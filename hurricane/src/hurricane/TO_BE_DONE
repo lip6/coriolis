@@ -1,0 +1,7 @@
+Materialisation
+	Un fois une cellule dematerialisee, les objets de la cellule ne sont plus materialisables.
+	idem pour les nets.
+
+Quelque soit le nombe d'UpdateSession assurer que tous les objets d'une cellule ou d'un net se
+	rematerialisent avand la fermeture de la session (pour etre sur de prendre tout le monde lors
+	des parcours under.

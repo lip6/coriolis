@@ -1,0 +1,154 @@
+#######################################################################################################
+# File: makefile
+# Authors: R. Escassut
+# Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
+#######################################################################################################
+# 21-10-2003 Alignement BULL-LIP6
+
+
+#######################################################################################################
+# Global macros
+#######################################################################################################
+
+_ROOT = $(HURRICANE_ROOT)
+_TARGET = $(HURRICANE_TARGET)
+_SYSTEM = $(HURRICANE_SYSTEM)
+_CC = $(HURRICANE_CC)
+
+_LIB = $(_ROOT)/build/$(_TARGET)/lib/$(_SYSTEM)/$(_CC)
+_DEP = $(_ROOT)/build/$(_TARGET)/dep/$(_SYSTEM)/$(_CC)
+_BIN = $(_ROOT)/build/$(_TARGET)/bin/$(_SYSTEM)/$(_CC)
+
+include $(_ROOT)/build/$(_TARGET)/makefiles/$(_SYSTEM)/$(_CC)/makefile
+
+
+
+#######################################################################################################
+# Local macros
+#######################################################################################################
+
+_INCLUDES = -I$(_ROOT)/bitmaps \
+				-I$(_ROOT)/pixmaps \
+				$(_GTK_INCLUDES)
+
+_LIBRARY = $(_LIB)/libHurricane.a
+
+_OBJECTS = $(_LIBRARY)(BasicLayer.o) \
+           $(_LIBRARY)(Box.o) \
+           $(_LIBRARY)(Builder.o) \
+           $(_LIBRARY)(Cell.o) \
+           $(_LIBRARY)(CellCollections.o) \
+           $(_LIBRARY)(Command.o) \
+           $(_LIBRARY)(Commons.o) \
+           $(_LIBRARY)(Component.o) \
+           $(_LIBRARY)(CompositeLayer.o) \
+           $(_LIBRARY)(Contact.o) \
+           $(_LIBRARY)(DataBase.o) \
+           $(_LIBRARY)(DBo.o) \
+           $(_LIBRARY)(DRCError.o) \
+           $(_LIBRARY)(DisplaySlot.o) \
+           $(_LIBRARY)(Entity.o) \
+           $(_LIBRARY)(Error.o) \
+           $(_LIBRARY)(Exception.o) \
+           $(_LIBRARY)(Go.o) \
+           $(_LIBRARY)(GtkUtils.o) \
+           $(_LIBRARY)(Hook.o) \
+           $(_LIBRARY)(Horizontal.o) \
+           $(_LIBRARY)(HyperNet.o) \
+           $(_LIBRARY)(InputFile.o) \
+           $(_LIBRARY)(Instance.o) \
+           $(_LIBRARY)(Interruption.o) \
+           $(_LIBRARY)(Interval.o) \
+           $(_LIBRARY)(Layer.o) \
+           $(_LIBRARY)(Library.o) \
+           $(_LIBRARY)(MainView.o) \
+           $(_LIBRARY)(MapView.o) \
+           $(_LIBRARY)(Marker.o) \
+           $(_LIBRARY)(Name.o) \
+           $(_LIBRARY)(Net.o) \
+           $(_LIBRARY)(NetExternalComponents.o) \
+           $(_LIBRARY)(Occurrence.o) \
+           $(_LIBRARY)(OutputFile.o) \
+           $(_LIBRARY)(Pad.o) \
+           $(_LIBRARY)(Path.o) \
+           $(_LIBRARY)(Pin.o) \
+           $(_LIBRARY)(Plug.o) \
+           $(_LIBRARY)(Point.o) \
+           $(_LIBRARY)(Primitive.o) \
+           $(_LIBRARY)(Property.o) \
+           $(_LIBRARY)(QuadTree.o) \
+           $(_LIBRARY)(Quark.o) \
+           $(_LIBRARY)(Record.o) \
+           $(_LIBRARY)(Reference.o) \
+           $(_LIBRARY)(Region.o) \
+           $(_LIBRARY)(Relation.o) \
+           $(_LIBRARY)(RoutingPad.o) \
+           $(_LIBRARY)(Rubber.o) \
+           $(_LIBRARY)(Segment.o) \
+           $(_LIBRARY)(Selector.o) \
+           $(_LIBRARY)(SharedName.o) \
+           $(_LIBRARY)(SharedPath.o) \
+           $(_LIBRARY)(Slice.o) \
+           $(_LIBRARY)(Slot.o) \
+           $(_LIBRARY)(Symbol.o) \
+           $(_LIBRARY)(Tabulation.o) \
+           $(_LIBRARY)(Tag.o) \
+           $(_LIBRARY)(Technology.o) \
+           $(_LIBRARY)(Timer.o) \
+           $(_LIBRARY)(Transformation.o) \
+           $(_LIBRARY)(Unit.o) \
+           $(_LIBRARY)(UpdateSession.o) \
+           $(_LIBRARY)(UserGo.o) \
+           $(_LIBRARY)(Vertical.o) \
+           $(_LIBRARY)(View.o) \
+           $(_LIBRARY)(VisualMap.o) \
+           $(_LIBRARY)(Warning.o)
+
+_DEPENDENCIES = $(_DEP)/libHurricane.dep
+
+
+
+#######################################################################################################
+# Implicit rules
+#######################################################################################################
+
+.PRECIOUS: $(_LIBRARY)
+
+.SUFFIXES: $(SUFFIXES) .cpp
+
+.cpp.a:
+	@echo "Compiling" $<
+	$(_CC) $(_CCFLAGS) $(_INCLUDES) -c $<
+	@ar crv $(_LIBRARY) $*.o > /dev/null
+	@rm $*.o
+
+
+
+#######################################################################################################
+# Explicit rules
+#######################################################################################################
+
+default: library
+
+library: $(_OBJECTS)
+	@echo "Updating" $(_LIBRARY)
+	@rm -f *.o
+	@ranlib $(_LIBRARY)
+
+clean:
+	@echo "Deleting" $(_LIBRARY)
+	@rm -f $(_LIBRARY)
+
+depend:
+	@echo "Updating" $(_DEPENDENCIES)
+	@makedepend -f $(_DEPENDENCIES) -p"$(_LIBRARY)(" -o".o)" -- $(_CCFLAGS) $(_INCLUDES) -- *.cpp >& makedepend.log
+	@rm $(_DEPENDENCIES).bak
+	@rm makedepend.log
+
+include $(_DEPENDENCIES)
+
+
+
+#######################################################################################################
+# Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
+#######################################################################################################

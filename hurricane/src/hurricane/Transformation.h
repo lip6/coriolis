@@ -1,0 +1,178 @@
+// ****************************************************************************************************
+// File: Transformation.h
+// Authors: R. Escassut
+// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
+// ****************************************************************************************************
+
+#ifndef HURRICANE_TRANSFORMATION
+#define HURRICANE_TRANSFORMATION
+
+#include "Box.h"
+
+namespace Hurricane {
+
+
+
+// ****************************************************************************************************
+// Transformation declaration
+// ****************************************************************************************************
+
+class Transformation {
+// *****************
+
+// Types
+// *****
+
+    public: class Orientation {
+	// **********************
+
+		public: enum Code {ID=0, R1=1, R2=2, R3=3, MX=4, XR=5, MY=6, YR=7};
+
+		private: Code _code;
+
+		public: Orientation(const Code& code = ID);
+		public: Orientation(const Orientation& orientation);
+
+		public: Orientation& operator=(const Orientation& orientation);
+
+		public: operator const Code&() const {return _code;};
+
+		public: const Code& GetCode() const {return _code;};
+
+        public: string _GetTypeName() const { return _TName("Transformation::Orientation"); };
+		public: string _GetString() const;
+		public: Record* _GetRecord() const;
+
+	};
+
+// Attributes
+// **********
+
+	private: Unit _tx;
+	private: Unit _ty;
+	private: Orientation _orientation;
+
+// Constructors
+// ************
+
+	public: Transformation();
+
+	public: Transformation(const Unit& tx, const Unit& ty, const Orientation& orientation = Orientation::ID);
+	public: Transformation(const Point& translation, const Orientation& orientation = Orientation::ID);
+
+	public: Transformation(const Transformation& transformation);
+
+// Operators
+// *********
+
+	public: Transformation& operator=(const Transformation& transformation);
+
+	public: bool operator==(const Transformation& transformation) const;
+	public: bool operator!=(const Transformation& transformation) const;
+
+// Accessors
+// *********
+
+	public: const Unit& GetTx() const {return _tx;};
+	public: const Unit& GetTy() const {return _ty;};
+	public: Point GetTranslation() const {return Point(_tx, _ty);};
+	public: const Orientation& GetOrientation() const {return _orientation;};
+
+	public: Unit GetX(const Unit& x, const Unit& y) const;
+	public: Unit GetY(const Unit& x, const Unit& y) const;
+
+	public: Unit GetX(const Point& point) const;
+	public: Unit GetY(const Point& point) const;
+
+	public: Unit GetDx(const Unit& dx, const Unit& dy) const;
+	public: Unit GetDy(const Unit& dx, const Unit& dy) const;
+
+	public: Point GetPoint(const Unit& x, const Unit& y) const;
+	public: Point GetPoint(const Point& point) const;
+
+	public: Box GetBox(const Unit& x1, const Unit& y1, const Unit& x2, const Unit& y2) const;
+	public: Box GetBox(const Point& point1, const Point& point2) const;
+	public: Box GetBox(const Box& box) const;
+
+	public: Transformation GetTransformation(const Transformation& transformation) const;
+
+	public: Transformation GetInvert() const;
+
+// Predicates
+// **********
+
+	public: bool IsEven() const {return !(_orientation.GetCode() & 1);};
+	public: bool IsOdd() const {return (_orientation.GetCode() & 1);};
+
+// Updators
+// ********
+
+	public: Transformation& Invert();
+
+// Manipulators
+// ************
+
+	public: void ApplyOn(Unit& x, Unit& y) const;
+	public: void ApplyOn(Point& point) const;
+	public: void ApplyOn(Box& box) const;
+	public: void ApplyOn(Transformation& transformation) const;
+
+// Others
+// ******
+
+    public: string _GetTypeName() const { return _TName("Transformation"); };
+	public: string _GetString() const;
+	public: Record* _GetRecord() const;
+
+};
+
+
+
+
+// -------------------------------------------------------------------
+// Class  :  "Proxy...<const Transformation::Orientation::Code*>".
+
+template<>
+  inline string  ProxyTypeName<Transformation::Orientation::Code>
+                              ( const Transformation::Orientation::Code* object )
+                              { return "<PointerSlotAdapter<Transformation::Orientation::Code>>"; }
+
+template<>
+  inline string  ProxyString  <Transformation::Orientation::Code>
+                              ( const Transformation::Orientation::Code* object )
+                              {
+                                switch ( *object ) {
+                                  case Transformation::Orientation::ID: return "ID";
+                                  case Transformation::Orientation::R1: return "R1";
+                                  case Transformation::Orientation::R2: return "R2";
+                                  case Transformation::Orientation::R3: return "R3";
+                                  case Transformation::Orientation::MX: return "MX";
+                                  case Transformation::Orientation::XR: return "XR";
+                                  case Transformation::Orientation::MY: return "MY";
+                                  case Transformation::Orientation::YR: return "YR";
+                                }
+                                return "ABNORMAL";
+                              }
+
+template<>
+  inline Record* ProxyRecord  <Transformation::Orientation::Code>
+                              ( const Transformation::Orientation::Code* object )
+                              {
+                                Record* record = new Record(GetString(object));
+                                record->Add(GetSlot("Code", (unsigned int*)object));
+                                return record;
+                              }
+
+
+
+} // End of Hurricane namespace.
+
+
+ValueIOStreamSupport(Hurricane::Transformation)
+
+
+#endif // HURRICANE_TRANSFORMATION
+
+// ****************************************************************************************************
+// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
+// ****************************************************************************************************
