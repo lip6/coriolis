@@ -1,6 +1,5 @@
 set(includes RdsUnit.h)  
 
-include_directories(${HURRICANE_SOURCE_DIR}/hurricane)
 
 add_custom_target(DTRParser echo "Creating DTRParser")
 
@@ -27,7 +26,10 @@ ${HURRICANE_BINARY_DIR}/analogic/ParserDtrScan.cpp)
 SET_SOURCE_FILES_PROPERTIES(${HURRICANE_BINARY_DIR}/analogic/ParserDtrGram.cpp GENERATED)
 SET_SOURCE_FILES_PROPERTIES(${HURRICANE_BINARY_DIR}/analogic/ParserDtrScan.cpp GENERATED)
 
-INCLUDE_DIRECTORIES(${HURRICANE_BINARY_DIR}/analogic/)
+INCLUDE_DIRECTORIES(${HURRICANE_BINARY_DIR}/analogic/
+${HURRICANE_SOURCE_DIR}/hurricane
+${HURRICANE_SOURCE_DIR}/analogic
+)
 
 add_library(analogic SHARED 
 ${DST_SRCS}
