@@ -41,5 +41,7 @@ RdsUnit.cpp
 Transistor.cpp
 TwoSpaces.cpp)
 
+target_link_libraries(analogic hurricane)
+
 install(FILES ${includes} DESTINATION /include/hurricane) 
 install(TARGETS analogic DESTINATION /lib)
