@@ -299,7 +299,7 @@ void GenV1Trans::Calculate(Transistor* transistor)
     j = _mapString2Box.end();
 
   while(i!=j) {
-    _mapString2Box[(*i).first] = (*i).second.Translate(-xmin, -ymin);      
+    _mapString2Box[(*i).first] = (*i).second.translate(-xmin, -ymin);      
 
     IF_DEBUG_HUR_ANALOG
       cout << ts << (*i).first <<"  " << GetString((*i).second) << endl;
@@ -367,10 +367,10 @@ END_IF
     }
     else {     
       Contact::Create(source, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsforsource[i])
-                    , GET_BOX(segsforsource[i]).GetXCenter()
-                    , GET_BOX(segsforsource[i]).GetYCenter()
-  		    , GET_BOX(segsforsource[i]).GetWidth()
-  		    , GET_BOX(segsforsource[i]).GetHeight() 
+                    , GET_BOX(segsforsource[i]).getXCenter()
+                    , GET_BOX(segsforsource[i]).getYCenter()
+  		    , GET_BOX(segsforsource[i]).getWidth()
+  		    , GET_BOX(segsforsource[i]).getHeight() 
   		    );
     }
   }  
@@ -387,16 +387,16 @@ IF_DEBUG_HUR_ANALOG
 END_IF
   for(size_t i=0; i<sizeof(segsforgrid)/sizeof(string); i++) {
        if(segsforgrid[i]=="30"){
-          if( GET_BOX(segsforgrid[i]).GetWidth()==GET_RULE("RW_CONT") ) {
+          if( GET_BOX(segsforgrid[i]).getWidth()==GET_RULE("RW_CONT") ) {
               Contact::Create(grid, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsforgrid[i])
-                              , GET_BOX(segsforgrid[i]).GetXCenter()
-                              , GET_BOX(segsforgrid[i]).GetYCenter()
-            		      , GET_BOX(segsforgrid[i]).GetWidth()
-            		      , GET_BOX(segsforgrid[i]).GetHeight()
+                              , GET_BOX(segsforgrid[i]).getXCenter()
+                              , GET_BOX(segsforgrid[i]).getYCenter()
+            		      , GET_BOX(segsforgrid[i]).getWidth()
+            		      , GET_BOX(segsforgrid[i]).getHeight()
                              );
 	  }    
 	  else  {
-              unsigned int nbcolumn = (GET_BOX(segsforgrid[i]).GetWidth()-rw_cont)/(rw_cont + rd_cont) + 1;
+              unsigned int nbcolumn = (GET_BOX(segsforgrid[i]).getWidth()-rw_cont)/(rw_cont + rd_cont) + 1;
  
 IF_DEBUG_HUR_ANALOG
 	      cout << ts << "nbcolumn in rectangle 30 is " << nbcolumn <<endl;
@@ -407,12 +407,12 @@ END_IF
 	  }
        }
        else {
-	  if(GET_BOX(segsforgrid[i]).GetXMin() < GET_BOX(segsforgrid[i]).GetXMax()) {
+	  if(GET_BOX(segsforgrid[i]).getXMin() < GET_BOX(segsforgrid[i]).getXMax()) {
               Contact::Create(grid, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsforgrid[i])
-                              , GET_BOX(segsforgrid[i]).GetXCenter()
-                              , GET_BOX(segsforgrid[i]).GetYCenter()
-            		      , GET_BOX(segsforgrid[i]).GetWidth()
-            		      , GET_BOX(segsforgrid[i]).GetHeight()
+                              , GET_BOX(segsforgrid[i]).getXCenter()
+                              , GET_BOX(segsforgrid[i]).getYCenter()
+            		      , GET_BOX(segsforgrid[i]).getWidth()
+            		      , GET_BOX(segsforgrid[i]).getHeight()
                              );
           }
        }
@@ -439,10 +439,10 @@ END_IF
     }
     else {     
       Contact::Create(drain, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsfordrain[i])
-                    , GET_BOX(segsfordrain[i]).GetXCenter()
-                    , GET_BOX(segsfordrain[i]).GetYCenter()
-  		    , GET_BOX(segsfordrain[i]).GetWidth()
-  		    , GET_BOX(segsfordrain[i]).GetHeight() 
+                    , GET_BOX(segsfordrain[i]).getXCenter()
+                    , GET_BOX(segsfordrain[i]).getYCenter()
+  		    , GET_BOX(segsfordrain[i]).getWidth()
+  		    , GET_BOX(segsfordrain[i]).getHeight() 
   		    );
     }
   }  
@@ -462,10 +462,10 @@ END_IF
       continue;
 
     Contact::Create(anonym, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsforanonym[i])
-	           , GET_BOX(segsforanonym[i]).GetXCenter()
-		   , GET_BOX(segsforanonym[i]).GetYCenter()
-		   , GET_BOX(segsforanonym[i]).GetWidth()
-		   , GET_BOX(segsforanonym[i]).GetHeight()
+	           , GET_BOX(segsforanonym[i]).getXCenter()
+		   , GET_BOX(segsforanonym[i]).getYCenter()
+		   , GET_BOX(segsforanonym[i]).getWidth()
+		   , GET_BOX(segsforanonym[i]).getHeight()
 		   );
   }
 
@@ -493,37 +493,37 @@ END_IF
   switch(transistor->GetAbutmentType().GetCode()) {
 
     case Transistor::Type::INTERNAL : 
-        transistor->SetAbutmentBox( Box(GET_BOX(string("20")).GetXCenter() 
-       	                             , transistor->GetBoundingBox().GetYMin()
-       	   			     , GET_BOX(string("40")).GetXCenter()
-       	   			     , transistor->GetBoundingBox().GetYMax()
+        transistor->SetAbutmentBox( Box(GET_BOX(string("20")).getXCenter() 
+       	                             , transistor->GetBoundingBox().getYMin()
+       	   			     , GET_BOX(string("40")).getXCenter()
+       	   			     , transistor->GetBoundingBox().getYMax()
 				    )
        	   			  );  
 	break; 
 
     case Transistor::Type::LEFT: 
-        transistor->SetAbutmentBox( Box(GET_BOX(string("11")).GetXMin() 
-       	                              , transistor->GetBoundingBox().GetYMin()
-       	   			      , GET_BOX(string("40")).GetXCenter()
-       	   			      , transistor->GetBoundingBox().GetYMax()
+        transistor->SetAbutmentBox( Box(GET_BOX(string("11")).getXMin() 
+       	                              , transistor->GetBoundingBox().getYMin()
+       	   			      , GET_BOX(string("40")).getXCenter()
+       	   			      , transistor->GetBoundingBox().getYMax()
 				    )
        	   			  );  
 	break ;
      
     case Transistor::Type::RIGHT: 
-        transistor->SetAbutmentBox( Box(GET_BOX(string("20")).GetXCenter() 
-       	                              , transistor->GetBoundingBox().GetYMin()
-       	   			      , GET_BOX(string("11")).GetXMax()
-       	   			      , transistor->GetBoundingBox().GetYMax()
+        transistor->SetAbutmentBox( Box(GET_BOX(string("20")).getXCenter() 
+       	                              , transistor->GetBoundingBox().getYMin()
+       	   			      , GET_BOX(string("11")).getXMax()
+       	   			      , transistor->GetBoundingBox().getYMax()
 				    )
        	   			  );  
 	break ;
 
     case Transistor::Type::SINGLE: 
-        transistor->SetAbutmentBox( Box(GET_BOX(string("11")).GetXMin() 
-       	                              , transistor->GetBoundingBox().GetYMin()
-       	   			      , GET_BOX(string("11")).GetXMax()
-       	   			      , transistor->GetBoundingBox().GetYMax()
+        transistor->SetAbutmentBox( Box(GET_BOX(string("11")).getXMin() 
+       	                              , transistor->GetBoundingBox().getYMin()
+       	   			      , GET_BOX(string("11")).getXMax()
+       	   			      , transistor->GetBoundingBox().getYMax()
                                     )
        	   			  );  
 	break ;

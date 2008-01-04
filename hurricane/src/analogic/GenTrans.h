@@ -117,14 +117,14 @@
 
 #  define CREATE_CONTACT_MATRIX_UNDER(underbox, nbcolumn, layer, net) \
                                                                       \
-        if(underbox.GetHeight()<rw_cont)   \
+        if(underbox.getHeight()<rw_cont)   \
            nbcontact = 0; \
         else \
-           nbcontact = (underbox.GetHeight()-rw_cont)/(rw_cont + rd_cont) + 1 ;\
+           nbcontact = (underbox.getHeight()-rw_cont)/(rw_cont + rd_cont) + 1 ;\
          \
                                                                      \
-        tmp_xcenter = underbox.GetXMin() + (rw_cont/2);  \
-        tmp_ycenter = underbox.GetYMin() + (rw_cont/2);  \
+        tmp_xcenter = underbox.getXMin() + (rw_cont/2);  \
+        tmp_ycenter = underbox.getYMin() + (rw_cont/2);  \
                                                                   \
 \
         for(unsigned i=0; i<nbcolumn; i++) { \
@@ -141,7 +141,7 @@
            }              \
               \
            tmp_xcenter += (rw_cont + rd_cont);  \
-           tmp_ycenter = underbox.GetYMin() + (rw_cont/2); \
+           tmp_ycenter = underbox.getYMin() + (rw_cont/2); \
 	}
 
 // ------------------------------------------------------------------
@@ -155,10 +155,10 @@
     */
  
 #  define BOX_IS_VALID(box) \
-   ( (long)(GetValue(box.GetXMin()))%2==0 )&& \
-   ( (long)(GetValue(box.GetXMax()))%2==0 )&& \
-   ( (long)(GetValue(box.GetYMin()))%2==0 )&& \
-   ( (long)(GetValue(box.GetYMax()))%2==0 ) 
+   ( (long)(GetValue(box.getXMin()))%2==0 )&& \
+   ( (long)(GetValue(box.getXMax()))%2==0 )&& \
+   ( (long)(GetValue(box.getYMin()))%2==0 )&& \
+   ( (long)(GetValue(box.getYMax()))%2==0 ) 
    
 
 BEGIN_NAMESPACE_HURRICANE
