@@ -8,10 +8,10 @@
 using namespace H;
 
 inline void BoxToRectangle(const Box& box, QRectF& rec) {
-	double xmin = GetValue(box.GetXMin());
-	double xmax = GetValue(box.GetXMax());
-	double ymin = GetValue(box.GetYMin());
-	double ymax = GetValue(box.GetYMax());
+	double xmin = GetValue(box.getXMin());
+	double xmax = GetValue(box.getXMax());
+	double ymin = GetValue(box.getYMin());
+	double ymax = GetValue(box.getYMax());
 	rec.setCoords(xmin, ymin, xmax, ymax);
 }
 

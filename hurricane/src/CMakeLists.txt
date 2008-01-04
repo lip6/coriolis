@@ -10,7 +10,8 @@ find_package(FLEX REQUIRED)
 
 add_subdirectory(hurricane)
 add_subdirectory(analogic)
-add_subdirectory(graphical)
+add_subdirectory(viewer)
+add_subdirectory(editor)
 
 set(DEST_DIR "$ENV{DESTDIR}")
 configure_file(${HURRICANE_SOURCE_DIR}/hurricane.pc.cmake hurricane.pc @ONLY)
