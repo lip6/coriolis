@@ -61,8 +61,8 @@ Transformation::Transformation(const Unit& tx, const Unit& ty, const Orientation
 
 Transformation::Transformation(const Point& translation, const Orientation& orientation)
 // *************************************************************************************
-:	_tx(translation.GetX()),
-	_ty(translation.GetY()),
+:	_tx(translation.getX()),
+	_ty(translation.getY()),
 	_orientation(orientation)
 {
 }
@@ -115,13 +115,13 @@ Unit Transformation::GetY(const Unit& x, const Unit& y) const
 Unit Transformation::GetX(const Point& point) const
 // ************************************************
 {
-	return GetX(point.GetX(), point.GetY());
+	return GetX(point.getX(), point.getY());
 }
 
 Unit Transformation::GetY(const Point& point) const
 // ************************************************
 {
-	return GetY(point.GetX(), point.GetY());
+	return GetY(point.getX(), point.getY());
 }
 
 Unit Transformation::GetDx(const Unit& dx, const Unit& dy) const
@@ -145,7 +145,7 @@ Point Transformation::GetPoint(const Unit& x, const Unit& y) const
 Point Transformation::GetPoint(const Point& point) const
 // *****************************************************
 {
-	return GetPoint(point.GetX(), point.GetY());
+	return GetPoint(point.getX(), point.getY());
 }
 
 Box Transformation::GetBox(const Unit& x1, const Unit& y1, const Unit& x2, const Unit& y2) const
@@ -157,14 +157,14 @@ Box Transformation::GetBox(const Unit& x1, const Unit& y1, const Unit& x2, const
 Box Transformation::GetBox(const Point& point1, const Point& point2) const
 // ***********************************************************************
 {
-	return GetBox(point1.GetX(), point1.GetY(), point2.GetX(), point2.GetY());
+	return GetBox(point1.getX(), point1.getY(), point2.getX(), point2.getY());
 }
 
 Box Transformation::GetBox(const Box& box) const
 // *********************************************
 {
-	if (box.IsEmpty()) return box;
-	return GetBox(box.GetXMin(), box.GetYMin(), box.GetXMax(), box.GetYMax());
+	if (box.isEmpty()) return box;
+	return GetBox(box.getXMin(), box.getYMin(), box.getXMax(), box.getYMax());
 }
 
 Transformation Transformation::GetTransformation(const Transformation& transformation) const

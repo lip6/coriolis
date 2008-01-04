@@ -172,7 +172,7 @@ Point Contact::GetPosition() const
 // *******************************
 {
 	Component* anchor = GetAnchor();
-	return (!anchor) ? Point(_dx, _dy) : anchor->GetPosition().Translate(_dx, _dy);
+	return (!anchor) ? Point(_dx, _dy) : anchor->GetPosition().translate(_dx, _dy);
 }
 
 Box Contact::GetBoundingBox() const
@@ -180,7 +180,7 @@ Box Contact::GetBoundingBox() const
 {
 	Unit size = _GetSize();
 
-	return Box(GetPosition()).Inflate(GetHalfWidth() + size, GetHalfHeight() + size);
+	return Box(GetPosition()).inflate(GetHalfWidth() + size, GetHalfHeight() + size);
 }
 
 Box Contact::GetBoundingBox(BasicLayer* basicLayer) const
@@ -190,7 +190,7 @@ Box Contact::GetBoundingBox(BasicLayer* basicLayer) const
 
 	Unit size = _GetSize(basicLayer);
 
-	return Box(GetPosition()).Inflate(GetHalfWidth() + size, GetHalfHeight() + size);
+	return Box(GetPosition()).inflate(GetHalfWidth() + size, GetHalfHeight() + size);
 }
 
 Component* Contact::GetAnchor() const
@@ -275,7 +275,7 @@ void Contact::SetPosition(const Unit& x, const Unit& y)
 void Contact::SetPosition(const Point& position)
 // *********************************************
 {
-	SetPosition(position.GetX(), position.GetY());
+	SetPosition(position.getX(), position.getY());
 }
 
 void Contact::SetDx(const Unit& dx)

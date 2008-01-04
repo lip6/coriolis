@@ -64,7 +64,7 @@ Box Vertical::GetBoundingBox() const
 	Unit size = GetHalfWidth() + _GetSize();
 	Unit extention = _GetExtention();
 
-	return Box(_x, GetSourceY(), _x, GetTargetY()).Inflate(size, extention);
+	return Box(_x, GetSourceY(), _x, GetTargetY()).inflate(size, extention);
 }
 
 Box Vertical::GetBoundingBox(BasicLayer* basicLayer) const
@@ -75,7 +75,7 @@ Box Vertical::GetBoundingBox(BasicLayer* basicLayer) const
 	Unit size = GetHalfWidth() + _GetSize(basicLayer);
 	Unit extention = _GetExtention(basicLayer);
 
-	return Box(_x, GetSourceY(), _x, GetTargetY()).Inflate(size, extention);
+	return Box(_x, GetSourceY(), _x, GetTargetY()).inflate(size, extention);
 }
 
 Unit Vertical::GetSourceY() const

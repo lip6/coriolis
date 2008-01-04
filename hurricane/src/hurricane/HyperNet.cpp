@@ -511,7 +511,7 @@ static bool IsConnex(const Occurrence& componentOccurrence1, const Occurrence& c
 			for_each_basic_layer(basicLayer2, layer2->GetBasicLayers()) {
 				if (basicLayer1->GetExtractMask() & basicLayer2->GetExtractMask()) {
 					Box box2 = transformation2.GetBox(component2->GetBoundingBox(basicLayer2));
-					if (box1.Intersect(box2)) return true;
+					if (box1.intersect(box2)) return true;
 				}
 				end_for;
 			}
@@ -766,7 +766,7 @@ void HyperNet_NetOccurrencesUnder::Locator::Progress()
 			for_each_component(component, net->GetComponents()) {
 				Occurrence occurrence = Occurrence(component, path);
 				Box area = occurrence.GetBoundingBox();
-				if (! area.Intersect (_area)) {
+				if (! area.intersect (_area)) {
 					// Outside useful area
 				} else if (is_a<Plug*>(component)) {
 					// Will be  processed below
@@ -774,7 +774,7 @@ void HyperNet_NetOccurrencesUnder::Locator::Progress()
 					// Don't go through the Rubbers (go only trough connecting layers)
 				} else {
 					//if (_allowInterruption && !((i++) % 200)) gtk_check_for_interruption();
-					Box under = area.GetIntersection (_area);
+					Box under = area.getIntersection (_area);
 					for_each_occurrence(occurrence2, cell->GetOccurrencesUnder(under)) {
 						if (is_a<Component*>(occurrence2.GetEntity())) {
 							Component* component2 = (Component*)occurrence2.GetEntity();

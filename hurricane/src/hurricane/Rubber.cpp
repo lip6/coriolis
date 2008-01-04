@@ -56,7 +56,7 @@ Cell* Rubber::GetCell() const
 Point Rubber::GetCenter() const
 // ****************************
 {
-        return GetBoundingBox().GetCenter();
+        return GetBoundingBox().getCenter();
 }
 
 Point Rubber::GetBarycenter() const
@@ -66,9 +66,9 @@ Point Rubber::GetBarycenter() const
         Unit x = 0;
         Unit y = 0;
         for_each_hook(hook, GetHooks()) {
-                Point position = hook->GetComponent()->GetBoundingBox().GetCenter();
-                x += position.GetX() / n;
-                y += position.GetY() / n;
+                Point position = hook->GetComponent()->GetBoundingBox().getCenter();
+                x += position.getX() / n;
+                y += position.getY() / n;
                 end_for;
         }
         return Point(x,y);
@@ -77,13 +77,13 @@ Point Rubber::GetBarycenter() const
 Box Rubber::GetBoundingBox() const
 // *******************************
 {
-        if (_boundingBox.IsEmpty())
+        if (_boundingBox.isEmpty())
         {
                 Rubber* rubber = const_cast<Rubber*>(this);
                 Box& boundingBox = rubber->_boundingBox;
                 for_each_hook(hook, GetHooks()) {
-                        Point position = hook->GetComponent()->GetBoundingBox().GetCenter();
-                        boundingBox.Merge(position);
+                        Point position = hook->GetComponent()->GetBoundingBox().getCenter();
+                        boundingBox.merge(position);
                         end_for;
                 }
         }
@@ -245,14 +245,14 @@ void Rubber::Invalidate(bool propagateFlag)
 // ****************************************
 {
         Inherit::Invalidate(false);
-        _boundingBox.MakeEmpty();
+        _boundingBox.makeEmpty();
 }
 
 //bool Rubber::_IsInterceptedBy(View* view, const Point& point, const Unit& aperture) const
 //// **************************************************************************************
 //{
-//        double x = GetValue(point.GetX());
-//        double y = GetValue(point.GetY());
+//        double x = GetValue(point.getX());
+//        double y = GetValue(point.getY());
 //        double a = GetValue(aperture);
 //        Point origin;
 //
@@ -277,12 +277,12 @@ void Rubber::Invalidate(bool propagateFlag)
 //            default:
 //                throw Error("Unknown RubberDisplayType");
 //        }
-//        double xo = GetValue(origin.GetX());
-//        double yo = GetValue(origin.GetY());
+//        double xo = GetValue(origin.getX());
+//        double yo = GetValue(origin.getY());
 //        for_each_hook(hook, GetHooks()) {
-//                Point extremity = extremity = hook->GetComponent()->GetBoundingBox().GetCenter();
-//                double xe = GetValue(extremity.GetX());
-//                double ye = GetValue(extremity.GetY());
+//                Point extremity = extremity = hook->GetComponent()->GetBoundingBox().getCenter();
+//                double xe = GetValue(extremity.getX());
+//                double ye = GetValue(extremity.getY());
 //                double xp = xo;
 //                double yp = yo;
 //                if (xo != xe) xp = (((xe - xo) / (ye - yo)) * (y - yo)) + xo;
@@ -307,7 +307,7 @@ void Rubber::Invalidate(bool propagateFlag)
 //                {
 //                    center = transformation.GetPoint(GetCenter());
 //                    for_each_hook(hook, GetHooks()) {
-//                        Point position = hook->GetComponent()->GetBoundingBox().GetCenter();
+//                        Point position = hook->GetComponent()->GetBoundingBox().getCenter();
 //                        view->DrawLine(center, transformation.GetPoint(position));
 //                        end_for;
 //                    }
@@ -317,7 +317,7 @@ void Rubber::Invalidate(bool propagateFlag)
 //                {
 //                    center = transformation.GetPoint(GetBarycenter());
 //                    for_each_hook(hook, GetHooks()) {
-//                        Point position = hook->GetComponent()->GetBoundingBox().GetCenter();
+//                        Point position = hook->GetComponent()->GetBoundingBox().getCenter();
 //                        view->DrawLine(center, transformation.GetPoint(position));
 //                        end_for;
 //                    }
@@ -327,8 +327,8 @@ void Rubber::Invalidate(bool propagateFlag)
 //                {
 //                    center = transformation.GetPoint(GetBarycenter());
 //                    for_each_hook(hook, GetHooks()) {
-//                        Point position = hook->GetComponent()->GetBoundingBox().GetCenter();
-//                        Point crosspoint (position.GetX(), center.GetY());
+//                        Point position = hook->GetComponent()->GetBoundingBox().getCenter();
+//                        Point crosspoint (position.getX(), center.getY());
 //                        view->DrawLine(position, crosspoint);
 //                        view->DrawLine(crosspoint, center);
 //                        end_for;
@@ -344,7 +344,7 @@ void Rubber::Invalidate(bool propagateFlag)
 //
 typedef struct pcmp_s {
     bool operator() (const Point& p1, const Point& p2) const {
-        return (p1.GetX() < p2.GetX()) || ( (p1.GetX() == p2.GetX()) && (p1.GetY() < p2.GetY()) );
+        return (p1.getX() < p2.getX()) || ( (p1.getX() == p2.getX()) && (p1.getY() < p2.getY()) );
     }
 } pcmp_t;
 
@@ -359,7 +359,7 @@ typedef struct pcmp_s {
 //                {
 //                    center = transformation.GetPoint(GetCenter());
 //                    for_each_hook(hook, GetHooks()) {
-//                        Point position = hook->GetComponent()->GetBoundingBox().GetCenter();
+//                        Point position = hook->GetComponent()->GetBoundingBox().getCenter();
 //                        view->DrawLine(center, transformation.GetPoint(position));
 //                        end_for;
 //                    }
@@ -369,7 +369,7 @@ typedef struct pcmp_s {
 //                {
 //                    center = transformation.GetPoint(GetBarycenter());
 //                    for_each_hook(hook, GetHooks()) {
-//                        Point position = hook->GetComponent()->GetBoundingBox().GetCenter();
+//                        Point position = hook->GetComponent()->GetBoundingBox().getCenter();
 //                        view->DrawLine(center, transformation.GetPoint(position));
 //                        end_for;
 //                    }
@@ -380,13 +380,13 @@ typedef struct pcmp_s {
 //                    set <Point, pcmp_t> pset;
 //                    for_each_hook (hook, GetHooks())
 //                    {
-//                        Point position = hook->GetComponent()->GetBoundingBox().GetCenter();
+//                        Point position = hook->GetComponent()->GetBoundingBox().getCenter();
 //                        pset.insert (position);
 //                        end_for;
 //                    }
 //                    center = transformation.GetPoint(GetBarycenter());
-//                    Unit lastXup = center.GetX();
-//                    Unit lastXlo = center.GetX();
+//                    Unit lastXup = center.getX();
+//                    Unit lastXlo = center.getX();
 //                    for (
 //                            set<Point, pcmp_t>::iterator pit = pset.begin();
 //                            pit != pset.end();
@@ -394,29 +394,29 @@ typedef struct pcmp_s {
 //                        )
 //                    {
 //                        Point position (*pit);
-//                        Point crosspoint (position.GetX(), center.GetY());
+//                        Point crosspoint (position.getX(), center.getY());
 //                        Point connxpoint (center);
-//                        if (position.GetY() > center.GetY())
+//                        if (position.getY() > center.getY())
 //                        {
 //                            // en haut
-//                            if ( (position.GetX() - lastXup) < (position.GetY() - center.GetY()) )
+//                            if ( (position.getX() - lastXup) < (position.getY() - center.getY()) )
 //                            {
 //                                crosspoint.SetX (lastXup);
-//                                crosspoint.SetY (position.GetY());
+//                                crosspoint.SetY (position.getY());
 //                                connxpoint.SetX (lastXup);
 //                            }
 //                            else
-//                                lastXup = position.GetX();
+//                                lastXup = position.getX();
 //                        } else {
 //                            // en bas
-//                            if ( (position.GetX() - lastXlo) < (center.GetY() - position.GetY()) )
+//                            if ( (position.getX() - lastXlo) < (center.getY() - position.getY()) )
 //                            {
 //                                crosspoint.SetX (lastXlo);
-//                                crosspoint.SetY (position.GetY());
+//                                crosspoint.SetY (position.getY());
 //                                connxpoint.SetX (lastXlo);
 //                            }
 //                            else
-//                                lastXlo = position.GetX();
+//                                lastXlo = position.getX();
 //                        }
 //
 //

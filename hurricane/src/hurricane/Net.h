@@ -143,8 +143,8 @@ class Net : public Entity {
 	public: const Type& GetType() const {return _type;};
 	public: const Direction& GetDirection() const {return _direction;};
 	public: const Point& GetPosition() const {return _position;};
-	public: const Unit& GetX() const {return _position.GetX();};
-	public: const Unit& GetY() const {return _position.GetY();};
+	public: const Unit& GetX() const {return _position.getX();};
+	public: const Unit& GetY() const {return _position.getY();};
 	public: Components GetComponents() const {return _componentSet.GetElements();};
 	public: Rubbers GetRubbers() const {return _rubberSet.GetElements();};
 	public: RoutingPads GetRoutingPads() const;

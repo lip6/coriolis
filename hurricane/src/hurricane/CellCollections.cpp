@@ -1272,14 +1272,14 @@ Rubbers Cell::GetRubbers() const
 Rubbers Cell::GetRubbersUnder(const Box& area) const
 // *************************************************
 {
-	// return (area.IsEmpty()) ? Rubbers() : _quadTree.GetGosUnder(area).GetSubSet<Rubber*>();
+	// return (area.isEmpty()) ? Rubbers() : _quadTree.GetGosUnder(area).GetSubSet<Rubber*>();
 	return SubTypeCollection<Go*, Rubber*>(_quadTree.GetGosUnder(area));
 }
 
 Markers Cell::GetMarkersUnder(const Box& area) const
 // *************************************************
 {
-	// return (area.IsEmpty()) ? Markers() : _quadTree.GetGosUnder(area).GetSubSet<Marker*>();
+	// return (area.isEmpty()) ? Markers() : _quadTree.GetGosUnder(area).GetSubSet<Marker*>();
 	return SubTypeCollection<Go*, Marker*>(_quadTree.GetGosUnder(area));
 }
 
@@ -1793,7 +1793,7 @@ Cell_ComponentsUnder::Locator::Locator(const Cell* cell, const Box& area, const 
 	_componentLocator(),
 	_component(NULL)
 {
-	if (_cell && !_area.IsEmpty()) {
+	if (_cell && !_area.isEmpty()) {
 		_sliceLocator = _cell->GetSlices(_mask).GetLocator();
 		while (!_component && _sliceLocator.IsValid()) {
 			Slice* slice = _sliceLocator.GetElement();
@@ -2260,7 +2260,7 @@ Cell_OccurrencesUnder::Locator::Locator(const Cell* cell, const Box& area, unsig
 	_instanceLocator(),
 	_occurrenceLocator()
 {
-	if (_cell && !_area.IsEmpty()) {
+	if (_cell && !_area.isEmpty()) {
 		_componentLocator = _cell->GetComponentsUnder(_area).GetLocator();
 		if (_componentLocator.IsValid())
 			_state = 1;
@@ -2718,7 +2718,7 @@ Cell_LeafInstanceOccurrencesUnder::Locator::Locator(const Cell* cell, const Box&
 	_nonLeafInstanceLocator(),
 	_occurrenceLocator()
 {
-	if (_cell && !_area.IsEmpty()) {
+	if (_cell && !_area.isEmpty()) {
 		_leafInstanceLocator = _cell->GetLeafInstancesUnder(_area).GetLocator();
 		if (_leafInstanceLocator.IsValid())
 			_state = 1;
@@ -3127,7 +3127,7 @@ Cell_TerminalInstanceOccurrencesUnder::Locator::Locator(const Cell* cell, const 
 	_nonTerminalInstanceLocator(),
 	_occurrenceLocator()
 {
-	if (_cell && !_area.IsEmpty()) {
+	if (_cell && !_area.isEmpty()) {
 		_terminalInstanceLocator = _cell->GetTerminalInstancesUnder(_area).GetLocator();
 		if (_terminalInstanceLocator.IsValid())
 			_state = 1;
@@ -3574,7 +3574,7 @@ Cell_ComponentOccurrencesUnder::Locator::Locator(const Cell* cell, const Box& ar
 	_instanceLocator(),
 	_occurrenceLocator()
 {
-	if (_cell && !_area.IsEmpty() && (_mask != 0)) {
+	if (_cell && !_area.isEmpty() && (_mask != 0)) {
 		_componentLocator = _cell->GetComponentsUnder(_area, _mask).GetLocator();
 		if (_componentLocator.IsValid())
 			_state = 1;

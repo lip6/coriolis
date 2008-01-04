@@ -53,7 +53,7 @@ class Component_IsUnderFilter : public Filter<Component*> {
 	public: virtual bool Accept(Component* component) const
 	// ****************************************************
 	{
-		return _area.Intersect(component->GetBoundingBox());
+		return _area.intersect(component->GetBoundingBox());
 	};
 
 	public: virtual string _GetString() const
@@ -490,7 +490,7 @@ void Component::_SetRubber(Rubber* rubber)
 //	Box area(point);
 //	area.Inflate(aperture);
 //	for_each_basic_layer(basicLayer, GetLayer()->GetBasicLayers()) {
-//		if (view->IsVisible(basicLayer) && GetBoundingBox(basicLayer).Intersect(area))
+//		if (view->IsVisible(basicLayer) && GetBoundingBox(basicLayer).intersect(area))
 //			return true;
 //		end_for;
 //	}
@@ -933,7 +933,7 @@ double  GetArea ( Component* component )
 {
   Box  bb = component->GetBoundingBox ();
 
-  return GetValue(bb.GetWidth()) * GetValue(bb.GetHeight());
+  return GetValue(bb.getWidth()) * GetValue(bb.getHeight());
 }
 
 

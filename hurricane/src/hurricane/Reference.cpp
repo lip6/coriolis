@@ -49,13 +49,13 @@ Reference* Reference::Create(Cell* cell, const Name& name, Unit x, Unit y)
 Reference* Reference::Create(Cell* cell, const Name& name, const Point& point)
 // ***************************************************************************
 {
-  return Create(cell,name,point.GetX(),point.GetY());
+  return Create(cell,name,point.getX(),point.getY());
 }
 
 Box  Reference::GetBoundingBox() const
 // ***********************************
 {
-  return Box(_point).Inflate(_extend);
+  return Box(_point).inflate(_extend);
 }
 
 void Reference::Translate(const Unit& dx, const Unit& dy)
@@ -63,7 +63,7 @@ void Reference::Translate(const Unit& dx, const Unit& dy)
 {
   if ((dx != 0) || (dy != 0)) {
     Invalidate(false);
-    _point.Translate(dx, dy);
+    _point.translate(dx, dy);
   }
 }
 

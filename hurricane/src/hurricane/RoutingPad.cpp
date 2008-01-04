@@ -30,9 +30,9 @@ namespace Hurricane {
 RoutingPad::RoutingPad(Net* net, const Point& p, Occurrence occurrence )
 // **********************************************************************************
 :  Inherit(net),
-	_x(p.GetX()),
-	_y(p.GetY()),
-	_occurrence(occurrence)
+    _x(p.getX()),
+    _y(p.getY()),
+    _occurrence(occurrence)
 {
 }
 
@@ -40,18 +40,18 @@ RoutingPad::RoutingPad(Net* net, const Point& p, Occurrence occurrence )
 RoutingPad* RoutingPad::Create(Net* net, Occurrence occurrence)
 // ***********************************************************
 {
-	if (!net)
-	    throw Error ("Can't create RoutingPad : NULL net");
-	if (!occurrence.IsValid())
-	    throw Error ("Can't create RoutingPag : Invalid occurrence");
+    if (!net)
+        throw Error ("Can't create RoutingPad : NULL net");
+    if (!occurrence.IsValid())
+        throw Error ("Can't create RoutingPag : Invalid occurrence");
 
     //TODO Gerer une contruction avec un composant externe, mais ce n'est pas prioritaire
-	Plug*    plug    = NULL;
+    Plug*    plug    = NULL;
     Pin*     pin     = NULL;
     Contact* contact = NULL;
     Point position;
 
-	if ( (plug = dynamic_cast<Plug*>(occurrence.GetEntity()) ) ) {
+    if ( (plug = dynamic_cast<Plug*>(occurrence.GetEntity()) ) ) {
       position = occurrence.GetPath().GetTransformation().GetPoint( plug->GetPosition() );
     } else if ( (pin = dynamic_cast<Pin*>(occurrence.GetEntity()) ) ) {
       position = occurrence.GetPath().GetTransformation().GetPoint( pin->GetPosition() );
@@ -62,11 +62,11 @@ RoutingPad* RoutingPad::Create(Net* net, Occurrence occurrence)
     if ( !plug && !pin && !contact )
       throw Error ("Can't create RoutingPad : plug or pin occurrence *required*");
 
-	RoutingPad* routingPad = new RoutingPad(net, position, occurrence);
+    RoutingPad* routingPad = new RoutingPad(net, position, occurrence);
 
-	routingPad->_PostCreate();
+    routingPad->_PostCreate();
 
-	return routingPad;
+    return routingPad;
 }
 
 void  RoutingPad::_PostCreate()
@@ -81,13 +81,13 @@ void  RoutingPad::_PostCreate()
 Unit RoutingPad::GetX() const
 // ***********************
 {
-	return _x;
+    return _x;
 }
 
 Unit RoutingPad::GetY() const
 // ***********************
 {
-	return _y;
+    return _y;
 }
 
 Box RoutingPad::GetBoundingBox() const
@@ -143,25 +143,25 @@ Point RoutingPad::GetTargetPosition() const
 Unit RoutingPad::GetSourceX() const
 // ********************************
 {
-  return GetSourcePosition().GetX();
+  return GetSourcePosition().getX();
 }
 
 Unit RoutingPad::GetSourceY() const
 // ********************************
 {
-  return GetSourcePosition().GetY();
+  return GetSourcePosition().getY();
 }
 
 Unit RoutingPad::GetTargetX() const
 // ********************************
 {
-  return GetTargetPosition().GetX();
+  return GetTargetPosition().getX();
 }
 
 Unit RoutingPad::GetTargetY() const
 // ********************************
 {
-  return GetTargetPosition().GetY();
+  return GetTargetPosition().getY();
 }
 
 Point RoutingPad::GetCenter() const
@@ -178,43 +178,43 @@ Point RoutingPad::GetCenter() const
 void RoutingPad::Translate(const Unit& dx, const Unit& dy)
 // ****************************************************
 {
-	if ((dx != 0) || (dy != 0)) {
-		Invalidate(true);
-		_x += dx;
-		_y += dy;
-	}
+    if ((dx != 0) || (dy != 0)) {
+        Invalidate(true);
+        _x += dx;
+        _y += dy;
+    }
 }
 
 void RoutingPad::SetX(const Unit& x)
 // ******************************
 {
-	SetPosition(x, GetY());
+    SetPosition(x, GetY());
 }
 
 void RoutingPad::SetY(const Unit& y)
 // ******************************
 {
-	SetPosition(GetX(), y);
+    SetPosition(GetX(), y);
 }
 
 void RoutingPad::SetPosition(const Unit& x, const Unit& y)
 // ****************************************************
 {
-	SetOffset(x, y);
+    SetOffset(x, y);
 }
 
 void RoutingPad::SetPosition(const Point& position)
 // *********************************************
 {
-	SetPosition(position.GetX(), position.GetY());
+    SetPosition(position.getX(), position.getY());
 }
 
 void RoutingPad::SetOffset(const Unit& x, const Unit& y)
 // ****************************************************
 {
-	Invalidate(true);
-	_x = x;
-	_y = y;
+    Invalidate(true);
+    _x = x;
+    _y = y;
 }
 
 void RoutingPad::_PreDelete()
@@ -235,24 +235,24 @@ void RoutingPad::_PreDelete()
 string RoutingPad::_GetString() const
 // *******************************
 {
-	string s = Inherit::_GetString();
-	s.insert(s.length() - 1, " [" + GetValueString(GetX()));
-	s.insert(s.length() - 1, " " + GetValueString(GetY()));
-	s.insert(s.length() - 1, "] ");
+    string s = Inherit::_GetString();
+    s.insert(s.length() - 1, " [" + GetValueString(GetX()));
+    s.insert(s.length() - 1, " " + GetValueString(GetY()));
+    s.insert(s.length() - 1, "] ");
     s.insert(s.length() - 1, GetString(_occurrence));
-	return s;
+    return s;
 }
 
 Record* RoutingPad::_GetRecord() const
 // **************************
 {
-	Record* record = Inherit::_GetRecord();
-	if (record) {
-		record->Add(GetSlot("X", &_x));
-		record->Add(GetSlot("Y", &_y));
+    Record* record = Inherit::_GetRecord();
+    if (record) {
+        record->Add(GetSlot("X", &_x));
+        record->Add(GetSlot("Y", &_y));
         record->Add(GetSlot("Occurrence",_occurrence));
-	}
-	return record;
+    }
+    return record;
 }
 
 Component*  RoutingPad::_GetEntityAsComponent () const
@@ -276,19 +276,19 @@ Segment*  RoutingPad::_GetEntityAsSegment () const
 //bool RoutingPad::_IsInterceptedBy(View* view, const Point& point, const Unit& aperture) const
 //// ******************************************************************************************
 //{
-//	Layer* layer = GetLayer();
+//    Layer* layer = GetLayer();
 //    Box    boundingBox ( GetBoundingBox() );
-//	Box    area        ( point );
+//    Box    area        ( point );
 //
-//	area.Inflate ( aperture );
+//    area.Inflate ( aperture );
 //
-//	for_each_basic_layer(basicLayer, layer->GetBasicLayers()) {
-//		if (view->IsVisible(basicLayer))
-//			if (boundingBox.Intersect(area)) return true;
-//		end_for;
-//	}
+//    for_each_basic_layer(basicLayer, layer->GetBasicLayers()) {
+//        if (view->IsVisible(basicLayer))
+//            if (boundingBox.Intersect(area)) return true;
+//        end_for;
+//    }
 //
-//	return false;
+//    return false;
 //}
 //
 //
@@ -334,11 +334,11 @@ void RoutingPad::SetExternalComponent(Component* component)
     Horizontal* horizontal = dynamic_cast<Horizontal*>(component);
     if ( horizontal ) {
       SetX ( 0 );
-      SetY ( position.GetY() );
+      SetY ( position.getY() );
     } else {
       Vertical* vertical = dynamic_cast<Vertical*>(component);
       if ( vertical ) {
-        SetX ( position.GetX() );
+        SetX ( position.getX() );
         SetY ( 0 );
       } else
         SetPosition ( position );
@@ -387,40 +387,40 @@ void RoutingPad::RestorePlugOccurrence()
 
 RoutingPad::Builder::Builder(const string& token)
 // *******************************************
-:	Inherit(token),
-	_layer(NULL),
-	_x(0),
-	_y(0),
-	_width(0),
-	_height(0)
+:    Inherit(token),
+    _layer(NULL),
+    _x(0),
+    _y(0),
+    _width(0),
+    _height(0)
 {
 }
 
 void RoutingPad::Builder::Scan(InputFile& inputFile, char*& arguments)
 // ****************************************************************
 {
-	Inherit::Scan(inputFile, arguments);
+    Inherit::Scan(inputFile, arguments);
 
-	unsigned layerId;
-	unsigned n;
+    unsigned layerId;
+    unsigned n;
 
 
-	if (r != 6)
-		throw Error("Can't create RoutingPad : syntax error");
+    if (r != 6)
+        throw Error("Can't create RoutingPad : syntax error");
 
-	arguments = &arguments[n];
+    arguments = &arguments[n];
 
-	DBo* dbo = inputFile.GetDBo(layerId);
-	if (!dbo || !is_a<Layer*>(dbo))
-		throw Error("Can't create RoutingPad : bad layer");
+    DBo* dbo = inputFile.GetDBo(layerId);
+    if (!dbo || !is_a<Layer*>(dbo))
+        throw Error("Can't create RoutingPad : bad layer");
 
-	_layer = (Layer*)dbo;
+    _layer = (Layer*)dbo;
 }
 
 DBo* RoutingPad::Builder::CreateDBo()
 // *******************************
 {
-	return RoutingPad::Create(GetNet(), GetLayer(), GetX(), GetY(), GetWidth(), GetHeight());
+    return RoutingPad::Create(GetNet(), GetLayer(), getX(), getY(), GetWidth(), GetHeight());
 }
 
 RoutingPad::Builder ROUTINGPAD_BUILDER("RP");

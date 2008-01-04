@@ -22,122 +22,122 @@ namespace Hurricane {
 Pad::Pad(Net* net, Layer* layer, const Box& boundingBox)
 // *****************************************************
 :  Inherit(net),
-	_layer(layer),
-	_boundingBox(boundingBox)
+    _layer(layer),
+    _boundingBox(boundingBox)
 {
-	if (!_layer)
-		throw Error("Can't create " + _TName("Pad") + " : null layer");
+    if (!_layer)
+        throw Error("Can't create " + _TName("Pad") + " : null layer");
 
-	if (_boundingBox.IsEmpty())
-		throw Error("Can't create " + _TName("Pad") + " : empty bounding box");
+    if (_boundingBox.isEmpty())
+        throw Error("Can't create " + _TName("Pad") + " : empty bounding box");
 }
 
 Pad* Pad::Create(Net* net, Layer* layer, const Box& boundingBox)
 // *************************************************************
 {
-	Pad* pad = new Pad(net, layer, boundingBox);
+    Pad* pad = new Pad(net, layer, boundingBox);
 
-	pad->_PostCreate();
+    pad->_PostCreate();
 
-	return pad;
+    return pad;
 }
 
 Unit Pad::GetX() const
 // *******************
 {
-	return 0;
+    return 0;
 }
 
 Unit Pad::GetY() const
 // *******************
 {
-	return 0;
+    return 0;
 }
 
 Box Pad::GetBoundingBox() const
 // ****************************
 {
-	Box boundingBox = _boundingBox;
+    Box boundingBox = _boundingBox;
 
-	if (is_a<CompositeLayer*>(_layer))
-		boundingBox.Inflate(((CompositeLayer*)_layer)->GetMaximalPadSize());
+    if (is_a<CompositeLayer*>(_layer))
+        boundingBox.inflate(((CompositeLayer*)_layer)->GetMaximalPadSize());
 
-	return boundingBox;
+    return boundingBox;
 }
 
 Box Pad::GetBoundingBox(BasicLayer* basicLayer) const
 // **************************************************
 {
-	if (!_layer->Contains(basicLayer)) return Box();
+    if (!_layer->Contains(basicLayer)) return Box();
 
-	Box boundingBox = _boundingBox;
+    Box boundingBox = _boundingBox;
 
-	if (is_a<CompositeLayer*>(_layer))
-		boundingBox.Inflate(((CompositeLayer*)_layer)->GetPadSize(basicLayer));
+    if (is_a<CompositeLayer*>(_layer))
+        boundingBox.inflate(((CompositeLayer*)_layer)->GetPadSize(basicLayer));
 
-	return boundingBox;
+    return boundingBox;
 }
 
 void Pad::Translate(const Unit& dx, const Unit& dy)
 // ************************************************
 {
-	if ((dx != 0) || (dy != 0)) {
-		Invalidate(true);
-		_boundingBox.Translate(dx, dy);
-	}
+    if ((dx != 0) || (dy != 0)) {
+        Invalidate(true);
+        _boundingBox.translate(dx, dy);
+    }
 }
 
 void Pad::SetBoundingBox(const Box& boundingBox)
 // *********************************************
 {
-	if (_boundingBox.IsEmpty())
-		throw Error("Can't set bounding box : empty bounding box");
+    if (_boundingBox.isEmpty())
+        throw Error("Can't set bounding box : empty bounding box");
 
-	if (boundingBox != _boundingBox) {
-		Invalidate(true);
-		_boundingBox = boundingBox;
-	}
+    if (boundingBox != _boundingBox) {
+        Invalidate(true);
+        _boundingBox = boundingBox;
+    }
 }
 
 string Pad::_GetString() const
 // ***************************
 {
-	string s = Inherit::_GetString();
-	s.insert(s.length() - 1, " " + GetString(_layer->GetName()));
-	s.insert(s.length() - 1, " " + GetString(_boundingBox));
-	return s;
+    string s = Inherit::_GetString();
+    s.insert(s.length() - 1, " " + GetString(_layer->GetName()));
+    s.insert(s.length() - 1, " " + GetString(_boundingBox));
+    return s;
 }
 
 Record* Pad::_GetRecord() const
 // **********************
 {
-	Record* record = Inherit::_GetRecord();
-	if (record) {
-		record->Add(GetSlot("Layer", _layer));
-		record->Add(GetSlot("BoundingBox", &_boundingBox));
-	}
-	return record;
+    Record* record = Inherit::_GetRecord();
+    if (record) {
+        record->Add(GetSlot("Layer", _layer));
+        record->Add(GetSlot("BoundingBox", &_boundingBox));
+    }
+    return record;
 }
 
 //void Pad::_Draw(View* view, BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation)
 //// ****************************************************************************************************
 //{
-//	Unit width = _boundingBox.GetWidth();
-//	Unit height = _boundingBox.GetHeight();
-//	if (1 < view->GetScreenSize(max(width, height))) {
-//		basicLayer->_Fill(view, transformation.GetBox(GetBoundingBox(basicLayer)));
-//		view->DrawRectangle(transformation.GetBox(GetBoundingBox(basicLayer))); // PROVISOIREMENT
-//	}
+//    Unit width = _boundingBox.GetWidth();
+//    Unit height = _boundingBox.GetHeight();
+//    if (1 < view->GetScreenSize(max(width, height))) {
+//        basicLayer->_Fill(view, transformation.GetBox(GetBoundingBox(basicLayer)));
+//        view->DrawRectangle(transformation.GetBox(GetBoundingBox(basicLayer))); // PROVISOIREMENT
+//    }
 //}
 //
 //void Pad::_Highlight(View* view, const Box& updateArea, const Transformation& transformation)
 //// ******************************************************************************************
 //{
-//	for_each_basic_layer(basicLayer, GetLayer()->GetBasicLayers()) {
-//		basicLayer->_Fill(view, transformation.GetBox(GetBoundingBox(basicLayer)));
-//		view->DrawRectangle(transformation.GetBox(GetBoundingBox(basicLayer))); // PROVISOIREMENT
-//		end_for;
-//	}
+//    for_each_basic_layer(basicLayer, GetLayer()->GetBasicLayers()) {
+//        basicLayer->_Fill(view, transformation.GetBox(GetBoundingBox(basicLayer)));
+//        view->DrawRectangle(transformation.GetBox(GetBoundingBox(basicLayer))); // PROVISOIREMENT
+//        end_for;
+//    }
 //}
 //
 

@@ -64,7 +64,7 @@ Box Horizontal::GetBoundingBox() const
 	Unit size = GetHalfWidth() + _GetSize();
 	Unit extention = _GetExtention();
 
-	return Box(GetSourceX(), _y, GetTargetX(), _y).Inflate(extention, size);
+	return Box(GetSourceX(), _y, GetTargetX(), _y).inflate(extention, size);
 }
 
 Box Horizontal::GetBoundingBox(BasicLayer* basicLayer) const
@@ -75,7 +75,7 @@ Box Horizontal::GetBoundingBox(BasicLayer* basicLayer) const
 	Unit size = GetHalfWidth() + _GetSize(basicLayer);
 	Unit extention = _GetExtention(basicLayer);
 
-	return Box(GetSourceX(), _y, GetTargetX(), _y).Inflate(extention, size);
+	return Box(GetSourceX(), _y, GetTargetX(), _y).inflate(extention, size);
 }
 
 Unit Horizontal::GetSourceX() const

@@ -26,7 +26,7 @@ DRCError::DRCError(Cell* cell, const Name& name, const Box& boundingBox)
 	if (_name.IsEmpty())
 		throw Error("Can't create " + _TName("DRCError") + " : empty name");
 
-	if (_boundingBox.IsEmpty())
+	if (_boundingBox.isEmpty())
 		throw Error("Can't create " + _TName("DRCError") + " : empty bounding box");
 }
 
@@ -45,7 +45,7 @@ void DRCError::Translate(const Unit& dx, const Unit& dy)
 {
 	if ((dx != 0) || (dy != 0)) {
 		Invalidate(false);
-		_boundingBox.Translate(dx, dy);
+		_boundingBox.translate(dx, dy);
 	}
 }
 
