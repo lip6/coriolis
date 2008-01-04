@@ -21,25 +21,25 @@ QRectF SliceFigure::boundingRect() const {
 }
 
 void SliceFigure::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-	if (option->levelOfDetail > 1.0) {
-//			painter->setClipRect(option->exposedRect);
-			BasicLayer* layer = dynamic_cast<BasicLayer*>(slice->GetLayer()); 
-			if (layer) {
-				painter->setBrush(QColor(layer->GetRedValue(), layer->GetGreenValue(), layer->GetBlueValue()));
-			} else {
-				painter->setBrush(Qt::blue);
-			}
-			for_each_go(go, slice->GetGos()) {
-				Segment* segment = dynamic_cast<Segment*>(go);
-				if (segment) {
-					Box box = segment->GetBoundingBox();
-					QRectF rect;
-					BoxToRectangle(box, rect);
-					painter->drawRect(rect);
-				}
-				end_for;
-			}
-	}
+//	if (option->levelOfDetail > 1.0) {
+////			painter->setClipRect(option->exposedRect);
+//			BasicLayer* layer = dynamic_cast<BasicLayer*>(slice->GetLayer()); 
+//			if (layer) {
+//				painter->setBrush(QColor(layer->GetRedValue(), layer->GetGreenValue(), layer->GetBlueValue()));
+//			} else {
+//				painter->setBrush(Qt::blue);
+//			}
+//			for_each_go(go, slice->GetGos()) {
+//				Segment* segment = dynamic_cast<Segment*>(go);
+//				if (segment) {
+//					Box box = segment->GetBoundingBox();
+//					QRectF rect;
+//					BoxToRectangle(box, rect);
+//					painter->drawRect(rect);
+//				}
+//				end_for;
+//			}
+//	}
 }
 
 void SliceFigure::constructGoFigures() {

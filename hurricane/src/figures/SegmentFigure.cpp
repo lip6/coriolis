@@ -7,15 +7,25 @@
 using namespace H;
 
 #include "Utils.h"
+#include "SliceFigure.h"
 #include "SegmentFigure.h"
 
 SegmentFigure::SegmentFigure(SliceFigure* master, Segment* s):
-	GoFigure(master),
+	QGraphicsItem(master),
 	segment(s)
 	{} 
 
+QRectF SegmentFigure::boundingRect() const {
+    Box box = getGo()->GetBoundingBox();
+    QRectF rect;
+    BoxToRectangle(box, rect);
+    return rect;
+}
+
 void SegmentFigure::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-	if (option->levelOfDetail < 1.0) {
+	Q_UNUSED(widget);
+
+	if (option->levelOfDetail > 1.0) {
 		painter->setClipRect(option->exposedRect);
 		BasicLayer* layer = dynamic_cast<BasicLayer*>(segment->GetLayer()); 
 		if (layer) {

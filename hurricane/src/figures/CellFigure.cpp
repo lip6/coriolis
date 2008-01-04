@@ -19,10 +19,10 @@ CellFigure::CellFigure(Cell* c):
 		new InstanceFigure(this, instance);
 		end_for;
 	}
-	for_each_slice(slice, cell->GetSlices()) {
-		new SliceFigure(this, slice);
-		end_for;
-	}
+	//for_each_slice(slice, cell->GetSlices()) {
+	//	new SliceFigure(this, slice);
+	//	end_for;
+	//}
 }
 
 CellFigure::CellFigure(InstanceFigure* master, Cell* c) : QGraphicsItem(master), cell(c) {
@@ -54,12 +54,12 @@ void CellFigure::paint(QPainter *painter, const QStyleOptionGraphicsItem* option
 	//	pen.setColor(Qt::red);
 	//	painter->setPen(pen);
 
-	painter->setClipRect(option->exposedRect);
-	if (option->levelOfDetail > 1.0) {
-		drawBoundary(painter);
-	} else {
-		drawPhantom(painter);
-	}
+	//painter->setClipRect(option->exposedRect);
+	//if (option->levelOfDetail > 1.0) {
+	//	drawBoundary(painter);
+	//} else {
+	//	drawPhantom(painter);
+	//}
 }
 
 void CellFigure::drawBoundary(QPainter* painter) {
@@ -78,4 +78,3 @@ void CellFigure::drawPhantom(QPainter* painter) {
 	BoxToRectangle(box, rect);
 	painter->drawRect(rect);
 }
-

@@ -4,16 +4,16 @@
 #include <QGraphicsItem>
 #include <QObject>
 
-#include "GoFigure.h"
-
 #include "Segment.h"
 using namespace Hurricane;
 
-class SegmentFigure : public GoFigure {
+class SliceFigure;
+
+class SegmentFigure : public QGraphicsItem {
     public:
         SegmentFigure(SliceFigure* parent, Segment* segment);
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-
+        QRectF boundingRect() const;
     private:
         Segment* segment;
     protected:

@@ -4,20 +4,26 @@
 #include <QGraphicsItem>
 #include <QObject>
 
-#include "CellFigure.h"
-
 #include "Instance.h"
+#include "Cell.h"
 using namespace Hurricane;
 
 class InstanceFigure : public QGraphicsItem {
     public:
-        InstanceFigure(CellFigure* parent, Instance* instance);
+        InstanceFigure(InstanceFigure* parent, Instance* instance);
+        //InstanceFigure(Instance* instance);
+        InstanceFigure(Cell* cell);
         QRectF boundingRect() const;
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                 QWidget *widget);
 
     private:
         Instance* instance;
+        Cell* cell;
+	void drawPhantom(QPainter* painter);
+	void drawBoundary(QPainter* painter);
+	void drawElements(QPainter* painter);
+        void constructSubInstances();
 
 };
 
