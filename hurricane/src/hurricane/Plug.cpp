@@ -100,7 +100,7 @@ Box Plug::GetBoundingBox() const
     return _instance->GetTransformation().getBox(_masterNet->GetPosition());
 }
 
-Box Plug::GetBoundingBox(BasicLayer* basicLayer) const
+Box Plug::GetBoundingBox(const BasicLayer* basicLayer) const
 // ***************************************************
 {
     return Box();

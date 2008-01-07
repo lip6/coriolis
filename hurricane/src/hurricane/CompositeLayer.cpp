@@ -51,28 +51,28 @@ BasicLayers CompositeLayer::GetBasicLayers() const
 	return GetCollection(_basicLayerList);
 }
 
-Unit CompositeLayer::GetContactSize(BasicLayer* basicLayer) const
+Unit CompositeLayer::GetContactSize(const BasicLayer* basicLayer) const
 // **************************************************************
 {
 	SizeMap::const_iterator it = _contactSizeMap.find(basicLayer);
 	return ((it == _contactSizeMap.end()) ? 0 : (*it).second);
 }
 
-Unit CompositeLayer::GetSegmentSize(BasicLayer* basicLayer) const
+Unit CompositeLayer::GetSegmentSize(const BasicLayer* basicLayer) const
 // **************************************************************
 {
 	SizeMap::const_iterator it = _segmentSizeMap.find(basicLayer);
 	return ((it == _segmentSizeMap.end()) ? 0 : (*it).second);
 }
 
-Unit CompositeLayer::GetSegmentExtention(BasicLayer* basicLayer) const
+Unit CompositeLayer::GetSegmentExtention(const BasicLayer* basicLayer) const
 // *******************************************************************
 {
 	SizeMap::const_iterator it = _segmentExtentionMap.find(basicLayer);
 	return ((it == _segmentExtentionMap.end()) ? 0 : (*it).second);
 }
 
-Unit CompositeLayer::GetPadSize(BasicLayer* basicLayer) const
+Unit CompositeLayer::GetPadSize(const BasicLayer* basicLayer) const
 // **********************************************************
 {
 	SizeMap::const_iterator it = _padSizeMap.find(basicLayer);

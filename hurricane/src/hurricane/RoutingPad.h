@@ -57,7 +57,7 @@ class RoutingPad : public Component {
 	public: virtual Unit GetY() const;
 	public: virtual Box GetBoundingBox() const;
 	public: virtual Layer* GetLayer() const;
-	public: virtual Box GetBoundingBox(BasicLayer* basicLayer) const;
+	public: virtual Box GetBoundingBox(const BasicLayer* basicLayer) const;
         public: virtual Point GetCenter() const;
 	public: Occurrence GetOccurrence() const { return _occurrence; };
     public: Occurrence GetPlugOccurrence();

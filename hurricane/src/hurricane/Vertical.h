@@ -47,7 +47,7 @@ class Vertical : public Segment {
 	public: virtual Unit GetX() const {return _x;};
 	public: virtual Point GetCenter() const;
 	public: virtual Box GetBoundingBox() const;
-	public: virtual Box GetBoundingBox(BasicLayer* basicLayer) const;
+	public: virtual Box GetBoundingBox(const BasicLayer* basicLayer) const;
 	public: virtual Unit GetSourceX() const {return GetX();};
 	public: virtual Unit GetSourceY() const;
 	public: virtual Unit GetTargetX() const {return GetX();};

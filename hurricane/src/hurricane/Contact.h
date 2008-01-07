@@ -71,7 +71,7 @@ class Contact : public Component {
 	public: virtual Point GetPosition() const;
 	public: virtual Box GetBoundingBox() const;
 	public: virtual Layer* GetLayer() const {return _layer;};
-	public: virtual Box GetBoundingBox(BasicLayer* basicLayer) const;
+	public: virtual Box GetBoundingBox(const BasicLayer* basicLayer) const;
 	public: Hook* GetAnchorHook() {return &_anchorHook;};
 	public: Component* GetAnchor() const;
 	public: const Unit& GetDx() const {return _dx;};
@@ -108,7 +108,7 @@ class Contact : public Component {
 	public: virtual Record* _GetRecord() const;
 
 	public: Unit _GetSize() const;
-	public: Unit _GetSize(BasicLayer* basicLayer) const;
+	public: Unit _GetSize(const BasicLayer* basicLayer) const;
 
 	//public: virtual void _Draw(View* view, BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation);
 	//public: virtual void _Highlight(View* view, const Box& updateArea, const Transformation& transformation);

@@ -64,8 +64,8 @@ class Layer : public DBo {
 // Predicates
 // **********
 
-	public: bool Contains(Layer* layer) const;
-	public: bool Intersect(Layer* layer) const;
+	public: bool Contains(const Layer* layer) const;
+	public: bool Intersect(const Layer* layer) const;
 
 // Updators
 // ********

@@ -17,18 +17,30 @@ class CellWidget : public QWidget {
     private:
         Cell* cell;
         QRegion invalidRegion;
-        H::Box clipBox;
+        Box clipBox;
+        double clipX[4];
+        double clipY[4];
         QPainter* painter;
+        QColor backgroundColor;
+        QColor foregroundColor;
         double scale;
         int screenDx;
 	int screenDy;
+        int brushDx;
+        int brushDy;
+        map<BasicLayer*, QBrush> basicLayersBrush;
+        map<BasicLayer*, QPen> basicLayersPen;
 
-        void drawCell(const Cell* cell, const Layer* layer, const H::Box& updateArea, const Transformation& transformation) const;
-        void drawPhantoms(const Cell* cell, const H::Box& updateArea, const Transformation& transformation) const;
-        void drawPhantoms(const Instance* instance, const H::Box& updateArea, const Transformation& transformation) const;
-        void drawBoundaries(const Cell* cell, const H::Box& updateArea, const Transformation& transformation) const;
-        void drawBoundaries(const Instance* instance, const H::Box& updateArea, const Transformation& transformation) const;
-        void drawRectangle(const H::Box& box) const;
+        void drawContent(const Cell* cell, const BasicLayer* basicLayer, const H::Box& updateArea, const Transformation& transformation) const;
+        void drawContent(const Instance* instance, const BasicLayer* basicLayer, const H::Box& updateArea, const Transformation& transformation) const;
+        void drawSlice(const Slice* slice, const BasicLayer* basicLayer, const H::Box& updateArea, const Transformation& transformation) const;
+        void drawPhantoms(const Cell* cell, const Box& updateArea, const Transformation& transformation) const;
+        void drawPhantoms(const Instance* instance, const Box& updateArea, const Transformation& transformation) const;
+        void drawBoundaries(const Cell* cell, const Box& updateArea, const Transformation& transformation) const;
+        void drawBoundaries(const Instance* instance, const Box& updateArea, const Transformation& transformation) const;
+        void drawGo(const Go* go, const BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation) const;
+        void drawSegment(const Segment* segment, const BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation) const;
+        void drawRectangle(const Box& box) const;
         Unit getX(int screenX) const;
         Unit getY(int screenY) const;
         Unit getSize(int screenSize) const;
@@ -37,7 +49,20 @@ class CellWidget : public QWidget {
         int getScreenY(const Unit& y) const;
         void invalidate();
         void invalidate(const QRect& screenRect);
+        void setClipBox(const Box& area);
+        void setFont(const QFont& font);
+        void setPen(const QPen& pen, double brightness = 1.0);
+        void setBrush(const QBrush& brush, double brightness = 1.0);
+        void setBrushOrigin(const QPoint& origin);
+
+        const QColor& getBackgroundColor() const;
 };
+
+
+
+inline const QColor& CellWidget::getBackgroundColor() const {
+    return backgroundColor;
+}
 
 
 #endif /* __CELL_WIDGET_H */

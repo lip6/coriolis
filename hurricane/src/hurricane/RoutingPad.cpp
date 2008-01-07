@@ -101,7 +101,7 @@ Box RoutingPad::GetBoundingBox() const
   return Box(GetPosition());
 }
 
-Box RoutingPad::GetBoundingBox(BasicLayer* basicLayer) const
+Box RoutingPad::GetBoundingBox(const BasicLayer* basicLayer) const
 // ******************************************************
 {
   Component* component = _GetEntityAsComponent();

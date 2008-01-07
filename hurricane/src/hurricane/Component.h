@@ -78,7 +78,7 @@ class Component : public Go {
 	public: virtual Point GetCenter() const {return GetPosition();};
 	public: virtual Layer* GetLayer() const = 0;
 	public: virtual Box GetBoundingBox() const = 0;
-	public: virtual Box GetBoundingBox(BasicLayer* basicLayer) const = 0;
+	public: virtual Box GetBoundingBox(const BasicLayer* basicLayer) const = 0;
 	public: Components GetConnexComponents() const;
 	public: Components GetSlaveComponents() const;
 

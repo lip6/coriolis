@@ -340,7 +340,7 @@ Unit Segment::_GetExtention() const
 	return extention;
 }
 
-Unit Segment::_GetSize(BasicLayer* basicLayer) const
+Unit Segment::_GetSize(const BasicLayer* basicLayer) const
 // *************************************************
 {
 	Layer* layer = GetLayer();
@@ -355,7 +355,7 @@ Unit Segment::_GetSize(BasicLayer* basicLayer) const
 	return size;
 }
 
-Unit Segment::_GetExtention(BasicLayer* basicLayer) const
+Unit Segment::_GetExtention(const BasicLayer* basicLayer) const
 // ******************************************************
 {
 	Layer* layer = GetLayer();

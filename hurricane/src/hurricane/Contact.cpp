@@ -183,7 +183,7 @@ Box Contact::GetBoundingBox() const
 	return Box(GetPosition()).inflate(GetHalfWidth() + size, GetHalfHeight() + size);
 }
 
-Box Contact::GetBoundingBox(BasicLayer* basicLayer) const
+Box Contact::GetBoundingBox(const BasicLayer* basicLayer) const
 // ******************************************************
 {
 	if (!_layer->Contains(basicLayer)) return Box();
@@ -354,8 +354,8 @@ Unit Contact::_GetSize() const
 	return size;
 }
 
-Unit Contact::_GetSize(BasicLayer* basicLayer) const
-// *************************************************
+Unit Contact::_GetSize(const BasicLayer* basicLayer) const
+// *******************************************************
 {
 	Layer* layer = GetLayer();
 

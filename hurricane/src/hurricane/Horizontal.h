@@ -47,7 +47,7 @@ class Horizontal : public Segment {
 	public: virtual Unit GetY() const {return _y;};
 	public: virtual Point GetCenter() const;
 	public: virtual Box GetBoundingBox() const;
-	public: virtual Box GetBoundingBox(BasicLayer* basicLayer) const;
+	public: virtual Box GetBoundingBox(const BasicLayer* basicLayer) const;
 	public: virtual Unit GetSourceX() const;
 	public: virtual Unit GetSourceY() const {return GetY();};
 	public: virtual Unit GetTargetX() const;

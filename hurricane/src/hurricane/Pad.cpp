@@ -65,7 +65,7 @@ Box Pad::GetBoundingBox() const
     return boundingBox;
 }
 
-Box Pad::GetBoundingBox(BasicLayer* basicLayer) const
+Box Pad::GetBoundingBox(const BasicLayer* basicLayer) const
 // **************************************************
 {
     if (!_layer->Contains(basicLayer)) return Box();

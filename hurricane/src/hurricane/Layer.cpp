@@ -38,14 +38,14 @@ Layer::Layer(Technology* technology, const Name& name, const Unit& minimalSize, 
 		throw Error("Can't create " + _TName("Layer") + " " + GetString(_name) + " : already exists");
 }
 
-bool Layer::Contains(Layer* layer) const
-// *************************************
+bool Layer::Contains(const Layer* layer) const
+// *******************************************
 {
 	return (layer && ((_mask & layer->GetMask()) == layer->GetMask()));
 }
 
-bool Layer::Intersect(Layer* layer) const
-// **************************************
+bool Layer::Intersect(const Layer* layer) const
+// ********************************************
 {
 	return ((_mask & layer->GetMask()) != 0);
 }

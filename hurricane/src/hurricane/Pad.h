@@ -48,7 +48,7 @@ class Pad : public Component {
 	public: virtual Unit GetX() const;
 	public: virtual Unit GetY() const;
 	public: virtual Box GetBoundingBox() const;
-	public: virtual Box GetBoundingBox(BasicLayer* basicLayer) const;
+	public: virtual Box GetBoundingBox(const BasicLayer* basicLayer) const;
 	public: virtual Layer* GetLayer() const {return _layer;};
 
 // Updators

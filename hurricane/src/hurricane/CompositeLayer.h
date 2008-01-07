@@ -50,7 +50,7 @@ class CompositeLayer : public Layer {
 
 	public: typedef list<BasicLayer*> BasicLayerList;
 
-	public: typedef map<BasicLayer*, Unit> SizeMap;
+	public: typedef map<const BasicLayer*, Unit> SizeMap;
 
 // Attributes
 // **********
@@ -79,10 +79,10 @@ class CompositeLayer : public Layer {
 
 	public: const Type& GetType() const {return _type;};
 	public: virtual BasicLayers GetBasicLayers() const;
-	public: Unit GetContactSize(BasicLayer* basicLayer) const;
-	public: Unit GetSegmentSize(BasicLayer* basicLayer) const;
-	public: Unit GetSegmentExtention(BasicLayer* basicLayer) const;
-	public: Unit GetPadSize(BasicLayer* basicLayer) const;
+	public: Unit GetContactSize(const BasicLayer* basicLayer) const;
+	public: Unit GetSegmentSize(const BasicLayer* basicLayer) const;
+	public: Unit GetSegmentExtention(const BasicLayer* basicLayer) const;
+	public: Unit GetPadSize(const BasicLayer* basicLayer) const;
 	public: const Unit& GetMaximalContactSize() const {return _maximalContactSize;};
 	public: const Unit& GetMaximalSegmentSize() const {return _maximalSegmentSize;};
 	public: const Unit& GetMaximalSegmentExtention() const {return _maximalSegmentExtention;};

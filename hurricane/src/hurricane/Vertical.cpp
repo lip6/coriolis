@@ -67,7 +67,7 @@ Box Vertical::GetBoundingBox() const
 	return Box(_x, GetSourceY(), _x, GetTargetY()).inflate(size, extention);
 }
 
-Box Vertical::GetBoundingBox(BasicLayer* basicLayer) const
+Box Vertical::GetBoundingBox(const BasicLayer* basicLayer) const
 // *******************************************************
 {
 	if (!GetLayer()->Contains(basicLayer)) return Box();

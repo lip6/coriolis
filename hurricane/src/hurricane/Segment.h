@@ -114,8 +114,8 @@ class Segment : public Component {
 
 	public: Unit _GetSize() const;
 	public: Unit _GetExtention() const;
-	public: Unit _GetSize(BasicLayer* basicLayer) const;
-	public: Unit _GetExtention(BasicLayer* basicLayer) const;
+	public: Unit _GetSize(const BasicLayer* basicLayer) const;
+	public: Unit _GetExtention(const BasicLayer* basicLayer) const;
 
 //	public: virtual bool _IsInterceptedBy(View* view, const Point& point, const Unit& aperture) const;
 //	public: virtual void _Draw(View* view, BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation);
