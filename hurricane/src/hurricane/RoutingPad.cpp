@@ -52,11 +52,11 @@ RoutingPad* RoutingPad::Create(Net* net, Occurrence occurrence)
     Point position;
 
     if ( (plug = dynamic_cast<Plug*>(occurrence.GetEntity()) ) ) {
-      position = occurrence.GetPath().GetTransformation().GetPoint( plug->GetPosition() );
+      position = occurrence.GetPath().GetTransformation().getPoint( plug->GetPosition() );
     } else if ( (pin = dynamic_cast<Pin*>(occurrence.GetEntity()) ) ) {
-      position = occurrence.GetPath().GetTransformation().GetPoint( pin->GetPosition() );
+      position = occurrence.GetPath().GetTransformation().getPoint( pin->GetPosition() );
     } else if ( (contact = dynamic_cast<Contact*>(occurrence.GetEntity()) ) ) {
-      position = occurrence.GetPath().GetTransformation().GetPoint( contact->GetPosition() );
+      position = occurrence.GetPath().GetTransformation().getPoint( contact->GetPosition() );
     }
 
     if ( !plug && !pin && !contact )
@@ -95,7 +95,7 @@ Box RoutingPad::GetBoundingBox() const
 {
   Component* component = _GetEntityAsComponent();
   if ( component ) {
-    return _occurrence.GetPath().GetTransformation().GetBox ( component->GetBoundingBox() );
+    return _occurrence.GetPath().GetTransformation().getBox ( component->GetBoundingBox() );
   }
 
   return Box(GetPosition());
@@ -106,7 +106,7 @@ Box RoutingPad::GetBoundingBox(BasicLayer* basicLayer) const
 {
   Component* component = _GetEntityAsComponent();
   if ( component )
-    return _occurrence.GetPath().GetTransformation().GetBox ( component->GetBoundingBox(basicLayer) );
+    return _occurrence.GetPath().GetTransformation().getBox ( component->GetBoundingBox(basicLayer) );
 
   return Box(GetPosition());
 }
@@ -125,7 +125,7 @@ Point RoutingPad::GetSourcePosition() const
 {
   Segment* segment = _GetEntityAsSegment();
   if ( segment )
-    return _occurrence.GetPath().GetTransformation().GetPoint ( segment->GetSourcePosition() );
+    return _occurrence.GetPath().GetTransformation().getPoint ( segment->GetSourcePosition() );
 
   return GetPosition();
 }
@@ -135,7 +135,7 @@ Point RoutingPad::GetTargetPosition() const
 {
   Segment* segment = _GetEntityAsSegment();
   if ( segment )
-    return _occurrence.GetPath().GetTransformation().GetPoint ( segment->GetTargetPosition() );
+    return _occurrence.GetPath().GetTransformation().getPoint ( segment->GetTargetPosition() );
 
   return GetPosition();
 }
@@ -169,7 +169,7 @@ Point RoutingPad::GetCenter() const
 {
   Segment* segment = _GetEntityAsSegment();
   if ( segment )
-    return _occurrence.GetPath().GetTransformation().GetPoint ( segment->GetCenter() );
+    return _occurrence.GetPath().GetTransformation().getPoint ( segment->GetCenter() );
 
   return GetPosition();
 }
@@ -329,7 +329,7 @@ void RoutingPad::SetExternalComponent(Component* component)
     _occurrence.GetMasterCell()->_RemoveSlaveEntity(_occurrence.GetEntity(),this);
     _occurrence = Occurrence(component,Path(plugOccurrence.GetPath(),plug->GetInstance()));
 
-    Point position = _occurrence.GetPath().GetTransformation().GetPoint ( component->GetPosition() );
+    Point position = _occurrence.GetPath().GetTransformation().getPoint ( component->GetPosition() );
 
     Horizontal* horizontal = dynamic_cast<Horizontal*>(component);
     if ( horizontal ) {
@@ -374,7 +374,7 @@ void RoutingPad::RestorePlugOccurrence()
     if (IsMaterialized()) Unmaterialize();
 
     _occurrence=GetPlugOccurrence();
-    SetPosition ( _occurrence.GetPath().GetTransformation().GetPoint
+    SetPosition ( _occurrence.GetPath().GetTransformation().getPoint
         ( dynamic_cast<Component*>(_occurrence.GetEntity())->GetPosition() ) );
 }
 

@@ -2407,7 +2407,7 @@ void Cell_OccurrencesUnder::Locator::Progress()
 					}
 					else {
 						Box masterArea = _area;
-						instance->GetTransformation().GetInvert().ApplyOn(masterArea);
+						instance->GetTransformation().getInvert().applyOn(masterArea);
 						Cell* masterCell = instance->GetMasterCell();
 						_occurrenceLocator =
 							masterCell->GetOccurrencesUnder(masterArea, _searchDepth - 1).GetLocator();
@@ -2728,7 +2728,7 @@ Cell_LeafInstanceOccurrencesUnder::Locator::Locator(const Cell* cell, const Box&
 				Instance* instance = _nonLeafInstanceLocator.GetElement();
 				Cell* masterCell = instance->GetMasterCell();
 				Box masterArea = _area;
-				instance->GetTransformation().GetInvert().ApplyOn(masterArea);
+				instance->GetTransformation().getInvert().applyOn(masterArea);
 				_occurrenceLocator =
 					masterCell->GetLeafInstanceOccurrencesUnder(masterArea).GetLocator();
 				if (_occurrenceLocator.IsValid())
@@ -2807,7 +2807,7 @@ void Cell_LeafInstanceOccurrencesUnder::Locator::Progress()
 						Instance* instance = _nonLeafInstanceLocator.GetElement();
 						Cell* masterCell = instance->GetMasterCell();
 						Box masterArea = _area;
-						instance->GetTransformation().GetInvert().ApplyOn(masterArea);
+						instance->GetTransformation().getInvert().applyOn(masterArea);
 						_occurrenceLocator =
 							masterCell->GetLeafInstanceOccurrencesUnder(masterArea).GetLocator();
 						if (_occurrenceLocator.IsValid())
@@ -2827,7 +2827,7 @@ void Cell_LeafInstanceOccurrencesUnder::Locator::Progress()
 							Instance* instance = _nonLeafInstanceLocator.GetElement();
 							Cell* masterCell = instance->GetMasterCell();
 							Box masterArea = _area;
-							instance->GetTransformation().GetInvert().ApplyOn(masterArea);
+							instance->GetTransformation().getInvert().applyOn(masterArea);
 							_occurrenceLocator =
 								masterCell->GetLeafInstanceOccurrencesUnder(masterArea).GetLocator();
 							if (_occurrenceLocator.IsValid())
@@ -3137,7 +3137,7 @@ Cell_TerminalInstanceOccurrencesUnder::Locator::Locator(const Cell* cell, const 
 				Instance* instance = _nonTerminalInstanceLocator.GetElement();
 				Cell* masterCell = instance->GetMasterCell();
 				Box masterArea = _area;
-				instance->GetTransformation().GetInvert().ApplyOn(masterArea);
+				instance->GetTransformation().getInvert().applyOn(masterArea);
 				_occurrenceLocator =
 					masterCell->GetTerminalInstanceOccurrencesUnder(masterArea).GetLocator();
 				if (_occurrenceLocator.IsValid())
@@ -3216,7 +3216,7 @@ void Cell_TerminalInstanceOccurrencesUnder::Locator::Progress()
 						Instance* instance = _nonTerminalInstanceLocator.GetElement();
 						Cell* masterCell = instance->GetMasterCell();
 						Box masterArea = _area;
-						instance->GetTransformation().GetInvert().ApplyOn(masterArea);
+						instance->GetTransformation().getInvert().applyOn(masterArea);
 						_occurrenceLocator =
 							masterCell->GetTerminalInstanceOccurrencesUnder(masterArea).GetLocator();
 						if (_occurrenceLocator.IsValid())
@@ -3236,7 +3236,7 @@ void Cell_TerminalInstanceOccurrencesUnder::Locator::Progress()
 							Instance* instance = _nonTerminalInstanceLocator.GetElement();
 							Cell* masterCell = instance->GetMasterCell();
 							Box masterArea = _area;
-							instance->GetTransformation().GetInvert().ApplyOn(masterArea);
+							instance->GetTransformation().getInvert().applyOn(masterArea);
 							_occurrenceLocator =
 								masterCell->GetTerminalInstanceOccurrencesUnder(masterArea).GetLocator();
 							if (_occurrenceLocator.IsValid())
@@ -3584,7 +3584,7 @@ Cell_ComponentOccurrencesUnder::Locator::Locator(const Cell* cell, const Box& ar
 				Instance* instance = _instanceLocator.GetElement();
 				Cell* masterCell = instance->GetMasterCell();
 				Box masterArea = _area;
-				instance->GetTransformation().GetInvert().ApplyOn(masterArea);
+				instance->GetTransformation().getInvert().applyOn(masterArea);
 				_occurrenceLocator =
 					masterCell->GetComponentOccurrencesUnder(masterArea, _mask).GetLocator();
 				if (_occurrenceLocator.IsValid())
@@ -3665,7 +3665,7 @@ void Cell_ComponentOccurrencesUnder::Locator::Progress()
 						Instance* instance = _instanceLocator.GetElement();
 						Cell* masterCell = instance->GetMasterCell();
 						Box masterArea = _area;
-						instance->GetTransformation().GetInvert().ApplyOn(masterArea);
+						instance->GetTransformation().getInvert().applyOn(masterArea);
 						_occurrenceLocator =
 							masterCell->GetComponentOccurrencesUnder(masterArea, _mask).GetLocator();
 						if (_occurrenceLocator.IsValid())
@@ -3685,7 +3685,7 @@ void Cell_ComponentOccurrencesUnder::Locator::Progress()
 							Instance* instance = _instanceLocator.GetElement();
 							Cell* masterCell = instance->GetMasterCell();
 							Box masterArea = _area;
-							instance->GetTransformation().GetInvert().ApplyOn(masterArea);
+							instance->GetTransformation().getInvert().applyOn(masterArea);
 							_occurrenceLocator =
 								masterCell->GetComponentOccurrencesUnder(masterArea, _mask).GetLocator();
 							if (_occurrenceLocator.IsValid())

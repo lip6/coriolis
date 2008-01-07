@@ -1,14 +1,14 @@
 #ifndef __CELL_WIDGET_H
 #define __CELL_WIDGET_H
 
-#include <QAbstractScrollArea>
+#include <QWidget>
 
 #include "Box.h"
 #include "Cell.h"
 using namespace H;
 
 
-class CellWidget : public QAbstractScrollArea {
+class CellWidget : public QWidget {
     public:
         CellWidget(Cell* cell, QWidget* parent=0);
         void redraw();

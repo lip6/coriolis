@@ -24,7 +24,7 @@ Technology* getTechnology() {
 }
 
 CellWidget::CellWidget(Cell* c, QWidget* parent)
-    : QAbstractScrollArea(parent),
+    : QWidget(parent),
     cell(c),
     invalidRegion(),
     clipBox(),
@@ -37,32 +37,7 @@ CellWidget::CellWidget(Cell* c, QWidget* parent)
 
 void CellWidget::paintEvent(QPaintEvent* event) {
     invalidate(event->rect());
-
-    if (!invalidRegion.isEmpty()) {
-        QRect invalidRect = invalidRegion.boundingRect();
-
-        H::Box area = getBox(invalidRect).inflate(getSize(1));
-        cerr << "akecoucou3" << endl;
-
-        //QPaintDevice* device = this;
-
-	//QPainter newPainter(device);
-	//QPainter* oldPainter = painter;
-	//painter = &newPainter;
-
-        painter->setPen(QPen(QColor(255, 255, 255)));
-	painter->fillRect(QRectF(0, 0, 100, 100), QBrush(QColor(255, 255, 255)));
-
-
-        drawPhantoms(cell, area, Transformation());
-        drawBoundaries(cell, area, Transformation());
-        for_each_layer(layer, getTechnology()->GetLayers()) {
-            drawCell(cell, layer, area, Transformation());
-            end_for;
-        }
-
-        invalidRegion = QRegion();
-    }
+    redraw();
 }
 
 void CellWidget::invalidate() {
@@ -85,7 +60,6 @@ void CellWidget::redraw() {
         QRect invalidRect = invalidRegion.boundingRect();
 
         H::Box area = getBox(invalidRect).inflate(getSize(1));
-        cerr << "akecoucou2" << endl;
 
         QPaintDevice* device = this;
 
@@ -93,16 +67,17 @@ void CellWidget::redraw() {
 	QPainter* oldPainter = painter;
 	painter = &newPainter;
 
-	//painter->fillRect(QRectF(0, 0, 100, 100), QBrush(QColor(255, 255, 255)));
+	painter->fillRect(QRectF(0, 0, 100, 100), QBrush(QColor(255, 255, 255)));
 
-        //painter->setPen(QPen(QColor(255, 255, 255)));
+        painter->setPen(QPen(QColor(255, 255, 0)));
+        painter->setBrush(QBrush(QColor(255, 255, 0)));
 
-        //drawPhantoms(cell, area, Transformation());
-        //drawBoundaries(cell, area, Transformation());
-        //for_each_layer(layer, getTechnology()->GetLayers()) {
-        //    drawCell(cell, layer, area, Transformation());
-        //    end_for;
-        //}
+        drawPhantoms(cell, area, Transformation());
+        drawBoundaries(cell, area, Transformation());
+        for_each_layer(layer, getTechnology()->GetLayers()) {
+            drawCell(cell, layer, area, Transformation());
+            end_for;
+        }
 
         invalidRegion = QRegion();
     }
@@ -121,8 +96,8 @@ void CellWidget::drawPhantoms(const Cell* cell, const H::Box& updateArea, const 
 void CellWidget::drawPhantoms(const Instance* instance, const H::Box& updateArea, const Transformation& transformation) const {
     H::Box masterArea = updateArea;
     Transformation masterTransformation = instance->GetTransformation();
-    instance->GetTransformation().GetInvert().ApplyOn(masterArea);
-    transformation.ApplyOn(masterTransformation);
+    instance->GetTransformation().getInvert().applyOn(masterArea);
+    transformation.applyOn(masterTransformation);
     drawPhantoms(instance->GetMasterCell(), masterArea, masterTransformation);
 }
 
@@ -137,8 +112,8 @@ void CellWidget::drawBoundaries(const Cell* cell, const H::Box& updateArea, cons
 void CellWidget::drawBoundaries(const Instance* instance, const H::Box& updateArea, const Transformation& transformation) const {
     H::Box masterArea = updateArea;
     Transformation masterTransformation = instance->GetTransformation();
-    instance->GetTransformation().GetInvert().ApplyOn(masterArea);
-    transformation.ApplyOn(masterTransformation);
+    instance->GetTransformation().getInvert().applyOn(masterArea);
+    transformation.applyOn(masterTransformation);
     drawBoundaries(instance->GetMasterCell(), masterArea, masterTransformation);
 }
 

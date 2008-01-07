@@ -24,105 +24,104 @@ class Transformation {
 // *****
 
     public: class Orientation {
-	// **********************
+    // **********************
 
-		public: enum Code {ID=0, R1=1, R2=2, R3=3, MX=4, XR=5, MY=6, YR=7};
+        public: enum Code {ID=0, R1=1, R2=2, R3=3, MX=4, XR=5, MY=6, YR=7};
 
-		private: Code _code;
+        private: Code _code;
 
-		public: Orientation(const Code& code = ID);
-		public: Orientation(const Orientation& orientation);
+        public: Orientation(const Code& code = ID);
+        public: Orientation(const Orientation& orientation);
 
-		public: Orientation& operator=(const Orientation& orientation);
+        public: Orientation& operator=(const Orientation& orientation);
 
-		public: operator const Code&() const {return _code;};
+        public: operator const Code&() const {return _code;};
 
-		public: const Code& GetCode() const {return _code;};
+        public: const Code& GetCode() const {return _code;};
 
         public: string _GetTypeName() const { return _TName("Transformation::Orientation"); };
-		public: string _GetString() const;
-		public: Record* _GetRecord() const;
-
-	};
+        public: string _GetString() const;
+        public: Record* _GetRecord() const;
+    };
 
 // Attributes
 // **********
 
-	private: Unit _tx;
-	private: Unit _ty;
-	private: Orientation _orientation;
+    private: Unit _tx;
+    private: Unit _ty;
+    private: Orientation _orientation;
 
 // Constructors
 // ************
 
-	public: Transformation();
+    public: Transformation();
 
-	public: Transformation(const Unit& tx, const Unit& ty, const Orientation& orientation = Orientation::ID);
-	public: Transformation(const Point& translation, const Orientation& orientation = Orientation::ID);
+    public: Transformation(const Unit& tx, const Unit& ty, const Orientation& orientation = Orientation::ID);
+    public: Transformation(const Point& translation, const Orientation& orientation = Orientation::ID);
 
-	public: Transformation(const Transformation& transformation);
+    public: Transformation(const Transformation& transformation);
 
 // Operators
 // *********
 
-	public: Transformation& operator=(const Transformation& transformation);
+    public: Transformation& operator=(const Transformation& transformation);
 
-	public: bool operator==(const Transformation& transformation) const;
-	public: bool operator!=(const Transformation& transformation) const;
+    public: bool operator==(const Transformation& transformation) const;
+    public: bool operator!=(const Transformation& transformation) const;
 
 // Accessors
 // *********
 
-	public: const Unit& GetTx() const {return _tx;};
-	public: const Unit& GetTy() const {return _ty;};
-	public: Point GetTranslation() const {return Point(_tx, _ty);};
-	public: const Orientation& GetOrientation() const {return _orientation;};
+    public: const Unit& getTx() const {return _tx;};
+    public: const Unit& getTy() const {return _ty;};
+    public: Point getTranslation() const {return Point(_tx, _ty);};
+    public: const Orientation& GetOrientation() const {return _orientation;};
 
-	public: Unit GetX(const Unit& x, const Unit& y) const;
-	public: Unit GetY(const Unit& x, const Unit& y) const;
+    public: Unit getX(const Unit& x, const Unit& y) const;
+    public: Unit getY(const Unit& x, const Unit& y) const;
 
-	public: Unit GetX(const Point& point) const;
-	public: Unit GetY(const Point& point) const;
+    public: Unit getX(const Point& point) const;
+    public: Unit getY(const Point& point) const;
 
-	public: Unit GetDx(const Unit& dx, const Unit& dy) const;
-	public: Unit GetDy(const Unit& dx, const Unit& dy) const;
+    public: Unit getDx(const Unit& dx, const Unit& dy) const;
+    public: Unit getDy(const Unit& dx, const Unit& dy) const;
 
-	public: Point GetPoint(const Unit& x, const Unit& y) const;
-	public: Point GetPoint(const Point& point) const;
+    public: Point getPoint(const Unit& x, const Unit& y) const;
+    public: Point getPoint(const Point& point) const;
 
-	public: Box GetBox(const Unit& x1, const Unit& y1, const Unit& x2, const Unit& y2) const;
-	public: Box GetBox(const Point& point1, const Point& point2) const;
-	public: Box GetBox(const Box& box) const;
+    public: Box getBox(const Unit& x1, const Unit& y1, const Unit& x2, const Unit& y2) const;
+    public: Box getBox(const Point& point1, const Point& point2) const;
+    public: Box getBox(const Box& box) const;
 
-	public: Transformation GetTransformation(const Transformation& transformation) const;
+    public: Transformation getTransformation(const Transformation& transformation) const;
 
-	public: Transformation GetInvert() const;
+    public: Transformation getInvert() const;
 
 // Predicates
 // **********
 
-	public: bool IsEven() const {return !(_orientation.GetCode() & 1);};
-	public: bool IsOdd() const {return (_orientation.GetCode() & 1);};
+    public: bool isEven() const {return !(_orientation.GetCode() & 1);};
+    public: bool isOdd() const {return (_orientation.GetCode() & 1);};
 
 // Updators
 // ********
 
-	public: Transformation& Invert();
+    public: Transformation& invert();
 
 // Manipulators
 // ************
 
-	public: void ApplyOn(Unit& x, Unit& y) const;
-	public: void ApplyOn(Point& point) const;
-	public: void ApplyOn(Box& box) const;
-	public: void ApplyOn(Transformation& transformation) const;
+    public: void applyOn(Unit& x, Unit& y) const;
+    public: void applyOn(Point& point) const;
+    public: void applyOn(Box& box) const;
+    public: void applyOn(Transformation& transformation) const;
 
 // Others
 // ******
 
     public: string _GetTypeName() const { return _TName("Transformation"); };
-	public: string _GetString() const;
-	public: Record* _GetRecord() const;
+    public: string _GetString() const;
+    public: Record* _GetRecord() const;
 
 };
 

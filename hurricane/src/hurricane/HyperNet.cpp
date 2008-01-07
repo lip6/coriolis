@@ -507,10 +507,10 @@ static bool IsConnex(const Occurrence& componentOccurrence1, const Occurrence& c
 		Transformation transformation1 = componentOccurrence1.GetPath().GetTransformation();
 		Transformation transformation2 = componentOccurrence2.GetPath().GetTransformation();
 		for_each_basic_layer(basicLayer1, layer1->GetBasicLayers()) {
-			Box box1 = transformation1.GetBox(component1->GetBoundingBox(basicLayer1));
+			Box box1 = transformation1.getBox(component1->GetBoundingBox(basicLayer1));
 			for_each_basic_layer(basicLayer2, layer2->GetBasicLayers()) {
 				if (basicLayer1->GetExtractMask() & basicLayer2->GetExtractMask()) {
-					Box box2 = transformation2.GetBox(component2->GetBoundingBox(basicLayer2));
+					Box box2 = transformation2.getBox(component2->GetBoundingBox(basicLayer2));
 					if (box1.intersect(box2)) return true;
 				}
 				end_for;

@@ -207,7 +207,7 @@ Instance* Instance::Create(Cell* cell, const Name& name, Cell* masterCell, const
 Box Instance::GetBoundingBox() const
 // *********************************
 {
-    return  _transformation.GetBox(_masterCell->GetBoundingBox());
+    return  _transformation.getBox(_masterCell->GetBoundingBox());
 }
 
 Plugs Instance::GetConnectedPlugs() const
@@ -231,7 +231,7 @@ Path Instance::GetPath(const Path& tailPath) const
 Box Instance::GetAbutmentBox() const
 // *********************************
 {
-    return _transformation.GetBox(_masterCell->GetAbutmentBox());
+    return _transformation.getBox(_masterCell->GetAbutmentBox());
 }
 
 bool Instance::IsTerminal() const
@@ -327,7 +327,7 @@ void Instance::Translate(const Unit& dx, const Unit& dy)
 // *****************************************************
 {
     if ((dx != 0) || (dy !=0)) {
-        Point translation = _transformation.GetTranslation();
+        Point translation = _transformation.getTranslation();
         Unit x = translation.getX() + dx;
         Unit y = translation.getY() + dy;
         Transformation::Orientation orientation = _transformation.GetOrientation();

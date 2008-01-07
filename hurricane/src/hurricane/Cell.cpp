@@ -279,7 +279,7 @@ void Cell::_Fit(const Box& box)
     if (_boundingBox.contains(box)) return;
     _boundingBox.merge(box);
     for_each_instance(instance, GetSlaveInstances()) {
-        instance->GetCell()->_Fit(instance->GetTransformation().GetBox(box));
+        instance->GetCell()->_Fit(instance->GetTransformation().getBox(box));
         end_for;
     }
 }
@@ -292,7 +292,7 @@ void Cell::_Unfit(const Box& box)
     if (!_boundingBox.isConstrainedBy(box)) return;
     _boundingBox.makeEmpty();
     for_each_instance(instance, GetSlaveInstances()) {
-        instance->GetCell()->_Unfit(instance->GetTransformation().GetBox(box));
+        instance->GetCell()->_Unfit(instance->GetTransformation().getBox(box));
         end_for;
     }
 }

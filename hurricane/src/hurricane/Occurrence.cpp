@@ -118,7 +118,7 @@ Box Occurrence::GetBoundingBox() const
 {
 	if (!_entity) return Box();
 	if (!_sharedPath) return _entity->GetBoundingBox();
-	return _sharedPath->GetTransformation().GetBox(_entity->GetBoundingBox());
+	return _sharedPath->GetTransformation().getBox(_entity->GetBoundingBox());
 }
 
 bool Occurrence::HasProperty() const
