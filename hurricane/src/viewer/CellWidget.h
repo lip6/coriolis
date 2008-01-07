@@ -40,6 +40,7 @@ class CellWidget : public QWidget {
         void drawBoundaries(const Instance* instance, const Box& updateArea, const Transformation& transformation) const;
         void drawGo(const Go* go, const BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation) const;
         void drawSegment(const Segment* segment, const BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation) const;
+        void drawContact(const Contact* contact, const BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation) const;
         void drawRectangle(const Box& box) const;
         Unit getX(int screenX) const;
         Unit getY(int screenY) const;

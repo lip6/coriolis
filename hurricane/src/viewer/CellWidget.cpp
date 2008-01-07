@@ -173,14 +173,21 @@ void CellWidget::drawGo(const Go* go, const BasicLayer* basicLayer, const Box& u
     const Segment* segment = dynamic_cast<const Segment*>(go);
     if (segment) {
         drawSegment(segment, basicLayer, updateArea, transformation);
+        return;
+    }
+    const Contact* contact = dynamic_cast<const Contact*>(go);
+    if (contact) {
+        drawContact(contact, basicLayer, updateArea, transformation);
     }
 }
-
 
 void CellWidget::drawSegment(const Segment* segment, const BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation) const {
     drawRectangle(transformation.getBox(segment->GetBoundingBox(basicLayer)));
 }
 
+void CellWidget::drawContact(const Contact* contact, const BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation) const {
+    drawRectangle(transformation.getBox(contact->GetBoundingBox(basicLayer)));
+}
 
 void CellWidget::drawPhantoms(const Cell* cell, const H::Box& updateArea, const Transformation& transformation) const {
     for_each_instance(instance, cell->GetInstancesUnder(updateArea)) {
