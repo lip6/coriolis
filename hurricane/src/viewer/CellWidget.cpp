@@ -16,6 +16,47 @@ using namespace H;
 
 namespace {
 
+QBrush getBrush(const string &pattern, int redValue, int greenValue, int blueValue) {
+    if (pattern == "FFFFFFFFFFFFFFFF") {
+        return QBrush(QColor(redValue, greenValue, blueValue));
+    } else {
+        char bits[8];
+        for (int i = 0; i < 8; i++) {
+            int high = pattern[i * 2];
+            if (('0' <= high) && (high <= '9')) {
+                high = high - '0';
+            } else {  
+                if (('a' <= high) && (high <= 'f')) {
+                    high = 10 + high - 'a';
+                } else {  
+                    if (('A' <= high) && (high <= 'F')) {
+                        high = 10 + high - 'A';
+                    } else {
+                        high = '0';
+                    }
+                }
+            }
+            int low = pattern[(i * 2) + 1];
+            if (('0' <= low) && (low <= '9')) {
+                low = low - '0';
+            } else {  
+                if (('a' <= low) && (low <= 'f')) {
+                    low = 10 + low - 'a';
+                } else {  
+                    if (('A' <= low) && (low <= 'F')) {
+                        low = 10 + low - 'A';
+                    } else {
+                        low = '0';
+                    }
+                }
+            }
+            bits[i] = (char)((high * 16) + low); 
+        }
+        return QBrush(QColor(redValue, greenValue, blueValue),
+                QPixmap(bits));
+    }
+}
+                
 Technology* getTechnology() {
     DataBase* database = GetDataBase();
     if (database) {
@@ -28,7 +69,7 @@ static QColor  backgroundColor    = QColor(  50,  50,  50 );
 static QColor  foregroundColor    = QColor( 255, 255, 255 );
 static QColor  rubberColor        = QColor( 192,   0, 192 );
 static QColor  phantomColor       = QColor( 139, 134, 130 );
-static QColor  boundaryColor      = QColor( 208*255, 199*255, 192*255 );
+static QColor  boundaryColor      = QColor( 208, 199, 192 );
 static QColor  markerColor        = QColor(  80, 250,  80 );
 static QColor  selectionDrawColor = QColor( 255, 255, 255 );
 static QColor  selectionFillColor = QColor( 255, 255, 255 );
@@ -62,7 +103,10 @@ CellWidget::CellWidget(Cell* c, QWidget* parent)
     basicLayersPen() {
     for_each_basic_layer(basiclayer, getTechnology()->GetBasicLayers()) {
         basicLayersBrush[basiclayer] = 
-                QBrush(QColor(basiclayer->GetRedValue(), basiclayer->GetGreenValue(), basiclayer->GetBlueValue()));
+            getBrush(basiclayer->GetFillPattern(),
+                    basiclayer->GetRedValue(),
+                    basiclayer->GetGreenValue(),
+                    basiclayer->GetBlueValue());
         basicLayersPen[basiclayer] = 
                 QPen(QColor(basiclayer->GetRedValue(), basiclayer->GetGreenValue(), basiclayer->GetBlueValue()));
         end_for;
@@ -105,10 +149,9 @@ void CellWidget::redraw() {
 
         double brightness = 1.0;
 
-        //painter->save();
-        //setBrush(phantomsBrush, brightness);
-        //drawPhantoms(cell, area, Transformation());
-        //painter->restore();
+        painter->setClipRegion(invalidRegion);
+
+	painter->fillRect(invalidRect, QBrush(getBackgroundColor()));
 
         painter->save();
         setPen(boundariesPen, brightness);
