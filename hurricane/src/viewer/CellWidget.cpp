@@ -139,19 +139,19 @@ void CellWidget::redraw() {
 
         H::Box area = getBox(invalidRect).inflate(getSize(1));
 
-	setClipBox(area);
+        setClipBox(area);
 
         QPaintDevice* device = this;
 
-	QPainter newPainter(device);
-	QPainter* oldPainter = painter;
-	painter = &newPainter;
+        QPainter newPainter(device);
+        QPainter* oldPainter = painter;
+        painter = &newPainter;
 
         double brightness = 1.0;
 
         painter->setClipRegion(invalidRegion);
 
-	painter->fillRect(invalidRect, QBrush(getBackgroundColor()));
+        painter->fillRect(invalidRect, QBrush(getBackgroundColor()));
 
         painter->save();
         setPen(boundariesPen, brightness);
@@ -160,18 +160,20 @@ void CellWidget::redraw() {
         painter->restore();
 
         for_each_basic_layer(basiclayer, getTechnology()->GetBasicLayers()) {
-            painter->save();
-            map<BasicLayer*, QBrush>::const_iterator bmit = basicLayersBrush.find(basiclayer);
-            if (bmit != basicLayersBrush.end()) {
-                setBrush(bmit->second, brightness);
+            if (isDrawable(basiclayer)) {
+                painter->save();
+                map<BasicLayer*, QBrush>::const_iterator bmit = basicLayersBrush.find(basiclayer);
+                if (bmit != basicLayersBrush.end()) {
+                    setBrush(bmit->second, brightness);
+                }
+                map<BasicLayer*, QPen>::const_iterator pmit = basicLayersPen.find(basiclayer);
+                if (pmit != basicLayersPen.end()) {
+                    setPen(pmit->second, brightness);
+                }
+                drawContent(cell, basiclayer, area, Transformation());
+                painter->restore();
+                end_for;
             }
-            map<BasicLayer*, QPen>::const_iterator pmit = basicLayersPen.find(basiclayer);
-            if (pmit != basicLayersPen.end()) {
-                setPen(pmit->second, brightness);
-            }
-            drawContent(cell, basiclayer, area, Transformation());
-            painter->restore();
-            end_for;
         }
 
         invalidRegion = QRegion();
@@ -221,11 +223,17 @@ void CellWidget::drawGo(const Go* go, const BasicLayer* basicLayer, const Box& u
     const Contact* contact = dynamic_cast<const Contact*>(go);
     if (contact) {
         drawContact(contact, basicLayer, updateArea, transformation);
+        return;
     }
 }
 
 void CellWidget::drawSegment(const Segment* segment, const BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation) const {
-    drawRectangle(transformation.getBox(segment->GetBoundingBox(basicLayer)));
+    if (1 < getScreenSize(segment->GetWidth())) {
+        drawRectangle(transformation.getBox(segment->GetBoundingBox(basicLayer)));
+    } else {
+        drawLine(transformation.getPoint(segment->GetSourcePosition()),
+                transformation.getPoint(segment->GetTargetPosition()));
+    }
 }
 
 void CellWidget::drawContact(const Contact* contact, const BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation) const {
@@ -277,6 +285,38 @@ void CellWidget::drawRectangle(const H::Box& box) const {
     }
 }
 
+void CellWidget::drawLine(const Point& po, const Point& pe) const {
+    drawLine(po.getX(), po.getY(), pe.getX(), pe.getY());
+}
+
+void CellWidget::drawLine(const Unit& xo,
+        const Unit& yo,
+        const Unit& xe,
+        const Unit& ye) const {
+    if (painter) {
+        double dxo = GetValue(xo);
+        double dyo = GetValue(yo);
+        int co = getClipCode(dxo, dyo);
+        double dxe = GetValue(xe);
+        double dye = GetValue(ye);
+        int ce = getClipCode(dxe, dye);
+        if (clipLine(dxo, dyo, co, dxe, dye, ce)) {
+            int ixo = getScreenX(GetUnit(dxo));
+            int iyo = getScreenY(GetUnit(dyo));
+            int ixe = getScreenX(GetUnit(dxe));
+            int iye = getScreenY(GetUnit(dye));
+            painter->save();
+            if (painter->pen() == Qt::NoPen) {
+                painter->setPen(painter->brush().color());
+            }
+            //painter->moveTo(ixo, iyo);
+            //painter->lineTo(ixe, iye);
+            painter->drawLine(ixo, iyo, ixe, iye);
+            painter->restore();
+        }
+    }
+}
+
 Unit CellWidget::getX(int screenX) const {
     return GetUnit((screenX - screenDx) / scale);
 }
@@ -308,6 +348,11 @@ int CellWidget::getScreenY(const Unit& y) const {
     return height() - (int)rint(screenDy + (GetValue(y) * scale));
 }
 
+int CellWidget::getScreenSize(const Unit& size) const {
+    return (int)rint(GetValue(size) * scale);
+}
+
+
 
 void CellWidget::setClipBox(const Box& area) {
     clipBox = Box(area).inflate(getSize(2));
@@ -323,77 +368,183 @@ void CellWidget::setClipBox(const Box& area) {
 }
 
 
+int CellWidget::getClipCode(double x, double y) const {
+    if (x < clipX[0]) {
+        if (y < clipY[0]) {
+            return 28;
+        }
+        if (clipY[3] < y) {
+            return 22;
+        }
+        return 4;
+    }
+
+    if (clipX[3] < x) {
+        if (y < clipY[0]) {
+            return 25;
+        }
+        if (clipY[3] < y) {
+            return 19;
+        }
+        return 1;
+    }
+
+    if (y < clipY[0]) {
+        return 8;
+    }
+
+    if (clipY[3] < y) {
+        return 2;
+    }
+    return 0;
+}
+
+
+bool CellWidget::clipLine(double& xo,
+        double& yo,
+        int     co,
+        double& xe,
+        double& ye,
+        int     ce,
+        int     u) const {
+    if (co & ce & -17) {
+        return false;
+    }
+
+    if (!co & !ce) {
+        return true;
+    }
+
+    if (co & 1) {
+        yo += ((ye - yo) / (xe - xo)) * (clipX[3] - xo);
+        xo = clipX[3];
+        co = getClipCode(xo, yo);
+        return clipLine(xo, yo, co, xe, ye, ce, u + 1);
+    }
+
+    if (co & 2) {
+        xo += ((xe - xo) / (ye - yo)) * (clipY[3] - yo);
+        yo = clipY[3];
+        co = getClipCode(xo, yo);
+        return clipLine(xo, yo, co, xe, ye, ce, u + 1);
+    }
+
+    if (co & 4) {
+        yo += ((ye - yo) / (xe - xo)) * (clipX[0] - xo);
+        xo = clipX[0];
+        co = getClipCode(xo, yo);
+        return clipLine(xo, yo, co, xe, ye, ce, u + 1);
+    }
+
+    if (co & 8) {
+        xo += ((xe - xo) / (ye - yo)) * (clipY[0] - yo);
+        yo = clipY[0];
+        co = getClipCode(xo, yo);
+        return clipLine(xo, yo, co, xe, ye, ce, u + 1);
+    }
+
+    if (ce & 1) {
+        ye -= ((ye - yo) / (xe - xo)) * (xe - clipX[3]);
+        xe = clipX[3];
+        ce = getClipCode(xe, ye);
+        return clipLine(xo, yo, co, xe, ye, ce, u + 1);
+    }
+
+    if (ce & 2) {
+        xe -= ((xe - xo) / (ye - yo)) * (ye - clipY[3]);
+        ye = clipY[3];
+        ce = getClipCode(xe, ye);
+        return clipLine(xo, yo, co, xe, ye, ce, u + 1);
+    }
+
+    if (ce & 4) {
+        ye -= ((ye - yo) / (xe - xo)) * (xe - clipX[0]);
+        xe = clipX[0];
+        ce = getClipCode(xe, ye);
+        return clipLine(xo, yo, co, xe, ye, ce, u + 1);
+    }
+
+    if (ce & 8) {
+        xe -= ((xe - xo) / (ye - yo)) * (ye - clipY[0]);
+        ye = clipY[0];
+        ce = getClipCode(xe, ye);
+        return clipLine(xo, yo, co, xe, ye, ce, u + 1);
+    }
+    return true;
+}
+
+
 void CellWidget::setFont(const QFont& font) {
     if (painter) {
-	painter->setFont(font);
+    painter->setFont(font);
     }
 }
 
 void CellWidget::setPen(const QPen& pen, double brightness) {
     if (!((0.1 <= brightness) && (brightness <= 1.0))) {
-	throw Error(__FILE__, __LINE__);
+    throw Error(__FILE__, __LINE__);
     }
 
     if (painter) {
-	if (pen == Qt::NoPen) {
-	    painter->setPen(pen);
-	}
-	else {
-	    QPen correctedPen = pen;
+        if (pen == Qt::NoPen) {
+            painter->setPen(pen);
+        } else {
+            QPen correctedPen = pen;
 
-	    if (brightness < 1) {
-		QColor bgColor = getBackgroundColor();
-		int r = bgColor.red();
-		int g = bgColor.green();
-		int b = bgColor.blue();
+            if (brightness < 1) {
+                QColor bgColor = getBackgroundColor();
+                int r = bgColor.red();
+                int g = bgColor.green();
+                int b = bgColor.blue();
 
-		QColor color = pen.color();
-		r = r + (int)((color.red() - r) * brightness);
-		g = g + (int)((color.green() - g) * brightness);
-		b = b + (int)((color.blue() - b) * brightness);
+                QColor color = pen.color();
+                r = r + (int)((color.red() - r) * brightness);
+                g = g + (int)((color.green() - g) * brightness);
+                b = b + (int)((color.blue() - b) * brightness);
 
-		correctedPen = QPen(QColor(r, g, b));
-	    }
-
-	    painter->setPen(correctedPen);
-	}
+                correctedPen = QPen(QColor(r, g, b));
+            }
+            painter->setPen(correctedPen);
+        }
     }
 }
 
 void CellWidget::setBrush(const QBrush& brush, double brightness) {
     if (!((0.1 <= brightness) && (brightness <= 1.0))) {
-	throw Error(__FILE__, __LINE__);
+        throw Error(__FILE__, __LINE__);
     }
 
     if (painter) {
-	if (brush == Qt::NoBrush) {
-	    painter->setBrush(brush);
-	}
-	else {
-	    QBrush correctedBrush = brush;
+        if (brush == Qt::NoBrush) {
+            painter->setBrush(brush);
+        } else {
+            QBrush correctedBrush = brush;
 
-	    if (brightness < 1) {
-		QColor bgColor = getBackgroundColor();
-		int r = bgColor.red();
-		int g = bgColor.green();
-		int b = bgColor.blue();
+            if (brightness < 1) {
+                QColor bgColor = getBackgroundColor();
+                int r = bgColor.red();
+                int g = bgColor.green();
+                int b = bgColor.blue();
 
-		QColor color = brush.color();
-		r = r + (int)((color.red() - r) * brightness);
-		g = g + (int)((color.green() - g) * brightness);
-		b = b + (int)((color.blue() - b) * brightness);
+                QColor color = brush.color();
+                r = r + (int)((color.red() - r) * brightness);
+                g = g + (int)((color.green() - g) * brightness);
+                b = b + (int)((color.blue() - b) * brightness);
 
-		correctedBrush = QBrush(QColor(r, g, b), brush.style());
-	    }
-
-	    painter->setBrush(correctedBrush);
-	}
+                correctedBrush = QBrush(QColor(r, g, b), brush.style());
+            }
+            painter->setBrush(correctedBrush);
+        }
     }
 }
 
 void CellWidget::setBrushOrigin(const QPoint& origin) {
     if (painter) {
-	painter->setBrushOrigin(brushDx + origin.x(), brushDy + origin.y());
+    painter->setBrushOrigin(brushDx + origin.x(), brushDy + origin.y());
     }
+}
+
+bool CellWidget::isDrawable(BasicLayer* layer) const {
+    return (layer->GetDisplayThreshold() <= scale);
 }
 

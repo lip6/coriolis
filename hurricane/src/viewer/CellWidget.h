@@ -25,7 +25,7 @@ class CellWidget : public QWidget {
         QColor foregroundColor;
         double scale;
         int screenDx;
-	int screenDy;
+        int screenDy;
         int brushDx;
         int brushDy;
         map<BasicLayer*, QBrush> basicLayersBrush;
@@ -42,21 +42,26 @@ class CellWidget : public QWidget {
         void drawSegment(const Segment* segment, const BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation) const;
         void drawContact(const Contact* contact, const BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation) const;
         void drawRectangle(const Box& box) const;
+        void drawLine(const Point& po, const Point& pe) const;
+        void drawLine(const Unit& xo, const Unit& yo, const Unit& xe, const Unit& ye) const;
         Unit getX(int screenX) const;
         Unit getY(int screenY) const;
         Unit getSize(int screenSize) const;
         H::Box getBox(const QRect& screenRect) const;
         int getScreenX(const Unit& x) const;
         int getScreenY(const Unit& y) const;
+        int getScreenSize(const Unit& size) const;
         void invalidate();
         void invalidate(const QRect& screenRect);
         void setClipBox(const Box& area);
+        int getClipCode(double x, double y) const;
+        bool clipLine(double& xo, double& yo, int co, double& xe, double& ye, int ce, int u=0) const;
         void setFont(const QFont& font);
         void setPen(const QPen& pen, double brightness = 1.0);
         void setBrush(const QBrush& brush, double brightness = 1.0);
         void setBrushOrigin(const QPoint& origin);
-
         const QColor& getBackgroundColor() const;
+        bool isDrawable(BasicLayer* layer) const;
 };
 
 
