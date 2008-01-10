@@ -2,6 +2,7 @@
 #define __CELL_WIDGET_H
 
 #include <QWidget>
+#include <QPen>
 
 #include "Box.h"
 #include "Cell.h"
@@ -9,6 +10,8 @@ using namespace H;
 
 
 class CellWidget : public QWidget {
+        Q_OBJECT
+
     public:
         CellWidget(Cell* cell, QWidget* parent=0);
         void redraw();

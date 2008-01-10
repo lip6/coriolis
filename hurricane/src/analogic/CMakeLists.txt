@@ -1,34 +1,36 @@
 set(includes RdsUnit.h)  
 
-
 add_custom_target(DTRParser echo "Creating DTRParser")
 
+set(source_dir ${HURRICANE_SOURCE_DIR}/src/analogic) 
+set(binary_dir ${HURRICANE_BINARY_DIR}/src/analogic) 
+
 add_custom_command(
-SOURCE ${HURRICANE_SOURCE_DIR}/analogic/ParserDtrScan.ll
+SOURCE ${source_dir}/ParserDtrScan.ll
 COMMAND ${FLEX_EXECUTABLE} 
-ARGS -Pdtr -o${HURRICANE_BINARY_DIR}/analogic/ParserDtrScan.cpp
-${HURRICANE_SOURCE_DIR}/analogic/ParserDtrScan.ll
+ARGS -Pdtr -o${binary_dir}/ParserDtrScan.cpp
+${source_dir}/ParserDtrScan.ll
 TARGET DTRParser
-OUTPUTS ${HURRICANE_BINARY_DIR}/analogic/ParserDtrScan.cpp)
+OUTPUTS ${binary_dir}/ParserDtrScan.cpp)
 
 add_custom_command(
-SOURCE ${HURRICANE_SOURCE_DIR}/analogic/ParserDtrGram.yy
+SOURCE ${source_dir}/ParserDtrGram.yy
 COMMAND ${BISON_EXECUTABLE} 
-ARGS -d -v -p dtr -y ${HURRICANE_SOURCE_DIR}/analogic/ParserDtrGram.yy
--o ${HURRICANE_BINARY_DIR}/analogic/ParserDtrGram.cpp
+ARGS -d -v -p dtr -y ${source_dir}/ParserDtrGram.yy
+-o ${binary_dir}/ParserDtrGram.cpp
 TARGET DSTParser
-DEPENDS ${HURRICANE_BINARY_DIR}/analogic/ParserDtrScan.cpp
-OUTPUTS ${HURRICANE_BINARY_DIR}/analogic/ParserDtrGram.cpp)
+DEPENDS ${binary_dir}/ParserDtrScan.cpp
+OUTPUTS ${binary_dir}/ParserDtrGram.cpp)
 
-set(DST_SRCS ${DST_SRCS} ${HURRICANE_BINARY_DIR}/analogic/ParserDtrGram.cpp
-${HURRICANE_BINARY_DIR}/analogic/ParserDtrScan.cpp)
+set(DST_SRCS ${DST_SRCS} ${binary_dir}/ParserDtrGram.cpp
+${binary_dir}/ParserDtrScan.cpp)
 
-SET_SOURCE_FILES_PROPERTIES(${HURRICANE_BINARY_DIR}/analogic/ParserDtrGram.cpp GENERATED)
-SET_SOURCE_FILES_PROPERTIES(${HURRICANE_BINARY_DIR}/analogic/ParserDtrScan.cpp GENERATED)
+SET_SOURCE_FILES_PROPERTIES(${binary_dir}/ParserDtrGram.cpp GENERATED)
+SET_SOURCE_FILES_PROPERTIES(${binary_dir}/ParserDtrScan.cpp GENERATED)
 
-INCLUDE_DIRECTORIES(${HURRICANE_BINARY_DIR}/analogic/
-${HURRICANE_SOURCE_DIR}/hurricane
-${HURRICANE_SOURCE_DIR}/analogic
+INCLUDE_DIRECTORIES(${binary_dir}
+${HURRICANE_SOURCE_DIR}/src/hurricane
+${source_dir}
 )
 
 add_library(analogic SHARED 
@@ -43,5 +45,5 @@ TwoSpaces.cpp)
 
 target_link_libraries(analogic hurricane)
 
-install(FILES ${includes} DESTINATION /include/hurricane) 
+install(FILES ${includes} DESTINATION /include/coriolis/hurricane) 
 install(TARGETS analogic DESTINATION /lib)

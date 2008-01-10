@@ -7,4 +7,4 @@ Name: hurricane
 Description: Hurricane Libs
 Version: 2.0.b
 Libs: -L${libdir} -lanalogic -lhurricaneviewer -lhurricane
-Cflags: -I${includedir}/hurricane
+Cflags: -I${includedir}/coriolis/hurricane
