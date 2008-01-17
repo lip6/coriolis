@@ -120,6 +120,23 @@ void CellWidget::paintEvent(QPaintEvent* event) {
     redraw();
 }
 
+void CellWidget::reframe(double sc) {
+    reframe(center, sc);
+}
+
+void CellWidget::reframe(const Point& c, double sc) {
+    if (0 < sc) {
+        center = c;
+        scale = sc;
+        screenDx = -(int)rint((GetValue(center.getX()) - (width() / (scale*2))) * scale);
+        screenDy = -(int)rint((GetValue(center.getY()) - (height() / (scale*2))) * scale);
+        brushDx = 0;
+        brushDy = 0;
+        invalidate();
+    }
+}
+
+
 void CellWidget::invalidate() {
     invalidRegion = QRegion(rect());
 }
@@ -161,7 +178,7 @@ void CellWidget::redraw() {
 
         for_each_basic_layer(basiclayer, getTechnology()->GetBasicLayers()) {
             if (isDrawable(basiclayer)) {
-                painter->save();
+                //painter->save();
                 map<BasicLayer*, QBrush>::const_iterator bmit = basicLayersBrush.find(basiclayer);
                 if (bmit != basicLayersBrush.end()) {
                     setBrush(bmit->second, brightness);
@@ -171,10 +188,12 @@ void CellWidget::redraw() {
                     setPen(pmit->second, brightness);
                 }
                 drawContent(cell, basiclayer, area, Transformation());
-                painter->restore();
+                //painter->restore();
                 end_for;
             }
         }
+
+        painter = oldPainter;
 
         invalidRegion = QRegion();
     }
@@ -305,14 +324,14 @@ void CellWidget::drawLine(const Unit& xo,
             int iyo = getScreenY(GetUnit(dyo));
             int ixe = getScreenX(GetUnit(dxe));
             int iye = getScreenY(GetUnit(dye));
-            painter->save();
+            //painter->save();
             if (painter->pen() == Qt::NoPen) {
                 painter->setPen(painter->brush().color());
             }
             //painter->moveTo(ixo, iyo);
             //painter->lineTo(ixe, iye);
             painter->drawLine(ixo, iyo, ixe, iye);
-            painter->restore();
+            //painter->restore();
         }
     }
 }
@@ -548,3 +567,7 @@ bool CellWidget::isDrawable(BasicLayer* layer) const {
     return (layer->GetDisplayThreshold() <= scale);
 }
 
+
+double CellWidget::getScale() const {
+    return scale;
+}

@@ -10,11 +10,14 @@ using namespace H;
 
 
 class CellWidget : public QWidget {
-        Q_OBJECT
+    Q_OBJECT
 
     public:
         CellWidget(Cell* cell, QWidget* parent=0);
+        double getScale() const;
         void redraw();
+        void reframe(double scale);
+        void reframe(const Point& c, double sc);
     protected:
         void paintEvent(QPaintEvent* event);
     private:
@@ -26,6 +29,7 @@ class CellWidget : public QWidget {
         QPainter* painter;
         QColor backgroundColor;
         QColor foregroundColor;
+        Point center;
         double scale;
         int screenDx;
         int screenDy;
@@ -33,6 +37,9 @@ class CellWidget : public QWidget {
         int brushDy;
         map<BasicLayer*, QBrush> basicLayersBrush;
         map<BasicLayer*, QPen> basicLayersPen;
+
+        void fitToContent(unsigned screenMargin = 5);
+        void scroll(const Unit& dx, const Unit& dy);
 
         void drawContent(const Cell* cell, const BasicLayer* basicLayer, const H::Box& updateArea, const Transformation& transformation) const;
         void drawContent(const Instance* instance, const BasicLayer* basicLayer, const H::Box& updateArea, const Transformation& transformation) const;
