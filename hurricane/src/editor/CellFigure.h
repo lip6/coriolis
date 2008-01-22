@@ -9,7 +9,6 @@ using namespace Hurricane;
 
 class InstanceFigure;
 
-
 class CellFigure : public QGraphicsItem {
     public:
         CellFigure(Cell* cell);

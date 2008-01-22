@@ -6,8 +6,7 @@ set(includes CellWidget.h LayersWidget.h CellViewer.h)
 set(exports CellViewer.h)
 set(cpps CellWidget.cpp LayersWidget.cpp CellViewer.cpp)
 
-QT4_WRAP_CPP(MOC_SRCS ${includes})
-
+Q4_WRAP_CPP(MOC_SRCS ${includes})
 
 add_library(hurricaneviewer SHARED ${cpps} ${MOC_SRCS})
 target_link_libraries(hurricaneviewer ${QT_LIBRARIES} hurricane)

@@ -3,13 +3,16 @@
 
 #include <QGraphicsScene>
 
+#include "Cell.h"
+using namespace H;
+
 class CellScene : public QGraphicsScene {
-    protected :
-        void drawItems(QPainter *painter,
-                int numItems,
-                QGraphicsItem *items[],
-                const QStyleOptionGraphicsItem options[],
-                QWidget *widget);
+    Q_OBJECT
+
+    public:
+        CellScene(Cell* cell);
+    private:
+        Cell* cell;
 };
 
 #endif /* __CELL_SCENE_H */ 
