@@ -7,25 +7,26 @@
 using namespace H;
 
 #include "Utils.h"
-#include "SliceFigure.h"
+#include "CellGraphicsItem.h"
 #include "SegmentFigure.h"
 
-SegmentFigure::SegmentFigure(SliceFigure* master, Segment* s):
-	QGraphicsItem(master),
-	segment(s)
-	{} 
+SegmentGraphicsItem::SegmentGraphicsItem(CellGraphicsItem* master, Segment* s):
+    QGraphicsItem(master),
+    segment(s)
+{
+    setFlag(ItemIsMovable);
+}
 
-QRectF SegmentFigure::boundingRect() const {
-    Box box = getGo()->GetBoundingBox();
+QRectF SegmentGraphicsItem::boundingRect() const {
+    Box box = segment->GetBoundingBox();
     QRectF rect;
-    BoxToRectangle(box, rect);
+    boxToRectangle(box, rect);
     return rect;
 }
 
-void SegmentFigure::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-	Q_UNUSED(widget);
+void SegmentGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
 
-	if (option->levelOfDetail > 1.0) {
+	//if (option->levelOfDetail > 1.0) {
 		painter->setClipRect(option->exposedRect);
 		BasicLayer* layer = dynamic_cast<BasicLayer*>(segment->GetLayer()); 
 		if (layer) {
@@ -35,7 +36,18 @@ void SegmentFigure::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 		}
 		Box box = segment->GetBoundingBox();
 		QRectF rect;
-		BoxToRectangle(box, rect);
+		boxToRectangle(box, rect);
 		painter->drawRect(rect);
-	}
+	//}
+}
+
+
+void SegmentGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    update();
+    QGraphicsItem::mousePressEvent(event);
+}
+
+void SegmentGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+    update();
+    QGraphicsItem::mouseReleaseEvent(event);
 }

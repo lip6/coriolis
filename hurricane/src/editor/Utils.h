@@ -7,7 +7,7 @@
 #include "Transformation.h"
 using namespace H;
 
-inline void BoxToRectangle(const Box& box, QRectF& rec) {
+inline void boxToRectangle(const Box& box, QRectF& rec) {
     double xmin = GetValue(box.getXMin());
     double xmax = GetValue(box.getXMax());
     double ymin = GetValue(box.getYMin());
@@ -15,7 +15,7 @@ inline void BoxToRectangle(const Box& box, QRectF& rec) {
     rec.setCoords(xmin, ymin, xmax, ymax);
 }
 
-inline void HurricanePositionToQtPosition(const Transformation& transformation, QTransform& transform, QPoint& position) {
+inline void hurricanePositionToQtPosition(const Transformation& transformation, QTransform& transform, QPoint& position) {
     double tx = GetValue(transformation.getTx());
     double ty = GetValue(transformation.getTy());
 

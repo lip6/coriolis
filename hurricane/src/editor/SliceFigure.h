@@ -4,14 +4,14 @@
 #include <QGraphicsItem>
 #include <QObject>
 
-#include "CellFigure.h"
+#include "CellGraphicsItem.h"
 
 #include "Slice.h"
 using namespace Hurricane;
 
 class SliceFigure : public QGraphicsItem {
     public:
-        SliceFigure(CellFigure* parent, Slice* slice);
+        SliceFigure(CellGraphicsItem* parent, Slice* slice);
         QRectF boundingRect() const;
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                 QWidget *widget);

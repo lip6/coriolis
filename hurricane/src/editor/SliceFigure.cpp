@@ -4,7 +4,7 @@
 #include "BasicLayer.h"
 using namespace H;
 
-#include "SegmentFigure.h"
+#include "SegmentGraphicsItem.h"
 #include "Utils.h"
 #include "SliceFigure.h"
 
@@ -46,7 +46,7 @@ void SliceFigure::constructGoFigures() {
     for_each_go(go, slice->GetGos()) {
         Segment* segment = dynamic_cast<Segment*>(go);
         if (segment) {
-            new SegmentFigure(this, segment);
+            new SegmentGraphicsItem(this, segment);
         }
         end_for;
     }

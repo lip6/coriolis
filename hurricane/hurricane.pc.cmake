@@ -6,5 +6,5 @@ includedir=${exec_prefix}/include
 Name: hurricane
 Description: Hurricane Libs
 Version: 2.0.b
-Libs: -L${libdir} -lanalogic -lhurricaneviewer -lhurricane
+Libs: -L${libdir} -lanalogic -lhurricaneviewer -lhurricaneeditor -lhurricane
 Cflags: -I${includedir}/coriolis/hurricane

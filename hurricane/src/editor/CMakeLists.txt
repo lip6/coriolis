@@ -4,12 +4,13 @@ include_directories(${HURRICANE_SOURCE_DIR}/src/hurricane)
 
 set(includes CellEditor.h CellScene.h)
 set(exports CellEditor.h)
-set(cpps InstanceFigure.cpp CellScene.cpp CellEditor.cpp)
+set(cpps CellGraphicsItem.cpp InstanceGraphicsItem.cpp SegmentFigure.cpp
+        CellScene.cpp CellEditor.cpp)
 
 QT4_WRAP_CPP(MOC_SRCS ${includes})
 
 add_library(hurricaneeditor SHARED ${cpps} ${MOC_SRCS})
 target_link_libraries(hurricaneeditor ${QT_LIBRARIES} hurricane)
 
-install(FILES ${includes} DESTINATION /include/coriolis/hurricane) 
+install(FILES ${exports} DESTINATION /include/coriolis/hurricane) 
 install(TARGETS hurricaneeditor DESTINATION /lib)

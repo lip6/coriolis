@@ -1,5 +1,5 @@
-#ifndef __INSTANCE_FIGURE_H
-#define __INSTANCE_FIGURE_H
+#ifndef __INSTANCE_GRAPHICS_ITEM_H
+#define __INSTANCE_GRAPHICS_ITEM_H
 
 #include <QGraphicsItem>
 #include <QObject>
@@ -8,11 +8,10 @@
 #include "Cell.h"
 using namespace Hurricane;
 
-class InstanceFigure : public QGraphicsItem {
+class InstanceGraphicsItem : public QGraphicsItem {
     public:
-        InstanceFigure(InstanceFigure* parent, Instance* instance);
-        //InstanceFigure(Instance* instance);
-        InstanceFigure(Cell* cell);
+        //InstanceGraphicsItem(InstanceGraphicsItem* parent, Instance* instance);
+        InstanceGraphicsItem(Cell* cell);
         QRectF boundingRect() const;
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                 QWidget *widget);
@@ -27,4 +26,4 @@ class InstanceFigure : public QGraphicsItem {
 
 };
 
-#endif /* __INSTANCE_FIGURE_H */
+#endif /* __INSTANCE_GRAPHICS_ITEM_H */

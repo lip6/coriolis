@@ -9,9 +9,9 @@
 using namespace H;
 
 #include "Utils.h"
-#include "InstanceFigure.h"
+#include "InstanceGraphicsItem.h"
 
-//InstanceFigure::InstanceFigure(Instance* inst)
+//InstanceGraphicsItem::InstanceGraphicsItem(Instance* inst)
 //    : instance(inst),
 //    cell(instance->GetMasterCell()) 
 //{
@@ -24,42 +24,42 @@ using namespace H;
 //    constructSubInstances();
 //}
 
-InstanceFigure::InstanceFigure(Cell* c)
+InstanceGraphicsItem::InstanceGraphicsItem(Cell* c)
     : instance(NULL),
     cell(c)
 {
     constructSubInstances();
 }
 
-InstanceFigure::InstanceFigure(InstanceFigure* parent, Instance* inst)
-    : QGraphicsItem(parent),
-    instance(inst),
-    cell(instance->GetMasterCell())
-{
-    Transformation transformation = instance->GetTransformation();
-    QTransform transform;
-    QPoint pos;
-    HurricanePositionToQtPosition(transformation, transform, pos);
-    setTransform(transform);
-    setPos(pos);
-    constructSubInstances();
-}
+//InstanceGraphicsItem::InstanceGraphicsItem(InstanceGraphicsItem* parent, Instance* inst)
+//    : QGraphicsItem(parent),
+//    instance(inst),
+//    cell(instance->GetMasterCell())
+//{
+//    Transformation transformation = instance->GetTransformation();
+//    QTransform transform;
+//    QPoint pos;
+//    HurricanePositionToQtPosition(transformation, transform, pos);
+//    setTransform(transform);
+//    setPos(pos);
+//    constructSubInstances();
+//}
 
-void InstanceFigure::constructSubInstances() {
+void InstanceGraphicsItem::constructSubInstances() {
     for_each_instance(instance, cell->GetInstances()) {
-        new InstanceFigure(this, instance);
+        //new InstanceGraphicsItem(this, instance);
         end_for;
     }
 }
 
-QRectF InstanceFigure::boundingRect() const {
+QRectF InstanceGraphicsItem::boundingRect() const {
     Box box = cell->GetAbutmentBox();
     QRectF rect;
-    BoxToRectangle(box, rect);
+    boxToRectangle(box, rect);
     return rect;
 }
 
-void InstanceFigure::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
+void InstanceGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
     painter->setClipRect(option->exposedRect.adjusted(-1.0, -1.0, 1.0, 1.0));
     if (option->levelOfDetail > 1.0) {
     	drawBoundary(painter);
@@ -69,7 +69,7 @@ void InstanceFigure::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     }
 }
 
-void InstanceFigure::drawElements(QPainter* painter) {
+void InstanceGraphicsItem::drawElements(QPainter* painter) {
     for_each_slice(slice, cell->GetSlices()) {
         painter->save();
         BasicLayer* layer = dynamic_cast<BasicLayer*>(slice->GetLayer()); 
@@ -83,7 +83,7 @@ void InstanceFigure::drawElements(QPainter* painter) {
             if (segment) {
 		Box box = segment->GetBoundingBox();
 		QRectF rect;
-		BoxToRectangle(box, rect);
+		boxToRectangle(box, rect);
 		painter->drawRect(rect);
 
             }
@@ -94,19 +94,19 @@ void InstanceFigure::drawElements(QPainter* painter) {
     }
 }
 
-void InstanceFigure::drawBoundary(QPainter* painter) {
+void InstanceGraphicsItem::drawBoundary(QPainter* painter) {
     QPen pen(Qt::black); 
     painter->setPen(pen);
     Box box = cell->GetAbutmentBox();
     QRectF rect;
-    BoxToRectangle(box, rect);
+    boxToRectangle(box, rect);
     painter->drawRect(rect);
 }
 
-void InstanceFigure::drawPhantom(QPainter* painter) {
+void InstanceGraphicsItem::drawPhantom(QPainter* painter) {
     painter->setBrush(Qt::red);
     Box box = cell->GetAbutmentBox();
     QRectF rect;
-    BoxToRectangle(box, rect);
+    boxToRectangle(box, rect);
     painter->drawRect(rect);
 }
