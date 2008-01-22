@@ -92,6 +92,10 @@ Point& Point::translate(const Unit& dx, const Unit& dy)
     return *this;
 }
 
+Point Point::getTranslated(const Unit& dx, const Unit& dy) const {
+    return Point(*this).translate(dx, dy);
+}
+
 string Point::_GetString() const
 // *****************************
 {

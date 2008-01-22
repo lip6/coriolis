@@ -15,7 +15,7 @@ CellViewer::CellViewer(Cell* cell)
     createMenus();
 
     setWindowTitle(tr("Cell Viewer"));
-    resize(500, 400);
+    resize(1000,  500);
 }
 
 CellViewer::~CellViewer() {
@@ -56,13 +56,17 @@ CellViewer::~CellViewer() {
 
 void CellViewer::zoomIn() {
     cellWidget->reframe(cellWidget->getScale() * 1.2);
-    cellWidget->redraw();
+    cellWidget->update();
 }
 
 void CellViewer::zoomOut() {
+    cellWidget->reframe(cellWidget->getScale() / 1.2);
+    cellWidget->update();
 }
 
 void CellViewer::fitToWindow() {
+    cellWidget->fitToContent();
+    cellWidget->update();
 }
 
 void CellViewer::createActions() {
@@ -70,11 +74,23 @@ void CellViewer::createActions() {
     zoomInAct->setShortcut(tr("Ctrl++"));
     zoomInAct->setEnabled(true);
     connect(zoomInAct, SIGNAL(triggered()), this, SLOT(zoomIn()));
+
+    zoomOutAct = new QAction(tr("Zoom &Out (25%)"), this);
+    zoomOutAct->setShortcut(tr("Ctrl+-"));
+    zoomOutAct->setEnabled(true);
+    connect(zoomOutAct, SIGNAL(triggered()), this, SLOT(zoomOut()));
+
+    fitToWindowAct = new QAction(tr("Fit &To &Window"), this);
+    fitToWindowAct->setShortcut(tr("f"));
+    fitToWindowAct->setEnabled(true);
+    connect(fitToWindowAct, SIGNAL(triggered()), this, SLOT(fitToWindow()));
 }
 
 void CellViewer::createMenus() {
     viewMenu = new QMenu(tr("&View"), this);
     viewMenu->addAction(zoomInAct);
+    viewMenu->addAction(zoomOutAct);
+    viewMenu->addAction(fitToWindowAct);
 
     menuBar()->addMenu(viewMenu);
 }

@@ -63,6 +63,7 @@ class Point {
     public: void setX(const Unit& x) {_x = x;};
     public: void setY(const Unit& y) {_y = y;};
     public: Point& translate(const Unit& dx, const Unit& dy);
+    public: Point getTranslated(const Unit& dx, const Unit& dy) const;
 
 // Others
 // ******

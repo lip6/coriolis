@@ -20,6 +20,8 @@ class CellViewer : public QMainWindow {
         LayersWidget* layersWidget;
 
         QAction *zoomInAct;
+        QAction *zoomOutAct;
+        QAction *fitToWindowAct;
         QMenu *viewMenu;
 
         void createActions();

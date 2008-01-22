@@ -96,6 +96,7 @@ class Box {
     public: Box& inflate(const Unit& d);
     public: Box& inflate(const Unit& dx, const Unit& dy);
     public: Box& inflate(const Unit& dxMin, const Unit& dyMin, const Unit& dxMax, const Unit& dyMax);
+    public: Box  getInflated(const Unit& d) const;
     public: Box& shrinkByFactor(double factor);   // 0 <= factor <= 1
 
     public: Box& merge(const Unit& x, const Unit& y);

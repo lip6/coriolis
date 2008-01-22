@@ -247,6 +247,10 @@ Box& Box::inflate(const Unit& dxMin, const Unit& dyMin, const Unit& dxMax, const
     return *this;
 }
 
+Box Box::getInflated(const Unit& d) const {
+    return Box(*this).inflate(d);
+}
+
 Box& Box::shrinkByFactor(double factor)
 // **************************************
 {
