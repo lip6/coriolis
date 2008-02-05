@@ -1,0 +1,145 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Layer
+  *  \brief        Layer description (\b API)
+  *
+  *  \section      secLayerIntro  Introduction
+  *
+  *                There are two layer types : Basic layers which are indeed the 
+  *                real process layers (GDS ones) and composite layers on which 
+  *                are located components of the layout. A composite layer 
+  *                groups a set of basic layers. For example, the contact layer 
+  *                VIA12 is built of the basic layers CM1 (metal1), CM2 (metal2) 
+  *                and C12 (contact cuts between CM1 and CM2). 
+  *
+  *                Like for the Technology object, a layer must not be deleted, 
+  *                else all components located on it will have a dangling 
+  *                pointer to an deleted object ... 
+  */
+
+
+
+ /*! \typedef      Layer::Inherit
+  *                Useful for calling upon methods of the base class without 
+  *                knowing it. 
+  */
+
+ /*! \typedef      Layer::Mask
+  *                This type represents a mask bit field characterising 
+  *                efficiently the constituents of any kind of layer. It 
+  *                associates to each basic layer a bit and to each composite 
+  *                layer the union of the bits corresponding to its basic 
+  *                layers. 
+  */
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     Technology* Layer::GetTechnology() const;
+  *  \Return       the technolgy owning the layer. 
+  */
+
+ /*! \function     const Name& Layer::GetName() const;
+  *  \Return       the name of the layer. 
+  */
+
+ /*! \function     const Layer::Mask& Layer::GetMask() const;
+  *  \Return       the mask associated to the layer. 
+  */
+
+ /*! \function     const Layer::Mask& Layer::GetExtractMask() const;
+  *  \Return       the mask used for extraction. 
+  *
+  *                Two differents basic layers have different masks but may have 
+  *                same extraction masks (ie CP layer which represent poly and 
+  *                CPG which represent poly used to realize transistor gates). 
+  */
+
+ /*! \function     const Unit& Layer::GetMinimalSize() const;
+  *  \Return       the minimal size allowed for a rectangular layout pad on this 
+  *                layer. 
+  */
+
+ /*! \function     const Unit& Layer::GetMinimalSpacing() const;
+  *  \Return       the minimal spacing between two pads on this layer. 
+  */
+
+ /*! \function     BasicLayers Layer::GetBasicLayers() const;
+  *  \Return       the collection of basic layers within this layer. 
+  *
+  *  \remark       For a basic layer the collection contains this one only. 
+  */
+
+ //  \}
+
+
+ /*! \name         Predicates
+  */
+ //  \{
+
+ /*! \function     bool Layer::Contains(Layer* layer) const;
+  *  \Return       \true if the \c \<layer\> is completely included in the layer 
+  *                \c \<this\> (that is if the basic layers of \c \<layer\> are 
+  *                a sub-set of the basic layers of \c \<this\>), else \false. 
+  */
+
+ /*! \function     bool Layer::Intersect(Layer* layer) const;
+  *  \Return       \true if the \c \<layer\> and the layer \c \<this\> have at 
+  *                least a common basic layer, else \false. 
+  */
+
+ //  \}
+
+
+ /*! \name         Modifiers
+  */
+ //  \{
+
+ /*! \function     void Layer::SetName(const Name& name);
+  *                Sets or changes the layer name. 
+  *
+  *  \remark       An exception is thrown if the name is empty or if there is an 
+  *                other layer with that name. 
+  */
+
+ /*! \function     void Layer::SetMinimalSize(const Unit& minimalSize);
+  *                Sets the minimal size of a pad on this layer. 
+  */
+
+ /*! \function     void Layer::SetMinimalSpacing(const Unit& minimalSpacing);
+  *                Sets the minimal spacing between two pads on this layer. 
+  */
+
+ //  \}
+
+
+ /*! \name         Layer Collection
+  */
+ //  \{
+
+ /*! \typedef      Layers
+  *                Generic collection representing a set of layers. 
+  */
+
+ /*! \typedef      LayerLocator
+  *                Generic locator for traversing a collection of layers. 
+  */
+
+ /*! \typedef      LayerFilter
+  *                Generic filter allowing to select a subset of layers matching 
+  *                some criteria. 
+  */
+
+ /*! \def          for_each_layer(layer, layers)
+  *                Macro for visiting all the layers of a collection of layers. 
+  */
+
+ //  \}
+
+
+ }

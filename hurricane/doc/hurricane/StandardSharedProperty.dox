@@ -1,0 +1,21 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        StandardSharedProperty
+  *  \brief        StandardSharedProperty description (\b API)
+  *
+  *  \section      secStandardSharedPropertyIntro  Introduction
+  *
+  *                Those properties allow to assign to a set of objects a 
+  *                relation between a name and a value. 
+  */
+
+
+
+ /*! \name         Constructors
+  */
+ //  \{
+

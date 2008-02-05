@@ -1,0 +1,10 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Editor
+  *  \brief        Editor description (\b API)
+  *
+ }

@@ -1,0 +1,87 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        SharedProperty
+  *  \brief        SharedProperty description (\b API)
+  *
+  *  \section      secSharedPropertyIntro  Introduction
+  *
+  *                Shared properties can be attached to many objects of the data 
+  *                base. 
+  *
+  *                When a new property is created, it is not yet assigned to any 
+  *                particular object. It becomes effectively the property of an 
+  *                object after the call <b>dbo-\>Put(property)</b>. The 
+  *                property then receives a message <b>OnCapturedBy</b> whose 
+  *                argument is the additional owner. From that time onwards, 
+  *                this object becomes partially responsible of the future of 
+  *                the property. 
+  *
+  *                <b>What can happen then ?</b> 
+  *
+  *                If the property is destroyed : The property being shared, it 
+  *                informs its owners of its deletion. Each of those owners 
+  *                detaches it from the list of its properties. If the object is 
+  *                a quark and that property is the last one it owns, it 
+  *                automatically deletes itself. 
+  *
+  *                If a property of same name already exist : Two properties 
+  *                with the same name can't cohabit, the older one is released 
+  *                by the object which receives the message <b>OnReleasedBy</b> 
+  *                from that old property and proceeds as required according to 
+  *                the type of property. 
+  *
+  *                If the property is attached to a new owner : Being shared, 
+  *                the property is simply captured by this new owner. 
+  *
+  *                If one of the owners of the property is destroyed : The 
+  *                properties captured by this object are then released. The 
+  *                future of those properties is here completely managed by the 
+  *                different messages <b>OnReleasedBy</b> which are associated 
+  *                to them. If the deleted object is the last owner of a shared 
+  *                property, this one is automatically deleted. 
+  */
+
+
+
+ /*! \typedef      typedef SharedProperty::Inherit  Property;
+  *                Useful for calling upon methods of the base class without 
+  *                knowing it. 
+  */
+
+ /*! \section      secSharedPropertyDestruction  Destruction
+  *
+  *                The property has owners, each one is informed of the property 
+  *                deletion and detaches it from its property list. If the 
+  *                object is a quark and if this was the last property owned it 
+  *                automatically deletes itself. 
+  *
+  *  \remark       Once the property is attached to an object this one becomes 
+  *                party responsible of its automatic destruction.When a new 
+  *                owner appears, the other owners delegate to it a part of that 
+  *                responsability. On the other hand, a property which has never 
+  *                been attached to an owner will never be deleted 
+  *                automatically. 
+  */
+
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     DBos SharedProperty::GetOwners() const;
+  *  \Return       the collection of objects owning the property (might be empty 
+  *                if the property has never been attached). 
+  */
+
+ //  \}
+
+
+ /*! \name         Messages
+  */
+ //  \{
+

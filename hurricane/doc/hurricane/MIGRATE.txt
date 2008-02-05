@@ -1,0 +1,184 @@
+
+
+    G u i d e   d e   M i g r a t i o n
+
+
+    1. Arborescence
+
+    Les sources de la nouvelle documentation se trouvent dans :
+        ~/hurricane/documentation/hurricane/doc.new
+
+    Elle est intallée dans :
+        ~/coriolis/Linux.SLA4x/install/share/doc/en/html/hurricane.new
+    
+
+    2. Ajout d'un nouveau fichier
+
+    Il faut modifier les fichiers de configuration suivants :
+
+    2.1 doc.new/doxyfile
+
+    Ajouter a la variable INPUT les fichiers ".h" et ".dox" associés.
+    Sauf en cas de documentation d'une fonction ou d'un objet entièrement
+    local au ".cpp" il n'est pas nécessaire de l'inclure dans la liste.
+    Merci de respecter l'indentation et l'alignement pour qu'on y voie
+    clair.
+
+    2.2 doc.new/Makefile.am
+
+    Ajouter le fichier de documentation (".dox") uniquement à la cible :
+        doc_en_hurricane_EXTRA
+
+
+    3. Ajout d'une figure
+
+    Les figures doivent être mises dans le sous-répertoire "images", au format
+    .fig, si possible (sinon png/gif & pdf pour chaque image).
+
+    3.1 doc.new/images/Makefile.am
+
+    Ajouter le .fig OU les png/gif & pdf à la cible EXTRA_DIST.
+
+    3.2 doc.new/Makefile.am
+
+    Dans le cas des .fig, il faut générer à la volée les png et pdf
+    associés. Pour pouvoir préciser des zooms spécifiques, il faut ajouter
+    un petit morceau de shell script au Makefile.am :
+
+    for figure in DummyFig*.fig; do                                    \
+      zoom="0.7";                                                      \
+      case $$figure in                                                 \
+        DummyFig-1.fig) zoom="0.7";;                                   \
+        DummyFig-2.fig) zoom="0.9";;                                   \
+      esac;                                                            \
+      fig2dev -L png -m $$zoom $$figure `basename $$figure .fig`.png;  \
+      fig2dev -L pdf -p dummy  $$figure `basename $$figure .fig`.pdf;  \
+    done;                                                              \
+
+      C'est la version la plus complexe, on la simplifiera suivant les
+    besoins.
+
+
+    4. Modification du ".h"
+
+    Pour éviter de voir apparaître tous les membres et fonctions membres
+    il est nécessaire de répartir membres documentés et membres non documentés
+    de part et d'autre de la macro "__DOXYGEN_PROCESSOR__".
+      Identification correcte du namespace : les macros BEGIN_HURRICANE_NAMESPACE
+    et END_HURRICANE_NAMESPACE empèche doxygen d'identifier les membres de ce
+    namespace. Il faut les remplacer par leur version expansée :
+          namespace Hurricane {
+          } // End of Hurricane namespace
+      Je pense que de toute façons, ce n'est pas plus mal pour la clarté du code.
+
+    Remarque : Si une classe ou une fonction n'est absolument pas documentée
+               (c.a.d. ni la classe, ni aucun de ses attributs ni aucunes de
+               ses fonctions membres) elle ne sera pas prise en compte dans
+               doxygen et il est donc inutile de faire un partage entre
+               partie documentée ou non.
+
+      Exemple, pour la DataBase :
+
+    namespace Hurricane {
+
+    class DataBase : public DBo {
+
+#   if !defined(__DOXYGEN_PROCESSOR__)
+
+       // Fonctions & membres non documentés.
+       // Attributes
+      private: Technology* _technology;
+      private: Library* _rootLibrary;
+      // Constructors
+      protected: DataBase();
+      // Others
+      protected: virtual void _PostCreate();
+      protected: virtual void _PreDelete();
+      public: virtual string _GetTypeName() const {return _TName("DataBase");};
+      public: virtual string _GetString() const;
+      public: virtual Record* _GetRecord();
+      public: void _SetTechnology(Technology* technology) {_technology = technology;};
+      public: void _SetRootLibrary(Library* rootLibrary) {_rootLibrary = rootLibrary;};
+      public: virtual string _GetHeaderName() const {return "DB";};
+      public: virtual void _SaveHeaderTo(OutputFile& outputFile);
+      public: virtual void _SaveContentTo(OutputFile& outputFile);
+      public: virtual void _Realize(Hurricane::Builder* builder, InputFile& inputFile);
+
+#   endif
+
+      // Fonctions & membres documentés.
+      public: static DataBase* Create();
+      // Accessors
+      public: Technology* GetTechnology() const {return _technology;};
+      public: Library* GetRootLibrary() const {return _rootLibrary;};
+    };
+
+    } // End of Hurricane namespace.
+
+
+    5. Ecriture du ".dox"
+
+    IMPORTANT : D'un point de vue syntaxique le ".dox" est un fichier C/C++,
+                il est donc impératif de respecter les règles de syntaxe.
+
+    Pour éviter d'avoir à préfixer toutes les fonctions/classes par le
+    namespace Hurricane, il plus élégant d'inclure les documentations dans
+    le namespace lui même.
+
+      Indentation : Pour plus de clarté, on réserve la marge de gauche
+    pour les mots clés principaux (\class, \fonction, \section, ...)
+    Le texte doit commencer sur la 20ième colonne.
+
+       Reconnaissance des classes : il n'est plus nécessaire d'écrire une
+     classe entre '@' pour qu'elle soit reconnue comme mot clé et transformée
+     en hyperlien. Par exemple : @DBo@ devient simplement DBo.
+       Les commandes @remark@ et @caution@ deviennent \remark et \caution.
+       Les caractères '>' et '<' peuvent être utilisés directement, au lieu
+     de &gt; et &lt; .
+
+       Classement des fonctions membres par genre : pour cela on utilise
+     les techniques de "grouping". La structure se compose de trois morceaux :
+     \name donne le nom du groupe, immédiatement après on ouvre le groupe
+     avec \{ et on le ferme par \} après les fonctions membres du groupe.
+
+     /*! \name         Constructors & Destructors
+      */
+     // \{
+
+     /*! \function     DataBase* DataBase::Create ();
+      *                Creates and returns a pointer to a new DataBase.
+      *
+      *  \caution      An exception is thrown if a Database already exists.
+      */
+
+     // \}
+
+
+     /*! \name         Accessors
+      */
+     // \{
+
+     /*! \function     Technology* DataBase::GetTechnology () const;
+      *  \return       the Technology if it exists, else \NULL.
+      */
+
+     /*! \function     Technology* DataBase::GetRootLibrary () const;
+      *  \return       the root Library if it exists, else \NULL.
+      */
+
+     // \}
+
+       
+     6. Génération de la documentation
+
+
+     Pour éviter de recompiler à chaque fois Hurricane on peu directement
+     faire un "make install" dans le répertoire de build :
+
+       (cd ~/coriolis/Linux.SLA4x/build/hurricane/documentation/hurricane/doc.new; make install)
+
+     NB: Il faut avoir fait tourner huitre au moins une fois avant de pouvoir
+         utiliser la commande précédente.
+
+
+     7. Enjoy!

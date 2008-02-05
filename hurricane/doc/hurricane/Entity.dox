@@ -1,0 +1,62 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Entity
+  *  \brief        Occurrenceable objects root class (\b API).
+  *
+  *  \section      sEntityIntro  Introduction
+  *
+  *                Entities are abstract objects representing the category of
+  *                occurrenceable objects.
+  */
+
+
+ /*! \name         Accessors
+  */
+ // \{
+
+ /*! \function     Cell* Entity::GetCell () const;
+  *  \return       Returns the cell owning this entity (when the Entity is a Cell,
+  *                the Cell itself is returned)
+  */
+
+ /*! \function     Box  Entity::GetBoundingBox () const;
+  *  \return       Returns the bounding box of the entity. It is defined as the
+  *                smallest box enclosing the entity or its constituents.
+  *
+  *  \remark       For the Plugs, which are not objects of the physical layout,
+  *                the returned envelope is a Box of null dimensions (ponctual)
+  *                centered on the location of the master Net of the Plug, to
+  *                which has been applied the transformation associated to the
+  *                Instance of the Plug.
+  */
+
+ // \}
+
+
+ /*! \name         Entity Collection
+  */
+ // \{
+
+ /*! \typedef      typedef GenericCollection<Entity*> Entities;
+  *                Generic collection representing a set of data base objects.
+  */
+
+ /*! \typedef      typedef GenericLocator<Entity*> EntityLocator;
+  *                Generic locator for visiting a data base objects Collection.
+  */
+
+ /*! \typedef      typedef GenericFilter<Entity*> EntityFilter;
+  *                Filter to selecting a subset of data base objects matching some criteria.
+  */
+
+ /*! \def          for_each_entity(entity,entities)
+  *                Macro for visiting all objects of a data base objects collection.
+  */
+
+ // \}
+
+ }

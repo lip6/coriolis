@@ -1,0 +1,165 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        BasicLayer
+  *  \brief        BasicLayer description (\b API)
+  *
+  */
+
+
+ /*! \typedef      BasicLayer::Inherit
+  *                Useful for calling upon methods of the base class without 
+  *                knowing it. 
+  */
+
+ /*! \name         Constructors
+  */
+ //  \{
+
+ /*! \function     BasicLayer* BasicLayer::Create(Technology* technology,const Name& name,const BasicLayer::Type& type,unsigned extractNumber,const Unit& minimalSize = 0,const Unit& minimalSpacing = 0);
+  *                Creates and returns a new basic layer named \c \<name\>, of 
+  *                type \c \<type\> for the given technology (some geometrical 
+  *                characteristics can also be specified). 
+  *
+  *  \caution      Throws an exception if the technology is null, if the name is 
+  *                empty, if a layer of same name already exists or if we 
+  *                overflow the capacity of the bit field associated to the 
+  *                layer mask. 
+  *
+  *  \remark       The extract number is a kind of logic number. In example the 
+  *                CP layer which represent a poly layer should have the same 
+  *                extract number as the CPG layer which represent a poly layer 
+  *                used to realize the transistor gates. While extractions 
+  *                process, layers which have the same extract number are 
+  *                considered as equivalents. A null value indicates that the 
+  *                extraction should ignore this layer. 
+  */
+
+ //  \}
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     const BasicLayer::Type& BasicLayer::GetType() const;
+  *  \Return       the basic layer type. 
+  */
+
+ /*! \function     unsigned BasicLayer::GetExtractNumber() const;
+  *  \Return       the extract number. 
+  */
+
+ /*! \function     const unsigned short& BasicLayer::GetRedValue() const;
+  *                No description.
+  */
+
+ /*! \function     const unsigned short& BasicLayer::GetGreenValue() const;
+  *                No description.
+  */
+
+ /*! \function     const unsigned short& BasicLayer::GetBlueValue() const;
+  *                No description.
+  */
+
+ /*! \function     const string& BasicLayer::GetFillPattern() const;
+  *                Basic layers have graphic display characteristics which are 
+  *                defined by both a color and a filling pattern. The above 
+  *                methods provide the corresponding accessor functions. 
+  *
+  *                <b>Color :</b> 
+  *
+  *                A color is defined by its three RGB components (whose values 
+  *                lies in the 0, 255). 
+  *
+  *                <b>Pattern :</b> 
+  *
+  *                A filling pattern is a stiple (transparent bitmap) of 8 by 8 
+  *                pixels. The 64 bits of this stiple are defined by a string of 
+  *                16 characters (allowed characters are 0123456789ABCDEF and 
+  *                abcdef). The 2 first characters describe the first line, the 
+  *                following 2 the second line and so forth. Pixels set to 1 
+  *                will be drawn with the color layer while pixels set to 0 are 
+  *                transparent. So the string "A5A5A5A5A5A5A5A5" represents a 
+  *                stipple with staggered pixel each two ones, while the 
+  *                "FFFFFFFFFFFFFFFF" stipple fills all the pixels (default 
+  *                value). 
+  */
+
+ /*! \function     double BasicLayer::GetDisplayThreshold() const;
+  *                In order to get an efficient graphic display we need : 
+  *
+  *                On one hand, when we are in close view, quickly filter 
+  *                objects which don't intersect the visible area. This is done 
+  *                by a quadtree geometrical access structure and also by the 
+  *                hierachy of cell assembly. 
+  *
+  *                On the other hand, when we are in an overview, not display 
+  *                very small objects (it is useless to display the internals of 
+  *                cells which represent few pixels on screen) and not display 
+  *                components laying on deep layers (because this doesn't help 
+  *                and probably the drawing will be hidden by upper layers). 
+  *
+  *                There is not a clear-cut between those two modes, so we 
+  *                change progressively the display behaviour. 
+  *
+  *                For that purpose we introduce for each basic layer a display 
+  *                threshold with shifting values, this makes appear 
+  *                progresively the different deep layers while we get closer 
+  *                and closer to the basic components 
+  */
+
+ //  \}
+
+
+ /*! \name         Modifiers
+  */
+ //  \{
+
+ /*! \function     void BasicLayer::SetColor(unsigned short redValue, unsigned short greenValue, unsigned short blueValue);
+  *                Sets the color of a basic layer. 
+  */
+
+ /*! \function     void BasicLayer::SetFillPattern(const string& fillPattern);
+  *                Sets the filling pattern of a basic layer. 
+  *
+  *  \caution      Throws an exception if the string does't obey to the rules 
+  *                described above. 
+  */
+
+ /*! \function     void BasicLayer::SetDisplayThreshold(double threshold);
+  *                Sets the display threshold of a basic layer. 
+  */
+
+ //  \}
+
+
+ /*! \name         BasicLayer Collection
+  */
+ //  \{
+
+ /*! \typedef      BasicLayers
+  *                Generic collection representing a set of basic layers. 
+  */
+
+ /*! \typedef      BasicLayerLocator
+  *                Generic locator for traversing a collection of basic layers. 
+  */
+
+ /*! \typedef      BasicLayerFilter
+  *                Generic filter allowing to select a subset of basic layers 
+  *                matching some criteria. 
+  */
+
+ /*! \def          for_each_basic_layer(basicLayer, basicLayers)
+  *                Macro for visiting all the layers of a collection of basic 
+  *                layers. 
+  */
+
+ //  \}
+
+
+ }

@@ -1,0 +1,12 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Primitive
+  *  \brief        Primitive description (\b API)
+  *
+  */
+
+ }

@@ -1,0 +1,141 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \defgroup     Unit  Unit description
+  *
+  *  \section      secUnitIntro  Introduction
+  *
+  *                Those objects are used to model a geometric lengths, that is 
+  *                abscissas, ordinates, widths, offsets ... 
+  *
+  *                They are represented internally by a <b>long integer</b> 
+  *                asociated with a <b>precision</b> and not by a double in 
+  *                order to avoid floating point round errors. 
+  * 
+  * 
+  *  \section      secUnitPrecision  Precision
+  *
+  *                It is possible to choose (once for all) the precision with 
+  *                which unit values are stored. 
+  *
+  *                This precision represents the maximal number of decimal 
+  *                digits allowed (it applies globally to all units). Therefore 
+  *                for a precision of 3, the unit will represent a value of 
+  *                0.001 and the effective value 23.54 will be represented by a 
+  *                unit equal to 23540. 
+  *
+  *                <ul>
+  *                  <li><b>Unit::GetPrecision</b>
+  *                  <li><b>Unit::GetMaximalPrecisionAllowed</b>
+  *                  <li><b>Unit::SetPrecision</b>
+  *                </ul>
+  * 
+  * 
+  *  \section      secUnitResolution  Resolution
+  *
+  *                The resolution is associated to the precision. Indeed it 
+  *                represents the external value associated to the smallest 
+  *                unit, that is the value returned by GetValue(GetUnit(1)). 
+  *
+  *                <b>Unit::GetResolution</b>
+  * 
+  * 
+  *  \section      secUnitGrid  Grid
+  *
+  *                <ul>
+  *                  <li><b>Unit::GetGridStep</b>
+  *                  <li><b>Unit::SetGridStep</b>
+  *                  <li><b>Unit::IsOnGrid</b>
+  *                  <li><b>Unit::GetOnGridUnit</b>
+  *                </ul>
+  * 
+  * 
+  *  \section      secUnitTranslators  Translators
+  *
+  *                <ul>
+  *                  <li><b>Unit::GetUnit</b>
+  *                  <li><b>Unit::GetValue</b>
+  *                  <li><b>Unit::GetValueString</b>
+  *                </ul>
+  */
+
+
+
+ /*! \ingroup      Unit
+  */
+ //  \{
+
+ /*! \function     bool Unit::IsOnGrid(const Unit& unit, int n = 1);
+  *  \Return       \true if the unit is on grid, else \false. The argument 
+  *                \c \<n\> allows to consider on grid only multiples of 
+  *                \c \<n\> grid steps. So if n=1 all grid steps are considered, 
+  *                but if n=2 only even grid steps are considered. 
+  */
+
+
+ /*! \function     unsigned Unit::GetPrecision();
+  *  \Return       the current precision (whose default is fixed to 0). 
+  */
+
+ /*! \function     unsigned Unit::GetMaximalPrecisionAllowed();
+  *  \Return       the maximal precision allowed (currently fixed to 3). 
+  */
+
+ /*! \function     double Unit::GetResolution();
+  *  \Return       the current resolution. 
+  */
+
+ /*! \function     const Unit& Unit::GetGridStep();
+  *  \Return       the grid step. 
+  */
+
+ /*! \function     Unit Unit::GetOnGridUnit(const Unit& unit, int s = 0);
+  *  \Return       the closest location on grid if the argument \c \<s\> equals 
+  *                0, the closest inferior location on grid if the argument 
+  *                \c \<s\> equals -1 and the closest superior location on grid 
+  *                if the argument \c \<s\> equals +1. 
+  *
+  *  \remark       Throw an exception for any other \c \<s\> argument value. 
+  */
+
+ /*! \function     Unit GetUnit(double value);
+  *  \Return       the unit corresponding to the value \c \<value\> according to 
+  *                the current precision. 
+  */
+
+ /*! \function     double GetValue(const Unit& unit);
+  *  \Return       the external value associated to the unit \c \<unit\> 
+  *                according to the current precision. 
+  */
+
+ /*! \function     string GetValueString(const Unit& unit);
+  *  \Return       a character string representing the external value of 
+  *                \c \<unit\>. 
+  *
+  *  \remark       This string is shorter than the one we could print from the 
+  *                external value because non needed decimals are not drawn (nor 
+  *                the point if value is integer). 
+  */
+
+
+ /*! \function     void SetPrecision(unsigned precision);
+  *                Allows to set the precision at a requested value. This must 
+  *                be done at the begining of the program (before the creation 
+  *                of the first unit) and not changed for the following (unless 
+  *                mandatory and for a temporary period because all existing 
+  *                units would be misinterpreted). 
+  *
+  *  \remark       This function throws an exception if the requested precision 
+  *                is greater than the maximal one. 
+  */
+
+ /*! \function     void SetGridStep(const Unit& gridStep);
+  *                Allows to change the grid step. 
+  */
+
+ //  \}
+
+ }

@@ -1,0 +1,310 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Net
+  *  \brief        Net description (\b API)
+  *
+  *  \section      secNetPredefinedFilters  Predefined filters
+  *
+  *                <b>Hurricane::Net::GetIsGlobalFilter</b>
+  *                <b>Hurricane::Net::GetIsExternalFilter</b>
+  *                <b>Hurricane::Net::GetIsInternalFilter</b>
+  *                <b>Hurricane::Net::GetIsClockFilter</b>
+  *                <b>Hurricane::Net::GetIsSupplyFilter</b>
+  */
+
+
+ /*! \typedef      Net::Inherit
+  *                Useful for calling upon methods of the base class without 
+  *                knowing it. 
+  */
+
+ /*! \typedef      Net::Arity
+  *                This type allows to represent the number of bits associated 
+  *                to a net (a null value meaning undefined). 
+  */
+
+ /*! \class        Net::Type
+  *                This enumeration defines the signal category. table: 
+  *                Available Signal Types headers: Name Code Signification 
+  *                slots: UNDEFINED 0 Type undefined slots: LOGICAL 1 Type 
+  *                assigned to ordinary signals slots: CLOCK 2 Type assigned to 
+  *                clock signals slots: SUPPLY 3 Type assigned to supply signals 
+  */
+
+ /*! \class        Net::Direction
+  *                This enumeration defines the signal direction. This direction 
+  *                is meaningful for external nets only. table: Available 
+  *                Directions headers: Name Code Signification slots: UNDEFINED 
+  *                0 Undefined direction slots: IN 1 There must be no driver 
+  *                inside and a single permanent driver outside slots: OUT 2 
+  *                There must be no driver outside and a single permanent driver 
+  *                inside slots: INOUT 3 No constraint slots: TRISTATE 4 Type 
+  *                assigned to logical tri-states signals 
+  */
+
+ /*! \name         Constructors
+  */
+ //  \{
+
+ /*! \function     Net* Net::Create(Cell* cell, const Name& name);
+  *                Creates and returns a new net named \c \<name\> for the cell 
+  *                \c \<cell\>. 
+  *
+  *  \caution      Throws an exception if the cell is null, if the name empty or 
+  *                if a net with same name already exists. 
+  */
+
+ //  \}
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     const Name& Net::GetName() const;
+  *  \Return       the net name. 
+  */
+
+ /*! \function     const Net::Arity& Net::GetArity() const;
+  *  \Return       the signal arity (by default set to 1). 
+  */
+
+ /*! \function     const Net::Type& Net::GetType() const;
+  *  \Return       the signal type (by default set to UNDEFINED). 
+  */
+
+ /*! \function     const Net::Direction& Net::GetDirection() const;
+  *  \Return       the signal direction (by default set to UNDEFINED). 
+  *
+  *  \remark       This direction is meaningfull only for external nets. 
+  */
+
+ /*! \function     const Point& Net::GetPosition() const;
+  *  \Return       the X,Y position of the net. This position is used for 
+  *                computing the location of the plugs (on slave instances 
+  *                calling the cell owning this net) having that net as master. 
+  */
+
+ /*! \function     const Unit& Net::GetX() const;
+  *  \Return       net abscissa. 
+  */
+
+ /*! \function     const Unit& Net::GetY() const;
+  *  \Return       net ordinate. 
+  */
+
+ /*! \function     Rubbers Net::GetRubbers() const;
+  *  \Return       the collection of net's rubbers. 
+  */
+
+ /*! \function     Components Net::GetComponents() const;
+  *  \Return       the collection of net's components. 
+  */
+
+ /*! \function     Plugs Net::GetPlugs() const;
+  *  \Return       the collection of net's plugs. 
+  */
+
+ /*! \function     Contacts Net::GetContacts() const;
+  *  \Return       the collection of net's contacts. 
+  */
+
+ /*! \function     Segments Net::GetSegments() const;
+  *  \Return       the collection of net's segments. 
+  */
+
+ /*! \function     Verticals Net::GetVerticals() const;
+  *  \Return       the collection of net's vertical segments. 
+  */
+
+ /*! \function     Horizontals Net::GetHorizontals() const;
+  *  \Return       the collection of net's horizontal segments. 
+  */
+
+ /*! \function     Pads Net::GetPads() const;
+  *  \Return       the collection of net's pads. 
+  */
+
+ /*! \function     Plugs Net::GetSlavePlugs() const;
+  *  \Return       the collection of plugs which have this net as master. 
+  *
+  *  \remark       Meaningfull only for external nets. 
+  */
+
+ /*! \function     Plugs Net::GetConnectedSlavePlugs() const;
+  *  \Return       the collection of connected plugs which have this net as 
+  *                master. 
+  *
+  *  \remark       Meaningfull only for external nets. 
+  */
+
+ /*! \function     Plugs Net::GetUnconnectedSlavePlugs() const;
+  *  \Return       the collection of unconnected plugs which have this net as 
+  *                master. 
+  *
+  *  \remark       Meaningfull only for external nets. 
+  */
+
+ //  \}
+
+
+ /*! \name         Predicates
+  */
+ //  \{
+
+ /*! \function     bool Net::IsGlobal() const;
+  *  \Return       \true if the net is global else \false. 
+  */
+
+ /*! \function     bool Net::IsExternal() const;
+  *  \Return       \true if the net is external else \false. 
+  */
+
+ /*! \function     bool Net::IsLogical() const;
+  *  \Return       \true if the net is logical else \false. 
+  */
+
+ /*  \function     bool Net::IsTriState() const;
+  *  \Return       \true if the net is tri-state else \false. 
+  */
+
+ /*! \function     bool Net::IsClock() const;
+  *  \Return       \true if the net is a clock else \false. 
+  */
+
+ /*! \function     bool Net::IsSupply() const;
+  *  \Return       \true if the net is a supply else \false. 
+  */
+
+ //  \}
+
+
+ /*! \name         Modifiers
+  */
+ //  \{
+
+ /*! \function     void Net::SetName(const Name& name);
+  *                Allows to change net name. 
+  *
+  *  \remark       Throws an exception if the new name is empty, or if a net 
+  *                with same net already exists in the cell. 
+  */
+
+ /*! \function     void Net::SetArity(const Net::Arity& arity);
+  *                Sets the signal arity to \c \<arity\>. 
+  */
+
+ /*! \function     void Net::SetGlobal(bool state);
+  *                Sets global signal status to \c \<state\>. 
+  */
+
+ /*! \function     void Net::SetExternal(bool state);
+  *                Sets the external net status to \c \<state\>. 
+  *
+  *  \remark       This function will throw an exception if the net switches to 
+  *                internal and there is a plug refering to it. 
+  */
+
+ /*! \function     void Net::SetType(const Net::Type& type);
+  *                Sets the signal type of the net. 
+  */
+
+ /*! \function     void Net::SetDirection(const Net::Direction& direction);
+  *                Sets the signal direction of the net. 
+  */
+
+ /*! \function     void Net::SetPosition(const Point& position);
+  *                Sets the X,Y location of the net. By default it is located at 
+  *                the coordinates origin of the cell (point 0,0). 
+  */
+
+ /*! \function     void Net::Materialize();;
+  *                Materializes all the rubbers and components of a net. 
+  */
+
+ /*! \function     void Net::Unmaterialize();;
+  *                De-materializes all rubbers and the components of a net. 
+  */
+
+ /*! \function     void Net::Merge(Net* net);
+  *                Merges the net \c \<net\> to the net \c \<this\> which keeps 
+  *                its characteristics (arity, global, external and direction). 
+  *
+  *  \caution      An exception is thrown if the \c \<net\> is null or equal to 
+  *                \c \<this\>, if the two nets don't belong to the same cell or 
+  *                if \c \<net\> is external and master net of a connected plug 
+  *                while net \c \<this\> is not external. 
+  *
+  *  \remark       All the rubbers and the components of the \c \<net\> (and 
+  *                also the plugs) become rubbers or components of the net 
+  *                \c \<this\>. Nevertheless if for a particular slave instance 
+  *                there was both a plug referencing the \c \<net\> and an other 
+  *                plug referencing \c \<this\>, the first is deleted to the 
+  *                advantage of the second, because a net can't have more than 
+  *                one plug for a given instance (the rings of the body hooks 
+  *                are then merged). 
+  *
+  *  \remark       Once the merger done the net \c \<net\> is definitively 
+  *                deleted. Its properties and those of its deleted plugs, if 
+  *                any, are lost (as well as the ones which could be attached to 
+  *                their occurences). 
+  */
+
+ //  \}
+
+
+ /*! \name         Net Collection
+  */
+ //  \{
+
+ /*! \typedef      Nets
+  *                Generic collection representing a set of nets. 
+  */
+
+ /*! \typedef      NetLocator
+  *                Generic locator for traversing a collection of nets. 
+  */
+
+ /*! \typedef      NetFilter
+  *                Generic filter allowing to select a subset of nets matching 
+  *                some criteria. 
+  */
+
+ /*! \def          for_each_net(net, nets)
+  *                Macro for visiting all the nets of a collection of nets. 
+  */
+
+ //  \}
+
+
+ /*  \name         Accessors
+  */
+ //  \{
+
+ /*! \function     NetFilter Net::GetIsGlobalFilter();
+  *  \Return       the filter selecting global nets. 
+  */
+
+ /*! \function     NetFilter Net::GetIsExternalFilter();
+  *  \Return       the filter selecting external nets. 
+  */
+
+ /*! \function     NetFilter Net::GetIsInternalFilter();
+  *  \Return       the filter selecting internal nets. 
+  */
+
+ /*! \function     NetFilter Net::GetIsClockFilter();
+  *  \Return       the filter selecting clock nets. 
+  */
+
+ /*! \function     NetFilter Net::GetIsSupplyFilter();
+  *  \Return       the filter selecting supply nets. 
+  */
+
+ //  \}
+
+ }

@@ -1,0 +1,12 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Relation
+  *  \brief        Relation description (\b API)
+  *
+  */
+
+ }

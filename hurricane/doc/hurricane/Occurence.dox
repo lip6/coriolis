@@ -1,0 +1,261 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Occurrence
+  *  \brief        Occurrence description (\b API)
+  *
+  *  \section      secOccurrenceIntro  Introduction
+  *
+  *                Occurrences are objects providing the capability to designate 
+  *                any entity of the hierarchical assembly as if this one was 
+  *                virtually unfolded. 
+  *
+  *                For that purpose they handle, on one side the referenced 
+  *                entity and on the other side the hierarchical instanciation 
+  *                path which refers to the cell containing this entity. 
+  *
+  *                Those occurrences are handy, volatile and very light objects. 
+  *                Two different occurrences may designate the same entity of the 
+  *                virtually unfolded data structure, simplifying the creation 
+  *                and deletion of those objects. 
+  */
+
+
+
+ /*! \section      secOccurrenceProperties  Properties
+  *
+  *                Anyway it is possible to attach properties to each occurrence. 
+  *
+  *                Of course, those properties are securely stored in order to 
+  *                access them unambiguously. 
+  *
+  *                Therefore, if a property is placed on an occurrence, we have 
+  *                access to it from a different occurrence provided it 
+  *                designates the same entity of the virtually unfolded data 
+  *                structure. 
+  */
+
+
+
+ /*! \section      secOccurrenceTerminology  Terminology
+  *
+  *                An occurrence is said invalid if it refers no entity. 
+  *
+  *                When it is valid, an occurrence has : an <b>OwnerCell</b> 
+  *                which is either the cell owning the path if this one is non 
+  *                void, else the cell owning the entity itself. and a 
+  *                <b>MasterCell</b> which is always the cell owning the entity. 
+  */
+
+
+
+ /*! \name         Constructors
+  */
+ //  \{
+
+ /*! \function     Occurrence(Entity* entity = NULL);
+  *                Builds an occurrence refering to an entity through a void 
+  *                path, in some way it is equivalent to the entity itself. 
+  *
+  *  \remark       If the entity is null the occurrence is invalid. 
+  */
+
+ /*! \function     Occurrence(Entity* entity, const Path& path);
+  *                Builds an occurrence refering to an entity through a path 
+  *                (possibly void). 
+  *
+  *  \caution      If the entity is null or if the path is uncompatible with the 
+  *                entity, an exception is thrown. 
+  *
+  *  \remark       The entity and the path are compatible if the path is void or 
+  *                if the master cell of the path is the cell owning the entity. 
+  */
+
+ /*! \function     Occurrence(const Occurrence& Occurrence);
+  *                Copy constructor. 
+  */
+
+ //  \}
+
+
+ /*! \name         Destructors
+  */
+ //  \{
+
+ /*! \function     Occurrence::~Occurrence();
+  *                No description.
+  */
+
+ //  \}
+
+
+ /*! \name         Operators
+  */
+ //  \{
+
+ /*! \function     Occurrence& Occurrence::operator=(const Occurrence& occurrence);
+  *                Assignment operator. 
+  */
+
+ /*! \function     bool Occurrence::operator==(const Occurrence& occurrence) const;
+  *                Two occurrences are equal if both are valid and refer to the 
+  *                same entity and have indentical instanciation pathes. 
+  */
+
+ /*! \function     bool Occurrence::operator!=(const Occurrence& occurrence) const;
+  *                Two occurrences are different if a least one is either invalid 
+  *                or both don't refer to the same entity or have differing 
+  *                instanciation pathes. 
+  */
+
+ /*! \function     bool Occurrence::operator<(const Occurrence& occurrence) const;
+  *                This comparator has no particular signification. It is just 
+  *                defined to be abble to use a STL set of occurrences which need 
+  *                a comparator. 
+  */
+
+ //  \}
+
+
+ /*! \section      secOccurrenceRemarks  Remarks
+  *
+  *                All constructors, the destructor and the different operators 
+  *                are very efficient. 
+  */
+
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     Entity* Occurrence::GetEntity() const;
+  *  \Return       the referenced entity or NULL if the occurrence is invalid. 
+  */
+
+ /*! \function     const Path& Occurrence::GetPath() const;
+  *  \Return       the hierarchical instanciation path of the occurrence 
+  *                (possibly void, but always void when the occurrence id 
+  *                invalid). 
+  */
+
+ /*! \function     Cell* Occurrence::GetOwnerCell() const;
+  *  \Return       the owner cell of the occurrence or NULL if the occurrence is 
+  *                invalid. 
+  */
+
+ /*! \function     Cell* Occurrence::GetMasterCell() const;
+  *  \Return       the cell owning the referenced entity or NULL if the 
+  *                occurrence is invalid. 
+  */
+
+ /*! \function     Property* Occurrence::GetProperty(const Name& name) const;
+  *  \Return       the property named \c \<name\> if it exists or NULL if not 
+  *                (or if the occurrence is invalid). 
+  */
+
+ /*! \function     Properties Occurrence::GetProperties() const;
+  *  \Return       the collection of properties attached to the occurrence 
+  *                (always empty if the occurrence is invalid). 
+  */
+
+ /*! \function     Box Occurrence::GetBoundingBox() const;
+  *  \Return       the bounding box of the occurrence (within the coordinate 
+  *                sysem of the owner cell) if it is valid or else the empty 
+  *                box. 
+  */
+
+ //  \}
+
+
+ /*! \name         Predicates
+  */
+ //  \{
+
+ /*! \function     bool Occurrence::IsValid() const;
+  *  \Return       \true if the occurrence is valid, else \false (the occurrence 
+  *                refers no entity). 
+  */
+
+ /*! \function     bool Occurrence::HasProperty() const;
+  *  \Return       \true if the occurrence owns some property else \false. 
+  */
+
+ //  \}
+
+
+ /*! \name         Modifiers
+  */
+ //  \{
+
+ /*! \function     void Occurrence::Put(Property* property);
+  *                Adds the property \c \<property\> to the occurrence property 
+  *                set. The property being named, if another property already 
+  *                exists in the set it will be, in a first step, detached from 
+  *                this set. 
+  *
+  *  \remarks      Does nothing if the occurrence already owns this property 
+  *                object. 
+  *
+  *  \caution      If the occurrence is invalid or the property null, an 
+  *                exception is thrown. 
+  */
+
+ /*! \function     void Occurrence::Remove(Property* property);
+  *                Removes the property \c \<property\> from the occurrence 
+  *                property set. 
+  *
+  *  \remark       Does nothing if the occurrence doesn't own this property 
+  *                object. 
+  *
+  *  \caution      If the occurrence is invalid or the property null, an 
+  *                exception is thrown. 
+  */
+
+ /*! \function     void Occurrence::RemoveProperty(const Name& name);
+  *                Removes the property of name \c \<name\> if it exists. 
+  *
+  *  \caution      If the occurrence is invalid an exception is thrown. 
+  */
+
+ /*! \function     void Occurrence::ClearProperties();
+  *                Removes all properties attached to the occurrence. As a 
+  *                consequence, the occurrence is deleted. 
+  *
+  *  \caution      If the occurrence is invalid an exception is thrown. 
+  */
+
+ //  \}
+
+
+ /*! \section      secOccurrenceNouveauxTypesGlobaux  Nouveaux types globaux
+  *
+  *                type: <b>Occurrences</b> -\> Collection\<Occurrence*\> 
+  *                Collection representing a set of occurrences. 
+  *
+  *                type: <b>OccurrenceLocator</b> -\> 
+  *                GenericLocator\<Occurrence*\> Locator for traversing a set of 
+  *                occurrences. 
+  *
+  *                type: <b>OccurrenceFilter</b> -\> GenericFilter\<Occurrence*\> 
+  *                Filter for selecting a subset of occurrences matching some 
+  *                criteria. 
+  */
+
+
+
+ /*! \name         Occurrence Collection
+  */
+ //  \{
+
+ /*! \def          for_each_occurrence(occurrence, occurrences)
+  *                Macro for visiting all occurrences of an occurrence collection. 
+  */
+
+ //  \}
+
+
+ }

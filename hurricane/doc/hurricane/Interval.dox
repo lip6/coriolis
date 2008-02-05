@@ -1,0 +1,211 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Interval
+  *  \brief        Interval description (\b API)
+  *
+  *  \section      secIntervalIntro  Introduction
+  *
+  *                Those objects represent intervals. They are defined by the 
+  *                values <b>VMin</b> and <b>VMax</b> which are representatives 
+  *                only when the interval is not empty. An interval is 
+  *                considered empty whenever it is not initialized or when it 
+  *                doesn't represent a real interval like the intersection of 
+  *                two disjoint intervals. 
+  * 
+  * 
+  *  \section      secIntervalRemark  Remark
+  *
+  *                All the function described in the chapter above return a 
+  *                reference on the modified interval, providing so the 
+  *                capability to apply to it a new modification. 
+  */
+
+
+
+ /*! \name         Constructors
+  */
+ //  \{
+
+ /*! \function     Interval::Interval(bool makeEmpty=true);
+  *                Default constructor : the returned interval is empty if 
+  *                <b>makeEmpy</b> is set to <b>true</b> (default) or full span 
+  *                otherwise. 
+  */
+
+ /*! \function     Interval::Interval(const Unit& v);
+  *                Builds an interval of null size centered on the value defined 
+  *                by \c \<v\>. 
+  */
+
+ /*! \function     Interval::Interval(const Unit& v1, const Unit& v2);
+  *                Builds the minimal interval enclosing the two values defined 
+  *                by \c \<v1\> and \c \<v2\>. 
+  */
+
+ /*! \function     Interval::Interval(const Interval& interval);
+  *                Copy constructor. 
+  */
+
+ //  \}
+
+
+ /*! \name         Operators
+  */
+ //  \{
+
+ /*! \function     Interval& Interval::operator=(const Interval& interval);
+  *                Assignment operator. 
+  */
+
+ /*! \function     bool Interval::operator==(const Interval& interval) const;
+  *                Equality operator. 
+  *
+  *  \remark       Two empty intervals are always different. 
+  */
+
+ /*! \function     bool Interval::operator!=(const Interval& interval) const;
+  *                Difference operator. 
+  */
+
+ //  \}
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     const Unit& Interval::GetVMin() const;
+  *  \Return       the VMin value : meaningful only for a non empty interval. 
+  */
+
+ /*! \function     const Unit& Interval::GetVMax() const;
+  *  \Return       the VMax value : meaningful only for a non empty interval. 
+  */
+
+ /*! \function     Unit Interval::GetCenter() const;
+  *  \Return       the interval center value : meaningful only for a non empty 
+  *                interval. 
+  */
+
+ /*! \function     Unit Interval::GetSize() const;
+  *  \Return       the interval size : meaningful only for a non empty interval. 
+  */
+
+ /*! \function     Unit Interval::GetHalfSize() const;
+  *  \Return       the half interval width : meaningful only for a non empty 
+  *                interval. 
+  */
+
+ /*! \function     Interval Interval::GetUnion(const Interval& interval) const;
+  *  \Return       the smallest enclosing interval containing the intervals 
+  *                \c \<this\> and \c \<interval\>. The returned interval may be 
+  *                empty if both are. 
+  */
+
+ /*! \function     Interval Interval::GetIntersection(const Interval& interval) const;
+  *  \Return       interval representing the overlapping region. This interval 
+  *                is empty if either one of the two intervals is empty or if 
+  *                they are disjoint. 
+  */
+
+ //  \}
+
+
+ /*! \name         Predicates
+  */
+ //  \{
+
+ /*! \function     bool Interval::IsEmpty() const;
+  *  \Return       \true if the interval is empty, else \false. 
+  */
+
+ /*! \function     bool Interval::IsPonctual() const;
+  *  \Return       \true if the interval is reduced to a value, else \false. 
+  */
+
+ /*! \function     bool Interval::Contains(const Unit& v) const;
+  *  \Return       \true if the interval is non empty and contains the value 
+  *                defined by \c \<v\> else \false. 
+  */
+
+ /*! \function     bool Interval::Contains(const Interval& interval) const;
+  *  \Return       \true if the two intervals are non empty and if the interval 
+  *                \c \<this\> contains the interval \c \<interval\>, else 
+  *                \false. 
+  */
+
+ /*! \function     bool Interval::Intersect(const Interval& interval) const;
+  *  \Return       \true if the two intervals are non empty and if they overlap, 
+  *                else \false. 
+  */
+
+ //  \}
+
+
+ /*! \name         Modifiers
+  */
+ //  \{
+
+ /*! \function     Interval& Interval::MakeEmpty();
+  *                Transforms the interval into an empty one. 
+  */
+
+ /*! \function     Interval& Interval::Inflate(const Unit& dv);
+  *                Expands (or contracts) the interval, if not empty, in each 
+  *                direction of the quantity \c \<dv\>. This quantity might be 
+  *                negative enough to transform it into an empty interval. 
+  */
+
+ /*! \function     Interval& Interval::Inflate(const Unit& dvMin, const Unit& dvMax);
+  *                Expands (or contracts) the interval, if not empty, on the 
+  *                left of the quantity \c \<dvMin\> and on the right of the 
+  *                quantity \c \<dvMax\>. Those quantities might be negative 
+  *                enough to transform it into an empty interval. 
+  */
+
+ /*! \function     Interval& Interval::Merge(const Unit& v);
+  *                Expands the interval in order that it encloses the value 
+  *                defined \c \<v\>. If the interval was initially empty it 
+  *                becomes reduced to the enclosed value. 
+  */
+
+ /*! \function     Interval& Interval::Merge(const Interval& interval);
+  *                Expands the interval in order that it encloses, if not empty, 
+  *                the interval \c \<interval\>. If the interval \c \<this\> was 
+  *                initially empty it becomes reduced to the enclosed interval. 
+  */
+
+ /*! \function     Interval& Interval::Intersection(const Unit& vMin, const Unit& vMax);
+  *                The interval becomes the intersection of itself and 
+  *                <b>[vMin,vMax]</b>. 
+  */
+
+ /*! \function     Interval& Interval::Intersection(const Interval& interval);
+  *                The interval becomes the intersection of itself and 
+  *                <b>interval</b>. 
+  */
+
+ /*! \function     Interval& Interval::Translate(const Unit& dv);
+  *                Translates the interval, if not empty, of the quantity 
+  *                \c \<dv\>. 
+  *
+  *                Exemple : 
+\code
+Interval interval1 = Interval(10, 100);
+Interval interval2 = interval1;
+ 
+assert(interval1.Translate(10) == interval2.Inflate(-10, 10));
+\endcode
+  *
+  *                
+  */
+
+ //  \}
+
+
+
+ }

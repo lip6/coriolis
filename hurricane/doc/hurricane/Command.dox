@@ -1,0 +1,421 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Command
+  *  \brief        Command description (\b API)
+  *
+  *  \section      secCommandIntro  Introduction
+  *
+  *                A command is an object which models the behaviour to be 
+  *                obtained in reaction to mouse or keyboard events within a 
+  *                view. 
+  *
+  *                In order to better understand the interaction between the 
+  *                view and the command we will study, at the end of this 
+  *                chapter, a specific and useful command : the zoom. 
+  *
+  *                Let us notice first that, in order to be active in a given 
+  *                view, a command must be installed within this view. Notice 
+  *                also that a command can be installed within many views. 
+  *                Therefore when a new type of command is needed only one 
+  *                instance has to be created, so we avoid dealing with 
+  *                allocation and deletion issues. 
+  *
+  *                Notice also that a view may have many commands installed : 
+  *                the first bound to the left mouse button (the zoom for 
+  *                instance) and a second one on the middle button (the 
+  *                selection command for instance). The right button is, in 
+  *                principle, reserved to a contextual pop-up menu, but could 
+  *                also be used to bind a third command. 
+  *
+  *                A command is associated to a mouse button and has a name. 
+  *                This name may be usefull within the graphic interface for 
+  *                informing the user about the currently installed command. 
+  *
+  *                A command being a data base object properties can be attached 
+  *                to it. 
+  * 
+  * 
+  *  \section      secCommandInstallationAndUninstallation  Installation and un-installation
+  *
+  *                Please refer to theses functions :
+  *                <ul>
+  *                  <li><b>Command::InstallOn</b>
+  *                  <li><b>Command::UninstallFrom</b>
+  *                </ul>
+  * 
+  * 
+  *  \section      secCommandRemarks  Remarks
+  *
+  *                Commands are very powerful objects of which the zoom is a 
+  *                rudimentary embodiment. It is perfectly feasible, for 
+  *                instance, at click time to create a contact and display as a 
+  *                real drawing (not a ghost) and move this contact according to 
+  *                the mouse movements, always with a real display, and at last 
+  *                drop it in the right place when the button is released. 
+  *
+  *                Furthermore, commands manage perfectly the complex effects 
+  *                introduced by the auto-scroll and double buffering 
+  *                techniques, without having to worry about. On the same way it 
+  *                is perfectly possible, while the command is ongoing, to apply 
+  *                actions like zoom in, zoom out and pan, thanks to the 
+  *                available keyboard shortcuts (and even to spawn more complex 
+  *                actions). The system will manage all those contradictory 
+  *                events in an efficient and secure way (when an auto-scroll 
+  *                occurs, a part of the ghost may have been moved and it is 
+  *                worthwile that we don't need to care about, and still more, 
+  *                if a "zoom in" is being requested at the same time ...). 
+  * 
+  * 
+  *  \section      secCommandImportant  Important : Coordinates of Messages
+  *
+  *                In those messages, the position, when provided, is in the 
+  *                client coordinate system of the view (and not in the screen 
+  *                pixel coordinates). 
+  *
+  *                But for obtaining the position in the cell coordinate system, 
+  *                the inverse of the tranformation associated to the view must 
+  *                be applied to the point. 
+  * 
+  * 
+  *  \section      secCommandCaseStudyTheZoom  Case study : the Zoom
+  *
+  *                Extracted from the file ZoomCommand.h 
+\code
+class ZoomCommand : public Command {
+// *******************************
+ 
+// Types
+// *****
+ 
+   public: typedef Command Inherit;
+ 
+// Attributes
+// **********
+ 
+   private: bool _started;    // flag indicating that the zoom has started
+   private: Point _origin;    // mouse position when zoom started
+   private: Point _extremity; // current mouse position
+ 
+// Constructors
+// ************
+ 
+   protected: ZoomCommand();
+ 
+   public: static ZoomCommand* Create();
+ 
+// Destructor and message handlers
+// *******************************
+ 
+   protected: virtual void _PreDelete();
+ 
+   public: virtual void _OnDrawGhost(View* view);
+   public: virtual void _OnMouseMove(View* view, const Point& position);
+   public: virtual void _OnButtonPress(View* view, const Point& position);
+   public: virtual void _OnButtonRelease(View* view, const Point& position);
+ 
+   // all those messages are not overloaded
+};
+ 
+// global function returning the zoom command object
+ 
+ZoomCommand* GetZoomCommand();
+\endcode
+  *                Extracted from the file ZoomCommand.cpp 
+\code
+static ZoomCommand* ZOOM_COMMAND = NULL;
+ 
+ZoomCommand* GetZoomCommand()
+// **************************
+{
+   // global function which gets the zoom command
+   // or creates it when needed
+ 
+   if (!ZOOM_COMMAND) ZOOM_COMMAND = ZoomCommand::Create();
+ 
+   return ZOOM_COMMAND;
+}
+ 
+ZoomCommand::ZoomCommand()
+// ***********************
+ : Inherit("Zoom", 1),
+   _started(false),
+   _origin(),
+   _extremity()
+{
+   // the zoom command has name "Zoom" (as expected)
+   // and is bound to the left mouse button (button 1)
+}
+ 
+ZoomCommand* ZoomCommand::Create()
+// *******************************
+{
+   // A command being a data base object
+   // the classical Create function must be provided
+ 
+   ZoomCommand* zoomCommand = new ZoomCommand();
+ 
+   if (!zoomCommand)
+      throw Error("Can't create ZoomCommand : allocation failed");
+ 
+   zoomCommand_PostCreate();
+ 
+   return zoomCommand;
+}
+ 
+void ZoomCommand::_PreDelete()
+// ***************************
+{
+   // A command being a data base object
+   // a pre-delete function must be provided
+   // (the function of post-creation being not needed here)
+ 
+   Inherit::_PreDelete();
+ 
+   if (ZOOM_COMMAND == this) ZOOM_COMMAND = NULL;
+}
+ 
+void ZoomCommand::_OnDrawGhost(View* view)
+// ***************************************
+{
+   // The drawing of the ghost must appear only when the zoom starts
+   // it is a simple rubber rectangle between the start and current points
+ 
+   if (_started) viewDrawRectangle(_origin, _extremity);
+}
+ 
+void ZoomCommand::_OnMouseMove(View* view, const Point& position)
+// **************************************************************
+{
+   // when the mouse moves and the zoom has already started
+ 
+   if (_started) {
+ 
+      // the ghost drawing must be erased by calling the function
+      // viewDrawGhost(this) which prepares the graphic context
+      // and calls upon the message _OnDrawGhost(view)
+      // (don't call directly the message _OnDrawGhost of the command)
+ 
+      viewDrawGhost(this);
+ 
+      // then change the position
+ 
+      _extremity = position;
+ 
+      // and at last draw the new ghost (same method)
+ 
+      viewDrawGhost(this);
+   }
+}
+ 
+void ZoomCommand::_OnButtonPress(View* view, const Point& position)
+// ****************************************************************
+{
+   // When the user presses the button bound to the command
+   // we set-up different attributs to start a new zoom
+   //    the starting and current point are the same
+   //    the zomm is flagged as started
+ 
+   _origin = position;
+   _extremity = position;
+   _started = true;
+ 
+   // we draw the new ghost (same method)
+ 
+   viewDrawGhost(this);
+}
+ 
+void ZoomCommand::_OnButtonRelease(View* view, const Point& position)
+// ******************************************************************
+{
+   // we erase the ghost (same method)
+ 
+   viewDrawGhost(this);
+ 
+   // we flag the zoom as ended
+ 
+   _started = false;
+ 
+   // if the defined rectangle is meaningful we can trigger
+   // the reframe and the refresh of the view
+ 
+   if (_extremity != _origin) {
+      viewReframe(Box(_origin, _extremity));
+      viewRefresh();
+   }
+}
+\endcode
+  *                The following piece of code shows now how to proceed for 
+  *                installing the zoom command on a given view 
+\code
+View* view = ...; // we get the view
+ 
+GetZoomCommand()InstallOn(view);
+ 
+assert(GetZoomCommand()IsInstalledOn(view));
+\endcode
+  */
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     const Name& Command::GetName() const;
+  *  \Return       the command name. 
+  */
+
+ /*! \function     unsigned Command::GetButton() const;
+  *  \Return       the command mouse button. 
+  */
+
+ /*! \function     Views Command::GetViews() const;
+  *  \Return       the collection of views where this command is installed. 
+  */
+
+ //  \}
+
+
+ /*! \name         Predicates
+  */
+ //  \{
+
+ /*! \function     bool Command::IsInstalledOn(View* view) const;
+  *  \Return       \true if the command is installed within the view, else 
+  *                \false. 
+  */
+
+ //  \}
+
+
+
+ /*! \name         Messages
+  */
+ //  \{
+
+ /*! \function     void Command::_OnInstalledOn(View* view);
+  *                Message called upon to inform the command that it has been 
+  *                installed in the view. 
+  */
+
+ /*! \function     void Command::_OnUninstalledFrom(View* view);
+  *                Message called upon to inform the command that it has been 
+  *                un-installed from the view. 
+  */
+
+ /*! \function     void Command::_OnDrawGhost(View* view);
+  *                Message called upon to inform the command that it has to draw 
+  *                its ghost. 
+  *
+  *  \important    This message must not be called directly, even inside the 
+  *                following commands. 
+  *
+  *                Indeed, the view must prepare the graphic context in order to 
+  *                set up the appropriate display mode (i.e. xor). Therefore a 
+  *                request must be done to the view to call upon this message, 
+  *                once it has made the preliminary preparations, by writing 
+  *                view-\>DrawGhost(this). 
+  */
+
+ /*! \function     void Command::_OnMouseEnter(View* view, const Point& position);
+  *                Message called upon to inform the command that the mouse has 
+  *                entered the window associated to the drawing area. 
+  */
+
+ /*! \function     void Command::_OnMouseMove(View* view, const Point& position, unsigned state);
+  *                Message called upon to inform the command that the mouse has 
+  *                just moved. 
+  *
+  *  \important    This message is received whatever the command button is being 
+  *                pressed or not. 
+  */
+
+ /*! \function     void Command::_OnMouseLeave(View* view, const Point& position);
+  *                Message called upon to inform the command that the mouse has 
+  *                exited the window associated to the drawing area. 
+  */
+
+ /*! \function     void Command::_OnButtonPress(View* view, const Point& position, unsigned state);
+  *                Message called upon to inform the command that a mouse button 
+  *                has just been pressed. 
+  */
+
+ /*! \function     void Command::_OnButtonRelease(View* view, const Point& position, unsigned state);
+  *                Message called upon to inform the command that a mouse button 
+  *                has just been released. 
+  */
+
+ /*  \function     void Command::_OnKeyPress(View* view, unsigned key);
+  *                Message called upon to inform the command that a key has just 
+  *                been pressed. 
+  */
+
+ /*  \function     void Command::_OnKeyRelease(View* view, unsigned key);
+  *                Message called upon to inform the command that a key has just 
+  *                been released. 
+  */
+
+ //  \}
+
+
+
+ /*! \name         Command Collection
+  */
+ //  \{
+
+ /*! \typedef      Commands
+  *                Generic collection representing a set of commands. 
+  */
+
+ /*! \typedef      CommandLocator
+  *                Generic locator for traversing a collection of commands. 
+  */
+
+ /*! \typedef      CommandFilter
+  *                Filter for selecting a sub-set of commands matching some 
+  *                criteria. 
+  */
+
+ /*! \def          for_each_command(command, commands)
+  *                Macro for visiting all commands of a collection of commands. 
+  */
+
+ //  \}
+
+
+ /*  \name         Installation/Uninstallation
+  */
+ //  \{
+
+ /*! \function     void Command::InstallOn(View* view);
+  *                Allows to install the command in the view. 
+  *
+  *  \caution      An exception is thrown if the view is null. 
+  *
+  *                Does nothing if the command is already installed in the view. 
+  *                On the other hand, if a command bound to the same button was 
+  *                already installed in the view, this last is automatically 
+  *                un-installed. 
+  *
+  *                When the command is effectively installed in the view, in 
+  *                order to inform this command of its installation and let it 
+  *                handle possible additional processing, a message 
+  *                <b>_OnInstalledOn()</b> is issued by the view. 
+  */
+
+ /*! \function     void Command::UninstallFrom(View* view);
+  *                Allows to un-install the command in the view. 
+  *
+  *  \caution      An exception is thrown if the view is null. 
+  *
+  *                In order to inform the command of its un-installation and let 
+  *                it handle possible additional processing, a message 
+  *                <b>_OnUnInstalledFrom()</b> is issued by the view. 
+  */
+
+ //  \}
+
+ }

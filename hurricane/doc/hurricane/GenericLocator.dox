@@ -1,0 +1,159 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        GenericLocator
+  *  \brief        GenericLocator description (\b API)
+  *
+  *  \section      secGenericLocatorIntro  Introduction
+  *
+  *                Locators are powerful objects but present a major weakness. 
+  *                You must handle them through a pointer variable and not 
+  *                forget to release the allocated locator after use. 
+\code
+Locator<Net*>* locator = cellGetNets().GetLocator();
+...
+// use
+...
+delete locator;
+\endcode
+  *                Fortunately, the type GenericLocator\c \<Type\> corrects this 
+  *                weakness. Indeed a generic locator creates at its 
+  *                construction (or by assignment) a clone of the given locator 
+  *                and releases, when deleted (or when assigned to an other 
+  *                locator) the previously allocated one. More, when initialized 
+  *                with an already allocated locator, it takes in charge to 
+  *                release it. Therefore you only need to write: 
+\code
+GenericLocator<Net*> locator = cellGetNets().GetLocator();
+...
+// use
+...
+\endcode
+  *  \remark       It's possible to bring within a GenericLocator\c \<Type\> 
+  *                variable any kind of locator of elements of the same Type 
+  *                (and also an other generic locator). 
+  */
+
+
+
+ /*! \section      secGenericLocatorUsageExamples  Usage examples
+  *
+  *                Let's take the examples used in the Locator class and see 
+  *                what they become. 
+  *
+  *                The following example shows how to visit the nets of a given 
+  *                cell. 
+\code
+Cell* cell = ...; // we get a cell
+ 
+if (cell) {
+   GenericLocator<Net*> locator = CellGetNets().GetLocator();
+   while (locator.IsValid()) {
+      Net* net = locator.GetElement();
+      assert(netGetCell() == cell);
+      locator.Progress();
+   }
+}
+\endcode
+  *                And this one, how to print all net pairs. 
+\code
+Cell* cell = ...; // we get a cell
+ 
+if (cell) {
+   GenericLocator<Net*> locator1 = CellGetNets().GetLocator();
+   while (locator1.IsValid()) {
+      Net* net1 = locator1.GetElement();
+      GenericLocator<Net*> locator2 = locator1;
+      // or GenericLocator<Net*> locator2 = locator1.GetClone();
+      while (locator2.IsValid()) {
+         Net* net2 = locator2.GetElement();
+         cerr << net1 << " " << net2 << endl;
+         locator2.Progress();
+      }
+      locator1Progress();
+   }
+}
+\endcode
+  *  \remark       Those examples are used here to describe generic locator 
+  *                behaviours. We will see later how code them in a much simpler 
+  *                way with the for_each macros. 
+  */
+
+
+
+ /*! \section      secGenericLocatorHowWorksTheMacroFor_each  How works the macro for_each
+  *
+  *                When explaining Collection class we used some macros. We can 
+  *                now describe the way they are implemented. 
+  *
+  *                <b>Macro for_each implementation</b> 
+\code
+#define for_each(Type, variable, collection)\
+/*******************************************/\
+{\
+   GenericLocator<Type> _locator = collection.GetLocator();\
+   while (_locator.IsValid()) {\
+      Type variable = _locator.GetElement();\
+      _locator.Progress();
+\endcode
+  *                This macro stores within a generic locator type variable the 
+  *                locator provided by the given collection. The remaining code 
+  *                is classic. 
+  *
+  *
+  *  \remark       The locator allocated by the GetLocator() call is released by 
+  *                the destructor of the generic locator which, itself, will be 
+  *                called automatically because it is allocated within the 
+  *                execution stack. 
+  *
+  *                <b>Macro end_for implementation</b> This macro is mandatory 
+  *                in order to close the lexical blocks opened by the for_each 
+  *                macro. 
+\code
+#define end_for\
+/**************/\
+   }\
+}
+\endcode
+  *                <b>Important observation</b> When you write the following : 
+\code
+for_each(Net*, net, cellGetNets()) {
+   // body
+   end_for;
+}
+\endcode
+  *                The body is processed between for_each and end_for macros, 
+  *                therefore after the binding of the variable to its element, 
+  *                but also once the locator has progressed. It is therefore 
+  *                possible to write, without risk the following : 
+\code
+for_each(Net*, net, cellGetNets()) {
+   netDelete();
+   end_for;
+}
+\endcode
+  *                Nevertheless you must take care in some cases. For instance 
+  *                you should not write : 
+\code
+for_each(Component*, component, netGetComponents()) {
+   componentDelete();
+   end_for;
+}
+\endcode
+  *                Because the deletion of a component might lead to the 
+  *                deletion of some related component, which could be the next 
+  *                one, where the locator is currently positionned. The locator 
+  *                becomes then invalid and the issue is fatal. It is cleaner to 
+  *                write : 
+\code
+Components components = netGetComponents();
+while (!components.IsEmpty()) components.GetFirst()Delete();
+\endcode
+  */
+
+
+
+ }

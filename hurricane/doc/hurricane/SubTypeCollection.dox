@@ -1,0 +1,41 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        SubTypeCollection
+  *  \brief        SubTypeCollection description (\b API)
+  *
+  *  \section      secSubTypeCollectionIntro  Introduction
+  *
+  *                This collection allows you to get the subset of all elements 
+  *                of type <b>Type</b> from a collection of elements of type 
+  *                <b>SuperType</b>. 
+  *
+  *                In principle you don't need to use this collection directly, 
+  *                but through the call of 
+  *                <b>collection-\>GetSubSet\c \<Type\></b>() which builds this 
+  *                subset collection (for that reason we will not describe it). 
+  */
+
+
+
+ /*! \section      secSubTypeCollectionExample  Example
+  *
+  *                On the following example we show how to realize the 
+  *                <b>GetContacts</b> member function for a net, which returns 
+  *                the set of contacts in its layout. 
+\code
+Contacts Net::GetContacts() const
+// ******************************
+{
+   return GetComponents()GetSubSet<Contact*>();
+}
+\endcode
+  *                It's very simple ... 
+  */
+
+
+
+ }

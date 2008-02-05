@@ -1,0 +1,10 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        ExpandRules
+  *  \brief        ExpandRules description (\b API)
+  *
+ }

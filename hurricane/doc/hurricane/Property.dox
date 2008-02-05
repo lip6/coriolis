@@ -1,0 +1,438 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Property
+  *  \brief        Property description (\b API)
+  *
+  *  \section      secPropertyIntro  Introduction
+  *
+  *                Properties can be attached to the data base objects. Those 
+  *                properties must have a name in order to access them 
+  *                unambiguously. Of course only one property of a given name 
+  *                can be attached to an object. 
+  *
+  *                In a first step we define two great categories of properties 
+  *                : the private properties which can be attached to only one 
+  *                object and the shared properties which can be attached to a 
+  *                large number of objects. 
+  *
+  *                We will detail separately their respective behaviour, but we 
+  *                ensure that the management of each of those two property 
+  *                categories is absolutely secure. That is, on one side you can 
+  *                destroy explicitely a property (and the objects will be 
+  *                notified) and on the other side the properties will be 
+  *                automatically destroyed when no more object reference them. 
+  *
+  *  \remark       By overloading some messages, as we will see later, it is 
+  *                possible to set up different behaviours (like avoid the 
+  *                automatic delete). 
+  * 
+  * 
+  *  \section      secPropertyTheQuarks  The Quarks
+  *
+  *                As we shall see, the occurences are very simple objects which 
+  *                are used to designate some entity of the virtually unfolded 
+  *                hierarchy. Indeed, those occurences, which are built and 
+  *                deleted very quickly, are very volatile objects to which 
+  *                obvioulsy we can't attach properties directly. 
+  *
+  *                But the interest of occurences is precisely to be able to 
+  *                attach them properties. In order to be able to do that, 
+  *                properties must be stored in a secure place where we could 
+  *                find them when needed. The quarks are here for that purpose : 
+  *                they are subtypes of data base object and therefore can store 
+  *                the properties attached to occurences. 
+  *
+  *  \important    Only one quark is attached to all occurences which refer the 
+  *                same entity of the virtually unfolded hierarchy. This means 
+  *                that a property placed on an occurence can be read by any 
+  *                other occurence which refers the same entity of the virtually 
+  *                unfolded hierarchy. 
+  *
+  *  \remark       Those quarks are also volatile objects because their only 
+  *                reason to exist is that at least one property is attached to 
+  *                them. 
+  * 
+  * 
+  *  \section      secPropertyHowThatWorks  How that works
+  *
+  *                We will detail the way properties are managed by analysing 
+  *                more precisely what happens at the level of property access 
+  *                functions both for data base objects and for occurences. 
+  *
+  * 
+  *                <b>Accessing a property by its name</b> 
+\code
+Property* DBo::GetProperty(const Name& name) const;
+\endcode
+  *                This member function returns the property of name \c \<name\> 
+  *                if there is one attached to the object, else NULL. 
+\code
+Property* Occurrence::GetProperty(const Name& name) const;
+\endcode
+  *                This function searches in a first time the quark representing 
+  *                the occurence. 
+  *
+  *                If the quark doesn't exist, this means there is no property 
+  *                attached to that occurence, then the function returns NULL. 
+  *
+  *                If the quark does exist, the function returns the property of 
+  *                name \c \<name\> attached to the quark, if any, by calling 
+  *                the previous function (because quarks are data base objects). 
+  *
+  * 
+  *                <b>Accessing the set of all properties</b> 
+\code
+Properties  DBo::GetProperties() const;
+\endcode
+  *                Return the collection of properties attached to the object (possibly 
+  *                empty). 
+\code
+Properties  Occurrence::GetProperties() const;
+\endcode
+  *                This function searches in a first time the quark representing 
+  *                the occurence. 
+  *
+  *                If the quark doesn't exist, this means there is no property 
+  *                attached to that occurence, then the function returns an 
+  *                empty property collection. 
+  *
+  *                If the quark does exist, the function returns the property 
+  *                collection attached to the quark, by calling the previous 
+  *                function (the returned collection is inevitably non empty, 
+  *                else the quark would not exist). 
+  * 
+  * 
+  *                <b>Does the object have properties ?</b> 
+\code
+bool DBo::HasProperty() const;
+\endcode
+  *                Return \true if the object owns at least a property, else \false. 
+\code
+bool Occurrence::HasProperty() const;
+\endcode
+  *                This function searches the quark representing the occurence. 
+  *
+  *                If the quark does exist it means there is at least a property 
+  *                assigned to it and the function returns \true, else it 
+  *                returns \false. 
+  *
+  *
+  *                <b>Adding a property : things becomes a little harder</b> 
+\code
+void DBo::Put(Property* property);
+\endcode
+  *                Adds the property \c \<property\> to the set of properties of 
+  *                the object. 
+\code
+void Occurence::Put(Property* property);
+\endcode
+  *                This function searches the quark representing the occurence. 
+  *
+  *                If the quark doesn't exist it is automatically created in 
+  *                order to attach this first property. 
+  *
+  *                Once the quark has been got or created, we can add the 
+  *                property with the previous function. 
+  *
+  *                Two important things might happen then : The property is 
+  *                already owned by an other object (may be a quark) and that 
+  *                property is not a shared one <b>and/or</b> the object owns 
+  *                already a property with the same name. 
+  *
+  *                Therefore it may happen, within this step, that adding a 
+  *                property to an object leads to the deletion of an other 
+  *                property on that object <b>(name unicity)</b> or on an other 
+  *                object <b>(unicity of owner for a private property)</b>. 
+  *
+  *                Which behaviour should we have in such conditions ? Shall we 
+  *                destroy the property which has been detached ? There is no 
+  *                unique behaviour which matches all needs. In order to solve 
+  *                this problem the properties must answer to two specific 
+  *                messages which are : <b>OnCapturedBy(DBo* dbo)</b> when the 
+  *                property is attached to an object and <b>OnReleasedBy(DBo* 
+  *                dbo)</b> when it is detached from the object. It is within 
+  *                that last message that the decision about the future of the 
+  *                property must be taken. 
+  *
+  *  \remark       We will detail below those messages for both private and 
+  *                shared properties. 
+  *
+  *
+  *                <b>Removing a property</b> 
+\code
+void DBo::Remove(Property* property);
+\endcode
+  *                Removes the property \c \<property\> from the set of 
+  *                properties of the object. 
+\code
+void Occurence::Remove(Property* property);
+\endcode
+  *                The function searches for the quark associated to the 
+  *                occurence. 
+  *
+  *                If the quark doesn't exist, there is nothing to do, the 
+  *                occurence has no properties. 
+  *
+  *                Else the property is removed from the set of quark properties 
+  *                by calling the previous function. Furthermore if this removed 
+  *                property is the last one, the quark is automatically deleted. 
+  *
+  *  \important    The message <b>OnReleasedBy</b> is called upon as explained 
+  *                above. This call will decide of the future of the removed 
+  *                property. 
+  *
+  *
+  *                <b>Clearing all properties</b> 
+\code
+void DBo::ClearProperties();
+\endcode
+  *                Removes all properties attached to the object. 
+\code
+void Occurence::ClearProperties();
+\endcode
+  *                First searches for the quark associated to the occurence. 
+  *
+  *                If the quark exist it is simply destroyed after removing all 
+  *                its private properties and detaching it from all its shared 
+  *                properties (wich may lead to their removal). Without quark 
+  *                the occurence looses all its properties. 
+  *
+  *  \important    Here again the message <b>OnReleasedBy</b> is called upon for 
+  *                each removed property. 
+  * 
+  * 
+  *  \section      secPropertyCreationProcess  Creation process
+  *
+  *                The creation process is similar to the data base objects 
+  *                creation one. Therefore a property must be created by the 
+  *                special function <b>Create</b> and not by the usual new 
+  *                (which is not available). 
+  * 
+  * 
+  *  \section      secPropertyDeletionProcess  Deletion process
+  *
+  *                <b>Hurricane::Property::Delete</b>
+  * 
+  * 
+  *  \section      secPropertyNaming  Naming Conventions
+  *
+  *                Properties being named and the their management being based 
+  *                on that name, it could occur conflicts between Hurricane 
+  *                which use some properties and the different tools which will 
+  *                be plugged above, or between different tools themselves. 
+  *
+  *                In order to avoid that you must take some precautions in the 
+  *                choice of the property names. 
+  *
+  *                So Hurricane uses properties prefixed by the string 
+  *                "Hurricane::",like for instance "Hurricane::Selector" for the 
+  *                property of type Selector. 
+  *
+  *                So I suggest that different tools use a 
+  *                similar namming strategy which would keep confident all the 
+  *                community of <b><i>hurricaners</i></b>
+  *
+  *  \remark       Using names like "ZenTek::TimingNode" for the TimingNode type 
+  *                property managed by tools from the ZenTek society decreases 
+  *                name conflicts, unless with other tools from the same 
+  *                society. A property name 
+  *                "SocietyName::ToolName::PropertyName" would be more secure. 
+  *
+  *                Furthermore, if the community adopts this convention it will 
+  *                be possible to simplify some parts of the code by avoiding 
+  *                for example calls to the macro <b>is_a</b> to check that the 
+  *                collected property is of the expected type, as shown in the 
+  *                following example : 
+\code
+Property* property = occurence.GetProperty("Hurricane::Selector");
+ 
+if (property && is_a<Selector*>(property)) {
+   Selector* selector = (Selector*)property;
+   ...
+}
+\endcode
+  *                Which could become : 
+\code
+Selector* selector = (Selector*)occurence.GetProperty("Hurricane::Selector");
+ 
+if (selector) {
+   ...
+}
+\endcode
+  * 
+  * 
+  *  \section      secPropertyRemarks  Remarks
+  *
+  *                The name of properties being of type Name and not of type 
+  *                string, the comparison between two names operates on their 
+  *                pointers and not on their character strings. The length of 
+  *                the name doesn't affect the comparison performance. 
+  *
+  *                On the other hand, the time to create a property name depends 
+  *                obviously of its length and of the number of names (which 
+  *                fortunately are managed by efficient map containers). 
+  *
+  *                Therefore in order to avoid building names at each property 
+  *                access, you must provide a specific function which returns a 
+  *                Name object allocated once and once only. 
+  *
+  *                As a matter of fact if you write, like in the previous 
+  *                example : 
+\code
+Property* property = occurence.GetProperty("Hurricane::Selector");
+\endcode
+  *                Each time the name is built and this will degrade 
+  *                performance. 
+  *
+  *                On the other hand if the following static member function is 
+  *                provided : 
+\code
+const Name& Selector::GetPropertyName()
+// ************************************
+{
+   static Name NAME = "Hurricane::Selector";
+   return NAME;
+}
+\endcode
+  *                You could write later : 
+\code
+Property* property = occurence.GetProperty(Selector::GetPropertyName());
+\endcode
+  *                This approach is much more efficient and presents an other 
+  *                interest : you don't need to know the name of the property 
+  *                being handled. This allows to change property names without 
+  *                affecting existing code. 
+  *
+  *                Therefore I propose, for every new 
+  *                instanciable property (whose name depends of the property 
+  *                type), that a static member function be systematically 
+  *                provided.
+  *
+  *                Furthermore, both StandardPrivateProperty and 
+  *                StandardSharedProperty have, as we shall see later, an 
+  *                attribute giving their name. Here again, for accessing the 
+  *                propety, a name must be created. 
+  *
+  *                So I propose also that a global 
+  *                function (which can't be a static member function) be defined 
+  *                for each new property name.
+  *
+  *                That way, by defining (i.e. for the property ObjectId) the 
+  *                function : 
+\code
+const Name& GetObjectIdPropertyName()
+// **********************************
+{
+   static Name NAME = "Hurricane::ObjectId";
+   return NAME;
+}
+\endcode
+  *                You can write later : 
+\code
+Property* property = occurence.GetProperty(GetObjectIdPropertyName());
+\endcode
+  */
+
+
+ /*! \name        Accessors
+  */
+ //  \{
+
+ /*! \function     Name Property::GetName() const;
+  *  \Return       the name of the property : this method must absolutely be 
+  *                overloaded for all new property classes, because the property 
+  *                name is not a "wired in" attribute. A property being a real 
+  *                object, this name derives naturally from the property type 
+  *                name (so don't loose room uselessly to store it in a record 
+  *                slot). 
+  */
+
+ //  \}
+
+
+ /*! \name         Messages
+  */
+ //  \{
+
+ /*! \function     void Property::OnCapturedBy(DBo* dbo);
+  *                This message is called upon when the property is added to the 
+  *                properties of \c \<dbo\>. 
+  *
+  *                By default this function does nothing particular, but it must 
+  *                be overloaded for all property sub-classes. We will detail 
+  *                later the reaction to this message as taken by the private 
+  *                and shared property classes. 
+  *
+  *  \remark       This message being already overloaded for private and shared 
+  *                property classes there is no need to overload it again when 
+  *                specializing any of those two classes. 
+  */
+
+ /*! \function     void Property::OnReleasedBy(DBo* dbo);
+  *                This message is called upon when the property is removed from 
+  *                the \c \<dbo\> properties. 
+  *
+  *  \important    The argument \c \<dbo\> is not (or no more) necessarily the 
+  *                owner of the property which receives the message. The 
+  *                processing to be done in reaction to this message often 
+  *                depends on this observation. We will better understand this 
+  *                subtlety when studying private properties. 
+  *
+  *  \remark       This message being already overloaded for private and shared 
+  *                property classes there is no need to overload it again when 
+  *                specializing any of those two classes. 
+  */
+
+ //  \}
+
+
+
+ /*! \name         Property Collection
+  */
+ //  \{
+
+ /*! \typedef      Properties
+  *                Generic collection representing a set of properties. 
+  */
+
+ /*! \typedef      PropertyLocator
+  *                Generic locator for visiting a property collection. 
+  */
+
+ /*! \typedef      PropertyFilter
+  *                Filter to selecting a subset of properties matching some 
+  *                criteria. 
+  */
+
+ /*! \def          for_each_property(property, properties)
+  *                Macro for visiting all properties of a property collection. 
+\code
+Occurence occurence = ...; // we get an occurence
+ 
+for_each_property(property, occurence.GetProperties()) {
+   cerr << property << endl;
+   end_for;
+}
+\endcode
+  */
+
+ //  \}
+
+
+ /*  \name         Destructors
+  */
+ //  \{
+
+ /*! \function     void Property::Delete();
+  *                Like the data base objects, properties can be destroyed by 
+  *                calling upon this function and not the standard C++ 
+  *                destructor (which is not available). 
+  */
+
+ //  \}
+
+ }

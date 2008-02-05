@@ -1,0 +1,88 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Rubber
+  *  \brief        Rubber description (\b API)
+  *
+  *  \section      secRubberIntro  Introduction
+  *
+  *                Ring introduce the concept of virtual connection between 
+  *                different master hooks present in the ring. Rubber is just 
+  *                introduced to materialize this implicit relation. 
+  *
+  *
+  *  \section      secRubberConstructors  Constructors & Destructors
+  *
+  *                Rubbers are entirely managed by Hurricane. So no constructors
+  *                nor destructor are avalaible.
+  */
+
+
+ /*! \typedef      Rubber::Inherit
+  *                Useful for calling upon methods of the base class without 
+  *                knowing it. 
+  */
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     Net* Rubber::GetNet() const;
+  *  \Return       the net owning the rubber. 
+  */
+
+ /*! \function     Hook* Rubber::GetHook() const;
+  *  \Return       one hook (necessarily a master hook) of the ring which has 
+  *                created the rubber. 
+  */
+
+ /*! \function     unsigned Rubber::GetCount() const;
+  *  \Return       the count associated to the rubber (in fact the number of 
+  *                master hooks of the ring). 
+  *
+  *  \remark       This count is at least equal to two else the rubber doesn't 
+  *                exists (no need). 
+  */
+
+ /*! \function     Point Rubber::GetCenter() const;
+  *  \Return       the center of the rubber (computed at the fly). 
+  */
+
+ /*! \function     Hooks Rubber::GetHooks() const;
+  *  \Return       the collection of master hooks that the rubber virtualy 
+  *                connect. 
+  */
+
+ //  \}
+
+
+ /*! \name         Rubber Collection
+  */
+ //  \{
+
+ /*! \typedef      Rubbers
+  *                Generic collection representing a set of rubbers. 
+  */
+
+ /*! \typedef      RubberLocator
+  *                Generic locator for traversing a collection of rubbers. 
+  */
+
+ /*! \typedef      RubberFilter
+  *                Generic filter allowing to select a subset of rubbers 
+  *                matching some criteria. 
+  */
+
+ /*! \def          for_each_rubber(rubber, rubbers)
+  *                Macro for visiting all the rubbers of a collection of 
+  *                rubbers. 
+  */
+
+ //  \}
+
+
+ }

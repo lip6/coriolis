@@ -1,0 +1,208 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Filter
+  *  \brief        Filter description (\b API)
+  *
+  *  \section      secFilterIntro  Introduction
+  *
+  *                A filter is a functional object which, used in conjunction 
+  *                with a collection, allows to get only the elements of this 
+  *                collection which meet some criteria. 
+  *
+  *                This class is an abstract class which must be derived in 
+  *                order to get the appropriate behaviour. 
+  *
+  *                You will have also to define the default constructor, the 
+  *                copy constructor, the assignment operator and overload the 
+  *                two following member functions : 
+  */
+
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     Filter<Type>* Filter::GetClone() const;
+  *  \Return       a filter copy. 
+  */
+
+ //  \}
+
+
+ /*! \name         Predicates
+  */
+ //  \{
+
+ /*! \function     bool Filter::Accept(Type element) const;
+  *                This member function returns \true if the filter accepts the 
+  *                element else \false. 
+  */
+
+ //  \}
+
+
+ /*! \name         Operators
+  */
+ //  \{
+
+ /*! \function     GenericFilter<Type> Filter::operator ! () const;
+  *  \Return       the inverse filter of the filter \c \<this\> (accepted 
+  *                elements are those rejected and conversely). 
+  */
+
+ //  \}
+
+
+ /*! \section      secFilterSimpleExample  Simple example
+  *
+  *                Definition of the filter selecting external nets of a cell : 
+\code
+class IsExternal : public Filter<Net*> {
+// ***********************************
+ 
+   public:
+ 
+      IsExternal() {};
+ 
+      IsExternal(const IsExternal& isExternal) {};
+ 
+      IsExternal& operator=(const IsExternal& isExternal) {return *this;};
+ 
+      virtual Filter<Net*>* GetClone() const {return new IsExternal(*this);};
+ 
+      virtual bool Accept(Net* net) const {return netIsExternal();};
+ 
+};
+\endcode
+  *                Implementation of the accessor <b>GetExternalNets</b> for the 
+  *                cells : 
+\code
+Nets Cell::GetExternalNet() const
+// ******************************
+{
+   return GetNets().GetSubSet(IsExternal());
+}
+\endcode
+  *                Similarly, the accessor <b>GetInternalNets</b> can be 
+  *                implemented using the <b>!</b> operator : 
+\code
+Nets Cell::GetInternalNets() const
+// *******************************
+{
+   return GetNets().GetSubSet(!IsExternal());
+}
+\endcode
+  */
+
+
+
+ /*! \section      secFilterComplexExample  Complex example
+  *
+  *                In order to implement previous examples we could have used 
+  *                filter with a simpler interface. Now the filters as they are 
+  *                defined open the door to much more complex processing. 
+  *
+  *                As a matter of fact the function <b>Accept</b> receives only 
+  *                one argument which represents the element of the collection 
+  *                to be accepted or rejected. 
+  *
+  *                Sometimes the filter must take into account other criteria. 
+  *                For example to print the external nets of a cell whose name 
+  *                start with a given character. Those additional criteria will 
+  *                then become attributes of the filter as shown in the 
+  *                following example : 
+  *
+  *                Filter definition : 
+\code
+class MyFilter : public Filter<Net*> {
+// *********************************
+ 
+   public:
+ 
+      char _c;
+ 
+      MyFilter(char c) : _c(c) {};
+ 
+      MyFilter(const MyFilter& myFilter) : _c(myFilter._c) {};
+ 
+      MyFilter& operator=(const MyFilter& myFilter)
+      {
+         _c = myFilter._c;
+         return *this;
+      };
+ 
+      virtual Filter<Net*>* GetClone() const {return new MyFilter(*this);};
+ 
+      virtual bool Accept(Net* net) const
+      {
+         return netIsExternal() && (netGetName()[0] == _c);
+      };
+ 
+};
+\endcode
+  *                Afterwards do 
+\code
+for_each_net(net, cellGetNets().GetSubSet(MyFilter('k'))) {
+   assert(net->IsExternal());
+   assert(net->GetName()[0] == 'k');
+   cerr << "net: " << net << endl;
+   end_for;
+}
+\endcode
+  *                Although this example is not of great interest, it 
+  *                illustrates the way to proceed to create a complex filter. 
+  */
+
+
+
+ /*! \section      secFilterRemarks  Remarks
+  *
+  *                It is wise to use filters only when it is trully necessary, 
+  *                that is to produce useful collections to be used extensively. 
+  *
+  *                Indeed, for the previous example, preferably write it like 
+  *                this : 
+\code
+for_each_net(net, cellGetNets()) {
+   if (netIsExternal() && (net->GetName()[0] == 'k'))
+      cerr << "net: " << net << endl;
+   end_for;
+}
+\endcode
+  *                or more simply : 
+\code
+for_each_net(net, cellGetExternalNets()) {
+   if (net->GetName()[0] == 'k')
+      cerr << "net: " << net << endl;
+   end_for;
+}
+\endcode
+  *                Filters are objects like any other : they can be passed as 
+  *                function arguments as shown below : 
+\code
+Nets Cell::GetNets(const GenericFilter<Net*>& filter) const
+// ********************************************************
+{
+   return GetNets().GetSubSet(filter);
+}
+\endcode
+  *                As far as the type <b>NetFilter</b> is defined as being a 
+  *                <b>GenericFilter\<Net*\></b> the previous function can be 
+  *                written like this : 
+\code
+Nets Cell::GetNets(const NetFilter& filter) const
+// **********************************************
+{
+   return GetNets().GetSubSet(filter);
+}
+\endcode
+  */
+
+
+
+ }

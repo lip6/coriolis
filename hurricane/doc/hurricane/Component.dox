@@ -1,0 +1,230 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Component
+  *  \brief        Component description (\b API)
+  *
+  *  \section      secComponentIntro  Introduction
+  *
+  *                Components are the abstract objects representing the category 
+  *                of net components (segments, contacts, pads, plugs,...). Each 
+  *                component knows its net, its layer and has a "body". 
+  * 
+  * 
+  *  \section      secComponentConceptOfLocation  Concept of Location
+  *
+  *                Some components (for instance the segments) bear on contacts 
+  *                or other segments, more precisely they bear an extremity (the 
+  *                origin or the extremity), possibly through an offset on other 
+  *                components. The real location of the concerned part is 
+  *                therefore relative to the location of the component on which 
+  *                this part bears. 
+  *
+  *                For that purpose each components must be able to return a 
+  *                location from which a relative calculations can be done. The 
+  *                methods <b>GetX()</b> and <b>GetY()</b> provide this 
+  *                information and must be overloaded for each sub-type of 
+  *                component in oder to get the desired effect. 
+  *
+  *
+  *  \remark       The fact that a null value is systematically returned by one 
+  *                of this methods means that the locations are computed 
+  *                relative to a null value, which is equivalent to say they are 
+  *                absolute values (see for instance the Horizontal segment 
+  *                whose GetX() returns always null, while GetY() return the 
+  *                ordinate of its axis). 
+  * 
+  *  \section      secComponentDestruction  Destruction
+  *
+  *                When a component is destroyed, all components which are 
+  *                anchored on its body (through the body hook) are also 
+  *                destroyed. This may recursively propagate to other components 
+  *                anchored on the body of those last ones. 
+  *
+  *                Rings are reorganized such that the connectivity remains 
+  *                invariant. 
+  * 
+  * 
+  *  \section      secComponentPredefinedFilters  Predefined filters
+  *
+  *                <b>Component::GetIsUnderFilter</b>
+  */
+
+
+
+ /*! \typedef      Component::Inherit
+  *                Useful for calling upon methods of the base class without 
+  *                knowing it. 
+  */
+
+ /*! \class        Component::BodyHook
+  *                With the components, appears a new Hook type : The 
+  *                <b>BodyHook</b>, which represents the body of the component 
+  *                inside which it is nested (it is always a <b>"master"</b> 
+  *                hook). 
+  */
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     Net* Component::GetNet() const;
+  *  \Return       the net owning the component. 
+  */
+
+ /*! \function     Rubber* Component::GetRubber() const;
+  *  \Return       the rubber associated to the component (may be NULL). 
+  */
+
+ /*! \function     Net::BodyHook* Component::GetBodyHook();
+  *  \Return       the hook representing the component body. 
+  */
+
+ /*! \function     Hooks Component::GetHooks() const;
+  *  \Return       the collection of component hooks, that is the collection of 
+  *                nested hooks within the component, each of them representing 
+  *                a part of the component. 
+  */
+
+ /*! \function     Unit Component::GetX() const;
+  *  \Return       the abscissa of the component's body. This abscissa is a 
+  *                reference base for the components anchored, through an 
+  *                offset, on the component's body. 
+  */
+
+ /*! \function     Unit Component::GetY() const;
+  *  \Return       the ordinate of the component's body. This ordinate is a 
+  *                reference base for the components anchored, through an 
+  *                offset, on the component's body. 
+  */
+
+ /*! \function     Point Component::GetPosition() const;
+  *  \Return       the location of the component's body. 
+  *
+  *                This method returns, in principle, a point built from the two 
+  *                previous methods. As far as some similar calculations are 
+  *                done in both methods, it is wise to redefine the method as 
+  *                shown below for the Contact : 
+\code
+Unit Contact::GetX() const
+// ***********************
+{
+   Component* anchor = GetAnchor();
+   return (!anchor) ? _dx : anchorGetX() + _dx;
+}
+ 
+Unit Contact::GetY() const
+// ***********************
+{
+   Component* anchor = GetAnchor();
+   return (!anchor) ? _dy : anchorGetY() + _dy;
+}
+ 
+Point Contact::GetPosition() const
+// *******************************
+{
+   Component* anchor = GetAnchor();
+   return (!anchor) ?
+          Point(_dx, _dy) :
+          anchorGetPosition().Translate(_dx, _dy);
+}
+\endcode
+  *
+  *                
+  *
+  *                Indeed, contacts can possibly bear on other components 
+  *                through an offset defined by two attributes _dx and _dy. In 
+  *                order to compute the abscissa of a contact the component on 
+  *                which it bears must be found. This component named the 
+  *                <b>anchor</b> is returned by the call to GetAnchor(). If the 
+  *                component has no anchor, its coordinates are considered as 
+  *                absolute and the attribute _dx gives directly its abscissa. 
+  *
+  *                The method GetAnchor() must loop through a ring in order to 
+  *                find the contact anchor. By overloading the function 
+  *                GetPosition(), only one loop will be needed. Furtermore we 
+  *                call directly anchor-\>GetPosition() and not both 
+  *                anchor-\>GetX() and anchor-\>GetY(), this will be faster 
+  *                (this anchor may be anchored itself on an other component). 
+  */
+
+ /*! \function     Layer* Component::GetLayer() const;
+  *  \Return       the layer on which the component is located (may return NULL 
+  *                for some component types like the plugs). 
+  */
+
+ /*! \function     Box Component::GetBoundingBox(BasicLayer* basicLayer) const;
+  *  \Return       the envelope of the component for the \c \<basicLayer\>, that 
+  *                is the smallest box enclosing all layout elements located on 
+  *                the specified basic layer. 
+  *
+  *  \Return       an empty box for objects which are not physical layout ones 
+  *                (i.e. plugs) or for those which have no layout on the 
+  *                specified basic layer. 
+  */
+
+ /*! \function     Components Component::GetSlaveComponents() const;
+  *  \Return       the collection of components whose existence depends directly 
+  *                or indirectly of the existence of the component \c \<this\> 
+  *                (a segment can't survive to the destruction of a contact on 
+  *                which it is anchored). 
+  */
+
+ /*! \function     Components Component::GetConnexComponents() const;
+  *  \Return       the collection of "connex components" to the component 
+  *                \c \<this\> (which includes at least this one). 
+  *
+  *  \remark       A componnent is said <b>connex</b> to an other one if it is 
+  *                attached directly or indirectly through hyper-hooks, that is 
+  *                if there exist a sequence of components whose parts 
+  *                (extremities or body) are either sharing the same anchor or 
+  *                anchored one upon the other. 
+  *
+  *                If the layout elements are correctly assembled and on the 
+  *                proper layers, this "connex components collection" represents 
+  *                an geometrically and electrically connected subset of layout 
+  *                elements 
+  *
+  *                On the other hand, if layout anchored objects don't overlap 
+  *                on the same conducting layers (either by a wrong contact 
+  *                layer or by an offset which forbids layout intersection) 
+  *                electrical continuity will not be ensured. 
+  */
+
+ /*! \function     ComponentFilter Component::GetIsUnderFilter(const Box& area);
+  *  \Return       the filter allowing to select only components which intersect 
+  *                the rectangular \c \<area\>. 
+  */
+
+ //  \}
+
+
+
+ /*! \name         Component Collection
+  */
+ //  \{
+
+ /*! \typedef      Components
+  *                Generic collection representing a set of components. 
+  */
+
+ /*! \typedef      ComponentLocator
+  *                Generic locator for traversing a collection of components. 
+  */
+
+ /*! \typedef      ComponentFilter
+  *                Generic filter for selecting a subset of components matching 
+  *                some criteria. 
+  */
+
+ /*! \def          for_each_component(component, components)
+  *                Macro for visiting all components of a components collection. 
+  */
+
+ //  \}
+
+
+ }

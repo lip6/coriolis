@@ -1,0 +1,699 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        View
+  *  \brief        View description (\b API)
+  *
+  *  \section      secViewIntro  Introduction
+  *
+  *                A view is an object managing the graphic display behaviour of 
+  *                a cell. A view is neither a window nor a widget (in their 
+  *                strict meaning) but indeed an object which establish a 
+  *                relationship between the cell and a DrawingArea widget (the 
+  *                display window). 
+  *
+  *                Its purpose is to display the associated cell within this 
+  *                drawing area according to characteristics which are only 
+  *                driven by this view object (zoom factor, grid display, 
+  *                visible layers, selected objects, ...). 
+  *
+  *                Furthermore the view manages the events recieved from the 
+  *                drawing area and notifies them to the attached cell in its 
+  *                reference coordinates. 
+  *
+  *                A view can display one and only one cell, but a cell can be 
+  *                displayed in multiple views. The fact that each view has its 
+  *                own characteristics (zoom factor, visible layers, display 
+  *                style and depth, ...) provides the capability to show 
+  *                different aspects of the same cell within separated windows. 
+  *
+  *                A view being a data base object, you can attach properties to 
+  *                it. 
+  * 
+  * 
+  *  \section      secViewCoordinateSystems  Coordinate systems
+  *
+  *                There are three coordinates systems to be considered : the 
+  *                <b>screen coordinate system</b> which references screen pixel 
+  *                locations, the <b>cell coordinate system</b> and the 
+  *                <b>client coordinate system</b>. Those two last coordinate 
+  *                systems are almost always identical, unless when the cell 
+  *                display is mapped through a transformation (translation, 
+  *                rotation and/or symetry) in order to represent it, for 
+  *                instance, in the context of some of its instanciations. 
+  */
+
+
+
+ /*! \typedef      View::Inherit
+  *                Useful for calling upon methods of the base class without 
+  *                knowing it. 
+  */
+
+ /*! \typedef      ScreenUnit
+  *                Data type used to represent screen units (pixels). It is 
+  *                typed as a form of Unit where the precision is ignored. The 
+  *                reason why this type is choosen instead of an integer is that 
+  *                we want to use Point and Box (indeed ScreenPoint and 
+  *                ScreenBox) which are very handy as we will see later. 
+  */
+
+ /*! \typedef      ScreenPoint
+  *                Type used to represent screen pixel position (precision is 
+  *                ignored). 
+  */
+
+ /*! \typedef      ScreenBox
+  *                Type used to represent a rectangular area expressed in screen 
+  *                pixel positions (precision is ignored). 
+  */
+
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     GtkWidget* View::GetFrame() const;
+  *  \Return       the widget containing the drawing area associated to the 
+  *                view. 
+  *
+  *                This is the widget which must be inserted into an other 
+  *                window of the graphic interface in order to activate the 
+  *                display. 
+  */
+
+ /*! \function     GtkWidget* View::GetDrawingArea() const;
+  *  \Return       the drawing area associated to the view. 
+  */
+
+ /*! \function     Cell* View::GetCell() const;
+  *  \Return       the cell associated to the view (possibly null). 
+  *
+  *  \remark       Views have no attribute refering directly the attached cell. 
+  *                Therefore this virtual method must be overloaded for each new 
+  *                view sub-type (for the MapView, for instance, the returned 
+  *                cell is the one attached to the MainView of which MapView 
+  *                represents a location map). 
+  */
+
+ /*! \function     Transformation View::GetTransformation() const;
+  *                Views allow to display a cell either within the coordinate 
+  *                reference of the cell or with some transformation (useful to 
+  *                display an instanciated cell in the context of a given 
+  *                occurrence). So this function returns the currently applied 
+  *                transformation. 
+  *
+  *  \remark       Like the previous function, this virtual method must be 
+  *                overloaded. 
+  */
+
+ /*! \function     const Point& View::GetCenter() const;
+  *  \Return       the point, in client coordinates, located at the center of 
+  *                the view. 
+  */
+
+ /*! \function     double View::GetScale() const;
+  *  \Return       the zoom factor with which the cell is drawn. 
+  */
+
+ /*! \function     const ScreenUnit& View::GetScreenWidth() const;
+  *  \Return       the screen width of the view (that is the pixel width of the 
+  *                drawing area). 
+  */
+
+ /*! \function     const ScreenUnit& View::GetScreenHeight() const;
+  *  \Return       the screen height of the view (that is the pixel height of 
+  *                the drawing area). 
+  */
+
+ /*! \function     ScreenUnit View::GetHalfScreenWidth() const;
+  *  \Return       the half width of the view. 
+  */
+
+ /*! \function     ScreenUnit View::GetHalfScreenHeight() const;
+  *  \Return       the half height of the view. 
+  */
+
+ /*! \function     Unit View::GetX(const ScreenUnit& screenX) const;
+  *  \Return       the client abscissa associated to a pixel abscissa. 
+  *
+  *  \remark       The upper left point of the drawing area has always null 
+  *                abscissa and ordinate (in pixels), while the center of the 
+  *                view has client coordinates returned by <b>GetCenter()</b>. 
+  *
+  *  \remark       Within the drawing area, ordinates are increasing from the 
+  *                top to bottom, while client ordinates are increasing from the 
+  *                bottom to top. 
+  */
+
+ /*! \function     Unit View::GetY(const ScreenUnit& screenY) const;
+  *  \Return       the client ordinate corresponding to a pixel ordinate. 
+  */
+
+ /*! \function     Unit View::GetSize(const ScreenUnit& screenSize) const;
+  *  \Return       the client dimension associated to a screen dimension. 
+\code
+int screenAperture = 2; // 2 pixels
+ 
+Unit clientAperture = view->GetSize(screenAperture);
+\endcode
+  *
+  *                
+  */
+
+ /*! \function     Point View::GetPoint(const ScreenPoint& screenPoint) const;
+  *  \Return       the point in client coordinates associated to a point in 
+  *                pixel coordinates. 
+  */
+
+ /*! \function     Box View::GetBox(const ScreenBox& screenBox) const;
+  *  \Return       the box in client coordinates associated to a box in pixel 
+  *                coordinates. 
+  */
+
+ /*! \function     ScreenUnit View::GetScreenX(const Unit& x) const;
+  *  \Return       the pixel abscissa corresponding to a client abscissa. 
+  */
+
+ /*! \function     ScreenUnit View::GetScreenY(const Unit& y) const;
+  *  \Return       the pixel ordinate corresponding to a client ordinate. 
+  */
+
+ /*! \function     ScreenUnit View::GetScreenSize(const Unit& size) const;
+  *  \Return       the pixel dimension of a client dimension. 
+  */
+
+ /*! \function     ScreenPoint View::GetScreenPoint(const Point& point) const;
+  *  \Return       the point in pixel coordinates associated to a point in 
+  *                client coordinates. 
+  */
+
+ /*! \function     ScreenBox View::GetScreenBox(const Box& box) const;
+  *  \Return       the box in pixel coordinates associated to a box in client 
+  *                coordinates. 
+  */
+
+ /*! \function     Box View::GetClientArea() const;
+  *  \Return       the box in client coordinates enclosing the total displayable 
+  *                (or displayed) space. This is the bounding box of the cell to 
+  *                which has been applied the transformation attached to the 
+  *                view, but increased in order to include the points outside 
+  *                the cell which are currently visible on the screen. This 
+  *                function (with a strange definition) is mainly used to manage 
+  *                the X and Y scroll bars. 
+  */
+
+ /*! \function     Box View::GetVisibleArea() const;
+  *  \Return       the box in client coordinates of the previous defined space 
+  *                which is currently visible in the view. 
+  */
+
+ /*! \function     Command* View::GetCommand(unsigned button) const;
+  *  \Return       the command currently associated to the button, else NULL. 
+  */
+
+ /*! \function     View::Commands View::GetCommands() const;
+  *  \Return       the collection of commands currently installed on the view. 
+  */
+
+ /*! \function     const ScreenUnit& View::GetGridDisplayThreshold() const;
+  *  \Return       the display threshold of the grid. 
+  *
+  *  \remark       In order to effectively see the grid, the grid must be set 
+  *                visible and the zoom factor must allow to distinguish two 
+  *                adjacent grid points, that is spaced on the screen by some 
+  *                pixel distance. This distance is the grid threshold (whose 
+  *                minimal allowed value is 3 pixels and default value fixed to 
+  *                6 pixels). 
+  */
+
+ /*! \function     const LayerMask& View::GetVisibleBasicLayersMask() const;
+  *  \Return       the bit mask representing the set of basic layers currently 
+  *                visible within the view. 
+  */
+
+ /*! \function     BasicLayers View::GetVisibleBasicLayers() const;
+  *  \Return       the collection of basic layers currently visible within the 
+  *                view. 
+  */
+
+ /*! \function     Selectors View::GetSelectors() const;
+  *  \Return       the collection of selectors associated to the view. 
+  */
+
+ //  \}
+
+
+ /*! \name         Predicates
+  */
+ //  \{
+
+ /*! \function     bool View::GridIsVisible() const;
+  *  \Return       \true if the grid is visible else \false. 
+  *
+  *  \caution      The grid may, as explained above, be visible and not 
+  *                drawable. 
+  */
+
+ /*! \function     bool View::GridIsDrawable() const;
+  *  \Return       \true when the grid is drawable, that is when the scale 
+  *                factor and the display threshold are such that the grid can 
+  *                be visible, else \false. 
+  *
+  *  \caution      The grid may be drawable but not set visible. 
+  */
+
+ /*! \function     bool View::AutoScrollIsEnabled() const;
+  *  \Return       \true when the auto scroll mode is allowed, else \false. 
+  */
+
+ /*! \function     bool View::DoubleBufferingIsEnabled() const;
+  *  \Return       \true when the delayed display mode (through a double buffer) 
+  *                is allowed, else \false. 
+  */
+
+ /*! \function     bool View::PhantomsAreVisible() const;
+  *  \Return       \true when the phantoms (usually of cell instances) are 
+  *                visible, else \false. 
+  */
+
+ /*! \function     bool View::BoundariesAreVisible() const;
+  *  \Return       \true when the boundaries (usually of cell instances) are 
+  *                visible, else \false. 
+  */
+
+ /*! \function     bool View::SelectionIsVisible() const;
+  *  \Return       \true when the selected objects are set visible, else \false. 
+  */
+
+ /*! \function     bool View::IsVisible(BasicLayer* basicLayer) const;
+  *  \Return       \true when the basic layer is visible, else \false. 
+  *
+  *  \caution      Throws an exception if the basiclayer is null. 
+  */
+
+ /*! \function     bool View::IsSelected(const Occurrence& occurrence) const;
+  *  \Return       \true if the occurrence is selected in this view, else \false. 
+  */
+
+ /*! \function     bool View::HasSomethingSelected() const;
+  *  \Return       \false if the selection is empty, else \true. 
+  */
+
+ //  \}
+
+
+ /*! \name         Modifiers
+  */
+ //  \{
+
+ /*! \function     void View::SetCell(Cell* cell);
+  *                Allows to change the cell displayed within the view. 
+  *
+  *  \remark       The view is re-initialized, that is all previous installed 
+  *                commands are first unbound, the choosen transform displays 
+  *                the new cell in its own reference coordinates, the scale 
+  *                factor and the view center area computed in order to make the 
+  *                whole cell visible. Then an overall update area event is 
+  *                posted. 
+  */
+
+ /*! \function     void View::SetTransformation(const Transformation& transformation);
+  *                Changes the transformation associated to the view. The scale 
+  *                factor and the view center area computed in order to make the 
+  *                whole cell visible. Then an overall update area event is 
+  *                posted. 
+  */
+
+ /*! \function     void View::ShowGrid();
+  *                Sets visible the grid (which however will be drawn only if 
+  *                the zoom factor and the grid display threshold allows it). 
+  *
+  *                The following piece of code shows how display the grid while 
+  *                executing a refresh only when neded. 
+\code
+View* view = ...; // we get a view
+ 
+if (!viewGridIsVisible()) {
+   viewShowGrid();
+   if (viewGridIsDrawable()) {
+      viewRefresh();
+   }
+}
+\endcode
+  *
+  *                
+  *
+  *                or still simpler : 
+\code
+View* view = ...; // on récupère une vue
+ 
+viewShowGrid();
+viewUpdate();
+\endcode
+  *
+  *                
+  *
+  *                The second version uses the fact that the function 
+  *                <b>ShowGrid</b> posts an overall update area only if the 
+  *                display has to be redrawn and the function <b>Update()</b> 
+  *                does nothing if no update area has been posted. 
+  *
+  *  \remark       If the refresh doesn't occur because the grid is not 
+  *                drawable, this one will appear when the zoom factor will 
+  *                allows it. 
+  */
+
+ /*! \function     void View::HideGrid();
+  *                Makes the grid invisible (an overall update area is posted if 
+  *                necessary). 
+  */
+
+ /*! \function     void View::SetGridDisplayThreshold(const ScreenUnit& threshold);
+  *                Sets the display threshold of the grid (an overall update 
+  *                area is posted if necessary). 
+  *
+  *  \caution      An exception is thrown if the threshold is below the minimal 
+  *                allowed value. 
+  */
+
+ /*! \function     void View::EnableAutoScroll();
+  *                Enables the automatic scroll mode. 
+  */
+
+ /*! \function     void View::DisableAutoScroll();
+  *                Disables the automatic scroll mode. 
+  */
+
+ /*! \function     void View::EnableDoubleBuffering();
+  *                Enables the delayed double buffering display mode. 
+  */
+
+ /*! \function     void View::DisableDoubleBuffering();
+  *                Disables the delayed double buffering display mode. 
+  */
+
+ /*! \function     void View::SetVisibleBasicLayersMask(const Layer::Mask& visibleBasicLayersMask);
+  *                Sets the layer mask of visible basic layers. 
+  */
+
+ /*! \function     void View::ShowPhantoms();
+  *                Sets visible the phantom layer. 
+  */
+
+ /*! \function     void View::HidePhantoms();
+  *                Sets invisible the phantom layer. 
+  */
+
+ /*! \function     void View::ShowBoundaries();
+  *                Sets visible the boundary layer. 
+  */
+
+ /*! \function     void View::HideBoundaries();
+  *                Sets invisible the boundary layer. 
+  */
+
+ /*! \function     void View::ShowSelection();
+  *                Sets visible the selection. 
+  */
+
+ /*! \function     void View::HideSelection();
+  *                Sets invisible the selection. 
+  */
+
+ /*! \function     void View::Show(BasicLayer* basicLayer);
+  *                Sets visible the basic layer. 
+  *
+  *  \caution      An exception is thrown if the basicLayer is null. 
+  */
+
+ /*! \function     void View::Hide(BasicLayer* basicLayer);
+  *                Sets invisible the basic layer. 
+  *
+  *  \caution      An exception is thrown if the basicLayer is null. 
+  */
+
+ /*! \function     void View::ShowAllLayers();
+  *                Sets visible all the basic layers. 
+  */
+
+ /*! \function     void View::HideAllLayers();
+  *                Sets invisible all the basic layers. 
+  */
+
+ /*! \function     void View::Select(Occurrence& occurrence);
+  *                Selects the occurrence if it was not already selected. 
+  *
+  *  \caution      An excetion is thrown if the occurrence is not valid or if it 
+  *                doesn't pertain to the cell associated to the view. 
+  */
+
+ /*! \function     void View::Unselect(Occurrence& occurrence);
+  *                Unselects the occurrence if it was already selected. 
+  *
+  *  \caution      An excetion is thrown if the occurrence is not valid or if it 
+  *                doesn't pertain to the cell associated to the view. 
+  */
+
+ /*! \function     void View::UnselectAll();
+  *                Unselects all the selected occurrences. 
+  */
+
+ //  \}
+
+
+ /*! \name         Managers
+  */
+ //  \{
+
+ /*! \function     void View::Invalidate();
+  *                Invalidates the whole view, therefore at the next call upon 
+  *                <b>Update()</b> all the view will be redrawn. 
+  */
+
+ /*! \function     void View::Invalidate(const Box& area);
+  *                Invalidates the client area defined by \c \<area\>, therefore 
+  *                at the next call upon <b>Update()</b> all this area will be 
+  *                redrawn. 
+  */
+
+ /*! \function     bool View::Update(bool useDoubleBuffering=false);
+  *                Updates the view by redrawing the rectangular area resulting 
+  *                of the union of invalidated areas. 
+  *
+  *  \remark       Its advantage is to do nothing if no area has been 
+  *                invalidated. 
+  */
+
+ /*! \function     bool View::Refresh(bool useDoubleBuffering=false);
+  *                Refreshes globally the view. 
+  *
+  *                The following piece of code shows its implementation. 
+\code
+void View::Refresh()
+// *****************
+{
+   Invalidate();
+   Update();
+}
+\endcode
+  *                Use preferably the function <b>Update()</b> which doesn't 
+  *                execute useless refreshes and which updates only the drawing 
+  *                of invalidated areas, but sometimes a <b>Refresh()</b> is 
+  *                worthwhile to eliminate possible graphic scoria. 
+  */
+
+ /*! \function     void View::VerticalScroll(const Unit& dy);
+  *                No description.
+  */
+
+ /*! \function     void View::HorizontalScroll(const Unit& dx);
+  *                No description.
+  */
+
+ /*! \function     void View::Scroll(const Unit& dx, const Unit& dy);
+  *                Those functions scroll the view of \c \<dx\> and \c \<dy\>. 
+  *                Those values are defined in client coordinates (and not in 
+  *                pixel) and may be negative. The uncovered areas are 
+  *                automatically updated. 
+  */
+
+ /*! \function     void View::Reframe(const Point& center);
+  *                This function moves the visible area to a new area centered 
+  *                in \c \<center\> without changing the scale factor (an 
+  *                overall update area is posted if necessary). 
+  *
+  *                In order to center the view on a given point just do : 
+\code
+Point newCenter = ...; // define the new center
+ 
+viewReframe(newCenter);
+viewUpdate(); // to get an immediate effect
+\endcode
+  *
+  *                
+  *
+  *                And to apply a "pan right" just do : 
+\code
+Point newCenter =
+   Point(viewGetX(viewGetScreenWidth()), viewGetCenter().GetY());
+ 
+viewReframe(newCenter);
+viewUpdate(); // to get an immediate effect
+\endcode
+  *
+  *                
+  *
+  *                or else : 
+\code
+Point newCenter = viewGetCenter();
+newCenter.Translate(viewGetSize(viewGetHalfScreenWidth()), 0);
+ 
+viewReframe(newCenter);
+viewUpdate(); // to get an immediate effect
+\endcode
+  *
+  *                
+  */
+
+ /*! \function     void View::Reframe(const Point& center, double scale);
+  *                This function has the same behaviour but allows also to 
+  *                change the scale factor (an overall update area is posted if 
+  *                necessary). 
+  *
+  *                To apply a "zoom in" while maintaining the same center just 
+  *                do : 
+\code
+viewReframe(viewGetCenter(), viewGetScale() * 2);
+viewUpdate(); // to get an immediate effect
+\endcode
+  *
+  *                
+  *
+  *                To apply a "zoom out" while maintaining the same center just 
+  *                do : 
+\code
+viewReframe(viewGetCenter(), viewGetScale() * 0.5);
+viewUpdate(); // to get an immediate effect
+\endcode
+  *
+  *                
+  */
+
+ /*! \function     void View::Reframe(const Box& area);
+  *                Changes the view point in order to let the area be visible 
+  *                and centered (a global update area is posted if needed). If 
+  *                the area is empty or if one of its dimensions is null, the 
+  *                function does nothing. 
+  *
+  *  \remark       The ratio width/height of the view may be different than the 
+  *                ratio width/height of the area, this last may not fully 
+  *                occupy all the view space but will be anyway fully visible. 
+  *
+  *                If we want to reframe the view on a given instance, just do : 
+\code
+Instance* instance = ...; // let's get the instance
+ 
+Box area = instance->GetAbutmentBox();
+ 
+viewReframe(view->GetTransformation().GetBox(area));
+// we apply to area the view transformation with which the cell is displayed
+
+viewUpdate(); // to get an immediate effect
+\endcode
+  */
+
+ /*! \function     void View::ReframeBack();
+  *  \Return       to the previous point. 
+  */
+
+ /*! \function     void View::FitToContent();
+  *                Changes both the view center and zoom factor in order to make 
+  *                an overview of the cell (an overall update area is posted if 
+  *                necessary). 
+  */
+
+ /*! \function     void View::DrawGhost(Command* command);
+  *                Some commands have a method <b>_OnDrawGhost()</b> which 
+  *                allows to draw the ghost associated to the command. This 
+  *                message is indeed called upon automatically by the system 
+  *                when neded, but sometimes it is necessary to trigger 
+  *                explicitelly the ghost drawing. This must not be done by 
+  *                calling directly the object's method, but by calling upon 
+  *                this which does the same but after setting up the graphic 
+  *                context. 
+  */
+
+ //  \}
+
+
+ /*! \name         Drawing Primitives
+  */
+ //  \{
+
+ /*! \function     void View::DrawLine(const Unit& xo, const Unit& yo, const Unit& xe, const Unit& ye);
+  *                No description.
+  */
+
+ /*! \function     void View::DrawLine(const Point& origin, const Point& extremity);
+  *                Those primitives allow to draw a line. 
+  */
+
+ /*! \function     void View::DrawRectangle(const Unit& xo, const Unit& yo, const Unit& xe, const Unit& ye);
+  *                No description.
+  */
+
+ /*! \function     void View::DrawRectangle(const Point& origin, const Point& extremity);
+  *                No description.
+  */
+
+ /*! \function     void View::DrawRectangle(const Box& box);
+  *                Those primitives allow to draw an hollowed rectangle. 
+  */
+
+ /*! \function     void View::FillRectangle(const Unit& xo, const Unit& yo, const Unit& xe, const Unit& ye, bool solid = false);
+  *                No description.
+  */
+
+ /*! \function     void View::FillRectangle(const Point& origin, const Point& extremity, bool solid = false);
+  *                No description.
+  */
+
+ /*! \function     void View::FillRectangle(const Box& box, bool solid = false);
+  *                Those primitives allow to fill a rectangle, either with a 
+  *                uniform color if the flag \c \<solid\> is set or with a 
+  *                stipple when this flag is off (default behaviour). 
+  */
+
+ //  \}
+
+
+ /*! \name         View Collection
+  */
+ //  \{
+
+ /*! \typedef      Views
+  *                Generic collection representing a set of views. 
+  */
+
+ /*! \typedef      ViewLocator
+  *                Generic locator for traversing a collection of views. 
+  */
+
+ /*! \typedef      ViewFilter
+  *                Generic filter for selecting a subset of views matching some 
+  *                criteria. 
+  */
+
+ /*! \def          for_each_view(view, views)
+  *                Macro for visiting all views of a collection of views. 
+  */
+
+ //  \}
+
+
+ }

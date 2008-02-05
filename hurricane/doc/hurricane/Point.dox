@@ -1,0 +1,70 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Point
+  *  \brief        Point description (\b API)
+  *
+  */
+
+
+ /*! \name         Constructors
+  */
+ //  \{
+
+ /*! \function     Point::Point();
+  *                Default constructor. 
+  */
+
+ /*! \function     Point::Point(const Unit& x, const Unit& y);
+  *                Creates the point defined by x and y coordinates. 
+  */
+
+ /*! \function     Point::Point(const Point& point);
+  *                Copy constructor. 
+  */
+
+ //  \}
+
+
+ /*! \name         Operators
+  */
+ //  \{
+
+ /*! \function     Point& Point::operator=(const Point& point);
+  *                Assignment operator. 
+  */
+
+ /*! \function     bool Point::operator==(const Point& point) const;
+  *                Equality operator. 
+  */
+
+ /*! \function     bool Point::operator!=(const Point& point) const;
+  *                Difference operator. 
+  */
+
+ //  \}
+
+
+ /*! \name         Modifiers
+  */
+ //  \{
+
+ /*! \function     void Point::SetX(const Unit& x);
+  *                Modifies point abscissa. 
+  */
+
+ /*! \function     void Point::SetY(const Unit& y);
+  *                Modifies point ordinate. 
+  */
+
+ /*! \function     Point& Point::Translate(const Unit& dx, const Unit& dy);
+  *                Translates the point of dx and dy. 
+  */
+
+ //  \}
+
+
+ }

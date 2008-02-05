@@ -1,0 +1,295 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Hook
+  *  \brief        Hook description (\b API)
+  *
+  *  \section      secHookIntro  Introduction
+  *
+  *                The hook is an object which is nested inside a component and 
+  *                which represents some specific part of this component (like 
+  *                its body, its origin or its extremity ...). 
+  *
+  *                The Hook class is an abstract one, that means that for any 
+  *                new type of <b>part</b> a new hook subclass must be derived. 
+  *                Each hook specialization will be described altogether with 
+  *                the component which includes it. 
+  *
+  *                The Component for instance introduces the concept of 
+  *                <b>BodyHook</b> representing the body of the component (which 
+  *                can be assimilated to the component itself). 
+  * 
+  * 
+  *  \section      secHookRings  Rings
+  *
+  *                Hooks are assembled into a <b>ring</b> (circular link) thanks 
+  *                to a special field pointing to the next hook within the ring. 
+  *
+  *                This field is never NULL, by default it points to itself, 
+  *                generating a minimal ring. 
+  * 
+  * 
+  *  \section      secHookMasterAndSlaveHookTypes  Master and Slave hook types
+  *
+  *                There are two kinds of hooks : the <b>masters</b> and the 
+  *                <b>slaves</b>. 
+  *
+  *                Rings are organized such that all slave hooks of a master 
+  *                hook are placed in the ring immediately before it (the 
+  *                ordering of slaves is not significant). 
+  *
+  *                Therefore, to find the master of a given slave, it's enough 
+  *                to follow the ring pointers, starting from the slave, until a 
+  *                master is found. 
+  * 
+  * 
+  *  \section      secHookExplicitConnections  Explicit connections
+  *
+  *                This dependency between a slave and its master means that the 
+  *                part of the component represented by the slave is anchored on 
+  *                the part of the component represented by the master. 
+  *
+  *                This dependence relationship is indeed an explicit 
+  *                connection. 
+  * 
+  * 
+  *  \section      secHookImplicitConnections  Implicit connections
+  *
+  *                Within a ring many relationships master-slaves can cohabit. 
+  *
+  *                This cohabitation has a specific meaning for the different 
+  *                masters of the ring. In fact, the ring must be considered as 
+  *                a connection request between the different masters of the 
+  *                ring. 
+  *
+  *                In other words, this means that the different masters remains 
+  *                to be connected together, or more generaly stated, that the 
+  *                different connected subsets of components associated to those 
+  *                masters remains to be connected together. 
+  *
+  *                The ordering of masters within a ring has no particular 
+  *                signification. 
+  * 
+  * 
+  *  \section      secHookConceptsOfHyperhooksAndHyperrings  Concepts of HyperHooks and HyperRings
+  *
+  *                We can imagine the master-slaves relation as a kind of 
+  *                hyper-hook representing the associated sub-ring, and the ring 
+  *                containing multiple master-slaves relations as an hyper-ring 
+  *                made up of hyper-hooks needing to be connected. 
+  *
+  *                Therefore there will be two different levels of ring 
+  *                processing functions depending on wether we handle hooks 
+  *                stricktly speaking or we handle hyper-hooks representing 
+  *                multiple master hooks. 
+  *
+  *  \section      secHookConstructorAndDestructor  Constructor and Destructor
+  *
+  *                There is no Hook constructor available because they are created by
+  *                the components themselves.
+  *
+  *                On the same way, hooks disapear automatically with their owner.
+  */
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     Component* Hook::GetComponent() const;
+  *  \Return       the component whose hook represents a part. 
+  *
+  *  \remark       The result is never NULL because hooks are byforce nested 
+  *                objects in their component. 
+  */
+
+ /*! \function     Hook* Hook::GetNextHook() const;
+  *  \Return       the next hook within the ring. 
+  *
+  *  \remark       The result is never NULL because every hook has by 
+  *                construction its next one (which may be itself is the ring is 
+  *                empty). 
+  */
+
+ /*! \function     Hook* Hook::GetPreviousHook() const;
+  *  \Return       the previous hook within the ring. 
+  *
+  *  \remark       Less efficient than GetNextHook because it requires a 
+  *                complete ring loop. 
+  */
+
+ /*! \function     Hook* Hook::GetMasterHook() const;
+  *  \Return       the master of the relation master-slaves identified by the 
+  *                hook. 
+  *
+  *  \remark       May return itself if the hook is a master and return NULL if 
+  *                the hook is a slave and has no associated master. 
+  */
+
+ /*! \function     Hook* Hook::GetNextMasterHook() const;
+  *  \Return       the first master found when starting the search immediately 
+  *                after the given hook. 
+  *
+  *  \remark       May return NULL if there is no master within the ring or 
+  *                return the hook itself if it is a master and the only one in 
+  *                the ring. 
+  */
+
+ /*! \function     Hook* Hook::GetPreviousMasterHook() const;
+  *  \Return       the first master found when starting a backwards search 
+  *                immediately before the given hook. 
+  *
+  *  \remark       May return NULL if there is no master within the ring or 
+  *                return the hook itself if it is a master and the only one in 
+  *                the ring. 
+  *
+  *  \remark       Of course the search is done in the natural forward direction 
+  *                (else it would be trully inefficient). 
+  */
+
+ /*! \function     Hooks Hook::GetHooks() const;
+  *  \Return       the collection of hooks of the ring containing the given 
+  *                hook. 
+  *
+  *  \remarks      Hooks are always visited in the natural order starting from 
+  *                the hook itself. 
+  */
+
+ /*! \function     Hooks Hook::GetSlaveHooks() const;
+  *  \Return       the hook collection which are slaves of the given hook. 
+  *
+  *  \remarks      This collection will be empty if the given hook is not a 
+  *                master or if it has no attached slaves. 
+  *
+  *                When visiting the slaves of a master, those are accessed in 
+  *                the assembly order : the first one is the oldest inserted 
+  *                (they are accessed starting from the first slave found when 
+  *                starting a ring loop from the master itself). 
+  *
+  *                The master is not included in this collection. 
+  */
+
+ //  \}
+
+
+ /*! \name         Predicates
+  */
+ //  \{
+
+ /*! \function     bool Hook::IsMaster() const;
+  *  \Return       \true if the hook must be considered as a master, else 
+  *                \false. 
+  *
+  *  \remark       For any new kind of hook this predicate must be overloaded. 
+  */
+
+ /*! \function     bool Hook::IsAttached() const;
+  *                If the hook is a slave : 
+  *
+  *  \Return       \true if the hook has an associated master, else \false. 
+  *
+  *  \remark       You can't find two slaves in the same ring without at least a 
+  *                master. 
+  *
+  *                If the hook is a master : 
+  *
+  *                Let us consider the hyper-ring made upon hyper-hooks. Then 
+  *                the function returns \true if the ring contains at least an 
+  *                other master else \false. 
+  *
+  *  \caution      The meaning here is very different than for a slave hook! 
+  */
+
+ //  \}
+
+
+ /*! \name         Modifiers
+  */
+ //  \{
+
+ /*! \function     Hook* Hook::Detach();
+  *                If the hook is a slave : 
+  *
+  *                Detaches the hook from its ring and returns its old 
+  *                predecessor. 
+  *
+  *  \remark       Will return NULL if the hook is the only one in the ring. 
+  *
+  *                If the hook is a master : 
+  *
+  *                Let us consider the hyper-ring made upon hyper-hooks. Then, 
+  *                the function detaches the hyper-hook (the sub-ring made up of 
+  *                the master and its slaves, if any) from the hyper-ring and 
+  *                returns the old predecessor of the hyper-hook. 
+  *
+  *                Within the detached hyper-hook, the relationship master hook 
+  *                - slave hooks remains unaltered and forms a new ring. 
+  *
+  *  \remarks      May return NULL if the hook is the only master of the ring. 
+  *
+  *                The returned hook, if not NULL, is byforce a master. 
+  */
+
+ /*! \function     Hook* Hook::Attach(Hook* masterHook);
+  *                If the hook (this) is a slave : 
+  *
+  *                The function inserts the hook immediately before 
+  *                \c \<masterHook\> and returns this masterHook. 
+  *
+  *  \caution      Might throw an exception if the hook already has a master or 
+  *                if \c \<masterHook\> is not a master hook. 
+  *
+  *                If the hook (this) is a master : 
+  *
+  *                Let us consider the hyper-ring made upon hyper-hooks. Then, 
+  *                the function attaches the the hyper-hook (the sub-ring made 
+  *                up of this master hook and its slaves, if any) before the 
+  *                \c \<masterHook\> and returns this masterHook. 
+  *
+  *  \caution      Might throw an exception if the hyper-hook is already 
+  *                attached within a ring including an other master or if 
+  *                \c \<masterHook\> is not a master hook. 
+  */
+
+ /*! \function     Hook* Hook::Merge(Hook* masterHook);
+  *                Merges the rings represented by the two hooks which both must 
+  *                be masters, returns \c \<masterHook\>. 
+  *
+  *  \remark       Throws an exception if both hooks are not masters. 
+  *
+  *                This function doesn't change the two relatioships 
+  *                master-slaves but modifies the connection request between 
+  *                corresponding hyper-hooks. 
+  */
+
+ //  \}
+
+
+ /*! \name         Hook Collection
+  */
+ //  \{
+
+ /*! \typedef      Hooks
+  *                Collection representing a set of hooks. 
+  */
+
+ /*! \typedef      HookLocator
+  *                Locator for traversing a collection of hooks. 
+  */
+
+ /*! \typedef      HookFilter
+  *                Fiter for selecting a sub-set of hooks matching a given 
+  *                criteria. 
+  */
+
+ /*! \def          for_each_hook(hook, hooks)
+  *                Macro for visiting the set of all hooks of a hook collection. 
+  */
+
+ //  \}
+
+
+ }

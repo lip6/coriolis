@@ -1,0 +1,108 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Error
+  *  \brief        Error description (\b API)
+  *
+  * 
+  *  \section      secErrorPrintingFormat  Printing format
+  *
+  *                Errors are printed with different formats wether the 
+  *                error code is null or not : text: So the following code : 
+\code
+try {
+   throw Error("Something strange");
+}
+catch {Exception& exception) {
+   cerr << exception << endl;
+}
+\endcode
+  *                Will produce the message : 
+\code
+[ERROR] Something strange
+\endcode
+  *                while the following code : 
+\code
+try {
+   throw Error("Can't create Net : null cell", 3);
+}
+catch {Exception& exception) {
+   cerr << exception << endl;
+}
+\endcode
+  *                Will produce the message : 
+\code
+[ERROR:3] Can't create Net : null cell
+\endcode
+  *                You can always print something different as shown in 
+  *                the following code : 
+\code
+try {
+   throw Error("Can't create Net : null cell", 3);
+}
+catch {Error& error) {
+   cerr << error.GetReason() << " (code " << error.GetCode() << ")" << endl;
+}
+catch {Exception& exception) {
+   cerr << exception << endl;
+}
+\endcode
+  *                Which will produce the message : 
+\code
+Can't create Net : null cell (code 3)
+\endcode
+  */
+
+
+ /*! \typedef      Error::Inherit
+  *                Useful for calling the base class methods without knowing 
+  *                this class. 
+  */
+
+ /*! \name         Constructors
+  */
+ //  \{
+
+ /*! \function     Error::Error(const string& reason, int code = 0);
+  *                Builds an error characterized by a reason and an error code 
+  *                useful within a switch. 
+  */
+
+ /*! \function     Error::Error(const Error& error);
+  *                Copy constructor. 
+  */
+
+ //  \}
+
+
+ /*! \name         Operators
+  */
+ //  \{
+
+ /*! \function     Error& Error::operator=(const Error& error);
+  *                Assignment operator. 
+  */
+
+ //  \}
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     const string& Error::GetReason() const;
+  *  \Return       the reason for which the error was thrown. 
+  */
+
+ /*! \function     int Error::GetCode() const;
+  *  \Return       the error code number. 
+  */
+
+ //  \}
+
+
+
+ }

@@ -1,0 +1,62 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        MapView
+  *  \brief        MapView description (\b API)
+  *
+  *  \section      secMapViewIntro  Introduction
+  *
+  *                There are two categories of views : the main views and the 
+  *                maps. 
+  *
+  *                The main view provides global or partial display of a cell 
+  *                while the map view (which is always attached to a main view) 
+  *                visualizes always the globality of the cell (in a simplified 
+  *                mode) and furthermore locates the part being currently 
+  *                visible within the main view. 
+  *
+  *                The cell displayed in the map is the one attached to the main 
+  *                view. The same holds for the transformation. 
+  */
+
+
+
+ /*! \section      secMapViewConstructionAndDestruction  Construction and destruction
+  *
+  *                Maps are automatically created by their main view and 
+  *                disapear with them. 
+  *
+  *                So if you try to delete a map view an exception is thrown. 
+  */
+
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     MainView* MapView::GetMainView() const;
+  *  \Return       the main view associated to the map (never null). 
+  */
+
+ //  \}
+
+
+ /*! \section      secMapViewRemark  Remark
+  *
+  *                Like for all views, you can install commands on a map, but 
+  *                the reactions to the events occuring within a map must be 
+  *                sent to the main view. 
+  *
+  *                For instance you can define a rubber rectangle of the zoom 
+  *                command within the map, but the scale change must occur 
+  *                within the main view which will automatically update the map 
+  *                by localizing the new visible area. 
+  */
+
+
+
+ }

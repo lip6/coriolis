@@ -1,0 +1,12 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Pin
+  *  \brief        Pin description (\b API)
+  *
+  */
+
+ }

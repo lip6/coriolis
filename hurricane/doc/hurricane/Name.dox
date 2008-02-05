@@ -1,0 +1,162 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Name
+  *  \brief        Name description (\b API)
+  *
+  *  \section      secNameIntro  Introduction
+  *
+  *                Those objects provide an automatic management of shared name 
+  *                (character strings). 
+  *
+  *                The underlying representation is based on a string shared by 
+  *                the different names. Each shared string is automatically 
+  *                released when the last name referencing it disapears (managed 
+  *                by a reference count technic). 
+  */
+
+
+
+ /*! \name         Constructors
+  */
+ //  \{
+
+ /*! \function     Name::Name();
+  *                Default constructor (initialized with an empty string). 
+  */
+
+ /*! \function     Name::Name(const char* s);
+  *                Standard constructor, from a C like character string. 
+  */
+
+ /*! \function     Name::Name(const string& s);
+  *                Standard constructor, from a STL string. 
+  */
+
+ /*! \function     Name::Name(const Name& name);
+  *                Copy constructor. 
+  */
+
+ //  \}
+
+
+ /*! \name         Destructors
+  */
+ //  \{
+
+ /*! \function     Name::~Name();
+  *                The destructor releases the shared string if it no longer 
+  *                referenced. 
+  */
+
+ //  \}
+
+
+ /*! \name         Operators
+  */
+ //  \{
+
+ /*! \function     Name& Name::operator=(const Name& name);
+  *                Assignment operator. Very fast because there is only an 
+  *                assignement of pointer to the shared string and an 
+  *                incrementation of its reference counter. 
+  */
+
+ /*! \function     bool Name::operator==(const Name& name) const;
+  *                Equality operator. Very fast because it only tests the 
+  *                equality of pointers to the two shared strings (and not the 
+  *                equality of the two strings). 
+  *
+  *  \remark       Don't loose on one side what you save on the other as shown 
+  *                in the following code : 
+\code
+Cell* cell = ...; // we get the cell
+ 
+for_each_net(net, cellGetNets()) {
+   if (netGetName() == "vdd") {
+      ... ;
+   }
+   end_for;
+}
+\endcode
+  *                Indeed, for each equality test, a name will be created from 
+  *                the string "vdd". If the equality test is very fast, it is 
+  *                not the same for the name construction. So it is faster to 
+  *                write : 
+\code
+Cell* cell = ...; // we get the cell
+ 
+Name vdd = "vdd";
+for_each_net(net, cellGetNets()) {
+   if (netGetName() == vdd) {
+      ...
+   }
+   end_for;
+}
+\endcode
+  *                Or yet faster : 
+\code
+Cell* cell = ...; // we get the cell
+ 
+static Name VDD = "vdd";
+for_each_net(net, cellGetNets()) {
+   if (netGetName() == VDD) {
+      ...
+   }
+   end_for;
+}
+\endcode
+  */
+
+ /*! \function     bool Name::operator!=(const Name& name) const;
+  *                Difference operator. Very fast because it only tests the 
+  *                difference of pointers to the two shared strings (and not the 
+  *                difference of the two strings). 
+  */
+
+ /*! \function     bool Name::operator<(const Name& name) const;
+  *                No description.
+  */
+
+ /*! \function     bool Name::operator<=(const Name& name) const;
+  *                No description.
+  */
+
+ /*! \function     bool Name::operator>(const Name& name) const;
+  *                No description.
+  */
+
+ /*! \function     bool Name::operator>=(const Name& name) const;
+  *                Those operators need to process the two shared strings and 
+  *                are not as fast as the previous ones. 
+  */
+
+ /*! \function     char Name::operator[](unsigned index) const;
+  *                Indexation operator (for reading the character of rank 
+  *                index). Throws an exception if index is out of bounds. 
+  */
+
+ /*  \function     operator Name::const string& () const;
+  *                Cast operator. In fact it returns a reference to the shared 
+  *                string (which is not modifiable [and should not be 
+  *                modified]). 
+  */
+
+ //  \}
+
+
+ /*! \name         Predicates
+  */
+ //  \{
+
+ /*! \function     bool Name::IsEmpty () const;
+  *  \Return       \true if the shared string is empty, else \false. 
+  */
+
+ //  \}
+
+
+ }

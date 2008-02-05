@@ -1,0 +1,134 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Library
+  *  \brief        Library description (\b API)
+  *
+  *  \section      secLibraryIntro  Introduction
+  *
+  *                A library contains a set of symbols, a set of cells and may 
+  *                also contains a set of sub libraries. 
+  *
+  *                A root library exists directly attached to the data_base. 
+  *                This root library is the only one which has no parent 
+  *                library. 
+  */
+
+
+
+ /*! \typedef      Library::Inherit
+  *                Useful for calling upon methods of the base class without 
+  *                knowing it. 
+  */
+
+ /*! \name         Constructors
+  */
+ //  \{
+
+ /*! \function     Library* Library::Create(DataBase* dataBase, const Name& name);
+  *                Creates and returns a new root library named \c \<name\> for 
+  *                the data base \c \<dataBase\>. 
+  *
+  *  \caution      Throws an exception if the data base is null, if the name is 
+  *                empty or if the data base already contains a root library. 
+  */
+
+ /*! \function     Library* Library::Create(Library* library, const Name& name);
+  *                Creates and returns a new sub library named \c \<name\> for 
+  *                the library \c \<library\>. 
+  *
+  *  \caution      Throws an exception if the library is null, if the name is 
+  *                empty or if a sub library with same name already exists in 
+  *                the library. 
+  */
+
+ //  \}
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     DataBase* Library::GetDataBase() const;
+  *  \Return       the data base owning directly or indirectly the library. 
+  */
+
+ /*! \function     Library* Library::GetLibrary() const;
+  *  \Return       the library owning the library (NULL for the root library). 
+  */
+
+ /*! \function     const Name& Library::GetName() const;
+  *  \Return       the name of the library. 
+  */
+
+ /*! \function     Library* Library::GetLibrary(const Name& name) const;
+  *  \Return       the sub library of name \c \<name\> if it exists, else NULL. 
+  */
+
+ /*! \function     Libraries Library::GetLibraries() const;
+  *  \Return       the collection of all sub libraries of the library. 
+  */
+
+ /*! \function     Cell* Library::GetCell(const Name& name) const;
+  *  \Return       the cell of name \c \<name\> if it exists, else NULL. 
+  */
+
+ /*! \function     Cells Library::GetCells() const;
+  *  \Return       the collection of all cells of the library. 
+  */
+
+ /*! \function     Symbol* Library::GetSymbol(const Name& name) const;
+  *  \Return       the symbol of name \c \<name\> if it exists, else NULL. 
+  */
+
+ /*! \function     Symbols Library::GetSymbols() const;
+  *  \Return       the collection of all symbols of the library. 
+  */
+
+ //  \}
+
+
+ /*! \name         Modifiers
+  */
+ //  \{
+
+ /*! \function     void Library::SetName(const Name& name);
+  *                Allows to change the library name. 
+  *
+  *  \remark       Throws an exception if the new name is empty or if the 
+  *                library owning the library (if any) has already a sub library 
+  *                with the same name. 
+  */
+
+ //  \}
+
+
+ /*! \name         Library Collection
+  */
+ //  \{
+
+ /*! \typedef      Libraries
+  *                Generic collection representing a set of libraries. 
+  */
+
+ /*! \typedef      LibraryLocator
+  *                Generic locator for traversing a collection of libraries. 
+  */
+
+ /*! \typedef      LibraryFilter
+  *                Generic filter allowing to select a subset of libraries 
+  *                matching some criteria. 
+  */
+
+ /*! \def          for_each_library(library, libraries)
+  *                Macro for visiting all the libraries of a libraries 
+  *                collection. 
+  */
+
+ //  \}
+
+
+ }

@@ -1,0 +1,11 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \namespace    Hurricane
+  *  \brief        The namespace dedicated to Hurricane.
+  */
+
+ }

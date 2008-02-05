@@ -1,0 +1,195 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Instance
+  *  \brief        Instance description (\b API)
+  *
+  *  \section      secInstanceIntro  Introduction
+  *
+  *                Instances provide the capability to build hierarchical 
+  *                assemblies. An instance belongs to a cell (the "<b>owner 
+  *                cell</b>") and references (calls) a model cell which we will 
+  *                call the "<b>mater cell</b>". Seen from the other hand, a 
+  *                cell may be the master cell of many instances belonging to 
+  *                other cells, this set of instances is named the "<b>slave 
+  *                instances</b>" of this cell (it is empty for the top most 
+  *                cell of a hierachical assembly, as well as for all cells from 
+  *                the library which are not instanciated in the current 
+  *                design). 
+  * 
+  * 
+  *  \section      secInstancePredefinedFilters  Predefined filters
+  *
+  *                <b>Hurricane::Instance::GetIsUnderFilter</b>
+  */
+
+
+
+ /*! \typedef      Instance::Inherit
+  *                Useful for calling upon methods of the base class without 
+  *                knowing it. 
+  */
+
+ /*! \name         Constructors
+  */
+ //  \{
+
+ /*! \function     Instance* Instance::Create(Cell* cell, const Name& name, Cell* masterCell, bool secureFlag = true);
+  *                No description.
+  */
+
+ /*! \function     Instance* Instance::Create(Cell* cell, const Name& name, Cell* masterCell,const Transformation& transformation, const PlacementStatus& placementstatus, bool secureFlag = true);
+  *                Create and return a pointer to a new instance of name 
+  *                \c \<name\> belonging to the cell \c \<cell\> and refering 
+  *                the cell \c \<masterCell\> through a transformation 
+  *                \c \<transformation\> if it is provided (else the identity 
+  *                transform is assumed). 
+  *
+  *  \caution      Throws an exception if the cell \c \<cell\> is null, if the 
+  *                \c \<masterCell\> is null, if an instance of same name 
+  *                already exists or if a cyclic assembly is detected. 
+  *
+  *  \remark       If the \c \<secureFlag\> is set to \false the verification of 
+  *                the lack of cyclic assembly is skipped (you save some cpu 
+  *                time, but at your own risks). 
+  */
+
+ //  \}
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     const Name& Instance::GetName() const;
+  *  \Return       the instance name. 
+  */
+
+ /*! \function     Cell* Instance::GetMasterCell() const;
+  *  \Return       the cell model referenced by the instance. 
+  */
+
+ /*! \function     const Transformation& Instance::GetTransformation() const;
+  *  \Return       the transformation associated to the instance. 
+  */
+
+ /*! \function     Plug* Instance::GetPlug(const Net* masterNet) const;
+  *  \Return       the plug associated to the \c \<masterNet\> if it exists or 
+  *                else NULL (if the net is not external). 
+  */
+
+ /*! \function     Plugs Instance::GetPlugs() const;
+  *  \Return       the collection of instance plugs. 
+  *
+  *  \important    Each external net of the master cell of the instance has by 
+  *                construction an associated plug. This one may be connected or 
+  *                not to a net in the owner cell of the instance. 
+  */
+
+ /*! \function     Plugs Instance::GetConnectedPlugs() const;
+  *  \Return       the collection of instance plugs which are effectively 
+  *                connected. 
+  */
+
+ /*! \function     Plugs Instance::GetUnconnectedPlugs() const;
+  *  \Return       the collection of instance plugs which are not connected. 
+  */
+
+ /*! \function     Path Instance::GetPath(const Path& tailPath=Path()) const;
+  *  \Return       the path composed of the instance solely. 
+  */
+
+ /*! \function     Path Instance::GetPath(const Path& tailPath) const;
+  *  \Return       the path resulting of the concatenation of the instance and 
+  *                the tail path (possibly empty). 
+  *
+  *  \caution      An exception will be thrown if the tail path is not 
+  *                consistent with the instance (that is if the owner cell of 
+  *                the tail path is not the master cell of the instance). 
+  */
+
+ /*! \function     Box Instance::GetAbutmentBox() const;
+  *  \Return       the abutment box of the instance, that is the abutment box of 
+  *                the master cell to which has been applied the instance 
+  *                transformation. 
+  */
+
+ /*! \function     InstanceFilter Instance::GetIsUnderFilter(const Box& area);
+  *  \Return       the filter selecting instances which intersect the given 
+  *                area. 
+  */
+
+ //  \}
+
+
+ /*! \name         Modifiers
+  */
+ //  \{
+
+ /*! \function     void Instance::SetName(const Name& name);
+  *                Allows to change the instance name. 
+  *
+  *  \remark       Throws an exception if the name is empty or if an instance 
+  *                with the same name exists in the owner cell. 
+  */
+
+ /*! \function     void Instance::SetTransformation(const Transformation& transformation);
+  *                Allows to modify the instance transformation. 
+  */
+
+ /*! \function     void Instance::SetMasterCell(Cell* masterCell, bool secureFlag = true);
+  *                Allows to change the cell referenced by this instance. 
+  *
+  *  \caution      Throws an exception if either the cell is null, a cyclic 
+  *                assembly is detected or the substitution can't succeed. 
+  *
+  *  \remark       If the \c \<secureFlag\> is set to \false the verification of 
+  *                the lack of cyclic assembly is skipped (you save some cpu 
+  *                time, but at your own risks). 
+  *
+  *  \important    In order to succeed with the substitution, it is necessary 
+  *                that for each connected plug, refering an external net of the 
+  *                old master cell, a net of same name can be found in the new 
+  *                master cell. 
+  *
+  *                The properties of the instance, of its existing plugs and of 
+  *                the different occurences of those ones are preserved. On the 
+  *                other hand, all the hierarchical pathes going through that 
+  *                instance and not ending on it, as well as all associated 
+  *                occurences, become obsolete. The properties attached to those 
+  *                occurences are therefore deleted. 
+  */
+
+ //  \}
+
+
+
+ /*! \name         Instance Collection
+  */
+ //  \{
+
+ /*! \typedef      Instances
+  *                Generic collection representing a set of instances. 
+  */
+
+ /*! \typedef      InstanceLocator
+  *                Generic locator for traversing a collection of instances. 
+  */
+
+ /*! \typedef      InstanceFilter
+  *                Generic filter allowing to select a subset of instances 
+  *                matching some criteria. 
+  */
+
+ /*! \def          for_each_instance(instance, instances)
+  *                Macro for visiting all the instances of a collection of 
+  *                instances. 
+  */
+
+ //  \}
+
+
+ }

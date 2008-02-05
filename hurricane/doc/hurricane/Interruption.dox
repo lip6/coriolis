@@ -1,0 +1,67 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Interruption
+  *  \brief        Interruption description (\b API)
+  *
+  *  \section      secInterruptionIntro  Introduction
+  *
+  *                Interruptions are neither errors nor warnings. They are used 
+  *                to suspend a potentially lengthy action (like a display 
+  *                refresh). We could have used errors or warning but it is 
+  *                wiser to use a specific type. 
+  */
+
+
+
+ /*! \typedef      Interruption::Inherit
+  *                Useful for calling the base class methods without knowing 
+  *                this class. 
+  */
+
+ /*! \name         Constructors
+  */
+ //  \{
+
+ /*! \function     Interruption::Interruption(const string& reason, int code = 0);
+  *                Builds an interruption characterized by a reason and a code 
+  *                useful within a switch. 
+  */
+
+ /*! \function     Interruption::Interruption(const Interruption& interruption);
+  *                Copy constructor. 
+  */
+
+ //  \}
+
+
+ /*! \name         Operators
+  */
+ //  \{
+
+ /*! \function     Interruption& Interruption::operator=(const Interruption& interruption);
+  *                Assignment operator. 
+  */
+
+ //  \}
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     const string& Interruption::GetReason() const;
+  *  \Return       the reason for which the interruption was thrown. 
+  */
+
+ /*! \function     int Interruption::GetCode() const;
+  *  \Return       the interruption code number. 
+  */
+
+ //  \}
+
+
+ }

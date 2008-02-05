@@ -1,0 +1,21 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        StandardPrivateProperty
+  *  \brief        StandardPrivateProperty description (\b API)
+  *
+  *  \section      secStandardPrivatePropertyIntro  Introduction
+  *
+  *                Those properties allow to assign to an object a relation 
+  *                between a name and a value. 
+  */
+
+
+
+ /*! \name         Constructors
+  */
+ //  \{
+

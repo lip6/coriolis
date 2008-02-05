@@ -1,0 +1,57 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Pad
+  *  \brief        Pad description (\b API)
+  *
+  *  \section      secPadIntro  Introduction
+  *
+  *                A pad is an object representing a layout rectangle. 
+  */
+
+
+
+ /*! \typedef      Pad::Inherit
+  *                Useful for calling upon methods of the base class without 
+  *                knowing it. 
+  */
+
+ /*! \name         Constructors
+  */
+ //  \{
+
+ /*! \function     Pad* Pad::Create(Net* net, Layer* layer, const Box& boundingBox);
+  *                No description.
+  */
+
+ //  \}
+
+
+ /*! \name         Pad Collection
+  */
+ //  \{
+
+ /*! \typedef      Pads
+  *                Generic collection representing a set of pads. 
+  */
+
+ /*! \typedef      PadLocator
+  *                Generic locator for traversing a collection of pads. 
+  */
+
+ /*! \typedef      PadFilter
+  *                Generic filter allowing to select a subset of pads matching 
+  *                some criteria. 
+  */
+
+ /*! \def          for_each_pad(pad, pads)
+  *                Macro for visiting all the pads of a collection of pads. 
+  */
+
+ //  \}
+
+
+ }

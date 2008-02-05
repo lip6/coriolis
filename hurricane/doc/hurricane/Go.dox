@@ -1,0 +1,310 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Go
+  *  \brief        Go description (\b API)
+  *
+  *  \section      secGoIntro  Introduction
+  *
+  *                The Gos represent the category of graphical objects. 
+  *
+  *                They are stored in a fast geometric access data structure : a 
+  *                quadtree (let us recall that the organization of each 
+  *                quadtree depends essentially of the geometrical envelope of 
+  *                those objects and of their number). 
+  * 
+  * 
+  *  \section      secGoMaterialization  Materialization
+  *
+  *                A graphical object can be materialized or not. 
+  *
+  *                A graphical object is said materialized when it is 
+  *                effectively inserted into a quadtree. It has then a graphical 
+  *                appearance (it's the least it can do) but also it will be 
+  *                taken into account within each collection which uses 
+  *                quadtrees in order to find its constituents (like the 
+  *                collection returned by the call 
+  *                cell-\>GetComponentsUnder(area) for instance). 
+  *
+  *                On the other hand, non materialized graphic objects will 
+  *                neither be visible nor taken into account by those 
+  *                collections. This may be a significant advantage in some 
+  *                situations and a great drawback in others. 
+  *
+  *  \remark       <b>Plugs are never materialized</b>. 
+  * 
+  * 
+  *  \section      secGoUpdateSessions  Update sessions
+  *
+  *                The location of an object within its quadtree depends of its 
+  *                bounding box, if a modification of this one must occur for 
+  *                any reason, the object must be removed from the quadtree 
+  *                before doing the modification and re-inserted after, at the 
+  *                right place, according to its new bounding box. 
+  *
+  *                Furthermore the change on an object may lead to changes on 
+  *                other ones. For instance the move of a contact will 
+  *                forcefully affect the components which are anchored on it, 
+  *                and so forth ... 
+  *
+  *                Furthermore it may be interesting to apply many modifications 
+  *                at the same time, avoiding so intermediate or useless 
+  *                multiple updates (many changes on the same object but also on 
+  *                different objects lying in different unrelated cells). 
+  *
+  *                type: In order to control this process we must operate in 
+  *                three steps 
+  *
+  *                Open an update session. Do all the needed modifications. 
+  *                Close the update session. 
+  *
+  *                type: Let us examine the following piece of code which 
+  *                illustrates that 
+\code
+OpenUpdateSession();
+ 
+contact->SetLayer(...);
+contact->SetSizes(...);
+contact->SetPosition(...);
+ 
+CloseUpdateSession();
+\endcode
+  *                The call to the generic function <b>OpenUpdateSession()</b> 
+  *                allows to open a new update_session. 
+  *
+  *                The three following lines call upon functions which modify 
+  *                the contact and, for the last one, also the components which 
+  *                directly or indirectly bear on it. 
+  *
+  *                At last the call to the generic function 
+  *                <b>CloseUpdateSession()</b> allows to close the last update 
+  *                session currently open. 
+  *
+  *                type: What does really happen ? 
+  *
+  *                The update sesion is a shared property which is put at its 
+  *                creation on the top of a FIFO stack. The last update cession 
+  *                placed on the top of this stack represents the current 
+  *                session. 
+  *
+  *                When the object is modified : the method <b>Invalidate</b> 
+  *                which we will detail later is called upon. The purpose of 
+  *                this method is to de-materialize all materialized objects 
+  *                affected directly or indirectly by this modification and 
+  *                notify those objects to the current update session. Each of 
+  *                those objects then becomes an owner of this update session 
+  *                which is, let us recall it, a shared property. 
+  *
+  *                Finally, when the current update session is closed, it is 
+  *                simply unstacked and destroyed. While being destroyed, it 
+  *                materializes again the objects which are still attached to 
+  *                it, that is those which were de-materialized within the 
+  *                modification phase (and only those ones) and which were not 
+  *                destroyed in between (invaluable contribution of the shared 
+  *                property). 
+  * 
+  *  \section      secGoConstructionAndDestruction  Construction and destruction
+  *
+  *                Graphic objects are, by default, automatically materialized 
+  *                at their creation (unless the plugs which are never 
+  *                materialized) and forcefully de-materialized at their 
+  *                destruction. 
+  *
+  *                Nevertheless it is possible to inhibit temporarily the 
+  *                automatic materialization in some cases (like within the 
+  *                loading phase for instance) and to execute the 
+  *                materialization a posteriory and in a global way.This allows 
+  *                to avoid multiple updates of the quadtree. 
+  */
+
+
+
+ /*! \name         Predicates
+  */
+ //  \{
+
+ /*! \function     bool Go::AutoMaterializationIsDisabled();
+  *                No description.
+  */
+
+ /*! \function     bool Go::IsMaterialized() const;
+  *                No description.
+  */
+
+ //  \}
+
+
+ /*! \name         Modifiers
+  */
+ //  \{
+
+ /*! \function     void Go::EnableAutoMaterialization();
+  *  \see          Go::DisableAutoMaterialization().
+  */
+
+ /*! \function     void Go::DisableAutoMaterialization();
+  *                Those two static member functions allows to inhibit
+  *                or restore the automatic materialization of all
+  *                graphic objects.
+  *                
+  *                When the automatic materialization is inhibited,
+  *                the postponed materialization of dematerialized
+  *                objects has to be taken in charge explicitely by
+  *                the developper (it will not be automatically done
+  *                at the restore of the automatic mode).
+  *                
+  *                The following sample code shows how to proceed :
+\code
+Cell* LoadCellFromFile(...)
+// ************************
+{
+   Cell* cell = Cell::Create(...);
+ 
+   bool enabledFlag = ! AutoMaterializationIsDisabled();
+ 
+   DisableAutoMaterialization(); // we force the mode
+ 
+   ... // we open the file and load the cell 
+ 
+   if (enabledFlag) // we restore the initial state if needed
+      EnableAutoMaterialization();
+ 
+   cell->Materialize(); // delayed materialization of cell content
+ 
+   return cell;
+}
+\endcode
+  */
+
+ /*! \function     void Go::Materialize();
+  *                No description.
+  */
+
+ /*! \function     void Go::Unmaterialize();
+  *                No description.
+  */
+
+ /*! \function     void Go::Invalidate(bool propagateFlag = true);
+  *                This method must be called before a change of the
+  *                object geometry.
+  *
+  *                It is within this function that the object captures
+  *                or not the current update session, which involves
+  *                its future re-materialization when the time commes.
+  *
+  *                It is also within this function that all objects,
+  *                whose geometry will be affected directly or
+  *                indirectly by the object change, must be
+  *                invalidated. The flag \c \<propagateFlag\> allows to
+  *                limit the propagation in some cases (i.e. when the
+  *                contact size changes, objects anchored on it are
+  *                not affected and there is no need to invalidate
+  *                them).
+  *
+  *                An already dematerialized object must not be taken
+  *                in count in the current update session, but its
+  *                propagation, if required, must be systematically
+  *                executed.
+  *
+  * \sample        We give as an example the implementation for the instances :
+\code
+void Instance::Invalidate(bool propagateFlag)
+// ******************************************
+{
+   Inherit::Invalidate(false);
+ 
+   if (propagateFlag) {
+      for_each_plug(plug, GetConnectedPlugs()) {
+         plugInvalidate(true);
+         end_for;
+      }
+   }
+}
+\endcode
+\code
+void Component::Invalidate(bool propagateFlag)
+// *******************************************
+{
+   Inherit::Invalidate(false);
+ 
+   if (propagateFlag) {
+      for_each_component(component, GetSlaveComponents()) {
+         componentInvalidate(false);
+         end_for;
+      }
+   }
+}
+\endcode
+\code
+void Contact::SetLayer(Layer* layer)
+// *********************************
+{
+   if (!layer)
+      throw Error("Can't set layer : null layer");
+ 
+   if (layer != _layer) {
+ 
+      // we do the change only if necessary
+ 
+      Invalidate(false); // done before the modification
+ 
+      _layer = layer;
+   }
+}
+\endcode
+\code
+void Instance::SetTransformation(const Transformation& transformation)
+// *******************************************************************
+{
+   if (transformation != _transformation) {
+ 
+      // we do the change only if necessary
+ 
+      Invalidate(true); // done before the modification
+ 
+      _transformation = transformation;
+   }
+}
+\endcode
+  */
+
+ /*! \function     void Go::Translate(const Unit& dx, const Unit& dy);
+  *                Translate the graphic object of the quantity \c \<dx\> and 
+  *                \c \<dy\>. 
+  *
+  *                This virtual method should be specialized for a new kind of 
+  *                graphic object. 
+  */
+
+ //  \}
+
+
+ /*! \name         Go Collection
+  */
+ //  \{
+
+ /*! \typedef      Gos
+  *                Generic collection representing a set of graphic objects. 
+  */
+
+ /*! \typedef      GoLocator
+  *                Generic locator for visiting a collection of graphic objects. 
+  */
+
+ /*! \typedef      GoFilter
+  *                Filter to selecting a subset of graphic objects matching some 
+  *                criteria. 
+  */
+
+ /*! \def          for_each_go(go, gos)
+  *                Macro for visiting all graphic objects of a graphic objects 
+  *                collection. 
+  */
+
+ //  \}
+
+
+ }

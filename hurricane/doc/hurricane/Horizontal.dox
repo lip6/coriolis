@@ -1,0 +1,123 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Horizontal
+  *  \brief        Horizontal description (\b API)
+  *
+  *  \section      secHorizontalIntro  Introduction
+  *
+  *                A horizontal has, in addition to inherited attributes, a 
+  *                specific one : its ordinate. The horizontal extend of the 
+  *                segment is defined by the "source" and "target" components on 
+  *                which it is anchored. 
+  *
+  *                This ordinate allows, among other things, to anchor a 
+  *                horizontal segment extremity on a component (i.e. a contact) 
+  *                with a small vertical offset without the need to materialize 
+  *                it, because it is implicitely equal to the difference between 
+  *                the horizontal ordinate and the component ordinate. It allows 
+  *                also, and it not the least interesting feature, to anchor an 
+  *                extremity of a horizontal directly on a vertical segment (and 
+  *                conversely) without the need to create an intermediate 
+  *                contact (unless they are on different layers!). The ordinate 
+  *                of the implicit contact point is the one of the horizontal 
+  *                and the abscissa the one of the vertical). 
+  */
+
+
+
+ /*! \typedef      Horizontal::Inherit
+  *                Useful for calling upon methods of the base class without 
+  *                knowing it. 
+  */
+
+ /*! \name         Constructors
+  */
+ //  \{
+
+ /*! \function     Horizontal* Horizontal::Create(Component* source, Component* target, Layer* layer,const Unit& y, const Unit& width = 0,const Unit& dxSource = 0, const Unit& dxTarget = 0);
+  *                No description.
+  */
+
+ /*! \function     Horizontal* Horizontal::Create(Net* net, Layer* layer, const Unit& y, const Unit& width = 0,const Unit& dxSource = 0, const Unit& dxTarget = 0);
+  *                Creates and returns an absolute horizontal segment with layer 
+  *                \c \<layer\>, located at ordinate \c \<y\> and of width 
+  *                \c \<width\>. The differents extremities abscissas are given 
+  *                by \c \<dxSource\> and \c \<dxTarget\>. 
+  *
+  *  \caution      Throws an exception if any of the net or layer pointers is 
+  *                null. 
+  */
+
+ //  \}
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     const Unit& Horizontal::GetDxSource() const;
+  *  \Return       the relative source abscissa of the segment (may be absolute 
+  *                if the source extremity isn't anchored). 
+  *
+  *  \remark       If you want to get the absolute one use the member function 
+  *                GetSourceY() defined at the Segment level. 
+  */
+
+ /*! \function     const Unit& Horizontal::GetDxTarget() const;
+  *  \Return       the relative target abscissa of the segment (may be absolute 
+  *                if the target extremity isn't anchored). 
+  *
+  *  \remark       If you want to get the absolute one use the member function 
+  *                GetTargetY() defined at the Segment level. 
+  */
+
+ //  \}
+
+
+ /*! \name         Modifiers
+  */
+ //  \{
+
+ /*! \function     void Horizontal::SetY(const Unit& x);
+  *                Sets the ordinate of the segment. 
+  */
+
+ /*! \function     void Horizontal::Translate(const Unit& dy);
+  *                Translate verticaly the horizontal segment of the quantity 
+  *                \c \<dy\>. 
+  */
+
+ //  \}
+
+
+ /*! \name         Horizontal Collection
+  */
+ //  \{
+
+ /*! \typedef      Horizontals
+  *                Generic collection representing a set of horizontal segments. 
+  */
+
+ /*! \typedef      HorizontalLocator
+  *                Generic locator for traversing a collection of horizontal 
+  *                segments. 
+  */
+
+ /*! \typedef      HorizontalFilter
+  *                Generic filter allowing to select a subset of horizontals 
+  *                matching some criteria. 
+  */
+
+ /*! \def          for_each_horizontal(horizontal, horizontals)
+  *                Macro for visiting all the horizontals of a collection of 
+  *                horizontal segments. 
+  */
+
+ //  \}
+
+
+ }

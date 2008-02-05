@@ -1,0 +1,210 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        GenericCollection
+  *  \brief        GenericCollection description (\b API)
+  *
+  *  \section      secGenericCollectionIntro  Introduction
+  *
+  *                Collections are powerful objects but share a common weakness. 
+  *                Indeed they don't allow to bring within a variable of type 
+  *                Collection\c \<Type\> a subset collection whose descriptor, 
+  *                of course, has additional attributes. For instance, the 
+  *                following sequence is rejected by the compiler 
+\code
+Collection<Net*> nets = cellGetExternalNets();
+\endcode
+  *                You must therefore imperatively go through a pointer type 
+  *                variable by generating a clone and must not forget to delete 
+  *                this allocated clone after use. 
+\code
+Collection<Net*>* nets = cellGetExternalNets().GetClone();
+...
+// use
+...
+delete nets; // we delete the collection, not the nets
+\endcode
+  *                Fortunately, the GenericCollection\c \<Type\> type solves 
+  *                this weakness. For this purpose, a generic collection creates 
+  *                at its construction (or by assignment) a clone of the given 
+  *                collection and releases, when deleted (or when assigned to an 
+  *                other collection), the previously allocated clone. Now it is 
+  *                feasible to bring into a variable of type 
+  *                GenericCollection\c \<Type\> any collection of type Type (as 
+  *                well as an other generic collection). 
+\code
+GenericCollection<Net*> nets = cellGetExternalNets();
+...
+// use it
+...
+\endcode
+  *                The variable \c \<nets\> being an automatic one, it will be 
+  *                automatically deleted (when leaving the scope the block where 
+  *                it was declared) carrying with it the clone allocated by the 
+  *                assignment. 
+  *
+  *                As far as all defined global collection types (Cells, Nets, 
+  *                Occurences, ...) are GenericCollections (the type Nets being 
+  *                defined by GenericCollection\<Net*\>), the previous sequence 
+  *                is still simpler and becomes: 
+\code
+Nets nets = cellGetExternalNets();
+...
+// use
+...
+\endcode
+  *                Furthermore a generic collection being able to get any other 
+  *                collection, provided it handles the same type of elements, 
+  *                you may well write: 
+\code
+Nets nets;
+ 
+nets = cellGetExternalNets();
+...
+// use
+...
+ 
+// and somewhere later, with the same variable
+nets = cellGetNets();
+...
+// use
+...
+\endcode
+  * 
+  * 
+  *  \section      secGenericCollectionRemark  Remark
+  *
+  *                When writing the following code : 
+\code
+Collection<Net*>* nets = cellGetExternalNets().GetClone();
+...
+// use
+...
+delete nets;
+\endcode
+  *                If an exception happens in the use phase, the nets variable 
+  *                will never be released. This is not critical in most cases, 
+  *                but may become dramatic in some other ones : notably within 
+  *                graphic display phases where frequent interruptions may 
+  *                occur. 
+  *
+  *                On the other hand, when writting: 
+\code
+GenericCollection<Net*> nets = cellGetExternalNets();
+...
+// use
+...
+\endcode
+  *                If an exception occurs within the usage phase, the nets 
+  *                variable will be deleted as well as the allocated clone. 
+  * 
+  * 
+  *  \section      secGenericCollectionDestruction  Destruction
+  *
+  *                When the generic collection is deleted, the clone (if any) is 
+  *                then deleted. 
+  * 
+  * 
+  *  \section      secGenericCollectionRemark  Remark
+  *
+  *                On the following example you can see an interesting effect. 
+  *                We get two different Nets objects which represent the same 
+  *                set of nets. Any modification on the elements of one set has 
+  *                immediate repercussion on the elements of the other. 
+\code
+Cell* cell = ...; // we get a cell
+ 
+if (cell) {
+ 
+   Nets nets1 = cellGetNets();
+   Nets nets2 = cellGetNets();
+ 
+   for_each_net(net, nets1) netDelete(); end_for;
+ 
+   assert(nets1.IsEmpty());
+   assert(nets2.IsEmpty());
+}
+\endcode
+  *                Therefore we can get the set of all nets of a cell at program 
+  *                begining, this set will remain, even after many cell changes, 
+  *                the set of nets of that cell (as much as, of course, the cell 
+  *                is not destroyed). 
+  */
+
+
+
+ /*! \typedef      GenericCollection::Inherit
+  *                Useful for calling methods on the base class without knowing 
+  *                it. 
+  */
+
+ /*! \name         Constructors
+  */
+ //  \{
+
+ /*! \function     GenericCollection<Type>::GenericCollection();
+  *                Default constructor : The generic collection is unbound and 
+  *                therefore empty. 
+  */
+
+ /*! \function     GenericCollection<Type>::GenericCollection(const Collection<Type>& collection);
+  *                Standard constructor: the generic collection is initialized 
+  *                with a clone of \c \<collection\> (which may be empty). 
+  */
+
+ /*! \function     GenericCollection<Type>::GenericCollection(Collection<Type>* collection);
+  *                Standard constructor: the generic collection is here directly 
+  *                initialized with the collection (pointer) and not with a 
+  *                clone of it. 
+  *
+  *  \important    In consequence this collection will be automatically 
+  *                destroyed by the generic collection when time comes. This may 
+  *                be useful when some collection clone has been created and 
+  *                needs to be automatically deleted, allocating it to a generic 
+  *                collection which will manage that. 
+  *
+  *  \remark       You can do that only once ... else you get in trouble. 
+  */
+
+ /*! \function     GenericCollection<Type>::GenericCollection(const GenericCollection<Type>& genericCollection);
+  *                Copy constructor: the generic collection is here initialized 
+  *                with a clone of genericCollection (which, here also, may be 
+  *                empty). 
+  */
+
+ //  \}
+
+
+
+ /*! \name         Operators
+  */
+ //  \{
+
+ /*! \function     GenericCollection<Type>& GenericCollection::operator=(const Collection<Type>& collection);
+  *                Assignment operator : if the generic collection was bound to 
+  *                a clone, this one is first deleted and then a new clone of 
+  *                \c \<collection\> is allocated (which will be deleted when 
+  *                time comes either by a new assignment or by the generic 
+  *                collection deletion). 
+  */
+
+ /*! \function     GenericCollection<Type>& GenericCollection::operator=(Collection<Type>* collection);
+  *                Assignment operator : The behaviour is identical to the 
+  *                standard assignment, but it's the \c \<collection\> 
+  *                collection itself which is bound to the generic collection 
+  *                and not a clone. 
+  *
+  *  \important    This \<collection&gt will be automatically deleted when the 
+  *                time comes. 
+  *
+  *  \remark       Here, again, you can do that only once ... 
+  */
+
+ //  \}
+
+
+
+ }

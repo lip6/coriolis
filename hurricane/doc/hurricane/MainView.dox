@@ -1,0 +1,84 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        MainView
+  *  \brief        MainView description (\b API)
+  *
+  *  \section      secMainViewIntro  Introduction
+  *
+  *                There are two categories of views : the main views and the 
+  *                maps. 
+  *
+  *                The main view provides global or partial display of a cell 
+  *                while the map view (which is always attached to a main view) 
+  *                visualizes always the globality of the cell (in a simplified 
+  *                mode) and furthermore locates the part being currently 
+  *                visible within the main view. 
+  * 
+  *  \section      secMainViewCreators  Creators
+  *
+  *                <b>Hurricane::MainView::Create</b>
+  */
+
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     MapView* MainView::GetMapView() const;
+  *  \Return       the associated map (never null). 
+  *
+  *  \remark       An exception is thrown is you try to delete the map 
+  *                associated to the main view. 
+  */
+
+ //  \}
+
+
+ /*! \name         MainView Collection
+  */
+ //  \{
+
+ /*! \typedef      MainViews
+  *                Generic collection representing a set of main views. 
+  */
+
+ /*! \typedef      MainViewLocator
+  *                Generic locator for traversing a collection of main views. 
+  */
+
+ /*! \typedef      MainViewFilter
+  *                Filter for selecting a sub-set of main views matching some 
+  *                criteria. 
+  */
+
+ /*! \def          for_each_main_view(mainView, mainViews)
+  *                Macro for visiting all main views of a collection of main 
+  *                views. 
+  */
+
+ //  \}
+
+
+ /*  \name         Constructors
+  */
+ //  \{
+
+ /*! \function     MainView* MainView::Create();
+  *                The default constructor (no cell is yet associated to the 
+  *                main view, but the drawing area is created). 
+  *
+  *                The map is also created as well as its drawing area. 
+  *
+  *                While the drawing areas are not inserted in a parent widget 
+  *                the display is not effective (it is therefore possible to 
+  *                activate only the display of the main view). 
+  */
+
+ //  \}
+
+ }

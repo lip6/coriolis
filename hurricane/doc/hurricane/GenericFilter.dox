@@ -1,0 +1,26 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        GenericFilter
+  *  \brief        GenericFilter description (\b API)
+  *
+  *  \section      secGenericFilterIntro  Introduction
+  *
+  *                When creating a clone of a collection with a filter, a clone 
+  *                of the filter must be created. This clone of course must be 
+  *                released after its use. 
+  *
+  *                The generic filters are provided to take in charge the 
+  *                deletion of the different clones allocated. They work like 
+  *                generic collections and locators. 
+  *
+  *                As far as we don't need to know much more about them, we 
+  *                don't detail this class. Kwowing that they exist is enough. 
+  */
+
+
+
+ }

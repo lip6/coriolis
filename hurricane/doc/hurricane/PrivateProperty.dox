@@ -1,0 +1,85 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        PrivateProperty
+  *  \brief        PrivateProperty description (\b API)
+  *
+  *  \section      secPrivatePropertyIntro  Introduction
+  *
+  *                Private properties are owned by only one data base object. 
+  *
+  *                When a new property is created, it is not yet assigned to any 
+  *                particular object. It becomes effectively the property of an 
+  *                object after the call <b>dbo-\>Put(property)</b>. The 
+  *                property then receives a message <b>OnCapturedBy</b> whose 
+  *                argument is the additional owner. From that time onwards, 
+  *                this object becomes partially responsible of the future of 
+  *                the property. 
+  *
+  *                <b>What can happen then ?</b> 
+  *
+  *                If the property is destroyed : The property, being private, 
+  *                informs its owner (if any) of its deletion which detaches it 
+  *                from its property list (if the object is a quark and if this 
+  *                was the last property owned, it has no more reason to exist 
+  *                and automatically deletes itself). 
+  *
+  *                If a property of same name already exist : Two properties 
+  *                with the same name can't cohabit, the older one is released 
+  *                by the object which receives the message <b>OnReleasedBy</b> 
+  *                from that old property and proceeds as required according to 
+  *                the type of property. 
+  *
+  *                If the property changes of owner : This one is first captured 
+  *                by the new owner and the released by the older owner (the 
+  *                reason why messages are called upon in this order will be 
+  *                explained later). 
+  *
+  *                If the property owner is destroyed : All properties owned by 
+  *                the object are then released. The future of each of those 
+  *                properties is fully driven by their respective messages 
+  *                <b>OnReleasedBy</b>. 
+  */
+
+
+
+ /*! \typedef      typedef PrivateProperty::Inherit  Property;
+  *                Useful for calling upon methods of the base class without 
+  *                knowing it. 
+  */
+
+ /*! \section      secPrivatePropertyDestruction  Destruction
+  *
+  *                The property has an owner, this one is informed of the 
+  *                property deletion and detaches it from its property list. If 
+  *                the object is a quark and if this was the last property owned 
+  *                it automatically deletes itself. 
+  *
+  *  \remark       Once the property is attached to an object this one becomes 
+  *                responsible of its automatic destruction. When a property 
+  *                changes its owner, the old owner delegates this task to the 
+  *                new one. On the other hand, a property which has never been 
+  *                attached to an owner will never be deleted automatically. 
+  */
+
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     DBo* PrivateProperty::GetOwner() const;
+  *  \Return       the current owner of the property (or NULL if at not been 
+  *                assigned yet). 
+  */
+
+ //  \}
+
+
+ /*! \name         Messages
+  */
+ //  \{
+

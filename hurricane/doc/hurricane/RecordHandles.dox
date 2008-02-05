@@ -1,0 +1,98 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+
+ //! \addtogroup   inspectorManagment
+ //! \{
+  
+ /*! \class        RecordHandles
+  *  \brief        Root class of Inspector managable objects (\b internal).
+  */
+  
+ /*! \class        StandardHandles
+  *  \brief        Provide Inspector support for non-duplicatable (\b internal).
+  */
+  
+ /*! \class        PseudoHandles
+  *  \brief        Provide Inspector support for volatile objects (\b internal).
+  */
+  
+ /*! \class        StringHandles
+  *  \brief        Provide minimal support for GetString() (\b internal).
+  */
+
+ // \}
+
+ /*! \name         Accessors
+  */
+ // \{
+
+ /*! \function     string* RecordHandles::_GetString () const;
+  *  \Return       a string representing the object name and characteristics
+  *                in a synthetic way. Used, among other things, as title
+  *                for the Inspector Record browser.
+  */
+
+ /*! \function     string  RecordHandles::_GetTypeName () const;
+  *  \Return       a string representing the object type. May be used by
+  *                RecordHandles::_GetString().
+  *
+  *  \note         Default implementation is supplied, which returns the
+  *                string \c "<RecordHandlesType>"
+  */
+
+ /*! \function     Record* RecordHandles::_GetRecord () const;
+  *  \Return       a Record representing the object current state.
+  *
+  *  \note         Default implementation is supplied, which returns \NULL.
+  */
+
+ /*! \function     Slot* RecordHandles::_GetPseudoSlot ( const string& name ) const;
+  *  \param        name  the name to give to the Slot. Usually the class attribute
+  *                      name.
+  *  \return       a Slot associated to this object to insert into another Record.
+  *                As the function let you guess, the Slot is a PseudoSlot, which
+  *                implies that the object is duplicated for the Slot.
+  *
+  *  \note         Default implementation is not supplied. You must supply it,
+  *                according to the object behavior.
+  */
+
+ /*! \function     Slot* RecordHandles::_GetStandardSlot ( const string& name ) const;
+  *  \param        name  the name to give to the Slot. Usually the class attribute
+  *                      name.
+  *  \return       a Slot associated to this object to insert into another Record.
+  *                The Slot is a StandardSlot, meaning that the data is not duplicated,
+  *                only a pointer is transmitted. The data must remains allocated
+  *                into memory till the deletion of this Slot.
+  *
+  *  \note         Default implementation is supplied. If the object is volatile and
+  *                must not be accessed through pointer (like Occurrence), overload
+  *                this function to invalidate it.
+  */
+
+ /*! \function     Slot* StandardHandles::_GetPseudoSlot ( const string& name ) const;
+  *  \Return       always \NULL, and issue a warning if ever be called. This function
+  *                must never be called for this kind of object (non-duplicatable).
+  */
+
+ /*! \function     Slot* PseudoHandles::_GetStandardSlot ( const string& name ) const;
+  *  \Return       always \NULL, and issue a warning if ever be called. This function
+  *                must never be called for this kind of object (volatile, no pointer
+  *                avalaible).
+  */
+
+ /*! \function     Slot* StringHandles::_GetPseudoSlot ( const string& name ) const;
+  *  \Return       always \NULL, and issue a warning if ever be called. This object
+  *                is not managed by the Inspector.
+  */
+
+ /*! \function     Slot* StringHandles::_GetStandardSlot ( const string& name ) const;
+  *  \Return       always \NULL, and issue a warning if ever be called. This object
+  *                is not managed by the Inspector.
+  */
+
+ }

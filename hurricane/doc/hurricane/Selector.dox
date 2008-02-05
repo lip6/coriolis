@@ -1,0 +1,42 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Selector
+  *  \brief        Selector description (\b API)
+  *
+  *  \section      secSelectorIntro  Introduction
+  *
+  *                Selectors are private properties providing a very secure way 
+  *                to manage the different selections attached to the different 
+  *                existing views at a given time. 
+  *
+  *                There is no need to known much more about this property 
+  *                because it is completely managed by the system. However it is 
+  *                very instructive to examine its code to understant how it 
+  *                works. 
+  */
+
+
+
+ /*! \section      secSelectorImportant  Important
+  *
+  *                Thanks to the power of properties, it has been very easy to 
+  *                set up a simple mechanism which fully guaranties the 
+  *                coherence whathever destruction operations could happen 
+  *                either at the graphical views level or at the different 
+  *                levels of entities and instances of the data base. 
+  *
+  *                For instance de-selection is automatic whenever an occurence 
+  *                becomes non representative, that is when it doesn't represent 
+  *                anylonger an entity of the virtually unfolded hierarchy 
+  *
+  *                It will be wise to inspire yourself of this case in order to 
+  *                design new ones. 
+  */
+
+
+
+ }

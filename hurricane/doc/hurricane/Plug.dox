@@ -1,0 +1,142 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Plug
+  *  \brief        Plug description (\b API)
+  *
+  *  \section      secPlugIntro  Introduction
+  *
+  *                A plug can be assimilated to a "logical port instance" : it 
+  *                designates both the concerned instance and the net of the 
+  *                model cell instanciated to which it is connected. This net, 
+  *                which must be an external net, will be named "<b>master 
+  *                net</b>" because it is a net of the instance master cell 
+  *                (notice that this net can be asimilated to a "logical port"). 
+  *
+  *                A plug is unique, that is, for a given instance there is one 
+  *                and only one plug refering to a given master net. 
+  *
+  *  \caution      When created, an instance creates all plugs corresponding to 
+  *                the external nets of its master cell. So, some plugs may 
+  *                exist without being connected. Plugs are the only components 
+  *                which have this characteristic. 
+  *
+  *  \remark       Plugs being completely managed by the system, you can't 
+  *                define sub-types of plugs. 
+  *
+  *
+  *  \section      secPlugConstructors  Constructors \& Destructors
+  *
+  *                Plugs being completely managed by the system, there is no
+  *                constructor nor destructor provided.
+  * 
+  * 
+  *  \section      secPlugPredefinedFilters  Predefined filters
+  *
+  *
+  *                <b>Hurricane::Plug::GetIsConnectedFilter</b>
+  *                <b>Hurricane::Plug::GetIsUnconnectedFilter</b>
+  */
+
+
+
+ /*! \typedef      Plug::Inherit
+  *                Useful for calling upon methods of the base class without 
+  *                knowing it. 
+  */
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     Instance* Plug::GetInstance() const;
+  *  \Return       the instance to which belongs the plug. 
+  */
+
+ /*! \function     Net* Plug::GetMasterNet() const;
+  *  \Return       the external net referenced by the plug in the master cell of 
+  *                its instance. 
+  *
+  *  \remark       Don't mistake with GetNet() which returns the net owning the 
+  *                plug (or NULL if is unconnected). 
+  */
+
+ //  \}
+
+
+ /*! \name         Predicates
+  */
+ //  \{
+
+ /*! \function     bool Plug::IsConnected() const;
+  *  \Return       \true if the plug is connected, else \false. 
+  *
+  *  \remark       A plug is connected if the call upon <b>GetNet()</b> doesn't 
+  *                return NULL. 
+  */
+
+ //  \}
+
+
+ /*! \name         Modifiers
+  */
+ //  \{
+
+ /*! \function     void Plug::SetNet(Net* net);
+  *                This method allows to connect or change the net of a plug. 
+  *
+  *  \caution      An exception is thrown if the net owner cell differs from the 
+  *                plug owner cell, or if there are components (contact, 
+  *                segments, ...) currently anchored on the plug. 
+  *
+  *  \remark       The properties attached to this plug and its occurences are 
+  *                left unchanged. 
+  */
+
+ //  \}
+
+
+
+ /*! \name         Plug Collection
+  */
+ //  \{
+
+ /*! \typedef      Plugs
+  *                Generic collection representing a set of plugs. 
+  */
+
+ /*! \typedef      PlugLocator
+  *                Generic locator for traversing a collection of plugs. 
+  */
+
+ /*! \typedef      PlugFilter
+  *                Generic filter allowing to select a subset of plugs matching 
+  *                some criteria. 
+  */
+
+ /*! \def          for_each_plug(plug, plugs)
+  *                Macro for visiting all the plugs of a collection of plugs. 
+  */
+
+ //  \}
+
+
+ /*  \name         Accessors
+  */
+ //  \{
+
+ /*! \function     PlugFilter Plug::GetIsConnectedFilter();
+  *  \Return       a filter for selecting only connected plugs. 
+  */
+
+ /*! \function     PlugFilter Plug::GetIsUnconnectedFilter();
+  *  \Return       a filter for selecting only unconnected plugs. 
+  */
+
+ //  \}
+
+ }

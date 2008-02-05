@@ -1,0 +1,72 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        ZoomCommand
+  *  \brief        ZoomCommand description (\b API)
+  *
+  *  \section      secZoomCommandIntro  Introduction
+  *
+  *                This command allows to reframe the main view over the cell 
+  *                portion enclosed into a rectangle defined either in the main 
+  *                view or in the associated map view. 
+  *
+  *                This command is named <b>"Zoom"</b> and is bound to the mouse 
+  *                <b>left button</b>. 
+  *
+  *                In order to let this command be available at any time, it is 
+  *                advisable to have this only command bound to the left button. 
+  *                As far as the rigth button is reserved (in principle) to a 
+  *                contextual pop-menu, the other commands should be bound to 
+  *                the middle button (like the selection command). 
+  * 
+  * 
+  *  \section      secZoomCommandRemark  Remark
+  *
+  *                We have detailed, when explaining the Command class, a way to 
+  *                implement this command. 
+  *
+  *                However things are in fact slightly different for the 
+  *                implementation of the message _OnButtonRelease which must 
+  *                take into account that the rubber rectangle may be defined 
+  *                either in the main view or in the associated map view. 
+  *
+  *                The implementation of this message is not really more complex 
+  *                : 
+\code
+void ZoomCommand::_OnButtonRelease(View* view, const Point& position)
+// ******************************************************************
+{
+   viewDrawGhost(this);
+ 
+   _started = false;
+ 
+   if (_extremity != _origin) {
+      if (is_a<MapView*>(view)) {
+         // when the view is the reframe map, the zoom must be
+         // applied on the associated main view
+         view = ((MapView*)view)GetMainView();
+      }
+      viewReframe(Box(_origin, _extremity));
+      viewRefresh();
+   }
+}
+\endcode
+  */
+
+
+
+ /*  \name         ZoomCommand Functions
+  */
+ //  \{
+
+ /*  \function     ZoomCommand* ZoomCommand::GetZoomCommand();
+  *  \Return       the zoom command. 
+  */
+
+ //  \}
+
+
+ }

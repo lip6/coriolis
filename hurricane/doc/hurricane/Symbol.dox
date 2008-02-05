@@ -1,0 +1,119 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Symbol
+  *  \brief        Symbol description (\b API)
+  *
+  */
+
+
+ /*! \typedef      Symbol::Inherit
+  *                Useful for calling upon methods of the base class without 
+  *                knowing it. 
+  */
+
+ /*! \name         Constructors
+  */
+ //  \{
+
+ /*! \function     Symbol* Symbol::Create(Library* library, const Name& name);
+  *                Creates and returns a new symbol named \c \<name\> for the 
+  *                library \c \<library\>. 
+  *
+  *  \caution      Throws an exception if the library is null, if the name is 
+  *                empty or if a symbol with same name already exists in the 
+  *                library. 
+  */
+
+ /*! \function     Symbol* Symbol::CreateFor(Cell* cell);
+  *                Creates and returns an adapted symbol for the cell 
+  *                \c \<cell\>. 
+  *
+  *  \remark       This symbol is owned by the library owning the cell and it's 
+  *                name is generated on the fly. 
+  *
+  *                The primitives which define the look of the symbol are 
+  *                generated with a default strategy. 
+  *
+  *                The positions and names of symbol pins depend respectively of 
+  *                the directions and names of the external nets of the cell. 
+  */
+
+ //  \}
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     Library* Symbol::GetLibrary() const;
+  *  \Return       the library owning the symbol. 
+  */
+
+ /*! \function     const Name& Symbol::GetName() const;
+  *  \Return       the name of the symbol. 
+  */
+
+ /*! \function     Cells Symbol::GetCells() const;
+  *  \Return       the collection of all cells associated to this symbol. 
+  */
+
+ /*! \function     Primitives Symbol::GetPrimitives() const;
+  *  \Return       the collection of primitives constituing the symbol. 
+  */
+
+ /*! \function     Box Symbol::GetBoundingBox() const;
+  *  \Return       the bounding box of the symbol. It is defined as the smallest 
+  *                box enclosing the primitives constituing the symbol. 
+  */
+
+ /*  \function     Pin* Symbol::GetPin(const Name& name) const;
+  *  \Return       the pin of name \c \<name\> if it exists, else NULL. 
+  */
+
+ //  \}
+
+
+ /*! \name         Modifiers
+  */
+ //  \{
+
+ /*! \function     void Symbol::SetName(const Name& name);;
+  *                Allows to change the symbol name. 
+  *
+  *  \remark       Throws an exception if the new name is empty or if the 
+  *                library owning the symbol has already a symbol with the same 
+  *                name. 
+  */
+
+ //  \}
+
+
+ /*! \name         Symbol Collection
+  */
+ //  \{
+
+ /*! \typedef      Symbols
+  *                Generic collection representing a set of symbols. 
+  */
+
+ /*! \typedef      SymbolLocator
+  *                Generic locator for visiting a collection of symbols. 
+  */
+
+ /*! \typedef      SymbolFilter
+  *                Filter to selecting a subset of symbols matching some 
+  *                criteria. 
+  */
+
+ /*! \def          for_each_symbol(symbol, symbols)
+  *                Macro for visiting all symbols of a symbols collection. 
+  */
+
+ //  \}
+
+
+ }

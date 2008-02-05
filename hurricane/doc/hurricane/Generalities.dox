@@ -1,0 +1,191 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \defgroup     Generalities  Generalities
+  *
+  *  \section      secGeneralitiesIntro  Introduction
+  *
+  *                When documenting a given class, only member functions 
+  *                introducted by this class are documented, inherited ones are 
+  *                not repeated. This is made easier by the presence of the 
+  *                inheritance sub-tree containing the described object type. 
+  *
+  *                In the same way, some opetators or global functions are 
+  *                defined for all object types though they don't derive from a 
+  *                common base class. Those operators and generic functions will 
+  *                be described below. 
+  *
+  *                terminology In the following, we will describe operators and 
+  *                functions applying to objects of different types. Therefore 
+  *                we will name "Object" any of those types. 
+  * 
+  * 
+  *  \section      secGeneralitiesNammingConventions  Namming conventions
+  *
+  *                The name of "C macros" are written with lower case letters 
+  *                and underscores (examples : <b>is_a</b>, <b>for_each_cell</b> 
+  *                or <b>end_for</b>) while the name of generic functions and 
+  *                member functions never use the underscore and always start 
+  *                with an Upper case letter (examples : <b>GetUnit</b>, 
+  *                <b>GetMasterCell</b>, <b>IsCalledBy</b>). 
+  *
+  *  \remark       When examining \c .h include files for more detailed information 
+  *                you will find member functions which start with an 
+  *                underscore. <b>While being "public" those functions must 
+  *                never be called upon</b>. In principle, only here'after 
+  *                documented functions should be used by the application 
+  *                programmer. 
+  * 
+  * 
+  *  \section      secGeneralitiesGetString  GetString
+  *
+\code
+string GetString(const Object& object);
+string GetString(const Object* object);
+\endcode
+  *                Thoses generic function allows you to get into a string an 
+  *                explicit description of any kind of Hurricane object pointer 
+  *                or reference. 
+\code
+ostream& operator<< (ostream& stream, const Object& object);
+ostream& operator<< (ostream& stream, const Object* object);
+\endcode
+  *                All Hurricane objects have printing operators for a reference 
+  *                or a pointer. Those printing operators use the generic 
+  *                function Hurricane::GetString() previously studied. 
+  * 
+  * 
+  *  \section      secGeneralitiesPredicates  Predicates
+  *
+  *                The \c bool \c is_a<Type*>(object) function.
+  *
+  *                For any kind of Hurricane object pertaining to a
+  *                class with at least one "virtual" member, it is
+  *                possible to determine if this object is a type or a
+  *                sub-type of \c \<type\> as shown in the following
+  *                example:
+\code
+DataBase* dataBase = GetDataBase();
+ 
+Library* library = Library::Create(dataBase, "std");
+ 
+Cell* cell = Cell::Create(library, "nand");
+ 
+if (is_a<Cell*>(cell)) {
+   // will inevitably go through here
+}
+ 
+if (is_a<Entity*>(cell)) {
+   // will go through here also because Cell derives from Entity
+}
+ 
+if (is_a<Library*>(cell)) {
+   // will never go through here because Cell doesn't derive from Library
+}
+\endcode
+  *
+  * 
+  *  \section      secGeneralitiesInheritance  Inheritance
+  *
+  *                All classes deriving directly from a base class define a new 
+  *                type named <b>Inherit</b> which represents this base class. 
+  *                <b>This one is unique because Hurricane doesn't use multiple 
+  *                inheritance</b>. This type is important because it allows to 
+  *                call upon the methods of the base class without knowing its 
+  *                name as shown in the following example: 
+\code
+void MyObject::Draw() const
+// ************************
+{
+   Inherit::Draw();
+ 
+   DrawParticularities();
+}
+\endcode
+  * 
+  * 
+  *  \section      secGeneralitiesTraceUtilities  Trace utilities
+  *
+  *                The library provides some usefull utilities for generating 
+  *                trace printings with a natural indentation allowing better 
+  *                understanding of the processing sequences: 
+  *
+  *                <ul>
+  *                  <li><b>Hurricane::in_trace</b>
+  *                  <li><b>Hurricane::trace_on</b>
+  *                  <li><b>Hurricane::trace_off</b>
+  *                  <li><b>Hurricane::trace_in</b>
+  *                  <li><b>Hurricane::trace_out</b>
+  *                  <li><b>Hurricane::trace</b>
+  *                </ul>
+  *
+  *
+\code
+void MyFunction(MyData* data)
+// **************************
+{
+   trace << "entering in MyFunction with " << data << endl;
+   trace_in();
+ 
+   ...
+ 
+   trace << "exiting of MyFunction" << endl;
+   trace_out();
+}
+\endcode
+  *  \remark       Debugger enthousiastic users will probably ignore this trace 
+  *                capability which presents the annoying need to be inserted 
+  *                into the code... For myself, I do prefer those facilities... 
+  * 
+  * 
+  *  \section      secGeneralitiesRemarks  Remarks
+  *
+  *                Many other global and generic functions exist. Each one will 
+  *                be studied within the description of the classes which create 
+  *                or specialize them (example: <b>Hurricane::GetUnit</b> will be 
+  *                introduced with the Unit class and <b>Hurricane::GetCollection</b> with 
+  *                the Collection class). 
+  */
+
+
+
+ /*! \addtogroup   Generalities
+  */
+ //  \{
+
+ /*! \function     bool in_trace();
+  *                The trace being optional, this function informs wether the 
+  *                trace is active or not. This allows if necessary to execute 
+  *                additional operations. 
+  */
+
+ /*! \function     void trace_on();
+  *                Activates the trace. 
+  */
+
+ /*! \function     void trace_off();
+  *                Suspends the trace. 
+  */
+
+ /*! \function     void trace_in();
+  *                Allows to enter a new trace block. This appears visually by 
+  *                adding an identation level to the trace printing. 
+  */
+
+ /*! \function     void trace_out();
+  *                Allows to leave the current trace block. This decreases the 
+  *                level of indentation of the trace print. 
+  */
+
+ /*! \def          trace
+  *                To be used like a <b>cerr</b> or 
+  *                a <b>cout</b> but the trace printing will be effective and 
+  *                indented only when the trace is active. 
+  */
+
+ //  \}
+
+ }

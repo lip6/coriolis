@@ -1,0 +1,69 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        DataBase
+  *  \brief        The whole DataBase (\b API).
+  *
+  *                The unique purpose of this object is to handle, at
+  *                any time, directly or indirectly, the whole set of
+  *                currently allocated objects of the data base.
+  *
+  *                This is a singleton object, only one can exist at a
+  *                given time.
+  *                
+  *                The data base must be created explicitely (it is
+  *                possible to derive a sub-type with specific
+  *                additional attributes, or use properties to store
+  *                them).
+  *
+  *                The Database object handles both the Technology
+  *                and the root Library.
+  *
+  *  \caution      Destroying the DataBase object destroys all data base objects.
+  */
+
+
+ /*! \name         Constructors & Destructors
+  */
+ // \{
+
+ /*! \function     DataBase* DataBase::Create ();
+  *                Creates and returns a pointer to a new DataBase.
+  *
+  *  \caution      An exception is thrown if a Database already exists.
+  */
+
+ // \}
+
+
+ /*! \name         Accessors
+  */
+ // \{
+
+ /*! \function     Technology* DataBase::GetTechnology () const;
+  *  \return       the Technology if it exists, else \NULL.
+  */
+
+ /*! \function     Technology* DataBase::GetRootLibrary () const;
+  *  \return       the root Library if it exists, else \NULL.
+  */
+
+ // \}
+
+
+ /*! \addtogroup   Generalities
+  *  \{
+  */
+
+ /*! \function     DataBase* GetDataBase ();
+  *                This global generic function returns the current
+  *                DataBase, if it has been created and not destroyed,
+  *                else \NULL.
+  */
+
+ // \}
+
+ }

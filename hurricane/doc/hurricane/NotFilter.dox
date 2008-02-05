@@ -1,0 +1,71 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        NotFilter
+  *  \brief        NotFilter description (\b API)
+  *
+  *  \section      secNotFilterIntro  Introduction
+  *
+  *                This filter inverts the behaviour of an other filter. 
+  *                Accepted elements by one will be rejected by the other and 
+  *                conversely. 
+  *
+  *                In principle this filter is not used directly but by means of 
+  *                the operator <b>!</b> available for the filters. 
+  *
+  *                Therefore ther is no need to describe this filter. 
+  */
+
+
+
+ /*! \section      secNotFilterExample  Example
+  *
+  *                If IsExternal is a filter for selecting the external nets of 
+  *                a cell (a possible implementation is given in the Filter 
+  *                description). Internal nets being the non external ones... In 
+  *                order to get the internal nets collection you could write : 
+\code
+Nets Cell::GetInternalNets() const
+// *******************************
+{
+   return GetNets().GetSubSet(NotFilter<Net*>(IsExternal()));
+}
+\endcode
+  *                or still better : 
+\code
+Nets Cell::GetInternalNets() const
+// *******************************
+{
+   return GetNets().GetSubSet(!IsExternal());
+}
+\endcode
+  */
+
+
+
+ /*! \section      secNotFilterRemark  Remark
+  *
+  *                Most objects, as we shall see, define some practical filters. 
+  *                For instance, the nets define the filter 
+  *                <b>IsExternalFilter</b> which can be obtained by the static 
+  *                member function <b>Net::GetIsExternalFilter()</b>. 
+  *
+  *                The accessor <b>GetInternalNets</b> being written as follow : 
+\code
+Nets Cell::GetInternalNets() const
+// *******************************
+{
+   return GetNets().GetSubSet(!Net::GetIsExternalFilter());
+}
+\endcode
+  *                The nets provide of course the filter 
+  *                <b>IsInternalFilter</b>, but we didn't use it here in order 
+  *                to illustrate the operator <b>!</b>. 
+  */
+
+
+
+ }

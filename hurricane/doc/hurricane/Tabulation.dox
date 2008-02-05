@@ -1,0 +1,167 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Tabulation
+  *  \brief        Tabulation description (\b API)
+  *
+  *  \section      secTabulationIntro  Introduction
+  *
+  *                This object provides an indentation capability for printing 
+  *                readable texts. 
+  * 
+  * 
+  *  \section      secTabulationNewGlobalVariable  New global variable
+  *
+\code
+Tabulation tab("    ");
+\endcode
+  *                Represents the 
+  *                global tabulation variable usable by all application 
+  *                programmers. The elementary tabulation being fixed to 3 space 
+  *                characters. 
+  * 
+  * 
+  *  \section      secTabulationUsage  Usage
+  *
+  *                Let us write a sample code of printing a succinct cell 
+  *                description : 
+\code
+void Describe(Cell* cell)
+// **********************
+{
+   cout << tab++ << "cell : " << cellGetName() << endl;
+   if (!cellGetInstances().IsEmpty()) {
+      cout << tab++ << "instances : {" << endl;
+      for_each_instance(instance, cellGetInstances()) {
+         cout << tab << "instance : " << instanceGetName() << endl;
+         end_for;
+      }
+      cout << --tab << "}";
+   }
+   if (!cellGetNets().IsEmpty()) {
+      cout << tab++ << "nets : {" << endl;
+      for_each_net(net, cellGetNets()) {
+         cout << tab++ << "net : " << netGetName() << endl;
+         if (!netGetPlugs().IsEmpty()) {
+            cout << tab++ << "plugs : {" << endl;
+            for_each_plug(plug, netGetPlugs()) {
+               cout << tab << "master_net : "
+                    << plugGetMasterNet()GetName() << endl;
+               end_for;
+            }
+            cout << --tab << "}";
+         }
+         end_for;
+      }
+      cout << --tab << "}";
+   }
+   --tab;
+}
+\endcode
+  *                The call : 
+\code
+Describe(cell);
+\endcode
+  *                Will print the result in the following form : 
+\code
+cell : ...
+   instances : {
+      instance : ...
+      instance : ...
+      ...
+   }
+   nets : {
+      net : ...
+         plugs : {
+            master_net : ...
+            master_net : ...
+            ...
+         }
+      net : ...
+         plugs : {
+            master_net : ...
+            master_net : ...
+            ...
+         }
+      ...
+   }
+\endcode
+  * 
+  * 
+  *  \section      secTabulationRemark  Remark
+  *
+  *                Of course this automatic indentation works also in recursive 
+  *                mode. Its main interest is for that purpose because you don't 
+  *                need to transfer through recursive function calls an 
+  *                additional argument for controling the indentation when 
+  *                formating print-outs. 
+  */
+
+
+
+ /*! \name         Constructors
+  */
+ //  \{
+
+ /*! \function     Tabulation::Tabulation(const string& s = "&nbsp;&nbsp;&nbsp;");
+  *                Default constructor : The string \c \<s\> represents the 
+  *                elementary tabulation (fixed by default to 3 space 
+  *                characters) 
+  */
+
+ /*! \function     Tabulation::Tabulation(const Tabulation& tabulation);
+  *                Copy constructor. 
+  */
+
+ //  \}
+
+
+ /*! \name         Destructors
+  */
+ //  \{
+
+ /*! \function     Tabulation::~Tabulation();
+  *                No description.
+  */
+
+ //  \}
+
+
+ /*! \name         Operators
+  */
+ //  \{
+
+ /*! \function     Tabulation& Tabulation::operator=(const Tabulation& tabulation);
+  *                Assignment operator. 
+  */
+
+ /*! \function     Tabulation& Tabulation::operator++();
+  *                Incrementation operator : returns the tabulation augmented of 
+  *                an elementary tabulation. 
+  */
+
+ /*! \function     Tabulation Tabulation::operator++(int);
+  *                Postfixed version of the incrementation operator : the 
+  *                tabulation is augmented of an elementary tabulation, but 
+  *                returns the previous tabulation. 
+  */
+
+ /*! \function     Tabulation& Tabulation::operator--();
+  *                Decrementation operator : returns the tabulation reduced of 
+  *                an elementary tabulation. 
+  */
+
+ /*! \function     Tabulation Tabulation::operator--(int);
+  *                Postfixed version of the decrementation operator : the 
+  *                tabulation is reduced of an elementary tabulation, but 
+  *                returns the previous tabulation. 
+  */
+
+ //  \}
+
+
+
+ }

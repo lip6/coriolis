@@ -1,0 +1,64 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        SelectCommand
+  *  \brief        SelectCommand description (\b API)
+  *
+  *  \section      secSelectCommandIntro  Introduction
+  *
+  *                This command allows to change the set of occurences selected 
+  *                in a view, by either replacing by, adding to or erasing from 
+  *                the current selection the occurences located into a 
+  *                rectangular area or below a point. This command uses a rubber 
+  *                rectangle to define the selection area. Let us recall that a 
+  *                cell may have different selections in different views. 
+  *
+  *                This command has name : <b>"Select"</b> and has to be 
+  *                installed on the mouse <b>middle button</b>. 
+  * 
+  * 
+  *  \section      secSelectCommandPrinciple  Principle
+  *
+  *                After defining a rectangle, the selection proceeds in two 
+  *                steps : 
+  *
+  *                <b>Identification of candidate occurences :</b> 
+  *
+  *                If the selection rectangle is a point Then the candidate 
+  *                occurences are those located below this point. 
+  *
+  *                Else The candidate occurences are all those located inside 
+  *                the rectangle or intersecting the rectangle if the control 
+  *                key is hold down. 
+  *
+  *                Only visible occurences are potentially candidates. Only 
+  *                occurences of instances refering a terminal cell are 
+  *                potential candidates. 
+  *
+  *                <b>Modification of the current selection :</b> 
+  *
+  *                If the shift key is hold down Each occurence is selected 
+  *                provided it was not previously selected, and unselected if it 
+  *                was previously selected (toggle mode). 
+  *
+  *                Else The new selection of only the candidate occurences 
+  *                replaces the old one (replace mode). 
+  */
+
+
+
+ /*  \name         SelectCommand Functions
+  */
+ //  \{
+
+ /*  \function     SelectCommand* SelectCommand::GetSelectCommand();
+  *  \Return       the selection command. 
+  */
+
+ //  \}
+
+
+ }

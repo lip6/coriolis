@@ -1,0 +1,264 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Transformation
+  *  \brief        Transformation description (\b API)
+  *
+  *  \section      secTransformationIntro  Introduction
+  *
+  *                Transformation objects are a combination of a 
+  *                <b>translation</b> and an <b>orientation</b> defined by the 
+  *                new enumeration <b>Transformation::Orientation</b> whose 
+  *                different values are described in table below. 
+  *
+  *
+  *  \remark       <b>Rotations are done counter clock wise</b> : 
+  */
+
+
+
+ /*! \class        Transformation::Orientation
+  *                This enumeration defines the orientation associated to a 
+  *                transformation object. table: Orientation codes and 
+  *                associated transfornation matrix headers: Name Aspect Code 
+  *                Signification a b c d slots: ID <img src='./gif/id.gif'> 0 
+  *                Identity 1 0 0 1 slots: R1 <img src='./gif/r1.gif'> 1 Simple 
+  *                rotation (90°) 0 &nbsp;&nbsp;-1&nbsp;&nbsp 1 0 slots: R2 <img 
+  *                src='./gif/r2.gif'> 2 Double rotation (180°) 
+  *                &nbsp;&nbsp;-1&nbsp;&nbsp 0 0 &nbsp;&nbsp;-1&nbsp;&nbsp 
+  *                slots: R3 <img src='./gif/r3.gif'> 3 Triple rotation (270°) 0 
+  *                1 &nbsp;&nbsp;-1&nbsp;&nbsp 0 slots: MX <img 
+  *                src='./gif/mx.gif'> 4 Horizontal symetry (Miror X) 
+  *                &nbsp;&nbsp;-1&nbsp;&nbsp 0 0 1 slots: XR <img 
+  *                src='./gif/xr.gif'> 5 Horizontal symetry followed by a 90° 
+  *                rotation 0 &nbsp;&nbsp;-1&nbsp;&nbsp 
+  *                &nbsp;&nbsp;-1&nbsp;&nbsp 0 slots: MY <img 
+  *                src='./gif/my.gif'> 6 Vertical symetry (Miror Y) 1 0 0 
+  *                &nbsp;&nbsp;-1&nbsp;&nbsp slots: YR <img src='./gif/yr.gif'> 
+  *                7 Vertical symetry followed by a 90° rotation 0 1 1 0 To each 
+  *                orientation corresponds a 2x2 matrix whose coefficients are 
+  *                named a and b for the first line and c and d for the second 
+  *                one. 
+  *
+  *                The transformation formula is given by : x' = (a * x) + (b * 
+  *                y) + tx y' = (c * x) + (d * y) + ty Where x and y are the 
+  *                coordinates of any point, x' and y' the coordinates of the 
+  *                trasformed point, tx and ty the horizontal and vertical 
+  *                components of the translation and where a, b, c and d are the 
+  *                coefficients of the matrix associated to the orientation. 
+  *
+  *  \remark       The exact name of the orientation is, i.e. for <b>R1</b> : 
+  *                <b>Transformation::Orientation::R1</b>. It's a little verbose 
+  *                but you use seldom those codes. If nevertheless you make 
+  *                intensive use of them you can locally write :
+\code
+#define  Transformation::Orientation TO
+\endcode
+  *                and then use the expression :
+\code
+TO::R1
+\endcode
+  */
+
+ /*! \name         Constructors
+  */
+ //  \{
+
+ /*! \function     Transformation::Transformation();
+  *                Default constructor : The translation is null and the 
+  *                orientation is equal to <b>ID</b>. 
+  */
+
+ /*! \function     Transformation::Transformation(const Point& translation, const Transformation::Orientation& orientation=Orientation::ID);
+  *                Builds a transformation whose translation part is defined by 
+  *                the argument \c \<translation\> and whose default orientation is 
+  *                <b>ID</b>. 
+  */
+
+ /*! \function     Transformation::Transformation(const Unit& tx, const Unit& ty, const Transformation::Orientation& orientation=Orientation::ID);
+  *                Builds a transformation whose translation part is defined by 
+  *                the arguments \c \<xt\> and \c \<ty\> and whose orientation 
+  *                is defined by \c \<orientation\> (\c \<ID\> by default). 
+  */
+
+ /*! \function     Transformation::Transformation(const Point& translation, const Transformation::Orientation& orientation);
+  *                Builds a transformation whose translation part is defined by 
+  *                the argument \c \<translation\> and whose orientation is 
+  *                defined by \c \<orientation\>. 
+  */
+
+ /*! \function     Transformation::Transformation(const Transformation& transformation);
+  *                Copy constructor. 
+  */
+
+ //  \}
+
+
+ /*! \name         Operators
+  */
+ //  \{
+
+ /*! \function     Transformation& Transformation::operator=(const Transformation& transformation);
+  *                Assignment operator. 
+  */
+
+ /*! \function     bool Transformation::operator==(const Transformation& transformation) const;
+  *                Two transformations are identical if their translations and 
+  *                orientation are identical. 
+  */
+
+ /*! \function     bool Transformation::operator!=(const Transformation& transformation) const;
+  *                Two transformations are different if eitheir their 
+  *                translations or orientation differ. 
+  */
+
+ //  \}
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     const Unit& Transformation::GetTx() const;
+  *  \Return       the horizontal component of the translation. 
+  */
+
+ /*! \function     const Unit& Transformation::GetTy() const;
+  *  \Return       the vertical component of the translation. 
+  */
+
+ /*! \function     Point Transformation::GetTranslation() const;
+  *  \Return       the translation component of the transformation. 
+  */
+
+ /*! \function     const Translation::Orientation& Transformation::GetOrientation() const;
+  *  \Return       the orientation of the transformation (may be used in a 
+  *                switch). 
+  */
+
+ /*! \function     Unit Transformation::GetX(const Unit& x, const Unit& y) const;
+  *  \Return       the point abscissa resulting of the transformation 
+  *                application on the point defined by \c \<x\> et \c \<y\>. 
+  */
+
+ /*! \function     Unit Transformation::GetY(const Unit& x, const Unit& y) const;
+  *  \Return       the point ordinate resulting of the transformation 
+  *                application on the point defined by \c \<x\> et \c \<y\>. 
+  */
+
+ /*! \function     Unit Transformation::GetX(const Point& point) const;
+  *  \Return       the point abscissa resulting of the transformation 
+  *                application on \c \<point\>. 
+  */
+
+ /*! \function     Unit Transformation::GetY(const Point& point) const;
+  *  \Return       the point ordinate resulting of the transformation 
+  *                application on \c \<point\>. 
+  */
+
+ /*! \function     Unit Transformation::GetDx(const Unit& dx, const Unit& dy) const;
+  *  \Return       the horizontal component of the vector resulting from the 
+  *                application of the transformation on the vector defined by 
+  *                \c \<dx\> et \c \<dy\>. 
+  */
+
+ /*! \function     Unit Transformation::GetDy(const Unit& dx, const Unit& dy) const;
+  *  \Return       the vertical component of the vector resulting from the 
+  *                application of the transformation on the vector defined by 
+  *                \c \<dx\> et \c \<dy\>. 
+  */
+
+ /*! \function     Point Transformation::GetPoint(const Unit& x, const Unit& y) const;
+  *  \Return       the point resulting from the application of the 
+  *                transformation on the point defined by \c \<dx\> et 
+  *                \c \<dy\>. 
+  */
+
+ /*! \function     Point Transformation::GetPoint(const Point& point) const;
+  *  \Return       the point resulting from the application of the 
+  *                transformation on \c \<point\>. 
+  */
+
+ /*! \function     Box Transformation::GetBox(const Unit& x1, const Unit& y1, const Unit& x2, const Unit& y2) const;
+  *  \Return       the box resulting from the application of the transformation 
+  *                on the box defined by \c \<x1\>, \c \<y1\>, \c \<x2\> et 
+  *                \c \<y2\>. 
+  */
+
+ /*! \function     Box Transformation::GetBox(const Point& point1, const Point& point2) const;
+  *  \Return       the box resulting from the application of the transformation 
+  *                on the box defined by \c \<point1\> et \c \<point2\>. 
+  */
+
+ /*! \function     Box Transformation::GetBox(const Box& box) const;
+  *  \Return       the box resulting from the application of the transformation 
+  *                on the box \c \<box\>. 
+  */
+
+ /*! \function     Transformation Transformation::GetTransformation(const Transformation& transformation) const;
+  *  \Return       the transformation resulting from the application of the 
+  *                transformation on the transformation \c \<transformation\>. 
+  */
+
+ /*! \function     Transformation Transformation::GetInvert() const;
+  *  \Return       the inverse transformation. 
+  */
+
+ //  \}
+
+
+ /*! \name         Modifiers
+  */
+ //  \{
+
+ /*! \function     Transformation& Transformation::Invert();
+  *                Inverts the transformation \c \<this\> and returns a 
+  *                reference to it in order to apply in sequence a new function. 
+  */
+
+ //  \}
+
+
+ /*! \section      secTransformationTransformers  Transformers
+  *
+  *
+  *                <b>Transformation::ApplyOn</b>
+  *
+  *                <b>Transformation::ApplyOn</b>
+  *
+  *                <b>Transformation::ApplyOn</b>
+  *
+  *                <b>Transformation::ApplyOn</b>
+  */
+
+
+
+ /*  \name         Others
+  */
+ //  \{
+
+ /*! \function     void Transformation::ApplyOn(Unit& x, Unit& y) const;
+  *                Applies the transformation on the coordinates given in 
+  *                arguments. 
+  */
+
+ /*! \function     void Transformation::ApplyOn(Point& point) const;
+  *                Applies the transformation on the point given in argument. 
+  */
+
+ /*! \function     void Transformation::ApplyOn(Box& box) const;
+  *                Applies the transformation on the box given in argument. 
+  */
+
+ /*! \function     void Transformation::ApplyOn(Transformation& transformation) const;
+  *                Applies the transformation on the transformation given in 
+  *                argument. This last one becomes then the transformation 
+  *                resulting of the product of those two. 
+  */
+
+ //  \}
+
+ }

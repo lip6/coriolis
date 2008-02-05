@@ -1,0 +1,12 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        UpdateSession
+  *  \brief        UpdateSession description (\b API)
+  *
+  */
+
+ }

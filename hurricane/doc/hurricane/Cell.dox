@@ -1,0 +1,248 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Cell
+  *  \brief        The model (\b API).
+  */
+
+
+ /*! \name         Constructors & Destructors
+  */
+ // \{
+
+ /*! \function     Cell* Cell::Create ( Library* library, const Name& name );
+  *                Creates and returns a new Cell named \e name for the Library
+  *                \e library.
+  *
+  *  \caution      Throws an exception if the Library is null, if the Name is
+  *                empty or if a cell with same name already exists in the
+  *                Library.
+  */
+
+ // \}
+
+
+ /*! \name         Accessors
+  */
+ // \{
+
+ /*! \function     Library* Cell::GetLibrary () const;
+  *                Returns the Library owning the Cell.
+  */
+
+ /*! \function     const Name& Cell::GetName () const;
+  *                Returns the Name of the Cell.
+  */
+
+ /*! \function     Instance* Cell::GetInstance ( const Name& name ) const;
+  *                Returns the Instance of name \e name if it exists, else \NULL.
+  */
+
+ /*! \function     Instances Cell::GetInstances () const;
+  *                Returns the Collection of all instances called by the Cell.
+  */
+
+ /*! \function     Instances Cell::GetInstancesUnder ( const Box& area ) const;
+  *                Returns the collection of all instances of the Cell intersecting the
+  *                given rectangular \e area.
+  */
+
+ /*! \function     Instances Cell::GetSlaveInstances () const;
+  *                Returns the Collection of instances whose master is this Cell.
+  */
+
+ /*! \function     Net* Cell::GetNet ( const Name& name ) const;
+  *                Returns the Net of name \e name if it exists, else \NULL.
+  */
+
+ /*! \function     Nets Cell::GetNets () const;
+  *                Returns the Collection of all nets of the Cell.
+  */
+
+ /*! \function     Nets Cell::GetGlobalNets () const;
+  *                Returns the Collection of all global nets of the Cell.
+  */
+
+ /*! \function     Nets Cell::GetExternalNets () const;
+  *                Returns the Collection of all external nets of the Cell.
+  */
+
+ /*! \function     Nets Cell::GetInternalNets () const;
+  *                Returns the Collection of all internal nets of the Cell.
+  */
+
+ /*! \function     Nets Cell::GetClockNets () const;
+  *                Returns the Collection of all clock nets of the Cell.
+  */
+
+ /*! \function     Nets Cell::GetSupplyNets () const;
+  *                Returns the Collection of all supply nets of the Cell.
+  */
+
+ /*! \function     Slice* Cell::GetSlice ( const Layer* layer ) const;
+  *                Returns the Slice associated with the Layer \e layer if it exists, else \NULL.
+  */
+
+ /*! \function     Slices  Cell::GetSlices ( const Layer::Mask& mask = ~0 ) const;
+  *                Returns the Collection of slices of a Cell.
+  */
+
+ /*! \function     Views  Cell::GetViews () const;
+  *                Returns the Collection of graphical views of a Cell.
+  */
+
+ /*! \function     Views  Cell::GetMainViews () const;
+  *                Returns the Collection of main graphical views of a Cell.
+  */
+
+ /*! \function     Views  Cell::GetImpactedMainViews () const;
+  *                Returns the Collection of main graphical views we should update after
+  *                a Cell has been modified.
+  *
+  *                When applying modifications upon a Cell, we need to update
+  *                main graphical views of a cell but also main graphical views
+  *                of cells which call directly or indirectly the Cell.
+  */
+
+ /*! \function     Rubbers  Cell::GetRubbers () const;
+  *                Returns the Collection of all Rubbers of a Cell.
+  */
+
+ /*! \function     Rubbers Cell::GetRubbersUnder ( const Box& area ) const;
+  *                Returns the collection of all Rubbers of the Cell intersecting the
+  *                given rectangular \e area.
+  *
+  *  \caution      Only currently materialized rubbers are taken into account
+  *                in this collection.
+  */
+
+ /*! \function     Components  Cell::GetComponents ( const Layer::Mask& mask = ~0 ) const;
+  *                Returns the Collection of all Components of the Cell.
+  */
+
+ /*! \function     Components Cell::GetComponentsUnder ( const Box& area, const Layer::Mask& mask = ~0 ) const;
+  *                Returns the collection of all Components of the Cell intersecting the
+  *                given rectangular \e area.
+  *
+  *  \caution      Only currently materialized Components are taken into account
+  *                in this collection.
+  */
+
+ /*! \function     Occurrences  Cell::GetOccurrences ( unsigned searchDepth=(unsigned)-1 ) const;
+  *                Returns the Collection of all Occurrences belonging to this Cell.
+  *
+  *  \remark       The search depth is decremented each time a hirearchical
+  *                level is crossed. The search ends when depth becomes null
+  *                (the value \c INFINITE is equal to \c (unsigned)-1) .
+  */
+
+ /*! \function     Occurrences  Cell::GetOccurrencesUnder ( const Box& area, unsigned searchDepth=(unsigned)-1 ) const;
+  *                Returns the Collection of all Occurrences belonging to this Cell and
+  *                intersecting the given rectangular area.
+  *
+  *  \remark       The search depth is decremented each time a hirearchical
+  *                level is crossed. The search ends when depth becomes null
+  *                (the value \c INFINITE is equal to \c (unsigned)-1) .
+  *
+  *  \caution      Only occurences corresponding to currently materialized
+  *                entities are taken into account in this Collection.
+  */
+
+ /*! \function     Box  Cell::GetAbutmentBox () const;
+  *                Returns Returns the abutment box of the cell (which is defined by the
+  *                designer unlike the bounding box which is managed dynamically).
+  */
+
+ /*! \function     Symbol* Cell::GetSymbol () const;
+  *                Returns the symbol associated to the cell.
+  */
+
+ // \}
+
+
+ /*! \name         Predicates
+  */
+ // \{
+
+ /*! \function     bool  Cell::IsCalledBy ( Cell* cell ) const;
+  *                Returns \true if the cell \this is directly or indirectly called by
+  *                the Cell \e cell. This functions allows to check that there is
+  *                no cyclic instance calls of cells (it is by default,
+  *                automatically called when creating an instance).
+  */
+
+ /*! \function     bool  Cell::IsTerminal () const;
+  *                Returns \true if the Cell is marked as terminal (meaning that it has
+  *                no inside or that we dont want to take it into account), else
+  *                \false.
+  */
+
+ // \}
+
+
+ /*! \name         Modifiers
+  */
+ // \{
+
+ /*! \function     void  Cell::SetName ( const Name& name );
+  *                Allows to change the Cell Name.
+  *
+  *  \remark       Throws an exception if the new \e name is empty or if the
+  *                Library owning the Cell has already a Cell with the same
+  *                name.
+  */
+
+ /*! \function     void  Cell::SetAbutmentBox ( const Box& abutmentBox );
+  *                Sets Cell abutment box.
+  *
+  *  \remark       At the Cell creation the abutment box is empty. This one must
+  *                be set through this function. It is possible also, once
+  *                fixed, to reset it to empty (undefined) by passing an empty
+  *                Box as argument.
+  */
+
+ /*! \function     void  Cell::SetTerminal ( bool state );
+  *                Sets Cell terminal status to \e state.
+  */
+
+ /*! \function     void  Cell::SetSymbol ( Symbol* symbol );
+  *                Associates the symbol \e symbol to the Cell.
+  */
+
+ /*! \function     void  Cell::Materialize ();
+  *                Materializes all components of all the nets of the Cell.
+  */
+
+ /*! \function     void  Cell::Unmaterialize ();
+  *                De-materializes all components of all the nets of the Cell.
+  */
+
+ // \}
+
+
+ /*! \name         Cell Collection
+  */
+ // \{
+
+ /*! \typedef      typedef GenericCollection<Cell*> Cells;
+  *                Generic collection representing a set of cell objects.
+  */
+
+ /*! \typedef      typedef GenericLocator<Cell*> CellLocator;
+  *                Generic locator for visiting a cell objects Collection.
+  */
+
+ /*! \typedef      typedef GenericFilter<Cell*> CellFilter;
+  *                Filter to selecting a subset of cell objects matching some criteria.
+  */
+
+ /*! \def          for_each_entity(entity,entities)
+  *                Macro for visiting all objects of a cell objects collection.
+  */
+
+ // \}
+
+ }

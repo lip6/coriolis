@@ -1,0 +1,53 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        SelectNetCommand
+  *  \brief        SelectNetCommand description (\b API)
+  *
+  *  \section      secSelectNetCommandIntro  Introduction
+  *
+  *                This command allows to select the set of component occurences 
+  *                pertaining to one or many net occurences. 
+  *
+  *                This command is named : <b>"Select nets"</b> and bound to the 
+  *                mouse <b>right button</b>. 
+  * 
+  * 
+  *  \section      secSelectNetCommandPrinciple  Principle
+  *
+  *                After having defined a point, the selection proceeds in two 
+  *                steps : 
+  *
+  *                <b>Identification of candidate occurences :</b> 
+  *
+  *                Candidate occurences are those located below this point. 
+  *
+  *                Only visible occurences are potentially candidates. 
+  *
+  *                <b>Modification of the current selection :</b> 
+  *
+  *                If the shift key is not hold down the previous selection is 
+  *                erased. 
+  *
+  *                Then, for each identified candidate occurence the 
+  *                corresponding net occurence is obtained, and the whole set of 
+  *                component occurences of this net occurence is selected. 
+  */
+
+
+
+ /*  \name         SelectNetCommand Functions
+  */
+ //  \{
+
+ /*  \function     SelectNetCommand* SelectNetCommand::GetSelectNetCommand();
+  *  \Return       the select net command object. 
+  */
+
+ //  \}
+
+
+ }

@@ -1,0 +1,371 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        DBo
+  *  \brief        DataBase object root class (\b API).
+  *
+  *  \section      sDBoIntro  Introduction
+  *
+  *                All data base objects must be created explicitely by using
+  *                the provided creation functions and not by calling directly
+  *                the new operator (which anyway is not provided).
+  *     
+  *                On the same way, they must not be deleted with the delete
+  *                operator but by calling the destruction function described
+  *                below.
+  *     
+  *                Those objects can't, either, be duplicated : the copy
+  *                constructor and the assignment operator are not available.
+  *
+  *                Properties can be attached to those objects (the principles
+  *                driving the properties management are detailed in the
+  *                Property class).
+  *
+  *  \section      sDBoCreation  Creation process
+  *
+  *                The data base objects are strongly linked between them and
+  *                some relations can't be set-up by the constructors themselves
+  *                but must be established a posteriori. <b>Those objects must
+  *                therefore be built by special functions which take care of
+  *                that obscure work</b>.
+  *
+  *                Indeed, let us imagine a <b>Go</b> type representing the
+  *                category of graphic objects and two sub-classes
+  *                <b>Rectangle</b> and <b>Line</b> having specific geometric
+  *                attributes. For eficiency reasons those <b>Go</b> are stored
+  *                in a fast access geometric data structure like a
+  *                <b>QuadTree</b>. It would be ideal that the insertion of the
+  *                <b>Go</b> within its <b>QuadTree</b> be automatic. This could
+  *                be done in the <b>Go</b> constructor for instance. But, when
+  *                this constructor is called upon (by the constructor of
+  *                sub-classes) it is impossible to determine the bounding box
+  *                of the object because all geometric characteristics are not
+  *                yet assigned (making the insertion unfeasible).
+  *
+  *                A possible solution would be to do nothing within the
+  *                <b>Go</b> constructor and let the work be done by the
+  *                sub-classes constructors wich could call upon the right
+  *                insertion function. This solution is neither smart nor
+  *                consistent because an omission can happen. If a sub-type of
+  *                <b>Line</b> is created, the insertion being already done in
+  *                the <b>Line</b> constructor, it must not be re-done for the
+  *                derived class. Conversely if a new type of <b>Go</b> is
+  *                created, insertion processing must not be forgotten. Code
+  *                omissions or duplications are bound to happen and the code is
+  *                not homogeneous.
+  *
+  *                Therefore this insertion must be realized by the <b>Go</b>,
+  *                but a posteriori, that is once the object has been fully
+  *                built. In order to realize such an operation it must, once
+  *                all derived classes constructors have been called, call upon
+  *                a function <b>_PostCreate</b> which realizes the additional
+  *                work and then return the pointer on the new objects (let us
+  *                recall that all member functions which must not be called
+  *                directly are prefixed by an underscore).
+  *        
+  *                This process in two steps is realized by the <b>Create</b>
+  *                function which is provided for each type of instanciable
+  *                object. The following example shows its implementation for a
+  *                net :
+  *  \code
+ Net* Net::Create(Cell* cell, const Name&amp; name)
+ // *******************************************
+ {
+    Net* net = new Net(cell, name);
+  
+    if (!net)
+       throw Error("Can't create Net : allocation failed");
+  
+    net->_PostCreate();
+  
+    return net;
+ }
+     \endcode
+  *
+  *                Within this function, the net is created in a first time
+  *                thanks to the constructor spawn by the new operator. If
+  *                everything goes right the function <b>_PostCreate</b> is
+  *                called upon the net. This one realizes the additional
+  *                operations that the constructor couldn't realize and then
+  *                calls the functions <b>_PostCreate</b> upon the base
+  *                classe. If everything goes right the net is returned, else an
+  *                exception is thrown if something abnormal or illegal occurs
+  *                (i.e. a net with the same name already exists). For the
+  *                example of a <b>Line</b> : the different called constructors
+  *                will fully characterize the line, then the <b>_PostCreate</b>
+  *                method on a line will do nothing else than call upon the
+  *                <b>_PostCreate</b> method of the <b>go</b> which will insert
+  *                the line within the <b>QuadTree</b> (this is now feasible,
+  *                the line geometry being fully characterized).
+  *
+  *  \section      sDBoDelete  Deletion process
+  *
+  *                <b>The Delete() member function :</b>
+  *
+  *                Data base ojects can be destroyed only by calling upon this
+  *                function and not by calling the C++ standard destructor
+  *                (which indeed is not provided).
+  *
+  *                A process similar but opposite to the creation process is
+  *                required. A function <b>_PreDelete</b> must be called upon
+  *                before the effective object destruction. As a matter of fact,
+  *                if we take again the case of the <b>Line</b> for example, the
+  *                line must be removed from the <b>QuadTree</b> before the
+  *                destruction of its geometric characteristics (inverse of the
+  *                previous phenomenon). Therefore the Delete function is
+  *                implemented that way :
+  *  \code
+ void DBo::Delete()
+ // ***************
+ {
+   _PreDelete();
+                 
+   delete *this;
+ }
+  *  \endcode
+  *
+  *  \section      sDBoExtentions  Extentions
+  *
+  *                For any new sub-type of DBo you must adhere to the same
+  *                protocol. That is provide the methods _PostCreate and
+  *                _PreDelete calling the methods _PostCreate and _PreDelete of
+  *                their base class. Furthermore you must provide when this
+  *                class is instantiable a creation function (caution : only the
+  *                creation function, if any, must be \public (and \static) the
+  *                others must be \protected).
+  *
+  *                Extracted from the .h of a new type of cell.
+  *  \code
+ class MyCell : public Cell {
+ // ***********************
+  
+ // Types
+ // *****
+  
+    public: typedef Cell Inherit;
+  
+ // Construction
+ // ************
+  
+    protected: MyCell(Library* library, const Name&amp; name);
+  
+    public: static MyCell* Create(Library* library, const Name&amp; name);
+  
+ // Others
+ // ******
+  
+    protected: virtual void _PostCreate();
+  
+    protected: virtual void _PreDelete();
+  
+ };
+  *  \endcode
+  *                Extracted from the .cpp for this new type of cell.
+  *  \code
+ MyCell::MyCell(Library* library, const Name&amp; name)
+ // ***********************************************
+  :  Inherit(library, name)
+ {
+ }
+  
+ MyCell* MyCell::Create(Library* library, const Name&amp; name)
+ // *******************************************************
+ {
+    MyCell* myCell = new MyCell(library, name);
+  
+    if (!myCell)
+       throw Error("Can't create MyCell : allocation failed");
+  
+    myCell->_PostCreate(); // must not be forgotten!
+  
+    return myCell;
+ }
+  
+ void MyCell::_PostCreate()
+ // ***********************
+ {
+    // complete here the post creation
+    
+    Inherit::_PostCreate(); // must not be forgotten!
+  
+    // posibly do something here
+ }
+  
+ void MyCell::_PreDelete()
+ // **********************
+ {
+    // posibly do something here
+  
+    Inherit::_PreDelete(); // must not be forgotten!
+  
+    // complete here the pre deletion
+ }
+  *  \endcode
+  *
+  *  \remark       The destructor, strictly speaking, is not defined because
+  *                necessary operations are done within the method
+  *                <b>_PreDelete</b>.
+  *                In the implementation of the class <b>MyCell</b> we have only
+  *                used the type <b>Inherit</b> (and never <b>Cell</b>). This opens
+  *                the door to hierarchy changes without affecting the code already
+  *                written.
+  *
+  *  \section      sDBoRemark  Remark
+  *
+  *                The construction and deletion process of property objects is the
+  *                same. It is mandatory for any new type of property to adopt the
+  *                same protocol.
+  *
+  */
+
+
+ /*! \function     void  DBo::Delete ();
+  *
+  *                The legal method to delete any DBo object (see \ref sDBoDelete).
+  */
+
+ /*! \name         Accessors
+  */
+ // \{
+
+ /*! \function     Property* DBo::GetProperty ( const Name& name ) const;
+  *  \param        name  Name of the Property to return.
+  *  \return       The property of Name \e name attached to the object, if it exists, else \NULL.
+  *
+  *  \remark       When writting what follows :
+  *  \code
+ for_each_dbo(dbo, dbos) {
+     Property* property = dbo->GetProperty("width");
+     if (property) {
+        // do something
+     }
+     end_for;
+ }
+  *  \endcode
+  *
+  *                There is construction of a name (from a character string) for
+  *                each visited dbo in order to find the property. It's more
+  *                efficient to write :
+  *  \code
+ Name width = "width";
+ for_each_dbo(dbo, dbos) {
+     Property* property = dbo->GetProperty(width);
+     if (property) {
+         // do something
+     }
+     end_for;
+ }
+  *  \endcode
+  *                Or still better :
+  *  \code
+ static Name WIDTH = "width";
+ for_each_dbo(dbo, dbos) {
+     Property* property = dbo->GetProperty(WIDTH);
+     if (property) {
+         // do something
+     }
+     end_for;
+ }
+  *  \endcode
+  *                This remark applies each time you handle names.
+  */
+
+ /*! \function     Propertes  DBo::GetProperties () const;
+  *  \return       The property Collection associated to the object (possibly empty).
+  */
+
+ // \}
+
+
+ /*! \name         Predicates
+  */
+ // \{
+
+ /*! \function     bool  DBo::HasProperty () const;
+  *  \return       \true if the object has at least a property, else \false.
+  */
+
+ // \}
+
+
+ /*! \name         Modifiers
+  */
+ // \{
+
+ /*! \function     void  DBo::Put ( Property* property );
+  *
+  *                Adds the Property \e property to the set of object
+  *                properties. Properties being named, if an other one already
+  *                exists in the set, with the same name, this last will be in a
+  *                first step removed from the set.
+  *
+  *  \remark       Does nothing if the Property object is already attached to the
+  *                object.
+  *
+  *  \caution      An exception is thrown if the Property pointer is \NULL.
+  */
+
+ /*! \function     void  DBo::Remove ( Property* property );
+  *                Removes the property \e property from the set of object properties.
+  *
+  *  \remark       Does nothing if the Property object is not attached to the object.
+  *
+  *  \caution      An exception is thrown if the Property pointer is \NULL.
+  */
+
+ /*! \function     void  DBo::RemoveProperty ( const Name& name );
+  *                Removes the property of name \e name if it exists.
+  */
+
+ /*! \function     void  DBo::ClearProperties ();
+  *                Removes all properties attached to this object.
+  */
+
+ // \}
+
+
+ /*! \name         DBo Collection
+  */
+ // \{
+
+ /*! \typedef      typedef GenericCollection<DBo*> DBos;
+  *                Generic collection representing a set of data base objects.
+  */
+
+ /*! \typedef      typedef GenericLocator<DBo*> DBoLocator;
+  *                Generic locator for visiting a data base objects Collection.
+  */
+
+ /*! \typedef      typedef GenericFilter<DBo*> DBoFilter;
+  *                Filter to selecting a subset of data base objects matching some criteria.
+  */
+
+ /*! \def          for_each_dbo(dbo,dbos)
+  *                Macro for visiting all objects of a data base objects collection.
+  */
+
+ // \}
+
+ }
+
+
+ /*  \addtogroup   GetStringFunctions
+  */
+ // \{
+
+ /*  \function     string  GetString ( const Hurricane::DBo& dbo );
+  *                Convert any Hurricane::DBo object into a \string.
+  */
+
+ /*  \function     inline ostream& operator<< ( ostream& o, const Hurricane::DBo& dbo );
+  *                Print any Hurricane::DBo object into an output \stream.
+  */
+
+ /*  \function     inline ostream& operator<< ( ostream& o, const Hurricane::DBo* dbo );
+  *                Print any pointed Hurricane::DBo object into an output \stream.
+  */
+
+ // \}

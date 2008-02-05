@@ -1,0 +1,94 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        VectorCollection
+  *  \brief        VectorCollection description (\b API)
+  *
+  *  \section      secVectorCollectionIntro  Introduction
+  *
+  *                This collection allows you to handle a STL vector as a 
+  *                collection. 
+  *
+  *                In priciple you don't need to handle directly this 
+  *                collection, you only need to handle a generic collection 
+  *                bound to a <b>VectorCollection</b> as created by the generic 
+  *                function <b>GetCollection</b>(...) which builds one when its 
+  *                argument is a STL vector (for that reason we will not 
+  *                describe it). 
+  * 
+  * 
+  *  \section      secVectorCollectionOverloadingsOfTheGetcollectionGenericFunction  Overloadings of the GetCollection generic function
+  *
+  *                <ul>
+  *                  <li><b>Hurricane::VectorCollection::GetCollection</b>
+  *                  <li><b>Hurricane::VectorCollection::GetCollection</b>
+  *                </ul>
+  * 
+  * 
+  *  \section      secVectorCollectionRemarks  Remarks
+  *
+  *                Comme pour toutes les collections, il n'y a pas de copie des 
+  *                éléments contenus dans le vecteur mais plutot une mise en 
+  *                correspondance du vecteur avec la collection. 
+  *
+  *                Une fois la collection créée il est tout à fait possible de 
+  *                modifier le vecteur ; les éléments ajoutés ou supprimés 
+  *                seront alors pris en compte ou pas lors du parcours de la 
+  *                collection comme le montre l'exemple suivant : 
+  *
+  *                Like for the other collections, there is no copy of the 
+  *                elements included in the vector, but instead a link from the 
+  *                collection to the vector. 
+  *
+  *                Once the collection as been built, you can perfectly modify 
+  *                the vector; the added or deleted elements will be taken into 
+  *                account when visiting the vector, as shown in the following 
+  *                example : 
+\code
+vector<Net*> netVector;
+ 
+Nets nets = GetCollection(netVector);
+// nets is then bound to the vector netVector
+// and will reflect its content until the end
+ 
+// so we can :
+assert(nets.IsEmpty());
+ 
+Cell* cell = ... // we get a cell
+if (cell) {
+   Net* net = cellGetNet("vdd");
+   if (net) {
+      netVector.push_back(net);
+      // and now :
+      assert(nets.GetSize() == 1);
+   }
+}
+\endcode
+  */
+
+
+
+ /*  \name         Accessors
+  */
+ //  \{
+
+ /*! \function     GenericCollection<Element> VectorCollection::GetCollection(const vector<Element>& elementVector);
+  *                See below.
+  */
+
+ /*! \function     GenericCollection<Element> VectorCollection::GetCollection(const vector<Element>* elementVector);;
+  *                Ces deux fonctions récupèrent sous forme de collection 
+  *                générique liée à un <b>VectorCollection</b> le contenu d'un 
+  *                vecteur passée en argument. 
+  *
+  *                Those two function return into generic collection bound to a 
+  *                <b>VectorCollection</b> the content of the STL vector given 
+  *                in argument. 
+  */
+
+ //  \}
+
+ }

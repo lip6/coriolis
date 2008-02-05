@@ -1,0 +1,100 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Technology
+  *  \brief        Technological rules description (\b API).
+  *
+  *  \section      sTechnologyIntro  Introduction
+  *
+  *                The Technology object provides the description of all the technology
+  *                rules needed by the tools, currently it is limited to the description
+  *                of all layers available. This object must be created once within the
+  *                DataBase, and, in principle never destroyed (this would destroy layers
+  *                and all objects laying on them ...).
+  *
+  *  \remark       There is only one technology for the current DataBase, and only one
+  *                Database object, so only one technology defined.
+  */
+
+
+ /*! \name         Constructors
+  */
+ // \{
+
+ /*! \function     Technology* Technology::Create ( DataBase* dataBase, const Name& name );
+  *  \Return       a newly created technology named \c \<name\> for the data base \c \<dataBase\>.
+  *
+  *  \caution      Throws an exception if the \c dataBase is \NULL, if the name is empty or if
+  *                the \c dataBase has already a technology.
+  */
+
+ // \}
+
+
+ /*! \name         Accessors
+  */
+ // \{
+
+ /*! \function     DataBase* Technology::GetDataBase () const;
+  *  \Return       the DataBase owning the technology.
+  */
+
+ /*! \function     const Name& Technology::GetName () const;
+  *  \Return       the technology name.
+  */
+
+ /*! \function     Layer* Technology::GetLayer ( const Name& name ) const;
+  *  \Return       the Layer named \c \<name\> if it exists, else \NULL.
+  */
+
+ /*! \function     BasicLayer* Technology::GetBasicLayer ( const Name& name ) const;
+  *  \Return       the Layer named \c \<name\> if it exists and is a BasicLayer, else \NULL.
+  */
+
+ /*! \function     CompositeLayer* Technology::GetCompositeLayer ( const Name& name ) const;
+  *  \Return       the Layer named \c \<name\> if it exists and is a CompositeLayer, else \NULL.
+  */
+
+ /*! \function     Layers  Technology::GetLayers () const;
+  *  \Return       Returns the collection of layers of the technology.
+  *
+  *  \remark       The layers are traversed according to their
+  *                creation order. This order is very important,
+  *                notably for the graphical display. Therefore deeper
+  *                basic layers must be created first and upper layers
+  *                later (the order of composite layers has no
+  *                importance).
+  */
+
+ /*! \function     BasicLayers  Technology::GetBasicLayers () const;
+  *  \Return       Returns the collection of basic layers of the technology
+  *                (uses the same order).
+  */
+
+ /*! \function     BasicLayers  Technology::GetBasicLayers ( const Layer::Mask& mask ) const;
+  *  \Return       Returns the collection of basic layers of the technology
+  *                which matches the Layer mask \c \<mask\> (uses the same order).
+  */
+
+ /*! \function     CompositeLayers  Technology::GetCompositeLayers () const;
+  *  \Return       Returns the collection of composite layers of the technology
+  *                (uses the same order).
+  */
+
+ // \}
+
+
+ /*! \name         Modifiers
+  */
+ // \{
+
+ /*! \function     void  Technology::SetName ( const Name& name );
+  *                Allows to change the technology name (if empty name, throws an exception).
+  */
+
+ // \}
+
+ }

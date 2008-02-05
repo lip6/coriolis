@@ -1,0 +1,183 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Segment
+  *  \brief        Segment description (\b API)
+  *
+  *  \section      secSegmentIntro  Introduction
+  *
+  *                Segments are abstract objects introducing the concept of link 
+  *                between two components. 
+  *
+  *                They are implicitely oriented, but that doesn't represent any 
+  *                particular signification (for layout objects at least). 
+  */
+
+
+
+ /*! \typedef      Segment::Inherit
+  *                Useful for calling upon methods of the base class without 
+  *                knowing it. 
+  */
+
+ /*! \class        Segment::SourceHook
+  *                With segments, a new type of Hook appears : the 
+  *                <b>SourceHook</b>, which allows to attach the segment origin 
+  *                upon an other component, on which it is said to be 
+  *                "anchored". The SourceHook is always a slave hook. 
+  */
+
+ /*! \class        Segment::TargetHook
+  *                With segments, a new type of Hook appears : the 
+  *                <b>TargetHook</b>, which allows to attach the segment 
+  *                extremity upon an other component, on which it is said to be 
+  *                "anchored". The TargetHook is always a slave hook. 
+  */
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     Segment::SourceHook* Segment::GetSourceHook();
+  *  \Return       the hook through which the segment origin can be anchored on 
+  *                a component. 
+  */
+
+ /*! \function     Segment::TargetHook* Segment::GetTargetHook();
+  *  \Return       the hook through which the segment extremity can be anchored 
+  *                on a component. 
+  */
+
+ /*! \function     Hook* Segment::GetOppositeHook(const Hook* hook) const;
+  *  \Return       the target hook of the segment if \c \<hook\> is the source 
+  *                hook of the segment. 
+  *
+  *  \Return       the source hook of the segment if \c \<hook\> is the target 
+  *                hook of the segment. 
+  *
+  *  \Return       NULL otherwise. 
+  */
+
+ /*! \function     Component* Segment::GetSource() const;
+  *                The source hook being a slave one, it may have an associated 
+  *                master hook representing the body of the component on wich 
+  *                the segment origin is anchored. 
+  *
+  *                So, this method returns the component owner of this master 
+  *                hook, if any, else a NULL pointer. 
+  */
+
+ /*! \function     Component* Segment::GetTarget() const;
+  *                The target hook being a slave one, it may have an associated 
+  *                master hook representing the body of the component on wich 
+  *                the segment extremity is anchored. 
+  *
+  *                So, this method returns the component owner of this master 
+  *                hook, if any, else a NULL pointer. 
+  */
+
+ /*! \function     Component* Segment::GetOppositeAnchor(Component* anchor) const;
+  *  \Return       the target anchor of the segment if \c \<anchor\> is the 
+  *                source anchor of the segment (may be NULL) 
+  *
+  *  \Return       the source anchor of the segment if \c \<anchor\> is the 
+  *                target anchor of the segment (may be NULL) 
+  *
+  *  \Return       NULL otherwise. 
+  */
+
+ /*! \function     Components Segment::GetAnchors() const;
+  *  \Return       the collection of anchors. This collection is composed by the 
+  *                source (if non NULL) and the target (if non NULL) of the 
+  *                segment (may be empty if all extremities of the segment 
+  *                aren't anchored). 
+  */
+
+ /*! \function     const Unit& Segment::GetWidth() const;
+  *  \Return       the segment width. 
+  */
+
+ /*! \function     Unit Segment::GetHalfWidth() const;
+  *  \Return       the segment half width. 
+  */
+
+ /*! \function     Unit Segment::GetSourceX() const;
+  *  \Return       the abscissa of the segment origin. 
+  */
+
+ /*! \function     Unit Segment::GetSourceY() const;
+  *  \Return       the ordinate of the segment origin. 
+  */
+
+ /*! \function     Point Segment::GetSourcePosition() const;
+  *  \Return       the point location of the segment origin. 
+  */
+
+ /*! \function     Unit Segment::GetTargetX() const;
+  *  \Return       the abscissa of the segment extremity. 
+  */
+
+ /*! \function     Unit Segment::GetTargetY() const;
+  *  \Return       the ordinate of the segment extremity. 
+  */
+
+ /*! \function     Point Segment::GetTargetPosition() const;
+  *  \Return       the point location of the segment extremity. 
+  */
+
+ /*! \function     Unit Segment::GetLength() const;
+  *  \Return       the segment length. 
+  */
+
+ //  \}
+
+
+ /*! \name         Modifiers
+  */
+ //  \{
+
+ /*! \function     void Segment::SetLayer(Layer* layer);
+  *                Sets the segment layer. 
+  */
+
+ /*! \function     void Segment::SetWidth(const Unit& width);
+  *                Sets the segment width. 
+  */
+
+ /*! \function     void Segment::Invert();
+  *                Invert the segment. The source and target of the segment are 
+  *                permutted. 
+  */
+
+ //  \}
+
+
+ /*! \name         Segment Collection
+  */
+ //  \{
+
+ /*! \typedef      Segments
+  *                Generic collection representing a set of segments. 
+  */
+
+ /*! \typedef      SegmentLocator
+  *                Generic locator for traversing a collection of segments. 
+  */
+
+ /*! \typedef      SegmentFilter
+  *                Generic filter allowing to select a subset of segments 
+  *                matching some criteria. 
+  */
+
+ /*! \def          for_each_segment(segment, segments)
+  *                Macro for visiting all the segments of a collection of 
+  *                segments. 
+  */
+
+ //  \}
+
+
+ }

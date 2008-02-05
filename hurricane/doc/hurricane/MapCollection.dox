@@ -1,0 +1,83 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        MapCollection
+  *  \brief        MapCollection description (\b API)
+  *
+  *  \section      secMapCollectionIntro  Introduction
+  *
+  *                This collection allows you to handle a STL map as a 
+  *                collection. 
+  *
+  *                In priciple you don't need to handle directly this 
+  *                collection, you only need to handle a generic collection 
+  *                bound to a <b>MapCollection</b> as created by the generic 
+  *                function <b>GetCollection</b>(...) which builds one when its 
+  *                argument is a STL map (for that reason we will not describe 
+  *                it). 
+  * 
+  * 
+  *  \section      secMapCollectionOverloadingsOfTheGetcollectionGenericFunction  Overloadings of the GetCollection generic function
+  *
+  *                <b>Hurricane::MapCollection::GetCollection</b>
+  *                <b>Hurricane::MapCollection::GetCollection</b>
+  * 
+  * 
+  *  \section      secMapCollectionRemarks  Remarks
+  *
+  *                Like for the other collections, there is no copy of the 
+  *                elements included in the map, but instead a link from the 
+  *                collection to the map. 
+  *
+  *                Once the collection as been built, you can perfectly modify 
+  *                the map; the added or deleted elements will be taken into 
+  *                account when visiting the map, as shown in the following 
+  *                example : 
+\code
+map<Name, Net*> netMap;
+ 
+Nets nets = GetCollection(netMap);
+// nets is then bound to the map netMap
+// and will reflect its content until the end
+ 
+// so we can :
+assert(nets.IsEmpty());
+ 
+Cell* cell = ... //  we get a cell
+if (cell) {
+   Net* net = cellGetNet("vdd");
+   if (net) {
+      netMap[netGetName()] = net;
+      // and now :
+      assert(nets.GetSize() == 1);
+   }
+}
+\endcode
+  *                You can trace the collection and reach the elements of the 
+  *                map, but you can't know to which key they are associated 
+  *                (seldom useful). If this is required, you must use STL 
+  *                iterators and not this collection. 
+  */
+
+
+
+ /*  \name         Accessors
+  */
+ //  \{
+
+ /*! \function     GenericCollection<Element> MapCollection::GetCollection(const map<Key, Element, Compare>& elementMap);
+  *  \see          below.
+  */
+
+ /*! \function     GenericCollection<Element> MapCollection::GetCollection(const map<Key, Element, Compare>* elementMap);;
+  *                Those two function return into generic collection bound to a 
+  *                <b>MapCollection</b> the content of the STL map given in 
+  *                argument. 
+  */
+
+ //  \}
+
+ }

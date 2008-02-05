@@ -1,0 +1,182 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        CompositeLayer
+  *  \brief        CompositeLayer description (\b API)
+  *
+  *  \section      secCompositeLayerIntro  Introduction
+  *
+  *                Composite layers are an assembly of basic layers. 
+  *
+  *                Given a rectangular area filled with a composite layer we can 
+  *                determine, according to different geometrical parameters, 
+  *                which are the characteristics of the different pads filled 
+  *                with each basic layer building the composite layer. Those 
+  *                parameters are the following : ContactSize, SegmentSize, 
+  *                SegmentExtention and PadSize. They differ for each basic 
+  *                layer participating to a composite layer. Refer to the 
+  *                chapter ExpandRules in order to get more information on the 
+  *                meaning of those parameters. 
+  */
+
+
+
+ /*! \typedef      CompositeLayer::Inherit
+  *                Useful for calling upon methods of the base class without 
+  *                knowing it. 
+  */
+
+ /*! \class        CompositeLayer::Type
+  *                This enumeration defines the composite layer types. table: 
+  *                Composite Layer Types headers: Name Code Signification slots: 
+  *                UNDEFINED 0 Undefined type slots: METAL 4 Routing layer 
+  *                slots: VIA 5 Contact layer 
+  */
+
+ /*! \name         Constructors
+  */
+ //  \{
+
+ /*! \function     CompositeLayer* CompositeLayer::Create(Technology* technology,const Name& name,const CompositeLayer::Type& type,const Unit& minimalSize = 0,const Unit& minimalSpacing = 0);
+  *                Creates and returns a new composite layer named \c \<name\>, 
+  *                of type \c \<type\> for the given technology (some 
+  *                geometrical characteristics can also be specified). 
+  *
+  *  \caution      Throws an exception if the technology is null, if the name is 
+  *                empty or if a layer of same name already exists. 
+  */
+
+ //  \}
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     const CompositeLayer::Type& CompositeLayer::GetType() const;
+  *  \Return       the composite layer type. 
+  */
+
+ /*! \function     Unit CompositeLayer::GetContactSize(BasicLayer* basicLayer) const;
+  *  \Return       the contact size associated to the basic layer 
+  *                \c \<basicLayer\> (0 if this basic layer doesn't pertains to 
+  *                composite one). 
+  */
+
+ /*! \function     Unit CompositeLayer::GetSegmentSize(BasicLayer* basicLayer) const;
+  *  \Return       the segment size associated to the basic layer 
+  *                \c \<basicLayer\> (0 if this basic layer doesn't pertains to 
+  *                composite one). 
+  */
+
+ /*! \function     Unit CompositeLayer::GetSegmentExtention(BasicLayer* basicLayer) const;
+  *  \Return       the segment extension associated to the basic layer 
+  *                \c \<basicLayer\> (0 if this basic layer doesn't pertains to 
+  *                composite one). 
+  */
+
+ /*! \function     Unit CompositeLayer::GetPadSize(BasicLayer* basicLayer) const;
+  *  \Return       the pad size associated to the basic layer \c \<basicLayer\> 
+  *                (0 if this basic layer doesn't pertains to composite one). 
+  */
+
+ /*! \function     const Unit& CompositeLayer::GetMaximalContactSize() const;
+  *  \Return       the maximum contact size for all the basic layers composing 
+  *                the composite layer. 
+  */
+
+ /*! \function     const Unit& CompositeLayer::GetMaximalSegmentSize() const;
+  *  \Return       the maximum segment size for all the basic layers composing 
+  *                the composite layer. 
+  */
+
+ /*! \function     const Unit& CompositeLayer::GetMaximalSegmentExtention() const;
+  *  \Return       the maximum segment extension for all the basic layers 
+  *                composing the composite layer. 
+  */
+
+ /*! \function     const Unit& CompositeLayer::GetMaximalPadSize() const;
+  *  \Return       the maximum pad size for all the basic layers composing the 
+  *                composite layer. 
+  */
+
+ //  \}
+
+
+ /*! \name         Modifiers
+  */
+ //  \{
+
+ /*! \function     void CompositeLayer::Add(BasicLayer* basicLayer,const Unit& contactSize,const Unit& segmentSize,const Unit& segmentExtention,const Unit& padSize);
+  *                Adds the basic layer with associated characteristics 
+  *                specified by the other arguments. 
+  *
+  *  \caution      Throws an exception if the basic layer is null or already 
+  *                present in the composite layer. 
+  *
+  *                Usage example : 
+\code
+DataBase* dataBase = GetDataBase();
+ 
+Technology* technology = dataBaseGetTechnology();
+ 
+CompositeLayer* metal2 = technologyGetCompositeLayer("metal2"):
+ 
+Unit contactSize = GetUnit(0.5);
+Unit segmentSize = GetUnit(1.0);
+Unit segmentExtention = GetUnit(1.3);
+Unit padSize = GetUnit(0);
+ 
+BasicLayer* CM2 = technologyGetBasicLayer("CM2");
+ 
+metal2Add(CM2, contactSize, segmentSize, segmentExtention, padSize);
+ 
+assert(metal2GetContactSize(CM2) == contactSize);
+assert(metal2GetSegmentSize(CM2) == segmentSize);
+assert(metal2GetSegmentExtention(CM2) == segmentExtention);
+assert(metal2GetPadSize(CM2) == padSize);
+\endcode
+  *
+  *                
+  */
+
+ /*! \function     void CompositeLayer::Remove(BasicLayer* basicLayer);
+  *                Removes the basic layer from the composite layer. 
+  *
+  *  \caution      Throws an exception if the basic layer is null or it doesn't 
+  *                pertain to the composite layer. 
+  */
+
+ //  \}
+
+
+ /*! \name         CompositeLayer Collection
+  */
+ //  \{
+
+ /*! \typedef      CompositeLayers
+  *                Generic collection representing a set of composite layers. 
+  */
+
+ /*! \typedef      CompositeLayerLocator
+  *                Generic locator for traversing a collection of composite 
+  *                layers. 
+  */
+
+ /*! \typedef      CompositeLayerFilter
+  *                Generic filter allowing to select a subset of composite 
+  *                layers matching some criteria. 
+  */
+
+ /*! \def          for_each_composite_layer(compositeLayer, compositeLayers)
+  *                Macro for visiting all the composite layers of a collection 
+  *                of composite layers. 
+  */
+
+ //  \}
+
+
+ }

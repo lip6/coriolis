@@ -1,0 +1,364 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Collection
+  *  \brief        Collection description (\b API)
+  *
+  *  \section      secCollectionIntro  Introduction
+  *
+  *                Collections introduce the concept of set of elements. 
+  *
+  *                Strictly speaking collections are not containers (in the STL 
+  *                way) but indeed set descriptors. For example, the set of 
+  *                instances called by a cell, which are located within a given 
+  *                rectangular area, will be a subtype of 
+  *                Collection\<Instance*\> whose first attribute will be a 
+  *                pointer to the cell and a second attribute the rectangular 
+  *                area. 
+  *
+  *
+  *  \section      secGenericGetCollection  The Generic GetCollection
+  *
+  *                The collections provide the generic \c GetCollection()
+  *                function which allows to convert its argument into a generic
+  *                collection. It has no specific interest for Hurricane
+  *                collections, but this function is overloaded for STL containers. 
+  *
+  *                This allows to handle a STL containers like a normal 
+  *                collection as shown in the following example: 
+\code
+set<Instance*> instanceSet;
+ 
+// here we fill the set with the desired instances...	
+ 
+for_each_instance(instance, GetCollection(instanceSet)) {
+   // process here each instance of the set
+   // (the elements are visited according to the set ordering)
+   end_for;
+}
+\endcode
+  *
+  *                
+  *
+  *  \remark       This approach is a little bit less efficient than the use of 
+  *                STL iterators, not much indeed, but has the advantage to be 
+  *                homogeneous with the remaining code (recall: the created 
+  *                collection doesn't make a copy of the STL container and its 
+  *                creation time is negligible). 
+  *
+  *  \caution      The returned collection is valid whenever the STL container 
+  *                is valid. Then you should not do the following: 
+\code
+GenericCollection<Instance*> GetInstances(...)
+// *******************************************
+{
+   set<Instance*> instanceSet;
+ 
+   // we fill the container with the appropriate instances
+ 
+   return GetCollection(instanceSet); // instanceSet deleted after return
+}
+\endcode
+  *
+  *                
+  *
+  *                The same will occur anyway if you do: 
+\code
+Cell* cell = ... // we get the cell
+ 
+Nets nets = cellGetNets();
+ 
+cellDelete();
+ 
+for_each_net(net, nets) {
+   ...
+   end_for;
+}
+\endcode
+  *
+  *                
+  */
+  */
+
+
+
+ /*! \section      secCollectionImportant  Important
+  *
+  *                Collections are very light objects which are built, copied or 
+  *                destroyed very rapidly. 
+  */
+
+
+
+ /*! \section      secCollectionLocators  Locators
+  *
+  *                Each type of collection provides an associated Locator for 
+  *                tracing through the corresponding set of elements. 
+  *
+  *                Each locator moves efficiently through the data structure 
+  *                without building (in the form of a list or any other 
+  *                container type) the set of elements defined by the collection 
+  *                (it may however use a stack (or something else) to manage 
+  *                recursive traces). 
+  *
+  *                The elements are therefore visited in the order with which 
+  *                they are internally stored. No assumptions must be made about 
+  *                this ordering. However, collections representing an STL 
+  *                container are visited in the same order than the container's 
+  *                one. 
+  *
+  *                If you need to visit the objects in a given order, you must 
+  *                first fill a STL container: either a vector to be sorted 
+  *                accordingly or a set with the given sort criteria (see the 
+  *                Fill method below). 
+  */
+
+
+
+ /*! \name         Destructors
+  */
+ //  \{
+
+ /*! \function     Collection::~Collection<Type>();
+  *                Destroys the collection but doesn't acts on elements refered 
+  *                by this collection. 
+  */
+
+ //  \}
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     Collection<Type>* Collection::GetClone() const;
+  *                Allocates and returns a clone (copy) of the collection 
+  *                (whatever be its type). 
+  *
+  *  \remark       In principle there is no need to use this function. However, 
+  *                if you do so, don't forget to delete the clone after use. It 
+  *                is indeed much easier to use generic collections which do 
+  *                that for you, as we will see later. 
+  */
+
+ /*! \function     Locator<Type>* Collection::GetLocator() const;
+  *                Allocates and returns a locator adapted to visit the elements 
+  *                of the collection. 
+  *
+  *  \remark       In principle there is no need to use this function. Use 
+  *                preferably the macro <b>for_each</b> described below. 
+  *                However, if you do so, don't forget to delete this locator 
+  *                after use, else use generic locators, which do that for you, 
+  *                as we will see later. 
+  */
+
+ /*! \function     unsigned Collection::GetSize() const;
+  *  \Return       the number of objects identified within the collection. 
+  *
+  *  \remark       Very fast in some cases, but may need to visit the collection 
+  *                in most ones. 
+  */
+
+ /*! \function     Type Collection::GetFirst() const;
+  *  \Return       the first element of the collection. 
+  *
+  *  \remark       The result is meaningful only when the collection is non 
+  *                empty. 
+  */
+
+ /*! \function     GenericCollection<SubType> Collection::GetSubSet<SubType>() const;
+  *  \Return       the collection corresponding to the subset of elements of 
+  *                type \c \<SubType\>. 
+  *
+  *  \remark       The returned collection is a collection of objects of type 
+  *                <b>SubType</b> and not of type <b>Type</b>. 
+  *
+\code
+Contacts Net::GetContacts() const
+// ******************************
+{
+   return GetComponents().GetSubSet<Contact*>();
+}
+\endcode
+  */
+
+ /*! \function     GenericCollection<Type> Collection::GetSubSet(const Filter<Type>& filter) const;
+  *  \Return       the collection representing the subset of elements accepted 
+  *                by the filter. 
+\code
+Nets Cell::GetExternalNets() const
+// *******************************
+{
+   return GetNets().GetSubSet(Net::GetIsExternalFilter());
+}
+\endcode
+  */
+
+ /*! \function     GenericCollection<SubType> Collection::GetSubSet<SubType>(const Filter<SubType>& filter) const;
+  *  \Return       the collection representing the subset of elements of type 
+  *                \c \<SubType\> accepted by the filter. 
+  *
+  *  \remark       The returned collection is a collection of elements of type 
+  *                <b>SubType</b> and not of type <b>Type</b> and the filter 
+  *                must be a filter of elements of type <b>SubType</b>. 
+  *
+  *  \sample       Filter Hurricane::Segment according to their Layer.
+\code
+class IsOnLayer : public Filter<Segment*> {
+// **************************************
+ 
+   public:
+ 
+      Layer* _layer;
+ 
+      IsOnLayer(Layer* layer)
+      : _layer(layer)
+      {
+         if (!_layer)
+            throw Error("Can't create IsOnLayer filter : null layer");
+      };
+ 
+      IsOnLayer(const IsOnLayer& isOnLayer)
+      : _layer(isOnLayer._layer)
+      {
+      };
+ 
+      IsOnLayer& operator=(const IsOnLayer& isOnLayer)
+      {
+         _layer = isOnLayer._layer;
+         return *this;
+      };
+ 
+      virtual Filter<Net*>* GetClone() const
+      {
+         return new IsOnLayer(*this);
+      };
+ 
+      virtual bool Accept(Segment* segment) const
+      {
+         return (segmentGetLayer() == _layer);
+      };
+ 
+};
+\endcode
+  *
+  *                And somewher later: 
+\code
+Layer* metal = GetDataBase()GetTechnology()GetLayer("metal");
+ 
+Segments segments = netGetComponents()->GetSubSet<Segment*>(IsOnLayer(metal));
+ 
+// segments represents here the subset of net components
+// which are of type Segment and located on layer metal
+\endcode
+  *
+  *                
+  */
+
+ //  \}
+
+
+ /*! \name         Predicates
+  */
+ //  \{
+
+ /*! \function     bool Collection::IsEmpty() const;
+  *                This function returns \true if the collection designates no 
+  *                element and else \false. 
+  */
+
+ //  \}
+
+
+ /*! \section      secCollectionUtilitarians  Utilitarians
+  *
+  *
+  *                <b>Collection::Fill</b>
+  *                <b>Collection::Fill</b>
+  *                <b>Collection::Fill</b>
+  *  \remark       The elements are added to the container in the order with 
+  *                which the collection is visited. So the same order will 
+  *                appear in a list or a vector, but for a set they will be 
+  *                inserted according to the set ordering method. 
+  */
+
+
+
+ /*! \name         Collection Collection
+  */
+ //  \{
+
+ /*! \def          for_each_object(Type, element, collection)
+  *                This powerful macro allows you to visit the set of elements 
+  *                designated by any type of collection. The first argument 
+  *                \c \<Type\> defines the type of elements that will be visited 
+  *                and the third argument \c \<collection\> is the traced 
+  *                collection. The code body located between macros 
+  *                <b>for_each</b> and <b>end_for</b> (that must not be 
+  *                forgotten) is then executed for each identified element, once 
+  *                this current element has been bound to the variable (you can 
+  *                exit prematurely with a traditional <b>break</b>). Sample use 
+  *                : 
+\code
+Cell* cell = ...; // we get the cell
+ 
+if (cell) {
+   for_each(Net*, net, cellGetExternalNets()) {
+      assert(netIsExternal());
+      assert(netGetCell() == cell);
+      end_for;
+   }
+}
+\endcode
+  *                On this example the call to <b>cell-\>GetExternalNets()</b> 
+  *                returns the collection of all external nets of the cell. Here 
+  *                the loop does some consistency checks on each net. As we will 
+  *                see later on there exist macros for each type of object which 
+  *                might be an element of a collection. Therefore the following 
+  *                sequence is equivalent to the previous one: 
+\code
+Cell* cell = ...; // we get the cell
+ 
+if (cell) {
+   for_each_net(net, cellGetExternalNets()) {
+      assert(netIsExternal());
+      assert(netGetCell() == cell);
+      end_for;
+   }
+}
+\endcode
+  */
+
+ //  \}
+
+
+ /*! \name         Collection Functions
+  */
+ //  \{
+
+ //  \}
+
+
+ /*  \name         Others
+  */
+ //  \{
+
+ /*  \function     void Collection::Fill(list<Type>& list) const;
+  *                No description.
+  */
+
+ /*  \function     void Collection::Fill(vector<Type>& vector) const;
+  *                No description.
+  */
+
+ /*  \function     void Collection::Fill(set<Type, Comparator = less<Type>>& set) const;
+  *                Those three functions allow to fill a STL container with the 
+  *                identified elements of a collection. 
+  */
+
+ //  \}
+
+ }

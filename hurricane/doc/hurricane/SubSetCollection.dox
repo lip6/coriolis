@@ -1,0 +1,79 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        SubSetCollection
+  *  \brief        SubSetCollection description (\b API)
+  *
+  *  \section      secSubSetCollectionIntro  Introduction
+  *
+  *                This collection allows you to get the subset of all elements 
+  *                which are accepted by a filter (this filter is indeed a 
+  *                functional object as illustrated below). 
+  *
+  *                In principle you don't need to use this collection directly, 
+  *                but through the call of <b>collection.GetSubSet(filter)</b> 
+  *                which builds this subset collection (for that reason we will 
+  *                not describe it). 
+  */
+
+
+
+ /*! \section      secSubSetCollectionExample  Example
+  *
+  *                Definition of the filter which selects external nets of a 
+  *                cell : 
+\code
+class IsExternal : public Filter<Net*> {
+// ***********************************
+ 
+   public:
+ 
+      IsExternal() {};
+ 
+      IsExternal(const IsExternal& isExternal) {};
+ 
+      IsExternal& operator=(const IsExternal& isExternal) {return *this;};
+ 
+      virtual Filter<Net*>* GetClone() const {return new IsExternal(*this);};
+ 
+      virtual bool Accept(Net* net) const {return netIsExternal();};
+ 
+};
+\endcode
+  *                Implementation of the accessor <b>GetExternalNets</b> for the 
+  *                cells : 
+\code
+Nets Cell::GetExternalNet() const
+// ******************************
+{
+   return GetNets().GetSubSet(IsExternal());
+}
+\endcode
+  */
+
+
+
+ /*! \section      secSubSetCollectionRemarks  Remarks
+  *
+  *                As we will see, most objects define some handy filters. For 
+  *                instance, nets define the filter <b>IsExternalFilter</b> 
+  *                which can be obtained by calling the static member function 
+  *                <b>Net::GetIsExternalFilter()</b>. 
+  *
+  *                Then, the <b>GetExternalNets</b> accessor for cells is 
+  *                written like this : 
+\code
+Nets Cell::GetExternalNets() const
+// *******************************
+{
+   return GetNets().GetSubSet(Net::GetIsExternalFilter());
+}
+\endcode
+  */
+
+
+
+ }

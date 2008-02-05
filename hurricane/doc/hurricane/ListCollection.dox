@@ -1,0 +1,79 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        ListCollection
+  *  \brief        ListCollection description (\b API)
+  *
+  *  \section      secListCollectionIntro  Introduction
+  *
+  *                This collection allows you to handle a STL list as a 
+  *                collection. 
+  *
+  *                In priciple you don't need to handle directly this 
+  *                collection, you only need to handle a generic collection 
+  *                bound to a <b>ListCollection</b> as created by the generic 
+  *                function <b>GetCollection</b>(...) which builds one when its 
+  *                argument is a STL list (for that reason we will not describe 
+  *                it). 
+  * 
+  * 
+  *  \section      secListCollectionOverloadingsOfTheGetcollectionGenericFunction  Overloadings of the GetCollection generic function
+  *
+  *                <b>Hurricane::ListCollection::GetCollection</b>
+  *                <b>Hurricane::ListCollection::GetCollection</b>
+  * 
+  * 
+  *  \section      secListCollectionRemarks  Remarks
+  *
+  *                Like for the other collections, there is no copy of the 
+  *                elements included in the list, but instead a link from the 
+  *                collection to the list. 
+  *
+  *                Once the collection as been built, you can perfectly modify 
+  *                the list; the added or deleted elements will be taken into 
+  *                account when visiting the list, as shown in the following 
+  *                example : 
+\code
+list<Net*> netList;
+ 
+Nets nets = GetCollection(netList);
+// nets is bound here to the list netList
+// and will reflect its content until the end
+ 
+// so we can :
+assert(nets.IsEmpty());
+ 
+Cell* cell = ... // we get a cell
+if (cell) {
+   Net* net = cellGetNet("vdd");
+   if (net) {
+      netList.push_back(net);
+      // and now :
+      assert(nets.GetSize() == 1);
+   }
+}
+\endcode
+  */
+
+
+
+ /*  \name         Accessors
+  */
+ //  \{
+
+ /*! \function     GenericCollection<Element> ListCollection::GetCollection(const list<Element>& elementList);
+  *  \see          below.              
+  */
+
+ /*! \function     GenericCollection<Element> ListCollection::GetCollection(const list<Element>* elementList);;
+  *                Those two function return into generic collection bound to a 
+  *                <b>ListCollection</b> the content of the STL list given in 
+  *                argument. 
+  */
+
+ //  \}
+
+ }

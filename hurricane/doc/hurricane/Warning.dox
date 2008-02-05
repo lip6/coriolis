@@ -1,0 +1,83 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Warning
+  *  \brief        Warning description (\b API)
+  *
+  *  \section      secWarningIntro  Introduction
+  *
+  *                There is no difference with the Error type but the printed 
+  *                message is prefixed by <b>WARNING</b> instead of 
+  *                <b>ERROR</b>. 
+  * 
+  *  \section      secWarningNouveauxTypes  Nouveaux types
+  *
+  *                type: <b>Warning::Inherit</b> -\> Exception Useful for 
+  *                calling the base class methods without knowing this class. 
+  * 
+  * 
+  *  \section      secWarningRemark  Remark
+  *
+  *                You can also use this object to print messages without 
+  *                throwing an exception as shown below : 
+\code
+Cell* cell = libraryGetCell("adder"); // we get the cell
+ 
+if (!cell)
+   cerr << Warning("Unknown cell adder") << endl;
+else {
+   // we know what to do here
+}
+\endcode
+  *                The same remark applies to all exception types. 
+  */
+
+
+
+ /*! \name         Constructors
+  */
+ //  \{
+
+ /*! \function     Warning::Warning(const string& reason, int code = 0);
+  *                Builds a warning characterized by a reason and a code useful 
+  *                within a switch. 
+  */
+
+ /*! \function     Warning::Warning(const Warning& warning);
+  *                Copy constructor. 
+  */
+
+ //  \}
+
+
+ /*! \name         Operators
+  */
+ //  \{
+
+ /*! \function     Warning& Warning::operator=(const Warning& warning);
+  *                Assignment operator. 
+  */
+
+ //  \}
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     const string& Warning::GetReason() const;
+  *  \Return       the reason for which the warning was thrown. 
+  */
+
+ /*! \function     int Warning::GetCode() const;
+  *  \Return       the warning code number. 
+  */
+
+ //  \}
+
+
+
+ }

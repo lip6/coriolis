@@ -1,0 +1,133 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Vertical
+  *  \brief        Vertical description (\b API)
+  *
+  *  \section      secVerticalIntro  Introduction
+  *
+  *                A vertical has, in addition to inherited attributes, a 
+  *                specific one : its abscissa. The vertical extend of the 
+  *                segment is defined by the "source" and "target" components on 
+  *                which it is anchored. 
+  *
+  *                This abscissa allows, among other things, to anchor a 
+  *                vertical segment extremity on a component (i.e. a contact) 
+  *                with a small horizontal offset without the need to 
+  *                materialize it, because it is implicitely equal to the 
+  *                difference between the vertical abscissa and the component 
+  *                abscissa. It allows also, and it not the least interesting 
+  *                feature, to anchor an extremity of a vertical directly on a 
+  *                horizontal segment (and conversely) without the need to 
+  *                create an intermediate contact (unless they are on different 
+  *                layers!). The abscissa of the implicit contact point is the 
+  *                one of the vertical and the ordinate the one of the 
+  *                horizontal). 
+  */
+
+
+
+ /*! \typedef      Vertical::Inherit
+  *                Useful for calling upon methods of the base class without 
+  *                knowing it. 
+  */
+
+ /*! \name         Constructors
+  */
+ //  \{
+
+ /*! \function     Vertical* Vertical::Create(Component* source, Component* target, Layer* layer,const Unit& x,const Unit& width = 0,const Unit& dySource = 0, const Unit& dyTarget = 0);
+  *                Creates and returns a vertical segment whose origin lies 
+  *                (through an offset equal to \c \<dySource\>) on 
+  *                \c \<source\>, whose extremity lies (through an offset equal 
+  *                to \c \<dyTarget\>) on \c \<target\>, with layer 
+  *                \c \<layer\>, located at abscissa \c \<x\> and of width 
+  *                \c \<width\>. 
+  *
+  *  \caution      Throws an exception if any of the source, target or layer 
+  *                pointers is null or if the two component don't belong to the 
+  *                same net. 
+  */
+
+ /*! \function     Vertical* Vertical::Create(Net* net, Layer* layer, const Unit& x, const Unit& width = 0,const Unit& dySource = 0, const Unit& dyTarget = 0);
+  *                Creates and returns an absolute vertical segment with layer 
+  *                \c \<layer\>, located at abscissa \c \<x\> and of width 
+  *                \c \<width\>. The differents extremities ordinates are given 
+  *                by \c \<dySource\> and \c \<dyTarget\>. 
+  *
+  *  \caution      Throws an exception if any of the net or layer pointers is 
+  *                null. 
+  */
+
+ //  \}
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     const Unit& Vertical::GetDySource() const;
+  *  \Return       the relative source ordinate of the segment (may be absolute 
+  *                if the source extremity isn't anchored). 
+  *
+  *  \remark       If you want to get the absolute one use the member function 
+  *                GetSourceX() defined at the Segment level. 
+  */
+
+ /*! \function     const Unit& Vertical::GetDyTarget() const;
+  *  \Return       the relative target ordinate of the segment (may be absolute 
+  *                if the target extremity isn't anchored). 
+  *
+  *  \remark       If you want to get the absolute one use the member function 
+  *                GetTargetX() defined at the Segment level. 
+  */
+
+ //  \}
+
+
+ /*! \name         Modifiers
+  */
+ //  \{
+
+ /*! \function     void Vertical::SetX(const Unit& x);
+  *                Sets the abscissa of the segment. 
+  */
+
+ /*! \function     void Vertical::Translate(const Unit& dx);
+  *                Translate horizontaly the vertical segment of the quantity 
+  *                \c \<dx\>. 
+  */
+
+ //  \}
+
+
+ /*! \name         Vertical Collection
+  */
+ //  \{
+
+ /*! \typedef      Verticals
+  *                Generic collection representing a set of vertical segments. 
+  */
+
+ /*! \typedef      VerticalLocator
+  *                Generic locator for traversing a collection of vertical 
+  *                segments. 
+  */
+
+ /*! \typedef      VerticalFilter
+  *                Generic filter allowing to select a subset of verticals 
+  *                matching some criteria. 
+  */
+
+ /*! \def          for_each_vertical(vertical, verticals)
+  *                Macro for visiting all the verticals of a collection of 
+  *                vertical segments. 
+  */
+
+ //  \}
+
+
+ }
