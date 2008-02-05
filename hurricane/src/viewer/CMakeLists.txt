@@ -11,5 +11,5 @@ QT4_WRAP_CPP(MOC_SRCS ${includes})
 add_library(hurricaneviewer SHARED ${cpps} ${MOC_SRCS})
 target_link_libraries(hurricaneviewer ${QT_LIBRARIES} hurricane)
 
-install(FILES ${exports} DESTINATION /include/coriolis/hurricane) 
+install(FILES ${exports} DESTINATION /include/hurricane) 
 install(TARGETS hurricaneviewer DESTINATION /lib)

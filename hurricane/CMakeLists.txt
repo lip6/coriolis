@@ -9,7 +9,4 @@ find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
 add_subdirectory(src)
-
-set(DEST_DIR "$ENV{DESTDIR}")
-configure_file(${HURRICANE_SOURCE_DIR}/hurricane.pc.cmake hurricane.pc @ONLY)
-install(FILES ${HURRICANE_BINARY_DIR}/hurricane.pc DESTINATION /share/pkgconfig) 
+add_subdirectory(cmake_modules)

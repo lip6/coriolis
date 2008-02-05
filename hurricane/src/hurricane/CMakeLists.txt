@@ -32,5 +32,5 @@ UserGo.cpp Vertical.cpp Warning.cpp)
 
 add_library(hurricane SHARED ${cpps})
 
-install(FILES ${includes} DESTINATION /include/coriolis/hurricane) 
+install(FILES ${includes} DESTINATION /include/hurricane) 
 install(TARGETS hurricane DESTINATION /lib)
