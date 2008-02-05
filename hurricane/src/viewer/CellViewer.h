@@ -31,6 +31,9 @@ class CellViewer : public QMainWindow {
         void zoomIn();
         void zoomOut();
         void fitToWindow();
+    protected:
+        void keyPressEvent(QKeyEvent *event);
+
 };
 
 #endif

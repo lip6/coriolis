@@ -22,6 +22,7 @@ using namespace H;
 
 #include <QPaintEvent>
 #include <QPainter>
+#include <QBitmap>
 
 #include <math.h>
 #include <functional>
@@ -34,7 +35,7 @@ QBrush getBrush(const string &pattern, int redValue, int greenValue, int blueVal
     if (pattern == "FFFFFFFFFFFFFFFF") {
         return QBrush(QColor(redValue, greenValue, blueValue));
     } else {
-        char bits[8];
+        uchar bits[8];
         for (int i = 0; i < 8; i++) {
             int high = pattern[i * 2];
             if (('0' <= high) && (high <= '9')) {
@@ -64,10 +65,10 @@ QBrush getBrush(const string &pattern, int redValue, int greenValue, int blueVal
                     }
                 }
             }
-            bits[i] = (char)((high * 16) + low); 
+            bits[i] = (uchar)((high * 16) + low); 
         }
-        return QBrush(QColor(redValue, greenValue, blueValue),
-                QPixmap(bits));
+
+        return QBrush(QColor(redValue, greenValue, blueValue), QBitmap::fromData(QSize(8,8), bits, QImage::Format_Mono));
     }
 }
 
@@ -1616,8 +1617,7 @@ CellWidget::scroll(const Unit& dx,
     if ((getSize(width()) < labs(dx)) || (getSize(height()) < labs(dy))) {
 	reframe(getCenter().getTranslated(-dx, -dy));
 	redraw();
-    }
-    else {
+    } else {
 	int sdx = getScreenSize(dx);
 	int sdy = getScreenSize(dy);
 
@@ -1649,32 +1649,35 @@ CellWidget::scroll(const Unit& dx,
 		if (0 < sdy) {
                     //bitBlt(this, sdx, 0, this, 0, sdy, w - sdx, h - sdy);
 		    invalidate(QRect(-1, -1, sdx + 1, h + 1));
-		    _redraw();
+		    //_redraw();
 		    invalidate(QRect(sdx - 1, h - sdy - 1, w + 1, h + 1));
-		    _redraw();
-		}
-		else {
+		    //_redraw();
+                    update();
+		} else {
 		    //bitBlt(this, sdx, -sdy, this, 0, 0, w - sdx, h + sdy, CopyROP);
 		    invalidate(QRect(-1, -1, sdx + 1, h + 1));
-		    _redraw();
+		    //_redraw();
 		    invalidate(QRect(sdx - 1, -1, w + 1, -sdy + 1));
-		    _redraw();
+		    //_redraw();
+                    update();
 		}
 	    }
 	    else {
 		if (0 < sdy) {
 		    //bitBlt(this, 0, 0, this, -sdx, sdy, w + sdx, h - sdy, CopyROP);
 		    invalidate(QRect(w + sdx - 1, -1, w + 1, h + 1));
-		    _redraw();
+		   // _redraw();
 		    invalidate(QRect(-1, h - sdy - 1, w + sdx + 1, h + 1));
-		    _redraw();
+		    //_redraw();
+                    update();
 		}
 		else {
 		    //bitBlt(this, 0, -sdy, this, -sdx, 0, w + sdx, h + sdy);
 		    invalidate(QRect(w + sdx - 1, -1, w + 1, h + 1));
-		    _redraw();
+		    //_redraw();
 		    invalidate(QRect(-1, -1, w + sdx + 1, -sdy + 1));
-		    _redraw();
+		    //_redraw();
+                    update();
 		}
 	    }
 

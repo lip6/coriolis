@@ -60,9 +60,11 @@ CellEditor::~CellEditor() {
 //}
 
 void CellEditor::zoomIn() {
+    view->scale(1.2, 1.2);
 }
 
 void CellEditor::zoomOut() {
+    view->scale(0.8, 0.8);
 }
 
 void CellEditor::fitToWindow() {

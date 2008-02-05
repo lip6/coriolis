@@ -23,30 +23,27 @@ CellViewer::~CellViewer() {
     delete layersWidget;
 }
 
-//void CellViewer::keyPressEvent(QKeyEvent *event) {
-//    switch (event->key()) {
-//        case Qt::Key_Plus:
-//            zoom(ZoomInFactor);
-//            break;
-//        case Qt::Key_Minus:
-//            zoom(ZoomOutFactor);
-//            break;
-//        case Qt::Key_Left:
-//            scroll(-ScrollStep, 0);
-//            break;
-//        case Qt::Key_Right:
-//            scroll(+ScrollStep, 0);
-//            break;
-//        case Qt::Key_Down:
-//            scroll(0, -ScrollStep);
-//            break;
-//        case Qt::Key_Up:
-//            scroll(0, +ScrollStep);
-//            break;
-//        default:
-//            QWidget::keyPressEvent(event);
-//    }
-//}
+static int scrollStep = GetUnit(200);
+
+void CellViewer::keyPressEvent(QKeyEvent *event) {
+    switch (event->key()) {
+        case Qt::Key_Left:
+            cellWidget->scroll(-scrollStep, 0);
+            break;
+        case Qt::Key_Right:
+            cellWidget->scroll(+scrollStep, 0);
+            break;
+        case Qt::Key_Down:
+            cellWidget->scroll(0, -scrollStep);
+            break;
+        case Qt::Key_Up:
+            cellWidget->scroll(0, +scrollStep);
+            break;
+        default:
+            QWidget::keyPressEvent(event);
+    }
+}
+
 //
 //void CellViewer::wheelEvent(QWheelEvent *event) {
 //    int numDegrees = event->delta() / 8;

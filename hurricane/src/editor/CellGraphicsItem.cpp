@@ -22,14 +22,17 @@ CellGraphicsItem::CellGraphicsItem(Cell* c):
 	//	end_for;
 	//}
 
+        unsigned zValue = 10;
 	for_each_slice(slice, cell->GetSlices()) {
             for_each_go(go, slice->GetGos()) {
                 Segment* segment = dynamic_cast<Segment*>(go);
                 if (segment) {
-                    new SegmentGraphicsItem(this, segment);
+                    SegmentGraphicsItem* segmentItem = new SegmentGraphicsItem(this, segment);
+                    segmentItem->setZValue(zValue);
                 }
                 end_for;
             }
+            zValue += 10;
             end_for;
         }
 }
