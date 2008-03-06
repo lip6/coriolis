@@ -20,11 +20,11 @@ namespace Hurricane {
 // Utilitarians 
 // ****************************************************************************************************
 
-const long& GetRdsUnit();
+extern const long& GetRdsUnit();
 
-const long& GetRdsPhysicalGrid();
+extern const long& GetRdsPhysicalGrid();
 
-const long& GetRdsLambda();  
+extern const long& GetRdsLambda();  
 
 //  ------------------------------------------------------------------------
 //  Function : "ConvertRealToRdsUnit(const double&)".

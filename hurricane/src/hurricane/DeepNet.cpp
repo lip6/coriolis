@@ -31,7 +31,7 @@
 // Authors-Tag
 // ===================================================================
 //
-// $Id: DeepNet.cpp,v 1.3 2007/06/27 21:13:25 jpc Exp $
+// $Id: DeepNet.cpp,v 1.4 2008/02/15 12:26:38 dosfin Exp $
 //
 // x-----------------------------------------------------------------x
 // |                                                                 |
@@ -169,6 +169,22 @@ size_t  DeepNet::_CreateRoutingPads ( bool buildRings )
   }
 
   return nbRoutingPads;
+}
+
+
+// -------------------------------------------------------------------
+// 
+
+Net* GetDeepNet(HyperNet& hypernet)
+// ********************************
+{
+    Occurrence  rootNetOccurrence = GetHyperNetRootNetOccurrence ( hypernet.GetNetOccurrence() );
+
+  //if (  rootNetOccurrence.GetMasterCell()->IsFlattenLeaf() ) return NULL;
+  //if (  rootNetOccurrence.GetPath().IsEmpty() )              return NULL;
+
+    return  rootNetOccurrence.GetOwnerCell()->GetNet(rootNetOccurrence.GetName());
+
 }
 
 

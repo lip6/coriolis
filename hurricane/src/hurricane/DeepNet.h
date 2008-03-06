@@ -31,7 +31,7 @@
 // Authors-Tag
 // ===================================================================
 //
-// $Id: DeepNet.h,v 1.3 2007/06/27 21:13:25 jpc Exp $
+// $Id: DeepNet.h,v 1.4 2008/02/15 12:26:38 dosfin Exp $
 //
 // x-----------------------------------------------------------------x
 // |                                                                 |
@@ -98,6 +98,8 @@ namespace Hurricane {
       size_t  _CreateRoutingPads ( bool buildRings=false );
 
 };
+
+Net* GetDeepNet(HyperNet& hyperNet);
 
 
 } // End of Hurricane namespace.

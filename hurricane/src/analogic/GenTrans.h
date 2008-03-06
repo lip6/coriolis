@@ -17,8 +17,8 @@
 // Macro Method  :  "MAXLONG(a,b), MINLONG(a,b)" 
 // Comparaison Method Macro For Calculate Rectangles.
 
-#  define   MAXLONG(a,b) (a>b?a:b) 
-#  define   MINLONG(a,b) (a>b?b:a) 
+#define   MAXLONG(a,b) (a>b?a:b) 
+#define   MINLONG(a,b) (a>b?b:a) 
 
 
 // --------------------------------------------------------------------
@@ -26,7 +26,7 @@
 // This Method Macro is For Geting The Value in RdsUnit of a DRM Rule.  
 // To Use This Macro, you must predefine Pointeur dtraccess. 
 
-#  define   GET_RULE(s)  \
+#define   GET_RULE(s)  \
    dtraccess->GetSingleRdsRuleByLabel(string(s))
 
 
@@ -43,7 +43,7 @@
 
 // To Use This Macro, you must Predefine Pointeur dtraccess. 
 
-#  define GET_RULE_BYNP(prefix, type, suffix) \
+#define GET_RULE_BYNP(prefix, type, suffix) \
    dtraccess->GetSingleRdsRuleByLabel(prefix, type, suffix)
 
 
@@ -61,7 +61,7 @@
 
 // To Use This Macro, you must Predefine Pointeur dtraccess. 
 
-#  define GET_LAYER_BYNP(prefix, type, suffix) \
+#define GET_LAYER_BYNP(prefix, type, suffix) \
    dtraccess->GetSingleLayerByLabel(prefix, type, suffix)
 
 
@@ -79,7 +79,7 @@
 
 // This Method Macro must be used in Membre Function Calculate.
 
-#  define   SAVE_RECTANGLE(s, x, y, dx, dy) \
+#define   SAVE_RECTANGLE(s, x, y, dx, dy) \
    _mapString2Box[string(s)] = Box(GetUnit(x), GetUnit(y), GetUnit(x+dx), GetUnit(y+dy)); \
    xmin = MINLONG(xmin, GetUnit(x)); \
    ymin = MINLONG(ymin, GetUnit(y));
@@ -96,7 +96,7 @@
 // This Method Macro must be used in member function of Class GenTrans.
 // 
 
-#  define GET_BOX(s) \
+#define GET_BOX(s) \
    _mapString2Box[s]
 
 
@@ -115,7 +115,7 @@
 // tmp_xcenter, tmp_ycenter, rw_cont, rd_cont.
 //
 
-#  define CREATE_CONTACT_MATRIX_UNDER(underbox, nbcolumn, layer, net) \
+#define CREATE_CONTACT_MATRIX_UNDER(underbox, nbcolumn, layer, net) \
                                                                       \
         if(underbox.getHeight()<rw_cont)   \
            nbcontact = 0; \

@@ -75,6 +75,3 @@ string GetString(const H::GenericDtrAccess&);
 
 
 #endif // HURRICANE_GENERICDTRACCESS
-
-
-
