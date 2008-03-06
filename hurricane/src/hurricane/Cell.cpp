@@ -52,7 +52,7 @@ Cell::Cell(Library* library, const Name& name)
         throw Error("Can't create " + _TName("Cell") + " : empty name");
 
     if (_library->GetCell(_name))
-        throw Error("Can't create " + _TName("Cell") + " : already exists");
+        throw Error("Can't create " + _TName("Cell") + " " + GetString(_name) + " : already exists");
 }
 
 Cell* Cell::Create(Library* library, const Name& name)

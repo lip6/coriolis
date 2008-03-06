@@ -25,7 +25,7 @@ SET(includes ProxyProperty.h PyBox.h PyCell.h PyCellLocator.h
 
 ADD_LIBRARY(isobar SHARED ${sources})
 
-TARGET_LINK_LIBRARIES(isobar hurricane)
+TARGET_LINK_LIBRARIES(isobar hurricane ${PYTHON_LIBRARIES})
 
 SET(source_dir ${HURRICANE_SOURCE_DIR}/src/pyext)
 SET(binary_dir ${HURRICANE_BINARY_DIR}/src/pyext)

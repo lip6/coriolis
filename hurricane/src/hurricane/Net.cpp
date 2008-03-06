@@ -258,7 +258,7 @@ Net::Net(Cell* cell, const Name& name)
         throw Error("Can't create " + _TName("Net") + " : empty name");
 
     if (_cell->GetNet(_name))
-        throw Error("Can't create " + _TName("Net") + " : already exists");
+        throw Error("Can't create " + _TName("Net ") + GetString(_name) + " : already exists");
 }
 
 Net* Net::Create(Cell* cell, const Name& name)
