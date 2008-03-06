@@ -1,16 +1,18 @@
-project(HURRICANE)
+PROJECT(HURRICANE)
 
-cmake_minimum_required(VERSION 2.4.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0)
 
-set(CMAKE_MODULE_PATH "${HURRICANE_SOURCE_DIR}/cmake_modules/")
+SET(CMAKE_MODULE_PATH "${HURRICANE_SOURCE_DIR}/cmake_modules/")
 
-find_package(Qt4 REQUIRED) # find and setup Qt4 for this project
-find_package(BISON REQUIRED)
-find_package(FLEX REQUIRED)
-find_package(Doxygen)
+FIND_PACKAGE(Qt4 REQUIRED) # find and setup Qt4 for this project
+FIND_PACKAGE(BISON REQUIRED)
+FIND_PACKAGE(FLEX REQUIRED)
+FIND_PACKAGE(PythonLibs REQUIRED)
+FIND_PACKAGE(PythonInterp REQUIRED)
+#FIND_PACKAGE(Doxygen)
 
-add_subdirectory(src)
-add_subdirectory(cmake_modules)
-if(DOXYGEN_FOUND)
-  add_subdirectory(doc)
-endif(DOXYGEN_FOUND)
+ADD_SUBDIRECTORY(src)
+ADD_SUBDIRECTORY(cmake_modules)
+#IF(DOXYGEN_FOUND)
+#  ADD_SUBDIRECTORY(doc)
+#ENDIF(DOXYGEN_FOUND)

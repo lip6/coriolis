@@ -75,7 +75,7 @@ class Transformation {
     public: const Unit& getTx() const {return _tx;};
     public: const Unit& getTy() const {return _ty;};
     public: Point getTranslation() const {return Point(_tx, _ty);};
-    public: const Orientation& GetOrientation() const {return _orientation;};
+    public: const Orientation& getOrientation() const {return _orientation;};
 
     public: Unit getX(const Unit& x, const Unit& y) const;
     public: Unit getY(const Unit& x, const Unit& y) const;

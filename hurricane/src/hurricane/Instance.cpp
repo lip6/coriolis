@@ -330,7 +330,7 @@ void Instance::Translate(const Unit& dx, const Unit& dy)
         Point translation = _transformation.getTranslation();
         Unit x = translation.getX() + dx;
         Unit y = translation.getY() + dy;
-        Transformation::Orientation orientation = _transformation.GetOrientation();
+        Transformation::Orientation orientation = _transformation.getOrientation();
         SetTransformation(Transformation(x, y, orientation));
     }
 }

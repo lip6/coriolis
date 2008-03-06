@@ -8,10 +8,10 @@
 using namespace H;
 
 inline void boxToRectangle(const Box& box, QRectF& rec) {
-    double xmin = GetValue(box.getXMin() * 10.0);
-    double xmax = GetValue(box.getXMax()) * 10.0;
-    double ymin = GetValue(box.getYMin()) * 10.0;
-    double ymax = GetValue(box.getYMax()) * 10.0;
+    double xmin = GetValue(box.getXMin());
+    double xmax = GetValue(box.getXMax());
+    double ymin = GetValue(box.getYMin());
+    double ymax = GetValue(box.getYMax());
     rec.setCoords(xmin, ymin, xmax, ymax);
 }
 
@@ -22,7 +22,7 @@ inline void hurricanePositionToQtPosition(const Transformation& transformation, 
     position.setX((int)tx);
     position.setY((int)ty);
 
-    switch (transformation.GetOrientation()) {
+    switch (transformation.getOrientation()) {
     case Transformation::Orientation::ID:
         transform.setMatrix(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0);
         break;
