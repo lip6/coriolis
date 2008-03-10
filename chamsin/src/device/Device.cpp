@@ -75,9 +75,7 @@ void Device::_PreDelete()
 }
 
 
-void Device::_PostCreate()
-// *******************************
-{
+void Device::_PostCreate() {
    Inherit::_PostCreate();
 
    //CDataBase* database = GetCDataBase();
@@ -91,7 +89,6 @@ void Device::_PostCreate()
    // Create GenericDtrAccess and DtrAccess
    // *************************************
    GenericDtrAccess::Instance(DtrAccess::Instance());   
-
 }
 
 

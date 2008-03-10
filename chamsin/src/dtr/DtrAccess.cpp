@@ -34,9 +34,7 @@ DtrAccess::DtrAccess()
 }
 
 
-DtrAccess * DtrAccess::Create()
-// *****************************
-{
+DtrAccess * DtrAccess::Create() {
    DtrAccess * dtraccess = new DtrAccess();
 
    dtraccess->_PostCreate();
@@ -45,43 +43,43 @@ DtrAccess * DtrAccess::Create()
 }
 
 
-void DtrAccess::_PostCreate()
-// ************************** 
-{
-   const char * dtrfilename = getenv("DTR_FILE");
-   if(!dtrfilename) {
+void DtrAccess::_PostCreate() {
+   const char* dtrFileName = getenv("DTR_FILE");
+   if(!dtrFileName) {
      throw Error("Can't not get Macro DTR_FILE.");
    }
 
    // Use API of DtrParser for get technology informations 
    // ****************************************************
-   ParseDtr(dtrfilename, this);
+   ParseDtr(dtrFileName, this);
 
    // Traduit Micro to RdsUnit
    // ************************
-   map<string, list<double> >::iterator it_rulemap = _label2ruleMap.begin(),
-     it_end_rulemap = _label2ruleMap.end();
-
-   while(it_rulemap!=it_end_rulemap) {
-
-    list<double>::iterator m = ((*it_rulemap).second).begin()
-      , n = ((*it_rulemap).second).end();
-    
-    while(m!=n) {
-      _label2RdsRuleMap[(*it_rulemap).first].push_back(ConvertRealToRdsUnit(*m)); 
-      m++;
-    }
-    it_rulemap++;
+   for (Label2RuleMap::iterator lrmit = _label2ruleMap.begin();
+           lrmit != _label2ruleMap.end();
+           ++lrmit) {
+       for (list<double>::iterator ldit = lrmit->second.begin();
+               ldit != lrmit->second.end();
+               ++ldit) {
+            _label2RdsRuleMap[lrmit->first].push_back(ConvertRealToRdsUnit(*ldit)); 
+       }
    }
 
    // Get Objet Layer from Technology with its name. 
    // **********************************************
    
-  DataBase * db = GetDataBase();  
+  DataBase* db = GetDataBase();  
 
-  if(!db) throw Error("In GetV1Trans::Generate : can't find DataBase.");
+  if(!db) {
+      throw Error("In GetV1Trans::Generate : can't find DataBase.");
+  }
 
-  Technology * tech = db->GetTechnology();
+  Technology* tech = db->GetTechnology();
+
+  if (!tech) {
+      throw Error("In GetV1Trans::Generate : can't find Technology.");
+  }
+
 
    map<string, list<string> >::iterator it_layermap = _label2layerNameMap.begin(),
      it_end_layermap = _label2layerNameMap.end();
@@ -109,9 +107,7 @@ void DtrAccess::_PostCreate()
 }
 
 
-DtrAccess * DtrAccess::Instance()
-// *****************************
-{
+DtrAccess * DtrAccess::Instance() {
   // User or environnement supplies this at startup
   // **********************************************
   const char * singleton_name = getenv("DTRACCESS_SINGLETON");
@@ -120,14 +116,12 @@ DtrAccess * DtrAccess::Instance()
      if(!_instance) {
         _instance = DtrAccess::Create();
      }
-  }
-  else {  
+  } else {  
     if(!_instance){
        if( !(_instance=LookUp(string(singleton_name))) ) // if singleton hasn't been registered
           _instance = DtrAccess::Create();
     }
   }
-  
   return _instance;
 }
 

@@ -16,24 +16,21 @@
 namespace Hurricane {
 
 class DtrAccess {
-// **************
-
-// Types
-// *****
 
 #   if !defined(__DOXYGEN_PROCESSOR__)
 // Attributes
 // **********
-    private : static DtrAccess * _instance;
+    private: typedef map<string, list<double> > Label2RuleMap;
+    private: static DtrAccess * _instance;
 
-    private : map<string, list<double> > _label2ruleMap;
-    private : map<string, list<string> > _label2layerNameMap;
-    private : map<string, list<double> > _label2electricalMap;
-    private : map<string, int> _label2modellingMap;
-    private : map<string, double> _label2simplecapamimMap;
-	      
-    private : map<string, list<long> > _label2RdsRuleMap;
-    private : map<string, list<Layer*> > _label2layerMap;
+    private: Label2RuleMap _label2ruleMap;
+    private: map<string, list<string> > _label2layerNameMap;
+    private: map<string, list<double> > _label2electricalMap;
+    private: map<string, int> _label2modellingMap;
+    private: map<string, double> _label2simplecapamimMap;
+	     
+    private: map<string, list<long> > _label2RdsRuleMap;
+    private: map<string, list<Layer*> > _label2layerMap;
 
 
     // For reusability of software	      

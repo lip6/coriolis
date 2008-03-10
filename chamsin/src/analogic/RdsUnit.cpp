@@ -147,16 +147,14 @@ static char* GetPattern(const string& str, const char* pattern)
    */
 
 
-static void CalculateRdsUnit()
-// ***************************
-{
+static void CalculateRdsUnit() {
   using Hurricane::Error;
 
   const char * rdsfilename = getenv("RDS_TECHNO_NAME");
   FILE * rdstechnofile;
 
   if(!rdsfilename) {
-      throw Error("Can't not find macro RDS_TECHNO_FILE");
+      throw Error("Cannot find macro RDS_TECHNO_NAME");
   }
 
   if( !(rdstechnofile = fopen(rdsfilename, "r")) ) {

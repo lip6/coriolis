@@ -32,3 +32,5 @@ ADD_LIBRARY(dtr SHARED
 ${DST_SRCS}
 DtrAccess.cpp
 GenericDtrAccess.cpp)
+
+INSTALL(TARGETS dtr DESTINATION /lib)

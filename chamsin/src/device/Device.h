@@ -21,7 +21,6 @@ namespace Hurricane {
   class Record;
   class Point;
   class Transformation;
-//  class Transformation::Orientation;
   class Instance;
       
 }
@@ -34,11 +33,9 @@ using Hurricane::Name;
 using Hurricane::Record;
 using Hurricane::Point;
 using Hurricane::Transformation;
-//using Hurricane::Transformation::Orientation;
 using Hurricane::Instance;
 
 class Device : public Cell {
-// *************************
 
 #   if !defined(__DOXYGEN_PROCESSOR__)
 // Types
@@ -46,7 +43,7 @@ class Device : public Cell {
      public : typedef Cell Inherit; 
 
 // Attributes
-// *******************
+// **********
 
 
 // Constructors

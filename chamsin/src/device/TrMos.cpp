@@ -25,27 +25,23 @@ namespace DEVICE{
 // TrMos implementation
 // ****************************************************************************************************
 
-TrMos::TrMos(Library* library, const Name& name)
-// **************************************************************************
-:	Inherit(library, name),
-        _type('N'),
-	_isBsConnected(false),
-	_m(1),
-	_sourceIsFirst(true),
-	_hasDummy(false),
-	_hasRing(true),
-        _tr1(NULL),
-	_capaRouting(0)
-{
-}
+TrMos::TrMos(Library* library, const Name& name):
+    Inherit(library, name),
+    _type('N'),
+    _isBsConnected(false),
+    _m(1),
+    _sourceIsFirst(true),
+    _hasDummy(false),
+    _hasRing(true),
+    _tr1(NULL),
+    _capaRouting(0)
+{}
 
 
-TrMos* TrMos::Create(Library* library, const Name & name)
-// **************************************************************************
-{
-	TrMos* trmos= new TrMos(library, name);
-	trmos->_PostCreate();
-	return trmos;
+TrMos* TrMos::Create(Library* library, const Name & name) {
+    TrMos* trmos= new TrMos(library, name);
+    trmos->_PostCreate();
+    return trmos;
 }
 
 
@@ -67,9 +63,7 @@ void TrMos::_PreDelete()
 }
 
 
-void TrMos::_PostCreate()
-// *******************************
-{
+void TrMos::_PostCreate() {
    Inherit::_PostCreate();
 
    // do something.
@@ -95,9 +89,7 @@ void TrMos::_PostCreate()
 }
 
 
-Transistors TrMos::GetTransistors() const 
-// **************************************
-{
+Transistors TrMos::GetTransistors() const {
     return  GetCollection(_transistorList);
 }
 
@@ -106,8 +98,8 @@ void TrMos::Create(const char type, const bool isbsconnected)
 // **********************************************************
 {
    if( _tr1 ) {
-      throw Error("Can't Create Logical View of TrMos " +  GetString(GetName()) + " : " 
-	  + "it has already been created"); 
+      throw Error("Can't Create Logical View of TrMos " +  GetString(GetName()) +
+              " : " + "it has already been created"); 
    }
 
    if( (type!=TRANSN) && (type!=TRANSP)) {
@@ -142,10 +134,9 @@ void TrMos::Create(const char type, const bool isbsconnected)
    // ****************************************************
 
    _tr1 = MetaTransistor::Create(library, Name( GetString(GetName())+"_Mos1" ), _type);
-   Instance * instance = Instance::Create(this
-                                        , Name("Ins_" + GetString(_tr1->GetName()))
-					, _tr1
-					);
+   Instance * instance = Instance::Create(this,
+           Name("Ins_" + GetString(_tr1->GetName())),
+           _tr1);
 
    instance->GetPlug(_tr1->GetNet(Name("DRAIN")))->SetNet(drain);
    instance->GetPlug(_tr1->GetNet(Name("SOURCE")))->SetNet(source);
@@ -165,8 +156,8 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
 // *********************************************************************************
 {
    if( !_tr1 ) {
-      throw Error("Can't Create Physical View for " +  GetString(this)
-	  + " : " + "Logical view has't been created yet.");
+      throw Error("Can't Create Physical View for " +  GetString(this) +
+              " : " + "Logical view has't been created yet.");
    }
 
 //   if( !(_transistorList.empty()) ) {
@@ -177,16 +168,16 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
    // Check out param of realization.
    // *******************************
    if( m <= 0 ) 
-     throw Error("Can't generate for " +  GetString(this) + " : m " + GetString(m)
-	 + " is invalid."); 
+     throw Error("Can't generate for " +  GetString(this) + " : m "
+             + GetString(m) + " is invalid."); 
 
    if(nbsourcecolumn<1)
-     throw Error("Can't generate for " + GetString(this) + " : nbsourcecolumn "
-	 + GetString(nbsourcecolumn) + " is invalid.");
+     throw Error("Can't generate for " + GetString(this)
+             + " : nbsourcecolumn " + GetString(nbsourcecolumn) + " is invalid.");
 
    if(nbdraincolumn<1)
-     throw Error("Can't generate for" + GetString(this) + " : nbdraincolumn " 
-	 + GetString(nbdraincolumn) + " is invalid.");
+     throw Error("Can't generate for" + GetString(this) + " : nbdraincolumn "
+             + GetString(nbdraincolumn) + " is invalid.");
 
 
    if(!(_transistorList.empty())) {
@@ -201,10 +192,9 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
    // *****************************************
    Library * library = GetLibrary();
 
-   cout << ts << "################################################################" <<endl
-        << ts << "####    BEGIN AUTOGENERATON FOR " + _GetTypeName() + " " + GetString(GetName()) + " #####" <<endl
-        << ts << "################################################################" <<endl
-	<< endl;
+   cout << ts << "################################################################" << endl <<
+       ts << "####    BEGIN AUTOGENERATON FOR " + _GetTypeName() + " " + GetString(GetName()) + " #####" << endl <<
+       ts << "################################################################" << endl << endl;
 
 //   OpenUpdateSession();
 
@@ -222,10 +212,9 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
    _tr1->SetM(_m);
 
    for(unsigned i=0; i<m; i++){
-     Transistor* finger = Transistor::Create(library
-	    , GetString(_tr1->GetName()) + "_Finger_" + GetString(i)
-	    , _type 
-	   );
+     Transistor* finger = Transistor::Create(library,
+             GetString(_tr1->GetName()) + "_Finger_" + GetString(i),
+             _type);
 
      _transistorList.push_back(finger);
      Instance::Create(_tr1, Name("Ins_" + GetString(finger->GetName())), finger); 
@@ -235,8 +224,7 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
 
    cout << "***  Stage 1 : CreateLayout of " + GetString(this) + " finish ***" <<endl;
    cout << ts <<   GetString(_tr1) + " 's M is " + GetString(_tr1->GetM()) + ".\n"
-        << ts <<   GetString(_m) + " Transistors are created.\n"
-	<<endl; 
+        << ts <<   GetString(_m) + " Transistors are created.\n" <<endl; 
 
    END_IF
    
