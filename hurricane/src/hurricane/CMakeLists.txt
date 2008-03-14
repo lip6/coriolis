@@ -13,7 +13,7 @@ Pin.h Pins.h Plug.h Plugs.h Point.h Points.h Primitives.h Properties.h
 Property.h QuadTree.h Quark.h Quarks.h Record.h Reference.h References.h Region.h
 Relation.h RoutingPad.h RoutingPads.h Rubber.h Rubbers.h Segment.h Segments.h Selectors.h
 SetCollection.h SharedName.h SharedPathes.h SharedPath.h Slice.h Slices.h
-SlotAdapter.h Slot.h Symbols.h Tabulation.h Tag.h Tags.h Technology.h Timer.h
+SlotAdapter.h Slot.h Symbols.h Tabulation.h Technology.h Timer.h
 Transformation.h Unit.h UpdateSession.h UserGo.h UserGos.h VectorCollection.h Vertical.h
 Verticals.h Views.h Warning.h)
 
@@ -27,7 +27,7 @@ Pad.cpp Path.cpp Pin.cpp Plug.cpp Point.cpp Property.cpp
 QuadTree.cpp Quark.cpp Record.cpp Reference.cpp Region.cpp
 Relation.cpp RoutingPad.cpp Rubber.cpp Segment.cpp SharedName.cpp
 SharedPath.cpp Slice.cpp SlotAdapter.cpp Slot.cpp Tabulation.cpp
-Tag.cpp Technology.cpp Timer.cpp Transformation.cpp Unit.cpp UpdateSession.cpp
+Technology.cpp Timer.cpp Transformation.cpp Unit.cpp UpdateSession.cpp
 UserGo.cpp Vertical.cpp Warning.cpp)
 
 add_library(hurricane SHARED ${cpps})
