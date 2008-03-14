@@ -181,12 +181,12 @@ CellWidget::CellWidget(Cell* cell,
         if (technology) {
             for_each_basic_layer(basiclayer, technology->GetBasicLayers()) {
                 _basicLayersBrush[basiclayer] = 
-                    ::getBrush(basiclayer->GetFillPattern(),
-                            basiclayer->GetRedValue(),
-                            basiclayer->GetGreenValue(),
-                            basiclayer->GetBlueValue());
+                    ::getBrush(basiclayer->getFillPattern(),
+                            basiclayer->getRedValue(),
+                            basiclayer->getGreenValue(),
+                            basiclayer->getBlueValue());
                 _basicLayersPen[basiclayer] = 
-                        QPen(QColor(basiclayer->GetRedValue(), basiclayer->GetGreenValue(), basiclayer->GetBlueValue()));
+                        QPen(QColor(basiclayer->getRedValue(), basiclayer->getGreenValue(), basiclayer->getBlueValue()));
                 end_for;
             }
         }
@@ -768,7 +768,7 @@ CellWidget::isVisible(BasicLayer* layer) const
 	//throw Error(NULL_LAYER, __FILE__, __LINE__);
     }
 
-    return (_visibleLayerMask & layer->GetMask());
+    return (_visibleLayerMask & layer->getMask());
 }
 
 bool
@@ -778,7 +778,7 @@ CellWidget::isDrawable(BasicLayer* layer) const
 	//throw Error(NULL_LAYER, __FILE__, __LINE__);
     }
 
-    return (layer->GetDisplayThreshold() <= _scale);
+    return (layer->getDisplayThreshold() <= _scale);
 }
 
 
@@ -911,10 +911,10 @@ CellWidget::setVisible(BasicLayer* layer,
 {
     if (isVisible(layer) != visible) {
 	if (visible) {
-	    _visibleLayerMask |= layer->GetMask();
+	    _visibleLayerMask |= layer->getMask();
 	}
 	else {
-	    _visibleLayerMask &= ~layer->GetMask();
+	    _visibleLayerMask &= ~layer->getMask();
 	}
 
 	onSetVisible(layer, visible);
@@ -925,7 +925,7 @@ CellWidget::setVisible(BasicLayer* layer,
 	//    invalidate();
 	//}
 
-	if (cell && !cell->GetSlices(layer->GetMask()).IsEmpty() && isDrawable(layer)) {
+	if (cell && !cell->GetSlices(layer->getMask()).IsEmpty() && isDrawable(layer)) {
 	    invalidate();
 	}
     }
@@ -1798,7 +1798,7 @@ void CellWidget::drawContent(const Instance* instance, const BasicLayer* basicLa
 
 
 void CellWidget::drawSlice(const Slice* slice, const BasicLayer* basicLayer, const H::Box& updateArea, const Transformation& transformation) const {
-    if (slice->GetLayer()->Contains(basicLayer)) {
+    if (slice->GetLayer()->contains(basicLayer)) {
         if (slice->GetBoundingBox().intersect(updateArea)) {
             //if ((basicLayer == _layer->_GetSymbolicBasicLayer()) || (3 < view->GetScale())) 
             for_each_go(go, slice->GetGosUnder(updateArea)) {

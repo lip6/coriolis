@@ -24,86 +24,86 @@ class CompositeLayer : public Layer {
 // Types
 // *****
 
-	public: typedef Layer Inherit;
+    public: typedef Layer Inherit;
 
     public: class Type {
-	// ***************
+    // ***************
 
-		public: enum Code {UNDEFINED=0, METAL=1, VIA=2};
+        public: enum Code {UNDEFINED=0, METAL=1, VIA=2};
 
-		private: Code _code;
+        private: Code _code;
 
-		public: Type(const Code& code = UNDEFINED);
-		public: Type(const Type& type);
+        public: Type(const Code& code = UNDEFINED);
+        public: Type(const Type& type);
 
-		public: Type& operator=(const Type& type);
+        public: Type& operator=(const Type& type);
 
-		public: operator const Code&() const {return _code;};
+        public: operator const Code&() const {return _code;};
 
-		public: const Code& GetCode() const {return _code;};
+        public: const Code& getCode() const {return _code;};
 
         public: string _GetTypeName() const { return _TName("CompositeLayer::Type"); };
-		public: string _GetString() const;
-		public: Record* _GetRecord() const;
+        public: string _GetString() const;
+        public: Record* _GetRecord() const;
 
-	};
+    };
 
-	public: typedef list<BasicLayer*> BasicLayerList;
+    public: typedef list<BasicLayer*> BasicLayerList;
 
-	public: typedef map<const BasicLayer*, Unit> SizeMap;
+    public: typedef map<const BasicLayer*, Unit> SizeMap;
 
 // Attributes
 // **********
 
-	private: Type _type;
-	private: BasicLayerList _basicLayerList;
-	private: SizeMap _contactSizeMap;
-	private: SizeMap _segmentSizeMap;
-	private: SizeMap _segmentExtentionMap;
-	private: SizeMap _padSizeMap;
-	private: Unit _maximalContactSize;
-	private: Unit _maximalSegmentSize;
-	private: Unit _maximalSegmentExtention;
-	private: Unit _maximalPadSize;
-	private: BasicLayer* _symbolicBasicLayer;
+    private: Type _type;
+    private: BasicLayerList _basicLayerList;
+    private: SizeMap _contactSizeMap;
+    private: SizeMap _segmentSizeMap;
+    private: SizeMap _segmentExtentionMap;
+    private: SizeMap _padSizeMap;
+    private: Unit _maximalContactSize;
+    private: Unit _maximalSegmentSize;
+    private: Unit _maximalSegmentExtention;
+    private: Unit _maximalPadSize;
+    private: BasicLayer* _symbolicBasicLayer;
 
 // Constructors
 // ************
 
-	protected: CompositeLayer(Technology* technology, const Name& name, const Type& type, const Unit& minimalSize = 0, const Unit& minimalSpacing = 0);
+    protected: CompositeLayer(Technology* technology, const Name& name, const Type& type, const Unit& minimalSize = 0, const Unit& minimalSpacing = 0);
 
-	public: static CompositeLayer* Create(Technology* technology, const Name& name, const Type& type, const Unit& minimalSize = 0, const Unit& minimalSpacing = 0);
+    public: static CompositeLayer* create(Technology* technology, const Name& name, const Type& type, const Unit& minimalSize = 0, const Unit& minimalSpacing = 0);
 
 // Accessors
 // *********
 
-	public: const Type& GetType() const {return _type;};
-	public: virtual BasicLayers GetBasicLayers() const;
-	public: Unit GetContactSize(const BasicLayer* basicLayer) const;
-	public: Unit GetSegmentSize(const BasicLayer* basicLayer) const;
-	public: Unit GetSegmentExtention(const BasicLayer* basicLayer) const;
-	public: Unit GetPadSize(const BasicLayer* basicLayer) const;
-	public: const Unit& GetMaximalContactSize() const {return _maximalContactSize;};
-	public: const Unit& GetMaximalSegmentSize() const {return _maximalSegmentSize;};
-	public: const Unit& GetMaximalSegmentExtention() const {return _maximalSegmentExtention;};
-	public: const Unit& GetMaximalPadSize() const {return _maximalPadSize;};
+    public: const Type& getType() const {return _type;};
+    public: virtual BasicLayers getBasicLayers() const;
+    public: Unit getContactSize(const BasicLayer* basicLayer) const;
+    public: Unit getSegmentSize(const BasicLayer* basicLayer) const;
+    public: Unit getSegmentExtention(const BasicLayer* basicLayer) const;
+    public: Unit getPadSize(const BasicLayer* basicLayer) const;
+    public: const Unit& getMaximalContactSize() const {return _maximalContactSize;};
+    public: const Unit& getMaximalSegmentSize() const {return _maximalSegmentSize;};
+    public: const Unit& getMaximalSegmentExtention() const {return _maximalSegmentExtention;};
+    public: const Unit& getMaximalPadSize() const {return _maximalPadSize;};
 
 // Updators
 // ********
 
-	public: void Add(BasicLayer* basicLayer, const Unit& contactSize, const Unit& segmentSize, const Unit& segmentExtention, const Unit& padSize);
-	public: void Remove(BasicLayer* basicLayer);
+    public: void add(BasicLayer* basicLayer, const Unit& contactSize, const Unit& segmentSize, const Unit& segmentExtention, const Unit& padSize);
+    public: void remove(BasicLayer* basicLayer);
 
 // Others
 // ******
 
-	public: virtual string _GetTypeName() const {return _TName("CompositeLayer");};
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
-	public: virtual BasicLayer* _GetSymbolicBasicLayer() {return _symbolicBasicLayer;};
-	public: BasicLayerList& _GetBasicLayerList() {return _basicLayerList;};
+    public: virtual string _GetTypeName() const {return _TName("CompositeLayer");};
+    public: virtual string _GetString() const;
+    public: virtual Record* _GetRecord() const;
+    public: virtual BasicLayer* _getSymbolicBasicLayer() {return _symbolicBasicLayer;};
+    public: BasicLayerList& _getBasicLayerList() {return _basicLayerList;};
 
-	public: void _UpdateSymbolicBasicLayer(const Layer::Mask& visibleBasicLayersMask);
+    public: void _updateSymbolicBasicLayer(const Layer::Mask& visibleBasicLayersMask);
 
 };
 

@@ -186,7 +186,7 @@ Box Contact::GetBoundingBox() const
 Box Contact::GetBoundingBox(const BasicLayer* basicLayer) const
 // ******************************************************
 {
-	if (!_layer->Contains(basicLayer)) return Box();
+	if (!_layer->contains(basicLayer)) return Box();
 
 	Unit size = _GetSize(basicLayer);
 
@@ -318,7 +318,7 @@ string Contact::_GetString() const
 // *******************************
 {
 	string s = Inherit::_GetString();
-	s.insert(s.length() - 1, " " + GetString(_layer->GetName()));
+	s.insert(s.length() - 1, " " + GetString(_layer->getName()));
 	s.insert(s.length() - 1, " [" + GetValueString(GetX()));
 	s.insert(s.length() - 1, " " + GetValueString(GetY()));
 	s.insert(s.length() - 1, "] " + GetValueString(_width));
@@ -349,7 +349,7 @@ Unit Contact::_GetSize() const
 
 	Layer* layer = GetLayer();
 	if (is_a<CompositeLayer*>(layer))
-		size = ((CompositeLayer*)layer)->GetMaximalContactSize();
+		size = ((CompositeLayer*)layer)->getMaximalContactSize();
 
 	return size;
 }
@@ -359,68 +359,15 @@ Unit Contact::_GetSize(const BasicLayer* basicLayer) const
 {
 	Layer* layer = GetLayer();
 
-	if (!layer->Contains(basicLayer)) return 0;
+	if (!layer->contains(basicLayer)) return 0;
 
 	Unit size = 0;
 
 	if (is_a<CompositeLayer*>(layer))
-		size = ((CompositeLayer*)layer)->GetContactSize(basicLayer);
+		size = ((CompositeLayer*)layer)->getContactSize(basicLayer);
 
 	return size;
 }
-
-//void Contact::_Draw(View* view, BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation)
-//// ****************************************************************************************************
-//{
-//	if (_width && _height) {
-//		if (1 < view->GetScreenSize(max(_width, _height)))
-//			basicLayer->_Fill(view, transformation.GetBox(GetBoundingBox(basicLayer)));
-//	}
-//	if (basicLayer == _layer->_GetSymbolicBasicLayer()) {
-//		if (view->CutPointsAreVisible() && (3 < view->GetScale())) {
-//			Point position = GetPosition();
-//			view->DrawPoint(transformation.GetPoint(position), 3);
-//			if (_width) {
-//				Box box = transformation.GetBox(Box(position).Inflate(GetHalfWidth(), 0));
-//				view->DrawLine(box.GetXMin(), box.GetYMin(), box.GetXMax(), box.GetYMax());
-//			}
-//			if (_height) {
-//				Box box = transformation.GetBox(Box(position).Inflate(0, GetHalfHeight()));
-//				view->DrawLine(box.GetXMin(), box.GetYMin(), box.GetXMax(), box.GetYMax());
-//			}
-//		}
-//	}
-//}
-//
-//void Contact::_Highlight(View* view, const Box& updateArea, const Transformation& transformation)
-//// **********************************************************************************************
-//{
-//	if (_width && _height) {
-//		if (1 < view->GetScreenSize(max(_width, _height))) {
-//			for_each_basic_layer(basicLayer, GetLayer()->GetBasicLayers()) {
-//				basicLayer->_Fill(view, transformation.GetBox(GetBoundingBox(basicLayer)));
-//				end_for;
-//			}
-//		}
-//	}
-//	if (view->GetScale() <= 1)
-//		view->DrawPoint(transformation.GetPoint(GetPosition()), 1);
-//	else if (view->GetScale() <= 3)
-//		view->DrawPoint(transformation.GetPoint(GetPosition()), 2);
-//	else {
-//		Point position = GetPosition();
-//		view->DrawPoint(transformation.GetPoint(position), 3);
-//		if (_width) {
-//			Box box = transformation.GetBox(Box(position).Inflate(GetHalfWidth(), 0));
-//			view->DrawLine(box.GetXMin(), box.GetYMin(), box.GetXMax(), box.GetYMax());
-//		}
-//		if (_height) {
-//			Box box = transformation.GetBox(Box(position).Inflate(0, GetHalfHeight()));
-//			view->DrawLine(box.GetXMin(), box.GetYMin(), box.GetXMax(), box.GetYMax());
-//		}
-//	}
-//}
-//
 
 // ****************************************************************************************************
 // Contact::AnchorHook implementation

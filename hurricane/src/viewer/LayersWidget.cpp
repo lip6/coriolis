@@ -25,7 +25,7 @@ LayersWidget::LayersWidget(QWidget* parent)
         //connect(checkBox, SIGNAL(toggled(bool)),
         //        renderArea, SLOT(setAntialiased(bool)));
 
-        string layerName = GetString(basicLayer->GetName());
+        string layerName = GetString(basicLayer->getName());
         QLabel* label = new QLabel(tr(layerName.c_str()));
         widgets.insert(label);
         mainLayout->addWidget(label, line, 1, Qt::AlignRight);

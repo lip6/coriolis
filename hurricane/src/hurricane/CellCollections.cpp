@@ -1451,7 +1451,7 @@ Cell_Slices::Locator::Locator(const Cell* cell, const Layer::Mask& mask)
 {
     if (_cell && (_mask != 0)) {
         _sliceLocator = ((Cell*)_cell)->_GetSliceMap().GetElements().GetLocator();
-        while (_sliceLocator.IsValid() && !(_sliceLocator.GetElement()->GetLayer()->GetMask() & _mask))
+        while (_sliceLocator.IsValid() && !(_sliceLocator.GetElement()->GetLayer()->getMask() & _mask))
             _sliceLocator.Progress();
     }
 }
@@ -1499,7 +1499,7 @@ void Cell_Slices::Locator::Progress()
         do {
             _sliceLocator.Progress();
         }
-        while (_sliceLocator.IsValid() && !(_sliceLocator.GetElement()->GetLayer()->GetMask() & _mask));
+        while (_sliceLocator.IsValid() && !(_sliceLocator.GetElement()->GetLayer()->getMask() & _mask));
     }
 }
 

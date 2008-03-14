@@ -96,7 +96,7 @@ BasicLayer::BasicLayer(Technology* technology, const Name& name, const Type& typ
 {
 }
 
-BasicLayer* BasicLayer::Create(Technology* technology, const Name& name, const Type& type, unsigned extractNumber, const Unit& minimalSize, const Unit& minimalSpacing)
+BasicLayer* BasicLayer::create(Technology* technology, const Name& name, const Type& type, unsigned extractNumber, const Unit& minimalSize, const Unit& minimalSpacing)
 // ****************************************************************************************************
 {
     BasicLayer* basicLayer =
@@ -107,31 +107,23 @@ BasicLayer* BasicLayer::Create(Technology* technology, const Name& name, const T
     return basicLayer;
 }
 
-BasicLayers BasicLayer::GetBasicLayers() const
+BasicLayers BasicLayer::getBasicLayers() const
 // *******************************************
 {
     return BasicLayer_BasicLayers(this);
 }
 
-void BasicLayer::SetColor(unsigned short redValue, unsigned short greenValue, unsigned short blueValue)
+void BasicLayer::setColor(unsigned short redValue, unsigned short greenValue, unsigned short blueValue)
 // ****************************************************************************************************
 {
     if ((redValue != _redValue) || (greenValue != _greenValue) || (blueValue != _blueValue)) {
         _redValue = redValue;
         _greenValue = greenValue;
         _blueValue = blueValue;
-        //if (_drawGC) {
-        //    gdk_gc_destroy(_drawGC);
-        //    _drawGC = NULL;
-        //}
-        //if (_fillGC) {
-        //    gdk_gc_destroy(_fillGC);
-        //    _fillGC = NULL;
-        //}
     }
 }
 
-void BasicLayer::SetFillPattern(const string& fillPattern)
+void BasicLayer::setFillPattern(const string& fillPattern)
 // *******************************************************
 {
     if (fillPattern != _fillPattern) {
@@ -144,14 +136,6 @@ void BasicLayer::SetFillPattern(const string& fillPattern)
                 throw Error("Can't set fill pattern (bad value)");
         }
         _fillPattern = fillPattern;
-        //if (_drawGC) {
-        //    gdk_gc_destroy(_drawGC);
-        //    _drawGC = NULL;
-        //}
-        //if (_fillGC) {
-        //    gdk_gc_destroy(_fillGC);
-        //    _fillGC = NULL;
-        //}
     }
 }
 
@@ -159,8 +143,8 @@ void BasicLayer::_PostCreate()
 // ***************************
 {
     Mask basicLayersMask = 0;
-    for_each_basic_layer(basicLayer, GetTechnology()->GetBasicLayers()) {
-        basicLayersMask |= basicLayer->GetMask();
+    for_each_basic_layer(basicLayer, getTechnology()->GetBasicLayers()) {
+        basicLayersMask |= basicLayer->getMask();
         end_for;
     }
 
@@ -170,7 +154,7 @@ void BasicLayer::_PostCreate()
     if (!mask)
         throw Error("Can't create " + _TName("BasicLayer") + " : mask capacity overflow");
 
-    _SetMask(mask);
+    _setMask(mask);
 
     if (_extractNumber) {
         Mask extractMask = (1 << _extractNumber);
@@ -178,7 +162,7 @@ void BasicLayer::_PostCreate()
         if (!extractMask)
             throw Error("Can't create " + _TName("BasicLayer") + " : extract mask capacity overflow");
 
-        _SetExtractMask(extractMask);
+        _setExtractMask(extractMask);
     }
 
     Inherit::_PostCreate();
@@ -189,12 +173,9 @@ void BasicLayer::_PreDelete()
 {
     Inherit::_PreDelete();
 
-    //if (_drawGC) gdk_gc_destroy(_drawGC);
-    //if (_fillGC) gdk_gc_destroy(_fillGC);
-
-    CompositeLayers compositeLayers = GetTechnology()->GetCompositeLayers();
+    CompositeLayers compositeLayers = getTechnology()->GetCompositeLayers();
     for_each_composite_layer(compositeLayer, compositeLayers) {
-        if (compositeLayer->Contains(this)) compositeLayer->Remove(this);
+        if (compositeLayer->contains(this)) compositeLayer->remove(this);
         end_for;
     }
 }
@@ -222,76 +203,6 @@ Record* BasicLayer::_GetRecord() const
     return record;
 }
 
-//GdkGC* BasicLayer::_GetDrawGC()
-//// ****************************
-//{
-//    if (!_drawGC) _drawGC = gtk_gc_new(_redValue, _greenValue, _blueValue);
-//
-//    return _drawGC;
-//}
-//
-//GdkGC* BasicLayer::_GetFillGC()
-//// ****************************
-//{
-//    if (!_fillGC) _fillGC = gtk_gc_new(_redValue, _greenValue, _blueValue, _fillPattern);
-//
-//    return _fillGC;
-//}
-//
-
-//void BasicLayer::_Fill(View* view, const Box& box) const
-//// *****************************************************
-//{
-//    switch (_type) {
-//        case Type::CONTACT : {
-//
-//            Unit minimalSize = GetMinimalSize();
-//            Unit minimalSpacing = GetMinimalSpacing();
-//
-//            if ((minimalSize <= 0) || (minimalSpacing <= 0))
-//                view->FillRectangle(box);
-//            else {
-//                view->DrawRectangle(box);
-//
-//                Unit width = box.GetWidth();
-//                Unit height = box.GetHeight();
-//                Unit offset = minimalSize + minimalSpacing;
-//
-//                int nx = (int)(GetValue(width) / GetValue(offset));
-//                int ny = (int)(GetValue(height) / GetValue(offset));
-//
-//                Unit dx = (width - (minimalSize + (offset * nx))) / 2;
-//                Unit dy = (height - (minimalSize + (offset * ny))) / 2;
-//
-//                if (dx < 0) dx = (width - (minimalSize + (offset * (--nx)))) / 2;
-//                if (dy < 0) dy = (height - (minimalSize + (offset * (--ny)))) / 2;
-//
-//                Unit xmin = box.GetXMin() + dx;
-//                Unit ymin = box.GetYMin() + dy;
-//                Unit xmax = box.GetXMax() - dx;
-//                Unit ymax = box.GetYMax() - dy;
-//
-//                if ((xmin < xmax) && (ymin < ymax)) {
-//                    Unit y = ymin;
-//                    do {
-//                        Unit x = xmin;
-//                        do {
-//                            view->FillRectangle(x, y, x + minimalSize, y + minimalSize, true);
-//                            x += offset;
-//                        } while (x < xmax);
-//                        y += offset;
-//                    } while (y < ymax);
-//                }
-//            }
-//            break;
-//        }
-//        default : {
-//            view->FillRectangle(box);
-//            break;
-//        }
-//    }
-//}
-//
 // ****************************************************************************************************
 // BasicLayer_BasicLayers implementation
 // ****************************************************************************************************

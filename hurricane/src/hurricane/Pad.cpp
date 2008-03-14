@@ -60,7 +60,7 @@ Box Pad::GetBoundingBox() const
     Box boundingBox = _boundingBox;
 
     if (is_a<CompositeLayer*>(_layer))
-        boundingBox.inflate(((CompositeLayer*)_layer)->GetMaximalPadSize());
+        boundingBox.inflate(((CompositeLayer*)_layer)->getMaximalPadSize());
 
     return boundingBox;
 }
@@ -68,12 +68,12 @@ Box Pad::GetBoundingBox() const
 Box Pad::GetBoundingBox(const BasicLayer* basicLayer) const
 // **************************************************
 {
-    if (!_layer->Contains(basicLayer)) return Box();
+    if (!_layer->contains(basicLayer)) return Box();
 
     Box boundingBox = _boundingBox;
 
     if (is_a<CompositeLayer*>(_layer))
-        boundingBox.inflate(((CompositeLayer*)_layer)->GetPadSize(basicLayer));
+        boundingBox.inflate(((CompositeLayer*)_layer)->getPadSize(basicLayer));
 
     return boundingBox;
 }
@@ -103,7 +103,7 @@ string Pad::_GetString() const
 // ***************************
 {
     string s = Inherit::_GetString();
-    s.insert(s.length() - 1, " " + GetString(_layer->GetName()));
+    s.insert(s.length() - 1, " " + GetString(_layer->getName()));
     s.insert(s.length() - 1, " " + GetString(_boundingBox));
     return s;
 }

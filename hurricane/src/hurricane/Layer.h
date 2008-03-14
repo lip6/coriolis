@@ -28,68 +28,68 @@ class Layer : public DBo {
 // Types
 // *****
 
-	public: typedef DBo Inherit;
+    public: typedef DBo Inherit;
 
-	public: typedef unsigned long long Mask;
+    public: typedef unsigned long long Mask;
 
 // Attributes
 // **********
 
-	private: Technology* _technology;
-	private: Name _name;
-	private: Mask _mask;
-	private: Mask _extractMask;
-	private: Unit _minimalSize;
-	private: Unit _minimalSpacing;
-	private: Unit _pitch;
-	private: Layer* _nextOfTechnologyLayerMap;
+    private: Technology* _technology;
+    private: Name _name;
+    private: Mask _mask;
+    private: Mask _extractMask;
+    private: Unit _minimalSize;
+    private: Unit _minimalSpacing;
+    private: Unit _pitch;
+    private: Layer* _nextOfTechnologyLayerMap;
 
 // Constructors
 // ************
 
-	protected: Layer(Technology* technology, const Name& name, const Unit& minimalSize = 0, const Unit& minimalSpacing = 0, const Unit& pitch = 0);
+    protected: Layer(Technology* technology, const Name& name, const Unit& minimalSize = 0, const Unit& minimalSpacing = 0, const Unit& pitch = 0);
 
 // Accessors
 // *********
 
-	public: Technology* GetTechnology() const {return _technology;};
-	public: const Name& GetName() const {return _name;};
-	public: const Mask& GetMask() const {return _mask;};
-	public: const Mask& GetExtractMask() const {return _extractMask;};
-	public: const Unit& GetMinimalSize() const {return _minimalSize;};
-	public: const Unit& GetMinimalSpacing() const {return _minimalSpacing;};
-    public: Unit GetPitch() const {return (_pitch==0?(_minimalSize + _minimalSpacing):_pitch);};
-	public: virtual BasicLayers GetBasicLayers() const = 0;
+    public: Technology* getTechnology() const {return _technology;};
+    public: const Name& getName() const {return _name;};
+    public: const Mask& getMask() const {return _mask;};
+    public: const Mask& getExtractMask() const {return _extractMask;};
+    public: const Unit& getMinimalSize() const {return _minimalSize;};
+    public: const Unit& getMinimalSpacing() const {return _minimalSpacing;};
+    public: Unit getPitch() const {return (_pitch==0?(_minimalSize + _minimalSpacing):_pitch);};
+    public: virtual BasicLayers getBasicLayers() const = 0;
 
 // Predicates
 // **********
 
-	public: bool Contains(const Layer* layer) const;
-	public: bool Intersect(const Layer* layer) const;
+    public: bool contains(const Layer* layer) const;
+    public: bool intersect(const Layer* layer) const;
 
 // Updators
 // ********
 
-	public: void SetName(const Name& name);
-	public: void SetMinimalSize(const Unit& minimalSize);
-	public: void SetMinimalSpacing(const Unit& minimalSpacing);
-	public: void SetPitch(const Unit& pitch);
+    public: void setName(const Name& name);
+    public: void setMinimalSize(const Unit& minimalSize);
+    public: void setMinimalSpacing(const Unit& minimalSpacing);
+    public: void setPitch(const Unit& pitch);
 
 // Others
 // ******
 
-	protected: virtual void _PostCreate();
+    protected: virtual void _PostCreate();
 
-	protected: virtual void _PreDelete();
+    protected: virtual void _PreDelete();
 
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
-	public: virtual BasicLayer* _GetSymbolicBasicLayer() = 0;
-	public: Layer* _GetNextOfTechnologyLayerMap() const {return _nextOfTechnologyLayerMap;};
+    public: virtual string _GetString() const;
+    public: virtual Record* _GetRecord() const;
+    public: virtual BasicLayer* _getSymbolicBasicLayer() = 0;
+    public: Layer* _getNextOfTechnologyLayerMap() const {return _nextOfTechnologyLayerMap;};
 
-	public: void _SetMask(const Mask& mask) {_mask = mask;};
-	public: void _SetExtractMask(const Mask& extractMask) {_extractMask = extractMask;};
-	public: void _SetNextOfTechnologyLayerMap(Layer* layer) {_nextOfTechnologyLayerMap = layer;};
+    public: void _setMask(const Mask& mask) {_mask = mask;};
+    public: void _setExtractMask(const Mask& extractMask) {_extractMask = extractMask;};
+    public: void _setNextOfTechnologyLayerMap(Layer* layer) {_nextOfTechnologyLayerMap = layer;};
 
 };
 

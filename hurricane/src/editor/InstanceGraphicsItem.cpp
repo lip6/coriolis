@@ -74,7 +74,7 @@ void InstanceGraphicsItem::drawElements(QPainter* painter) {
         painter->save();
         BasicLayer* layer = dynamic_cast<BasicLayer*>(slice->GetLayer()); 
         if (layer) {
-            painter->setBrush(QColor(layer->GetRedValue(), layer->GetGreenValue(), layer->GetBlueValue()));
+            painter->setBrush(QColor(layer->getRedValue(), layer->getGreenValue(), layer->getBlueValue()));
         } else {
             painter->setBrush(Qt::blue);
         }

@@ -63,7 +63,6 @@ class Technology : public DBo {
 	protected: Technology(DataBase* dataBase, const Name& name);
 
 	public: static Technology* Create(DataBase* dataBase, const Name& name);
-	public: static Technology* CreateFromFile(DataBase* dataBase, const string& filePathName);
 
 // Accessors
 // *********

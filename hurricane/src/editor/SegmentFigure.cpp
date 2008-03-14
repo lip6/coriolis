@@ -80,9 +80,9 @@ void SegmentGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
     boxToRectangle(box, rect);
     BasicLayer* blayer = dynamic_cast<BasicLayer*>(segment->GetLayer()); 
     if (blayer) {
-        QColor layerColor(blayer->GetRedValue(),
-            blayer->GetGreenValue(),
-            blayer->GetBlueValue());
+        QColor layerColor(blayer->getRedValue(),
+            blayer->getGreenValue(),
+            blayer->getBlueValue());
         QBrush brush(layerColor);
         brush.setStyle(Qt::Dense1Pattern);
         painter->setBrush(brush);
@@ -95,10 +95,10 @@ void SegmentGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
     } else {
         CompositeLayer* clayer = dynamic_cast<CompositeLayer*>(segment->GetLayer());
         if (clayer) {
-            for_each_basic_layer(basiclayer, clayer->GetBasicLayers()) {
-                QColor layerColor(basiclayer->GetRedValue(),
-                            basiclayer->GetGreenValue(),
-                            basiclayer->GetBlueValue());
+            for_each_basic_layer(basiclayer, clayer->getBasicLayers()) {
+                QColor layerColor(basiclayer->getRedValue(),
+                            basiclayer->getGreenValue(),
+                            basiclayer->getBlueValue());
                 QBrush brush(layerColor);
                 brush.setStyle(Qt::Dense1Pattern);
                 painter->setBrush(brush);

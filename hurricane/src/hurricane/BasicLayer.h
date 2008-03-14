@@ -43,7 +43,7 @@ class BasicLayer : public Layer {
 
         public: operator const Code&() const {return _code;};
 
-        public: const Code& GetCode() const {return _code;};
+        public: const Code& getCode() const {return _code;};
 
         public: string _GetTypeName() const { return _TName("BasicLayer::Type"); };
         public: string _GetString() const;
@@ -61,34 +61,32 @@ class BasicLayer : public Layer {
     private: unsigned short _blueValue;
     private: string _fillPattern;
     private: double _displayThreshold;
-//    private: GdkGC* _drawGC;
-//    private: GdkGC* _fillGC;
 
 // Constructors
 // ************
 
     protected: BasicLayer(Technology* technology, const Name& name, const Type& type, unsigned extractNumber, const Unit& minimalSize = 0, const Unit& minimalSpacing = 0);
 
-    public: static BasicLayer* Create(Technology* technology, const Name& name, const Type& type, unsigned extractNumber, const Unit& minimalSize = 0, const Unit& minimalSpacing = 0);
+    public: static BasicLayer* create(Technology* technology, const Name& name, const Type& type, unsigned extractNumber, const Unit& minimalSize = 0, const Unit& minimalSpacing = 0);
 
 // Accessors
 // *********
 
-    public: const Type& GetType() const {return _type;};
-    public: unsigned GetExtractNumber() const {return _extractNumber;};
-    public: const unsigned short& GetRedValue() const {return _redValue;};
-    public: const unsigned short& GetGreenValue() const {return _greenValue;};
-    public: const unsigned short& GetBlueValue() const {return _blueValue;};
-    public: const string& GetFillPattern() const {return _fillPattern;};
-    public: double GetDisplayThreshold() const {return _displayThreshold;};
-    public: virtual BasicLayers GetBasicLayers() const;
+    public: const Type& getType() const {return _type;};
+    public: unsigned getExtractNumber() const {return _extractNumber;};
+    public: const unsigned short& getRedValue() const {return _redValue;};
+    public: const unsigned short& getGreenValue() const {return _greenValue;};
+    public: const unsigned short& getBlueValue() const {return _blueValue;};
+    public: const string& getFillPattern() const {return _fillPattern;};
+    public: double getDisplayThreshold() const {return _displayThreshold;};
+    public: virtual BasicLayers getBasicLayers() const;
 
 // Updators
 // ********
 
-    public: void SetColor(unsigned short redValue, unsigned short greenValue, unsigned short blueValue);
-    public: void SetFillPattern(const string& fillPattern);
-    public: void SetDisplayThreshold(double threshold) {_displayThreshold = threshold;};
+    public: void setColor(unsigned short redValue, unsigned short greenValue, unsigned short blueValue);
+    public: void setFillPattern(const string& fillPattern);
+    public: void setDisplayThreshold(double threshold) {_displayThreshold = threshold;};
 
 // Others
 // ******
@@ -100,11 +98,9 @@ class BasicLayer : public Layer {
     public: virtual string _GetTypeName() const {return _TName("BasicLayer");};
     public: virtual string _GetString() const;
     public: virtual Record* _GetRecord() const;
-    public: virtual BasicLayer* _GetSymbolicBasicLayer() {return this;};
-    //public: GdkGC* _GetDrawGC();
-    //public: GdkGC* _GetFillGC();
+    public: virtual BasicLayer* _getSymbolicBasicLayer() {return this;};
 
-    public: void _Fill(View* view, const Box& box) const;
+    public: void _fill(View* view, const Box& box) const;
 
 };
 

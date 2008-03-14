@@ -70,7 +70,7 @@ Box Horizontal::GetBoundingBox() const
 Box Horizontal::GetBoundingBox(const BasicLayer* basicLayer) const
 // *********************************************************
 {
-	if (!GetLayer()->Contains(basicLayer)) return Box();
+	if (!GetLayer()->contains(basicLayer)) return Box();
 
 	Unit size = GetHalfWidth() + _GetSize(basicLayer);
 	Unit extention = _GetExtention(basicLayer);
