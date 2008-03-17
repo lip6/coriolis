@@ -53,12 +53,12 @@
 
 
 
-# ifndef  __PROXYPROPERTY__
-#   define  __PROXYPROPERTY__
+#ifndef  __PROXYPROPERTY__
+#define  __PROXYPROPERTY__
 
 
-# include  "DBo.h"
-# include  "Property.h"
+#include  "DBo.h"
+#include  "Property.h"
 
 
 namespace  Isobar {
@@ -72,10 +72,10 @@ using  namespace  Hurricane;
 // -------------------------------------------------------------------
 // Miscellaneous.
 
-# define    F_PY_OWNED    ( 1 << 0 )
+#define    F_PY_OWNED    ( 1 << 0 )
 
-# define    CHECK_OFFSET(PY_STRUCT)                                             \
-  if ( ProxyProperty::GetOffset() < 0 )                                         \
+#define    CHECK_OFFSET(PY_STRUCT)                                             \
+  if ( ProxyProperty::getOffset() < 0 )                                         \
       ProxyProperty::SetOffset (   (unsigned long)(&(PY_STRUCT->ACCESS_OBJECT)) \
                                  - (unsigned long)PY_STRUCT );
 
@@ -98,31 +98,31 @@ using  namespace  Hurricane;
     protected:        ProxyProperty ( void* _shadow );
     private:          ProxyProperty ( const ProxyProperty& );
     private:          ProxyProperty& operator= ( const ProxyProperty& );
-    public:    static ProxyProperty* Create ( void* _shadow=NULL );
+    public:    static ProxyProperty* create ( void* _shadow=NULL );
 
     // Accessors.
-    public: DBo*  GetOwner        () const { return ( _owner ); };
-    public: void* GetShadow       () const { return ( _shadow ); };
-    public: void* GetShadowMember () const { return ( (void*)((unsigned long)_shadow+_offset) ); };
+    public: DBo*  getOwner        () const { return ( _owner ); };
+    public: void* getShadow       () const { return ( _shadow ); };
+    public: void* getShadowMember () const { return ( (void*)((unsigned long)_shadow+_offset) ); };
     public: template<typename DBoType>
-              DBoType* GetAsType () { return ( dynamic_cast<DBoType*>(_owner) ); };
+              DBoType* getAsType () { return ( dynamic_cast<DBoType*>(_owner) ); };
 
     // Static methods.
-    public: static int   GetOffset () { return ( _offset ); };
+    public: static int   getOffset () { return ( _offset ); };
     public: static void  SetOffset ( int offset );
 
     // Property Managment.
-    public:    static  const Name &GetPropertyName () { return ( _name ); }
-    public:    virtual Name  GetName () const { return (GetPropertyName()); }
-	public:    virtual void  OnCapturedBy ( DBo* owner );
-	public:    virtual void  OnReleasedBy ( DBo* owner );
-	public:    virtual void  OnNotOwned   ();
-	protected: virtual void  _PreDelete   ();
+    public:    static  const Name &getPropertyName () { return ( _name ); }
+    public:    virtual Name  getName () const { return (getPropertyName()); }
+    public:    virtual void  onCapturedBy ( DBo* owner );
+    public:    virtual void  onReleasedBy ( DBo* owner );
+    public:    virtual void  onNotOwned   ();
+    protected: virtual void  _preDestroy  ();
 
     // Hurricane Managment.
-    public: virtual string  _GetString   () const;
-    public: virtual Record* _GetRecord   () const;
-    public: virtual string  _GetTypeName () const { return _TName("ProxyProperty"); };
+    public: virtual string  _getString   () const;
+    public: virtual Record* _getRecord   () const;
+    public: virtual string  _getTypeName () const { return _TName("ProxyProperty"); };
 
   };
 
@@ -136,4 +136,4 @@ SetNestedSlotAdapter(Isobar::ProxyProperty)
 
 
 
-# endif
+#endif

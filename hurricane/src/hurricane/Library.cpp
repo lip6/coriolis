@@ -20,115 +20,115 @@ namespace Hurricane {
 
 Library::Library(DataBase* dataBase, Library* library, const Name& name)
 // *********************************************************************
-:	Inherit(),
-	_dataBase(dataBase),
-	_library(library),
-	_name(name),
-	_libraryMap(),
-	_cellMap(),
-	_nextOfLibraryLibraryMap(NULL)
+:    Inherit(),
+    _dataBase(dataBase),
+    _library(library),
+    _name(name),
+    _libraryMap(),
+    _cellMap(),
+    _nextOfLibraryLibraryMap(NULL)
 {
-	if (!_dataBase)
-		throw Error("Can't create " + _TName("Library") + " : null data base");
+    if (!_dataBase)
+        throw Error("Can't create " + _TName("Library") + " : null data base");
 
-	if (name.IsEmpty())
-		throw Error("Can't create " + _TName("Library") + " : empty name");
+    if (name.IsEmpty())
+        throw Error("Can't create " + _TName("Library") + " : empty name");
 
-	if (!_library) {
-		if (_dataBase->GetRootLibrary())
-			throw Error("Can't create " + _TName("Library") + " : root library already exists");
-	}
-	else {
-		if (_library->GetLibrary(_name))
-			throw Error("Can't create " + _TName("Library") + " : already exists");
-	}
+    if (!_library) {
+        if (_dataBase->getRootLibrary())
+            throw Error("Can't create " + _TName("Library") + " : root library already exists");
+    }
+    else {
+        if (_library->getLibrary(_name))
+            throw Error("Can't create " + _TName("Library") + " : already exists");
+    }
 }
 
 Library* Library::Create(DataBase* dataBase, const Name& name)
 // ***********************************************************
 {
-	Library* library = new Library(dataBase, NULL, name);
+    Library* library = new Library(dataBase, NULL, name);
 
-	library->_PostCreate();
+    library->_postCreate();
 
-	return library;
+    return library;
 }
 
 Library* Library::Create(Library* library, const Name& name)
 // *********************************************************
 {
-	if (!library)
-		throw Error("Can't create " + _TName("Library") + " : null library");
+    if (!library)
+        throw Error("Can't create " + _TName("Library") + " : null library");
 
-	library = new Library(library->GetDataBase(), library, name);
+    library = new Library(library->getDataBase(), library, name);
 
-	library->_PostCreate();
+    library->_postCreate();
 
-	return library;
+    return library;
 }
 
 void Library::SetName(const Name& name)
 // ************************************
 {
-	if (name != _name) {
-		if (name.IsEmpty())
-			throw Error("Can't change library name : empty name");
+    if (name != _name) {
+        if (name.IsEmpty())
+            throw Error("Can't change library name : empty name");
 
-		if (_library && _library->GetLibrary(name))
-			throw Error("Can't change library name : already exists");
+        if (_library && _library->getLibrary(name))
+            throw Error("Can't change library name : already exists");
 
-		if (_library) _library->_GetLibraryMap()._Remove(this);
-		_name = name;
-		if (_library) _library->_GetLibraryMap()._Insert(this);
-	}
+        if (_library) _library->_getLibraryMap()._Remove(this);
+        _name = name;
+        if (_library) _library->_getLibraryMap()._Insert(this);
+    }
 }
 
-void Library::_PostCreate()
+void Library::_postCreate()
 // ************************
 {
-	if (!_library)
-		_dataBase->_SetRootLibrary(this);
-	else
-		_library->_GetLibraryMap()._Insert(this);
+    if (!_library)
+        _dataBase->_SetRootLibrary(this);
+    else
+        _library->_getLibraryMap()._Insert(this);
 
-	Inherit::_PostCreate();
+    Inherit::_postCreate();
 }
 
-void Library::_PreDelete()
+void Library::_preDestroy()
 // ***********************
 {
-	Inherit::_PreDelete();
+    Inherit::_preDestroy();
 
-	for_each_cell(cell, GetCells()) cell->Delete(); end_for;
-	for_each_library(library, GetLibraries()) library->Delete(); end_for;
+    for_each_cell(cell, getCells()) cell->destroy(); end_for;
+    for_each_library(library, getLibraries()) library->destroy(); end_for;
 
-	if (!_library)
-		_dataBase->_SetRootLibrary(NULL);
-	else
-		_library->_GetLibraryMap()._Remove(this);
+    if (!_library)
+        _dataBase->_SetRootLibrary(NULL);
+    else
+        _library->_getLibraryMap()._Remove(this);
 }
 
-string Library::_GetString() const
+string Library::_getString() const
 // *******************************
 {
-	string s = Inherit::_GetString();
-	s.insert(s.length() - 1, " ");
-	s.insert(s.length() - 1, GetString(_name));
-	return s;
+    string s = Inherit::_getString();
+    s.insert(s.length() - 1, " ");
+    s.insert(s.length() - 1, getString(_name));
+    return s;
 }
 
-Record* Library::_GetRecord() const
+Record* Library::_getRecord() const
 // **************************
 {
-	Record* record = Inherit::_GetRecord();
-	if (record) {
-		record->Add(GetSlot("DataBase", _dataBase));
-		record->Add(GetSlot("Library", _library));
-		record->Add(GetSlot("Name", &_name));
-		record->Add(GetSlot("Libraries", &_libraryMap));
-		record->Add(GetSlot("Cells", &_cellMap));
-	}
-	return record;
+    Record* record = Inherit::_getRecord();
+    if (record) {
+        record->Add(getSlot("DataBase", _dataBase));
+        record->Add(getSlot("Library", _library));
+        record->Add(getSlot("Name", &_name));
+        record->Add(getSlot("Libraries", &_libraryMap));
+        record->Add(getSlot("Cells", &_cellMap));
+    }
+    return record;
 }
 
 // ****************************************************************************************************
@@ -137,32 +137,32 @@ Record* Library::_GetRecord() const
 
 Library::LibraryMap::LibraryMap()
 // ******************************
-:	Inherit()
+:    Inherit()
 {
 }
 
-Name Library::LibraryMap::_GetKey(Library* library) const
+Name Library::LibraryMap::_getKey(Library* library) const
 // ******************************************************
 {
-	return library->GetName();
+    return library->getName();
 }
 
-unsigned Library::LibraryMap::_GetHashValue(Name name) const
+unsigned Library::LibraryMap::_getHashValue(Name name) const
 // *********************************************************
 {
-	return ( (unsigned int)( (unsigned long)name._GetSharedName() ) ) / 8;
+    return ( (unsigned int)( (unsigned long)name._getSharedName() ) ) / 8;
 }
 
-Library* Library::LibraryMap::_GetNextElement(Library* library) const
+Library* Library::LibraryMap::_getNextElement(Library* library) const
 // ******************************************************************
 {
-	return library->_GetNextOfLibraryLibraryMap();
+    return library->_getNextOfLibraryLibraryMap();
 }
 
 void Library::LibraryMap::_SetNextElement(Library* library, Library* nextLibrary) const
 // ************************************************************************************
 {
-	library->_SetNextOfLibraryLibraryMap(nextLibrary);
+    library->_SetNextOfLibraryLibraryMap(nextLibrary);
 };
 
 
@@ -173,32 +173,32 @@ void Library::LibraryMap::_SetNextElement(Library* library, Library* nextLibrary
 
 Library::CellMap::CellMap()
 // ************************
-:	Inherit()
+:    Inherit()
 {
 }
 
-Name Library::CellMap::_GetKey(Cell* cell) const
+Name Library::CellMap::_getKey(Cell* cell) const
 // *********************************************
 {
-	return cell->GetName();
+    return cell->getName();
 }
 
-unsigned Library::CellMap::_GetHashValue(Name name) const
+unsigned Library::CellMap::_getHashValue(Name name) const
 // ******************************************************
 {
-	return ( (unsigned int)( (unsigned long)name._GetSharedName() ) ) / 8;
+    return ( (unsigned int)( (unsigned long)name._getSharedName() ) ) / 8;
 }
 
-Cell* Library::CellMap::_GetNextElement(Cell* cell) const
+Cell* Library::CellMap::_getNextElement(Cell* cell) const
 // ******************************************************
 {
-	return cell->_GetNextOfLibraryCellMap();
+    return cell->_getNextOfLibraryCellMap();
 }
 
 void Library::CellMap::_SetNextElement(Cell* cell, Cell* nextCell) const
 // *********************************************************************
 {
-	cell->_SetNextOfLibraryCellMap(nextCell);
+    cell->_SetNextOfLibraryCellMap(nextCell);
 };
 
 

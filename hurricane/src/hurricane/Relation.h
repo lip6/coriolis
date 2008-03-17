@@ -23,37 +23,37 @@ class Relation : public SharedProperty {
 // Types
 // *****
 
-	public: typedef SharedProperty Inherit;
+    public: typedef SharedProperty Inherit;
 
 // Attributes
 // **********
 
-	private: DBo* _masterOwner;
+    private: DBo* _masterOwner;
 
 // Constructors
 // ************
 
-	protected: Relation(DBo* masterOwner);
+    protected: Relation(DBo* masterOwner);
 
 // Accessors
 // *********
 
-	public: DBo* GetMasterOwner() const {return _masterOwner;};
-	public: DBos GetSlaveOwners() const;
+    public: DBo* getMasterOwner() const {return _masterOwner;};
+    public: DBos getSlaveOwners() const;
 
 // Managers
 // ********
 
-	public: virtual void OnReleasedBy(DBo* owner);
+    public: virtual void onReleasedBy(DBo* owner);
 
 // Others
 // ******
 
-	protected: virtual void _PostCreate();
+    protected: virtual void _postCreate();
 
-	public: virtual string _GetTypeName() const {return _TName("Relation");};
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
+    public: virtual string _getTypeName() const {return _TName("Relation");};
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
 
 };
 
@@ -69,31 +69,31 @@ class StandardRelation : public Relation {
 // Types
 // *****
 
-	public: typedef Relation Inherit;
+    public: typedef Relation Inherit;
 
 // Attributes
 // **********
 
-	private: Name _name;
+    private: Name _name;
 
 // Constructors
 // ************
 
-	protected: StandardRelation(DBo* masterOwner, const Name& name);
+    protected: StandardRelation(DBo* masterOwner, const Name& name);
 
-	public: static StandardRelation* Create(DBo* masterOwner, const Name& name);
+    public: static StandardRelation* create(DBo* masterOwner, const Name& name);
 
 // Accessors
 // *********
 
-	public: virtual Name GetName() const {return _name;};
+    public: virtual Name getName() const {return _name;};
 
 // Others
 // ******
 
-	public: virtual string _GetTypeName() const {return _TName("StandardRelation");};
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
+    public: virtual string _getTypeName() const {return _TName("StandardRelation");};
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
 
 };
 

@@ -31,29 +31,29 @@ class Entity : public DBo {
 // Types
 // *****
 
-	public: typedef DBo Inherit;
+    public: typedef DBo Inherit;
 
 // Constructors
 // ************
 
-	protected: Entity();
+    protected: Entity();
 
 // Others
 // ******
 
-	protected: virtual void _PreDelete();
+    protected: virtual void _preDestroy();
 
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
-	public: Quark* _GetQuark(SharedPath* sharedPath = NULL) const;
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
+    public: Quark* _getQuark(SharedPath* sharedPath = NULL) const;
 
 #   endif
 
 // Accessors
 // *********
 
-	public: virtual Cell* GetCell() const = 0;
-	public: virtual Box GetBoundingBox() const = 0;
+    public: virtual Cell* getCell() const = 0;
+    public: virtual Box getBoundingBox() const = 0;
 
 };
 

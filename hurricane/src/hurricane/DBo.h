@@ -22,7 +22,7 @@ namespace Hurricane {
 class DBo : public NestedSlotAdapter {
 // *********************************
 
-#   if !defined(__DOXYGEN_PROCESSOR__)
+#if !defined(__DOXYGEN_PROCESSOR__)
 
 // Types
 // *****
@@ -54,42 +54,42 @@ class DBo : public NestedSlotAdapter {
 // Others
 // ******
 
-    protected: virtual void _PostCreate();
+    protected: virtual void _postCreate();
 
-    protected: virtual void _PreDelete();
+    protected: virtual void _preDestroy();
 
-    public: virtual string _GetTypeName() const = 0;
-    public: virtual string _GetString() const;
-    public: virtual Record* _GetRecord() const;
-    public: PropertySet& _GetPropertySet() {return _propertySet;};
+    public: virtual string _getTypeName() const = 0;
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
+    public: PropertySet& _getPropertySet() {return _propertySet;};
 
-    public: void _OnDeleted(Property* property);
+    public: void _onDeleted(Property* property);
 
-# endif
+#endif
 
 // Destructors
 // ***********
 
-    public: virtual void Delete();
+    public: virtual void destroy();
 
 // Accessors
 // *********
 
-    public: Property* GetProperty(const Name& name) const;
-    public: Properties GetProperties() const {return GetCollection(_propertySet);};
+    public: Property* getProperty(const Name& name) const;
+    public: Properties getProperties() const {return getCollection(_propertySet);};
 
 // Predicates
 // **********
 
-    public: bool HasProperty() const {return !_propertySet.empty();};
+    public: bool hasProperty() const {return !_propertySet.empty();};
 
 // Updators
 // ********
 
-    public: void Put(Property* property);
-    public: void Remove(Property* property);
-    public: void RemoveProperty(const Name& name);
-    public: void ClearProperties();
+    public: void put(Property* property);
+    public: void remove(Property* property);
+    public: void removeProperty(const Name& name);
+    public: void clearProperties();
 
 };
 

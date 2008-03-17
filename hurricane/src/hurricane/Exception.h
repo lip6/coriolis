@@ -23,29 +23,29 @@ class Exception : public NestedSlotAdapter {
 // Constructors
 // ************
 
-	protected: Exception();
+    protected: Exception();
 
-	private: Exception(const Exception& exception); // not implemented to forbid copy construction
+    private: Exception(const Exception& exception); // not implemented to forbid copy construction
 
 // Destructor
 // **********
 
-	public: virtual ~Exception();
+    public: virtual ~Exception();
 
 // Operators
 // *********
 
-	private: Exception& operator=(const Exception& exception); // not implemented to forbid assignment
+    private: Exception& operator=(const Exception& exception); // not implemented to forbid assignment
 
 // Accessors
 // *********
 
-   public: string  What() const { return _GetString(); };
+   public: string  What() const { return _getString(); };
 
 // Others
 // ******
 
-	public: virtual string _GetString() const = 0;
+    public: virtual string _getString() const = 0;
 
 };
 

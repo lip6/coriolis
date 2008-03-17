@@ -25,58 +25,58 @@ class Contact_Hooks : public Collection<Hook*> {
 // Types
 // *****
 
-	public: typedef Collection<Hook*> Inherit;
+    public: typedef Collection<Hook*> Inherit;
 
-	public: class Locator : public Hurricane::Locator<Hook*> {
-	// *****************************************************
+    public: class Locator : public Hurricane::Locator<Hook*> {
+    // *****************************************************
 
-		public: typedef Hurricane::Locator<Hook*> Inherit;
+        public: typedef Hurricane::Locator<Hook*> Inherit;
 
-		private: const Contact* _contact;
-		private: Hook* _hook;
+        private: const Contact* _contact;
+        private: Hook* _hook;
 
-		public: Locator(const Contact* contact = NULL);
-		public: Locator(const Locator& locator);
+        public: Locator(const Contact* contact = NULL);
+        public: Locator(const Locator& locator);
 
-		public: Locator& operator=(const Locator& locator);
+        public: Locator& operator=(const Locator& locator);
 
-		public: virtual Hook* GetElement() const;
-		public: virtual Hurricane::Locator<Hook*>* GetClone() const;
+        public: virtual Hook* getElement() const;
+        public: virtual Hurricane::Locator<Hook*>* getClone() const;
 
-		public: virtual bool IsValid() const;
+        public: virtual bool IsValid() const;
 
-		public: virtual void Progress();
+        public: virtual void Progress();
 
-		public: virtual string _GetString() const;
+        public: virtual string _getString() const;
 
-	};
+    };
 
 // Attributes
 // **********
 
-	private: const Contact* _contact;
+    private: const Contact* _contact;
 
 // Constructors
 // ************
 
-	public: Contact_Hooks(const Contact* contact = NULL);
-	public: Contact_Hooks(const Contact_Hooks& hooks);
+    public: Contact_Hooks(const Contact* contact = NULL);
+    public: Contact_Hooks(const Contact_Hooks& hooks);
 
 // Operators
 // *********
 
-	public: Contact_Hooks& operator=(const Contact_Hooks& hooks);
+    public: Contact_Hooks& operator=(const Contact_Hooks& hooks);
 
 // Accessors
 // ********^
 
-	public: virtual Collection<Hook*>* GetClone() const;
-	public: virtual Hurricane::Locator<Hook*>* GetLocator() const;
+    public: virtual Collection<Hook*>* getClone() const;
+    public: virtual Hurricane::Locator<Hook*>* getLocator() const;
 
 // Others
 // ******
 
-	public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -89,284 +89,284 @@ class Contact_Hooks : public Collection<Hook*> {
 Contact::Contact(Net* net, Layer* layer, const Unit& x, const Unit& y, const Unit& width, const Unit& height)
 // ****************************************************************************************************
 :  Inherit(net),
-	_anchorHook(this),
-	_layer(layer),
-	_dx(x),
-	_dy(y),
-	_width(width),
-	_height(height)
+    _anchorHook(this),
+    _layer(layer),
+    _dx(x),
+    _dy(y),
+    _width(width),
+    _height(height)
 {
-	if (!_layer)
-		throw Error("Can't create " + _TName("Contact") + " : null layer");
+    if (!_layer)
+        throw Error("Can't create " + _TName("Contact") + " : null layer");
 }
 
 Contact::Contact(Net* net, Component* anchor, Layer* layer, const Unit& dx, const Unit& dy, const Unit& width, const Unit& height)
 // ****************************************************************************************************
 :  Inherit(net),
-	_anchorHook(this),
-	_layer(layer),
-	_dx(dx),
-	_dy(dy),
-	_width(width),
-	_height(height)
+    _anchorHook(this),
+    _layer(layer),
+    _dx(dx),
+    _dy(dy),
+    _width(width),
+    _height(height)
 {
-	if (!anchor)
-		throw Error("Can't create " + _TName("Contact") + " : null anchor");
+    if (!anchor)
+        throw Error("Can't create " + _TName("Contact") + " : null anchor");
 
-	if (!anchor->GetNet())
-		throw Error("Can't create " + _TName("Contact") + " : unconnected anchor");
+    if (!anchor->getNet())
+        throw Error("Can't create " + _TName("Contact") + " : unconnected anchor");
 
-	if (anchor->GetNet() != GetNet())
-		throw Error("Can't create " + _TName("Contact") + " : incompatible anchor");
+    if (anchor->getNet() != getNet())
+        throw Error("Can't create " + _TName("Contact") + " : incompatible anchor");
 
-	if (!_layer)
-		throw Error("Can't create " + _TName("Contact") + " : null layer");
+    if (!_layer)
+        throw Error("Can't create " + _TName("Contact") + " : null layer");
 
-	_anchorHook.Attach(anchor->GetBodyHook());
+    _anchorHook.Attach(anchor->getBodyHook());
 }
 
 Contact* Contact::Create(Net* net, Layer* layer, const Unit& x, const Unit& y, const Unit& width, const Unit& height)
 // ****************************************************************************************************
 {
-	Contact* contact = new Contact(net, layer, x, y, width, height);
+    Contact* contact = new Contact(net, layer, x, y, width, height);
 
-	contact->_PostCreate();
+    contact->_postCreate();
 
-	return contact;
+    return contact;
 }
 
 Contact* Contact::Create(Component* anchor, Layer* layer, const Unit& dx, const Unit& dy, const Unit& width, const Unit& height)
 // ****************************************************************************************************
 {
-	if (!anchor)
-		throw Error("Can't create " + _TName("Contact") + " : null anchor");
+    if (!anchor)
+        throw Error("Can't create " + _TName("Contact") + " : null anchor");
 
-	Contact* contact = new Contact(anchor->GetNet(), anchor, layer, dx, dy, width, height);
+    Contact* contact = new Contact(anchor->getNet(), anchor, layer, dx, dy, width, height);
 
-	contact->_PostCreate();
+    contact->_postCreate();
 
-	return contact;
+    return contact;
 }
 
-Hooks Contact::GetHooks() const
+Hooks Contact::getHooks() const
 // ****************************
 {
-	return Contact_Hooks(this);
+    return Contact_Hooks(this);
 }
 
-Unit Contact::GetX() const
+Unit Contact::getX() const
 // ***********************
 {
-	Component* anchor = GetAnchor();
-	return (!anchor) ? _dx : anchor->GetX() + _dx;
+    Component* anchor = getAnchor();
+    return (!anchor) ? _dx : anchor->getX() + _dx;
 }
 
-Unit Contact::GetY() const
+Unit Contact::getY() const
 // ***********************
 {
-	Component* anchor = GetAnchor();
-	return (!anchor) ? _dy : anchor->GetY() + _dy;
+    Component* anchor = getAnchor();
+    return (!anchor) ? _dy : anchor->getY() + _dy;
 }
 
-Point Contact::GetPosition() const
+Point Contact::getPosition() const
 // *******************************
 {
-	Component* anchor = GetAnchor();
-	return (!anchor) ? Point(_dx, _dy) : anchor->GetPosition().translate(_dx, _dy);
+    Component* anchor = getAnchor();
+    return (!anchor) ? Point(_dx, _dy) : anchor->getPosition().translate(_dx, _dy);
 }
 
-Box Contact::GetBoundingBox() const
+Box Contact::getBoundingBox() const
 // ********************************
 {
-	Unit size = _GetSize();
+    Unit size = _getSize();
 
-	return Box(GetPosition()).inflate(GetHalfWidth() + size, GetHalfHeight() + size);
+    return Box(getPosition()).inflate(getHalfWidth() + size, getHalfHeight() + size);
 }
 
-Box Contact::GetBoundingBox(const BasicLayer* basicLayer) const
+Box Contact::getBoundingBox(const BasicLayer* basicLayer) const
 // ******************************************************
 {
-	if (!_layer->contains(basicLayer)) return Box();
+    if (!_layer->contains(basicLayer)) return Box();
 
-	Unit size = _GetSize(basicLayer);
+    Unit size = _getSize(basicLayer);
 
-	return Box(GetPosition()).inflate(GetHalfWidth() + size, GetHalfHeight() + size);
+    return Box(getPosition()).inflate(getHalfWidth() + size, getHalfHeight() + size);
 }
 
-Component* Contact::GetAnchor() const
+Component* Contact::getAnchor() const
 // **********************************
 {
-	Hook* masterHook = _anchorHook.GetMasterHook();
-	return (masterHook) ? masterHook->GetComponent() : NULL;
+    Hook* masterHook = _anchorHook.getMasterHook();
+    return (masterHook) ? masterHook->getComponent() : NULL;
 }
 
 void Contact::Translate(const Unit& dx, const Unit& dy)
 // ****************************************************
 {
-	if ((dx != 0) || (dy != 0)) {
-		Invalidate(true);
-		_dx += dx;
-		_dy += dy;
-	}
+    if ((dx != 0) || (dy != 0)) {
+        Invalidate(true);
+        _dx += dx;
+        _dy += dy;
+    }
 }
 
 void Contact::SetLayer(Layer* layer)
 // *********************************
 {
-	if (!layer)
-		throw Error("Can't set layer : null layer");
+    if (!layer)
+        throw Error("Can't set layer : null layer");
 
-	if (layer != _layer) {
-		Invalidate(false);
-		_layer = layer;
-	}
+    if (layer != _layer) {
+        Invalidate(false);
+        _layer = layer;
+    }
 }
 
 void Contact::SetWidth(const Unit& width)
 // **************************************
 {
-	if (width != _width) {
-		Invalidate(false);
-		_width = width;
-	}
+    if (width != _width) {
+        Invalidate(false);
+        _width = width;
+    }
 }
 
 void Contact::SetHeight(const Unit& height)
 // ****************************************
 {
-	if (height != _height) {
-		Invalidate(false);
-		_height = height;
-	}
+    if (height != _height) {
+        Invalidate(false);
+        _height = height;
+    }
 }
 
 void Contact::SetSizes(const Unit& width, const Unit& height)
 // **********************************************************
 {
-	if ((width != _width) || (height != _height)) {
-		Invalidate(false);
-		_width = width;
-		_height = height;
-	}
+    if ((width != _width) || (height != _height)) {
+        Invalidate(false);
+        _width = width;
+        _height = height;
+    }
 }
 
 void Contact::SetX(const Unit& x)
 // ******************************
 {
-	SetPosition(x, GetY());
+    SetPosition(x, getY());
 }
 
 void Contact::SetY(const Unit& y)
 // ******************************
 {
-	SetPosition(GetX(), y);
+    SetPosition(getX(), y);
 }
 
 void Contact::SetPosition(const Unit& x, const Unit& y)
 // ****************************************************
 {
-	Component* anchor = GetAnchor();
-	if (!anchor)
-		SetOffset(x, y);
-	else
-		SetOffset(x - anchor->GetX(), y - anchor->GetY());
+    Component* anchor = getAnchor();
+    if (!anchor)
+        SetOffset(x, y);
+    else
+        SetOffset(x - anchor->getX(), y - anchor->getY());
 }
 
 void Contact::SetPosition(const Point& position)
 // *********************************************
 {
-	SetPosition(position.getX(), position.getY());
+    SetPosition(position.getX(), position.getY());
 }
 
 void Contact::SetDx(const Unit& dx)
 // ********************************
 {
-	SetOffset(dx, _dy);
+    SetOffset(dx, _dy);
 }
 
 void Contact::SetDy(const Unit& dy)
 // ********************************
 {
-	SetOffset(_dx, dy);
+    SetOffset(_dx, dy);
 }
 
 void Contact::SetOffset(const Unit& dx, const Unit& dy)
 // ****************************************************
 {
-	if ((dx != _dx) || (dy != _dy)) {
-		Invalidate(true);
-		_dx = dx;
-		_dy = dy;
-	}
+    if ((dx != _dx) || (dy != _dy)) {
+        Invalidate(true);
+        _dx = dx;
+        _dy = dy;
+    }
 }
 
-void Contact::_PreDelete()
+void Contact::_preDestroy()
 // ***********************
 {
-// trace << "entering Contact::PreDelete: " << this << endl;
+// trace << "entering Contact::PreDestroy " << this << endl;
 // trace_in();
 
-	Inherit::_PreDelete();
+    Inherit::_preDestroy();
 
-	_anchorHook.Detach();
+    _anchorHook.Detach();
 
-// trace << "exiting Contact::PreDelete:" << endl;
+// trace << "exiting Contact::PreDestroy" << endl;
 // trace_out();
 }
 
-string Contact::_GetString() const
+string Contact::_getString() const
 // *******************************
 {
-	string s = Inherit::_GetString();
-	s.insert(s.length() - 1, " " + GetString(_layer->getName()));
-	s.insert(s.length() - 1, " [" + GetValueString(GetX()));
-	s.insert(s.length() - 1, " " + GetValueString(GetY()));
-	s.insert(s.length() - 1, "] " + GetValueString(_width));
-	s.insert(s.length() - 1, "x" + GetValueString(_height));
-	return s;
+    string s = Inherit::_getString();
+    s.insert(s.length() - 1, " " + getString(_layer->getName()));
+    s.insert(s.length() - 1, " [" + getValueString(getX()));
+    s.insert(s.length() - 1, " " + getValueString(getY()));
+    s.insert(s.length() - 1, "] " + getValueString(_width));
+    s.insert(s.length() - 1, "x" + getValueString(_height));
+    return s;
 }
 
-Record* Contact::_GetRecord() const
+Record* Contact::_getRecord() const
 // **************************
 {
-	Record* record = Inherit::_GetRecord();
-	if (record) {
-		record->Add(GetSlot("AnchorHook", &_anchorHook));
-		record->Add(GetSlot("Anchor", GetAnchor()));
-		record->Add(GetSlot("Layer", _layer));
-		record->Add(GetSlot("Dx", &_dx));
-		record->Add(GetSlot("Dy", &_dy));
-		record->Add(GetSlot("Width", &_width));
-		record->Add(GetSlot("Height", &_height));
-	}
-	return record;
+    Record* record = Inherit::_getRecord();
+    if (record) {
+        record->Add(getSlot("AnchorHook", &_anchorHook));
+        record->Add(getSlot("Anchor", getAnchor()));
+        record->Add(getSlot("Layer", _layer));
+        record->Add(getSlot("Dx", &_dx));
+        record->Add(getSlot("Dy", &_dy));
+        record->Add(getSlot("Width", &_width));
+        record->Add(getSlot("Height", &_height));
+    }
+    return record;
 }
 
-Unit Contact::_GetSize() const
+Unit Contact::_getSize() const
 // ***************************
 {
-	Unit size = 0;
+    Unit size = 0;
 
-	Layer* layer = GetLayer();
-	if (is_a<CompositeLayer*>(layer))
-		size = ((CompositeLayer*)layer)->getMaximalContactSize();
+    Layer* layer = getLayer();
+    if (is_a<CompositeLayer*>(layer))
+        size = ((CompositeLayer*)layer)->getMaximalContactSize();
 
-	return size;
+    return size;
 }
 
-Unit Contact::_GetSize(const BasicLayer* basicLayer) const
+Unit Contact::_getSize(const BasicLayer* basicLayer) const
 // *******************************************************
 {
-	Layer* layer = GetLayer();
+    Layer* layer = getLayer();
 
-	if (!layer->contains(basicLayer)) return 0;
+    if (!layer->contains(basicLayer)) return 0;
 
-	Unit size = 0;
+    Unit size = 0;
 
-	if (is_a<CompositeLayer*>(layer))
-		size = ((CompositeLayer*)layer)->getContactSize(basicLayer);
+    if (is_a<CompositeLayer*>(layer))
+        size = ((CompositeLayer*)layer)->getContactSize(basicLayer);
 
-	return size;
+    return size;
 }
 
 // ****************************************************************************************************
@@ -377,25 +377,25 @@ static int ANCHOR_HOOK_OFFSET = -1;
 
 Contact::AnchorHook::AnchorHook(Contact* contact)
 // **********************************************
-:	Inherit()
+:    Inherit()
 {
-	if (!contact)
-		throw Error("Can't create " + _TName("Contact::AnchorHook") + " : null contact");
+    if (!contact)
+        throw Error("Can't create " + _TName("Contact::AnchorHook") + " : null contact");
 
-		if (ANCHOR_HOOK_OFFSET == -1)
-		ANCHOR_HOOK_OFFSET = (unsigned long)this - (unsigned long)contact;
+        if (ANCHOR_HOOK_OFFSET == -1)
+        ANCHOR_HOOK_OFFSET = (unsigned long)this - (unsigned long)contact;
 }
 
-Component* Contact::AnchorHook::GetComponent() const
+Component* Contact::AnchorHook::getComponent() const
 // *************************************************
 {
-	return (Component*)((unsigned long)this - ANCHOR_HOOK_OFFSET);
+    return (Component*)((unsigned long)this - ANCHOR_HOOK_OFFSET);
 }
 
-string Contact::AnchorHook::_GetString() const
+string Contact::AnchorHook::_getString() const
 // *******************************************
 {
-	return "<" + _TName("Contact::AnchorHook") + " " + GetString(GetComponent()) + ">";
+    return "<" + _TName("Contact::AnchorHook") + " " + getString(getComponent()) + ">";
 }
 
 
@@ -406,44 +406,44 @@ string Contact::AnchorHook::_GetString() const
 
 Contact_Hooks::Contact_Hooks(const Contact* contact)
 // *************************************************
-: 	Inherit(),
-	_contact(contact)
+:     Inherit(),
+    _contact(contact)
 {
 }
 
 Contact_Hooks::Contact_Hooks(const Contact_Hooks& hooks)
 // *****************************************************
-: 	Inherit(),
-	_contact(hooks._contact)
+:     Inherit(),
+    _contact(hooks._contact)
 {
 }
 
 Contact_Hooks& Contact_Hooks::operator=(const Contact_Hooks& hooks)
 // ****************************************************************
 {
-	_contact = hooks._contact;
-	return *this;
+    _contact = hooks._contact;
+    return *this;
 }
 
-Collection<Hook*>* Contact_Hooks::GetClone() const
+Collection<Hook*>* Contact_Hooks::getClone() const
 // ***********************************************
 {
-	return new Contact_Hooks(*this);
+    return new Contact_Hooks(*this);
 }
 
-Locator<Hook*>* Contact_Hooks::GetLocator() const
+Locator<Hook*>* Contact_Hooks::getLocator() const
 // **********************************************
 {
-	return new Locator(_contact);
+    return new Locator(_contact);
 }
 
-string Contact_Hooks::_GetString() const
+string Contact_Hooks::_getString() const
 // *************************************
 {
-	string s = "<" + _TName("Contact::Hooks");
-	if (_contact) s += " " + GetString(_contact);
-	s += ">";
-	return s;
+    string s = "<" + _TName("Contact::Hooks");
+    if (_contact) s += " " + getString(_contact);
+    s += ">";
+    return s;
 }
 
 
@@ -454,65 +454,65 @@ string Contact_Hooks::_GetString() const
 
 Contact_Hooks::Locator::Locator(const Contact* contact)
 // ****************************************************
-:	Inherit(),
-	_contact(contact),
-	_hook(NULL)
+:    Inherit(),
+    _contact(contact),
+    _hook(NULL)
 {
-	if (_contact) _hook = ((Contact*)_contact)->GetBodyHook();
+    if (_contact) _hook = ((Contact*)_contact)->getBodyHook();
 }
 
 Contact_Hooks::Locator::Locator(const Locator& locator)
 // ****************************************************
-:	Inherit(),
-	_contact(locator._contact),
-	_hook(locator._hook)
+:    Inherit(),
+    _contact(locator._contact),
+    _hook(locator._hook)
 {
 }
 
 Contact_Hooks::Locator& Contact_Hooks::Locator::operator=(const Locator& locator)
 // ******************************************************************************
 {
-	_contact = locator._contact;
-	_hook = locator._hook;
-	return *this;
+    _contact = locator._contact;
+    _hook = locator._hook;
+    return *this;
 }
 
-Hook* Contact_Hooks::Locator::GetElement() const
+Hook* Contact_Hooks::Locator::getElement() const
 // *********************************************
 {
-	return _hook;
+    return _hook;
 }
 
-Locator<Hook*>* Contact_Hooks::Locator::GetClone() const
+Locator<Hook*>* Contact_Hooks::Locator::getClone() const
 // *****************************************************
 {
-	return new Locator(*this);
+    return new Locator(*this);
 }
 
 bool Contact_Hooks::Locator::IsValid() const
 // *****************************************
 {
-	return (_hook != NULL);
+    return (_hook != NULL);
 }
 
 void Contact_Hooks::Locator::Progress()
 // ************************************
 {
-	if (_hook) {
-		if (_hook == ((Contact*)_contact)->GetBodyHook())
-			_hook = ((Contact*)_contact)->GetAnchorHook();
-		else
-			_hook = NULL;
-	}
+    if (_hook) {
+        if (_hook == ((Contact*)_contact)->getBodyHook())
+            _hook = ((Contact*)_contact)->getAnchorHook();
+        else
+            _hook = NULL;
+    }
 }
 
-string Contact_Hooks::Locator::_GetString() const
+string Contact_Hooks::Locator::_getString() const
 // **********************************************
 {
-	string s = "<" + _TName("Contact::Hooks::Locator");
-	if (_contact) s += " " + GetString(_contact);
-	s += ">";
-	return s;
+    string s = "<" + _TName("Contact::Hooks::Locator");
+    if (_contact) s += " " + getString(_contact);
+    s += ">";
+    return s;
 }
 
 } // End of Hurricane namespace.

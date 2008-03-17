@@ -45,9 +45,9 @@ typedef GenericFilter<Interval> IntervalFilter;
 #define for_each_interval(interval, intervals)\
 /*********************************************/\
 {\
-	IntervalLocator _locator = intervals.GetLocator();\
+	IntervalLocator _locator = intervals.getLocator();\
 	while (_locator.IsValid()) {\
-		Interval interval = _locator.GetElement();\
+		Interval interval = _locator.getElement();\
 		_locator.Progress();
 
 

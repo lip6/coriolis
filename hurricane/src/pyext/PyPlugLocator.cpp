@@ -52,8 +52,8 @@
 
 
 
-# include  "PyPlugLocator.h"
-# include  "PyPlug.h"
+#include "PyPlugLocator.h"
+#include "PyPlug.h"
 
 
 namespace  Isobar {
@@ -65,16 +65,16 @@ USING_NAMESPACE_HURRICANE
 extern "C" {
 
 
-# undef   ACCESS_OBJECT
-# define  ACCESS_OBJECT           _object
-# define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Locator<Plug*>,locator,function)
+#undef   ACCESS_OBJECT
+#define  ACCESS_OBJECT           _object
+#define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Locator<Plug*>,locator,function)
 
 
 // x=================================================================x
 // |            "PyPlugLocator" Python Module Code Part              |
 // x=================================================================x
 
-# if defined(__PYTHON_MODULE__)
+#if defined(__PYTHON_MODULE__)
 
 
   // x-------------------------------------------------------------x
@@ -103,8 +103,8 @@ extern "C" {
   PyMethodDef PyPlugLocator_Methods[] =
     { { "IsValid"        , (PyCFunction)PyPlugLocator_IsValid    , METH_NOARGS , "Returns true while the walk has not exhausted the set of elements, else false." }
     , { "Progress"       , (PyCFunction)PyPlugLocator_Progress   , METH_NOARGS , "Moves forward the locator to the following element." }
-    , { "GetElement"     , (PyCFunction)PyPlugLocator_GetElement , METH_NOARGS , "Returns the current element (or the value Type() when the locator is not or no longer valid)." }
-    , { "GetClone"       , (PyCFunction)PyPlugLocator_GetClone   , METH_NOARGS , "This function allocates and returns a new locator that will have the same visiting course than the remaining one of the locator being cloned." }
+    , { "getElement"     , (PyCFunction)PyPlugLocator_getElement , METH_NOARGS , "Returns the current element (or the value Type() when the locator is not or no longer valid)." }
+    , { "getClone"       , (PyCFunction)PyPlugLocator_getClone   , METH_NOARGS , "This function allocates and returns a new locator that will have the same visiting course than the remaining one of the locator being cloned." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 
@@ -120,7 +120,7 @@ extern "C" {
 
 
 
-# else  // End of Python Module Code Part.
+#else  // End of Python Module Code Part.
 
 
 // x=================================================================x
@@ -133,7 +133,7 @@ extern "C" {
   PyTypeRootObjectDefinitions(PlugLocator)
 
 
-# endif  // End of Shared Library Code Part.
+#endif  // End of Shared Library Code Part.
 
 
 }  // End of extern "C".

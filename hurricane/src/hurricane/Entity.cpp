@@ -20,71 +20,71 @@ namespace Hurricane {
 
 Entity::Entity()
 // *************
-:	Inherit()
+:    Inherit()
 {
 }
 
-void Entity::_PreDelete()
+void Entity::_preDestroy()
 // **********************
 {
-// trace << "entering Entity::_PreDelete: " << this << endl;
+// trace << "entering Entity::_preDestroy: " << this << endl;
 // trace_in();
 
     vector<Entity*> slaveEntities;
     SlaveEntityMap::iterator  it;
     SlaveEntityMap::iterator  end;
-    GetCell()->_GetSlaveEntities(this,it,end);
+    getCell()->_getSlaveEntities(this,it,end);
     for(; it != end ; it++)
       slaveEntities.push_back(it->second);
     for(; slaveEntities.size() ; slaveEntities.pop_back()) {
       cerr << "Erasing " << slaveEntities.back() << endl;
-      slaveEntities.back()->Delete();
+      slaveEntities.back()->destroy();
     }
 
-	Quark* quark = _GetQuark();
-	if (quark) quark->Delete();
+    Quark* quark = _getQuark();
+    if (quark) quark->destroy();
 
-	stack<SharedPath*> sharedPathStack;
-	for_each_instance(instance, GetCell()->GetSlaveInstances()) {
-		SharedPath* sharedPath = instance->_GetSharedPath(NULL);
-		if (sharedPath) sharedPathStack.push(sharedPath);
-		end_for;
-	}
-	while (!sharedPathStack.empty()) {
-		SharedPath* sharedPath = sharedPathStack.top();
-		sharedPathStack.pop();
-		Quark* quark = _GetQuark(sharedPath);
-		if (quark) quark->Delete();
-		Cell* cell = sharedPath->GetOwnerCell();
-		for_each_instance(instance, cell->GetSlaveInstances()) {
-			SharedPath* sharedPath2 = instance->_GetSharedPath(sharedPath);
-			if (sharedPath2) sharedPathStack.push(sharedPath2);
-			end_for;
-		}
-	}
+    stack<SharedPath*> sharedPathStack;
+    for_each_instance(instance, getCell()->getSlaveInstances()) {
+        SharedPath* sharedPath = instance->_getSharedPath(NULL);
+        if (sharedPath) sharedPathStack.push(sharedPath);
+        end_for;
+    }
+    while (!sharedPathStack.empty()) {
+        SharedPath* sharedPath = sharedPathStack.top();
+        sharedPathStack.pop();
+        Quark* quark = _getQuark(sharedPath);
+        if (quark) quark->destroy();
+        Cell* cell = sharedPath->getOwnerCell();
+        for_each_instance(instance, cell->getSlaveInstances()) {
+            SharedPath* sharedPath2 = instance->_getSharedPath(sharedPath);
+            if (sharedPath2) sharedPathStack.push(sharedPath2);
+            end_for;
+        }
+    }
 
-	Inherit::_PreDelete();
+    Inherit::_preDestroy();
 
-// trace << "exiting Entity::_PreDelete:" << endl;
+// trace << "exiting Entity::_preDestroy:" << endl;
 // trace_out();
 }
 
-string Entity::_GetString() const
+string Entity::_getString() const
 // ******************************
 {
-	return Inherit::_GetString();
+    return Inherit::_getString();
 }
 
-Record* Entity::_GetRecord() const
+Record* Entity::_getRecord() const
 // *************************
 {
-	Record* record = Inherit::_GetRecord();
-	if (record) {
-		Occurrence occurrence = Occurrence(this);
-		if (occurrence.HasProperty())
-			record->Add(GetSlot("Occurrence", occurrence));
-	}
-	return record;
+    Record* record = Inherit::_getRecord();
+    if (record) {
+        Occurrence occurrence = Occurrence(this);
+        if (occurrence.HasProperty())
+            record->Add(getSlot("Occurrence", occurrence));
+    }
+    return record;
 }
 
 

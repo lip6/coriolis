@@ -91,8 +91,8 @@ extern "C" {
   LocatorGetCloneAttribute(Reference)
 
 
-  // Standart Delete (Attribute).
-  DirectDeleteAttribute(PyReferenceLocator_Delete,PyReferenceLocator)
+  // Standart destroy (Attribute).
+  DirectDestroyAttribute(PyReferenceLocator_destroy, PyReferenceLocator)
 
 
 
@@ -103,10 +103,10 @@ extern "C" {
   PyMethodDef PyReferenceLocator_Methods[] =
     { { "IsValid"        , (PyCFunction)PyReferenceLocator_IsValid    , METH_NOARGS , "Returns true while the walk has not exhausted the set of elements, else false." }
     , { "Progress"       , (PyCFunction)PyReferenceLocator_Progress   , METH_NOARGS , "Moves forward the locator to the following element." }
-    , { "GetElement"     , (PyCFunction)PyReferenceLocator_GetElement , METH_NOARGS , "Returns the current element (or the value Type() when the locator is not or no longer valid)." }
-    , { "GetClone"       , (PyCFunction)PyReferenceLocator_GetClone   , METH_NOARGS , "This function allocates and returns a new locator that will have the same visiting course than the remaining one of the locator being cloned." }
-    , { "Delete"         , (PyCFunction)PyReferenceLocator_Delete     , METH_NOARGS
-                         , "Delete associated hurricane object, the python object remains." }
+    , { "getElement"     , (PyCFunction)PyReferenceLocator_getElement , METH_NOARGS , "Returns the current element (or the value Type() when the locator is not or no longer valid)." }
+    , { "getClone"       , (PyCFunction)PyReferenceLocator_getClone   , METH_NOARGS , "This function allocates and returns a new locator that will have the same visiting course than the remaining one of the locator being cloned." }
+    , { "destroy"        , (PyCFunction)PyReferenceLocator_destroy    , METH_NOARGS
+                         , "destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

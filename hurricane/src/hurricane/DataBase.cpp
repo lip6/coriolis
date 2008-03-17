@@ -24,73 +24,73 @@ static DataBase* DATA_BASE = NULL;
 
 DataBase::DataBase()
 // *****************
-:	Inherit(),
-	_technology(NULL),
-	_rootLibrary(NULL)
+:    Inherit(),
+    _technology(NULL),
+    _rootLibrary(NULL)
 {
-	if (DATA_BASE)
-		throw Error("Can't create " + _TName("DataBase") + " : already exists");
+    if (DATA_BASE)
+        throw Error("Can't create " + _TName("DataBase") + " : already exists");
 }
 
 DataBase* DataBase::Create()
 // *************************
 {
-	DataBase* dataBase = new DataBase();
+    DataBase* dataBase = new DataBase();
 
-	dataBase->_PostCreate();
+    dataBase->_postCreate();
 
-	return dataBase;
+    return dataBase;
 }
 
-void DataBase::_PostCreate()
+void DataBase::_postCreate()
 // *************************
 {
-	Inherit::_PostCreate();
+    Inherit::_postCreate();
 
-	DATA_BASE = this;
+    DATA_BASE = this;
 }
 
-void DataBase::_PreDelete()
+void DataBase::_preDestroy()
 // ************************
 {
-	OpenUpdateSession();
-	Inherit::_PreDelete();
+    OpenUpdateSession();
+    Inherit::_preDestroy();
 
-	if (_rootLibrary) _rootLibrary->Delete();
-	if (_technology) _technology->Delete();
-	CloseUpdateSession ();
+    if (_rootLibrary) _rootLibrary->destroy();
+    if (_technology) _technology->destroy();
+    CloseUpdateSession ();
 
-	DATA_BASE = NULL;
+    DATA_BASE = NULL;
 }
 
-string DataBase::_GetString() const
+string DataBase::_getString() const
 // ********************************
 {
-	return Inherit::_GetString();
+    return Inherit::_getString();
 }
 
-Record* DataBase::_GetRecord() const
+Record* DataBase::_getRecord() const
 // ***************************
 {
-	Record* record = Inherit::_GetRecord();
-	if (record) {
-		record->Add(GetSlot("Technology", _technology));
-		record->Add(GetSlot("RootLibrary", _rootLibrary));
-		record->Add(GetSlot("Precision", GetPrecision()));
-		record->Add(GetSlot("Resolution", GetValueString(1)));
-		record->Add(GetSlot("GridStep", GetValueString(GetGridStep())));
-	}
-	return record;
+    Record* record = Inherit::_getRecord();
+    if (record) {
+        record->Add(getSlot("Technology", _technology));
+        record->Add(getSlot("RootLibrary", _rootLibrary));
+        record->Add(getSlot("Precision", getPrecision()));
+        record->Add(getSlot("Resolution", getValueString(1)));
+        record->Add(getSlot("GridStep", getValueString(getGridStep())));
+    }
+    return record;
 }
 
 // ****************************************************************************************************
 // Generic functions
 // ****************************************************************************************************
 
-DataBase* GetDataBase()
+DataBase* getDataBase()
 // ********************
 {
-	return DATA_BASE;
+    return DATA_BASE;
 }
 
 

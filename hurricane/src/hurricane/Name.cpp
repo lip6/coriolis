@@ -19,153 +19,153 @@ Name::Name()
 // *********
 :  _sharedName(NULL)
 {
-	string s = "";
-	if (!SharedName::_SHARED_NAME_MAP)
-		_sharedName = new SharedName(s);
-	else {
-		SharedName::SharedNameMap::iterator iterator =
-			SharedName::_SHARED_NAME_MAP->find(&(string&)s);
-		if (iterator != SharedName::_SHARED_NAME_MAP->end())
-			_sharedName = (*iterator).second;
-		else
-			_sharedName = new SharedName(s);
-	}
+    string s = "";
+    if (!SharedName::_SHARED_NAME_MAP)
+        _sharedName = new SharedName(s);
+    else {
+        SharedName::SharedNameMap::iterator iterator =
+            SharedName::_SHARED_NAME_MAP->find(&(string&)s);
+        if (iterator != SharedName::_SHARED_NAME_MAP->end())
+            _sharedName = (*iterator).second;
+        else
+            _sharedName = new SharedName(s);
+    }
 
-	assert(_sharedName);
+    assert(_sharedName);
 
-	_sharedName->Capture();
+    _sharedName->Capture();
 }
 
 Name::Name(const char* c)
 // **********************
 :  _sharedName(NULL)
 {
-	string s = c;
-	if (!SharedName::_SHARED_NAME_MAP)
-		_sharedName = new SharedName(s);
-	else {
-		SharedName::SharedNameMap::iterator iterator =
-			SharedName::_SHARED_NAME_MAP->find(&(string&)s);
-		if (iterator != SharedName::_SHARED_NAME_MAP->end())
-			_sharedName = (*iterator).second;
-		else
-			_sharedName = new SharedName(s);
-	}
+    string s = c;
+    if (!SharedName::_SHARED_NAME_MAP)
+        _sharedName = new SharedName(s);
+    else {
+        SharedName::SharedNameMap::iterator iterator =
+            SharedName::_SHARED_NAME_MAP->find(&(string&)s);
+        if (iterator != SharedName::_SHARED_NAME_MAP->end())
+            _sharedName = (*iterator).second;
+        else
+            _sharedName = new SharedName(s);
+    }
 
-	assert(_sharedName);
+    assert(_sharedName);
 
-	_sharedName->Capture();
+    _sharedName->Capture();
 }
 
 Name::Name(const string& s)
 // ************************
 :  _sharedName(NULL)
 {
-	if (!SharedName::_SHARED_NAME_MAP)
-		_sharedName = new SharedName(s);
-	else {
-		SharedName::SharedNameMap::iterator iterator =
-			SharedName::_SHARED_NAME_MAP->find(&(string&)s);
-		if (iterator != SharedName::_SHARED_NAME_MAP->end())
-			_sharedName = (*iterator).second;
-		else
-			_sharedName = new SharedName(s);
-	}
+    if (!SharedName::_SHARED_NAME_MAP)
+        _sharedName = new SharedName(s);
+    else {
+        SharedName::SharedNameMap::iterator iterator =
+            SharedName::_SHARED_NAME_MAP->find(&(string&)s);
+        if (iterator != SharedName::_SHARED_NAME_MAP->end())
+            _sharedName = (*iterator).second;
+        else
+            _sharedName = new SharedName(s);
+    }
 
-	assert(_sharedName);
+    assert(_sharedName);
 
-	_sharedName->Capture();
+    _sharedName->Capture();
 }
 
 Name::Name(const Name& name)
 // *************************
 :  _sharedName(name._sharedName)
 {
-	_sharedName->Capture();
+    _sharedName->Capture();
 }
 
 Name::~Name()
 // **********
 {
-	_sharedName->Release();
+    _sharedName->Release();
 }
 
 Name& Name::operator=(const Name& name)
 // ************************************
 {
-	SharedName* sharedName = name._sharedName;
-	if (sharedName != _sharedName) {
-		_sharedName->Release();
-		_sharedName = sharedName;
-		_sharedName->Capture();
-	}
-	return *this;
+    SharedName* sharedName = name._sharedName;
+    if (sharedName != _sharedName) {
+        _sharedName->Release();
+        _sharedName = sharedName;
+        _sharedName->Capture();
+    }
+    return *this;
 }
 
 bool Name::operator==(const Name& name) const
 // ******************************************
 {
-	return (_sharedName == name._sharedName);
+    return (_sharedName == name._sharedName);
 }
 
 bool Name::operator!=(const Name& name) const
 // ******************************************
 {
-	return (_sharedName != name._sharedName);
+    return (_sharedName != name._sharedName);
 }
 
 bool Name::operator<(const Name& name) const
 // *****************************************
 {
-	return ((_sharedName != name._sharedName) &&
-			  (_sharedName->_string < name._sharedName->_string));
+    return ((_sharedName != name._sharedName) &&
+              (_sharedName->_string < name._sharedName->_string));
 }
 
 bool Name::operator<=(const Name& name) const
 // ******************************************
 {
-	return ((_sharedName == name._sharedName) ||
-			  (_sharedName->_string < name._sharedName->_string));
+    return ((_sharedName == name._sharedName) ||
+              (_sharedName->_string < name._sharedName->_string));
 }
 
 bool Name::operator>(const Name& name) const
 // *****************************************
 {
-	return ((_sharedName != name._sharedName) &&
-			  (_sharedName->_string > name._sharedName->_string));
+    return ((_sharedName != name._sharedName) &&
+              (_sharedName->_string > name._sharedName->_string));
 }
 
 bool Name::operator>=(const Name& name) const
 // ******************************************
 {
-	return ((_sharedName == name._sharedName) ||
-			  (_sharedName->_string >= name._sharedName->_string));
+    return ((_sharedName == name._sharedName) ||
+              (_sharedName->_string >= name._sharedName->_string));
 }
 
 char Name::operator[](unsigned index) const
 // ****************************************
 {
-	return _sharedName->_string[index];
+    return _sharedName->_string[index];
 }
 
 bool Name::IsEmpty() const
 // ***********************
 {
-	return _sharedName->_string.empty();
+    return _sharedName->_string.empty();
 }
 
-string Name::_GetString() const
+string Name::_getString() const
 // ****************************
 {
-	return _sharedName->_string;
+    return _sharedName->_string;
 }
 
-Record* Name::_GetRecord() const
+Record* Name::_getRecord() const
 // ***********************
 {
-	Record* record = new Record(GetString(this));
-	record->Add(GetSlot("SharedName", _sharedName));
-	return record;
+    Record* record = new Record(getString(this));
+    record->Add(getSlot("SharedName", _sharedName));
+    return record;
 }
 
 

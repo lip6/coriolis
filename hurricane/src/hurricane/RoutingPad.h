@@ -31,71 +31,68 @@ class RoutingPad : public Component {
 // Types
 // *****
 
-	public: typedef Component Inherit;
+    public: typedef Component Inherit;
 
 
 // Attributes
 // **********
 
-	private:   Unit _x;
-	private:   Unit _y;
-	private:   Occurrence _occurrence;
+    private:   Unit _x;
+    private:   Unit _y;
+    private:   Occurrence _occurrence;
 
 
 
 // Constructors
 // ************
 
-	protected: RoutingPad(Net* net, const Point& p, Occurrence occurrence = Occurrence());
-	public: static RoutingPad* Create(Net* net, Occurrence occurrence);
+    protected: RoutingPad(Net* net, const Point& p, Occurrence occurrence = Occurrence());
+    public: static RoutingPad* Create(Net* net, Occurrence occurrence);
 
 // Accessors
 // *********
 
-	//public: virtual Hooks GetHooks() const;
-	public: virtual Unit GetX() const;
-	public: virtual Unit GetY() const;
-	public: virtual Box GetBoundingBox() const;
-	public: virtual Layer* GetLayer() const;
-	public: virtual Box GetBoundingBox(const BasicLayer* basicLayer) const;
-        public: virtual Point GetCenter() const;
-	public: Occurrence GetOccurrence() const { return _occurrence; };
-    public: Occurrence GetPlugOccurrence();
-    public: Point GetSourcePosition() const;
-    public: Point GetTargetPosition() const;
-    public: Unit GetSourceX() const;
-    public: Unit GetSourceY() const;
-    public: Unit GetTargetX() const;
-    public: Unit GetTargetY() const;
+    //public: virtual Hooks getHooks() const;
+    public: virtual Unit getX() const;
+    public: virtual Unit getY() const;
+    public: virtual Box getBoundingBox() const;
+    public: virtual Layer* getLayer() const;
+    public: virtual Box getBoundingBox(const BasicLayer* basicLayer) const;
+        public: virtual Point getCenter() const;
+    public: Occurrence getOccurrence() const { return _occurrence; };
+    public: Occurrence getPlugOccurrence();
+    public: Point getSourcePosition() const;
+    public: Point getTargetPosition() const;
+    public: Unit getSourceX() const;
+    public: Unit getSourceY() const;
+    public: Unit getTargetX() const;
+    public: Unit getTargetY() const;
 
 // Updators
 // ********
 
-	public: virtual void Translate(const Unit& dx, const Unit& dy);
+    public: virtual void Translate(const Unit& dx, const Unit& dy);
 
-	public: void SetX(const Unit& x);
-	public: void SetY(const Unit& y);
-	public: void SetPosition(const Unit& x, const Unit& y);
-	public: void SetPosition(const Point& position);
-	public: void SetOffset(const Unit& x, const Unit& y);
+    public: void SetX(const Unit& x);
+    public: void SetY(const Unit& y);
+    public: void SetPosition(const Unit& x, const Unit& y);
+    public: void SetPosition(const Point& position);
+    public: void SetOffset(const Unit& x, const Unit& y);
     public: void SetExternalComponent(Component* component);
     public: void RestorePlugOccurrence();
 
 // Others
 // ******
 
-	protected: virtual void _PostCreate();
-	protected: virtual void _PreDelete();
+    protected: virtual void _postCreate();
+    protected: virtual void _preDestroy();
 
-	public: virtual string _GetTypeName() const {return _TName("RoutingPad");};
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
+    public: virtual string _getTypeName() const {return _TName("RoutingPad");};
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
 
-    public: Component* _GetEntityAsComponent () const;
-    public: Segment* _GetEntityAsSegment () const;
-//    public: bool _IsInterceptedBy(View* view, const Point& point, const Unit& aperture) const;
-//	public: virtual void _Draw(View* view, BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation);
-//	public: virtual void _Highlight(View* view, const Box& updateArea, const Transformation& transformation);
+    public: Component* _getEntityAsComponent () const;
+    public: Segment* _getEntityAsSegment () const;
 
 };
 

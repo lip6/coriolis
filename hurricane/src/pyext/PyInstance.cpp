@@ -134,24 +134,24 @@ extern "C" {
   // Standart Accessors (Attributes).
 
 
-  // Standart Delete (Attribute).
-  DBoDeleteAttribute(PyInstance_Delete,PyInstance)
+  // Standart destroy (Attribute).
+  DBoDestroyAttribute(PyInstance_destroy,PyInstance)
 
 
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_GetName ()"
+  // Attribute Method  :  "PyInstance_getName ()"
 
-  static PyObject* PyInstance_GetName ( PyInstance *self ) {
-    trace << "PyInstance_GetName ()" << endl;
-    METHOD_HEAD ( "Instance.GetName()" )
+  static PyObject* PyInstance_getName ( PyInstance *self ) {
+    trace << "PyInstance_getName ()" << endl;
+    METHOD_HEAD ( "Instance.getName()" )
 
     PyName* pyName = PyObject_NEW ( PyName, &PyTypeName );
     if ( pyName == NULL ) { return NULL; }
 
     HTRY
-    pyName->_object = new Name ( instance->GetName() );
+    pyName->_object = new Name ( instance->getName() );
     HCATCH
     
     return ( (PyObject*)pyName ); 
@@ -161,32 +161,32 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_GetMasterCell ()"
+  // Attribute Method  :  "PyInstance_getMasterCell ()"
 
-  static PyObject* PyInstance_GetMasterCell ( PyInstance *self ) {
-    trace << "PyInstance_GetMasterCell ()" << endl;
+  static PyObject* PyInstance_getMasterCell ( PyInstance *self ) {
+    trace << "PyInstance_getMasterCell ()" << endl;
     
     Cell* cell = NULL;
 
     HTRY
-    METHOD_HEAD ( "Instance.GetMasterCell()" )
-    cell = instance->GetMasterCell ();
+    METHOD_HEAD ( "Instance.getMasterCell()" )
+    cell = instance->getMasterCell ();
     HCATCH
 
     return PyCell_Link ( cell );
   }
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_GetPlacementStatus ()"
+  // Attribute Method  :  "PyInstance_getPlacementStatus ()"
 
-  static PyObject* PyInstance_GetPlacementStatus ( PyInstance *self ) {
-    trace << "PyInstance_GetPlacementStatus ()" << endl;
+  static PyObject* PyInstance_getPlacementStatus ( PyInstance *self ) {
+    trace << "PyInstance_getPlacementStatus ()" << endl;
     
-    METHOD_HEAD ( "Instance.GetPlacementStatus()" );
+    METHOD_HEAD ( "Instance.getPlacementStatus()" );
 
     PyObject* pyObject = NULL;
     HTRY
-    pyObject = (PyObject*)Py_BuildValue("i",(long)instance->GetPlacementStatus().GetCode());
+    pyObject = (PyObject*)Py_BuildValue("i",(long)instance->getPlacementStatus().getCode());
     HCATCH
 
     return pyObject;
@@ -213,17 +213,17 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_GetTransformation ()"
+  // Attribute Method  :  "PyInstance_getTransformation ()"
 
-  static PyObject* PyInstance_GetTransformation ( PyInstance *self ) {
-    trace << "PyInstance_GetTransformation ()" << endl;
-    METHOD_HEAD ( "Instance.GetTransformation()" );
+  static PyObject* PyInstance_getTransformation ( PyInstance *self ) {
+    trace << "PyInstance_getTransformation ()" << endl;
+    METHOD_HEAD ( "Instance.getTransformation()" );
 
     PyTransformation* resultPyTransf = PyObject_NEW ( PyTransformation, &PyTypeTransformation );
     if ( resultPyTransf == NULL ) { return NULL; }
 
     HTRY
-    resultPyTransf->_object = new Transformation ( instance->GetTransformation () );
+    resultPyTransf->_object = new Transformation ( instance->getTransformation () );
     HCATCH
 
     return ( (PyObject*)resultPyTransf );
@@ -233,20 +233,20 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_GetPlug ()"
+  // Attribute Method  :  "PyInstance_getPlug ()"
 
-  static PyObject* PyInstance_GetPlug ( PyInstance *self, PyObject* args ) {
-    trace << "PyInstance_GetPlug ()" << endl;
+  static PyObject* PyInstance_getPlug ( PyInstance *self, PyObject* args ) {
+    trace << "PyInstance_getPlug ()" << endl;
 
     Plug* plug = NULL;
     
     HTRY
-    METHOD_HEAD ( "Instance.GetPlug()" )
+    METHOD_HEAD ( "Instance.getPlug()" )
 
     PyNet* masterNet;
-    if ( ! ParseOneArg ( "Instance.GetPlug", args, NET_ARG, (PyObject**)&masterNet ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Instance.getPlug", args, NET_ARG, (PyObject**)&masterNet ) ) return ( NULL );
  
-    plug = instance->GetPlug( PYNET_O(masterNet) );
+    plug = instance->getPlug( PYNET_O(masterNet) );
     HCATCH
 
     return PyPlug_Link ( plug );
@@ -256,21 +256,21 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_GetPlugsLocator ()"
+  // Attribute Method  :  "PyInstance_getPlugsLocator ()"
 
-  static PyObject* PyInstance_GetPlugsLocator ( PyInstance *self ) {
-    trace << "PyInstance_GetPlugsLocator ()" << endl;
-    METHOD_HEAD ( "Instance.GetPlugsLocator()" )
+  static PyObject* PyInstance_getPlugsLocator ( PyInstance *self ) {
+    trace << "PyInstance_getPlugsLocator ()" << endl;
+    METHOD_HEAD ( "Instance.getPlugsLocator()" )
 
     PyPlugLocator* pyPlugLocator = NULL;
 
     HTRY
-    Plugs plugs = instance->GetPlugs ();
+    Plugs plugs = instance->getPlugs ();
 
     pyPlugLocator = PyObject_NEW ( PyPlugLocator, &PyTypePlugLocator );
     if (pyPlugLocator == NULL) { return NULL; }
     
-    pyPlugLocator->_object = plugs.GetLocator ();
+    pyPlugLocator->_object = plugs.getLocator ();
     HCATCH
 
     return ( (PyObject*)pyPlugLocator );
@@ -280,22 +280,22 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_GetConnectedPlugsLocator ()"
+  // Attribute Method  :  "PyInstance_getConnectedPlugsLocator ()"
 
-  static PyObject* PyInstance_GetConnectedPlugsLocator ( PyInstance *self )
+  static PyObject* PyInstance_getConnectedPlugsLocator ( PyInstance *self )
   {
-    trace << "PyInstance_GetConnectedPlugsLocator ()" << endl;
-    METHOD_HEAD ( "Instance.GetConnectedPlugsLocator()" )
+    trace << "PyInstance_getConnectedPlugsLocator ()" << endl;
+    METHOD_HEAD ( "Instance.getConnectedPlugsLocator()" )
 
     PyPlugLocator* pyPlugLocator = NULL;
 
     HTRY
-    Plugs plugs = instance->GetConnectedPlugs ();
+    Plugs plugs = instance->getConnectedPlugs ();
 
     pyPlugLocator = PyObject_NEW ( PyPlugLocator, &PyTypePlugLocator );
     if (pyPlugLocator == NULL) { return NULL; }
     
-    pyPlugLocator->_object = plugs.GetLocator ();
+    pyPlugLocator->_object = plugs.getLocator ();
     HCATCH
 
     return ( (PyObject*)pyPlugLocator );
@@ -305,22 +305,22 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_GetUnconnectedPlugsLocator ()"
+  // Attribute Method  :  "PyInstance_getUnconnectedPlugsLocator ()"
 
-  static PyObject* PyInstance_GetUnconnectedPlugsLocator ( PyInstance *self )
+  static PyObject* PyInstance_getUnconnectedPlugsLocator ( PyInstance *self )
   {
-    trace << "PyInstance_GetUnconnectedPlugsLocator ()" << endl;
-    METHOD_HEAD ( "Instance.GetUnconnectedPlugsLocator()" )
+    trace << "PyInstance_getUnconnectedPlugsLocator ()" << endl;
+    METHOD_HEAD ( "Instance.getUnconnectedPlugsLocator()" )
 
     PyPlugLocator* pyPlugLocator = NULL;
 
     HTRY
-    Plugs plugs = instance->GetUnconnectedPlugs ();
+    Plugs plugs = instance->getUnconnectedPlugs ();
 
     pyPlugLocator = PyObject_NEW ( PyPlugLocator, &PyTypePlugLocator );
     if (pyPlugLocator == NULL) { return NULL; }
     
-    pyPlugLocator->_object = plugs.GetLocator ();
+    pyPlugLocator->_object = plugs.getLocator ();
     HCATCH
 
     return ( (PyObject*)pyPlugLocator );
@@ -330,18 +330,18 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_GetAbutmentBox ()"
+  // Attribute Method  :  "PyInstance_getAbutmentBox ()"
 
-  static PyObject* PyInstance_GetAbutmentBox ( PyInstance *self )
+  static PyObject* PyInstance_getAbutmentBox ( PyInstance *self )
   {
-    trace << "PyInstance_GetAbutmentBox ()" << endl;
-    METHOD_HEAD ( "Instance.GetAbutmentBox()" )
+    trace << "PyInstance_getAbutmentBox ()" << endl;
+    METHOD_HEAD ( "Instance.getAbutmentBox()" )
 
     PyBox* pyBox = PyObject_NEW ( PyBox, &PyTypeBox );
     if (pyBox == NULL) { return NULL; }
 
     HTRY
-    pyBox->_object = new Box ( instance->GetAbutmentBox() );
+    pyBox->_object = new Box ( instance->getAbutmentBox() );
     HCATCH
 
     return ( (PyObject*)pyBox );
@@ -421,17 +421,17 @@ extern "C" {
   // PyInstance Attribute Method table.
 
   PyMethodDef PyInstance_Methods[] =
-    { { "GetName"                   , (PyCFunction)PyInstance_GetName                   , METH_NOARGS , "Returns the instance name." }
-    , { "GetMasterCell"             , (PyCFunction)PyInstance_GetMasterCell             , METH_NOARGS , "Returns the cell model referenced by the instance." }
-    , { "GetTransformation"         , (PyCFunction)PyInstance_GetTransformation         , METH_NOARGS , "Returns the transformation associated to the instance." }
-    , { "GetPlacementStatus"        , (PyCFunction)PyInstance_GetPlacementStatus        , METH_NOARGS , "Returns the placement status of the instance." }
-    , { "GetPlug"                   , (PyCFunction)PyInstance_GetPlug                   , METH_VARARGS, "Returns the plug associated to the <masterNet> if it exists or else NULL (if the net is not external)." }
-    , { "GetPlugsLocator"           , (PyCFunction)PyInstance_GetPlugsLocator           , METH_NOARGS , "Returns the collection of instance plugs." }
-    , { "GetConnectedPlugsLocator"  , (PyCFunction)PyInstance_GetConnectedPlugsLocator  , METH_NOARGS , "Returns the collection of instance plugs which are effectively connected." }
-    , { "GetUnconnectedPlugsLocator", (PyCFunction)PyInstance_GetUnconnectedPlugsLocator, METH_NOARGS , "Returns the collection of instance plugs which are not connected." }
-    //, { "GetPath"                   , (PyCFunction)PyInstance_GetPath                   , METH_NOARGS , "Returns the path composed of the instance solely." }
-    //, { "GetPath"                   , (PyCFunction)PyInstance_GetPath                   , METH_VARARGS, "Returns the path resulting of the concatenation of the instance and the tail path (possibly empty)." }
-    , { "GetAbutmentBox"            , (PyCFunction)PyInstance_GetAbutmentBox            , METH_NOARGS , "Returns the abutment box of the instance, that is the abutment box of the master cell to which has been applied the instance transformation." }
+    { { "getName"                   , (PyCFunction)PyInstance_getName                   , METH_NOARGS , "Returns the instance name." }
+    , { "getMasterCell"             , (PyCFunction)PyInstance_getMasterCell             , METH_NOARGS , "Returns the cell model referenced by the instance." }
+    , { "getTransformation"         , (PyCFunction)PyInstance_getTransformation         , METH_NOARGS , "Returns the transformation associated to the instance." }
+    , { "getPlacementStatus"        , (PyCFunction)PyInstance_getPlacementStatus        , METH_NOARGS , "Returns the placement status of the instance." }
+    , { "getPlug"                   , (PyCFunction)PyInstance_getPlug                   , METH_VARARGS, "Returns the plug associated to the <masterNet> if it exists or else NULL (if the net is not external)." }
+    , { "getPlugsLocator"           , (PyCFunction)PyInstance_getPlugsLocator           , METH_NOARGS , "Returns the collection of instance plugs." }
+    , { "getConnectedPlugsLocator"  , (PyCFunction)PyInstance_getConnectedPlugsLocator  , METH_NOARGS , "Returns the collection of instance plugs which are effectively connected." }
+    , { "getUnconnectedPlugsLocator", (PyCFunction)PyInstance_getUnconnectedPlugsLocator, METH_NOARGS , "Returns the collection of instance plugs which are not connected." }
+    //, { "getPath"                   , (PyCFunction)PyInstance_getPath                   , METH_NOARGS , "Returns the path composed of the instance solely." }
+    //, { "getPath"                   , (PyCFunction)PyInstance_getPath                   , METH_VARARGS, "Returns the path resulting of the concatenation of the instance and the tail path (possibly empty)." }
+    , { "getAbutmentBox"            , (PyCFunction)PyInstance_getAbutmentBox            , METH_NOARGS , "Returns the abutment box of the instance, that is the abutment box of the master cell to which has been applied the instance transformation." }
     , { "IsTerminal"                , (PyCFunction)PyInstance_IsTerminal                , METH_NOARGS , "Returns true if the instance is a terminal instance." }
     , { "IsLeaf"                    , (PyCFunction)PyInstance_IsLeaf                    , METH_NOARGS , "Returns true if the instance is a leaf instance." }
     , { "IsBound"                   , (PyCFunction)PyInstance_IsPyBound                 , METH_NOARGS, "Returns true if the instance is bounded to the hurricane instance" }
@@ -439,8 +439,8 @@ extern "C" {
     , { "SetTransformation"         , (PyCFunction)PyInstance_SetTransformation         , METH_VARARGS, "Allows to modify the instance transformation." }
     , { "SetPlacementStatus"        , (PyCFunction)PyInstance_SetPlacementStatus        , METH_VARARGS, "Allows to modify the instance placement status." }
     , { "SetMasterCell"             , (PyCFunction)PyInstance_SetMasterCell             , METH_VARARGS, "Allows to change the cell referenced by this instance." }
-    , { "Delete"                    , (PyCFunction)PyInstance_Delete                    , METH_NOARGS
-                                    , "Delete associated hurricane object The python object remains." }
+    , { "destroy"                   , (PyCFunction)PyInstance_destroy                   , METH_NOARGS
+                                    , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 
@@ -472,15 +472,15 @@ extern "C" {
                            ,Converter,&arg3
                            ) ) return ( NULL );
 
-    if      ( __cs.GetObjectIds() == CELL_NAME_CELL_ARG       ) { instance = Instance::Create (  PYCELL_O(arg0)
+    if      ( __cs.getObjectIds() == CELL_NAME_CELL_ARG       ) { instance = Instance::Create (  PYCELL_O(arg0)
                                                                                               , *PYNAME_O(arg1)
                                                                                               ,  PYCELL_O(arg2) ); }
-    else if ( __cs.GetObjectIds() == CELL_NAME_CELL_TRANS_ARG ) { instance = Instance::Create (  PYCELL_O(arg0)
+    else if ( __cs.getObjectIds() == CELL_NAME_CELL_TRANS_ARG ) { instance = Instance::Create (  PYCELL_O(arg0)
                                                                                               , *PYNAME_O(arg1)
                                                                                               ,  PYCELL_O(arg2)
                                                                                               , *PYTRANSFORMATION_O(arg3)
                                                                                               ,  Instance::PlacementStatus::PLACED); } else {
-      cerr << __cs.GetObjectIds() << endl;
+      cerr << __cs.getObjectIds() << endl;
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Instance constructor." );
       return ( NULL );
     }

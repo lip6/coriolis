@@ -46,9 +46,9 @@ typedef GenericFilter<Reference*> ReferenceFilter;
 #define for_each_reference(reference, references)\
 /***************************************/\
 {\
-	ReferenceLocator _locator = references.GetLocator();\
+	ReferenceLocator _locator = references.getLocator();\
 	while (_locator.IsValid()) {\
-		Reference* reference = _locator.GetElement();\
+		Reference* reference = _locator.getElement();\
 		_locator.Progress();
 
 

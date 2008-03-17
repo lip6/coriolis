@@ -92,8 +92,8 @@ extern "C" {
   LocatorGetCloneAttribute(Cell)
 
 
-  // Standart Delete (Attribute).
-  DirectDeleteAttribute(PyCellLocator_Delete,PyCellLocator)
+  // Standard destroy (Attribute).
+  DirectDestroyAttribute(PyCellLocator_destroy, PyCellLocator)
 
 
 
@@ -103,10 +103,10 @@ extern "C" {
   PyMethodDef PyCellLocator_Methods[] =
     { { "IsValid"        , (PyCFunction)PyCellLocator_IsValid    , METH_NOARGS , "Returns true while the walk has not exhausted the set of elements, else false." }
     , { "Progress"       , (PyCFunction)PyCellLocator_Progress   , METH_NOARGS , "Moves forward the locator to the following element." }
-    , { "GetElement"     , (PyCFunction)PyCellLocator_GetElement , METH_NOARGS , "Returns the current element (or the value Type() when the locator is not or no longer valid)." }
-    , { "GetClone"       , (PyCFunction)PyCellLocator_GetClone   , METH_NOARGS , "This function allocates and returns a new locator that will have the same visiting course than the remaining one of the locator being cloned." }
-    , { "Delete"         , (PyCFunction)PyCellLocator_Delete     , METH_NOARGS
-                         , "Delete associated hurricane object, the python object remains." }
+    , { "getElement"     , (PyCFunction)PyCellLocator_getElement , METH_NOARGS , "Returns the current element (or the value Type() when the locator is not or no longer valid)." }
+    , { "getClone"       , (PyCFunction)PyCellLocator_getClone   , METH_NOARGS , "This function allocates and returns a new locator that will have the same visiting course than the remaining one of the locator being cloned." }
+    , { "destroy"        , (PyCFunction)PyCellLocator_destroy    , METH_NOARGS
+                         , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

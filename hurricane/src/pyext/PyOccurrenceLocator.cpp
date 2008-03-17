@@ -70,7 +70,7 @@ extern "C" {
 // |         "PyOccurrenceLocator" Python Module Code Part           |
 // x=================================================================x
 
-# if defined(__PYTHON_MODULE__)
+#if defined(__PYTHON_MODULE__)
 
 
   // x-------------------------------------------------------------x
@@ -78,23 +78,17 @@ extern "C" {
   // x-------------------------------------------------------------x
 
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyOccurrenceLocator_Create ()"
-
-  // Standart Accessors (Attributes).
-
   // Standart Predicates (Attributes).
   DirectGetBoolAttribute(PyOccurrenceLocator_IsValid,IsValid,PyOccurrenceLocator,Locator<Occurrence>)
 
-  // Standart Delete (Attribute).
-  DirectDeleteAttribute(PyOccurrenceLocator_Delete,PyOccurrenceLocator)
+  // Standart destroy (Attribute).
+  DirectDestroyAttribute(PyOccurrenceLocator_destroy, PyOccurrenceLocator)
 
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyOccurrenceLocator_Progress ()"
 
-  static PyObject* PyOccurrenceLocator_Progress ( PyOccurrenceLocator *self )
-  {
+  static PyObject* PyOccurrenceLocator_Progress ( PyOccurrenceLocator *self ) {
     trace << "OccurrenceLocator.Progress()" << endl;
 
     HTRY
@@ -108,19 +102,18 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyOccurrenceLocator_GetElement ()"
+  // Attribute Method  :  "PyOccurrenceLocator_getElement ()"
 
-  static PyObject* PyOccurrenceLocator_GetElement ( PyOccurrenceLocator *self )
-  {
-    trace << "OccurrenceLocator.GetElement()" << endl;
+  static PyObject* PyOccurrenceLocator_getElement ( PyOccurrenceLocator *self ) {
+    trace << "OccurrenceLocator.getElement()" << endl;
     
-    METHOD_HEAD ( "OccurrenceLocator.GetElement()" )
+    METHOD_HEAD ( "OccurrenceLocator.getElement()" )
       
     PyOccurrence* pyOccurrence = PyObject_NEW ( PyOccurrence, &PyTypeOccurrence );
     if ( pyOccurrence == NULL ) return NULL;
 
     HTRY
-    Occurrence  occurrence = locator->GetElement ();
+    Occurrence  occurrence = locator->getElement ();
     if ( occurrence == NULL )
         Py_RETURN_NONE;
 
@@ -132,13 +125,13 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyOccurrenceLocator_GetClone ()"
+  // Attribute Method  :  "PyOccurrenceLocator_getClone ()"
 
-  static PyObject* PyOccurrenceLocator_GetClone ( PyOccurrenceLocator *self )
+  static PyObject* PyOccurrenceLocator_getClone ( PyOccurrenceLocator *self )
   {
-    trace << "OccurrenceLocator.GetClone()" << endl;
+    trace << "OccurrenceLocator.getClone()" << endl;
     
-    METHOD_HEAD ( "OccurrenceLocator.GetClone()" )
+    METHOD_HEAD ( "OccurrenceLocator.getClone()" )
 
     PyOccurrenceLocator* pyOccurrenceLocator = NULL;
 
@@ -146,7 +139,7 @@ extern "C" {
     pyOccurrenceLocator = PyObject_NEW ( PyOccurrenceLocator, &PyTypeOccurrenceLocator );
     if ( pyOccurrenceLocator == NULL ) { return NULL; }
     
-    pyOccurrenceLocator->_object = locator->GetClone();
+    pyOccurrenceLocator->_object = locator->getClone();
     HCATCH
 
     return ( (PyObject*)pyOccurrenceLocator );
@@ -159,10 +152,10 @@ extern "C" {
   PyMethodDef PyOccurrenceLocator_Methods[] =
     { { "IsValid"        , (PyCFunction)PyOccurrenceLocator_IsValid    , METH_NOARGS , "Returns true while the walk has not exhausted the set of elements, else false." }
     , { "Progress"       , (PyCFunction)PyOccurrenceLocator_Progress   , METH_NOARGS , "Moves forward the locator to the following element." }
-    , { "GetElement"     , (PyCFunction)PyOccurrenceLocator_GetElement , METH_NOARGS , "Returns the current element (or the value Type() when the locator is not or no longer valid)." }
-    , { "GetClone"       , (PyCFunction)PyOccurrenceLocator_GetClone   , METH_NOARGS , "This function allocates and returns a new locator that will have the same visiting course than the remaining one of the locator being cloned." }
-    , { "Delete"         , (PyCFunction)PyOccurrenceLocator_Delete     , METH_NOARGS
-                         , "Delete associated hurricane object, the python object remains." }
+    , { "getElement"     , (PyCFunction)PyOccurrenceLocator_getElement , METH_NOARGS , "Returns the current element (or the value Type() when the locator is not or no longer valid)." }
+    , { "getClone"       , (PyCFunction)PyOccurrenceLocator_getClone   , METH_NOARGS , "This function allocates and returns a new locator that will have the same visiting course than the remaining one of the locator being cloned." }
+    , { "destroy"        , (PyCFunction)PyOccurrenceLocator_destroy    , METH_NOARGS
+                         , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

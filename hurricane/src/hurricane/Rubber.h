@@ -47,19 +47,19 @@ class Rubber : public Go {
 // Destructor
 // **********
 
-        public: virtual void Delete();
+        public: virtual void destroy();
 
 // Accessors
 // *********
 
-        public: virtual Cell* GetCell() const;
-        public: Net* GetNet() const {return _net;};
-        public: Hook* GetHook() const {return _hook;};
-        public: unsigned GetCount() const {return _count;};
-        public: Point GetCenter() const;
-        public: Point GetBarycenter() const;
-        public: virtual Box GetBoundingBox() const;
-        public: Hooks GetHooks() const;
+        public: virtual Cell* getCell() const;
+        public: Net* getNet() const {return _net;};
+        public: Hook* getHook() const {return _hook;};
+        public: unsigned getCount() const {return _count;};
+        public: Point getCenter() const;
+        public: Point getBarycenter() const;
+        public: virtual Box getBoundingBox() const;
+        public: Hooks getHooks() const;
 
 // Updators
 // ********
@@ -73,15 +73,15 @@ class Rubber : public Go {
 // ******
 
         public: static Rubber* _Create(Hook* hook);
-        protected: virtual void _PostCreate();
+        protected: virtual void _postCreate();
 
-        public: void _Delete();
-        protected: virtual void _PreDelete();
+        public: void _destroy();
+        protected: virtual void _preDestroy();
 
-        public: virtual string _GetTypeName() const {return _TName("Rubber");};
-        public: virtual string _GetString() const;
-        public: virtual Record* _GetRecord() const;
-        public: Rubber* _GetNextOfNetRubberSet() const {return _nextOfNetRubberSet;};
+        public: virtual string _getTypeName() const {return _TName("Rubber");};
+        public: virtual string _getString() const;
+        public: virtual Record* _getRecord() const;
+        public: Rubber* _getNextOfNetRubberSet() const {return _nextOfNetRubberSet;};
 
         public: void _SetNet(Net* net);
         public: void _SetHook(Hook* hook);
@@ -89,10 +89,6 @@ class Rubber : public Go {
 
         public: void _Capture();
         public: void _Release();
-
-        //public: virtual bool _IsInterceptedBy(View* view, const Point& point, const Unit& aperture) const;
-        //public: virtual void _Draw(View* view, BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation);
-        //public: virtual void _Highlight(View* view, const Box& updateArea, const Transformation& transformation);
 
 };
 

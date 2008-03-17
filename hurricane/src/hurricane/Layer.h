@@ -78,12 +78,12 @@ class Layer : public DBo {
 // Others
 // ******
 
-    protected: virtual void _PostCreate();
+    protected: virtual void _postCreate();
 
-    protected: virtual void _PreDelete();
+    protected: virtual void _preDestroy();
 
-    public: virtual string _GetString() const;
-    public: virtual Record* _GetRecord() const;
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
     public: virtual BasicLayer* _getSymbolicBasicLayer() = 0;
     public: Layer* _getNextOfTechnologyLayerMap() const {return _nextOfTechnologyLayerMap;};
 

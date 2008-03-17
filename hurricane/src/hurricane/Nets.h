@@ -46,10 +46,10 @@ typedef GenericFilter<Net*> NetFilter;
 #define for_each_net(net, nets)\
 /******************************/\
 {\
-	NetLocator _locator = nets.GetLocator();\
-	while (_locator.IsValid()) {\
-		Net* net = _locator.GetElement();\
-		_locator.Progress();
+    NetLocator _locator = nets.getLocator();\
+    while (_locator.IsValid()) {\
+        Net* net = _locator.getElement();\
+        _locator.Progress();
 
 
 

@@ -40,7 +40,7 @@ CompositeLayer* CompositeLayer::create(Technology* technology, const Name& name,
     CompositeLayer* compositeLayer =
         new CompositeLayer(technology, name, type, minimalSize, minimalSpacing);
 
-    compositeLayer->_PostCreate();
+    compositeLayer->_postCreate();
 
     return compositeLayer;
 }
@@ -48,7 +48,7 @@ CompositeLayer* CompositeLayer::create(Technology* technology, const Name& name,
 BasicLayers CompositeLayer::getBasicLayers() const
 // ***********************************************
 {
-    return GetCollection(_basicLayerList);
+    return getCollection(_basicLayerList);
 }
 
 Unit CompositeLayer::getContactSize(const BasicLayer* basicLayer) const
@@ -142,16 +142,16 @@ void CompositeLayer::remove(BasicLayer* basicLayer)
     _setExtractMask(extractMask);
 }
 
-string CompositeLayer::_GetString() const
+string CompositeLayer::_getString() const
 // **************************************
 {
-    string s = Inherit::_GetString();
+    string s = Inherit::_getString();
     /*
-    s.insert(s.length() - 1, " " + GetString(_type));
+    s.insert(s.length() - 1, " " + getString(_type));
     s.insert(s.length() - 1, " {");
     string separator = "";
-    for_each_basic_layer(basicLayer, GetBasicLayers()) {
-        s.insert(s.length() - 1, separator + GetString(basicLayer->GetName()));
+    for_each_basic_layer(basicLayer, getBasicLayers()) {
+        s.insert(s.length() - 1, separator + getString(basicLayer->getName()));
         separator = "|";
         end_for;
     }
@@ -160,21 +160,21 @@ string CompositeLayer::_GetString() const
     return s;
 }
 
-Record* CompositeLayer::_GetRecord() const
+Record* CompositeLayer::_getRecord() const
 // ***************************************
 {
-    Record* record = Inherit::_GetRecord();
+    Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(GetSlot("Type", &_type));
-        record->Add(GetSlot("BasicLayers", &_basicLayerList));
-        record->Add(GetSlot("ContactSizes", &_contactSizeMap));
-        record->Add(GetSlot("SegmentSizes", &_segmentSizeMap));
-        record->Add(GetSlot("SegmentExtentions", &_segmentExtentionMap));
-        record->Add(GetSlot("PadSizes", &_padSizeMap));
-        record->Add(GetSlot("MaximalContactSize", &_maximalContactSize));
-        record->Add(GetSlot("MaximalSegmentSize", &_maximalSegmentSize));
-        record->Add(GetSlot("MaximalSegmentExtention", &_maximalSegmentExtention));
-        record->Add(GetSlot("MaximalPadSize", &_maximalPadSize));
+        record->Add(getSlot("Type", &_type));
+        record->Add(getSlot("BasicLayers", &_basicLayerList));
+        record->Add(getSlot("ContactSizes", &_contactSizeMap));
+        record->Add(getSlot("SegmentSizes", &_segmentSizeMap));
+        record->Add(getSlot("SegmentExtentions", &_segmentExtentionMap));
+        record->Add(getSlot("PadSizes", &_padSizeMap));
+        record->Add(getSlot("MaximalContactSize", &_maximalContactSize));
+        record->Add(getSlot("MaximalSegmentSize", &_maximalSegmentSize));
+        record->Add(getSlot("MaximalSegmentExtention", &_maximalSegmentExtention));
+        record->Add(getSlot("MaximalPadSize", &_maximalPadSize));
     }
     return record;
 }
@@ -218,7 +218,7 @@ CompositeLayer::Type& CompositeLayer::Type::operator=(const Type& type)
     return *this;
 }
 
-string CompositeLayer::Type::_GetString() const
+string CompositeLayer::Type::_getString() const
 // ********************************************
 {
     switch (_code) {
@@ -229,11 +229,11 @@ string CompositeLayer::Type::_GetString() const
     return "ABNORMAL";
 }
 
-Record* CompositeLayer::Type::_GetRecord() const
+Record* CompositeLayer::Type::_getRecord() const
 // *********************************************
 {
-    Record* record = new Record(GetString(this));
-    record->Add(GetSlot("Code", (int)_code));
+    Record* record = new Record(getString(this));
+    record->Add(getSlot("Code", (int)_code));
     return record;
 }
 

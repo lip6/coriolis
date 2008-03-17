@@ -46,10 +46,10 @@ typedef GenericFilter<Layer*> LayerFilter;
 #define for_each_layer(layer, layers)\
 /************************************/\
 {\
-	LayerLocator _locator = layers.GetLocator();\
-	while (_locator.IsValid()) {\
-		Layer* layer = _locator.GetElement();\
-		_locator.Progress();
+    LayerLocator _locator = layers.getLocator();\
+    while (_locator.IsValid()) {\
+        Layer* layer = _locator.getElement();\
+        _locator.Progress();
 
 
 

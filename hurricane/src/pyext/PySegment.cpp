@@ -52,12 +52,12 @@
 
 
 
-# include  "PyNet.h"
-# include  "PyLayer.h"
-# include  "PySegment.h"
-# include  "PyHorizontal.h"
-# include  "PyVertical.h"
-# include  "PyPoint.h"
+#include "PyNet.h"
+#include "PyLayer.h"
+#include "PySegment.h"
+#include "PyHorizontal.h"
+#include "PyVertical.h"
+#include "PyPoint.h"
 
 
 namespace  Isobar {
@@ -69,18 +69,18 @@ USING_NAMESPACE_HURRICANE
 extern "C" {
 
 
-# undef   ACCESS_OBJECT
-# undef   ACCESS_CLASS
-# define  ACCESS_OBJECT           _baseObject._baseObject._object
-# define  ACCESS_CLASS(_pyObject)  &(_pyObject->_baseObject._baseObject)
-# define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Segment,segment,function)
+#undef  ACCESS_OBJECT
+#undef  ACCESS_CLASS
+#define ACCESS_OBJECT           _baseObject._baseObject._object
+#define ACCESS_CLASS(_pyObject)  &(_pyObject->_baseObject._baseObject)
+#define METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Segment,segment,function)
 
 
 // x=================================================================x
 // |              "PySegment" Python Module Code Part                |
 // x=================================================================x
 
-# if defined(__PYTHON_MODULE__)
+#if defined(__PYTHON_MODULE__)
 
 
   // x-------------------------------------------------------------x
@@ -88,23 +88,23 @@ extern "C" {
   // x-------------------------------------------------------------x
 
 
-  // Standart Accessors (Attributes).
-  DirectGetLongAttribute(PySegment_GetSourceX,GetSourceX,PySegment,Segment)
-  DirectGetLongAttribute(PySegment_GetSourceY,GetSourceY,PySegment,Segment)
-  DirectGetLongAttribute(PySegment_GetWidth  ,GetWidth,  PySegment,Segment)
+  // Standard Accessors (Attributes).
+  DirectGetLongAttribute(PySegment_getSourceX,getSourceX,PySegment,Segment)
+  DirectGetLongAttribute(PySegment_getSourceY,getSourceY,PySegment,Segment)
+  DirectGetLongAttribute(PySegment_getWidth  ,getWidth,  PySegment,Segment)
 
-  // Standart Delete (Attribute).
-  DBoDeleteAttribute(PySegment_Delete,PySegment)
+  // Standard Destroy (Attribute).
+  DBoDestroyAttribute(PySegment_destroy, PySegment)
 
 
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PySegment_GetSourcePosition ()"
+  // Attribute Method  :  "PySegment_getSourcePosition ()"
 
-  static PyObject* PySegment_GetSourcePosition ( PySegment *self )
+  static PyObject* PySegment_getSourcePosition ( PySegment *self )
   {
-    trace << "PySegment_GetSourcePosition()" << endl;
+    trace << "PySegment_getSourcePosition()" << endl;
 
     METHOD_HEAD ( "Segment.SourcePosition()" )
 
@@ -112,7 +112,7 @@ extern "C" {
     if (pyPoint == NULL) { return NULL; }
     
     HTRY
-    pyPoint->_object = new Point ( segment->GetSourcePosition() );
+    pyPoint->_object = new Point ( segment->getSourcePosition() );
     HCATCH    
 
     return ( (PyObject*)pyPoint );
@@ -120,11 +120,11 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PySegment_GetTargetPosition ()"
+  // Attribute Method  :  "PySegment_getTargetPosition ()"
 
-  static PyObject* PySegment_GetTargetPosition ( PySegment *self )
+  static PyObject* PySegment_getTargetPosition ( PySegment *self )
   {
-    trace << "PySegment_GetTargetPosition()" << endl;
+    trace << "PySegment_getTargetPosition()" << endl;
 
     METHOD_HEAD ( "Segment.TargetPosition()" )
 
@@ -132,7 +132,7 @@ extern "C" {
     if (pyPoint == NULL) { return NULL; }
     
     HTRY
-    pyPoint->_object = new Point ( segment->GetTargetPosition() );
+    pyPoint->_object = new Point ( segment->getTargetPosition() );
     HCATCH    
 
     return ( (PyObject*)pyPoint );
@@ -143,13 +143,13 @@ extern "C" {
   // PySegment Attribute Method table.
 
   PyMethodDef PySegment_Methods[] =
-    { { "GetSourceX"           , (PyCFunction)PySegment_GetSourceX       , METH_NOARGS , "Return the Segment source X value." }
-    , { "GetSourceY"           , (PyCFunction)PySegment_GetSourceY       , METH_NOARGS , "Return the Segment source Y value." }
-    , { "GetSourcePosition"    , (PyCFunction)PySegment_GetSourcePosition, METH_NOARGS , "Return the Segment source point value." }
-    , { "GetTargetPosition"    , (PyCFunction)PySegment_GetTargetPosition, METH_NOARGS , "Return the Segment target point value." }
-    , { "GetWidth"             , (PyCFunction)PySegment_GetWidth         , METH_NOARGS , "Return the segment width." }
-    , { "Delete"               , (PyCFunction)PySegment_Delete           , METH_NOARGS
-                               , "Delete associated hurricane object, the python object remains." }
+    { { "getSourceX"           , (PyCFunction)PySegment_getSourceX       , METH_NOARGS , "Return the Segment source X value." }
+    , { "getSourceY"           , (PyCFunction)PySegment_getSourceY       , METH_NOARGS , "Return the Segment source Y value." }
+    , { "getSourcePosition"    , (PyCFunction)PySegment_getSourcePosition, METH_NOARGS , "Return the Segment source point value." }
+    , { "getTargetPosition"    , (PyCFunction)PySegment_getTargetPosition, METH_NOARGS , "Return the Segment target point value." }
+    , { "getWidth"             , (PyCFunction)PySegment_getWidth         , METH_NOARGS , "Return the segment width." }
+    , { "destroy"              , (PyCFunction)PySegment_destroy          , METH_NOARGS
+                               , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

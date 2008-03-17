@@ -90,7 +90,7 @@ extern "C" {
   LocatorGetCloneAttribute(Component)
 
   // Standart Delete (Attribute).
-  DirectDeleteAttribute(PyComponentLocator_Delete,PyComponentLocator)
+  DirectDestroyAttribute(PyComponentLocator_destroy, PyComponentLocator)
 
 
 
@@ -101,10 +101,10 @@ extern "C" {
   PyMethodDef PyComponentLocator_Methods[] =
     { { "IsValid"        , (PyCFunction)PyComponentLocator_IsValid    , METH_NOARGS , "Returns true while the walk has not exhausted the set of elements, else false." }
     , { "Progress"       , (PyCFunction)PyComponentLocator_Progress   , METH_NOARGS , "Moves forward the locator to the following element." }
-    , { "GetElement"     , (PyCFunction)PyComponentLocator_GetElement , METH_NOARGS , "Returns the current element (or the value Type() when the locator is not or no longer valid)." }
-    , { "GetClone"       , (PyCFunction)PyComponentLocator_GetClone   , METH_NOARGS , "This function allocates and returns a new locator that will have the same visiting course than the remaining one of the locator being cloned." }
-    , { "Delete"         , (PyCFunction)PyComponentLocator_Delete     , METH_NOARGS
-                         , "Delete associated hurricane object, the python object remains." }
+    , { "getElement"     , (PyCFunction)PyComponentLocator_getElement , METH_NOARGS , "Returns the current element (or the value Type() when the locator is not or no longer valid)." }
+    , { "getClone"       , (PyCFunction)PyComponentLocator_getClone   , METH_NOARGS , "This function allocates and returns a new locator that will have the same visiting course than the remaining one of the locator being cloned." }
+    , { "destroy"        , (PyCFunction)PyComponentLocator_destroy    , METH_NOARGS
+                         , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

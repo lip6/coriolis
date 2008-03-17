@@ -24,71 +24,71 @@ template<class Type> class Locator : public NestedSlotAdapter {
 // Constructors
 // ************
 
-	protected: Locator()
-	// *****************
-	{
-	};
+    protected: Locator()
+    // *****************
+    {
+    };
 
-	private: Locator(const Locator& locator);
-	// *******************************************
-	// not implemented to forbid copy construction
-	// *******************************************
+    private: Locator(const Locator& locator);
+    // *******************************************
+    // not implemented to forbid copy construction
+    // *******************************************
 
 // Destructor
 // **********
 
-	public: virtual ~Locator()
-	// ***********************
-	{
-	};
+    public: virtual ~Locator()
+    // ***********************
+    {
+    };
 
 // Operators
 // *********
 
-	private: Locator& operator=(const Locator& locator);
-	// *************************************************
-	// not implemented to forbid assignment
-	// *************************************************
+    private: Locator& operator=(const Locator& locator);
+    // *************************************************
+    // not implemented to forbid assignment
+    // *************************************************
 
 // Accessors
 // *********
 
-	public: virtual Type GetElement() const = 0;
-	public: virtual Locator<Type>* GetClone() const = 0;
+    public: virtual Type getElement() const = 0;
+    public: virtual Locator<Type>* getClone() const = 0;
 
-	public: virtual Locator<Type>* GetLocator()      // 21-10-2003
-	// ****************************************
-	{
-	  return ( this );
-	}
+    public: virtual Locator<Type>* getLocator()      // 21-10-2003
+    // ****************************************
+    {
+      return ( this );
+    }
 
 // Predicates
 // **********
 
-	public: virtual bool IsValid() const = 0;
+    public: virtual bool IsValid() const = 0;
 
 // Updators
 // ********
 
-	public: virtual void Progress() = 0;
+    public: virtual void Progress() = 0;
 
 // Others
 // ******
 
-    public: virtual string _GetTypeName() const
-	// **************************************
+    public: virtual string _getTypeName() const
+    // **************************************
     {
       return _TName("Locator");
     };
 
-	public: virtual string _GetString() const
-	// **************************************
-	{
-		if (!IsValid())
-			return "<" + _GetTypeName() + " invalid>";
-		else
-			return "<" + _GetTypeName() + " " + GetString(GetElement()) + ">";
-	};
+    public: virtual string _getString() const
+    // **************************************
+    {
+        if (!IsValid())
+            return "<" + _getTypeName() + " invalid>";
+        else
+            return "<" + _getTypeName() + " " + getString(getElement()) + ">";
+    };
 
 };
 
@@ -104,141 +104,141 @@ template<class Type> class GenericLocator : public Locator<Type> {
 // Types
 // *****
 
-	public: typedef Locator<Type> Inherit;
+    public: typedef Locator<Type> Inherit;
 
 // Attributes
 // **********
 
-	private: Locator<Type>* _locator;
+    private: Locator<Type>* _locator;
 
 // Constructors
 // ************
 
-	public: GenericLocator()
-	// *********************
-	:	Inherit(),
-		_locator(NULL)
-	{
-	};
+    public: GenericLocator()
+    // *********************
+    :    Inherit(),
+        _locator(NULL)
+    {
+    };
 
-	public: GenericLocator(const Locator<Type>& locator)
-	// *************************************************
-	:	Inherit(),
-		_locator(locator.GetClone())
-	{
-	};
+    public: GenericLocator(const Locator<Type>& locator)
+    // *************************************************
+    :    Inherit(),
+        _locator(locator.getClone())
+    {
+    };
 
-	public: GenericLocator(const GenericLocator& genericLocator)
-	// *********************************************************
-	:	Inherit(),
-		_locator(genericLocator.GetClone())
-	{
-	};
+    public: GenericLocator(const GenericLocator& genericLocator)
+    // *********************************************************
+    :    Inherit(),
+        _locator(genericLocator.getClone())
+    {
+    };
 
-	public: GenericLocator(Locator<Type>* locator)
-	// *******************************************************
-	// CAUTION : locator will be deleted by the GenericLocator
-	// *******************************************************
-	:	Inherit(),
-		_locator(locator)
-	{
-	};
+    public: GenericLocator(Locator<Type>* locator)
+    // *******************************************************
+    // CAUTION : locator will be deleted by the GenericLocator
+    // *******************************************************
+    :    Inherit(),
+        _locator(locator)
+    {
+    };
 
 // Destructor
 // **********
 
-	public: virtual ~GenericLocator()
-	// ******************************
-	{
-		if (_locator) delete _locator;
-	};
+    public: virtual ~GenericLocator()
+    // ******************************
+    {
+        if (_locator) delete _locator;
+    };
 
 // Operators
 // *********
 
-	public: GenericLocator& operator=(const Locator<Type>& locator)
-	// ************************************************************
-	{
-		if (_locator) delete _locator;
-		_locator = locator.GetClone();
-		return *this;
-	};
+    public: GenericLocator& operator=(const Locator<Type>& locator)
+    // ************************************************************
+    {
+        if (_locator) delete _locator;
+        _locator = locator.getClone();
+        return *this;
+    };
 
-	public: GenericLocator& operator=(const GenericLocator& genericLocator)
-	// ********************************************************************
-	{
-		if (_locator) delete _locator;
-		_locator = genericLocator.GetClone();
-		return *this;
-	};
+    public: GenericLocator& operator=(const GenericLocator& genericLocator)
+    // ********************************************************************
+    {
+        if (_locator) delete _locator;
+        _locator = genericLocator.getClone();
+        return *this;
+    };
 
-	public: GenericLocator& operator=(Locator<Type>* locator)
-	// *******************************************************
-	// CAUTION : locator will be deleted by the GenericLocator
-	// *******************************************************
-	{
-		if (_locator) delete _locator;
-		_locator = locator;
-		return *this;
-	};
+    public: GenericLocator& operator=(Locator<Type>* locator)
+    // *******************************************************
+    // CAUTION : locator will be deleted by the GenericLocator
+    // *******************************************************
+    {
+        if (_locator) delete _locator;
+        _locator = locator;
+        return *this;
+    };
 
 // Accessors
 // *********
 
-	public: virtual Type GetElement() const
-	// ************************************
-	{
-		return ((_locator) ? _locator->GetElement() : Type());
-	};
+    public: virtual Type getElement() const
+    // ************************************
+    {
+        return ((_locator) ? _locator->getElement() : Type());
+    };
 
-	public: virtual Locator<Type>* GetClone() const
-	// ********************************************
-	{
-		return ((_locator) ? _locator->GetClone() : NULL);
-	};
+    public: virtual Locator<Type>* getClone() const
+    // ********************************************
+    {
+        return ((_locator) ? _locator->getClone() : NULL);
+    };
 
-	public: virtual Locator<Type>* GetLocator()   // 21-10-2003
-	// ****************************************
-	{
-	  return ( _locator->GetLocator () );
-	}
+    public: virtual Locator<Type>* getLocator()   // 21-10-2003
+    // ****************************************
+    {
+      return ( _locator->getLocator () );
+    }
 
 
 // Predicates
 // **********
 
-	public: virtual bool IsValid() const
-	// *********************************
-	{
-		return (_locator && _locator->IsValid());
-	};
+    public: virtual bool IsValid() const
+    // *********************************
+    {
+        return (_locator && _locator->IsValid());
+    };
 
 // Updators
 // ********
 
-	public: virtual void Progress()
-	// ****************************
-	{
-		if (_locator) _locator->Progress();
-	};
+    public: virtual void Progress()
+    // ****************************
+    {
+        if (_locator) _locator->Progress();
+    };
 
 // Others
 // ******
 
-    public: virtual string _GetTypeName() const
-	// **************************************
+    public: virtual string _getTypeName() const
+    // **************************************
     {
       return _TName("GenericLocator");
     };
 
-	public: virtual string _GetString() const
-	// **************************************
-	{
-		if (!_locator)
-			return "<" + _GetTypeName() + " unbound>";
-		else
-			return "<" + _GetTypeName() + " " + GetString(_locator) + ">";
-	};
+    public: virtual string _getString() const
+    // **************************************
+    {
+        if (!_locator)
+            return "<" + _getTypeName() + " unbound>";
+        else
+            return "<" + _getTypeName() + " " + getString(_locator) + ">";
+    };
 
 };
 

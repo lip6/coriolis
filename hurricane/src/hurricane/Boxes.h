@@ -45,10 +45,10 @@ typedef GenericFilter<Box> BoxFilter;
 #define for_each_box(box, boxes)\
 /*******************************/\
 {\
-	BoxLocator _locator = boxes.GetLocator();\
-	while (_locator.IsValid()) {\
-		Box box = _locator.GetElement();\
-		_locator.Progress();
+    BoxLocator _locator = boxes.getLocator();\
+    while (_locator.IsValid()) {\
+        Box box = _locator.getElement();\
+        _locator.Progress();
 
 
 

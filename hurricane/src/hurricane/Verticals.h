@@ -46,9 +46,9 @@ typedef GenericFilter<Vertical*> VerticalFilter;
 #define for_each_vertical(vertical, verticals)\
 /*********************************************/\
 {\
-	VerticalLocator _locator = verticals.GetLocator();\
+	VerticalLocator _locator = verticals.getLocator();\
 	while (_locator.IsValid()) {\
-		Vertical* vertical = _locator.GetElement();\
+		Vertical* vertical = _locator.getElement();\
 		_locator.Progress();
 
 

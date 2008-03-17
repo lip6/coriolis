@@ -84,19 +84,19 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyTechnology_GetName ()"
+  // Attribute Method  :  "PyTechnology_getName ()"
 
-  static PyObject* PyTechnology_GetName ( PyTechnology *self )
+  static PyObject* PyTechnology_getName ( PyTechnology *self )
   {
-    trace << "PyTechnology_GetName ()" << endl;
+    trace << "PyTechnology_getName ()" << endl;
     
-    METHOD_HEAD ( "Technology.GetName()" )
+    METHOD_HEAD ( "Technology.getName()" )
 
     PyName* pyName = PyObject_NEW ( PyName, &PyTypeName );
     if ( pyName == NULL ) { return NULL; }
     
     HTRY
-    pyName->_object = new Name ( techno->GetName() );
+    pyName->_object = new Name ( techno->getName() );
     HCATCH
     
     return ( (PyObject*)pyName );
@@ -125,20 +125,20 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyTechnology_GetLayer ()"
+  // Attribute Method  :  "PyTechnology_getLayer ()"
 
-  static PyObject* PyTechnology_GetLayer ( PyTechnology *self, PyObject* args )
+  static PyObject* PyTechnology_getLayer ( PyTechnology *self, PyObject* args )
   {
-    trace << "Technology.GetLayer()" << endl;
-    METHOD_HEAD ( "Technology.GetLayer()" )
+    trace << "Technology.getLayer()" << endl;
+    METHOD_HEAD ( "Technology.getLayer()" )
 
     Layer* layer = NULL;
     
     HTRY
     PyName* name;
-    if ( ! ParseOneArg ( "Technology.GetLayer", args,NAME_ARG, (PyObject**)&name ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Technology.getLayer", args,NAME_ARG, (PyObject**)&name ) ) return ( NULL );
 
-    layer = techno->GetLayer ( *PYNAME_O(name) );
+    layer = techno->getLayer ( *PYNAME_O(name) );
     HCATCH
 
     return PyLayer_Link ( layer );
@@ -149,8 +149,8 @@ extern "C" {
 
   // Standart Accessors (Attributes).
 
-  // Standart Delete (Attribute).
-  DBoDeleteAttribute(PyTechnology_Delete,PyTechnology)
+  // Standard destroy (Attribute).
+  DBoDestroyAttribute(PyTechnology_destroy, PyTechnology)
 
 
 
@@ -159,11 +159,11 @@ extern "C" {
   // PyTechnology Attribute Method table.
 
   PyMethodDef PyTechnology_Methods[] =
-    { { "GetName"      , (PyCFunction)PyTechnology_GetName      , METH_NOARGS , "Returns the name of the technology." }
+    { { "getName"      , (PyCFunction)PyTechnology_getName      , METH_NOARGS , "Returns the name of the technology." }
     , { "SetName"      , (PyCFunction)PyTechnology_SetName      , METH_VARARGS, "Allows to change the technology name." }
-    , { "GetLayer"     , (PyCFunction)PyTechnology_GetLayer     , METH_VARARGS, "Returns the layer named name." }
-    , { "Delete"       , (PyCFunction)PyTechnology_Delete       , METH_NOARGS
-                       , "Delete associated hurricane object The python object remains." }
+    , { "getLayer"     , (PyCFunction)PyTechnology_getLayer     , METH_VARARGS, "Returns the layer named name." }
+    , { "destroy"      , (PyCFunction)PyTechnology_destroy      , METH_NOARGS
+                       , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

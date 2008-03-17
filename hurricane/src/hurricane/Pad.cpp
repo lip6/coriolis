@@ -37,24 +37,24 @@ Pad* Pad::Create(Net* net, Layer* layer, const Box& boundingBox)
 {
     Pad* pad = new Pad(net, layer, boundingBox);
 
-    pad->_PostCreate();
+    pad->_postCreate();
 
     return pad;
 }
 
-Unit Pad::GetX() const
+Unit Pad::getX() const
 // *******************
 {
     return 0;
 }
 
-Unit Pad::GetY() const
+Unit Pad::getY() const
 // *******************
 {
     return 0;
 }
 
-Box Pad::GetBoundingBox() const
+Box Pad::getBoundingBox() const
 // ****************************
 {
     Box boundingBox = _boundingBox;
@@ -65,7 +65,7 @@ Box Pad::GetBoundingBox() const
     return boundingBox;
 }
 
-Box Pad::GetBoundingBox(const BasicLayer* basicLayer) const
+Box Pad::getBoundingBox(const BasicLayer* basicLayer) const
 // **************************************************
 {
     if (!_layer->contains(basicLayer)) return Box();
@@ -99,47 +99,25 @@ void Pad::SetBoundingBox(const Box& boundingBox)
     }
 }
 
-string Pad::_GetString() const
+string Pad::_getString() const
 // ***************************
 {
-    string s = Inherit::_GetString();
-    s.insert(s.length() - 1, " " + GetString(_layer->getName()));
-    s.insert(s.length() - 1, " " + GetString(_boundingBox));
+    string s = Inherit::_getString();
+    s.insert(s.length() - 1, " " + getString(_layer->getName()));
+    s.insert(s.length() - 1, " " + getString(_boundingBox));
     return s;
 }
 
-Record* Pad::_GetRecord() const
+Record* Pad::_getRecord() const
 // **********************
 {
-    Record* record = Inherit::_GetRecord();
+    Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(GetSlot("Layer", _layer));
-        record->Add(GetSlot("BoundingBox", &_boundingBox));
+        record->Add(getSlot("Layer", _layer));
+        record->Add(getSlot("BoundingBox", &_boundingBox));
     }
     return record;
 }
-
-//void Pad::_Draw(View* view, BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation)
-//// ****************************************************************************************************
-//{
-//    Unit width = _boundingBox.GetWidth();
-//    Unit height = _boundingBox.GetHeight();
-//    if (1 < view->GetScreenSize(max(width, height))) {
-//        basicLayer->_Fill(view, transformation.GetBox(GetBoundingBox(basicLayer)));
-//        view->DrawRectangle(transformation.GetBox(GetBoundingBox(basicLayer))); // PROVISOIREMENT
-//    }
-//}
-//
-//void Pad::_Highlight(View* view, const Box& updateArea, const Transformation& transformation)
-//// ******************************************************************************************
-//{
-//    for_each_basic_layer(basicLayer, GetLayer()->GetBasicLayers()) {
-//        basicLayer->_Fill(view, transformation.GetBox(GetBoundingBox(basicLayer)));
-//        view->DrawRectangle(transformation.GetBox(GetBoundingBox(basicLayer))); // PROVISOIREMENT
-//        end_for;
-//    }
-//}
-//
 
 } // End of Hurricane namespace.
 

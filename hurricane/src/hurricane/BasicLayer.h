@@ -45,9 +45,9 @@ class BasicLayer : public Layer {
 
         public: const Code& getCode() const {return _code;};
 
-        public: string _GetTypeName() const { return _TName("BasicLayer::Type"); };
-        public: string _GetString() const;
-        public: Record* _GetRecord() const;
+        public: string _getTypeName() const { return _TName("BasicLayer::Type"); };
+        public: string _getString() const;
+        public: Record* _getRecord() const;
 
     };
 
@@ -91,13 +91,13 @@ class BasicLayer : public Layer {
 // Others
 // ******
 
-    protected: virtual void _PostCreate();
+    protected: virtual void _postCreate();
 
-    protected: virtual void _PreDelete();
+    protected: virtual void _preDestroy();
 
-    public: virtual string _GetTypeName() const {return _TName("BasicLayer");};
-    public: virtual string _GetString() const;
-    public: virtual Record* _GetRecord() const;
+    public: virtual string _getTypeName() const {return _TName("BasicLayer");};
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
     public: virtual BasicLayer* _getSymbolicBasicLayer() {return this;};
 
     public: void _fill(View* view, const Box& box) const;
@@ -128,8 +128,8 @@ template<>
 template<>
   inline Record* ProxyRecord<BasicLayer::Type::Code>   ( const BasicLayer::Type::Code* object )
                                                        {
-                                                         Record* record = new Record(GetString(object));
-                                                         record->Add(GetSlot("Code", (unsigned int*)object));
+                                                         Record* record = new Record(getString(object));
+                                                         record->Add(getSlot("Code", (unsigned int*)object));
                                                          return record;
                                                        }
 

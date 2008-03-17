@@ -29,77 +29,77 @@ static Quark_QuarkMap* NULL_SHARED_PATH_QUARK_MAP = NULL;
 
 Quark::Quark(const Occurrence& occurrence)
 // *************************************
-:	Inherit(),
-	_occurrence(occurrence),
-	_nextOfSharedPathQuarkMap(NULL)
+:    Inherit(),
+    _occurrence(occurrence),
+    _nextOfSharedPathQuarkMap(NULL)
 {
-	if (!_occurrence.IsValid())
-		throw Error("Can't create " + _TName("Quark") + " : invalid occurrence");
+    if (!_occurrence.IsValid())
+        throw Error("Can't create " + _TName("Quark") + " : invalid occurrence");
 
-	if (_occurrence._GetQuark())
-		throw Error("Can't create " + _TName("Quark") + " : already exists");
+    if (_occurrence._getQuark())
+        throw Error("Can't create " + _TName("Quark") + " : already exists");
 }
 
 Quark* Quark::_Create(const Occurrence& occurrence)
 // **********************************************
 {
-	Quark* quark = new Quark(occurrence);
+    Quark* quark = new Quark(occurrence);
 
-	quark->_PostCreate();
+    quark->_postCreate();
 
-	return quark;
+    return quark;
 }
 
-void Quark::_PostCreate()
+void Quark::_postCreate()
 // **********************
 {
-	SharedPath* sharedPath = _occurrence._GetSharedPath();
+    SharedPath* sharedPath = _occurrence._getSharedPath();
 
-	if (sharedPath)
-		sharedPath->_GetQuarkMap()._Insert(this);
-	else {
-		if (!NULL_SHARED_PATH_QUARK_MAP) NULL_SHARED_PATH_QUARK_MAP = new Quark_QuarkMap();
-		NULL_SHARED_PATH_QUARK_MAP->_Insert(this);
-	}
+    if (sharedPath)
+        sharedPath->_getQuarkMap()._Insert(this);
+    else {
+        if (!NULL_SHARED_PATH_QUARK_MAP) NULL_SHARED_PATH_QUARK_MAP = new Quark_QuarkMap();
+        NULL_SHARED_PATH_QUARK_MAP->_Insert(this);
+    }
 
-	Inherit::_PostCreate();
+    Inherit::_postCreate();
 }
 
-void Quark::_PreDelete()
+void Quark::_preDestroy()
 // *********************
 {
-// trace << "entering Quark::_PreDelete: " << this << endl;
+// trace << "entering Quark::_preDestroy: " << this << endl;
 // trace_in();
 
-	Inherit::_PreDelete();
+    Inherit::_preDestroy();
 
-	SharedPath* sharedPath = _occurrence._GetSharedPath();
+    SharedPath* sharedPath = _occurrence._getSharedPath();
 
-	if (sharedPath)
-		sharedPath->_GetQuarkMap()._Remove(this);
-	else
-		if (NULL_SHARED_PATH_QUARK_MAP) NULL_SHARED_PATH_QUARK_MAP->_Remove(this);
+    if (sharedPath)
+        sharedPath->_getQuarkMap()._Remove(this);
+    else
+        if (NULL_SHARED_PATH_QUARK_MAP) NULL_SHARED_PATH_QUARK_MAP->_Remove(this);
 
-// trace << "exiting Quark::_PreDelete:" << endl;
+// trace << "exiting Quark::_preDestroy:" << endl;
 // trace_out();
 }
 
-string Quark::_GetString() const
+string Quark::_getString() const
 // *****************************
 {
-	string s = Inherit::_GetString();
-	s.insert(s.length() - 1, " " + GetString(_occurrence));
-	return s;
+    string s = Inherit::_getString();
+    s.insert(s.length() - 1, " " + getString(_occurrence));
+    return s;
 }
 
-Record* Quark::_GetRecord() const
+Record* Quark::_getRecord() const
 // ************************
 {
-	Record* record = Inherit::_GetRecord();
-	if (record) {
-		record->Add(GetSlot("Occurrence", &_occurrence));
-	}
-	return record;
+    Record* record = Inherit::_getRecord();
+    if (record) {
+        record->Add(getSlot("Occurrence", &_occurrence));
+    }
+    return record;
 }
 
 
@@ -108,15 +108,15 @@ Record* Quark::_GetRecord() const
 // Entity implementation (located here to access the local variables)
 // ****************************************************************************************************
 
-Quark* Entity::_GetQuark(SharedPath* sharedPath) const
+Quark* Entity::_getQuark(SharedPath* sharedPath) const
 // ***************************************************
 {
-	if (sharedPath)
-		return sharedPath->_GetQuark(this);
-	else {
-		if (!NULL_SHARED_PATH_QUARK_MAP) return NULL;
-		return NULL_SHARED_PATH_QUARK_MAP->GetElement(this);
-	}
+    if (sharedPath)
+        return sharedPath->_getQuark(this);
+    else {
+        if (!NULL_SHARED_PATH_QUARK_MAP) return NULL;
+        return NULL_SHARED_PATH_QUARK_MAP->getElement(this);
+    }
 }
 
 

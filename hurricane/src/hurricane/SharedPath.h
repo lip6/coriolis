@@ -30,80 +30,80 @@ class SharedPath {
 // Types
 // *****
 
-	public: class QuarkMap : public IntrusiveMap<const Entity*, Quark> {
-	// ***************************************************************
+    public: class QuarkMap : public IntrusiveMap<const Entity*, Quark> {
+    // ***************************************************************
 
-		public: typedef IntrusiveMap<const Entity*, Quark> Inherit;
-	
-		public: QuarkMap();
+        public: typedef IntrusiveMap<const Entity*, Quark> Inherit;
+    
+        public: QuarkMap();
 
-		public: virtual const Entity* _GetKey(Quark* quark) const;
-		public: virtual unsigned _GetHashValue(const Entity* entity) const;
-		public: virtual Quark* _GetNextElement(Quark* quark) const;
-		public: virtual void _SetNextElement(Quark* quark, Quark* nextQuark) const;
+        public: virtual const Entity* _getKey(Quark* quark) const;
+        public: virtual unsigned _getHashValue(const Entity* entity) const;
+        public: virtual Quark* _getNextElement(Quark* quark) const;
+        public: virtual void _SetNextElement(Quark* quark, Quark* nextQuark) const;
 
-	};
+    };
 
 // Attributes
 // **********
 
-	private: Instance* _headInstance;
-	private: SharedPath* _tailSharedPath;
-	private: QuarkMap _quarkMap;
-	private: SharedPath* _nextOfInstanceSharedPathMap;
+    private: Instance* _headInstance;
+    private: SharedPath* _tailSharedPath;
+    private: QuarkMap _quarkMap;
+    private: SharedPath* _nextOfInstanceSharedPathMap;
 
 // Constructors
 // ************
 
-	public: SharedPath(Instance* headInstance, SharedPath* tailSharedPath = NULL);
+    public: SharedPath(Instance* headInstance, SharedPath* tailSharedPath = NULL);
 
-	private: SharedPath(const SharedPath& sharedPath);
-				// not implemented to forbid copy construction
+    private: SharedPath(const SharedPath& sharedPath);
+                // not implemented to forbid copy construction
 
 // Destructor
 // **********
 
-	public: ~SharedPath();
+    public: ~SharedPath();
 
 // Operators
 // *********
 
-	private: SharedPath& operator=(const SharedPath& sharedPath);
-				// not implemented to forbid assignment
+    private: SharedPath& operator=(const SharedPath& sharedPath);
+                // not implemented to forbid assignment
 
 // Accessors
 // *********
 
-	public: static char GetNameSeparator();
+    public: static char getNameSeparator();
 
-	public: Instance* GetHeadInstance() const {return _headInstance;};
-	public: SharedPath* GetTailSharedPath() const {return _tailSharedPath;};
-	public: SharedPath* GetHeadSharedPath() const;
-	public: Instance* GetTailInstance() const;
-	public: string GetName() const;
-	public: Cell* GetOwnerCell() const;
-	public: Cell* GetMasterCell() const;
-	public: Instances GetInstances() const;
-	public: Transformation GetTransformation(const Transformation& transformation = Transformation()) const;
+    public: Instance* getHeadInstance() const {return _headInstance;};
+    public: SharedPath* getTailSharedPath() const {return _tailSharedPath;};
+    public: SharedPath* getHeadSharedPath() const;
+    public: Instance* getTailInstance() const;
+    public: string getName() const;
+    public: Cell* getOwnerCell() const;
+    public: Cell* getMasterCell() const;
+    public: Instances getInstances() const;
+    public: Transformation getTransformation(const Transformation& transformation = Transformation()) const;
 
 // Updators
 // ********
 
-	public: static void SetNameSeparator(char nameSeparator);
+    public: static void SetNameSeparator(char nameSeparator);
 
 // Accessors
 // *********
 
-    public: string _GetTypeName() const { return _TName("SharedPath"); };
-	public: string _GetString() const;
-	public: Record* _GetRecord() const;
+    public: string _getTypeName() const { return _TName("SharedPath"); };
+    public: string _getString() const;
+    public: Record* _getRecord() const;
 
-	public: Quark* _GetQuark(const Entity* entity) const {return _quarkMap.GetElement(entity);};
-	public: Quarks _GetQuarks() const {return _quarkMap.GetElements();};
-	public: QuarkMap& _GetQuarkMap() {return _quarkMap;};
-	public: SharedPath* _GetNextOfInstanceSharedPathMap() const {return _nextOfInstanceSharedPathMap;};
+    public: Quark* _getQuark(const Entity* entity) const {return _quarkMap.getElement(entity);};
+    public: Quarks _getQuarks() const {return _quarkMap.getElements();};
+    public: QuarkMap& _getQuarkMap() {return _quarkMap;};
+    public: SharedPath* _getNextOfInstanceSharedPathMap() const {return _nextOfInstanceSharedPathMap;};
 
-	public: void _SetNextOfInstanceSharedPathMap(SharedPath* sharedPath) {_nextOfInstanceSharedPathMap = sharedPath;};
+    public: void _SetNextOfInstanceSharedPathMap(SharedPath* sharedPath) {_nextOfInstanceSharedPathMap = sharedPath;};
 
 };
 

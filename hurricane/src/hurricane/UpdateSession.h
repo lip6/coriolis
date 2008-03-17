@@ -25,39 +25,39 @@ class UpdateSession : public SharedProperty {
 // Types
 // *****
 
-	public: typedef SharedProperty Inherit;
+    public: typedef SharedProperty Inherit;
 
 // Constructors
 // ************
 
-	protected: UpdateSession();
+    protected: UpdateSession();
 
-	public: virtual void Delete();
+    public: virtual void destroy();
 
 // Accessors
 // *********
 
-	public: static const Name& GetPropertyName();
-	public: virtual Name GetName() const {return GetPropertyName();};
+    public: static const Name& getPropertyName();
+    public: virtual Name getName() const {return getPropertyName();};
 
 // Managers
 // ********
 
-	public: virtual void OnCapturedBy(DBo* owner);
-	public: virtual void OnNotOwned();
+    public: virtual void onCapturedBy(DBo* owner);
+    public: virtual void onNotOwned();
 
 // Ohers
 // *****
 
-	public: static UpdateSession* _Create();
-	protected: virtual void _PostCreate();
+    public: static UpdateSession* _create();
+    protected: virtual void _postCreate();
 
-	public: void _Delete();
-	protected: virtual void _PreDelete();
+    public: void _destroy();
+    protected: virtual void _preDestroy();
 
-	public: virtual string _GetTypeName() const {return _TName("UpdateSession");};
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
+    public: virtual string _getTypeName() const {return _TName("UpdateSession");};
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
 
 };
 

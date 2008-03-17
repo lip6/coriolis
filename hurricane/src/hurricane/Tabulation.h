@@ -23,38 +23,38 @@ class Tabulation {
 // Attributes
 // **********
 
-	private: string _s;
-	private: unsigned _n;
+    private: string _s;
+    private: unsigned _n;
 
 // Constructors
 // ************
 
-	public: Tabulation(const string& s = "   ");
+    public: Tabulation(const string& s = "   ");
 
-	public: Tabulation(const Tabulation& tabulation);
+    public: Tabulation(const Tabulation& tabulation);
 
 // Destructor
 // **********
 
-	public: ~Tabulation();
+    public: ~Tabulation();
 
 // Operators
 // *********
 
-	public: Tabulation& operator=(const Tabulation& tabulation);
+    public: Tabulation& operator=(const Tabulation& tabulation);
 
-	public: Tabulation& operator++();
-	public: Tabulation operator++(int);
-	public: Tabulation& operator--();
-	public: Tabulation operator--(int);
+    public: Tabulation& operator++();
+    public: Tabulation operator++(int);
+    public: Tabulation& operator--();
+    public: Tabulation operator--(int);
 
 // Others
 // ******
 
-    public: string _GetTypeName() const { return _TName("Tabulation"); };
-	public: string _GetString() const;
-    public: Record* _GetRecord() const { return NULL; };
-    public: Slot* _GetSlot() const { return NULL; };
+    public: string _getTypeName() const { return _TName("Tabulation"); };
+    public: string _getString() const;
+    public: Record* _getRecord() const { return NULL; };
+    public: Slot* _getSlot() const { return NULL; };
 
 };
 

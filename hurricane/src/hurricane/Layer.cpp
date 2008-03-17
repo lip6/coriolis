@@ -34,8 +34,8 @@ Layer::Layer(Technology* technology, const Name& name, const Unit& minimalSize, 
     if (_name.IsEmpty())
         throw Error("Can't create " + _TName("Layer") + " : empty name");
 
-    if (_technology->GetLayer(_name))
-        throw Error("Can't create " + _TName("Layer") + " " + GetString(_name) + " : already exists");
+    if (_technology->getLayer(_name))
+        throw Error("Can't create " + _TName("Layer") + " " + getString(_name) + " : already exists");
 }
 
 bool Layer::contains(const Layer* layer) const
@@ -57,12 +57,12 @@ void Layer::setName(const Name& name)
         if (name.IsEmpty())
             throw Error("Can't change layer name : empty name");
 
-        if (_technology->GetLayer(name))
+        if (_technology->getLayer(name))
             throw Error("Can't change layer name : already exists");
 
-        _technology->_GetLayerMap()._Remove(this);
+        _technology->_getLayerMap()._Remove(this);
         _name = name;
-        _technology->_GetLayerMap()._Insert(this);
+        _technology->_getLayerMap()._Insert(this);
     }
 }
 
@@ -84,44 +84,44 @@ void Layer::setPitch(const Unit& pitch)
     _pitch = pitch;
 }
 
-void Layer::_PostCreate()
+void Layer::_postCreate()
 // **********************
 {
-    _technology->_GetLayerMap()._Insert(this);
-    _technology->_GetLayerList().push_back(this);
+    _technology->_getLayerMap()._Insert(this);
+    _technology->_getLayerList().push_back(this);
 
-    Inherit::_PostCreate();
+    Inherit::_postCreate();
 }
 
-void Layer::_PreDelete()
+void Layer::_preDestroy()
 // *********************
 {
-    Inherit::_PreDelete();
+    Inherit::_preDestroy();
 
-    _technology->_GetLayerList().remove(this);
-    _technology->_GetLayerMap()._Remove(this);
+    _technology->_getLayerList().remove(this);
+    _technology->_getLayerMap()._Remove(this);
 }
 
-string Layer::_GetString() const
+string Layer::_getString() const
 // *****************************
 {
-    string s = Inherit::_GetString();
-    s.insert(s.length() - 1, " " + GetString(_name));
+    string s = Inherit::_getString();
+    s.insert(s.length() - 1, " " + getString(_name));
     return s;
 }
 
-Record* Layer::_GetRecord() const
+Record* Layer::_getRecord() const
 // ************************
 {
-    Record* record = Inherit::_GetRecord();
+    Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(GetSlot("Technology", _technology));
-        record->Add(GetSlot("Name", &_name));
-        record->Add(GetSlot("Mask", &_mask));
-        record->Add(GetSlot("ExtractMask", &_extractMask));
-        record->Add(GetSlot("MinimalSize", &_minimalSize));
-        record->Add(GetSlot("MinimalSpacing", &_minimalSpacing));
-        record->Add(GetSlot("Pitch", &_pitch));
+        record->Add(getSlot("Technology", _technology));
+        record->Add(getSlot("Name", &_name));
+        record->Add(getSlot("Mask", &_mask));
+        record->Add(getSlot("ExtractMask", &_extractMask));
+        record->Add(getSlot("MinimalSize", &_minimalSize));
+        record->Add(getSlot("MinimalSpacing", &_minimalSpacing));
+        record->Add(getSlot("Pitch", &_pitch));
     }
     return record;
 }

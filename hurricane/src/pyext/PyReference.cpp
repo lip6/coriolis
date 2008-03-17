@@ -68,18 +68,18 @@ USING_NAMESPACE_HURRICANE
 extern "C" {
 
 
-# undef   ACCESS_OBJECT
-# undef   ACCESS_CLASS
-# define  ACCESS_OBJECT           _baseObject._object
-# define  ACCESS_CLASS(_pyObject)  &(_pyObject->_baseObject)
-# define  METHOD_HEAD(function)    GENERIC_METHOD_HEAD(Reference,reference,function)
+#undef   ACCESS_OBJECT
+#undef   ACCESS_CLASS
+#define  ACCESS_OBJECT           _baseObject._object
+#define  ACCESS_CLASS(_pyObject)  &(_pyObject->_baseObject)
+#define  METHOD_HEAD(function)    GENERIC_METHOD_HEAD(Reference,reference,function)
 
 
 // x=================================================================x
 // |             "PyReference" Python Module Code Part               |
 // x=================================================================x
 
-# if defined(__PYTHON_MODULE__)
+#if defined(__PYTHON_MODULE__)
 
 
   // x-------------------------------------------------------------x
@@ -87,24 +87,16 @@ extern "C" {
   // x-------------------------------------------------------------x
 
 
-  // Standart Accessors (Attributes).
-   
-  
-  // Standart Delete (Attribute).
-  DBoDeleteAttribute(PyReference_Delete,PyReference)
-
-
-
+  DBoDestroyAttribute(PyReference_destroy, PyReference)
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyReference_GetName ()"
+  // Attribute Method  :  "PyReference_getName ()"
 
-  static PyObject* PyReference_GetName ( PyReference *self )
-  {
+  static PyObject* PyReference_getName ( PyReference *self ) {
 
-    trace << "PyReference_GetName ()" << endl;
+    trace << "PyReference_getName ()" << endl;
     
-    METHOD_HEAD ( "Reference.GetName()" )
+    METHOD_HEAD ( "Reference.getName()" )
 
     PyName* pyName = PyObject_NEW ( PyName, &PyTypeName );
     if ( pyName == NULL ) { return NULL; }
@@ -115,7 +107,7 @@ extern "C" {
     trace << "new PyName [" << hex << pyName << "]" << endl;
     trace_out ();
 
-    pyName->_object = new Name ( reference->GetName() );
+    pyName->_object = new Name ( reference->getName() );
   
     HCATCH
     
@@ -126,19 +118,19 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyReference_GetPoint ()"
+  // Attribute Method  :  "PyReference_getPoint ()"
 
-  static PyObject* PyReference_GetPoint ( PyReference *self )
+  static PyObject* PyReference_getPoint ( PyReference *self )
   {
-    trace << "PyReference_GetPoint()" << endl;
+    trace << "PyReference_getPoint()" << endl;
 
-    METHOD_HEAD ( "Reference.GetPoint()" )
+    METHOD_HEAD ( "Reference.getPoint()" )
 
     PyPoint* pyPoint = PyObject_NEW ( PyPoint, &PyTypePoint );
     if (pyPoint == NULL) { return NULL; }
     
     HTRY
-    pyPoint->_object = new Point ( reference->GetPoint() );
+    pyPoint->_object = new Point ( reference->getPoint() );
     HCATCH    
 
     return ( (PyObject*)pyPoint );
@@ -177,10 +169,10 @@ extern "C" {
   // PyReference Attribute Method table.
 
   PyMethodDef PyReference_Methods[] =
-    { { "Delete"         , (PyCFunction)PyReference_Delete         , METH_NOARGS
-                         , "Delete associated hurricane object, the python object remains." }
-    , { "GetName"        , (PyCFunction)PyReference_GetName        , METH_NOARGS , "Returns the name of the reference." }
-    , { "GetPoint"       , (PyCFunction)PyReference_GetPoint       , METH_NOARGS , "Return the reference point." }
+    { { "destroy"        , (PyCFunction)PyReference_destroy        , METH_NOARGS
+                         , "destroy associated hurricane object, the python object remains." }
+    , { "getName"        , (PyCFunction)PyReference_getName        , METH_NOARGS , "Returns the name of the reference." }
+    , { "getPoint"       , (PyCFunction)PyReference_getPoint       , METH_NOARGS , "Return the reference point." }
     , { "Translate"      , (PyCFunction)PyReference_Translate      , METH_VARARGS, "Translate the reference of dx and dy." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
@@ -214,12 +206,12 @@ extern "C" {
                            ,Converter,&arg3
                            ) ) return ( NULL );
 
-    if      ( __cs.GetObjectIds() == CELL_NAME_INTS2_ARG )
+    if      ( __cs.getObjectIds() == CELL_NAME_INTS2_ARG )
       reference = Reference::Create (  PYCELL_O(arg0)
                                     , *PYNAME_O(arg1)
                                     ,  PyInt_AsLong(arg2)
                                     ,  PyInt_AsLong(arg3) );
-    else if ( __cs.GetObjectIds() == CELL_NAME_POINT_ARG )
+    else if ( __cs.getObjectIds() == CELL_NAME_POINT_ARG )
       reference = Reference::Create (  PYCELL_O(arg0)
                                     , *PYNAME_O(arg1)
                                     , *PYPOINT_O(arg2) );

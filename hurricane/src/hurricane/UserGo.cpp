@@ -24,61 +24,61 @@ class UserGo_CellUserGos : public Collection<UserGo*> {
 // Types
 // *****
 
-	public: typedef Collection<UserGo*> Inherit;
+    public: typedef Collection<UserGo*> Inherit;
 
-	public: class Locator : public Hurricane::Locator<UserGo*> {
-	// *******************************************************
+    public: class Locator : public Hurricane::Locator<UserGo*> {
+    // *******************************************************
 
-		public: typedef Hurricane::Locator<UserGo*> Inherit;
+        public: typedef Hurricane::Locator<UserGo*> Inherit;
 
-		private: const Cell* _cell;
+        private: const Cell* _cell;
         private: DisplaySlotLocator _displaySlotLocator;
-		private: UserGoLocator _userGoLocator;
+        private: UserGoLocator _userGoLocator;
 
-		public: Locator();
-		public: Locator(const Cell* cell);
-		public: Locator(const Locator& locator);
+        public: Locator();
+        public: Locator(const Cell* cell);
+        public: Locator(const Locator& locator);
 
-		public: Locator& operator=(const Locator& locator);
+        public: Locator& operator=(const Locator& locator);
 
-		public: virtual UserGo* GetElement() const;
-		public: virtual Hurricane::Locator<UserGo*>* GetClone() const;
+        public: virtual UserGo* getElement() const;
+        public: virtual Hurricane::Locator<UserGo*>* getClone() const;
 
-		public: virtual bool IsValid() const;
+        public: virtual bool IsValid() const;
 
-		public: virtual void Progress();
+        public: virtual void Progress();
 
-		public: virtual string _GetString() const;
+        public: virtual string _getString() const;
 
-	};
+    };
 
 // Attributes
 // **********
 
-	private: const Cell* _cell;
+    private: const Cell* _cell;
 
 // Constructors
 // ************
 
-	public: UserGo_CellUserGos();
-	public: UserGo_CellUserGos(const Cell* cell);
-	public: UserGo_CellUserGos(const UserGo_CellUserGos& cellusergos);
+    public: UserGo_CellUserGos();
+    public: UserGo_CellUserGos(const Cell* cell);
+    public: UserGo_CellUserGos(const UserGo_CellUserGos& cellusergos);
 
 // Operators
 // *********
 
-	public: UserGo_CellUserGos& operator=(const UserGo_CellUserGos& usergos);
+    public: UserGo_CellUserGos& operator=(const UserGo_CellUserGos& usergos);
 
 // Accessors
 // *********
 
-	public: virtual Collection<UserGo*>* GetClone() const;
-	public: virtual Hurricane::Locator<UserGo*>* GetLocator() const;
+    public: virtual Collection<UserGo*>* getClone() const;
+    public: virtual Hurricane::Locator<UserGo*>* getLocator() const;
 
 // Others
 // ******
 
-	public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -89,67 +89,55 @@ class UserGo_CellUserGos : public Collection<UserGo*> {
 UserGo::UserGo(DisplaySlot* displaySlot)
 // *************************************
         :  Inherit()
-	, _displaySlot(displaySlot)
+    , _displaySlot(displaySlot)
 {
-	if (!_displaySlot)
-		throw Error("Can't Create " + _TName("UserGo") + " null displaySlot");
+    if (!_displaySlot)
+        throw Error("Can't Create " + _TName("UserGo") + " null displaySlot");
 }
 
 void UserGo::Materialize()
 // ***********************
 {
-	if (!IsMaterialized()) {
-		QuadTree& quadTree = _displaySlot->_GetQuadTree();
-		quadTree.Insert(this);
-		GetCell()->_Fit(quadTree.GetBoundingBox());
-	}
+    if (!IsMaterialized()) {
+        QuadTree& quadTree = _displaySlot->_getQuadTree();
+        quadTree.Insert(this);
+        getCell()->_Fit(quadTree.getBoundingBox());
+    }
 }
 
 void UserGo::Unmaterialize()
 // *************************
 {
-	if (IsMaterialized()) {
-		QuadTree& quadTree = _displaySlot->_GetQuadTree();
-		GetCell()->_Unfit(GetBoundingBox());
-		quadTree.Remove(this);
-	}
+    if (IsMaterialized()) {
+        QuadTree& quadTree = _displaySlot->_getQuadTree();
+        getCell()->_Unfit(getBoundingBox());
+        quadTree.Remove(this);
+    }
 }
 
-void UserGo::_PostCreate()
-// ***********************
-{
-	Inherit::_PostCreate();
-}
-
-void UserGo::_PreDelete()
-// **********************
-{
-	Inherit::_PreDelete();
-}
-
-string UserGo::_GetString() const
+string UserGo::_getString() const
 // ******************************
 {
-	string s = Inherit::_GetString();
-	s.insert(s.length() - 1, " " + GetString(_displaySlot->GetName()));
-	return s;
+    string s = Inherit::_getString();
+    s.insert(s.length() - 1, " " + getString(_displaySlot->getName()));
+    return s;
 }
 
-Record* UserGo::_GetRecord() const
+Record* UserGo::_getRecord() const
 // *************************
 {
-	Record* record = Inherit::_GetRecord();
-	if (record) {
-		record->Add(GetSlot("DisplaySlot", _displaySlot));
-	}
-	return record;
+    Record* record = Inherit::_getRecord();
+    if (record) {
+        record->Add(getSlot("DisplaySlot", _displaySlot));
+    }
+    return record;
 }
 
-UserGos GetUserGos(const Cell* cell)
+UserGos getUserGos(const Cell* cell)
 // *********************************
 {
     if (!cell)
-		throw Error("Null pointer on cell while getting usergos");
+        throw Error("Null pointer on cell while getting usergos");
     return UserGo_CellUserGos(cell); 
 }
 
@@ -159,53 +147,53 @@ UserGos GetUserGos(const Cell* cell)
 
 UserGo_CellUserGos::UserGo_CellUserGos()
 // *************************************
-: 	Inherit(),
-	_cell(NULL)
+:     Inherit(),
+    _cell(NULL)
 {
 }
 
 UserGo_CellUserGos::UserGo_CellUserGos(const Cell* cell)
 // *****************************************************
-: 	Inherit(),
-	_cell(cell)
+:     Inherit(),
+    _cell(cell)
 {
 }
 
 UserGo_CellUserGos::UserGo_CellUserGos(const UserGo_CellUserGos& usergos)
 // **********************************************************************
-: 	Inherit(),
-	_cell(usergos._cell)
+:     Inherit(),
+    _cell(usergos._cell)
 {
 }
 
 UserGo_CellUserGos& UserGo_CellUserGos::operator=(const UserGo_CellUserGos& usergos)
 // *********************************************************************************
 {
-	_cell = usergos._cell;
-	return *this;
+    _cell = usergos._cell;
+    return *this;
 }
 
-Collection<UserGo*>* UserGo_CellUserGos::GetClone() const
+Collection<UserGo*>* UserGo_CellUserGos::getClone() const
 // ******************************************************
 {
-	return new UserGo_CellUserGos(*this);
+    return new UserGo_CellUserGos(*this);
 }
 
-Locator<UserGo*>* UserGo_CellUserGos::GetLocator() const
+Locator<UserGo*>* UserGo_CellUserGos::getLocator() const
 // *****************************************************
 {
-	return new Locator(_cell);
+    return new Locator(_cell);
 }
 
-string UserGo_CellUserGos::_GetString() const
+string UserGo_CellUserGos::_getString() const
 // ******************************************
 {
-	string s = "<" + _TName("Cell::UserGos");
-	if (_cell) {
-		s += " " + GetString(_cell);
-	}
-	s += ">";
-	return s;
+    string s = "<" + _TName("Cell::UserGos");
+    if (_cell) {
+        s += " " + getString(_cell);
+    }
+    s += ">";
+    return s;
 }
 
 
@@ -216,34 +204,34 @@ string UserGo_CellUserGos::_GetString() const
 
 UserGo_CellUserGos::Locator::Locator()
 // ****************************
-:	Inherit(),
-	_cell(NULL),
+:    Inherit(),
+    _cell(NULL),
         _displaySlotLocator(),
-	_userGoLocator()
+    _userGoLocator()
 {
 }
 
 UserGo_CellUserGos::Locator::Locator(const Cell* cell)
 // ***************************************************
-:	Inherit(),
-	_cell(cell),
+:    Inherit(),
+    _cell(cell),
     _displaySlotLocator(),
-	_userGoLocator()
+    _userGoLocator()
 {
-	if (_cell) {
-        _displaySlotLocator = GetDisplaySlots(cell).GetLocator();
+    if (_cell) {
+        _displaySlotLocator = getDisplaySlots(cell).getLocator();
         if (_displaySlotLocator.IsValid())
         {
-            DisplaySlot* displaySlot = _displaySlotLocator.GetElement();
-            _userGoLocator = displaySlot->GetUserGos().GetLocator();
+            DisplaySlot* displaySlot = _displaySlotLocator.getElement();
+            _userGoLocator = displaySlot->getUserGos().getLocator();
         }
-	}
+    }
 }
 
 UserGo_CellUserGos::Locator::Locator(const Locator& locator)
 // **************************************************
-:	Inherit(),
-	_cell(locator._cell),
+:    Inherit(),
+    _cell(locator._cell),
     _displaySlotLocator(locator._displaySlotLocator),
     _userGoLocator(locator._userGoLocator)
 {
@@ -252,55 +240,55 @@ UserGo_CellUserGos::Locator::Locator(const Locator& locator)
 UserGo_CellUserGos::Locator& UserGo_CellUserGos::Locator::operator=(const Locator& locator)
 // ****************************************************************************************
 {
-	_cell = locator._cell;
+    _cell = locator._cell;
     _displaySlotLocator = locator._displaySlotLocator;
     _userGoLocator =locator._userGoLocator;
-	return *this;
+    return *this;
 }
 
-UserGo* UserGo_CellUserGos::Locator::GetElement() const
+UserGo* UserGo_CellUserGos::Locator::getElement() const
 // ********************************************
 {
-	return _userGoLocator.GetElement();
+    return _userGoLocator.getElement();
 }
 
-Locator<UserGo*>* UserGo_CellUserGos::Locator::GetClone() const
+Locator<UserGo*>* UserGo_CellUserGos::Locator::getClone() const
 // ************************************************************
 {
-	return new Locator(*this);
+    return new Locator(*this);
 }
 
 bool UserGo_CellUserGos::Locator::IsValid() const
 // ***************************************
 {
-	return _userGoLocator.IsValid();
+    return _userGoLocator.IsValid();
 }
 
 void UserGo_CellUserGos::Locator::Progress()
 // *****************************************
 {
-	if (_userGoLocator.IsValid()) {
+    if (_userGoLocator.IsValid()) {
         _userGoLocator.Progress();
     }
     else if (_displaySlotLocator.IsValid()) {
         _displaySlotLocator.Progress();
         if (_displaySlotLocator.IsValid())
         {
-            DisplaySlot* displaySlot = _displaySlotLocator.GetElement();
-            _userGoLocator = displaySlot->GetUserGos().GetLocator();
+            DisplaySlot* displaySlot = _displaySlotLocator.getElement();
+            _userGoLocator = displaySlot->getUserGos().getLocator();
         }
     }
 }
 
-string UserGo_CellUserGos::Locator::_GetString() const
+string UserGo_CellUserGos::Locator::_getString() const
 // ********************************************
 {
-	string s = "<" + _TName("Cell::UserGos::Locator");
-	if (_cell) {
-		s += " " + GetString(_cell);
-	}
-	s += ">";
-	return s;
+    string s = "<" + _TName("Cell::UserGos::Locator");
+    if (_cell) {
+        s += " " + getString(_cell);
+    }
+    s += ">";
+    return s;
 }
 
 } // End of Hurricane namespace.

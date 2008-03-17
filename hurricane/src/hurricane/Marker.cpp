@@ -20,66 +20,66 @@ namespace Hurricane {
 Marker::Marker(Cell* cell)
 // ***********************
 :  Inherit(),
-	_cell(cell),
-	_nextOfCellMarkerSet(NULL)
+    _cell(cell),
+    _nextOfCellMarkerSet(NULL)
 {
-	if (!_cell)
-		throw Error("Can't create " + _TName("Marker") + " : null cell");
+    if (!_cell)
+        throw Error("Can't create " + _TName("Marker") + " : null cell");
 }
 
 void Marker::Materialize()
 // ***********************
 {
-	if (!IsMaterialized()) {
-		Cell* cell = GetCell();
-		QuadTree* quadTree = cell->_GetQuadTree();
-		quadTree->Insert(this);
-		cell->_Fit(quadTree->GetBoundingBox());
-	}
+    if (!IsMaterialized()) {
+        Cell* cell = getCell();
+        QuadTree* quadTree = cell->_getQuadTree();
+        quadTree->Insert(this);
+        cell->_Fit(quadTree->getBoundingBox());
+    }
 }
 
 void Marker::Unmaterialize()
 // *************************
 {
-	if (IsMaterialized()) {
-		Cell* cell = GetCell();
-		cell->_Unfit(GetBoundingBox());
-		cell->_GetQuadTree()->Remove(this);
-	}
+    if (IsMaterialized()) {
+        Cell* cell = getCell();
+        cell->_Unfit(getBoundingBox());
+        cell->_getQuadTree()->Remove(this);
+    }
 }
 
-void Marker::_PostCreate()
+void Marker::_postCreate()
 // ***********************
 {
-	_cell->_GetMarkerSet()._Insert(this);
+    _cell->_getMarkerSet()._Insert(this);
 
-	Inherit::_PostCreate();
+    Inherit::_postCreate();
 }
 
-void Marker::_PreDelete()
+void Marker::_preDestroy()
 // **********************
 {
-	Inherit::_PreDelete();
+    Inherit::_preDestroy();
 
-	_cell->_GetMarkerSet()._Remove(this);
+    _cell->_getMarkerSet()._Remove(this);
 }
 
-string Marker::_GetString() const
+string Marker::_getString() const
 // ******************************
 {
-	string s = Inherit::_GetString();
-	s.insert(s.length() - 1, " " + GetString(_cell->GetName()));
-	return s;
+    string s = Inherit::_getString();
+    s.insert(s.length() - 1, " " + getString(_cell->getName()));
+    return s;
 }
 
-Record* Marker::_GetRecord() const
+Record* Marker::_getRecord() const
 // *************************
 {
-	Record* record = Inherit::_GetRecord();
-	if (record) {
-		record->Add(GetSlot("Cell", _cell));
-	}
-	return record;
+    Record* record = Inherit::_getRecord();
+    if (record) {
+        record->Add(getSlot("Cell", _cell));
+    }
+    return record;
 }
 
 

@@ -22,219 +22,219 @@ namespace Hurricane {
 
 Occurrence::Occurrence(const Entity* entity)
 // *********************************
-  :	_entity(const_cast<Entity*>(entity)),
-	_sharedPath(NULL)
+  :    _entity(const_cast<Entity*>(entity)),
+    _sharedPath(NULL)
 {
 }
 
 Occurrence::Occurrence(const Entity* entity, const Path& path)
 // ***************************************************
-  :	_entity(const_cast<Entity*>(entity)),
-	_sharedPath(path._GetSharedPath())
+  :    _entity(const_cast<Entity*>(entity)),
+    _sharedPath(path._getSharedPath())
 {
-	if (!_entity) {
-		throw Error("Can't create " + _TName("Occurrence") + " : null entity");
-	}
-	if (_sharedPath)
-		if (_entity->GetCell() != _sharedPath->GetMasterCell())
-			throw Error("Can't create " + _TName("Occurrence") + " : incompatible path");
+    if (!_entity) {
+        throw Error("Can't create " + _TName("Occurrence") + " : null entity");
+    }
+    if (_sharedPath)
+        if (_entity->getCell() != _sharedPath->getMasterCell())
+            throw Error("Can't create " + _TName("Occurrence") + " : incompatible path");
 }
 
 Occurrence::Occurrence(const Occurrence& occurrence)
 // *********************************************
-:	_entity(occurrence._entity),
-	_sharedPath(occurrence._sharedPath)
+:    _entity(occurrence._entity),
+    _sharedPath(occurrence._sharedPath)
 {
 }
 
 Occurrence& Occurrence::operator=(const Occurrence& occurrence)
 // ********************************************************
 {
-	_entity = occurrence._entity;
-	_sharedPath = occurrence._sharedPath;
-	return *this;
+    _entity = occurrence._entity;
+    _sharedPath = occurrence._sharedPath;
+    return *this;
 }
 
 bool Occurrence::operator==(const Occurrence& occurrence) const
 // *********************************************************
 {
-	return _entity && occurrence._entity &&
-			 (_entity == occurrence._entity) &&
-			 (_sharedPath == occurrence._sharedPath);
+    return _entity && occurrence._entity &&
+             (_entity == occurrence._entity) &&
+             (_sharedPath == occurrence._sharedPath);
 }
 
 bool Occurrence::operator!=(const Occurrence& occurrence) const
 // *********************************************************
 {
-	return !_entity ||
-			 !occurrence._entity ||
-			 (_entity != occurrence._entity) ||
-			 (_sharedPath != occurrence._sharedPath);
+    return !_entity ||
+             !occurrence._entity ||
+             (_entity != occurrence._entity) ||
+             (_sharedPath != occurrence._sharedPath);
 }
 
 bool Occurrence::operator<(const Occurrence& occurrence) const
 // ********************************************************
 {
-	return ((_entity < occurrence._entity) ||
-			  ((_entity == occurrence._entity) && (_sharedPath < occurrence._sharedPath)));
+    return ((_entity < occurrence._entity) ||
+              ((_entity == occurrence._entity) && (_sharedPath < occurrence._sharedPath)));
 }
 
-Cell* Occurrence::GetOwnerCell() const
+Cell* Occurrence::getOwnerCell() const
 // **********************************
 {
-	if (!_entity) return NULL;
-	return (_sharedPath) ? _sharedPath->GetOwnerCell() : _entity->GetCell();
+    if (!_entity) return NULL;
+    return (_sharedPath) ? _sharedPath->getOwnerCell() : _entity->getCell();
 }
 
-Cell* Occurrence::GetMasterCell() const
+Cell* Occurrence::getMasterCell() const
 // ***********************************
 {
-	return (_entity) ? _entity->GetCell() : NULL;
+    return (_entity) ? _entity->getCell() : NULL;
 }
 
-Property* Occurrence::GetProperty(const Name& name) const
+Property* Occurrence::getProperty(const Name& name) const
 // *****************************************************
 {
-	if (_entity) {
-        //DBo* quark = _GetQuark(); 
-		Quark* quark = _GetQuark();
-		if (quark) return quark->GetProperty(name);
-	}
-	return NULL;
+    if (_entity) {
+        //DBo* quark = _getQuark(); 
+        Quark* quark = _getQuark();
+        if (quark) return quark->getProperty(name);
+    }
+    return NULL;
 }
 
-Properties Occurrence::GetProperties() const
+Properties Occurrence::getProperties() const
 // ****************************************
 {
-	if (_entity) {
-		Quark* quark = _GetQuark();
-		if (quark) return quark->GetProperties();
-	}
-	return Properties();
+    if (_entity) {
+        Quark* quark = _getQuark();
+        if (quark) return quark->getProperties();
+    }
+    return Properties();
 }
 
-Box Occurrence::GetBoundingBox() const
+Box Occurrence::getBoundingBox() const
 // **********************************
 {
-	if (!_entity) return Box();
-	if (!_sharedPath) return _entity->GetBoundingBox();
-	return _sharedPath->GetTransformation().getBox(_entity->GetBoundingBox());
+    if (!_entity) return Box();
+    if (!_sharedPath) return _entity->getBoundingBox();
+    return _sharedPath->getTransformation().getBox(_entity->getBoundingBox());
 }
 
 bool Occurrence::HasProperty() const
 // ********************************
 {
-	return (_GetQuark() != NULL);
+    return (_getQuark() != NULL);
 }
 
 void Occurrence::MakeInvalid()
 // **************************
 {
-	_entity = NULL;
-	_sharedPath = NULL;
+    _entity = NULL;
+    _sharedPath = NULL;
 }
 
 void Occurrence::Put(Property* property)
 // ************************************
 {
-	if (!_entity)
-		throw Error("Can't put property : invalid occurrence");
+    if (!_entity)
+        throw Error("Can't put property : invalid occurrence");
 
-	if (!property)
-		throw Error("Can't put property : null property");
+    if (!property)
+        throw Error("Can't put property : null property");
 
-	Quark* quark = _GetQuark();
-	if (!quark) quark = Quark::_Create(*this);
-	quark->Put(property);
+    Quark* quark = _getQuark();
+    if (!quark) quark = Quark::_Create(*this);
+    quark->put(property);
 }
 
 void Occurrence::Remove(Property* property)
 // ***************************************
 {
-	if (!_entity)
-		throw Error("Can't remove property : invalid occurrence");
+    if (!_entity)
+        throw Error("Can't remove property : invalid occurrence");
 
-	if (!property)
-		throw Error("Can't remove property : null property");
+    if (!property)
+        throw Error("Can't remove property : null property");
 
-	Quark* quark = _GetQuark();
-	if (quark) quark->Remove(property);
+    Quark* quark = _getQuark();
+    if (quark) quark->remove(property);
 }
 
 void Occurrence::RemoveProperty(const Name& name)
 // *********************************************
 {
-	if (!_entity)
-		throw Error("Can't remove property : invalid occurrence");
+    if (!_entity)
+        throw Error("Can't remove property : invalid occurrence");
 
-	Quark* quark = _GetQuark();
-	if (quark) quark->RemoveProperty(name);
+    Quark* quark = _getQuark();
+    if (quark) quark->removeProperty(name);
 }
 
 void Occurrence::ClearProperties()
 // ******************************
 {
-	Quark* quark = _GetQuark();
-	if (quark) quark->Delete();
+    Quark* quark = _getQuark();
+    if (quark) quark->destroy();
 }
 
-string Occurrence::_GetString() const
+string Occurrence::_getString() const
 // *********************************
 {
-	string s = "<" + _TName("Occurrence");
-	if (_entity) {
-		s += " ";
-                s += GetString(GetOwnerCell());
+    string s = "<" + _TName("Occurrence");
+    if (_entity) {
+        s += " ";
+                s += getString(getOwnerCell());
                 s += ":";
-		if (_sharedPath) s += GetString(_sharedPath->GetName()) + ":";
-		s += GetString(_entity);
-	}
-	s += ">";
-	return s;
+        if (_sharedPath) s += getString(_sharedPath->getName()) + ":";
+        s += getString(_entity);
+    }
+    s += ">";
+    return s;
 }
 
-Record* Occurrence::_GetRecord() const
+Record* Occurrence::_getRecord() const
 // ****************************
 {
- 	Record* record = NULL;
-	if (_entity) {
-  		record = new Record(GetString(this));
-		record->Add(GetSlot("Entity", _entity));
-		record->Add(GetSlot("SharedPath", _sharedPath));
-		Quark* quark = _GetQuark();
-		if (quark) record->Add(GetSlot("Quark", quark));
-	}
-	return record;
+     Record* record = NULL;
+    if (_entity) {
+          record = new Record(getString(this));
+        record->Add(getSlot("Entity", _entity));
+        record->Add(getSlot("SharedPath", _sharedPath));
+        Quark* quark = _getQuark();
+        if (quark) record->Add(getSlot("Quark", quark));
+    }
+    return record;
 }
 
 //DBo* ...
-Quark* Occurrence::_GetQuark() const
+Quark* Occurrence::_getQuark() const
 // ********************************
 {
-	return (_entity) ? _entity->_GetQuark(_sharedPath) : NULL;
+    return (_entity) ? _entity->_getQuark(_sharedPath) : NULL;
 }
 
-string Occurrence::GetName() const
+string Occurrence::getName() const
 // *******************************
 {
     string description;
 
     if (_sharedPath)
-        description=_sharedPath->GetName()+SharedPath::GetNameSeparator();
+        description=_sharedPath->getName()+SharedPath::getNameSeparator();
 
     if (Plug* plug= dynamic_cast<Plug*>(_entity))
-        description += plug->GetName();
+        description += plug->getName();
     else if (Pin* pin= dynamic_cast<Pin*>(_entity))
-        description += GetString(pin->GetName());
+        description += getString(pin->getName());
     else if (Net* net= dynamic_cast<Net*>(_entity))
-        description += GetString(net->GetName());
+        description += getString(net->getName());
     else if (Cell* cell= dynamic_cast<Cell*>(_entity))
-        description += GetString(cell->GetName());
+        description += getString(cell->getName());
     else if (Instance* instance= dynamic_cast<Instance*>(_entity))
-        description += GetString(instance->GetName());
+        description += getString(instance->getName());
     else
-        description+= GetString(_entity);
-        //throw Error("[Occurrence::GetName] No Name for "+GetString(_entity));
+        description+= getString(_entity);
+        //throw Error("[Occurrence::getName] No Name for "+getString(_entity));
 
     return description;
 }

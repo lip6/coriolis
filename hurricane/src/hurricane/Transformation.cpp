@@ -222,23 +222,23 @@ void Transformation::applyOn(Transformation& transformation) const
     transformation = getTransformation(transformation);
 }
 
-string Transformation::_GetString() const
+string Transformation::_getString() const
 // **************************************
 {
     return "<" + _TName("Transformation") + " " +
-             GetValueString(_tx) + " " +
-             GetValueString(_ty) + " " +
-             GetString(_orientation) +
+             getValueString(_tx) + " " +
+             getValueString(_ty) + " " +
+             getString(_orientation) +
              ">";
 }
 
-Record* Transformation::_GetRecord() const
+Record* Transformation::_getRecord() const
 // *********************************
 {
-    Record* record = new Record(GetString(this));
-    record->Add(GetSlot("X", &_tx));
-    record->Add(GetSlot("Y", &_ty));
-    record->Add(GetSlot("Orientation", _orientation));
+    Record* record = new Record(getString(this));
+    record->Add(getSlot("X", &_tx));
+    record->Add(getSlot("Y", &_ty));
+    record->Add(getSlot("Orientation", _orientation));
     return record;
 }
 
@@ -267,17 +267,17 @@ Transformation::Orientation& Transformation::Orientation::operator=(const Orient
     return *this;
 }
 
-string Transformation::Orientation::_GetString() const
+string Transformation::Orientation::_getString() const
 // ***************************************************
 {
-  return GetString(&_code);
+  return getString(&_code);
 }
 
-Record* Transformation::Orientation::_GetRecord() const
+Record* Transformation::Orientation::_getRecord() const
 // **********************************************
 {
-    Record* record = new Record(GetString(this));
-    record->Add(GetSlot("Code", &_code));
+    Record* record = new Record(getString(this));
+    record->Add(getSlot("Code", &_code));
     return record;
 }
 

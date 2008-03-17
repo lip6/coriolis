@@ -38,14 +38,14 @@ class Cell_Slices : public Collection<Slice*> {
 
         public: Locator& operator=(const Locator& locator);
 
-        public: virtual Slice* GetElement() const;
-        public: virtual Hurricane::Locator<Slice*>* GetClone() const;
+        public: virtual Slice* getElement() const;
+        public: virtual Hurricane::Locator<Slice*>* getClone() const;
 
         public: virtual bool IsValid() const;
 
         public: virtual void Progress();
 
-        public: virtual string _GetString() const;
+        public: virtual string _getString() const;
 
     };
 
@@ -70,13 +70,13 @@ class Cell_Slices : public Collection<Slice*> {
 // Accessors
 // *********
 
-    public: virtual Collection<Slice*>* GetClone() const;
-    public: virtual Hurricane::Locator<Slice*>* GetLocator() const;
+    public: virtual Collection<Slice*>* getClone() const;
+    public: virtual Hurricane::Locator<Slice*>* getLocator() const;
 
 // Others
 // ******
 
-    public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -111,14 +111,14 @@ class Cell_Components : public Collection<Component*> {
 
         public: Locator& operator=(const Locator& locator);
 
-        public: virtual Component* GetElement() const;
-        public: virtual Hurricane::Locator<Component*>* GetClone() const;
+        public: virtual Component* getElement() const;
+        public: virtual Hurricane::Locator<Component*>* getClone() const;
 
         public: virtual bool IsValid() const;
 
         public: virtual void Progress();
 
-        public: virtual string _GetString() const;
+        public: virtual string _getString() const;
 
     };
 
@@ -143,13 +143,13 @@ class Cell_Components : public Collection<Component*> {
 // Accessors
 // *********
 
-    public: virtual Collection<Component*>* GetClone() const;
-    public: virtual Hurricane::Locator<Component*>* GetLocator() const;
+    public: virtual Collection<Component*>* getClone() const;
+    public: virtual Hurricane::Locator<Component*>* getLocator() const;
 
 // Others
 // ******
 
-    public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -185,14 +185,14 @@ class Cell_ComponentsUnder : public Collection<Component*> {
 
         public: Locator& operator=(const Locator& locator);
 
-        public: virtual Component* GetElement() const;
-        public: virtual Hurricane::Locator<Component*>* GetClone() const;
+        public: virtual Component* getElement() const;
+        public: virtual Hurricane::Locator<Component*>* getClone() const;
 
         public: virtual bool IsValid() const;
 
         public: virtual void Progress();
 
-        public: virtual string _GetString() const;
+        public: virtual string _getString() const;
 
     };
 
@@ -218,13 +218,13 @@ class Cell_ComponentsUnder : public Collection<Component*> {
 // Accessors
 // *********
 
-    public: virtual Collection<Component*>* GetClone() const;
-    public: virtual Hurricane::Locator<Component*>* GetLocator() const;
+    public: virtual Collection<Component*>* getClone() const;
+    public: virtual Hurricane::Locator<Component*>* getLocator() const;
 
 // Others
 // ******
 
-    public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -262,14 +262,14 @@ class Cell_Occurrences : public Collection<Occurrence> {
 
         public: Locator& operator=(const Locator& locator);
 
-        public: virtual Occurrence GetElement() const;
-        public: virtual Hurricane::Locator<Occurrence>* GetClone() const;
+        public: virtual Occurrence getElement() const;
+        public: virtual Hurricane::Locator<Occurrence>* getClone() const;
 
         public: virtual bool IsValid() const;
 
         public: virtual void Progress();
 
-        public: virtual string _GetString() const;
+        public: virtual string _getString() const;
 
     };
 
@@ -294,13 +294,13 @@ class Cell_Occurrences : public Collection<Occurrence> {
 // Accessors
 // *********
 
-    public: virtual Collection<Occurrence>* GetClone() const;
-    public: virtual Hurricane::Locator<Occurrence>* GetLocator() const;
+    public: virtual Collection<Occurrence>* getClone() const;
+    public: virtual Hurricane::Locator<Occurrence>* getLocator() const;
 
 // Others
 // ******
 
-    public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -339,14 +339,14 @@ class Cell_OccurrencesUnder : public Collection<Occurrence> {
 
         public: Locator& operator=(const Locator& locator);
 
-        public: virtual Occurrence GetElement() const;
-        public: virtual Hurricane::Locator<Occurrence>* GetClone() const;
+        public: virtual Occurrence getElement() const;
+        public: virtual Hurricane::Locator<Occurrence>* getClone() const;
 
         public: virtual bool IsValid() const;
 
         public: virtual void Progress();
 
-        public: virtual string _GetString() const;
+        public: virtual string _getString() const;
 
     };
 
@@ -372,13 +372,13 @@ class Cell_OccurrencesUnder : public Collection<Occurrence> {
 // Accessors
 // *********
 
-    public: virtual Collection<Occurrence>* GetClone() const;
-    public: virtual Hurricane::Locator<Occurrence>* GetLocator() const;
+    public: virtual Collection<Occurrence>* getClone() const;
+    public: virtual Hurricane::Locator<Occurrence>* getLocator() const;
 
 // Others
 // ******
 
-    public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -410,14 +410,14 @@ class Cell_LeafInstanceOccurrences : public Collection<Occurrence> {
 
         public: Locator& operator=(const Locator& locator);
 
-        public: virtual Occurrence GetElement() const;
-        public: virtual Hurricane::Locator<Occurrence>* GetClone() const;
+        public: virtual Occurrence getElement() const;
+        public: virtual Hurricane::Locator<Occurrence>* getClone() const;
 
         public: virtual bool IsValid() const;
 
         public: virtual void Progress();
 
-        public: virtual string _GetString() const;
+        public: virtual string _getString() const;
 
     };
 
@@ -440,13 +440,13 @@ class Cell_LeafInstanceOccurrences : public Collection<Occurrence> {
 // Accessors
 // *********
 
-    public: virtual Collection<Occurrence>* GetClone() const;
-    public: virtual Hurricane::Locator<Occurrence>* GetLocator() const;
+    public: virtual Collection<Occurrence>* getClone() const;
+    public: virtual Hurricane::Locator<Occurrence>* getLocator() const;
 
 // Others
 // ******
 
-    public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -482,14 +482,14 @@ class Cell_LeafInstanceOccurrencesUnder : public Collection<Occurrence> {
 
         public: Locator& operator=(const Locator& locator);
 
-        public: virtual Occurrence GetElement() const;
-        public: virtual Hurricane::Locator<Occurrence>* GetClone() const;
+        public: virtual Occurrence getElement() const;
+        public: virtual Hurricane::Locator<Occurrence>* getClone() const;
 
         public: virtual bool IsValid() const;
 
         public: virtual void Progress();
 
-        public: virtual string _GetString() const;
+        public: virtual string _getString() const;
 
     };
 
@@ -514,13 +514,13 @@ class Cell_LeafInstanceOccurrencesUnder : public Collection<Occurrence> {
 // Accessors
 // *********
 
-    public: virtual Collection<Occurrence>* GetClone() const;
-    public: virtual Hurricane::Locator<Occurrence>* GetLocator() const;
+    public: virtual Collection<Occurrence>* getClone() const;
+    public: virtual Hurricane::Locator<Occurrence>* getLocator() const;
 
 // Others
 // ******
 
-    public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -554,14 +554,14 @@ class Cell_TerminalInstanceOccurrences : public Collection<Occurrence> {
 
         public: Locator& operator=(const Locator& locator);
 
-        public: virtual Occurrence GetElement() const;
-        public: virtual Hurricane::Locator<Occurrence>* GetClone() const;
+        public: virtual Occurrence getElement() const;
+        public: virtual Hurricane::Locator<Occurrence>* getClone() const;
 
         public: virtual bool IsValid() const;
 
         public: virtual void Progress();
 
-        public: virtual string _GetString() const;
+        public: virtual string _getString() const;
 
     };
 
@@ -584,13 +584,13 @@ class Cell_TerminalInstanceOccurrences : public Collection<Occurrence> {
 // Accessors
 // *********
 
-    public: virtual Collection<Occurrence>* GetClone() const;
-    public: virtual Hurricane::Locator<Occurrence>* GetLocator() const;
+    public: virtual Collection<Occurrence>* getClone() const;
+    public: virtual Hurricane::Locator<Occurrence>* getLocator() const;
 
 // Others
 // ******
 
-    public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -626,14 +626,14 @@ class Cell_TerminalInstanceOccurrencesUnder : public Collection<Occurrence> {
 
         public: Locator& operator=(const Locator& locator);
 
-        public: virtual Occurrence GetElement() const;
-        public: virtual Hurricane::Locator<Occurrence>* GetClone() const;
+        public: virtual Occurrence getElement() const;
+        public: virtual Hurricane::Locator<Occurrence>* getClone() const;
 
         public: virtual bool IsValid() const;
 
         public: virtual void Progress();
 
-        public: virtual string _GetString() const;
+        public: virtual string _getString() const;
 
     };
 
@@ -658,13 +658,13 @@ class Cell_TerminalInstanceOccurrencesUnder : public Collection<Occurrence> {
 // Accessors
 // *********
 
-    public: virtual Collection<Occurrence>* GetClone() const;
-    public: virtual Hurricane::Locator<Occurrence>* GetLocator() const;
+    public: virtual Collection<Occurrence>* getClone() const;
+    public: virtual Hurricane::Locator<Occurrence>* getLocator() const;
 
 // Others
 // ******
 
-    public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -700,14 +700,14 @@ class Cell_ComponentOccurrences : public Collection<Occurrence> {
 
         public: Locator& operator=(const Locator& locator);
 
-        public: virtual Occurrence GetElement() const;
-        public: virtual Hurricane::Locator<Occurrence>* GetClone() const;
+        public: virtual Occurrence getElement() const;
+        public: virtual Hurricane::Locator<Occurrence>* getClone() const;
 
         public: virtual bool IsValid() const;
 
         public: virtual void Progress();
 
-        public: virtual string _GetString() const;
+        public: virtual string _getString() const;
 
     };
 
@@ -732,13 +732,13 @@ class Cell_ComponentOccurrences : public Collection<Occurrence> {
 // Accessors
 // *********
 
-    public: virtual Collection<Occurrence>* GetClone() const;
-    public: virtual Hurricane::Locator<Occurrence>* GetLocator() const;
+    public: virtual Collection<Occurrence>* getClone() const;
+    public: virtual Hurricane::Locator<Occurrence>* getLocator() const;
 
 // Others
 // ******
 
-    public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -775,14 +775,14 @@ class Cell_ComponentOccurrencesUnder : public Collection<Occurrence> {
 
         public: Locator& operator=(const Locator& locator);
 
-        public: virtual Occurrence GetElement() const;
-        public: virtual Hurricane::Locator<Occurrence>* GetClone() const;
+        public: virtual Occurrence getElement() const;
+        public: virtual Hurricane::Locator<Occurrence>* getClone() const;
 
         public: virtual bool IsValid() const;
 
         public: virtual void Progress();
 
-        public: virtual string _GetString() const;
+        public: virtual string _getString() const;
 
     };
 
@@ -808,13 +808,13 @@ class Cell_ComponentOccurrencesUnder : public Collection<Occurrence> {
 // Accessors
 // *********
 
-    public: virtual Collection<Occurrence>* GetClone() const;
-    public: virtual Hurricane::Locator<Occurrence>* GetLocator() const;
+    public: virtual Collection<Occurrence>* getClone() const;
+    public: virtual Hurricane::Locator<Occurrence>* getLocator() const;
 
 // Others
 // ******
 
-    public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -846,14 +846,14 @@ class Cell_HyperNetRootNetOccurrences : public Collection<Occurrence> {
 
         public: Locator& operator=(const Locator& locator);
 
-        public: virtual Occurrence GetElement() const;
-        public: virtual Hurricane::Locator<Occurrence>* GetClone() const;
+        public: virtual Occurrence getElement() const;
+        public: virtual Hurricane::Locator<Occurrence>* getClone() const;
 
         public: virtual bool IsValid() const;
 
         public: virtual void Progress();
 
-        public: virtual string _GetString() const;
+        public: virtual string _getString() const;
 
     };
 
@@ -878,13 +878,13 @@ class Cell_HyperNetRootNetOccurrences : public Collection<Occurrence> {
 // Accessors
 // *********
 
-    public: virtual Collection<Occurrence>* GetClone() const;
-    public: virtual Hurricane::Locator<Occurrence>* GetLocator() const;
+    public: virtual Collection<Occurrence>* getClone() const;
+    public: virtual Hurricane::Locator<Occurrence>* getLocator() const;
 
 // Others
 // ******
 
-    public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -917,14 +917,14 @@ class Cell_HyperNetRootNetOccurrences : public Collection<Occurrence> {
 //
 //        public: Locator& operator=(const Locator& locator);
 //
-//        public: virtual MainView* GetElement() const;
-//        public: virtual Hurricane::Locator<MainView*>* GetClone() const;
+//        public: virtual MainView* getElement() const;
+//        public: virtual Hurricane::Locator<MainView*>* getClone() const;
 //
 //        public: virtual bool IsValid() const;
 //
 //        public: virtual void Progress();
 //
-//        public: virtual string _GetString() const;
+//        public: virtual string _getString() const;
 //
 //    };
 //
@@ -947,13 +947,13 @@ class Cell_HyperNetRootNetOccurrences : public Collection<Occurrence> {
 //// Accessors
 //// *********
 //
-//    public: virtual Collection<MainView*>* GetClone() const;
-//    public: virtual Hurricane::Locator<MainView*>* GetLocator() const;
+//    public: virtual Collection<MainView*>* getClone() const;
+//    public: virtual Hurricane::Locator<MainView*>* getLocator() const;
 //
 //// Others
 //// ******
 //
-//    public: virtual string _GetString() const;
+//    public: virtual string _getString() const;
 //
 //};
 //
@@ -983,14 +983,14 @@ class Cell_SubCells : public Collection<Cell*> {
 
         public: Locator& operator=(const Locator& locator);
 
-        public: virtual Cell* GetElement() const;
-        public: virtual Hurricane::Locator<Cell*>* GetClone() const;
+        public: virtual Cell* getElement() const;
+        public: virtual Hurricane::Locator<Cell*>* getClone() const;
 
         public: virtual bool IsValid() const;
 
         public: virtual void Progress();
 
-        public: virtual string _GetString() const;
+        public: virtual string _getString() const;
 
     };
 
@@ -1014,13 +1014,13 @@ class Cell_SubCells : public Collection<Cell*> {
 // Accessors
 // *********
 
-    public: virtual Collection<Cell*>* GetClone() const;
-    public: virtual Hurricane::Locator<Cell*>* GetLocator() const;
+    public: virtual Collection<Cell*>* getClone() const;
+    public: virtual Hurricane::Locator<Cell*>* getLocator() const;
 
 // Others
 // ******
 
-    public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -1050,13 +1050,13 @@ class Cell_SubCells : public Collection<Cell*> {
                                               { };
         // Accessors.
         public:
-          virtual Path                      GetElement () const { return _instancePath; };
-          virtual Hurricane::Locator<Path>* GetClone   () const { return new Locator(*this); };
+          virtual Path                      getElement () const { return _instancePath; };
+          virtual Hurricane::Locator<Path>* getClone   () const { return new Locator(*this); };
           virtual bool                      IsValid    () const { return _instancesStack.size(); };
           virtual void                      Progress   ();
         // Hurricane Managment.
         public:
-          virtual string _GetString() const;
+          virtual string _getString() const;
       };
 
     // Attributes.
@@ -1076,12 +1076,12 @@ class Cell_SubCells : public Collection<Cell*> {
       
     // Accessors.
     public:
-      virtual Collection<Path>*         GetClone   () const { return new Cell_RecursiveSlavePathes(*this); };
-      virtual Hurricane::Locator<Path>* GetLocator () const { return new Locator(_cell); };
+      virtual Collection<Path>*         getClone   () const { return new Cell_RecursiveSlavePathes(*this); };
+      virtual Hurricane::Locator<Path>* getLocator () const { return new Locator(_cell); };
 
     // Hurricane Managment.
     public:
-      virtual string _GetString() const;
+      virtual string _getString() const;
 
   };
 
@@ -1092,276 +1092,276 @@ class Cell_SubCells : public Collection<Cell*> {
 // Cell further definition
 // ****************************************************************************************************
 
-Instances Cell::GetInstancesUnder(const Box& area) const
+Instances Cell::getInstancesUnder(const Box& area) const
 // *****************************************************
 {
-    // return _quadTree.GetGosUnder(area).GetSubSet<Instance*>();
-    return SubTypeCollection<Go*, Instance*>(_quadTree.GetGosUnder(area));
+    // return _quadTree.getGosUnder(area).getSubSet<Instance*>();
+    return SubTypeCollection<Go*, Instance*>(_quadTree.getGosUnder(area));
 }
 
-Instances Cell::GetSlaveInstances() const
+Instances Cell::getSlaveInstances() const
 // **************************************
 {
-    return _slaveInstanceSet.GetElements();
+    return _slaveInstanceSet.getElements();
 }
 
-Instances Cell::GetTerminalInstances() const
+Instances Cell::getTerminalInstances() const
 // *****************************************
 {
-    return GetInstances().GetSubSet(Instance::GetIsTerminalFilter());
+    return getInstances().getSubSet(Instance::getIsTerminalFilter());
 }
 
-Instances Cell::GetLeafInstances() const
+Instances Cell::getLeafInstances() const
 // *************************************
 {
-    return GetInstances().GetSubSet(Instance::GetIsLeafFilter());
+    return getInstances().getSubSet(Instance::getIsLeafFilter());
 }
 
-Instances Cell::GetPlacedInstances() const
+Instances Cell::getPlacedInstances() const
 // ***************************************
 {
-    return GetInstances().GetSubSet(Instance::GetIsPlacedFilter());
+    return getInstances().getSubSet(Instance::getIsPlacedFilter());
 }
 
-Instances Cell::GetFixedInstances() const
+Instances Cell::getFixedInstances() const
 // **************************************
 {
-    return GetInstances().GetSubSet(Instance::GetIsFixedFilter());
+    return getInstances().getSubSet(Instance::getIsFixedFilter());
 }
 
-Instances Cell::GetUnplacedInstances() const
+Instances Cell::getUnplacedInstances() const
 // **************************************
 {
-    return GetInstances().GetSubSet(Instance::GetIsUnplacedFilter());
+    return getInstances().getSubSet(Instance::getIsUnplacedFilter());
 }
 
-Instances Cell::GetNotUnplacedInstances() const
+Instances Cell::getNotUnplacedInstances() const
 // **************************************
 {
-    return GetInstances().GetSubSet(Instance::GetIsNotUnplacedFilter());
+    return getInstances().getSubSet(Instance::getIsNotUnplacedFilter());
 }
 
-Instances Cell::GetPlacedInstancesUnder(const Box& area) const
+Instances Cell::getPlacedInstancesUnder(const Box& area) const
 // ***********************************************************
 {
-    return GetInstancesUnder(area).GetSubSet(Instance::GetIsPlacedFilter());
+    return getInstancesUnder(area).getSubSet(Instance::getIsPlacedFilter());
 }
 
-Instances Cell::GetFixedInstancesUnder(const Box& area) const
+Instances Cell::getFixedInstancesUnder(const Box& area) const
 // **********************************************************
 {
-    return GetInstancesUnder(area).GetSubSet(Instance::GetIsFixedFilter());
+    return getInstancesUnder(area).getSubSet(Instance::getIsFixedFilter());
 }
 
-Instances Cell::GetUnplacedInstancesUnder(const Box& area) const
+Instances Cell::getUnplacedInstancesUnder(const Box& area) const
 // *************************************************************
 {
-    return GetInstancesUnder(area).GetSubSet(Instance::GetIsUnplacedFilter());
+    return getInstancesUnder(area).getSubSet(Instance::getIsUnplacedFilter());
 }
 
-Instances Cell::GetNotUnplacedInstancesUnder(const Box& area) const
+Instances Cell::getNotUnplacedInstancesUnder(const Box& area) const
 // ****************************************************************
 {
-    return GetInstancesUnder(area).GetSubSet(Instance::GetIsNotUnplacedFilter());
+    return getInstancesUnder(area).getSubSet(Instance::getIsNotUnplacedFilter());
 }
 
-Instances Cell::GetTerminalInstancesUnder(const Box& area) const
+Instances Cell::getTerminalInstancesUnder(const Box& area) const
 // *************************************************************
 {
-    return GetInstancesUnder(area).GetSubSet(Instance::GetIsTerminalFilter());
+    return getInstancesUnder(area).getSubSet(Instance::getIsTerminalFilter());
 }
 
-Instances Cell::GetNonTerminalInstances() const
+Instances Cell::getNonTerminalInstances() const
 // ********************************************
 {
-    return GetInstances().GetSubSet(!Instance::GetIsTerminalFilter());
+    return getInstances().getSubSet(!Instance::getIsTerminalFilter());
 }
 
-Instances Cell::GetNonTerminalInstancesUnder(const Box& area) const
+Instances Cell::getNonTerminalInstancesUnder(const Box& area) const
 // ****************************************************************
 {
-    return GetInstancesUnder(area).GetSubSet(!Instance::GetIsTerminalFilter());
+    return getInstancesUnder(area).getSubSet(!Instance::getIsTerminalFilter());
 }
 
-Instances Cell::GetLeafInstancesUnder(const Box& area) const
+Instances Cell::getLeafInstancesUnder(const Box& area) const
 // *********************************************************
 {
-    return GetInstancesUnder(area).GetSubSet(Instance::GetIsLeafFilter());
+    return getInstancesUnder(area).getSubSet(Instance::getIsLeafFilter());
 }
 
-Instances Cell::GetNonLeafInstances() const
+Instances Cell::getNonLeafInstances() const
 // ****************************************
 {
-    return GetInstances().GetSubSet(!Instance::GetIsLeafFilter());
+    return getInstances().getSubSet(!Instance::getIsLeafFilter());
 }
 
-Instances Cell::GetNonLeafInstancesUnder(const Box& area) const
+Instances Cell::getNonLeafInstancesUnder(const Box& area) const
 // ************************************************************
 {
-    return GetInstancesUnder(area).GetSubSet(!Instance::GetIsLeafFilter());
+    return getInstancesUnder(area).getSubSet(!Instance::getIsLeafFilter());
 }
 
-Nets Cell::GetGlobalNets() const
+Nets Cell::getGlobalNets() const
 // *****************************
 {
-    return GetNets().GetSubSet(Net::GetIsGlobalFilter());
+    return getNets().getSubSet(Net::getIsGlobalFilter());
 }
 
-Nets Cell::GetExternalNets() const
+Nets Cell::getExternalNets() const
 // *******************************
 {
-    return GetNets().GetSubSet(Net::GetIsExternalFilter());
+    return getNets().getSubSet(Net::getIsExternalFilter());
 }
 
-Nets Cell::GetInternalNets() const
+Nets Cell::getInternalNets() const
 // *******************************
 {
-    return GetNets().GetSubSet(Net::GetIsInternalFilter());
+    return getNets().getSubSet(Net::getIsInternalFilter());
 }
 
-Nets Cell::GetClockNets() const
+Nets Cell::getClockNets() const
 // ****************************
 {
-    return GetNets().GetSubSet(Net::GetIsClockFilter());
+    return getNets().getSubSet(Net::getIsClockFilter());
 }
 
-Nets Cell::GetSupplyNets() const
+Nets Cell::getSupplyNets() const
 // *****************************
 {
-    return GetNets().GetSubSet(Net::GetIsSupplyFilter());
+    return getNets().getSubSet(Net::getIsSupplyFilter());
 }
 
-Nets Cell::GetPowerNets() const
+Nets Cell::getPowerNets() const
 // *****************************
 {
-    return GetNets().GetSubSet(Net::GetIsPowerFilter());
+    return getNets().getSubSet(Net::getIsPowerFilter());
 }
 
-Nets Cell::GetGroundNets() const
+Nets Cell::getGroundNets() const
 // *****************************
 {
-    return GetNets().GetSubSet(Net::GetIsGroundFilter());
+    return getNets().getSubSet(Net::getIsGroundFilter());
 }
 
-Slices Cell::GetSlices(const Layer::Mask& mask) const
+Slices Cell::getSlices(const Layer::Mask& mask) const
 // **************************************************
 {
     return Cell_Slices(this, mask);
 }
 
-//MainViews Cell::GetMainViews() const
+//MainViews Cell::getMainViews() const
 //// *********************************
 //{
-//    // return GetViews().GetSubSet<MainView*>();
-//    return SubTypeCollection<View*, MainView*>(GetViews());
+//    // return getViews().getSubSet<MainView*>();
+//    return SubTypeCollection<View*, MainView*>(getViews());
 //}
 //
-//MainViews Cell::GetImpactedMainViews() const
+//MainViews Cell::getImpactedMainViews() const
 //// *****************************************
 //{
 //    return Cell_ImpactedMainViews(this);
 //}
 //
-Rubbers Cell::GetRubbers() const
+Rubbers Cell::getRubbers() const
 // *****************************
 {
-    // return _quadTree.GetGos().GetSubSet<Rubber*>();
-    return SubTypeCollection<Go*, Rubber*>(_quadTree.GetGos());
+    // return _quadTree.getGos().getSubSet<Rubber*>();
+    return SubTypeCollection<Go*, Rubber*>(_quadTree.getGos());
 }
 
-Rubbers Cell::GetRubbersUnder(const Box& area) const
+Rubbers Cell::getRubbersUnder(const Box& area) const
 // *************************************************
 {
-    // return (area.isEmpty()) ? Rubbers() : _quadTree.GetGosUnder(area).GetSubSet<Rubber*>();
-    return SubTypeCollection<Go*, Rubber*>(_quadTree.GetGosUnder(area));
+    // return (area.isEmpty()) ? Rubbers() : _quadTree.getGosUnder(area).getSubSet<Rubber*>();
+    return SubTypeCollection<Go*, Rubber*>(_quadTree.getGosUnder(area));
 }
 
-Markers Cell::GetMarkersUnder(const Box& area) const
+Markers Cell::getMarkersUnder(const Box& area) const
 // *************************************************
 {
-    // return (area.isEmpty()) ? Markers() : _quadTree.GetGosUnder(area).GetSubSet<Marker*>();
-    return SubTypeCollection<Go*, Marker*>(_quadTree.GetGosUnder(area));
+    // return (area.isEmpty()) ? Markers() : _quadTree.getGosUnder(area).getSubSet<Marker*>();
+    return SubTypeCollection<Go*, Marker*>(_quadTree.getGosUnder(area));
 }
 
-References Cell::GetReferences() const
+References Cell::getReferences() const
 // **********************************
 {
-    return SubTypeCollection<Marker*, Reference*>(GetMarkers());
+    return SubTypeCollection<Marker*, Reference*>(getMarkers());
 }
 
-Cells Cell::GetSubCells() const
+Cells Cell::getSubCells() const
 // ****************************
 {
     return Cell_SubCells(this);
 }
 
-Components Cell::GetComponents(const Layer::Mask& mask) const
+Components Cell::getComponents(const Layer::Mask& mask) const
 // **********************************************************
 {
     return Cell_Components(this, mask);
 }
 
-Components Cell::GetComponentsUnder(const Box& area, const Layer::Mask& mask) const
+Components Cell::getComponentsUnder(const Box& area, const Layer::Mask& mask) const
 // ********************************************************************************
 {
     return Cell_ComponentsUnder(this, area, mask);
 }
 
-Occurrences Cell::GetOccurrences(unsigned searchDepth) const
+Occurrences Cell::getOccurrences(unsigned searchDepth) const
 // *******************************************************
 {
     return Cell_Occurrences(this, searchDepth);
 }
 
-Occurrences Cell::GetOccurrencesUnder(const Box& area, unsigned searchDepth) const
+Occurrences Cell::getOccurrencesUnder(const Box& area, unsigned searchDepth) const
 // *****************************************************************************
 {
     return Cell_OccurrencesUnder(this, area, searchDepth);
 }
 
-Occurrences Cell::GetTerminalInstanceOccurrences() const
+Occurrences Cell::getTerminalInstanceOccurrences() const
 // ***************************************************
 {
     return Cell_TerminalInstanceOccurrences(this);
 }
 
-Occurrences Cell::GetTerminalInstanceOccurrencesUnder(const Box& area) const
+Occurrences Cell::getTerminalInstanceOccurrencesUnder(const Box& area) const
 // ***********************************************************************
 {
     return Cell_TerminalInstanceOccurrencesUnder(this, area);
 }
 
-Occurrences Cell::GetLeafInstanceOccurrences() const
+Occurrences Cell::getLeafInstanceOccurrences() const
 // ***********************************************
 {
     return Cell_LeafInstanceOccurrences(this);
 }
 
-Occurrences Cell::GetLeafInstanceOccurrencesUnder(const Box& area) const
+Occurrences Cell::getLeafInstanceOccurrencesUnder(const Box& area) const
 // *******************************************************************
 {
     return Cell_LeafInstanceOccurrencesUnder(this, area);
 }
 
-Occurrences Cell::GetComponentOccurrences(const Layer::Mask& mask) const
+Occurrences Cell::getComponentOccurrences(const Layer::Mask& mask) const
 // *******************************************************************
 {
     return Cell_ComponentOccurrences(this, mask);
 }
 
-Occurrences Cell::GetComponentOccurrencesUnder(const Box& area, const Layer::Mask& mask) const
+Occurrences Cell::getComponentOccurrencesUnder(const Box& area, const Layer::Mask& mask) const
 // *****************************************************************************************
 {
     return Cell_ComponentOccurrencesUnder(this, area, mask);
 }
 
-Pathes Cell::GetRecursiveSlavePathes() const
+Pathes Cell::getRecursiveSlavePathes() const
 // *****************************************
 {
   return Cell_RecursiveSlavePathes(this);
 }
 
-Occurrences Cell::GetHyperNetRootNetOccurrences() const
+Occurrences Cell::getHyperNetRootNetOccurrences() const
 // *********************************
 {
     return Cell_HyperNetRootNetOccurrences(this,Path());
@@ -1403,25 +1403,25 @@ Cell_Slices& Cell_Slices::operator=(const Cell_Slices& slices)
     return *this;
 }
 
-Collection<Slice*>* Cell_Slices::GetClone() const
+Collection<Slice*>* Cell_Slices::getClone() const
 // **********************************************
 {
     return new Cell_Slices(*this);
 }
 
-Locator<Slice*>* Cell_Slices::GetLocator() const
+Locator<Slice*>* Cell_Slices::getLocator() const
 // *********************************************
 {
     return new Locator(_cell, _mask);
 }
 
-string Cell_Slices::_GetString() const
+string Cell_Slices::_getString() const
 // ***********************************
 {
     string s = "<" + _TName("Cell::Slices");
     if (_cell) {
-        s += " " + GetString(_cell);
-        s += " " + GetString(_mask);
+        s += " " + getString(_cell);
+        s += " " + getString(_mask);
     }
     s += ">";
     return s;
@@ -1450,8 +1450,8 @@ Cell_Slices::Locator::Locator(const Cell* cell, const Layer::Mask& mask)
     _sliceLocator()
 {
     if (_cell && (_mask != 0)) {
-        _sliceLocator = ((Cell*)_cell)->_GetSliceMap().GetElements().GetLocator();
-        while (_sliceLocator.IsValid() && !(_sliceLocator.GetElement()->GetLayer()->getMask() & _mask))
+        _sliceLocator = ((Cell*)_cell)->_getSliceMap().getElements().getLocator();
+        while (_sliceLocator.IsValid() && !(_sliceLocator.getElement()->getLayer()->getMask() & _mask))
             _sliceLocator.Progress();
     }
 }
@@ -1474,13 +1474,13 @@ Cell_Slices::Locator& Cell_Slices::Locator::operator=(const Locator& locator)
     return *this;
 }
 
-Slice* Cell_Slices::Locator::GetElement() const
+Slice* Cell_Slices::Locator::getElement() const
 // ********************************************
 {
-    return _sliceLocator.GetElement();
+    return _sliceLocator.getElement();
 }
 
-Locator<Slice*>* Cell_Slices::Locator::GetClone() const
+Locator<Slice*>* Cell_Slices::Locator::getClone() const
 // ****************************************************
 {
     return new Locator(*this);
@@ -1499,17 +1499,17 @@ void Cell_Slices::Locator::Progress()
         do {
             _sliceLocator.Progress();
         }
-        while (_sliceLocator.IsValid() && !(_sliceLocator.GetElement()->GetLayer()->getMask() & _mask));
+        while (_sliceLocator.IsValid() && !(_sliceLocator.getElement()->getLayer()->getMask() & _mask));
     }
 }
 
-string Cell_Slices::Locator::_GetString() const
+string Cell_Slices::Locator::_getString() const
 // ********************************************
 {
     string s = "<" + _TName("Cell::Slices::Locator");
     if (_cell) {
-        s += " " + GetString(_cell);
-        s += " " + GetString(_mask);
+        s += " " + getString(_cell);
+        s += " " + getString(_mask);
     }
     s += ">";
     return s;
@@ -1553,25 +1553,25 @@ Cell_Components& Cell_Components::operator=(const Cell_Components& components)
     return *this;
 }
 
-Collection<Component*>* Cell_Components::GetClone() const
+Collection<Component*>* Cell_Components::getClone() const
 // ******************************************************
 {
     return new Cell_Components(*this);
 }
 
-Locator<Component*>* Cell_Components::GetLocator() const
+Locator<Component*>* Cell_Components::getLocator() const
 // *****************************************************
 {
     return new Locator(_cell, _mask);
 }
 
-string Cell_Components::_GetString() const
+string Cell_Components::_getString() const
 // ***************************************
 {
     string s = "<" + _TName("Cell::Components");
     if (_cell) {
-        s += " " + GetString(_cell);
-        s += " " + GetString(_mask);
+        s += " " + getString(_cell);
+        s += " " + getString(_mask);
     }
     s += ">";
     return s;
@@ -1604,13 +1604,13 @@ Cell_Components::Locator::Locator(const Cell* cell, const Layer::Mask& mask)
     _component(NULL)
 {
     if (_cell && (_mask != 0)) {
-        _sliceLocator = _cell->GetSlices(_mask).GetLocator();
+        _sliceLocator = _cell->getSlices(_mask).getLocator();
         while (!_component && _sliceLocator.IsValid()) {
-            Slice* slice = _sliceLocator.GetElement();
+            Slice* slice = _sliceLocator.getElement();
             if (slice) {
-                _componentLocator = slice->GetComponents().GetLocator();
+                _componentLocator = slice->getComponents().getLocator();
                 while (!_component && _componentLocator.IsValid()) {
-                    _component = _componentLocator.GetElement();
+                    _component = _componentLocator.getElement();
                     if (!_component) _componentLocator.Progress();
                 }
             }
@@ -1641,13 +1641,13 @@ Cell_Components::Locator& Cell_Components::Locator::operator=(const Locator& loc
     return *this;
 }
 
-Component* Cell_Components::Locator::GetElement() const
+Component* Cell_Components::Locator::getElement() const
 // ****************************************************
 {
     return _component;
 }
 
-Locator<Component*>* Cell_Components::Locator::GetClone() const
+Locator<Component*>* Cell_Components::Locator::getClone() const
 // ************************************************************
 {
     return new Locator(*this);
@@ -1666,17 +1666,17 @@ void Cell_Components::Locator::Progress()
         _component = NULL;
         do {
             _componentLocator.Progress();
-            _component = _componentLocator.GetElement();
+            _component = _componentLocator.getElement();
         }
         while (!_component && _componentLocator.IsValid());
         if (!_component) {
             do {
                 _sliceLocator.Progress();
-                Slice* slice = _sliceLocator.GetElement();
+                Slice* slice = _sliceLocator.getElement();
                 if (slice) {
-                    _componentLocator = slice->GetComponents().GetLocator();
+                    _componentLocator = slice->getComponents().getLocator();
                     while (!_component && _componentLocator.IsValid()) {
-                        _component = _componentLocator.GetElement();
+                        _component = _componentLocator.getElement();
                         if (!_component) _componentLocator.Progress();
                     }
                 }
@@ -1686,13 +1686,13 @@ void Cell_Components::Locator::Progress()
     }
 }
 
-string Cell_Components::Locator::_GetString() const
+string Cell_Components::Locator::_getString() const
 // ************************************************
 {
     string s = "<" + _TName("Cell::Components::Locator");
     if (_cell) {
-        s += " " + GetString(_cell);
-        s += " " + GetString(_mask);
+        s += " " + getString(_cell);
+        s += " " + getString(_mask);
     }
     s += ">";
     return s;
@@ -1740,26 +1740,26 @@ Cell_ComponentsUnder& Cell_ComponentsUnder::operator=(const Cell_ComponentsUnder
     return *this;
 }
 
-Collection<Component*>* Cell_ComponentsUnder::GetClone() const
+Collection<Component*>* Cell_ComponentsUnder::getClone() const
 // ***********************************************************
 {
     return new Cell_ComponentsUnder(*this);
 }
 
-Locator<Component*>* Cell_ComponentsUnder::GetLocator() const
+Locator<Component*>* Cell_ComponentsUnder::getLocator() const
 // **********************************************************
 {
     return new Locator(_cell, _area, _mask);
 }
 
-string Cell_ComponentsUnder::_GetString() const
+string Cell_ComponentsUnder::_getString() const
 // ********************************************
 {
     string s = "<" + _TName("Cell::ComponentsUnder");
     if (_cell) {
-        s += " " + GetString(_cell);
-        s += " " + GetString(_area);
-        s += " " + GetString(_mask);
+        s += " " + getString(_cell);
+        s += " " + getString(_area);
+        s += " " + getString(_mask);
     }
     s += ">";
     return s;
@@ -1794,13 +1794,13 @@ Cell_ComponentsUnder::Locator::Locator(const Cell* cell, const Box& area, const 
     _component(NULL)
 {
     if (_cell && !_area.isEmpty()) {
-        _sliceLocator = _cell->GetSlices(_mask).GetLocator();
+        _sliceLocator = _cell->getSlices(_mask).getLocator();
         while (!_component && _sliceLocator.IsValid()) {
-            Slice* slice = _sliceLocator.GetElement();
+            Slice* slice = _sliceLocator.getElement();
             if (slice) {
-                _componentLocator = slice->GetComponentsUnder(_area).GetLocator();
+                _componentLocator = slice->getComponentsUnder(_area).getLocator();
                 if (_componentLocator.IsValid())
-                    _component = _componentLocator.GetElement();
+                    _component = _componentLocator.getElement();
             }
             if (!_component) _sliceLocator.Progress();
         }
@@ -1831,13 +1831,13 @@ Cell_ComponentsUnder::Locator& Cell_ComponentsUnder::Locator::operator=(const Lo
     return *this;
 }
 
-Component* Cell_ComponentsUnder::Locator::GetElement() const
+Component* Cell_ComponentsUnder::Locator::getElement() const
 // *********************************************************
 {
     return _component;
 }
 
-Locator<Component*>* Cell_ComponentsUnder::Locator::GetClone() const
+Locator<Component*>* Cell_ComponentsUnder::Locator::getClone() const
 // *****************************************************************
 {
     return new Locator(*this);
@@ -1856,29 +1856,29 @@ void Cell_ComponentsUnder::Locator::Progress()
         _component = NULL;
         _componentLocator.Progress();
         if (_componentLocator.IsValid())
-            _component = _componentLocator.GetElement();
+            _component = _componentLocator.getElement();
         else {
             do {
                 _sliceLocator.Progress();
-                Slice* slice = _sliceLocator.GetElement();
+                Slice* slice = _sliceLocator.getElement();
                 if (slice) {
-                    _componentLocator = slice->GetComponentsUnder(_area).GetLocator();
+                    _componentLocator = slice->getComponentsUnder(_area).getLocator();
                     if (_componentLocator.IsValid())
-                        _component = _componentLocator.GetElement();
+                        _component = _componentLocator.getElement();
                 }
             } while (!_component && _sliceLocator.IsValid());
         }
     }
 }
 
-string Cell_ComponentsUnder::Locator::_GetString() const
+string Cell_ComponentsUnder::Locator::_getString() const
 // *****************************************************
 {
     string s = "<" + _TName("Cell::ComponentsUnder::Locator");
     if (_cell) {
-        s += " " + GetString(_cell);
-        s += " " + GetString(_area);
-        s += " " + GetString(_mask);
+        s += " " + getString(_cell);
+        s += " " + getString(_area);
+        s += " " + getString(_mask);
     }
     s += ">";
     return s;
@@ -1922,25 +1922,25 @@ Cell_Occurrences& Cell_Occurrences::operator=(const Cell_Occurrences& occurrence
     return *this;
 }
 
-Collection<Occurrence>* Cell_Occurrences::GetClone() const
+Collection<Occurrence>* Cell_Occurrences::getClone() const
 // *****************************************************
 {
     return new Cell_Occurrences(*this);
 }
 
-Locator<Occurrence>* Cell_Occurrences::GetLocator() const
+Locator<Occurrence>* Cell_Occurrences::getLocator() const
 // ****************************************************
 {
     return new Locator(_cell, _searchDepth);
 }
 
-string Cell_Occurrences::_GetString() const
+string Cell_Occurrences::_getString() const
 // ***************************************
 {
     string s = "<" + _TName("Cell::Occurrences");
     if (_cell) {
-        s += " " + GetString(_cell);
-        if (_searchDepth != ((unsigned)-1)) s += " " + GetString(_searchDepth);
+        s += " " + getString(_cell);
+        if (_searchDepth != ((unsigned)-1)) s += " " + getString(_searchDepth);
     }
     s += ">";
     return s;
@@ -1979,19 +1979,19 @@ Cell_Occurrences::Locator::Locator(const Cell* cell, unsigned searchDepth)
     _occurrenceLocator()
 {
     if (_cell) {
-        _componentLocator = _cell->GetComponents().GetLocator();
+        _componentLocator = _cell->getComponents().getLocator();
         if (_componentLocator.IsValid())
             _state = 1;
         else {
-            _rubberLocator = _cell->GetRubbers().GetLocator();
+            _rubberLocator = _cell->getRubbers().getLocator();
             if (_rubberLocator.IsValid())
                 _state = 2;
             else {
-                _markerLocator = _cell->GetMarkers().GetLocator();
+                _markerLocator = _cell->getMarkers().getLocator();
                 if (_markerLocator.IsValid())
                     _state = 3;
                 else {
-                    _instanceLocator = _cell->GetInstances().GetLocator();
+                    _instanceLocator = _cell->getInstances().getLocator();
                     if (_instanceLocator.IsValid())
                         _state = 4;
                 }
@@ -2028,19 +2028,19 @@ Cell_Occurrences::Locator& Cell_Occurrences::Locator::operator=(const Locator& l
     return *this;
 }
 
-Occurrence Cell_Occurrences::Locator::GetElement() const
+Occurrence Cell_Occurrences::Locator::getElement() const
 // ***************************************************
 {
     if (_state) {
         switch (_state) {
-            case 1 : return Occurrence(_componentLocator.GetElement());
-            case 2 : return Occurrence(_rubberLocator.GetElement());
-            case 3 : return Occurrence(_markerLocator.GetElement());
-            case 4 : return Occurrence(_instanceLocator.GetElement());
+            case 1 : return Occurrence(_componentLocator.getElement());
+            case 2 : return Occurrence(_rubberLocator.getElement());
+            case 3 : return Occurrence(_markerLocator.getElement());
+            case 4 : return Occurrence(_instanceLocator.getElement());
             case 5 : {
-                Occurrence occurrence = _occurrenceLocator.GetElement();
-                Entity* entity = occurrence.GetEntity();
-                Path path = Path(_instanceLocator.GetElement(), occurrence.GetPath());
+                Occurrence occurrence = _occurrenceLocator.getElement();
+                Entity* entity = occurrence.getEntity();
+                Path path = Path(_instanceLocator.getElement(), occurrence.getPath());
                 return Occurrence(entity, path);
             }
         }
@@ -2048,7 +2048,7 @@ Occurrence Cell_Occurrences::Locator::GetElement() const
     return Occurrence();
 }
 
-Locator<Occurrence>* Cell_Occurrences::Locator::GetClone() const
+Locator<Occurrence>* Cell_Occurrences::Locator::getClone() const
 // ***********************************************************
 {
     return new Locator(*this);
@@ -2068,15 +2068,15 @@ void Cell_Occurrences::Locator::Progress()
             case 1 :
                 _componentLocator.Progress();
                 if (!_componentLocator.IsValid()) {
-                    _rubberLocator = _cell->GetRubbers().GetLocator();
+                    _rubberLocator = _cell->getRubbers().getLocator();
                     if (_rubberLocator.IsValid())
                         _state = 2;
                     else {
-                        _markerLocator = _cell->GetMarkers().GetLocator();
+                        _markerLocator = _cell->getMarkers().getLocator();
                         if (_markerLocator.IsValid())
                             _state = 3;
                         else {
-                            _instanceLocator = _cell->GetInstances().GetLocator();
+                            _instanceLocator = _cell->getInstances().getLocator();
                             if (_instanceLocator.IsValid())
                                 _state = 4;
                             else
@@ -2088,11 +2088,11 @@ void Cell_Occurrences::Locator::Progress()
             case 2 :
                 _rubberLocator.Progress();
                 if (!_rubberLocator.IsValid()) {
-                    _markerLocator = _cell->GetMarkers().GetLocator();
+                    _markerLocator = _cell->getMarkers().getLocator();
                     if (_markerLocator.IsValid())
                         _state = 3;
                     else {
-                        _instanceLocator = _cell->GetInstances().GetLocator();
+                        _instanceLocator = _cell->getInstances().getLocator();
                         if (_instanceLocator.IsValid())
                             _state = 4;
                         else
@@ -2103,7 +2103,7 @@ void Cell_Occurrences::Locator::Progress()
             case 3 :
                 _markerLocator.Progress();
                 if (!_markerLocator.IsValid()) {
-                    _instanceLocator = _cell->GetInstances().GetLocator();
+                    _instanceLocator = _cell->getInstances().getLocator();
                     if (_instanceLocator.IsValid())
                         _state = 4;
                     else
@@ -2116,14 +2116,14 @@ void Cell_Occurrences::Locator::Progress()
                     if (!_instanceLocator.IsValid()) _state = 0;
                 }
                 else {
-                    Instance* instance = _instanceLocator.GetElement();
+                    Instance* instance = _instanceLocator.getElement();
                     if (instance->IsTerminal()) {
                         _instanceLocator.Progress();
                         if (!_instanceLocator.IsValid()) _state = 0;
                     }
                     else {
                         _occurrenceLocator =
-                            instance->GetMasterCell()->GetOccurrences(_searchDepth - 1).GetLocator();
+                            instance->getMasterCell()->getOccurrences(_searchDepth - 1).getLocator();
                         if (_occurrenceLocator.IsValid())
                             _state = 5;
                         else {
@@ -2147,13 +2147,13 @@ void Cell_Occurrences::Locator::Progress()
     }
 }
 
-string Cell_Occurrences::Locator::_GetString() const
+string Cell_Occurrences::Locator::_getString() const
 // ************************************************
 {
     string s = "<" + _TName("Cell::Occurrences::Locator");
     if (_cell) {
-        s += " " + GetString(_cell);
-        if (_searchDepth != ((unsigned)-1)) s += " " + GetString(_searchDepth);
+        s += " " + getString(_cell);
+        if (_searchDepth != ((unsigned)-1)) s += " " + getString(_searchDepth);
     }
     s += ">";
     return s;
@@ -2201,26 +2201,26 @@ Cell_OccurrencesUnder& Cell_OccurrencesUnder::operator=(const Cell_OccurrencesUn
     return *this;
 }
 
-Collection<Occurrence>* Cell_OccurrencesUnder::GetClone() const
+Collection<Occurrence>* Cell_OccurrencesUnder::getClone() const
 // **********************************************************
 {
     return new Cell_OccurrencesUnder(*this);
 }
 
-Locator<Occurrence>* Cell_OccurrencesUnder::GetLocator() const
+Locator<Occurrence>* Cell_OccurrencesUnder::getLocator() const
 // *********************************************************
 {
     return new Locator(_cell, _area, _searchDepth);
 }
 
-string Cell_OccurrencesUnder::_GetString() const
+string Cell_OccurrencesUnder::_getString() const
 // ********************************************
 {
     string s = "<" + _TName("Cell::OccurrencesUnder");
     if (_cell) {
-        s += " " + GetString(_cell);
-        s += " " + GetString(_area);
-        if (_searchDepth != ((unsigned)-1)) s += " " + GetString(_searchDepth);
+        s += " " + getString(_cell);
+        s += " " + getString(_area);
+        if (_searchDepth != ((unsigned)-1)) s += " " + getString(_searchDepth);
     }
     s += ">";
     return s;
@@ -2261,19 +2261,19 @@ Cell_OccurrencesUnder::Locator::Locator(const Cell* cell, const Box& area, unsig
     _occurrenceLocator()
 {
     if (_cell && !_area.isEmpty()) {
-        _componentLocator = _cell->GetComponentsUnder(_area).GetLocator();
+        _componentLocator = _cell->getComponentsUnder(_area).getLocator();
         if (_componentLocator.IsValid())
             _state = 1;
         else {
-            _rubberLocator = _cell->GetRubbersUnder(_area).GetLocator();
+            _rubberLocator = _cell->getRubbersUnder(_area).getLocator();
             if (_rubberLocator.IsValid())
                 _state = 2;
             else {
-                _markerLocator = _cell->GetMarkersUnder(_area).GetLocator();
+                _markerLocator = _cell->getMarkersUnder(_area).getLocator();
                 if (_markerLocator.IsValid())
                     _state = 3;
                 else {
-                    _instanceLocator = _cell->GetInstancesUnder(_area).GetLocator();
+                    _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
                     if (_instanceLocator.IsValid())
                         _state = 4;
                 }
@@ -2312,19 +2312,19 @@ Cell_OccurrencesUnder::Locator& Cell_OccurrencesUnder::Locator::operator=(const 
     return *this;
 }
 
-Occurrence Cell_OccurrencesUnder::Locator::GetElement() const
+Occurrence Cell_OccurrencesUnder::Locator::getElement() const
 // ********************************************************
 {
     if (_state) {
         switch (_state) {
-            case 1 : return Occurrence(_componentLocator.GetElement());
-            case 2 : return Occurrence(_rubberLocator.GetElement());
-            case 3 : return Occurrence(_markerLocator.GetElement());
-            case 4 : return Occurrence(_instanceLocator.GetElement());
+            case 1 : return Occurrence(_componentLocator.getElement());
+            case 2 : return Occurrence(_rubberLocator.getElement());
+            case 3 : return Occurrence(_markerLocator.getElement());
+            case 4 : return Occurrence(_instanceLocator.getElement());
             case 5 : {
-                Occurrence occurrence = _occurrenceLocator.GetElement();
-                Entity* entity = occurrence.GetEntity();
-                Path path = Path(_instanceLocator.GetElement(), occurrence.GetPath());
+                Occurrence occurrence = _occurrenceLocator.getElement();
+                Entity* entity = occurrence.getEntity();
+                Path path = Path(_instanceLocator.getElement(), occurrence.getPath());
                 return Occurrence(entity, path);
             }
         }
@@ -2332,7 +2332,7 @@ Occurrence Cell_OccurrencesUnder::Locator::GetElement() const
     return Occurrence();
 }
 
-Locator<Occurrence>* Cell_OccurrencesUnder::Locator::GetClone() const
+Locator<Occurrence>* Cell_OccurrencesUnder::Locator::getClone() const
 // ****************************************************************
 {
     return new Locator(*this);
@@ -2352,15 +2352,15 @@ void Cell_OccurrencesUnder::Locator::Progress()
             case 1 :
                 _componentLocator.Progress();
                 if (!_componentLocator.IsValid()) {
-                    _rubberLocator = _cell->GetRubbersUnder(_area).GetLocator();
+                    _rubberLocator = _cell->getRubbersUnder(_area).getLocator();
                     if (_rubberLocator.IsValid())
                         _state = 2;
                     else {
-                        _markerLocator = _cell->GetMarkersUnder(_area).GetLocator();
+                        _markerLocator = _cell->getMarkersUnder(_area).getLocator();
                         if (_markerLocator.IsValid())
                             _state = 3;
                         else {
-                            _instanceLocator = _cell->GetInstancesUnder(_area).GetLocator();
+                            _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
                             if (_instanceLocator.IsValid())
                                 _state = 4;
                             else
@@ -2372,11 +2372,11 @@ void Cell_OccurrencesUnder::Locator::Progress()
             case 2 :
                 _rubberLocator.Progress();
                 if (!_rubberLocator.IsValid()) {
-                    _markerLocator = _cell->GetMarkersUnder(_area).GetLocator();
+                    _markerLocator = _cell->getMarkersUnder(_area).getLocator();
                     if (_markerLocator.IsValid())
                         _state = 3;
                     else {
-                        _instanceLocator = _cell->GetInstancesUnder(_area).GetLocator();
+                        _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
                         if (_instanceLocator.IsValid())
                             _state = 4;
                         else
@@ -2387,7 +2387,7 @@ void Cell_OccurrencesUnder::Locator::Progress()
             case 3 :
                 _markerLocator.Progress();
                 if (!_markerLocator.IsValid()) {
-                    _instanceLocator = _cell->GetInstancesUnder(_area).GetLocator();
+                    _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
                     if (_instanceLocator.IsValid())
                         _state = 4;
                     else
@@ -2400,17 +2400,17 @@ void Cell_OccurrencesUnder::Locator::Progress()
                     if (!_instanceLocator.IsValid()) _state = 0;
                 }
                 else {
-                    Instance* instance = _instanceLocator.GetElement();
+                    Instance* instance = _instanceLocator.getElement();
                     if (instance->IsTerminal()) {
                         _instanceLocator.Progress();
                         if (!_instanceLocator.IsValid()) _state = 0;
                     }
                     else {
                         Box masterArea = _area;
-                        instance->GetTransformation().getInvert().applyOn(masterArea);
-                        Cell* masterCell = instance->GetMasterCell();
+                        instance->getTransformation().getInvert().applyOn(masterArea);
+                        Cell* masterCell = instance->getMasterCell();
                         _occurrenceLocator =
-                            masterCell->GetOccurrencesUnder(masterArea, _searchDepth - 1).GetLocator();
+                            masterCell->getOccurrencesUnder(masterArea, _searchDepth - 1).getLocator();
                         if (_occurrenceLocator.IsValid())
                             _state = 5;
                         else {
@@ -2434,14 +2434,14 @@ void Cell_OccurrencesUnder::Locator::Progress()
     }
 }
 
-string Cell_OccurrencesUnder::Locator::_GetString() const
+string Cell_OccurrencesUnder::Locator::_getString() const
 // *****************************************************
 {
     string s = "<" + _TName("Cell::OccurrencesUnder::Locator");
     if (_cell) {
-        s += " " + GetString(_cell);
-        s += " " + GetString(_area);
-        if (_searchDepth != ((unsigned)-1)) s += " " + GetString(_searchDepth);
+        s += " " + getString(_cell);
+        s += " " + getString(_area);
+        if (_searchDepth != ((unsigned)-1)) s += " " + getString(_searchDepth);
     }
     s += ">";
     return s;
@@ -2472,23 +2472,23 @@ Cell_LeafInstanceOccurrences& Cell_LeafInstanceOccurrences::operator=(const Cell
     return *this;
 }
 
-Collection<Occurrence>* Cell_LeafInstanceOccurrences::GetClone() const
+Collection<Occurrence>* Cell_LeafInstanceOccurrences::getClone() const
 // *********************************************************************
 {
     return new Cell_LeafInstanceOccurrences(*this);
 }
 
-Locator<Occurrence>* Cell_LeafInstanceOccurrences::GetLocator() const
+Locator<Occurrence>* Cell_LeafInstanceOccurrences::getLocator() const
 // ********************************************************************
 {
     return new Locator(_cell);
 }
 
-string Cell_LeafInstanceOccurrences::_GetString() const
+string Cell_LeafInstanceOccurrences::_getString() const
 // *******************************************************
 {
     string s = "<" + _TName("Cell::LeafInstanceOccurrences");
-    if (_cell) s += " " + GetString(_cell);
+    if (_cell) s += " " + getString(_cell);
     s += ">";
     return s;
 }
@@ -2509,14 +2509,14 @@ Cell_LeafInstanceOccurrences::Locator::Locator(const Cell* cell)
     _occurrenceLocator()
 {
     if (_cell) {
-        _leafInstanceLocator = _cell->GetLeafInstances().GetLocator();
+        _leafInstanceLocator = _cell->getLeafInstances().getLocator();
         if (_leafInstanceLocator.IsValid())
             _state = 1;
         else {
-            _nonLeafInstanceLocator = _cell->GetNonLeafInstances().GetLocator();
+            _nonLeafInstanceLocator = _cell->getNonLeafInstances().getLocator();
             while (!_state && _nonLeafInstanceLocator.IsValid()) {
-                Cell* masterCell = _nonLeafInstanceLocator.GetElement()->GetMasterCell();
-                _occurrenceLocator = masterCell->GetLeafInstanceOccurrences().GetLocator();
+                Cell* masterCell = _nonLeafInstanceLocator.getElement()->getMasterCell();
+                _occurrenceLocator = masterCell->getLeafInstanceOccurrences().getLocator();
                 if (_occurrenceLocator.IsValid())
                     _state = 2;
                 else
@@ -2548,16 +2548,16 @@ Cell_LeafInstanceOccurrences::Locator& Cell_LeafInstanceOccurrences::Locator::op
     return *this;
 }
 
-Occurrence Cell_LeafInstanceOccurrences::Locator::GetElement() const
+Occurrence Cell_LeafInstanceOccurrences::Locator::getElement() const
 // *******************************************************************
 {
     if (_state) {
         switch (_state) {
-            case 1 : return Occurrence(_leafInstanceLocator.GetElement());
+            case 1 : return Occurrence(_leafInstanceLocator.getElement());
             case 2 : {
-                Occurrence occurrence = _occurrenceLocator.GetElement();
-                Entity* entity = occurrence.GetEntity();
-                Path path = Path(_nonLeafInstanceLocator.GetElement(), occurrence.GetPath());
+                Occurrence occurrence = _occurrenceLocator.getElement();
+                Entity* entity = occurrence.getEntity();
+                Path path = Path(_nonLeafInstanceLocator.getElement(), occurrence.getPath());
                 return Occurrence(entity, path);
             }
         }
@@ -2565,7 +2565,7 @@ Occurrence Cell_LeafInstanceOccurrences::Locator::GetElement() const
     return Occurrence();
 }
 
-Locator<Occurrence>* Cell_LeafInstanceOccurrences::Locator::GetClone() const
+Locator<Occurrence>* Cell_LeafInstanceOccurrences::Locator::getClone() const
 // ***************************************************************************
 {
     return new Locator(*this);
@@ -2586,10 +2586,10 @@ void Cell_LeafInstanceOccurrences::Locator::Progress()
                 _leafInstanceLocator.Progress();
                 if (!_leafInstanceLocator.IsValid()) {
                     _state = 0;
-                    _nonLeafInstanceLocator = _cell->GetNonLeafInstances().GetLocator();
+                    _nonLeafInstanceLocator = _cell->getNonLeafInstances().getLocator();
                     while (!_state && _nonLeafInstanceLocator.IsValid()) {
-                        Cell* masterCell = _nonLeafInstanceLocator.GetElement()->GetMasterCell();
-                        _occurrenceLocator = masterCell->GetLeafInstanceOccurrences().GetLocator();
+                        Cell* masterCell = _nonLeafInstanceLocator.getElement()->getMasterCell();
+                        _occurrenceLocator = masterCell->getLeafInstanceOccurrences().getLocator();
                         if (_occurrenceLocator.IsValid())
                             _state = 2;
                         else
@@ -2604,9 +2604,9 @@ void Cell_LeafInstanceOccurrences::Locator::Progress()
                     if (_nonLeafInstanceLocator.IsValid()) {
                         _nonLeafInstanceLocator.Progress();
                         while (!_state && _nonLeafInstanceLocator.IsValid()) {
-                            Cell* masterCell = _nonLeafInstanceLocator.GetElement()->GetMasterCell();
+                            Cell* masterCell = _nonLeafInstanceLocator.getElement()->getMasterCell();
                             _occurrenceLocator =
-                                masterCell->GetLeafInstanceOccurrences().GetLocator();
+                                masterCell->getLeafInstanceOccurrences().getLocator();
                             if (_occurrenceLocator.IsValid())
                                 _state = 2;
                             else
@@ -2619,11 +2619,11 @@ void Cell_LeafInstanceOccurrences::Locator::Progress()
     }
 }
 
-string Cell_LeafInstanceOccurrences::Locator::_GetString() const
+string Cell_LeafInstanceOccurrences::Locator::_getString() const
 // ****************************************************************
 {
     string s = "<" + _TName("Cell::LeafInstanceOccurrences::Locator");
-    if (_cell) s += " " + GetString(_cell);
+    if (_cell) s += " " + getString(_cell);
     s += ">";
     return s;
 }
@@ -2666,25 +2666,25 @@ Cell_LeafInstanceOccurrencesUnder& Cell_LeafInstanceOccurrencesUnder::operator=(
     return *this;
 }
 
-Collection<Occurrence>* Cell_LeafInstanceOccurrencesUnder::GetClone() const
+Collection<Occurrence>* Cell_LeafInstanceOccurrencesUnder::getClone() const
 // **************************************************************************
 {
     return new Cell_LeafInstanceOccurrencesUnder(*this);
 }
 
-Locator<Occurrence>* Cell_LeafInstanceOccurrencesUnder::GetLocator() const
+Locator<Occurrence>* Cell_LeafInstanceOccurrencesUnder::getLocator() const
 // *************************************************************************
 {
     return new Locator(_cell, _area);
 }
 
-string Cell_LeafInstanceOccurrencesUnder::_GetString() const
+string Cell_LeafInstanceOccurrencesUnder::_getString() const
 // ************************************************************
 {
     string s = "<" + _TName("Cell::LeafInstanceOccurrencesUnder");
     if (_cell) {
-        s += " " + GetString(_cell);
-        s += " " + GetString(_area);
+        s += " " + getString(_cell);
+        s += " " + getString(_area);
     }
     s += ">";
     return s;
@@ -2719,18 +2719,18 @@ Cell_LeafInstanceOccurrencesUnder::Locator::Locator(const Cell* cell, const Box&
     _occurrenceLocator()
 {
     if (_cell && !_area.isEmpty()) {
-        _leafInstanceLocator = _cell->GetLeafInstancesUnder(_area).GetLocator();
+        _leafInstanceLocator = _cell->getLeafInstancesUnder(_area).getLocator();
         if (_leafInstanceLocator.IsValid())
             _state = 1;
         else {
-            _nonLeafInstanceLocator = _cell->GetNonLeafInstancesUnder(_area).GetLocator();
+            _nonLeafInstanceLocator = _cell->getNonLeafInstancesUnder(_area).getLocator();
             while (!_state && _nonLeafInstanceLocator.IsValid()) {
-                Instance* instance = _nonLeafInstanceLocator.GetElement();
-                Cell* masterCell = instance->GetMasterCell();
+                Instance* instance = _nonLeafInstanceLocator.getElement();
+                Cell* masterCell = instance->getMasterCell();
                 Box masterArea = _area;
-                instance->GetTransformation().getInvert().applyOn(masterArea);
+                instance->getTransformation().getInvert().applyOn(masterArea);
                 _occurrenceLocator =
-                    masterCell->GetLeafInstanceOccurrencesUnder(masterArea).GetLocator();
+                    masterCell->getLeafInstanceOccurrencesUnder(masterArea).getLocator();
                 if (_occurrenceLocator.IsValid())
                     _state = 2;
                 else
@@ -2764,16 +2764,16 @@ Cell_LeafInstanceOccurrencesUnder::Locator& Cell_LeafInstanceOccurrencesUnder::L
     return *this;
 }
 
-Occurrence Cell_LeafInstanceOccurrencesUnder::Locator::GetElement() const
+Occurrence Cell_LeafInstanceOccurrencesUnder::Locator::getElement() const
 // ************************************************************************
 {
     if (_state) {
         switch (_state) {
-            case 1 : return Occurrence(_leafInstanceLocator.GetElement());
+            case 1 : return Occurrence(_leafInstanceLocator.getElement());
             case 2 : {
-                Occurrence occurrence = _occurrenceLocator.GetElement();
-                Entity* entity = occurrence.GetEntity();
-                Path path = Path(_nonLeafInstanceLocator.GetElement(), occurrence.GetPath());
+                Occurrence occurrence = _occurrenceLocator.getElement();
+                Entity* entity = occurrence.getEntity();
+                Path path = Path(_nonLeafInstanceLocator.getElement(), occurrence.getPath());
                 return Occurrence(entity, path);
             }
         }
@@ -2781,7 +2781,7 @@ Occurrence Cell_LeafInstanceOccurrencesUnder::Locator::GetElement() const
     return Occurrence();
 }
 
-Locator<Occurrence>* Cell_LeafInstanceOccurrencesUnder::Locator::GetClone() const
+Locator<Occurrence>* Cell_LeafInstanceOccurrencesUnder::Locator::getClone() const
 // ********************************************************************************
 {
     return new Locator(*this);
@@ -2802,14 +2802,14 @@ void Cell_LeafInstanceOccurrencesUnder::Locator::Progress()
                 _leafInstanceLocator.Progress();
                 if (!_leafInstanceLocator.IsValid()) {
                     _state = 0;
-                    _nonLeafInstanceLocator = _cell->GetNonLeafInstancesUnder(_area).GetLocator();
+                    _nonLeafInstanceLocator = _cell->getNonLeafInstancesUnder(_area).getLocator();
                     while (!_state && _nonLeafInstanceLocator.IsValid()) {
-                        Instance* instance = _nonLeafInstanceLocator.GetElement();
-                        Cell* masterCell = instance->GetMasterCell();
+                        Instance* instance = _nonLeafInstanceLocator.getElement();
+                        Cell* masterCell = instance->getMasterCell();
                         Box masterArea = _area;
-                        instance->GetTransformation().getInvert().applyOn(masterArea);
+                        instance->getTransformation().getInvert().applyOn(masterArea);
                         _occurrenceLocator =
-                            masterCell->GetLeafInstanceOccurrencesUnder(masterArea).GetLocator();
+                            masterCell->getLeafInstanceOccurrencesUnder(masterArea).getLocator();
                         if (_occurrenceLocator.IsValid())
                             _state = 2;
                         else
@@ -2824,12 +2824,12 @@ void Cell_LeafInstanceOccurrencesUnder::Locator::Progress()
                     if (_nonLeafInstanceLocator.IsValid()) {
                         _nonLeafInstanceLocator.Progress();
                         while (!_state && _nonLeafInstanceLocator.IsValid()) {
-                            Instance* instance = _nonLeafInstanceLocator.GetElement();
-                            Cell* masterCell = instance->GetMasterCell();
+                            Instance* instance = _nonLeafInstanceLocator.getElement();
+                            Cell* masterCell = instance->getMasterCell();
                             Box masterArea = _area;
-                            instance->GetTransformation().getInvert().applyOn(masterArea);
+                            instance->getTransformation().getInvert().applyOn(masterArea);
                             _occurrenceLocator =
-                                masterCell->GetLeafInstanceOccurrencesUnder(masterArea).GetLocator();
+                                masterCell->getLeafInstanceOccurrencesUnder(masterArea).getLocator();
                             if (_occurrenceLocator.IsValid())
                                 _state = 2;
                             else
@@ -2842,13 +2842,13 @@ void Cell_LeafInstanceOccurrencesUnder::Locator::Progress()
     }
 }
 
-string Cell_LeafInstanceOccurrencesUnder::Locator::_GetString() const
+string Cell_LeafInstanceOccurrencesUnder::Locator::_getString() const
 // *********************************************************************
 {
     string s = "<" + _TName("Cell::LeafInstanceOccurrencesUnder::Locator");
     if (_cell) {
-        s += " " + GetString(_cell);
-        s += " " + GetString(_area);
+        s += " " + getString(_cell);
+        s += " " + getString(_area);
     }
     s += ">";
     return s;
@@ -2881,23 +2881,23 @@ Cell_TerminalInstanceOccurrences& Cell_TerminalInstanceOccurrences::operator=(co
     return *this;
 }
 
-Collection<Occurrence>* Cell_TerminalInstanceOccurrences::GetClone() const
+Collection<Occurrence>* Cell_TerminalInstanceOccurrences::getClone() const
 // *********************************************************************
 {
     return new Cell_TerminalInstanceOccurrences(*this);
 }
 
-Locator<Occurrence>* Cell_TerminalInstanceOccurrences::GetLocator() const
+Locator<Occurrence>* Cell_TerminalInstanceOccurrences::getLocator() const
 // ********************************************************************
 {
     return new Locator(_cell);
 }
 
-string Cell_TerminalInstanceOccurrences::_GetString() const
+string Cell_TerminalInstanceOccurrences::_getString() const
 // *******************************************************
 {
     string s = "<" + _TName("Cell::TerminalInstanceOccurrences");
-    if (_cell) s += " " + GetString(_cell);
+    if (_cell) s += " " + getString(_cell);
     s += ">";
     return s;
 }
@@ -2918,14 +2918,14 @@ Cell_TerminalInstanceOccurrences::Locator::Locator(const Cell* cell)
     _occurrenceLocator()
 {
     if (_cell) {
-        _terminalInstanceLocator = _cell->GetTerminalInstances().GetLocator();
+        _terminalInstanceLocator = _cell->getTerminalInstances().getLocator();
         if (_terminalInstanceLocator.IsValid())
             _state = 1;
         else {
-            _nonTerminalInstanceLocator = _cell->GetNonTerminalInstances().GetLocator();
+            _nonTerminalInstanceLocator = _cell->getNonTerminalInstances().getLocator();
             while (!_state && _nonTerminalInstanceLocator.IsValid()) {
-                Cell* masterCell = _nonTerminalInstanceLocator.GetElement()->GetMasterCell();
-                _occurrenceLocator = masterCell->GetTerminalInstanceOccurrences().GetLocator();
+                Cell* masterCell = _nonTerminalInstanceLocator.getElement()->getMasterCell();
+                _occurrenceLocator = masterCell->getTerminalInstanceOccurrences().getLocator();
                 if (_occurrenceLocator.IsValid())
                     _state = 2;
                 else
@@ -2957,16 +2957,16 @@ Cell_TerminalInstanceOccurrences::Locator& Cell_TerminalInstanceOccurrences::Loc
     return *this;
 }
 
-Occurrence Cell_TerminalInstanceOccurrences::Locator::GetElement() const
+Occurrence Cell_TerminalInstanceOccurrences::Locator::getElement() const
 // *******************************************************************
 {
     if (_state) {
         switch (_state) {
-            case 1 : return Occurrence(_terminalInstanceLocator.GetElement());
+            case 1 : return Occurrence(_terminalInstanceLocator.getElement());
             case 2 : {
-                Occurrence occurrence = _occurrenceLocator.GetElement();
-                Entity* entity = occurrence.GetEntity();
-                Path path = Path(_nonTerminalInstanceLocator.GetElement(), occurrence.GetPath());
+                Occurrence occurrence = _occurrenceLocator.getElement();
+                Entity* entity = occurrence.getEntity();
+                Path path = Path(_nonTerminalInstanceLocator.getElement(), occurrence.getPath());
                 return Occurrence(entity, path);
             }
         }
@@ -2974,7 +2974,7 @@ Occurrence Cell_TerminalInstanceOccurrences::Locator::GetElement() const
     return Occurrence();
 }
 
-Locator<Occurrence>* Cell_TerminalInstanceOccurrences::Locator::GetClone() const
+Locator<Occurrence>* Cell_TerminalInstanceOccurrences::Locator::getClone() const
 // ***************************************************************************
 {
     return new Locator(*this);
@@ -2995,10 +2995,10 @@ void Cell_TerminalInstanceOccurrences::Locator::Progress()
                 _terminalInstanceLocator.Progress();
                 if (!_terminalInstanceLocator.IsValid()) {
                     _state = 0;
-                    _nonTerminalInstanceLocator = _cell->GetNonTerminalInstances().GetLocator();
+                    _nonTerminalInstanceLocator = _cell->getNonTerminalInstances().getLocator();
                     while (!_state && _nonTerminalInstanceLocator.IsValid()) {
-                        Cell* masterCell = _nonTerminalInstanceLocator.GetElement()->GetMasterCell();
-                        _occurrenceLocator = masterCell->GetTerminalInstanceOccurrences().GetLocator();
+                        Cell* masterCell = _nonTerminalInstanceLocator.getElement()->getMasterCell();
+                        _occurrenceLocator = masterCell->getTerminalInstanceOccurrences().getLocator();
                         if (_occurrenceLocator.IsValid())
                             _state = 2;
                         else
@@ -3013,9 +3013,9 @@ void Cell_TerminalInstanceOccurrences::Locator::Progress()
                     if (_nonTerminalInstanceLocator.IsValid()) {
                         _nonTerminalInstanceLocator.Progress();
                         while (!_state && _nonTerminalInstanceLocator.IsValid()) {
-                            Cell* masterCell = _nonTerminalInstanceLocator.GetElement()->GetMasterCell();
+                            Cell* masterCell = _nonTerminalInstanceLocator.getElement()->getMasterCell();
                             _occurrenceLocator =
-                                masterCell->GetTerminalInstanceOccurrences().GetLocator();
+                                masterCell->getTerminalInstanceOccurrences().getLocator();
                             if (_occurrenceLocator.IsValid())
                                 _state = 2;
                             else
@@ -3028,11 +3028,11 @@ void Cell_TerminalInstanceOccurrences::Locator::Progress()
     }
 }
 
-string Cell_TerminalInstanceOccurrences::Locator::_GetString() const
+string Cell_TerminalInstanceOccurrences::Locator::_getString() const
 // ****************************************************************
 {
     string s = "<" + _TName("Cell::TerminalInstanceOccurrences::Locator");
-    if (_cell) s += " " + GetString(_cell);
+    if (_cell) s += " " + getString(_cell);
     s += ">";
     return s;
 }
@@ -3075,25 +3075,25 @@ Cell_TerminalInstanceOccurrencesUnder& Cell_TerminalInstanceOccurrencesUnder::op
     return *this;
 }
 
-Collection<Occurrence>* Cell_TerminalInstanceOccurrencesUnder::GetClone() const
+Collection<Occurrence>* Cell_TerminalInstanceOccurrencesUnder::getClone() const
 // **************************************************************************
 {
     return new Cell_TerminalInstanceOccurrencesUnder(*this);
 }
 
-Locator<Occurrence>* Cell_TerminalInstanceOccurrencesUnder::GetLocator() const
+Locator<Occurrence>* Cell_TerminalInstanceOccurrencesUnder::getLocator() const
 // *************************************************************************
 {
     return new Locator(_cell, _area);
 }
 
-string Cell_TerminalInstanceOccurrencesUnder::_GetString() const
+string Cell_TerminalInstanceOccurrencesUnder::_getString() const
 // ************************************************************
 {
     string s = "<" + _TName("Cell::TerminalInstanceOccurrencesUnder");
     if (_cell) {
-        s += " " + GetString(_cell);
-        s += " " + GetString(_area);
+        s += " " + getString(_cell);
+        s += " " + getString(_area);
     }
     s += ">";
     return s;
@@ -3128,18 +3128,18 @@ Cell_TerminalInstanceOccurrencesUnder::Locator::Locator(const Cell* cell, const 
     _occurrenceLocator()
 {
     if (_cell && !_area.isEmpty()) {
-        _terminalInstanceLocator = _cell->GetTerminalInstancesUnder(_area).GetLocator();
+        _terminalInstanceLocator = _cell->getTerminalInstancesUnder(_area).getLocator();
         if (_terminalInstanceLocator.IsValid())
             _state = 1;
         else {
-            _nonTerminalInstanceLocator = _cell->GetNonTerminalInstancesUnder(_area).GetLocator();
+            _nonTerminalInstanceLocator = _cell->getNonTerminalInstancesUnder(_area).getLocator();
             while (!_state && _nonTerminalInstanceLocator.IsValid()) {
-                Instance* instance = _nonTerminalInstanceLocator.GetElement();
-                Cell* masterCell = instance->GetMasterCell();
+                Instance* instance = _nonTerminalInstanceLocator.getElement();
+                Cell* masterCell = instance->getMasterCell();
                 Box masterArea = _area;
-                instance->GetTransformation().getInvert().applyOn(masterArea);
+                instance->getTransformation().getInvert().applyOn(masterArea);
                 _occurrenceLocator =
-                    masterCell->GetTerminalInstanceOccurrencesUnder(masterArea).GetLocator();
+                    masterCell->getTerminalInstanceOccurrencesUnder(masterArea).getLocator();
                 if (_occurrenceLocator.IsValid())
                     _state = 2;
                 else
@@ -3173,16 +3173,16 @@ Cell_TerminalInstanceOccurrencesUnder::Locator& Cell_TerminalInstanceOccurrences
     return *this;
 }
 
-Occurrence Cell_TerminalInstanceOccurrencesUnder::Locator::GetElement() const
+Occurrence Cell_TerminalInstanceOccurrencesUnder::Locator::getElement() const
 // ************************************************************************
 {
     if (_state) {
         switch (_state) {
-            case 1 : return Occurrence(_terminalInstanceLocator.GetElement());
+            case 1 : return Occurrence(_terminalInstanceLocator.getElement());
             case 2 : {
-                Occurrence occurrence = _occurrenceLocator.GetElement();
-                Entity* entity = occurrence.GetEntity();
-                Path path = Path(_nonTerminalInstanceLocator.GetElement(), occurrence.GetPath());
+                Occurrence occurrence = _occurrenceLocator.getElement();
+                Entity* entity = occurrence.getEntity();
+                Path path = Path(_nonTerminalInstanceLocator.getElement(), occurrence.getPath());
                 return Occurrence(entity, path);
             }
         }
@@ -3190,7 +3190,7 @@ Occurrence Cell_TerminalInstanceOccurrencesUnder::Locator::GetElement() const
     return Occurrence();
 }
 
-Locator<Occurrence>* Cell_TerminalInstanceOccurrencesUnder::Locator::GetClone() const
+Locator<Occurrence>* Cell_TerminalInstanceOccurrencesUnder::Locator::getClone() const
 // ********************************************************************************
 {
     return new Locator(*this);
@@ -3211,14 +3211,14 @@ void Cell_TerminalInstanceOccurrencesUnder::Locator::Progress()
                 _terminalInstanceLocator.Progress();
                 if (!_terminalInstanceLocator.IsValid()) {
                     _state = 0;
-                    _nonTerminalInstanceLocator = _cell->GetNonTerminalInstancesUnder(_area).GetLocator();
+                    _nonTerminalInstanceLocator = _cell->getNonTerminalInstancesUnder(_area).getLocator();
                     while (!_state && _nonTerminalInstanceLocator.IsValid()) {
-                        Instance* instance = _nonTerminalInstanceLocator.GetElement();
-                        Cell* masterCell = instance->GetMasterCell();
+                        Instance* instance = _nonTerminalInstanceLocator.getElement();
+                        Cell* masterCell = instance->getMasterCell();
                         Box masterArea = _area;
-                        instance->GetTransformation().getInvert().applyOn(masterArea);
+                        instance->getTransformation().getInvert().applyOn(masterArea);
                         _occurrenceLocator =
-                            masterCell->GetTerminalInstanceOccurrencesUnder(masterArea).GetLocator();
+                            masterCell->getTerminalInstanceOccurrencesUnder(masterArea).getLocator();
                         if (_occurrenceLocator.IsValid())
                             _state = 2;
                         else
@@ -3233,12 +3233,12 @@ void Cell_TerminalInstanceOccurrencesUnder::Locator::Progress()
                     if (_nonTerminalInstanceLocator.IsValid()) {
                         _nonTerminalInstanceLocator.Progress();
                         while (!_state && _nonTerminalInstanceLocator.IsValid()) {
-                            Instance* instance = _nonTerminalInstanceLocator.GetElement();
-                            Cell* masterCell = instance->GetMasterCell();
+                            Instance* instance = _nonTerminalInstanceLocator.getElement();
+                            Cell* masterCell = instance->getMasterCell();
                             Box masterArea = _area;
-                            instance->GetTransformation().getInvert().applyOn(masterArea);
+                            instance->getTransformation().getInvert().applyOn(masterArea);
                             _occurrenceLocator =
-                                masterCell->GetTerminalInstanceOccurrencesUnder(masterArea).GetLocator();
+                                masterCell->getTerminalInstanceOccurrencesUnder(masterArea).getLocator();
                             if (_occurrenceLocator.IsValid())
                                 _state = 2;
                             else
@@ -3251,13 +3251,13 @@ void Cell_TerminalInstanceOccurrencesUnder::Locator::Progress()
     }
 }
 
-string Cell_TerminalInstanceOccurrencesUnder::Locator::_GetString() const
+string Cell_TerminalInstanceOccurrencesUnder::Locator::_getString() const
 // *********************************************************************
 {
     string s = "<" + _TName("Cell::TerminalInstanceOccurrencesUnder::Locator");
     if (_cell) {
-        s += " " + GetString(_cell);
-        s += " " + GetString(_area);
+        s += " " + getString(_cell);
+        s += " " + getString(_area);
     }
     s += ">";
     return s;
@@ -3301,25 +3301,25 @@ Cell_ComponentOccurrences& Cell_ComponentOccurrences::operator=(const Cell_Compo
     return *this;
 }
 
-Collection<Occurrence>* Cell_ComponentOccurrences::GetClone() const
+Collection<Occurrence>* Cell_ComponentOccurrences::getClone() const
 // **************************************************************
 {
     return new Cell_ComponentOccurrences(*this);
 }
 
-Locator<Occurrence>* Cell_ComponentOccurrences::GetLocator() const
+Locator<Occurrence>* Cell_ComponentOccurrences::getLocator() const
 // *************************************************************
 {
     return new Locator(_cell, _mask);
 }
 
-string Cell_ComponentOccurrences::_GetString() const
+string Cell_ComponentOccurrences::_getString() const
 // ************************************************
 {
     string s = "<" + _TName("Cell::ComponentOccurrences");
     if (_cell) {
-        s += " " + GetString(_cell);
-        s += " " + GetString(_mask);
+        s += " " + getString(_cell);
+        s += " " + getString(_mask);
     }
     s += ">";
     return s;
@@ -3354,14 +3354,14 @@ Cell_ComponentOccurrences::Locator::Locator(const Cell* cell, const Layer::Mask&
     _occurrenceLocator()
 {
     if (_cell && (_mask != 0)) {
-        _componentLocator = _cell->GetComponents(_mask).GetLocator();
+        _componentLocator = _cell->getComponents(_mask).getLocator();
         if (_componentLocator.IsValid())
             _state = 1;
         else {
-            _instanceLocator = _cell->GetInstances().GetLocator();
+            _instanceLocator = _cell->getInstances().getLocator();
             while (!_state && _instanceLocator.IsValid()) {
-                Cell* masterCell = _instanceLocator.GetElement()->GetMasterCell();
-                _occurrenceLocator = masterCell->GetComponentOccurrences(_mask).GetLocator();
+                Cell* masterCell = _instanceLocator.getElement()->getMasterCell();
+                _occurrenceLocator = masterCell->getComponentOccurrences(_mask).getLocator();
                 if (_occurrenceLocator.IsValid())
                     _state = 2;
                 else
@@ -3395,16 +3395,16 @@ Cell_ComponentOccurrences::Locator& Cell_ComponentOccurrences::Locator::operator
     return *this;
 }
 
-Occurrence Cell_ComponentOccurrences::Locator::GetElement() const
+Occurrence Cell_ComponentOccurrences::Locator::getElement() const
 // ************************************************************
 {
     if (_state) {
         switch (_state) {
-            case 1 : return Occurrence(_componentLocator.GetElement());
+            case 1 : return Occurrence(_componentLocator.getElement());
             case 2 : {
-                Occurrence occurrence = _occurrenceLocator.GetElement();
-                Entity* entity = occurrence.GetEntity();
-                Path path = Path(_instanceLocator.GetElement(), occurrence.GetPath());
+                Occurrence occurrence = _occurrenceLocator.getElement();
+                Entity* entity = occurrence.getEntity();
+                Path path = Path(_instanceLocator.getElement(), occurrence.getPath());
                 return Occurrence(entity, path);
             }
         }
@@ -3412,7 +3412,7 @@ Occurrence Cell_ComponentOccurrences::Locator::GetElement() const
     return Occurrence();
 }
 
-Locator<Occurrence>* Cell_ComponentOccurrences::Locator::GetClone() const
+Locator<Occurrence>* Cell_ComponentOccurrences::Locator::getClone() const
 // ********************************************************************
 {
     return new Locator(*this);
@@ -3433,10 +3433,10 @@ void Cell_ComponentOccurrences::Locator::Progress()
                 _componentLocator.Progress();
                 if (!_componentLocator.IsValid()) {
                     _state = 0;
-                    _instanceLocator = _cell->GetInstances().GetLocator();
+                    _instanceLocator = _cell->getInstances().getLocator();
                     while (!_state && _instanceLocator.IsValid()) {
-                        Cell* masterCell = _instanceLocator.GetElement()->GetMasterCell();
-                        _occurrenceLocator = masterCell->GetComponentOccurrences(_mask).GetLocator();
+                        Cell* masterCell = _instanceLocator.getElement()->getMasterCell();
+                        _occurrenceLocator = masterCell->getComponentOccurrences(_mask).getLocator();
                         if (_occurrenceLocator.IsValid())
                             _state = 2;
                         else
@@ -3451,8 +3451,8 @@ void Cell_ComponentOccurrences::Locator::Progress()
                     if (_instanceLocator.IsValid()) {
                         _instanceLocator.Progress();
                         while (!_state && _instanceLocator.IsValid()) {
-                            Cell* masterCell = _instanceLocator.GetElement()->GetMasterCell();
-                            _occurrenceLocator = masterCell->GetComponentOccurrences(_mask).GetLocator();
+                            Cell* masterCell = _instanceLocator.getElement()->getMasterCell();
+                            _occurrenceLocator = masterCell->getComponentOccurrences(_mask).getLocator();
                             if (_occurrenceLocator.IsValid())
                                 _state = 2;
                             else
@@ -3465,13 +3465,13 @@ void Cell_ComponentOccurrences::Locator::Progress()
     }
 }
 
-string Cell_ComponentOccurrences::Locator::_GetString() const
+string Cell_ComponentOccurrences::Locator::_getString() const
 // *********************************************************
 {
     string s = "<" + _TName("Cell::ComponentOccurrences::Locator");
     if (_cell) {
-        s += " " + GetString(_cell);
-        s += " " + GetString(_mask);
+        s += " " + getString(_cell);
+        s += " " + getString(_mask);
     }
     s += ">";
     return s;
@@ -3519,26 +3519,26 @@ Cell_ComponentOccurrencesUnder& Cell_ComponentOccurrencesUnder::operator=(const 
     return *this;
 }
 
-Collection<Occurrence>* Cell_ComponentOccurrencesUnder::GetClone() const
+Collection<Occurrence>* Cell_ComponentOccurrencesUnder::getClone() const
 // *******************************************************************
 {
     return new Cell_ComponentOccurrencesUnder(*this);
 }
 
-Locator<Occurrence>* Cell_ComponentOccurrencesUnder::GetLocator() const
+Locator<Occurrence>* Cell_ComponentOccurrencesUnder::getLocator() const
 // ******************************************************************
 {
     return new Locator(_cell, _area, _mask);
 }
 
-string Cell_ComponentOccurrencesUnder::_GetString() const
+string Cell_ComponentOccurrencesUnder::_getString() const
 // *****************************************************
 {
     string s = "<" + _TName("Cell::ComponentOccurrencesUnder");
     if (_cell) {
-        s += " " + GetString(_cell);
-        s += " " + GetString(_area);
-        s += " " + GetString(_mask);
+        s += " " + getString(_cell);
+        s += " " + getString(_area);
+        s += " " + getString(_mask);
     }
     s += ">";
     return s;
@@ -3575,18 +3575,18 @@ Cell_ComponentOccurrencesUnder::Locator::Locator(const Cell* cell, const Box& ar
     _occurrenceLocator()
 {
     if (_cell && !_area.isEmpty() && (_mask != 0)) {
-        _componentLocator = _cell->GetComponentsUnder(_area, _mask).GetLocator();
+        _componentLocator = _cell->getComponentsUnder(_area, _mask).getLocator();
         if (_componentLocator.IsValid())
             _state = 1;
         else {
-            _instanceLocator = _cell->GetInstancesUnder(_area).GetLocator();
+            _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
             while (!_state && _instanceLocator.IsValid()) {
-                Instance* instance = _instanceLocator.GetElement();
-                Cell* masterCell = instance->GetMasterCell();
+                Instance* instance = _instanceLocator.getElement();
+                Cell* masterCell = instance->getMasterCell();
                 Box masterArea = _area;
-                instance->GetTransformation().getInvert().applyOn(masterArea);
+                instance->getTransformation().getInvert().applyOn(masterArea);
                 _occurrenceLocator =
-                    masterCell->GetComponentOccurrencesUnder(masterArea, _mask).GetLocator();
+                    masterCell->getComponentOccurrencesUnder(masterArea, _mask).getLocator();
                 if (_occurrenceLocator.IsValid())
                     _state = 2;
                 else
@@ -3622,16 +3622,16 @@ Cell_ComponentOccurrencesUnder::Locator& Cell_ComponentOccurrencesUnder::Locator
     return *this;
 }
 
-Occurrence Cell_ComponentOccurrencesUnder::Locator::GetElement() const
+Occurrence Cell_ComponentOccurrencesUnder::Locator::getElement() const
 // *****************************************************************
 {
     if (_state) {
         switch (_state) {
-            case 1 : return Occurrence(_componentLocator.GetElement());
+            case 1 : return Occurrence(_componentLocator.getElement());
             case 2 : {
-                Occurrence occurrence = _occurrenceLocator.GetElement();
-                Entity* entity = occurrence.GetEntity();
-                Path path = Path(_instanceLocator.GetElement(), occurrence.GetPath());
+                Occurrence occurrence = _occurrenceLocator.getElement();
+                Entity* entity = occurrence.getEntity();
+                Path path = Path(_instanceLocator.getElement(), occurrence.getPath());
                 return Occurrence(entity, path);
             }
         }
@@ -3639,7 +3639,7 @@ Occurrence Cell_ComponentOccurrencesUnder::Locator::GetElement() const
     return Occurrence();
 }
 
-Locator<Occurrence>* Cell_ComponentOccurrencesUnder::Locator::GetClone() const
+Locator<Occurrence>* Cell_ComponentOccurrencesUnder::Locator::getClone() const
 // *************************************************************************
 {
     return new Locator(*this);
@@ -3660,14 +3660,14 @@ void Cell_ComponentOccurrencesUnder::Locator::Progress()
                 _componentLocator.Progress();
                 if (!_componentLocator.IsValid()) {
                     _state = 0;
-                    _instanceLocator = _cell->GetInstancesUnder(_area).GetLocator();
+                    _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
                     while (!_state && _instanceLocator.IsValid()) {
-                        Instance* instance = _instanceLocator.GetElement();
-                        Cell* masterCell = instance->GetMasterCell();
+                        Instance* instance = _instanceLocator.getElement();
+                        Cell* masterCell = instance->getMasterCell();
                         Box masterArea = _area;
-                        instance->GetTransformation().getInvert().applyOn(masterArea);
+                        instance->getTransformation().getInvert().applyOn(masterArea);
                         _occurrenceLocator =
-                            masterCell->GetComponentOccurrencesUnder(masterArea, _mask).GetLocator();
+                            masterCell->getComponentOccurrencesUnder(masterArea, _mask).getLocator();
                         if (_occurrenceLocator.IsValid())
                             _state = 2;
                         else
@@ -3682,12 +3682,12 @@ void Cell_ComponentOccurrencesUnder::Locator::Progress()
                     if (_instanceLocator.IsValid()) {
                         _instanceLocator.Progress();
                         while (!_state && _instanceLocator.IsValid()) {
-                            Instance* instance = _instanceLocator.GetElement();
-                            Cell* masterCell = instance->GetMasterCell();
+                            Instance* instance = _instanceLocator.getElement();
+                            Cell* masterCell = instance->getMasterCell();
                             Box masterArea = _area;
-                            instance->GetTransformation().getInvert().applyOn(masterArea);
+                            instance->getTransformation().getInvert().applyOn(masterArea);
                             _occurrenceLocator =
-                                masterCell->GetComponentOccurrencesUnder(masterArea, _mask).GetLocator();
+                                masterCell->getComponentOccurrencesUnder(masterArea, _mask).getLocator();
                             if (_occurrenceLocator.IsValid())
                                 _state = 2;
                             else
@@ -3700,14 +3700,14 @@ void Cell_ComponentOccurrencesUnder::Locator::Progress()
     }
 }
 
-string Cell_ComponentOccurrencesUnder::Locator::_GetString() const
+string Cell_ComponentOccurrencesUnder::Locator::_getString() const
 // **************************************************************
 {
     string s = "<" + _TName("Cell::ComponentOccurrencesUnder::Locator");
     if (_cell) {
-        s += " " + GetString(_cell);
-        s += " " + GetString(_area);
-        s += " " + GetString(_mask);
+        s += " " + getString(_cell);
+        s += " " + getString(_area);
+        s += " " + getString(_mask);
     }
     s += ">";
     return s;
@@ -3749,25 +3749,25 @@ Cell_HyperNetRootNetOccurrences& Cell_HyperNetRootNetOccurrences::operator=(cons
     return *this;
 }
 
-Collection<Occurrence>* Cell_HyperNetRootNetOccurrences::GetClone() const
+Collection<Occurrence>* Cell_HyperNetRootNetOccurrences::getClone() const
 // ********************************************************
 {
     return new Cell_HyperNetRootNetOccurrences(*this);
 }
 
-Locator<Occurrence>* Cell_HyperNetRootNetOccurrences::GetLocator() const
+Locator<Occurrence>* Cell_HyperNetRootNetOccurrences::getLocator() const
 // *******************************************************
 {
     return new Locator(_cell, _path);
 }
 
-string Cell_HyperNetRootNetOccurrences::_GetString() const
+string Cell_HyperNetRootNetOccurrences::_getString() const
 // ******************************************
 {
     string s = "<" + _TName("Cell::HyperNetRootNetOccurrences");
     if (_cell) {
-        s += " " + GetString(_cell);
-        if (!_path.IsEmpty()) s += " " + GetString(_path);
+        s += " " + getString(_cell);
+        if (!_path.IsEmpty()) s += " " + getString(_path);
     }
     s += ">";
     return s;
@@ -3797,18 +3797,18 @@ Cell_HyperNetRootNetOccurrences::Locator::Locator(const Cell* cell, Path path)
     _instanceLocator(),
     _hyperNetRootNetOccurrenceLocator()
 {
-    _netLocator=cell->GetNets().GetLocator();
+    _netLocator=cell->getNets().getLocator();
 
-    _instanceLocator=cell->GetInstances().GetLocator();
+    _instanceLocator=cell->getInstances().getLocator();
 
-    while (_netLocator.IsValid() && !IsHyperNetRootNetOccurrence(Occurrence(_netLocator.GetElement(),_path)))
+    while (_netLocator.IsValid() && !IsHyperNetRootNetOccurrence(Occurrence(_netLocator.getElement(),_path)))
         _netLocator.Progress();
 
     if (!_netLocator.IsValid())
         while (!_hyperNetRootNetOccurrenceLocator.IsValid() && _instanceLocator.IsValid())
         {
-            Instance* instance = _instanceLocator.GetElement();
-            _hyperNetRootNetOccurrenceLocator=Locator(instance->GetMasterCell(),Path(_path,instance));
+            Instance* instance = _instanceLocator.getElement();
+            _hyperNetRootNetOccurrenceLocator=Locator(instance->getMasterCell(),Path(_path,instance));
             _instanceLocator.Progress();
         }
 }
@@ -3833,19 +3833,19 @@ Cell_HyperNetRootNetOccurrences::Locator& Cell_HyperNetRootNetOccurrences::Locat
     return *this;
 }
 
-Occurrence Cell_HyperNetRootNetOccurrences::Locator::GetElement() const
+Occurrence Cell_HyperNetRootNetOccurrences::Locator::getElement() const
 // ******************************************************
 {
     if (_netLocator.IsValid())
-        return Occurrence(_netLocator.GetElement(),_path);
+        return Occurrence(_netLocator.getElement(),_path);
     else if (_hyperNetRootNetOccurrenceLocator.IsValid())
-        return _hyperNetRootNetOccurrenceLocator.GetElement();
+        return _hyperNetRootNetOccurrenceLocator.getElement();
     else
         return Occurrence();
 
 }
 
-Locator<Occurrence>* Cell_HyperNetRootNetOccurrences::Locator::GetClone() const
+Locator<Occurrence>* Cell_HyperNetRootNetOccurrences::Locator::getClone() const
 // **************************************************************
 {
     return new Locator(*this);
@@ -3865,7 +3865,7 @@ void Cell_HyperNetRootNetOccurrences::Locator::Progress()
         do {
             _netLocator.Progress();
         }
-        while (_netLocator.IsValid() && !IsHyperNetRootNetOccurrence(Occurrence(_netLocator.GetElement(),_path)));
+        while (_netLocator.IsValid() && !IsHyperNetRootNetOccurrence(Occurrence(_netLocator.getElement(),_path)));
     }
     else if (_hyperNetRootNetOccurrenceLocator.IsValid())
         _hyperNetRootNetOccurrenceLocator.Progress();
@@ -3873,19 +3873,19 @@ void Cell_HyperNetRootNetOccurrences::Locator::Progress()
     if (!_netLocator.IsValid())
         while (!_hyperNetRootNetOccurrenceLocator.IsValid() && _instanceLocator.IsValid())
         {
-            Instance* instance = _instanceLocator.GetElement();
-            _hyperNetRootNetOccurrenceLocator=Locator(instance->GetMasterCell(),Path(_path,instance));
+            Instance* instance = _instanceLocator.getElement();
+            _hyperNetRootNetOccurrenceLocator=Locator(instance->getMasterCell(),Path(_path,instance));
             _instanceLocator.Progress();
         }
 
 }
 
-string Cell_HyperNetRootNetOccurrences::Locator::_GetString() const
+string Cell_HyperNetRootNetOccurrences::Locator::_getString() const
 // ***************************************************
 {
     string s = "<" + _TName("Cell::HyperNetRootNetOccurrences::Locator");
     if (!_path.IsEmpty())
-        s += " " + _path.GetName();
+        s += " " + _path.getName();
     s += ">";
     return s;
 }
@@ -3916,23 +3916,23 @@ string Cell_HyperNetRootNetOccurrences::Locator::_GetString() const
 //    return *this;
 //}
 //
-//Collection<MainView*>* Cell_ImpactedMainViews::GetClone() const
+//Collection<MainView*>* Cell_ImpactedMainViews::getClone() const
 //// ************************************************************
 //{
 //    return new Cell_ImpactedMainViews(*this);
 //}
 //
-//Locator<MainView*>* Cell_ImpactedMainViews::GetLocator() const
+//Locator<MainView*>* Cell_ImpactedMainViews::getLocator() const
 //// ***********************************************************
 //{
 //    return new Locator(_cell);
 //}
 //
-//string Cell_ImpactedMainViews::_GetString() const
+//string Cell_ImpactedMainViews::_getString() const
 //// **********************************************
 //{
 //    string s = "<" + _TName("Cell::ImpactedMainViews");
-//    if (_cell) s += " " + GetString(_cell);
+//    if (_cell) s += " " + getString(_cell);
 //    s += ">";
 //    return s;
 //}
@@ -3958,16 +3958,16 @@ string Cell_HyperNetRootNetOccurrences::Locator::_GetString() const
 //        while (!_mainView && !_cellStack.empty()) {
 //            Cell* cell = _cellStack.top();
 //            _cellStack.pop();
-//            for_each_instance(instance, cell->GetSlaveInstances()) {
-//                Cell* cell = instance->GetCell();
+//            for_each_instance(instance, cell->getSlaveInstances()) {
+//                Cell* cell = instance->getCell();
 //                if (_cellSet.find(cell) == _cellSet.end()) {
 //                    _cellSet.insert(cell);
 //                    _cellStack.push(cell);
 //                }
 //                end_for;
 //            }
-//            _mainViewLocator = cell->GetMainViews().GetLocator();
-//            _mainView = _mainViewLocator.GetElement();
+//            _mainViewLocator = cell->getMainViews().getLocator();
+//            _mainView = _mainViewLocator.getElement();
 //        }
 //    }
 //}
@@ -3994,13 +3994,13 @@ string Cell_HyperNetRootNetOccurrences::Locator::_GetString() const
 //    return *this;
 //}
 //
-//MainView* Cell_ImpactedMainViews::Locator::GetElement() const
+//MainView* Cell_ImpactedMainViews::Locator::getElement() const
 //// **********************************************************
 //{
 //    return _mainView;
 //}
 //
-//Locator<MainView*>* Cell_ImpactedMainViews::Locator::GetClone() const
+//Locator<MainView*>* Cell_ImpactedMainViews::Locator::getClone() const
 //// ******************************************************************
 //{
 //    return new Locator(*this);
@@ -4019,30 +4019,30 @@ string Cell_HyperNetRootNetOccurrences::Locator::_GetString() const
 //        _mainView = NULL;
 //        do {
 //            _mainViewLocator.Progress();
-//            _mainView = _mainViewLocator.GetElement();
+//            _mainView = _mainViewLocator.getElement();
 //            if (!_mainView && !_cellStack.empty()) {
 //                Cell* cell = _cellStack.top();
 //                _cellStack.pop();
-//                for_each_instance(instance, cell->GetSlaveInstances()) {
-//                    Cell* cell = instance->GetCell();
+//                for_each_instance(instance, cell->getSlaveInstances()) {
+//                    Cell* cell = instance->getCell();
 //                    if (_cellSet.find(cell) == _cellSet.end()) {
 //                        _cellSet.insert(cell);
 //                        _cellStack.push(cell);
 //                    }
 //                    end_for;
 //                }
-//                _mainViewLocator = cell->GetMainViews().GetLocator();
-//                _mainView = _mainViewLocator.GetElement();
+//                _mainViewLocator = cell->getMainViews().getLocator();
+//                _mainView = _mainViewLocator.getElement();
 //            }
 //        } while (!_mainView && !_cellStack.empty());
 //    }
 //}
 //
-//string Cell_ImpactedMainViews::Locator::_GetString() const
+//string Cell_ImpactedMainViews::Locator::_getString() const
 //// *******************************************************
 //{
 //    string s = "<" + _TName("Cell::ImpactedMainViews::Locator");
-//    if (_cell) s += " " + GetString(_cell);
+//    if (_cell) s += " " + getString(_cell);
 //    s += ">";
 //    return s;
 //}
@@ -4080,24 +4080,24 @@ Cell_SubCells& Cell_SubCells::operator=(const Cell_SubCells& subCells)
     return *this;
 }
 
-Collection<Cell*>* Cell_SubCells::GetClone() const
+Collection<Cell*>* Cell_SubCells::getClone() const
 // ***********************************************
 {
     return new Cell_SubCells(*this);
 }
 
-Locator<Cell*>* Cell_SubCells::GetLocator() const
+Locator<Cell*>* Cell_SubCells::getLocator() const
 // **********************************************
 {
-    return new Locator(_cell->GetInstances().GetLocator());
+    return new Locator(_cell->getInstances().getLocator());
 }
 
-string Cell_SubCells::_GetString() const
+string Cell_SubCells::_getString() const
 // *************************************
 {
     string s = "<" + _TName("Cell::SubCells");
     if (_cell) {
-        s += " " + GetString(_cell);
+        s += " " + getString(_cell);
     }
     s += ">";
     return s;
@@ -4124,7 +4124,7 @@ Cell_SubCells::Locator::Locator(InstanceLocator instanceLocator)
     _instanceLocator(instanceLocator)
 {
     if ( IsValid() )
-        _cellSet.insert ( _instanceLocator.GetElement()->GetMasterCell() );
+        _cellSet.insert ( _instanceLocator.getElement()->getMasterCell() );
 }
 
 Cell_SubCells::Locator::Locator(const Locator& locator)
@@ -4143,13 +4143,13 @@ Cell_SubCells::Locator& Cell_SubCells::Locator::operator=(const Locator& locator
     return *this;
 }
 
-Cell* Cell_SubCells::Locator::GetElement() const
+Cell* Cell_SubCells::Locator::getElement() const
 // *********************************************
 {
-    return _instanceLocator.GetElement()->GetMasterCell();
+    return _instanceLocator.getElement()->getMasterCell();
 }
 
-Locator<Cell*>* Cell_SubCells::Locator::GetClone() const
+Locator<Cell*>* Cell_SubCells::Locator::getClone() const
 // *****************************************************
 {
     return new Locator(*this);
@@ -4164,18 +4164,18 @@ bool Cell_SubCells::Locator::IsValid() const
 void Cell_SubCells::Locator::Progress()
 // ************************************
 {
-    while ( IsValid() && ( _cellSet.find ( _instanceLocator.GetElement()->GetMasterCell() ) != _cellSet.end() ) )
+    while ( IsValid() && ( _cellSet.find ( _instanceLocator.getElement()->getMasterCell() ) != _cellSet.end() ) )
         _instanceLocator.Progress();
     if ( IsValid() )
-        _cellSet.insert ( _instanceLocator.GetElement()->GetMasterCell() );
+        _cellSet.insert ( _instanceLocator.getElement()->getMasterCell() );
 }
 
-string Cell_SubCells::Locator::_GetString() const
+string Cell_SubCells::Locator::_getString() const
 // **************************************************
 {
     string s = "<" + _TName("Cell::SubCells::Locator");
-    s += " " + _GetString();
-    s += " " + GetString(_instanceLocator);
+    s += " " + _getString();
+    s += " " + getString(_instanceLocator);
     s += ">";
     return s;
 }
@@ -4200,17 +4200,17 @@ Cell_RecursiveSlavePathes::Locator::Locator ( const Cell* cell )
   const Cell* topCell = cell;
 
   do {
-    Instances slaveInstances = topCell->GetSlaveInstances();
+    Instances slaveInstances = topCell->getSlaveInstances();
 
     if ( !slaveInstances.IsEmpty() ) {
-      _instancesStack.push_back ( *slaveInstances.GetLocator() );
-      _instancePath = Path ( _instancesStack.back().GetElement(), _instancePath );
+      _instancesStack.push_back ( *slaveInstances.getLocator() );
+      _instancePath = Path ( _instancesStack.back().getElement(), _instancePath );
 
-//       cerr << "Instances of I: " << topCell->GetName() << endl;
-//       cerr << "Head         I: " << _instancesStack.back().GetElement()->GetName() << endl;
-//       cerr << "TailPath     I: " << _instancePath.GetName() << endl;
+//       cerr << "Instances of I: " << topCell->getName() << endl;
+//       cerr << "Head         I: " << _instancesStack.back().getElement()->getName() << endl;
+//       cerr << "TailPath     I: " << _instancePath.getName() << endl;
 
-      topCell = _instancesStack.back().GetElement()->GetCell();
+      topCell = _instancesStack.back().getElement()->getCell();
     } else
       topCell = NULL;
 
@@ -4229,23 +4229,23 @@ void  Cell_RecursiveSlavePathes::Locator::Progress ()
 
   _instancesStack.back().Progress();
   if ( _instancesStack.back().IsValid() ) {
-//     cerr << "Head         N: " << _instancesStack.back().GetElement()->GetName() << endl;
-//     cerr << "TailPath     N: " << _instancePath.GetTailPath().GetName() << endl;
-    _instancePath = Path ( _instancesStack.back().GetElement(), _instancePath.GetTailPath() );
+//     cerr << "Head         N: " << _instancesStack.back().getElement()->getName() << endl;
+//     cerr << "TailPath     N: " << _instancePath.getTailPath().getName() << endl;
+    _instancePath = Path ( _instancesStack.back().getElement(), _instancePath.getTailPath() );
 
-    Cell* topCell = _instancesStack.back().GetElement()->GetCell();
+    Cell* topCell = _instancesStack.back().getElement()->getCell();
 
     do {
-      Instances slaveInstances = topCell->GetSlaveInstances();
+      Instances slaveInstances = topCell->getSlaveInstances();
 
       if ( !slaveInstances.IsEmpty() ) {
-        _instancesStack.push_back ( *slaveInstances.GetLocator() );
-//         cerr << "Instances of R: " << topCell->GetName() << endl;
-//         cerr << "Head         R: " << _instancesStack.back().GetElement()->GetName() << endl;
-//         cerr << "TailPath     R: " << _instancePath.GetName() << endl;
-        _instancePath = Path ( _instancesStack.back().GetElement(), _instancePath );
+        _instancesStack.push_back ( *slaveInstances.getLocator() );
+//         cerr << "Instances of R: " << topCell->getName() << endl;
+//         cerr << "Head         R: " << _instancesStack.back().getElement()->getName() << endl;
+//         cerr << "TailPath     R: " << _instancePath.getName() << endl;
+        _instancePath = Path ( _instancesStack.back().getElement(), _instancePath );
 
-        topCell = _instancesStack.back().GetElement()->GetCell();
+        topCell = _instancesStack.back().getElement()->getCell();
       } else
         topCell = NULL;
     } while ( topCell );
@@ -4253,8 +4253,8 @@ void  Cell_RecursiveSlavePathes::Locator::Progress ()
     return;
   } else {
     _instancesStack.pop_back();
-    _instancePath = _instancePath.GetTailPath();
-//     cerr << "TailPath     F: " << _instancePath.GetName() << endl;
+    _instancePath = _instancePath.getTailPath();
+//     cerr << "TailPath     F: " << _instancePath.getName() << endl;
     return;
   }
 }
@@ -4263,17 +4263,17 @@ void  Cell_RecursiveSlavePathes::Locator::Progress ()
 
 
 // -------------------------------------------------------------------
-// Hurricane Management  :  "Cell_RecursiveSlavePathes::Locator::_GetString ()".
+// Hurricane Management  :  "Cell_RecursiveSlavePathes::Locator::_getString ()".
 
-string  Cell_RecursiveSlavePathes::Locator::_GetString () const
+string  Cell_RecursiveSlavePathes::Locator::_getString () const
 {
   Name  masterCellName = "Finished";
 
   if ( IsValid() )
-    masterCellName = _instancesStack.front().GetElement()->GetMasterCell()->GetName();
+    masterCellName = _instancesStack.front().getElement()->getMasterCell()->getName();
 
   string s = "<" + _TName("Cell_RecursiveSlavePathes::Locator")
-                 + GetString(masterCellName)
+                 + getString(masterCellName)
                  + ">";
 
   return s;
@@ -4288,12 +4288,12 @@ string  Cell_RecursiveSlavePathes::Locator::_GetString () const
 
 
 // -------------------------------------------------------------------
-// Hurricane Management  :  "Cell_RecursiveSlavePathes::_GetString ()".
+// Hurricane Management  :  "Cell_RecursiveSlavePathes::_getString ()".
 
-string  Cell_RecursiveSlavePathes::_GetString () const
+string  Cell_RecursiveSlavePathes::_getString () const
 {
   string s = "<" + _TName("Cell_RecursiveSlavePathes") + " "
-                 + GetString(_cell) + " "
+                 + getString(_cell) + " "
                  + ">";
 
   return s;

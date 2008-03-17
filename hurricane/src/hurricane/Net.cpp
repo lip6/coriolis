@@ -35,11 +35,11 @@ class Net_IsCellNetFilter : public Filter<Net*> {
 
     public: Net_IsCellNetFilter& operator=(const Net_IsCellNetFilter& filter) {return *this;};
 
-    public: virtual Filter<Net*>* GetClone() const {return new Net_IsCellNetFilter(*this);};
+    public: virtual Filter<Net*>* getClone() const {return new Net_IsCellNetFilter(*this);};
 
     public: virtual bool Accept(Net* net) const {return !net->IsDeepNet();};
 
-    public: virtual string _GetString() const {return "<" + _TName("Net::IsCellNetFilter>");};
+    public: virtual string _getString() const {return "<" + _TName("Net::IsCellNetFilter>");};
 
 };
 
@@ -52,11 +52,11 @@ class Net_IsDeepNetFilter : public Filter<Net*> {
 
     public: Net_IsDeepNetFilter& operator=(const Net_IsDeepNetFilter& filter) {return *this;};
 
-    public: virtual Filter<Net*>* GetClone() const {return new Net_IsDeepNetFilter(*this);};
+    public: virtual Filter<Net*>* getClone() const {return new Net_IsDeepNetFilter(*this);};
 
     public: virtual bool Accept(Net* net) const {return net->IsDeepNet();};
 
-    public: virtual string _GetString() const {return "<" + _TName("Net::IsDeepNetFilter>");};
+    public: virtual string _getString() const {return "<" + _TName("Net::IsDeepNetFilter>");};
 
 };
 
@@ -69,11 +69,11 @@ class Net_IsGlobalFilter : public Filter<Net*> {
 
     public: Net_IsGlobalFilter& operator=(const Net_IsGlobalFilter& filter) {return *this;};
 
-    public: virtual Filter<Net*>* GetClone() const {return new Net_IsGlobalFilter(*this);};
+    public: virtual Filter<Net*>* getClone() const {return new Net_IsGlobalFilter(*this);};
 
     public: virtual bool Accept(Net* net) const {return net->IsGlobal();};
 
-    public: virtual string _GetString() const {return "<" + _TName("Net::IsGlobalFilter>");};
+    public: virtual string _getString() const {return "<" + _TName("Net::IsGlobalFilter>");};
 
 };
 
@@ -86,11 +86,11 @@ class Net_IsExternalFilter : public Filter<Net*> {
 
     public: Net_IsExternalFilter& operator=(const Net_IsExternalFilter& filter) {return *this;};
 
-    public: virtual Filter<Net*>* GetClone() const {return new Net_IsExternalFilter(*this);};
+    public: virtual Filter<Net*>* getClone() const {return new Net_IsExternalFilter(*this);};
 
     public: virtual bool Accept(Net* net) const {return net->IsExternal();};
 
-    public: virtual string _GetString() const {return "<" + _TName("Net::IsExternalFilter>");};
+    public: virtual string _getString() const {return "<" + _TName("Net::IsExternalFilter>");};
 
 };
 
@@ -103,11 +103,11 @@ class Net_IsClockFilter : public Filter<Net*> {
 
     public: Net_IsClockFilter& operator=(const Net_IsClockFilter& filter) {return *this;};
 
-    public: virtual Filter<Net*>* GetClone() const {return new Net_IsClockFilter(*this);};
+    public: virtual Filter<Net*>* getClone() const {return new Net_IsClockFilter(*this);};
 
     public: virtual bool Accept(Net* net) const {return net->IsClock();};
 
-    public: virtual string _GetString() const {return "<" + _TName("Net::IsClockFilter>");};
+    public: virtual string _getString() const {return "<" + _TName("Net::IsClockFilter>");};
 
 };
 
@@ -120,11 +120,11 @@ class Net_IsSupplyFilter : public Filter<Net*> {
 
     public: Net_IsSupplyFilter& operator=(const Net_IsSupplyFilter& filter) {return *this;};
 
-    public: virtual Filter<Net*>* GetClone() const {return new Net_IsSupplyFilter(*this);};
+    public: virtual Filter<Net*>* getClone() const {return new Net_IsSupplyFilter(*this);};
 
     public: virtual bool Accept(Net* net) const {return net->IsSupply();};
 
-    public: virtual string _GetString() const {return "<" + _TName("Net::IsSupplyFilter>");};
+    public: virtual string _getString() const {return "<" + _TName("Net::IsSupplyFilter>");};
 
 };
 
@@ -137,11 +137,11 @@ class Net_IsPowerFilter : public Filter<Net*> {
 
     public: Net_IsPowerFilter& operator=(const Net_IsPowerFilter& filter) {return *this;};
 
-    public: virtual Filter<Net*>* GetClone() const {return new Net_IsPowerFilter(*this);};
+    public: virtual Filter<Net*>* getClone() const {return new Net_IsPowerFilter(*this);};
 
     public: virtual bool Accept(Net* net) const {return net->IsPower();};
 
-    public: virtual string _GetString() const {return "<" + _TName("Net::IsPowerFilter>");};
+    public: virtual string _getString() const {return "<" + _TName("Net::IsPowerFilter>");};
 
 };
 
@@ -154,11 +154,11 @@ class Net_IsGroundFilter : public Filter<Net*> {
 
     public: Net_IsGroundFilter& operator=(const Net_IsGroundFilter& filter) {return *this;};
 
-    public: virtual Filter<Net*>* GetClone() const {return new Net_IsGroundFilter(*this);};
+    public: virtual Filter<Net*>* getClone() const {return new Net_IsGroundFilter(*this);};
 
     public: virtual bool Accept(Net* net) const {return net->IsGround();};
 
-    public: virtual string _GetString() const {return "<" + _TName("Net::IsGroundFilter>");};
+    public: virtual string _getString() const {return "<" + _TName("Net::IsGroundFilter>");};
 
 };
 
@@ -190,14 +190,14 @@ class Net_SlavePlugs : public Collection<Plug*> {
 
         public: Locator& operator=(const Locator& locator);
 
-        public: virtual Plug* GetElement() const;
-        public: virtual Hurricane::Locator<Plug*>* GetClone() const;
+        public: virtual Plug* getElement() const;
+        public: virtual Hurricane::Locator<Plug*>* getClone() const;
 
         public: virtual bool IsValid() const;
 
         public: virtual void Progress();
 
-        public: virtual string _GetString() const;
+        public: virtual string _getString() const;
 
     };
 
@@ -220,13 +220,13 @@ class Net_SlavePlugs : public Collection<Plug*> {
 // Accessors
 // *********
 
-    public: virtual Collection<Plug*>* GetClone() const;
-    public: virtual Hurricane::Locator<Plug*>* GetLocator() const;
+    public: virtual Collection<Plug*>* getClone() const;
+    public: virtual Hurricane::Locator<Plug*>* getLocator() const;
 
 // Others
 // ******
 
-    public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -257,8 +257,8 @@ Net::Net(Cell* cell, const Name& name)
     if (name.IsEmpty())
         throw Error("Can't create " + _TName("Net") + " : empty name");
 
-    if (_cell->GetNet(_name))
-        throw Error("Can't create " + _TName("Net ") + GetString(_name) + " : already exists");
+    if (_cell->getNet(_name))
+        throw Error("Can't create " + _TName("Net ") + getString(_name) + " : already exists");
 }
 
 Net* Net::Create(Cell* cell, const Name& name)
@@ -266,145 +266,145 @@ Net* Net::Create(Cell* cell, const Name& name)
 {
     Net* net = new Net(cell, name);
 
-    net->_PostCreate();
+    net->_postCreate();
 
     return net;
 }
 
-Box Net::GetBoundingBox() const
+Box Net::getBoundingBox() const
 // ****************************
 {
     Box boundingBox;
-    for_each_component(component, GetComponents()) {
-        boundingBox.merge(component->GetBoundingBox());
+    for_each_component(component, getComponents()) {
+        boundingBox.merge(component->getBoundingBox());
         end_for;
     }
     return boundingBox;
 }
 
-RoutingPads Net::GetRoutingPads() const
+RoutingPads Net::getRoutingPads() const
 // ************************
 {
-    // return GetComponents().GetSubSet<RoutingPad*>();
-    return SubTypeCollection<Component*, RoutingPad*>(GetComponents());
+    // return getComponents().getSubSet<RoutingPad*>();
+    return SubTypeCollection<Component*, RoutingPad*>(getComponents());
 }
 
-Plugs Net::GetPlugs() const
+Plugs Net::getPlugs() const
 // ************************
 {
-    // return GetComponents().GetSubSet<Plug*>();
-    return SubTypeCollection<Component*, Plug*>(GetComponents());
+    // return getComponents().getSubSet<Plug*>();
+    return SubTypeCollection<Component*, Plug*>(getComponents());
 }
 
-Pins Net::GetPins() const
+Pins Net::getPins() const
 // **********************
 {
-    // return GetComponents().GetSubSet<Pin*>();
-    return SubTypeCollection<Component*, Pin*>(GetComponents());
+    // return getComponents().getSubSet<Pin*>();
+    return SubTypeCollection<Component*, Pin*>(getComponents());
 }
 
-Contacts Net::GetContacts() const
+Contacts Net::getContacts() const
 // ******************************
 {
-    // return GetComponents().GetSubSet<Contact*>();
-    return SubTypeCollection<Component*, Contact*>(GetComponents());
+    // return getComponents().getSubSet<Contact*>();
+    return SubTypeCollection<Component*, Contact*>(getComponents());
 }
 
-Segments Net::GetSegments() const
+Segments Net::getSegments() const
 // ******************************
 {
-    // return GetComponents().GetSubSet<Segment*>();
-    return SubTypeCollection<Component*, Segment*>(GetComponents());
+    // return getComponents().getSubSet<Segment*>();
+    return SubTypeCollection<Component*, Segment*>(getComponents());
 }
 
-Verticals Net::GetVerticals() const
+Verticals Net::getVerticals() const
 // ********************************
 {
-    // return GetComponents().GetSubSet<Vertical*>();
-    return SubTypeCollection<Component*, Vertical*>(GetComponents());
+    // return getComponents().getSubSet<Vertical*>();
+    return SubTypeCollection<Component*, Vertical*>(getComponents());
 }
 
-Horizontals Net::GetHorizontals() const
+Horizontals Net::getHorizontals() const
 // ************************************
 {
-    // return GetComponents().GetSubSet<Horizontal*>();
-    return SubTypeCollection<Component*, Horizontal*>(GetComponents());
+    // return getComponents().getSubSet<Horizontal*>();
+    return SubTypeCollection<Component*, Horizontal*>(getComponents());
 }
 
-Pads Net::GetPads() const
+Pads Net::getPads() const
 // **********************
 {
-    // return GetComponents().GetSubSet<Pad*>();
-    return SubTypeCollection<Component*, Pad*>(GetComponents());
+    // return getComponents().getSubSet<Pad*>();
+    return SubTypeCollection<Component*, Pad*>(getComponents());
 }
 
-Plugs Net::GetSlavePlugs() const
+Plugs Net::getSlavePlugs() const
 // *****************************
 {
     return Net_SlavePlugs(this);
 }
 
-Plugs Net::GetConnectedSlavePlugs() const
+Plugs Net::getConnectedSlavePlugs() const
 // **************************************
 {
-    return GetSlavePlugs().GetSubSet(Plug::GetIsConnectedFilter());
+    return getSlavePlugs().getSubSet(Plug::getIsConnectedFilter());
 }
 
-Plugs Net::GetUnconnectedSlavePlugs() const
+Plugs Net::getUnconnectedSlavePlugs() const
 // ****************************************
 {
-    return GetSlavePlugs().GetSubSet(Plug::GetIsUnconnectedFilter());
+    return getSlavePlugs().getSubSet(Plug::getIsUnconnectedFilter());
 }
 
-NetFilter Net::GetIsCellNetFilter()
+NetFilter Net::getIsCellNetFilter()
 // *******************************
 {
     return Net_IsCellNetFilter();
 }
 
-NetFilter Net::GetIsDeepNetFilter()
+NetFilter Net::getIsDeepNetFilter()
 // *******************************
 {
     return Net_IsDeepNetFilter();
 }
 
-NetFilter Net::GetIsGlobalFilter()
+NetFilter Net::getIsGlobalFilter()
 // *******************************
 {
     return Net_IsGlobalFilter();
 }
 
-NetFilter Net::GetIsExternalFilter()
+NetFilter Net::getIsExternalFilter()
 // *********************************
 {
     return Net_IsExternalFilter();
 }
 
-NetFilter Net::GetIsInternalFilter()
+NetFilter Net::getIsInternalFilter()
 // *********************************
 {
     return !Net_IsExternalFilter();
 }
 
-NetFilter Net::GetIsClockFilter()
+NetFilter Net::getIsClockFilter()
 // ******************************
 {
     return Net_IsClockFilter();
 }
 
-NetFilter Net::GetIsSupplyFilter()
+NetFilter Net::getIsSupplyFilter()
 // *******************************
 {
     return Net_IsSupplyFilter();
 }
 
-NetFilter Net::GetIsPowerFilter()
+NetFilter Net::getIsPowerFilter()
 // *******************************
 {
     return Net_IsPowerFilter();
 }
 
-NetFilter Net::GetIsGroundFilter()
+NetFilter Net::getIsGroundFilter()
 // *******************************
 {
     return Net_IsGroundFilter();
@@ -417,12 +417,12 @@ void Net::SetName(const Name& name)
         if (name.IsEmpty())
             throw Error("Can't change net name : empty name");
 
-        if (_cell->GetNet(name))
+        if (_cell->getNet(name))
             throw Error("Can't change net name : already exists");
 
-        _cell->_GetNetMap()._Remove(this);
+        _cell->_getNetMap()._Remove(this);
         _name = name;
-        _cell->_GetNetMap()._Insert(this);
+        _cell->_getNetMap()._Insert(this);
     }
 }
 
@@ -443,7 +443,7 @@ void Net::SetExternal(bool isExternal)
 {
     if (isExternal != _isExternal) {
         if (!isExternal) {
-            if (!GetConnectedSlavePlugs().IsEmpty())
+            if (!getConnectedSlavePlugs().IsEmpty())
                 throw Error("Can't set internal : has connected slave plugs");
             _direction = Direction::UNDEFINED;
         }
@@ -451,7 +451,7 @@ void Net::SetExternal(bool isExternal)
         if (_isExternal) {
             OpenUpdateSession();
             SetPosition(Point(0, 0));
-            for_each_instance(instance, _cell->GetSlaveInstances()) {
+            for_each_instance(instance, _cell->getSlaveInstances()) {
                 Plug::_Create(instance, this);
                 end_for;
             }
@@ -470,7 +470,7 @@ void Net::SetPosition(const Point& position)
 // *****************************************
 {
     if (_position != position) {
-        for_each_plug(plug, GetSlavePlugs()) {
+        for_each_plug(plug, getSlavePlugs()) {
             plug->Invalidate(true);
             end_for;
         }
@@ -487,11 +487,11 @@ void Net::SetDirection(const Direction& direction)
 void Net::Materialize()
 // ********************
 {
-    for_each_component(component, GetComponents()) {
+    for_each_component(component, getComponents()) {
         component->Materialize();
         end_for;
     }
-    for_each_rubber(rubber, GetRubbers()) {
+    for_each_rubber(rubber, getRubbers()) {
         rubber->Materialize();
         end_for;
     }
@@ -500,11 +500,11 @@ void Net::Materialize()
 void Net::Unmaterialize()
 // **********************
 {
-    for_each_rubber(rubber, GetRubbers()) {
+    for_each_rubber(rubber, getRubbers()) {
         rubber->Unmaterialize();
         end_for;
     }
-    for_each_component(component, GetComponents()) {
+    for_each_component(component, getComponents()) {
         component->Unmaterialize();
         end_for;
     }
@@ -516,8 +516,8 @@ static void MergeNets(Net* net1, Net* net2)
     assert(net1);
     assert(net2);
 
-    if (net2->GetName()[0] != '~') {
-        if ((net1->GetName()[0] == '~') ||
+    if (net2->getName()[0] != '~') {
+        if ((net1->getName()[0] == '~') ||
              (net2->IsGlobal() && !net1->IsGlobal()) ||
              (net2->IsExternal() && !net1->IsExternal())) {
             Net* tmpNet = net1;
@@ -544,73 +544,73 @@ void Net::Merge(Net* net)
     if (net == this)
         throw Error("Can't merge net : itself");
 
-    if (net->GetCell() != _cell)
+    if (net->getCell() != _cell)
         throw Error("Can't merge net : incompatible net");
 
-    if (!IsExternal() && net->IsExternal() && !net->GetConnectedSlavePlugs().IsEmpty())
+    if (!IsExternal() && net->IsExternal() && !net->getConnectedSlavePlugs().IsEmpty())
         throw Error("Can't merge net : incompatible net");
 
-    for_each_rubber(rubber, net->GetRubbers()) rubber->_SetNet(this); end_for;
-    for_each_component(component, net->GetComponents()) component->_SetNet(this); end_for;
+    for_each_rubber(rubber, net->getRubbers()) rubber->_SetNet(this); end_for;
+    for_each_component(component, net->getComponents()) component->_SetNet(this); end_for;
 
     if (IsExternal() && net->IsExternal()) {
-        for_each_plug(plug, net->GetConnectedSlavePlugs()) {
-            Plug* mainPlug = plug->GetInstance()->GetPlug(this);
-            if (mainPlug->IsConnected() && (mainPlug->GetNet() != plug->GetNet()))
-                MergeNets(mainPlug->GetNet(), plug->GetNet());
+        for_each_plug(plug, net->getConnectedSlavePlugs()) {
+            Plug* mainPlug = plug->getInstance()->getPlug(this);
+            if (mainPlug->IsConnected() && (mainPlug->getNet() != plug->getNet()))
+                MergeNets(mainPlug->getNet(), plug->getNet());
             end_for;
         }
-        for_each_plug(plug, net->GetConnectedSlavePlugs()) {
-            Plug* mainPlug = plug->GetInstance()->GetPlug(this);
-            if (!mainPlug->IsConnected()) mainPlug->SetNet(plug->GetNet());
-            Hook* masterHook = plug->GetBodyHook();
-            Hook* nextMasterHook = masterHook->GetNextMasterHook();
+        for_each_plug(plug, net->getConnectedSlavePlugs()) {
+            Plug* mainPlug = plug->getInstance()->getPlug(this);
+            if (!mainPlug->IsConnected()) mainPlug->SetNet(plug->getNet());
+            Hook* masterHook = plug->getBodyHook();
+            Hook* nextMasterHook = masterHook->getNextMasterHook();
             if (nextMasterHook != masterHook) {
                 masterHook->Detach();
-                mainPlug->GetBodyHook()->Merge(nextMasterHook);
+                mainPlug->getBodyHook()->Merge(nextMasterHook);
             }
-            Hooks slaveHooks = masterHook->GetSlaveHooks();
+            Hooks slaveHooks = masterHook->getSlaveHooks();
             while (!slaveHooks.IsEmpty()) {
-                Hook* slaveHook = slaveHooks.GetFirst();
+                Hook* slaveHook = slaveHooks.getFirst();
                 slaveHook->Detach();
-                slaveHook->Attach(mainPlug->GetBodyHook());
+                slaveHook->Attach(mainPlug->getBodyHook());
             }
-            plug->_Delete();
+            plug->_destroy();
             end_for;
         }
     }
 
-    net->Delete();
+    net->destroy();
 }
 
-void Net::_PostCreate()
+void Net::_postCreate()
 // ********************
 {
-    _cell->_GetNetMap()._Insert(this);
+    _cell->_getNetMap()._Insert(this);
 
     if (_isExternal) {
-        for_each_instance(instance, _cell->GetSlaveInstances()) {
+        for_each_instance(instance, _cell->getSlaveInstances()) {
             Plug::_Create(instance, this);
             end_for;
         }
     }
 
-    Inherit::_PostCreate();
+    Inherit::_postCreate();
 }
 
-void Net::_PreDelete()
+void Net::_preDestroy()
 // *******************
 {
-    Inherit::_PreDelete();
+    Inherit::_preDestroy();
 
-    for_each_plug(slavePlug, GetSlavePlugs()) slavePlug->_Delete(); end_for;
+    for_each_plug(slavePlug, getSlavePlugs()) slavePlug->_destroy(); end_for;
 
     Unmaterialize();
 
-    for_each_rubber(rubber, GetRubbers()) rubber->_Delete(); end_for;
+    for_each_rubber(rubber, getRubbers()) rubber->_destroy(); end_for;
 
-    for_each_component(component, GetComponents()) {
-        for_each_hook(hook, component->GetHooks()) {
+    for_each_component(component, getComponents()) {
+        for_each_hook(hook, component->getHooks()) {
             // 15 05 2006 xtof : detach all hooks in rings when
             // a net deletion occurs, can't see why master hooks were not detached.
             //if (!hook->IsMaster()) hook->Detach();
@@ -620,41 +620,41 @@ void Net::_PreDelete()
         end_for;
     }
 
-    for_each_component(component, GetComponents()) {
+    for_each_component(component, getComponents()) {
         if (!is_a<Plug*>(component))
-            component->Delete();
+            component->destroy();
         else
             ((Plug*)component)->SetNet(NULL);
         end_for;
     }
 
-    _cell->_GetNetMap()._Remove(this);
+    _cell->_getNetMap()._Remove(this);
 }
 
-string Net::_GetString() const
+string Net::_getString() const
 // ***************************
 {
-    string s = Inherit::_GetString();
-    s.insert(s.length() - 1, " " + GetString(_name));
+    string s = Inherit::_getString();
+    s.insert(s.length() - 1, " " + getString(_name));
     return s;
 }
 
-Record* Net::_GetRecord() const
+Record* Net::_getRecord() const
 // **********************
 {
-    Record* record = Inherit::_GetRecord();
+    Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(GetSlot("Cell", _cell));
-        record->Add(GetSlot("Name", &_name));
-        record->Add(GetSlot("Arity", &_arity));
-        record->Add(GetSlot("Global", &_isGlobal));
-        record->Add(GetSlot("External", &_isExternal));
-        record->Add(GetSlot("Type", _type));
-        record->Add(GetSlot("Direction", _direction));
-        record->Add(GetSlot("Position", &_position));
-        record->Add(GetSlot("Components", &_componentSet));
-        record->Add(GetSlot("Rubbers", &_rubberSet));
-        record->Add(GetSlot("External", &_isExternal));
+        record->Add(getSlot("Cell", _cell));
+        record->Add(getSlot("Name", &_name));
+        record->Add(getSlot("Arity", &_arity));
+        record->Add(getSlot("Global", &_isGlobal));
+        record->Add(getSlot("External", &_isExternal));
+        record->Add(getSlot("Type", _type));
+        record->Add(getSlot("Direction", _direction));
+        record->Add(getSlot("Position", &_position));
+        record->Add(getSlot("Components", &_componentSet));
+        record->Add(getSlot("Rubbers", &_rubberSet));
+        record->Add(getSlot("External", &_isExternal));
     }
     return record;
 }
@@ -682,17 +682,17 @@ Net::Type& Net::Type::operator=(const Type& type)
     return *this;
 }
 
-string Net::Type::_GetString() const
+string Net::Type::_getString() const
 // *********************************
 {
-  return GetString(&_code);
+  return getString(&_code);
 }
 
-Record* Net::Type::_GetRecord() const
+Record* Net::Type::_getRecord() const
 // ****************************
 {
-    Record* record = new Record(GetString(this));
-    record->Add(GetSlot("Code", &_code));
+    Record* record = new Record(getString(this));
+    record->Add(getSlot("Code", &_code));
     return record;
 }
 
@@ -721,17 +721,17 @@ Net::Direction& Net::Direction::operator=(const Direction& direction)
     return *this;
 }
 
-string Net::Direction::_GetString() const
+string Net::Direction::_getString() const
 // **************************************
 {
-  return GetString(&_code);
+  return getString(&_code);
 }
 
-Record* Net::Direction::_GetRecord() const
+Record* Net::Direction::_getRecord() const
 // *********************************
 {
-    Record* record = new Record(GetString(this));
-    record->Add(GetSlot("Code", &_code));
+    Record* record = new Record(getString(this));
+    record->Add(getSlot("Code", &_code));
     return record;
 }
 
@@ -747,16 +747,16 @@ Net::ComponentSet::ComponentSet()
 {
 }
 
-unsigned Net::ComponentSet::_GetHashValue(Component* component) const
+unsigned Net::ComponentSet::_getHashValue(Component* component) const
 // ******************************************************************
 {
     return ( (unsigned int)( (unsigned long)component ) ) / 8;
 }
 
-Component* Net::ComponentSet::_GetNextElement(Component* component) const
+Component* Net::ComponentSet::_getNextElement(Component* component) const
 // **********************************************************************
 {
-    return component->_GetNextOfNetComponentSet();
+    return component->_getNextOfNetComponentSet();
 }
 
 void Net::ComponentSet::_SetNextElement(Component* component, Component* nextComponent) const
@@ -777,16 +777,16 @@ Net::RubberSet::RubberSet()
 {
 }
 
-unsigned Net::RubberSet::_GetHashValue(Rubber* rubber) const
+unsigned Net::RubberSet::_getHashValue(Rubber* rubber) const
 // *********************************************************
 {
     return ( (unsigned int)( (unsigned long)rubber ) ) / 8;
 }
 
-Rubber* Net::RubberSet::_GetNextElement(Rubber* rubber) const
+Rubber* Net::RubberSet::_getNextElement(Rubber* rubber) const
 // **********************************************************
 {
-    return rubber->_GetNextOfNetRubberSet();
+    return rubber->_getNextOfNetRubberSet();
 }
 
 void Net::RubberSet::_SetNextElement(Rubber* rubber, Rubber* nextRubber) const
@@ -822,23 +822,23 @@ Net_SlavePlugs& Net_SlavePlugs::operator=(const Net_SlavePlugs& slavePlugs)
     return *this;
 }
 
-Collection<Plug*>* Net_SlavePlugs::GetClone() const
+Collection<Plug*>* Net_SlavePlugs::getClone() const
 // ************************************************
 {
     return new Net_SlavePlugs(*this);
 }
 
-Locator<Plug*>* Net_SlavePlugs::GetLocator() const
+Locator<Plug*>* Net_SlavePlugs::getLocator() const
 // ***********************************************
 {
     return new Locator(_net);
 }
 
-string Net_SlavePlugs::_GetString() const
+string Net_SlavePlugs::_getString() const
 // **************************************
 {
     string s = "<" + _TName("Net::SlavePlugs");
-    if (_net) s += " " + GetString(_net);
+    if (_net) s += " " + getString(_net);
     s += ">";
     return s;
 }
@@ -857,9 +857,9 @@ Net_SlavePlugs::Locator::Locator(const Net* net)
     _instanceLocator()
 {
     if (_net) {
-        _instanceLocator = _net->GetCell()->GetSlaveInstances().GetLocator();
+        _instanceLocator = _net->getCell()->getSlaveInstances().getLocator();
         while (!_plug && _instanceLocator.IsValid()) {
-            _plug = _instanceLocator.GetElement()->GetPlug(_net);
+            _plug = _instanceLocator.getElement()->getPlug(_net);
             _instanceLocator.Progress();
         }
     }
@@ -883,13 +883,13 @@ Net_SlavePlugs::Locator& Net_SlavePlugs::Locator::operator=(const Locator& locat
     return *this;
 }
 
-Plug* Net_SlavePlugs::Locator::GetElement() const
+Plug* Net_SlavePlugs::Locator::getElement() const
 // **********************************************
 {
     return _plug;
 }
 
-Locator<Plug*>* Net_SlavePlugs::Locator::GetClone() const
+Locator<Plug*>* Net_SlavePlugs::Locator::getClone() const
 // ******************************************************
 {
     return new Locator(*this);
@@ -907,17 +907,17 @@ void Net_SlavePlugs::Locator::Progress()
     if (IsValid()) {
         _plug = NULL;
         while (!_plug && _instanceLocator.IsValid()) {
-            _plug = _instanceLocator.GetElement()->GetPlug(_net);
+            _plug = _instanceLocator.getElement()->getPlug(_net);
             _instanceLocator.Progress();
         }
     }
 }
 
-string Net_SlavePlugs::Locator::_GetString() const
+string Net_SlavePlugs::Locator::_getString() const
 // ***********************************************
 {
     string s = "<" + _TName("Net::SlavePlugs::Locator");
-    if (_net) s += " " + GetString(_net);
+    if (_net) s += " " + getString(_net);
     s += ">";
     return s;
 }

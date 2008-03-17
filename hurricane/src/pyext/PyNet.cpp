@@ -164,8 +164,8 @@ extern "C" {
 
 
   // Standart Accessors (Attributes).
-  DirectGetLongAttribute(PyNet_GetX,GetX,PyNet,Net)
-  DirectGetLongAttribute(PyNet_GetY,GetY,PyNet,Net)  
+  DirectGetLongAttribute(PyNet_getX,getX,PyNet,Net)
+  DirectGetLongAttribute(PyNet_getY,getY,PyNet,Net)  
   
   // Standart Predicates (Attributes).
   DirectGetBoolAttribute(PyNet_IsGlobal  ,IsGlobal  ,PyNet,Net)
@@ -178,20 +178,19 @@ extern "C" {
 
   GetBoundStateAttribute(PyNet_IsPyBound            ,PyNet,Net)
 
-  // Standart Delete (Attribute).
-  DBoDeleteAttribute(PyNet_Delete,PyNet)
+  // Standart destroy (Attribute).
+  DBoDestroyAttribute(PyNet_destroy, PyNet)
 
 
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_GetName ()"
+  // Attribute Method  :  "PyNet_getName ()"
 
-  static PyObject* PyNet_GetName ( PyNet *self )
-  {
-    trace << "PyNet_GetName ()" << endl;
+  static PyObject* PyNet_getName ( PyNet *self ) {
+    trace << "PyNet_getName ()" << endl;
     
-    METHOD_HEAD ( "Net.GetName()" )
+    METHOD_HEAD ( "Net.getName()" )
 
     PyName* pyName = PyObject_NEW ( PyName, &PyTypeName );
     if ( pyName == NULL ) { return NULL; }
@@ -202,7 +201,7 @@ extern "C" {
 
     HTRY
 
-    pyName->_object = new Name ( net->GetName() );
+    pyName->_object = new Name ( net->getName() );
 
     HCATCH
     
@@ -212,42 +211,42 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_GetType ()"
+  // Attribute Method  :  "PyNet_getType ()"
 
-  static PyObject* PyNet_GetType ( PyNet *self )
+  static PyObject* PyNet_getType ( PyNet *self )
   {
-    trace << "PyNet_GetType ()" << endl;
+    trace << "PyNet_getType ()" << endl;
     
-    METHOD_HEAD ( "Net.GetType()" )
+    METHOD_HEAD ( "Net.getType()" )
 
-    return ( (PyObject*)Py_BuildValue("i",(long)net->GetType().GetCode()) );
+    return ( (PyObject*)Py_BuildValue("i",(long)net->getType().getCode()) );
   }
 
   
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_GetDirection ()"
+  // Attribute Method  :  "PyNet_getDirection ()"
 
-  static PyObject* PyNet_GetDirection ( PyNet *self )
+  static PyObject* PyNet_getDirection ( PyNet *self )
   {
-    trace << "PyNet_GetDirection ()" << endl;
+    trace << "PyNet_getDirection ()" << endl;
    
-    METHOD_HEAD ( "Net.GetDirection()" )
+    METHOD_HEAD ( "Net.getDirection()" )
 
-    return ( (PyObject*)Py_BuildValue("i",(long)net->GetDirection().GetCode()) );
+    return ( (PyObject*)Py_BuildValue("i",(long)net->getDirection().getCode()) );
   }
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_GetPlugsLocator ()"
+  // Attribute Method  :  "PyNet_getPlugsLocator ()"
 
-  static PyObject* PyNet_GetPlugsLocator ( PyNet *self )
+  static PyObject* PyNet_getPlugsLocator ( PyNet *self )
   {
-    trace << "PyNet_GetPlugsLocator ()" << endl;
+    trace << "PyNet_getPlugsLocator ()" << endl;
 
-    METHOD_HEAD ( "Net.GetPlugsLocator()" )
+    METHOD_HEAD ( "Net.getPlugsLocator()" )
 
-    Plugs plugs = net->GetPlugs ();
+    Plugs plugs = net->getPlugs ();
 
     PyPlugLocator* pyPlugLocator = PyObject_NEW ( PyPlugLocator, &PyTypePlugLocator );
     if (pyPlugLocator == NULL) { return NULL; }
@@ -258,7 +257,7 @@ extern "C" {
 
     HTRY
 
-    pyPlugLocator->_object = plugs.GetLocator ();
+    pyPlugLocator->_object = plugs.getLocator ();
 
     HCATCH
 
@@ -267,15 +266,15 @@ extern "C" {
 
     
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_GetSegmentsLocator ()"
+  // Attribute Method  :  "PyNet_getSegmentsLocator ()"
 
-  static PyObject* PyNet_GetSegmentsLocator ( PyNet *self )
+  static PyObject* PyNet_getSegmentsLocator ( PyNet *self )
   {
-    trace << "PyNet_GetSegmentsLocator ()" << endl;
+    trace << "PyNet_getSegmentsLocator ()" << endl;
 
-    METHOD_HEAD ( "Net.GetSegmentsLocator()" )
+    METHOD_HEAD ( "Net.getSegmentsLocator()" )
 
-    Segments segments = net->GetSegments ();
+    Segments segments = net->getSegments ();
 
     PySegmentLocator* pySegmentLocator = PyObject_NEW ( PySegmentLocator, &PyTypeSegmentLocator );
     if (pySegmentLocator == NULL) { return NULL; }
@@ -286,7 +285,7 @@ extern "C" {
 
     HTRY
 
-    pySegmentLocator->_object = segments.GetLocator ();
+    pySegmentLocator->_object = segments.getLocator ();
 
     HCATCH
 
@@ -295,15 +294,15 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_GetPinsLocator ()"
+  // Attribute Method  :  "PyNet_getPinsLocator ()"
 
-  static PyObject* PyNet_GetPinsLocator ( PyNet *self )
+  static PyObject* PyNet_getPinsLocator ( PyNet *self )
   {
-    trace << "PyNet_GetPinsLocator ()" << endl;
+    trace << "PyNet_getPinsLocator ()" << endl;
 
-    METHOD_HEAD ( "Net.GetPinsLocator()" )
+    METHOD_HEAD ( "Net.getPinsLocator()" )
 
-    Pins pins = net->GetPins ();
+    Pins pins = net->getPins ();
 
     PyPinLocator* pyPinLocator = PyObject_NEW ( PyPinLocator, &PyTypePinLocator );
     if (pyPinLocator == NULL) { return NULL; }
@@ -314,7 +313,7 @@ extern "C" {
 
     HTRY
 
-    pyPinLocator->_object = pins.GetLocator ();
+    pyPinLocator->_object = pins.getLocator ();
 
     HCATCH
 
@@ -322,15 +321,15 @@ extern "C" {
   }
   
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_GetExternalComponentsLocator ()"
+  // Attribute Method  :  "PyNet_getExternalComponentsLocator ()"
 
-  static PyObject* PyNet_GetExternalComponentsLocator ( PyNet *self )
+  static PyObject* PyNet_getExternalComponentsLocator ( PyNet *self )
   {
-    trace << "PyNet_GetExternalComponentsLocator ()" << endl;
+    trace << "PyNet_getExternalComponentsLocator ()" << endl;
 
-    METHOD_HEAD ( "Net.GetExternalcomponentsLocator()" )
+    METHOD_HEAD ( "Net.getExternalcomponentsLocator()" )
 
-    Components externalComponents = GetExternalComponents(net);
+    Components externalComponents = getExternalComponents(net);
 
     PyComponentLocator* pyExternalComponentsLocator = PyObject_NEW ( PyComponentLocator, &PyTypeComponentLocator );
     if (pyExternalComponentsLocator == NULL) { return NULL; }
@@ -341,7 +340,7 @@ extern "C" {
 
     HTRY
 
-    pyExternalComponentsLocator->_object = externalComponents.GetLocator ();
+    pyExternalComponentsLocator->_object = externalComponents.getLocator ();
 
     HCATCH
 
@@ -517,31 +516,31 @@ extern "C" {
   // PyNet Attribute Method table.
 
   PyMethodDef PyNet_Methods[] =
-    { { "GetName"              , (PyCFunction)PyNet_GetName                  , METH_NOARGS , "Returns the net name." }
-    //, { "GetArity"             , (PyCFunction)PyNet_GetArity                 , METH_NOARGS , "Returns the signal arity." }
-    , { "GetType"              , (PyCFunction)PyNet_GetType                  , METH_NOARGS
+    { { "getName"              , (PyCFunction)PyNet_getName                  , METH_NOARGS , "Returns the net name." }
+    //, { "getArity"             , (PyCFunction)PyNet_getArity                 , METH_NOARGS , "Returns the signal arity." }
+    , { "getType"              , (PyCFunction)PyNet_getType                  , METH_NOARGS
                                , "Returns the signal type (by default set to UNDEFINED)." }
-    , { "GetDirection"         , (PyCFunction)PyNet_GetDirection             , METH_NOARGS
+    , { "getDirection"         , (PyCFunction)PyNet_getDirection             , METH_NOARGS
                                , "Returns the signal direction (by default set to UNDEFINED)." }
-    //, { "GetPosition"          , (PyCFunction)PyNet_GetPosition   , METH_NOARGS
+    //, { "getPosition"          , (PyCFunction)PyNet_getPosition   , METH_NOARGS
     //                           , "Returns the X,Y position of the net. This position is used for computing the location of the plugs (on slave instances calling the cell owning this net) having that net as master." }
-    , { "GetX"                 , (PyCFunction)PyNet_GetX                     , METH_NOARGS , "Returns net abscissa." }
-    , { "GetY"                 , (PyCFunction)PyNet_GetY                     , METH_NOARGS , "Returns net ordinate." }
-    //, { "GetRubbers"           , (PyCFunction)PyNet_GetRubbers               , METH_NOARGS , "Returns the collection of net's rubbers." }
-    //, { "GetComponents"        , (PyCFunction)PyNet_GetComponents            , METH_NOARGS , "Returns the collection of net's components." }
-    , { "GetExternalComponents", (PyCFunction)PyNet_GetExternalComponentsLocator , METH_NOARGS , "Returns the collection of net's external components. (only for an external net)" }
-    , { "GetPlugsLocator"      , (PyCFunction)PyNet_GetPlugsLocator          , METH_NOARGS , "Returns the collection of net's plugs." }
-    //, { "GetContacts"          , (PyCFunction)PyNet_GetContacts              , METH_NOARGS , "Returns the collection of net's contacts." }
-    , { "GetPinsLocator"        , (PyCFunction)PyNet_GetPinsLocator            , METH_NOARGS , "Returns the collection of net's pins." }
-    , { "GetSegmentsLocator"    , (PyCFunction)PyNet_GetSegmentsLocator        , METH_NOARGS , "Returns the collection of net's segments." }
-    //, { "GetSegments"          , (PyCFunction)PyNet_GetSegments              , METH_NOARGS , "Returns the collection of net's segments." }
-    //, { "GetVerticals"         , (PyCFunction)PyNet_GetVerticals             , METH_NOARGS , "Returns the collection of net's vertical segments." }
-    //, { "GetHorizontals"       , (PyCFunction)PyNet_GetHorizontals           , METH_NOARGS , "Returns the collection of net's horizontal segments." }
-    //, { "GetPads"              , (PyCFunction)PyNet_GetPads                  , METH_NOARGS , "Returns the collection of net's pads." }
-    //, { "GetSavePlugs"         , (PyCFunction)PyNet_GetSavePlugs             , METH_NOARGS , "Returns the collection of plugs which have this net as master." }
-    //, { "GetConnectedSavePlugs", (PyCFunction)PyNet_GetConnectedSavePlugs    , METH_NOARGS
+    , { "getX"                 , (PyCFunction)PyNet_getX                     , METH_NOARGS , "Returns net abscissa." }
+    , { "getY"                 , (PyCFunction)PyNet_getY                     , METH_NOARGS , "Returns net ordinate." }
+    //, { "getRubbers"           , (PyCFunction)PyNet_getRubbers               , METH_NOARGS , "Returns the collection of net's rubbers." }
+    //, { "getComponents"        , (PyCFunction)PyNet_getComponents            , METH_NOARGS , "Returns the collection of net's components." }
+    , { "getExternalComponents", (PyCFunction)PyNet_getExternalComponentsLocator , METH_NOARGS , "Returns the collection of net's external components. (only for an external net)" }
+    , { "getPlugsLocator"      , (PyCFunction)PyNet_getPlugsLocator          , METH_NOARGS , "Returns the collection of net's plugs." }
+    //, { "getContacts"          , (PyCFunction)PyNet_getContacts              , METH_NOARGS , "Returns the collection of net's contacts." }
+    , { "getPinsLocator"        , (PyCFunction)PyNet_getPinsLocator            , METH_NOARGS , "Returns the collection of net's pins." }
+    , { "getSegmentsLocator"    , (PyCFunction)PyNet_getSegmentsLocator        , METH_NOARGS , "Returns the collection of net's segments." }
+    //, { "getSegments"          , (PyCFunction)PyNet_getSegments              , METH_NOARGS , "Returns the collection of net's segments." }
+    //, { "getVerticals"         , (PyCFunction)PyNet_getVerticals             , METH_NOARGS , "Returns the collection of net's vertical segments." }
+    //, { "getHorizontals"       , (PyCFunction)PyNet_getHorizontals           , METH_NOARGS , "Returns the collection of net's horizontal segments." }
+    //, { "getPads"              , (PyCFunction)PyNet_getPads                  , METH_NOARGS , "Returns the collection of net's pads." }
+    //, { "getSavePlugs"         , (PyCFunction)PyNet_getSavePlugs             , METH_NOARGS , "Returns the collection of plugs which have this net as master." }
+    //, { "getConnectedSavePlugs", (PyCFunction)PyNet_getConnectedSavePlugs    , METH_NOARGS
     //                           , "Returns the collection of connected plugs which have this net as master." }
-    //, { "GetUnconnectedSavePlugs", (PyCFunction)PyNet_GetUnconnectedSavePlugs, METH_NOARGS
+    //, { "getUnconnectedSavePlugs", (PyCFunction)PyNet_getUnconnectedSavePlugs, METH_NOARGS
     //                             , "Returns the collection of unconnected plugs which have this net as master." }
     , { "IsGlobal"             , (PyCFunction)PyNet_IsGlobal                 , METH_NOARGS, "return true if the net is global" }
     , { "IsExternal"           , (PyCFunction)PyNet_IsExternal               , METH_NOARGS, "return true if the the net is external." }
@@ -564,8 +563,8 @@ extern "C" {
     //                           , "De-materializes all the rubbers and components of a net." }
     , { "Merge"                , (PyCFunction)PyNet_Merge                    , METH_VARARGS
                                , "Merges the net <net> to the net <this> which keeps its characteristics (arity, global, external and direction)." }
-    , { "Delete"               , (PyCFunction)PyNet_Delete                   , METH_NOARGS
-                               , "Delete associated hurricane object, the python object remains." }
+    , { "destroy"              , (PyCFunction)PyNet_destroy                  , METH_NOARGS
+                               , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

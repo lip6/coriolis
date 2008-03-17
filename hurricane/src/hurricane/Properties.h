@@ -46,9 +46,9 @@ typedef GenericFilter<Property*> PropertyFilter;
 #define for_each_property(property, properties)\
 /**********************************************/\
 {\
-	PropertyLocator _locator = properties.GetLocator();\
+	PropertyLocator _locator = properties.getLocator();\
 	while (_locator.IsValid()) {\
-		Property* property = _locator.GetElement();\
+		Property* property = _locator.getElement();\
 		_locator.Progress();
 
 

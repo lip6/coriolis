@@ -91,21 +91,21 @@ extern "C" {
 
 
   // Standart Delete (Attribute).
-  DirectDeleteAttribute(PyHyperNet_Delete,PyHyperNet)
+  DirectDestroyAttribute(PyHyperNet_destroy, PyHyperNet)
 
 
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyHyperNet_GetPlugsLocator ()"
+  // Attribute Method  :  "PyHyperNet_getPlugsLocator ()"
 
-  static PyObject* PyHyperNet_GetLeafPlugOccurrenceLocator ( PyHyperNet *self )
+  static PyObject* PyHyperNet_getLeafPlugOccurrenceLocator ( PyHyperNet *self )
   {
-    trace << "PyHyperNet_GetLeafPlugOccurrenceLocator ()" << endl;
+    trace << "PyHyperNet_getLeafPlugOccurrenceLocator ()" << endl;
 
-    METHOD_HEAD ( "HyperNet.GetLeafPlugOccurrenceLocator()" )
+    METHOD_HEAD ( "HyperNet.getLeafPlugOccurrenceLocator()" )
 
-    Occurrences occurrences = hyperNet->GetLeafPlugOccurrences ();
+    Occurrences occurrences = hyperNet->getLeafPlugOccurrences ();
 
     PyOccurrenceLocator* pyOccurrenceLocator = PyObject_NEW ( PyOccurrenceLocator, &PyTypeOccurrenceLocator );
     if (pyOccurrenceLocator == NULL) { return NULL; }
@@ -116,7 +116,7 @@ extern "C" {
 
     HTRY
 
-    pyOccurrenceLocator->_object = occurrences.GetLocator ();
+    pyOccurrenceLocator->_object = occurrences.getLocator ();
 
     HCATCH
 
@@ -125,17 +125,17 @@ extern "C" {
 
     
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyHyperNet_GetCell ()"
+  // Attribute Method  :  "PyHyperNet_getCell ()"
 
-  static PyObject* PyHyperNet_GetCell ( PyHyperNet *self )
+  static PyObject* PyHyperNet_getCell ( PyHyperNet *self )
   {
-    trace << "PyHyperNet_GetCell ()" << endl;
+    trace << "PyHyperNet_getCell ()" << endl;
 
     Cell* cell = NULL;
     
     HTRY
-    METHOD_HEAD ( "HyperNet.GetCell()" )
-    cell = hyperNet->GetCell ();
+    METHOD_HEAD ( "HyperNet.getCell()" )
+    cell = hyperNet->getCell ();
     HCATCH
 
     return PyCell_Link ( cell );
@@ -149,12 +149,12 @@ extern "C" {
   // PyHyperNet Attribute Method table.
 
   PyMethodDef PyHyperNet_Methods[] =
-    { { "GetCell"                     , (PyCFunction)PyHyperNet_GetCell                     , METH_NOARGS , "Returns the hyperNet cell." }
+    { { "getCell"                     , (PyCFunction)PyHyperNet_getCell                     , METH_NOARGS , "Returns the hyperNet cell." }
     , { "IsValid"                     , (PyCFunction)PyHyperNet_IsValid                     , METH_NOARGS , "Returns trus if the HyperNet isValid." }
-    , { "GetLeafPlugOccurrenceLocator", (PyCFunction)PyHyperNet_GetLeafPlugOccurrenceLocator, METH_NOARGS 
+    , { "getLeafPlugOccurrenceLocator", (PyCFunction)PyHyperNet_getLeafPlugOccurrenceLocator, METH_NOARGS 
                                       , "Returns the collection of leaf occurrences" }
-    , { "Delete"                      , (PyCFunction)PyHyperNet_Delete                      , METH_NOARGS
-                                      , "Delete associated hurricane object, the python object remains." }
+    , { "destroy"                     , (PyCFunction)PyHyperNet_destroy                     , METH_NOARGS
+                                      , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

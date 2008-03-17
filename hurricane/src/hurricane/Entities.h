@@ -46,9 +46,9 @@ typedef GenericFilter<Entity*> EntityFilter;
 #define for_each_entity(entity, entities)\
 /****************************************/\
 {\
-	EntityLocator _locator = entities.GetLocator();\
+	EntityLocator _locator = entities.getLocator();\
 	while (_locator.IsValid()) {\
-		Entity* entity = _locator.GetElement();\
+		Entity* entity = _locator.getElement();\
 		_locator.Progress();
 
 

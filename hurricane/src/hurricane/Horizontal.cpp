@@ -22,149 +22,149 @@ namespace Hurricane {
 Horizontal::Horizontal(Net* net, Component* source, Component* target, Layer* layer, const Unit& y, const Unit& width, const Unit& dxSource, const Unit& dxTarget)
 // ****************************************************************************************************
 :  Inherit(net, source, target, layer, width),
-	_y(y),
-	_dxSource(dxSource),
-	_dxTarget(dxTarget)
+    _y(y),
+    _dxSource(dxSource),
+    _dxTarget(dxTarget)
 {
 }
 
 Horizontal* Horizontal::Create(Net* net, Layer* layer, const Unit& y, const Unit& width, const Unit& dxSource, const Unit& dxTarget)
 // ****************************************************************************************************
 {
-	if (!net)
-		throw Error("Can't create " + _TName("Horizontal") + " : null net");
+    if (!net)
+        throw Error("Can't create " + _TName("Horizontal") + " : null net");
 
-	Horizontal* horizontal = new Horizontal(net, NULL, NULL, layer, y, width, dxSource, dxTarget);
+    Horizontal* horizontal = new Horizontal(net, NULL, NULL, layer, y, width, dxSource, dxTarget);
 
-	horizontal->_PostCreate();
+    horizontal->_postCreate();
 
-	return horizontal;
+    return horizontal;
 }
 
 Horizontal* Horizontal::Create(Component* source, Component* target, Layer* layer, const Unit& y, const Unit& width, const Unit& dxSource, const Unit& dxTarget)
 // ****************************************************************************************************
 {
-	if (!source)
-		throw Error("Can't create " + _TName("Horizontal") + " : null source");
+    if (!source)
+        throw Error("Can't create " + _TName("Horizontal") + " : null source");
 
-	if (!target)
-		throw Error("Can't create " + _TName("Horizontal") + " : null target");
+    if (!target)
+        throw Error("Can't create " + _TName("Horizontal") + " : null target");
 
-	Horizontal* horizontal =
-		new Horizontal(source->GetNet(), source, target, layer, y, width, dxSource, dxTarget);
+    Horizontal* horizontal =
+        new Horizontal(source->getNet(), source, target, layer, y, width, dxSource, dxTarget);
 
-	horizontal->_PostCreate();
+    horizontal->_postCreate();
 
-	return horizontal;
+    return horizontal;
 }
 
-Box Horizontal::GetBoundingBox() const
+Box Horizontal::getBoundingBox() const
 // ***********************************
 {
-	Unit size = GetHalfWidth() + _GetSize();
-	Unit extention = _GetExtention();
+    Unit size = getHalfWidth() + _getSize();
+    Unit extention = _getExtention();
 
-	return Box(GetSourceX(), _y, GetTargetX(), _y).inflate(extention, size);
+    return Box(getSourceX(), _y, getTargetX(), _y).inflate(extention, size);
 }
 
-Box Horizontal::GetBoundingBox(const BasicLayer* basicLayer) const
+Box Horizontal::getBoundingBox(const BasicLayer* basicLayer) const
 // *********************************************************
 {
-	if (!GetLayer()->contains(basicLayer)) return Box();
+    if (!getLayer()->contains(basicLayer)) return Box();
 
-	Unit size = GetHalfWidth() + _GetSize(basicLayer);
-	Unit extention = _GetExtention(basicLayer);
+    Unit size = getHalfWidth() + _getSize(basicLayer);
+    Unit extention = _getExtention(basicLayer);
 
-	return Box(GetSourceX(), _y, GetTargetX(), _y).inflate(extention, size);
+    return Box(getSourceX(), _y, getTargetX(), _y).inflate(extention, size);
 }
 
-Unit Horizontal::GetSourceX() const
+Unit Horizontal::getSourceX() const
 // ********************************
 {
-	Component* source = GetSource();
-	return (source) ? source->GetX() + _dxSource : _dxSource;
+    Component* source = getSource();
+    return (source) ? source->getX() + _dxSource : _dxSource;
 }
 
-Unit Horizontal::GetTargetX() const
+Unit Horizontal::getTargetX() const
 // ********************************
 {
-	Component* target = GetTarget();
-	return (target) ? target->GetX() + _dxTarget : _dxTarget;
+    Component* target = getTarget();
+    return (target) ? target->getX() + _dxTarget : _dxTarget;
 }
 
-Unit Horizontal::GetLength() const
+Unit Horizontal::getLength() const
 // *******************************
 {
-	return abs(GetSourceX() - GetTargetX());
+    return abs(getSourceX() - getTargetX());
 }
 
-Point Horizontal::GetCenter() const
+Point Horizontal::getCenter() const
 // *******************************
 {
-	return Point ( (GetSourceX()+GetTargetX())/2, GetY() );
+    return Point ( (getSourceX()+getTargetX())/2, getY() );
 }
 
 void Horizontal::Translate(const Unit& dx, const Unit& dy)
 // *******************************************************
 {
-	if (dy != 0) {
-		Invalidate(true);
-		_y += dy;
-	}
+    if (dy != 0) {
+        Invalidate(true);
+        _y += dy;
+    }
 }
 
 void Horizontal::SetY(const Unit& y)
 // *********************************
 {
-	if (y != _y) {
-		Invalidate(true);
-		_y = y;
-	}
+    if (y != _y) {
+        Invalidate(true);
+        _y = y;
+    }
 }
 
 void Horizontal::SetDxSource(const Unit& dxSource)
 // ***********************************************
 {
-	if (dxSource != _dxSource) {
-		Invalidate(false);
-		_dxSource = dxSource;
-	}
+    if (dxSource != _dxSource) {
+        Invalidate(false);
+        _dxSource = dxSource;
+    }
 }
 
 void Horizontal::SetDxTarget(const Unit& dxTarget)
 // ***********************************************
 {
-	if (dxTarget != _dxTarget) {
-		Invalidate(false);
-		_dxTarget = dxTarget;
-	}
+    if (dxTarget != _dxTarget) {
+        Invalidate(false);
+        _dxTarget = dxTarget;
+    }
 }
 
 void Horizontal::Translate(const Unit& dy)
 // ***************************************
 {
-	if (dy != 0) {
-		Invalidate(true);
-		_y += dy;
-	}
+    if (dy != 0) {
+        Invalidate(true);
+        _y += dy;
+    }
 }
 
-string Horizontal::_GetString() const
+string Horizontal::_getString() const
 // **********************************
 {
-	return Inherit::_GetString();
+    return Inherit::_getString();
 }
 
-Record* Horizontal::_GetRecord() const
+Record* Horizontal::_getRecord() const
 // *****************************
 {
-	Record* record = Inherit::_GetRecord();
-	if (record) {
-		record->Add(GetSlot("Y", &_y));
-		record->Add(GetSlot("DxSource", &_dxSource));
-		record->Add(GetSlot("DxTarget", &_dxTarget));
-	}
-	return record;
+    Record* record = Inherit::_getRecord();
+    if (record) {
+        record->Add(getSlot("Y", &_y));
+        record->Add(getSlot("DxSource", &_dxSource));
+        record->Add(getSlot("DxTarget", &_dxTarget));
+    }
+    return record;
 }
 
 } // End of Hurricane namespace.

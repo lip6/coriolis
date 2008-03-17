@@ -77,21 +77,21 @@ namespace Hurricane {
 
     // Inspector Management.
     public:
-      virtual Record* _GetRecord  () const;
-      virtual string  _GetTypeName() const { return "DeepNet"; };
+      virtual Record* _getRecord  () const;
+      virtual string  _getTypeName() const { return "DeepNet"; };
 
 # endif
 
     // Constructors.
     public:
-	  static  DeepNet* Create      ( HyperNet& hyperNet );
+      static  DeepNet* Create      ( HyperNet& hyperNet );
 
     // Accessors.
     public:
 
     // Predicates.
     public:
-	  virtual bool IsDeepNet () const { return true; };
+      virtual bool IsDeepNet () const { return true; };
 
     // Internal Modifiers.
     public:
@@ -99,7 +99,7 @@ namespace Hurricane {
 
 };
 
-Net* GetDeepNet(HyperNet& hyperNet);
+Net* getDeepNet(HyperNet& hyperNet);
 
 
 } // End of Hurricane namespace.

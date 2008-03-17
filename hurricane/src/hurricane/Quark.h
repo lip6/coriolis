@@ -25,38 +25,38 @@ class Quark : public DBo {
 // Types
 // *****
 
-	public: typedef DBo Inherit;
+    public: typedef DBo Inherit;
 
 // Attributes
 // **********
 
-	private: Occurrence _occurrence;
-	private: Quark* _nextOfSharedPathQuarkMap;
+    private: Occurrence _occurrence;
+    private: Quark* _nextOfSharedPathQuarkMap;
 
 // Constructors
 // ************
 
-	protected: Quark(const Occurrence& occurrence);
+    protected: Quark(const Occurrence& occurrence);
 
 // Accessors
 // *********
 
-	public: const Occurrence& GetOccurrence() const {return _occurrence;};
+    public: const Occurrence& getOccurrence() const {return _occurrence;};
 
 // Others
 // ******
 
-	public: static Quark* _Create(const Occurrence& occurrence);
-	protected: virtual void _PostCreate();
+    public: static Quark* _Create(const Occurrence& occurrence);
+    protected: virtual void _postCreate();
 
-	protected: virtual void _PreDelete();
+    protected: virtual void _preDestroy();
 
-	public: virtual string _GetTypeName() const {return _TName("Quark");};
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
-	public: Quark* _GetNextOfSharedPathQuarkMap() const {return _nextOfSharedPathQuarkMap;};
+    public: virtual string _getTypeName() const {return _TName("Quark");};
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
+    public: Quark* _getNextOfSharedPathQuarkMap() const {return _nextOfSharedPathQuarkMap;};
 
-	public: void _SetNextOfSharedPathQuarkMap(Quark* quark) {_nextOfSharedPathQuarkMap = quark;};
+    public: void _SetNextOfSharedPathQuarkMap(Quark* quark) {_nextOfSharedPathQuarkMap = quark;};
 
 };
 

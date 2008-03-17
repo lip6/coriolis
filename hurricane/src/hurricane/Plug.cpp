@@ -27,11 +27,11 @@ class Plug_IsConnectedFilter : public Filter<Plug*> {
 
     public: Plug_IsConnectedFilter& operator=(const Plug_IsConnectedFilter& filter) {return *this;};
 
-    public: virtual Filter<Plug*>* GetClone() const {return new Plug_IsConnectedFilter(*this);};
+    public: virtual Filter<Plug*>* getClone() const {return new Plug_IsConnectedFilter(*this);};
 
     public: virtual bool Accept(Plug* plug) const {return plug->IsConnected();};
 
-    public: virtual string _GetString() const {return "<" + _TName("Plug::IsConnectedFilter>");};
+    public: virtual string _getString() const {return "<" + _TName("Plug::IsConnectedFilter>");};
 
 };
 
@@ -54,65 +54,65 @@ Plug::Plug(Instance* instance, Net* masterNet)
     if (!_masterNet)
         throw Error("Can't create " + _TName("Plug") + " : null master net");
 
-    if (_masterNet->GetCell() != _instance->GetMasterCell())
+    if (_masterNet->getCell() != _instance->getMasterCell())
         throw Error("Can't create " + _TName("Plug") + " : incompatible master net");
 
     if (!_masterNet->IsExternal())
         throw Error("Can't create " + _TName("Plug") + " : not an external master net");
 
-    if (_instance->GetPlug(_masterNet))
+    if (_instance->getPlug(_masterNet))
         throw Error("Can't create " + _TName("Plug") + " : already exists");
 }
 
-void Plug::Delete()
+void Plug::destroy()
 // ****************
 {
     throw Error("Abnormal deletion of " + _TName("Plug"));
 }
 
-Cell* Plug::GetCell() const
+Cell* Plug::getCell() const
 // ************************
 {
-    return _instance->GetCell();
+    return _instance->getCell();
 }
 
-Unit Plug::GetX() const
+Unit Plug::getX() const
 // ********************
 {
-    return _instance->GetTransformation().getX(_masterNet->GetPosition());
+    return _instance->getTransformation().getX(_masterNet->getPosition());
 }
 
-Unit Plug::GetY() const
+Unit Plug::getY() const
 // ********************
 {
-    return _instance->GetTransformation().getY(_masterNet->GetPosition());
+    return _instance->getTransformation().getY(_masterNet->getPosition());
 }
 
-Point Plug::GetPosition() const
+Point Plug::getPosition() const
 // ****************************
 {
-    return _instance->GetTransformation().getPoint(_masterNet->GetPosition());
+    return _instance->getTransformation().getPoint(_masterNet->getPosition());
 }
 
-Box Plug::GetBoundingBox() const
+Box Plug::getBoundingBox() const
 // *****************************
 {
-    return _instance->GetTransformation().getBox(_masterNet->GetPosition());
+    return _instance->getTransformation().getBox(_masterNet->getPosition());
 }
 
-Box Plug::GetBoundingBox(const BasicLayer* basicLayer) const
+Box Plug::getBoundingBox(const BasicLayer* basicLayer) const
 // ***************************************************
 {
     return Box();
 }
 
-PlugFilter Plug::GetIsConnectedFilter()
+PlugFilter Plug::getIsConnectedFilter()
 // ************************************
 {
     return Plug_IsConnectedFilter();
 }
 
-PlugFilter Plug::GetIsUnconnectedFilter()
+PlugFilter Plug::getIsUnconnectedFilter()
 // **************************************
 {
     return !Plug_IsConnectedFilter();
@@ -131,12 +131,12 @@ void Plug::Unmaterialize()
 void Plug::SetNet(Net* net)
 // ************************
 {
-    if (net != GetNet()) {
+    if (net != getNet()) {
 
-        if (net && (GetCell() != net->GetCell()))
-            throw Error("Can't change net of plug : net : " + GetString(net) + "does not belong to the cell : " + GetString(GetCell()));
+        if (net && (getCell() != net->getCell()))
+            throw Error("Can't change net of plug : net : " + getString(net) + "does not belong to the cell : " + getString(getCell()));
 
-        if (!GetBodyHook()->GetSlaveHooks().IsEmpty())
+        if (!getBodyHook()->getSlaveHooks().IsEmpty())
             throw Error("Can't change net of plug : not empty slave hooks");
 
         _SetNet(net);
@@ -148,66 +148,66 @@ Plug* Plug::_Create(Instance* instance, Net* masterNet)
 {
     Plug* plug = new Plug(instance, masterNet);
 
-    plug->_PostCreate();
+    plug->_postCreate();
 
     return plug;
 }
 
-void Plug::_PostCreate()
+void Plug::_postCreate()
 // *********************
 {
-    _instance->_GetPlugMap()._Insert(this);
+    _instance->_getPlugMap()._Insert(this);
 
-    Inherit::_PostCreate();
+    Inherit::_postCreate();
 }
 
-void Plug::_Delete()
+void Plug::_destroy()
 // *****************
 {
-    _PreDelete();
+    _preDestroy();
 
     delete this;
 }
 
-void Plug::_PreDelete()
+void Plug::_preDestroy()
 // ********************
 {
-// trace << "entering Plug::_PreDelete: " << this << endl;
+// trace << "entering Plug::_preDestroy: " << this << endl;
 // trace_in();
 
-    Inherit::_PreDelete();
+    Inherit::_preDestroy();
 
-    _instance->_GetPlugMap()._Remove(this);
+    _instance->_getPlugMap()._Remove(this);
 
-// trace << "exiting Plug::_PreDelete:" << endl;
+// trace << "exiting Plug::_preDestroy:" << endl;
 // trace_out();
 }
 
-string Plug::_GetString() const
+string Plug::_getString() const
 // ****************************
 {
-    string s = Inherit::_GetString();
-    s.insert(s.length() - 1, " " + GetName());
+    string s = Inherit::_getString();
+    s.insert(s.length() - 1, " " + getName());
     return s;
 }
 
-Record* Plug::_GetRecord() const
+Record* Plug::_getRecord() const
 // ***********************
 {
-    Record* record = Inherit::_GetRecord();
+    Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(GetSlot("Instance", _instance));
-        record->Add(GetSlot("MasterNet", _masterNet));
+        record->Add(getSlot("Instance", _instance));
+        record->Add(getSlot("MasterNet", _masterNet));
     }
     return record;
 }
 
-string Plug::GetName() const
+string Plug::getName() const
 // *************************
 {
-    return GetString(_instance->GetName())
+    return getString(_instance->getName())
          + "."
-         + GetString(_masterNet->GetName());
+         + getString(_masterNet->getName());
 }
 
 } // End of Hurricane namespace.

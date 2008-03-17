@@ -16,8 +16,8 @@ namespace Hurricane {
 
 Interval::Interval(bool makeEmpty)
 // *******************************
-:	_vMin(1),
-	_vMax(-1)
+:    _vMin(1),
+    _vMax(-1)
 {
   if (!makeEmpty) {
     _vMin = UNIT_MIN;
@@ -27,87 +27,87 @@ Interval::Interval(bool makeEmpty)
 
 Interval::Interval(const Unit& value)
 // **********************************
-:	_vMin(value),
-	_vMax(value)
+:    _vMin(value),
+    _vMax(value)
 {
 }
 
 Interval::Interval(const Unit& v1, const Unit& v2)
 // ***********************************************
-:	_vMin(min(v1, v2)),
-	_vMax(max(v1, v2))
+:    _vMin(min(v1, v2)),
+    _vMax(max(v1, v2))
 {
 }
 
 Interval::Interval(const Interval& interval)
 // *****************************************
-:	_vMin(interval._vMin),
-	_vMax(interval._vMax)
+:    _vMin(interval._vMin),
+    _vMax(interval._vMax)
 {
 }
 
 Interval& Interval::operator=(const Interval& interval)
 // ****************************************************
 {
-	_vMin = interval._vMin;
-	_vMax = interval._vMax;
-	return *this;
+    _vMin = interval._vMin;
+    _vMax = interval._vMax;
+    return *this;
 }
 
 bool Interval::operator==(const Interval& interval) const
 // ******************************************************
 {
-	return !IsEmpty() && !interval.IsEmpty() && (_vMin == interval._vMin) && (_vMax == interval._vMax);
+    return !IsEmpty() && !interval.IsEmpty() && (_vMin == interval._vMin) && (_vMax == interval._vMax);
 }
 
 bool Interval::operator!=(const Interval& interval) const
 // ******************************************************
 {
-	return IsEmpty() || interval.IsEmpty() || (_vMin != interval._vMin) || (_vMax != interval._vMax);
+    return IsEmpty() || interval.IsEmpty() || (_vMin != interval._vMin) || (_vMax != interval._vMax);
 }
 
-Interval Interval::GetUnion(const Interval& interval) const
+Interval Interval::getUnion(const Interval& interval) const
 // ********************************************************
 {
-	if (IsEmpty() && interval.IsEmpty()) return Interval();
-	return Interval(min(_vMin, interval._vMin), max(_vMax, interval._vMax));
+    if (IsEmpty() && interval.IsEmpty()) return Interval();
+    return Interval(min(_vMin, interval._vMin), max(_vMax, interval._vMax));
 }
 
-Interval Interval::GetIntersection(const Interval& interval) const
+Interval Interval::getIntersection(const Interval& interval) const
 // ***************************************************************
 {
-	if (!Intersect(interval)) return Interval();
-	return Interval(max(_vMin, interval._vMin), min(_vMax, interval._vMax));
+    if (!Intersect(interval)) return Interval();
+    return Interval(max(_vMin, interval._vMin), min(_vMax, interval._vMax));
 }
 
 bool Interval::IsEmpty() const
 // ***************************
 {
-	return (_vMax < _vMin);
+    return (_vMax < _vMin);
 }
 
 bool Interval::IsPonctual() const
 // ******************************
 {
-	return (_vMax == _vMin);
+    return (_vMax == _vMin);
 }
 
 bool Interval::Contains(const Unit& v) const
 // *****************************************
 {
-	return !IsEmpty() && (_vMin <= v) && (v <= _vMax);
+    return !IsEmpty() && (_vMin <= v) && (v <= _vMax);
 }
 
 bool Interval::Contains(const Interval& interval) const
 // ****************************************************
 {
-	return !IsEmpty() && !interval.IsEmpty() && (_vMin <= interval._vMin) && (interval._vMax <= _vMax);
+    return !IsEmpty() && !interval.IsEmpty() && (_vMin <= interval._vMin) && (interval._vMax <= _vMax);
 }
 
 bool Interval::Intersect(const Interval& interval) const
 // *****************************************************
 {
-	return !IsEmpty() && !interval.IsEmpty() && !((_vMax < interval._vMin) || (interval._vMax < _vMin));
+    return !IsEmpty() && !interval.IsEmpty() && !((_vMax < interval._vMin) || (interval._vMax < _vMin));
 }
 
 bool Interval::Inferior(const Interval& interval, bool strict) const
@@ -127,57 +127,57 @@ bool Interval::Superior(const Interval& interval, bool strict) const
 bool Interval::IsConstrainedBy(const Interval& interval) const
 // ***********************************************************
 {
-	return (!IsEmpty() &&
-			  !interval.IsEmpty() &&
-			  ((_vMin == interval.GetVMin()) || (_vMax == interval.GetVMax())));
+    return (!IsEmpty() &&
+              !interval.IsEmpty() &&
+              ((_vMin == interval.getVMin()) || (_vMax == interval.getVMax())));
 }
 
 Interval& Interval::MakeEmpty()
 // ****************************
 {
-	_vMin = 1;
-	_vMax = -1;
-	return *this;
+    _vMin = 1;
+    _vMax = -1;
+    return *this;
 }
 
 Interval& Interval::Inflate(const Unit& dv)
 // ****************************************
 {
-	return Inflate(dv, dv);
+    return Inflate(dv, dv);
 }
 
 Interval& Interval::Inflate(const Unit& dvMin, const Unit& dvMax)
 // **************************************************************
 {
-	if (!IsEmpty()) {
-		_vMin -= dvMin;
-		_vMax += dvMax;
-	}
-	return *this;
+    if (!IsEmpty()) {
+        _vMin -= dvMin;
+        _vMax += dvMax;
+    }
+    return *this;
 }
 
 Interval& Interval::Merge(const Unit& v)
 // *************************************
 {
-	if (IsEmpty()) {
-		_vMin = v;
-		_vMax = v;
-	}
-	else {
-		_vMin = min(_vMin, v);
-		_vMax = max(_vMax, v);
-	}
-	return *this;
+    if (IsEmpty()) {
+        _vMin = v;
+        _vMax = v;
+    }
+    else {
+        _vMin = min(_vMin, v);
+        _vMax = max(_vMax, v);
+    }
+    return *this;
 }
 
 Interval& Interval::Merge(const Interval& interval)
 // ************************************************
 {
-	if (!interval.IsEmpty()) {
-		_vMin = min(_vMin, interval._vMin);
-		_vMax = max(_vMax, interval._vMax);
-	}
-	return *this;
+    if (!interval.IsEmpty()) {
+        _vMin = min(_vMin, interval._vMin);
+        _vMax = max(_vMax, interval._vMax);
+    }
+    return *this;
 }
 
 Interval& Interval::Intersection(const Unit& vMin, const Unit& vMax)
@@ -201,26 +201,26 @@ Interval& Interval::Intersection(const Interval& interval)
 Interval& Interval::Translate(const Unit& dv)
 // ******************************************
 {
-	if (!IsEmpty()) {
-		_vMin += dv;
-		_vMax += dv;
-	}
-	return *this;
+    if (!IsEmpty()) {
+        _vMin += dv;
+        _vMax += dv;
+    }
+    return *this;
 }
 
-string Interval::_GetString() const
+string Interval::_getString() const
 // ********************************
 {
-	return "<" + _TName("Interval") + " " + GetValueString(_vMin) + " " + GetValueString(_vMax) + ">";
+    return "<" + _TName("Interval") + " " + getValueString(_vMin) + " " + getValueString(_vMax) + ">";
 }
 
-Record* Interval::_GetRecord() const
+Record* Interval::_getRecord() const
 // ***************************
 {
-	Record* record = new Record(GetString(this));
-	record->Add(GetSlot("VMin", &_vMin));
-	record->Add(GetSlot("VMin", &_vMax));
-	return record;
+    Record* record = new Record(getString(this));
+    record->Add(getSlot("VMin", &_vMin));
+    record->Add(getSlot("VMin", &_vMax));
+    return record;
 }
 
 

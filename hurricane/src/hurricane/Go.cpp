@@ -19,66 +19,66 @@ static bool AUTO_MATERIALIZATION_IS_ENABLED = true;
 
 Go::Go()
 // *****
-:	Inherit(),
-	_quadTree(NULL),
-	_nextOfQuadTreeGoSet(NULL)
+:    Inherit(),
+    _quadTree(NULL),
+    _nextOfQuadTreeGoSet(NULL)
 {
 }
 
 bool Go::AutoMaterializationIsDisabled()
 // *************************************
 {
-	return !AUTO_MATERIALIZATION_IS_ENABLED;
+    return !AUTO_MATERIALIZATION_IS_ENABLED;
 }
 
 void Go::EnableAutoMaterialization()
 // *********************************
 {
-	AUTO_MATERIALIZATION_IS_ENABLED = true;
+    AUTO_MATERIALIZATION_IS_ENABLED = true;
 }
 
 void Go::DisableAutoMaterialization()
 // **********************************
 {
-	AUTO_MATERIALIZATION_IS_ENABLED = false;
+    AUTO_MATERIALIZATION_IS_ENABLED = false;
 }
 
-void Go::_PostCreate()
+void Go::_postCreate()
 // *******************
 {
-	Inherit::_PostCreate();
+    Inherit::_postCreate();
 
-	if (!AutoMaterializationIsDisabled()) Materialize(); // materialized after entire post creation
+    if (!AutoMaterializationIsDisabled()) Materialize(); // materialized after entire post creation
 }
 
-void Go::_PreDelete()
+void Go::_preDestroy()
 // ******************
 {
-// trace << "entering Go::_PreDelete: " << this << endl;
+// trace << "entering Go::_preDestroy: " << this << endl;
 // trace_in();
 
-	Unmaterialize(); // unmaterialized before starting pre destruction
+    Unmaterialize(); // unmaterialized before starting pre destruction
 
-	Inherit::_PreDelete();
+    Inherit::_preDestroy();
 
-// trace << "exiting Go::_PreDelete:" << endl;
+// trace << "exiting Go::_preDestroy:" << endl;
 // trace_out();
 }
 
-string Go::_GetString() const
+string Go::_getString() const
 // **************************
 {
-	return Inherit::_GetString();
+    return Inherit::_getString();
 }
 
-Record* Go::_GetRecord() const
+Record* Go::_getRecord() const
 // *********************
 {
-	Record* record = Inherit::_GetRecord();
-	if (record) {
-		record->Add(GetSlot("QuadTree", _quadTree));
-	}
-	return record;
+    Record* record = Inherit::_getRecord();
+    if (record) {
+        record->Add(getSlot("QuadTree", _quadTree));
+    }
+    return record;
 }
 
 

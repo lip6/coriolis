@@ -29,42 +29,42 @@ class DataBase : public DBo {
 // Types
 // *****
 
-	public: typedef DBo Inherit;
+    public: typedef DBo Inherit;
 
 // Attributes
 // **********
 
-	private: Technology* _technology;
-	private: Library* _rootLibrary;
+    private: Technology* _technology;
+    private: Library* _rootLibrary;
 
 // Constructors
 // ************
 
-	protected: DataBase();
+    protected: DataBase();
 
 // Others
 // ******
 
-	protected: virtual void _PostCreate();
+    protected: virtual void _postCreate();
 
-	protected: virtual void _PreDelete();
+    protected: virtual void _preDestroy();
 
-	public: virtual string _GetTypeName() const {return _TName("DataBase");};
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
+    public: virtual string _getTypeName() const {return _TName("DataBase");};
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
 
-	public: void _SetTechnology(Technology* technology) {_technology = technology;};
-	public: void _SetRootLibrary(Library* rootLibrary) {_rootLibrary = rootLibrary;};
+    public: void _SetTechnology(Technology* technology) {_technology = technology;};
+    public: void _SetRootLibrary(Library* rootLibrary) {_rootLibrary = rootLibrary;};
 
 #   endif
 
-	public: static DataBase* Create();
+    public: static DataBase* Create();
 
 // Accessors
 // *********
 
-	public: Technology* GetTechnology() const {return _technology;};
-	public: Library* GetRootLibrary() const {return _rootLibrary;};
+    public: Technology* getTechnology() const {return _technology;};
+    public: Library* getRootLibrary() const {return _rootLibrary;};
 
 };
 
@@ -73,7 +73,7 @@ class DataBase : public DBo {
 // Generic functions
 // ****************************************************************************************************
 
-DataBase* GetDataBase();
+DataBase* getDataBase();
 
 
 

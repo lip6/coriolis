@@ -130,7 +130,7 @@ using namespace std;
 
 
 // x-----------------------------------------------------------------x
-// |             GetString() Overloads for POD/STL types             |
+// |             getString() Overloads for POD/STL types             |
 // x-----------------------------------------------------------------x
 
 // Note: we are outside the Hurricane namespace.

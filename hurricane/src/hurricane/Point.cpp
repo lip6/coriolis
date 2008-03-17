@@ -96,18 +96,18 @@ Point Point::getTranslated(const Unit& dx, const Unit& dy) const {
     return Point(*this).translate(dx, dy);
 }
 
-string Point::_GetString() const
+string Point::_getString() const
 // *****************************
 {
-    return "<" + _TName("Point") + " " + GetValueString(_x) + " " + GetValueString(_y) + ">";
+    return "<" + _TName("Point") + " " + getValueString(_x) + " " + getValueString(_y) + ">";
 }
 
-Record* Point::_GetRecord() const
+Record* Point::_getRecord() const
 // ******************************
 {
-    Record* record = new Record(GetString(this));
-    record->Add(GetSlot("X", &_x));
-    record->Add(GetSlot("Y", &_y));
+    Record* record = new Record(getString(this));
+    record->Add(getSlot("X", &_x));
+    record->Add(getSlot("Y", &_y));
     return record;
 }
 

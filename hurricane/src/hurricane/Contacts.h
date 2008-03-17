@@ -46,9 +46,9 @@ typedef GenericFilter<Contact*> ContactFilter;
 #define for_each_contact(contact, contacts)\
 /******************************************/\
 {\
-	ContactLocator _locator = contacts.GetLocator();\
+	ContactLocator _locator = contacts.getLocator();\
 	while (_locator.IsValid()) {\
-		Contact* contact = _locator.GetElement();\
+		Contact* contact = _locator.getElement();\
 		_locator.Progress();
 
 

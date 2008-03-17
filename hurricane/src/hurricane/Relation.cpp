@@ -21,44 +21,44 @@ namespace Hurricane {
 class Relation_OwnerIsSlave : public Filter<DBo*> {
 // **********************************************
 
-	private: const Relation* _relation;
+    private: const Relation* _relation;
 
-	public: Relation_OwnerIsSlave(const Relation* relation)
-	// ****************************************************
-	: _relation(relation)
-	{
-	};
+    public: Relation_OwnerIsSlave(const Relation* relation)
+    // ****************************************************
+    : _relation(relation)
+    {
+    };
 
-	public: Relation_OwnerIsSlave(const Relation_OwnerIsSlave& filter)
-	// ***************************************************************
-	: _relation(filter._relation)
-	{
-	};
+    public: Relation_OwnerIsSlave(const Relation_OwnerIsSlave& filter)
+    // ***************************************************************
+    : _relation(filter._relation)
+    {
+    };
 
-	public: Relation_OwnerIsSlave& operator=(const Relation_OwnerIsSlave& filter)
-	// **************************************************************************
-	{
-		_relation = filter._relation;
-		return *this;
-	};
+    public: Relation_OwnerIsSlave& operator=(const Relation_OwnerIsSlave& filter)
+    // **************************************************************************
+    {
+        _relation = filter._relation;
+        return *this;
+    };
 
-	public: virtual Filter<DBo*>* GetClone() const
-	// *******************************************
-	{
-		return new Relation_OwnerIsSlave(*this);
-	};
+    public: virtual Filter<DBo*>* getClone() const
+    // *******************************************
+    {
+        return new Relation_OwnerIsSlave(*this);
+    };
 
-	public: virtual bool Accept(DBo* owner) const
-	// ******************************************
-	{
-		return (owner != _relation->GetMasterOwner());
-	};
+    public: virtual bool Accept(DBo* owner) const
+    // ******************************************
+    {
+        return (owner != _relation->getMasterOwner());
+    };
 
-	public: virtual string _GetString() const
-	// **************************************
-	{
-		return "<" + _TName("Relation::OwnerIsSlave") + " " + GetString(_relation) + ">";
-	};
+    public: virtual string _getString() const
+    // **************************************
+    {
+        return "<" + _TName("Relation::OwnerIsSlave") + " " + getString(_relation) + ">";
+    };
 
 };
 
@@ -70,49 +70,49 @@ class Relation_OwnerIsSlave : public Filter<DBo*> {
 
 Relation::Relation(DBo* masterOwner)
 // *********************************
-:	Inherit(),
-	_masterOwner(masterOwner)
+:    Inherit(),
+    _masterOwner(masterOwner)
 {
-	if (!_masterOwner)
-		throw Error("Can't create " + _TName("Relation") + " : null master owner");
+    if (!_masterOwner)
+        throw Error("Can't create " + _TName("Relation") + " : null master owner");
 }
 
-DBos Relation::GetSlaveOwners() const
+DBos Relation::getSlaveOwners() const
 // **********************************
 {
-	return GetOwners().GetSubSet(Relation_OwnerIsSlave(this));
+    return getOwners().getSubSet(Relation_OwnerIsSlave(this));
 }
 
-void Relation::OnReleasedBy(DBo* owner)
+void Relation::onReleasedBy(DBo* owner)
 // ************************************
 {
-	_GetOwnerSet().erase(owner);
+    _getOwnerSet().erase(owner);
 
-	if (owner == _masterOwner) Delete();
+    if (owner == _masterOwner) destroy();
 }
 
-void Relation::_PostCreate()
+void Relation::_postCreate()
 // *************************
 {
-	Inherit::_PostCreate();
+    Inherit::_postCreate();
 
-	_masterOwner->Put(this);
+    _masterOwner->put(this);
 }
 
-string Relation::_GetString() const
+string Relation::_getString() const
 // ********************************
 {
-	return "<" + _TName("Relation") + " " + GetString(GetMasterOwner()) + " " + GetString(GetName()) + ">";
+    return "<" + _TName("Relation") + " " + getString(getMasterOwner()) + " " + getString(getName()) + ">";
 }
 
-Record* Relation::_GetRecord() const
+Record* Relation::_getRecord() const
 // ***************************
 {
-	Record* record = Inherit::_GetRecord();
-	if (record) {
-		record->Add(GetSlot("MasterOwner", _masterOwner));
-	}
-	return record;
+    Record* record = Inherit::_getRecord();
+    if (record) {
+        record->Add(getSlot("MasterOwner", _masterOwner));
+    }
+    return record;
 }
 
 
@@ -123,35 +123,35 @@ Record* Relation::_GetRecord() const
 
 StandardRelation::StandardRelation(DBo* masterOwner, const Name& name)
 // *******************************************************************
-:	Inherit(masterOwner),
-	_name(name)
+:    Inherit(masterOwner),
+    _name(name)
 {
 }
 
-StandardRelation* StandardRelation::Create(DBo* masterOwner, const Name& name)
+StandardRelation* StandardRelation::create(DBo* masterOwner, const Name& name)
 // ***************************************************************************
 {
-	StandardRelation* standardRelation = new StandardRelation(masterOwner, name);
+    StandardRelation* standardRelation = new StandardRelation(masterOwner, name);
 
-	standardRelation->_PostCreate();
+    standardRelation->_postCreate();
 
-	return standardRelation;
+    return standardRelation;
 };
 
-string StandardRelation::_GetString() const
+string StandardRelation::_getString() const
 // ****************************************
 {
-	return Inherit::_GetString();
+    return Inherit::_getString();
 }
 
-Record* StandardRelation::_GetRecord() const
+Record* StandardRelation::_getRecord() const
 // ***********************************
 {
-	Record* record = Inherit::_GetRecord();
-	if (record) {
-		record->Add(GetSlot("Name", &_name));
-	}
-	return record;
+    Record* record = Inherit::_getRecord();
+    if (record) {
+        record->Add(getSlot("Name", &_name));
+    }
+    return record;
 }
 
 

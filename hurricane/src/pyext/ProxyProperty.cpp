@@ -124,7 +124,7 @@ ProxyProperty::ProxyProperty ( void* shadow )
 // -------------------------------------------------------------------
 // Constructor  :  "ProxyProperty::Create ()".
 
-ProxyProperty* ProxyProperty::Create ( void* shadow )
+ProxyProperty* ProxyProperty::create ( void* shadow )
 {
   ProxyProperty* property = new ProxyProperty ( shadow );
 
@@ -138,11 +138,10 @@ ProxyProperty* ProxyProperty::Create ( void* shadow )
 
 
 // -------------------------------------------------------------------
-// Destructor  :  "ProxyProperty::_PreDelete ()".
+// Destructor  :  "ProxyProperty::_preDestroy ()".
 
-void  ProxyProperty::_PreDelete ()
-{
-  if ( _owner ) _owner->_OnDeleted ( this );
+void  ProxyProperty::_preDestroy () {
+  if ( _owner ) _owner->_onDeleted ( this );
 
   trace << "ProxyProperty::_owner := " << hex << (void*)_owner << endl;
 
@@ -159,12 +158,11 @@ void  ProxyProperty::_PreDelete ()
 
 
 // -------------------------------------------------------------------
-// Method  :  "ProxyProperty::OnCapturedBy ()".
+// Method  :  "ProxyProperty::onCapturedBy ()".
 
-void  ProxyProperty::OnCapturedBy ( DBo* owner )
-{
+void  ProxyProperty::onCapturedBy ( DBo* owner ) {
   if ( ( _owner != NULL ) && ( _owner != owner ) )
-    throw Error ( GetString(this).c_str() );
+    throw Error ( getString(this).c_str() );
 
   _owner = owner;
 }
@@ -173,22 +171,20 @@ void  ProxyProperty::OnCapturedBy ( DBo* owner )
 
 
 // -------------------------------------------------------------------
-// Method  :  "ProxyProperty::OnReleasedBy ()".
+// Method  :  "ProxyProperty::onReleasedBy ()".
 
-void  ProxyProperty::OnReleasedBy ( DBo* owner )
-{
-  if ( _owner == owner ) OnNotOwned ();
+void  ProxyProperty::onReleasedBy ( DBo* owner ) {
+  if ( _owner == owner ) onNotOwned ();
 }
 
 
 
 
 // -------------------------------------------------------------------
-// Method  :  "ProxyProperty::OnNotOwned ()".
+// Method  :  "ProxyProperty::onNotOwned ()".
 
-void  ProxyProperty::OnNotOwned ()
-{
-  Delete ();
+void  ProxyProperty::onNotOwned () {
+  destroy ();
 }
 
 
@@ -197,8 +193,7 @@ void  ProxyProperty::OnNotOwned ()
 // -------------------------------------------------------------------
 // Method  :  "ProxyProperty::SetOffset ()".
 
-void  ProxyProperty::SetOffset ( int offset )
-{
+void  ProxyProperty::SetOffset ( int offset ) {
   if ( _offset >= 0 ) throw Error ( twiceSetOffset );
 
   _offset = offset;
@@ -208,13 +203,12 @@ void  ProxyProperty::SetOffset ( int offset )
 
 
 // -------------------------------------------------------------------
-// Method  :  "ProxyProperty::_GetString()".
+// Method  :  "ProxyProperty::_getString()".
 
-string  ProxyProperty::_GetString () const
-{
+string  ProxyProperty::_getString () const {
   ostringstream  os;
 
-  os << "<" << _GetTypeName() << " ";
+  os << "<" << _getTypeName() << " ";
   if ( _owner ) os << hex << (void*)_owner << " ";
   else          os << "[not owned] ";
   os << _shadow << ">";
@@ -226,15 +220,15 @@ string  ProxyProperty::_GetString () const
 
 
 // -------------------------------------------------------------------
-// Method  :  "ProxyProperty::_GetRecord()".
+// Method  :  "ProxyProperty::_getRecord()".
 
-Record* ProxyProperty::_GetRecord () const
+Record* ProxyProperty::_getRecord () const
 {
-  Record* record = Property::_GetRecord ();
+  Record* record = Property::_getRecord ();
 
   if ( record != NULL ) {
-    record->Add ( GetSlot ( "_owner" ,  _owner  ) );
-    record->Add ( GetSlot ( "_shadow",  _shadow ) );
+    record->Add ( getSlot ( "_owner" ,  _owner  ) );
+    record->Add ( getSlot ( "_shadow",  _shadow ) );
   }
 
   return ( record );

@@ -46,10 +46,10 @@ typedef GenericFilter<Slice*> SliceFilter;
 #define for_each_slice(slice, slices)\
 /************************************/\
 {\
-	SliceLocator _locator = slices.GetLocator();\
-	while (_locator.IsValid()) {\
-		Slice* slice = _locator.GetElement();\
-		_locator.Progress();
+    SliceLocator _locator = slices.getLocator();\
+    while (_locator.IsValid()) {\
+        Slice* slice = _locator.getElement();\
+        _locator.Progress();
 
 
 

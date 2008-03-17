@@ -26,36 +26,26 @@ Property::~Property()
 {
 }
 
-void Property::Delete()
+void Property::destroy()
 // ********************
 {
-	_PreDelete();
+    _preDestroy();
 
-	delete this;
+    delete this;
 }
 
-void Property::_PostCreate()
-// *************************
-{
-}
-
-void Property::_PreDelete()
-// ************************
-{
-}
-
-string Property::_GetString() const
+string Property::_getString() const
 // ********************************
 {
-	string s = "<" + _GetTypeName() + ">";
-	s.insert(s.length() - 1, " " + GetString(GetName()));
-	return s;
+    string s = "<" + _getTypeName() + ">";
+    s.insert(s.length() - 1, " " + getString(getName()));
+    return s;
 }
 
-Record* Property::_GetRecord() const
+Record* Property::_getRecord() const
 // ***************************
 {
-	return new Record(GetString(this));
+    return new Record(getString(this));
 }
 
 
@@ -66,51 +56,51 @@ Record* Property::_GetRecord() const
 
 PrivateProperty::PrivateProperty()
 // *******************************
-:	Inherit(),
-	_owner(NULL)
+:    Inherit(),
+    _owner(NULL)
 {
 }
 
-void PrivateProperty::_PreDelete()
+void PrivateProperty::_preDestroy()
 // *******************************
 {
-	Inherit::_PreDelete();
+    Inherit::_preDestroy();
 
-	if (_owner) _owner->_OnDeleted(this);
+    if (_owner) _owner->_onDeleted(this);
 }
 
-void PrivateProperty::OnCapturedBy(DBo* owner)
+void PrivateProperty::onCapturedBy(DBo* owner)
 // *******************************************
 {
-	_owner = owner;
+    _owner = owner;
 }
 
-void PrivateProperty::OnReleasedBy(DBo* owner)
+void PrivateProperty::onReleasedBy(DBo* owner)
 // *******************************************
 {
-	if (_owner == owner) OnNotOwned();
+    if (_owner == owner) onNotOwned();
 }
 
-void PrivateProperty::OnNotOwned()
+void PrivateProperty::onNotOwned()
 // *******************************
 {
-	Delete();
+    destroy();
 }
 
-string PrivateProperty::_GetString() const
+string PrivateProperty::_getString() const
 // ***************************************
 {
-	return Inherit::_GetString();
+    return Inherit::_getString();
 }
 
-Record* PrivateProperty::_GetRecord() const
+Record* PrivateProperty::_getRecord() const
 // **********************************
 {
-	Record* record = Inherit::_GetRecord();
-	if (record) {
-		record->Add(GetSlot("Owner", _owner));
-	}
-	return record;
+    Record* record = Inherit::_getRecord();
+    if (record) {
+        record->Add(getSlot("Owner", _owner));
+    }
+    return record;
 }
 
 
@@ -121,57 +111,57 @@ Record* PrivateProperty::_GetRecord() const
 
 SharedProperty::SharedProperty()
 // *****************************
-:	Inherit(),
-	_ownerSet()
+:    Inherit(),
+    _ownerSet()
 {
 }
 
-void SharedProperty::_PreDelete()
+void SharedProperty::_preDestroy()
 // ******************************
 {
-	Inherit::_PreDelete();
+    Inherit::_preDestroy();
 
-	while (!_ownerSet.empty()) {
-		DBo* owner = *_ownerSet.begin();
-		_ownerSet.erase(owner);
-		owner->_OnDeleted(this);
-	}
+    while (!_ownerSet.empty()) {
+        DBo* owner = *_ownerSet.begin();
+        _ownerSet.erase(owner);
+        owner->_onDeleted(this);
+    }
 }
 
-void SharedProperty::OnCapturedBy(DBo* owner)
+void SharedProperty::onCapturedBy(DBo* owner)
 // ******************************************
 {
-	_ownerSet.insert(owner);
+    _ownerSet.insert(owner);
 }
 
-void SharedProperty::OnReleasedBy(DBo* owner)
+void SharedProperty::onReleasedBy(DBo* owner)
 // ******************************************
 {
-	_ownerSet.erase(owner);
+    _ownerSet.erase(owner);
 
-	if (_ownerSet.empty()) OnNotOwned();
+    if (_ownerSet.empty()) onNotOwned();
 }
 
-void SharedProperty::OnNotOwned()
+void SharedProperty::onNotOwned()
 // ******************************
 {
-	Delete();
+    destroy();
 }
 
-string SharedProperty::_GetString() const
+string SharedProperty::_getString() const
 // **************************************
 {
-	return Inherit::_GetString();
+    return Inherit::_getString();
 }
 
-Record* SharedProperty::_GetRecord() const
+Record* SharedProperty::_getRecord() const
 // *********************************
 {
-	Record* record = Inherit::_GetRecord();
-	if (record) {
-		record->Add(GetSlot("Owners", &_ownerSet));
-	}
-	return record;
+    Record* record = Inherit::_getRecord();
+    if (record) {
+        record->Add(getSlot("Owners", &_ownerSet));
+    }
+    return record;
 }
 
 

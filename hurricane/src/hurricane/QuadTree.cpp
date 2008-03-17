@@ -47,14 +47,14 @@ class QuadTree_Gos : public Collection<Go*> {
 
         public: Locator& operator=(const Locator& locator);
 
-        public: virtual Go* GetElement() const;
-        public: virtual Hurricane::Locator<Go*>* GetClone() const;
+        public: virtual Go* getElement() const;
+        public: virtual Hurricane::Locator<Go*>* getClone() const;
 
         public: virtual bool IsValid() const;
 
         public: virtual void Progress();
 
-        public: virtual string _GetString() const;
+        public: virtual string _getString() const;
 
     };
 
@@ -77,13 +77,13 @@ class QuadTree_Gos : public Collection<Go*> {
 // Accessors
 // *********
 
-    public: virtual Collection<Go*>* GetClone() const;
-    public: virtual Hurricane::Locator<Go*>* GetLocator() const;
+    public: virtual Collection<Go*>* getClone() const;
+    public: virtual Hurricane::Locator<Go*>* getLocator() const;
 
 // Others
 // ******
 
-    public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -117,14 +117,14 @@ class QuadTree_GosUnder : public Collection<Go*> {
 
         public: Locator& operator=(const Locator& locator);
 
-        public: virtual Go* GetElement() const;
-        public: virtual Hurricane::Locator<Go*>* GetClone() const;
+        public: virtual Go* getElement() const;
+        public: virtual Hurricane::Locator<Go*>* getClone() const;
 
         public: virtual bool IsValid() const;
 
         public: virtual void Progress();
 
-        public: virtual string _GetString() const;
+        public: virtual string _getString() const;
 
     };
 
@@ -149,13 +149,13 @@ class QuadTree_GosUnder : public Collection<Go*> {
 // Accessors
 // *********
 
-    public: virtual Collection<Go*>* GetClone() const;
-    public: virtual Hurricane::Locator<Go*>* GetLocator() const;
+    public: virtual Collection<Go*>* getClone() const;
+    public: virtual Hurricane::Locator<Go*>* getLocator() const;
 
 // Others
 // ******
 
-    public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -204,30 +204,30 @@ QuadTree::~QuadTree()
     if (_lrChild) delete _lrChild;
 }
 
-const Box& QuadTree::GetBoundingBox() const
+const Box& QuadTree::getBoundingBox() const
 // ****************************************
 {
     if (_boundingBox.isEmpty()) {
         Box& boundingBox = ((QuadTree*)this)->_boundingBox;
-        if (_ulChild) boundingBox.merge(_ulChild->GetBoundingBox());
-        if (_urChild) boundingBox.merge(_urChild->GetBoundingBox());
-        if (_llChild) boundingBox.merge(_llChild->GetBoundingBox());
-        if (_lrChild) boundingBox.merge(_lrChild->GetBoundingBox());
-        for_each_go(go, _goSet.GetElements()) {
-            boundingBox.merge(go->GetBoundingBox());
+        if (_ulChild) boundingBox.merge(_ulChild->getBoundingBox());
+        if (_urChild) boundingBox.merge(_urChild->getBoundingBox());
+        if (_llChild) boundingBox.merge(_llChild->getBoundingBox());
+        if (_lrChild) boundingBox.merge(_lrChild->getBoundingBox());
+        for_each_go(go, _goSet.getElements()) {
+            boundingBox.merge(go->getBoundingBox());
             end_for;
         }
     }
     return _boundingBox;
 }
 
-Gos QuadTree::GetGos() const
+Gos QuadTree::getGos() const
 // *************************
 {
     return QuadTree_Gos(this);
 }
 
-Gos QuadTree::GetGosUnder(const Box& area) const
+Gos QuadTree::getGosUnder(const Box& area) const
 // *********************************************
 {
     return QuadTree_GosUnder(this, area);
@@ -240,8 +240,8 @@ void QuadTree::Insert(Go* go)
         throw Error("Can't insert go : null go");
 
     if (!go->IsMaterialized()) {
-        Box boundingBox = go->GetBoundingBox();
-        QuadTree* child = _GetDeepestChild(boundingBox);
+        Box boundingBox = go->getBoundingBox();
+        QuadTree* child = _getDeepestChild(boundingBox);
         child->_goSet._Insert(go);
         go->_quadTree = child;
         QuadTree* parent = child;
@@ -263,7 +263,7 @@ void QuadTree::Remove(Go* go)
         throw Error("Can't remove go : null go");
 
     if (go->IsMaterialized()) {
-        Box boundingBox = go->GetBoundingBox();
+        Box boundingBox = go->getBoundingBox();
         QuadTree* child = go->_quadTree;
         child->_goSet._Remove(go);
         go->_quadTree = NULL;
@@ -284,145 +284,145 @@ void QuadTree::Remove(Go* go)
     }
 }
 
-string QuadTree::_GetString() const
+string QuadTree::_getString() const
 // ********************************
 {
     string s = "<" + _TName("QuadTree");
     if (!_size)
         s += " empty";
     else
-        s += " " + GetString(_size);
+        s += " " + getString(_size);
     s += ">";
     return s;
 }
 
-Record* QuadTree::_GetRecord() const
+Record* QuadTree::_getRecord() const
 // ***************************
 {
     Record* record = NULL;
     if (_size) {
-        record = new Record(GetString(this));
-        record->Add(GetSlot("Parent", _parent));
-        record->Add(GetSlot("X", &_x));
-        record->Add(GetSlot("Y", &_y));
-        record->Add(GetSlot("BoundingBox", &_boundingBox));
-        record->Add(GetSlot("Size", &_size));
-        record->Add(GetSlot("Gos", &_goSet));
-        record->Add(GetSlot("ULChild", _ulChild));
-        record->Add(GetSlot("URChild", _urChild));
-        record->Add(GetSlot("LLChild", _llChild));
-        record->Add(GetSlot("LRChild", _lrChild));
+        record = new Record(getString(this));
+        record->Add(getSlot("Parent", _parent));
+        record->Add(getSlot("X", &_x));
+        record->Add(getSlot("Y", &_y));
+        record->Add(getSlot("BoundingBox", &_boundingBox));
+        record->Add(getSlot("Size", &_size));
+        record->Add(getSlot("Gos", &_goSet));
+        record->Add(getSlot("ULChild", _ulChild));
+        record->Add(getSlot("URChild", _urChild));
+        record->Add(getSlot("LLChild", _llChild));
+        record->Add(getSlot("LRChild", _lrChild));
     }
     return record;
 }
 
-QuadTree* QuadTree::_GetDeepestChild(const Box& box)
+QuadTree* QuadTree::_getDeepestChild(const Box& box)
 // ************************************************
 {
     if (_HasBeenExploded()) {
         if (box.getXMax() < _x) {
             if (box.getYMax() < _y)
-                return _llChild->_GetDeepestChild(box);
+                return _llChild->_getDeepestChild(box);
             if (_y < box.getYMin())
-                return _ulChild->_GetDeepestChild(box);
+                return _ulChild->_getDeepestChild(box);
         }
         if (_x < box.getXMin()) {
             if (box.getYMax() < _y)
-                return _lrChild->_GetDeepestChild(box);
+                return _lrChild->_getDeepestChild(box);
             if (_y < box.getYMin())
-                return _urChild->_GetDeepestChild(box);
+                return _urChild->_getDeepestChild(box);
         }
     }
     return this;
 }
 
-QuadTree* QuadTree::_GetFirstQuadTree() const
+QuadTree* QuadTree::_getFirstQuadTree() const
 // ******************************************
 {
     if (!_goSet.IsEmpty()) return (QuadTree*)this;
     QuadTree* quadTree = NULL;
     if (_HasBeenExploded()) {
-        if (!quadTree) quadTree = _ulChild->_GetFirstQuadTree();
-        if (!quadTree) quadTree = _urChild->_GetFirstQuadTree();
-        if (!quadTree) quadTree = _llChild->_GetFirstQuadTree();
-        if (!quadTree) quadTree = _lrChild->_GetFirstQuadTree();
+        if (!quadTree) quadTree = _ulChild->_getFirstQuadTree();
+        if (!quadTree) quadTree = _urChild->_getFirstQuadTree();
+        if (!quadTree) quadTree = _llChild->_getFirstQuadTree();
+        if (!quadTree) quadTree = _lrChild->_getFirstQuadTree();
     }
     return quadTree;
 }
 
-QuadTree* QuadTree::_GetFirstQuadTree(const Box& area) const
+QuadTree* QuadTree::_getFirstQuadTree(const Box& area) const
 // *********************************************************
 {
-    if (GetBoundingBox().intersect(area)) {
+    if (getBoundingBox().intersect(area)) {
         if (!_goSet.IsEmpty()) return (QuadTree*)this;
         QuadTree* quadTree = NULL;
         if (_HasBeenExploded()) {
-            if (!quadTree) quadTree = _ulChild->_GetFirstQuadTree(area);
-            if (!quadTree) quadTree = _urChild->_GetFirstQuadTree(area);
-            if (!quadTree) quadTree = _llChild->_GetFirstQuadTree(area);
-            if (!quadTree) quadTree = _lrChild->_GetFirstQuadTree(area);
+            if (!quadTree) quadTree = _ulChild->_getFirstQuadTree(area);
+            if (!quadTree) quadTree = _urChild->_getFirstQuadTree(area);
+            if (!quadTree) quadTree = _llChild->_getFirstQuadTree(area);
+            if (!quadTree) quadTree = _lrChild->_getFirstQuadTree(area);
         }
         return quadTree;
     }
     return NULL;
 }
 
-QuadTree* QuadTree::_GetNextQuadTree()
+QuadTree* QuadTree::_getNextQuadTree()
 // ***********************************
 {
     QuadTree* nextQuadTree = NULL;
     if (_HasBeenExploded()) {
-        if (!nextQuadTree) nextQuadTree = _ulChild->_GetFirstQuadTree();
-        if (!nextQuadTree) nextQuadTree = _urChild->_GetFirstQuadTree();
-        if (!nextQuadTree) nextQuadTree = _llChild->_GetFirstQuadTree();
-        if (!nextQuadTree) nextQuadTree = _lrChild->_GetFirstQuadTree();
+        if (!nextQuadTree) nextQuadTree = _ulChild->_getFirstQuadTree();
+        if (!nextQuadTree) nextQuadTree = _urChild->_getFirstQuadTree();
+        if (!nextQuadTree) nextQuadTree = _llChild->_getFirstQuadTree();
+        if (!nextQuadTree) nextQuadTree = _lrChild->_getFirstQuadTree();
     }
     QuadTree* quadTree = this;
     while (!nextQuadTree && quadTree->_parent) {
         if (quadTree->_parent->_llChild == quadTree)
-            nextQuadTree = quadTree->_parent->_lrChild->_GetFirstQuadTree();
+            nextQuadTree = quadTree->_parent->_lrChild->_getFirstQuadTree();
         else if (quadTree->_parent->_urChild == quadTree) {
-            nextQuadTree = quadTree->_parent->_llChild->_GetFirstQuadTree();
+            nextQuadTree = quadTree->_parent->_llChild->_getFirstQuadTree();
             if (!nextQuadTree)
-                nextQuadTree = quadTree->_parent->_lrChild->_GetFirstQuadTree();
+                nextQuadTree = quadTree->_parent->_lrChild->_getFirstQuadTree();
         }
         else if (quadTree->_parent->_ulChild == quadTree) {
-            nextQuadTree = quadTree->_parent->_urChild->_GetFirstQuadTree();
+            nextQuadTree = quadTree->_parent->_urChild->_getFirstQuadTree();
             if (!nextQuadTree)
-                nextQuadTree = quadTree->_parent->_llChild->_GetFirstQuadTree();
+                nextQuadTree = quadTree->_parent->_llChild->_getFirstQuadTree();
             if (!nextQuadTree)
-                nextQuadTree = quadTree->_parent->_lrChild->_GetFirstQuadTree();
+                nextQuadTree = quadTree->_parent->_lrChild->_getFirstQuadTree();
         }
         quadTree = quadTree->_parent;
     }
     return nextQuadTree;
 }
 
-QuadTree* QuadTree::_GetNextQuadTree(const Box& area)
+QuadTree* QuadTree::_getNextQuadTree(const Box& area)
 // **************************************************
 {
     QuadTree* nextQuadTree = NULL;
     if (_HasBeenExploded()) {
-        if (!nextQuadTree) nextQuadTree = _ulChild->_GetFirstQuadTree(area);
-        if (!nextQuadTree) nextQuadTree = _urChild->_GetFirstQuadTree(area);
-        if (!nextQuadTree) nextQuadTree = _llChild->_GetFirstQuadTree(area);
-        if (!nextQuadTree) nextQuadTree = _lrChild->_GetFirstQuadTree(area);
+        if (!nextQuadTree) nextQuadTree = _ulChild->_getFirstQuadTree(area);
+        if (!nextQuadTree) nextQuadTree = _urChild->_getFirstQuadTree(area);
+        if (!nextQuadTree) nextQuadTree = _llChild->_getFirstQuadTree(area);
+        if (!nextQuadTree) nextQuadTree = _lrChild->_getFirstQuadTree(area);
     }
     QuadTree* quadTree = this;
     while (!nextQuadTree && quadTree->_parent) {
         if (quadTree->_parent->_llChild == quadTree)
-            nextQuadTree = quadTree->_parent->_lrChild->_GetFirstQuadTree(area);
+            nextQuadTree = quadTree->_parent->_lrChild->_getFirstQuadTree(area);
         else if (quadTree->_parent->_urChild == quadTree) {
-            nextQuadTree = quadTree->_parent->_llChild->_GetFirstQuadTree(area);
+            nextQuadTree = quadTree->_parent->_llChild->_getFirstQuadTree(area);
             if (!nextQuadTree)
-                nextQuadTree = quadTree->_parent->_lrChild->_GetFirstQuadTree(area);
+                nextQuadTree = quadTree->_parent->_lrChild->_getFirstQuadTree(area);
         }
         else if (quadTree->_parent->_ulChild == quadTree) {
-            nextQuadTree = quadTree->_parent->_urChild->_GetFirstQuadTree(area);
+            nextQuadTree = quadTree->_parent->_urChild->_getFirstQuadTree(area);
             if (!nextQuadTree)
-                nextQuadTree = quadTree->_parent->_llChild->_GetFirstQuadTree(area);
+                nextQuadTree = quadTree->_parent->_llChild->_getFirstQuadTree(area);
             if (!nextQuadTree)
-                nextQuadTree = quadTree->_parent->_lrChild->_GetFirstQuadTree(area);
+                nextQuadTree = quadTree->_parent->_lrChild->_getFirstQuadTree(area);
         }
         quadTree = quadTree->_parent;
     }
@@ -433,21 +433,21 @@ void QuadTree::_Explode()
 // **********************
 {
     if (!_HasBeenExploded()) {
-        _x = GetBoundingBox().getXCenter();
-        _y = GetBoundingBox().getYCenter();
+        _x = getBoundingBox().getXCenter();
+        _y = getBoundingBox().getYCenter();
         _ulChild = new QuadTree(this);
         _urChild = new QuadTree(this);
         _llChild = new QuadTree(this);
         _lrChild = new QuadTree(this);
         set<Go*> goSet;
-        for_each_go(go, _goSet.GetElements()) {
+        for_each_go(go, _goSet.getElements()) {
             _goSet._Remove(go);
             go->_quadTree = NULL;
             goSet.insert(go);
             end_for;
         }
-        for_each_go(go, GetCollection(goSet)) {
-            QuadTree* child = _GetDeepestChild(go->GetBoundingBox());
+        for_each_go(go, getCollection(goSet)) {
+            QuadTree* child = _getDeepestChild(go->getBoundingBox());
             child->_goSet._Insert(go);
             go->_quadTree = child;
             if (child != this) child->_size++;
@@ -461,7 +461,7 @@ void QuadTree::_Implode()
 {
     if (_HasBeenExploded()) {
         if (_ulChild->_HasBeenExploded()) _ulChild->_Implode();
-        for_each_go(go, _ulChild->_goSet.GetElements()) {
+        for_each_go(go, _ulChild->_goSet.getElements()) {
             _ulChild->_goSet._Remove(go);
             _goSet._Insert(go);
             go->_quadTree = this;
@@ -470,7 +470,7 @@ void QuadTree::_Implode()
         delete _ulChild;
         _ulChild = NULL;
         if (_urChild->_HasBeenExploded()) _urChild->_Implode();
-        for_each_go(go, _urChild->_goSet.GetElements()) {
+        for_each_go(go, _urChild->_goSet.getElements()) {
             _urChild->_goSet._Remove(go);
             _goSet._Insert(go);
             go->_quadTree = this;
@@ -479,7 +479,7 @@ void QuadTree::_Implode()
         delete _urChild;
         _urChild = NULL;
         if (_llChild->_HasBeenExploded()) _llChild->_Implode();
-        for_each_go(go, _llChild->_goSet.GetElements()) {
+        for_each_go(go, _llChild->_goSet.getElements()) {
             _llChild->_goSet._Remove(go);
             _goSet._Insert(go);
             go->_quadTree = this;
@@ -488,7 +488,7 @@ void QuadTree::_Implode()
         delete _llChild;
         _llChild = NULL;
         if (_lrChild->_HasBeenExploded()) _lrChild->_Implode();
-        for_each_go(go, _lrChild->_goSet.GetElements()) {
+        for_each_go(go, _lrChild->_goSet.getElements()) {
             _lrChild->_goSet._Remove(go);
             _goSet._Insert(go);
             go->_quadTree = this;
@@ -511,16 +511,16 @@ QuadTree::GoSet::GoSet()
 {
 }
 
-unsigned QuadTree::GoSet::_GetHashValue(Go* go) const
+unsigned QuadTree::GoSet::_getHashValue(Go* go) const
 // **************************************************
 {
     return ( (unsigned int)( (unsigned long)go ) ) / 8;
 }
 
-Go* QuadTree::GoSet::_GetNextElement(Go* go) const
+Go* QuadTree::GoSet::_getNextElement(Go* go) const
 // ***********************************************
 {
-    return go->_GetNextOfQuadTreeGoSet();
+    return go->_getNextOfQuadTreeGoSet();
 }
 
 void QuadTree::GoSet::_SetNextElement(Go* go, Go* nextGo) const
@@ -556,23 +556,23 @@ QuadTree_Gos& QuadTree_Gos::operator=(const QuadTree_Gos& gos)
     return *this;
 }
 
-Collection<Go*>* QuadTree_Gos::GetClone() const
+Collection<Go*>* QuadTree_Gos::getClone() const
 // ********************************************
 {
     return new QuadTree_Gos(*this);
 }
 
-Locator<Go*>* QuadTree_Gos::GetLocator() const
+Locator<Go*>* QuadTree_Gos::getLocator() const
 // *******************************************
 {
     return new Locator(_quadTree);
 }
 
-string QuadTree_Gos::_GetString() const
+string QuadTree_Gos::_getString() const
 // ************************************
 {
     string s = "<" + _TName("QuadTree::Gos");
-    if (_quadTree) s += " " + GetString(_quadTree);
+    if (_quadTree) s += " " + getString(_quadTree);
     s += ">";
     return s;
 }
@@ -591,9 +591,9 @@ QuadTree_Gos::Locator::Locator(const QuadTree* quadTree)
     _goLocator()
 {
     if (_quadTree) {
-        _currentQuadTree = _quadTree->_GetFirstQuadTree();
+        _currentQuadTree = _quadTree->_getFirstQuadTree();
         if (_currentQuadTree)
-            _goLocator = _currentQuadTree->_GetGoSet().GetElements().GetLocator();
+            _goLocator = _currentQuadTree->_getGoSet().getElements().getLocator();
     }
 }
 
@@ -615,13 +615,13 @@ QuadTree_Gos::Locator& QuadTree_Gos::Locator::operator=(const Locator& locator)
     return *this;
 }
 
-Go* QuadTree_Gos::Locator::GetElement() const
+Go* QuadTree_Gos::Locator::getElement() const
 // ******************************************
 {
-    return _goLocator.GetElement();
+    return _goLocator.getElement();
 }
 
-Locator<Go*>* QuadTree_Gos::Locator::GetClone() const
+Locator<Go*>* QuadTree_Gos::Locator::getClone() const
 // **************************************************
 {
     return new Locator(*this);
@@ -639,18 +639,18 @@ void QuadTree_Gos::Locator::Progress()
     if (IsValid()) {
         _goLocator.Progress();
         if (!_goLocator.IsValid()) {
-            _currentQuadTree = _currentQuadTree->_GetNextQuadTree();
+            _currentQuadTree = _currentQuadTree->_getNextQuadTree();
             if (_currentQuadTree)
-                _goLocator = _currentQuadTree->_GetGoSet().GetElements().GetLocator();
+                _goLocator = _currentQuadTree->_getGoSet().getElements().getLocator();
         }
     }
 }
 
-string QuadTree_Gos::Locator::_GetString() const
+string QuadTree_Gos::Locator::_getString() const
 // *********************************************
 {
     string s = "<" + _TName("QuadTree::Gos::Locator");
-    if (_quadTree) s += " " + GetString(_quadTree);
+    if (_quadTree) s += " " + getString(_quadTree);
     s += ">";
     return s;
 }
@@ -693,25 +693,25 @@ QuadTree_GosUnder& QuadTree_GosUnder::operator=(const QuadTree_GosUnder& gos)
     return *this;
 }
 
-Collection<Go*>* QuadTree_GosUnder::GetClone() const
+Collection<Go*>* QuadTree_GosUnder::getClone() const
 // *************************************************
 {
     return new QuadTree_GosUnder(*this);
 }
 
-Locator<Go*>* QuadTree_GosUnder::GetLocator() const
+Locator<Go*>* QuadTree_GosUnder::getLocator() const
 // ************************************************
 {
     return new Locator(_quadTree, _area);
 }
 
-string QuadTree_GosUnder::_GetString() const
+string QuadTree_GosUnder::_getString() const
 // *****************************************
 {
     string s = "<" + _TName("QuadTree::GosUnder");
     if (_quadTree) {
-        s += " " + GetString(_quadTree);
-        s += " " + GetString(_area);
+        s += " " + getString(_quadTree);
+        s += " " + getString(_area);
     }
     s += ">";
     return s;
@@ -742,10 +742,10 @@ QuadTree_GosUnder::Locator::Locator(const QuadTree* quadTree, const Box& area)
     _goLocator()
 {
     if (_quadTree && !_area.isEmpty()) {
-        _currentQuadTree = _quadTree->_GetFirstQuadTree(_area);
+        _currentQuadTree = _quadTree->_getFirstQuadTree(_area);
         if (_currentQuadTree) {
-            _goLocator = _currentQuadTree->_GetGoSet().GetElements().GetLocator();
-            if (!GetElement()->GetBoundingBox().intersect(_area)) Progress();
+            _goLocator = _currentQuadTree->_getGoSet().getElements().getLocator();
+            if (!getElement()->getBoundingBox().intersect(_area)) Progress();
         }
     }
 }
@@ -770,13 +770,13 @@ QuadTree_GosUnder::Locator& QuadTree_GosUnder::Locator::operator=(const Locator&
     return *this;
 }
 
-Go* QuadTree_GosUnder::Locator::GetElement() const
+Go* QuadTree_GosUnder::Locator::getElement() const
 // ***********************************************
 {
-    return _goLocator.GetElement();
+    return _goLocator.getElement();
 }
 
-Locator<Go*>* QuadTree_GosUnder::Locator::GetClone() const
+Locator<Go*>* QuadTree_GosUnder::Locator::getClone() const
 // *******************************************************
 {
     return new Locator(*this);
@@ -795,21 +795,21 @@ void QuadTree_GosUnder::Locator::Progress()
         do {
             _goLocator.Progress();
             if (!_goLocator.IsValid()) {
-                _currentQuadTree = _currentQuadTree->_GetNextQuadTree(_area);
+                _currentQuadTree = _currentQuadTree->_getNextQuadTree(_area);
                 if (_currentQuadTree)
-                    _goLocator = _currentQuadTree->_GetGoSet().GetElements().GetLocator();
+                    _goLocator = _currentQuadTree->_getGoSet().getElements().getLocator();
             }
-        } while (IsValid() && !GetElement()->GetBoundingBox().intersect(_area));
+        } while (IsValid() && !getElement()->getBoundingBox().intersect(_area));
     }
 }
 
-string QuadTree_GosUnder::Locator::_GetString() const
+string QuadTree_GosUnder::Locator::_getString() const
 // **************************************************
 {
     string s = "<" + _TName("QuadTree::GosUnder::Locator");
     if (_quadTree) {
-        s += " " + GetString(_quadTree);
-        s += " " + GetString(_area);
+        s += " " + getString(_quadTree);
+        s += " " + getString(_area);
     }
     s += ">";
     return s;

@@ -23,60 +23,60 @@ class SharedName {
 // Friends
 // *******
 
-	friend class Name;
+    friend class Name;
 
 // Types
 // *****
 
-	private: struct SharedNameMapComparator {
-	// ************************************
+    private: struct SharedNameMapComparator {
+    // ************************************
 
-		bool operator()(string* s1, string* s2) const;
+        bool operator()(string* s1, string* s2) const;
 
-	};
+    };
 
-	private: typedef map<string*, SharedName*, SharedNameMapComparator> SharedNameMap;
+    private: typedef map<string*, SharedName*, SharedNameMapComparator> SharedNameMap;
 
 // Attributes
 // **********
 
-	private: static SharedNameMap* _SHARED_NAME_MAP;
+    private: static SharedNameMap* _SHARED_NAME_MAP;
 
-	private: int _count;
-	private: string _string;
+    private: int _count;
+    private: string _string;
 
 // Constructors
 // ************
 
-	private: SharedName(const string& s);
+    private: SharedName(const string& s);
 
-	private: SharedName(const SharedName& sharedName);
-				// not implemented to forbid copy construction
+    private: SharedName(const SharedName& sharedName);
+                // not implemented to forbid copy construction
 
 // Destructor
 // **********
 
-	private: ~SharedName();
+    private: ~SharedName();
 
 // Operators
 // *********
 
-	private: SharedName& operator=(const SharedName& sharedName);
-				// not implemented to forbid assignment
+    private: SharedName& operator=(const SharedName& sharedName);
+                // not implemented to forbid assignment
 
 // Updators
 // ********
 
-	private: void Capture();
-	private: void Release();
+    private: void Capture();
+    private: void Release();
 
 // Others
 // ******
 
-        public: const string &_GetSString () const { return _string; };
-        public: string _GetTypeName() const { return _TName("SharedName"); };
-	public: string _GetString() const;
-	public: Record* _GetRecord() const;
+    public: const string &_getSString () const { return _string; };
+    public: string _getTypeName() const { return _TName("SharedName"); };
+    public: string _getString() const;
+    public: Record* _getRecord() const;
 
 };
 

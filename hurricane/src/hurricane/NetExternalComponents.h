@@ -15,9 +15,9 @@
 
 namespace Hurricane {
 
-Components GetExternalComponents(const Net* net);
+Components getExternalComponents(const Net* net);
 
-void SetExternal(Component* component);
+void setExternal(Component* component);
 
 
 } // End of Hurricane namespace.

@@ -46,9 +46,9 @@ typedef GenericFilter<Segment*> SegmentFilter;
 #define for_each_segment(segment, segments)\
 /******************************************/\
 {\
-	SegmentLocator _locator = segments.GetLocator();\
+	SegmentLocator _locator = segments.getLocator();\
 	while (_locator.IsValid()) {\
-		Segment* segment = _locator.GetElement();\
+		Segment* segment = _locator.getElement();\
 		_locator.Progress();
 
 

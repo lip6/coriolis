@@ -88,31 +88,31 @@ extern "C" {
 
 
   // Standart Accessors (Attributes).
-  DirectGetLongAttribute(PyContact_GetWidth     , GetWidth     , PyContact,Contact)
-  DirectGetLongAttribute(PyContact_GetHalfWidth , GetHalfWidth , PyContact,Contact)
-  DirectGetLongAttribute(PyContact_GetHeight    , GetHeight    , PyContact,Contact)
-  DirectGetLongAttribute(PyContact_GetHalfHeight, GetHalfHeight, PyContact,Contact)
+  DirectGetLongAttribute(PyContact_getWidth     , getWidth     , PyContact,Contact)
+  DirectGetLongAttribute(PyContact_getHalfWidth , getHalfWidth , PyContact,Contact)
+  DirectGetLongAttribute(PyContact_getHeight    , getHeight    , PyContact,Contact)
+  DirectGetLongAttribute(PyContact_getHalfHeight, getHalfHeight, PyContact,Contact)
 
-  DirectGetLongAttribute(PyContact_GetDx, GetDx, PyContact,Contact)
-  DirectGetLongAttribute(PyContact_GetDy, GetDy, PyContact,Contact)
+  DirectGetLongAttribute(PyContact_getDx, getDx, PyContact,Contact)
+  DirectGetLongAttribute(PyContact_getDy, getDy, PyContact,Contact)
    
   
-  // Standart Delete (Attribute).
-  DBoDeleteAttribute(PyContact_Delete, PyContact)
+  // Standart destroy (Attribute).
+  DBoDestroyAttribute(PyContact_destroy, PyContact)
 
 
   // ---------------------------------------------------------------
   // PyContact Attribute Method table.
 
   PyMethodDef PyContact_Methods[] =
-    { { "Delete"         , (PyCFunction)PyContact_Delete         , METH_NOARGS
-                         , "Delete associated hurricane object, the python object remains." }
-    , { "GetWidth"       , (PyCFunction)PyContact_GetWidth       , METH_NOARGS , "Return the contact width." }
-    , { "GetHalfWidth"   , (PyCFunction)PyContact_GetHalfWidth   , METH_NOARGS , "Return the contact half width." }
-    , { "GetHeight"      , (PyCFunction)PyContact_GetHeight      , METH_NOARGS , "Return the contact height." }
-    , { "GetHalfHeight"  , (PyCFunction)PyContact_GetHalfHeight  , METH_NOARGS , "Return the contact half height." }
-    , { "GetDx"          , (PyCFunction)PyContact_GetDx          , METH_NOARGS , "Return the contact dx value." }
-    , { "GetDy"          , (PyCFunction)PyContact_GetDy          , METH_NOARGS , "Return the contact dy value." }
+    { { "destroy"         , (PyCFunction)PyContact_destroy         , METH_NOARGS
+                         , "Destroy associated hurricane object, the python object remains." }
+    , { "getWidth"       , (PyCFunction)PyContact_getWidth       , METH_NOARGS , "Return the contact width." }
+    , { "getHalfWidth"   , (PyCFunction)PyContact_getHalfWidth   , METH_NOARGS , "Return the contact half width." }
+    , { "getHeight"      , (PyCFunction)PyContact_getHeight      , METH_NOARGS , "Return the contact height." }
+    , { "getHalfHeight"  , (PyCFunction)PyContact_getHalfHeight  , METH_NOARGS , "Return the contact half height." }
+    , { "getDx"          , (PyCFunction)PyContact_getDx          , METH_NOARGS , "Return the contact dx value." }
+    , { "getDy"          , (PyCFunction)PyContact_getDy          , METH_NOARGS , "Return the contact dy value." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 
@@ -150,21 +150,21 @@ extern "C" {
                            ) ) return ( NULL );
 
 
-    //cerr << "Format := " << __cs.GetObjectIds() << endl;
-    if      ( __cs.GetObjectIds() == NET_LAYER_INTS2_ARG )
+    //cerr << "Format := " << __cs.getObjectIds() << endl;
+    if      ( __cs.getObjectIds() == NET_LAYER_INTS2_ARG )
       contact = Contact::Create ( PYNET_O(arg0)
                                   , PYLAYER_O(arg1)
                                   , PyInt_AsLong(arg2)
                                   , PyInt_AsLong(arg3) );
 
-    else if ( __cs.GetObjectIds() == NET_LAYER_INTS3_ARG )
+    else if ( __cs.getObjectIds() == NET_LAYER_INTS3_ARG )
       contact = Contact::Create ( PYNET_O(arg0)
                                   , PYLAYER_O(arg1)
                                   , PyInt_AsLong(arg2)
                                   , PyInt_AsLong(arg3) 
                                   , PyInt_AsLong(arg4) );
 
-    else if ( __cs.GetObjectIds() == NET_LAYER_INTS4_ARG )
+    else if ( __cs.getObjectIds() == NET_LAYER_INTS4_ARG )
       contact = Contact::Create ( PYNET_O(arg0)
                                   , PYLAYER_O(arg1)
                                   , PyInt_AsLong(arg2)
@@ -172,20 +172,20 @@ extern "C" {
                                   , PyInt_AsLong(arg4)
                                   , PyInt_AsLong(arg5) );
 
-    else if ( __cs.GetObjectIds() == COMP_LAYER_INTS2_ARG )
+    else if ( __cs.getObjectIds() == COMP_LAYER_INTS2_ARG )
       contact = Contact::Create ( PYCOMPONENT_O(arg0)
                                   , PYLAYER_O(arg1)
                                   , PyInt_AsLong(arg2)
                                   , PyInt_AsLong(arg3) );
 
-    else if ( __cs.GetObjectIds() == COMP_LAYER_INTS3_ARG )
+    else if ( __cs.getObjectIds() == COMP_LAYER_INTS3_ARG )
       contact = Contact::Create ( PYCOMPONENT_O(arg0)
                                   , PYLAYER_O(arg1)
                                   , PyInt_AsLong(arg2)
                                   , PyInt_AsLong(arg3)
                                   , PyInt_AsLong(arg4) );
 
-    else if ( __cs.GetObjectIds() == COMP_LAYER_INTS4_ARG )
+    else if ( __cs.getObjectIds() == COMP_LAYER_INTS4_ARG )
       contact = Contact::Create ( PYCOMPONENT_O(arg0)
                                   , PYLAYER_O(arg1)
                                   , PyInt_AsLong(arg2) 

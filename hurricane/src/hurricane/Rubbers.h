@@ -46,10 +46,10 @@ typedef GenericFilter<Rubber*> RubberFilter;
 #define for_each_rubber(rubber, rubbers)\
 /***************************************/\
 {\
-	RubberLocator _locator = rubbers.GetLocator();\
-	while (_locator.IsValid()) {\
-		Rubber* rubber = _locator.GetElement();\
-		_locator.Progress();
+    RubberLocator _locator = rubbers.getLocator();\
+    while (_locator.IsValid()) {\
+        Rubber* rubber = _locator.getElement();\
+        _locator.Progress();
 
 
 

@@ -44,7 +44,7 @@ class Instance_IsUnderFilter : public Filter<Instance*> {
         return *this;
     };
 
-    public: virtual Filter<Instance*>* GetClone() const
+    public: virtual Filter<Instance*>* getClone() const
     // ************************************************
     {
         return new Instance_IsUnderFilter(*this);
@@ -53,13 +53,13 @@ class Instance_IsUnderFilter : public Filter<Instance*> {
     public: virtual bool Accept(Instance* instance) const
     // **************************************************
     {
-        return _area.intersect(instance->GetBoundingBox());
+        return _area.intersect(instance->getBoundingBox());
     };
 
-    public: virtual string _GetString() const
+    public: virtual string _getString() const
     // **************************************
     {
-        return "<" + _TName("Instance::IsUnderFilter") + " " + GetString(_area) + ">";
+        return "<" + _TName("Instance::IsUnderFilter") + " " + getString(_area) + ">";
     };
 
 };
@@ -73,11 +73,11 @@ class Instance_IsTerminalFilter : public Filter<Instance*> {
 
     public: Instance_IsTerminalFilter& operator=(const Instance_IsTerminalFilter& filter) {return *this;};
 
-    public: virtual Filter<Instance*>* GetClone() const {return new Instance_IsTerminalFilter(*this);};
+    public: virtual Filter<Instance*>* getClone() const {return new Instance_IsTerminalFilter(*this);};
 
     public: virtual bool Accept(Instance* instance) const {return instance->IsTerminal();};
 
-    public: virtual string _GetString() const {return "<" + _TName("Instance::IsTerminalFilter") + ">";};
+    public: virtual string _getString() const {return "<" + _TName("Instance::IsTerminalFilter") + ">";};
 
 };
 
@@ -90,11 +90,11 @@ class Instance_IsLeafFilter : public Filter<Instance*> {
 
     public: Instance_IsLeafFilter& operator=(const Instance_IsLeafFilter& filter) {return *this;};
 
-    public: virtual Filter<Instance*>* GetClone() const {return new Instance_IsLeafFilter(*this);};
+    public: virtual Filter<Instance*>* getClone() const {return new Instance_IsLeafFilter(*this);};
 
     public: virtual bool Accept(Instance* instance) const {return instance->IsLeaf();};
 
-    public: virtual string _GetString() const {return "<" + _TName("Instance::IsLeafFilter") + ">";};
+    public: virtual string _getString() const {return "<" + _TName("Instance::IsLeafFilter") + ">";};
 
 };
 
@@ -107,11 +107,11 @@ class Instance_IsUnplacedFilter : public Filter<Instance*> {
 
     public: Instance_IsUnplacedFilter& operator=(const Instance_IsUnplacedFilter& filter) {return *this;};
 
-    public: virtual Filter<Instance*>* GetClone() const {return new Instance_IsUnplacedFilter(*this);};
+    public: virtual Filter<Instance*>* getClone() const {return new Instance_IsUnplacedFilter(*this);};
 
     public: virtual bool Accept(Instance* instance) const {return instance->IsUnplaced();};
 
-    public: virtual string _GetString() const {return "<" + _TName("Net::IsUnplacedFilter>");};
+    public: virtual string _getString() const {return "<" + _TName("Net::IsUnplacedFilter>");};
 
 };
 
@@ -124,11 +124,11 @@ class Instance_IsPlacedFilter : public Filter<Instance*> {
 
     public: Instance_IsPlacedFilter& operator=(const Instance_IsPlacedFilter& filter) {return *this;};
 
-    public: virtual Filter<Instance*>* GetClone() const {return new Instance_IsPlacedFilter(*this);};
+    public: virtual Filter<Instance*>* getClone() const {return new Instance_IsPlacedFilter(*this);};
 
     public: virtual bool Accept(Instance* instance) const {return instance->IsPlaced();};
 
-    public: virtual string _GetString() const {return "<" + _TName("Net::IsPlacedFilter>");};
+    public: virtual string _getString() const {return "<" + _TName("Net::IsPlacedFilter>");};
 
 };
 
@@ -141,11 +141,11 @@ class Instance_IsFixedFilter : public Filter<Instance*> {
 
     public: Instance_IsFixedFilter& operator=(const Instance_IsFixedFilter& filter) {return *this;};
 
-    public: virtual Filter<Instance*>* GetClone() const {return new Instance_IsFixedFilter(*this);};
+    public: virtual Filter<Instance*>* getClone() const {return new Instance_IsFixedFilter(*this);};
 
     public: virtual bool Accept(Instance* instance) const {return instance->IsFixed();};
 
-    public: virtual string _GetString() const {return "<" + _TName("Net::IsFixedFilter>");};
+    public: virtual string _getString() const {return "<" + _TName("Net::IsFixedFilter>");};
 
 };
 
@@ -172,7 +172,7 @@ Instance::Instance(Cell* cell, const Name& name, Cell* masterCell, const Transfo
     if (name.IsEmpty())
         throw Error("Can't create " + _TName("Instance") + " : empty name");
 
-    if (_cell->GetInstance(_name))
+    if (_cell->getInstance(_name))
         throw Error("Can't create " + _TName("Instance") + " : already exists");
 
     if (!_masterCell)
@@ -188,7 +188,7 @@ Instance* Instance::Create(Cell* cell, const Name& name, Cell* masterCell, bool 
     Instance* instance =
         new Instance(cell, name, masterCell, Transformation(), PlacementStatus(), secureFlag);
 
-    instance->_PostCreate();
+    instance->_postCreate();
 
     return instance;
 }
@@ -199,90 +199,90 @@ Instance* Instance::Create(Cell* cell, const Name& name, Cell* masterCell, const
     Instance* instance =
         new Instance(cell, name, masterCell, transformation, placementstatus, secureFlag);
 
-    instance->_PostCreate();
+    instance->_postCreate();
 
     return instance;
 }
 
-Box Instance::GetBoundingBox() const
+Box Instance::getBoundingBox() const
 // *********************************
 {
-    return  _transformation.getBox(_masterCell->GetBoundingBox());
+    return  _transformation.getBox(_masterCell->getBoundingBox());
 }
 
-Plugs Instance::GetConnectedPlugs() const
+Plugs Instance::getConnectedPlugs() const
 // **************************************
 {
-    return GetPlugs().GetSubSet(Plug::GetIsConnectedFilter());
+    return getPlugs().getSubSet(Plug::getIsConnectedFilter());
 }
 
-Plugs Instance::GetUnconnectedPlugs() const
+Plugs Instance::getUnconnectedPlugs() const
 // ****************************************
 {
-    return GetPlugs().GetSubSet(Plug::GetIsUnconnectedFilter());
+    return getPlugs().getSubSet(Plug::getIsUnconnectedFilter());
 }
 
-Path Instance::GetPath(const Path& tailPath) const
+Path Instance::getPath(const Path& tailPath) const
 // ***********************************************
 {
     return Path((Instance*)this, tailPath);
 }
 
-Box Instance::GetAbutmentBox() const
+Box Instance::getAbutmentBox() const
 // *********************************
 {
-    return _transformation.getBox(_masterCell->GetAbutmentBox());
+    return _transformation.getBox(_masterCell->getAbutmentBox());
 }
 
 bool Instance::IsTerminal() const
 // ******************************
 {
-    return GetMasterCell()->IsTerminal();
+    return getMasterCell()->IsTerminal();
 }
 
 bool Instance::IsLeaf() const
 // **************************
 {
-    return GetMasterCell()->IsLeaf();
+    return getMasterCell()->IsLeaf();
 }
 
-InstanceFilter Instance::GetIsUnderFilter(const Box& area)
+InstanceFilter Instance::getIsUnderFilter(const Box& area)
 // *******************************************************
 {
     return Instance_IsUnderFilter(area);
 }
 
-InstanceFilter Instance::GetIsTerminalFilter()
+InstanceFilter Instance::getIsTerminalFilter()
 // *******************************************
 {
     return Instance_IsTerminalFilter();
 }
 
-InstanceFilter Instance::GetIsLeafFilter()
+InstanceFilter Instance::getIsLeafFilter()
 // *******************************************
 {
     return Instance_IsLeafFilter();
 }
 
-InstanceFilter Instance::GetIsUnplacedFilter()
+InstanceFilter Instance::getIsUnplacedFilter()
 // *******************************************
 {
     return Instance_IsUnplacedFilter();
 }
 
-InstanceFilter Instance::GetIsPlacedFilter()
+InstanceFilter Instance::getIsPlacedFilter()
 // *****************************************
 {
     return Instance_IsPlacedFilter();
 }
 
-InstanceFilter Instance::GetIsFixedFilter()
+InstanceFilter Instance::getIsFixedFilter()
 // ****************************************
 {
     return Instance_IsFixedFilter();
 }
 
-InstanceFilter Instance::GetIsNotUnplacedFilter()
+InstanceFilter Instance::getIsNotUnplacedFilter()
 // **********************************************
 {
     return !Instance_IsUnplacedFilter();
@@ -292,11 +292,11 @@ void Instance::Materialize()
 // *************************
 {
     if (!IsMaterialized()) {
-        Box boundingBox = GetBoundingBox();
+        Box boundingBox = getBoundingBox();
         if (!boundingBox.isEmpty()) {
-            QuadTree* quadTree = _cell->_GetQuadTree();
+            QuadTree* quadTree = _cell->_getQuadTree();
             quadTree->Insert(this);
-            _cell->_Fit(quadTree->GetBoundingBox());
+            _cell->_Fit(quadTree->getBoundingBox());
         }
     }
 }
@@ -305,8 +305,8 @@ void Instance::Unmaterialize()
 // ***************************
 {
     if (IsMaterialized()) {
-        _cell->_Unfit(GetBoundingBox());
-        _cell->_GetQuadTree()->Remove(this);
+        _cell->_Unfit(getBoundingBox());
+        _cell->_getQuadTree()->Remove(this);
     }
 }
 
@@ -316,7 +316,7 @@ void Instance::Invalidate(bool propagateFlag)
     Inherit::Invalidate(false);
 
     if (propagateFlag) {
-        for_each_plug(plug, GetConnectedPlugs()) {
+        for_each_plug(plug, getConnectedPlugs()) {
             plug->Invalidate(true);
             end_for;
         }
@@ -342,12 +342,12 @@ void Instance::SetName(const Name& name)
         if (name.IsEmpty())
             throw Error("Can't change instance name : empty name");
 
-        if (_cell->GetInstance(name))
+        if (_cell->getInstance(name))
             throw Error("Can't change instance name : already exists");
 
-        _cell->_GetInstanceMap()._Remove(this);
+        _cell->_getInstanceMap()._Remove(this);
         _name = name;
-        _cell->_GetInstanceMap()._Insert(this);
+        _cell->_getInstanceMap()._Insert(this);
     }
 }
 
@@ -382,8 +382,8 @@ void Instance::SetMasterCell(Cell* masterCell, bool secureFlag)
 
         list<Plug*> connectedPlugList;
         list<Net*> masterNetList;
-        for_each_plug(plug, GetConnectedPlugs()) {
-            Net* masterNet = masterCell->GetNet(plug->GetMasterNet()->GetName());
+        for_each_plug(plug, getConnectedPlugs()) {
+            Net* masterNet = masterCell->getNet(plug->getMasterNet()->getName());
             if (!masterNet || !masterNet->IsExternal())
                 throw Error("Can't set master (bad master net matching)");
             connectedPlugList.push_back(plug);
@@ -391,8 +391,8 @@ void Instance::SetMasterCell(Cell* masterCell, bool secureFlag)
             end_for;
         }
 
-        for_each_shared_path(sharedPath, _GetSharedPathes()) {
-            if (!sharedPath->GetTailSharedPath())
+        for_each_shared_path(sharedPath, _getSharedPathes()) {
+            if (!sharedPath->getTailSharedPath())
                 // if the tail is empty the SharedPath isn't impacted by the change
                 delete sharedPath;
             end_for;
@@ -400,8 +400,8 @@ void Instance::SetMasterCell(Cell* masterCell, bool secureFlag)
 
         Invalidate(true);
 
-        for_each_plug(plug, GetUnconnectedPlugs()) {
-            plug->_Delete();
+        for_each_plug(plug, getUnconnectedPlugs()) {
+            plug->_destroy();
             end_for;
         }
 
@@ -415,67 +415,67 @@ void Instance::SetMasterCell(Cell* masterCell, bool secureFlag)
             masterNetList.pop_front();
         }
 
-        _masterCell->_GetSlaveInstanceSet()._Remove(this);
+        _masterCell->_getSlaveInstanceSet()._Remove(this);
         _masterCell = masterCell;
-        _masterCell->_GetSlaveInstanceSet()._Insert(this);
+        _masterCell->_getSlaveInstanceSet()._Insert(this);
 
-        for_each_net(externalNet, _masterCell->GetExternalNets()) {
-            if (!GetPlug(externalNet)) Plug::_Create(this, externalNet);
+        for_each_net(externalNet, _masterCell->getExternalNets()) {
+            if (!getPlug(externalNet)) Plug::_Create(this, externalNet);
             end_for;
         }
     }
 }
 
-void Instance::_PostCreate()
+void Instance::_postCreate()
 // *************************
 {
-    _cell->_GetInstanceMap()._Insert(this);
-    _masterCell->_GetSlaveInstanceSet()._Insert(this);
+    _cell->_getInstanceMap()._Insert(this);
+    _masterCell->_getSlaveInstanceSet()._Insert(this);
 
-    for_each_net(externalNet, _masterCell->GetExternalNets()) {
+    for_each_net(externalNet, _masterCell->getExternalNets()) {
         Plug::_Create(this, externalNet);
         end_for;
     }
 
-    Inherit::_PostCreate();
+    Inherit::_postCreate();
 }
 
-void Instance::_PreDelete()
+void Instance::_preDestroy()
 // ************************
 {
-    for_each_shared_path(sharedPath, _GetSharedPathes()) delete sharedPath; end_for;
+    for_each_shared_path(sharedPath, _getSharedPathes()) delete sharedPath; end_for;
 
-    Inherit::_PreDelete();
+    Inherit::_preDestroy();
 
-    for_each_plug(plug, GetPlugs()) plug->_Delete(); end_for;
+    for_each_plug(plug, getPlugs()) plug->_destroy(); end_for;
 
-    _masterCell->_GetSlaveInstanceSet()._Remove(this);
-    _cell->_GetInstanceMap()._Remove(this);
+    _masterCell->_getSlaveInstanceSet()._Remove(this);
+    _cell->_getInstanceMap()._Remove(this);
 }
 
-string Instance::_GetString() const
+string Instance::_getString() const
 // ********************************
 {
-    string s = Inherit::_GetString();
-    s.insert(s.length() - 1, " " + GetString(_name));
-    s.insert(s.length() - 1, " " + GetString(_masterCell->GetName()));
+    string s = Inherit::_getString();
+    s.insert(s.length() - 1, " " + getString(_name));
+    s.insert(s.length() - 1, " " + getString(_masterCell->getName()));
     return s;
 }
 
-Record* Instance::_GetRecord() const
+Record* Instance::_getRecord() const
 // ***************************
 {
-    Record* record = Inherit::_GetRecord();
+    Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(GetSlot("Cell", _cell));
-        record->Add(GetSlot("Name", &_name));
-        record->Add(GetSlot("MasterCell", _masterCell));
-        record->Add(GetSlot("Transformation", &_transformation));
-        record->Add(GetSlot("PlacementStatus", _placementStatus));
-        record->Add(GetSlot("XCenter", GetValue(GetAbutmentBox().getXCenter())));
-        record->Add(GetSlot("YCenter", GetValue(GetAbutmentBox().getYCenter())));
-        record->Add(GetSlot("Plugs", &_plugMap));
-        record->Add(GetSlot("SharedPathes", &_sharedPathMap));
+        record->Add(getSlot("Cell", _cell));
+        record->Add(getSlot("Name", &_name));
+        record->Add(getSlot("MasterCell", _masterCell));
+        record->Add(getSlot("Transformation", &_transformation));
+        record->Add(getSlot("PlacementStatus", _placementStatus));
+        record->Add(getSlot("XCenter", getValue(getAbutmentBox().getXCenter())));
+        record->Add(getSlot("YCenter", getValue(getAbutmentBox().getYCenter())));
+        record->Add(getSlot("Plugs", &_plugMap));
+        record->Add(getSlot("SharedPathes", &_sharedPathMap));
     }
     return record;
 }
@@ -483,11 +483,11 @@ Record* Instance::_GetRecord() const
 //void Instance::_DrawPhantoms(View* view, const Box& updateArea, const Transformation& transformation)
 //// **************************************************************************************************
 //{
-//    Symbol* symbol = _masterCell->GetSymbol();
+//    Symbol* symbol = _masterCell->getSymbol();
 //    if (!symbol) {
 //        Box masterArea = updateArea;
 //        Transformation masterTransformation = _transformation;
-//        _transformation.GetInvert().ApplyOn(masterArea);
+//        _transformation.getInvert().ApplyOn(masterArea);
 //        transformation.ApplyOn(masterTransformation);
 //        _masterCell->_DrawPhantoms(view, masterArea, masterTransformation);
 //    }
@@ -498,13 +498,13 @@ Record* Instance::_GetRecord() const
 //{
 //    Box masterArea = updateArea;
 //    Transformation masterTransformation = _transformation;
-//    _transformation.GetInvert().ApplyOn(masterArea);
+//    _transformation.getInvert().ApplyOn(masterArea);
 //    transformation.ApplyOn(masterTransformation);
-//    Symbol* symbol = _masterCell->GetSymbol();
+//    Symbol* symbol = _masterCell->getSymbol();
 //    if (!symbol)
 //        _masterCell->_DrawBoundaries(view, masterArea, masterTransformation);
 //    else
-//        _masterCell->GetSymbol()->_Draw(view, masterArea, masterTransformation);
+//        _masterCell->getSymbol()->_Draw(view, masterArea, masterTransformation);
 //}
 //
 //void Instance::_DrawRubbers(View* view, const Box& updateArea, const Transformation& transformation)
@@ -512,7 +512,7 @@ Record* Instance::_GetRecord() const
 //{
 //    Box masterArea = updateArea;
 //    Transformation masterTransformation = _transformation;
-//    _transformation.GetInvert().ApplyOn(masterArea);
+//    _transformation.getInvert().ApplyOn(masterArea);
 //    transformation.ApplyOn(masterTransformation);
 //    _masterCell->_DrawRubbers(view, masterArea, masterTransformation);
 //}
@@ -522,7 +522,7 @@ Record* Instance::_GetRecord() const
 //{
 //    Box masterArea = updateArea;
 //    Transformation masterTransformation = _transformation;
-//    _transformation.GetInvert().ApplyOn(masterArea);
+//    _transformation.getInvert().ApplyOn(masterArea);
 //    transformation.ApplyOn(masterTransformation);
 //    _masterCell->_DrawMarkers(view, masterArea, masterTransformation);
 //}
@@ -532,7 +532,7 @@ Record* Instance::_GetRecord() const
 //{
 //    Box masterArea = updateArea;
 //    Transformation masterTransformation = _transformation;
-//    _transformation.GetInvert().ApplyOn(masterArea);
+//    _transformation.getInvert().ApplyOn(masterArea);
 //    transformation.ApplyOn(masterTransformation);
 //    _masterCell->_DrawDisplaySlots(view, area, masterArea, masterTransformation);
 //}
@@ -540,13 +540,13 @@ Record* Instance::_GetRecord() const
 //bool Instance::_IsInterceptedBy(View* view, const Point& point, const Unit& aperture) const
 //// ****************************************************************************************
 //{
-//    Symbol* symbol = _masterCell->GetSymbol();
+//    Symbol* symbol = _masterCell->getSymbol();
 //    if (!symbol)
 //        return (view->PhantomsAreVisible() || view->BoundariesAreVisible()) &&
-//                 GetAbutmentBox().intersect(Box(point).Inflate(aperture));
+//                 getAbutmentBox().intersect(Box(point).Inflate(aperture));
 //    else {
 //        Point masterPoint = point;
-//        _transformation.GetInvert().ApplyOn(masterPoint);
+//        _transformation.getInvert().ApplyOn(masterPoint);
 //        return (view->BoundariesAreVisible() && symbol->_IsInterceptedBy(view, masterPoint, aperture));
 //    }
 //}
@@ -554,11 +554,11 @@ Record* Instance::_GetRecord() const
 //void Instance::_Draw(View* view, BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation)
 //// ****************************************************************************************************
 //{
-//    Symbol* symbol = _masterCell->GetSymbol();
+//    Symbol* symbol = _masterCell->getSymbol();
 //    if (!symbol) {
 //        Box masterArea = updateArea;
 //        Transformation masterTransformation = _transformation;
-//        _transformation.GetInvert().ApplyOn(masterArea);
+//        _transformation.getInvert().ApplyOn(masterArea);
 //        transformation.ApplyOn(masterTransformation);
 //        _masterCell->_DrawContent(view, basicLayer, masterArea, masterTransformation);
 //    }
@@ -567,27 +567,27 @@ Record* Instance::_GetRecord() const
 //void Instance::_Highlight(View* view, const Box& updateArea, const Transformation& transformation)
 //// ***********************************************************************************************
 //{
-//    Symbol* symbol = _masterCell->GetSymbol();
+//    Symbol* symbol = _masterCell->getSymbol();
 //    if (!symbol) {
-//        Box abutmentBox = transformation.GetBox(GetAbutmentBox());
+//        Box abutmentBox = transformation.getBox(getAbutmentBox());
 //        view->FillRectangle(abutmentBox);
 //        view->DrawRectangle(abutmentBox);
 //        
-//        if ( view->GetScale() > 1 )
+//        if ( view->getScale() > 1 )
 //        {
 //            if ( view->IsTextVisible() )
 //            {
-//                string text = GetString ( _name ) + " ("
-//                            + GetString ( GetValue ( abutmentBox.GetXCenter () ) ) + ","
-//                            + GetString ( GetValue ( abutmentBox.GetYCenter () ) ) + ")";
-//                view->DrawString ( text, abutmentBox.GetXMin(), abutmentBox.GetYMax() ); 
+//                string text = getString ( _name ) + " ("
+//                            + getString ( getValue ( abutmentBox.getXCenter () ) ) + ","
+//                            + getString ( getValue ( abutmentBox.getYCenter () ) ) + ")";
+//                view->DrawString ( text, abutmentBox.getXMin(), abutmentBox.getYMax() ); 
 //            }
 //        }
 //    }
 //    else {
 //        Box masterArea = updateArea;
 //        Transformation masterTransformation = _transformation;
-//        _transformation.GetInvert().ApplyOn(masterArea);
+//        _transformation.getInvert().ApplyOn(masterArea);
 //        transformation.ApplyOn(masterTransformation);
 //        symbol->_Highlight(view, masterArea, masterTransformation);
 //    }
@@ -604,22 +604,22 @@ Instance::PlugMap::PlugMap()
 {
 }
 
-const Net* Instance::PlugMap::_GetKey(Plug* plug) const
+const Net* Instance::PlugMap::_getKey(Plug* plug) const
 // ****************************************************
 {
-    return plug->GetMasterNet();
+    return plug->getMasterNet();
 }
 
-unsigned Instance::PlugMap::_GetHashValue(const Net* masterNet) const
+unsigned Instance::PlugMap::_getHashValue(const Net* masterNet) const
 // ******************************************************************
 {
     return ( (unsigned int)( (unsigned long)masterNet ) ) / 8;
 }
 
-Plug* Instance::PlugMap::_GetNextElement(Plug* plug) const
+Plug* Instance::PlugMap::_getNextElement(Plug* plug) const
 // *******************************************************
 {
-    return plug->_GetNextOfInstancePlugMap();
+    return plug->_getNextOfInstancePlugMap();
 }
 
 void Instance::PlugMap::_SetNextElement(Plug* plug, Plug* nextPlug) const
@@ -640,22 +640,22 @@ Instance::SharedPathMap::SharedPathMap()
 {
 }
 
-const SharedPath* Instance::SharedPathMap::_GetKey(SharedPath* sharedPath) const
+const SharedPath* Instance::SharedPathMap::_getKey(SharedPath* sharedPath) const
 // *****************************************************************************
 {
-    return sharedPath->GetTailSharedPath();
+    return sharedPath->getTailSharedPath();
 }
 
-unsigned Instance::SharedPathMap::_GetHashValue(const SharedPath* tailSharedPath) const
+unsigned Instance::SharedPathMap::_getHashValue(const SharedPath* tailSharedPath) const
 // ************************************************************************************
 {
     return ( (unsigned int)( (unsigned long)tailSharedPath ) ) / 8;
 }
 
-SharedPath* Instance::SharedPathMap::_GetNextElement(SharedPath* sharedPath) const
+SharedPath* Instance::SharedPathMap::_getNextElement(SharedPath* sharedPath) const
 // *******************************************************************************
 {
-    return sharedPath->_GetNextOfInstanceSharedPathMap();
+    return sharedPath->_getNextOfInstanceSharedPathMap();
 }
 
 void Instance::SharedPathMap::_SetNextElement(SharedPath* sharedPath, SharedPath* nextSharedPath) const
@@ -687,17 +687,17 @@ Instance::PlacementStatus& Instance::PlacementStatus::operator=(const PlacementS
     return *this;
 }
 
-string Instance::PlacementStatus::_GetString() const
+string Instance::PlacementStatus::_getString() const
 // *************************************************
 {
-  return GetString(&_code);
+  return getString(&_code);
 }
 
-Record* Instance::PlacementStatus::_GetRecord() const
+Record* Instance::PlacementStatus::_getRecord() const
 // ********************************************
 {
-    Record* record = new Record(GetString(this));
-    record->Add(GetSlot("Code", &_code));
+    Record* record = new Record(getString(this));
+    record->Add(getSlot("Code", &_code));
     return record;
 }
 

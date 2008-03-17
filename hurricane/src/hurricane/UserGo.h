@@ -27,41 +27,32 @@ class UserGo : public Go {
 // Types
 // *****
 
-	public: typedef Go Inherit;
+    public: typedef Go Inherit;
 
 // Attributes
 // **********
-	protected: DisplaySlot* _displaySlot;
+    protected: DisplaySlot* _displaySlot;
 
 // Constructors
 // ************
 
-	protected: UserGo(DisplaySlot* displaySlot);
-
-// Destructor
-// **********
-
-// Accessors
-// *********
+    protected: UserGo(DisplaySlot* displaySlot);
 
 // Updators
 // ********
 
-	public: virtual void Materialize();
-	public: virtual void Unmaterialize();
+    public: virtual void Materialize();
+    public: virtual void Unmaterialize();
 
 // Others
 // ******
 
-	protected: virtual void _PostCreate();
-	protected: virtual void _PreDelete();
-
-	public: virtual string _GetTypeName() const {return _TName("UserGo");};
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
+    public: virtual string _getTypeName() const {return _TName("UserGo");};
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
 };
 
-UserGos GetUserGos(const Cell* cell);
+UserGos getUserGos(const Cell* cell);
 
 } // End of Hurricane namespace.
 

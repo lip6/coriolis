@@ -46,10 +46,10 @@ typedef GenericFilter<Library*> LibraryFilter;
 #define for_each_library(library, libraries)\
 /*******************************************/\
 {\
-	LibraryLocator _locator = libraries.GetLocator();\
-	while (_locator.IsValid()) {\
-		Library* library = _locator.GetElement();\
-		_locator.Progress();
+    LibraryLocator _locator = libraries.getLocator();\
+    while (_locator.IsValid()) {\
+        Library* library = _locator.getElement();\
+        _locator.Progress();
 
 
 

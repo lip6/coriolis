@@ -45,9 +45,9 @@ typedef GenericFilter<Name*> NameFilter;
 #define for_each_name(name, names)\
 /****************************************************/\
 {\
-    NameLocator _locator = names.GetLocator();\
+    NameLocator _locator = names.getLocator();\
     while (_locator.IsValid()) {\
-        Name* name = _locator.GetElement();\
+        Name* name = _locator.getElement();\
         _locator.Progress();
 
 } // End of Hurricane namespace.

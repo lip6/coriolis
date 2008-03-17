@@ -37,182 +37,182 @@ class Net : public Entity {
 // Types
 // *****
 
-	public: typedef Entity Inherit;
+    public: typedef Entity Inherit;
 
-	public: typedef unsigned Arity;
+    public: typedef unsigned Arity;
 
     public: class Type {
-	// ***************
+    // ***************
 
-		public: enum Code {UNDEFINED=0, LOGICAL=1, CLOCK=2, POWER=3, GROUND=4};
+        public: enum Code {UNDEFINED=0, LOGICAL=1, CLOCK=2, POWER=3, GROUND=4};
 
-		private: Code _code;
+        private: Code _code;
 
-		public: Type(const Code& code = UNDEFINED);
-		public: Type(const Type& type);
+        public: Type(const Code& code = UNDEFINED);
+        public: Type(const Type& type);
 
-		public: Type& operator=(const Type& type);
+        public: Type& operator=(const Type& type);
 
-		public: operator const Code&() const {return _code;};
+        public: operator const Code&() const {return _code;};
 
-		public: const Code& GetCode() const {return _code;};
+        public: const Code& getCode() const {return _code;};
 
-        public: string _GetTypeName() const { return _TName("Net::type"); };
-		public: string _GetString() const;
-		public: Record* _GetRecord() const;
+        public: string _getTypeName() const { return _TName("Net::type"); };
+        public: string _getString() const;
+        public: Record* _getRecord() const;
 
-	};
+    };
 
     public: class Direction {
-	// ********************
+    // ********************
 
-		public: enum Code {UNDEFINED=0, IN=1, OUT=2, INOUT=3, TRISTATE=4};
+        public: enum Code {UNDEFINED=0, IN=1, OUT=2, INOUT=3, TRISTATE=4};
 
-		private: Code _code;
+        private: Code _code;
 
-		public: Direction(const Code& code = UNDEFINED);
-		public: Direction(const Direction& direction);
+        public: Direction(const Code& code = UNDEFINED);
+        public: Direction(const Direction& direction);
 
-		public: Direction& operator=(const Direction& direction);
+        public: Direction& operator=(const Direction& direction);
 
-		public: operator const Code&() const {return _code;};
+        public: operator const Code&() const {return _code;};
 
-		public: const Code& GetCode() const {return _code;};
+        public: const Code& getCode() const {return _code;};
 
-        public: string _GetTypeName() const { return _TName("Net::Direction"); };
-		public: string _GetString() const;
-		public: Record* _GetRecord() const;
+        public: string _getTypeName() const { return _TName("Net::Direction"); };
+        public: string _getString() const;
+        public: Record* _getRecord() const;
 
-	};
+    };
 
-	class ComponentSet : public IntrusiveSet<Component> {
-	// ************************************************
+    class ComponentSet : public IntrusiveSet<Component> {
+    // ************************************************
 
-		public: typedef IntrusiveSet<Component> Inherit;
-	
-		public: ComponentSet();
+        public: typedef IntrusiveSet<Component> Inherit;
+    
+        public: ComponentSet();
 
-		public: virtual unsigned _GetHashValue(Component* component) const;
-		public: virtual Component* _GetNextElement(Component* component) const;
-		public: virtual void _SetNextElement(Component* component, Component* nextComponent) const;
+        public: virtual unsigned _getHashValue(Component* component) const;
+        public: virtual Component* _getNextElement(Component* component) const;
+        public: virtual void _SetNextElement(Component* component, Component* nextComponent) const;
 
-	};
+    };
 
-	class RubberSet : public IntrusiveSet<Rubber> {
-	// ******************************************
+    class RubberSet : public IntrusiveSet<Rubber> {
+    // ******************************************
 
-		public: typedef IntrusiveSet<Rubber> Inherit;
-	
-		public: RubberSet();
+        public: typedef IntrusiveSet<Rubber> Inherit;
+    
+        public: RubberSet();
 
-		public: virtual unsigned _GetHashValue(Rubber* rubber) const;
-		public: virtual Rubber* _GetNextElement(Rubber* rubber) const;
-		public: virtual void _SetNextElement(Rubber* rubber, Rubber* nextRubber) const;
+        public: virtual unsigned _getHashValue(Rubber* rubber) const;
+        public: virtual Rubber* _getNextElement(Rubber* rubber) const;
+        public: virtual void _SetNextElement(Rubber* rubber, Rubber* nextRubber) const;
 
-	};
+    };
 
 // Attributes
 // **********
 
-	private: Cell* _cell;
-	private: Name _name;
-	private: Arity _arity;
-	private: bool _isGlobal;
-	private: bool _isExternal;
-	private: Type _type;
-	private: Direction _direction;
-	private: Point _position;
-	private: ComponentSet _componentSet;
-	private: RubberSet _rubberSet;
-	private: Net* _nextOfCellNetMap;
+    private: Cell* _cell;
+    private: Name _name;
+    private: Arity _arity;
+    private: bool _isGlobal;
+    private: bool _isExternal;
+    private: Type _type;
+    private: Direction _direction;
+    private: Point _position;
+    private: ComponentSet _componentSet;
+    private: RubberSet _rubberSet;
+    private: Net* _nextOfCellNetMap;
 
 // Constructors
 // ************
 
-	protected: Net(Cell* cell, const Name& name);
+    protected: Net(Cell* cell, const Name& name);
 
-	public: static Net* Create(Cell* cell, const Name& name);
+    public: static Net* Create(Cell* cell, const Name& name);
 
 // Accessors
 // *********
 
-	public: virtual Cell* GetCell() const {return _cell;};
-	public: virtual Box GetBoundingBox() const;
-	public: const Name& GetName() const {return _name;};
-	public: const Arity& GetArity() const {return _arity;};
-	public: const Type& GetType() const {return _type;};
-	public: const Direction& GetDirection() const {return _direction;};
-	public: const Point& GetPosition() const {return _position;};
-	public: const Unit& GetX() const {return _position.getX();};
-	public: const Unit& GetY() const {return _position.getY();};
-	public: Components GetComponents() const {return _componentSet.GetElements();};
-	public: Rubbers GetRubbers() const {return _rubberSet.GetElements();};
-	public: RoutingPads GetRoutingPads() const;
-	public: Plugs GetPlugs() const;
-	public: Pins GetPins() const;
-	public: Contacts GetContacts() const;
-	public: Segments GetSegments() const;
-	public: Verticals GetVerticals() const;
-	public: Horizontals GetHorizontals() const;
-	public: Pads GetPads() const;
-	public: Plugs GetSlavePlugs() const;
-	public: Plugs GetConnectedSlavePlugs() const;
-	public: Plugs GetUnconnectedSlavePlugs() const;
+    public: virtual Cell* getCell() const {return _cell;};
+    public: virtual Box getBoundingBox() const;
+    public: const Name& getName() const {return _name;};
+    public: const Arity& getArity() const {return _arity;};
+    public: const Type& getType() const {return _type;};
+    public: const Direction& getDirection() const {return _direction;};
+    public: const Point& getPosition() const {return _position;};
+    public: const Unit& getX() const {return _position.getX();};
+    public: const Unit& getY() const {return _position.getY();};
+    public: Components getComponents() const {return _componentSet.getElements();};
+    public: Rubbers getRubbers() const {return _rubberSet.getElements();};
+    public: RoutingPads getRoutingPads() const;
+    public: Plugs getPlugs() const;
+    public: Pins getPins() const;
+    public: Contacts getContacts() const;
+    public: Segments getSegments() const;
+    public: Verticals getVerticals() const;
+    public: Horizontals getHorizontals() const;
+    public: Pads getPads() const;
+    public: Plugs getSlavePlugs() const;
+    public: Plugs getConnectedSlavePlugs() const;
+    public: Plugs getUnconnectedSlavePlugs() const;
 
 // Filters
 // *******
 
-	public: static NetFilter GetIsCellNetFilter();
-	public: static NetFilter GetIsDeepNetFilter();
-	public: static NetFilter GetIsGlobalFilter();
-	public: static NetFilter GetIsExternalFilter();
-	public: static NetFilter GetIsInternalFilter();
-	public: static NetFilter GetIsClockFilter();
-	public: static NetFilter GetIsSupplyFilter();
-	public: static NetFilter GetIsPowerFilter();
-	public: static NetFilter GetIsGroundFilter();
+    public: static NetFilter getIsCellNetFilter();
+    public: static NetFilter getIsDeepNetFilter();
+    public: static NetFilter getIsGlobalFilter();
+    public: static NetFilter getIsExternalFilter();
+    public: static NetFilter getIsInternalFilter();
+    public: static NetFilter getIsClockFilter();
+    public: static NetFilter getIsSupplyFilter();
+    public: static NetFilter getIsPowerFilter();
+    public: static NetFilter getIsGroundFilter();
 
 // Predicates
 // **********
 
-	public: virtual bool IsDeepNet () const {return false;};
-	public:         bool IsGlobal  () const {return _isGlobal;};
-	public:         bool IsExternal() const {return _isExternal;};
-	public:         bool IsLogical () const {return (_type == Type::LOGICAL);};
-	public:         bool IsClock   () const {return (_type == Type::CLOCK);};
-	public:         bool IsPower   () const {return (_type == Type::POWER);};
-	public:         bool IsGround  () const {return (_type == Type::GROUND);};
-	public:         bool IsSupply  () const {return (IsPower() || IsGround());};
+    public: virtual bool IsDeepNet () const {return false;};
+    public:         bool IsGlobal  () const {return _isGlobal;};
+    public:         bool IsExternal() const {return _isExternal;};
+    public:         bool IsLogical () const {return (_type == Type::LOGICAL);};
+    public:         bool IsClock   () const {return (_type == Type::CLOCK);};
+    public:         bool IsPower   () const {return (_type == Type::POWER);};
+    public:         bool IsGround  () const {return (_type == Type::GROUND);};
+    public:         bool IsSupply  () const {return (IsPower() || IsGround());};
 
 // Updators
 // ********
 
-	public: void SetName(const Name& name);
-	public: void SetArity(const Arity& arity);
-	public: void SetGlobal(bool isGlobal);
-	public: void SetExternal(bool isExternal);
-	public: void SetType(const Type& type);
-	public: void SetDirection(const Direction& direction);
-	public: void SetPosition(const Point& position);
-	public: void Materialize();
-	public: void Unmaterialize();
-	public: void Merge(Net* net);
+    public: void SetName(const Name& name);
+    public: void SetArity(const Arity& arity);
+    public: void SetGlobal(bool isGlobal);
+    public: void SetExternal(bool isExternal);
+    public: void SetType(const Type& type);
+    public: void SetDirection(const Direction& direction);
+    public: void SetPosition(const Point& position);
+    public: void Materialize();
+    public: void Unmaterialize();
+    public: void Merge(Net* net);
 
 // Others
 // ******
 
-	protected: virtual void _PostCreate();
+    protected: virtual void _postCreate();
 
-	protected: virtual void _PreDelete();
+    protected: virtual void _preDestroy();
 
-	public: virtual string _GetTypeName() const {return _TName("Net");};
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
-	public: ComponentSet& _GetComponentSet() {return _componentSet;};
-	public: RubberSet& _GetRubberSet() {return _rubberSet;};
-	public: Net* _GetNextOfCellNetMap() const {return _nextOfCellNetMap;};
+    public: virtual string _getTypeName() const {return _TName("Net");};
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
+    public: ComponentSet& _getComponentSet() {return _componentSet;};
+    public: RubberSet& _getRubberSet() {return _rubberSet;};
+    public: Net* _getNextOfCellNetMap() const {return _nextOfCellNetMap;};
 
-	public: void _SetNextOfCellNetMap(Net* net) {_nextOfCellNetMap = net;};
+    public: void _SetNextOfCellNetMap(Net* net) {_nextOfCellNetMap = net;};
 
 };
 
@@ -245,8 +245,8 @@ template<>
   inline Record* ProxyRecord  <Net::Type::Code>
                               ( const Net::Type::Code* object )
                               {
-                                Record* record = new Record(GetString(object));
-                                record->Add(GetSlot("Code", (unsigned int*)object));
+                                Record* record = new Record(getString(object));
+                                record->Add(getSlot("Code", (unsigned int*)object));
                                 return record;
                               }
 
@@ -279,8 +279,8 @@ template<>
   inline Record* ProxyRecord  <Net::Direction::Code>
                               ( const Net::Direction::Code* object )
                               {
-                                Record* record = new Record(GetString(object));
-                                record->Add(GetSlot("Code", (unsigned int*)object));
+                                Record* record = new Record(getString(object));
+                                record->Add(getSlot("Code", (unsigned int*)object));
                                 return record;
                               }
 

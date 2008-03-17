@@ -96,8 +96,8 @@ extern "C" {
   LocatorGetCloneAttribute(Net)
 
 
-  // Standart Delete (Attribute).
-  DirectDeleteAttribute(PyNetLocator_Delete,PyNetLocator)
+  // Standart destroy (Attribute).
+  DirectDestroyAttribute(PyNetLocator_destroy, PyNetLocator)
 
 
 
@@ -107,10 +107,10 @@ extern "C" {
   PyMethodDef PyNetLocator_Methods[] =
     { { "IsValid"        , (PyCFunction)PyNetLocator_IsValid    , METH_NOARGS , "Returns true while the walk has not exhausted the set of elements, else false." }
     , { "Progress"       , (PyCFunction)PyNetLocator_Progress   , METH_NOARGS , "Moves forward the locator to the following element." }
-    , { "GetElement"     , (PyCFunction)PyNetLocator_GetElement , METH_NOARGS , "Returns the current element (or the value Type() when the locator is not or no longer valid)." }
-    , { "GetClone"       , (PyCFunction)PyNetLocator_GetClone   , METH_NOARGS , "This function allocates and returns a new locator that will have the same visiting course than the remaining one of the locator being cloned." }
-    , { "Delete"         , (PyCFunction)PyNetLocator_Delete     , METH_NOARGS
-                         , "Delete associated hurricane object, the python object remains." }
+    , { "getElement"     , (PyCFunction)PyNetLocator_getElement , METH_NOARGS , "Returns the current element (or the value Type() when the locator is not or no longer valid)." }
+    , { "getClone"       , (PyCFunction)PyNetLocator_getClone   , METH_NOARGS , "This function allocates and returns a new locator that will have the same visiting course than the remaining one of the locator being cloned." }
+    , { "destroy"        , (PyCFunction)PyNetLocator_destroy    , METH_NOARGS
+                         , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

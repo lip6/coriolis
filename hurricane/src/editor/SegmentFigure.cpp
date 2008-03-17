@@ -66,7 +66,7 @@ SegmentGraphicsItem::SegmentGraphicsItem(CellGraphicsItem* master, Segment* s):
 }
 
 QRectF SegmentGraphicsItem::boundingRect() const {
-    Box box = segment->GetBoundingBox();
+    Box box = segment->getBoundingBox();
     QRectF rect;
     boxToRectangle(box, rect);
     return rect;
@@ -75,10 +75,10 @@ QRectF SegmentGraphicsItem::boundingRect() const {
 void SegmentGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
     //if (option->levelOfDetail > 1.0) {
     painter->setClipRect(option->exposedRect);
-    Box box = segment->GetBoundingBox();
+    Box box = segment->getBoundingBox();
     QRectF rect;
     boxToRectangle(box, rect);
-    BasicLayer* blayer = dynamic_cast<BasicLayer*>(segment->GetLayer()); 
+    BasicLayer* blayer = dynamic_cast<BasicLayer*>(segment->getLayer()); 
     if (blayer) {
         QColor layerColor(blayer->getRedValue(),
             blayer->getGreenValue(),
@@ -86,14 +86,14 @@ void SegmentGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
         QBrush brush(layerColor);
         brush.setStyle(Qt::Dense1Pattern);
         painter->setBrush(brush);
-        //painter->setBrush(getBrush(blayer->GetFillPattern(),
-        //            blayer->GetRedValue(),
-        //            blayer->GetGreenValue(),
-        //            blayer->GetBlueValue()));
+        //painter->setBrush(getBrush(blayer->getFillPattern(),
+        //            blayer->getRedValue(),
+        //            blayer->getGreenValue(),
+        //            blayer->getBlueValue()));
         painter->setPen(layerColor);
         painter->drawRect(rect);
     } else {
-        CompositeLayer* clayer = dynamic_cast<CompositeLayer*>(segment->GetLayer());
+        CompositeLayer* clayer = dynamic_cast<CompositeLayer*>(segment->getLayer());
         if (clayer) {
             for_each_basic_layer(basiclayer, clayer->getBasicLayers()) {
                 QColor layerColor(basiclayer->getRedValue(),
@@ -102,10 +102,10 @@ void SegmentGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
                 QBrush brush(layerColor);
                 brush.setStyle(Qt::Dense1Pattern);
                 painter->setBrush(brush);
-                //painter->setBrush(getBrush(basiclayer->GetFillPattern(),
-                //            basiclayer->GetRedValue(),
-                //            basiclayer->GetGreenValue(),
-                //            basiclayer->GetBlueValue()));
+                //painter->setBrush(getBrush(basiclayer->getFillPattern(),
+                //            basiclayer->getRedValue(),
+                //            basiclayer->getGreenValue(),
+                //            basiclayer->getBlueValue()));
                 painter->setPen(layerColor);
                 painter->drawRect(rect);
                 end_for;

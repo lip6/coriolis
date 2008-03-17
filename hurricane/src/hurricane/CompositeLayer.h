@@ -42,9 +42,9 @@ class CompositeLayer : public Layer {
 
         public: const Code& getCode() const {return _code;};
 
-        public: string _GetTypeName() const { return _TName("CompositeLayer::Type"); };
-        public: string _GetString() const;
-        public: Record* _GetRecord() const;
+        public: string _getTypeName() const { return _TName("CompositeLayer::Type"); };
+        public: string _getString() const;
+        public: Record* _getRecord() const;
 
     };
 
@@ -97,9 +97,9 @@ class CompositeLayer : public Layer {
 // Others
 // ******
 
-    public: virtual string _GetTypeName() const {return _TName("CompositeLayer");};
-    public: virtual string _GetString() const;
-    public: virtual Record* _GetRecord() const;
+    public: virtual string _getTypeName() const {return _TName("CompositeLayer");};
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
     public: virtual BasicLayer* _getSymbolicBasicLayer() {return _symbolicBasicLayer;};
     public: BasicLayerList& _getBasicLayerList() {return _basicLayerList;};
 

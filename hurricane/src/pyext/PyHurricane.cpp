@@ -93,7 +93,7 @@
 namespace  Isobar {
 
 
-# if !defined(__PYTHON_MODULE__)
+#if !defined(__PYTHON_MODULE__)
 
 // x=================================================================x
 // |             "PyHurricane" Shared Library Code Part              |
@@ -151,7 +151,7 @@ USING_NAMESPACE_HURRICANE
   bool  ConverterState::ObjectType::PyEqual ( PyTypeObject* pyType ) {
     if ( _pyType    == pyType ) return true;
     if ( _idBase[0] == '\0'   ) return false;
-    return ( __cs.GetObject(_idBase)->PyEqual(pyType) );
+    return ( __cs.getObject(_idBase)->PyEqual(pyType) );
   }
 
 
@@ -171,7 +171,7 @@ USING_NAMESPACE_HURRICANE
   {
     if ( _idBase[0] == '\0'         ) return this;
     if ( ! strcmp(_id,_inheritStop) ) return this;
-    return ( __cs.GetObject(_idBase)->PyBase() );
+    return ( __cs.getObject(_idBase)->PyBase() );
   }
 
 
@@ -184,7 +184,7 @@ USING_NAMESPACE_HURRICANE
   {
     if ( _idBase[0] == '\0'         ) return _id;
     if ( ! strcmp(_id,_inheritStop) ) return _id;
-    return ( __cs.GetObject(_idBase)->PyBase(pyType)->_id );
+    return ( __cs.getObject(_idBase)->PyBase(pyType)->_id );
   }
 
 
@@ -231,9 +231,9 @@ USING_NAMESPACE_HURRICANE
 
 
 // -------------------------------------------------------------------
-// Method  : "::ConverterState::GetObjectType ()"
+// Method  : "::ConverterState::getObjectType ()"
 
-  string ConverterState::GetObjectType ( string objectsTypes, unsigned n ) {
+  string ConverterState::getObjectType ( string objectsTypes, unsigned n ) {
     string  temp;
     size_t  end, head, tail, start;
   
@@ -261,9 +261,9 @@ USING_NAMESPACE_HURRICANE
 
 
 // -------------------------------------------------------------------
-// Method  : "::ConverterState::GetObjectId ()"
+// Method  : "::ConverterState::getObjectId ()"
 
-  char* ConverterState::GetObjectId ( PyObject* object ) {
+  char* ConverterState::getObjectId ( PyObject* object ) {
     for ( unsigned i=0 ; i < _types.size() ; i++ ) {
       if ( ( ! strcmp ( _types[i]->_id, "function" ) ) && ( PyCallable_Check(object) ) )
         return ( _types[i]->_id );
@@ -281,9 +281,9 @@ USING_NAMESPACE_HURRICANE
   
 
 // -------------------------------------------------------------------
-// Method  : "::ConverterState::GetObject ()"
+// Method  : "::ConverterState::getObject ()"
 
-  ConverterState::ObjectType* ConverterState::GetObject ( char* id ) {
+  ConverterState::ObjectType* ConverterState::getObject ( char* id ) {
     for ( unsigned i=0 ; i < _types.size() ; i++ ) {
       if ( ! strcmp ( id, _types[i]->_id ) ) return ( _types[i] );
     }
@@ -292,9 +292,9 @@ USING_NAMESPACE_HURRICANE
   }
 
 // -------------------------------------------------------------------
-// Method  : "::ConverterState::GetObjectName ()"
+// Method  : "::ConverterState::getObjectName ()"
 
-  char *ConverterState::GetObjectName ( string id ) {
+  char *ConverterState::getObjectName ( string id ) {
     for ( unsigned i=0 ; i < _types.size() ; i++ ) {
       if ( ! strcmp ( id.c_str(), _types[i]->_id ) ) return ( _types[i]->_name );
     }
@@ -322,18 +322,18 @@ USING_NAMESPACE_HURRICANE
     string                      unboundObject = "";
     ConverterState::ObjectType* baseType;
 
-    for ( unsigned i=0 ; i < __cs.GetTypes().size() ; i++ ) {
-      baseType = __cs.GetTypes()[i]->PyBase ( object->ob_type );
+    for ( unsigned i=0 ; i < __cs.getTypes().size() ; i++ ) {
+      baseType = __cs.getTypes()[i]->PyBase ( object->ob_type );
       if ( PyCallable_Check(object) || baseType ) {
         *pArg = object;
         i = baseType->_index;
         __cs.AddId ( baseType->_id );
 
-        if ( ! __cs.GetTypes()[i]->_isPythonType ) {
+        if ( ! __cs.getTypes()[i]->_isPythonType ) {
           void** member = ( (void**)( (unsigned long)object + __objectOffset ) );
 
           if ( *member == NULL ) {
-            unboundObject = __cs.GetTypes()[i]->_name;
+            unboundObject = __cs.getTypes()[i]->_name;
             break;
           }
         }
@@ -343,15 +343,15 @@ USING_NAMESPACE_HURRICANE
     }
 
     if ( unboundObject.size() ) {
-      message << "Attempt to call " << __cs.GetFunction()
+      message << "Attempt to call " << __cs.getFunction()
               << "() with an unbound " << unboundObject << " argument";
 
       PyErr_SetString ( ProxyError, message.str().c_str() );
       return ( 0 );
     }
 
-    message << "Argument " << __cs.GetSize() + 1
-            << " of call to " << __cs.GetFunction()
+    message << "Argument " << __cs.getSize() + 1
+            << " of call to " << __cs.getFunction()
             << "() is of unmanaged type " << object->ob_type->tp_name;
 
     PyErr_SetString ( ProxyError, message.str().c_str() );
@@ -369,12 +369,12 @@ USING_NAMESPACE_HURRICANE
     __cs.Init ( function );
     if ( ! PyArg_ParseTuple(args,"O&",Converter,arg) ) return ( false );
 
-    string firstArgType    = ConverterState::GetObjectType ( __cs.GetObjectIds(), 0 );
-    string firstArgTypeExp = ConverterState::GetObjectType ( format             , 0 );
+    string firstArgType    = ConverterState::getObjectType ( __cs.getObjectIds(), 0 );
+    string firstArgTypeExp = ConverterState::getObjectType ( format             , 0 );
     if ( firstArgType != firstArgTypeExp ) {
-      message << "First argument of call to " << __cs.GetFunction()
+      message << "First argument of call to " << __cs.getFunction()
               << "() is of unexpected type " << (*arg)->ob_type->tp_name
-              << ", must be of type " << __cs.GetObjectName( firstArgTypeExp );
+              << ", must be of type " << __cs.getObjectName( firstArgTypeExp );
 
       PyErr_SetString ( ProxyError, message.str().c_str() );
       return ( false );
@@ -395,21 +395,21 @@ USING_NAMESPACE_HURRICANE
     __cs.Init ( function );
     if ( ! PyArg_ParseTuple(args,"O&O&",Converter,arg0,Converter,arg1) ) return ( false );
 
-    string firstArgType    = ConverterState::GetObjectType ( __cs.GetObjectIds(), 0 );
-    string firstArgTypeExp = ConverterState::GetObjectType ( format             , 0 );
+    string firstArgType    = ConverterState::getObjectType ( __cs.getObjectIds(), 0 );
+    string firstArgTypeExp = ConverterState::getObjectType ( format             , 0 );
     if ( firstArgType != firstArgTypeExp ) {
-      message << "First argument of call to " << __cs.GetFunction()
+      message << "First argument of call to " << __cs.getFunction()
               << "() is of unexpected type " << (*arg0)->ob_type->tp_name
-              << ", must be of type " << __cs.GetObjectName( firstArgTypeExp );
+              << ", must be of type " << __cs.getObjectName( firstArgTypeExp );
       PyErr_SetString ( ProxyError, message.str().c_str() );
       return ( false );
     }
-    string secondArgType    = ConverterState::GetObjectType ( __cs.GetObjectIds(), 1 );
-    string secondArgTypeExp = ConverterState::GetObjectType ( format             , 1 );
+    string secondArgType    = ConverterState::getObjectType ( __cs.getObjectIds(), 1 );
+    string secondArgTypeExp = ConverterState::getObjectType ( format             , 1 );
     if ( secondArgType != secondArgTypeExp ) {
-      message << "Second argument of call to " << __cs.GetFunction()
+      message << "Second argument of call to " << __cs.getFunction()
               << "() is of unexpected type " << (*arg1)->ob_type->tp_name
-              << ", must be of type " << __cs.GetObjectName( secondArgTypeExp );
+              << ", must be of type " << __cs.getObjectName( secondArgTypeExp );
       PyErr_SetString ( ProxyError, message.str().c_str() );
       return ( false );
     }
@@ -430,30 +430,30 @@ USING_NAMESPACE_HURRICANE
     __cs.Init ( function );
     if ( ! PyArg_ParseTuple(args,"O&O&O&",Converter,arg0,Converter,arg1,Converter,arg2) ) return ( false );
 
-    string firstArgType    = ConverterState::GetObjectType ( __cs.GetObjectIds(), 0 );
-    string firstArgTypeExp = ConverterState::GetObjectType ( format             , 0 );
+    string firstArgType    = ConverterState::getObjectType ( __cs.getObjectIds(), 0 );
+    string firstArgTypeExp = ConverterState::getObjectType ( format             , 0 );
     if ( firstArgType != firstArgTypeExp ) {
-      message << "First argument of call to " << __cs.GetFunction()
+      message << "First argument of call to " << __cs.getFunction()
               << "() is of unexpected type " << (*arg0)->ob_type->tp_name
-              << ", must be of type " << __cs.GetObjectName( firstArgTypeExp );
+              << ", must be of type " << __cs.getObjectName( firstArgTypeExp );
       PyErr_SetString ( ProxyError, message.str().c_str() );
       return ( false );
     }
-    string secondArgType    = ConverterState::GetObjectType ( __cs.GetObjectIds(), 1 );
-    string secondArgTypeExp = ConverterState::GetObjectType ( format             , 1 );
+    string secondArgType    = ConverterState::getObjectType ( __cs.getObjectIds(), 1 );
+    string secondArgTypeExp = ConverterState::getObjectType ( format             , 1 );
     if ( secondArgType != secondArgTypeExp ) {
-      message << "Second argument of call to " << __cs.GetFunction()
+      message << "Second argument of call to " << __cs.getFunction()
               << "() is of unexpected type " << (*arg1)->ob_type->tp_name
-              << ", must be of type " << __cs.GetObjectName( secondArgTypeExp );
+              << ", must be of type " << __cs.getObjectName( secondArgTypeExp );
       PyErr_SetString ( ProxyError, message.str().c_str() );
       return ( false );
     }
-    string thirdArgType    = ConverterState::GetObjectType ( __cs.GetObjectIds(), 2 );
-    string thirdArgTypeExp = ConverterState::GetObjectType ( format             , 2 );
+    string thirdArgType    = ConverterState::getObjectType ( __cs.getObjectIds(), 2 );
+    string thirdArgTypeExp = ConverterState::getObjectType ( format             , 2 );
     if ( thirdArgType != thirdArgTypeExp ) {
-      message << "Third argument of call to " << __cs.GetFunction()
+      message << "Third argument of call to " << __cs.getFunction()
               << "() is of unexpected type " << (*arg2)->ob_type->tp_name
-              << ", must be of type " << __cs.GetObjectName( thirdArgTypeExp );
+              << ", must be of type " << __cs.getObjectName( thirdArgTypeExp );
       PyErr_SetString ( ProxyError, message.str().c_str() );
       return ( false );
     }
@@ -493,25 +493,25 @@ extern "C" {
 extern "C" {
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNetExternalComponents_GetNetExternalComponents ()"
+  // Attribute Method  :  "PyNetExternalComponents_getNetExternalComponents ()"
 
-  PyObject* PyNetExternalComponents_GetExternalComponents ( PyObject* module, PyObject* args )
+  PyObject* PyNetExternalComponents_getExternalComponents ( PyObject* module, PyObject* args )
   {
-    trace << "PyNetExternalComponents_GetExternalComponents()" << endl;
+    trace << "PyNetExternalComponents_getExternalComponents()" << endl;
 
     PyObject* arg0;
-    if ( ! ParseOneArg ( "GetExternalComponents", args, ":ent", &arg0) ) return ( NULL );
+    if ( ! ParseOneArg ( "getExternalComponents", args, ":ent", &arg0) ) return ( NULL );
 
     PyComponentLocator* pyComponentLocator = NULL;
 
     HTRY
 
-    Components components = GetExternalComponents ( PYNET_O ( arg0 ) );
+    Components components = getExternalComponents ( PYNET_O ( arg0 ) );
 
     pyComponentLocator = PyObject_NEW ( PyComponentLocator, &PyTypeComponentLocator );
     if (pyComponentLocator == NULL) { return NULL; }
 
-    pyComponentLocator->_object = components.GetLocator ();
+    pyComponentLocator->_object = components.getLocator ();
 
     HCATCH
 
@@ -523,12 +523,12 @@ extern "C" {
   // x-------------------------------------------------------------x
 
   static PyMethodDef PyHurricane_Methods[] =
-    { { "GetUnit"               ,              PyUnit_GetUnit                    , METH_VARARGS, "Convert to Unit." }
-    , { "GetValue"              ,              PyUnit_GetValue                   , METH_VARARGS, "Convert a Unit to a value." }
-    , { "GetDataBase"           , (PyCFunction)PyDataBase_GetDataBase            , METH_NOARGS , "Get the current DataBase." }
+    { { "getUnit"               ,              PyUnit_getUnit                    , METH_VARARGS, "Convert to Unit." }
+    , { "getValue"              ,              PyUnit_getValue                   , METH_VARARGS, "Convert a Unit to a value." }
+    , { "getDataBase"           , (PyCFunction)PyDataBase_getDataBase            , METH_NOARGS , "Get the current DataBase." }
     , { "OpenUpdateSession"     , (PyCFunction)PyUpdateSession_OpenUpdateSession , METH_NOARGS , "Open an UpdateSession." }
     , { "CloseUpdateSession"    , (PyCFunction)PyUpdateSession_CloseUpdateSession, METH_NOARGS , "Close an UpdateSession." }
-    , { "GetExternalComponents" , (PyCFunction)PyNetExternalComponents_GetExternalComponents, METH_VARARGS, "Returns the components collection of an external net" }
+    , { "getExternalComponents" , (PyCFunction)PyNetExternalComponents_getExternalComponents, METH_VARARGS, "Returns the components collection of an external net" }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 
@@ -718,7 +718,7 @@ extern "C" {
 } // End of extern "C".
 
 
-# endif // End of Python Module Code Part.
+#endif // End of Python Module Code Part.
 
 
 

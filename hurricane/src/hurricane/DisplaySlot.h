@@ -34,8 +34,6 @@ class DisplaySlot : public DBo {
         private: Cell* _cell;
         private: Name _name; 
         private: QuadTree _quadTree;
-        //private: GdkGC* _drawGC;
-        //private: GdkGC* _fillGC;
         private: bool   _isVisible;
 
 // Constructors
@@ -43,20 +41,15 @@ class DisplaySlot : public DBo {
 
         protected: DisplaySlot(Cell* cell,const Name& name, unsigned short red1, unsigned short green1, unsigned short blue1, const string& pattern1, unsigned linewidth1, unsigned short red2, unsigned short green2, unsigned short blue2, const string& pattern2, unsigned linewidth2);
         public: static DisplaySlot* Create(Cell* cell, const Name& name, unsigned short red1, unsigned short green1, unsigned short blue1, const string& pattern1 = "FFFFFFFFFFFFFFFF", unsigned linewidth1=0, unsigned short red2 = 0, unsigned short green2 = 0, unsigned short blue2 = 0, const string& pattern2 = "FFFFFFFFFFFFFFFF", unsigned linewidth2=0);
-        protected: virtual void _PostCreate();
-
-// Destructor
-// **********
-
-        protected: virtual void _PreDelete();
+        protected: virtual void _postCreate();
 
 // Accessors
 // *********
 
-        public: const Name& GetName() const {return _name;};
-        public: const Box& GetBoundingBox() const {return _quadTree.GetBoundingBox();};
-        public: UserGos GetUserGos() const; 
-        public: UserGos GetUserGosUnder(const Box& area) const; 
+        public: const Name& getName() const {return _name;};
+        public: const Box& getBoundingBox() const {return _quadTree.getBoundingBox();};
+        public: UserGos getUserGos() const; 
+        public: UserGos getUserGosUnder(const Box& area) const; 
             
 // Predicates
 // **********
@@ -71,20 +64,17 @@ class DisplaySlot : public DBo {
 
 // Others
 // ******
-        //public: GdkGC* _GetDrawGC() const { return _drawGC; }
-        //public: GdkGC* _GetFillGC() const { return _fillGC; }
-        public: QuadTree& _GetQuadTree() { return _quadTree; }
-        //public: virtual void _Draw(View* view, const Box& updateArea, const Transformation& transformation);
+        public: QuadTree& _getQuadTree() { return _quadTree; }
                 
-        public: virtual string _GetTypeName() const {return _TName("DisplaySlot");};
-        public: virtual string _GetString() const;
-        public: virtual Record* _GetRecord() const;
+        public: virtual string _getTypeName() const {return _TName("DisplaySlot");};
+        public: virtual string _getString() const;
+        public: virtual Record* _getRecord() const;
 
 };
 
-DisplaySlots GetDisplaySlots(const Cell* cell);
+DisplaySlots getDisplaySlots(const Cell* cell);
 
-DisplaySlot* GetDisplaySlot(const Cell* cell, const Name& name);
+DisplaySlot* getDisplaySlot(const Cell* cell, const Name& name);
 
 
 

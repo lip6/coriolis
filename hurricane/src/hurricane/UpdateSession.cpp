@@ -21,93 +21,93 @@ stack<UpdateSession*>* UPDATOR_STACK = NULL;
 
 UpdateSession::UpdateSession()
 // ***************************
-:	Inherit()
+:    Inherit()
 {
 }
 
-void UpdateSession::Delete()
+void UpdateSession::destroy()
 // *************************
 {
-	throw Error("Abnormal deletion of " + _TName("UpdateSession"));
+    throw Error("Abnormal deletion of " + _TName("UpdateSession"));
 }
 
-const Name& UpdateSession::GetPropertyName()
+const Name& UpdateSession::getPropertyName()
 // *****************************************
 {
-	static Name NAME = _PName("UpdateSession");
-	return NAME;
+    static Name NAME = _PName("UpdateSession");
+    return NAME;
 }
 
-UpdateSession* UpdateSession::_Create()
+UpdateSession* UpdateSession::_create()
 // ************************************
 {
-	UpdateSession* updateSession = new UpdateSession();
+    UpdateSession* updateSession = new UpdateSession();
 
-	updateSession->_PostCreate();
+    updateSession->_postCreate();
 
-	return updateSession;
+    return updateSession;
 }
 
-void UpdateSession::_PostCreate()
+void UpdateSession::_postCreate()
 // ******************************
 {
-	Inherit::_PostCreate();
+    Inherit::_postCreate();
 
-	if (!UPDATOR_STACK) UPDATOR_STACK = new stack<UpdateSession*>();
+    if (!UPDATOR_STACK) UPDATOR_STACK = new stack<UpdateSession*>();
 
-	UPDATOR_STACK->push(this);
+    UPDATOR_STACK->push(this);
 }
 
-void UpdateSession::_Delete()
+void UpdateSession::_destroy()
 // **************************
 {
-	Inherit::Delete();
+    Inherit::destroy();
 }
 
-void UpdateSession::_PreDelete()
+void UpdateSession::_preDestroy()
 // *****************************
 {
-	if (!UPDATOR_STACK || UPDATOR_STACK->empty())
-		throw Error("Invalid update session deletion : empty stack");
+    if (!UPDATOR_STACK || UPDATOR_STACK->empty())
+        throw Error("Invalid update session deletion : empty stack");
 
-	if (UPDATOR_STACK->top() != this)
-		throw Error("Invalid update session deletion : not on top");
+    if (UPDATOR_STACK->top() != this)
+        throw Error("Invalid update session deletion : not on top");
 
-	UPDATOR_STACK->pop();
+    UPDATOR_STACK->pop();
 
-	for_each_dbo(owner, GetOwners()) {
-		if (is_a<Go*>(owner)) ((Go*)owner)->Materialize();
-		end_for;
-	}
+    for_each_dbo(owner, getOwners()) {
+        if (is_a<Go*>(owner)) ((Go*)owner)->Materialize();
+        end_for;
+    }
 
-	Inherit::_PreDelete();
+    Inherit::_preDestroy();
 }
 
-string UpdateSession::_GetString() const
+string UpdateSession::_getString() const
 // *************************************
 {
-	return "<" + _TName("UpdateSession") + ">";
+    return "<" + _TName("UpdateSession") + ">";
 }
 
-Record* UpdateSession::_GetRecord() const
+Record* UpdateSession::_getRecord() const
 // ********************************
 {
-	Record* record = Inherit::_GetRecord();
-	if (record) {
-	}
-	return record;
+    Record* record = Inherit::_getRecord();
+    if (record) {
+    }
+    return record;
 }
 
-void UpdateSession::OnCapturedBy(DBo* owner)
+void UpdateSession::onCapturedBy(DBo* owner)
 // *****************************************
 {
-	if (!is_a<Go*>(owner))
-		throw Error("Bad update session capture : not a graphic object");
+    if (!is_a<Go*>(owner))
+        throw Error("Bad update session capture : not a graphic object");
 
-	Inherit::OnCapturedBy(owner);
+    Inherit::onCapturedBy(owner);
 }
 
-void UpdateSession::OnNotOwned()
+void UpdateSession::onNotOwned()
 // *****************************
 {
 }
@@ -124,29 +124,29 @@ void Go::Invalidate(bool propagateFlag)
 // trace << "Invalidate(" << this << ")" << endl;
 // trace_in();
 
-	if (!UPDATOR_STACK || UPDATOR_STACK->empty())
-		throw Error("Can't invalidate go : empty update session stack");
+    if (!UPDATOR_STACK || UPDATOR_STACK->empty())
+        throw Error("Can't invalidate go : empty update session stack");
 
-	Property* property = GetProperty(UpdateSession::GetPropertyName());
+    Property* property = getProperty(UpdateSession::getPropertyName());
 
-	if (property) {
-		if (!is_a<UpdateSession*>(property))
-			throw Error("Can't invalidate go : bad update session type");
-	}
-	else {
+    if (property) {
+        if (!is_a<UpdateSession*>(property))
+            throw Error("Can't invalidate go : bad update session type");
+    }
+    else {
         SlaveEntityMap::iterator  it;
         SlaveEntityMap::iterator  end;
-        GetCell()->_GetSlaveEntities(this,it,end);
+        getCell()->_getSlaveEntities(this,it,end);
         for(; it != end ; it++) {
           Go* go = dynamic_cast<Go*>(it->second);
           if (go) go->Invalidate(propagateFlag);
         }
 
-		if (IsMaterialized()) {
-			Unmaterialize();
-			Put(UPDATOR_STACK->top());
-		}
-	}
+        if (IsMaterialized()) {
+            Unmaterialize();
+            put(UPDATOR_STACK->top());
+        }
+    }
 // trace << "done" << endl;
 // trace_out();
 }
@@ -162,7 +162,7 @@ void OpenUpdateSession()
 {
 // trace << "OpenUpdateSession()" << endl;
 // trace_in();
-	UpdateSession::_Create();
+    UpdateSession::_create();
 }
 
 void CloseUpdateSession()
@@ -171,10 +171,10 @@ void CloseUpdateSession()
 // trace << "CloseUpdateSession()" << endl;
 // trace_in();
 
-	if (!UPDATOR_STACK || UPDATOR_STACK->empty())
-		throw Error("Can't end update : empty update session stack");
+    if (!UPDATOR_STACK || UPDATOR_STACK->empty())
+        throw Error("Can't end update : empty update session stack");
 
-	UPDATOR_STACK->top()->_Delete();
+    UPDATOR_STACK->top()->_destroy();
 
 // trace << "done" << endl;
 // trace_out();

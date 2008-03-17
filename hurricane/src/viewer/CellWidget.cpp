@@ -1,6 +1,6 @@
 // *************************************************************************************************
 // *************************************************************************************************
-//   File:	CellWidget.cpp
+//   File:    CellWidget.cpp
 // *************************************************************************************************
 // *************************************************************************************************
 
@@ -149,8 +149,8 @@ CellWidget::CellWidget(Cell* cell,
     //_commandMap(),
     //_startedCommand(NULL),
     _gridOrigin(),
-    _gridXStep(GetUnit(1)),
-    _gridYStep(GetUnit(1)),
+    _gridXStep(getUnit(1)),
+    _gridYStep(getUnit(1)),
     _gridIsVisible(true),
     _gridAxesAreVisible(false),
     _gridDisplayThreshold(8),
@@ -175,11 +175,11 @@ CellWidget::CellWidget(Cell* cell,
     setFocusPolicy(Qt::StrongFocus); // to accepts focus by tabbing and clicking
     setMouseTracking(true); // to have move events even a mouse button isn't pressed
 
-    DataBase* database = GetDataBase();
+    DataBase* database = getDataBase();
     if (database) {
-        Technology* technology = database->GetTechnology();
+        Technology* technology = database->getTechnology();
         if (technology) {
-            for_each_basic_layer(basiclayer, technology->GetBasicLayers()) {
+            for_each_basic_layer(basiclayer, technology->getBasicLayers()) {
                 _basicLayersBrush[basiclayer] = 
                     ::getBrush(basiclayer->getFillPattern(),
                             basiclayer->getRedValue(),
@@ -230,7 +230,7 @@ CellWidget::~CellWidget()
 //
 //    View* view = getView();
 //    if (view) {
-//	label.add(" ", view);
+//    label.add(" ", view);
 //    }
 //
 //    return label;
@@ -242,45 +242,45 @@ CellWidget::~CellWidget()
 //    Record* record = new Record(this);
 //
 //    if (record) {
-//	record->addHeader("Widget");
+//    record->addHeader("Widget");
 //
-//	record->addHeader("CellWidget");
+//    record->addHeader("CellWidget");
 //
-//	record->addSlot("View",                  getView());
-//	record->addSlot("Center",                getCenter());
-//	record->addSlot("Scale",                 getScale());
-//	record->addSlot("BackgroundColor",       My::getLabel(getBackgroundColor()));
-//	record->addSlot("ForegroundColor",       My::getLabel(getForegroundColor()));
-//	record->addSlot("DoubleBuffering",       doubleBuffering());
-//	record->addSlot("AutomaticScrolling",    automaticScrolling());
-//	record->addSlot("VisibleLayers",         getVisibleLayers());
-//	record->addSlot("Commands",              getCommands());
-//	record->addSlot("GridOrigin",            getGridOrigin());
-//	record->addSlot("GridXStep",             GetValueString(getGridXStep()));
-//	record->addSlot("GridYStep",             GetValueString(getGridYStep()));
-//	record->addSlot("GridDisplayThreshold",  getGridDisplayThreshold());
-//	record->addSlot("GridIsVisible",         gridIsVisible());
-//	record->addSlot("GridAxesAreVisible",    gridAxesAreVisible());
-//	record->addSlot("GridIsDrawable",        gridIsDrawable());
-//	record->addSlot("GridColor",             My::getLabel(getGridColor()));
-//	record->addSlot("SnapGrid",              snapGrid());
-//	record->addSlot("DisplayDepth",          getDisplayDepth());
-//	record->addSlot("DisplaySize",           getDisplaySize());
-//	record->addSlot("SelectionIsVisible",    selectionIsVisible());
-//	record->addSlot("Selection",             getSelection());
-//	record->addSlot("SelectionBox",          getSelectionBox());
-//	unsigned limit = getSelectionLimit();
-//	if (limit) {
-//	    record->addSlot("SelectionLimit", limit);
-//	}
-//	else {
-//	    record->addSlot("SelectionLimit", "NONE");
-//	}
-//	record->addSlot("SelectionColor",        My::getLabel(getSelectionColor()));
-//	record->addSlot("HighlightionIsVisible", highlightionIsVisible());
-//	record->addSlot("Highlightion",          getHighlightion());
-//	record->addSlot("HighlightionBox",       getHighlightionBox());
-//	record->addSlot("TrackBox",              getTrackBox());
+//    record->addSlot("View",                  getView());
+//    record->addSlot("Center",                getCenter());
+//    record->addSlot("Scale",                 getScale());
+//    record->addSlot("BackgroundColor",       My::getLabel(getBackgroundColor()));
+//    record->addSlot("ForegroundColor",       My::getLabel(getForegroundColor()));
+//    record->addSlot("DoubleBuffering",       doubleBuffering());
+//    record->addSlot("AutomaticScrolling",    automaticScrolling());
+//    record->addSlot("VisibleLayers",         getVisibleLayers());
+//    record->addSlot("Commands",              getCommands());
+//    record->addSlot("GridOrigin",            getGridOrigin());
+//    record->addSlot("GridXStep",             getValueString(getGridXStep()));
+//    record->addSlot("GridYStep",             getValueString(getGridYStep()));
+//    record->addSlot("GridDisplayThreshold",  getGridDisplayThreshold());
+//    record->addSlot("GridIsVisible",         gridIsVisible());
+//    record->addSlot("GridAxesAreVisible",    gridAxesAreVisible());
+//    record->addSlot("GridIsDrawable",        gridIsDrawable());
+//    record->addSlot("GridColor",             My::getLabel(getGridColor()));
+//    record->addSlot("SnapGrid",              snapGrid());
+//    record->addSlot("DisplayDepth",          getDisplayDepth());
+//    record->addSlot("DisplaySize",           getDisplaySize());
+//    record->addSlot("SelectionIsVisible",    selectionIsVisible());
+//    record->addSlot("Selection",             getSelection());
+//    record->addSlot("SelectionBox",          getSelectionBox());
+//    unsigned limit = getSelectionLimit();
+//    if (limit) {
+//        record->addSlot("SelectionLimit", limit);
+//    }
+//    else {
+//        record->addSlot("SelectionLimit", "NONE");
+//    }
+//    record->addSlot("SelectionColor",        My::getLabel(getSelectionColor()));
+//    record->addSlot("HighlightionIsVisible", highlightionIsVisible());
+//    record->addSlot("Highlightion",          getHighlightion());
+//    record->addSlot("HighlightionBox",       getHighlightionBox());
+//    record->addSlot("TrackBox",              getTrackBox());
 //    }
 //
 //    return record;
@@ -324,19 +324,19 @@ CellWidget::getScale() const
 Unit
 CellWidget::getX(int screenX) const
 {
-    return GetUnit((screenX - _screenDx) / _scale);
+    return getUnit((screenX - _screenDx) / _scale);
 }
 
 Unit
 CellWidget::getY(int screenY) const
 {
-    return GetUnit(((height() - screenY) - _screenDy) / _scale);
+    return getUnit(((height() - screenY) - _screenDy) / _scale);
 }
 
 Unit
 CellWidget::getSize(int screenSize) const
 {
-    return GetUnit(screenSize / _scale);
+    return getUnit(screenSize / _scale);
 }
 
 Point
@@ -349,13 +349,13 @@ Box
 CellWidget::getBox(const QRect& screenRect) const
 {
     if (screenRect.isEmpty()) {
-	return Box();
+    return Box();
     }
 
     return Box(getX(screenRect.left()),
-	       getY(screenRect.bottom()),
-	       getX(screenRect.right()),
-	       getY(screenRect.top()));
+           getY(screenRect.bottom()),
+           getX(screenRect.right()),
+           getY(screenRect.top()));
 }
 
 
@@ -371,19 +371,19 @@ CellWidget::getBox(const QRect& screenRect) const
 int
 CellWidget::getScreenX(const Unit& x) const
 {
-    return _screenDx + (int)rint(GetValue(x) * _scale);
+    return _screenDx + (int)rint(getValue(x) * _scale);
 }
 
 int
 CellWidget::getScreenY(const Unit& y) const
 {
-    return height() - (int)rint(_screenDy + (GetValue(y) * _scale));
+    return height() - (int)rint(_screenDy + (getValue(y) * _scale));
 }
 
 int
 CellWidget::getScreenSize(const Unit& size) const
 {
-    return (int)rint(GetValue(size) * _scale);
+    return (int)rint(getValue(size) * _scale);
 }
 
 QPoint
@@ -396,7 +396,7 @@ QRect
 CellWidget::getScreenRect(const Box& box) const
 {
     if (box.isEmpty()) {
-	return QRect();
+    return QRect();
     }
 
     int screenX1 = getScreenX(box.getXMin());
@@ -405,7 +405,7 @@ CellWidget::getScreenRect(const Box& box) const
     int screenY2 = getScreenY(box.getYMax());
 
     return QRect(QPoint(min(screenX1, screenX2), min(screenY1, screenY2)),
-		 QPoint(max(screenX1, screenX2), max(screenY1, screenY2)));
+         QPoint(max(screenX1, screenX2), max(screenY1, screenY2)));
 }
 
 
@@ -422,7 +422,7 @@ CellWidget::getSnapPoint(const Point& point) const
 
 Point
 CellWidget::getSnapPoint(int screenX,
-		       int screenY) const
+               int screenY) const
 {
     return getSnapPoint(Point(getX(screenX), getY(screenY)));
 }
@@ -436,12 +436,12 @@ CellWidget::getSnapPoint(int screenX,
 BasicLayers
 CellWidget::getVisibleLayers() const
 {
-    DataBase* database = GetDataBase();
+    DataBase* database = getDataBase();
     if (database) {
-	Technology* technology = database->GetTechnology();
-	if (technology) {
-            return technology->GetBasicLayers(_visibleLayerMask);
-	}
+    Technology* technology = database->getTechnology();
+    if (technology) {
+            return technology->getBasicLayers(_visibleLayerMask);
+    }
     }
     return NULL;
 }
@@ -477,46 +477,46 @@ CellWidget::getVisibleLayers() const
 
 Unit
 CellWidget::getGridX(const Unit& x,
-		   int         sign) const
+           int         sign) const
 {
     if (!((-1 <= sign) && (sign <= 1))) {
-	//throw Error(INVALID_REQUEST, __FILE__, __LINE__);
+    //throw Error(INVALID_REQUEST, __FILE__, __LINE__);
     }
 
     Unit cx = x;
     Unit xo = _gridOrigin.getX();
 
     if (cx != xo) {
-	cx -= xo;
-	switch (sign) {
-	    case -1 : {
-		if (0 < cx) {
-		    return ((cx / _gridXStep) * _gridXStep) + xo;
-		}
-		else {
-		    if (cx < 0) {
-			return (((cx / _gridXStep) - 1) * _gridXStep) + xo;
-		    }
-		}
-		return cx + xo;
-	    }
-	    case 0 : {
-		Unit x1 = (cx / _gridXStep) * _gridXStep;
-		Unit x2 = ((x1 < cx) ? (x1 + _gridXStep) : (x1 - _gridXStep));
-		return ((labs(x1 - cx) <= labs(x2 - cx)) ? x1 : x2) + xo;
-	    }
-	    case 1 : {
-		if (0 < cx) {
-		    return (((cx / _gridXStep) + 1) * _gridXStep) + xo;
-		}
-		else {
-		    if (cx < 0) {
-			return ((cx / _gridXStep) * _gridXStep) + xo;
-		    }
-		}
-		return cx + xo;
-	    }
-	}
+    cx -= xo;
+    switch (sign) {
+        case -1 : {
+        if (0 < cx) {
+            return ((cx / _gridXStep) * _gridXStep) + xo;
+        }
+        else {
+            if (cx < 0) {
+            return (((cx / _gridXStep) - 1) * _gridXStep) + xo;
+            }
+        }
+        return cx + xo;
+        }
+        case 0 : {
+        Unit x1 = (cx / _gridXStep) * _gridXStep;
+        Unit x2 = ((x1 < cx) ? (x1 + _gridXStep) : (x1 - _gridXStep));
+        return ((labs(x1 - cx) <= labs(x2 - cx)) ? x1 : x2) + xo;
+        }
+        case 1 : {
+        if (0 < cx) {
+            return (((cx / _gridXStep) + 1) * _gridXStep) + xo;
+        }
+        else {
+            if (cx < 0) {
+            return ((cx / _gridXStep) * _gridXStep) + xo;
+            }
+        }
+        return cx + xo;
+        }
+    }
     }
 
     return cx;
@@ -524,46 +524,46 @@ CellWidget::getGridX(const Unit& x,
 
 Unit
 CellWidget::getGridY(const Unit& y,
-		   int         sign) const
+           int         sign) const
 {
     if (!((-1 <= sign) && (sign <= 1))) {
-	//throw Error(INVALID_REQUEST, __FILE__, __LINE__);
+    //throw Error(INVALID_REQUEST, __FILE__, __LINE__);
     }
 
     Unit cy = y;
     Unit yo = _gridOrigin.getY();
 
     if (cy != yo) {
-	cy -= yo;
-	switch (sign) {
-	    case -1 : {
-		if (0 < cy) {
-		    return ((cy / _gridYStep) * _gridYStep) + yo;
-		}
-		else {
-		    if (cy < 0) {
-			return (((cy / _gridYStep) - 1) * _gridYStep) + yo;
-		    }
-		}
-		return cy + yo;
-	    }
-	    case 0 : {
-		Unit y1 = (cy / _gridYStep) * _gridYStep;
-		Unit y2 = ((y1 < cy) ? (y1 + _gridYStep) : (y1 - _gridYStep));
-		return ((labs(y1 - cy) <= labs(y2 - cy)) ? y1 : y2) + yo;
-	    }
-	    case 1 : {
-		if (0 < cy) {
-		    return (((cy / _gridYStep) + 1) * _gridYStep) + yo;
-		}
-		else {
-		    if (cy < 0) {
-			return ((cy / _gridYStep) * _gridYStep) + yo;
-		    }
-		}
-		return cy + yo;
-	    }
-	}
+    cy -= yo;
+    switch (sign) {
+        case -1 : {
+        if (0 < cy) {
+            return ((cy / _gridYStep) * _gridYStep) + yo;
+        }
+        else {
+            if (cy < 0) {
+            return (((cy / _gridYStep) - 1) * _gridYStep) + yo;
+            }
+        }
+        return cy + yo;
+        }
+        case 0 : {
+        Unit y1 = (cy / _gridYStep) * _gridYStep;
+        Unit y2 = ((y1 < cy) ? (y1 + _gridYStep) : (y1 - _gridYStep));
+        return ((labs(y1 - cy) <= labs(y2 - cy)) ? y1 : y2) + yo;
+        }
+        case 1 : {
+        if (0 < cy) {
+            return (((cy / _gridYStep) + 1) * _gridYStep) + yo;
+        }
+        else {
+            if (cy < 0) {
+            return ((cy / _gridYStep) * _gridYStep) + yo;
+            }
+        }
+        return cy + yo;
+        }
+    }
     }
 
     return cy;
@@ -571,8 +571,8 @@ CellWidget::getGridY(const Unit& y,
 
 Point
 CellWidget::getGridPoint(const Point& point,
-		       int          xSign,
-		       int          ySign) const
+               int          xSign,
+               int          ySign) const
 {
     return Point(getGridX(point.getX(), xSign), getGridY(point.getY(), ySign));
 }
@@ -591,7 +591,7 @@ CellWidget::getGridPoint(const Point& point,
 //    View* view = getView();
 //
 //    if (view) {
-//	world.merge(view->getBoundingBox());
+//    world.merge(view->getBoundingBox());
 //    }
 //
 //    return world;
@@ -617,7 +617,7 @@ CellWidget::getGridPoint(const Point& point,
 //Occurrences
 //CellWidget::getSelection() const
 //{
-//    return getSelectors().getAssociates(GetOccurrence<Selector>());
+//    return getSelectors().getAssociates(getOccurrence<Selector>());
 //}
 
 //Box
@@ -626,8 +626,8 @@ CellWidget::getGridPoint(const Point& point,
 //    Box selectionBox;
 //
 //    forEachOccurrence(occurrence, getSelection()) {
-//	selectionBox.merge(occurrence.getBoundingBox());
-//	endFor;
+//    selectionBox.merge(occurrence.getBoundingBox());
+//    endFor;
 //    }
 //
 //    return selectionBox;
@@ -642,7 +642,7 @@ CellWidget::getGridPoint(const Point& point,
 //Occurrences
 //CellWidget::getHighlightion() const
 //{
-//    return getHighlightors().getAssociates(GetOccurrence<Highlightor>());
+//    return getHighlightors().getAssociates(getOccurrence<Highlightor>());
 //}
 //
 //Box
@@ -651,8 +651,8 @@ CellWidget::getGridPoint(const Point& point,
 //    Box highlightionBox;
 //
 //    forEachOccurrence(occurrence, getHighlightion()) {
-//	highlightionBox.merge(occurrence.getBoundingBox());
-//	endFor;
+//    highlightionBox.merge(occurrence.getBoundingBox());
+//    endFor;
 //    }
 //
 //    return highlightionBox;
@@ -732,13 +732,13 @@ CellWidget::hasRecord() const
 //CellWidget::setTrackBox(TrackBox* trackBox)
 //{
 //    if (trackBox != _trackBox) {
-//	if (_trackBox) {
-//	    _trackBox->_setCellWidget(NULL);
-//	}
-//	_trackBox = trackBox;
-//	if (_trackBox) {
-//	    _trackBox->_setCellWidget(this);
-//	}
+//    if (_trackBox) {
+//        _trackBox->_setCellWidget(NULL);
+//    }
+//    _trackBox = trackBox;
+//    if (_trackBox) {
+//        _trackBox->_setCellWidget(this);
+//    }
 //    }
 //}
 //
@@ -765,7 +765,7 @@ bool
 CellWidget::isVisible(BasicLayer* layer) const
 {
     if (!layer) {
-	//throw Error(NULL_LAYER, __FILE__, __LINE__);
+    //throw Error(NULL_LAYER, __FILE__, __LINE__);
     }
 
     return (_visibleLayerMask & layer->getMask());
@@ -775,7 +775,7 @@ bool
 CellWidget::isDrawable(BasicLayer* layer) const
 {
     if (!layer) {
-	//throw Error(NULL_LAYER, __FILE__, __LINE__);
+    //throw Error(NULL_LAYER, __FILE__, __LINE__);
     }
 
     return (layer->getDisplayThreshold() <= _scale);
@@ -791,16 +791,16 @@ CellWidget::isDrawable(BasicLayer* layer) const
 
 bool
 CellWidget::isOnGridX(const Unit& x,
-		    unsigned    n) const
+            unsigned    n) const
 {
     if (!n) {
-	//throw Error(INVALID_REQUEST, __FILE__, __LINE__);
+    //throw Error(INVALID_REQUEST, __FILE__, __LINE__);
     }
 
     Unit delta = labs(x - _gridOrigin.getX());
 
     if (delta < 0) {
-	delta = -delta;
+    delta = -delta;
     }
 
     Unit step = _gridXStep * n;
@@ -810,16 +810,16 @@ CellWidget::isOnGridX(const Unit& x,
 
 bool
 CellWidget::isOnGridY(const Unit& y,
-		    unsigned    n) const
+            unsigned    n) const
 {
     if (!n) {
-	//throw Error(INVALID_REQUEST, __FILE__, __LINE__);
+    //throw Error(INVALID_REQUEST, __FILE__, __LINE__);
     }
 
     Unit delta = labs(y - _gridOrigin.getY());
 
     if (delta < 0) {
-	delta = -delta;
+    delta = -delta;
     }
 
     Unit step = _gridYStep * n;
@@ -829,8 +829,8 @@ CellWidget::isOnGridY(const Unit& y,
 
 bool
 CellWidget::isOnGridPoint(const Point& point,
-			unsigned     xN,
-			unsigned     yN) const
+            unsigned     xN,
+            unsigned     yN) const
 {
     return isOnGridX(point.getX(), xN) && isOnGridY(point.getX(), yN);
 }
@@ -848,7 +848,7 @@ CellWidget::isOnGridPoint(const Point& point,
 //CellWidget::isSelected(const Occurrence& occurrence) const
 //{
 //    Selector* selector =
-//	dynamic_cast<Selector*>(occurrence.getProperty(Selector::getPropertyName()));
+//    dynamic_cast<Selector*>(occurrence.getProperty(Selector::getPropertyName()));
 //
 //    return (selector) ? selector->_contains((CellWidget*)this) : false;
 //}
@@ -863,7 +863,7 @@ CellWidget::isOnGridPoint(const Point& point,
 //CellWidget::isHighlighted(const Occurrence& occurrence) const
 //{
 //    Highlightor* highlightor =
-//	dynamic_cast<Highlightor*>(occurrence.getProperty(Highlightor::getPropertyName()));
+//    dynamic_cast<Highlightor*>(occurrence.getProperty(Highlightor::getPropertyName()));
 //
 //    return (highlightor) ? highlightor->_contains((CellWidget*)this) : false;
 //}
@@ -885,8 +885,8 @@ void
 CellWidget::setBackgroundColor(const QColor& color)
 {
     if (color != _backgroundColor) {
-	_backgroundColor = color;
-	invalidate();
+    _backgroundColor = color;
+    invalidate();
     }
 }
 
@@ -894,8 +894,8 @@ void
 CellWidget::setForegroundColor(const QColor& color)
 {
     if (color != _foregroundColor) {
-	_foregroundColor = color;
-	invalidate();
+    _foregroundColor = color;
+    invalidate();
     }
 }
 
@@ -907,27 +907,27 @@ CellWidget::setForegroundColor(const QColor& color)
 
 void
 CellWidget::setVisible(BasicLayer* layer,
-		     bool   visible)
+             bool   visible)
 {
     if (isVisible(layer) != visible) {
-	if (visible) {
-	    _visibleLayerMask |= layer->getMask();
-	}
-	else {
-	    _visibleLayerMask &= ~layer->getMask();
-	}
+    if (visible) {
+        _visibleLayerMask |= layer->getMask();
+    }
+    else {
+        _visibleLayerMask &= ~layer->getMask();
+    }
 
-	onSetVisible(layer, visible);
+    onSetVisible(layer, visible);
 
-	Cell* cell = getCell();
+    Cell* cell = getCell();
 
-	//if (view && !view->getSlices(layer).isEmpty() && isDrawable(layer)) {
-	//    invalidate();
-	//}
+    //if (view && !view->getSlices(layer).isEmpty() && isDrawable(layer)) {
+    //    invalidate();
+    //}
 
-	if (cell && !cell->GetSlices(layer->getMask()).IsEmpty() && isDrawable(layer)) {
-	    invalidate();
-	}
+    if (cell && !cell->getSlices(layer->getMask()).IsEmpty() && isDrawable(layer)) {
+        invalidate();
+    }
     }
 }
 
@@ -947,13 +947,13 @@ void
 CellWidget::setGridOrigin(const Point& origin)
 {
     if (origin != _gridOrigin) {
-	bool gridIsDrawn = gridIsVisible() && gridIsDrawable();
+    bool gridIsDrawn = gridIsVisible() && gridIsDrawable();
 
-	_gridOrigin = origin;
+    _gridOrigin = origin;
 
-	if (gridIsDrawn || (gridIsVisible() && gridIsDrawable())) {
-	    invalidate();
-	}
+    if (gridIsDrawn || (gridIsVisible() && gridIsDrawable())) {
+        invalidate();
+    }
     }
 }
 
@@ -961,17 +961,17 @@ void
 CellWidget::setGridXStep(const Unit& step)
 {
     if (!step) {
-	//throw Error(INVALID_REQUEST, __FILE__, __LINE__);
+    //throw Error(INVALID_REQUEST, __FILE__, __LINE__);
     }
 
     if (step != _gridXStep) {
-	bool gridIsDrawn = gridIsVisible() && gridIsDrawable();
+    bool gridIsDrawn = gridIsVisible() && gridIsDrawable();
 
-	_gridXStep = step;
+    _gridXStep = step;
 
-	if (gridIsDrawn || (gridIsVisible() && gridIsDrawable())) {
-	    invalidate();
-	}
+    if (gridIsDrawn || (gridIsVisible() && gridIsDrawable())) {
+        invalidate();
+    }
     }
 }
 
@@ -979,17 +979,17 @@ void
 CellWidget::setGridYStep(const Unit& step)
 {
     if (!step) {
-	//throw Error(INVALID_REQUEST, __FILE__, __LINE__);
+    //throw Error(INVALID_REQUEST, __FILE__, __LINE__);
     }
 
     if (step != _gridYStep) {
-	bool gridIsDrawn = gridIsVisible() && gridIsDrawable();
+    bool gridIsDrawn = gridIsVisible() && gridIsDrawable();
 
-	_gridYStep = step;
+    _gridYStep = step;
 
-	if (gridIsDrawn || (gridIsVisible() && gridIsDrawable())) {
-	    invalidate();
-	}
+    if (gridIsDrawn || (gridIsVisible() && gridIsDrawable())) {
+        invalidate();
+    }
     }
 }
 
@@ -997,38 +997,38 @@ void
 CellWidget::setGridStep(const Unit& step)
 {
     if (!step) {
-	//throw Error(INVALID_REQUEST, __FILE__, __LINE__);
+    //throw Error(INVALID_REQUEST, __FILE__, __LINE__);
     }
 
     if ((step != _gridXStep) || (step != _gridYStep)) {
-	bool gridIsDrawn = gridIsVisible() && gridIsDrawable();
+    bool gridIsDrawn = gridIsVisible() && gridIsDrawable();
 
-	_gridXStep = step;
-	_gridYStep = step;
+    _gridXStep = step;
+    _gridYStep = step;
 
-	if (gridIsDrawn || (gridIsVisible() && gridIsDrawable())) {
-	    invalidate();
-	}
+    if (gridIsDrawn || (gridIsVisible() && gridIsDrawable())) {
+        invalidate();
+    }
     }
 }
 
 void
 CellWidget::setGridSteps(const Unit& xStep,
-		       const Unit& yStep)
+               const Unit& yStep)
 {
     if (!xStep || !yStep) {
-	//throw Error(INVALID_REQUEST, __FILE__, __LINE__);
+    //throw Error(INVALID_REQUEST, __FILE__, __LINE__);
     }
 
     if ((xStep != _gridXStep) || (yStep != _gridYStep)) {
-	bool gridIsDrawn = gridIsVisible() && gridIsDrawable();
+    bool gridIsDrawn = gridIsVisible() && gridIsDrawable();
 
-	_gridXStep = xStep;
-	_gridYStep = yStep;
+    _gridXStep = xStep;
+    _gridYStep = yStep;
 
-	if (gridIsDrawn || (gridIsVisible() && gridIsDrawable())) {
-	    invalidate();
-	}
+    if (gridIsDrawn || (gridIsVisible() && gridIsDrawable())) {
+        invalidate();
+    }
     }
 }
 
@@ -1036,7 +1036,7 @@ void
 CellWidget::setGridDisplayThreshold(unsigned threshold)
 {
     if (threshold < 3) {
-	//throw Error(INVALID_REQUEST, __FILE__, __LINE__);
+    //throw Error(INVALID_REQUEST, __FILE__, __LINE__);
     }
 
     _gridDisplayThreshold = threshold;
@@ -1048,10 +1048,10 @@ void
 CellWidget::setGridColor(const QColor& color)
 {
     if (_gridColor != color) {
-	_gridColor = color;
-	if (gridIsVisible() && gridIsDrawable()) {
-	    invalidate();
-	}
+    _gridColor = color;
+    if (gridIsVisible() && gridIsDrawable()) {
+        invalidate();
+    }
     }
 }
 
@@ -1067,10 +1067,10 @@ void
 CellWidget::setGridVisible(bool visible)
 {
     if (_gridIsVisible != visible) {
-	_gridIsVisible = visible;
-	if (gridIsDrawable()) {
-	    invalidate();
-	}
+    _gridIsVisible = visible;
+    if (gridIsDrawable()) {
+        invalidate();
+    }
     }
 }
 
@@ -1078,10 +1078,10 @@ void
 CellWidget::setGridAxesVisible(bool visible)
 {
     if (_gridAxesAreVisible != visible) {
-	_gridAxesAreVisible = visible;
-	if (gridIsDrawable()) {
-	    invalidate();
-	}
+    _gridAxesAreVisible = visible;
+    if (gridIsDrawable()) {
+        invalidate();
+    }
     }
 }
 
@@ -1089,15 +1089,15 @@ void
 CellWidget::setSnapGrid(bool enable)
 {
     if (_snapGrid != enable) {
-	if (_snapGrid && _drawSnapPoint) {
-	    drawSnapPoint();
-	    _drawSnapPoint = false;
-	}
-	_snapGrid = enable;
-	if (_snapGrid && !_drawSnapPoint) {
-	    _drawSnapPoint = true;
-	    drawSnapPoint();
-	}
+    if (_snapGrid && _drawSnapPoint) {
+        drawSnapPoint();
+        _drawSnapPoint = false;
+    }
+    _snapGrid = enable;
+    if (_snapGrid && !_drawSnapPoint) {
+        _drawSnapPoint = true;
+        drawSnapPoint();
+    }
     }
 }
 
@@ -1112,8 +1112,8 @@ void
 CellWidget::setDisplayDepth(unsigned displayDepth)
 {
     if (displayDepth != _displayDepth) {
-	_displayDepth = displayDepth;
-	invalidate();
+    _displayDepth = displayDepth;
+    invalidate();
     }
 }
 
@@ -1121,7 +1121,7 @@ void
 CellWidget::setDisplaySize(unsigned displaySize)
 {
     if (displaySize != _displaySize) {
-	_displaySize = displaySize;
+    _displaySize = displaySize;
     }
 }
 
@@ -1138,75 +1138,75 @@ void
 CellWidget::setFont(const QFont& font)
 {
     if (_painter) {
-	_painter->setFont(font);
+    _painter->setFont(font);
     }
 }
 
 void
 CellWidget::setPen(const QPen& pen,
-		 double      brightness)
+         double      brightness)
 {
     if (!((0.1 <= brightness) && (brightness <= 1.0))) {
-	//throw Error(INVALID_REQUEST, __FILE__, __LINE__);
+    //throw Error(INVALID_REQUEST, __FILE__, __LINE__);
     }
 
     if (_painter) {
-	if (pen == Qt::NoPen) {
-	    _painter->setPen(pen);
-	}
-	else {
-	    QPen correctedPen = pen;
+    if (pen == Qt::NoPen) {
+        _painter->setPen(pen);
+    }
+    else {
+        QPen correctedPen = pen;
 
-	    if (brightness < 1) {
-		QColor bgColor = getBackgroundColor();
-		int r = bgColor.red();
-		int g = bgColor.green();
-		int b = bgColor.blue();
+        if (brightness < 1) {
+        QColor bgColor = getBackgroundColor();
+        int r = bgColor.red();
+        int g = bgColor.green();
+        int b = bgColor.blue();
 
-		QColor color = pen.color();
-		r = r + (int)((color.red() - r) * brightness);
-		g = g + (int)((color.green() - g) * brightness);
-		b = b + (int)((color.blue() - b) * brightness);
+        QColor color = pen.color();
+        r = r + (int)((color.red() - r) * brightness);
+        g = g + (int)((color.green() - g) * brightness);
+        b = b + (int)((color.blue() - b) * brightness);
 
-		correctedPen = QPen(QColor(r, g, b));
-	    }
+        correctedPen = QPen(QColor(r, g, b));
+        }
 
-	    _painter->setPen(correctedPen);
-	}
+        _painter->setPen(correctedPen);
+    }
     }
 }
 
 void
 CellWidget::setBrush(const QBrush& brush,
-		   double        brightness)
+           double        brightness)
 {
     if (!((0.1 <= brightness) && (brightness <= 1.0))) {
-	//throw Error(INVALID_REQUEST, __FILE__, __LINE__);
+    //throw Error(INVALID_REQUEST, __FILE__, __LINE__);
     }
 
     if (_painter) {
-	if (brush == Qt::NoBrush) {
-	    _painter->setBrush(brush);
-	}
-	else {
-	    QBrush correctedBrush = brush;
+    if (brush == Qt::NoBrush) {
+        _painter->setBrush(brush);
+    }
+    else {
+        QBrush correctedBrush = brush;
 
-	    if (brightness < 1) {
-		QColor bgColor = getBackgroundColor();
-		int r = bgColor.red();
-		int g = bgColor.green();
-		int b = bgColor.blue();
+        if (brightness < 1) {
+        QColor bgColor = getBackgroundColor();
+        int r = bgColor.red();
+        int g = bgColor.green();
+        int b = bgColor.blue();
 
-		QColor color = brush.color();
-		r = r + (int)((color.red() - r) * brightness);
-		g = g + (int)((color.green() - g) * brightness);
-		b = b + (int)((color.blue() - b) * brightness);
+        QColor color = brush.color();
+        r = r + (int)((color.red() - r) * brightness);
+        g = g + (int)((color.green() - g) * brightness);
+        b = b + (int)((color.blue() - b) * brightness);
 
-		correctedBrush = QBrush(QColor(r, g, b), brush.style());
-	    }
+        correctedBrush = QBrush(QColor(r, g, b), brush.style());
+        }
 
-	    _painter->setBrush(correctedBrush);
-	}
+        _painter->setBrush(correctedBrush);
+    }
     }
 }
 
@@ -1214,7 +1214,7 @@ void
 CellWidget::setBrushOrigin(const QPoint& origin)
 {
     if (_painter) {
-	_painter->setBrushOrigin(_brushDx + origin.x(), _brushDy + origin.y());
+    _painter->setBrushOrigin(_brushDx + origin.x(), _brushDy + origin.y());
     }
 }
 
@@ -1230,10 +1230,10 @@ CellWidget::setBrushOrigin(const QPoint& origin)
 //CellWidget::setSelectionColor(const QColor& color)
 //{
 //    if (color != _selectionColor) {
-//	_selectionColor = color;
-//	if (selectionIsVisible()) {
-//	    invalidate(getSelectionBox());
-//	}
+//    _selectionColor = color;
+//    if (selectionIsVisible()) {
+//        invalidate(getSelectionBox());
+//    }
 //    }
 //}
 //
@@ -1241,8 +1241,8 @@ CellWidget::setBrushOrigin(const QPoint& origin)
 //CellWidget::setSelectionVisible(bool visible)
 //{
 //    if (_selectionIsVisible != visible) {
-//	_selectionIsVisible = visible;
-//	invalidate(getSelectionBox());
+//    _selectionIsVisible = visible;
+//    invalidate(getSelectionBox());
 //    }
 //}
 //
@@ -1250,8 +1250,8 @@ CellWidget::setBrushOrigin(const QPoint& origin)
 //CellWidget::setHighlightionVisible(bool visible)
 //{
 //    if (_highlightionIsVisible != visible) {
-//	_highlightionIsVisible = visible;
-//	invalidate(getHighlightionBox());
+//    _highlightionIsVisible = visible;
+//    invalidate(getHighlightionBox());
 //    }
 //}
 //
@@ -1265,7 +1265,7 @@ void
 CellWidget::setAutomaticScrolling(bool enable)
 {
     if (!allowAutomaticScrolling()) {
-	//throw Error(INVALID_REQUEST, __FILE__, __LINE__);
+    //throw Error(INVALID_REQUEST, __FILE__, __LINE__);
     }
 
     _automaticScrolling = enable;
@@ -1281,30 +1281,30 @@ CellWidget::setAutomaticScrolling(bool enable)
 void
 CellWidget::showAllLayers()
 {
-    DataBase* database = GetDataBase();
+    DataBase* database = getDataBase();
     if (database) {
-	Technology* technology = database->GetTechnology();
-	if (technology) {
-            for_each_basic_layer(layer, technology->GetBasicLayers()) {
-		setVisible(layer, true);
-		end_for;
-	    }
-	}
+    Technology* technology = database->getTechnology();
+    if (technology) {
+            for_each_basic_layer(layer, technology->getBasicLayers()) {
+        setVisible(layer, true);
+        end_for;
+        }
+    }
     }
 }
 
 void
 CellWidget::hideAllLayers()
 {
-    DataBase* database = GetDataBase();
+    DataBase* database = getDataBase();
     if (database) {
-	Technology* technology = database->GetTechnology();
-	if (technology) {
-            for_each_basic_layer(layer, technology->GetBasicLayers()) {
-		setVisible(layer, false);
-		end_for;
-	    }
-	}
+    Technology* technology = database->getTechnology();
+    if (technology) {
+            for_each_basic_layer(layer, technology->getBasicLayers()) {
+        setVisible(layer, false);
+        end_for;
+        }
+    }
     }
 }
 
@@ -1320,11 +1320,11 @@ CellWidget::hideAllLayers()
 //CellWidget::select(const Occurrence& occurrence)
 //{
 //    if (!isSelectable(occurrence)) {
-//	throw Error(INVALID_REQUEST, __FILE__, __LINE__);
+//    throw Error(INVALID_REQUEST, __FILE__, __LINE__);
 //    }
 //
 //    if (_selectionLimit && (_selectionLimit <= getSelectors().getCount())) {
-//	return false;
+//    return false;
 //    }
 //
 //    Property* property = occurrence.getProperty(Selector::getPropertyName());
@@ -1332,13 +1332,13 @@ CellWidget::hideAllLayers()
 //    Selector* selector = NULL;
 //
 //    if (!property) {
-//	selector = new Selector(occurrence);
+//    selector = new Selector(occurrence);
 //    }
 //    else {
-//	if (!dynamic_cast<Selector*>(property)) {
-//	    throw Error(BAD_PROPERTY_TYPE, __FILE__, __LINE__);
-//	}
-//	selector = (Selector*)property;
+//    if (!dynamic_cast<Selector*>(property)) {
+//        throw Error(BAD_PROPERTY_TYPE, __FILE__, __LINE__);
+//    }
+//    selector = (Selector*)property;
 //    }
 //
 //    selector->_attachTo(this);
@@ -1352,19 +1352,19 @@ CellWidget::hideAllLayers()
 //CellWidget::unselect(const Occurrence& occurrence)
 //{
 //    if (!isSelectable(occurrence)) {
-//	throw Error(INVALID_REQUEST, __FILE__, __LINE__);
+//    throw Error(INVALID_REQUEST, __FILE__, __LINE__);
 //    }
 //
 //    Property* property = occurrence.getProperty(Selector::getPropertyName());
 //
 //    if (property) {
-//	if (!dynamic_cast<Selector*>(property)) {
-//	    throw Error(BAD_PROPERTY_TYPE, __FILE__, __LINE__);
-//	}
+//    if (!dynamic_cast<Selector*>(property)) {
+//        throw Error(BAD_PROPERTY_TYPE, __FILE__, __LINE__);
+//    }
 //
-//	((Selector*)property)->_detachFrom(this);
+//    ((Selector*)property)->_detachFrom(this);
 //
-//	invalidate(occurrence.getBoundingBox());
+//    invalidate(occurrence.getBoundingBox());
 //    }
 //}
 //
@@ -1375,11 +1375,11 @@ CellWidget::hideAllLayers()
 //
 //    bool _cumulativeMode = false; // HOOPS !!!
 //    if (_cumulativeMode) {
-//	invalidate(getSelectionBox());
+//    invalidate(getSelectionBox());
 //    }
 //
 //    while (!selection.isEmpty()) {
-//	unselect(selection.getFirst());
+//    unselect(selection.getFirst());
 //    }
 //}
 //
@@ -1395,13 +1395,13 @@ CellWidget::hideAllLayers()
 //CellWidget::highlight(const Occurrence& occurrence)
 //{
 //    if (!isHighlightable(occurrence)) {
-//	throw Error(INVALID_REQUEST, __FILE__, __LINE__);
+//    throw Error(INVALID_REQUEST, __FILE__, __LINE__);
 //    }
 //
 //    unsigned count = getHighlightors().getCount();
 //
 //    if (_highlightionLimit && (_highlightionLimit <= count)) {
-//	return false;
+//    return false;
 //    }
 //
 //    Property* property = occurrence.getProperty(Highlightor::getPropertyName());
@@ -1409,22 +1409,22 @@ CellWidget::hideAllLayers()
 //    Highlightor* highlightor = NULL;
 //
 //    if (!property) {
-//	highlightor = new Highlightor(occurrence);
+//    highlightor = new Highlightor(occurrence);
 //    }
 //    else {
-//	if (!dynamic_cast<Highlightor*>(property)) {
-//	    throw Error(BAD_PROPERTY_TYPE, __FILE__, __LINE__);
-//	}
-//	highlightor = (Highlightor*)property;
+//    if (!dynamic_cast<Highlightor*>(property)) {
+//        throw Error(BAD_PROPERTY_TYPE, __FILE__, __LINE__);
+//    }
+//    highlightor = (Highlightor*)property;
 //    }
 //
 //    highlightor->_attachTo(this);
 //
 //    if (!count) {
-//	invalidate();
+//    invalidate();
 //    }
 //    else {
-//	invalidate(occurrence.getBoundingBox());
+//    invalidate(occurrence.getBoundingBox());
 //    }
 //
 //    return true;
@@ -1434,24 +1434,24 @@ CellWidget::hideAllLayers()
 //CellWidget::unhighlight(const Occurrence& occurrence)
 //{
 //    if (!isHighlightable(occurrence)) {
-//	throw Error(INVALID_REQUEST, __FILE__, __LINE__);
+//    throw Error(INVALID_REQUEST, __FILE__, __LINE__);
 //    }
 //
 //    Property* property = occurrence.getProperty(Highlightor::getPropertyName());
 //
 //    if (property) {
-//	if (!dynamic_cast<Highlightor*>(property)) {
-//	    throw Error(BAD_PROPERTY_TYPE, __FILE__, __LINE__);
-//	}
+//    if (!dynamic_cast<Highlightor*>(property)) {
+//        throw Error(BAD_PROPERTY_TYPE, __FILE__, __LINE__);
+//    }
 //
-//	((Highlightor*)property)->_detachFrom(this);
+//    ((Highlightor*)property)->_detachFrom(this);
 //
-//	if (getHighlightors().isEmpty()) {
-//	    invalidate();
-//	}
-//	else {
-//	    invalidate(occurrence.getBoundingBox());
-//	}
+//    if (getHighlightors().isEmpty()) {
+//        invalidate();
+//    }
+//    else {
+//        invalidate(occurrence.getBoundingBox());
+//    }
 //    }
 //}
 //
@@ -1462,11 +1462,11 @@ CellWidget::hideAllLayers()
 //
 //    bool _cumulativeMode = false; // HOOPS !!!
 //    if (_cumulativeMode) {
-//	invalidate(getHighlightionBox());
+//    invalidate(getHighlightionBox());
 //    }
 //
 //    while (!highlightion.isEmpty()) {
-//	unhighlight(highlightion.getFirst());
+//    unhighlight(highlightion.getFirst());
 //    }
 //}
 //
@@ -1485,9 +1485,9 @@ CellWidget::clearPeeks()
             ++plit) {
         invalidate(*plit);
     }
-//    for_each_box(peek, GetCollection(_peekList)) {
-//	invalidate(peek);
-//	end_for;
+//    for_each_box(peek, getCollection(_peekList)) {
+//    invalidate(peek);
+//    end_for;
 //    }
 //
     _peekList.clear();
@@ -1497,8 +1497,8 @@ void
 CellWidget::addPeek(const Box& peek)
 {
     if (!peek.isEmpty()) {
-	invalidate(peek);
-	_peekList.push_back(peek);
+    invalidate(peek);
+    _peekList.push_back(peek);
     }
 }
 
@@ -1520,13 +1520,13 @@ CellWidget::invalidate(const QRect& screenRect)
     QRect visibleScreenRect = screenRect.intersect(rect());
 
     if (!visibleScreenRect.isEmpty()) {
-	bool _cumulativeMode = false; // HOOPS !!!
-	if (!_cumulativeMode) {
-	    _invalidRegion = _invalidRegion.unite(QRegion(visibleScreenRect));
-	}
-	else {
-	    _invalidRegion = QRegion(_invalidRegion.boundingRect().unite(visibleScreenRect));
-	}
+    bool _cumulativeMode = false; // HOOPS !!!
+    if (!_cumulativeMode) {
+        _invalidRegion = _invalidRegion.unite(QRegion(visibleScreenRect));
+    }
+    else {
+        _invalidRegion = QRegion(_invalidRegion.boundingRect().unite(visibleScreenRect));
+    }
     }
 }
 
@@ -1534,8 +1534,8 @@ void
 CellWidget::invalidate(const Box& box)
 {
     if (!box.isEmpty()) {
-	int safetyMargin = 2; // 2 pixel
-	invalidate(getScreenRect(box.getInflated(getSize(safetyMargin))));
+    int safetyMargin = 2; // 2 pixel
+    invalidate(getScreenRect(box.getInflated(getSize(safetyMargin))));
     }
 }
 
@@ -1543,14 +1543,14 @@ void
 CellWidget::fitToContent(unsigned screenMargin) {
     Box area(getX(0), getY(0), getX(width()), getY(height()));
     if (_cell) {
-	area = _cell->GetBoundingBox();
+    area = _cell->getBoundingBox();
     }
 
     reframe(area);
     area.inflate(screenMargin);
     reframe(area);
 }
-	
+    
 
 
 
@@ -1578,16 +1578,16 @@ CellWidget::reframe(const Point& center)
 
 void
 CellWidget::reframe(const Point& center,
-		  double       scale)
+          double       scale)
 {
     if (0 < scale) {
-	_center = center;
-	_scale = scale;
-	_screenDx = -(int)rint((GetValue(_center.getX()) - (width() / (_scale*2))) * _scale);
-	_screenDy = -(int)rint((GetValue(_center.getY()) - (height() / (_scale*2))) * _scale);
-	_brushDx = 0;
-	_brushDy = 0;
-	invalidate();
+    _center = center;
+    _scale = scale;
+    _screenDx = -(int)rint((getValue(_center.getX()) - (width() / (_scale*2))) * _scale);
+    _screenDy = -(int)rint((getValue(_center.getY()) - (height() / (_scale*2))) * _scale);
+    _brushDx = 0;
+    _brushDy = 0;
+    invalidate();
     }
 }
 
@@ -1595,12 +1595,12 @@ void
 CellWidget::reframe(const Box& box)
 {
     if (!box.isEmpty()) {
-	Point center = box.getCenter();
+    Point center = box.getCenter();
 
-	double scale = min((double)width() / GetValue(box.getWidth()),
-			   (double)height() / GetValue(box.getHeight()));
+    double scale = min((double)width() / getValue(box.getWidth()),
+               (double)height() / getValue(box.getHeight()));
 
-	reframe(center, scale);
+    reframe(center, scale);
     }
 }
 
@@ -1612,86 +1612,86 @@ CellWidget::reframe(const Box& box)
 
 void
 CellWidget::scroll(const Unit& dx,
-		 const Unit& dy)
+         const Unit& dy)
 {
     if ((getSize(width()) < labs(dx)) || (getSize(height()) < labs(dy))) {
-	reframe(getCenter().getTranslated(-dx, -dy));
-	redraw();
+    reframe(getCenter().getTranslated(-dx, -dy));
+    redraw();
     } else {
-	int sdx = getScreenSize(dx);
-	int sdy = getScreenSize(dy);
+    int sdx = getScreenSize(dx);
+    int sdy = getScreenSize(dy);
 
-	if (sdx || sdy) {
-	    QCursor oldCursor = cursor();
-	    setCursor(Qt::WaitCursor);
+    if (sdx || sdy) {
+        QCursor oldCursor = cursor();
+        setCursor(Qt::WaitCursor);
 
-	    if (_snapGrid) {
-		drawSnapPoint();
-	    }
+        if (_snapGrid) {
+        drawSnapPoint();
+        }
 
-	    //forEachCommand(command, getCommands()) {
-	    //    _callDrawOf(command);
-	    //    endFor;
-	    //}
+        //forEachCommand(command, getCommands()) {
+        //    _callDrawOf(command);
+        //    endFor;
+        //}
 
-	    _screenDx += sdx;
-	    _screenDy += sdy;
+        _screenDx += sdx;
+        _screenDy += sdy;
 
-	    _brushDx += sdx;
-	    _brushDy -= sdy;
+        _brushDx += sdx;
+        _brushDy -= sdy;
 
-	    _center = getPoint(QPoint(width() / 2, height() / 2));
+        _center = getPoint(QPoint(width() / 2, height() / 2));
 
-	    int w = width();
-	    int h = height();
+        int w = width();
+        int h = height();
 
-	    if (0 < sdx) {
-		if (0 < sdy) {
+        if (0 < sdx) {
+        if (0 < sdy) {
                     //bitBlt(this, sdx, 0, this, 0, sdy, w - sdx, h - sdy);
-		    invalidate(QRect(-1, -1, sdx + 1, h + 1));
-		    //_redraw();
-		    invalidate(QRect(sdx - 1, h - sdy - 1, w + 1, h + 1));
-		    //_redraw();
+            invalidate(QRect(-1, -1, sdx + 1, h + 1));
+            //_redraw();
+            invalidate(QRect(sdx - 1, h - sdy - 1, w + 1, h + 1));
+            //_redraw();
                     update();
-		} else {
-		    //bitBlt(this, sdx, -sdy, this, 0, 0, w - sdx, h + sdy, CopyROP);
-		    invalidate(QRect(-1, -1, sdx + 1, h + 1));
-		    //_redraw();
-		    invalidate(QRect(sdx - 1, -1, w + 1, -sdy + 1));
-		    //_redraw();
+        } else {
+            //bitBlt(this, sdx, -sdy, this, 0, 0, w - sdx, h + sdy, CopyROP);
+            invalidate(QRect(-1, -1, sdx + 1, h + 1));
+            //_redraw();
+            invalidate(QRect(sdx - 1, -1, w + 1, -sdy + 1));
+            //_redraw();
                     update();
-		}
-	    }
-	    else {
-		if (0 < sdy) {
-		    //bitBlt(this, 0, 0, this, -sdx, sdy, w + sdx, h - sdy, CopyROP);
-		    invalidate(QRect(w + sdx - 1, -1, w + 1, h + 1));
-		   // _redraw();
-		    invalidate(QRect(-1, h - sdy - 1, w + sdx + 1, h + 1));
-		    //_redraw();
+        }
+        }
+        else {
+        if (0 < sdy) {
+            //bitBlt(this, 0, 0, this, -sdx, sdy, w + sdx, h - sdy, CopyROP);
+            invalidate(QRect(w + sdx - 1, -1, w + 1, h + 1));
+           // _redraw();
+            invalidate(QRect(-1, h - sdy - 1, w + sdx + 1, h + 1));
+            //_redraw();
                     update();
-		}
-		else {
-		    //bitBlt(this, 0, -sdy, this, -sdx, 0, w + sdx, h + sdy);
-		    invalidate(QRect(w + sdx - 1, -1, w + 1, h + 1));
-		    //_redraw();
-		    invalidate(QRect(-1, -1, w + sdx + 1, -sdy + 1));
-		    //_redraw();
+        }
+        else {
+            //bitBlt(this, 0, -sdy, this, -sdx, 0, w + sdx, h + sdy);
+            invalidate(QRect(w + sdx - 1, -1, w + 1, h + 1));
+            //_redraw();
+            invalidate(QRect(-1, -1, w + sdx + 1, -sdy + 1));
+            //_redraw();
                     update();
-		}
-	    }
+        }
+        }
 
-	    //forEachCommand(command, reverse(getCommands())) {
-	    //    _callDrawOf(command);
-	    //    endFor;
-	    //}
+        //forEachCommand(command, reverse(getCommands())) {
+        //    _callDrawOf(command);
+        //    endFor;
+        //}
 
-	    if (_snapGrid) {
-		drawSnapPoint();
-	    }
+        if (_snapGrid) {
+        drawSnapPoint();
+        }
 
-	    setCursor(oldCursor);
-	}
+        setCursor(oldCursor);
+    }
     }
 }
 
@@ -1705,37 +1705,37 @@ void
 CellWidget::redraw()
 {
     if (!_invalidRegion.isEmpty()) {
-	QCursor oldCursor = cursor();
-	setCursor(Qt::WaitCursor);
+    QCursor oldCursor = cursor();
+    setCursor(Qt::WaitCursor);
 
-	if (_snapGrid) {
-	    drawSnapPoint();
-	}
+    if (_snapGrid) {
+        drawSnapPoint();
+    }
 
-	//forEachCommand(command, getCommands()) {
-	//    _callDrawOf(command);
-	//    endFor;
-	//}
+    //forEachCommand(command, getCommands()) {
+    //    _callDrawOf(command);
+    //    endFor;
+    //}
 
-	if (!_alreadyExposed) {
-	    fitToContent();
-	    _alreadyExposed = true;
-	}
+    if (!_alreadyExposed) {
+        fitToContent();
+        _alreadyExposed = true;
+    }
 
-	_redraw();
+    _redraw();
 
-	//forEachCommand(command, reverse(getCommands())) {
-	//    _callDrawOf(command);
-	//    endFor;
-	//}
+    //forEachCommand(command, reverse(getCommands())) {
+    //    _callDrawOf(command);
+    //    endFor;
+    //}
 
-	if (_snapGrid) {
-	    drawSnapPoint();
-	}
+    if (_snapGrid) {
+        drawSnapPoint();
+    }
 
-	setCursor(oldCursor);
+    setCursor(oldCursor);
 
-	_invalidRegion = QRegion();
+    _invalidRegion = QRegion();
     }
 }
 
@@ -1749,11 +1749,11 @@ CellWidget::redraw()
 //CellWidget::abortStartedCommand()
 //{
 //    if (_startedCommand) {
-//	_startedCommand->abortOn(this);
+//    _startedCommand->abortOn(this);
 //    }
 //
 //    if (_trackBox) {
-//	_trackBox->stop(_snapPoint);
+//    _trackBox->stop(_snapPoint);
 //    }
 //}
 
@@ -1776,12 +1776,12 @@ CellWidget::postRedraw(const Box& area)
 
 
 void CellWidget::drawContent(const Cell* cell, const BasicLayer* basicLayer, const H::Box& updateArea, const Transformation& transformation) const {
-    for_each_instance(instance, cell->GetInstancesUnder(updateArea)) {
+    for_each_instance(instance, cell->getInstancesUnder(updateArea)) {
         drawContent(instance, basicLayer, updateArea, transformation);
         end_for;
     }
 
-    for_each_slice(slice, cell->GetSlices()) {
+    for_each_slice(slice, cell->getSlices()) {
         drawSlice(slice, basicLayer, updateArea, transformation);
         end_for;
     }
@@ -1790,18 +1790,18 @@ void CellWidget::drawContent(const Cell* cell, const BasicLayer* basicLayer, con
 
 void CellWidget::drawContent(const Instance* instance, const BasicLayer* basicLayer, const H::Box& updateArea, const Transformation& transformation) const {
     Box masterArea = updateArea;
-    Transformation masterTransformation = instance->GetTransformation();
-    instance->GetTransformation().getInvert().applyOn(masterArea);
+    Transformation masterTransformation = instance->getTransformation();
+    instance->getTransformation().getInvert().applyOn(masterArea);
     transformation.applyOn(masterTransformation);
-    drawContent(instance->GetMasterCell(), basicLayer, masterArea, masterTransformation);
+    drawContent(instance->getMasterCell(), basicLayer, masterArea, masterTransformation);
 }
 
 
 void CellWidget::drawSlice(const Slice* slice, const BasicLayer* basicLayer, const H::Box& updateArea, const Transformation& transformation) const {
-    if (slice->GetLayer()->contains(basicLayer)) {
-        if (slice->GetBoundingBox().intersect(updateArea)) {
-            //if ((basicLayer == _layer->_GetSymbolicBasicLayer()) || (3 < view->GetScale())) 
-            for_each_go(go, slice->GetGosUnder(updateArea)) {
+    if (slice->getLayer()->contains(basicLayer)) {
+        if (slice->getBoundingBox().intersect(updateArea)) {
+            //if ((basicLayer == _layer->_getSymbolicBasicLayer()) || (3 < view->getScale())) 
+            for_each_go(go, slice->getGosUnder(updateArea)) {
                 drawGo(go, basicLayer, updateArea, transformation);
                 end_for;
             }
@@ -1823,20 +1823,20 @@ void CellWidget::drawGo(const Go* go, const BasicLayer* basicLayer, const Box& u
 }
 
 void CellWidget::drawSegment(const Segment* segment, const BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation) const {
-    if (1 < getScreenSize(segment->GetWidth())) {
-        drawRectangle(transformation.getBox(segment->GetBoundingBox(basicLayer)));
+    if (1 < getScreenSize(segment->getWidth())) {
+        drawRectangle(transformation.getBox(segment->getBoundingBox(basicLayer)));
     } else {
-        drawLine(transformation.getPoint(segment->GetSourcePosition()),
-                transformation.getPoint(segment->GetTargetPosition()));
+        drawLine(transformation.getPoint(segment->getSourcePosition()),
+                transformation.getPoint(segment->getTargetPosition()));
     }
 }
 
 void CellWidget::drawContact(const Contact* contact, const BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation) const {
-    drawRectangle(transformation.getBox(contact->GetBoundingBox(basicLayer)));
+    drawRectangle(transformation.getBox(contact->getBoundingBox(basicLayer)));
 }
 
 void CellWidget::drawPhantoms(const Cell* cell, const H::Box& updateArea, const Transformation& transformation) const {
-    for_each_instance(instance, cell->GetInstancesUnder(updateArea)) {
+    for_each_instance(instance, cell->getInstancesUnder(updateArea)) {
         drawPhantoms(instance, updateArea, transformation);
         end_for;
     }
@@ -1844,15 +1844,15 @@ void CellWidget::drawPhantoms(const Cell* cell, const H::Box& updateArea, const 
 
 void CellWidget::drawPhantoms(const Instance* instance, const H::Box& updateArea, const Transformation& transformation) const {
     H::Box masterArea = updateArea;
-    Transformation masterTransformation = instance->GetTransformation();
-    instance->GetTransformation().getInvert().applyOn(masterArea);
+    Transformation masterTransformation = instance->getTransformation();
+    instance->getTransformation().getInvert().applyOn(masterArea);
     transformation.applyOn(masterTransformation);
-    drawPhantoms(instance->GetMasterCell(), masterArea, masterTransformation);
+    drawPhantoms(instance->getMasterCell(), masterArea, masterTransformation);
 }
 
 void CellWidget::drawBoundaries(const Cell* cell, const H::Box& updateArea, const Transformation& transformation) const {
-    drawRectangle(transformation.getBox(cell->GetAbutmentBox()));
-    for_each_instance(instance, cell->GetInstances()) {
+    drawRectangle(transformation.getBox(cell->getAbutmentBox()));
+    for_each_instance(instance, cell->getInstances()) {
         drawBoundaries(instance, updateArea, transformation);
         end_for;
     }
@@ -1860,10 +1860,10 @@ void CellWidget::drawBoundaries(const Cell* cell, const H::Box& updateArea, cons
 
 void CellWidget::drawBoundaries(const Instance* instance, const H::Box& updateArea, const Transformation& transformation) const {
     H::Box masterArea = updateArea;
-    Transformation masterTransformation = instance->GetTransformation();
-    instance->GetTransformation().getInvert().applyOn(masterArea);
+    Transformation masterTransformation = instance->getTransformation();
+    instance->getTransformation().getInvert().applyOn(masterArea);
     transformation.applyOn(masterTransformation);
-    drawBoundaries(instance->GetMasterCell(), masterArea, masterTransformation);
+    drawBoundaries(instance->getMasterCell(), masterArea, masterTransformation);
 }
 
 
@@ -1878,31 +1878,31 @@ void CellWidget::drawBoundaries(const Instance* instance, const H::Box& updateAr
 
 void
 CellWidget::drawLine(const Unit& xo,
-		   const Unit& yo,
-		   const Unit& xe,
-		   const Unit& ye) const
+           const Unit& yo,
+           const Unit& xe,
+           const Unit& ye) const
 {
     if (_painter) {
-	double dxo = GetValue(xo);
-	double dyo = GetValue(yo);
-	int co = getClipCode(dxo, dyo);
-	double dxe = GetValue(xe);
-	double dye = GetValue(ye);
-	int ce = getClipCode(dxe, dye);
-	if (clipLine(dxo, dyo, co, dxe, dye, ce)) {
-	    int ixo = getScreenX(GetUnit(dxo));
-	    int iyo = getScreenY(GetUnit(dyo));
-	    int ixe = getScreenX(GetUnit(dxe));
-	    int iye = getScreenY(GetUnit(dye));
-	    _painter->save();
-	    if (_painter->pen() == Qt::NoPen) {
-		_painter->setPen(_painter->brush().color());
-	    }
+    double dxo = getValue(xo);
+    double dyo = getValue(yo);
+    int co = getClipCode(dxo, dyo);
+    double dxe = getValue(xe);
+    double dye = getValue(ye);
+    int ce = getClipCode(dxe, dye);
+    if (clipLine(dxo, dyo, co, dxe, dye, ce)) {
+        int ixo = getScreenX(getUnit(dxo));
+        int iyo = getScreenY(getUnit(dyo));
+        int ixe = getScreenX(getUnit(dxe));
+        int iye = getScreenY(getUnit(dye));
+        _painter->save();
+        if (_painter->pen() == Qt::NoPen) {
+        _painter->setPen(_painter->brush().color());
+        }
             _painter->drawLine(ixo, iyo, ixe, iye);
-	    //_painter->moveTo(ixo, iyo);
-	    //_painter->lineTo(ixe, iye);
-	    _painter->restore();
-	}
+        //_painter->moveTo(ixo, iyo);
+        //_painter->lineTo(ixe, iye);
+        _painter->restore();
+    }
     }
 }
 
@@ -1910,16 +1910,16 @@ CellWidget::drawLine(const Unit& xo,
 //CellWidget::drawPolyline(const Points& points)
 //{
 //    if (_painter) {
-//	unsigned sCount;
+//    unsigned sCount;
 //
-//	if (clipLines(points, _sPoints, sCount, false)) {
-//	    _painter->save();
-//	    if (_painter->pen() == NoPen) {
-//		_painter->setPen(_painter->brush().color());
-//	    }
-//	    _painter->drawPolyline(_sPoints, 0, sCount);
-//	    _painter->restore();
-//	}
+//    if (clipLines(points, _sPoints, sCount, false)) {
+//        _painter->save();
+//        if (_painter->pen() == NoPen) {
+//        _painter->setPen(_painter->brush().color());
+//        }
+//        _painter->drawPolyline(_sPoints, 0, sCount);
+//        _painter->restore();
+//    }
 //    }
 //}
 
@@ -1927,15 +1927,15 @@ void
 CellWidget::drawRectangle(const Box& box) const
 {
     if (_painter) {
-	Box ibox = box.getIntersection(_clipBox);
+    Box ibox = box.getIntersection(_clipBox);
 
-	if (!ibox.isEmpty()) {
-	    int x = getScreenX(ibox.getXMin());
-	    int y = getScreenY(ibox.getYMax());
-	    int w = getScreenX(ibox.getXMax()) - x + 1;
-	    int h = getScreenY(ibox.getYMin()) - y + 1;
-	    _painter->drawRect(x, y, w, h);
-	}
+    if (!ibox.isEmpty()) {
+        int x = getScreenX(ibox.getXMin());
+        int y = getScreenY(ibox.getYMax());
+        int w = getScreenX(ibox.getXMax()) - x + 1;
+        int h = getScreenY(ibox.getYMin()) - y + 1;
+        _painter->drawRect(x, y, w, h);
+    }
     }
 }
 
@@ -1943,67 +1943,67 @@ CellWidget::drawRectangle(const Box& box) const
 //CellWidget::drawPolygon(const Points& points)
 //{
 //    if (_painter) {
-//	unsigned sCount;
+//    unsigned sCount;
 //
-//	if (clipLines(points, _sPoints, sCount, true)) {
-//	    _painter->drawPolygon(_sPoints, true, 0, sCount);
-//	}
+//    if (clipLines(points, _sPoints, sCount, true)) {
+//        _painter->drawPolygon(_sPoints, true, 0, sCount);
+//    }
 //    }
 //}
 
 //void
 //CellWidget::drawText(const Box&       frame,
-//		   const string&    text,
-//		   const Direction& direction)
+//           const string&    text,
+//           const Direction& direction)
 //{
 //    if (_painter && !frame.isEmpty()) {
-//	int x = getScreenX(frame.getXMin());
-//	int y = getScreenY(frame.getYMax());
-//	int w = getScreenX(frame.getXMax()) - x + 1;
-//	int h = getScreenY(frame.getYMin()) - y + 1;
-//	switch (direction) {
-//	    case NORTH: {
-//		int ow = w;
-//		w = h;
-//		h = ow;
-//		int ox = x;
-//		x = - (y + w);
-//		y = ox;
-//		break;
-//	    }
-//	    /*
-//	    case WEST: {
-//		x = - (x + w);
-//		y = - (y + h);
-//		break;
-//	    }
-//	    */
-//	    case SOUTH: {
-//		int ow = w;
-//		w = h;
-//		h = ow;
-//		int ox = x;
-//		x = y;
-//		y = - (ox + h);
-//		break;
-//	    }
-//	}
-//	QFontMetrics metrics(_painter->font());
-//	if ((metrics.width(text) <= w) && (metrics.height() <= h)) {
-//	    _painter->save();
-//	    switch (direction) {
-//		case NORTH: _painter->rotate(-90); break;
-//		/*
-//		case WEST: _painter->rotate(180); break;
-//		*/
-//		case SOUTH: _painter->rotate(90); break;
-//	    }
-//	    if (_painter->pen() == NoPen) {
-//		_painter->setPen(_painter->brush().color());
-//	    }
-//	    _painter->drawText(x, y, w, h, Qt::AlignCenter, text);
-//	    _painter->restore();
-//	}
+//    int x = getScreenX(frame.getXMin());
+//    int y = getScreenY(frame.getYMax());
+//    int w = getScreenX(frame.getXMax()) - x + 1;
+//    int h = getScreenY(frame.getYMin()) - y + 1;
+//    switch (direction) {
+//        case NORTH: {
+//        int ow = w;
+//        w = h;
+//        h = ow;
+//        int ox = x;
+//        x = - (y + w);
+//        y = ox;
+//        break;
+//        }
+//        /*
+//        case WEST: {
+//        x = - (x + w);
+//        y = - (y + h);
+//        break;
+//        }
+//        */
+//        case SOUTH: {
+//        int ow = w;
+//        w = h;
+//        h = ow;
+//        int ox = x;
+//        x = y;
+//        y = - (ox + h);
+//        break;
+//        }
+//    }
+//    QFontMetrics metrics(_painter->font());
+//    if ((metrics.width(text) <= w) && (metrics.height() <= h)) {
+//        _painter->save();
+//        switch (direction) {
+//        case NORTH: _painter->rotate(-90); break;
+//        /*
+//        case WEST: _painter->rotate(180); break;
+//        */
+//        case SOUTH: _painter->rotate(90); break;
+//        }
+//        if (_painter->pen() == NoPen) {
+//        _painter->setPen(_painter->brush().color());
+//        }
+//        _painter->drawText(x, y, w, h, Qt::AlignCenter, text);
+//        _painter->restore();
+//    }
 //    }
 //}
 //
@@ -2017,17 +2017,17 @@ void
 CellWidget::drawSnapPoint()
 {
     if (_drawSnapPoint) {
-	int sx = getScreenX(_snapPoint.getX());
-	int sy = getScreenY(_snapPoint.getY());
+    int sx = getScreenX(_snapPoint.getX());
+    int sy = getScreenY(_snapPoint.getY());
 
-	if (((-3 <= sx) && (sx <= (width() + 3))) &&
-	    ((-3 <= sy) && (sy <= (height() + 3)))) {
-	    QPainter painter(this);
-	    painter.setPen(getForegroundColor());
-	    painter.setBrush(Qt::NoBrush);
-	    //painter.setRasterOp(Qt::XorROP);
-	    painter.drawRect(sx - 3, sy - 3, 7, 7);
-	}
+    if (((-3 <= sx) && (sx <= (width() + 3))) &&
+        ((-3 <= sy) && (sy <= (height() + 3)))) {
+        QPainter painter(this);
+        painter.setPen(getForegroundColor());
+        painter.setBrush(Qt::NoBrush);
+        //painter.setRasterOp(Qt::XorROP);
+        painter.drawRect(sx - 3, sy - 3, 7, 7);
+    }
     }
 }
 
@@ -2055,15 +2055,15 @@ CellWidget::resizeEvent(QResizeEvent* event)
 //CellWidget::enterEvent(QEvent* event)
 //{
 //    if (getView()) {
-//	forEachCommand(command, getCommands()) {
-//	    command->onArm(this);
-//	    endFor;
-//	}
+//    forEachCommand(command, getCommands()) {
+//        command->onArm(this);
+//        endFor;
+//    }
 //    }
 //
 //    if (_snapGrid) {
-//	_drawSnapPoint = true;
-//	drawSnapPoint();
+//    _drawSnapPoint = true;
+//    drawSnapPoint();
 //    }
 //}
 //
@@ -2071,15 +2071,15 @@ CellWidget::resizeEvent(QResizeEvent* event)
 //CellWidget::leaveEvent(QEvent* event)
 //{
 //    if (_snapGrid) {
-//	drawSnapPoint();
-//	_drawSnapPoint = false;
+//    drawSnapPoint();
+//    _drawSnapPoint = false;
 //    }
 //
 //    if (getView()) {
-//	forEachCommand(command, getCommands()) {
-//	    command->onDisarm(this);
-//	    endFor;
-//	}
+//    forEachCommand(command, getCommands()) {
+//        command->onDisarm(this);
+//        endFor;
+//    }
 //    }
 //}
 
@@ -2087,17 +2087,17 @@ CellWidget::resizeEvent(QResizeEvent* event)
 //CellWidget::mousePressEvent(QMouseEvent* event)
 //{
 //    if (!_startedCommand) {
-//	Point position = getSnapPoint(event->x(), event->y());
-//	if (getView()) {
-//	    _startedCommand = getCommand(event->button());
+//    Point position = getSnapPoint(event->x(), event->y());
+//    if (getView()) {
+//        _startedCommand = getCommand(event->button());
 //
-//	    if (_startedCommand) {
-//		_startedCommand->onStart(this, position, event->state());
-//	    }
-//	}
-//	if (_trackBox) {
-//	    _trackBox->start(position);
-//	}
+//        if (_startedCommand) {
+//        _startedCommand->onStart(this, position, event->state());
+//        }
+//    }
+//    if (_trackBox) {
+//        _trackBox->start(position);
+//    }
 //    }
 //}
 //
@@ -2105,54 +2105,54 @@ CellWidget::resizeEvent(QResizeEvent* event)
 //CellWidget::mouseMoveEvent(QMouseEvent* event)
 //{
 //    if (_startedCommand && automaticScrolling() && _startedCommand->automaticScrolling()) {
-//	int sx = event->x();
-//	int sy = event->y();
-//	Unit dx = 0;
-//	if (sx < 0) {
-//	    dx = GetUnit(width() / 40);
-//	}
-//	else {
-//	    if (width() < sx) {
-//		dx = - GetUnit(width() / 40);
-//	    }
-//	}
-//	Unit dy = 0;
-//	if (sy < 0) {
-//	    dy = - GetUnit(height() / 40);
-//	}
-//	else {
-//	    if (height() < sy) {
-//		dy = GetUnit(height() / 40);
-//	    }
-//	}
-//	if (dx || dy) {
-//	    scroll(dx, dy);
-//	}
+//    int sx = event->x();
+//    int sy = event->y();
+//    Unit dx = 0;
+//    if (sx < 0) {
+//        dx = getUnit(width() / 40);
+//    }
+//    else {
+//        if (width() < sx) {
+//        dx = - getUnit(width() / 40);
+//        }
+//    }
+//    Unit dy = 0;
+//    if (sy < 0) {
+//        dy = - getUnit(height() / 40);
+//    }
+//    else {
+//        if (height() < sy) {
+//        dy = getUnit(height() / 40);
+//        }
+//    }
+//    if (dx || dy) {
+//        scroll(dx, dy);
+//    }
 //    }
 //
 //    Point position = getSnapPoint(event->x(), event->y());
 //
 //    if (position != _snapPoint) {
-//	if (_snapGrid) {
-//	    drawSnapPoint();
-//	}
-//	_snapPoint = position;
-//	if (_snapGrid) {
-//	    drawSnapPoint();
-//	}
-//	if (getView()) {
-//	    forEachCommand(command, getCommands()) {
-//		command->onTrack(this, position);
-//		endFor;
-//	    }
+//    if (_snapGrid) {
+//        drawSnapPoint();
+//    }
+//    _snapPoint = position;
+//    if (_snapGrid) {
+//        drawSnapPoint();
+//    }
+//    if (getView()) {
+//        forEachCommand(command, getCommands()) {
+//        command->onTrack(this, position);
+//        endFor;
+//        }
 //
-//	    if (_startedCommand) {
-//		_startedCommand->onUpdate(this, position, event->state());
-//	    }
-//	}
-//	if (_trackBox) {
-//	    _trackBox->update(position);
-//	}
+//        if (_startedCommand) {
+//        _startedCommand->onUpdate(this, position, event->state());
+//        }
+//    }
+//    if (_trackBox) {
+//        _trackBox->update(position);
+//    }
 //    }
 //}
 //
@@ -2160,14 +2160,14 @@ CellWidget::resizeEvent(QResizeEvent* event)
 //CellWidget::mouseReleaseEvent(QMouseEvent* event)
 //{
 //    if (_startedCommand && (_startedCommand->getButton() == event->button())) {
-//	Point position = getSnapPoint(event->x(), event->y());
-//	if (getView()) {
-//	    _startedCommand->onStop(this, position);
-//	    _startedCommand = NULL;
-//	}
-//	if (_trackBox) {
-//	    _trackBox->stop(position);
-//	}
+//    Point position = getSnapPoint(event->x(), event->y());
+//    if (getView()) {
+//        _startedCommand->onStop(this, position);
+//        _startedCommand = NULL;
+//    }
+//    if (_trackBox) {
+//        _trackBox->stop(position);
+//    }
 //    }
 //}
 //
@@ -2199,7 +2199,7 @@ CellWidget::paintEvent(QPaintEvent* event)
 
 void
 CellWidget::onSetVisible(Layer* layer,
-		       bool   visible)
+               bool   visible)
 {
 }
 
@@ -2211,34 +2211,34 @@ CellWidget::onSetVisible(Layer* layer,
 
 int
 CellWidget::getClipCode(double x,
-		      double y) const
+              double y) const
 {
     if (x < _clipX[0]) {
-	if (y < _clipY[0]) {
-	    return 28;
-	}
-	if (_clipY[3] < y) {
-	    return 22;
-	}
-	return 4;
+    if (y < _clipY[0]) {
+        return 28;
+    }
+    if (_clipY[3] < y) {
+        return 22;
+    }
+    return 4;
     }
 
     if (_clipX[3] < x) {
-	if (y < _clipY[0]) {
-	    return 25;
-	}
-	if (_clipY[3] < y) {
-	    return 19;
-	}
-	return 1;
+    if (y < _clipY[0]) {
+        return 25;
+    }
+    if (_clipY[3] < y) {
+        return 19;
+    }
+    return 1;
     }
 
     if (y < _clipY[0]) {
-	return 8;
+    return 8;
     }
 
     if (_clipY[3] < y) {
-	return 2;
+    return 2;
     }
 
     return 0;
@@ -2253,75 +2253,75 @@ CellWidget::getClipCode(double x,
 
 bool
 CellWidget::clipLine(double& xo,
-		   double& yo,
-		   int     co,
-		   double& xe,
-		   double& ye,
-		   int     ce,
-		   int     u) const
+           double& yo,
+           int     co,
+           double& xe,
+           double& ye,
+           int     ce,
+           int     u) const
 {
     if (co & ce & -17) {
-	return false;
+    return false;
     }
 
     if (!co & !ce) {
-	return true;
+    return true;
     }
 
     if (co & 1) {
-	yo += ((ye - yo) / (xe - xo)) * (_clipX[3] - xo);
-	xo = _clipX[3];
-	co = getClipCode(xo, yo);
-	return clipLine(xo, yo, co, xe, ye, ce, u + 1);
+    yo += ((ye - yo) / (xe - xo)) * (_clipX[3] - xo);
+    xo = _clipX[3];
+    co = getClipCode(xo, yo);
+    return clipLine(xo, yo, co, xe, ye, ce, u + 1);
     }
 
     if (co & 2) {
-	xo += ((xe - xo) / (ye - yo)) * (_clipY[3] - yo);
-	yo = _clipY[3];
-	co = getClipCode(xo, yo);
-	return clipLine(xo, yo, co, xe, ye, ce, u + 1);
+    xo += ((xe - xo) / (ye - yo)) * (_clipY[3] - yo);
+    yo = _clipY[3];
+    co = getClipCode(xo, yo);
+    return clipLine(xo, yo, co, xe, ye, ce, u + 1);
     }
 
     if (co & 4) {
-	yo += ((ye - yo) / (xe - xo)) * (_clipX[0] - xo);
-	xo = _clipX[0];
-	co = getClipCode(xo, yo);
-	return clipLine(xo, yo, co, xe, ye, ce, u + 1);
+    yo += ((ye - yo) / (xe - xo)) * (_clipX[0] - xo);
+    xo = _clipX[0];
+    co = getClipCode(xo, yo);
+    return clipLine(xo, yo, co, xe, ye, ce, u + 1);
     }
 
     if (co & 8) {
-	xo += ((xe - xo) / (ye - yo)) * (_clipY[0] - yo);
-	yo = _clipY[0];
-	co = getClipCode(xo, yo);
-	return clipLine(xo, yo, co, xe, ye, ce, u + 1);
+    xo += ((xe - xo) / (ye - yo)) * (_clipY[0] - yo);
+    yo = _clipY[0];
+    co = getClipCode(xo, yo);
+    return clipLine(xo, yo, co, xe, ye, ce, u + 1);
     }
 
     if (ce & 1) {
-	ye -= ((ye - yo) / (xe - xo)) * (xe - _clipX[3]);
-	xe = _clipX[3];
-	ce = getClipCode(xe, ye);
-	return clipLine(xo, yo, co, xe, ye, ce, u + 1);
+    ye -= ((ye - yo) / (xe - xo)) * (xe - _clipX[3]);
+    xe = _clipX[3];
+    ce = getClipCode(xe, ye);
+    return clipLine(xo, yo, co, xe, ye, ce, u + 1);
     }
 
     if (ce & 2) {
-	xe -= ((xe - xo) / (ye - yo)) * (ye - _clipY[3]);
-	ye = _clipY[3];
-	ce = getClipCode(xe, ye);
-	return clipLine(xo, yo, co, xe, ye, ce, u + 1);
+    xe -= ((xe - xo) / (ye - yo)) * (ye - _clipY[3]);
+    ye = _clipY[3];
+    ce = getClipCode(xe, ye);
+    return clipLine(xo, yo, co, xe, ye, ce, u + 1);
     }
 
     if (ce & 4) {
-	ye -= ((ye - yo) / (xe - xo)) * (xe - _clipX[0]);
-	xe = _clipX[0];
-	ce = getClipCode(xe, ye);
-	return clipLine(xo, yo, co, xe, ye, ce, u + 1);
+    ye -= ((ye - yo) / (xe - xo)) * (xe - _clipX[0]);
+    xe = _clipX[0];
+    ce = getClipCode(xe, ye);
+    return clipLine(xo, yo, co, xe, ye, ce, u + 1);
     }
 
     if (ce & 8) {
-	xe -= ((xe - xo) / (ye - yo)) * (ye - _clipY[0]);
-	ye = _clipY[0];
-	ce = getClipCode(xe, ye);
-	return clipLine(xo, yo, co, xe, ye, ce, u + 1);
+    xe -= ((xe - xo) / (ye - yo)) * (ye - _clipY[0]);
+    ye = _clipY[0];
+    ce = getClipCode(xe, ye);
+    return clipLine(xo, yo, co, xe, ye, ce, u + 1);
     }
 
     return true;
@@ -2329,14 +2329,14 @@ CellWidget::clipLine(double& xo,
 
 //bool
 //CellWidget::clipLines(const Points& points,
-//		    QPointArray&  sPoints,
-//		    unsigned&     sCount,
-//		    bool          closed) const
+//            QPointArray&  sPoints,
+//            unsigned&     sCount,
+//            bool          closed) const
 //{
 //    sCount = 0;
 //
 //    if (points.isEmpty()) {
-//	return false;
+//    return false;
 //    }
 //
 //    int co, ce;
@@ -2344,107 +2344,107 @@ CellWidget::clipLine(double& xo,
 //    bool firstPoint = true;
 //
 //    forEachPoint(point, points) {
-//	xe = GetValue(point.getX());
-//	ye = GetValue(point.getY());
-//	ce = getClipCode(xe, ye);
-//	if (firstPoint) {
-//	    if (!ce) {
-//		int sx = getScreenX(GetUnit(xe));
-//		int sy = getScreenY(GetUnit(ye));
-//		sPoints.putPoints(sCount++, 1, sx, sy);
-//	    }
-//	    firstPoint = false;
-//	}
-//	else {
-//	    static int tcc[] = {0,-3,-6,1,3,0,1,0,6,1,0,0,1,0,0,0};
-//	    static int cra[] = {-1,-1,-1,3,-1,-1,2,-1,-1,1,-1,-1,0,-1,-1,-1};
+//    xe = getValue(point.getX());
+//    ye = getValue(point.getY());
+//    ce = getClipCode(xe, ye);
+//    if (firstPoint) {
+//        if (!ce) {
+//        int sx = getScreenX(getUnit(xe));
+//        int sy = getScreenY(getUnit(ye));
+//        sPoints.putPoints(sCount++, 1, sx, sy);
+//        }
+//        firstPoint = false;
+//    }
+//    else {
+//        static int tcc[] = {0,-3,-6,1,3,0,1,0,6,1,0,0,1,0,0,0};
+//        static int cra[] = {-1,-1,-1,3,-1,-1,2,-1,-1,1,-1,-1,0,-1,-1,-1};
 //
-//	    double xco = xo;
-//	    double yco = yo;
-//	    double xce = xe;
-//	    double yce = ye;
-//	    if (clipLine(xco, yco, co, xce, yce, ce)) {
-//		if (co) {
-//		    int sx = getScreenX(GetUnit(xco));
-//		    int sy = getScreenY(GetUnit(yco));
-//		    sPoints.putPoints(sCount++, 1, sx, sy);
-//		}
-//		int sx = getScreenX(GetUnit(xce));
-//		int sy = getScreenY(GetUnit(yce));
-//		sPoints.putPoints(sCount++, 1, sx, sy);
-//	    }
-//	    else {
-//		if (ce & 16) {
-//		    if (!(co & ce & ~16)) {
-//			int c;
-//			if (!(co & 16)) {
-//			    c = ce + tcc[co];
-//			}
-//			else {
-//			    bool done = false;
-//			    double xto = xo;
-//			    double yto = yo;
-//			    double xte = xe;
-//			    double yte = ye;
-//			    while (!done) {
-//				double x = (xto + xte) / 2;
-//				double y = (yto + yte) / 2;
-//				c = getClipCode(x, y);
-//				if (!(c & 16)) {
-//				    if (c & ce) {
-//					c = ce + tcc[co & ~16];
-//				    }
-//				    else {
-//					c = co + tcc[ce & ~16];
-//				    }
-//				    done = true;
-//				}
-//				else {
-//				    if (c == ce) {
-//					xte = x;
-//					yte = y;
-//				    }
-//				    else {
-//					if (c != co) {
-//					    done = true;
-//					}
-//					else {
-//					    xto = x;
-//					    yto = y;
-//					}
-//				    }
-//				}
-//			    }
-//			}
-//			int sx = getScreenX(GetUnit(_clipX[cra[c&~16]]));
-//			int sy = getScreenY(GetUnit(_clipY[cra[c&~16]]));
-//			sPoints.putPoints(sCount++, 1, sx, sy);
-//		    }
-//		}
-//		else {
-//		    if (co & 16) {
-//			if (!(co & ce)) ce = co + tcc[ce];
-//		    }
-//		    else {
-//			ce |= co;
-//			if (tcc[ce] == 1) ce |= 16;
-//		    }
-//		}
-//	    }
-//	    if (ce & 16) {
-//		int sx = getScreenX(GetUnit(_clipX[cra[ce&~16]]));
-//		int sy = getScreenY(GetUnit(_clipY[cra[ce&~16]]));
-//		sPoints.putPoints(sCount++, 1, sx, sy);
-//	    }
-//	}
-//	xo = xe;
-//	yo = ye;
-//	co = ce;
-//	endFor;
+//        double xco = xo;
+//        double yco = yo;
+//        double xce = xe;
+//        double yce = ye;
+//        if (clipLine(xco, yco, co, xce, yce, ce)) {
+//        if (co) {
+//            int sx = getScreenX(getUnit(xco));
+//            int sy = getScreenY(getUnit(yco));
+//            sPoints.putPoints(sCount++, 1, sx, sy);
+//        }
+//        int sx = getScreenX(getUnit(xce));
+//        int sy = getScreenY(getUnit(yce));
+//        sPoints.putPoints(sCount++, 1, sx, sy);
+//        }
+//        else {
+//        if (ce & 16) {
+//            if (!(co & ce & ~16)) {
+//            int c;
+//            if (!(co & 16)) {
+//                c = ce + tcc[co];
+//            }
+//            else {
+//                bool done = false;
+//                double xto = xo;
+//                double yto = yo;
+//                double xte = xe;
+//                double yte = ye;
+//                while (!done) {
+//                double x = (xto + xte) / 2;
+//                double y = (yto + yte) / 2;
+//                c = getClipCode(x, y);
+//                if (!(c & 16)) {
+//                    if (c & ce) {
+//                    c = ce + tcc[co & ~16];
+//                    }
+//                    else {
+//                    c = co + tcc[ce & ~16];
+//                    }
+//                    done = true;
+//                }
+//                else {
+//                    if (c == ce) {
+//                    xte = x;
+//                    yte = y;
+//                    }
+//                    else {
+//                    if (c != co) {
+//                        done = true;
+//                    }
+//                    else {
+//                        xto = x;
+//                        yto = y;
+//                    }
+//                    }
+//                }
+//                }
+//            }
+//            int sx = getScreenX(getUnit(_clipX[cra[c&~16]]));
+//            int sy = getScreenY(getUnit(_clipY[cra[c&~16]]));
+//            sPoints.putPoints(sCount++, 1, sx, sy);
+//            }
+//        }
+//        else {
+//            if (co & 16) {
+//            if (!(co & ce)) ce = co + tcc[ce];
+//            }
+//            else {
+//            ce |= co;
+//            if (tcc[ce] == 1) ce |= 16;
+//            }
+//        }
+//        }
+//        if (ce & 16) {
+//        int sx = getScreenX(getUnit(_clipX[cra[ce&~16]]));
+//        int sy = getScreenY(getUnit(_clipY[cra[ce&~16]]));
+//        sPoints.putPoints(sCount++, 1, sx, sy);
+//        }
+//    }
+//    xo = xe;
+//    yo = ye;
+//    co = ce;
+//    endFor;
 //    }
 //
 //    if (closed && sCount) {
-//	sPoints.putPoints(sCount++, 1, sPoints[0].x(), sPoints[0].y());
+//    sPoints.putPoints(sCount++, 1, sPoints[0].x(), sPoints[0].y());
 //    }
 //
 //    return sCount;
@@ -2468,14 +2468,14 @@ CellWidget::_setClipBox(const Box& area)
 {
     _clipBox = Box(area).inflate(getSize(2));
 
-    _clipX[0] = GetValue(_clipBox.getXMin());
-    _clipX[1] = GetValue(_clipBox.getXMax());
-    _clipX[2] = GetValue(_clipBox.getXMin());
-    _clipX[3] = GetValue(_clipBox.getXMax());
-    _clipY[0] = GetValue(_clipBox.getYMin());
-    _clipY[1] = GetValue(_clipBox.getYMin());
-    _clipY[2] = GetValue(_clipBox.getYMax());
-    _clipY[3] = GetValue(_clipBox.getYMax());
+    _clipX[0] = getValue(_clipBox.getXMin());
+    _clipX[1] = getValue(_clipBox.getXMax());
+    _clipX[2] = getValue(_clipBox.getXMin());
+    _clipX[3] = getValue(_clipBox.getXMax());
+    _clipY[0] = getValue(_clipBox.getYMin());
+    _clipY[1] = getValue(_clipBox.getYMin());
+    _clipY[2] = getValue(_clipBox.getYMax());
+    _clipY[3] = getValue(_clipBox.getYMax());
 }
 
 
@@ -2488,58 +2488,58 @@ void
 CellWidget::_redraw()
 {
     if (!_invalidRegion.isEmpty()) {
-	QRect invalidRect = _invalidRegion.boundingRect();
+    QRect invalidRect = _invalidRegion.boundingRect();
 
-	if (_doubleBuffering) {
-	    _invalidRegion = invalidRect;
-	}
+    if (_doubleBuffering) {
+        _invalidRegion = invalidRect;
+    }
 
-	Box area = getBox(invalidRect).inflate(getSize(1));
+    Box area = getBox(invalidRect).inflate(getSize(1));
 
-	_setClipBox(area);
+    _setClipBox(area);
 
-	QPaintDevice* device = this;
+    QPaintDevice* device = this;
 
-	if (_doubleBuffering) {
-	    //device = _getPixmap();
-	}
+    if (_doubleBuffering) {
+        //device = _getPixmap();
+    }
 
-	QPainter painter(device);
-	QPainter* oldPainter = _painter;
-	_painter = &painter;
+    QPainter painter(device);
+    QPainter* oldPainter = _painter;
+    _painter = &painter;
 
-	QRegion deepRegion;
+    QRegion deepRegion;
         for (list<Box>::iterator plit = _peekList.begin();
                 plit != _peekList.end();
                 ++plit) {
-	    deepRegion = deepRegion.unite(QRegion(getScreenRect(*plit)));
+        deepRegion = deepRegion.unite(QRegion(getScreenRect(*plit)));
         }
-//	forEachBox(peek, _peekList) {
-//	    deepRegion = deepRegion.unite(QRegion(getScreenRect(peek)));
-//	    endFor;
-//	}
-	deepRegion = deepRegion.intersect(_invalidRegion);
-	Box deepArea = getBox(deepRegion.boundingRect());
+//    forEachBox(peek, _peekList) {
+//        deepRegion = deepRegion.unite(QRegion(getScreenRect(peek)));
+//        endFor;
+//    }
+    deepRegion = deepRegion.intersect(_invalidRegion);
+    Box deepArea = getBox(deepRegion.boundingRect());
 
-	_painter->setClipRegion(_invalidRegion);
+    _painter->setClipRegion(_invalidRegion);
 
-	_painter->fillRect(invalidRect, QBrush(getBackgroundColor()));
+    _painter->fillRect(invalidRect, QBrush(getBackgroundColor()));
 
-	preRedraw(area);
+    preRedraw(area);
 
-	QRegion region = _invalidRegion.subtract(deepRegion);
+    QRegion region = _invalidRegion.subtract(deepRegion);
 
-	Cell* cell = getCell();
-	if (cell) {
+    Cell* cell = getCell();
+    if (cell) {
 
 
             _painter->save();
 
 
-	    double brightness = 1.0;
-	    //if (highlightionIsVisible() && !getHighlightion().isEmpty()) {
-	    //    brightness = 0.4;
-	    //}
+        double brightness = 1.0;
+        //if (highlightionIsVisible() && !getHighlightion().isEmpty()) {
+        //    brightness = 0.4;
+        //}
 
             setPen(boundariesPen, brightness);
             setBrush(boundariesBrush, brightness);
@@ -2547,131 +2547,131 @@ CellWidget::_redraw()
 
 
             for_each_basic_layer(layer, getVisibleLayers()) {
-		if (isDrawable(layer)) {
-		    //setFont(getFont(layer));
-		    //setPen(layer->getPen(), brightness);
+        if (isDrawable(layer)) {
+            //setFont(getFont(layer));
+            //setPen(layer->getPen(), brightness);
                     setPen(getPen(layer), brightness);
-		    //setBrush(layer->getBrush(), brightness);
+            //setBrush(layer->getBrush(), brightness);
                     setBrush(getBrush(layer), brightness);
-		    //setBrushOrigin(layer->getBrushOrigin());
-		    if (deepRegion.isEmpty()) {
+            //setBrushOrigin(layer->getBrushOrigin());
+            if (deepRegion.isEmpty()) {
                         drawContent(cell, layer, area, Transformation());
-		    //    view->_draw(this, layer, area, Transformation());
+            //    view->_draw(this, layer, area, Transformation());
                     } else {
-			_painter->setClipRegion(region);
+            _painter->setClipRegion(region);
                         drawContent(cell, layer, area, Transformation());
-			//view->_draw(this, layer, area, Transformation());
-			_painter->setClipRegion(deepRegion);
-			unsigned displayDepth = _displayDepth;
-			_displayDepth = (unsigned)-1;
-			//view->_draw(this, layer, deepArea, Transformation());
+            //view->_draw(this, layer, area, Transformation());
+            _painter->setClipRegion(deepRegion);
+            unsigned displayDepth = _displayDepth;
+            _displayDepth = (unsigned)-1;
+            //view->_draw(this, layer, deepArea, Transformation());
                         drawContent(cell, layer, deepArea, Transformation());
-			_displayDepth = displayDepth;
-			_painter->setClipRegion(_invalidRegion);
-		    }
-		    //_painter->flush();
-		}
-		end_for;
-	    }
-//	    if (highlightionIsVisible() && !getHighlightion().isEmpty()) {
-//		Technology* technology = getDatabase()->getTechnology();
-//		if (technology) {
-//		    forEachLayer(layer, technology->getLayers()) {
-//			if (isDrawable(layer)) {
-//			    setFont(layer->getFont());
-//			    setPen(layer->getPen());
-//			    setBrush(layer->getBrush());
-//			    setBrushOrigin(layer->getBrushOrigin());
-//			    forEachOccurrence(occurrence, getHighlightion()) {
-//				Figure* figure = dynamic_cast<Figure*>(occurrence.getEntity());
-//				if (figure &&
-//				    figure->isMaterialized() &&
-//				    (figure->getLayerMask() & layer->getMask())) {
-//				    Box boundingBox = occurrence.getBoundingBox();
-//				    if (boundingBox.overlaps(area)) {
-//					Transformation transformation =
-//					    occurrence.getPath().getTransformation();
-//					Box correctedArea =
-//					    transformation.getInverted().getBox(area);
-//					figure->_draw(this, layer, correctedArea, transformation);
-//				    }
-//				}
-//				endFor;
-//			    }
-//			    _painter->flush();
-//			}
-//			endFor;
-//		    }
-//		}
-//	    }
-//	    if (selectionIsVisible()) {
-//		QColor selectionColor = getSelectionColor();
-//		setPen(selectionColor);
-//		setBrush(QBrush(selectionColor, Dense4Pattern));
-//		setBrushOrigin(QPoint(0, 0));
-//		forEachOccurrence(occurrence, getSelection()) {
-//		    Figure* figure = dynamic_cast<Figure*>(occurrence.getEntity());
-//		    if (figure) {
-//			Box boundingBox = occurrence.getBoundingBox();
-//			if (boundingBox.overlaps(area)) {
-//			    figure->_highlight(this, occurrence.getPath().getTransformation());
-//			}
-//		    }
-//		    endFor;
-//		}
-//	    }
-	    _painter->restore();
-	    if (gridIsVisible() && gridIsDrawable()) {
-		Unit xMin = getGridX(getX(0));
-		Unit yMin = getGridY(getY(height()));
-		Unit xMax = getGridX(getX(width()));
-		Unit yMax = getGridY(getY(0));
-		setPen(getGridColor());
-		for (Unit x = xMin; x <= xMax; x += _gridXStep) {
-		    int sx = getScreenX(x);
-		    if (_gridAxesAreVisible && (x == getGridOrigin().getX())) {
-			//_painter->moveTo(sx, 0);
-			//_painter->lineTo(sx, height());
+            _displayDepth = displayDepth;
+            _painter->setClipRegion(_invalidRegion);
+            }
+            //_painter->flush();
+        }
+        end_for;
+        }
+//        if (highlightionIsVisible() && !getHighlightion().isEmpty()) {
+//        Technology* technology = getDatabase()->getTechnology();
+//        if (technology) {
+//            forEachLayer(layer, technology->getLayers()) {
+//            if (isDrawable(layer)) {
+//                setFont(layer->getFont());
+//                setPen(layer->getPen());
+//                setBrush(layer->getBrush());
+//                setBrushOrigin(layer->getBrushOrigin());
+//                forEachOccurrence(occurrence, getHighlightion()) {
+//                Figure* figure = dynamic_cast<Figure*>(occurrence.getEntity());
+//                if (figure &&
+//                    figure->isMaterialized() &&
+//                    (figure->getLayerMask() & layer->getMask())) {
+//                    Box boundingBox = occurrence.getBoundingBox();
+//                    if (boundingBox.overlaps(area)) {
+//                    Transformation transformation =
+//                        occurrence.getPath().getTransformation();
+//                    Box correctedArea =
+//                        transformation.getInverted().getBox(area);
+//                    figure->_draw(this, layer, correctedArea, transformation);
+//                    }
+//                }
+//                endFor;
+//                }
+//                _painter->flush();
+//            }
+//            endFor;
+//            }
+//        }
+//        }
+//        if (selectionIsVisible()) {
+//        QColor selectionColor = getSelectionColor();
+//        setPen(selectionColor);
+//        setBrush(QBrush(selectionColor, Dense4Pattern));
+//        setBrushOrigin(QPoint(0, 0));
+//        forEachOccurrence(occurrence, getSelection()) {
+//            Figure* figure = dynamic_cast<Figure*>(occurrence.getEntity());
+//            if (figure) {
+//            Box boundingBox = occurrence.getBoundingBox();
+//            if (boundingBox.overlaps(area)) {
+//                figure->_highlight(this, occurrence.getPath().getTransformation());
+//            }
+//            }
+//            endFor;
+//        }
+//        }
+        _painter->restore();
+        if (gridIsVisible() && gridIsDrawable()) {
+        Unit xMin = getGridX(getX(0));
+        Unit yMin = getGridY(getY(height()));
+        Unit xMax = getGridX(getX(width()));
+        Unit yMax = getGridY(getY(0));
+        setPen(getGridColor());
+        for (Unit x = xMin; x <= xMax; x += _gridXStep) {
+            int sx = getScreenX(x);
+            if (_gridAxesAreVisible && (x == getGridOrigin().getX())) {
+            //_painter->moveTo(sx, 0);
+            //_painter->lineTo(sx, height());
                         _painter->drawLine(sx, 0, sx, height());
-		    }
-		    for (Unit y = yMin; y <= yMax; y += _gridYStep) {
-			int sy = getScreenY(y);
-			if (_gridAxesAreVisible && (y == getGridOrigin().getY())) {
-			    //_painter->moveTo(0, sy);
-			    //_painter->lineTo(width(), sy);
+            }
+            for (Unit y = yMin; y <= yMax; y += _gridYStep) {
+            int sy = getScreenY(y);
+            if (_gridAxesAreVisible && (y == getGridOrigin().getY())) {
+                //_painter->moveTo(0, sy);
+                //_painter->lineTo(width(), sy);
                             _painter->drawLine(0, sy, width(), sy);
-			}
-			if (!(isOnGridX(x, 10) && isOnGridY(y, 10))) {
-			    _painter->drawPoint(sx, sy);
-			}
-			else {
-			    //_painter->moveTo(sx - 2, sy);
-			    //_painter->lineTo(sx + 2, sy);
+            }
+            if (!(isOnGridX(x, 10) && isOnGridY(y, 10))) {
+                _painter->drawPoint(sx, sy);
+            }
+            else {
+                //_painter->moveTo(sx - 2, sy);
+                //_painter->lineTo(sx + 2, sy);
                             _painter->drawLine(sx - 2, sy, sx + 2, sy);
-			    //_painter->moveTo(sx, sy - 2);
-			    //_painter->lineTo(sx, sy + 2);
+                //_painter->moveTo(sx, sy - 2);
+                //_painter->lineTo(sx, sy + 2);
                             _painter->drawLine(sx, sy - 2, sx, sy + 2);
-			}
-		    }
-		}
-	    }
-	}
+            }
+            }
+        }
+        }
+    }
 
-	postRedraw(area);
+    postRedraw(area);
 
-	if (device != this) {
-	    int x = invalidRect.x();
-	    int y = invalidRect.y();
-	    int w = invalidRect.width();
-	    int h = invalidRect.height();
-	    //bitBlt(this, x, y, device, x, y, w, h, CopyROP, true);
-	}
+    if (device != this) {
+        int x = invalidRect.x();
+        int y = invalidRect.y();
+        int w = invalidRect.width();
+        int h = invalidRect.height();
+        //bitBlt(this, x, y, device, x, y, w, h, CopyROP, true);
+    }
 
-	_setClipBox(getBox(rect()));
+    _setClipBox(getBox(rect()));
 
-	_painter = oldPainter;
+    _painter = oldPainter;
 
-	_invalidRegion = QRegion();
+    _invalidRegion = QRegion();
     }
 }
 
@@ -2688,15 +2688,15 @@ CellWidget::_redraw()
 //    assert(command->isInstalledOn(this));
 //
 //    if (getView()) {
-//	QPainter painter(this);
+//    QPainter painter(this);
 //
-//	_painter = &painter;
+//    _painter = &painter;
 //
-//	_painter->setRasterOp(XorROP);
-//	_painter->setPen(getForegroundColor());
-//	_painter->setBrush(NoBrush);
+//    _painter->setRasterOp(XorROP);
+//    _painter->setPen(getForegroundColor());
+//    _painter->setBrush(NoBrush);
 //
-//	command->onDraw(this);
+//    command->onDraw(this);
 //    }
 //}
 //

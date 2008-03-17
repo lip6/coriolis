@@ -23,26 +23,26 @@ class Timer {
 // Attributes
 // **********
 
-	private: time_t _time;
+    private: time_t _time;
 
 // Constructors
 // ************
 
-	public: Timer();
+    public: Timer();
 
-	public: Timer(const Timer& timer);
+    public: Timer(const Timer& timer);
 
 // Operators
 // *********
 
-	public: Timer& operator=(const Timer& timer);
+    public: Timer& operator=(const Timer& timer);
 
 // Others
 // ******
 
-    public: string _GetTypeName() const { return _TName("Timer"); };
-	public: string _GetString() const;
-	public: Record* _GetRecord() const;
+    public: string _getTypeName() const { return _TName("Timer"); };
+    public: string _getString() const;
+    public: Record* _getRecord() const;
 
 };
 

@@ -3,7 +3,6 @@
 // Authors: R. Escassut
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
-// 21-10-2003 Alignment BULL-LIP6 : added operators+ += ... (questionnable!)
 
 #ifndef HURRICANE_POINT
 #define HURRICANE_POINT
@@ -68,9 +67,9 @@ class Point {
 // Others
 // ******
 
-    public: string _GetTypeName() const { return _TName("Point"); };
-    public: string _GetString() const;
-    public: Record* _GetRecord() const;
+    public: string _getTypeName() const { return _TName("Point"); };
+    public: string _getString() const;
+    public: Record* _getRecord() const;
 
 };
 

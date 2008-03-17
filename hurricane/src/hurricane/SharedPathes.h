@@ -46,9 +46,9 @@ typedef GenericFilter<SharedPath*> SharedPathFilter;
 #define for_each_shared_path(sharedPath, sharedPathes)\
 /*****************************************************/\
 {\
-	SharedPathLocator _locator = sharedPathes.GetLocator();\
+	SharedPathLocator _locator = sharedPathes.getLocator();\
 	while (_locator.IsValid()) {\
-		SharedPath* sharedPath = _locator.GetElement();\
+		SharedPath* sharedPath = _locator.getElement();\
 		_locator.Progress();
 
 

@@ -46,10 +46,10 @@ typedef GenericFilter<Hook*> HookFilter;
 #define for_each_hook(hook, hooks)\
 /*********************************/\
 {\
-	HookLocator _locator = hooks.GetLocator();\
-	while (_locator.IsValid()) {\
-		Hook* hook = _locator.GetElement();\
-		_locator.Progress();
+    HookLocator _locator = hooks.getLocator();\
+    while (_locator.IsValid()) {\
+        Hook* hook = _locator.getElement();\
+        _locator.Progress();
 
 
 

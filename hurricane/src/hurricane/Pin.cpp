@@ -22,132 +22,132 @@ namespace Hurricane {
 Pin::Pin(Net* net, const Name& name, const AccessDirection& accessDirection, const PlacementStatus& placementStatus, Layer* layer, const Unit& x, const Unit& y, const Unit& width, const Unit& height)
 // ****************************************************************************************************
 :  Inherit(net, layer, x, y, width, height),
-	_name(name),
-	_accessDirection(accessDirection),
+    _name(name),
+    _accessDirection(accessDirection),
     _placementStatus(placementStatus),
-	_nextOfCellPinMap(NULL)
+    _nextOfCellPinMap(NULL)
 {
-	if (GetCell()->GetPin(name))
-		throw Error("Can't create " + _TName("Pin") + " : already exists");
+    if (getCell()->getPin(name))
+        throw Error("Can't create " + _TName("Pin") + " : already exists");
 
 }
 
 Pin* Pin::Create(Net* net, const Name& name, const AccessDirection& accessDirection, const PlacementStatus& placementStatus, Layer* layer, const Unit& x, const Unit& y, const Unit& width, const Unit& height)
 // ****************************************************************************************************
 {
-	if (!net)
-		throw Error("Can't create " + _TName("Pin") + " : NULL net");
-	if (!layer)
-		throw Error("Can't create " + _TName("Pin") + " : NULL layer");
+    if (!net)
+        throw Error("Can't create " + _TName("Pin") + " : NULL net");
+    if (!layer)
+        throw Error("Can't create " + _TName("Pin") + " : NULL layer");
 
-	Pin* pin = new Pin(net, name, accessDirection, placementStatus, layer, x, y, width, height);
+    Pin* pin = new Pin(net, name, accessDirection, placementStatus, layer, x, y, width, height);
 
-	pin->_PostCreate();
+    pin->_postCreate();
 
-	return pin;
+    return pin;
 }
 
 void Pin::SetPlacementStatus(const PlacementStatus& placementstatus)
 // **********************************************************************
 {
-	if (placementstatus != _placementStatus) {
-		Invalidate(true);
+    if (placementstatus != _placementStatus) {
+        Invalidate(true);
         _placementStatus = placementstatus;
-	}
+    }
 }
 
-void Pin::_PostCreate()
+void Pin::_postCreate()
 // **********************
 {
-	GetCell()->_GetPinMap()._Insert(this);
+    getCell()->_getPinMap()._Insert(this);
 
-	Inherit::_PostCreate();
+    Inherit::_postCreate();
 }
 
-void Pin::_PreDelete()
+void Pin::_preDestroy()
 // *********************
 {
-	Inherit::_PreDelete();
+    Inherit::_preDestroy();
 
-	GetCell()->_GetPinMap()._Remove(this);
+    getCell()->_getPinMap()._Remove(this);
 }
 
-string Pin::_GetString() const
+string Pin::_getString() const
 // *****************************
 {
-	string s = Inherit::_GetString();
-	s.insert(s.length() - 1, " " + GetString(_name));
-	s.insert(s.length() - 1, " " + GetString(_accessDirection));
-	return s;
+    string s = Inherit::_getString();
+    s.insert(s.length() - 1, " " + getString(_name));
+    s.insert(s.length() - 1, " " + getString(_accessDirection));
+    return s;
 }
 
-Record* Pin::_GetRecord() const
+Record* Pin::_getRecord() const
 // ************************
 {
-	Record* record = Inherit::_GetRecord();
-	if (record) {
-		record->Add(GetSlot("Name", &_name));
-		record->Add(GetSlot("AccessDirection", &_accessDirection));
-		record->Add(GetSlot("PlacementStatus", &_placementStatus));
-	}
-	return record;
+    Record* record = Inherit::_getRecord();
+    if (record) {
+        record->Add(getSlot("Name", &_name));
+        record->Add(getSlot("AccessDirection", &_accessDirection));
+        record->Add(getSlot("PlacementStatus", &_placementStatus));
+    }
+    return record;
 }
 
 //void Pin::_Draw(View* view, BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation)
 //// *************************************************************************************************************
 //{
-//	view->FillRectangle(transformation.GetBox(GetBoundingBox(basicLayer)), true);
+//    view->FillRectangle(transformation.getBox(getBoundingBox(basicLayer)), true);
 //}
 //
 //void Pin::_Highlight(View* view, const Box& updateArea, const Transformation& transformation)
 //// ******************************************************************************************
 //{
-//	if (_width && _height) {
-//		if (1 < view->GetScreenSize(max(_width, _height))) {
-//			for_each_basic_layer(basicLayer, GetLayer()->GetBasicLayers()) {
-//				basicLayer->_Fill(view, transformation.GetBox(GetBoundingBox(basicLayer)));
-//				end_for;
-//			}
-//		}
-//	}
-//	if (view->GetScale() <= 1)
-//		view->DrawPoint(transformation.GetPoint(GetPosition()), 1);
-//	else if (view->GetScale() <= 3)
+//    if (_width && _height) {
+//        if (1 < view->getScreenSize(max(_width, _height))) {
+//            for_each_basic_layer(basicLayer, getLayer()->getBasicLayers()) {
+//                basicLayer->_Fill(view, transformation.getBox(getBoundingBox(basicLayer)));
+//                end_for;
+//            }
+//        }
+//    }
+//    if (view->getScale() <= 1)
+//        view->DrawPoint(transformation.getPoint(getPosition()), 1);
+//    else if (view->getScale() <= 3)
 //    {
-//		view->DrawPoint(transformation.GetPoint(GetPosition()), 2);
+//        view->DrawPoint(transformation.getPoint(getPosition()), 2);
 //
 //        if ( view->IsTextVisible() )
 //        {
 //            string text = "("
-//                        + GetString ( GetValue ( GetX() ) ) + ","
-//                        + GetString ( GetValue ( GetY() ) ) + ")";
+//                        + getString ( getValue ( getX() ) ) + ","
+//                        + getString ( getValue ( getY() ) ) + ")";
 //            view->DrawString ( text,
-//                               transformation.GetBox ( GetBoundingBox() ).GetXMin(),
-//                               transformation.GetBox ( GetBoundingBox() ).GetYMax() );
+//                               transformation.getBox ( getBoundingBox() ).getXMin(),
+//                               transformation.getBox ( getBoundingBox() ).getYMax() );
 //        }
 //    }
-//	else {
-//		Point position = GetPosition();
-//		view->DrawPoint(transformation.GetPoint(position), 3);
-//		if (_width) {
-//			Box box = transformation.GetBox(Box(position).Inflate(GetHalfWidth(), 0));
-//			view->DrawLine(box.GetXMin(), box.GetYMin(), box.GetXMax(), box.GetYMax());
-//		}
-//		if (_height) {
-//			Box box = transformation.GetBox(Box(position).Inflate(0, GetHalfHeight()));
-//			view->DrawLine(box.GetXMin(), box.GetYMin(), box.GetXMax(), box.GetYMax());
-//		}
+//    else {
+//        Point position = getPosition();
+//        view->DrawPoint(transformation.getPoint(position), 3);
+//        if (_width) {
+//            Box box = transformation.getBox(Box(position).Inflate(getHalfWidth(), 0));
+//            view->DrawLine(box.getXMin(), box.getYMin(), box.getXMax(), box.getYMax());
+//        }
+//        if (_height) {
+//            Box box = transformation.getBox(Box(position).Inflate(0, getHalfHeight()));
+//            view->DrawLine(box.getXMin(), box.getYMin(), box.getXMax(), box.getYMax());
+//        }
 //
 //        if ( view->IsTextVisible() )
 //        {
-//            string text = GetString ( _name ) + "("
-//                        + GetString ( GetValue ( GetX() ) ) + ","
-//                        + GetString ( GetValue ( GetY() ) ) + ")";
+//            string text = getString ( _name ) + "("
+//                        + getString ( getValue ( getX() ) ) + ","
+//                        + getString ( getValue ( getY() ) ) + ")";
 //            view->DrawString ( text,
-//                               transformation.GetBox ( GetBoundingBox() ).GetXMin(),
-//                               transformation.GetBox ( GetBoundingBox() ).GetYMax() );
+//                               transformation.getBox ( getBoundingBox() ).getXMin(),
+//                               transformation.getBox ( getBoundingBox() ).getYMax() );
 //        }
-//	}
+//    }
 //}
 //
 
@@ -157,42 +157,42 @@ Record* Pin::_GetRecord() const
 
 Pin::AccessDirection::AccessDirection(const Code& code)
 // ******************************************************
-:	_code(code)
+:    _code(code)
 {
 }
 
 Pin::AccessDirection::AccessDirection(const AccessDirection& accessDirection)
 // ****************************************************************************
-:	_code(accessDirection._code)
+:    _code(accessDirection._code)
 {
 }
 
 Pin::AccessDirection& Pin::AccessDirection::operator=(const AccessDirection& accessDirection)
 // **********************************************************************************************
 {
-	_code = accessDirection._code;
-	return *this;
+    _code = accessDirection._code;
+    return *this;
 }
 
-string Pin::AccessDirection::_GetString() const
+string Pin::AccessDirection::_getString() const
 // **********************************************
 {
-	switch (_code) {
-		case UNDEFINED : return "UNDEFINED";
-		case NORTH : return "NORTH";
-		case SOUTH : return "SOUTH";
-		case WEST : return "WEST";
-		case EAST : return "EAST";
-	}
-	return "ABNORMAL";
+    switch (_code) {
+        case UNDEFINED : return "UNDEFINED";
+        case NORTH : return "NORTH";
+        case SOUTH : return "SOUTH";
+        case WEST : return "WEST";
+        case EAST : return "EAST";
+    }
+    return "ABNORMAL";
 }
 
-Record* Pin::AccessDirection::_GetRecord() const
+Record* Pin::AccessDirection::_getRecord() const
 // *****************************************
 {
-	Record* record = new Record(GetString(this));
-	record->Add(GetSlot("Code", (int)_code));
-	return record;
+    Record* record = new Record(getString(this));
+    record->Add(getSlot("Code", (int)_code));
+    return record;
 }
 
 
@@ -203,13 +203,13 @@ Record* Pin::AccessDirection::_GetRecord() const
 
 Pin::PlacementStatus::PlacementStatus(const Code& code)
 // ****************************************************
-:	_code(code)
+:    _code(code)
 {
 }
 
 Pin::PlacementStatus::PlacementStatus(const PlacementStatus& placementstatus)
 // **************************************************************************
-:	_code(placementstatus._code)
+:    _code(placementstatus._code)
 {
 }
 
@@ -217,26 +217,26 @@ Pin::PlacementStatus& Pin::PlacementStatus::operator=(const PlacementStatus& pla
 // ******************************************************************************************
 {
     _code = placementstatus._code;
-	return *this;
+    return *this;
 }
 
-string Pin::PlacementStatus::_GetString() const
+string Pin::PlacementStatus::_getString() const
 // ********************************************
 {
-	switch (_code) {
-		case UNPLACED : return "UNPLACED";
-		case PLACED : return "PLACED";
-		case FIXED : return "FIXED";
-	}
-	return "ABNORMAL";
+    switch (_code) {
+        case UNPLACED : return "UNPLACED";
+        case PLACED : return "PLACED";
+        case FIXED : return "FIXED";
+    }
+    return "ABNORMAL";
 }
 
-Record* Pin::PlacementStatus::_GetRecord() const
+Record* Pin::PlacementStatus::_getRecord() const
 // ***************************************
 {
-	Record* record = new Record(GetString(this));
-	record->Add(GetSlot("Code", (int)_code));
-	return record;
+    Record* record = new Record(getString(this));
+    record->Add(getSlot("Code", (int)_code));
+    return record;
 }
 
 

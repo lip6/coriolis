@@ -16,34 +16,34 @@ namespace Hurricane {
 
 Warning::Warning(const string& reason, int code)
 // *********************************************
-:	Inherit(),
-	_reason(reason),
-	_code(code)
+:    Inherit(),
+    _reason(reason),
+    _code(code)
 {
 }
 
 Warning::Warning(const Warning& warning)
 // *************************************
-:	Inherit(),
-	_reason(warning._reason),
-	_code(warning._code)
+:    Inherit(),
+    _reason(warning._reason),
+    _code(warning._code)
 {
 }
 
 Warning& Warning::operator=(const Warning& warning)
 // ************************************************
 {
-	_reason = warning._reason;
-	_code = warning._code;
-	return *this;
+    _reason = warning._reason;
+    _code = warning._code;
+    return *this;
 }
 
-string Warning::_GetString() const
+string Warning::_getString() const
 // *******************************
 {
-	if (!_code) return "[WARNING] " + _reason;
+    if (!_code) return "[WARNING] " + _reason;
 
-	return "[WARNING:" + GetString(_code) + "] " + _reason;
+    return "[WARNING:" + getString(_code) + "] " + _reason;
 }
 
 

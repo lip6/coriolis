@@ -3,7 +3,6 @@
 // Authors: R. Escassut
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
-// 21-10-2003 added ManhattanDistance & ShrinkByFactor
 
 #ifndef HURRICANE_BOX
 #define HURRICANE_BOX
@@ -110,9 +109,9 @@ class Box {
 // ******
 
 
-    public: string _GetTypeName() const { return _TName("Box"); };
-    public: string _GetString() const;
-    public: Record* _GetRecord() const;
+    public: string _getTypeName() const { return _TName("Box"); };
+    public: string _getString() const;
+    public: Record* _getRecord() const;
 
 };
 

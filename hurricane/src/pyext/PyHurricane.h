@@ -114,19 +114,19 @@ using namespace std;
                               { }
     public: ~ConverterState ();
 
-    public: ObjectType*             GetObject     ( char* id );
-    public: char*                   GetObjectId   ( PyObject* object );
-    public: char*                   GetObjectName ( string id );
-    public: string                  GetObjectIds  () const { return ( _objectIds ); };
-    public: char*                   GetFunction   () const { return ( _function ); };
-    public: int                     GetSize       () const { return ( _objectIds.size() ); };
-    public: const ObjectTypeVector& GetTypes      () const { return ( _types ); };
-    public: void                    AddObject     ( PyObject* object ) { _objectIds += GetObjectId ( object ); };
+    public: ObjectType*             getObject     ( char* id );
+    public: char*                   getObjectId   ( PyObject* object );
+    public: char*                   getObjectName ( string id );
+    public: string                  getObjectIds  () const { return ( _objectIds ); };
+    public: char*                   getFunction   () const { return ( _function ); };
+    public: int                     getSize       () const { return ( _objectIds.size() ); };
+    public: const ObjectTypeVector& getTypes      () const { return ( _types ); };
+    public: void                    AddObject     ( PyObject* object ) { _objectIds += getObjectId ( object ); };
     public: void                    AddId         ( char* id ) { _objectIds += ":"; _objectIds += id; };
     public: void                    SetFunction   ( char* function ) { _function = function; };
     public: void                    Init          ( char* function, char* inheritStop="comp" );
     public: void                    AddType       ( char* id, PyTypeObject* pyType, char* name, bool isPythonType, char* idBase="" );
-    public: static string           GetObjectType ( string objectsTypes, unsigned n );
+    public: static string           getObjectType ( string objectsTypes, unsigned n );
   };
 
 
@@ -318,7 +318,7 @@ extern "C" {
 // -------------------------------------------------------------------
 // Attribute Macro For Deletion.
 
-# define  DirectDeleteAttribute(PY_FUNC_NAME,PY_SELF_TYPE)             \
+# define  DirectDestroyAttribute(PY_FUNC_NAME,PY_SELF_TYPE)             \
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args ) \
   {                                                                    \
     if ( self->ACCESS_OBJECT != NULL ) {                               \
@@ -363,7 +363,7 @@ extern "C" {
   
 
 // -------------------------------------------------------------------
-// Attribute Method For Getting Attributes.
+// Attribute Method For getting Attributes.
 
 # define  DirectGetAttrMethod(PY_FUNC_NAME,PY_OBJECT_METHODS)  \
   static PyObject* PY_FUNC_NAME ( PyObject* self, char* name ) \
@@ -406,18 +406,18 @@ extern "C" {
   
 
 // -------------------------------------------------------------------
-// Locator Attribute Method For GetElement.
+// Locator Attribute Method For getElement.
 
 # define  LocatorGetElementAttribute(SELF_TYPE)         \
-  static PyObject* Py##SELF_TYPE##Locator_GetElement ( Py##SELF_TYPE##Locator *self ) \
+  static PyObject* Py##SELF_TYPE##Locator_getElement ( Py##SELF_TYPE##Locator *self ) \
   {                                                     \
-    trace << #SELF_TYPE "Locator.GetElement()" << endl; \
-    METHOD_HEAD ( #SELF_TYPE "Locator.GetElement()" )   \
+    trace << #SELF_TYPE "Locator.getElement()" << endl; \
+    METHOD_HEAD ( #SELF_TYPE "Locator.getElement()" )   \
                                                         \
     SELF_TYPE* element = NULL;                          \
                                                         \
     HTRY                                                \
-    element = locator->GetElement ();                   \
+    element = locator->getElement ();                   \
     HCATCH                                              \
                                                         \
     return Py##SELF_TYPE##_Link ( element );            \
@@ -427,18 +427,18 @@ extern "C" {
   
 
 // -------------------------------------------------------------------
-// Locator Attribute Method For GetElement (element is PyEntity).
+// Locator Attribute Method For getElement (element is PyEntity).
 
 # define  LocatorGetElementEntityAttribute(SELF_TYPE)   \
-  static PyObject* Py##SELF_TYPE##Locator_GetElement ( Py##SELF_TYPE##Locator *self ) \
+  static PyObject* Py##SELF_TYPE##Locator_getElement ( Py##SELF_TYPE##Locator *self ) \
   {                                                     \
-    trace << #SELF_TYPE "Locator.GetElement()" << endl; \
-    METHOD_HEAD ( #SELF_TYPE "Locator.GetElement()" )   \
+    trace << #SELF_TYPE "Locator.getElement()" << endl; \
+    METHOD_HEAD ( #SELF_TYPE "Locator.getElement()" )   \
                                                         \
     PyObject* pyElement = NULL;                         \
                                                         \
     HTRY                                                \
-    SELF_TYPE* element = locator->GetElement ();        \
+    SELF_TYPE* element = locator->getElement ();        \
     if ( element == NULL )                              \
       Py_RETURN_NONE;                                   \
     pyElement = PyEntity_NEW ( element );               \
@@ -451,13 +451,13 @@ extern "C" {
   
 
 // -------------------------------------------------------------------
-// Locator Attribute Method For GetClone.
+// Locator Attribute Method For getClone.
 
 # define  LocatorGetCloneAttribute(SELF_TYPE)           \
-  static PyObject* Py##SELF_TYPE##Locator_GetClone ( Py##SELF_TYPE##Locator *self ) \
+  static PyObject* Py##SELF_TYPE##Locator_getClone ( Py##SELF_TYPE##Locator *self ) \
   {                                                     \
-    trace << #SELF_TYPE "Locator.GetClone()" << endl;   \
-    METHOD_HEAD ( #SELF_TYPE "Locator.GetClone()" )     \
+    trace << #SELF_TYPE "Locator.getClone()" << endl;   \
+    METHOD_HEAD ( #SELF_TYPE "Locator.getClone()" )     \
                                                         \
     Py##SELF_TYPE##Locator* cloneLocator = NULL;        \
                                                         \
@@ -465,7 +465,7 @@ extern "C" {
     cloneLocator = PyObject_NEW ( Py##SELF_TYPE##Locator, &PyType##SELF_TYPE##Locator ); \
     if (cloneLocator == NULL) { return NULL; }          \
                                                         \
-    cloneLocator->_object = locator->GetClone();        \
+    cloneLocator->_object = locator->getClone();        \
     HCATCH                                              \
                                                         \
     return ( (PyObject*)cloneLocator );                 \
@@ -487,7 +487,7 @@ extern "C" {
       return ( PyString_FromString("<PyObject invalid dynamic-cast>") ); \
                                                                          \
     ostringstream repr;                                                  \
-    repr << "[" << hex << self << "<->" << (void*)object << " " << GetString(object) << "]"; \
+    repr << "[" << hex << self << "<->" << (void*)object << " " << getString(object) << "]"; \
                                                                          \
     return ( PyString_FromString(repr.str().c_str()) );                  \
   }
@@ -507,7 +507,7 @@ extern "C" {
     if ( object == NULL )                                                \
       return ( PyString_FromString("<PyObject invalid dynamic_cast>") ); \
                                                                          \
-    return ( PyString_FromString(GetString(object).c_str()) );           \
+    return ( PyString_FromString(getString(object).c_str()) );           \
   }
 
 
@@ -543,7 +543,7 @@ extern "C" {
 // -------------------------------------------------------------------
 // Attribute Macro For DBo Deletion.
 
-# define  DBoDeleteAttribute(PY_FUNC_NAME,PY_SELF_TYPE)                                  \
+# define  DBoDestroyAttribute(PY_FUNC_NAME,PY_SELF_TYPE)                                  \
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self )                                   \
   {                                                                                      \
     HTRY                                                                                 \
@@ -554,14 +554,14 @@ extern "C" {
       return ( NULL );                                                                   \
     }                                                                                    \
     ProxyProperty* proxy = dynamic_cast<ProxyProperty*>                                  \
-                           ( self->ACCESS_OBJECT->GetProperty ( ProxyProperty::GetPropertyName() ) ); \
+                           ( self->ACCESS_OBJECT->getProperty ( ProxyProperty::getPropertyName() ) ); \
     if (proxy == NULL) {                                                                 \
       ostringstream  message;                                                            \
       message << "Trying to Delete a Hurricane object of with no Proxy attached ";       \
       PyErr_SetString ( ProxyError, message.str().c_str() );                             \
       return ( NULL );                                                                   \
     }                                                                                    \
-    self->ACCESS_OBJECT->Delete ();                                                      \
+    self->ACCESS_OBJECT->destroy();                                                      \
     HCATCH                                                                               \
     Py_RETURN_NONE;                                                                      \
   }
@@ -577,18 +577,18 @@ extern "C" {
     PY_SELF_TYPE* pyObject = NULL;                                               \
     HTRY                                                                         \
     ProxyProperty* proxy = dynamic_cast<ProxyProperty*>                          \
-      ( object->GetProperty ( ProxyProperty::GetPropertyName() ) );              \
+      ( object->getProperty ( ProxyProperty::getPropertyName() ) );              \
     if ( proxy == NULL ) {                                                       \
       pyObject = PyObject_NEW(PY_SELF_TYPE, &PY_SELF_CLASS);                     \
       if (pyObject == NULL) { return NULL; }                                     \
                                                                                  \
-      proxy = ProxyProperty::Create ( (void*)pyObject );                         \
+      proxy = ProxyProperty::create ( (void*)pyObject );                         \
       CHECK_OFFSET ( pyObject )                                                  \
                                                                                  \
       pyObject->ACCESS_OBJECT = object;                                          \
-      object->Put ( proxy );                                                     \
+      object->put ( proxy );                                                     \
     } else {                                                                     \
-      pyObject = (PY_SELF_TYPE*)proxy->GetShadow ();                             \
+      pyObject = (PY_SELF_TYPE*)proxy->getShadow ();                             \
       Py_INCREF ( ACCESS_CLASS(pyObject) );                                      \
     }                                                                            \
     HCATCH                                                                       \
@@ -607,13 +607,13 @@ extern "C" {
                                                                          \
     if ( self->ACCESS_OBJECT != NULL ) {                                 \
         ProxyProperty* proxy = dynamic_cast<ProxyProperty*>              \
-                               ( self->ACCESS_OBJECT->GetProperty ( ProxyProperty::GetPropertyName() ) ); \
+                               ( self->ACCESS_OBJECT->getProperty ( ProxyProperty::getPropertyName() ) ); \
         if (proxy == NULL) {                                             \
           ostringstream  message;                                        \
           message << "deleting a Python object with no Proxy attached "; \
           PyErr_SetString ( ProxyError, message.str().c_str() );         \
         }                                                                \
-        self->ACCESS_OBJECT->Remove ( proxy );                           \
+        self->ACCESS_OBJECT->remove ( proxy );                           \
     }                                                                    \
     PyObject_DEL ( self );                                               \
   }
@@ -683,16 +683,16 @@ extern "C" {
   }                
 
 // -------------------------------------------------------------------
-// Direct GetCEngine() Method (no argument)
+// Direct getCEngine() Method (no argument)
 #define DirectGetCEngine(CENGINE)                                               \
-  PyObject* Py##CENGINE##_Get##CENGINE ( PyObject* module, PyObject* args )     \
+  PyObject* Py##CENGINE##_get##CENGINE ( PyObject* module, PyObject* args )     \
   {                                                                             \
     PyObject* arg0;                                                             \
     CENGINE* cengine = NULL;                                                    \
     HTRY                                                                        \
-    if (!ParseOneArg("Get" #CENGINE, args, CELL_ARG, &arg0 ) ) return ( NULL ); \
+    if (!ParseOneArg("get" #CENGINE, args, CELL_ARG, &arg0 ) ) return ( NULL ); \
     Cell* cell = PYCELL_O(arg0);                                                \
-    cengine = dynamic_cast<CENGINE*>(GetCEngine(cell, Name(#CENGINE)));         \
+    cengine = dynamic_cast<CENGINE*>(getCEngine(cell, Name(#CENGINE)));         \
     if (!cengine) {                                                             \
         cengine = CENGINE::Create (cell);                                       \
     }                                                                           \
@@ -832,11 +832,11 @@ extern "C" {
 # define   HCATCH  \
     }                                                            \
     catch ( Error& e ) {                                         \
-      PyErr_SetString ( HurricaneError, GetString(e).c_str() );  \
+      PyErr_SetString ( HurricaneError, getString(e).c_str() );  \
       return ( NULL );                                           \
     }                                                            \
     catch ( Warning& w ) {                                       \
-      PyErr_Warn ( HurricaneWarning, const_cast<char*>(GetString(w).c_str()) );  \
+      PyErr_Warn ( HurricaneWarning, const_cast<char*>(getString(w).c_str()) );  \
     }
 
 }  // End of extern "C".

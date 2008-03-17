@@ -24,54 +24,54 @@ class Horizontal : public Segment {
 // Types
 // *****
 
-	public: typedef Segment Inherit;
+    public: typedef Segment Inherit;
 
 // Attributes
 // **********
 
-	private: Unit _y;
-	private: Unit _dxSource;
-	private: Unit _dxTarget;
+    private: Unit _y;
+    private: Unit _dxSource;
+    private: Unit _dxTarget;
 
 // Constructors
 // ************
 
-	protected: Horizontal(Net* net, Component* source, Component* target, Layer* layer, const Unit& y, const Unit& width = 0, const Unit& dxSource = 0, const Unit& dxTarget = 0);
+    protected: Horizontal(Net* net, Component* source, Component* target, Layer* layer, const Unit& y, const Unit& width = 0, const Unit& dxSource = 0, const Unit& dxTarget = 0);
 
-	public: static Horizontal* Create(Net* net, Layer* layer, const Unit& y, const Unit& width = 0, const Unit& dxSource = 0, const Unit& dxTarget = 0);
-	public: static Horizontal* Create(Component* source, Component* target, Layer* layer, const Unit& y, const Unit& width = 0, const Unit& dxSource = 0, const Unit& dxTarget = 0);
+    public: static Horizontal* Create(Net* net, Layer* layer, const Unit& y, const Unit& width = 0, const Unit& dxSource = 0, const Unit& dxTarget = 0);
+    public: static Horizontal* Create(Component* source, Component* target, Layer* layer, const Unit& y, const Unit& width = 0, const Unit& dxSource = 0, const Unit& dxTarget = 0);
 
 // Accessors
 // *********
 
-	public: virtual Unit GetY() const {return _y;};
-	public: virtual Point GetCenter() const;
-	public: virtual Box GetBoundingBox() const;
-	public: virtual Box GetBoundingBox(const BasicLayer* basicLayer) const;
-	public: virtual Unit GetSourceX() const;
-	public: virtual Unit GetSourceY() const {return GetY();};
-	public: virtual Unit GetTargetX() const;
-	public: virtual Unit GetTargetY() const {return GetY();};
-	public: virtual Unit GetLength() const;
-	public: const Unit& GetDxSource() const {return _dxSource;};
-	public: const Unit& GetDxTarget() const {return _dxTarget;};
+    public: virtual Unit getY() const {return _y;};
+    public: virtual Point getCenter() const;
+    public: virtual Box getBoundingBox() const;
+    public: virtual Box getBoundingBox(const BasicLayer* basicLayer) const;
+    public: virtual Unit getSourceX() const;
+    public: virtual Unit getSourceY() const {return getY();};
+    public: virtual Unit getTargetX() const;
+    public: virtual Unit getTargetY() const {return getY();};
+    public: virtual Unit getLength() const;
+    public: const Unit& getDxSource() const {return _dxSource;};
+    public: const Unit& getDxTarget() const {return _dxTarget;};
 
 // Updators
 // ********
 
-	public: virtual void Translate(const Unit& dx, const Unit& dy);
+    public: virtual void Translate(const Unit& dx, const Unit& dy);
 
-	public: void SetY(const Unit& y);
-	public: void SetDxSource(const Unit& dxSource);
-	public: void SetDxTarget(const Unit& dxSource);
-	public: void Translate(const Unit& dy);
+    public: void SetY(const Unit& y);
+    public: void SetDxSource(const Unit& dxSource);
+    public: void SetDxTarget(const Unit& dxSource);
+    public: void Translate(const Unit& dy);
 
 // Others
 // ******
 
-	public: virtual string _GetTypeName() const {return _TName("Horizontal");};
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
+    public: virtual string _getTypeName() const {return _TName("Horizontal");};
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
 
 };
 

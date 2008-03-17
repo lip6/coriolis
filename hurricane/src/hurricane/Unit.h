@@ -28,9 +28,9 @@ typedef long Unit;
 // Precision managers (precision defines the maximal number of decimals allowed)
 // ****************************************************************************************************
 
-unsigned GetPrecision();
+unsigned getPrecision();
 
-unsigned GetMaximalPrecisionAllowed();
+unsigned getMaximalPrecisionAllowed();
 
 void SetPrecision(unsigned precision);
 // Should be called only once at the beginning of the program
@@ -41,7 +41,7 @@ void SetPrecision(unsigned precision);
 // Resolution managers (the value associate to the unit 1)
 // ****************************************************************************************************
 
-double GetResolution();
+double getResolution();
 
 
 
@@ -49,13 +49,13 @@ double GetResolution();
 // Grid managers
 // ****************************************************************************************************
 
-const Unit& GetGridStep();
+const Unit& getGridStep();
 
 void SetGridStep(const Unit& gridStep);
 
 bool IsOnGrid(const Unit& unit, int n = 1);
 
-Unit GetOnGridUnit(const Unit& unit, int s = 0);
+Unit getOnGridUnit(const Unit& unit, int s = 0);
 
 
 
@@ -63,11 +63,11 @@ Unit GetOnGridUnit(const Unit& unit, int s = 0);
 // Others
 // ****************************************************************************************************
 
-Unit GetUnit(double value);
+Unit getUnit(double value);
 
-double GetValue(const Unit& unit);
+double getValue(const Unit& unit);
 
-string GetValueString(const Unit& unit);
+string getValueString(const Unit& unit);
 
 
 
@@ -81,13 +81,13 @@ string GetValueString(const Unit& unit);
 
 /* template<> */
 /*   inline string  ProxyString<Unit>   ( const Unit* object ) */
-/*                                      { return GetValueString(); } */
+/*                                      { return getValueString(); } */
 
 /* template<> */
 /*   inline Record* ProxyRecord<Unit>   ( const Unit* object ) */
 /*                                      { */
-/*                                        Record* record = new Record(GetString(object)); */
-/*                                        record->Add(GetSlot("Unit", (unsigned int*)_object)); */
+/*                                        Record* record = new Record(getString(object)); */
+/*                                        record->Add(getSlot("Unit", (unsigned int*)_object)); */
 /*                                        return record; */
 /*                                      } */
 

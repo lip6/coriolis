@@ -31,69 +31,69 @@ class Technology : public DBo {
 // Types
 // *****
 
-	public: typedef DBo Inherit;
+    public: typedef DBo Inherit;
 
-	public: class LayerMap : public IntrusiveMap<Name, Layer> {
-	// ******************************************************
+    public: class LayerMap : public IntrusiveMap<Name, Layer> {
+    // ******************************************************
 
-		public: typedef IntrusiveMap<Name, Layer> Inherit;
-	
-		public: LayerMap();
+        public: typedef IntrusiveMap<Name, Layer> Inherit;
+    
+        public: LayerMap();
 
-		public: virtual Name _GetKey(Layer* layer) const;
-		public: virtual unsigned _GetHashValue(Name name) const;
-		public: virtual Layer* _GetNextElement(Layer* layer) const;
-		public: virtual void _SetNextElement(Layer* layer, Layer* nextLayer) const;
+        public: virtual Name _getKey(Layer* layer) const;
+        public: virtual unsigned _getHashValue(Name name) const;
+        public: virtual Layer* _getNextElement(Layer* layer) const;
+        public: virtual void _setNextElement(Layer* layer, Layer* nextLayer) const;
 
-	};
+    };
 
-	public: typedef list<Layer*> LayerList;
+    public: typedef list<Layer*> LayerList;
 
 // Attributes
 // **********
 
-	private: DataBase* _dataBase;
-	private: Name _name;
-	private: LayerMap _layerMap;
-	private: LayerList _layerList;
+    private: DataBase* _dataBase;
+    private: Name _name;
+    private: LayerMap _layerMap;
+    private: LayerList _layerList;
 
 // Constructors
 // ************
 
-	protected: Technology(DataBase* dataBase, const Name& name);
+    protected: Technology(DataBase* dataBase, const Name& name);
 
-	public: static Technology* Create(DataBase* dataBase, const Name& name);
+    public: static Technology* Create(DataBase* dataBase, const Name& name);
 
 // Accessors
 // *********
 
-	public: DataBase* GetDataBase() const {return _dataBase;};
-	public: const Name& GetName() const {return _name;};
-	public: Layer* GetLayer(const Name& name) const {return _layerMap.GetElement(name);};
-	public: BasicLayer* GetBasicLayer(const Name& name) const;
-	public: CompositeLayer* GetCompositeLayer(const Name& name) const;
-	public: Layers GetLayers() const {return GetCollection(_layerList);};
-	public: BasicLayers GetBasicLayers() const;
-	public: BasicLayers GetBasicLayers(const Layer::Mask& mask) const;
-	public: CompositeLayers GetCompositeLayers() const;
+    public: DataBase* getDataBase() const {return _dataBase;};
+    public: const Name& getName() const {return _name;};
+    public: Layer* getLayer(const Name& name) const {return _layerMap.getElement(name);};
+    public: BasicLayer* getBasicLayer(const Name& name) const;
+    public: CompositeLayer* getCompositeLayer(const Name& name) const;
+    public: Layers getLayers() const {return getCollection(_layerList);};
+    public: BasicLayers getBasicLayers() const;
+    public: BasicLayers getBasicLayers(const Layer::Mask& mask) const;
+    public: CompositeLayers getCompositeLayers() const;
 
 // Updators
 // ********
 
-	public: void SetName(const Name& name);
+    public: void SetName(const Name& name);
 
 // Others
 // ******
 
-	protected: virtual void _PostCreate();
+    protected: virtual void _postCreate();
 
-	protected: virtual void _PreDelete();
+    protected: virtual void _preDestroy();
 
-	public: virtual string _GetTypeName() const {return _TName("Technology");};
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
-	public: LayerMap& _GetLayerMap() {return _layerMap;};
-	public: LayerList& _GetLayerList() {return _layerList;};
+    public: virtual string _getTypeName() const {return _TName("Technology");};
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
+    public: LayerMap& _getLayerMap() {return _layerMap;};
+    public: LayerList& _getLayerList() {return _layerList;};
 
 };
 

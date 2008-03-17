@@ -93,22 +93,22 @@ extern "C" {
 
 
   // Standart Delete (Attribute).
-  DBoDeleteAttribute(PyCell_Delete,PyCell)
+  DBoDestroyAttribute(PyCell_destroy,PyCell)
 
 
 
   
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_GetLibrary ()"
+  // Attribute Method  :  "PyCell_getLibrary ()"
 
-  static PyObject* PyCell_GetLibrary ( PyCell *self ) {
-    trace << "PyCell_GetLibrary ()" << endl;
+  static PyObject* PyCell_getLibrary ( PyCell *self ) {
+    trace << "PyCell_getLibrary ()" << endl;
 
     Library* library = NULL;
 
     HTRY
-    METHOD_HEAD ( "Cell.GetLibrary()" )
-    library = cell->GetLibrary ();
+    METHOD_HEAD ( "Cell.getLibrary()" )
+    library = cell->getLibrary ();
     HCATCH
     
     return PyLibrary_Link ( library );
@@ -116,18 +116,18 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_GetName ()"
+  // Attribute Method  :  "PyCell_getName ()"
 
-  static PyObject* PyCell_GetName(PyCell *self) {
-    trace << "PyCell_GetName ()" << endl;
+  static PyObject* PyCell_getName(PyCell *self) {
+    trace << "PyCell_getName ()" << endl;
     
-    METHOD_HEAD ( "Cell.GetName()" )
+    METHOD_HEAD ( "Cell.getName()" )
 
     PyName* pyName = PyObject_NEW ( PyName, &PyTypeName );
     if ( pyName == NULL ) { return NULL; }
 
     HTRY
-    pyName->_object = new Name ( cell->GetName() );
+    pyName->_object = new Name ( cell->getName() );
     HCATCH
     
     return ( (PyObject*)pyName );
@@ -135,20 +135,20 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_GetInstance ()"
+  // Attribute Method  :  "PyCell_getInstance ()"
 
-  static PyObject* PyCell_GetInstance ( PyCell *self, PyObject* args ) {
-    trace << "PyCell_GetInstance ()" << endl;
+  static PyObject* PyCell_getInstance ( PyCell *self, PyObject* args ) {
+    trace << "PyCell_getInstance ()" << endl;
 
     Instance* instance = NULL;
     
     HTRY
-    METHOD_HEAD ( "Cell.GetInstance()" )
+    METHOD_HEAD ( "Cell.getInstance()" )
 
     PyName* arg0;
-    if ( ! ParseOneArg ( "Cell.GetInstance", args, NAME_ARG, (PyObject**)&arg0 ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Cell.getInstance", args, NAME_ARG, (PyObject**)&arg0 ) ) return ( NULL );
 
-    instance = cell->GetInstance ( *PYNAME_O(arg0) );
+    instance = cell->getInstance ( *PYNAME_O(arg0) );
     HCATCH
     
     return PyInstance_Link ( instance );
@@ -156,20 +156,20 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_GetInstancesLocator ()"
+  // Attribute Method  :  "PyCell_getInstancesLocator ()"
 
-  static PyObject* PyCell_GetInstancesLocator ( PyCell *self ) {
-    trace << "PyCell_GetInstancesLocator ()" << endl;
+  static PyObject* PyCell_getInstancesLocator ( PyCell *self ) {
+    trace << "PyCell_getInstancesLocator ()" << endl;
 
-    METHOD_HEAD ( "Cell.GetInstancesLocator()" )
+    METHOD_HEAD ( "Cell.getInstancesLocator()" )
 
-    Instances instances = cell->GetInstances ();
+    Instances instances = cell->getInstances ();
 
     PyInstanceLocator* pyInstanceLocator = PyObject_NEW ( PyInstanceLocator, &PyTypeInstanceLocator );
     if (pyInstanceLocator == NULL) { return NULL; }
 
     HTRY
-    pyInstanceLocator->_object = instances.GetLocator ();
+    pyInstanceLocator->_object = instances.getLocator ();
     HCATCH
 
     return ( (PyObject*)pyInstanceLocator );
@@ -177,25 +177,25 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_GetInstancesUnderLocator ()"
+  // Attribute Method  :  "PyCell_getInstancesUnderLocator ()"
 
-  static PyObject* PyCell_GetInstancesUnderLocator ( PyCell *self, PyObject* args ) {
+  static PyObject* PyCell_getInstancesUnderLocator ( PyCell *self, PyObject* args ) {
     PyInstanceLocator* pyInstanceLocator;
 
-    trace << "PyCell_GetInstancesUnderLocator ()" << endl;
+    trace << "PyCell_getInstancesUnderLocator ()" << endl;
 
-    METHOD_HEAD ( "Cell.GetInstancesUnderLocator()" )
+    METHOD_HEAD ( "Cell.getInstancesUnderLocator()" )
 
     PyBox* arg0;
-    if ( ! ParseOneArg ( "Cell.GetInstancesUnderLocator", args, BOX_ARG, (PyObject**)&arg0 ) ) return ( NULL );        
+    if ( ! ParseOneArg ( "Cell.getInstancesUnderLocator", args, BOX_ARG, (PyObject**)&arg0 ) ) return ( NULL );        
 
-    Instances instances = cell->GetInstancesUnder ( *PYBOX_O(arg0) );
+    Instances instances = cell->getInstancesUnder ( *PYBOX_O(arg0) );
 
     pyInstanceLocator = PyObject_NEW ( PyInstanceLocator, &PyTypeInstanceLocator );
     if (pyInstanceLocator == NULL) { return NULL; }
     
     HTRY
-    pyInstanceLocator->_object = instances.GetLocator ();
+    pyInstanceLocator->_object = instances.getLocator ();
     HCATCH
 
     return ( (PyObject*)pyInstanceLocator );
@@ -203,20 +203,20 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_GetSlaveInstancesLocator ()"
+  // Attribute Method  :  "PyCell_getSlaveInstancesLocator ()"
 
-  static PyObject* PyCell_GetSlaveInstancesLocator ( PyCell *self ) {
-    trace << "PyCell_GetSlaveInstancesLocator ()" << endl;
+  static PyObject* PyCell_getSlaveInstancesLocator ( PyCell *self ) {
+    trace << "PyCell_getSlaveInstancesLocator ()" << endl;
 
-    METHOD_HEAD ( "Cell.GetSlaveInstancesLocator()" )
+    METHOD_HEAD ( "Cell.getSlaveInstancesLocator()" )
 
-    Instances instances = cell->GetSlaveInstances ();
+    Instances instances = cell->getSlaveInstances ();
 
     PyInstanceLocator* pyInstanceLocator = PyObject_NEW ( PyInstanceLocator, &PyTypeInstanceLocator );
     if (pyInstanceLocator == NULL) { return NULL; }
     
     HTRY
-    pyInstanceLocator->_object = instances.GetLocator ();
+    pyInstanceLocator->_object = instances.getLocator ();
     HCATCH
 
     return ( (PyObject*)pyInstanceLocator );
@@ -224,20 +224,20 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_GetOccurrencesLocator ()"
+  // Attribute Method  :  "PyCell_getOccurrencesLocator ()"
 
-  static PyObject* PyCell_GetOccurrencesLocator ( PyCell *self ) {
-    trace << "PyCell_GetOccurrencesLocator ()" << endl;
+  static PyObject* PyCell_getOccurrencesLocator ( PyCell *self ) {
+    trace << "PyCell_getOccurrencesLocator ()" << endl;
 
-    METHOD_HEAD ( "Cell.GetOccurrencesLocator()" )
+    METHOD_HEAD ( "Cell.getOccurrencesLocator()" )
 
-    Occurrences  occurrences = cell->GetOccurrences ();
+    Occurrences  occurrences = cell->getOccurrences ();
 
     PyOccurrenceLocator* pyOccurrenceLocator = PyObject_NEW ( PyOccurrenceLocator, &PyTypeOccurrenceLocator );
     if (pyOccurrenceLocator == NULL) { return NULL; }
 
     HTRY
-    pyOccurrenceLocator->_object = occurrences.GetLocator ();
+    pyOccurrenceLocator->_object = occurrences.getLocator ();
     HCATCH
 
     return ( (PyObject*)pyOccurrenceLocator );
@@ -246,22 +246,22 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_GetOccurrencesUnderLocator ()"
+  // Attribute Method  :  "PyCell_getOccurrencesUnderLocator ()"
 
-  static PyObject* PyCell_GetOccurrencesUnderLocator ( PyCell *self, PyObject* args ) {
-    trace << "PyCell_GetOccurrencesUnderLocator ()" << endl;
+  static PyObject* PyCell_getOccurrencesUnderLocator ( PyCell *self, PyObject* args ) {
+    trace << "PyCell_getOccurrencesUnderLocator ()" << endl;
 
-    METHOD_HEAD ( "Cell.GetOccurrencesUnderLocator()" )
+    METHOD_HEAD ( "Cell.getOccurrencesUnderLocator()" )
 
     PyBox* arg0;
-    if ( ! ParseOneArg ( "Cell.GetInstancesUnderLocator", args, BOX_ARG, (PyObject**)&arg0 ) ) return ( NULL );        
+    if ( ! ParseOneArg ( "Cell.getInstancesUnderLocator", args, BOX_ARG, (PyObject**)&arg0 ) ) return ( NULL );        
 
     PyOccurrenceLocator* pyOccurrenceLocator = PyObject_NEW ( PyOccurrenceLocator, &PyTypeOccurrenceLocator );
     if (pyOccurrenceLocator == NULL) { return NULL; }
 
     HTRY
-    Occurrences  occurrences = cell->GetOccurrencesUnder ( *PYBOX_O(arg0) );
-    pyOccurrenceLocator->_object = occurrences.GetLocator ();
+    Occurrences  occurrences = cell->getOccurrencesUnder ( *PYBOX_O(arg0) );
+    pyOccurrenceLocator->_object = occurrences.getLocator ();
     HCATCH
 
     return ( (PyObject*)pyOccurrenceLocator );
@@ -269,20 +269,20 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_GetLeafInstanceOccurrencesLocator ()"
+  // Attribute Method  :  "PyCell_getLeafInstanceOccurrencesLocator ()"
 
-  static PyObject* PyCell_GetLeafInstanceOccurrencesLocator ( PyCell *self ) {
-    trace << "PyCell_GetLeafInstanceOccurrencesLocator ()" << endl;
+  static PyObject* PyCell_getLeafInstanceOccurrencesLocator ( PyCell *self ) {
+    trace << "PyCell_getLeafInstanceOccurrencesLocator ()" << endl;
 
-    METHOD_HEAD ( "Cell.GetLeafInstanceOccurrencesLocator()" )
+    METHOD_HEAD ( "Cell.getLeafInstanceOccurrencesLocator()" )
 
-    Occurrences occurrences = cell->GetLeafInstanceOccurrences ();
+    Occurrences occurrences = cell->getLeafInstanceOccurrences ();
 
     PyOccurrenceLocator* pyOccurrenceLocator = PyObject_NEW ( PyOccurrenceLocator, &PyTypeOccurrenceLocator );
     if (pyOccurrenceLocator == NULL) { return NULL; }
 
     HTRY
-    pyOccurrenceLocator->_object = occurrences.GetLocator ();
+    pyOccurrenceLocator->_object = occurrences.getLocator ();
     HCATCH
 
     return ( (PyObject*)pyOccurrenceLocator );
@@ -290,23 +290,23 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_GetLeafInstanceOccurrencesUnderLocator ()"
+  // Attribute Method  :  "PyCell_getLeafInstanceOccurrencesUnderLocator ()"
 
-  static PyObject* PyCell_GetLeafInstanceOccurrencesUnderLocator ( PyCell *self, PyObject* args ) {
-    trace << "PyCell_GetLeafInstanceOccurrencesUnderLocator ()" << endl;
+  static PyObject* PyCell_getLeafInstanceOccurrencesUnderLocator ( PyCell *self, PyObject* args ) {
+    trace << "PyCell_getLeafInstanceOccurrencesUnderLocator ()" << endl;
 
-    METHOD_HEAD ( "Cell.GetLeafInstanceOccurrencesUnderLocator()" )
+    METHOD_HEAD ( "Cell.getLeafInstanceOccurrencesUnderLocator()" )
 
     PyBox* arg0;
-    if ( ! ParseOneArg ( "Cell.GetLeafInstanceOccurencesUnderLocator", args, BOX_ARG, (PyObject**)&arg0 ) ) return ( NULL );        
+    if ( ! ParseOneArg ( "Cell.getLeafInstanceOccurencesUnderLocator", args, BOX_ARG, (PyObject**)&arg0 ) ) return ( NULL );        
 
     PyOccurrenceLocator* pyOccurrenceLocator = PyObject_NEW ( PyOccurrenceLocator, &PyTypeOccurrenceLocator );
     if (pyOccurrenceLocator == NULL) { return NULL; }
 
     HTRY
-    Occurrences  occurrences = cell->GetLeafInstanceOccurrencesUnder ( *PYBOX_O(arg0) );
-    //pyOccurrenceLocator->_object = new locator ( instances.GetLocator () );
-    pyOccurrenceLocator->_object = occurrences.GetLocator ();
+    Occurrences  occurrences = cell->getLeafInstanceOccurrencesUnder ( *PYBOX_O(arg0) );
+    //pyOccurrenceLocator->_object = new locator ( instances.getLocator () );
+    pyOccurrenceLocator->_object = occurrences.getLocator ();
     HCATCH
 
     return ( (PyObject*)pyOccurrenceLocator );
@@ -314,20 +314,20 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_GetReferencesLocator ()"
+  // Attribute Method  :  "PyCell_getReferencesLocator ()"
 
-  static PyObject* PyCell_GetReferencesLocator ( PyCell *self ) {
-    trace << "PyCell_GetReferencesLocator ()" << endl;
+  static PyObject* PyCell_getReferencesLocator ( PyCell *self ) {
+    trace << "PyCell_getReferencesLocator ()" << endl;
 
-    METHOD_HEAD ( "Cell.GetReferencesLocator()" )
+    METHOD_HEAD ( "Cell.getReferencesLocator()" )
 
-    References references = cell->GetReferences ();
+    References references = cell->getReferences ();
 
     PyReferenceLocator* pyReferenceLocator = PyObject_NEW ( PyReferenceLocator, &PyTypeReferenceLocator );
     if (pyReferenceLocator == NULL) { return NULL; }
 
     HTRY
-    pyReferenceLocator->_object = references.GetLocator ();
+    pyReferenceLocator->_object = references.getLocator ();
     HCATCH
 
     return ( (PyObject*)pyReferenceLocator );
@@ -335,20 +335,20 @@ extern "C" {
 
   
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_GetHyperNetsLocator ()"
+  // Attribute Method  :  "PyCell_getHyperNetsLocator ()"
 
-  static PyObject* PyCell_GetHyperNetsLocator ( PyCell *self ) {
-    trace << "PyCell_GetHyperNetsLocator ()" << endl;
+  static PyObject* PyCell_getHyperNetsLocator ( PyCell *self ) {
+    trace << "PyCell_getHyperNetsLocator ()" << endl;
 
-    METHOD_HEAD ( "Cell.GetHyperNetsLocator()" )
+    METHOD_HEAD ( "Cell.getHyperNetsLocator()" )
 
-    Occurrences  occurrences = cell->GetHyperNetRootNetOccurrences();
+    Occurrences  occurrences = cell->getHyperNetRootNetOccurrences();
 
     PyOccurrenceLocator* pyOccurrenceLocator = PyObject_NEW ( PyOccurrenceLocator, &PyTypeOccurrenceLocator );
     if (pyOccurrenceLocator == NULL) { return NULL; }
 
     HTRY
-    pyOccurrenceLocator->_object = occurrences.GetLocator ();
+    pyOccurrenceLocator->_object = occurrences.getLocator ();
     HCATCH
 
     return ( (PyObject*)pyOccurrenceLocator );
@@ -356,20 +356,20 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_GetNet ()"
+  // Attribute Method  :  "PyCell_getNet ()"
 
-  static PyObject* PyCell_GetNet ( PyCell *self, PyObject* args ) {
-    trace << "PyCell_GetNet ()" << endl;
+  static PyObject* PyCell_getNet ( PyCell *self, PyObject* args ) {
+    trace << "PyCell_getNet ()" << endl;
 
     Net* net = NULL;
 
     HTRY
-    METHOD_HEAD ( "Cell.GetNet()" )
+    METHOD_HEAD ( "Cell.getNet()" )
 
     PyName* arg0;
-    if ( ! ParseOneArg ( "Cell.GetNet", args, NAME_ARG, (PyObject**)&arg0 ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Cell.getNet", args, NAME_ARG, (PyObject**)&arg0 ) ) return ( NULL );
     
-    net = cell->GetNet ( *PYNAME_O(arg0) );
+    net = cell->getNet ( *PYNAME_O(arg0) );
     HCATCH
     
     return PyNet_Link ( net );
@@ -377,22 +377,22 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_GetNetsLocator ()"
+  // Attribute Method  :  "PyCell_getNetsLocator ()"
 
-  static PyObject* PyCell_GetNetsLocator ( PyCell *self ) {
-    trace << "PyCell_GetNetsLocator ()" << endl;
+  static PyObject* PyCell_getNetsLocator ( PyCell *self ) {
+    trace << "PyCell_getNetsLocator ()" << endl;
 
-    METHOD_HEAD ( "Cell.GetNetsLocator()" )
+    METHOD_HEAD ( "Cell.getNetsLocator()" )
 
     PyNetLocator* pyNetLocator = NULL;
 
     HTRY
-    Nets nets = cell->GetNets ();
+    Nets nets = cell->getNets ();
 
     pyNetLocator = PyObject_NEW ( PyNetLocator, &PyTypeNetLocator );
     if (pyNetLocator == NULL) { return NULL; }
 
-    pyNetLocator->_object = nets.GetLocator ();
+    pyNetLocator->_object = nets.getLocator ();
     HCATCH
 
     return ( (PyObject*)pyNetLocator );
@@ -400,44 +400,44 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_GetExternalNetsLocator ()"
+  // Attribute Method  :  "PyCell_getExternalNetsLocator ()"
 
-  static PyObject* PyCell_GetExternalNetsLocator ( PyCell *self ) {
-    trace << "PyCell_GetExternalNetsLocator ()" << endl;
+  static PyObject* PyCell_getExternalNetsLocator ( PyCell *self ) {
+    trace << "PyCell_getExternalNetsLocator ()" << endl;
 
-    METHOD_HEAD ( "Cell.GetExternalNetsLocator()" )
+    METHOD_HEAD ( "Cell.getExternalNetsLocator()" )
 
     PyNetLocator* pyNetLocator = NULL;
 
     HTRY
-    Nets nets = cell->GetExternalNets ();
+    Nets nets = cell->getExternalNets ();
 
     pyNetLocator = PyObject_NEW ( PyNetLocator, &PyTypeNetLocator );
     if (pyNetLocator == NULL) { return NULL; }
 
-    pyNetLocator->_object = nets.GetLocator ();
+    pyNetLocator->_object = nets.getLocator ();
     HCATCH
 
     return ( (PyObject*)pyNetLocator );
   }  
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_GetClockNetsLocator ()"
+  // Attribute Method  :  "PyCell_getClockNetsLocator ()"
 
-  static PyObject* PyCell_GetClockNetsLocator ( PyCell *self ) {
-    trace << "PyCell_GetClockNetsLocator ()" << endl;
+  static PyObject* PyCell_getClockNetsLocator ( PyCell *self ) {
+    trace << "PyCell_getClockNetsLocator ()" << endl;
 
-    METHOD_HEAD ( "Cell.GetClockNetsLocator()" )
+    METHOD_HEAD ( "Cell.getClockNetsLocator()" )
 
     PyNetLocator* pyNetLocator = NULL;
 
     HTRY
-    Nets nets = cell->GetClockNets ();
+    Nets nets = cell->getClockNets ();
 
     pyNetLocator = PyObject_NEW ( PyNetLocator, &PyTypeNetLocator );
     if (pyNetLocator == NULL) { return NULL; }
 
-    pyNetLocator->_object = nets.GetLocator ();
+    pyNetLocator->_object = nets.getLocator ();
     HCATCH
 
     return ( (PyObject*)pyNetLocator );
@@ -446,22 +446,22 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_GetSupplyNetsLocator ()"
+  // Attribute Method  :  "PyCell_getSupplyNetsLocator ()"
 
-  static PyObject* PyCell_GetSupplyNetsLocator ( PyCell *self ) {
-    trace << "PyCell_GetSupplyNetsLocator ()" << endl;
+  static PyObject* PyCell_getSupplyNetsLocator ( PyCell *self ) {
+    trace << "PyCell_getSupplyNetsLocator ()" << endl;
 
-    METHOD_HEAD ( "Cell.GetSupplyNetsLocator()" )
+    METHOD_HEAD ( "Cell.getSupplyNetsLocator()" )
 
     PyNetLocator* pyNetLocator = NULL;
 
     HTRY
-    Nets nets = cell->GetSupplyNets ();
+    Nets nets = cell->getSupplyNets ();
 
     pyNetLocator = PyObject_NEW ( PyNetLocator, &PyTypeNetLocator );
     if (pyNetLocator == NULL) { return NULL; }
 
-    pyNetLocator->_object = nets.GetLocator ();
+    pyNetLocator->_object = nets.getLocator ();
     HCATCH
 
     return ( (PyObject*)pyNetLocator );
@@ -469,23 +469,23 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_GetPowerNetsLocator ()"
+  // Attribute Method  :  "PyCell_getPowerNetsLocator ()"
 
-  static PyObject* PyCell_GetPowerNetsLocator ( PyCell *self )
+  static PyObject* PyCell_getPowerNetsLocator ( PyCell *self )
   {
-    trace << "PyCell_GetPowerNetsLocator ()" << endl;
+    trace << "PyCell_getPowerNetsLocator ()" << endl;
 
-    METHOD_HEAD ( "Cell.GetPowerNetsLocator()" )
+    METHOD_HEAD ( "Cell.getPowerNetsLocator()" )
 
     PyNetLocator* pyNetLocator = NULL;
 
     HTRY
-    Nets nets = cell->GetPowerNets ();
+    Nets nets = cell->getPowerNets ();
 
     pyNetLocator = PyObject_NEW ( PyNetLocator, &PyTypeNetLocator );
     if (pyNetLocator == NULL) { return NULL; }
 
-    pyNetLocator->_object = nets.GetLocator ();
+    pyNetLocator->_object = nets.getLocator ();
     HCATCH
 
     return ( (PyObject*)pyNetLocator );
@@ -493,22 +493,22 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_GetGroundNetsLocator ()"
+  // Attribute Method  :  "PyCell_getGroundNetsLocator ()"
 
-  static PyObject* PyCell_GetGroundNetsLocator ( PyCell *self ) {
-    trace << "PyCell_GetGroundNetsLocator ()" << endl;
+  static PyObject* PyCell_getGroundNetsLocator ( PyCell *self ) {
+    trace << "PyCell_getGroundNetsLocator ()" << endl;
 
-    METHOD_HEAD ( "Cell.GetGroundNetsLocator()" )
+    METHOD_HEAD ( "Cell.getGroundNetsLocator()" )
 
     PyNetLocator* pyNetLocator = NULL;
 
     HTRY
-    Nets nets = cell->GetGroundNets ();
+    Nets nets = cell->getGroundNets ();
 
     pyNetLocator = PyObject_NEW ( PyNetLocator, &PyTypeNetLocator );
     if (pyNetLocator == NULL) { return NULL; }
 
-    pyNetLocator->_object = nets.GetLocator ();
+    pyNetLocator->_object = nets.getLocator ();
     HCATCH
 
     return ( (PyObject*)pyNetLocator );
@@ -516,18 +516,18 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_GetAbutmentBox ()"
+  // Attribute Method  :  "PyCell_getAbutmentBox ()"
 
-  static PyObject* PyCell_GetAbutmentBox ( PyCell *self ) {
-    trace << "PyCell_GetAbutmentBox()" << endl;
+  static PyObject* PyCell_getAbutmentBox ( PyCell *self ) {
+    trace << "PyCell_getAbutmentBox()" << endl;
     
-    METHOD_HEAD ( "Cell.GetAbutmentBox()" )
+    METHOD_HEAD ( "Cell.getAbutmentBox()" )
 
     PyBox* abutmentBox = PyObject_NEW ( PyBox, &PyTypeBox );
     if (abutmentBox == NULL) { return NULL; }
 
     HTRY
-    abutmentBox->_object = new Box ( cell->GetAbutmentBox() );
+    abutmentBox->_object = new Box ( cell->getAbutmentBox() );
     HCATCH
 
     return ( (PyObject*)abutmentBox );
@@ -599,31 +599,31 @@ extern "C" {
   // PyCell Attribute Method table.
 
   PyMethodDef PyCell_Methods[] =
-    { { "GetLibrary"          , (PyCFunction)PyCell_GetLibrary           , METH_NOARGS , "Returns the library owning the cell." }
-    , { "GetName"             , (PyCFunction)PyCell_GetName              , METH_NOARGS , "Returns the name of the cell." }
-    , { "GetInstance"         , (PyCFunction)PyCell_GetInstance          , METH_VARARGS, "Returns the instance of name <name> if it exists, else NULL." }
-    , { "GetInstancesLocator" , (PyCFunction)PyCell_GetInstancesLocator  , METH_NOARGS , "Returns the locator of the collection of all instances called by the cell." } // GetInstances
-    , { "GetInstancesUnderLocator"  , (PyCFunction)PyCell_GetInstancesUnderLocator  , METH_VARARGS, "Returns the locator of the collection of all instances of the cell intersecting the given rectangular area." } // GetInstancesUnder
-    , { "GetSlaveInstancesLocator"  , (PyCFunction)PyCell_GetSlaveInstancesLocator  , METH_NOARGS , "Returns the locator of the collection of instances whose master is this cell." } // GetSlaveInstances
-    , { "GetOccurrencesLocator"     , (PyCFunction)PyCell_GetOccurrencesLocator     , METH_VARARGS, "Returns the collection of all occurrences belonging to the cell." }
-    , { "GetOccurrencesUnderLocator", (PyCFunction)PyCell_GetOccurrencesUnderLocator, METH_NOARGS , "Returns the collection of all occurrences belonging to this cell and intersecting the given rectangular area." }
-    , { "GetLeafInstanceOccurrencesLocator", (PyCFunction)PyCell_GetLeafInstanceOccurrencesLocator, METH_VARARGS, "Returns the collection of all occurrences belonging to the cell." }
-    , { "GetLeafInstanceOccurrencesUnderLocator", (PyCFunction)PyCell_GetLeafInstanceOccurrencesUnderLocator, METH_NOARGS , "Returns the collection of all occurrences belonging to this cell and intersecting the given rectangular area." }
-    , { "GetReferencesLocator"      , (PyCFunction)PyCell_GetReferencesLocator      , METH_VARARGS, "Returns the collection of all references belonging to the cell." }
-    , { "GetHyperNetsLocator"       , (PyCFunction)PyCell_GetHyperNetsLocator       , METH_VARARGS, "Returns the collection of all hyperNets belonging to the cell." }
-    , { "GetNet"              , (PyCFunction)PyCell_GetNet              , METH_VARARGS, "Returns the net of name <name> if it exists, else NULL." }
-    , { "GetNetsLocator"      , (PyCFunction)PyCell_GetNetsLocator      , METH_NOARGS , "Returns the collection of all nets of the cell." }
-    //, { "GetGlobalNets"       , (PyCFunction)PyCell_GetGlobalNets       , METH_NOARGS , "Returns the collection of all global nets of the cell." }
-    , { "GetExternalNetsLocator", (PyCFunction)PyCell_GetExternalNetsLocator, METH_NOARGS , "Returns the collection of all external nets of the cell." }
-    //, { "GetInternalNets"     , (PyCFunction)PyCell_GetInternalNets     , METH_NOARGS , "Returns the collection of all internal nets of the cell." }
-    , { "GetClockNetsLocator" , (PyCFunction)PyCell_GetClockNetsLocator , METH_NOARGS , "Returns the collection of all clock nets of the cell." }
-    , { "GetSupplyNetsLocator", (PyCFunction)PyCell_GetSupplyNetsLocator, METH_NOARGS , "Returns the collection of all supply nets of the cell." }
-    , { "GetPowerNetsLocator" , (PyCFunction)PyCell_GetPowerNetsLocator , METH_NOARGS , "Returns the collection of all power nets of the cell." }
-    , { "GetGroundNetsLocator", (PyCFunction)PyCell_GetGroundNetsLocator, METH_NOARGS , "Returns the collection of all ground nets of the cell." }
-    //, { "GetComponents"       , (PyCFunction)PyCell_GetComponents       , METH_NOARGS , "Returns the collection of all components of the cell." }
-    //, { "GetComponentsUnder"  , (PyCFunction)PyCell_GetComponentsUnder  , METH_VARARGS, "Returns the collection of cell components which intersect the given rectangular area." }
-    , { "GetAbutmentBox"      , (PyCFunction)PyCell_GetAbutmentBox      , METH_NOARGS , "Returns the abutment box of the cell(which is defined by the designer unlike the bounding box which is managed dynamically)" }
-    //, { "GetSymbol"           , (PyCFunction)PyCell_GetSymbol           , METH_NOARGS , "Returns the symbol associated to the cell." }
+    { { "getLibrary"          , (PyCFunction)PyCell_getLibrary           , METH_NOARGS , "Returns the library owning the cell." }
+    , { "getName"             , (PyCFunction)PyCell_getName              , METH_NOARGS , "Returns the name of the cell." }
+    , { "getInstance"         , (PyCFunction)PyCell_getInstance          , METH_VARARGS, "Returns the instance of name <name> if it exists, else NULL." }
+    , { "getInstancesLocator" , (PyCFunction)PyCell_getInstancesLocator  , METH_NOARGS , "Returns the locator of the collection of all instances called by the cell." } // getInstances
+    , { "getInstancesUnderLocator"  , (PyCFunction)PyCell_getInstancesUnderLocator  , METH_VARARGS, "Returns the locator of the collection of all instances of the cell intersecting the given rectangular area." } // getInstancesUnder
+    , { "getSlaveInstancesLocator"  , (PyCFunction)PyCell_getSlaveInstancesLocator  , METH_NOARGS , "Returns the locator of the collection of instances whose master is this cell." } // getSlaveInstances
+    , { "getOccurrencesLocator"     , (PyCFunction)PyCell_getOccurrencesLocator     , METH_VARARGS, "Returns the collection of all occurrences belonging to the cell." }
+    , { "getOccurrencesUnderLocator", (PyCFunction)PyCell_getOccurrencesUnderLocator, METH_NOARGS , "Returns the collection of all occurrences belonging to this cell and intersecting the given rectangular area." }
+    , { "getLeafInstanceOccurrencesLocator", (PyCFunction)PyCell_getLeafInstanceOccurrencesLocator, METH_VARARGS, "Returns the collection of all occurrences belonging to the cell." }
+    , { "getLeafInstanceOccurrencesUnderLocator", (PyCFunction)PyCell_getLeafInstanceOccurrencesUnderLocator, METH_NOARGS , "Returns the collection of all occurrences belonging to this cell and intersecting the given rectangular area." }
+    , { "getReferencesLocator"      , (PyCFunction)PyCell_getReferencesLocator      , METH_VARARGS, "Returns the collection of all references belonging to the cell." }
+    , { "getHyperNetsLocator"       , (PyCFunction)PyCell_getHyperNetsLocator       , METH_VARARGS, "Returns the collection of all hyperNets belonging to the cell." }
+    , { "getNet"              , (PyCFunction)PyCell_getNet              , METH_VARARGS, "Returns the net of name <name> if it exists, else NULL." }
+    , { "getNetsLocator"      , (PyCFunction)PyCell_getNetsLocator      , METH_NOARGS , "Returns the collection of all nets of the cell." }
+    //, { "getGlobalNets"       , (PyCFunction)PyCell_getGlobalNets       , METH_NOARGS , "Returns the collection of all global nets of the cell." }
+    , { "getExternalNetsLocator", (PyCFunction)PyCell_getExternalNetsLocator, METH_NOARGS , "Returns the collection of all external nets of the cell." }
+    //, { "getInternalNets"     , (PyCFunction)PyCell_getInternalNets     , METH_NOARGS , "Returns the collection of all internal nets of the cell." }
+    , { "getClockNetsLocator" , (PyCFunction)PyCell_getClockNetsLocator , METH_NOARGS , "Returns the collection of all clock nets of the cell." }
+    , { "getSupplyNetsLocator", (PyCFunction)PyCell_getSupplyNetsLocator, METH_NOARGS , "Returns the collection of all supply nets of the cell." }
+    , { "getPowerNetsLocator" , (PyCFunction)PyCell_getPowerNetsLocator , METH_NOARGS , "Returns the collection of all power nets of the cell." }
+    , { "getGroundNetsLocator", (PyCFunction)PyCell_getGroundNetsLocator, METH_NOARGS , "Returns the collection of all ground nets of the cell." }
+    //, { "getComponents"       , (PyCFunction)PyCell_getComponents       , METH_NOARGS , "Returns the collection of all components of the cell." }
+    //, { "getComponentsUnder"  , (PyCFunction)PyCell_getComponentsUnder  , METH_VARARGS, "Returns the collection of cell components which intersect the given rectangular area." }
+    , { "getAbutmentBox"      , (PyCFunction)PyCell_getAbutmentBox      , METH_NOARGS , "Returns the abutment box of the cell(which is defined by the designer unlike the bounding box which is managed dynamically)" }
+    //, { "getSymbol"           , (PyCFunction)PyCell_getSymbol           , METH_NOARGS , "Returns the symbol associated to the cell." }
     //, { "IsCalledBy"          , (PyCFunction)PyCell_IsCalledBy          , METH_VARARGS, "Returns true if the cell <this> is directly or indirectly called by the cell <cell>." }
     , { "IsTerminal"          , (PyCFunction)PyCell_IsTerminal          , METH_NOARGS , "Returns true if the cell is marked as terminal, else false." }
     , { "IsLeaf"              , (PyCFunction)PyCell_IsLeaf              , METH_NOARGS , "Returns true if the cell is a leaf of the hierarchy, else false." }
@@ -634,8 +634,8 @@ extern "C" {
     //, { "SetSymbol"           , (PyCFunction)PyCell_SetSymbol           , METH_VARARGS, "Associates the symbol <symbol> to the cell." }
     //, { "Materialize"         , (PyCFunction)PyCell_Materialize         , METH_NOARGS , "Materializes all components of all the nets of the cell." }
     //, { "Unmaterialize"       , (PyCFunction)PyCell_Unmaterialize       , METH_NOARGS , "De-materializes all components of all the nets of the cell." }
-    , { "Delete"              , (PyCFunction)PyCell_Delete              , METH_NOARGS
-                              , "Delete associated hurricane object The python object remains." }
+    , { "destroy"               , (PyCFunction)PyCell_destroy             , METH_NOARGS
+                              , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 
@@ -659,7 +659,7 @@ extern "C" {
     Cell* cell = NULL;
 
     HTRY
-    cell = Cell::Create(PYLIBRARY_O(arg0), GetString(*PYNAME_O(arg1)));
+    cell = Cell::Create(PYLIBRARY_O(arg0), getString(*PYNAME_O(arg1)));
     HCATCH
 
     return PyCell_Link(cell);
@@ -671,14 +671,14 @@ extern "C" {
                                                                          
     if ( self->ACCESS_OBJECT != NULL ) {                                 
         ProxyProperty* proxy = dynamic_cast<ProxyProperty*>              
-                               ( self->ACCESS_OBJECT->GetProperty ( ProxyProperty::GetPropertyName() ) ); \
+                               ( self->ACCESS_OBJECT->getProperty ( ProxyProperty::getPropertyName() ) ); \
         if (proxy == NULL) {                                             
           ostringstream  message;                                        
           message << "deleting a Python object with no Proxy attached "; 
           cerr << "yes man" << endl;
           PyErr_SetString ( ProxyError, message.str().c_str() );         
         }                                                                
-        self->ACCESS_OBJECT->Remove ( proxy );                           
+        self->ACCESS_OBJECT->remove ( proxy );                           
     } else {
         cerr << "ACCESS_OBJECT is NULL" << endl;
     }

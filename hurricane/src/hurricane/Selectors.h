@@ -46,9 +46,9 @@ typedef GenericFilter<Selector*> SelectorFilter;
 #define for_each_selector(selector, selectors)\
 /*********************************************/\
 {\
-	SelectorLocator _locator = selectors.GetLocator();\
+	SelectorLocator _locator = selectors.getLocator();\
 	while (_locator.IsValid()) {\
-		Selector* selector = _locator.GetElement();\
+		Selector* selector = _locator.getElement();\
 		_locator.Progress();
 
 

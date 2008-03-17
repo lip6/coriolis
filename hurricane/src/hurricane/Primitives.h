@@ -46,9 +46,9 @@ typedef GenericFilter<Primitive*> PrimitiveFilter;
 #define for_each_primitive(primitive, primitives)\
 /************************************************/\
 {\
-	PrimitiveLocator _locator = primitives.GetLocator();\
+	PrimitiveLocator _locator = primitives.getLocator();\
 	while (_locator.IsValid()) {\
-		Primitive* primitive = _locator.GetElement();\
+		Primitive* primitive = _locator.getElement();\
 		_locator.Progress();
 
 

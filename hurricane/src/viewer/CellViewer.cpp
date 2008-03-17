@@ -23,7 +23,7 @@ CellViewer::~CellViewer() {
     delete layersWidget;
 }
 
-static int scrollStep = GetUnit(200);
+static int scrollStep = getUnit(200);
 
 void CellViewer::keyPressEvent(QKeyEvent *event) {
     switch (event->key()) {

@@ -46,9 +46,9 @@ typedef GenericFilter<Pad*> PadFilter;
 #define for_each_pad(pad, pads)\
 /******************************/\
 {\
-	PadLocator _locator = pads.GetLocator();\
+	PadLocator _locator = pads.getLocator();\
 	while (_locator.IsValid()) {\
-		Pad* pad = _locator.GetElement();\
+		Pad* pad = _locator.getElement();\
 		_locator.Progress();
 
 

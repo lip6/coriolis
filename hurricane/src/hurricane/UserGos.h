@@ -50,9 +50,9 @@ typedef GenericFilter<UserGo*> UserGoFilter;
 #define for_each_user_go(userGo, userGos)\
 /***************************************/\
 {\
-    UserGoLocator _locator = userGos.GetLocator();\
+    UserGoLocator _locator = userGos.getLocator();\
     while (_locator.IsValid()) {\
-        UserGo* userGo = _locator.GetElement();\
+        UserGo* userGo = _locator.getElement();\
         _locator.Progress();
 
 

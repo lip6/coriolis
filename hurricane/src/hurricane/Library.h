@@ -28,85 +28,85 @@ class Library : public DBo {
 // Types
 // *****
 
-	public: typedef DBo Inherit;
+    public: typedef DBo Inherit;
 
-	public: class LibraryMap : public IntrusiveMap<Name, Library> {
-	// **********************************************************
+    public: class LibraryMap : public IntrusiveMap<Name, Library> {
+    // **********************************************************
 
-		public: typedef IntrusiveMap<Name, Library> Inherit;
-	
-		public: LibraryMap();
+        public: typedef IntrusiveMap<Name, Library> Inherit;
+    
+        public: LibraryMap();
 
-		public: virtual Name _GetKey(Library* library) const;
-		public: virtual unsigned _GetHashValue(Name name) const;
-		public: virtual Library* _GetNextElement(Library* library) const;
-		public: virtual void _SetNextElement(Library* library, Library* nextLibrary) const;
+        public: virtual Name _getKey(Library* library) const;
+        public: virtual unsigned _getHashValue(Name name) const;
+        public: virtual Library* _getNextElement(Library* library) const;
+        public: virtual void _SetNextElement(Library* library, Library* nextLibrary) const;
 
-	};
+    };
 
-	public: class CellMap : public IntrusiveMap<Name, Cell> {
-	// ****************************************************
+    public: class CellMap : public IntrusiveMap<Name, Cell> {
+    // ****************************************************
 
-		public: typedef IntrusiveMap<Name, Cell> Inherit;
-	
-		public: CellMap();
+        public: typedef IntrusiveMap<Name, Cell> Inherit;
+    
+        public: CellMap();
 
-		public: virtual Name _GetKey(Cell* cell) const;
-		public: virtual unsigned _GetHashValue(Name name) const;
-		public: virtual Cell* _GetNextElement(Cell* cell) const;
-		public: virtual void _SetNextElement(Cell* cell, Cell* nextCell) const;
+        public: virtual Name _getKey(Cell* cell) const;
+        public: virtual unsigned _getHashValue(Name name) const;
+        public: virtual Cell* _getNextElement(Cell* cell) const;
+        public: virtual void _SetNextElement(Cell* cell, Cell* nextCell) const;
 
-	};
+    };
 
 // Attributes
 // **********
 
-	private: DataBase* _dataBase;
-	private: Library* _library;
-	private: Name _name;
-	private: LibraryMap _libraryMap;
-	private: CellMap _cellMap;
-	private: Library* _nextOfLibraryLibraryMap;
+    private: DataBase* _dataBase;
+    private: Library* _library;
+    private: Name _name;
+    private: LibraryMap _libraryMap;
+    private: CellMap _cellMap;
+    private: Library* _nextOfLibraryLibraryMap;
 
 // Constructors
 // ************
 
-	protected: Library(DataBase* dataBase, Library* library, const Name& name);
+    protected: Library(DataBase* dataBase, Library* library, const Name& name);
 
-	public: static Library* Create(DataBase* dataBase, const Name& name);
-	public: static Library* Create(Library* library, const Name& name);
+    public: static Library* Create(DataBase* dataBase, const Name& name);
+    public: static Library* Create(Library* library, const Name& name);
 
 // Accessors
 // *********
 
-	public: DataBase* GetDataBase() const {return _dataBase;};
-	public: Library* GetLibrary() const {return _library;};
-	public: const Name& GetName() const {return _name;};
-	public: Library* GetLibrary(const Name& name) const {return _libraryMap.GetElement(name);};
-	public: Libraries GetLibraries() const {return _libraryMap.GetElements();};
-	public: Cell* GetCell(const Name& name) const {return _cellMap.GetElement(name);};
-	public: Cells GetCells() const {return _cellMap.GetElements();};
+    public: DataBase* getDataBase() const {return _dataBase;};
+    public: Library* getLibrary() const {return _library;};
+    public: const Name& getName() const {return _name;};
+    public: Library* getLibrary(const Name& name) const {return _libraryMap.getElement(name);};
+    public: Libraries getLibraries() const {return _libraryMap.getElements();};
+    public: Cell* getCell(const Name& name) const {return _cellMap.getElement(name);};
+    public: Cells getCells() const {return _cellMap.getElements();};
 
 // Updators
 // ********
 
-	public: void SetName(const Name& name);
+    public: void SetName(const Name& name);
 
 // Others
 // ******
 
-	protected: virtual void _PostCreate();
+    protected: virtual void _postCreate();
 
-	protected: virtual void _PreDelete();
+    protected: virtual void _preDestroy();
 
-	public: virtual string _GetTypeName() const {return _TName("Library");};
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
-	public: LibraryMap& _GetLibraryMap() {return _libraryMap;};
-	public: CellMap& _GetCellMap() {return _cellMap;};
-	public: Library* _GetNextOfLibraryLibraryMap() const {return _nextOfLibraryLibraryMap;};
+    public: virtual string _getTypeName() const {return _TName("Library");};
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
+    public: LibraryMap& _getLibraryMap() {return _libraryMap;};
+    public: CellMap& _getCellMap() {return _cellMap;};
+    public: Library* _getNextOfLibraryLibraryMap() const {return _nextOfLibraryLibraryMap;};
 
-	public: void _SetNextOfLibraryLibraryMap(Library* library) {_nextOfLibraryLibraryMap = library;};
+    public: void _SetNextOfLibraryLibraryMap(Library* library) {_nextOfLibraryLibraryMap = library;};
 
 };
 

@@ -39,14 +39,14 @@ class Segment_Hooks : public Collection<Hook*> {
 
         public: Locator& operator=(const Locator& locator);
 
-        public: virtual Hook* GetElement() const;
-        public: virtual Hurricane::Locator<Hook*>* GetClone() const;
+        public: virtual Hook* getElement() const;
+        public: virtual Hurricane::Locator<Hook*>* getClone() const;
 
         public: virtual bool IsValid() const;
 
         public: virtual void Progress();
 
-        public: virtual string _GetString() const;
+        public: virtual string _getString() const;
 
     };
 
@@ -69,13 +69,13 @@ class Segment_Hooks : public Collection<Hook*> {
 // Accessors
 // *********
 
-    public: virtual Collection<Hook*>* GetClone() const;
-    public: virtual Hurricane::Locator<Hook*>* GetLocator() const;
+    public: virtual Collection<Hook*>* getClone() const;
+    public: virtual Hurricane::Locator<Hook*>* getLocator() const;
 
 // Others
 // ******
 
-    public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -106,14 +106,14 @@ class Segment_Anchors : public Collection<Component*> {
 
         public: Locator& operator=(const Locator& locator);
 
-        public: virtual Component* GetElement() const;
-        public: virtual Hurricane::Locator<Component*>* GetClone() const;
+        public: virtual Component* getElement() const;
+        public: virtual Hurricane::Locator<Component*>* getClone() const;
 
         public: virtual bool IsValid() const;
 
         public: virtual void Progress();
 
-        public: virtual string _GetString() const;
+        public: virtual string _getString() const;
 
     };
 
@@ -136,13 +136,13 @@ class Segment_Anchors : public Collection<Component*> {
 // Accessors
 // *********
 
-    public: virtual Collection<Component*>* GetClone() const;
-    public: virtual Hurricane::Locator<Component*>* GetLocator() const;
+    public: virtual Collection<Component*>* getClone() const;
+    public: virtual Hurricane::Locator<Component*>* getLocator() const;
 
 // Others
 // ******
 
-    public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -161,33 +161,33 @@ Segment::Segment(Net* net, Component* source, Component* target, Layer* layer, c
     _width(width)
 {
     if (source) {
-        if (!source->GetNet())
+        if (!source->getNet())
             throw Error("Can't create " + _TName("Segment") + " : unconnected source");
-        if (source->GetNet() != net)
+        if (source->getNet() != net)
             throw Error("Can't create " + _TName("Segment") + " : incompatible source");
     }
 
     if (target) {
-        if (!target->GetNet())
+        if (!target->getNet())
             throw Error("Can't create " + _TName("Segment") + " : unconnected target");
-        if (target->GetNet() != net)
+        if (target->getNet() != net)
             throw Error("Can't create " + _TName("Segment") + " : incompatible target");
     }
 
     if (!_layer)
         throw Error("Can't create " + _TName("Segment") + " : null layer");
 
-    if (source) _sourceHook.Attach(source->GetBodyHook());
-    if (target) _targetHook.Attach(target->GetBodyHook());
+    if (source) _sourceHook.Attach(source->getBodyHook());
+    if (target) _targetHook.Attach(target->getBodyHook());
 }
 
-Hooks Segment::GetHooks() const
+Hooks Segment::getHooks() const
 // ****************************
 {
     return Segment_Hooks(this);
 }
 
-Hook* Segment::GetOppositeHook(const Hook* hook) const
+Hook* Segment::getOppositeHook(const Hook* hook) const
 // ***************************************************
 {
     if (hook) {
@@ -197,48 +197,48 @@ Hook* Segment::GetOppositeHook(const Hook* hook) const
     return NULL;
 }
 
-Component* Segment::GetSource() const
+Component* Segment::getSource() const
 // **********************************
 {
-    Hook* masterHook = _sourceHook.GetMasterHook();
-    return (masterHook) ? masterHook->GetComponent() : NULL;
+    Hook* masterHook = _sourceHook.getMasterHook();
+    return (masterHook) ? masterHook->getComponent() : NULL;
 }
 
-Component* Segment::GetTarget() const
+Component* Segment::getTarget() const
 // **********************************
 {
-    Hook* masterHook = _targetHook.GetMasterHook();
-    return (masterHook) ? masterHook->GetComponent() : NULL;
+    Hook* masterHook = _targetHook.getMasterHook();
+    return (masterHook) ? masterHook->getComponent() : NULL;
 }
 
-Components Segment::GetAnchors() const
+Components Segment::getAnchors() const
 // ***********************************
 {
     return Segment_Anchors(this);
 }
 
-Component* Segment::GetOppositeAnchor(Component* anchor) const
+Component* Segment::getOppositeAnchor(Component* anchor) const
 // ***********************************************************
 {
     if (anchor) {
-        Component* source = GetSource();
-        Component* target = GetTarget();
+        Component* source = getSource();
+        Component* target = getTarget();
         if (anchor == source) return target;
         if (anchor == target) return source;
     }
     return NULL;
 }
 
-Point Segment::GetSourcePosition() const
+Point Segment::getSourcePosition() const
 // *************************************
 {
-    return Point(GetSourceX(), GetSourceY());
+    return Point(getSourceX(), getSourceY());
 }
 
-Point Segment::GetTargetPosition() const
+Point Segment::getTargetPosition() const
 // *************************************
 {
-    return Point(GetTargetX(), GetTargetY());
+    return Point(getTargetX(), getTargetY());
 }
 
 void Segment::SetLayer(Layer* layer)
@@ -265,85 +265,85 @@ void Segment::SetWidth(const Unit& width)
 void Segment::Invert()
 // *******************
 {
-    Component* source = GetSource();
-    Component* target = GetTarget();
+    Component* source = getSource();
+    Component* target = getTarget();
     if (source && target && (target != source)) {
-        GetSourceHook()->Detach();
-        GetTargetHook()->Detach();
-        GetSourceHook()->Attach(target->GetBodyHook());
-        GetTargetHook()->Attach(source->GetBodyHook());
+        getSourceHook()->Detach();
+        getTargetHook()->Detach();
+        getSourceHook()->Attach(target->getBodyHook());
+        getTargetHook()->Attach(source->getBodyHook());
     }
 }
 
-void Segment::_PreDelete()
+void Segment::_preDestroy()
 // ***********************
 {
-// trace << "entering Segment::_PreDelete: " << this << endl;
+// trace << "entering Segment::_preDestroy: " << this << endl;
 // trace_in();
 
-    Inherit::_PreDelete();
+    Inherit::_preDestroy();
 
     _sourceHook.Detach();
     _targetHook.Detach();
 
-// trace << "exiting Segment::_PreDelete:" << endl;
+// trace << "exiting Segment::_preDestroy:" << endl;
 // trace_out();
 }
 
-string Segment::_GetString() const
+string Segment::_getString() const
 // *******************************
 {
-    string s = Inherit::_GetString();
-    s.insert(s.length() - 1, " " + GetString(_layer->getName()));
-    s.insert(s.length() - 1, " [" + GetValueString(GetSourceX()) + " " + GetValueString(GetSourceY()) + "]");
-    s.insert(s.length() - 1, " [" + GetValueString(GetTargetX()) + " " + GetValueString(GetTargetY()) + "]");
-    s.insert(s.length() - 1, " " + GetValueString(_width));
+    string s = Inherit::_getString();
+    s.insert(s.length() - 1, " " + getString(_layer->getName()));
+    s.insert(s.length() - 1, " [" + getValueString(getSourceX()) + " " + getValueString(getSourceY()) + "]");
+    s.insert(s.length() - 1, " [" + getValueString(getTargetX()) + " " + getValueString(getTargetY()) + "]");
+    s.insert(s.length() - 1, " " + getValueString(_width));
     return s;
 }
 
-Record* Segment::_GetRecord() const
+Record* Segment::_getRecord() const
 // **************************
 {
-    Record* record = Inherit::_GetRecord();
+    Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(GetSlot("SourceHook", &_sourceHook));
-        record->Add(GetSlot("Source", GetSource()));
-        record->Add(GetSlot("TargetHook", &_targetHook));
-        record->Add(GetSlot("Target", GetTarget()));
-        record->Add(GetSlot("Layer", _layer));
-        record->Add(GetSlot("Width", &_width));
+        record->Add(getSlot("SourceHook", &_sourceHook));
+        record->Add(getSlot("Source", getSource()));
+        record->Add(getSlot("TargetHook", &_targetHook));
+        record->Add(getSlot("Target", getTarget()));
+        record->Add(getSlot("Layer", _layer));
+        record->Add(getSlot("Width", &_width));
     }
     return record;
 }
 
-Unit Segment::_GetSize() const
+Unit Segment::_getSize() const
 // ***************************
 {
     Unit size = 0;
 
-    Layer* layer = GetLayer();
+    Layer* layer = getLayer();
     if (is_a<CompositeLayer*>(layer))
         size = ((CompositeLayer*)layer)->getMaximalSegmentSize();
 
     return size;
 }
 
-Unit Segment::_GetExtention() const
+Unit Segment::_getExtention() const
 // ********************************
 {
     Unit extention = 0;
 
-    Layer* layer = GetLayer();
+    Layer* layer = getLayer();
     if (is_a<CompositeLayer*>(layer))
         extention = ((CompositeLayer*)layer)->getMaximalSegmentExtention();
 
     return extention;
 }
 
-Unit Segment::_GetSize(const BasicLayer* basicLayer) const
+Unit Segment::_getSize(const BasicLayer* basicLayer) const
 // *************************************************
 {
-    Layer* layer = GetLayer();
+    Layer* layer = getLayer();
 
     if (!layer->contains(basicLayer)) return 0;
 
@@ -355,10 +355,10 @@ Unit Segment::_GetSize(const BasicLayer* basicLayer) const
     return size;
 }
 
-Unit Segment::_GetExtention(const BasicLayer* basicLayer) const
+Unit Segment::_getExtention(const BasicLayer* basicLayer) const
 // ******************************************************
 {
-    Layer* layer = GetLayer();
+    Layer* layer = getLayer();
 
     if (!layer->contains(basicLayer)) return 0;
 
@@ -387,16 +387,16 @@ Segment::SourceHook::SourceHook(Segment* segment)
         SOURCE_HOOK_OFFSET = (unsigned long)this - (unsigned long)segment;
 }
 
-Component* Segment::SourceHook::GetComponent() const
+Component* Segment::SourceHook::getComponent() const
 // *************************************************
 {
     return (Component*)((unsigned long)this - SOURCE_HOOK_OFFSET);
 }
 
-string Segment::SourceHook::_GetString() const
+string Segment::SourceHook::_getString() const
 // *******************************************
 {
-    return "<" + _TName("Segment::SourceHook") + " " + GetString(GetComponent()) + ">";
+    return "<" + _TName("Segment::SourceHook") + " " + getString(getComponent()) + ">";
 }
 
 
@@ -418,16 +418,16 @@ Segment::TargetHook::TargetHook(Segment* segment)
         TARGET_HOOK_OFFSET = (unsigned long)this - (unsigned long)segment;
 }
 
-Component* Segment::TargetHook::GetComponent() const
+Component* Segment::TargetHook::getComponent() const
 // *************************************************
 {
     return (Component*)((unsigned long)this - TARGET_HOOK_OFFSET);
 }
 
-string Segment::TargetHook::_GetString() const
+string Segment::TargetHook::_getString() const
 // *******************************************
 {
-    return "<" + _TName("Segment::TargetHook") + " " + GetString(GetComponent()) + ">";
+    return "<" + _TName("Segment::TargetHook") + " " + getString(getComponent()) + ">";
 }
 
 // ****************************************************************************************************
@@ -455,23 +455,23 @@ Segment_Hooks& Segment_Hooks::operator=(const Segment_Hooks& hooks)
     return *this;
 }
 
-Collection<Hook*>* Segment_Hooks::GetClone() const
+Collection<Hook*>* Segment_Hooks::getClone() const
 // ***********************************************
 {
     return new Segment_Hooks(*this);
 }
 
-Locator<Hook*>* Segment_Hooks::GetLocator() const
+Locator<Hook*>* Segment_Hooks::getLocator() const
 // **********************************************
 {
     return new Locator(_segment);
 }
 
-string Segment_Hooks::_GetString() const
+string Segment_Hooks::_getString() const
 // *************************************
 {
     string s = "<" + _TName("Segment::Hooks");
-    if (_segment) s += " " + GetString(_segment);
+    if (_segment) s += " " + getString(_segment);
     s += ">";
     return s;
 }
@@ -488,7 +488,7 @@ Segment_Hooks::Locator::Locator(const Segment* segment)
     _segment(segment),
     _hook(NULL)
 {
-    if (_segment) _hook = ((Segment*)_segment)->GetBodyHook();
+    if (_segment) _hook = ((Segment*)_segment)->getBodyHook();
 }
 
 Segment_Hooks::Locator::Locator(const Locator& locator)
@@ -507,13 +507,13 @@ Segment_Hooks::Locator& Segment_Hooks::Locator::operator=(const Locator& locator
     return *this;
 }
 
-Hook* Segment_Hooks::Locator::GetElement() const
+Hook* Segment_Hooks::Locator::getElement() const
 // *********************************************
 {
     return _hook;
 }
 
-Locator<Hook*>* Segment_Hooks::Locator::GetClone() const
+Locator<Hook*>* Segment_Hooks::Locator::getClone() const
 // *****************************************************
 {
     return new Locator(*this);
@@ -529,22 +529,22 @@ void Segment_Hooks::Locator::Progress()
 // ************************************
 {
     if (_hook) {
-        if (_hook == ((Segment*)_segment)->GetBodyHook())
-            _hook = ((Segment*)_segment)->GetSourceHook();
+        if (_hook == ((Segment*)_segment)->getBodyHook())
+            _hook = ((Segment*)_segment)->getSourceHook();
         else {
-            if (_hook == ((Segment*)_segment)->GetSourceHook())
-                _hook = ((Segment*)_segment)->GetTargetHook();
+            if (_hook == ((Segment*)_segment)->getSourceHook())
+                _hook = ((Segment*)_segment)->getTargetHook();
             else
                 _hook = NULL;
         }
     }
 }
 
-string Segment_Hooks::Locator::_GetString() const
+string Segment_Hooks::Locator::_getString() const
 // **********************************************
 {
     string s = "<" + _TName("Segment::Hooks::Locator");
-    if (_segment) s += " " + GetString(_segment);
+    if (_segment) s += " " + getString(_segment);
     s += ">";
     return s;
 }
@@ -576,23 +576,23 @@ Segment_Anchors& Segment_Anchors::operator=(const Segment_Anchors& hooks)
     return *this;
 }
 
-Collection<Component*>* Segment_Anchors::GetClone() const
+Collection<Component*>* Segment_Anchors::getClone() const
 // ******************************************************
 {
     return new Segment_Anchors(*this);
 }
 
-Locator<Component*>* Segment_Anchors::GetLocator() const
+Locator<Component*>* Segment_Anchors::getLocator() const
 // *****************************************************
 {
     return new Locator(_segment);
 }
 
-string Segment_Anchors::_GetString() const
+string Segment_Anchors::_getString() const
 // ***************************************
 {
     string s = "<" + _TName("Segment::Anchors");
-    if (_segment) s += " " + GetString(_segment);
+    if (_segment) s += " " + getString(_segment);
     s += ">";
     return s;
 }
@@ -610,8 +610,8 @@ Segment_Anchors::Locator::Locator(const Segment* segment)
     _anchor(NULL)
 {
     if (_segment) {
-        _anchor = ((Segment*)_segment)->GetSource();
-        if (!_anchor) _anchor = ((Segment*)_segment)->GetTarget();
+        _anchor = ((Segment*)_segment)->getSource();
+        if (!_anchor) _anchor = ((Segment*)_segment)->getTarget();
     }
 }
 
@@ -631,13 +631,13 @@ Segment_Anchors::Locator& Segment_Anchors::Locator::operator=(const Locator& loc
     return *this;
 }
 
-Component* Segment_Anchors::Locator::GetElement() const
+Component* Segment_Anchors::Locator::getElement() const
 // ****************************************************
 {
     return _anchor;
 }
 
-Locator<Component*>* Segment_Anchors::Locator::GetClone() const
+Locator<Component*>* Segment_Anchors::Locator::getClone() const
 // ************************************************************
 {
     return new Locator(*this);
@@ -653,18 +653,18 @@ void Segment_Anchors::Locator::Progress()
 // **************************************
 {
     if (_anchor) {
-        if (_anchor == ((Segment*)_segment)->GetTarget())
+        if (_anchor == ((Segment*)_segment)->getTarget())
             _anchor = NULL;
         else
-            _anchor = ((Segment*)_segment)->GetTarget();
+            _anchor = ((Segment*)_segment)->getTarget();
     }
 }
 
-string Segment_Anchors::Locator::_GetString() const
+string Segment_Anchors::Locator::_getString() const
 // ************************************************
 {
     string s = "<" + _TName("Segment::Anchors::Locator");
-    if (_segment) s += " " + GetString(_segment);
+    if (_segment) s += " " + getString(_segment);
     s += ">";
     return s;
 }

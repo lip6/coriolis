@@ -52,9 +52,9 @@
 
 
 
-# include  "PyNet.h"
-# include  "PyLayer.h"
-# include  "PyVertical.h"
+#include "PyNet.h"
+#include "PyLayer.h"
+#include "PyVertical.h"
 
 
 namespace  Isobar {
@@ -66,17 +66,17 @@ USING_NAMESPACE_HURRICANE
 extern "C" {
 
 
-# undef   ACCESS_OBJECT
-# undef   ACCESS_CLASS
-# define  ACCESS_OBJECT            _baseObject._baseObject._baseObject._object
-# define  ACCESS_CLASS(_pyObject)  &(_pyObject->_baseObject._baseObject._baseObject)
-# define  METHOD_HEAD(function)    GENERIC_METHOD_HEAD(Vertical,vertical,function)
+#undef  ACCESS_OBJECT
+#undef  ACCESS_CLASS
+#define ACCESS_OBJECT            _baseObject._baseObject._baseObject._object
+#define ACCESS_CLASS(_pyObject)  &(_pyObject->_baseObject._baseObject._baseObject)
+#define METHOD_HEAD(function)    GENERIC_METHOD_HEAD(Vertical,vertical,function)
 
 // x=================================================================x
 // |              "PyVertical" Python Module Code Part               |
 // x=================================================================x
 
-# if defined(__PYTHON_MODULE__)
+#if defined(__PYTHON_MODULE__)
 
   
   // x-------------------------------------------------------------x
@@ -84,16 +84,16 @@ extern "C" {
   // x-------------------------------------------------------------x
 
 
-  // Standart Delete (Attribute).
-  DBoDeleteAttribute(PyVertical_Delete,PyVertical)
+  // Standard destroy (Attribute).
+  DBoDestroyAttribute(PyVertical_destroy, PyVertical)
 
 
   // ---------------------------------------------------------------
   // PyVertical Attribute Method table.
 
   PyMethodDef PyVertical_Methods[] =
-    { { "Delete"               , (PyCFunction)PyVertical_Delete                     , METH_NOARGS
-                               , "Delete associated hurricane object, the python object remains." }
+    { { "destroy"              , (PyCFunction)PyVertical_destroy                     , METH_NOARGS
+                               , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 
@@ -131,48 +131,48 @@ extern "C" {
                            ) ) return ( NULL );
 
 
-    //cerr << "Format := " << __cs.GetObjectIds() << endl;
-    if      ( __cs.GetObjectIds() == NET_LAYER_INT_ARG )
+    //cerr << "Format := " << __cs.getObjectIds() << endl;
+    if      ( __cs.getObjectIds() == NET_LAYER_INT_ARG )
       vertical = Vertical::Create ( PYNET_O(arg0)
                                   , PYLAYER_O(arg1)
                                   , PyInt_AsLong(arg2) );
-    else if ( __cs.GetObjectIds() == NET_LAYER_INTS2_ARG )
+    else if ( __cs.getObjectIds() == NET_LAYER_INTS2_ARG )
       vertical = Vertical::Create ( PYNET_O(arg0)
                                   , PYLAYER_O(arg1)
                                   , PyInt_AsLong(arg2)
                                   , PyInt_AsLong(arg3) );
-    else if ( __cs.GetObjectIds() == COMPS2_LAYER_INT_ARG )
+    else if ( __cs.getObjectIds() == COMPS2_LAYER_INT_ARG )
       vertical = Vertical::Create ( ComponentCast(arg0)
                                   , ComponentCast(arg1)
                                   , PYLAYER_O(arg2)
                                   , PyInt_AsLong(arg3) );
-    else if ( __cs.GetObjectIds() == NET_LAYER_INTS3_ARG )
+    else if ( __cs.getObjectIds() == NET_LAYER_INTS3_ARG )
       vertical = Vertical::Create ( PYNET_O(arg0)
                                   , PYLAYER_O(arg1)
                                   , PyInt_AsLong(arg2)
                                   , PyInt_AsLong(arg3)
                                   , PyInt_AsLong(arg4) );
-    else if ( __cs.GetObjectIds() == COMPS2_LAYER_INTS2_ARG )
+    else if ( __cs.getObjectIds() == COMPS2_LAYER_INTS2_ARG )
       vertical = Vertical::Create ( ComponentCast(arg0)
                                   , ComponentCast(arg1)
                                   , PYLAYER_O(arg2)
                                   , PyInt_AsLong(arg3)
                                   , PyInt_AsLong(arg4) );
-    else if ( __cs.GetObjectIds() == NET_LAYER_INTS4_ARG )
+    else if ( __cs.getObjectIds() == NET_LAYER_INTS4_ARG )
       vertical = Vertical::Create ( PYNET_O(arg0)
                                   , PYLAYER_O(arg1)
                                   , PyInt_AsLong(arg2)
                                   , PyInt_AsLong(arg3)
                                   , PyInt_AsLong(arg4)
                                   , PyInt_AsLong(arg5) );
-    else if ( __cs.GetObjectIds() == COMPS2_LAYER_INTS3_ARG )
+    else if ( __cs.getObjectIds() == COMPS2_LAYER_INTS3_ARG )
       vertical = Vertical::Create ( ComponentCast(arg0)
                                   , ComponentCast(arg1)
                                   , PYLAYER_O(arg2)
                                   , PyInt_AsLong(arg3)
                                   , PyInt_AsLong(arg4)
                                   , PyInt_AsLong(arg5) );
-    else if ( __cs.GetObjectIds() == COMPS2_LAYER_INTS4_ARG )
+    else if ( __cs.getObjectIds() == COMPS2_LAYER_INTS4_ARG )
       vertical = Vertical::Create ( ComponentCast(arg0)
                                   , ComponentCast(arg1)
                                   , PYLAYER_O(arg2)

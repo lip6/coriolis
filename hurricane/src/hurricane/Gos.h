@@ -46,10 +46,10 @@ typedef GenericFilter<Go*> GoFilter;
 #define for_each_go(go, gos)\
 /***************************/\
 {\
-	GoLocator _locator = gos.GetLocator();\
-	while (_locator.IsValid()) {\
-		Go* go = _locator.GetElement();\
-		_locator.Progress();
+    GoLocator _locator = gos.getLocator();\
+    while (_locator.IsValid()) {\
+        Go* go = _locator.getElement();\
+        _locator.Progress();
 
 
 

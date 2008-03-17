@@ -46,10 +46,10 @@ typedef GenericFilter<Quark*> QuarkFilter;
 #define for_each_quark(quark, quarks)\
 /************************************/\
 {\
-	QuarkLocator _locator = quarks.GetLocator();\
-	while (_locator.IsValid()) {\
-		Quark* quark = _locator.GetElement();\
-		_locator.Progress();
+    QuarkLocator _locator = quarks.getLocator();\
+    while (_locator.IsValid()) {\
+        Quark* quark = _locator.getElement();\
+        _locator.Progress();
 
 
 

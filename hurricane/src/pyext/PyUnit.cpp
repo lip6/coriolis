@@ -76,25 +76,25 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyUnit_GetUnit ()"
+  // Attribute Method  :  "PyUnit_getUnit ()"
 
-  extern PyObject* PyUnit_GetUnit ( PyObject* module, PyObject* args )
+  extern PyObject* PyUnit_getUnit ( PyObject* module, PyObject* args )
   {
-    trace << "PyUnit_GetUnit ()" << endl;
+    trace << "PyUnit_getUnit ()" << endl;
     
     PyObject* arg0;
     Unit      result = 0;
 
     HTRY
     
-    __cs.Init ( "Unit.GetUnit" );
-    if ( ! PyArg_ParseTuple(args,"|O&:Unit.GetUnit",Converter,&arg0) )
+    __cs.Init ( "Unit.getUnit" );
+    if ( ! PyArg_ParseTuple(args,"|O&:Unit.getUnit",Converter,&arg0) )
       return ( NULL );
     
-    if      ( __cs.GetObjectIds() == INT_ARG   ) { result = GetUnit ( PyInt_AsLong     ( arg0 ) ); }
-    else if ( __cs.GetObjectIds() == FLOAT_ARG ) { result = GetUnit ( PyFloat_AsDouble ( arg0 ) ); }
+    if      ( __cs.getObjectIds() == INT_ARG   ) { result = getUnit ( PyInt_AsLong     ( arg0 ) ); }
+    else if ( __cs.getObjectIds() == FLOAT_ARG ) { result = getUnit ( PyFloat_AsDouble ( arg0 ) ); }
     else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Unit.GetUnit constructor." );
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Unit.getUnit constructor." );
       return ( NULL );
     }
     
@@ -107,28 +107,28 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyUnit_GetValue ()"
+  // Attribute Method  :  "PyUnit_getValue ()"
 
-  extern PyObject* PyUnit_GetValue ( PyObject* module, PyObject* args )
+  extern PyObject* PyUnit_getValue ( PyObject* module, PyObject* args )
   {
-    trace << "PyUnit_GetValue ()" << endl;
+    trace << "PyUnit_getValue ()" << endl;
     
     PyObject* arg0;
-    if ( ! ParseOneArg ( "GetValue", args,INT_ARG, &arg0 ) ) return ( NULL );
+    if ( ! ParseOneArg ( "getValue", args,INT_ARG, &arg0 ) ) return ( NULL );
 
-    return ( Py_BuildValue("d",GetValue(PyInt_AsLong(arg0))) );
+    return ( Py_BuildValue("d",getValue(PyInt_AsLong(arg0))) );
   }
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyUnit_GetResolution ()"
+  // Attribute Method  :  "PyUnit_getResolution ()"
 
-  extern PyObject* PyUnit_GetResolution ( PyObject* module )
+  extern PyObject* PyUnit_getResolution ( PyObject* module )
   {
-    trace << "PyUnit_GetResolution ()" << endl;
+    trace << "PyUnit_getResolution ()" << endl;
     
 
-    return ( Py_BuildValue("d",GetResolution()) );
+    return ( Py_BuildValue("d",getResolution()) );
   }
 
 

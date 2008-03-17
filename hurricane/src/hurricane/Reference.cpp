@@ -30,7 +30,7 @@ Reference::Reference(Cell* cell, const Name& name, Unit x, Unit y)
   _name(name),
   _point(x,y)
 {
-  if ( !_extend ) _extend = GetUnit(0.5);
+  if ( !_extend ) _extend = getUnit(0.5);
 
   if (_name.IsEmpty())
     throw Error("Can't create " + _TName("Reference") + " : empty name");
@@ -41,7 +41,7 @@ Reference* Reference::Create(Cell* cell, const Name& name, Unit x, Unit y)
 {
   Reference* reference = new Reference(cell, name, x, y);
 
-  reference->_PostCreate();
+  reference->_postCreate();
 
   return reference;
 }
@@ -52,7 +52,7 @@ Reference* Reference::Create(Cell* cell, const Name& name, const Point& point)
   return Create(cell,name,point.getX(),point.getY());
 }
 
-Box  Reference::GetBoundingBox() const
+Box  Reference::getBoundingBox() const
 // ***********************************
 {
   return Box(_point).inflate(_extend);
@@ -67,65 +67,25 @@ void Reference::Translate(const Unit& dx, const Unit& dy)
   }
 }
 
-string Reference::_GetString() const
+string Reference::_getString() const
 // ********************************
 {
-  string s = Inherit::_GetString();
-  s.insert(s.length() - 1, " " + GetString(_name));
-  s.insert(s.length() - 1, " " + GetString(_point));
+  string s = Inherit::_getString();
+  s.insert(s.length() - 1, " " + getString(_name));
+  s.insert(s.length() - 1, " " + getString(_point));
   return s;
 }
 
-Record* Reference::_GetRecord() const
+Record* Reference::_getRecord() const
 // ***************************
 {
-  Record* record = Inherit::_GetRecord();
+  Record* record = Inherit::_getRecord();
   if (record) {
-    record->Add(GetSlot("Name", &_name));
-    record->Add(GetSlot("point", &_point));
+    record->Add(getSlot("Name", &_name));
+    record->Add(getSlot("point", &_point));
   }
   return record;
 }
-
-//bool Reference::_IsInterceptedBy(View* view, const Point& point, const Unit& aperture) const
-//// ****************************************************************************************
-//{
-//  return GetBoundingBox().Intersect(Box(point).Inflate(aperture));
-//}
-//
-//void Reference::_Draw(View* view, BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation)
-//// ****************************************************************************************************
-//{
-//  assert(!basicLayer);
-//
-//  Point center = transformation.GetPoint(_point);
-//
-//  view->DrawLine( center.GetX() - _extend
-//                , center.GetY()
-//                , center.GetX() + _extend
-//                , center.GetY()
-//                );
-//  view->DrawLine( center.GetX()
-//                , center.GetY() - _extend
-//                , center.GetX()
-//                , center.GetY() + _extend
-//                );
-//  view->FillCircle(center, _extend>>1);
-//  if ( view->IsTextVisible() ) {
-//    view->DrawString( GetString(_name)
-//                    , center.GetX() + _extend
-//                    , center.GetY() + _extend
-//                    );
-//  }
-//}
-//
-//void Reference::_Highlight(View* view, const Box& updateArea, const Transformation& transformation)
-//// **********************************************************************************************
-//{
-//  _Draw(view,NULL,updateArea,transformation);
-//}
-//
-//
 
 } // End of Hurricane namespace.
 

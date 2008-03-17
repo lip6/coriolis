@@ -105,14 +105,14 @@ extern "C" {
 
 
   // Standart Accessors (Attributes).
-  DirectGetLongAttribute(PyPoint_GetX,getX,PyPoint,Point)
-  DirectGetLongAttribute(PyPoint_GetY,getY,PyPoint,Point)
+  DirectGetLongAttribute(PyPoint_getX,getX,PyPoint,Point)
+  DirectGetLongAttribute(PyPoint_getY,getY,PyPoint,Point)
   DirectSetLongAttribute(PyPoint_SetX,setX,"Point.setX",PyPoint,Point)
   DirectSetLongAttribute(PyPoint_SetY,setY,"Point.setY",PyPoint,Point)
 
 
-  // Standart Delete (Attribute).
-  DirectDeleteAttribute(PyPoint_Delete,PyPoint)
+  // Standart destroy (Attribute).
+  DirectDestroyAttribute(PyPoint_destroy, PyPoint)
 
 
 
@@ -121,13 +121,13 @@ extern "C" {
   // PyPoint Attribute Method table.
 
   PyMethodDef PyPoint_Methods[] =
-    { { "GetX"     , (PyCFunction)PyPoint_GetX     , METH_NOARGS , "Return the Point X value." }
-    , { "GetY"     , (PyCFunction)PyPoint_GetY     , METH_NOARGS , "Return the Point Y value." }
+    { { "getX"     , (PyCFunction)PyPoint_getX     , METH_NOARGS , "Return the Point X value." }
+    , { "getY"     , (PyCFunction)PyPoint_getY     , METH_NOARGS , "Return the Point Y value." }
     , { "SetX"     , (PyCFunction)PyPoint_SetX     , METH_VARARGS, "Modify the Point X value." }
     , { "SetY"     , (PyCFunction)PyPoint_SetY     , METH_VARARGS, "Modify the Point Y value." }
     , { "Translate", (PyCFunction)PyPoint_Translate, METH_VARARGS, "Translate the point of dx and dy." }
-    , { "Delete"   , (PyCFunction)PyPoint_Delete   , METH_NOARGS
-                   , "Delete associated hurricane object The python object remains." }
+    , { "destroy"  , (PyCFunction)PyPoint_destroy  , METH_NOARGS
+                   , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 
@@ -151,9 +151,9 @@ extern "C" {
                            ,Converter,&arg1
                            ) ) return ( NULL );
 
-    if      ( __cs.GetObjectIds() == NO_ARG    ) { point = new Point (); }
-    else if ( __cs.GetObjectIds() == POINT_ARG ) { point = new Point ( *PYPOINT_O(arg0) ); }
-    else if ( __cs.GetObjectIds() == INTS2_ARG ) { point = new Point ( PyInt_AsLong(arg0)
+    if      ( __cs.getObjectIds() == NO_ARG    ) { point = new Point (); }
+    else if ( __cs.getObjectIds() == POINT_ARG ) { point = new Point ( *PYPOINT_O(arg0) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG ) { point = new Point ( PyInt_AsLong(arg0)
                                                                      , PyInt_AsLong(arg1) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Point constructor." );

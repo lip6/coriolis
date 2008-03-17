@@ -29,61 +29,57 @@ class Go : public Entity {
 // Friends
 // *******
 
-	friend class QuadTree;
+    friend class QuadTree;
 
 // Types
 // *****
 
-	public: typedef Entity Inherit;
+    public: typedef Entity Inherit;
 
 // Attributes
 // **********
 
-	private: QuadTree* _quadTree;
-	private: Go* _nextOfQuadTreeGoSet;
+    private: QuadTree* _quadTree;
+    private: Go* _nextOfQuadTreeGoSet;
 
 // Constructors
 // ************
 
-	protected: Go();
+    protected: Go();
 
 // Predicates
 // **********
 
-	public: static bool AutoMaterializationIsDisabled();
+    public: static bool AutoMaterializationIsDisabled();
 
-	public: bool IsMaterialized() const {return (_quadTree != NULL);};
+    public: bool IsMaterialized() const {return (_quadTree != NULL);};
 
 // Updators
 // ********
 
-	public: static void EnableAutoMaterialization();
-	public: static void DisableAutoMaterialization();
+    public: static void EnableAutoMaterialization();
+    public: static void DisableAutoMaterialization();
 
-	public: virtual void Materialize() = 0;
-	public: virtual void Unmaterialize() = 0;
+    public: virtual void Materialize() = 0;
+    public: virtual void Unmaterialize() = 0;
 
-	public: virtual void Invalidate(bool propagateFlag = true);
-			  // implementation located on file UpdateSession.cpp to access local variables
+    public: virtual void Invalidate(bool propagateFlag = true);
+              // implementation located on file UpdateSession.cpp to access local variables
 
-	public: virtual void Translate(const Unit& dx, const Unit& dy) = 0;
+    public: virtual void Translate(const Unit& dx, const Unit& dy) = 0;
 
 // Others
 // ******
 
-	protected: virtual void _PostCreate();
+    protected: virtual void _postCreate();
 
-	protected: virtual void _PreDelete();
+    protected: virtual void _preDestroy();
 
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
-	public: Go* _GetNextOfQuadTreeGoSet() const {return _nextOfQuadTreeGoSet;};
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
+    public: Go* _getNextOfQuadTreeGoSet() const {return _nextOfQuadTreeGoSet;};
 
-	public: void _SetNextOfQuadTreeGoSet(Go* go) {_nextOfQuadTreeGoSet = go;};
-
-	//public: virtual bool _IsInterceptedBy(View* view, const Point& point, const Unit& aperture) const = 0;
-	//public: virtual void _Draw(View* view, BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation) = 0;
-	//public: virtual void _Highlight(View* view, const Box& updateArea, const Transformation& transformation) = 0;
+    public: void _SetNextOfQuadTreeGoSet(Go* go) {_nextOfQuadTreeGoSet = go;};
 
 };
 

@@ -46,10 +46,10 @@ typedef GenericFilter<DBo*> DBoFilter;
 #define for_each_dbo(dbo, dbos)\
 /******************************/\
 {\
-	DBoLocator _locator = dbos.GetLocator();\
-	while (_locator.IsValid()) {\
-		DBo* dbo = _locator.GetElement();\
-		_locator.Progress();
+    DBoLocator _locator = dbos.getLocator();\
+    while (_locator.IsValid()) {\
+        DBo* dbo = _locator.getElement();\
+        _locator.Progress();
 
 
 

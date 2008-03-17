@@ -46,10 +46,10 @@ typedef GenericFilter<Plug*> PlugFilter;
 #define for_each_plug(plug, plugs)\
 /*********************************/\
 {\
-	PlugLocator _locator = plugs.GetLocator();\
-	while (_locator.IsValid()) {\
-		Plug* plug = _locator.GetElement();\
-		_locator.Progress();
+    PlugLocator _locator = plugs.getLocator();\
+    while (_locator.IsValid()) {\
+        Plug* plug = _locator.getElement();\
+        _locator.Progress();
 
 
 

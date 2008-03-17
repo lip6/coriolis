@@ -83,22 +83,22 @@ extern "C" {
   // Standart Accessors (Attributes).
 
 
-  // Standart Delete (Attribute).
-  DBoDeleteAttribute(PyLayer_Delete,PyLayer)
+  // Standart destroy (Attribute).
+  DBoDestroyAttribute(PyLayer_destroy, PyLayer)
 
   
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyLayer_GetTechnology ()"
+  // Attribute Method  :  "PyLayer_getTechnology ()"
 
-  static PyObject* PyLayer_GetTechnology ( PyLayer *self )
+  static PyObject* PyLayer_getTechnology ( PyLayer *self )
   {
-    trace << "PyLayer_GetTechnology ()" << endl;
+    trace << "PyLayer_getTechnology ()" << endl;
 
     Technology* techno = NULL;
 
     HTRY
-    METHOD_HEAD ( "Layer.GetTechnology()" )
-    techno = layer->GetTechnology ();
+    METHOD_HEAD ( "Layer.getTechnology()" )
+    techno = layer->getTechnology ();
     HCATCH
     
     return PyTechnology_Link ( techno );
@@ -107,19 +107,19 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyLayer_GetName ()"
+  // Attribute Method  :  "PyLayer_getName ()"
 
-  static PyObject* PyLayer_GetName ( PyLayer *self )
+  static PyObject* PyLayer_getName ( PyLayer *self )
   {
 
-    trace << "Layer_GetName ()" << endl;
-    METHOD_HEAD ( "Layer.GetName()" )
+    trace << "Layer_getName ()" << endl;
+    METHOD_HEAD ( "Layer.getName()" )
 
     PyName* pyName = PyObject_NEW ( PyName, &PyTypeName );
     if ( pyName == NULL ) { return NULL; }
 
     HTRY
-    pyName->_object = new Name ( layer->GetName() );
+    pyName->_object = new Name ( layer->getName() );
     HCATCH
     
     return ( (PyObject*)pyName );
@@ -139,7 +139,7 @@ extern "C" {
     PyName* name;
     if ( ! ParseOneArg ( "Layer.SetName", args, NAME_ARG, (PyObject**)&name ) ) return ( NULL );
 
-    layer->SetName ( *PYNAME_O(name) );
+    layer->setName ( *PYNAME_O(name) );
     HCATCH
 
     Py_RETURN_NONE;
@@ -151,11 +151,11 @@ extern "C" {
   // PyLayer Attribute Method table.
 
   PyMethodDef PyLayer_Methods[] =
-    { { "GetTechnology"       , (PyCFunction)PyLayer_GetTechnology       , METH_NOARGS , "Returns the technology owning the layer." }
-    , { "GetName"             , (PyCFunction)PyLayer_GetName             , METH_NOARGS , "Returns the name of the layer." }
+    { { "getTechnology"       , (PyCFunction)PyLayer_getTechnology       , METH_NOARGS , "Returns the technology owning the layer." }
+    , { "getName"             , (PyCFunction)PyLayer_getName             , METH_NOARGS , "Returns the name of the layer." }
     , { "SetName"             , (PyCFunction)PyLayer_SetName             , METH_VARARGS, "Allows to change the layer name." }
-    , { "Delete"              , (PyCFunction)PyLayer_Delete              , METH_NOARGS
-                              , "Delete associated hurricane object The python object remains." }
+    , { "destroy"             , (PyCFunction)PyLayer_destroy             , METH_NOARGS
+                              , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

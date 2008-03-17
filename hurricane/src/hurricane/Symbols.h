@@ -46,9 +46,9 @@ typedef GenericFilter<Symbol*> SymbolFilter;
 #define for_each_symbol(symbol, symbols)\
 /***************************************/\
 {\
-	SymbolLocator _locator = symbols.GetLocator();\
+	SymbolLocator _locator = symbols.getLocator();\
 	while (_locator.IsValid()) {\
-		Symbol* symbol = _locator.GetElement();\
+		Symbol* symbol = _locator.getElement();\
 		_locator.Progress();
 
 

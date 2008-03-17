@@ -65,17 +65,17 @@ namespace Hurricane {
 
     // Accessors
     public:
-      const   string& GetName       () const { return _name; };
-      virtual string  GetDataString () const { return _data->_GetString(); };
-      virtual Record* GetDataRecord () const { return _data->_GetRecord(); };
+      const   string& getName       () const { return _name; };
+      virtual string  getDataString () const { return _data->_getString(); };
+      virtual Record* getDataRecord () const { return _data->_getRecord(); };
 
    // Inspector Managment.
    public:
-      virtual string _GetString () const
+      virtual string _getString () const
                                 {
-                                  return "<" + _GetTypeName()
-                                             + " " + GetName() + " "
-                                             + _data->_GetString() + ">";
+                                  return "<" + _getTypeName()
+                                             + " " + getName() + " "
+                                             + _data->_getString() + ">";
                                 };
 
 };
@@ -106,7 +106,7 @@ namespace Hurricane {
 
     // Accessors
     public:
-      virtual string  _GetTypeName   () const { return _TName("PointerSlot"); };
+      virtual string  _getTypeName   () const { return _TName("PointerSlot"); };
 
   };
 
@@ -132,7 +132,7 @@ namespace Hurricane {
 
    // Accessors
    public:
-      virtual string  _GetTypeName () const { return _TName("ValueSlot"); };
+      virtual string  _getTypeName () const { return _TName("ValueSlot"); };
 
   };
 

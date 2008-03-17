@@ -90,25 +90,24 @@ extern "C" {
   DirectGetBoolAttribute(PyOccurrence_HasProperty,HasProperty,PyOccurrence,Occurrence)
 
 
-  // Standart Delete (Attribute).
-  DirectDeleteAttribute(PyOccurrence_Delete,PyOccurrence)
+  // Standart destroy (Attribute).
+  DirectDestroyAttribute(PyOccurrence_destroy, PyOccurrence)
 
 
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyOccurrence_GetEntity ()"
+  // Attribute Method  :  "PyOccurrence_getEntity ()"
 
-  static PyObject* PyOccurrence_GetEntity ( PyOccurrence *self )
-  {
-    trace << "PyOccurrence_GetEntity()" << endl;
+  static PyObject* PyOccurrence_getEntity ( PyOccurrence *self ) {
+    trace << "PyOccurrence_getEntity()" << endl;
 
-    METHOD_HEAD ( "Occurrence.GetEntity()" )
+    METHOD_HEAD ( "Occurrence.getEntity()" )
 
     PyObject* pyEntity = NULL;
 
     HTRY
-    Entity* entity = occurrence->GetEntity();
+    Entity* entity = occurrence->getEntity();
     if ( entity == NULL )
         Py_RETURN_NONE;
 
@@ -120,18 +119,17 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyOccurrence_GetOwnerCell ()"
+  // Attribute Method  :  "PyOccurrence_getOwnerCell ()"
 
-  static PyObject* PyOccurrence_GetOwnerCell ( PyOccurrence *self )
-  {
-    trace << "PyOccurrence_GetOwnerCell()" << endl;
+  static PyObject* PyOccurrence_getOwnerCell ( PyOccurrence *self ) {
+    trace << "PyOccurrence_getOwnerCell()" << endl;
 
-    METHOD_HEAD ( "Occurernce.GetOwnerCell()" )
+    METHOD_HEAD ( "Occurernce.getOwnerCell()" )
 
     Cell* cell = NULL;
 
     HTRY
-    cell = occurrence->GetOwnerCell();
+    cell = occurrence->getOwnerCell();
     HCATCH    
 
     return PyCell_Link ( cell );
@@ -139,18 +137,18 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyOccurrence_GetMasterCell ()"
+  // Attribute Method  :  "PyOccurrence_getMasterCell ()"
 
-  static PyObject* PyOccurrence_GetMasterCell ( PyOccurrence *self )
+  static PyObject* PyOccurrence_getMasterCell ( PyOccurrence *self )
   {
-    trace << "PyOccurrence_GetMasterCell()" << endl;
+    trace << "PyOccurrence_getMasterCell()" << endl;
 
-    METHOD_HEAD ( "Occurrence.GetMasterCell()" )
+    METHOD_HEAD ( "Occurrence.getMasterCell()" )
 
     Cell* cell = NULL;
 
     HTRY
-    cell = occurrence->GetMasterCell();
+    cell = occurrence->getMasterCell();
     HCATCH    
 
     return PyCell_Link ( cell );
@@ -158,19 +156,19 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyOccurrence_GetPath ()"
+  // Attribute Method  :  "PyOccurrence_getPath ()"
 
-  static PyObject* PyOccurrence_GetPath ( PyOccurrence *self )
+  static PyObject* PyOccurrence_getPath ( PyOccurrence *self )
   {
-    trace << "PyOccurrence_GetPath ()" << endl;
+    trace << "PyOccurrence_getPath ()" << endl;
     
-    METHOD_HEAD ( "Occurrence.GetPath()" )
+    METHOD_HEAD ( "Occurrence.getPath()" )
 
     PyPath* pyPath = PyObject_NEW ( PyPath, &PyTypePath );
     if ( pyPath == NULL ) { return NULL; }
 
     HTRY
-    pyPath->_object = new Path ( occurrence->GetPath() );
+    pyPath->_object = new Path ( occurrence->getPath() );
     HCATCH
     
     return ( (PyObject*)pyPath );
@@ -178,19 +176,19 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyOccurrence_GetName ()"
+  // Attribute Method  :  "PyOccurrence_getName ()"
 
-  static PyObject* PyOccurrence_GetName ( PyOccurrence *self )
+  static PyObject* PyOccurrence_getName ( PyOccurrence *self )
   {
-    trace << "PyOccurrence_GetName ()" << endl;
+    trace << "PyOccurrence_getName ()" << endl;
     
-    METHOD_HEAD ( "Occurrence.GetName()" )
+    METHOD_HEAD ( "Occurrence.getName()" )
 
     PyName* pyName = PyObject_NEW ( PyName, &PyTypeName );
     if ( pyName == NULL ) { return NULL; }
 
     HTRY
-    pyName->_object = new Name ( occurrence->GetName() );
+    pyName->_object = new Name ( occurrence->getName() );
     HCATCH
     
     return ( (PyObject*)pyName );
@@ -198,19 +196,19 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyOccurrence_GetBoundingBox ()"
+  // Attribute Method  :  "PyOccurrence_getBoundingBox ()"
 
-  static PyObject* PyOccurrence_GetBoundingBox ( PyOccurrence *self )
+  static PyObject* PyOccurrence_getBoundingBox ( PyOccurrence *self )
   {
-    trace << "PyOccurrence_GetBoundingBox ()" << endl;
+    trace << "PyOccurrence_getBoundingBox ()" << endl;
     
-    METHOD_HEAD ( "Occurrence.GetBoundingBox()" )
+    METHOD_HEAD ( "Occurrence.getBoundingBox()" )
 
     PyBox* pyBox = PyObject_NEW ( PyBox, &PyTypeBox );
     if ( pyBox == NULL ) { return NULL; }
 
     HTRY
-    pyBox->_object = new Box ( occurrence->GetBoundingBox() );
+    pyBox->_object = new Box ( occurrence->getBoundingBox() );
     HCATCH
     
     return ( (PyObject*)pyBox );
@@ -223,16 +221,16 @@ extern "C" {
   // PyOccurrence Attribute Method table.
 
   PyMethodDef PyOccurrence_Methods[] =
-    { { "GetEntity"     , (PyCFunction)PyOccurrence_GetEntity     , METH_NOARGS, "Returns the referenced entity." }
-    , { "GetPath"       , (PyCFunction)PyOccurrence_GetPath       , METH_NOARGS, "Returns the hierarchical instaciation path." }
-    , { "GetName"       , (PyCFunction)PyOccurrence_GetName       , METH_NOARGS, "Returns the occurrence name (concatenation of path and entity name." }
-    , { "GetOwnerCell"  , (PyCFunction)PyOccurrence_GetOwnerCell  , METH_NOARGS, "Returns the occurrence owner cell." }
-    , { "GetMasterCell" , (PyCFunction)PyOccurrence_GetMasterCell , METH_NOARGS, "Returns the cell owning the referenced entity." }
-    , { "GetBoundingBox", (PyCFunction)PyOccurrence_GetBoundingBox, METH_NOARGS, "Returns the occurrence bounding box." }
+    { { "getEntity"     , (PyCFunction)PyOccurrence_getEntity     , METH_NOARGS, "Returns the referenced entity." }
+    , { "getPath"       , (PyCFunction)PyOccurrence_getPath       , METH_NOARGS, "Returns the hierarchical instaciation path." }
+    , { "getName"       , (PyCFunction)PyOccurrence_getName       , METH_NOARGS, "Returns the occurrence name (concatenation of path and entity name." }
+    , { "getOwnerCell"  , (PyCFunction)PyOccurrence_getOwnerCell  , METH_NOARGS, "Returns the occurrence owner cell." }
+    , { "getMasterCell" , (PyCFunction)PyOccurrence_getMasterCell , METH_NOARGS, "Returns the cell owning the referenced entity." }
+    , { "getBoundingBox", (PyCFunction)PyOccurrence_getBoundingBox, METH_NOARGS, "Returns the occurrence bounding box." }
     , { "IsValid"       , (PyCFunction)PyOccurrence_IsValid       , METH_NOARGS, "Returns true if the occurrence is valid." }
     , { "HasProperty"   , (PyCFunction)PyOccurrence_HasProperty   , METH_NOARGS, "Returns true if the occurrence owns some properties." }
-    , { "Delete"        , (PyCFunction)PyOccurrence_Delete        , METH_NOARGS
-                        , "Delete associated hurricane object, the python object remains." }
+    , { "destroy"       , (PyCFunction)PyOccurrence_destroy       , METH_NOARGS
+                        , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 
@@ -259,11 +257,11 @@ extern "C" {
                            ,Converter,&arg1
                            ) ) return ( NULL );
 
-    if      ( __cs.GetObjectIds() == NO_ARG       ) { occurrence = new Occurrence (); }
-    else if ( __cs.GetObjectIds() == ENT_ARG      ) { occurrence = new Occurrence (  PYENTITY_O(arg0) ); }
-    else if ( __cs.GetObjectIds() == COMP_PATH_ARG) { occurrence = new Occurrence (  PYSEGMENT_O(arg0)
+    if      ( __cs.getObjectIds() == NO_ARG       ) { occurrence = new Occurrence (); }
+    else if ( __cs.getObjectIds() == ENT_ARG      ) { occurrence = new Occurrence (  PYENTITY_O(arg0) ); }
+    else if ( __cs.getObjectIds() == COMP_PATH_ARG) { occurrence = new Occurrence (  PYSEGMENT_O(arg0)
                                                                                   , *PYPATH_O(arg1) ); }
-    else if ( __cs.GetObjectIds() == ENT_PATH_ARG ) { occurrence = new Occurrence (  PYENTITY_O(arg0)
+    else if ( __cs.getObjectIds() == ENT_PATH_ARG ) { occurrence = new Occurrence (  PYENTITY_O(arg0)
                                                                                   , *PYPATH_O(arg1) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Occurrence constructor. " );
@@ -287,7 +285,7 @@ extern "C" {
   PyTypeObjectConstructor(Occurrence)
 
 
-# else  // End of Python Module Code Part.
+#else  // End of Python Module Code Part.
 
 
 // x=================================================================x
@@ -304,7 +302,7 @@ extern "C" {
   PyTypeRootObjectDefinitions(Occurrence)
 
 
-# endif  // End of Shared Library Code Part.
+#endif  // End of Shared Library Code Part.
 
 
 }  // End of extern "C".
@@ -313,4 +311,3 @@ extern "C" {
 
 
 }  // End of Isobar namespace.
- 

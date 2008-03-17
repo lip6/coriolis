@@ -46,10 +46,10 @@ typedef GenericFilter<Component*> ComponentFilter;
 #define for_each_component(component, components)\
 /************************************************/\
 {\
-	ComponentLocator _locator = components.GetLocator();\
-	while (_locator.IsValid()) {\
-		Component* component = _locator.GetElement();\
-		_locator.Progress();
+    ComponentLocator _locator = components.getLocator();\
+    while (_locator.IsValid()) {\
+        Component* component = _locator.getElement();\
+        _locator.Progress();
 
 
 

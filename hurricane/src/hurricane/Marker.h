@@ -23,44 +23,44 @@ class Marker : public Go {
 // Types
 // *****
 
-	public: typedef Go Inherit;
+    public: typedef Go Inherit;
 
 // Attributes
 // **********
 
-	private: Cell* _cell;
-	private: Marker* _nextOfCellMarkerSet;
+    private: Cell* _cell;
+    private: Marker* _nextOfCellMarkerSet;
 
 // Constructors
 // ************
 
-	protected: Marker(Cell* cell);
+    protected: Marker(Cell* cell);
 
 // Accessors
 // *********
 
-	public: virtual Cell* GetCell() const {return _cell;};
-	public: virtual Box GetBoundingBox() const = 0;
+    public: virtual Cell* getCell() const {return _cell;};
+    public: virtual Box getBoundingBox() const = 0;
 
 // Updators
 // ********
 
-	public: virtual void Materialize();
-	public: virtual void Unmaterialize();
+    public: virtual void Materialize();
+    public: virtual void Unmaterialize();
 
 // Others
 // ******
 
-	protected: virtual void _PostCreate();
+    protected: virtual void _postCreate();
 
-	protected: virtual void _PreDelete();
+    protected: virtual void _preDestroy();
 
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
 
-	public: Marker* _GetNextOfCellMarkerSet() const {return _nextOfCellMarkerSet;};
+    public: Marker* _getNextOfCellMarkerSet() const {return _nextOfCellMarkerSet;};
 
-	public: void _SetNextOfCellMarkerSet(Marker* marker) {_nextOfCellMarkerSet = marker;};
+    public: void _SetNextOfCellMarkerSet(Marker* marker) {_nextOfCellMarkerSet = marker;};
 
 };
 

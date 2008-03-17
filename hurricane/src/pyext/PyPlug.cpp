@@ -92,17 +92,17 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPlug_GetInstance ()"
+  // Attribute Method  :  "PyPlug_getInstance ()"
 
-  static PyObject* PyPlug_GetInstance ( PyPlug *self )
+  static PyObject* PyPlug_getInstance ( PyPlug *self )
   {
-    trace << "PyPlug_GetInstance ()" << endl;
+    trace << "PyPlug_getInstance ()" << endl;
     
     Instance* instance = NULL;
 
     HTRY
-    METHOD_HEAD ( "Plug.GetInstance()" )
-    instance = plug->GetInstance ( );
+    METHOD_HEAD ( "Plug.getInstance()" )
+    instance = plug->getInstance ( );
     HCATCH    
 
     return PyInstance_Link ( instance );
@@ -110,17 +110,17 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPlug_GetMasterNet ()"
+  // Attribute Method  :  "PyPlug_getMasterNet ()"
 
-  static PyObject* PyPlug_GetMasterNet ( PyPlug *self )
+  static PyObject* PyPlug_getMasterNet ( PyPlug *self )
   {
-    trace << "PyPlug_GetMasterNet ()" << endl;
+    trace << "PyPlug_getMasterNet ()" << endl;
     
     Net* net = NULL;
 
     HTRY
-    METHOD_HEAD ( "Plug.GetMasterNet()" )
-    net = plug->GetMasterNet ( );
+    METHOD_HEAD ( "Plug.getMasterNet()" )
+    net = plug->getMasterNet ( );
     HCATCH
     
     return PyNet_Link ( net );
@@ -129,17 +129,17 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPlug_GetNet ()"
+  // Attribute Method  :  "PyPlug_getNet ()"
 
-  static PyObject* PyPlug_GetNet ( PyPlug *self )
+  static PyObject* PyPlug_getNet ( PyPlug *self )
   {
-    trace << "PyPlug_GetNet ()" << endl;
+    trace << "PyPlug_getNet ()" << endl;
     
     Net* net = NULL;
 
     HTRY
-    METHOD_HEAD ( "Plug.GetNet()" )
-    net = plug->GetNet ( );
+    METHOD_HEAD ( "Plug.getNet()" )
+    net = plug->getNet ( );
     HCATCH
     
     return PyNet_Link ( net );
@@ -177,9 +177,9 @@ extern "C" {
   // PyPlug Attribute Method table.
 
   PyMethodDef PyPlug_Methods[] =
-    { { "GetInstance"    , (PyCFunction)PyPlug_GetInstance   , METH_NOARGS , "Return the instance to which belongs the plug." }
-    , { "GetMasterNet"   , (PyCFunction)PyPlug_GetMasterNet  , METH_NOARGS , "Returns the external net referenced by the plug in the master cell of its instance." }
-    , { "GetNet"         , (PyCFunction)PyPlug_GetNet  , METH_NOARGS , "Returns the  net connected by the plug in the cell of its instance." }
+    { { "getInstance"    , (PyCFunction)PyPlug_getInstance   , METH_NOARGS , "Return the instance to which belongs the plug." }
+    , { "getMasterNet"   , (PyCFunction)PyPlug_getMasterNet  , METH_NOARGS , "Returns the external net referenced by the plug in the master cell of its instance." }
+    , { "getNet"         , (PyCFunction)PyPlug_getNet  , METH_NOARGS , "Returns the  net connected by the plug in the cell of its instance." }
     , { "IsConnected"    , (PyCFunction)PyPlug_IsConnected   , METH_NOARGS , "Returns true if the plug is connected, else false." }
     , { "SetNet"         , (PyCFunction)PyPlug_SetNet        , METH_VARARGS, "This method allows to connect or change the net of a plug."  }
     , {NULL, NULL, 0, NULL}           /* sentinel */

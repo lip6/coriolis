@@ -46,10 +46,10 @@ typedef GenericFilter<CompositeLayer*> CompositeLayerFilter;
 #define for_each_composite_layer(compositeLayer, compositeLayers)\
 /****************************************************************/\
 {\
-	CompositeLayerLocator _locator = compositeLayers.GetLocator();\
-	while (_locator.IsValid()) {\
-		CompositeLayer* compositeLayer = _locator.GetElement();\
-		_locator.Progress();
+    CompositeLayerLocator _locator = compositeLayers.getLocator();\
+    while (_locator.IsValid()) {\
+        CompositeLayer* compositeLayer = _locator.getElement();\
+        _locator.Progress();
 
 
 

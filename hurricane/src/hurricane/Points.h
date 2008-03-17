@@ -45,9 +45,9 @@ typedef GenericFilter<Point> PointFilter;
 #define for_each_point(point, points)\
 /************************************/\
 {\
-	PointLocator _locator = points.GetLocator();\
+	PointLocator _locator = points.getLocator();\
 	while (_locator.IsValid()) {\
-		Point point = _locator.GetElement();\
+		Point point = _locator.getElement();\
 		_locator.Progress();
 
 

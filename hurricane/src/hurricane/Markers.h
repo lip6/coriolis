@@ -46,10 +46,10 @@ typedef GenericFilter<Marker*> MarkerFilter;
 #define for_each_marker(marker, markers)\
 /***************************************/\
 {\
-	MarkerLocator _locator = markers.GetLocator();\
-	while (_locator.IsValid()) {\
-		Marker* marker = _locator.GetElement();\
-		_locator.Progress();
+    MarkerLocator _locator = markers.getLocator();\
+    while (_locator.IsValid()) {\
+        Marker* marker = _locator.getElement();\
+        _locator.Progress();
 
 
 

@@ -50,10 +50,10 @@ typedef GenericFilter<DisplaySlot*> DisplaySlotFilter;
 #define for_each_display_slot(displaySlot, displaySlots)\
 /******************************************************/\
 {\
-	DisplaySlotLocator _locator = displaySlots.GetLocator();\
-	while (_locator.IsValid()) {\
-		DisplaySlot* displaySlot = _locator.GetElement();\
-		_locator.Progress();
+    DisplaySlotLocator _locator = displaySlots.getLocator();\
+    while (_locator.IsValid()) {\
+        DisplaySlot* displaySlot = _locator.getElement();\
+        _locator.Progress();
 
 
 

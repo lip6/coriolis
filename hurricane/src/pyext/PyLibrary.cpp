@@ -84,17 +84,17 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyLibrary_GetName ()"
+  // Attribute Method  :  "PyLibrary_getName ()"
 
-  static PyObject* PyLibrary_GetName ( PyLibrary *self ) {
-    trace << "PyLibrary_GetName ()" << endl;
-    METHOD_HEAD ( "Library.GetName()" )
+  static PyObject* PyLibrary_getName ( PyLibrary *self ) {
+    trace << "PyLibrary_getName ()" << endl;
+    METHOD_HEAD ( "Library.getName()" )
 
     PyName* pyName = PyObject_NEW ( PyName, &PyTypeName );
     if ( pyName == NULL ) { return NULL; }
 
     HTRY
-    pyName->_object = new Name ( lib->GetName() );
+    pyName->_object = new Name ( lib->getName() );
     HCATCH
     
     return ( (PyObject*)pyName );
@@ -103,20 +103,20 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyLibrary_GetCell ()"
+  // Attribute Method  :  "PyLibrary_getCell ()"
 
-  PyObject* PyLibrary_GetCell ( PyLibrary* self, PyObject* args ) {
-    trace << "PyLibrary_GetCell ()" << endl;
+  PyObject* PyLibrary_getCell ( PyLibrary* self, PyObject* args ) {
+    trace << "PyLibrary_getCell ()" << endl;
     
     Cell* cell = NULL;
 
     HTRY
-    METHOD_HEAD ( "Library.GetCell()" )
+    METHOD_HEAD ( "Library.getCell()" )
 
     PyObject* arg0;
-    if ( ! ParseOneArg ( "Library.GetCell", args, NAME_ARG, &arg0 ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Library.getCell", args, NAME_ARG, &arg0 ) ) return ( NULL );
 
-    cell = lib->GetCell ( *PYNAME_O(arg0) );
+    cell = lib->getCell ( *PYNAME_O(arg0) );
     HCATCH
 
     return PyCell_Link ( cell );
@@ -125,19 +125,19 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyLibrary_GetCellsLocator ()"
+  // Attribute Method  :  "PyLibrary_getCellsLocator ()"
 
-  static PyObject* PyLibrary_GetCellsLocator ( PyLibrary *self ) {
-    trace << "PyLibrary_GetCellsLocator ()" << endl;
-    METHOD_HEAD ( "Library.GetCellsLocator()" )
+  static PyObject* PyLibrary_getCellsLocator ( PyLibrary *self ) {
+    trace << "PyLibrary_getCellsLocator ()" << endl;
+    METHOD_HEAD ( "Library.getCellsLocator()" )
 
-    Cells cells = lib->GetCells ();
+    Cells cells = lib->getCells ();
 
     PyCellLocator* pyCellLocator = PyObject_NEW ( PyCellLocator, &PyTypeCellLocator );
     if (pyCellLocator == NULL) { return NULL; }
 
     HTRY
-    pyCellLocator->_object = cells.GetLocator ();
+    pyCellLocator->_object = cells.getLocator ();
     HCATCH
 
     return ( (PyObject*)pyCellLocator );
@@ -147,19 +147,19 @@ extern "C" {
   // Standart Accessors (Attributes).
 
 
-  // Standart Delete (Attribute).
-  DBoDeleteAttribute(PyLibrary_Delete,PyLibrary)
+  // Standart Destroy (Attribute).
+  DBoDestroyAttribute(PyLibrary_destroy, PyLibrary)
 
   // ---------------------------------------------------------------
   // PyLibrary Attribute Method table.
 
   PyMethodDef PyLibrary_Methods[] =
     {
-      { "GetName"      , (PyCFunction)PyLibrary_GetName      , METH_NOARGS , "Returns the name of the library." }
-    , { "GetCell"        , (PyCFunction)PyLibrary_GetCell        , METH_VARARGS, "Get the cell of name <name>" }
-    , { "GetCellsLocator", (PyCFunction)PyLibrary_GetCellsLocator, METH_NOARGS , "Returns the collection of all cells of the library." }
-    , { "Delete"       , (PyCFunction)PyLibrary_Delete       , METH_NOARGS
-                       , "Delete associated hurricane object The python object remains." }
+      { "getName"      , (PyCFunction)PyLibrary_getName      , METH_NOARGS , "Returns the name of the library." }
+    , { "getCell"        , (PyCFunction)PyLibrary_getCell        , METH_VARARGS, "Get the cell of name <name>" }
+    , { "getCellsLocator", (PyCFunction)PyLibrary_getCellsLocator, METH_NOARGS , "Returns the collection of all cells of the library." }
+    , { "destroy"       , (PyCFunction)PyLibrary_destroy       , METH_NOARGS
+                       , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

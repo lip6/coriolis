@@ -255,8 +255,8 @@ Box& Box::shrinkByFactor(double factor)
 // **************************************
 {
     assert((0 <= factor) && (factor <= 1));
-    Unit dx=GetUnit(0.5*(1- factor) * (GetValue(_xMax) - GetValue(_xMin)));
-    Unit dy=GetUnit(0.5*(1- factor) * (GetValue(_yMax) - GetValue(_yMin)));
+    Unit dx=getUnit(0.5*(1- factor) * (getValue(_xMax) - getValue(_xMin)));
+    Unit dy=getUnit(0.5*(1- factor) * (getValue(_yMax) - getValue(_yMin)));
     return inflate(-dx, -dy);
 }
 
@@ -314,28 +314,28 @@ Box& Box::translate(const Unit& dx, const Unit& dy)
     return *this;
 }
 
-string Box::_GetString() const
+string Box::_getString() const
 // ***************************
 {
     if (isEmpty())
         return "<" + _TName("Box") + " empty>";
     else
         return "<" + _TName("Box") + " " +
-                 GetValueString(_xMin) + " " + GetValueString(_yMin) + " " +
-                 GetValueString(_xMax) + " " + GetValueString(_yMax) +
+                 getValueString(_xMin) + " " + getValueString(_yMin) + " " +
+                 getValueString(_xMax) + " " + getValueString(_yMax) +
                  ">";
 }
 
-Record* Box::_GetRecord() const
+Record* Box::_getRecord() const
 // **********************
 {
     if (isEmpty()) return NULL;
 
-    Record* record = new Record(GetString(this));
-    record->Add(GetSlot("XMin", &_xMin));
-    record->Add(GetSlot("YMin", &_yMin));
-    record->Add(GetSlot("XMax", &_xMax));
-    record->Add(GetSlot("YMax", &_yMax));
+    Record* record = new Record(getString(this));
+    record->Add(getSlot("XMin", &_xMin));
+    record->Add(getSlot("YMin", &_yMin));
+    record->Add(getSlot("XMax", &_xMax));
+    record->Add(getSlot("YMax", &_yMax));
     return record;
 }
 

@@ -32,47 +32,47 @@ Slice::Slice(Cell* cell, Layer* layer)
     if (!_layer)
         throw Error("Can't create " + _TName("Slice") + " : null layer");
 
-    if (_cell->GetSlice(_layer))
+    if (_cell->getSlice(_layer))
         throw Error("Can't create " + _TName("Slice") + " : already exists");
 
-    _cell->_GetSliceMap()._Insert(this);
+    _cell->_getSliceMap()._Insert(this);
 }
 
 Slice::~Slice()
 // ************
 {
-    _cell->_GetSliceMap()._Remove(this);
+    _cell->_getSliceMap()._Remove(this);
 }
 
-Components Slice::GetComponents() const
+Components Slice::getComponents() const
 // ************************************
 {
-    // return _quadTree.GetGos().GetSubSet<Component*>();
-    return SubTypeCollection<Go*, Component*>(_quadTree.GetGos());
+    // return _quadTree.getGos().getSubSet<Component*>();
+    return SubTypeCollection<Go*, Component*>(_quadTree.getGos());
 }
 
-Components Slice::GetComponentsUnder(const Box& area) const
+Components Slice::getComponentsUnder(const Box& area) const
 // ********************************************************
 {
-    // return _quadTree.GetGosUnder(area).GetSubSet<Component*>();
-    return SubTypeCollection<Go*, Component*>(_quadTree.GetGosUnder(area));
+    // return _quadTree.getGosUnder(area).getSubSet<Component*>();
+    return SubTypeCollection<Go*, Component*>(_quadTree.getGosUnder(area));
 }
 
-Markers Slice::GetMarkers() const
+Markers Slice::getMarkers() const
 // ******************************
 {
-    // return _quadTree.GetGos().GetSubSet<Marker*>();
-    return SubTypeCollection<Go*, Marker*>(_quadTree.GetGos());
+    // return _quadTree.getGos().getSubSet<Marker*>();
+    return SubTypeCollection<Go*, Marker*>(_quadTree.getGos());
 }
 
-Markers Slice::GetMarkersUnder(const Box& area) const
+Markers Slice::getMarkersUnder(const Box& area) const
 // **************************************************
 {
-    // return _quadTree.GetGosUnder(area).GetSubSet<Marker*>();
-    return SubTypeCollection<Go*, Marker*>(_quadTree.GetGosUnder(area));
+    // return _quadTree.getGosUnder(area).getSubSet<Marker*>();
+    return SubTypeCollection<Go*, Marker*>(_quadTree.getGosUnder(area));
 }
 
-Slice* Slice::_Create(Cell* cell, Layer* layer)
+Slice* Slice::_create(Cell* cell, Layer* layer)
 // ********************************************
 {
     Slice* slice = new Slice(cell, layer);
@@ -80,30 +80,30 @@ Slice* Slice::_Create(Cell* cell, Layer* layer)
     return slice;
 }
 
-void Slice::_Delete()
+void Slice::_destroy()
 // ******************
 {
     delete this;
 }
 
-string Slice::_GetString() const
+string Slice::_getString() const
 // *****************************
 {
     string s = "<" + _TName("Slice");
-    // s += " " + GetString(_cell->GetName());
-    s += " " + GetString(_layer->getName());
+    // s += " " + getString(_cell->getName());
+    s += " " + getString(_layer->getName());
     s += ">";
     return s;
 }
 
-Record* Slice::_GetRecord() const
+Record* Slice::_getRecord() const
 // ************************
 {
-     Record* record = new Record(GetString(this));
+     Record* record = new Record(getString(this));
     if (record) {
-        record->Add(GetSlot("Cell", _cell));
-        record->Add(GetSlot("Layer", _layer));
-        record->Add(GetSlot("QuadTree", &_quadTree));
+        record->Add(getSlot("Cell", _cell));
+        record->Add(getSlot("Layer", _layer));
+        record->Add(getSlot("QuadTree", &_quadTree));
     }
     return record;
 }

@@ -46,10 +46,10 @@ typedef GenericFilter<Instance*> InstanceFilter;
 #define for_each_instance(instance, instances)\
 /*********************************************/\
 {\
-	InstanceLocator _locator = instances.GetLocator();\
-	while (_locator.IsValid()) {\
-		Instance* instance = _locator.GetElement();\
-		_locator.Progress();
+    InstanceLocator _locator = instances.getLocator();\
+    while (_locator.IsValid()) {\
+        Instance* instance = _locator.getElement();\
+        _locator.Progress();
 
 
 

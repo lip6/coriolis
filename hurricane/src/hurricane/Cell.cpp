@@ -51,8 +51,8 @@ Cell::Cell(Library* library, const Name& name)
     if (name.IsEmpty())
         throw Error("Can't create " + _TName("Cell") + " : empty name");
 
-    if (_library->GetCell(_name))
-        throw Error("Can't create " + _TName("Cell") + " " + GetString(_name) + " : already exists");
+    if (_library->getCell(_name))
+        throw Error("Can't create " + _TName("Cell") + " " + getString(_name) + " : already exists");
 }
 
 Cell* Cell::Create(Library* library, const Name& name)
@@ -60,20 +60,20 @@ Cell* Cell::Create(Library* library, const Name& name)
 {
     Cell* cell = new Cell(library, name);
 
-    cell->_PostCreate();
+    cell->_postCreate();
 
     return cell;
 }
 
-Box Cell::GetBoundingBox() const
+Box Cell::getBoundingBox() const
 // *****************************
 {
     if (_boundingBox.isEmpty()) {
         Box& boundingBox = (Box&)_boundingBox;
         boundingBox = _abutmentBox;
-        boundingBox.merge(_quadTree.GetBoundingBox());
-        for_each_slice(slice, GetSlices()) {
-            boundingBox.merge(slice->GetBoundingBox());
+        boundingBox.merge(_quadTree.getBoundingBox());
+        for_each_slice(slice, getSlices()) {
+            boundingBox.merge(slice->getBoundingBox());
             end_for;
         }
     }
@@ -90,8 +90,8 @@ bool Cell::IsLeaf() const
 bool Cell::IsCalledBy(Cell* cell) const
 // ************************************
 {
-    for_each_instance(instance, cell->GetInstances()) {
-        Cell* masterCell = instance->GetMasterCell();
+    for_each_instance(instance, cell->getInstances()) {
+        Cell* masterCell = instance->getMasterCell();
         if (masterCell == this) return true;
         if (IsCalledBy(masterCell)) return true;
         end_for;
@@ -106,12 +106,12 @@ void Cell::SetName(const Name& name)
         if (name.IsEmpty())
             throw Error("Can't change " + _TName("Cell") + " name : empty name");
 
-        if (_library->GetCell(name))
+        if (_library->getCell(name))
             throw Error("Can't change " + _TName("Cell") + " name : already exists");
 
-        _library->_GetCellMap()._Remove(this);
+        _library->_getCellMap()._Remove(this);
         _name = name;
-        _library->_GetCellMap()._Insert(this);
+        _library->_getCellMap()._Insert(this);
     }
 }
 
@@ -132,40 +132,40 @@ void Cell::FlattenNets(bool buildRings)
 {
   OpenUpdateSession ();
 
-  for_each_occurrence ( occurrence, GetHyperNetRootNetOccurrences() ) {
+  for_each_occurrence ( occurrence, getHyperNetRootNetOccurrences() ) {
     HyperNet  hyperNet ( occurrence );
-    if ( !occurrence.GetPath().IsEmpty() ) {
+    if ( !occurrence.getPath().IsEmpty() ) {
       DeepNet* deepNet = DeepNet::Create ( hyperNet );
       if (deepNet) deepNet->_CreateRoutingPads ( buildRings );
     } else {
       RoutingPad* previousRP = NULL;
       RoutingPad* currentRP  = NULL;
-      Net* net = static_cast<Net*>(occurrence.GetEntity());
+      Net* net = static_cast<Net*>(occurrence.getEntity());
 
-      for_each_component ( component, net->GetComponents() ) {
+      for_each_component ( component, net->getComponents() ) {
         Plug* primaryPlug = dynamic_cast<Plug*>( component );
         if ( primaryPlug ) {
-          if ( !primaryPlug->GetBodyHook()->GetSlaveHooks().IsEmpty() ) {
+          if ( !primaryPlug->getBodyHook()->getSlaveHooks().IsEmpty() ) {
             cerr << "[ERROR] " << primaryPlug << "\n"
                  << "        has attached components, not managed yet." << endl;
           } else {
-            primaryPlug->GetBodyHook()->Detach ();
+            primaryPlug->getBodyHook()->Detach ();
           }
         }
         end_for
       }
 
-      for_each_occurrence ( plugOccurrence, hyperNet.GetLeafPlugOccurrences() ) {
+      for_each_occurrence ( plugOccurrence, hyperNet.getLeafPlugOccurrences() ) {
         currentRP = CreateRoutingPad ( net, plugOccurrence );
         currentRP->Materialize ();
         if ( buildRings ) {
           if ( previousRP ) {
-            currentRP->GetBodyHook()->Attach ( previousRP->GetBodyHook() );
+            currentRP->getBodyHook()->Attach ( previousRP->getBodyHook() );
           }
-          Plug* plug = static_cast<Plug*>( plugOccurrence.GetEntity() );
-          if ( plugOccurrence.GetPath().IsEmpty() ) {
-            plug->GetBodyHook()->Attach ( currentRP->GetBodyHook() );
-            plug->GetBodyHook()->Detach ();
+          Plug* plug = static_cast<Plug*>( plugOccurrence.getEntity() );
+          if ( plugOccurrence.getPath().IsEmpty() ) {
+            plug->getBodyHook()->Attach ( currentRP->getBodyHook() );
+            plug->getBodyHook()->Detach ();
           }
           previousRP = currentRP;
         }
@@ -173,16 +173,16 @@ void Cell::FlattenNets(bool buildRings)
         end_for
       }
 
-      for_each_component ( component, net->GetComponents() ) {
+      for_each_component ( component, net->getComponents() ) {
         Pin* pin = dynamic_cast<Pin*>( component );
         if ( pin ) {
           currentRP = CreateRoutingPad ( pin );
           if ( buildRings ) {
             if ( previousRP ) {
-              currentRP->GetBodyHook()->Attach ( previousRP->GetBodyHook() );
+              currentRP->getBodyHook()->Attach ( previousRP->getBodyHook() );
             }
-            pin->GetBodyHook()->Attach ( currentRP->GetBodyHook() );
-            pin->GetBodyHook()->Detach ();
+            pin->getBodyHook()->Attach ( currentRP->getBodyHook() );
+            pin->getBodyHook()->Detach ();
           }
           previousRP = currentRP;
         }
@@ -199,74 +199,72 @@ void Cell::FlattenNets(bool buildRings)
 void Cell::Materialize()
 // *********************
 {
-    for_each_instance(instance, GetInstances()) instance->Materialize(); end_for;
-    for_each_net(net, GetNets()) net->Materialize(); end_for;
-    for_each_marker(marker, GetMarkers()) marker->Materialize(); end_for;
+    for_each_instance(instance, getInstances()) instance->Materialize(); end_for;
+    for_each_net(net, getNets()) net->Materialize(); end_for;
+    for_each_marker(marker, getMarkers()) marker->Materialize(); end_for;
 }
 
 void Cell::Unmaterialize()
 // ***********************
 {
-    for_each_instance(instance, GetInstances()) instance->Unmaterialize(); end_for;
-    for_each_net(net, GetNets()) net->Unmaterialize(); end_for;
-    for_each_marker(marker, GetMarkers()) marker->Unmaterialize(); end_for;
+    for_each_instance(instance, getInstances()) instance->Unmaterialize(); end_for;
+    for_each_net(net, getNets()) net->Unmaterialize(); end_for;
+    for_each_marker(marker, getMarkers()) marker->Unmaterialize(); end_for;
 }
 
-void Cell::_PostCreate()
+void Cell::_postCreate()
 // *********************
 {
-    _library->_GetCellMap()._Insert(this);
+    _library->_getCellMap()._Insert(this);
 
-    Inherit::_PostCreate();
+    Inherit::_postCreate();
 }
 
-void Cell::_PreDelete()
+void Cell::_preDestroy()
 // ********************
 {
-    Inherit::_PreDelete();
+    Inherit::_preDestroy();
 
     while(_slaveEntityMap.size()) {
-      _slaveEntityMap.begin()->second->Delete();
+      _slaveEntityMap.begin()->second->destroy();
     }
 
-    //for_each_view(view, GetViews()) view->SetCell(NULL); end_for;
-    for_each_marker(marker, GetMarkers()) marker->Delete(); end_for;
-    for_each_instance(slaveInstance, GetSlaveInstances()) slaveInstance->Delete(); end_for;
-    for_each_instance(instance, GetInstances()) instance->Delete(); end_for;
-    for_each_net(net, GetNets()) net->Delete(); end_for;
-    for_each_slice(slice, GetSlices()) slice->_Delete(); end_for;
+    //for_each_view(view, getViews()) view->SetCell(NULL); end_for;
+    for_each_marker(marker, getMarkers()) marker->destroy(); end_for;
+    for_each_instance(slaveInstance, getSlaveInstances()) slaveInstance->destroy(); end_for;
+    for_each_instance(instance, getInstances()) instance->destroy(); end_for;
+    for_each_net(net, getNets()) net->destroy(); end_for;
+    for_each_slice(slice, getSlices()) slice->_destroy(); end_for;
 
-    _library->_GetCellMap()._Remove(this);
+    _library->_getCellMap()._Remove(this);
 }
 
-string Cell::_GetString() const
+string Cell::_getString() const
 // ****************************
 {
-    string s = Inherit::_GetString();
-    s.insert(s.length() - 1, " " + GetString(_name));
+    string s = Inherit::_getString();
+    s.insert(s.length() - 1, " " + getString(_name));
     return s;
 }
 
-Record* Cell::_GetRecord() const
+Record* Cell::_getRecord() const
 // ***********************
 {
-    Record* record = Inherit::_GetRecord();
+    Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(GetSlot("Library", _library));
-        record->Add(GetSlot("Name", &_name));
-        record->Add(GetSlot("Instances", &_instanceMap));
-        record->Add(GetSlot("QuadTree", &_quadTree));
-        record->Add(GetSlot("SlaveInstances", &_slaveInstanceSet));
-        record->Add(GetSlot("Nets", &_netMap));
-        record->Add(GetSlot("Pins", &_pinMap));
-        record->Add(GetSlot("Slices", &_sliceMap));
-        record->Add(GetSlot("Markers", &_markerSet));
-        //record->Add(GetSlot("Views", &_viewSet));
-        record->Add(GetSlot("AbutmentBox", &_abutmentBox));
-        record->Add(GetSlot("BoundingBox", &_boundingBox));
-        record->Add(GetSlot("IsTerminal", &_isTerminal));
-        record->Add(GetSlot("IsFlattenLeaf", &_isFlattenLeaf));
-        //record->Add(GetSlot("Symbol", _symbol));
+        record->Add(getSlot("Library", _library));
+        record->Add(getSlot("Name", &_name));
+        record->Add(getSlot("Instances", &_instanceMap));
+        record->Add(getSlot("QuadTree", &_quadTree));
+        record->Add(getSlot("SlaveInstances", &_slaveInstanceSet));
+        record->Add(getSlot("Nets", &_netMap));
+        record->Add(getSlot("Pins", &_pinMap));
+        record->Add(getSlot("Slices", &_sliceMap));
+        record->Add(getSlot("Markers", &_markerSet));
+        record->Add(getSlot("AbutmentBox", &_abutmentBox));
+        record->Add(getSlot("BoundingBox", &_boundingBox));
+        record->Add(getSlot("IsTerminal", &_isTerminal));
+        record->Add(getSlot("IsFlattenLeaf", &_isFlattenLeaf));
     }
     return record;
 }
@@ -278,8 +276,8 @@ void Cell::_Fit(const Box& box)
     if (_boundingBox.isEmpty()) return;
     if (_boundingBox.contains(box)) return;
     _boundingBox.merge(box);
-    for_each_instance(instance, GetSlaveInstances()) {
-        instance->GetCell()->_Fit(instance->GetTransformation().getBox(box));
+    for_each_instance(instance, getSlaveInstances()) {
+        instance->getCell()->_Fit(instance->getTransformation().getBox(box));
         end_for;
     }
 }
@@ -291,8 +289,8 @@ void Cell::_Unfit(const Box& box)
     if (_boundingBox.isEmpty()) return;
     if (!_boundingBox.isConstrainedBy(box)) return;
     _boundingBox.makeEmpty();
-    for_each_instance(instance, GetSlaveInstances()) {
-        instance->GetCell()->_Unfit(instance->GetTransformation().getBox(box));
+    for_each_instance(instance, getSlaveInstances()) {
+        instance->getCell()->_Unfit(instance->getTransformation().getBox(box));
         end_for;
     }
 }
@@ -300,7 +298,7 @@ void Cell::_Unfit(const Box& box)
 void Cell::_AddSlaveEntity(Entity* entity, Entity* slaveEntity)
 // ************************************************************************
 {
-  assert(entity->GetCell() == this);
+  assert(entity->getCell() == this);
 
   _slaveEntityMap.insert(pair<Entity*,Entity*>(entity,slaveEntity));
 }
@@ -308,7 +306,7 @@ void Cell::_AddSlaveEntity(Entity* entity, Entity* slaveEntity)
 void Cell::_RemoveSlaveEntity(Entity* entity, Entity* slaveEntity)
 // ***************************************************************************
 {
-  assert(entity->GetCell() == this);
+  assert(entity->getCell() == this);
 
   pair<SlaveEntityMap::iterator,SlaveEntityMap::iterator>
     bounds = _slaveEntityMap.equal_range(entity);
@@ -321,147 +319,20 @@ void Cell::_RemoveSlaveEntity(Entity* entity, Entity* slaveEntity)
   }
 }
 
-void Cell::_GetSlaveEntities(SlaveEntityMap::iterator& begin, SlaveEntityMap::iterator& end)
+void Cell::_getSlaveEntities(SlaveEntityMap::iterator& begin, SlaveEntityMap::iterator& end)
 // *********************************************************************************************************
 {
   begin = _slaveEntityMap.begin();
   end   = _slaveEntityMap.end();
 }
 
-void Cell::_GetSlaveEntities(Entity* entity, SlaveEntityMap::iterator& begin, SlaveEntityMap::iterator& end)
+void Cell::_getSlaveEntities(Entity* entity, SlaveEntityMap::iterator& begin, SlaveEntityMap::iterator& end)
 // *********************************************************************************************************
 {
   begin = _slaveEntityMap.lower_bound(entity);
   end   = _slaveEntityMap.upper_bound(entity);
 }
 
-//bool Cell::_IsDrawable(View* view) const
-//// *************************************
-//{
-//    return true;
-//    //if (view->GetCell() == this) return true;
-//
-//    //if (is_a<MapView*>(view)) return true;
-//
-//    //return (1 < (double)view->GetScreenSize(_boundingBox.GetHeight()));
-////    return (100 < ((double)view->GetScreenSize(_boundingBox.GetWidth()) *
-////                        (double)view->GetScreenSize(_boundingBox.GetHeight())));
-//}
-//
-//bool Cell::_ContentIsDrawable(View* view) const
-//// ********************************************
-//{
-//    if (IsTerminal()) return false;
-//
-//        return true;
-//
-//    //if (view->GetCell() == this) return true;
-//
-//    //if (is_a<MapView*>(view)) return false;
-//
-//    //return (40 < (double)view->GetScreenSize(_boundingBox.GetHeight()));
-////    return (400 < ((double)view->GetScreenSize(_boundingBox.GetWidth()) *
-////                        (double)view->GetScreenSize(_boundingBox.GetHeight())));
-//}
-//
-//void Cell::_DrawPhantoms(View* view, const Box& updateArea, const Transformation& transformation)
-//// **********************************************************************************************
-//{
-////    if (_IsDrawable(view)) { // To avoid irregular display of instances phantoms
-////        if (!_ContentIsDrawable(view))
-////            view->FillRectangle(transformation.GetBox(GetAbutmentBox()));
-////        else {
-////            for_each_instance(instance, GetInstancesUnder(updateArea)) {
-////                instance->_DrawPhantoms(view, updateArea, transformation);
-////                end_for;
-////            }
-////        }
-////    }
-//}
-//
-//void Cell::_DrawBoundaries(View* view, const Box& updateArea, const Transformation& transformation)
-//// ************************************************************************************************
-//{
-// //       if (_IsDrawable(view)) { // To avoid irregular display of instances phantoms
-// //           view->DrawRectangle(transformation.GetBox(GetAbutmentBox()));
-// //           if (_ContentIsDrawable(view)) {
-// //           for_each_instance(instance, GetInstancesUnder(updateArea)) {
-// //               instance->_DrawBoundaries(view, updateArea, transformation);
-// //               end_for;
-// //           }
-// //       }
-// //   }
-//}
-//
-//void Cell::_DrawContent(View* view, BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation)
-//// ****************************************************************************************************
-//{
-////    if (_IsDrawable(view)) {
-////        if (_ContentIsDrawable(view)) {
-////            view->CheckForDisplayInterruption();
-////            for_each_instance(instance, GetInstancesUnder(updateArea)) {
-////                instance->_Draw(view, basicLayer, updateArea, transformation);
-////                end_for;
-////            }
-////            for_each_slice(slice, GetSlices()) {
-////                slice->_Draw(view, basicLayer, updateArea, transformation);
-////                end_for;
-////            }
-////        }
-////    }
-//}
-//
-//void Cell::_DrawRubbers(View* view, const Box& updateArea, const Transformation& transformation)
-//// *********************************************************************************************
-//{
-////    if (_IsDrawable(view)) {
-////        if (_ContentIsDrawable(view)) {
-////            for_each_instance(instance, GetInstancesUnder(updateArea)) {
-////                instance->_DrawRubbers(view, updateArea, transformation);
-////                end_for;
-////            }
-////            for_each_rubber(rubber, GetRubbersUnder(updateArea)) {
-////                rubber->_Draw(view, NULL, updateArea, transformation);
-////                end_for;
-////            }
-////        }
-////    }
-//}
-//
-//void Cell::_DrawMarkers(View* view, const Box& updateArea, const Transformation& transformation)
-//// *********************************************************************************************
-//{
-////    if (_IsDrawable(view)) {
-////        if (_ContentIsDrawable(view)) {
-////            for_each_instance(instance, GetInstancesUnder(updateArea)) {
-////                instance->_DrawMarkers(view, updateArea, transformation);
-////                end_for;
-////            }
-////            for_each_marker(marker, GetMarkersUnder(updateArea)) {
-////                marker->_Draw(view, NULL, updateArea, transformation);
-////                end_for;
-////            }
-////        }
-////    }
-//}
-//
-//void Cell::_DrawDisplaySlots(View* view, const Box& area,  const Box& updateArea, const Transformation& transformation)
-//// ********************************************************************************************************************
-//{
-////    if (_IsDrawable(view)) {
-////        if (_ContentIsDrawable(view)) {
-////            for_each_instance(instance, GetInstancesUnder(updateArea)) {
-////                instance->_DrawDisplaySlots(view, area, updateArea, transformation);
-////                end_for;
-////            }
-////            for_each_display_slot(displaySlot, GetDisplaySlots(this)) {
-////                view->_DrawDisplaySlot(displaySlot, area, updateArea, transformation);
-////                end_for;
-////            }
-////        }
-////    }
-//}
-//
 // ****************************************************************************************************
 // Cell::InstanceMap implementation
 // ****************************************************************************************************
@@ -472,22 +343,22 @@ Cell::InstanceMap::InstanceMap()
 {
 }
 
-Name Cell::InstanceMap::_GetKey(Instance* instance) const
+Name Cell::InstanceMap::_getKey(Instance* instance) const
 // ******************************************************
 {
-    return instance->GetName();
+    return instance->getName();
 }
 
-unsigned Cell::InstanceMap::_GetHashValue(Name name) const
+unsigned Cell::InstanceMap::_getHashValue(Name name) const
 // *******************************************************
 {
-    return ( (unsigned int)( (unsigned long)name._GetSharedName() ) ) / 8;
+    return ( (unsigned int)( (unsigned long)name._getSharedName() ) ) / 8;
 }
 
-Instance* Cell::InstanceMap::_GetNextElement(Instance* instance) const
+Instance* Cell::InstanceMap::_getNextElement(Instance* instance) const
 // *******************************************************************
 {
-    return instance->_GetNextOfCellInstanceMap();
+    return instance->_getNextOfCellInstanceMap();
 }
 
 void Cell::InstanceMap::_SetNextElement(Instance* instance, Instance* nextInstance) const
@@ -508,16 +379,16 @@ Cell::SlaveInstanceSet::SlaveInstanceSet()
 {
 }
 
-unsigned Cell::SlaveInstanceSet::_GetHashValue(Instance* slaveInstance) const
+unsigned Cell::SlaveInstanceSet::_getHashValue(Instance* slaveInstance) const
 // **************************************************************************
 {
     return ( (unsigned int)( (unsigned long)slaveInstance ) ) / 8;
 }
 
-Instance* Cell::SlaveInstanceSet::_GetNextElement(Instance* slaveInstance) const
+Instance* Cell::SlaveInstanceSet::_getNextElement(Instance* slaveInstance) const
 // *****************************************************************************
 {
-    return slaveInstance->_GetNextOfCellSlaveInstanceSet();
+    return slaveInstance->_getNextOfCellSlaveInstanceSet();
 }
 
 void Cell::SlaveInstanceSet::_SetNextElement(Instance* slaveInstance, Instance* nextSlaveInstance) const
@@ -538,22 +409,22 @@ Cell::NetMap::NetMap()
 {
 }
 
-Name Cell::NetMap::_GetKey(Net* net) const
+Name Cell::NetMap::_getKey(Net* net) const
 // ***************************************
 {
-    return net->GetName();
+    return net->getName();
 }
 
-unsigned Cell::NetMap::_GetHashValue(Name name) const
+unsigned Cell::NetMap::_getHashValue(Name name) const
 // **************************************************
 {
-    return ( (unsigned int)( (unsigned long)name._GetSharedName() ) ) / 8;
+    return ( (unsigned int)( (unsigned long)name._getSharedName() ) ) / 8;
 }
 
-Net* Cell::NetMap::_GetNextElement(Net* net) const
+Net* Cell::NetMap::_getNextElement(Net* net) const
 // ***********************************************
 {
-    return net->_GetNextOfCellNetMap();
+    return net->_getNextOfCellNetMap();
 }
 
 void Cell::NetMap::_SetNextElement(Net* net, Net* nextNet) const
@@ -573,22 +444,22 @@ Cell::PinMap::PinMap()
 {
 }
 
-Name Cell::PinMap::_GetKey(Pin* pin) const
+Name Cell::PinMap::_getKey(Pin* pin) const
 // ***************************************
 {
-    return pin->GetName();
+    return pin->getName();
 }
 
-unsigned Cell::PinMap::_GetHashValue(Name name) const
+unsigned Cell::PinMap::_getHashValue(Name name) const
 // **************************************************
 {
-    return ( (unsigned int)( (unsigned long)name._GetSharedName() ) ) / 8;
+    return ( (unsigned int)( (unsigned long)name._getSharedName() ) ) / 8;
 }
 
-Pin* Cell::PinMap::_GetNextElement(Pin* pin) const
+Pin* Cell::PinMap::_getNextElement(Pin* pin) const
 // ***********************************************
 {
-    return pin->_GetNextOfCellPinMap();
+    return pin->_getNextOfCellPinMap();
 }
 
 void Cell::PinMap::_SetNextElement(Pin* pin, Pin* nextPin) const
@@ -608,22 +479,22 @@ Cell::SliceMap::SliceMap()
 {
 }
 
-const Layer* Cell::SliceMap::_GetKey(Slice* slice) const
+const Layer* Cell::SliceMap::_getKey(Slice* slice) const
 // *****************************************************
 {
-    return slice->GetLayer();
+    return slice->getLayer();
 }
 
-unsigned Cell::SliceMap::_GetHashValue(const Layer* layer) const
+unsigned Cell::SliceMap::_getHashValue(const Layer* layer) const
 // *************************************************************
 {
     return ( (unsigned int)( (unsigned long)layer ) ) / 8;
 }
 
-Slice* Cell::SliceMap::_GetNextElement(Slice* slice) const
+Slice* Cell::SliceMap::_getNextElement(Slice* slice) const
 // *******************************************************
 {
-    return slice->_GetNextOfCellSliceMap();
+    return slice->_getNextOfCellSliceMap();
 }
 
 void Cell::SliceMap::_SetNextElement(Slice* slice, Slice* nextSlice) const
@@ -644,16 +515,16 @@ Cell::MarkerSet::MarkerSet()
 {
 }
 
-unsigned Cell::MarkerSet::_GetHashValue(Marker* marker) const
+unsigned Cell::MarkerSet::_getHashValue(Marker* marker) const
 // **********************************************************
 {
     return ( (unsigned int)( (unsigned long)marker ) ) / 8;
 }
 
-Marker* Cell::MarkerSet::_GetNextElement(Marker* marker) const
+Marker* Cell::MarkerSet::_getNextElement(Marker* marker) const
 // ***********************************************************
 {
-    return marker->_GetNextOfCellMarkerSet();
+    return marker->_getNextOfCellMarkerSet();
 }
 
 void Cell::MarkerSet::_SetNextElement(Marker* marker, Marker* nextMarker) const
@@ -661,38 +532,6 @@ void Cell::MarkerSet::_SetNextElement(Marker* marker, Marker* nextMarker) const
 {
     marker->_SetNextOfCellMarkerSet(nextMarker);
 }
-
-
-
-//// ****************************************************************************************************
-//// Cell::ViewSet implementation
-//// ****************************************************************************************************
-//
-//Cell::ViewSet::ViewSet()
-//// *********************
-//:    Inherit()
-//{
-//}
-//
-//unsigned Cell::ViewSet::_GetHashValue(View* view) const
-//// ****************************************************
-//{
-//    return ( (unsigned int)( (unsigned long)view ) ) / 8;
-//}
-//
-//View* Cell::ViewSet::_GetNextElement(View* view) const
-//// ***************************************************
-//{
-//    return view->_GetNextOfCellViewSet();
-//}
-//
-//void Cell::ViewSet::_SetNextElement(View* view, View* nextView) const
-//// ******************************************************************
-//{
-//    view->_SetNextOfCellViewSet(nextView);
-//}
-//
-//
 
 } // End of Hurricane namespace.
 

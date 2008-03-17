@@ -24,45 +24,41 @@ class Reference : public Marker {
 // Types
 // *****
 
-	public: typedef Marker Inherit;
+    public: typedef Marker Inherit;
 
 // Attributes
 // **********
 
-	public: Name _name;
-	public: Point _point;
+    public: Name _name;
+    public: Point _point;
     public: static Unit _extend;
 
 // Constructors
 // ************
 
-	protected: Reference(Cell* cell, const Name& name, Unit x, Unit y);
+    protected: Reference(Cell* cell, const Name& name, Unit x, Unit y);
 
-	public: static Reference* Create(Cell* cell, const Name& name, Unit x, Unit y );
-	public: static Reference* Create(Cell* cell, const Name& name, const Point& point );
+    public: static Reference* Create(Cell* cell, const Name& name, Unit x, Unit y );
+    public: static Reference* Create(Cell* cell, const Name& name, const Point& point );
 
 // Accessors
 // *********
 
-    public: virtual Box GetBoundingBox() const;
-	public: const Name& GetName() const {return _name;};
-	public: const Point& GetPoint() const {return _point;};
+    public: virtual Box getBoundingBox() const;
+    public: const Name& getName() const {return _name;};
+    public: const Point& getPoint() const {return _point;};
 
 // Updators
 // ********
 
-	public: virtual void Translate(const Unit& dx, const Unit& dy);
+    public: virtual void Translate(const Unit& dx, const Unit& dy);
 
 // Others
 // ******
 
-	public: virtual string _GetTypeName() const {return _TName("Reference");};
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
-
-	//public: virtual bool _IsInterceptedBy(View* view, const Point& point, const Unit& aperture) const;
-	//public: virtual void _Draw(View* view, BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation);
-	//public: virtual void _Highlight(View* view, const Box& updateArea, const Transformation& transformation);
+    public: virtual string _getTypeName() const {return _TName("Reference");};
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
 
 };
 

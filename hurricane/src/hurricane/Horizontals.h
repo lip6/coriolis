@@ -46,9 +46,9 @@ typedef GenericFilter<Horizontal*> HorizontalFilter;
 #define for_each_horizontal(horizontal, horizontals)\
 /***************************************************/\
 {\
-	HorizontalLocator _locator = horizontals.GetLocator();\
+	HorizontalLocator _locator = horizontals.getLocator();\
 	while (_locator.IsValid()) {\
-		Horizontal* horizontal = _locator.GetElement();\
+		Horizontal* horizontal = _locator.getElement();\
 		_locator.Progress();
 
 

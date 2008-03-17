@@ -46,10 +46,10 @@ typedef GenericFilter<BasicLayer*> BasicLayerFilter;
 #define for_each_basic_layer(basicLayer, basicLayers)\
 /****************************************************/\
 {\
-	BasicLayerLocator _locator = basicLayers.GetLocator();\
-	while (_locator.IsValid()) {\
-		BasicLayer* basicLayer = _locator.GetElement();\
-		_locator.Progress();
+    BasicLayerLocator _locator = basicLayers.getLocator();\
+    while (_locator.IsValid()) {\
+        BasicLayer* basicLayer = _locator.getElement();\
+        _locator.Progress();
 
 
 

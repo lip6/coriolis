@@ -50,17 +50,17 @@
 
 
 
-# ifndef  __SLOT_ADAPTER__
-#   define  __SLOT_ADAPTER__
+#ifndef  __SLOT_ADAPTER__
+#define  __SLOT_ADAPTER__
 
 
-#   ifndef  __HURRICANE_COMMONS__
-#     error "SlotAdapter.h musn't be included alone, please uses Commons.h."
-#   endif
+#ifndef  __HURRICANE_COMMONS__
+#error "SlotAdapter.h musn't be included alone, please uses Commons.h."
+#endif
 
 
 
-#   include  <sstream>
+#include  <sstream>
 
 
 
@@ -76,13 +76,13 @@ namespace Hurricane {
 // Template Functions  :  "Proxy...()".
 
 template<typename Type>
-  inline string  ProxyTypeName ( const Type* object ) { return object->_GetTypeName(); }
+  inline string  ProxyTypeName ( const Type* object ) { return object->_getTypeName(); }
 
 template<typename Type>
-  inline string  ProxyString   ( const Type* object ) { return object->_GetString(); }
+  inline string  ProxyString   ( const Type* object ) { return object->_getString(); }
 
 template<typename Type>
-  inline Record* ProxyRecord   ( const Type* object ) { return object->_GetRecord(); }
+  inline Record* ProxyRecord   ( const Type* object ) { return object->_getRecord(); }
   
 
 
@@ -118,10 +118,10 @@ template<typename T>
   
     // Slot Management.
     public:
-             virtual string  _GetTypeName () const = 0;
-             virtual string  _GetString   () const { return "SlotAdapter::_GetString()"; };
-             virtual Record* _GetRecord   () const { return NULL; };
-      inline virtual Slot*   _GetSlot     ( const string& name ) const;
+             virtual string  _getTypeName () const = 0;
+             virtual string  _getString   () const { return "SlotAdapter::_getString()"; };
+             virtual Record* _getRecord   () const { return NULL; };
+      inline virtual Slot*   _getSlot     ( const string& name ) const;
   
   };
 
@@ -139,7 +139,7 @@ template<typename T>
   
     // Slot Management.
     public:
-      inline virtual Slot* _GetSlot ( const string& name ) const;
+      inline virtual Slot* _getSlot ( const string& name ) const;
   
   };
 
@@ -153,7 +153,7 @@ template<typename T>
         protected:                                                                      \
           const T* t;                                                                   \
         public:                                                                         \
-          const NestedSlotAdapter* _CheckInheritance () const                           \
+          const NestedSlotAdapter* _checkInheritance () const                           \
                                    { return static_cast<const NestedSlotAdapter*>(t); } \
         public:                                                                         \
           enum { True=1, False=0 };                                                     \
@@ -183,9 +183,9 @@ template<typename Type>
   
     // Slot Management.
     public:
-      virtual string  _GetTypeName () const { return ProxyTypeName(_object); };
-      virtual string  _GetString   () const { return ProxyString  (_object); };
-      virtual Record* _GetRecord   () const { return ProxyRecord  (_object); };
+      virtual string  _getTypeName () const { return ProxyTypeName(_object); };
+      virtual string  _getString   () const { return ProxyString  (_object); };
+      virtual Record* _getRecord   () const { return ProxyRecord  (_object); };
   
   };
 
@@ -212,9 +212,9 @@ template<typename Type>
   
     // Slot Management.
     public:
-      virtual string  _GetTypeName () const { return ProxyTypeName(&_object); };
-      virtual string  _GetString   () const { return ProxyString  (&_object); };
-      virtual Record* _GetRecord   () const { return ProxyRecord  (&_object); };
+      virtual string  _getTypeName () const { return ProxyTypeName(&_object); };
+      virtual string  _getString   () const { return ProxyString  (&_object); };
+      virtual Record* _getRecord   () const { return ProxyRecord  (&_object); };
   
   };
 
@@ -271,8 +271,8 @@ template<>
 
     // Slot Management.
     public:
-      virtual string  _GetTypeName () const { return "<ValueSlotAdapter<const char>>"; };
-      virtual string  _GetString   () const { return string(1,_c); };
+      virtual string  _getTypeName () const { return "<ValueSlotAdapter<const char>>"; };
+      virtual string  _getString   () const { return string(1,_c); };
   };
 
 
@@ -298,8 +298,8 @@ template<>
 
     // Slot Management.
     public:
-      virtual string  _GetTypeName () const { return "<ValueSlotAdapter<const char>>"; };
-      virtual string  _GetString   () const { return string(1,_c); };
+      virtual string  _getTypeName () const { return "<ValueSlotAdapter<const char>>"; };
+      virtual string  _getString   () const { return string(1,_c); };
   };
 
 
@@ -523,65 +523,60 @@ template<>
 
 
 template<typename T>
-  inline Hurricane::Record* GetRecord ( T* t )
-  {
+  inline Hurricane::Record* getRecord ( T* t ) {
     if ( !t ) return NULL;
     if ( Hurricane::IsNestedSlotAdapter<T>::True )
-      return ((const Hurricane::SlotAdapter*)((const void*)t))->_GetRecord();
+      return ((const Hurricane::SlotAdapter*)((const void*)t))->_getRecord();
 
-    return Hurricane::PointerSlotAdapter<T>(t)._GetRecord();
+    return Hurricane::PointerSlotAdapter<T>(t)._getRecord();
   }
 
 
 template<typename T>
-  inline Hurricane::Record* GetRecord ( T t )
-  {
+  inline Hurricane::Record* getRecord ( T t ) {
     if ( Hurricane::IsNestedSlotAdapter<T>::True )
-      return ((const Hurricane::SlotAdapter*)((const void*)&t))->_GetRecord();
+      return ((const Hurricane::SlotAdapter*)((const void*)&t))->_getRecord();
 
-    return Hurricane::ValueSlotAdapter<T>(t)._GetRecord();
+    return Hurricane::ValueSlotAdapter<T>(t)._getRecord();
   }
 
 
 template<typename T>
-  inline string  GetString ( T* t )
-  {
+  inline string getString ( T* t ) {
     if ( !t ) return "NULL";
     if ( Hurricane::IsNestedSlotAdapter<T>::True )
-      return ((const Hurricane::SlotAdapter*)((const void*)t))->_GetString();
+      return ((const Hurricane::SlotAdapter*)((const void*)t))->_getString();
 
-    return Hurricane::PointerSlotAdapter<T>(t)._GetString();
+    return Hurricane::PointerSlotAdapter<T>(t)._getString();
   }
 
 
 template<typename T>
-  inline string  GetString ( T t )
+  inline string getString ( T t )
   {
     if ( Hurricane::IsNestedSlotAdapter<T>::True )
-      return ((const Hurricane::SlotAdapter*)((void*)&t))->_GetString();
+      return ((const Hurricane::SlotAdapter*)((void*)&t))->_getString();
 
-    return Hurricane::ValueSlotAdapter<T>(t)._GetString();
+    return Hurricane::ValueSlotAdapter<T>(t)._getString();
   }
 
 
 template<typename T>
-  inline Hurricane::Slot*  GetSlot ( const string& name, T* t )
-  {
-    if ( !t ) return GetSlot ( name, "NULL pointer" );
+  inline Hurricane::Slot* getSlot(const string& name, T* t ) {
+    if ( !t ) return getSlot ( name, "NULL pointer" );
     if ( Hurricane::IsNestedSlotAdapter<T>::True )
-      return ((const Hurricane::SlotAdapter*)((const void*)t))->_GetSlot(name);
+      return ((const Hurricane::SlotAdapter*)((const void*)t))->_getSlot(name);
 
-    return (new Hurricane::PointerSlotAdapter<T>(t))->_GetSlot(name);
+    return (new Hurricane::PointerSlotAdapter<T>(t))->_getSlot(name);
   }
 
 
 template<typename T>
-  inline Hurricane::Slot*  GetSlot ( const string& name, T t )
-  {
+  inline Hurricane::Slot* getSlot( const string& name, T t ) {
     if ( Hurricane::IsNestedSlotAdapter<T>::True )
-      return ((const Hurricane::SlotAdapter*)((const void*)&t))->_GetSlot(name);
+      return ((const Hurricane::SlotAdapter*)((const void*)&t))->_getSlot(name);
 
-    return (new Hurricane::ValueSlotAdapter<T>(t))->_GetSlot(name);
+    return (new Hurricane::ValueSlotAdapter<T>(t))->_getSlot(name);
   }
 
 
@@ -590,9 +585,9 @@ template<typename T>
   {                                                                                    \
     if ( !t ) return stream << "NULL";                                                 \
     if ( Hurricane::IsNestedSlotAdapter<Type>::True )                                  \
-      return stream << "&" << ((const Hurricane::SlotAdapter*)((const void*)t))->_GetString(); \
+      return stream << "&" << ((const Hurricane::SlotAdapter*)((const void*)t))->_getString(); \
                                                                                        \
-    return stream << "&" << Hurricane::PointerSlotAdapter<const Type>(t)._GetString(); \
+    return stream << "&" << Hurricane::PointerSlotAdapter<const Type>(t)._getString(); \
   }
 
 
@@ -600,28 +595,26 @@ template<typename T>
   inline ostream& operator<< ( ostream& stream, const Type& t )                           \
   {                                                                                       \
     if ( Hurricane::IsNestedSlotAdapter<Type>::True )                                     \
-      return stream << ((const Hurricane::SlotAdapter*)((const void*)&t))->_GetString();  \
+      return stream << ((const Hurricane::SlotAdapter*)((const void*)&t))->_getString();  \
                                                                                           \
-    return stream << Hurricane::ValueSlotAdapter<const Type>(t)._GetString();             \
+    return stream << Hurricane::ValueSlotAdapter<const Type>(t)._getString();             \
   }
 
 
 
-# include  "Record.h"
-# include  "Slot.h"
+#include "Record.h"
+#include "Slot.h"
 
 
 namespace Hurricane {
 
 
-  inline Slot* SlotAdapter::_GetSlot ( const string& name ) const
-  {
+  inline Slot* SlotAdapter::_getSlot ( const string& name ) const {
     return new ValueSlot(name,this);
   };
 
 
-  inline Slot* NestedSlotAdapter::_GetSlot ( const string& name ) const
-  {
+  inline Slot* NestedSlotAdapter::_getSlot ( const string& name ) const {
     return new PointerSlot(name,this);
   };
 
@@ -629,7 +622,7 @@ namespace Hurricane {
 
 
 // Re-Entering Hurricane namespace, but now we can make use of
-// GetString(), GetRecord() & GetSlot() for containers templates.
+// getString(), getRecord() & getSlot() for containers templates.
 
 
 // -------------------------------------------------------------------
@@ -652,30 +645,28 @@ template<typename Element>
 
     // Slot Management.
     public:
-      virtual string  _GetTypeName     () const { return "<PointerSlotAdapter<const vector<Element>>"; };
-      virtual string  _GetString       () const;
-      virtual Record* _GetRecord       () const;
+      virtual string  _getTypeName     () const { return "<PointerSlotAdapter<const vector<Element>>"; };
+      virtual string  _getString       () const;
+      virtual Record* _getRecord       () const;
   };
 
 
 template<typename Element>
-  inline string  PointerSlotAdapter<const vector<Element> >::_GetString () const
-  {
+  inline string  PointerSlotAdapter<const vector<Element> >::_getString () const {
     string name = "vector<Element>:";
-    return name + GetString(_v->size());
+    return name + getString(_v->size());
   }
 
 
 template<typename Element>
-  inline Record* PointerSlotAdapter<const vector<Element> >::_GetRecord () const
-  {
+  inline Record* PointerSlotAdapter<const vector<Element> >::_getRecord () const {
     Record* record = NULL;
     if ( !_v->empty() ) {
       record = new Record ( "vector<Element>" );
       unsigned n = 1;
       typename vector<Element>::const_iterator iterator = _v->begin();
       while ( iterator != _v->end() ) {
-        record->Add ( GetSlot(GetString(n++), *iterator) );
+        record->Add ( getSlot(getString(n++), *iterator) );
         ++iterator;
       }
     }
@@ -705,22 +696,22 @@ template<typename Element>
 
     // Slot Management.
     public:
-      virtual string  _GetTypeName     () const { return "<PointerSlotAdapter<const list<Element>>"; };
-      virtual string  _GetString       () const;
-      virtual Record* _GetRecord       () const;
+      virtual string  _getTypeName     () const { return "<PointerSlotAdapter<const list<Element>>"; };
+      virtual string  _getString       () const;
+      virtual Record* _getRecord       () const;
   };
 
 
 template<typename Element>
-  inline string  PointerSlotAdapter<const list<Element> >::_GetString () const
+  inline string  PointerSlotAdapter<const list<Element> >::_getString () const
   {
     string name = "list<Element>:";
-    return name + GetString(_l->size());
+    return name + getString(_l->size());
   }
 
 
 template<typename Element>
-  inline Record* PointerSlotAdapter<const list<Element> >::_GetRecord () const
+  inline Record* PointerSlotAdapter<const list<Element> >::_getRecord () const
   {
     Record* record = NULL;
     if ( !_l->empty() ) {
@@ -728,7 +719,7 @@ template<typename Element>
       unsigned n = 1;
       typename list<Element>::const_iterator iterator = _l->begin();
       while ( iterator != _l->end() ) {
-        record->Add ( GetSlot(GetString(n++), *iterator) );
+        record->Add ( getSlot(getString(n++), *iterator) );
         ++iterator;
       }
     }
@@ -758,29 +749,27 @@ template<typename Key, typename Element, typename Compare>
 
     // Slot Management.
     public:
-      virtual string  _GetTypeName     () const { return "<PointerSlotAdapter<const map<Element>>"; };
-      virtual string  _GetString       () const;
-      virtual Record* _GetRecord       () const;
+      virtual string  _getTypeName     () const { return "<PointerSlotAdapter<const map<Element>>"; };
+      virtual string  _getString       () const;
+      virtual Record* _getRecord       () const;
   };
 
 
 template<typename Key, typename Element, typename Compare>
-  inline string  PointerSlotAdapter<const map<Key,Element,Compare> >::_GetString () const
-  {
+  inline string  PointerSlotAdapter<const map<Key,Element,Compare> >::_getString () const {
     string name = "map<Element>:";
-    return name + GetString(_m->size());
+    return name + getString(_m->size());
   }
 
 
 template<typename Key, typename Element, typename Compare>
-  inline Record* PointerSlotAdapter<const map <Key,Element,Compare> >::_GetRecord () const
-  {
+  inline Record* PointerSlotAdapter<const map <Key,Element,Compare> >::_getRecord () const {
     Record* record = NULL;
     if ( !_m->empty() ) {
       record = new Record ( "map<Element>" );
       typename map<Key,Element,Compare>::const_iterator iterator = _m->begin();
       while ( iterator != _m->end() ) {
-        record->Add ( GetSlot(GetString(iterator->first), iterator->second) );
+        record->Add ( getSlot(getString(iterator->first), iterator->second) );
         ++iterator;
       }
     }
@@ -810,30 +799,28 @@ template<typename Element, typename Compare>
 
     // Slot Management.
     public:
-      virtual string  _GetTypeName     () const { return "<PointerSlotAdapter<const set<Element>>"; };
-      virtual string  _GetString       () const;
-      virtual Record* _GetRecord       () const;
+      virtual string  _getTypeName     () const { return "<PointerSlotAdapter<const set<Element>>"; };
+      virtual string  _getString       () const;
+      virtual Record* _getRecord       () const;
   };
 
 
 template<typename Element, typename Compare>
-  inline string  PointerSlotAdapter<const set<Element,Compare> >::_GetString () const
-  {
+  inline string  PointerSlotAdapter<const set<Element,Compare> >::_getString () const {
     string name = "set<Element>:";
-    return name + GetString(_s->size());
+    return name + getString(_s->size());
   }
 
 
 template<typename Element, typename Compare>
-  inline Record* PointerSlotAdapter<const set<Element,Compare> >::_GetRecord () const
-  {
+  inline Record* PointerSlotAdapter<const set<Element,Compare> >::_getRecord () const {
     Record* record = NULL;
     if ( !_s->empty() ) {
       record = new Record ( "set<Element>" );
       unsigned n = 1;
       typename set<Element,Compare>::const_iterator iterator = _s->begin();
       while ( iterator != _s->end() ) {
-        record->Add ( GetSlot(GetString(n++), *iterator) );
+        record->Add ( getSlot(getString(n++), *iterator) );
         ++iterator;
       }
     }
@@ -863,30 +850,28 @@ template<typename Element, typename Compare>
 
     // Slot Management.
     public:
-      virtual string  _GetTypeName     () const { return "<PointerSlotAdapter<const multiset<Element>>"; };
-      virtual string  _GetString       () const;
-      virtual Record* _GetRecord       () const;
+      virtual string  _getTypeName     () const { return "<PointerSlotAdapter<const multiset<Element>>"; };
+      virtual string  _getString       () const;
+      virtual Record* _getRecord       () const;
   };
 
 
 template<typename Element, typename Compare>
-  inline string  PointerSlotAdapter<const multiset<Element,Compare> >::_GetString () const
-  {
+  inline string  PointerSlotAdapter<const multiset<Element,Compare> >::_getString () const {
     string name = "multiset<Element>:";
-    return name + GetString(_s->size());
+    return name + getString(_s->size());
   }
 
 
 template<typename Element, typename Compare>
-  inline Record* PointerSlotAdapter<const multiset<Element,Compare> >::_GetRecord () const
-  {
+  inline Record* PointerSlotAdapter<const multiset<Element,Compare> >::_getRecord () const {
     Record* record = NULL;
     if ( !_s->empty() ) {
       record = new Record ( "multiset<Element>" );
       unsigned n = 1;
       typename multiset<Element,Compare>::const_iterator iterator = _s->begin();
       while ( iterator != _s->end() ) {
-        record->Add ( GetSlot(GetString(n++), *iterator) );
+        record->Add ( getSlot(getString(n++), *iterator) );
         ++iterator;
       }
     }
@@ -901,4 +886,4 @@ template<typename Element, typename Compare>
 
 
 
-# endif
+#endif

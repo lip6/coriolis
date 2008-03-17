@@ -52,8 +52,8 @@
 
 
 
-# include  "PyPoint.h"
-# include  "PyBox.h"
+#include "PyPoint.h"
+#include "PyBox.h"
 
 
 namespace  Isobar {
@@ -80,16 +80,16 @@ extern "C" {
 
 
   // Standart Accessors (Attributes).
-  DirectGetLongAttribute(PyBox_GetXMin      ,getXMin      ,PyBox,Box)
-  DirectGetLongAttribute(PyBox_GetYMin      ,getYMin      ,PyBox,Box)
-  DirectGetLongAttribute(PyBox_GetXMax      ,getXMax      ,PyBox,Box)
-  DirectGetLongAttribute(PyBox_GetYMax      ,getYMax      ,PyBox,Box)
-  DirectGetLongAttribute(PyBox_GetXCenter   ,getXCenter   ,PyBox,Box)
-  DirectGetLongAttribute(PyBox_GetYCenter   ,getYCenter   ,PyBox,Box)
-  DirectGetLongAttribute(PyBox_GetWidth     ,getWidth     ,PyBox,Box)
-  DirectGetLongAttribute(PyBox_GetHalfWidth ,getHalfWidth ,PyBox,Box)
-  DirectGetLongAttribute(PyBox_GetHeight    ,getHeight    ,PyBox,Box)
-  DirectGetLongAttribute(PyBox_GetHalfHeight,getHalfHeight,PyBox,Box)
+  DirectGetLongAttribute(PyBox_getXMin      ,getXMin      ,PyBox,Box)
+  DirectGetLongAttribute(PyBox_getYMin      ,getYMin      ,PyBox,Box)
+  DirectGetLongAttribute(PyBox_getXMax      ,getXMax      ,PyBox,Box)
+  DirectGetLongAttribute(PyBox_getYMax      ,getYMax      ,PyBox,Box)
+  DirectGetLongAttribute(PyBox_getXCenter   ,getXCenter   ,PyBox,Box)
+  DirectGetLongAttribute(PyBox_getYCenter   ,getYCenter   ,PyBox,Box)
+  DirectGetLongAttribute(PyBox_getWidth     ,getWidth     ,PyBox,Box)
+  DirectGetLongAttribute(PyBox_getHalfWidth ,getHalfWidth ,PyBox,Box)
+  DirectGetLongAttribute(PyBox_getHeight    ,getHeight    ,PyBox,Box)
+  DirectGetLongAttribute(PyBox_getHalfHeight,getHalfHeight,PyBox,Box)
 
 
   // Standart Predicates (Attributes).
@@ -98,18 +98,17 @@ extern "C" {
   DirectGetBoolAttribute(PyBox_IsPonctual,isPonctual,PyBox,Box)
 
 
-  // Standart Delete (Attribute).
-  DirectDeleteAttribute(PyBox_Delete,PyBox)
+  // Standart Destroy (Attribute).
+  DirectDestroyAttribute(PyBox_destroy, PyBox)
 
 
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_GetCenter ()"
+  // Attribute Method  :  "PyBox_getCenter ()"
 
-  static PyObject* PyBox_GetCenter ( PyBox *self )
-  {
-    trace << "PyBox_GetCenter()" << endl;
+  static PyObject* PyBox_getCenter ( PyBox *self ) {
+    trace << "PyBox_getCenter()" << endl;
 
     METHOD_HEAD ( "Box.Center()" )
 
@@ -128,16 +127,16 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_GetUnion ()"
+  // Attribute Method  :  "PyBox_getUnion ()"
 
-  static PyObject* PyBox_GetUnion ( PyBox *self, PyObject* args )
+  static PyObject* PyBox_getUnion ( PyBox *self, PyObject* args )
   {
-    trace << "PyBox_GetUnion()" << endl;
+    trace << "PyBox_getUnion()" << endl;
 
-    METHOD_HEAD ( "Box.GetUnion()" )
+    METHOD_HEAD ( "Box.getUnion()" )
 
     PyBox* otherPyBox;
-    if ( ! ParseOneArg( "Box.GetUnion", args, BOX_ARG, (PyObject**)&otherPyBox ) ) return ( NULL );
+    if ( ! ParseOneArg( "Box.getUnion", args, BOX_ARG, (PyObject**)&otherPyBox ) ) return ( NULL );
 
     PyBox* unionPyBox = PyObject_NEW ( PyBox, &PyTypeBox );
     if (unionPyBox == NULL) { return NULL; }
@@ -154,16 +153,16 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_GetIntersection ()"
+  // Attribute Method  :  "PyBox_getIntersection ()"
 
-  static PyObject* PyBox_GetIntersection ( PyBox *self, PyObject* args )
+  static PyObject* PyBox_getIntersection ( PyBox *self, PyObject* args )
   {
-    trace << "PyBox_GetIntersection()" << endl;
+    trace << "PyBox_getIntersection()" << endl;
 
-    METHOD_HEAD ( "Box.GetIntersection()" )
+    METHOD_HEAD ( "Box.getIntersection()" )
 
     PyBox* otherPyBox;
-    if ( ! ParseOneArg ( "Box.GetIntersection", args, BOX_ARG, (PyObject**)&otherPyBox ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Box.getIntersection", args, BOX_ARG, (PyObject**)&otherPyBox ) ) return ( NULL );
 
     PyBox* intersectionPyBox = PyObject_NEW ( PyBox, &PyTypeBox );
     if (intersectionPyBox == NULL) { return NULL; }
@@ -198,9 +197,9 @@ extern "C" {
     if ( ! PyArg_ParseTuple(args,"|O&O&:Box.Contains",Converter,&arg0,Converter,&arg1) )
       return ( NULL );
 
-    if      ( __cs.GetObjectIds() == BOX_ARG   ) { result = box->contains ( *PYBOX_O(arg0) ); }
-    else if ( __cs.GetObjectIds() == POINT_ARG ) { result = box->contains ( *PYPOINT_O(arg0) ); }
-    else if ( __cs.GetObjectIds() == INTS2_ARG ) { result = box->contains ( PyInt_AsLong(arg0)
+    if      ( __cs.getObjectIds() == BOX_ARG   ) { result = box->contains ( *PYBOX_O(arg0) ); }
+    else if ( __cs.getObjectIds() == POINT_ARG ) { result = box->contains ( *PYPOINT_O(arg0) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG ) { result = box->contains ( PyInt_AsLong(arg0)
                                                                           , PyInt_AsLong(arg1) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Box.Contains constructor." );
@@ -248,7 +247,7 @@ extern "C" {
     PyBox* otherPyBox;
 
     HTRY
-    if ( ! ParseOneArg ( "Box.GetIsConstrainedBy", args, BOX_ARG, (PyObject**)&otherPyBox ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Box.getIsConstrainedBy", args, BOX_ARG, (PyObject**)&otherPyBox ) ) return ( NULL );
     HCATCH
 
     return ( Py_BuildValue("i",(long)box->isConstrainedBy(*PYBOX_O(otherPyBox))) );
@@ -299,10 +298,10 @@ extern "C" {
     if ( ! PyArg_ParseTuple(args,"|O&O&O&O&:Box.Inflate",Converter,&arg0,Converter,&arg1) )
       return ( NULL );
 
-    if      ( __cs.GetObjectIds() == INT_ARG   ) { box->inflate ( PyInt_AsLong(arg0) ); }
-    else if ( __cs.GetObjectIds() == INTS2_ARG ) { box->inflate ( PyInt_AsLong(arg0)
+    if      ( __cs.getObjectIds() == INT_ARG   ) { box->inflate ( PyInt_AsLong(arg0) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG ) { box->inflate ( PyInt_AsLong(arg0)
                                                                 , PyInt_AsLong(arg1) ); }
-    else if ( __cs.GetObjectIds() == INTS4_ARG ) { box->inflate ( PyInt_AsLong(arg0)
+    else if ( __cs.getObjectIds() == INTS4_ARG ) { box->inflate ( PyInt_AsLong(arg0)
                                                                 , PyInt_AsLong(arg1)
                                                                 , PyInt_AsLong(arg2)
                                                                 , PyInt_AsLong(arg3) ); }
@@ -341,11 +340,11 @@ extern "C" {
     if ( ! PyArg_ParseTuple(args,"|O&O&O&O&:Box.Merge",Converter,&arg0,Converter,&arg1,Converter,&arg2,Converter,&arg3) )
       return ( NULL );
 
-    if      ( __cs.GetObjectIds() == POINT_ARG ) { box->merge ( *PYPOINT_O(arg0) ); }
-    else if ( __cs.GetObjectIds() == BOX_ARG   ) { box->merge ( *PYBOX_O(arg0) ); }
-    else if ( __cs.GetObjectIds() == INTS2_ARG ) { box->merge ( PyInt_AsLong(arg0)
+    if      ( __cs.getObjectIds() == POINT_ARG ) { box->merge ( *PYPOINT_O(arg0) ); }
+    else if ( __cs.getObjectIds() == BOX_ARG   ) { box->merge ( *PYBOX_O(arg0) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG ) { box->merge ( PyInt_AsLong(arg0)
                                                               , PyInt_AsLong(arg1) ); }
-    else if ( __cs.GetObjectIds() == INTS4_ARG ) { box->merge ( PyInt_AsLong(arg0)
+    else if ( __cs.getObjectIds() == INTS4_ARG ) { box->merge ( PyInt_AsLong(arg0)
                                                               , PyInt_AsLong(arg1)
                                                               , PyInt_AsLong(arg2)
                                                               , PyInt_AsLong(arg3) ); }
@@ -389,19 +388,19 @@ extern "C" {
   // PyBox Attribute Method table.
 
   PyMethodDef PyBox_Methods[] =
-    { { "GetXMin"        , (PyCFunction)PyBox_GetXMin        , METH_NOARGS , "Return the XMin value." }
-    , { "GetYMin"        , (PyCFunction)PyBox_GetYMin        , METH_NOARGS , "Return the YMin value." }
-    , { "GetXMax"        , (PyCFunction)PyBox_GetXMax        , METH_NOARGS , "Return the XMax value." }
-    , { "GetYMax"        , (PyCFunction)PyBox_GetYMax        , METH_NOARGS , "Return the YMax value." }
-    , { "GetXCenter"     , (PyCFunction)PyBox_GetXCenter     , METH_NOARGS , "Return the X box center value." }
-    , { "GetYCenter"     , (PyCFunction)PyBox_GetYCenter     , METH_NOARGS , "Return the Y box center value." }
-    , { "GetCenter"      , (PyCFunction)PyBox_GetCenter      , METH_NOARGS , "Return the box center Point." }
-    , { "GetWidth"       , (PyCFunction)PyBox_GetWidth       , METH_NOARGS , "Return the box width." }
-    , { "GetHalfWidth"   , (PyCFunction)PyBox_GetHalfWidth   , METH_NOARGS , "Return the box half width." }
-    , { "GetHeight"      , (PyCFunction)PyBox_GetHeight      , METH_NOARGS , "Return the box height." }
-    , { "GetHalfHeight"  , (PyCFunction)PyBox_GetHalfHeight  , METH_NOARGS , "Return the box half height." }
-    , { "GetUnion"       , (PyCFunction)PyBox_GetUnion       , METH_VARARGS, "Return the smallest enclosing box." }
-    , { "GetIntersection", (PyCFunction)PyBox_GetIntersection, METH_VARARGS, "Return the overlapping area." }
+    { { "getXMin"        , (PyCFunction)PyBox_getXMin        , METH_NOARGS , "Return the XMin value." }
+    , { "getYMin"        , (PyCFunction)PyBox_getYMin        , METH_NOARGS , "Return the YMin value." }
+    , { "getXMax"        , (PyCFunction)PyBox_getXMax        , METH_NOARGS , "Return the XMax value." }
+    , { "getYMax"        , (PyCFunction)PyBox_getYMax        , METH_NOARGS , "Return the YMax value." }
+    , { "getXCenter"     , (PyCFunction)PyBox_getXCenter     , METH_NOARGS , "Return the X box center value." }
+    , { "getYCenter"     , (PyCFunction)PyBox_getYCenter     , METH_NOARGS , "Return the Y box center value." }
+    , { "getCenter"      , (PyCFunction)PyBox_getCenter      , METH_NOARGS , "Return the box center Point." }
+    , { "getWidth"       , (PyCFunction)PyBox_getWidth       , METH_NOARGS , "Return the box width." }
+    , { "getHalfWidth"   , (PyCFunction)PyBox_getHalfWidth   , METH_NOARGS , "Return the box half width." }
+    , { "getHeight"      , (PyCFunction)PyBox_getHeight      , METH_NOARGS , "Return the box height." }
+    , { "getHalfHeight"  , (PyCFunction)PyBox_getHalfHeight  , METH_NOARGS , "Return the box half height." }
+    , { "getUnion"       , (PyCFunction)PyBox_getUnion       , METH_VARARGS, "Return the smallest enclosing box." }
+    , { "getIntersection", (PyCFunction)PyBox_getIntersection, METH_VARARGS, "Return the overlapping area." }
     , { "IsEmpty"        , (PyCFunction)PyBox_IsEmpty        , METH_NOARGS , "Return true if the box is empty." }
     , { "IsFlat"         , (PyCFunction)PyBox_IsFlat         , METH_NOARGS , "Return true if the box is flat." }
     , { "IsPonctual"     , (PyCFunction)PyBox_IsPonctual     , METH_NOARGS , "Return true if the box reduced to a point." }
@@ -412,8 +411,8 @@ extern "C" {
     , { "Inflate"        , (PyCFunction)PyBox_Inflate        , METH_VARARGS, "Expand the box to contains the arguments." }
     , { "Merge"          , (PyCFunction)PyBox_Merge          , METH_VARARGS, "Expand or contract the box to contains the arguments." }
     , { "Translate"      , (PyCFunction)PyBox_Translate      , METH_VARARGS, "Translate the box od dx ans dy." }
-    , { "Delete"         , (PyCFunction)PyBox_Delete         , METH_NOARGS
-                         , "Delete associated hurricane object, the python object remains." }
+    , { "destroy"        , (PyCFunction)PyBox_destroy        , METH_NOARGS
+                         , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 
@@ -437,14 +436,14 @@ extern "C" {
                            ,Converter,&arg3
                            ) ) return ( NULL );
 
-    if      ( __cs.GetObjectIds() == NO_ARG      ) { box = new Box (); }
-    else if ( __cs.GetObjectIds() == POINT_ARG   ) { box = new Box ( *PYPOINT_O(arg0) ); }
-    else if ( __cs.GetObjectIds() == BOX_ARG     ) { box = new Box ( *PYBOX_O(arg0) ); }
-    else if ( __cs.GetObjectIds() == POINTS2_ARG ) { box = new Box ( *PYPOINT_O(arg0)
+    if      ( __cs.getObjectIds() == NO_ARG      ) { box = new Box (); }
+    else if ( __cs.getObjectIds() == POINT_ARG   ) { box = new Box ( *PYPOINT_O(arg0) ); }
+    else if ( __cs.getObjectIds() == BOX_ARG     ) { box = new Box ( *PYBOX_O(arg0) ); }
+    else if ( __cs.getObjectIds() == POINTS2_ARG ) { box = new Box ( *PYPOINT_O(arg0)
                                                                    , *PYPOINT_O(arg1) ); }
-    else if ( __cs.GetObjectIds() == INTS2_ARG   ) { box = new Box ( PyInt_AsLong(arg0) 
+    else if ( __cs.getObjectIds() == INTS2_ARG   ) { box = new Box ( PyInt_AsLong(arg0) 
                                                                    , PyInt_AsLong(arg1) ); }
-    else if ( __cs.GetObjectIds() == INTS4_ARG   ) { box = new Box ( PyInt_AsLong(arg0)
+    else if ( __cs.getObjectIds() == INTS4_ARG   ) { box = new Box ( PyInt_AsLong(arg0)
                                                                    , PyInt_AsLong(arg1)
                                                                    , PyInt_AsLong(arg2)
                                                                    , PyInt_AsLong(arg3) ); }

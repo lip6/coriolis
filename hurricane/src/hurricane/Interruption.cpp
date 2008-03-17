@@ -16,34 +16,34 @@ namespace Hurricane {
 
 Interruption::Interruption(const string& reason, int code)
 // *******************************************************
-:	Inherit(),
-	_reason(reason),
-	_code(code)
+:    Inherit(),
+    _reason(reason),
+    _code(code)
 {
 }
 
 Interruption::Interruption(const Interruption& interruption)
 // *********************************************************
-:	Inherit(),
-	_reason(interruption._reason),
-	_code(interruption._code)
+:    Inherit(),
+    _reason(interruption._reason),
+    _code(interruption._code)
 {
 }
 
 Interruption& Interruption::operator=(const Interruption& interruption)
 // ********************************************************************
 {
-	_reason = interruption._reason;
-	_code = interruption._code;
-	return *this;
+    _reason = interruption._reason;
+    _code = interruption._code;
+    return *this;
 }
 
-string Interruption::_GetString() const
+string Interruption::_getString() const
 // ************************************
 {
-	if (!_code) return "[INTERRUPTION] " + _reason;
+    if (!_code) return "[INTERRUPTION] " + _reason;
 
-	return "[INTERRUPTION:" + GetString(_code) + "] " + _reason;
+    return "[INTERRUPTION:" + getString(_code) + "] " + _reason;
 }
 
 

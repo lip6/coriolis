@@ -18,43 +18,38 @@ namespace Hurricane {
 
 static Name ExternalComponentsRelationName("ExternalComponentsRelation");
 
-static StandardRelation* GetExternalComponentsRelation(const Net* net)
-{
-	Property* property = net->GetProperty(ExternalComponentsRelationName);
-	if (!property)
-		return NULL;
-	else
-	{
-		StandardRelation* relation = dynamic_cast<StandardRelation*>(property);
-		if (!relation)
-			throw Error("Bad Property type: Must be a Standard Relation");
-		return relation;
-	}
-    
+static StandardRelation* getExternalComponentsRelation(const Net* net) {
+    Property* property = net->getProperty(ExternalComponentsRelationName);
+    if (!property) {
+        return NULL;
+    } else {
+        StandardRelation* relation = dynamic_cast<StandardRelation*>(property);
+        if (!relation)
+            throw Error("Bad Property type: Must be a Standard Relation");
+        return relation;
+    }
 }
 
-Components GetExternalComponents(const Net* net)
-{
+Components getExternalComponents(const Net* net) {
     if (!net->IsExternal())
         throw Error("Impossible to retrieve external components on non external net "
-                + net->GetName()._GetString());
+                + net->getName()._getString());
     
-    StandardRelation* externalComponentsRelation = GetExternalComponentsRelation(net);
+    StandardRelation* externalComponentsRelation = getExternalComponentsRelation(net);
     if (!externalComponentsRelation)
         return Components();
-    return externalComponentsRelation->GetSlaveOwners().GetSubSet<Component*>();
+    return externalComponentsRelation->getSlaveOwners().getSubSet<Component*>();
 }
 
-void SetExternal(Component* component)
-{
-    Net* net = component->GetNet();
+void setExternal(Component* component) {
+    Net* net = component->getNet();
     if (!net->IsExternal())
         throw Error("Impossible to set as external a component member of non external net "
-                + net->GetName()._GetString());
-    StandardRelation* externalComponentsRelation = GetExternalComponentsRelation(net);
+                + net->getName()._getString());
+    StandardRelation* externalComponentsRelation = getExternalComponentsRelation(net);
     if (!externalComponentsRelation)
-        externalComponentsRelation = StandardRelation::Create(net, ExternalComponentsRelationName);
-    component->Put(externalComponentsRelation);
+        externalComponentsRelation = StandardRelation::create(net, ExternalComponentsRelationName);
+    component->put(externalComponentsRelation);
 }
 
 } // End of Hurricane namespace.

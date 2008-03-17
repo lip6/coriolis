@@ -85,21 +85,21 @@ extern "C" {
   // |                "PyEntity" Attribute Methods                 |
   // x-------------------------------------------------------------x
 
-  // Standart Delete (Attribute).
-  DBoDeleteAttribute(PyEntity_Delete,PyEntity)
+  // Standart destroy (Attribute).
+  DBoDestroyAttribute(PyEntity_destroy ,PyEntity)
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyEntity_GetCell ()"
+  // Attribute Method  :  "PyEntity_getCell ()"
 
-  static PyObject* PyEntity_GetCell ( PyEntity *self )
+  static PyObject* PyEntity_getCell ( PyEntity *self )
   {
-    trace << "PyEntity_GetCell ()" << endl;
+    trace << "PyEntity_getCell ()" << endl;
 
     Cell* cell = NULL;
     
     HTRY
-    METHOD_HEAD ( "Entity.GetCell()" )
-    cell = entity->GetCell ();
+    METHOD_HEAD ( "Entity.getCell()" )
+    cell = entity->getCell ();
     HCATCH
 
     return PyCell_Link ( cell );
@@ -112,9 +112,9 @@ extern "C" {
   // PyEntity Attribute Method table.
 
   PyMethodDef PyEntity_Methods[] =
-    { { "GetCell"              , (PyCFunction)PyEntity_GetCell       , METH_NOARGS , "Returns the entity cell." }
-    , { "Delete"               , (PyCFunction)PyEntity_Delete        , METH_NOARGS
-                               , "Delete associated hurricane object, the python object remains." }
+    { { "getCell"              , (PyCFunction)PyEntity_getCell       , METH_NOARGS , "Returns the entity cell." }
+    , { "destroy"               , (PyCFunction)PyEntity_destroy      , METH_NOARGS
+                               , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

@@ -46,9 +46,9 @@ typedef GenericFilter<View*> ViewFilter;
 #define for_each_view(view, views)\
 /*********************************/\
 {\
-	ViewLocator _locator = views.GetLocator();\
+	ViewLocator _locator = views.getLocator();\
 	while (_locator.IsValid()) {\
-		View* view = _locator.GetElement();\
+		View* view = _locator.getElement();\
 		_locator.Progress();
 
 

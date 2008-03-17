@@ -17,34 +17,34 @@ namespace Hurricane {
 
 Error::Error(const string& reason, int code)
 // *****************************************
-:	Inherit(),
-	_reason(reason),
-	_code(code)
+:    Inherit(),
+    _reason(reason),
+    _code(code)
 {
 }
 
 Error::Error(const Error& error)
 // *****************************
-:	Inherit(),
-	_reason(error._reason),
-	_code(error._code)
+:    Inherit(),
+    _reason(error._reason),
+    _code(error._code)
 {
 }
 
 Error& Error::operator=(const Error& error)
 // ****************************************
 {
-	_reason = error._reason;
-	_code = error._code;
-	return *this;
+    _reason = error._reason;
+    _code = error._code;
+    return *this;
 }
 
-string Error::_GetString() const
+string Error::_getString() const
 // *****************************
 {
-	if (!_code) return "[ERROR] " + _reason;
+    if (!_code) return "[ERROR] " + _reason;
 
-	return "[ERROR:" + GetString(_code) + "] " + _reason;
+    return "[ERROR:" + getString(_code) + "] " + _reason;
 }
 
 

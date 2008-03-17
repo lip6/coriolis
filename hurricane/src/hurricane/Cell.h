@@ -59,9 +59,9 @@ class Cell : public Entity {
 
         public: InstanceMap();
 
-        public: virtual Name _GetKey(Instance* instance) const;
-        public: virtual unsigned _GetHashValue(Name name) const;
-        public: virtual Instance* _GetNextElement(Instance* instance) const;
+        public: virtual Name _getKey(Instance* instance) const;
+        public: virtual unsigned _getHashValue(Name name) const;
+        public: virtual Instance* _getNextElement(Instance* instance) const;
         public: virtual void _SetNextElement(Instance* instance, Instance* nextInstance) const;
 
     };
@@ -73,8 +73,8 @@ class Cell : public Entity {
     
         public: SlaveInstanceSet();
 
-        public: virtual unsigned _GetHashValue(Instance* slaveInstance) const;
-        public: virtual Instance* _GetNextElement(Instance* slaveInstance) const;
+        public: virtual unsigned _getHashValue(Instance* slaveInstance) const;
+        public: virtual Instance* _getNextElement(Instance* slaveInstance) const;
         public: virtual void _SetNextElement(Instance* slaveInstance, Instance* nextSlaveInstance) const;
 
     };
@@ -86,9 +86,9 @@ class Cell : public Entity {
     
         public: NetMap();
 
-        public: virtual Name _GetKey(Net* net) const;
-        public: virtual unsigned _GetHashValue(Name name) const;
-        public: virtual Net* _GetNextElement(Net* net) const;
+        public: virtual Name _getKey(Net* net) const;
+        public: virtual unsigned _getHashValue(Name name) const;
+        public: virtual Net* _getNextElement(Net* net) const;
         public: virtual void _SetNextElement(Net* net, Net* nextNet) const;
 
     };
@@ -100,9 +100,9 @@ class Cell : public Entity {
 
         public: PinMap();
 
-        public: virtual Name _GetKey(Pin* pin) const;
-        public: virtual unsigned _GetHashValue(Name name) const;
-        public: virtual Pin* _GetNextElement(Pin* pin) const;
+        public: virtual Name _getKey(Pin* pin) const;
+        public: virtual unsigned _getHashValue(Name name) const;
+        public: virtual Pin* _getNextElement(Pin* pin) const;
         public: virtual void _SetNextElement(Pin* pin, Pin* nextPin) const;
 
     };
@@ -114,9 +114,9 @@ class Cell : public Entity {
     
         public: SliceMap();
 
-        public: virtual const Layer* _GetKey(Slice* slice) const;
-        public: virtual unsigned _GetHashValue(const Layer* layer) const;
-        public: virtual Slice* _GetNextElement(Slice* slice) const;
+        public: virtual const Layer* _getKey(Slice* slice) const;
+        public: virtual unsigned _getHashValue(const Layer* layer) const;
+        public: virtual Slice* _getNextElement(Slice* slice) const;
         public: virtual void _SetNextElement(Slice* slice, Slice* nextSlice) const;
 
     };
@@ -128,24 +128,11 @@ class Cell : public Entity {
     
         public: MarkerSet();
 
-        public: virtual unsigned _GetHashValue(Marker* marker) const;
-        public: virtual Marker* _GetNextElement(Marker* marker) const;
+        public: virtual unsigned _getHashValue(Marker* marker) const;
+        public: virtual Marker* _getNextElement(Marker* marker) const;
         public: virtual void _SetNextElement(Marker* marker, Marker* nextMarker) const;
 
     };
-
-    //public: class ViewSet : public IntrusiveSet<View> {
-    //// **********************************************
-
-    //    public: typedef IntrusiveSet<View> Inherit;
-    //
-    //    public: ViewSet();
-
-    //    public: virtual unsigned _GetHashValue(View* view) const;
-    //    public: virtual View* _GetNextElement(View* view) const;
-    //    public: virtual void _SetNextElement(View* view, View* nextView) const;
-
-    //};
 
 // Attributes
 // **********
@@ -159,7 +146,6 @@ class Cell : public Entity {
     private: PinMap _pinMap;
     private: SliceMap _sliceMap;
     private: MarkerSet _markerSet;
-    //private: ViewSet _viewSet;
     private: Box _abutmentBox;
     private: Box _boundingBox;
     private: bool _isTerminal;
@@ -177,24 +163,24 @@ class Cell : public Entity {
 // Others
 // ******
 
-    protected: virtual void _PostCreate();
+    protected: virtual void _postCreate();
 
-    protected: virtual void _PreDelete();
+    protected: virtual void _preDestroy();
 
-    public: virtual string _GetTypeName() const {return _TName("Cell");};
-    public: virtual string _GetString() const;
-    public: virtual Record* _GetRecord() const;
+    public: virtual string _getTypeName() const {return _TName("Cell");};
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
 
-    public: InstanceMap& _GetInstanceMap() {return _instanceMap;};
-    public: QuadTree* _GetQuadTree() {return &_quadTree;};
-    public: SlaveInstanceSet& _GetSlaveInstanceSet() {return _slaveInstanceSet;};
-    public: NetMap& _GetNetMap() {return _netMap;};
-    public: PinMap& _GetPinMap() {return _pinMap;};
-    public: SliceMap& _GetSliceMap() {return _sliceMap;};
-    public: MarkerSet& _GetMarkerSet() {return _markerSet;};
-    //public: ViewSet& _GetViewSet() {return _viewSet;};
-    public: Cell* _GetNextOfLibraryCellMap() const {return _nextOfLibraryCellMap;};
-    public: Cell* _GetNextOfSymbolCellSet() const {return _nextOfSymbolCellSet;};
+    public: InstanceMap& _getInstanceMap() {return _instanceMap;};
+    public: QuadTree* _getQuadTree() {return &_quadTree;};
+    public: SlaveInstanceSet& _getSlaveInstanceSet() {return _slaveInstanceSet;};
+    public: NetMap& _getNetMap() {return _netMap;};
+    public: PinMap& _getPinMap() {return _pinMap;};
+    public: SliceMap& _getSliceMap() {return _sliceMap;};
+    public: MarkerSet& _getMarkerSet() {return _markerSet;};
+    //public: ViewSet& _getViewSet() {return _viewSet;};
+    public: Cell* _getNextOfLibraryCellMap() const {return _nextOfLibraryCellMap;};
+    public: Cell* _getNextOfSymbolCellSet() const {return _nextOfSymbolCellSet;};
 
     public: void _SetNextOfLibraryCellMap(Cell* cell) {_nextOfLibraryCellMap = cell;};
     public: void _SetNextOfSymbolCellSet(Cell* cell) {_nextOfSymbolCellSet = cell;};
@@ -204,8 +190,8 @@ class Cell : public Entity {
 
     public: void _AddSlaveEntity(Entity* entity, Entity* slaveEntity);
     public: void _RemoveSlaveEntity(Entity* entity, Entity* slaveEntity);
-    public: void _GetSlaveEntities(SlaveEntityMap::iterator& begin, SlaveEntityMap::iterator& end);
-    public: void _GetSlaveEntities(Entity* entity, SlaveEntityMap::iterator& begin, SlaveEntityMap::iterator& end);
+    public: void _getSlaveEntities(SlaveEntityMap::iterator& begin, SlaveEntityMap::iterator& end);
+    public: void _getSlaveEntities(Entity* entity, SlaveEntityMap::iterator& begin, SlaveEntityMap::iterator& end);
 
     //public: bool _IsDrawable(View* view) const;
     //public: bool _ContentIsDrawable(View* view) const;
@@ -226,65 +212,65 @@ class Cell : public Entity {
 // Accessors
 // *********
 
-    public: virtual Cell* GetCell() const {return (Cell*)this;};
-    public: virtual Box GetBoundingBox() const;
-    public: Library* GetLibrary() const {return _library;};
-    public: const Name& GetName() const {return _name;};
-    public: Instance* GetInstance(const Name& name) const {return _instanceMap.GetElement(name);};
-    public: Instances GetInstances() const {return _instanceMap.GetElements();};
-    public: Instances GetPlacedInstances() const;
-    public: Instances GetFixedInstances() const;
-    public: Instances GetUnplacedInstances() const;
-    public: Instances GetNotUnplacedInstances() const;
-    public: Instances GetInstancesUnder(const Box& area) const;
-    public: Instances GetPlacedInstancesUnder(const Box& area) const;
-    public: Instances GetFixedInstancesUnder(const Box& area) const;
-    public: Instances GetUnplacedInstancesUnder(const Box& area) const;
-    public: Instances GetNotUnplacedInstancesUnder(const Box& area) const;
-    public: Instances GetSlaveInstances() const; // {return _slaveInstanceSet.GetElements();}; NOON!!
-    public: Instances GetTerminalInstances() const;
-    public: Instances GetTerminalInstancesUnder(const Box& area) const;
-    public: Instances GetNonTerminalInstances() const;
-    public: Instances GetNonTerminalInstancesUnder(const Box& area) const;
-    public: Instances GetLeafInstances() const;
-    public: Instances GetLeafInstancesUnder(const Box& area) const;
-    public: Instances GetNonLeafInstances() const;
-    public: Instances GetNonLeafInstancesUnder(const Box& area) const;
-    public: Net* GetNet(const Name& name) const {return _netMap.GetElement(name);};
-    public: Nets GetNets() const {return _netMap.GetElements();};
-    public: Nets GetGlobalNets() const;
-    public: Nets GetExternalNets() const;
-    public: Nets GetInternalNets() const;
-    public: Nets GetClockNets() const;
-    public: Nets GetSupplyNets() const;
-    public: Nets GetPowerNets() const;
-    public: Nets GetGroundNets() const;
-    public: Pin* GetPin(const Name& name) const {return _pinMap.GetElement(name);};
-    public: Pins GetPins() const {return _pinMap.GetElements();};
-    public: Slice* GetSlice(const Layer* layer) const {return _sliceMap.GetElement(layer);};
-    public: Slices GetSlices(const Layer::Mask& mask = ~0) const;
-//    public: Views GetViews() const {return _viewSet.GetElements();};
-//    public: MainViews GetMainViews() const;
-//    public: MainViews GetImpactedMainViews() const;
-    public: Rubbers GetRubbers() const;
-    public: Rubbers GetRubbersUnder(const Box& area) const;
-    public: Markers GetMarkers() const {return _markerSet.GetElements();};
-    public: Markers GetMarkersUnder(const Box& area) const;
-    public: References GetReferences() const;
-    public: Components GetComponents(const Layer::Mask& mask = ~0) const;
-    public: Components GetComponentsUnder(const Box& area, const Layer::Mask& mask = ~0) const;
-    public: Occurrences GetOccurrences(unsigned searchDepth = (unsigned)-1) const;
-    public: Occurrences GetOccurrencesUnder(const Box& area, unsigned searchDepth = (unsigned)-1) const;
-    public: Occurrences GetTerminalInstanceOccurrences() const;
-    public: Occurrences GetTerminalInstanceOccurrencesUnder(const Box& area) const;
-    public: Occurrences GetLeafInstanceOccurrences() const;
-    public: Occurrences GetLeafInstanceOccurrencesUnder(const Box& area) const;
-    public: Occurrences GetComponentOccurrences(const Layer::Mask& mask = ~0) const;
-    public: Occurrences GetComponentOccurrencesUnder(const Box& area, const Layer::Mask& mask = ~0) const;
-    public: Occurrences GetHyperNetRootNetOccurrences() const;
-    public: Cells GetSubCells() const;
-    public: Pathes GetRecursiveSlavePathes() const;
-    public: const Box& GetAbutmentBox() const {return _abutmentBox;};
+    public: virtual Cell* getCell() const {return (Cell*)this;};
+    public: virtual Box getBoundingBox() const;
+    public: Library* getLibrary() const {return _library;};
+    public: const Name& getName() const {return _name;};
+    public: Instance* getInstance(const Name& name) const {return _instanceMap.getElement(name);};
+    public: Instances getInstances() const {return _instanceMap.getElements();};
+    public: Instances getPlacedInstances() const;
+    public: Instances getFixedInstances() const;
+    public: Instances getUnplacedInstances() const;
+    public: Instances getNotUnplacedInstances() const;
+    public: Instances getInstancesUnder(const Box& area) const;
+    public: Instances getPlacedInstancesUnder(const Box& area) const;
+    public: Instances getFixedInstancesUnder(const Box& area) const;
+    public: Instances getUnplacedInstancesUnder(const Box& area) const;
+    public: Instances getNotUnplacedInstancesUnder(const Box& area) const;
+    public: Instances getSlaveInstances() const; // {return _slaveInstanceSet.getElements();}; NOON!!
+    public: Instances getTerminalInstances() const;
+    public: Instances getTerminalInstancesUnder(const Box& area) const;
+    public: Instances getNonTerminalInstances() const;
+    public: Instances getNonTerminalInstancesUnder(const Box& area) const;
+    public: Instances getLeafInstances() const;
+    public: Instances getLeafInstancesUnder(const Box& area) const;
+    public: Instances getNonLeafInstances() const;
+    public: Instances getNonLeafInstancesUnder(const Box& area) const;
+    public: Net* getNet(const Name& name) const {return _netMap.getElement(name);};
+    public: Nets getNets() const {return _netMap.getElements();};
+    public: Nets getGlobalNets() const;
+    public: Nets getExternalNets() const;
+    public: Nets getInternalNets() const;
+    public: Nets getClockNets() const;
+    public: Nets getSupplyNets() const;
+    public: Nets getPowerNets() const;
+    public: Nets getGroundNets() const;
+    public: Pin* getPin(const Name& name) const {return _pinMap.getElement(name);};
+    public: Pins getPins() const {return _pinMap.getElements();};
+    public: Slice* getSlice(const Layer* layer) const {return _sliceMap.getElement(layer);};
+    public: Slices getSlices(const Layer::Mask& mask = ~0) const;
+//    public: Views getViews() const {return _viewSet.getElements();};
+//    public: MainViews getMainViews() const;
+//    public: MainViews getImpactedMainViews() const;
+    public: Rubbers getRubbers() const;
+    public: Rubbers getRubbersUnder(const Box& area) const;
+    public: Markers getMarkers() const {return _markerSet.getElements();};
+    public: Markers getMarkersUnder(const Box& area) const;
+    public: References getReferences() const;
+    public: Components getComponents(const Layer::Mask& mask = ~0) const;
+    public: Components getComponentsUnder(const Box& area, const Layer::Mask& mask = ~0) const;
+    public: Occurrences getOccurrences(unsigned searchDepth = (unsigned)-1) const;
+    public: Occurrences getOccurrencesUnder(const Box& area, unsigned searchDepth = (unsigned)-1) const;
+    public: Occurrences getTerminalInstanceOccurrences() const;
+    public: Occurrences getTerminalInstanceOccurrencesUnder(const Box& area) const;
+    public: Occurrences getLeafInstanceOccurrences() const;
+    public: Occurrences getLeafInstanceOccurrencesUnder(const Box& area) const;
+    public: Occurrences getComponentOccurrences(const Layer::Mask& mask = ~0) const;
+    public: Occurrences getComponentOccurrencesUnder(const Box& area, const Layer::Mask& mask = ~0) const;
+    public: Occurrences getHyperNetRootNetOccurrences() const;
+    public: Cells getSubCells() const;
+    public: Pathes getRecursiveSlavePathes() const;
+    public: const Box& getAbutmentBox() const {return _abutmentBox;};
 
 // Predicates
 // **********

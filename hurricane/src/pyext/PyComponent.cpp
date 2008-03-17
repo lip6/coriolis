@@ -89,25 +89,25 @@ extern "C" {
 
 
   // Standart Accessors (Attributes).
-  DirectGetLongAttribute(PyComponent_GetX,GetX,PyComponent,Component)
-  DirectGetLongAttribute(PyComponent_GetY,GetY,PyComponent,Component)
+  DirectGetLongAttribute(PyComponent_getX,getX,PyComponent,Component)
+  DirectGetLongAttribute(PyComponent_getY,getY,PyComponent,Component)
 
-  // Standart Delete (Attribute).
-  DBoDeleteAttribute(PyComponent_Delete,PyComponent)
+  // Standart Destroy (Attribute).
+  DBoDestroyAttribute(PyComponent_destroy,PyComponent)
   
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyComponent_GetPosition ()"
-  static PyObject* PyComponent_GetPosition ( PyComponent *self )
+  // Attribute Method  :  "PyComponent_getPosition ()"
+  static PyObject* PyComponent_getPosition ( PyComponent *self )
   {
-    trace << "PyComponent_GetPosition ()" << endl;
-    METHOD_HEAD ( "Component.GetPosition()" )
+    trace << "PyComponent_getPosition ()" << endl;
+    METHOD_HEAD ( "Component.getPosition()" )
 
     PyPoint* pyPoint = PyObject_NEW ( PyPoint, &PyTypePoint );
     if (pyPoint == NULL) { return NULL; }
     
     HTRY
-    pyPoint->_object = new Point ( component->GetPosition() );
+    pyPoint->_object = new Point ( component->getPosition() );
     HCATCH    
 
     return ( (PyObject*)pyPoint );
@@ -115,35 +115,35 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyComponent_GetNet ()"
+  // Attribute Method  :  "PyComponent_getNet ()"
 
-  static PyObject* PyComponent_GetNet ( PyComponent *self )
+  static PyObject* PyComponent_getNet ( PyComponent *self )
   {
-    trace << "PyComponent_GetNet ()" << endl;
+    trace << "PyComponent_getNet ()" << endl;
     
     Net* net = NULL;
 
     HTRY
-    METHOD_HEAD ( "Component.GetNet()" )
+    METHOD_HEAD ( "Component.getNet()" )
 
-    net = component->GetNet ( );
+    net = component->getNet ( );
     HCATCH
     
     return PyNet_Link ( net );
   }
  
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyComponent_GetLayer ()"
+  // Attribute Method  :  "PyComponent_getLayer ()"
 
-  static PyObject* PyComponent_GetLayer ( PyComponent *self )
+  static PyObject* PyComponent_getLayer ( PyComponent *self )
   {
-    trace << "PyComponent_GetLayer ()" << endl;
-    METHOD_HEAD ( "Component.GetLayer()" )
+    trace << "PyComponent_getLayer ()" << endl;
+    METHOD_HEAD ( "Component.getLayer()" )
 
     Layer* layer = NULL;
 
     HTRY
-    layer = component->GetLayer ();
+    layer = component->getLayer ();
     HCATCH
 
     return PyLayer_Link ( layer );
@@ -151,19 +151,19 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyComponent_GetBoundingBox ()"
+  // Attribute Method  :  "PyComponent_getBoundingBox ()"
 
-  static PyObject* PyComponent_GetBoundingBox ( PyComponent *self )
+  static PyObject* PyComponent_getBoundingBox ( PyComponent *self )
   {
-    trace << "PyComponent_GetBoundingBox ()" << endl;
-    METHOD_HEAD ( "Component.GetBoundingBox()" )
+    trace << "PyComponent_getBoundingBox ()" << endl;
+    METHOD_HEAD ( "Component.getBoundingBox()" )
 
     PyBox* pyBox = PyObject_NEW ( PyBox, &PyTypeBox );
     if (pyBox == NULL) { return NULL; }
     trace_out ();
 
     HTRY
-    pyBox->_object = new Box ( component->GetBoundingBox() );
+    pyBox->_object = new Box ( component->getBoundingBox() );
     HCATCH
 
     return ( (PyObject*)pyBox );
@@ -175,14 +175,14 @@ extern "C" {
   // PyComponent Attribute Method table.
 
   PyMethodDef PyComponent_Methods[] =
-    { { "GetX"                 , (PyCFunction)PyComponent_GetX          , METH_NOARGS , "Return the Component X value." }
-    , { "GetY"                 , (PyCFunction)PyComponent_GetY          , METH_NOARGS , "Return the Component Y value." }
-    , { "GetPosition"          , (PyCFunction)PyComponent_GetPosition   , METH_NOARGS , "Return the Component position." }
-    , { "GetNet"               , (PyCFunction)PyComponent_GetNet        , METH_NOARGS , "Returns the net owning the component." }
-    , { "GetLayer"             , (PyCFunction)PyComponent_GetLayer      , METH_NOARGS , "Return the component layer." }
-    , { "GetBoundingBox"       , (PyCFunction)PyComponent_GetBoundingBox, METH_NOARGS , "Return the component boundingBox." }
-    , { "Delete"               , (PyCFunction)PyComponent_Delete        , METH_NOARGS
-                               , "Delete associated hurricane object, the python object remains." }
+    { { "getX"                 , (PyCFunction)PyComponent_getX          , METH_NOARGS , "Return the Component X value." }
+    , { "getY"                 , (PyCFunction)PyComponent_getY          , METH_NOARGS , "Return the Component Y value." }
+    , { "getPosition"          , (PyCFunction)PyComponent_getPosition   , METH_NOARGS , "Return the Component position." }
+    , { "getNet"               , (PyCFunction)PyComponent_getNet        , METH_NOARGS , "Returns the net owning the component." }
+    , { "getLayer"             , (PyCFunction)PyComponent_getLayer      , METH_NOARGS , "Return the component layer." }
+    , { "getBoundingBox"       , (PyCFunction)PyComponent_getBoundingBox, METH_NOARGS , "Return the component boundingBox." }
+    , { "destroy"              , (PyCFunction)PyComponent_destroy       , METH_NOARGS
+                               , "destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

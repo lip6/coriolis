@@ -31,91 +31,88 @@ class Component : public Go {
 // Types
 // *****
 
-	public: typedef Go Inherit;
+    public: typedef Go Inherit;
 
-	public: class BodyHook : public Hook {
-	// *********************************
+    public: class BodyHook : public Hook {
+    // *********************************
 
-		friend class Component;
+        friend class Component;
 
-		public: typedef Hook Inherit;
+        public: typedef Hook Inherit;
 
-		private: BodyHook(Component* component);
+        private: BodyHook(Component* component);
 
-		public: virtual Component* GetComponent() const;
+        public: virtual Component* getComponent() const;
 
-		public: virtual bool IsMaster() const {return true;};
+        public: virtual bool IsMaster() const {return true;};
 
-        public: virtual string _GetTypeName() const { return _TName("Component::BodyHook"); };
-		public: virtual string _GetString() const;
+        public: virtual string _getTypeName() const { return _TName("Component::BodyHook"); };
+        public: virtual string _getString() const;
 
-	};
+    };
 
 // Attributes
 // **********
 
-	private: Net* _net;
-	private: Rubber* _rubber;
-	private: BodyHook _bodyHook;
-	private: Component* _nextOfNetComponentSet;
+    private: Net* _net;
+    private: Rubber* _rubber;
+    private: BodyHook _bodyHook;
+    private: Component* _nextOfNetComponentSet;
 
 // Constructors
 // ************
 
-	protected: Component(Net* net, bool inPlugCreate = false);
+    protected: Component(Net* net, bool inPlugCreate = false);
 
 // Accessors
 // *********
 
-	public: virtual Cell* GetCell() const;
-	public: Net* GetNet() const {return _net;};
-	public: Rubber* GetRubber() const {return _rubber;};
-	public: Hook* GetBodyHook() {return &_bodyHook;};
-	public: virtual Hooks GetHooks() const;
-	public: virtual Unit GetX() const = 0;
-	public: virtual Unit GetY() const = 0;
-	public: virtual Point GetPosition() const {return Point(GetX(), GetY());};
-	public: virtual Point GetCenter() const {return GetPosition();};
-	public: virtual Layer* GetLayer() const = 0;
-	public: virtual Box GetBoundingBox() const = 0;
-	public: virtual Box GetBoundingBox(const BasicLayer* basicLayer) const = 0;
-	public: Components GetConnexComponents() const;
-	public: Components GetSlaveComponents() const;
+    public: virtual Cell* getCell() const;
+    public: Net* getNet() const {return _net;};
+    public: Rubber* getRubber() const {return _rubber;};
+    public: Hook* getBodyHook() {return &_bodyHook;};
+    public: virtual Hooks getHooks() const;
+    public: virtual Unit getX() const = 0;
+    public: virtual Unit getY() const = 0;
+    public: virtual Point getPosition() const {return Point(getX(), getY());};
+    public: virtual Point getCenter() const {return getPosition();};
+    public: virtual Layer* getLayer() const = 0;
+    public: virtual Box getBoundingBox() const = 0;
+    public: virtual Box getBoundingBox(const BasicLayer* basicLayer) const = 0;
+    public: Components getConnexComponents() const;
+    public: Components getSlaveComponents() const;
 
 // Updators
 // ********
 
-	public: virtual void Materialize();
-	public: virtual void Unmaterialize();
-	public: virtual void Invalidate(bool propagateFlag = true);
+    public: virtual void Materialize();
+    public: virtual void Unmaterialize();
+    public: virtual void Invalidate(bool propagateFlag = true);
 
 // Filters
 // *******
 
-	public: static ComponentFilter GetIsUnderFilter(const Box& area);
+    public: static ComponentFilter getIsUnderFilter(const Box& area);
 
 // Others
 // ******
 
-	protected: virtual void _PostCreate();
+    protected: virtual void _postCreate();
 
-	protected: virtual void _PreDelete();
+    protected: virtual void _preDestroy();
 
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
-	public: Component* _GetNextOfNetComponentSet() const {return _nextOfNetComponentSet;};
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
+    public: Component* _getNextOfNetComponentSet() const {return _nextOfNetComponentSet;};
 
-	public: void _SetNet(Net* net);
-	public: void _SetRubber(Rubber* rubber);
-	public: void _SetNextOfNetComponentSet(Component* component) {_nextOfNetComponentSet = component;};
-
-	//public: virtual bool _IsInterceptedBy(View* view, const Point& point, const Unit& aperture) const;
-	//public: virtual void _Highlight(View* view, const Box& updateArea, const Transformation& transformation);
+    public: void _SetNet(Net* net);
+    public: void _SetRubber(Rubber* rubber);
+    public: void _SetNextOfNetComponentSet(Component* component) {_nextOfNetComponentSet = component;};
 
 };
 
 
-double  GetArea ( Component* component );
+double  getArea ( Component* component );
 
 
 

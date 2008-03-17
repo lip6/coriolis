@@ -74,14 +74,9 @@ extern "C" {
   // |                "PyName" Attribute Methods                   |
   // x-------------------------------------------------------------x
 
-
-
-
-  // Standart Delete (Attribute).
   //DirectGetBoolAttribute(PyName_IsEmpty,IsEmpty,PyName,Name)
 
-  static PyObject* PyName_IsEmpty ( PyName *self )
-  {
+  static PyObject* PyName_IsEmpty ( PyName *self ) {
     trace << "PyName_IsEmpty()" << endl;
     
     METHOD_HEAD ( "Name.IsEmpty()" )
@@ -89,8 +84,8 @@ extern "C" {
   }
 
 
-  // Standart Delete (Attribute).
-  DirectDeleteAttribute(PyName_Delete,PyName)
+  // Standart destroy (Attribute).
+  DirectDestroyAttribute(PyName_destroy, PyName)
 
 
 
@@ -100,8 +95,8 @@ extern "C" {
 
   PyMethodDef PyName_Methods[] =
     { { "IsEmpty"  , (PyCFunction)PyName_IsEmpty  , METH_NOARGS , "True if empty." }
-    , { "Delete"   , (PyCFunction)PyName_Delete   , METH_NOARGS
-                   , "Delete associated hurricane object The python object remains." }
+    , { "destroy"  , (PyCFunction)PyName_destroy   , METH_NOARGS
+                   , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 
@@ -118,8 +113,8 @@ extern "C" {
     if (!PyArg_ParseTuple(args,"|O&:Name.new",Converter,&arg0) ) return ( NULL );
     
     HTRY
-    if      (__cs.GetObjectIds() == NO_ARG     ) { name = new Name (); }
-    else if (__cs.GetObjectIds() == STRING_ARG ) { name = new Name ( PyString_AsString(arg0) ); }
+    if      (__cs.getObjectIds() == NO_ARG     ) { name = new Name (); }
+    else if (__cs.getObjectIds() == STRING_ARG ) { name = new Name ( PyString_AsString(arg0) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Name constructor." );
       return(NULL);

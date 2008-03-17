@@ -23,31 +23,31 @@ class Error : public Exception {
 // Types
 // *****
 
-	public: typedef Exception Inherit;
+    public: typedef Exception Inherit;
 
 // Attributes
 // **********
 
-	private: string _reason;
-	private: int _code;
+    private: string _reason;
+    private: int _code;
 
 // Constructors
 // ************
 
-	public: Error(const string& reason, int code = 0);
+    public: Error(const string& reason, int code = 0);
 
-	public: Error(const Error& error);
+    public: Error(const Error& error);
 
 // Operators
 // *********
 
-	public: Error& operator=(const Error& error);
+    public: Error& operator=(const Error& error);
 
 // Accessors
 // *********
 
-	public: string GetReason() const {return _reason;};
-	public: int GetCode() const {return _code;};
+    public: string getReason() const {return _reason;};
+    public: int getCode() const {return _code;};
 
 // Modifiers
 // *********
@@ -57,8 +57,8 @@ class Error : public Exception {
 // Others
 // ******
 
-    public: virtual string _GetTypeName() const { return _TName("Error"); };
-	public: virtual string _GetString() const;
+    public: virtual string _getTypeName() const { return _TName("Error"); };
+    public: virtual string _getString() const;
 
 };
 

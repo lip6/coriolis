@@ -37,11 +37,11 @@ class Transformation {
 
         public: operator const Code&() const {return _code;};
 
-        public: const Code& GetCode() const {return _code;};
+        public: const Code& getCode() const {return _code;};
 
-        public: string _GetTypeName() const { return _TName("Transformation::Orientation"); };
-        public: string _GetString() const;
-        public: Record* _GetRecord() const;
+        public: string _getTypeName() const { return _TName("Transformation::Orientation"); };
+        public: string _getString() const;
+        public: Record* _getRecord() const;
     };
 
 // Attributes
@@ -100,8 +100,8 @@ class Transformation {
 // Predicates
 // **********
 
-    public: bool isEven() const {return !(_orientation.GetCode() & 1);};
-    public: bool isOdd() const {return (_orientation.GetCode() & 1);};
+    public: bool isEven() const {return !(_orientation.getCode() & 1);};
+    public: bool isOdd() const {return (_orientation.getCode() & 1);};
 
 // Updators
 // ********
@@ -119,9 +119,9 @@ class Transformation {
 // Others
 // ******
 
-    public: string _GetTypeName() const { return _TName("Transformation"); };
-    public: string _GetString() const;
-    public: Record* _GetRecord() const;
+    public: string _getTypeName() const { return _TName("Transformation"); };
+    public: string _getString() const;
+    public: Record* _getRecord() const;
 
 };
 
@@ -157,8 +157,8 @@ template<>
   inline Record* ProxyRecord  <Transformation::Orientation::Code>
                               ( const Transformation::Orientation::Code* object )
                               {
-                                Record* record = new Record(GetString(object));
-                                record->Add(GetSlot("Code", (unsigned int*)object));
+                                Record* record = new Record(getString(object));
+                                record->Add(getSlot("Code", (unsigned int*)object));
                                 return record;
                               }
 

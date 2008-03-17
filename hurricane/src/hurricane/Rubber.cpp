@@ -37,36 +37,36 @@ Rubber::Rubber(Net* net, Hook* hook)
         if (!_hook)
                 throw Error("Can't create " + _TName("Rubber") + " : null hook");
 
-        if (_hook->GetComponent()->GetNet() != _net)
+        if (_hook->getComponent()->getNet() != _net)
                 throw Error("Can't create " + _TName("Rubber") + " : invalid hook");
 }
 
-void Rubber::Delete()
+void Rubber::destroy()
 // ******************
 {
         throw Error("Abnormal deletion of " + _TName("Rubber"));
 }
 
-Cell* Rubber::GetCell() const
+Cell* Rubber::getCell() const
 // **************************
 {
-        return _net->GetCell();
+        return _net->getCell();
 }
 
-Point Rubber::GetCenter() const
+Point Rubber::getCenter() const
 // ****************************
 {
-        return GetBoundingBox().getCenter();
+        return getBoundingBox().getCenter();
 }
 
-Point Rubber::GetBarycenter() const
+Point Rubber::getBarycenter() const
 // ********************************
 {
-        int n = GetHooks().GetSize();
+        int n = getHooks().getSize();
         Unit x = 0;
         Unit y = 0;
-        for_each_hook(hook, GetHooks()) {
-                Point position = hook->GetComponent()->GetBoundingBox().getCenter();
+        for_each_hook(hook, getHooks()) {
+                Point position = hook->getComponent()->getBoundingBox().getCenter();
                 x += position.getX() / n;
                 y += position.getY() / n;
                 end_for;
@@ -74,15 +74,15 @@ Point Rubber::GetBarycenter() const
         return Point(x,y);
 }
 
-Box Rubber::GetBoundingBox() const
+Box Rubber::getBoundingBox() const
 // *******************************
 {
         if (_boundingBox.isEmpty())
         {
                 Rubber* rubber = const_cast<Rubber*>(this);
                 Box& boundingBox = rubber->_boundingBox;
-                for_each_hook(hook, GetHooks()) {
-                        Point position = hook->GetComponent()->GetBoundingBox().getCenter();
+                for_each_hook(hook, getHooks()) {
+                        Point position = hook->getComponent()->getBoundingBox().getCenter();
                         boundingBox.merge(position);
                         end_for;
                 }
@@ -90,20 +90,20 @@ Box Rubber::GetBoundingBox() const
         return _boundingBox;
 }
 
-Hooks Rubber::GetHooks() const
+Hooks Rubber::getHooks() const
 // ***************************
 {
-        return (_hook) ? _hook->GetHooks().GetSubSet(Hook::GetIsMasterFilter()) : Hooks();
+        return (_hook) ? _hook->getHooks().getSubSet(Hook::getIsMasterFilter()) : Hooks();
 }
 
 void Rubber::Materialize()
 // ***********************
 {
         if (!IsMaterialized()) {
-                Cell* cell = GetCell();
-                QuadTree* quadTree = cell->_GetQuadTree();
+                Cell* cell = getCell();
+                QuadTree* quadTree = cell->_getQuadTree();
                 quadTree->Insert(this);
-                cell->_Fit(quadTree->GetBoundingBox());
+                cell->_Fit(quadTree->getBoundingBox());
         }
 }
 
@@ -111,9 +111,9 @@ void Rubber::Unmaterialize()
 // *************************
 {
         if (IsMaterialized()) {
-                Cell* cell = GetCell();
-                cell->_Unfit(GetBoundingBox());
-                cell->_GetQuadTree()->Remove(this);
+                Cell* cell = getCell();
+                cell->_Unfit(getBoundingBox());
+                cell->_getQuadTree()->Remove(this);
         }
 }
 
@@ -131,78 +131,78 @@ Rubber* Rubber::_Create(Hook* hook)
         if (!hook->IsMaster())
                 throw Error("Can't create " + _TName("Rubber") + " : not a master hook");
 
-        Net* net = hook->GetComponent()->GetNet();
+        Net* net = hook->getComponent()->getNet();
 
         if (!net)
                 throw Error("Can't create " + _TName("Rubber") + " : unconnected component");
 
         Rubber* rubber = new Rubber(net, hook);
 
-        rubber->_PostCreate();
+        rubber->_postCreate();
 
         return rubber;
 }
 
-void Rubber::_PostCreate()
+void Rubber::_postCreate()
 // ***********************
 {
-        _net->_GetRubberSet()._Insert(this);
+        _net->_getRubberSet()._Insert(this);
 
-        for_each_hook(hook, GetHooks()) {
-                hook->GetComponent()->_SetRubber(this);
+        for_each_hook(hook, getHooks()) {
+                hook->getComponent()->_SetRubber(this);
                 end_for;
         }
 
-        Inherit::_PostCreate();
+        Inherit::_postCreate();
 }
 
-void Rubber::_Delete()
+void Rubber::_destroy()
 // *******************
 {
-        _PreDelete();
+        _preDestroy();
 
         delete this;
 }
 
-void Rubber::_PreDelete()
+void Rubber::_preDestroy()
 // **********************
 {
-// trace << "entering Rubber::_PreDelete: " << this << endl;
+// trace << "entering Rubber::_preDestroy: " << this << endl;
 // trace_in();
 
-        Inherit::_PreDelete();
+        Inherit::_preDestroy();
 
         _count = (unsigned)-1; // to avoid a new destruction
 
-        for_each_hook(hook, GetHooks()) {
-                hook->GetComponent()->_SetRubber(NULL);
+        for_each_hook(hook, getHooks()) {
+                hook->getComponent()->_SetRubber(NULL);
                 end_for;
         }
 
-        _net->_GetRubberSet()._Remove(this);
+        _net->_getRubberSet()._Remove(this);
 
-// trace << "exiting Rubber::_PreDelete:" << endl;
+// trace << "exiting Rubber::_preDestroy:" << endl;
 // trace_out();
 }
 
-string Rubber::_GetString() const
+string Rubber::_getString() const
 // ******************************
 {
-        string s = Inherit::_GetString();
-        s.insert(s.length() - 1, " " + GetString(_net->GetName()));
-        s.insert(s.length() - 1, " " + GetString(_count));
+        string s = Inherit::_getString();
+        s.insert(s.length() - 1, " " + getString(_net->getName()));
+        s.insert(s.length() - 1, " " + getString(_count));
         return s;
 }
 
-Record* Rubber::_GetRecord() const
+Record* Rubber::_getRecord() const
 // *************************
 {
-        Record* record = Inherit::_GetRecord();
+        Record* record = Inherit::_getRecord();
         if (record) {
-                record->Add(GetSlot("Net", _net));
-                record->Add(GetSlot("Hook", _hook));
-                record->Add(GetSlot("Count", _count));
-                record->Add(GetSlot("BoundingBox", _boundingBox));
+                record->Add(getSlot("Net", _net));
+                record->Add(getSlot("Hook", _hook));
+                record->Add(getSlot("Count", _count));
+                record->Add(getSlot("BoundingBox", _boundingBox));
         }
         return record;
 }
@@ -211,9 +211,9 @@ void Rubber::_SetNet(Net* net)
 // ***************************
 {
         if (net != _net) {
-                if (_net) _net->_GetRubberSet()._Remove(this);
+                if (_net) _net->_getRubberSet()._Remove(this);
                 _net = net;
-                if (_net) _net->_GetRubberSet()._Insert(this);
+                if (_net) _net->_getRubberSet()._Insert(this);
         }
 }
 
@@ -221,7 +221,7 @@ void Rubber::_SetHook(Hook* hook)
 // ******************************
 {
         assert(hook->IsMaster());
-        assert(hook->GetComponent()->GetNet() == GetNet());
+        assert(hook->getComponent()->getNet() == getNet());
         _hook = hook;
 }
 
@@ -237,7 +237,7 @@ void Rubber::_Release()
 {
         if (_count != ((unsigned)-1)) { // not in deletion
                 Invalidate();
-                if ((--_count) == 1) _Delete();
+                if ((--_count) == 1) _destroy();
         }
 }
 
@@ -248,190 +248,11 @@ void Rubber::Invalidate(bool propagateFlag)
         _boundingBox.makeEmpty();
 }
 
-//bool Rubber::_IsInterceptedBy(View* view, const Point& point, const Unit& aperture) const
-//// **************************************************************************************
-//{
-//        double x = GetValue(point.getX());
-//        double y = GetValue(point.getY());
-//        double a = GetValue(aperture);
-//        Point origin;
-//
-//        switch (view->GetRubberDisplayType())
-//        {
-//            case View::RubberDisplayType::GEOMETRIC:
-//                {
-//                    origin = GetCenter();
-//                    break;
-//                }
-//            case View::RubberDisplayType::BARYCENTRIC:
-//                {
-//                    origin = GetBarycenter();
-//                    break;
-//                }
-//            case View::RubberDisplayType::STEINER:
-//                {
-//                    // XXX
-//                    return false;
-//                    break;
-//                }
-//            default:
-//                throw Error("Unknown RubberDisplayType");
-//        }
-//        double xo = GetValue(origin.getX());
-//        double yo = GetValue(origin.getY());
-//        for_each_hook(hook, GetHooks()) {
-//                Point extremity = extremity = hook->GetComponent()->GetBoundingBox().getCenter();
-//                double xe = GetValue(extremity.getX());
-//                double ye = GetValue(extremity.getY());
-//                double xp = xo;
-//                double yp = yo;
-//                if (xo != xe) xp = (((xe - xo) / (ye - yo)) * (y - yo)) + xo;
-//                if (yo != ye) yp = (((ye - yo) / (xe - xo)) * (x - xo)) + yo;
-//                if ((abs(xp - x) <= a) || (abs(yp - y) <= a)) return true;
-//                end_for;
-//        }
-//        return false;
-//}
-//
-//
-//void Rubber::_Draw(View* view, BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation)
-//// ****************************************************************************************************************
-//{
-//        assert(!basicLayer);
-//
-//        Point center;
-//
-//        switch (view->GetRubberDisplayType())
-//        {
-//            case View::RubberDisplayType::GEOMETRIC:
-//                {
-//                    center = transformation.GetPoint(GetCenter());
-//                    for_each_hook(hook, GetHooks()) {
-//                        Point position = hook->GetComponent()->GetBoundingBox().getCenter();
-//                        view->DrawLine(center, transformation.GetPoint(position));
-//                        end_for;
-//                    }
-//                    break;
-//                }
-//            case View::RubberDisplayType::BARYCENTRIC:
-//                {
-//                    center = transformation.GetPoint(GetBarycenter());
-//                    for_each_hook(hook, GetHooks()) {
-//                        Point position = hook->GetComponent()->GetBoundingBox().getCenter();
-//                        view->DrawLine(center, transformation.GetPoint(position));
-//                        end_for;
-//                    }
-//                    break;
-//                }
-//            case View::RubberDisplayType::STEINER:
-//                {
-//                    center = transformation.GetPoint(GetBarycenter());
-//                    for_each_hook(hook, GetHooks()) {
-//                        Point position = hook->GetComponent()->GetBoundingBox().getCenter();
-//                        Point crosspoint (position.getX(), center.getY());
-//                        view->DrawLine(position, crosspoint);
-//                        view->DrawLine(crosspoint, center);
-//                        end_for;
-//                    }
-//
-//                    break;
-//                }
-//            default:
-//                throw Error("Unknown RubberDisplayType");
-//        }
-//
-//}
-//
 typedef struct pcmp_s {
     bool operator() (const Point& p1, const Point& p2) const {
         return (p1.getX() < p2.getX()) || ( (p1.getX() == p2.getX()) && (p1.getY() < p2.getY()) );
     }
 } pcmp_t;
-
-//void Rubber::_Highlight(View* view, const Box& updateArea, const Transformation& transformation)
-//// **********************************************************************************************
-//{
-//        Point center;
-//
-//        switch (view->GetRubberDisplayType())
-//        {
-//            case View::RubberDisplayType::GEOMETRIC:
-//                {
-//                    center = transformation.GetPoint(GetCenter());
-//                    for_each_hook(hook, GetHooks()) {
-//                        Point position = hook->GetComponent()->GetBoundingBox().getCenter();
-//                        view->DrawLine(center, transformation.GetPoint(position));
-//                        end_for;
-//                    }
-//                    break;
-//                }
-//            case View::RubberDisplayType::BARYCENTRIC:
-//                {
-//                    center = transformation.GetPoint(GetBarycenter());
-//                    for_each_hook(hook, GetHooks()) {
-//                        Point position = hook->GetComponent()->GetBoundingBox().getCenter();
-//                        view->DrawLine(center, transformation.GetPoint(position));
-//                        end_for;
-//                    }
-//                    break;
-//                }
-//            case View::RubberDisplayType::STEINER:
-//                {
-//                    set <Point, pcmp_t> pset;
-//                    for_each_hook (hook, GetHooks())
-//                    {
-//                        Point position = hook->GetComponent()->GetBoundingBox().getCenter();
-//                        pset.insert (position);
-//                        end_for;
-//                    }
-//                    center = transformation.GetPoint(GetBarycenter());
-//                    Unit lastXup = center.getX();
-//                    Unit lastXlo = center.getX();
-//                    for (
-//                            set<Point, pcmp_t>::iterator pit = pset.begin();
-//                            pit != pset.end();
-//                            pit++
-//                        )
-//                    {
-//                        Point position (*pit);
-//                        Point crosspoint (position.getX(), center.getY());
-//                        Point connxpoint (center);
-//                        if (position.getY() > center.getY())
-//                        {
-//                            // en haut
-//                            if ( (position.getX() - lastXup) < (position.getY() - center.getY()) )
-//                            {
-//                                crosspoint.SetX (lastXup);
-//                                crosspoint.SetY (position.getY());
-//                                connxpoint.SetX (lastXup);
-//                            }
-//                            else
-//                                lastXup = position.getX();
-//                        } else {
-//                            // en bas
-//                            if ( (position.getX() - lastXlo) < (center.getY() - position.getY()) )
-//                            {
-//                                crosspoint.SetX (lastXlo);
-//                                crosspoint.SetY (position.getY());
-//                                connxpoint.SetX (lastXlo);
-//                            }
-//                            else
-//                                lastXlo = position.getX();
-//                        }
-//
-//
-//                        view->DrawLine(position, crosspoint);
-//                        view->DrawLine(crosspoint, connxpoint);
-//                    }
-//                    break;
-//                }
-//            default:
-//                throw Error("Unknown RubberDisplayType");
-//        }
-//
-//}
-//
-
 
 } // End of Hurricane namespace.
 

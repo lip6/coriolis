@@ -82,15 +82,15 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyDataBase_GetDataBase ()"
+  // Attribute Method  :  "PyDataBase_getDataBase ()"
 
-  PyObject* PyDataBase_GetDataBase ( PyObject* module ) {
-    trace << "PyDataBase_GetDataBase()" << endl;
+  PyObject* PyDataBase_getDataBase ( PyObject* module ) {
+    trace << "PyDataBase_getDataBase()" << endl;
 
     DataBase* db = NULL;
 
     HTRY
-    db = GetDataBase ();
+    db = getDataBase ();
     if ( db == NULL )
       PyErr_SetString ( HurricaneError, "DataBase has not been created yet" );
     HCATCH
@@ -99,17 +99,17 @@ extern "C" {
   }
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyDataBase_GetTechnology ()"
+  // Attribute Method  :  "PyDataBase_getTechnology ()"
 
-  PyObject* PyDataBase_GetTechnology ( PyDataBase* self ) {
-    trace << "PyDataBase_GetTechnology()" << endl;
+  PyObject* PyDataBase_getTechnology ( PyDataBase* self ) {
+    trace << "PyDataBase_getTechnology()" << endl;
 
     Technology* techno = NULL;
 
     HTRY
-    METHOD_HEAD("DataBase.GetTechnology()")
+    METHOD_HEAD("DataBase.getTechnology()")
 
-    techno = db->GetTechnology ();
+    techno = db->getTechnology ();
     
     if ( techno == NULL )
         Py_RETURN_NONE;
@@ -122,8 +122,8 @@ extern "C" {
   // Standart Accessors (Attributes).
 
 
-  // Standart Delete (Attribute).
-  DBoDeleteAttribute(PyDataBase_Delete,PyDataBase)
+  // Standart Destroy (Attribute).
+  DBoDestroyAttribute(PyDataBase_destroy,PyDataBase)
 
 
 
@@ -132,9 +132,9 @@ extern "C" {
   // PyDataBase Attribute Method table.
 
   PyMethodDef PyDataBase_Methods[] =
-    { { "GetTechnology", (PyCFunction)PyDataBase_GetTechnology, METH_NOARGS, "Return the Technology" }
-    , { "Delete"       , (PyCFunction)PyDataBase_Delete       , METH_NOARGS
-                       , "Delete associated hurricane object The python object remains." }
+    { { "getTechnology", (PyCFunction)PyDataBase_getTechnology, METH_NOARGS, "Return the Technology" }
+    , { "destroy"       , (PyCFunction)PyDataBase_destroy      , METH_NOARGS
+                       , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

@@ -45,10 +45,10 @@ typedef GenericFilter<Occurrence> OccurrenceFilter;
 #define for_each_occurrence(occurrence, occurrences)\
 /************************************************/\
 {\
-	OccurrenceLocator _locator = occurrences.GetLocator();\
-	while (_locator.IsValid()) {\
-		Occurrence occurrence = _locator.GetElement();\
-		_locator.Progress();
+    OccurrenceLocator _locator = occurrences.getLocator();\
+    while (_locator.IsValid()) {\
+        Occurrence occurrence = _locator.getElement();\
+        _locator.Progress();
 
 
 

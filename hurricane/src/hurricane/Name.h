@@ -26,49 +26,49 @@ class Name {
 // Attributes
 // **********
 
-	private: SharedName* _sharedName;
+    private: SharedName* _sharedName;
 
 // Constructors
 // ************
 
-	public: Name();
+    public: Name();
 
-	public: Name(const char* c);
-	public: Name(const string& s);
+    public: Name(const char* c);
+    public: Name(const string& s);
 
-	public: Name(const Name& name);
+    public: Name(const Name& name);
 
 // Destructor
 // **********
 
-	public: ~Name();
+    public: ~Name();
 
 // Operators
 // *********
 
-	public: Name& operator=(const Name& name);
+    public: Name& operator=(const Name& name);
 
-	public: bool operator==(const Name& name) const;
-	public: bool operator!=(const Name& name) const;
-	public: bool operator<(const Name& name) const;
-	public: bool operator<=(const Name& name) const;
-	public: bool operator>(const Name& name) const;
-	public: bool operator>=(const Name& name) const;
+    public: bool operator==(const Name& name) const;
+    public: bool operator!=(const Name& name) const;
+    public: bool operator<(const Name& name) const;
+    public: bool operator<=(const Name& name) const;
+    public: bool operator>(const Name& name) const;
+    public: bool operator>=(const Name& name) const;
 
-	public: char operator[](unsigned index) const;
+    public: char operator[](unsigned index) const;
 
 // Predicates
 // **********
 
-	public: bool IsEmpty() const;
+    public: bool IsEmpty() const;
 
 // Others
 // ******
 
-    public: string _GetTypeName() const { return _TName("Name"); };
-	public: string _GetString() const;
-	public: Record* _GetRecord() const;
-	public: SharedName* _GetSharedName() const {return _sharedName;};
+    public: string _getTypeName() const { return _TName("Name"); };
+    public: string _getString() const;
+    public: Record* _getRecord() const;
+    public: SharedName* _getSharedName() const {return _sharedName;};
 
 };
 

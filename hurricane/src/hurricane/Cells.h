@@ -46,10 +46,10 @@ typedef GenericFilter<Cell*> CellFilter;
 #define for_each_cell(cell, cells)\
 /*********************************/\
 {\
-	CellLocator _locator = cells.GetLocator();\
-	while (_locator.IsValid()) {\
-		Cell* cell = _locator.GetElement();\
-		_locator.Progress();
+    CellLocator _locator = cells.getLocator();\
+    while (_locator.IsValid()) {\
+        Cell* cell = _locator.getElement();\
+        _locator.Progress();
 
 
 

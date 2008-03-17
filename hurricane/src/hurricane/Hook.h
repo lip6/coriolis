@@ -25,65 +25,65 @@ class Hook : public NestedSlotAdapter {
 // Attributes
 // **********
 
-	private: Hook* _nextHook;
+    private: Hook* _nextHook;
 
 // Constructors
 // ************
 
-	protected: Hook();
+    protected: Hook();
 
-	private: Hook(const Hook& hook); // not implemented to forbid copy construction
+    private: Hook(const Hook& hook); // not implemented to forbid copy construction
 
 // Destructor
 // **********
 
-	protected: virtual ~Hook();
+    protected: virtual ~Hook();
 
 // Operators
 // *********
 
-	private: Hook& operator=(const Hook& hook); // not implemented to forbid assignment
+    private: Hook& operator=(const Hook& hook); // not implemented to forbid assignment
 
 // Accessors
 // *********
 
-	public: virtual Component* GetComponent() const = 0;
+    public: virtual Component* getComponent() const = 0;
 
-	public: Hook* GetNextHook() const;
-	public: Hook* GetPreviousHook() const;
+    public: Hook* getNextHook() const;
+    public: Hook* getPreviousHook() const;
 
-	public: Hook* GetMasterHook() const;
-	public: Hook* GetNextMasterHook() const;
-	public: Hook* GetPreviousMasterHook() const;
+    public: Hook* getMasterHook() const;
+    public: Hook* getNextMasterHook() const;
+    public: Hook* getPreviousMasterHook() const;
 
-	public: Hooks GetHooks() const;
-	public: Hooks GetSlaveHooks() const;
+    public: Hooks getHooks() const;
+    public: Hooks getSlaveHooks() const;
 
 // Filters
 // *******
 
-	public: static HookFilter GetIsMasterFilter();
+    public: static HookFilter getIsMasterFilter();
 
 // Predicates
 // **********
 
-	public: virtual bool IsMaster() const = 0;
+    public: virtual bool IsMaster() const = 0;
 
-	public: bool IsAttached() const;
+    public: bool IsAttached() const;
 
 // Updators
 // ********
 
-	public: Hook* Detach();
-	public: Hook* Attach(Hook* hook);
-	public: Hook* Merge(Hook* hook);
-	public: void _SetNextHook(Hook* hook);
+    public: Hook* Detach();
+    public: Hook* Attach(Hook* hook);
+    public: Hook* Merge(Hook* hook);
+    public: void _SetNextHook(Hook* hook);
 
 // Others
 // ******
 
-	public: virtual string _GetString() const = 0;
-	public: virtual Record* _GetRecord() const;
+    public: virtual string _getString() const = 0;
+    public: virtual Record* _getRecord() const;
 
 };
 

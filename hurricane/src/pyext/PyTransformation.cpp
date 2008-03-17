@@ -103,24 +103,23 @@ extern "C" {
 
 
   // Standart Accessors (Attributes).
-  DirectGetLongAttribute(PyTransformation_GetTx, getTx, PyTransformation, Transformation)
-  DirectGetLongAttribute(PyTransformation_GetTy, getTy, PyTransformation, Transformation)
+  DirectGetLongAttribute(PyTransformation_getTx, getTx, PyTransformation, Transformation)
+  DirectGetLongAttribute(PyTransformation_getTy, getTy, PyTransformation, Transformation)
 
 
-  // Standart Delete (Attribute).
-  DirectDeleteAttribute(PyTransformation_Delete, PyTransformation)
+  // Standard destroy (Attribute).
+  DirectDestroyAttribute(PyTransformation_destroy, PyTransformation)
 
 
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_GetTranslation ()"
+  // Attribute Method  :  "PyBox_getTranslation ()"
 
-  static PyObject* PyTransformation_GetTranslation ( PyTransformation *self )
-  {
-    trace << "PyBox_GetTranslation ()" << endl;
+  static PyObject* PyTransformation_getTranslation ( PyTransformation *self ) {
+    trace << "PyBox_getTranslation ()" << endl;
     
-    METHOD_HEAD ( "Translation.GetTranslation()" )
+    METHOD_HEAD ( "Translation.getTranslation()" )
 
     PyPoint* pyPoint = PyObject_NEW ( PyPoint, &PyTypePoint );
     if (pyPoint == NULL) { return NULL; }
@@ -142,27 +141,27 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyTransformation_GetOrientation ()"
+  // Attribute Method  :  "PyTransformation_getOrientation ()"
 
-  static PyObject* PyTransformation_GetOrientation ( PyTransformation *self ) {
-    trace << "PyTransformation_GetOrientation ()" << endl;
+  static PyObject* PyTransformation_getOrientation ( PyTransformation *self ) {
+    trace << "PyTransformation_getOrientation ()" << endl;
     
-    METHOD_HEAD ( "Translation.GetOrientation()" )
+    METHOD_HEAD ( "Translation.getOrientation()" )
 
-    return ( (PyObject*)Py_BuildValue("i",(long)transf->getOrientation().GetCode()) );
+    return ( (PyObject*)Py_BuildValue("i",(long)transf->getOrientation().getCode()) );
   }
 
 
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyTransformation_GetX ()"
+  // Attribute Method  :  "PyTransformation_getX ()"
 
-  static PyObject* PyTransformation_GetX ( PyTransformation *self, PyObject* args )
+  static PyObject* PyTransformation_getX ( PyTransformation *self, PyObject* args )
   {
-    trace << "PyTransformation_GetX ()" << endl;
+    trace << "PyTransformation_getX ()" << endl;
     
-    METHOD_HEAD ( "Transformation.GetX()" )
+    METHOD_HEAD ( "Transformation.getX()" )
 
     PyObject* arg0;
     PyObject* arg1;
@@ -170,15 +169,15 @@ extern "C" {
 
     HTRY
 
-    __cs.Init ("Transformation.GetX");
-    if ( ! PyArg_ParseTuple(args,"|O&O&:Transformation.GetX",Converter,&arg0,Converter,&arg1) )
+    __cs.Init ("Transformation.getX");
+    if ( ! PyArg_ParseTuple(args,"|O&O&:Transformation.getX",Converter,&arg0,Converter,&arg1) )
       return ( NULL );
 
-    if      ( __cs.GetObjectIds() == POINT_ARG ) { result = transf->getX ( *PYPOINT_O(arg0) ); }
-    else if ( __cs.GetObjectIds() == INTS2_ARG ) { result = transf->getX ( PyInt_AsLong(arg0)
+    if      ( __cs.getObjectIds() == POINT_ARG ) { result = transf->getX ( *PYPOINT_O(arg0) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG ) { result = transf->getX ( PyInt_AsLong(arg0)
                                                                          , PyInt_AsLong(arg1) ); }
     else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Tranformation.GetX()." );
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Tranformation.getX()." );
       return ( NULL );
     }
 
@@ -191,13 +190,13 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyTransformation_GetY ()"
+  // Attribute Method  :  "PyTransformation_getY ()"
 
-  static PyObject* PyTransformation_GetY ( PyTransformation *self, PyObject* args )
+  static PyObject* PyTransformation_getY ( PyTransformation *self, PyObject* args )
   {
-    trace << "PyTransformation_GetY ()" << endl;
+    trace << "PyTransformation_getY ()" << endl;
     
-    METHOD_HEAD ( "Transformation.GetY()" )
+    METHOD_HEAD ( "Transformation.getY()" )
 
     PyObject* arg0;
     PyObject* arg1;
@@ -205,15 +204,15 @@ extern "C" {
 
     HTRY
 
-    __cs.Init ("Transformation.GetY");
-    if ( ! PyArg_ParseTuple(args,"|O&O&:Transformation.GetY",Converter,&arg0,Converter,&arg1) )
+    __cs.Init ("Transformation.getY");
+    if ( ! PyArg_ParseTuple(args,"|O&O&:Transformation.getY",Converter,&arg0,Converter,&arg1) )
       return ( NULL );
 
-    if      ( __cs.GetObjectIds() == POINT_ARG ) { result = transf->getY ( *PYPOINT_O(arg0) ); }
-    else if ( __cs.GetObjectIds() == INTS2_ARG ) { result = transf->getY ( PyInt_AsLong(arg0)
+    if      ( __cs.getObjectIds() == POINT_ARG ) { result = transf->getY ( *PYPOINT_O(arg0) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG ) { result = transf->getY ( PyInt_AsLong(arg0)
                                                                          , PyInt_AsLong(arg1) ); }
     else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Tranformation.GetY()." );
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Tranformation.getY()." );
       return ( NULL );
     }
 
@@ -226,13 +225,13 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyTransformation_GetDx ()"
+  // Attribute Method  :  "PyTransformation_getDx ()"
 
-  static PyObject* PyTransformation_GetDx ( PyTransformation *self, PyObject* args )
+  static PyObject* PyTransformation_getDx ( PyTransformation *self, PyObject* args )
   {
-    trace << "PyTransformation_GetDx ()" << endl;
+    trace << "PyTransformation_getDx ()" << endl;
     
-    METHOD_HEAD ( "Transformation.GetDx()" )
+    METHOD_HEAD ( "Transformation.getDx()" )
 
     PyObject* arg0;
     PyObject* arg1;
@@ -240,7 +239,7 @@ extern "C" {
 
     HTRY
 
-    if ( ! ParseTwoArg ( "Transformation.GetDx", args, INTS2_ARG, &arg0, &arg1 ) ) return ( NULL );
+    if ( ! ParseTwoArg ( "Transformation.getDx", args, INTS2_ARG, &arg0, &arg1 ) ) return ( NULL );
     result = transf->getDx ( PyInt_AsLong(arg0), PyInt_AsLong(arg1) );
 
     HCATCH
@@ -252,13 +251,13 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyTransformation_GetDy ()"
+  // Attribute Method  :  "PyTransformation_getDy ()"
 
-  static PyObject* PyTransformation_GetDy ( PyTransformation *self, PyObject* args )
+  static PyObject* PyTransformation_getDy ( PyTransformation *self, PyObject* args )
   {
-    trace << "PyTransformation_GetDy ()" << endl;
+    trace << "PyTransformation_getDy ()" << endl;
     
-    METHOD_HEAD ( "Transformation.GetDy()" )
+    METHOD_HEAD ( "Transformation.getDy()" )
 
     PyObject* arg0;
     PyObject* arg1;
@@ -266,7 +265,7 @@ extern "C" {
 
     HTRY
 
-    if ( ! ParseTwoArg ( "Transformation.GetDy", args, INTS2_ARG, &arg0, &arg1 ) ) return ( NULL );
+    if ( ! ParseTwoArg ( "Transformation.getDy", args, INTS2_ARG, &arg0, &arg1 ) ) return ( NULL );
     result = transf->getDy ( PyInt_AsLong(arg0), PyInt_AsLong(arg1) );
 
     HCATCH
@@ -278,18 +277,18 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyTransformation_GetTransformation ()"
+  // Attribute Method  :  "PyTransformation_getTransformation ()"
 
-  static PyObject* PyTransformation_GetTransformation ( PyTransformation *self, PyObject* args )
+  static PyObject* PyTransformation_getTransformation ( PyTransformation *self, PyObject* args )
   {
-    trace << "PyTransformation_GetTransformation ()" << endl;
+    trace << "PyTransformation_getTransformation ()" << endl;
     
-    METHOD_HEAD ( "Transformation.GetTransformation()" )
+    METHOD_HEAD ( "Transformation.getTransformation()" )
 
     PyObject*       arg0;
     Transformation  result;
 
-    if ( ! ParseOneArg ( "Transformation.GetTransformation", args, TRANS_ARG, &arg0 ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Transformation.getTransformation", args, TRANS_ARG, &arg0 ) ) return ( NULL );
     result = transf->getTransformation ( *PYTRANSFORMATION_O(arg0) );
 
     PyTransformation* resultPyTransf = PyObject_NEW ( PyTransformation, &PyTypeTransformation );
@@ -312,27 +311,27 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyTransformation_GetPoint ()"
+  // Attribute Method  :  "PyTransformation_getPoint ()"
 
-  static PyObject* PyTransformation_GetPoint ( PyTransformation *self, PyObject* args )
+  static PyObject* PyTransformation_getPoint ( PyTransformation *self, PyObject* args )
   {
-    trace << "PyTransformation_GetPoint ()" << endl;
+    trace << "PyTransformation_getPoint ()" << endl;
     
-    METHOD_HEAD ( "Transformation.GetPoint()" )
+    METHOD_HEAD ( "Transformation.getPoint()" )
 
     PyObject* arg0;
     PyObject* arg1;
     Point     result;
 
-    __cs.Init ("Transformation.GetPoint");
-    if ( ! PyArg_ParseTuple(args,"|O&O&:Transformation.GetPoint",Converter,&arg0,Converter,&arg1) )
+    __cs.Init ("Transformation.getPoint");
+    if ( ! PyArg_ParseTuple(args,"|O&O&:Transformation.getPoint",Converter,&arg0,Converter,&arg1) )
       return ( NULL );
 
-    if      ( __cs.GetObjectIds() == POINT_ARG ) { result = transf->getPoint ( *PYPOINT_O(arg0) ); }
-    else if ( __cs.GetObjectIds() == INTS2_ARG ) { result = transf->getPoint ( PyInt_AsLong(arg0)
+    if      ( __cs.getObjectIds() == POINT_ARG ) { result = transf->getPoint ( *PYPOINT_O(arg0) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG ) { result = transf->getPoint ( PyInt_AsLong(arg0)
                                                                              , PyInt_AsLong(arg1) ); }
     else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Tranformation.GetPoint()." );
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Tranformation.getPoint()." );
       return ( NULL );
     }
 
@@ -356,13 +355,13 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyTransformation_GetBox ()"
+  // Attribute Method  :  "PyTransformation_getBox ()"
 
-  static PyObject* PyTransformation_GetBox ( PyTransformation *self, PyObject* args )
+  static PyObject* PyTransformation_getBox ( PyTransformation *self, PyObject* args )
   {
-    trace << "PyTransformation_GetBox ()" << endl;
+    trace << "PyTransformation_getBox ()" << endl;
     
-    METHOD_HEAD ( "Transformation.GetBox()" )
+    METHOD_HEAD ( "Transformation.getBox()" )
 
     PyObject* arg0;
     PyObject* arg1;
@@ -370,23 +369,23 @@ extern "C" {
     PyObject* arg3;
     Box       result;
 
-    __cs.Init ("Transformation.GetBox");
-    if ( ! PyArg_ParseTuple(args,"|O&O&O&O&:Transformation.GetBox"
+    __cs.Init ("Transformation.getBox");
+    if ( ! PyArg_ParseTuple(args,"|O&O&O&O&:Transformation.getBox"
                            ,Converter,&arg0
                            ,Converter,&arg1
                            ,Converter,&arg2
                            ,Converter,&arg3) )
       return ( NULL );
 
-    if      ( __cs.GetObjectIds() == BOX_ARG     ) { result = transf->getBox ( *PYBOX_O(arg0) ); }
-    else if ( __cs.GetObjectIds() == POINTS2_ARG ) { result = transf->getBox ( *PYPOINT_O(arg0)
+    if      ( __cs.getObjectIds() == BOX_ARG     ) { result = transf->getBox ( *PYBOX_O(arg0) ); }
+    else if ( __cs.getObjectIds() == POINTS2_ARG ) { result = transf->getBox ( *PYPOINT_O(arg0)
                                                                              , *PYPOINT_O(arg1) ); }
-    else if ( __cs.GetObjectIds() == INTS4_ARG   ) { result = transf->getBox ( PyInt_AsLong(arg0)
+    else if ( __cs.getObjectIds() == INTS4_ARG   ) { result = transf->getBox ( PyInt_AsLong(arg0)
                                                                              , PyInt_AsLong(arg1)
                                                                              , PyInt_AsLong(arg2)
                                                                              , PyInt_AsLong(arg3) ); }
     else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Tranformation.GetBox()." );
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Tranformation.getBox()." );
       return ( NULL );
     }
 
@@ -410,13 +409,13 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyTransformation_GetInvert ()"
+  // Attribute Method  :  "PyTransformation_getInvert ()"
 
-  static PyObject* PyTransformation_GetInvert ( PyTransformation *self )
+  static PyObject* PyTransformation_getInvert ( PyTransformation *self )
   {
-    trace << "PyTransformation_GetInvert ()" << endl;
+    trace << "PyTransformation_getInvert ()" << endl;
     
-    METHOD_HEAD ( "Transformation.GetInvert()" )
+    METHOD_HEAD ( "Transformation.getInvert()" )
 
     Transformation  result = transf->getInvert ();
 
@@ -479,10 +478,10 @@ extern "C" {
     if ( ! PyArg_ParseTuple(args,"|O&O&:Transformation.ApplyOn",Converter,&arg0,Converter,&arg1) )
       return ( NULL );
 
-    if      ( __cs.GetObjectIds() == POINT_ARG ) { transf->applyOn ( *PYPOINT_O(arg0) ); }
-    else if ( __cs.GetObjectIds() == BOX_ARG   ) { transf->applyOn ( *PYBOX_O(arg0) ); }
-    else if ( __cs.GetObjectIds() == TRANS_ARG ) { transf->applyOn ( *PYTRANSFORMATION_O(arg0) ); }
-    else if ( __cs.GetObjectIds() == INTS2_ARG ) {
+    if      ( __cs.getObjectIds() == POINT_ARG ) { transf->applyOn ( *PYPOINT_O(arg0) ); }
+    else if ( __cs.getObjectIds() == BOX_ARG   ) { transf->applyOn ( *PYBOX_O(arg0) ); }
+    else if ( __cs.getObjectIds() == TRANS_ARG ) { transf->applyOn ( *PYTRANSFORMATION_O(arg0) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG ) {
       PyErr_SetString ( ConstructorError, "This set of ApplyOn() parameters has not been implemented." );
       return ( NULL );
     } else {
@@ -502,22 +501,22 @@ extern "C" {
   // PyTransformation Attribute Method table.
 
   PyMethodDef PyTransformation_Methods[] =
-    { { "GetTx"            , (PyCFunction)PyTransformation_GetTx            , METH_NOARGS, "Return the horizontal component of a Transformation." }
-    , { "GetTy"            , (PyCFunction)PyTransformation_GetTy            , METH_NOARGS, "Return the vertical component of a Transformation." }
-    , { "GetTranslation"   , (PyCFunction)PyTransformation_GetTranslation   , METH_NOARGS , "Return the translation component of a Transformation." }
-    , { "GetOrientation"   , (PyCFunction)PyTransformation_GetOrientation   , METH_NOARGS , "Return the orientation component of a Transformation." }
-    , { "GetX"             , (PyCFunction)PyTransformation_GetX             , METH_VARARGS, "Return X of transformed point <x,y>." }
-    , { "GetY"             , (PyCFunction)PyTransformation_GetY             , METH_VARARGS, "Return Y of transformed point <x,y>." }
-    , { "GetDx"            , (PyCFunction)PyTransformation_GetDx            , METH_VARARGS, "Return X of transformed point <x,y>." }
-    , { "GetDy"            , (PyCFunction)PyTransformation_GetDy            , METH_VARARGS, "Return Y of transformed point <x,y>." }
-    , { "GetTransformation", (PyCFunction)PyTransformation_GetTransformation, METH_VARARGS, "Return combined transformation." }
-    , { "GetPoint"         , (PyCFunction)PyTransformation_GetPoint         , METH_VARARGS, "Return transformed point <x,y>." }
-    , { "GetBox"           , (PyCFunction)PyTransformation_GetBox           , METH_VARARGS, "Return transformed box." }
-    , { "GetInvert"        , (PyCFunction)PyTransformation_GetInvert        , METH_NOARGS, "Return inverse transformation." }
+    { { "getTx"            , (PyCFunction)PyTransformation_getTx            , METH_NOARGS, "Return the horizontal component of a Transformation." }
+    , { "getTy"            , (PyCFunction)PyTransformation_getTy            , METH_NOARGS, "Return the vertical component of a Transformation." }
+    , { "getTranslation"   , (PyCFunction)PyTransformation_getTranslation   , METH_NOARGS , "Return the translation component of a Transformation." }
+    , { "getOrientation"   , (PyCFunction)PyTransformation_getOrientation   , METH_NOARGS , "Return the orientation component of a Transformation." }
+    , { "getX"             , (PyCFunction)PyTransformation_getX             , METH_VARARGS, "Return X of transformed point <x,y>." }
+    , { "getY"             , (PyCFunction)PyTransformation_getY             , METH_VARARGS, "Return Y of transformed point <x,y>." }
+    , { "getDx"            , (PyCFunction)PyTransformation_getDx            , METH_VARARGS, "Return X of transformed point <x,y>." }
+    , { "getDy"            , (PyCFunction)PyTransformation_getDy            , METH_VARARGS, "Return Y of transformed point <x,y>." }
+    , { "getTransformation", (PyCFunction)PyTransformation_getTransformation, METH_VARARGS, "Return combined transformation." }
+    , { "getPoint"         , (PyCFunction)PyTransformation_getPoint         , METH_VARARGS, "Return transformed point <x,y>." }
+    , { "getBox"           , (PyCFunction)PyTransformation_getBox           , METH_VARARGS, "Return transformed box." }
+    , { "getInvert"        , (PyCFunction)PyTransformation_getInvert        , METH_NOARGS, "Return inverse transformation." }
     , { "Invert"           , (PyCFunction)PyTransformation_Invert           , METH_NOARGS, "Inverse transformation." }
     , { "ApplyOn"          , (PyCFunction)PyTransformation_ApplyOn          , METH_VARARGS, "Apply transformation to object." }
-    , { "Delete"           , (PyCFunction)PyTransformation_Delete           , METH_NOARGS
-                           , "Delete associated hurricane object, the python object remains." }
+    , { "destroy"          , (PyCFunction)PyTransformation_destroy          , METH_NOARGS
+                           , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 
@@ -561,14 +560,14 @@ extern "C" {
                            ,Converter,&arg2
                            ) ) return ( NULL );
 
-    if      ( __cs.GetObjectIds() == NO_ARG        ) { transf = new Transformation (); }
-    else if ( __cs.GetObjectIds() == POINT_ARG     ) { transf = new Transformation ( *PYPOINT_O(arg0) ); }
-    else if ( __cs.GetObjectIds() == TRANS_ARG     ) { transf = new Transformation ( *PYTRANSFORMATION_O(arg0) ); }
-    else if ( __cs.GetObjectIds() == INTS2_ARG     ) { transf = new Transformation ( PyInt_AsLong(arg0)
+    if      ( __cs.getObjectIds() == NO_ARG        ) { transf = new Transformation (); }
+    else if ( __cs.getObjectIds() == POINT_ARG     ) { transf = new Transformation ( *PYPOINT_O(arg0) ); }
+    else if ( __cs.getObjectIds() == TRANS_ARG     ) { transf = new Transformation ( *PYTRANSFORMATION_O(arg0) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG     ) { transf = new Transformation ( PyInt_AsLong(arg0)
                                                                                    , PyInt_AsLong(arg1) ); }
-    else if ( __cs.GetObjectIds() == POINT_INT_ARG ) { transf = new Transformation ( *PYPOINT_O(arg0)
+    else if ( __cs.getObjectIds() == POINT_INT_ARG ) { transf = new Transformation ( *PYPOINT_O(arg0)
                                                                                    , PyInt_AsOrientation(arg1) ); }
-    else if ( __cs.GetObjectIds() == INTS3_ARG     ) { transf = new Transformation ( PyInt_AsLong(arg0)
+    else if ( __cs.getObjectIds() == INTS3_ARG     ) { transf = new Transformation ( PyInt_AsLong(arg0)
                                                                                    , PyInt_AsLong(arg1)
                                                                                    , PyInt_AsOrientation(arg2) ); }
     else {

@@ -87,25 +87,24 @@ extern "C" {
   DirectGetBoolAttribute(PyPath_IsEmpty   ,IsEmpty   ,PyPath,Path)
 
 
-  // Standart Delete (Attribute).
-  DirectDeleteAttribute(PyPath_Delete,PyPath)
+  // Standart Destroy (Attribute).
+  DirectDestroyAttribute(PyPath_destroy, PyPath)
 
 
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPath_GetHeadInstance ()"
+  // Attribute Method  :  "PyPath_getHeadInstance ()"
 
-  static PyObject* PyPath_GetHeadInstance ( PyPath *self )
-  {
-    trace << "PyPath_GetHeadInstance()" << endl;
+  static PyObject* PyPath_getHeadInstance ( PyPath *self ) {
+    trace << "PyPath_getHeadInstance()" << endl;
 
-    METHOD_HEAD ( "Path.GetHeadInstance()" )
+    METHOD_HEAD ( "Path.getHeadInstance()" )
 
     Instance* instance = NULL;
 
     HTRY
-    instance = path->GetHeadInstance();
+    instance = path->getHeadInstance();
     HCATCH    
 
     return PyInstance_Link ( instance );
@@ -113,18 +112,17 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPath_GetTailInstance ()"
+  // Attribute Method  :  "PyPath_getTailInstance ()"
 
-  static PyObject* PyPath_GetTailInstance ( PyPath *self )
-  {
-    trace << "PyPath_GetTailInstance()" << endl;
+  static PyObject* PyPath_getTailInstance ( PyPath *self ) {
+    trace << "PyPath_getTailInstance()" << endl;
 
-    METHOD_HEAD ( "Path.GetTailInstance()" )
+    METHOD_HEAD ( "Path.getTailInstance()" )
 
     Instance* instance = NULL;
 
     HTRY
-    instance = path->GetTailInstance();
+    instance = path->getTailInstance();
     HCATCH    
 
     return PyInstance_Link ( instance );
@@ -132,18 +130,17 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPath_GetOwnerCell ()"
+  // Attribute Method  :  "PyPath_getOwnerCell ()"
 
-  static PyObject* PyPath_GetOwnerCell ( PyPath *self )
-  {
-    trace << "PyPath_GetOwnerCell()" << endl;
+  static PyObject* PyPath_getOwnerCell ( PyPath *self ) {
+    trace << "PyPath_getOwnerCell()" << endl;
 
-    METHOD_HEAD ( "Path.GetOwnerCell()" )
+    METHOD_HEAD ( "Path.getOwnerCell()" )
 
     Cell* cell = NULL;
 
     HTRY
-    cell = path->GetOwnerCell();
+    cell = path->getOwnerCell();
     HCATCH    
 
     return PyCell_Link ( cell );
@@ -151,18 +148,17 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPath_GetMasterCell ()"
+  // Attribute Method  :  "PyPath_getMasterCell ()"
 
-  static PyObject* PyPath_GetMasterCell ( PyPath *self )
-  {
-    trace << "PyPath_GetMasterCell()" << endl;
+  static PyObject* PyPath_getMasterCell ( PyPath *self ) {
+    trace << "PyPath_getMasterCell()" << endl;
 
-    METHOD_HEAD ( "Path.GetMasterCell()" )
+    METHOD_HEAD ( "Path.getMasterCell()" )
 
     Cell* cell = NULL;
 
     HTRY
-    cell = path->GetMasterCell();
+    cell = path->getMasterCell();
     HCATCH    
 
     return PyCell_Link ( cell );
@@ -170,19 +166,18 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPath_GetName ()"
+  // Attribute Method  :  "PyPath_getName ()"
 
-  static PyObject* PyPath_GetName ( PyPath *self )
-  {
-    trace << "PyPath_GetName ()" << endl;
+  static PyObject* PyPath_getName ( PyPath *self ) {
+    trace << "PyPath_getName ()" << endl;
     
-    METHOD_HEAD ( "Path.GetName()" )
+    METHOD_HEAD ( "Path.getName()" )
 
     PyName* pyName = PyObject_NEW ( PyName, &PyTypeName );
     if ( pyName == NULL ) { return NULL; }
 
     HTRY
-    pyName->_object = new Name ( path->GetName() );
+    pyName->_object = new Name ( path->getName() );
     HCATCH
     
     return ( (PyObject*)pyName );
@@ -190,20 +185,19 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPath_GetHeadPath ()"
+  // Attribute Method  :  "PyPath_getHeadPath ()"
 
-  static PyObject* PyPath_GetHeadPath ( PyPath *self )
-  {
+  static PyObject* PyPath_getHeadPath ( PyPath *self ) {
 
-    trace << "PyPath_GetHeadPath ()" << endl;
+    trace << "PyPath_getHeadPath ()" << endl;
     
-    METHOD_HEAD ( "Path.GetHeadPath()" )
+    METHOD_HEAD ( "Path.getHeadPath()" )
 
     PyPath* pyPath = PyObject_NEW ( PyPath, &PyTypePath );
     if ( pyPath == NULL ) { return NULL; }
 
     HTRY
-    pyPath->_object = new Path ( path->GetHeadPath() );
+    pyPath->_object = new Path ( path->getHeadPath() );
     HCATCH
     
     return ( (PyObject*)pyPath );
@@ -211,20 +205,20 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPath_GetTailPath ()"
+  // Attribute Method  :  "PyPath_getTailPath ()"
 
-  static PyObject* PyPath_GetTailPath ( PyPath *self )
+  static PyObject* PyPath_getTailPath ( PyPath *self )
   {
 
-    trace << "PyPath_GetTailPath ()" << endl;
+    trace << "PyPath_getTailPath ()" << endl;
     
-    METHOD_HEAD ( "Path.GetTailPath()" )
+    METHOD_HEAD ( "Path.getTailPath()" )
 
     PyPath* pyPath = PyObject_NEW ( PyPath, &PyTypePath );
     if ( pyPath == NULL ) { return NULL; }
 
     HTRY
-    pyPath->_object = new Path ( path->GetTailPath() );
+    pyPath->_object = new Path ( path->getTailPath() );
     HCATCH
     
     return ( (PyObject*)pyPath );
@@ -232,26 +226,26 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPath_GetTransformation ()"
+  // Attribute Method  :  "PyPath_getTransformation ()"
 
-  static PyObject* PyPath_GetTransformation ( PyPath *self, PyObject* args )
+  static PyObject* PyPath_getTransformation ( PyPath *self, PyObject* args )
   {
-    trace << "PyPath_GetTransformation ()" << endl;
+    trace << "PyPath_getTransformation ()" << endl;
     
-    METHOD_HEAD ( "Instance.GetTransformation()" );
+    METHOD_HEAD ( "Instance.getTransformation()" );
 
     PyObject*         arg0;
     PyTransformation* pyTransf = PyObject_NEW ( PyTransformation, &PyTypeTransformation );
     if ( pyTransf == NULL ) { return NULL; }
 
-    __cs.Init ("Path.GetTransformation");
-    if ( ! PyArg_ParseTuple(args,"|O&:Path.GetTransformation",Converter,&arg0) ) return ( NULL );
+    __cs.Init ("Path.getTransformation");
+    if ( ! PyArg_ParseTuple(args,"|O&:Path.getTransformation",Converter,&arg0) ) return ( NULL );
 
     HTRY
-    if      ( __cs.GetObjectIds() == NO_ARG )
-      { pyTransf->_object = new Transformation ( path->GetTransformation () ); }
-    else if ( __cs.GetObjectIds() == TRANS_ARG )
-      { pyTransf->_object = new Transformation ( path->GetTransformation (*PYTRANSFORMATION_O(arg0)) ); }
+    if      ( __cs.getObjectIds() == NO_ARG )
+      { pyTransf->_object = new Transformation ( path->getTransformation () ); }
+    else if ( __cs.getObjectIds() == TRANS_ARG )
+      { pyTransf->_object = new Transformation ( path->getTransformation (*PYTRANSFORMATION_O(arg0)) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Path constructor." );
       return ( NULL );
@@ -264,22 +258,22 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPath_GetInstancesLocator ()"
+  // Attribute Method  :  "PyPath_getInstancesLocator ()"
 
-  static PyObject* PyPath_GetInstancesLocator ( PyPath *self )
+  static PyObject* PyPath_getInstancesLocator ( PyPath *self )
   {
 
-    trace << "PyPath_GetInstancesLocator ()" << endl;
+    trace << "PyPath_getInstancesLocator ()" << endl;
 
-    METHOD_HEAD ( "Path.GetInstancesLocator()" )
+    METHOD_HEAD ( "Path.getInstancesLocator()" )
 
-    Instances instances = path->GetInstances ();
+    Instances instances = path->getInstances ();
 
     PyInstanceLocator* pyInstanceLocator = PyObject_NEW ( PyInstanceLocator, &PyTypeInstanceLocator );
     if (pyInstanceLocator == NULL) { return NULL; }
 
     HTRY
-    pyInstanceLocator->_object = instances.GetLocator ();
+    pyInstanceLocator->_object = instances.getLocator ();
     HCATCH
 
     return ( (PyObject*)pyInstanceLocator );
@@ -292,18 +286,18 @@ extern "C" {
   // PyPath Attribute Method table.
 
   PyMethodDef PyPath_Methods[] =
-    { { "GetHeadInstance"    , (PyCFunction)PyPath_GetHeadInstance    , METH_NOARGS , "Return the head instance." }
-    , { "GetTailInstance"    , (PyCFunction)PyPath_GetTailInstance    , METH_NOARGS , "Return the tail instance." }
-    , { "GetHeadPath"        , (PyCFunction)PyPath_GetHeadPath        , METH_NOARGS , "Return the head path." }
-    , { "GetTailPath"        , (PyCFunction)PyPath_GetTailPath        , METH_NOARGS , "Return the tail path." }
-    , { "GetOwnerCell"       , (PyCFunction)PyPath_GetOwnerCell       , METH_NOARGS , "Return the cell owning the head instance." }
-    , { "GetMasterCell"      , (PyCFunction)PyPath_GetMasterCell      , METH_NOARGS , "Returns the master cell referenced by the last instance of the path." }
-    , { "GetName"            , (PyCFunction)PyPath_GetName            , METH_NOARGS , "Returns the concatenation of instances names." }
-    , { "GetTransformation"  , (PyCFunction)PyPath_GetTransformation  , METH_VARARGS, "Return the resulting transformation." }
-    , { "GetInstancesLocator", (PyCFunction)PyPath_GetInstancesLocator, METH_NOARGS , "Returns the collection of instances defining the path." }
+    { { "getHeadInstance"    , (PyCFunction)PyPath_getHeadInstance    , METH_NOARGS , "Return the head instance." }
+    , { "getTailInstance"    , (PyCFunction)PyPath_getTailInstance    , METH_NOARGS , "Return the tail instance." }
+    , { "getHeadPath"        , (PyCFunction)PyPath_getHeadPath        , METH_NOARGS , "Return the head path." }
+    , { "getTailPath"        , (PyCFunction)PyPath_getTailPath        , METH_NOARGS , "Return the tail path." }
+    , { "getOwnerCell"       , (PyCFunction)PyPath_getOwnerCell       , METH_NOARGS , "Return the cell owning the head instance." }
+    , { "getMasterCell"      , (PyCFunction)PyPath_getMasterCell      , METH_NOARGS , "Returns the master cell referenced by the last instance of the path." }
+    , { "getName"            , (PyCFunction)PyPath_getName            , METH_NOARGS , "Returns the concatenation of instances names." }
+    , { "getTransformation"  , (PyCFunction)PyPath_getTransformation  , METH_VARARGS, "Return the resulting transformation." }
+    , { "getInstancesLocator", (PyCFunction)PyPath_getInstancesLocator, METH_NOARGS , "Returns the collection of instances defining the path." }
     , { "IsEmpty"            , (PyCFunction)PyPath_IsEmpty            , METH_NOARGS , "Return true if the path is empty." }
-    , { "Delete"             , (PyCFunction)PyPath_Delete             , METH_NOARGS
-                             , "Delete associated hurricane object, the python object remains." }
+    , { "destroy"            , (PyCFunction)PyPath_destroy            , METH_NOARGS
+                             , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 
@@ -333,13 +327,13 @@ extern "C" {
 
     HTRY
 
-    if      ( __cs.GetObjectIds() == NO_ARG          ) { path = new Path (); }
-    else if ( __cs.GetObjectIds() == INST_ARG        ) { path = new Path (  PYINSTANCE_O(arg0) ); }
-    else if ( __cs.GetObjectIds() == INST_PATH_ARG   ) { path = new Path (  PYINSTANCE_O(arg0)
+    if      ( __cs.getObjectIds() == NO_ARG          ) { path = new Path (); }
+    else if ( __cs.getObjectIds() == INST_ARG        ) { path = new Path (  PYINSTANCE_O(arg0) ); }
+    else if ( __cs.getObjectIds() == INST_PATH_ARG   ) { path = new Path (  PYINSTANCE_O(arg0)
                                                                          , *PYPATH_O(arg1) ); }
-    else if ( __cs.GetObjectIds() == PATH_INST_ARG   ) { path = new Path ( *PYPATH_O(arg0)
+    else if ( __cs.getObjectIds() == PATH_INST_ARG   ) { path = new Path ( *PYPATH_O(arg0)
                                                                          ,  PYINSTANCE_O(arg1) ); }
-    else if ( __cs.GetObjectIds() == CELL_STRING_ARG ) { path = new Path (  PYCELL_O(arg0) 
+    else if ( __cs.getObjectIds() == CELL_STRING_ARG ) { path = new Path (  PYCELL_O(arg0) 
                                                                          ,  PyString_AsString(arg1) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Path constructor." );

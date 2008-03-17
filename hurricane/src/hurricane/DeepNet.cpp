@@ -96,8 +96,8 @@ namespace {
 // Constructor  :  "DeepNet::DeepNet ()".
 
 DeepNet::DeepNet ( Occurrence& netOccurrence )
-  : Net(netOccurrence.GetOwnerCell()
-       ,netOccurrence.GetName()
+  : Net(netOccurrence.getOwnerCell()
+       ,netOccurrence.getName()
        )
   , _netOccurrence(netOccurrence)
 {
@@ -107,13 +107,13 @@ DeepNet::DeepNet ( Occurrence& netOccurrence )
 
 
 // -------------------------------------------------------------------
-// Inspector Management  :  "DeepNet::_GetRecord ()".
+// Inspector Management  :  "DeepNet::_getRecord ()".
 
-Record* DeepNet::_GetRecord () const
+Record* DeepNet::_getRecord () const
 {
-  Record* record = Net::_GetRecord();
+  Record* record = Net::_getRecord();
   if (record) {
-		record->Add(GetSlot("_netOccurrence", &_netOccurrence));
+        record->Add(getSlot("_netOccurrence", &_netOccurrence));
   }
   return record;
 }
@@ -130,13 +130,13 @@ DeepNet* DeepNet::Create ( HyperNet& hyperNet )
   if ( !hyperNet.IsValid() )
     throw Error ( "Can't create " + _TName("DeepNet") + ": occurence is invalid." );
 
-  Occurrence  rootNetOccurrence = GetHyperNetRootNetOccurrence ( hyperNet.GetNetOccurrence() );
+  Occurrence  rootNetOccurrence = getHyperNetRootNetOccurrence ( hyperNet.getNetOccurrence() );
 
-  if (  rootNetOccurrence.GetMasterCell()->IsFlattenLeaf() ) return NULL;
-  if (  rootNetOccurrence.GetPath().IsEmpty() )              return NULL;
+  if (  rootNetOccurrence.getMasterCell()->IsFlattenLeaf() ) return NULL;
+  if (  rootNetOccurrence.getPath().IsEmpty() )              return NULL;
 
   DeepNet* deepNet = new DeepNet ( rootNetOccurrence );
-  deepNet->_PostCreate ();
+  deepNet->_postCreate ();
 
   return deepNet;
 }
@@ -154,13 +154,13 @@ size_t  DeepNet::_CreateRoutingPads ( bool buildRings )
 
   RoutingPad* previousRP = NULL;
   RoutingPad* currentRP  = NULL;
-  for_each_occurrence ( plugOccurrence, hyperNet.GetLeafPlugOccurrences() ) {
+  for_each_occurrence ( plugOccurrence, hyperNet.getLeafPlugOccurrences() ) {
     nbRoutingPads++;
 
     currentRP = CreateRoutingPad ( this, plugOccurrence );
     if ( buildRings ) {
       if ( previousRP ) {
-        currentRP->GetBodyHook()->Attach ( previousRP->GetBodyHook() );
+        currentRP->getBodyHook()->Attach ( previousRP->getBodyHook() );
       }
       previousRP = currentRP;
     }
@@ -175,15 +175,15 @@ size_t  DeepNet::_CreateRoutingPads ( bool buildRings )
 // -------------------------------------------------------------------
 // 
 
-Net* GetDeepNet(HyperNet& hypernet)
+Net* getDeepNet(HyperNet& hypernet)
 // ********************************
 {
-    Occurrence  rootNetOccurrence = GetHyperNetRootNetOccurrence ( hypernet.GetNetOccurrence() );
+    Occurrence  rootNetOccurrence = getHyperNetRootNetOccurrence ( hypernet.getNetOccurrence() );
 
-  //if (  rootNetOccurrence.GetMasterCell()->IsFlattenLeaf() ) return NULL;
-  //if (  rootNetOccurrence.GetPath().IsEmpty() )              return NULL;
+  //if (  rootNetOccurrence.getMasterCell()->IsFlattenLeaf() ) return NULL;
+  //if (  rootNetOccurrence.getPath().IsEmpty() )              return NULL;
 
-    return  rootNetOccurrence.GetOwnerCell()->GetNet(rootNetOccurrence.GetName());
+    return  rootNetOccurrence.getOwnerCell()->getNet(rootNetOccurrence.getName());
 
 }
 

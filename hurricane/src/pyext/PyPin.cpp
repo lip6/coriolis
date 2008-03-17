@@ -104,12 +104,12 @@ extern "C" {
 
   // Standart Accessors (Attributes).
   
-  PyObject* PyPin_GetAccessDirection( PyPin* self ) {
-      trace << "PyNet_GetAccessDirection ()" << endl;
+  PyObject* PyPin_getAccessDirection( PyPin* self ) {
+      trace << "PyNet_getAccessDirection ()" << endl;
 
-      METHOD_HEAD ( "Net.GetAccessDirection()" )
+      METHOD_HEAD ( "Net.getAccessDirection()" )
   
-      return (PyObject *)Py_BuildValue("l",  pin->GetAccessDirection().GetCode() );
+      return (PyObject *)Py_BuildValue("l",  pin->getAccessDirection().getCode() );
 
   }
     
@@ -118,7 +118,7 @@ extern "C" {
   // PyPin Attribute Method table.
 
   PyMethodDef PyPin_Methods[] =
-    { { "GetAccessDirection"  , (PyCFunction)PyPin_GetAccessDirection  , METH_NOARGS
+    { { "getAccessDirection"  , (PyCFunction)PyPin_getAccessDirection  , METH_NOARGS
                               , "Returns the pin accessdirection (by default set to UNDEFINED) ." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
@@ -188,7 +188,7 @@ extern "C" {
     string pin_arg1 = ":ent:name:int:int:layer:int:int:int:int";
     string pin_arg2 = ":ent:name:int:int:layer:int:int:int";
     string pin_arg3 = ":ent:name:int:int:layer:int:int";
-    if      ( __cs.GetObjectIds() == pin_arg1 ) { pin = Pin::Create ( PYNET_O ( arg0 )
+    if      ( __cs.getObjectIds() == pin_arg1 ) { pin = Pin::Create ( PYNET_O ( arg0 )
                                                                     , *PYNAME_O ( arg1 )
  											        				, PyInt_AsAccessDirection ( arg2 )
   											        				, PyInt_AsPlacementStatus ( arg3 )
@@ -197,7 +197,7 @@ extern "C" {
                                                                     , PyInt_AsLong ( arg6 )
                                                                     , PyInt_AsLong ( arg7 )
                                                                     , PyInt_AsLong ( arg8 ) ); }
-    else if ( __cs.GetObjectIds() == pin_arg2 ) { pin = Pin::Create ( PYNET_O ( arg0 )
+    else if ( __cs.getObjectIds() == pin_arg2 ) { pin = Pin::Create ( PYNET_O ( arg0 )
                                                                     , *PYNAME_O ( arg1 )
  											        				, PyInt_AsAccessDirection ( arg2 )
   											        				, PyInt_AsPlacementStatus ( arg3 )
@@ -205,7 +205,7 @@ extern "C" {
                                                                     , PyInt_AsLong ( arg5 )
                                                                     , PyInt_AsLong ( arg6 )
                                                                     , PyInt_AsLong ( arg7 ) ); }
-    else if ( __cs.GetObjectIds() == pin_arg3 ) { pin = Pin::Create ( PYNET_O ( arg0 )
+    else if ( __cs.getObjectIds() == pin_arg3 ) { pin = Pin::Create ( PYNET_O ( arg0 )
                                                                     , *PYNAME_O ( arg1 )
  											        				, PyInt_AsAccessDirection ( arg2 )
   											        				, PyInt_AsPlacementStatus ( arg3 )

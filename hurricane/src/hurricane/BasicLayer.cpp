@@ -37,14 +37,14 @@ class BasicLayer_BasicLayers : public Collection<BasicLayer*> {
 
         public: Locator& operator=(const Locator& locator);
 
-        public: virtual BasicLayer* GetElement() const;
-        public: virtual Hurricane::Locator<BasicLayer*>* GetClone() const;
+        public: virtual BasicLayer* getElement() const;
+        public: virtual Hurricane::Locator<BasicLayer*>* getClone() const;
 
         public: virtual bool IsValid() const;
 
         public: virtual void Progress();
 
-        public: virtual string _GetString() const;
+        public: virtual string _getString() const;
 
     };
 
@@ -67,13 +67,13 @@ class BasicLayer_BasicLayers : public Collection<BasicLayer*> {
 // Accessors
 // *********
 
-    public: virtual Collection<BasicLayer*>* GetClone() const;
-    public: virtual Hurricane::Locator<BasicLayer*>* GetLocator() const;
+    public: virtual Collection<BasicLayer*>* getClone() const;
+    public: virtual Hurricane::Locator<BasicLayer*>* getLocator() const;
 
 // Others
 // ******
 
-    public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -102,7 +102,7 @@ BasicLayer* BasicLayer::create(Technology* technology, const Name& name, const T
     BasicLayer* basicLayer =
         new BasicLayer(technology, name, type, extractNumber, minimalSize, minimalSpacing);
 
-    basicLayer->_PostCreate();
+    basicLayer->_postCreate();
 
     return basicLayer;
 }
@@ -139,11 +139,11 @@ void BasicLayer::setFillPattern(const string& fillPattern)
     }
 }
 
-void BasicLayer::_PostCreate()
+void BasicLayer::_postCreate()
 // ***************************
 {
     Mask basicLayersMask = 0;
-    for_each_basic_layer(basicLayer, getTechnology()->GetBasicLayers()) {
+    for_each_basic_layer(basicLayer, getTechnology()->getBasicLayers()) {
         basicLayersMask |= basicLayer->getMask();
         end_for;
     }
@@ -165,40 +165,40 @@ void BasicLayer::_PostCreate()
         _setExtractMask(extractMask);
     }
 
-    Inherit::_PostCreate();
+    Inherit::_postCreate();
 }
 
-void BasicLayer::_PreDelete()
+void BasicLayer::_preDestroy()
 // **************************
 {
-    Inherit::_PreDelete();
+    Inherit::_preDestroy();
 
-    CompositeLayers compositeLayers = getTechnology()->GetCompositeLayers();
+    CompositeLayers compositeLayers = getTechnology()->getCompositeLayers();
     for_each_composite_layer(compositeLayer, compositeLayers) {
         if (compositeLayer->contains(this)) compositeLayer->remove(this);
         end_for;
     }
 }
 
-string BasicLayer::_GetString() const
+string BasicLayer::_getString() const
 // **********************************
 {
-    string s = Inherit::_GetString();
-    // s.insert(s.length() - 1, " " + GetString(_type));
+    string s = Inherit::_getString();
+    // s.insert(s.length() - 1, " " + getString(_type));
     return s;
 }
 
-Record* BasicLayer::_GetRecord() const
+Record* BasicLayer::_getRecord() const
 // *****************************
 {
-    Record* record = Inherit::_GetRecord();
+    Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(GetSlot("Type", &_type));
-        record->Add(GetSlot("RedValue", &_redValue));
-        record->Add(GetSlot("GreenValue", &_greenValue));
-        record->Add(GetSlot("BlueValue", &_blueValue));
-        record->Add(GetSlot("FillPattern", &_fillPattern));
-        record->Add(GetSlot("DisplayThreshold", &_displayThreshold));
+        record->Add(getSlot("Type", &_type));
+        record->Add(getSlot("RedValue", &_redValue));
+        record->Add(getSlot("GreenValue", &_greenValue));
+        record->Add(getSlot("BlueValue", &_blueValue));
+        record->Add(getSlot("FillPattern", &_fillPattern));
+        record->Add(getSlot("DisplayThreshold", &_displayThreshold));
     }
     return record;
 }
@@ -228,23 +228,23 @@ BasicLayer_BasicLayers& BasicLayer_BasicLayers::operator=(const BasicLayer_Basic
     return *this;
 }
 
-Collection<BasicLayer*>* BasicLayer_BasicLayers::GetClone() const
+Collection<BasicLayer*>* BasicLayer_BasicLayers::getClone() const
 // **************************************************************
 {
     return new BasicLayer_BasicLayers(*this);
 }
 
-Locator<BasicLayer*>* BasicLayer_BasicLayers::GetLocator() const
+Locator<BasicLayer*>* BasicLayer_BasicLayers::getLocator() const
 // *************************************************************
 {
     return new Locator(_basicLayer);
 }
 
-string BasicLayer_BasicLayers::_GetString() const
+string BasicLayer_BasicLayers::_getString() const
 // **********************************************
 {
     string s = "<" + _TName("BasicLayer::BasicLayers");
-    if (_basicLayer) s += " " + GetString(_basicLayer);
+    if (_basicLayer) s += " " + getString(_basicLayer);
     s += ">";
     return s;
 }
@@ -276,13 +276,13 @@ BasicLayer_BasicLayers::Locator& BasicLayer_BasicLayers::Locator::operator=(cons
     return *this;
 }
 
-BasicLayer* BasicLayer_BasicLayers::Locator::GetElement() const
+BasicLayer* BasicLayer_BasicLayers::Locator::getElement() const
 // ************************************************************
 {
     return (BasicLayer*)_basicLayer;
 }
 
-Locator<BasicLayer*>* BasicLayer_BasicLayers::Locator::GetClone() const
+Locator<BasicLayer*>* BasicLayer_BasicLayers::Locator::getClone() const
 // ********************************************************************
 {
     return new Locator(*this);
@@ -300,11 +300,11 @@ void BasicLayer_BasicLayers::Locator::Progress()
     _basicLayer = NULL;
 }
 
-string BasicLayer_BasicLayers::Locator::_GetString() const
+string BasicLayer_BasicLayers::Locator::_getString() const
 // *******************************************************
 {
     string s = "<" + _TName("BasicLayer::BasicLayers::Locator");
-    if (_basicLayer) s += " " + GetString(_basicLayer);
+    if (_basicLayer) s += " " + getString(_basicLayer);
     s += ">";
     return s;
 }
@@ -334,17 +334,17 @@ BasicLayer::Type& BasicLayer::Type::operator=(const Type& type)
     return *this;
 }
 
-string BasicLayer::Type::_GetString() const
+string BasicLayer::Type::_getString() const
 // ****************************************
 {
-    return GetString(_code);
+    return getString(_code);
 }
 
-Record* BasicLayer::Type::_GetRecord() const
+Record* BasicLayer::Type::_getRecord() const
 // ***********************************
 {
-    Record* record = new Record(GetString(this));
-    record->Add(GetSlot("Code", &_code));
+    Record* record = new Record(getString(this));
+    record->Add(getSlot("Code", &_code));
     return record;
 }
 

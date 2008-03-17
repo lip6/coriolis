@@ -37,14 +37,14 @@ class SharedPath_Instances : public Collection<Instance*> {
 
         public: Locator& operator=(const Locator& locator);
 
-        public: virtual Instance* GetElement() const;
-        public: virtual Hurricane::Locator<Instance*>* GetClone() const;
+        public: virtual Instance* getElement() const;
+        public: virtual Hurricane::Locator<Instance*>* getClone() const;
 
         public: virtual bool IsValid() const;
 
         public: virtual void Progress();
 
-        public: virtual string _GetString() const;
+        public: virtual string _getString() const;
     };
 
 // Attributes
@@ -66,13 +66,13 @@ class SharedPath_Instances : public Collection<Instance*> {
 // Accessors
 // *********
 
-    public: virtual Collection<Instance*>* GetClone() const;
-    public: virtual Hurricane::Locator<Instance*>* GetLocator() const;
+    public: virtual Collection<Instance*>* getClone() const;
+    public: virtual Hurricane::Locator<Instance*>* getLocator() const;
 
 // Others
 // ******
 
-    public: virtual string _GetString() const;
+    public: virtual string _getString() const;
 
 };
 
@@ -94,99 +94,99 @@ SharedPath::SharedPath(Instance* headInstance, SharedPath* tailSharedPath)
     if (!_headInstance)
         throw Error("Can't create " + _TName("SharedPath") + " : null head instance");
 
-    if (_headInstance->_GetSharedPath(_tailSharedPath))
+    if (_headInstance->_getSharedPath(_tailSharedPath))
         throw Error("Can't create " + _TName("SharedPath") + " : already exists");
 
-    if (_tailSharedPath && (_tailSharedPath->GetOwnerCell() != _headInstance->GetMasterCell()))
+    if (_tailSharedPath && (_tailSharedPath->getOwnerCell() != _headInstance->getMasterCell()))
         throw Error("Can't create " + _TName("SharedPath") + " : incompatible tail path");
 
-    _headInstance->_GetSharedPathMap()._Insert(this);
+    _headInstance->_getSharedPathMap()._Insert(this);
 }
 
 SharedPath::~SharedPath()
 // **********************
 {
-    for_each_quark(quark, _GetQuarks()) quark->Delete(); end_for;
+    for_each_quark(quark, _getQuarks()) quark->destroy(); end_for;
 
-    Cell* cell = _headInstance->GetCell();
-    for_each_instance(instance, cell->GetSlaveInstances()) {
-        SharedPath* sharedPath = instance->_GetSharedPath(this);
+    Cell* cell = _headInstance->getCell();
+    for_each_instance(instance, cell->getSlaveInstances()) {
+        SharedPath* sharedPath = instance->_getSharedPath(this);
         if (sharedPath) delete sharedPath;
         end_for;
     }
-    _headInstance->_GetSharedPathMap()._Remove(this);
+    _headInstance->_getSharedPathMap()._Remove(this);
 }
 
-SharedPath* SharedPath::GetHeadSharedPath() const
+SharedPath* SharedPath::getHeadSharedPath() const
 // **********************************************
 {
     if (!_tailSharedPath) return NULL;
 
-    SharedPath* tailSharedPath = _tailSharedPath->GetHeadSharedPath();
+    SharedPath* tailSharedPath = _tailSharedPath->getHeadSharedPath();
 
-    SharedPath* headSharedPath = _headInstance->_GetSharedPath(tailSharedPath);
+    SharedPath* headSharedPath = _headInstance->_getSharedPath(tailSharedPath);
 
     if (!headSharedPath) headSharedPath = new SharedPath(_headInstance, tailSharedPath);
 
     return headSharedPath;
 }
 
-Instance* SharedPath::GetTailInstance() const
+Instance* SharedPath::getTailInstance() const
 // ******************************************
 {
-    return (_tailSharedPath) ? _tailSharedPath->GetTailInstance() : _headInstance;
+    return (_tailSharedPath) ? _tailSharedPath->getTailInstance() : _headInstance;
 }
 
-char SharedPath::GetNameSeparator()
+char SharedPath::getNameSeparator()
 // ********************************
 {
     return NAME_SEPARATOR;
 }
 
-string SharedPath::GetName() const
+string SharedPath::getName() const
 // *******************************
 {
     string name = "";
     string nameSeparator = "";
     SharedPath* sharedPath = (SharedPath*)this;
     while (sharedPath) {
-        name += nameSeparator + GetString(sharedPath->GetHeadInstance()->GetName());
-        nameSeparator = GetString(GetNameSeparator());
-        sharedPath = sharedPath->GetTailSharedPath();
+        name += nameSeparator + getString(sharedPath->getHeadInstance()->getName());
+        nameSeparator = getString(getNameSeparator());
+        sharedPath = sharedPath->getTailSharedPath();
     }
     return name;
 }
 
-Cell* SharedPath::GetOwnerCell() const
+Cell* SharedPath::getOwnerCell() const
 // ***********************************
 {
-    return _headInstance->GetCell();
+    return _headInstance->getCell();
 }
 
-Cell* SharedPath::GetMasterCell() const
+Cell* SharedPath::getMasterCell() const
 // ************************************
 {
     Cell* masterCell = NULL;
     SharedPath* sharedPath = (SharedPath*)this;
     while (sharedPath) {
-        masterCell = sharedPath->GetHeadInstance()->GetMasterCell();
-        sharedPath = sharedPath->GetTailSharedPath();
+        masterCell = sharedPath->getHeadInstance()->getMasterCell();
+        sharedPath = sharedPath->getTailSharedPath();
     }
     return masterCell;
 }
 
-Instances SharedPath::GetInstances() const
+Instances SharedPath::getInstances() const
 // ***************************************
 {
     return SharedPath_Instances(this);
 }
 
-Transformation SharedPath::GetTransformation(const Transformation& transformation) const
+Transformation SharedPath::getTransformation(const Transformation& transformation) const
 // *************************************************************************************
 {
-    Transformation headTransformation = _headInstance->GetTransformation();
+    Transformation headTransformation = _headInstance->getTransformation();
     Transformation tailTransformation =
-        (!_tailSharedPath) ? transformation : _tailSharedPath->GetTransformation(transformation);
+        (!_tailSharedPath) ? transformation : _tailSharedPath->getTransformation(transformation);
     return headTransformation.getTransformation(tailTransformation);
 }
 
@@ -196,24 +196,24 @@ void SharedPath::SetNameSeparator(char nameSeparator)
     NAME_SEPARATOR = nameSeparator;
 }
 
-string SharedPath::_GetString() const
+string SharedPath::_getString() const
 // **********************************
 {
     string s = "<" + _TName("SharedPath");
-    string name = GetName();
+    string name = getName();
     if (!name.empty()) s += " " + name;
     s += ">";
     return s;
 }
 
-Record* SharedPath::_GetRecord() const
+Record* SharedPath::_getRecord() const
 // *****************************
 {
-     Record* record = new Record(GetString(this));
+     Record* record = new Record(getString(this));
     if (record) {
-        record->Add(GetSlot("HeadInstance", _headInstance));
-        record->Add(GetSlot("TailSharedPath", _tailSharedPath));
-        record->Add(GetSlot("Quarks", &_quarkMap));
+        record->Add(getSlot("HeadInstance", _headInstance));
+        record->Add(getSlot("TailSharedPath", _tailSharedPath));
+        record->Add(getSlot("Quarks", &_quarkMap));
     }
     return record;
 }
@@ -230,22 +230,22 @@ SharedPath::QuarkMap::QuarkMap()
 {
 }
 
-const Entity* SharedPath::QuarkMap::_GetKey(Quark* quark) const
+const Entity* SharedPath::QuarkMap::_getKey(Quark* quark) const
 // ************************************************************
 {
-    return quark->GetOccurrence().GetEntity();
+    return quark->getOccurrence().getEntity();
 }
 
-unsigned SharedPath::QuarkMap::_GetHashValue(const Entity* entity) const
+unsigned SharedPath::QuarkMap::_getHashValue(const Entity* entity) const
 // *********************************************************************
 {
     return ( (unsigned int)( (unsigned long)entity ) ) / 8;
 }
 
-Quark* SharedPath::QuarkMap::_GetNextElement(Quark* quark) const
+Quark* SharedPath::QuarkMap::_getNextElement(Quark* quark) const
 // *************************************************************
 {
-    return quark->_GetNextOfSharedPathQuarkMap();
+    return quark->_getNextOfSharedPathQuarkMap();
 }
 
 void SharedPath::QuarkMap::_SetNextElement(Quark* quark, Quark* nextQuark) const
@@ -281,23 +281,23 @@ SharedPath_Instances& SharedPath_Instances::operator=(const SharedPath_Instances
     return *this;
 }
 
-Collection<Instance*>* SharedPath_Instances::GetClone() const
+Collection<Instance*>* SharedPath_Instances::getClone() const
 // **********************************************************
 {
     return new SharedPath_Instances(*this);
 }
 
-Locator<Instance*>* SharedPath_Instances::GetLocator() const
+Locator<Instance*>* SharedPath_Instances::getLocator() const
 // *********************************************************
 {
     return new Locator(_sharedPath);
 }
 
-string SharedPath_Instances::_GetString() const
+string SharedPath_Instances::_getString() const
 // ********************************************
 {
     string s = "<" + _TName("SharedPath::Instances");
-    if (_sharedPath) s += " " + GetString(_sharedPath);
+    if (_sharedPath) s += " " + getString(_sharedPath);
     s += ">";
     return s;
 }
@@ -329,13 +329,13 @@ SharedPath_Instances::Locator& SharedPath_Instances::Locator::operator=(const Lo
     return *this;
 }
 
-Instance* SharedPath_Instances::Locator::GetElement() const
+Instance* SharedPath_Instances::Locator::getElement() const
 // ********************************************************
 {
-    return (_sharedPath) ? _sharedPath->GetHeadInstance() : NULL;
+    return (_sharedPath) ? _sharedPath->getHeadInstance() : NULL;
 }
 
-Locator<Instance*>* SharedPath_Instances::Locator::GetClone() const
+Locator<Instance*>* SharedPath_Instances::Locator::getClone() const
 // ****************************************************************
 {
     return new Locator(*this);
@@ -350,14 +350,14 @@ bool SharedPath_Instances::Locator::IsValid() const
 void SharedPath_Instances::Locator::Progress()
 // *******************************************
 {
-    if (_sharedPath) _sharedPath = _sharedPath->GetTailSharedPath();
+    if (_sharedPath) _sharedPath = _sharedPath->getTailSharedPath();
 }
 
-string SharedPath_Instances::Locator::_GetString() const
+string SharedPath_Instances::Locator::_getString() const
 // *****************************************************
 {
     string s = "<" + _TName("SharedPath::Instances::Locator");
-    if (_sharedPath) s += " " + GetString(_sharedPath);
+    if (_sharedPath) s += " " + getString(_sharedPath);
     s += ">";
     return s;
 }

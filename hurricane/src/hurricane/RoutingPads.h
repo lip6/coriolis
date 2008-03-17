@@ -50,9 +50,9 @@ typedef GenericFilter<RoutingPad*> RoutingPadFilter;
 #define for_each_routing_pad(routingpad, routingpads)\
 /*********************************/\
 {\
-	RoutingPadLocator _locator = routingpads.GetLocator();\
+	RoutingPadLocator _locator = routingpads.getLocator();\
 	while (_locator.IsValid()) {\
-		RoutingPad* routingpad = _locator.GetElement();\
+		RoutingPad* routingpad = _locator.getElement();\
 		_locator.Progress();
 
 

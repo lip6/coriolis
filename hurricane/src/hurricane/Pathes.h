@@ -45,9 +45,9 @@ typedef GenericFilter<Path> PathFilter;
 #define for_each_path(path, pathes)\
 /**********************************/\
 {\
-	PathLocator _locator = pathes.GetLocator();\
+	PathLocator _locator = pathes.getLocator();\
 	while (_locator.IsValid()) {\
-		Path path = _locator.GetElement();\
+		Path path = _locator.getElement();\
 		_locator.Progress();
 
 

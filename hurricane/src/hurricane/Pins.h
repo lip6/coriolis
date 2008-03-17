@@ -50,9 +50,9 @@ typedef GenericFilter<Pin*> PinFilter;
 #define for_each_pin(pin, pins)\
 /******************************/\
 {\
-	PinLocator _locator = pins.GetLocator();\
+	PinLocator _locator = pins.getLocator();\
 	while (_locator.IsValid()) {\
-		Pin* pin = _locator.GetElement();\
+		Pin* pin = _locator.getElement();\
 		_locator.Progress();
 
 

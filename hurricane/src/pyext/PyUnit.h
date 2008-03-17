@@ -53,13 +53,13 @@
 
 
 
-# ifndef  __PYUNIT__
-#   define  __PYUNIT__
+#ifndef  __PYUNIT__
+#define  __PYUNIT__
 
 
-# include  "PyHurricane.h"
+#include  "PyHurricane.h"
 
-# include  "Unit.h"
+#include  "Unit.h"
 
 
 namespace  Isobar {
@@ -77,8 +77,8 @@ extern "C" {
 // -------------------------------------------------------------------
 // Functions & Types exported to "PyHurricane.ccp".
 
-  extern  PyObject* PyUnit_GetUnit  ( PyObject* module, PyObject* args );
-  extern  PyObject* PyUnit_GetValue ( PyObject* module, PyObject* args );
+  extern  PyObject* PyUnit_getUnit  ( PyObject* module, PyObject* args );
+  extern  PyObject* PyUnit_getValue ( PyObject* module, PyObject* args );
 
 
 }  // End of extern "C".
@@ -91,4 +91,4 @@ extern "C" {
 
 
 
-# endif
+#endif

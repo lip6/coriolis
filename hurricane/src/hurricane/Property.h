@@ -26,43 +26,43 @@ class Property : public NestedSlotAdapter {
 // Constructors
 // ************
 
-	protected: Property();
+    protected: Property();
 
-	private: Property(const Property& property); // not implemented to forbid copy construction
+    private: Property(const Property& property); // not implemented to forbid copy construction
 
 // Destructors
 // ***********
 
-	protected: virtual ~Property();
+    protected: virtual ~Property();
 
-	public: virtual void Delete();
+    public: virtual void destroy();
 
 // Operators
 // *********
 
-	private: Property& operator=(const Property& property); // not implemented to forbid assignment
+    private: Property& operator=(const Property& property); // not implemented to forbid assignment
 
 // Accessors
 // *********
 
-	public: virtual Name GetName() const = 0;
+    public: virtual Name getName() const = 0;
 
 // Managers
 // ********
 
-	public: virtual void OnCapturedBy(DBo* owner) = 0;
-	public: virtual void OnReleasedBy(DBo* owner) = 0;
+    public: virtual void onCapturedBy(DBo* owner) = 0;
+    public: virtual void onReleasedBy(DBo* owner) = 0;
 
 // Others
 // ******
 
-	protected: virtual void _PostCreate();
+    protected: virtual void _postCreate() {};
 
-	protected: virtual void _PreDelete();
+    protected: virtual void _preDestroy() {};
 
-	public: virtual string _GetTypeName() const = 0;
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
+    public: virtual string _getTypeName() const = 0;
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
 
 };
 
@@ -78,37 +78,37 @@ class PrivateProperty : public Property {
 // Types
 // *****
 
-	public: typedef Property Inherit;
+    public: typedef Property Inherit;
 
 // Attributes
 // **********
 
-	private: DBo* _owner;
+    private: DBo* _owner;
 
 // Constructors
 // ************
 
-	protected: PrivateProperty();
+    protected: PrivateProperty();
 
 // Accessors
 // *********
 
-	public: DBo* GetOwner() const {return _owner;};
+    public: DBo* getOwner() const {return _owner;};
 
 // Managers
 // ********
 
-	public: virtual void OnCapturedBy(DBo* owner);
-	public: virtual void OnReleasedBy(DBo* owner);
-	public: virtual void OnNotOwned();
+    public: virtual void onCapturedBy(DBo* owner);
+    public: virtual void onReleasedBy(DBo* owner);
+    public: virtual void onNotOwned();
 
 // Others
 // ******
 
-	protected: virtual void _PreDelete();
+    protected: virtual void _preDestroy();
 
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
 
 };
 
@@ -124,86 +124,86 @@ template<class Value> class StandardPrivateProperty : public PrivateProperty {
 // Types
 // *****
 
-	public: typedef PrivateProperty Inherit;
+    public: typedef PrivateProperty Inherit;
 
 // Attributes
 // **********
 
-	private: Name _name;
-	private: Value _value;
+    private: Name _name;
+    private: Value _value;
 
 // Constructors
 // ************
 
-	protected: StandardPrivateProperty(const Name& name, const Value& value)
-	// *********************************************************************
-	:	Inherit(),
-		_name(name),
-		_value(value)
-	{
-	};
+    protected: StandardPrivateProperty(const Name& name, const Value& value)
+    // *********************************************************************
+    :    Inherit(),
+        _name(name),
+        _value(value)
+    {
+    };
 
-	public: static StandardPrivateProperty* Create(const Name& name, const Value& value )
-	// **********************************************************************************
-	{
-		StandardPrivateProperty* property = new StandardPrivateProperty(name, value);
+    public: static StandardPrivateProperty* create(const Name& name, const Value& value )
+    // **********************************************************************************
+    {
+        StandardPrivateProperty* property = new StandardPrivateProperty(name, value);
 
-		property->_PostCreate();
+        property->_postCreate();
 
-		return property;
-	};
+        return property;
+    };
 
 // Accessors
 // *********
 
-	public: virtual Name GetName() const
-	// *********************************
-	{
-		return _name;
-	};
+    public: virtual Name getName() const
+    // *********************************
+    {
+        return _name;
+    };
 
-	public: const Value& GetValue() const
-	// **********************************
-	{
-		return _value;
-	};
+    public: const Value& getValue() const
+    // **********************************
+    {
+        return _value;
+    };
 
 // Modifieurs
 // **********
 
-	public: void SetValue(const Value& value)
-	// **************************************
-	{
-		_value = value;
-	};
+    public: void setValue(const Value& value)
+    // **************************************
+    {
+        _value = value;
+    };
 
 // Others
 // ******
 
-	public: virtual string _GetTypeName() const
-	// ****************************************
-	{
-		return _TName("StandardPrivateProperty");
-	};
+    public: virtual string _getTypeName() const
+    // ****************************************
+    {
+        return _TName("StandardPrivateProperty");
+    };
 
-	public: virtual string _GetString() const
-	// **************************************
-	{
-		string s = Inherit::_GetString();
-		s.insert(s.length() - 1, " " + GetString(_value));
-		return s;
-	};
+    public: virtual string _getString() const
+    // **************************************
+    {
+        string s = Inherit::_getString();
+        s.insert(s.length() - 1, " " + getString(_value));
+        return s;
+    };
 
-	public: virtual Record* _GetRecord() const
-	// *********************************
-	{
-		Record* record = Inherit::_GetRecord();
-		if (record) {
-			record->Add(GetSlot("Name", &_name));
-			record->Add(GetSlot("Value", _value));
-		}
-		return record;
-	};
+    public: virtual Record* _getRecord() const
+    // *********************************
+    {
+        Record* record = Inherit::_getRecord();
+        if (record) {
+            record->Add(getSlot("Name", &_name));
+            record->Add(getSlot("Value", _value));
+        }
+        return record;
+    };
 
 };
 
@@ -219,40 +219,40 @@ class SharedProperty : public Property {
 // Types
 // *****
 
-	public: typedef Property Inherit;
-	public: typedef set<DBo*> DBoSet;
+    public: typedef Property Inherit;
+    public: typedef set<DBo*> DBoSet;
 
 // Attributes
 // **********
 
-	private: DBoSet _ownerSet;
+    private: DBoSet _ownerSet;
 
 // Constructors
 // ************
 
-	protected: SharedProperty();
+    protected: SharedProperty();
 
 // Accessors
 // *********
 
-	public: DBos GetOwners() const {return GetCollection(_ownerSet);};
+    public: DBos getOwners() const {return getCollection(_ownerSet);};
 
 // Managers
 // ********
 
-	public: virtual void OnCapturedBy(DBo* owner);
-	public: virtual void OnReleasedBy(DBo* owner);
-	public: virtual void OnNotOwned();
+    public: virtual void onCapturedBy(DBo* owner);
+    public: virtual void onReleasedBy(DBo* owner);
+    public: virtual void onNotOwned();
 
 // Accessors
 // *********
 
-	protected: virtual void _PreDelete();
+    protected: virtual void _preDestroy();
 
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
 
-	public: DBoSet& _GetOwnerSet() {return _ownerSet;};
+    public: DBoSet& _getOwnerSet() {return _ownerSet;};
 
 };
 
@@ -268,86 +268,86 @@ template<class Value> class StandardSharedProperty : public SharedProperty {
 // Types
 // *****
 
-	public: typedef SharedProperty Inherit;
+    public: typedef SharedProperty Inherit;
 
 // Attributes
 // **********
 
-	private: Name _name;
-	private: Value _value;
+    private: Name _name;
+    private: Value _value;
 
 // Constructors
 // ************
 
-	protected: StandardSharedProperty(const Name& name, const Value& value)
-	// ********************************************************************
-	:	Inherit(),
-		_name(name),
-		_value(value)
-	{
-	};
+    protected: StandardSharedProperty(const Name& name, const Value& value)
+    // ********************************************************************
+    :    Inherit(),
+        _name(name),
+        _value(value)
+    {
+    };
 
-	public: static StandardSharedProperty* Create(const Name& name, const Value& value )
-	// *********************************************************************************
-	{
-		StandardSharedProperty* property = new StandardSharedProperty(name, value);
+    public: static StandardSharedProperty* Create(const Name& name, const Value& value )
+    // *********************************************************************************
+    {
+        StandardSharedProperty* property = new StandardSharedProperty(name, value);
 
-		property->_PostCreate();
+        property->_postCreate();
 
-		return property;
-	};
+        return property;
+    };
 
 // Accessors
 // *********
 
-	public: virtual Name GetName() const
-	// *********************************
-	{
-		return _name;
-	};
+    public: virtual Name getName() const
+    // *********************************
+    {
+        return _name;
+    };
 
-	public: const Value& GetValue() const
-	// **********************************
-	{
-		return _value;
-	};
+    public: const Value& getValue() const
+    // **********************************
+    {
+        return _value;
+    };
 
 // Modifieurs
 // **********
 
-	public: void SetValue(const Value& value)
-	// **************************************
-	{
-		_value = value;
-	};
+    public: void setValue(const Value& value)
+    // **************************************
+    {
+        _value = value;
+    };
 
 // Others
 // ******
 
-	public: virtual string _GetTypeName() const
-	// ****************************************
-	{
-		return _TName("StandardSharedProperty");
-	};
+    public: virtual string _getTypeName() const
+    // ****************************************
+    {
+        return _TName("StandardSharedProperty");
+    };
 
-	public: virtual string _GetString() const
-	// **************************************
-	{
-		string s = Inherit::_GetString();
-		s.insert(s.length() - 1, " " + GetString(_value));
-		return s;
-	};
+    public: virtual string _getString() const
+    // **************************************
+    {
+        string s = Inherit::_getString();
+        s.insert(s.length() - 1, " " + getString(_value));
+        return s;
+    };
 
-	public: virtual Record* _GetRecord() const
-	// *********************************
-	{
-		Record* record = Inherit::_GetRecord();
-		if (record) {
-			record->Add(GetSlot("Name", &_name));
-			record->Add(GetSlot("Value", &_value));
-		}
-		return record;
-	};
+    public: virtual Record* _getRecord() const
+    // *********************************
+    {
+        Record* record = Inherit::_getRecord();
+        if (record) {
+            record->Add(getSlot("Name", &_name));
+            record->Add(getSlot("Value", &_value));
+        }
+        return record;
+    };
 
 };
 

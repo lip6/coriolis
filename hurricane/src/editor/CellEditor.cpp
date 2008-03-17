@@ -69,7 +69,7 @@ void CellEditor::zoomOut() {
 
 void CellEditor::fitToWindow() {
     if (cell) {
-	Box area(cell->GetBoundingBox());
+        Box area(cell->getBoundingBox());
         QRectF rect;
         boxToRectangle(area, rect);
         view->fitInView(rect);

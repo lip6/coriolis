@@ -27,79 +27,76 @@ class Plug : public Component {
 // Types
 // *****
 
-	public: typedef Component Inherit;
+    public: typedef Component Inherit;
 
 // Attributes
 // **********
 
-	private: Instance* _instance;
-	private: Net* _masterNet;
-	private: Plug* _nextOfInstancePlugMap;
+    private: Instance* _instance;
+    private: Net* _masterNet;
+    private: Plug* _nextOfInstancePlugMap;
 
 // Constructors
 // ************
 
-	protected: Plug(Instance* instance, Net* masterNet);
+    protected: Plug(Instance* instance, Net* masterNet);
 
 // Destructor
 // **********
 
-	public: virtual void Delete();
+    public: virtual void destroy();
 
 // Accessors
 // *********
 
-	public: virtual Cell* GetCell() const;
-	public: virtual Unit GetX() const;
-	public: virtual Unit GetY() const;
-	public: virtual Point GetPosition() const;
-	public: virtual Box GetBoundingBox() const;
-	public: virtual Layer* GetLayer() const {return NULL;};
-	public: virtual Box GetBoundingBox(const BasicLayer* basicLayer) const;
-	public: Instance* GetInstance() const {return _instance;};
-	public: Net* GetMasterNet() const {return _masterNet;};
+    public: virtual Cell* getCell() const;
+    public: virtual Unit getX() const;
+    public: virtual Unit getY() const;
+    public: virtual Point getPosition() const;
+    public: virtual Box getBoundingBox() const;
+    public: virtual Layer* getLayer() const {return NULL;};
+    public: virtual Box getBoundingBox(const BasicLayer* basicLayer) const;
+    public: Instance* getInstance() const {return _instance;};
+    public: Net* getMasterNet() const {return _masterNet;};
 
 // Filters
 // *******
 
-	public: static PlugFilter GetIsConnectedFilter();
-	public: static PlugFilter GetIsUnconnectedFilter();
+    public: static PlugFilter getIsConnectedFilter();
+    public: static PlugFilter getIsUnconnectedFilter();
 
 // Predicates
 // **********
 
-	public: bool IsConnected() const {return (GetNet() != NULL);};
+    public: bool IsConnected() const {return (getNet() != NULL);};
 
 // Updators
 // ********
 
-	public: virtual void Translate(const Unit& dx, const Unit& dy) {};
+    public: virtual void Translate(const Unit& dx, const Unit& dy) {};
 
-	public: void SetNet(Net* net);
+    public: void SetNet(Net* net);
 
-	public: virtual void Materialize();
-	public: virtual void Unmaterialize();
+    public: virtual void Materialize();
+    public: virtual void Unmaterialize();
 
 // Others
 // ******
 
-	public: static Plug* _Create(Instance* instance, Net* masterNet);
-	protected: virtual void _PostCreate();
+    public: static Plug* _Create(Instance* instance, Net* masterNet);
+    protected: virtual void _postCreate();
 
-	public: void _Delete();
-	protected: virtual void _PreDelete();
+    public: void _destroy();
+    protected: virtual void _preDestroy();
 
-    public: virtual string GetName() const;
-	public: virtual string _GetTypeName() const {return _TName("Plug");};
-	public: virtual string _GetString() const;
-	public: virtual Record* _GetRecord() const;
-	public: Plug* _GetNextOfInstancePlugMap() const {return _nextOfInstancePlugMap;};
+    public: virtual string getName() const;
+    public: virtual string _getTypeName() const {return _TName("Plug");};
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
+    public: Plug* _getNextOfInstancePlugMap() const {return _nextOfInstancePlugMap;};
 
-	public: virtual void _SetMasterNet(Net* masterNet) {_masterNet = masterNet;};
-	public: void _SetNextOfInstancePlugMap(Plug* plug) {_nextOfInstancePlugMap = plug;};
-
-	//public: virtual void _Draw(View* view, BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation) {};
-	//public: virtual void _Highlight(View* view, const Box& updateArea, const Transformation& transformation) {};
+    public: virtual void _SetMasterNet(Net* masterNet) {_masterNet = masterNet;};
+    public: void _SetNextOfInstancePlugMap(Plug* plug) {_nextOfInstancePlugMap = plug;};
 
 };
 

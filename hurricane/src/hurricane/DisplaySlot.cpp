@@ -20,9 +20,9 @@ namespace Hurricane {
 
 static Name DisplaySlotsCellRelationName("DisplaySlotsCellRelation");
 
-static StandardRelation* GetDisplaySlotRelation(const Cell* cell)
+static StandardRelation* getDisplaySlotRelation(const Cell* cell)
 {
-        Property* property = cell->GetProperty(DisplaySlotsCellRelationName);
+        Property* property = cell->getProperty(DisplaySlotsCellRelationName);
         if (!property)
                 return NULL;
         else
@@ -57,19 +57,19 @@ DisplaySlot* DisplaySlot::Create(Cell* cell, const Name& name, unsigned short re
 {
         DisplaySlot* displaySlot = new DisplaySlot(cell, name, red1, green1, blue1, pattern1, linewidth1, red2, green2, blue2, pattern2, linewidth2);
 
-        displaySlot->_PostCreate();
+        displaySlot->_postCreate();
 
         return displaySlot;
 }
 
-void DisplaySlot::_PostCreate()
+void DisplaySlot::_postCreate()
 // ***********************
 {
-        Inherit::_PostCreate();
-        StandardRelation* relation = GetDisplaySlotRelation(_cell);
+        Inherit::_postCreate();
+        StandardRelation* relation = getDisplaySlotRelation(_cell);
         if (!relation)
-                relation = StandardRelation::Create(_cell, DisplaySlotsCellRelationName);
-        Put(relation);
+                relation = StandardRelation::create(_cell, DisplaySlotsCellRelationName);
+        put(relation);
 }
 
 void DisplaySlot::Show()
@@ -77,7 +77,7 @@ void DisplaySlot::Show()
 {
         if (!_isVisible) {
                 _isVisible = true;
-                //for_each_view(view, _cell->GetViews())
+                //for_each_view(view, _cell->getViews())
                 //{
                 //        view->Invalidate();
                 //        end_for;
@@ -88,14 +88,9 @@ void DisplaySlot::Show()
 void DisplaySlot::Hide()
 // *********************
 {
-        if (_isVisible) {
-                _isVisible = false;
-                //for_each_view(view, _cell->GetViews())
-                //{
-                //    view->Invalidate();
-                //    end_for;
-                //}
-        }
+    if (_isVisible) {
+        _isVisible = false;
+    }
 }
 
 void DisplaySlot::Flush()
@@ -103,91 +98,69 @@ void DisplaySlot::Flush()
 {
     OpenUpdateSession();
     vector<Go*> govect;
-    _quadTree.GetGos().Fill(govect);
-    for (unsigned i = 0 ; i < govect.size() ; i++)
-    {
-        govect[i]->Delete();
+    _quadTree.getGos().Fill(govect);
+    for (unsigned i = 0 ; i < govect.size() ; i++) {
+        govect[i]->destroy();
     }
     CloseUpdateSession();
 }
 
-//void DisplaySlot::_Draw(View* view, const Box& updateArea, const Transformation& transformation)
-//// *********************************************************************************************
-//{
-//        if (GetBoundingBox().Intersect(updateArea)) {
-//                for_each_go(go, _quadTree.GetGos())
-//                {
-//                        go->_Draw(view, NULL, updateArea, transformation);
-//                        end_for;
-//                }
-//        }
-//}
-//
-void DisplaySlot::_PreDelete()
-// ***************************
-{
-        Inherit::_PreDelete();
-        //gdk_gc_destroy(_drawGC);
-        //gdk_gc_destroy(_fillGC);
-}
-
-UserGos DisplaySlot::GetUserGos() const
+UserGos DisplaySlot::getUserGos() const
 // ************************************
 {
-    return _quadTree.GetGos().GetSubSet<UserGo*>();
+    return _quadTree.getGos().getSubSet<UserGo*>();
 }
 
-UserGos DisplaySlot::GetUserGosUnder(const Box& area) const
+UserGos DisplaySlot::getUserGosUnder(const Box& area) const
 // ********************************************************
 {
-    return _quadTree.GetGosUnder(area).GetSubSet<UserGo*>();
+    return _quadTree.getGosUnder(area).getSubSet<UserGo*>();
 }
 
-string DisplaySlot::_GetString() const
+string DisplaySlot::_getString() const
 // ***********************************
 {
-        string s = Inherit::_GetString();
-        s.insert(s.length() - 1, " " + GetString(GetName()));
+        string s = Inherit::_getString();
+        s.insert(s.length() - 1, " " + getString(getName()));
         return s;
 }
 
-Record* DisplaySlot::_GetRecord() const
+Record* DisplaySlot::_getRecord() const
 // ******************************
 {
-        Record* record = Inherit::_GetRecord();
+        Record* record = Inherit::_getRecord();
         if (record) {
-                record->Add(GetSlot("Cell", _cell));
-                record->Add(GetSlot("Name", _name));
-                record->Add(GetSlot("QuadTree", &_quadTree));
-                record->Add(GetSlot("Is Visible", _isVisible));
+                record->Add(getSlot("Cell", _cell));
+                record->Add(getSlot("Name", _name));
+                record->Add(getSlot("QuadTree", &_quadTree));
+                record->Add(getSlot("Is Visible", _isVisible));
         }
         return record;
 }
 
-DisplaySlots GetDisplaySlots(const Cell* cell)
+DisplaySlots getDisplaySlots(const Cell* cell)
 {
         if (!cell)
                 throw Error("Null pointer on cell while getting display slots");
 
-        StandardRelation* relation = GetDisplaySlotRelation(cell);
+        StandardRelation* relation = getDisplaySlotRelation(cell);
         if (!relation)
                 return DisplaySlots();
-        return relation->GetSlaveOwners().GetSubSet<DisplaySlot*>();
+        return relation->getSlaveOwners().getSubSet<DisplaySlot*>();
 }
 
-DisplaySlot* GetDisplaySlot(const Cell* cell,const Name& name)
+DisplaySlot* getDisplaySlot(const Cell* cell,const Name& name)
 {
         if (!cell)
                 throw Error("Null pointer on cell while getting display slots");
 
-        StandardRelation* relation = GetDisplaySlotRelation(cell);
+        StandardRelation* relation = getDisplaySlotRelation(cell);
         if (!relation)
                 return NULL;
         else
         {
-                for_each_display_slot(displaySlot,relation->GetSlaveOwners().GetSubSet<DisplaySlot*>())
-                {
-                        if (displaySlot->GetName() == name)
+                for_each_display_slot(displaySlot,relation->getSlaveOwners().getSubSet<DisplaySlot*>()) {
+                        if (displaySlot->getName() == name)
                                 return displaySlot;
                         end_for;
                 }
