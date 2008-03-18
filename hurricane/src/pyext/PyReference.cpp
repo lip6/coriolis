@@ -207,12 +207,12 @@ extern "C" {
                            ) ) return ( NULL );
 
     if      ( __cs.getObjectIds() == CELL_NAME_INTS2_ARG )
-      reference = Reference::Create (  PYCELL_O(arg0)
+      reference = Reference::create (  PYCELL_O(arg0)
                                     , *PYNAME_O(arg1)
                                     ,  PyInt_AsLong(arg2)
                                     ,  PyInt_AsLong(arg3) );
     else if ( __cs.getObjectIds() == CELL_NAME_POINT_ARG )
-      reference = Reference::Create (  PYCELL_O(arg0)
+      reference = Reference::create (  PYCELL_O(arg0)
                                     , *PYNAME_O(arg1)
                                     , *PYPOINT_O(arg2) );
     else {

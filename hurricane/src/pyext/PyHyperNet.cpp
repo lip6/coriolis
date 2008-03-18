@@ -165,7 +165,7 @@ extern "C" {
   // |                  "PyHyperNet" Object Methods                     |
   // x-------------------------------------------------------------x
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyHyperNet_Create ()"
+  // Attribute Method  :  "PyHyperNet_new ()"
 
   static PyObject* PyHyperNet_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
     trace << "PyHyperNet_new()" << endl;

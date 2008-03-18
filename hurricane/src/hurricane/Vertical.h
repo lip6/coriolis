@@ -38,8 +38,8 @@ class Vertical : public Segment {
 
     protected: Vertical(Net* net, Component* source, Component* target, Layer* layer, const Unit& x, const Unit& width = 0, const Unit& dySource = 0, const Unit& dyTarget = 0);
 
-    public: static Vertical* Create(Net* net, Layer* layer, const Unit& x, const Unit& width = 0, const Unit& dySource = 0, const Unit& dyTarget = 0);
-    public: static Vertical* Create(Component* source, Component* target, Layer* layer, const Unit& x, const Unit& width = 0, const Unit& dySource = 0, const Unit& dyTarget = 0);
+    public: static Vertical* create(Net* net, Layer* layer, const Unit& x, const Unit& width = 0, const Unit& dySource = 0, const Unit& dyTarget = 0);
+    public: static Vertical* create(Component* source, Component* target, Layer* layer, const Unit& x, const Unit& width = 0, const Unit& dySource = 0, const Unit& dyTarget = 0);
 
 // Accessors
 // *********

@@ -46,7 +46,7 @@ class Quark : public DBo {
 // Others
 // ******
 
-    public: static Quark* _Create(const Occurrence& occurrence);
+    public: static Quark* _create(const Occurrence& occurrence);
     protected: virtual void _postCreate();
 
     protected: virtual void _preDestroy();

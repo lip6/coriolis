@@ -83,7 +83,7 @@ class Plug : public Component {
 // Others
 // ******
 
-    public: static Plug* _Create(Instance* instance, Net* masterNet);
+    public: static Plug* _create(Instance* instance, Net* masterNet);
     protected: virtual void _postCreate();
 
     public: void _destroy();

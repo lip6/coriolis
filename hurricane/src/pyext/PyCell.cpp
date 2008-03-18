@@ -659,7 +659,7 @@ extern "C" {
     Cell* cell = NULL;
 
     HTRY
-    cell = Cell::Create(PYLIBRARY_O(arg0), getString(*PYNAME_O(arg1)));
+    cell = Cell::create(PYLIBRARY_O(arg0), getString(*PYNAME_O(arg1)));
     HCATCH
 
     return PyCell_Link(cell);

@@ -39,7 +39,7 @@ class Pad : public Component {
 
     protected: Pad(Net* net, Layer* layer, const Box& boundingBox);
 
-    public: static Pad* Create(Net* net, Layer* layer, const Box& boundingBox);
+    public: static Pad* create(Net* net, Layer* layer, const Box& boundingBox);
 
 // Accessors
 // *********

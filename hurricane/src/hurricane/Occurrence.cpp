@@ -144,7 +144,7 @@ void Occurrence::Put(Property* property)
         throw Error("Can't put property : null property");
 
     Quark* quark = _getQuark();
-    if (!quark) quark = Quark::_Create(*this);
+    if (!quark) quark = Quark::_create(*this);
     quark->put(property);
 }
 

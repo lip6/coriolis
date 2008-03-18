@@ -28,7 +28,7 @@ Vertical::Vertical(Net* net, Component* source, Component* target, Layer* layer,
 {
 }
 
-Vertical* Vertical::Create(Net* net, Layer* layer, const Unit& x, const Unit& width, const Unit& dySource, const Unit& dyTarget)
+Vertical* Vertical::create(Net* net, Layer* layer, const Unit& x, const Unit& width, const Unit& dySource, const Unit& dyTarget)
 // ****************************************************************************************************
 {
     if (!net)
@@ -41,7 +41,7 @@ Vertical* Vertical::Create(Net* net, Layer* layer, const Unit& x, const Unit& wi
     return vertical;
 }
 
-Vertical* Vertical::Create(Component* source, Component* target, Layer* layer, const Unit& x, const Unit& width, const Unit& dySource, const Unit& dyTarget)
+Vertical* Vertical::create(Component* source, Component* target, Layer* layer, const Unit& x, const Unit& width, const Unit& dySource, const Unit& dyTarget)
 // ****************************************************************************************************
 {
     if (!source)

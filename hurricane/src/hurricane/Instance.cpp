@@ -182,7 +182,7 @@ Instance::Instance(Cell* cell, const Name& name, Cell* masterCell, const Transfo
         throw Error("Can't create " + _TName("Instance") + " : cyclic construction");
 }
 
-Instance* Instance::Create(Cell* cell, const Name& name, Cell* masterCell, bool secureFlag)
+Instance* Instance::create(Cell* cell, const Name& name, Cell* masterCell, bool secureFlag)
 // ****************************************************************************************
 {
     Instance* instance =
@@ -193,7 +193,7 @@ Instance* Instance::Create(Cell* cell, const Name& name, Cell* masterCell, bool 
     return instance;
 }
 
-Instance* Instance::Create(Cell* cell, const Name& name, Cell* masterCell, const Transformation& transformation, const PlacementStatus& placementstatus, bool secureFlag)
+Instance* Instance::create(Cell* cell, const Name& name, Cell* masterCell, const Transformation& transformation, const PlacementStatus& placementstatus, bool secureFlag)
 // ****************************************************************************************************
 {
     Instance* instance =
@@ -420,7 +420,7 @@ void Instance::SetMasterCell(Cell* masterCell, bool secureFlag)
         _masterCell->_getSlaveInstanceSet()._Insert(this);
 
         for_each_net(externalNet, _masterCell->getExternalNets()) {
-            if (!getPlug(externalNet)) Plug::_Create(this, externalNet);
+            if (!getPlug(externalNet)) Plug::_create(this, externalNet);
             end_for;
         }
     }
@@ -433,7 +433,7 @@ void Instance::_postCreate()
     _masterCell->_getSlaveInstanceSet()._Insert(this);
 
     for_each_net(externalNet, _masterCell->getExternalNets()) {
-        Plug::_Create(this, externalNet);
+        Plug::_create(this, externalNet);
         end_for;
     }
 

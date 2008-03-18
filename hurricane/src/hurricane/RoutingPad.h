@@ -47,7 +47,7 @@ class RoutingPad : public Component {
 // ************
 
     protected: RoutingPad(Net* net, const Point& p, Occurrence occurrence = Occurrence());
-    public: static RoutingPad* Create(Net* net, Occurrence occurrence);
+    public: static RoutingPad* create(Net* net, Occurrence occurrence);
 
 // Accessors
 // *********
@@ -97,8 +97,8 @@ class RoutingPad : public Component {
 };
 
 
-RoutingPad* CreateRoutingPad ( Net* net, Occurrence plugOccurrence );
-RoutingPad* CreateRoutingPad ( Pin* pin );
+RoutingPad* createRoutingPad ( Net* net, Occurrence plugOccurrence );
+RoutingPad* createRoutingPad ( Pin* pin );
 
 
 } // End of Hurricane namespace.

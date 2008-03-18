@@ -63,7 +63,7 @@ class DBo : public NestedSlotAdapter {
     public: virtual Record* _getRecord() const;
     public: PropertySet& _getPropertySet() {return _propertySet;};
 
-    public: void _onDeleted(Property* property);
+    public: void _onDestroyed(Property* property);
 
 #endif
 

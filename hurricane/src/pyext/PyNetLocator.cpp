@@ -78,14 +78,6 @@ extern "C" {
   // x-------------------------------------------------------------x
 
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNetLocator_Create ()"
-
-
-
-  // Standart Accessors (Attributes).
-
-
   // Standart Predicates (Attributes).
   DirectGetBoolAttribute(PyNetLocator_IsValid,IsValid,PyNetLocator,Locator<Net*>)
 

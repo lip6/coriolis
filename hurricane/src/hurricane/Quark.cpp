@@ -40,7 +40,7 @@ Quark::Quark(const Occurrence& occurrence)
         throw Error("Can't create " + _TName("Quark") + " : already exists");
 }
 
-Quark* Quark::_Create(const Occurrence& occurrence)
+Quark* Quark::_create(const Occurrence& occurrence)
 // **********************************************
 {
     Quark* quark = new Quark(occurrence);

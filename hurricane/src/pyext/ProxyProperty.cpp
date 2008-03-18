@@ -122,14 +122,14 @@ ProxyProperty::ProxyProperty ( void* shadow )
 
 
 // -------------------------------------------------------------------
-// Constructor  :  "ProxyProperty::Create ()".
+// Constructor  :  "ProxyProperty::create ()".
 
 ProxyProperty* ProxyProperty::create ( void* shadow )
 {
   ProxyProperty* property = new ProxyProperty ( shadow );
 
   if ( property == NULL )
-    throw Error ( "ProxyProperty::Create()" );
+    throw Error ( "ProxyProperty::create()" );
 
   return ( property );
 }
@@ -141,7 +141,7 @@ ProxyProperty* ProxyProperty::create ( void* shadow )
 // Destructor  :  "ProxyProperty::_preDestroy ()".
 
 void  ProxyProperty::_preDestroy () {
-  if ( _owner ) _owner->_onDeleted ( this );
+  if ( _owner ) _owner->_onDestroyed ( this );
 
   trace << "ProxyProperty::_owner := " << hex << (void*)_owner << endl;
 

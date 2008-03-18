@@ -30,7 +30,7 @@ DRCError::DRCError(Cell* cell, const Name& name, const Box& boundingBox)
         throw Error("Can't create " + _TName("DRCError") + " : empty bounding box");
 }
 
-DRCError* DRCError::Create(Cell* cell, const Name& name, const Box& boundingBox)
+DRCError* DRCError::create(Cell* cell, const Name& name, const Box& boundingBox)
 // *****************************************************************************
 {
     DRCError* drcError = new DRCError(cell, name, boundingBox);

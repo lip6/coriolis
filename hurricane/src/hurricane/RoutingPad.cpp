@@ -37,7 +37,7 @@ RoutingPad::RoutingPad(Net* net, const Point& p, Occurrence occurrence )
 }
 
 
-RoutingPad* RoutingPad::Create(Net* net, Occurrence occurrence)
+RoutingPad* RoutingPad::create(Net* net, Occurrence occurrence)
 // ***********************************************************
 {
     if (!net)
@@ -420,14 +420,14 @@ void RoutingPad::Builder::Scan(InputFile& inputFile, char*& arguments)
 DBo* RoutingPad::Builder::CreateDBo()
 // *******************************
 {
-    return RoutingPad::Create(getNet(), getLayer(), getX(), getY(), getWidth(), getHeight());
+    return RoutingPad::create(getNet(), getLayer(), getX(), getY(), getWidth(), getHeight());
 }
 
 RoutingPad::Builder ROUTINGPAD_BUILDER("RP");
 #endif
 
 
-RoutingPad* CreateRoutingPad ( Net* net, Occurrence plugOccurrence )
+RoutingPad* createRoutingPad ( Net* net, Occurrence plugOccurrence )
 // *****************************************************************
 {
     Component*      bestComponent  = NULL;
@@ -449,13 +449,13 @@ RoutingPad* CreateRoutingPad ( Net* net, Occurrence plugOccurrence )
       throw Error ( message );
     }
 
-    RoutingPad* rp = RoutingPad::Create ( net, plugOccurrence );
+    RoutingPad* rp = RoutingPad::create ( net, plugOccurrence );
     rp->SetExternalComponent ( bestComponent );
 
     return rp;
 }
 
-RoutingPad* CreateRoutingPad ( Pin* pin )
+RoutingPad* createRoutingPad ( Pin* pin )
 // **************************************
 {
   Occurrence  pinOccurrence ( pin, Path() );
@@ -468,7 +468,7 @@ RoutingPad* CreateRoutingPad ( Pin* pin )
   }
 # endif
 
-  return RoutingPad::Create ( pin->getNet(), pinOccurrence );
+  return RoutingPad::create ( pin->getNet(), pinOccurrence );
 }
 
 

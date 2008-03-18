@@ -101,8 +101,8 @@ class Instance : public Go {
 
     protected: Instance(Cell* cell, const Name& name, Cell* masterCell, const Transformation& transformation, const PlacementStatus& placementstatus, bool secureFlag);
 
-    public: static Instance* Create(Cell* cell, const Name& name, Cell* masterCell, bool secureFlag = true);
-    public: static Instance* Create(Cell* cell, const Name& name, Cell* masterCell, const Transformation& transformation, const PlacementStatus& placementstatus, bool secureFlag = true);
+    public: static Instance* create(Cell* cell, const Name& name, Cell* masterCell, bool secureFlag = true);
+    public: static Instance* create(Cell* cell, const Name& name, Cell* masterCell, const Transformation& transformation, const PlacementStatus& placementstatus, bool secureFlag = true);
 
 // Accessors
 // *********

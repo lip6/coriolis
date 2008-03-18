@@ -84,7 +84,7 @@ namespace Hurricane {
 
     // Constructors.
     public:
-      static  DeepNet* Create      ( HyperNet& hyperNet );
+      static  DeepNet* create      ( HyperNet& hyperNet );
 
     // Accessors.
     public:
@@ -95,7 +95,7 @@ namespace Hurricane {
 
     // Internal Modifiers.
     public:
-      size_t  _CreateRoutingPads ( bool buildRings=false );
+      size_t  _createRoutingPads ( bool buildRings=false );
 
 };
 

@@ -66,7 +66,7 @@ void PrivateProperty::_preDestroy()
 {
     Inherit::_preDestroy();
 
-    if (_owner) _owner->_onDeleted(this);
+    if (_owner) _owner->_onDestroyed(this);
 }
 
 void PrivateProperty::onCapturedBy(DBo* owner)
@@ -124,7 +124,7 @@ void SharedProperty::_preDestroy()
     while (!_ownerSet.empty()) {
         DBo* owner = *_ownerSet.begin();
         _ownerSet.erase(owner);
-        owner->_onDeleted(this);
+        owner->_onDestroyed(this);
     }
 }
 

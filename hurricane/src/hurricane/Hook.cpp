@@ -313,7 +313,7 @@ Hook* Hook::Attach(Hook* hook)
         if (rubber)
             getComponent()->_SetRubber(rubber);
         else
-            Rubber::_Create(this);
+            Rubber::_create(this);
     }
     // */
 
@@ -355,7 +355,7 @@ Hook* Hook::Merge(Hook* hook)
     if (rubber) rubber->_destroy();
     rubber = hook->getComponent()->getRubber();
     if (rubber) rubber->_destroy();
-    Rubber::_Create(this);
+    Rubber::_create(this);
 
     return this;
 }

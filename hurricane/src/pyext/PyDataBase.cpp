@@ -153,7 +153,7 @@ extern "C" {
     DataBase* db = NULL;
     
     HTRY
-    db = DataBase::Create ();
+    db = DataBase::create ();
     HCATCH
 
     return PyDataBase_Link(db);

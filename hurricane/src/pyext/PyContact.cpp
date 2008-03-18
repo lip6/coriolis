@@ -152,20 +152,20 @@ extern "C" {
 
     //cerr << "Format := " << __cs.getObjectIds() << endl;
     if      ( __cs.getObjectIds() == NET_LAYER_INTS2_ARG )
-      contact = Contact::Create ( PYNET_O(arg0)
+      contact = Contact::create ( PYNET_O(arg0)
                                   , PYLAYER_O(arg1)
                                   , PyInt_AsLong(arg2)
                                   , PyInt_AsLong(arg3) );
 
     else if ( __cs.getObjectIds() == NET_LAYER_INTS3_ARG )
-      contact = Contact::Create ( PYNET_O(arg0)
+      contact = Contact::create ( PYNET_O(arg0)
                                   , PYLAYER_O(arg1)
                                   , PyInt_AsLong(arg2)
                                   , PyInt_AsLong(arg3) 
                                   , PyInt_AsLong(arg4) );
 
     else if ( __cs.getObjectIds() == NET_LAYER_INTS4_ARG )
-      contact = Contact::Create ( PYNET_O(arg0)
+      contact = Contact::create ( PYNET_O(arg0)
                                   , PYLAYER_O(arg1)
                                   , PyInt_AsLong(arg2)
                                   , PyInt_AsLong(arg3)
@@ -173,20 +173,20 @@ extern "C" {
                                   , PyInt_AsLong(arg5) );
 
     else if ( __cs.getObjectIds() == COMP_LAYER_INTS2_ARG )
-      contact = Contact::Create ( PYCOMPONENT_O(arg0)
+      contact = Contact::create ( PYCOMPONENT_O(arg0)
                                   , PYLAYER_O(arg1)
                                   , PyInt_AsLong(arg2)
                                   , PyInt_AsLong(arg3) );
 
     else if ( __cs.getObjectIds() == COMP_LAYER_INTS3_ARG )
-      contact = Contact::Create ( PYCOMPONENT_O(arg0)
+      contact = Contact::create ( PYCOMPONENT_O(arg0)
                                   , PYLAYER_O(arg1)
                                   , PyInt_AsLong(arg2)
                                   , PyInt_AsLong(arg3)
                                   , PyInt_AsLong(arg4) );
 
     else if ( __cs.getObjectIds() == COMP_LAYER_INTS4_ARG )
-      contact = Contact::Create ( PYCOMPONENT_O(arg0)
+      contact = Contact::create ( PYCOMPONENT_O(arg0)
                                   , PYLAYER_O(arg1)
                                   , PyInt_AsLong(arg2) 
                                   , PyInt_AsLong(arg3)

@@ -36,7 +36,7 @@ class DRCError : public Marker {
 
     protected: DRCError(Cell* cell, const Name& name, const Box& boundingBox);
 
-    public: static DRCError* Create(Cell* cell, const Name& name, const Box& boundingBox);
+    public: static DRCError* create(Cell* cell, const Name& name, const Box& boundingBox);
 
 // Accessors
 // *********

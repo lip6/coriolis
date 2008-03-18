@@ -131,7 +131,7 @@ class Net : public Entity {
 
     protected: Net(Cell* cell, const Name& name);
 
-    public: static Net* Create(Cell* cell, const Name& name);
+    public: static Net* create(Cell* cell, const Name& name);
 
 // Accessors
 // *********

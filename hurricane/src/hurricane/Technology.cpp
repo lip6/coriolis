@@ -108,7 +108,7 @@ Technology::Technology(DataBase* dataBase, const Name& name)
         throw Error("Can't create " + _TName("Technology") + " : empty name");
 }
 
-Technology* Technology::Create(DataBase* dataBase, const Name& name)
+Technology* Technology::create(DataBase* dataBase, const Name& name)
 // *****************************************************************
 {
     Technology* technology = new Technology(dataBase, name);

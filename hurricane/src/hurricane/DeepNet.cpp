@@ -123,9 +123,9 @@ Record* DeepNet::_getRecord () const
 
 
 // -------------------------------------------------------------------
-// Constructor  :  "DeepNet::Create ()".
+// Constructor  :  "DeepNet::create ()".
 
-DeepNet* DeepNet::Create ( HyperNet& hyperNet )
+DeepNet* DeepNet::create ( HyperNet& hyperNet )
 {
   if ( !hyperNet.IsValid() )
     throw Error ( "Can't create " + _TName("DeepNet") + ": occurence is invalid." );
@@ -145,9 +145,9 @@ DeepNet* DeepNet::Create ( HyperNet& hyperNet )
 
 
 // -------------------------------------------------------------------
-// Internal Modifier  :  "DeepNet::_CreateRoutingPads ()".
+// Internal Modifier  :  "DeepNet::_createRoutingPads ()".
 
-size_t  DeepNet::_CreateRoutingPads ( bool buildRings )
+size_t  DeepNet::_createRoutingPads ( bool buildRings )
 {
   size_t  nbRoutingPads = 0;
   HyperNet  hyperNet ( _netOccurrence );
@@ -157,7 +157,7 @@ size_t  DeepNet::_CreateRoutingPads ( bool buildRings )
   for_each_occurrence ( plugOccurrence, hyperNet.getLeafPlugOccurrences() ) {
     nbRoutingPads++;
 
-    currentRP = CreateRoutingPad ( this, plugOccurrence );
+    currentRP = createRoutingPad ( this, plugOccurrence );
     if ( buildRings ) {
       if ( previousRP ) {
         currentRP->getBodyHook()->Attach ( previousRP->getBodyHook() );

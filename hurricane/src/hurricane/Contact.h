@@ -59,8 +59,8 @@ class Contact : public Component {
     protected: Contact(Net* net, Layer* layer, const Unit& x, const Unit& y, const Unit& width = 0, const Unit& height = 0);
     protected: Contact(Net* net, Component* anchor, Layer* layer, const Unit& dx, const Unit& dy, const Unit& width = 0, const Unit& height = 0);
 
-    public: static Contact* Create(Net* net, Layer* layer, const Unit& x, const Unit& y, const Unit& width = 0, const Unit& height = 0);
-    public: static Contact* Create(Component* anchor, Layer* layer, const Unit& dx, const Unit& dy, const Unit& width = 0, const Unit& height = 0);
+    public: static Contact* create(Net* net, Layer* layer, const Unit& x, const Unit& y, const Unit& width = 0, const Unit& height = 0);
+    public: static Contact* create(Component* anchor, Layer* layer, const Unit& dx, const Unit& dy, const Unit& width = 0, const Unit& height = 0);
 
 // Accessors
 // *********

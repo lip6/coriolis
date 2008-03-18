@@ -55,7 +55,7 @@ Cell::Cell(Library* library, const Name& name)
         throw Error("Can't create " + _TName("Cell") + " " + getString(_name) + " : already exists");
 }
 
-Cell* Cell::Create(Library* library, const Name& name)
+Cell* Cell::create(Library* library, const Name& name)
 // ***************************************************
 {
     Cell* cell = new Cell(library, name);
@@ -135,8 +135,8 @@ void Cell::FlattenNets(bool buildRings)
   for_each_occurrence ( occurrence, getHyperNetRootNetOccurrences() ) {
     HyperNet  hyperNet ( occurrence );
     if ( !occurrence.getPath().IsEmpty() ) {
-      DeepNet* deepNet = DeepNet::Create ( hyperNet );
-      if (deepNet) deepNet->_CreateRoutingPads ( buildRings );
+      DeepNet* deepNet = DeepNet::create ( hyperNet );
+      if (deepNet) deepNet->_createRoutingPads ( buildRings );
     } else {
       RoutingPad* previousRP = NULL;
       RoutingPad* currentRP  = NULL;
@@ -156,7 +156,7 @@ void Cell::FlattenNets(bool buildRings)
       }
 
       for_each_occurrence ( plugOccurrence, hyperNet.getLeafPlugOccurrences() ) {
-        currentRP = CreateRoutingPad ( net, plugOccurrence );
+        currentRP = createRoutingPad ( net, plugOccurrence );
         currentRP->Materialize ();
         if ( buildRings ) {
           if ( previousRP ) {
@@ -176,7 +176,7 @@ void Cell::FlattenNets(bool buildRings)
       for_each_component ( component, net->getComponents() ) {
         Pin* pin = dynamic_cast<Pin*>( component );
         if ( pin ) {
-          currentRP = CreateRoutingPad ( pin );
+          currentRP = createRoutingPad ( pin );
           if ( buildRings ) {
             if ( previousRP ) {
               currentRP->getBodyHook()->Attach ( previousRP->getBodyHook() );

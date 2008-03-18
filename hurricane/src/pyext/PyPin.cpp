@@ -188,7 +188,7 @@ extern "C" {
     string pin_arg1 = ":ent:name:int:int:layer:int:int:int:int";
     string pin_arg2 = ":ent:name:int:int:layer:int:int:int";
     string pin_arg3 = ":ent:name:int:int:layer:int:int";
-    if      ( __cs.getObjectIds() == pin_arg1 ) { pin = Pin::Create ( PYNET_O ( arg0 )
+    if      ( __cs.getObjectIds() == pin_arg1 ) { pin = Pin::create ( PYNET_O ( arg0 )
                                                                     , *PYNAME_O ( arg1 )
  											        				, PyInt_AsAccessDirection ( arg2 )
   											        				, PyInt_AsPlacementStatus ( arg3 )
@@ -197,7 +197,7 @@ extern "C" {
                                                                     , PyInt_AsLong ( arg6 )
                                                                     , PyInt_AsLong ( arg7 )
                                                                     , PyInt_AsLong ( arg8 ) ); }
-    else if ( __cs.getObjectIds() == pin_arg2 ) { pin = Pin::Create ( PYNET_O ( arg0 )
+    else if ( __cs.getObjectIds() == pin_arg2 ) { pin = Pin::create ( PYNET_O ( arg0 )
                                                                     , *PYNAME_O ( arg1 )
  											        				, PyInt_AsAccessDirection ( arg2 )
   											        				, PyInt_AsPlacementStatus ( arg3 )
@@ -205,7 +205,7 @@ extern "C" {
                                                                     , PyInt_AsLong ( arg5 )
                                                                     , PyInt_AsLong ( arg6 )
                                                                     , PyInt_AsLong ( arg7 ) ); }
-    else if ( __cs.getObjectIds() == pin_arg3 ) { pin = Pin::Create ( PYNET_O ( arg0 )
+    else if ( __cs.getObjectIds() == pin_arg3 ) { pin = Pin::create ( PYNET_O ( arg0 )
                                                                     , *PYNAME_O ( arg1 )
  											        				, PyInt_AsAccessDirection ( arg2 )
   											        				, PyInt_AsPlacementStatus ( arg3 )

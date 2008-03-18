@@ -143,7 +143,7 @@ void Plug::SetNet(Net* net)
     }
 }
 
-Plug* Plug::_Create(Instance* instance, Net* masterNet)
+Plug* Plug::_create(Instance* instance, Net* masterNet)
 // ****************************************************
 {
     Plug* plug = new Plug(instance, masterNet);

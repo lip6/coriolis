@@ -146,7 +146,7 @@ Record* DBo::_getRecord() const
     return record;
 }
 
-void DBo::_onDeleted(Property* property)
+void DBo::_onDestroyed(Property* property)
 // *************************************
 {
     if (property && (_propertySet.find(property) != _propertySet.end())) {

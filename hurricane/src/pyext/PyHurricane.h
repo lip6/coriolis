@@ -694,7 +694,7 @@ extern "C" {
     Cell* cell = PYCELL_O(arg0);                                                \
     cengine = dynamic_cast<CENGINE*>(getCEngine(cell, Name(#CENGINE)));         \
     if (!cengine) {                                                             \
-        cengine = CENGINE::Create (cell);                                       \
+        cengine = CENGINE::create (cell);                                       \
     }                                                                           \
     HCATCH                                                                      \
     return Py##CENGINE##_Link( cengine );                                       \

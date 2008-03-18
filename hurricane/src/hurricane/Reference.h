@@ -38,8 +38,8 @@ class Reference : public Marker {
 
     protected: Reference(Cell* cell, const Name& name, Unit x, Unit y);
 
-    public: static Reference* Create(Cell* cell, const Name& name, Unit x, Unit y );
-    public: static Reference* Create(Cell* cell, const Name& name, const Point& point );
+    public: static Reference* create(Cell* cell, const Name& name, Unit x, Unit y );
+    public: static Reference* create(Cell* cell, const Name& name, const Point& point );
 
 // Accessors
 // *********

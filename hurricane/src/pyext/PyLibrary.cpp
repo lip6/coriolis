@@ -179,12 +179,12 @@ extern "C" {
       if (ParseTwoArg("Library.new", args, ":db:name", &arg0, &arg1)) {
           HTRY
           DataBase* db = PYDATABASE_O(arg0);
-          library = Library::Create(db, *PYNAME_O(arg1));
+          library = Library::create(db, *PYNAME_O(arg1));
           HCATCH
       } else if (ParseTwoArg("Library.new", args, ":db:name", &arg0, &arg1)) { 
           HTRY
           Library* masterLibrary = PYLIBRARY_O(arg0);
-          library = Library::Create(masterLibrary, *PYNAME_O(arg1));
+          library = Library::create(masterLibrary, *PYNAME_O(arg1));
           HCATCH
       } else {
           return NULL;

@@ -145,8 +145,8 @@ extern "C" {
     PyObject* arg0;
     PyObject* arg1;
 
-    __cs.Init ("Point.Create");
-    if ( ! PyArg_ParseTuple(args,"|O&O&:Point.Create"
+    __cs.Init ("Point.create");
+    if ( ! PyArg_ParseTuple(args,"|O&O&:Point.create"
                            ,Converter,&arg0
                            ,Converter,&arg1
                            ) ) return ( NULL );

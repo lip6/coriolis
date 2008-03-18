@@ -36,7 +36,7 @@ Reference::Reference(Cell* cell, const Name& name, Unit x, Unit y)
     throw Error("Can't create " + _TName("Reference") + " : empty name");
 }
 
-Reference* Reference::Create(Cell* cell, const Name& name, Unit x, Unit y)
+Reference* Reference::create(Cell* cell, const Name& name, Unit x, Unit y)
 // ***********************************************************************
 {
   Reference* reference = new Reference(cell, name, x, y);
@@ -46,10 +46,10 @@ Reference* Reference::Create(Cell* cell, const Name& name, Unit x, Unit y)
   return reference;
 }
 
-Reference* Reference::Create(Cell* cell, const Name& name, const Point& point)
+Reference* Reference::create(Cell* cell, const Name& name, const Point& point)
 // ***************************************************************************
 {
-  return Create(cell,name,point.getX(),point.getY());
+  return create(cell,name,point.getX(),point.getY());
 }
 
 Box  Reference::getBoundingBox() const

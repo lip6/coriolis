@@ -73,8 +73,8 @@ class Library : public DBo {
 
     protected: Library(DataBase* dataBase, Library* library, const Name& name);
 
-    public: static Library* Create(DataBase* dataBase, const Name& name);
-    public: static Library* Create(Library* library, const Name& name);
+    public: static Library* create(DataBase* dataBase, const Name& name);
+    public: static Library* create(Library* library, const Name& name);
 
 // Accessors
 // *********

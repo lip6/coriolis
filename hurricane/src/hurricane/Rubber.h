@@ -72,7 +72,7 @@ class Rubber : public Go {
 // Others
 // ******
 
-        public: static Rubber* _Create(Hook* hook);
+        public: static Rubber* _create(Hook* hook);
         protected: virtual void _postCreate();
 
         public: void _destroy();

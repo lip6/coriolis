@@ -261,7 +261,7 @@ Net::Net(Cell* cell, const Name& name)
         throw Error("Can't create " + _TName("Net ") + getString(_name) + " : already exists");
 }
 
-Net* Net::Create(Cell* cell, const Name& name)
+Net* Net::create(Cell* cell, const Name& name)
 // *******************************************
 {
     Net* net = new Net(cell, name);
@@ -452,7 +452,7 @@ void Net::SetExternal(bool isExternal)
             OpenUpdateSession();
             SetPosition(Point(0, 0));
             for_each_instance(instance, _cell->getSlaveInstances()) {
-                Plug::_Create(instance, this);
+                Plug::_create(instance, this);
                 end_for;
             }
             CloseUpdateSession();
@@ -590,7 +590,7 @@ void Net::_postCreate()
 
     if (_isExternal) {
         for_each_instance(instance, _cell->getSlaveInstances()) {
-            Plug::_Create(instance, this);
+            Plug::_create(instance, this);
             end_for;
         }
     }

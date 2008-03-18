@@ -125,7 +125,7 @@ Contact::Contact(Net* net, Component* anchor, Layer* layer, const Unit& dx, cons
     _anchorHook.Attach(anchor->getBodyHook());
 }
 
-Contact* Contact::Create(Net* net, Layer* layer, const Unit& x, const Unit& y, const Unit& width, const Unit& height)
+Contact* Contact::create(Net* net, Layer* layer, const Unit& x, const Unit& y, const Unit& width, const Unit& height)
 // ****************************************************************************************************
 {
     Contact* contact = new Contact(net, layer, x, y, width, height);
@@ -135,7 +135,7 @@ Contact* Contact::Create(Net* net, Layer* layer, const Unit& x, const Unit& y, c
     return contact;
 }
 
-Contact* Contact::Create(Component* anchor, Layer* layer, const Unit& dx, const Unit& dy, const Unit& width, const Unit& height)
+Contact* Contact::create(Component* anchor, Layer* layer, const Unit& dx, const Unit& dy, const Unit& width, const Unit& height)
 // ****************************************************************************************************
 {
     if (!anchor)

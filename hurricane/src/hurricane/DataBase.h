@@ -58,7 +58,7 @@ class DataBase : public DBo {
 
 #   endif
 
-    public: static DataBase* Create();
+    public: static DataBase* create();
 
 // Accessors
 // *********

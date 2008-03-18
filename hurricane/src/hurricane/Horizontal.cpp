@@ -28,7 +28,7 @@ Horizontal::Horizontal(Net* net, Component* source, Component* target, Layer* la
 {
 }
 
-Horizontal* Horizontal::Create(Net* net, Layer* layer, const Unit& y, const Unit& width, const Unit& dxSource, const Unit& dxTarget)
+Horizontal* Horizontal::create(Net* net, Layer* layer, const Unit& y, const Unit& width, const Unit& dxSource, const Unit& dxTarget)
 // ****************************************************************************************************
 {
     if (!net)
@@ -41,7 +41,7 @@ Horizontal* Horizontal::Create(Net* net, Layer* layer, const Unit& y, const Unit
     return horizontal;
 }
 
-Horizontal* Horizontal::Create(Component* source, Component* target, Layer* layer, const Unit& y, const Unit& width, const Unit& dxSource, const Unit& dxTarget)
+Horizontal* Horizontal::create(Component* source, Component* target, Layer* layer, const Unit& y, const Unit& width, const Unit& dxSource, const Unit& dxTarget)
 // ****************************************************************************************************
 {
     if (!source)

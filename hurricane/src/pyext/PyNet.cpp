@@ -588,7 +588,7 @@ extern "C" {
     if ( ! ParseTwoArg ( "Net.new", args, CELL_NAME_ARG, &arg0, &arg1 ) ) return ( NULL );
 
     HTRY
-    net = Net::Create ( PYCELL_O(arg0), *PYNAME_O(arg1) );
+    net = Net::create ( PYCELL_O(arg0), *PYNAME_O(arg1) );
     HCATCH
 
     return PyNet_Link ( net );

@@ -32,7 +32,7 @@ DataBase::DataBase()
         throw Error("Can't create " + _TName("DataBase") + " : already exists");
 }
 
-DataBase* DataBase::Create()
+DataBase* DataBase::create()
 // *************************
 {
     DataBase* dataBase = new DataBase();

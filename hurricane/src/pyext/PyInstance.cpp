@@ -472,10 +472,10 @@ extern "C" {
                            ,Converter,&arg3
                            ) ) return ( NULL );
 
-    if      ( __cs.getObjectIds() == CELL_NAME_CELL_ARG       ) { instance = Instance::Create (  PYCELL_O(arg0)
+    if      ( __cs.getObjectIds() == CELL_NAME_CELL_ARG       ) { instance = Instance::create (  PYCELL_O(arg0)
                                                                                               , *PYNAME_O(arg1)
                                                                                               ,  PYCELL_O(arg2) ); }
-    else if ( __cs.getObjectIds() == CELL_NAME_CELL_TRANS_ARG ) { instance = Instance::Create (  PYCELL_O(arg0)
+    else if ( __cs.getObjectIds() == CELL_NAME_CELL_TRANS_ARG ) { instance = Instance::create (  PYCELL_O(arg0)
                                                                                               , *PYNAME_O(arg1)
                                                                                               ,  PYCELL_O(arg2)
                                                                                               , *PYTRANSFORMATION_O(arg3)

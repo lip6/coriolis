@@ -32,7 +32,7 @@ Pin::Pin(Net* net, const Name& name, const AccessDirection& accessDirection, con
 
 }
 
-Pin* Pin::Create(Net* net, const Name& name, const AccessDirection& accessDirection, const PlacementStatus& placementStatus, Layer* layer, const Unit& x, const Unit& y, const Unit& width, const Unit& height)
+Pin* Pin::create(Net* net, const Name& name, const AccessDirection& accessDirection, const PlacementStatus& placementStatus, Layer* layer, const Unit& x, const Unit& y, const Unit& width, const Unit& height)
 // ****************************************************************************************************
 {
     if (!net)

@@ -122,8 +122,8 @@ extern "C" {
 
     HTRY
 
-    __cs.Init ("Horizontal.Create");
-    if ( ! PyArg_ParseTuple(args,"O&O&O&|O&O&O&O&:Horizontal.Create"
+    __cs.Init ("Horizontal.create");
+    if ( ! PyArg_ParseTuple(args,"O&O&O&|O&O&O&O&:Horizontal.create"
                            ,Converter,&arg0
                            ,Converter,&arg1
                            ,Converter,&arg2
@@ -134,47 +134,47 @@ extern "C" {
                            ) ) return ( NULL );
 
     if      ( __cs.getObjectIds() == NET_LAYER_INT_ARG )
-      horizontal = Horizontal::Create ( PYNET_O(arg0)
+      horizontal = Horizontal::create ( PYNET_O(arg0)
                                       , PYLAYER_O(arg1)
                                       , PyInt_AsLong(arg2) );
     else if ( __cs.getObjectIds() == NET_LAYER_INTS2_ARG )
-      horizontal = Horizontal::Create ( PYNET_O(arg0)
+      horizontal = Horizontal::create ( PYNET_O(arg0)
                                       , PYLAYER_O(arg1)
                                       , PyInt_AsLong(arg2)
                                       , PyInt_AsLong(arg3) );
     else if ( __cs.getObjectIds() == COMPS2_LAYER_INT_ARG )
-      horizontal = Horizontal::Create ( ComponentCast(arg0)
+      horizontal = Horizontal::create ( ComponentCast(arg0)
                                       , ComponentCast(arg1)
                                       , PYLAYER_O(arg2)
                                       , PyInt_AsLong(arg3) );
     else if ( __cs.getObjectIds() == NET_LAYER_INTS3_ARG )
-      horizontal = Horizontal::Create ( PYNET_O(arg0)
+      horizontal = Horizontal::create ( PYNET_O(arg0)
                                       , PYLAYER_O(arg1)
                                       , PyInt_AsLong(arg2)
                                       , PyInt_AsLong(arg3)
                                       , PyInt_AsLong(arg4) );
     else if ( __cs.getObjectIds() == COMPS2_LAYER_INTS2_ARG )
-      horizontal = Horizontal::Create ( ComponentCast(arg0)
+      horizontal = Horizontal::create ( ComponentCast(arg0)
                                       , ComponentCast(arg1)
                                       , PYLAYER_O(arg2)
                                       , PyInt_AsLong(arg3)
                                       , PyInt_AsLong(arg4) );
     else if ( __cs.getObjectIds() == NET_LAYER_INTS4_ARG )
-      horizontal = Horizontal::Create ( PYNET_O(arg0)
+      horizontal = Horizontal::create ( PYNET_O(arg0)
                                       , PYLAYER_O(arg1)
                                       , PyInt_AsLong(arg2)
                                       , PyInt_AsLong(arg3)
                                       , PyInt_AsLong(arg4)
                                       , PyInt_AsLong(arg5) );
     else if ( __cs.getObjectIds() == COMPS2_LAYER_INTS3_ARG )
-      horizontal = Horizontal::Create ( ComponentCast(arg0)
+      horizontal = Horizontal::create ( ComponentCast(arg0)
                                       , ComponentCast(arg1)
                                       , PYLAYER_O(arg2)
                                       , PyInt_AsLong(arg3)
                                       , PyInt_AsLong(arg4)
                                       , PyInt_AsLong(arg5) );
     else if ( __cs.getObjectIds() == COMPS2_LAYER_INTS4_ARG )
-      horizontal = Horizontal::Create ( ComponentCast(arg0)
+      horizontal = Horizontal::create ( ComponentCast(arg0)
                                       , ComponentCast(arg1)
                                       , PYLAYER_O(arg2)
                                       , PyInt_AsLong(arg3)

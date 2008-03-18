@@ -40,7 +40,7 @@ class DisplaySlot : public DBo {
 // ************
 
         protected: DisplaySlot(Cell* cell,const Name& name, unsigned short red1, unsigned short green1, unsigned short blue1, const string& pattern1, unsigned linewidth1, unsigned short red2, unsigned short green2, unsigned short blue2, const string& pattern2, unsigned linewidth2);
-        public: static DisplaySlot* Create(Cell* cell, const Name& name, unsigned short red1, unsigned short green1, unsigned short blue1, const string& pattern1 = "FFFFFFFFFFFFFFFF", unsigned linewidth1=0, unsigned short red2 = 0, unsigned short green2 = 0, unsigned short blue2 = 0, const string& pattern2 = "FFFFFFFFFFFFFFFF", unsigned linewidth2=0);
+        public: static DisplaySlot* create(Cell* cell, const Name& name, unsigned short red1, unsigned short green1, unsigned short blue1, const string& pattern1 = "FFFFFFFFFFFFFFFF", unsigned linewidth1=0, unsigned short red2 = 0, unsigned short green2 = 0, unsigned short blue2 = 0, const string& pattern2 = "FFFFFFFFFFFFFFFF", unsigned linewidth2=0);
         protected: virtual void _postCreate();
 
 // Accessors

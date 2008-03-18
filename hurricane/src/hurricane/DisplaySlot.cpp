@@ -52,7 +52,7 @@ DisplaySlot::DisplaySlot(Cell* cell,const Name& name, unsigned short red1, unsig
         //_fillGC = gtk_gc_new(red2, green2, blue2, pattern2, linewidth2);
 }
 
-DisplaySlot* DisplaySlot::Create(Cell* cell, const Name& name, unsigned short red1, unsigned short green1, unsigned short blue1, const string& pattern1, unsigned linewidth1, unsigned short red2, unsigned short green2, unsigned short blue2, const string& pattern2, unsigned linewidth2)
+DisplaySlot* DisplaySlot::create(Cell* cell, const Name& name, unsigned short red1, unsigned short green1, unsigned short blue1, const string& pattern1, unsigned linewidth1, unsigned short red2, unsigned short green2, unsigned short blue2, const string& pattern2, unsigned linewidth2)
 // ******************************************
 {
         DisplaySlot* displaySlot = new DisplaySlot(cell, name, red1, green1, blue1, pattern1, linewidth1, red2, green2, blue2, pattern2, linewidth2);

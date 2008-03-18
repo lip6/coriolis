@@ -178,7 +178,6 @@ class Cell : public Entity {
     public: PinMap& _getPinMap() {return _pinMap;};
     public: SliceMap& _getSliceMap() {return _sliceMap;};
     public: MarkerSet& _getMarkerSet() {return _markerSet;};
-    //public: ViewSet& _getViewSet() {return _viewSet;};
     public: Cell* _getNextOfLibraryCellMap() const {return _nextOfLibraryCellMap;};
     public: Cell* _getNextOfSymbolCellSet() const {return _nextOfSymbolCellSet;};
 
@@ -193,21 +192,12 @@ class Cell : public Entity {
     public: void _getSlaveEntities(SlaveEntityMap::iterator& begin, SlaveEntityMap::iterator& end);
     public: void _getSlaveEntities(Entity* entity, SlaveEntityMap::iterator& begin, SlaveEntityMap::iterator& end);
 
-    //public: bool _IsDrawable(View* view) const;
-    //public: bool _ContentIsDrawable(View* view) const;
-    //public: void _DrawPhantoms(View* view, const Box& updateArea, const Transformation& transformation);
-    //public: void _DrawBoundaries(View* view, const Box& updateArea, const Transformation& transformation);
-    //public: void _DrawContent(View* view, BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation);
-    //public: void _DrawRubbers(View* view, const Box& updateArea, const Transformation& transformation);
-    //public: void _DrawMarkers(View* view, const Box& updateArea, const Transformation& transformation);
-        //public: void _DrawDisplaySlots(View* view,  const Box& area, const Box& updateArea, const Transformation& transformation);
-
-# endif
+#endif
 
 // Constructors
 // ************
 
-    public: static Cell* Create(Library* library, const Name& name);
+    public: static Cell* create(Library* library, const Name& name);
 
 // Accessors
 // *********
@@ -249,9 +239,6 @@ class Cell : public Entity {
     public: Pins getPins() const {return _pinMap.getElements();};
     public: Slice* getSlice(const Layer* layer) const {return _sliceMap.getElement(layer);};
     public: Slices getSlices(const Layer::Mask& mask = ~0) const;
-//    public: Views getViews() const {return _viewSet.getElements();};
-//    public: MainViews getMainViews() const;
-//    public: MainViews getImpactedMainViews() const;
     public: Rubbers getRubbers() const;
     public: Rubbers getRubbersUnder(const Box& area) const;
     public: Markers getMarkers() const {return _markerSet.getElements();};

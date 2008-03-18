@@ -287,7 +287,7 @@ template<class Value> class StandardSharedProperty : public SharedProperty {
     {
     };
 
-    public: static StandardSharedProperty* Create(const Name& name, const Value& value )
+    public: static StandardSharedProperty* create(const Name& name, const Value& value )
     // *********************************************************************************
     {
         StandardSharedProperty* property = new StandardSharedProperty(name, value);

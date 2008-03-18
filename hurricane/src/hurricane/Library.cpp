@@ -44,7 +44,7 @@ Library::Library(DataBase* dataBase, Library* library, const Name& name)
     }
 }
 
-Library* Library::Create(DataBase* dataBase, const Name& name)
+Library* Library::create(DataBase* dataBase, const Name& name)
 // ***********************************************************
 {
     Library* library = new Library(dataBase, NULL, name);
@@ -54,7 +54,7 @@ Library* Library::Create(DataBase* dataBase, const Name& name)
     return library;
 }
 
-Library* Library::Create(Library* library, const Name& name)
+Library* Library::create(Library* library, const Name& name)
 // *********************************************************
 {
     if (!library)

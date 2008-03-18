@@ -122,7 +122,7 @@ void Rubber::Translate(const Unit& dx, const Unit& dy)
 {
 }
 
-Rubber* Rubber::_Create(Hook* hook)
+Rubber* Rubber::_create(Hook* hook)
 // ********************************
 {
         if (!hook)
