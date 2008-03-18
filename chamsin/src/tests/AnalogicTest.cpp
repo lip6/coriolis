@@ -13,9 +13,9 @@ using namespace DEVICE;
 int main() {
     try {
       cout << "simple analogic test" << endl;
-      CDataBase* db = CDataBase::Create();
-      Library* workLibrary = Library::Create(db->GetRootLibrary(), Name("WorkLibrary"));
-      TrMos* trmos = TrMos::Create(workLibrary, Name("MosTr"));
+      CDataBase* db = CDataBase::create();
+      Library* workLibrary = Library::create(db->getRootLibrary(), Name("WorkLibrary"));
+      TrMos* trmos = TrMos::create(workLibrary, Name("MosTr"));
       exit(0);
     } catch (Hurricane::Warning& w) {
         cerr << w.What() << endl;

@@ -47,7 +47,7 @@ bool Transistor::MaskVersion::operator==(const MaskVersion& version) const
 }  
 
 
-string Transistor::MaskVersion::_GetString() const
+string Transistor::MaskVersion::_getString() const
 // *************************************************
 {
   switch(_code) {
@@ -57,11 +57,11 @@ string Transistor::MaskVersion::_GetString() const
 }
 
 
-Record* Transistor::MaskVersion::_GetRecord() const
+Record* Transistor::MaskVersion::_getRecord() const
 // **************************************************
 {
-  Record* record = new Record(GetString(this));
-  record->Add(GetSlot("Code", _code));
+  Record* record = new Record(getString(this));
+  record->Add(getSlot("Code", _code));
   return record;
 }
 
@@ -91,7 +91,7 @@ Transistor::Type& Transistor::Type::operator=(const Type& type)
 }  
   
 
-string Transistor::Type::_GetString() const
+string Transistor::Type::_getString() const
 // *****************************************
 {
   switch(_code) {
@@ -105,11 +105,11 @@ string Transistor::Type::_GetString() const
 }
 
 
-Record* Transistor::Type::_GetRecord() const
+Record* Transistor::Type::_getRecord() const
 // *****************************************
 {
-   Record* record = new Record(GetString(this));
-   record->Add(GetSlot("Code", _code));
+   Record* record = new Record(getString(this));
+   record->Add(getSlot("Code", _code));
    return record;
 }
 
@@ -132,44 +132,24 @@ Transistor::MaskInfo::MaskInfo(const double& l, const double& w, const Type::Cod
 Transistor::MaskInfo& Transistor::MaskInfo::operator=(const MaskInfo& masqueinfo)
 // ************************************************************************************
 {
-   _l = masqueinfo.GetL();
-   _w = masqueinfo.GetW();
-   _type= masqueinfo.GetType();
-   _nbDrainColumn = masqueinfo.GetNbDrainColumn();
-   _nbSourceColumn = masqueinfo.GetNbSourceColumn();
+   _l = masqueinfo.getL();
+   _w = masqueinfo.getW();
+   _type= masqueinfo.getType();
+   _nbDrainColumn = masqueinfo.getNbDrainColumn();
+   _nbSourceColumn = masqueinfo.getNbSourceColumn();
 
    return *this;
-}  
-
-
-void Transistor::MaskInfo::_PostCreate()
-// ***************************************
-{
-}
-
-
-void Transistor::MaskInfo::_PreDelete()
-// **************************************
-{
-} 
-
-
-void Transistor::MaskInfo::Delete()
-// **********************************
-{
-   _PreDelete();
-   delete this;
 }  
 
 
 bool Transistor::MaskInfo::operator==(const MaskInfo& masqueinfo)
 // ******************************************************************
 {
-   if(_l == masqueinfo.GetL() &&
-      _w == masqueinfo.GetW() &&
-      _type== masqueinfo.GetType() &&
-      _nbDrainColumn == masqueinfo.GetNbDrainColumn() &&
-      _nbSourceColumn == masqueinfo.GetNbSourceColumn() 
+   if(_l == masqueinfo.getL() &&
+      _w == masqueinfo.getW() &&
+      _type== masqueinfo.getType() &&
+      _nbDrainColumn == masqueinfo.getNbDrainColumn() &&
+      _nbSourceColumn == masqueinfo.getNbSourceColumn() 
      )
      return true;
 
@@ -177,24 +157,24 @@ bool Transistor::MaskInfo::operator==(const MaskInfo& masqueinfo)
 }  
 
 
-string Transistor::MaskInfo::_GetString() const
+string Transistor::MaskInfo::_getString() const
 // **********************************************
 {
-  string s = "<" + _GetTypeName() + " " 
-                 + GetString(_l)  + " "
-		 + GetString(_w)  + " "
-	         + _type._GetString() + " "
-		 + GetString(_nbSourceColumn) + " "
-		 + GetString(_nbDrainColumn) 
+  string s = "<" + _getTypeName() + " " 
+                 + getString(_l)  + " "
+		 + getString(_w)  + " "
+	         + _type._getString() + " "
+		 + getString(_nbSourceColumn) + " "
+		 + getString(_nbDrainColumn) 
 		 + ">";
   return s;
 }
 
 
-Record* Transistor::MaskInfo::_GetRecord() const
+Record* Transistor::MaskInfo::_getRecord() const
 // ***********************************************
 {
-  Record * record = new Record(_GetString());
+  Record * record = new Record(_getString());
   return record;
 }
 
@@ -214,21 +194,6 @@ Transistor::MaskV1Info::MaskV1Info(const double& l, const double& w, const Type:
 	       )
 {}
 
-
-Transistor::MaskV1Info* Transistor::MaskV1Info::Create(const double& l, const double& w
-                                                       , const Type::Code& type 
-                                                       , const unsigned& nbDrainColumn 
-		                                       , const unsigned& nbSourceColumn)
-// **********************************************************************************************
-{
-   MaskV1Info* masquev1info = new MaskV1Info(l, w, type, nbDrainColumn, nbSourceColumn);
-   
-   masquev1info->_PostCreate();
-
-   return masquev1info;
-}
-
-
 Transistor::MaskInfo& Transistor::MaskV1Info::operator=(const MaskInfo& masqueinfo)
 // **************************************************************************************
 {
@@ -238,21 +203,6 @@ Transistor::MaskInfo& Transistor::MaskV1Info::operator=(const MaskInfo& masquein
    return  *this;
 }  
 
-
-void Transistor::MaskV1Info::_PostCreate() 
-// *****************************************
-{
-  Inherit::_PostCreate();
-}  
-
-
-void Transistor::MaskV1Info::_PreDelete()
-// ****************************************
-{
-  Inherit::_PreDelete();
-}  
-
-
 bool Transistor::MaskV1Info::operator == (const MaskInfo& masqueinfo)
 // **********************************************************************
 {
@@ -261,17 +211,17 @@ bool Transistor::MaskV1Info::operator == (const MaskInfo& masqueinfo)
 }  
 
 
-string Transistor::MaskV1Info::_GetString() const
+string Transistor::MaskV1Info::_getString() const
 // ************************************************
 {
-  string s = Inherit::_GetString();
+  string s = Inherit::_getString();
   return s;
 }  
   
-Record* Transistor::MaskV1Info::_GetRecord() const
+Record* Transistor::MaskV1Info::_getRecord() const
 // *************************************************
 {
-  Record* record = Inherit::_GetRecord();
+  Record* record = Inherit::_getRecord();
   return record;
 }  
 
@@ -289,42 +239,42 @@ Transistor::Transistor(Library* library, const Name& name, char type)
 }
 
 
-Transistor* Transistor::Create(Library* library, const Name& name, char type)
+Transistor* Transistor::create(Library* library, const Name& name, char type)
 // **************************************************************************
 {
 	Transistor* transistor = new Transistor(library, name, type);
 
-	transistor->_PostCreate();
+	transistor->_postCreate();
 
 	return transistor;
 }
 
 
 
-void Transistor::_PreDelete()
+void Transistor::_preDestroy()
 // ******************************
 {
    // Delete aggregated objets. 
    // *************************
    if(_masqueInfo)
-      _masqueInfo->Delete();
+       delete _masqueInfo;
 
    if(_genTrans)
       delete _genTrans;
   
-   Inherit::_PreDelete();
+   Inherit::_preDestroy();
 }
 
 
-void Transistor::_PostCreate()
+void Transistor::_postCreate()
 // *******************************
 {
-   Inherit::_PostCreate();
+   Inherit::_postCreate();
 
-   (Net::Create(this, Name("DRAIN")))->SetExternal(true);
-   (Net::Create(this, Name("SOURCE")))->SetExternal(true);
-   (Net::Create(this, Name("GRID")))->SetExternal(true);
-   (Net::Create(this, Name("BULK")))->SetExternal(true);
+   (Net::create(this, Name("DRAIN")))->SetExternal(true);
+   (Net::create(this, Name("SOURCE")))->SetExternal(true);
+   (Net::create(this, Name("GRID")))->SetExternal(true);
+   (Net::create(this, Name("BULK")))->SetExternal(true);
 
    // By default, transistor's length and heigth is NULL, and is internal.
    // ********************************************************************
@@ -332,47 +282,47 @@ void Transistor::_PostCreate()
 }
 
 
-string Transistor::_GetString() const
+string Transistor::_getString() const
 // ***********************************
 {
-     string s = Inherit::_GetString();
-     s.insert(s.length()-1, " " + GetString(_type));
-     s.insert(s.length()-1, " " + GetAbutmentType()._GetString());
+     string s = Inherit::_getString();
+     s.insert(s.length()-1, " " + getString(_type));
+     s.insert(s.length()-1, " " + getAbutmentType()._getString());
      return s;
 }
 
 
-Record* Transistor::_GetRecord() const
+Record* Transistor::_getRecord() const
 // ************************************
 {
-	Record* record = Inherit::_GetRecord();
+	Record* record = Inherit::_getRecord();
 	return record;
 }
 
 
-Transistor::MaskVersion Transistor::_GetMaskInfoVersion(MaskInfo* masqueinfo) 
+Transistor::MaskVersion Transistor::_getMaskInfoVersion(MaskInfo* masqueinfo) 
 // ***************************************************************************************
 {
     if(!masqueinfo)
-       throw Error("Error : In Transistor::_GetMaskInfoVersion, param masqueinfo is NULL");
+       throw Error("Error : In Transistor::_getMaskInfoVersion, param masqueinfo is NULL");
 
     if(dynamic_cast<MaskV1Info*>(masqueinfo))
        return MaskVersion(MaskVersion::VERSION1);
 
-    throw Error("Error : In Transistor::_GetMaskInfoVersion, can't dynamic cast param masqueinfo");
+    throw Error("Error : In Transistor::_getMaskInfoVersion, can't dynamic cast param masqueinfo");
     return MaskVersion(MaskVersion::VERSION1); 
 }  
 
 
-Transistor::MaskInfo* Transistor::_CreateMaskInfo(const MaskVersion& version)
+Transistor::MaskInfo* Transistor::_createMaskInfo(const MaskVersion& version)
 // *******************************************************************************
 {
     switch((const MaskVersion::Code&)version) {
       case MaskVersion::VERSION1 : 
-	 return MaskV1Info::Create(0.0, 0.0);
+	 return new MaskV1Info(0.0, 0.0);
 	 
       default : 
-	 throw Error ("Error : In Transistor::_CreateMaskInfoBy, unknown param version"); 
+	 throw Error ("Error : In Transistor::_createMaskInfoBy, unknown param version"); 
 	 return NULL;
     }
 }  
@@ -382,12 +332,12 @@ void Transistor::SetMaskInfo(MaskInfo* masqueinfo)
 // ***************************************************
 {
    if(!masqueinfo)
-      throw Error("Error : In Transistor::CreateLayout : masqueinfo is NULL");
+      throw Error("Error : In Transistor::createLayout : masqueinfo is NULL");
 
    // Set new Param. 
    // ***************
-   MaskVersion newversion = _GetMaskInfoVersion(masqueinfo);
-   MaskVersion oldversion = _GetMaskInfoVersion(_masqueInfo);
+   MaskVersion newversion = _getMaskInfoVersion(masqueinfo);
+   MaskVersion oldversion = _getMaskInfoVersion(_masqueInfo);
 
    if(newversion == oldversion) { // If they are the same version.
       if((*_masqueInfo)==(*masqueinfo)) // If they are identical.
@@ -396,17 +346,17 @@ void Transistor::SetMaskInfo(MaskInfo* masqueinfo)
 	 (*_masqueInfo)=(*masqueinfo); 
    }
    else {  // If change the version.
-      _masqueInfo->Delete(); 
-      _masqueInfo = _CreateMaskInfo(newversion);
+      delete _masqueInfo; 
+      _masqueInfo = _createMaskInfo(newversion);
       (*_masqueInfo) == (*masqueinfo); 
    }
 }  
 
 
-void Transistor::CreateLayout()
+void Transistor::createLayout()
 // ****************************
 {
-   MaskVersion version      = _GetMaskInfoVersion(_masqueInfo);
+   MaskVersion version      = _getMaskInfoVersion(_masqueInfo);
    MaskV1Info* masquev1info = NULL;
 
    // Select algorithme with technology and masque version. 
@@ -448,39 +398,39 @@ void Transistor::DuplicateLayout(Transistor* transistor)
    Contact * con = NULL;
    Segment * seg = NULL;
 
-   for_each_net(net, transistor->GetNets())
-      if( !( tmp=GetNet(net->GetName()) ) ) { // 
-          tmp = Net::Create(this, net->GetName());
+   for_each_net(net, transistor->getNets())
+      if( !( tmp=getNet(net->getName()) ) ) { // 
+          tmp = Net::create(this, net->getName());
 	  tmp->SetExternal(net->IsExternal());
       }
 
-      for_each_component(component, net->GetComponents())
+      for_each_component(component, net->getComponents())
           if( (con=dynamic_cast<Contact*>(component)) ){
-	    Contact::Create(tmp, component->GetLayer(), con->GetX(), con->GetY(), con->GetWidth(), con->GetHeight());  
+	    Contact::create(tmp, component->getLayer(), con->getX(), con->getY(), con->getWidth(), con->getHeight());  
 	  }
 	  else if( (seg=dynamic_cast<Vertical*>(component)) ) {
-	       Vertical::Create(tmp, component->GetLayer(), seg->GetSourceX(), seg->GetWidth(), seg->GetSourceY(), 
-		   seg->GetTargetY()); 
+	       Vertical::create(tmp, component->getLayer(), seg->getSourceX(), seg->getWidth(), seg->getSourceY(), 
+		   seg->getTargetY()); 
 	   }
 	  else if( (seg=dynamic_cast<Horizontal*>(component)) ){
-	       Horizontal::Create(tmp, component->GetLayer(), seg->GetSourceY(), seg->GetWidth(), seg->GetSourceX(), 
-	     	   seg->GetTargetX()); 
+	       Horizontal::create(tmp, component->getLayer(), seg->getSourceY(), seg->getWidth(), seg->getSourceX(), 
+	     	   seg->getTargetX()); 
 	  }
           else 
-            throw Error ("Error : In Transistor::DuplicateLayout, find illegal elem : " + GetString(component) +
+            throw Error ("Error : In Transistor::DuplicateLayout, find illegal elem : " + getString(component) +
 		"In Transistor, all component must be contact or segment" ) ;
 	  end_for
    end_for
 
-   SetAbutmentBox(transistor->GetAbutmentBox());
+   SetAbutmentBox(transistor->getAbutmentBox());
 	  
    _mapNet2Box.clear();
    
-   map<Net*, Box>::iterator i = transistor->_GetMapNet2Box()->begin(), 
-       j = transistor->_GetMapNet2Box()->end();
+   map<Net*, Box>::iterator i = transistor->_getMapNet2Box()->begin(), 
+       j = transistor->_getMapNet2Box()->end();
 
    while(i!=j) {
-     _mapNet2Box[GetNet((*i).first->GetName())]=(*i).second;
+     _mapNet2Box[getNet((*i).first->getName())]=(*i).second;
      i++;
    }
 
@@ -497,9 +447,9 @@ END_NAMESPACE_HURRICANE
 // Generic functions
 // ****************************************************************************************************
 
-string GetString(const H::Transistor::MaskInfo& masqueinfo)
+string getString(const H::Transistor::MaskInfo& masqueinfo)
 // **********************************************************
 {
-  return masqueinfo._GetString();
+  return masqueinfo._getString();
 }  
 

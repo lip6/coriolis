@@ -3,7 +3,8 @@ ADD_CUSTOM_TARGET(DTRParser echo "Creating DTRParser")
 SET(source_dir ${CHAMSIN_SOURCE_DIR}/src/dtr) 
 SET(binary_dir ${CHAMSIN_BINARY_DIR}/src/dtr) 
 
-INCLUDE_DIRECTORIES(${HURRICANE_INCLUDE_DIR} ${source_dir})
+INCLUDE_DIRECTORIES(${HURRICANE_INCLUDE_DIR}
+${CHAMSIN_SOURCE_DIR}/src/analogic ${source_dir})
 
 ADD_CUSTOM_COMMAND(
 SOURCE ${source_dir}/ParserDtrScan.ll

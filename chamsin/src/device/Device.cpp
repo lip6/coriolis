@@ -28,15 +28,15 @@ static Instance * refins = NULL;
 static set<Cell*> cellSet;
 
 
-static void GetAllCells(Cell* cell)
+static void getAllCells(Cell* cell)
 // ********************************
 {
    cellSet.insert(cell);
    
    if(!(cell->IsLeaf())){
-       for_each_instance(instance, cell->GetInstances())
-	 Cell * mastercell = instance->GetMasterCell();
-         GetAllCells(mastercell); 
+       for_each_instance(instance, cell->getInstances())
+	 Cell * mastercell = instance->getMasterCell();
+         getAllCells(mastercell); 
        end_for	 
    }  
 }
@@ -57,34 +57,16 @@ Device::Device(Library* library, const Name& name)
 }
 
 
-void Device::Delete()
-// **************************
-{
-   _PreDelete();
-   delete this;
-}
+void Device::_postCreate() {
+   Inherit::_postCreate();
 
-
-void Device::_PreDelete()
-// ******************************
-{
-   // do something
-   // ************
+   //CDataBase* database = getCDataBase();
+   //CCatal* ccatal = database->getCCatal();
   
-   Inherit::_PreDelete();
-}
-
-
-void Device::_PostCreate() {
-   Inherit::_PostCreate();
-
-   //CDataBase* database = GetCDataBase();
-   //CCatal* ccatal = database->GetCCatal();
-  
-   //CCatal::State* state = ccatal->GetState(GetName(), true);
+   //CCatal::State* state = ccatal->getState(getName(), true);
    //state->SetFlags(CCatal::State::LOGICAL|CCatal::State::PHYSICAL|CCatal::State::IN_MEMORY|CCatal::State::GDS, true);
    //state->SetCell(this);
-   //state->SetLibrary(GetLibrary());
+   //state->SetLibrary(getLibrary());
 
    // Create GenericDtrAccess and DtrAccess
    // *************************************
@@ -96,9 +78,9 @@ void Device::SaveLogicalView()
 // ***************************
 {
    cellSet.clear();
-   GetAllCells(this);
+   getAllCells(this);
 
-   //CDataBase * db = GetCDataBase();
+   //CDataBase * db = getCDataBase();
 
   // set<Cell*>::iterator i = cellSet.begin(), j = cellSet.end();
   // 
@@ -110,17 +92,17 @@ void Device::SaveLogicalView()
 
 
 
-string Device::_GetString() const
+string Device::_getString() const
 // ***************************************
 {
-     string s= Inherit::_GetString();
+     string s= Inherit::_getString();
      return s;
 }
 
-Record* Device::_GetRecord() const
+Record* Device::_getRecord() const
 // *********************************
 {
-	Record* record = Inherit::_GetRecord();
+	Record* record = Inherit::_getRecord();
 	return record;
 }
 
@@ -133,11 +115,11 @@ void Device::_Place(Instance* ins, const Transformation::Orientation& orientatio
     } 
 
     if(ins->IsPlaced()) {
-       throw Error("Can't Place " + GetString(ins) + " : it has already been placed");
+       throw Error("Can't Place " + getString(ins) + " : it has already been placed");
     }
 
     Transformation transformation(Point(0,0), orientation);
-    Box orientedmastercellbox = transformation.getBox(ins->GetMasterCell()->GetAbutmentBox());
+    Box orientedmastercellbox = transformation.getBox(ins->getMasterCell()->getAbutmentBox());
     
     Point translation( point.getX() - orientedmastercellbox.getXMin()
 	             , point.getY() - orientedmastercellbox.getYMin() );
@@ -172,18 +154,18 @@ void Device::_PlaceRight(Instance* ins, const Transformation::Orientation& orien
     } 
 
     if(ins->IsPlaced()) {
-       throw Error("Can't PlaceRight " + GetString(ins) + " : it has already been placed");
+       throw Error("Can't PlaceRight " + getString(ins) + " : it has already been placed");
     }
 
 
     if(!refins) {
-      throw Error("Can't Place Right " + GetString(ins) + " :  can't find refins");
+      throw Error("Can't Place Right " + getString(ins) + " :  can't find refins");
     }
   
-    Box refinsbox = refins->GetAbutmentBox();
+    Box refinsbox = refins->getAbutmentBox();
     
     Transformation transformation(Point(0,0), orientation);
-    Box orientedmastercellbox = transformation.getBox(ins->GetMasterCell()->GetAbutmentBox());
+    Box orientedmastercellbox = transformation.getBox(ins->getMasterCell()->getAbutmentBox());
     
     Point translation( refinsbox.getXMax() - orientedmastercellbox.getXMin() + offset.getX()
 	             , refinsbox.getYMin() - orientedmastercellbox.getYMin() + offset.getY() );

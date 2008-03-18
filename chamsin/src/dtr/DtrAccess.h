@@ -44,8 +44,8 @@ class DtrAccess {
     private : DtrAccess(const DtrAccess&);		
     private : DtrAccess& operator=(const DtrAccess&);
 
-    protected : static DtrAccess * Create();		
-    protected : virtual void _PostCreate();
+    protected : static DtrAccess * create();		
+    protected : virtual void _postCreate();
 # endif 
       
     public : static DtrAccess* Instance();
@@ -54,11 +54,11 @@ class DtrAccess {
 // ***********
 #   if !defined(__DOXYGEN_PROCESSOR__)
     protected : virtual ~DtrAccess() {};
-    protected : virtual void _PreDelete(); 
+    protected : virtual void _preDestroy(); 
 # endif 
 
 
-    public : virtual void Delete();
+    public : virtual void destroy();
 
 
 // Accessors
@@ -66,67 +66,67 @@ class DtrAccess {
     
     // If can't find data , throw Hurricane::Error
     // *******************************************	     
-    public : GenericCollection<double> GetRuleByLabel(const string&) const; 
-    public : GenericCollection<long>  GetRdsRuleByLabel(const string&) const; 
-    public : GenericCollection<string> GetLayerNamesByLabel(const string&) const;
-    public : Layers GetLayersByLabel(const string&) const;
-    public : GenericCollection<double> GetElectricalsByLabel(const string& ) const;
-    public : int GetModellingByLabel(const string&) const;
-    public : double GetSimpleCapaMimByLabel(const string&) const;
+    public : GenericCollection<double> getRuleByLabel(const string&) const; 
+    public : GenericCollection<long>  getRdsRuleByLabel(const string&) const; 
+    public : GenericCollection<string> getLayerNamesByLabel(const string&) const;
+    public : Layers getLayersByLabel(const string&) const;
+    public : GenericCollection<double> getElectricalsByLabel(const string& ) const;
+    public : int getModellingByLabel(const string&) const;
+    public : double getSimpleCapaMimByLabel(const string&) const;
 
 
 #   if !defined(__DOXYGEN_PROCESSOR__)
-    public : double GetSingleRealRuleByLabel(const string& s) const 
+    public : double getSingleRealRuleByLabel(const string& s) const 
 	     // *************************************************
 	     {
-	       GenericLocator<double> locator = GetRuleByLabel(s).GetLocator();
-	       return locator.GetElement(); 
+	       GenericLocator<double> locator = getRuleByLabel(s).getLocator();
+	       return locator.getElement(); 
 	     }
 
-    public : long GetSingleRdsRuleByLabel(const string& s) const 
+    public : long getSingleRdsRuleByLabel(const string& s) const 
 	     // ************************************************
 	     {
-	       GenericLocator<long> locator = GetRdsRuleByLabel(s).GetLocator();
-	       return locator.GetElement(); 
+	       GenericLocator<long> locator = getRdsRuleByLabel(s).getLocator();
+	       return locator.getElement(); 
 	     }
 
-    public : string GetSingleLayerNameByLabel(const string& s) const 
+    public : string getSingleLayerNameByLabel(const string& s) const 
 	     // ****************************************************
 	     {
-	       GenericLocator<string> locator = GetLayerNamesByLabel(s).GetLocator();
-	       return locator.GetElement(); 
+	       GenericLocator<string> locator = getLayerNamesByLabel(s).getLocator();
+	       return locator.getElement(); 
 	     }
 
-    public : Layer* GetSingleLayerByLabel(const string& s) const
+    public : Layer* getSingleLayerByLabel(const string& s) const
 	     // ************************************************
 	     {
-	       LayerLocator locator = GetLayersByLabel(s).GetLocator();
-	       return locator.GetElement();
+	       LayerLocator locator = getLayersByLabel(s).getLocator();
+	       return locator.getElement();
 	     }
 	   
-    public : double GetSingleRealRuleByLabel(char* prefix, const string& type, char* suffix) const
+    public : double getSingleRealRuleByLabel(char* prefix, const string& type, char* suffix) const
 	     // **********************************************************************************
 	     {
-	        return GetSingleRealRuleByLabel(prefix + type + suffix);       
+	        return getSingleRealRuleByLabel(prefix + type + suffix);       
 	     }
 
-    public : long GetSingleRdsRuleByLabel(char* prefix, const string& type, char* suffix) const 
+    public : long getSingleRdsRuleByLabel(char* prefix, const string& type, char* suffix) const 
 	     // *******************************************************************************
 	     {
-	        return GetSingleRdsRuleByLabel(prefix + type + suffix); 
+	        return getSingleRdsRuleByLabel(prefix + type + suffix); 
 	     }
 
-    public : string GetSingleLayerNameByLabel(char* prefix, const string& type, const string& suffix)             const
+    public : string getSingleLayerNameByLabel(char* prefix, const string& type, const string& suffix)             const
 	     // ************************************************************************************
 	     {
-	        return GetSingleLayerNameByLabel(prefix + type + suffix);
+	        return getSingleLayerNameByLabel(prefix + type + suffix);
 	     }
 
 
-    public : Layer* GetSingleLayerByLabel(char* prefix, const string& type, const string& suffix) const
+    public : Layer* getSingleLayerByLabel(char* prefix, const string& type, const string& suffix) const
 	     // ***************************************************************************************
 	     {
-                return GetSingleLayerByLabel(prefix + type + suffix);	     
+                return getSingleLayerByLabel(prefix + type + suffix);	     
 	     }
 
 # endif
@@ -153,16 +153,16 @@ class DtrAccess {
 #   if !defined(__DOXYGEN_PROCESSOR__)
 // Others
 // ******
-    public: virtual string _GetTypeName() const {return _TName("DtrAccess");};
-    public: virtual string _GetString() const;
-    public: virtual Record* _GetRecord() const;
+    public: virtual string _getTypeName() const {return _TName("DtrAccess");};
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
 
-    public: map<string, list<double> >& _GetLabel2RuleMap()  { return _label2ruleMap; };
-    public: map<string, list<string> >& _GetLabel2LayerNameMap()  { return _label2layerNameMap; };
-    public: map<string, list<double> >& _GetLabel2ElectricalMap()  
+    public: map<string, list<double> >& _getLabel2RuleMap()  { return _label2ruleMap; };
+    public: map<string, list<string> >& _getLabel2LayerNameMap()  { return _label2layerNameMap; };
+    public: map<string, list<double> >& _getLabel2ElectricalMap()  
 	     { return _label2electricalMap; };
-    public: map<string, int>& _GetLabel2ModellingMap() { return _label2modellingMap; };
-    public: map<string, double>& _GetLabel2SimpleCapaMimMap() 
+    public: map<string, int>& _getLabel2ModellingMap() { return _label2modellingMap; };
+    public: map<string, double>& _getLabel2SimpleCapaMimMap() 
 	     { return _label2simplecapamimMap; };
 # endif
 
@@ -178,7 +178,7 @@ class DtrAccess {
 // Generic functions
 // ****************************************************************************************************
 
-string GetString(const H::DtrAccess&);
+string getString(const H::DtrAccess&);
 
 
 #endif // HURRICANE_DTRACCESS

@@ -49,14 +49,9 @@ class Device : public Cell {
 // Constructors
 // ************
     protected : Device(Library* library, const Name& name);
-    protected : virtual void _PostCreate();
+    protected : virtual void _postCreate();
 
 
-// Destructors
-// ***********
-    protected : ~Device() {};
-    public    : virtual void Delete();
-    protected : virtual void _PreDelete();
 # endif
 
 // Operations
@@ -79,9 +74,9 @@ class Device : public Cell {
 
 // Others
 // ******
-    public: virtual string _GetTypeName() const {return _TName("Device"); };
-    public: virtual string _GetString() const;
-    public: virtual Record* _GetRecord() const;
+    public: virtual string _getTypeName() const {return _TName("Device"); };
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
     public : virtual void _Flush() = 0;
 
     // Description of Layout

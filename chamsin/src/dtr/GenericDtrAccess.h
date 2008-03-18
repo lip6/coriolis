@@ -56,8 +56,8 @@ class GenericDtrAccess {
 #   if !defined(__DOXYGEN_PROCESSOR__)
 // Others
 // ******
-    public: virtual string _GetTypeName() const {return _TName("GenericDtrAccess");};
-    public: virtual string _GetString() const;
+    public: virtual string _getTypeName() const {return _TName("GenericDtrAccess");};
+    public: virtual string _getString() const;
 # endif
 
 };
@@ -71,7 +71,7 @@ class GenericDtrAccess {
 // Generic functions
 // ****************************************************************************************************
 
-string GetString(const H::GenericDtrAccess&);
+string getString(const H::GenericDtrAccess&);
 
 
 #endif // HURRICANE_GENERICDTRACCESS

@@ -60,16 +60,16 @@ class MetaTransistor: public Cell {
     protected : MetaTransistor(Library* library, const Name& name, char type);
 # endif 
 
-    public : static MetaTransistor* Create(Library* library, const Name& name, char type);		
+    public : static MetaTransistor* create(Library* library, const Name& name, char type);		
    
 #   if !defined(__DOXYGEN_PROCESSOR__)
-    protected : virtual void _PostCreate();
+    protected : virtual void _postCreate();
 
 
 // Destructors
 // ***********
     protected : ~MetaTransistor() {};
-    protected : virtual void _PreDelete();
+    protected : virtual void _preDestroy();
 # endif 
 
 // Operations
@@ -77,17 +77,17 @@ class MetaTransistor: public Cell {
 
     // Create the connection between all instances.
     // ********************************************
-    public : void CreateConnection();
+    public : void createConnection();
 		
     // Create the layout of all motifs in this metatransistor. 
     // *******************************************************	     
-    public : void CreateLayout();
+    public : void createLayout();
 
 
 #   if !defined(__DOXYGEN_PROCESSOR__)
-    // Get all paramters after generation of Layout (capa..). 
+    // get all paramters after generation of Layout (capa..). 
     // *****************************************************
-    public : void GetParameterOfGeneration() { /* to do */};
+    public : void getParameterOfGeneration() { /* to do */};
 
     // Delete all instances and all motifs in this metatransistor.
     // ***********************************************************	     
@@ -97,10 +97,10 @@ class MetaTransistor: public Cell {
 
 // Accessors
 // *********	    
-    public : const Micro&  GetLe() const { return _le; };
-    public : const Micro&  GetWe()  const  { return _we; };
-    public : const char  GetType() const { return _type; };
-    public : const unsigned  GetM() const { return _m; };
+    public : const Micro&  getLe() const { return _le; };
+    public : const Micro&  getWe()  const  { return _we; };
+    public : const char  getType() const { return _type; };
+    public : const unsigned  getM() const { return _m; };
 
 
 // Updators
@@ -116,9 +116,9 @@ class MetaTransistor: public Cell {
 #   if !defined(__DOXYGEN_PROCESSOR__)
 // Others
 // ******
-    public: virtual string _GetTypeName() const {return _TName("MetaTransistor");};
-    public: virtual string _GetString() const;
-    public: virtual Record* _GetRecord() const;
+    public: virtual string _getTypeName() const {return _TName("MetaTransistor");};
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
 # endif
 
 };

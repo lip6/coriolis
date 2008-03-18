@@ -32,7 +32,7 @@ string segsforanonym[] = {string("10"), string("11"), string("12"), string("50")
 
  
 // ****************************************************************************************************
-// Class GetV1Trans implementation
+// Class getV1Trans implementation
 // ****************************************************************************************************
 GenV1Trans::GenV1Trans(Transistor::MaskV1Info* masqueinfo) 
 // *********************************************************
@@ -48,28 +48,28 @@ void GenV1Trans::Calculate(Transistor* transistor)
 
   // Check out mask param.
   // *********************
-  if(_masqueV1Info->GetL() < dtraccess->GetSingleRealRuleByLabel("L_TRANS") ||
-     _masqueV1Info->GetL() > dtraccess->GetSingleRealRuleByLabel("L_TRANS_MAX") ||
-     _masqueV1Info->GetW() < dtraccess->GetSingleRealRuleByLabel("W_TRANS") ||
-     _masqueV1Info->GetW() > dtraccess->GetSingleRealRuleByLabel("W_TRANS_MAX") )
+  if(_masqueV1Info->getL() < dtraccess->getSingleRealRuleByLabel("L_TRANS") ||
+     _masqueV1Info->getL() > dtraccess->getSingleRealRuleByLabel("L_TRANS_MAX") ||
+     _masqueV1Info->getW() < dtraccess->getSingleRealRuleByLabel("W_TRANS") ||
+     _masqueV1Info->getW() > dtraccess->getSingleRealRuleByLabel("W_TRANS_MAX") )
 
-    throw Error("Can't launch function GenV1Trans::Calculate for " + GetString(transistor) 
-	+ " the L " + GetString(_masqueV1Info->GetL()) 
-	+ " or the W " + GetString(_masqueV1Info->GetW()) 
+    throw Error("Can't launch function GenV1Trans::Calculate for " + getString(transistor) 
+	+ " the L " + getString(_masqueV1Info->getL()) 
+	+ " or the W " + getString(_masqueV1Info->getW()) 
 	+ " of this transistor is invalid."
 	);
 
-  if(_masqueV1Info->GetNbSourceColumn() < 1 || _masqueV1Info->GetNbSourceColumn() > MAXNBCONTACT || 
-     _masqueV1Info->GetNbDrainColumn() < 1 || _masqueV1Info->GetNbDrainColumn() > MAXNBCONTACT ) 
+  if(_masqueV1Info->getNbSourceColumn() < 1 || _masqueV1Info->getNbSourceColumn() > MAXNBCONTACT || 
+     _masqueV1Info->getNbDrainColumn() < 1 || _masqueV1Info->getNbDrainColumn() > MAXNBCONTACT ) 
 
-    throw Error("Can't launch function GenV1Trans::Calculate for " + GetString(transistor) 
-	+ " the nbsourcecolumn " + GetString(_masqueV1Info->GetNbSourceColumn()) 
-	+ " or the nbdraincolumn " + GetString(_masqueV1Info->GetNbDrainColumn()) 
+    throw Error("Can't launch function GenV1Trans::Calculate for " + getString(transistor) 
+	+ " the nbsourcecolumn " + getString(_masqueV1Info->getNbSourceColumn()) 
+	+ " or the nbdraincolumn " + getString(_masqueV1Info->getNbDrainColumn()) 
 	+ " of this transistor is invalid."
 	);
 
   IF_DEBUG_HUR_ANALOG
-    cout << ts << GetString(transistor) + " 's masqueinfo is " + GetString(_masqueV1Info)
+    cout << ts << getString(transistor) + " 's masqueinfo is " + getString(_masqueV1Info)
          << endl;
   END_IF
 
@@ -99,15 +99,15 @@ void GenV1Trans::Calculate(Transistor* transistor)
   long extension3 = 0;
   long extension4 = 0;
   long ymax     = 0;
-  string mostype;    // Get Mos Type (N/P).
+  string mostype;    // get Mos Type (N/P).
 
   if(transistor->IsNmos())
     mostype='N';
   else
     mostype='P';
 
-  //string mostype;    // Get Mos Type (N/P).
-  //mostype=transistor->GetType();
+  //string mostype;    // get Mos Type (N/P).
+  //mostype=transistor->getType();
 
   // -------------------------------------------------------------
   // Begin Calculate.
@@ -124,8 +124,8 @@ void GenV1Trans::Calculate(Transistor* transistor)
   x00 = 0; 
   y00 = -( GET_RULE("RE_GATE_ACTI") ); 
 
-  dx00 = ConvertRealToRdsUnit(_masqueV1Info->GetL());
-  realw = ConvertRealToRdsUnit(_masqueV1Info->GetW());
+  dx00 = ConvertRealToRdsUnit(_masqueV1Info->getL());
+  realw = ConvertRealToRdsUnit(_masqueV1Info->getW());
 
   dy00 = realw + 2*(-y00);
 
@@ -202,8 +202,8 @@ void GenV1Trans::Calculate(Transistor* transistor)
   // **********************
   y20 = 0 + GET_RULE("RE_ACTI_CONT");
   dy20 = realw - 2 * GET_RULE("RE_ACTI_CONT");
-  dx20 = (_masqueV1Info->GetNbSourceColumn()) * GET_RULE("RW_CONT")  + 
-      ((_masqueV1Info->GetNbSourceColumn()) - 1) * GET_RULE("RD_CONT");
+  dx20 = (_masqueV1Info->getNbSourceColumn()) * GET_RULE("RW_CONT")  + 
+      ((_masqueV1Info->getNbSourceColumn()) - 1) * GET_RULE("RD_CONT");
   x20 = 0 - ( dx20 + GET_RULE("RD_CONT_GATE") );
 
   SAVE_RECTANGLE("20", x20, y20, dx20, dy20)
@@ -213,8 +213,8 @@ void GenV1Trans::Calculate(Transistor* transistor)
   // **********************
   y40 = y20;
   x40 = x00 + dx00 + GET_RULE("RD_CONT_GATE");
-  dx40 = (_masqueV1Info->GetNbDrainColumn()) * GET_RULE("RW_CONT")  + 
-      ((_masqueV1Info->GetNbDrainColumn()) - 1) * GET_RULE("RD_CONT");
+  dx40 = (_masqueV1Info->getNbDrainColumn()) * GET_RULE("RW_CONT")  + 
+      ((_masqueV1Info->getNbDrainColumn()) - 1) * GET_RULE("RD_CONT");
   dy40 = dy20;
 
   SAVE_RECTANGLE("40", x40, y40, dx40, dy40)
@@ -302,7 +302,7 @@ void GenV1Trans::Calculate(Transistor* transistor)
     _mapString2Box[(*i).first] = (*i).second.translate(-xmin, -ymin);      
 
     IF_DEBUG_HUR_ANALOG
-      cout << ts << (*i).first <<"  " << GetString((*i).second) << endl;
+      cout << ts << (*i).first <<"  " << getString((*i).second) << endl;
     END_IF
 
     assert(BOX_IS_VALID((*i).second));
@@ -317,31 +317,31 @@ void GenV1Trans::Generate(Transistor* transistor)
 {
   OpenUpdateSession();
 
-  Net* source = transistor->GetNet(Name(transistor->GetSourceName())); 
-  Net* drain  = transistor->GetNet(Name(transistor->GetDrainName()) ); 
-  Net* grid   = transistor->GetNet(Name(transistor->GetGridName())  ); 
+  Net* source = transistor->getNet(Name(transistor->getSourceName())); 
+  Net* drain  = transistor->getNet(Name(transistor->getDrainName()) ); 
+  Net* grid   = transistor->getNet(Name(transistor->getGridName())  ); 
 
   DtrAccess * dtraccess = DtrAccess::Instance(); 
-  //string mostype(1, transistor->GetType());    // Get Mos Type (N/P).
+  //string mostype(1, transistor->getType());    // get Mos Type (N/P).
 
-  string mostype;    // Get Mos Type (N/P).
+  string mostype;    // get Mos Type (N/P).
 
   if(transistor->IsNmos())
     mostype='N';
   else
     mostype='P';
 
-  long rw_cont = GetUnit(GET_RULE("RW_CONT"));
-  long rd_cont = GetUnit(GET_RULE("RD_CONT"));
+  long rw_cont = getUnit(GET_RULE("RW_CONT"));
+  long rd_cont = getUnit(GET_RULE("RD_CONT"));
   unsigned nbcontact = 0;
   long tmp_xcenter = 0;
   long tmp_ycenter = 0;
 
-  DataBase * db = GetDataBase();  
+  DataBase * db = getDataBase();  
 
-  if(!db) throw Error("In GetV1Trans::Generate : can't find DataBase");
+  if(!db) throw Error("In getV1Trans::Generate : can't find DataBase");
 
-  //Technology * tech = db->GetTechnology();
+  //Technology * tech = db->getTechnology();
 
   Layer * layer_20 = GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_20"); 
   Layer * layer_30 = GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_30"); 
@@ -354,19 +354,19 @@ void GenV1Trans::Generate(Transistor* transistor)
   // Cenerate Components For Net Source. 
   // ***********************************
 IF_DEBUG_HUR_ANALOG
-      cout << ts << "Begin for create components for net Source of " << GetString(transistor) << endl;
+      cout << ts << "Begin for create components for net Source of " << getString(transistor) << endl;
 END_IF
 
   for(size_t i=0; i<sizeof(segsforsource)/sizeof(string); i++) {
 
     if(segsforsource[i]=="20") {
-      //cout << ts << " Begin create contact for source , Under Box is " << GetString(GET_BOX(segsforsource[i])) <<endl;
+      //cout << ts << " Begin create contact for source , Under Box is " << getString(GET_BOX(segsforsource[i])) <<endl;
       Box underbox = GET_BOX(segsforsource[i]);
-      CREATE_CONTACT_MATRIX_UNDER(underbox, transistor->GetNbSourceColumn(), layer_20, source)  
+      CREATE_CONTACT_MATRIX_UNDER(underbox, transistor->getNbSourceColumn(), layer_20, source)  
       //cout << ts << " Finish create contact for source " <<endl;
     }
     else {     
-      Contact::Create(source, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsforsource[i])
+      Contact::create(source, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsforsource[i])
                     , GET_BOX(segsforsource[i]).getXCenter()
                     , GET_BOX(segsforsource[i]).getYCenter()
   		    , GET_BOX(segsforsource[i]).getWidth()
@@ -376,19 +376,19 @@ END_IF
   }  
 
 IF_DEBUG_HUR_ANALOG
-      cout << ts << "End for create components for net Source of " << GetString(transistor) << endl;
+      cout << ts << "End for create components for net Source of " << getString(transistor) << endl;
 END_IF
 
     
   // Generate Components For Net Grid.
   // *********************************
 IF_DEBUG_HUR_ANALOG
-      cout << ts << "Begin for create components for net Grid of " << GetString(transistor) << endl;
+      cout << ts << "Begin for create components for net Grid of " << getString(transistor) << endl;
 END_IF
   for(size_t i=0; i<sizeof(segsforgrid)/sizeof(string); i++) {
        if(segsforgrid[i]=="30"){
           if( GET_BOX(segsforgrid[i]).getWidth()==GET_RULE("RW_CONT") ) {
-              Contact::Create(grid, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsforgrid[i])
+              Contact::create(grid, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsforgrid[i])
                               , GET_BOX(segsforgrid[i]).getXCenter()
                               , GET_BOX(segsforgrid[i]).getYCenter()
             		      , GET_BOX(segsforgrid[i]).getWidth()
@@ -408,7 +408,7 @@ END_IF
        }
        else {
 	  if(GET_BOX(segsforgrid[i]).getXMin() < GET_BOX(segsforgrid[i]).getXMax()) {
-              Contact::Create(grid, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsforgrid[i])
+              Contact::create(grid, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsforgrid[i])
                               , GET_BOX(segsforgrid[i]).getXCenter()
                               , GET_BOX(segsforgrid[i]).getYCenter()
             		      , GET_BOX(segsforgrid[i]).getWidth()
@@ -420,25 +420,25 @@ END_IF
   }     
      
 IF_DEBUG_HUR_ANALOG
-      cout << ts << "End for create components for net Grid of " << GetString(transistor) << endl;
+      cout << ts << "End for create components for net Grid of " << getString(transistor) << endl;
 END_IF
 
 
   // Generate Components For Net Drain. 
   // **********************************
 IF_DEBUG_HUR_ANALOG
-      cout << ts << "Begin for create components for net Drain of " << GetString(transistor) << endl;
+      cout << ts << "Begin for create components for net Drain of " << getString(transistor) << endl;
 END_IF
   for(size_t i=0; i<sizeof(segsfordrain)/sizeof(string); i++) {
 
     if(segsfordrain[i]=="40") {
-      //cout << ts << " Begin create contact for drain, Under Box is " << GetString(GET_BOX(segsforsource[i])) <<endl;
+      //cout << ts << " Begin create contact for drain, Under Box is " << getString(GET_BOX(segsforsource[i])) <<endl;
       Box underbox = GET_BOX(segsfordrain[i]);
-      CREATE_CONTACT_MATRIX_UNDER(underbox, transistor->GetNbDrainColumn(), layer_40, drain) 
+      CREATE_CONTACT_MATRIX_UNDER(underbox, transistor->getNbDrainColumn(), layer_40, drain) 
       //cout << ts << " Finish create contact for drain" <<endl;
     }
     else {     
-      Contact::Create(drain, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsfordrain[i])
+      Contact::create(drain, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsfordrain[i])
                     , GET_BOX(segsfordrain[i]).getXCenter()
                     , GET_BOX(segsfordrain[i]).getYCenter()
   		    , GET_BOX(segsfordrain[i]).getWidth()
@@ -448,20 +448,20 @@ END_IF
   }  
 
 IF_DEBUG_HUR_ANALOG
-      cout << ts << "End for create components for net Drain of " << GetString(transistor) << endl;
+      cout << ts << "End for create components for net Drain of " << getString(transistor) << endl;
 END_IF
 
   // Generate Components For Anonyms Nets.
   // *************************************
 IF_DEBUG_HUR_ANALOG
-      cout << ts << "Begin for create components for net Anonyme of " << GetString(transistor) << endl;
+      cout << ts << "Begin for create components for net Anonyme of " << getString(transistor) << endl;
 END_IF
-  Net * anonym = Net::Create(transistor, Name("anonym"));
+  Net * anonym = Net::create(transistor, Name("anonym"));
   for(size_t i=0; i<sizeof(segsforanonym)/sizeof(string);i++) {
     if(transistor->IsNmos() && segsforanonym[i]=="50")
       continue;
 
-    Contact::Create(anonym, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsforanonym[i])
+    Contact::create(anonym, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsforanonym[i])
 	           , GET_BOX(segsforanonym[i]).getXCenter()
 		   , GET_BOX(segsforanonym[i]).getYCenter()
 		   , GET_BOX(segsforanonym[i]).getWidth()
@@ -470,7 +470,7 @@ END_IF
   }
 
 IF_DEBUG_HUR_ANALOG
-      cout << ts << "End for create components for net Anonyme of " << GetString(transistor) << endl;
+      cout << ts << "End for create components for net Anonyme of " << getString(transistor) << endl;
 END_IF
 
   // End Generation.
@@ -480,50 +480,50 @@ END_IF
 
   // Set Transistor::_mapNet2Box.  
   // ****************************
-  (*(transistor->_GetMapNet2Box()))[grid]   = _mapString2Box[string("30")];
-  (*(transistor->_GetMapNet2Box()))[source] = _mapString2Box[string("20")];
-  (*(transistor->_GetMapNet2Box()))[drain]  = _mapString2Box[string("40")];
+  (*(transistor->_getMapNet2Box()))[grid]   = _mapString2Box[string("30")];
+  (*(transistor->_getMapNet2Box()))[source] = _mapString2Box[string("20")];
+  (*(transistor->_getMapNet2Box()))[drain]  = _mapString2Box[string("40")];
 
-  cout<< GetString(_mapString2Box[string("30")]) <<endl;
-  cout<< GetString(_mapString2Box[string("20")]) <<endl;
-  cout<< GetString(_mapString2Box[string("40")]) <<endl;
+  cout<< getString(_mapString2Box[string("30")]) <<endl;
+  cout<< getString(_mapString2Box[string("20")]) <<endl;
+  cout<< getString(_mapString2Box[string("40")]) <<endl;
 
   // Set Abutment Box.
   // ***************** 
-  switch(transistor->GetAbutmentType().GetCode()) {
+  switch(transistor->getAbutmentType().getCode()) {
 
     case Transistor::Type::INTERNAL : 
         transistor->SetAbutmentBox( Box(GET_BOX(string("20")).getXCenter() 
-       	                             , transistor->GetBoundingBox().getYMin()
+       	                             , transistor->getBoundingBox().getYMin()
        	   			     , GET_BOX(string("40")).getXCenter()
-       	   			     , transistor->GetBoundingBox().getYMax()
+       	   			     , transistor->getBoundingBox().getYMax()
 				    )
        	   			  );  
 	break; 
 
     case Transistor::Type::LEFT: 
         transistor->SetAbutmentBox( Box(GET_BOX(string("11")).getXMin() 
-       	                              , transistor->GetBoundingBox().getYMin()
+       	                              , transistor->getBoundingBox().getYMin()
        	   			      , GET_BOX(string("40")).getXCenter()
-       	   			      , transistor->GetBoundingBox().getYMax()
+       	   			      , transistor->getBoundingBox().getYMax()
 				    )
        	   			  );  
 	break ;
      
     case Transistor::Type::RIGHT: 
         transistor->SetAbutmentBox( Box(GET_BOX(string("20")).getXCenter() 
-       	                              , transistor->GetBoundingBox().getYMin()
+       	                              , transistor->getBoundingBox().getYMin()
        	   			      , GET_BOX(string("11")).getXMax()
-       	   			      , transistor->GetBoundingBox().getYMax()
+       	   			      , transistor->getBoundingBox().getYMax()
 				    )
        	   			  );  
 	break ;
 
     case Transistor::Type::SINGLE: 
         transistor->SetAbutmentBox( Box(GET_BOX(string("11")).getXMin() 
-       	                              , transistor->GetBoundingBox().getYMin()
+       	                              , transistor->getBoundingBox().getYMin()
        	   			      , GET_BOX(string("11")).getXMax()
-       	   			      , transistor->GetBoundingBox().getYMax()
+       	   			      , transistor->getBoundingBox().getYMax()
                                     )
        	   			  );  
 	break ;

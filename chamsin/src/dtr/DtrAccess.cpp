@@ -34,16 +34,16 @@ DtrAccess::DtrAccess()
 }
 
 
-DtrAccess * DtrAccess::Create() {
+DtrAccess * DtrAccess::create() {
    DtrAccess * dtraccess = new DtrAccess();
 
-   dtraccess->_PostCreate();
+   dtraccess->_postCreate();
    
    return dtraccess;
 }
 
 
-void DtrAccess::_PostCreate() {
+void DtrAccess::_postCreate() {
    const char* dtrFileName = getenv("DTR_FILE");
    if(!dtrFileName) {
      throw Error("Can't not get Macro DTR_FILE.");
@@ -65,19 +65,19 @@ void DtrAccess::_PostCreate() {
        }
    }
 
-   // Get Objet Layer from Technology with its name. 
+   // get Objet Layer from Technology with its name. 
    // **********************************************
    
-  DataBase* db = GetDataBase();  
+  DataBase* db = getDataBase();  
 
   if(!db) {
-      throw Error("In GetV1Trans::Generate : can't find DataBase.");
+      throw Error("In getV1Trans::Generate : can't find DataBase.");
   }
 
-  Technology* tech = db->GetTechnology();
+  Technology* tech = db->getTechnology();
 
   if (!tech) {
-      throw Error("In GetV1Trans::Generate : can't find Technology.");
+      throw Error("In getV1Trans::Generate : can't find Technology.");
   }
 
 
@@ -90,12 +90,12 @@ void DtrAccess::_PostCreate() {
        n = (*it_layermap).second.end();
 
      while(m!=n) {
-       Layer * layer = tech->GetLayer(Name(*m));
+       Layer * layer = tech->getLayer(Name(*m));
        if(!layer) { 
 	 throw Error("Error : in function DtrAccess::_PostCreate , Can't find Layer " 
-	     + GetString(*m) + " in technology file when parser DtrFile.");
+	     + getString(*m) + " in technology file when parser DtrFile.");
 //	 cerr << Warning("In function DtrAccess::_PostCreate , Can't find Layer " 
-//	     + GetString(*m) + " in technology file when parser DtrFile");
+//	     + getString(*m) + " in technology file when parser DtrFile");
        }
 	 
        _label2layerMap[(*it_layermap).first].push_back(layer);
@@ -114,19 +114,19 @@ DtrAccess * DtrAccess::Instance() {
 
   if(!singleton_name) { // if MACRO IS INVALID
      if(!_instance) {
-        _instance = DtrAccess::Create();
+        _instance = DtrAccess::create();
      }
   } else {  
     if(!_instance){
        if( !(_instance=LookUp(string(singleton_name))) ) // if singleton hasn't been registered
-          _instance = DtrAccess::Create();
+          _instance = DtrAccess::create();
     }
   }
   return _instance;
 }
 
 
-void DtrAccess::_PreDelete()
+void DtrAccess::_preDestroy()
 // ***********************
 {
   // Do something
@@ -134,39 +134,39 @@ void DtrAccess::_PreDelete()
 }
 
 
-void DtrAccess::Delete()
+void DtrAccess::destroy()
 // ********************
 {
-   _PreDelete();
+   _preDestroy();
    delete this;
 }
 
 
-GenericCollection<double> DtrAccess::GetRuleByLabel(const string& label) const
+GenericCollection<double> DtrAccess::getRuleByLabel(const string& label) const
 // ***************************************************************************
 {
     map<string, list<double> >::const_iterator i = _label2ruleMap.find(label);
 
     if(i==_label2ruleMap.end()) 
-      throw Error("Can't find in DtrFile rule the label : " + GetString(label));
+      throw Error("Can't find in DtrFile rule the label : " + getString(label));
 
-    return GetCollection((*i).second);
+    return getCollection((*i).second);
 }
 
 
-GenericCollection<long> DtrAccess::GetRdsRuleByLabel(const string& label) const
+GenericCollection<long> DtrAccess::getRdsRuleByLabel(const string& label) const
 // ******************************************************************************
 {
     map<string, list<long> >::const_iterator i = _label2RdsRuleMap.find(label);
 
     if(i==_label2RdsRuleMap.end()) 
-      throw Error("Can't find in DtrFile The Rds Value of Rule by label : " + GetString(label));
+      throw Error("Can't find in DtrFile The Rds Value of Rule by label : " + getString(label));
 
-    return GetCollection((*i).second);
+    return getCollection((*i).second);
 }
 
 
-GenericCollection<string> DtrAccess::GetLayerNamesByLabel(const string& label) const
+GenericCollection<string> DtrAccess::getLayerNamesByLabel(const string& label) const
 // *********************************************************************************
 {
     map<string, list<string> >::const_iterator i = _label2layerNameMap.find(label);
@@ -174,11 +174,11 @@ GenericCollection<string> DtrAccess::GetLayerNamesByLabel(const string& label) c
     if(i==_label2layerNameMap.end())
       throw Error("Can't find in DtrFile layers the label : " + label);
 
-    return GetCollection((*i).second);
+    return getCollection((*i).second);
 }
 
 
-GenericCollection<Layer*> DtrAccess::GetLayersByLabel(const string& label) const
+GenericCollection<Layer*> DtrAccess::getLayersByLabel(const string& label) const
 // ******************************************************************************
 {
    map<string, list<Layer*> >::const_iterator i = _label2layerMap.find(label);
@@ -186,11 +186,11 @@ GenericCollection<Layer*> DtrAccess::GetLayersByLabel(const string& label) const
    if(i==_label2layerMap.end()) 
      throw Error("Can't find in DtrFile objet Layer by label : " + label );
 
-   return GetCollection((*i).second);
+   return getCollection((*i).second);
 }
 
 
-GenericCollection<double> DtrAccess::GetElectricalsByLabel(const string& label) const
+GenericCollection<double> DtrAccess::getElectricalsByLabel(const string& label) const
 // **********************************************************************************
 {
     map<string, list<double> >::const_iterator i = _label2electricalMap.find(label);
@@ -198,29 +198,29 @@ GenericCollection<double> DtrAccess::GetElectricalsByLabel(const string& label) 
     if(i==_label2electricalMap.end())
       throw Error("Can't find in DtrFile electricals by label : " + label);
 
-    return GetCollection((*i).second);
+    return getCollection((*i).second);
 }
 
 
-int DtrAccess::GetModellingByLabel(const string& label) const
+int DtrAccess::getModellingByLabel(const string& label) const
 // **********************************************************
 {
     map<string, int>::const_iterator i = _label2modellingMap.find(label);
 
     if(i==_label2modellingMap.end())
-      throw Error("Can't find in DtrFile modelling by label : " + GetString(label));
+      throw Error("Can't find in DtrFile modelling by label : " + getString(label));
 
     return (*i).second;
 }
 
 
-double DtrAccess::GetSimpleCapaMimByLabel(const string& label) const
+double DtrAccess::getSimpleCapaMimByLabel(const string& label) const
 // ****************************************************************
 {
     map<string, double>::const_iterator i = _label2simplecapamimMap.find(label);
 
     if(i==_label2simplecapamimMap.end())
-      throw Error("Can't find in DtrFile simple capa mim by label : " + GetString(label));
+      throw Error("Can't find in DtrFile simple capa mim by label : " + getString(label));
 
     return (*i).second;
 }
@@ -271,7 +271,7 @@ void DtrAccess::Register(const string& singletonname, DtrAccess* dtraccess)
 }  
 
 
-string DtrAccess::_GetString() const
+string DtrAccess::_getString() const
 // **********************************
 {
   string s("Singleton DtrAccess");
@@ -279,10 +279,10 @@ string DtrAccess::_GetString() const
 }
 
 
-Record* DtrAccess::_GetRecord() const
+Record* DtrAccess::_getRecord() const
 // **********************************
 {
-  Record* record = new Record(_GetString());
+  Record* record = new Record(_getString());
   return record;
 }
 
@@ -292,10 +292,10 @@ END_NAMESPACE_HURRICANE
 // Generic functions
 // ****************************************************************************************************
 
-string GetString(const H::DtrAccess& access)
+string getString(const H::DtrAccess& access)
 // **********************************************
 {
-  return access._GetString();
+  return access._getString();
 }
 
 

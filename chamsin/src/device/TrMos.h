@@ -85,19 +85,13 @@ class TrMos : public Device {
 // Constructors
 // ************
     protected : TrMos(Library* library, const Name& name);
-    protected : virtual void _PostCreate();
+    protected : virtual void _postCreate();
 #endif
 
-    public    : static TrMos* Create(Library* library, const Name & name); 
+    public    : static TrMos* create(Library* library, const Name & name); 
 
 
 #   if !defined(__DOXYGEN_PROCESSOR__)
-// Destructors
-// ***********
-    protected : ~TrMos() {};
-    public    : virtual void Delete();
-    protected : virtual void _PreDelete();
-
 
 // Operations
 // **********
@@ -106,18 +100,18 @@ class TrMos : public Device {
 #endif
 
 
-    public : void Create(const char type, const bool isbsconnected);
+    public : void create(const char type, const bool isbsconnected);
     public : void Generate(const unsigned m, const bool sourceisfirst, const bool hasring,
 		 const unsigned nbsourcecolumn, const unsigned nbdraincolumn);
 
 // Accessors
 // *********	    
-    public : char GetType() const { return _type; };  
-    public : unsigned GetM() const { return _m; };	     
-    public : const double GetWidthOfSourceWire() const { return _widthOfSourceWire; };	     
-    public : const double GetWidthOfDrainWire() const { return _widthOfDrainWire; };	     
-    public : MetaTransistor* GetTr1() const { return _tr1; };	     
-    public : Transistors GetTransistors() const ;
+    public : char getType() const { return _type; };  
+    public : unsigned getM() const { return _m; };	     
+    public : const double getWidthOfSourceWire() const { return _widthOfSourceWire; };	     
+    public : const double getWidthOfDrainWire() const { return _widthOfDrainWire; };	     
+    public : MetaTransistor* getTr1() const { return _tr1; };	     
+    public : Transistors getTransistors() const ;
 
 // Updators
 // ********
@@ -139,15 +133,15 @@ class TrMos : public Device {
 
 // Others
 // ******
-    public: virtual string _GetTypeName() const {return _TName("TrMos"); };
-    public: virtual string _GetString() const;
-    public: virtual Record* _GetRecord() const;
+    public: virtual string _getTypeName() const {return _TName("TrMos"); };
+    public: virtual string _getString() const;
+    public: virtual Record* _getRecord() const;
 
-    public: vector<PinName>& GetLowPinOrder() { return _lowPinOrder; };     
-    public: vector<PinName>& GetHighPinOrder() { return _highPinOrder; };
+    public: vector<PinName>& getLowPinOrder() { return _lowPinOrder; };     
+    public: vector<PinName>& getHighPinOrder() { return _highPinOrder; };
 
-    public: map<Net*, Pin*>& GetMapNetToPinBoxInLeftSide() { return _mapNetToPinBoxInLeftSide; };
-    public: map<Net*, Pin*>& GetMapNetToPinBoxInRightSide() { return _mapNetToPinBoxInRightSide; };
+    public: map<Net*, Pin*>& getMapNetToPinBoxInLeftSide() { return _mapNetToPinBoxInLeftSide; };
+    public: map<Net*, Pin*>& getMapNetToPinBoxInRightSide() { return _mapNetToPinBoxInRightSide; };
      
     public : virtual void _Flush();
     protected : void _PlaceAndRoute();	    

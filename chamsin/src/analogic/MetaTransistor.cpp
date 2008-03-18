@@ -19,7 +19,6 @@ BEGIN_NAMESPACE_HURRICANE
 // ****************************************************************************************************
 
 MetaTransistor::MetaTransistor(Library* library, const Name& name, char type)
-// **************************************************************************
 :	Inherit(library, name),
         _type(type),
 	_m(1),
@@ -29,67 +28,61 @@ MetaTransistor::MetaTransistor(Library* library, const Name& name, char type)
 }
 
 
-MetaTransistor* MetaTransistor::Create(Library* library, const Name& name, char type)
-// **********************************************************************************
-{
+MetaTransistor* MetaTransistor::create(Library* library, const Name& name, char type) {
 	MetaTransistor* metatransistor = new MetaTransistor(library, name, type);
 
-	metatransistor->_PostCreate();
+	metatransistor->_postCreate();
 
 	return metatransistor;
 }
 
 
-void MetaTransistor::_PreDelete()
-// ******************************
-{
+void MetaTransistor::_preDestroy() {
    // do something
    // ************
   
-   Inherit::_PreDelete();
+   Inherit::_preDestroy();
 }
 
 
-void MetaTransistor::_PostCreate()
-// *******************************
-{
-   Inherit::_PostCreate();
+void MetaTransistor::_postCreate() {
+   Inherit::_postCreate();
 
-   (Net::Create(this, Name("DRAIN")))->SetExternal(true);
-   (Net::Create(this, Name("SOURCE")))->SetExternal(true);
-   (Net::Create(this, Name("GRID")))->SetExternal(true);
-   (Net::Create(this, Name("BULK")))->SetExternal(true);
+   (Net::create(this, Name("DRAIN")))->SetExternal(true);
+   (Net::create(this, Name("SOURCE")))->SetExternal(true);
+   (Net::create(this, Name("GRID")))->SetExternal(true);
+   (Net::create(this, Name("BULK")))->SetExternal(true);
 }
 
 
-void MetaTransistor::CreateConnection()
+void MetaTransistor::createConnection()
 // ***********************************
 {
-  for_each_instance(instance, this->GetInstances())   
-     Cell * mastercell = instance->GetMasterCell();
+  for_each_instance(instance, this->getInstances())   
+     Cell * mastercell = instance->getMasterCell();
 
      // Assurance of unique instanciation 
      // *********************************
-     if(mastercell->_GetSlaveInstanceSet()._GetSize()!=1) {
-       string err_msg = "Can't create connection : " + GetString(mastercell) + " hasn't only one slave instance";
+     if(mastercell->_getSlaveInstanceSet()._getSize()!=1) {
+       string err_msg = "Can't create connection : " + getString(mastercell) + " hasn't only one slave instance";
        assert(err_msg.c_str());
      }
 
-     instance->GetPlug(mastercell->GetNet(Name("DRAIN")))->SetNet(GetNet(Name("DRAIN")));
-     instance->GetPlug(mastercell->GetNet(Name("SOURCE")))->SetNet(GetNet(Name("SOURCE")));
-     instance->GetPlug(mastercell->GetNet(Name("GRID")))->SetNet(GetNet(Name("GRID")));
-     instance->GetPlug(mastercell->GetNet(Name("BULK")))->SetNet(GetNet(Name("BULK")));
+     instance->getPlug(mastercell->getNet(Name("DRAIN")))->SetNet(getNet(Name("DRAIN")));
+     instance->getPlug(mastercell->getNet(Name("SOURCE")))->SetNet(getNet(Name("SOURCE")));
+     instance->getPlug(mastercell->getNet(Name("GRID")))->SetNet(getNet(Name("GRID")));
+     instance->getPlug(mastercell->getNet(Name("BULK")))->SetNet(getNet(Name("BULK")));
   end_for
 }  
 
 
-void MetaTransistor::CreateLayout()
+void MetaTransistor::createLayout()
 // ********************************
 {
 //  OpenUpdateSession();
   
   if((_le == 0.0) || (_we == 0.0)) {
-     throw Error("Can't generate layout : " + GetString(this) + " hasn't been dimensionned");
+     throw Error("Can't generate layout : " + getString(this) + " hasn't been dimensionned");
   }
 
   SetTerminal(false);
@@ -98,24 +91,24 @@ void MetaTransistor::CreateLayout()
   Transistor * left_ref = NULL;
   Transistor * right_ref = NULL;
 
-  for_each_instance(instance, this->GetInstances())
-     Cell * mastercell = instance->GetMasterCell();
+  for_each_instance(instance, this->getInstances())
+     Cell * mastercell = instance->getMasterCell();
 
      // Assurance of unique instanciation 
      // *********************************
-     if(mastercell->_GetSlaveInstanceSet()._GetSize()!=1) {
-       string err_msg = "Can't generate layout : " + GetString(mastercell) + " hasn't only one slave instance";
+     if(mastercell->_getSlaveInstanceSet()._getSize()!=1) {
+       string err_msg = "Can't generate layout : " + getString(mastercell) + " hasn't only one slave instance";
        assert(err_msg.c_str());
      }
     
      Transistor * trans = dynamic_cast<Transistor*>(mastercell);
      if(!trans){
-       string err_msg = "Can't genrate layout : " + GetString(mastercell) + " isn't a Transistor"; 
+       string err_msg = "Can't genrate layout : " + getString(mastercell) + " isn't a Transistor"; 
      }
      
      if(trans->IsInternal()) {
        if(!internal_ref) {
-         trans->CreateLayout();
+         trans->createLayout();
 	 internal_ref = trans;
        } 
        else {
@@ -124,7 +117,7 @@ void MetaTransistor::CreateLayout()
      }
      else if(trans->IsLeft()) {
        if(!left_ref) {
-	 trans->CreateLayout();
+	 trans->createLayout();
 	 left_ref=trans;
        }
        else
@@ -132,14 +125,14 @@ void MetaTransistor::CreateLayout()
      }  
      else if(trans->IsRight()) {
        if(!right_ref) {
-	 trans->CreateLayout();
+	 trans->createLayout();
 	 right_ref=trans;
        }
        else
 	 trans->DuplicateLayout(right_ref);
      }
      else 
-        trans->CreateLayout();
+        trans->createLayout();
   end_for    
   
 
@@ -153,29 +146,29 @@ void MetaTransistor::Flush()
 // *************************
 {
   OpenUpdateSession();
-  for_each_instance(instance, this->GetInstances())   
-    Cell * mastercell = instance->GetMasterCell();
-    instance->Delete();     
-    mastercell->Delete();
+  for_each_instance(instance, this->getInstances())   
+    Cell * mastercell = instance->getMasterCell();
+    instance->destroy();     
+    mastercell->destroy();
   end_for
   CloseUpdateSession();
 }  
 
 
 
-string MetaTransistor::_GetString() const
+string MetaTransistor::_getString() const
 // ***************************************
 {
-     string s= Inherit::_GetString();
-     s.insert(s.length()-1, " " + GetString(GetType()) );
-     s.insert(s.length()-1, " " + GetString(GetM()) );
+     string s= Inherit::_getString();
+     s.insert(s.length()-1, " " + getString(getType()) );
+     s.insert(s.length()-1, " " + getString(getM()) );
      return s;
 }
 
-Record* MetaTransistor::_GetRecord() const
+Record* MetaTransistor::_getRecord() const
 // ***************************************
 {
-	Record* record = Inherit::_GetRecord();
+	Record* record = Inherit::_getRecord();
 	return record;
 }
 

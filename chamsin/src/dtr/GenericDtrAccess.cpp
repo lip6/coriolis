@@ -31,11 +31,11 @@ void GenericDtrAccess::Instance(DtrAccess* dtraccess)
 GenericDtrAccess::~GenericDtrAccess()
 // *********************************
 {
-  if(_dtrAccess)  {  cout<<GetString(_dtrAccess)<<" is delete "<<endl; _dtrAccess->Delete();}
+  if(_dtrAccess)  {  cout<<getString(_dtrAccess)<<" is delete "<<endl; _dtrAccess->destroy();}
 }
 
 
-string GenericDtrAccess::_GetString() const
+string GenericDtrAccess::_getString() const
 // ****************************************
 {
   string s("Singleton GenericDtrAccess");
@@ -51,10 +51,10 @@ END_NAMESPACE_HURRICANE
 // Generic functions
 // ****************************************************************************************************
 
-string GetString(const H::GenericDtrAccess& access)
+string getString(const H::GenericDtrAccess& access)
 // ************************************************
 {
-  return access._GetString();
+  return access._getString();
 }
 
 

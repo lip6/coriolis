@@ -92,7 +92,7 @@ item:  T_ID elems '\n'
 	      , j = doubleList.end();
 
 	  while(i!=j) {
-            (dtraccess->_GetLabel2RuleMap())[label].push_back(*i);  
+            (dtraccess->_getLabel2RuleMap())[label].push_back(*i);  
 	    i++;
 	  }
      }  
@@ -105,7 +105,7 @@ item:  T_ID elems '\n'
 	      , j = stringList.end();
 
 	  while(i!=j) {
-            (dtraccess->_GetLabel2LayerNameMap())[label].push_back(*i);;   
+            (dtraccess->_getLabel2LayerNameMap())[label].push_back(*i);;   
 	    i++;
 	  }
      }
@@ -118,7 +118,7 @@ item:  T_ID elems '\n'
 	      , j = doubleList.end();
 
 	  while(i!=j) {
-            (dtraccess->_GetLabel2ElectricalMap())[label].push_back(*i);  
+            (dtraccess->_getLabel2ElectricalMap())[label].push_back(*i);  
 	    i++;
 	  }
      }
@@ -129,7 +129,7 @@ item:  T_ID elems '\n'
                 
           list<double>::iterator i = doubleList.begin();
 	     
-          (dtraccess->_GetLabel2ModellingMap())[label] = (int)(*i);  
+          (dtraccess->_getLabel2ModellingMap())[label] = (int)(*i);  
      }
 
      else if( strcmp(table_name, "SIMPLE_CAPA_MIM")==0 ) {
@@ -138,7 +138,7 @@ item:  T_ID elems '\n'
 	  }
  
           list<double>::iterator i = doubleList.begin();
-	  (dtraccess->_GetLabel2SimpleCapaMimMap())[label] = (*i);
+	  (dtraccess->_getLabel2SimpleCapaMimMap())[label] = (*i);
        
      }
       

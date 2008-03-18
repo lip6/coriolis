@@ -40,7 +40,7 @@ void TrMos::_PlaceAndRoute()
 // *************************
 {
 
-   // Get Dtr Rules And Calculate the Size of AbutmentBox of Device.
+   // get Dtr Rules And Calculate the Size of AbutmentBox of Device.
    // **************************************************************
    DtrAccess * dtraccess = DtrAccess::Instance(); 
 
@@ -48,19 +48,19 @@ void TrMos::_PlaceAndRoute()
    if(_type == 'P') type = 'N'; 
    else type = 'P';
 
-   long minImpWidth       = dtraccess->GetSingleRdsRuleByLabel("RW_", GetString(type), "IMP"); 
-   long minContWidth      = dtraccess->GetSingleRdsRuleByLabel(string("RW_CONT")); 
-   long minAlu1Width      = dtraccess->GetSingleRdsRuleByLabel(string("RW_ALU1")); 
-   long minVia1Width      = dtraccess->GetSingleRdsRuleByLabel(string("RW_VIA1")); 
+   long minImpWidth       = dtraccess->getSingleRdsRuleByLabel("RW_", getString(type), "IMP"); 
+   long minContWidth      = dtraccess->getSingleRdsRuleByLabel(string("RW_CONT")); 
+   long minAlu1Width      = dtraccess->getSingleRdsRuleByLabel(string("RW_ALU1")); 
+   long minVia1Width      = dtraccess->getSingleRdsRuleByLabel(string("RW_VIA1")); 
 
-   long rdImp             = dtraccess->GetSingleRdsRuleByLabel(string("RD_NIMP")); 
-   long rdActive          = dtraccess->GetSingleRdsRuleByLabel(string("RD_ACTI")); 
-   long rdAlu2            = dtraccess->GetSingleRdsRuleByLabel(string("RD_ALU1")); 
+   long rdImp             = dtraccess->getSingleRdsRuleByLabel(string("RD_NIMP")); 
+   long rdActive          = dtraccess->getSingleRdsRuleByLabel(string("RD_ACTI")); 
+   long rdAlu2            = dtraccess->getSingleRdsRuleByLabel(string("RD_ALU1")); 
 
-   long reImpActi         = dtraccess->GetSingleRdsRuleByLabel("RE_", GetString(type), "IMP_CONT"); 
-   long reActiContact     = dtraccess->GetSingleRdsRuleByLabel("RE_ACTI_CONT"); 
-   long reAlu1Contact     = dtraccess->GetSingleRdsRuleByLabel("RE_ALU1_CONT"); 
-   long reAlu1Via1        = dtraccess->GetSingleRdsRuleByLabel("RE_ALU1_VIA1"); 
+   long reImpActi         = dtraccess->getSingleRdsRuleByLabel("RE_", getString(type), "IMP_CONT"); 
+   long reActiContact     = dtraccess->getSingleRdsRuleByLabel("RE_ACTI_CONT"); 
+   long reAlu1Contact     = dtraccess->getSingleRdsRuleByLabel("RE_ALU1_CONT"); 
+   long reAlu1Via1        = dtraccess->getSingleRdsRuleByLabel("RE_ALU1_VIA1"); 
 
    long minActiWidth      = 2*reActiContact + minContWidth; 
 
@@ -85,19 +85,19 @@ void TrMos::_PlaceAndRoute()
    Instance * leftins = NULL; 
    Instance * rightins = NULL;
 
-   OccurrenceLocator locator =  GetLeafInstanceOccurrences().GetLocator();  
-   Instance * instance = dynamic_cast<Instance*>(locator.GetElement().GetEntity());;  
-   fingerHeight        = instance->GetCell()->GetBoundingBox().getHeight();
-   horizontalMargin    = GetUnit(RETURN_EVEN((long)(GetValue(fingerHeight))/4));
-   verticalLowMargin   = GetUnit(RETURN_EVEN((long)(GetValue(fingerHeight))/2));
-   verticalHighMargin  = GetUnit(RETURN_EVEN((long)(GetValue(fingerHeight))/2));
+   OccurrenceLocator locator =  getLeafInstanceOccurrences().getLocator();  
+   Instance * instance = dynamic_cast<Instance*>(locator.getElement().getEntity());;  
+   fingerHeight        = instance->getCell()->getBoundingBox().getHeight();
+   horizontalMargin    = getUnit(RETURN_EVEN((long)(getValue(fingerHeight))/4));
+   verticalLowMargin   = getUnit(RETURN_EVEN((long)(getValue(fingerHeight))/2));
+   verticalHighMargin  = getUnit(RETURN_EVEN((long)(getValue(fingerHeight))/2));
 
 
-   verticalLowMargin   = MAX_INTEGER(verticalLowMargin, GetUnit(RETURN_EVEN(rdImp + widthOfImp/2 + widthOfSourceWire 
+   verticalLowMargin   = MAX_INTEGER(verticalLowMargin, getUnit(RETURN_EVEN(rdImp + widthOfImp/2 + widthOfSourceWire 
 	                + rdAlu2 + widthOfActive + rdActive)) );
 
-   verticalHighMargin  = MAX_INTEGER(verticalHighMargin, horizontalMargin + GetUnit(2*rdAlu2 + 2*widthOfDrainWire) );
-   horizontalMargin    = MAX_INTEGER(horizontalMargin, GetUnit(RETURN_EVEN(rdImp + widthOfImp/2)) );
+   verticalHighMargin  = MAX_INTEGER(verticalHighMargin, horizontalMargin + getUnit(2*rdAlu2 + 2*widthOfDrainWire) );
+   horizontalMargin    = MAX_INTEGER(horizontalMargin, getUnit(RETURN_EVEN(rdImp + widthOfImp/2)) );
 
    OpenUpdateSession();
 
@@ -108,11 +108,11 @@ void TrMos::_PlaceAndRoute()
 
    }
    else {   
-     // Get instance who's model's abutment type is Left or Right.
+     // get instance who's model's abutment type is Left or Right.
      // ************************************************************
-     for_each_occurrence(occurrence, GetLeafInstanceOccurrences())
-        instance = dynamic_cast<Instance*>(occurrence.GetEntity());
-        Transistor * trans = dynamic_cast<Transistor*>(instance->GetMasterCell());
+     for_each_occurrence(occurrence, getLeafInstanceOccurrences())
+        instance = dynamic_cast<Instance*>(occurrence.getEntity());
+        Transistor * trans = dynamic_cast<Transistor*>(instance->getMasterCell());
 
         if ( _sourceIsFirst ) {
           if(trans->IsLeft() && !leftins)
@@ -152,9 +152,9 @@ void TrMos::_PlaceAndRoute()
 
      // Place internal finger.
      // *********************
-     for_each_occurrence(occurrence, GetLeafInstanceOccurrences())
+     for_each_occurrence(occurrence, getLeafInstanceOccurrences())
 
-        Instance * instance = dynamic_cast<Instance*>(occurrence.GetEntity());
+        Instance * instance = dynamic_cast<Instance*>(occurrence.getEntity());
 
         if(instance==leftins || instance==rightins )
           continue;
@@ -170,7 +170,7 @@ void TrMos::_PlaceAndRoute()
 
      // Place the last finger.
      // **********************
-     Transistor * trans = dynamic_cast<Transistor*>(rightins->GetMasterCell());
+     Transistor * trans = dynamic_cast<Transistor*>(rightins->getMasterCell());
 
      if( trans->IsRight())
        _PlaceRight( rightins, Transformation::Orientation::ID);
@@ -185,7 +185,7 @@ void TrMos::_PlaceAndRoute()
 
    // Set AbutmentBox.
    // ****************
-   for_each_instance(instance, GetInstances())
+   for_each_instance(instance, getInstances())
     instance->Unmaterialize();      
     instance->Materialize();      
    end_for
@@ -193,11 +193,11 @@ void TrMos::_PlaceAndRoute()
    OpenUpdateSession();
 
 
-   cout <<"Bounding box of TrMos is "<<GetString(GetBoundingBox())<<endl;
+   cout <<"Bounding box of TrMos is "<<getString(getBoundingBox())<<endl;
 
    SetAbutmentBox(Box(0, 0, 
-		      GetBoundingBox().getWidth()  + 2*horizontalMargin,
-		      GetBoundingBox().getHeight() + verticalLowMargin + verticalHighMargin
+		      getBoundingBox().getWidth()  + 2*horizontalMargin,
+		      getBoundingBox().getHeight() + verticalLowMargin + verticalHighMargin
 		      )
                  ); 
 
@@ -206,9 +206,9 @@ void TrMos::_PlaceAndRoute()
    // Routing .
    // **************************************************************
 
-   Unit expectedInterval  = GetUnit(RETURN_EVEN((long)(GetValue(horizontalMargin))/2)); 
+   Unit expectedInterval  = getUnit(RETURN_EVEN((long)(getValue(horizontalMargin))/2)); 
    Unit interval          = 0;
-   Unit initialPosition   = verticalLowMargin + fingerHeight + GetUnit(rdAlu2 + widthOfDrainWire/2); 
+   Unit initialPosition   = verticalLowMargin + fingerHeight + getUnit(rdAlu2 + widthOfDrainWire/2); 
 
    map<string, Unit> netName2PositionOfConnectorMap; 
    list<Box> routingZoneList;    
@@ -217,28 +217,28 @@ void TrMos::_PlaceAndRoute()
    Unit sourceRoutingZoneWidth;
    Unit drainRoutingZoneWidth;
    
-   DataBase * db = GetDataBase();  
-    if(!db) throw Error("Can't launch Trmos::PlaceAndRoute for " + GetString(this) + " : can't find DataBase");
+   DataBase * db = getDataBase();  
+    if(!db) throw Error("Can't launch Trmos::PlaceAndRoute for " + getString(this) + " : can't find DataBase");
 
-   Layer * layerAlu1    = db->GetTechnology()->GetLayer(Name("ALU1"));
-   Layer * layerAlu2    = db->GetTechnology()->GetLayer(Name("ALU2"));
+   Layer * layerAlu1    = db->getTechnology()->getLayer(Name("ALU1"));
+   Layer * layerAlu2    = db->getTechnology()->getLayer(Name("ALU2"));
 
-   Layer * layerVia1    = db->GetTechnology()->GetLayer(Name("VIA1"));
-   Layer * layerActive  = db->GetTechnology()->GetLayer(Name("ACTIVE"));
+   Layer * layerVia1    = db->getTechnology()->getLayer(Name("VIA1"));
+   Layer * layerActive  = db->getTechnology()->getLayer(Name("ACTIVE"));
 
-   Layer * layerVia01   = db->GetTechnology()->GetLayer(Name("via01"));
-   Layer * layerVia12   = db->GetTechnology()->GetLayer(Name("via12"));
+   Layer * layerVia01   = db->getTechnology()->getLayer(Name("via01"));
+   Layer * layerVia12   = db->getTechnology()->getLayer(Name("via12"));
 
-   Layer * layerPoly    = db->GetTechnology()->GetLayer(Name("POLY"));
-   Layer * layerNwell   = db->GetTechnology()->GetLayer(Name("NWELL"));
-   Layer * layerCont    = db->GetTechnology()->GetLayer(Name("CONT"));
+   Layer * layerPoly    = db->getTechnology()->getLayer(Name("POLY"));
+   Layer * layerNwell   = db->getTechnology()->getLayer(Name("NWELL"));
+   Layer * layerCont    = db->getTechnology()->getLayer(Name("CONT"));
 
    Layer * layerImp = NULL;
    
    if(_type == 'P')  
-     layerImp  = db->GetTechnology()->GetLayer(Name("NIMP"));
+     layerImp  = db->getTechnology()->getLayer(Name("NIMP"));
    else 
-     layerImp  = db->GetTechnology()->GetLayer(Name("PIMP"));
+     layerImp  = db->getTechnology()->getLayer(Name("PIMP"));
 
    Pin * pin = NULL;        // For get the adresse of Created Pins. 
 
@@ -259,7 +259,7 @@ void TrMos::_PlaceAndRoute()
      if(*i == G)
        netName2PositionOfConnectorMap[string("grid")] = initialPosition; 
 
-     interval = MAX_INTEGER(expectedInterval, GetUnit(widthOfDrainWire + rdAlu2));
+     interval = MAX_INTEGER(expectedInterval, getUnit(widthOfDrainWire + rdAlu2));
 
      // initialPosition += horizontalMargin/2;
      initialPosition += interval;
@@ -270,8 +270,8 @@ void TrMos::_PlaceAndRoute()
       n = _lowPinOrder.end();
    
    //initialPosition = verticalMargin - horizontalMargin/2; 
-   //initialPosition = verticalLowMargin - MAX_INTEGER(expectedInterval, GetUnit(rdImp + widthOfImp/2)); 
-   initialPosition = verticalLowMargin - GetUnit(rdImp + widthOfImp/2); 
+   //initialPosition = verticalLowMargin - MAX_INTEGER(expectedInterval, getUnit(rdImp + widthOfImp/2)); 
+   initialPosition = verticalLowMargin - getUnit(rdImp + widthOfImp/2); 
 
    while(m!=n) {
      if(*m == S)
@@ -279,7 +279,7 @@ void TrMos::_PlaceAndRoute()
      if(*m == B)
        netName2PositionOfConnectorMap[string("bulk")] = initialPosition; 
 
-     interval = MAX_INTEGER(expectedInterval, GetUnit(rdAlu2 + widthOfSourceWire));
+     interval = MAX_INTEGER(expectedInterval, getUnit(rdAlu2 + widthOfSourceWire));
 
      initialPosition -= interval;
      m++;
@@ -292,38 +292,38 @@ void TrMos::_PlaceAndRoute()
 
    // Main Loop.
    // **********
-   for_each_net(net, GetNets())          // For all hypernets.
+   for_each_net(net, getNets())          // For all hypernets.
 
-      if(GetString(net->GetName())=="bulk" || GetString(net->GetName())=="BULK"  )
+      if(getString(net->getName())=="bulk" || getString(net->getName())=="BULK"  )
 	 continue;
 
-      // Get Routing Zone. 
+      // get Routing Zone. 
       // *****************
       HyperNet hyperNet(Occurrence(net, Path()));    
-      for_each_occurrence(occurrence, hyperNet.GetNetOccurrences())  // For all net occurrences.
-         Net * net = dynamic_cast<Net*>(occurrence.GetEntity());
+      for_each_occurrence(occurrence, hyperNet.getNetOccurrences())  // For all net occurrences.
+         Net * net = dynamic_cast<Net*>(occurrence.getEntity());
          Box routingZone;
 
-         if(net->GetCell()->IsLeaf()) {
-	   Transistor * trans = dynamic_cast<Transistor*>(net->GetCell());
+         if(net->getCell()->IsLeaf()) {
+	   Transistor * trans = dynamic_cast<Transistor*>(net->getCell());
 	   if ( !trans )
-	      throw Error("Can't launch Trmos::PlaceAndRoute for " + GetString(this) 
+	      throw Error("Can't launch Trmos::PlaceAndRoute for " + getString(this) 
 		  + ", it is not a Transistor");
 	   
-           cout << GetString(occurrence) << endl;
-	   cout << GetString(occurrence.GetPath().GetTransformation()) <<endl;
-	   cout << GetString((*(trans->_GetMapNet2Box()))[net]) << endl;
+           cout << getString(occurrence) << endl;
+	   cout << getString(occurrence.getPath().getTransformation()) <<endl;
+	   cout << getString((*(trans->_getMapNet2Box()))[net]) << endl;
 
-           // Get Routing Zone.
+           // get Routing Zone.
 	   // *****************
-	   routingZone = occurrence.GetPath().GetTransformation().getBox((*(trans->_GetMapNet2Box()))[net]);  
+	   routingZone = occurrence.getPath().getTransformation().getBox((*(trans->_getMapNet2Box()))[net]);  
 	   routingZoneList.push_back(routingZone);  
 
-           if(GetString(net->GetName())=="SOURCE") {
+           if(getString(net->getName())=="SOURCE") {
              sourcePositionList.push_back(routingZone.getXCenter());         
       	     sourceRoutingZoneWidth = routingZone.getWidth();
       	   }
-       	   else if (GetString(net->GetName())=="DRAIN") {
+       	   else if (getString(net->getName())=="DRAIN") {
              drainPositionList.push_back(routingZone.getXCenter());         
              drainRoutingZoneWidth = routingZone.getWidth(); 
            }
@@ -332,26 +332,26 @@ void TrMos::_PlaceAndRoute()
       end_for
 
 
-      cout <<"Print routing zone for " <<GetString(net)<<endl;
+      cout <<"Print routing zone for " <<getString(net)<<endl;
 
       list<Box>::iterator it_begin_listbox = routingZoneList.begin(), 
 	   it_end_listbox = routingZoneList.end();
 
       while(it_begin_listbox != it_end_listbox)
       {
-         cout<< GetString(*it_begin_listbox) <<endl;	
+         cout<< getString(*it_begin_listbox) <<endl;	
          it_begin_listbox++;
       }
 
-      cout <<"End Print Routing Zone for "<<GetString(net)<<endl;
+      cout <<"End Print Routing Zone for "<<getString(net)<<endl;
 
       // Create routing line.
       // ********************
       list<Box>::iterator routingzonelist_begin_it = routingZoneList.begin(), 
 	routingzonelist_end_it = routingZoneList.end();
 
-      connectorPosition = netName2PositionOfConnectorMap[GetString(net->GetName())];
-      cout << "Connector Position is " << netName2PositionOfConnectorMap[GetString(net)] << endl;
+      connectorPosition = netName2PositionOfConnectorMap[getString(net->getName())];
+      cout << "Connector Position is " << netName2PositionOfConnectorMap[getString(net)] << endl;
 
       while(routingzonelist_begin_it!=routingzonelist_end_it) {
 
@@ -360,22 +360,22 @@ void TrMos::_PlaceAndRoute()
         // Create vertical line and Contact.
         // ********************************
 	if(connectorPosition > routingZoneBox.getYMin()) {
-	   Vertical::Create(net, layerAlu1, routingZoneBox.getXCenter()
-	         , routingZoneBox.getWidth() + GetUnit(2*reAlu1Contact)
-	         , routingZoneBox.getYMin() - GetUnit(reAlu1Contact)
+	   Vertical::create(net, layerAlu1, routingZoneBox.getXCenter()
+	         , routingZoneBox.getWidth() + getUnit(2*reAlu1Contact)
+	         , routingZoneBox.getYMin() - getUnit(reAlu1Contact)
 	         , connectorPosition);        
 	}   
 	else  {
-	   Vertical::Create(net, layerAlu1, routingZoneBox.getXCenter()
-	         , routingZoneBox.getWidth() + GetUnit(2*reAlu1Contact)
+	   Vertical::create(net, layerAlu1, routingZoneBox.getXCenter()
+	         , routingZoneBox.getWidth() + getUnit(2*reAlu1Contact)
 		 , connectorPosition
-		 , routingZoneBox.getYMax() + GetUnit(reAlu1Contact) ) ;
+		 , routingZoneBox.getYMax() + getUnit(reAlu1Contact) ) ;
         }
 
-        Contact::Create(net, layerVia12, routingZoneBox.getXCenter()
+        Contact::create(net, layerVia12, routingZoneBox.getXCenter()
 	      , connectorPosition
-	      , GetUnit(minVia1Width)
-	      , GetUnit(minVia1Width)
+	      , getUnit(minVia1Width)
+	      , getUnit(minVia1Width)
 	    );
 
         routingzonelist_begin_it ++ ;
@@ -385,44 +385,44 @@ void TrMos::_PlaceAndRoute()
       // ***********************
       long widthOfWire = 0;
 
-      if(GetString(net->GetName())=="source")
+      if(getString(net->getName())=="source")
 	widthOfWire = widthOfSourceWire;
-      else if(GetString(net->GetName())=="drain")
+      else if(getString(net->getName())=="drain")
 	widthOfWire = widthOfDrainWire;
       else 
 	widthOfWire = widthOfDrainWire;
       
 
-      Horizontal::Create(net, layerAlu2, connectorPosition 
-	                  , GetUnit(widthOfWire)
+      Horizontal::create(net, layerAlu2, connectorPosition 
+	                  , getUnit(widthOfWire)
 			  , 0
-			  , GetAbutmentBox().getXMax()
+			  , getAbutmentBox().getXMax()
                         );
 
       // Create Two Pins.
       // ****************
-      pin = Pin::Create(net
-	        , Name(GetString(net->GetName())+"_west")
+      pin = Pin::create(net
+	        , Name(getString(net->getName())+"_west")
 	        , Pin::AccessDirection(Pin::AccessDirection::WEST)
 		, Pin::PlacementStatus(Pin::PlacementStatus::PLACED)
 		, layerAlu2
-		, GetAbutmentBox().getXMin()
+		, getAbutmentBox().getXMin()
 		, connectorPosition
-		, GetUnit(widthOfWire)
-		, GetUnit(widthOfWire)
+		, getUnit(widthOfWire)
+		, getUnit(widthOfWire)
 		);
 
       _mapNetToPinBoxInLeftSide[net] = pin; 
 
-      pin = Pin::Create(net
-	        , Name(GetString(net->GetName())+"_east")
+      pin = Pin::create(net
+	        , Name(getString(net->getName())+"_east")
 	        , Pin::AccessDirection(Pin::AccessDirection::EAST)
 		, Pin::PlacementStatus(Pin::PlacementStatus::PLACED)
 		, layerAlu2
-		, GetAbutmentBox().getXMax()
+		, getAbutmentBox().getXMax()
 		, connectorPosition
-		, GetUnit(widthOfWire)
-		, GetUnit(widthOfWire)
+		, getUnit(widthOfWire)
+		, getUnit(widthOfWire)
 		);
 
       _mapNetToPinBoxInRightSide[net] = pin; 
@@ -437,10 +437,10 @@ void TrMos::_PlaceAndRoute()
    // ***************
    connectorPosition  = netName2PositionOfConnectorMap[string("bulk")];
 
-   Net * netBulk = GetNet(Name("bulk"));
+   Net * netBulk = getNet(Name("bulk"));
 
    if(!netBulk)   // bulk and source are connected.  
-     netBulk = GetNet(Name("source"));   
+     netBulk = getNet(Name("source"));   
 
    // Calculate the width of Contact Alu1.
    // ************************************
@@ -449,56 +449,56 @@ void TrMos::_PlaceAndRoute()
    Unit bulkPosition = netName2PositionOfConnectorMap[string("bulk")];
    Unit sourcePosition = netName2PositionOfConnectorMap[string("source")];
 
-   Horizontal::Create( netBulk
+   Horizontal::create( netBulk
 	             , layerImp
 	             , bulkPosition 
-                     , GetUnit(widthOfImp)
-   		     , 0 - GetUnit(reImpActi)
-   		     , GetAbutmentBox().getXMax() + GetUnit(reImpActi)
+                     , getUnit(widthOfImp)
+   		     , 0 - getUnit(reImpActi)
+   		     , getAbutmentBox().getXMax() + getUnit(reImpActi)
                     );
 
-   Horizontal::Create( netBulk
+   Horizontal::create( netBulk
 	             , layerActive
 	             , bulkPosition 
-                     , GetUnit(widthOfActive)
+                     , getUnit(widthOfActive)
    		     , 0
-   		     , GetAbutmentBox().getXMax()
+   		     , getAbutmentBox().getXMax()
                     );
 
-   Horizontal::Create( netBulk
+   Horizontal::create( netBulk
                      , layerAlu2
 		     , bulkPosition 
-                     , GetUnit(widthOfSourceWire)
+                     , getUnit(widthOfSourceWire)
    		     , 0
-   		     , GetAbutmentBox().getXMax()
+   		     , getAbutmentBox().getXMax()
                     );
 
    // Create Two Pins For Net bulk.
    // *****************************
    if(!_isBsConnected) {  
 
-       pin = Pin::Create(netBulk
-                 , Name(GetString(netBulk->GetName())+"_west")
+       pin = Pin::create(netBulk
+                 , Name(getString(netBulk->getName())+"_west")
                  , Pin::AccessDirection(Pin::AccessDirection::WEST)
                  , Pin::PlacementStatus(Pin::PlacementStatus::PLACED)
                  , layerAlu2
-                 , GetAbutmentBox().getXMin()
+                 , getAbutmentBox().getXMin()
                  , bulkPosition
-                 , GetUnit(widthOfSourceWire)
-                 , GetUnit(widthOfSourceWire)
+                 , getUnit(widthOfSourceWire)
+                 , getUnit(widthOfSourceWire)
                  );
 
        _mapNetToPinBoxInLeftSide[netBulk] = pin; 
 
-       pin = Pin::Create(netBulk
-            , Name(GetString(netBulk->GetName())+"_east")
+       pin = Pin::create(netBulk
+            , Name(getString(netBulk->getName())+"_east")
             , Pin::AccessDirection(Pin::AccessDirection::EAST)
             , Pin::PlacementStatus(Pin::PlacementStatus::PLACED)
             , layerAlu2
-            , GetAbutmentBox().getXMax()
+            , getAbutmentBox().getXMax()
             , bulkPosition
-            , GetUnit(widthOfSourceWire)
-            , GetUnit(widthOfSourceWire)
+            , getUnit(widthOfSourceWire)
+            , getUnit(widthOfSourceWire)
             );
 
        _mapNetToPinBoxInRightSide[netBulk] = pin; 
@@ -516,29 +516,29 @@ void TrMos::_PlaceAndRoute()
        
        cout << "  #########  Create Contact ###########" <<endl;
 
-       Contact::Create(netBulk, layerVia01, *i 
+       Contact::create(netBulk, layerVia01, *i 
             , bulkPosition
-            , GetUnit(minContWidth)
-            , GetUnit(minContWidth)
+            , getUnit(minContWidth)
+            , getUnit(minContWidth)
             );
 
-       Contact::Create(netBulk, layerAlu1, *i 
+       Contact::create(netBulk, layerAlu1, *i 
             , bulkPosition
-            , GetUnit(widthOfAlu1)
-            , GetUnit(widthOfAlu1)
+            , getUnit(widthOfAlu1)
+            , getUnit(widthOfAlu1)
             );
 
-       Contact::Create(netBulk, layerVia12, *i
+       Contact::create(netBulk, layerVia12, *i
             , bulkPosition
-            , GetUnit(minVia1Width)
-            , GetUnit(minVia1Width)
+            , getUnit(minVia1Width)
+            , getUnit(minVia1Width)
             );
 
        if( _isBsConnected ) { // If bulk and Source are connected. 
 
 	 cout << " B S is connected in " << *i << endl;
 
-         Vertical::Create(netBulk, layerAlu1, *i
+         Vertical::create(netBulk, layerAlu1, *i
                    , sourceRoutingZoneWidth 
           	   , bulkPosition
           	   , sourcePosition);
@@ -565,22 +565,22 @@ void TrMos::_PlaceAndRoute()
        
        cout << "  #########  Create Contact ###########" <<endl;
 
-       Contact::Create(netBulk, layerVia01, *i 
+       Contact::create(netBulk, layerVia01, *i 
             , bulkPosition
-            , GetUnit(minContWidth)
-            , GetUnit(minContWidth)
+            , getUnit(minContWidth)
+            , getUnit(minContWidth)
             );
    
-       Contact::Create(netBulk, layerAlu1, *i 
+       Contact::create(netBulk, layerAlu1, *i 
             , bulkPosition
-            , GetUnit(widthOfAlu1)
-            , GetUnit(widthOfAlu1)
+            , getUnit(widthOfAlu1)
+            , getUnit(widthOfAlu1)
             );
    
-       Contact::Create(netBulk, layerVia12, *i
+       Contact::create(netBulk, layerVia12, *i
             , bulkPosition
-            , GetUnit(minVia1Width)
-            , GetUnit(minVia1Width)
+            , getUnit(minVia1Width)
+            , getUnit(minVia1Width)
             );
    
        i++;
@@ -593,77 +593,77 @@ void TrMos::_PlaceAndRoute()
    if( _hasRing ) {
      widthOfImp = MAX_INTEGER(minImpWidth, minActiWidth + 2*reImpActi); 
 
-     Net * netRing = Net::Create(this, Name("RING"));
+     Net * netRing = Net::create(this, Name("RING"));
 
 
      // Create rectangle in IMPLANT.
      // ***************************
-     Horizontal::Create( netRing
+     Horizontal::create( netRing
 	             , layerImp
-	             , GetAbutmentBox().getYMax() 
-                     , GetUnit(widthOfImp)
-   		     , GetAbutmentBox().getXMin() - GetUnit(widthOfImp/2)
-   		     , GetAbutmentBox().getXMax() + GetUnit(widthOfImp/2)
+	             , getAbutmentBox().getYMax() 
+                     , getUnit(widthOfImp)
+   		     , getAbutmentBox().getXMin() - getUnit(widthOfImp/2)
+   		     , getAbutmentBox().getXMax() + getUnit(widthOfImp/2)
                     );
 
-     Horizontal::Create( netRing
+     Horizontal::create( netRing
 	             , layerImp
-	             , GetAbutmentBox().getYMin() 
-                     , GetUnit(widthOfImp)
-   		     , GetAbutmentBox().getXMin() - GetUnit(widthOfImp/2)
-   		     , GetAbutmentBox().getXMax() + GetUnit(widthOfImp/2)
+	             , getAbutmentBox().getYMin() 
+                     , getUnit(widthOfImp)
+   		     , getAbutmentBox().getXMin() - getUnit(widthOfImp/2)
+   		     , getAbutmentBox().getXMax() + getUnit(widthOfImp/2)
                     );
    
-     Vertical::Create(netRing
+     Vertical::create(netRing
 	           , layerImp
-		   , GetAbutmentBox().getXMin()
-                   , GetUnit(widthOfImp) 
-          	   , GetAbutmentBox().getYMin()
-          	   , GetAbutmentBox().getYMax()
+		   , getAbutmentBox().getXMin()
+                   , getUnit(widthOfImp) 
+          	   , getAbutmentBox().getYMin()
+          	   , getAbutmentBox().getYMax()
 		   );
 
-     Vertical::Create(netRing
+     Vertical::create(netRing
 	           , layerImp
-		   , GetAbutmentBox().getXMax()
-                   , GetUnit(widthOfImp) 
-          	   , GetAbutmentBox().getYMin()
-          	   , GetAbutmentBox().getYMax()
+		   , getAbutmentBox().getXMax()
+                   , getUnit(widthOfImp) 
+          	   , getAbutmentBox().getYMin()
+          	   , getAbutmentBox().getYMax()
 		   );
 
 
      // Create rectangle in Active.
      // ***************************
-     Horizontal::Create( netRing
+     Horizontal::create( netRing
 	             , layerActive
-	             , GetAbutmentBox().getYMax() 
-                     , GetUnit(minActiWidth)
-   		     , GetAbutmentBox().getXMin() - GetUnit(minActiWidth/2)
-   		     , GetAbutmentBox().getXMax() + GetUnit(minActiWidth/2)
+	             , getAbutmentBox().getYMax() 
+                     , getUnit(minActiWidth)
+   		     , getAbutmentBox().getXMin() - getUnit(minActiWidth/2)
+   		     , getAbutmentBox().getXMax() + getUnit(minActiWidth/2)
                     );
 
-     Horizontal::Create( netRing
+     Horizontal::create( netRing
 	             , layerActive
-	             , GetAbutmentBox().getYMin() 
-                     , GetUnit(minActiWidth)
-   		     , GetAbutmentBox().getXMin() - GetUnit(minActiWidth/2)
-   		     , GetAbutmentBox().getXMax() + GetUnit(minActiWidth/2)
+	             , getAbutmentBox().getYMin() 
+                     , getUnit(minActiWidth)
+   		     , getAbutmentBox().getXMin() - getUnit(minActiWidth/2)
+   		     , getAbutmentBox().getXMax() + getUnit(minActiWidth/2)
                     );
 
 
-     Vertical::Create(netRing
+     Vertical::create(netRing
 	           , layerActive
-		   , GetAbutmentBox().getXMin()
-                   , GetUnit(minActiWidth) 
-          	   , GetAbutmentBox().getYMin()
-          	   , GetAbutmentBox().getYMax()
+		   , getAbutmentBox().getXMin()
+                   , getUnit(minActiWidth) 
+          	   , getAbutmentBox().getYMin()
+          	   , getAbutmentBox().getYMax()
 		   );
 
-     Vertical::Create(netRing
+     Vertical::create(netRing
 	           , layerActive
-		   , GetAbutmentBox().getXMax()
-                   , GetUnit(minActiWidth) 
-          	   , GetAbutmentBox().getYMin()
-          	   , GetAbutmentBox().getYMax()
+		   , getAbutmentBox().getXMax()
+                   , getUnit(minActiWidth) 
+          	   , getAbutmentBox().getYMin()
+          	   , getAbutmentBox().getYMax()
 		   );
 
    }
@@ -671,12 +671,12 @@ void TrMos::_PlaceAndRoute()
    // Create Caission NWELL if this is a PMOS.
    // ****************************************
    if(_type == 'P') {
-       Net * netCaisson = Net::Create(this, Name("CAISSON"));
-       Contact::Create(netCaisson, layerNwell
-	    , GetAbutmentBox().getXCenter()
-            , GetAbutmentBox().getYCenter()
-            , GetAbutmentBox().getWidth()
-            , GetAbutmentBox().getHeight()
+       Net * netCaisson = Net::create(this, Name("CAISSON"));
+       Contact::create(netCaisson, layerNwell
+	    , getAbutmentBox().getXCenter()
+            , getAbutmentBox().getYCenter()
+            , getAbutmentBox().getWidth()
+            , getAbutmentBox().getHeight()
             );
    }   
 

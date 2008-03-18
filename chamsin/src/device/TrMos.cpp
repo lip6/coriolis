@@ -38,33 +38,14 @@ TrMos::TrMos(Library* library, const Name& name):
 {}
 
 
-TrMos* TrMos::Create(Library* library, const Name & name) {
+TrMos* TrMos::create(Library* library, const Name & name) {
     TrMos* trmos= new TrMos(library, name);
-    trmos->_PostCreate();
+    trmos->_postCreate();
     return trmos;
 }
 
-
-void TrMos::Delete()
-// *****************
-{
-   _PreDelete();
-   delete this;
-}
-
-
-void TrMos::_PreDelete()
-// ******************************
-{
-   // do something
-   // ************
-  
-   Inherit::_PreDelete();
-}
-
-
-void TrMos::_PostCreate() {
-   Inherit::_PostCreate();
+void TrMos::_postCreate() {
+   Inherit::_postCreate();
 
    // do something.
    // Initialize pin order list and other attributes. 
@@ -81,7 +62,7 @@ void TrMos::_PostCreate() {
    _lowPinOrder.push_back(S);
    _lowPinOrder.push_back(B);
 
-   double minWidth = (DtrAccess::Instance())->GetSingleRealRuleByLabel(string("RW_ALU1")); 
+   double minWidth = (DtrAccess::Instance())->getSingleRealRuleByLabel(string("RW_ALU1")); 
 
    _widthOfSourceWire = minWidth;
    _widthOfDrainWire = minWidth;
@@ -89,21 +70,21 @@ void TrMos::_PostCreate() {
 }
 
 
-Transistors TrMos::GetTransistors() const {
-    return  GetCollection(_transistorList);
+Transistors TrMos::getTransistors() const {
+    return  getCollection(_transistorList);
 }
 
 
-void TrMos::Create(const char type, const bool isbsconnected)
+void TrMos::create(const char type, const bool isbsconnected)
 // **********************************************************
 {
    if( _tr1 ) {
-      throw Error("Can't Create Logical View of TrMos " +  GetString(GetName()) +
+      throw Error("Can't Create Logical View of TrMos " +  getString(getName()) +
               " : " + "it has already been created"); 
    }
 
    if( (type!=TRANSN) && (type!=TRANSP)) {
-      throw Error("Can't Create TrMos " +  GetString(GetName()) + " : type " + GetString(type) + " is invalid"); 
+      throw Error("Can't Create TrMos " +  getString(getName()) + " : type " + getString(type) + " is invalid"); 
    }
 
    _type = type;
@@ -111,7 +92,7 @@ void TrMos::Create(const char type, const bool isbsconnected)
 
    // MetaTransistor is in the same library than Trmos
    // ************************************************
-   Library * library = GetLibrary();
+   Library * library = getLibrary();
 
    // Create signals
    // **************
@@ -120,12 +101,12 @@ void TrMos::Create(const char type, const bool isbsconnected)
    Net * grid   = NULL;
    Net * bulk   = NULL;
 
-   (drain  = Net::Create(this, Name("drain")))->SetExternal(true);
-   (source = Net::Create(this, Name("source")))->SetExternal(true);
-   (grid   = Net::Create(this, Name("grid")))->SetExternal(true);
+   (drain  = Net::create(this, Name("drain")))->SetExternal(true);
+   (source = Net::create(this, Name("source")))->SetExternal(true);
+   (grid   = Net::create(this, Name("grid")))->SetExternal(true);
    
    if(!isbsconnected) { 
-     (bulk   = Net::Create(this, Name("bulk")))->SetExternal(true);
+     (bulk   = Net::create(this, Name("bulk")))->SetExternal(true);
    }
 
 
@@ -133,19 +114,19 @@ void TrMos::Create(const char type, const bool isbsconnected)
    // The name of MetaTransistor is nameoftrmos_tr1
    // ****************************************************
 
-   _tr1 = MetaTransistor::Create(library, Name( GetString(GetName())+"_Mos1" ), _type);
-   Instance * instance = Instance::Create(this,
-           Name("Ins_" + GetString(_tr1->GetName())),
+   _tr1 = MetaTransistor::create(library, Name( getString(getName())+"_Mos1" ), _type);
+   Instance * instance = Instance::create(this,
+           Name("Ins_" + getString(_tr1->getName())),
            _tr1);
 
-   instance->GetPlug(_tr1->GetNet(Name("DRAIN")))->SetNet(drain);
-   instance->GetPlug(_tr1->GetNet(Name("SOURCE")))->SetNet(source);
-   instance->GetPlug(_tr1->GetNet(Name("GRID")))->SetNet(grid);
+   instance->getPlug(_tr1->getNet(Name("DRAIN")))->SetNet(drain);
+   instance->getPlug(_tr1->getNet(Name("SOURCE")))->SetNet(source);
+   instance->getPlug(_tr1->getNet(Name("GRID")))->SetNet(grid);
 
    if(!isbsconnected)
-     instance->GetPlug(_tr1->GetNet(Name("BULK")))->SetNet(bulk);
+     instance->getPlug(_tr1->getNet(Name("BULK")))->SetNet(bulk);
    else 
-     instance->GetPlug(_tr1->GetNet(Name("BULK")))->SetNet(source);
+     instance->getPlug(_tr1->getNet(Name("BULK")))->SetNet(source);
 
 
 }  
@@ -156,28 +137,28 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
 // *********************************************************************************
 {
    if( !_tr1 ) {
-      throw Error("Can't Create Physical View for " +  GetString(this) +
+      throw Error("Can't Create Physical View for " +  getString(this) +
               " : " + "Logical view has't been created yet.");
    }
 
 //   if( !(_transistorList.empty()) ) {
-//      throw Error("Can't Create Physical View of TrMos " +  GetString(GetName()) + " : " 
+//      throw Error("Can't Create Physical View of TrMos " +  getString(getName()) + " : " 
 //	  + "it has already been created"); 
 //   }
 
    // Check out param of realization.
    // *******************************
    if( m <= 0 ) 
-     throw Error("Can't generate for " +  GetString(this) + " : m "
-             + GetString(m) + " is invalid."); 
+     throw Error("Can't generate for " +  getString(this) + " : m "
+             + getString(m) + " is invalid."); 
 
    if(nbsourcecolumn<1)
-     throw Error("Can't generate for " + GetString(this)
-             + " : nbsourcecolumn " + GetString(nbsourcecolumn) + " is invalid.");
+     throw Error("Can't generate for " + getString(this)
+             + " : nbsourcecolumn " + getString(nbsourcecolumn) + " is invalid.");
 
    if(nbdraincolumn<1)
-     throw Error("Can't generate for" + GetString(this) + " : nbdraincolumn "
-             + GetString(nbdraincolumn) + " is invalid.");
+     throw Error("Can't generate for" + getString(this) + " : nbdraincolumn "
+             + getString(nbdraincolumn) + " is invalid.");
 
 
    if(!(_transistorList.empty())) {
@@ -190,10 +171,10 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
 
    // Motifs are in the same library than Trmos
    // *****************************************
-   Library * library = GetLibrary();
+   Library * library = getLibrary();
 
    cout << ts << "################################################################" << endl <<
-       ts << "####    BEGIN AUTOGENERATON FOR " + _GetTypeName() + " " + GetString(GetName()) + " #####" << endl <<
+       ts << "####    BEGIN AUTOGENERATON FOR " + _getTypeName() + " " + getString(getName()) + " #####" << endl <<
        ts << "################################################################" << endl << endl;
 
 //   OpenUpdateSession();
@@ -201,7 +182,7 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
 /* (1) */   
 
    IF_DEBUG_HUR_ANALOG
-   cout << "***  Stage 1 : CreateLayout of " + GetString(this) + " Begin ***" <<endl;
+   cout << "***  Stage 1 : CreateLayout of " + getString(this) + " Begin ***" <<endl;
    END_IF
 
    // Create Motifs according to m, and instance the Motifs according
@@ -212,35 +193,35 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
    _tr1->SetM(_m);
 
    for(unsigned i=0; i<m; i++){
-     Transistor* finger = Transistor::Create(library,
-             GetString(_tr1->GetName()) + "_Finger_" + GetString(i),
+     Transistor* finger = Transistor::create(library,
+             getString(_tr1->getName()) + "_Finger_" + getString(i),
              _type);
 
      _transistorList.push_back(finger);
-     Instance::Create(_tr1, Name("Ins_" + GetString(finger->GetName())), finger); 
+     Instance::create(_tr1, Name("Ins_" + getString(finger->getName())), finger); 
    }
 
    IF_DEBUG_HUR_ANALOG
 
-   cout << "***  Stage 1 : CreateLayout of " + GetString(this) + " finish ***" <<endl;
-   cout << ts <<   GetString(_tr1) + " 's M is " + GetString(_tr1->GetM()) + ".\n"
-        << ts <<   GetString(_m) + " Transistors are created.\n" <<endl; 
+   cout << "***  Stage 1 : CreateLayout of " + getString(this) + " finish ***" <<endl;
+   cout << ts <<   getString(_tr1) + " 's M is " + getString(_tr1->getM()) + ".\n"
+        << ts <<   getString(_m) + " Transistors are created.\n" <<endl; 
 
    END_IF
    
 /* (2) */
 
    IF_DEBUG_HUR_ANALOG
-   cout << "***  Stage 2 : CreateLayout of " + GetString(this) + " Begin ***" <<endl;
+   cout << "***  Stage 2 : CreateLayout of " + getString(this) + " Begin ***" <<endl;
    END_IF
 
    // Create connexion for each MetaTransistor.
    // *****************************************
-   _tr1->CreateConnection();
+   _tr1->createConnection();
 
    IF_DEBUG_HUR_ANALOG
-   cout << "***  Stage 2 : CreateLayout of " + GetString(this) + " finish ***" <<endl;
-   cout << "  The connection in " + GetString(_tr1) + " is created.\n"
+   cout << "***  Stage 2 : CreateLayout of " + getString(this) + " finish ***" <<endl;
+   cout << "  The connection in " + getString(_tr1) + " is created.\n"
         <<endl;
    END_IF
    
@@ -252,16 +233,16 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
 
 /* (3) */
    IF_DEBUG_HUR_ANALOG
-   cout << "***  Stage 3 : CreateLayout of " + GetString(this) + " Begin ***" <<endl;
+   cout << "***  Stage 3 : CreateLayout of " + getString(this) + " Begin ***" <<endl;
    END_IF
    
    // Set dessin Parameter of generation for each finger. 
    // ***************************************************
-   double l_finger = _tr1->GetLe() ;
-   double w_finger = (_tr1->GetWe()) / (double)(_tr1->GetM()) ;
+   double l_finger = _tr1->getLe() ;
+   double w_finger = (_tr1->getWe()) / (double)(_tr1->getM()) ;
    unsigned count = 0;
 
-   Transistor::MaskV1Info * masqueinfo = Transistor::MaskV1Info::Create( l_finger, w_finger); 
+   Transistor::MaskV1Info * masqueinfo = new Transistor::MaskV1Info(l_finger, w_finger); 
    masqueinfo->SetNbSourceColumn(nbsourcecolumn);
    masqueinfo->SetNbDrainColumn(nbdraincolumn);
 
@@ -303,19 +284,19 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
 	}
    }
 
-   masqueinfo->Delete();
+   delete masqueinfo;
    
    IF_DEBUG_HUR_ANALOG
-   cout << "***  Stage 3 : CreateLayout of " + GetString(this) + " finish ***" <<endl;
-   cout << ts << "Real l_finger is " + GetString(l_finger) + "." << endl
-        << ts << "Real w_finger is " + GetString(w_finger) + "." << endl
+   cout << "***  Stage 3 : CreateLayout of " + getString(this) + " finish ***" <<endl;
+   cout << ts << "Real l_finger is " + getString(l_finger) + "." << endl
+        << ts << "Real w_finger is " + getString(w_finger) + "." << endl
 	<<endl;
    END_IF
 
 /* (4) */
    IF_DEBUG_HUR_ANALOG
-   cout << "***  Stage 4 : CreateLayout of " + GetString(this) + " Begin ***" <<endl;
-   cout << ts << "Call GenerateLayout for " + GetString(_tr1) 
+   cout << "***  Stage 4 : CreateLayout of " + getString(this) + " Begin ***" <<endl;
+   cout << ts << "Call GenerateLayout for " + getString(_tr1) 
          + " who will launch the generator of its fingers" << ".\n"
 	<<endl;
    END_IF
@@ -327,15 +308,15 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
 //
 //   IF_DEBUG_HUR_ANALOG
 //   cout << endl;
-//   cout << ts << "Real l of " << (long)_tr1 << GetString(_tr1) + " is " + GetString(_tr1->_le) + "." << endl
-//        << ts << "Real w of " << (long)_tr1 << GetString(_tr1) + " is " + GetString(_tr1->_we) + "." << endl
+//   cout << ts << "Real l of " << (long)_tr1 << getString(_tr1) + " is " + getString(_tr1->_le) + "." << endl
+//        << ts << "Real w of " << (long)_tr1 << getString(_tr1) + " is " + getString(_tr1->_we) + "." << endl
 //	<<endl;
 //   END_IF
 //
-   _tr1->CreateLayout();
+   _tr1->createLayout();
    
    IF_DEBUG_HUR_ANALOG
-   cout << "***  Stage 4 : CreateLayout of " + GetString(this) + " finish ***"<<endl
+   cout << "***  Stage 4 : CreateLayout of " + getString(this) + " finish ***"<<endl
         << endl;
    END_IF
 
@@ -348,13 +329,13 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
 
    cout << " Place And Route " <<endl;
 
-   for_each_instance(instance, GetInstances())
-    //instance->SetTransformation(instance->GetTransformation());      
+   for_each_instance(instance, getInstances())
+    //instance->SetTransformation(instance->getTransformation());      
     instance->Unmaterialize();      
     instance->Materialize();      
 
 IF_DEBUG_HUR_ANALOG
-    cout << ts << GetString(instance) <<" 's boundingBox is " << GetString(instance->GetBoundingBox())<<endl;
+    cout << ts << getString(instance) <<" 's boundingBox is " << getString(instance->getBoundingBox())<<endl;
 END_IF
      
    end_for
@@ -362,18 +343,18 @@ END_IF
 //   CloseUpdateSession();
 
 IF_DEBUG_HUR_ANALOG
-   cout << ts << GetString(this) << " 's primary (without wire) boundingBox is " << GetString(GetBoundingBox()) <<endl;
+   cout << ts << getString(this) << " 's primary (without wire) boundingBox is " << getString(getBoundingBox()) <<endl;
 END_IF
 
    Materialize();
 
 IF_DEBUG_HUR_ANALOG
-   cout << ts << GetString(this) << " 's boundingBox is " << GetString(GetBoundingBox()) <<endl;
+   cout << ts << getString(this) << " 's boundingBox is " << getString(getBoundingBox()) <<endl;
 END_IF
 
    cout << ts << endl
         << ts << "################################################################" <<endl
-        << ts << "####    END AUTOGENERATON FOR " + _GetTypeName() + " " + GetString(GetName()) + " #####" <<endl
+        << ts << "####    END AUTOGENERATON FOR " + _getTypeName() + " " + getString(getName()) + " #####" <<endl
         << ts << "################################################################" <<endl
 	<< endl;
 } 
@@ -418,7 +399,7 @@ void TrMos::_Flush()
 // ****************
 {
   if(_transistorList.empty()) {
-      throw Error("Can't delete Physical View of TrMos " +  GetString(GetName()) + " : "  + "il doesn't exist"); 
+      throw Error("Can't delete Physical View of TrMos " +  getString(getName()) + " : "  + "il doesn't exist"); 
   }
 
   _tr1->Flush();
@@ -433,17 +414,17 @@ void TrMos::_Flush()
 }  
 
 
-string TrMos::_GetString() const
+string TrMos::_getString() const
 // ***************************************
 {
-     string s= Inherit::_GetString();
+     string s= Inherit::_getString();
      return s;
 }
 
-Record* TrMos::_GetRecord() const
+Record* TrMos::_getRecord() const
 // *********************************
 {
-	Record* record = Inherit::_GetRecord();
+	Record* record = Inherit::_getRecord();
 	return record;
 }
 

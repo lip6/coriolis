@@ -28,19 +28,19 @@ static long RDS_LAMBDA = -1;
 
 
 // -----------------------------------------------------------------------
-// Function  :  "GetPattern()".
+// Function  :  "getPattern()".
  
-  /*  \static char * GetPattern (const string& str, const char* pattern)
+  /*  \static char * getPattern (const string& str, const char* pattern)
    *  \param  str      the string to check for regex.
    *  \param  pattern  the pattern to find.
    *  
-   *  Get and return the march substring from str according to the pattern.
+   *  get and return the march substring from str according to the pattern.
    *
    *  \return NULL if Failure.
    *  \return the according substring if Success.
    */
  
-static char* GetPattern(const string& str, const char* pattern)
+static char* getPattern(const string& str, const char* pattern)
 // ************************************************************
 {
     int err;
@@ -158,7 +158,7 @@ static void CalculateRdsUnit() {
   }
 
   if( !(rdstechnofile = fopen(rdsfilename, "r")) ) {
-      throw Error("Can't not open rds techno file : " + GetString(rdsfilename)); 
+      throw Error("Can't not open rds techno file : " + getString(rdsfilename)); 
   }
 
   char buffer[80];                       // For stock a line of the rds techno file
@@ -172,8 +172,8 @@ static void CalculateRdsUnit() {
 
 	string pattern;
 
-        if( (pattern = GetPattern(tmp, "[[:digit:]\\.]+")).size()==0 ) { // Get the value behind 
-	  throw Error("Can't get rds_physical_grid : GetPattern(string&, char*) return NULL");
+        if( (pattern = getPattern(tmp, "[[:digit:]\\.]+")).size()==0 ) { // get the value behind 
+	  throw Error("Can't get rds_physical_grid : getPattern(string&, char*) return NULL");
 	} 
 
 	if(!Scan(pattern, rds_physical_grid)){  // Convert from string to double
@@ -186,8 +186,8 @@ static void CalculateRdsUnit() {
 
         string pattern; 
 
-        if( (pattern = GetPattern(tmp, "[[:digit:]\\.]+")).size()==0 ) {
-           throw Error("Can't get rds_lambda : GetPattern(string&, char*) return NULL");	
+        if( (pattern = getPattern(tmp, "[[:digit:]\\.]+")).size()==0 ) {
+           throw Error("Can't get rds_lambda : getPattern(string&, char*) return NULL");	
 	}
 
 	if(!Scan(pattern, rds_lambda)){
@@ -230,7 +230,7 @@ BEGIN_NAMESPACE_HURRICANE
 // Utilitarians 
 // ****************************************************************************************************
 
-const long& GetRdsUnit() 
+const long& getRdsUnit() 
 // *********************
 {
   if ( RDS_UNIT == -1) 
@@ -239,13 +239,13 @@ const long& GetRdsUnit()
   return RDS_UNIT;  
 }
 
-const long& GetRdsPhysicalGrid()
+const long& getRdsPhysicalGrid()
 // *****************************
 {
   return RDS_PHYSICAL_GRID;
 }
   
-const long& GetRdsLambda()
+const long& getRdsLambda()
 // ***********************
 {
   if ( RDS_LAMBDA == -1) 

@@ -23,17 +23,17 @@
 
 // --------------------------------------------------------------------
 // Macro Method  :  "GET_RULE(s)"
-// This Method Macro is For Geting The Value in RdsUnit of a DRM Rule.  
+// This Method Macro is For geting The Value in RdsUnit of a DRM Rule.  
 // To Use This Macro, you must predefine Pointeur dtraccess. 
 
 #define   GET_RULE(s)  \
-   dtraccess->GetSingleRdsRuleByLabel(string(s))
+   dtraccess->getSingleRdsRuleByLabel(string(s))
 
 
 
 // --------------------------------------------------------------------
 // Macro Method "GET_RULE_BYNP(prefix, type, suffix)"
-// This Method Macro is For Geting The Value in RdsUnit of a DRM Rule  
+// This Method Macro is For geting The Value in RdsUnit of a DRM Rule  
 // selected by string type which is mostype . 
 
    /*  \prefix       must be a chain character.
@@ -44,13 +44,13 @@
 // To Use This Macro, you must Predefine Pointeur dtraccess. 
 
 #define GET_RULE_BYNP(prefix, type, suffix) \
-   dtraccess->GetSingleRdsRuleByLabel(prefix, type, suffix)
+   dtraccess->getSingleRdsRuleByLabel(prefix, type, suffix)
 
 
 
 // --------------------------------------------------------------------
-// Macro Method : "Get_LAYER_BYNP(prefix, type, suffix)"
-// This Method Macro is For Geting the Layer of a Layer Rule Selected 
+// Macro Method : "get_LAYER_BYNP(prefix, type, suffix)"
+// This Method Macro is For geting the Layer of a Layer Rule Selected 
 // by string type which is mostype. To Use This Macro, you must predefine
 // Pointeur dtraccess.
 
@@ -62,7 +62,7 @@
 // To Use This Macro, you must Predefine Pointeur dtraccess. 
 
 #define GET_LAYER_BYNP(prefix, type, suffix) \
-   dtraccess->GetSingleLayerByLabel(prefix, type, suffix)
+   dtraccess->getSingleLayerByLabel(prefix, type, suffix)
 
 
 
@@ -80,14 +80,14 @@
 // This Method Macro must be used in Membre Function Calculate.
 
 #define   SAVE_RECTANGLE(s, x, y, dx, dy) \
-   _mapString2Box[string(s)] = Box(GetUnit(x), GetUnit(y), GetUnit(x+dx), GetUnit(y+dy)); \
-   xmin = MINLONG(xmin, GetUnit(x)); \
-   ymin = MINLONG(ymin, GetUnit(y));
+   _mapString2Box[string(s)] = Box(getUnit(x), getUnit(y), getUnit(x+dx), getUnit(y+dy)); \
+   xmin = MINLONG(xmin, getUnit(x)); \
+   ymin = MINLONG(ymin, getUnit(y));
 
 
 // --------------------------------------------------------------------
 // Macro Method   :  "GET_BOX(s)"
-// This Method Macro is For Get the box According to the its name. 
+// This Method Macro is For get the box According to the its name. 
 
    /*
     *  \s            name of rectangle, must be a string.  
@@ -130,7 +130,7 @@
         for(unsigned i=0; i<nbcolumn; i++) { \
                                                                 \
            for(unsigned j=0; j<nbcontact; j++) {                     \
-             Contact::Create(net, layer                    \
+             Contact::create(net, layer                    \
       	               , tmp_xcenter                            \
       		       , tmp_ycenter                           \
       		       , rw_cont              \
@@ -155,10 +155,10 @@
     */
  
 #  define BOX_IS_VALID(box) \
-   ( (long)(GetValue(box.getXMin()))%2==0 )&& \
-   ( (long)(GetValue(box.getXMax()))%2==0 )&& \
-   ( (long)(GetValue(box.getYMin()))%2==0 )&& \
-   ( (long)(GetValue(box.getYMax()))%2==0 ) 
+   ( (long)(getValue(box.getXMin()))%2==0 )&& \
+   ( (long)(getValue(box.getXMax()))%2==0 )&& \
+   ( (long)(getValue(box.getYMin()))%2==0 )&& \
+   ( (long)(getValue(box.getYMax()))%2==0 ) 
    
 
 BEGIN_NAMESPACE_HURRICANE

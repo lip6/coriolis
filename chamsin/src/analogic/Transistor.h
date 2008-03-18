@@ -45,11 +45,11 @@ class Transistor : public Cell {
                 public : bool operator==(const MaskVersion&) const; 
 
 		public : operator const Code& () const { return _code; };
-		public : const Code& GetCode() const { return _code; }; 
+		public : const Code& getCode() const { return _code; }; 
 
-		public : string _GetTypeName() const { return _TName("Transistor::MaskVersion"); }; 
-		public : string _GetString() const; 
-		public : Record* _GetRecord() const;
+		public : string _getTypeName() const { return _TName("Transistor::MaskVersion"); }; 
+		public : string _getString() const; 
+		public : Record* _getRecord() const;
 		
 	      };
 
@@ -68,11 +68,11 @@ class Transistor : public Cell {
 			 
                 public : void SetCode(const Code& code) { _code = code; }; 
 
-		public : const Code& GetCode() const { return _code; };
+		public : const Code& getCode() const { return _code; };
 
-		public : string _GetTypeName() const { return _TName("Transistor::Type"); }; 
-		public : string _GetString() const;
-		public : Record* _GetRecord() const;
+		public : string _getTypeName() const { return _TName("Transistor::Type"); }; 
+		public : string _getString() const;
+		public : Record* _getRecord() const;
 	
 	      };
 
@@ -98,21 +98,18 @@ class Transistor : public Cell {
 
 		 private : MaskInfo(const MaskInfo& ); 
 
-                 protected : virtual void  _PostCreate();
 			   
                  // Destructors
 		 // ***********
-                 protected: virtual ~MaskInfo() {};
-	         protected: virtual void _PreDelete(); 
-		 public : virtual void Delete(); 
+                 public: virtual ~MaskInfo() {};
 
                  // Accessors
 	         // *********
-		 public : const double& GetL() const { return _l; };
-		 public : const double& GetW() const { return _w; };
-		 public : const unsigned & GetNbDrainColumn() const { return _nbDrainColumn; };
-		 public : const unsigned & GetNbSourceColumn() const { return _nbSourceColumn; };
-		 public : const Type& GetType() const { return _type; };
+		 public : const double& getL() const { return _l; };
+		 public : const double& getW() const { return _w; };
+		 public : const unsigned & getNbDrainColumn() const { return _nbDrainColumn; };
+		 public : const unsigned & getNbSourceColumn() const { return _nbSourceColumn; };
+		 public : const Type& getType() const { return _type; };
 
                  // Update
 		 // ******
@@ -132,9 +129,9 @@ class Transistor : public Cell {
 
                  // Others
 		 // ******
-		 public : virtual string _GetTypeName() const =0;
-		 public : virtual string _GetString() const;
-		 public : virtual Record* _GetRecord() const;
+		 public : virtual string _getTypeName() const =0;
+		 public : virtual string _getString() const;
+		 public : virtual Record* _getRecord() const;
 	
 	      };
 
@@ -155,18 +152,12 @@ class Transistor : public Cell {
 			               , const unsigned& nbDrainColumn = 1
 				       , const unsigned& nbSourceColumn = 1);
 
-		 public: static MaskV1Info* Create(const double& l, const double& w, const Type::Code& type=Type::INTERNAL
-			               , const unsigned& nbDrainColumn = 1 
-				       , const unsigned& nbSourceColumn = 1);
-
 	         public : MaskInfo& operator=(const MaskInfo&);
 
-		 protected : void _PostCreate();
 
 	         // Destructor
 		 // ***********
 		 public : virtual ~MaskV1Info() {};
-		 protected: void _PreDelete();
 
 		 // Operators
 		 // *********
@@ -174,9 +165,9 @@ class Transistor : public Cell {
 
 		 // Others
 	         // *********
-		 public : virtual string _GetTypeName() const { return _TName("Transistor::MaskV1Info"); }; 
-		 public : virtual string _GetString() const;
-		 public : virtual Record* _GetRecord() const;
+		 public : virtual string _getTypeName() const { return _TName("Transistor::MaskV1Info"); }; 
+		 public : virtual string _getString() const;
+		 public : virtual Record* _getRecord() const;
               };
 
 
@@ -199,43 +190,43 @@ class Transistor : public Cell {
     protected : Transistor(Library* library, const Name& name, char type);
 # endif 
 
-    public : static Transistor* Create(Library* library, const Name& name, char type);		
+    public : static Transistor* create(Library* library, const Name& name, char type);		
    
 #   if !defined(__DOXYGEN_PROCESSOR__)
-    protected : virtual void _PostCreate();
+    protected : virtual void _postCreate();
 
 
 // Destructors
 // ***********
     protected : ~Transistor() {};
-    protected : virtual void _PreDelete();
+    protected : virtual void _preDestroy();
 # endif 
 
 // Accessors
 // *********	  
-    public : char GetType() const { return _type; };
-    public : MaskVersion GetMaskVersion() const { return _GetMaskInfoVersion(_masqueInfo); };
-    public : const MaskInfo* GetMaskInfo() const { return _masqueInfo; };
-    public : const double& GetL() const { return _masqueInfo->GetL(); };
-    public : const double& GetW() const { return _masqueInfo->GetW(); };
-    public : const unsigned& GetNbDrainColumn() const { return _masqueInfo->GetNbDrainColumn(); };
-    public : const unsigned& GetNbSourceColumn() const { return _masqueInfo->GetNbSourceColumn(); };
-    public : const char* GetDrainName() const  { return "DRAIN"; };
-    public : const char* GetSourceName() const { return "SOURCE"; };
-    public : const char* GetGridName() const   { return "GRID"; };
-    public : Net* GetDrain() const  { return GetNet(GetDrainName()); };
-    public : Net* GetSource() const { return GetNet(GetSourceName()); };
-    public : Net* GetGrid() const   { return GetNet(GetGridName()); };
-    public : const Type& GetAbutmentType() const { return _masqueInfo->GetType(); };
+    public : char getType() const { return _type; };
+    public : MaskVersion getMaskVersion() const { return _getMaskInfoVersion(_masqueInfo); };
+    public : const MaskInfo* getMaskInfo() const { return _masqueInfo; };
+    public : const double& getL() const { return _masqueInfo->getL(); };
+    public : const double& getW() const { return _masqueInfo->getW(); };
+    public : const unsigned& getNbDrainColumn() const { return _masqueInfo->getNbDrainColumn(); };
+    public : const unsigned& getNbSourceColumn() const { return _masqueInfo->getNbSourceColumn(); };
+    public : const char* getDrainName() const  { return "DRAIN"; };
+    public : const char* getSourceName() const { return "SOURCE"; };
+    public : const char* getGridName() const   { return "GRID"; };
+    public : Net* getDrain() const  { return getNet(getDrainName()); };
+    public : Net* getSource() const { return getNet(getSourceName()); };
+    public : Net* getGrid() const   { return getNet(getGridName()); };
+    public : const Type& getAbutmentType() const { return _masqueInfo->getType(); };
 
 // Predicats
 // *********
     public : bool IsNmos() const { return _type==TRANSN; };
     public : bool IsPmos() const { return _type==TRANSP; };
-    public : bool IsInternal() const { return GetAbutmentType().GetCode()==Type::INTERNAL; };
-    public : bool IsLeft() const     { return GetAbutmentType().GetCode()==Type::LEFT; };
-    public : bool IsRight() const    { return GetAbutmentType().GetCode()==Type::RIGHT; };
-    public : bool IsSingle() const   { return GetAbutmentType().GetCode()==Type::SINGLE; };
+    public : bool IsInternal() const { return getAbutmentType().getCode()==Type::INTERNAL; };
+    public : bool IsLeft() const     { return getAbutmentType().getCode()==Type::LEFT; };
+    public : bool IsRight() const    { return getAbutmentType().getCode()==Type::RIGHT; };
+    public : bool IsSingle() const   { return getAbutmentType().getCode()==Type::SINGLE; };
 
 // Updators
 // ********	    
@@ -247,20 +238,20 @@ class Transistor : public Cell {
 #   if !defined(__DOXYGEN_PROCESSOR__)
 // Others
 // ******
-    public : virtual string _GetTypeName() const {return _TName("Transistor");};
-    public : virtual string _GetString() const;
-    public : virtual Record* _GetRecord() const;
-    public : const GenTrans* _GetGenTrans() const {return _genTrans; }; 
-    public : static MaskVersion _GetMaskInfoVersion(MaskInfo*) ;
-    public : static MaskInfo* _CreateMaskInfo(const MaskVersion&) ;
-    public : map<Net*, Box>* _GetMapNet2Box() { return &_mapNet2Box; };
+    public : virtual string _getTypeName() const {return _TName("Transistor");};
+    public : virtual string _getString() const;
+    public : virtual Record* _getRecord() const;
+    public : const GenTrans* _getGenTrans() const {return _genTrans; }; 
+    public : static MaskVersion _getMaskInfoVersion(MaskInfo*) ;
+    public : static MaskInfo* _createMaskInfo(const MaskVersion&) ;
+    public : map<Net*, Box>* _getMapNet2Box() { return &_mapNet2Box; };
 
 # endif
 
 // Operators
 // *********
    public : void SetMaskInfo(MaskInfo*);
-   public : void CreateLayout();
+   public : void createLayout();
    public : void DuplicateLayout(Transistor* transistor) ;
 
 
@@ -290,8 +281,8 @@ template<>
   inline Record* ProxyRecord  <Transistor::MaskVersion::Code>
                               ( const Transistor::MaskVersion::Code* object )
                               {
-                                Record* record = new Record(GetString(object));
-                                record->Add(GetSlot("Code", (unsigned int*)object));
+                                Record* record = new Record(getString(object));
+                                record->Add(getSlot("Code", (unsigned int*)object));
                                 return record;
                               }
 
@@ -321,8 +312,8 @@ template<>
   inline Record* ProxyRecord  <Transistor::Type::Code>
                               ( const Transistor::Type::Code* object )
                               {
-                                Record* record = new Record(GetString(object));
-                                record->Add(GetSlot("Code", (unsigned int*)object));
+                                Record* record = new Record(getString(object));
+                                record->Add(getSlot("Code", (unsigned int*)object));
                                 return record;
                               }
 
@@ -338,7 +329,7 @@ template<>
 // Generic functions
 // ****************************************************************************************************
 
-string GetString(const H::Transistor::MaskInfo&);
+string getString(const H::Transistor::MaskInfo&);
 
 
 #endif // HURRICANE_TRANSISTOR
