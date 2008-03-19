@@ -47,9 +47,9 @@ typedef GenericFilter<Entity*> EntityFilter;
 /****************************************/\
 {\
 	EntityLocator _locator = entities.getLocator();\
-	while (_locator.IsValid()) {\
+	while (_locator.isValid()) {\
 		Entity* entity = _locator.getElement();\
-		_locator.Progress();
+		_locator.progress();
 
 
 

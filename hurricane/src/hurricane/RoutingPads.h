@@ -51,9 +51,9 @@ typedef GenericFilter<RoutingPad*> RoutingPadFilter;
 /*********************************/\
 {\
 	RoutingPadLocator _locator = routingpads.getLocator();\
-	while (_locator.IsValid()) {\
+	while (_locator.isValid()) {\
 		RoutingPad* routingpad = _locator.getElement();\
-		_locator.Progress();
+		_locator.progress();
 
 
 

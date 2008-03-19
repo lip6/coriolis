@@ -47,9 +47,9 @@ typedef GenericFilter<Rubber*> RubberFilter;
 /***************************************/\
 {\
     RubberLocator _locator = rubbers.getLocator();\
-    while (_locator.IsValid()) {\
+    while (_locator.isValid()) {\
         Rubber* rubber = _locator.getElement();\
-        _locator.Progress();
+        _locator.progress();
 
 
 

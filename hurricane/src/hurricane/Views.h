@@ -47,9 +47,9 @@ typedef GenericFilter<View*> ViewFilter;
 /*********************************/\
 {\
 	ViewLocator _locator = views.getLocator();\
-	while (_locator.IsValid()) {\
+	while (_locator.isValid()) {\
 		View* view = _locator.getElement();\
-		_locator.Progress();
+		_locator.progress();
 
 
 

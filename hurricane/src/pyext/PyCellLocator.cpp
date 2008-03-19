@@ -83,7 +83,7 @@ extern "C" {
 
 
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PyCellLocator_IsValid,IsValid,PyCellLocator,Locator<Cell*>)
+  DirectGetBoolAttribute(PyCellLocator_isValid,isValid,PyCellLocator,Locator<Cell*>)
 
 
   // Standart Locator Accessors (Attributes).
@@ -101,8 +101,8 @@ extern "C" {
   // PyCellLocator Attribute Method table.
 
   PyMethodDef PyCellLocator_Methods[] =
-    { { "IsValid"        , (PyCFunction)PyCellLocator_IsValid    , METH_NOARGS , "Returns true while the walk has not exhausted the set of elements, else false." }
-    , { "Progress"       , (PyCFunction)PyCellLocator_Progress   , METH_NOARGS , "Moves forward the locator to the following element." }
+    { { "isValid"        , (PyCFunction)PyCellLocator_isValid    , METH_NOARGS , "Returns true while the walk has not exhausted the set of elements, else false." }
+    , { "progress"       , (PyCFunction)PyCellLocator_progress   , METH_NOARGS , "Moves forward the locator to the following element." }
     , { "getElement"     , (PyCFunction)PyCellLocator_getElement , METH_NOARGS , "Returns the current element (or the value Type() when the locator is not or no longer valid)." }
     , { "getClone"       , (PyCFunction)PyCellLocator_getClone   , METH_NOARGS , "This function allocates and returns a new locator that will have the same visiting course than the remaining one of the locator being cloned." }
     , { "destroy"        , (PyCFunction)PyCellLocator_destroy    , METH_NOARGS

@@ -47,9 +47,9 @@ typedef GenericFilter<Quark*> QuarkFilter;
 /************************************/\
 {\
     QuarkLocator _locator = quarks.getLocator();\
-    while (_locator.IsValid()) {\
+    while (_locator.isValid()) {\
         Quark* quark = _locator.getElement();\
-        _locator.Progress();
+        _locator.progress();
 
 
 

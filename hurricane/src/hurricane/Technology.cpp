@@ -47,9 +47,9 @@ class Technology_BasicLayers : public Collection<BasicLayer*> {
         public: virtual BasicLayer* getElement() const;
         public: virtual Hurricane::Locator<BasicLayer*>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -321,8 +321,8 @@ Technology_BasicLayers::Locator::Locator(const Technology* technology, const Lay
 {
     if (_technology) {
         _basicLayerLocator = _technology->getBasicLayers().getLocator();
-        while (_basicLayerLocator.IsValid() && !(_basicLayerLocator.getElement()->getMask() & _mask))
-            _basicLayerLocator.Progress();
+        while (_basicLayerLocator.isValid() && !(_basicLayerLocator.getElement()->getMask() & _mask))
+            _basicLayerLocator.progress();
     }
 }
 
@@ -356,19 +356,19 @@ Locator<BasicLayer*>* Technology_BasicLayers::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Technology_BasicLayers::Locator::IsValid() const
+bool Technology_BasicLayers::Locator::isValid() const
 // **************************************************
 {
-    return _basicLayerLocator.IsValid();
+    return _basicLayerLocator.isValid();
 }
 
-void Technology_BasicLayers::Locator::Progress()
+void Technology_BasicLayers::Locator::progress()
 // *********************************************
 {
     do {
-        _basicLayerLocator.Progress();
+        _basicLayerLocator.progress();
     }
-    while (_basicLayerLocator.IsValid() && !(_basicLayerLocator.getElement()->getMask() & _mask));
+    while (_basicLayerLocator.isValid() && !(_basicLayerLocator.getElement()->getMask() & _mask));
 }
 
 string Technology_BasicLayers::Locator::_getString() const

@@ -93,12 +93,12 @@ class Region {
     // Predicates
     // **********
 
-        public: bool IsValid() const {return _baseTile;};
+        public: bool isValid() const {return _baseTile;};
 
     // Updators
     // ********
 
-        public: void Progress(int n = 1);
+        public: void progress(int n = 1);
         public: void Translate(const Unit& quantity);
         public: void SetPosition(const Unit& position);
 

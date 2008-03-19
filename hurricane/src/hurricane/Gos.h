@@ -47,9 +47,9 @@ typedef GenericFilter<Go*> GoFilter;
 /***************************/\
 {\
     GoLocator _locator = gos.getLocator();\
-    while (_locator.IsValid()) {\
+    while (_locator.isValid()) {\
         Go* go = _locator.getElement();\
-        _locator.Progress();
+        _locator.progress();
 
 
 

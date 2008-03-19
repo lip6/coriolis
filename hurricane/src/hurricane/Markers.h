@@ -47,9 +47,9 @@ typedef GenericFilter<Marker*> MarkerFilter;
 /***************************************/\
 {\
     MarkerLocator _locator = markers.getLocator();\
-    while (_locator.IsValid()) {\
+    while (_locator.isValid()) {\
         Marker* marker = _locator.getElement();\
-        _locator.Progress();
+        _locator.progress();
 
 
 

@@ -53,7 +53,7 @@ template<class Element, class Compare = less<Element> >
         public: virtual Element getElement() const
         // ***************************************
         {
-            return (IsValid()) ? *_iterator : Element();
+            return (isValid()) ? *_iterator : Element();
         };
 
         public: virtual Hurricane::Locator<Element>* getClone() const
@@ -62,13 +62,13 @@ template<class Element, class Compare = less<Element> >
             return new Locator(_elementSet);
         };
 
-        public: virtual bool IsValid() const
+        public: virtual bool isValid() const
         // *********************************
         {
             return (_elementSet && (_iterator != _elementSet->end()));
         };
 
-        public: virtual void Progress()
+        public: virtual void progress()
         // ****************************
         {
             ++_iterator;

@@ -47,9 +47,9 @@ typedef GenericFilter<Property*> PropertyFilter;
 /**********************************************/\
 {\
 	PropertyLocator _locator = properties.getLocator();\
-	while (_locator.IsValid()) {\
+	while (_locator.isValid()) {\
 		Property* property = _locator.getElement();\
-		_locator.Progress();
+		_locator.progress();
 
 
 

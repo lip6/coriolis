@@ -41,9 +41,9 @@ class Cell_Slices : public Collection<Slice*> {
         public: virtual Slice* getElement() const;
         public: virtual Hurricane::Locator<Slice*>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -114,9 +114,9 @@ class Cell_Components : public Collection<Component*> {
         public: virtual Component* getElement() const;
         public: virtual Hurricane::Locator<Component*>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -188,9 +188,9 @@ class Cell_ComponentsUnder : public Collection<Component*> {
         public: virtual Component* getElement() const;
         public: virtual Hurricane::Locator<Component*>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -265,9 +265,9 @@ class Cell_Occurrences : public Collection<Occurrence> {
         public: virtual Occurrence getElement() const;
         public: virtual Hurricane::Locator<Occurrence>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -342,9 +342,9 @@ class Cell_OccurrencesUnder : public Collection<Occurrence> {
         public: virtual Occurrence getElement() const;
         public: virtual Hurricane::Locator<Occurrence>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -413,9 +413,9 @@ class Cell_LeafInstanceOccurrences : public Collection<Occurrence> {
         public: virtual Occurrence getElement() const;
         public: virtual Hurricane::Locator<Occurrence>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -485,9 +485,9 @@ class Cell_LeafInstanceOccurrencesUnder : public Collection<Occurrence> {
         public: virtual Occurrence getElement() const;
         public: virtual Hurricane::Locator<Occurrence>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -557,9 +557,9 @@ class Cell_TerminalInstanceOccurrences : public Collection<Occurrence> {
         public: virtual Occurrence getElement() const;
         public: virtual Hurricane::Locator<Occurrence>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -629,9 +629,9 @@ class Cell_TerminalInstanceOccurrencesUnder : public Collection<Occurrence> {
         public: virtual Occurrence getElement() const;
         public: virtual Hurricane::Locator<Occurrence>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -703,9 +703,9 @@ class Cell_ComponentOccurrences : public Collection<Occurrence> {
         public: virtual Occurrence getElement() const;
         public: virtual Hurricane::Locator<Occurrence>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -778,9 +778,9 @@ class Cell_ComponentOccurrencesUnder : public Collection<Occurrence> {
         public: virtual Occurrence getElement() const;
         public: virtual Hurricane::Locator<Occurrence>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -849,9 +849,9 @@ class Cell_HyperNetRootNetOccurrences : public Collection<Occurrence> {
         public: virtual Occurrence getElement() const;
         public: virtual Hurricane::Locator<Occurrence>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -920,9 +920,9 @@ class Cell_HyperNetRootNetOccurrences : public Collection<Occurrence> {
 //        public: virtual MainView* getElement() const;
 //        public: virtual Hurricane::Locator<MainView*>* getClone() const;
 //
-//        public: virtual bool IsValid() const;
+//        public: virtual bool isValid() const;
 //
-//        public: virtual void Progress();
+//        public: virtual void progress();
 //
 //        public: virtual string _getString() const;
 //
@@ -986,9 +986,9 @@ class Cell_SubCells : public Collection<Cell*> {
         public: virtual Cell* getElement() const;
         public: virtual Hurricane::Locator<Cell*>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -1052,8 +1052,8 @@ class Cell_SubCells : public Collection<Cell*> {
         public:
           virtual Path                      getElement () const { return _instancePath; };
           virtual Hurricane::Locator<Path>* getClone   () const { return new Locator(*this); };
-          virtual bool                      IsValid    () const { return _instancesStack.size(); };
-          virtual void                      Progress   ();
+          virtual bool                      isValid    () const { return _instancesStack.size(); };
+          virtual void                      progress   ();
         // Hurricane Managment.
         public:
           virtual string _getString() const;
@@ -1451,8 +1451,8 @@ Cell_Slices::Locator::Locator(const Cell* cell, const Layer::Mask& mask)
 {
     if (_cell && (_mask != 0)) {
         _sliceLocator = ((Cell*)_cell)->_getSliceMap().getElements().getLocator();
-        while (_sliceLocator.IsValid() && !(_sliceLocator.getElement()->getLayer()->getMask() & _mask))
-            _sliceLocator.Progress();
+        while (_sliceLocator.isValid() && !(_sliceLocator.getElement()->getLayer()->getMask() & _mask))
+            _sliceLocator.progress();
     }
 }
 
@@ -1486,20 +1486,20 @@ Locator<Slice*>* Cell_Slices::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Cell_Slices::Locator::IsValid() const
+bool Cell_Slices::Locator::isValid() const
 // ***************************************
 {
-    return _sliceLocator.IsValid();
+    return _sliceLocator.isValid();
 }
 
-void Cell_Slices::Locator::Progress()
+void Cell_Slices::Locator::progress()
 // **********************************
 {
-    if (_sliceLocator.IsValid()) {
+    if (_sliceLocator.isValid()) {
         do {
-            _sliceLocator.Progress();
+            _sliceLocator.progress();
         }
-        while (_sliceLocator.IsValid() && !(_sliceLocator.getElement()->getLayer()->getMask() & _mask));
+        while (_sliceLocator.isValid() && !(_sliceLocator.getElement()->getLayer()->getMask() & _mask));
     }
 }
 
@@ -1605,16 +1605,16 @@ Cell_Components::Locator::Locator(const Cell* cell, const Layer::Mask& mask)
 {
     if (_cell && (_mask != 0)) {
         _sliceLocator = _cell->getSlices(_mask).getLocator();
-        while (!_component && _sliceLocator.IsValid()) {
+        while (!_component && _sliceLocator.isValid()) {
             Slice* slice = _sliceLocator.getElement();
             if (slice) {
                 _componentLocator = slice->getComponents().getLocator();
-                while (!_component && _componentLocator.IsValid()) {
+                while (!_component && _componentLocator.isValid()) {
                     _component = _componentLocator.getElement();
-                    if (!_component) _componentLocator.Progress();
+                    if (!_component) _componentLocator.progress();
                 }
             }
-            if (!_component) _sliceLocator.Progress();
+            if (!_component) _sliceLocator.progress();
         }
     }
 }
@@ -1653,35 +1653,35 @@ Locator<Component*>* Cell_Components::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Cell_Components::Locator::IsValid() const
+bool Cell_Components::Locator::isValid() const
 // *******************************************
 {
     return (_component != NULL);
 }
 
-void Cell_Components::Locator::Progress()
+void Cell_Components::Locator::progress()
 // **************************************
 {
     if (_component) {
         _component = NULL;
         do {
-            _componentLocator.Progress();
+            _componentLocator.progress();
             _component = _componentLocator.getElement();
         }
-        while (!_component && _componentLocator.IsValid());
+        while (!_component && _componentLocator.isValid());
         if (!_component) {
             do {
-                _sliceLocator.Progress();
+                _sliceLocator.progress();
                 Slice* slice = _sliceLocator.getElement();
                 if (slice) {
                     _componentLocator = slice->getComponents().getLocator();
-                    while (!_component && _componentLocator.IsValid()) {
+                    while (!_component && _componentLocator.isValid()) {
                         _component = _componentLocator.getElement();
-                        if (!_component) _componentLocator.Progress();
+                        if (!_component) _componentLocator.progress();
                     }
                 }
             }
-            while (!_component && _sliceLocator.IsValid());
+            while (!_component && _sliceLocator.isValid());
         }
     }
 }
@@ -1795,14 +1795,14 @@ Cell_ComponentsUnder::Locator::Locator(const Cell* cell, const Box& area, const 
 {
     if (_cell && !_area.isEmpty()) {
         _sliceLocator = _cell->getSlices(_mask).getLocator();
-        while (!_component && _sliceLocator.IsValid()) {
+        while (!_component && _sliceLocator.isValid()) {
             Slice* slice = _sliceLocator.getElement();
             if (slice) {
                 _componentLocator = slice->getComponentsUnder(_area).getLocator();
-                if (_componentLocator.IsValid())
+                if (_componentLocator.isValid())
                     _component = _componentLocator.getElement();
             }
-            if (!_component) _sliceLocator.Progress();
+            if (!_component) _sliceLocator.progress();
         }
     }
 }
@@ -1843,30 +1843,30 @@ Locator<Component*>* Cell_ComponentsUnder::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Cell_ComponentsUnder::Locator::IsValid() const
+bool Cell_ComponentsUnder::Locator::isValid() const
 // ************************************************
 {
     return (_component != NULL);
 }
 
-void Cell_ComponentsUnder::Locator::Progress()
+void Cell_ComponentsUnder::Locator::progress()
 // *******************************************
 {
     if (_component) {
         _component = NULL;
-        _componentLocator.Progress();
-        if (_componentLocator.IsValid())
+        _componentLocator.progress();
+        if (_componentLocator.isValid())
             _component = _componentLocator.getElement();
         else {
             do {
-                _sliceLocator.Progress();
+                _sliceLocator.progress();
                 Slice* slice = _sliceLocator.getElement();
                 if (slice) {
                     _componentLocator = slice->getComponentsUnder(_area).getLocator();
-                    if (_componentLocator.IsValid())
+                    if (_componentLocator.isValid())
                         _component = _componentLocator.getElement();
                 }
-            } while (!_component && _sliceLocator.IsValid());
+            } while (!_component && _sliceLocator.isValid());
         }
     }
 }
@@ -1980,19 +1980,19 @@ Cell_Occurrences::Locator::Locator(const Cell* cell, unsigned searchDepth)
 {
     if (_cell) {
         _componentLocator = _cell->getComponents().getLocator();
-        if (_componentLocator.IsValid())
+        if (_componentLocator.isValid())
             _state = 1;
         else {
             _rubberLocator = _cell->getRubbers().getLocator();
-            if (_rubberLocator.IsValid())
+            if (_rubberLocator.isValid())
                 _state = 2;
             else {
                 _markerLocator = _cell->getMarkers().getLocator();
-                if (_markerLocator.IsValid())
+                if (_markerLocator.isValid())
                     _state = 3;
                 else {
                     _instanceLocator = _cell->getInstances().getLocator();
-                    if (_instanceLocator.IsValid())
+                    if (_instanceLocator.isValid())
                         _state = 4;
                 }
             }
@@ -2054,30 +2054,30 @@ Locator<Occurrence>* Cell_Occurrences::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Cell_Occurrences::Locator::IsValid() const
+bool Cell_Occurrences::Locator::isValid() const
 // *******************************************
 {
     return (_state != 0);
 }
 
-void Cell_Occurrences::Locator::Progress()
+void Cell_Occurrences::Locator::progress()
 // **************************************
 {
     if (_state) {
         switch (_state) {
             case 1 :
-                _componentLocator.Progress();
-                if (!_componentLocator.IsValid()) {
+                _componentLocator.progress();
+                if (!_componentLocator.isValid()) {
                     _rubberLocator = _cell->getRubbers().getLocator();
-                    if (_rubberLocator.IsValid())
+                    if (_rubberLocator.isValid())
                         _state = 2;
                     else {
                         _markerLocator = _cell->getMarkers().getLocator();
-                        if (_markerLocator.IsValid())
+                        if (_markerLocator.isValid())
                             _state = 3;
                         else {
                             _instanceLocator = _cell->getInstances().getLocator();
-                            if (_instanceLocator.IsValid())
+                            if (_instanceLocator.isValid())
                                 _state = 4;
                             else
                                 _state = 0;
@@ -2086,14 +2086,14 @@ void Cell_Occurrences::Locator::Progress()
                 }
                 break;
             case 2 :
-                _rubberLocator.Progress();
-                if (!_rubberLocator.IsValid()) {
+                _rubberLocator.progress();
+                if (!_rubberLocator.isValid()) {
                     _markerLocator = _cell->getMarkers().getLocator();
-                    if (_markerLocator.IsValid())
+                    if (_markerLocator.isValid())
                         _state = 3;
                     else {
                         _instanceLocator = _cell->getInstances().getLocator();
-                        if (_instanceLocator.IsValid())
+                        if (_instanceLocator.isValid())
                             _state = 4;
                         else
                             _state = 0;
@@ -2101,10 +2101,10 @@ void Cell_Occurrences::Locator::Progress()
                 }
                 break;
             case 3 :
-                _markerLocator.Progress();
-                if (!_markerLocator.IsValid()) {
+                _markerLocator.progress();
+                if (!_markerLocator.isValid()) {
                     _instanceLocator = _cell->getInstances().getLocator();
-                    if (_instanceLocator.IsValid())
+                    if (_instanceLocator.isValid())
                         _state = 4;
                     else
                         _state = 0;
@@ -2112,32 +2112,32 @@ void Cell_Occurrences::Locator::Progress()
                 break;
             case 4 :
                 if (!_searchDepth) {
-                    _instanceLocator.Progress();
-                    if (!_instanceLocator.IsValid()) _state = 0;
+                    _instanceLocator.progress();
+                    if (!_instanceLocator.isValid()) _state = 0;
                 }
                 else {
                     Instance* instance = _instanceLocator.getElement();
                     if (instance->IsTerminal()) {
-                        _instanceLocator.Progress();
-                        if (!_instanceLocator.IsValid()) _state = 0;
+                        _instanceLocator.progress();
+                        if (!_instanceLocator.isValid()) _state = 0;
                     }
                     else {
                         _occurrenceLocator =
                             instance->getMasterCell()->getOccurrences(_searchDepth - 1).getLocator();
-                        if (_occurrenceLocator.IsValid())
+                        if (_occurrenceLocator.isValid())
                             _state = 5;
                         else {
-                            _instanceLocator.Progress();
-                            if (!_instanceLocator.IsValid()) _state = 0;
+                            _instanceLocator.progress();
+                            if (!_instanceLocator.isValid()) _state = 0;
                         }
                     }
                 }
                 break;
             case 5 :
-                _occurrenceLocator.Progress();
-                if (!_occurrenceLocator.IsValid()) {
-                    _instanceLocator.Progress();
-                    if (_instanceLocator.IsValid())
+                _occurrenceLocator.progress();
+                if (!_occurrenceLocator.isValid()) {
+                    _instanceLocator.progress();
+                    if (_instanceLocator.isValid())
                         _state = 4;
                     else
                         _state = 0;
@@ -2262,19 +2262,19 @@ Cell_OccurrencesUnder::Locator::Locator(const Cell* cell, const Box& area, unsig
 {
     if (_cell && !_area.isEmpty()) {
         _componentLocator = _cell->getComponentsUnder(_area).getLocator();
-        if (_componentLocator.IsValid())
+        if (_componentLocator.isValid())
             _state = 1;
         else {
             _rubberLocator = _cell->getRubbersUnder(_area).getLocator();
-            if (_rubberLocator.IsValid())
+            if (_rubberLocator.isValid())
                 _state = 2;
             else {
                 _markerLocator = _cell->getMarkersUnder(_area).getLocator();
-                if (_markerLocator.IsValid())
+                if (_markerLocator.isValid())
                     _state = 3;
                 else {
                     _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
-                    if (_instanceLocator.IsValid())
+                    if (_instanceLocator.isValid())
                         _state = 4;
                 }
             }
@@ -2338,30 +2338,30 @@ Locator<Occurrence>* Cell_OccurrencesUnder::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Cell_OccurrencesUnder::Locator::IsValid() const
+bool Cell_OccurrencesUnder::Locator::isValid() const
 // ************************************************
 {
     return (_state != 0);
 }
 
-void Cell_OccurrencesUnder::Locator::Progress()
+void Cell_OccurrencesUnder::Locator::progress()
 // *******************************************
 {
     if (_state) {
         switch (_state) {
             case 1 :
-                _componentLocator.Progress();
-                if (!_componentLocator.IsValid()) {
+                _componentLocator.progress();
+                if (!_componentLocator.isValid()) {
                     _rubberLocator = _cell->getRubbersUnder(_area).getLocator();
-                    if (_rubberLocator.IsValid())
+                    if (_rubberLocator.isValid())
                         _state = 2;
                     else {
                         _markerLocator = _cell->getMarkersUnder(_area).getLocator();
-                        if (_markerLocator.IsValid())
+                        if (_markerLocator.isValid())
                             _state = 3;
                         else {
                             _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
-                            if (_instanceLocator.IsValid())
+                            if (_instanceLocator.isValid())
                                 _state = 4;
                             else
                                 _state = 0;
@@ -2370,14 +2370,14 @@ void Cell_OccurrencesUnder::Locator::Progress()
                 }
                 break;
             case 2 :
-                _rubberLocator.Progress();
-                if (!_rubberLocator.IsValid()) {
+                _rubberLocator.progress();
+                if (!_rubberLocator.isValid()) {
                     _markerLocator = _cell->getMarkersUnder(_area).getLocator();
-                    if (_markerLocator.IsValid())
+                    if (_markerLocator.isValid())
                         _state = 3;
                     else {
                         _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
-                        if (_instanceLocator.IsValid())
+                        if (_instanceLocator.isValid())
                             _state = 4;
                         else
                             _state = 0;
@@ -2385,10 +2385,10 @@ void Cell_OccurrencesUnder::Locator::Progress()
                 }
                 break;
             case 3 :
-                _markerLocator.Progress();
-                if (!_markerLocator.IsValid()) {
+                _markerLocator.progress();
+                if (!_markerLocator.isValid()) {
                     _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
-                    if (_instanceLocator.IsValid())
+                    if (_instanceLocator.isValid())
                         _state = 4;
                     else
                         _state = 0;
@@ -2396,14 +2396,14 @@ void Cell_OccurrencesUnder::Locator::Progress()
                 break;
             case 4 :
                 if (!_searchDepth) {
-                    _instanceLocator.Progress();
-                    if (!_instanceLocator.IsValid()) _state = 0;
+                    _instanceLocator.progress();
+                    if (!_instanceLocator.isValid()) _state = 0;
                 }
                 else {
                     Instance* instance = _instanceLocator.getElement();
                     if (instance->IsTerminal()) {
-                        _instanceLocator.Progress();
-                        if (!_instanceLocator.IsValid()) _state = 0;
+                        _instanceLocator.progress();
+                        if (!_instanceLocator.isValid()) _state = 0;
                     }
                     else {
                         Box masterArea = _area;
@@ -2411,20 +2411,20 @@ void Cell_OccurrencesUnder::Locator::Progress()
                         Cell* masterCell = instance->getMasterCell();
                         _occurrenceLocator =
                             masterCell->getOccurrencesUnder(masterArea, _searchDepth - 1).getLocator();
-                        if (_occurrenceLocator.IsValid())
+                        if (_occurrenceLocator.isValid())
                             _state = 5;
                         else {
-                            _instanceLocator.Progress();
-                            if (!_instanceLocator.IsValid()) _state = 0;
+                            _instanceLocator.progress();
+                            if (!_instanceLocator.isValid()) _state = 0;
                         }
                     }
                 }
                 break;
             case 5 :
-                _occurrenceLocator.Progress();
-                if (!_occurrenceLocator.IsValid()) {
-                    _instanceLocator.Progress();
-                    if (_instanceLocator.IsValid())
+                _occurrenceLocator.progress();
+                if (!_occurrenceLocator.isValid()) {
+                    _instanceLocator.progress();
+                    if (_instanceLocator.isValid())
                         _state = 4;
                     else
                         _state = 0;
@@ -2510,17 +2510,17 @@ Cell_LeafInstanceOccurrences::Locator::Locator(const Cell* cell)
 {
     if (_cell) {
         _leafInstanceLocator = _cell->getLeafInstances().getLocator();
-        if (_leafInstanceLocator.IsValid())
+        if (_leafInstanceLocator.isValid())
             _state = 1;
         else {
             _nonLeafInstanceLocator = _cell->getNonLeafInstances().getLocator();
-            while (!_state && _nonLeafInstanceLocator.IsValid()) {
+            while (!_state && _nonLeafInstanceLocator.isValid()) {
                 Cell* masterCell = _nonLeafInstanceLocator.getElement()->getMasterCell();
                 _occurrenceLocator = masterCell->getLeafInstanceOccurrences().getLocator();
-                if (_occurrenceLocator.IsValid())
+                if (_occurrenceLocator.isValid())
                     _state = 2;
                 else
-                    _nonLeafInstanceLocator.Progress();
+                    _nonLeafInstanceLocator.progress();
             }
         }
     }
@@ -2571,46 +2571,46 @@ Locator<Occurrence>* Cell_LeafInstanceOccurrences::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Cell_LeafInstanceOccurrences::Locator::IsValid() const
+bool Cell_LeafInstanceOccurrences::Locator::isValid() const
 // ***********************************************************
 {
     return (_state != 0);
 }
 
-void Cell_LeafInstanceOccurrences::Locator::Progress()
+void Cell_LeafInstanceOccurrences::Locator::progress()
 // ******************************************************
 {
     if (_state) {
         switch (_state) {
             case 1 :
-                _leafInstanceLocator.Progress();
-                if (!_leafInstanceLocator.IsValid()) {
+                _leafInstanceLocator.progress();
+                if (!_leafInstanceLocator.isValid()) {
                     _state = 0;
                     _nonLeafInstanceLocator = _cell->getNonLeafInstances().getLocator();
-                    while (!_state && _nonLeafInstanceLocator.IsValid()) {
+                    while (!_state && _nonLeafInstanceLocator.isValid()) {
                         Cell* masterCell = _nonLeafInstanceLocator.getElement()->getMasterCell();
                         _occurrenceLocator = masterCell->getLeafInstanceOccurrences().getLocator();
-                        if (_occurrenceLocator.IsValid())
+                        if (_occurrenceLocator.isValid())
                             _state = 2;
                         else
-                            _nonLeafInstanceLocator.Progress();
+                            _nonLeafInstanceLocator.progress();
                     }
                 }
                 break;
             case 2 :
-                _occurrenceLocator.Progress();
-                if (!_occurrenceLocator.IsValid()) {
+                _occurrenceLocator.progress();
+                if (!_occurrenceLocator.isValid()) {
                     _state = 0;
-                    if (_nonLeafInstanceLocator.IsValid()) {
-                        _nonLeafInstanceLocator.Progress();
-                        while (!_state && _nonLeafInstanceLocator.IsValid()) {
+                    if (_nonLeafInstanceLocator.isValid()) {
+                        _nonLeafInstanceLocator.progress();
+                        while (!_state && _nonLeafInstanceLocator.isValid()) {
                             Cell* masterCell = _nonLeafInstanceLocator.getElement()->getMasterCell();
                             _occurrenceLocator =
                                 masterCell->getLeafInstanceOccurrences().getLocator();
-                            if (_occurrenceLocator.IsValid())
+                            if (_occurrenceLocator.isValid())
                                 _state = 2;
                             else
-                                _nonLeafInstanceLocator.Progress();
+                                _nonLeafInstanceLocator.progress();
                         }
                     }
                 }
@@ -2720,21 +2720,21 @@ Cell_LeafInstanceOccurrencesUnder::Locator::Locator(const Cell* cell, const Box&
 {
     if (_cell && !_area.isEmpty()) {
         _leafInstanceLocator = _cell->getLeafInstancesUnder(_area).getLocator();
-        if (_leafInstanceLocator.IsValid())
+        if (_leafInstanceLocator.isValid())
             _state = 1;
         else {
             _nonLeafInstanceLocator = _cell->getNonLeafInstancesUnder(_area).getLocator();
-            while (!_state && _nonLeafInstanceLocator.IsValid()) {
+            while (!_state && _nonLeafInstanceLocator.isValid()) {
                 Instance* instance = _nonLeafInstanceLocator.getElement();
                 Cell* masterCell = instance->getMasterCell();
                 Box masterArea = _area;
                 instance->getTransformation().getInvert().applyOn(masterArea);
                 _occurrenceLocator =
                     masterCell->getLeafInstanceOccurrencesUnder(masterArea).getLocator();
-                if (_occurrenceLocator.IsValid())
+                if (_occurrenceLocator.isValid())
                     _state = 2;
                 else
-                    _nonLeafInstanceLocator.Progress();
+                    _nonLeafInstanceLocator.progress();
             }
         }
     }
@@ -2787,53 +2787,53 @@ Locator<Occurrence>* Cell_LeafInstanceOccurrencesUnder::Locator::getClone() cons
     return new Locator(*this);
 }
 
-bool Cell_LeafInstanceOccurrencesUnder::Locator::IsValid() const
+bool Cell_LeafInstanceOccurrencesUnder::Locator::isValid() const
 // ****************************************************************
 {
     return (_state != 0);
 }
 
-void Cell_LeafInstanceOccurrencesUnder::Locator::Progress()
+void Cell_LeafInstanceOccurrencesUnder::Locator::progress()
 // ***********************************************************
 {
     if (_state) {
         switch (_state) {
             case 1 :
-                _leafInstanceLocator.Progress();
-                if (!_leafInstanceLocator.IsValid()) {
+                _leafInstanceLocator.progress();
+                if (!_leafInstanceLocator.isValid()) {
                     _state = 0;
                     _nonLeafInstanceLocator = _cell->getNonLeafInstancesUnder(_area).getLocator();
-                    while (!_state && _nonLeafInstanceLocator.IsValid()) {
+                    while (!_state && _nonLeafInstanceLocator.isValid()) {
                         Instance* instance = _nonLeafInstanceLocator.getElement();
                         Cell* masterCell = instance->getMasterCell();
                         Box masterArea = _area;
                         instance->getTransformation().getInvert().applyOn(masterArea);
                         _occurrenceLocator =
                             masterCell->getLeafInstanceOccurrencesUnder(masterArea).getLocator();
-                        if (_occurrenceLocator.IsValid())
+                        if (_occurrenceLocator.isValid())
                             _state = 2;
                         else
-                            _nonLeafInstanceLocator.Progress();
+                            _nonLeafInstanceLocator.progress();
                     }
                 }
                 break;
             case 2 :
-                _occurrenceLocator.Progress();
-                if (!_occurrenceLocator.IsValid()) {
+                _occurrenceLocator.progress();
+                if (!_occurrenceLocator.isValid()) {
                     _state = 0;
-                    if (_nonLeafInstanceLocator.IsValid()) {
-                        _nonLeafInstanceLocator.Progress();
-                        while (!_state && _nonLeafInstanceLocator.IsValid()) {
+                    if (_nonLeafInstanceLocator.isValid()) {
+                        _nonLeafInstanceLocator.progress();
+                        while (!_state && _nonLeafInstanceLocator.isValid()) {
                             Instance* instance = _nonLeafInstanceLocator.getElement();
                             Cell* masterCell = instance->getMasterCell();
                             Box masterArea = _area;
                             instance->getTransformation().getInvert().applyOn(masterArea);
                             _occurrenceLocator =
                                 masterCell->getLeafInstanceOccurrencesUnder(masterArea).getLocator();
-                            if (_occurrenceLocator.IsValid())
+                            if (_occurrenceLocator.isValid())
                                 _state = 2;
                             else
-                                _nonLeafInstanceLocator.Progress();
+                                _nonLeafInstanceLocator.progress();
                         }
                     }
                 }
@@ -2919,17 +2919,17 @@ Cell_TerminalInstanceOccurrences::Locator::Locator(const Cell* cell)
 {
     if (_cell) {
         _terminalInstanceLocator = _cell->getTerminalInstances().getLocator();
-        if (_terminalInstanceLocator.IsValid())
+        if (_terminalInstanceLocator.isValid())
             _state = 1;
         else {
             _nonTerminalInstanceLocator = _cell->getNonTerminalInstances().getLocator();
-            while (!_state && _nonTerminalInstanceLocator.IsValid()) {
+            while (!_state && _nonTerminalInstanceLocator.isValid()) {
                 Cell* masterCell = _nonTerminalInstanceLocator.getElement()->getMasterCell();
                 _occurrenceLocator = masterCell->getTerminalInstanceOccurrences().getLocator();
-                if (_occurrenceLocator.IsValid())
+                if (_occurrenceLocator.isValid())
                     _state = 2;
                 else
-                    _nonTerminalInstanceLocator.Progress();
+                    _nonTerminalInstanceLocator.progress();
             }
         }
     }
@@ -2980,46 +2980,46 @@ Locator<Occurrence>* Cell_TerminalInstanceOccurrences::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Cell_TerminalInstanceOccurrences::Locator::IsValid() const
+bool Cell_TerminalInstanceOccurrences::Locator::isValid() const
 // ***********************************************************
 {
     return (_state != 0);
 }
 
-void Cell_TerminalInstanceOccurrences::Locator::Progress()
+void Cell_TerminalInstanceOccurrences::Locator::progress()
 // ******************************************************
 {
     if (_state) {
         switch (_state) {
             case 1 :
-                _terminalInstanceLocator.Progress();
-                if (!_terminalInstanceLocator.IsValid()) {
+                _terminalInstanceLocator.progress();
+                if (!_terminalInstanceLocator.isValid()) {
                     _state = 0;
                     _nonTerminalInstanceLocator = _cell->getNonTerminalInstances().getLocator();
-                    while (!_state && _nonTerminalInstanceLocator.IsValid()) {
+                    while (!_state && _nonTerminalInstanceLocator.isValid()) {
                         Cell* masterCell = _nonTerminalInstanceLocator.getElement()->getMasterCell();
                         _occurrenceLocator = masterCell->getTerminalInstanceOccurrences().getLocator();
-                        if (_occurrenceLocator.IsValid())
+                        if (_occurrenceLocator.isValid())
                             _state = 2;
                         else
-                            _nonTerminalInstanceLocator.Progress();
+                            _nonTerminalInstanceLocator.progress();
                     }
                 }
                 break;
             case 2 :
-                _occurrenceLocator.Progress();
-                if (!_occurrenceLocator.IsValid()) {
+                _occurrenceLocator.progress();
+                if (!_occurrenceLocator.isValid()) {
                     _state = 0;
-                    if (_nonTerminalInstanceLocator.IsValid()) {
-                        _nonTerminalInstanceLocator.Progress();
-                        while (!_state && _nonTerminalInstanceLocator.IsValid()) {
+                    if (_nonTerminalInstanceLocator.isValid()) {
+                        _nonTerminalInstanceLocator.progress();
+                        while (!_state && _nonTerminalInstanceLocator.isValid()) {
                             Cell* masterCell = _nonTerminalInstanceLocator.getElement()->getMasterCell();
                             _occurrenceLocator =
                                 masterCell->getTerminalInstanceOccurrences().getLocator();
-                            if (_occurrenceLocator.IsValid())
+                            if (_occurrenceLocator.isValid())
                                 _state = 2;
                             else
-                                _nonTerminalInstanceLocator.Progress();
+                                _nonTerminalInstanceLocator.progress();
                         }
                     }
                 }
@@ -3129,21 +3129,21 @@ Cell_TerminalInstanceOccurrencesUnder::Locator::Locator(const Cell* cell, const 
 {
     if (_cell && !_area.isEmpty()) {
         _terminalInstanceLocator = _cell->getTerminalInstancesUnder(_area).getLocator();
-        if (_terminalInstanceLocator.IsValid())
+        if (_terminalInstanceLocator.isValid())
             _state = 1;
         else {
             _nonTerminalInstanceLocator = _cell->getNonTerminalInstancesUnder(_area).getLocator();
-            while (!_state && _nonTerminalInstanceLocator.IsValid()) {
+            while (!_state && _nonTerminalInstanceLocator.isValid()) {
                 Instance* instance = _nonTerminalInstanceLocator.getElement();
                 Cell* masterCell = instance->getMasterCell();
                 Box masterArea = _area;
                 instance->getTransformation().getInvert().applyOn(masterArea);
                 _occurrenceLocator =
                     masterCell->getTerminalInstanceOccurrencesUnder(masterArea).getLocator();
-                if (_occurrenceLocator.IsValid())
+                if (_occurrenceLocator.isValid())
                     _state = 2;
                 else
-                    _nonTerminalInstanceLocator.Progress();
+                    _nonTerminalInstanceLocator.progress();
             }
         }
     }
@@ -3196,53 +3196,53 @@ Locator<Occurrence>* Cell_TerminalInstanceOccurrencesUnder::Locator::getClone() 
     return new Locator(*this);
 }
 
-bool Cell_TerminalInstanceOccurrencesUnder::Locator::IsValid() const
+bool Cell_TerminalInstanceOccurrencesUnder::Locator::isValid() const
 // ****************************************************************
 {
     return (_state != 0);
 }
 
-void Cell_TerminalInstanceOccurrencesUnder::Locator::Progress()
+void Cell_TerminalInstanceOccurrencesUnder::Locator::progress()
 // ***********************************************************
 {
     if (_state) {
         switch (_state) {
             case 1 :
-                _terminalInstanceLocator.Progress();
-                if (!_terminalInstanceLocator.IsValid()) {
+                _terminalInstanceLocator.progress();
+                if (!_terminalInstanceLocator.isValid()) {
                     _state = 0;
                     _nonTerminalInstanceLocator = _cell->getNonTerminalInstancesUnder(_area).getLocator();
-                    while (!_state && _nonTerminalInstanceLocator.IsValid()) {
+                    while (!_state && _nonTerminalInstanceLocator.isValid()) {
                         Instance* instance = _nonTerminalInstanceLocator.getElement();
                         Cell* masterCell = instance->getMasterCell();
                         Box masterArea = _area;
                         instance->getTransformation().getInvert().applyOn(masterArea);
                         _occurrenceLocator =
                             masterCell->getTerminalInstanceOccurrencesUnder(masterArea).getLocator();
-                        if (_occurrenceLocator.IsValid())
+                        if (_occurrenceLocator.isValid())
                             _state = 2;
                         else
-                            _nonTerminalInstanceLocator.Progress();
+                            _nonTerminalInstanceLocator.progress();
                     }
                 }
                 break;
             case 2 :
-                _occurrenceLocator.Progress();
-                if (!_occurrenceLocator.IsValid()) {
+                _occurrenceLocator.progress();
+                if (!_occurrenceLocator.isValid()) {
                     _state = 0;
-                    if (_nonTerminalInstanceLocator.IsValid()) {
-                        _nonTerminalInstanceLocator.Progress();
-                        while (!_state && _nonTerminalInstanceLocator.IsValid()) {
+                    if (_nonTerminalInstanceLocator.isValid()) {
+                        _nonTerminalInstanceLocator.progress();
+                        while (!_state && _nonTerminalInstanceLocator.isValid()) {
                             Instance* instance = _nonTerminalInstanceLocator.getElement();
                             Cell* masterCell = instance->getMasterCell();
                             Box masterArea = _area;
                             instance->getTransformation().getInvert().applyOn(masterArea);
                             _occurrenceLocator =
                                 masterCell->getTerminalInstanceOccurrencesUnder(masterArea).getLocator();
-                            if (_occurrenceLocator.IsValid())
+                            if (_occurrenceLocator.isValid())
                                 _state = 2;
                             else
-                                _nonTerminalInstanceLocator.Progress();
+                                _nonTerminalInstanceLocator.progress();
                         }
                     }
                 }
@@ -3355,17 +3355,17 @@ Cell_ComponentOccurrences::Locator::Locator(const Cell* cell, const Layer::Mask&
 {
     if (_cell && (_mask != 0)) {
         _componentLocator = _cell->getComponents(_mask).getLocator();
-        if (_componentLocator.IsValid())
+        if (_componentLocator.isValid())
             _state = 1;
         else {
             _instanceLocator = _cell->getInstances().getLocator();
-            while (!_state && _instanceLocator.IsValid()) {
+            while (!_state && _instanceLocator.isValid()) {
                 Cell* masterCell = _instanceLocator.getElement()->getMasterCell();
                 _occurrenceLocator = masterCell->getComponentOccurrences(_mask).getLocator();
-                if (_occurrenceLocator.IsValid())
+                if (_occurrenceLocator.isValid())
                     _state = 2;
                 else
-                    _instanceLocator.Progress();
+                    _instanceLocator.progress();
             }
         }
     }
@@ -3418,45 +3418,45 @@ Locator<Occurrence>* Cell_ComponentOccurrences::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Cell_ComponentOccurrences::Locator::IsValid() const
+bool Cell_ComponentOccurrences::Locator::isValid() const
 // ****************************************************
 {
     return (_state != 0);
 }
 
-void Cell_ComponentOccurrences::Locator::Progress()
+void Cell_ComponentOccurrences::Locator::progress()
 // ***********************************************
 {
     if (_state) {
         switch (_state) {
             case 1 :
-                _componentLocator.Progress();
-                if (!_componentLocator.IsValid()) {
+                _componentLocator.progress();
+                if (!_componentLocator.isValid()) {
                     _state = 0;
                     _instanceLocator = _cell->getInstances().getLocator();
-                    while (!_state && _instanceLocator.IsValid()) {
+                    while (!_state && _instanceLocator.isValid()) {
                         Cell* masterCell = _instanceLocator.getElement()->getMasterCell();
                         _occurrenceLocator = masterCell->getComponentOccurrences(_mask).getLocator();
-                        if (_occurrenceLocator.IsValid())
+                        if (_occurrenceLocator.isValid())
                             _state = 2;
                         else
-                            _instanceLocator.Progress();
+                            _instanceLocator.progress();
                     }
                 }
                 break;
             case 2 :
-                _occurrenceLocator.Progress();
-                if (!_occurrenceLocator.IsValid()) {
+                _occurrenceLocator.progress();
+                if (!_occurrenceLocator.isValid()) {
                     _state = 0;
-                    if (_instanceLocator.IsValid()) {
-                        _instanceLocator.Progress();
-                        while (!_state && _instanceLocator.IsValid()) {
+                    if (_instanceLocator.isValid()) {
+                        _instanceLocator.progress();
+                        while (!_state && _instanceLocator.isValid()) {
                             Cell* masterCell = _instanceLocator.getElement()->getMasterCell();
                             _occurrenceLocator = masterCell->getComponentOccurrences(_mask).getLocator();
-                            if (_occurrenceLocator.IsValid())
+                            if (_occurrenceLocator.isValid())
                                 _state = 2;
                             else
-                                _instanceLocator.Progress();
+                                _instanceLocator.progress();
                         }
                     }
                 }
@@ -3576,21 +3576,21 @@ Cell_ComponentOccurrencesUnder::Locator::Locator(const Cell* cell, const Box& ar
 {
     if (_cell && !_area.isEmpty() && (_mask != 0)) {
         _componentLocator = _cell->getComponentsUnder(_area, _mask).getLocator();
-        if (_componentLocator.IsValid())
+        if (_componentLocator.isValid())
             _state = 1;
         else {
             _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
-            while (!_state && _instanceLocator.IsValid()) {
+            while (!_state && _instanceLocator.isValid()) {
                 Instance* instance = _instanceLocator.getElement();
                 Cell* masterCell = instance->getMasterCell();
                 Box masterArea = _area;
                 instance->getTransformation().getInvert().applyOn(masterArea);
                 _occurrenceLocator =
                     masterCell->getComponentOccurrencesUnder(masterArea, _mask).getLocator();
-                if (_occurrenceLocator.IsValid())
+                if (_occurrenceLocator.isValid())
                     _state = 2;
                 else
-                    _instanceLocator.Progress();
+                    _instanceLocator.progress();
             }
         }
     }
@@ -3645,53 +3645,53 @@ Locator<Occurrence>* Cell_ComponentOccurrencesUnder::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Cell_ComponentOccurrencesUnder::Locator::IsValid() const
+bool Cell_ComponentOccurrencesUnder::Locator::isValid() const
 // *********************************************************
 {
     return (_state != 0);
 }
 
-void Cell_ComponentOccurrencesUnder::Locator::Progress()
+void Cell_ComponentOccurrencesUnder::Locator::progress()
 // ****************************************************
 {
     if (_state) {
         switch (_state) {
             case 1 :
-                _componentLocator.Progress();
-                if (!_componentLocator.IsValid()) {
+                _componentLocator.progress();
+                if (!_componentLocator.isValid()) {
                     _state = 0;
                     _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
-                    while (!_state && _instanceLocator.IsValid()) {
+                    while (!_state && _instanceLocator.isValid()) {
                         Instance* instance = _instanceLocator.getElement();
                         Cell* masterCell = instance->getMasterCell();
                         Box masterArea = _area;
                         instance->getTransformation().getInvert().applyOn(masterArea);
                         _occurrenceLocator =
                             masterCell->getComponentOccurrencesUnder(masterArea, _mask).getLocator();
-                        if (_occurrenceLocator.IsValid())
+                        if (_occurrenceLocator.isValid())
                             _state = 2;
                         else
-                            _instanceLocator.Progress();
+                            _instanceLocator.progress();
                     }
                 }
                 break;
             case 2 :
-                _occurrenceLocator.Progress();
-                if (!_occurrenceLocator.IsValid()) {
+                _occurrenceLocator.progress();
+                if (!_occurrenceLocator.isValid()) {
                     _state = 0;
-                    if (_instanceLocator.IsValid()) {
-                        _instanceLocator.Progress();
-                        while (!_state && _instanceLocator.IsValid()) {
+                    if (_instanceLocator.isValid()) {
+                        _instanceLocator.progress();
+                        while (!_state && _instanceLocator.isValid()) {
                             Instance* instance = _instanceLocator.getElement();
                             Cell* masterCell = instance->getMasterCell();
                             Box masterArea = _area;
                             instance->getTransformation().getInvert().applyOn(masterArea);
                             _occurrenceLocator =
                                 masterCell->getComponentOccurrencesUnder(masterArea, _mask).getLocator();
-                            if (_occurrenceLocator.IsValid())
+                            if (_occurrenceLocator.isValid())
                                 _state = 2;
                             else
-                                _instanceLocator.Progress();
+                                _instanceLocator.progress();
                         }
                     }
                 }
@@ -3801,15 +3801,15 @@ Cell_HyperNetRootNetOccurrences::Locator::Locator(const Cell* cell, Path path)
 
     _instanceLocator=cell->getInstances().getLocator();
 
-    while (_netLocator.IsValid() && !IsHyperNetRootNetOccurrence(Occurrence(_netLocator.getElement(),_path)))
-        _netLocator.Progress();
+    while (_netLocator.isValid() && !IsHyperNetRootNetOccurrence(Occurrence(_netLocator.getElement(),_path)))
+        _netLocator.progress();
 
-    if (!_netLocator.IsValid())
-        while (!_hyperNetRootNetOccurrenceLocator.IsValid() && _instanceLocator.IsValid())
+    if (!_netLocator.isValid())
+        while (!_hyperNetRootNetOccurrenceLocator.isValid() && _instanceLocator.isValid())
         {
             Instance* instance = _instanceLocator.getElement();
             _hyperNetRootNetOccurrenceLocator=Locator(instance->getMasterCell(),Path(_path,instance));
-            _instanceLocator.Progress();
+            _instanceLocator.progress();
         }
 }
 
@@ -3836,9 +3836,9 @@ Cell_HyperNetRootNetOccurrences::Locator& Cell_HyperNetRootNetOccurrences::Locat
 Occurrence Cell_HyperNetRootNetOccurrences::Locator::getElement() const
 // ******************************************************
 {
-    if (_netLocator.IsValid())
+    if (_netLocator.isValid())
         return Occurrence(_netLocator.getElement(),_path);
-    else if (_hyperNetRootNetOccurrenceLocator.IsValid())
+    else if (_hyperNetRootNetOccurrenceLocator.isValid())
         return _hyperNetRootNetOccurrenceLocator.getElement();
     else
         return Occurrence();
@@ -3851,31 +3851,31 @@ Locator<Occurrence>* Cell_HyperNetRootNetOccurrences::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Cell_HyperNetRootNetOccurrences::Locator::IsValid() const
+bool Cell_HyperNetRootNetOccurrences::Locator::isValid() const
 // **********************************************
 {
-    return (_netLocator.IsValid() || (_hyperNetRootNetOccurrenceLocator.IsValid()));
+    return (_netLocator.isValid() || (_hyperNetRootNetOccurrenceLocator.isValid()));
 }
 
-void Cell_HyperNetRootNetOccurrences::Locator::Progress()
+void Cell_HyperNetRootNetOccurrences::Locator::progress()
 // *****************************************
 {
-    if (_netLocator.IsValid())
+    if (_netLocator.isValid())
     {
         do {
-            _netLocator.Progress();
+            _netLocator.progress();
         }
-        while (_netLocator.IsValid() && !IsHyperNetRootNetOccurrence(Occurrence(_netLocator.getElement(),_path)));
+        while (_netLocator.isValid() && !IsHyperNetRootNetOccurrence(Occurrence(_netLocator.getElement(),_path)));
     }
-    else if (_hyperNetRootNetOccurrenceLocator.IsValid())
-        _hyperNetRootNetOccurrenceLocator.Progress();
+    else if (_hyperNetRootNetOccurrenceLocator.isValid())
+        _hyperNetRootNetOccurrenceLocator.progress();
 
-    if (!_netLocator.IsValid())
-        while (!_hyperNetRootNetOccurrenceLocator.IsValid() && _instanceLocator.IsValid())
+    if (!_netLocator.isValid())
+        while (!_hyperNetRootNetOccurrenceLocator.isValid() && _instanceLocator.isValid())
         {
             Instance* instance = _instanceLocator.getElement();
             _hyperNetRootNetOccurrenceLocator=Locator(instance->getMasterCell(),Path(_path,instance));
-            _instanceLocator.Progress();
+            _instanceLocator.progress();
         }
 
 }
@@ -4006,19 +4006,19 @@ string Cell_HyperNetRootNetOccurrences::Locator::_getString() const
 //    return new Locator(*this);
 //}
 //
-//bool Cell_ImpactedMainViews::Locator::IsValid() const
+//bool Cell_ImpactedMainViews::Locator::isValid() const
 //// **************************************************
 //{
 //    return (_mainView != NULL);
 //}
 //
-//void Cell_ImpactedMainViews::Locator::Progress()
+//void Cell_ImpactedMainViews::Locator::progress()
 //// *********************************************
 //{
 //    if (_mainView) {
 //        _mainView = NULL;
 //        do {
-//            _mainViewLocator.Progress();
+//            _mainViewLocator.progress();
 //            _mainView = _mainViewLocator.getElement();
 //            if (!_mainView && !_cellStack.empty()) {
 //                Cell* cell = _cellStack.top();
@@ -4123,7 +4123,7 @@ Cell_SubCells::Locator::Locator(InstanceLocator instanceLocator)
     _cellSet(),
     _instanceLocator(instanceLocator)
 {
-    if ( IsValid() )
+    if ( isValid() )
         _cellSet.insert ( _instanceLocator.getElement()->getMasterCell() );
 }
 
@@ -4155,18 +4155,18 @@ Locator<Cell*>* Cell_SubCells::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Cell_SubCells::Locator::IsValid() const
+bool Cell_SubCells::Locator::isValid() const
 // *****************************************
 {
-    return _instanceLocator.IsValid();
+    return _instanceLocator.isValid();
 }
 
-void Cell_SubCells::Locator::Progress()
+void Cell_SubCells::Locator::progress()
 // ************************************
 {
-    while ( IsValid() && ( _cellSet.find ( _instanceLocator.getElement()->getMasterCell() ) != _cellSet.end() ) )
-        _instanceLocator.Progress();
-    if ( IsValid() )
+    while ( isValid() && ( _cellSet.find ( _instanceLocator.getElement()->getMasterCell() ) != _cellSet.end() ) )
+        _instanceLocator.progress();
+    if ( isValid() )
         _cellSet.insert ( _instanceLocator.getElement()->getMasterCell() );
 }
 
@@ -4221,14 +4221,14 @@ Cell_RecursiveSlavePathes::Locator::Locator ( const Cell* cell )
 
 
 // -------------------------------------------------------------------
-// Modifier  :  "Cell_RecursiveSlavePathes::Locator::Progress ()".
+// Modifier  :  "Cell_RecursiveSlavePathes::Locator::progress ()".
 
-void  Cell_RecursiveSlavePathes::Locator::Progress ()
+void  Cell_RecursiveSlavePathes::Locator::progress ()
 {
-  if ( !IsValid() ) return;
+  if ( !isValid() ) return;
 
-  _instancesStack.back().Progress();
-  if ( _instancesStack.back().IsValid() ) {
+  _instancesStack.back().progress();
+  if ( _instancesStack.back().isValid() ) {
 //     cerr << "Head         N: " << _instancesStack.back().getElement()->getName() << endl;
 //     cerr << "TailPath     N: " << _instancePath.getTailPath().getName() << endl;
     _instancePath = Path ( _instancesStack.back().getElement(), _instancePath.getTailPath() );
@@ -4269,7 +4269,7 @@ string  Cell_RecursiveSlavePathes::Locator::_getString () const
 {
   Name  masterCellName = "Finished";
 
-  if ( IsValid() )
+  if ( isValid() )
     masterCellName = _instancesStack.front().getElement()->getMasterCell()->getName();
 
   string s = "<" + _TName("Cell_RecursiveSlavePathes::Locator")

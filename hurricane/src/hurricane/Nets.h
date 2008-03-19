@@ -47,9 +47,9 @@ typedef GenericFilter<Net*> NetFilter;
 /******************************/\
 {\
     NetLocator _locator = nets.getLocator();\
-    while (_locator.IsValid()) {\
+    while (_locator.isValid()) {\
         Net* net = _locator.getElement();\
-        _locator.Progress();
+        _locator.progress();
 
 
 

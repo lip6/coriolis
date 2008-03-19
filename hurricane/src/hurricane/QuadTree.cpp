@@ -50,9 +50,9 @@ class QuadTree_Gos : public Collection<Go*> {
         public: virtual Go* getElement() const;
         public: virtual Hurricane::Locator<Go*>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -120,9 +120,9 @@ class QuadTree_GosUnder : public Collection<Go*> {
         public: virtual Go* getElement() const;
         public: virtual Hurricane::Locator<Go*>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -627,18 +627,18 @@ Locator<Go*>* QuadTree_Gos::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool QuadTree_Gos::Locator::IsValid() const
+bool QuadTree_Gos::Locator::isValid() const
 // ****************************************
 {
-    return _goLocator.IsValid();
+    return _goLocator.isValid();
 }
 
-void QuadTree_Gos::Locator::Progress()
+void QuadTree_Gos::Locator::progress()
 // ***********************************
 {
-    if (IsValid()) {
-        _goLocator.Progress();
-        if (!_goLocator.IsValid()) {
+    if (isValid()) {
+        _goLocator.progress();
+        if (!_goLocator.isValid()) {
             _currentQuadTree = _currentQuadTree->_getNextQuadTree();
             if (_currentQuadTree)
                 _goLocator = _currentQuadTree->_getGoSet().getElements().getLocator();
@@ -745,7 +745,7 @@ QuadTree_GosUnder::Locator::Locator(const QuadTree* quadTree, const Box& area)
         _currentQuadTree = _quadTree->_getFirstQuadTree(_area);
         if (_currentQuadTree) {
             _goLocator = _currentQuadTree->_getGoSet().getElements().getLocator();
-            if (!getElement()->getBoundingBox().intersect(_area)) Progress();
+            if (!getElement()->getBoundingBox().intersect(_area)) progress();
         }
     }
 }
@@ -782,24 +782,24 @@ Locator<Go*>* QuadTree_GosUnder::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool QuadTree_GosUnder::Locator::IsValid() const
+bool QuadTree_GosUnder::Locator::isValid() const
 // *********************************************
 {
-    return _goLocator.IsValid();
+    return _goLocator.isValid();
 }
 
-void QuadTree_GosUnder::Locator::Progress()
+void QuadTree_GosUnder::Locator::progress()
 // ****************************************
 {
-    if (IsValid()) {
+    if (isValid()) {
         do {
-            _goLocator.Progress();
-            if (!_goLocator.IsValid()) {
+            _goLocator.progress();
+            if (!_goLocator.isValid()) {
                 _currentQuadTree = _currentQuadTree->_getNextQuadTree(_area);
                 if (_currentQuadTree)
                     _goLocator = _currentQuadTree->_getGoSet().getElements().getLocator();
             }
-        } while (IsValid() && !getElement()->getBoundingBox().intersect(_area));
+        } while (isValid() && !getElement()->getBoundingBox().intersect(_area));
     }
 }
 

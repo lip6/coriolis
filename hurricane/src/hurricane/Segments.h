@@ -47,9 +47,9 @@ typedef GenericFilter<Segment*> SegmentFilter;
 /******************************************/\
 {\
 	SegmentLocator _locator = segments.getLocator();\
-	while (_locator.IsValid()) {\
+	while (_locator.isValid()) {\
 		Segment* segment = _locator.getElement();\
-		_locator.Progress();
+		_locator.progress();
 
 
 

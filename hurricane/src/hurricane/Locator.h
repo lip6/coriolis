@@ -65,12 +65,12 @@ template<class Type> class Locator : public NestedSlotAdapter {
 // Predicates
 // **********
 
-    public: virtual bool IsValid() const = 0;
+    public: virtual bool isValid() const = 0;
 
 // Updators
 // ********
 
-    public: virtual void Progress() = 0;
+    public: virtual void progress() = 0;
 
 // Others
 // ******
@@ -84,7 +84,7 @@ template<class Type> class Locator : public NestedSlotAdapter {
     public: virtual string _getString() const
     // **************************************
     {
-        if (!IsValid())
+        if (!isValid())
             return "<" + _getTypeName() + " invalid>";
         else
             return "<" + _getTypeName() + " " + getString(getElement()) + ">";
@@ -207,19 +207,19 @@ template<class Type> class GenericLocator : public Locator<Type> {
 // Predicates
 // **********
 
-    public: virtual bool IsValid() const
+    public: virtual bool isValid() const
     // *********************************
     {
-        return (_locator && _locator->IsValid());
+        return (_locator && _locator->isValid());
     };
 
 // Updators
 // ********
 
-    public: virtual void Progress()
+    public: virtual void progress()
     // ****************************
     {
-        if (_locator) _locator->Progress();
+        if (_locator) _locator->progress();
     };
 
 // Others

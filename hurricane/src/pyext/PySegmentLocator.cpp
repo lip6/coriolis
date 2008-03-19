@@ -84,7 +84,7 @@ extern "C" {
 
 
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PySegmentLocator_IsValid,IsValid,PySegmentLocator,Locator<Segment*>)
+  DirectGetBoolAttribute(PySegmentLocator_isValid,isValid,PySegmentLocator,Locator<Segment*>)
 
 
   // Standart Locator Accessors (Attributes).
@@ -103,8 +103,8 @@ extern "C" {
   // PySegmentLocator Attribute Method table.
 
   PyMethodDef PySegmentLocator_Methods[] =
-    { { "IsValid"        , (PyCFunction)PySegmentLocator_IsValid    , METH_NOARGS , "Returns true while the walk has not exhausted the set of elements, else false." }
-    , { "Progress"       , (PyCFunction)PySegmentLocator_Progress   , METH_NOARGS , "Moves forward the locator to the following element." }
+    { { "isValid"        , (PyCFunction)PySegmentLocator_isValid    , METH_NOARGS , "Returns true while the walk has not exhausted the set of elements, else false." }
+    , { "progress"       , (PyCFunction)PySegmentLocator_progress   , METH_NOARGS , "Moves forward the locator to the following element." }
     , { "getElement"     , (PyCFunction)PySegmentLocator_getElement , METH_NOARGS , "Returns the current element (or the value Type() when the locator is not or no longer valid)." }
     , { "getClone"       , (PyCFunction)PySegmentLocator_getClone   , METH_NOARGS , "This function allocates and returns a new locator that will have the same visiting course than the remaining one of the locator being cloned." }
     , { "destroy"        , (PyCFunction)PySegmentLocator_destroy    , METH_NOARGS

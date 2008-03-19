@@ -87,7 +87,7 @@ extern "C" {
 
   
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PyHyperNet_IsValid  ,IsValid  ,PyHyperNet,HyperNet)
+  DirectGetBoolAttribute(PyHyperNet_isValid  ,isValid  ,PyHyperNet,HyperNet)
 
 
   // Standart Delete (Attribute).
@@ -150,7 +150,7 @@ extern "C" {
 
   PyMethodDef PyHyperNet_Methods[] =
     { { "getCell"                     , (PyCFunction)PyHyperNet_getCell                     , METH_NOARGS , "Returns the hyperNet cell." }
-    , { "IsValid"                     , (PyCFunction)PyHyperNet_IsValid                     , METH_NOARGS , "Returns trus if the HyperNet isValid." }
+    , { "isValid"                     , (PyCFunction)PyHyperNet_isValid                     , METH_NOARGS , "Returns trus if the HyperNet isValid." }
     , { "getLeafPlugOccurrenceLocator", (PyCFunction)PyHyperNet_getLeafPlugOccurrenceLocator, METH_NOARGS 
                                       , "Returns the collection of leaf occurrences" }
     , { "destroy"                     , (PyCFunction)PyHyperNet_destroy                     , METH_NOARGS

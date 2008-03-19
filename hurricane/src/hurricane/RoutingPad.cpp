@@ -42,7 +42,7 @@ RoutingPad* RoutingPad::create(Net* net, Occurrence occurrence)
 {
     if (!net)
         throw Error ("Can't create RoutingPad : NULL net");
-    if (!occurrence.IsValid())
+    if (!occurrence.isValid())
         throw Error ("Can't create RoutingPag : Invalid occurrence");
 
     //TODO Gerer une contruction avec un composant externe, mais ce n'est pas prioritaire
@@ -258,7 +258,7 @@ Record* RoutingPad::_getRecord() const
 Component*  RoutingPad::_getEntityAsComponent () const
 // ***************************************************
 {
-  if ( _occurrence.IsValid() )
+  if ( _occurrence.isValid() )
     return dynamic_cast<Component*>( _occurrence.getEntity() );
 
   return NULL;
@@ -267,54 +267,11 @@ Component*  RoutingPad::_getEntityAsComponent () const
 Segment*  RoutingPad::_getEntityAsSegment () const
 // ***********************************************
 {
-  if ( _occurrence.IsValid() )
+  if ( _occurrence.isValid() )
     return dynamic_cast<Segment*>( _occurrence.getEntity() );
 
   return NULL;
 }
-
-//bool RoutingPad::_IsInterceptedBy(View* view, const Point& point, const Unit& aperture) const
-//// ******************************************************************************************
-//{
-//    Layer* layer = getLayer();
-//    Box    boundingBox ( getBoundingBox() );
-//    Box    area        ( point );
-//
-//    area.Inflate ( aperture );
-//
-//    for_each_basic_layer(basicLayer, layer->getBasicLayers()) {
-//        if (view->IsVisible(basicLayer))
-//            if (boundingBox.Intersect(area)) return true;
-//        end_for;
-//    }
-//
-//    return false;
-//}
-//
-//
-//void RoutingPad::_Draw(View* view, BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation)
-//// ****************************************************************************************************
-//{
-//    Box         boundingBox ( getBoundingBox() );
-//    BasicLayer* layer = getLayer()->_getSymbolicBasicLayer();
-//
-//    if ( basicLayer == layer ) {
-//      if ( 1 < view->getScreenSize(boundingBox.getWidth()) ) {
-//        view->DrawRectangle ( boundingBox );
-//      }
-//      else
-//        view->DrawLine ( getSourcePosition(), getTargetPosition() );
-//    }
-//}
-//
-//
-//void RoutingPad::_Highlight(View* view, const Box& updateArea, const Transformation& transformation)
-//// **********************************************************************************************
-//{
-//    BasicLayer* layer = getLayer()->_getSymbolicBasicLayer();
-//    _Draw ( view, layer, updateArea, transformation );
-//}
-
 
 void RoutingPad::SetExternalComponent(Component* component)
 // ********************************************************

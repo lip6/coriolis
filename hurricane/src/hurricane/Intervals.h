@@ -46,9 +46,9 @@ typedef GenericFilter<Interval> IntervalFilter;
 /*********************************************/\
 {\
 	IntervalLocator _locator = intervals.getLocator();\
-	while (_locator.IsValid()) {\
+	while (_locator.isValid()) {\
 		Interval interval = _locator.getElement();\
-		_locator.Progress();
+		_locator.progress();
 
 
 

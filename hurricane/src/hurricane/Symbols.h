@@ -47,9 +47,9 @@ typedef GenericFilter<Symbol*> SymbolFilter;
 /***************************************/\
 {\
 	SymbolLocator _locator = symbols.getLocator();\
-	while (_locator.IsValid()) {\
+	while (_locator.isValid()) {\
 		Symbol* symbol = _locator.getElement();\
-		_locator.Progress();
+		_locator.progress();
 
 
 

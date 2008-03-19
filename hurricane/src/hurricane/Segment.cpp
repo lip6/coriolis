@@ -42,9 +42,9 @@ class Segment_Hooks : public Collection<Hook*> {
         public: virtual Hook* getElement() const;
         public: virtual Hurricane::Locator<Hook*>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -109,9 +109,9 @@ class Segment_Anchors : public Collection<Component*> {
         public: virtual Component* getElement() const;
         public: virtual Hurricane::Locator<Component*>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -519,13 +519,13 @@ Locator<Hook*>* Segment_Hooks::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Segment_Hooks::Locator::IsValid() const
+bool Segment_Hooks::Locator::isValid() const
 // *****************************************
 {
     return (_hook != NULL);
 }
 
-void Segment_Hooks::Locator::Progress()
+void Segment_Hooks::Locator::progress()
 // ************************************
 {
     if (_hook) {
@@ -643,13 +643,13 @@ Locator<Component*>* Segment_Anchors::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Segment_Anchors::Locator::IsValid() const
+bool Segment_Anchors::Locator::isValid() const
 // *******************************************
 {
     return (_anchor != NULL);
 }
 
-void Segment_Anchors::Locator::Progress()
+void Segment_Anchors::Locator::progress()
 // **************************************
 {
     if (_anchor) {

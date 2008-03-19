@@ -47,9 +47,9 @@ typedef GenericFilter<Plug*> PlugFilter;
 /*********************************/\
 {\
     PlugLocator _locator = plugs.getLocator();\
-    while (_locator.IsValid()) {\
+    while (_locator.isValid()) {\
         Plug* plug = _locator.getElement();\
-        _locator.Progress();
+        _locator.progress();
 
 
 

@@ -47,9 +47,9 @@ typedef GenericFilter<BasicLayer*> BasicLayerFilter;
 /****************************************************/\
 {\
     BasicLayerLocator _locator = basicLayers.getLocator();\
-    while (_locator.IsValid()) {\
+    while (_locator.isValid()) {\
         BasicLayer* basicLayer = _locator.getElement();\
-        _locator.Progress();
+        _locator.progress();
 
 
 

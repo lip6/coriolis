@@ -51,9 +51,9 @@ typedef GenericFilter<DisplaySlot*> DisplaySlotFilter;
 /******************************************************/\
 {\
     DisplaySlotLocator _locator = displaySlots.getLocator();\
-    while (_locator.IsValid()) {\
+    while (_locator.isValid()) {\
         DisplaySlot* displaySlot = _locator.getElement();\
-        _locator.Progress();
+        _locator.progress();
 
 
 

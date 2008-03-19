@@ -40,9 +40,9 @@ class BasicLayer_BasicLayers : public Collection<BasicLayer*> {
         public: virtual BasicLayer* getElement() const;
         public: virtual Hurricane::Locator<BasicLayer*>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -288,13 +288,13 @@ Locator<BasicLayer*>* BasicLayer_BasicLayers::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool BasicLayer_BasicLayers::Locator::IsValid() const
+bool BasicLayer_BasicLayers::Locator::isValid() const
 // **************************************************
 {
     return (_basicLayer != NULL);
 }
 
-void BasicLayer_BasicLayers::Locator::Progress()
+void BasicLayer_BasicLayers::Locator::progress()
 // *********************************************
 {
     _basicLayer = NULL;

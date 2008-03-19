@@ -37,7 +37,7 @@ class Net_IsCellNetFilter : public Filter<Net*> {
 
     public: virtual Filter<Net*>* getClone() const {return new Net_IsCellNetFilter(*this);};
 
-    public: virtual bool Accept(Net* net) const {return !net->IsDeepNet();};
+    public: virtual bool accept(Net* net) const {return !net->IsDeepNet();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsCellNetFilter>");};
 
@@ -54,7 +54,7 @@ class Net_IsDeepNetFilter : public Filter<Net*> {
 
     public: virtual Filter<Net*>* getClone() const {return new Net_IsDeepNetFilter(*this);};
 
-    public: virtual bool Accept(Net* net) const {return net->IsDeepNet();};
+    public: virtual bool accept(Net* net) const {return net->IsDeepNet();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsDeepNetFilter>");};
 
@@ -71,7 +71,7 @@ class Net_IsGlobalFilter : public Filter<Net*> {
 
     public: virtual Filter<Net*>* getClone() const {return new Net_IsGlobalFilter(*this);};
 
-    public: virtual bool Accept(Net* net) const {return net->IsGlobal();};
+    public: virtual bool accept(Net* net) const {return net->IsGlobal();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsGlobalFilter>");};
 
@@ -88,7 +88,7 @@ class Net_IsExternalFilter : public Filter<Net*> {
 
     public: virtual Filter<Net*>* getClone() const {return new Net_IsExternalFilter(*this);};
 
-    public: virtual bool Accept(Net* net) const {return net->IsExternal();};
+    public: virtual bool accept(Net* net) const {return net->IsExternal();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsExternalFilter>");};
 
@@ -105,7 +105,7 @@ class Net_IsClockFilter : public Filter<Net*> {
 
     public: virtual Filter<Net*>* getClone() const {return new Net_IsClockFilter(*this);};
 
-    public: virtual bool Accept(Net* net) const {return net->IsClock();};
+    public: virtual bool accept(Net* net) const {return net->IsClock();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsClockFilter>");};
 
@@ -122,7 +122,7 @@ class Net_IsSupplyFilter : public Filter<Net*> {
 
     public: virtual Filter<Net*>* getClone() const {return new Net_IsSupplyFilter(*this);};
 
-    public: virtual bool Accept(Net* net) const {return net->IsSupply();};
+    public: virtual bool accept(Net* net) const {return net->IsSupply();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsSupplyFilter>");};
 
@@ -139,7 +139,7 @@ class Net_IsPowerFilter : public Filter<Net*> {
 
     public: virtual Filter<Net*>* getClone() const {return new Net_IsPowerFilter(*this);};
 
-    public: virtual bool Accept(Net* net) const {return net->IsPower();};
+    public: virtual bool accept(Net* net) const {return net->IsPower();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsPowerFilter>");};
 
@@ -156,7 +156,7 @@ class Net_IsGroundFilter : public Filter<Net*> {
 
     public: virtual Filter<Net*>* getClone() const {return new Net_IsGroundFilter(*this);};
 
-    public: virtual bool Accept(Net* net) const {return net->IsGround();};
+    public: virtual bool accept(Net* net) const {return net->IsGround();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsGroundFilter>");};
 
@@ -193,9 +193,9 @@ class Net_SlavePlugs : public Collection<Plug*> {
         public: virtual Plug* getElement() const;
         public: virtual Hurricane::Locator<Plug*>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -858,9 +858,9 @@ Net_SlavePlugs::Locator::Locator(const Net* net)
 {
     if (_net) {
         _instanceLocator = _net->getCell()->getSlaveInstances().getLocator();
-        while (!_plug && _instanceLocator.IsValid()) {
+        while (!_plug && _instanceLocator.isValid()) {
             _plug = _instanceLocator.getElement()->getPlug(_net);
-            _instanceLocator.Progress();
+            _instanceLocator.progress();
         }
     }
 }
@@ -895,20 +895,20 @@ Locator<Plug*>* Net_SlavePlugs::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Net_SlavePlugs::Locator::IsValid() const
+bool Net_SlavePlugs::Locator::isValid() const
 // ******************************************
 {
     return (_plug != NULL);
 }
 
-void Net_SlavePlugs::Locator::Progress()
+void Net_SlavePlugs::Locator::progress()
 // *************************************
 {
-    if (IsValid()) {
+    if (isValid()) {
         _plug = NULL;
-        while (!_plug && _instanceLocator.IsValid()) {
+        while (!_plug && _instanceLocator.isValid()) {
             _plug = _instanceLocator.getElement()->getPlug(_net);
-            _instanceLocator.Progress();
+            _instanceLocator.progress();
         }
     }
 }

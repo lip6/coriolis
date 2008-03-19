@@ -28,7 +28,7 @@ class Hook_IsMasterFilter : public Filter<Hook*> {
 
     public: virtual Filter<Hook*>* getClone() const {return new Hook_IsMasterFilter(*this);};
 
-    public: virtual bool Accept(Hook* hook) const {return hook->IsMaster();};
+    public: virtual bool accept(Hook* hook) const {return hook->IsMaster();};
 
     public: virtual string _getString() const {return "<" + _TName("Hook::IsMasterFilter>");};
 
@@ -64,9 +64,9 @@ class Hook_Hooks : public Collection<Hook*> {
         public: virtual Hook* getElement() const;
         public: virtual Hurricane::Locator<Hook*>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -131,9 +131,9 @@ class Hook_SlaveHooks : public Collection<Hook*> {
         public: virtual Hook* getElement() const;
         public: virtual Hurricane::Locator<Hook*>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -462,13 +462,13 @@ Locator<Hook*>* Hook_Hooks::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Hook_Hooks::Locator::IsValid() const
+bool Hook_Hooks::Locator::isValid() const
 // **************************************
 {
     return (_currentHook != NULL);
 }
 
-void Hook_Hooks::Locator::Progress()
+void Hook_Hooks::Locator::progress()
 // *********************************
 {
     if (_currentHook) {
@@ -584,13 +584,13 @@ Locator<Hook*>* Hook_SlaveHooks::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Hook_SlaveHooks::Locator::IsValid() const
+bool Hook_SlaveHooks::Locator::isValid() const
 // *******************************************
 {
     return (_currentHook != NULL);
 }
 
-void Hook_SlaveHooks::Locator::Progress()
+void Hook_SlaveHooks::Locator::progress()
 // **************************************
 {
     if (_currentHook) {

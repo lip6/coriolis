@@ -54,7 +54,7 @@ template<class Type> class Filter : public NestedSlotAdapter {
 // Predicates
 // **********
 
-    public: virtual bool Accept(Type type) const = 0;
+    public: virtual bool accept(Type type) const = 0;
 
 // Others
 // ******
@@ -166,10 +166,10 @@ template<class Type> class GenericFilter : public Filter<Type> {
 // Predicates
 // **********
 
-    public: virtual bool Accept(Type type) const
+    public: virtual bool accept(Type type) const
     // *****************************************
     {
-        return (_filter) ? _filter->Accept(type) : false;
+        return (_filter) ? _filter->accept(type) : false;
     };
 
 // Others
@@ -257,10 +257,10 @@ template<class Type> class NotFilter : public Filter<Type> {
 // Predicates
 // **********
 
-    public: virtual bool Accept(Type type) const
+    public: virtual bool accept(Type type) const
     // *****************************************
     {
-        return !_genericFilter.Accept(type);
+        return !_genericFilter.accept(type);
     };
 
 // Others

@@ -127,7 +127,7 @@ Record* DeepNet::_getRecord () const
 
 DeepNet* DeepNet::create ( HyperNet& hyperNet )
 {
-  if ( !hyperNet.IsValid() )
+  if ( !hyperNet.isValid() )
     throw Error ( "Can't create " + _TName("DeepNet") + ": occurence is invalid." );
 
   Occurrence  rootNetOccurrence = getHyperNetRootNetOccurrence ( hyperNet.getNetOccurrence() );

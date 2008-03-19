@@ -26,21 +26,21 @@
 
 
 
-# ifndef  __HURRICANE_COMMONS__
-#   define  __HURRICANE_COMMONS__
+#ifndef  __HURRICANE_COMMONS__
+#define  __HURRICANE_COMMONS__
 
 
-#   include <stdio.h>
-#   include <assert.h>
+#include <stdio.h>
+#include <assert.h>
 
-#   include <string>
-#   include <list>
-#   include <set>
-#   include <map>
-#   include <stack>
-#   include <vector>
-#   include <iostream>
-#   include <fstream>
+#include <string>
+#include <list>
+#include <set>
+#include <map>
+#include <stack>
+#include <vector>
+#include <iostream>
+#include <fstream>
 
 
 
@@ -50,13 +50,13 @@
 // x-----------------------------------------------------------------x
 
 
-# define Hurricane                 H
-# define BEGIN_NAMESPACE_HURRICANE namespace Hurricane {
-# define END_NAMESPACE_HURRICANE   }
-# define USING_NAMESPACE_HURRICANE using namespace std; using namespace Hurricane;
+#define Hurricane                 H
+#define BEGIN_NAMESPACE_HURRICANE namespace Hurricane {
+#define END_NAMESPACE_HURRICANE   }
+#define USING_NAMESPACE_HURRICANE using namespace std; using namespace Hurricane;
 
 
-# define is_a (bool)dynamic_cast
+#define is_a (bool)dynamic_cast
 
 
 using namespace std;
@@ -91,8 +91,8 @@ namespace Hurricane {
   void          ltracein    ( unsigned int level, unsigned int count=1 );
   void          ltraceout   ( unsigned int level, unsigned int count=1 );
 
-# define        trace            if (in_trace()     ) cerr << tab
-# define        ltrace(level)    if (inltrace(level)) cerr << tab
+#define        trace            if (in_trace()     ) cerr << tab
+#define        ltrace(level)    if (inltrace(level)) cerr << tab
 
 
 
@@ -136,7 +136,7 @@ using namespace std;
 // Note: we are outside the Hurricane namespace.
 
 
-# include "SlotAdapter.h"
+#include "SlotAdapter.h"
 
 
 
@@ -166,9 +166,9 @@ bool Scan ( const string& s, unsigned short& redValue
 // Note: Record & Tabulation are not templates, so they can be defined
 //       early.
 
-# include "Tabulation.h"
+#include "Tabulation.h"
 
 
 
 
-# endif
+#endif

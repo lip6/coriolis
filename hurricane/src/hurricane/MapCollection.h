@@ -48,7 +48,7 @@ template<class Key, class Element, class Compare = less<Key> >
 		public: virtual Element GetElement() const
 		// ***************************************
 		{
-			return (IsValid()) ? (*_iterator).second : Element();
+			return (isValid()) ? (*_iterator).second : Element();
 		};
 
 		public: virtual Hurricane::Locator<Element>* GetClone() const
@@ -57,13 +57,13 @@ template<class Key, class Element, class Compare = less<Key> >
 			return new Locator(_elementMap);
 		};
 
-		public: virtual bool IsValid() const
+		public: virtual bool isValid() const
 		// *********************************
 		{
 			return (_elementMap && (_iterator != _elementMap->end()));
 		};
 
-		public: virtual void Progress()
+		public: virtual void progress()
 		// ****************************
 		{
 			++_iterator;

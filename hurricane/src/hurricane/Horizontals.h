@@ -47,9 +47,9 @@ typedef GenericFilter<Horizontal*> HorizontalFilter;
 /***************************************************/\
 {\
 	HorizontalLocator _locator = horizontals.getLocator();\
-	while (_locator.IsValid()) {\
+	while (_locator.isValid()) {\
 		Horizontal* horizontal = _locator.getElement();\
-		_locator.Progress();
+		_locator.progress();
 
 
 

@@ -47,9 +47,9 @@ typedef GenericFilter<Vertical*> VerticalFilter;
 /*********************************************/\
 {\
 	VerticalLocator _locator = verticals.getLocator();\
-	while (_locator.IsValid()) {\
+	while (_locator.isValid()) {\
 		Vertical* vertical = _locator.getElement();\
-		_locator.Progress();
+		_locator.progress();
 
 
 

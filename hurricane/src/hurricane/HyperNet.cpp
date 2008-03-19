@@ -50,9 +50,9 @@ class HyperNet_NetOccurrences : public Collection<Occurrence> {
         public: virtual Occurrence getElement() const;
         public: virtual Hurricane::Locator<Occurrence>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -124,9 +124,9 @@ class HyperNet_NetOccurrencesUnder : public Collection<Occurrence> {
         public: virtual Occurrence getElement() const;
         public: virtual Hurricane::Locator<Occurrence>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -200,9 +200,9 @@ class HyperNet_LeafPlugOccurrences : public Collection<Occurrence> {
         public: virtual Occurrence getElement() const;
         public: virtual Hurricane::Locator<Occurrence>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -250,7 +250,7 @@ HyperNet::HyperNet(const Occurrence& occurrence)
 // *******************************************
 :    _netOccurrence()
 {
-    if (occurrence.IsValid()) {
+    if (occurrence.isValid()) {
         Entity* entity = occurrence.getEntity();
         if (is_a<Net*>(entity))
             _netOccurrence = occurrence;
@@ -293,7 +293,7 @@ string HyperNet::_getString() const
 // ********************************
 {
     string s = "<" + _TName("HyperNet");
-    if (IsValid()) s += " " + getString(_netOccurrence);
+    if (isValid()) s += " " + getString(_netOccurrence);
     s += ">";
     return s;
 }
@@ -311,7 +311,7 @@ Record* HyperNet::_getRecord() const
 Occurrence getHyperNetRootNetOccurrence(const Occurrence& netoccurrence)
 // *********************************************************************
 {
-    if (!netoccurrence.IsValid())
+    if (!netoccurrence.isValid())
         throw Error("getHyperNetRootNetOccurrence : invalid occurrence");
     
     Net* net = dynamic_cast<Net*>(netoccurrence.getEntity());
@@ -449,7 +449,7 @@ HyperNet_NetOccurrences::Locator::Locator(const HyperNet* hyperNet, bool doExtra
 {
     if (_hyperNet) {
         Occurrence netOccurrence = _hyperNet->getNetOccurrence();
-        if (netOccurrence.IsValid()) {
+        if (netOccurrence.isValid()) {
             _netOccurrenceSet.insert(netOccurrence);
             _netOccurrenceStack.push(netOccurrence);
         }
@@ -490,7 +490,7 @@ Locator<Occurrence>* HyperNet_NetOccurrences::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool HyperNet_NetOccurrences::Locator::IsValid() const
+bool HyperNet_NetOccurrences::Locator::isValid() const
 // **************************************************
 {
     return !_netOccurrenceStack.empty();
@@ -521,7 +521,7 @@ static bool IsConnex(const Occurrence& componentOccurrence1, const Occurrence& c
     return false;
 }
 
-void HyperNet_NetOccurrences::Locator::Progress()
+void HyperNet_NetOccurrences::Locator::progress()
 // *********************************************
 {
     if (!_netOccurrenceStack.empty()) {
@@ -703,7 +703,7 @@ HyperNet_NetOccurrencesUnder::Locator::Locator(const HyperNet* hyperNet, Box are
 {
     if (_hyperNet) {
         Occurrence netOccurrence = _hyperNet->getNetOccurrence();
-        if (netOccurrence.IsValid()) {
+        if (netOccurrence.isValid()) {
             _netOccurrenceSet.insert(netOccurrence);
             _netOccurrenceStack.push(netOccurrence);
         }
@@ -746,13 +746,13 @@ Locator<Occurrence>* HyperNet_NetOccurrencesUnder::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool HyperNet_NetOccurrencesUnder::Locator::IsValid() const
+bool HyperNet_NetOccurrencesUnder::Locator::isValid() const
 // *******************************************************
 {
     return !_netOccurrenceStack.empty();
 }
 
-void HyperNet_NetOccurrencesUnder::Locator::Progress()
+void HyperNet_NetOccurrencesUnder::Locator::progress()
 // **************************************************
 {
     if (!_netOccurrenceStack.empty()) {
@@ -927,7 +927,7 @@ HyperNet_LeafPlugOccurrences::Locator::Locator(const HyperNet* hyperNet, bool do
 {
     if (hyperNet) {
         _netOccurrenceLocator = hyperNet->getNetOccurrences(doExtraction,allowInterruption).getLocator();
-        Progress();
+        progress();
     }
 }
 
@@ -959,21 +959,21 @@ Locator<Occurrence>* HyperNet_LeafPlugOccurrences::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool HyperNet_LeafPlugOccurrences::Locator::IsValid() const
+bool HyperNet_LeafPlugOccurrences::Locator::isValid() const
 // **************************************************
 {
-    return _plugOccurrence.IsValid();
+    return _plugOccurrence.isValid();
 }
 
 
-void HyperNet_LeafPlugOccurrences::Locator::Progress()
+void HyperNet_LeafPlugOccurrences::Locator::progress()
 // *********************************************
 {
     _plugOccurrence = Occurrence();
-    while(_netOccurrenceLocator.IsValid() && !_plugOccurrence.IsValid())
+    while(_netOccurrenceLocator.isValid() && !_plugOccurrence.isValid())
     {
         Occurrence netOccurrence = _netOccurrenceLocator.getElement();
-        _netOccurrenceLocator.Progress();
+        _netOccurrenceLocator.progress();
         Net* net = (Net*)netOccurrence.getEntity();
         Path path = netOccurrence.getPath();
         if (!path.IsEmpty() && net->getCell()->IsLeaf())

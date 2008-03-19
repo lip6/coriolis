@@ -51,7 +51,7 @@ class HyperNet {
 // Predicates
 // **********
 
-    public: bool IsValid() const {return _netOccurrence.IsValid();};
+    public: bool isValid() const {return _netOccurrence.isValid();};
 
 // Others
 // ******

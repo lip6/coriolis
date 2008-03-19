@@ -50,7 +50,7 @@ class Component_IsUnderFilter : public Filter<Component*> {
         return new Component_IsUnderFilter(*this);
     };
 
-    public: virtual bool Accept(Component* component) const
+    public: virtual bool accept(Component* component) const
     // ****************************************************
     {
         return _area.intersect(component->getBoundingBox());
@@ -94,9 +94,9 @@ class Component_Hooks : public Collection<Hook*> {
         public: virtual Hook* getElement() const;
         public: virtual Hurricane::Locator<Hook*>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -162,9 +162,9 @@ class Component_ConnexComponents : public Collection<Component*> {
         public: virtual Component* getElement() const;
         public: virtual Hurricane::Locator<Component*>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -230,9 +230,9 @@ class Component_SlaveComponents : public Collection<Component*> {
         public: virtual Component* getElement() const;
         public: virtual Hurricane::Locator<Component*>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -626,13 +626,13 @@ Locator<Hook*>* Component_Hooks::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Component_Hooks::Locator::IsValid() const
+bool Component_Hooks::Locator::isValid() const
 // *******************************************
 {
     return (_hook != NULL);
 }
 
-void Component_Hooks::Locator::Progress()
+void Component_Hooks::Locator::progress()
 // **************************************
 {
     _hook = NULL;
@@ -745,13 +745,13 @@ Locator<Component*>* Component_ConnexComponents::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Component_ConnexComponents::Locator::IsValid() const
+bool Component_ConnexComponents::Locator::isValid() const
 // ******************************************************
 {
     return !_componentStack.empty();
 }
 
-void Component_ConnexComponents::Locator::Progress()
+void Component_ConnexComponents::Locator::progress()
 // *************************************************
 {
     if (!_componentStack.empty()) {
@@ -895,13 +895,13 @@ Locator<Component*>* Component_SlaveComponents::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Component_SlaveComponents::Locator::IsValid() const
+bool Component_SlaveComponents::Locator::isValid() const
 // *****************************************************
 {
     return !_componentStack.empty();
 }
 
-void Component_SlaveComponents::Locator::Progress()
+void Component_SlaveComponents::Locator::progress()
 // ************************************************
 {
     if (!_componentStack.empty()) {

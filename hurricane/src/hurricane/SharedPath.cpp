@@ -40,9 +40,9 @@ class SharedPath_Instances : public Collection<Instance*> {
         public: virtual Instance* getElement() const;
         public: virtual Hurricane::Locator<Instance*>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
     };
@@ -341,13 +341,13 @@ Locator<Instance*>* SharedPath_Instances::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool SharedPath_Instances::Locator::IsValid() const
+bool SharedPath_Instances::Locator::isValid() const
 // ************************************************
 {
     return (_sharedPath != NULL);
 }
 
-void SharedPath_Instances::Locator::Progress()
+void SharedPath_Instances::Locator::progress()
 // *******************************************
 {
     if (_sharedPath) _sharedPath = _sharedPath->getTailSharedPath();

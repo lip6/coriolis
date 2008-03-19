@@ -46,9 +46,9 @@ typedef GenericFilter<Path> PathFilter;
 /**********************************/\
 {\
 	PathLocator _locator = pathes.getLocator();\
-	while (_locator.IsValid()) {\
+	while (_locator.isValid()) {\
 		Path path = _locator.getElement();\
-		_locator.Progress();
+		_locator.progress();
 
 
 

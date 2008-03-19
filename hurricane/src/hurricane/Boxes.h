@@ -46,9 +46,9 @@ typedef GenericFilter<Box> BoxFilter;
 /*******************************/\
 {\
     BoxLocator _locator = boxes.getLocator();\
-    while (_locator.IsValid()) {\
+    while (_locator.isValid()) {\
         Box box = _locator.getElement();\
-        _locator.Progress();
+        _locator.progress();
 
 
 

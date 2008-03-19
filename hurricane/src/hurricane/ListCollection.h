@@ -47,7 +47,7 @@ template<class Element> class ListCollection : public Collection<Element> {
         public: virtual Element getElement() const
         // ***************************************
         {
-            return (IsValid()) ? *_iterator : Element();
+            return (isValid()) ? *_iterator : Element();
         };
 
         public: virtual Hurricane::Locator<Element>* getClone() const
@@ -56,13 +56,13 @@ template<class Element> class ListCollection : public Collection<Element> {
             return new Locator(_elementList);
         };
 
-        public: virtual bool IsValid() const
+        public: virtual bool isValid() const
         // *********************************
         {
             return (_elementList && (_iterator != _elementList->end()));
         };
 
-        public: virtual void Progress()
+        public: virtual void progress()
         // ****************************
         {
             ++_iterator;

@@ -46,7 +46,7 @@ class Region_Tile {
 
         public: virtual Filter<Region_Tile*>* getClone() const;
 
-        public: virtual bool Accept(Region_Tile* tile) const;
+        public: virtual bool accept(Region_Tile* tile) const;
 
         public: virtual string _getString() const;
 
@@ -983,7 +983,7 @@ Filter<Region_Tile*>* Region_Tile::IsVoidFilter::getClone() const
     return new Region_Tile::IsVoidFilter(*this);
 }
 
-bool Region_Tile::IsVoidFilter::Accept(Region_Tile* tile) const
+bool Region_Tile::IsVoidFilter::accept(Region_Tile* tile) const
 // ************************************************************
 {
     return tile->IsVoid();
@@ -1025,9 +1025,9 @@ class Region_Tiles : public Collection<Region_Tile*> {
         public: virtual Region_Tile* getElement() const;
         public: virtual Hurricane::Locator<Region_Tile*>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -1159,13 +1159,13 @@ Locator<Region_Tile*>* Region_Tiles::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Region_Tiles::Locator::IsValid() const
+bool Region_Tiles::Locator::isValid() const
 // ***************************************
 {
     return !_tileStack.empty();
 }
 
-void Region_Tiles::Locator::Progress()
+void Region_Tiles::Locator::progress()
 // **********************************
 {
     if (!_tileStack.empty()) {
@@ -1224,9 +1224,9 @@ class Region_TilesUnder : public Collection<Region_Tile*> {
         public: virtual Region_Tile* getElement() const;
         public: virtual Hurricane::Locator<Region_Tile*>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -1402,13 +1402,13 @@ Locator<Region_Tile*>* Region_TilesUnder::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Region_TilesUnder::Locator::IsValid() const
+bool Region_TilesUnder::Locator::isValid() const
 // *********************************************
 {
     return !_tileStack.empty();
 }
 
-void Region_TilesUnder::Locator::Progress()
+void Region_TilesUnder::Locator::progress()
 // ****************************************
 {
     if (!_tileStack.empty()) {
@@ -1476,9 +1476,9 @@ class Region_BoxesUnder : public Collection<Box> {
         public: virtual Box getElement() const;
         public: virtual Hurricane::Locator<Box>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -1628,7 +1628,7 @@ Region_BoxesUnder::Locator& Region_BoxesUnder::Locator::operator=(const Locator&
 Box Region_BoxesUnder::Locator::getElement() const
 // ***********************************************
 {
-    return (_tileLocator.IsValid()) ? _tileLocator.getElement()->getBoundingBox() : Box();
+    return (_tileLocator.isValid()) ? _tileLocator.getElement()->getBoundingBox() : Box();
 }
 
 Locator<Box>* Region_BoxesUnder::Locator::getClone() const
@@ -1637,16 +1637,16 @@ Locator<Box>* Region_BoxesUnder::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Region_BoxesUnder::Locator::IsValid() const
+bool Region_BoxesUnder::Locator::isValid() const
 // ********************************************
 {
-    return _tileLocator.IsValid();
+    return _tileLocator.isValid();
 }
 
-void Region_BoxesUnder::Locator::Progress()
+void Region_BoxesUnder::Locator::progress()
 // ****************************************
 {
-    _tileLocator.Progress();
+    _tileLocator.progress();
 }
 
 string Region_BoxesUnder::Locator::_getString() const
@@ -1693,9 +1693,9 @@ class Region_VoidBoxesUnder : public Collection<Box> {
         public: virtual Box getElement() const;
         public: virtual Hurricane::Locator<Box>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -1845,7 +1845,7 @@ Region_VoidBoxesUnder::Locator& Region_VoidBoxesUnder::Locator::operator=(const 
 Box Region_VoidBoxesUnder::Locator::getElement() const
 // ***************************************************
 {
-    return (_tileLocator.IsValid()) ? _tileLocator.getElement()->getBoundingBox() : Box();
+    return (_tileLocator.isValid()) ? _tileLocator.getElement()->getBoundingBox() : Box();
 }
 
 Locator<Box>* Region_VoidBoxesUnder::Locator::getClone() const
@@ -1854,16 +1854,16 @@ Locator<Box>* Region_VoidBoxesUnder::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Region_VoidBoxesUnder::Locator::IsValid() const
+bool Region_VoidBoxesUnder::Locator::isValid() const
 // *************************************************
 {
-    return _tileLocator.IsValid();
+    return _tileLocator.isValid();
 }
 
-void Region_VoidBoxesUnder::Locator::Progress()
+void Region_VoidBoxesUnder::Locator::progress()
 // ********************************************
 {
-    _tileLocator.Progress();
+    _tileLocator.progress();
 }
 
 string Region_VoidBoxesUnder::Locator::_getString() const
@@ -1909,9 +1909,9 @@ class Region_Intervals : public Collection<Interval> {
         public: virtual Interval getElement() const;
         public: virtual Hurricane::Locator<Interval>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -2068,7 +2068,7 @@ Region_Intervals::Locator& Region_Intervals::Locator::operator=(const Locator& l
 Interval Region_Intervals::Locator::getElement() const
 // ***************************************************
 {
-    if (!IsValid()) return Interval();
+    if (!isValid()) return Interval();
 
     Interval interval;
     switch (_swapLine->getType()) {
@@ -2091,16 +2091,16 @@ Locator<Interval>* Region_Intervals::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool Region_Intervals::Locator::IsValid() const
+bool Region_Intervals::Locator::isValid() const
 // ********************************************
 {
     return (_lowerTile && _upperTile);
 }
 
-void Region_Intervals::Locator::Progress()
+void Region_Intervals::Locator::progress()
 // ***************************************
 {
-    if (IsValid()) {
+    if (isValid()) {
         switch (_swapLine->getType()) {
             case Region::SwapLine::Type::VERTICAL : {
                 Unit x = _swapLine->getPosition();
@@ -2298,10 +2298,10 @@ Intervals Region::SwapLine::getIntervals() const
     return Region_Intervals(this);
 }
 
-void Region::SwapLine::Progress(int n)
+void Region::SwapLine::progress(int n)
           // ***************************
 {
-    if (IsValid() && n) {
+    if (isValid() && n) {
         if (0 < n) {
             switch (_type) {
                 case Type::VERTICAL : {
@@ -2396,7 +2396,7 @@ string Region::SwapLine::_getString() const
 // ****************************************
 {
     string s = "<" + _getTypeName() + ">";
-    if (IsValid()) {
+    if (isValid()) {
         s.insert(s.length() - 1, " " + getString(_type));
         s.insert(s.length() - 1, " " + getString(_position));
         s.insert(s.length() - 1, " " + getString(_extention));

@@ -50,7 +50,7 @@ class Instance_IsUnderFilter : public Filter<Instance*> {
         return new Instance_IsUnderFilter(*this);
     };
 
-    public: virtual bool Accept(Instance* instance) const
+    public: virtual bool accept(Instance* instance) const
     // **************************************************
     {
         return _area.intersect(instance->getBoundingBox());
@@ -75,7 +75,7 @@ class Instance_IsTerminalFilter : public Filter<Instance*> {
 
     public: virtual Filter<Instance*>* getClone() const {return new Instance_IsTerminalFilter(*this);};
 
-    public: virtual bool Accept(Instance* instance) const {return instance->IsTerminal();};
+    public: virtual bool accept(Instance* instance) const {return instance->IsTerminal();};
 
     public: virtual string _getString() const {return "<" + _TName("Instance::IsTerminalFilter") + ">";};
 
@@ -92,7 +92,7 @@ class Instance_IsLeafFilter : public Filter<Instance*> {
 
     public: virtual Filter<Instance*>* getClone() const {return new Instance_IsLeafFilter(*this);};
 
-    public: virtual bool Accept(Instance* instance) const {return instance->IsLeaf();};
+    public: virtual bool accept(Instance* instance) const {return instance->IsLeaf();};
 
     public: virtual string _getString() const {return "<" + _TName("Instance::IsLeafFilter") + ">";};
 
@@ -109,7 +109,7 @@ class Instance_IsUnplacedFilter : public Filter<Instance*> {
 
     public: virtual Filter<Instance*>* getClone() const {return new Instance_IsUnplacedFilter(*this);};
 
-    public: virtual bool Accept(Instance* instance) const {return instance->IsUnplaced();};
+    public: virtual bool accept(Instance* instance) const {return instance->IsUnplaced();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsUnplacedFilter>");};
 
@@ -126,7 +126,7 @@ class Instance_IsPlacedFilter : public Filter<Instance*> {
 
     public: virtual Filter<Instance*>* getClone() const {return new Instance_IsPlacedFilter(*this);};
 
-    public: virtual bool Accept(Instance* instance) const {return instance->IsPlaced();};
+    public: virtual bool accept(Instance* instance) const {return instance->IsPlaced();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsPlacedFilter>");};
 
@@ -143,7 +143,7 @@ class Instance_IsFixedFilter : public Filter<Instance*> {
 
     public: virtual Filter<Instance*>* getClone() const {return new Instance_IsFixedFilter(*this);};
 
-    public: virtual bool Accept(Instance* instance) const {return instance->IsFixed();};
+    public: virtual bool accept(Instance* instance) const {return instance->IsFixed();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsFixedFilter>");};
 

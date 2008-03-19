@@ -68,9 +68,9 @@ template<class Type> class Collection : public NestedSlotAdapter {
         unsigned size = 0;
         // we use a GenericLocator to delete the locator allocated by getLocator()
         GenericLocator<Type> locator = getLocator();
-        while (locator.IsValid()) {
+        while (locator.isValid()) {
             size++;
-            locator.Progress();
+            locator.progress();
         }
         return size;
     }
@@ -108,7 +108,7 @@ template<class Type> class Collection : public NestedSlotAdapter {
     // *************************
     {
         // we use a GenericLocator to delete the locator allocated by getLocator()
-        return !GenericLocator<Type>(getLocator()).IsValid();
+        return !GenericLocator<Type>(getLocator()).isValid();
     }
 
 // Utilitarians
@@ -118,9 +118,9 @@ template<class Type> class Collection : public NestedSlotAdapter {
     // **************************************
     {
         GenericLocator<Type> locator = getLocator();
-        while (locator.IsValid()) {
+        while (locator.isValid()) {
             list.push_back(locator.getElement());
-            locator.Progress();
+            locator.progress();
         }
     }
 
@@ -128,9 +128,9 @@ template<class Type> class Collection : public NestedSlotAdapter {
     // ************************************
     {
         GenericLocator<Type> locator = getLocator();
-        while (locator.IsValid()) {
+        while (locator.isValid()) {
             set.insert(locator.getElement());
-            locator.Progress();
+            locator.progress();
         }
     }
 
@@ -138,9 +138,9 @@ template<class Type> class Collection : public NestedSlotAdapter {
     // *********************************************************************
     {
         GenericLocator<Type> locator = getLocator();
-        while (locator.IsValid()) {
+        while (locator.isValid()) {
             set.insert(locator.getElement());
-            locator.Progress();
+            locator.progress();
         }
     }
 
@@ -148,9 +148,9 @@ template<class Type> class Collection : public NestedSlotAdapter {
     // ******************************************
     {
         GenericLocator<Type> locator = getLocator();
-        while (locator.IsValid()) {
+        while (locator.isValid()) {
             vector.push_back(locator.getElement());
-            locator.Progress();
+            locator.progress();
         }
     }
 
@@ -173,11 +173,11 @@ template<class Type> class Collection : public NestedSlotAdapter {
             record = new Record(getString(this));
             unsigned n = 1;
             GenericLocator<Type> locator = getLocator();
-            while (locator.IsValid()) {
+            while (locator.isValid()) {
               string  slotName   = getString(n++);
               Type    slotRecord = locator.getElement();
               record->Add(getSlot(slotName, slotRecord));
-                locator.Progress();
+                locator.progress();
             }
         }
         return record;
@@ -343,8 +343,8 @@ template<class Type> class ElementCollection : public Collection<Type> {
     // *********
         public: virtual ElType           getElement () const { return const_cast<ElType>(_element); };
         public: virtual Locator<ElType>* getClone   () const { return new Locator(*this); };
-        public: virtual bool             IsValid    () const { return !_done; };
-        public: virtual void             Progress   ()       { _done = true; };
+        public: virtual bool             isValid    () const { return !_done; };
+        public: virtual void             progress   ()       { _done = true; };
 
     // Hurricane Management
     // ********************
@@ -461,8 +461,8 @@ template<class Type, class SubType> class SubTypeCollection : public Collection<
         :    Inherit(),
             _locator(collection.getLocator())
         {
-            while (_locator.IsValid() && !is_a<SubType>(_locator.getElement()))
-                _locator.Progress();
+            while (_locator.isValid() && !is_a<SubType>(_locator.getElement()))
+                _locator.progress();
         }
 
         public: Locator(const GenericLocator<Type>& genericLocator)
@@ -470,8 +470,8 @@ template<class Type, class SubType> class SubTypeCollection : public Collection<
         :    Inherit(),
             _locator(genericLocator.getClone())
         {
-            while (_locator.IsValid() && !is_a<SubType>(_locator.getElement()))
-                _locator.Progress();
+            while (_locator.isValid() && !is_a<SubType>(_locator.getElement()))
+                _locator.progress();
         }
 
     // Accessors
@@ -480,7 +480,7 @@ template<class Type, class SubType> class SubTypeCollection : public Collection<
         public: virtual SubType getElement() const
         // ***************************************
         {
-            return (_locator.IsValid()) ? (SubType)_locator.getElement() : SubType();
+            return (_locator.isValid()) ? (SubType)_locator.getElement() : SubType();
         }
 
         public: virtual Hurricane::Locator<SubType>* getClone() const
@@ -500,22 +500,22 @@ template<class Type, class SubType> class SubTypeCollection : public Collection<
     // Predicates
     // **********
 
-        public: virtual bool IsValid() const
+        public: virtual bool isValid() const
         // *********************************
         {
-            return _locator.IsValid();
+            return _locator.isValid();
         }
 
     // Updators
     // ********
 
-        public: virtual void Progress()
+        public: virtual void progress()
         // ****************************
         {
-            if (_locator.IsValid()) {
+            if (_locator.isValid()) {
                 do {
-                    _locator.Progress();
-                } while (_locator.IsValid() && !is_a<SubType>(_locator.getElement()));
+                    _locator.progress();
+                } while (_locator.isValid() && !is_a<SubType>(_locator.getElement()));
             }
         }
 
@@ -630,8 +630,8 @@ template<class Type> class SubSetCollection : public Collection<Type> {
             _locator(collection.getLocator()),
             _filter(filter)
         {
-            while (_locator.IsValid() && !_filter.Accept(_locator.getElement()))
-                _locator.Progress();
+            while (_locator.isValid() && !_filter.accept(_locator.getElement()))
+                _locator.progress();
         }
 
         public: Locator(const Collection<Type>& collection, const Filter<Type>& filter)
@@ -640,8 +640,8 @@ template<class Type> class SubSetCollection : public Collection<Type> {
             _locator(collection.getLocator()),
             _filter(filter)
         {
-            while (_locator.IsValid() && !_filter.Accept(_locator.getElement()))
-                _locator.Progress();
+            while (_locator.isValid() && !_filter.accept(_locator.getElement()))
+                _locator.progress();
         }
 
         public: Locator(const GenericCollection<Type>& genericCollection, const Filter<Type>& filter)
@@ -650,8 +650,8 @@ template<class Type> class SubSetCollection : public Collection<Type> {
             _locator(genericCollection.getLocator()),
             _filter(filter)
         {
-            while (_locator.IsValid() && !_filter.Accept(_locator.getElement()))
-                _locator.Progress();
+            while (_locator.isValid() && !_filter.accept(_locator.getElement()))
+                _locator.progress();
         }
 
         public: Locator(const GenericLocator<Type>& genericLocator, const Filter<Type>& filter)
@@ -660,8 +660,8 @@ template<class Type> class SubSetCollection : public Collection<Type> {
             _locator(genericLocator),
             _filter(filter)
         {
-            while (_locator.IsValid() && !_filter.Accept(_locator.getElement()))
-                _locator.Progress();
+            while (_locator.isValid() && !_filter.accept(_locator.getElement()))
+                _locator.progress();
         }
 
     // Accessors
@@ -670,7 +670,7 @@ template<class Type> class SubSetCollection : public Collection<Type> {
         public: virtual Type getElement() const
         // ************************************
         {
-            return (_locator.IsValid()) ? _locator.getElement() : Type();
+            return (_locator.isValid()) ? _locator.getElement() : Type();
         }
 
         public: virtual Hurricane::Locator<Type>* getClone() const
@@ -688,22 +688,22 @@ template<class Type> class SubSetCollection : public Collection<Type> {
     // Predicates
     // **********
 
-        public: virtual bool IsValid() const
+        public: virtual bool isValid() const
         // *********************************
         {
-            return _locator.IsValid();
+            return _locator.isValid();
         }
 
     // Updators
     // ********
 
-        public: virtual void Progress()
+        public: virtual void progress()
         // ****************************
         {
-            if (_locator.IsValid()) {
+            if (_locator.isValid()) {
                 do {
-                    _locator.Progress();
-                } while (_locator.IsValid() && !_filter.Accept(_locator.getElement()));
+                    _locator.progress();
+                } while (_locator.isValid() && !_filter.accept(_locator.getElement()));
             }
         }
 
@@ -800,17 +800,17 @@ template<class Type> class SubSetCollection : public Collection<Type> {
 /*************************************************/\
 {\
     GenericLocator<Type> _locator = collection.getLocator();\
-    while (_locator.IsValid()) {\
+    while (_locator.isValid()) {\
         Type element = _locator.getElement();\
-        _locator.Progress();
+        _locator.progress();
 
 #define for_each_element(Type, element, collection)\
 /*************************************************/\
 {\
     ElementCollection<Type>::Locator<Type>* _locator = collection.getLocator();\
-    while (_locator->IsValid()) {\
+    while (_locator->isValid()) {\
         Type element = _locator->getElement();\
-        _locator->Progress();
+        _locator->progress();
 
 
 template<typename T>

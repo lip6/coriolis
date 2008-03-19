@@ -47,9 +47,9 @@ typedef GenericFilter<Hook*> HookFilter;
 /*********************************/\
 {\
     HookLocator _locator = hooks.getLocator();\
-    while (_locator.IsValid()) {\
+    while (_locator.isValid()) {\
         Hook* hook = _locator.getElement();\
-        _locator.Progress();
+        _locator.progress();
 
 
 

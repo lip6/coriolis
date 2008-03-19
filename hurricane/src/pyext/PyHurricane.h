@@ -390,13 +390,13 @@ extern "C" {
 // Locator Attribute Method For Progress.
 
 # define  LocatorProgressAttribute(SELF_TYPE)  \
-  static PyObject* Py##SELF_TYPE##Locator_Progress ( Py##SELF_TYPE##Locator *self ) \
+  static PyObject* Py##SELF_TYPE##Locator_progress ( Py##SELF_TYPE##Locator *self ) \
   {                                                     \
-    trace << #SELF_TYPE "Locator.Progress()" << endl;   \
-    METHOD_HEAD ( #SELF_TYPE "Locator.Progress()" )     \
+    trace << #SELF_TYPE "Locator.progress()" << endl;   \
+    METHOD_HEAD ( #SELF_TYPE "Locator.progress()" )     \
                                                         \
     HTRY                                                \
-    locator->Progress ();                               \
+    locator->progress ();                               \
     HCATCH                                              \
                                                         \
     Py_RETURN_NONE;                                     \

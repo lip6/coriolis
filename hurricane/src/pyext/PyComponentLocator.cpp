@@ -81,7 +81,7 @@ extern "C" {
   // Standart Accessors (Attributes).
 
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PyComponentLocator_IsValid,IsValid,PyComponentLocator,Locator<Component*>)
+  DirectGetBoolAttribute(PyComponentLocator_isValid,isValid,PyComponentLocator,Locator<Component*>)
 
 
   // Standart Locator Accessors (Attributes).
@@ -99,8 +99,8 @@ extern "C" {
   // PyComponent Attribute Method table.
 
   PyMethodDef PyComponentLocator_Methods[] =
-    { { "IsValid"        , (PyCFunction)PyComponentLocator_IsValid    , METH_NOARGS , "Returns true while the walk has not exhausted the set of elements, else false." }
-    , { "Progress"       , (PyCFunction)PyComponentLocator_Progress   , METH_NOARGS , "Moves forward the locator to the following element." }
+    { { "isValid"        , (PyCFunction)PyComponentLocator_isValid    , METH_NOARGS , "Returns true while the walk has not exhausted the set of elements, else false." }
+    , { "progress"       , (PyCFunction)PyComponentLocator_progress   , METH_NOARGS , "Moves forward the locator to the following element." }
     , { "getElement"     , (PyCFunction)PyComponentLocator_getElement , METH_NOARGS , "Returns the current element (or the value Type() when the locator is not or no longer valid)." }
     , { "getClone"       , (PyCFunction)PyComponentLocator_getClone   , METH_NOARGS , "This function allocates and returns a new locator that will have the same visiting course than the remaining one of the locator being cloned." }
     , { "destroy"        , (PyCFunction)PyComponentLocator_destroy    , METH_NOARGS
@@ -117,7 +117,7 @@ extern "C" {
   LocatorPyTypeObjectLinkPyType(Component, Component*)
 
 
-# else  // End of Python Module Code Part.
+#else  // End of Python Module Code Part.
 
 
 // x=================================================================x

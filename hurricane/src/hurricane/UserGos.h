@@ -51,9 +51,9 @@ typedef GenericFilter<UserGo*> UserGoFilter;
 /***************************************/\
 {\
     UserGoLocator _locator = userGos.getLocator();\
-    while (_locator.IsValid()) {\
+    while (_locator.isValid()) {\
         UserGo* userGo = _locator.getElement();\
-        _locator.Progress();
+        _locator.progress();
 
 
 } // End of Hurricane namespace.

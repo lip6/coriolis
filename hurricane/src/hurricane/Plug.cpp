@@ -29,7 +29,7 @@ class Plug_IsConnectedFilter : public Filter<Plug*> {
 
     public: virtual Filter<Plug*>* getClone() const {return new Plug_IsConnectedFilter(*this);};
 
-    public: virtual bool Accept(Plug* plug) const {return plug->IsConnected();};
+    public: virtual bool accept(Plug* plug) const {return plug->IsConnected();};
 
     public: virtual string _getString() const {return "<" + _TName("Plug::IsConnectedFilter>");};
 

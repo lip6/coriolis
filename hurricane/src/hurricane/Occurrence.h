@@ -63,7 +63,7 @@ class Occurrence {
 // Predicates
 // **********
 
-    public: bool IsValid() const {return (_entity != NULL);};
+    public: bool isValid() const {return (_entity != NULL);};
     public: bool HasProperty() const;
 
 // Updators

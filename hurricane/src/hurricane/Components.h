@@ -47,9 +47,9 @@ typedef GenericFilter<Component*> ComponentFilter;
 /************************************************/\
 {\
     ComponentLocator _locator = components.getLocator();\
-    while (_locator.IsValid()) {\
+    while (_locator.isValid()) {\
         Component* component = _locator.getElement();\
-        _locator.Progress();
+        _locator.progress();
 
 
 

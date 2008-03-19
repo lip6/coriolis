@@ -47,9 +47,9 @@ typedef GenericFilter<Instance*> InstanceFilter;
 /*********************************************/\
 {\
     InstanceLocator _locator = instances.getLocator();\
-    while (_locator.IsValid()) {\
+    while (_locator.isValid()) {\
         Instance* instance = _locator.getElement();\
-        _locator.Progress();
+        _locator.progress();
 
 
 

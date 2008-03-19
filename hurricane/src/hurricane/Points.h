@@ -46,9 +46,9 @@ typedef GenericFilter<Point> PointFilter;
 /************************************/\
 {\
 	PointLocator _locator = points.getLocator();\
-	while (_locator.IsValid()) {\
+	while (_locator.isValid()) {\
 		Point point = _locator.getElement();\
-		_locator.Progress();
+		_locator.progress();
 
 
 

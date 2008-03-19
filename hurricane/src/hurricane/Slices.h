@@ -47,9 +47,9 @@ typedef GenericFilter<Slice*> SliceFilter;
 /************************************/\
 {\
     SliceLocator _locator = slices.getLocator();\
-    while (_locator.IsValid()) {\
+    while (_locator.isValid()) {\
         Slice* slice = _locator.getElement();\
-        _locator.Progress();
+        _locator.progress();
 
 
 

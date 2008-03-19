@@ -106,7 +106,7 @@ template<class Key, class Element> class IntrusiveMap {
         // Predicates
         // **********
     
-            public: virtual bool IsValid() const
+            public: virtual bool isValid() const
             // *********************************
             {
                 return (_element != NULL);
@@ -115,7 +115,7 @@ template<class Key, class Element> class IntrusiveMap {
         // Updators
         // ********
     
-            public: virtual void Progress()
+            public: virtual void progress()
             // ****************************
             {
                 if (_element) {

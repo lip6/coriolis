@@ -47,9 +47,9 @@ typedef GenericFilter<DBo*> DBoFilter;
 /******************************/\
 {\
     DBoLocator _locator = dbos.getLocator();\
-    while (_locator.IsValid()) {\
+    while (_locator.isValid()) {\
         DBo* dbo = _locator.getElement();\
-        _locator.Progress();
+        _locator.progress();
 
 
 

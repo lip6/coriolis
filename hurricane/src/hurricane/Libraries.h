@@ -47,9 +47,9 @@ typedef GenericFilter<Library*> LibraryFilter;
 /*******************************************/\
 {\
     LibraryLocator _locator = libraries.getLocator();\
-    while (_locator.IsValid()) {\
+    while (_locator.isValid()) {\
         Library* library = _locator.getElement();\
-        _locator.Progress();
+        _locator.progress();
 
 
 

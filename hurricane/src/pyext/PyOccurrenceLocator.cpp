@@ -79,22 +79,22 @@ extern "C" {
 
 
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PyOccurrenceLocator_IsValid,IsValid,PyOccurrenceLocator,Locator<Occurrence>)
+  DirectGetBoolAttribute(PyOccurrenceLocator_isValid,isValid,PyOccurrenceLocator,Locator<Occurrence>)
 
   // Standart destroy (Attribute).
   DirectDestroyAttribute(PyOccurrenceLocator_destroy, PyOccurrenceLocator)
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyOccurrenceLocator_Progress ()"
+  // Attribute Method  :  "PyOccurrenceLocator_progress ()"
 
-  static PyObject* PyOccurrenceLocator_Progress ( PyOccurrenceLocator *self ) {
-    trace << "OccurrenceLocator.Progress()" << endl;
+  static PyObject* PyOccurrenceLocator_progress ( PyOccurrenceLocator *self ) {
+    trace << "OccurrenceLocator.progress()" << endl;
 
     HTRY
-    METHOD_HEAD ( "OccurrenceLocator.Progress()" )
+    METHOD_HEAD ( "OccurrenceLocator.progress()" )
 
-    locator->Progress ();
+    locator->progress ();
     HCATCH
 
     Py_RETURN_NONE;
@@ -150,8 +150,8 @@ extern "C" {
   // PyOccurrenceLocator Attribute Method table.
 
   PyMethodDef PyOccurrenceLocator_Methods[] =
-    { { "IsValid"        , (PyCFunction)PyOccurrenceLocator_IsValid    , METH_NOARGS , "Returns true while the walk has not exhausted the set of elements, else false." }
-    , { "Progress"       , (PyCFunction)PyOccurrenceLocator_Progress   , METH_NOARGS , "Moves forward the locator to the following element." }
+    { { "isValid"        , (PyCFunction)PyOccurrenceLocator_isValid    , METH_NOARGS , "Returns true while the walk has not exhausted the set of elements, else false." }
+    , { "progress"       , (PyCFunction)PyOccurrenceLocator_progress   , METH_NOARGS , "Moves forward the locator to the following element." }
     , { "getElement"     , (PyCFunction)PyOccurrenceLocator_getElement , METH_NOARGS , "Returns the current element (or the value Type() when the locator is not or no longer valid)." }
     , { "getClone"       , (PyCFunction)PyOccurrenceLocator_getClone   , METH_NOARGS , "This function allocates and returns a new locator that will have the same visiting course than the remaining one of the locator being cloned." }
     , { "destroy"        , (PyCFunction)PyOccurrenceLocator_destroy    , METH_NOARGS
@@ -168,7 +168,7 @@ extern "C" {
   LocatorPyTypeObjectLinkPyType(Occurrence, Occurrence)
 
 
-# else  // End of Python Module Code Part.
+#else  // End of Python Module Code Part.
 
 
 // x=================================================================x

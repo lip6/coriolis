@@ -33,7 +33,7 @@ Quark::Quark(const Occurrence& occurrence)
     _occurrence(occurrence),
     _nextOfSharedPathQuarkMap(NULL)
 {
-    if (!_occurrence.IsValid())
+    if (!_occurrence.isValid())
         throw Error("Can't create " + _TName("Quark") + " : invalid occurrence");
 
     if (_occurrence._getQuark())

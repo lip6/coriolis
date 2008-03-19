@@ -47,9 +47,9 @@ typedef GenericFilter<Cell*> CellFilter;
 /*********************************/\
 {\
     CellLocator _locator = cells.getLocator();\
-    while (_locator.IsValid()) {\
+    while (_locator.isValid()) {\
         Cell* cell = _locator.getElement();\
-        _locator.Progress();
+        _locator.progress();
 
 
 

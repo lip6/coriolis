@@ -47,9 +47,9 @@ typedef GenericFilter<CompositeLayer*> CompositeLayerFilter;
 /****************************************************************/\
 {\
     CompositeLayerLocator _locator = compositeLayers.getLocator();\
-    while (_locator.IsValid()) {\
+    while (_locator.isValid()) {\
         CompositeLayer* compositeLayer = _locator.getElement();\
-        _locator.Progress();
+        _locator.progress();
 
 
 

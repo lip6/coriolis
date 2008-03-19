@@ -86,7 +86,7 @@ extern "C" {
 
 
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PyPlugLocator_IsValid,IsValid,PyPlugLocator,Locator<Plug*>)
+  DirectGetBoolAttribute(PyPlugLocator_isValid,isValid,PyPlugLocator,Locator<Plug*>)
 
 
   // Standart Locator Accessors (Attributes).
@@ -101,8 +101,8 @@ extern "C" {
   // PyPlugLocator Attribute Method table.
 
   PyMethodDef PyPlugLocator_Methods[] =
-    { { "IsValid"        , (PyCFunction)PyPlugLocator_IsValid    , METH_NOARGS , "Returns true while the walk has not exhausted the set of elements, else false." }
-    , { "Progress"       , (PyCFunction)PyPlugLocator_Progress   , METH_NOARGS , "Moves forward the locator to the following element." }
+    { { "isValid"        , (PyCFunction)PyPlugLocator_isValid    , METH_NOARGS , "Returns true while the walk has not exhausted the set of elements, else false." }
+    , { "progress"       , (PyCFunction)PyPlugLocator_progress   , METH_NOARGS , "Moves forward the locator to the following element." }
     , { "getElement"     , (PyCFunction)PyPlugLocator_getElement , METH_NOARGS , "Returns the current element (or the value Type() when the locator is not or no longer valid)." }
     , { "getClone"       , (PyCFunction)PyPlugLocator_getClone   , METH_NOARGS , "This function allocates and returns a new locator that will have the same visiting course than the remaining one of the locator being cloned." }
     , {NULL, NULL, 0, NULL}           /* sentinel */

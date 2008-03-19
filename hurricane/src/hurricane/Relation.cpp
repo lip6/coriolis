@@ -48,7 +48,7 @@ class Relation_OwnerIsSlave : public Filter<DBo*> {
         return new Relation_OwnerIsSlave(*this);
     };
 
-    public: virtual bool Accept(DBo* owner) const
+    public: virtual bool accept(DBo* owner) const
     // ******************************************
     {
         return (owner != _relation->getMasterOwner());

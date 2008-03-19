@@ -47,9 +47,9 @@ typedef GenericFilter<Pad*> PadFilter;
 /******************************/\
 {\
 	PadLocator _locator = pads.getLocator();\
-	while (_locator.IsValid()) {\
+	while (_locator.isValid()) {\
 		Pad* pad = _locator.getElement();\
-		_locator.Progress();
+		_locator.progress();
 
 
 

@@ -46,9 +46,9 @@ typedef GenericFilter<Occurrence> OccurrenceFilter;
 /************************************************/\
 {\
     OccurrenceLocator _locator = occurrences.getLocator();\
-    while (_locator.IsValid()) {\
+    while (_locator.isValid()) {\
         Occurrence occurrence = _locator.getElement();\
-        _locator.Progress();
+        _locator.progress();
 
 
 

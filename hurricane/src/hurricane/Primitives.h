@@ -47,9 +47,9 @@ typedef GenericFilter<Primitive*> PrimitiveFilter;
 /************************************************/\
 {\
 	PrimitiveLocator _locator = primitives.getLocator();\
-	while (_locator.IsValid()) {\
+	while (_locator.isValid()) {\
 		Primitive* primitive = _locator.getElement();\
-		_locator.Progress();
+		_locator.progress();
 
 
 

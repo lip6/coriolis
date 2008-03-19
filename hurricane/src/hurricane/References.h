@@ -47,9 +47,9 @@ typedef GenericFilter<Reference*> ReferenceFilter;
 /***************************************/\
 {\
 	ReferenceLocator _locator = references.getLocator();\
-	while (_locator.IsValid()) {\
+	while (_locator.isValid()) {\
 		Reference* reference = _locator.getElement();\
-		_locator.Progress();
+		_locator.progress();
 
 
 

@@ -79,7 +79,7 @@ extern "C" {
 
 
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PyNetLocator_IsValid,IsValid,PyNetLocator,Locator<Net*>)
+  DirectGetBoolAttribute(PyNetLocator_isValid,isValid,PyNetLocator,Locator<Net*>)
 
 
   // Standart Locator Accessors (Attributes).
@@ -97,8 +97,8 @@ extern "C" {
   // PyNetLocator Attribute Method table.
 
   PyMethodDef PyNetLocator_Methods[] =
-    { { "IsValid"        , (PyCFunction)PyNetLocator_IsValid    , METH_NOARGS , "Returns true while the walk has not exhausted the set of elements, else false." }
-    , { "Progress"       , (PyCFunction)PyNetLocator_Progress   , METH_NOARGS , "Moves forward the locator to the following element." }
+    { { "isValid"        , (PyCFunction)PyNetLocator_isValid    , METH_NOARGS , "Returns true while the walk has not exhausted the set of elements, else false." }
+    , { "progress"       , (PyCFunction)PyNetLocator_progress   , METH_NOARGS , "Moves forward the locator to the following element." }
     , { "getElement"     , (PyCFunction)PyNetLocator_getElement , METH_NOARGS , "Returns the current element (or the value Type() when the locator is not or no longer valid)." }
     , { "getClone"       , (PyCFunction)PyNetLocator_getClone   , METH_NOARGS , "This function allocates and returns a new locator that will have the same visiting course than the remaining one of the locator being cloned." }
     , { "destroy"        , (PyCFunction)PyNetLocator_destroy    , METH_NOARGS

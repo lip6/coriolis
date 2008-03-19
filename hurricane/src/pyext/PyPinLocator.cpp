@@ -85,7 +85,7 @@ extern "C" {
 
 
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PyPinLocator_IsValid,IsValid,PyPinLocator,Locator<Pin*>)
+  DirectGetBoolAttribute(PyPinLocator_isValid,isValid,PyPinLocator,Locator<Pin*>)
 
 
   // Standart Locator Accessors (Attributes).
@@ -104,8 +104,8 @@ extern "C" {
   // PyPinLocator Attribute Method table.
 
   PyMethodDef PyPinLocator_Methods[] =
-    { { "IsValid"        , (PyCFunction)PyPinLocator_IsValid    , METH_NOARGS , "Returns true while the walk has not exhausted the set of elements, else false." }
-    , { "Progress"       , (PyCFunction)PyPinLocator_Progress   , METH_NOARGS , "Moves forward the locator to the following element." }
+    { { "isValid"        , (PyCFunction)PyPinLocator_isValid    , METH_NOARGS , "Returns true while the walk has not exhausted the set of elements, else false." }
+    , { "progress"       , (PyCFunction)PyPinLocator_progress   , METH_NOARGS , "Moves forward the locator to the following element." }
     , { "getElement"     , (PyCFunction)PyPinLocator_getElement , METH_NOARGS , "Returns the current element (or the value Type() when the locator is not or no longer valid)." }
     , { "getClone"       , (PyCFunction)PyPinLocator_getClone   , METH_NOARGS , "This function allocates and returns a new locator that will have the same visiting course than the remaining one of the locator being cloned." }
     , { "destroy"        , (PyCFunction)PyPinLocator_destroy    , METH_NOARGS

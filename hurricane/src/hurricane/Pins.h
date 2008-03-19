@@ -51,9 +51,9 @@ typedef GenericFilter<Pin*> PinFilter;
 /******************************/\
 {\
 	PinLocator _locator = pins.getLocator();\
-	while (_locator.IsValid()) {\
+	while (_locator.isValid()) {\
 		Pin* pin = _locator.getElement();\
-		_locator.Progress();
+		_locator.progress();
 
 
 

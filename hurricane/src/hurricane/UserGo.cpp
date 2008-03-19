@@ -44,9 +44,9 @@ class UserGo_CellUserGos : public Collection<UserGo*> {
         public: virtual UserGo* getElement() const;
         public: virtual Hurricane::Locator<UserGo*>* getClone() const;
 
-        public: virtual bool IsValid() const;
+        public: virtual bool isValid() const;
 
-        public: virtual void Progress();
+        public: virtual void progress();
 
         public: virtual string _getString() const;
 
@@ -220,7 +220,7 @@ UserGo_CellUserGos::Locator::Locator(const Cell* cell)
 {
     if (_cell) {
         _displaySlotLocator = getDisplaySlots(cell).getLocator();
-        if (_displaySlotLocator.IsValid())
+        if (_displaySlotLocator.isValid())
         {
             DisplaySlot* displaySlot = _displaySlotLocator.getElement();
             _userGoLocator = displaySlot->getUserGos().getLocator();
@@ -258,21 +258,21 @@ Locator<UserGo*>* UserGo_CellUserGos::Locator::getClone() const
     return new Locator(*this);
 }
 
-bool UserGo_CellUserGos::Locator::IsValid() const
+bool UserGo_CellUserGos::Locator::isValid() const
 // ***************************************
 {
-    return _userGoLocator.IsValid();
+    return _userGoLocator.isValid();
 }
 
-void UserGo_CellUserGos::Locator::Progress()
+void UserGo_CellUserGos::Locator::progress()
 // *****************************************
 {
-    if (_userGoLocator.IsValid()) {
-        _userGoLocator.Progress();
+    if (_userGoLocator.isValid()) {
+        _userGoLocator.progress();
     }
-    else if (_displaySlotLocator.IsValid()) {
-        _displaySlotLocator.Progress();
-        if (_displaySlotLocator.IsValid())
+    else if (_displaySlotLocator.isValid()) {
+        _displaySlotLocator.progress();
+        if (_displaySlotLocator.isValid())
         {
             DisplaySlot* displaySlot = _displaySlotLocator.getElement();
             _userGoLocator = displaySlot->getUserGos().getLocator();

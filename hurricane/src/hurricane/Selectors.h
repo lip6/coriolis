@@ -47,9 +47,9 @@ typedef GenericFilter<Selector*> SelectorFilter;
 /*********************************************/\
 {\
 	SelectorLocator _locator = selectors.getLocator();\
-	while (_locator.IsValid()) {\
+	while (_locator.isValid()) {\
 		Selector* selector = _locator.getElement();\
-		_locator.Progress();
+		_locator.progress();
 
 
 

@@ -47,9 +47,9 @@ typedef GenericFilter<Contact*> ContactFilter;
 /******************************************/\
 {\
 	ContactLocator _locator = contacts.getLocator();\
-	while (_locator.IsValid()) {\
+	while (_locator.isValid()) {\
 		Contact* contact = _locator.getElement();\
-		_locator.Progress();
+		_locator.progress();
 
 
 
