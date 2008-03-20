@@ -382,7 +382,7 @@ void Component::_preDestroy()
     clearProperties();
 
     set<Component*> componentSet;
-    getSlaveComponents().Fill(componentSet);
+    getSlaveComponents().fill(componentSet);
 
     set<Hook*> masterHookSet;
     componentSet.insert(this);

@@ -175,8 +175,8 @@ class Region {
 
     public: Region& Clear();
 
-    public: Region& Fill(const Box& box);
-    public: Region& Fill(const Region& region);
+    public: Region& fill(const Box& box);
+    public: Region& fill(const Region& region);
     public: Region& getUnion(const Region& region);
 
     public: Region& Groove(const Box& box);

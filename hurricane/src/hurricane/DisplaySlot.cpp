@@ -98,7 +98,7 @@ void DisplaySlot::Flush()
 {
     OpenUpdateSession();
     vector<Go*> govect;
-    _quadTree.getGos().Fill(govect);
+    _quadTree.getGos().fill(govect);
     for (unsigned i = 0 ; i < govect.size() ; i++) {
         govect[i]->destroy();
     }

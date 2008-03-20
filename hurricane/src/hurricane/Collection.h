@@ -114,7 +114,7 @@ template<class Type> class Collection : public NestedSlotAdapter {
 // Utilitarians
 // ************
 
-    public: void Fill(list<Type>& list) const
+    public: void fill(list<Type>& list) const
     // **************************************
     {
         GenericLocator<Type> locator = getLocator();
@@ -124,7 +124,7 @@ template<class Type> class Collection : public NestedSlotAdapter {
         }
     }
 
-    public: void Fill(set<Type>& set) const
+    public: void fill(set<Type>& set) const
     // ************************************
     {
         GenericLocator<Type> locator = getLocator();
@@ -134,7 +134,7 @@ template<class Type> class Collection : public NestedSlotAdapter {
         }
     }
 
-    public: template<class Compare> void Fill(set<Type, Compare>& set) const
+    public: template<class Compare> void fill(set<Type, Compare>& set) const
     // *********************************************************************
     {
         GenericLocator<Type> locator = getLocator();
@@ -144,7 +144,7 @@ template<class Type> class Collection : public NestedSlotAdapter {
         }
     }
 
-    public: void Fill(vector<Type>& vector) const
+    public: void fill(vector<Type>& vector) const
     // ******************************************
     {
         GenericLocator<Type> locator = getLocator();

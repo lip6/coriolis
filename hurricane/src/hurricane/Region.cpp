@@ -2447,7 +2447,7 @@ Region::Region(const Region& region)
         _bottomRightTile = new Tile(region.getBoundingBox(), true);
         _topLeftTile = _bottomRightTile;
         for_each_box(box, region.getBoxes()) {
-            Fill(box);
+            fill(box);
             end_for;
         }
     }
@@ -2469,7 +2469,7 @@ Region& Region::operator=(const Region& region)
         _bottomRightTile = new Tile (initialBoundingBox, true);
         _topLeftTile = _bottomRightTile;
         for_each_box(box, region.getBoxes()) {
-            Fill(box);
+            fill(box);
             end_for;
         }
     }
@@ -2648,7 +2648,7 @@ Region& Region::Clear()
     return *this;
 }
 
-Region& Region::Fill(const Box& box)
+Region& Region::fill(const Box& box)
 // *********************************
 {
     if (box.isEmpty() || !box.getWidth() || !box.getHeight()) return *this;
@@ -2670,11 +2670,11 @@ Region& Region::Fill(const Box& box)
     return *this;
 }
 
-Region& Region::Fill(const Region& region)
+Region& Region::fill(const Region& region)
 // ***************************************
 {
     for_each_box(box, region.getBoxes()) {
-        Fill(box);
+        fill(box);
         end_for;
     }
     return *this;
@@ -2683,7 +2683,7 @@ Region& Region::Fill(const Region& region)
 Region& Region::getUnion (const Region& region)
 // ********************************************
 {
-    return Fill(region);
+    return fill(region);
 }
 
 Region& Region::Groove(const Box& box)
@@ -2737,7 +2737,7 @@ Region& Region::Inflate(const Unit& quantity)
                 end_for;
             }
             for_each_box(box, getCollection(boxList)) {
-                Fill(box.inflate(quantity));
+                fill(box.inflate(quantity));
                 end_for;
             }
         }
@@ -2763,7 +2763,7 @@ Region& Region::Translate(const Unit& dx, const Unit& dy)
 {
     if ((dx != 0) || (dy != 0)) {
         set<Tile*> tileSet;
-        _getTiles().Fill(tileSet);
+        _getTiles().fill(tileSet);
         for_each_object(Tile*, tile, getCollection(tileSet)) {
             tile->_boundingBox.translate(dx, dy);
             end_for;
@@ -2848,7 +2848,7 @@ void Region::_Split(const Box& box)
 
         list<Tile*> tileList;
         Box line = Box(box.getXMin(), box.getYMin(), box.getXMax() - 1, box.getYMin());
-        _getTilesUnder(line, startTile).Fill(tileList);
+        _getTilesUnder(line, startTile).fill(tileList);
         for_each_object(Tile*, tile, getCollection(tileList)) {
             tile->SplitHorizontal(this, box.getYMin());
             end_for;
@@ -2856,7 +2856,7 @@ void Region::_Split(const Box& box)
 
         tileList.clear();
         line = Box(box.getXMin(), box.getYMax(), box.getXMax() - 1, box.getYMax());
-        _getTilesUnder(line, startTile).Fill(tileList);
+        _getTilesUnder(line, startTile).fill(tileList);
         for_each_object(Tile*, tile, getCollection(tileList)) {
             tile->SplitHorizontal(this, box.getYMax());
             end_for;
@@ -2864,7 +2864,7 @@ void Region::_Split(const Box& box)
 
         tileList.clear();
         line = Box(box.getXMin(), box.getYMin(), box.getXMin(), box.getYMax() - 1);
-        _getTilesUnder(line, startTile).Fill(tileList);
+        _getTilesUnder(line, startTile).fill(tileList);
         for_each_object(Tile*, tile, getCollection(tileList)) {
             tile->SplitVertical(this, box.getXMin());
             end_for;
@@ -2872,7 +2872,7 @@ void Region::_Split(const Box& box)
 
         tileList.clear();
         line = Box(box.getXMax(), box.getYMin(), box.getXMax(), box.getYMax() - 1);
-        _getTilesUnder(line, startTile).Fill(tileList);
+        _getTilesUnder(line, startTile).fill(tileList);
         for_each_object(Tile*, tile, getCollection(tileList)) {
             tile->SplitVertical(this, box.getXMax());
             end_for;
@@ -2950,7 +2950,7 @@ void Region::_Update(const Box& box, bool isVoid, Tile* startTile)
     Tile* newTile = new Tile(box, isVoid);
 
     list<Tile*> tileList;
-    _getTilesUnder(Box(box).inflate(0, 0, -1, -1), startTile).Fill(tileList);
+    _getTilesUnder(Box(box).inflate(0, 0, -1, -1), startTile).fill(tileList);
     for_each_object(Tile*, tile, getCollection(tileList)) {
         if (_topLeftTile == tile) _topLeftTile = newTile;
         if (_bottomRightTile == tile) _bottomRightTile = newTile;
@@ -3027,10 +3027,10 @@ Region::VerticalEnhancement()
     if (maxBox.getWidth() >= getUnit(2)) {
       modif = tile->VerticalEnhancement (this);
     }
-    result.Fill (tile->getBoundingBox());
+    result.fill (tile->getBoundingBox());
     Groove (tile->getBoundingBox());
   } while (! IsEmpty());
-  Fill (result);
+  fill (result);
   return modif;
 };                // Region::VerticalEnhancement
 
@@ -3073,10 +3073,10 @@ Region::HorizontalEnhancement()
     if (maxBox.getWidth() >= getUnit(2)) {
       modif = tile->HorizontalEnhancement (this);
     }
-    result.Fill (tile->getBoundingBox());
+    result.fill (tile->getBoundingBox());
     Groove (tile->getBoundingBox());
   } while (! IsEmpty());
-  Fill (result);
+  fill (result);
   return modif;
 };                // Region::HorizontalEnhancement
 

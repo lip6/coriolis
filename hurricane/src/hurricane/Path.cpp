@@ -79,7 +79,7 @@ Path::Path(const Path& headPath, const Path& tailPath)
 :  _sharedPath(tailPath._getSharedPath())
 {
     vector<Instance*> instances;
-    headPath.getInstances().Fill(instances);
+    headPath.getInstances().fill(instances);
     
     for (vector<Instance*>::reverse_iterator rit=instances.rbegin() ; rit != instances.rend() ; rit++)
     { Instance* instance=*rit;
