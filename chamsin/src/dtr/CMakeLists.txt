@@ -32,6 +32,10 @@ SET_SOURCE_FILES_PROPERTIES(${binary_dir}/ParserDtrScan.cpp GENERATED)
 ADD_LIBRARY(dtr SHARED
 ${DST_SRCS}
 DtrAccess.cpp
+RdsUnit.cpp
 GenericDtrAccess.cpp)
+
+
+TARGET_LINK_LIBRARIES(dtr ${HURRICANE_LIBRARIES})
 
 INSTALL(TARGETS dtr DESTINATION /lib)
