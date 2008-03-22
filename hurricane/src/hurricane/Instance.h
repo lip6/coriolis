@@ -65,7 +65,7 @@ class Instance : public Go {
         public: virtual const Net* _getKey(Plug* plug) const;
         public: virtual unsigned _getHashValue(const Net* masterNet) const;
         public: virtual Plug* _getNextElement(Plug* plug) const;
-        public: virtual void _SetNextElement(Plug* plug, Plug* nextPlug) const;
+        public: virtual void _setNextElement(Plug* plug, Plug* nextPlug) const;
 
     };
 
@@ -79,7 +79,7 @@ class Instance : public Go {
         public: virtual const SharedPath* _getKey(SharedPath* sharedPath) const;
         public: virtual unsigned _getHashValue(const SharedPath* tailSharedPath) const;
         public: virtual SharedPath* _getNextElement(SharedPath* sharedPath) const;
-        public: virtual void _SetNextElement(SharedPath* sharedPath, SharedPath* nextSharedPath) const;
+        public: virtual void _setNextElement(SharedPath* sharedPath, SharedPath* nextSharedPath) const;
 
     };
 
@@ -143,8 +143,8 @@ class Instance : public Go {
 // Updators
 // ********
 
-    public: virtual void Materialize();
-    public: virtual void Unmaterialize();
+    public: virtual void materialize();
+    public: virtual void unmaterialize();
     public: virtual void Invalidate(bool propagateFlag = true);
     public: virtual void Translate(const Unit& dx, const Unit& dy);
 
@@ -170,8 +170,8 @@ class Instance : public Go {
     public: Instance* _getNextOfCellInstanceMap() const {return _nextOfCellInstanceMap;};
     public: Instance* _getNextOfCellSlaveInstanceSet() const {return _nextOfCellSlaveInstanceSet;};
 
-    public: void _SetNextOfCellInstanceMap(Instance* instance) {_nextOfCellInstanceMap = instance;};
-    public: void _SetNextOfCellSlaveInstanceSet(Instance* instance) {_nextOfCellSlaveInstanceSet = instance;};
+    public: void _setNextOfCellInstanceMap(Instance* instance) {_nextOfCellInstanceMap = instance;};
+    public: void _setNextOfCellSlaveInstanceSet(Instance* instance) {_nextOfCellSlaveInstanceSet = instance;};
 
 };
 

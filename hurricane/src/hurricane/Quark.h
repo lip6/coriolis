@@ -56,7 +56,7 @@ class Quark : public DBo {
     public: virtual Record* _getRecord() const;
     public: Quark* _getNextOfSharedPathQuarkMap() const {return _nextOfSharedPathQuarkMap;};
 
-    public: void _SetNextOfSharedPathQuarkMap(Quark* quark) {_nextOfSharedPathQuarkMap = quark;};
+    public: void _setNextOfSharedPathQuarkMap(Quark* quark) {_nextOfSharedPathQuarkMap = quark;};
 
 };
 

@@ -85,8 +85,8 @@ class Component : public Go {
 // Updators
 // ********
 
-    public: virtual void Materialize();
-    public: virtual void Unmaterialize();
+    public: virtual void materialize();
+    public: virtual void unmaterialize();
     public: virtual void Invalidate(bool propagateFlag = true);
 
 // Filters
@@ -105,9 +105,9 @@ class Component : public Go {
     public: virtual Record* _getRecord() const;
     public: Component* _getNextOfNetComponentSet() const {return _nextOfNetComponentSet;};
 
-    public: void _SetNet(Net* net);
-    public: void _SetRubber(Rubber* rubber);
-    public: void _SetNextOfNetComponentSet(Component* component) {_nextOfNetComponentSet = component;};
+    public: void _setNet(Net* net);
+    public: void _setRubber(Rubber* rubber);
+    public: void _setNextOfNetComponentSet(Component* component) {_nextOfNetComponentSet = component;};
 
 };
 

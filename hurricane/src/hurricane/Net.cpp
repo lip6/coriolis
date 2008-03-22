@@ -484,28 +484,28 @@ void Net::SetDirection(const Direction& direction)
     _direction = direction;
 }
 
-void Net::Materialize()
+void Net::materialize()
 // ********************
 {
     for_each_component(component, getComponents()) {
-        component->Materialize();
+        component->materialize();
         end_for;
     }
     for_each_rubber(rubber, getRubbers()) {
-        rubber->Materialize();
+        rubber->materialize();
         end_for;
     }
 }
 
-void Net::Unmaterialize()
+void Net::unmaterialize()
 // **********************
 {
     for_each_rubber(rubber, getRubbers()) {
-        rubber->Unmaterialize();
+        rubber->unmaterialize();
         end_for;
     }
     for_each_component(component, getComponents()) {
-        component->Unmaterialize();
+        component->unmaterialize();
         end_for;
     }
 }
@@ -550,8 +550,8 @@ void Net::Merge(Net* net)
     if (!IsExternal() && net->IsExternal() && !net->getConnectedSlavePlugs().IsEmpty())
         throw Error("Can't merge net : incompatible net");
 
-    for_each_rubber(rubber, net->getRubbers()) rubber->_SetNet(this); end_for;
-    for_each_component(component, net->getComponents()) component->_SetNet(this); end_for;
+    for_each_rubber(rubber, net->getRubbers()) rubber->_setNet(this); end_for;
+    for_each_component(component, net->getComponents()) component->_setNet(this); end_for;
 
     if (IsExternal() && net->IsExternal()) {
         for_each_plug(plug, net->getConnectedSlavePlugs()) {
@@ -605,7 +605,7 @@ void Net::_preDestroy()
 
     for_each_plug(slavePlug, getSlavePlugs()) slavePlug->_destroy(); end_for;
 
-    Unmaterialize();
+    unmaterialize();
 
     for_each_rubber(rubber, getRubbers()) rubber->_destroy(); end_for;
 
@@ -759,10 +759,10 @@ Component* Net::ComponentSet::_getNextElement(Component* component) const
     return component->_getNextOfNetComponentSet();
 }
 
-void Net::ComponentSet::_SetNextElement(Component* component, Component* nextComponent) const
+void Net::ComponentSet::_setNextElement(Component* component, Component* nextComponent) const
 // ******************************************************************************************
 {
-    component->_SetNextOfNetComponentSet(nextComponent);
+    component->_setNextOfNetComponentSet(nextComponent);
 }
 
 
@@ -789,10 +789,10 @@ Rubber* Net::RubberSet::_getNextElement(Rubber* rubber) const
     return rubber->_getNextOfNetRubberSet();
 }
 
-void Net::RubberSet::_SetNextElement(Rubber* rubber, Rubber* nextRubber) const
+void Net::RubberSet::_setNextElement(Rubber* rubber, Rubber* nextRubber) const
 // ***************************************************************************
 {
-    rubber->_SetNextOfNetRubberSet(nextRubber);
+    rubber->_setNextOfNetRubberSet(nextRubber);
 }
 
 

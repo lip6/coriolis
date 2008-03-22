@@ -52,7 +52,7 @@ class Go : public Entity {
 
     public: static bool AutoMaterializationIsDisabled();
 
-    public: bool IsMaterialized() const {return (_quadTree != NULL);};
+    public: bool isMaterialized() const {return (_quadTree != NULL);};
 
 // Updators
 // ********
@@ -60,8 +60,8 @@ class Go : public Entity {
     public: static void EnableAutoMaterialization();
     public: static void DisableAutoMaterialization();
 
-    public: virtual void Materialize() = 0;
-    public: virtual void Unmaterialize() = 0;
+    public: virtual void materialize() = 0;
+    public: virtual void unmaterialize() = 0;
 
     public: virtual void Invalidate(bool propagateFlag = true);
               // implementation located on file UpdateSession.cpp to access local variables
@@ -79,7 +79,7 @@ class Go : public Entity {
     public: virtual Record* _getRecord() const;
     public: Go* _getNextOfQuadTreeGoSet() const {return _nextOfQuadTreeGoSet;};
 
-    public: void _SetNextOfQuadTreeGoSet(Go* go) {_nextOfQuadTreeGoSet = go;};
+    public: void _setNextOfQuadTreeGoSet(Go* go) {_nextOfQuadTreeGoSet = go;};
 
 };
 

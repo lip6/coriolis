@@ -75,7 +75,7 @@ void  RoutingPad::_postCreate()
   Inherit::_postCreate();
 
   if (!_occurrence.getPath().IsEmpty())
-    _occurrence.getMasterCell()->_AddSlaveEntity(_occurrence.getEntity(),this);
+    _occurrence.getMasterCell()->_addSlaveEntity(_occurrence.getEntity(),this);
 }
 
 Unit RoutingPad::getX() const
@@ -225,7 +225,7 @@ void RoutingPad::_preDestroy()
 
 
   if (!_occurrence.getPath().IsEmpty())
-    _occurrence.getMasterCell()->_RemoveSlaveEntity(_occurrence.getEntity(),this);
+    _occurrence.getMasterCell()->_removeSlaveEntity(_occurrence.getEntity(),this);
   Inherit::_preDestroy();
 
 // trace << "exiting RoutingPad::preDestroy:" << endl;
@@ -276,14 +276,14 @@ Segment*  RoutingPad::_getEntityAsSegment () const
 void RoutingPad::SetExternalComponent(Component* component)
 // ********************************************************
 {
-    if (IsMaterialized()) Invalidate(false);
+    if (isMaterialized()) Invalidate(false);
 
     Occurrence plugOccurrence = getPlugOccurrence();
     Plug* plug= static_cast<Plug*>(plugOccurrence.getEntity());
     if (plug->getMasterNet() != component->getNet())
         throw Error("Cannot Set External Component to Routing Pad : Inconsistant Net");
 
-    _occurrence.getMasterCell()->_RemoveSlaveEntity(_occurrence.getEntity(),this);
+    _occurrence.getMasterCell()->_removeSlaveEntity(_occurrence.getEntity(),this);
     _occurrence = Occurrence(component,Path(plugOccurrence.getPath(),plug->getInstance()));
 
     Point position = _occurrence.getPath().getTransformation().getPoint ( component->getPosition() );
@@ -301,10 +301,10 @@ void RoutingPad::SetExternalComponent(Component* component)
         SetPosition ( position );
     }
 
-    _occurrence.getMasterCell()->_AddSlaveEntity(_occurrence.getEntity(),this);
+    _occurrence.getMasterCell()->_addSlaveEntity(_occurrence.getEntity(),this);
 
-    if (!IsMaterialized()) {
-      Materialize();
+    if (!isMaterialized()) {
+      materialize();
     }
 }
 
@@ -328,61 +328,12 @@ Occurrence RoutingPad::getPlugOccurrence()
 void RoutingPad::RestorePlugOccurrence()
 // *************************************
 {
-    if (IsMaterialized()) Unmaterialize();
+    if (isMaterialized()) unmaterialize();
 
     _occurrence=getPlugOccurrence();
     SetPosition ( _occurrence.getPath().getTransformation().getPoint
         ( dynamic_cast<Component*>(_occurrence.getEntity())->getPosition() ) );
 }
-
-
-
-#if 0
-// ****************************************************************************************************
-// RoutingPad::Builder declaration
-// ****************************************************************************************************
-
-RoutingPad::Builder::Builder(const string& token)
-// *******************************************
-:    Inherit(token),
-    _layer(NULL),
-    _x(0),
-    _y(0),
-    _width(0),
-    _height(0)
-{
-}
-
-void RoutingPad::Builder::Scan(InputFile& inputFile, char*& arguments)
-// ****************************************************************
-{
-    Inherit::Scan(inputFile, arguments);
-
-    unsigned layerId;
-    unsigned n;
-
-
-    if (r != 6)
-        throw Error("Can't create RoutingPad : syntax error");
-
-    arguments = &arguments[n];
-
-    DBo* dbo = inputFile.getDBo(layerId);
-    if (!dbo || !is_a<Layer*>(dbo))
-        throw Error("Can't create RoutingPad : bad layer");
-
-    _layer = (Layer*)dbo;
-}
-
-DBo* RoutingPad::Builder::CreateDBo()
-// *******************************
-{
-    return RoutingPad::create(getNet(), getLayer(), getX(), getY(), getWidth(), getHeight());
-}
-
-RoutingPad::Builder ROUTINGPAD_BUILDER("RP");
-#endif
-
 
 RoutingPad* createRoutingPad ( Net* net, Occurrence plugOccurrence )
 // *****************************************************************

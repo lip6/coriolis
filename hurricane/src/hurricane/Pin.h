@@ -121,7 +121,7 @@ class Pin : public Contact {
 
     public: Pin* _getNextOfCellPinMap() const {return _nextOfCellPinMap;};
 
-    public: void _SetNextOfCellPinMap(Pin* pin) {_nextOfCellPinMap = pin;};
+    public: void _setNextOfCellPinMap(Pin* pin) {_nextOfCellPinMap = pin;};
 
 };
 

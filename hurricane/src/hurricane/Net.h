@@ -94,7 +94,7 @@ class Net : public Entity {
 
         public: virtual unsigned _getHashValue(Component* component) const;
         public: virtual Component* _getNextElement(Component* component) const;
-        public: virtual void _SetNextElement(Component* component, Component* nextComponent) const;
+        public: virtual void _setNextElement(Component* component, Component* nextComponent) const;
 
     };
 
@@ -107,7 +107,7 @@ class Net : public Entity {
 
         public: virtual unsigned _getHashValue(Rubber* rubber) const;
         public: virtual Rubber* _getNextElement(Rubber* rubber) const;
-        public: virtual void _SetNextElement(Rubber* rubber, Rubber* nextRubber) const;
+        public: virtual void _setNextElement(Rubber* rubber, Rubber* nextRubber) const;
 
     };
 
@@ -194,8 +194,8 @@ class Net : public Entity {
     public: void SetType(const Type& type);
     public: void SetDirection(const Direction& direction);
     public: void SetPosition(const Point& position);
-    public: void Materialize();
-    public: void Unmaterialize();
+    public: void materialize();
+    public: void unmaterialize();
     public: void Merge(Net* net);
 
 // Others
@@ -212,7 +212,7 @@ class Net : public Entity {
     public: RubberSet& _getRubberSet() {return _rubberSet;};
     public: Net* _getNextOfCellNetMap() const {return _nextOfCellNetMap;};
 
-    public: void _SetNextOfCellNetMap(Net* net) {_nextOfCellNetMap = net;};
+    public: void _setNextOfCellNetMap(Net* net) {_nextOfCellNetMap = net;};
 
 };
 

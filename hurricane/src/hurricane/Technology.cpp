@@ -168,7 +168,7 @@ void Technology::_postCreate()
 {
     Inherit::_postCreate();
 
-    _dataBase->_SetTechnology(this);
+    _dataBase->_setTechnology(this);
 }
 
 void Technology::_preDestroy()
@@ -178,7 +178,7 @@ void Technology::_preDestroy()
 
     for_each_layer(layer, getLayers()) layer->destroy(); end_for;
 
-    _dataBase->_SetTechnology(NULL);
+    _dataBase->_setTechnology(NULL);
 }
 
 string Technology::_getString() const

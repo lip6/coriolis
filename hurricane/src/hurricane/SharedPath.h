@@ -40,7 +40,7 @@ class SharedPath {
         public: virtual const Entity* _getKey(Quark* quark) const;
         public: virtual unsigned _getHashValue(const Entity* entity) const;
         public: virtual Quark* _getNextElement(Quark* quark) const;
-        public: virtual void _SetNextElement(Quark* quark, Quark* nextQuark) const;
+        public: virtual void _setNextElement(Quark* quark, Quark* nextQuark) const;
 
     };
 
@@ -103,7 +103,7 @@ class SharedPath {
     public: QuarkMap& _getQuarkMap() {return _quarkMap;};
     public: SharedPath* _getNextOfInstanceSharedPathMap() const {return _nextOfInstanceSharedPathMap;};
 
-    public: void _SetNextOfInstanceSharedPathMap(SharedPath* sharedPath) {_nextOfInstanceSharedPathMap = sharedPath;};
+    public: void _setNextOfInstanceSharedPathMap(SharedPath* sharedPath) {_nextOfInstanceSharedPathMap = sharedPath;};
 
 };
 

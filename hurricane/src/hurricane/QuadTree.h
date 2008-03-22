@@ -32,7 +32,7 @@ class QuadTree {
 
         public: virtual unsigned _getHashValue(Go* go) const;
         public: virtual Go* _getNextElement(Go* go) const;
-        public: virtual void _SetNextElement(Go* go, Go* nextGo) const;
+        public: virtual void _setNextElement(Go* go, Go* nextGo) const;
 
     };
 

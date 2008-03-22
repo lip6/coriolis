@@ -62,7 +62,7 @@ class Cell : public Entity {
         public: virtual Name _getKey(Instance* instance) const;
         public: virtual unsigned _getHashValue(Name name) const;
         public: virtual Instance* _getNextElement(Instance* instance) const;
-        public: virtual void _SetNextElement(Instance* instance, Instance* nextInstance) const;
+        public: virtual void _setNextElement(Instance* instance, Instance* nextInstance) const;
 
     };
 
@@ -75,7 +75,7 @@ class Cell : public Entity {
 
         public: virtual unsigned _getHashValue(Instance* slaveInstance) const;
         public: virtual Instance* _getNextElement(Instance* slaveInstance) const;
-        public: virtual void _SetNextElement(Instance* slaveInstance, Instance* nextSlaveInstance) const;
+        public: virtual void _setNextElement(Instance* slaveInstance, Instance* nextSlaveInstance) const;
 
     };
 
@@ -89,7 +89,7 @@ class Cell : public Entity {
         public: virtual Name _getKey(Net* net) const;
         public: virtual unsigned _getHashValue(Name name) const;
         public: virtual Net* _getNextElement(Net* net) const;
-        public: virtual void _SetNextElement(Net* net, Net* nextNet) const;
+        public: virtual void _setNextElement(Net* net, Net* nextNet) const;
 
     };
 
@@ -103,7 +103,7 @@ class Cell : public Entity {
         public: virtual Name _getKey(Pin* pin) const;
         public: virtual unsigned _getHashValue(Name name) const;
         public: virtual Pin* _getNextElement(Pin* pin) const;
-        public: virtual void _SetNextElement(Pin* pin, Pin* nextPin) const;
+        public: virtual void _setNextElement(Pin* pin, Pin* nextPin) const;
 
     };
 
@@ -117,7 +117,7 @@ class Cell : public Entity {
         public: virtual const Layer* _getKey(Slice* slice) const;
         public: virtual unsigned _getHashValue(const Layer* layer) const;
         public: virtual Slice* _getNextElement(Slice* slice) const;
-        public: virtual void _SetNextElement(Slice* slice, Slice* nextSlice) const;
+        public: virtual void _setNextElement(Slice* slice, Slice* nextSlice) const;
 
     };
 
@@ -130,7 +130,7 @@ class Cell : public Entity {
 
         public: virtual unsigned _getHashValue(Marker* marker) const;
         public: virtual Marker* _getNextElement(Marker* marker) const;
-        public: virtual void _SetNextElement(Marker* marker, Marker* nextMarker) const;
+        public: virtual void _setNextElement(Marker* marker, Marker* nextMarker) const;
 
     };
 
@@ -181,14 +181,14 @@ class Cell : public Entity {
     public: Cell* _getNextOfLibraryCellMap() const {return _nextOfLibraryCellMap;};
     public: Cell* _getNextOfSymbolCellSet() const {return _nextOfSymbolCellSet;};
 
-    public: void _SetNextOfLibraryCellMap(Cell* cell) {_nextOfLibraryCellMap = cell;};
-    public: void _SetNextOfSymbolCellSet(Cell* cell) {_nextOfSymbolCellSet = cell;};
+    public: void _setNextOfLibraryCellMap(Cell* cell) {_nextOfLibraryCellMap = cell;};
+    public: void _setNextOfSymbolCellSet(Cell* cell) {_nextOfSymbolCellSet = cell;};
 
-    public: void _Fit(const Box& box);
-    public: void _Unfit(const Box& box);
+    public: void _fit(const Box& box);
+    public: void _unfit(const Box& box);
 
-    public: void _AddSlaveEntity(Entity* entity, Entity* slaveEntity);
-    public: void _RemoveSlaveEntity(Entity* entity, Entity* slaveEntity);
+    public: void _addSlaveEntity(Entity* entity, Entity* slaveEntity);
+    public: void _removeSlaveEntity(Entity* entity, Entity* slaveEntity);
     public: void _getSlaveEntities(SlaveEntityMap::iterator& begin, SlaveEntityMap::iterator& end);
     public: void _getSlaveEntities(Entity* entity, SlaveEntityMap::iterator& begin, SlaveEntityMap::iterator& end);
 
@@ -262,23 +262,23 @@ class Cell : public Entity {
 // Predicates
 // **********
 
-    public: bool IsCalledBy(Cell* cell) const;
-    public: bool IsTerminal() const {return _isTerminal;};
-    public: bool IsFlattenLeaf() const {return _isFlattenLeaf;};
-    public: bool IsLeaf() const;
-    public: bool IsPad() const {return _isPad;};
+    public: bool isCalledBy(Cell* cell) const;
+    public: bool isTerminal() const {return _isTerminal;};
+    public: bool isFlattenLeaf() const {return _isFlattenLeaf;};
+    public: bool isLeaf() const;
+    public: bool isPad() const {return _isPad;};
 
 // Updators
 // ********
 
-    public: void SetName(const Name& name);
-    public: void SetAbutmentBox(const Box& abutmentBox);
-    public: void SetTerminal(bool isTerminal) {_isTerminal = isTerminal;};
-    public: void SetFlattenLeaf(bool isFlattenLeaf) {_isFlattenLeaf = isFlattenLeaf;};
-    public: void SetPad(bool isPad) {_isPad = isPad;};
-    public: void FlattenNets(bool buildRings=true);
-    public: void Materialize();
-    public: void Unmaterialize();
+    public: void setName(const Name& name);
+    public: void setAbutmentBox(const Box& abutmentBox);
+    public: void setTerminal(bool isTerminal) {_isTerminal = isTerminal;};
+    public: void setFlattenLeaf(bool isFlattenLeaf) {_isFlattenLeaf = isFlattenLeaf;};
+    public: void setPad(bool isPad) {_isPad = isPad;};
+    public: void flattenNets(bool buildRings=true);
+    public: void materialize();
+    public: void unmaterialize();
 
 };
 

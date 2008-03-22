@@ -208,8 +208,8 @@ class Region {
     public: GenericCollection<Tile*> _getTiles() const;
     public: GenericCollection<Tile*> _getTilesUnder(const Box& area, Tile* startTile = NULL) const;
 
-    public: void _SetBottomRightTile(Tile* bottomRightTile) {_bottomRightTile = bottomRightTile;};
-    public: void _SetTopLeftTile(Tile* topLeftTile) {_topLeftTile = topLeftTile;};
+    public: void _setBottomRightTile(Tile* bottomRightTile) {_bottomRightTile = bottomRightTile;};
+    public: void _setTopLeftTile(Tile* topLeftTile) {_topLeftTile = topLeftTile;};
     public: void _Split(const Box& box);
     public: void _GrowthToFit(const Box& box);
     public: void _Update(const Box& box, bool isVoid, Tile* startTile = NULL);

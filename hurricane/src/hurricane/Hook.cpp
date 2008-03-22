@@ -277,8 +277,8 @@ Hook* Hook::Detach()
             Component* component = getComponent();
             Rubber* rubber = component->getRubber();
             if (rubber) {
-                rubber->_SetHook(previousHook);
-                component->_SetRubber(NULL);
+                rubber->_setHook(previousHook);
+                component->_setRubber(NULL);
             }
         }
         // */
@@ -311,7 +311,7 @@ Hook* Hook::Attach(Hook* hook)
     if (IsMaster()) {
         Rubber* rubber = hook->getComponent()->getRubber();
         if (rubber)
-            getComponent()->_SetRubber(rubber);
+            getComponent()->_setRubber(rubber);
         else
             Rubber::_create(this);
     }
@@ -320,7 +320,7 @@ Hook* Hook::Attach(Hook* hook)
     return this;
 }
 
-void Hook::_SetNextHook(Hook* hook)
+void Hook::_setNextHook(Hook* hook)
 {
     if (IsMaster())
     {

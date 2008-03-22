@@ -314,12 +314,12 @@ ComponentFilter Component::getIsUnderFilter(const Box& area)
     return Component_IsUnderFilter(area);
 }
 
-void Component::Materialize()
+void Component::materialize()
 // **************************
 {
-// trace << "Materialize() - " << this << endl;
+// trace << "materialize() - " << this << endl;
 
-    if (!IsMaterialized()) {
+    if (!isMaterialized()) {
         Cell*  cell  = getCell();
         Layer* layer = getLayer();
         if (cell && layer) {
@@ -327,23 +327,23 @@ void Component::Materialize()
             if (!slice) slice = Slice::_create(cell, layer);
             QuadTree* quadTree = slice->_getQuadTree();
             quadTree->Insert(this);
-            cell->_Fit(quadTree->getBoundingBox());
+            cell->_fit(quadTree->getBoundingBox());
         } else {
           //cerr << "[WARNING] " << this << " not inserted into QuadTree." << endl;
         }
     }
 }
 
-void Component::Unmaterialize()
+void Component::unmaterialize()
 // ****************************
 {
 // trace << "Unmaterializing " << this << endl;
 
-    if (IsMaterialized()) {
+    if (isMaterialized()) {
         Cell* cell = getCell();
         Slice* slice = cell->getSlice(getLayer());
         if (slice) {
-            cell->_Unfit(getBoundingBox());
+            cell->_unfit(getBoundingBox());
             slice->_getQuadTree()->Remove(this);
             if (slice->IsEmpty()) slice->_destroy();
         }
@@ -387,7 +387,7 @@ void Component::_preDestroy()
     set<Hook*> masterHookSet;
     componentSet.insert(this);
     for_each_component(component, getCollection(componentSet)) {
-        component->Unmaterialize();
+        component->unmaterialize();
         for_each_hook(hook, component->getHooks()) {
             for_each_hook(hook, hook->getHooks()) {
                 if (hook->IsMaster() && (componentSet.find(hook->getComponent()) == componentSet.end()))
@@ -464,7 +464,7 @@ Record* Component::_getRecord() const
     return record;
 }
 
-void Component::_SetNet(Net* net)
+void Component::_setNet(Net* net)
 // ******************************
 {
     if (net != _net) {
@@ -474,7 +474,7 @@ void Component::_SetNet(Net* net)
     }
 }
 
-void Component::_SetRubber(Rubber* rubber)
+void Component::_setRubber(Rubber* rubber)
 // ***************************************
 {
     if (rubber != _rubber) {

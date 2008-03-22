@@ -81,25 +81,25 @@ Box Cell::getBoundingBox() const
     return _boundingBox;
 }
 
-bool Cell::IsLeaf() const
+bool Cell::isLeaf() const
 // **********************
 {
     return _instanceMap.IsEmpty();
 }
 
-bool Cell::IsCalledBy(Cell* cell) const
+bool Cell::isCalledBy(Cell* cell) const
 // ************************************
 {
     for_each_instance(instance, cell->getInstances()) {
         Cell* masterCell = instance->getMasterCell();
         if (masterCell == this) return true;
-        if (IsCalledBy(masterCell)) return true;
+        if (isCalledBy(masterCell)) return true;
         end_for;
     }
     return false;
 }
 
-void Cell::SetName(const Name& name)
+void Cell::setName(const Name& name)
 // *********************************
 {
     if (name != _name) {
@@ -115,19 +115,19 @@ void Cell::SetName(const Name& name)
     }
 }
 
-void Cell::SetAbutmentBox(const Box& abutmentBox)
+void Cell::setAbutmentBox(const Box& abutmentBox)
 // **********************************************
 {
     if (abutmentBox != _abutmentBox) {
         if (!_abutmentBox.isEmpty() &&
              (abutmentBox.isEmpty() || !abutmentBox.contains(_abutmentBox)))
-            _Unfit(_abutmentBox);
+            _unfit(_abutmentBox);
         _abutmentBox = abutmentBox;
-        _Fit(_abutmentBox);
+        _fit(_abutmentBox);
     }
 }
 
-void Cell::FlattenNets(bool buildRings)
+void Cell::flattenNets(bool buildRings)
 // ************************************
 {
   OpenUpdateSession ();
@@ -157,7 +157,7 @@ void Cell::FlattenNets(bool buildRings)
 
       for_each_occurrence ( plugOccurrence, hyperNet.getLeafPlugOccurrences() ) {
         currentRP = createRoutingPad ( net, plugOccurrence );
-        currentRP->Materialize ();
+        currentRP->materialize ();
         if ( buildRings ) {
           if ( previousRP ) {
             currentRP->getBodyHook()->Attach ( previousRP->getBodyHook() );
@@ -196,20 +196,20 @@ void Cell::FlattenNets(bool buildRings)
   CloseUpdateSession ();
 }
 
-void Cell::Materialize()
+void Cell::materialize()
 // *********************
 {
-    for_each_instance(instance, getInstances()) instance->Materialize(); end_for;
-    for_each_net(net, getNets()) net->Materialize(); end_for;
-    for_each_marker(marker, getMarkers()) marker->Materialize(); end_for;
+    for_each_instance(instance, getInstances()) instance->materialize(); end_for;
+    for_each_net(net, getNets()) net->materialize(); end_for;
+    for_each_marker(marker, getMarkers()) marker->materialize(); end_for;
 }
 
-void Cell::Unmaterialize()
+void Cell::unmaterialize()
 // ***********************
 {
-    for_each_instance(instance, getInstances()) instance->Unmaterialize(); end_for;
-    for_each_net(net, getNets()) net->Unmaterialize(); end_for;
-    for_each_marker(marker, getMarkers()) marker->Unmaterialize(); end_for;
+    for_each_instance(instance, getInstances()) instance->unmaterialize(); end_for;
+    for_each_net(net, getNets()) net->unmaterialize(); end_for;
+    for_each_marker(marker, getMarkers()) marker->unmaterialize(); end_for;
 }
 
 void Cell::_postCreate()
@@ -263,13 +263,13 @@ Record* Cell::_getRecord() const
         record->Add(getSlot("Markers", &_markerSet));
         record->Add(getSlot("AbutmentBox", &_abutmentBox));
         record->Add(getSlot("BoundingBox", &_boundingBox));
-        record->Add(getSlot("IsTerminal", &_isTerminal));
-        record->Add(getSlot("IsFlattenLeaf", &_isFlattenLeaf));
+        record->Add(getSlot("isTerminal", &_isTerminal));
+        record->Add(getSlot("isFlattenLeaf", &_isFlattenLeaf));
     }
     return record;
 }
 
-void Cell::_Fit(const Box& box)
+void Cell::_fit(const Box& box)
 // ****************************
 {
     if (box.isEmpty()) return;
@@ -277,12 +277,12 @@ void Cell::_Fit(const Box& box)
     if (_boundingBox.contains(box)) return;
     _boundingBox.merge(box);
     for_each_instance(instance, getSlaveInstances()) {
-        instance->getCell()->_Fit(instance->getTransformation().getBox(box));
+        instance->getCell()->_fit(instance->getTransformation().getBox(box));
         end_for;
     }
 }
 
-void Cell::_Unfit(const Box& box)
+void Cell::_unfit(const Box& box)
 // ******************************
 {
     if (box.isEmpty()) return;
@@ -290,12 +290,12 @@ void Cell::_Unfit(const Box& box)
     if (!_boundingBox.isConstrainedBy(box)) return;
     _boundingBox.makeEmpty();
     for_each_instance(instance, getSlaveInstances()) {
-        instance->getCell()->_Unfit(instance->getTransformation().getBox(box));
+        instance->getCell()->_unfit(instance->getTransformation().getBox(box));
         end_for;
     }
 }
 
-void Cell::_AddSlaveEntity(Entity* entity, Entity* slaveEntity)
+void Cell::_addSlaveEntity(Entity* entity, Entity* slaveEntity)
 // ************************************************************************
 {
   assert(entity->getCell() == this);
@@ -303,7 +303,7 @@ void Cell::_AddSlaveEntity(Entity* entity, Entity* slaveEntity)
   _slaveEntityMap.insert(pair<Entity*,Entity*>(entity,slaveEntity));
 }
 
-void Cell::_RemoveSlaveEntity(Entity* entity, Entity* slaveEntity)
+void Cell::_removeSlaveEntity(Entity* entity, Entity* slaveEntity)
 // ***************************************************************************
 {
   assert(entity->getCell() == this);
@@ -361,10 +361,10 @@ Instance* Cell::InstanceMap::_getNextElement(Instance* instance) const
     return instance->_getNextOfCellInstanceMap();
 }
 
-void Cell::InstanceMap::_SetNextElement(Instance* instance, Instance* nextInstance) const
+void Cell::InstanceMap::_setNextElement(Instance* instance, Instance* nextInstance) const
 // **************************************************************************************
 {
-    instance->_SetNextOfCellInstanceMap(nextInstance);
+    instance->_setNextOfCellInstanceMap(nextInstance);
 }
 
 
@@ -391,10 +391,10 @@ Instance* Cell::SlaveInstanceSet::_getNextElement(Instance* slaveInstance) const
     return slaveInstance->_getNextOfCellSlaveInstanceSet();
 }
 
-void Cell::SlaveInstanceSet::_SetNextElement(Instance* slaveInstance, Instance* nextSlaveInstance) const
+void Cell::SlaveInstanceSet::_setNextElement(Instance* slaveInstance, Instance* nextSlaveInstance) const
 // ****************************************************************************************************
 {
-    slaveInstance->_SetNextOfCellSlaveInstanceSet(nextSlaveInstance);
+    slaveInstance->_setNextOfCellSlaveInstanceSet(nextSlaveInstance);
 }
 
 
@@ -427,10 +427,10 @@ Net* Cell::NetMap::_getNextElement(Net* net) const
     return net->_getNextOfCellNetMap();
 }
 
-void Cell::NetMap::_SetNextElement(Net* net, Net* nextNet) const
+void Cell::NetMap::_setNextElement(Net* net, Net* nextNet) const
 // *************************************************************
 {
-    net->_SetNextOfCellNetMap(nextNet);
+    net->_setNextOfCellNetMap(nextNet);
 }
 
 
@@ -462,10 +462,10 @@ Pin* Cell::PinMap::_getNextElement(Pin* pin) const
     return pin->_getNextOfCellPinMap();
 }
 
-void Cell::PinMap::_SetNextElement(Pin* pin, Pin* nextPin) const
+void Cell::PinMap::_setNextElement(Pin* pin, Pin* nextPin) const
 // *************************************************************
 {
-    pin->_SetNextOfCellPinMap(nextPin);
+    pin->_setNextOfCellPinMap(nextPin);
 }
 
 
@@ -497,10 +497,10 @@ Slice* Cell::SliceMap::_getNextElement(Slice* slice) const
     return slice->_getNextOfCellSliceMap();
 }
 
-void Cell::SliceMap::_SetNextElement(Slice* slice, Slice* nextSlice) const
+void Cell::SliceMap::_setNextElement(Slice* slice, Slice* nextSlice) const
 // ***********************************************************************
 {
-    slice->_SetNextOfCellSliceMap(nextSlice);
+    slice->_setNextOfCellSliceMap(nextSlice);
 };
 
 
@@ -527,10 +527,10 @@ Marker* Cell::MarkerSet::_getNextElement(Marker* marker) const
     return marker->_getNextOfCellMarkerSet();
 }
 
-void Cell::MarkerSet::_SetNextElement(Marker* marker, Marker* nextMarker) const
+void Cell::MarkerSet::_setNextElement(Marker* marker, Marker* nextMarker) const
 // ****************************************************************************
 {
-    marker->_SetNextOfCellMarkerSet(nextMarker);
+    marker->_setNextOfCellMarkerSet(nextMarker);
 }
 
 } // End of Hurricane namespace.

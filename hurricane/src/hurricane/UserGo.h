@@ -41,8 +41,8 @@ class UserGo : public Go {
 // Updators
 // ********
 
-    public: virtual void Materialize();
-    public: virtual void Unmaterialize();
+    public: virtual void materialize();
+    public: virtual void unmaterialize();
 
 // Others
 // ******

@@ -239,7 +239,7 @@ void QuadTree::Insert(Go* go)
     if (!go)
         throw Error("Can't insert go : null go");
 
-    if (!go->IsMaterialized()) {
+    if (!go->isMaterialized()) {
         Box boundingBox = go->getBoundingBox();
         QuadTree* child = _getDeepestChild(boundingBox);
         child->_goSet._Insert(go);
@@ -262,7 +262,7 @@ void QuadTree::Remove(Go* go)
     if (!go)
         throw Error("Can't remove go : null go");
 
-    if (go->IsMaterialized()) {
+    if (go->isMaterialized()) {
         Box boundingBox = go->getBoundingBox();
         QuadTree* child = go->_quadTree;
         child->_goSet._Remove(go);
@@ -523,10 +523,10 @@ Go* QuadTree::GoSet::_getNextElement(Go* go) const
     return go->_getNextOfQuadTreeGoSet();
 }
 
-void QuadTree::GoSet::_SetNextElement(Go* go, Go* nextGo) const
+void QuadTree::GoSet::_setNextElement(Go* go, Go* nextGo) const
 // ************************************************************
 {
-    go->_SetNextOfQuadTreeGoSet(nextGo);
+    go->_setNextOfQuadTreeGoSet(nextGo);
 }
 
 

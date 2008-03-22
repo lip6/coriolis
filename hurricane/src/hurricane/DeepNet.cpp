@@ -132,8 +132,8 @@ DeepNet* DeepNet::create ( HyperNet& hyperNet )
 
   Occurrence  rootNetOccurrence = getHyperNetRootNetOccurrence ( hyperNet.getNetOccurrence() );
 
-  if (  rootNetOccurrence.getMasterCell()->IsFlattenLeaf() ) return NULL;
-  if (  rootNetOccurrence.getPath().IsEmpty() )              return NULL;
+  if ( rootNetOccurrence.getMasterCell()->isFlattenLeaf() ) return NULL;
+  if ( rootNetOccurrence.getPath().IsEmpty() )              return NULL;
 
   DeepNet* deepNet = new DeepNet ( rootNetOccurrence );
   deepNet->_postCreate ();

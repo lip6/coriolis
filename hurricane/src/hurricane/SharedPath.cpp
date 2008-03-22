@@ -248,10 +248,10 @@ Quark* SharedPath::QuarkMap::_getNextElement(Quark* quark) const
     return quark->_getNextOfSharedPathQuarkMap();
 }
 
-void SharedPath::QuarkMap::_SetNextElement(Quark* quark, Quark* nextQuark) const
+void SharedPath::QuarkMap::_setNextElement(Quark* quark, Quark* nextQuark) const
 // *****************************************************************************
 {
-    quark->_SetNextOfSharedPathQuarkMap(nextQuark);
+    quark->_setNextOfSharedPathQuarkMap(nextQuark);
 }
 
 

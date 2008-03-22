@@ -976,7 +976,7 @@ void HyperNet_LeafPlugOccurrences::Locator::progress()
         _netOccurrenceLocator.progress();
         Net* net = (Net*)netOccurrence.getEntity();
         Path path = netOccurrence.getPath();
-        if (!path.IsEmpty() && net->getCell()->IsLeaf())
+        if (!path.IsEmpty() && net->getCell()->isLeaf())
         {
             Instance *instance = path.getTailInstance();
             Plug *plug=instance->getPlug(net);

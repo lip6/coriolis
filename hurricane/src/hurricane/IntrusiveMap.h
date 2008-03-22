@@ -237,7 +237,7 @@ template<class Key, class Element> class IntrusiveMap {
             Element* element = _array[index];
             while (element) {
                 _array[index] = _getNextElement(element);
-                _SetNextElement(element, NULL);
+                _setNextElement(element, NULL);
                 element = _array[index];
             }
             _array[index] = NULL;
@@ -292,11 +292,11 @@ template<class Key, class Element> class IntrusiveMap {
         return NULL;
     };
 
-    // public: virtual void _SetNextElement(Element* element, Element* nextElement) const = 0; // AD
-    public: virtual void _SetNextElement(Element* element, Element* nextElement) const
+    // public: virtual void _setNextElement(Element* element, Element* nextElement) const = 0; // AD
+    public: virtual void _setNextElement(Element* element, Element* nextElement) const
     // *******************************************************************************
     {
-        throw Error(_TName("IntrusiveMap") + "::_SetNextElement(...) : should be overrided");
+        throw Error(_TName("IntrusiveMap") + "::_setNextElement(...) : should be overrided");
     };
 
 // Others
@@ -373,7 +373,7 @@ template<class Key, class Element> class IntrusiveMap {
     {
         if (!_Contains(element)) {
             unsigned index = (_getHashValue(_getKey(element)) / 8) % _length;
-            _SetNextElement(element, _array[index]);
+            _setNextElement(element, _array[index]);
             _array[index] = element;
               _size++;
             _Resize();
@@ -389,15 +389,15 @@ template<class Key, class Element> class IntrusiveMap {
             if (currentElement) {
                 if (currentElement == element) {
                     _array[index] = _getNextElement(element);
-                    _SetNextElement(element, NULL);
+                    _setNextElement(element, NULL);
                     _size--;
                 }
                 else {
                     while (_getNextElement(currentElement) && (_getNextElement(currentElement) != element))
                         currentElement = _getNextElement(currentElement);
                     if (currentElement && (_getNextElement(currentElement) == element)) {
-                        _SetNextElement(currentElement, _getNextElement(element));
-                        _SetNextElement(element, NULL);
+                        _setNextElement(currentElement, _getNextElement(element));
+                        _setNextElement(element, NULL);
                         _size--;
                     }
                 }
@@ -427,7 +427,7 @@ template<class Key, class Element> class IntrusiveMap {
                 while (element) {
                     Element* nextElement = _getNextElement(element);
                     unsigned newIndex = (_getHashValue(_getKey(element)) / 8) % _length;
-                    _SetNextElement(element, _array[newIndex]);
+                    _setNextElement(element, _array[newIndex]);
                     _array[newIndex] = element;
                     element = nextElement;
                 }

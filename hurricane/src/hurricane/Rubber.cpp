@@ -93,28 +93,28 @@ Box Rubber::getBoundingBox() const
 Hooks Rubber::getHooks() const
 // ***************************
 {
-        return (_hook) ? _hook->getHooks().getSubSet(Hook::getIsMasterFilter()) : Hooks();
+    return (_hook) ? _hook->getHooks().getSubSet(Hook::getIsMasterFilter()) : Hooks();
 }
 
-void Rubber::Materialize()
+void Rubber::materialize()
 // ***********************
 {
-        if (!IsMaterialized()) {
-                Cell* cell = getCell();
-                QuadTree* quadTree = cell->_getQuadTree();
-                quadTree->Insert(this);
-                cell->_Fit(quadTree->getBoundingBox());
-        }
+    if (!isMaterialized()) {
+        Cell* cell = getCell();
+        QuadTree* quadTree = cell->_getQuadTree();
+        quadTree->Insert(this);
+        cell->_fit(quadTree->getBoundingBox());
+    }
 }
 
-void Rubber::Unmaterialize()
+void Rubber::unmaterialize()
 // *************************
 {
-        if (IsMaterialized()) {
-                Cell* cell = getCell();
-                cell->_Unfit(getBoundingBox());
-                cell->_getQuadTree()->Remove(this);
-        }
+    if (isMaterialized()) {
+        Cell* cell = getCell();
+        cell->_unfit(getBoundingBox());
+        cell->_getQuadTree()->Remove(this);
+    }
 }
 
 void Rubber::Translate(const Unit& dx, const Unit& dy)
@@ -149,7 +149,7 @@ void Rubber::_postCreate()
         _net->_getRubberSet()._Insert(this);
 
         for_each_hook(hook, getHooks()) {
-                hook->getComponent()->_SetRubber(this);
+                hook->getComponent()->_setRubber(this);
                 end_for;
         }
 
@@ -175,7 +175,7 @@ void Rubber::_preDestroy()
         _count = (unsigned)-1; // to avoid a new destruction
 
         for_each_hook(hook, getHooks()) {
-                hook->getComponent()->_SetRubber(NULL);
+                hook->getComponent()->_setRubber(NULL);
                 end_for;
         }
 
@@ -207,7 +207,7 @@ Record* Rubber::_getRecord() const
         return record;
 }
 
-void Rubber::_SetNet(Net* net)
+void Rubber::_setNet(Net* net)
 // ***************************
 {
         if (net != _net) {
@@ -217,7 +217,7 @@ void Rubber::_SetNet(Net* net)
         }
 }
 
-void Rubber::_SetHook(Hook* hook)
+void Rubber::_setHook(Hook* hook)
 // ******************************
 {
         assert(hook->IsMaster());

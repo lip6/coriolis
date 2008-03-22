@@ -87,7 +87,7 @@ void Library::_postCreate()
 // ************************
 {
     if (!_library)
-        _dataBase->_SetRootLibrary(this);
+        _dataBase->_setRootLibrary(this);
     else
         _library->_getLibraryMap()._Insert(this);
 
@@ -103,7 +103,7 @@ void Library::_preDestroy()
     for_each_library(library, getLibraries()) library->destroy(); end_for;
 
     if (!_library)
-        _dataBase->_SetRootLibrary(NULL);
+        _dataBase->_setRootLibrary(NULL);
     else
         _library->_getLibraryMap()._Remove(this);
 }
@@ -159,10 +159,10 @@ Library* Library::LibraryMap::_getNextElement(Library* library) const
     return library->_getNextOfLibraryLibraryMap();
 }
 
-void Library::LibraryMap::_SetNextElement(Library* library, Library* nextLibrary) const
+void Library::LibraryMap::_setNextElement(Library* library, Library* nextLibrary) const
 // ************************************************************************************
 {
-    library->_SetNextOfLibraryLibraryMap(nextLibrary);
+    library->_setNextOfLibraryLibraryMap(nextLibrary);
 };
 
 
@@ -195,10 +195,10 @@ Cell* Library::CellMap::_getNextElement(Cell* cell) const
     return cell->_getNextOfLibraryCellMap();
 }
 
-void Library::CellMap::_SetNextElement(Cell* cell, Cell* nextCell) const
+void Library::CellMap::_setNextElement(Cell* cell, Cell* nextCell) const
 // *********************************************************************
 {
-    cell->_SetNextOfLibraryCellMap(nextCell);
+    cell->_setNextOfLibraryCellMap(nextCell);
 };
 
 

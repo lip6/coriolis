@@ -283,7 +283,7 @@ void Region_Tile::SplitVertical(Region* region, const Unit& x)
 
         _boundingBox = Box(getXMin(), getYMin(), x, getYMax());
 
-        if (region->_getBottomRightTile() == this) region->_SetBottomRightTile(newTile);
+        if (region->_getBottomRightTile() == this) region->_setBottomRightTile(newTile);
     }
 }
 
@@ -324,7 +324,7 @@ void Region_Tile::SplitHorizontal(Region* region, const Unit& y)
 
         _boundingBox = Box(getXMin(), getYMin(), getXMax(), y);
 
-        if (region->_getTopLeftTile() == this) region->_SetTopLeftTile(newTile);
+        if (region->_getTopLeftTile() == this) region->_setTopLeftTile(newTile);
     }
 }
 
@@ -363,7 +363,7 @@ bool Region_Tile::MergeLeftTile(Region* region)
 
     _boundingBox.merge(uselessTile->_boundingBox);
 
-    if (region->_getTopLeftTile() == uselessTile) region->_SetTopLeftTile(this);
+    if (region->_getTopLeftTile() == uselessTile) region->_setTopLeftTile(this);
 
     delete uselessTile;
 
@@ -405,7 +405,7 @@ bool Region_Tile::MergeBottomTile(Region* region)
 
     _boundingBox.merge(uselessTile->_boundingBox);
 
-    if (region->_getBottomRightTile() == uselessTile) region->_SetBottomRightTile(this);
+    if (region->_getBottomRightTile() == uselessTile) region->_setBottomRightTile(this);
 
     delete uselessTile;
 
@@ -447,7 +447,7 @@ bool Region_Tile::MergeTopTile(Region* region)
 
     _boundingBox.merge(uselessTile->_boundingBox);
 
-    if (region->_getTopLeftTile() == uselessTile) region->_SetTopLeftTile(this);
+    if (region->_getTopLeftTile() == uselessTile) region->_setTopLeftTile(this);
 
     delete uselessTile;
 
@@ -489,7 +489,7 @@ bool Region_Tile::MergeRightTile(Region* region)
 
     _boundingBox.merge(uselessTile->_boundingBox);
 
-    if (region->_getBottomRightTile() == uselessTile) region->_SetBottomRightTile(this);
+    if (region->_getBottomRightTile() == uselessTile) region->_setBottomRightTile(this);
 
     delete uselessTile;
 

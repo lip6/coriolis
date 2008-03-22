@@ -535,18 +535,18 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_SetName ()"
+  // Attribute Method  :  "PyCell_setName ()"
 
-  static PyObject* PyCell_SetName ( PyCell *self, PyObject* args )
+  static PyObject* PyCell_setName ( PyCell *self, PyObject* args )
   {
-    trace << "Cell.SetName()" << endl;
+    trace << "Cell.setName()" << endl;
 
     HTRY
-    METHOD_HEAD ( "Cell.SetName()" )
+    METHOD_HEAD ( "Cell.setName()" )
 
     PyName* name;
-    if ( ! ParseOneArg ( "Cell.SetName", args, NAME_ARG, (PyObject**)&name ) ) return ( NULL );
-    cell->SetName ( *PYNAME_O(name) );
+    if ( ! ParseOneArg ( "Cell.setName", args, NAME_ARG, (PyObject**)&name ) ) return ( NULL );
+    cell->setName ( *PYNAME_O(name) );
     HCATCH
 
     Py_RETURN_NONE;
@@ -554,17 +554,17 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_SetAbutmentBox ()"
+  // Attribute Method  :  "PyCell_setAbutmentBox ()"
 
-  static PyObject* PyCell_SetAbutmentBox ( PyCell *self, PyObject* args ) {
-    trace << "Cell.SetAbutmentBox()" << endl;
+  static PyObject* PyCell_setAbutmentBox ( PyCell *self, PyObject* args ) {
+    trace << "Cell.setAbutmentBox()" << endl;
 
     HTRY
-    METHOD_HEAD ( "Cell.SetAbutmentBox()" )
+    METHOD_HEAD ( "Cell.setAbutmentBox()" )
 
     PyBox* abutmentBox;
-    if ( ! ParseOneArg ( "Cell.SetAbutmentBox", args, BOX_ARG, (PyObject**)&abutmentBox ) ) return ( NULL );
-    cell->SetAbutmentBox ( *PYBOX_O(abutmentBox) );
+    if ( ! ParseOneArg ( "Cell.setAbutmentBox", args, BOX_ARG, (PyObject**)&abutmentBox ) ) return ( NULL );
+    cell->setAbutmentBox ( *PYBOX_O(abutmentBox) );
     HCATCH
 
     Py_RETURN_NONE;
@@ -572,17 +572,17 @@ extern "C" {
   
   
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_SetTerminal ()"
+  // Attribute Method  :  "PyCell_setTerminal ()"
 
-  static PyObject* PyCell_SetTerminal ( PyCell *self, PyObject* args ) {
-    trace << "PyCell_SetTerminal ()" << endl;
+  static PyObject* PyCell_setTerminal ( PyCell *self, PyObject* args ) {
+    trace << "PyCell_setTerminal ()" << endl;
 
     HTRY
-    METHOD_HEAD ( "Cell.SetTerminal()" )
+    METHOD_HEAD ( "Cell.setTerminal()" )
 
     PyObject* arg0;
-    if ( ! ParseOneArg ( "Cell.SetTerminal", args, INT_ARG, (PyObject**)&arg0 ) ) return ( NULL );
-    cell->SetTerminal ( PyInt_AsLong(arg0) != 0 );
+    if ( ! ParseOneArg ( "Cell.setTerminal", args, INT_ARG, (PyObject**)&arg0 ) ) return ( NULL );
+    cell->setTerminal ( PyInt_AsLong(arg0) != 0 );
     HCATCH
 
     Py_RETURN_NONE;
@@ -590,10 +590,10 @@ extern "C" {
 
 
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PyCell_IsTerminal, IsTerminal ,PyCell,Cell)
-  DirectGetBoolAttribute(PyCell_IsLeaf,         IsLeaf ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isTerminal, isTerminal ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isLeaf,         isLeaf ,PyCell,Cell)
 
-  GetBoundStateAttribute(PyCell_IsPyBound              ,PyCell,Cell)
+  GetBoundStateAttribute(PyCell_isPyBound              ,PyCell,Cell)
 
   // ---------------------------------------------------------------
   // PyCell Attribute Method table.
@@ -613,28 +613,19 @@ extern "C" {
     , { "getHyperNetsLocator"       , (PyCFunction)PyCell_getHyperNetsLocator       , METH_VARARGS, "Returns the collection of all hyperNets belonging to the cell." }
     , { "getNet"              , (PyCFunction)PyCell_getNet              , METH_VARARGS, "Returns the net of name <name> if it exists, else NULL." }
     , { "getNetsLocator"      , (PyCFunction)PyCell_getNetsLocator      , METH_NOARGS , "Returns the collection of all nets of the cell." }
-    //, { "getGlobalNets"       , (PyCFunction)PyCell_getGlobalNets       , METH_NOARGS , "Returns the collection of all global nets of the cell." }
     , { "getExternalNetsLocator", (PyCFunction)PyCell_getExternalNetsLocator, METH_NOARGS , "Returns the collection of all external nets of the cell." }
-    //, { "getInternalNets"     , (PyCFunction)PyCell_getInternalNets     , METH_NOARGS , "Returns the collection of all internal nets of the cell." }
     , { "getClockNetsLocator" , (PyCFunction)PyCell_getClockNetsLocator , METH_NOARGS , "Returns the collection of all clock nets of the cell." }
     , { "getSupplyNetsLocator", (PyCFunction)PyCell_getSupplyNetsLocator, METH_NOARGS , "Returns the collection of all supply nets of the cell." }
     , { "getPowerNetsLocator" , (PyCFunction)PyCell_getPowerNetsLocator , METH_NOARGS , "Returns the collection of all power nets of the cell." }
     , { "getGroundNetsLocator", (PyCFunction)PyCell_getGroundNetsLocator, METH_NOARGS , "Returns the collection of all ground nets of the cell." }
-    //, { "getComponents"       , (PyCFunction)PyCell_getComponents       , METH_NOARGS , "Returns the collection of all components of the cell." }
-    //, { "getComponentsUnder"  , (PyCFunction)PyCell_getComponentsUnder  , METH_VARARGS, "Returns the collection of cell components which intersect the given rectangular area." }
     , { "getAbutmentBox"      , (PyCFunction)PyCell_getAbutmentBox      , METH_NOARGS , "Returns the abutment box of the cell(which is defined by the designer unlike the bounding box which is managed dynamically)" }
-    //, { "getSymbol"           , (PyCFunction)PyCell_getSymbol           , METH_NOARGS , "Returns the symbol associated to the cell." }
-    //, { "IsCalledBy"          , (PyCFunction)PyCell_IsCalledBy          , METH_VARARGS, "Returns true if the cell <this> is directly or indirectly called by the cell <cell>." }
-    , { "IsTerminal"          , (PyCFunction)PyCell_IsTerminal          , METH_NOARGS , "Returns true if the cell is marked as terminal, else false." }
-    , { "IsLeaf"              , (PyCFunction)PyCell_IsLeaf              , METH_NOARGS , "Returns true if the cell is a leaf of the hierarchy, else false." }
-    , { "IsBound"             , (PyCFunction)PyCell_IsPyBound           , METH_NOARGS, "Returns true if the cell is bounded to the hurricane cell" }    
-    , { "SetName"             , (PyCFunction)PyCell_SetName             , METH_VARARGS, "Allows to change the cell name." }
-    , { "SetAbutmentBox"      , (PyCFunction)PyCell_SetAbutmentBox      , METH_VARARGS, "Sets the cell abutment box." }
-    , { "SetTerminal"         , (PyCFunction)PyCell_SetTerminal         , METH_VARARGS, "Sets the cell terminal status." }
-    //, { "SetSymbol"           , (PyCFunction)PyCell_SetSymbol           , METH_VARARGS, "Associates the symbol <symbol> to the cell." }
-    //, { "Materialize"         , (PyCFunction)PyCell_Materialize         , METH_NOARGS , "Materializes all components of all the nets of the cell." }
-    //, { "Unmaterialize"       , (PyCFunction)PyCell_Unmaterialize       , METH_NOARGS , "De-materializes all components of all the nets of the cell." }
-    , { "destroy"               , (PyCFunction)PyCell_destroy             , METH_NOARGS
+    , { "isTerminal"          , (PyCFunction)PyCell_isTerminal          , METH_NOARGS , "Returns true if the cell is marked as terminal, else false." }
+    , { "isLeaf"              , (PyCFunction)PyCell_isLeaf              , METH_NOARGS , "Returns true if the cell is a leaf of the hierarchy, else false." }
+    , { "isBound"             , (PyCFunction)PyCell_isPyBound           , METH_NOARGS, "Returns true if the cell is bounded to the hurricane cell" }    
+    , { "setName"             , (PyCFunction)PyCell_setName             , METH_VARARGS, "Allows to change the cell name." }
+    , { "setAbutmentBox"      , (PyCFunction)PyCell_setAbutmentBox      , METH_VARARGS, "Sets the cell abutment box." }
+    , { "setTerminal"         , (PyCFunction)PyCell_setTerminal         , METH_VARARGS, "Sets the cell terminal status." }
+    , { "destroy"             , (PyCFunction)PyCell_destroy             , METH_NOARGS
                               , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
@@ -714,5 +705,3 @@ extern "C" {
 
 
 }  // End of Isobar namespace.
- 
-

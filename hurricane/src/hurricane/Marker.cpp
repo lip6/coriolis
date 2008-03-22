@@ -27,23 +27,23 @@ Marker::Marker(Cell* cell)
         throw Error("Can't create " + _TName("Marker") + " : null cell");
 }
 
-void Marker::Materialize()
+void Marker::materialize()
 // ***********************
 {
-    if (!IsMaterialized()) {
+    if (!isMaterialized()) {
         Cell* cell = getCell();
         QuadTree* quadTree = cell->_getQuadTree();
         quadTree->Insert(this);
-        cell->_Fit(quadTree->getBoundingBox());
+        cell->_fit(quadTree->getBoundingBox());
     }
 }
 
-void Marker::Unmaterialize()
+void Marker::unmaterialize()
 // *************************
 {
-    if (IsMaterialized()) {
+    if (isMaterialized()) {
         Cell* cell = getCell();
-        cell->_Unfit(getBoundingBox());
+        cell->_unfit(getBoundingBox());
         cell->_getQuadTree()->Remove(this);
     }
 }

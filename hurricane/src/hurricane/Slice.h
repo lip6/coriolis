@@ -83,7 +83,7 @@ class Slice {
     public: QuadTree* _getQuadTree() {return &_quadTree;};
     public: Slice* _getNextOfCellSliceMap() const {return _nextOfCellSliceMap;};
 
-    public: void _SetNextOfCellSliceMap(Slice* slice) {_nextOfCellSliceMap = slice;};
+    public: void _setNextOfCellSliceMap(Slice* slice) {_nextOfCellSliceMap = slice;};
 
 };
 

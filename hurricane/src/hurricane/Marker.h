@@ -45,8 +45,8 @@ class Marker : public Go {
 // Updators
 // ********
 
-    public: virtual void Materialize();
-    public: virtual void Unmaterialize();
+    public: virtual void materialize();
+    public: virtual void unmaterialize();
 
 // Others
 // ******
@@ -60,7 +60,7 @@ class Marker : public Go {
 
     public: Marker* _getNextOfCellMarkerSet() const {return _nextOfCellMarkerSet;};
 
-    public: void _SetNextOfCellMarkerSet(Marker* marker) {_nextOfCellMarkerSet = marker;};
+    public: void _setNextOfCellMarkerSet(Marker* marker) {_nextOfCellMarkerSet = marker;};
 
 };
 

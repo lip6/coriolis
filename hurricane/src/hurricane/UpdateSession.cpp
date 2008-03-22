@@ -76,7 +76,7 @@ void UpdateSession::_preDestroy()
     UPDATOR_STACK->pop();
 
     for_each_dbo(owner, getOwners()) {
-        if (is_a<Go*>(owner)) ((Go*)owner)->Materialize();
+        if (is_a<Go*>(owner)) ((Go*)owner)->materialize();
         end_for;
     }
 
@@ -142,8 +142,8 @@ void Go::Invalidate(bool propagateFlag)
           if (go) go->Invalidate(propagateFlag);
         }
 
-        if (IsMaterialized()) {
-            Unmaterialize();
+        if (isMaterialized()) {
+            unmaterialize();
             put(UPDATOR_STACK->top());
         }
     }

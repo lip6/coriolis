@@ -48,7 +48,7 @@ void Go::_postCreate()
 {
     Inherit::_postCreate();
 
-    if (!AutoMaterializationIsDisabled()) Materialize(); // materialized after entire post creation
+    if (!AutoMaterializationIsDisabled()) materialize(); // materialized after entire post creation
 }
 
 void Go::_preDestroy()
@@ -57,7 +57,7 @@ void Go::_preDestroy()
 // trace << "entering Go::_preDestroy: " << this << endl;
 // trace_in();
 
-    Unmaterialize(); // unmaterialized before starting pre destruction
+    unmaterialize(); // unmaterialized before starting pre destruction
 
     Inherit::_preDestroy();
 

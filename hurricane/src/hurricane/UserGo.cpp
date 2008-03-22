@@ -95,22 +95,22 @@ UserGo::UserGo(DisplaySlot* displaySlot)
         throw Error("Can't Create " + _TName("UserGo") + " null displaySlot");
 }
 
-void UserGo::Materialize()
+void UserGo::materialize()
 // ***********************
 {
-    if (!IsMaterialized()) {
+    if (!isMaterialized()) {
         QuadTree& quadTree = _displaySlot->_getQuadTree();
         quadTree.Insert(this);
-        getCell()->_Fit(quadTree.getBoundingBox());
+        getCell()->_fit(quadTree.getBoundingBox());
     }
 }
 
-void UserGo::Unmaterialize()
+void UserGo::unmaterialize()
 // *************************
 {
-    if (IsMaterialized()) {
+    if (isMaterialized()) {
         QuadTree& quadTree = _displaySlot->_getQuadTree();
-        getCell()->_Unfit(getBoundingBox());
+        getCell()->_unfit(getBoundingBox());
         quadTree.Remove(this);
     }
 }

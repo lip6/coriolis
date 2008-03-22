@@ -64,8 +64,8 @@ class Rubber : public Go {
 // Updators
 // ********
 
-        public: virtual void Materialize();
-        public: virtual void Unmaterialize();
+        public: virtual void materialize();
+        public: virtual void unmaterialize();
         public: virtual void Translate(const Unit& dx, const Unit& dy);
         public: virtual void Invalidate(bool propagateFlag = true);
 
@@ -83,9 +83,9 @@ class Rubber : public Go {
         public: virtual Record* _getRecord() const;
         public: Rubber* _getNextOfNetRubberSet() const {return _nextOfNetRubberSet;};
 
-        public: void _SetNet(Net* net);
-        public: void _SetHook(Hook* hook);
-        public: void _SetNextOfNetRubberSet(Rubber* rubber) {_nextOfNetRubberSet = rubber;};
+        public: void _setNet(Net* net);
+        public: void _setHook(Hook* hook);
+        public: void _setNextOfNetRubberSet(Rubber* rubber) {_nextOfNetRubberSet = rubber;};
 
         public: void _Capture();
         public: void _Release();

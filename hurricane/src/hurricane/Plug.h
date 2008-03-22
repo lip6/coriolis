@@ -77,8 +77,8 @@ class Plug : public Component {
 
     public: void SetNet(Net* net);
 
-    public: virtual void Materialize();
-    public: virtual void Unmaterialize();
+    public: virtual void materialize() {};
+    public: virtual void unmaterialize() {};
 
 // Others
 // ******
@@ -95,8 +95,8 @@ class Plug : public Component {
     public: virtual Record* _getRecord() const;
     public: Plug* _getNextOfInstancePlugMap() const {return _nextOfInstancePlugMap;};
 
-    public: virtual void _SetMasterNet(Net* masterNet) {_masterNet = masterNet;};
-    public: void _SetNextOfInstancePlugMap(Plug* plug) {_nextOfInstancePlugMap = plug;};
+    public: virtual void _setMasterNet(Net* masterNet) {_masterNet = masterNet;};
+    public: void _setNextOfInstancePlugMap(Plug* plug) {_nextOfInstancePlugMap = plug;};
 
 };
 

@@ -178,7 +178,7 @@ Instance::Instance(Cell* cell, const Name& name, Cell* masterCell, const Transfo
     if (!_masterCell)
         throw Error("Can't create " + _TName("Instance") + " : null master cell");
 
-    if (secureFlag && _cell->IsCalledBy(_masterCell))
+    if (secureFlag && _cell->isCalledBy(_masterCell))
         throw Error("Can't create " + _TName("Instance") + " : cyclic construction");
 }
 
@@ -237,13 +237,13 @@ Box Instance::getAbutmentBox() const
 bool Instance::IsTerminal() const
 // ******************************
 {
-    return getMasterCell()->IsTerminal();
+    return getMasterCell()->isTerminal();
 }
 
 bool Instance::IsLeaf() const
 // **************************
 {
-    return getMasterCell()->IsLeaf();
+    return getMasterCell()->isLeaf();
 }
 
 InstanceFilter Instance::getIsUnderFilter(const Box& area)
@@ -288,24 +288,24 @@ InstanceFilter Instance::getIsNotUnplacedFilter()
     return !Instance_IsUnplacedFilter();
 }
 
-void Instance::Materialize()
+void Instance::materialize()
 // *************************
 {
-    if (!IsMaterialized()) {
+    if (!isMaterialized()) {
         Box boundingBox = getBoundingBox();
         if (!boundingBox.isEmpty()) {
             QuadTree* quadTree = _cell->_getQuadTree();
             quadTree->Insert(this);
-            _cell->_Fit(quadTree->getBoundingBox());
+            _cell->_fit(quadTree->getBoundingBox());
         }
     }
 }
 
-void Instance::Unmaterialize()
+void Instance::unmaterialize()
 // ***************************
 {
-    if (IsMaterialized()) {
-        _cell->_Unfit(getBoundingBox());
+    if (isMaterialized()) {
+        _cell->_unfit(getBoundingBox());
         _cell->_getQuadTree()->Remove(this);
     }
 }
@@ -377,7 +377,7 @@ void Instance::SetMasterCell(Cell* masterCell, bool secureFlag)
         if (!masterCell)
             throw Error("Can't set master : null master cell");
 
-        if (secureFlag && _cell->IsCalledBy(masterCell))
+        if (secureFlag && _cell->isCalledBy(masterCell))
             throw Error("Can't set master : cyclic construction");
 
         list<Plug*> connectedPlugList;
@@ -409,7 +409,7 @@ void Instance::SetMasterCell(Cell* masterCell, bool secureFlag)
             Plug* plug = connectedPlugList.front();
             Net* masterNet = masterNetList.front();
             _plugMap._Remove(plug);
-            plug->_SetMasterNet(masterNet);
+            plug->_setMasterNet(masterNet);
             _plugMap._Insert(plug);
             connectedPlugList.pop_front();
             masterNetList.pop_front();
@@ -622,10 +622,10 @@ Plug* Instance::PlugMap::_getNextElement(Plug* plug) const
     return plug->_getNextOfInstancePlugMap();
 }
 
-void Instance::PlugMap::_SetNextElement(Plug* plug, Plug* nextPlug) const
+void Instance::PlugMap::_setNextElement(Plug* plug, Plug* nextPlug) const
 // **********************************************************************
 {
-    plug->_SetNextOfInstancePlugMap(nextPlug);
+    plug->_setNextOfInstancePlugMap(nextPlug);
 }
 
 
@@ -658,10 +658,10 @@ SharedPath* Instance::SharedPathMap::_getNextElement(SharedPath* sharedPath) con
     return sharedPath->_getNextOfInstanceSharedPathMap();
 }
 
-void Instance::SharedPathMap::_SetNextElement(SharedPath* sharedPath, SharedPath* nextSharedPath) const
+void Instance::SharedPathMap::_setNextElement(SharedPath* sharedPath, SharedPath* nextSharedPath) const
 // ****************************************************************************************************
 {
-    sharedPath->_SetNextOfInstanceSharedPathMap(nextSharedPath);
+    sharedPath->_setNextOfInstanceSharedPathMap(nextSharedPath);
 };
 
 // ****************************************************************************************************

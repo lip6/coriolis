@@ -53,8 +53,8 @@ class DataBase : public DBo {
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
 
-    public: void _SetTechnology(Technology* technology) {_technology = technology;};
-    public: void _SetRootLibrary(Library* rootLibrary) {_rootLibrary = rootLibrary;};
+    public: void _setTechnology(Technology* technology) {_technology = technology;};
+    public: void _setRootLibrary(Library* rootLibrary) {_rootLibrary = rootLibrary;};
 
 #   endif
 

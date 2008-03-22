@@ -118,16 +118,6 @@ PlugFilter Plug::getIsUnconnectedFilter()
     return !Plug_IsConnectedFilter();
 }
 
-void Plug::Materialize()
-// *********************
-{
-}
-
-void Plug::Unmaterialize()
-// ***********************
-{
-}
-
 void Plug::SetNet(Net* net)
 // ************************
 {
@@ -139,7 +129,7 @@ void Plug::SetNet(Net* net)
         if (!getBodyHook()->getSlaveHooks().IsEmpty())
             throw Error("Can't change net of plug : not empty slave hooks");
 
-        _SetNet(net);
+        _setNet(net);
     }
 }
 

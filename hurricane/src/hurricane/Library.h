@@ -40,7 +40,7 @@ class Library : public DBo {
         public: virtual Name _getKey(Library* library) const;
         public: virtual unsigned _getHashValue(Name name) const;
         public: virtual Library* _getNextElement(Library* library) const;
-        public: virtual void _SetNextElement(Library* library, Library* nextLibrary) const;
+        public: virtual void _setNextElement(Library* library, Library* nextLibrary) const;
 
     };
 
@@ -54,7 +54,7 @@ class Library : public DBo {
         public: virtual Name _getKey(Cell* cell) const;
         public: virtual unsigned _getHashValue(Name name) const;
         public: virtual Cell* _getNextElement(Cell* cell) const;
-        public: virtual void _SetNextElement(Cell* cell, Cell* nextCell) const;
+        public: virtual void _setNextElement(Cell* cell, Cell* nextCell) const;
 
     };
 
@@ -106,7 +106,7 @@ class Library : public DBo {
     public: CellMap& _getCellMap() {return _cellMap;};
     public: Library* _getNextOfLibraryLibraryMap() const {return _nextOfLibraryLibraryMap;};
 
-    public: void _SetNextOfLibraryLibraryMap(Library* library) {_nextOfLibraryLibraryMap = library;};
+    public: void _setNextOfLibraryLibraryMap(Library* library) {_nextOfLibraryLibraryMap = library;};
 
 };
 
