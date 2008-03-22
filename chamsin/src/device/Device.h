@@ -82,7 +82,7 @@ class Device : public Cell {
     // Description of Layout
     // **********************
     public: void _Place(Instance* ins, const Transformation::Orientation& orientation, const Point& point); 
-    public: void _SetRefIns(Instance*) const;
+    public: void _setRefIns(Instance*) const;
     public: void _PlaceRight(Instance* ins, const Transformation::Orientation& orientation, const Point& offset=Point());
    
 

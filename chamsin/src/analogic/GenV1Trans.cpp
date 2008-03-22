@@ -493,7 +493,7 @@ END_IF
   switch(transistor->getAbutmentType().getCode()) {
 
     case Transistor::Type::INTERNAL : 
-        transistor->SetAbutmentBox( Box(GET_BOX(string("20")).getXCenter() 
+        transistor->setAbutmentBox( Box(GET_BOX(string("20")).getXCenter() 
        	                             , transistor->getBoundingBox().getYMin()
        	   			     , GET_BOX(string("40")).getXCenter()
        	   			     , transistor->getBoundingBox().getYMax()
@@ -502,7 +502,7 @@ END_IF
 	break; 
 
     case Transistor::Type::LEFT: 
-        transistor->SetAbutmentBox( Box(GET_BOX(string("11")).getXMin() 
+        transistor->setAbutmentBox( Box(GET_BOX(string("11")).getXMin() 
        	                              , transistor->getBoundingBox().getYMin()
        	   			      , GET_BOX(string("40")).getXCenter()
        	   			      , transistor->getBoundingBox().getYMax()
@@ -511,7 +511,7 @@ END_IF
 	break ;
      
     case Transistor::Type::RIGHT: 
-        transistor->SetAbutmentBox( Box(GET_BOX(string("20")).getXCenter() 
+        transistor->setAbutmentBox( Box(GET_BOX(string("20")).getXCenter() 
        	                              , transistor->getBoundingBox().getYMin()
        	   			      , GET_BOX(string("11")).getXMax()
        	   			      , transistor->getBoundingBox().getYMax()
@@ -520,7 +520,7 @@ END_IF
 	break ;
 
     case Transistor::Type::SINGLE: 
-        transistor->SetAbutmentBox( Box(GET_BOX(string("11")).getXMin() 
+        transistor->setAbutmentBox( Box(GET_BOX(string("11")).getXMin() 
        	                              , transistor->getBoundingBox().getYMin()
        	   			      , GET_BOX(string("11")).getXMax()
        	   			      , transistor->getBoundingBox().getYMax()

@@ -33,7 +33,7 @@ static void getAllCells(Cell* cell)
 {
    cellSet.insert(cell);
    
-   if(!(cell->IsLeaf())){
+   if(!(cell->isLeaf())){
        for_each_instance(instance, cell->getInstances())
 	 Cell * mastercell = instance->getMasterCell();
          getAllCells(mastercell); 
@@ -131,7 +131,7 @@ void Device::_Place(Instance* ins, const Transformation::Orientation& orientatio
 }
 
 
-void Device::_SetRefIns(Instance* ins) const
+void Device::_setRefIns(Instance* ins) const
 // *****************************************
 {
    if(!ins) {

@@ -304,7 +304,7 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
    // Call function CreateLayout of MetaTransistor to launch the generator of finger.
    // *******************************************************************************
 
-   SetTerminal(false);
+   setTerminal(false);
 //
 //   IF_DEBUG_HUR_ANALOG
 //   cout << endl;
@@ -331,8 +331,8 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
 
    for_each_instance(instance, getInstances())
     //instance->SetTransformation(instance->getTransformation());      
-    instance->Unmaterialize();      
-    instance->Materialize();      
+    instance->unmaterialize();      
+    instance->materialize();      
 
 IF_DEBUG_HUR_ANALOG
     cout << ts << getString(instance) <<" 's boundingBox is " << getString(instance->getBoundingBox())<<endl;
@@ -346,7 +346,7 @@ IF_DEBUG_HUR_ANALOG
    cout << ts << getString(this) << " 's primary (without wire) boundingBox is " << getString(getBoundingBox()) <<endl;
 END_IF
 
-   Materialize();
+   materialize();
 
 IF_DEBUG_HUR_ANALOG
    cout << ts << getString(this) << " 's boundingBox is " << getString(getBoundingBox()) <<endl;

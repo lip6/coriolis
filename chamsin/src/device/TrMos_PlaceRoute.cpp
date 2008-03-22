@@ -143,7 +143,7 @@ void TrMos::_PlaceAndRoute()
      else
        _Place( leftins, Transformation::Orientation::MX, Point(horizontalMargin, verticalLowMargin) );
 
-     _SetRefIns(leftins);
+     _setRefIns(leftins);
 
      if(_sourceIsFirst)  // internal Finger's transformation. 
         internalTransCode = Transformation::Orientation::MX; 
@@ -186,8 +186,8 @@ void TrMos::_PlaceAndRoute()
    // Set AbutmentBox.
    // ****************
    for_each_instance(instance, getInstances())
-    instance->Unmaterialize();      
-    instance->Materialize();      
+    instance->unmaterialize();      
+    instance->materialize();      
    end_for
 
    OpenUpdateSession();
@@ -195,7 +195,7 @@ void TrMos::_PlaceAndRoute()
 
    cout <<"Bounding box of TrMos is "<<getString(getBoundingBox())<<endl;
 
-   SetAbutmentBox(Box(0, 0, 
+   setAbutmentBox(Box(0, 0, 
 		      getBoundingBox().getWidth()  + 2*horizontalMargin,
 		      getBoundingBox().getHeight() + verticalLowMargin + verticalHighMargin
 		      )
@@ -304,7 +304,7 @@ void TrMos::_PlaceAndRoute()
          Net * net = dynamic_cast<Net*>(occurrence.getEntity());
          Box routingZone;
 
-         if(net->getCell()->IsLeaf()) {
+         if(net->getCell()->isLeaf()) {
 	   Transistor * trans = dynamic_cast<Transistor*>(net->getCell());
 	   if ( !trans )
 	      throw Error("Can't launch Trmos::PlaceAndRoute for " + getString(this) 

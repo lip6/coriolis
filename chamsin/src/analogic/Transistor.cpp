@@ -372,14 +372,14 @@ void Transistor::createLayout()
        break;   
    }
 
-   SetTerminal(false);
+   setTerminal(false);
 
    // Launch the selected algorithme.
    // ******************************
    _genTrans->Calculate(this);
    _genTrans->Generate(this);
 
-   Materialize();   
+   materialize();   
 
    delete _genTrans;
    _genTrans = NULL;
@@ -392,7 +392,7 @@ void Transistor::DuplicateLayout(Transistor* transistor)
 {
    OpenUpdateSession();
 
-   SetTerminal(false);
+   setTerminal(false);
 
    Net * tmp = NULL;
    Contact * con = NULL;
@@ -422,7 +422,7 @@ void Transistor::DuplicateLayout(Transistor* transistor)
 	  end_for
    end_for
 
-   SetAbutmentBox(transistor->getAbutmentBox());
+   setAbutmentBox(transistor->getAbutmentBox());
 	  
    _mapNet2Box.clear();
    
@@ -434,7 +434,7 @@ void Transistor::DuplicateLayout(Transistor* transistor)
      i++;
    }
 
-   Materialize();   
+   materialize();   
 
    CloseUpdateSession();
 

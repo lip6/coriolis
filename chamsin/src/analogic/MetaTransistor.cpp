@@ -85,7 +85,7 @@ void MetaTransistor::createLayout()
      throw Error("Can't generate layout : " + getString(this) + " hasn't been dimensionned");
   }
 
-  SetTerminal(false);
+  setTerminal(false);
   
   Transistor * internal_ref = NULL;
   Transistor * left_ref = NULL;
@@ -136,7 +136,7 @@ void MetaTransistor::createLayout()
   end_for    
   
 
-  Materialize();
+  materialize();
  // CloseUpdateSession();
 
 }
