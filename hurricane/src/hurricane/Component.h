@@ -87,7 +87,7 @@ class Component : public Go {
 
     public: virtual void materialize();
     public: virtual void unmaterialize();
-    public: virtual void Invalidate(bool propagateFlag = true);
+    public: virtual void invalidate(bool propagateFlag = true);
 
 // Filters
 // *******

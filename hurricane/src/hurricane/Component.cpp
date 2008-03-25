@@ -350,16 +350,16 @@ void Component::unmaterialize()
     }
 }
 
-void Component::Invalidate(bool propagateFlag)
+void Component::invalidate(bool propagateFlag)
 // *******************************************
 {
-    Inherit::Invalidate(false);
+    Inherit::invalidate(false);
 
     if (propagateFlag) {
         Rubber* rubber = getRubber();
-        if (rubber) rubber->Invalidate();
+        if (rubber) rubber->invalidate();
         for_each_component(component, getSlaveComponents()) {
-            component->Invalidate(false);
+            component->invalidate(false);
             end_for;
         }
     }

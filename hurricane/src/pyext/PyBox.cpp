@@ -93,9 +93,9 @@ extern "C" {
 
 
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PyBox_IsEmpty   ,isEmpty   ,PyBox,Box)
-  DirectGetBoolAttribute(PyBox_IsFlat    ,isFlat    ,PyBox,Box)
-  DirectGetBoolAttribute(PyBox_IsPonctual,isPonctual,PyBox,Box)
+  DirectGetBoolAttribute(PyBox_isEmpty   ,isEmpty   ,PyBox,Box)
+  DirectGetBoolAttribute(PyBox_isFlat    ,isFlat    ,PyBox,Box)
+  DirectGetBoolAttribute(PyBox_isPonctual,isPonctual,PyBox,Box)
 
 
   // Standart Destroy (Attribute).
@@ -179,13 +179,13 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_Contains ()"
+  // Attribute Method  :  "PyBox_contains ()"
 
-  static PyObject* PyBox_Contains ( PyBox *self, PyObject* args )
+  static PyObject* PyBox_contains ( PyBox *self, PyObject* args )
   {
-    trace << "PyBox_Contains ()" << endl;
+    trace << "PyBox_contains ()" << endl;
     
-    METHOD_HEAD ( "Box.Contains()" )
+    METHOD_HEAD ( "Box.contains()" )
 
     PyObject* arg0;
     PyObject* arg1;
@@ -193,8 +193,8 @@ extern "C" {
 
     HTRY
 
-    __cs.Init ("Box.Contains");
-    if ( ! PyArg_ParseTuple(args,"|O&O&:Box.Contains",Converter,&arg0,Converter,&arg1) )
+    __cs.Init ("Box.contains");
+    if ( ! PyArg_ParseTuple(args,"|O&O&:Box.contains",Converter,&arg0,Converter,&arg1) )
       return ( NULL );
 
     if      ( __cs.getObjectIds() == BOX_ARG   ) { result = box->contains ( *PYBOX_O(arg0) ); }
@@ -202,7 +202,7 @@ extern "C" {
     else if ( __cs.getObjectIds() == INTS2_ARG ) { result = box->contains ( PyInt_AsLong(arg0)
                                                                           , PyInt_AsLong(arg1) ); }
     else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Box.Contains constructor." );
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Box.contains constructor." );
       return ( NULL );
     }
 
@@ -215,18 +215,18 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_Intersect ()"
+  // Attribute Method  :  "PyBox_intersect ()"
 
-  static PyObject* PyBox_Intersect ( PyBox *self, PyObject* args )
+  static PyObject* PyBox_intersect ( PyBox *self, PyObject* args )
   {
-    trace << "PyBox_Intersect ()" << endl;
+    trace << "PyBox_intersect ()" << endl;
     
-    METHOD_HEAD ( "Box.Intersect()" )
+    METHOD_HEAD ( "Box.intersect()" )
 
     PyBox* otherPyBox;
 
     HTRY
-    if ( ! ParseOneArg ( "Box.Intersect", args, BOX_ARG, (PyObject**)&otherPyBox ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Box.intersect", args, BOX_ARG, (PyObject**)&otherPyBox ) ) return ( NULL );
     HCATCH
 
     return ( Py_BuildValue("i",(long)box->intersect(*PYBOX_O(otherPyBox))) );
@@ -236,18 +236,18 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_IsConstrainedBy ()"
+  // Attribute Method  :  "PyBox_isConstrainedBy ()"
 
-  static PyObject* PyBox_IsConstrainedBy ( PyBox *self, PyObject* args )
+  static PyObject* PyBox_isConstrainedBy ( PyBox *self, PyObject* args )
   {
-    trace << "PyBox_IsConstrainedBy ()" << endl;
+    trace << "PyBox_isConstrainedBy ()" << endl;
     
-    METHOD_HEAD ( "Box.IsConstrainedBy()" )
+    METHOD_HEAD ( "Box.isConstrainedBy()" )
 
     PyBox* otherPyBox;
 
     HTRY
-    if ( ! ParseOneArg ( "Box.getIsConstrainedBy", args, BOX_ARG, (PyObject**)&otherPyBox ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Box.getisConstrainedBy", args, BOX_ARG, (PyObject**)&otherPyBox ) ) return ( NULL );
     HCATCH
 
     return ( Py_BuildValue("i",(long)box->isConstrainedBy(*PYBOX_O(otherPyBox))) );
@@ -257,14 +257,14 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_MakeEmpty ()"
+  // Attribute Method  :  "PyBox_makeEmpty ()"
 
-  static PyObject* PyBox_MakeEmpty ( PyBox *self, PyObject* args )
+  static PyObject* PyBox_makeEmpty ( PyBox *self, PyObject* args )
   {
-    trace << "PyBox_MakeEmpty ()" << endl;
+    trace << "PyBox_makeEmpty ()" << endl;
 
     HTRY
-    METHOD_HEAD ( "Box.MakeEmpty()" )
+    METHOD_HEAD ( "Box.makeEmpty()" )
 
     if ( ! PyArg_ParseTuple ( args,":Box" ) ) return ( NULL );
     box->makeEmpty ();
@@ -279,13 +279,13 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_Inflate ()"
+  // Attribute Method  :  "PyBox_inflate ()"
 
-  static PyObject* PyBox_Inflate ( PyBox *self, PyObject* args )
+  static PyObject* PyBox_inflate ( PyBox *self, PyObject* args )
   {
-    trace << "PyBox_Inflate ()" << endl;
+    trace << "PyBox_inflate ()" << endl;
     
-    METHOD_HEAD ( "Box.Inflate()" )
+    METHOD_HEAD ( "Box.inflate()" )
 
     PyObject* arg0;
     PyObject* arg1;
@@ -294,8 +294,8 @@ extern "C" {
 
     HTRY
 
-    __cs.Init ("Box.Inflate");
-    if ( ! PyArg_ParseTuple(args,"|O&O&O&O&:Box.Inflate",Converter,&arg0,Converter,&arg1) )
+    __cs.Init ("Box.inflate");
+    if ( ! PyArg_ParseTuple(args,"|O&O&O&O&:Box.inflate",Converter,&arg0,Converter,&arg1) )
       return ( NULL );
 
     if      ( __cs.getObjectIds() == INT_ARG   ) { box->inflate ( PyInt_AsLong(arg0) ); }
@@ -306,7 +306,7 @@ extern "C" {
                                                                 , PyInt_AsLong(arg2)
                                                                 , PyInt_AsLong(arg3) ); }
     else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Box.Inflate()" );
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Box.inflate()" );
       return ( NULL );
     }
 
@@ -321,13 +321,13 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_Merge ()"
+  // Attribute Method  :  "PyBox_merge ()"
 
-  static PyObject* PyBox_Merge ( PyBox *self, PyObject* args )
+  static PyObject* PyBox_merge ( PyBox *self, PyObject* args )
   {
-    trace << "Box_Merge()" << endl;
+    trace << "Box_merge()" << endl;
     
-    METHOD_HEAD ( "Box.Merge()" )
+    METHOD_HEAD ( "Box.merge()" )
     
     PyObject* arg0;
     PyObject* arg1;
@@ -336,8 +336,8 @@ extern "C" {
 
     HTRY
 
-    __cs.Init ("Box.Merge");
-    if ( ! PyArg_ParseTuple(args,"|O&O&O&O&:Box.Merge",Converter,&arg0,Converter,&arg1,Converter,&arg2,Converter,&arg3) )
+    __cs.Init ("Box.merge");
+    if ( ! PyArg_ParseTuple(args,"|O&O&O&O&:Box.merge",Converter,&arg0,Converter,&arg1,Converter,&arg2,Converter,&arg3) )
       return ( NULL );
 
     if      ( __cs.getObjectIds() == POINT_ARG ) { box->merge ( *PYPOINT_O(arg0) ); }
@@ -349,7 +349,7 @@ extern "C" {
                                                               , PyInt_AsLong(arg2)
                                                               , PyInt_AsLong(arg3) ); }
     else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Box.Merge()" );
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Box.merge()" );
       return ( NULL );
     }
     
@@ -363,19 +363,19 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_Translate ()"
+  // Attribute Method  :  "PyBox_translate ()"
 
-  static PyObject* PyBox_Translate ( PyBox *self, PyObject* args )
+  static PyObject* PyBox_translate ( PyBox *self, PyObject* args )
   {
-    trace << "PyBox_Translate ()" << endl;
+    trace << "PyBox_translate ()" << endl;
     
-    METHOD_HEAD ( "Box.Translate()" )
+    METHOD_HEAD ( "Box.translate()" )
 
     PyObject* arg0;
     PyObject* arg1;
 
     HTRY
-    if ( ! ParseTwoArg ( "Box.Translate", args, INTS2_ARG, &arg0, &arg1 ) ) return ( NULL );
+    if ( ! ParseTwoArg ( "Box.translate", args, INTS2_ARG, &arg0, &arg1 ) ) return ( NULL );
     box->translate ( PyInt_AsLong(arg0), PyInt_AsLong(arg1) );
     HCATCH
     Py_RETURN_NONE;
@@ -401,16 +401,16 @@ extern "C" {
     , { "getHalfHeight"  , (PyCFunction)PyBox_getHalfHeight  , METH_NOARGS , "Return the box half height." }
     , { "getUnion"       , (PyCFunction)PyBox_getUnion       , METH_VARARGS, "Return the smallest enclosing box." }
     , { "getIntersection", (PyCFunction)PyBox_getIntersection, METH_VARARGS, "Return the overlapping area." }
-    , { "IsEmpty"        , (PyCFunction)PyBox_IsEmpty        , METH_NOARGS , "Return true if the box is empty." }
-    , { "IsFlat"         , (PyCFunction)PyBox_IsFlat         , METH_NOARGS , "Return true if the box is flat." }
-    , { "IsPonctual"     , (PyCFunction)PyBox_IsPonctual     , METH_NOARGS , "Return true if the box reduced to a point." }
-    , { "Contains"       , (PyCFunction)PyBox_Contains       , METH_VARARGS, "Return true if the box contains the argument." }
-    , { "Intersect"      , (PyCFunction)PyBox_Intersect      , METH_VARARGS, "Return true if two boxes overlap." }
-    , { "IsConstrainedBy", (PyCFunction)PyBox_IsConstrainedBy, METH_VARARGS, "Return true if the argment box is included and share at least a side." }
-    , { "MakeEmpty"      , (PyCFunction)PyBox_MakeEmpty      , METH_NOARGS , "Transform the box in an empty one." }
-    , { "Inflate"        , (PyCFunction)PyBox_Inflate        , METH_VARARGS, "Expand the box to contains the arguments." }
-    , { "Merge"          , (PyCFunction)PyBox_Merge          , METH_VARARGS, "Expand or contract the box to contains the arguments." }
-    , { "Translate"      , (PyCFunction)PyBox_Translate      , METH_VARARGS, "Translate the box od dx ans dy." }
+    , { "isEmpty"        , (PyCFunction)PyBox_isEmpty        , METH_NOARGS , "Return true if the box is empty." }
+    , { "isFlat"         , (PyCFunction)PyBox_isFlat         , METH_NOARGS , "Return true if the box is flat." }
+    , { "isPonctual"     , (PyCFunction)PyBox_isPonctual     , METH_NOARGS , "Return true if the box reduced to a point." }
+    , { "contains"       , (PyCFunction)PyBox_contains       , METH_VARARGS, "Return true if the box contains the argument." }
+    , { "intersect"      , (PyCFunction)PyBox_intersect      , METH_VARARGS, "Return true if two boxes overlap." }
+    , { "isConstrainedBy", (PyCFunction)PyBox_isConstrainedBy, METH_VARARGS, "Return true if the argment box is included and share at least a side." }
+    , { "makeEmpty"      , (PyCFunction)PyBox_makeEmpty      , METH_NOARGS , "Transform the box in an empty one." }
+    , { "inflate"        , (PyCFunction)PyBox_inflate        , METH_VARARGS, "Expand the box to contains the arguments." }
+    , { "merge"          , (PyCFunction)PyBox_merge          , METH_VARARGS, "Expand or contract the box to contains the arguments." }
+    , { "translate"      , (PyCFunction)PyBox_translate      , METH_VARARGS, "translate the box od dx ans dy." }
     , { "destroy"        , (PyCFunction)PyBox_destroy        , METH_NOARGS
                          , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */

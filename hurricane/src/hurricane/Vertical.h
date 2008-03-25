@@ -59,12 +59,12 @@ class Vertical : public Segment {
 // Updators
 // ********
 
-    public: virtual void Translate(const Unit& dx, const Unit& dy);
+    public: virtual void translate(const Unit& dx, const Unit& dy);
 
     public: void SetX(const Unit& x);
     public: void SetDySource(const Unit& dySource);
     public: void SetDyTarget(const Unit& dyTarget);
-    public: void Translate(const Unit& dx);
+    public: void translate(const Unit& dx);
 
 // Others
 // ******

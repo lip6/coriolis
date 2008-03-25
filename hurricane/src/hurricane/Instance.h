@@ -123,11 +123,11 @@ class Instance : public Go {
 // Predicates
 // **********
 
-    public: bool IsUnplaced() const {return _placementStatus == PlacementStatus::UNPLACED;};
-    public: bool IsPlaced() const {return _placementStatus == PlacementStatus::PLACED;};
-    public: bool IsFixed() const {return _placementStatus == PlacementStatus::FIXED;};
-    public: bool IsTerminal() const;
-    public: bool IsLeaf() const;
+    public: bool isUnplaced() const {return _placementStatus == PlacementStatus::UNPLACED;};
+    public: bool isPlaced() const {return _placementStatus == PlacementStatus::PLACED;};
+    public: bool isFixed() const {return _placementStatus == PlacementStatus::FIXED;};
+    public: bool isTerminal() const;
+    public: bool isLeaf() const;
 
 // Filters
 // *******
@@ -145,13 +145,13 @@ class Instance : public Go {
 
     public: virtual void materialize();
     public: virtual void unmaterialize();
-    public: virtual void Invalidate(bool propagateFlag = true);
-    public: virtual void Translate(const Unit& dx, const Unit& dy);
+    public: virtual void invalidate(bool propagateFlag = true);
+    public: virtual void translate(const Unit& dx, const Unit& dy);
 
-    public: void SetName(const Name& name);
-    public: void SetTransformation(const Transformation& transformation);
-    public: void SetPlacementStatus(const PlacementStatus& placementstatus);
-    public: void SetMasterCell(Cell* masterCell, bool secureFlag = true);
+    public: void setName(const Name& name);
+    public: void setTransformation(const Transformation& transformation);
+    public: void setPlacementStatus(const PlacementStatus& placementstatus);
+    public: void setMasterCell(Cell* masterCell, bool secureFlag = true);
 
 // Others
 // ******

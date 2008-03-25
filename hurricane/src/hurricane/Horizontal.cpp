@@ -104,11 +104,11 @@ Point Horizontal::getCenter() const
     return Point ( (getSourceX()+getTargetX())/2, getY() );
 }
 
-void Horizontal::Translate(const Unit& dx, const Unit& dy)
+void Horizontal::translate(const Unit& dx, const Unit& dy)
 // *******************************************************
 {
     if (dy != 0) {
-        Invalidate(true);
+        invalidate(true);
         _y += dy;
     }
 }
@@ -117,7 +117,7 @@ void Horizontal::SetY(const Unit& y)
 // *********************************
 {
     if (y != _y) {
-        Invalidate(true);
+        invalidate(true);
         _y = y;
     }
 }
@@ -126,7 +126,7 @@ void Horizontal::SetDxSource(const Unit& dxSource)
 // ***********************************************
 {
     if (dxSource != _dxSource) {
-        Invalidate(false);
+        invalidate(false);
         _dxSource = dxSource;
     }
 }
@@ -135,16 +135,16 @@ void Horizontal::SetDxTarget(const Unit& dxTarget)
 // ***********************************************
 {
     if (dxTarget != _dxTarget) {
-        Invalidate(false);
+        invalidate(false);
         _dxTarget = dxTarget;
     }
 }
 
-void Horizontal::Translate(const Unit& dy)
+void Horizontal::translate(const Unit& dy)
 // ***************************************
 {
     if (dy != 0) {
-        Invalidate(true);
+        invalidate(true);
         _y += dy;
     }
 }

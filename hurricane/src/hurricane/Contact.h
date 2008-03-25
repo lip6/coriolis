@@ -84,7 +84,7 @@ class Contact : public Component {
 // Updators
 // ********
 
-    public: virtual void Translate(const Unit& dx, const Unit& dy);
+    public: virtual void translate(const Unit& dx, const Unit& dy);
 
     public: void SetLayer(Layer* layer);
     public: void SetWidth(const Unit& width);

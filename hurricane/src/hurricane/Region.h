@@ -99,7 +99,7 @@ class Region {
     // ********
 
         public: void progress(int n = 1);
-        public: void Translate(const Unit& quantity);
+        public: void translate(const Unit& quantity);
         public: void SetPosition(const Unit& position);
 
     // Others
@@ -181,10 +181,10 @@ class Region {
 
     public: Region& Groove(const Box& box);
     public: Region& Groove(const Region& region);
-  public: Region& getIntersection(const Region& region);
+    public: Region& getIntersection(const Region& region);
 
     public: Region& Inflate(const Unit& quantity);
-    public: Region& Translate(const Unit& dx, const Unit& dy);
+    public: Region& translate(const Unit& dx, const Unit& dy);
 
     public: bool VerticalEnhancement();
     public: bool VerticalEnhancement(Point point);

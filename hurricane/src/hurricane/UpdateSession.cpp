@@ -115,13 +115,13 @@ void UpdateSession::onNotOwned()
 
 
 // ****************************************************************************************************
-// Go::Invalidate implementation : located here to access UPDATOR_STACK variable
+// Go::invalidate implementation : located here to access UPDATOR_STACK variable
 // ****************************************************************************************************
 
-void Go::Invalidate(bool propagateFlag)
+void Go::invalidate(bool propagateFlag)
 // ************************************
 {
-// trace << "Invalidate(" << this << ")" << endl;
+// trace << "invalidate(" << this << ")" << endl;
 // trace_in();
 
     if (!UPDATOR_STACK || UPDATOR_STACK->empty())
@@ -139,7 +139,7 @@ void Go::Invalidate(bool propagateFlag)
         getCell()->_getSlaveEntities(this,it,end);
         for(; it != end ; it++) {
           Go* go = dynamic_cast<Go*>(it->second);
-          if (go) go->Invalidate(propagateFlag);
+          if (go) go->invalidate(propagateFlag);
         }
 
         if (isMaterialized()) {

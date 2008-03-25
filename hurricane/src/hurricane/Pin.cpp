@@ -51,7 +51,7 @@ void Pin::SetPlacementStatus(const PlacementStatus& placementstatus)
 // **********************************************************************
 {
     if (placementstatus != _placementStatus) {
-        Invalidate(true);
+        invalidate(true);
         _placementStatus = placementstatus;
     }
 }

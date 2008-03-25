@@ -78,11 +78,11 @@ Box Pad::getBoundingBox(const BasicLayer* basicLayer) const
     return boundingBox;
 }
 
-void Pad::Translate(const Unit& dx, const Unit& dy)
+void Pad::translate(const Unit& dx, const Unit& dy)
 // ************************************************
 {
     if ((dx != 0) || (dy != 0)) {
-        Invalidate(true);
+        invalidate(true);
         _boundingBox.translate(dx, dy);
     }
 }
@@ -94,7 +94,7 @@ void Pad::SetBoundingBox(const Box& boundingBox)
         throw Error("Can't set bounding box : empty bounding box");
 
     if (boundingBox != _boundingBox) {
-        Invalidate(true);
+        invalidate(true);
         _boundingBox = boundingBox;
     }
 }

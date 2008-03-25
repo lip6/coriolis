@@ -195,22 +195,19 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyInstance_SetPlacementStatus ()"
 
-  static PyObject* PyInstance_SetPlacementStatus ( PyInstance *self, PyObject* args ) {
-    trace << "PyInstance_SetPlacementStatus()" << endl;
-    METHOD_HEAD ( "Instance.SetPlacementStatus()" )
+  static PyObject* PyInstance_setPlacementStatus ( PyInstance *self, PyObject* args ) {
+    trace << "PyInstance_setPlacementStatus()" << endl;
+    METHOD_HEAD ( "Instance.setPlacementStatus()" )
       
     HTRY
     PyObject* arg0;
-    if ( ! ParseOneArg ( "Instance.SetPlacementStatus()", args, INT_ARG, (PyObject**)&arg0 ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Instance.setPlacementStatus()", args, INT_ARG, (PyObject**)&arg0 ) ) return ( NULL );
       
-    instance->SetPlacementStatus ( PyInt_AsPlacementStatus(arg0) );
+    instance->setPlacementStatus ( PyInt_AsPlacementStatus(arg0) );
     HCATCH
       
     Py_RETURN_NONE;
   }
-
-
-
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyInstance_getTransformation ()"
@@ -228,9 +225,6 @@ extern "C" {
 
     return ( (PyObject*)resultPyTransf );
   }
-
-
-
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyInstance_getPlug ()"
@@ -251,9 +245,6 @@ extern "C" {
 
     return PyPlug_Link ( plug );
   }
-
-
-
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyInstance_getPlugsLocator ()"
@@ -332,8 +323,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyInstance_getAbutmentBox ()"
 
-  static PyObject* PyInstance_getAbutmentBox ( PyInstance *self )
-  {
+  static PyObject* PyInstance_getAbutmentBox ( PyInstance *self ) {
     trace << "PyInstance_getAbutmentBox ()" << endl;
     METHOD_HEAD ( "Instance.getAbutmentBox()" )
 
@@ -351,18 +341,17 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_SetName ()"
+  // Attribute Method  :  "PyInstance_setName ()"
 
-  static PyObject* PyInstance_SetName ( PyInstance *self, PyObject* args )
-  {
-    trace << "PyInstance_SetName()" << endl;
-    METHOD_HEAD ( "Instance.SetName()" )
+  static PyObject* PyInstance_setName ( PyInstance *self, PyObject* args ) {
+    trace << "PyInstance_setName()" << endl;
+    METHOD_HEAD ( "Instance.setName()" )
 
     HTRY
     PyName* name;
-    if ( ! ParseOneArg ( "Instance.SetName", args, NAME_ARG, (PyObject**)&name ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Instance.setName", args, NAME_ARG, (PyObject**)&name ) ) return ( NULL );
 
-    instance->SetName ( *PYNAME_O(name) );
+    instance->setName ( *PYNAME_O(name) );
     HCATCH
 
     Py_RETURN_NONE;
@@ -373,16 +362,15 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyInstance_SetTransformation ()"
 
-  static PyObject* PyInstance_SetTransformation ( PyInstance *self, PyObject* args )
-  {
-    trace << "PyInstance_SetTransformation()" << endl;
-    METHOD_HEAD ( "Instance.SetTransformation()" )
+  static PyObject* PyInstance_setTransformation ( PyInstance *self, PyObject* args ) {
+    trace << "PyInstance_setTransformation()" << endl;
+    METHOD_HEAD ( "Instance.setTransformation()" )
 
     HTRY
     PyTransformation* transformation;
-    if ( ! ParseOneArg ( "Instance.SetTransformation", args, TRANS_ARG, (PyObject**)&transformation ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Instance.setTransformation", args, TRANS_ARG, (PyObject**)&transformation ) ) return ( NULL );
 
-    instance->SetTransformation ( *PYTRANSFORMATION_O(transformation) );
+    instance->setTransformation ( *PYTRANSFORMATION_O(transformation) );
     HCATCH
 
     Py_RETURN_NONE;
@@ -394,26 +382,25 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyInstance_SetMasterCell ()"
 
-  static PyObject* PyInstance_SetMasterCell ( PyInstance *self, PyObject* args )
-  {
-    trace << "Instance.SetMasterCell()" << endl;
-    METHOD_HEAD ( "Instance.SetMasterCell()" )
+  static PyObject* PyInstance_setMasterCell ( PyInstance *self, PyObject* args ) {
+    trace << "Instance.setMasterCell()" << endl;
+    METHOD_HEAD ( "Instance.setMasterCell()" )
 
     HTRY
     PyCell* masterCell;
-    if ( ! ParseOneArg ( "Instance.SetMasterCell", args, CELL_ARG, (PyObject**)&masterCell ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Instance.setMasterCell", args, CELL_ARG, (PyObject**)&masterCell ) ) return ( NULL );
 
-    instance->SetMasterCell ( PYCELL_O(masterCell) );
+    instance->setMasterCell ( PYCELL_O(masterCell) );
     HCATCH
 
     Py_RETURN_NONE;
   }
 
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PyInstance_IsTerminal ,IsTerminal ,PyInstance,Instance)
-  DirectGetBoolAttribute(PyInstance_IsLeaf     ,IsLeaf     ,PyInstance,Instance)
+  DirectGetBoolAttribute(PyInstance_isTerminal ,isTerminal ,PyInstance,Instance)
+  DirectGetBoolAttribute(PyInstance_isLeaf     ,isLeaf     ,PyInstance,Instance)
 
-  GetBoundStateAttribute(PyInstance_IsPyBound              ,PyInstance,Instance)
+  GetBoundStateAttribute(PyInstance_isPyBound              ,PyInstance,Instance)
   
 
   
@@ -429,16 +416,14 @@ extern "C" {
     , { "getPlugsLocator"           , (PyCFunction)PyInstance_getPlugsLocator           , METH_NOARGS , "Returns the collection of instance plugs." }
     , { "getConnectedPlugsLocator"  , (PyCFunction)PyInstance_getConnectedPlugsLocator  , METH_NOARGS , "Returns the collection of instance plugs which are effectively connected." }
     , { "getUnconnectedPlugsLocator", (PyCFunction)PyInstance_getUnconnectedPlugsLocator, METH_NOARGS , "Returns the collection of instance plugs which are not connected." }
-    //, { "getPath"                   , (PyCFunction)PyInstance_getPath                   , METH_NOARGS , "Returns the path composed of the instance solely." }
-    //, { "getPath"                   , (PyCFunction)PyInstance_getPath                   , METH_VARARGS, "Returns the path resulting of the concatenation of the instance and the tail path (possibly empty)." }
     , { "getAbutmentBox"            , (PyCFunction)PyInstance_getAbutmentBox            , METH_NOARGS , "Returns the abutment box of the instance, that is the abutment box of the master cell to which has been applied the instance transformation." }
-    , { "IsTerminal"                , (PyCFunction)PyInstance_IsTerminal                , METH_NOARGS , "Returns true if the instance is a terminal instance." }
-    , { "IsLeaf"                    , (PyCFunction)PyInstance_IsLeaf                    , METH_NOARGS , "Returns true if the instance is a leaf instance." }
-    , { "IsBound"                   , (PyCFunction)PyInstance_IsPyBound                 , METH_NOARGS, "Returns true if the instance is bounded to the hurricane instance" }
-    , { "SetName"                   , (PyCFunction)PyInstance_SetName                   , METH_VARARGS, "Allows to change the instance name." }
-    , { "SetTransformation"         , (PyCFunction)PyInstance_SetTransformation         , METH_VARARGS, "Allows to modify the instance transformation." }
-    , { "SetPlacementStatus"        , (PyCFunction)PyInstance_SetPlacementStatus        , METH_VARARGS, "Allows to modify the instance placement status." }
-    , { "SetMasterCell"             , (PyCFunction)PyInstance_SetMasterCell             , METH_VARARGS, "Allows to change the cell referenced by this instance." }
+    , { "isTerminal"                , (PyCFunction)PyInstance_isTerminal                , METH_NOARGS , "Returns true if the instance is a terminal instance." }
+    , { "isLeaf"                    , (PyCFunction)PyInstance_isLeaf                    , METH_NOARGS , "Returns true if the instance is a leaf instance." }
+    , { "isBound"                   , (PyCFunction)PyInstance_isPyBound                 , METH_NOARGS, "Returns true if the instance is bounded to the hurricane instance" }
+    , { "setName"                   , (PyCFunction)PyInstance_setName                   , METH_VARARGS, "Allows to change the instance name." }
+    , { "setTransformation"         , (PyCFunction)PyInstance_setTransformation         , METH_VARARGS, "Allows to modify the instance transformation." }
+    , { "setPlacementStatus"        , (PyCFunction)PyInstance_setPlacementStatus        , METH_VARARGS, "Allows to modify the instance placement status." }
+    , { "setMasterCell"             , (PyCFunction)PyInstance_setMasterCell             , METH_VARARGS, "Allows to change the cell referenced by this instance." }
     , { "destroy"                   , (PyCFunction)PyInstance_destroy                   , METH_NOARGS
                                     , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */

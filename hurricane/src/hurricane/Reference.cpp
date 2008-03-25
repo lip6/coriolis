@@ -58,11 +58,11 @@ Box  Reference::getBoundingBox() const
   return Box(_point).inflate(_extend);
 }
 
-void Reference::Translate(const Unit& dx, const Unit& dy)
+void Reference::translate(const Unit& dx, const Unit& dy)
 // *****************************************************
 {
   if ((dx != 0) || (dy != 0)) {
-    Invalidate(false);
+    invalidate(false);
     _point.translate(dx, dy);
   }
 }

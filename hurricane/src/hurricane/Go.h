@@ -13,11 +13,8 @@
 
 namespace Hurricane {
 
-//class View;
 class BasicLayer;
 class QuadTree;
-
-
 
 // ****************************************************************************************************
 // Go declaration
@@ -63,10 +60,10 @@ class Go : public Entity {
     public: virtual void materialize() = 0;
     public: virtual void unmaterialize() = 0;
 
-    public: virtual void Invalidate(bool propagateFlag = true);
+    public: virtual void invalidate(bool propagateFlag = true);
               // implementation located on file UpdateSession.cpp to access local variables
 
-    public: virtual void Translate(const Unit& dx, const Unit& dy) = 0;
+    public: virtual void translate(const Unit& dx, const Unit& dy) = 0;
 
 // Others
 // ******

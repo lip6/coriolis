@@ -104,11 +104,11 @@ Point Vertical::getCenter() const
         return Point ( getX(), (getSourceY()+getTargetY())/2 );
 }
 
-void Vertical::Translate(const Unit& dx, const Unit& dy)
+void Vertical::translate(const Unit& dx, const Unit& dy)
 // *****************************************************
 {
     if (dx != 0) {
-        Invalidate(true);
+        invalidate(true);
         _x += dx;
     }
 }
@@ -117,7 +117,7 @@ void Vertical::SetX(const Unit& x)
 // *******************************
 {
     if (x != _x) {
-        Invalidate(true);
+        invalidate(true);
         _x = x;
     }
 }
@@ -126,7 +126,7 @@ void Vertical::SetDySource(const Unit& dySource)
 // *********************************************
 {
     if (dySource != _dySource) {
-        Invalidate(false);
+        invalidate(false);
         _dySource = dySource;
     }
 }
@@ -135,16 +135,16 @@ void Vertical::SetDyTarget(const Unit& dyTarget)
 // *********************************************
 {
     if (dyTarget != _dyTarget) {
-        Invalidate(false);
+        invalidate(false);
         _dyTarget = dyTarget;
     }
 }
 
-void Vertical::Translate(const Unit& dx)
+void Vertical::translate(const Unit& dx)
 // *************************************
 {
     if (dx != 0) {
-        Invalidate(true);
+        invalidate(true);
         _x += dx;
     }
 }

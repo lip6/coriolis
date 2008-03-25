@@ -248,7 +248,7 @@ void Segment::SetLayer(Layer* layer)
         throw Error("Can't set layer : null layer");
 
     if (layer != _layer) {
-        Invalidate(false);
+        invalidate(false);
         _layer = layer;
     }
 }
@@ -257,7 +257,7 @@ void Segment::SetWidth(const Unit& width)
 // **************************************
 {
     if (width != _width) {
-        Invalidate(false);
+        invalidate(false);
         _width = width;
     }
 }

@@ -2117,7 +2117,7 @@ void Cell_Occurrences::Locator::progress()
                 }
                 else {
                     Instance* instance = _instanceLocator.getElement();
-                    if (instance->IsTerminal()) {
+                    if (instance->isTerminal()) {
                         _instanceLocator.progress();
                         if (!_instanceLocator.isValid()) _state = 0;
                     }
@@ -2401,7 +2401,7 @@ void Cell_OccurrencesUnder::Locator::progress()
                 }
                 else {
                     Instance* instance = _instanceLocator.getElement();
-                    if (instance->IsTerminal()) {
+                    if (instance->isTerminal()) {
                         _instanceLocator.progress();
                         if (!_instanceLocator.isValid()) _state = 0;
                     }

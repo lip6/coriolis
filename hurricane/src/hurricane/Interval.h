@@ -77,7 +77,7 @@ class Interval {
     public: Interval& Merge(const Interval& interval);
     public: Interval& Intersection(const Unit& vMin, const Unit& vMax);
     public: Interval& Intersection(const Interval& interval);
-    public: Interval& Translate(const Unit& dv);
+    public: Interval& translate(const Unit& dv);
 
 // Others
 // ******

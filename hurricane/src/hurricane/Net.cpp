@@ -471,7 +471,7 @@ void Net::SetPosition(const Point& position)
 {
     if (_position != position) {
         for_each_plug(plug, getSlavePlugs()) {
-            plug->Invalidate(true);
+            plug->invalidate(true);
             end_for;
         }
         _position = position;

@@ -40,11 +40,11 @@ DRCError* DRCError::create(Cell* cell, const Name& name, const Box& boundingBox)
     return drcError;
 }
 
-void DRCError::Translate(const Unit& dx, const Unit& dy)
+void DRCError::translate(const Unit& dx, const Unit& dy)
 // *****************************************************
 {
     if ((dx != 0) || (dy != 0)) {
-        Invalidate(false);
+        invalidate(false);
         _boundingBox.translate(dx, dy);
     }
 }

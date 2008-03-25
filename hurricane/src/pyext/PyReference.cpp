@@ -140,22 +140,21 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyReference_Translate ()"
+  // Attribute Method  :  "PyReference_translate ()"
 
-  static PyObject* PyReference_Translate ( PyReference *self, PyObject* args )
-  {
-    trace << "PyReference_Translate ()" << endl;
+  static PyObject* PyReference_translate ( PyReference *self, PyObject* args ) {
+    trace << "PyReference_translate ()" << endl;
     
-    METHOD_HEAD ( "Reference.Translate()" )
+    METHOD_HEAD ( "Reference.translate()" )
 
     PyObject* arg0;
     PyObject* arg1;
 
     HTRY
 
-    if ( ! ParseTwoArg ( "Reference.Translate", args, INTS2_ARG, &arg0, &arg1 ) ) return ( NULL );
+    if ( ! ParseTwoArg ( "Reference.translate", args, INTS2_ARG, &arg0, &arg1 ) ) return ( NULL );
 
-    reference->Translate ( PyInt_AsLong(arg0), PyInt_AsLong(arg1) );
+    reference->translate ( PyInt_AsLong(arg0), PyInt_AsLong(arg1) );
 
     HCATCH
 
@@ -173,7 +172,7 @@ extern "C" {
                          , "destroy associated hurricane object, the python object remains." }
     , { "getName"        , (PyCFunction)PyReference_getName        , METH_NOARGS , "Returns the name of the reference." }
     , { "getPoint"       , (PyCFunction)PyReference_getPoint       , METH_NOARGS , "Return the reference point." }
-    , { "Translate"      , (PyCFunction)PyReference_Translate      , METH_VARARGS, "Translate the reference of dx and dy." }
+    , { "translate"      , (PyCFunction)PyReference_translate      , METH_VARARGS, "Translate the reference of dx and dy." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

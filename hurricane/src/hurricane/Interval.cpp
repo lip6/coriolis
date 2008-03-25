@@ -198,7 +198,7 @@ Interval& Interval::Intersection(const Interval& interval)
   return *this;
 }
 
-Interval& Interval::Translate(const Unit& dv)
+Interval& Interval::translate(const Unit& dv)
 // ******************************************
 {
     if (!IsEmpty()) {

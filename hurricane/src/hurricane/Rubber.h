@@ -66,8 +66,8 @@ class Rubber : public Go {
 
         public: virtual void materialize();
         public: virtual void unmaterialize();
-        public: virtual void Translate(const Unit& dx, const Unit& dy);
-        public: virtual void Invalidate(bool propagateFlag = true);
+        public: virtual void translate(const Unit& dx, const Unit& dy);
+        public: virtual void invalidate(bool propagateFlag = true);
 
 // Others
 // ******

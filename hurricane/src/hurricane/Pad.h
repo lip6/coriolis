@@ -53,7 +53,7 @@ class Pad : public Component {
 // Updators
 // ********
 
-    public: virtual void Translate(const Unit& dx, const Unit& dy);
+    public: virtual void translate(const Unit& dx, const Unit& dy);
     public: void SetBoundingBox(const Box& boundingBox);
 
 // Others

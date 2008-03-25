@@ -71,7 +71,7 @@ class RoutingPad : public Component {
 // Updators
 // ********
 
-    public: virtual void Translate(const Unit& dx, const Unit& dy);
+    public: virtual void translate(const Unit& dx, const Unit& dy);
 
     public: void SetX(const Unit& x);
     public: void SetY(const Unit& y);

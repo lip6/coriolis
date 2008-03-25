@@ -117,7 +117,7 @@ void Rubber::unmaterialize()
     }
 }
 
-void Rubber::Translate(const Unit& dx, const Unit& dy)
+void Rubber::translate(const Unit& dx, const Unit& dy)
 // ***************************************************
 {
 }
@@ -228,7 +228,7 @@ void Rubber::_setHook(Hook* hook)
 void Rubber::_Capture()
 // ********************
 {
-        Invalidate();
+        invalidate();
         _count++;
 }
 
@@ -236,15 +236,15 @@ void Rubber::_Release()
 // ********************
 {
         if (_count != ((unsigned)-1)) { // not in deletion
-                Invalidate();
+                invalidate();
                 if ((--_count) == 1) _destroy();
         }
 }
 
-void Rubber::Invalidate(bool propagateFlag)
+void Rubber::invalidate(bool propagateFlag)
 // ****************************************
 {
-        Inherit::Invalidate(false);
+        Inherit::invalidate(false);
         _boundingBox.makeEmpty();
 }
 

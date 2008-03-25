@@ -75,7 +75,7 @@ class Instance_IsTerminalFilter : public Filter<Instance*> {
 
     public: virtual Filter<Instance*>* getClone() const {return new Instance_IsTerminalFilter(*this);};
 
-    public: virtual bool accept(Instance* instance) const {return instance->IsTerminal();};
+    public: virtual bool accept(Instance* instance) const {return instance->isTerminal();};
 
     public: virtual string _getString() const {return "<" + _TName("Instance::IsTerminalFilter") + ">";};
 
@@ -92,7 +92,7 @@ class Instance_IsLeafFilter : public Filter<Instance*> {
 
     public: virtual Filter<Instance*>* getClone() const {return new Instance_IsLeafFilter(*this);};
 
-    public: virtual bool accept(Instance* instance) const {return instance->IsLeaf();};
+    public: virtual bool accept(Instance* instance) const {return instance->isLeaf();};
 
     public: virtual string _getString() const {return "<" + _TName("Instance::IsLeafFilter") + ">";};
 
@@ -109,7 +109,7 @@ class Instance_IsUnplacedFilter : public Filter<Instance*> {
 
     public: virtual Filter<Instance*>* getClone() const {return new Instance_IsUnplacedFilter(*this);};
 
-    public: virtual bool accept(Instance* instance) const {return instance->IsUnplaced();};
+    public: virtual bool accept(Instance* instance) const {return instance->isUnplaced();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsUnplacedFilter>");};
 
@@ -126,7 +126,7 @@ class Instance_IsPlacedFilter : public Filter<Instance*> {
 
     public: virtual Filter<Instance*>* getClone() const {return new Instance_IsPlacedFilter(*this);};
 
-    public: virtual bool accept(Instance* instance) const {return instance->IsPlaced();};
+    public: virtual bool accept(Instance* instance) const {return instance->isPlaced();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsPlacedFilter>");};
 
@@ -143,7 +143,7 @@ class Instance_IsFixedFilter : public Filter<Instance*> {
 
     public: virtual Filter<Instance*>* getClone() const {return new Instance_IsFixedFilter(*this);};
 
-    public: virtual bool accept(Instance* instance) const {return instance->IsFixed();};
+    public: virtual bool accept(Instance* instance) const {return instance->isFixed();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsFixedFilter>");};
 
@@ -234,13 +234,13 @@ Box Instance::getAbutmentBox() const
     return _transformation.getBox(_masterCell->getAbutmentBox());
 }
 
-bool Instance::IsTerminal() const
+bool Instance::isTerminal() const
 // ******************************
 {
     return getMasterCell()->isTerminal();
 }
 
-bool Instance::IsLeaf() const
+bool Instance::isLeaf() const
 // **************************
 {
     return getMasterCell()->isLeaf();
@@ -310,20 +310,20 @@ void Instance::unmaterialize()
     }
 }
 
-void Instance::Invalidate(bool propagateFlag)
+void Instance::invalidate(bool propagateFlag)
 // ******************************************
 {
-    Inherit::Invalidate(false);
+    Inherit::invalidate(false);
 
     if (propagateFlag) {
         for_each_plug(plug, getConnectedPlugs()) {
-            plug->Invalidate(true);
+            plug->invalidate(true);
             end_for;
         }
     }
 }
 
-void Instance::Translate(const Unit& dx, const Unit& dy)
+void Instance::translate(const Unit& dx, const Unit& dy)
 // *****************************************************
 {
     if ((dx != 0) || (dy !=0)) {
@@ -331,11 +331,11 @@ void Instance::Translate(const Unit& dx, const Unit& dy)
         Unit x = translation.getX() + dx;
         Unit y = translation.getY() + dy;
         Transformation::Orientation orientation = _transformation.getOrientation();
-        SetTransformation(Transformation(x, y, orientation));
+        setTransformation(Transformation(x, y, orientation));
     }
 }
 
-void Instance::SetName(const Name& name)
+void Instance::setName(const Name& name)
 // *************************************
 {
     if (name != _name) {
@@ -351,16 +351,16 @@ void Instance::SetName(const Name& name)
     }
 }
 
-void Instance::SetTransformation(const Transformation& transformation)
+void Instance::setTransformation(const Transformation& transformation)
 // *******************************************************************
 {
     if (transformation != _transformation) {
-        Invalidate(true);
+        invalidate(true);
         _transformation = transformation;
     }
 }
 
-void Instance::SetPlacementStatus(const PlacementStatus& placementstatus)
+void Instance::setPlacementStatus(const PlacementStatus& placementstatus)
 // **********************************************************************
 {
 //    if (placementstatus != _placementStatus) {
@@ -369,7 +369,7 @@ void Instance::SetPlacementStatus(const PlacementStatus& placementstatus)
 //    }
 }
 
-void Instance::SetMasterCell(Cell* masterCell, bool secureFlag)
+void Instance::setMasterCell(Cell* masterCell, bool secureFlag)
 // ************************************************************
 {
     if (masterCell != _masterCell) {
@@ -398,7 +398,7 @@ void Instance::SetMasterCell(Cell* masterCell, bool secureFlag)
             end_for;
         }
 
-        Invalidate(true);
+        invalidate(true);
 
         for_each_plug(plug, getUnconnectedPlugs()) {
             plug->_destroy();

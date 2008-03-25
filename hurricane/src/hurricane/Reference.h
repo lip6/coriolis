@@ -51,7 +51,7 @@ class Reference : public Marker {
 // Updators
 // ********
 
-    public: virtual void Translate(const Unit& dx, const Unit& dy);
+    public: virtual void translate(const Unit& dx, const Unit& dy);
 
 // Others
 // ******

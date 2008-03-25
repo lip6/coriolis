@@ -2368,7 +2368,7 @@ void Region::SwapLine::progress(int n)
     }
 }
 
-void Region::SwapLine::Translate(const Unit& quantity)
+void Region::SwapLine::translate(const Unit& quantity)
 // ***************************************************
 {
     if (quantity) SetPosition(getPosition() + quantity);
@@ -2758,7 +2758,7 @@ Region& Region::Inflate(const Unit& quantity)
     return *this;
 }
 
-Region& Region::Translate(const Unit& dx, const Unit& dy)
+Region& Region::translate(const Unit& dx, const Unit& dy)
 // ******************************************************
 {
     if ((dx != 0) || (dy != 0)) {

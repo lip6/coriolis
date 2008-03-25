@@ -175,11 +175,11 @@ Point RoutingPad::getCenter() const
 }
 
 
-void RoutingPad::Translate(const Unit& dx, const Unit& dy)
+void RoutingPad::translate(const Unit& dx, const Unit& dy)
 // ****************************************************
 {
     if ((dx != 0) || (dy != 0)) {
-        Invalidate(true);
+        invalidate(true);
         _x += dx;
         _y += dy;
     }
@@ -212,7 +212,7 @@ void RoutingPad::SetPosition(const Point& position)
 void RoutingPad::SetOffset(const Unit& x, const Unit& y)
 // ****************************************************
 {
-    Invalidate(true);
+    invalidate(true);
     _x = x;
     _y = y;
 }
@@ -276,7 +276,7 @@ Segment*  RoutingPad::_getEntityAsSegment () const
 void RoutingPad::SetExternalComponent(Component* component)
 // ********************************************************
 {
-    if (isMaterialized()) Invalidate(false);
+    if (isMaterialized()) invalidate(false);
 
     Occurrence plugOccurrence = getPlugOccurrence();
     Plug* plug= static_cast<Plug*>(plugOccurrence.getEntity());

@@ -200,11 +200,11 @@ Component* Contact::getAnchor() const
     return (masterHook) ? masterHook->getComponent() : NULL;
 }
 
-void Contact::Translate(const Unit& dx, const Unit& dy)
+void Contact::translate(const Unit& dx, const Unit& dy)
 // ****************************************************
 {
     if ((dx != 0) || (dy != 0)) {
-        Invalidate(true);
+        invalidate(true);
         _dx += dx;
         _dy += dy;
     }
@@ -217,7 +217,7 @@ void Contact::SetLayer(Layer* layer)
         throw Error("Can't set layer : null layer");
 
     if (layer != _layer) {
-        Invalidate(false);
+        invalidate(false);
         _layer = layer;
     }
 }
@@ -226,7 +226,7 @@ void Contact::SetWidth(const Unit& width)
 // **************************************
 {
     if (width != _width) {
-        Invalidate(false);
+        invalidate(false);
         _width = width;
     }
 }
@@ -235,7 +235,7 @@ void Contact::SetHeight(const Unit& height)
 // ****************************************
 {
     if (height != _height) {
-        Invalidate(false);
+        invalidate(false);
         _height = height;
     }
 }
@@ -244,7 +244,7 @@ void Contact::SetSizes(const Unit& width, const Unit& height)
 // **********************************************************
 {
     if ((width != _width) || (height != _height)) {
-        Invalidate(false);
+        invalidate(false);
         _width = width;
         _height = height;
     }
@@ -294,7 +294,7 @@ void Contact::SetOffset(const Unit& dx, const Unit& dy)
 // ****************************************************
 {
     if ((dx != _dx) || (dy != _dy)) {
-        Invalidate(true);
+        invalidate(true);
         _dx = dx;
         _dy = dy;
     }

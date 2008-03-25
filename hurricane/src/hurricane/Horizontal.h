@@ -59,12 +59,12 @@ class Horizontal : public Segment {
 // Updators
 // ********
 
-    public: virtual void Translate(const Unit& dx, const Unit& dy);
+    public: virtual void translate(const Unit& dx, const Unit& dy);
 
     public: void SetY(const Unit& y);
     public: void SetDxSource(const Unit& dxSource);
     public: void SetDxTarget(const Unit& dxSource);
-    public: void Translate(const Unit& dy);
+    public: void translate(const Unit& dy);
 
 // Others
 // ******
