@@ -114,7 +114,7 @@ void Device::_Place(Instance* ins, const Transformation::Orientation& orientatio
        throw Error("Can't Place Instance : ins is NULL");
     } 
 
-    if(ins->IsPlaced()) {
+    if(ins->isPlaced()) {
        throw Error("Can't Place " + getString(ins) + " : it has already been placed");
     }
 
@@ -126,8 +126,8 @@ void Device::_Place(Instance* ins, const Transformation::Orientation& orientatio
 
     Transformation transformation_ins = Transformation(translation, orientation);
     
-    ins->SetTransformation(transformation_ins);
-    ins->SetPlacementStatus(Instance::PlacementStatus::PLACED);
+    ins->setTransformation(transformation_ins);
+    ins->setPlacementStatus(Instance::PlacementStatus::PLACED);
 }
 
 
@@ -138,7 +138,7 @@ void Device::_setRefIns(Instance* ins) const
        throw Error("Can't SetRefIns : ref instance is NULL");
    }
   
-   if(ins->IsUnplaced()) {
+   if(ins->isUnplaced()) {
        throw Error("Can't SetRefIns : ref instance has't been placed");
    }
    
@@ -153,7 +153,7 @@ void Device::_PlaceRight(Instance* ins, const Transformation::Orientation& orien
        throw Error("Can't PlaceRight Instance : ins is NULL");
     } 
 
-    if(ins->IsPlaced()) {
+    if(ins->isPlaced()) {
        throw Error("Can't PlaceRight " + getString(ins) + " : it has already been placed");
     }
 
@@ -172,8 +172,8 @@ void Device::_PlaceRight(Instance* ins, const Transformation::Orientation& orien
 
     Transformation transformation_ins = Transformation(translation, orientation);
     
-    ins->SetTransformation(transformation_ins);
-    ins->SetPlacementStatus(Instance::PlacementStatus::PLACED);
+    ins->setTransformation(transformation_ins);
+    ins->setPlacementStatus(Instance::PlacementStatus::PLACED);
 
     refins = ins;
 }
