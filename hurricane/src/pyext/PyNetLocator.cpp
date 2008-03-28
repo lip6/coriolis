@@ -50,14 +50,13 @@
 
 
 
-# include  "PyNetLocator.h"
-# include  "PyNet.h"
+#include "PyNetLocator.h"
+#include "PyNet.h"
 
 
 namespace  Isobar {
 
-
-USING_NAMESPACE_HURRICANE
+using namespace Hurricane;
 
 
 extern "C" {

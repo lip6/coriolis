@@ -350,19 +350,19 @@ Record* BasicLayer::Type::_getRecord() const
 
 } // End of Hurricane namespace.
 
-bool Scan(const string& s, H::BasicLayer::Type& type)
+bool Scan(const string& s, Hurricane::BasicLayer::Type& type)
 // **************************************************
 {
     if (s == "UNDEFINED") {
-        type = H::BasicLayer::Type::UNDEFINED;
+        type = Hurricane::BasicLayer::Type::UNDEFINED;
         return true;
     }
     if (s == "CONDUCTING") {
-        type = H::BasicLayer::Type::CONDUCTING;
+        type = Hurricane::BasicLayer::Type::CONDUCTING;
         return true;
     }
     if (s == "CONTACT") {
-        type = H::BasicLayer::Type::CONTACT;
+        type = Hurricane::BasicLayer::Type::CONTACT;
         return true;
     }
     return false;

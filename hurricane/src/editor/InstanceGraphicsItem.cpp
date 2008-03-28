@@ -6,7 +6,7 @@
 #include "Slice.h"
 #include "Segment.h"
 #include "BasicLayer.h"
-using namespace H;
+using namespace Hurricane;
 
 #include "Utils.h"
 #include "InstanceGraphicsItem.h"

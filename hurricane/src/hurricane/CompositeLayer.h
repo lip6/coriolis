@@ -120,7 +120,7 @@ SetNestedSlotAdapter(Hurricane::CompositeLayer)
 // ****************************************************************************************************
 
 
-bool Scan(const string& s, H::CompositeLayer::Type& type);
+bool Scan(const string& s, Hurricane::CompositeLayer::Type& type);
 
 #endif // HURRICANE_COMPOSITE_LAYER
 

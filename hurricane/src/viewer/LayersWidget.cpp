@@ -1,7 +1,7 @@
 #include "DataBase.h"
 #include "Technology.h"
 #include "BasicLayer.h"
-using namespace H;
+using namespace Hurricane;
 
 #include <QCheckBox>
 #include <QLabel>

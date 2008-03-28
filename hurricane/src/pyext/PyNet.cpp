@@ -52,23 +52,21 @@
 
 
 
-# include  "PyNet.h"
-# include  "PyName.h"
-# include  "PyCell.h" 
-# include  "PyPoint.h" 
-# include  "PyPlugLocator.h" 
-# include  "PySegmentLocator.h" 
-# include  "PyComponentLocator.h" 
-# include  "PyPinLocator.h" 
+#include "PyNet.h"
+#include "PyName.h"
+#include "PyCell.h" 
+#include "PyPoint.h" 
+#include "PyPlugLocator.h" 
+#include "PySegmentLocator.h" 
+#include "PyComponentLocator.h" 
+#include "PyPinLocator.h" 
 
-# include  "NetExternalComponents.h"
-USING_NAMESPACE_HURRICANE
+#include "NetExternalComponents.h"
+using namespace Hurricane;
+
 
 
 namespace  Isobar {
-
-
-USING_NAMESPACE_HURRICANE
 
 
 extern "C" {

@@ -52,28 +52,26 @@
 
 
 
-# include  "PyPinLocator.h"
-# include  "PyPin.h"
+#include "PyPinLocator.h"
+#include "PyPin.h"
 
 
 namespace  Isobar {
 
-
-USING_NAMESPACE_HURRICANE
-
+using namespace Hurricane;
 
 extern "C" {
 
-# undef   ACCESS_OBJECT 
-# define  ACCESS_OBJECT           _object
-# define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Locator<Pin*>,locator,function)
+#undef  ACCESS_OBJECT 
+#define ACCESS_OBJECT           _object
+#define METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Locator<Pin*>,locator,function)
 
 
 // x=================================================================x
 // |                 "PyPin" Python Module Code Part                 |
 // x=================================================================x
 
-# if defined(__PYTHON_MODULE__)
+#if defined(__PYTHON_MODULE__)
 
 
   // x-------------------------------------------------------------x

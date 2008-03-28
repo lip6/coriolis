@@ -246,19 +246,19 @@ Record* CompositeLayer::Type::_getRecord() const
 // Generic functions
 // ****************************************************************************************************
 
-bool Scan(const string& s, H::CompositeLayer::Type& type)
+bool Scan(const string& s, Hurricane::CompositeLayer::Type& type)
 // ***************************************************
 {
     if (s == "UNDEFINED") {
-        type = H::CompositeLayer::Type::UNDEFINED;
+        type = Hurricane::CompositeLayer::Type::UNDEFINED;
         return true;
     }
     if (s == "METAL") {
-        type = H::CompositeLayer::Type::METAL;
+        type = Hurricane::CompositeLayer::Type::METAL;
         return true;
     }
     if (s == "VIA") {
-        type = H::CompositeLayer::Type::VIA;
+        type = Hurricane::CompositeLayer::Type::VIA;
         return true;
     }
     return false;

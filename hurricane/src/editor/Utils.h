@@ -5,7 +5,7 @@
 #include <QTransform>
 #include "Box.h"
 #include "Transformation.h"
-using namespace H;
+using namespace Hurricane;
 
 inline void boxToRectangle(const Box& box, QRectF& rec) {
     double xmin = getValue(box.getXMin());

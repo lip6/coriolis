@@ -52,25 +52,23 @@
 
 
 
-# include  "PyPlug.h"
-# include  "PyInstance.h"
-# include  "PyNet.h"
+#include "PyPlug.h"
+#include "PyInstance.h"
+#include "PyNet.h"
 
 
 namespace  Isobar {
 
-
-USING_NAMESPACE_HURRICANE
-
+using namespace Hurricane;
 
 extern "C" {
 
 
-# undef   ACCESS_OBJECT
-# undef   ACCESS_CLASS
-# define  ACCESS_OBJECT            _baseObject._baseObject._object
-# define  ACCESS_CLASS(_pyObject)  &(_pyObject->_baseObject._baseObject)
-# define  METHOD_HEAD(function)    GENERIC_METHOD_HEAD(Plug,plug,function)
+#undef  ACCESS_OBJECT
+#undef  ACCESS_CLASS
+#define ACCESS_OBJECT            _baseObject._baseObject._object
+#define ACCESS_CLASS(_pyObject)  &(_pyObject->_baseObject._baseObject)
+#define METHOD_HEAD(function)    GENERIC_METHOD_HEAD(Plug,plug,function)
 
 
 // x=================================================================x

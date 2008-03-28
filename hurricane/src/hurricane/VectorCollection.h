@@ -157,7 +157,7 @@ template<class Element> class VectorCollection : public Collection<Element> {
     public: Record* _getRecord() const
     // *************************
     {
-      H::Record* record = NULL;
+      Hurricane::Record* record = NULL;
       if (!_elementVector->empty()) {
         record = new Record(_getString());
         unsigned n = 1;

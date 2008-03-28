@@ -60,11 +60,11 @@
 #include "Error.h"
 #include "Warning.h"
 
+using namespace Hurricane;
 
-USING_NAMESPACE_HURRICANE
 
 
-namespace  Isobar {
+namespace Isobar {
 
 namespace {
 

@@ -4,7 +4,7 @@
 #include <QStyleOptionGraphicsItem>
 
 #include "Slice.h"
-using namespace H;
+using namespace Hurricane;
 
 #include "Utils.h"
 #include "InstanceGraphicsItem.h"

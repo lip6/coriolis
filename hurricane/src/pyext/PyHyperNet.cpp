@@ -52,18 +52,17 @@
 
 
 
-# include  "PyHyperNet.h"
-# include  "PyCell.h"
-# include  "PyOccurrence.h"
-# include  "PyOccurrenceLocator.h" 
+#include "PyHyperNet.h"
+#include "PyCell.h"
+#include "PyOccurrence.h"
+#include "PyOccurrenceLocator.h" 
 
-USING_NAMESPACE_HURRICANE
+using namespace Hurricane;
 
 
 namespace  Isobar {
 
 
-USING_NAMESPACE_HURRICANE
 
 
 extern "C" {

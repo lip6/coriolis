@@ -49,13 +49,6 @@
 // |                        Macros Definition                        |
 // x-----------------------------------------------------------------x
 
-
-#define Hurricane                 H
-#define BEGIN_NAMESPACE_HURRICANE namespace Hurricane {
-#define END_NAMESPACE_HURRICANE   }
-#define USING_NAMESPACE_HURRICANE using namespace std; using namespace Hurricane;
-
-
 #define is_a (bool)dynamic_cast
 
 

@@ -170,12 +170,12 @@ string getValueString(const Unit& unit)
 
 
 
-bool Scan(const string& s, H::Unit& unit)
+bool Scan(const string& s, Hurricane::Unit& unit)
 // ***********************************
 {
     double d;
     if (Scan(s, d)) {
-        unit = H::getUnit(d);
+        unit = Hurricane::getUnit(d);
         return true;
     }
     return false;

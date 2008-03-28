@@ -140,7 +140,7 @@ template<>
 SetNestedSlotAdapter(Hurricane::BasicLayer)
 
 
-bool Scan(const string& s, H::BasicLayer::Type& type);
+bool Scan(const string& s, Hurricane::BasicLayer::Type& type);
 
 
 #endif // HURRICANE_BASIC_LAYER

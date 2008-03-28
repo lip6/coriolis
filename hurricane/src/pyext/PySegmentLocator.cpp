@@ -52,27 +52,25 @@
 
 
 
-# include  "PySegmentLocator.h"
-# include  "PySegment.h"
+#include "PySegmentLocator.h"
+#include "PySegment.h"
 
 
 namespace  Isobar {
 
-
-USING_NAMESPACE_HURRICANE
-
+using namespace Hurricane;
 
 extern "C" {
 
 
-# define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Locator<Segment*>,locator,function)
+#define METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Locator<Segment*>,locator,function)
 
 
 // x=================================================================x
 // |           "PySegmentLocator" Python Module Code Part            |
 // x=================================================================x
 
-# if defined(__PYTHON_MODULE__)
+#if defined(__PYTHON_MODULE__)
 
 
   // x-------------------------------------------------------------x

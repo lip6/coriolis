@@ -47,23 +47,18 @@
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
-
-
-
-# include  "PyReferenceLocator.h"
-# include  "PyReference.h"
+#include "PyReferenceLocator.h"
+#include "PyReference.h"
 
 
 namespace  Isobar {
 
-
-USING_NAMESPACE_HURRICANE
-
+using namespace Hurricane;
 
 extern "C" {
 
 
-# define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Locator<Reference*>,locator,function)
+#define METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Locator<Reference*>,locator,function)
 
 
 // x=================================================================x

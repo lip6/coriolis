@@ -6,7 +6,7 @@
 
 #include "CompositeLayer.h"
 #include "BasicLayer.h"
-using namespace H;
+using namespace Hurricane;
 
 #include "Utils.h"
 #include "CellGraphicsItem.h"

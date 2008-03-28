@@ -79,7 +79,7 @@ class Name {
 ValueIOStreamSupport(Hurricane::Name)
 
 
-bool Scan ( const string& s, H::Name& name );
+bool Scan ( const string& s, Hurricane::Name& name );
 
 #endif // HURRICANE_NAME
 

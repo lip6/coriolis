@@ -178,7 +178,7 @@ Record* Name::_getRecord() const
 // Generic functions
 // ****************************************************************************************************
 
-bool Scan ( const string& s, H::Name& name )
+bool Scan ( const string& s, Hurricane::Name& name )
 // *****************************************
 {
   name = s;

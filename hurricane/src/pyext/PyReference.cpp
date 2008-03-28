@@ -61,9 +61,7 @@
 
 namespace  Isobar {
 
-
-USING_NAMESPACE_HURRICANE
-
+using namespace Hurricane;
 
 extern "C" {
 

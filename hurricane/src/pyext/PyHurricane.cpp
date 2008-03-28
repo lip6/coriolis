@@ -121,7 +121,7 @@ namespace {
 } // End of local namespace.
 
 
-USING_NAMESPACE_HURRICANE
+using namespace Hurricane;
 
 
 

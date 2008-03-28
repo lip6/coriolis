@@ -2,7 +2,7 @@
 #define __CELL_EDITOR_H
 
 #include "Cell.h"
-using namespace H;
+using namespace Hurricane;
 
 #include <QMainWindow>
 

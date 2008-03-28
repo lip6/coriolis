@@ -4,7 +4,7 @@
 #include <QGraphicsScene>
 
 #include "Cell.h"
-using namespace H;
+using namespace Hurricane;
 
 class CellScene : public QGraphicsScene {
     Q_OBJECT

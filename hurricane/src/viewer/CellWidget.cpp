@@ -18,7 +18,7 @@
 #include "Slot.h"
 #include "Technology.h"
 #include "Transformation.h"
-using namespace H;
+using namespace Hurricane;
 
 #include <QPaintEvent>
 #include <QPainter>
@@ -1775,7 +1775,7 @@ CellWidget::postRedraw(const Box& area)
 }
 
 
-void CellWidget::drawContent(const Cell* cell, const BasicLayer* basicLayer, const H::Box& updateArea, const Transformation& transformation) const {
+void CellWidget::drawContent(const Cell* cell, const BasicLayer* basicLayer, const Hurricane::Box& updateArea, const Transformation& transformation) const {
     for_each_instance(instance, cell->getInstancesUnder(updateArea)) {
         drawContent(instance, basicLayer, updateArea, transformation);
         end_for;
@@ -1788,7 +1788,7 @@ void CellWidget::drawContent(const Cell* cell, const BasicLayer* basicLayer, con
 }
 
 
-void CellWidget::drawContent(const Instance* instance, const BasicLayer* basicLayer, const H::Box& updateArea, const Transformation& transformation) const {
+void CellWidget::drawContent(const Instance* instance, const BasicLayer* basicLayer, const Hurricane::Box& updateArea, const Transformation& transformation) const {
     Box masterArea = updateArea;
     Transformation masterTransformation = instance->getTransformation();
     instance->getTransformation().getInvert().applyOn(masterArea);
@@ -1797,7 +1797,7 @@ void CellWidget::drawContent(const Instance* instance, const BasicLayer* basicLa
 }
 
 
-void CellWidget::drawSlice(const Slice* slice, const BasicLayer* basicLayer, const H::Box& updateArea, const Transformation& transformation) const {
+void CellWidget::drawSlice(const Slice* slice, const BasicLayer* basicLayer, const Hurricane::Box& updateArea, const Transformation& transformation) const {
     if (slice->getLayer()->contains(basicLayer)) {
         if (slice->getBoundingBox().intersect(updateArea)) {
             //if ((basicLayer == _layer->_getSymbolicBasicLayer()) || (3 < view->getScale())) 
@@ -1835,22 +1835,22 @@ void CellWidget::drawContact(const Contact* contact, const BasicLayer* basicLaye
     drawRectangle(transformation.getBox(contact->getBoundingBox(basicLayer)));
 }
 
-void CellWidget::drawPhantoms(const Cell* cell, const H::Box& updateArea, const Transformation& transformation) const {
+void CellWidget::drawPhantoms(const Cell* cell, const Hurricane::Box& updateArea, const Transformation& transformation) const {
     for_each_instance(instance, cell->getInstancesUnder(updateArea)) {
         drawPhantoms(instance, updateArea, transformation);
         end_for;
     }
 }
 
-void CellWidget::drawPhantoms(const Instance* instance, const H::Box& updateArea, const Transformation& transformation) const {
-    H::Box masterArea = updateArea;
+void CellWidget::drawPhantoms(const Instance* instance, const Hurricane::Box& updateArea, const Transformation& transformation) const {
+    Hurricane::Box masterArea = updateArea;
     Transformation masterTransformation = instance->getTransformation();
     instance->getTransformation().getInvert().applyOn(masterArea);
     transformation.applyOn(masterTransformation);
     drawPhantoms(instance->getMasterCell(), masterArea, masterTransformation);
 }
 
-void CellWidget::drawBoundaries(const Cell* cell, const H::Box& updateArea, const Transformation& transformation) const {
+void CellWidget::drawBoundaries(const Cell* cell, const Hurricane::Box& updateArea, const Transformation& transformation) const {
     drawRectangle(transformation.getBox(cell->getAbutmentBox()));
     for_each_instance(instance, cell->getInstances()) {
         drawBoundaries(instance, updateArea, transformation);
@@ -1858,8 +1858,8 @@ void CellWidget::drawBoundaries(const Cell* cell, const H::Box& updateArea, cons
     }
 }
 
-void CellWidget::drawBoundaries(const Instance* instance, const H::Box& updateArea, const Transformation& transformation) const {
-    H::Box masterArea = updateArea;
+void CellWidget::drawBoundaries(const Instance* instance, const Hurricane::Box& updateArea, const Transformation& transformation) const {
+    Hurricane::Box masterArea = updateArea;
     Transformation masterTransformation = instance->getTransformation();
     instance->getTransformation().getInvert().applyOn(masterArea);
     transformation.applyOn(masterTransformation);

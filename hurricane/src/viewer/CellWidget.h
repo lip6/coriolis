@@ -18,7 +18,7 @@
 #include "BasicLayer.h"
 #include "Occurrences.h"
 #include "Points.h"
-using namespace H;
+using namespace Hurricane;
 //#include "Selectors.h"
 
 //OPEN_MY_NAMESPACE
@@ -170,9 +170,9 @@ class /* Q_EXPORT */ CellWidget : public QWidget {
 	    void			abortStartedCommand();
 
 
-            void drawContent(const Cell* cell, const BasicLayer* basicLayer, const H::Box& updateArea, const Transformation& transformation) const;
-            void drawContent(const Instance* instance, const BasicLayer* basicLayer, const H::Box& updateArea, const Transformation& transformation) const;
-            void drawSlice(const Slice* slice, const BasicLayer* basicLayer, const H::Box& updateArea, const Transformation& transformation) const;
+            void drawContent(const Cell* cell, const BasicLayer* basicLayer, const Hurricane::Box& updateArea, const Transformation& transformation) const;
+            void drawContent(const Instance* instance, const BasicLayer* basicLayer, const Hurricane::Box& updateArea, const Transformation& transformation) const;
+            void drawSlice(const Slice* slice, const BasicLayer* basicLayer, const Hurricane::Box& updateArea, const Transformation& transformation) const;
             void drawPhantoms(const Cell* cell, const Box& updateArea, const Transformation& transformation) const;
             void drawPhantoms(const Instance* instance, const Box& updateArea, const Transformation& transformation) const;
             void drawBoundaries(const Cell* cell, const Box& updateArea, const Transformation& transformation) const;

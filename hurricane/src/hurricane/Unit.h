@@ -97,7 +97,7 @@ string getValueString(const Unit& unit);
 
 
 
-bool Scan(const string& s, H::Unit& unit);
+bool Scan(const string& s, Hurricane::Unit& unit);
 
 #endif // HURRICANE_UNIT
 
