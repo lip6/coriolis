@@ -11,8 +11,7 @@
 #include "UpdateSession.h"
 #include "Vertical.h"
 
-
-BEGIN_NAMESPACE_HURRICANE
+namespace Hurricane {
 
 // ****************************************************************************************************
 // MetaTransistor implementation
@@ -172,6 +171,4 @@ Record* MetaTransistor::_getRecord() const
 	return record;
 }
 
-END_NAMESPACE_HURRICANE
-
-
+}

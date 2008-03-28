@@ -7,8 +7,7 @@
 #include "DtrAccess.h"
 #include "GenericDtrAccess.h"
 
-BEGIN_NAMESPACE_HURRICANE
-
+namespace Hurricane {
 
 // ****************************************************************************************************
 // GenericDtrAccess implementation
@@ -43,15 +42,13 @@ string GenericDtrAccess::_getString() const
   
 }
 
-END_NAMESPACE_HURRICANE
-
-
+}
 
 // ****************************************************************************************************
 // Generic functions
 // ****************************************************************************************************
 
-string getString(const H::GenericDtrAccess& access)
+string getString(const Hurricane::GenericDtrAccess& access)
 // ************************************************
 {
   return access._getString();

@@ -14,7 +14,7 @@
 extern void ParseDtr(const char*, Hurricane::DtrAccess*);
 
 
-BEGIN_NAMESPACE_HURRICANE
+namespace Hurricane {
 
 
 // ****************************************************************************************************
@@ -286,13 +286,13 @@ Record* DtrAccess::_getRecord() const
   return record;
 }
 
-END_NAMESPACE_HURRICANE
+}
 
 // ****************************************************************************************************
 // Generic functions
 // ****************************************************************************************************
 
-string getString(const H::DtrAccess& access)
+string getString(const Hurricane::DtrAccess& access)
 // **********************************************
 {
   return access._getString();

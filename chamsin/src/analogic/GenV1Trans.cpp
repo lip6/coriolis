@@ -15,10 +15,7 @@
 
 #include "DataBase.h"
 
-
-
-BEGIN_NAMESPACE_HURRICANE
-
+namespace Hurricane {
 
 
 // ****************************************************************************************************
@@ -535,5 +532,4 @@ END_IF
 
 }  
 
-
-END_NAMESPACE_HURRICANE
+}

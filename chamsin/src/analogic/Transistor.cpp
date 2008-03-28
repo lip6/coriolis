@@ -13,8 +13,7 @@
 
 #include "UpdateSession.h"
 
-BEGIN_NAMESPACE_HURRICANE
-
+namespace Hurricane {
 
 // ****************************************************************************************************
 // Transistor::MaskVersion implementation
@@ -440,16 +439,16 @@ void Transistor::DuplicateLayout(Transistor* transistor)
 
 }  
 
-END_NAMESPACE_HURRICANE
-
+}
 
 // ****************************************************************************************************
 // Generic functions
 // ****************************************************************************************************
 
-string getString(const H::Transistor::MaskInfo& masqueinfo)
+string getString(const Hurricane::Transistor::MaskInfo& masqueinfo)
 // **********************************************************
 {
   return masqueinfo._getString();
 }  
+
 

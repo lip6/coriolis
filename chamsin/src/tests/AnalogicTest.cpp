@@ -2,7 +2,7 @@
 
 #include "Library.h"
 #include "Warning.h"
-using namespace H;
+using namespace Hurricane;
 
 #include "crlcore/CDataBase.h"
 using namespace CRL;

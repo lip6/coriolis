@@ -5,13 +5,13 @@
 // ***************************************************************
 
 
-# ifndef HURRICANE_TWOSPACES
-# define HURRICANE_TWOSPACES
+#ifndef HURRICANE_TWOSPACES
+#define HURRICANE_TWOSPACES
 
-# include  "Commons.h" 
+#include  "Commons.h" 
 
+namespace Hurricane {
 
-BEGIN_NAMESPACE_HURRICANE
 
 // ****************************************************************************************************
 // TwoSpaces declaration.
@@ -55,18 +55,18 @@ class TwoSpaces {
 // ****************************************************************************************************
 extern TwoSpaces ts;
 
-END_NAMESPACE_HURRICANE
+}
 
 
 // ****************************************************************************************************
 // Generic functions
 // ****************************************************************************************************
-string GetString(const H::TwoSpaces&);
+string GetString(const Hurricane::TwoSpaces&);
 
-inline ostream& operator<<(ostream& stream, const H::TwoSpaces& ts)
+inline ostream& operator<<(ostream& stream, const Hurricane::TwoSpaces& ts)
 // ****************************************************************
 {
   return stream<< GetString(ts);
 }  
 
-# endif    // END HURRICANE_TWOSPACES
+#endif // END HURRICANE_TWOSPACES

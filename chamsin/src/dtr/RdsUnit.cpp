@@ -221,10 +221,7 @@ static void CalculateRdsUnit() {
 
 }
 
-BEGIN_NAMESPACE_HURRICANE
-
-
-
+namespace Hurricane {
 
 // ****************************************************************************************************
 // Utilitarians 
@@ -255,4 +252,4 @@ const long& getRdsLambda()
 }  
 
 
-END_NAMESPACE_HURRICANE
+}

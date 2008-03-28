@@ -63,15 +63,13 @@ class GenericDtrAccess {
 };
 
 
-//END_NAMESPACE_HURRICANE
-
 }
 
 // ****************************************************************************************************
 // Generic functions
 // ****************************************************************************************************
 
-string getString(const H::GenericDtrAccess&);
+string getString(const Hurricane::GenericDtrAccess&);
 
 
 #endif // HURRICANE_GENERICDTRACCESS

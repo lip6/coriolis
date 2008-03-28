@@ -10,7 +10,8 @@
 
 #include "Collection.h"
 
-BEGIN_NAMESPACE_HURRICANE
+namespace Hurricane {
+
 
 class Transistor;
 
@@ -53,7 +54,7 @@ typedef GenericFilter<Transistor*> TransistorFilter;
 
 
 
-END_NAMESPACE_HURRICANE
+}
 
 #endif // HURRICANE_TRANSISTORS
 

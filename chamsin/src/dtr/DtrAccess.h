@@ -10,9 +10,6 @@
 #include "Layer.h"
 #include "Layers.h"
 
-//BEGIN_NAMESPACE_HURRICANE
-
-
 namespace Hurricane {
 
 class DtrAccess {
@@ -164,21 +161,18 @@ class DtrAccess {
     public: map<string, int>& _getLabel2ModellingMap() { return _label2modellingMap; };
     public: map<string, double>& _getLabel2SimpleCapaMimMap() 
 	     { return _label2simplecapamimMap; };
-# endif
+#endif
 
 };
 
 }
 
 
-//END_NAMESPACE_HURRICANE
-
-
 // ****************************************************************************************************
 // Generic functions
 // ****************************************************************************************************
 
-string getString(const H::DtrAccess&);
+string getString(const Hurricane::DtrAccess&);
 
 
 #endif // HURRICANE_DTRACCESS

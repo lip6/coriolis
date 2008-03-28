@@ -161,8 +161,7 @@
    ( (long)(getValue(box.getYMax()))%2==0 ) 
    
 
-BEGIN_NAMESPACE_HURRICANE
-
+namespace Hurricane {
 
 class GenTrans {
 // *************
@@ -214,7 +213,6 @@ class GenV1Trans : public GenTrans {
   
 };
 
-
-END_NAMESPACE_HURRICANE
+}
 
 #endif

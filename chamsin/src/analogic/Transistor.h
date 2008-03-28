@@ -318,18 +318,17 @@ template<>
                               }
 
 
-# endif
+#endif
 
 }
 
-//END_NAMESPACE_HURRICANE
 
 
 // ****************************************************************************************************
 // Generic functions
 // ****************************************************************************************************
 
-string getString(const H::Transistor::MaskInfo&);
+string getString(const Hurricane::Transistor::MaskInfo&);
 
 
 #endif // HURRICANE_TRANSISTOR

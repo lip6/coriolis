@@ -6,8 +6,8 @@
 
 #include "TwoSpaces.h"
 
+namespace Hurricane {
 
-BEGIN_NAMESPACE_HURRICANE
 
 // ****************************************************************************************************
 // Two Spaces definition.
@@ -108,14 +108,13 @@ string TwoSpaces::_GetString() const
 // ****************************************************************************************************
 TwoSpaces ts("  ");
 
-
-END_NAMESPACE_HURRICANE
+}
 
 
 // ****************************************************************************************************
 // Generic functions
 // ****************************************************************************************************
-string GetString(const H::TwoSpaces& ts)
+string GetString(const Hurricane::TwoSpaces& ts)
 // ***********************************
 {
   return ts._GetString();
