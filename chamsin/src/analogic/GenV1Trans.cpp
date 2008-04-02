@@ -8,7 +8,6 @@
 #include "RdsUnit.h"
 #include "GenTrans.h"
 #include "DtrAccess.h"
-#include "GenericDtrAccess.h"
 
 #include "Technology.h"
 #include "UpdateSession.h"
@@ -41,7 +40,7 @@ GenV1Trans::GenV1Trans(Transistor::MaskV1Info* masqueinfo)
 void GenV1Trans::Calculate(Transistor* transistor)
 // **********************************************
 {
-  DtrAccess * dtraccess = DtrAccess::Instance(); 
+  DtrAccess* dtraccess = DtrAccess::getDtrAccess(); 
 
   // Check out mask param.
   // *********************
@@ -318,7 +317,7 @@ void GenV1Trans::Generate(Transistor* transistor)
   Net* drain  = transistor->getNet(Name(transistor->getDrainName()) ); 
   Net* grid   = transistor->getNet(Name(transistor->getGridName())  ); 
 
-  DtrAccess * dtraccess = DtrAccess::Instance(); 
+  DtrAccess * dtraccess = DtrAccess::getDtrAccess(); 
   //string mostype(1, transistor->getType());    // get Mos Type (N/P).
 
   string mostype;    // get Mos Type (N/P).

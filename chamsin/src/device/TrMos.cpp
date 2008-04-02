@@ -62,7 +62,7 @@ void TrMos::_postCreate() {
    _lowPinOrder.push_back(S);
    _lowPinOrder.push_back(B);
 
-   double minWidth = (DtrAccess::Instance())->getSingleRealRuleByLabel(string("RW_ALU1")); 
+   double minWidth = (DtrAccess::getDtrAccess())->getSingleRealRuleByLabel(string("RW_ALU1")); 
 
    _widthOfSourceWire = minWidth;
    _widthOfDrainWire = minWidth;

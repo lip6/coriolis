@@ -42,7 +42,7 @@ void TrMos::_PlaceAndRoute()
 
    // get Dtr Rules And Calculate the Size of AbutmentBox of Device.
    // **************************************************************
-   DtrAccess * dtraccess = DtrAccess::Instance(); 
+   DtrAccess * dtraccess = DtrAccess::getDtrAccess(); 
 
    char type;
    if(_type == 'P') type = 'N'; 

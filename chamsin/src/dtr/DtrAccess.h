@@ -18,7 +18,7 @@ class DtrAccess {
 // Attributes
 // **********
     private: typedef map<string, list<double> > Label2RuleMap;
-    private: static DtrAccess * _instance;
+    private: static DtrAccess * _singleton;
 
     private: Label2RuleMap _label2ruleMap;
     private: map<string, list<string> > _label2layerNameMap;
@@ -37,26 +37,13 @@ class DtrAccess {
  
 // Constructors
 // ************
-    protected : DtrAccess();
-    private : DtrAccess(const DtrAccess&);		
     private : DtrAccess& operator=(const DtrAccess&);
 
     protected : static DtrAccess * create();		
     protected : virtual void _postCreate();
 # endif 
       
-    public : static DtrAccess* Instance();
-
-// Destructors
-// ***********
-#   if !defined(__DOXYGEN_PROCESSOR__)
-    protected : virtual ~DtrAccess() {};
-    protected : virtual void _preDestroy(); 
-# endif 
-
-
-    public : virtual void destroy();
-
+    public : static DtrAccess* getDtrAccess();
 
 // Accessors
 // *********	    

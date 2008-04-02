@@ -24,18 +24,12 @@ namespace Hurricane {
 
 // static data defintion
 // *********************
-DtrAccess* DtrAccess::_instance = NULL;
+DtrAccess* DtrAccess::_singleton = NULL;
 
 map<string, DtrAccess*> DtrAccess::_registry;
 
-DtrAccess::DtrAccess()
-// *******************
-{
-}
-
-
 DtrAccess * DtrAccess::create() {
-   DtrAccess * dtraccess = new DtrAccess();
+   DtrAccess* dtraccess = new DtrAccess();
 
    dtraccess->_postCreate();
    
@@ -92,9 +86,9 @@ void DtrAccess::_postCreate() {
      while(m!=n) {
        Layer * layer = tech->getLayer(Name(*m));
        if(!layer) { 
-	 throw Error("Error : in function DtrAccess::_PostCreate , Can't find Layer " 
+	 throw Error("Error : in function DtrAccess::_postCreate , Can't find Layer " 
 	     + getString(*m) + " in technology file when parser DtrFile.");
-//	 cerr << Warning("In function DtrAccess::_PostCreate , Can't find Layer " 
+//	 cerr << Warning("In function DtrAccess::_postCreate , Can't find Layer " 
 //	     + getString(*m) + " in technology file when parser DtrFile");
        }
 	 
@@ -107,40 +101,23 @@ void DtrAccess::_postCreate() {
 }
 
 
-DtrAccess * DtrAccess::Instance() {
+DtrAccess * DtrAccess::getDtrAccess() {
   // User or environnement supplies this at startup
   // **********************************************
   const char * singleton_name = getenv("DTRACCESS_SINGLETON");
 
   if(!singleton_name) { // if MACRO IS INVALID
-     if(!_instance) {
-        _instance = DtrAccess::create();
+     if(!_singleton) {
+        _singleton = DtrAccess::create();
      }
   } else {  
-    if(!_instance){
-       if( !(_instance=LookUp(string(singleton_name))) ) // if singleton hasn't been registered
-          _instance = DtrAccess::create();
+    if(!_singleton){
+       if( !(_singleton=LookUp(string(singleton_name))) ) // if singleton hasn't been registered
+          _singleton = DtrAccess::create();
     }
   }
-  return _instance;
+  return _singleton;
 }
-
-
-void DtrAccess::_preDestroy()
-// ***********************
-{
-  // Do something
-  // ************
-}
-
-
-void DtrAccess::destroy()
-// ********************
-{
-   _preDestroy();
-   delete this;
-}
-
 
 GenericCollection<double> DtrAccess::getRuleByLabel(const string& label) const
 // ***************************************************************************
@@ -152,7 +129,6 @@ GenericCollection<double> DtrAccess::getRuleByLabel(const string& label) const
 
     return getCollection((*i).second);
 }
-
 
 GenericCollection<long> DtrAccess::getRdsRuleByLabel(const string& label) const
 // ******************************************************************************

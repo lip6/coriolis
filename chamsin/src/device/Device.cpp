@@ -15,7 +15,6 @@
 
 #include "Cells.h"
 #include "DtrAccess.h"
-#include "GenericDtrAccess.h"
 using namespace Hurricane;
 
 // ****************************************************************************************************
@@ -68,9 +67,6 @@ void Device::_postCreate() {
    //state->SetCell(this);
    //state->SetLibrary(getLibrary());
 
-   // Create GenericDtrAccess and DtrAccess
-   // *************************************
-   GenericDtrAccess::Instance(DtrAccess::Instance());   
 }
 
 
