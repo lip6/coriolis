@@ -67,15 +67,15 @@ class Hook : public NestedSlotAdapter {
 // Predicates
 // **********
 
-    public: virtual bool IsMaster() const = 0;
+    public: virtual bool isMaster() const = 0;
 
-    public: bool IsAttached() const;
+    public: bool isAttached() const;
 
 // Updators
 // ********
 
-    public: Hook* Detach();
-    public: Hook* Attach(Hook* hook);
+    public: Hook* detach();
+    public: Hook* attach(Hook* hook);
     public: Hook* merge(Hook* hook);
     public: void _setNextHook(Hook* hook);
 

@@ -160,7 +160,7 @@ size_t  DeepNet::_createRoutingPads ( bool buildRings )
     currentRP = createRoutingPad ( this, plugOccurrence );
     if ( buildRings ) {
       if ( previousRP ) {
-        currentRP->getBodyHook()->Attach ( previousRP->getBodyHook() );
+        currentRP->getBodyHook()->attach ( previousRP->getBodyHook() );
       }
       previousRP = currentRP;
     }

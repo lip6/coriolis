@@ -44,7 +44,7 @@ class Component : public Go {
 
         public: virtual Component* getComponent() const;
 
-        public: virtual bool IsMaster() const {return true;};
+        public: virtual bool isMaster() const {return true;};
 
         public: virtual string _getTypeName() const { return _TName("Component::BodyHook"); };
         public: virtual string _getString() const;

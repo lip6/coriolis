@@ -37,7 +37,7 @@ class Segment : public Component {
 
         public: virtual Component* getComponent() const;
 
-        public: virtual bool IsMaster() const {return false;};
+        public: virtual bool isMaster() const {return false;};
 
         public: virtual string _getTypeName() const { return _TName("Segment::SourceHook"); };
         public: virtual string _getString() const;
@@ -54,7 +54,7 @@ class Segment : public Component {
 
         public: virtual Component* getComponent() const;
 
-        public: virtual bool IsMaster() const {return false;};
+        public: virtual bool isMaster() const {return false;};
 
         public: virtual string _getTypeName() const { return _TName("Segment::TargetHook"); };
         public: virtual string _getString() const;

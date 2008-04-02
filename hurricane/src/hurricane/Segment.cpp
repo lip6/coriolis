@@ -177,8 +177,8 @@ Segment::Segment(Net* net, Component* source, Component* target, Layer* layer, c
     if (!_layer)
         throw Error("Can't create " + _TName("Segment") + " : null layer");
 
-    if (source) _sourceHook.Attach(source->getBodyHook());
-    if (target) _targetHook.Attach(target->getBodyHook());
+    if (source) _sourceHook.attach(source->getBodyHook());
+    if (target) _targetHook.attach(target->getBodyHook());
 }
 
 Hooks Segment::getHooks() const
@@ -268,10 +268,10 @@ void Segment::Invert()
     Component* source = getSource();
     Component* target = getTarget();
     if (source && target && (target != source)) {
-        getSourceHook()->Detach();
-        getTargetHook()->Detach();
-        getSourceHook()->Attach(target->getBodyHook());
-        getTargetHook()->Attach(source->getBodyHook());
+        getSourceHook()->detach();
+        getTargetHook()->detach();
+        getSourceHook()->attach(target->getBodyHook());
+        getTargetHook()->attach(source->getBodyHook());
     }
 }
 
@@ -283,8 +283,8 @@ void Segment::_preDestroy()
 
     Inherit::_preDestroy();
 
-    _sourceHook.Detach();
-    _targetHook.Detach();
+    _sourceHook.detach();
+    _targetHook.detach();
 
 // trace << "exiting Segment::_preDestroy:" << endl;
 // trace_out();

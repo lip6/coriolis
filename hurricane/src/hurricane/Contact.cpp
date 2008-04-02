@@ -122,7 +122,7 @@ Contact::Contact(Net* net, Component* anchor, Layer* layer, const Unit& dx, cons
     if (!_layer)
         throw Error("Can't create " + _TName("Contact") + " : null layer");
 
-    _anchorHook.Attach(anchor->getBodyHook());
+    _anchorHook.attach(anchor->getBodyHook());
 }
 
 Contact* Contact::create(Net* net, Layer* layer, const Unit& x, const Unit& y, const Unit& width, const Unit& height)
@@ -308,7 +308,7 @@ void Contact::_preDestroy()
 
     Inherit::_preDestroy();
 
-    _anchorHook.Detach();
+    _anchorHook.detach();
 
 // trace << "exiting Contact::PreDestroy" << endl;
 // trace_out();

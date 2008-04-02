@@ -28,7 +28,7 @@ class Hook_IsMasterFilter : public Filter<Hook*> {
 
     public: virtual Filter<Hook*>* getClone() const {return new Hook_IsMasterFilter(*this);};
 
-    public: virtual bool accept(Hook* hook) const {return hook->IsMaster();};
+    public: virtual bool accept(Hook* hook) const {return hook->isMaster();};
 
     public: virtual string _getString() const {return "<" + _TName("Hook::IsMasterFilter>");};
 
@@ -206,7 +206,7 @@ Hook* Hook::getMasterHook() const
 {
     Hook* hook = (Hook*)this;
     do {
-        if (hook->IsMaster()) return hook;
+        if (hook->isMaster()) return hook;
         hook = hook->_nextHook;
     } while (hook != this);
     return NULL;
@@ -224,7 +224,7 @@ Hook* Hook::getPreviousMasterHook() const
     Hook* previousMasterHook = NULL;
     Hook* hook = (Hook*)this;
     do {
-        if (hook->IsMaster()) previousMasterHook = hook;
+        if (hook->isMaster()) previousMasterHook = hook;
         hook = hook->_nextHook;
     } while (hook != this);
     return previousMasterHook;
@@ -248,22 +248,22 @@ HookFilter Hook::getIsMasterFilter()
     return Hook_IsMasterFilter();
 }
 
-bool Hook::IsAttached() const
+bool Hook::isAttached() const
 // **************************
 {
-    if (!IsMaster())
+    if (!isMaster())
         return (getMasterHook() != NULL);
     else
         return (getNextMasterHook() != this);
 }
 
-Hook* Hook::Detach()
+Hook* Hook::detach()
 // *****************
 {
     Hook* previousHook = NULL;
     Hook* hook = _nextHook;
     while (hook != this) {
-        if (!IsMaster() || hook->IsMaster()) previousHook = hook;
+        if (!isMaster() || hook->isMaster()) previousHook = hook;
         hook = hook->_nextHook;
     }
     if (previousHook) {
@@ -272,8 +272,8 @@ Hook* Hook::Detach()
         previousHook->_nextHook = nextHook;
 
         // /*
-        if (IsMaster()) {
-            assert(previousHook->IsMaster());
+        if (isMaster()) {
+            assert(previousHook->isMaster());
             Component* component = getComponent();
             Rubber* rubber = component->getRubber();
             if (rubber) {
@@ -287,16 +287,16 @@ Hook* Hook::Detach()
     return previousHook;
 }
 
-Hook* Hook::Attach(Hook* hook)
+Hook* Hook::attach(Hook* hook)
 // ***************************
 {
-    if (IsAttached())
+    if (isAttached())
         throw Error("Can't attach : already attached");
 
     if (!hook)
         throw Error("Can't attach : null hook");
 
-    if (!hook->IsMaster())
+    if (!hook->isMaster())
         throw Error("Can't attach : not a master hook");
 
     if (hook == this)
@@ -308,7 +308,7 @@ Hook* Hook::Attach(Hook* hook)
     _nextHook = nextHook;
 
     // /*
-    if (IsMaster()) {
+    if (isMaster()) {
         Rubber* rubber = hook->getComponent()->getRubber();
         if (rubber)
             getComponent()->_setRubber(rubber);
@@ -322,7 +322,7 @@ Hook* Hook::Attach(Hook* hook)
 
 void Hook::_setNextHook(Hook* hook)
 {
-    if (IsMaster())
+    if (isMaster())
     {
         Rubber* rubber = hook->getComponent()->getRubber();
         if (rubber)
@@ -334,13 +334,13 @@ void Hook::_setNextHook(Hook* hook)
 Hook* Hook::merge(Hook* hook)
 // **************************
 {
-    if (!IsMaster())
+    if (!isMaster())
         throw Error("Can't merge : not a master");
 
     if (!hook)
         throw Error("Can't merge : null hook");
 
-    if (!hook->IsMaster())
+    if (!hook->isMaster())
         throw Error("Can't merge : not a master hook");
 
     if (hook == this)
@@ -546,13 +546,13 @@ Hook_SlaveHooks::Locator::Locator(const Hook* hook)
     _hook(hook),
     _currentHook(NULL)
 {
-    if (_hook && _hook->IsMaster()) {
+    if (_hook && _hook->isMaster()) {
         _currentHook = _hook->getPreviousMasterHook();
         if (_currentHook) {
             _currentHook = _currentHook->getNextHook();
             if (_currentHook == _hook) _currentHook = NULL;
         }
-        assert(!_currentHook || !_currentHook->IsMaster());
+        assert(!_currentHook || !_currentHook->isMaster());
     }
 }
 
@@ -596,7 +596,7 @@ void Hook_SlaveHooks::Locator::progress()
     if (_currentHook) {
         _currentHook = _currentHook->getNextHook();
         if (_currentHook == _hook) _currentHook = NULL;
-        assert(!_currentHook || !_currentHook->IsMaster());
+        assert(!_currentHook || !_currentHook->isMaster());
     }
 }
 

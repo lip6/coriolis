@@ -37,7 +37,7 @@ class Contact : public Component {
 
         public: virtual Component* getComponent() const;
 
-        public: virtual bool IsMaster() const {return false;};
+        public: virtual bool isMaster() const {return false;};
 
         public: virtual string _getTypeName() const { return _TName("Contact::AnchorHook"); };
         public: virtual string _getString() const;

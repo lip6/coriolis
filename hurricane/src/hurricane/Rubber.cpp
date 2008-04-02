@@ -128,7 +128,7 @@ Rubber* Rubber::_create(Hook* hook)
         if (!hook)
                 throw Error("Can't create " + _TName("Rubber") + " : null hook");
 
-        if (!hook->IsMaster())
+        if (!hook->isMaster())
                 throw Error("Can't create " + _TName("Rubber") + " : not a master hook");
 
         Net* net = hook->getComponent()->getNet();
@@ -220,7 +220,7 @@ void Rubber::_setNet(Net* net)
 void Rubber::_setHook(Hook* hook)
 // ******************************
 {
-        assert(hook->IsMaster());
+        assert(hook->isMaster());
         assert(hook->getComponent()->getNet() == getNet());
         _hook = hook;
 }

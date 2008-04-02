@@ -390,11 +390,11 @@ void Component::_preDestroy()
         component->unmaterialize();
         for_each_hook(hook, component->getHooks()) {
             for_each_hook(hook, hook->getHooks()) {
-                if (hook->IsMaster() && (componentSet.find(hook->getComponent()) == componentSet.end()))
+                if (hook->isMaster() && (componentSet.find(hook->getComponent()) == componentSet.end()))
                     masterHookSet.insert(hook);
                 end_for;
             }
-            if (!hook->IsMaster()) hook->Detach();
+            if (!hook->isMaster()) hook->detach();
             end_for;
         }
         end_for;
@@ -430,7 +430,7 @@ void Component::_preDestroy()
     }
     /**/
 
-    _bodyHook.Detach();
+    _bodyHook.detach();
 
     Inherit::_preDestroy();
 

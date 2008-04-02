@@ -566,14 +566,14 @@ void Net::merge(Net* net)
             Hook* masterHook = plug->getBodyHook();
             Hook* nextMasterHook = masterHook->getNextMasterHook();
             if (nextMasterHook != masterHook) {
-                masterHook->Detach();
+                masterHook->detach();
                 mainPlug->getBodyHook()->merge(nextMasterHook);
             }
             Hooks slaveHooks = masterHook->getSlaveHooks();
             while (!slaveHooks.IsEmpty()) {
                 Hook* slaveHook = slaveHooks.getFirst();
-                slaveHook->Detach();
-                slaveHook->Attach(mainPlug->getBodyHook());
+                slaveHook->detach();
+                slaveHook->attach(mainPlug->getBodyHook());
             }
             plug->_destroy();
             end_for;
@@ -613,8 +613,8 @@ void Net::_preDestroy()
         for_each_hook(hook, component->getHooks()) {
             // 15 05 2006 xtof : detach all hooks in rings when
             // a net deletion occurs, can't see why master hooks were not detached.
-            //if (!hook->IsMaster()) hook->Detach();
-            hook->Detach();
+            //if (!hook->IsMaster()) hook->detach();
+            hook->detach();
             end_for;
         }
         end_for;

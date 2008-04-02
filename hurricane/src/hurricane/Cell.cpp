@@ -149,7 +149,7 @@ void Cell::flattenNets(bool buildRings)
             cerr << "[ERROR] " << primaryPlug << "\n"
                  << "        has attached components, not managed yet." << endl;
           } else {
-            primaryPlug->getBodyHook()->Detach ();
+            primaryPlug->getBodyHook()->detach ();
           }
         }
         end_for
@@ -160,12 +160,12 @@ void Cell::flattenNets(bool buildRings)
         currentRP->materialize ();
         if ( buildRings ) {
           if ( previousRP ) {
-            currentRP->getBodyHook()->Attach ( previousRP->getBodyHook() );
+            currentRP->getBodyHook()->attach ( previousRP->getBodyHook() );
           }
           Plug* plug = static_cast<Plug*>( plugOccurrence.getEntity() );
           if ( plugOccurrence.getPath().isEmpty() ) {
-            plug->getBodyHook()->Attach ( currentRP->getBodyHook() );
-            plug->getBodyHook()->Detach ();
+            plug->getBodyHook()->attach ( currentRP->getBodyHook() );
+            plug->getBodyHook()->detach ();
           }
           previousRP = currentRP;
         }
@@ -179,10 +179,10 @@ void Cell::flattenNets(bool buildRings)
           currentRP = createRoutingPad ( pin );
           if ( buildRings ) {
             if ( previousRP ) {
-              currentRP->getBodyHook()->Attach ( previousRP->getBodyHook() );
+              currentRP->getBodyHook()->attach ( previousRP->getBodyHook() );
             }
-            pin->getBodyHook()->Attach ( currentRP->getBodyHook() );
-            pin->getBodyHook()->Detach ();
+            pin->getBodyHook()->attach ( currentRP->getBodyHook() );
+            pin->getBodyHook()->detach ();
           }
           previousRP = currentRP;
         }
