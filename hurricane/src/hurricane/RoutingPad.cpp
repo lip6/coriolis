@@ -74,7 +74,7 @@ void  RoutingPad::_postCreate()
 {
   Inherit::_postCreate();
 
-  if (!_occurrence.getPath().IsEmpty())
+  if (!_occurrence.getPath().isEmpty())
     _occurrence.getMasterCell()->_addSlaveEntity(_occurrence.getEntity(),this);
 }
 
@@ -224,7 +224,7 @@ void RoutingPad::_preDestroy()
 // trace_in();
 
 
-  if (!_occurrence.getPath().IsEmpty())
+  if (!_occurrence.getPath().isEmpty())
     _occurrence.getMasterCell()->_removeSlaveEntity(_occurrence.getEntity(),this);
   Inherit::_preDestroy();
 
@@ -317,7 +317,7 @@ Occurrence RoutingPad::getPlugOccurrence()
     Component* component= static_cast<Component*>(_occurrence.getEntity());
     Net* net=component->getNet();
     Path path=_occurrence.getPath();
-    if (path.IsEmpty())
+    if (path.isEmpty())
         throw Error("Empty Path => not in an instance");
     Instance* instance=path.getTailInstance();
     Plug* plug=instance->getPlug(net);

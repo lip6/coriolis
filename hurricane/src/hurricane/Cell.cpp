@@ -134,7 +134,7 @@ void Cell::flattenNets(bool buildRings)
 
   for_each_occurrence ( occurrence, getHyperNetRootNetOccurrences() ) {
     HyperNet  hyperNet ( occurrence );
-    if ( !occurrence.getPath().IsEmpty() ) {
+    if ( !occurrence.getPath().isEmpty() ) {
       DeepNet* deepNet = DeepNet::create ( hyperNet );
       if (deepNet) deepNet->_createRoutingPads ( buildRings );
     } else {
@@ -163,7 +163,7 @@ void Cell::flattenNets(bool buildRings)
             currentRP->getBodyHook()->Attach ( previousRP->getBodyHook() );
           }
           Plug* plug = static_cast<Plug*>( plugOccurrence.getEntity() );
-          if ( plugOccurrence.getPath().IsEmpty() ) {
+          if ( plugOccurrence.getPath().isEmpty() ) {
             plug->getBodyHook()->Attach ( currentRP->getBodyHook() );
             plug->getBodyHook()->Detach ();
           }

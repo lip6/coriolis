@@ -190,7 +190,7 @@ Transformation SharedPath::getTransformation(const Transformation& transformatio
     return headTransformation.getTransformation(tailTransformation);
 }
 
-void SharedPath::SetNameSeparator(char nameSeparator)
+void SharedPath::setNameSeparator(char nameSeparator)
 // **************************************************
 {
     NAME_SEPARATOR = nameSeparator;

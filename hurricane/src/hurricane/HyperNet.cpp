@@ -318,12 +318,12 @@ Occurrence getHyperNetRootNetOccurrence(const Occurrence& netoccurrence)
     if (!net)
         throw Error("getHyperNetRootNetOccurrence : not a net occurrence");
     
-    if (!net->IsExternal())
+    if (!net->isExternal())
         return netoccurrence;
 
     Path path = netoccurrence.getPath();
     
-    if (path.IsEmpty())
+    if (path.isEmpty())
         return netoccurrence;
     
     Instance* instance = path.getTailInstance();
@@ -332,7 +332,7 @@ Occurrence getHyperNetRootNetOccurrence(const Occurrence& netoccurrence)
     if (!plug)
         throw Error("getHyperNetRootNetOccurrence : no plug for external net !");
     
-    if(!plug->IsConnected())
+    if(!plug->isConnected())
         return netoccurrence;
     
     return getHyperNetRootNetOccurrence(Occurrence(plug->getNet(), path.getHeadPath()));
@@ -344,10 +344,10 @@ bool IsHyperNetRootNetOccurrence(Occurrence netoccurrence)
 {
     Net* net=dynamic_cast<Net*>(netoccurrence.getEntity());
     if (!net) return false;
-    if (!net->IsExternal())                return true;
-    if (netoccurrence.getPath().IsEmpty()) return true;
-    if (net->IsGlobal())                   return false;
-    if (!netoccurrence.getPath().getTailInstance()->getPlug(net)->IsConnected())
+    if (!net->isExternal())                return true;
+    if (netoccurrence.getPath().isEmpty()) return true;
+    if (net->isGlobal())                   return false;
+    if (!netoccurrence.getPath().getTailInstance()->getPlug(net)->isConnected())
                                            return true;
     return false;
 }
@@ -565,7 +565,7 @@ void HyperNet_NetOccurrences::Locator::progress()
             end_for;
         }
 
-        if (net->IsExternal()) {
+        if (net->isExternal()) {
             Instance* instance = path.getTailInstance();
             if (instance) {
                 Plug* plug = instance->getPlug(net);
@@ -803,7 +803,7 @@ void HyperNet_NetOccurrencesUnder::Locator::progress()
             end_for;
         }
 
-        if (net->IsExternal()) {
+        if (net->isExternal()) {
             Instance* instance = path.getTailInstance();
             if (instance) {
                 Plug* plug = instance->getPlug(net);
@@ -976,7 +976,7 @@ void HyperNet_LeafPlugOccurrences::Locator::progress()
         _netOccurrenceLocator.progress();
         Net* net = (Net*)netOccurrence.getEntity();
         Path path = netOccurrence.getPath();
-        if (!path.IsEmpty() && net->getCell()->isLeaf())
+        if (!path.isEmpty() && net->getCell()->isLeaf())
         {
             Instance *instance = path.getTailInstance();
             Plug *plug=instance->getPlug(net);

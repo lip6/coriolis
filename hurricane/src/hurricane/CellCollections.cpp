@@ -3767,7 +3767,7 @@ string Cell_HyperNetRootNetOccurrences::_getString() const
     string s = "<" + _TName("Cell::HyperNetRootNetOccurrences");
     if (_cell) {
         s += " " + getString(_cell);
-        if (!_path.IsEmpty()) s += " " + getString(_path);
+        if (!_path.isEmpty()) s += " " + getString(_path);
     }
     s += ">";
     return s;
@@ -3884,170 +3884,12 @@ string Cell_HyperNetRootNetOccurrences::Locator::_getString() const
 // ***************************************************
 {
     string s = "<" + _TName("Cell::HyperNetRootNetOccurrences::Locator");
-    if (!_path.IsEmpty())
+    if (!_path.isEmpty())
         s += " " + _path.getName();
     s += ">";
     return s;
 }
 
-
-// ****************************************************************************************************
-// Cell_ImpactedMainViews implementation
-// ****************************************************************************************************
-
-//Cell_ImpactedMainViews::Cell_ImpactedMainViews(const Cell* cell)
-//// *************************************************************
-//:     Inherit(),
-//    _cell(cell)
-//{
-//}
-//
-//Cell_ImpactedMainViews::Cell_ImpactedMainViews(const Cell_ImpactedMainViews& impactedMainViews)
-//// ********************************************************************************************
-//:     Inherit(),
-//    _cell(impactedMainViews._cell)
-//{
-//}
-//
-//Cell_ImpactedMainViews& Cell_ImpactedMainViews::operator=(const Cell_ImpactedMainViews& impactedMainViews)
-//// ****************************************************************************************************
-//{
-//    _cell = impactedMainViews._cell;
-//    return *this;
-//}
-//
-//Collection<MainView*>* Cell_ImpactedMainViews::getClone() const
-//// ************************************************************
-//{
-//    return new Cell_ImpactedMainViews(*this);
-//}
-//
-//Locator<MainView*>* Cell_ImpactedMainViews::getLocator() const
-//// ***********************************************************
-//{
-//    return new Locator(_cell);
-//}
-//
-//string Cell_ImpactedMainViews::_getString() const
-//// **********************************************
-//{
-//    string s = "<" + _TName("Cell::ImpactedMainViews");
-//    if (_cell) s += " " + getString(_cell);
-//    s += ">";
-//    return s;
-//}
-//
-//
-//
-//// ****************************************************************************************************
-//// Cell_ImpactedMainViews::Locator implementation
-//// ****************************************************************************************************
-//
-//Cell_ImpactedMainViews::Locator::Locator(const Cell* cell)
-//// *******************************************************
-//:    Inherit(),
-//    _cell(cell),
-//    _cellSet(),
-//    _cellStack(),
-//    _mainViewLocator(),
-//    _mainView(NULL)
-//{
-//    if (_cell) {
-//        _cellSet.insert((Cell*)_cell);
-//        _cellStack.push((Cell*)_cell);
-//        while (!_mainView && !_cellStack.empty()) {
-//            Cell* cell = _cellStack.top();
-//            _cellStack.pop();
-//            for_each_instance(instance, cell->getSlaveInstances()) {
-//                Cell* cell = instance->getCell();
-//                if (_cellSet.find(cell) == _cellSet.end()) {
-//                    _cellSet.insert(cell);
-//                    _cellStack.push(cell);
-//                }
-//                end_for;
-//            }
-//            _mainViewLocator = cell->getMainViews().getLocator();
-//            _mainView = _mainViewLocator.getElement();
-//        }
-//    }
-//}
-//
-//Cell_ImpactedMainViews::Locator::Locator(const Locator& locator)
-//// *************************************************************
-//:    Inherit(),
-//    _cell(locator._cell),
-//    _cellSet(locator._cellSet),
-//    _cellStack(locator._cellStack),
-//    _mainViewLocator(locator._mainViewLocator),
-//    _mainView(locator._mainView)
-//{
-//}
-//
-//Cell_ImpactedMainViews::Locator& Cell_ImpactedMainViews::Locator::operator=(const Locator& locator)
-//// ************************************************************************************************
-//{
-//    _cell = locator._cell;
-//    _cellSet = locator._cellSet;
-//    _cellStack = locator._cellStack;
-//    _mainViewLocator = locator._mainViewLocator;
-//    _mainView = locator._mainView;
-//    return *this;
-//}
-//
-//MainView* Cell_ImpactedMainViews::Locator::getElement() const
-//// **********************************************************
-//{
-//    return _mainView;
-//}
-//
-//Locator<MainView*>* Cell_ImpactedMainViews::Locator::getClone() const
-//// ******************************************************************
-//{
-//    return new Locator(*this);
-//}
-//
-//bool Cell_ImpactedMainViews::Locator::isValid() const
-//// **************************************************
-//{
-//    return (_mainView != NULL);
-//}
-//
-//void Cell_ImpactedMainViews::Locator::progress()
-//// *********************************************
-//{
-//    if (_mainView) {
-//        _mainView = NULL;
-//        do {
-//            _mainViewLocator.progress();
-//            _mainView = _mainViewLocator.getElement();
-//            if (!_mainView && !_cellStack.empty()) {
-//                Cell* cell = _cellStack.top();
-//                _cellStack.pop();
-//                for_each_instance(instance, cell->getSlaveInstances()) {
-//                    Cell* cell = instance->getCell();
-//                    if (_cellSet.find(cell) == _cellSet.end()) {
-//                        _cellSet.insert(cell);
-//                        _cellStack.push(cell);
-//                    }
-//                    end_for;
-//                }
-//                _mainViewLocator = cell->getMainViews().getLocator();
-//                _mainView = _mainViewLocator.getElement();
-//            }
-//        } while (!_mainView && !_cellStack.empty());
-//    }
-//}
-//
-//string Cell_ImpactedMainViews::Locator::_getString() const
-//// *******************************************************
-//{
-//    string s = "<" + _TName("Cell::ImpactedMainViews::Locator");
-//    if (_cell) s += " " + getString(_cell);
-//    s += ">";
-//    return s;
-//}
-//
-//
 // ****************************************************************************************************
 // Cell_SubCells implementation
 // ****************************************************************************************************

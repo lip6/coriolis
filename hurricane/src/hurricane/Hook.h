@@ -76,7 +76,7 @@ class Hook : public NestedSlotAdapter {
 
     public: Hook* Detach();
     public: Hook* Attach(Hook* hook);
-    public: Hook* Merge(Hook* hook);
+    public: Hook* merge(Hook* hook);
     public: void _setNextHook(Hook* hook);
 
 // Others

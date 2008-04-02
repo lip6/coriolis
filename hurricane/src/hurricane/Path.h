@@ -73,13 +73,13 @@ class Path {
 // Predicates
 // **********
 
-    public: bool IsEmpty() const;
+    public: bool isEmpty() const;
 
 // Updators
 // ********
 
-    public: void MakeEmpty();
-    public: static void SetNameSeparator(char nameSeparator);
+    public: void makeEmpty();
+    public: static void setNameSeparator(char nameSeparator);
 
 // Others
 // ******

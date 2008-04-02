@@ -156,7 +156,7 @@ Interval& Interval::Inflate(const Unit& dvMin, const Unit& dvMax)
     return *this;
 }
 
-Interval& Interval::Merge(const Unit& v)
+Interval& Interval::merge(const Unit& v)
 // *************************************
 {
     if (IsEmpty()) {
@@ -170,7 +170,7 @@ Interval& Interval::Merge(const Unit& v)
     return *this;
 }
 
-Interval& Interval::Merge(const Interval& interval)
+Interval& Interval::merge(const Interval& interval)
 // ************************************************
 {
     if (!interval.IsEmpty()) {

@@ -166,13 +166,13 @@ extern "C" {
   DirectGetLongAttribute(PyNet_getY,getY,PyNet,Net)  
   
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PyNet_IsGlobal  ,IsGlobal  ,PyNet,Net)
-  DirectGetBoolAttribute(PyNet_IsExternal,IsExternal,PyNet,Net)
-  DirectGetBoolAttribute(PyNet_IsLogical ,IsLogical ,PyNet,Net)
-  DirectGetBoolAttribute(PyNet_IsClock   ,IsClock   ,PyNet,Net)
-  DirectGetBoolAttribute(PyNet_IsGround  ,IsGround  ,PyNet,Net)
-  DirectGetBoolAttribute(PyNet_IsPower   ,IsPower   ,PyNet,Net)
-  DirectGetBoolAttribute(PyNet_IsSupply  ,IsSupply  ,PyNet,Net)
+  DirectGetBoolAttribute(PyNet_isGlobal  ,isGlobal  ,PyNet,Net)
+  DirectGetBoolAttribute(PyNet_isExternal,isExternal,PyNet,Net)
+  DirectGetBoolAttribute(PyNet_isLogical ,isLogical ,PyNet,Net)
+  DirectGetBoolAttribute(PyNet_isClock   ,isClock   ,PyNet,Net)
+  DirectGetBoolAttribute(PyNet_isGround  ,isGround  ,PyNet,Net)
+  DirectGetBoolAttribute(PyNet_isPower   ,isPower   ,PyNet,Net)
+  DirectGetBoolAttribute(PyNet_isSupply  ,isSupply  ,PyNet,Net)
 
   GetBoundStateAttribute(PyNet_IsPyBound            ,PyNet,Net)
 
@@ -349,20 +349,20 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_SetName ()"
+  // Attribute Method  :  "PyNet_setName ()"
 
-  static PyObject* PyNet_SetName ( PyNet *self, PyObject* args )
+  static PyObject* PyNet_setName ( PyNet *self, PyObject* args )
   {
-    trace << "PyNet_SetName()" << endl;
+    trace << "PyNet_setName()" << endl;
 
     HTRY
 
-    METHOD_HEAD ( "Net.SetName()" )
+    METHOD_HEAD ( "Net.setName()" )
     
     PyObject* arg0;
-    if ( ! ParseOneArg ( "Net.SetName", args, NET_ARG, (PyObject**)&arg0 ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Net.setName", args, NET_ARG, (PyObject**)&arg0 ) ) return ( NULL );
 
-    net->SetName ( *PYNAME_O(arg0) );
+    net->setName ( *PYNAME_O(arg0) );
 
     HCATCH
 
@@ -371,20 +371,20 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_SetGlobal ()"
+  // Attribute Method  :  "PyNet_setGlobal ()"
 
-  static PyObject* PyNet_SetGlobal ( PyNet *self, PyObject* args )
+  static PyObject* PyNet_setGlobal ( PyNet *self, PyObject* args )
   {
-    trace << "PyNet_SetGlobal()" << endl;
+    trace << "PyNet_setGlobal()" << endl;
 
     HTRY
 
-    METHOD_HEAD ( "Net.SetGlobal()" )
+    METHOD_HEAD ( "Net.setGlobal()" )
     
     PyObject* arg0;
-    if ( ! ParseOneArg ( "Net.SetGlobal", args, INT_ARG, (PyObject**)&arg0 ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Net.setGlobal", args, INT_ARG, (PyObject**)&arg0 ) ) return ( NULL );
 
-    net->SetGlobal ( PyInt_AsLong(arg0) != 0 );
+    net->setGlobal ( PyInt_AsLong(arg0) != 0 );
 
     HCATCH
 
@@ -394,20 +394,20 @@ extern "C" {
 
   
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_SetExternal ()"
+  // Attribute Method  :  "PyNet_setExternal ()"
 
-  static PyObject* PyNet_SetExternal ( PyNet *self, PyObject* args )
+  static PyObject* PyNet_setExternal ( PyNet *self, PyObject* args )
   {
-    trace << "PyNet_SetExternal()" << endl;
+    trace << "PyNet_setExternal()" << endl;
 
     HTRY
 
-    METHOD_HEAD ( "Net.SetExternal()" )
+    METHOD_HEAD ( "Net.setExternal()" )
     
     PyObject* arg0;
-    if ( ! ParseOneArg ( "Net.SetExternal", args, INT_ARG, (PyObject**)&arg0 ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Net.setExternal", args, INT_ARG, (PyObject**)&arg0 ) ) return ( NULL );
 
-    net->SetExternal ( PyInt_AsLong(arg0) != 0 );
+    net->setExternal ( PyInt_AsLong(arg0) != 0 );
 
     HCATCH
 
@@ -417,20 +417,20 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_SetType ()"
+  // Attribute Method  :  "PyNet_setType ()"
 
-  static PyObject* PyNet_SetType ( PyNet *self, PyObject* args )
+  static PyObject* PyNet_setType ( PyNet *self, PyObject* args )
   {
-    trace << "PyNet_SetType()" << endl;
+    trace << "PyNet_setType()" << endl;
 
     HTRY
 
-    METHOD_HEAD ( "Net.SetType()" )
+    METHOD_HEAD ( "Net.setType()" )
     
     PyObject* arg0;
-    if ( ! ParseOneArg ( "Net.SetType", args, INT_ARG, (PyObject**)&arg0 ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Net.setType", args, INT_ARG, (PyObject**)&arg0 ) ) return ( NULL );
     
-    net->SetType ( PyInt_AsType(arg0) );
+    net->setType ( PyInt_AsType(arg0) );
 
     HCATCH
     
@@ -440,20 +440,20 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_SetDirection ()"
+  // Attribute Method  :  "PyNet_setDirection ()"
 
-  static PyObject* PyNet_SetDirection ( PyNet *self, PyObject* args )
+  static PyObject* PyNet_setDirection ( PyNet *self, PyObject* args )
   {
-    trace << "PyNet_SetDirection()" << endl;
+    trace << "PyNet_setDirection()" << endl;
 
     HTRY
 
-    METHOD_HEAD ( "Net.SetDirection()" )
+    METHOD_HEAD ( "Net.setDirection()" )
 
     PyObject* arg0;
-    if ( ! ParseOneArg ( "Net.SetDirection", args, INT_ARG, (PyObject**)&arg0 ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Net.setDirection", args, INT_ARG, (PyObject**)&arg0 ) ) return ( NULL );
 
-    net->SetDirection ( PyInt_AsDirection(arg0) );
+    net->setDirection ( PyInt_AsDirection(arg0) );
 
     HCATCH
 
@@ -463,20 +463,20 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_SetPosition ()"
+  // Attribute Method  :  "PyNet_setPosition ()"
 
-  static PyObject* PyNet_SetPosition ( PyNet *self, PyObject* args )
+  static PyObject* PyNet_setPosition ( PyNet *self, PyObject* args )
   {
-    trace << "PyNet_SetPosition()" << endl;
+    trace << "PyNet_setPosition()" << endl;
 
     HTRY
 
-    METHOD_HEAD ( "Net.SetPosition()" )
+    METHOD_HEAD ( "Net.setPosition()" )
 
     PyObject* arg0;
-    if ( ! ParseOneArg ( "Net.SetPosition", args, POINT_ARG, (PyObject**)&arg0 ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Net.setPosition", args, POINT_ARG, (PyObject**)&arg0 ) ) return ( NULL );
 
-    net->SetPosition ( *PYPOINT_O(arg0) );
+    net->setPosition ( *PYPOINT_O(arg0) );
 
     HCATCH
 
@@ -485,20 +485,19 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_Merge ()"
+  // Attribute Method  :  "PyNet_merge ()"
 
-  static PyObject* PyNet_Merge ( PyNet *self, PyObject* args )
-  {
-    trace << "PyNet_Merge()" << endl;
+  static PyObject* PyNet_merge ( PyNet *self, PyObject* args ) {
+    trace << "PyNet_merge()" << endl;
 
     HTRY
 
-    METHOD_HEAD ( "Net.Merge()" )
+    METHOD_HEAD ( "Net.merge()" )
 
     PyObject* arg0;
-    if ( ! ParseOneArg ( "Net.Merge", args, NET_ARG, (PyObject**)&arg0 ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Net.merge", args, NET_ARG, (PyObject**)&arg0 ) ) return ( NULL );
 
-    net->Merge ( PYNET_O(arg0) );
+    net->merge ( PYNET_O(arg0) );
 
     HCATCH
     
@@ -515,51 +514,31 @@ extern "C" {
 
   PyMethodDef PyNet_Methods[] =
     { { "getName"              , (PyCFunction)PyNet_getName                  , METH_NOARGS , "Returns the net name." }
-    //, { "getArity"             , (PyCFunction)PyNet_getArity                 , METH_NOARGS , "Returns the signal arity." }
     , { "getType"              , (PyCFunction)PyNet_getType                  , METH_NOARGS
                                , "Returns the signal type (by default set to UNDEFINED)." }
     , { "getDirection"         , (PyCFunction)PyNet_getDirection             , METH_NOARGS
                                , "Returns the signal direction (by default set to UNDEFINED)." }
-    //, { "getPosition"          , (PyCFunction)PyNet_getPosition   , METH_NOARGS
-    //                           , "Returns the X,Y position of the net. This position is used for computing the location of the plugs (on slave instances calling the cell owning this net) having that net as master." }
     , { "getX"                 , (PyCFunction)PyNet_getX                     , METH_NOARGS , "Returns net abscissa." }
     , { "getY"                 , (PyCFunction)PyNet_getY                     , METH_NOARGS , "Returns net ordinate." }
-    //, { "getRubbers"           , (PyCFunction)PyNet_getRubbers               , METH_NOARGS , "Returns the collection of net's rubbers." }
-    //, { "getComponents"        , (PyCFunction)PyNet_getComponents            , METH_NOARGS , "Returns the collection of net's components." }
     , { "getExternalComponents", (PyCFunction)PyNet_getExternalComponentsLocator , METH_NOARGS , "Returns the collection of net's external components. (only for an external net)" }
     , { "getPlugsLocator"      , (PyCFunction)PyNet_getPlugsLocator          , METH_NOARGS , "Returns the collection of net's plugs." }
-    //, { "getContacts"          , (PyCFunction)PyNet_getContacts              , METH_NOARGS , "Returns the collection of net's contacts." }
     , { "getPinsLocator"        , (PyCFunction)PyNet_getPinsLocator            , METH_NOARGS , "Returns the collection of net's pins." }
     , { "getSegmentsLocator"    , (PyCFunction)PyNet_getSegmentsLocator        , METH_NOARGS , "Returns the collection of net's segments." }
-    //, { "getSegments"          , (PyCFunction)PyNet_getSegments              , METH_NOARGS , "Returns the collection of net's segments." }
-    //, { "getVerticals"         , (PyCFunction)PyNet_getVerticals             , METH_NOARGS , "Returns the collection of net's vertical segments." }
-    //, { "getHorizontals"       , (PyCFunction)PyNet_getHorizontals           , METH_NOARGS , "Returns the collection of net's horizontal segments." }
-    //, { "getPads"              , (PyCFunction)PyNet_getPads                  , METH_NOARGS , "Returns the collection of net's pads." }
-    //, { "getSavePlugs"         , (PyCFunction)PyNet_getSavePlugs             , METH_NOARGS , "Returns the collection of plugs which have this net as master." }
-    //, { "getConnectedSavePlugs", (PyCFunction)PyNet_getConnectedSavePlugs    , METH_NOARGS
-    //                           , "Returns the collection of connected plugs which have this net as master." }
-    //, { "getUnconnectedSavePlugs", (PyCFunction)PyNet_getUnconnectedSavePlugs, METH_NOARGS
-    //                             , "Returns the collection of unconnected plugs which have this net as master." }
-    , { "IsGlobal"             , (PyCFunction)PyNet_IsGlobal                 , METH_NOARGS, "return true if the net is global" }
-    , { "IsExternal"           , (PyCFunction)PyNet_IsExternal               , METH_NOARGS, "return true if the the net is external." }
-    , { "IsLogical"            , (PyCFunction)PyNet_IsLogical                , METH_NOARGS, "return true if the net is logical ." }
-    , { "IsClock"              , (PyCFunction)PyNet_IsClock                  , METH_NOARGS, "return true if the net is a clock" }
-    , { "IsPower"              , (PyCFunction)PyNet_IsPower                  , METH_NOARGS, "return true if the net is a power" }
-    , { "IsGround"             , (PyCFunction)PyNet_IsGround                 , METH_NOARGS, "return true if the net is a ground" }
-    , { "IsSupply"             , (PyCFunction)PyNet_IsSupply                 , METH_NOARGS, "return true if the net is a supply" }
-    , { "IsBound"              , (PyCFunction)PyNet_IsPyBound                , METH_NOARGS, "return true if the net is bounded to the hurricane net" }
-    , { "SetName"              , (PyCFunction)PyNet_SetName                  , METH_VARARGS, "Allows to change net name." }
-    //, { "SetArity"             , (PyCFunction)PyNet_SetArity                 , METH_VARARGS, "Sets the signal arity to <arity>." }
-    , { "SetGlobal"            , (PyCFunction)PyNet_SetGlobal                , METH_VARARGS, "Set the net global." }
-    , { "SetExternal"          , (PyCFunction)PyNet_SetExternal              , METH_VARARGS, "Set the net external." }
-    , { "SetType"              , (PyCFunction)PyNet_SetType                  , METH_VARARGS, "Set the type of the net." }
-    , { "SetDirection"         , (PyCFunction)PyNet_SetDirection             , METH_VARARGS, "Set the direction of the net." }
-    , { "SetPosition"          , (PyCFunction)PyNet_SetPosition              , METH_VARARGS, "Set the X,Y location of the net." }
-    //, { "Materialize"          , (PyCFunction)PyNet_Materialize              , METH_NOARGS
-    //                           , "Materializes all the rubbers and components of a net." }
-    //, { "Unmaterialize"        , (PyCFunction)PyNet_Unmaterialize            , METH_NOARGS
-    //                           , "De-materializes all the rubbers and components of a net." }
-    , { "Merge"                , (PyCFunction)PyNet_Merge                    , METH_VARARGS
+    , { "isGlobal"             , (PyCFunction)PyNet_isGlobal                 , METH_NOARGS, "return true if the net is global" }
+    , { "isExternal"           , (PyCFunction)PyNet_isExternal               , METH_NOARGS, "return true if the the net is external." }
+    , { "isLogical"            , (PyCFunction)PyNet_isLogical                , METH_NOARGS, "return true if the net is logical ." }
+    , { "isClock"              , (PyCFunction)PyNet_isClock                  , METH_NOARGS, "return true if the net is a clock" }
+    , { "isPower"              , (PyCFunction)PyNet_isPower                  , METH_NOARGS, "return true if the net is a power" }
+    , { "isGround"             , (PyCFunction)PyNet_isGround                 , METH_NOARGS, "return true if the net is a ground" }
+    , { "isSupply"             , (PyCFunction)PyNet_isSupply                 , METH_NOARGS, "return true if the net is a supply" }
+    , { "isBound"              , (PyCFunction)PyNet_IsPyBound                , METH_NOARGS, "return true if the net is bounded to the hurricane net" }
+    , { "setName"              , (PyCFunction)PyNet_setName                  , METH_VARARGS, "Allows to change net name." }
+    , { "setGlobal"            , (PyCFunction)PyNet_setGlobal                , METH_VARARGS, "set the net global." }
+    , { "setExternal"          , (PyCFunction)PyNet_setExternal              , METH_VARARGS, "set the net external." }
+    , { "setType"              , (PyCFunction)PyNet_setType                  , METH_VARARGS, "set the type of the net." }
+    , { "setDirection"         , (PyCFunction)PyNet_setDirection             , METH_VARARGS, "set the direction of the net." }
+    , { "setPosition"          , (PyCFunction)PyNet_setPosition              , METH_VARARGS, "set the X,Y location of the net." }
+    , { "merge"                , (PyCFunction)PyNet_merge                    , METH_VARARGS
                                , "Merges the net <net> to the net <this> which keeps its characteristics (arity, global, external and direction)." }
     , { "destroy"              , (PyCFunction)PyNet_destroy                  , METH_NOARGS
                                , "Destroy associated hurricane object, the python object remains." }

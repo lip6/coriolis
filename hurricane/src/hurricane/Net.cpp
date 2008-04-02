@@ -37,7 +37,7 @@ class Net_IsCellNetFilter : public Filter<Net*> {
 
     public: virtual Filter<Net*>* getClone() const {return new Net_IsCellNetFilter(*this);};
 
-    public: virtual bool accept(Net* net) const {return !net->IsDeepNet();};
+    public: virtual bool accept(Net* net) const {return !net->isDeepNet();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsCellNetFilter>");};
 
@@ -54,7 +54,7 @@ class Net_IsDeepNetFilter : public Filter<Net*> {
 
     public: virtual Filter<Net*>* getClone() const {return new Net_IsDeepNetFilter(*this);};
 
-    public: virtual bool accept(Net* net) const {return net->IsDeepNet();};
+    public: virtual bool accept(Net* net) const {return net->isDeepNet();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsDeepNetFilter>");};
 
@@ -71,7 +71,7 @@ class Net_IsGlobalFilter : public Filter<Net*> {
 
     public: virtual Filter<Net*>* getClone() const {return new Net_IsGlobalFilter(*this);};
 
-    public: virtual bool accept(Net* net) const {return net->IsGlobal();};
+    public: virtual bool accept(Net* net) const {return net->isGlobal();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsGlobalFilter>");};
 
@@ -88,7 +88,7 @@ class Net_IsExternalFilter : public Filter<Net*> {
 
     public: virtual Filter<Net*>* getClone() const {return new Net_IsExternalFilter(*this);};
 
-    public: virtual bool accept(Net* net) const {return net->IsExternal();};
+    public: virtual bool accept(Net* net) const {return net->isExternal();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsExternalFilter>");};
 
@@ -105,7 +105,7 @@ class Net_IsClockFilter : public Filter<Net*> {
 
     public: virtual Filter<Net*>* getClone() const {return new Net_IsClockFilter(*this);};
 
-    public: virtual bool accept(Net* net) const {return net->IsClock();};
+    public: virtual bool accept(Net* net) const {return net->isClock();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsClockFilter>");};
 
@@ -122,7 +122,7 @@ class Net_IsSupplyFilter : public Filter<Net*> {
 
     public: virtual Filter<Net*>* getClone() const {return new Net_IsSupplyFilter(*this);};
 
-    public: virtual bool accept(Net* net) const {return net->IsSupply();};
+    public: virtual bool accept(Net* net) const {return net->isSupply();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsSupplyFilter>");};
 
@@ -139,7 +139,7 @@ class Net_IsPowerFilter : public Filter<Net*> {
 
     public: virtual Filter<Net*>* getClone() const {return new Net_IsPowerFilter(*this);};
 
-    public: virtual bool accept(Net* net) const {return net->IsPower();};
+    public: virtual bool accept(Net* net) const {return net->isPower();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsPowerFilter>");};
 
@@ -156,7 +156,7 @@ class Net_IsGroundFilter : public Filter<Net*> {
 
     public: virtual Filter<Net*>* getClone() const {return new Net_IsGroundFilter(*this);};
 
-    public: virtual bool accept(Net* net) const {return net->IsGround();};
+    public: virtual bool accept(Net* net) const {return net->isGround();};
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsGroundFilter>");};
 
@@ -410,7 +410,7 @@ NetFilter Net::getIsGroundFilter()
     return Net_IsGroundFilter();
 }
 
-void Net::SetName(const Name& name)
+void Net::setName(const Name& name)
 // ********************************
 {
     if (name != _name) {
@@ -426,19 +426,19 @@ void Net::SetName(const Name& name)
     }
 }
 
-void Net::SetArity(const Arity& arity)
+void Net::setArity(const Arity& arity)
 // ***********************************
 {
     _arity = arity;
 }
 
-void Net::SetGlobal(bool isGlobal)
+void Net::setGlobal(bool isGlobal)
 // *******************************
 {
     _isGlobal = isGlobal;
 }
 
-void Net::SetExternal(bool isExternal)
+void Net::setExternal(bool isExternal)
 // ***********************************
 {
     if (isExternal != _isExternal) {
@@ -450,7 +450,7 @@ void Net::SetExternal(bool isExternal)
         _isExternal = isExternal;
         if (_isExternal) {
             OpenUpdateSession();
-            SetPosition(Point(0, 0));
+            setPosition(Point(0, 0));
             for_each_instance(instance, _cell->getSlaveInstances()) {
                 Plug::_create(instance, this);
                 end_for;
@@ -460,13 +460,13 @@ void Net::SetExternal(bool isExternal)
     }
 }
 
-void Net::SetType(const Type& type)
+void Net::setType(const Type& type)
 // ********************************
 {
     _type = type;
 }
 
-void Net::SetPosition(const Point& position)
+void Net::setPosition(const Point& position)
 // *****************************************
 {
     if (_position != position) {
@@ -478,7 +478,7 @@ void Net::SetPosition(const Point& position)
     }
 }
 
-void Net::SetDirection(const Direction& direction)
+void Net::setDirection(const Direction& direction)
 // ***********************************************
 {
     _direction = direction;
@@ -510,7 +510,7 @@ void Net::unmaterialize()
     }
 }
 
-static void MergeNets(Net* net1, Net* net2)
+static void mergeNets(Net* net1, Net* net2)
 // ****************************************
 {
     assert(net1);
@@ -518,24 +518,24 @@ static void MergeNets(Net* net1, Net* net2)
 
     if (net2->getName()[0] != '~') {
         if ((net1->getName()[0] == '~') ||
-             (net2->IsGlobal() && !net1->IsGlobal()) ||
-             (net2->IsExternal() && !net1->IsExternal())) {
+             (net2->isGlobal() && !net1->isGlobal()) ||
+             (net2->isExternal() && !net1->isExternal())) {
             Net* tmpNet = net1;
             net1 = net2;
             net2 = tmpNet;
         }
     }
 
-    if (net2->IsExternal() && !net1->IsExternal()) {
+    if (net2->isExternal() && !net1->isExternal()) {
         Net* tmpNet = net1;
         net1 = net2;
         net2 = tmpNet;
     }
 
-    net1->Merge(net2);
+    net1->merge(net2);
 }
 
-void Net::Merge(Net* net)
+void Net::merge(Net* net)
 // **********************
 {
     if (!net)
@@ -547,27 +547,27 @@ void Net::Merge(Net* net)
     if (net->getCell() != _cell)
         throw Error("Can't merge net : incompatible net");
 
-    if (!IsExternal() && net->IsExternal() && !net->getConnectedSlavePlugs().IsEmpty())
+    if (!isExternal() && net->isExternal() && !net->getConnectedSlavePlugs().IsEmpty())
         throw Error("Can't merge net : incompatible net");
 
     for_each_rubber(rubber, net->getRubbers()) rubber->_setNet(this); end_for;
     for_each_component(component, net->getComponents()) component->_setNet(this); end_for;
 
-    if (IsExternal() && net->IsExternal()) {
+    if (isExternal() && net->isExternal()) {
         for_each_plug(plug, net->getConnectedSlavePlugs()) {
             Plug* mainPlug = plug->getInstance()->getPlug(this);
-            if (mainPlug->IsConnected() && (mainPlug->getNet() != plug->getNet()))
-                MergeNets(mainPlug->getNet(), plug->getNet());
+            if (mainPlug->isConnected() && (mainPlug->getNet() != plug->getNet()))
+                mergeNets(mainPlug->getNet(), plug->getNet());
             end_for;
         }
         for_each_plug(plug, net->getConnectedSlavePlugs()) {
             Plug* mainPlug = plug->getInstance()->getPlug(this);
-            if (!mainPlug->IsConnected()) mainPlug->SetNet(plug->getNet());
+            if (!mainPlug->isConnected()) mainPlug->setNet(plug->getNet());
             Hook* masterHook = plug->getBodyHook();
             Hook* nextMasterHook = masterHook->getNextMasterHook();
             if (nextMasterHook != masterHook) {
                 masterHook->Detach();
-                mainPlug->getBodyHook()->Merge(nextMasterHook);
+                mainPlug->getBodyHook()->merge(nextMasterHook);
             }
             Hooks slaveHooks = masterHook->getSlaveHooks();
             while (!slaveHooks.IsEmpty()) {
@@ -624,7 +624,7 @@ void Net::_preDestroy()
         if (!is_a<Plug*>(component))
             component->destroy();
         else
-            ((Plug*)component)->SetNet(NULL);
+            ((Plug*)component)->setNet(NULL);
         end_for;
     }
 

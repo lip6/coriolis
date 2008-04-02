@@ -175,28 +175,28 @@ class Net : public Entity {
 // Predicates
 // **********
 
-    public: virtual bool IsDeepNet () const {return false;};
-    public:         bool IsGlobal  () const {return _isGlobal;};
-    public:         bool IsExternal() const {return _isExternal;};
-    public:         bool IsLogical () const {return (_type == Type::LOGICAL);};
-    public:         bool IsClock   () const {return (_type == Type::CLOCK);};
-    public:         bool IsPower   () const {return (_type == Type::POWER);};
-    public:         bool IsGround  () const {return (_type == Type::GROUND);};
-    public:         bool IsSupply  () const {return (IsPower() || IsGround());};
+    public: virtual bool isDeepNet () const {return false;};
+    public:         bool isGlobal  () const {return _isGlobal;};
+    public:         bool isExternal() const {return _isExternal;};
+    public:         bool isLogical () const {return (_type == Type::LOGICAL);};
+    public:         bool isClock   () const {return (_type == Type::CLOCK);};
+    public:         bool isPower   () const {return (_type == Type::POWER);};
+    public:         bool isGround  () const {return (_type == Type::GROUND);};
+    public:         bool isSupply  () const {return (isPower() || isGround());};
 
 // Updators
 // ********
 
-    public: void SetName(const Name& name);
-    public: void SetArity(const Arity& arity);
-    public: void SetGlobal(bool isGlobal);
-    public: void SetExternal(bool isExternal);
-    public: void SetType(const Type& type);
-    public: void SetDirection(const Direction& direction);
-    public: void SetPosition(const Point& position);
+    public: void setName(const Name& name);
+    public: void setArity(const Arity& arity);
+    public: void setGlobal(bool isGlobal);
+    public: void setExternal(bool isExternal);
+    public: void setType(const Type& type);
+    public: void setDirection(const Direction& direction);
+    public: void setPosition(const Point& position);
     public: void materialize();
     public: void unmaterialize();
-    public: void Merge(Net* net);
+    public: void merge(Net* net);
 
 // Others
 // ******

@@ -331,7 +331,7 @@ void Hook::_setNextHook(Hook* hook)
     _nextHook = hook;
 }
 
-Hook* Hook::Merge(Hook* hook)
+Hook* Hook::merge(Hook* hook)
 // **************************
 {
     if (!IsMaster())

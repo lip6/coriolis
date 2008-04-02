@@ -89,7 +89,7 @@ class SharedPath {
 // Updators
 // ********
 
-    public: static void SetNameSeparator(char nameSeparator);
+    public: static void setNameSeparator(char nameSeparator);
 
 // Accessors
 // *********

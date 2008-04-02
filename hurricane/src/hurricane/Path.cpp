@@ -214,22 +214,22 @@ Transformation Path::getTransformation(const Transformation& transformation) con
     return (_sharedPath) ? _sharedPath->getTransformation(transformation) : transformation;
 }
 
-bool Path::IsEmpty() const
+bool Path::isEmpty() const
 // ***********************
 {
     return (_sharedPath == NULL);
 }
 
-void Path::MakeEmpty()
+void Path::makeEmpty()
 // *******************
 {
     _sharedPath = NULL;
 }
 
-void Path::SetNameSeparator(char nameSeparator)
+void Path::setNameSeparator(char nameSeparator)
 // ********************************************
 {
-    SharedPath::SetNameSeparator(nameSeparator);
+    SharedPath::setNameSeparator(nameSeparator);
 }
 
 string Path::_getString() const

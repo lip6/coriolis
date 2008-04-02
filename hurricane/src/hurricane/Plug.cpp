@@ -29,7 +29,7 @@ class Plug_IsConnectedFilter : public Filter<Plug*> {
 
     public: virtual Filter<Plug*>* getClone() const {return new Plug_IsConnectedFilter(*this);};
 
-    public: virtual bool accept(Plug* plug) const {return plug->IsConnected();};
+    public: virtual bool accept(Plug* plug) const {return plug->isConnected();};
 
     public: virtual string _getString() const {return "<" + _TName("Plug::IsConnectedFilter>");};
 
@@ -57,7 +57,7 @@ Plug::Plug(Instance* instance, Net* masterNet)
     if (_masterNet->getCell() != _instance->getMasterCell())
         throw Error("Can't create " + _TName("Plug") + " : incompatible master net");
 
-    if (!_masterNet->IsExternal())
+    if (!_masterNet->isExternal())
         throw Error("Can't create " + _TName("Plug") + " : not an external master net");
 
     if (_instance->getPlug(_masterNet))
@@ -118,7 +118,7 @@ PlugFilter Plug::getIsUnconnectedFilter()
     return !Plug_IsConnectedFilter();
 }
 
-void Plug::SetNet(Net* net)
+void Plug::setNet(Net* net)
 // ************************
 {
     if (net != getNet()) {

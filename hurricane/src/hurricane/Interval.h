@@ -73,8 +73,8 @@ class Interval {
     public: Interval& MakeEmpty();
     public: Interval& Inflate(const Unit& dv);
     public: Interval& Inflate(const Unit& dvMin, const Unit& dvMax);
-    public: Interval& Merge(const Unit& v);
-    public: Interval& Merge(const Interval& interval);
+    public: Interval& merge(const Unit& v);
+    public: Interval& merge(const Interval& interval);
     public: Interval& Intersection(const Unit& vMin, const Unit& vMax);
     public: Interval& Intersection(const Interval& interval);
     public: Interval& translate(const Unit& dv);

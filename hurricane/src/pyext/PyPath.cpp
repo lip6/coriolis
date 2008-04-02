@@ -83,7 +83,7 @@ extern "C" {
 
 
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PyPath_IsEmpty   ,IsEmpty   ,PyPath,Path)
+  DirectGetBoolAttribute(PyPath_isEmpty   ,isEmpty   ,PyPath,Path)
 
 
   // Standart Destroy (Attribute).
@@ -294,7 +294,7 @@ extern "C" {
     , { "getName"            , (PyCFunction)PyPath_getName            , METH_NOARGS , "Returns the concatenation of instances names." }
     , { "getTransformation"  , (PyCFunction)PyPath_getTransformation  , METH_VARARGS, "Return the resulting transformation." }
     , { "getInstancesLocator", (PyCFunction)PyPath_getInstancesLocator, METH_NOARGS , "Returns the collection of instances defining the path." }
-    , { "IsEmpty"            , (PyCFunction)PyPath_IsEmpty            , METH_NOARGS , "Return true if the path is empty." }
+    , { "isEmpty"            , (PyCFunction)PyPath_isEmpty            , METH_NOARGS , "Return true if the path is empty." }
     , { "destroy"            , (PyCFunction)PyPath_destroy            , METH_NOARGS
                              , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */

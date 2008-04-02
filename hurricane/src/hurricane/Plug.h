@@ -68,14 +68,14 @@ class Plug : public Component {
 // Predicates
 // **********
 
-    public: bool IsConnected() const {return (getNet() != NULL);};
+    public: bool isConnected() const {return (getNet() != NULL);};
 
 // Updators
 // ********
 
     public: virtual void translate(const Unit& dx, const Unit& dy) {};
 
-    public: void SetNet(Net* net);
+    public: void setNet(Net* net);
 
     public: virtual void materialize() {};
     public: virtual void unmaterialize() {};

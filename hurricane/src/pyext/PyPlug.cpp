@@ -84,7 +84,7 @@ extern "C" {
 
 
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PyPlug_IsConnected,IsConnected,PyPlug,Plug)
+  DirectGetBoolAttribute(PyPlug_isConnected,isConnected,PyPlug,Plug)
 
 
 
@@ -129,8 +129,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyPlug_getNet ()"
 
-  static PyObject* PyPlug_getNet ( PyPlug *self )
-  {
+  static PyObject* PyPlug_getNet ( PyPlug *self ) {
     trace << "PyPlug_getNet ()" << endl;
     
     Net* net = NULL;
@@ -147,20 +146,19 @@ extern "C" {
  
   
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPlug_SetNet ()"
+  // Attribute Method  :  "PyPlug_setNet ()"
 
-  static PyObject* PyPlug_SetNet ( PyPlug *self, PyObject* args )
-  {
-    trace << "PyPlug_SetNet()" << endl;
+  static PyObject* PyPlug_setNet ( PyPlug *self, PyObject* args ) {
+    trace << "PyPlug_setNet()" << endl;
 
     HTRY
     
-    METHOD_HEAD ( "Plug.SetNet()" )
+    METHOD_HEAD ( "Plug.setNet()" )
 
     PyNet* net;
-    if ( ! ParseOneArg ( "Plug.SetNet", args, NET_ARG, (PyObject**)&net ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Plug.setNet", args, NET_ARG, (PyObject**)&net ) ) return ( NULL );
 
-    plug->SetNet ( PYNET_O(net) );
+    plug->setNet ( PYNET_O(net) );
 
     HCATCH
 
@@ -178,8 +176,8 @@ extern "C" {
     { { "getInstance"    , (PyCFunction)PyPlug_getInstance   , METH_NOARGS , "Return the instance to which belongs the plug." }
     , { "getMasterNet"   , (PyCFunction)PyPlug_getMasterNet  , METH_NOARGS , "Returns the external net referenced by the plug in the master cell of its instance." }
     , { "getNet"         , (PyCFunction)PyPlug_getNet  , METH_NOARGS , "Returns the  net connected by the plug in the cell of its instance." }
-    , { "IsConnected"    , (PyCFunction)PyPlug_IsConnected   , METH_NOARGS , "Returns true if the plug is connected, else false." }
-    , { "SetNet"         , (PyCFunction)PyPlug_SetNet        , METH_VARARGS, "This method allows to connect or change the net of a plug."  }
+    , { "isConnected"    , (PyCFunction)PyPlug_isConnected   , METH_NOARGS , "Returns true if the plug is connected, else false." }
+    , { "setNet"         , (PyCFunction)PyPlug_setNet        , METH_VARARGS, "This method allows to connect or change the net of a plug."  }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

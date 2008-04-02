@@ -425,7 +425,7 @@ void Component::_preDestroy()
         if (!masterHook)
             masterHook = hook;
         else
-            hook->Merge(masterHook);
+            hook->merge(masterHook);
         end_for;
     }
     /**/

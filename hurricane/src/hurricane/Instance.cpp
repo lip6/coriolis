@@ -384,7 +384,7 @@ void Instance::setMasterCell(Cell* masterCell, bool secureFlag)
         list<Net*> masterNetList;
         for_each_plug(plug, getConnectedPlugs()) {
             Net* masterNet = masterCell->getNet(plug->getMasterNet()->getName());
-            if (!masterNet || !masterNet->IsExternal())
+            if (!masterNet || !masterNet->isExternal())
                 throw Error("Can't set master (bad master net matching)");
             connectedPlugList.push_back(plug);
             masterNetList.push_back(masterNet);

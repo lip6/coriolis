@@ -113,11 +113,11 @@ class Region_Tile {
 
     public: void SplitVertical(Region* region, const Unit& x);
     public: void SplitHorizontal(Region* region, const Unit& y);
-    public: bool MergeLeftTile(Region* region);
-    public: bool MergeBottomTile(Region* region);
-    public: bool MergeTopTile(Region* region);
-    public: bool MergeRightTile(Region* region);
-    public: void MergeNeighbours(Region* region);
+    public: bool mergeLeftTile(Region* region);
+    public: bool mergeBottomTile(Region* region);
+    public: bool mergeTopTile(Region* region);
+    public: bool mergeRightTile(Region* region);
+    public: void mergeNeighbours(Region* region);
     public: void CleanNeighbours(Region* region);
     public: bool VerticalEnhancement(Region* region);
     public: bool HorizontalEnhancement(Region* region);
@@ -328,7 +328,7 @@ void Region_Tile::SplitHorizontal(Region* region, const Unit& y)
     }
 }
 
-bool Region_Tile::MergeLeftTile(Region* region)
+bool Region_Tile::mergeLeftTile(Region* region)
 // ********************************************
 {
     Region_Tile* uselessTile = _leftTile;
@@ -370,7 +370,7 @@ bool Region_Tile::MergeLeftTile(Region* region)
     return true;
 }
 
-bool Region_Tile::MergeBottomTile(Region* region)
+bool Region_Tile::mergeBottomTile(Region* region)
 // **********************************************
 {
     Region_Tile* uselessTile = _bottomTile;
@@ -412,7 +412,7 @@ bool Region_Tile::MergeBottomTile(Region* region)
     return true;
 }
 
-bool Region_Tile::MergeTopTile(Region* region)
+bool Region_Tile::mergeTopTile(Region* region)
 // *******************************************
 {
     Region_Tile* uselessTile = _topTile;
@@ -454,7 +454,7 @@ bool Region_Tile::MergeTopTile(Region* region)
     return true;
 }
 
-bool Region_Tile::MergeRightTile(Region* region)
+bool Region_Tile::mergeRightTile(Region* region)
 // *********************************************
 {
     Region_Tile* uselessTile = _rightTile;
@@ -496,11 +496,11 @@ bool Region_Tile::MergeRightTile(Region* region)
     return true;
 }
 
-void Region_Tile::MergeNeighbours(Region* region)
+void Region_Tile::mergeNeighbours(Region* region)
 // **********************************************
 {
-    while (MergeLeftTile(region) || MergeTopTile(region) ||
-               MergeBottomTile(region) || MergeRightTile(region)) {
+    while (mergeLeftTile(region) || mergeTopTile(region) ||
+               mergeBottomTile(region) || mergeRightTile(region)) {
     }
 }
 
@@ -539,22 +539,22 @@ void Region_Tile::CleanNeighbours(Region* region)
         tile = *tileSet.begin();
         while (true) {
             Region_Tile* leftTile = tile->_leftTile;
-            if ((leftTile == this) || !tile->MergeLeftTile(region)) break;
+            if ((leftTile == this) || !tile->mergeLeftTile(region)) break;
             tileSet.erase(leftTile);
         }
         while (true) {
             Region_Tile* topTile = tile->_topTile;
-            if ((topTile == this) || !tile->MergeTopTile(region)) break;
+            if ((topTile == this) || !tile->mergeTopTile(region)) break;
             tileSet.erase(topTile);
         }
         while (true) {
             Region_Tile* bottomTile = tile->_bottomTile;
-            if ((bottomTile == this) || !tile->MergeBottomTile(region)) break;
+            if ((bottomTile == this) || !tile->mergeBottomTile(region)) break;
             tileSet.erase(bottomTile);
         }
         while (true) {
             Region_Tile* rightTile = tile->_rightTile;
-            if ((rightTile == this) || !tile->MergeRightTile(region)) break;
+            if ((rightTile == this) || !tile->mergeRightTile(region)) break;
             tileSet.erase(rightTile);
         }
         tileSet.erase(tile);
@@ -745,8 +745,8 @@ Region_Tile::_TopSplitAtHorizontalSize (Region* region, const Unit height)
       modif = true;
     }
     if (upTile->_rightTile && upTile->_rightTile->getXMax() == getXMax()) {
-      // Merge upTile et upTile->_rightTile
-      modif = upTile->MergeRightTile (region) || modif;
+      // merge upTile et upTile->_rightTile
+      modif = upTile->mergeRightTile (region) || modif;
     }
     upTile = upTile->_leftTile;
   }
@@ -770,8 +770,8 @@ Region_Tile::_BottomSplitAtHorizontalSize (Region* region, const Unit height)
       if (downTile->_topTile != this) downTile = downTile->_topTile;
     }
     if (downTile->_leftTile && downTile->_leftTile->getXMin() == getXMin()) {
-      // Merge downTile et downTile->_leftTile
-      modif = downTile->MergeLeftTile (region) || modif;
+      // merge downTile et downTile->_leftTile
+      modif = downTile->mergeLeftTile (region) || modif;
     }
     downTile = downTile->_rightTile;
   }
@@ -794,8 +794,8 @@ Region_Tile::_LeftSplitAtVerticalSize (Region* region, const Unit width)
       if (leftTile->_rightTile != this) leftTile = leftTile->_rightTile;
     }
     if (leftTile->_bottomTile && leftTile->_bottomTile->getYMin() == getYMin()) {
-      // Merge leftTile et leftTile->_bottomTile
-      modif = leftTile->MergeBottomTile (region) || modif;
+      // merge leftTile et leftTile->_bottomTile
+      modif = leftTile->mergeBottomTile (region) || modif;
     }
     leftTile = leftTile->_topTile;
   }
@@ -819,8 +819,8 @@ Region_Tile::_RightSplitAtVerticalSize (Region* region, const Unit width)
       if (rightTile->_leftTile != this) rightTile = rightTile->_leftTile;
     }
     if (rightTile->_topTile && rightTile->_topTile->getYMax() == getYMax()) {
-      // Merge rightTile et rightTile->_leftTile
-      modif = rightTile->MergeTopTile (region) || modif;
+      // merge rightTile et rightTile->_leftTile
+      modif = rightTile->mergeTopTile (region) || modif;
     }
     rightTile = rightTile->_bottomTile;
   }
@@ -837,7 +837,7 @@ Region_Tile::_getTopNeighbour () const
   Region_Tile* topTile = _topTile;
   while (topTile && topTile->getXMax() > getXMin()) {
     if (topTile->_isVoid == _isVoid) {
-      result.Merge (Interval (topTile->getXMin(), topTile->getXMax()));
+      result.merge (Interval (topTile->getXMin(), topTile->getXMax()));
     }
     topTile = topTile->_leftTile;
   }
@@ -853,7 +853,7 @@ Region_Tile::_getBottomNeighbour () const
   Region_Tile* bottomTile = _bottomTile;
   while (bottomTile && bottomTile->getXMin() < getXMax()) {
     if (bottomTile->_isVoid == _isVoid) {
-      result.Merge (Interval (bottomTile->getXMin(), bottomTile->getXMax()));
+      result.merge (Interval (bottomTile->getXMin(), bottomTile->getXMax()));
     }
     bottomTile = bottomTile->_rightTile;
   }
@@ -869,7 +869,7 @@ Region_Tile::_getLeftNeighbour () const
   Region_Tile* leftTile = _leftTile;
   while (leftTile && leftTile->getYMin() < getYMax()) {
     if (leftTile->_isVoid == _isVoid) {
-      result.Merge (Interval (leftTile->getYMin(), leftTile->getYMax()));
+      result.merge (Interval (leftTile->getYMin(), leftTile->getYMax()));
     }
     leftTile = leftTile->_topTile;
   }
@@ -885,7 +885,7 @@ Region_Tile::_getRightNeighbour () const
   Region_Tile* rightTile = _rightTile;
   while (rightTile && rightTile->getYMax() > getYMin()) {
     if (rightTile->_isVoid == _isVoid) {
-      result.Merge (Interval (rightTile->getYMin(), rightTile->getYMax()));
+      result.merge (Interval (rightTile->getYMin(), rightTile->getYMax()));
     }
     rightTile = rightTile->_bottomTile;
   }
@@ -901,12 +901,12 @@ Region_Tile::VerticalEnhancement(Region* region)
   while (_IsTopFull ()) {
     Unit height = _TopSplitAtVerticalSize (region);
     modif = _TopSplitAtHorizontalSize (region, height);
-    modif = MergeTopTile (region) || modif;
+    modif = mergeTopTile (region) || modif;
   }
   while (_IsBottomFull ()) {
     Unit height = _BottomSplitAtVerticalSize (region);
     modif = _BottomSplitAtHorizontalSize (region, height);
-    modif = MergeBottomTile (region) || modif;
+    modif = mergeBottomTile (region) || modif;
   }
   return modif;
 };                // Region_Tile::VerticalEnhancement
@@ -920,12 +920,12 @@ Region_Tile::HorizontalEnhancement(Region* region)
   while (_IsLeftFull ()) {
     Unit width = _LeftSplitAtHorizontalSize (region);
     modif = _LeftSplitAtVerticalSize (region, width);
-    modif = MergeLeftTile (region) || modif;
+    modif = mergeLeftTile (region) || modif;
   }
   while (_IsRightFull ()) {
     Unit width = _RightSplitAtHorizontalSize (region);
     modif = _RightSplitAtVerticalSize (region, width);
-    modif = MergeRightTile (region) || modif;
+    modif = mergeRightTile (region) || modif;
   }
   return modif;
 };                // Region_Tile::HorizontalEnhancement
@@ -2998,7 +2998,7 @@ void Region::_Update(const Box& box, bool isVoid, Tile* startTile)
     }
 
     newTile->CleanNeighbours(this);
-    newTile->MergeNeighbours(this);
+    newTile->mergeNeighbours(this);
 };                // Region::_Update
 
 bool 
@@ -3095,7 +3095,7 @@ Region::HorizontalEnhancement(Point point)
 Interval 
 Region::TopBottomFacing (const Box box) const
 // **********************************************
-// Retourne le Merge des intervales en vis a vis entre les boites
+// Retourne le merge des intervales en vis a vis entre les boites
 // dessus et dessous de box
 {
   Interval result = Interval();
@@ -3109,7 +3109,7 @@ Region::TopBottomFacing (const Box box) const
 Interval 
 Region::LeftRightFacing (const Box box) const
 // **********************************************
-// Retourne le Merge des intervales en vis a vis entre les boites
+// Retourne le merge des intervales en vis a vis entre les boites
 // a gauche et droite de box
 {
   Interval result = Interval();
