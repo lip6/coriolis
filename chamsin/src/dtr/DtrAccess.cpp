@@ -86,6 +86,10 @@ void DtrAccess::_postCreate() {
      while(m!=n) {
        Layer * layer = tech->getLayer(Name(*m));
        if(!layer) { 
+           for_each_layer(l, tech->getLayers()) {
+               cerr << l << endl;
+               end_for;
+           }
 	 throw Error("Error : in function DtrAccess::_postCreate , Can't find Layer " 
 	     + getString(*m) + " in technology file when parser DtrFile.");
 //	 cerr << Warning("In function DtrAccess::_postCreate , Can't find Layer " 
