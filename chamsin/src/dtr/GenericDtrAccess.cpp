@@ -27,13 +27,6 @@ void GenericDtrAccess::Instance(DtrAccess* dtraccess)
       instance._dtrAccess = dtraccess;
 }
 
-GenericDtrAccess::~GenericDtrAccess()
-// *********************************
-{
-  if(_dtrAccess)  {  cout<<getString(_dtrAccess)<<" is delete "<<endl; _dtrAccess->destroy();}
-}
-
-
 string GenericDtrAccess::_getString() const
 // ****************************************
 {
