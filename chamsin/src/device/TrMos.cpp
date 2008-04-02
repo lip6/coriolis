@@ -101,12 +101,12 @@ void TrMos::create(const char type, const bool isbsconnected)
    Net * grid   = NULL;
    Net * bulk   = NULL;
 
-   (drain  = Net::create(this, Name("drain")))->SetExternal(true);
-   (source = Net::create(this, Name("source")))->SetExternal(true);
-   (grid   = Net::create(this, Name("grid")))->SetExternal(true);
+   (drain  = Net::create(this, Name("drain")))->setExternal(true);
+   (source = Net::create(this, Name("source")))->setExternal(true);
+   (grid   = Net::create(this, Name("grid")))->setExternal(true);
    
    if(!isbsconnected) { 
-     (bulk   = Net::create(this, Name("bulk")))->SetExternal(true);
+     (bulk   = Net::create(this, Name("bulk")))->setExternal(true);
    }
 
 
@@ -119,14 +119,14 @@ void TrMos::create(const char type, const bool isbsconnected)
            Name("Ins_" + getString(_tr1->getName())),
            _tr1);
 
-   instance->getPlug(_tr1->getNet(Name("DRAIN")))->SetNet(drain);
-   instance->getPlug(_tr1->getNet(Name("SOURCE")))->SetNet(source);
-   instance->getPlug(_tr1->getNet(Name("GRID")))->SetNet(grid);
+   instance->getPlug(_tr1->getNet(Name("DRAIN")))->setNet(drain);
+   instance->getPlug(_tr1->getNet(Name("SOURCE")))->setNet(source);
+   instance->getPlug(_tr1->getNet(Name("GRID")))->setNet(grid);
 
    if(!isbsconnected)
-     instance->getPlug(_tr1->getNet(Name("BULK")))->SetNet(bulk);
+     instance->getPlug(_tr1->getNet(Name("BULK")))->setNet(bulk);
    else 
-     instance->getPlug(_tr1->getNet(Name("BULK")))->SetNet(source);
+     instance->getPlug(_tr1->getNet(Name("BULK")))->setNet(source);
 
 
 }  

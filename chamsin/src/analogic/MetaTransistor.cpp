@@ -47,10 +47,10 @@ void MetaTransistor::_preDestroy() {
 void MetaTransistor::_postCreate() {
    Inherit::_postCreate();
 
-   (Net::create(this, Name("DRAIN")))->SetExternal(true);
-   (Net::create(this, Name("SOURCE")))->SetExternal(true);
-   (Net::create(this, Name("GRID")))->SetExternal(true);
-   (Net::create(this, Name("BULK")))->SetExternal(true);
+   (Net::create(this, Name("DRAIN")))->setExternal(true);
+   (Net::create(this, Name("SOURCE")))->setExternal(true);
+   (Net::create(this, Name("GRID")))->setExternal(true);
+   (Net::create(this, Name("BULK")))->setExternal(true);
 }
 
 
@@ -67,10 +67,10 @@ void MetaTransistor::createConnection()
        assert(err_msg.c_str());
      }
 
-     instance->getPlug(mastercell->getNet(Name("DRAIN")))->SetNet(getNet(Name("DRAIN")));
-     instance->getPlug(mastercell->getNet(Name("SOURCE")))->SetNet(getNet(Name("SOURCE")));
-     instance->getPlug(mastercell->getNet(Name("GRID")))->SetNet(getNet(Name("GRID")));
-     instance->getPlug(mastercell->getNet(Name("BULK")))->SetNet(getNet(Name("BULK")));
+     instance->getPlug(mastercell->getNet(Name("DRAIN")))->setNet(getNet(Name("DRAIN")));
+     instance->getPlug(mastercell->getNet(Name("SOURCE")))->setNet(getNet(Name("SOURCE")));
+     instance->getPlug(mastercell->getNet(Name("GRID")))->setNet(getNet(Name("GRID")));
+     instance->getPlug(mastercell->getNet(Name("BULK")))->setNet(getNet(Name("BULK")));
   end_for
 }  
 

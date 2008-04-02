@@ -270,10 +270,10 @@ void Transistor::_postCreate()
 {
    Inherit::_postCreate();
 
-   (Net::create(this, Name("DRAIN")))->SetExternal(true);
-   (Net::create(this, Name("SOURCE")))->SetExternal(true);
-   (Net::create(this, Name("GRID")))->SetExternal(true);
-   (Net::create(this, Name("BULK")))->SetExternal(true);
+   (Net::create(this, Name("DRAIN")))->setExternal(true);
+   (Net::create(this, Name("SOURCE")))->setExternal(true);
+   (Net::create(this, Name("GRID")))->setExternal(true);
+   (Net::create(this, Name("BULK")))->setExternal(true);
 
    // By default, transistor's length and heigth is NULL, and is internal.
    // ********************************************************************
@@ -400,7 +400,7 @@ void Transistor::DuplicateLayout(Transistor* transistor)
    for_each_net(net, transistor->getNets())
       if( !( tmp=getNet(net->getName()) ) ) { // 
           tmp = Net::create(this, net->getName());
-	  tmp->SetExternal(net->IsExternal());
+	  tmp->setExternal(net->isExternal());
       }
 
       for_each_component(component, net->getComponents())
