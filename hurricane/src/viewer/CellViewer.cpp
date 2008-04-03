@@ -16,7 +16,7 @@
 # include  "CellViewer.h"
 
 
-namespace H {
+namespace Hurricane {
 
 
 CellViewer::CellViewer ( Cell* cell ) : QMainWindow()

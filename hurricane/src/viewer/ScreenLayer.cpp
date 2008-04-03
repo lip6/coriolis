@@ -53,7 +53,7 @@ ScreenLayer::ScreenLayer ( BasicLayer* basicLayer
                          ) : _layer(basicLayer)
                            , _index(index)
                            , _isVisible(isVisible)
-                           , _brush(H::getBrush(_layer))
+                           , _brush(Hurricane::getBrush(_layer))
 {}
 
 
