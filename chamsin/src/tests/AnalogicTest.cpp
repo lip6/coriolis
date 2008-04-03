@@ -18,9 +18,9 @@ int main() {
       TrMos* trmos = TrMos::create(workLibrary, Name("MosTr"));
       exit(0);
     } catch (Hurricane::Warning& w) {
-        cerr << w.What() << endl;
+        cerr << w.what() << endl;
     } catch (Hurricane::Error& e) {
-          cerr << e.What() << endl;
+          cerr << e.what() << endl;
           exit (1);
     } catch (...) {
         cout << "Abnormal termination\n" << endl;
