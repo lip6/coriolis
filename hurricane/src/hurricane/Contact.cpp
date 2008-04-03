@@ -210,7 +210,7 @@ void Contact::translate(const Unit& dx, const Unit& dy)
     }
 }
 
-void Contact::SetLayer(Layer* layer)
+void Contact::setLayer(Layer* layer)
 // *********************************
 {
     if (!layer)
@@ -222,7 +222,7 @@ void Contact::SetLayer(Layer* layer)
     }
 }
 
-void Contact::SetWidth(const Unit& width)
+void Contact::setWidth(const Unit& width)
 // **************************************
 {
     if (width != _width) {
@@ -231,7 +231,7 @@ void Contact::SetWidth(const Unit& width)
     }
 }
 
-void Contact::SetHeight(const Unit& height)
+void Contact::setHeight(const Unit& height)
 // ****************************************
 {
     if (height != _height) {
@@ -240,7 +240,7 @@ void Contact::SetHeight(const Unit& height)
     }
 }
 
-void Contact::SetSizes(const Unit& width, const Unit& height)
+void Contact::setSizes(const Unit& width, const Unit& height)
 // **********************************************************
 {
     if ((width != _width) || (height != _height)) {
@@ -250,47 +250,47 @@ void Contact::SetSizes(const Unit& width, const Unit& height)
     }
 }
 
-void Contact::SetX(const Unit& x)
+void Contact::setX(const Unit& x)
 // ******************************
 {
-    SetPosition(x, getY());
+    setPosition(x, getY());
 }
 
-void Contact::SetY(const Unit& y)
+void Contact::setY(const Unit& y)
 // ******************************
 {
-    SetPosition(getX(), y);
+    setPosition(getX(), y);
 }
 
-void Contact::SetPosition(const Unit& x, const Unit& y)
+void Contact::setPosition(const Unit& x, const Unit& y)
 // ****************************************************
 {
     Component* anchor = getAnchor();
     if (!anchor)
-        SetOffset(x, y);
+        setOffset(x, y);
     else
-        SetOffset(x - anchor->getX(), y - anchor->getY());
+        setOffset(x - anchor->getX(), y - anchor->getY());
 }
 
-void Contact::SetPosition(const Point& position)
+void Contact::setPosition(const Point& position)
 // *********************************************
 {
-    SetPosition(position.getX(), position.getY());
+    setPosition(position.getX(), position.getY());
 }
 
-void Contact::SetDx(const Unit& dx)
+void Contact::setDx(const Unit& dx)
 // ********************************
 {
-    SetOffset(dx, _dy);
+    setOffset(dx, _dy);
 }
 
-void Contact::SetDy(const Unit& dy)
+void Contact::setDy(const Unit& dy)
 // ********************************
 {
-    SetOffset(_dx, dy);
+    setOffset(_dx, dy);
 }
 
-void Contact::SetOffset(const Unit& dx, const Unit& dy)
+void Contact::setOffset(const Unit& dx, const Unit& dy)
 // ****************************************************
 {
     if ((dx != _dx) || (dy != _dy)) {

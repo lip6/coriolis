@@ -100,7 +100,7 @@ class Region {
 
         public: void progress(int n = 1);
         public: void translate(const Unit& quantity);
-        public: void SetPosition(const Unit& position);
+        public: void setPosition(const Unit& position);
 
     // Others
     // ******
@@ -160,11 +160,11 @@ class Region {
 // Predicates
 // **********
 
-    public: bool IsEmpty() const;
+    public: bool isEmpty() const;
 
-    public: bool Contains(const Point& point) const;
-    public: bool Contains(const Box& box) const;
-    public: bool Contains(const Region& region) const;
+    public: bool contains(const Point& point) const;
+    public: bool contains(const Box& box) const;
+    public: bool contains(const Region& region) const;
 #if 0                                                        // pas encore teste
     public: bool Intersect(const Box& box) const;
     public: bool Intersect(const Region& region) const;
@@ -173,25 +173,25 @@ class Region {
 // Updators
 // ********
 
-    public: Region& Clear();
+    public: Region& clear();
 
     public: Region& fill(const Box& box);
     public: Region& fill(const Region& region);
     public: Region& getUnion(const Region& region);
 
-    public: Region& Groove(const Box& box);
-    public: Region& Groove(const Region& region);
+    public: Region& groove(const Box& box);
+    public: Region& groove(const Region& region);
     public: Region& getIntersection(const Region& region);
 
     public: Region& Inflate(const Unit& quantity);
     public: Region& translate(const Unit& dx, const Unit& dy);
 
-    public: bool VerticalEnhancement();
-    public: bool VerticalEnhancement(Point point);
-    public: bool HorizontalEnhancement();
-    public: bool HorizontalEnhancement(Point point);
-    public: Interval TopBottomFacing (const Box box) const;
-    public: Interval LeftRightFacing (const Box box) const;
+    public: bool verticalEnhancement();
+    public: bool verticalEnhancement(Point point);
+    public: bool horizontalEnhancement();
+    public: bool horizontalEnhancement(Point point);
+    public: Interval topBottomFacing (const Box box) const;
+    public: Interval leftRightFacing (const Box box) const;
 
 // Others
 // ******
@@ -210,9 +210,9 @@ class Region {
 
     public: void _setBottomRightTile(Tile* bottomRightTile) {_bottomRightTile = bottomRightTile;};
     public: void _setTopLeftTile(Tile* topLeftTile) {_topLeftTile = topLeftTile;};
-    public: void _Split(const Box& box);
-    public: void _GrowthToFit(const Box& box);
-    public: void _Update(const Box& box, bool isVoid, Tile* startTile = NULL);
+    public: void _split(const Box& box);
+    public: void _growthToFit(const Box& box);
+    public: void _update(const Box& box, bool isVoid, Tile* startTile = NULL);
 
 };
 

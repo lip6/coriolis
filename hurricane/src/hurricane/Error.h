@@ -52,7 +52,7 @@ class Error : public Exception {
 // Modifiers
 // *********
 
-    public: void  SetReason ( const string& reason ) { _reason = reason; };
+    public: void  setReason ( const string& reason ) { _reason = reason; };
 
 // Others
 // ******

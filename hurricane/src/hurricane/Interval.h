@@ -58,25 +58,25 @@ class Interval {
 // Predicates
 // **********
 
-    public: bool IsEmpty() const;
-    public: bool IsPonctual() const;
-    public: bool Contains(const Unit& v) const;
-    public: bool Contains(const Interval& interval) const;
-    public: bool Intersect(const Interval& interval) const;
-    public: bool Inferior(const Interval& interval, bool strict=true) const;
-    public: bool Superior(const Interval& interval, bool strict=true) const;
-    public: bool IsConstrainedBy(const Interval& interval) const;
+    public: bool isEmpty() const;
+    public: bool isPonctual() const;
+    public: bool contains(const Unit& v) const;
+    public: bool contains(const Interval& interval) const;
+    public: bool intersect(const Interval& interval) const;
+    public: bool inferior(const Interval& interval, bool strict=true) const;
+    public: bool superior(const Interval& interval, bool strict=true) const;
+    public: bool isConstrainedBy(const Interval& interval) const;
 
 // Updators
 // ********
 
-    public: Interval& MakeEmpty();
-    public: Interval& Inflate(const Unit& dv);
-    public: Interval& Inflate(const Unit& dvMin, const Unit& dvMax);
+    public: Interval& makeEmpty();
+    public: Interval& inflate(const Unit& dv);
+    public: Interval& inflate(const Unit& dvMin, const Unit& dvMax);
     public: Interval& merge(const Unit& v);
     public: Interval& merge(const Interval& interval);
-    public: Interval& Intersection(const Unit& vMin, const Unit& vMax);
-    public: Interval& Intersection(const Interval& interval);
+    public: Interval& intersection(const Unit& vMin, const Unit& vMax);
+    public: Interval& intersection(const Interval& interval);
     public: Interval& translate(const Unit& dv);
 
 // Others

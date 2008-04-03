@@ -113,7 +113,7 @@ void Horizontal::translate(const Unit& dx, const Unit& dy)
     }
 }
 
-void Horizontal::SetY(const Unit& y)
+void Horizontal::setY(const Unit& y)
 // *********************************
 {
     if (y != _y) {
@@ -122,7 +122,7 @@ void Horizontal::SetY(const Unit& y)
     }
 }
 
-void Horizontal::SetDxSource(const Unit& dxSource)
+void Horizontal::setDxSource(const Unit& dxSource)
 // ***********************************************
 {
     if (dxSource != _dxSource) {
@@ -131,7 +131,7 @@ void Horizontal::SetDxSource(const Unit& dxSource)
     }
 }
 
-void Horizontal::SetDxTarget(const Unit& dxTarget)
+void Horizontal::setDxTarget(const Unit& dxTarget)
 // ***********************************************
 {
     if (dxTarget != _dxTarget) {

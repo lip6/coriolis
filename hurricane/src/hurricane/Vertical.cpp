@@ -113,7 +113,7 @@ void Vertical::translate(const Unit& dx, const Unit& dy)
     }
 }
 
-void Vertical::SetX(const Unit& x)
+void Vertical::setX(const Unit& x)
 // *******************************
 {
     if (x != _x) {
@@ -122,7 +122,7 @@ void Vertical::SetX(const Unit& x)
     }
 }
 
-void Vertical::SetDySource(const Unit& dySource)
+void Vertical::setDySource(const Unit& dySource)
 // *********************************************
 {
     if (dySource != _dySource) {
@@ -131,7 +131,7 @@ void Vertical::SetDySource(const Unit& dySource)
     }
 }
 
-void Vertical::SetDyTarget(const Unit& dyTarget)
+void Vertical::setDyTarget(const Unit& dyTarget)
 // *********************************************
 {
     if (dyTarget != _dyTarget) {

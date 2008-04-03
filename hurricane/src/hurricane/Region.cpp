@@ -105,14 +105,14 @@ class Region_Tile {
 // Predicates
 // **********
 
-    public: bool IsVoid() const {return _isVoid;};
+    public: bool isVoid() const {return _isVoid;};
     public: bool contains(const Point& point) const;
 
 // Updators
 // ********
 
-    public: void SplitVertical(Region* region, const Unit& x);
-    public: void SplitHorizontal(Region* region, const Unit& y);
+    public: void splitVertical(Region* region, const Unit& x);
+    public: void splitHorizontal(Region* region, const Unit& y);
     public: bool mergeLeftTile(Region* region);
     public: bool mergeBottomTile(Region* region);
     public: bool mergeTopTile(Region* region);
@@ -246,11 +246,11 @@ GenericFilter<Region_Tile*> Region_Tile::getIsVoidFilter()
     return Region_Tile::IsVoidFilter();
 }
 
-void Region_Tile::SplitVertical(Region* region, const Unit& x)
+void Region_Tile::splitVertical(Region* region, const Unit& x)
 // ***********************************************************
 {
     if ((getXMin() < x) && (x < getXMax())) {
-        Region_Tile* newTile = new Region_Tile(Box(x, getYMin(), getXMax(), getYMax()), IsVoid());
+        Region_Tile* newTile = new Region_Tile(Box(x, getYMin(), getXMax(), getYMax()), isVoid());
 
         newTile->_leftTile = this;
         newTile->_rightTile = _rightTile;
@@ -287,11 +287,11 @@ void Region_Tile::SplitVertical(Region* region, const Unit& x)
     }
 }
 
-void Region_Tile::SplitHorizontal(Region* region, const Unit& y)
+void Region_Tile::splitHorizontal(Region* region, const Unit& y)
 // *************************************************************
 {
     if ((getYMin() < y) && (y < getYMax())) {
-        Region_Tile* newTile = new Region_Tile(Box(getXMin(), y, getXMax(), getYMax()), IsVoid());
+        Region_Tile* newTile = new Region_Tile(Box(getXMin(), y, getXMax(), getYMax()), isVoid());
 
         newTile->_bottomTile = this;
         newTile->_topTile = _topTile;
@@ -628,7 +628,7 @@ Region_Tile::_TopSplitAtVerticalSize (Region* region)
   Region_Tile* upTile = _topTile;
   Unit height = upTile->getYMax() - getYMax();
   if (upTile && upTile->getXMax() != getXMax()) {
-    upTile->SplitVertical (region, getXMax());
+    upTile->splitVertical (region, getXMax());
     upTile = _topTile;
   }
   Unit ht;
@@ -640,7 +640,7 @@ Region_Tile::_TopSplitAtVerticalSize (Region* region)
   ht =  upTile->getYMax() - getYMax();
   if (height > ht) height = ht;
   if (upTile && upTile->getXMin() != getXMin()) {
-    upTile->SplitVertical (region, getXMin());
+    upTile->splitVertical (region, getXMin());
   }
   return height;
 };                // Region_Tile::_TopSplitAtVerticalSize
@@ -655,7 +655,7 @@ Region_Tile::_BottomSplitAtVerticalSize (Region* region)
   Region_Tile* downTile = _bottomTile;
   Unit height = getYMin() - downTile->getYMin();
   if (downTile && downTile->getXMin() != getXMin()) {
-    downTile->SplitVertical (region, getXMin());
+    downTile->splitVertical (region, getXMin());
     downTile = _bottomTile;
   }
   Unit ht;
@@ -667,7 +667,7 @@ Region_Tile::_BottomSplitAtVerticalSize (Region* region)
   ht = getYMin() - downTile->getYMin();
   if (height > ht) height = ht;
   if (downTile && downTile->getXMax() != getXMax()) {
-    downTile->SplitVertical (region, getXMax());
+    downTile->splitVertical (region, getXMax());
   }
   return height;
 };                // Region_Tile::_BottomSplitAtVerticalSize
@@ -683,7 +683,7 @@ Region_Tile::_LeftSplitAtHorizontalSize (Region* region)
   Region_Tile* leftTile = _leftTile;
   Unit width = getXMin() - leftTile->getXMin();
   if (leftTile && leftTile->getYMin() != getYMin()) {
-    leftTile->SplitHorizontal (region, getYMin());
+    leftTile->splitHorizontal (region, getYMin());
     leftTile = _leftTile;
   }
   Unit wt;
@@ -695,7 +695,7 @@ Region_Tile::_LeftSplitAtHorizontalSize (Region* region)
   wt = getXMin() - leftTile->getXMin();
   if (width > wt) width = wt;
   if (leftTile && leftTile->getYMax() != getYMax()) {
-    leftTile->SplitHorizontal (region, getYMax());
+    leftTile->splitHorizontal (region, getYMax());
   }
   return width;
 };                // Region_Tile::_LeftSplitAtHorizontalSize
@@ -711,7 +711,7 @@ Region_Tile::_RightSplitAtHorizontalSize (Region* region)
   Region_Tile* rightTile = _rightTile;
   Unit width = rightTile->getXMax() - getXMax();
   if (rightTile && rightTile->getYMax() != getYMax()) {
-    rightTile->SplitHorizontal (region, getYMax());
+    rightTile->splitHorizontal (region, getYMax());
     rightTile = _rightTile;
   }
   Unit wt;
@@ -723,7 +723,7 @@ Region_Tile::_RightSplitAtHorizontalSize (Region* region)
   wt =  rightTile->getXMax() - getXMax();
   if (width > wt) width = wt;
   if (rightTile && rightTile->getYMin() != getYMin()) {
-    rightTile->SplitHorizontal (region, getYMin());
+    rightTile->splitHorizontal (region, getYMin());
   }
   return width;
 };                // Region_Tile::_RightSplitAtHorizontalSize
@@ -740,7 +740,7 @@ Region_Tile::_TopSplitAtHorizontalSize (Region* region, const Unit height)
 
   while (upTile && upTile->getXMin() >= getXMin()) {
     if (upTile->getYMax() - getYMax() > height) {
-      upTile->SplitHorizontal (region, getYMax() + height);
+      upTile->splitHorizontal (region, getYMax() + height);
       if (upTile->_bottomTile != this) upTile = upTile->_bottomTile;
       modif = true;
     }
@@ -765,7 +765,7 @@ Region_Tile::_BottomSplitAtHorizontalSize (Region* region, const Unit height)
 
   while (downTile && downTile->getXMax() <= getXMax()) {
     if (getYMin() - downTile->getYMin() > height) {
-      downTile->SplitHorizontal (region, getYMin() - height);
+      downTile->splitHorizontal (region, getYMin() - height);
       modif = true;
       if (downTile->_topTile != this) downTile = downTile->_topTile;
     }
@@ -789,7 +789,7 @@ Region_Tile::_LeftSplitAtVerticalSize (Region* region, const Unit width)
 
   while (leftTile && leftTile->getYMax() <= getYMax()) {
     if (getXMin() - leftTile->getXMin() > width) {
-      leftTile->SplitVertical (region, getXMin() - width);
+      leftTile->splitVertical (region, getXMin() - width);
       modif = true;
       if (leftTile->_rightTile != this) leftTile = leftTile->_rightTile;
     }
@@ -814,7 +814,7 @@ Region_Tile::_RightSplitAtVerticalSize (Region* region, const Unit width)
 
   while (rightTile && rightTile->getYMin() >= getYMin()) {
     if (rightTile->getXMax() - getXMax() > width) {
-      rightTile->SplitVertical (region, getXMax() + width);
+      rightTile->splitVertical (region, getXMax() + width);
       modif = true;
       if (rightTile->_leftTile != this) rightTile = rightTile->_leftTile;
     }
@@ -986,7 +986,7 @@ Filter<Region_Tile*>* Region_Tile::IsVoidFilter::getClone() const
 bool Region_Tile::IsVoidFilter::accept(Region_Tile* tile) const
 // ************************************************************
 {
-    return tile->IsVoid();
+    return tile->isVoid();
 }
 
 string Region_Tile::IsVoidFilter::_getString() const
@@ -2013,12 +2013,12 @@ Region_Intervals::Locator::Locator(const Region::SwapLine* swapLine)
                 Unit x = _swapLine->getPosition();
                 Unit yMax = _swapLine->getExtention().getVMax();
                 _lowerTile = _swapLine->_getBaseTile();
-                while (_lowerTile && _lowerTile->IsVoid())
+                while (_lowerTile && _lowerTile->isVoid())
                     _lowerTile = _lowerTile->getTopTile(x);
                 if (_lowerTile && (yMax < _lowerTile->getYMin())) _lowerTile = NULL;
                 if (_lowerTile) {
                     Region::Tile* tile = _lowerTile;
-                    while (tile && !tile->IsVoid()) {
+                    while (tile && !tile->isVoid()) {
                         _upperTile = tile;
                         tile = tile->getTopTile(x);
                         if (tile && (yMax < tile->getYMin())) tile = NULL;
@@ -2030,12 +2030,12 @@ Region_Intervals::Locator::Locator(const Region::SwapLine* swapLine)
                 Unit y = _swapLine->getPosition();
                 Unit xMax = _swapLine->getExtention().getVMax();
                 _lowerTile = _swapLine->_getBaseTile();
-                while (_lowerTile && _lowerTile->IsVoid())
+                while (_lowerTile && _lowerTile->isVoid())
                     _lowerTile = _lowerTile->getRightTile(y);
                 if (_lowerTile && (xMax < _lowerTile->getXMin())) _lowerTile = NULL;
                 if (_lowerTile) {
                     Region::Tile* tile = _lowerTile;
-                    while (tile && !tile->IsVoid()) {
+                    while (tile && !tile->isVoid()) {
                         _upperTile = tile;
                         tile = tile->getRightTile(y);
                         if (tile && (xMax < tile->getXMin())) tile = NULL;
@@ -2106,13 +2106,13 @@ void Region_Intervals::Locator::progress()
                 Unit x = _swapLine->getPosition();
                 Unit yMax = _swapLine->getExtention().getVMax();
                 _lowerTile = _upperTile->getTopTile(x);
-                while (_lowerTile && _lowerTile->IsVoid())
+                while (_lowerTile && _lowerTile->isVoid())
                     _lowerTile = _lowerTile->getTopTile(x);
                 if (_lowerTile && (yMax < _lowerTile->getYMin())) _lowerTile = NULL;
                 _upperTile = NULL;
                 if (_lowerTile) {
                     Region::Tile* tile = _lowerTile;
-                    while (tile && !tile->IsVoid()) {
+                    while (tile && !tile->isVoid()) {
                         _upperTile = tile;
                         tile = tile->getTopTile(x);
                         if (tile && (yMax < tile->getYMin())) tile = NULL;
@@ -2124,13 +2124,13 @@ void Region_Intervals::Locator::progress()
                 Unit y = _swapLine->getPosition();
                 Unit xMax = _swapLine->getExtention().getVMax();
                 _lowerTile = _upperTile->getRightTile(y);
-                while (_lowerTile && _lowerTile->IsVoid())
+                while (_lowerTile && _lowerTile->isVoid())
                     _lowerTile = _lowerTile->getRightTile(y);
                 if (_lowerTile && (xMax < _lowerTile->getXMin())) _lowerTile = NULL;
                 _upperTile = NULL;
                 if (_lowerTile) {
                     Region::Tile* tile = _lowerTile;
-                    while (tile && !tile->IsVoid()) {
+                    while (tile && !tile->isVoid()) {
                         _upperTile = tile;
                         tile = tile->getRightTile(y);
                         if (tile && (xMax < tile->getXMin())) tile = NULL;
@@ -2221,17 +2221,17 @@ Region::SwapLine::SwapLine(Region* region, const Type& type, const Interval& ext
     if (!_region)
         throw Error("Can't create " + _TName("Region::SwapLine") + " : null region");
 
-    if (!_region->IsEmpty()) {
+    if (!_region->isEmpty()) {
         switch (_type) {
             case Type::VERTICAL : {
                 _position = _region->getXMin();
-                if (_extention.IsEmpty()) _extention = Interval(_region->getYMin(), _region->getYMax());
+                if (_extention.isEmpty()) _extention = Interval(_region->getYMin(), _region->getYMax());
                 _baseTile = _region->_getTileAt(Point(_position, _extention.getVMin()));
                 break;
             }
             case Type::HORIZONTAL : {
                 _position = _region->getYMin();
-                if (_extention.IsEmpty()) _extention = Interval(_region->getXMin(), _region->getXMax());
+                if (_extention.isEmpty()) _extention = Interval(_region->getXMin(), _region->getXMax());
                 _baseTile = _region->_getTileAt(Point(_extention.getVMin(), _position));
                 break;
             }
@@ -2250,15 +2250,15 @@ Region::SwapLine::SwapLine(Region* region, const Type& type, const Unit& positio
     if (!_region)
         throw Error("Can't create " + _TName("Region::SwapLine") + " : null region");
 
-    if (!_region->IsEmpty()) {
+    if (!_region->isEmpty()) {
         switch (_type) {
             case Type::VERTICAL : {
-                if (_extention.IsEmpty()) _extention = Interval(_region->getYMin(), _region->getYMax());
+                if (_extention.isEmpty()) _extention = Interval(_region->getYMin(), _region->getYMax());
                 _baseTile = _region->_getTileAt(Point(_position, _extention.getVMin()));
                 break;
             }
             case Type::HORIZONTAL : {
-                if (_extention.IsEmpty()) _extention = Interval(_region->getXMin(), _region->getXMax());
+                if (_extention.isEmpty()) _extention = Interval(_region->getXMin(), _region->getXMax());
                 _baseTile = _region->_getTileAt(Point(_extention.getVMin(), _position));
                 break;
             }
@@ -2371,10 +2371,10 @@ void Region::SwapLine::progress(int n)
 void Region::SwapLine::translate(const Unit& quantity)
 // ***************************************************
 {
-    if (quantity) SetPosition(getPosition() + quantity);
+    if (quantity) setPosition(getPosition() + quantity);
 }
 
-void Region::SwapLine::SetPosition(const Unit& position)
+void Region::SwapLine::setPosition(const Unit& position)
 // *****************************************************
 {
     if (position != _position) {
@@ -2456,13 +2456,13 @@ Region::Region(const Region& region)
 Region::~Region()
 // **************
 {
-    Clear();
+    clear();
 }
 
 Region& Region::operator=(const Region& region)
 // ********************************************
 {
-    Clear();
+    clear();
     // keep trace (as void tile) of the initial bounding box
     Box initialBoundingBox = region.getBoundingBox();
     if (! initialBoundingBox.isEmpty()) {
@@ -2557,32 +2557,32 @@ Region::SwapLine Region::getHorizontalSwapLine(const Unit& y, const Interval& ex
     return SwapLine((Region*)this, Region::SwapLine::Type::HORIZONTAL, y, extention);
 }
 
-bool Region::IsEmpty() const
+bool Region::isEmpty() const
 // *************************
 {
     return Region_Tiles(this).getSubSet(!Tile::getIsVoidFilter()).IsEmpty();
 }
 
-bool Region::Contains(const Point& point) const
+bool Region::contains(const Point& point) const
 // ********************************************
 {
     return getBoundingBox().contains(point) && _getNonVoidTileAt(point);
 }
 
-bool Region::Contains(const Box& box) const
+bool Region::contains(const Box& box) const
 // ****************************************
 {
-    if (box.isPonctual()) return Contains(box.getCenter());
+    if (box.isPonctual()) return contains(box.getCenter());
     return getBoundingBox().contains(box) &&
         Region_TilesUnder (this, Box(box).inflate(-1))
                          .getSubSet(Tile::getIsVoidFilter()).IsEmpty();
 }
 
-bool Region::Contains(const Region& region) const
+bool Region::contains(const Region& region) const
 // **********************************************
 {
     for_each_box(box, region.getBoxesUnder(getBoundingBox())) {
-        if (!Contains(box)) return false;
+        if (!contains(box)) return false;
         end_for;
     }
     return true;
@@ -2595,7 +2595,7 @@ bool Region::Intersect(const Box& box) const
     if (box.isPonctual()) return contains(box.getCenter());
     if (! getBoundingBox().Intersect(box)) return false;
     if (! Region_TilesUnder (this, Box(box).inflate(1))
-                       .getSubSet(! Tile::getIsVoidFilter()).IsEmpty()) return true;
+                       .getSubSet(! Tile::getIsVoidFilter()).isEmpty()) return true;
     return false;
 }
 
@@ -2610,7 +2610,7 @@ bool Region::Intersect(const Region& region) const
 }
 #endif
 
-Region& Region::Clear()
+Region& Region::clear()
 // ********************
 {
     stack<Tile*> tileStack;
@@ -2660,11 +2660,11 @@ Region& Region::fill(const Box& box)
     }
 
     if (!getBoundingBox().contains(box))
-        _Update(box, false);
+        _update(box, false);
     else {
         Tile* startTile = _getStartTile(_getTileAt(Point(box.getXMax(), box.getYMin())));
         GenericCollection<Tile*> tiles = _getTilesUnder(Box(box).inflate(0, 0, -1, -1), startTile);
-        if (!tiles.getSubSet(Tile::getIsVoidFilter()).IsEmpty()) _Update(box, false, startTile);
+        if (!tiles.getSubSet(Tile::getIsVoidFilter()).IsEmpty()) _update(box, false, startTile);
     }
 
     return *this;
@@ -2686,7 +2686,7 @@ Region& Region::getUnion (const Region& region)
     return fill(region);
 }
 
-Region& Region::Groove(const Box& box)
+Region& Region::groove(const Box& box)
 // ***********************************
 {
     if (!_bottomRightTile) return *this;
@@ -2697,17 +2697,17 @@ Region& Region::Groove(const Box& box)
 
     Tile* startTile = _getStartTile(_getTileAt(Point(correctedBox.getXMax(), correctedBox.getYMin())));
     GenericCollection<Tile*> tiles = _getTilesUnder(Box(correctedBox).inflate(0, 0, -1, -1), startTile);
-    if (!tiles.getSubSet(!Tile::getIsVoidFilter()).IsEmpty()) _Update(box, true, startTile);
+    if (!tiles.getSubSet(!Tile::getIsVoidFilter()).IsEmpty()) _update(box, true, startTile);
 
     return *this;
 }
 
-Region& Region::Groove(const Region& region)
+Region& Region::groove(const Region& region)
 // *****************************************
 {
     Box boundingBox = getBoundingBox();
     for_each_box(box, region.getBoxesUnder(boundingBox)) {
-        Groove(box);
+        groove(box);
         end_for;
     }
     return *this;
@@ -2720,7 +2720,7 @@ Region& Region::getIntersection (const Region& region)
     for_each_box (box, region.getVoidBoxesUnder (boundingBox)) {
         //for_each_box (box, region.getVoidBoxes ()) {
         //if (! boundingBox.Intersect (box)) continue;
-        Groove (box);
+        groove (box);
         end_for;
     }
     return *this;
@@ -2729,7 +2729,7 @@ Region& Region::getIntersection (const Region& region)
 Region& Region::Inflate(const Unit& quantity)
 // ******************************************
 {
-    if (!IsEmpty()) {
+    if (!isEmpty()) {
         if (0 < quantity) {
             list<Box> boxList;
             for_each_object(Tile*, tile, Region_Tiles(this).getSubSet(!Tile::getIsVoidFilter())) {
@@ -2742,14 +2742,14 @@ Region& Region::Inflate(const Unit& quantity)
             }
         }
         else if (quantity < 0) {
-            _GrowthToFit(getBoundingBox().inflate(getUnit(1)));
+            _growthToFit(getBoundingBox().inflate(getUnit(1)));
             list<Box> boxList;
             for_each_object(Tile*, tile, Region_Tiles(this).getSubSet(Tile::getIsVoidFilter())) {
                 boxList.push_back(tile->getBoundingBox());
                 end_for;
             }
             for_each_box(box, getCollection(boxList)) {
-                Groove(box.inflate(-quantity));
+                groove(box.inflate(-quantity));
                 end_for;
             }
         }
@@ -2839,7 +2839,7 @@ GenericCollection<Region_Tile*> Region::_getTilesUnder(const Box& area, Tile* st
     return Region_TilesUnder(this, area, startTile);
 }
 
-void Region::_Split(const Box& box)
+void Region::_split(const Box& box)
 // ********************************
 {
     if (getBoundingBox().intersect(box)) {
@@ -2850,7 +2850,7 @@ void Region::_Split(const Box& box)
         Box line = Box(box.getXMin(), box.getYMin(), box.getXMax() - 1, box.getYMin());
         _getTilesUnder(line, startTile).fill(tileList);
         for_each_object(Tile*, tile, getCollection(tileList)) {
-            tile->SplitHorizontal(this, box.getYMin());
+            tile->splitHorizontal(this, box.getYMin());
             end_for;
         }
 
@@ -2858,7 +2858,7 @@ void Region::_Split(const Box& box)
         line = Box(box.getXMin(), box.getYMax(), box.getXMax() - 1, box.getYMax());
         _getTilesUnder(line, startTile).fill(tileList);
         for_each_object(Tile*, tile, getCollection(tileList)) {
-            tile->SplitHorizontal(this, box.getYMax());
+            tile->splitHorizontal(this, box.getYMax());
             end_for;
         }
 
@@ -2866,7 +2866,7 @@ void Region::_Split(const Box& box)
         line = Box(box.getXMin(), box.getYMin(), box.getXMin(), box.getYMax() - 1);
         _getTilesUnder(line, startTile).fill(tileList);
         for_each_object(Tile*, tile, getCollection(tileList)) {
-            tile->SplitVertical(this, box.getXMin());
+            tile->splitVertical(this, box.getXMin());
             end_for;
         }
 
@@ -2874,13 +2874,13 @@ void Region::_Split(const Box& box)
         line = Box(box.getXMax(), box.getYMin(), box.getXMax(), box.getYMax() - 1);
         _getTilesUnder(line, startTile).fill(tileList);
         for_each_object(Tile*, tile, getCollection(tileList)) {
-            tile->SplitVertical(this, box.getXMax());
+            tile->splitVertical(this, box.getXMax());
             end_for;
         }
     }
 }
 
-void Region::_GrowthToFit(const Box& box)
+void Region::_growthToFit(const Box& box)
 // **************************************
 {
     if (box.isEmpty()) return;
@@ -2938,14 +2938,14 @@ void Region::_GrowthToFit(const Box& box)
     }
 }
 
-void Region::_Update(const Box& box, bool isVoid, Tile* startTile)
+void Region::_update(const Box& box, bool isVoid, Tile* startTile)
 // **************************************************************
 {
     if (box.isEmpty() || !_bottomRightTile || !box.getWidth() || !box.getHeight()) return;
 
-    if (!getBoundingBox().contains(box)) _GrowthToFit(box);
+    if (!getBoundingBox().contains(box)) _growthToFit(box);
 
-    _Split(box);
+    _split(box);
 
     Tile* newTile = new Tile(box, isVoid);
 
@@ -2999,10 +2999,10 @@ void Region::_Update(const Box& box, bool isVoid, Tile* startTile)
 
     newTile->CleanNeighbours(this);
     newTile->mergeNeighbours(this);
-};                // Region::_Update
+};                // Region::_update
 
 bool 
-Region::VerticalEnhancement()
+Region::verticalEnhancement()
 // **************************
 {
   bool modif = false;
@@ -3028,15 +3028,15 @@ Region::VerticalEnhancement()
       modif = tile->VerticalEnhancement (this);
     }
     result.fill (tile->getBoundingBox());
-    Groove (tile->getBoundingBox());
-  } while (! IsEmpty());
+    groove (tile->getBoundingBox());
+  } while (! isEmpty());
   fill (result);
   return modif;
 };                // Region::VerticalEnhancement
 
 
 bool 
-Region::VerticalEnhancement(Point point)
+Region::verticalEnhancement(Point point)
 // ***************************************
 // Amelioration de la tuile contenant point
 {
@@ -3048,7 +3048,7 @@ Region::VerticalEnhancement(Point point)
 
 
 bool 
-Region::HorizontalEnhancement()
+Region::horizontalEnhancement()
 // ****************************
 {
   bool modif = false;
@@ -3074,14 +3074,14 @@ Region::HorizontalEnhancement()
       modif = tile->HorizontalEnhancement (this);
     }
     result.fill (tile->getBoundingBox());
-    Groove (tile->getBoundingBox());
-  } while (! IsEmpty());
+    groove (tile->getBoundingBox());
+  } while (! isEmpty());
   fill (result);
   return modif;
-};                // Region::HorizontalEnhancement
+};
 
 bool 
-Region::HorizontalEnhancement(Point point)
+Region::horizontalEnhancement(Point point)
 // ***************************************
 // Amelioration de la tuile contenant point
 {
@@ -3093,7 +3093,7 @@ Region::HorizontalEnhancement(Point point)
 
 
 Interval 
-Region::TopBottomFacing (const Box box) const
+Region::topBottomFacing (const Box box) const
 // **********************************************
 // Retourne le merge des intervales en vis a vis entre les boites
 // dessus et dessous de box
@@ -3107,7 +3107,7 @@ Region::TopBottomFacing (const Box box) const
 };                // Region::TopBottomFacing
 
 Interval 
-Region::LeftRightFacing (const Box box) const
+Region::leftRightFacing (const Box box) const
 // **********************************************
 // Retourne le merge des intervales en vis a vis entre les boites
 // a gauche et droite de box

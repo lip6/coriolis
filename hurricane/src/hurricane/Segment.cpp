@@ -241,7 +241,7 @@ Point Segment::getTargetPosition() const
     return Point(getTargetX(), getTargetY());
 }
 
-void Segment::SetLayer(Layer* layer)
+void Segment::setLayer(Layer* layer)
 // *********************************
 {
     if (!layer)
@@ -253,7 +253,7 @@ void Segment::SetLayer(Layer* layer)
     }
 }
 
-void Segment::SetWidth(const Unit& width)
+void Segment::setWidth(const Unit& width)
 // **************************************
 {
     if (width != _width) {
@@ -262,7 +262,7 @@ void Segment::SetWidth(const Unit& width)
     }
 }
 
-void Segment::Invert()
+void Segment::invert()
 // *******************
 {
     Component* source = getSource();

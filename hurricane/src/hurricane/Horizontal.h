@@ -61,9 +61,9 @@ class Horizontal : public Segment {
 
     public: virtual void translate(const Unit& dx, const Unit& dy);
 
-    public: void SetY(const Unit& y);
-    public: void SetDxSource(const Unit& dxSource);
-    public: void SetDxTarget(const Unit& dxSource);
+    public: void setY(const Unit& y);
+    public: void setDxSource(const Unit& dxSource);
+    public: void setDxTarget(const Unit& dxSource);
     public: void translate(const Unit& dy);
 
 // Others

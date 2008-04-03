@@ -86,17 +86,17 @@ class Contact : public Component {
 
     public: virtual void translate(const Unit& dx, const Unit& dy);
 
-    public: void SetLayer(Layer* layer);
-    public: void SetWidth(const Unit& width);
-    public: void SetHeight(const Unit& height);
-    public: void SetSizes(const Unit& width, const Unit& height);
-    public: void SetX(const Unit& x);
-    public: void SetY(const Unit& y);
-    public: void SetPosition(const Unit& x, const Unit& y);
-    public: void SetPosition(const Point& position);
-    public: void SetDx(const Unit& dx);
-    public: void SetDy(const Unit& dy);
-    public: void SetOffset(const Unit& dx, const Unit& dy);
+    public: void setLayer(Layer* layer);
+    public: void setWidth(const Unit& width);
+    public: void setHeight(const Unit& height);
+    public: void setSizes(const Unit& width, const Unit& height);
+    public: void setX(const Unit& x);
+    public: void setY(const Unit& y);
+    public: void setPosition(const Unit& x, const Unit& y);
+    public: void setPosition(const Point& position);
+    public: void setDx(const Unit& dx);
+    public: void setDy(const Unit& dy);
+    public: void setOffset(const Unit& dx, const Unit& dy);
 
 // Others
 // ******

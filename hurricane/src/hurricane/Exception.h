@@ -40,7 +40,7 @@ class Exception : public NestedSlotAdapter {
 // Accessors
 // *********
 
-   public: string  What() const { return _getString(); };
+   public: string what() const { return _getString(); };
 
 // Others
 // ******

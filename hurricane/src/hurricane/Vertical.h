@@ -61,9 +61,9 @@ class Vertical : public Segment {
 
     public: virtual void translate(const Unit& dx, const Unit& dy);
 
-    public: void SetX(const Unit& x);
-    public: void SetDySource(const Unit& dySource);
-    public: void SetDyTarget(const Unit& dyTarget);
+    public: void setX(const Unit& x);
+    public: void setDySource(const Unit& dySource);
+    public: void setDyTarget(const Unit& dyTarget);
     public: void translate(const Unit& dx);
 
 // Others

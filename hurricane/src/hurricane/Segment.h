@@ -100,9 +100,9 @@ class Segment : public Component {
 // Updators
 // ********
 
-    public: void SetLayer(Layer* layer);
-    public: void SetWidth(const Unit& width);
-    public: void Invert();
+    public: void setLayer(Layer* layer);
+    public: void setWidth(const Unit& width);
+    public: void invert();
 
 // Others
 // ******
