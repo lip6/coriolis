@@ -50,14 +50,16 @@ CellWidget::CellWidget ( Cell* cell ) : QWidget()
                                       , _mouseGo(false)
                                       , _openCell(true)
                                       , _showBoundaries(true)
+                                      , _redrawRectCount(0)
 {
+//setBackgroundRole ( QPalette::Dark );
+//setAutoFillBackground ( false );
   setAttribute   ( Qt::WA_OpaquePaintEvent );
-  setAttribute   ( Qt::WA_NoSystemBackground );
-  setAttribute   ( Qt::WA_PaintOnScreen );
-  setAttribute   ( Qt::WA_StaticContents );
+//setAttribute   ( Qt::WA_NoSystemBackground );
+//setAttribute   ( Qt::WA_PaintOnScreen );
+//setAttribute   ( Qt::WA_StaticContents );
   setSizePolicy  ( QSizePolicy::Expanding, QSizePolicy::Expanding );
   setFocusPolicy ( Qt::StrongFocus );
-//setAutoFillBackground ( false );
 
   // Build ScreenLayer vector here from BasicLayers.
   DataBase* database = getDataBase();
@@ -118,6 +120,8 @@ void  CellWidget::redraw ( QRect redrawArea )
 {
 //cerr << "CellWidget::redraw ()" << endl;
 
+  _redrawRectCount = 0;
+
   pushCursor ( Qt::BusyCursor );
 
   _painter.begin ( &_drawingBuffer );
@@ -153,7 +157,8 @@ void  CellWidget::redraw ( QRect redrawArea )
   update ();
   popCursor ();
 
-//   cerr << "*******************************************************" << endl;
+  cerr << "Redrawed rectangles: " << _redrawRectCount << endl;
+//cerr << "*******************************************************" << endl;
 }
 
 
@@ -319,6 +324,7 @@ void CellWidget::drawContact ( const Contact*        contact
 
 void  CellWidget::drawBox ( const Box& box )
 {
+  _redrawRectCount++;
   _painter.drawRect ( getScreenRect(box) );
 }
 
@@ -332,7 +338,7 @@ void  CellWidget::drawLine ( const Point& p1, const Point& p2 )
 void  CellWidget::goLeft ( int dx )
 {
   if ( !dx ) dx = geometry().size().width() / 4;
-  if (  _offsetVA.rx() - dx >= 0 ) {
+  if ( _offsetVA.rx() - dx >= 0 ) {
     _offsetVA.rx() -= dx;
     update ();
   } else {
@@ -347,7 +353,7 @@ void  CellWidget::goRight ( int dx )
 
 //cerr << "CellWidget::goRight() - dx: " << dx << " (offset: " << _offsetVA.rx() << ")" << endl;
 
-  if (  _offsetVA.rx() + dx < 2*_stripWidth ) {
+  if ( _offsetVA.rx() + dx < 2*_stripWidth ) {
     _offsetVA.rx() += dx;
     update ();
   } else {
@@ -359,7 +365,7 @@ void  CellWidget::goRight ( int dx )
 void  CellWidget::goUp ( int dy )
 {
   if ( !dy ) dy = geometry().size().height() / 4;
-  if (  _offsetVA.ry() - dy >= 0 ) {
+  if ( _offsetVA.ry() - dy >= 0 ) {
     _offsetVA.ry() -= dy;
     update ();
   } else {
@@ -371,7 +377,7 @@ void  CellWidget::goUp ( int dy )
 void  CellWidget::goDown ( int dy )
 {
   if ( !dy ) dy = geometry().size().height() / 4;
-  if (  _offsetVA.ry() + dy < 2*_stripWidth ) {
+  if ( _offsetVA.ry() + dy < 2*_stripWidth ) {
     _offsetVA.ry() += dy;
     update ();
   } else {
@@ -637,11 +643,13 @@ void  CellWidget::mouseMoveEvent ( QMouseEvent* event )
 
   if ( _mouseGo ) {
     int  dx = event->x() - _lastMousePosition.x();
+    dx <<= 1;
   //cerr << "dX (px): " << dx << " _offsetVA.rx() " << _offsetVA.rx() << endl;
     if ( dx > 0 ) goLeft  (  dx );
     if ( dx < 0 ) goRight ( -dx );
 
     int dy = event->y() - _lastMousePosition.y();
+    dy <<= 1;
   //cerr << "dY (px): " << dy << " _offsetVA.ry() " << _offsetVA.ry() << endl;
     if ( dy > 0 ) goUp   (  dy );
     if ( dy < 0 ) goDown ( -dy );

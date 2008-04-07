@@ -41,6 +41,7 @@ CellViewer::CellViewer ( Cell* cell ) : QMainWindow()
 
 
 
+
 void  CellViewer::createActions ()
 {
   if ( _openAction ) return;

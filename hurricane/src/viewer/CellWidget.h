@@ -71,6 +71,7 @@ namespace Hurricane {
                    bool                      _mouseGo;
                    bool                      _openCell;
                    bool                      _showBoundaries;
+                   size_t                    _redrawRectCount;
 
     public:
                                     CellWidget        ( Cell* cell );
