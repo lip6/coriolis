@@ -115,19 +115,19 @@ void TrMos::_PlaceAndRoute()
         Transistor * trans = dynamic_cast<Transistor*>(instance->getMasterCell());
 
         if ( _sourceIsFirst ) {
-          if(trans->IsLeft() && !leftins)
+          if(trans->isLeft() && !leftins)
              leftins = instance;
-          else if ( trans->IsLeft() && leftins)
+          else if ( trans->isLeft() && leftins)
              rightins = instance;
-          else if ( trans->IsRight())
+          else if ( trans->isRight())
              rightins = instance;
         }
         else {
-          if(trans->IsRight() && !leftins)
+          if(trans->isRight() && !leftins)
             leftins = instance;
-          else if (trans->IsRight() && leftins )
+          else if (trans->isRight() && leftins )
             rightins = instance;
-          else if (trans->IsLeft())
+          else if (trans->isLeft())
             rightins = instance;
         }
      end_for
@@ -172,7 +172,7 @@ void TrMos::_PlaceAndRoute()
      // **********************
      Transistor * trans = dynamic_cast<Transistor*>(rightins->getMasterCell());
 
-     if( trans->IsRight())
+     if( trans->isRight())
        _PlaceRight( rightins, Transformation::Orientation::ID);
      else 
        _PlaceRight( rightins, Transformation::Orientation::MX);

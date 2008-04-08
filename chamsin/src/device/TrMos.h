@@ -95,13 +95,13 @@ class TrMos : public Device {
 
 // Operations
 // **********
-    public : virtual void Dses()   { /* to do */}; 
-    public : virtual void Shape()  { /* to do */};
+    public : virtual void dses()   { /* to do */}; 
+    public : virtual void shape()  { /* to do */};
 #endif
 
 
     public : void create(const char type, const bool isbsconnected);
-    public : void Generate(const unsigned m, const bool sourceisfirst, const bool hasring,
+    public : void generate(const unsigned m, const bool sourceisfirst, const bool hasring,
 		 const unsigned nbsourcecolumn, const unsigned nbdraincolumn);
 
 // Accessors
@@ -115,18 +115,18 @@ class TrMos : public Device {
 
 // Updators
 // ********
-    public : void SetMosLength(const double length) { if(_tr1) _tr1->SetLe(length); }
-    public : void SetMosWidth(const double width) { if(_tr1) _tr1->SetWe(width); }
-    public : void SetWidthOfSourceWire(const double width)  { _widthOfSourceWire = width; };	     
-    public : void SetWidthOfDrainWire(const double width) { _widthOfDrainWire=width; };	     
-    public : void SetLowPinOrder(const PinName, const PinName) ;	     
-    public : void SetHighPinOrder(const PinName, const PinName) ;	     
+    public : void setMosLength(const double length) { if(_tr1) _tr1->setLe(length); }
+    public : void setMosWidth(const double width) { if(_tr1) _tr1->setWe(width); }
+    public : void setWidthOfSourceWire(const double width)  { _widthOfSourceWire = width; };	     
+    public : void setWidthOfDrainWire(const double width) { _widthOfDrainWire=width; };	     
+    public : void setLowPinOrder(const PinName, const PinName) ;	     
+    public : void setHighPinOrder(const PinName, const PinName) ;	     
 
 // Predicats
 // *********
-    public : bool IsBsConnected() const { return _isBsConnected; };
-    public : bool SourceIsFirst() const { return _sourceIsFirst; };
-    public : bool HasRing() const { return _hasRing; };
+    public : bool isBsConnected() const { return _isBsConnected; };
+    public : bool sourceIsFirst() const { return _sourceIsFirst; };
+    public : bool hasRing() const { return _hasRing; };
  
 
 #   if !defined(__DOXYGEN_PROCESSOR__)

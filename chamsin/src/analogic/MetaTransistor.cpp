@@ -105,33 +105,30 @@ void MetaTransistor::createLayout()
        string err_msg = "Can't genrate layout : " + getString(mastercell) + " isn't a Transistor"; 
      }
      
-     if(trans->IsInternal()) {
+     if(trans->isInternal()) {
        if(!internal_ref) {
          trans->createLayout();
 	 internal_ref = trans;
-       } 
-       else {
-         trans->DuplicateLayout(internal_ref);
+       } else {
+         trans->duplicateLayout(internal_ref);
        }
-     }
-     else if(trans->IsLeft()) {
+     } else if(trans->isLeft()) {
        if(!left_ref) {
 	 trans->createLayout();
 	 left_ref=trans;
+       } else {
+	 trans->duplicateLayout(left_ref);
        }
-       else
-	 trans->DuplicateLayout(left_ref);
-     }  
-     else if(trans->IsRight()) {
+     }  else if(trans->isRight()) {
        if(!right_ref) {
 	 trans->createLayout();
 	 right_ref=trans;
+       } else {
+	 trans->duplicateLayout(right_ref);
        }
-       else
-	 trans->DuplicateLayout(right_ref);
-     }
-     else 
+     } else { 
         trans->createLayout();
+     }
   end_for    
   
 

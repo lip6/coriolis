@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "DataBase.h"
+#include "Technology.h"
 #include "Library.h"
 #include "Warning.h"
 using namespace Hurricane;
@@ -12,7 +13,7 @@ int main() {
     try {
       cout << "simple analogic test" << endl;
       DataBase* db = DataBase::create();
-      //Technology* technology = Technology::create(db);
+      Technology* technology = Technology::create(db, Name("MyTechnology"));
       Library* rootLibrary = Library::create(db, Name("RootLibrary"));
       Library* workLibrary = Library::create(rootLibrary, Name("WorkLibrary"));
       TrMos* trmos = TrMos::create(workLibrary, Name("MosTr"));

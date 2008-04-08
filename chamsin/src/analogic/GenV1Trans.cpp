@@ -97,7 +97,7 @@ void GenV1Trans::Calculate(Transistor* transistor)
   long ymax     = 0;
   string mostype;    // get Mos Type (N/P).
 
-  if(transistor->IsNmos())
+  if(transistor->isNmos())
     mostype='N';
   else
     mostype='P';
@@ -277,7 +277,7 @@ void GenV1Trans::Calculate(Transistor* transistor)
 
   // Calculate Rectangle 50 just for PMOS.
   // -------------------------------------------------------------
-  if (transistor->IsPmos())  { // Calculate Rectangle 50 for PMos.
+  if (transistor->isPmos())  { // Calculate Rectangle 50 for PMos.
      x50 = x10 - GET_RULE("RE_NWELL_ACTI");
      y50 = y10 - GET_RULE("RE_NWELL_ACTI");
      dx50 = dx10 + 2 * GET_RULE("RE_NWELL_ACTI");
@@ -322,7 +322,7 @@ void GenV1Trans::Generate(Transistor* transistor)
 
   string mostype;    // get Mos Type (N/P).
 
-  if(transistor->IsNmos())
+  if(transistor->isNmos())
     mostype='N';
   else
     mostype='P';
@@ -454,7 +454,7 @@ IF_DEBUG_HUR_ANALOG
 END_IF
   Net * anonym = Net::create(transistor, Name("anonym"));
   for(size_t i=0; i<sizeof(segsforanonym)/sizeof(string);i++) {
-    if(transistor->IsNmos() && segsforanonym[i]=="50")
+    if(transistor->isNmos() && segsforanonym[i]=="50")
       continue;
 
     Contact::create(anonym, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsforanonym[i])

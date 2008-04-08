@@ -11,8 +11,6 @@
 #include "AnalogicalCommons.h"
 
 
-//BEGIN_NAMESPACE_HURRICANE
-
 namespace Hurricane {
 
 class Library; 
@@ -66,7 +64,7 @@ class Transistor : public Cell {
 		public : Type& operator=(const Type& type);
 		public : operator const Code&() const { return _code; };
 			 
-                public : void SetCode(const Code& code) { _code = code; }; 
+                public : void setCode(const Code& code) { _code = code; }; 
 
 		public : const Code& getCode() const { return _code; };
 
@@ -113,12 +111,12 @@ class Transistor : public Cell {
 
                  // Update
 		 // ******
-		 public : void SetL(const double& l) { _l=l;}; 
-		 public : void SetW(const double& w) { _w=w;}; 
-		 public : void SetNbDrainColumn(const unsigned& column) { _nbDrainColumn=column; };
-		 public : void SetNbSourceColumn(const unsigned& column) { _nbSourceColumn=column; };
-		 public : void SetType(const Type::Code& code) { _type.SetCode(code); };
-		 public : void SetType(const Type& type) { _type = type; };
+		 public : void setL(const double& l) { _l=l;}; 
+		 public : void setW(const double& w) { _w=w;}; 
+		 public : void setNbDrainColumn(const unsigned& column) { _nbDrainColumn=column; };
+		 public : void setNbSourceColumn(const unsigned& column) { _nbSourceColumn=column; };
+		 public : void setType(const Type::Code& code) { _type.setCode(code); };
+		 public : void setType(const Type& type) { _type = type; };
 
 		 // Predicats
 	         // *********
@@ -221,17 +219,17 @@ class Transistor : public Cell {
 
 // Predicats
 // *********
-    public : bool IsNmos() const { return _type==TRANSN; };
-    public : bool IsPmos() const { return _type==TRANSP; };
-    public : bool IsInternal() const { return getAbutmentType().getCode()==Type::INTERNAL; };
-    public : bool IsLeft() const     { return getAbutmentType().getCode()==Type::LEFT; };
-    public : bool IsRight() const    { return getAbutmentType().getCode()==Type::RIGHT; };
-    public : bool IsSingle() const   { return getAbutmentType().getCode()==Type::SINGLE; };
+    public : bool isNmos() const { return _type==TRANSN; };
+    public : bool isPmos() const { return _type==TRANSP; };
+    public : bool isInternal() const { return getAbutmentType().getCode()==Type::INTERNAL; };
+    public : bool isLeft() const     { return getAbutmentType().getCode()==Type::LEFT; };
+    public : bool isRight() const    { return getAbutmentType().getCode()==Type::RIGHT; };
+    public : bool isSingle() const   { return getAbutmentType().getCode()==Type::SINGLE; };
 
 // Updators
 // ********	    
-    public : void SetL(const double& l) { _masqueInfo->SetL(l); };
-    public : void SetW(const double& w) { _masqueInfo->SetW(w); };
+    public : void setL(const double& l) { _masqueInfo->setL(l); };
+    public : void setW(const double& w) { _masqueInfo->setW(w); };
 
 //# endif
 
@@ -250,9 +248,9 @@ class Transistor : public Cell {
 
 // Operators
 // *********
-   public : void SetMaskInfo(MaskInfo*);
+   public : void setMaskInfo(MaskInfo*);
    public : void createLayout();
-   public : void DuplicateLayout(Transistor* transistor) ;
+   public : void duplicateLayout(Transistor* transistor) ;
 
 
 }; 

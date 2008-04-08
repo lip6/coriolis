@@ -327,7 +327,7 @@ Transistor::MaskInfo* Transistor::_createMaskInfo(const MaskVersion& version)
 }  
 
 
-void Transistor::SetMaskInfo(MaskInfo* masqueinfo)
+void Transistor::setMaskInfo(MaskInfo* masqueinfo)
 // ***************************************************
 {
    if(!masqueinfo)
@@ -386,7 +386,7 @@ void Transistor::createLayout()
 }  
 
 
-void Transistor::DuplicateLayout(Transistor* transistor)
+void Transistor::duplicateLayout(Transistor* transistor)
 // *****************************************************
 {
    OpenUpdateSession();

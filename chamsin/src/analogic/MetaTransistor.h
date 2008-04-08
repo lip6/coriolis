@@ -10,9 +10,6 @@
 #include "Cell.h"
 #include "AnalogicalCommons.h"
 
-
-//BEGIN_NAMESPACE_HURRICANE
-
 namespace Hurricane {
 
 class Library; 
@@ -105,10 +102,10 @@ class MetaTransistor: public Cell {
 
 // Updators
 // ********
-    public : void SetLe  (const Micro le)   { _le=le; };
-    public : void SetWe  (const Micro we)  { _we=we; };
-    public : void SetType(const char type)  { _type=type; };
-    public : void SetM   (const unsigned m)  { _m=m; };
+    public : void setLe  (const Micro le)   { _le=le; };
+    public : void setWe  (const Micro we)  { _we=we; };
+    public : void setType(const char type)  { _type=type; };
+    public : void setM   (const unsigned m)  { _m=m; };
 
 
 //#endif 
@@ -126,8 +123,4 @@ class MetaTransistor: public Cell {
 
 }
 
-//END_NAMESPACE_HURRICANE
-
 #endif // HURRICANE_METATRANSISTOR
-
-

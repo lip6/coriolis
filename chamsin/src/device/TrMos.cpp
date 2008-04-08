@@ -19,7 +19,7 @@
 using namespace Hurricane;
 
 
-namespace DEVICE{
+namespace DEVICE {
 
 // ****************************************************************************************************
 // TrMos implementation
@@ -132,7 +132,7 @@ void TrMos::create(const char type, const bool isbsconnected)
 }  
 
 
-void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasring
+void TrMos::generate(const unsigned m, const bool sourceisfirst, const bool hasring
     , const unsigned nbsourcecolumn, const unsigned nbdraincolumn)
 // *********************************************************************************
 {
@@ -190,7 +190,7 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
    // Set m of MetaTransistor.
    // The name of motif is nameofDevice_nameofMetaTrans_finger_index
    // ****************************************************************
-   _tr1->SetM(_m);
+   _tr1->setM(_m);
 
    for(unsigned i=0; i<m; i++){
      Transistor* finger = Transistor::create(library,
@@ -228,8 +228,8 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
    // Pseudo dimensionnement of metatransistor.
    // In the futur, this will be the work of auto-dimensionnement tool (DSES).
    // ************************************************************************
-//   _tr1->SetLe(10);
-//   _tr1->SetWe(11);
+//   _tr1->setLe(10);
+//   _tr1->setWe(11);
 
 /* (3) */
    IF_DEBUG_HUR_ANALOG
@@ -243,29 +243,29 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
    unsigned count = 0;
 
    Transistor::MaskV1Info * masqueinfo = new Transistor::MaskV1Info(l_finger, w_finger); 
-   masqueinfo->SetNbSourceColumn(nbsourcecolumn);
-   masqueinfo->SetNbDrainColumn(nbdraincolumn);
+   masqueinfo->setNbSourceColumn(nbsourcecolumn);
+   masqueinfo->setNbDrainColumn(nbdraincolumn);
 
    list<Transistor*>::iterator i = _transistorList.begin()
       , j = _transistorList.end();   
 
    if(_m == 1){
-      masqueinfo->SetType(Transistor::Type::SINGLE);
-      (*(_transistorList.begin()))->SetMaskInfo(masqueinfo);
+      masqueinfo->setType(Transistor::Type::SINGLE);
+      (*(_transistorList.begin()))->setMaskInfo(masqueinfo);
    }  
    else if(_m%2==0) { // if m is pair, create two left fingers if is source first.
                       // and create two right fingers if is drain first.
         while(i!=j) {
          if(++count>2) 
-           masqueinfo->SetType(Transistor::Type::INTERNAL);
+           masqueinfo->setType(Transistor::Type::INTERNAL);
 	 else {
 	   if ( _sourceIsFirst )
-	     masqueinfo->SetType(Transistor::Type::LEFT);
+	     masqueinfo->setType(Transistor::Type::LEFT);
 	   else 
-	     masqueinfo->SetType(Transistor::Type::RIGHT);
+	     masqueinfo->setType(Transistor::Type::RIGHT);
 	 }
 
-	 (*i)->SetMaskInfo(masqueinfo);
+	 (*i)->setMaskInfo(masqueinfo);
 	 i++;
         }
    }	
@@ -273,13 +273,13 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
         while(i!=j){
 	  ++ count ;
 	  if (count == 1)
-	    masqueinfo-> SetType(Transistor::Type::LEFT);
+	    masqueinfo-> setType(Transistor::Type::LEFT);
 	  else if (count == 2)  
-	    masqueinfo-> SetType(Transistor::Type::RIGHT);
+	    masqueinfo-> setType(Transistor::Type::RIGHT);
 	  else
-	    masqueinfo-> SetType(Transistor::Type::INTERNAL);
+	    masqueinfo-> setType(Transistor::Type::INTERNAL);
 
-          (*i)->SetMaskInfo(masqueinfo);
+          (*i)->setMaskInfo(masqueinfo);
 	  i++;
 	}
    }
@@ -330,7 +330,7 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
    cout << " Place And Route " <<endl;
 
    for_each_instance(instance, getInstances())
-    //instance->SetTransformation(instance->getTransformation());      
+    //instance->setTransformation(instance->getTransformation());      
     instance->unmaterialize();      
     instance->materialize();      
 
@@ -360,7 +360,7 @@ END_IF
 } 
 
 
-void TrMos::SetLowPinOrder(const PinName pin1, const PinName pin2)
+void TrMos::setLowPinOrder(const PinName pin1, const PinName pin2)
 // ***************************************************************
 {
    _lowPinOrder[0]=pin1;
@@ -378,7 +378,7 @@ void TrMos::SetLowPinOrder(const PinName pin1, const PinName pin2)
 }  
 
 
-void TrMos::SetHighPinOrder(const PinName pin1, const PinName pin2)
+void TrMos::setHighPinOrder(const PinName pin1, const PinName pin2)
 // *****************************************************************
 {
    _highPinOrder[0]=pin1;

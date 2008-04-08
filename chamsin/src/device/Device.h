@@ -57,8 +57,8 @@ class Device : public Cell {
 // Operations
 // **********
 //    public : virtual void Create(const char, const bool) = 0;
-    public : virtual void Dses()   = 0; 
-    public : virtual void Shape()  = 0;
+    public : virtual void dses()   = 0; 
+    public : virtual void shape()  = 0;
 //    public : virtual void Generate() = 0;
 
 
