@@ -173,9 +173,9 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
    // *****************************************
    Library * library = getLibrary();
 
-   cout << ts << "################################################################" << endl <<
-       ts << "####    BEGIN AUTOGENERATON FOR " + _getTypeName() + " " + getString(getName()) + " #####" << endl <<
-       ts << "################################################################" << endl << endl;
+   cout << "################################################################" << endl <<
+       "####    BEGIN AUTOGENERATON FOR " + _getTypeName() + " " + getString(getName()) + " #####" << endl <<
+       "################################################################" << endl << endl;
 
 //   OpenUpdateSession();
 
@@ -204,8 +204,8 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
    IF_DEBUG_HUR_ANALOG
 
    cout << "***  Stage 1 : CreateLayout of " + getString(this) + " finish ***" <<endl;
-   cout << ts <<   getString(_tr1) + " 's M is " + getString(_tr1->getM()) + ".\n"
-        << ts <<   getString(_m) + " Transistors are created.\n" <<endl; 
+   cout <<   getString(_tr1) + " 's M is " + getString(_tr1->getM()) + ".\n"
+        <<   getString(_m) + " Transistors are created.\n" <<endl; 
 
    END_IF
    
@@ -288,15 +288,15 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
    
    IF_DEBUG_HUR_ANALOG
    cout << "***  Stage 3 : CreateLayout of " + getString(this) + " finish ***" <<endl;
-   cout << ts << "Real l_finger is " + getString(l_finger) + "." << endl
-        << ts << "Real w_finger is " + getString(w_finger) + "." << endl
+   cout << "Real l_finger is " + getString(l_finger) + "." << endl
+        << "Real w_finger is " + getString(w_finger) + "." << endl
 	<<endl;
    END_IF
 
 /* (4) */
    IF_DEBUG_HUR_ANALOG
    cout << "***  Stage 4 : CreateLayout of " + getString(this) + " Begin ***" <<endl;
-   cout << ts << "Call GenerateLayout for " + getString(_tr1) 
+   cout << "Call GenerateLayout for " + getString(_tr1) 
          + " who will launch the generator of its fingers" << ".\n"
 	<<endl;
    END_IF
@@ -308,8 +308,8 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
 //
 //   IF_DEBUG_HUR_ANALOG
 //   cout << endl;
-//   cout << ts << "Real l of " << (long)_tr1 << getString(_tr1) + " is " + getString(_tr1->_le) + "." << endl
-//        << ts << "Real w of " << (long)_tr1 << getString(_tr1) + " is " + getString(_tr1->_we) + "." << endl
+//   cout << "Real l of " << (long)_tr1 << getString(_tr1) + " is " + getString(_tr1->_le) + "." << endl
+//        << "Real w of " << (long)_tr1 << getString(_tr1) + " is " + getString(_tr1->_we) + "." << endl
 //	<<endl;
 //   END_IF
 //
@@ -335,7 +335,7 @@ void TrMos::Generate(const unsigned m, const bool sourceisfirst, const bool hasr
     instance->materialize();      
 
 IF_DEBUG_HUR_ANALOG
-    cout << ts << getString(instance) <<" 's boundingBox is " << getString(instance->getBoundingBox())<<endl;
+    cout << getString(instance) <<" 's boundingBox is " << getString(instance->getBoundingBox())<<endl;
 END_IF
      
    end_for
@@ -343,19 +343,19 @@ END_IF
 //   CloseUpdateSession();
 
 IF_DEBUG_HUR_ANALOG
-   cout << ts << getString(this) << " 's primary (without wire) boundingBox is " << getString(getBoundingBox()) <<endl;
+   cout << getString(this) << " 's primary (without wire) boundingBox is " << getString(getBoundingBox()) <<endl;
 END_IF
 
    materialize();
 
 IF_DEBUG_HUR_ANALOG
-   cout << ts << getString(this) << " 's boundingBox is " << getString(getBoundingBox()) <<endl;
+   cout << getString(this) << " 's boundingBox is " << getString(getBoundingBox()) <<endl;
 END_IF
 
-   cout << ts << endl
-        << ts << "################################################################" <<endl
-        << ts << "####    END AUTOGENERATON FOR " + _getTypeName() + " " + getString(getName()) + " #####" <<endl
-        << ts << "################################################################" <<endl
+   cout << endl
+        << "################################################################" <<endl
+        << "####    END AUTOGENERATON FOR " + _getTypeName() + " " + getString(getName()) + " #####" <<endl
+        << "################################################################" <<endl
 	<< endl;
 } 
 

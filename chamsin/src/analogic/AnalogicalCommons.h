@@ -13,33 +13,32 @@
 // Macros Declaration.
 // *********************************************************************
 
-#  define TRANSN 'N'
-#  define TRANSP 'P'
+#define TRANSN 'N'
+#define TRANSP 'P'
 
 
-#  define MAXNBCONTACT 8 
+#define MAXNBCONTACT 8 
 
-#  define IF_DEBUG_HUR_ANALOG \
-   if(getenv("DEBUG_HUR_ANALOG")) {
+#define IF_DEBUG_HUR_ANALOG \
+ if(getenv("DEBUG_HUR_ANALOG")) {
 
-#  ifndef END_IF
-#  define END_IF \
+#ifndef END_IF
+#define END_IF \
    }
-# endif
+#endif
 
 
 // *********************************************************************
 // Analogical Unit declaration.
 // *********************************************************************
-#   if !defined(__DOXYGEN_PROCESSOR__)
+#if !defined(__DOXYGEN_PROCESSOR__)
 
 typedef double Micro;
 typedef double MicroPower2;
 typedef long   Nano;
 
-# endif
+#endif
 
-#include "TwoSpaces.h"
 
 
 #endif // HURRICANE_ANALOGICALCOMMONS

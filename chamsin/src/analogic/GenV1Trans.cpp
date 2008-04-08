@@ -65,7 +65,7 @@ void GenV1Trans::Calculate(Transistor* transistor)
 	);
 
   IF_DEBUG_HUR_ANALOG
-    cout << ts << getString(transistor) + " 's masqueinfo is " + getString(_masqueV1Info)
+    cout << getString(transistor) + " 's masqueinfo is " + getString(_masqueV1Info)
          << endl;
   END_IF
 
@@ -298,7 +298,7 @@ void GenV1Trans::Calculate(Transistor* transistor)
     _mapString2Box[(*i).first] = (*i).second.translate(-xmin, -ymin);      
 
     IF_DEBUG_HUR_ANALOG
-      cout << ts << (*i).first <<"  " << getString((*i).second) << endl;
+      cout << (*i).first <<"  " << getString((*i).second) << endl;
     END_IF
 
     assert(BOX_IS_VALID((*i).second));
@@ -350,16 +350,16 @@ void GenV1Trans::Generate(Transistor* transistor)
   // Cenerate Components For Net Source. 
   // ***********************************
 IF_DEBUG_HUR_ANALOG
-      cout << ts << "Begin for create components for net Source of " << getString(transistor) << endl;
+      cout << "Begin for create components for net Source of " << getString(transistor) << endl;
 END_IF
 
   for(size_t i=0; i<sizeof(segsforsource)/sizeof(string); i++) {
 
     if(segsforsource[i]=="20") {
-      //cout << ts << " Begin create contact for source , Under Box is " << getString(GET_BOX(segsforsource[i])) <<endl;
+      //cout << " Begin create contact for source , Under Box is " << getString(GET_BOX(segsforsource[i])) <<endl;
       Box underbox = GET_BOX(segsforsource[i]);
       CREATE_CONTACT_MATRIX_UNDER(underbox, transistor->getNbSourceColumn(), layer_20, source)  
-      //cout << ts << " Finish create contact for source " <<endl;
+      //cout << " Finish create contact for source " <<endl;
     }
     else {     
       Contact::create(source, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsforsource[i])
@@ -372,14 +372,14 @@ END_IF
   }  
 
 IF_DEBUG_HUR_ANALOG
-      cout << ts << "End for create components for net Source of " << getString(transistor) << endl;
+      cout << "End for create components for net Source of " << getString(transistor) << endl;
 END_IF
 
     
   // Generate Components For Net Grid.
   // *********************************
 IF_DEBUG_HUR_ANALOG
-      cout << ts << "Begin for create components for net Grid of " << getString(transistor) << endl;
+      cout << "Begin for create components for net Grid of " << getString(transistor) << endl;
 END_IF
   for(size_t i=0; i<sizeof(segsforgrid)/sizeof(string); i++) {
        if(segsforgrid[i]=="30"){
@@ -395,7 +395,7 @@ END_IF
               unsigned int nbcolumn = (GET_BOX(segsforgrid[i]).getWidth()-rw_cont)/(rw_cont + rd_cont) + 1;
  
 IF_DEBUG_HUR_ANALOG
-	      cout << ts << "nbcolumn in rectangle 30 is " << nbcolumn <<endl;
+	      cout << "nbcolumn in rectangle 30 is " << nbcolumn <<endl;
 END_IF
 
               Box underbox = GET_BOX(segsforgrid[i]);
@@ -416,22 +416,22 @@ END_IF
   }     
      
 IF_DEBUG_HUR_ANALOG
-      cout << ts << "End for create components for net Grid of " << getString(transistor) << endl;
+      cout << "End for create components for net Grid of " << getString(transistor) << endl;
 END_IF
 
 
   // Generate Components For Net Drain. 
   // **********************************
 IF_DEBUG_HUR_ANALOG
-      cout << ts << "Begin for create components for net Drain of " << getString(transistor) << endl;
+      cout << "Begin for create components for net Drain of " << getString(transistor) << endl;
 END_IF
   for(size_t i=0; i<sizeof(segsfordrain)/sizeof(string); i++) {
 
     if(segsfordrain[i]=="40") {
-      //cout << ts << " Begin create contact for drain, Under Box is " << getString(GET_BOX(segsforsource[i])) <<endl;
+      //cout << " Begin create contact for drain, Under Box is " << getString(GET_BOX(segsforsource[i])) <<endl;
       Box underbox = GET_BOX(segsfordrain[i]);
       CREATE_CONTACT_MATRIX_UNDER(underbox, transistor->getNbDrainColumn(), layer_40, drain) 
-      //cout << ts << " Finish create contact for drain" <<endl;
+      //cout << " Finish create contact for drain" <<endl;
     }
     else {     
       Contact::create(drain, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsfordrain[i])
@@ -444,13 +444,13 @@ END_IF
   }  
 
 IF_DEBUG_HUR_ANALOG
-      cout << ts << "End for create components for net Drain of " << getString(transistor) << endl;
+      cout << "End for create components for net Drain of " << getString(transistor) << endl;
 END_IF
 
   // Generate Components For Anonyms Nets.
   // *************************************
 IF_DEBUG_HUR_ANALOG
-      cout << ts << "Begin for create components for net Anonyme of " << getString(transistor) << endl;
+      cout << "Begin for create components for net Anonyme of " << getString(transistor) << endl;
 END_IF
   Net * anonym = Net::create(transistor, Name("anonym"));
   for(size_t i=0; i<sizeof(segsforanonym)/sizeof(string);i++) {
@@ -466,7 +466,7 @@ END_IF
   }
 
 IF_DEBUG_HUR_ANALOG
-      cout << ts << "End for create components for net Anonyme of " << getString(transistor) << endl;
+      cout << "End for create components for net Anonyme of " << getString(transistor) << endl;
 END_IF
 
   // End Generation.
