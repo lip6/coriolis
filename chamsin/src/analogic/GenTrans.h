@@ -188,28 +188,18 @@ class GenTrans {
 
 
 class GenV1Trans : public GenTrans {
-// *********************************
+    public:
+        typedef GenTrans Inherit;
 
-// Types
-// *****
-  public : typedef GenTrans Inherit;
+        const Transistor::MaskV1Info* _masqueV1Info;
+        static const int maxNbContacts = 8;
 
-// Attributs
-// *********
-  public : const Transistor::MaskV1Info* _masqueV1Info;
+        GenV1Trans(Transistor::MaskV1Info*);
 
-// Constructors
-// ************
-  public : GenV1Trans(Transistor::MaskV1Info*);
+        virtual ~GenV1Trans() {};
 
-// Destructors
-// ************
-  public : virtual ~GenV1Trans() {};
-
-// Operators
-// *********
-  public : virtual void Calculate(Transistor*) ;
-  public : virtual void Generate(Transistor*) ;
+        virtual void Calculate(Transistor*) ;
+        virtual void Generate(Transistor*) ;
   
 };
 

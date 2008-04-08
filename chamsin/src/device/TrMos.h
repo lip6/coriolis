@@ -7,33 +7,15 @@
 #ifndef DEVICE_TRMOS
 #define DEVICE_TRMOS
 
+#include "Net.h"
+using namespace Hurricane;
 
 #include "Device.h"
-#include "Transistors.h"
+#include "Transistor.h"
 #include "MetaTransistor.h"
 
 
-namespace Hurricane {
-
-  class Library;
-  class Name;
-  class Record;
-  class Transistor;
-
-  class Net;
-  class Pin;
-}
-
 namespace DEVICE {
-
-using Hurricane::Library;
-using Hurricane::Name;
-using Hurricane::Record;
-using Hurricane::MetaTransistor;
-using Hurricane::Transistor;
-using Hurricane::Transistors;
-using Hurricane::Net;
-using Hurricane::Pin;
 
 
 class TrMos : public Device {
@@ -51,7 +33,7 @@ class TrMos : public Device {
 
     // Structural parameter.
     // ********************
-    private  : char _type;
+    private  : Transistor::Polarity _polarity;
     private  : bool _isBsConnected;
     private  : unsigned _m;
 
@@ -100,13 +82,13 @@ class TrMos : public Device {
 #endif
 
 
-    public : void create(const char type, const bool isbsconnected);
+    public : void create(const Transistor::Polarity& polarity, const bool isbsconnected);
     public : void generate(const unsigned m, const bool sourceisfirst, const bool hasring,
 		 const unsigned nbsourcecolumn, const unsigned nbdraincolumn);
 
 // Accessors
 // *********	    
-    public : char getType() const { return _type; };  
+    public : const Transistor::Polarity& getPolarity() const { return _polarity; };  
     public : unsigned getM() const { return _m; };	     
     public : const double getWidthOfSourceWire() const { return _widthOfSourceWire; };	     
     public : const double getWidthOfDrainWire() const { return _widthOfDrainWire; };	     

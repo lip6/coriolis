@@ -12,7 +12,6 @@
 
 namespace Hurricane {
 
-
 class Transistor;
 
 

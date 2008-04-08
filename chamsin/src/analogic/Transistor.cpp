@@ -4,16 +4,53 @@
 // Date   : 21/12/2006 
 // ****************************************************************************************************
 
-#include "AnalogicalCommons.h"
-#include "Transistor.h"
-#include "GenTrans.h"
-
 #include "Vertical.h"
 #include "Horizontal.h"
-
 #include "UpdateSession.h"
+using namespace Hurricane;
 
-namespace Hurricane {
+#include "AnalogicalCommons.h"
+#include "GenTrans.h"
+
+#include "Transistor.h"
+
+namespace Chamsin {
+
+// ****************************************************************************************************
+// Transistor::Polarity implementation
+// ****************************************************************************************************
+
+Transistor::Polarity::Polarity(const Code& code) :_code(code)
+{}  
+
+
+Transistor::Polarity::Polarity(const Polarity& type) :_code(type._code)
+{}
+
+
+Transistor::Polarity& Transistor::Polarity::operator=(const Polarity& type) {
+  _code = type._code;
+  return *this;
+}  
+  
+
+string Transistor::Polarity::_getString() const {
+  switch(_code) {
+    case N : return "N";
+    case P : return "P";
+  }
+  return "ABNORMAL";
+}
+
+
+Record* Transistor::Polarity::_getRecord() const
+// *****************************************
+{
+   Record* record = new Record(getString(this));
+   record->Add(getSlot("Code", _code));
+   return record;
+}
+
 
 // ****************************************************************************************************
 // Transistor::MaskVersion implementation
@@ -37,13 +74,6 @@ Transistor::MaskVersion& Transistor::MaskVersion::operator=(const MaskVersion& v
    _code = version._code;
    return *this;
 }
-
-
-bool Transistor::MaskVersion::operator==(const MaskVersion& version) const
-// ***************************************************************************
-{
-   return _code==version._code; 
-}  
 
 
 string Transistor::MaskVersion::_getString() const
@@ -228,20 +258,16 @@ Record* Transistor::MaskV1Info::_getRecord() const
 // Transistor implementation
 // ****************************************************************************************************
 
-Transistor::Transistor(Library* library, const Name& name, char type)
-// *******************************************************************
-:	Inherit(library, name),
-        _type(type),
-	_masqueInfo(NULL),
-	_genTrans(NULL)
-{
-}
+Transistor::Transistor(Library* library, const Name& name, const Polarity& polarity) :
+    Inherit(library, name),
+    _polarity(polarity),
+    _masqueInfo(NULL),
+    _genTrans(NULL)
+{}
 
 
-Transistor* Transistor::create(Library* library, const Name& name, char type)
-// **************************************************************************
-{
-	Transistor* transistor = new Transistor(library, name, type);
+Transistor* Transistor::create(Library* library, const Name& name, const Polarity& polarity) {
+	Transistor* transistor = new Transistor(library, name, polarity);
 
 	transistor->_postCreate();
 
@@ -250,9 +276,7 @@ Transistor* Transistor::create(Library* library, const Name& name, char type)
 
 
 
-void Transistor::_preDestroy()
-// ******************************
-{
+void Transistor::_preDestroy() {
    // Delete aggregated objets. 
    // *************************
    if(_masqueInfo)
@@ -281,19 +305,15 @@ void Transistor::_postCreate()
 }
 
 
-string Transistor::_getString() const
-// ***********************************
-{
+string Transistor::_getString() const {
      string s = Inherit::_getString();
-     s.insert(s.length()-1, " " + getString(_type));
+     s.insert(s.length()-1, " " + getString(_polarity));
      s.insert(s.length()-1, " " + getAbutmentType()._getString());
      return s;
 }
 
 
-Record* Transistor::_getRecord() const
-// ************************************
-{
+Record* Transistor::_getRecord() const {
 	Record* record = Inherit::_getRecord();
 	return record;
 }
@@ -440,15 +460,3 @@ void Transistor::duplicateLayout(Transistor* transistor)
 }  
 
 }
-
-// ****************************************************************************************************
-// Generic functions
-// ****************************************************************************************************
-
-string getString(const Hurricane::Transistor::MaskInfo& masqueinfo)
-// **********************************************************
-{
-  return masqueinfo._getString();
-}  
-
-

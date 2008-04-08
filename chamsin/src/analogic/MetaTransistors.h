@@ -10,8 +10,6 @@
 
 #include "Collection.h"
 
-BEGIN_NAMESPACE_HURRICANE
-
 class MetaTransistor;
 
 
@@ -52,8 +50,6 @@ typedef GenericFilter<MetaTransistor*> MetaTransistorFilter;
 		_locator.Progress();
 
 
-
-END_NAMESPACE_HURRICANE
 
 #endif // HURRICANE_METATRANSISTORS
 

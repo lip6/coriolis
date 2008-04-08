@@ -8,14 +8,10 @@
 #define HURRICANE_METATRANSISTOR
 
 #include "Cell.h"
+using namespace Hurricane;
 #include "AnalogicalCommons.h"
 
 namespace Hurricane {
-
-class Library; 
-class Name;
-class Symbol;
-class Record;
 
 class MetaTransistor: public Cell {
 // ********************************

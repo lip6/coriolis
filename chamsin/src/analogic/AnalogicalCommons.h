@@ -13,12 +13,6 @@
 // Macros Declaration.
 // *********************************************************************
 
-#define TRANSN 'N'
-#define TRANSP 'P'
-
-
-#define MAXNBCONTACT 8 
-
 #define IF_DEBUG_HUR_ANALOG \
  if(getenv("DEBUG_HUR_ANALOG")) {
 

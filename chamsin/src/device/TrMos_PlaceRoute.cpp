@@ -44,11 +44,11 @@ void TrMos::_PlaceAndRoute()
    // **************************************************************
    DtrAccess * dtraccess = DtrAccess::getDtrAccess(); 
 
-   char type;
-   if(_type == 'P') type = 'N'; 
-   else type = 'P';
+   Transistor::Polarity polarity;
+   if(_polarity == Transistor::Polarity::P) polarity = Transistor::Polarity::N; 
+   else polarity = Transistor::Polarity::P;
 
-   long minImpWidth       = dtraccess->getSingleRdsRuleByLabel("RW_", getString(type), "IMP"); 
+   long minImpWidth       = dtraccess->getSingleRdsRuleByLabel("RW_", getString(polarity), "IMP"); 
    long minContWidth      = dtraccess->getSingleRdsRuleByLabel(string("RW_CONT")); 
    long minAlu1Width      = dtraccess->getSingleRdsRuleByLabel(string("RW_ALU1")); 
    long minVia1Width      = dtraccess->getSingleRdsRuleByLabel(string("RW_VIA1")); 
@@ -57,7 +57,7 @@ void TrMos::_PlaceAndRoute()
    long rdActive          = dtraccess->getSingleRdsRuleByLabel(string("RD_ACTI")); 
    long rdAlu2            = dtraccess->getSingleRdsRuleByLabel(string("RD_ALU1")); 
 
-   long reImpActi         = dtraccess->getSingleRdsRuleByLabel("RE_", getString(type), "IMP_CONT"); 
+   long reImpActi         = dtraccess->getSingleRdsRuleByLabel("RE_", getString(polarity), "IMP_CONT"); 
    long reActiContact     = dtraccess->getSingleRdsRuleByLabel("RE_ACTI_CONT"); 
    long reAlu1Contact     = dtraccess->getSingleRdsRuleByLabel("RE_ALU1_CONT"); 
    long reAlu1Via1        = dtraccess->getSingleRdsRuleByLabel("RE_ALU1_VIA1"); 
@@ -235,7 +235,7 @@ void TrMos::_PlaceAndRoute()
 
    Layer * layerImp = NULL;
    
-   if(_type == 'P')  
+   if(_polarity == Transistor::Polarity::P)  
      layerImp  = db->getTechnology()->getLayer(Name("NIMP"));
    else 
      layerImp  = db->getTechnology()->getLayer(Name("PIMP"));
@@ -670,7 +670,7 @@ void TrMos::_PlaceAndRoute()
 
    // Create Caission NWELL if this is a PMOS.
    // ****************************************
-   if(_type == 'P') {
+   if(_polarity == Transistor::Polarity::P) {
        Net * netCaisson = Net::create(this, Name("CAISSON"));
        Contact::create(netCaisson, layerNwell
 	    , getAbutmentBox().getXCenter()

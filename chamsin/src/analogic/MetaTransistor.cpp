@@ -4,14 +4,13 @@
 // Date   : 21/12/2006 
 // ****************************************************************************************************
 
-
-#include "MetaTransistor.h"
-#include "Transistor.h"
-#include "Instances.h"
 #include "UpdateSession.h"
-#include "Vertical.h"
+using namespace Hurricane;
 
-namespace Hurricane {
+#include "Transistor.h"
+#include "MetaTransistor.h"
+
+namespace Chamsin {
 
 // ****************************************************************************************************
 // MetaTransistor implementation
@@ -86,9 +85,9 @@ void MetaTransistor::createLayout()
 
   setTerminal(false);
   
-  Transistor * internal_ref = NULL;
-  Transistor * left_ref = NULL;
-  Transistor * right_ref = NULL;
+  Transistor* internal_ref = NULL;
+  Transistor* left_ref = NULL;
+  Transistor* right_ref = NULL;
 
   for_each_instance(instance, this->getInstances())
      Cell * mastercell = instance->getMasterCell();

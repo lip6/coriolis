@@ -5,7 +5,6 @@
 // ****************************************************************************************************
 
 
-#include "TrMos.h"
 
 #include "Instance.h"
 #include "MetaTransistor.h"
@@ -16,6 +15,8 @@
 #include "UpdateSession.h"
 
 #include "DtrAccess.h"
+
+#include "TrMos.h"
 using namespace Hurricane;
 
 
@@ -27,7 +28,7 @@ namespace DEVICE {
 
 TrMos::TrMos(Library* library, const Name& name):
     Inherit(library, name),
-    _type('N'),
+    _polarity(Transistor::Polarity::N),
     _isBsConnected(false),
     _m(1),
     _sourceIsFirst(true),
@@ -75,19 +76,14 @@ Transistors TrMos::getTransistors() const {
 }
 
 
-void TrMos::create(const char type, const bool isbsconnected)
-// **********************************************************
+void TrMos::create(const Transistor::Polarity& polarity, const bool isbsconnected)
 {
    if( _tr1 ) {
       throw Error("Can't Create Logical View of TrMos " +  getString(getName()) +
               " : " + "it has already been created"); 
    }
 
-   if( (type!=TRANSN) && (type!=TRANSP)) {
-      throw Error("Can't Create TrMos " +  getString(getName()) + " : type " + getString(type) + " is invalid"); 
-   }
-
-   _type = type;
+   _polarity = polarity;
    _isBsConnected = isbsconnected;
 
    // MetaTransistor is in the same library than Trmos
@@ -114,7 +110,7 @@ void TrMos::create(const char type, const bool isbsconnected)
    // The name of MetaTransistor is nameoftrmos_tr1
    // ****************************************************
 
-   _tr1 = MetaTransistor::create(library, Name( getString(getName())+"_Mos1" ), _type);
+   _tr1 = MetaTransistor::create(library, Name( getString(getName())+"_Mos1" ), _polarity);
    Instance * instance = Instance::create(this,
            Name("Ins_" + getString(_tr1->getName())),
            _tr1);
@@ -195,7 +191,7 @@ void TrMos::generate(const unsigned m, const bool sourceisfirst, const bool hasr
    for(unsigned i=0; i<m; i++){
      Transistor* finger = Transistor::create(library,
              getString(_tr1->getName()) + "_Finger_" + getString(i),
-             _type);
+             _polarity);
 
      _transistorList.push_back(finger);
      Instance::create(_tr1, Name("Ins_" + getString(finger->getName())), finger); 

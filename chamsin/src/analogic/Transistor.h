@@ -8,30 +8,45 @@
 #define HURRICANE_TRANSISTOR
 
 #include "Cell.h"
-#include "AnalogicalCommons.h"
+using namespace Hurricane;
 
+#include "Transistors.h"
 
 namespace Hurricane {
 
-class Library; 
-class Name;
-class Symbol;
-class Record;
 class GenTrans;
 
+
+
 class Transistor : public Cell {
-// ********************************
 
 //#   if !defined(__DOXYGEN_PROCESSOR__)
 
 // Types
 // *****
 
-     public : typedef Cell Inherit; 
+     public: typedef Cell Inherit; 
+
+     public: class Polarity {
+                 public: enum Code {N=0, P=1}; 
+
+		 private: Code _code;
+
+		 public : Polarity(const Code& code=N);
+		 public : Polarity(const Polarity&);
+		 public : Polarity& operator=(const Polarity&);
+
+		 public : operator const Code& () const { return _code; };
+		 public : const Code& getCode() const { return _code; }; 
+
+		 public : string _getTypeName() const { return _TName("Transistor::Polarity"); }; 
+		 public : string _getString() const; 
+		 public : Record* _getRecord() const;
+             };
+
 
 
      public : class MaskVersion {
-	      // ******************
                 public : enum Code { VERSION1=0 };
 
 		private: Code _code;
@@ -39,8 +54,6 @@ class Transistor : public Cell {
 		public : explicit MaskVersion(const Code& code=VERSION1);
 		public : MaskVersion(const MaskVersion&);
 		public : MaskVersion& operator=(const MaskVersion&);
-
-                public : bool operator==(const MaskVersion&) const; 
 
 		public : operator const Code& () const { return _code; };
 		public : const Code& getCode() const { return _code; }; 
@@ -173,7 +186,7 @@ class Transistor : public Cell {
 
 // Attributes
 // *******************
-    private : char _type; 
+    private : Polarity _polarity; 
     private : MaskInfo* _masqueInfo;	      
     private : GenTrans * _genTrans;	  
     //public : RealInfo * _realInfo;	      
@@ -185,10 +198,10 @@ class Transistor : public Cell {
 // Constructors
 // ************
 #   if !defined(__DOXYGEN_PROCESSOR__)
-    protected : Transistor(Library* library, const Name& name, char type);
+    protected : Transistor(Library* library, const Name& name, const Polarity& polarity);
 # endif 
 
-    public : static Transistor* create(Library* library, const Name& name, char type);		
+    public : static Transistor* create(Library* library, const Name& name, const Polarity& polarity);		
    
 #   if !defined(__DOXYGEN_PROCESSOR__)
     protected : virtual void _postCreate();
@@ -202,11 +215,11 @@ class Transistor : public Cell {
 
 // Accessors
 // *********	  
-    public : char getType() const { return _type; };
+    public : const Polarity& getPolarity() const { return _polarity; };
     public : MaskVersion getMaskVersion() const { return _getMaskInfoVersion(_masqueInfo); };
     public : const MaskInfo* getMaskInfo() const { return _masqueInfo; };
-    public : const double& getL() const { return _masqueInfo->getL(); };
-    public : const double& getW() const { return _masqueInfo->getW(); };
+    public : const double getL() const { return _masqueInfo->getL(); };
+    public : const double getW() const { return _masqueInfo->getW(); };
     public : const unsigned& getNbDrainColumn() const { return _masqueInfo->getNbDrainColumn(); };
     public : const unsigned& getNbSourceColumn() const { return _masqueInfo->getNbSourceColumn(); };
     public : const char* getDrainName() const  { return "DRAIN"; };
@@ -219,8 +232,8 @@ class Transistor : public Cell {
 
 // Predicats
 // *********
-    public : bool isNmos() const { return _type==TRANSN; };
-    public : bool isPmos() const { return _type==TRANSP; };
+    public : bool isNmos() const { return _polarity==Polarity::N; };
+    public : bool isPmos() const { return _polarity==Polarity::P; };
     public : bool isInternal() const { return getAbutmentType().getCode()==Type::INTERNAL; };
     public : bool isLeft() const     { return getAbutmentType().getCode()==Type::LEFT; };
     public : bool isRight() const    { return getAbutmentType().getCode()==Type::RIGHT; };
@@ -254,9 +267,40 @@ class Transistor : public Cell {
 
 
 }; 
+#if !defined(__DOXYGEN_PROCESSOR__)
+
+// -------------------------------------------------------------------
+// Class  :  "Proxy...<const Transistor::Polarity::Code*>".
+
+template<>
+  inline string  ProxyTypeName<Transistor::Polarity::Code>
+                              ( const Transistor::Polarity::Code* object )
+                              { return "<PointerSlotAdapter<Transistor::Polarity::Code>>"; }
+
+template<>
+  inline string  ProxyString  <Transistor::Polarity::Code>
+                              ( const Transistor::Polarity::Code* object )
+                              {
+                            switch ( *object ) {
+                                  case Transistor::Polarity::N: return "N";
+                                  case Transistor::Polarity::P: return "P";
+                                }
+                                return "ABNORMAL";
+                              }
+
+template<>
+  inline Record* ProxyRecord  <Transistor::Polarity::Code>
+                              ( const Transistor::Polarity::Code* object )
+                          {
+                                Record* record = new Record(getString(object));
+                                record->Add(getSlot("Code", (unsigned int*)object));
+                                return record;
+                          }
 
 
-#   if !defined(__DOXYGEN_PROCESSOR__)
+
+
+
 // -------------------------------------------------------------------
 // Class  :  "Proxy...<const Transistor::MaskVersion::Code*>".
 
@@ -269,7 +313,7 @@ template<>
   inline string  ProxyString  <Transistor::MaskVersion::Code>
                               ( const Transistor::MaskVersion::Code* object )
                               {
-                                switch ( *object ) {
+                            switch ( *object ) {
                                   case Transistor::MaskVersion::VERSION1: return "VERSION1";
                                 }
                                 return "ABNORMAL";
@@ -278,11 +322,11 @@ template<>
 template<>
   inline Record* ProxyRecord  <Transistor::MaskVersion::Code>
                               ( const Transistor::MaskVersion::Code* object )
-                              {
+                          {
                                 Record* record = new Record(getString(object));
                                 record->Add(getSlot("Code", (unsigned int*)object));
                                 return record;
-                              }
+                          }
 
 
 // -------------------------------------------------------------------
@@ -291,7 +335,7 @@ template<>
 template<>
   inline string  ProxyTypeName<Transistor::Type::Code>
                               ( const Transistor::Type::Code* object )
-                              { return "<PointerSlotAdapter<Transistor::Type::Code>>"; }
+                          { return "<PointerSlotAdapter<Transistor::Type::Code>>"; }
 
 template<>
   inline string  ProxyString  <Transistor::Type::Code>
@@ -309,7 +353,7 @@ template<>
 template<>
   inline Record* ProxyRecord  <Transistor::Type::Code>
                               ( const Transistor::Type::Code* object )
-                              {
+                          {
                                 Record* record = new Record(getString(object));
                                 record->Add(getSlot("Code", (unsigned int*)object));
                                 return record;
@@ -319,14 +363,16 @@ template<>
 #endif
 
 }
-
-
+ 
+ 
 
 // ****************************************************************************************************
 // Generic functions
 // ****************************************************************************************************
 
 string getString(const Hurricane::Transistor::MaskInfo&);
+
+
 
 
 #endif // HURRICANE_TRANSISTOR

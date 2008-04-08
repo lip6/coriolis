@@ -4,15 +4,15 @@
 // Date   : 04/04/2007 
 // ****************************************************************************************************
 
-#include "Collection.h"
-#include "RdsUnit.h"
-#include "GenTrans.h"
-#include "DtrAccess.h"
-
 #include "Technology.h"
 #include "UpdateSession.h"
-
 #include "DataBase.h"
+
+#include "RdsUnit.h"
+#include "DtrAccess.h"
+#include "AnalogicalCommons.h"
+#include "GenTrans.h"
+
 
 namespace Hurricane {
 
@@ -55,8 +55,8 @@ void GenV1Trans::Calculate(Transistor* transistor)
 	+ " of this transistor is invalid."
 	);
 
-  if(_masqueV1Info->getNbSourceColumn() < 1 || _masqueV1Info->getNbSourceColumn() > MAXNBCONTACT || 
-     _masqueV1Info->getNbDrainColumn() < 1 || _masqueV1Info->getNbDrainColumn() > MAXNBCONTACT ) 
+  if(_masqueV1Info->getNbSourceColumn() < 1 || _masqueV1Info->getNbSourceColumn() > GenV1Trans::maxNbContacts || 
+     _masqueV1Info->getNbDrainColumn() < 1 || _masqueV1Info->getNbDrainColumn() > GenV1Trans::maxNbContacts ) 
 
     throw Error("Can't launch function GenV1Trans::Calculate for " + getString(transistor) 
 	+ " the nbsourcecolumn " + getString(_masqueV1Info->getNbSourceColumn()) 
