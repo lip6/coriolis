@@ -14,7 +14,7 @@ using namespace Hurricane;
 
 #include "Transistor.h"
 
-namespace Chamsin {
+namespace Hurricane {
 
 // ****************************************************************************************************
 // Transistor::Polarity implementation

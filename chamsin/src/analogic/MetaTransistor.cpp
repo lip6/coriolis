@@ -10,7 +10,7 @@ using namespace Hurricane;
 #include "Transistor.h"
 #include "MetaTransistor.h"
 
-namespace Chamsin {
+namespace Hurricane {
 
 // ****************************************************************************************************
 // MetaTransistor implementation

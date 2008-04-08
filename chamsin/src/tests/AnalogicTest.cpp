@@ -1,10 +1,10 @@
 #include <iostream>
 
-#include "DataBase.h"
-#include "Technology.h"
-#include "Library.h"
 #include "Warning.h"
 using namespace Hurricane;
+
+#include "crlcore/CDataBase.h"
+using namespace CRL;
 
 #include "TrMos.h"
 using namespace DEVICE;
@@ -12,10 +12,8 @@ using namespace DEVICE;
 int main() {
     try {
       cout << "simple analogic test" << endl;
-      DataBase* db = DataBase::create();
-      Technology* technology = Technology::create(db, Name("MyTechnology"));
-      Library* rootLibrary = Library::create(db, Name("RootLibrary"));
-      Library* workLibrary = Library::create(rootLibrary, Name("WorkLibrary"));
+      CDataBase* db = CDataBase::create();
+      Library* workLibrary = Library::create(db->getRootLibrary(), Name("WorkLibrary"));
       TrMos* trmos = TrMos::create(workLibrary, Name("MosTr"));
       exit(0);
     } catch (Hurricane::Warning& w) {
