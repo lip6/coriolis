@@ -31,7 +31,7 @@ Library::Library(DataBase* dataBase, Library* library, const Name& name)
     if (!_dataBase)
         throw Error("Can't create " + _TName("Library") + " : null data base");
 
-    if (name.IsEmpty())
+    if (name.isEmpty())
         throw Error("Can't create " + _TName("Library") + " : empty name");
 
     if (!_library) {
@@ -71,7 +71,7 @@ void Library::SetName(const Name& name)
 // ************************************
 {
     if (name != _name) {
-        if (name.IsEmpty())
+        if (name.isEmpty())
             throw Error("Can't change library name : empty name");
 
         if (_library && _library->getLibrary(name))

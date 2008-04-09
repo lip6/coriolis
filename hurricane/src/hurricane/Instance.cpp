@@ -169,7 +169,7 @@ Instance::Instance(Cell* cell, const Name& name, Cell* masterCell, const Transfo
     if (!_cell)
         throw Error("Can't create " + _TName("Instance") + " : null cell");
 
-    if (name.IsEmpty())
+    if (name.isEmpty())
         throw Error("Can't create " + _TName("Instance") + " : empty name");
 
     if (_cell->getInstance(_name))
@@ -339,7 +339,7 @@ void Instance::setName(const Name& name)
 // *************************************
 {
     if (name != _name) {
-        if (name.IsEmpty())
+        if (name.isEmpty())
             throw Error("Can't change instance name : empty name");
 
         if (_cell->getInstance(name))

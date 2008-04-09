@@ -32,7 +32,7 @@ Reference::Reference(Cell* cell, const Name& name, Unit x, Unit y)
 {
   if ( !_extend ) _extend = getUnit(0.5);
 
-  if (_name.IsEmpty())
+  if (_name.isEmpty())
     throw Error("Can't create " + _TName("Reference") + " : empty name");
 }
 

@@ -48,7 +48,7 @@ Cell::Cell(Library* library, const Name& name)
     if (!_library)
         throw Error("Can't create " + _TName("Cell") + " : null library");
 
-    if (name.IsEmpty())
+    if (name.isEmpty())
         throw Error("Can't create " + _TName("Cell") + " : empty name");
 
     if (_library->getCell(_name))
@@ -103,7 +103,7 @@ void Cell::setName(const Name& name)
 // *********************************
 {
     if (name != _name) {
-        if (name.IsEmpty())
+        if (name.isEmpty())
             throw Error("Can't change " + _TName("Cell") + " name : empty name");
 
         if (_library->getCell(name))

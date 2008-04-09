@@ -60,7 +60,7 @@ class Name {
 // Predicates
 // **********
 
-    public: bool IsEmpty() const;
+    public: bool isEmpty() const;
 
 // Others
 // ******

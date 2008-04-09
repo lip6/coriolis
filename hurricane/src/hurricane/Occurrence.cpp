@@ -121,20 +121,20 @@ Box Occurrence::getBoundingBox() const
     return _sharedPath->getTransformation().getBox(_entity->getBoundingBox());
 }
 
-bool Occurrence::HasProperty() const
+bool Occurrence::hasProperty() const
 // ********************************
 {
     return (_getQuark() != NULL);
 }
 
-void Occurrence::MakeInvalid()
+void Occurrence::makeInvalid()
 // **************************
 {
     _entity = NULL;
     _sharedPath = NULL;
 }
 
-void Occurrence::Put(Property* property)
+void Occurrence::put(Property* property)
 // ************************************
 {
     if (!_entity)
@@ -148,7 +148,7 @@ void Occurrence::Put(Property* property)
     quark->put(property);
 }
 
-void Occurrence::Remove(Property* property)
+void Occurrence::remove(Property* property)
 // ***************************************
 {
     if (!_entity)
@@ -161,7 +161,7 @@ void Occurrence::Remove(Property* property)
     if (quark) quark->remove(property);
 }
 
-void Occurrence::RemoveProperty(const Name& name)
+void Occurrence::removeProperty(const Name& name)
 // *********************************************
 {
     if (!_entity)
@@ -171,7 +171,7 @@ void Occurrence::RemoveProperty(const Name& name)
     if (quark) quark->removeProperty(name);
 }
 
-void Occurrence::ClearProperties()
+void Occurrence::clearProperties()
 // ******************************
 {
     Quark* quark = _getQuark();

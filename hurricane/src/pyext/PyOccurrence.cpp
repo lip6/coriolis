@@ -86,7 +86,7 @@ extern "C" {
 
   // Standart Predicates (Attributes).
   DirectGetBoolAttribute(PyOccurrence_isValid    ,isValid    ,PyOccurrence,Occurrence)
-  DirectGetBoolAttribute(PyOccurrence_HasProperty,HasProperty,PyOccurrence,Occurrence)
+  DirectGetBoolAttribute(PyOccurrence_hasProperty,hasProperty,PyOccurrence,Occurrence)
 
 
   // Standart destroy (Attribute).
@@ -227,7 +227,7 @@ extern "C" {
     , { "getMasterCell" , (PyCFunction)PyOccurrence_getMasterCell , METH_NOARGS, "Returns the cell owning the referenced entity." }
     , { "getBoundingBox", (PyCFunction)PyOccurrence_getBoundingBox, METH_NOARGS, "Returns the occurrence bounding box." }
     , { "isValid"       , (PyCFunction)PyOccurrence_isValid       , METH_NOARGS, "Returns true if the occurrence is valid." }
-    , { "HasProperty"   , (PyCFunction)PyOccurrence_HasProperty   , METH_NOARGS, "Returns true if the occurrence owns some properties." }
+    , { "hasProperty"   , (PyCFunction)PyOccurrence_hasProperty   , METH_NOARGS, "Returns true if the occurrence owns some properties." }
     , { "destroy"       , (PyCFunction)PyOccurrence_destroy       , METH_NOARGS
                         , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */

@@ -64,16 +64,16 @@ class Occurrence {
 // **********
 
     public: bool isValid() const {return (_entity != NULL);};
-    public: bool HasProperty() const;
+    public: bool hasProperty() const;
 
 // Updators
 // ********
 
-    public: void MakeInvalid();
-    public: void Put(Property* property);
-    public: void Remove(Property* property);
-    public: void RemoveProperty(const Name& name);
-    public: void ClearProperties();
+    public: void makeInvalid();
+    public: void put(Property* property);
+    public: void remove(Property* property);
+    public: void removeProperty(const Name& name);
+    public: void clearProperties();
 
 // Others
 // ******

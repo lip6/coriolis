@@ -31,7 +31,7 @@ Layer::Layer(Technology* technology, const Name& name, const Unit& minimalSize, 
     if (!_technology)
         throw Error("Can't create " + _TName("Layer") + " : null technology");
 
-    if (_name.IsEmpty())
+    if (_name.isEmpty())
         throw Error("Can't create " + _TName("Layer") + " : empty name");
 
     if (_technology->getLayer(_name))
@@ -54,7 +54,7 @@ void Layer::setName(const Name& name)
 // **********************************
 {
     if (name != _name) {
-        if (name.IsEmpty())
+        if (name.isEmpty())
             throw Error("Can't change layer name : empty name");
 
         if (_technology->getLayer(name))

@@ -81,7 +81,7 @@ Record* Entity::_getRecord() const
     Record* record = Inherit::_getRecord();
     if (record) {
         Occurrence occurrence = Occurrence(this);
-        if (occurrence.HasProperty())
+        if (occurrence.hasProperty())
             record->Add(getSlot("Occurrence", occurrence));
     }
     return record;

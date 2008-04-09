@@ -148,7 +148,7 @@ char Name::operator[](unsigned index) const
     return _sharedName->_string[index];
 }
 
-bool Name::IsEmpty() const
+bool Name::isEmpty() const
 // ***********************
 {
     return _sharedName->_string.empty();

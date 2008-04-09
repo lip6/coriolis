@@ -47,15 +47,15 @@ class Go : public Entity {
 // Predicates
 // **********
 
-    public: static bool AutoMaterializationIsDisabled();
+    public: static bool autoMaterializationIsDisabled();
 
     public: bool isMaterialized() const {return (_quadTree != NULL);};
 
 // Updators
 // ********
 
-    public: static void EnableAutoMaterialization();
-    public: static void DisableAutoMaterialization();
+    public: static void enableAutoMaterialization();
+    public: static void disableAutoMaterialization();
 
     public: virtual void materialize() = 0;
     public: virtual void unmaterialize() = 0;

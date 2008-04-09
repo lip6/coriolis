@@ -75,11 +75,11 @@ extern "C" {
 
   //DirectGetBoolAttribute(PyName_IsEmpty,IsEmpty,PyName,Name)
 
-  static PyObject* PyName_IsEmpty ( PyName *self ) {
-    trace << "PyName_IsEmpty()" << endl;
+  static PyObject* PyName_isEmpty ( PyName *self ) {
+    trace << "PyName_isEmpty()" << endl;
     
-    METHOD_HEAD ( "Name.IsEmpty()" )
-    return ( Py_BuildValue ("i",_object->IsEmpty()) );
+    METHOD_HEAD ( "Name.isEmpty()" )
+    return ( Py_BuildValue ("i",_object->isEmpty()) );
   }
 
 
@@ -93,7 +93,7 @@ extern "C" {
   // PyName Attribute Method table.
 
   PyMethodDef PyName_Methods[] =
-    { { "IsEmpty"  , (PyCFunction)PyName_IsEmpty  , METH_NOARGS , "True if empty." }
+    { { "isEmpty"  , (PyCFunction)PyName_isEmpty  , METH_NOARGS , "True if empty." }
     , { "destroy"  , (PyCFunction)PyName_destroy   , METH_NOARGS
                    , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */

@@ -254,7 +254,7 @@ Net::Net(Cell* cell, const Name& name)
     if (!_cell)
         throw Error("Can't create " + _TName("Net") + " : null cell");
 
-    if (name.IsEmpty())
+    if (name.isEmpty())
         throw Error("Can't create " + _TName("Net") + " : empty name");
 
     if (_cell->getNet(_name))
@@ -414,7 +414,7 @@ void Net::setName(const Name& name)
 // ********************************
 {
     if (name != _name) {
-        if (name.IsEmpty())
+        if (name.isEmpty())
             throw Error("Can't change net name : empty name");
 
         if (_cell->getNet(name))

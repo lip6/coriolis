@@ -104,7 +104,7 @@ Technology::Technology(DataBase* dataBase, const Name& name)
     if (_dataBase->getTechnology())
         throw Error("Can't create " + _TName("Technology") + " : already exists");
 
-    if (_name.IsEmpty())
+    if (_name.isEmpty())
         throw Error("Can't create " + _TName("Technology") + " : empty name");
 }
 
@@ -156,7 +156,7 @@ void Technology::SetName(const Name& name)
 // ***************************************
 {
     if (name != _name) {
-        if (name.IsEmpty())
+        if (name.isEmpty())
             throw Error("Can't change technology name : empty name");
 
         _name = name;

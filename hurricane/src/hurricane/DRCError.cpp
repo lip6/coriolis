@@ -23,7 +23,7 @@ DRCError::DRCError(Cell* cell, const Name& name, const Box& boundingBox)
     _name(name),
     _boundingBox(boundingBox)
 {
-    if (_name.IsEmpty())
+    if (_name.isEmpty())
         throw Error("Can't create " + _TName("DRCError") + " : empty name");
 
     if (_boundingBox.isEmpty())

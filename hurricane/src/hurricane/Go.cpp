@@ -25,19 +25,19 @@ Go::Go()
 {
 }
 
-bool Go::AutoMaterializationIsDisabled()
+bool Go::autoMaterializationIsDisabled()
 // *************************************
 {
     return !AUTO_MATERIALIZATION_IS_ENABLED;
 }
 
-void Go::EnableAutoMaterialization()
+void Go::enableAutoMaterialization()
 // *********************************
 {
     AUTO_MATERIALIZATION_IS_ENABLED = true;
 }
 
-void Go::DisableAutoMaterialization()
+void Go::disableAutoMaterialization()
 // **********************************
 {
     AUTO_MATERIALIZATION_IS_ENABLED = false;
@@ -48,7 +48,7 @@ void Go::_postCreate()
 {
     Inherit::_postCreate();
 
-    if (!AutoMaterializationIsDisabled()) materialize(); // materialized after entire post creation
+    if (!autoMaterializationIsDisabled()) materialize(); // materialized after entire post creation
 }
 
 void Go::_preDestroy()
