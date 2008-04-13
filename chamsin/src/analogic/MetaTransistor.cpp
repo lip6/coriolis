@@ -140,13 +140,14 @@ void MetaTransistor::createLayout()
 void MetaTransistor::Flush()
 // *************************
 {
-  OpenUpdateSession();
-  for_each_instance(instance, this->getInstances())   
+  openUpdateSession();
+  for_each_instance(instance, this->getInstances()) { 
     Cell * mastercell = instance->getMasterCell();
     instance->destroy();     
     mastercell->destroy();
-  end_for
-  CloseUpdateSession();
+    end_for
+  }
+  closeUpdateSession();
 }  
 
 

@@ -293,7 +293,7 @@ template<>
                               ( const Transistor::Polarity::Code* object )
                           {
                                 Record* record = new Record(getString(object));
-                                record->Add(getSlot("Code", (unsigned int*)object));
+                                record->add(getSlot("Code", (unsigned int*)object));
                                 return record;
                           }
 
@@ -324,7 +324,7 @@ template<>
                               ( const Transistor::MaskVersion::Code* object )
                           {
                                 Record* record = new Record(getString(object));
-                                record->Add(getSlot("Code", (unsigned int*)object));
+                                record->add(getSlot("Code", (unsigned int*)object));
                                 return record;
                           }
 
@@ -355,7 +355,7 @@ template<>
                               ( const Transistor::Type::Code* object )
                           {
                                 Record* record = new Record(getString(object));
-                                record->Add(getSlot("Code", (unsigned int*)object));
+                                record->add(getSlot("Code", (unsigned int*)object));
                                 return record;
                               }
 

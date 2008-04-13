@@ -47,7 +47,7 @@ Record* Transistor::Polarity::_getRecord() const
 // *****************************************
 {
    Record* record = new Record(getString(this));
-   record->Add(getSlot("Code", _code));
+   record->add(getSlot("Code", _code));
    return record;
 }
 
@@ -90,7 +90,7 @@ Record* Transistor::MaskVersion::_getRecord() const
 // **************************************************
 {
   Record* record = new Record(getString(this));
-  record->Add(getSlot("Code", _code));
+  record->add(getSlot("Code", _code));
   return record;
 }
 
@@ -138,7 +138,7 @@ Record* Transistor::Type::_getRecord() const
 // *****************************************
 {
    Record* record = new Record(getString(this));
-   record->Add(getSlot("Code", _code));
+   record->add(getSlot("Code", _code));
    return record;
 }
 
@@ -409,7 +409,7 @@ void Transistor::createLayout()
 void Transistor::duplicateLayout(Transistor* transistor)
 // *****************************************************
 {
-   OpenUpdateSession();
+   openUpdateSession();
 
    setTerminal(false);
 
@@ -455,7 +455,7 @@ void Transistor::duplicateLayout(Transistor* transistor)
 
    materialize();   
 
-   CloseUpdateSession();
+   closeUpdateSession();
 
 }  
 

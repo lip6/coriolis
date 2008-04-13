@@ -99,7 +99,7 @@ void TrMos::_PlaceAndRoute()
    verticalHighMargin  = MAX_INTEGER(verticalHighMargin, horizontalMargin + getUnit(2*rdAlu2 + 2*widthOfDrainWire) );
    horizontalMargin    = MAX_INTEGER(horizontalMargin, getUnit(RETURN_EVEN(rdImp + widthOfImp/2)) );
 
-   OpenUpdateSession();
+   openUpdateSession();
 
    if(_m ==  1 ) {  // If there is only one finger.
      _Place( instance, Transformation::Orientation::ID, Point( horizontalMargin, verticalLowMargin ) );
@@ -179,7 +179,7 @@ void TrMos::_PlaceAndRoute()
      
    }  
 
-   CloseUpdateSession();
+   closeUpdateSession();
 
 
 
@@ -190,7 +190,7 @@ void TrMos::_PlaceAndRoute()
     instance->materialize();      
    end_for
 
-   OpenUpdateSession();
+   openUpdateSession();
 
 
    cout <<"Bounding box of TrMos is "<<getString(getBoundingBox())<<endl;
@@ -680,7 +680,7 @@ void TrMos::_PlaceAndRoute()
             );
    }   
 
-   CloseUpdateSession();
+   closeUpdateSession();
 
 }  
 
