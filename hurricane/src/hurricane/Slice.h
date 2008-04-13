@@ -68,7 +68,7 @@ class Slice {
 // Predicates
 // **********
 
-    public: bool IsEmpty() const {return _quadTree.IsEmpty();};
+    public: bool isEmpty() const {return _quadTree.isEmpty();};
 
 // Others
 // ******

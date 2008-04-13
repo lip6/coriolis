@@ -67,8 +67,8 @@ class SharedName {
 // Updators
 // ********
 
-    private: void Capture();
-    private: void Release();
+    private: void capture();
+    private: void release();
 
 // Others
 // ******

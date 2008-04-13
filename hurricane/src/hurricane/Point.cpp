@@ -106,8 +106,8 @@ Record* Point::_getRecord() const
 // ******************************
 {
     Record* record = new Record(getString(this));
-    record->Add(getSlot("X", &_x));
-    record->Add(getSlot("Y", &_y));
+    record->add(getSlot("X", &_x));
+    record->add(getSlot("Y", &_y));
     return record;
 }
 

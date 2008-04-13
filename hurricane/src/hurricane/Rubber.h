@@ -87,8 +87,8 @@ class Rubber : public Go {
         public: void _setHook(Hook* hook);
         public: void _setNextOfNetRubberSet(Rubber* rubber) {_nextOfNetRubberSet = rubber;};
 
-        public: void _Capture();
-        public: void _Release();
+        public: void _capture();
+        public: void _release();
 
 };
 

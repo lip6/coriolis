@@ -73,13 +73,13 @@ class RoutingPad : public Component {
 
     public: virtual void translate(const Unit& dx, const Unit& dy);
 
-    public: void SetX(const Unit& x);
-    public: void SetY(const Unit& y);
-    public: void SetPosition(const Unit& x, const Unit& y);
-    public: void SetPosition(const Point& position);
-    public: void SetOffset(const Unit& x, const Unit& y);
-    public: void SetExternalComponent(Component* component);
-    public: void RestorePlugOccurrence();
+    public: void setX(const Unit& x);
+    public: void setY(const Unit& y);
+    public: void setPosition(const Unit& x, const Unit& y);
+    public: void setPosition(const Point& position);
+    public: void setOffset(const Unit& x, const Unit& y);
+    public: void setExternalComponent(Component* component);
+    public: void restorePlugOccurrence();
 
 // Others
 // ******

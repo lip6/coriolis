@@ -199,8 +199,8 @@ template<class Value> class StandardPrivateProperty : public PrivateProperty {
     {
         Record* record = Inherit::_getRecord();
         if (record) {
-            record->Add(getSlot("Name", &_name));
-            record->Add(getSlot("Value", _value));
+            record->add(getSlot("Name", &_name));
+            record->add(getSlot("Value", _value));
         }
         return record;
     };
@@ -343,8 +343,8 @@ template<class Value> class StandardSharedProperty : public SharedProperty {
     {
         Record* record = Inherit::_getRecord();
         if (record) {
-            record->Add(getSlot("Name", &_name));
-            record->Add(getSlot("Value", &_value));
+            record->add(getSlot("Name", &_name));
+            record->add(getSlot("Value", &_value));
         }
         return record;
     };

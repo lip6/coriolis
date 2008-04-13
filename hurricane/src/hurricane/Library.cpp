@@ -67,7 +67,7 @@ Library* Library::create(Library* library, const Name& name)
     return library;
 }
 
-void Library::SetName(const Name& name)
+void Library::setName(const Name& name)
 // ************************************
 {
     if (name != _name) {
@@ -77,9 +77,9 @@ void Library::SetName(const Name& name)
         if (_library && _library->getLibrary(name))
             throw Error("Can't change library name : already exists");
 
-        if (_library) _library->_getLibraryMap()._Remove(this);
+        if (_library) _library->_getLibraryMap()._remove(this);
         _name = name;
-        if (_library) _library->_getLibraryMap()._Insert(this);
+        if (_library) _library->_getLibraryMap()._insert(this);
     }
 }
 
@@ -89,7 +89,7 @@ void Library::_postCreate()
     if (!_library)
         _dataBase->_setRootLibrary(this);
     else
-        _library->_getLibraryMap()._Insert(this);
+        _library->_getLibraryMap()._insert(this);
 
     Inherit::_postCreate();
 }
@@ -105,7 +105,7 @@ void Library::_preDestroy()
     if (!_library)
         _dataBase->_setRootLibrary(NULL);
     else
-        _library->_getLibraryMap()._Remove(this);
+        _library->_getLibraryMap()._remove(this);
 }
 
 string Library::_getString() const
@@ -122,11 +122,11 @@ Record* Library::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("DataBase", _dataBase));
-        record->Add(getSlot("Library", _library));
-        record->Add(getSlot("Name", &_name));
-        record->Add(getSlot("Libraries", &_libraryMap));
-        record->Add(getSlot("Cells", &_cellMap));
+        record->add(getSlot("DataBase", _dataBase));
+        record->add(getSlot("Library", _library));
+        record->add(getSlot("Name", &_name));
+        record->add(getSlot("Libraries", &_libraryMap));
+        record->add(getSlot("Cells", &_cellMap));
     }
     return record;
 }

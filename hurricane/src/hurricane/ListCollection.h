@@ -165,7 +165,7 @@ template<class Element> class ListCollection : public Collection<Element> {
         while (iterator != _elementList->end()) {
           string   slotName   = getString(n++);
           Element  slotObject = *iterator;
-          record->Add(getSlot(slotName, slotObject));
+          record->add(getSlot(slotName, slotObject));
           ++iterator;
         }
       }

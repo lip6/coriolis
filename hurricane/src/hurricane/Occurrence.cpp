@@ -199,10 +199,10 @@ Record* Occurrence::_getRecord() const
      Record* record = NULL;
     if (_entity) {
           record = new Record(getString(this));
-        record->Add(getSlot("Entity", _entity));
-        record->Add(getSlot("SharedPath", _sharedPath));
+        record->add(getSlot("Entity", _entity));
+        record->add(getSlot("SharedPath", _sharedPath));
         Quark* quark = _getQuark();
-        if (quark) record->Add(getSlot("Quark", quark));
+        if (quark) record->add(getSlot("Quark", quark));
     }
     return record;
 }

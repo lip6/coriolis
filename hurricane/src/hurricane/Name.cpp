@@ -33,7 +33,7 @@ Name::Name()
 
     assert(_sharedName);
 
-    _sharedName->Capture();
+    _sharedName->capture();
 }
 
 Name::Name(const char* c)
@@ -54,7 +54,7 @@ Name::Name(const char* c)
 
     assert(_sharedName);
 
-    _sharedName->Capture();
+    _sharedName->capture();
 }
 
 Name::Name(const string& s)
@@ -74,20 +74,20 @@ Name::Name(const string& s)
 
     assert(_sharedName);
 
-    _sharedName->Capture();
+    _sharedName->capture();
 }
 
 Name::Name(const Name& name)
 // *************************
 :  _sharedName(name._sharedName)
 {
-    _sharedName->Capture();
+    _sharedName->capture();
 }
 
 Name::~Name()
 // **********
 {
-    _sharedName->Release();
+    _sharedName->release();
 }
 
 Name& Name::operator=(const Name& name)
@@ -95,9 +95,9 @@ Name& Name::operator=(const Name& name)
 {
     SharedName* sharedName = name._sharedName;
     if (sharedName != _sharedName) {
-        _sharedName->Release();
+        _sharedName->release();
         _sharedName = sharedName;
-        _sharedName->Capture();
+        _sharedName->capture();
     }
     return *this;
 }
@@ -164,7 +164,7 @@ Record* Name::_getRecord() const
 // ***********************
 {
     Record* record = new Record(getString(this));
-    record->Add(getSlot("SharedName", _sharedName));
+    record->add(getSlot("SharedName", _sharedName));
     return record;
 }
 

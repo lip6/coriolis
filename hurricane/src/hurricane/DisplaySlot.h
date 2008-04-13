@@ -54,13 +54,13 @@ class DisplaySlot : public DBo {
 // Predicates
 // **********
 
-        public: bool IsVisible() const {return _isVisible;};
-        public: void Show();
-        public: void Hide();
+        public: bool isVisible() const {return _isVisible;};
+        public: void show();
+        public: void hide();
 
 // Updators
 // ********
-        public: void Flush();
+        public: void flush();
 
 // Others
 // ******

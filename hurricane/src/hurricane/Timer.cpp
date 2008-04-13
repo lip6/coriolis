@@ -72,7 +72,7 @@ Record* Timer::_getRecord() const
 // ************************
 {
     Record* record = new Record(getString(this));
-    record->Add(getSlot("Time", &_time));
+    record->add(getSlot("Time", &_time));
     return record;
 }
 

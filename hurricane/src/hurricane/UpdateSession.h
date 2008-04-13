@@ -66,9 +66,9 @@ class UpdateSession : public SharedProperty {
 // Generic functions
 // ****************************************************************************************************
 
-void OpenUpdateSession();
+void openUpdateSession();
 
-void CloseUpdateSession();
+void closeUpdateSession();
 
 
 

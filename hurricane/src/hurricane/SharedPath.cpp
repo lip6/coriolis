@@ -100,7 +100,7 @@ SharedPath::SharedPath(Instance* headInstance, SharedPath* tailSharedPath)
     if (_tailSharedPath && (_tailSharedPath->getOwnerCell() != _headInstance->getMasterCell()))
         throw Error("Can't create " + _TName("SharedPath") + " : incompatible tail path");
 
-    _headInstance->_getSharedPathMap()._Insert(this);
+    _headInstance->_getSharedPathMap()._insert(this);
 }
 
 SharedPath::~SharedPath()
@@ -114,7 +114,7 @@ SharedPath::~SharedPath()
         if (sharedPath) delete sharedPath;
         end_for;
     }
-    _headInstance->_getSharedPathMap()._Remove(this);
+    _headInstance->_getSharedPathMap()._remove(this);
 }
 
 SharedPath* SharedPath::getHeadSharedPath() const
@@ -211,9 +211,9 @@ Record* SharedPath::_getRecord() const
 {
      Record* record = new Record(getString(this));
     if (record) {
-        record->Add(getSlot("HeadInstance", _headInstance));
-        record->Add(getSlot("TailSharedPath", _tailSharedPath));
-        record->Add(getSlot("Quarks", &_quarkMap));
+        record->add(getSlot("HeadInstance", _headInstance));
+        record->add(getSlot("TailSharedPath", _tailSharedPath));
+        record->add(getSlot("Quarks", &_quarkMap));
     }
     return record;
 }

@@ -31,7 +31,7 @@ Record::~Record()
 	}
 }
 
-Slot* Record::GetSlot(unsigned no) const
+Slot* Record::getSlot(unsigned no) const
 // *************************************
 {
 	SlotList::const_iterator iterator = _slotList.begin();
@@ -39,20 +39,20 @@ Slot* Record::GetSlot(unsigned no) const
 	return (iterator == _slotList.end()) ? NULL : *iterator;
 }
 
-void Record::Add(Slot* slot)
+void Record::add(Slot* slot)
 // *************************
 {
   if (!slot) {
-    cerr << "[ERROR] Record::Add(): Attempt to add NULL Slot." << endl;
+    cerr << "[ERROR] Record::add(): Attempt to add NULL Slot." << endl;
     return;
   }
   _slotList.push_back(slot);
 }
 
-string Record::_GetString() const
+string Record::_getString() const
 // ******************************
 {
-	return "<" + _TName("Record") + " " + GetName() + ">";
+	return "<" + _TName("Record") + " " + getName() + ">";
 }
 
 

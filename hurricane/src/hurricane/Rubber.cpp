@@ -102,7 +102,7 @@ void Rubber::materialize()
     if (!isMaterialized()) {
         Cell* cell = getCell();
         QuadTree* quadTree = cell->_getQuadTree();
-        quadTree->Insert(this);
+        quadTree->insert(this);
         cell->_fit(quadTree->getBoundingBox());
     }
 }
@@ -113,7 +113,7 @@ void Rubber::unmaterialize()
     if (isMaterialized()) {
         Cell* cell = getCell();
         cell->_unfit(getBoundingBox());
-        cell->_getQuadTree()->Remove(this);
+        cell->_getQuadTree()->remove(this);
     }
 }
 
@@ -146,7 +146,7 @@ Rubber* Rubber::_create(Hook* hook)
 void Rubber::_postCreate()
 // ***********************
 {
-        _net->_getRubberSet()._Insert(this);
+        _net->_getRubberSet()._insert(this);
 
         for_each_hook(hook, getHooks()) {
                 hook->getComponent()->_setRubber(this);
@@ -179,7 +179,7 @@ void Rubber::_preDestroy()
                 end_for;
         }
 
-        _net->_getRubberSet()._Remove(this);
+        _net->_getRubberSet()._remove(this);
 
 // trace << "exiting Rubber::_preDestroy:" << endl;
 // trace_out();
@@ -199,10 +199,10 @@ Record* Rubber::_getRecord() const
 {
         Record* record = Inherit::_getRecord();
         if (record) {
-                record->Add(getSlot("Net", _net));
-                record->Add(getSlot("Hook", _hook));
-                record->Add(getSlot("Count", _count));
-                record->Add(getSlot("BoundingBox", _boundingBox));
+                record->add(getSlot("Net", _net));
+                record->add(getSlot("Hook", _hook));
+                record->add(getSlot("Count", _count));
+                record->add(getSlot("BoundingBox", _boundingBox));
         }
         return record;
 }
@@ -211,9 +211,9 @@ void Rubber::_setNet(Net* net)
 // ***************************
 {
         if (net != _net) {
-                if (_net) _net->_getRubberSet()._Remove(this);
+                if (_net) _net->_getRubberSet()._remove(this);
                 _net = net;
-                if (_net) _net->_getRubberSet()._Insert(this);
+                if (_net) _net->_getRubberSet()._insert(this);
         }
 }
 
@@ -225,14 +225,14 @@ void Rubber::_setHook(Hook* hook)
         _hook = hook;
 }
 
-void Rubber::_Capture()
+void Rubber::_capture()
 // ********************
 {
         invalidate();
         _count++;
 }
 
-void Rubber::_Release()
+void Rubber::_release()
 // ********************
 {
         if (_count != ((unsigned)-1)) { // not in deletion

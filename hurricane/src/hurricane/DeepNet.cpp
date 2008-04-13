@@ -113,7 +113,7 @@ Record* DeepNet::_getRecord () const
 {
   Record* record = Net::_getRecord();
   if (record) {
-        record->Add(getSlot("_netOccurrence", &_netOccurrence));
+        record->add(getSlot("_netOccurrence", &_netOccurrence));
   }
   return record;
 }

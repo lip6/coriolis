@@ -53,12 +53,12 @@ void DataBase::_postCreate()
 void DataBase::_preDestroy()
 // ************************
 {
-    OpenUpdateSession();
+    openUpdateSession();
     Inherit::_preDestroy();
 
     if (_rootLibrary) _rootLibrary->destroy();
     if (_technology) _technology->destroy();
-    CloseUpdateSession ();
+    closeUpdateSession ();
 
     DATA_BASE = NULL;
 }
@@ -74,11 +74,11 @@ Record* DataBase::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("Technology", _technology));
-        record->Add(getSlot("RootLibrary", _rootLibrary));
-        record->Add(getSlot("Precision", getPrecision()));
-        record->Add(getSlot("Resolution", getValueString(1)));
-        record->Add(getSlot("GridStep", getValueString(getGridStep())));
+        record->add(getSlot("Technology", _technology));
+        record->add(getSlot("RootLibrary", _rootLibrary));
+        record->add(getSlot("Precision", getPrecision()));
+        record->add(getSlot("Resolution", getValueString(1)));
+        record->add(getSlot("GridStep", getValueString(getGridStep())));
     }
     return record;
 }

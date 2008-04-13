@@ -526,8 +526,8 @@ extern "C" {
     { { "getUnit"               ,              PyUnit_getUnit                    , METH_VARARGS, "Convert to Unit." }
     , { "getValue"              ,              PyUnit_getValue                   , METH_VARARGS, "Convert a Unit to a value." }
     , { "getDataBase"           , (PyCFunction)PyDataBase_getDataBase            , METH_NOARGS , "Get the current DataBase." }
-    , { "OpenUpdateSession"     , (PyCFunction)PyUpdateSession_OpenUpdateSession , METH_NOARGS , "Open an UpdateSession." }
-    , { "CloseUpdateSession"    , (PyCFunction)PyUpdateSession_CloseUpdateSession, METH_NOARGS , "Close an UpdateSession." }
+    , { "openUpdateSession"     , (PyCFunction)PyUpdateSession_openUpdateSession , METH_NOARGS , "Open an UpdateSession." }
+    , { "closeUpdateSession"    , (PyCFunction)PyUpdateSession_closeUpdateSession, METH_NOARGS , "Close an UpdateSession." }
     , { "getExternalComponents" , (PyCFunction)PyNetExternalComponents_getExternalComponents, METH_VARARGS, "Returns the components collection of an external net" }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };

@@ -54,7 +54,7 @@ class Pad : public Component {
 // ********
 
     public: virtual void translate(const Unit& dx, const Unit& dy);
-    public: void SetBoundingBox(const Box& boundingBox);
+    public: void setBoundingBox(const Box& boundingBox);
 
 // Others
 // ******

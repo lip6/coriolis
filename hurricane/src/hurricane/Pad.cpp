@@ -87,7 +87,7 @@ void Pad::translate(const Unit& dx, const Unit& dy)
     }
 }
 
-void Pad::SetBoundingBox(const Box& boundingBox)
+void Pad::setBoundingBox(const Box& boundingBox)
 // *********************************************
 {
     if (_boundingBox.isEmpty())
@@ -113,8 +113,8 @@ Record* Pad::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("Layer", _layer));
-        record->Add(getSlot("BoundingBox", &_boundingBox));
+        record->add(getSlot("Layer", _layer));
+        record->add(getSlot("BoundingBox", &_boundingBox));
     }
     return record;
 }

@@ -366,8 +366,8 @@ Record* Hook::_getRecord() const
     Record* record = NULL;
     if (_nextHook != this) {
         record = new Record(getString(this));
-        record->Add(getSlot("Component", getComponent()));
-        record->Add(getSlot("NextHook", _nextHook));
+        record->add(getSlot("Component", getComponent()));
+        record->add(getSlot("NextHook", _nextHook));
     }
     return record;
 }

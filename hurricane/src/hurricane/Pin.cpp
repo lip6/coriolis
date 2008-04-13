@@ -47,7 +47,7 @@ Pin* Pin::create(Net* net, const Name& name, const AccessDirection& accessDirect
     return pin;
 }
 
-void Pin::SetPlacementStatus(const PlacementStatus& placementstatus)
+void Pin::setPlacementStatus(const PlacementStatus& placementstatus)
 // **********************************************************************
 {
     if (placementstatus != _placementStatus) {
@@ -59,7 +59,7 @@ void Pin::SetPlacementStatus(const PlacementStatus& placementstatus)
 void Pin::_postCreate()
 // **********************
 {
-    getCell()->_getPinMap()._Insert(this);
+    getCell()->_getPinMap()._insert(this);
 
     Inherit::_postCreate();
 }
@@ -69,7 +69,7 @@ void Pin::_preDestroy()
 {
     Inherit::_preDestroy();
 
-    getCell()->_getPinMap()._Remove(this);
+    getCell()->_getPinMap()._remove(this);
 }
 
 string Pin::_getString() const
@@ -86,9 +86,9 @@ Record* Pin::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("Name", &_name));
-        record->Add(getSlot("AccessDirection", &_accessDirection));
-        record->Add(getSlot("PlacementStatus", &_placementStatus));
+        record->add(getSlot("Name", &_name));
+        record->add(getSlot("AccessDirection", &_accessDirection));
+        record->add(getSlot("PlacementStatus", &_placementStatus));
     }
     return record;
 }
@@ -191,7 +191,7 @@ Record* Pin::AccessDirection::_getRecord() const
 // *****************************************
 {
     Record* record = new Record(getString(this));
-    record->Add(getSlot("Code", (int)_code));
+    record->add(getSlot("Code", (int)_code));
     return record;
 }
 
@@ -235,7 +235,7 @@ Record* Pin::PlacementStatus::_getRecord() const
 // ***************************************
 {
     Record* record = new Record(getString(this));
-    record->Add(getSlot("Code", (int)_code));
+    record->add(getSlot("Code", (int)_code));
     return record;
 }
 

@@ -233,7 +233,7 @@ Gos QuadTree::getGosUnder(const Box& area) const
     return QuadTree_GosUnder(this, area);
 }
 
-void QuadTree::Insert(Go* go)
+void QuadTree::insert(Go* go)
 // **************************
 {
     if (!go)
@@ -242,21 +242,21 @@ void QuadTree::Insert(Go* go)
     if (!go->isMaterialized()) {
         Box boundingBox = go->getBoundingBox();
         QuadTree* child = _getDeepestChild(boundingBox);
-        child->_goSet._Insert(go);
+        child->_goSet._insert(go);
         go->_quadTree = child;
         QuadTree* parent = child;
         while (parent) {
             parent->_size++;
-            if (parent->IsEmpty() || !parent->_boundingBox.isEmpty())
+            if (parent->isEmpty() || !parent->_boundingBox.isEmpty())
                 parent->_boundingBox.merge(boundingBox);
             parent = parent->_parent;
         }
         if (QUAD_TREE_EXPLODE_THRESHOLD <= child->_size)
-            child->_Explode();
+            child->_explode();
     }
 }
 
-void QuadTree::Remove(Go* go)
+void QuadTree::remove(Go* go)
 // **************************
 {
     if (!go)
@@ -265,7 +265,7 @@ void QuadTree::Remove(Go* go)
     if (go->isMaterialized()) {
         Box boundingBox = go->getBoundingBox();
         QuadTree* child = go->_quadTree;
-        child->_goSet._Remove(go);
+        child->_goSet._remove(go);
         go->_quadTree = NULL;
         QuadTree* parent = child;
         while (parent) {
@@ -278,7 +278,7 @@ void QuadTree::Remove(Go* go)
         while (parent) {
             if (!(parent->_size <= QUAD_TREE_IMPLODE_THRESHOLD))
                 break;
-            parent->_Implode();
+            parent->_implode();
             parent = parent->_parent;
         }
     }
@@ -302,16 +302,16 @@ Record* QuadTree::_getRecord() const
     Record* record = NULL;
     if (_size) {
         record = new Record(getString(this));
-        record->Add(getSlot("Parent", _parent));
-        record->Add(getSlot("X", &_x));
-        record->Add(getSlot("Y", &_y));
-        record->Add(getSlot("BoundingBox", &_boundingBox));
-        record->Add(getSlot("Size", &_size));
-        record->Add(getSlot("Gos", &_goSet));
-        record->Add(getSlot("ULChild", _ulChild));
-        record->Add(getSlot("URChild", _urChild));
-        record->Add(getSlot("LLChild", _llChild));
-        record->Add(getSlot("LRChild", _lrChild));
+        record->add(getSlot("Parent", _parent));
+        record->add(getSlot("X", &_x));
+        record->add(getSlot("Y", &_y));
+        record->add(getSlot("BoundingBox", &_boundingBox));
+        record->add(getSlot("Size", &_size));
+        record->add(getSlot("Gos", &_goSet));
+        record->add(getSlot("ULChild", _ulChild));
+        record->add(getSlot("URChild", _urChild));
+        record->add(getSlot("LLChild", _llChild));
+        record->add(getSlot("LRChild", _lrChild));
     }
     return record;
 }
@@ -319,7 +319,7 @@ Record* QuadTree::_getRecord() const
 QuadTree* QuadTree::_getDeepestChild(const Box& box)
 // ************************************************
 {
-    if (_HasBeenExploded()) {
+    if (_hasBeenExploded()) {
         if (box.getXMax() < _x) {
             if (box.getYMax() < _y)
                 return _llChild->_getDeepestChild(box);
@@ -339,9 +339,9 @@ QuadTree* QuadTree::_getDeepestChild(const Box& box)
 QuadTree* QuadTree::_getFirstQuadTree() const
 // ******************************************
 {
-    if (!_goSet.IsEmpty()) return (QuadTree*)this;
+    if (!_goSet.isEmpty()) return (QuadTree*)this;
     QuadTree* quadTree = NULL;
-    if (_HasBeenExploded()) {
+    if (_hasBeenExploded()) {
         if (!quadTree) quadTree = _ulChild->_getFirstQuadTree();
         if (!quadTree) quadTree = _urChild->_getFirstQuadTree();
         if (!quadTree) quadTree = _llChild->_getFirstQuadTree();
@@ -354,9 +354,9 @@ QuadTree* QuadTree::_getFirstQuadTree(const Box& area) const
 // *********************************************************
 {
     if (getBoundingBox().intersect(area)) {
-        if (!_goSet.IsEmpty()) return (QuadTree*)this;
+        if (!_goSet.isEmpty()) return (QuadTree*)this;
         QuadTree* quadTree = NULL;
-        if (_HasBeenExploded()) {
+        if (_hasBeenExploded()) {
             if (!quadTree) quadTree = _ulChild->_getFirstQuadTree(area);
             if (!quadTree) quadTree = _urChild->_getFirstQuadTree(area);
             if (!quadTree) quadTree = _llChild->_getFirstQuadTree(area);
@@ -371,7 +371,7 @@ QuadTree* QuadTree::_getNextQuadTree()
 // ***********************************
 {
     QuadTree* nextQuadTree = NULL;
-    if (_HasBeenExploded()) {
+    if (_hasBeenExploded()) {
         if (!nextQuadTree) nextQuadTree = _ulChild->_getFirstQuadTree();
         if (!nextQuadTree) nextQuadTree = _urChild->_getFirstQuadTree();
         if (!nextQuadTree) nextQuadTree = _llChild->_getFirstQuadTree();
@@ -402,7 +402,7 @@ QuadTree* QuadTree::_getNextQuadTree(const Box& area)
 // **************************************************
 {
     QuadTree* nextQuadTree = NULL;
-    if (_HasBeenExploded()) {
+    if (_hasBeenExploded()) {
         if (!nextQuadTree) nextQuadTree = _ulChild->_getFirstQuadTree(area);
         if (!nextQuadTree) nextQuadTree = _urChild->_getFirstQuadTree(area);
         if (!nextQuadTree) nextQuadTree = _llChild->_getFirstQuadTree(area);
@@ -429,10 +429,10 @@ QuadTree* QuadTree::_getNextQuadTree(const Box& area)
     return nextQuadTree;
 }
 
-void QuadTree::_Explode()
+void QuadTree::_explode()
 // **********************
 {
-    if (!_HasBeenExploded()) {
+    if (!_hasBeenExploded()) {
         _x = getBoundingBox().getXCenter();
         _y = getBoundingBox().getYCenter();
         _ulChild = new QuadTree(this);
@@ -441,14 +441,14 @@ void QuadTree::_Explode()
         _lrChild = new QuadTree(this);
         set<Go*> goSet;
         for_each_go(go, _goSet.getElements()) {
-            _goSet._Remove(go);
+            _goSet._remove(go);
             go->_quadTree = NULL;
             goSet.insert(go);
             end_for;
         }
         for_each_go(go, getCollection(goSet)) {
             QuadTree* child = _getDeepestChild(go->getBoundingBox());
-            child->_goSet._Insert(go);
+            child->_goSet._insert(go);
             go->_quadTree = child;
             if (child != this) child->_size++;
             end_for;
@@ -456,41 +456,41 @@ void QuadTree::_Explode()
     }
 }
 
-void QuadTree::_Implode()
+void QuadTree::_implode()
 // **********************
 {
-    if (_HasBeenExploded()) {
-        if (_ulChild->_HasBeenExploded()) _ulChild->_Implode();
+    if (_hasBeenExploded()) {
+        if (_ulChild->_hasBeenExploded()) _ulChild->_implode();
         for_each_go(go, _ulChild->_goSet.getElements()) {
-            _ulChild->_goSet._Remove(go);
-            _goSet._Insert(go);
+            _ulChild->_goSet._remove(go);
+            _goSet._insert(go);
             go->_quadTree = this;
             end_for;
         }
         delete _ulChild;
         _ulChild = NULL;
-        if (_urChild->_HasBeenExploded()) _urChild->_Implode();
+        if (_urChild->_hasBeenExploded()) _urChild->_implode();
         for_each_go(go, _urChild->_goSet.getElements()) {
-            _urChild->_goSet._Remove(go);
-            _goSet._Insert(go);
+            _urChild->_goSet._remove(go);
+            _goSet._insert(go);
             go->_quadTree = this;
             end_for;
         }
         delete _urChild;
         _urChild = NULL;
-        if (_llChild->_HasBeenExploded()) _llChild->_Implode();
+        if (_llChild->_hasBeenExploded()) _llChild->_implode();
         for_each_go(go, _llChild->_goSet.getElements()) {
-            _llChild->_goSet._Remove(go);
-            _goSet._Insert(go);
+            _llChild->_goSet._remove(go);
+            _goSet._insert(go);
             go->_quadTree = this;
             end_for;
         }
         delete _llChild;
         _llChild = NULL;
-        if (_lrChild->_HasBeenExploded()) _lrChild->_Implode();
+        if (_lrChild->_hasBeenExploded()) _lrChild->_implode();
         for_each_go(go, _lrChild->_goSet.getElements()) {
-            _lrChild->_goSet._Remove(go);
-            _goSet._Insert(go);
+            _lrChild->_goSet._remove(go);
+            _goSet._insert(go);
             go->_quadTree = this;
             end_for;
         }

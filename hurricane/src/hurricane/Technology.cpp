@@ -152,7 +152,7 @@ CompositeLayers Technology::getCompositeLayers() const
     return SubTypeCollection<Layer*, CompositeLayer*>(getLayers());
 }
 
-void Technology::SetName(const Name& name)
+void Technology::setName(const Name& name)
 // ***************************************
 {
     if (name != _name) {
@@ -194,9 +194,9 @@ Record* Technology::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("DataBase", _dataBase));
-        record->Add(getSlot("Name", &_name));
-        record->Add(getSlot("Layers", &_layerList));
+        record->add(getSlot("DataBase", _dataBase));
+        record->add(getSlot("Name", &_name));
+        record->add(getSlot("Layers", &_layerList));
     }
     return record;
 }

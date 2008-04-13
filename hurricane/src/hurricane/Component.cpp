@@ -326,7 +326,7 @@ void Component::materialize()
             Slice* slice = cell->getSlice(layer);
             if (!slice) slice = Slice::_create(cell, layer);
             QuadTree* quadTree = slice->_getQuadTree();
-            quadTree->Insert(this);
+            quadTree->insert(this);
             cell->_fit(quadTree->getBoundingBox());
         } else {
           //cerr << "[WARNING] " << this << " not inserted into QuadTree." << endl;
@@ -344,8 +344,8 @@ void Component::unmaterialize()
         Slice* slice = cell->getSlice(getLayer());
         if (slice) {
             cell->_unfit(getBoundingBox());
-            slice->_getQuadTree()->Remove(this);
-            if (slice->IsEmpty()) slice->_destroy();
+            slice->_getQuadTree()->remove(this);
+            if (slice->isEmpty()) slice->_destroy();
         }
     }
 }
@@ -368,7 +368,7 @@ void Component::invalidate(bool propagateFlag)
 void Component::_postCreate()
 // **************************
 {
-    if (_net) _net->_getComponentSet()._Insert(this);
+    if (_net) _net->_getComponentSet()._insert(this);
 
     Inherit::_postCreate();
 }
@@ -434,7 +434,7 @@ void Component::_preDestroy()
 
     Inherit::_preDestroy();
 
-    if (_net) _net->_getComponentSet()._Remove(this);
+    if (_net) _net->_getComponentSet()._remove(this);
 
 
     // trace << "exiting Component::_Predestroy:" << endl;
@@ -457,9 +457,9 @@ Record* Component::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("Net", _net));
-        record->Add(getSlot("Rubber", _rubber));
-        record->Add(getSlot("BodyHook", &_bodyHook));
+        record->add(getSlot("Net", _net));
+        record->add(getSlot("Rubber", _rubber));
+        record->add(getSlot("BodyHook", &_bodyHook));
     }
     return record;
 }
@@ -468,9 +468,9 @@ void Component::_setNet(Net* net)
 // ******************************
 {
     if (net != _net) {
-        if (_net) _net->_getComponentSet()._Remove(this);
+        if (_net) _net->_getComponentSet()._remove(this);
         _net = net;
-        if (_net) _net->_getComponentSet()._Insert(this);
+        if (_net) _net->_getComponentSet()._insert(this);
     }
 }
 
@@ -478,9 +478,9 @@ void Component::_setRubber(Rubber* rubber)
 // ***************************************
 {
     if (rubber != _rubber) {
-        if (_rubber) _rubber->_Release();
+        if (_rubber) _rubber->_release();
         _rubber = rubber;
-        if (_rubber) _rubber->_Capture();
+        if (_rubber) _rubber->_capture();
     }
 }
 
@@ -496,15 +496,6 @@ void Component::_setRubber(Rubber* rubber)
 //    }
 //
 //    return false;
-//}
-//
-//void Component::_Highlight(View* view, const Box& updateArea, const Transformation& transformation)
-//// ************************************************************************************************
-//{
-//    for_each_basic_layer(basicLayer, getLayer()->getBasicLayers()) {
-//        _Draw(view, basicLayer, updateArea, transformation);
-//        end_for;
-//    }
 //}
 //
 

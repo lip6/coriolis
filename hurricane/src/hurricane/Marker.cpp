@@ -33,7 +33,7 @@ void Marker::materialize()
     if (!isMaterialized()) {
         Cell* cell = getCell();
         QuadTree* quadTree = cell->_getQuadTree();
-        quadTree->Insert(this);
+        quadTree->insert(this);
         cell->_fit(quadTree->getBoundingBox());
     }
 }
@@ -44,14 +44,14 @@ void Marker::unmaterialize()
     if (isMaterialized()) {
         Cell* cell = getCell();
         cell->_unfit(getBoundingBox());
-        cell->_getQuadTree()->Remove(this);
+        cell->_getQuadTree()->remove(this);
     }
 }
 
 void Marker::_postCreate()
 // ***********************
 {
-    _cell->_getMarkerSet()._Insert(this);
+    _cell->_getMarkerSet()._insert(this);
 
     Inherit::_postCreate();
 }
@@ -61,7 +61,7 @@ void Marker::_preDestroy()
 {
     Inherit::_preDestroy();
 
-    _cell->_getMarkerSet()._Remove(this);
+    _cell->_getMarkerSet()._remove(this);
 }
 
 string Marker::_getString() const
@@ -77,7 +77,7 @@ Record* Marker::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("Cell", _cell));
+        record->add(getSlot("Cell", _cell));
     }
     return record;
 }

@@ -91,7 +91,7 @@ namespace Hurricane {
 
     // Predicates.
     public:
-      virtual bool IsDeepNet () const { return true; };
+      virtual bool isDeepNet () const { return true; };
 
     // Internal Modifiers.
     public:

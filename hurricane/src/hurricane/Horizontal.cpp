@@ -160,9 +160,9 @@ Record* Horizontal::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("Y", &_y));
-        record->Add(getSlot("DxSource", &_dxSource));
-        record->Add(getSlot("DxTarget", &_dxTarget));
+        record->add(getSlot("Y", &_y));
+        record->add(getSlot("DxSource", &_dxSource));
+        record->add(getSlot("DxTarget", &_dxTarget));
     }
     return record;
 }

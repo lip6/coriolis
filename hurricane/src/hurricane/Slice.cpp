@@ -35,13 +35,13 @@ Slice::Slice(Cell* cell, Layer* layer)
     if (_cell->getSlice(_layer))
         throw Error("Can't create " + _TName("Slice") + " : already exists");
 
-    _cell->_getSliceMap()._Insert(this);
+    _cell->_getSliceMap()._insert(this);
 }
 
 Slice::~Slice()
 // ************
 {
-    _cell->_getSliceMap()._Remove(this);
+    _cell->_getSliceMap()._remove(this);
 }
 
 Components Slice::getComponents() const
@@ -101,9 +101,9 @@ Record* Slice::_getRecord() const
 {
      Record* record = new Record(getString(this));
     if (record) {
-        record->Add(getSlot("Cell", _cell));
-        record->Add(getSlot("Layer", _layer));
-        record->Add(getSlot("QuadTree", &_quadTree));
+        record->add(getSlot("Cell", _cell));
+        record->add(getSlot("Layer", _layer));
+        record->add(getSlot("QuadTree", &_quadTree));
     }
     return record;
 }

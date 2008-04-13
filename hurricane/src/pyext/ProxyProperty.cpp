@@ -227,8 +227,8 @@ Record* ProxyProperty::_getRecord () const
   Record* record = Property::_getRecord ();
 
   if ( record != NULL ) {
-    record->Add ( getSlot ( "_owner" ,  _owner  ) );
-    record->Add ( getSlot ( "_shadow",  _shadow ) );
+    record->add ( getSlot ( "_owner" ,  _owner  ) );
+    record->add ( getSlot ( "_shadow",  _shadow ) );
   }
 
   return ( record );

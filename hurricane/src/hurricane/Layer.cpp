@@ -60,9 +60,9 @@ void Layer::setName(const Name& name)
         if (_technology->getLayer(name))
             throw Error("Can't change layer name : already exists");
 
-        _technology->_getLayerMap()._Remove(this);
+        _technology->_getLayerMap()._remove(this);
         _name = name;
-        _technology->_getLayerMap()._Insert(this);
+        _technology->_getLayerMap()._insert(this);
     }
 }
 
@@ -87,7 +87,7 @@ void Layer::setPitch(const Unit& pitch)
 void Layer::_postCreate()
 // **********************
 {
-    _technology->_getLayerMap()._Insert(this);
+    _technology->_getLayerMap()._insert(this);
     _technology->_getLayerList().push_back(this);
 
     Inherit::_postCreate();
@@ -99,7 +99,7 @@ void Layer::_preDestroy()
     Inherit::_preDestroy();
 
     _technology->_getLayerList().remove(this);
-    _technology->_getLayerMap()._Remove(this);
+    _technology->_getLayerMap()._remove(this);
 }
 
 string Layer::_getString() const
@@ -115,13 +115,13 @@ Record* Layer::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("Technology", _technology));
-        record->Add(getSlot("Name", &_name));
-        record->Add(getSlot("Mask", &_mask));
-        record->Add(getSlot("ExtractMask", &_extractMask));
-        record->Add(getSlot("MinimalSize", &_minimalSize));
-        record->Add(getSlot("MinimalSpacing", &_minimalSpacing));
-        record->Add(getSlot("Pitch", &_pitch));
+        record->add(getSlot("Technology", _technology));
+        record->add(getSlot("Name", &_name));
+        record->add(getSlot("Mask", &_mask));
+        record->add(getSlot("ExtractMask", &_extractMask));
+        record->add(getSlot("MinimalSize", &_minimalSize));
+        record->add(getSlot("MinimalSpacing", &_minimalSpacing));
+        record->add(getSlot("Pitch", &_pitch));
     }
     return record;
 }

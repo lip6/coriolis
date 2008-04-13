@@ -53,13 +53,13 @@
 
 
 
-# ifndef  __PYUPDATESESSION__
-#   define  __PYUPDATESESSION__
+#ifndef __PYUPDATESESSION__
+#define __PYUPDATESESSION__
 
 
-# include  "PyHurricane.h"
+#include "PyHurricane.h"
 
-# include  "UpdateSession.h"
+#include "UpdateSession.h"
 
 
 namespace  Isobar {
@@ -77,8 +77,8 @@ extern "C" {
 // -------------------------------------------------------------------
 // Functions & Types exported to "PyHurricane.ccp".
 
-  extern  PyObject* PyUpdateSession_OpenUpdateSession  ( PyObject* module );
-  extern  PyObject* PyUpdateSession_CloseUpdateSession ( PyObject* module );
+  extern PyObject* PyUpdateSession_openUpdateSession  ( PyObject* module );
+  extern PyObject* PyUpdateSession_closeUpdateSession ( PyObject* module );
   
 
 }  // End of extern "C".
@@ -91,4 +91,4 @@ extern "C" {
 
 
 
-# endif
+#endif

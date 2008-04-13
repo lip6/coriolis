@@ -98,7 +98,7 @@ Record* PrivateProperty::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("Owner", _owner));
+        record->add(getSlot("Owner", _owner));
     }
     return record;
 }
@@ -159,7 +159,7 @@ Record* SharedProperty::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("Owners", &_ownerSet));
+        record->add(getSlot("Owners", &_ownerSet));
     }
     return record;
 }

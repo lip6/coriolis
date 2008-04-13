@@ -90,7 +90,7 @@ class Library : public DBo {
 // Updators
 // ********
 
-    public: void SetName(const Name& name);
+    public: void setName(const Name& name);
 
 // Others
 // ******

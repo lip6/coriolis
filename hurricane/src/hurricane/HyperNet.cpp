@@ -303,7 +303,7 @@ Record* HyperNet::_getRecord() const
 {
      Record* record = new Record(getString(this));
     if (record) {
-        record->Add(getSlot("NetOccurrence", &_netOccurrence));
+        record->add(getSlot("NetOccurrence", &_netOccurrence));
     }
     return record;
 }

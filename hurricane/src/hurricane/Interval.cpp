@@ -218,8 +218,8 @@ Record* Interval::_getRecord() const
 // ***************************
 {
     Record* record = new Record(getString(this));
-    record->Add(getSlot("VMin", &_vMin));
-    record->Add(getSlot("VMin", &_vMax));
+    record->add(getSlot("VMin", &_vMin));
+    record->add(getSlot("VMin", &_vMax));
     return record;
 }
 

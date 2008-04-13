@@ -160,9 +160,9 @@ Record* Vertical::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("X", &_x));
-        record->Add(getSlot("DySource", &_dySource));
-        record->Add(getSlot("DyTarget", &_dyTarget));
+        record->add(getSlot("X", &_x));
+        record->add(getSlot("DySource", &_dySource));
+        record->add(getSlot("DyTarget", &_dyTarget));
     }
     return record;
 }

@@ -56,10 +56,10 @@ void Quark::_postCreate()
     SharedPath* sharedPath = _occurrence._getSharedPath();
 
     if (sharedPath)
-        sharedPath->_getQuarkMap()._Insert(this);
+        sharedPath->_getQuarkMap()._insert(this);
     else {
         if (!NULL_SHARED_PATH_QUARK_MAP) NULL_SHARED_PATH_QUARK_MAP = new Quark_QuarkMap();
-        NULL_SHARED_PATH_QUARK_MAP->_Insert(this);
+        NULL_SHARED_PATH_QUARK_MAP->_insert(this);
     }
 
     Inherit::_postCreate();
@@ -76,9 +76,9 @@ void Quark::_preDestroy()
     SharedPath* sharedPath = _occurrence._getSharedPath();
 
     if (sharedPath)
-        sharedPath->_getQuarkMap()._Remove(this);
+        sharedPath->_getQuarkMap()._remove(this);
     else
-        if (NULL_SHARED_PATH_QUARK_MAP) NULL_SHARED_PATH_QUARK_MAP->_Remove(this);
+        if (NULL_SHARED_PATH_QUARK_MAP) NULL_SHARED_PATH_QUARK_MAP->_remove(this);
 
 // trace << "exiting Quark::_preDestroy:" << endl;
 // trace_out();
@@ -97,7 +97,7 @@ Record* Quark::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("Occurrence", &_occurrence));
+        record->add(getSlot("Occurrence", &_occurrence));
     }
     return record;
 }

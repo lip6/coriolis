@@ -79,13 +79,13 @@ class QuadTree {
 // Predicates
 // **********
 
-    public: bool IsEmpty() const {return (_size == 0);};
+    public: bool isEmpty() const {return (_size == 0);};
 
 // Updators
 // ********
 
-    public: void Insert(Go* go);
-    public: void Remove(Go* go);
+    public: void insert(Go* go);
+    public: void remove(Go* go);
 
 // Others
 // ******
@@ -101,10 +101,10 @@ class QuadTree {
     public: QuadTree* _getNextQuadTree();
     public: QuadTree* _getNextQuadTree(const Box& area);
 
-    public: bool _HasBeenExploded() const {return (_ulChild != NULL);};
+    public: bool _hasBeenExploded() const {return (_ulChild != NULL);};
 
-    public: void _Explode();
-    public: void _Implode();
+    public: void _explode();
+    public: void _implode();
 
 };
 

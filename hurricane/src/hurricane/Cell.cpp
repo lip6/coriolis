@@ -109,9 +109,9 @@ void Cell::setName(const Name& name)
         if (_library->getCell(name))
             throw Error("Can't change " + _TName("Cell") + " name : already exists");
 
-        _library->_getCellMap()._Remove(this);
+        _library->_getCellMap()._remove(this);
         _name = name;
-        _library->_getCellMap()._Insert(this);
+        _library->_getCellMap()._insert(this);
     }
 }
 
@@ -130,7 +130,7 @@ void Cell::setAbutmentBox(const Box& abutmentBox)
 void Cell::flattenNets(bool buildRings)
 // ************************************
 {
-  OpenUpdateSession ();
+  openUpdateSession ();
 
   for_each_occurrence ( occurrence, getHyperNetRootNetOccurrences() ) {
     HyperNet  hyperNet ( occurrence );
@@ -193,7 +193,7 @@ void Cell::flattenNets(bool buildRings)
     end_for
   }
 
-  CloseUpdateSession ();
+  closeUpdateSession ();
 }
 
 void Cell::materialize()
@@ -215,7 +215,7 @@ void Cell::unmaterialize()
 void Cell::_postCreate()
 // *********************
 {
-    _library->_getCellMap()._Insert(this);
+    _library->_getCellMap()._insert(this);
 
     Inherit::_postCreate();
 }
@@ -236,7 +236,7 @@ void Cell::_preDestroy()
     for_each_net(net, getNets()) net->destroy(); end_for;
     for_each_slice(slice, getSlices()) slice->_destroy(); end_for;
 
-    _library->_getCellMap()._Remove(this);
+    _library->_getCellMap()._remove(this);
 }
 
 string Cell::_getString() const
@@ -252,19 +252,19 @@ Record* Cell::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("Library", _library));
-        record->Add(getSlot("Name", &_name));
-        record->Add(getSlot("Instances", &_instanceMap));
-        record->Add(getSlot("QuadTree", &_quadTree));
-        record->Add(getSlot("SlaveInstances", &_slaveInstanceSet));
-        record->Add(getSlot("Nets", &_netMap));
-        record->Add(getSlot("Pins", &_pinMap));
-        record->Add(getSlot("Slices", &_sliceMap));
-        record->Add(getSlot("Markers", &_markerSet));
-        record->Add(getSlot("AbutmentBox", &_abutmentBox));
-        record->Add(getSlot("BoundingBox", &_boundingBox));
-        record->Add(getSlot("isTerminal", &_isTerminal));
-        record->Add(getSlot("isFlattenLeaf", &_isFlattenLeaf));
+        record->add(getSlot("Library", _library));
+        record->add(getSlot("Name", &_name));
+        record->add(getSlot("Instances", &_instanceMap));
+        record->add(getSlot("QuadTree", &_quadTree));
+        record->add(getSlot("SlaveInstances", &_slaveInstanceSet));
+        record->add(getSlot("Nets", &_netMap));
+        record->add(getSlot("Pins", &_pinMap));
+        record->add(getSlot("Slices", &_sliceMap));
+        record->add(getSlot("Markers", &_markerSet));
+        record->add(getSlot("AbutmentBox", &_abutmentBox));
+        record->add(getSlot("BoundingBox", &_boundingBox));
+        record->add(getSlot("isTerminal", &_isTerminal));
+        record->add(getSlot("isFlattenLeaf", &_isFlattenLeaf));
     }
     return record;
 }

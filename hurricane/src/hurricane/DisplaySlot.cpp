@@ -72,7 +72,7 @@ void DisplaySlot::_postCreate()
         put(relation);
 }
 
-void DisplaySlot::Show()
+void DisplaySlot::show()
 // *********************
 {
         if (!_isVisible) {
@@ -85,7 +85,7 @@ void DisplaySlot::Show()
         }
 }
 
-void DisplaySlot::Hide()
+void DisplaySlot::hide()
 // *********************
 {
     if (_isVisible) {
@@ -93,16 +93,16 @@ void DisplaySlot::Hide()
     }
 }
 
-void DisplaySlot::Flush()
+void DisplaySlot::flush()
 // **********************
 {
-    OpenUpdateSession();
+    openUpdateSession();
     vector<Go*> govect;
     _quadTree.getGos().fill(govect);
     for (unsigned i = 0 ; i < govect.size() ; i++) {
         govect[i]->destroy();
     }
-    CloseUpdateSession();
+    closeUpdateSession();
 }
 
 UserGos DisplaySlot::getUserGos() const
@@ -130,10 +130,10 @@ Record* DisplaySlot::_getRecord() const
 {
         Record* record = Inherit::_getRecord();
         if (record) {
-                record->Add(getSlot("Cell", _cell));
-                record->Add(getSlot("Name", _name));
-                record->Add(getSlot("QuadTree", &_quadTree));
-                record->Add(getSlot("Is Visible", _isVisible));
+                record->add(getSlot("Cell", _cell));
+                record->add(getSlot("Name", _name));
+                record->add(getSlot("QuadTree", &_quadTree));
+                record->add(getSlot("Is Visible", _isVisible));
         }
         return record;
 }

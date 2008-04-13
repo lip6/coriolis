@@ -945,12 +945,12 @@ Record* Region_Tile::_getRecord() const
 {
     Record* record = new Record(getString(this));
     if (record) {
-        record->Add(getSlot("BoundingBox", &_boundingBox));
-        record->Add(getSlot("IsVoid", &_isVoid));
-        record->Add(getSlot("LeftTile", _leftTile));
-        record->Add(getSlot("BottomTile", _bottomTile));
-        record->Add(getSlot("TopTile", _topTile));
-        record->Add(getSlot("RightTile", _rightTile));
+        record->add(getSlot("BoundingBox", &_boundingBox));
+        record->add(getSlot("IsVoid", &_isVoid));
+        record->add(getSlot("LeftTile", _leftTile));
+        record->add(getSlot("BottomTile", _bottomTile));
+        record->add(getSlot("TopTile", _topTile));
+        record->add(getSlot("RightTile", _rightTile));
     }
     return record;
 }
@@ -2190,7 +2190,7 @@ Record* Region::SwapLine::Type::_getRecord() const
 // *****************************************
 {
     Record* record = new Record(getString(this));
-    record->Add ( getSlot ( "Code", ((unsigned int*)((void*)&_code)) ) );
+    record->add ( getSlot ( "Code", ((unsigned int*)((void*)&_code)) ) );
     return record;
 }
 
@@ -2409,11 +2409,11 @@ Record* Region::SwapLine::_getRecord() const
 {
     Record* record = new Record(getString(this));
     if (record) {
-        record->Add(getSlot("Region", _region));
-        record->Add(getSlot("Type", &_type));
-        record->Add(getSlot("Position", &_position));
-        record->Add(getSlot("Extention", &_extention));
-        record->Add(getSlot("BaseTile", _baseTile));
+        record->add(getSlot("Region", _region));
+        record->add(getSlot("Type", &_type));
+        record->add(getSlot("Position", &_position));
+        record->add(getSlot("Extention", &_extention));
+        record->add(getSlot("BaseTile", _baseTile));
     }
     return record;
 }
@@ -2784,8 +2784,8 @@ Record* Region::_getRecord() const
 {
     Record* record = new Record(getString(this));
     if (record) {
-        record->Add(getSlot("BottomRightTile", _bottomRightTile));
-        record->Add(getSlot("TopLeftTile", _topLeftTile));
+        record->add(getSlot("BottomRightTile", _bottomRightTile));
+        record->add(getSlot("TopLeftTile", _topLeftTile));
     }
     return record;
 }

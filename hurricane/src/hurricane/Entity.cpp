@@ -82,7 +82,7 @@ Record* Entity::_getRecord() const
     if (record) {
         Occurrence occurrence = Occurrence(this);
         if (occurrence.hasProperty())
-            record->Add(getSlot("Occurrence", occurrence));
+            record->add(getSlot("Occurrence", occurrence));
     }
     return record;
 }

@@ -169,7 +169,7 @@ template<class Element, class Compare = less<Element> >
         unsigned n = 1;
         typename set<Element, Compare>::const_iterator iterator = _elementSet->begin(); // AD
         while (iterator != _elementSet->end()) {
-          record->Add(getSlot(getString(n++), *iterator));
+          record->add(getSlot(getString(n++), *iterator));
           ++iterator;
         }
       }

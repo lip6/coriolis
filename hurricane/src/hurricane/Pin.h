@@ -99,14 +99,14 @@ class Pin : public Contact {
 // Predicates
 // **********
 
-    public: bool IsUnplaced() const {return _placementStatus == PlacementStatus::UNPLACED;};
-    public: bool IsPlaced()   const {return _placementStatus == PlacementStatus::PLACED;};
-    public: bool IsFixed()    const {return _placementStatus == PlacementStatus::FIXED;};
+    public: bool isUnplaced() const {return _placementStatus == PlacementStatus::UNPLACED;};
+    public: bool isPlaced()   const {return _placementStatus == PlacementStatus::PLACED;};
+    public: bool isFixed()    const {return _placementStatus == PlacementStatus::FIXED;};
 
 // Updators
 // ********
 
-    public: void SetPlacementStatus(const PlacementStatus& placementstatus);
+    public: void setPlacementStatus(const PlacementStatus& placementstatus);
 
 // Others
 // ******

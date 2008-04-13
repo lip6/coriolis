@@ -63,8 +63,8 @@ Record* DRCError::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("Name", &_name));
-        record->Add(getSlot("BoundingBox", &_boundingBox));
+        record->add(getSlot("Name", &_name));
+        record->add(getSlot("BoundingBox", &_boundingBox));
     }
     return record;
 }

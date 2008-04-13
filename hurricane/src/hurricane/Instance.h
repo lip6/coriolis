@@ -203,7 +203,7 @@ template<>
                               ( const Instance::PlacementStatus::Code* object )
                               {
                                 Record* record = new Record(getString(object));
-                                record->Add(getSlot("Code", (unsigned int*)object));
+                                record->add(getSlot("Code", (unsigned int*)object));
                                 return record;
                               }
 

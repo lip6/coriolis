@@ -330,8 +330,8 @@ template<class Key, class Element> class IntrusiveMap {
                 /**/
                 Element* element = _array[index];
                 while (element) {
-                    // record->Add(getSlot(getString(n++), element));
-                    record->Add(getSlot(getString(index) + ":" + getString(n++), element));
+                    // record->add(getSlot(getString(n++), element));
+                    record->add(getSlot(getString(index) + ":" + getString(n++), element));
                     /**/
                     element = _getNextElement(element);
                 }
@@ -358,7 +358,7 @@ template<class Key, class Element> class IntrusiveMap {
         return _array;
     };
 
-    public: bool _Contains(Element* element) const
+    public: bool _contains(Element* element) const
     // *******************************************
     {
         unsigned index = (_getHashValue(_getKey(element)) / 8) % _length;
@@ -368,22 +368,22 @@ template<class Key, class Element> class IntrusiveMap {
         return (currentElement != NULL);
     };
 
-    public: void _Insert(Element* element)
+    public: void _insert(Element* element)
     // ***********************************
     {
-        if (!_Contains(element)) {
+        if (!_contains(element)) {
             unsigned index = (_getHashValue(_getKey(element)) / 8) % _length;
             _setNextElement(element, _array[index]);
             _array[index] = element;
               _size++;
-            _Resize();
+            _resize();
         }
     };
 
-    public: void _Remove(Element* element)
+    public: void _remove(Element* element)
     // ***********************************
     {
-        if (_Contains(element)) {
+        if (_contains(element)) {
             unsigned index = (_getHashValue(_getKey(element)) / 8) % _length;
             Element* currentElement = _array[index];
             if (currentElement) {
@@ -405,7 +405,7 @@ template<class Key, class Element> class IntrusiveMap {
         }
     };
 
-    public: void _Resize()
+    public: void _resize()
     // *******************
     {
         unsigned newLength = _length;

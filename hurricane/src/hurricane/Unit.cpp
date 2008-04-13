@@ -42,7 +42,7 @@ unsigned getMaximalPrecisionAllowed()
     return MAXIMAL_PRECISION_ALLOWED;
 }
 
-void SetPrecision(unsigned precision)
+void setPrecision(unsigned precision)
 // **********************************
 {
     if (MAXIMAL_PRECISION_ALLOWED < precision)
@@ -53,7 +53,7 @@ void SetPrecision(unsigned precision)
     RESOLUTION = 1;
     while (precision--) RESOLUTION /= 10;
 
-    SetGridStep(getUnit(1));
+    setGridStep(getUnit(1));
 }
 
 
@@ -80,7 +80,7 @@ const Unit& getGridStep()
     return GRID_STEP;
 }
 
-void SetGridStep(const Unit& gridStep)
+void setGridStep(const Unit& gridStep)
 // ***********************************
 {
     if (!gridStep) throw Error("Can't set grid step : invalid value");
@@ -88,7 +88,7 @@ void SetGridStep(const Unit& gridStep)
     GRID_STEP = gridStep;
 }
 
-bool IsOnGrid(const Unit& unit, int n)
+bool isOnGrid(const Unit& unit, int n)
 // ***********************************
 {
     if (n <= 0) throw Error("Can't compute : invalid value");

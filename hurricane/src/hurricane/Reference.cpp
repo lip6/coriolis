@@ -81,8 +81,8 @@ Record* Reference::_getRecord() const
 {
   Record* record = Inherit::_getRecord();
   if (record) {
-    record->Add(getSlot("Name", &_name));
-    record->Add(getSlot("point", &_point));
+    record->add(getSlot("Name", &_name));
+    record->add(getSlot("point", &_point));
   }
   return record;
 }

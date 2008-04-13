@@ -250,7 +250,7 @@ Record* Path::_getRecord() const
      Record* record = NULL;
     if (_sharedPath) {
           record = new Record(getString(this));
-        record->Add(getSlot("SharedPath", _sharedPath));
+        record->add(getSlot("SharedPath", _sharedPath));
     }
     return record;
 }

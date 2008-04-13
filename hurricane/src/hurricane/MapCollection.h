@@ -163,7 +163,7 @@ template<class Key, class Element, class Compare = less<Key> >
 		record = new Record(_GetString());
 		typename map<Key, Element, Compare>::const_iterator iterator = _elementMap->begin(); // AD
 		while (iterator != _elementMap->end()) {
-          record->Add(GetSlot(GetString((*iterator).first), (*iterator).second));
+          record->add(GetSlot(GetString((*iterator).first), (*iterator).second));
           ++iterator;
 		}
       }

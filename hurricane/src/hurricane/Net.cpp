@@ -420,9 +420,9 @@ void Net::setName(const Name& name)
         if (_cell->getNet(name))
             throw Error("Can't change net name : already exists");
 
-        _cell->_getNetMap()._Remove(this);
+        _cell->_getNetMap()._remove(this);
         _name = name;
-        _cell->_getNetMap()._Insert(this);
+        _cell->_getNetMap()._insert(this);
     }
 }
 
@@ -449,13 +449,13 @@ void Net::setExternal(bool isExternal)
         }
         _isExternal = isExternal;
         if (_isExternal) {
-            OpenUpdateSession();
+            openUpdateSession();
             setPosition(Point(0, 0));
             for_each_instance(instance, _cell->getSlaveInstances()) {
                 Plug::_create(instance, this);
                 end_for;
             }
-            CloseUpdateSession();
+            closeUpdateSession();
         }
     }
 }
@@ -586,7 +586,7 @@ void Net::merge(Net* net)
 void Net::_postCreate()
 // ********************
 {
-    _cell->_getNetMap()._Insert(this);
+    _cell->_getNetMap()._insert(this);
 
     if (_isExternal) {
         for_each_instance(instance, _cell->getSlaveInstances()) {
@@ -628,7 +628,7 @@ void Net::_preDestroy()
         end_for;
     }
 
-    _cell->_getNetMap()._Remove(this);
+    _cell->_getNetMap()._remove(this);
 }
 
 string Net::_getString() const
@@ -644,17 +644,17 @@ Record* Net::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("Cell", _cell));
-        record->Add(getSlot("Name", &_name));
-        record->Add(getSlot("Arity", &_arity));
-        record->Add(getSlot("Global", &_isGlobal));
-        record->Add(getSlot("External", &_isExternal));
-        record->Add(getSlot("Type", _type));
-        record->Add(getSlot("Direction", _direction));
-        record->Add(getSlot("Position", &_position));
-        record->Add(getSlot("Components", &_componentSet));
-        record->Add(getSlot("Rubbers", &_rubberSet));
-        record->Add(getSlot("External", &_isExternal));
+        record->add(getSlot("Cell", _cell));
+        record->add(getSlot("Name", &_name));
+        record->add(getSlot("Arity", &_arity));
+        record->add(getSlot("Global", &_isGlobal));
+        record->add(getSlot("External", &_isExternal));
+        record->add(getSlot("Type", _type));
+        record->add(getSlot("Direction", _direction));
+        record->add(getSlot("Position", &_position));
+        record->add(getSlot("Components", &_componentSet));
+        record->add(getSlot("Rubbers", &_rubberSet));
+        record->add(getSlot("External", &_isExternal));
     }
     return record;
 }
@@ -692,7 +692,7 @@ Record* Net::Type::_getRecord() const
 // ****************************
 {
     Record* record = new Record(getString(this));
-    record->Add(getSlot("Code", &_code));
+    record->add(getSlot("Code", &_code));
     return record;
 }
 
@@ -731,7 +731,7 @@ Record* Net::Direction::_getRecord() const
 // *********************************
 {
     Record* record = new Record(getString(this));
-    record->Add(getSlot("Code", &_code));
+    record->add(getSlot("Code", &_code));
     return record;
 }
 

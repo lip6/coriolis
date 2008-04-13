@@ -146,7 +146,7 @@ Plug* Plug::_create(Instance* instance, Net* masterNet)
 void Plug::_postCreate()
 // *********************
 {
-    _instance->_getPlugMap()._Insert(this);
+    _instance->_getPlugMap()._insert(this);
 
     Inherit::_postCreate();
 }
@@ -167,7 +167,7 @@ void Plug::_preDestroy()
 
     Inherit::_preDestroy();
 
-    _instance->_getPlugMap()._Remove(this);
+    _instance->_getPlugMap()._remove(this);
 
 // trace << "exiting Plug::_preDestroy:" << endl;
 // trace_out();
@@ -186,8 +186,8 @@ Record* Plug::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("Instance", _instance));
-        record->Add(getSlot("MasterNet", _masterNet));
+        record->add(getSlot("Instance", _instance));
+        record->add(getSlot("MasterNet", _masterNet));
     }
     return record;
 }

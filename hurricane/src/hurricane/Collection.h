@@ -176,7 +176,7 @@ template<class Type> class Collection : public NestedSlotAdapter {
             while (locator.isValid()) {
               string  slotName   = getString(n++);
               Type    slotRecord = locator.getElement();
-              record->Add(getSlot(slotName, slotRecord));
+              record->add(getSlot(slotName, slotRecord));
                 locator.progress();
             }
         }

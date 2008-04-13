@@ -141,7 +141,7 @@ Record* DBo::_getRecord() const
 {
      Record* record = new Record(getString(this));
     if (record) {
-        record->Add(getSlot("Properties", &_propertySet));
+        record->add(getSlot("Properties", &_propertySet));
     }
     return record;
 }

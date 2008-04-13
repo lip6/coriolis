@@ -666,7 +666,7 @@ template<typename Element>
       unsigned n = 1;
       typename vector<Element>::const_iterator iterator = _v->begin();
       while ( iterator != _v->end() ) {
-        record->Add ( getSlot(getString(n++), *iterator) );
+        record->add ( getSlot(getString(n++), *iterator) );
         ++iterator;
       }
     }
@@ -719,7 +719,7 @@ template<typename Element>
       unsigned n = 1;
       typename list<Element>::const_iterator iterator = _l->begin();
       while ( iterator != _l->end() ) {
-        record->Add ( getSlot(getString(n++), *iterator) );
+        record->add ( getSlot(getString(n++), *iterator) );
         ++iterator;
       }
     }
@@ -769,7 +769,7 @@ template<typename Key, typename Element, typename Compare>
       record = new Record ( "map<Element>" );
       typename map<Key,Element,Compare>::const_iterator iterator = _m->begin();
       while ( iterator != _m->end() ) {
-        record->Add ( getSlot(getString(iterator->first), iterator->second) );
+        record->add ( getSlot(getString(iterator->first), iterator->second) );
         ++iterator;
       }
     }
@@ -820,7 +820,7 @@ template<typename Element, typename Compare>
       unsigned n = 1;
       typename set<Element,Compare>::const_iterator iterator = _s->begin();
       while ( iterator != _s->end() ) {
-        record->Add ( getSlot(getString(n++), *iterator) );
+        record->add ( getSlot(getString(n++), *iterator) );
         ++iterator;
       }
     }
@@ -871,7 +871,7 @@ template<typename Element, typename Compare>
       unsigned n = 1;
       typename multiset<Element,Compare>::const_iterator iterator = _s->begin();
       while ( iterator != _s->end() ) {
-        record->Add ( getSlot(getString(n++), *iterator) );
+        record->add ( getSlot(getString(n++), *iterator) );
         ++iterator;
       }
     }

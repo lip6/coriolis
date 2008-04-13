@@ -32,7 +32,7 @@ unsigned getPrecision();
 
 unsigned getMaximalPrecisionAllowed();
 
-void SetPrecision(unsigned precision);
+void setPrecision(unsigned precision);
 // Should be called only once at the beginning of the program
 
 
@@ -51,9 +51,9 @@ double getResolution();
 
 const Unit& getGridStep();
 
-void SetGridStep(const Unit& gridStep);
+void setGridStep(const Unit& gridStep);
 
-bool IsOnGrid(const Unit& unit, int n = 1);
+bool isOnGrid(const Unit& unit, int n = 1);
 
 Unit getOnGridUnit(const Unit& unit, int s = 0);
 

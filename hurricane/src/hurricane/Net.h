@@ -246,7 +246,7 @@ template<>
                               ( const Net::Type::Code* object )
                               {
                                 Record* record = new Record(getString(object));
-                                record->Add(getSlot("Code", (unsigned int*)object));
+                                record->add(getSlot("Code", (unsigned int*)object));
                                 return record;
                               }
 
@@ -280,7 +280,7 @@ template<>
                               ( const Net::Direction::Code* object )
                               {
                                 Record* record = new Record(getString(object));
-                                record->Add(getSlot("Code", (unsigned int*)object));
+                                record->add(getSlot("Code", (unsigned int*)object));
                                 return record;
                               }
 

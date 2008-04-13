@@ -103,19 +103,18 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyTechnology_SetName ()"
+  // Attribute Method  :  "PyTechnology_setName ()"
 
-  static PyObject* PyTechnology_SetName ( PyTechnology *self, PyObject* args )
-  {
-    trace << "Technology.SetName()" << endl;
-    METHOD_HEAD ( "Technology.SetName()" )
+  static PyObject* PyTechnology_setName ( PyTechnology *self, PyObject* args ) {
+    trace << "Technology.setName()" << endl;
+    METHOD_HEAD ( "Technology.setName()" )
 
     HTRY
 
     PyName* name;
-    if ( ! ParseOneArg ( "Technology.SetName", args, NAME_ARG, (PyObject**)&name ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Technology.setName", args, NAME_ARG, (PyObject**)&name ) ) return ( NULL );
 
-    techno->SetName ( *PYNAME_O(name) );
+    techno->setName ( *PYNAME_O(name) );
     HCATCH
 
     Py_RETURN_NONE;
@@ -159,7 +158,7 @@ extern "C" {
 
   PyMethodDef PyTechnology_Methods[] =
     { { "getName"      , (PyCFunction)PyTechnology_getName      , METH_NOARGS , "Returns the name of the technology." }
-    , { "SetName"      , (PyCFunction)PyTechnology_SetName      , METH_VARARGS, "Allows to change the technology name." }
+    , { "setName"      , (PyCFunction)PyTechnology_setName      , METH_VARARGS, "Allows to change the technology name." }
     , { "getLayer"     , (PyCFunction)PyTechnology_getLayer     , METH_VARARGS, "Returns the layer named name." }
     , { "destroy"      , (PyCFunction)PyTechnology_destroy      , METH_NOARGS
                        , "Destroy associated hurricane object The python object remains." }

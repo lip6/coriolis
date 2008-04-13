@@ -331,13 +331,13 @@ Record* Contact::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("AnchorHook", &_anchorHook));
-        record->Add(getSlot("Anchor", getAnchor()));
-        record->Add(getSlot("Layer", _layer));
-        record->Add(getSlot("Dx", &_dx));
-        record->Add(getSlot("Dy", &_dy));
-        record->Add(getSlot("Width", &_width));
-        record->Add(getSlot("Height", &_height));
+        record->add(getSlot("AnchorHook", &_anchorHook));
+        record->add(getSlot("Anchor", getAnchor()));
+        record->add(getSlot("Layer", _layer));
+        record->add(getSlot("Dx", &_dx));
+        record->add(getSlot("Dy", &_dy));
+        record->add(getSlot("Width", &_width));
+        record->add(getSlot("Height", &_height));
     }
     return record;
 }

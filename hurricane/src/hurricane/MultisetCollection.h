@@ -163,7 +163,7 @@ template<class Element, class Compare = less<Element> >
         unsigned n = 1;
         typename multiset<Element, Compare>::const_iterator iterator = _elementMultiset->begin(); // AD
         while (iterator != _elementMultiset->end()) {
-          record->Add(getSlot(getString(n++), *iterator));
+          record->add(getSlot(getString(n++), *iterator));
           ++iterator;
         }
       }

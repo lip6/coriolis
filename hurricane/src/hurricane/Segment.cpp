@@ -306,12 +306,12 @@ Record* Segment::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("SourceHook", &_sourceHook));
-        record->Add(getSlot("Source", getSource()));
-        record->Add(getSlot("TargetHook", &_targetHook));
-        record->Add(getSlot("Target", getTarget()));
-        record->Add(getSlot("Layer", _layer));
-        record->Add(getSlot("Width", &_width));
+        record->add(getSlot("SourceHook", &_sourceHook));
+        record->add(getSlot("Source", getSource()));
+        record->add(getSlot("TargetHook", &_targetHook));
+        record->add(getSlot("Target", getTarget()));
+        record->add(getSlot("Layer", _layer));
+        record->add(getSlot("Width", &_width));
     }
     return record;
 }

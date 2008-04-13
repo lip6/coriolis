@@ -31,13 +31,13 @@ SharedName::~SharedName()
     _SHARED_NAME_MAP->erase(&_string);
 }
 
-void SharedName::Capture()
+void SharedName::capture()
 // ***********************
 {
     _count++;
 }
 
-void SharedName::Release()
+void SharedName::release()
 // ***********************
 {
     if (!--_count) delete this;
@@ -53,8 +53,8 @@ Record* SharedName::_getRecord() const
 // *****************************
 {
     Record* record = new Record(getString(this));
-    record->Add(getSlot("Count", &_count));
-    record->Add(getSlot("String", &_string));
+    record->add(getSlot("Count", &_count));
+    record->add(getSlot("String", &_string));
     return record;
 }
 

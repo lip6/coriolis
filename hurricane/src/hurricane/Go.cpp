@@ -76,7 +76,7 @@ Record* Go::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("QuadTree", _quadTree));
+        record->add(getSlot("QuadTree", _quadTree));
     }
     return record;
 }

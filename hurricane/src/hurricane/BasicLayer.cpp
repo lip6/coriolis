@@ -193,12 +193,12 @@ Record* BasicLayer::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("Type", &_type));
-        record->Add(getSlot("RedValue", &_redValue));
-        record->Add(getSlot("GreenValue", &_greenValue));
-        record->Add(getSlot("BlueValue", &_blueValue));
-        record->Add(getSlot("FillPattern", &_fillPattern));
-        record->Add(getSlot("DisplayThreshold", &_displayThreshold));
+        record->add(getSlot("Type", &_type));
+        record->add(getSlot("RedValue", &_redValue));
+        record->add(getSlot("GreenValue", &_greenValue));
+        record->add(getSlot("BlueValue", &_blueValue));
+        record->add(getSlot("FillPattern", &_fillPattern));
+        record->add(getSlot("DisplayThreshold", &_displayThreshold));
     }
     return record;
 }
@@ -344,7 +344,7 @@ Record* BasicLayer::Type::_getRecord() const
 // ***********************************
 {
     Record* record = new Record(getString(this));
-    record->Add(getSlot("Code", &_code));
+    record->add(getSlot("Code", &_code));
     return record;
 }
 

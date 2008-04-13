@@ -110,7 +110,7 @@ Record* Relation::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("MasterOwner", _masterOwner));
+        record->add(getSlot("MasterOwner", _masterOwner));
     }
     return record;
 }
@@ -149,7 +149,7 @@ Record* StandardRelation::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("Name", &_name));
+        record->add(getSlot("Name", &_name));
     }
     return record;
 }

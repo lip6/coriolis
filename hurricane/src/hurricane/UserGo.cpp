@@ -100,7 +100,7 @@ void UserGo::materialize()
 {
     if (!isMaterialized()) {
         QuadTree& quadTree = _displaySlot->_getQuadTree();
-        quadTree.Insert(this);
+        quadTree.insert(this);
         getCell()->_fit(quadTree.getBoundingBox());
     }
 }
@@ -111,7 +111,7 @@ void UserGo::unmaterialize()
     if (isMaterialized()) {
         QuadTree& quadTree = _displaySlot->_getQuadTree();
         getCell()->_unfit(getBoundingBox());
-        quadTree.Remove(this);
+        quadTree.remove(this);
     }
 }
 
@@ -128,7 +128,7 @@ Record* UserGo::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("DisplaySlot", _displaySlot));
+        record->add(getSlot("DisplaySlot", _displaySlot));
     }
     return record;
 }

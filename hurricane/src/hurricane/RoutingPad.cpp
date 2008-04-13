@@ -185,31 +185,31 @@ void RoutingPad::translate(const Unit& dx, const Unit& dy)
     }
 }
 
-void RoutingPad::SetX(const Unit& x)
+void RoutingPad::setX(const Unit& x)
 // ******************************
 {
-    SetPosition(x, getY());
+    setPosition(x, getY());
 }
 
-void RoutingPad::SetY(const Unit& y)
+void RoutingPad::setY(const Unit& y)
 // ******************************
 {
-    SetPosition(getX(), y);
+    setPosition(getX(), y);
 }
 
-void RoutingPad::SetPosition(const Unit& x, const Unit& y)
+void RoutingPad::setPosition(const Unit& x, const Unit& y)
 // ****************************************************
 {
-    SetOffset(x, y);
+    setOffset(x, y);
 }
 
-void RoutingPad::SetPosition(const Point& position)
+void RoutingPad::setPosition(const Point& position)
 // *********************************************
 {
-    SetPosition(position.getX(), position.getY());
+    setPosition(position.getX(), position.getY());
 }
 
-void RoutingPad::SetOffset(const Unit& x, const Unit& y)
+void RoutingPad::setOffset(const Unit& x, const Unit& y)
 // ****************************************************
 {
     invalidate(true);
@@ -248,9 +248,9 @@ Record* RoutingPad::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("X", &_x));
-        record->Add(getSlot("Y", &_y));
-        record->Add(getSlot("Occurrence",_occurrence));
+        record->add(getSlot("X", &_x));
+        record->add(getSlot("Y", &_y));
+        record->add(getSlot("Occurrence",_occurrence));
     }
     return record;
 }
@@ -273,7 +273,7 @@ Segment*  RoutingPad::_getEntityAsSegment () const
   return NULL;
 }
 
-void RoutingPad::SetExternalComponent(Component* component)
+void RoutingPad::setExternalComponent(Component* component)
 // ********************************************************
 {
     if (isMaterialized()) invalidate(false);
@@ -290,15 +290,15 @@ void RoutingPad::SetExternalComponent(Component* component)
 
     Horizontal* horizontal = dynamic_cast<Horizontal*>(component);
     if ( horizontal ) {
-      SetX ( 0 );
-      SetY ( position.getY() );
+      setX ( 0 );
+      setY ( position.getY() );
     } else {
       Vertical* vertical = dynamic_cast<Vertical*>(component);
       if ( vertical ) {
-        SetX ( position.getX() );
-        SetY ( 0 );
+        setX ( position.getX() );
+        setY ( 0 );
       } else
-        SetPosition ( position );
+        setPosition ( position );
     }
 
     _occurrence.getMasterCell()->_addSlaveEntity(_occurrence.getEntity(),this);
@@ -325,13 +325,13 @@ Occurrence RoutingPad::getPlugOccurrence()
 }
 
 
-void RoutingPad::RestorePlugOccurrence()
+void RoutingPad::restorePlugOccurrence()
 // *************************************
 {
     if (isMaterialized()) unmaterialize();
 
     _occurrence=getPlugOccurrence();
-    SetPosition ( _occurrence.getPath().getTransformation().getPoint
+    setPosition ( _occurrence.getPath().getTransformation().getPoint
         ( dynamic_cast<Component*>(_occurrence.getEntity())->getPosition() ) );
 }
 
@@ -358,7 +358,7 @@ RoutingPad* createRoutingPad ( Net* net, Occurrence plugOccurrence )
     }
 
     RoutingPad* rp = RoutingPad::create ( net, plugOccurrence );
-    rp->SetExternalComponent ( bestComponent );
+    rp->setExternalComponent ( bestComponent );
 
     return rp;
 }

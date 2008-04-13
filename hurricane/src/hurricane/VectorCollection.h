@@ -163,7 +163,7 @@ template<class Element> class VectorCollection : public Collection<Element> {
         unsigned n = 1;
         typename vector<Element>::const_iterator iterator = _elementVector->begin(); // AD
         while (iterator != _elementVector->end()) {
-          record->Add(getSlot(getString(n++), *iterator));
+          record->add(getSlot(getString(n++), *iterator));
           ++iterator;
         }
       }

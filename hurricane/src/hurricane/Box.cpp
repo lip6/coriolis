@@ -332,10 +332,10 @@ Record* Box::_getRecord() const
     if (isEmpty()) return NULL;
 
     Record* record = new Record(getString(this));
-    record->Add(getSlot("XMin", &_xMin));
-    record->Add(getSlot("YMin", &_yMin));
-    record->Add(getSlot("XMax", &_xMax));
-    record->Add(getSlot("YMax", &_yMax));
+    record->add(getSlot("XMin", &_xMin));
+    record->add(getSlot("YMin", &_yMin));
+    record->add(getSlot("XMax", &_xMax));
+    record->add(getSlot("YMax", &_yMax));
     return record;
 }
 

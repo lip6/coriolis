@@ -165,16 +165,16 @@ Record* CompositeLayer::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("Type", &_type));
-        record->Add(getSlot("BasicLayers", &_basicLayerList));
-        record->Add(getSlot("ContactSizes", &_contactSizeMap));
-        record->Add(getSlot("SegmentSizes", &_segmentSizeMap));
-        record->Add(getSlot("SegmentExtentions", &_segmentExtentionMap));
-        record->Add(getSlot("PadSizes", &_padSizeMap));
-        record->Add(getSlot("MaximalContactSize", &_maximalContactSize));
-        record->Add(getSlot("MaximalSegmentSize", &_maximalSegmentSize));
-        record->Add(getSlot("MaximalSegmentExtention", &_maximalSegmentExtention));
-        record->Add(getSlot("MaximalPadSize", &_maximalPadSize));
+        record->add(getSlot("Type", &_type));
+        record->add(getSlot("BasicLayers", &_basicLayerList));
+        record->add(getSlot("ContactSizes", &_contactSizeMap));
+        record->add(getSlot("SegmentSizes", &_segmentSizeMap));
+        record->add(getSlot("SegmentExtentions", &_segmentExtentionMap));
+        record->add(getSlot("PadSizes", &_padSizeMap));
+        record->add(getSlot("MaximalContactSize", &_maximalContactSize));
+        record->add(getSlot("MaximalSegmentSize", &_maximalSegmentSize));
+        record->add(getSlot("MaximalSegmentExtention", &_maximalSegmentExtention));
+        record->add(getSlot("MaximalPadSize", &_maximalPadSize));
     }
     return record;
 }
@@ -233,7 +233,7 @@ Record* CompositeLayer::Type::_getRecord() const
 // *********************************************
 {
     Record* record = new Record(getString(this));
-    record->Add(getSlot("Code", (int)_code));
+    record->add(getSlot("Code", (int)_code));
     return record;
 }
 

@@ -295,7 +295,7 @@ void Instance::materialize()
         Box boundingBox = getBoundingBox();
         if (!boundingBox.isEmpty()) {
             QuadTree* quadTree = _cell->_getQuadTree();
-            quadTree->Insert(this);
+            quadTree->insert(this);
             _cell->_fit(quadTree->getBoundingBox());
         }
     }
@@ -306,7 +306,7 @@ void Instance::unmaterialize()
 {
     if (isMaterialized()) {
         _cell->_unfit(getBoundingBox());
-        _cell->_getQuadTree()->Remove(this);
+        _cell->_getQuadTree()->remove(this);
     }
 }
 
@@ -345,9 +345,9 @@ void Instance::setName(const Name& name)
         if (_cell->getInstance(name))
             throw Error("Can't change instance name : already exists");
 
-        _cell->_getInstanceMap()._Remove(this);
+        _cell->_getInstanceMap()._remove(this);
         _name = name;
-        _cell->_getInstanceMap()._Insert(this);
+        _cell->_getInstanceMap()._insert(this);
     }
 }
 
@@ -408,16 +408,16 @@ void Instance::setMasterCell(Cell* masterCell, bool secureFlag)
         while (!connectedPlugList.empty() && !masterNetList.empty()) {
             Plug* plug = connectedPlugList.front();
             Net* masterNet = masterNetList.front();
-            _plugMap._Remove(plug);
+            _plugMap._remove(plug);
             plug->_setMasterNet(masterNet);
-            _plugMap._Insert(plug);
+            _plugMap._insert(plug);
             connectedPlugList.pop_front();
             masterNetList.pop_front();
         }
 
-        _masterCell->_getSlaveInstanceSet()._Remove(this);
+        _masterCell->_getSlaveInstanceSet()._remove(this);
         _masterCell = masterCell;
-        _masterCell->_getSlaveInstanceSet()._Insert(this);
+        _masterCell->_getSlaveInstanceSet()._insert(this);
 
         for_each_net(externalNet, _masterCell->getExternalNets()) {
             if (!getPlug(externalNet)) Plug::_create(this, externalNet);
@@ -429,8 +429,8 @@ void Instance::setMasterCell(Cell* masterCell, bool secureFlag)
 void Instance::_postCreate()
 // *************************
 {
-    _cell->_getInstanceMap()._Insert(this);
-    _masterCell->_getSlaveInstanceSet()._Insert(this);
+    _cell->_getInstanceMap()._insert(this);
+    _masterCell->_getSlaveInstanceSet()._insert(this);
 
     for_each_net(externalNet, _masterCell->getExternalNets()) {
         Plug::_create(this, externalNet);
@@ -449,8 +449,8 @@ void Instance::_preDestroy()
 
     for_each_plug(plug, getPlugs()) plug->_destroy(); end_for;
 
-    _masterCell->_getSlaveInstanceSet()._Remove(this);
-    _cell->_getInstanceMap()._Remove(this);
+    _masterCell->_getSlaveInstanceSet()._remove(this);
+    _cell->_getInstanceMap()._remove(this);
 }
 
 string Instance::_getString() const
@@ -467,15 +467,15 @@ Record* Instance::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->Add(getSlot("Cell", _cell));
-        record->Add(getSlot("Name", &_name));
-        record->Add(getSlot("MasterCell", _masterCell));
-        record->Add(getSlot("Transformation", &_transformation));
-        record->Add(getSlot("PlacementStatus", _placementStatus));
-        record->Add(getSlot("XCenter", getValue(getAbutmentBox().getXCenter())));
-        record->Add(getSlot("YCenter", getValue(getAbutmentBox().getYCenter())));
-        record->Add(getSlot("Plugs", &_plugMap));
-        record->Add(getSlot("SharedPathes", &_sharedPathMap));
+        record->add(getSlot("Cell", _cell));
+        record->add(getSlot("Name", &_name));
+        record->add(getSlot("MasterCell", _masterCell));
+        record->add(getSlot("Transformation", &_transformation));
+        record->add(getSlot("PlacementStatus", _placementStatus));
+        record->add(getSlot("XCenter", getValue(getAbutmentBox().getXCenter())));
+        record->add(getSlot("YCenter", getValue(getAbutmentBox().getYCenter())));
+        record->add(getSlot("Plugs", &_plugMap));
+        record->add(getSlot("SharedPathes", &_sharedPathMap));
     }
     return record;
 }
@@ -697,7 +697,7 @@ Record* Instance::PlacementStatus::_getRecord() const
 // ********************************************
 {
     Record* record = new Record(getString(this));
-    record->Add(getSlot("Code", &_code));
+    record->add(getSlot("Code", &_code));
     return record;
 }
 

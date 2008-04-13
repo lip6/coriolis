@@ -157,7 +157,7 @@ void Go::invalidate(bool propagateFlag)
 // Generic functions
 // ****************************************************************************************************
 
-void OpenUpdateSession()
+void openUpdateSession()
 // *********************
 {
 // trace << "OpenUpdateSession()" << endl;
@@ -165,7 +165,7 @@ void OpenUpdateSession()
     UpdateSession::_create();
 }
 
-void CloseUpdateSession()
+void closeUpdateSession()
 // **********************
 {
 // trace << "CloseUpdateSession()" << endl;

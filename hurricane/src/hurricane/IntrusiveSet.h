@@ -274,7 +274,7 @@ template<class Element> class IntrusiveSet : public NestedSlotAdapter {
 // Predicates
 // **********
 
-    public: bool IsEmpty() const
+    public: bool isEmpty() const
     // *************************
     {
         return (_size == 0);
@@ -312,7 +312,7 @@ template<class Element> class IntrusiveSet : public NestedSlotAdapter {
     public: string _getString() const
     // ******************************
     {
-        if (IsEmpty())
+        if (isEmpty())
             return "<" + _getTypeName() + " empty>";
         else
             return "<" + _getTypeName() + " " + getString(_size) + ">";
@@ -322,7 +322,7 @@ template<class Element> class IntrusiveSet : public NestedSlotAdapter {
     // *************************
     {
         Record* record = NULL;
-        if (!IsEmpty()) {
+        if (!isEmpty()) {
             record = new Record(getString(this));
             unsigned n = 1;
             for (unsigned index = 0; index < _length; index++) {
@@ -331,8 +331,8 @@ template<class Element> class IntrusiveSet : public NestedSlotAdapter {
                 /**/
                 Element* element = _array[index];
                 while (element) {
-                    // record->Add(getSlot(getString(n++), element));
-                    record->Add(getSlot(getString(index) + ":" + getString(n++), element));
+                    // record->add(getSlot(getString(n++), element));
+                    record->add(getSlot(getString(index) + ":" + getString(n++), element));
                     /**/
                     element = _getNextElement(element);
                 }
@@ -359,7 +359,7 @@ template<class Element> class IntrusiveSet : public NestedSlotAdapter {
         return _array;
     };
 
-    public: bool _Contains(Element* element) const
+    public: bool _contains(Element* element) const
     // *******************************************
     {
         unsigned index = (_getHashValue(element) / 8) % _length;
@@ -369,22 +369,22 @@ template<class Element> class IntrusiveSet : public NestedSlotAdapter {
         return (currentElement != NULL);
     };
 
-    public: void _Insert(Element* element)
+    public: void _insert(Element* element)
     // ***********************************
     {
-        if (!_Contains(element)) {
+        if (!_contains(element)) {
             unsigned index = (_getHashValue(element) / 8) % _length;
             _setNextElement(element, _array[index]);
             _array[index] = element;
               _size++;
-            _Resize();
+            _resize();
         }
     };
 
-    public: void _Remove(Element* element)
+    public: void _remove(Element* element)
     // ***********************************
     {
-        if (_Contains(element)) {
+        if (_contains(element)) {
             unsigned index = (_getHashValue(element) / 8) % _length;
             Element* currentElement = _array[index];
             if (currentElement) {
@@ -406,7 +406,7 @@ template<class Element> class IntrusiveSet : public NestedSlotAdapter {
         }
     };
 
-    public: void _Resize()
+    public: void _resize()
     // *******************
     {
         unsigned newLength = _length;

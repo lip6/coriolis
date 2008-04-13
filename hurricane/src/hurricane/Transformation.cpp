@@ -236,9 +236,9 @@ Record* Transformation::_getRecord() const
 // *********************************
 {
     Record* record = new Record(getString(this));
-    record->Add(getSlot("X", &_tx));
-    record->Add(getSlot("Y", &_ty));
-    record->Add(getSlot("Orientation", _orientation));
+    record->add(getSlot("X", &_tx));
+    record->add(getSlot("Y", &_ty));
+    record->add(getSlot("Orientation", _orientation));
     return record;
 }
 
@@ -277,7 +277,7 @@ Record* Transformation::Orientation::_getRecord() const
 // **********************************************
 {
     Record* record = new Record(getString(this));
-    record->Add(getSlot("Code", &_code));
+    record->add(getSlot("Code", &_code));
     return record;
 }
 

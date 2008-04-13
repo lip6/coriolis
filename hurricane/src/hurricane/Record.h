@@ -65,7 +65,7 @@ namespace Hurricane {
       Record ( const string& name );
 	private:
       Record            ( const Record& record );
-	  Record& operator= ( const Record& record );
+      Record& operator= ( const Record& record );
 
     // Destructor
 	public:
@@ -73,18 +73,18 @@ namespace Hurricane {
 
     // Accessors
 	public:
-      const string&   GetName          ()              const { return _name; };
-            Slot*     GetSlot          ( unsigned no ) const;
+      const string&   getName          ()              const { return _name; };
+            Slot*     getSlot          ( unsigned no ) const;
 
     // Updators
 	public:
-            void      Add              ( Slot* slot );
+            void      add              ( Slot* slot );
 
     // Others
 	public:
-            string    _GetTypeName     () const { return _TName("Record"); };
-            string    _GetString       () const;
-	        SlotList& _GetSlotList     () { return _slotList; };
+            string    _getTypeName     () const { return _TName("Record"); };
+            string    _getString       () const;
+            SlotList& _getSlotList     () { return _slotList; };
 			  	
 };
 
