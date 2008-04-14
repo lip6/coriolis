@@ -449,13 +449,13 @@ void Net::setExternal(bool isExternal)
         }
         _isExternal = isExternal;
         if (_isExternal) {
-            openUpdateSession();
+            UpdateSession::open();
             setPosition(Point(0, 0));
             for_each_instance(instance, _cell->getSlaveInstances()) {
                 Plug::_create(instance, this);
                 end_for;
             }
-            closeUpdateSession();
+            UpdateSession::close();
         }
     }
 }

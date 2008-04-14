@@ -59,6 +59,10 @@ class UpdateSession : public SharedProperty {
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
 
+    public: static void open();
+    public: static void close();
+
+
 };
 
 
@@ -66,10 +70,10 @@ class UpdateSession : public SharedProperty {
 // Generic functions
 // ****************************************************************************************************
 
-void openUpdateSession();
-
-void closeUpdateSession();
-
+//void openUpdateSession();
+//
+//void closeUpdateSession();
+//
 
 
 } // End of Hurricane namespace.

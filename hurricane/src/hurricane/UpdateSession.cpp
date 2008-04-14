@@ -151,23 +151,13 @@ void Go::invalidate(bool propagateFlag)
 // trace_out();
 }
 
-
-
-// ****************************************************************************************************
-// Generic functions
-// ****************************************************************************************************
-
-void openUpdateSession()
-// *********************
-{
+void UpdateSession::open() {
 // trace << "OpenUpdateSession()" << endl;
 // trace_in();
     UpdateSession::_create();
 }
 
-void closeUpdateSession()
-// **********************
-{
+void UpdateSession::close() {
 // trace << "CloseUpdateSession()" << endl;
 // trace_in();
 

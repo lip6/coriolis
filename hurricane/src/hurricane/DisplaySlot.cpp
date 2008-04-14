@@ -96,13 +96,13 @@ void DisplaySlot::hide()
 void DisplaySlot::flush()
 // **********************
 {
-    openUpdateSession();
+    UpdateSession::open();
     vector<Go*> govect;
     _quadTree.getGos().fill(govect);
     for (unsigned i = 0 ; i < govect.size() ; i++) {
         govect[i]->destroy();
     }
-    closeUpdateSession();
+    UpdateSession::close();
 }
 
 UserGos DisplaySlot::getUserGos() const

@@ -53,12 +53,12 @@ void DataBase::_postCreate()
 void DataBase::_preDestroy()
 // ************************
 {
-    openUpdateSession();
+    UpdateSession::open();
     Inherit::_preDestroy();
 
     if (_rootLibrary) _rootLibrary->destroy();
     if (_technology) _technology->destroy();
-    closeUpdateSession ();
+    UpdateSession::close();
 
     DATA_BASE = NULL;
 }

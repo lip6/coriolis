@@ -130,7 +130,7 @@ void Cell::setAbutmentBox(const Box& abutmentBox)
 void Cell::flattenNets(bool buildRings)
 // ************************************
 {
-  openUpdateSession ();
+    UpdateSession::open();
 
   for_each_occurrence ( occurrence, getHyperNetRootNetOccurrences() ) {
     HyperNet  hyperNet ( occurrence );
@@ -193,7 +193,7 @@ void Cell::flattenNets(bool buildRings)
     end_for
   }
 
-  closeUpdateSession ();
+  UpdateSession::close();
 }
 
 void Cell::materialize()

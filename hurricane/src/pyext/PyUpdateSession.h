@@ -77,8 +77,8 @@ extern "C" {
 // -------------------------------------------------------------------
 // Functions & Types exported to "PyHurricane.ccp".
 
-  extern PyObject* PyUpdateSession_openUpdateSession  ( PyObject* module );
-  extern PyObject* PyUpdateSession_closeUpdateSession ( PyObject* module );
+  extern PyObject* PyUpdateSession_open  ( PyObject* module );
+  extern PyObject* PyUpdateSession_close ( PyObject* module );
   
 
 }  // End of extern "C".

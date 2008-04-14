@@ -72,13 +72,13 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyUpdateSession_openUpdateSession ()"
+  // Attribute Method  :  "PyUpdateSession_open ()"
 
-  extern PyObject* PyUpdateSession_openUpdateSession ( PyObject* module ) {
-    trace << "PyUpdateSession_openUpdateSession ()" << endl;
+  extern PyObject* PyUpdateSession_open ( PyObject* module ) {
+    trace << "PyUpdateSession_open()" << endl;
 
     HTRY
-    openUpdateSession ();
+    UpdateSession::open ();
     HCATCH
 
     Py_RETURN_NONE;
@@ -88,14 +88,14 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyUpdateSession_closeUpdateSession ()"
+  // Attribute Method  :  "PyUpdateSession_close()"
 
-  extern PyObject* PyUpdateSession_closeUpdateSession ( PyObject* module )
+  extern PyObject* PyUpdateSession_close( PyObject* module )
   {
-    trace << "PyUpdateSession_closeUpdateSession ()" << endl;
+    trace << "PyUpdateSession_close()" << endl;
 
     HTRY
-    closeUpdateSession ();
+    UpdateSession::close();
     HCATCH
 
     Py_RETURN_NONE;
