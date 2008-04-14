@@ -311,7 +311,7 @@ void GenV1Trans::Calculate(Transistor* transistor)
 void GenV1Trans::Generate(Transistor* transistor)
 // *********************************************
 {
-  openUpdateSession();
+    UpdateSession::open();
 
   Net* source = transistor->getNet(Name(transistor->getSourceName())); 
   Net* drain  = transistor->getNet(Name(transistor->getDrainName()) ); 
@@ -472,7 +472,7 @@ END_IF
   // End Generation.
   // -------------------------------------------------------------
 
-  closeUpdateSession();
+  UpdateSession::close();
 
   // Set Transistor::_mapNet2Box.  
   // ****************************

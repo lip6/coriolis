@@ -99,15 +99,12 @@ void TrMos::_PlaceAndRoute()
    verticalHighMargin  = MAX_INTEGER(verticalHighMargin, horizontalMargin + getUnit(2*rdAlu2 + 2*widthOfDrainWire) );
    horizontalMargin    = MAX_INTEGER(horizontalMargin, getUnit(RETURN_EVEN(rdImp + widthOfImp/2)) );
 
-   openUpdateSession();
+   UpdateSession::open();
 
    if(_m ==  1 ) {  // If there is only one finger.
      _Place( instance, Transformation::Orientation::ID, Point( horizontalMargin, verticalLowMargin ) );
-     //CloseUpdateSession();
-     //return;
 
-   }
-   else {   
+   } else {   
      // get instance who's model's abutment type is Left or Right.
      // ************************************************************
      for_each_occurrence(occurrence, getLeafInstanceOccurrences())
@@ -121,8 +118,7 @@ void TrMos::_PlaceAndRoute()
              rightins = instance;
           else if ( trans->isRight())
              rightins = instance;
-        }
-        else {
+        } else {
           if(trans->isRight() && !leftins)
             leftins = instance;
           else if (trans->isRight() && leftins )
@@ -179,7 +175,7 @@ void TrMos::_PlaceAndRoute()
      
    }  
 
-   closeUpdateSession();
+   UpdateSession::close();
 
 
 
@@ -190,7 +186,7 @@ void TrMos::_PlaceAndRoute()
     instance->materialize();      
    end_for
 
-   openUpdateSession();
+   UpdateSession::open();
 
 
    cout <<"Bounding box of TrMos is "<<getString(getBoundingBox())<<endl;
@@ -680,7 +676,7 @@ void TrMos::_PlaceAndRoute()
             );
    }   
 
-   closeUpdateSession();
+   UpdateSession::close();
 
 }  
 

@@ -409,7 +409,7 @@ void Transistor::createLayout()
 void Transistor::duplicateLayout(Transistor* transistor)
 // *****************************************************
 {
-   openUpdateSession();
+   UpdateSession::open();
 
    setTerminal(false);
 
@@ -455,7 +455,7 @@ void Transistor::duplicateLayout(Transistor* transistor)
 
    materialize();   
 
-   closeUpdateSession();
+   UpdateSession::close();
 
 }  
 

@@ -77,7 +77,6 @@ void MetaTransistor::createConnection()
 void MetaTransistor::createLayout()
 // ********************************
 {
-//  OpenUpdateSession();
   
   if((_le == 0.0) || (_we == 0.0)) {
      throw Error("Can't generate layout : " + getString(this) + " hasn't been dimensionned");
@@ -132,7 +131,6 @@ void MetaTransistor::createLayout()
   
 
   materialize();
- // CloseUpdateSession();
 
 }
 
@@ -140,14 +138,14 @@ void MetaTransistor::createLayout()
 void MetaTransistor::Flush()
 // *************************
 {
-  openUpdateSession();
+  UpdateSession::open();
   for_each_instance(instance, this->getInstances()) { 
     Cell * mastercell = instance->getMasterCell();
     instance->destroy();     
     mastercell->destroy();
     end_for
   }
-  closeUpdateSession();
+  UpdateSession::close();
 }  
 
 
