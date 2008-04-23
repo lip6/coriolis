@@ -24,14 +24,20 @@ SET(includes ProxyProperty.h PyBox.h PyCell.h PyCellLocator.h
 )
 
 ADD_LIBRARY(isobar SHARED ${sources})
+
 TARGET_LINK_LIBRARIES(isobar hurricane ${PYTHON_LIBRARIES})
 
-ADD_LIBRARY(Hurricane MODULE ${sources}) 
-SET_TARGET_PROPERTIES(Hurricane
-        PROPERTIES
-        COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
-        PREFIX ""
-)
-TARGET_LINK_LIBRARIES(Hurricane isobar hurricane ${PYTHON_LIBRARIES})
+SET(source_dir ${HURRICANE_SOURCE_DIR}/src/pyext)
+SET(binary_dir ${HURRICANE_BINARY_DIR}/src/pyext)
+SET(include_dirs ${HURRICANE_SOURCE_DIR}/src/hurricane)
+SET(library_dirs ${HURRICANE_BINARY_DIR}/src/hurricane:${binary_dir})
+
+CONFIGURE_FILE(PyExtensionBuild.conf.in ${binary_dir}/PyExtensionBuild.conf)
+
+ADD_CUSTOM_COMMAND(TARGET isobar POST_BUILD
+           COMMAND cp ${source_dir}/setup.py ${binary_dir}/setup.py
+           COMMAND ${PYTHON_EXECUTABLE} ${binary_dir}/setup.py build
+           --build-base=${binary_dir}
+           DEPENDS ${binary_dir}/PyExtensionBuild.conf)
 
 INSTALL(TARGETS isobar DESTINATION /lib)
