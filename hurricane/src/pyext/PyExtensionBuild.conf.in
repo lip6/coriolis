@@ -1,5 +1,0 @@
-src_dir=${HURRICANE_SOURCE_DIR}/src/pyext
-build_dir=${HURRICANE_BINARY_DIR}/src/pyext
-sources=@sources@
-include_dirs=@include_dirs@
-library_dirs=@library_dirs@

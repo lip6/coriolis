@@ -66,14 +66,14 @@ using namespace Hurricane;
 extern "C" {
 
 
-# define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Library,lib,function)
+#define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Library,lib,function)
 
 
 // x=================================================================x
 // |              "PyLibrary" Python Module Code Part                |
 // x=================================================================x
 
-# if defined(__PYTHON_MODULE__)
+#if defined(__PYTHON_MODULE__)
 
 
   // x-------------------------------------------------------------x
@@ -180,7 +180,7 @@ extern "C" {
           DataBase* db = PYDATABASE_O(arg0);
           library = Library::create(db, *PYNAME_O(arg1));
           HCATCH
-      } else if (ParseTwoArg("Library.new", args, ":db:name", &arg0, &arg1)) { 
+      } else if (ParseTwoArg("Library.new", args, ":library:name", &arg0, &arg1)) { 
           HTRY
           Library* masterLibrary = PYLIBRARY_O(arg0);
           library = Library::create(masterLibrary, *PYNAME_O(arg1));
@@ -197,7 +197,7 @@ extern "C" {
   PyTypeObjectConstructor(Library)
 
 
-# else  // End of Python Module Code Part.
+#else  // End of Python Module Code Part.
 
 
 // x=================================================================x
@@ -217,7 +217,7 @@ extern "C" {
   PyTypeRootObjectDefinitions(Library)
 
 
-# endif  // End of Shared Library Code Part.
+#endif  // End of Shared Library Code Part.
 
 
 }  // End of extern "C".
