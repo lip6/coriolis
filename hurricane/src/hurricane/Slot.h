@@ -25,13 +25,13 @@
 
 
 
-# ifndef  __HURRICANE_SLOT__
-#   define  __HURRICANE_SLOT__
+#ifndef  __HURRICANE_SLOT__
+#define  __HURRICANE_SLOT__
 
 
-#   ifndef  __HURRICANE_COMMONS__
-#     error "Slot.h musn't be included alone, please uses Commons.h."
-#   endif
+#ifndef  __HURRICANE_COMMONS__
+#error "Slot.h musn't be included alone, please uses Commons.h."
+#endif
 
 
 

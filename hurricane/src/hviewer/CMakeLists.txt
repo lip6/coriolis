@@ -10,8 +10,8 @@ set(cpps ScreenUtilities.cpp DisplayStyle.cpp ScreenLayer.cpp LayersList.cpp Cel
 QT4_WRAP_CPP(MOC_SRCS ${mocincludes})
 QT4_ADD_RESOURCES(RCC_SRCS CellViewer.qrc)
 
-add_library(hurricaneviewer SHARED ${cpps} ${MOC_SRCS} ${RCC_SRCS})
-target_link_libraries(hurricaneviewer ${QT_LIBRARIES} hurricane)
+add_library(hviewer SHARED ${cpps} ${MOC_SRCS} ${RCC_SRCS})
+target_link_libraries(hviewer ${QT_LIBRARIES} hurricane)
 
 install(FILES ${exports} DESTINATION /include/hurricane) 
-install(TARGETS hurricaneviewer DESTINATION /lib)
+install(TARGETS hviewer DESTINATION /lib)

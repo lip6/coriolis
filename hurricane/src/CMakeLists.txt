@@ -1,3 +1,4 @@
-ADD_SUBDIRECTORY(hurricane)
-ADD_SUBDIRECTORY(viewer)
-ADD_SUBDIRECTORY(pyext)
+add_subdirectory(hurricane)
+add_subdirectory(hinspector)
+add_subdirectory(hviewer)
+add_subdirectory(pyext)

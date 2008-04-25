@@ -53,14 +53,14 @@
 
 
 
-# ifndef  __PYINSTANCELOCATOR__
-#   define  __PYINSTANCELOCATOR__
+#ifndef __PYINSTANCELOCATOR__
+#define __PYINSTANCELOCATOR__
 
 
-# include  "PyHurricane.h"
+#include "PyHurricane.h"
 
-# include  "Locator.h"
-# include  "Instance.h"
+#include "Locator.h"
+#include "Instance.h"
 
 
 namespace  Isobar {
@@ -83,15 +83,15 @@ extern "C" {
 // -------------------------------------------------------------------
 // Functions & Types exported to "PyHurricane.ccp".
 
-  extern  PyTypeObject  PyTypeInstanceLocator;
-  extern  PyMethodDef   PyInstanceLocator_Methods[];
+  extern PyTypeObject  PyTypeInstanceLocator;
+  extern PyMethodDef   PyInstanceLocator_Methods[];
 
-  extern  void      PyInstanceLocator_LinkPyType ();
+  extern void      PyInstanceLocator_LinkPyType ();
 
 
-# define IsPyInstanceLocator(v)    ( (v)->ob_type == &PyTypeInstanceLocator )
-# define PYINSTANCELOCATOR(v)      ( (PyInstanceLocator*)(v) )
-# define PYINSTANCELOCATOR_O(v)    ( PYINSTANCELOCATOR(v)->_object )
+#define IsPyInstanceLocator(v)    ( (v)->ob_type == &PyTypeInstanceLocator )
+#define PYINSTANCELOCATOR(v)      ( (PyInstanceLocator*)(v) )
+#define PYINSTANCELOCATOR_O(v)    ( PYINSTANCELOCATOR(v)->_object )
 
 
 }  // End of extern "C".
@@ -104,4 +104,4 @@ extern "C" {
 
 
 
-# endif
+#endif

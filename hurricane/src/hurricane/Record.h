@@ -26,13 +26,13 @@
 
 
 
-# ifndef  __RECORD__
-#   define  __RECORD__
+#ifndef  __RECORD__
+#define  __RECORD__
 
 
-#   ifndef  __HURRICANE_COMMONS__
-#     error "Record.h musn't be included alone, please uses Commons.h."
-#   endif
+#ifndef  __HURRICANE_COMMONS__
+#error "Record.h musn't be included alone, please uses Commons.h."
+#endif
 
 
 namespace Hurricane {
