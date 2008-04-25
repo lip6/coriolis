@@ -14,12 +14,18 @@ class HInspectorWidget : public QWidget {
 
     public:
         typedef map<Record*, RecordModel*> RecordModels;
+        typedef list<RecordModel*> RecordModelsHistory;
         HInspectorWidget(QWidget* parent=0);
         ~HInspectorWidget();
         void setRecord(Record* record);
 
+    protected:
+        void keyPressEvent(QKeyEvent * event);
+
     private:
+        void internalSetRecord(Record* record);
         RecordModels recordModels;
+        RecordModelsHistory recordModelsHistory;
         QTableView* slotsTableView;
 };
 

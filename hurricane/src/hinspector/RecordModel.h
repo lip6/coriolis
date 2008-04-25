@@ -14,6 +14,7 @@ class RecordModel : public QAbstractTableModel {
         int rowCount(const QModelIndex &parent = QModelIndex()) const;
         int columnCount(const QModelIndex &parent = QModelIndex()) const;
         QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+        Record* getRecord() { return record; }
     private:
         Record* record;
 };
