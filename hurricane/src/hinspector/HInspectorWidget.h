@@ -5,18 +5,17 @@
 using namespace Hurricane;
 
 #include <QWidget>
-#include <QTableView>
-
-class RecordModel;
+class QSortFilterProxyModel;
+class QTableView;
+class QLineEdit;
 
 class HInspectorWidget : public QWidget {
     Q_OBJECT
 
     public:
-        typedef map<Record*, RecordModel*> RecordModels;
-        typedef list<RecordModel*> RecordModelsHistory;
+        typedef map<Record*, QSortFilterProxyModel*> FilterProxyModels;
+        typedef list<QSortFilterProxyModel*> FilterProxyModelsHistory;
         HInspectorWidget(QWidget* parent=0);
-        ~HInspectorWidget();
         void setRecord(Record* record);
 
     protected:
@@ -24,9 +23,10 @@ class HInspectorWidget : public QWidget {
 
     private:
         void internalSetRecord(Record* record);
-        RecordModels recordModels;
-        RecordModelsHistory recordModelsHistory;
-        QTableView* slotsTableView;
+        FilterProxyModels filterProxyModels;
+        FilterProxyModelsHistory filterProxyModelsHistory;
+        QTableView* slotsView;
+        QLineEdit* filterPatternLineEdit;
 };
 
 

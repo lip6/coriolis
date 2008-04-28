@@ -1,4 +1,8 @@
+#include <QLineEdit>
+#include <QTableView>
+#include <QSortFilterProxyModel>
 #include <QKeyEvent>
+#include <QGroupBox>
 #include <QVBoxLayout>
 
 #include "RecordModel.h"
@@ -6,58 +10,66 @@
 
 HInspectorWidget::HInspectorWidget(QWidget* parent):
     QWidget(parent),
-    recordModels(),
-    recordModelsHistory(),
-    slotsTableView(NULL)
+    filterProxyModels(),
+    filterProxyModelsHistory(),
+    slotsView(NULL)
 {
-    slotsTableView = new QTableView;
-    slotsTableView->setAlternatingRowColors(true);
-    slotsTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    slotsView = new QTableView(this);
+    slotsView->setAlternatingRowColors(true);
+    slotsView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    slotsView->setSortingEnabled(true);
+
+    QVBoxLayout* inspectorLayout = new QVBoxLayout();
+    inspectorLayout->addWidget(slotsView);
+
+    filterPatternLineEdit = new QLineEdit(this);
+    inspectorLayout->addWidget(filterPatternLineEdit);
 
 
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(slotsTableView);
+
+
+    QGroupBox* inspectorGroupBox = new QGroupBox(tr("Hurricane inspector"), this);
+    inspectorGroupBox->setLayout(inspectorLayout);
+
+    QVBoxLayout* mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(inspectorGroupBox);
     setLayout(mainLayout);
-
-    //setFocusPolicy(Qt::StrongFocus);
 
     setWindowTitle(tr("Inspector"));
     resize(1000, 500);
 }
 
-HInspectorWidget::~HInspectorWidget() {
-    for (RecordModels::iterator rmit = recordModels.begin();
-            rmit != recordModels.end();
-            ++rmit) {
-        delete rmit->second;
-    }
-}
-
 void HInspectorWidget::setRecord(Record* record) {
-    recordModelsHistory.clear();
+    filterProxyModelsHistory.clear();
     internalSetRecord(record);
 }
 
 void HInspectorWidget::internalSetRecord(Record* record) {
-    RecordModel* recordModel = NULL;
+    QSortFilterProxyModel* sortModel = NULL;
 
-    RecordModels::iterator rmit = recordModels.find(record);
-    if (rmit != recordModels.end()) {
-        recordModel = rmit->second;
+    FilterProxyModels::iterator fpmit = filterProxyModels.find(record);
+    if (fpmit != filterProxyModels.end()) {
+        sortModel = fpmit->second;
     } else {
-        recordModel = new RecordModel(record);
-        recordModels[record] = recordModel;
+        RecordModel* recordModel = new RecordModel(record, this);
+        sortModel = new QSortFilterProxyModel(this);
+        sortModel->setSourceModel(recordModel);
+        filterProxyModels[record] = sortModel;
     }
-    slotsTableView->setModel(recordModel);
-    recordModelsHistory.push_back(recordModel);
+    slotsView->setModel(sortModel);
+    slotsView->resizeColumnsToContents();
+    filterProxyModelsHistory.push_back(sortModel);
 }
 
 void HInspectorWidget::keyPressEvent(QKeyEvent *event) {
     if (event->matches(QKeySequence::MoveToNextChar)) {
-        QModelIndex index = slotsTableView->currentIndex();
+        QModelIndex index = slotsView->currentIndex();
         if (index.isValid()) {
             unsigned row = index.row();
-            RecordModel* recordModel = static_cast<RecordModel*>(slotsTableView->model());
+            QSortFilterProxyModel* sortModel =
+                static_cast<QSortFilterProxyModel*>(slotsView->model());
+            RecordModel* recordModel =
+                static_cast<RecordModel*>(sortModel->sourceModel());
             Record* record = recordModel->getRecord();
             Slot* slot = record->getSlot(row);
             if (slot) {
@@ -67,14 +79,14 @@ void HInspectorWidget::keyPressEvent(QKeyEvent *event) {
                 }
             }
         }
-    } else if (event->matches(QKeySequence::MoveToPreviousChar)) {
-        if (!recordModelsHistory.empty()) {
-            recordModelsHistory.pop_back();
-            if (!recordModelsHistory.empty()) {
-                RecordModel* recordModel = recordModelsHistory.back();
-                slotsTableView->setModel(recordModel);
-            }
-        }
+    //} else if (event->matches(QKeySequence::MoveToPreviousChar)) {
+    //    if (!recordModelsHistory.empty()) {
+    //        recordModelsHistory.pop_back();
+    //        if (!recordModelsHistory.empty()) {
+    //            QSortFilterProxyModel* proxyModel = recordModelsHistory.back();
+    //            slotsView->setModel(proxyModel);
+    //        }
+    //    }
     } else {
         event->ignore();
     }
