@@ -18,6 +18,9 @@ class HInspectorWidget : public QWidget {
         HInspectorWidget(QWidget* parent=0);
         void setRecord(Record* record);
 
+    private slots:
+        void textFilterChanged();
+
     protected:
         void keyPressEvent(QKeyEvent * event);
 

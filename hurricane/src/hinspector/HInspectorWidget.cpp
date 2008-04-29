@@ -1,3 +1,4 @@
+#include <QLabel>
 #include <QLineEdit>
 #include <QTableView>
 #include <QSortFilterProxyModel>
@@ -19,14 +20,15 @@ HInspectorWidget::HInspectorWidget(QWidget* parent):
     slotsView->setSelectionBehavior(QAbstractItemView::SelectRows);
     slotsView->setSortingEnabled(true);
 
-    QVBoxLayout* inspectorLayout = new QVBoxLayout();
-    inspectorLayout->addWidget(slotsView);
+    QGridLayout* inspectorLayout = new QGridLayout();
+    inspectorLayout->addWidget(slotsView, 0, 0, 1, 2);
 
     filterPatternLineEdit = new QLineEdit(this);
-    inspectorLayout->addWidget(filterPatternLineEdit);
+    QLabel* filterPatternLabel = new QLabel(tr("&Filter pattern:"), this);
+    filterPatternLabel->setBuddy(filterPatternLineEdit);
 
-
-
+    inspectorLayout->addWidget(filterPatternLabel, 1, 0);
+    inspectorLayout->addWidget(filterPatternLineEdit, 1, 1);
 
     QGroupBox* inspectorGroupBox = new QGroupBox(tr("Hurricane inspector"), this);
     inspectorGroupBox->setLayout(inspectorLayout);
@@ -34,6 +36,9 @@ HInspectorWidget::HInspectorWidget(QWidget* parent):
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addWidget(inspectorGroupBox);
     setLayout(mainLayout);
+
+    connect(filterPatternLineEdit, SIGNAL(textChanged(const QString &)),
+            this, SLOT(textFilterChanged()));
 
     setWindowTitle(tr("Inspector"));
     resize(1000, 500);
@@ -53,7 +58,9 @@ void HInspectorWidget::internalSetRecord(Record* record) {
     } else {
         RecordModel* recordModel = new RecordModel(record, this);
         sortModel = new QSortFilterProxyModel(this);
+        sortModel->setDynamicSortFilter(true);
         sortModel->setSourceModel(recordModel);
+        sortModel->setFilterKeyColumn(1);
         filterProxyModels[record] = sortModel;
     }
     slotsView->setModel(sortModel);
@@ -90,4 +97,12 @@ void HInspectorWidget::keyPressEvent(QKeyEvent *event) {
     } else {
         event->ignore();
     }
+}
+
+
+void HInspectorWidget::textFilterChanged() {
+    QRegExp regExp(filterPatternLineEdit->text());
+    QSortFilterProxyModel* sortModel =
+        static_cast<QSortFilterProxyModel*>(slotsView->model());
+    sortModel->setFilterRegExp(regExp);
 }
