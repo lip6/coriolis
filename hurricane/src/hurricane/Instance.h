@@ -8,17 +8,13 @@
 #define HURRICANE_INSTANCE
 
 #include "Go.h"
-#include "Instances.h"
-#include "Transformation.h"
 #include "Plug.h"
-#include "Path.h"
 #include "SharedPath.h"
 #include "IntrusiveMap.h"
 
 namespace Hurricane {
 
 class Net;
-//class View;
 class BasicLayer;
 
 // ****************************************************************************************************
