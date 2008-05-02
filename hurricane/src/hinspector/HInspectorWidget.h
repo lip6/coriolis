@@ -8,17 +8,19 @@ using namespace Hurricane;
 class QSortFilterProxyModel;
 class QTableView;
 class QLineEdit;
+class QComboBox;
 
 class HInspectorWidget : public QWidget {
     Q_OBJECT
 
     public:
         typedef map<Record*, QSortFilterProxyModel*> FilterProxyModels;
-        typedef list<QSortFilterProxyModel*> FilterProxyModelsHistory;
+        typedef vector<QSortFilterProxyModel*> FilterProxyModelsHistory;
         HInspectorWidget(QWidget* parent=0);
         void setRecord(Record* record);
 
     private slots:
+        void recordChanged(int index);
         void textFilterChanged();
 
     protected:
@@ -28,6 +30,7 @@ class HInspectorWidget : public QWidget {
         void internalSetRecord(Record* record);
         FilterProxyModels filterProxyModels;
         FilterProxyModelsHistory filterProxyModelsHistory;
+        QComboBox* recordsHistoryComboBox;
         QTableView* slotsView;
         QLineEdit* filterPatternLineEdit;
 };
