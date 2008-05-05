@@ -8,7 +8,7 @@ using namespace Hurricane;
 
 namespace {
 
-ATechnology* parseFileAsTechnology(const char* filePath) {
+ATechnology* parseFileAsTechnology(const char* filePath, Technology* technology) {
     xmlDocPtr doc; /* the resulting document tree */
 
     doc = xmlReadFile(filePath, NULL, 0);
@@ -21,7 +21,6 @@ ATechnology* parseFileAsTechnology(const char* filePath) {
     xmlNode* rootElement = xmlDocGetRootElement(doc);
     if (rootElement->type == XML_ELEMENT_NODE && xmlStrEqual(rootElement->name, (xmlChar*)"technology")) {
     }
-
 }
 
 }
@@ -30,7 +29,7 @@ ATechnology* parseTechnologyFromXml(const char* filePath, Technology* technology
 
     LIBXML_TEST_VERSION
 
-    //    Cell* rootCell = parseFileAsCell(filePath.c_str());
+    ATechnology* aTechnology = parseFileAsTechnology(filePath, technology);
 
     xmlCleanupParser();
     /*
