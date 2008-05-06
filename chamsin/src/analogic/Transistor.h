@@ -13,7 +13,6 @@ class Transistor : public Cell {
 
         static Transistor* create(Library* library, const Name& name, const Polarity& polarity);		
         void createLayout();
-        void duplicateLayout();
 
         bool isNmos() const { return polarity == N; };
         bool isPmos() const { return polarity == P; };
