@@ -4,27 +4,19 @@
 // Date   : 21/12/2006 
 // ****************************************************************************************************
 
-#ifndef DEVICE_TRMOS
-#define DEVICE_TRMOS
+#ifndef TRMOS_H
+#define TRMOS_H
 
 #include "Net.h"
 using namespace Hurricane;
 
-#include "Device.h"
 #include "Transistor.h"
-#include "MetaTransistor.h"
 
-
-namespace DEVICE {
+//#include "MetaTransistor.h"
+#include "Device.h"
 
 
 class TrMos : public Device {
-// **************************
-
-#   if !defined(__DOXYGEN_PROCESSOR__)
-// Types
-// *****
-    public : typedef Device Inherit; 
 
     public : enum PinName { D, G, S, B };
 
@@ -68,18 +60,15 @@ class TrMos : public Device {
 // ************
     protected : TrMos(Library* library, const Name& name);
     protected : virtual void _postCreate();
-#endif
 
     public    : static TrMos* create(Library* library, const Name & name); 
 
 
-#   if !defined(__DOXYGEN_PROCESSOR__)
 
 // Operations
 // **********
     public : virtual void dses()   { /* to do */}; 
     public : virtual void shape()  { /* to do */};
-#endif
 
 
     public : void create(const Transistor::Polarity& polarity, const bool isbsconnected);
@@ -93,7 +82,6 @@ class TrMos : public Device {
     public : const double getWidthOfSourceWire() const { return _widthOfSourceWire; };	     
     public : const double getWidthOfDrainWire() const { return _widthOfDrainWire; };	     
     public : MetaTransistor* getTr1() const { return _tr1; };	     
-    public : Transistors getTransistors() const ;
 
 // Updators
 // ********
@@ -127,11 +115,8 @@ class TrMos : public Device {
      
     public : virtual void _Flush();
     protected : void _PlaceAndRoute();	    
-# endif
-
-} ;
-
-} // end of namespace Device 
-
-
 #endif
+
+};
+
+#endif // TRMOS_H

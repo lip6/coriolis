@@ -5,39 +5,16 @@
 // Date   : 21/12/2006 
 // ****************************************************************************************************
 
-#ifndef DEVICE_DEVICE
-#define DEVICE_DEVICE
+#ifndef DEVICE_H
+#define DEVICE_H
 
 
 #include "Cell.h"
-using Hurricane::Cell;
-using Hurricane::_TName;
-
-
-namespace Hurricane {
-
-  class Library;
-  class Name;
-  class Record;
-  class Point;
-  class Transformation;
-  class Instance;
-      
-}
-
-
-namespace DEVICE {
-
-using Hurricane::Library;
-using Hurricane::Name;
-using Hurricane::Record;
-using Hurricane::Point;
-using Hurricane::Transformation;
-using Hurricane::Instance;
+using namespace Hurricane;
 
 class Device : public Cell {
 
-#   if !defined(__DOXYGEN_PROCESSOR__)
+#if !defined(__DOXYGEN_PROCESSOR__)
 // Types
 // *****
      public : typedef Cell Inherit; 
@@ -52,7 +29,7 @@ class Device : public Cell {
     protected : virtual void _postCreate();
 
 
-# endif
+#endif
 
 // Operations
 // **********
@@ -74,9 +51,6 @@ class Device : public Cell {
 
 // Others
 // ******
-    public: virtual string _getTypeName() const {return _TName("Device"); };
-    public: virtual string _getString() const;
-    public: virtual Record* _getRecord() const;
     public : virtual void _Flush() = 0;
 
     // Description of Layout
@@ -88,10 +62,6 @@ class Device : public Cell {
 
 #endif 
 
-} ;
+};
 
-
-} // end namespace Device
-
-
-#endif
+#endif // DEVICE_H

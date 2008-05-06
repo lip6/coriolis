@@ -15,6 +15,13 @@ int main() {
       //Library* workLibrary = Library::create(db->getRootLibrary(), Name("WorkLibrary"));
       //TrMos* trmos = TrMos::create(workLibrary, Name("MosTr"));
       AEnv::create("toto");
+      trmos->create(Transistor::Polarity::P, true); 
+
+      trmos->setMosLength(3);
+      trmos->setMosWidth(3);
+
+      trmos->generate(5, true, false, 3, 3); 
+
       exit(0);
     } catch (Hurricane::Warning& w) {
         cerr << w.what() << endl;

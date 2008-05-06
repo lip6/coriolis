@@ -4,8 +4,6 @@
 // Date   : 21/12/2006 
 // ****************************************************************************************************
 
-
-
 #include "Instance.h"
 #include "MetaTransistor.h"
 #include "Net.h"
@@ -27,8 +25,8 @@ namespace DEVICE {
 // ****************************************************************************************************
 
 TrMos::TrMos(Library* library, const Name& name):
-    Inherit(library, name),
-    _polarity(Transistor::Polarity::N),
+    Device(library, name),
+    _polarity(Transistor::N),
     _isBsConnected(false),
     _m(1),
     _sourceIsFirst(true),
@@ -69,12 +67,6 @@ void TrMos::_postCreate() {
    _widthOfDrainWire = minWidth;
 
 }
-
-
-Transistors TrMos::getTransistors() const {
-    return  getCollection(_transistorList);
-}
-
 
 void TrMos::create(const Transistor::Polarity& polarity, const bool isbsconnected)
 {

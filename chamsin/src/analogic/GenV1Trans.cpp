@@ -13,6 +13,53 @@
 #include "AnalogicalCommons.h"
 #include "GenTrans.h"
 
+#define   MAXLONG(a,b) (a>b?a:b) 
+#define   MINLONG(a,b) (a>b?b:a) 
+
+#define   SAVE_RECTANGLE(s, x, y, dx, dy) \
+   _mapString2Box[string(s)] = Box(getUnit(x), getUnit(y), getUnit(x+dx), getUnit(y+dy)); \
+   xmin = MINLONG(xmin, getUnit(x)); \
+   ymin = MINLONG(ymin, getUnit(y));
+
+#define   GET_RULE(s)  \
+   dtraccess->getSingleRdsRuleByLabel(string(s))
+
+#define BOX_IS_VALID(box) \
+   ( (long)(getValue(box.getXMin()))%2==0 )&& \
+   ( (long)(getValue(box.getXMax()))%2==0 )&& \
+   ( (long)(getValue(box.getYMin()))%2==0 )&& \
+   ( (long)(getValue(box.getYMax()))%2==0 ) 
+
+#define CREATE_CONTACT_MATRIX_UNDER(underbox, nbcolumn, layer, net) \
+                                                                      \
+        if(underbox.getHeight()<rw_cont)   \
+           nbcontact = 0; \
+        else \
+           nbcontact = (underbox.getHeight()-rw_cont)/(rw_cont + rd_cont) + 1 ;\
+         \
+                                                                     \
+        tmp_xcenter = underbox.getXMin() + (rw_cont/2);  \
+        tmp_ycenter = underbox.getYMin() + (rw_cont/2);  \
+                                                                  \
+\
+        for(unsigned i=0; i<nbcolumn; i++) { \
+                                                                \
+           for(unsigned j=0; j<nbcontact; j++) {                     \
+             Contact::create(net, layer                    \
+      	               , tmp_xcenter                            \
+      		       , tmp_ycenter                           \
+      		       , rw_cont              \
+      		       , rw_cont              \
+      		       );                    \
+                                              \
+             tmp_ycenter += (rw_cont + rd_cont); \
+           }              \
+              \
+           tmp_xcenter += (rw_cont + rd_cont);  \
+           tmp_ycenter = underbox.getYMin() + (rw_cont/2); \
+	}
+   
+
 
 namespace Hurricane {
 
@@ -20,8 +67,8 @@ namespace Hurricane {
 // ****************************************************************************************************
 // Globals Datas 
 // ****************************************************************************************************
-string segsforsource[] = {string("20"), string("23")};
-string segsfordrain[]  = {string("40"), string("43")};
+string segsforsource[] = {string("20"), string("22")};
+string segsfordrain[]  = {string("40"), string("42")};
 string segsforgrid[]   = {string("00"), string("01"), string("30"), string("31")};
 //string segsforgrid[]   = {string("00"), string("30") };
 string segsforanonym[] = {string("10"), string("11"), string("12"), string("50")};
@@ -109,44 +156,44 @@ void GenV1Trans::Calculate(Transistor* transistor)
   // Begin Calculate.
 
   //long re_imp_acti  = GET_RULE_BYNP("RE_", mostype, "IMP_ACTI"); 
-  long re_imp_acti  = GET_RULE_BYNP("RE_", mostype, "IMP_ACTI"); 
-  long re_imp_poly  = GET_RULE_BYNP("RE_", mostype, "IMP_POLY");
-  long re_imp_cont  = GET_RULE_BYNP("RE_", mostype, "IMP_CONT");
-  long re_imp_gate  = GET_RULE_BYNP("RE_", mostype, "IMP_GATE");
+  long re_imp_acti  = dtraccess->getSingleRdsRuleByLabel("RE_", mostype, "IMP_ACTI"); 
+  long re_imp_poly  = dtraccess->getSingleRdsRuleByLabel("RE_", mostype, "IMP_POLY");
+  long re_imp_cont  = dtraccess->getSingleRdsRuleByLabel("RE_", mostype, "IMP_CONT");
+  long re_imp_gate  = dtraccess->getSingleRdsRuleByLabel("RE_", mostype, "IMP_GATE");
   //long re_well_acti = GET_RULE_BYNP("RE_", mostype, "WELL_ACTI");
 
   // Calculate Rectangle 00
   // **********************
   x00 = 0; 
-  y00 = -( GET_RULE("RE_GATE_ACTI") ); 
+  y00 = -dtraccess->getSingleRdsRuleByLabel("RE_GATE_ACTI");
 
   dx00 = ConvertRealToRdsUnit(_masqueV1Info->getL());
   realw = ConvertRealToRdsUnit(_masqueV1Info->getW());
 
   dy00 = realw + 2*(-y00);
 
-  SAVE_RECTANGLE("00", x00, y00, dx00, dy00)
+  SAVE_RECTANGLE("00", x00, y00, dx00, dy00);
   
     
   // Calculate Rectangle 30 
   // **********************
 
-//  cout << "RD_ACTI_CONT is " << GET_RULE("RD_ACTI_CONT")<<endl;
-//  cout << "RD_ACTI_POLY is " << GET_RULE("RD_ACTI_POLY")<<endl;
-//  cout << "RE_POLY_CONT is " << GET_RULE("RE_POLY_CONT")<<endl;
-//  cout << "MAX RD_ACTI_POLY is " << (MAXLONG(GET_RULE("RD_ACTI_CONT"), GET_RULE("RD_ACTI_POLY") + GET_RULE("RE_POLY_CONT"))) <<endl;
+//  cout << "RD_ACTI_CONT is " << dtraccess->getSingleRdsRuleByLabel("RD_ACTI_CONT")<<endl;
+//  cout << "RD_ACTI_POLY is " << dtraccess->getSingleRdsRuleByLabel("RD_ACTI_POLY")<<endl;
+//  cout << "RE_POLY_CONT is " << dtraccess->getSingleRdsRuleByLabel("RE_POLY_CONT")<<endl;
+//  cout << "MAX RD_ACTI_POLY is " << (MAXLONG(dtraccess->getSingleRdsRuleByLabel("RD_ACTI_CONT"), GET_RULE("RD_ACTI_POLY") + GET_RULE("RE_POLY_CONT"))) <<endl;
 //  
 
-  dx31 = GET_RULE("RW_CONT") + 2*GET_RULE("RE_POLY_CONT"); 
+  dx31 = dtraccess->getSingleRdsRuleByLabel("RW_CONT") + 2*GET_RULE("RE_POLY_CONT"); 
   if (dx31 >= dx00) {
-    dx30 = GET_RULE("RW_CONT");
+    dx30 = dtraccess->getSingleRdsRuleByLabel("RW_CONT");
     dy30 = dx30;
-    y30 = 0 + realw + MAXLONG(GET_RULE("RD_ACTI_CONT"), GET_RULE("RD_ACTI_POLY") + GET_RULE("RE_POLY_CONT"));
+    y30 = 0 + realw + MAXLONG(dtraccess->getSingleRdsRuleByLabel("RD_ACTI_CONT"), GET_RULE("RD_ACTI_POLY") + GET_RULE("RE_POLY_CONT"));
   } 
   else {
-    dx30 = dx00 - 2*GET_RULE("RE_POLY_CONT");
-    dy30 = GET_RULE("RW_CONT");
-    y30 = 0 + realw + GET_RULE("RD_ACTI_CONT");
+    dx30 = dx00 - 2*dtraccess->getSingleRdsRuleByLabel("RE_POLY_CONT");
+    dy30 = dtraccess->getSingleRdsRuleByLabel("RW_CONT");
+    y30 = 0 + realw + dtraccess->getSingleRdsRuleByLabel("RD_ACTI_CONT");
   }
 
   x30 = x00 + dx00/2 - dx30/2;    
@@ -156,10 +203,10 @@ void GenV1Trans::Calculate(Transistor* transistor)
 
   // Calculate Rectangle 31 
   // **********************
-  dx31 = dx30 + 2*GET_RULE("RE_POLY_CONT");
-  dy31 = dy30 + 2*GET_RULE("RE_POLY_CONT");
-  x31 = x30 - GET_RULE("RE_POLY_CONT");
-  y31 = y30 - GET_RULE("RE_POLY_CONT");
+  dx31 = dx30 + 2*dtraccess->getSingleRdsRuleByLabel("RE_POLY_CONT");
+  dy31 = dy30 + 2*dtraccess->getSingleRdsRuleByLabel("RE_POLY_CONT");
+  x31 = x30 - dtraccess->getSingleRdsRuleByLabel("RE_POLY_CONT");
+  y31 = y30 - dtraccess->getSingleRdsRuleByLabel("RE_POLY_CONT");
 
   SAVE_RECTANGLE("31", x31, y31, dx31, dy31)
 
@@ -196,11 +243,11 @@ void GenV1Trans::Calculate(Transistor* transistor)
 
   // Calculate Rectangle 20 
   // **********************
-  y20 = 0 + GET_RULE("RE_ACTI_CONT");
-  dy20 = realw - 2 * GET_RULE("RE_ACTI_CONT");
-  dx20 = (_masqueV1Info->getNbSourceColumn()) * GET_RULE("RW_CONT")  + 
-      ((_masqueV1Info->getNbSourceColumn()) - 1) * GET_RULE("RD_CONT");
-  x20 = 0 - ( dx20 + GET_RULE("RD_CONT_GATE") );
+  y20 = 0 + dtraccess->getSingleRdsRuleByLabel("RE_ACTI_CONT");
+  dy20 = realw - 2 * dtraccess->getSingleRdsRuleByLabel("RE_ACTI_CONT");
+  dx20 = (_masqueV1Info->getNbSourceColumn()) * dtraccess->getSingleRdsRuleByLabel("RW_CONT")  + 
+      ((_masqueV1Info->getNbSourceColumn()) - 1) * dtraccess->getSingleRdsRuleByLabel("RD_CONT");
+  x20 = 0 - ( dx20 + dtraccess->getSingleRdsRuleByLabel("RD_CONT_GATE") );
 
   SAVE_RECTANGLE("20", x20, y20, dx20, dy20)
   
@@ -208,9 +255,9 @@ void GenV1Trans::Calculate(Transistor* transistor)
   // Calculate Rectangle 40
   // **********************
   y40 = y20;
-  x40 = x00 + dx00 + GET_RULE("RD_CONT_GATE");
-  dx40 = (_masqueV1Info->getNbDrainColumn()) * GET_RULE("RW_CONT")  + 
-      ((_masqueV1Info->getNbDrainColumn()) - 1) * GET_RULE("RD_CONT");
+  x40 = x00 + dx00 + dtraccess->getSingleRdsRuleByLabel("RD_CONT_GATE");
+  dx40 = (_masqueV1Info->getNbDrainColumn()) * dtraccess->getSingleRdsRuleByLabel("RW_CONT")  + 
+      ((_masqueV1Info->getNbDrainColumn()) - 1) * dtraccess->getSingleRdsRuleByLabel("RD_CONT");
   dy40 = dy20;
 
   SAVE_RECTANGLE("40", x40, y40, dx40, dy40)
@@ -218,10 +265,10 @@ void GenV1Trans::Calculate(Transistor* transistor)
   // Calculate Rectangle 10
   // **********************
   y10 = 0;
-  x10 = MINLONG(x20 - GET_RULE("RE_ACTI_CONT"), 0 - GET_RULE("RE_ACTI_GATE"));
+  x10 = MINLONG(x20 - dtraccess->getSingleRdsRuleByLabel("RE_ACTI_CONT"), 0 - GET_RULE("RE_ACTI_GATE"));
   dy10 = realw; 
 
-  extension1 = MAXLONG(0 + x40 + dx40 + GET_RULE("RE_ACTI_CONT"), dx00 + GET_RULE("RE_ACTI_GATE"));
+  extension1 = MAXLONG(0 + x40 + dx40 + dtraccess->getSingleRdsRuleByLabel("RE_ACTI_CONT"), dx00 + GET_RULE("RE_ACTI_GATE"));
 
   dx10 = 0 - x10 + extension1;
   
@@ -278,10 +325,10 @@ void GenV1Trans::Calculate(Transistor* transistor)
   // Calculate Rectangle 50 just for PMOS.
   // -------------------------------------------------------------
   if (transistor->isPmos())  { // Calculate Rectangle 50 for PMos.
-     x50 = x10 - GET_RULE("RE_NWELL_ACTI");
-     y50 = y10 - GET_RULE("RE_NWELL_ACTI");
-     dx50 = dx10 + 2 * GET_RULE("RE_NWELL_ACTI");
-     dy50 = dy10 + 2 * GET_RULE("RE_NWELL_ACTI"); 
+     x50 = x10 - dtraccess->getSingleRdsRuleByLabel("RE_NWELL_ACTI");
+     y50 = y10 - dtraccess->getSingleRdsRuleByLabel("RE_NWELL_ACTI");
+     dx50 = dx10 + 2 * dtraccess->getSingleRdsRuleByLabel("RE_NWELL_ACTI");
+     dy50 = dy10 + 2 * dtraccess->getSingleRdsRuleByLabel("RE_NWELL_ACTI"); 
 
      SAVE_RECTANGLE("50", x50, y50, dx50, dy50);
   }
@@ -327,8 +374,8 @@ void GenV1Trans::Generate(Transistor* transistor)
   else
     mostype='P';
 
-  long rw_cont = getUnit(GET_RULE("RW_CONT"));
-  long rd_cont = getUnit(GET_RULE("RD_CONT"));
+  long rw_cont = getUnit(dtraccess->getSingleRdsRuleByLabel("RW_CONT"));
+  long rd_cont = getUnit(dtraccess->getSingleRdsRuleByLabel("RD_CONT"));
   unsigned nbcontact = 0;
   long tmp_xcenter = 0;
   long tmp_ycenter = 0;
@@ -339,9 +386,9 @@ void GenV1Trans::Generate(Transistor* transistor)
 
   //Technology * tech = db->getTechnology();
 
-  Layer * layer_20 = GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_20"); 
-  Layer * layer_30 = GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_30"); 
-  Layer * layer_40 = GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_40"); 
+  Layer* layer_20 = dtraccess->getSingleLayerByLabel("M1TRANS_",mostype,"_LAYER_20"); 
+  Layer* layer_30 = dtraccess->getSingleLayerByLabel("M1TRANS_",mostype,"_LAYER_30"); 
+  Layer* layer_40 = dtraccess->getSingleLayerByLabel("M1TRANS_",mostype,"_LAYER_40"); 
 
 
   // -------------------------------------------------------------
@@ -356,18 +403,18 @@ END_IF
   for(size_t i=0; i<sizeof(segsforsource)/sizeof(string); i++) {
 
     if(segsforsource[i]=="20") {
-      //cout << " Begin create contact for source , Under Box is " << getString(GET_BOX(segsforsource[i])) <<endl;
-      Box underbox = GET_BOX(segsforsource[i]);
+      //cout << " Begin create contact for source , Under Box is " << getString(_mapString2Box[segsforsource[i])) <<endl;
+      Box underbox = _mapString2Box[segsforsource[i]];
       CREATE_CONTACT_MATRIX_UNDER(underbox, transistor->getNbSourceColumn(), layer_20, source)  
       //cout << " Finish create contact for source " <<endl;
     }
     else {     
-      Contact::create(source, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsforsource[i])
-                    , GET_BOX(segsforsource[i]).getXCenter()
-                    , GET_BOX(segsforsource[i]).getYCenter()
-  		    , GET_BOX(segsforsource[i]).getWidth()
-  		    , GET_BOX(segsforsource[i]).getHeight() 
-  		    );
+  //    Contact::create(source, dtraccess->getSingleLayerByLabel("M1TRANS_",mostype,"_LAYER_"+segsforsource[i])
+  //                  , _mapString2Box[segsforsource[i]].getXCenter()
+  //                  , _mapString2Box[segsforsource[i]].getYCenter()
+  //		    , _mapString2Box[segsforsource[i]].getWidth()
+  //		    , _mapString2Box[segsforsource[i]].getHeight() 
+  //		    );
     }
   }  
 
@@ -383,32 +430,32 @@ IF_DEBUG_HUR_ANALOG
 END_IF
   for(size_t i=0; i<sizeof(segsforgrid)/sizeof(string); i++) {
        if(segsforgrid[i]=="30"){
-          if( GET_BOX(segsforgrid[i]).getWidth()==GET_RULE("RW_CONT") ) {
-              Contact::create(grid, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsforgrid[i])
-                              , GET_BOX(segsforgrid[i]).getXCenter()
-                              , GET_BOX(segsforgrid[i]).getYCenter()
-            		      , GET_BOX(segsforgrid[i]).getWidth()
-            		      , GET_BOX(segsforgrid[i]).getHeight()
+          if( _mapString2Box[segsforgrid[i]].getWidth()==dtraccess->getSingleRdsRuleByLabel("RW_CONT") ) {
+              Contact::create(grid, dtraccess->getSingleLayerByLabel("M1TRANS_",mostype,"_LAYER_"+segsforgrid[i])
+                              , _mapString2Box[segsforgrid[i]].getXCenter()
+                              , _mapString2Box[segsforgrid[i]].getYCenter()
+            		      , _mapString2Box[segsforgrid[i]].getWidth()
+            		      , _mapString2Box[segsforgrid[i]].getHeight()
                              );
 	  }    
 	  else  {
-              unsigned int nbcolumn = (GET_BOX(segsforgrid[i]).getWidth()-rw_cont)/(rw_cont + rd_cont) + 1;
+              unsigned int nbcolumn = (_mapString2Box[segsforgrid[i]].getWidth()-rw_cont)/(rw_cont + rd_cont) + 1;
  
 IF_DEBUG_HUR_ANALOG
 	      cout << "nbcolumn in rectangle 30 is " << nbcolumn <<endl;
 END_IF
 
-              Box underbox = GET_BOX(segsforgrid[i]);
+              Box underbox = _mapString2Box[segsforgrid[i]];
               CREATE_CONTACT_MATRIX_UNDER(underbox, nbcolumn, layer_30, grid)  
 	  }
        }
        else {
-	  if(GET_BOX(segsforgrid[i]).getXMin() < GET_BOX(segsforgrid[i]).getXMax()) {
-              Contact::create(grid, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsforgrid[i])
-                              , GET_BOX(segsforgrid[i]).getXCenter()
-                              , GET_BOX(segsforgrid[i]).getYCenter()
-            		      , GET_BOX(segsforgrid[i]).getWidth()
-            		      , GET_BOX(segsforgrid[i]).getHeight()
+	  if(_mapString2Box[segsforgrid[i]].getXMin() < _mapString2Box[segsforgrid[i]].getXMax()) {
+              Contact::create(grid, dtraccess->getSingleLayerByLabel("M1TRANS_",mostype,"_LAYER_"+segsforgrid[i])
+                              , _mapString2Box[segsforgrid[i]].getXCenter()
+                              , _mapString2Box[segsforgrid[i]].getYCenter()
+            		      , _mapString2Box[segsforgrid[i]].getWidth()
+            		      , _mapString2Box[segsforgrid[i]].getHeight()
                              );
           }
        }
@@ -428,17 +475,17 @@ END_IF
   for(size_t i=0; i<sizeof(segsfordrain)/sizeof(string); i++) {
 
     if(segsfordrain[i]=="40") {
-      //cout << " Begin create contact for drain, Under Box is " << getString(GET_BOX(segsforsource[i])) <<endl;
-      Box underbox = GET_BOX(segsfordrain[i]);
+      //cout << " Begin create contact for drain, Under Box is " << getString(_mapString2Box[segsforsource[i])) <<endl;
+      Box underbox = _mapString2Box[segsfordrain[i]];
       CREATE_CONTACT_MATRIX_UNDER(underbox, transistor->getNbDrainColumn(), layer_40, drain) 
       //cout << " Finish create contact for drain" <<endl;
     }
     else {     
-      Contact::create(drain, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsfordrain[i])
-                    , GET_BOX(segsfordrain[i]).getXCenter()
-                    , GET_BOX(segsfordrain[i]).getYCenter()
-  		    , GET_BOX(segsfordrain[i]).getWidth()
-  		    , GET_BOX(segsfordrain[i]).getHeight() 
+      Contact::create(drain, dtraccess->getSingleLayerByLabel("M1TRANS_",mostype,"_LAYER_"+segsfordrain[i])
+                    , _mapString2Box[segsfordrain[i]].getXCenter()
+                    , _mapString2Box[segsfordrain[i]].getYCenter()
+  		    , _mapString2Box[segsfordrain[i]].getWidth()
+  		    , _mapString2Box[segsfordrain[i]].getHeight() 
   		    );
     }
   }  
@@ -457,11 +504,11 @@ END_IF
     if(transistor->isNmos() && segsforanonym[i]=="50")
       continue;
 
-    Contact::create(anonym, GET_LAYER_BYNP("TRANS_",mostype,"_LAYER_"+segsforanonym[i])
-	           , GET_BOX(segsforanonym[i]).getXCenter()
-		   , GET_BOX(segsforanonym[i]).getYCenter()
-		   , GET_BOX(segsforanonym[i]).getWidth()
-		   , GET_BOX(segsforanonym[i]).getHeight()
+    Contact::create(anonym, dtraccess->getSingleLayerByLabel("M1TRANS_",mostype,"_LAYER_"+segsforanonym[i])
+	           , _mapString2Box[segsforanonym[i]].getXCenter()
+		   , _mapString2Box[segsforanonym[i]].getYCenter()
+		   , _mapString2Box[segsforanonym[i]].getWidth()
+		   , _mapString2Box[segsforanonym[i]].getHeight()
 		   );
   }
 
@@ -489,36 +536,36 @@ END_IF
   switch(transistor->getAbutmentType().getCode()) {
 
     case Transistor::Type::INTERNAL : 
-        transistor->setAbutmentBox( Box(GET_BOX(string("20")).getXCenter() 
+        transistor->setAbutmentBox( Box(_mapString2Box[string("20")].getXCenter() 
        	                             , transistor->getBoundingBox().getYMin()
-       	   			     , GET_BOX(string("40")).getXCenter()
+       	   			     , _mapString2Box[string("40")].getXCenter()
        	   			     , transistor->getBoundingBox().getYMax()
 				    )
        	   			  );  
 	break; 
 
     case Transistor::Type::LEFT: 
-        transistor->setAbutmentBox( Box(GET_BOX(string("11")).getXMin() 
+        transistor->setAbutmentBox( Box(_mapString2Box[string("11")].getXMin() 
        	                              , transistor->getBoundingBox().getYMin()
-       	   			      , GET_BOX(string("40")).getXCenter()
+       	   			      , _mapString2Box[string("40")].getXCenter()
        	   			      , transistor->getBoundingBox().getYMax()
 				    )
        	   			  );  
 	break ;
      
     case Transistor::Type::RIGHT: 
-        transistor->setAbutmentBox( Box(GET_BOX(string("20")).getXCenter() 
+        transistor->setAbutmentBox( Box(_mapString2Box[string("20")].getXCenter() 
        	                              , transistor->getBoundingBox().getYMin()
-       	   			      , GET_BOX(string("11")).getXMax()
+       	   			      , _mapString2Box[string("11")].getXMax()
        	   			      , transistor->getBoundingBox().getYMax()
 				    )
        	   			  );  
 	break ;
 
     case Transistor::Type::SINGLE: 
-        transistor->setAbutmentBox( Box(GET_BOX(string("11")).getXMin() 
+        transistor->setAbutmentBox( Box(_mapString2Box[string("11")].getXMin() 
        	                              , transistor->getBoundingBox().getYMin()
-       	   			      , GET_BOX(string("11")).getXMax()
+       	   			      , _mapString2Box[string("11")].getXMax()
        	   			      , transistor->getBoundingBox().getYMax()
                                     )
        	   			  );  

@@ -4,12 +4,14 @@
 // Date   : 21/12/2006 
 // ****************************************************************************************************
 
-#include "DtrAccess.h"
-#include "RdsUnit.h"
-#include "Error.h"
-
 #include "DataBase.h"
 #include "Technology.h"
+#include "BasicLayer.h"
+#include "Error.h"
+
+#include "RdsUnit.h"
+#include "DtrAccess.h"
+
 
 extern void ParseDtr(const char*, Hurricane::DtrAccess*);
 
@@ -86,12 +88,9 @@ void DtrAccess::_postCreate() {
      while(m!=n) {
        Layer * layer = tech->getLayer(Name(*m));
        if(!layer) { 
-           for_each_layer(l, tech->getLayers()) {
-               cerr << l << endl;
-               end_for;
-           }
-	 throw Error("Error : in function DtrAccess::_postCreate , Can't find Layer " 
-	     + getString(*m) + " in technology file when parser DtrFile.");
+           layer = BasicLayer::create(tech, Name(*m), BasicLayer::Type::UNDEFINED, 100);
+	 //throw Error("Error : in function DtrAccess::_postCreate , Can't find Layer " 
+	 //    + getString(*m) + " in technology file when parser DtrFile.");
 //	 cerr << Warning("In function DtrAccess::_postCreate , Can't find Layer " 
 //	     + getString(*m) + " in technology file when parser DtrFile");
        }

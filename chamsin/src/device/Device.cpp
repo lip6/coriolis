@@ -86,23 +86,6 @@ void Device::SaveLogicalView()
   // }
 }  
 
-
-
-string Device::_getString() const
-// ***************************************
-{
-     string s= Inherit::_getString();
-     return s;
-}
-
-Record* Device::_getRecord() const
-// *********************************
-{
-	Record* record = Inherit::_getRecord();
-	return record;
-}
-
-
 void Device::_Place(Instance* ins, const Transformation::Orientation& orientation, const Point& point)
 // **************************************************************************************************  
 {
