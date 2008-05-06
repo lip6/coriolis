@@ -83,12 +83,13 @@ void HInspectorWidget::keyPressEvent(QKeyEvent *event) {
     if (event->matches(QKeySequence::MoveToNextChar)) {
         QModelIndex index = slotsView->currentIndex();
         if (index.isValid()) {
-            unsigned row = index.row();
             QSortFilterProxyModel* sortModel =
                 static_cast<QSortFilterProxyModel*>(slotsView->model());
+            QModelIndex modelIndex = sortModel->mapToSource(index);
             RecordModel* recordModel =
                 static_cast<RecordModel*>(sortModel->sourceModel());
             Record* record = recordModel->getRecord();
+            unsigned row = modelIndex.row();
             Slot* slot = record->getSlot(row);
             if (slot) {
                 Record* newRecord = slot->getDataRecord();
