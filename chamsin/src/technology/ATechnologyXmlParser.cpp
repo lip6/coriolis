@@ -4,7 +4,7 @@
 #include "Technology.h"
 using namespace Hurricane;
 
-#include "TechnologyXmlParser.h"
+#include "ATechnologyXmlParser.h"
 
 namespace {
 

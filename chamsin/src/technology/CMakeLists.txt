@@ -1,7 +1,7 @@
 INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_DIR} ${HURRICANE_INCLUDE_DIR})
 
-ADD_LIBRARY(atechnology SHARED 
-ATechnology.cpp TechnologyXmlParser.cpp)
+ADD_LIBRARY(atechnology SHARED
+AEnv.cpp ATechnology.cpp ATechnologyXmlParser.cpp)
 
 TARGET_LINK_LIBRARIES(atechnology ${HURRICANE_LIBRARIES} ${LIBXML2_LIBRARIES})
 

@@ -1,5 +1,5 @@
-#ifndef TECHNOLOGYXMLPARSER_H_
-#define TECHNOLOGYXMLPARSER_H_
+#ifndef ATECHNOLOGYXMLPARSER_H_
+#define ATECHNOLOGYXMLPARSER_H_
 
 namespace Hurricane {
     class Technology;
@@ -7,9 +7,9 @@ namespace Hurricane {
 
 class ATechnology;
 
-class TechnologyXmlParser {
+class ATechnologyXmlParser {
     public:
         static ATechnology* parseTechnologyFromXml(const char* filePath, Hurricane::Technology* technology);
 };
 
-#endif /*TECHNOLOGYXMLPARSER_H_*/
+#endif /*ATECHNOLOGYXMLPARSER_H_*/

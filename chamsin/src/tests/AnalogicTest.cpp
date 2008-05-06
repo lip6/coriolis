@@ -3,8 +3,7 @@
 #include "Warning.h"
 using namespace Hurricane;
 
-#include "crlcore/CDataBase.h"
-using namespace CRL;
+#include "AEnv.h"
 
 #include "TrMos.h"
 using namespace DEVICE;
@@ -12,9 +11,10 @@ using namespace DEVICE;
 int main() {
     try {
       cout << "simple analogic test" << endl;
-      CDataBase* db = CDataBase::create();
-      Library* workLibrary = Library::create(db->getRootLibrary(), Name("WorkLibrary"));
-      TrMos* trmos = TrMos::create(workLibrary, Name("MosTr"));
+      //CDataBase* db = CDataBase::create();
+      //Library* workLibrary = Library::create(db->getRootLibrary(), Name("WorkLibrary"));
+      //TrMos* trmos = TrMos::create(workLibrary, Name("MosTr"));
+      AEnv::create("toto");
       exit(0);
     } catch (Hurricane::Warning& w) {
         cerr << w.what() << endl;
