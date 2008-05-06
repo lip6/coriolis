@@ -169,9 +169,9 @@ void TrMos::generate(const unsigned m, const bool sourceisfirst, const bool hasr
 
 /* (1) */   
 
-   IF_DEBUG_HUR_ANALOG
+   //IF_DEBUG_HUR_ANALOG
    cout << "***  Stage 1 : CreateLayout of " + getString(this) + " Begin ***" <<endl;
-   END_IF
+   //END_IF
 
    // Create Motifs according to m, and instance the Motifs according
    // to the Meta-Transistor . 
@@ -189,29 +189,29 @@ void TrMos::generate(const unsigned m, const bool sourceisfirst, const bool hasr
      Instance::create(_tr1, Name("Ins_" + getString(finger->getName())), finger); 
    }
 
-   IF_DEBUG_HUR_ANALOG
+   //IF_DEBUG_HUR_ANALOG
 
    cout << "***  Stage 1 : CreateLayout of " + getString(this) + " finish ***" <<endl;
    cout <<   getString(_tr1) + " 's M is " + getString(_tr1->getM()) + ".\n"
         <<   getString(_m) + " Transistors are created.\n" <<endl; 
 
-   END_IF
+   //END_IF
    
 /* (2) */
 
-   IF_DEBUG_HUR_ANALOG
+   //IF_DEBUG_HUR_ANALOG
    cout << "***  Stage 2 : CreateLayout of " + getString(this) + " Begin ***" <<endl;
-   END_IF
+   //END_IF
 
    // Create connexion for each MetaTransistor.
    // *****************************************
    _tr1->createConnection();
 
-   IF_DEBUG_HUR_ANALOG
+   //IF_DEBUG_HUR_ANALOG
    cout << "***  Stage 2 : CreateLayout of " + getString(this) + " finish ***" <<endl;
    cout << "  The connection in " + getString(_tr1) + " is created.\n"
         <<endl;
-   END_IF
+   //END_IF
    
    // Pseudo dimensionnement of metatransistor.
    // In the futur, this will be the work of auto-dimensionnement tool (DSES).
@@ -220,9 +220,9 @@ void TrMos::generate(const unsigned m, const bool sourceisfirst, const bool hasr
 //   _tr1->setWe(11);
 
 /* (3) */
-   IF_DEBUG_HUR_ANALOG
+   //IF_DEBUG_HUR_ANALOG
    cout << "***  Stage 3 : CreateLayout of " + getString(this) + " Begin ***" <<endl;
-   END_IF
+   //END_IF
    
    // Set dessin Parameter of generation for each finger. 
    // ***************************************************
@@ -237,11 +237,10 @@ void TrMos::generate(const unsigned m, const bool sourceisfirst, const bool hasr
    list<Transistor*>::iterator i = _transistorList.begin()
       , j = _transistorList.end();   
 
-   if(_m == 1){
+   if(_m == 1) {
       masqueinfo->setType(Transistor::Type::SINGLE);
       (*(_transistorList.begin()))->setMaskInfo(masqueinfo);
-   }  
-   else if(_m%2==0) { // if m is pair, create two left fingers if is source first.
+   } else if(_m%2==0) { // if m is pair, create two left fingers if is source first.
                       // and create two right fingers if is drain first.
         while(i!=j) {
          if(++count>2) 
@@ -256,8 +255,7 @@ void TrMos::generate(const unsigned m, const bool sourceisfirst, const bool hasr
 	 (*i)->setMaskInfo(masqueinfo);
 	 i++;
         }
-   }	
-   else if(_m%2==1) { // if m is impair, create one left finger, one right finger.
+   } else if(_m%2==1) { // if m is impair, create one left finger, one right finger.
         while(i!=j){
 	  ++ count ;
 	  if (count == 1)
@@ -274,20 +272,20 @@ void TrMos::generate(const unsigned m, const bool sourceisfirst, const bool hasr
 
    delete masqueinfo;
    
-   IF_DEBUG_HUR_ANALOG
+   //IF_DEBUG_HUR_ANALOG
    cout << "***  Stage 3 : CreateLayout of " + getString(this) + " finish ***" <<endl;
    cout << "Real l_finger is " + getString(l_finger) + "." << endl
         << "Real w_finger is " + getString(w_finger) + "." << endl
 	<<endl;
-   END_IF
+   //END_IF
 
 /* (4) */
-   IF_DEBUG_HUR_ANALOG
+   //IF_DEBUG_HUR_ANALOG
    cout << "***  Stage 4 : CreateLayout of " + getString(this) + " Begin ***" <<endl;
    cout << "Call GenerateLayout for " + getString(_tr1) 
          + " who will launch the generator of its fingers" << ".\n"
 	<<endl;
-   END_IF
+   //END_IF
 
    // Call function CreateLayout of MetaTransistor to launch the generator of finger.
    // *******************************************************************************
@@ -303,10 +301,10 @@ void TrMos::generate(const unsigned m, const bool sourceisfirst, const bool hasr
 //
    _tr1->createLayout();
    
-   IF_DEBUG_HUR_ANALOG
+   //IF_DEBUG_HUR_ANALOG
    cout << "***  Stage 4 : CreateLayout of " + getString(this) + " finish ***"<<endl
         << endl;
-   END_IF
+   //END_IF
 
 /* (5) */   
    // Lauch Algo of Placement and routage selected.
@@ -322,23 +320,23 @@ void TrMos::generate(const unsigned m, const bool sourceisfirst, const bool hasr
     instance->unmaterialize();      
     instance->materialize();      
 
-IF_DEBUG_HUR_ANALOG
+//IF_DEBUG_HUR_ANALOG
     cout << getString(instance) <<" 's boundingBox is " << getString(instance->getBoundingBox())<<endl;
-END_IF
+//END_IF
      
    end_for
 
 //   CloseUpdateSession();
 
-IF_DEBUG_HUR_ANALOG
+//IF_DEBUG_HUR_ANALOG
    cout << getString(this) << " 's primary (without wire) boundingBox is " << getString(getBoundingBox()) <<endl;
-END_IF
+//END_IF
 
    materialize();
 
-IF_DEBUG_HUR_ANALOG
+//IF_DEBUG_HUR_ANALOG
    cout << getString(this) << " 's boundingBox is " << getString(getBoundingBox()) <<endl;
-END_IF
+//END_IF
 
    cout << endl
         << "################################################################" <<endl

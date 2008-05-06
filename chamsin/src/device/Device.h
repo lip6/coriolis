@@ -12,6 +12,8 @@
 #include "Cell.h"
 using namespace Hurricane;
 
+namespace DEVICE {
+
 class Device : public Cell {
 
 #if !defined(__DOXYGEN_PROCESSOR__)
@@ -63,5 +65,7 @@ class Device : public Cell {
 #endif 
 
 };
+
+}
 
 #endif // DEVICE_H

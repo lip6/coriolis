@@ -74,9 +74,7 @@ void MetaTransistor::createConnection()
 }  
 
 
-void MetaTransistor::createLayout()
-// ********************************
-{
+void MetaTransistor::createLayout() {
   
   if((_le == 0.0) || (_we == 0.0)) {
      throw Error("Can't generate layout : " + getString(this) + " hasn't been dimensionned");
@@ -105,6 +103,7 @@ void MetaTransistor::createLayout()
      
      if(trans->isInternal()) {
        if(!internal_ref) {
+         cerr << "akecoucou" << endl;
          trans->createLayout();
 	 internal_ref = trans;
        } else {

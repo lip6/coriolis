@@ -8,9 +8,11 @@ namespace {
 
 static Name ATechnologyPropertyName("ATechnologyProperty");
 
+
 class ATechnologyProperty : public PrivateProperty {
     public:
         typedef PrivateProperty Inherit;
+        typedef map<string, ATechnology::PhysicalRule*> PhysicalRules;
         static ATechnologyProperty* create(Technology* technology);
         ATechnologyProperty();
         virtual Name getName() const {
@@ -19,11 +21,22 @@ class ATechnologyProperty : public PrivateProperty {
         virtual string _getTypeName() const {
             return _TName("ATechnologyProperty");
         }
+        void addPhysicalRule(ATechnology::PhysicalRule& physicalRule) {
+            PhysicalRules::iterator prit = physicalRules_.find(physicalRule.name_);
+            if (prit != physicalRules_.end()) {
+                throw Error("");
+            }
+            ATechnology::PhysicalRule* newPhysicalRule = new ATechnology::PhysicalRule(physicalRule);
+            physicalRules_[newPhysicalRule->name_] = newPhysicalRule; 
+        }
+    private:
+        PhysicalRules physicalRules_;
 };
 
 
 ATechnologyProperty::ATechnologyProperty():
-    Inherit()
+    Inherit(),
+    physicalRules_()
     {}
 
 ATechnologyProperty* ATechnologyProperty::create(Technology* technology) {

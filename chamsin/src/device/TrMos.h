@@ -16,6 +16,8 @@ using namespace Hurricane;
 #include "Device.h"
 
 
+namespace DEVICE {
+
 class TrMos : public Device {
 
     public : enum PinName { D, G, S, B };
@@ -118,5 +120,7 @@ class TrMos : public Device {
 #endif
 
 };
+
+}
 
 #endif // TRMOS_H

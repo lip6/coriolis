@@ -88,11 +88,10 @@ void DtrAccess::_postCreate() {
      while(m!=n) {
        Layer * layer = tech->getLayer(Name(*m));
        if(!layer) { 
-           layer = BasicLayer::create(tech, Name(*m), BasicLayer::Type::UNDEFINED, 100);
 	 //throw Error("Error : in function DtrAccess::_postCreate , Can't find Layer " 
 	 //    + getString(*m) + " in technology file when parser DtrFile.");
-//	 cerr << Warning("In function DtrAccess::_postCreate , Can't find Layer " 
-//	     + getString(*m) + " in technology file when parser DtrFile");
+	 cerr << "In function DtrAccess::_postCreate , Can't find Layer " +
+             getString(*m) + " in technology file when parser DtrFile" << endl;
        }
 	 
        _label2layerMap[(*it_layermap).first].push_back(layer);
