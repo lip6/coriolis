@@ -1,14 +1,42 @@
+#include "ATechnologyXmlParser.h"
+
+#include "ATechnology.h"
+
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
 #include "Technology.h"
 using namespace Hurricane;
 
-#include "ATechnologyXmlParser.h"
 
 namespace {
 
+void readPhysicalRules(xmlNode* node, ATechnology* aTechnology) {
+    if (node->type == XML_ELEMENT_NODE && node->children) {
+        for (xmlNode* ruleNode = node->children;
+            ruleNode;
+            ruleNode = ruleNode->next) {
+            if (ruleNode->type == XML_ELEMENT_NODE) {
+                if (xmlStrEqual(ruleNode->name, (xmlChar*)"rule")) {
+                    xmlChar* ruleNameC = xmlGetProp(ruleNode, (xmlChar*)"name");
+                    xmlChar* valueC = xmlGetProp(ruleNode, (xmlChar*)"value");
+                    xmlChar* refC = xmlGetProp(ruleNode, (xmlChar*)"ref");
+                    if (ruleNameC && valueC && refC) {
+                        string ruleName((const char*)ruleNameC);
+                        double value = atof((const char*)valueC);
+                        string reference((const char*)refC);
+                        aTechnology->addPhysicalRule(ruleName, value, reference);
+                    }
+                }
+            }
+        }
+    }
+}
+
 ATechnology* parseFileAsTechnology(const char* filePath, Technology* technology) {
+    ATechnology* aTechnology = ATechnology::create(technology);
+
+
     xmlDocPtr doc; /* the resulting document tree */
 
     doc = xmlReadFile(filePath, NULL, 0);
@@ -19,13 +47,22 @@ ATechnology* parseFileAsTechnology(const char* filePath, Technology* technology)
 
     /*Get the design element node */
     xmlNode* rootElement = xmlDocGetRootElement(doc);
-    if (rootElement->type == XML_ELEMENT_NODE && xmlStrEqual(rootElement->name, (xmlChar*)"technology")) {
+    if (rootElement->type == XML_ELEMENT_NODE &&
+            xmlStrEqual(rootElement->name, (xmlChar*)"technology")) {
+        xmlNode* child = rootElement->children;
+        for (xmlNode* node = child; node; node = node->next) {
+            if (node->type == XML_ELEMENT_NODE) {
+                if (xmlStrEqual(node->name, (xmlChar*)"physical_rules")) {
+                    readPhysicalRules(node, aTechnology);
+                }
+            }
+        }
     }
 }
 
 }
 
-ATechnology* parseTechnologyFromXml(const char* filePath, Technology* technology) {
+ATechnology* ATechnologyXmlParser::parse(const char* filePath, Technology* technology) {
 
     LIBXML_TEST_VERSION
 

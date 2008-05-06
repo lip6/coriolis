@@ -5,42 +5,28 @@ using namespace Hurricane;
 #include "ATechnology.h"
 
 namespace {
-
 static Name ATechnologyPropertyName("ATechnologyProperty");
+}
 
+Name ATechnology::getName() const {
+    return ATechnologyPropertyName;
+}
 
-class ATechnologyProperty : public PrivateProperty {
-    public:
-        typedef PrivateProperty Inherit;
-        typedef map<string, ATechnology::PhysicalRule*> PhysicalRules;
-        static ATechnologyProperty* create(Technology* technology);
-        ATechnologyProperty();
-        virtual Name getName() const {
-            return ATechnologyPropertyName;
-        }
-        virtual string _getTypeName() const {
-            return _TName("ATechnologyProperty");
-        }
-        void addPhysicalRule(ATechnology::PhysicalRule& physicalRule) {
-            PhysicalRules::iterator prit = physicalRules_.find(physicalRule.name_);
-            if (prit != physicalRules_.end()) {
-                throw Error("");
-            }
-            ATechnology::PhysicalRule* newPhysicalRule = new ATechnology::PhysicalRule(physicalRule);
-            physicalRules_[newPhysicalRule->name_] = newPhysicalRule; 
-        }
-    private:
-        PhysicalRules physicalRules_;
-};
+string ATechnology::_getTypeName() const {
+    return _TName("ATechnologyProperty");
+}
 
+void ATechnology::addPhysicalRule(const string& name, double value, const string& reference) {
+    PhysicalRules::iterator prit = physicalRules_.find(name);
+    if (prit != physicalRules_.end()) {
+        throw Error("");
+    }
+    PhysicalRule* newPhysicalRule = new PhysicalRule(name, value, reference);
+    physicalRules_[newPhysicalRule->name_] = newPhysicalRule; 
+}
 
-ATechnologyProperty::ATechnologyProperty():
-    Inherit(),
-    physicalRules_()
-    {}
-
-ATechnologyProperty* ATechnologyProperty::create(Technology* technology) {
-    ATechnologyProperty* prop = new ATechnologyProperty();
+ATechnology* ATechnology::create(Technology* technology) {
+    ATechnology* prop = new ATechnology();
 
     prop->_postCreate();
 
@@ -49,9 +35,24 @@ ATechnologyProperty* ATechnologyProperty::create(Technology* technology) {
     return prop;
 }
 
+ATechnology* ATechnology::getATechnology(Technology* technology) {
+    Property* property = technology->getProperty(ATechnologyPropertyName);
+    if (property) {
+        ATechnology* aTechnology = static_cast<ATechnology*>(property);
+        return aTechnology;
+    }
+    return NULL;
 }
 
-
-
-
-
+void ATechnology::print() {
+    cout << "Printing ATechnology" << endl;
+    cout << " o Physical Rules" << endl;
+    for (PhysicalRules::iterator prit = physicalRules_.begin();
+            prit != physicalRules_.end();
+            prit++) {
+        PhysicalRule* physicalRule = prit->second;
+        cout << "  - name = " << physicalRule->name_ << 
+            ", value = " << physicalRule->value_ <<
+            ", ref = " << physicalRule->reference_ << endl;
+    }
+}
