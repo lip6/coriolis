@@ -61,6 +61,8 @@ class BasicLayer : public Layer {
     private: unsigned short _blueValue;
     private: string _fillPattern;
     private: double _displayThreshold;
+    private: BasicLayer* _connectorLayer;
+    private: BasicLayer* _obstructionLayer;
 
 // Constructors
 // ************
@@ -80,6 +82,8 @@ class BasicLayer : public Layer {
     public: const string& getFillPattern() const {return _fillPattern;};
     public: double getDisplayThreshold() const {return _displayThreshold;};
     public: virtual BasicLayers getBasicLayers() const;
+    public: virtual BasicLayer* getConnectorLayer() const {return _connectorLayer;}; 
+    public: virtual BasicLayer* getObstructionLayer() const {return _obstructionLayer;}; 
 
 // Updators
 // ********
@@ -87,6 +91,8 @@ class BasicLayer : public Layer {
     public: void setColor(unsigned short redValue, unsigned short greenValue, unsigned short blueValue);
     public: void setFillPattern(const string& fillPattern);
     public: void setDisplayThreshold(double threshold) {_displayThreshold = threshold;};
+    public: void setConnectorLayer(BasicLayer* layer) {_connectorLayer = layer;};
+    public: void setObstructionLayer(BasicLayer* layer) {_obstructionLayer = layer;};
 
 // Others
 // ******

@@ -92,6 +92,9 @@ class CompositeLayer : public Layer {
 // ********
 
     public: void add(BasicLayer* basicLayer, const Unit& contactSize, const Unit& segmentSize, const Unit& segmentExtention, const Unit& padSize);
+    public: void setContactSize(BasicLayer* basicLayer, const Unit& contactSize);
+    public: void setSegmentSize(BasicLayer* basicLayer, const Unit& segmentSize);
+    public: void setSegmentExtention(BasicLayer* basicLayer, const Unit& segmentExtention);
     public: void remove(BasicLayer* basicLayer);
 
 // Others

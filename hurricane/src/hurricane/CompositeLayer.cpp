@@ -104,6 +104,48 @@ void CompositeLayer::add(BasicLayer* basicLayer, const Unit& contactSize, const 
     _maximalPadSize = max(padSize, _maximalPadSize);
 }
 
+void CompositeLayer::setContactSize(BasicLayer* basicLayer, const Unit& contactSize)
+// *********************************************************************************
+{
+    if (!basicLayer)
+        throw Error("Can't add basic layer : null basic layer");
+
+    if (!contains(basicLayer))
+        throw Error("Basic layer not part of composite layer");
+
+    if (contactSize != 0) _contactSizeMap[basicLayer] = contactSize;
+
+    _maximalContactSize = max(contactSize, _maximalContactSize);
+}
+
+void CompositeLayer::setSegmentSize(BasicLayer* basicLayer, const Unit& segmentSize)
+// *********************************************************************************
+{
+    if (!basicLayer)
+        throw Error("Can't add basic layer : null basic layer");
+
+    if (!contains(basicLayer))
+        throw Error("Basic layer not part of composite layer");
+
+    if (segmentSize != 0) _segmentSizeMap[basicLayer] = segmentSize;
+
+    _maximalSegmentSize = max(segmentSize, _maximalSegmentSize);
+}
+
+void CompositeLayer::setSegmentExtention(BasicLayer* basicLayer, const Unit& segmentExtention)
+// *********************************************************************************
+{
+    if (!basicLayer)
+        throw Error("Can't add basic layer : null basic layer");
+
+    if (!contains(basicLayer))
+        throw Error("Basic layer not part of composite layer");
+
+    if (segmentExtention != 0) _segmentExtentionMap[basicLayer] = segmentExtention;
+
+    _maximalSegmentExtention = max(segmentExtention, _maximalSegmentExtention);
+}
+
 void CompositeLayer::remove(BasicLayer* basicLayer)
 // ************************************************
 {

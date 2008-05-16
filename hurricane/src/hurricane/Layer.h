@@ -60,6 +60,8 @@ class Layer : public DBo {
     public: const Unit& getMinimalSpacing() const {return _minimalSpacing;};
     public: Unit getPitch() const {return (_pitch==0?(_minimalSize + _minimalSpacing):_pitch);};
     public: virtual BasicLayers getBasicLayers() const = 0;
+    public: virtual Layer* getConnectorLayer() const {return NULL;}; 
+    public: virtual Layer* getObstructionLayer() const {return NULL;}; 
 
 // Predicates
 // **********
