@@ -1,11 +1,11 @@
 #include "Technology.h"
-#include "Property.h"
 using namespace Hurricane;
 
 #include "ATechnology.h"
 
 namespace {
 static Name ATechnologyPropertyName("ATechnologyProperty");
+
 }
 
 Name ATechnology::getName() const {
@@ -16,13 +16,37 @@ string ATechnology::_getTypeName() const {
     return _TName("ATechnologyProperty");
 }
 
-void ATechnology::addPhysicalRule(const string& name, double value, const string& reference) {
-    PhysicalRules::iterator prit = _physicalRules.find(name);
-    if (prit != _physicalRules.end()) {
+void ATechnology::addPhysicalRule(const Name& name, double value, const string& reference) {
+    PhysicalRules::iterator prit = _noLayerPhysicalRules.find(name);
+    if (prit != _noLayerPhysicalRules.end()) {
         throw Error("");
     }
     PhysicalRule* newPhysicalRule = new PhysicalRule(name, value, reference);
-    _physicalRules[newPhysicalRule->_name] = newPhysicalRule; 
+    _noLayerPhysicalRules[newPhysicalRule->_name] = newPhysicalRule; 
+}
+
+void ATechnology::addPhysicalRule(const Name& name, const Name& layerName, double value, const string& reference) {
+    Layer* layer = getLayer(layerName);
+    OneLayerPhysicalRules::iterator olprit = _oneLayerPhysicalRules.find(layer);
+    if (olprit == _oneLayerPhysicalRules.end()) {
+        pair<OneLayerPhysicalRules::iterator, bool> result =
+            _oneLayerPhysicalRules.insert(make_pair(layer, PhysicalRules()));
+        assert(result.second);
+        olprit = result.first;
+        PhysicalRule* newPhysicalRule = new PhysicalRule(name, value, reference);
+        olprit->second[name] = newPhysicalRule;
+    } else {
+        PhysicalRules& physicalRules = olprit->second;
+        if (physicalRules.find(name) != physicalRules.end()) {
+            throw Error("duplicate rule");
+        }
+        PhysicalRule* newPhysicalRule = new PhysicalRule(name, value, reference);
+        physicalRules[name] = newPhysicalRule;
+    }
+}
+
+void ATechnology::addPhysicalRule(const Name& name, const Name& layer1Name,
+        const Name& layer2Name, double value, const string& reference) {
 }
 
 ATechnology* ATechnology::create(Technology* technology) {
@@ -46,9 +70,9 @@ ATechnology* ATechnology::getATechnology(Technology* technology) {
 
 void ATechnology::print() {
     cout << "Printing ATechnology" << endl;
-    cout << " o Physical Rules" << endl;
-    for (PhysicalRules::iterator prit = _physicalRules.begin();
-            prit != _physicalRules.end();
+    cout << " o No Layer Physical Rules" << endl;
+    for (PhysicalRules::iterator prit = _noLayerPhysicalRules.begin();
+            prit != _noLayerPhysicalRules.end();
             prit++) {
         PhysicalRule* physicalRule = prit->second;
         cout << "  - name = " << physicalRule->_name << 
@@ -57,10 +81,19 @@ void ATechnology::print() {
     }
 }
 
-const ATechnology::PhysicalRule* ATechnology::getPhysicalRule(const string& name) {
-    PhysicalRules::iterator prit = _physicalRules.find(name);
-    if (prit == _physicalRules.end()) {
-        throw Error("Cannot find Physical Rule " + name);
+const ATechnology::PhysicalRule* ATechnology::getPhysicalRule(const Name& name) {
+    PhysicalRules::iterator prit = _noLayerPhysicalRules.find(name);
+    if (prit == _noLayerPhysicalRules.end()) {
+        throw Error("Cannot find Physical Rule " + getString(name));
     }
     return prit->second;
+}
+
+Layer* ATechnology::getLayer(const Name& layerName) {
+    Technology* technology = static_cast<Technology*>(getOwner());
+    Layer* layer = technology->getLayer(layerName);
+    if (!layer) {
+        throw Error("cannot find layer");
+    }
+    return layer;
 }

@@ -1,14 +1,15 @@
-PROJECT(CHAMSIN)
+project(CHAMSIN)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0)
+cmake_minimum_required(VERSION 2.4.0)
 
-SET(CMAKE_MODULE_PATH "$ENV{HURRICANE_TOP}/share/cmake_modules/"
+set(CMAKE_MODULE_PATH "$ENV{HURRICANE_TOP}/share/cmake_modules/"
                       "$ENV{HURRICANE_TOP}/share/cmake_modules/")
 
-FIND_PACKAGE(BISON REQUIRED)
-FIND_PACKAGE(FLEX REQUIRED)
-FIND_PACKAGE(HURRICANE REQUIRED)
-FIND_PACKAGE(CORIOLIS REQUIRED)
-FIND_PACKAGE(LibXml2 REQUIRED)
+find_package(BISON REQUIRED)
+find_package(FLEX REQUIRED)
+find_package(HURRICANE REQUIRED)
+find_package(CORIOLIS REQUIRED)
+find_package(Qt4 REQUIRED) # find and setup Qt4 for this project
+find_package(LibXml2 REQUIRED)
 
-ADD_SUBDIRECTORY(src)
+add_subdirectory(src)

@@ -5,7 +5,7 @@ class ATechnology;
 
 class AEnv {
     public:
-        static void create(const char* technoFilePath);
+        static void create(const char* technoFilePath, const char* graphicFilePath, const char* analogTechnoFilePath);
         static ATechnology* getATechnology();
 };
 

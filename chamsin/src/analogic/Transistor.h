@@ -37,6 +37,10 @@ class Transistor : public Cell {
         AbutmentType _abutmentType;
         double _l;
         double _w;
+        Contact* _source20;
+        Contact* _source22;
+        Contact* _drain40;
+        Contact* _drain42;
 
         Transistor(Library* library, const Name& name, const Polarity& polarity);
 };

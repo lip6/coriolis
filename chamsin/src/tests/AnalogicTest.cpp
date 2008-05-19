@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include <QApplication>
+
 #include "Warning.h"
 #include "Error.h"
 #include "DataBase.h"
@@ -13,12 +15,15 @@ using namespace Hurricane;
 
 int main(int argc, char* argv[]) {
     try {
+
+	QApplication* qa = new QApplication(argc, argv);
+
         cout << "simple analogic test" << endl;
-        if (argc != 2) {
-            cerr << "atest techno.xml";
+        if (argc != 4) {
+            cerr << "atest techno.xml graphic.xml anatechno.xml";
             exit(56);
         }
-        AEnv::create(argv[1]);
+        AEnv::create(argv[1], argv[2], argv[3]);
         DataBase* db = getDataBase();
         Library* rootLibrary = db->getRootLibrary();
         Library* userLibrary = Library::create(rootLibrary, Name("USER"));

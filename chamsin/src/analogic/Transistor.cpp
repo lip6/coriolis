@@ -19,7 +19,11 @@ Transistor::Transistor(Library* library, const Name& name, const Polarity& polar
     _polarity(polarity),
     _abutmentType(),
     _l(0.0),
-    _w(0.0)
+    _w(0.0),
+    _source20(NULL),
+    _source22(NULL),
+    _drain40(NULL),
+    _drain42(NULL)
 {}
 
 
@@ -41,6 +45,10 @@ void Transistor::_postCreate() {
    _grid->setExternal(true);
    _bulk = Net::create(this, BulkName);
    _bulk->setExternal(true);
+   //_source20 = Contact::create(_source);
+   //_source22 = Contact::create(_source);
+   //_drain40 = Contact::create(_drain);
+   //_drain42 = Contact::create(_drain);
 }
 
 void Transistor::createLayout() {

@@ -1,9 +1,11 @@
-INCLUDE_DIRECTORIES(${HURRICANE_INCLUDE_DIR} ${CORIOLIS_INCLUDE_DIR}
+include(${QT_USE_FILE})
+
+include_directories(${HURRICANE_INCLUDE_DIR} ${CORIOLIS_INCLUDE_DIR}
 ${CHAMSIN_SOURCE_DIR}/src/technology
 ${CHAMSIN_SOURCE_DIR}/src/analogic ${CHAMSIN_SOURCE_DIR}/src/device)
 
-ADD_EXECUTABLE(atest AnalogicTest.cpp)
+add_executable(atest AnalogicTest.cpp)
 
-TARGET_LINK_LIBRARIES(atest atechnology analogic ${HURRICANE_LIBRARIES})
+target_link_libraries(atest atechnology analogic ${HURRICANE_LIBRARIES} ${QT_LIBRARIES})
 
-INSTALL(TARGETS atest DESTINATION /bin)
+install(TARGETS atest DESTINATION /bin)

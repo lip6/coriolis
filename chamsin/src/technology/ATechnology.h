@@ -6,6 +6,7 @@ using namespace Hurricane;
 
 namespace Hurricane {
     class Technology;
+    class Layer;
 }
 
 class ATechnology : public PrivateProperty {
@@ -14,7 +15,7 @@ class ATechnology : public PrivateProperty {
 
         class PhysicalRule {
             public:
-                PhysicalRule(const string& name,
+                PhysicalRule(const Name& name,
                         double value,
                         const string& reference):
                     _name(name),
@@ -24,16 +25,23 @@ class ATechnology : public PrivateProperty {
                     _name(physicalRule._name),
                     _value(physicalRule._value),
                     _reference(physicalRule._reference) {}
-                const string _name;
+                const Name _name;
                 const double _value;
                 const string _reference;
                 double getValue() const { return _value; }
         };
-        typedef map<string, ATechnology::PhysicalRule*> PhysicalRules;
+        typedef map<Name, ATechnology::PhysicalRule*> PhysicalRules;
+        typedef map<Layer*, PhysicalRules> OneLayerPhysicalRules;
+        typedef pair<Layer*, Layer*> LayerPair;
+        typedef map<LayerPair, PhysicalRules> TwoLayersPhysicalRules;
         static ATechnology* create(Hurricane::Technology* technology);
         static ATechnology* getATechnology(Hurricane::Technology* technology);
-        const PhysicalRule* getPhysicalRule(const string& name);
-        void addPhysicalRule(const string& name, double value, const string& reference);
+        const PhysicalRule* getPhysicalRule(const Name& name);
+        void addPhysicalRule(const Name& name, double value, const string& reference);
+        void addPhysicalRule(const Name& name, const Name& layerName, double value, const string& reference);
+        void addPhysicalRule(const Name& name, const Name& layer1Name,
+                const Name& layer2Name, double value, const string& reference);
+        Layer* getLayer(const Name& layerName);
         void print();
 
         virtual Name getName() const;
@@ -42,10 +50,14 @@ class ATechnology : public PrivateProperty {
 
         ATechnology():
             Inherit(),
-            _physicalRules() {}
+            _noLayerPhysicalRules(),
+            _oneLayerPhysicalRules(),
+            _twoLayersPhysicalRules() {}
 
     private:
-        PhysicalRules _physicalRules;
+        PhysicalRules _noLayerPhysicalRules;
+        OneLayerPhysicalRules _oneLayerPhysicalRules;
+        TwoLayersPhysicalRules _twoLayersPhysicalRules;
 };
 
 #endif /* ATECHNOLOGY_H_*/

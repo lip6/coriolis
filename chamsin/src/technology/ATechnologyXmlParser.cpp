@@ -11,6 +11,10 @@ using namespace Hurricane;
 
 namespace {
 
+void syntaxError(const string& reason) {
+    throw Error(reason);
+}
+
 void readPhysicalRules(xmlNode* node, ATechnology* aTechnology) {
     if (node->type == XML_ELEMENT_NODE && node->children) {
         for (xmlNode* ruleNode = node->children;
@@ -21,11 +25,25 @@ void readPhysicalRules(xmlNode* node, ATechnology* aTechnology) {
                     xmlChar* ruleNameC = xmlGetProp(ruleNode, (xmlChar*)"name");
                     xmlChar* valueC = xmlGetProp(ruleNode, (xmlChar*)"value");
                     xmlChar* refC = xmlGetProp(ruleNode, (xmlChar*)"ref");
+                    xmlChar* layerC = xmlGetProp(ruleNode, (xmlChar*)"layer");
+                    xmlChar* layer1C = xmlGetProp(ruleNode, (xmlChar*)"layer1");
+                    xmlChar* layer2C = xmlGetProp(ruleNode, (xmlChar*)"layer2");
                     if (ruleNameC && valueC && refC) {
                         string ruleName((const char*)ruleNameC);
                         double value = atof((const char*)valueC);
                         string reference((const char*)refC);
-                        aTechnology->addPhysicalRule(ruleName, value, reference);
+                        if (layerC) {
+                            Name layerName((const char*)layerC);
+                            aTechnology->addPhysicalRule(ruleName, layerName, value, reference);
+                        } else if (layer1C && layer2C) {
+                            Name layer1Name((const char*)layer1C);
+                            Name layer2Name((const char*)layer2C);
+                            aTechnology->addPhysicalRule(ruleName, layer1Name, layer2Name, value, reference);
+                        } else {
+                            aTechnology->addPhysicalRule(ruleName, value, reference);
+                        }
+                    } else {
+                        syntaxError("");
                     }
                 }
             }
