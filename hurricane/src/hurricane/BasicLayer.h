@@ -56,13 +56,9 @@ class BasicLayer : public Layer {
 
     private: Type _type;
     private: unsigned _extractNumber;
-    private: unsigned short _redValue;
-    private: unsigned short _greenValue;
-    private: unsigned short _blueValue;
-    private: string _fillPattern;
-    private: double _displayThreshold;
     private: BasicLayer* _connectorLayer;
     private: BasicLayer* _obstructionLayer;
+    private: Name _realName;
 
 // Constructors
 // ************
@@ -76,23 +72,17 @@ class BasicLayer : public Layer {
 
     public: const Type& getType() const {return _type;};
     public: unsigned getExtractNumber() const {return _extractNumber;};
-    public: const unsigned short& getRedValue() const {return _redValue;};
-    public: const unsigned short& getGreenValue() const {return _greenValue;};
-    public: const unsigned short& getBlueValue() const {return _blueValue;};
-    public: const string& getFillPattern() const {return _fillPattern;};
-    public: double getDisplayThreshold() const {return _displayThreshold;};
     public: virtual BasicLayers getBasicLayers() const;
     public: virtual BasicLayer* getConnectorLayer() const {return _connectorLayer;}; 
     public: virtual BasicLayer* getObstructionLayer() const {return _obstructionLayer;}; 
+    public: const Name& getRealName () const { return _realName; };
 
 // Updators
 // ********
 
-    public: void setColor(unsigned short redValue, unsigned short greenValue, unsigned short blueValue);
-    public: void setFillPattern(const string& fillPattern);
-    public: void setDisplayThreshold(double threshold) {_displayThreshold = threshold;};
     public: void setConnectorLayer(BasicLayer* layer) {_connectorLayer = layer;};
     public: void setObstructionLayer(BasicLayer* layer) {_obstructionLayer = layer;};
+    public: void setRealName(const char* realName) { _realName = realName; };
 
 // Others
 // ******

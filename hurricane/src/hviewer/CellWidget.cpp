@@ -164,8 +164,7 @@ void  CellWidget::drawBoundaries ( const Instance*       instance
 
 bool  CellWidget::isDrawable ( PaletteEntry* entry )
 {
-  return      entry->isChecked()
-         && ( entry->getBasicLayer()->getDisplayThreshold() < _scale*100 );
+  return entry->isChecked() && ( Graphics::getThreshold(entry->getName()) < _scale*100 );
 }
 
 

@@ -88,11 +88,7 @@ BasicLayer::BasicLayer(Technology* technology, const Name& name, const Type& typ
 :    Inherit(technology, name, minimalSize, minimalSpacing),
     _type(type),
     _extractNumber(extractNumber),
-    _redValue(255),
-    _greenValue(255),
-    _blueValue(255),
-    _fillPattern("FFFFFFFFFFFFFFFF"),
-    _displayThreshold(0.0)
+    _realName("<not associated>")
 {
 }
 
@@ -111,32 +107,6 @@ BasicLayers BasicLayer::getBasicLayers() const
 // *******************************************
 {
     return BasicLayer_BasicLayers(this);
-}
-
-void BasicLayer::setColor(unsigned short redValue, unsigned short greenValue, unsigned short blueValue)
-// ****************************************************************************************************
-{
-    if ((redValue != _redValue) || (greenValue != _greenValue) || (blueValue != _blueValue)) {
-        _redValue = redValue;
-        _greenValue = greenValue;
-        _blueValue = blueValue;
-    }
-}
-
-void BasicLayer::setFillPattern(const string& fillPattern)
-// *******************************************************
-{
-    if (fillPattern != _fillPattern) {
-        if (fillPattern.size() != 16)
-            throw Error("Can't set fill pattern (bad value)");
-
-        string validChars = "0123456789ABCDEFabcdef";
-        for (unsigned i = 0; i < 16; i++) {
-            if (validChars.find(fillPattern[i]) == string::npos)
-                throw Error("Can't set fill pattern (bad value)");
-        }
-        _fillPattern = fillPattern;
-    }
 }
 
 void BasicLayer::_postCreate()
@@ -194,11 +164,7 @@ Record* BasicLayer::_getRecord() const
     Record* record = Inherit::_getRecord();
     if (record) {
         record->add(getSlot("Type", &_type));
-        record->add(getSlot("RedValue", &_redValue));
-        record->add(getSlot("GreenValue", &_greenValue));
-        record->add(getSlot("BlueValue", &_blueValue));
-        record->add(getSlot("FillPattern", &_fillPattern));
-        record->add(getSlot("DisplayThreshold", &_displayThreshold));
+        record->add(getSlot("RealName", &_realName));
     }
     return record;
 }

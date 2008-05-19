@@ -19,20 +19,20 @@ namespace Hurricane {
 
     // Constructor.
     public:
-      static  LayerPaletteEntry* create             ( Palette* palette, BasicLayer* basicLayer );
+      static  LayerPaletteEntry* create              ( Palette* palette, BasicLayer* basicLayer );
 
     // Methods.
     public:
-      virtual bool               isGroup            () const;
-      virtual bool               isBasicLayer       () const;
-      virtual const Name&        getName            () const;
-      virtual BasicLayer*        getBasicLayer      ();
-      virtual bool               isChecked          () const;
-      virtual void               setChecked         ( bool state );
+      virtual bool               isGroup             () const;
+      virtual bool               isBasicLayer        () const;
+      virtual const Name&        getName             () const;
+      virtual BasicLayer*        getBasicLayer       ();
+      virtual bool               isChecked           () const;
+      virtual void               setChecked          ( bool state );
 
     // Slots.
     public slots:
-      virtual void               toggle             ();
+      virtual void               toggle              ();
 
     // Internal - Attributes.
     protected:

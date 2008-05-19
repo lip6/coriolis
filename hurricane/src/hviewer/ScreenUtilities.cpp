@@ -71,14 +71,4 @@ QBrush  getBrush ( const string& pattern, int red, int green, int blue )
 }
 
 
-QBrush  getBrush ( const BasicLayer* layer )
-{
-  return getBrush ( layer->getFillPattern()
-                  , layer->getRedValue()
-                  , layer->getGreenValue()
-                  , layer->getBlueValue()
-                  );
-}
-
-
 } // End of Hurricane namespace.

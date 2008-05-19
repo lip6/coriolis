@@ -24,7 +24,6 @@ namespace Hurricane {
   // Functions.
 
   QBrush  getBrush ( const string& pattern, int red, int green, int blue );
-  QBrush  getBrush ( const BasicLayer* layer );
 
 
 
