@@ -1,12 +1,14 @@
 #include <iostream>
 
-#include "DBo.h"
 #include "Warning.h"
 #include "Error.h"
+#include "DataBase.h"
+#include "Library.h"
 using namespace Hurricane;
 
 #include "AEnv.h"
 #include "ATechnology.h"
+#include "Transistor.h"
 
 
 int main(int argc, char* argv[]) {
@@ -17,11 +19,17 @@ int main(int argc, char* argv[]) {
             exit(56);
         }
         AEnv::create(argv[1]);
+        DataBase* db = getDataBase();
+        Library* rootLibrary = db->getRootLibrary();
+        Library* userLibrary = Library::create(rootLibrary, Name("USER"));
+
         ATechnology* aTechnology = AEnv::getATechnology();
         if (!aTechnology) {
             exit(56);
         }
         aTechnology->print();
+        Transistor* trans = Transistor::create(userLibrary, Name("TEST"), Transistor::P);
+        cerr << trans << endl;
         exit(0);
     } catch (Hurricane::Warning& w) {
         cerr << w.what() << endl;

@@ -4,6 +4,6 @@ ${CHAMSIN_SOURCE_DIR}/src/analogic ${CHAMSIN_SOURCE_DIR}/src/device)
 
 ADD_EXECUTABLE(atest AnalogicTest.cpp)
 
-TARGET_LINK_LIBRARIES(atest atechnology ${HURRICANE_LIBRARIES})
+TARGET_LINK_LIBRARIES(atest atechnology analogic ${HURRICANE_LIBRARIES})
 
 INSTALL(TARGETS atest DESTINATION /bin)

@@ -1,4 +1,5 @@
 #include "DataBase.h"
+#include "Library.h"
 #include "Technology.h"
 using namespace Hurricane;
 
@@ -13,6 +14,7 @@ void AEnv::create(const char* technoFilePath) {
         throw Error("");
     }
     db = DataBase::create();
+    Library* rootLibrary = Library::create(db, Name("RootLibrary"));
     Technology* techno = Technology::create(db, Name("AnalogicTechnology"));
     ATechnologyXmlParser::parse(technoFilePath, techno);
 }

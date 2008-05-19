@@ -1,6 +1,7 @@
 #ifndef TRANSISTOR_H
 #define TRANSISTOR_H
 
+#include "Name.h"
 #include "Cell.h"
 using namespace Hurricane;
 
@@ -8,24 +9,36 @@ namespace Hurricane {
 
 class Transistor : public Cell {
     public:
+        static const Name DrainName;
+        static const Name SourceName;
+        static const Name GridName;
+        static const Name BulkName;
         enum Polarity {N=0, P=1};
         enum AbutmentType { INTERNAL=0, LEFT=1, RIGHT=2, SINGLE=3};
 
         static Transistor* create(Library* library, const Name& name, const Polarity& polarity);		
         void createLayout();
 
-        bool isNmos() const { return polarity == N; };
-        bool isPmos() const { return polarity == P; };
-        bool isInternal() const { return abutmentType == INTERNAL; };
-        bool isLeft() const     { return abutmentType == LEFT; };
-        bool isRight() const    { return abutmentType == RIGHT; };
-        bool isSingle() const   { return abutmentType == SINGLE; };
+        bool isNmos() const { return _polarity == N; };
+        bool isPmos() const { return _polarity == P; };
+        bool isInternal() const { return _abutmentType == INTERNAL; };
+        bool isLeft() const     { return _abutmentType == LEFT; };
+        bool isRight() const    { return _abutmentType == RIGHT; };
+        bool isSingle() const   { return _abutmentType == SINGLE; };
+    protected:
+        void _postCreate();
 
     private:
-        Polarity polarity;
-        AbutmentType abutmentType;
-        double l;
-        double w;
+        Net* _drain;
+        Net* _source;
+        Net* _grid;
+        Net* _bulk;
+        Polarity _polarity;
+        AbutmentType _abutmentType;
+        double _l;
+        double _w;
+
+        Transistor(Library* library, const Name& name, const Polarity& polarity);
 };
 
 }

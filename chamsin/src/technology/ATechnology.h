@@ -17,32 +17,35 @@ class ATechnology : public PrivateProperty {
                 PhysicalRule(const string& name,
                         double value,
                         const string& reference):
-                    name_(name),
-                    value_(value),
-                    reference_(reference) {}
+                    _name(name),
+                    _value(value),
+                    _reference(reference) {}
                 PhysicalRule(const PhysicalRule& physicalRule):
-                    name_(physicalRule.name_),
-                    value_(physicalRule.value_),
-                    reference_(physicalRule.reference_) {}
-                const string name_;
-                const double value_;
-                const string reference_;
+                    _name(physicalRule._name),
+                    _value(physicalRule._value),
+                    _reference(physicalRule._reference) {}
+                const string _name;
+                const double _value;
+                const string _reference;
+                double getValue() const { return _value; }
         };
         typedef map<string, ATechnology::PhysicalRule*> PhysicalRules;
         static ATechnology* create(Hurricane::Technology* technology);
         static ATechnology* getATechnology(Hurricane::Technology* technology);
-        const PhysicalRule* getPhysicalRule(string name);
+        const PhysicalRule* getPhysicalRule(const string& name);
         void addPhysicalRule(const string& name, double value, const string& reference);
         void print();
+
         virtual Name getName() const;
+
         virtual string _getTypeName() const;
 
         ATechnology():
             Inherit(),
-            physicalRules_() {}
+            _physicalRules() {}
 
     private:
-        PhysicalRules physicalRules_;
+        PhysicalRules _physicalRules;
 };
 
 #endif /* ATECHNOLOGY_H_*/

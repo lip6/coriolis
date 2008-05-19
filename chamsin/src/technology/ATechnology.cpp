@@ -17,12 +17,12 @@ string ATechnology::_getTypeName() const {
 }
 
 void ATechnology::addPhysicalRule(const string& name, double value, const string& reference) {
-    PhysicalRules::iterator prit = physicalRules_.find(name);
-    if (prit != physicalRules_.end()) {
+    PhysicalRules::iterator prit = _physicalRules.find(name);
+    if (prit != _physicalRules.end()) {
         throw Error("");
     }
     PhysicalRule* newPhysicalRule = new PhysicalRule(name, value, reference);
-    physicalRules_[newPhysicalRule->name_] = newPhysicalRule; 
+    _physicalRules[newPhysicalRule->_name] = newPhysicalRule; 
 }
 
 ATechnology* ATechnology::create(Technology* technology) {
@@ -47,12 +47,20 @@ ATechnology* ATechnology::getATechnology(Technology* technology) {
 void ATechnology::print() {
     cout << "Printing ATechnology" << endl;
     cout << " o Physical Rules" << endl;
-    for (PhysicalRules::iterator prit = physicalRules_.begin();
-            prit != physicalRules_.end();
+    for (PhysicalRules::iterator prit = _physicalRules.begin();
+            prit != _physicalRules.end();
             prit++) {
         PhysicalRule* physicalRule = prit->second;
-        cout << "  - name = " << physicalRule->name_ << 
-            ", value = " << physicalRule->value_ <<
-            ", ref = " << physicalRule->reference_ << endl;
+        cout << "  - name = " << physicalRule->_name << 
+            ", value = " << physicalRule->_value <<
+            ", ref = " << physicalRule->_reference << endl;
     }
+}
+
+const ATechnology::PhysicalRule* ATechnology::getPhysicalRule(const string& name) {
+    PhysicalRules::iterator prit = _physicalRules.find(name);
+    if (prit == _physicalRules.end()) {
+        throw Error("Cannot find Physical Rule " + name);
+    }
+    return prit->second;
 }
