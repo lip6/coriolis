@@ -5,7 +5,7 @@
 // ****************************************************************************************************
 // 21-10-2003 Alignment BULL-LIP6 : added operators+ += ... (questionnable!)
 
-#include "Point.h"
+#include "hurricane/Point.h"
 
 namespace Hurricane {
 

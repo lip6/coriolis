@@ -5,10 +5,10 @@
 // ****************************************************************************************************
 // 21-10-2003 Alignment BULL-LIP6
 
-#include "Segment.h"
-#include "BasicLayer.h"
-#include "CompositeLayer.h"
-#include "Error.h"
+#include "hurricane/Segment.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/CompositeLayer.h"
+#include "hurricane/Error.h"
 
 namespace Hurricane {
 

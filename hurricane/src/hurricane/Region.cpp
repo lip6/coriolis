@@ -4,8 +4,8 @@
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
 
-#include "Region.h"
-#include "Error.h"
+#include "hurricane/Region.h"
+#include "hurricane/Error.h"
 
 
 namespace Hurricane {

@@ -4,10 +4,10 @@
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
 
-#include "DRCError.h"
-#include "Cell.h"
-#include "Slice.h"
-#include "Error.h"
+#include "hurricane/DRCError.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Slice.h"
+#include "hurricane/Error.h"
 
 namespace Hurricane {
 

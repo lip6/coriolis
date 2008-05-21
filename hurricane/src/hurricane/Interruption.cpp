@@ -4,7 +4,7 @@
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
 
-#include "Interruption.h"
+#include "hurricane/Interruption.h"
 
 namespace Hurricane {
 

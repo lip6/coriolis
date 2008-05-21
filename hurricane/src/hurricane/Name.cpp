@@ -4,8 +4,8 @@
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
 
-#include "Name.h"
-#include "SharedName.h"
+#include "hurricane/Name.h"
+#include "hurricane/SharedName.h"
 
 namespace Hurricane {
 

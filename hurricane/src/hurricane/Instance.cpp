@@ -5,12 +5,12 @@
 // ****************************************************************************************************
 // 21-10-2003 Alignment BULL-LIP6
 
-#include "Instance.h"
-#include "Cell.h"
-#include "Net.h"
-#include "Plug.h"
-#include "SharedPath.h"
-#include "Error.h"
+#include "hurricane/Instance.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Net.h"
+#include "hurricane/Plug.h"
+#include "hurricane/SharedPath.h"
+#include "hurricane/Error.h"
 
 namespace Hurricane {
 

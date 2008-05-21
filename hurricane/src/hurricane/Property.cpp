@@ -4,9 +4,9 @@
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
 
-#include "Property.h"
-#include "DBo.h"
-#include "Error.h"
+#include "hurricane/Property.h"
+#include "hurricane/DBo.h"
+#include "hurricane/Error.h"
 
 namespace Hurricane {
 

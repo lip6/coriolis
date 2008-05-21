@@ -4,10 +4,10 @@
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
 
-#include "Slice.h"
-#include "Cell.h"
-//#include "MainView.h"
-#include "HyperNet.h"
+#include "hurricane/Slice.h"
+#include "hurricane/Cell.h"
+//#include "hurricane/MainView.h"
+#include "hurricane/HyperNet.h"
 
 namespace Hurricane {
 

@@ -8,8 +8,8 @@
 // Authors: Christophe Alexandre.
 // ****************************************************************************************************
 
-#include "Cell.h"
-#include "Pin.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Pin.h"
 
 namespace Hurricane {
 

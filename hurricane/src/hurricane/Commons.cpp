@@ -6,11 +6,11 @@
 
 
 #ifdef  HAVE_LIBIBERTY
-#  include "demangle.h"
-#  include "libiberty.h"
+#include "hurricane/demangle.h"
+#include "hurricane/libiberty.h"
 #endif
 
-#include "Commons.h"
+#include "hurricane/Commons.h"
 
 
 namespace Hurricane {

@@ -4,8 +4,8 @@
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
 
-#include "Go.h"
-#include "QuadTree.h"
+#include "hurricane/Go.h"
+#include "hurricane/QuadTree.h"
 
 namespace Hurricane {
 

@@ -4,12 +4,12 @@
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
 
-#include "Technology.h"
-#include "DataBase.h"
-#include "Layer.h"
-#include "BasicLayer.h"
-#include "CompositeLayer.h"
-#include "Error.h"
+#include "hurricane/Technology.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Layer.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/CompositeLayer.h"
+#include "hurricane/Error.h"
 
 
 

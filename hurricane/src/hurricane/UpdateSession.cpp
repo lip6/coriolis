@@ -4,10 +4,10 @@
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
 
-#include "UpdateSession.h"
-#include "Go.h"
-#include "Cell.h"
-#include "Error.h"
+#include "hurricane/UpdateSession.h"
+#include "hurricane/Go.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Error.h"
 
 namespace Hurricane {
 

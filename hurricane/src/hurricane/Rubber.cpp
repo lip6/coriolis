@@ -5,14 +5,14 @@
 // ****************************************************************************************************
 // 21-10-2003 Alignment BULL-LIP6 : Rubbers end at component center
 
-#include "Rubber.h"
-#include "Net.h"
-#include "Plug.h"
-#include "Instance.h"
-#include "Cell.h"
-#include "Hook.h"
-#include "Component.h"
-#include "Error.h"
+#include "hurricane/Rubber.h"
+#include "hurricane/Net.h"
+#include "hurricane/Plug.h"
+#include "hurricane/Instance.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Hook.h"
+#include "hurricane/Component.h"
+#include "hurricane/Error.h"
 
 namespace Hurricane {
 

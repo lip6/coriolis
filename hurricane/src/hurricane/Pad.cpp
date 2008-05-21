@@ -5,11 +5,11 @@
 // ****************************************************************************************************
 // 21-10-2003 Alignment BULL-LIP6 (to be seen : PROVISOIREMENT in _Draw & _Highlight)
 
-#include "Pad.h"
-#include "Net.h"
-#include "BasicLayer.h"
-#include "CompositeLayer.h"
-#include "Error.h"
+#include "hurricane/Pad.h"
+#include "hurricane/Net.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/CompositeLayer.h"
+#include "hurricane/Error.h"
 
 namespace Hurricane {
 

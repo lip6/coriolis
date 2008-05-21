@@ -4,10 +4,10 @@
 // Copyright (c) LIP6/UPMC 2006-2006, All Rights Reserved
 // ****************************************************************************************************
 
-#include "Reference.h"
-#include "Cell.h"
-#include "Slice.h"
-#include "Error.h"
+#include "hurricane/Reference.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Slice.h"
+#include "hurricane/Error.h"
 
 namespace Hurricane {
 

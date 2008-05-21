@@ -4,11 +4,11 @@
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
 
-#include "Plug.h"
-#include "Net.h"
-#include "Cell.h"
-#include "Instance.h"
-#include "Error.h"
+#include "hurricane/Plug.h"
+#include "hurricane/Net.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Instance.h"
+#include "hurricane/Error.h"
 
 namespace Hurricane {
 

@@ -4,8 +4,8 @@
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
 
-#include "Unit.h"
-#include "Error.h"
+#include "hurricane/Unit.h"
+#include "hurricane/Error.h"
 
 #include <math.h>
 

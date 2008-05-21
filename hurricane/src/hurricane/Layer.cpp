@@ -4,9 +4,9 @@
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
 
-#include "Layer.h"
-#include "Technology.h"
-#include "Error.h"
+#include "hurricane/Layer.h"
+#include "hurricane/Technology.h"
+#include "hurricane/Error.h"
 
 namespace Hurricane {
 

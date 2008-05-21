@@ -4,13 +4,13 @@
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
 
-#include "DataBase.h"
-#include "Technology.h"
-#include "Library.h"
-#include "Cell.h"
-#include "Timer.h"
-#include "Error.h"
-#include "UpdateSession.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Technology.h"
+#include "hurricane/Library.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Timer.h"
+#include "hurricane/Error.h"
+#include "hurricane/UpdateSession.h"
 
 namespace Hurricane {
 

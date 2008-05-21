@@ -4,12 +4,12 @@
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
 
-#include "Slice.h"
-#include "Cell.h"
-#include "Component.h"
-#include "Marker.h"
-#include "Layer.h"
-#include "Error.h"
+#include "hurricane/Slice.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Component.h"
+#include "hurricane/Marker.h"
+#include "hurricane/Layer.h"
+#include "hurricane/Error.h"
 
 namespace Hurricane {
 

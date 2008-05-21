@@ -4,10 +4,10 @@
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
 
-#include "Marker.h"
-#include "Cell.h"
-#include "Slice.h"
-#include "Error.h"
+#include "hurricane/Marker.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Slice.h"
+#include "hurricane/Error.h"
 
 namespace Hurricane {
 

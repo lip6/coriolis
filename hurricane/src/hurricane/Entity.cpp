@@ -4,11 +4,11 @@
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
 
-#include "Entity.h"
-#include "Quark.h"
-#include "Cell.h"
-#include "Instance.h"
-#include "SharedPath.h"
+#include "hurricane/Entity.h"
+#include "hurricane/Quark.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Instance.h"
+#include "hurricane/SharedPath.h"
 
 namespace Hurricane {
 

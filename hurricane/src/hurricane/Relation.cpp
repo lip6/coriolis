@@ -4,11 +4,11 @@
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
 
-#include "Relation.h"
-#include "DBo.h"
-#include "Error.h"
+#include "hurricane/Relation.h"
+#include "hurricane/DBo.h"
+#include "hurricane/Error.h"
 
-#include "Filter.h"
+#include "hurricane/Filter.h"
 
 namespace Hurricane {
 

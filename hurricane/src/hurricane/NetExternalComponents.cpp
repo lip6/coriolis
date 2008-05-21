@@ -8,11 +8,11 @@
 // Author: C. Alexandre
 // ****************************************************************************************************
 
-#include "Error.h"
-#include "Relation.h"
-#include "Net.h"
+#include "hurricane/Error.h"
+#include "hurricane/Relation.h"
+#include "hurricane/Net.h"
 
-#include "NetExternalComponents.h"
+#include "hurricane/NetExternalComponents.h"
 
 namespace Hurricane {
 

@@ -4,10 +4,10 @@
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
 
-#include "Hook.h"
-#include "Component.h"
-#include "Rubber.h"
-#include "Error.h"
+#include "hurricane/Hook.h"
+#include "hurricane/Component.h"
+#include "hurricane/Rubber.h"
+#include "hurricane/Error.h"
 
 namespace Hurricane {
 

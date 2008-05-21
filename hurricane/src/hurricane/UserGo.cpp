@@ -8,8 +8,8 @@
 // Authors: C. Alexandre
 // ****************************************************************************************************
 
-#include "Cell.h"
-#include "UserGo.h"
+#include "hurricane/Cell.h"
+#include "hurricane/UserGo.h"
 
 namespace Hurricane {
 

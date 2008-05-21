@@ -4,12 +4,12 @@
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
 
-#include "Vertical.h"
-#include "Net.h"
-#include "BasicLayer.h"
-#include "CompositeLayer.h"
-#include "Plug.h"
-#include "Error.h"
+#include "hurricane/Vertical.h"
+#include "hurricane/Net.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/CompositeLayer.h"
+#include "hurricane/Plug.h"
+#include "hurricane/Error.h"
 
 namespace Hurricane {
 

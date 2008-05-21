@@ -4,7 +4,7 @@
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
 // ****************************************************************************************************
 
-#include "Timer.h"
+#include "hurricane/Timer.h"
 
 namespace Hurricane {
 

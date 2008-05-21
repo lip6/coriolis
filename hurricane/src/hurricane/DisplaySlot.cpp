@@ -8,13 +8,13 @@
 // Author: C. Alexandre
 // ****************************************************************************************************
 
-#include "Error.h"
-#include "UserGo.h"
-#include "Relation.h"
-#include "Cell.h"
-#include "UpdateSession.h"
+#include "hurricane/Error.h"
+#include "hurricane/UserGo.h"
+#include "hurricane/Relation.h"
+#include "hurricane/Cell.h"
+#include "hurricane/UpdateSession.h"
 
-#include "DisplaySlot.h"
+#include "hurricane/DisplaySlot.h"
 
 namespace Hurricane {
 

@@ -5,8 +5,8 @@
 // ****************************************************************************************************
 // 21-10-2003 added ManhattanDistance & ShrinkByFactor
 
-#include "Error.h"
-#include "Box.h"
+#include "hurricane/Error.h"
+#include "hurricane/Box.h"
 
 namespace Hurricane {
 

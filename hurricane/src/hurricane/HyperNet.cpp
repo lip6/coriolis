@@ -5,14 +5,14 @@
 // ****************************************************************************************************
 // 21-10-2003 Alignment BULL-LIP6
 
-#include "HyperNet.h"
-#include "Cell.h"
-#include "Net.h"
-#include "Instance.h"
-#include "Rubber.h"
-#include "Plug.h"
-#include "BasicLayer.h"
-#include "Error.h"
+#include "hurricane/HyperNet.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Net.h"
+#include "hurricane/Instance.h"
+#include "hurricane/Rubber.h"
+#include "hurricane/Plug.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/Error.h"
 
 namespace Hurricane {
 
