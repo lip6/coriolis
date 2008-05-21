@@ -26,22 +26,22 @@
 \code
 class SlotAdapter {
   public:
-           virtual string  _GetTypename     () const;
-           virtual string  _GetString       () const;
-           virtual Record* _GetRecord       () const;
-    inline virtual Slot*   _GetSlot         ( const string& name ) const;
+           virtual string  _getTypename     () const;
+           virtual string  _getString       () const;
+           virtual Record* _getRecord       () const;
+    inline virtual Slot*   _getSlot         ( const string& name ) const;
 };
 \endcode
   *
   *                
   *                Thoses methods correspond to :
   *                <ul>
-  *                  <li>\b _GetTypeName() : the inspected object's type.
-  *                  <li>\b _GetString() : a synthetic string description of the
+  *                  <li>\b _getTypeName() : the inspected object's type.
+  *                  <li>\b _getString() : a synthetic string description of the
   *                      object's state.
-  *                  <li>\b _GetRecord() : the complete description of all object's
+  *                  <li>\b _getRecord() : the complete description of all object's
   *                      attributes (a list of Slot).
-  *                  <li>\b _GetSlot() : a Slot build from this SlotAdapter. As this
+  *                  <li>\b _getSlot() : a Slot build from this SlotAdapter. As this
   *                      function is supplied by default with the right implementation
   *                      we will not detail it here.
   *                </ul>
@@ -56,8 +56,8 @@ class SlotAdapter {
   *                      must inherit from the NestedSlotAdapter class.
   *                  <li><b>User defined, without virtual methods</b> : thoses
   *                      objects must provides (as ordinary methods)
-  *                      \b _GetTypeName() , \b _GetString() , \b _GetRecord() .
-  *                      But \b not \b _GetSlot().
+  *                      \b _getTypeName() , \b _getString() , \b _getRecord() .
+  *                      But \b not \b _getSlot().
   *                  <li><b>External objects</b> : that is, we cannot modify.
   *                      In this case we have to provide a specialised template
   *                      overload for \b ProxyTypeName<>() , \b ProxyString<>() ,
@@ -78,13 +78,13 @@ namespace MyTool {
        int  _value;
      public:
                int     GetValue    () const { return _value; }
-       virtual string  _GetTypeName() const { return "MyClass"; };
-       virtual string  _GetString  () const { return "<MyClass"+GetString(_value)+">"; };
-       virtual Record* _GetRecord  () const;
+       virtual string  _getTypeName() const { return "MyClass"; };
+       virtual string  _getString  () const { return "<MyClass"+GetString(_value)+">"; };
+       virtual Record* _getRecord  () const;
   };
 
   Record* MyClass::GetRecord () const {
-    Record* record = new Record(_GetString());
+    Record* record = new Record(_getString());
     record->Add ( GetSlot("_value",&_value) );
     return record;
   }
@@ -123,20 +123,20 @@ namespace MyTool {
        int  _value;
      public:
        int     GetValue    () const { return _value; }
-       string  _GetTypeName() const { return "MyLightClass"; };
-       string  _GetString  () const { return "<MyLightClass"+GetString(_value)+">"; };
-       Record* _GetRecord  () const;
+       string  _getTypeName() const { return "MyLightClass"; };
+       string  _getString  () const { return "<MyLightClass"+GetString(_value)+">"; };
+       Record* _getRecord  () const;
   };
 
   Record* MyLightClass::GetRecord () const {
-    Record* record = new Record(_GetString());
+    Record* record = new Record(_getString());
     record->Add ( GetSlot("_value",&_value) );
     return record;
   }
 } // End of MyTool namespace.
 \endcode
   *
-  *                The methods \b _GetTypeName() , \b _GetString() and \b GetRecord()
+  *                The methods \b _getTypeName() , \b _getString() and \b GetRecord()
   *                are now non-virtual and there's no call to \b SetNestedSlotAdapter() .
   *
   *
@@ -172,7 +172,7 @@ template<typename T> inline Hurricane::Slot*  GetSlot ( const string& name, T  t
   *                GetString() may be used to print some debugging informations
   *                on \stdout.
   *
-  *                GetSlot() used to built the various entries in a \b _GetRecord()
+  *                GetSlot() used to built the various entries in a \b _getRecord()
   *                method.
   *
   *                <b>Argument type policy</b>
@@ -274,29 +274,29 @@ template<typename T> inline Hurricane::Slot*  GetSlot ( const string& name, T  t
   */
  // \{
 
- /*! \function     string  SlotAdapter::_GetTypeName () const;
+ /*! \function     string  SlotAdapter::_getTypeName () const;
   *  \Return       a string representing the object type. May be used by
-  *                SlotAdapter::_GetString().
+  *                SlotAdapter::_getString().
   *
   *  \note         No default implementation is supplied.
   */
 
- /*! \function     string  SlotAdapter::_GetString () const;
+ /*! \function     string  SlotAdapter::_getString () const;
   *  \Return       a string representing the object name and characteristics
   *                in a synthetic way. Used, among other things, as title
   *                for the Inspector Record browser.
   *
   *  \note         Default implementation is supplied, which returns the
-  *                string \c "SlotAdapter::_GetString()" .
+  *                string \c "SlotAdapter::_getString()" .
   */
 
- /*! \function     Record* SlotAdapter::_GetRecord () const;
+ /*! \function     Record* SlotAdapter::_getRecord () const;
   *  \Return       a Record representing the object current state.
   *
   *  \note         Default implementation is supplied, which returns \NULL.
   */
 
- /*! \function     Slot* SlotAdapter::_GetSlot ( const string& name ) const;
+ /*! \function     Slot* SlotAdapter::_getSlot ( const string& name ) const;
   *  \param        name  the name to give to the Slot. Usually the class attribute
   *                      name.
   *  \return       a Slot associated to this object to insert into another Record.
@@ -306,7 +306,7 @@ template<typename T> inline Hurricane::Slot*  GetSlot ( const string& name, T  t
   */
 
 
- /*! \function     Slot* NestedSlotAdapter::_GetSlot ( const string& name ) const;
+ /*! \function     Slot* NestedSlotAdapter::_getSlot ( const string& name ) const;
   *  \param        name  the name to give to the Slot. Usually the class attribute
   *                      name.
   *  \return       a Slot associated to this object to insert into another Record.
