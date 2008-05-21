@@ -5,11 +5,11 @@
 # include  <QCheckBox>
 # include  <QHBoxLayout>
 
-# include  "BasicLayer.h"
+# include  "hurricane/BasicLayer.h"
 
-# include  "Graphics.h"
-# include  "ViewerPaletteEntry.h"
-# include  "Palette.h"
+# include  "hurricane/viewer/Graphics.h"
+# include  "hurricane/viewer/ViewerPaletteEntry.h"
+# include  "hurricane/viewer/Palette.h"
 
 
 namespace Hurricane {

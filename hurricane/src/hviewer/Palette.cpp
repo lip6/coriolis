@@ -9,19 +9,19 @@
 # include  <QCheckBox>
 # include  <QPushButton>
 
-# include  "Name.h"
-# include  "DataBase.h"
-# include  "Technology.h"
-# include  "BasicLayer.h"
-# include  "BasicLayers.h"
+# include  "hurricane/Name.h"
+# include  "hurricane/DataBase.h"
+# include  "hurricane/Technology.h"
+# include  "hurricane/BasicLayer.h"
+# include  "hurricane/BasicLayers.h"
 
-# include  "Graphics.h"
-# include  "PaletteEntry.h"
-# include  "LayerPaletteEntry.h"
-# include  "GroupPaletteEntry.h"
-# include  "ViewerPaletteEntry.h"
-# include  "Palette.h"
-# include  "CellWidget.h"
+# include  "hurricane/viewer/Graphics.h"
+# include  "hurricane/viewer/PaletteEntry.h"
+# include  "hurricane/viewer/LayerPaletteEntry.h"
+# include  "hurricane/viewer/GroupPaletteEntry.h"
+# include  "hurricane/viewer/ViewerPaletteEntry.h"
+# include  "hurricane/viewer/Palette.h"
+# include  "hurricane/viewer/CellWidget.h"
 
 
 namespace Hurricane {

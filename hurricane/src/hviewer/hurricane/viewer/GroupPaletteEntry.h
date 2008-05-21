@@ -8,9 +8,9 @@
 
 class QPushButton;
 
-# include  "Name.h"
+# include  "hurricane/Name.h"
 
-# include  "PaletteEntry.h"
+# include  "hurricane/viewer/PaletteEntry.h"
 
 
 namespace Hurricane {

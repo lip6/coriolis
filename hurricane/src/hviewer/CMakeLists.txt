@@ -1,26 +1,28 @@
 
                include ( ${QT_USE_FILE} )
 
-   include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane )
+   include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane
+                         ${HURRICANE_SOURCE_DIR}/src/hviewer
+                       )
 
-                   set ( includes    ScreenUtilities.h
-                                     DisplayStyle.h
-                                     Graphics.h
+                   set ( includes    hurricane/viewer/ScreenUtilities.h
+                                     hurricane/viewer/DisplayStyle.h
+                                     hurricane/viewer/Graphics.h
                        )
-                   set ( mocincludes PaletteEntry.h
-                                     LayerPaletteEntry.h
-                                     GroupPaletteEntry.h
-                                     ViewerPaletteEntry.h
-                                     Palette.h
-                                     CellWidget.h
-                                     CellViewer.h
+                   set ( mocincludes hurricane/viewer/PaletteEntry.h
+                                     hurricane/viewer/LayerPaletteEntry.h
+                                     hurricane/viewer/GroupPaletteEntry.h
+                                     hurricane/viewer/ViewerPaletteEntry.h
+                                     hurricane/viewer/Palette.h
+                                     hurricane/viewer/CellWidget.h
+                                     hurricane/viewer/CellViewer.h
                        )
-                   set ( exports     ScreenUtilities.h
-                                     PaletteEntry.h
-                                     Palette.h
-                                     DisplayStyle.h
-                                     Graphics.h
-                                     CellViewer.h
+                   set ( exports     hurricane/viewer/ScreenUtilities.h
+                                     hurricane/viewer/PaletteEntry.h
+                                     hurricane/viewer/Palette.h
+                                     hurricane/viewer/DisplayStyle.h
+                                     hurricane/viewer/Graphics.h
+                                     hurricane/viewer/CellViewer.h
                        )
                    set ( cpps        ScreenUtilities.cpp 
                                      DisplayStyle.cpp 
@@ -40,5 +42,5 @@
            add_library ( hviewer     SHARED ${cpps} ${MOC_SRCS} ${RCC_SRCS} )
  target_link_libraries ( hviewer     ${QT_LIBRARIES} hurricane )
 
-               install ( FILES       ${exports} DESTINATION /include/hurricane ) 
+               install ( FILES       ${exports} DESTINATION /include/hurricane/viewer ) 
                install ( TARGETS     hviewer    DESTINATION /lib )

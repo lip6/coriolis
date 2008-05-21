@@ -9,7 +9,7 @@
 # include  <string>
 # include  <vector>
 
-# include  "DisplayStyle.h"
+# include  "hurricane/viewer/DisplayStyle.h"
 
 class QFont;
 class QColor;

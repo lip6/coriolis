@@ -9,20 +9,20 @@
 # include <QStylePainter>
 # include <QBitmap>
 
-# include "DataBase.h"
-# include "Technology.h"
-# include "BasicLayer.h"
-# include "Cell.h"
-# include "Instance.h"
-# include "Slice.h"
-# include "Segment.h"
-# include "Contact.h"
+# include "hurricane/DataBase.h"
+# include "hurricane/Technology.h"
+# include "hurricane/BasicLayer.h"
+# include "hurricane/Cell.h"
+# include "hurricane/Instance.h"
+# include "hurricane/Slice.h"
+# include "hurricane/Segment.h"
+# include "hurricane/Contact.h"
 
-# include "Graphics.h"
-# include "PaletteEntry.h"
-# include "Palette.h"
+# include "hurricane/viewer/Graphics.h"
+# include "hurricane/viewer/PaletteEntry.h"
+# include "hurricane/viewer/Palette.h"
 // # include "MapView.h"
-# include "CellWidget.h"
+# include "hurricane/viewer/CellWidget.h"
 
 
 

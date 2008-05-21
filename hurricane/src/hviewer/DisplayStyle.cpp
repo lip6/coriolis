@@ -4,7 +4,7 @@
 
 # include  <cassert>
 
-# include  "DisplayStyle.h"
+# include  "hurricane/viewer/DisplayStyle.h"
 
 
 

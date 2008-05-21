@@ -10,7 +10,7 @@
 # include  <QScrollArea>
 # include  <QPixmap>
 
-# include  "Commons.h"
+# include  "hurricane/Commons.h"
 
 
   class QCheckBox;

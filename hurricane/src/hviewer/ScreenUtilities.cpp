@@ -4,9 +4,9 @@
 
 # include  <QBitmap>
 
-# include  "BasicLayer.h"
+# include  "hurricane/BasicLayer.h"
 
-# include  "ScreenUtilities.h"
+# include  "hurricane/viewer/ScreenUtilities.h"
 
 
 

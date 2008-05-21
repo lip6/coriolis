@@ -13,10 +13,10 @@
 # include  <QPen>
 # include  <QBrush>
 
-# include  "Commons.h"
-# include  "Name.h"
+# include  "hurricane/Commons.h"
+# include  "hurricane/Name.h"
 
-# include  "ScreenUtilities.h"
+# include  "hurricane/viewer/ScreenUtilities.h"
 
 
 namespace Hurricane {

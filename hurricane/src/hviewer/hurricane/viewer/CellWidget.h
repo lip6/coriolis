@@ -22,12 +22,12 @@ class QKeyEvent;
 class QAction;
 
 
-# include  "Commons.h"
-# include  "Point.h"
-# include  "Box.h"
-# include  "Transformation.h"
+# include  "hurricane/Commons.h"
+# include  "hurricane/Point.h"
+# include  "hurricane/Box.h"
+# include  "hurricane/Transformation.h"
 
-# include  "DisplayStyle.h"
+# include  "hurricane/viewer/DisplayStyle.h"
 
 
 

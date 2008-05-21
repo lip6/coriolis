@@ -5,9 +5,9 @@
 # include  <QPushButton>
 # include  <QHBoxLayout>
 
-# include  "Graphics.h"
-# include  "GroupPaletteEntry.h"
-# include  "Palette.h"
+# include  "hurricane/viewer/Graphics.h"
+# include  "hurricane/viewer/GroupPaletteEntry.h"
+# include  "hurricane/viewer/Palette.h"
 
 
 namespace Hurricane {

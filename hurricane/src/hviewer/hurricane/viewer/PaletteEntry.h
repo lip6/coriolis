@@ -12,7 +12,7 @@
 class QPaintEvent;
 class QCheckBox;
 
-# include  "Commons.h"
+# include  "hurricane/Commons.h"
 
 
 namespace Hurricane {

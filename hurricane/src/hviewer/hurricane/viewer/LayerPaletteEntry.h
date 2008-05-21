@@ -8,7 +8,7 @@
 
 class QCheckBox;
 
-# include  "PaletteEntry.h"
+# include  "hurricane/viewer/PaletteEntry.h"
 
 
 namespace Hurricane {

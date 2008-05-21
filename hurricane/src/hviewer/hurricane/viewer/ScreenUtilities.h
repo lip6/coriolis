@@ -8,7 +8,7 @@
 # include  <string>
 # include  <QBrush>
 
-# include  "Commons.h"
+# include  "hurricane/Commons.h"
 
 
 namespace Hurricane {

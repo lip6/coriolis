@@ -10,10 +10,10 @@
 # include  <QFont>
 # include  <QApplication>
 
-# include  "Name.h"
+# include  "hurricane/Name.h"
 
-# include  "DisplayStyle.h"
-# include  "Graphics.h"
+# include  "hurricane/viewer/DisplayStyle.h"
+# include  "hurricane/viewer/Graphics.h"
 
 
 

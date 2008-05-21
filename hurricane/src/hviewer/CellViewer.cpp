@@ -8,12 +8,12 @@
 # include  <QMenuBar>
 # include  <QDockWidget>
 
-# include  "Cell.h"
+# include  "hurricane/Cell.h"
 
 //# include  "MapView.h"
-# include  "Palette.h"
-# include  "CellWidget.h"
-# include  "CellViewer.h"
+# include  "hurricane/viewer/Palette.h"
+# include  "hurricane/viewer/CellWidget.h"
+# include  "hurricane/viewer/CellViewer.h"
 
 
 namespace Hurricane {

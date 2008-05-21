@@ -4,8 +4,8 @@
 
 # include  <QPainter>
 
-# include  "Graphics.h"
-# include  "PaletteEntry.h"
+# include  "hurricane/viewer/Graphics.h"
+# include  "hurricane/viewer/PaletteEntry.h"
 
 
 namespace Hurricane {
