@@ -7,8 +7,8 @@
 #include <QGroupBox>
 #include <QVBoxLayout>
 
-#include "RecordModel.h"
-#include "HInspectorWidget.h"
+#include "hurricane/inspector/RecordModel.h"
+#include "hurricane/inspector/HInspectorWidget.h"
 
 HInspectorWidget::HInspectorWidget(QWidget* parent):
     QWidget(parent),

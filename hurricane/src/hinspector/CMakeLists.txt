@@ -1,14 +1,22 @@
-include(${QT_USE_FILE})
 
-include_directories(${HURRICANE_SOURCE_DIR}/src/hurricane)
+               include ( ${QT_USE_FILE} )
 
-set(mocincludes RecordModel.h HInspectorWidget.h)
-set(cpps RecordModel.cpp HInspectorWidget.cpp)
+   include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane
+                         ${HURRICANE_SOURCE_DIR}/src/hinspector
+                       )
 
-QT4_WRAP_CPP(MOC_SRCS ${mocincludes})
+                   set ( mocincludes hurricane/inspector/RecordModel.h
+                                     hurricane/inspector/HInspectorWidget.h
+                       )
+                   set ( cpps        RecordModel.cpp
+                                     HInspectorWidget.cpp
+                       )
 
-add_library(hinspector SHARED ${cpps} ${MOC_SRCS})
-target_link_libraries(hinspector ${QT_LIBRARIES} hurricane)
+          qt4_wrap_cpp ( MOC_SRCS ${mocincludes} )
 
-install(FILES HInspectorWidget.h DESTINATION /include/hurricane) 
-install(TARGETS hinspector DESTINATION /lib)
+           add_library ( hinspector SHARED ${cpps} ${MOC_SRCS} )
+ target_link_libraries ( hinspector ${QT_LIBRARIES} hurricane )
+
+               install ( FILES   hurricane/inspector/HInspectorWidget.h
+                                                    DESTINATION /include/hurricane/inspector ) 
+               install ( TARGETS hinspector         DESTINATION /lib )

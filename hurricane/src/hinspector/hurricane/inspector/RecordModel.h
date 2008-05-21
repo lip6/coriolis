@@ -3,7 +3,7 @@
 
 #include <QAbstractTableModel>
 
-#include "Commons.h"
+#include "hurricane/Commons.h"
 using namespace Hurricane;
 
 class RecordModel : public QAbstractTableModel {

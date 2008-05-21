@@ -1,4 +1,4 @@
-#include "RecordModel.h"
+#include "hurricane/inspector/RecordModel.h"
 
 RecordModel::RecordModel(Record* r, QObject* parent):
     QAbstractTableModel(parent),

@@ -1,7 +1,7 @@
 #ifndef HINSPECTORWIDGET_H
 #define HINSPECTORWIDGET_H
 
-#include "Commons.h"
+#include "hurricane/Commons.h"
 using namespace Hurricane;
 
 #include <QWidget>
