@@ -52,8 +52,8 @@
 
 
 
-# include  "PyInstanceLocator.h"
-# include  "PyInstance.h"
+#include "hurricane/isobar/PyInstanceLocator.h"
+#include "hurricane/isobar/PyInstance.h"
 
 
 namespace  Isobar {

@@ -51,8 +51,8 @@
 
 
 
-# include  "PyCellLocator.h"
-# include  "PyCell.h"
+#include "hurricane/isobar/PyCellLocator.h"
+#include "hurricane/isobar/PyCell.h"
 
 
 namespace  Isobar {

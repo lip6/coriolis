@@ -47,8 +47,8 @@
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
-#include "PyReferenceLocator.h"
-#include "PyReference.h"
+#include "hurricane/isobar/PyReferenceLocator.h"
+#include "hurricane/isobar/PyReference.h"
 
 
 namespace  Isobar {

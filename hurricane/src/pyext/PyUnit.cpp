@@ -52,7 +52,7 @@
 
 
 
-#include "PyUnit.h"
+#include "hurricane/isobar/PyUnit.h"
 
 
 namespace Isobar {

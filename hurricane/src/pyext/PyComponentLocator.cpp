@@ -50,8 +50,8 @@
 
 
 
-# include  "PyComponentLocator.h"
-# include  "PyComponent.h"
+#include "hurricane/isobar/PyComponentLocator.h"
+#include "hurricane/isobar/PyComponent.h"
 
 
 namespace  Isobar {

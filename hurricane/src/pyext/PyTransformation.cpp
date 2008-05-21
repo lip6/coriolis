@@ -52,9 +52,9 @@
 
 
 
-#include "PyPoint.h"
-#include "PyBox.h"
-#include "PyTransformation.h"
+#include "hurricane/isobar/PyPoint.h"
+#include "hurricane/isobar/PyBox.h"
+#include "hurricane/isobar/PyTransformation.h"
 
 
 namespace  Isobar {

@@ -52,8 +52,8 @@
 
 
 
-#include "PyPinLocator.h"
-#include "PyPin.h"
+#include "hurricane/isobar/PyPinLocator.h"
+#include "hurricane/isobar/PyPin.h"
 
 
 namespace  Isobar {

@@ -49,10 +49,10 @@
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
-#include "PyPin.h"
-#include "PyNet.h"
-#include "PyName.h"
-#include "PyLayer.h"
+#include "hurricane/isobar/PyPin.h"
+#include "hurricane/isobar/PyNet.h"
+#include "hurricane/isobar/PyName.h"
+#include "hurricane/isobar/PyLayer.h"
 
 
 namespace Isobar {

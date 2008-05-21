@@ -52,8 +52,8 @@
 
 
 
-#include "PyPoint.h"
-#include "PyBox.h"
+#include "hurricane/isobar/PyPoint.h"
+#include "hurricane/isobar/PyBox.h"
 
 
 namespace  Isobar {

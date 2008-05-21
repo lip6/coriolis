@@ -49,7 +49,7 @@
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
-#include "PyUpdateSession.h"
+#include "hurricane/isobar/PyUpdateSession.h"
 
 
 namespace  Isobar {

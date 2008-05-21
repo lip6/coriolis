@@ -49,7 +49,7 @@
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
-#include "PyName.h"
+#include "hurricane/isobar/PyName.h"
 
 
 namespace Isobar {

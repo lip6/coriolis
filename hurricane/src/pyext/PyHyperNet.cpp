@@ -52,10 +52,10 @@
 
 
 
-#include "PyHyperNet.h"
-#include "PyCell.h"
-#include "PyOccurrence.h"
-#include "PyOccurrenceLocator.h" 
+#include "hurricane/isobar/PyHyperNet.h"
+#include "hurricane/isobar/PyCell.h"
+#include "hurricane/isobar/PyOccurrence.h"
+#include "hurricane/isobar/PyOccurrenceLocator.h" 
 
 using namespace Hurricane;
 

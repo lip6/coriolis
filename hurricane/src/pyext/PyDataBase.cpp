@@ -52,8 +52,8 @@
 
 
 
-# include  "PyDataBase.h"
-# include  "PyTechnology.h"
+#include "hurricane/isobar/PyDataBase.h"
+#include "hurricane/isobar/PyTechnology.h"
 
 
 namespace  Isobar {

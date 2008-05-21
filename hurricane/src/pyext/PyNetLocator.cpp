@@ -50,8 +50,8 @@
 
 
 
-#include "PyNetLocator.h"
-#include "PyNet.h"
+#include "hurricane/isobar/PyNetLocator.h"
+#include "hurricane/isobar/PyNet.h"
 
 
 namespace  Isobar {

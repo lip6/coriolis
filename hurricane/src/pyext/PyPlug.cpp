@@ -52,9 +52,9 @@
 
 
 
-#include "PyPlug.h"
-#include "PyInstance.h"
-#include "PyNet.h"
+#include "hurricane/isobar/PyPlug.h"
+#include "hurricane/isobar/PyInstance.h"
+#include "hurricane/isobar/PyNet.h"
 
 
 namespace  Isobar {

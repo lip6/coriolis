@@ -49,15 +49,15 @@
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
-#include "PyBox.h"
-#include "PyName.h"
-#include "PyTransformation.h"
-#include "PyLibrary.h"
-#include "PyCell.h"
-#include "PyInstance.h"
-#include "PyNet.h"
-#include "PyPlug.h"
-#include "PyPlugLocator.h"
+#include "hurricane/isobar/PyBox.h"
+#include "hurricane/isobar/PyName.h"
+#include "hurricane/isobar/PyTransformation.h"
+#include "hurricane/isobar/PyLibrary.h"
+#include "hurricane/isobar/PyCell.h"
+#include "hurricane/isobar/PyInstance.h"
+#include "hurricane/isobar/PyNet.h"
+#include "hurricane/isobar/PyPlug.h"
+#include "hurricane/isobar/PyPlugLocator.h"
 
 
 namespace  Isobar {

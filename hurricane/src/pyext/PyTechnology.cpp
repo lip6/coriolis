@@ -52,10 +52,10 @@
 
 
 
-#include "PyDataBase.h"
-#include "PyName.h"
-#include "PyLayer.h"
-#include "PyTechnology.h"
+#include "hurricane/isobar/PyDataBase.h"
+#include "hurricane/isobar/PyName.h"
+#include "hurricane/isobar/PyLayer.h"
+#include "hurricane/isobar/PyTechnology.h"
 
 
 namespace Isobar {

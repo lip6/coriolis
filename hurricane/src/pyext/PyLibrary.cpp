@@ -52,11 +52,11 @@
 
 
 
-#include "PyDataBase.h"
-#include "PyName.h"
-#include "PyLibrary.h"
-#include "PyCell.h"
-#include "PyCellLocator.h"
+#include "hurricane/isobar/PyDataBase.h"
+#include "hurricane/isobar/PyName.h"
+#include "hurricane/isobar/PyLibrary.h"
+#include "hurricane/isobar/PyCell.h"
+#include "hurricane/isobar/PyCellLocator.h"
 
 
 namespace Isobar {

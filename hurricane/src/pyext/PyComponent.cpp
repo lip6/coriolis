@@ -49,16 +49,16 @@
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
-#include "PyNet.h"
-#include "PyLayer.h"
-#include "PyPoint.h"
-#include "PyBox.h"
-#include "PyComponent.h"
-#include "PyPlug.h"
-#include "PyHorizontal.h"
-#include "PyVertical.h"
-#include "PyContact.h"
-#include "PyPin.h"
+#include "hurricane/isobar/PyNet.h"
+#include "hurricane/isobar/PyLayer.h"
+#include "hurricane/isobar/PyPoint.h"
+#include "hurricane/isobar/PyBox.h"
+#include "hurricane/isobar/PyComponent.h"
+#include "hurricane/isobar/PyPlug.h"
+#include "hurricane/isobar/PyHorizontal.h"
+#include "hurricane/isobar/PyVertical.h"
+#include "hurricane/isobar/PyContact.h"
+#include "hurricane/isobar/PyPin.h"
 
 namespace  Isobar {
 

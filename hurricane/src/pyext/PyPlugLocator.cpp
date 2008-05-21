@@ -52,8 +52,8 @@
 
 
 
-#include "PyPlugLocator.h"
-#include "PyPlug.h"
+#include "hurricane/isobar/PyPlugLocator.h"
+#include "hurricane/isobar/PyPlug.h"
 
 
 namespace  Isobar {

@@ -55,10 +55,10 @@
 #include <iostream>
 #include <sstream>
 
-#include "ProxyProperty.h"
+#include "hurricane/isobar/ProxyProperty.h"
 
-#include "Error.h"
-#include "Warning.h"
+#include "hurricane/Error.h"
+#include "hurricane/Warning.h"
 
 using namespace Hurricane;
 

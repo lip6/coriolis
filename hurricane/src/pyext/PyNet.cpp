@@ -52,16 +52,16 @@
 
 
 
-#include "PyNet.h"
-#include "PyName.h"
-#include "PyCell.h" 
-#include "PyPoint.h" 
-#include "PyPlugLocator.h" 
-#include "PySegmentLocator.h" 
-#include "PyComponentLocator.h" 
-#include "PyPinLocator.h" 
+#include "hurricane/isobar/PyNet.h"
+#include "hurricane/isobar/PyName.h"
+#include "hurricane/isobar/PyCell.h" 
+#include "hurricane/isobar/PyPoint.h" 
+#include "hurricane/isobar/PyPlugLocator.h" 
+#include "hurricane/isobar/PySegmentLocator.h" 
+#include "hurricane/isobar/PyComponentLocator.h" 
+#include "hurricane/isobar/PyPinLocator.h" 
 
-#include "NetExternalComponents.h"
+#include "hurricane/NetExternalComponents.h"
 using namespace Hurricane;
 
 

@@ -50,8 +50,8 @@
 
 
 
-#include "PyOccurrence.h"
-#include "PyOccurrenceLocator.h"
+#include "hurricane/isobar/PyOccurrence.h"
+#include "hurricane/isobar/PyOccurrenceLocator.h"
 
 
 namespace  Isobar {

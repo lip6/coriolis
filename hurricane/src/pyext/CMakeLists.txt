@@ -1,38 +1,94 @@
-INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH} ${HURRICANE_SOURCE_DIR}/src/hurricane)
 
-SET(sources ProxyProperty.cpp PyBox.cpp PyCell.cpp PyCellLocator.cpp
-    PyComponent.cpp PyComponentLocator.cpp PyContact.cpp
-    PyDataBase.cpp PyEntity.cpp PyHorizontal.cpp
-    PyHurricane.cpp PyHyperNet.cpp PyInstance.cpp PyInstanceLocator.cpp
-    PyLayer.cpp PyLibrary.cpp PyName.cpp PyNet.cpp PyNetLocator.cpp
-    PyOccurrence.cpp PyOccurrenceLocator.cpp PyPath.cpp PyPin.cpp PyPinLocator.cpp
-    PyPlug.cpp PyPlugLocator.cpp PyPoint.cpp PyReference.cpp PyReferenceLocator.cpp
-    PySegment.cpp PySegmentLocator.cpp PyTechnology.cpp PyTransformation.cpp
-    PyUnit.cpp PyUpdateSession.cpp PyVertical.cpp 
-)
+   include_directories ( ${PYTHON_INCLUDE_PATH}
+                         ${HURRICANE_SOURCE_DIR}/src/hurricane
+                         ${HURRICANE_SOURCE_DIR}/src/pyext
+                       )
+                   set ( sources  ProxyProperty.cpp
+                                  PyBox.cpp
+                                  PyCell.cpp
+                                  PyCellLocator.cpp
+                                  PyComponent.cpp
+                                  PyComponentLocator.cpp
+                                  PyContact.cpp
+                                  PyDataBase.cpp
+                                  PyEntity.cpp
+                                  PyHorizontal.cpp
+                                  PyHurricane.cpp
+                                  PyHyperNet.cpp
+                                  PyInstance.cpp
+                                  PyInstanceLocator.cpp
+                                  PyLayer.cpp
+                                  PyLibrary.cpp
+                                  PyName.cpp
+                                  PyNet.cpp
+                                  PyNetLocator.cpp
+                                  PyOccurrence.cpp
+                                  PyOccurrenceLocator.cpp
+                                  PyPath.cpp
+                                  PyPin.cpp
+                                  PyPinLocator.cpp
+                                  PyPlug.cpp
+                                  PyPlugLocator.cpp
+                                  PyPoint.cpp
+                                  PyReference.cpp
+                                  PyReferenceLocator.cpp
+                                  PySegment.cpp
+                                  PySegmentLocator.cpp
+                                  PyTechnology.cpp
+                                  PyTransformation.cpp
+                                  PyUnit.cpp
+                                  PyUpdateSession.cpp
+                                  PyVertical.cpp
+                                  
+                       )
+                   set ( includes hurricane/isobar/ProxyProperty.h
+                                  hurricane/isobar/PyBox.h
+                                  hurricane/isobar/PyCell.h
+                                  hurricane/isobar/PyCellLocator.h
+                                  hurricane/isobar/PyComponent.h
+                                  hurricane/isobar/PyComponentLocator.h
+                                  hurricane/isobar/PyContact.h
+                                  hurricane/isobar/PyDataBase.h
+                                  hurricane/isobar/PyEntity.h
+                                  hurricane/isobar/PyHorizontal.h
+                                  hurricane/isobar/PyHurricane.h
+                                  hurricane/isobar/PyHyperNet.h
+                                  hurricane/isobar/PyInstance.h
+                                  hurricane/isobar/PyInstanceLocator.h
+                                  hurricane/isobar/PyLayer.h
+                                  hurricane/isobar/PyLibrary.h
+                                  hurricane/isobar/PyName.h
+                                  hurricane/isobar/PyNet.h
+                                  hurricane/isobar/PyNetLocator.h
+                                  hurricane/isobar/PyOccurrence.h
+                                  hurricane/isobar/PyOccurrenceLocator.h
+                                  hurricane/isobar/PyPath.h
+                                  hurricane/isobar/PyPin.h
+                                  hurricane/isobar/PyPinLocator.h
+                                  hurricane/isobar/PyPlug.h
+                                  hurricane/isobar/PyPlugLocator.h
+                                  hurricane/isobar/PyPoint.h
+                                  hurricane/isobar/PyReference.h
+                                  hurricane/isobar/PyReferenceLocator.h
+                                  hurricane/isobar/PySegment.h
+                                  hurricane/isobar/PySegmentLocator.h
+                                  hurricane/isobar/PyTechnology.h
+                                  hurricane/isobar/PyTransformation.h
+                                  hurricane/isobar/PyUnit.h
+                                  hurricane/isobar/PyUpdateSession.h
+                                  hurricane/isobar/PyVertical.h
+                       )
 
+           add_library ( isobar SHARED ${sources} )
+ target_link_libraries ( isobar hurricane ${PYTHON_LIBRARIES} )
 
-SET(includes ProxyProperty.h PyBox.h PyCell.h PyCellLocator.h
-    PyComponent.h PyComponentLocator.h PyContact.h
-    PyDataBase.h PyEntity.h PyHorizontal.h
-    PyHurricane.h PyHyperNet.h PyInstance.h PyInstanceLocator.h
-    PyLayer.h PyLibrary.h PyName.h PyNet.h PyNetLocator.h
-    PyOccurrence.h PyOccurrenceLocator.h PyPath.h PyPin.h PyPinLocator.h
-    PyPlug.h PyPlugLocator.h PyPoint.h PyReference.h PyReferenceLocator.h
-    PySegment.h PySegmentLocator.h PyTechnology.h PyTransformation.h
-    PyUnit.h PyUpdateSession.h PyVertical.h 
-)
+           add_library ( Hurricane MODULE ${sources} ) 
+ set_target_properties ( Hurricane PROPERTIES
+                                   COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
+                                   PREFIX        ""
+                       )
+ target_link_libraries ( Hurricane isobar hurricane ${PYTHON_LIBRARIES} )
 
-ADD_LIBRARY(isobar SHARED ${sources})
-TARGET_LINK_LIBRARIES(isobar hurricane ${PYTHON_LIBRARIES})
-
-ADD_LIBRARY(Hurricane MODULE ${sources}) 
-SET_TARGET_PROPERTIES(Hurricane
-        PROPERTIES
-        COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
-        PREFIX ""
-)
-TARGET_LINK_LIBRARIES(Hurricane isobar hurricane ${PYTHON_LIBRARIES})
-
-INSTALL(TARGETS isobar DESTINATION /lib)
-INSTALL(TARGETS Hurricane DESTINATION /lib/python)
+               install ( TARGETS isobar      DESTINATION /lib )
+               install ( TARGETS Hurricane   DESTINATION /lib/python )
+               install ( FILES   ${includes} DESTINATION /include/hurricane/isobar )

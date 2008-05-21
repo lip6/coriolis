@@ -49,12 +49,12 @@
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
-#include "PyTransformation.h"
-#include "PyName.h"
-#include "PyPath.h"
-#include "PyCell.h"
-#include "PyInstance.h"
-#include "PyInstanceLocator.h"
+#include "hurricane/isobar/PyTransformation.h"
+#include "hurricane/isobar/PyName.h"
+#include "hurricane/isobar/PyPath.h"
+#include "hurricane/isobar/PyCell.h"
+#include "hurricane/isobar/PyInstance.h"
+#include "hurricane/isobar/PyInstanceLocator.h"
 
 
 namespace Isobar {

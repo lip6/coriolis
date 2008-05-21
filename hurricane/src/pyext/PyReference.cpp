@@ -52,11 +52,11 @@
 
 
 
-# include  "PyReference.h"
-# include  "PyPoint.h"
-# include  "PyName.h"
-# include  "PyCell.h"
-# include  "PyNet.h"
+#include "hurricane/isobar/PyReference.h"
+#include "hurricane/isobar/PyPoint.h"
+#include "hurricane/isobar/PyName.h"
+#include "hurricane/isobar/PyCell.h"
+#include "hurricane/isobar/PyNet.h"
 
 
 namespace  Isobar {

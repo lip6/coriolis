@@ -52,8 +52,8 @@
 
 
 
-#include "PySegmentLocator.h"
-#include "PySegment.h"
+#include "hurricane/isobar/PySegmentLocator.h"
+#include "hurricane/isobar/PySegment.h"
 
 
 namespace  Isobar {

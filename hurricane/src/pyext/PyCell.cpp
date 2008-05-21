@@ -49,18 +49,18 @@
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
-#include "PyCell.h"
-#include "PyBox.h"
-#include "PyName.h"
-#include "PyLibrary.h"
-#include "PyInstance.h"
-#include "PyOccurrence.h"
-#include "ProxyProperty.h"
-#include "PyNet.h"
-#include "PyNetLocator.h"
-#include "PyReferenceLocator.h"
-#include "PyInstanceLocator.h"
-#include "PyOccurrenceLocator.h"
+#include "hurricane/isobar/PyCell.h"
+#include "hurricane/isobar/PyBox.h"
+#include "hurricane/isobar/PyName.h"
+#include "hurricane/isobar/PyLibrary.h"
+#include "hurricane/isobar/PyInstance.h"
+#include "hurricane/isobar/PyOccurrence.h"
+#include "hurricane/isobar/ProxyProperty.h"
+#include "hurricane/isobar/PyNet.h"
+#include "hurricane/isobar/PyNetLocator.h"
+#include "hurricane/isobar/PyReferenceLocator.h"
+#include "hurricane/isobar/PyInstanceLocator.h"
+#include "hurricane/isobar/PyOccurrenceLocator.h"
 
 namespace  Isobar {
 

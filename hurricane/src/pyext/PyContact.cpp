@@ -52,11 +52,11 @@
 
 
 
-#include "PyNet.h"
-#include "PyLayer.h"
-#include "PyContact.h"
-#include "PyHorizontal.h"
-#include "PyVertical.h"
+#include "hurricane/isobar/PyNet.h"
+#include "hurricane/isobar/PyLayer.h"
+#include "hurricane/isobar/PyContact.h"
+#include "hurricane/isobar/PyHorizontal.h"
+#include "hurricane/isobar/PyVertical.h"
 
 
 namespace  Isobar {
