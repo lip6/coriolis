@@ -1,4 +1,4 @@
-#include "Technology.h"
+#include "hurricane/Technology.h"
 using namespace Hurricane;
 
 #include "ATechnology.h"

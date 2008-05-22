@@ -1,11 +1,13 @@
-#include "ATechnologyXmlParser.h"
-
-#include "ATechnology.h"
-
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#include "Technology.h"
+#include "hurricane/Technology.h"
+
+#include "ATechnology.h"
+
+#include "ATechnologyXmlParser.h"
+
+
 using namespace Hurricane;
 
 

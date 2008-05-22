@@ -1,7 +1,7 @@
 #ifndef ATECHNOLOGY_H_
 #define ATECHNOLOGY_H_
 
-#include "Property.h"
+#include "hurricane/Property.h"
 using namespace Hurricane;
 
 namespace Hurricane {

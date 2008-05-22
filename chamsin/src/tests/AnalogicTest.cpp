@@ -2,10 +2,10 @@
 
 #include <QApplication>
 
-#include "Warning.h"
-#include "Error.h"
-#include "DataBase.h"
-#include "Library.h"
+#include "hurricane/Warning.h"
+#include "hurricane/Error.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Library.h"
 using namespace Hurricane;
 
 #include "AEnv.h"

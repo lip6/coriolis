@@ -1,6 +1,6 @@
-#include "DataBase.h"
-#include "Library.h"
-#include "Technology.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Library.h"
+#include "hurricane/Technology.h"
 using namespace Hurricane;
 
 #include "crlcore/GraphicsParser.h"

@@ -1,8 +1,8 @@
 #ifndef TRANSISTOR_H
 #define TRANSISTOR_H
 
-#include "Name.h"
-#include "Cell.h"
+#include "hurricane/Name.h"
+#include "hurricane/Cell.h"
 using namespace Hurricane;
 
 namespace Hurricane {
