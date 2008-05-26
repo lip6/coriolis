@@ -30,10 +30,19 @@ class ATechnology : public PrivateProperty {
                 const string _reference;
                 double getValue() const { return _value; }
         };
-        typedef map<Name, ATechnology::PhysicalRule*> PhysicalRules;
+
+        struct PhysicalRuleNameCompare:
+            public std::binary_function<const PhysicalRule*, const PhysicalRule*, bool> {
+                bool operator()(const PhysicalRule* pr1, const PhysicalRule* pr2) const {
+                    return pr1->_name < pr2->_name;
+                }
+            };
+
+        typedef set<ATechnology::PhysicalRule*, PhysicalRuleNameCompare> PhysicalRules;
         typedef map<Layer*, PhysicalRules> OneLayerPhysicalRules;
         typedef pair<Layer*, Layer*> LayerPair;
         typedef map<LayerPair, PhysicalRules> TwoLayersPhysicalRules;
+
         static ATechnology* create(Hurricane::Technology* technology);
         static ATechnology* getATechnology(Hurricane::Technology* technology);
         const PhysicalRule* getPhysicalRule(const Name& name);

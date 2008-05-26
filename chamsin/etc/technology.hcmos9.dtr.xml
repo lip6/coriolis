@@ -1,0 +1,7 @@
+<technology name="hcmos9">
+  <physical_rules>
+    <rule name="L_TRANS" value="0.13" ref="13-1.a"/>
+    <rule name="RD" layer="diff" value="0.21" ref="2-3"/>
+    <rule name="RE" layer1="nImplant" layer2="GATE" value="0.4" ref="16-6"/>
+  </physical_rules>
+</technology>

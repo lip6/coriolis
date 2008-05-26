@@ -1,3 +1,5 @@
+#include "hurricane/DataBase.h"
+#include "hurricane/Technology.h"
 #include "hurricane/UpdateSession.h"
 using namespace Hurricane;
 
@@ -5,10 +7,20 @@ using namespace Hurricane;
 #include "ATechnology.h"
 #include "Transistor.h"
 
+namespace {
+
 const Name Transistor::DrainName("DRAIN");
 const Name Transistor::SourceName("SOURCE");
 const Name Transistor::GridName("GRID");
 const Name Transistor::BulkName("BULK");
+
+Contact* createContact(Technology* technology, Net* net, const string& layerName) {
+    Layer* layer = technology->getLayer(Name(layerName));
+    Contact* contact = Contact::create(net, layer, 0, 0);
+    return contact;
+}
+
+}
 
 Transistor::Transistor(Library* library, const Name& name, const Polarity& polarity):
     Cell(library, name),
@@ -37,6 +49,8 @@ Transistor* Transistor::create(Library* library, const Name& name, const Polarit
 
 void Transistor::_postCreate() {
    Inherit::_postCreate();
+   DataBase* db = getDataBase();
+   Technology* technology = db->getTechnology();
    _drain = Net::create(this, DrainName);
    _drain->setExternal(true);
    _source = Net::create(this, SourceName);
@@ -45,10 +59,10 @@ void Transistor::_postCreate() {
    _grid->setExternal(true);
    _bulk = Net::create(this, BulkName);
    _bulk->setExternal(true);
-   //_source20 = Contact::create(_source);
-   //_source22 = Contact::create(_source);
-   //_drain40 = Contact::create(_drain);
-   //_drain42 = Contact::create(_drain);
+   _source20 = createContact(technology, _source, "cut0");
+   _source22 = createContact(technology, _source, "cut1");
+   _drain40  = createContact(technology, _drain,  "cut0");
+   _drain42  = createContact(technology, _drain,  "cut1");
 }
 
 void Transistor::createLayout() {

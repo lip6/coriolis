@@ -13,3 +13,4 @@ find_package(Qt4 REQUIRED) # find and setup Qt4 for this project
 find_package(LibXml2 REQUIRED)
 
 add_subdirectory(src)
+add_subdirectory(etc)

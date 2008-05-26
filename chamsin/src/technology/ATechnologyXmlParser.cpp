@@ -74,6 +74,8 @@ ATechnology* parseFileAsTechnology(const char* filePath, Technology* technology)
             if (node->type == XML_ELEMENT_NODE) {
                 if (xmlStrEqual(node->name, (xmlChar*)"physical_rules")) {
                     readPhysicalRules(node, aTechnology);
+                } else {
+                    syntaxError("unknown tag");
                 }
             }
         }
