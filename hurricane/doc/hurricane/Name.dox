@@ -152,7 +152,7 @@ for_each_net(net, cellGetNets()) {
   */
  //  \{
 
- /*! \function     bool Name::IsEmpty () const;
+ /*! \function     bool Name::isEmpty () const;
   *  \Return       \true if the shared string is empty, else \false. 
   */
 

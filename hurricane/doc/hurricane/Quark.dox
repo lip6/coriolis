@@ -63,11 +63,11 @@
 Property* property = ...; // we get a property
  
 if (is_a<SharedPropery*>(property)) {
-   for_each_dbo(dbo, ((SharedProperty*)property)GetOwners()) {
+   for_each_dbo(dbo, ((SharedProperty*)property)getOwners()) {
       if (!is_a<Quark*>(dbo))
          cerr << dbo << endl;
       else
-         cerr << ((Quark*)dbo)GetOccurence() << endl;
+         cerr << ((Quark*)dbo)getOccurence() << endl;
       end_for;
    }
 }
@@ -80,7 +80,7 @@ if (is_a<SharedPropery*>(property)) {
   */
  //  \{
 
- /*! \function     const Occurrence& Quark::GetOccurrence() const;
+ /*! \function     const Occurrence& Quark::getOccurrence() const;
   *  \Return       an occurence of which this quark is a representative. 
   */
 

@@ -46,7 +46,7 @@
   *                they are subtypes of data base object and therefore can store 
   *                the properties attached to occurences. 
   *
-  *  \important    Only one quark is attached to all occurences which refer the 
+  *  \important    only one quark is attached to all occurences which refer the 
   *                same entity of the virtually unfolded hierarchy. This means 
   *                that a property placed on an occurence can be read by any 
   *                other occurence which refers the same entity of the virtually 
@@ -66,12 +66,12 @@
   * 
   *                <b>Accessing a property by its name</b> 
 \code
-Property* DBo::GetProperty(const Name& name) const;
+Property* DBo::getProperty(const Name& name) const;
 \endcode
   *                This member function returns the property of name \c \<name\> 
   *                if there is one attached to the object, else NULL. 
 \code
-Property* Occurrence::GetProperty(const Name& name) const;
+Property* Occurrence::getProperty(const Name& name) const;
 \endcode
   *                This function searches in a first time the quark representing 
   *                the occurence. 
@@ -86,12 +86,12 @@ Property* Occurrence::GetProperty(const Name& name) const;
   * 
   *                <b>Accessing the set of all properties</b> 
 \code
-Properties  DBo::GetProperties() const;
+Properties  DBo::getProperties() const;
 \endcode
   *                Return the collection of properties attached to the object (possibly 
   *                empty). 
 \code
-Properties  Occurrence::GetProperties() const;
+Properties  Occurrence::getProperties() const;
 \endcode
   *                This function searches in a first time the quark representing 
   *                the occurence. 
@@ -135,7 +135,7 @@ void Occurence::Put(Property* property);
   *                If the quark doesn't exist it is automatically created in 
   *                order to attach this first property. 
   *
-  *                Once the quark has been got or created, we can add the 
+  *                once the quark has been got or created, we can add the 
   *                property with the previous function. 
   *
   *                Two important things might happen then : The property is 
@@ -152,8 +152,8 @@ void Occurence::Put(Property* property);
   *                destroy the property which has been detached ? There is no 
   *                unique behaviour which matches all needs. In order to solve 
   *                this problem the properties must answer to two specific 
-  *                messages which are : <b>OnCapturedBy(DBo* dbo)</b> when the 
-  *                property is attached to an object and <b>OnReleasedBy(DBo* 
+  *                messages which are : <b>onCapturedBy(DBo* dbo)</b> when the 
+  *                property is attached to an object and <b>onReleasedBy(DBo* 
   *                dbo)</b> when it is detached from the object. It is within 
   *                that last message that the decision about the future of the 
   *                property must be taken. 
@@ -181,7 +181,7 @@ void Occurence::Remove(Property* property);
   *                by calling the previous function. Furthermore if this removed 
   *                property is the last one, the quark is automatically deleted. 
   *
-  *  \important    The message <b>OnReleasedBy</b> is called upon as explained 
+  *  \important    The message <b>onReleasedBy</b> is called upon as explained 
   *                above. This call will decide of the future of the removed 
   *                property. 
   *
@@ -201,7 +201,7 @@ void Occurence::ClearProperties();
   *                properties (wich may lead to their removal). Without quark 
   *                the occurence looses all its properties. 
   *
-  *  \important    Here again the message <b>OnReleasedBy</b> is called upon for 
+  *  \important    Here again the message <b>onReleasedBy</b> is called upon for 
   *                each removed property. 
   * 
   * 
@@ -215,7 +215,7 @@ void Occurence::ClearProperties();
   * 
   *  \section      secPropertyDeletionProcess  Deletion process
   *
-  *                <b>Hurricane::Property::Delete</b>
+  *                <b>Hurricane::Property::destroy</b>
   * 
   * 
   *  \section      secPropertyNaming  Naming Conventions
@@ -248,7 +248,7 @@ void Occurence::ClearProperties();
   *                collected property is of the expected type, as shown in the 
   *                following example : 
 \code
-Property* property = occurence.GetProperty("Hurricane::Selector");
+Property* property = occurence.getProperty("Hurricane::Selector");
  
 if (property && is_a<Selector*>(property)) {
    Selector* selector = (Selector*)property;
@@ -257,7 +257,7 @@ if (property && is_a<Selector*>(property)) {
 \endcode
   *                Which could become : 
 \code
-Selector* selector = (Selector*)occurence.GetProperty("Hurricane::Selector");
+Selector* selector = (Selector*)occurence.getProperty("Hurricane::Selector");
  
 if (selector) {
    ...
@@ -272,7 +272,7 @@ if (selector) {
   *                pointers and not on their character strings. The length of 
   *                the name doesn't affect the comparison performance. 
   *
-  *                On the other hand, the time to create a property name depends 
+  *                on the other hand, the time to create a property name depends 
   *                obviously of its length and of the number of names (which 
   *                fortunately are managed by efficient map containers). 
   *
@@ -283,15 +283,15 @@ if (selector) {
   *                As a matter of fact if you write, like in the previous 
   *                example : 
 \code
-Property* property = occurence.GetProperty("Hurricane::Selector");
+Property* property = occurence.getProperty("Hurricane::Selector");
 \endcode
   *                Each time the name is built and this will degrade 
   *                performance. 
   *
-  *                On the other hand if the following static member function is 
+  *                on the other hand if the following static member function is 
   *                provided : 
 \code
-const Name& Selector::GetPropertyName()
+const Name& Selector::getPropertyName()
 // ************************************
 {
    static Name NAME = "Hurricane::Selector";
@@ -300,7 +300,7 @@ const Name& Selector::GetPropertyName()
 \endcode
   *                You could write later : 
 \code
-Property* property = occurence.GetProperty(Selector::GetPropertyName());
+Property* property = occurence.getProperty(Selector::getPropertyName());
 \endcode
   *                This approach is much more efficient and presents an other 
   *                interest : you don't need to know the name of the property 
@@ -324,7 +324,7 @@ Property* property = occurence.GetProperty(Selector::GetPropertyName());
   *                That way, by defining (i.e. for the property ObjectId) the 
   *                function : 
 \code
-const Name& GetObjectIdPropertyName()
+const Name& getObjectIdPropertyName()
 // **********************************
 {
    static Name NAME = "Hurricane::ObjectId";
@@ -333,7 +333,7 @@ const Name& GetObjectIdPropertyName()
 \endcode
   *                You can write later : 
 \code
-Property* property = occurence.GetProperty(GetObjectIdPropertyName());
+Property* property = occurence.getProperty(getObjectIdPropertyName());
 \endcode
   */
 
@@ -342,7 +342,7 @@ Property* property = occurence.GetProperty(GetObjectIdPropertyName());
   */
  //  \{
 
- /*! \function     Name Property::GetName() const;
+ /*! \function     Name Property::getName() const;
   *  \Return       the name of the property : this method must absolutely be 
   *                overloaded for all new property classes, because the property 
   *                name is not a "wired in" attribute. A property being a real 
@@ -358,7 +358,7 @@ Property* property = occurence.GetProperty(GetObjectIdPropertyName());
   */
  //  \{
 
- /*! \function     void Property::OnCapturedBy(DBo* dbo);
+ /*! \function     void Property::onCapturedBy(DBo* dbo);
   *                This message is called upon when the property is added to the 
   *                properties of \c \<dbo\>. 
   *
@@ -372,7 +372,7 @@ Property* property = occurence.GetProperty(GetObjectIdPropertyName());
   *                specializing any of those two classes. 
   */
 
- /*! \function     void Property::OnReleasedBy(DBo* dbo);
+ /*! \function     void Property::onReleasedBy(DBo* dbo);
   *                This message is called upon when the property is removed from 
   *                the \c \<dbo\> properties. 
   *
@@ -413,7 +413,7 @@ Property* property = occurence.GetProperty(GetObjectIdPropertyName());
 \code
 Occurence occurence = ...; // we get an occurence
  
-for_each_property(property, occurence.GetProperties()) {
+for_each_property(property, occurence.getProperties()) {
    cerr << property << endl;
    end_for;
 }
@@ -427,7 +427,7 @@ for_each_property(property, occurence.GetProperties()) {
   */
  //  \{
 
- /*! \function     void Property::Delete();
+ /*! \function     void Property::destroy();
   *                Like the data base objects, properties can be destroyed by 
   *                calling upon this function and not the standard C++ 
   *                destructor (which is not available). 

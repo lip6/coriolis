@@ -222,7 +222,7 @@
   */
 
 
- /*! \function     void  DBo::Delete ();
+ /*! \function     void  DBo::destroy ();
   *
   *                The legal method to delete any DBo object (see \ref sDBoDelete).
   */
@@ -231,14 +231,14 @@
   */
  // \{
 
- /*! \function     Property* DBo::GetProperty ( const Name& name ) const;
+ /*! \function     Property* DBo::getProperty ( const Name& name ) const;
   *  \param        name  Name of the Property to return.
   *  \return       The property of Name \e name attached to the object, if it exists, else \NULL.
   *
   *  \remark       When writting what follows :
   *  \code
  for_each_dbo(dbo, dbos) {
-     Property* property = dbo->GetProperty("width");
+     Property* property = dbo->getProperty("width");
      if (property) {
         // do something
      }
@@ -252,7 +252,7 @@
   *  \code
  Name width = "width";
  for_each_dbo(dbo, dbos) {
-     Property* property = dbo->GetProperty(width);
+     Property* property = dbo->getProperty(width);
      if (property) {
          // do something
      }
@@ -263,7 +263,7 @@
   *  \code
  static Name WIDTH = "width";
  for_each_dbo(dbo, dbos) {
-     Property* property = dbo->GetProperty(WIDTH);
+     Property* property = dbo->getProperty(WIDTH);
      if (property) {
          // do something
      }
@@ -273,7 +273,7 @@
   *                This remark applies each time you handle names.
   */
 
- /*! \function     Propertes  DBo::GetProperties () const;
+ /*! \function     Propertes  DBo::getProperties () const;
   *  \return       The property Collection associated to the object (possibly empty).
   */
 
@@ -284,7 +284,7 @@
   */
  // \{
 
- /*! \function     bool  DBo::HasProperty () const;
+ /*! \function     bool  DBo::hasProperty () const;
   *  \return       \true if the object has at least a property, else \false.
   */
 
@@ -295,7 +295,7 @@
   */
  // \{
 
- /*! \function     void  DBo::Put ( Property* property );
+ /*! \function     void  DBo::put ( Property* property );
   *
   *                Adds the Property \e property to the set of object
   *                properties. Properties being named, if an other one already
@@ -308,20 +308,20 @@
   *  \caution      An exception is thrown if the Property pointer is \NULL.
   */
 
- /*! \function     void  DBo::Remove ( Property* property );
-  *                Removes the property \e property from the set of object properties.
+ /*! \function     void  DBo::remove ( Property* property );
+  *                removes the property \e property from the set of object properties.
   *
   *  \remark       Does nothing if the Property object is not attached to the object.
   *
   *  \caution      An exception is thrown if the Property pointer is \NULL.
   */
 
- /*! \function     void  DBo::RemoveProperty ( const Name& name );
-  *                Removes the property of name \e name if it exists.
+ /*! \function     void  DBo::removeProperty ( const Name& name );
+  *                removes the property of name \e name if it exists.
   */
 
- /*! \function     void  DBo::ClearProperties ();
-  *                Removes all properties attached to this object.
+ /*! \function     void  DBo::clearProperties ();
+  *                removes all properties attached to this object.
   */
 
  // \}
@@ -352,11 +352,11 @@
  }
 
 
- /*  \addtogroup   GetStringFunctions
+ /*  \addtogroup   getStringFunctions
   */
  // \{
 
- /*  \function     string  GetString ( const Hurricane::DBo& dbo );
+ /*  \function     string  getString ( const Hurricane::DBo& dbo );
   *                Convert any Hurricane::DBo object into a \string.
   */
 

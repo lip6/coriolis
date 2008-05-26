@@ -40,8 +40,8 @@
   */
  //  \{
 
- /*! \function     CompositeLayer* CompositeLayer::Create(Technology* technology,const Name& name,const CompositeLayer::Type& type,const Unit& minimalSize = 0,const Unit& minimalSpacing = 0);
-  *                Creates and returns a new composite layer named \c \<name\>, 
+ /*! \function     CompositeLayer* CompositeLayer::create(Technology* technology,const Name& name,const CompositeLayer::Type& type,const Unit& minimalSize = 0,const Unit& minimalSpacing = 0);
+  *                creates and returns a new composite layer named \c \<name\>, 
   *                of type \c \<type\> for the given technology (some 
   *                geometrical characteristics can also be specified). 
   *
@@ -56,49 +56,49 @@
   */
  //  \{
 
- /*! \function     const CompositeLayer::Type& CompositeLayer::GetType() const;
+ /*! \function     const CompositeLayer::Type& CompositeLayer::getType() const;
   *  \Return       the composite layer type. 
   */
 
- /*! \function     Unit CompositeLayer::GetContactSize(BasicLayer* basicLayer) const;
+ /*! \function     Unit CompositeLayer::getContactSize(const BasicLayer* basicLayer) const;
   *  \Return       the contact size associated to the basic layer 
   *                \c \<basicLayer\> (0 if this basic layer doesn't pertains to 
   *                composite one). 
   */
 
- /*! \function     Unit CompositeLayer::GetSegmentSize(BasicLayer* basicLayer) const;
+ /*! \function     Unit CompositeLayer::getSegmentSize(const BasicLayer* basicLayer) const;
   *  \Return       the segment size associated to the basic layer 
   *                \c \<basicLayer\> (0 if this basic layer doesn't pertains to 
   *                composite one). 
   */
 
- /*! \function     Unit CompositeLayer::GetSegmentExtention(BasicLayer* basicLayer) const;
+ /*! \function     Unit CompositeLayer::getSegmentExtention(const BasicLayer* basicLayer) const;
   *  \Return       the segment extension associated to the basic layer 
   *                \c \<basicLayer\> (0 if this basic layer doesn't pertains to 
   *                composite one). 
   */
 
- /*! \function     Unit CompositeLayer::GetPadSize(BasicLayer* basicLayer) const;
+ /*! \function     Unit CompositeLayer::getPadSize(const BasicLayer* basicLayer) const;
   *  \Return       the pad size associated to the basic layer \c \<basicLayer\> 
   *                (0 if this basic layer doesn't pertains to composite one). 
   */
 
- /*! \function     const Unit& CompositeLayer::GetMaximalContactSize() const;
+ /*! \function     const Unit& CompositeLayer::getMaximalContactSize() const;
   *  \Return       the maximum contact size for all the basic layers composing 
   *                the composite layer. 
   */
 
- /*! \function     const Unit& CompositeLayer::GetMaximalSegmentSize() const;
+ /*! \function     const Unit& CompositeLayer::getMaximalSegmentSize() const;
   *  \Return       the maximum segment size for all the basic layers composing 
   *                the composite layer. 
   */
 
- /*! \function     const Unit& CompositeLayer::GetMaximalSegmentExtention() const;
+ /*! \function     const Unit& CompositeLayer::getMaximalSegmentExtention() const;
   *  \Return       the maximum segment extension for all the basic layers 
   *                composing the composite layer. 
   */
 
- /*! \function     const Unit& CompositeLayer::GetMaximalPadSize() const;
+ /*! \function     const Unit& CompositeLayer::getMaximalPadSize() const;
   *  \Return       the maximum pad size for all the basic layers composing the 
   *                composite layer. 
   */
@@ -110,8 +110,8 @@
   */
  //  \{
 
- /*! \function     void CompositeLayer::Add(BasicLayer* basicLayer,const Unit& contactSize,const Unit& segmentSize,const Unit& segmentExtention,const Unit& padSize);
-  *                Adds the basic layer with associated characteristics 
+ /*! \function     void CompositeLayer::add(BasicLayer* basicLayer,const Unit& contactSize,const Unit& segmentSize,const Unit& segmentExtention,const Unit& padSize);
+  *                adds the basic layer with associated characteristics 
   *                specified by the other arguments. 
   *
   *  \caution      Throws an exception if the basic layer is null or already 
@@ -119,16 +119,16 @@
   *
   *                Usage example : 
 \code
-DataBase* dataBase = GetDataBase();
+DataBase* dataBase = getDataBase();
  
 Technology* technology = dataBaseGetTechnology();
  
 CompositeLayer* metal2 = technologyGetCompositeLayer("metal2"):
  
-Unit contactSize = GetUnit(0.5);
-Unit segmentSize = GetUnit(1.0);
-Unit segmentExtention = GetUnit(1.3);
-Unit padSize = GetUnit(0);
+Unit contactSize = getUnit(0.5);
+Unit segmentSize = getUnit(1.0);
+Unit segmentExtention = getUnit(1.3);
+Unit padSize = getUnit(0);
  
 BasicLayer* CM2 = technologyGetBasicLayer("CM2");
  
@@ -143,8 +143,8 @@ assert(metal2GetPadSize(CM2) == padSize);
   *                
   */
 
- /*! \function     void CompositeLayer::Remove(BasicLayer* basicLayer);
-  *                Removes the basic layer from the composite layer. 
+ /*! \function     void CompositeLayer::remove(BasicLayer* basicLayer);
+  *                removes the basic layer from the composite layer. 
   *
   *  \caution      Throws an exception if the basic layer is null or it doesn't 
   *                pertain to the composite layer. 

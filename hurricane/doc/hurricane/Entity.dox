@@ -18,12 +18,12 @@
   */
  // \{
 
- /*! \function     Cell* Entity::GetCell () const;
+ /*! \function     Cell* Entity::getCell () const;
   *  \return       Returns the cell owning this entity (when the Entity is a Cell,
   *                the Cell itself is returned)
   */
 
- /*! \function     Box  Entity::GetBoundingBox () const;
+ /*! \function     Box  Entity::getBoundingBox () const;
   *  \return       Returns the bounding box of the entity. It is defined as the
   *                smallest box enclosing the entity or its constituents.
   *

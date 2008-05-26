@@ -19,8 +19,8 @@
   */
  //  \{
 
- /*! \function     BasicLayer* BasicLayer::Create(Technology* technology,const Name& name,const BasicLayer::Type& type,unsigned extractNumber,const Unit& minimalSize = 0,const Unit& minimalSpacing = 0);
-  *                Creates and returns a new basic layer named \c \<name\>, of 
+ /*! \function     BasicLayer* BasicLayer::create(Technology* technology,const Name& name,const BasicLayer::Type& type,unsigned extractNumber,const Unit& minimalSize = 0,const Unit& minimalSpacing = 0);
+  *                creates and returns a new basic layer named \c \<name\>, of 
   *                type \c \<type\> for the given technology (some geometrical 
   *                characteristics can also be specified). 
   *
@@ -45,27 +45,15 @@
   */
  //  \{
 
- /*! \function     const BasicLayer::Type& BasicLayer::GetType() const;
+ /*! \function     const BasicLayer::Type& BasicLayer::getType() const;
   *  \Return       the basic layer type. 
   */
 
- /*! \function     unsigned BasicLayer::GetExtractNumber() const;
+ /*! \function     unsigned BasicLayer::getExtractNumber() const;
   *  \Return       the extract number. 
   */
 
- /*! \function     const unsigned short& BasicLayer::GetRedValue() const;
-  *                No description.
-  */
-
- /*! \function     const unsigned short& BasicLayer::GetGreenValue() const;
-  *                No description.
-  */
-
- /*! \function     const unsigned short& BasicLayer::GetBlueValue() const;
-  *                No description.
-  */
-
- /*! \function     const string& BasicLayer::GetFillPattern() const;
+ /*  \function     const string& BasicLayer::getFillPattern() const;
   *                Basic layers have graphic display characteristics which are 
   *                defined by both a color and a filling pattern. The above 
   *                methods provide the corresponding accessor functions. 
@@ -89,7 +77,7 @@
   *                value). 
   */
 
- /*! \function     double BasicLayer::GetDisplayThreshold() const;
+ /*  \function     double BasicLayer::getDisplayThreshold() const;
   *                In order to get an efficient graphic display we need : 
   *
   *                On one hand, when we are in close view, quickly filter 
@@ -119,18 +107,18 @@
   */
  //  \{
 
- /*! \function     void BasicLayer::SetColor(unsigned short redValue, unsigned short greenValue, unsigned short blueValue);
+ /*  \function     void BasicLayer::SetColor(unsigned short redValue, unsigned short greenValue, unsigned short blueValue);
   *                Sets the color of a basic layer. 
   */
 
- /*! \function     void BasicLayer::SetFillPattern(const string& fillPattern);
+ /*  \function     void BasicLayer::SetFillPattern(const string& fillPattern);
   *                Sets the filling pattern of a basic layer. 
   *
   *  \caution      Throws an exception if the string does't obey to the rules 
   *                described above. 
   */
 
- /*! \function     void BasicLayer::SetDisplayThreshold(double threshold);
+ /*  \function     void BasicLayer::SetDisplayThreshold(double threshold);
   *                Sets the display threshold of a basic layer. 
   */
 

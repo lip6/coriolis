@@ -30,8 +30,8 @@
   */
  // \{
 
- /*! \function     DataBase* DataBase::Create ();
-  *                Creates and returns a pointer to a new DataBase.
+ /*! \function     DataBase* DataBase::create ();
+  *                creates and returns a pointer to a new DataBase.
   *
   *  \caution      An exception is thrown if a Database already exists.
   */
@@ -43,11 +43,11 @@
   */
  // \{
 
- /*! \function     Technology* DataBase::GetTechnology () const;
+ /*! \function     Technology* DataBase::getTechnology () const;
   *  \return       the Technology if it exists, else \NULL.
   */
 
- /*! \function     Technology* DataBase::GetRootLibrary () const;
+ /*! \function     Technology* DataBase::getRootLibrary () const;
   *  \return       the root Library if it exists, else \NULL.
   */
 
@@ -58,7 +58,7 @@
   *  \{
   */
 
- /*! \function     DataBase* GetDataBase ();
+ /*! \function     DataBase* getDataBase ();
   *                This global generic function returns the current
   *                DataBase, if it has been created and not destroyed,
   *                else \NULL.

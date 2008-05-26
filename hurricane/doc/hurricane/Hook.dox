@@ -99,14 +99,14 @@
   */
  //  \{
 
- /*! \function     Component* Hook::GetComponent() const;
+ /*! \function     Component* Hook::getComponent() const;
   *  \Return       the component whose hook represents a part. 
   *
   *  \remark       The result is never NULL because hooks are byforce nested 
   *                objects in their component. 
   */
 
- /*! \function     Hook* Hook::GetNextHook() const;
+ /*! \function     Hook* Hook::getNextHook() const;
   *  \Return       the next hook within the ring. 
   *
   *  \remark       The result is never NULL because every hook has by 
@@ -114,14 +114,14 @@
   *                empty). 
   */
 
- /*! \function     Hook* Hook::GetPreviousHook() const;
+ /*! \function     Hook* Hook::getPreviousHook() const;
   *  \Return       the previous hook within the ring. 
   *
-  *  \remark       Less efficient than GetNextHook because it requires a 
+  *  \remark       Less efficient than getNextHook because it requires a 
   *                complete ring loop. 
   */
 
- /*! \function     Hook* Hook::GetMasterHook() const;
+ /*! \function     Hook* Hook::getMasterHook() const;
   *  \Return       the master of the relation master-slaves identified by the 
   *                hook. 
   *
@@ -129,7 +129,7 @@
   *                the hook is a slave and has no associated master. 
   */
 
- /*! \function     Hook* Hook::GetNextMasterHook() const;
+ /*! \function     Hook* Hook::getNextMasterHook() const;
   *  \Return       the first master found when starting the search immediately 
   *                after the given hook. 
   *
@@ -138,7 +138,7 @@
   *                the ring. 
   */
 
- /*! \function     Hook* Hook::GetPreviousMasterHook() const;
+ /*! \function     Hook* Hook::getPreviousMasterHook() const;
   *  \Return       the first master found when starting a backwards search 
   *                immediately before the given hook. 
   *
@@ -150,7 +150,7 @@
   *                (else it would be trully inefficient). 
   */
 
- /*! \function     Hooks Hook::GetHooks() const;
+ /*! \function     Hooks Hook::getHooks() const;
   *  \Return       the collection of hooks of the ring containing the given 
   *                hook. 
   *
@@ -158,7 +158,7 @@
   *                the hook itself. 
   */
 
- /*! \function     Hooks Hook::GetSlaveHooks() const;
+ /*! \function     Hooks Hook::getSlaveHooks() const;
   *  \Return       the hook collection which are slaves of the given hook. 
   *
   *  \remarks      This collection will be empty if the given hook is not a 
@@ -179,14 +179,14 @@
   */
  //  \{
 
- /*! \function     bool Hook::IsMaster() const;
+ /*! \function     bool Hook::isMaster() const;
   *  \Return       \true if the hook must be considered as a master, else 
   *                \false. 
   *
   *  \remark       For any new kind of hook this predicate must be overloaded. 
   */
 
- /*! \function     bool Hook::IsAttached() const;
+ /*! \function     bool Hook::isAttached() const;
   *                If the hook is a slave : 
   *
   *  \Return       \true if the hook has an associated master, else \false. 
@@ -210,10 +210,10 @@
   */
  //  \{
 
- /*! \function     Hook* Hook::Detach();
+ /*! \function     Hook* Hook::detach();
   *                If the hook is a slave : 
   *
-  *                Detaches the hook from its ring and returns its old 
+  *                detaches the hook from its ring and returns its old 
   *                predecessor. 
   *
   *  \remark       Will return NULL if the hook is the only one in the ring. 
@@ -233,7 +233,7 @@
   *                The returned hook, if not NULL, is byforce a master. 
   */
 
- /*! \function     Hook* Hook::Attach(Hook* masterHook);
+ /*! \function     Hook* Hook::attach(Hook* masterHook);
   *                If the hook (this) is a slave : 
   *
   *                The function inserts the hook immediately before 
@@ -254,8 +254,8 @@
   *                \c \<masterHook\> is not a master hook. 
   */
 
- /*! \function     Hook* Hook::Merge(Hook* masterHook);
-  *                Merges the rings represented by the two hooks which both must 
+ /*! \function     Hook* Hook::merge(Hook* masterHook);
+  *                merges the rings represented by the two hooks which both must 
   *                be masters, returns \c \<masterHook\>. 
   *
   *  \remark       Throws an exception if both hooks are not masters. 

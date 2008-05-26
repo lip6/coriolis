@@ -13,8 +13,8 @@
   */
  // \{
 
- /*! \function     Cell* Cell::Create ( Library* library, const Name& name );
-  *                Creates and returns a new Cell named \e name for the Library
+ /*! \function     Cell* Cell::create ( Library* library, const Name& name );
+  *                creates and returns a new Cell named \e name for the Library
   *                \e library.
   *
   *  \caution      Throws an exception if the Library is null, if the Name is
@@ -29,76 +29,76 @@
   */
  // \{
 
- /*! \function     Library* Cell::GetLibrary () const;
+ /*! \function     Library* Cell::getLibrary () const;
   *                Returns the Library owning the Cell.
   */
 
- /*! \function     const Name& Cell::GetName () const;
+ /*! \function     const Name& Cell::getName () const;
   *                Returns the Name of the Cell.
   */
 
- /*! \function     Instance* Cell::GetInstance ( const Name& name ) const;
+ /*! \function     Instance* Cell::getInstance ( const Name& name ) const;
   *                Returns the Instance of name \e name if it exists, else \NULL.
   */
 
- /*! \function     Instances Cell::GetInstances () const;
+ /*! \function     Instances Cell::getInstances () const;
   *                Returns the Collection of all instances called by the Cell.
   */
 
- /*! \function     Instances Cell::GetInstancesUnder ( const Box& area ) const;
+ /*! \function     Instances Cell::getInstancesUnder ( const Box& area ) const;
   *                Returns the collection of all instances of the Cell intersecting the
   *                given rectangular \e area.
   */
 
- /*! \function     Instances Cell::GetSlaveInstances () const;
+ /*! \function     Instances Cell::getSlaveInstances () const;
   *                Returns the Collection of instances whose master is this Cell.
   */
 
- /*! \function     Net* Cell::GetNet ( const Name& name ) const;
+ /*! \function     Net* Cell::getNet ( const Name& name ) const;
   *                Returns the Net of name \e name if it exists, else \NULL.
   */
 
- /*! \function     Nets Cell::GetNets () const;
+ /*! \function     Nets Cell::getNets () const;
   *                Returns the Collection of all nets of the Cell.
   */
 
- /*! \function     Nets Cell::GetGlobalNets () const;
+ /*! \function     Nets Cell::getGlobalNets () const;
   *                Returns the Collection of all global nets of the Cell.
   */
 
- /*! \function     Nets Cell::GetExternalNets () const;
+ /*! \function     Nets Cell::getExternalNets () const;
   *                Returns the Collection of all external nets of the Cell.
   */
 
- /*! \function     Nets Cell::GetInternalNets () const;
+ /*! \function     Nets Cell::getInternalNets () const;
   *                Returns the Collection of all internal nets of the Cell.
   */
 
- /*! \function     Nets Cell::GetClockNets () const;
+ /*! \function     Nets Cell::getClockNets () const;
   *                Returns the Collection of all clock nets of the Cell.
   */
 
- /*! \function     Nets Cell::GetSupplyNets () const;
+ /*! \function     Nets Cell::getSupplyNets () const;
   *                Returns the Collection of all supply nets of the Cell.
   */
 
- /*! \function     Slice* Cell::GetSlice ( const Layer* layer ) const;
+ /*! \function     Slice* Cell::getSlice ( const Layer* layer ) const;
   *                Returns the Slice associated with the Layer \e layer if it exists, else \NULL.
   */
 
- /*! \function     Slices  Cell::GetSlices ( const Layer::Mask& mask = ~0 ) const;
+ /*! \function     Slices  Cell::getSlices ( const Layer::Mask& mask = ~0 ) const;
   *                Returns the Collection of slices of a Cell.
   */
 
- /*! \function     Views  Cell::GetViews () const;
+ /*  \function     Views  Cell::getViews () const;
   *                Returns the Collection of graphical views of a Cell.
   */
 
- /*! \function     Views  Cell::GetMainViews () const;
+ /*  \function     Views  Cell::getMainViews () const;
   *                Returns the Collection of main graphical views of a Cell.
   */
 
- /*! \function     Views  Cell::GetImpactedMainViews () const;
+ /*  \function     Views  Cell::getImpactedMainViews () const;
   *                Returns the Collection of main graphical views we should update after
   *                a Cell has been modified.
   *
@@ -107,11 +107,11 @@
   *                of cells which call directly or indirectly the Cell.
   */
 
- /*! \function     Rubbers  Cell::GetRubbers () const;
+ /*! \function     Rubbers  Cell::getRubbers () const;
   *                Returns the Collection of all Rubbers of a Cell.
   */
 
- /*! \function     Rubbers Cell::GetRubbersUnder ( const Box& area ) const;
+ /*! \function     Rubbers Cell::getRubbersUnder ( const Box& area ) const;
   *                Returns the collection of all Rubbers of the Cell intersecting the
   *                given rectangular \e area.
   *
@@ -119,11 +119,11 @@
   *                in this collection.
   */
 
- /*! \function     Components  Cell::GetComponents ( const Layer::Mask& mask = ~0 ) const;
+ /*! \function     Components  Cell::getComponents ( const Layer::Mask& mask = ~0 ) const;
   *                Returns the Collection of all Components of the Cell.
   */
 
- /*! \function     Components Cell::GetComponentsUnder ( const Box& area, const Layer::Mask& mask = ~0 ) const;
+ /*! \function     Components Cell::getComponentsUnder ( const Box& area, const Layer::Mask& mask = ~0 ) const;
   *                Returns the collection of all Components of the Cell intersecting the
   *                given rectangular \e area.
   *
@@ -131,7 +131,7 @@
   *                in this collection.
   */
 
- /*! \function     Occurrences  Cell::GetOccurrences ( unsigned searchDepth=(unsigned)-1 ) const;
+ /*! \function     Occurrences  Cell::getOccurrences ( unsigned searchDepth=(unsigned)-1 ) const;
   *                Returns the Collection of all Occurrences belonging to this Cell.
   *
   *  \remark       The search depth is decremented each time a hirearchical
@@ -139,7 +139,7 @@
   *                (the value \c INFINITE is equal to \c (unsigned)-1) .
   */
 
- /*! \function     Occurrences  Cell::GetOccurrencesUnder ( const Box& area, unsigned searchDepth=(unsigned)-1 ) const;
+ /*! \function     Occurrences  Cell::getOccurrencesUnder ( const Box& area, unsigned searchDepth=(unsigned)-1 ) const;
   *                Returns the Collection of all Occurrences belonging to this Cell and
   *                intersecting the given rectangular area.
   *
@@ -151,12 +151,12 @@
   *                entities are taken into account in this Collection.
   */
 
- /*! \function     Box  Cell::GetAbutmentBox () const;
+ /*! \function     Box  Cell::getAbutmentBox () const;
   *                Returns Returns the abutment box of the cell (which is defined by the
   *                designer unlike the bounding box which is managed dynamically).
   */
 
- /*! \function     Symbol* Cell::GetSymbol () const;
+ /*  \function     Symbol* Cell::getSymbol () const;
   *                Returns the symbol associated to the cell.
   */
 
@@ -167,14 +167,14 @@
   */
  // \{
 
- /*! \function     bool  Cell::IsCalledBy ( Cell* cell ) const;
+ /*! \function     bool  Cell::isCalledBy ( Cell* cell ) const;
   *                Returns \true if the cell \this is directly or indirectly called by
   *                the Cell \e cell. This functions allows to check that there is
   *                no cyclic instance calls of cells (it is by default,
   *                automatically called when creating an instance).
   */
 
- /*! \function     bool  Cell::IsTerminal () const;
+ /*! \function     bool  Cell::isTerminal () const;
   *                Returns \true if the Cell is marked as terminal (meaning that it has
   *                no inside or that we dont want to take it into account), else
   *                \false.
@@ -187,7 +187,7 @@
   */
  // \{
 
- /*! \function     void  Cell::SetName ( const Name& name );
+ /*! \function     void  Cell::setName ( const Name& name );
   *                Allows to change the Cell Name.
   *
   *  \remark       Throws an exception if the new \e name is empty or if the
@@ -195,8 +195,8 @@
   *                name.
   */
 
- /*! \function     void  Cell::SetAbutmentBox ( const Box& abutmentBox );
-  *                Sets Cell abutment box.
+ /*! \function     void  Cell::setAbutmentBox ( const Box& abutmentBox );
+  *                sets Cell abutment box.
   *
   *  \remark       At the Cell creation the abutment box is empty. This one must
   *                be set through this function. It is possible also, once
@@ -204,19 +204,19 @@
   *                Box as argument.
   */
 
- /*! \function     void  Cell::SetTerminal ( bool state );
-  *                Sets Cell terminal status to \e state.
+ /*! \function     void  Cell::setTerminal ( bool state );
+  *                sets Cell terminal status to \e state.
   */
 
- /*! \function     void  Cell::SetSymbol ( Symbol* symbol );
+ /*  \function     void  Cell::setSymbol ( Symbol* symbol );
   *                Associates the symbol \e symbol to the Cell.
   */
 
- /*! \function     void  Cell::Materialize ();
-  *                Materializes all components of all the nets of the Cell.
+ /*! \function     void  Cell::materialize ();
+  *                materializes all components of all the nets of the Cell.
   */
 
- /*! \function     void  Cell::Unmaterialize ();
+ /*! \function     void  Cell::unmaterialize ();
   *                De-materializes all components of all the nets of the Cell.
   */
 

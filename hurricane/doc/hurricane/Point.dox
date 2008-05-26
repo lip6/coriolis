@@ -52,15 +52,15 @@
   */
  //  \{
 
- /*! \function     void Point::SetX(const Unit& x);
+ /*! \function     void Point::setX(const Unit& x);
   *                Modifies point abscissa. 
   */
 
- /*! \function     void Point::SetY(const Unit& y);
+ /*! \function     void Point::setY(const Unit& y);
   *                Modifies point ordinate. 
   */
 
- /*! \function     Point& Point::Translate(const Unit& dx, const Unit& dy);
+ /*! \function     Point& Point::translate(const Unit& dx, const Unit& dy);
   *                Translates the point of dx and dy. 
   */
 

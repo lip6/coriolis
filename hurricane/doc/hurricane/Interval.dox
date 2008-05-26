@@ -78,35 +78,35 @@
   */
  //  \{
 
- /*! \function     const Unit& Interval::GetVMin() const;
+ /*! \function     const Unit& Interval::getVMin() const;
   *  \Return       the VMin value : meaningful only for a non empty interval. 
   */
 
- /*! \function     const Unit& Interval::GetVMax() const;
+ /*! \function     const Unit& Interval::getVMax() const;
   *  \Return       the VMax value : meaningful only for a non empty interval. 
   */
 
- /*! \function     Unit Interval::GetCenter() const;
+ /*! \function     Unit Interval::getCenter() const;
   *  \Return       the interval center value : meaningful only for a non empty 
   *                interval. 
   */
 
- /*! \function     Unit Interval::GetSize() const;
+ /*! \function     Unit Interval::getSize() const;
   *  \Return       the interval size : meaningful only for a non empty interval. 
   */
 
- /*! \function     Unit Interval::GetHalfSize() const;
+ /*! \function     Unit Interval::getHalfSize() const;
   *  \Return       the half interval width : meaningful only for a non empty 
   *                interval. 
   */
 
- /*! \function     Interval Interval::GetUnion(const Interval& interval) const;
+ /*! \function     Interval Interval::getUnion(const Interval& interval) const;
   *  \Return       the smallest enclosing interval containing the intervals 
   *                \c \<this\> and \c \<interval\>. The returned interval may be 
   *                empty if both are. 
   */
 
- /*! \function     Interval Interval::GetIntersection(const Interval& interval) const;
+ /*! \function     Interval Interval::getIntersection(const Interval& interval) const;
   *  \Return       interval representing the overlapping region. This interval 
   *                is empty if either one of the two intervals is empty or if 
   *                they are disjoint. 
@@ -119,26 +119,26 @@
   */
  //  \{
 
- /*! \function     bool Interval::IsEmpty() const;
+ /*! \function     bool Interval::isEmpty() const;
   *  \Return       \true if the interval is empty, else \false. 
   */
 
- /*! \function     bool Interval::IsPonctual() const;
+ /*! \function     bool Interval::isPonctual() const;
   *  \Return       \true if the interval is reduced to a value, else \false. 
   */
 
- /*! \function     bool Interval::Contains(const Unit& v) const;
+ /*! \function     bool Interval::contains(const Unit& v) const;
   *  \Return       \true if the interval is non empty and contains the value 
   *                defined by \c \<v\> else \false. 
   */
 
- /*! \function     bool Interval::Contains(const Interval& interval) const;
+ /*! \function     bool Interval::contains(const Interval& interval) const;
   *  \Return       \true if the two intervals are non empty and if the interval 
   *                \c \<this\> contains the interval \c \<interval\>, else 
   *                \false. 
   */
 
- /*! \function     bool Interval::Intersect(const Interval& interval) const;
+ /*! \function     bool Interval::intersect(const Interval& interval) const;
   *  \Return       \true if the two intervals are non empty and if they overlap, 
   *                else \false. 
   */
@@ -150,47 +150,47 @@
   */
  //  \{
 
- /*! \function     Interval& Interval::MakeEmpty();
+ /*! \function     Interval& Interval::makeEmpty();
   *                Transforms the interval into an empty one. 
   */
 
- /*! \function     Interval& Interval::Inflate(const Unit& dv);
+ /*! \function     Interval& Interval::inflate(const Unit& dv);
   *                Expands (or contracts) the interval, if not empty, in each 
   *                direction of the quantity \c \<dv\>. This quantity might be 
   *                negative enough to transform it into an empty interval. 
   */
 
- /*! \function     Interval& Interval::Inflate(const Unit& dvMin, const Unit& dvMax);
+ /*! \function     Interval& Interval::inflate(const Unit& dvMin, const Unit& dvMax);
   *                Expands (or contracts) the interval, if not empty, on the 
   *                left of the quantity \c \<dvMin\> and on the right of the 
   *                quantity \c \<dvMax\>. Those quantities might be negative 
   *                enough to transform it into an empty interval. 
   */
 
- /*! \function     Interval& Interval::Merge(const Unit& v);
+ /*! \function     Interval& Interval::merge(const Unit& v);
   *                Expands the interval in order that it encloses the value 
   *                defined \c \<v\>. If the interval was initially empty it 
   *                becomes reduced to the enclosed value. 
   */
 
- /*! \function     Interval& Interval::Merge(const Interval& interval);
+ /*! \function     Interval& Interval::merge(const Interval& interval);
   *                Expands the interval in order that it encloses, if not empty, 
   *                the interval \c \<interval\>. If the interval \c \<this\> was 
   *                initially empty it becomes reduced to the enclosed interval. 
   */
 
- /*! \function     Interval& Interval::Intersection(const Unit& vMin, const Unit& vMax);
+ /*! \function     Interval& Interval::intersection(const Unit& vMin, const Unit& vMax);
   *                The interval becomes the intersection of itself and 
   *                <b>[vMin,vMax]</b>. 
   */
 
- /*! \function     Interval& Interval::Intersection(const Interval& interval);
+ /*! \function     Interval& Interval::intersection(const Interval& interval);
   *                The interval becomes the intersection of itself and 
   *                <b>interval</b>. 
   */
 
- /*! \function     Interval& Interval::Translate(const Unit& dv);
-  *                Translates the interval, if not empty, of the quantity 
+ /*! \function     Interval& Interval::translate(const Unit& dv);
+  *                translates the interval, if not empty, of the quantity 
   *                \c \<dv\>. 
   *
   *                Exemple : 
@@ -198,7 +198,7 @@
 Interval interval1 = Interval(10, 100);
 Interval interval2 = interval1;
  
-assert(interval1.Translate(10) == interval2.Inflate(-10, 10));
+assert(interval1.translate(10) == interval2.inflate(-10, 10));
 \endcode
   *
   *                

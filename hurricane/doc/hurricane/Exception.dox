@@ -12,11 +12,9 @@
   *                The Exception class groups all exceptions thrown by functions 
   *                from the API. This virtual class is only useful to catch 
   *                exceptions originating from one of those functions. 
-  */
-
-
-
- /*! \section      secExceptionExample  Example
+  * 
+  * 
+  *  \section      secExceptionExample  Example
   *
 \code
 try {

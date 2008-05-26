@@ -77,15 +77,15 @@ namespace MyTool {
      protected:
        int  _value;
      public:
-               int     GetValue    () const { return _value; }
+               int     getValue    () const { return _value; }
        virtual string  _getTypeName() const { return "MyClass"; };
-       virtual string  _getString  () const { return "<MyClass"+GetString(_value)+">"; };
+       virtual string  _getString  () const { return "<MyClass"+getString(_value)+">"; };
        virtual Record* _getRecord  () const;
   };
 
-  Record* MyClass::GetRecord () const {
+  Record* MyClass::getRecord () const {
     Record* record = new Record(_getString());
-    record->Add ( GetSlot("_value",&_value) );
+    record->Add ( getSlot("_value",&_value) );
     return record;
   }
 } // End of MyTool namespace.
@@ -122,21 +122,21 @@ namespace MyTool {
      protected:
        int  _value;
      public:
-       int     GetValue    () const { return _value; }
+       int     getValue    () const { return _value; }
        string  _getTypeName() const { return "MyLightClass"; };
-       string  _getString  () const { return "<MyLightClass"+GetString(_value)+">"; };
+       string  _getString  () const { return "<MyLightClass"+getString(_value)+">"; };
        Record* _getRecord  () const;
   };
 
-  Record* MyLightClass::GetRecord () const {
+  Record* MyLightClass::getRecord () const {
     Record* record = new Record(_getString());
-    record->Add ( GetSlot("_value",&_value) );
+    record->Add ( getSlot("_value",&_value) );
     return record;
   }
 } // End of MyTool namespace.
 \endcode
   *
-  *                The methods \b _getTypeName() , \b _getString() and \b GetRecord()
+  *                The methods \b _getTypeName() , \b _getString() and \b getRecord()
   *                are now non-virtual and there's no call to \b SetNestedSlotAdapter() .
   *
   *
@@ -158,21 +158,21 @@ template<>
 \endcode
   *
   *
-  * \section       sGetStringAndGetSlot  GetString() and GetSlot() functions
+  * \section       sgetStringAndgetSlot  getString() and getSlot() functions
   *
   *                When a class or type is provided with Inspector support,
   *                you may uses the two generic functions below :
 \code
-template<typename T> inline string            GetString ( T* t );
-template<typename T> inline string            GetString ( T  t );
-template<typename T> inline Hurricane::Slot*  GetSlot ( const string& name, T* t );
-template<typename T> inline Hurricane::Slot*  GetSlot ( const string& name, T  t );
+template<typename T> inline string            getString ( T* t );
+template<typename T> inline string            getString ( T  t );
+template<typename T> inline Hurricane::Slot*  getSlot ( const string& name, T* t );
+template<typename T> inline Hurricane::Slot*  getSlot ( const string& name, T  t );
 \endcode
   *
-  *                GetString() may be used to print some debugging informations
+  *                getString() may be used to print some debugging informations
   *                on \stdout.
   *
-  *                GetSlot() used to built the various entries in a \b _getRecord()
+  *                getSlot() used to built the various entries in a \b _getRecord()
   *                method.
   *
   *                <b>Argument type policy</b>

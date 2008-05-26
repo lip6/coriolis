@@ -20,9 +20,9 @@
   *                area. 
   *
   *
-  *  \section      secGenericGetCollection  The Generic GetCollection
+  *  \section      secGenericgetCollection  The Generic getCollection
   *
-  *                The collections provide the generic \c GetCollection()
+  *                The collections provide the generic \c getCollection()
   *                function which allows to convert its argument into a generic
   *                collection. It has no specific interest for Hurricane
   *                collections, but this function is overloaded for STL containers. 
@@ -34,7 +34,7 @@ set<Instance*> instanceSet;
  
 // here we fill the set with the desired instances...	
  
-for_each_instance(instance, GetCollection(instanceSet)) {
+for_each_instance(instance, getCollection(instanceSet)) {
    // process here each instance of the set
    // (the elements are visited according to the set ordering)
    end_for;
@@ -52,14 +52,14 @@ for_each_instance(instance, GetCollection(instanceSet)) {
   *  \caution      The returned collection is valid whenever the STL container 
   *                is valid. Then you should not do the following: 
 \code
-GenericCollection<Instance*> GetInstances(...)
+GenericCollection<Instance*> getInstances(...)
 // *******************************************
 {
    set<Instance*> instanceSet;
  
    // we fill the container with the appropriate instances
  
-   return GetCollection(instanceSet); // instanceSet deleted after return
+   return getCollection(instanceSet); // instanceSet deleted after return
 }
 \endcode
   *
@@ -69,7 +69,7 @@ GenericCollection<Instance*> GetInstances(...)
 \code
 Cell* cell = ... // we get the cell
  
-Nets nets = cellGetNets();
+Nets nets = cellgetNets();
  
 cellDelete();
  
@@ -134,7 +134,7 @@ for_each_net(net, nets) {
   */
  //  \{
 
- /*! \function     Collection<Type>* Collection::GetClone() const;
+ /*! \function     Collection<Type>* Collection::getClone() const;
   *                Allocates and returns a clone (copy) of the collection 
   *                (whatever be its type). 
   *
@@ -144,7 +144,7 @@ for_each_net(net, nets) {
   *                that for you, as we will see later. 
   */
 
- /*! \function     Locator<Type>* Collection::GetLocator() const;
+ /*! \function     Locator<Type>* Collection::getLocator() const;
   *                Allocates and returns a locator adapted to visit the elements 
   *                of the collection. 
   *
@@ -155,21 +155,21 @@ for_each_net(net, nets) {
   *                as we will see later. 
   */
 
- /*! \function     unsigned Collection::GetSize() const;
+ /*! \function     unsigned Collection::getSize() const;
   *  \Return       the number of objects identified within the collection. 
   *
   *  \remark       Very fast in some cases, but may need to visit the collection 
   *                in most ones. 
   */
 
- /*! \function     Type Collection::GetFirst() const;
+ /*! \function     Type Collection::getFirst() const;
   *  \Return       the first element of the collection. 
   *
   *  \remark       The result is meaningful only when the collection is non 
   *                empty. 
   */
 
- /*! \function     GenericCollection<SubType> Collection::GetSubSet<SubType>() const;
+ /*! \function     GenericCollection<SubType> Collection::getSubSet<SubType>() const;
   *  \Return       the collection corresponding to the subset of elements of 
   *                type \c \<SubType\>. 
   *
@@ -177,27 +177,27 @@ for_each_net(net, nets) {
   *                <b>SubType</b> and not of type <b>Type</b>. 
   *
 \code
-Contacts Net::GetContacts() const
+Contacts Net::getContacts() const
 // ******************************
 {
-   return GetComponents().GetSubSet<Contact*>();
+   return getComponents().getSubSet<Contact*>();
 }
 \endcode
   */
 
- /*! \function     GenericCollection<Type> Collection::GetSubSet(const Filter<Type>& filter) const;
+ /*! \function     GenericCollection<Type> Collection::getSubSet(const Filter<Type>& filter) const;
   *  \Return       the collection representing the subset of elements accepted 
   *                by the filter. 
 \code
-Nets Cell::GetExternalNets() const
+Nets Cell::getExternalNets() const
 // *******************************
 {
-   return GetNets().GetSubSet(Net::GetIsExternalFilter());
+   return getNets().getSubSet(Net::getIsExternalFilter());
 }
 \endcode
   */
 
- /*! \function     GenericCollection<SubType> Collection::GetSubSet<SubType>(const Filter<SubType>& filter) const;
+ /*! \function     GenericCollection<SubType> Collection::getSubSet<SubType>(const Filter<SubType>& filter) const;
   *  \Return       the collection representing the subset of elements of type 
   *                \c \<SubType\> accepted by the filter. 
   *
@@ -232,14 +232,14 @@ class IsOnLayer : public Filter<Segment*> {
          return *this;
       };
  
-      virtual Filter<Net*>* GetClone() const
+      virtual Filter<Net*>* getClone() const
       {
          return new IsOnLayer(*this);
       };
  
       virtual bool Accept(Segment* segment) const
       {
-         return (segmentGetLayer() == _layer);
+         return (segmentgetLayer() == _layer);
       };
  
 };
@@ -247,9 +247,9 @@ class IsOnLayer : public Filter<Segment*> {
   *
   *                And somewher later: 
 \code
-Layer* metal = GetDataBase()GetTechnology()GetLayer("metal");
+Layer* metal = getDataBase()getTechnology()getLayer("metal");
  
-Segments segments = netGetComponents()->GetSubSet<Segment*>(IsOnLayer(metal));
+Segments segments = netgetComponents()->getSubSet<Segment*>(IsOnLayer(metal));
  
 // segments represents here the subset of net components
 // which are of type Segment and located on layer metal
@@ -306,14 +306,14 @@ Segments segments = netGetComponents()->GetSubSet<Segment*>(IsOnLayer(metal));
 Cell* cell = ...; // we get the cell
  
 if (cell) {
-   for_each(Net*, net, cellGetExternalNets()) {
+   for_each(Net*, net, cellgetExternalNets()) {
       assert(netIsExternal());
-      assert(netGetCell() == cell);
+      assert(netgetCell() == cell);
       end_for;
    }
 }
 \endcode
-  *                On this example the call to <b>cell-\>GetExternalNets()</b> 
+  *                On this example the call to <b>cell-\>getExternalNets()</b> 
   *                returns the collection of all external nets of the cell. Here 
   *                the loop does some consistency checks on each net. As we will 
   *                see later on there exist macros for each type of object which 
@@ -323,9 +323,9 @@ if (cell) {
 Cell* cell = ...; // we get the cell
  
 if (cell) {
-   for_each_net(net, cellGetExternalNets()) {
+   for_each_net(net, cellgetExternalNets()) {
       assert(netIsExternal());
-      assert(netGetCell() == cell);
+      assert(netgetCell() == cell);
       end_for;
    }
 }

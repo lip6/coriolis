@@ -23,17 +23,17 @@
   *                existing locator allowing to visit the remaining elements 
   *                starting from the current position of that locator. 
   *
-  *                <b>End of walk indicator</b> The predicate <b>IsValid()</b> 
+  *                <b>End of walk indicator</b> The predicate <b>isValid()</b> 
   *                returns \true if the locator refers an element of the set, 
   *                \false when all the elements have been visited. 
   *
-  *                <b>Getting the current element</b> The current element is 
-  *                obtained by the accessor <b>GetElement()</b>. There is no 
+  *                <b>getting the current element</b> The current element is 
+  *                obtained by the accessor <b>getElement()</b>. There is no 
   *                risk to call this function when the visit is finished or the 
   *                locator is non initialized (the returned value is 
   *                meaningless). 
   *
-  *                <b>Walk progression</b> The function <b>Progress()</b> moves 
+  *                <b>Walk progression</b> The function <b>progress()</b> moves 
   *                forward the locator on the next element of the set (does 
   *                nothing if called after the last element). 
   */
@@ -51,9 +51,9 @@ if (cell) {
  
    // CellGetNets()
    //    returns the nets collection of the cell
-   // and GetLocator()
+   // and getLocator()
    //    allocates and returns a locator for traversing those nets
-   Locator<Net*>* locator = CellGetNets().GetLocator();
+   Locator<Net*>* locator = CellGetNets().getLocator();
  
    while (locatorIsValid()) {
       Net* net = locatorGetElement();
@@ -70,7 +70,7 @@ if (cell) {
 Cell* cell = ...; // we get a cell
  
 if (cell) {
-   Locator<Net*>* locator1 = CellGetNets().GetLocator();
+   Locator<Net*>* locator1 = CellGetNets().getLocator();
    while (locator1IsValid()) {
       Net* net1 = locator1GetElement();
  
@@ -99,12 +99,12 @@ if (cell) {
   */
  //  \{
 
- /*! \function     Type Locator::GetElement() const;
+ /*! \function     Type Locator::getElement() const;
   *  \Return       the current element (or the value <b>Type()</b> when the 
   *                locator is not or no longer valid). 
   */
 
- /*! \function     Locator<Type>* Locator::GetClone() const;
+ /*! \function     Locator<Type>* Locator::getClone() const;
   *                This function allocates and returns a new locator that will 
   *                have the same visiting course than the remaining one of the 
   *                locator being cloned. 
@@ -122,7 +122,7 @@ if (cell) {
   */
  //  \{
 
- /*! \function     bool Locator::IsValid() const;
+ /*! \function     bool Locator::isValid() const;
   *  \Return       \true while the walk has not exhausted the set of elements, 
   *                else \false. 
   */
@@ -134,7 +134,7 @@ if (cell) {
   */
  //  \{
 
- /*! \function     void Locator::Progress();
+ /*! \function     void Locator::progress();
   *                Moves forward the locator to the following element. 
   */
 

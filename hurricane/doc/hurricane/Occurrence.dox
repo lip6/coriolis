@@ -127,37 +127,37 @@
   */
  //  \{
 
- /*! \function     Entity* Occurrence::GetEntity() const;
+ /*! \function     Entity* Occurrence::getEntity() const;
   *  \Return       the referenced entity or NULL if the occurrence is invalid. 
   */
 
- /*! \function     const Path& Occurrence::GetPath() const;
+ /*! \function     const Path& Occurrence::getPath() const;
   *  \Return       the hierarchical instanciation path of the occurrence 
   *                (possibly void, but always void when the occurrence id 
   *                invalid). 
   */
 
- /*! \function     Cell* Occurrence::GetOwnerCell() const;
+ /*! \function     Cell* Occurrence::getOwnerCell() const;
   *  \Return       the owner cell of the occurrence or NULL if the occurrence is 
   *                invalid. 
   */
 
- /*! \function     Cell* Occurrence::GetMasterCell() const;
+ /*! \function     Cell* Occurrence::getMasterCell() const;
   *  \Return       the cell owning the referenced entity or NULL if the 
   *                occurrence is invalid. 
   */
 
- /*! \function     Property* Occurrence::GetProperty(const Name& name) const;
+ /*! \function     Property* Occurrence::getProperty(const Name& name) const;
   *  \Return       the property named \c \<name\> if it exists or NULL if not 
   *                (or if the occurrence is invalid). 
   */
 
- /*! \function     Properties Occurrence::GetProperties() const;
+ /*! \function     Properties Occurrence::getProperties() const;
   *  \Return       the collection of properties attached to the occurrence 
   *                (always empty if the occurrence is invalid). 
   */
 
- /*! \function     Box Occurrence::GetBoundingBox() const;
+ /*! \function     Box Occurrence::getBoundingBox() const;
   *  \Return       the bounding box of the occurrence (within the coordinate 
   *                sysem of the owner cell) if it is valid or else the empty 
   *                box. 
@@ -170,12 +170,12 @@
   */
  //  \{
 
- /*! \function     bool Occurrence::IsValid() const;
+ /*! \function     bool Occurrence::isValid() const;
   *  \Return       \true if the occurrence is valid, else \false (the occurrence 
   *                refers no entity). 
   */
 
- /*! \function     bool Occurrence::HasProperty() const;
+ /*! \function     bool Occurrence::hasProperty() const;
   *  \Return       \true if the occurrence owns some property else \false. 
   */
 
@@ -186,7 +186,7 @@
   */
  //  \{
 
- /*! \function     void Occurrence::Put(Property* property);
+ /*! \function     void Occurrence::put(Property* property);
   *                Adds the property \c \<property\> to the occurrence property 
   *                set. The property being named, if another property already 
   *                exists in the set it will be, in a first step, detached from 
@@ -199,8 +199,8 @@
   *                exception is thrown. 
   */
 
- /*! \function     void Occurrence::Remove(Property* property);
-  *                Removes the property \c \<property\> from the occurrence 
+ /*! \function     void Occurrence::remove(Property* property);
+  *                removes the property \c \<property\> from the occurrence 
   *                property set. 
   *
   *  \remark       Does nothing if the occurrence doesn't own this property 
@@ -210,14 +210,14 @@
   *                exception is thrown. 
   */
 
- /*! \function     void Occurrence::RemoveProperty(const Name& name);
-  *                Removes the property of name \c \<name\> if it exists. 
+ /*! \function     void Occurrence::removeProperty(const Name& name);
+  *                removes the property of name \c \<name\> if it exists. 
   *
   *  \caution      If the occurrence is invalid an exception is thrown. 
   */
 
- /*! \function     void Occurrence::ClearProperties();
-  *                Removes all properties attached to the occurrence. As a 
+ /*! \function     void Occurrence::clearProperties();
+  *                removes all properties attached to the occurrence. As a 
   *                consequence, the occurrence is deleted. 
   *
   *  \caution      If the occurrence is invalid an exception is thrown. 

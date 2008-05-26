@@ -51,18 +51,18 @@
   */
  //  \{
 
- /*! \function     Box QuadTree::GetBoundingBox() const;
+ /*! \function     Box QuadTree::getBoundingBox() const;
   *  \Return       the quadtree bounding box, that is the minimal bounding box 
   *                including all objects of the quad tree (this bounding box is 
   *                updated dynamically). 
   */
 
- /*! \function     Gos QuadTree::GetGos() const;
+ /*! \function     Gos QuadTree::getGos() const;
   *  \Return       the collection of graphical objects contained in the 
   *                quadtree. 
   */
 
- /*! \function     Gos QuadTree::GetGosUnder(const Box& area) const;
+ /*! \function     Gos QuadTree::getGosUnder(const Box& area) const;
   *  \Return       the collection of graphical objects contained in the quadtree 
   *                and whose bounding box intersects the rectangular region 
   *                defined by \c \<area\>. 
@@ -75,7 +75,7 @@
   */
  //  \{
 
- /*! \function     bool QuadTree::IsEmpty() const;
+ /*! \function     bool QuadTree::isEmpty() const;
   *  \Return       <b>true</b> if the quadtree doesn't contain any object, else 
   *                <b>false</b>. 
   */
@@ -87,8 +87,8 @@
   */
  //  \{
 
- /*! \function     void QuadTree::Insert(Go* go);
-  *                Inserts the graphic object within the quadtree (if not yet 
+ /*! \function     void QuadTree::insert(Go* go);
+  *                inserts the graphic object within the quadtree (if not yet 
   *                inserted). 
   *
   *  \caution      If the graphic object pointer is NULL an exception is thrown. 
@@ -100,8 +100,8 @@
   *                of some memory loss). 
   */
 
- /*! \function     void QuadTree::Remove(Go* go);
-  *                Removes the object from the quadtree. 
+ /*! \function     void QuadTree::remove(Go* go);
+  *                removes the object from the quadtree. 
   *
   *  \caution      If the graphic object is NULL an exception is thrown. 
   *
@@ -132,8 +132,8 @@ void Component::Materialize()
 // **************************
 {
    // we get the cell and the layer of the component
-   Cell* cell = GetCell();
-   Layer* layer = GetLayer();
+   Cell* cell = getCell();
+   Layer* layer = getLayer();
  
    // we get the slice within which the object must be inserted
    // (if necessary we create it)
@@ -141,7 +141,7 @@ void Component::Materialize()
    if (!slice) slice = Slice::_Create(cell, layer);
  
    // we get the quadtree associated to the slice
-   QuadTree* quadTree = slice_GetQuadTree();
+   QuadTree* quadTree = slice_getQuadTree();
  
    // we insert into the object
    quadTreeInsert(this);
@@ -157,8 +157,8 @@ void Component::Unmaterialize()
 // ****************************
 {
    // we get the cell and the layer of the component
-   Cell* cell = GetCell();
-   Layer* layer = GetLayer();
+   Cell* cell = getCell();
+   Layer* layer = getLayer();
  
    // we get the associated slice 
    Slice* slice = cellGetSlice(layer);
@@ -170,13 +170,13 @@ void Component::Unmaterialize()
       // we inform the cell that an object with a given bounding
       // box will be removed (does something only if the bounding
       // box is tangent to the cell bounding box)
-      cell_Unfit(GetBoundingBox());
+      cell_Unfit(getBoundingBox());
 \endcode
   *                // we remove the object from its slice 
-  *                slice-\>_GetQuadTree()-\>Remove(this); 
+  *                slice-\>_getQuadTree()-\>remove(this); 
   *
   *                // if the slice becomes empty, it is destroyed if 
-  *                (slice-\>IsEmpty()) slice-\>_Delete(); } } 
+  *                (slice-\>isEmpty()) slice-\>_Delete(); } } 
   */
 
 

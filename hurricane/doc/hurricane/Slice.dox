@@ -39,9 +39,9 @@ BasicLayer* basicLayer = ...; // we get the basic layer
  
 Box area = ...; // we define the rectangular area
  
-for_each_slice(slice, cell->GetSlices()) {
-   if (slice->GetLayer()->Contains(basicLayer)) {
-      for_each_componant(component, slice->GetComponentsUnder(area)) {
+for_each_slice(slice, cell->getSlices()) {
+   if (slice->getLayer()->Contains(basicLayer)) {
+      for_each_componant(component, slice->getComponentsUnder(area)) {
          ...
          // here we visit all requested components
          ...
@@ -59,29 +59,29 @@ for_each_slice(slice, cell->GetSlices()) {
   */
  //  \{
 
- /*! \function     Cell* Slice::GetCell() const;
+ /*! \function     Cell* Slice::getCell() const;
   *  \Return       the cell owning the slice. 
   */
 
- /*! \function     Layer* Slice::GetLayer() const;
+ /*! \function     Layer* Slice::getLayer() const;
   *  \Return       the layer associated to the slice : all components lying in a 
   *                cell are perforce located on that layer. 
   */
 
- /*! \function     Box Slice::GetBoundingBox() const;
+ /*! \function     Box Slice::getBoundingBox() const;
   *  \Return       the bounding box of the slice, that is the smallest enclosing 
   *                rectangle of all its components. 
   */
 
- /*! \function     const Gos Slice::GetGos() const;
+ /*! \function     const Gos Slice::getGos() const;
   *  \Return       the collection of graphic objects lying on the slice. 
   */
 
- /*! \function     const Components Slice::GetComponents() const;
+ /*! \function     const Components Slice::getComponents() const;
   *  \Return       the collection of components lying on the slice. 
   */
 
- /*! \function     const Components Slice::GetComponentsUnder(const Box& area) const;
+ /*! \function     const Components Slice::getComponentsUnder(const Box& area) const;
   *  \Return       the collection of components of the slice whose bounding box 
   *                intersects the rectangular region defined by \c \<area\>. 
   */

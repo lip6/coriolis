@@ -31,16 +31,16 @@
   */
  //  \{
 
- /*! \function     Net* Rubber::GetNet() const;
+ /*! \function     Net* Rubber::getNet() const;
   *  \Return       the net owning the rubber. 
   */
 
- /*! \function     Hook* Rubber::GetHook() const;
+ /*! \function     Hook* Rubber::getHook() const;
   *  \Return       one hook (necessarily a master hook) of the ring which has 
   *                created the rubber. 
   */
 
- /*! \function     unsigned Rubber::GetCount() const;
+ /*! \function     unsigned Rubber::getCount() const;
   *  \Return       the count associated to the rubber (in fact the number of 
   *                master hooks of the ring). 
   *
@@ -48,11 +48,11 @@
   *                exists (no need). 
   */
 
- /*! \function     Point Rubber::GetCenter() const;
+ /*! \function     Point Rubber::getCenter() const;
   *  \Return       the center of the rubber (computed at the fly). 
   */
 
- /*! \function     Hooks Rubber::GetHooks() const;
+ /*! \function     Hooks Rubber::getHooks() const;
   *  \Return       the collection of master hooks that the rubber virtualy 
   *                connect. 
   */

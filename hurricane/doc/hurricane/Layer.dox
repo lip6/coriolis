@@ -40,19 +40,19 @@
   */
  //  \{
 
- /*! \function     Technology* Layer::GetTechnology() const;
+ /*! \function     Technology* Layer::getTechnology() const;
   *  \Return       the technolgy owning the layer. 
   */
 
- /*! \function     const Name& Layer::GetName() const;
+ /*! \function     const Name& Layer::getName() const;
   *  \Return       the name of the layer. 
   */
 
- /*! \function     const Layer::Mask& Layer::GetMask() const;
+ /*! \function     const Layer::Mask& Layer::getMask() const;
   *  \Return       the mask associated to the layer. 
   */
 
- /*! \function     const Layer::Mask& Layer::GetExtractMask() const;
+ /*! \function     const Layer::Mask& Layer::getExtractMask() const;
   *  \Return       the mask used for extraction. 
   *
   *                Two differents basic layers have different masks but may have 
@@ -60,16 +60,16 @@
   *                CPG which represent poly used to realize transistor gates). 
   */
 
- /*! \function     const Unit& Layer::GetMinimalSize() const;
+ /*! \function     const Unit& Layer::getMinimalSize() const;
   *  \Return       the minimal size allowed for a rectangular layout pad on this 
   *                layer. 
   */
 
- /*! \function     const Unit& Layer::GetMinimalSpacing() const;
+ /*! \function     const Unit& Layer::getMinimalSpacing() const;
   *  \Return       the minimal spacing between two pads on this layer. 
   */
 
- /*! \function     BasicLayers Layer::GetBasicLayers() const;
+ /*! \function     BasicLayers Layer::getBasicLayers() const;
   *  \Return       the collection of basic layers within this layer. 
   *
   *  \remark       For a basic layer the collection contains this one only. 
@@ -82,13 +82,13 @@
   */
  //  \{
 
- /*! \function     bool Layer::Contains(Layer* layer) const;
+ /*! \function     bool Layer::contains(const Layer* layer) const;
   *  \Return       \true if the \c \<layer\> is completely included in the layer 
   *                \c \<this\> (that is if the basic layers of \c \<layer\> are 
   *                a sub-set of the basic layers of \c \<this\>), else \false. 
   */
 
- /*! \function     bool Layer::Intersect(Layer* layer) const;
+ /*! \function     bool Layer::intersect(const Layer* layer) const;
   *  \Return       \true if the \c \<layer\> and the layer \c \<this\> have at 
   *                least a common basic layer, else \false. 
   */
@@ -100,19 +100,19 @@
   */
  //  \{
 
- /*! \function     void Layer::SetName(const Name& name);
-  *                Sets or changes the layer name. 
+ /*! \function     void Layer::setName(const Name& name);
+  *                sets or changes the layer name. 
   *
   *  \remark       An exception is thrown if the name is empty or if there is an 
   *                other layer with that name. 
   */
 
- /*! \function     void Layer::SetMinimalSize(const Unit& minimalSize);
-  *                Sets the minimal size of a pad on this layer. 
+ /*! \function     void Layer::setMinimalSize(const Unit& minimalSize);
+  *                sets the minimal size of a pad on this layer. 
   */
 
- /*! \function     void Layer::SetMinimalSpacing(const Unit& minimalSpacing);
-  *                Sets the minimal spacing between two pads on this layer. 
+ /*! \function     void Layer::setMinimalSpacing(const Unit& minimalSpacing);
+  *                sets the minimal spacing between two pads on this layer. 
   */
 
  //  \}

@@ -24,7 +24,7 @@
   */
  // \{
 
- /*! \function     Technology* Technology::Create ( DataBase* dataBase, const Name& name );
+ /*! \function     Technology* Technology::create ( DataBase* dataBase, const Name& name );
   *  \Return       a newly created technology named \c \<name\> for the data base \c \<dataBase\>.
   *
   *  \caution      Throws an exception if the \c dataBase is \NULL, if the name is empty or if
@@ -38,27 +38,27 @@
   */
  // \{
 
- /*! \function     DataBase* Technology::GetDataBase () const;
+ /*! \function     DataBase* Technology::getDataBase () const;
   *  \Return       the DataBase owning the technology.
   */
 
- /*! \function     const Name& Technology::GetName () const;
+ /*! \function     const Name& Technology::getName () const;
   *  \Return       the technology name.
   */
 
- /*! \function     Layer* Technology::GetLayer ( const Name& name ) const;
+ /*! \function     Layer* Technology::getLayer ( const Name& name ) const;
   *  \Return       the Layer named \c \<name\> if it exists, else \NULL.
   */
 
- /*! \function     BasicLayer* Technology::GetBasicLayer ( const Name& name ) const;
+ /*! \function     BasicLayer* Technology::getBasicLayer ( const Name& name ) const;
   *  \Return       the Layer named \c \<name\> if it exists and is a BasicLayer, else \NULL.
   */
 
- /*! \function     CompositeLayer* Technology::GetCompositeLayer ( const Name& name ) const;
+ /*! \function     CompositeLayer* Technology::getCompositeLayer ( const Name& name ) const;
   *  \Return       the Layer named \c \<name\> if it exists and is a CompositeLayer, else \NULL.
   */
 
- /*! \function     Layers  Technology::GetLayers () const;
+ /*! \function     Layers  Technology::getLayers () const;
   *  \Return       Returns the collection of layers of the technology.
   *
   *  \remark       The layers are traversed according to their
@@ -69,17 +69,17 @@
   *                importance).
   */
 
- /*! \function     BasicLayers  Technology::GetBasicLayers () const;
+ /*! \function     BasicLayers  Technology::getBasicLayers () const;
   *  \Return       Returns the collection of basic layers of the technology
   *                (uses the same order).
   */
 
- /*! \function     BasicLayers  Technology::GetBasicLayers ( const Layer::Mask& mask ) const;
+ /*! \function     BasicLayers  Technology::getBasicLayers ( const Layer::Mask& mask ) const;
   *  \Return       Returns the collection of basic layers of the technology
   *                which matches the Layer mask \c \<mask\> (uses the same order).
   */
 
- /*! \function     CompositeLayers  Technology::GetCompositeLayers () const;
+ /*! \function     CompositeLayers  Technology::getCompositeLayers () const;
   *  \Return       Returns the collection of composite layers of the technology
   *                (uses the same order).
   */
@@ -91,7 +91,7 @@
   */
  // \{
 
- /*! \function     void  Technology::SetName ( const Name& name );
+ /*! \function     void  Technology::setName ( const Name& name );
   *                Allows to change the technology name (if empty name, throws an exception).
   */
 

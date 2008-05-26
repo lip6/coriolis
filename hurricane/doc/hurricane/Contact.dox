@@ -42,8 +42,8 @@
   */
  //  \{
 
- /*! \function     Contact* Contact::Create(Net* net, Layer* layer, const Unit& x, const Unit& y,const Unit& width = 0, const Unit& height = 0);
-  *                Creates and returns a new contact belonging to the net 
+ /*! \function     Contact* Contact::create(Net* net, Layer* layer, const Unit& x, const Unit& y,const Unit& width = 0, const Unit& height = 0);
+  *                creates and returns a new contact belonging to the net 
   *                \c \<net\>, on the layer \c \<layer\>, of size \c \<width\> 
   *                and \c \<height\> and located at the absolute coordinates 
   *                \c \<x\> and \c \<y\>. 
@@ -51,8 +51,8 @@
   *  \caution      Throws an exception if the layer or the net is null. 
   */
 
- /*! \function     Contact* Contact::Create(Component* anchor, Layer* layer, const Unit& dx, const Unit& dy,const Unit& width = 0, const Unit& height = 0);
-  *                Creates and returns a new contact on the layer \c \<layer\>, 
+ /*! \function     Contact* Contact::create(Component* anchor, Layer* layer, const Unit& dx, const Unit& dy,const Unit& width = 0, const Unit& height = 0);
+  *                creates and returns a new contact on the layer \c \<layer\>, 
   *                of size \c \<width\> and \c \<height\> attached upon the 
   *                component \c \<anchor\> through an offset defined by 
   *                \c \<dx\> et \c \<dy\>. 
@@ -70,12 +70,12 @@
   */
  //  \{
 
- /*! \function     Contact::AnchorHook* Contact::GetAnchorHook();
+ /*! \function     Contact::AnchorHook* Contact::getAnchorHook();
   *  \Return       the hook through which the contact can be attached upon an 
   *                anchor. 
   */
 
- /*! \function     Component* Contact::GetAnchor() const;
+ /*! \function     Component* Contact::getAnchor() const;
   *                The anchor hook of the contact being a slave one, it may have 
   *                a master hook representing the body of the anchor on which it 
   *                is attached. This method returns the owner of this master 
@@ -85,33 +85,33 @@
   *                transitory)). 
   */
 
- /*! \function     const Unit& Contact::GetDx() const;
+ /*! \function     const Unit& Contact::getDx() const;
   *  \Return       the relative abscissa of the contact. 
   *
   *  \remark       If you want to get the absolute one use the member function 
-  *                GetX() defined at the Component level. 
+  *                getX() defined at the Component level. 
   */
 
- /*! \function     const Unit& Contact::GetDy() const;
+ /*! \function     const Unit& Contact::getDy() const;
   *  \Return       the relative ordinate of the contact. 
   *
   *  \remark       If you want to get the absolute one use the member function 
-  *                GetY() defined at the Component level. 
+  *                getY() defined at the Component level. 
   */
 
- /*! \function     const Unit& Contact::GetWidth() const;
+ /*! \function     const Unit& Contact::getWidth() const;
   *  \Return       the contact width. 
   */
 
- /*! \function     Unit Contact::GetHalfWidth() const;
+ /*! \function     Unit Contact::getHalfWidth() const;
   *  \Return       the contact half width. 
   */
 
- /*! \function     const Unit& Contact::GetHeight() const;
+ /*! \function     const Unit& Contact::getHeight() const;
   *  \Return       the contact height. 
   */
 
- /*! \function     Unit Contact::GetHalfHeight() const;
+ /*! \function     Unit Contact::getHalfHeight() const;
   *  \Return       the contact half height. 
   */
 
@@ -122,59 +122,59 @@
   */
  //  \{
 
- /*! \function     void Contact::SetLayer(Layer* layer);
-  *                Sets the contact layer. 
+ /*! \function     void Contact::setLayer(Layer* layer);
+  *                sets the contact layer. 
   */
 
- /*! \function     void Contact::SetWidth(const Unit& width);
-  *                Sets the contact width. 
+ /*! \function     void Contact::setWidth(const Unit& width);
+  *                sets the contact width. 
   */
 
- /*! \function     void Contact::SetHeight(const Unit& height);
-  *                Sets the contact height. 
+ /*! \function     void Contact::setHeight(const Unit& height);
+  *                sets the contact height. 
   */
 
- /*! \function     void Contact::SetSizes(const Unit& width, const Unit& height);
-  *                Sets both contact width and height. 
+ /*! \function     void Contact::setSizes(const Unit& width, const Unit& height);
+  *                sets both contact width and height. 
   */
 
- /*! \function     void Contact::SetX(const Unit& x);
+ /*! \function     void Contact::setX(const Unit& x);
   *                Allows to change the absolute abscissa of the contact (if it 
   *                has a location relative to an other component, only relative 
   *                position to this last is accordingly changed). 
   */
 
- /*! \function     void Contact::SetY(const Unit& y);
+ /*! \function     void Contact::setY(const Unit& y);
   *                Allows to change the absolute ordinate of the contact (if it 
   *                has a location relative to an other component, only relative 
   *                position to this last is accordingly changed). 
   */
 
- /*! \function     void Contact::SetPosition(const Unit& x, const Unit& y);
+ /*! \function     void Contact::setPosition(const Unit& x, const Unit& y);
   *                No description.
   */
 
- /*! \function     void Contact::SetPosition(const Point& position);
+ /*! \function     void Contact::setPosition(const Point& position);
   *                Allows to change the absolute location of the contact (if it 
   *                has a location relative to an other component, only relative 
   *                position to this last is accordingly changed). 
   */
 
- /*! \function     void Contact::SetDx(const Unit& dx);
+ /*! \function     void Contact::setDx(const Unit& dx);
   *                Allows to change the horizontal offset of the contact. 
   *
   *  \remark       If the contact is absolute, this amounts to change its 
   *                absolute abscissa. 
   */
 
- /*! \function     void Contact::SetDy(const Unit& dy);
+ /*! \function     void Contact::setDy(const Unit& dy);
   *                Allows to change the vertical offset of the contact. 
   *
   *  \remark       If the contact is absolute, this amounts to change its 
   *                absolute ordinate. 
   */
 
- /*! \function     void Contact::SetOffset(const Unit& dx, const Unit& dy);
+ /*! \function     void Contact::setOffset(const Unit& dx, const Unit& dy);
   *                Allows to change the offset of the contact. 
   *
   *  \remark       If the contact is absolute, this amounts to change its 

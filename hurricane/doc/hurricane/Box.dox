@@ -27,7 +27,7 @@
 Box box1(0, 0, 100, 100);
 Box box2(20, 20, 50, 150;
  
-if (box1.Inflate(3).Merge(box2.Translate(10, 10).Inflate(-1, 1)).Contains(20, 20)) {
+if (box1.inflate(3).merge(box2.translate(10, 10).inflate(-1, 1)).contains(20, 20)) {
    // do we reach here ? that is the question !
 }
 \endcode
@@ -93,58 +93,58 @@ if (box1.Inflate(3).Merge(box2.Translate(10, 10).Inflate(-1, 1)).Contains(20, 20
   */
  //  \{
 
- /*! \function     const Unit& Box::GetXMin() const;
+ /*! \function     const Unit& Box::getXMin() const;
   *  \Return       the XMin value : meaningful only for a non empty box. 
   */
 
- /*! \function     const Unit& Box::GetYMin() const;
+ /*! \function     const Unit& Box::getYMin() const;
   *  \Return       the YMin value : meaningful only for a non empty box. 
   */
 
- /*! \function     const Unit& Box::GetXMax() const;
+ /*! \function     const Unit& Box::getXMax() const;
   *  \Return       the XMax value : meaningful only for a non empty box. 
   */
 
- /*! \function     const Unit& Box::GetYMax() const;
+ /*! \function     const Unit& Box::getYMax() const;
   *  \Return       the YMax value : meaningful only for a non empty box. 
   */
 
- /*! \function     Unit Box::GetXCenter() const;
+ /*! \function     Unit Box::getXCenter() const;
   *  \Return       the abscissa of the box center : meaningful only for a non 
   *                empty box. 
   */
 
- /*! \function     Unit Box::GetYCenter() const;
+ /*! \function     Unit Box::getYCenter() const;
   *  \Return       the ordinate of the box center : meaningful only for a non 
   *                empty box. 
   */
 
- /*! \function     Point Box::GetCenter() const;
+ /*! \function     Point Box::getCenter() const;
   *  \Return       the box center point : meaningful only for a non empty box. 
   */
 
- /*! \function     Unit Box::GetWidth() const;
+ /*! \function     Unit Box::getWidth() const;
   *  \Return       the box width : meaningful only for a non empty box. 
   */
 
- /*! \function     Unit Box::GetHalfWidth() const;
+ /*! \function     Unit Box::getHalfWidth() const;
   *  \Return       the half box width : meaningful only for a non empty box. 
   */
 
- /*! \function     Unit Box::GetHeight() const;
+ /*! \function     Unit Box::getHeight() const;
   *  \Return       the box height : meaningful only for a non empty box. 
   */
 
- /*! \function     Unit Box::GetHalfHeight() const;
+ /*! \function     Unit Box::getHalfHeight() const;
   *  \Return       the half box height : meaningful only for a non empty box. 
   */
 
- /*! \function     Box Box::GetUnion(const Box& box) const;
+ /*! \function     Box Box::getUnion(const Box& box) const;
   *  \Return       the smallest enclosing box containing the boxes \c \<this\> 
   *                and \c \<box\>. The returned box may be empty if both are. 
   */
 
- /*! \function     Box Box::GetIntersection(const Box& box) const;
+ /*! \function     Box Box::getIntersection(const Box& box) const;
   *  \Return       box representing the overlapping area. This box is empty if 
   *                either one of the two boxes is empty or if they are disjoint. 
   */
@@ -156,41 +156,41 @@ if (box1.Inflate(3).Merge(box2.Translate(10, 10).Inflate(-1, 1)).Contains(20, 20
   */
  //  \{
 
- /*! \function     bool Box::IsEmpty() const;
+ /*! \function     bool Box::isEmpty() const;
   *  \Return       \true if the box is empty, else \false. 
   */
 
- /*! \function     bool Box::IsFlat() const;
+ /*! \function     bool Box::isFlat() const;
   *  \Return       \true if the box is non void and if we have either 
   *                ((XMin==XMax) an (YMin\<YMax)) or ((XMin\<XMax) and 
   *                (YMin==YMax)). 
   */
 
- /*! \function     bool Box::IsPonctual() const;
+ /*! \function     bool Box::isPonctual() const;
   *  \Return       \true if the box is reduced to a point, else \false. 
   */
 
- /*! \function     bool Box::Contains(const Unit& x, const Unit& y) const;
+ /*! \function     bool Box::contains(const Unit& x, const Unit& y) const;
   *  \Return       \true if the box is non empty and contains the point defined 
   *                by the coordinates \c \<x\>, \c \<y\> else \false. 
   */
 
- /*! \function     bool Box::Contains(const Point& point) const;
+ /*! \function     bool Box::contains(const Point& point) const;
   *  \Return       \true if the box is non empty and contains the point 
   *                \c \<point\>, else \false. 
   */
 
- /*! \function     bool Box::Contains(const Box& box) const;
+ /*! \function     bool Box::contains(const Box& box) const;
   *  \Return       \true if the two boxes are non empty and if the box 
   *                \c \<this\> contains the box \c \<box\>, else \false. 
   */
 
- /*! \function     bool Box::Intersect(const Box& box) const;
+ /*! \function     bool Box::intersect(const Box& box) const;
   *  \Return       \true if the two boxes are non empty and if they overlap, 
   *                else \false. 
   */
 
- /*! \function     bool Box::IsConstrainedBy(const Box& box) const;
+ /*! \function     bool Box::isConstrainedBy(const Box& box) const;
   *  \Return       \true if the two boxes are non empty, if the box \c \<this\> 
   *                contains the box \c \<box\> and if those two boxes have at 
   *                least a common border side, else \false. 
@@ -203,24 +203,24 @@ if (box1.Inflate(3).Merge(box2.Translate(10, 10).Inflate(-1, 1)).Contains(20, 20
   */
  //  \{
 
- /*! \function     Box& Box::MakeEmpty();
+ /*! \function     Box& Box::makeEmpty();
   *                Transforms the box into an empty one. 
   */
 
- /*! \function     Box& Box::Inflate(const Unit& d);
+ /*! \function     Box& Box::inflate(const Unit& d);
   *                Expands (or contracts) the box, if not empty, in each 
   *                direction of the quantity \c \<d\>. This quantity might be 
   *                negative enough to transform it into an empty box. 
   */
 
- /*! \function     Box& Box::Inflate(const Unit& dx, const Unit& dy);
+ /*! \function     Box& Box::inflate(const Unit& dx, const Unit& dy);
   *                Expands (or contracts) the box, if not empty, horizontaly of 
   *                the quantity \c \<dx\> and vertically of the quatity 
   *                \c \<dy\>. Those quantities might be negative enough to 
   *                transform it into an empty box. 
   */
 
- /*! \function     Box& Box::Inflate(const Unit& dxMin, const Unit& dyMin, const Unit& dxMax, const Unit& dyMax);
+ /*! \function     Box& Box::inflate(const Unit& dxMin, const Unit& dyMin, const Unit& dxMax, const Unit& dyMax);
   *                Expands (or contracts) the box, if not empty, on the left of 
   *                the quantity \c \<dxMin\>, on the bottom of the quantity 
   *                \c \<dyMin\>, on the right of the quantity \c \<dxMax\> and 
@@ -228,31 +228,31 @@ if (box1.Inflate(3).Merge(box2.Translate(10, 10).Inflate(-1, 1)).Contains(20, 20
   *                might be negative enough to transform it into an empty box. 
   */
 
- /*! \function     Box& Box::Merge(const Unit& x, const Unit& y);
+ /*! \function     Box& Box::merge(const Unit& x, const Unit& y);
   *                Expands the box in order that it encloses the point defined 
   *                by coordinates \c \<x\> and \c \<y\>. If the box was 
   *                initially empty it becomes reduced to the enclosed point. 
   */
 
- /*! \function     Box& Box::Merge(const Point& point);
+ /*! \function     Box& Box::merge(const Point& point);
   *                Expands the box in order that it encloses the point 
   *                \c \<point\>. If the box was initially empty it becomes 
   *                reduced to the enclosed point. 
   */
 
- /*! \function     Box& Box::Merge(const Unit& x1, const Unit& y1, const Unit& x2, const Unit& y2);
+ /*! \function     Box& Box::merge(const Unit& x1, const Unit& y1, const Unit& x2, const Unit& y2);
   *                Expands the box in order that it encloses the points defined 
   *                by coordinates \c \<x1\>, \c \<y1\> and \c \<x2\>, \c \<y2\>. 
   */
 
- /*! \function     Box& Box::Merge(const Box& box);
+ /*! \function     Box& Box::merge(const Box& box);
   *                Expands the box in order that it encloses, if not empty, the 
   *                box \c \<box\>. If the box \c \<this\> was initially empty it 
   *                becomes reduced to the enclosed box. 
   */
 
- /*! \function     Box& Box::Translate(const Unit& dx, const Unit& dy);
-  *                Translates the box, if not empty, of the quantities \c \<dx\> 
+ /*! \function     Box& Box::translate(const Unit& dx, const Unit& dy);
+  *                translates the box, if not empty, of the quantities \c \<dx\> 
   *                and \c \<dy\>. 
   */
 

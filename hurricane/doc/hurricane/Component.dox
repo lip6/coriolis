@@ -25,7 +25,7 @@
   *
   *                For that purpose each components must be able to return a 
   *                location from which a relative calculations can be done. The 
-  *                methods <b>GetX()</b> and <b>GetY()</b> provide this 
+  *                methods <b>getX()</b> and <b>getY()</b> provide this 
   *                information and must be overloaded for each sub-type of 
   *                component in oder to get the desired effect. 
   *
@@ -34,7 +34,7 @@
   *                of this methods means that the locations are computed 
   *                relative to a null value, which is equivalent to say they are 
   *                absolute values (see for instance the Horizontal segment 
-  *                whose GetX() returns always null, while GetY() return the 
+  *                whose getX() returns always null, while getY() return the 
   *                ordinate of its axis). 
   * 
   *  \section      secComponentDestruction  Destruction
@@ -50,7 +50,7 @@
   * 
   *  \section      secComponentPredefinedFilters  Predefined filters
   *
-  *                <b>Component::GetIsUnderFilter</b>
+  *                <b>Component::getIsUnderFilter</b>
   */
 
 
@@ -71,37 +71,37 @@
   */
  //  \{
 
- /*! \function     Net* Component::GetNet() const;
+ /*! \function     Net* Component::getNet() const;
   *  \Return       the net owning the component. 
   */
 
- /*! \function     Rubber* Component::GetRubber() const;
+ /*! \function     Rubber* Component::getRubber() const;
   *  \Return       the rubber associated to the component (may be NULL). 
   */
 
- /*! \function     Net::BodyHook* Component::GetBodyHook();
+ /*! \function     Net::BodyHook* Component::getBodyHook();
   *  \Return       the hook representing the component body. 
   */
 
- /*! \function     Hooks Component::GetHooks() const;
+ /*! \function     Hooks Component::getHooks() const;
   *  \Return       the collection of component hooks, that is the collection of 
   *                nested hooks within the component, each of them representing 
   *                a part of the component. 
   */
 
- /*! \function     Unit Component::GetX() const;
+ /*! \function     Unit Component::getX() const;
   *  \Return       the abscissa of the component's body. This abscissa is a 
   *                reference base for the components anchored, through an 
   *                offset, on the component's body. 
   */
 
- /*! \function     Unit Component::GetY() const;
+ /*! \function     Unit Component::getY() const;
   *  \Return       the ordinate of the component's body. This ordinate is a 
   *                reference base for the components anchored, through an 
   *                offset, on the component's body. 
   */
 
- /*! \function     Point Component::GetPosition() const;
+ /*! \function     Point Component::getPosition() const;
   *  \Return       the location of the component's body. 
   *
   *                This method returns, in principle, a point built from the two 
@@ -109,24 +109,24 @@
   *                done in both methods, it is wise to redefine the method as 
   *                shown below for the Contact : 
 \code
-Unit Contact::GetX() const
+Unit Contact::getX() const
 // ***********************
 {
-   Component* anchor = GetAnchor();
+   Component* anchor = getAnchor();
    return (!anchor) ? _dx : anchorGetX() + _dx;
 }
  
-Unit Contact::GetY() const
+Unit Contact::getY() const
 // ***********************
 {
-   Component* anchor = GetAnchor();
+   Component* anchor = getAnchor();
    return (!anchor) ? _dy : anchorGetY() + _dy;
 }
  
-Point Contact::GetPosition() const
+Point Contact::getPosition() const
 // *******************************
 {
-   Component* anchor = GetAnchor();
+   Component* anchor = getAnchor();
    return (!anchor) ?
           Point(_dx, _dy) :
           anchorGetPosition().Translate(_dx, _dy);
@@ -139,24 +139,24 @@ Point Contact::GetPosition() const
   *                through an offset defined by two attributes _dx and _dy. In 
   *                order to compute the abscissa of a contact the component on 
   *                which it bears must be found. This component named the 
-  *                <b>anchor</b> is returned by the call to GetAnchor(). If the 
+  *                <b>anchor</b> is returned by the call to getAnchor(). If the 
   *                component has no anchor, its coordinates are considered as 
   *                absolute and the attribute _dx gives directly its abscissa. 
   *
-  *                The method GetAnchor() must loop through a ring in order to 
+  *                The method getAnchor() must loop through a ring in order to 
   *                find the contact anchor. By overloading the function 
-  *                GetPosition(), only one loop will be needed. Furtermore we 
-  *                call directly anchor-\>GetPosition() and not both 
-  *                anchor-\>GetX() and anchor-\>GetY(), this will be faster 
+  *                getPosition(), only one loop will be needed. Furtermore we 
+  *                call directly anchor-\>getPosition() and not both 
+  *                anchor-\>getX() and anchor-\>getY(), this will be faster 
   *                (this anchor may be anchored itself on an other component). 
   */
 
- /*! \function     Layer* Component::GetLayer() const;
+ /*! \function     Layer* Component::getLayer() const;
   *  \Return       the layer on which the component is located (may return NULL 
   *                for some component types like the plugs). 
   */
 
- /*! \function     Box Component::GetBoundingBox(BasicLayer* basicLayer) const;
+ /*! \function     Box Component::getBoundingBox(const BasicLayer* basicLayer) const;
   *  \Return       the envelope of the component for the \c \<basicLayer\>, that 
   *                is the smallest box enclosing all layout elements located on 
   *                the specified basic layer. 
@@ -166,14 +166,14 @@ Point Contact::GetPosition() const
   *                specified basic layer. 
   */
 
- /*! \function     Components Component::GetSlaveComponents() const;
+ /*! \function     Components Component::getSlaveComponents() const;
   *  \Return       the collection of components whose existence depends directly 
   *                or indirectly of the existence of the component \c \<this\> 
   *                (a segment can't survive to the destruction of a contact on 
   *                which it is anchored). 
   */
 
- /*! \function     Components Component::GetConnexComponents() const;
+ /*! \function     Components Component::getConnexComponents() const;
   *  \Return       the collection of "connex components" to the component 
   *                \c \<this\> (which includes at least this one). 
   *
@@ -194,7 +194,7 @@ Point Contact::GetPosition() const
   *                electrical continuity will not be ensured. 
   */
 
- /*! \function     ComponentFilter Component::GetIsUnderFilter(const Box& area);
+ /*! \function     ComponentFilter Component::getIsUnderFilter(const Box& area);
   *  \Return       the filter allowing to select only components which intersect 
   *                the rectangular \c \<area\>. 
   */

@@ -41,17 +41,17 @@
   */
  //  \{
 
- /*! \function     Segment::SourceHook* Segment::GetSourceHook();
+ /*! \function     Segment::SourceHook* Segment::getSourceHook();
   *  \Return       the hook through which the segment origin can be anchored on 
   *                a component. 
   */
 
- /*! \function     Segment::TargetHook* Segment::GetTargetHook();
+ /*! \function     Segment::TargetHook* Segment::getTargetHook();
   *  \Return       the hook through which the segment extremity can be anchored 
   *                on a component. 
   */
 
- /*! \function     Hook* Segment::GetOppositeHook(const Hook* hook) const;
+ /*! \function     Hook* Segment::getOppositeHook(const Hook* hook) const;
   *  \Return       the target hook of the segment if \c \<hook\> is the source 
   *                hook of the segment. 
   *
@@ -61,7 +61,7 @@
   *  \Return       NULL otherwise. 
   */
 
- /*! \function     Component* Segment::GetSource() const;
+ /*! \function     Component* Segment::getSource() const;
   *                The source hook being a slave one, it may have an associated 
   *                master hook representing the body of the component on wich 
   *                the segment origin is anchored. 
@@ -70,7 +70,7 @@
   *                hook, if any, else a NULL pointer. 
   */
 
- /*! \function     Component* Segment::GetTarget() const;
+ /*! \function     Component* Segment::getTarget() const;
   *                The target hook being a slave one, it may have an associated 
   *                master hook representing the body of the component on wich 
   *                the segment extremity is anchored. 
@@ -79,7 +79,7 @@
   *                hook, if any, else a NULL pointer. 
   */
 
- /*! \function     Component* Segment::GetOppositeAnchor(Component* anchor) const;
+ /*! \function     Component* Segment::getOppositeAnchor(Component* anchor) const;
   *  \Return       the target anchor of the segment if \c \<anchor\> is the 
   *                source anchor of the segment (may be NULL) 
   *
@@ -89,46 +89,46 @@
   *  \Return       NULL otherwise. 
   */
 
- /*! \function     Components Segment::GetAnchors() const;
+ /*! \function     Components Segment::getAnchors() const;
   *  \Return       the collection of anchors. This collection is composed by the 
   *                source (if non NULL) and the target (if non NULL) of the 
   *                segment (may be empty if all extremities of the segment 
   *                aren't anchored). 
   */
 
- /*! \function     const Unit& Segment::GetWidth() const;
+ /*! \function     const Unit& Segment::getWidth() const;
   *  \Return       the segment width. 
   */
 
- /*! \function     Unit Segment::GetHalfWidth() const;
+ /*! \function     Unit Segment::getHalfWidth() const;
   *  \Return       the segment half width. 
   */
 
- /*! \function     Unit Segment::GetSourceX() const;
+ /*! \function     Unit Segment::getSourceX() const;
   *  \Return       the abscissa of the segment origin. 
   */
 
- /*! \function     Unit Segment::GetSourceY() const;
+ /*! \function     Unit Segment::getSourceY() const;
   *  \Return       the ordinate of the segment origin. 
   */
 
- /*! \function     Point Segment::GetSourcePosition() const;
+ /*! \function     Point Segment::getSourcePosition() const;
   *  \Return       the point location of the segment origin. 
   */
 
- /*! \function     Unit Segment::GetTargetX() const;
+ /*! \function     Unit Segment::getTargetX() const;
   *  \Return       the abscissa of the segment extremity. 
   */
 
- /*! \function     Unit Segment::GetTargetY() const;
+ /*! \function     Unit Segment::getTargetY() const;
   *  \Return       the ordinate of the segment extremity. 
   */
 
- /*! \function     Point Segment::GetTargetPosition() const;
+ /*! \function     Point Segment::getTargetPosition() const;
   *  \Return       the point location of the segment extremity. 
   */
 
- /*! \function     Unit Segment::GetLength() const;
+ /*! \function     Unit Segment::getLength() const;
   *  \Return       the segment length. 
   */
 
@@ -139,16 +139,16 @@
   */
  //  \{
 
- /*! \function     void Segment::SetLayer(Layer* layer);
-  *                Sets the segment layer. 
+ /*! \function     void Segment::setLayer(Layer* layer);
+  *                sets the segment layer. 
   */
 
- /*! \function     void Segment::SetWidth(const Unit& width);
-  *                Sets the segment width. 
+ /*! \function     void Segment::setWidth(const Unit& width);
+  *                sets the segment width. 
   */
 
- /*! \function     void Segment::Invert();
-  *                Invert the segment. The source and target of the segment are 
+ /*! \function     void Segment::invert();
+  *                invert the segment. The source and target of the segment are 
   *                permutted. 
   */
 

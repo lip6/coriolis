@@ -38,12 +38,12 @@
   */
  //  \{
 
- /*! \function     Horizontal* Horizontal::Create(Component* source, Component* target, Layer* layer,const Unit& y, const Unit& width = 0,const Unit& dxSource = 0, const Unit& dxTarget = 0);
+ /*! \function     Horizontal* Horizontal::create(Component* source, Component* target, Layer* layer,const Unit& y, const Unit& width = 0,const Unit& dxSource = 0, const Unit& dxTarget = 0);
   *                No description.
   */
 
- /*! \function     Horizontal* Horizontal::Create(Net* net, Layer* layer, const Unit& y, const Unit& width = 0,const Unit& dxSource = 0, const Unit& dxTarget = 0);
-  *                Creates and returns an absolute horizontal segment with layer 
+ /*! \function     Horizontal* Horizontal::create(Net* net, Layer* layer, const Unit& y, const Unit& width = 0,const Unit& dxSource = 0, const Unit& dxTarget = 0);
+  *                creates and returns an absolute horizontal segment with layer 
   *                \c \<layer\>, located at ordinate \c \<y\> and of width 
   *                \c \<width\>. The differents extremities abscissas are given 
   *                by \c \<dxSource\> and \c \<dxTarget\>. 
@@ -59,20 +59,20 @@
   */
  //  \{
 
- /*! \function     const Unit& Horizontal::GetDxSource() const;
+ /*! \function     const Unit& Horizontal::getDxSource() const;
   *  \Return       the relative source abscissa of the segment (may be absolute 
   *                if the source extremity isn't anchored). 
   *
   *  \remark       If you want to get the absolute one use the member function 
-  *                GetSourceY() defined at the Segment level. 
+  *                getSourceY() defined at the Segment level. 
   */
 
- /*! \function     const Unit& Horizontal::GetDxTarget() const;
+ /*! \function     const Unit& Horizontal::getDxTarget() const;
   *  \Return       the relative target abscissa of the segment (may be absolute 
   *                if the target extremity isn't anchored). 
   *
   *  \remark       If you want to get the absolute one use the member function 
-  *                GetTargetY() defined at the Segment level. 
+  *                getTargetY() defined at the Segment level. 
   */
 
  //  \}
@@ -82,12 +82,12 @@
   */
  //  \{
 
- /*! \function     void Horizontal::SetY(const Unit& x);
-  *                Sets the ordinate of the segment. 
+ /*! \function     void Horizontal::setY(const Unit& x);
+  *                sets the ordinate of the segment. 
   */
 
- /*! \function     void Horizontal::Translate(const Unit& dy);
-  *                Translate verticaly the horizontal segment of the quantity 
+ /*! \function     void Horizontal::translate(const Unit& dy);
+  *                translate verticaly the horizontal segment of the quantity 
   *                \c \<dy\>. 
   */
 

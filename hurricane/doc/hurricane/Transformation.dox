@@ -122,88 +122,88 @@ TO::R1
   */
  //  \{
 
- /*! \function     const Unit& Transformation::GetTx() const;
+ /*! \function     const Unit& Transformation::getTx() const;
   *  \Return       the horizontal component of the translation. 
   */
 
- /*! \function     const Unit& Transformation::GetTy() const;
+ /*! \function     const Unit& Transformation::getTy() const;
   *  \Return       the vertical component of the translation. 
   */
 
- /*! \function     Point Transformation::GetTranslation() const;
+ /*! \function     Point Transformation::getTranslation() const;
   *  \Return       the translation component of the transformation. 
   */
 
- /*! \function     const Translation::Orientation& Transformation::GetOrientation() const;
+ /*! \function     const Translation::Orientation& Transformation::getOrientation() const;
   *  \Return       the orientation of the transformation (may be used in a 
   *                switch). 
   */
 
- /*! \function     Unit Transformation::GetX(const Unit& x, const Unit& y) const;
+ /*! \function     Unit Transformation::getX(const Unit& x, const Unit& y) const;
   *  \Return       the point abscissa resulting of the transformation 
   *                application on the point defined by \c \<x\> et \c \<y\>. 
   */
 
- /*! \function     Unit Transformation::GetY(const Unit& x, const Unit& y) const;
+ /*! \function     Unit Transformation::getY(const Unit& x, const Unit& y) const;
   *  \Return       the point ordinate resulting of the transformation 
   *                application on the point defined by \c \<x\> et \c \<y\>. 
   */
 
- /*! \function     Unit Transformation::GetX(const Point& point) const;
+ /*! \function     Unit Transformation::getX(const Point& point) const;
   *  \Return       the point abscissa resulting of the transformation 
   *                application on \c \<point\>. 
   */
 
- /*! \function     Unit Transformation::GetY(const Point& point) const;
+ /*! \function     Unit Transformation::getY(const Point& point) const;
   *  \Return       the point ordinate resulting of the transformation 
   *                application on \c \<point\>. 
   */
 
- /*! \function     Unit Transformation::GetDx(const Unit& dx, const Unit& dy) const;
+ /*! \function     Unit Transformation::getDx(const Unit& dx, const Unit& dy) const;
   *  \Return       the horizontal component of the vector resulting from the 
   *                application of the transformation on the vector defined by 
   *                \c \<dx\> et \c \<dy\>. 
   */
 
- /*! \function     Unit Transformation::GetDy(const Unit& dx, const Unit& dy) const;
+ /*! \function     Unit Transformation::getDy(const Unit& dx, const Unit& dy) const;
   *  \Return       the vertical component of the vector resulting from the 
   *                application of the transformation on the vector defined by 
   *                \c \<dx\> et \c \<dy\>. 
   */
 
- /*! \function     Point Transformation::GetPoint(const Unit& x, const Unit& y) const;
+ /*! \function     Point Transformation::getPoint(const Unit& x, const Unit& y) const;
   *  \Return       the point resulting from the application of the 
   *                transformation on the point defined by \c \<dx\> et 
   *                \c \<dy\>. 
   */
 
- /*! \function     Point Transformation::GetPoint(const Point& point) const;
+ /*! \function     Point Transformation::getPoint(const Point& point) const;
   *  \Return       the point resulting from the application of the 
   *                transformation on \c \<point\>. 
   */
 
- /*! \function     Box Transformation::GetBox(const Unit& x1, const Unit& y1, const Unit& x2, const Unit& y2) const;
+ /*! \function     Box Transformation::getBox(const Unit& x1, const Unit& y1, const Unit& x2, const Unit& y2) const;
   *  \Return       the box resulting from the application of the transformation 
   *                on the box defined by \c \<x1\>, \c \<y1\>, \c \<x2\> et 
   *                \c \<y2\>. 
   */
 
- /*! \function     Box Transformation::GetBox(const Point& point1, const Point& point2) const;
+ /*! \function     Box Transformation::getBox(const Point& point1, const Point& point2) const;
   *  \Return       the box resulting from the application of the transformation 
   *                on the box defined by \c \<point1\> et \c \<point2\>. 
   */
 
- /*! \function     Box Transformation::GetBox(const Box& box) const;
+ /*! \function     Box Transformation::getBox(const Box& box) const;
   *  \Return       the box resulting from the application of the transformation 
   *                on the box \c \<box\>. 
   */
 
- /*! \function     Transformation Transformation::GetTransformation(const Transformation& transformation) const;
+ /*! \function     Transformation Transformation::getTransformation(const Transformation& transformation) const;
   *  \Return       the transformation resulting from the application of the 
   *                transformation on the transformation \c \<transformation\>. 
   */
 
- /*! \function     Transformation Transformation::GetInvert() const;
+ /*! \function     Transformation Transformation::getInvert() const;
   *  \Return       the inverse transformation. 
   */
 
@@ -214,8 +214,8 @@ TO::R1
   */
  //  \{
 
- /*! \function     Transformation& Transformation::Invert();
-  *                Inverts the transformation \c \<this\> and returns a 
+ /*! \function     Transformation& Transformation::invert();
+  *                inverts the transformation \c \<this\> and returns a 
   *                reference to it in order to apply in sequence a new function. 
   */
 
@@ -225,13 +225,13 @@ TO::R1
  /*! \section      secTransformationTransformers  Transformers
   *
   *
-  *                <b>Transformation::ApplyOn</b>
+  *                <b>Transformation::applyOn</b>
   *
-  *                <b>Transformation::ApplyOn</b>
+  *                <b>Transformation::applyOn</b>
   *
-  *                <b>Transformation::ApplyOn</b>
+  *                <b>Transformation::applyOn</b>
   *
-  *                <b>Transformation::ApplyOn</b>
+  *                <b>Transformation::applyOn</b>
   */
 
 
@@ -240,20 +240,20 @@ TO::R1
   */
  //  \{
 
- /*! \function     void Transformation::ApplyOn(Unit& x, Unit& y) const;
+ /*! \function     void Transformation::applyOn(Unit& x, Unit& y) const;
   *                Applies the transformation on the coordinates given in 
   *                arguments. 
   */
 
- /*! \function     void Transformation::ApplyOn(Point& point) const;
+ /*! \function     void Transformation::applyOn(Point& point) const;
   *                Applies the transformation on the point given in argument. 
   */
 
- /*! \function     void Transformation::ApplyOn(Box& box) const;
+ /*! \function     void Transformation::applyOn(Box& box) const;
   *                Applies the transformation on the box given in argument. 
   */
 
- /*! \function     void Transformation::ApplyOn(Transformation& transformation) const;
+ /*! \function     void Transformation::applyOn(Transformation& transformation) const;
   *                Applies the transformation on the transformation given in 
   *                argument. This last one becomes then the transformation 
   *                resulting of the product of those two. 

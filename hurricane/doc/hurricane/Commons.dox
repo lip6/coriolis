@@ -9,12 +9,12 @@
   *  \{
   */
 
- /*! \function     string  Demangle ( const char* symbol );
+ /*! \function     string  demangle ( const char* symbol );
   *                Translate (demangle) a symbol from C++ (\c gnu-v3) internal format
   *                into a human readable \string.
   */
 
- /*! \function     string  Demangle ( const type_info& info );
+ /*! \function     string  demangle ( const type_info& info );
   *  \param        info  a type_info structure as returned by \c typeid().
   *
   *                Translate (demangle) a symbol from C++ (\c gnu-v3) internal format

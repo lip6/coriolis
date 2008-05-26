@@ -27,7 +27,7 @@
   */
  //  \{
 
- /*! \function     Filter<Type>* Filter::GetClone() const;
+ /*! \function     Filter<Type>* Filter::getClone() const;
   *  \Return       a filter copy. 
   */
 
@@ -38,7 +38,7 @@
   */
  //  \{
 
- /*! \function     bool Filter::Accept(Type element) const;
+ /*! \function     bool Filter::accept(Type element) const;
   *                This member function returns \true if the filter accepts the 
   *                element else \false. 
   */
@@ -73,28 +73,28 @@ class IsExternal : public Filter<Net*> {
  
       IsExternal& operator=(const IsExternal& isExternal) {return *this;};
  
-      virtual Filter<Net*>* GetClone() const {return new IsExternal(*this);};
+      virtual Filter<Net*>* getClone() const {return new IsExternal(*this);};
  
-      virtual bool Accept(Net* net) const {return netIsExternal();};
+      virtual bool accept(Net* net) const {return netIsExternal();};
  
 };
 \endcode
-  *                Implementation of the accessor <b>GetExternalNets</b> for the 
+  *                Implementation of the accessor <b>getExternalNets</b> for the 
   *                cells : 
 \code
-Nets Cell::GetExternalNet() const
+Nets Cell::getExternalNet() const
 // ******************************
 {
-   return GetNets().GetSubSet(IsExternal());
+   return getNets().getSubSet(IsExternal());
 }
 \endcode
-  *                Similarly, the accessor <b>GetInternalNets</b> can be 
+  *                Similarly, the accessor <b>getInternalNets</b> can be 
   *                implemented using the <b>!</b> operator : 
 \code
-Nets Cell::GetInternalNets() const
+Nets Cell::getInternalNets() const
 // *******************************
 {
-   return GetNets().GetSubSet(!IsExternal());
+   return getNets().getSubSet(!IsExternal());
 }
 \endcode
   */
@@ -107,7 +107,7 @@ Nets Cell::GetInternalNets() const
   *                filter with a simpler interface. Now the filters as they are 
   *                defined open the door to much more complex processing. 
   *
-  *                As a matter of fact the function <b>Accept</b> receives only 
+  *                As a matter of fact the function <b>accept</b> receives only 
   *                one argument which represents the element of the collection 
   *                to be accepted or rejected. 
   *
@@ -136,9 +136,9 @@ class MyFilter : public Filter<Net*> {
          return *this;
       };
  
-      virtual Filter<Net*>* GetClone() const {return new MyFilter(*this);};
+      virtual Filter<Net*>* getClone() const {return new MyFilter(*this);};
  
-      virtual bool Accept(Net* net) const
+      virtual bool accept(Net* net) const
       {
          return netIsExternal() && (netGetName()[0] == _c);
       };
@@ -147,9 +147,9 @@ class MyFilter : public Filter<Net*> {
 \endcode
   *                Afterwards do 
 \code
-for_each_net(net, cellGetNets().GetSubSet(MyFilter('k'))) {
+for_each_net(net, cellGetNets().getSubSet(MyFilter('k'))) {
    assert(net->IsExternal());
-   assert(net->GetName()[0] == 'k');
+   assert(net->getName()[0] == 'k');
    cerr << "net: " << net << endl;
    end_for;
 }
@@ -169,7 +169,7 @@ for_each_net(net, cellGetNets().GetSubSet(MyFilter('k'))) {
   *                this : 
 \code
 for_each_net(net, cellGetNets()) {
-   if (netIsExternal() && (net->GetName()[0] == 'k'))
+   if (netIsExternal() && (net->getName()[0] == 'k'))
       cerr << "net: " << net << endl;
    end_for;
 }
@@ -177,7 +177,7 @@ for_each_net(net, cellGetNets()) {
   *                or more simply : 
 \code
 for_each_net(net, cellGetExternalNets()) {
-   if (net->GetName()[0] == 'k')
+   if (net->getName()[0] == 'k')
       cerr << "net: " << net << endl;
    end_for;
 }
@@ -185,20 +185,20 @@ for_each_net(net, cellGetExternalNets()) {
   *                Filters are objects like any other : they can be passed as 
   *                function arguments as shown below : 
 \code
-Nets Cell::GetNets(const GenericFilter<Net*>& filter) const
+Nets Cell::getNets(const GenericFilter<Net*>& filter) const
 // ********************************************************
 {
-   return GetNets().GetSubSet(filter);
+   return getNets().getSubSet(filter);
 }
 \endcode
   *                As far as the type <b>NetFilter</b> is defined as being a 
   *                <b>GenericFilter\<Net*\></b> the previous function can be 
   *                written like this : 
 \code
-Nets Cell::GetNets(const NetFilter& filter) const
+Nets Cell::getNets(const NetFilter& filter) const
 // **********************************************
 {
-   return GetNets().GetSubSet(filter);
+   return getNets().getSubSet(filter);
 }
 \endcode
   */

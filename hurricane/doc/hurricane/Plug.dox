@@ -37,8 +37,8 @@
   *  \section      secPlugPredefinedFilters  Predefined filters
   *
   *
-  *                <b>Hurricane::Plug::GetIsConnectedFilter</b>
-  *                <b>Hurricane::Plug::GetIsUnconnectedFilter</b>
+  *                <b>Hurricane::Plug::getIsConnectedFilter</b>
+  *                <b>Hurricane::Plug::getIsUnconnectedFilter</b>
   */
 
 
@@ -53,15 +53,15 @@
   */
  //  \{
 
- /*! \function     Instance* Plug::GetInstance() const;
+ /*! \function     Instance* Plug::getInstance() const;
   *  \Return       the instance to which belongs the plug. 
   */
 
- /*! \function     Net* Plug::GetMasterNet() const;
+ /*! \function     Net* Plug::getMasterNet() const;
   *  \Return       the external net referenced by the plug in the master cell of 
   *                its instance. 
   *
-  *  \remark       Don't mistake with GetNet() which returns the net owning the 
+  *  \remark       Don't mistake with getNet() which returns the net owning the 
   *                plug (or NULL if is unconnected). 
   */
 
@@ -72,10 +72,10 @@
   */
  //  \{
 
- /*! \function     bool Plug::IsConnected() const;
+ /*! \function     bool Plug::isConnected() const;
   *  \Return       \true if the plug is connected, else \false. 
   *
-  *  \remark       A plug is connected if the call upon <b>GetNet()</b> doesn't 
+  *  \remark       A plug is connected if the call upon <b>getNet()</b> doesn't 
   *                return NULL. 
   */
 
@@ -86,7 +86,7 @@
   */
  //  \{
 
- /*! \function     void Plug::SetNet(Net* net);
+ /*! \function     void Plug::setNet(Net* net);
   *                This method allows to connect or change the net of a plug. 
   *
   *  \caution      An exception is thrown if the net owner cell differs from the 
@@ -129,11 +129,11 @@
   */
  //  \{
 
- /*! \function     PlugFilter Plug::GetIsConnectedFilter();
+ /*! \function     PlugFilter Plug::getIsConnectedFilter();
   *  \Return       a filter for selecting only connected plugs. 
   */
 
- /*! \function     PlugFilter Plug::GetIsUnconnectedFilter();
+ /*! \function     PlugFilter Plug::getIsUnconnectedFilter();
   *  \Return       a filter for selecting only unconnected plugs. 
   */
 

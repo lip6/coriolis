@@ -83,7 +83,7 @@
   *                names described as a character string. Each instance name is 
   *                separated from the preceeding one by a special delimiter 
   *                (which can be defined with the function 
-  *                <b>SetPathNameSeparator</b> to be defined later). The cell 
+  *                <b>setPathNameSeparator</b> to be defined later). The cell 
   *                given in argument defines where sarts the search (at each new 
   *                instance identified, we go to its model cell to pursue the 
   *                search within the \c \<pathName\>). 
@@ -143,47 +143,47 @@
   */
  //  \{
 
- /*! \function     Instance* Path::GetHeadInstance() const;
+ /*! \function     Instance* Path::getHeadInstance() const;
   *  \Return       the head instance or NULL if the path is void. 
   */
 
- /*! \function     Path Path::GetTailPath() const;
+ /*! \function     Path Path::getTailPath() const;
   *  \Return       the tail path or a void path if the path has 1 or 0 
   *                hierarchical depth. 
   */
 
- /*! \function     Path Path::GetHeadPath() const;
+ /*! \function     Path Path::getHeadPath() const;
   *  \Return       the head path or a void path if the path has 1 or 0 
   *                hierarchical depth. 
   */
 
- /*! \function     Instance* Path::GetTailInstance() const;
+ /*! \function     Instance* Path::getTailInstance() const;
   *  \Return       the tail instance or NULL if the path is void. 
   */
 
- /*! \function     string Path::GetName() const;
+ /*! \function     string Path::getName() const;
   *  \Return       a string defined by the concatenation of instance names 
   *                separated by a special character (which can be set up by the 
-  *                function <b>SetPathNameSeparator</b>). 
+  *                function <b>setPathNameSeparator</b>). 
   *
   *  \Return       the string <b>""</b> when the path is void. 
   */
 
- /*! \function     Cell* Path::GetOwnerCell() const;
+ /*! \function     Cell* Path::getOwnerCell() const;
   *                Retruns the cell owning the head instance or NULL if the path 
   *                is void. 
   */
 
- /*! \function     Cell* Path::GetMasterCell() const;
+ /*! \function     Cell* Path::getMasterCell() const;
   *  \Return       the master cell referenced by the last instance of the path 
   *                or NULL if the path is void. 
   */
 
- /*! \function     Instances Path::GetInstances() const;
+ /*! \function     Instances Path::getInstances() const;
   *  \Return       the collection of instances defining the path. 
   */
 
- /*! \function     Transformation Path::GetTransformation(const Transformation& transformation = Transformation()) const;
+ /*! \function     Transformation Path::getTransformation(const Transformation& transformation = Transformation()) const;
   *  \Return       the transform resulting of the composition of all transforms 
   *                associated with the different instances of the path, applied 
   *                to the given \c \<transformation\>. 
@@ -196,7 +196,7 @@
   */
  //  \{
 
- /*! \function     bool Path::IsEmpty() const;
+ /*! \function     bool Path::isEmpty() const;
   *  \Return       \true if the path is void and else \false. 
   */
 
@@ -207,12 +207,12 @@
   */
  //  \{
 
- /*! \function     char Path::GetNameSeparator();
+ /*! \function     char Path::getNameSeparator();
   *  \Return       the special character used as a separator between the 
   *                instance names of a path. By default it is the '.' (point). 
   */
 
- /*! \function     void Path::SetNameSeparator(char separator);
+ /*! \function     void Path::setNameSeparator(char separator);
   *                This function sets the special character used as a separator 
   *                between the instance names of a path (choose it carrefully, 
   *                it must not appear in any instance name). 

@@ -39,8 +39,8 @@
   */
  //  \{
 
- /*! \function     Vertical* Vertical::Create(Component* source, Component* target, Layer* layer,const Unit& x,const Unit& width = 0,const Unit& dySource = 0, const Unit& dyTarget = 0);
-  *                Creates and returns a vertical segment whose origin lies 
+ /*! \function     Vertical* Vertical::create(Component* source, Component* target, Layer* layer,const Unit& x,const Unit& width = 0,const Unit& dySource = 0, const Unit& dyTarget = 0);
+  *                creates and returns a vertical segment whose origin lies 
   *                (through an offset equal to \c \<dySource\>) on 
   *                \c \<source\>, whose extremity lies (through an offset equal 
   *                to \c \<dyTarget\>) on \c \<target\>, with layer 
@@ -52,8 +52,8 @@
   *                same net. 
   */
 
- /*! \function     Vertical* Vertical::Create(Net* net, Layer* layer, const Unit& x, const Unit& width = 0,const Unit& dySource = 0, const Unit& dyTarget = 0);
-  *                Creates and returns an absolute vertical segment with layer 
+ /*! \function     Vertical* Vertical::create(Net* net, Layer* layer, const Unit& x, const Unit& width = 0,const Unit& dySource = 0, const Unit& dyTarget = 0);
+  *                creates and returns an absolute vertical segment with layer 
   *                \c \<layer\>, located at abscissa \c \<x\> and of width 
   *                \c \<width\>. The differents extremities ordinates are given 
   *                by \c \<dySource\> and \c \<dyTarget\>. 
@@ -69,20 +69,20 @@
   */
  //  \{
 
- /*! \function     const Unit& Vertical::GetDySource() const;
+ /*! \function     const Unit& Vertical::getDySource() const;
   *  \Return       the relative source ordinate of the segment (may be absolute 
   *                if the source extremity isn't anchored). 
   *
   *  \remark       If you want to get the absolute one use the member function 
-  *                GetSourceX() defined at the Segment level. 
+  *                getSourceX() defined at the Segment level. 
   */
 
- /*! \function     const Unit& Vertical::GetDyTarget() const;
+ /*! \function     const Unit& Vertical::getDyTarget() const;
   *  \Return       the relative target ordinate of the segment (may be absolute 
   *                if the target extremity isn't anchored). 
   *
   *  \remark       If you want to get the absolute one use the member function 
-  *                GetTargetX() defined at the Segment level. 
+  *                getTargetX() defined at the Segment level. 
   */
 
  //  \}
@@ -92,12 +92,12 @@
   */
  //  \{
 
- /*! \function     void Vertical::SetX(const Unit& x);
-  *                Sets the abscissa of the segment. 
+ /*! \function     void Vertical::setX(const Unit& x);
+  *                sets the abscissa of the segment. 
   */
 
- /*! \function     void Vertical::Translate(const Unit& dx);
-  *                Translate horizontaly the vertical segment of the quantity 
+ /*! \function     void Vertical::translate(const Unit& dx);
+  *                translate horizontaly the vertical segment of the quantity 
   *                \c \<dx\>. 
   */
 

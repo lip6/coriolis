@@ -5,7 +5,7 @@
 
 PROJECT_NAME           = "Hurricane"
 PROJECT_NUMBER         = 3.0
-OUTPUT_DIRECTORY       = html
+OUTPUT_DIRECTORY       = .
 OUTPUT_LANGUAGE        = English
 #USE_WINDOWS_ENCODING   = NO
 #DOXYFILE_ENCODING      = UTF-8
@@ -19,7 +19,7 @@ SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = NO
 MULTILINE_CPP_IS_BRIEF = NO
 DETAILS_AT_TOP         = YES
-INHERIT_DOCS           = YES
+INHERIT_DOCS           = NO
 DISTRIBUTE_GROUP_DOC   = NO
 TAB_SIZE               = 2
 
@@ -62,7 +62,7 @@ SUBGROUPING            = YES
 # --------------------------------------------------------------------
 # Build related configuration options
 
-EXTRACT_ALL            = YES
+EXTRACT_ALL            = NO
 EXTRACT_PRIVATE        = YES
 EXTRACT_STATIC         = YES
 EXTRACT_LOCAL_CLASSES  = YES
@@ -101,84 +101,131 @@ INPUT                  = \
   ../../src/hurricane/hurricane/SlotAdapter.h      \
                                 SlotAdapter.dox    \
   ../../src/hurricane/hurricane/Commons.h          \ 
-  ../../src/hurricane/hurricane/DataBase.h         \
-  ../../src/hurricane/hurricane/Technology.h       \
-  ../../src/hurricane/hurricane/DBos.h             \
-  ../../src/hurricane/hurricane/DBo.h              \
-  ../../src/hurricane/hurricane/Entities.h         \
-  ../../src/hurricane/hurricane/Entity.h           \
-  ../../src/hurricane/hurricane/Cells.h            \
-  ../../src/hurricane/hurricane/Cell.h             \
-  ../../src/hurricane/hurricane/BasicLayers.h      \
-  ../../src/hurricane/hurricane/BasicLayer.h       \
-  ../../src/hurricane/hurricane/Boxes.h            \
-  ../../src/hurricane/hurricane/Box.h              \
-  ../../src/hurricane/hurricane/Collection.h       \
-  ../../src/hurricane/hurricane/Components.h       \
-  ../../src/hurricane/hurricane/Component.h        \
-  ../../src/hurricane/hurricane/CompositeLayers.h  \
-  ../../src/hurricane/hurricane/CompositeLayer.h   \
-  ../../src/hurricane/hurricane/Contacts.h         \
-  ../../src/hurricane/hurricane/Contact.h          \
-  ../../src/hurricane/hurricane/Error.h            \
+                                Commons.dox        \
   ../../src/hurricane/hurricane/Exception.h        \
-  ../../src/hurricane/hurricane/Filter.h           \
-  ../../src/hurricane/hurricane/Locator.h          \
-  ../../src/hurricane/hurricane/Gos.h              \
-  ../../src/hurricane/hurricane/Go.h               \
-  ../../src/hurricane/hurricane/Hooks.h            \
-  ../../src/hurricane/hurricane/Hook.h             \
-  ../../src/hurricane/hurricane/Horizontals.h      \
-  ../../src/hurricane/hurricane/Horizontal.h       \
-  ../../src/hurricane/hurricane/Instances.h        \
-  ../../src/hurricane/hurricane/Instance.h         \
+  ../../src/hurricane/hurricane/Error.h            \
+  ../../src/hurricane/hurricane/Warning.h          \
   ../../src/hurricane/hurricane/Interruption.h     \
-  ../../src/hurricane/hurricane/Intervals.h        \
-  ../../src/hurricane/hurricane/Interval.h         \
-  ../../src/hurricane/hurricane/Layers.h           \
-  ../../src/hurricane/hurricane/Layer.h            \
-  ../../src/hurricane/hurricane/Libraries.h        \
-  ../../src/hurricane/hurricane/Library.h          \
+                                Exception.dox      \
+  ../../src/hurricane/hurricane/Collection.h       \
   ../../src/hurricane/hurricane/ListCollection.h   \
-  ../../src/hurricane/hurricane/Locator.h          \
   ../../src/hurricane/hurricane/MapCollection.h    \
-  ../../src/hurricane/hurricane/Names.h            \
-  ../../src/hurricane/hurricane/Name.h             \
-  ../../src/hurricane/hurricane/Nets.h             \
-  ../../src/hurricane/hurricane/Net.h              \
-  ../../src/hurricane/hurricane/Occurrences.h      \
-  ../../src/hurricane/hurricane/Occurrence.h       \
-  ../../src/hurricane/hurricane/Pads.h             \
-  ../../src/hurricane/hurricane/Pad.h              \
-  ../../src/hurricane/hurricane/Pathes.h           \
-  ../../src/hurricane/hurricane/Path.h             \
-  ../../src/hurricane/hurricane/Pins.h             \
-  ../../src/hurricane/hurricane/Pin.h              \
-  ../../src/hurricane/hurricane/Plugs.h            \
-  ../../src/hurricane/hurricane/Plug.h             \
+  ../../src/hurricane/hurricane/SetCollection.h    \
+  ../../src/hurricane/hurricane/VectorCollection.h \
+                                Collection.dox     \
+  ../../src/hurricane/hurricane/Locator.h          \
+  ../../src/hurricane/hurricane/Locator.h          \
+                                Locator.dox        \
+  ../../src/hurricane/hurricane/Filter.h           \
+                                Filter.dox         \
+  ../../src/hurricane/hurricane/Relation.h         \
+                                Relation.dox       \
+  ../../src/hurricane/hurricane/Tabulation.h       \
+                                Tabulation.dox     \
+  ../../src/hurricane/hurricane/Unit.h             \
+                                Unit.dox           \
   ../../src/hurricane/hurricane/Points.h           \
   ../../src/hurricane/hurricane/Point.h            \
-  ../../src/hurricane/hurricane/Properties.h       \
-  ../../src/hurricane/hurricane/Property.h         \
-  ../../src/hurricane/hurricane/QuadTree.h         \
-  ../../src/hurricane/hurricane/Quarks.h           \
-  ../../src/hurricane/hurricane/Quark.h            \
-  ../../src/hurricane/hurricane/Relation.h         \
-  ../../src/hurricane/hurricane/Rubbers.h          \
-  ../../src/hurricane/hurricane/Rubber.h           \
+                                Point.dox          \
+  ../../src/hurricane/hurricane/Boxes.h            \
+  ../../src/hurricane/hurricane/Box.h              \
+                                Box.dox            \
+  ../../src/hurricane/hurricane/Intervals.h        \
+  ../../src/hurricane/hurricane/Interval.h         \
+                                Interval.dox       \
+  ../../src/hurricane/hurricane/Transformation.h   \
+                                Transformation.dox \
+  ../../src/hurricane/hurricane/Names.h            \
+  ../../src/hurricane/hurricane/Name.h             \
+                                Name.dox           \
+                                                   \
+  ../../src/hurricane/hurricane/DBos.h             \
+  ../../src/hurricane/hurricane/DBo.h              \
+                                DBo.dox            \
+  ../../src/hurricane/hurricane/DataBase.h         \
+                                DataBase.dox       \
+  ../../src/hurricane/hurricane/Technology.h       \
+                                Technology.dox     \
+  ../../src/hurricane/hurricane/Layers.h           \
+  ../../src/hurricane/hurricane/Layer.h            \
+                                Layer.dox          \
+  ../../src/hurricane/hurricane/BasicLayers.h      \
+  ../../src/hurricane/hurricane/BasicLayer.h       \
+                                BasicLayer.dox     \
+  ../../src/hurricane/hurricane/CompositeLayers.h  \
+  ../../src/hurricane/hurricane/CompositeLayer.h   \
+                                CompositeLayer.dox \
+  ../../src/hurricane/hurricane/Libraries.h        \
+  ../../src/hurricane/hurricane/Library.h          \
+                                Library.dox        \
+  ../../src/hurricane/hurricane/Entities.h         \
+  ../../src/hurricane/hurricane/Entity.h           \
+                                Entity.dox         \
+  ../../src/hurricane/hurricane/Cells.h            \
+  ../../src/hurricane/hurricane/Cell.h             \
+                                Cell.dox           \
+  ../../src/hurricane/hurricane/Nets.h             \
+  ../../src/hurricane/hurricane/Net.h              \
+                                Cell.dox           \
+  ../../src/hurricane/hurricane/Gos.h              \
+  ../../src/hurricane/hurricane/Go.h               \
+                                Cell.dox           \
+  ../../src/hurricane/hurricane/Instances.h        \
+  ../../src/hurricane/hurricane/Instance.h         \
+                                Cell.dox           \
+  ../../src/hurricane/hurricane/Components.h       \
+  ../../src/hurricane/hurricane/Component.h        \
+                                Component.dox      \
+  ../../src/hurricane/hurricane/Plugs.h            \
+  ../../src/hurricane/hurricane/Plug.h             \
+                                Plug.dox           \
+  ../../src/hurricane/hurricane/Contacts.h         \
+  ../../src/hurricane/hurricane/Contact.h          \
+                                Contact.dox        \
+  ../../src/hurricane/hurricane/Pins.h             \
+  ../../src/hurricane/hurricane/Pin.h              \
+                                Pin.dox            \
   ../../src/hurricane/hurricane/Segments.h         \
   ../../src/hurricane/hurricane/Segment.h          \
-  ../../src/hurricane/hurricane/SetCollection.h    \
-  ../../src/hurricane/hurricane/Slices.h           \
-  ../../src/hurricane/hurricane/Slice.h            \
-  ../../src/hurricane/hurricane/Tabulation.h       \
-  ../../src/hurricane/hurricane/Transformation.h   \
-  ../../src/hurricane/hurricane/Unit.h             \
-  ../../src/hurricane/hurricane/UpdateSession.h    \
-  ../../src/hurricane/hurricane/VectorCollection.h \
+                                Segment.dox        \
   ../../src/hurricane/hurricane/Verticals.h        \
   ../../src/hurricane/hurricane/Vertical.h         \
-  ../../src/hurricane/hurricane/Warning.h
+                                Vertical.dox       \
+  ../../src/hurricane/hurricane/Horizontals.h      \
+  ../../src/hurricane/hurricane/Horizontal.h       \
+                                Horizontal.dox     \
+  ../../src/hurricane/hurricane/Pads.h             \
+  ../../src/hurricane/hurricane/Pad.h              \
+                                Pad.dox            \
+  ../../src/hurricane/hurricane/Rubbers.h          \
+  ../../src/hurricane/hurricane/Rubber.h           \
+                                Rubber.dox         \
+  ../../src/hurricane/hurricane/Quarks.h           \
+  ../../src/hurricane/hurricane/Quark.h            \
+                                Quark.dox          \
+                                                   \
+  ../../src/hurricane/hurricane/Properties.h       \
+  ../../src/hurricane/hurricane/Property.h         \
+                                Property.dox       \
+                                                   \
+  ../../src/hurricane/hurricane/Hooks.h            \
+  ../../src/hurricane/hurricane/Hook.h             \
+                                Hook.dox           \
+                                                   \
+  ../../src/hurricane/hurricane/Pathes.h           \
+  ../../src/hurricane/hurricane/Path.h             \
+                                Path.dox           \
+  ../../src/hurricane/hurricane/Occurrences.h      \
+  ../../src/hurricane/hurricane/Occurrence.h       \
+                                Occurrence.dox     \
+                                                   \
+  ../../src/hurricane/hurricane/QuadTree.h         \
+                                QuadTree.dox       \
+  ../../src/hurricane/hurricane/Slices.h           \
+  ../../src/hurricane/hurricane/Slice.h            \
+                                Slice.dox          \
+  ../../src/hurricane/hurricane/UpdateSession.h    \
+                                UpdateSession.dox
 
 
 FILE_PATTERNS          = *.h   \
@@ -254,7 +301,7 @@ LATEX_HIDE_INDICES     = NO
 # --------------------------------------------------------------------
 # Configuration options related to the RTF output
 
-GENERATE_RTF           = YES
+GENERATE_RTF           = NO
 RTF_OUTPUT             = rtf
 COMPACT_RTF            = NO
 RTF_HYPERLINKS         = NO
@@ -264,7 +311,7 @@ RTF_EXTENSIONS_FILE    =
 # --------------------------------------------------------------------
 # Configuration options related to the man page output
 
-GENERATE_MAN           = YES
+GENERATE_MAN           = NO
 MAN_OUTPUT             = man
 MAN_EXTENSION          = .3
 MAN_LINKS              = NO
