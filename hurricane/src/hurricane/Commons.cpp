@@ -84,7 +84,7 @@ void  ltraceout (unsigned int level, unsigned int count )
 // -------------------------------------------------------------------
 // Function  :  "Demangle ()".
 
-string  Demangle ( const char* symbol )
+string  demangle ( const char* symbol )
 {
   string  mangled   = "_Z";
   mangled += symbol;

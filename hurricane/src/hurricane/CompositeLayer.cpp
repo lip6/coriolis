@@ -229,7 +229,7 @@ void CompositeLayer::_updateSymbolicBasicLayer(const Layer::Mask& visibleBasicLa
     for_each_basic_layer(basicLayer, getBasicLayers()) {
         if (basicLayer->getMask() & visibleBasicLayersMask) {
             symbolicBasicLayer = basicLayer;
-            if (basicLayer->getType() == BasicLayer::Type::CONTACT)
+            if (basicLayer->getMaterial() == BasicLayer::Material::cut)
                 _symbolicBasicLayer = basicLayer;
         }
         end_for;

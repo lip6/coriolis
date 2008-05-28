@@ -20,7 +20,7 @@ class HInspectorWidget : public QWidget {
         void setRecord(Record* record);
 
     private slots:
-        void recordChanged(int index);
+        void recordChanged(size_t index);
         void textFilterChanged();
 
     protected:

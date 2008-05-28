@@ -21,13 +21,6 @@
   *                pointer to an deleted object ... 
   */
 
-
-
- /*! \typedef      Layer::Inherit
-  *                Useful for calling upon methods of the base class without 
-  *                knowing it. 
-  */
-
  /*! \typedef      Layer::Mask
   *                This type represents a mask bit field characterising 
   *                efficiently the constituents of any kind of layer. It 

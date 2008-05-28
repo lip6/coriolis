@@ -115,7 +115,7 @@ void HInspectorWidget::keyPressEvent(QKeyEvent *event) {
     }
 }
 
-void HInspectorWidget::recordChanged(int index) {
+void HInspectorWidget::recordChanged(size_t index) {
     if (index >= 0 && index < filterProxyModelsHistory.size()) {
         QSortFilterProxyModel* proxyModel = filterProxyModelsHistory[index];
         slotsView->setModel(proxyModel);

@@ -7,7 +7,7 @@
 //
 // ===================================================================
 //
-// $Id: Commons.h,v 1.19 2007/07/29 15:24:52 jpc Exp $
+// $Id$
 //
 // x-----------------------------------------------------------------x
 // |                                                                 |
@@ -101,8 +101,8 @@ namespace Hurricane {
   template<class Type>
     inline Type abs ( const Type& value ) { return (value<0) ? -value : value; }
 
-         string  Demangle ( const char*      symbol );
-  inline string  Demangle ( const type_info& info   ) { return Demangle(info.name()); }
+         string  demangle ( const char*      symbol );
+  inline string  demangle ( const type_info& info   ) { return demangle(info.name()); }
 
 
 
