@@ -80,20 +80,13 @@ for_each_net(net, nets) {
 \endcode
   *
   *                
-  */
-  */
-
-
-
- /*! \section      secCollectionImportant  Important
+  *
+  * \section      secCollectionImportant  Important
   *
   *                Collections are very light objects which are built, copied or 
   *                destroyed very rapidly. 
-  */
-
-
-
- /*! \section      secCollectionLocators  Locators
+  *
+  * \section      secCollectionLocators  Locators
   *
   *                Each type of collection provides an associated Locator for 
   *                tracing through the corresponding set of elements. 

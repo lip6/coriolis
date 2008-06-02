@@ -11,11 +11,8 @@
   *
   *                Locators are objects which allow to walk efficiently through 
   *                the data structure. 
-  */
-
-
-
- /*! \section      secLocatorGeneralConcepts  General concepts
+  *
+  *  \section      secLocatorGeneralConcepts  General concepts
   *
   *                <b>Initialization</b> In order to get a locator, you must : 
   *                either ask the collection to provide a locator for visiting 
@@ -36,11 +33,8 @@
   *                <b>Walk progression</b> The function <b>progress()</b> moves 
   *                forward the locator on the next element of the set (does 
   *                nothing if called after the last element). 
-  */
-
-
-
- /*! \section      secLocatorUsageExamples  Usage examples
+  *
+  * \section      secLocatorUsageExamples  Usage examples
   *
   *                The following sample code shows how to trace the nets of a 
   *                given cell 
