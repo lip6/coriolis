@@ -1,6 +1,7 @@
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
 #include "hurricane/UpdateSession.h"
+#include "hurricane/Pad.h"
 using namespace Hurricane;
 
 #include "AEnv.h"
@@ -12,34 +13,39 @@ namespace {
 
 Pad* createPad(Technology* technology, Net* net, const string& layerName) {
     Layer* layer = technology->getLayer(Name(layerName));
-    Pad* pad = Pad::create(net, layer, 0, 0);
+    Pad* pad = Pad::create(net, layer, Box());
     return pad;
 }
 
 
-void createContactMatrix(Net* net, const Layer* layer, const Box& box, unsigned columns) {
+void createContactMatrix(Net* net, const Layer* layer, const Box& box, unsigned columns, const Unit& rwCont, const Unit& rdCont) {
     unsigned contacts = 0;
-    long xCenter = 0;
-    long yCenter = 0;
-    if (box.getHeight() < RW_CONT__) {
+    if (box.getHeight() < rwCont) {
         contacts = 0;
     } else {
-        contacts = (box.getHeight()-rw_cont)/(rw_cont + rd_cont) + 1;
+        contacts = (box.getHeight() - rwCont) / (rwCont + rdCont) + 1;
     }
 
-    Point xCenter(box.getXMin() + (rw_cont/2));
-    Point yCenter(box.getYMin() + (rw_cont/2));
+    Point padMin(box.getXMin(), box.getYMin());
+    Point padMax(padMin);
+    padMax += Point(rwCont, rwCont);
 
     for (unsigned i=0; i<columns; i++) {
-        for (unsigned j=0; j<columns; j++) {
-            Pad::create(net, layer, xCenter, yCenter, rw_cont , rw_cont);
-            yCenter += rw_cont + rd_cont;
+        for (unsigned j=0; j<contacts; j++) {
+            Box padBox(padMin, padMax);
+            Pad::create(net, layer, padBox);
+            padMin.setY(padMin.getY() + rwCont + rdCont);
+            padMax.setY(padMax.getY() + rwCont + rdCont);
         }
-        xCenter += rw_cont + rd_cont;
-        yCenter = box.getYMin() + (rw_cont/2);
+        padMin.setX(padMin.getX() + rwCont + rdCont);
+        padMax.setX(padMax.getX() + rwCont + rdCont);
+        padMin.setY(box.getYMin());
+        padMax.setY(box.getYMax());
     }
 }
 
+
+}
 
 const Name Transistor::DrainName("DRAIN");
 const Name Transistor::SourceName("SOURCE");
@@ -57,8 +63,8 @@ Transistor::Transistor(Library* library, const Name& name, const Polarity& polar
     _l(0.0),
     _w(0.0),
     _source20(NULL), _source22(NULL),
-    _drain40(NULL), _drain42(NULL)
-    _grid00(NULL), _grid01(NULL), _grid(30), _grid(31)
+    _drain40(NULL), _drain42(NULL),
+    _grid00(NULL), _grid01(NULL), _grid30(NULL), _grid31(NULL)
 {}
 
 
