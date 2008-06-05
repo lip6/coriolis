@@ -19,8 +19,8 @@ namespace Hurricane {
 // Pad implementation
 // ****************************************************************************************************
 
-Pad::Pad(Net* net, Layer* layer, const Box& boundingBox)
-// *****************************************************
+Pad::Pad(Net* net, const Layer* layer, const Box& boundingBox)
+// ***********************************************************
 :  Inherit(net),
     _layer(layer),
     _boundingBox(boundingBox)
@@ -32,8 +32,8 @@ Pad::Pad(Net* net, Layer* layer, const Box& boundingBox)
         throw Error("Can't create " + _TName("Pad") + " : empty bounding box");
 }
 
-Pad* Pad::create(Net* net, Layer* layer, const Box& boundingBox)
-// *************************************************************
+Pad* Pad::create(Net* net, const Layer* layer, const Box& boundingBox)
+// *******************************************************************
 {
     Pad* pad = new Pad(net, layer, boundingBox);
 

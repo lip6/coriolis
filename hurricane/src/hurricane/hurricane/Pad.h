@@ -31,15 +31,15 @@ class Pad : public Component {
 // Attributes
 // **********
 
-    private: Layer* _layer;
+    private: const Layer* _layer;
     private: Box _boundingBox;
 
 // Constructors
 // ************
 
-    protected: Pad(Net* net, Layer* layer, const Box& boundingBox);
+    protected: Pad(Net* net, const Layer* layer, const Box& boundingBox);
 
-    public: static Pad* create(Net* net, Layer* layer, const Box& boundingBox);
+    public: static Pad* create(Net* net, const Layer* layer, const Box& boundingBox);
 
 // Accessors
 // *********

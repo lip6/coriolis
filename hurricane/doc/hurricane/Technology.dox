@@ -54,10 +54,6 @@
   *  \Return       the Layer named \c \<name\> if it exists and is a BasicLayer, else \NULL.
   */
 
- /*! \function     CompositeLayer* Technology::getCompositeLayer ( const Name& name ) const;
-  *  \Return       the Layer named \c \<name\> if it exists and is a CompositeLayer, else \NULL.
-  */
-
  /*! \function     Layers  Technology::getLayers () const;
   *  \Return       Returns the collection of layers of the technology.
   *
@@ -77,11 +73,6 @@
  /*! \function     BasicLayers  Technology::getBasicLayers ( const Layer::Mask& mask ) const;
   *  \Return       Returns the collection of basic layers of the technology
   *                which matches the Layer mask \c \<mask\> (uses the same order).
-  */
-
- /*! \function     CompositeLayers  Technology::getCompositeLayers () const;
-  *  \Return       Returns the collection of composite layers of the technology
-  *                (uses the same order).
   */
 
  // \}
