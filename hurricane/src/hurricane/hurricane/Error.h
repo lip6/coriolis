@@ -1,66 +1,63 @@
-// ****************************************************************************************************
-// File: Error.h
-// Authors: R. Escassut
+
+// -*- C++ -*-
+//
+// This file is part of the Hurricane Software.
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
-// ****************************************************************************************************
+//
+// ===================================================================
+//
+// $Id$
+//
+// x-----------------------------------------------------------------x
+// |                                                                 |
+// |                  H U R R I C A N E                              |
+// |     V L S I   B a c k e n d   D a t a - B a s e                 |
+// |                                                                 |
+// |  Author      :                       Remy Escassut              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
+// | =============================================================== |
+// |  C++ Header  :       "./Error.h"                                |
+// | *************************************************************** |
+// |  U p d a t e s                                                  |
+// |                                                                 |
+// x-----------------------------------------------------------------x
 
-#ifndef HURRICANE_ERROR
-#define HURRICANE_ERROR
 
-#include "hurricane/Exception.h"
+# ifndef  __HURRICANE_ERROR__
+# define  __HURRICANE_ERROR__
+
+# include  "hurricane/Exception.h"
+
 
 namespace Hurricane {
 
 
+  class Error : public Exception {
 
-// ****************************************************************************************************
-// Error declaration
-// ****************************************************************************************************
+    public:
+    // Constructors.
+                      Error        ( const string& reason );
+                      Error        ( const char*   format, ... );
+                      Error        ( int code, const string& reason );
+                      Error        ( int code, const char*   format, ... );
+                      Error        ( const Error& error );
+    // Methods.
+      inline  string  getReason    () const;
+      inline  int     getCode      () const;
+    // Hurricane Managment.
+      virtual string  _getTypeName () const;
+      virtual string  _getString   () const;
 
-class Error : public Exception {
-// ***************************
+    private:
+    // Internal: Attributes.
+              string  _reason;
+              int     _code;
+  };
 
-// Types
-// *****
 
-    public: typedef Exception Inherit;
-
-// Attributes
-// **********
-
-    private: string _reason;
-    private: int _code;
-
-// Constructors
-// ************
-
-    public: Error(const string& reason, int code = 0);
-
-    public: Error(const Error& error);
-
-// Operators
-// *********
-
-    public: Error& operator=(const Error& error);
-
-// Accessors
-// *********
-
-    public: string getReason() const {return _reason;};
-    public: int getCode() const {return _code;};
-
-// Modifiers
-// *********
-
-    public: void  setReason ( const string& reason ) { _reason = reason; };
-
-// Others
-// ******
-
-    public: virtual string _getTypeName() const { return _TName("Error"); };
-    public: virtual string _getString() const;
-
-};
+// Inline Functions.
+  inline  string  Error::getReason () const { return _reason; }
+  inline  int     Error::getCode   () const { return _code; }
 
 
 } // End of Hurricane namespace.
@@ -68,8 +65,5 @@ class Error : public Exception {
 
 SetNestedSlotAdapter(Hurricane::Error)
 
-#endif // HURRICANE_ERROR
 
-// ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
-// ****************************************************************************************************
+# endif // __HURRICANE_ERROR__

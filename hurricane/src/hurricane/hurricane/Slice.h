@@ -31,14 +31,14 @@ class Slice {
 // **********
 
     private: Cell* _cell;
-    private: Layer* _layer;
+    private: const Layer* _layer;
     private: QuadTree _quadTree;
     private: Slice* _nextOfCellSliceMap;
 
 // Constructors
 // ************
 
-    protected: Slice(Cell* cell, Layer* layer);
+    protected: Slice(Cell* cell, const Layer* layer);
 
     private: Slice(const Slice& slice); // not implemented to forbid copy construction
 
@@ -56,7 +56,7 @@ class Slice {
 // *********
 
     public: Cell* getCell() const {return _cell;};
-    public: Layer* getLayer() const {return _layer;};
+    public: const Layer* getLayer() const {return _layer;};
     public: const Box& getBoundingBox() const {return _quadTree.getBoundingBox();};
     public: Gos getGos() const {return _quadTree.getGos();};
     public: Gos getGosUnder(const Box& area) const {return _quadTree.getGosUnder(area);};
@@ -73,7 +73,7 @@ class Slice {
 // Others
 // ******
 
-    public: static Slice* _create(Cell* cell, Layer* layer);
+    public: static Slice* _create(Cell* cell, const Layer* layer);
 
     public: void _destroy();
 

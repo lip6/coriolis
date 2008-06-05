@@ -2,12 +2,16 @@
 
  include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane )
                  set ( includes hurricane/BasicLayer.h            hurricane/BasicLayers.h
+                                hurricane/RegularLayer.h          hurricane/RegularLayers.h
+                                hurricane/ViaLayer.h              hurricane/ViaLayers.h
+                                hurricane/ContactLayer.h
+                                hurricane/DiffusionLayer.h
+                                hurricane/TransistorLayer.h       hurricane/TransistorLayers.h
                                 hurricane/Boxes.h                 hurricane/Box.h
                                 hurricane/Cell.h                  hurricane/Cells.h
                                 hurricane/Collection.h
                                 hurricane/Commons.h
                                 hurricane/Component.h             hurricane/Components.h
-                                hurricane/CompositeLayer.h        hurricane/CompositeLayers.h
                                 hurricane/Contact.h               hurricane/Contacts.h
                                 hurricane/DataBase.h
                                 hurricane/DBo.h                   hurricane/DBos.h
@@ -75,12 +79,16 @@
                                 hurricane/Warning.h
                      )
                  set ( cpps     BasicLayer.cpp
+                                RegularLayer.cpp
+                                ViaLayer.cpp
+                                ContactLayer.cpp
+                                DiffusionLayer.cpp
+                                TransistorLayer.cpp
                                 Box.cpp
                                 CellCollections.cpp
                                 Cell.cpp
                                 Commons.cpp
                                 Component.cpp
-                                CompositeLayer.cpp
                                 Contact.cpp
                                 DataBase.cpp
                                 DBo.cpp

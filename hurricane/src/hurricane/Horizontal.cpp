@@ -5,11 +5,12 @@
 // ****************************************************************************************************
 
 #include "hurricane/Horizontal.h"
-#include "hurricane/Net.h"
+#include "hurricane/Layer.h"
 #include "hurricane/BasicLayer.h"
-#include "hurricane/CompositeLayer.h"
+#include "hurricane/Net.h"
 #include "hurricane/Plug.h"
 #include "hurricane/Error.h"
+
 
 namespace Hurricane {
 
@@ -19,7 +20,7 @@ namespace Hurricane {
 // Horizontal implementation
 // ****************************************************************************************************
 
-Horizontal::Horizontal(Net* net, Component* source, Component* target, Layer* layer, const Unit& y, const Unit& width, const Unit& dxSource, const Unit& dxTarget)
+Horizontal::Horizontal(Net* net, Component* source, Component* target, const Layer* layer, const Unit& y, const Unit& width, const Unit& dxSource, const Unit& dxTarget)
 // ****************************************************************************************************
 :  Inherit(net, source, target, layer, width),
     _y(y),
@@ -28,7 +29,7 @@ Horizontal::Horizontal(Net* net, Component* source, Component* target, Layer* la
 {
 }
 
-Horizontal* Horizontal::create(Net* net, Layer* layer, const Unit& y, const Unit& width, const Unit& dxSource, const Unit& dxTarget)
+Horizontal* Horizontal::create(Net* net, const Layer* layer, const Unit& y, const Unit& width, const Unit& dxSource, const Unit& dxTarget)
 // ****************************************************************************************************
 {
     if (!net)
@@ -41,7 +42,7 @@ Horizontal* Horizontal::create(Net* net, Layer* layer, const Unit& y, const Unit
     return horizontal;
 }
 
-Horizontal* Horizontal::create(Component* source, Component* target, Layer* layer, const Unit& y, const Unit& width, const Unit& dxSource, const Unit& dxTarget)
+Horizontal* Horizontal::create(Component* source, Component* target, const Layer* layer, const Unit& y, const Unit& width, const Unit& dxSource, const Unit& dxTarget)
 // ****************************************************************************************************
 {
     if (!source)
@@ -61,8 +62,8 @@ Horizontal* Horizontal::create(Component* source, Component* target, Layer* laye
 Box Horizontal::getBoundingBox() const
 // ***********************************
 {
-    Unit size = getHalfWidth() + _getSize();
-    Unit extention = _getExtention();
+  Unit size      = getLayer()->getExtentionWidth() + getHalfWidth();
+  Unit extention = getLayer()->getExtentionCap  ();
 
     return Box(getSourceX(), _y, getTargetX(), _y).inflate(extention, size);
 }
@@ -72,8 +73,8 @@ Box Horizontal::getBoundingBox(const BasicLayer* basicLayer) const
 {
     if (!getLayer()->contains(basicLayer)) return Box();
 
-    Unit size = getHalfWidth() + _getSize(basicLayer);
-    Unit extention = _getExtention(basicLayer);
+    Unit size      = getLayer()->getExtentionWidth(basicLayer) + getHalfWidth();
+    Unit extention = getLayer()->getExtentionCap  (basicLayer);
 
     return Box(getSourceX(), _y, getTargetX(), _y).inflate(extention, size);
 }

@@ -85,9 +85,9 @@ class Pin : public Contact {
 // Constructors
 // ************
 
-    protected: Pin(Net* net, const Name& name, const AccessDirection& accessDirection, const PlacementStatus& placementStatus, Layer* layer, const Unit& x, const Unit& y, const Unit& width = 0, const Unit& height = 0);
+    protected: Pin(Net* net, const Name& name, const AccessDirection& accessDirection, const PlacementStatus& placementStatus, const Layer* layer, const Unit& x, const Unit& y, const Unit& width = 0, const Unit& height = 0);
 
-    public: static Pin* create(Net* net, const Name& name, const AccessDirection& accessDirection, const PlacementStatus& placementStatus, Layer* layer, const Unit& x, const Unit& y, const Unit& width = 0, const Unit& height = 0);
+    public: static Pin* create(Net* net, const Name& name, const AccessDirection& accessDirection, const PlacementStatus& placementStatus, const Layer* layer, const Unit& x, const Unit& y, const Unit& width = 0, const Unit& height = 0);
 
 // Accessors
 // *********

@@ -11,7 +11,7 @@
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Net.h"
 #include "hurricane/NetExternalComponents.h"
-#include "hurricane/CompositeLayer.h"
+#include "hurricane/Layer.h"
 #include "hurricane/Plug.h"
 #include "hurricane/Pin.h"
 #include "hurricane/Segment.h"
@@ -111,7 +111,7 @@ Box RoutingPad::getBoundingBox(const BasicLayer* basicLayer) const
   return Box(getPosition());
 }
 
-Layer* RoutingPad::getLayer() const
+const Layer* RoutingPad::getLayer() const
 // ******************************************************
 {
   Component* component = _getEntityAsComponent();

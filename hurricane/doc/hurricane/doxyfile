@@ -152,9 +152,6 @@ INPUT                  = \
   ../../src/hurricane/hurricane/BasicLayers.h      \
   ../../src/hurricane/hurricane/BasicLayer.h       \
                                 BasicLayer.dox     \
-  ../../src/hurricane/hurricane/CompositeLayers.h  \
-  ../../src/hurricane/hurricane/CompositeLayer.h   \
-                                CompositeLayer.dox \
   ../../src/hurricane/hurricane/Libraries.h        \
   ../../src/hurricane/hurricane/Library.h          \
                                 Library.dox        \

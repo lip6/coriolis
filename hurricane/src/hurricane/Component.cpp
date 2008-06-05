@@ -321,7 +321,7 @@ void Component::materialize()
 
     if (!isMaterialized()) {
         Cell*  cell  = getCell();
-        Layer* layer = getLayer();
+        const Layer* layer = getLayer();
         if (cell && layer) {
             Slice* slice = cell->getSlice(layer);
             if (!slice) slice = Slice::_create(cell, layer);

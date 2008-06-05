@@ -6,8 +6,8 @@
 
 #include "hurricane/Contact.h"
 #include "hurricane/Net.h"
+#include "hurricane/Layer.h"
 #include "hurricane/BasicLayer.h"
-#include "hurricane/CompositeLayer.h"
 #include "hurricane/Plug.h"
 #include "hurricane/Error.h"
 
@@ -86,7 +86,7 @@ class Contact_Hooks : public Collection<Hook*> {
 // Contact implementation
 // ****************************************************************************************************
 
-Contact::Contact(Net* net, Layer* layer, const Unit& x, const Unit& y, const Unit& width, const Unit& height)
+Contact::Contact(Net* net, const Layer* layer, const Unit& x, const Unit& y, const Unit& width, const Unit& height)
 // ****************************************************************************************************
 :  Inherit(net),
     _anchorHook(this),
@@ -98,9 +98,12 @@ Contact::Contact(Net* net, Layer* layer, const Unit& x, const Unit& y, const Uni
 {
     if (!_layer)
         throw Error("Can't create " + _TName("Contact") + " : null layer");
+
+    if ( _width  < _layer->getMinimalSize() ) _width  = _layer->getMinimalSize();
+    if ( _height < _layer->getMinimalSize() ) _height = _layer->getMinimalSize();
 }
 
-Contact::Contact(Net* net, Component* anchor, Layer* layer, const Unit& dx, const Unit& dy, const Unit& width, const Unit& height)
+Contact::Contact(Net* net, Component* anchor, const Layer* layer, const Unit& dx, const Unit& dy, const Unit& width, const Unit& height)
 // ****************************************************************************************************
 :  Inherit(net),
     _anchorHook(this),
@@ -123,9 +126,12 @@ Contact::Contact(Net* net, Component* anchor, Layer* layer, const Unit& dx, cons
         throw Error("Can't create " + _TName("Contact") + " : null layer");
 
     _anchorHook.attach(anchor->getBodyHook());
+
+    if ( _width  < _layer->getMinimalSize() ) _width  = _layer->getMinimalSize();
+    if ( _height < _layer->getMinimalSize() ) _height = _layer->getMinimalSize();
 }
 
-Contact* Contact::create(Net* net, Layer* layer, const Unit& x, const Unit& y, const Unit& width, const Unit& height)
+Contact* Contact::create(Net* net, const Layer* layer, const Unit& x, const Unit& y, const Unit& width, const Unit& height)
 // ****************************************************************************************************
 {
     Contact* contact = new Contact(net, layer, x, y, width, height);
@@ -135,7 +141,7 @@ Contact* Contact::create(Net* net, Layer* layer, const Unit& x, const Unit& y, c
     return contact;
 }
 
-Contact* Contact::create(Component* anchor, Layer* layer, const Unit& dx, const Unit& dy, const Unit& width, const Unit& height)
+Contact* Contact::create(Component* anchor, const Layer* layer, const Unit& dx, const Unit& dy, const Unit& width, const Unit& height)
 // ****************************************************************************************************
 {
     if (!anchor)
@@ -178,7 +184,7 @@ Point Contact::getPosition() const
 Box Contact::getBoundingBox() const
 // ********************************
 {
-    Unit size = _getSize();
+  Unit size = getLayer()->getEnclosure();
 
     return Box(getPosition()).inflate(getHalfWidth() + size, getHalfHeight() + size);
 }
@@ -188,7 +194,7 @@ Box Contact::getBoundingBox(const BasicLayer* basicLayer) const
 {
     if (!_layer->contains(basicLayer)) return Box();
 
-    Unit size = _getSize(basicLayer);
+    Unit size = getLayer()->getEnclosure(basicLayer);
 
     return Box(getPosition()).inflate(getHalfWidth() + size, getHalfHeight() + size);
 }
@@ -210,7 +216,7 @@ void Contact::translate(const Unit& dx, const Unit& dy)
     }
 }
 
-void Contact::setLayer(Layer* layer)
+void Contact::setLayer(const Layer* layer)
 // *********************************
 {
     if (!layer)
@@ -340,33 +346,6 @@ Record* Contact::_getRecord() const
         record->add(getSlot("Height", &_height));
     }
     return record;
-}
-
-Unit Contact::_getSize() const
-// ***************************
-{
-    Unit size = 0;
-
-    Layer* layer = getLayer();
-    if (is_a<CompositeLayer*>(layer))
-        size = ((CompositeLayer*)layer)->getMaximalContactSize();
-
-    return size;
-}
-
-Unit Contact::_getSize(const BasicLayer* basicLayer) const
-// *******************************************************
-{
-    Layer* layer = getLayer();
-
-    if (!layer->contains(basicLayer)) return 0;
-
-    Unit size = 0;
-
-    if (is_a<CompositeLayer*>(layer))
-        size = ((CompositeLayer*)layer)->getContactSize(basicLayer);
-
-    return size;
 }
 
 // ****************************************************************************************************

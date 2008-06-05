@@ -7,7 +7,6 @@
 
 #include "hurricane/Segment.h"
 #include "hurricane/BasicLayer.h"
-#include "hurricane/CompositeLayer.h"
 #include "hurricane/Error.h"
 
 namespace Hurricane {
@@ -152,7 +151,7 @@ class Segment_Anchors : public Collection<Component*> {
 // Segment implementation
 // ****************************************************************************************************
 
-Segment::Segment(Net* net, Component* source, Component* target, Layer* layer, const Unit& width)
+Segment::Segment(Net* net, Component* source, Component* target, const Layer* layer, const Unit& width)
 // **********************************************************************************************
 :  Inherit(net),
     _sourceHook(this),
@@ -241,7 +240,7 @@ Point Segment::getTargetPosition() const
     return Point(getTargetX(), getTargetY());
 }
 
-void Segment::setLayer(Layer* layer)
+void Segment::setLayer(const Layer* layer)
 // *********************************
 {
     if (!layer)
@@ -314,60 +313,6 @@ Record* Segment::_getRecord() const
         record->add(getSlot("Width", &_width));
     }
     return record;
-}
-
-Unit Segment::_getSize() const
-// ***************************
-{
-    Unit size = 0;
-
-    Layer* layer = getLayer();
-    if (is_a<CompositeLayer*>(layer))
-        size = ((CompositeLayer*)layer)->getMaximalSegmentSize();
-
-    return size;
-}
-
-Unit Segment::_getExtention() const
-// ********************************
-{
-    Unit extention = 0;
-
-    Layer* layer = getLayer();
-    if (is_a<CompositeLayer*>(layer))
-        extention = ((CompositeLayer*)layer)->getMaximalSegmentExtention();
-
-    return extention;
-}
-
-Unit Segment::_getSize(const BasicLayer* basicLayer) const
-// *************************************************
-{
-    Layer* layer = getLayer();
-
-    if (!layer->contains(basicLayer)) return 0;
-
-    Unit size = 0;
-
-    if (is_a<CompositeLayer*>(layer))
-        size = ((CompositeLayer*)layer)->getSegmentSize(basicLayer);
-
-    return size;
-}
-
-Unit Segment::_getExtention(const BasicLayer* basicLayer) const
-// ******************************************************
-{
-    Layer* layer = getLayer();
-
-    if (!layer->contains(basicLayer)) return 0;
-
-    Unit extention = 0;
-
-    if (is_a<CompositeLayer*>(layer))
-        extention = ((CompositeLayer*)layer)->getSegmentExtention(basicLayer);
-
-    return extention;
 }
 
 // ****************************************************************************************************

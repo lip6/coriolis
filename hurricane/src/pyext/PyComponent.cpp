@@ -143,7 +143,7 @@ extern "C" {
     Layer* layer = NULL;
 
     HTRY
-    layer = component->getLayer ();
+    layer = const_cast<Layer*>(component->getLayer ());
     HCATCH
 
     return PyLayer_Link ( layer );

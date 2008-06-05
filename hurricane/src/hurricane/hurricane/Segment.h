@@ -65,13 +65,13 @@ class Segment : public Component {
 
     private: SourceHook _sourceHook;
     private: TargetHook _targetHook;
-    private: Layer* _layer;
+    private: const Layer* _layer;
     private: Unit _width;
 
 // Constructors
 // ************
 
-    protected: Segment(Net* net, Component* source, Component* target, Layer* layer, const Unit& width = 0);
+    protected: Segment(Net* net, Component* source, Component* target, const Layer* layer, const Unit& width = 0);
 
 // Accessors
 // *********
@@ -79,7 +79,7 @@ class Segment : public Component {
     public: virtual Hooks getHooks() const;
     public: virtual Unit getX() const {return 0;};
     public: virtual Unit getY() const {return 0;};
-    public: virtual Layer* getLayer() const {return _layer;};
+    public: virtual const Layer* getLayer() const {return _layer;};
     public: Hook* getSourceHook() {return &_sourceHook;};
     public: Hook* getTargetHook() {return &_targetHook;};
     public: Hook* getOppositeHook(const Hook* hook) const;
@@ -100,7 +100,7 @@ class Segment : public Component {
 // Updators
 // ********
 
-    public: void setLayer(Layer* layer);
+    public: void setLayer(const Layer* layer);
     public: void setWidth(const Unit& width);
     public: void invert();
 
@@ -111,11 +111,6 @@ class Segment : public Component {
 
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
-
-    public: Unit _getSize() const;
-    public: Unit _getExtention() const;
-    public: Unit _getSize(const BasicLayer* basicLayer) const;
-    public: Unit _getExtention(const BasicLayer* basicLayer) const;
 
 };
 

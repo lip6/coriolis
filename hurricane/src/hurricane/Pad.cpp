@@ -8,7 +8,7 @@
 #include "hurricane/Pad.h"
 #include "hurricane/Net.h"
 #include "hurricane/BasicLayer.h"
-#include "hurricane/CompositeLayer.h"
+#include "hurricane/Layer.h"
 #include "hurricane/Error.h"
 
 namespace Hurricane {
@@ -59,9 +59,6 @@ Box Pad::getBoundingBox() const
 {
     Box boundingBox = _boundingBox;
 
-    if (is_a<CompositeLayer*>(_layer))
-        boundingBox.inflate(((CompositeLayer*)_layer)->getMaximalPadSize());
-
     return boundingBox;
 }
 
@@ -71,9 +68,6 @@ Box Pad::getBoundingBox(const BasicLayer* basicLayer) const
     if (!_layer->contains(basicLayer)) return Box();
 
     Box boundingBox = _boundingBox;
-
-    if (is_a<CompositeLayer*>(_layer))
-        boundingBox.inflate(((CompositeLayer*)_layer)->getPadSize(basicLayer));
 
     return boundingBox;
 }

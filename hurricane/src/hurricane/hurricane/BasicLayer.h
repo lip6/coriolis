@@ -50,7 +50,7 @@ namespace Hurricane {
                     , poly
                     , cut
                     , metal
-                    , obstacle
+                    , blockage
                     , other
                     };
         // Constructors.
@@ -153,7 +153,7 @@ inline string  ProxyString<BasicLayer::Material::Code> ( const BasicLayer::Mater
     case BasicLayer::Material::poly:     return "poly";
     case BasicLayer::Material::cut:      return "cut";
     case BasicLayer::Material::metal:    return "metal";
-    case BasicLayer::Material::obstacle: return "obstacle";
+    case BasicLayer::Material::blockage: return "blockage";
     case BasicLayer::Material::other:    return "other";
   }
   return "abnormal";

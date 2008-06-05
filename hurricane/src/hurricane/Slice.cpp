@@ -19,8 +19,8 @@ namespace Hurricane {
 // Slice implementation
 // ****************************************************************************************************
 
-Slice::Slice(Cell* cell, Layer* layer)
-// ***********************************
+Slice::Slice(Cell* cell, const Layer* layer)
+// *****************************************
 :    _cell(cell),
     _layer(layer),
     _quadTree(),
@@ -72,7 +72,7 @@ Markers Slice::getMarkersUnder(const Box& area) const
     return SubTypeCollection<Go*, Marker*>(_quadTree.getGosUnder(area));
 }
 
-Slice* Slice::_create(Cell* cell, Layer* layer)
+Slice* Slice::_create(Cell* cell, const Layer* layer)
 // ********************************************
 {
     Slice* slice = new Slice(cell, layer);

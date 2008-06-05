@@ -76,7 +76,7 @@ class Component : public Go {
     public: virtual Unit getY() const = 0;
     public: virtual Point getPosition() const {return Point(getX(), getY());};
     public: virtual Point getCenter() const {return getPosition();};
-    public: virtual Layer* getLayer() const = 0;
+    public: virtual const Layer* getLayer() const = 0;
     public: virtual Box getBoundingBox() const = 0;
     public: virtual Box getBoundingBox(const BasicLayer* basicLayer) const = 0;
     public: Components getConnexComponents() const;

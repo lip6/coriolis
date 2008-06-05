@@ -8,7 +8,8 @@
 #include "hurricane/DataBase.h"
 #include "hurricane/Layer.h"
 #include "hurricane/BasicLayer.h"
-#include "hurricane/CompositeLayer.h"
+#include "hurricane/RegularLayer.h"
+#include "hurricane/ViaLayer.h"
 #include "hurricane/Error.h"
 
 
@@ -125,11 +126,18 @@ BasicLayer* Technology::getBasicLayer(const Name& name) const
     return (layer && is_a<BasicLayer*>(layer)) ? (BasicLayer*)layer : NULL;
 }
 
-CompositeLayer* Technology::getCompositeLayer(const Name& name) const
+RegularLayer* Technology::getRegularLayer(const Name& name) const
+// **********************************************************
+{
+    Layer* layer = getLayer(name);
+    return (layer && is_a<RegularLayer*>(layer)) ? (RegularLayer*)layer : NULL;
+}
+
+ViaLayer* Technology::getViaLayer(const Name& name) const
 // ******************************************************************
 {
     Layer* layer = getLayer(name);
-    return (layer && is_a<CompositeLayer*>(layer)) ? (CompositeLayer*)layer : NULL;
+    return (layer && is_a<ViaLayer*>(layer)) ? (ViaLayer*)layer : NULL;
 }
 
 BasicLayers Technology::getBasicLayers() const
@@ -145,11 +153,16 @@ BasicLayers Technology::getBasicLayers(const Layer::Mask& mask) const
     return Technology_BasicLayers(this, mask);
 }
 
-CompositeLayers Technology::getCompositeLayers() const
+RegularLayers Technology::getRegularLayers() const
 // ***************************************************
 {
-    // return getLayers().getSubSet<CompositeLayer*>();
-    return SubTypeCollection<Layer*, CompositeLayer*>(getLayers());
+    return SubTypeCollection<Layer*, RegularLayer*>(getLayers());
+}
+
+ViaLayers Technology::getViaLayers() const
+// ***************************************************
+{
+    return SubTypeCollection<Layer*, ViaLayer*>(getLayers());
 }
 
 void Technology::setName(const Name& name)

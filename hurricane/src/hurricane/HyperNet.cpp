@@ -501,8 +501,8 @@ static bool IsConnex(const Occurrence& componentOccurrence1, const Occurrence& c
 {
     Component* component1 = (Component*)componentOccurrence1.getEntity();
     Component* component2 = (Component*)componentOccurrence2.getEntity();
-    Layer* layer1 = component1->getLayer();
-    Layer* layer2 = component2->getLayer();
+    const Layer* layer1 = component1->getLayer();
+    const Layer* layer2 = component2->getLayer();
     if (layer1->getExtractMask() & layer2->getExtractMask()) {
         Transformation transformation1 = componentOccurrence1.getPath().getTransformation();
         Transformation transformation2 = componentOccurrence2.getPath().getTransformation();

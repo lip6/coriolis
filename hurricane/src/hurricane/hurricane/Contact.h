@@ -47,7 +47,7 @@ class Contact : public Component {
 // **********
 
     private:   AnchorHook _anchorHook;
-    private:   Layer* _layer;
+    private:   const Layer* _layer;
     private:   Unit _dx;
     private:   Unit _dy;
     protected: Unit _width;
@@ -56,11 +56,11 @@ class Contact : public Component {
 // Constructors
 // ************
 
-    protected: Contact(Net* net, Layer* layer, const Unit& x, const Unit& y, const Unit& width = 0, const Unit& height = 0);
-    protected: Contact(Net* net, Component* anchor, Layer* layer, const Unit& dx, const Unit& dy, const Unit& width = 0, const Unit& height = 0);
+    protected: Contact(Net* net, const Layer* layer, const Unit& x, const Unit& y, const Unit& width = 0, const Unit& height = 0);
+    protected: Contact(Net* net, Component* anchor, const Layer* layer, const Unit& dx, const Unit& dy, const Unit& width = 0, const Unit& height = 0);
 
-    public: static Contact* create(Net* net, Layer* layer, const Unit& x, const Unit& y, const Unit& width = 0, const Unit& height = 0);
-    public: static Contact* create(Component* anchor, Layer* layer, const Unit& dx, const Unit& dy, const Unit& width = 0, const Unit& height = 0);
+    public: static Contact* create(Net* net, const Layer* layer, const Unit& x, const Unit& y, const Unit& width = 0, const Unit& height = 0);
+    public: static Contact* create(Component* anchor, const Layer* layer, const Unit& dx, const Unit& dy, const Unit& width = 0, const Unit& height = 0);
 
 // Accessors
 // *********
@@ -70,7 +70,7 @@ class Contact : public Component {
     public: virtual Unit getY() const;
     public: virtual Point getPosition() const;
     public: virtual Box getBoundingBox() const;
-    public: virtual Layer* getLayer() const {return _layer;};
+    public: virtual const Layer* getLayer() const {return _layer;};
     public: virtual Box getBoundingBox(const BasicLayer* basicLayer) const;
     public: Hook* getAnchorHook() {return &_anchorHook;};
     public: Component* getAnchor() const;
@@ -86,7 +86,7 @@ class Contact : public Component {
 
     public: virtual void translate(const Unit& dx, const Unit& dy);
 
-    public: void setLayer(Layer* layer);
+    public: void setLayer(const Layer* layer);
     public: void setWidth(const Unit& width);
     public: void setHeight(const Unit& height);
     public: void setSizes(const Unit& width, const Unit& height);
@@ -106,9 +106,6 @@ class Contact : public Component {
     public: virtual string _getTypeName() const {return _TName("Contact");};
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
-
-    public: Unit _getSize() const;
-    public: Unit _getSize(const BasicLayer* basicLayer) const;
 
 };
 

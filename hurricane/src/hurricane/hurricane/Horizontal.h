@@ -13,6 +13,8 @@
 namespace Hurricane {
 
 
+  class Layer;
+
 
 // ****************************************************************************************************
 // Horizontal declaration
@@ -36,10 +38,10 @@ class Horizontal : public Segment {
 // Constructors
 // ************
 
-    protected: Horizontal(Net* net, Component* source, Component* target, Layer* layer, const Unit& y, const Unit& width = 0, const Unit& dxSource = 0, const Unit& dxTarget = 0);
+    protected: Horizontal(Net* net, Component* source, Component* target, const Layer* layer, const Unit& y, const Unit& width = 0, const Unit& dxSource = 0, const Unit& dxTarget = 0);
 
-    public: static Horizontal* create(Net* net, Layer* layer, const Unit& y, const Unit& width = 0, const Unit& dxSource = 0, const Unit& dxTarget = 0);
-    public: static Horizontal* create(Component* source, Component* target, Layer* layer, const Unit& y, const Unit& width = 0, const Unit& dxSource = 0, const Unit& dxTarget = 0);
+    public: static Horizontal* create(Net* net, const Layer* layer, const Unit& y, const Unit& width = 0, const Unit& dxSource = 0, const Unit& dxTarget = 0);
+    public: static Horizontal* create(Component* source, Component* target, const Layer* layer, const Unit& y, const Unit& width = 0, const Unit& dxSource = 0, const Unit& dxTarget = 0);
 
 // Accessors
 // *********

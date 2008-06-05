@@ -54,7 +54,7 @@ class Plug : public Component {
     public: virtual Unit getY() const;
     public: virtual Point getPosition() const;
     public: virtual Box getBoundingBox() const;
-    public: virtual Layer* getLayer() const {return NULL;};
+    public: virtual const Layer* getLayer() const {return NULL;};
     public: virtual Box getBoundingBox(const BasicLayer* basicLayer) const;
     public: Instance* getInstance() const {return _instance;};
     public: Net* getMasterNet() const {return _masterNet;};

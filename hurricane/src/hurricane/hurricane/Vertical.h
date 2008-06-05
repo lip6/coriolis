@@ -13,6 +13,8 @@
 namespace Hurricane {
 
 
+  class Layer;
+
 
 // ****************************************************************************************************
 // Vertical declaration
@@ -36,10 +38,10 @@ class Vertical : public Segment {
 // Constructors
 // ************
 
-    protected: Vertical(Net* net, Component* source, Component* target, Layer* layer, const Unit& x, const Unit& width = 0, const Unit& dySource = 0, const Unit& dyTarget = 0);
+    protected: Vertical(Net* net, Component* source, Component* target, const Layer* layer, const Unit& x, const Unit& width = 0, const Unit& dySource = 0, const Unit& dyTarget = 0);
 
-    public: static Vertical* create(Net* net, Layer* layer, const Unit& x, const Unit& width = 0, const Unit& dySource = 0, const Unit& dyTarget = 0);
-    public: static Vertical* create(Component* source, Component* target, Layer* layer, const Unit& x, const Unit& width = 0, const Unit& dySource = 0, const Unit& dyTarget = 0);
+    public: static Vertical* create(Net* net, const Layer* layer, const Unit& x, const Unit& width = 0, const Unit& dySource = 0, const Unit& dyTarget = 0);
+    public: static Vertical* create(Component* source, Component* target, const Layer* layer, const Unit& x, const Unit& width = 0, const Unit& dySource = 0, const Unit& dyTarget = 0);
 
 // Accessors
 // *********

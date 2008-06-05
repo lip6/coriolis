@@ -55,6 +55,12 @@ namespace Hurricane {
       virtual BasicLayers  getBasicLayers               () const = 0;
       virtual Layer*       getConnectorLayer            () const;
       virtual Layer*       getObstructionLayer          () const;
+      virtual Unit         getEnclosure                 () const;
+      virtual Unit         getExtentionCap              () const;
+      virtual Unit         getExtentionWidth            () const;
+      virtual Unit         getEnclosure                 ( const BasicLayer* layer ) const;
+      virtual Unit         getExtentionCap              ( const BasicLayer* layer ) const;
+      virtual Unit         getExtentionWidth            ( const BasicLayer* layer ) const;
     // Predicates
               bool         contains                     ( const Layer* layer ) const;
               bool         intersect                    ( const Layer* layer ) const;
@@ -63,10 +69,12 @@ namespace Hurricane {
               void         setMinimalSize               ( const Unit& minimalSize );
               void         setMinimalSpacing            ( const Unit& minimalSpacing );
               void         setPitch                     ( const Unit& pitch );
+      virtual void         setEnclosure                 ( const BasicLayer* layer, Unit );
+      virtual void         setExtentionCap              ( const BasicLayer* layer, Unit );
+      virtual void         setExtentionWidth            ( const BasicLayer* layer, Unit );
     // Hurricane Managment.
       virtual string       _getString                   () const;
       virtual Record*      _getRecord                   () const;
-      virtual BasicLayer*  _getSymbolicBasicLayer       () = 0;
       inline  Layer*       _getNextOfTechnologyLayerMap () const;
       inline  void         _setMask                     ( const Mask& mask );
       inline  void         _setExtractMask              ( const Mask& extractMask );

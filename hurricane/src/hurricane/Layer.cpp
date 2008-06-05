@@ -25,6 +25,7 @@
 
 
 # include  "hurricane/Layer.h"
+# include  "hurricane/BasicLayer.h"
 # include  "hurricane/Technology.h"
 # include  "hurricane/Error.h"
 
@@ -63,15 +64,35 @@ namespace Hurricane {
 
 
   Layer* Layer::getConnectorLayer () const
-  {
-    return NULL;
-  }
+  { return NULL; }
 
 
   Layer* Layer::getObstructionLayer () const
-  {
-    return NULL;
-  } 
+  { return NULL; } 
+
+
+  Unit  Layer::getEnclosure () const
+  { return 0; }
+
+
+  Unit  Layer::getExtentionCap () const
+  { return 0; }
+
+
+  Unit  Layer::getExtentionWidth () const
+  { return 0; }
+
+
+  Unit  Layer::getEnclosure ( const BasicLayer* layer ) const
+  { return 0; }
+
+
+  Unit  Layer::getExtentionCap ( const BasicLayer* layer ) const
+  { return 0; }
+
+
+  Unit  Layer::getExtentionWidth ( const BasicLayer* layer ) const
+  { return 0; }
 
 
   bool Layer::contains ( const Layer* layer ) const
@@ -117,6 +138,27 @@ namespace Hurricane {
   void Layer::setPitch ( const Unit& pitch )
   {
     _pitch = pitch;
+  }
+
+
+  void  Layer::setEnclosure ( const BasicLayer* layer, Unit )
+  {
+    cerr << "[WARNING] Layer::setEnclosure() musn't be called on "
+         << _getTypeName() << ": dummy implementation." << endl;
+  }
+
+
+  void  Layer::setExtentionCap ( const BasicLayer* layer, Unit )
+  {
+    cerr << "[WARNING] Layer::setExtentionCap() musn't be called on "
+         << _getTypeName() << ": dummy implementation." << endl;
+  }
+
+
+  void  Layer::setExtentionWidth ( const BasicLayer* layer, Unit )
+  {
+    cerr << "[WARNING] Layer::setExtentionWidth() musn't be called on "
+         << _getTypeName() << ": dummy implementation." << endl;
   }
   
 

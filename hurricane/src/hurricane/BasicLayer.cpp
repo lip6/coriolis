@@ -26,7 +26,6 @@
 
 # include  "hurricane/BasicLayer.h"
 # include  "hurricane/Technology.h"
-# include  "hurricane/CompositeLayer.h"
 # include  "hurricane/Error.h"
 
 
@@ -236,12 +235,6 @@ namespace Hurricane {
   void BasicLayer::_preDestroy ()
   {
     Layer::_preDestroy();
-
-    CompositeLayers compositeLayers = getTechnology()->getCompositeLayers();
-    for_each_composite_layer(compositeLayer, compositeLayers) {
-      if (compositeLayer->contains(this)) compositeLayer->remove(this);
-      end_for;
-    }
   }
 
 

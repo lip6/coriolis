@@ -10,14 +10,16 @@
 #include "hurricane/DBo.h"
 #include "hurricane/Layer.h"
 #include "hurricane/BasicLayers.h"
-#include "hurricane/CompositeLayers.h"
+#include "hurricane/RegularLayers.h"
+#include "hurricane/ViaLayers.h"
 #include "hurricane/IntrusiveMap.h"
 
 namespace Hurricane {
 
 class DataBase;
 class BasicLayer;
-class CompositeLayer;
+class RegularLayer;
+class ViaLayer;
 
 
 
@@ -71,11 +73,13 @@ class Technology : public DBo {
     public: const Name& getName() const {return _name;};
     public: Layer* getLayer(const Name& name) const {return _layerMap.getElement(name);};
     public: BasicLayer* getBasicLayer(const Name& name) const;
-    public: CompositeLayer* getCompositeLayer(const Name& name) const;
+    public: RegularLayer* getRegularLayer(const Name& name) const;
+    public: ViaLayer* getViaLayer(const Name& name) const;
     public: Layers getLayers() const {return getCollection(_layerList);};
     public: BasicLayers getBasicLayers() const;
     public: BasicLayers getBasicLayers(const Layer::Mask& mask) const;
-    public: CompositeLayers getCompositeLayers() const;
+    public: RegularLayers getRegularLayers() const;
+    public: ViaLayers getViaLayers() const;
 
 // Updators
 // ********
