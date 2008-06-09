@@ -23,7 +23,7 @@
   */
  //  \{
 
- /*! \function     Pad* Pad::create(Net* net, Layer* layer, const Box& boundingBox);
+ /*! \function     Pad* Pad::create(Net* net, const Layer* layer, const Box& boundingBox);
   *                No description.
   */
 
