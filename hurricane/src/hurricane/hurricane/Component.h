@@ -72,8 +72,8 @@ class Component : public Go {
     public: Rubber* getRubber() const {return _rubber;};
     public: Hook* getBodyHook() {return &_bodyHook;};
     public: virtual Hooks getHooks() const;
-    public: virtual Unit getX() const = 0;
-    public: virtual Unit getY() const = 0;
+    public: virtual DbU::Unit getX() const = 0;
+    public: virtual DbU::Unit getY() const = 0;
     public: virtual Point getPosition() const {return Point(getX(), getY());};
     public: virtual Point getCenter() const {return getPosition();};
     public: virtual const Layer* getLayer() const = 0;

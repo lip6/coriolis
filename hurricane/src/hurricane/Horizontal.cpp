@@ -20,7 +20,7 @@ namespace Hurricane {
 // Horizontal implementation
 // ****************************************************************************************************
 
-Horizontal::Horizontal(Net* net, Component* source, Component* target, const Layer* layer, const Unit& y, const Unit& width, const Unit& dxSource, const Unit& dxTarget)
+Horizontal::Horizontal(Net* net, Component* source, Component* target, const Layer* layer, const DbU::Unit& y, const DbU::Unit& width, const DbU::Unit& dxSource, const DbU::Unit& dxTarget)
 // ****************************************************************************************************
 :  Inherit(net, source, target, layer, width),
     _y(y),
@@ -29,7 +29,7 @@ Horizontal::Horizontal(Net* net, Component* source, Component* target, const Lay
 {
 }
 
-Horizontal* Horizontal::create(Net* net, const Layer* layer, const Unit& y, const Unit& width, const Unit& dxSource, const Unit& dxTarget)
+Horizontal* Horizontal::create(Net* net, const Layer* layer, const DbU::Unit& y, const DbU::Unit& width, const DbU::Unit& dxSource, const DbU::Unit& dxTarget)
 // ****************************************************************************************************
 {
     if (!net)
@@ -42,7 +42,7 @@ Horizontal* Horizontal::create(Net* net, const Layer* layer, const Unit& y, cons
     return horizontal;
 }
 
-Horizontal* Horizontal::create(Component* source, Component* target, const Layer* layer, const Unit& y, const Unit& width, const Unit& dxSource, const Unit& dxTarget)
+Horizontal* Horizontal::create(Component* source, Component* target, const Layer* layer, const DbU::Unit& y, const DbU::Unit& width, const DbU::Unit& dxSource, const DbU::Unit& dxTarget)
 // ****************************************************************************************************
 {
     if (!source)
@@ -62,8 +62,8 @@ Horizontal* Horizontal::create(Component* source, Component* target, const Layer
 Box Horizontal::getBoundingBox() const
 // ***********************************
 {
-  Unit size      = getLayer()->getExtentionWidth() + getHalfWidth();
-  Unit extention = getLayer()->getExtentionCap  ();
+  DbU::Unit size      = getLayer()->getExtentionWidth() + getHalfWidth();
+  DbU::Unit extention = getLayer()->getExtentionCap  ();
 
     return Box(getSourceX(), _y, getTargetX(), _y).inflate(extention, size);
 }
@@ -73,27 +73,27 @@ Box Horizontal::getBoundingBox(const BasicLayer* basicLayer) const
 {
     if (!getLayer()->contains(basicLayer)) return Box();
 
-    Unit size      = getLayer()->getExtentionWidth(basicLayer) + getHalfWidth();
-    Unit extention = getLayer()->getExtentionCap  (basicLayer);
+    DbU::Unit size      = getLayer()->getExtentionWidth(basicLayer) + getHalfWidth();
+    DbU::Unit extention = getLayer()->getExtentionCap  (basicLayer);
 
     return Box(getSourceX(), _y, getTargetX(), _y).inflate(extention, size);
 }
 
-Unit Horizontal::getSourceX() const
+DbU::Unit Horizontal::getSourceX() const
 // ********************************
 {
     Component* source = getSource();
     return (source) ? source->getX() + _dxSource : _dxSource;
 }
 
-Unit Horizontal::getTargetX() const
+DbU::Unit Horizontal::getTargetX() const
 // ********************************
 {
     Component* target = getTarget();
     return (target) ? target->getX() + _dxTarget : _dxTarget;
 }
 
-Unit Horizontal::getLength() const
+DbU::Unit Horizontal::getLength() const
 // *******************************
 {
     return abs(getSourceX() - getTargetX());
@@ -105,7 +105,7 @@ Point Horizontal::getCenter() const
     return Point ( (getSourceX()+getTargetX())/2, getY() );
 }
 
-void Horizontal::translate(const Unit& dx, const Unit& dy)
+void Horizontal::translate(const DbU::Unit& dx, const DbU::Unit& dy)
 // *******************************************************
 {
     if (dy != 0) {
@@ -114,7 +114,7 @@ void Horizontal::translate(const Unit& dx, const Unit& dy)
     }
 }
 
-void Horizontal::setY(const Unit& y)
+void Horizontal::setY(const DbU::Unit& y)
 // *********************************
 {
     if (y != _y) {
@@ -123,7 +123,7 @@ void Horizontal::setY(const Unit& y)
     }
 }
 
-void Horizontal::setDxSource(const Unit& dxSource)
+void Horizontal::setDxSource(const DbU::Unit& dxSource)
 // ***********************************************
 {
     if (dxSource != _dxSource) {
@@ -132,7 +132,7 @@ void Horizontal::setDxSource(const Unit& dxSource)
     }
 }
 
-void Horizontal::setDxTarget(const Unit& dxTarget)
+void Horizontal::setDxTarget(const DbU::Unit& dxTarget)
 // ***********************************************
 {
     if (dxTarget != _dxTarget) {
@@ -141,7 +141,7 @@ void Horizontal::setDxTarget(const Unit& dxTarget)
     }
 }
 
-void Horizontal::translate(const Unit& dy)
+void Horizontal::translate(const DbU::Unit& dy)
 // ***************************************
 {
     if (dy != 0) {

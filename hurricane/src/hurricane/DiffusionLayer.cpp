@@ -145,15 +145,15 @@ namespace Hurricane {
   { return getCollection(_basicLayers); }
 
 
-  Unit  DiffusionLayer::getExtentionCap () const
+  DbU::Unit  DiffusionLayer::getExtentionCap () const
   { return _maximalExtentionCap; }
 
 
-  Unit  DiffusionLayer::getExtentionWidth () const
+  DbU::Unit  DiffusionLayer::getExtentionWidth () const
   { return _maximalExtentionWidth; }
 
 
-  Unit  DiffusionLayer::getExtentionCap ( const BasicLayer* layer ) const
+  DbU::Unit  DiffusionLayer::getExtentionCap ( const BasicLayer* layer ) const
   {
     for ( size_t i=0 ; i<_basicLayers.size() ; i++ ) {
       if ( _basicLayers[i] == layer ) {
@@ -166,7 +166,7 @@ namespace Hurricane {
   }
 
 
-  Unit  DiffusionLayer::getExtentionWidth ( const BasicLayer* layer ) const
+  DbU::Unit  DiffusionLayer::getExtentionWidth ( const BasicLayer* layer ) const
   {
     for ( size_t i=0 ; i<_basicLayers.size() ; i++ ) {
       if ( _basicLayers[i] == layer ) {
@@ -179,7 +179,7 @@ namespace Hurricane {
   }
 
 
-  void  DiffusionLayer::setExtentionCap ( const BasicLayer* layer, Unit cap )
+  void  DiffusionLayer::setExtentionCap ( const BasicLayer* layer, DbU::Unit cap )
   {
     for ( size_t i=0 ; i<_basicLayers.size() ; i++ ) {
       if ( _basicLayers[i] == layer ) {
@@ -191,7 +191,7 @@ namespace Hurricane {
   }
 
 
-  void  DiffusionLayer::setExtentionWidth ( const BasicLayer* layer, Unit width )
+  void  DiffusionLayer::setExtentionWidth ( const BasicLayer* layer, DbU::Unit width )
   {
     for ( size_t i=0 ; i<_basicLayers.size() ; i++ ) {
       if ( _basicLayers[i] == layer ) {

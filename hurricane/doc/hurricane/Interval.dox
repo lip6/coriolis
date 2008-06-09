@@ -36,12 +36,12 @@
   *                otherwise. 
   */
 
- /*! \function     Interval::Interval(const Unit& v);
+ /*! \function     Interval::Interval(const DbU::Unit& v);
   *                Builds an interval of null size centered on the value defined 
   *                by \c \<v\>. 
   */
 
- /*! \function     Interval::Interval(const Unit& v1, const Unit& v2);
+ /*! \function     Interval::Interval(const DbU::Unit& v1, const DbU::Unit& v2);
   *                Builds the minimal interval enclosing the two values defined 
   *                by \c \<v1\> and \c \<v2\>. 
   */
@@ -78,24 +78,24 @@
   */
  //  \{
 
- /*! \function     const Unit& Interval::getVMin() const;
+ /*! \function     const DbU::Unit& Interval::getVMin() const;
   *  \Return       the VMin value : meaningful only for a non empty interval. 
   */
 
- /*! \function     const Unit& Interval::getVMax() const;
+ /*! \function     const DbU::Unit& Interval::getVMax() const;
   *  \Return       the VMax value : meaningful only for a non empty interval. 
   */
 
- /*! \function     Unit Interval::getCenter() const;
+ /*! \function     DbU::Unit Interval::getCenter() const;
   *  \Return       the interval center value : meaningful only for a non empty 
   *                interval. 
   */
 
- /*! \function     Unit Interval::getSize() const;
+ /*! \function     DbU::Unit Interval::getSize() const;
   *  \Return       the interval size : meaningful only for a non empty interval. 
   */
 
- /*! \function     Unit Interval::getHalfSize() const;
+ /*! \function     DbU::Unit Interval::getHalfSize() const;
   *  \Return       the half interval width : meaningful only for a non empty 
   *                interval. 
   */
@@ -127,7 +127,7 @@
   *  \Return       \true if the interval is reduced to a value, else \false. 
   */
 
- /*! \function     bool Interval::contains(const Unit& v) const;
+ /*! \function     bool Interval::contains(const DbU::Unit& v) const;
   *  \Return       \true if the interval is non empty and contains the value 
   *                defined by \c \<v\> else \false. 
   */
@@ -154,20 +154,20 @@
   *                Transforms the interval into an empty one. 
   */
 
- /*! \function     Interval& Interval::inflate(const Unit& dv);
+ /*! \function     Interval& Interval::inflate(const DbU::Unit& dv);
   *                Expands (or contracts) the interval, if not empty, in each 
   *                direction of the quantity \c \<dv\>. This quantity might be 
   *                negative enough to transform it into an empty interval. 
   */
 
- /*! \function     Interval& Interval::inflate(const Unit& dvMin, const Unit& dvMax);
+ /*! \function     Interval& Interval::inflate(const DbU::Unit& dvMin, const DbU::Unit& dvMax);
   *                Expands (or contracts) the interval, if not empty, on the 
   *                left of the quantity \c \<dvMin\> and on the right of the 
   *                quantity \c \<dvMax\>. Those quantities might be negative 
   *                enough to transform it into an empty interval. 
   */
 
- /*! \function     Interval& Interval::merge(const Unit& v);
+ /*! \function     Interval& Interval::merge(const DbU::Unit& v);
   *                Expands the interval in order that it encloses the value 
   *                defined \c \<v\>. If the interval was initially empty it 
   *                becomes reduced to the enclosed value. 
@@ -179,7 +179,7 @@
   *                initially empty it becomes reduced to the enclosed interval. 
   */
 
- /*! \function     Interval& Interval::intersection(const Unit& vMin, const Unit& vMax);
+ /*! \function     Interval& Interval::intersection(const DbU::Unit& vMin, const DbU::Unit& vMax);
   *                The interval becomes the intersection of itself and 
   *                <b>[vMin,vMax]</b>. 
   */
@@ -189,7 +189,7 @@
   *                <b>interval</b>. 
   */
 
- /*! \function     Interval& Interval::translate(const Unit& dv);
+ /*! \function     Interval& Interval::translate(const DbU::Unit& dv);
   *                translates the interval, if not empty, of the quantity 
   *                \c \<dv\>. 
   *

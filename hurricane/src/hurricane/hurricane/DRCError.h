@@ -47,7 +47,7 @@ class DRCError : public Marker {
 // Updators
 // ********
 
-    public: virtual void translate(const Unit& dx, const Unit& dy);
+    public: virtual void translate(const DbU::Unit& dx, const DbU::Unit& dy);
 
 // Others
 // ******

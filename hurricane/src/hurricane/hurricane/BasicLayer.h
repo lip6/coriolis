@@ -75,8 +75,8 @@ namespace Hurricane {
                                                      , const Name&     name
                                                      , const Material& material
                                                      , unsigned        extractNumber
-                                                     , const Unit&     minimalSize    = 0
-                                                     , const Unit&     minimalSpacing = 0
+                                                     , const DbU::Unit&     minimalSize    = 0
+                                                     , const DbU::Unit&     minimalSpacing = 0
                                                      );
     // Accessors.
       inline  const Material& getMaterial            () const;
@@ -111,8 +111,8 @@ namespace Hurricane {
                                                      , const Name&     name
                                                      , const Material& material
                                                      , unsigned        extractNumber
-                                                     , const Unit&     minimalSize = 0
-                                                     , const Unit&     minimalSpacing = 0
+                                                     , const DbU::Unit&     minimalSize    = 0
+                                                     , const DbU::Unit&     minimalSpacing = 0
                                                      );
      virtual void             _postCreate            ();
      virtual void             _preDestroy            ();

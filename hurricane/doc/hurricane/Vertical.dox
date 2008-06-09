@@ -39,7 +39,7 @@
   */
  //  \{
 
- /*! \function     Vertical* Vertical::create(Component* source, Component* target, Layer* layer,const Unit& x,const Unit& width = 0,const Unit& dySource = 0, const Unit& dyTarget = 0);
+ /*! \function     Vertical* Vertical::create(Component* source, Component* target, const Layer* layer,const DbU::Unit& x,const DbU::Unit& width = 0,const DbU::Unit& dySource = 0, const DbU::Unit& dyTarget = 0);
   *                creates and returns a vertical segment whose origin lies 
   *                (through an offset equal to \c \<dySource\>) on 
   *                \c \<source\>, whose extremity lies (through an offset equal 
@@ -52,7 +52,7 @@
   *                same net. 
   */
 
- /*! \function     Vertical* Vertical::create(Net* net, Layer* layer, const Unit& x, const Unit& width = 0,const Unit& dySource = 0, const Unit& dyTarget = 0);
+ /*! \function     Vertical* Vertical::create(Net* net, const Layer* layer, const DbU::Unit& x, const DbU::Unit& width = 0,const DbU::Unit& dySource = 0, const DbU::Unit& dyTarget = 0);
   *                creates and returns an absolute vertical segment with layer 
   *                \c \<layer\>, located at abscissa \c \<x\> and of width 
   *                \c \<width\>. The differents extremities ordinates are given 
@@ -69,7 +69,7 @@
   */
  //  \{
 
- /*! \function     const Unit& Vertical::getDySource() const;
+ /*! \function     const DbU::Unit& Vertical::getDySource() const;
   *  \Return       the relative source ordinate of the segment (may be absolute 
   *                if the source extremity isn't anchored). 
   *
@@ -77,7 +77,7 @@
   *                getSourceX() defined at the Segment level. 
   */
 
- /*! \function     const Unit& Vertical::getDyTarget() const;
+ /*! \function     const DbU::Unit& Vertical::getDyTarget() const;
   *  \Return       the relative target ordinate of the segment (may be absolute 
   *                if the target extremity isn't anchored). 
   *
@@ -92,11 +92,11 @@
   */
  //  \{
 
- /*! \function     void Vertical::setX(const Unit& x);
+ /*! \function     void Vertical::setX(const DbU::Unit& x);
   *                sets the abscissa of the segment. 
   */
 
- /*! \function     void Vertical::translate(const Unit& dx);
+ /*! \function     void Vertical::translate(const DbU::Unit& dx);
   *                translate horizontaly the vertical segment of the quantity 
   *                \c \<dx\>. 
   */

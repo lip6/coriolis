@@ -143,8 +143,8 @@ class Net : public Entity {
     public: const Type& getType() const {return _type;};
     public: const Direction& getDirection() const {return _direction;};
     public: const Point& getPosition() const {return _position;};
-    public: const Unit& getX() const {return _position.getX();};
-    public: const Unit& getY() const {return _position.getY();};
+    public: const DbU::Unit& getX() const {return _position.getX();};
+    public: const DbU::Unit& getY() const {return _position.getY();};
     public: Components getComponents() const {return _componentSet.getElements();};
     public: Rubbers getRubbers() const {return _rubberSet.getElements();};
     public: RoutingPads getRoutingPads() const;

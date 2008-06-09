@@ -13,7 +13,7 @@
   */
  //  \{
 
- /*! \function     BasicLayer* BasicLayer::create(Technology* technology,const Name& name,const BasicLayer::Material& material,unsigned extractNumber,const Unit& minimalSize = 0,const Unit& minimalSpacing = 0);
+ /*! \function     BasicLayer* BasicLayer::create(Technology* technology,const Name& name,const BasicLayer::Material& material,unsigned extractNumber,const DbU::Unit& minimalSize = 0,const DbU::Unit& minimalSpacing = 0);
   *                creates and returns a new basic layer named \c \<name\>, of 
   *                type \c \<material\> for the given technology (some geometrical 
   *                characteristics can also be specified). 

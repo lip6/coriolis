@@ -142,7 +142,7 @@ class Instance : public Go {
     public: virtual void materialize();
     public: virtual void unmaterialize();
     public: virtual void invalidate(bool propagateFlag = true);
-    public: virtual void translate(const Unit& dx, const Unit& dy);
+    public: virtual void translate(const DbU::Unit& dx, const DbU::Unit& dy);
 
     public: void setName(const Name& name);
     public: void setTransformation(const Transformation& transformation);

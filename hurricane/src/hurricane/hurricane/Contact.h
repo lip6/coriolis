@@ -48,55 +48,80 @@ class Contact : public Component {
 
     private:   AnchorHook _anchorHook;
     private:   const Layer* _layer;
-    private:   Unit _dx;
-    private:   Unit _dy;
-    protected: Unit _width;
-    protected: Unit _height;
+    private:   DbU::Unit _dx;
+    private:   DbU::Unit _dy;
+    protected: DbU::Unit _width;
+    protected: DbU::Unit _height;
 
 // Constructors
 // ************
 
-    protected: Contact(Net* net, const Layer* layer, const Unit& x, const Unit& y, const Unit& width = 0, const Unit& height = 0);
-    protected: Contact(Net* net, Component* anchor, const Layer* layer, const Unit& dx, const Unit& dy, const Unit& width = 0, const Unit& height = 0);
+  protected: Contact( Net* net
+                    , const Layer* layer
+                    , const DbU::Unit& x
+                    , const DbU::Unit& y
+                    , const DbU::Unit& width  = 0
+                    , const DbU::Unit& height = 0
+                    );
+  protected: Contact( Net* net
+                    , Component* anchor
+                    , const Layer* layer
+                    , const DbU::Unit& dx
+                    , const DbU::Unit& dy
+                    , const DbU::Unit& width  = 0
+                    , const DbU::Unit& height = 0
+                    );
 
-    public: static Contact* create(Net* net, const Layer* layer, const Unit& x, const Unit& y, const Unit& width = 0, const Unit& height = 0);
-    public: static Contact* create(Component* anchor, const Layer* layer, const Unit& dx, const Unit& dy, const Unit& width = 0, const Unit& height = 0);
+  public: static Contact* create( Net* net
+                                , const Layer* layer
+                                , const DbU::Unit& x
+                                , const DbU::Unit& y
+                                , const DbU::Unit& width  = 0
+                                , const DbU::Unit& height = 0
+                                );
+  public: static Contact* create( Component* anchor
+                                , const Layer* layer
+                                , const DbU::Unit& dx
+                                , const DbU::Unit& dy
+                                , const DbU::Unit& width  = 0
+                                , const DbU::Unit& height = 0
+                                );
 
 // Accessors
 // *********
 
     public: virtual Hooks getHooks() const;
-    public: virtual Unit getX() const;
-    public: virtual Unit getY() const;
+    public: virtual DbU::Unit getX() const;
+    public: virtual DbU::Unit getY() const;
     public: virtual Point getPosition() const;
     public: virtual Box getBoundingBox() const;
     public: virtual const Layer* getLayer() const {return _layer;};
     public: virtual Box getBoundingBox(const BasicLayer* basicLayer) const;
     public: Hook* getAnchorHook() {return &_anchorHook;};
     public: Component* getAnchor() const;
-    public: const Unit& getDx() const {return _dx;};
-    public: const Unit& getDy() const {return _dy;};
-    public: const Unit& getWidth() const {return _width;};
-    public: Unit getHalfWidth() const {return (_width / 2);};
-    public: const Unit& getHeight() const {return _height;};
-    public: Unit getHalfHeight() const {return (_height / 2);};
+    public: const DbU::Unit& getDx() const {return _dx;};
+    public: const DbU::Unit& getDy() const {return _dy;};
+    public: const DbU::Unit& getWidth() const {return _width;};
+    public: DbU::Unit getHalfWidth() const {return (_width / 2);};
+    public: const DbU::Unit& getHeight() const {return _height;};
+    public: DbU::Unit getHalfHeight() const {return (_height / 2);};
 
 // Updators
 // ********
 
-    public: virtual void translate(const Unit& dx, const Unit& dy);
+    public: virtual void translate(const DbU::Unit& dx, const DbU::Unit& dy);
 
     public: void setLayer(const Layer* layer);
-    public: void setWidth(const Unit& width);
-    public: void setHeight(const Unit& height);
-    public: void setSizes(const Unit& width, const Unit& height);
-    public: void setX(const Unit& x);
-    public: void setY(const Unit& y);
-    public: void setPosition(const Unit& x, const Unit& y);
+    public: void setWidth(const DbU::Unit& width);
+    public: void setHeight(const DbU::Unit& height);
+    public: void setSizes(const DbU::Unit& width, const DbU::Unit& height);
+    public: void setX(const DbU::Unit& x);
+    public: void setY(const DbU::Unit& y);
+    public: void setPosition(const DbU::Unit& x, const DbU::Unit& y);
     public: void setPosition(const Point& position);
-    public: void setDx(const Unit& dx);
-    public: void setDy(const Unit& dy);
-    public: void setOffset(const Unit& dx, const Unit& dy);
+    public: void setDx(const DbU::Unit& dx);
+    public: void setDy(const DbU::Unit& dy);
+    public: void setOffset(const DbU::Unit& dx, const DbU::Unit& dy);
 
 // Others
 // ******

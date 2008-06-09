@@ -86,7 +86,7 @@ class Contact_Hooks : public Collection<Hook*> {
 // Contact implementation
 // ****************************************************************************************************
 
-Contact::Contact(Net* net, const Layer* layer, const Unit& x, const Unit& y, const Unit& width, const Unit& height)
+Contact::Contact(Net* net, const Layer* layer, const DbU::Unit& x, const DbU::Unit& y, const DbU::Unit& width, const DbU::Unit& height)
 // ****************************************************************************************************
 :  Inherit(net),
     _anchorHook(this),
@@ -103,7 +103,7 @@ Contact::Contact(Net* net, const Layer* layer, const Unit& x, const Unit& y, con
     if ( _height < _layer->getMinimalSize() ) _height = _layer->getMinimalSize();
 }
 
-Contact::Contact(Net* net, Component* anchor, const Layer* layer, const Unit& dx, const Unit& dy, const Unit& width, const Unit& height)
+Contact::Contact(Net* net, Component* anchor, const Layer* layer, const DbU::Unit& dx, const DbU::Unit& dy, const DbU::Unit& width, const DbU::Unit& height)
 // ****************************************************************************************************
 :  Inherit(net),
     _anchorHook(this),
@@ -131,7 +131,7 @@ Contact::Contact(Net* net, Component* anchor, const Layer* layer, const Unit& dx
     if ( _height < _layer->getMinimalSize() ) _height = _layer->getMinimalSize();
 }
 
-Contact* Contact::create(Net* net, const Layer* layer, const Unit& x, const Unit& y, const Unit& width, const Unit& height)
+Contact* Contact::create(Net* net, const Layer* layer, const DbU::Unit& x, const DbU::Unit& y, const DbU::Unit& width, const DbU::Unit& height)
 // ****************************************************************************************************
 {
     Contact* contact = new Contact(net, layer, x, y, width, height);
@@ -141,7 +141,7 @@ Contact* Contact::create(Net* net, const Layer* layer, const Unit& x, const Unit
     return contact;
 }
 
-Contact* Contact::create(Component* anchor, const Layer* layer, const Unit& dx, const Unit& dy, const Unit& width, const Unit& height)
+Contact* Contact::create(Component* anchor, const Layer* layer, const DbU::Unit& dx, const DbU::Unit& dy, const DbU::Unit& width, const DbU::Unit& height)
 // ****************************************************************************************************
 {
     if (!anchor)
@@ -160,14 +160,14 @@ Hooks Contact::getHooks() const
     return Contact_Hooks(this);
 }
 
-Unit Contact::getX() const
+DbU::Unit Contact::getX() const
 // ***********************
 {
     Component* anchor = getAnchor();
     return (!anchor) ? _dx : anchor->getX() + _dx;
 }
 
-Unit Contact::getY() const
+DbU::Unit Contact::getY() const
 // ***********************
 {
     Component* anchor = getAnchor();
@@ -184,7 +184,7 @@ Point Contact::getPosition() const
 Box Contact::getBoundingBox() const
 // ********************************
 {
-  Unit size = getLayer()->getEnclosure();
+  DbU::Unit size = getLayer()->getEnclosure();
 
     return Box(getPosition()).inflate(getHalfWidth() + size, getHalfHeight() + size);
 }
@@ -194,7 +194,7 @@ Box Contact::getBoundingBox(const BasicLayer* basicLayer) const
 {
     if (!_layer->contains(basicLayer)) return Box();
 
-    Unit size = getLayer()->getEnclosure(basicLayer);
+    DbU::Unit size = getLayer()->getEnclosure(basicLayer);
 
     return Box(getPosition()).inflate(getHalfWidth() + size, getHalfHeight() + size);
 }
@@ -206,7 +206,7 @@ Component* Contact::getAnchor() const
     return (masterHook) ? masterHook->getComponent() : NULL;
 }
 
-void Contact::translate(const Unit& dx, const Unit& dy)
+void Contact::translate(const DbU::Unit& dx, const DbU::Unit& dy)
 // ****************************************************
 {
     if ((dx != 0) || (dy != 0)) {
@@ -228,7 +228,7 @@ void Contact::setLayer(const Layer* layer)
     }
 }
 
-void Contact::setWidth(const Unit& width)
+void Contact::setWidth(const DbU::Unit& width)
 // **************************************
 {
     if (width != _width) {
@@ -237,7 +237,7 @@ void Contact::setWidth(const Unit& width)
     }
 }
 
-void Contact::setHeight(const Unit& height)
+void Contact::setHeight(const DbU::Unit& height)
 // ****************************************
 {
     if (height != _height) {
@@ -246,7 +246,7 @@ void Contact::setHeight(const Unit& height)
     }
 }
 
-void Contact::setSizes(const Unit& width, const Unit& height)
+void Contact::setSizes(const DbU::Unit& width, const DbU::Unit& height)
 // **********************************************************
 {
     if ((width != _width) || (height != _height)) {
@@ -256,19 +256,19 @@ void Contact::setSizes(const Unit& width, const Unit& height)
     }
 }
 
-void Contact::setX(const Unit& x)
+void Contact::setX(const DbU::Unit& x)
 // ******************************
 {
     setPosition(x, getY());
 }
 
-void Contact::setY(const Unit& y)
+void Contact::setY(const DbU::Unit& y)
 // ******************************
 {
     setPosition(getX(), y);
 }
 
-void Contact::setPosition(const Unit& x, const Unit& y)
+void Contact::setPosition(const DbU::Unit& x, const DbU::Unit& y)
 // ****************************************************
 {
     Component* anchor = getAnchor();
@@ -284,19 +284,19 @@ void Contact::setPosition(const Point& position)
     setPosition(position.getX(), position.getY());
 }
 
-void Contact::setDx(const Unit& dx)
+void Contact::setDx(const DbU::Unit& dx)
 // ********************************
 {
     setOffset(dx, _dy);
 }
 
-void Contact::setDy(const Unit& dy)
+void Contact::setDy(const DbU::Unit& dy)
 // ********************************
 {
     setOffset(_dx, dy);
 }
 
-void Contact::setOffset(const Unit& dx, const Unit& dy)
+void Contact::setOffset(const DbU::Unit& dx, const DbU::Unit& dy)
 // ****************************************************
 {
     if ((dx != _dx) || (dy != _dy)) {
@@ -325,10 +325,10 @@ string Contact::_getString() const
 {
     string s = Inherit::_getString();
     s.insert(s.length() - 1, " " + getString(_layer->getName()));
-    s.insert(s.length() - 1, " [" + getValueString(getX()));
-    s.insert(s.length() - 1, " " + getValueString(getY()));
-    s.insert(s.length() - 1, "] " + getValueString(_width));
-    s.insert(s.length() - 1, "x" + getValueString(_height));
+    s.insert(s.length() - 1, " [" + DbU::getValueString(getX()));
+    s.insert(s.length() - 1, " " + DbU::getValueString(getY()));
+    s.insert(s.length() - 1, "] " + DbU::getValueString(_width));
+    s.insert(s.length() - 1, "x" + DbU::getValueString(_height));
     return s;
 }
 

@@ -47,8 +47,8 @@ class Transformation {
 // Attributes
 // **********
 
-    private: Unit _tx;
-    private: Unit _ty;
+    private: DbU::Unit _tx;
+    private: DbU::Unit _ty;
     private: Orientation _orientation;
 
 // Constructors
@@ -56,7 +56,7 @@ class Transformation {
 
     public: Transformation();
 
-    public: Transformation(const Unit& tx, const Unit& ty, const Orientation& orientation = Orientation::ID);
+    public: Transformation(const DbU::Unit& tx, const DbU::Unit& ty, const Orientation& orientation = Orientation::ID);
     public: Transformation(const Point& translation, const Orientation& orientation = Orientation::ID);
 
     public: Transformation(const Transformation& transformation);
@@ -72,24 +72,24 @@ class Transformation {
 // Accessors
 // *********
 
-    public: const Unit& getTx() const {return _tx;};
-    public: const Unit& getTy() const {return _ty;};
+    public: const DbU::Unit& getTx() const {return _tx;};
+    public: const DbU::Unit& getTy() const {return _ty;};
     public: Point getTranslation() const {return Point(_tx, _ty);};
     public: const Orientation& getOrientation() const {return _orientation;};
 
-    public: Unit getX(const Unit& x, const Unit& y) const;
-    public: Unit getY(const Unit& x, const Unit& y) const;
+    public: DbU::Unit getX(const DbU::Unit& x, const DbU::Unit& y) const;
+    public: DbU::Unit getY(const DbU::Unit& x, const DbU::Unit& y) const;
 
-    public: Unit getX(const Point& point) const;
-    public: Unit getY(const Point& point) const;
+    public: DbU::Unit getX(const Point& point) const;
+    public: DbU::Unit getY(const Point& point) const;
 
-    public: Unit getDx(const Unit& dx, const Unit& dy) const;
-    public: Unit getDy(const Unit& dx, const Unit& dy) const;
+    public: DbU::Unit getDx(const DbU::Unit& dx, const DbU::Unit& dy) const;
+    public: DbU::Unit getDy(const DbU::Unit& dx, const DbU::Unit& dy) const;
 
-    public: Point getPoint(const Unit& x, const Unit& y) const;
+    public: Point getPoint(const DbU::Unit& x, const DbU::Unit& y) const;
     public: Point getPoint(const Point& point) const;
 
-    public: Box getBox(const Unit& x1, const Unit& y1, const Unit& x2, const Unit& y2) const;
+    public: Box getBox(const DbU::Unit& x1, const DbU::Unit& y1, const DbU::Unit& x2, const DbU::Unit& y2) const;
     public: Box getBox(const Point& point1, const Point& point2) const;
     public: Box getBox(const Box& box) const;
 
@@ -111,7 +111,7 @@ class Transformation {
 // Manipulators
 // ************
 
-    public: void applyOn(Unit& x, Unit& y) const;
+    public: void applyOn(DbU::Unit& x, DbU::Unit& y) const;
     public: void applyOn(Point& point) const;
     public: void applyOn(Box& box) const;
     public: void applyOn(Transformation& transformation) const;

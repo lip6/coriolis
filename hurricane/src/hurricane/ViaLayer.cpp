@@ -146,13 +146,13 @@ namespace Hurricane {
   { return getCollection(_basicLayers); }
 
 
-  Unit  ViaLayer::getEnclosure () const
+  DbU::Unit  ViaLayer::getEnclosure () const
   {
     return _maximalEnclosure;
   }
 
 
-  Unit  ViaLayer::getEnclosure ( const BasicLayer* layer ) const
+  DbU::Unit  ViaLayer::getEnclosure ( const BasicLayer* layer ) const
   {
     for ( size_t i=0 ; i<_basicLayers.size() ; i++ ) {
       if ( layer == _basicLayers[i] ) return _enclosures[i];
@@ -162,7 +162,7 @@ namespace Hurricane {
   }
 
 
-  void  ViaLayer::setEnclosure ( const BasicLayer* layer, Unit enclosure )
+  void  ViaLayer::setEnclosure ( const BasicLayer* layer, DbU::Unit enclosure )
   {
     for ( size_t i=0 ; i<_basicLayers.size() ; i++ ) {
       if ( layer == _basicLayers[i] ) {

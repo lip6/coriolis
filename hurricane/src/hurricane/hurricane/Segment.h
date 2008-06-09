@@ -66,19 +66,24 @@ class Segment : public Component {
     private: SourceHook _sourceHook;
     private: TargetHook _targetHook;
     private: const Layer* _layer;
-    private: Unit _width;
+    private: DbU::Unit _width;
 
 // Constructors
 // ************
 
-    protected: Segment(Net* net, Component* source, Component* target, const Layer* layer, const Unit& width = 0);
+  protected: Segment ( Net* net
+                     , Component* source
+                     , Component* target
+                     , const Layer* layer
+                     , const DbU::Unit& width = 0
+                     );
 
 // Accessors
 // *********
 
     public: virtual Hooks getHooks() const;
-    public: virtual Unit getX() const {return 0;};
-    public: virtual Unit getY() const {return 0;};
+    public: virtual DbU::Unit getX() const {return 0;};
+    public: virtual DbU::Unit getY() const {return 0;};
     public: virtual const Layer* getLayer() const {return _layer;};
     public: Hook* getSourceHook() {return &_sourceHook;};
     public: Hook* getTargetHook() {return &_targetHook;};
@@ -87,21 +92,21 @@ class Segment : public Component {
     public: Component* getTarget() const;
     public: Components getAnchors() const;
     public: Component* getOppositeAnchor(Component* anchor) const;
-    public: const Unit& getWidth() const {return _width;};
-    public: Unit getHalfWidth() const {return (_width / 2);};
-    public: virtual Unit getSourceX() const = 0;
-    public: virtual Unit getSourceY() const = 0;
+    public: const DbU::Unit& getWidth() const {return _width;};
+    public: DbU::Unit getHalfWidth() const {return (_width / 2);};
+    public: virtual DbU::Unit getSourceX() const = 0;
+    public: virtual DbU::Unit getSourceY() const = 0;
     public: virtual Point getSourcePosition() const;
-    public: virtual Unit getTargetX() const = 0;
-    public: virtual Unit getTargetY() const = 0;
+    public: virtual DbU::Unit getTargetX() const = 0;
+    public: virtual DbU::Unit getTargetY() const = 0;
     public: virtual Point getTargetPosition() const;
-    public: virtual Unit getLength() const = 0;
+    public: virtual DbU::Unit getLength() const = 0;
 
 // Updators
 // ********
 
     public: void setLayer(const Layer* layer);
-    public: void setWidth(const Unit& width);
+    public: void setWidth(const DbU::Unit& width);
     public: void invert();
 
 // Others

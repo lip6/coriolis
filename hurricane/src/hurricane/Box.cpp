@@ -24,7 +24,7 @@ Box::Box()
     _yMax(-1)
 {}
 
-Box::Box(const Unit& x, const Unit& y)
+Box::Box(const DbU::Unit& x, const DbU::Unit& y)
 // ***********************************
     : _xMin(x),
     _yMin(y),
@@ -40,7 +40,7 @@ Box::Box(const Point& point)
     _yMax(point.getY())
 {}
 
-Box::Box(const Unit& x1, const Unit& y1, const Unit& x2, const Unit& y2)
+Box::Box(const DbU::Unit& x1, const DbU::Unit& y1, const DbU::Unit& x2, const DbU::Unit& y2)
 // *********************************************************************
     : _xMin(min(x1, x2)),
     _yMin(min(y1, y2)),
@@ -116,10 +116,10 @@ Box Box::getIntersection(const Box& box) const
                   min(_yMax, box._yMax));
 }
 
-Unit Box::manhattanDistance(const Point& pt) const
+DbU::Unit Box::manhattanDistance(const Point& pt) const
 // ***********************************************
 {
-    Unit dist = 0;
+    DbU::Unit dist = 0;
     if (isEmpty())
         throw Error("Can't compute distance to an empty Box");
     if (pt.getX() < _xMin) dist = _xMin - pt.getX();
@@ -131,12 +131,12 @@ Unit Box::manhattanDistance(const Point& pt) const
     return dist;
 }
 
-Unit Box::manhattanDistance(const Box& box) const
+DbU::Unit Box::manhattanDistance(const Box& box) const
 // **********************************************
 {
     if (isEmpty() || box.isEmpty())
         throw Error("Can't compute distance to an empty Box");
-    Unit dx, dy;
+    DbU::Unit dx, dy;
     if ((dx=box.getXMin() - _xMax) < 0)
         if ((dx=_xMin-box.getXMax()) < 0) dx=0;
     if ((dy=box.getYMin() - _yMax) < 0)
@@ -164,7 +164,7 @@ bool Box::isPonctual() const
     return (!isEmpty() && (_xMax == _xMin) && (_yMax == _yMin));
 }
 
-bool Box::contains(const Unit& x, const Unit& y) const
+bool Box::contains(const DbU::Unit& x, const DbU::Unit& y) const
 // ***************************************************
 {
     return (!isEmpty() &&
@@ -216,26 +216,26 @@ bool Box::isConstrainedBy(const Box& box) const
 Box& Box::makeEmpty()
 // ******************
 {
-    _xMin = 1;
+  _xMin = 1;
     _yMin = 1;
     _xMax = -1;
     _yMax = -1;
     return *this;
 }
 
-Box& Box::inflate(const Unit& d)
+Box& Box::inflate(const DbU::Unit& d)
 // *****************************
 {
     return inflate(d, d, d, d);
 }
 
-Box& Box::inflate(const Unit& dx, const Unit& dy)
+Box& Box::inflate(const DbU::Unit& dx, const DbU::Unit& dy)
 // **********************************************
 {
     return inflate(dx, dy, dx, dy);
 }
 
-Box& Box::inflate(const Unit& dxMin, const Unit& dyMin, const Unit& dxMax, const Unit& dyMax)
+Box& Box::inflate(const DbU::Unit& dxMin, const DbU::Unit& dyMin, const DbU::Unit& dxMax, const DbU::Unit& dyMax)
 // ******************************************************************************************
 {
     if (!isEmpty()) {
@@ -247,20 +247,23 @@ Box& Box::inflate(const Unit& dxMin, const Unit& dyMin, const Unit& dxMax, const
     return *this;
 }
 
-Box Box::getInflated(const Unit& d) const {
+Box Box::getInflated(const DbU::Unit& d) const {
     return Box(*this).inflate(d);
 }
 
 Box& Box::shrinkByFactor(double factor)
 // **************************************
 {
-    assert((0 <= factor) && (factor <= 1));
-    Unit dx=getUnit(0.5*(1- factor) * (getValue(_xMax) - getValue(_xMin)));
-    Unit dy=getUnit(0.5*(1- factor) * (getValue(_yMax) - getValue(_yMin)));
+    assert((0.0 <= factor) && (factor <= 1.0));
+    DbU::Unit dx = DbU::real ( 0.5 * (1-factor) * (DbU::getReal(_xMax) - DbU::getReal(_xMin)) );
+    DbU::Unit dy = DbU::real ( 0.5 * (1-factor) * (DbU::getReal(_yMax) - DbU::getReal(_yMin)) );
+
+  //DbU::Unit dx=getUnit(0.5*(1- factor) * (getValue(_xMax) - getValue(_xMin)));
+  //DbU::Unit dy=getUnit(0.5*(1- factor) * (getValue(_yMax) - getValue(_yMin)));
     return inflate(-dx, -dy);
 }
 
-Box& Box::merge(const Unit& x, const Unit& y)
+Box& Box::merge(const DbU::Unit& x, const DbU::Unit& y)
 // ******************************************
 {
     if (isEmpty()) {
@@ -284,7 +287,7 @@ Box& Box::merge(const Point& point)
     return merge(point.getX(), point.getY());
 }
 
-Box& Box::merge(const Unit& x1, const Unit& y1, const Unit& x2, const Unit& y2)
+Box& Box::merge(const DbU::Unit& x1, const DbU::Unit& y1, const DbU::Unit& x2, const DbU::Unit& y2)
 // ****************************************************************************
 {
     merge(x1, y1);
@@ -302,7 +305,7 @@ Box& Box::merge(const Box& box)
     return *this;
 }
 
-Box& Box::translate(const Unit& dx, const Unit& dy)
+Box& Box::translate(const DbU::Unit& dx, const DbU::Unit& dy)
 // ************************************************
 {
     if (!isEmpty()) {
@@ -317,13 +320,12 @@ Box& Box::translate(const Unit& dx, const Unit& dy)
 string Box::_getString() const
 // ***************************
 {
-    if (isEmpty())
-        return "<" + _TName("Box") + " empty>";
-    else
-        return "<" + _TName("Box") + " " +
-                 getValueString(_xMin) + " " + getValueString(_yMin) + " " +
-                 getValueString(_xMax) + " " + getValueString(_yMax) +
-                 ">";
+  if (isEmpty())
+    return "<" + _TName("Box") + " empty>";
+  else
+    return "<" + _TName("Box") + " "
+      + DbU::getValueString(_xMin) + " " + DbU::getValueString(_yMin) + " "
+      + DbU::getValueString(_xMax) + " " + DbU::getValueString(_yMax) + ">";
 }
 
 Record* Box::_getRecord() const

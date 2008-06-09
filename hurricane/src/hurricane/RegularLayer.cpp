@@ -231,31 +231,31 @@ namespace Hurricane {
   { return RegularLayer_RegularLayers(this); }
 
 
-  Unit  RegularLayer::getEnclosure () const
+  DbU::Unit  RegularLayer::getEnclosure () const
   { return _enclosure; }
 
 
-  Unit  RegularLayer::getExtentionCap () const
+  DbU::Unit  RegularLayer::getExtentionCap () const
   { return _extentionCap; }
 
 
-  Unit  RegularLayer::getExtentionWidth () const
+  DbU::Unit  RegularLayer::getExtentionWidth () const
   { return _extentionWidth; }
 
 
-  Unit  RegularLayer::getEnclosure ( const BasicLayer* layer ) const
+  DbU::Unit  RegularLayer::getEnclosure ( const BasicLayer* layer ) const
   {
     return (layer == _basicLayer) ? _enclosure : 0;
   }
 
 
-  Unit  RegularLayer::getExtentionCap ( const BasicLayer* layer ) const
+  DbU::Unit  RegularLayer::getExtentionCap ( const BasicLayer* layer ) const
   {
     return (layer == _basicLayer) ? _extentionCap : 0;
   }
 
 
-  Unit  RegularLayer::getExtentionWidth ( const BasicLayer* layer ) const
+  DbU::Unit  RegularLayer::getExtentionWidth ( const BasicLayer* layer ) const
   {
     return (layer == _basicLayer) ? _extentionWidth : 0;
   }
@@ -276,19 +276,19 @@ namespace Hurricane {
   }
 
 
-  void  RegularLayer::setEnclosure ( const BasicLayer* layer, Unit enclosure )
+  void  RegularLayer::setEnclosure ( const BasicLayer* layer, DbU::Unit enclosure )
   {
     if ( _basicLayer == layer ) _enclosure = enclosure;
   }
 
 
-  void  RegularLayer::setExtentionCap ( const BasicLayer* layer, Unit cap )
+  void  RegularLayer::setExtentionCap ( const BasicLayer* layer, DbU::Unit cap )
   {
     if ( _basicLayer == layer ) _extentionCap = cap;
   }
 
 
-  void  RegularLayer::setExtentionWidth ( const BasicLayer* layer, Unit width )
+  void  RegularLayer::setExtentionWidth ( const BasicLayer* layer, DbU::Unit width )
   {
     if ( _basicLayer == layer ) _extentionWidth = width;
   }

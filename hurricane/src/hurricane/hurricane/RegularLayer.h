@@ -72,17 +72,17 @@ namespace Hurricane {
     // Accessors.
       virtual BasicLayers     getBasicLayers    () const;
       inline  BasicLayer*     getBasicLayer     () const;
-      virtual Unit            getEnclosure      () const;
-      virtual Unit            getExtentionCap   () const;
-      virtual Unit            getExtentionWidth () const;
-      virtual Unit            getEnclosure      ( const BasicLayer* layer ) const;
-      virtual Unit            getExtentionCap   ( const BasicLayer* layer ) const;
-      virtual Unit            getExtentionWidth ( const BasicLayer* layer ) const;
+      virtual DbU::Unit            getEnclosure      () const;
+      virtual DbU::Unit            getExtentionCap   () const;
+      virtual DbU::Unit            getExtentionWidth () const;
+      virtual DbU::Unit            getEnclosure      ( const BasicLayer* layer ) const;
+      virtual DbU::Unit            getExtentionCap   ( const BasicLayer* layer ) const;
+      virtual DbU::Unit            getExtentionWidth ( const BasicLayer* layer ) const;
     // Updators
               void            setBasicLayer     ( BasicLayer* layer );
-      virtual void            setEnclosure      ( const BasicLayer* layer, Unit enclosure );
-      virtual void            setExtentionCap   ( const BasicLayer* layer, Unit cap );
-      virtual void            setExtentionWidth ( const BasicLayer* layer, Unit width );
+      virtual void            setEnclosure      ( const BasicLayer* layer, DbU::Unit enclosure );
+      virtual void            setExtentionCap   ( const BasicLayer* layer, DbU::Unit cap );
+      virtual void            setExtentionWidth ( const BasicLayer* layer, DbU::Unit width );
     // Hurricane Managment.
       virtual string          _getTypeName      () const;
       virtual string          _getString        () const;
@@ -91,9 +91,9 @@ namespace Hurricane {
     private:
     // Internal: Attributes
               BasicLayer*     _basicLayer;
-              Unit            _enclosure;
-              Unit            _extentionCap;
-              Unit            _extentionWidth;
+              DbU::Unit            _enclosure;
+              DbU::Unit            _extentionCap;
+              DbU::Unit            _extentionWidth;
 
     protected:
     // Internal: Constructors & Destructors.

@@ -31,42 +31,62 @@ class Horizontal : public Segment {
 // Attributes
 // **********
 
-    private: Unit _y;
-    private: Unit _dxSource;
-    private: Unit _dxTarget;
+    private: DbU::Unit _y;
+    private: DbU::Unit _dxSource;
+    private: DbU::Unit _dxTarget;
 
 // Constructors
 // ************
 
-    protected: Horizontal(Net* net, Component* source, Component* target, const Layer* layer, const Unit& y, const Unit& width = 0, const Unit& dxSource = 0, const Unit& dxTarget = 0);
-
-    public: static Horizontal* create(Net* net, const Layer* layer, const Unit& y, const Unit& width = 0, const Unit& dxSource = 0, const Unit& dxTarget = 0);
-    public: static Horizontal* create(Component* source, Component* target, const Layer* layer, const Unit& y, const Unit& width = 0, const Unit& dxSource = 0, const Unit& dxTarget = 0);
+    protected: Horizontal ( Net* net
+                          , Component* source
+                          , Component* target
+                          , const Layer* layer
+                          , const DbU::Unit& y
+                          , const DbU::Unit& width    = 0
+                          , const DbU::Unit& dxSource = 0
+                          , const DbU::Unit& dxTarget = 0
+                          );
+    public: static Horizontal* create ( Net* net
+                                      , const Layer* layer
+                                      , const DbU::Unit& y
+                                      , const DbU::Unit& width    = 0
+                                      , const DbU::Unit& dxSource = 0
+                                      , const DbU::Unit& dxTarget = 0
+                                      );
+    public: static Horizontal* create ( Component* source
+                                      , Component* target
+                                      , const Layer* layer
+                                      , const DbU::Unit& y
+                                      , const DbU::Unit& width    = 0
+                                      , const DbU::Unit& dxSource = 0
+                                      , const DbU::Unit& dxTarget = 0
+                                      );
 
 // Accessors
 // *********
 
-    public: virtual Unit getY() const {return _y;};
+    public: virtual DbU::Unit getY() const {return _y;};
     public: virtual Point getCenter() const;
     public: virtual Box getBoundingBox() const;
     public: virtual Box getBoundingBox(const BasicLayer* basicLayer) const;
-    public: virtual Unit getSourceX() const;
-    public: virtual Unit getSourceY() const {return getY();};
-    public: virtual Unit getTargetX() const;
-    public: virtual Unit getTargetY() const {return getY();};
-    public: virtual Unit getLength() const;
-    public: const Unit& getDxSource() const {return _dxSource;};
-    public: const Unit& getDxTarget() const {return _dxTarget;};
+    public: virtual DbU::Unit getSourceX() const;
+    public: virtual DbU::Unit getSourceY() const {return getY();};
+    public: virtual DbU::Unit getTargetX() const;
+    public: virtual DbU::Unit getTargetY() const {return getY();};
+    public: virtual DbU::Unit getLength() const;
+    public: const DbU::Unit& getDxSource() const {return _dxSource;};
+    public: const DbU::Unit& getDxTarget() const {return _dxTarget;};
 
 // Updators
 // ********
 
-    public: virtual void translate(const Unit& dx, const Unit& dy);
+    public: virtual void translate(const DbU::Unit& dx, const DbU::Unit& dy);
 
-    public: void setY(const Unit& y);
-    public: void setDxSource(const Unit& dxSource);
-    public: void setDxTarget(const Unit& dxSource);
-    public: void translate(const Unit& dy);
+    public: void setY(const DbU::Unit& y);
+    public: void setDxSource(const DbU::Unit& dxSource);
+    public: void setDxTarget(const DbU::Unit& dxSource);
+    public: void translate(const DbU::Unit& dy);
 
 // Others
 // ******

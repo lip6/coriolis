@@ -33,7 +33,7 @@
 // Authors-Tag
 // ===================================================================
 //
-// $Id: PyUnit.cpp,v 1.11 2006/05/03 14:00:05 jpc Exp $
+// $Id$
 //
 // x-----------------------------------------------------------------x 
 // |                                                                 |
@@ -43,7 +43,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./PyUnit.cpp"                             |
+// |  C++ Header  :       "./PyDbU.h"                                |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
@@ -52,90 +52,48 @@
 
 
 
-#include "hurricane/isobar/PyUnit.h"
+
+#ifndef  __PYUNIT__
+#define  __PYUNIT__
 
 
-namespace Isobar {
+#include "hurricane/isobar/PyHurricane.h"
 
-using namespace Hurricane;
+#include "hurricane/DbU.h"
+
+
+namespace  Isobar {
+
 
 extern "C" {
 
 
-// x=================================================================x
-// |                "PyUnit" Python Module Code Part                 |
-// x=================================================================x
-
-#if defined(__PYTHON_MODULE__)
-
-
-  // x-------------------------------------------------------------x
-  // |                 "PyUnit" General Methods                    |
-  // x-------------------------------------------------------------x
-
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyUnit_getUnit ()"
-
-  extern PyObject* PyUnit_getUnit ( PyObject* module, PyObject* args )
-  {
-    trace << "PyUnit_getUnit ()" << endl;
-    
-    PyObject* arg0;
-    Unit      result = 0;
-
-    HTRY
-    
-    __cs.Init ( "Unit.getUnit" );
-    if ( ! PyArg_ParseTuple(args,"|O&:Unit.getUnit",Converter,&arg0) )
-      return ( NULL );
-    
-    if      ( __cs.getObjectIds() == INT_ARG   ) { result = getUnit ( PyInt_AsLong     ( arg0 ) ); }
-    else if ( __cs.getObjectIds() == FLOAT_ARG ) { result = getUnit ( PyFloat_AsDouble ( arg0 ) ); }
-    else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Unit.getUnit constructor." );
-      return ( NULL );
-    }
-    
-    HCATCH
-    
-    return ( Py_BuildValue ( "i", result ) );
-  }
+// -------------------------------------------------------------------
+// Python Object  :  "PyDbU".
 
 
 
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyUnit_getValue ()"
+// -------------------------------------------------------------------
+// Functions & Types exported to "PyHurricane.ccp".
 
-  extern PyObject* PyUnit_getValue ( PyObject* module, PyObject* args )
-  {
-    trace << "PyUnit_getValue ()" << endl;
-    
-    PyObject* arg0;
-    if ( ! ParseOneArg ( "getValue", args,INT_ARG, &arg0 ) ) return ( NULL );
+  extern  PyObject* PyDbU_db            ( PyObject* module, PyObject* args );
+  extern  PyObject* PyDbU_real          ( PyObject* module, PyObject* args );
+  extern  PyObject* PyDbU_lambda        ( PyObject* module, PyObject* args );
+  extern  PyObject* PyDbU_getDb         ( PyObject* module, PyObject* args );
+  extern  PyObject* PyDbU_getReal       ( PyObject* module, PyObject* args );
+  extern  PyObject* PyDbU_getLambda     ( PyObject* module, PyObject* args );
+  extern  PyObject* PyDbU_getResolution ( PyObject* module );
 
-    return ( Py_BuildValue("d",getValue(PyInt_AsLong(arg0))) );
-  }
-
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyUnit_getResolution ()"
-
-  extern PyObject* PyUnit_getResolution ( PyObject* module )
-  {
-    trace << "PyUnit_getResolution ()" << endl;
-    
-
-    return ( Py_BuildValue("d",getResolution()) );
-  }
-
-
-#endif  // End of Python Module Code Part.
-      
 
 }  // End of extern "C".
 
 
+
+
 }  // End of Isobar namespace.
  
+
+
+
+#endif

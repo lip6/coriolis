@@ -42,7 +42,7 @@ if (box1.inflate(3).merge(box2.translate(10, 10).inflate(-1, 1)).contains(20, 20
   *                Default constructor : the returned box is empty. 
   */
 
- /*! \function     Box::Box(const Unit& x, const Unit& y);
+ /*! \function     Box::Box(const DbU::Unit& x, const DbU::Unit& y);
   *                Builds a box of null size centered on the point defined by 
   *                \c \<x\> and \c \<y\>. 
   */
@@ -51,7 +51,7 @@ if (box1.inflate(3).merge(box2.translate(10, 10).inflate(-1, 1)).contains(20, 20
   *                Builds a box of null size centered on the point. 
   */
 
- /*! \function     Box::Box(const Unit& x1, const Unit& y1, const Unit& x2, const Unit& y2);
+ /*! \function     Box::Box(const DbU::Unit& x1, const DbU::Unit& y1, const DbU::Unit& x2, const DbU::Unit& y2);
   *                Builds the minimal box enclosing the two points defined by 
   *                the coordinates \c \<x1\>, \c \<y1\> and \c \<x2\>, 
   *                \c \<y2\>. 
@@ -93,28 +93,28 @@ if (box1.inflate(3).merge(box2.translate(10, 10).inflate(-1, 1)).contains(20, 20
   */
  //  \{
 
- /*! \function     const Unit& Box::getXMin() const;
+ /*! \function     const DbU::Unit& Box::getXMin() const;
   *  \Return       the XMin value : meaningful only for a non empty box. 
   */
 
- /*! \function     const Unit& Box::getYMin() const;
+ /*! \function     const DbU::Unit& Box::getYMin() const;
   *  \Return       the YMin value : meaningful only for a non empty box. 
   */
 
- /*! \function     const Unit& Box::getXMax() const;
+ /*! \function     const DbU::Unit& Box::getXMax() const;
   *  \Return       the XMax value : meaningful only for a non empty box. 
   */
 
- /*! \function     const Unit& Box::getYMax() const;
+ /*! \function     const DbU::Unit& Box::getYMax() const;
   *  \Return       the YMax value : meaningful only for a non empty box. 
   */
 
- /*! \function     Unit Box::getXCenter() const;
+ /*! \function     DbU::Unit Box::getXCenter() const;
   *  \Return       the abscissa of the box center : meaningful only for a non 
   *                empty box. 
   */
 
- /*! \function     Unit Box::getYCenter() const;
+ /*! \function     DbU::Unit Box::getYCenter() const;
   *  \Return       the ordinate of the box center : meaningful only for a non 
   *                empty box. 
   */
@@ -123,19 +123,19 @@ if (box1.inflate(3).merge(box2.translate(10, 10).inflate(-1, 1)).contains(20, 20
   *  \Return       the box center point : meaningful only for a non empty box. 
   */
 
- /*! \function     Unit Box::getWidth() const;
+ /*! \function     DbU::Unit Box::getWidth() const;
   *  \Return       the box width : meaningful only for a non empty box. 
   */
 
- /*! \function     Unit Box::getHalfWidth() const;
+ /*! \function     DbU::Unit Box::getHalfWidth() const;
   *  \Return       the half box width : meaningful only for a non empty box. 
   */
 
- /*! \function     Unit Box::getHeight() const;
+ /*! \function     DbU::Unit Box::getHeight() const;
   *  \Return       the box height : meaningful only for a non empty box. 
   */
 
- /*! \function     Unit Box::getHalfHeight() const;
+ /*! \function     DbU::Unit Box::getHalfHeight() const;
   *  \Return       the half box height : meaningful only for a non empty box. 
   */
 
@@ -170,7 +170,7 @@ if (box1.inflate(3).merge(box2.translate(10, 10).inflate(-1, 1)).contains(20, 20
   *  \Return       \true if the box is reduced to a point, else \false. 
   */
 
- /*! \function     bool Box::contains(const Unit& x, const Unit& y) const;
+ /*! \function     bool Box::contains(const DbU::Unit& x, const DbU::Unit& y) const;
   *  \Return       \true if the box is non empty and contains the point defined 
   *                by the coordinates \c \<x\>, \c \<y\> else \false. 
   */
@@ -207,20 +207,20 @@ if (box1.inflate(3).merge(box2.translate(10, 10).inflate(-1, 1)).contains(20, 20
   *                Transforms the box into an empty one. 
   */
 
- /*! \function     Box& Box::inflate(const Unit& d);
+ /*! \function     Box& Box::inflate(const DbU::Unit& d);
   *                Expands (or contracts) the box, if not empty, in each 
   *                direction of the quantity \c \<d\>. This quantity might be 
   *                negative enough to transform it into an empty box. 
   */
 
- /*! \function     Box& Box::inflate(const Unit& dx, const Unit& dy);
+ /*! \function     Box& Box::inflate(const DbU::Unit& dx, const DbU::Unit& dy);
   *                Expands (or contracts) the box, if not empty, horizontaly of 
   *                the quantity \c \<dx\> and vertically of the quatity 
   *                \c \<dy\>. Those quantities might be negative enough to 
   *                transform it into an empty box. 
   */
 
- /*! \function     Box& Box::inflate(const Unit& dxMin, const Unit& dyMin, const Unit& dxMax, const Unit& dyMax);
+ /*! \function     Box& Box::inflate(const DbU::Unit& dxMin, const DbU::Unit& dyMin, const DbU::Unit& dxMax, const DbU::Unit& dyMax);
   *                Expands (or contracts) the box, if not empty, on the left of 
   *                the quantity \c \<dxMin\>, on the bottom of the quantity 
   *                \c \<dyMin\>, on the right of the quantity \c \<dxMax\> and 
@@ -228,7 +228,7 @@ if (box1.inflate(3).merge(box2.translate(10, 10).inflate(-1, 1)).contains(20, 20
   *                might be negative enough to transform it into an empty box. 
   */
 
- /*! \function     Box& Box::merge(const Unit& x, const Unit& y);
+ /*! \function     Box& Box::merge(const DbU::Unit& x, const DbU::Unit& y);
   *                Expands the box in order that it encloses the point defined 
   *                by coordinates \c \<x\> and \c \<y\>. If the box was 
   *                initially empty it becomes reduced to the enclosed point. 
@@ -240,7 +240,7 @@ if (box1.inflate(3).merge(box2.translate(10, 10).inflate(-1, 1)).contains(20, 20
   *                reduced to the enclosed point. 
   */
 
- /*! \function     Box& Box::merge(const Unit& x1, const Unit& y1, const Unit& x2, const Unit& y2);
+ /*! \function     Box& Box::merge(const DbU::Unit& x1, const DbU::Unit& y1, const DbU::Unit& x2, const DbU::Unit& y2);
   *                Expands the box in order that it encloses the points defined 
   *                by coordinates \c \<x1\>, \c \<y1\> and \c \<x2\>, \c \<y2\>. 
   */
@@ -251,7 +251,7 @@ if (box1.inflate(3).merge(box2.translate(10, 10).inflate(-1, 1)).contains(20, 20
   *                becomes reduced to the enclosed box. 
   */
 
- /*! \function     Box& Box::translate(const Unit& dx, const Unit& dy);
+ /*! \function     Box& Box::translate(const DbU::Unit& dx, const DbU::Unit& dy);
   *                translates the box, if not empty, of the quantities \c \<dx\> 
   *                and \c \<dy\>. 
   */

@@ -246,7 +246,7 @@ Net::Net(Cell* cell, const Name& name)
     _isExternal(false),
     _type(),
     _direction(),
-    _position(0, 0),
+     _position(0,0),
     _componentSet(),
     _rubberSet(),
     _nextOfCellNetMap(NULL)
@@ -450,7 +450,7 @@ void Net::setExternal(bool isExternal)
         _isExternal = isExternal;
         if (_isExternal) {
             UpdateSession::open();
-            setPosition(Point(0, 0));
+            setPosition(Point(0,0));
             for_each_instance(instance, _cell->getSlaveInstances()) {
                 Plug::_create(instance, this);
                 end_for;

@@ -53,12 +53,12 @@
   *                CPG which represent poly used to realize transistor gates). 
   */
 
- /*! \function     const Unit& Layer::getMinimalSize() const;
+ /*! \function     const DbU::Unit& Layer::getMinimalSize() const;
   *  \Return       the minimal size allowed for a rectangular layout pad on this 
   *                layer. 
   */
 
- /*! \function     const Unit& Layer::getMinimalSpacing() const;
+ /*! \function     const DbU::Unit& Layer::getMinimalSpacing() const;
   *  \Return       the minimal spacing between two pads on this layer. 
   */
 
@@ -100,11 +100,11 @@
   *                other layer with that name. 
   */
 
- /*! \function     void Layer::setMinimalSize(const Unit& minimalSize);
+ /*! \function     void Layer::setMinimalSize(const DbU::Unit& minimalSize);
   *                sets the minimal size of a pad on this layer. 
   */
 
- /*! \function     void Layer::setMinimalSpacing(const Unit& minimalSpacing);
+ /*! \function     void Layer::setMinimalSpacing(const DbU::Unit& minimalSpacing);
   *                sets the minimal spacing between two pads on this layer. 
   */
 

@@ -76,13 +76,13 @@ Cell* Plug::getCell() const
     return _instance->getCell();
 }
 
-Unit Plug::getX() const
+DbU::Unit Plug::getX() const
 // ********************
 {
     return _instance->getTransformation().getX(_masterNet->getPosition());
 }
 
-Unit Plug::getY() const
+DbU::Unit Plug::getY() const
 // ********************
 {
     return _instance->getTransformation().getY(_masterNet->getPosition());

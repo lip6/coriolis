@@ -154,15 +154,15 @@ namespace Hurricane {
   { return getCollection(_basicLayers); }
 
 
-  Unit  TransistorLayer::getExtentionCap () const
+  DbU::Unit  TransistorLayer::getExtentionCap () const
   { return _maximalExtentionCap; }
 
 
-  Unit  TransistorLayer::getExtentionWidth () const
+  DbU::Unit  TransistorLayer::getExtentionWidth () const
   { return _maximalExtentionWidth; }
 
 
-  Unit  TransistorLayer::getExtentionCap ( const BasicLayer* layer ) const
+  DbU::Unit  TransistorLayer::getExtentionCap ( const BasicLayer* layer ) const
   {
     for ( size_t i=0 ; i<_basicLayers.size() ; i++ ) {
       if ( _basicLayers[i] == layer )
@@ -173,7 +173,7 @@ namespace Hurricane {
   }
 
 
-  Unit  TransistorLayer::getExtentionWidth ( const BasicLayer* layer ) const
+  DbU::Unit  TransistorLayer::getExtentionWidth ( const BasicLayer* layer ) const
   {
     for ( size_t i=0 ; i<_basicLayers.size() ; i++ ) {
       if ( _basicLayers[i] == layer )
@@ -184,7 +184,7 @@ namespace Hurricane {
   }
 
 
-  void  TransistorLayer::setExtentionCap ( const BasicLayer* layer, Unit cap )
+  void  TransistorLayer::setExtentionCap ( const BasicLayer* layer, DbU::Unit cap )
   {
     for ( size_t i=0 ; i<_basicLayers.size() ; i++ ) {
       if ( _basicLayers[i] == layer ) {
@@ -195,7 +195,7 @@ namespace Hurricane {
   }
 
 
-  void  TransistorLayer::setExtentionWidth ( const BasicLayer* layer, Unit width )
+  void  TransistorLayer::setExtentionWidth ( const BasicLayer* layer, DbU::Unit width )
   {
     for ( size_t i=0 ; i<_basicLayers.size() ; i++ ) {
       if ( _basicLayers[i] == layer )

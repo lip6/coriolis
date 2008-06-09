@@ -156,11 +156,11 @@ namespace Hurricane {
   { return getCollection(_basicLayers); }
 
 
-  Unit  ContactLayer::getEnclosure () const
+  DbU::Unit  ContactLayer::getEnclosure () const
   { return _maximalEnclosure; }
 
 
-  Unit  ContactLayer::getEnclosure ( const BasicLayer* layer ) const
+  DbU::Unit  ContactLayer::getEnclosure ( const BasicLayer* layer ) const
   {
     for ( size_t i=0 ; i<_basicLayers.size() ; i++ ) {
       if ( _basicLayers[i] == layer )
@@ -171,7 +171,7 @@ namespace Hurricane {
   }
 
 
-  void  ContactLayer::setEnclosure ( const BasicLayer* layer, Unit enclosure )
+  void  ContactLayer::setEnclosure ( const BasicLayer* layer, DbU::Unit enclosure )
   {
     for ( size_t i=0 ; i<_basicLayers.size() ; i++ ) {
       if ( _basicLayers[i] == layer ) {

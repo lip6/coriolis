@@ -104,16 +104,16 @@ namespace Hurricane {
 
     // Geometric conversions.
     public:
-              QRect                 getScreenRect     ( Unit x1, Unit y1, Unit x2, Unit y2 ) const;
+              QRect                 getScreenRect     ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2 ) const;
               QRect                 getScreenRect     ( const Box& box ) const;
-              QPoint                getScreenPoint    ( Unit x, Unit y ) const;
+              QPoint                getScreenPoint    ( DbU::Unit x, DbU::Unit y ) const;
               QPoint                getScreenPoint    ( const Point& point ) const;
-      inline  int                   getScreenX        ( Unit x ) const;
-      inline  int                   getScreenY        ( Unit y ) const;
-      inline  int                   getScreenLength   ( Unit length ) const;
-      inline  Unit                  getX              ( int  x ) const;
-      inline  Unit                  getY              ( int  y ) const;
-      inline  Unit                  getLength         ( int  length ) const;
+      inline  int                   getScreenX        ( DbU::Unit x ) const;
+      inline  int                   getScreenY        ( DbU::Unit y ) const;
+      inline  int                   getScreenLength   ( DbU::Unit length ) const;
+      inline  DbU::Unit                  getX              ( int  x ) const;
+      inline  DbU::Unit                  getY              ( int  y ) const;
+      inline  DbU::Unit                  getLength         ( int  length ) const;
       inline  Box                   getBox            ( const QRect& rect ) const;
 
     // Painter control & Hurricane objects drawing primitives.
@@ -150,37 +150,37 @@ inline void  CellWidget::redraw ()
 }
 
 
-inline int  CellWidget::getScreenX ( Unit x ) const
+inline int  CellWidget::getScreenX ( DbU::Unit x ) const
 {
   return (int)rint ( (float)( x - _displayArea.getXMin() ) * _scale );
 }
 
 
-inline int  CellWidget::getScreenY ( Unit y ) const
+inline int  CellWidget::getScreenY ( DbU::Unit y ) const
 {
   return (int)rint ( (float)( _displayArea.getYMax() - y ) * _scale );
 }
 
 
-inline int  CellWidget::getScreenLength ( Unit length ) const
+inline int  CellWidget::getScreenLength ( DbU::Unit length ) const
 {
   return (int)rint ( (float)length * _scale );
 }
 
 
-inline Unit  CellWidget::getX ( int x ) const
+inline DbU::Unit  CellWidget::getX ( int x ) const
 {
-  return (Unit)(x/_scale) + _displayArea.getXMin();
+  return (DbU::Unit)(x/_scale) + _displayArea.getXMin();
 }
 
 
-inline Unit  CellWidget::getY ( int y ) const
+inline DbU::Unit  CellWidget::getY ( int y ) const
 {
-  return _displayArea.getYMax() - (Unit)(y/_scale);
+  return _displayArea.getYMax() - (DbU::Unit)(y/_scale);
 }
 
 
-inline Unit  CellWidget::getLength ( int length ) const
+inline DbU::Unit  CellWidget::getLength ( int length ) const
 {
   return (int)( (float)length / _scale );
 }

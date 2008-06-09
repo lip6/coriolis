@@ -484,7 +484,7 @@ void Component::_setRubber(Rubber* rubber)
     }
 }
 
-//bool Component::_IsInterceptedBy(View* view, const Point& point, const Unit& aperture) const
+//bool Component::_IsInterceptedBy(View* view, const Point& point, const DbU::Unit& aperture) const
 //// *****************************************************************************************
 //{
 //    Box area(point);
@@ -924,7 +924,7 @@ double  getArea ( Component* component )
 {
   Box  bb = component->getBoundingBox ();
 
-  return getValue(bb.getWidth()) * getValue(bb.getHeight());
+  return DbU::getReal(bb.getWidth()) * DbU::getReal(bb.getHeight());
 }
 
 

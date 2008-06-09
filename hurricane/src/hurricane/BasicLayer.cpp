@@ -162,8 +162,8 @@ namespace Hurricane {
                          , const Name&     name
                          , const Material& material
                          , unsigned        extractNumber
-                         , const Unit&     minimalSize
-                         , const Unit&     minimalSpacing
+                         , const DbU::Unit&     minimalSize
+                         , const DbU::Unit&     minimalSpacing
                          ) : Layer(technology
                                   ,name
                                   ,minimalSize
@@ -178,8 +178,8 @@ namespace Hurricane {
                                  , const Name&     name
                                  , const Material& material
                                  , unsigned        extractNumber
-                                 , const Unit&     minimalSize
-                                 , const Unit&     minimalSpacing
+                                 , const DbU::Unit&     minimalSize
+                                 , const DbU::Unit&     minimalSpacing
                                  )
   {
     BasicLayer* basicLayer =

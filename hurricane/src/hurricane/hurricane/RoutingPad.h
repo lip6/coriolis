@@ -37,8 +37,8 @@ class RoutingPad : public Component {
 // Attributes
 // **********
 
-    private:   Unit _x;
-    private:   Unit _y;
+    private:   DbU::Unit _x;
+    private:   DbU::Unit _y;
     private:   Occurrence _occurrence;
 
 
@@ -53,8 +53,8 @@ class RoutingPad : public Component {
 // *********
 
     //public: virtual Hooks getHooks() const;
-    public: virtual Unit getX() const;
-    public: virtual Unit getY() const;
+    public: virtual DbU::Unit getX() const;
+    public: virtual DbU::Unit getY() const;
     public: virtual Box getBoundingBox() const;
     public: virtual const Layer* getLayer() const;
     public: virtual Box getBoundingBox(const BasicLayer* basicLayer) const;
@@ -63,21 +63,21 @@ class RoutingPad : public Component {
     public: Occurrence getPlugOccurrence();
     public: Point getSourcePosition() const;
     public: Point getTargetPosition() const;
-    public: Unit getSourceX() const;
-    public: Unit getSourceY() const;
-    public: Unit getTargetX() const;
-    public: Unit getTargetY() const;
+    public: DbU::Unit getSourceX() const;
+    public: DbU::Unit getSourceY() const;
+    public: DbU::Unit getTargetX() const;
+    public: DbU::Unit getTargetY() const;
 
 // Updators
 // ********
 
-    public: virtual void translate(const Unit& dx, const Unit& dy);
+    public: virtual void translate(const DbU::Unit& dx, const DbU::Unit& dy);
 
-    public: void setX(const Unit& x);
-    public: void setY(const Unit& y);
-    public: void setPosition(const Unit& x, const Unit& y);
+    public: void setX(const DbU::Unit& x);
+    public: void setY(const DbU::Unit& y);
+    public: void setPosition(const DbU::Unit& x, const DbU::Unit& y);
     public: void setPosition(const Point& position);
-    public: void setOffset(const Unit& x, const Unit& y);
+    public: void setOffset(const DbU::Unit& x, const DbU::Unit& y);
     public: void setExternalComponent(Component* component);
     public: void restorePlugOccurrence();
 

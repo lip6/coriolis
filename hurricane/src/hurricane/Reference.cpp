@@ -21,22 +21,22 @@ namespace Hurricane {
 // ****************
 
 
-Unit Reference::_extend = 0;
+  DbU::Unit Reference::_extend = 0;
 
 
-Reference::Reference(Cell* cell, const Name& name, Unit x, Unit y)
+Reference::Reference(Cell* cell, const Name& name, DbU::Unit x, DbU::Unit y)
 // ***************************************************************
 :  Inherit(cell),
   _name(name),
   _point(x,y)
 {
-  if ( !_extend ) _extend = getUnit(0.5);
+  if ( !_extend ) _extend = DbU::real(0.5);
 
   if (_name.isEmpty())
     throw Error("Can't create " + _TName("Reference") + " : empty name");
 }
 
-Reference* Reference::create(Cell* cell, const Name& name, Unit x, Unit y)
+Reference* Reference::create(Cell* cell, const Name& name, DbU::Unit x, DbU::Unit y)
 // ***********************************************************************
 {
   Reference* reference = new Reference(cell, name, x, y);
@@ -58,7 +58,7 @@ Box  Reference::getBoundingBox() const
   return Box(_point).inflate(_extend);
 }
 
-void Reference::translate(const Unit& dx, const Unit& dy)
+void Reference::translate(const DbU::Unit& dx, const DbU::Unit& dy)
 // *****************************************************
 {
   if ((dx != 0) || (dy != 0)) {

@@ -75,13 +75,13 @@ namespace Hurricane {
                                                      );
     // Accessors.
       virtual BasicLayers          getBasicLayers    () const;
-      virtual Unit                 getExtentionCap   () const;
-      virtual Unit                 getExtentionWidth () const;
-      virtual Unit                 getExtentionCap   ( const BasicLayer* layer ) const;
-      virtual Unit                 getExtentionWidth ( const BasicLayer* layer ) const;
+      virtual DbU::Unit                 getExtentionCap   () const;
+      virtual DbU::Unit                 getExtentionWidth () const;
+      virtual DbU::Unit                 getExtentionCap   ( const BasicLayer* layer ) const;
+      virtual DbU::Unit                 getExtentionWidth ( const BasicLayer* layer ) const;
     // Updators.
-      virtual void                 setExtentionCap   ( const BasicLayer* layer, Unit cap );
-      virtual void                 setExtentionWidth ( const BasicLayer* layer, Unit width );
+      virtual void                 setExtentionCap   ( const BasicLayer* layer, DbU::Unit cap );
+      virtual void                 setExtentionWidth ( const BasicLayer* layer, DbU::Unit width );
     // Hurricane Managment.
       virtual string               _getTypeName      () const;
       virtual string               _getString        () const;
@@ -90,10 +90,10 @@ namespace Hurricane {
     private:
     // Internal: Attributes
               vector<BasicLayer*>  _basicLayers;
-              vector<Unit>         _extentionCaps;
-              vector<Unit>         _extentionWidths;
-              Unit                 _maximalExtentionCap;
-              Unit                 _maximalExtentionWidth;
+              vector<DbU::Unit>         _extentionCaps;
+              vector<DbU::Unit>         _extentionWidths;
+              DbU::Unit                 _maximalExtentionCap;
+              DbU::Unit                 _maximalExtentionWidth;
 
     protected:
     // Internal: Constructors & Destructors.

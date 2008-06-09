@@ -76,9 +76,9 @@ Record* DataBase::_getRecord() const
     if (record) {
         record->add(getSlot("Technology", _technology));
         record->add(getSlot("RootLibrary", _rootLibrary));
-        record->add(getSlot("Precision", getPrecision()));
-        record->add(getSlot("Resolution", getValueString(1)));
-        record->add(getSlot("GridStep", getValueString(getGridStep())));
+        record->add(getSlot("Precision", DbU::getPrecision()));
+        record->add(getSlot("Resolution", DbU::getValueString(DbU::db(1))));
+      //record->add(getSlot("GridStep", getValueString(getGridStep())));
     }
     return record;
 }

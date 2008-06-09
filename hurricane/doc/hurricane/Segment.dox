@@ -96,19 +96,19 @@
   *                aren't anchored). 
   */
 
- /*! \function     const Unit& Segment::getWidth() const;
+ /*! \function     const DbU::Unit& Segment::getWidth() const;
   *  \Return       the segment width. 
   */
 
- /*! \function     Unit Segment::getHalfWidth() const;
+ /*! \function     DbU::Unit Segment::getHalfWidth() const;
   *  \Return       the segment half width. 
   */
 
- /*! \function     Unit Segment::getSourceX() const;
+ /*! \function     DbU::Unit Segment::getSourceX() const;
   *  \Return       the abscissa of the segment origin. 
   */
 
- /*! \function     Unit Segment::getSourceY() const;
+ /*! \function     DbU::Unit Segment::getSourceY() const;
   *  \Return       the ordinate of the segment origin. 
   */
 
@@ -116,11 +116,11 @@
   *  \Return       the point location of the segment origin. 
   */
 
- /*! \function     Unit Segment::getTargetX() const;
+ /*! \function     DbU::Unit Segment::getTargetX() const;
   *  \Return       the abscissa of the segment extremity. 
   */
 
- /*! \function     Unit Segment::getTargetY() const;
+ /*! \function     DbU::Unit Segment::getTargetY() const;
   *  \Return       the ordinate of the segment extremity. 
   */
 
@@ -128,7 +128,7 @@
   *  \Return       the point location of the segment extremity. 
   */
 
- /*! \function     Unit Segment::getLength() const;
+ /*! \function     DbU::Unit Segment::getLength() const;
   *  \Return       the segment length. 
   */
 
@@ -139,11 +139,11 @@
   */
  //  \{
 
- /*! \function     void Segment::setLayer(Layer* layer);
+ /*! \function     void Segment::setLayer(const Layer* layer);
   *                sets the segment layer. 
   */
 
- /*! \function     void Segment::setWidth(const Unit& width);
+ /*! \function     void Segment::setWidth(const DbU::Unit& width);
   *                sets the segment width. 
   */
 

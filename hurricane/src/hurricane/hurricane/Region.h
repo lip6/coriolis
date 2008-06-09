@@ -58,7 +58,7 @@ class Region {
     
         private: Region* _region;
         private: Type _type;
-        private: Unit _position;
+        private: DbU::Unit _position;
         private: Interval _extention;
         private: Tile* _baseTile;
 
@@ -67,7 +67,7 @@ class Region {
 
         public: SwapLine();
         public: SwapLine(Region* region, const Type& type, const Interval& extention = Interval());
-        public: SwapLine(Region* region, const Type& type, const Unit& position, const Interval& extention = Interval());
+        public: SwapLine(Region* region, const Type& type, const DbU::Unit& position, const Interval& extention = Interval());
         public: SwapLine(const SwapLine& swapLine);
 
     // Destructor
@@ -85,7 +85,7 @@ class Region {
 
         public: Region* getRegion() const {return _region;};
         public: Type getType() const {return _type;};
-        public: const Unit& getPosition() const {return _position;};
+        public: const DbU::Unit& getPosition() const {return _position;};
         public: const Interval& getExtention() const {return _extention;};
 
         public: Intervals getIntervals() const;
@@ -99,8 +99,8 @@ class Region {
     // ********
 
         public: void progress(int n = 1);
-        public: void translate(const Unit& quantity);
-        public: void setPosition(const Unit& position);
+        public: void translate(const DbU::Unit& quantity);
+        public: void setPosition(const DbU::Unit& position);
 
     // Others
     // ******
@@ -140,10 +140,10 @@ class Region {
 
     public: Box getBoundingBox() const;
 
-    public: Unit getXMin() const;
-    public: Unit getYMin() const;
-    public: Unit getXMax() const;
-    public: Unit getYMax() const;
+    public: DbU::Unit getXMin() const;
+    public: DbU::Unit getYMin() const;
+    public: DbU::Unit getXMax() const;
+    public: DbU::Unit getYMax() const;
 
     public: Boxes getBoxes() const;
     public: Boxes getBoxesUnder(const Box& area) const;
@@ -152,10 +152,10 @@ class Region {
     public: Boxes getVoidBoxesUnder(const Box& area) const;
 
     public: SwapLine getVerticalSwapLine(const Interval& extention = Interval()) const;
-    public: SwapLine getVerticalSwapLine(const Unit& x, const Interval& extention = Interval()) const;
+    public: SwapLine getVerticalSwapLine(const DbU::Unit& x, const Interval& extention = Interval()) const;
 
     public: SwapLine getHorizontalSwapLine(const Interval& extention = Interval()) const;
-    public: SwapLine getHorizontalSwapLine(const Unit& y, const Interval& extention = Interval()) const;
+    public: SwapLine getHorizontalSwapLine(const DbU::Unit& y, const Interval& extention = Interval()) const;
 
 // Predicates
 // **********
@@ -183,8 +183,8 @@ class Region {
     public: Region& groove(const Region& region);
     public: Region& getIntersection(const Region& region);
 
-    public: Region& Inflate(const Unit& quantity);
-    public: Region& translate(const Unit& dx, const Unit& dy);
+    public: Region& Inflate(const DbU::Unit& quantity);
+    public: Region& translate(const DbU::Unit& dx, const DbU::Unit& dy);
 
     public: bool verticalEnhancement();
     public: bool verticalEnhancement(Point point);

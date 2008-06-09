@@ -22,7 +22,7 @@ Point::Point()
 {
 }
 
-Point::Point(const Unit& x, const Unit& y)
+Point::Point(const DbU::Unit& x, const DbU::Unit& y)
 // ***************************************
 :    _x(x),
     _y(y)
@@ -84,7 +84,7 @@ Point& Point::operator-=(const Point &point)
     return *this;
 }
 
-Point& Point::translate(const Unit& dx, const Unit& dy)
+Point& Point::translate(const DbU::Unit& dx, const DbU::Unit& dy)
 // ****************************************************
 {
     _x += dx;
@@ -92,14 +92,14 @@ Point& Point::translate(const Unit& dx, const Unit& dy)
     return *this;
 }
 
-Point Point::getTranslated(const Unit& dx, const Unit& dy) const {
+Point Point::getTranslated(const DbU::Unit& dx, const DbU::Unit& dy) const {
     return Point(*this).translate(dx, dy);
 }
 
 string Point::_getString() const
 // *****************************
 {
-    return "<" + _TName("Point") + " " + getValueString(_x) + " " + getValueString(_y) + ">";
+  return "<" + _TName("Point") + " " + DbU::getValueString(_x) + " " + DbU::getValueString(_y) + ">";
 }
 
 Record* Point::_getRecord() const

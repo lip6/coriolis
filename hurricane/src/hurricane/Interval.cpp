@@ -20,19 +20,19 @@ Interval::Interval(bool makeEmpty)
     _vMax(-1)
 {
   if (!makeEmpty) {
-    _vMin = UNIT_MIN;
-    _vMax = UNIT_MAX;
+    _vMin = DbU::Min;
+    _vMax = DbU::Max;
   }
 }
 
-Interval::Interval(const Unit& value)
+Interval::Interval(const DbU::Unit& value)
 // **********************************
 :    _vMin(value),
     _vMax(value)
 {
 }
 
-Interval::Interval(const Unit& v1, const Unit& v2)
+Interval::Interval(const DbU::Unit& v1, const DbU::Unit& v2)
 // ***********************************************
 :    _vMin(min(v1, v2)),
     _vMax(max(v1, v2))
@@ -92,7 +92,7 @@ bool Interval::isPonctual() const
     return (_vMax == _vMin);
 }
 
-bool Interval::contains(const Unit& v) const
+bool Interval::contains(const DbU::Unit& v) const
 // *****************************************
 {
     return !isEmpty() && (_vMin <= v) && (v <= _vMax);
@@ -135,18 +135,18 @@ bool Interval::isConstrainedBy(const Interval& interval) const
 Interval& Interval::makeEmpty()
 // ****************************
 {
-    _vMin = 1;
-    _vMax = -1;
+  _vMin = 1;
+  _vMax = -1;
     return *this;
 }
 
-Interval& Interval::inflate(const Unit& dv)
+Interval& Interval::inflate(const DbU::Unit& dv)
 // ****************************************
 {
     return inflate(dv, dv);
 }
 
-Interval& Interval::inflate(const Unit& dvMin, const Unit& dvMax)
+Interval& Interval::inflate(const DbU::Unit& dvMin, const DbU::Unit& dvMax)
 // **************************************************************
 {
     if (!isEmpty()) {
@@ -156,7 +156,7 @@ Interval& Interval::inflate(const Unit& dvMin, const Unit& dvMax)
     return *this;
 }
 
-Interval& Interval::merge(const Unit& v)
+Interval& Interval::merge(const DbU::Unit& v)
 // *************************************
 {
     if (isEmpty()) {
@@ -180,7 +180,7 @@ Interval& Interval::merge(const Interval& interval)
     return *this;
 }
 
-Interval& Interval::intersection(const Unit& vMin, const Unit& vMax)
+Interval& Interval::intersection(const DbU::Unit& vMin, const DbU::Unit& vMax)
 // *****************************************************************
 {
   return intersection(Interval(vMin,vMax));
@@ -198,7 +198,7 @@ Interval& Interval::intersection(const Interval& interval)
   return *this;
 }
 
-Interval& Interval::translate(const Unit& dv)
+Interval& Interval::translate(const DbU::Unit& dv)
 // ******************************************
 {
     if (!isEmpty()) {
@@ -211,7 +211,7 @@ Interval& Interval::translate(const Unit& dv)
 string Interval::_getString() const
 // ********************************
 {
-    return "<" + _TName("Interval") + " " + getValueString(_vMin) + " " + getValueString(_vMax) + ">";
+  return "<" + _TName("Interval") + " " + DbU::getValueString(_vMin) + " " + DbU::getValueString(_vMax) + ">";
 }
 
 Record* Interval::_getRecord() const

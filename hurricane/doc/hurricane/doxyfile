@@ -122,8 +122,8 @@ INPUT                  = \
                                 Relation.dox       \
   ../../src/hurricane/hurricane/Tabulation.h       \
                                 Tabulation.dox     \
-  ../../src/hurricane/hurricane/Unit.h             \
-                                Unit.dox           \
+  ../../src/hurricane/hurricane/DbU.h              \
+                                DbU.dox            \
   ../../src/hurricane/hurricane/Points.h           \
   ../../src/hurricane/hurricane/Point.h            \
                                 Point.dox          \

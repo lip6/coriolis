@@ -39,9 +39,9 @@ namespace Hurricane {
 
   Layer::Layer ( Technology* technology
                , const Name& name
-               , const Unit& minimalSize
-               , const Unit& minimalSpacing
-               , const Unit& pitch
+               , const DbU::Unit& minimalSize
+               , const DbU::Unit& minimalSpacing
+               , const DbU::Unit& pitch
                ) : DBo()
                  , _technology(technology)
                  , _name(name)
@@ -71,27 +71,27 @@ namespace Hurricane {
   { return NULL; } 
 
 
-  Unit  Layer::getEnclosure () const
+  DbU::Unit  Layer::getEnclosure () const
   { return 0; }
 
 
-  Unit  Layer::getExtentionCap () const
+  DbU::Unit  Layer::getExtentionCap () const
   { return 0; }
 
 
-  Unit  Layer::getExtentionWidth () const
+  DbU::Unit  Layer::getExtentionWidth () const
   { return 0; }
 
 
-  Unit  Layer::getEnclosure ( const BasicLayer* layer ) const
+  DbU::Unit  Layer::getEnclosure ( const BasicLayer* layer ) const
   { return 0; }
 
 
-  Unit  Layer::getExtentionCap ( const BasicLayer* layer ) const
+  DbU::Unit  Layer::getExtentionCap ( const BasicLayer* layer ) const
   { return 0; }
 
 
-  Unit  Layer::getExtentionWidth ( const BasicLayer* layer ) const
+  DbU::Unit  Layer::getExtentionWidth ( const BasicLayer* layer ) const
   { return 0; }
 
 
@@ -123,39 +123,39 @@ namespace Hurricane {
   }
 
 
-  void Layer::setMinimalSize ( const Unit& minimalSize )
+  void Layer::setMinimalSize ( const DbU::Unit& minimalSize )
   {
     _minimalSize = minimalSize;
   }
 
 
-  void Layer::setMinimalSpacing ( const Unit& minimalSpacing )
+  void Layer::setMinimalSpacing ( const DbU::Unit& minimalSpacing )
   {
     _minimalSpacing = minimalSpacing;
   }
 
 
-  void Layer::setPitch ( const Unit& pitch )
+  void Layer::setPitch ( const DbU::Unit& pitch )
   {
     _pitch = pitch;
   }
 
 
-  void  Layer::setEnclosure ( const BasicLayer* layer, Unit )
+  void  Layer::setEnclosure ( const BasicLayer* layer, DbU::Unit )
   {
     cerr << "[WARNING] Layer::setEnclosure() musn't be called on "
          << _getTypeName() << ": dummy implementation." << endl;
   }
 
 
-  void  Layer::setExtentionCap ( const BasicLayer* layer, Unit )
+  void  Layer::setExtentionCap ( const BasicLayer* layer, DbU::Unit )
   {
     cerr << "[WARNING] Layer::setExtentionCap() musn't be called on "
          << _getTypeName() << ": dummy implementation." << endl;
   }
 
 
-  void  Layer::setExtentionWidth ( const BasicLayer* layer, Unit )
+  void  Layer::setExtentionWidth ( const BasicLayer* layer, DbU::Unit )
   {
     cerr << "[WARNING] Layer::setExtentionWidth() musn't be called on "
          << _getTypeName() << ": dummy implementation." << endl;

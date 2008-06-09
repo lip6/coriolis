@@ -40,8 +40,8 @@ class QuadTree {
 // **********
 
     private: QuadTree* _parent;
-    private: Unit _x;
-    private: Unit _y;
+    private: DbU::Unit _x;
+    private: DbU::Unit _y;
     private: Box _boundingBox;
     private: unsigned _size;
     private: GoSet _goSet;

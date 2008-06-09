@@ -63,7 +63,7 @@ class Go : public Entity {
     public: virtual void invalidate(bool propagateFlag = true);
               // implementation located on file UpdateSession.cpp to access local variables
 
-    public: virtual void translate(const Unit& dx, const Unit& dy) = 0;
+    public: virtual void translate(const DbU::Unit& dx, const DbU::Unit& dy) = 0;
 
 // Others
 // ******

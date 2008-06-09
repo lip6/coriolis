@@ -42,7 +42,7 @@
   */
  //  \{
 
- /*! \function     Contact* Contact::create(Net* net, Layer* layer, const Unit& x, const Unit& y,const Unit& width = 0, const Unit& height = 0);
+ /*! \function     Contact* Contact::create(Net* net, const Layer* layer, const DbU::Unit& x, const DbU::Unit& y,const DbU::Unit& width = 0, const DbU::Unit& height = 0);
   *                creates and returns a new contact belonging to the net 
   *                \c \<net\>, on the layer \c \<layer\>, of size \c \<width\> 
   *                and \c \<height\> and located at the absolute coordinates 
@@ -51,7 +51,7 @@
   *  \caution      Throws an exception if the layer or the net is null. 
   */
 
- /*! \function     Contact* Contact::create(Component* anchor, Layer* layer, const Unit& dx, const Unit& dy,const Unit& width = 0, const Unit& height = 0);
+ /*! \function     Contact* Contact::create(Component* anchor, const Layer* layer, const DbU::Unit& dx, const DbU::Unit& dy,const DbU::Unit& width = 0, const DbU::Unit& height = 0);
   *                creates and returns a new contact on the layer \c \<layer\>, 
   *                of size \c \<width\> and \c \<height\> attached upon the 
   *                component \c \<anchor\> through an offset defined by 
@@ -85,33 +85,33 @@
   *                transitory)). 
   */
 
- /*! \function     const Unit& Contact::getDx() const;
+ /*! \function     const DbU::Unit& Contact::getDx() const;
   *  \Return       the relative abscissa of the contact. 
   *
   *  \remark       If you want to get the absolute one use the member function 
   *                getX() defined at the Component level. 
   */
 
- /*! \function     const Unit& Contact::getDy() const;
+ /*! \function     const DbU::Unit& Contact::getDy() const;
   *  \Return       the relative ordinate of the contact. 
   *
   *  \remark       If you want to get the absolute one use the member function 
   *                getY() defined at the Component level. 
   */
 
- /*! \function     const Unit& Contact::getWidth() const;
+ /*! \function     const DbU::Unit& Contact::getWidth() const;
   *  \Return       the contact width. 
   */
 
- /*! \function     Unit Contact::getHalfWidth() const;
+ /*! \function     DbU::Unit Contact::getHalfWidth() const;
   *  \Return       the contact half width. 
   */
 
- /*! \function     const Unit& Contact::getHeight() const;
+ /*! \function     const DbU::Unit& Contact::getHeight() const;
   *  \Return       the contact height. 
   */
 
- /*! \function     Unit Contact::getHalfHeight() const;
+ /*! \function     DbU::Unit Contact::getHalfHeight() const;
   *  \Return       the contact half height. 
   */
 
@@ -122,35 +122,35 @@
   */
  //  \{
 
- /*! \function     void Contact::setLayer(Layer* layer);
+ /*! \function     void Contact::setLayer(const Layer* layer);
   *                sets the contact layer. 
   */
 
- /*! \function     void Contact::setWidth(const Unit& width);
+ /*! \function     void Contact::setWidth(const DbU::Unit& width);
   *                sets the contact width. 
   */
 
- /*! \function     void Contact::setHeight(const Unit& height);
+ /*! \function     void Contact::setHeight(const DbU::Unit& height);
   *                sets the contact height. 
   */
 
- /*! \function     void Contact::setSizes(const Unit& width, const Unit& height);
+ /*! \function     void Contact::setSizes(const DbU::Unit& width, const DbU::Unit& height);
   *                sets both contact width and height. 
   */
 
- /*! \function     void Contact::setX(const Unit& x);
+ /*! \function     void Contact::setX(const DbU::Unit& x);
   *                Allows to change the absolute abscissa of the contact (if it 
   *                has a location relative to an other component, only relative 
   *                position to this last is accordingly changed). 
   */
 
- /*! \function     void Contact::setY(const Unit& y);
+ /*! \function     void Contact::setY(const DbU::Unit& y);
   *                Allows to change the absolute ordinate of the contact (if it 
   *                has a location relative to an other component, only relative 
   *                position to this last is accordingly changed). 
   */
 
- /*! \function     void Contact::setPosition(const Unit& x, const Unit& y);
+ /*! \function     void Contact::setPosition(const DbU::Unit& x, const DbU::Unit& y);
   *                No description.
   */
 
@@ -160,21 +160,21 @@
   *                position to this last is accordingly changed). 
   */
 
- /*! \function     void Contact::setDx(const Unit& dx);
+ /*! \function     void Contact::setDx(const DbU::Unit& dx);
   *                Allows to change the horizontal offset of the contact. 
   *
   *  \remark       If the contact is absolute, this amounts to change its 
   *                absolute abscissa. 
   */
 
- /*! \function     void Contact::setDy(const Unit& dy);
+ /*! \function     void Contact::setDy(const DbU::Unit& dy);
   *                Allows to change the vertical offset of the contact. 
   *
   *  \remark       If the contact is absolute, this amounts to change its 
   *                absolute ordinate. 
   */
 
- /*! \function     void Contact::setOffset(const Unit& dx, const Unit& dy);
+ /*! \function     void Contact::setOffset(const DbU::Unit& dx, const DbU::Unit& dy);
   *                Allows to change the offset of the contact. 
   *
   *  \remark       If the contact is absolute, this amounts to change its 

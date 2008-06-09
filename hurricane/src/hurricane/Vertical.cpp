@@ -19,7 +19,7 @@ namespace Hurricane {
 // Vertical implementation
 // ****************************************************************************************************
 
-Vertical::Vertical(Net* net, Component* source, Component* target, const Layer* layer, const Unit& x, const Unit& width, const Unit& dySource, const Unit& dyTarget)
+Vertical::Vertical(Net* net, Component* source, Component* target, const Layer* layer, const DbU::Unit& x, const DbU::Unit& width, const DbU::Unit& dySource, const DbU::Unit& dyTarget)
 // ****************************************************************************************************
 :  Inherit(net, source, target, layer, width),
     _x(x),
@@ -28,7 +28,7 @@ Vertical::Vertical(Net* net, Component* source, Component* target, const Layer* 
 {
 }
 
-Vertical* Vertical::create(Net* net, const Layer* layer, const Unit& x, const Unit& width, const Unit& dySource, const Unit& dyTarget)
+Vertical* Vertical::create(Net* net, const Layer* layer, const DbU::Unit& x, const DbU::Unit& width, const DbU::Unit& dySource, const DbU::Unit& dyTarget)
 // ****************************************************************************************************
 {
     if (!net)
@@ -41,7 +41,7 @@ Vertical* Vertical::create(Net* net, const Layer* layer, const Unit& x, const Un
     return vertical;
 }
 
-Vertical* Vertical::create(Component* source, Component* target, const Layer* layer, const Unit& x, const Unit& width, const Unit& dySource, const Unit& dyTarget)
+Vertical* Vertical::create(Component* source, Component* target, const Layer* layer, const DbU::Unit& x, const DbU::Unit& width, const DbU::Unit& dySource, const DbU::Unit& dyTarget)
 // ****************************************************************************************************
 {
     if (!source)
@@ -61,8 +61,8 @@ Vertical* Vertical::create(Component* source, Component* target, const Layer* la
 Box Vertical::getBoundingBox() const
 // *********************************
 {
-  Unit size      = getLayer()->getExtentionWidth() + getHalfWidth();
-  Unit extention = getLayer()->getExtentionCap  ();
+  DbU::Unit size      = getLayer()->getExtentionWidth() + getHalfWidth();
+  DbU::Unit extention = getLayer()->getExtentionCap  ();
 
     return Box(_x, getSourceY(), _x, getTargetY()).inflate(size, extention);
 }
@@ -73,8 +73,8 @@ Box Vertical::getBoundingBox(const BasicLayer* basicLayer) const
   if (!getLayer()->contains(basicLayer)) return Box();
 
 
-    Unit size      = getLayer()->getExtentionWidth(basicLayer) + getHalfWidth();
-    Unit extention = getLayer()->getExtentionCap  (basicLayer);
+    DbU::Unit size      = getLayer()->getExtentionWidth(basicLayer) + getHalfWidth();
+    DbU::Unit extention = getLayer()->getExtentionCap  (basicLayer);
 
   //cerr << this << " on: " << basicLayer << " " << size << " " << extention << endl;
   //cerr << Box(_x, getSourceY(), _x, getTargetY()).inflate(size, extention) << endl;
@@ -82,21 +82,21 @@ Box Vertical::getBoundingBox(const BasicLayer* basicLayer) const
     return Box(_x, getSourceY(), _x, getTargetY()).inflate(size, extention);
 }
 
-Unit Vertical::getSourceY() const
+DbU::Unit Vertical::getSourceY() const
 // ******************************
 {
     Component* source = getSource();
     return (source) ? source->getY() + _dySource : _dySource;
 }
 
-Unit Vertical::getTargetY() const
+DbU::Unit Vertical::getTargetY() const
 // ******************************
 {
     Component* target = getTarget();
     return (target) ? target->getY() + _dyTarget : _dyTarget;
 }
 
-Unit Vertical::getLength() const
+DbU::Unit Vertical::getLength() const
 // *****************************
 {
     return abs(getSourceY() - getTargetY());
@@ -108,7 +108,7 @@ Point Vertical::getCenter() const
         return Point ( getX(), (getSourceY()+getTargetY())/2 );
 }
 
-void Vertical::translate(const Unit& dx, const Unit& dy)
+void Vertical::translate(const DbU::Unit& dx, const DbU::Unit& dy)
 // *****************************************************
 {
     if (dx != 0) {
@@ -117,7 +117,7 @@ void Vertical::translate(const Unit& dx, const Unit& dy)
     }
 }
 
-void Vertical::setX(const Unit& x)
+void Vertical::setX(const DbU::Unit& x)
 // *******************************
 {
     if (x != _x) {
@@ -126,7 +126,7 @@ void Vertical::setX(const Unit& x)
     }
 }
 
-void Vertical::setDySource(const Unit& dySource)
+void Vertical::setDySource(const DbU::Unit& dySource)
 // *********************************************
 {
     if (dySource != _dySource) {
@@ -135,7 +135,7 @@ void Vertical::setDySource(const Unit& dySource)
     }
 }
 
-void Vertical::setDyTarget(const Unit& dyTarget)
+void Vertical::setDyTarget(const DbU::Unit& dyTarget)
 // *********************************************
 {
     if (dyTarget != _dyTarget) {
@@ -144,7 +144,7 @@ void Vertical::setDyTarget(const Unit& dyTarget)
     }
 }
 
-void Vertical::translate(const Unit& dx)
+void Vertical::translate(const DbU::Unit& dx)
 // *************************************
 {
     if (dx != 0) {

@@ -44,8 +44,8 @@ class Pad : public Component {
 // Accessors
 // *********
 
-    public: virtual Unit getX() const;
-    public: virtual Unit getY() const;
+    public: virtual DbU::Unit getX() const;
+    public: virtual DbU::Unit getY() const;
     public: virtual Box getBoundingBox() const;
     public: virtual Box getBoundingBox(const BasicLayer* basicLayer) const;
     public: virtual const Layer* getLayer() const {return _layer;};
@@ -53,7 +53,7 @@ class Pad : public Component {
 // Updators
 // ********
 
-    public: virtual void translate(const Unit& dx, const Unit& dy);
+    public: virtual void translate(const DbU::Unit& dx, const DbU::Unit& dy);
     public: void setBoundingBox(const Box& boundingBox);
 
 // Others

@@ -40,7 +40,7 @@ DRCError* DRCError::create(Cell* cell, const Name& name, const Box& boundingBox)
     return drcError;
 }
 
-void DRCError::translate(const Unit& dx, const Unit& dy)
+void DRCError::translate(const DbU::Unit& dx, const DbU::Unit& dy)
 // *****************************************************
 {
     if ((dx != 0) || (dy != 0)) {

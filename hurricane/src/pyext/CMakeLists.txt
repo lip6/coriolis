@@ -36,7 +36,7 @@
                                   PySegmentLocator.cpp
                                   PyTechnology.cpp
                                   PyTransformation.cpp
-                                  PyUnit.cpp
+                                  PyDbU.cpp
                                   PyUpdateSession.cpp
                                   PyVertical.cpp
                                   
@@ -74,7 +74,7 @@
                                   hurricane/isobar/PySegmentLocator.h
                                   hurricane/isobar/PyTechnology.h
                                   hurricane/isobar/PyTransformation.h
-                                  hurricane/isobar/PyUnit.h
+                                  hurricane/isobar/PyDbU.h
                                   hurricane/isobar/PyUpdateSession.h
                                   hurricane/isobar/PyVertical.h
                        )

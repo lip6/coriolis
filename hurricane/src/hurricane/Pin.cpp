@@ -19,7 +19,7 @@ namespace Hurricane {
 // Pin implementation
 // ****************************************************************************************************
 
-Pin::Pin(Net* net, const Name& name, const AccessDirection& accessDirection, const PlacementStatus& placementStatus, const Layer* layer, const Unit& x, const Unit& y, const Unit& width, const Unit& height)
+Pin::Pin(Net* net, const Name& name, const AccessDirection& accessDirection, const PlacementStatus& placementStatus, const Layer* layer, const DbU::Unit& x, const DbU::Unit& y, const DbU::Unit& width, const DbU::Unit& height)
 // ****************************************************************************************************
 :  Inherit(net, layer, x, y, width, height),
     _name(name),
@@ -32,7 +32,7 @@ Pin::Pin(Net* net, const Name& name, const AccessDirection& accessDirection, con
 
 }
 
-Pin* Pin::create(Net* net, const Name& name, const AccessDirection& accessDirection, const PlacementStatus& placementStatus, const Layer* layer, const Unit& x, const Unit& y, const Unit& width, const Unit& height)
+Pin* Pin::create(Net* net, const Name& name, const AccessDirection& accessDirection, const PlacementStatus& placementStatus, const Layer* layer, const DbU::Unit& x, const DbU::Unit& y, const DbU::Unit& width, const DbU::Unit& height)
 // ****************************************************************************************************
 {
     if (!net)

@@ -7,7 +7,7 @@
 #ifndef HURRICANE_POINT
 #define HURRICANE_POINT
 
-#include "hurricane/Unit.h"
+#include "hurricane/DbU.h"
 
 namespace Hurricane {
 
@@ -23,15 +23,15 @@ class Point {
 // Attributes
 // **********
 
-    private: Unit _x;
-    private: Unit _y;
+    private: DbU::Unit _x;
+    private: DbU::Unit _y;
 
 // Constructors
 // ************
 
     public: Point();
 
-    public: Point(const Unit& x, const Unit& y);
+    public: Point(const DbU::Unit& x, const DbU::Unit& y);
 
     public: Point(const Point& point);
 
@@ -51,18 +51,18 @@ class Point {
 // Accessors
 // *********
 
-    public: const Unit& getX() const {return _x;};
-    public: const Unit& getY() const {return _y;};
-    public: Unit manhattanDistance(const Point pt) const 
+    public: const DbU::Unit& getX() const {return _x;};
+    public: const DbU::Unit& getY() const {return _y;};
+    public: DbU::Unit manhattanDistance(const Point pt) const 
             { return abs(_x - pt.getX()) + abs(_y - pt.getY()); }
 
 // Updators
 // ********
 
-    public: void setX(const Unit& x) {_x = x;};
-    public: void setY(const Unit& y) {_y = y;};
-    public: Point& translate(const Unit& dx, const Unit& dy);
-    public: Point getTranslated(const Unit& dx, const Unit& dy) const;
+    public: void setX(const DbU::Unit& x) {_x = x;};
+    public: void setY(const DbU::Unit& y) {_y = y;};
+    public: Point& translate(const DbU::Unit& dx, const DbU::Unit& dy);
+    public: Point getTranslated(const DbU::Unit& dx, const DbU::Unit& dy) const;
 
 // Others
 // ******

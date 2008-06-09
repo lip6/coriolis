@@ -8,7 +8,7 @@
 #define HURRICANE_DATA_BASE
 
 #include "hurricane/DBo.h"
-#include "hurricane/Unit.h"
+#include "hurricane/DbU.h"
 
 namespace Hurricane {
 

@@ -78,7 +78,7 @@ TO::R1
   *                <b>ID</b>. 
   */
 
- /*! \function     Transformation::Transformation(const Unit& tx, const Unit& ty, const Transformation::Orientation& orientation=Orientation::ID);
+ /*! \function     Transformation::Transformation(const DbU::Unit& tx, const DbU::Unit& ty, const Transformation::Orientation& orientation=Orientation::ID);
   *                Builds a transformation whose translation part is defined by 
   *                the arguments \c \<xt\> and \c \<ty\> and whose orientation 
   *                is defined by \c \<orientation\> (\c \<ID\> by default). 
@@ -122,11 +122,11 @@ TO::R1
   */
  //  \{
 
- /*! \function     const Unit& Transformation::getTx() const;
+ /*! \function     const DbU::Unit& Transformation::getTx() const;
   *  \Return       the horizontal component of the translation. 
   */
 
- /*! \function     const Unit& Transformation::getTy() const;
+ /*! \function     const DbU::Unit& Transformation::getTy() const;
   *  \Return       the vertical component of the translation. 
   */
 
@@ -139,39 +139,39 @@ TO::R1
   *                switch). 
   */
 
- /*! \function     Unit Transformation::getX(const Unit& x, const Unit& y) const;
+ /*! \function     DbU::Unit Transformation::getX(const DbU::Unit& x, const DbU::Unit& y) const;
   *  \Return       the point abscissa resulting of the transformation 
   *                application on the point defined by \c \<x\> et \c \<y\>. 
   */
 
- /*! \function     Unit Transformation::getY(const Unit& x, const Unit& y) const;
+ /*! \function     DbU::Unit Transformation::getY(const DbU::Unit& x, const DbU::Unit& y) const;
   *  \Return       the point ordinate resulting of the transformation 
   *                application on the point defined by \c \<x\> et \c \<y\>. 
   */
 
- /*! \function     Unit Transformation::getX(const Point& point) const;
+ /*! \function     DbU::Unit Transformation::getX(const Point& point) const;
   *  \Return       the point abscissa resulting of the transformation 
   *                application on \c \<point\>. 
   */
 
- /*! \function     Unit Transformation::getY(const Point& point) const;
+ /*! \function     DbU::Unit Transformation::getY(const Point& point) const;
   *  \Return       the point ordinate resulting of the transformation 
   *                application on \c \<point\>. 
   */
 
- /*! \function     Unit Transformation::getDx(const Unit& dx, const Unit& dy) const;
+ /*! \function     DbU::Unit Transformation::getDx(const DbU::Unit& dx, const DbU::Unit& dy) const;
   *  \Return       the horizontal component of the vector resulting from the 
   *                application of the transformation on the vector defined by 
   *                \c \<dx\> et \c \<dy\>. 
   */
 
- /*! \function     Unit Transformation::getDy(const Unit& dx, const Unit& dy) const;
+ /*! \function     DbU::Unit Transformation::getDy(const DbU::Unit& dx, const DbU::Unit& dy) const;
   *  \Return       the vertical component of the vector resulting from the 
   *                application of the transformation on the vector defined by 
   *                \c \<dx\> et \c \<dy\>. 
   */
 
- /*! \function     Point Transformation::getPoint(const Unit& x, const Unit& y) const;
+ /*! \function     Point Transformation::getPoint(const DbU::Unit& x, const DbU::Unit& y) const;
   *  \Return       the point resulting from the application of the 
   *                transformation on the point defined by \c \<dx\> et 
   *                \c \<dy\>. 
@@ -182,7 +182,7 @@ TO::R1
   *                transformation on \c \<point\>. 
   */
 
- /*! \function     Box Transformation::getBox(const Unit& x1, const Unit& y1, const Unit& x2, const Unit& y2) const;
+ /*! \function     Box Transformation::getBox(const DbU::Unit& x1, const DbU::Unit& y1, const DbU::Unit& x2, const DbU::Unit& y2) const;
   *  \Return       the box resulting from the application of the transformation 
   *                on the box defined by \c \<x1\>, \c \<y1\>, \c \<x2\> et 
   *                \c \<y2\>. 
@@ -240,7 +240,7 @@ TO::R1
   */
  //  \{
 
- /*! \function     void Transformation::applyOn(Unit& x, Unit& y) const;
+ /*! \function     void Transformation::applyOn(DbU::Unit& x, DbU::Unit& y) const;
   *                Applies the transformation on the coordinates given in 
   *                arguments. 
   */

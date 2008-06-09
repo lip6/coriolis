@@ -31,14 +31,14 @@ class Reference : public Marker {
 
     public: Name _name;
     public: Point _point;
-    public: static Unit _extend;
+    public: static DbU::Unit _extend;
 
 // Constructors
 // ************
 
-    protected: Reference(Cell* cell, const Name& name, Unit x, Unit y);
+    protected: Reference(Cell* cell, const Name& name, DbU::Unit x, DbU::Unit y);
 
-    public: static Reference* create(Cell* cell, const Name& name, Unit x, Unit y );
+    public: static Reference* create(Cell* cell, const Name& name, DbU::Unit x, DbU::Unit y );
     public: static Reference* create(Cell* cell, const Name& name, const Point& point );
 
 // Accessors
@@ -51,7 +51,7 @@ class Reference : public Marker {
 // Updators
 // ********
 
-    public: virtual void translate(const Unit& dx, const Unit& dy);
+    public: virtual void translate(const DbU::Unit& dx, const DbU::Unit& dy);
 
 // Others
 // ******

@@ -151,7 +151,7 @@ class Segment_Anchors : public Collection<Component*> {
 // Segment implementation
 // ****************************************************************************************************
 
-Segment::Segment(Net* net, Component* source, Component* target, const Layer* layer, const Unit& width)
+Segment::Segment(Net* net, Component* source, Component* target, const Layer* layer, const DbU::Unit& width)
 // **********************************************************************************************
 :  Inherit(net),
     _sourceHook(this),
@@ -252,7 +252,7 @@ void Segment::setLayer(const Layer* layer)
     }
 }
 
-void Segment::setWidth(const Unit& width)
+void Segment::setWidth(const DbU::Unit& width)
 // **************************************
 {
     if (width != _width) {
@@ -294,9 +294,9 @@ string Segment::_getString() const
 {
     string s = Inherit::_getString();
     s.insert(s.length() - 1, " " + getString(_layer->getName()));
-    s.insert(s.length() - 1, " [" + getValueString(getSourceX()) + " " + getValueString(getSourceY()) + "]");
-    s.insert(s.length() - 1, " [" + getValueString(getTargetX()) + " " + getValueString(getTargetY()) + "]");
-    s.insert(s.length() - 1, " " + getValueString(_width));
+    s.insert(s.length() - 1, " [" + DbU::getValueString(getSourceX()) + " " + DbU::getValueString(getSourceY()) + "]");
+    s.insert(s.length() - 1, " [" + DbU::getValueString(getTargetX()) + " " + DbU::getValueString(getTargetY()) + "]");
+    s.insert(s.length() - 1, " " + DbU::getValueString(_width));
     return s;
 }
 

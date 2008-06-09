@@ -70,7 +70,7 @@
                                 hurricane/Technology.h
                                 hurricane/Timer.h
                                 hurricane/Transformation.h
-                                hurricane/Unit.h
+                                hurricane/DbU.h
                                 hurricane/UpdateSession.h
                                 hurricane/UserGo.h                hurricane/UserGos.h
                                 hurricane/VectorCollection.h
@@ -136,7 +136,7 @@
                                 Technology.cpp
                                 Timer.cpp
                                 Transformation.cpp
-                                Unit.cpp
+                                DbU.cpp
                                 UpdateSession.cpp
                                 UserGo.cpp
                                 Vertical.cpp

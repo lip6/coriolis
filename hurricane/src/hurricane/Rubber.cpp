@@ -63,8 +63,8 @@ Point Rubber::getBarycenter() const
 // ********************************
 {
         int n = getHooks().getSize();
-        Unit x = 0;
-        Unit y = 0;
+        DbU::Unit x = 0;
+        DbU::Unit y = 0;
         for_each_hook(hook, getHooks()) {
                 Point position = hook->getComponent()->getBoundingBox().getCenter();
                 x += position.getX() / n;
@@ -117,7 +117,7 @@ void Rubber::unmaterialize()
     }
 }
 
-void Rubber::translate(const Unit& dx, const Unit& dy)
+void Rubber::translate(const DbU::Unit& dx, const DbU::Unit& dy)
 // ***************************************************
 {
 }

@@ -78,13 +78,13 @@ void  RoutingPad::_postCreate()
     _occurrence.getMasterCell()->_addSlaveEntity(_occurrence.getEntity(),this);
 }
 
-Unit RoutingPad::getX() const
+DbU::Unit RoutingPad::getX() const
 // ***********************
 {
     return _x;
 }
 
-Unit RoutingPad::getY() const
+DbU::Unit RoutingPad::getY() const
 // ***********************
 {
     return _y;
@@ -140,25 +140,25 @@ Point RoutingPad::getTargetPosition() const
   return getPosition();
 }
 
-Unit RoutingPad::getSourceX() const
+DbU::Unit RoutingPad::getSourceX() const
 // ********************************
 {
   return getSourcePosition().getX();
 }
 
-Unit RoutingPad::getSourceY() const
+DbU::Unit RoutingPad::getSourceY() const
 // ********************************
 {
   return getSourcePosition().getY();
 }
 
-Unit RoutingPad::getTargetX() const
+DbU::Unit RoutingPad::getTargetX() const
 // ********************************
 {
   return getTargetPosition().getX();
 }
 
-Unit RoutingPad::getTargetY() const
+DbU::Unit RoutingPad::getTargetY() const
 // ********************************
 {
   return getTargetPosition().getY();
@@ -175,7 +175,7 @@ Point RoutingPad::getCenter() const
 }
 
 
-void RoutingPad::translate(const Unit& dx, const Unit& dy)
+void RoutingPad::translate(const DbU::Unit& dx, const DbU::Unit& dy)
 // ****************************************************
 {
     if ((dx != 0) || (dy != 0)) {
@@ -185,19 +185,19 @@ void RoutingPad::translate(const Unit& dx, const Unit& dy)
     }
 }
 
-void RoutingPad::setX(const Unit& x)
+void RoutingPad::setX(const DbU::Unit& x)
 // ******************************
 {
     setPosition(x, getY());
 }
 
-void RoutingPad::setY(const Unit& y)
+void RoutingPad::setY(const DbU::Unit& y)
 // ******************************
 {
     setPosition(getX(), y);
 }
 
-void RoutingPad::setPosition(const Unit& x, const Unit& y)
+void RoutingPad::setPosition(const DbU::Unit& x, const DbU::Unit& y)
 // ****************************************************
 {
     setOffset(x, y);
@@ -209,7 +209,7 @@ void RoutingPad::setPosition(const Point& position)
     setPosition(position.getX(), position.getY());
 }
 
-void RoutingPad::setOffset(const Unit& x, const Unit& y)
+void RoutingPad::setOffset(const DbU::Unit& x, const DbU::Unit& y)
 // ****************************************************
 {
     invalidate(true);
@@ -236,8 +236,8 @@ string RoutingPad::_getString() const
 // *******************************
 {
     string s = Inherit::_getString();
-    s.insert(s.length() - 1, " [" + getValueString(getX()));
-    s.insert(s.length() - 1, " " + getValueString(getY()));
+    s.insert(s.length() - 1, " [" + DbU::getValueString(getX()));
+    s.insert(s.length() - 1, " " + DbU::getValueString(getY()));
     s.insert(s.length() - 1, "] ");
     s.insert(s.length() - 1, getString(_occurrence));
     return s;

@@ -54,7 +54,7 @@
 
 #include "hurricane/isobar/PyHurricane.h"
 #include "hurricane/isobar/PyUpdateSession.h"
-#include "hurricane/isobar/PyUnit.h"
+#include "hurricane/isobar/PyDbU.h"
 #include "hurricane/isobar/PyPoint.h"
 #include "hurricane/isobar/PyBox.h"
 #include "hurricane/isobar/PyTransformation.h"
@@ -523,11 +523,15 @@ extern "C" {
   // x-------------------------------------------------------------x
 
   static PyMethodDef PyHurricane_Methods[] =
-    { { "getUnit"               ,              PyUnit_getUnit                    , METH_VARARGS, "Convert to Unit." }
-    , { "getValue"              ,              PyUnit_getValue                   , METH_VARARGS, "Convert a Unit to a value." }
+    { { "DbU_db"                ,              PyDbU_db                          , METH_VARARGS, "Convert an integer to DbU::Unit (no scale factor)." }
+    , { "DbU_real"              ,              PyDbU_real                        , METH_VARARGS, "Convert a real (founder grid) to DbU::Unit." }
+    , { "DbU_lambda"            ,              PyDbU_lambda                      , METH_VARARGS, "Convert a symbolic (lambda) to DbU::Unit." }
+    , { "DbU_getDb"             ,              PyDbU_getDb                       , METH_VARARGS, "Convert a DbU::Unit to an integer value (no scale factor)." }
+    , { "DbU_getReal"           ,              PyDbU_getReal                     , METH_VARARGS, "Convert a DbU::Unit to a real value (to grid founder)." }
+    , { "DbU_getLambda"         ,              PyDbU_getLambda                   , METH_VARARGS, "Convert a DbU::Unit to a symbolic value (to lambda)." }
     , { "getDataBase"           , (PyCFunction)PyDataBase_getDataBase            , METH_NOARGS , "Get the current DataBase." }
-    //, { "openUpdateSession"     , (PyCFunction)PyUpdateSession_openUpdateSession , METH_NOARGS , "Open an UpdateSession." }
-    //, { "closeUpdateSession"    , (PyCFunction)PyUpdateSession_closeUpdateSession, METH_NOARGS , "Close an UpdateSession." }
+  //, { "openUpdateSession"     , (PyCFunction)PyUpdateSession_openUpdateSession , METH_NOARGS , "Open an UpdateSession." }
+  //, { "closeUpdateSession"    , (PyCFunction)PyUpdateSession_closeUpdateSession, METH_NOARGS , "Close an UpdateSession." }
     , { "getExternalComponents" , (PyCFunction)PyNetExternalComponents_getExternalComponents, METH_VARARGS, "Returns the components collection of an external net" }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };

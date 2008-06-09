@@ -42,13 +42,13 @@ Pad* Pad::create(Net* net, const Layer* layer, const Box& boundingBox)
     return pad;
 }
 
-Unit Pad::getX() const
+DbU::Unit Pad::getX() const
 // *******************
 {
-    return 0;
+  return 0;
 }
 
-Unit Pad::getY() const
+DbU::Unit Pad::getY() const
 // *******************
 {
     return 0;
@@ -72,7 +72,7 @@ Box Pad::getBoundingBox(const BasicLayer* basicLayer) const
     return boundingBox;
 }
 
-void Pad::translate(const Unit& dx, const Unit& dy)
+void Pad::translate(const DbU::Unit& dx, const DbU::Unit& dy)
 // ************************************************
 {
     if ((dx != 0) || (dy != 0)) {

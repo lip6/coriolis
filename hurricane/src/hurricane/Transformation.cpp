@@ -51,7 +51,7 @@ Transformation::Transformation()
 {
 }
 
-Transformation::Transformation(const Unit& tx, const Unit& ty, const Orientation& orientation)
+Transformation::Transformation(const DbU::Unit& tx, const DbU::Unit& ty, const Orientation& orientation)
 // *******************************************************************************************
 :    _tx(tx),
     _ty(ty),
@@ -100,43 +100,43 @@ bool Transformation::operator!=(const Transformation& transformation) const
               (_orientation != transformation._orientation));
 }
 
-Unit Transformation::getX(const Unit& x, const Unit& y) const
+DbU::Unit Transformation::getX(const DbU::Unit& x, const DbU::Unit& y) const
 // **********************************************************
 {
     return (x * A[_orientation]) + (y * B[_orientation]) + _tx;
 }
 
-Unit Transformation::getY(const Unit& x, const Unit& y) const
+DbU::Unit Transformation::getY(const DbU::Unit& x, const DbU::Unit& y) const
 // **********************************************************
 {
     return (x * C[_orientation]) + (y * D[_orientation]) + _ty;
 }
 
-Unit Transformation::getX(const Point& point) const
+DbU::Unit Transformation::getX(const Point& point) const
 // ************************************************
 {
     return getX(point.getX(), point.getY());
 }
 
-Unit Transformation::getY(const Point& point) const
+DbU::Unit Transformation::getY(const Point& point) const
 // ************************************************
 {
     return getY(point.getX(), point.getY());
 }
 
-Unit Transformation::getDx(const Unit& dx, const Unit& dy) const
+DbU::Unit Transformation::getDx(const DbU::Unit& dx, const DbU::Unit& dy) const
 // *************************************************************
 {
     return (dx * A[_orientation]) + (dy * B[_orientation]);
 }
 
-Unit Transformation::getDy(const Unit& dx, const Unit& dy) const
+DbU::Unit Transformation::getDy(const DbU::Unit& dx, const DbU::Unit& dy) const
 // *************************************************************
 {
     return (dx * C[_orientation]) + (dy * D[_orientation]);
 }
 
-Point Transformation::getPoint(const Unit& x, const Unit& y) const
+Point Transformation::getPoint(const DbU::Unit& x, const DbU::Unit& y) const
 // ***************************************************************
 {
     return Point(getX(x, y), getY(x, y));
@@ -148,7 +148,7 @@ Point Transformation::getPoint(const Point& point) const
     return getPoint(point.getX(), point.getY());
 }
 
-Box Transformation::getBox(const Unit& x1, const Unit& y1, const Unit& x2, const Unit& y2) const
+Box Transformation::getBox(const DbU::Unit& x1, const DbU::Unit& y1, const DbU::Unit& x2, const DbU::Unit& y2) const
 // *********************************************************************************************
 {
     return Box(getX(x1, y1), getY(x1, y1), getX(x2, y2), getY(x2, y2));
@@ -170,8 +170,8 @@ Box Transformation::getBox(const Box& box) const
 Transformation Transformation::getTransformation(const Transformation& transformation) const
 // *****************************************************************************************
 {
-    Unit x = transformation._tx;
-    Unit y = transformation._ty;
+    DbU::Unit x = transformation._tx;
+    DbU::Unit y = transformation._ty;
 
     return Transformation(
                 (x * A[_orientation]) + (y * B[_orientation]) + _tx,
@@ -196,10 +196,10 @@ Transformation& Transformation::invert()
             INVERT[_orientation]));
 }
 
-void Transformation::applyOn(Unit& x, Unit& y) const
+void Transformation::applyOn(DbU::Unit& x, DbU::Unit& y) const
 // *************************************************
 {
-    Unit xi = x, yi = y;
+    DbU::Unit xi = x, yi = y;
     x = getX(xi, yi);
     y = getY(xi, yi);
 }
@@ -226,10 +226,10 @@ string Transformation::_getString() const
 // **************************************
 {
     return "<" + _TName("Transformation") + " " +
-             getValueString(_tx) + " " +
-             getValueString(_ty) + " " +
-             getString(_orientation) +
-             ">";
+      DbU::getValueString(_tx) + " " +
+      DbU::getValueString(_ty) + " " +
+      getString(_orientation) +
+      ">";
 }
 
 Record* Transformation::_getRecord() const

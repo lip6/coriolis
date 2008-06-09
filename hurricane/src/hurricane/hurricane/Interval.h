@@ -7,7 +7,7 @@
 #ifndef HURRICANE_INTERVAL
 #define HURRICANE_INTERVAL
 
-#include "hurricane/Unit.h"
+#include "hurricane/DbU.h"
 
 namespace Hurricane {
 
@@ -23,15 +23,15 @@ class Interval {
 // Attributes
 // **********
 
-    private: Unit _vMin;
-    private: Unit _vMax;
+    private: DbU::Unit _vMin;
+    private: DbU::Unit _vMax;
 
 // Constructors
 // ************
 
     public: Interval(bool makeEmpty=true);
-    public: Interval(const Unit& v);
-    public: Interval(const Unit& v1, const Unit& v2);
+    public: Interval(const DbU::Unit& v);
+    public: Interval(const DbU::Unit& v1, const DbU::Unit& v2);
     public: Interval(const Interval& interval);
 
 // Operators
@@ -45,13 +45,13 @@ class Interval {
 // Accessors
 // *********
 
-    public: const Unit& getVMin() const {return _vMin;};
-    public: const Unit& getVMax() const {return _vMax;};
-    public: Unit& getVMin() {return _vMin;};
-    public: Unit& getVMax() {return _vMax;};
-    public: Unit getCenter() const {return ((_vMin + _vMax) / 2);};
-    public: Unit getSize() const {return (_vMax - _vMin);};
-    public: Unit getHalfSize() const {return (getSize() / 2);};
+    public: const DbU::Unit& getVMin() const {return _vMin;};
+    public: const DbU::Unit& getVMax() const {return _vMax;};
+    public: DbU::Unit& getVMin() {return _vMin;};
+    public: DbU::Unit& getVMax() {return _vMax;};
+    public: DbU::Unit getCenter() const {return ((_vMin + _vMax) / 2);};
+    public: DbU::Unit getSize() const {return (_vMax - _vMin);};
+    public: DbU::Unit getHalfSize() const {return (getSize() / 2);};
     public: Interval getUnion(const Interval& interval) const;
     public: Interval getIntersection(const Interval& interval) const;
 
@@ -60,7 +60,7 @@ class Interval {
 
     public: bool isEmpty() const;
     public: bool isPonctual() const;
-    public: bool contains(const Unit& v) const;
+    public: bool contains(const DbU::Unit& v) const;
     public: bool contains(const Interval& interval) const;
     public: bool intersect(const Interval& interval) const;
     public: bool inferior(const Interval& interval, bool strict=true) const;
@@ -71,13 +71,13 @@ class Interval {
 // ********
 
     public: Interval& makeEmpty();
-    public: Interval& inflate(const Unit& dv);
-    public: Interval& inflate(const Unit& dvMin, const Unit& dvMax);
-    public: Interval& merge(const Unit& v);
+    public: Interval& inflate(const DbU::Unit& dv);
+    public: Interval& inflate(const DbU::Unit& dvMin, const DbU::Unit& dvMax);
+    public: Interval& merge(const DbU::Unit& v);
     public: Interval& merge(const Interval& interval);
-    public: Interval& intersection(const Unit& vMin, const Unit& vMax);
+    public: Interval& intersection(const DbU::Unit& vMin, const DbU::Unit& vMax);
     public: Interval& intersection(const Interval& interval);
-    public: Interval& translate(const Unit& dv);
+    public: Interval& translate(const DbU::Unit& dv);
 
 // Others
 // ******

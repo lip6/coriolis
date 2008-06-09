@@ -323,13 +323,13 @@ void Instance::invalidate(bool propagateFlag)
     }
 }
 
-void Instance::translate(const Unit& dx, const Unit& dy)
+void Instance::translate(const DbU::Unit& dx, const DbU::Unit& dy)
 // *****************************************************
 {
     if ((dx != 0) || (dy !=0)) {
         Point translation = _transformation.getTranslation();
-        Unit x = translation.getX() + dx;
-        Unit y = translation.getY() + dy;
+        DbU::Unit x = translation.getX() + dx;
+        DbU::Unit y = translation.getY() + dy;
         Transformation::Orientation orientation = _transformation.getOrientation();
         setTransformation(Transformation(x, y, orientation));
     }
@@ -472,8 +472,8 @@ Record* Instance::_getRecord() const
         record->add(getSlot("MasterCell", _masterCell));
         record->add(getSlot("Transformation", &_transformation));
         record->add(getSlot("PlacementStatus", _placementStatus));
-        record->add(getSlot("XCenter", getValue(getAbutmentBox().getXCenter())));
-        record->add(getSlot("YCenter", getValue(getAbutmentBox().getYCenter())));
+        record->add(getSlot("XCenter", DbU::getValueString(getAbutmentBox().getXCenter())));
+        record->add(getSlot("YCenter", DbU::getValueString(getAbutmentBox().getYCenter())));
         record->add(getSlot("Plugs", &_plugMap));
         record->add(getSlot("SharedPathes", &_sharedPathMap));
     }
@@ -537,7 +537,7 @@ Record* Instance::_getRecord() const
 //    _masterCell->_DrawDisplaySlots(view, area, masterArea, masterTransformation);
 //}
 //
-//bool Instance::_IsInterceptedBy(View* view, const Point& point, const Unit& aperture) const
+//bool Instance::_IsInterceptedBy(View* view, const Point& point, const DbU::Unit& aperture) const
 //// ****************************************************************************************
 //{
 //    Symbol* symbol = _masterCell->getSymbol();

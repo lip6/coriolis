@@ -4,9 +4,9 @@
 
  namespace Hurricane {
 
- /*! \defgroup     Unit  Unit description
+ /*! \defgroup     DbU  DbU/Unit description
   *
-  *  \section      secUnitIntro  Introduction
+  *  \section      secDbUIntro  Introduction
   *
   *                Those objects are used to model a geometric lengths, that is 
   *                abscissas, ordinates, widths, offsets ... 
@@ -16,7 +16,7 @@
   *                order to avoid floating point round errors. 
   * 
   * 
-  *  \section      secUnitPrecision  Precision
+  *  \section      secDbUPrecision  Precision
   *
   *                It is possible to choose (once for all) the precision with 
   *                which unit values are stored. 
@@ -28,47 +28,47 @@
   *                unit equal to 23540. 
   *
   *                <ul>
-  *                  <li><b>Unit::getPrecision</b>
-  *                  <li><b>Unit::getMaximalPrecisionAllowed</b>
-  *                  <li><b>Unit::setPrecision</b>
+  *                  <li><b>DbU::getPrecision</b>
+  *                  <li><b>DbU::getMaximalPrecisionAllowed</b>
+  *                  <li><b>DbU::setPrecision</b>
   *                </ul>
   * 
   * 
-  *  \section      secUnitResolution  Resolution
+  *  \section      secDbUResolution  Resolution
   *
   *                The resolution is associated to the precision. Indeed it 
   *                represents the external value associated to the smallest 
   *                unit, that is the value returned by getValue(getUnit(1)). 
   *
-  *                <b>Unit::getResolution</b>
+  *                <b>DbU::getResolution</b>
   * 
   * 
-  *  \section      secUnitGrid  Grid
+  *  \section      secDbUGrid  Grid
   *
   *                <ul>
-  *                  <li><b>Unit::getGridStep</b>
-  *                  <li><b>Unit::setGridStep</b>
-  *                  <li><b>Unit::isOnGrid</b>
-  *                  <li><b>Unit::getOnGridUnit</b>
+  *                  <li><b>DbU::getGridStep</b>
+  *                  <li><b>DbU::setGridStep</b>
+  *                  <li><b>DbU::isOnGrid</b>
+  *                  <li><b>DbU::getOnGridUnit</b>
   *                </ul>
   * 
   * 
-  *  \section      secUnitTranslators  Translators
+  *  \section      secDbUTranslators  Translators
   *
   *                <ul>
-  *                  <li><b>Unit::getUnit</b>
-  *                  <li><b>Unit::getValue</b>
-  *                  <li><b>Unit::getValueString</b>
+  *                  <li><b>DbU::getUnit</b>
+  *                  <li><b>DbU::getValue</b>
+  *                  <li><b>DbU::getValueString</b>
   *                </ul>
   */
 
 
 
- /*! \ingroup      Unit
+ /*! \ingroup      DbU
   */
  //  \{
 
- /*! \function     bool Unit::isOnGrid(const Unit& unit, int n = 1);
+ /*  \function     bool DbU::isOnGrid(const Unit& unit, int n = 1);
   *  \Return       \true if the unit is on grid, else \false. The argument 
   *                \c \<n\> allows to consider on grid only multiples of 
   *                \c \<n\> grid steps. So if n=1 all grid steps are considered, 
@@ -76,23 +76,23 @@
   */
 
 
- /*! \function     unsigned Unit::getPrecision();
+ /*  \function     unsigned DbU::getPrecision();
   *  \Return       the current precision (whose default is fixed to 0). 
   */
 
- /*! \function     unsigned Unit::getMaximalPrecisionAllowed();
+ /*  \function     unsigned DbU::getMaximalPrecisionAllowed();
   *  \Return       the maximal precision allowed (currently fixed to 3). 
   */
 
- /*! \function     double Unit::getResolution();
+ /*  \function     double DbU::getResolution();
   *  \Return       the current resolution. 
   */
 
- /*! \function     const Unit& Unit::getGridStep();
+ /*  \function     const DbU::Unit& DbU::getGridStep();
   *  \Return       the grid step. 
   */
 
- /*! \function     Unit Unit::getOnGridUnit(const Unit& unit, int s = 0);
+ /*  \function     DbU::Unit DbU::getOnGridUnit(const Unit& unit, int s = 0);
   *  \Return       the closest location on grid if the argument \c \<s\> equals 
   *                0, the closest inferior location on grid if the argument 
   *                \c \<s\> equals -1 and the closest superior location on grid 
@@ -101,17 +101,17 @@
   *  \remark       Throw an exception for any other \c \<s\> argument value. 
   */
 
- /*! \function     Unit getUnit(double value);
+ /*  \function     DbU::Unit getUnit(double value);
   *  \Return       the unit corresponding to the value \c \<value\> according to 
   *                the current precision. 
   */
 
- /*! \function     double getValue(const Unit& unit);
+ /*  \function     double DbU::getValue(const Unit& unit);
   *  \Return       the external value associated to the unit \c \<unit\> 
   *                according to the current precision. 
   */
 
- /*! \function     string getValueString(const Unit& unit);
+ /*  \function     string DbU::getValueString(const Unit& unit);
   *  \Return       a character string representing the external value of 
   *                \c \<unit\>. 
   *
@@ -121,7 +121,7 @@
   */
 
 
- /*! \function     void setPrecision(unsigned precision);
+ /*  \function     void DbU::setPrecision(unsigned precision);
   *                Allows to set the precision at a requested value. This must 
   *                be done at the begining of the program (before the creation 
   *                of the first unit) and not changed for the following (unless 
@@ -132,7 +132,7 @@
   *                is greater than the maximal one. 
   */
 
- /*! \function     void setGridStep(const Unit& gridStep);
+ /*  \function     void DbU::setGridStep(const Unit& gridStep);
   *                Allows to change the grid step. 
   */
 

@@ -164,7 +164,8 @@ void  CellWidget::drawBoundaries ( const Instance*       instance
 
 bool  CellWidget::isDrawable ( PaletteEntry* entry )
 {
-  return entry->isChecked() && ( Graphics::getThreshold(entry->getName()) < _scale*100 );
+  return entry->isChecked()
+    && ( Graphics::getThreshold(entry->getName())/DbU::lambda(1.0) < _scale );
 }
 
 
@@ -333,10 +334,10 @@ void  CellWidget::screenReframe ()
   _offsetVA.rx() = _stripWidth;
   _offsetVA.ry() = _stripWidth;
 
-  Unit xmin = (Unit)( _visibleArea.getXMin() - ((float)_offsetVA.x()/_scale) );
-  Unit xmax = (Unit)( xmin + ((float)_drawingBuffer.width()/_scale) ) ;
-  Unit ymax = (Unit)( _visibleArea.getYMax() + ((float)_offsetVA.y()/_scale) );
-  Unit ymin = (Unit)( ymax - ((float)_drawingBuffer.height()/_scale) ) ;
+  DbU::Unit xmin = (DbU::Unit)( _visibleArea.getXMin() - ((float)_offsetVA.x()/_scale) );
+  DbU::Unit xmax = (DbU::Unit)( xmin + ((float)_drawingBuffer.width()/_scale) ) ;
+  DbU::Unit ymax = (DbU::Unit)( _visibleArea.getYMax() + ((float)_offsetVA.y()/_scale) );
+  DbU::Unit ymin = (DbU::Unit)( ymax - ((float)_drawingBuffer.height()/_scale) ) ;
                    
   _displayArea = Box ( xmin, ymin, xmax, ymax );
 
@@ -351,10 +352,10 @@ void  CellWidget::setScale ( float scale )
   Point center = _visibleArea.getCenter();
 
   _visibleArea.makeEmpty ();
-  _visibleArea.merge ( (Unit)( center.getX() - width () / (_scale*2) ) 
-                     , (Unit)( center.getY() - height() / (_scale*2) ) 
-                     , (Unit)( center.getX() + width () / (_scale*2) )
-                     , (Unit)( center.getY() + height() / (_scale*2) )
+  _visibleArea.merge ( (DbU::Unit)( center.getX() - width () / (_scale*2) ) 
+                     , (DbU::Unit)( center.getY() - height() / (_scale*2) ) 
+                     , (DbU::Unit)( center.getX() + width () / (_scale*2) )
+                     , (DbU::Unit)( center.getY() + height() / (_scale*2) )
                      );
 
 //cerr << "_visibleArea: " << _visibleArea << " (offset: " << _offsetVA.x() << ")" << endl;
@@ -376,17 +377,15 @@ void  CellWidget::reframe ( const Box& box )
   float scaleY = height / (float)box.getHeight();
   _scale = min ( scaleX, scaleY );
 
-//cerr << "  _scale := " << _scale << endl;
-
   Point center = box.getCenter();
 
   width  /= 2;
   height /= 2;
 
-  _visibleArea = Box ( (Unit)( center.getX() - width  / _scale ) 
-                     , (Unit)( center.getY() - height / _scale ) 
-                     , (Unit)( center.getX() + width  / _scale )
-                     , (Unit)( center.getY() + height / _scale )
+  _visibleArea = Box ( (DbU::Unit)( center.getX() - width  / _scale ) 
+                     , (DbU::Unit)( center.getY() - height / _scale ) 
+                     , (DbU::Unit)( center.getX() + width  / _scale )
+                     , (DbU::Unit)( center.getY() + height / _scale )
                      );
   screenReframe ();
 
@@ -406,8 +405,8 @@ void  CellWidget::shiftLeft ( int dx )
 
   int  leftShift  = ( 1 + ( dx - _offsetVA.rx() ) / _stripWidth ) * _stripWidth;
 
-  _displayArea.translate ( - (Unit)( leftShift / _scale ) , 0 );
-  _visibleArea.translate ( - (Unit)( leftShift / _scale ) , 0 );
+  _displayArea.translate ( - (DbU::Unit)( leftShift / _scale ) , 0 );
+  _visibleArea.translate ( - (DbU::Unit)( leftShift / _scale ) , 0 );
   _offsetVA.rx() -= dx - leftShift;
 
   if ( leftShift >= _drawingBuffer.width() ) {
@@ -436,8 +435,8 @@ void  CellWidget::shiftRight ( int dx )
 
   int  rightShift  = ( ( _offsetVA.rx() + dx ) / _stripWidth ) * _stripWidth;
 
-  _displayArea.translate ( (Unit)( rightShift / _scale ) , 0 );
-  _visibleArea.translate ( (Unit)( rightShift / _scale ) , 0 );
+  _displayArea.translate ( (DbU::Unit)( rightShift / _scale ) , 0 );
+  _visibleArea.translate ( (DbU::Unit)( rightShift / _scale ) , 0 );
   _offsetVA.rx() += dx - rightShift;
 
 //cerr << "  _displayArea: " << _displayArea << endl;
@@ -468,8 +467,8 @@ void  CellWidget::shiftUp ( int dy )
 
   int  upShift  = ( 1 + ( dy - _offsetVA.ry() ) / _stripWidth ) * _stripWidth;
 
-  _displayArea.translate ( 0, (Unit)( upShift / _scale ) );
-  _visibleArea.translate ( 0, (Unit)( upShift / _scale ) );
+  _displayArea.translate ( 0, (DbU::Unit)( upShift / _scale ) );
+  _visibleArea.translate ( 0, (DbU::Unit)( upShift / _scale ) );
   _offsetVA.ry() -= dy - upShift;
 
   if ( upShift >= _drawingBuffer.height() ) {
@@ -498,8 +497,8 @@ void  CellWidget::shiftDown ( int dy )
 
   int  downShift  = (  ( _offsetVA.ry() + dy ) / _stripWidth ) * _stripWidth;
 
-  _displayArea.translate ( 0, - (Unit)( downShift / _scale ) );
-  _visibleArea.translate ( 0, - (Unit)( downShift / _scale ) );
+  _displayArea.translate ( 0, - (DbU::Unit)( downShift / _scale ) );
+  _visibleArea.translate ( 0, - (DbU::Unit)( downShift / _scale ) );
   _offsetVA.ry() += dy - downShift;
 
   if ( downShift >= _drawingBuffer.height() ) {
@@ -548,8 +547,8 @@ void  CellWidget::resizeEvent ( QResizeEvent* )
 //cerr << "New UA widget size: " << uaSize.width() << "x" << uaSize.height() << endl;
 
   if ( uaDelta.width() || uaDelta.height() ) {
-    _displayArea.inflate ( 0, 0, (Unit)(uaDelta.width()/_scale), (Unit)(uaDelta.height()/_scale) );
-    _visibleArea.inflate ( 0, 0, (Unit)(uaDelta.width()/_scale), (Unit)(uaDelta.height()/_scale) );
+    _displayArea.inflate ( 0, 0, (DbU::Unit)(uaDelta.width()/_scale), (DbU::Unit)(uaDelta.height()/_scale) );
+    _visibleArea.inflate ( 0, 0, (DbU::Unit)(uaDelta.width()/_scale), (DbU::Unit)(uaDelta.height()/_scale) );
   //cerr << "new      " << _displayArea << endl;
 
   //cerr << "Previous buffer size: " << _drawingBuffer.width () << "x"
@@ -620,7 +619,7 @@ void  CellWidget::mouseReleaseEvent ( QMouseEvent* event )
 }
 
 
-QPoint  CellWidget::getScreenPoint ( Unit x, Unit y ) const
+QPoint  CellWidget::getScreenPoint ( DbU::Unit x, DbU::Unit y ) const
 {
   return QPoint ( getScreenX(x), getScreenY(y) );
 }
@@ -632,7 +631,7 @@ QPoint  CellWidget::getScreenPoint ( const Point& point ) const
 }
 
 
-QRect  CellWidget::getScreenRect ( Unit x1, Unit y1, Unit x2, Unit y2 ) const
+QRect  CellWidget::getScreenRect ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2 ) const
 {
   return QRect ( getScreenX(x1)
                , getScreenY(y2)
