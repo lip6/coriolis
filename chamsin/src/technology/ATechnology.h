@@ -16,7 +16,7 @@ class ATechnology : public PrivateProperty {
         class PhysicalRule {
             public:
                 PhysicalRule(const Name& name,
-                        double value,
+                        DbU::Unit value,
                         const string& reference):
                     _name(name),
                     _value(value),
@@ -26,7 +26,7 @@ class ATechnology : public PrivateProperty {
                     _value(physicalRule._value),
                     _reference(physicalRule._reference) {}
                 const Name _name;
-                const double _value;
+                const DbU::Unit _value;
                 const string _reference;
                 double getValue() const { return _value; }
         };
@@ -68,10 +68,10 @@ class ATechnology : public PrivateProperty {
         const PhysicalRule* getPhysicalRule(const Name& name) const;
         const PhysicalRule* getPhysicalRule(const Name& name, const Layer* layer) const;
         const PhysicalRule* getPhysicalRule(const Name& name, const Layer* layer1, const Layer* layer2) const;
-        void addPhysicalRule(const Name& name, double value, const string& reference);
-        void addPhysicalRule(const Name& name, const Name& layerName, double value, const string& reference);
+        void addPhysicalRule(const Name& name, DbU::Unit value, const string& reference);
+        void addPhysicalRule(const Name& name, const Name& layerName, DbU::Unit value, const string& reference);
         void addPhysicalRule(const Name& name, const Name& layer1Name,
-                const Name& layer2Name, double value, const string& reference);
+                const Name& layer2Name, DbU::Unit value, const string& reference);
         Layer* getLayer(const Name& layerName);
         void print();
 

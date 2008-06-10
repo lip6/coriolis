@@ -55,6 +55,7 @@ const Name Transistor::DrainName("DRAIN");
 const Name Transistor::SourceName("SOURCE");
 const Name Transistor::GridName("GRID");
 const Name Transistor::BulkName("BULK");
+const Name Transistor::AnonymousName("ANONYMOUS");
 
 Transistor::Transistor(Library* library, const Name& name, const Polarity& polarity):
     Cell(library, name),
@@ -62,13 +63,15 @@ Transistor::Transistor(Library* library, const Name& name, const Polarity& polar
     _source(NULL),
     _grid(NULL),
     _bulk(NULL),
+    _anonymous(NULL),
     _polarity(polarity),
     _abutmentType(),
     _l(DbU::Min),
     _w(DbU::Min),
     _source20(NULL), _source22(NULL),
     _drain40(NULL), _drain42(NULL),
-    _grid00(NULL), _grid01(NULL), _grid30(NULL), _grid31(NULL)
+    _grid00(NULL), _grid01(NULL), _grid30(NULL), _grid31(NULL),
+    _anonymous10(NULL), _anonymous11(NULL), _anonymous12(NULL)
 {}
 
 
@@ -92,26 +95,29 @@ void Transistor::_postCreate() {
    _grid->setExternal(true);
    _bulk = Net::create(this, BulkName);
    _bulk->setExternal(true);
-   _source20 = createPad(technology, _source, "cut0");
-   _source22 = createPad(technology, _source, "cut1");
-   _drain40  = createPad(technology, _drain,  "cut0");
-   _drain42  = createPad(technology, _drain,  "cut1");
-   _grid00   = createPad(technology, _grid,   "poly");
-   _grid01   = createPad(technology, _grid,   "poly");
-   _grid30   = createPad(technology, _grid,   "cut0");
-   _grid31   = createPad(technology, _grid,   "metal1");
-   
+   _anonymous = Net::create(this, AnonymousName);
+   _source20    = createPad(technology, _source,    "cut0");
+   _source22    = createPad(technology, _source,    "cut1");
+   _drain40     = createPad(technology, _drain,     "cut0");
+   _drain42     = createPad(technology, _drain,     "cut1");
+   _grid00      = createPad(technology, _grid,      "poly");
+   _grid01      = createPad(technology, _grid,      "poly");
+   _grid30      = createPad(technology, _grid,      "cut0");
+   _grid31      = createPad(technology, _grid,      "metal1");
+   _anonymous10 = createPad(technology, _anonymous, "active");
+   _anonymous11 = createPad(technology, _anonymous, "nimp");
+   _anonymous12 = createPad(technology, _anonymous, "nimp");
 }
 
 void Transistor::createLayout() {
     ATechnology* techno = AEnv::getATechnology();
 
-    DbU::Unit rwCont = DbU::real(techno->getPhysicalRule("RW_CONT")->getValue());
-    DbU::Unit rdCont = DbU::real(techno->getPhysicalRule("RD_CONT")->getValue());
-    DbU::Unit reGateActiv = DbU::real(techno->getPhysicalRule("RE", getLayer("poly"), getLayer("active"))->getValue()); 
-    DbU::Unit rePolyCont = DbU::real(techno->getPhysicalRule("RE", getLayer("poly"), getLayer("cut"))->getValue());
-    DbU::Unit rdActiveCont = DbU::real(techno->getPhysicalRule("RD", getLayer("active"), getLayer("cut"))->getValue());
-    DbU::Unit rdActivePoly = DbU::real(techno->getPhysicalRule("RD", getLayer("active"), getLayer("poly"))->getValue());
+    DbU::Unit rwCont = techno->getPhysicalRule("RW_CONT")->getValue();
+    DbU::Unit rdCont = techno->getPhysicalRule("RD_CONT")->getValue();
+    DbU::Unit reGateActiv  = techno->getPhysicalRule("RE", getLayer("poly"), getLayer("active"))->getValue(); 
+    DbU::Unit rePolyCont   = techno->getPhysicalRule("RE", getLayer("poly"), getLayer("cut"))->getValue();
+    DbU::Unit rdActiveCont = techno->getPhysicalRule("RD", getLayer("active"), getLayer("cut"))->getValue();
+    DbU::Unit rdActivePoly = techno->getPhysicalRule("RD", getLayer("active"), getLayer("poly"))->getValue();
 
     UpdateSession::open();
 
@@ -157,6 +163,8 @@ void Transistor::createLayout() {
         dx01 = dx00; 
         dy01 = y31 - (y00 + dy00);
     }
+
+    //12
 
     UpdateSession::close();
 }

@@ -27,7 +27,7 @@ string ATechnology::_getTypeName() const {
     return _TName("ATechnologyProperty");
 }
 
-void ATechnology::addPhysicalRule(const Name& name, double value, const string& reference) {
+void ATechnology::addPhysicalRule(const Name& name, DbU::Unit value, const string& reference) {
     PhysicalRule searchPR(name, 0, "");
     PhysicalRules::iterator prit = _noLayerPhysicalRules.find(&searchPR);
     if (prit != _noLayerPhysicalRules.end()) {
@@ -37,7 +37,7 @@ void ATechnology::addPhysicalRule(const Name& name, double value, const string& 
     _noLayerPhysicalRules.insert(newPhysicalRule); 
 }
 
-void ATechnology::addPhysicalRule(const Name& name, const Name& layerName, double value, const string& reference) {
+void ATechnology::addPhysicalRule(const Name& name, const Name& layerName, DbU::Unit value, const string& reference) {
     Layer* layer = getLayer(layerName);
     OneLayerPhysicalRules::iterator olprit = _oneLayerPhysicalRules.find(layer);
     if (olprit == _oneLayerPhysicalRules.end()) {
@@ -59,7 +59,7 @@ void ATechnology::addPhysicalRule(const Name& name, const Name& layerName, doubl
 }
 
 void ATechnology::addPhysicalRule(const Name& name, const Name& layer1Name,
-        const Name& layer2Name, double value, const string& reference) {
+        const Name& layer2Name, DbU::Unit value, const string& reference) {
 }
 
 ATechnology* ATechnology::create(Technology* technology) {

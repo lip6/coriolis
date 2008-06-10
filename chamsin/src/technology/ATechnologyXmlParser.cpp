@@ -33,16 +33,17 @@ void readPhysicalRules(xmlNode* node, ATechnology* aTechnology) {
                     if (ruleNameC && valueC && refC) {
                         string ruleName((const char*)ruleNameC);
                         double value = atof((const char*)valueC);
+                        DbU::Unit unitValue= DbU::real(value);
                         string reference((const char*)refC);
                         if (layerC) {
                             Name layerName((const char*)layerC);
-                            aTechnology->addPhysicalRule(ruleName, layerName, value, reference);
+                            aTechnology->addPhysicalRule(ruleName, layerName, unitValue, reference);
                         } else if (layer1C && layer2C) {
                             Name layer1Name((const char*)layer1C);
                             Name layer2Name((const char*)layer2C);
-                            aTechnology->addPhysicalRule(ruleName, layer1Name, layer2Name, value, reference);
+                            aTechnology->addPhysicalRule(ruleName, layer1Name, layer2Name, unitValue, reference);
                         } else {
-                            aTechnology->addPhysicalRule(ruleName, value, reference);
+                            aTechnology->addPhysicalRule(ruleName, unitValue, reference);
                         }
                     } else {
                         syntaxError("");

@@ -13,6 +13,7 @@ class Transistor : public Cell {
         static const Name SourceName;
         static const Name GridName;
         static const Name BulkName;
+        static const Name AnonymousName;
         enum Polarity {N=0, P=1};
         enum AbutmentType { INTERNAL=0, LEFT=1, RIGHT=2, SINGLE=3};
 
@@ -34,6 +35,7 @@ class Transistor : public Cell {
         Net* _source;
         Net* _grid;
         Net* _bulk;
+        Net* _anonymous;
         Polarity _polarity;
         AbutmentType _abutmentType;
         DbU::Unit _l;
@@ -41,6 +43,7 @@ class Transistor : public Cell {
         Pad *_source20, *_source22;
         Pad *_drain40, *_drain42;
         Pad *_grid00, *_grid01, *_grid30, *_grid31;
+        Pad *_anonymous10, *_anonymous11, *_anonymous12, *_anonymous50;
 
         Transistor(Library* library, const Name& name, const Polarity& polarity);
 };
