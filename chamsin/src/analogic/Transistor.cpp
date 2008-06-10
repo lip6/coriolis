@@ -44,6 +44,9 @@ void createContactMatrix(Net* net, const Layer* layer, const Box& box, unsigned 
     }
 }
 
+Layer* getLayer(const string& layerStr) {
+}
+
 
 }
 
@@ -104,10 +107,55 @@ void Transistor::createLayout() {
 
     Unit rwCont = getUnit(techno->getPhysicalRule("RW_CONT")->getValue());
     Unit rdCont = getUnit(techno->getPhysicalRule("RD_CONT")->getValue());
+    Unit reGateActiv = getUnit(techno->getPhysicalRule("RE", getLayer("poly"), getLayer("active"))->getValue()); 
+    Unit rePolyCont = getUnit(techno->getPhysicalRule("RE", getLayer("poly"), getLayer("cut"))->getValue());
+    Unit rdActiveCont = getUnit("RD", getLayer("active"), getLayer("cut"));
+    Unit rdActivePoly = getUnit("RD", getLayer("active"), getLayer("poly"));
 
     UpdateSession::open();
-    
-    
+
+    //grid 00
+    Unit y00 = -reGateActiv;
+    Unit dx00 = _l;
+    Unit dy00 = _w - y00*2; 
+    Box box00(0, y00, dx00, dy00);
+    _grid00->setBoundingBox(box00);
+
+    //grid30
+    Unit toto = rwCont + 2*rePolyCont;
+    Unit dx30 = 0, dy30 = 0;
+    if (toto > _l) {
+        dx30 = rwCont;
+        dy30 = dx30;
+        y30 = _w + Unit::max(rdActiveCont, rdAvtivePoly + rePolyCont); 
+    } else {
+        dx30 = dx00 - 2*rePolyCont;
+        dy30 = rwCont;
+        y30 = _w + rdActiveCont;
+    }
+    Unit x30 = x00 + dx00/2 - dx30/2;
+    Box box30(x30, y30, dx30, dy30);
+    _grid30->setBoundingBox(box30);
+
+    //grid31
+    Unit dx31 = dx30 + 2*rePolyCont;
+    Unit dy31 = dy30 + 2*rePolyCont;
+    Unit x31 = x30 - rePolyCont;
+    Unit y31 = y30 - rePolyCont;
+    Box box31(x31, y31, dx31, dy31);
+    _grid31->setBoundingBox(box31);
+
+    //grid01
+    if (y31 <= y00+dy00) {
+        x01 = 0; y01 = 0; dx01 = 0; dy01 = 0;
+  }
+  else {
+    x01 = x00; 
+    y01 = y00 + dy00; 
+    dx01 = dx00; 
+    dy01 = y31 - (y00 + dy00);
+  }
+
 
     UpdateSession::close();
 }
