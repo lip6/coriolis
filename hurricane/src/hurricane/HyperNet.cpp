@@ -252,15 +252,15 @@ HyperNet::HyperNet(const Occurrence& occurrence)
 {
     if (occurrence.isValid()) {
         Entity* entity = occurrence.getEntity();
-        if (is_a<Net*>(entity))
+        if (dynamic_cast<Net*>(entity))
             _netOccurrence = occurrence;
         else {
-            if (is_a<Rubber*>(entity)) {
+            if (dynamic_cast<Rubber*>(entity)) {
                 Rubber* rubber = (Rubber*)entity;
                 _netOccurrence = Occurrence(rubber->getNet(), occurrence.getPath());
             }
             else {
-                if (is_a<Component*>(entity)) {
+                if (dynamic_cast<Component*>(entity)) {
                     Component* component = (Component*)entity;
                     _netOccurrence = Occurrence(component->getNet(), occurrence.getPath());
                 }
@@ -533,12 +533,12 @@ void HyperNet_NetOccurrences::Locator::progress()
         if (_doExtraction) {
             Cell* cell = netOccurrence.getOwnerCell();
             for_each_component(component, net->getComponents()) {
-                if (!is_a<Plug*>(component)) {
+                if (!dynamic_cast<Plug*>(component)) {
                     //if (_allowInterruption && !((i++) % 200)) gtk_check_for_interruption();
                     Occurrence occurrence = Occurrence(component, path);
                     Box area = occurrence.getBoundingBox();
                     for_each_occurrence(occurrence2, cell->getOccurrencesUnder(area)) {
-                        if (is_a<Component*>(occurrence2.getEntity())) {
+                        if (dynamic_cast<Component*>(occurrence2.getEntity())) {
                             Component* component2 = (Component*)occurrence2.getEntity();
                             if (IsConnex(occurrence, occurrence2)) {
                                 Occurrence net2Occurrence =
@@ -768,15 +768,15 @@ void HyperNet_NetOccurrencesUnder::Locator::progress()
                 Box area = occurrence.getBoundingBox();
                 if (! area.intersect (_area)) {
                     // Outside useful area
-                } else if (is_a<Plug*>(component)) {
+                } else if (dynamic_cast<Plug*>(component)) {
                     // Will be  processed below
-                } else if (is_a<Rubber*>(component)) {
+                } else if (dynamic_cast<Rubber*>(component)) {
                     // Don't go through the Rubbers (go only trough connecting layers)
                 } else {
                     //if (_allowInterruption && !((i++) % 200)) gtk_check_for_interruption();
                     Box under = area.getIntersection (_area);
                     for_each_occurrence(occurrence2, cell->getOccurrencesUnder(under)) {
-                        if (is_a<Component*>(occurrence2.getEntity())) {
+                        if (dynamic_cast<Component*>(occurrence2.getEntity())) {
                             Component* component2 = (Component*)occurrence2.getEntity();
                             if (IsConnex(occurrence, occurrence2)) {
                                 Occurrence net2Occurrence =

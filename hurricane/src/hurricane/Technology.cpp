@@ -123,21 +123,21 @@ BasicLayer* Technology::getBasicLayer(const Name& name) const
 // **********************************************************
 {
     Layer* layer = getLayer(name);
-    return (layer && is_a<BasicLayer*>(layer)) ? (BasicLayer*)layer : NULL;
+    return (layer && dynamic_cast<BasicLayer*>(layer)) ? (BasicLayer*)layer : NULL;
 }
 
 RegularLayer* Technology::getRegularLayer(const Name& name) const
 // **********************************************************
 {
     Layer* layer = getLayer(name);
-    return (layer && is_a<RegularLayer*>(layer)) ? (RegularLayer*)layer : NULL;
+    return (layer && dynamic_cast<RegularLayer*>(layer)) ? (RegularLayer*)layer : NULL;
 }
 
 ViaLayer* Technology::getViaLayer(const Name& name) const
 // ******************************************************************
 {
     Layer* layer = getLayer(name);
-    return (layer && is_a<ViaLayer*>(layer)) ? (ViaLayer*)layer : NULL;
+    return (layer && dynamic_cast<ViaLayer*>(layer)) ? (ViaLayer*)layer : NULL;
 }
 
 BasicLayers Technology::getBasicLayers() const

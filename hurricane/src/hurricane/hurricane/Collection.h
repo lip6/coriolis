@@ -461,7 +461,7 @@ template<class Type, class SubType> class SubTypeCollection : public Collection<
         :    Inherit(),
             _locator(collection.getLocator())
         {
-            while (_locator.isValid() && !is_a<SubType>(_locator.getElement()))
+            while (_locator.isValid() && !dynamic_cast<SubType>(_locator.getElement()))
                 _locator.progress();
         }
 
@@ -470,7 +470,7 @@ template<class Type, class SubType> class SubTypeCollection : public Collection<
         :    Inherit(),
             _locator(genericLocator.getClone())
         {
-            while (_locator.isValid() && !is_a<SubType>(_locator.getElement()))
+            while (_locator.isValid() && !dynamic_cast<SubType>(_locator.getElement()))
                 _locator.progress();
         }
 
@@ -515,7 +515,7 @@ template<class Type, class SubType> class SubTypeCollection : public Collection<
             if (_locator.isValid()) {
                 do {
                     _locator.progress();
-                } while (_locator.isValid() && !is_a<SubType>(_locator.getElement()));
+                } while (_locator.isValid() && !dynamic_cast<SubType>(_locator.getElement()));
             }
         }
 

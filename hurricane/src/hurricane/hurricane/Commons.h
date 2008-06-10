@@ -49,9 +49,6 @@
 // |                        Macros Definition                        |
 // x-----------------------------------------------------------------x
 
-#define is_a (bool)dynamic_cast
-
-
 using namespace std;
 
 

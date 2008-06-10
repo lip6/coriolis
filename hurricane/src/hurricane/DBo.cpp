@@ -80,7 +80,7 @@ void DBo::remove(Property* property)
     if (_propertySet.find(property) != _propertySet.end()) {
         _propertySet.erase(property);
         property->onReleasedBy(this);
-        if (is_a<Quark*>(this) && _propertySet.empty()) destroy();
+        if (dynamic_cast<Quark*>(this) && _propertySet.empty()) destroy();
     }
 }
 
@@ -91,7 +91,7 @@ void DBo::removeProperty(const Name& name)
     if (property) {
         _propertySet.erase(property);
         property->onReleasedBy(this);
-        if (is_a<Quark*>(this) && _propertySet.empty()) destroy();
+        if (dynamic_cast<Quark*>(this) && _propertySet.empty()) destroy();
     }
 }
 
@@ -151,7 +151,7 @@ void DBo::_onDestroyed(Property* property)
 {
     if (property && (_propertySet.find(property) != _propertySet.end())) {
         _propertySet.erase(property);
-        if (is_a<Quark*>(this) && _propertySet.empty()) destroy();
+        if (dynamic_cast<Quark*>(this) && _propertySet.empty()) destroy();
     }
 }
 

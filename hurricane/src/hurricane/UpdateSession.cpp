@@ -76,7 +76,7 @@ void UpdateSession::_preDestroy()
     UPDATOR_STACK->pop();
 
     for_each_dbo(owner, getOwners()) {
-        if (is_a<Go*>(owner)) ((Go*)owner)->materialize();
+        if (dynamic_cast<Go*>(owner)) ((Go*)owner)->materialize();
         end_for;
     }
 
@@ -101,7 +101,7 @@ Record* UpdateSession::_getRecord() const
 void UpdateSession::onCapturedBy(DBo* owner)
 // *****************************************
 {
-    if (!is_a<Go*>(owner))
+    if (!dynamic_cast<Go*>(owner))
         throw Error("Bad update session capture : not a graphic object");
 
     Inherit::onCapturedBy(owner);
@@ -130,7 +130,7 @@ void Go::invalidate(bool propagateFlag)
     Property* property = getProperty(UpdateSession::getPropertyName());
 
     if (property) {
-        if (!is_a<UpdateSession*>(property))
+        if (!dynamic_cast<UpdateSession*>(property))
             throw Error("Can't invalidate go : bad update session type");
     }
     else {

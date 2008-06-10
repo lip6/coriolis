@@ -621,7 +621,7 @@ void Net::_preDestroy()
     }
 
     for_each_component(component, getComponents()) {
-        if (!is_a<Plug*>(component))
+        if (!dynamic_cast<Plug*>(component))
             component->destroy();
         else
             ((Plug*)component)->setNet(NULL);

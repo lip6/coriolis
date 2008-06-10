@@ -312,7 +312,7 @@ void RoutingPad::setExternalComponent(Component* component)
 Occurrence RoutingPad::getPlugOccurrence()
 // ***************************************
 {
-    if (is_a<Plug*>(_occurrence.getEntity()))
+    if (dynamic_cast<Plug*>(_occurrence.getEntity()))
         return _occurrence;
     Component* component= static_cast<Component*>(_occurrence.getEntity());
     Net* net=component->getNet();
