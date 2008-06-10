@@ -32,7 +32,7 @@ class DBo : public NestedSlotAdapter {
 // Attributs
 // *********
 
-    private: PropertySet _propertySet;
+    private: mutable PropertySet _propertySet;
 
 // Constructors
 // ************
@@ -58,7 +58,7 @@ class DBo : public NestedSlotAdapter {
 
     protected: virtual void _preDestroy();
 
-    public: virtual string _getTypeName() const = 0;
+    public: virtual string _getTypeName() const;
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
     public: PropertySet& _getPropertySet() {return _propertySet;};

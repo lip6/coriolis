@@ -130,6 +130,12 @@ void DBo::_preDestroy()
 // trace_out();
 }
 
+string DBo::_getTypeName () const
+// ******************************
+{
+  return "DBo";
+}
+
 string DBo::_getString() const
 // ***************************
 {

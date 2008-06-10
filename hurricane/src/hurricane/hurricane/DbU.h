@@ -56,8 +56,8 @@ namespace Hurricane {
       static        double              getResolution       ();
       static        void                setPrecision        ( unsigned int precision );
     // Lamba Managment.
-      static        void                setUnitsPerLambda   ( double unitsPerLambda );
-      static        double              getUnitsPerLambda   ();
+      static        void                setRealsPerLambda   ( double realsPerLambda );
+      static        double              getRealsPerLambda   ();
     // Grid Managment.
     //static        void                setGridStep         ( const Unit& gridStep );
     //static        const Unit          getGridStep         ();
@@ -79,7 +79,7 @@ namespace Hurricane {
       static const unsigned int  _maximalPrecision;
       static unsigned int        _precision;
       static double              _resolution;
-      static double              _unitsPerLambda;
+      static double              _realsPerLambda;
       static unsigned int        _stringMode;
   };
 
@@ -87,10 +87,10 @@ namespace Hurricane {
 // Inline Functions.
   inline DbU::Unit  DbU::db            ( long value )   { return value; }
   inline DbU::Unit  DbU::real          ( double value ) { return (long)rint( value/_resolution ); }
-  inline DbU::Unit  DbU::lambda        ( double value ) { return real(value*_unitsPerLambda); }
+  inline DbU::Unit  DbU::lambda        ( double value ) { return real(value*_realsPerLambda); }
   inline long       DbU::getDb         ( DbU::Unit u )  { return u; }
   inline double     DbU::getReal       ( DbU::Unit u )  { return _resolution*(double)u; }
-  inline double     DbU::getLambda     ( DbU::Unit u )  { return getReal(u)/_unitsPerLambda; }
+  inline double     DbU::getLambda     ( DbU::Unit u )  { return getReal(u)/_realsPerLambda; }
 
 
 } // End of Hurricane namespace.

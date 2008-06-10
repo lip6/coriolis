@@ -831,6 +831,57 @@ template<typename Element, typename Compare>
 
 
 // -------------------------------------------------------------------
+// Class  :  "SlotAdapterSet".
+
+template<typename Element, typename Compare>
+  class PointerSlotAdapter<set<Element,Compare> > : public SlotAdapter {
+      
+    // Attributes.
+    protected:
+      set<Element,Compare>* _s;
+  
+    // Constructor.
+    public:
+      PointerSlotAdapter ( set<Element,Compare>* m ) : _s(m) {};
+  
+    // Destructor.
+    public:
+      virtual ~PointerSlotAdapter () {};
+
+    // Slot Management.
+    public:
+      virtual string  _getTypeName     () const { return "<PointerSlotAdapter<const set<Element>>"; };
+      virtual string  _getString       () const;
+      virtual Record* _getRecord       () const;
+  };
+
+
+template<typename Element, typename Compare>
+  inline string  PointerSlotAdapter<set<Element,Compare> >::_getString () const {
+    string name = "set<Element>:";
+    return name + getString(_s->size());
+  }
+
+
+template<typename Element, typename Compare>
+  inline Record* PointerSlotAdapter<set<Element,Compare> >::_getRecord () const {
+    Record* record = NULL;
+    if ( !_s->empty() ) {
+      record = new Record ( "set<Element>" );
+      unsigned n = 1;
+      typename set<Element,Compare>::const_iterator iterator = _s->begin();
+      while ( iterator != _s->end() ) {
+        record->add ( getSlot(getString(n++), *iterator) );
+        ++iterator;
+      }
+    }
+    return record;
+  }
+
+
+
+
+// -------------------------------------------------------------------
 // Class  :  "SlotAdapterMultiSet".
 
 template<typename Element, typename Compare>

@@ -36,7 +36,7 @@ namespace Hurricane {
   const unsigned int  DbU::_maximalPrecision = 3;
   unsigned int        DbU::_precision        = 1;
   double              DbU::_resolution       = 0.1;
-  double              DbU::_unitsPerLambda   = 10.0;
+  double              DbU::_realsPerLambda   = 10.0;
   unsigned int        DbU::_stringMode       = DbU::Symbolic;
   const DbU::Unit     DbU::Min               = LONG_MIN;
   const DbU::Unit     DbU::Max               = LONG_MAX;
@@ -75,20 +75,20 @@ namespace Hurricane {
   }
 
 
-  void  DbU::setUnitsPerLambda ( double unitsPerLambda )
+  void  DbU::setRealsPerLambda ( double realsPerLambda )
   {
-    if (   ( rint(unitsPerLambda) != unitsPerLambda ) 
-        || ( remainder(unitsPerLambda,2.0) != 0.0   ) )
-      throw Error ( "DbU::Unit::setUnitPerLambdas(): \"unitsPerLambda\" (%f) must be an even integer."
-                  , unitsPerLambda
+    if (   ( rint(realsPerLambda) != realsPerLambda ) 
+        || ( remainder(realsPerLambda,2.0) != 0.0   ) )
+      throw Error ( "DbU::Unit::setRealPerLambdas(): \"realsPerLambda\" (%f) must be an even integer."
+                  , realsPerLambda
                   );
 
-    _unitsPerLambda = unitsPerLambda;
+    _realsPerLambda = realsPerLambda;
   }
 
 
-  double  DbU::getUnitsPerLambda ()
-  { return _unitsPerLambda; }
+  double  DbU::getRealsPerLambda ()
+  { return _realsPerLambda; }
 
 
   void  DbU::setStringMode ( unsigned int mode )
@@ -154,20 +154,34 @@ namespace Hurricane {
   string  DbU::getValueString ( DbU::Unit u )
   {
     char buffer[1024];
+    char unitSymbol = 'u';
 
-    if ( _stringMode == Db ) {
+    if ( _stringMode == Real ) {
+      if ( u == 0 ) return "0g";
+
+      unitSymbol = 'g';
+      snprintf ( buffer, 1024, "%.1f", getReal(u) );
+    } else if ( _stringMode == Symbolic ) {
+      if ( u == 0 ) return "0l";
+
+      unitSymbol = 'l';
+      snprintf ( buffer, 1024, "%.1f", getLambda(u) );
+    } else {
+      if ( _stringMode != Db )
+        cerr << "[ERROR] Unknown Unit representation mode: " << _stringMode << endl;
+
       if ( u == 0 ) return "0u";
 
-      snprintf ( buffer, 1024, "%ldu", u );
-    } else if ( _stringMode == Real ) {
-      if ( u == 0 ) return "0g";
-
-      snprintf ( buffer, 1024, "%.1fg", getReal(u) );
-    } else if ( _stringMode == Symbolic ) {
-      if ( u == 0 ) return "0g";
-
-      snprintf ( buffer, 1024, "%.1flbd", getLambda(u) );
+      snprintf ( buffer, 1024, "%ld", u );
     }
+
+    size_t length = strlen(buffer) - 1;
+    for ( ; length > 0 ; length-- ) {
+      if ( (buffer[length] != '0') && (buffer[length] != '.') )
+        break;
+    }
+    buffer[++length] = unitSymbol;
+    buffer[++length] = '\0';
 
     return buffer;
   }
