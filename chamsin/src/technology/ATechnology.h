@@ -38,21 +38,21 @@ class ATechnology : public PrivateProperty {
                 }
             };
 
-        typedef pair<Layer*, Layer*> LayerPair;
+        typedef pair<const Layer*, const Layer*> LayerPair;
 
         struct LayerPairCompare:
             public std::binary_function<const LayerPair&, const LayerPair&, bool> {
                 bool operator()(const LayerPair& lp1, const LayerPair& lp2) const {
-                    if (lp1->first < lp2->first) {
+                    if (lp1.first < lp2.first) {
                         return -1;
                     }
-                    if (lp1->first > lp2->first) {
+                    if (lp1.first > lp2.first) {
                         return 1;
                     }
-                    if (lp1->second < lp2->second) {
+                    if (lp1.second < lp2.second) {
                         return -1;
                     }
-                    if (lp1->second > lp2->second) {
+                    if (lp1.second > lp2.second) {
                         return 1;
                     }
                     return 0;
@@ -60,7 +60,7 @@ class ATechnology : public PrivateProperty {
             };
 
         typedef set<ATechnology::PhysicalRule*, PhysicalRuleNameCompare> PhysicalRules;
-        typedef map<Layer*, PhysicalRules> OneLayerPhysicalRules;
+        typedef map<const Layer*, PhysicalRules> OneLayerPhysicalRules;
         typedef map<LayerPair, PhysicalRules, LayerPairCompare> TwoLayersPhysicalRules;
 
         static ATechnology* create(Hurricane::Technology* technology);

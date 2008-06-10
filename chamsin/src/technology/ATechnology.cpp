@@ -90,7 +90,7 @@ void ATechnology::print() {
     for (OneLayerPhysicalRules::iterator olprit = _oneLayerPhysicalRules.begin();
             olprit != _oneLayerPhysicalRules.end();
             olprit++) {
-        Layer* layer = olprit->first;
+        const Layer* layer = olprit->first;
         cout << "   o layer " << layer << endl; 
         printPhysicalRules(olprit->second);
         cout << endl;
@@ -99,8 +99,8 @@ void ATechnology::print() {
     for (TwoLayersPhysicalRules::iterator tlprit = _twoLayersPhysicalRules.begin();
             tlprit != _twoLayersPhysicalRules.end();
             tlprit++) {
-        Layer* layer1 = tlprit->first.first;
-        Layer* layer2 = tlprit->first.second;
+        const Layer* layer1 = tlprit->first.first;
+        const Layer* layer2 = tlprit->first.second;
         cout << "   o layer1 " << layer1 << endl; 
         cout << "   o layer2 " << layer2 << endl; 
         printPhysicalRules(tlprit->second);
@@ -118,11 +118,11 @@ const ATechnology::PhysicalRule* ATechnology::getPhysicalRule(const Name& name) 
 }
 
 const ATechnology::PhysicalRule* ATechnology::getPhysicalRule(const Name& name, const Layer* layer) const {
-    OneLayerPhysicalRules::iterator olprit = _oneLayerPhysicalRules.find(layer);
+    OneLayerPhysicalRules::const_iterator olprit = _oneLayerPhysicalRules.find(layer);
     if (olprit == _oneLayerPhysicalRules.end()) {
         throw Error("Cannot find Physical Rules for layer " + getString(layer->getName()));
     }
-    PhysicalRules& physicalRules = olprit->second;
+    const PhysicalRules& physicalRules = olprit->second;
     PhysicalRule searchPR(name, 0, "");
     PhysicalRules::iterator prit = physicalRules.find(&searchPR);
     if (prit == physicalRules.end()) {
@@ -135,11 +135,15 @@ const ATechnology::PhysicalRule* ATechnology::getPhysicalRule(
         const Name& name,
         const Layer* layer1,
         const Layer* layer2) const {
-    TwoLayerPhysicalRules::iterator tlprit = _twoLayerPhysicalRules.find(layer);
-    if (olprit == _oneLayerPhysicalRules.end()) {
-        throw Error("Cannot find Physical Rules for layer " + getString(layer->getName()));
+    LayerPair searchLayerPair(layer1, layer2);
+    TwoLayersPhysicalRules::const_iterator tlprit = _twoLayersPhysicalRules.find(searchLayerPair);
+    if (tlprit == _twoLayersPhysicalRules.end()) {
+        throw Error("Cannot find Physical Rules for layers " +
+                getString(layer1->getName()) +
+                " and " +
+                getString(layer2->getName()));
     }
-    PhysicalRules& physicalRules = olprit->second;
+    const PhysicalRules& physicalRules = tlprit->second;
     PhysicalRule searchPR(name, 0, "");
     PhysicalRules::iterator prit = physicalRules.find(&searchPR);
     if (prit == physicalRules.end()) {

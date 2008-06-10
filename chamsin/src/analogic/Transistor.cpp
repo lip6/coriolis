@@ -129,7 +129,7 @@ void Transistor::createLayout() {
     if (toto > _l) {
         dx30 = rwCont;
         dy30 = dx30;
-        y30 = _w + DbU::max(rdActiveCont, rdActivePoly + rePolyCont); 
+        y30 = _w + max(rdActiveCont, rdActivePoly + rePolyCont); 
     } else {
         dx30 = dx00 - 2*rePolyCont;
         dy30 = rwCont;
