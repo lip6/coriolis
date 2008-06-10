@@ -38,14 +38,36 @@ class ATechnology : public PrivateProperty {
                 }
             };
 
+        typedef pair<Layer*, Layer*> LayerPair;
+
+        struct LayerPairCompare:
+            public std::binary_function<const LayerPair&, const LayerPair&, bool> {
+                bool operator()(const LayerPair& lp1, const LayerPair& lp2) const {
+                    if (lp1->first < lp2->first) {
+                        return -1;
+                    }
+                    if (lp1->first > lp2->first) {
+                        return 1;
+                    }
+                    if (lp1->second < lp2->second) {
+                        return -1;
+                    }
+                    if (lp1->second > lp2->second) {
+                        return 1;
+                    }
+                    return 0;
+                }
+            };
+
         typedef set<ATechnology::PhysicalRule*, PhysicalRuleNameCompare> PhysicalRules;
         typedef map<Layer*, PhysicalRules> OneLayerPhysicalRules;
-        typedef pair<Layer*, Layer*> LayerPair;
-        typedef map<LayerPair, PhysicalRules> TwoLayersPhysicalRules;
+        typedef map<LayerPair, PhysicalRules, LayerPairCompare> TwoLayersPhysicalRules;
 
         static ATechnology* create(Hurricane::Technology* technology);
         static ATechnology* getATechnology(Hurricane::Technology* technology);
-        const PhysicalRule* getPhysicalRule(const Name& name);
+        const PhysicalRule* getPhysicalRule(const Name& name) const;
+        const PhysicalRule* getPhysicalRule(const Name& name, const Layer* layer) const;
+        const PhysicalRule* getPhysicalRule(const Name& name, const Layer* layer1, const Layer* layer2) const;
         void addPhysicalRule(const Name& name, double value, const string& reference);
         void addPhysicalRule(const Name& name, const Name& layerName, double value, const string& reference);
         void addPhysicalRule(const Name& name, const Name& layer1Name,

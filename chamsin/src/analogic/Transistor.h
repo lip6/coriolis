@@ -29,14 +29,15 @@ class Transistor : public Cell {
         void _postCreate();
 
     private:
+
         Net* _drain;
         Net* _source;
         Net* _grid;
         Net* _bulk;
         Polarity _polarity;
         AbutmentType _abutmentType;
-        double _l;
-        double _w;
+        DbU::Unit _l;
+        DbU::Unit _w;
         Pad *_source20, *_source22;
         Pad *_drain40, *_drain42;
         Pad *_grid00, *_grid01, *_grid30, *_grid31;

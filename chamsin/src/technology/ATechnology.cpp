@@ -95,6 +95,7 @@ void ATechnology::print() {
         printPhysicalRules(olprit->second);
         cout << endl;
     }
+    cout << " o Two Layers Physical Rules" << endl;
     for (TwoLayersPhysicalRules::iterator tlprit = _twoLayersPhysicalRules.begin();
             tlprit != _twoLayersPhysicalRules.end();
             tlprit++) {
@@ -107,10 +108,41 @@ void ATechnology::print() {
     }
 }
 
-const ATechnology::PhysicalRule* ATechnology::getPhysicalRule(const Name& name) {
+const ATechnology::PhysicalRule* ATechnology::getPhysicalRule(const Name& name) const {
     PhysicalRule searchPR(name, 0, "");
     PhysicalRules::iterator prit = _noLayerPhysicalRules.find(&searchPR);
     if (prit == _noLayerPhysicalRules.end()) {
+        throw Error("Cannot find Physical Rule " + getString(name));
+    }
+    return *prit;
+}
+
+const ATechnology::PhysicalRule* ATechnology::getPhysicalRule(const Name& name, const Layer* layer) const {
+    OneLayerPhysicalRules::iterator olprit = _oneLayerPhysicalRules.find(layer);
+    if (olprit == _oneLayerPhysicalRules.end()) {
+        throw Error("Cannot find Physical Rules for layer " + getString(layer->getName()));
+    }
+    PhysicalRules& physicalRules = olprit->second;
+    PhysicalRule searchPR(name, 0, "");
+    PhysicalRules::iterator prit = physicalRules.find(&searchPR);
+    if (prit == physicalRules.end()) {
+        throw Error("Cannot find Physical Rule " + getString(name));
+    }
+    return *prit;
+}
+
+const ATechnology::PhysicalRule* ATechnology::getPhysicalRule(
+        const Name& name,
+        const Layer* layer1,
+        const Layer* layer2) const {
+    TwoLayerPhysicalRules::iterator tlprit = _twoLayerPhysicalRules.find(layer);
+    if (olprit == _oneLayerPhysicalRules.end()) {
+        throw Error("Cannot find Physical Rules for layer " + getString(layer->getName()));
+    }
+    PhysicalRules& physicalRules = olprit->second;
+    PhysicalRule searchPR(name, 0, "");
+    PhysicalRules::iterator prit = physicalRules.find(&searchPR);
+    if (prit == physicalRules.end()) {
         throw Error("Cannot find Physical Rule " + getString(name));
     }
     return *prit;

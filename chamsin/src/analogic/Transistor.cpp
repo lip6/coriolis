@@ -18,7 +18,8 @@ Pad* createPad(Technology* technology, Net* net, const string& layerName) {
 }
 
 
-void createContactMatrix(Net* net, const Layer* layer, const Box& box, unsigned columns, const Unit& rwCont, const Unit& rdCont) {
+void createContactMatrix(Net* net, const Layer* layer, const Box& box, unsigned columns,
+        const DbU::Unit& rwCont, const DbU::Unit& rdCont) {
     unsigned contacts = 0;
     if (box.getHeight() < rwCont) {
         contacts = 0;
@@ -63,8 +64,8 @@ Transistor::Transistor(Library* library, const Name& name, const Polarity& polar
     _bulk(NULL),
     _polarity(polarity),
     _abutmentType(),
-    _l(0.0),
-    _w(0.0),
+    _l(DbU::Min),
+    _w(DbU::Min),
     _source20(NULL), _source22(NULL),
     _drain40(NULL), _drain42(NULL),
     _grid00(NULL), _grid01(NULL), _grid30(NULL), _grid31(NULL)
@@ -105,57 +106,57 @@ void Transistor::_postCreate() {
 void Transistor::createLayout() {
     ATechnology* techno = AEnv::getATechnology();
 
-    Unit rwCont = getUnit(techno->getPhysicalRule("RW_CONT")->getValue());
-    Unit rdCont = getUnit(techno->getPhysicalRule("RD_CONT")->getValue());
-    Unit reGateActiv = getUnit(techno->getPhysicalRule("RE", getLayer("poly"), getLayer("active"))->getValue()); 
-    Unit rePolyCont = getUnit(techno->getPhysicalRule("RE", getLayer("poly"), getLayer("cut"))->getValue());
-    Unit rdActiveCont = getUnit("RD", getLayer("active"), getLayer("cut"));
-    Unit rdActivePoly = getUnit("RD", getLayer("active"), getLayer("poly"));
+    DbU::Unit rwCont = DbU::real(techno->getPhysicalRule("RW_CONT")->getValue());
+    DbU::Unit rdCont = DbU::real(techno->getPhysicalRule("RD_CONT")->getValue());
+    DbU::Unit reGateActiv = DbU::real(techno->getPhysicalRule("RE", getLayer("poly"), getLayer("active"))->getValue()); 
+    DbU::Unit rePolyCont = DbU::real(techno->getPhysicalRule("RE", getLayer("poly"), getLayer("cut"))->getValue());
+    DbU::Unit rdActiveCont = DbU::real(techno->getPhysicalRule("RD", getLayer("active"), getLayer("cut"))->getValue());
+    DbU::Unit rdActivePoly = DbU::real(techno->getPhysicalRule("RD", getLayer("active"), getLayer("poly"))->getValue());
 
     UpdateSession::open();
 
     //grid 00
-    Unit y00 = -reGateActiv;
-    Unit dx00 = _l;
-    Unit dy00 = _w - y00*2; 
-    Box box00(0, y00, dx00, dy00);
+    DbU::Unit x00 = 0;
+    DbU::Unit y00 = -reGateActiv;
+    DbU::Unit dx00 = _l;
+    DbU::Unit dy00 = _w - y00*2; 
+    Box box00(x00, y00, dx00, dy00);
     _grid00->setBoundingBox(box00);
 
     //grid30
-    Unit toto = rwCont + 2*rePolyCont;
-    Unit dx30 = 0, dy30 = 0;
+    DbU::Unit toto = rwCont + 2*rePolyCont;
+    DbU::Unit x30 = 0, dx30 = 0, y30 = 0, dy30 = 0;
     if (toto > _l) {
         dx30 = rwCont;
         dy30 = dx30;
-        y30 = _w + Unit::max(rdActiveCont, rdAvtivePoly + rePolyCont); 
+        y30 = _w + DbU::max(rdActiveCont, rdActivePoly + rePolyCont); 
     } else {
         dx30 = dx00 - 2*rePolyCont;
         dy30 = rwCont;
         y30 = _w + rdActiveCont;
     }
-    Unit x30 = x00 + dx00/2 - dx30/2;
+    x30 = x00 + dx00/2 - dx30/2;
     Box box30(x30, y30, dx30, dy30);
     _grid30->setBoundingBox(box30);
 
     //grid31
-    Unit dx31 = dx30 + 2*rePolyCont;
-    Unit dy31 = dy30 + 2*rePolyCont;
-    Unit x31 = x30 - rePolyCont;
-    Unit y31 = y30 - rePolyCont;
+    DbU::Unit dx31 = dx30 + 2*rePolyCont;
+    DbU::Unit dy31 = dy30 + 2*rePolyCont;
+    DbU::Unit x31 = x30 - rePolyCont;
+    DbU::Unit y31 = y30 - rePolyCont;
     Box box31(x31, y31, dx31, dy31);
     _grid31->setBoundingBox(box31);
 
     //grid01
+    DbU::Unit x01 = 0, y01 = 0, dx01 = 0, dy01 = 0;
     if (y31 <= y00+dy00) {
         x01 = 0; y01 = 0; dx01 = 0; dy01 = 0;
-  }
-  else {
-    x01 = x00; 
-    y01 = y00 + dy00; 
-    dx01 = dx00; 
-    dy01 = y31 - (y00 + dy00);
-  }
-
+    } else {
+        x01 = x00; 
+        y01 = y00 + dy00; 
+        dx01 = dx00; 
+        dy01 = y31 - (y00 + dy00);
+    }
 
     UpdateSession::close();
 }
