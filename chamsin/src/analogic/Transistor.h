@@ -43,7 +43,7 @@ class Transistor : public Cell {
         Pad *_source20, *_source22;
         Pad *_drain40, *_drain42;
         Pad *_grid00, *_grid01, *_grid30, *_grid31;
-        Pad *_anonymous10, *_anonymous11, *_anonymous12, *_anonymous50;
+        Pad *_anonymous10, *_anonymous11, *_anonymous12;
 
         Transistor(Library* library, const Name& name, const Polarity& polarity);
 };

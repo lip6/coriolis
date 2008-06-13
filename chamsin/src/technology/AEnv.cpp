@@ -13,7 +13,7 @@ using namespace CRL;
 #include "AEnv.h"
 
 void AEnv::create(const char* technoFilePath, const char* graphicFilePath, const char* analogTechnoFilePath) {
-    DataBase* db = getDataBase();
+    DataBase* db = DataBase::getDB();
     if (db) {
         throw Error("");
     }
@@ -27,7 +27,7 @@ void AEnv::create(const char* technoFilePath, const char* graphicFilePath, const
 }
 
 ATechnology* AEnv::getATechnology() {
-    DataBase* db = getDataBase();
+    DataBase* db = DataBase::getDB();
     if (!db) {
         throw Error("");
     }

@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
             exit(56);
         }
         AEnv::create(argv[1], argv[2], argv[3]);
-        DataBase* db = getDataBase();
+        DataBase* db = DataBase::getDB();
         Library* rootLibrary = db->getRootLibrary();
         Library* userLibrary = Library::create(rootLibrary, Name("USER"));
 
@@ -34,6 +34,7 @@ int main(int argc, char* argv[]) {
         }
         aTechnology->print();
         Transistor* trans = Transistor::create(userLibrary, Name("TEST"), Transistor::P);
+        trans->createLayout();
         cerr << trans << endl;
         exit(0);
     } catch (Hurricane::Warning& w) {

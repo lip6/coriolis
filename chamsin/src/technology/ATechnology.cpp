@@ -6,7 +6,7 @@ using namespace Hurricane;
 namespace {
 static Name ATechnologyPropertyName("ATechnologyProperty");
 
-void printPhysicalRules(ATechnology::PhysicalRules& physicalRules) {
+void printPhysicalRules(const ATechnology::PhysicalRules& physicalRules) {
     for (ATechnology::PhysicalRules::iterator prit = physicalRules.begin();
             prit != physicalRules.end();
             prit++) {
@@ -42,8 +42,7 @@ void ATechnology::addPhysicalRule(const Name& name, const Name& layerName, DbU::
     OneLayerPhysicalRules::iterator olprit = _oneLayerPhysicalRules.find(layer);
     if (olprit == _oneLayerPhysicalRules.end()) {
         pair<OneLayerPhysicalRules::iterator, bool> result =
-            _oneLayerPhysicalRules.insert(make_pair(layer, PhysicalRules()));
-        assert(result.second);
+            _oneLayerPhysicalRules.insert(OneLayerPhysicalRules::value_type(layer, PhysicalRules()));
         olprit = result.first;
         PhysicalRule* newPhysicalRule = new PhysicalRule(name, value, reference);
         olprit->second.insert(newPhysicalRule);
@@ -60,6 +59,25 @@ void ATechnology::addPhysicalRule(const Name& name, const Name& layerName, DbU::
 
 void ATechnology::addPhysicalRule(const Name& name, const Name& layer1Name,
         const Name& layer2Name, DbU::Unit value, const string& reference) {
+    Layer* layer1 = getLayer(layer1Name);
+    Layer* layer2 = getLayer(layer2Name);
+    LayerPair layerPair(layer1, layer2);
+    TwoLayersPhysicalRules::iterator tlprit = _twoLayersPhysicalRules.find(layerPair);
+    if (tlprit == _twoLayersPhysicalRules.end()) {
+        pair<TwoLayersPhysicalRules::iterator, bool> result =
+            _twoLayersPhysicalRules.insert(TwoLayersPhysicalRules::value_type(layerPair, PhysicalRules()));
+        tlprit = result.first;
+        PhysicalRule* newPhysicalRule = new PhysicalRule(name, value, reference);
+        tlprit->second.insert(newPhysicalRule);
+    } else {
+        PhysicalRules& physicalRules = tlprit->second;
+        PhysicalRule searchPR(name, 0, "");
+        if (physicalRules.find(&searchPR) != physicalRules.end()) {
+            throw Error("duplicate rule");
+        }
+        PhysicalRule* newPhysicalRule = new PhysicalRule(name, value, reference);
+        physicalRules.insert(newPhysicalRule);
+    }
 }
 
 ATechnology* ATechnology::create(Technology* technology) {
@@ -141,7 +159,8 @@ const ATechnology::PhysicalRule* ATechnology::getPhysicalRule(
         throw Error("Cannot find Physical Rules for layers " +
                 getString(layer1->getName()) +
                 " and " +
-                getString(layer2->getName()));
+                getString(layer2->getName()) +
+                " (searching Rule : " + getString(name) +")");
     }
     const PhysicalRules& physicalRules = tlprit->second;
     PhysicalRule searchPR(name, 0, "");

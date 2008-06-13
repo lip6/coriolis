@@ -11,12 +11,6 @@ using namespace Hurricane;
 namespace {
 
 
-Pad* createPad(Technology* technology, Net* net, const string& layerName) {
-    Layer* layer = technology->getLayer(Name(layerName));
-    Pad* pad = Pad::create(net, layer, Box());
-    return pad;
-}
-
 
 void createContactMatrix(Net* net, const Layer* layer, const Box& box, unsigned columns,
         const DbU::Unit& rwCont, const DbU::Unit& rdCont) {
@@ -45,7 +39,19 @@ void createContactMatrix(Net* net, const Layer* layer, const Box& box, unsigned 
     }
 }
 
-Layer* getLayer(const string& layerStr) {
+Layer* getLayer(Technology* technology, const string& layerStr) {
+   Layer* layer = technology->getLayer(layerStr);
+   if (!layer) {
+       throw Error("Unknown Layer : " + layerStr);
+   }
+   return layer; 
+}
+
+Pad* createPad(Technology* technology, Net* net, const string& layerName) {
+    static Box emptyBox(0, 0, 0, 0);
+    Layer* layer = getLayer(technology, layerName);
+    Pad* pad = Pad::create(net, layer, emptyBox);
+    return pad;
 }
 
 
@@ -85,7 +91,7 @@ Transistor* Transistor::create(Library* library, const Name& name, const Polarit
 
 void Transistor::_postCreate() {
    Inherit::_postCreate();
-   DataBase* db = getDataBase();
+   DataBase* db = DataBase::getDB();
    Technology* technology = db->getTechnology();
    _drain = Net::create(this, DrainName);
    _drain->setExternal(true);
@@ -105,51 +111,85 @@ void Transistor::_postCreate() {
    _grid30      = createPad(technology, _grid,      "cut0");
    _grid31      = createPad(technology, _grid,      "metal1");
    _anonymous10 = createPad(technology, _anonymous, "active");
-   _anonymous11 = createPad(technology, _anonymous, "nimp");
-   _anonymous12 = createPad(technology, _anonymous, "nimp");
+   if (_polarity == N) { 
+       _anonymous11 = createPad(technology, _anonymous, "nImplant");
+       _anonymous12 = createPad(technology, _anonymous, "nImplant");
+   } else {
+       _anonymous11 = createPad(technology, _anonymous, "pImplant");
+       _anonymous12 = createPad(technology, _anonymous, "pImplant");
+   }
 }
 
 void Transistor::createLayout() {
-    ATechnology* techno = AEnv::getATechnology();
+    DataBase* db = DataBase::getDB();
+    if (!db) {
+        throw Error("Error : no DataBase");
+    }
+    Technology* techno = db->getTechnology();
+    if (!techno) {
+        throw Error("Error : no Technology");
+    }
+    ATechnology* atechno = AEnv::getATechnology();
 
-    DbU::Unit rwCont = techno->getPhysicalRule("RW_CONT")->getValue();
-    DbU::Unit rdCont = techno->getPhysicalRule("RD_CONT")->getValue();
-    DbU::Unit reGateActiv  = techno->getPhysicalRule("RE", getLayer("poly"), getLayer("active"))->getValue(); 
-    DbU::Unit rePolyCont   = techno->getPhysicalRule("RE", getLayer("poly"), getLayer("cut"))->getValue();
-    DbU::Unit rdActiveCont = techno->getPhysicalRule("RD", getLayer("active"), getLayer("cut"))->getValue();
-    DbU::Unit rdActivePoly = techno->getPhysicalRule("RD", getLayer("active"), getLayer("poly"))->getValue();
+    DbU::Unit widthCut0         = atechno->getPhysicalRule("minWidth", getLayer(techno, "cut0"))->getValue();
+    DbU::Unit extGateActive     = atechno->getPhysicalRule("minGateExtension",
+            getLayer(techno, "poly"), getLayer(techno, "active"))->getValue(); 
+    DbU::Unit extPolyCut0       = atechno->getPhysicalRule("minExtension",
+            getLayer(techno, "poly"), getLayer(techno, "cut0"))->getValue();
+    DbU::Unit spacingActiveCut0 = atechno->getPhysicalRule("minSpacing",
+            getLayer(techno, "active"), getLayer(techno, "cut0"))->getValue();
+    DbU::Unit spacingActivePoly = atechno->getPhysicalRule("minSpacing",
+            getLayer(techno, "active"), getLayer(techno, "poly"))->getValue();
+    DbU::Unit extImplantPoly = 0;
+    DbU::Unit extImplantActive = 0;
+    DbU::Unit extImplantCut0 = 0;
+    if (_polarity == N) {
+        extImplantPoly   = atechno->getPhysicalRule("minExtension",
+                getLayer(techno, "nImplant"), getLayer(techno, "poly"))->getValue();
+        extImplantActive = atechno->getPhysicalRule("minExtension",
+                getLayer(techno, "nImplant"), getLayer(techno, "active"))->getValue();
+        extImplantCut0   = atechno->getPhysicalRule("minExtension",
+                getLayer(techno, "nImplant"), getLayer(techno, "cut0"))->getValue();
+    } else {
+        extImplantPoly   = atechno->getPhysicalRule("minExtension",
+                getLayer(techno, "pImplant"), getLayer(techno, "poly"))->getValue();
+        extImplantActive = atechno->getPhysicalRule("minExtension",
+                getLayer(techno, "pImplant"), getLayer(techno, "active"))->getValue();
+        extImplantCut0   = atechno->getPhysicalRule("minExtension",
+                getLayer(techno, "pImplant"), getLayer(techno, "cut0"))->getValue();
+    }
 
     UpdateSession::open();
 
     //grid 00
     DbU::Unit x00 = 0;
-    DbU::Unit y00 = -reGateActiv;
+    DbU::Unit y00 = -extGateActive;
     DbU::Unit dx00 = _l;
     DbU::Unit dy00 = _w - y00*2; 
     Box box00(x00, y00, dx00, dy00);
     _grid00->setBoundingBox(box00);
 
     //grid30
-    DbU::Unit toto = rwCont + 2*rePolyCont;
+    DbU::Unit maxValue = widthCut0 + 2*extPolyCut0;
     DbU::Unit x30 = 0, dx30 = 0, y30 = 0, dy30 = 0;
-    if (toto > _l) {
-        dx30 = rwCont;
+    if (maxValue > _l) {
+        dx30 = widthCut0;
         dy30 = dx30;
-        y30 = _w + max(rdActiveCont, rdActivePoly + rePolyCont); 
+        y30 = _w + max(spacingActiveCut0, spacingActivePoly + extPolyCut0); 
     } else {
-        dx30 = dx00 - 2*rePolyCont;
-        dy30 = rwCont;
-        y30 = _w + rdActiveCont;
+        dx30 = dx00 - 2*extPolyCut0;
+        dy30 = widthCut0;
+        y30 = _w + spacingActiveCut0;
     }
     x30 = x00 + dx00/2 - dx30/2;
     Box box30(x30, y30, dx30, dy30);
     _grid30->setBoundingBox(box30);
 
     //grid31
-    DbU::Unit dx31 = dx30 + 2*rePolyCont;
-    DbU::Unit dy31 = dy30 + 2*rePolyCont;
-    DbU::Unit x31 = x30 - rePolyCont;
-    DbU::Unit y31 = y30 - rePolyCont;
+    DbU::Unit dx31 = dx30 + 2*extPolyCut0;
+    DbU::Unit dy31 = dy30 + 2*extPolyCut0;
+    DbU::Unit x31 = x30 - extPolyCut0;
+    DbU::Unit y31 = y30 - extPolyCut0;
     Box box31(x31, y31, dx31, dy31);
     _grid31->setBoundingBox(box31);
 
@@ -163,8 +203,18 @@ void Transistor::createLayout() {
         dx01 = dx00; 
         dy01 = y31 - (y00 + dy00);
     }
+    Box box01(x01, y01, dx01, dy01);
+    _grid01->setBoundingBox(box01);
 
-    //12
+    //anonymous12
+    DbU::Unit x12 = min(x31, x00) - extImplantPoly;
+    DbU::Unit y12 = min(0 - extImplantActive, y00 - extImplantPoly);
+    DbU::Unit dx12 = max(dx31, dx00) + 2 * extImplantPoly;
+    DbU::Unit yMax = max( max(y30 + dy30 + extImplantCut0, max(y31 + dy31, y00 + dy00) + extImplantPoly), _w + extImplantActive);
+    DbU::Unit dy12 = yMax - y12;
+
+    Box box12(x12, y12, dx12, dy12);
+    _anonymous12->setBoundingBox(box12);
 
     UpdateSession::close();
 }
