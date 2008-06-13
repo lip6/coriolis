@@ -63,7 +63,7 @@ namespace Hurricane {
     }
     gentry->setChecked ( false );
 
-    DataBase* database = getDataBase();
+    DataBase* database = DataBase::getDB();
     if ( database ) {
       Technology* technology = database->getTechnology();
       if ( technology ) {

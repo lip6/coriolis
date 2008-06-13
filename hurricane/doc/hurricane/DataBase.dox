@@ -43,6 +43,12 @@
   */
  // \{
 
+ /*! \function     DataBase* DataBase::getDB ();
+  *                This static function returns the current
+  *                DataBase, if it has been created and not destroyed,
+  *                else \NULL.
+  */
+
  /*! \function     Technology* DataBase::getTechnology () const;
   *  \return       the Technology if it exists, else \NULL.
   */
@@ -51,18 +57,6 @@
   *  \return       the root Library if it exists, else \NULL.
   */
 
- // \}
-
-
- /*! \addtogroup   Generalities
-  *  \{
-  */
-
- /*! \function     DataBase* getDataBase ();
-  *                This global generic function returns the current
-  *                DataBase, if it has been created and not destroyed,
-  *                else \NULL.
-  */
 
  // \}
 

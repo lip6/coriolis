@@ -89,7 +89,7 @@ extern "C" {
     DataBase* db = NULL;
 
     HTRY
-    db = getDataBase ();
+    db = DataBase::getDB ();
     if ( db == NULL )
       PyErr_SetString ( HurricaneError, "DataBase has not been created yet" );
     HCATCH

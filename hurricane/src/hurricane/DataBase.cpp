@@ -20,7 +20,7 @@ namespace Hurricane {
 // DataBase implementation
 // ****************************************************************************************************
 
-static DataBase* DATA_BASE = NULL;
+DataBase* DataBase::_db = NULL;
 
 DataBase::DataBase()
 // *****************
@@ -28,7 +28,7 @@ DataBase::DataBase()
     _technology(NULL),
     _rootLibrary(NULL)
 {
-    if (DATA_BASE)
+    if (_db)
         throw Error("Can't create " + _TName("DataBase") + " : already exists");
 }
 
@@ -47,7 +47,7 @@ void DataBase::_postCreate()
 {
     Inherit::_postCreate();
 
-    DATA_BASE = this;
+    _db = this;
 }
 
 void DataBase::_preDestroy()
@@ -60,7 +60,7 @@ void DataBase::_preDestroy()
     if (_technology) _technology->destroy();
     UpdateSession::close();
 
-    DATA_BASE = NULL;
+    _db = NULL;
 }
 
 string DataBase::_getString() const
@@ -83,14 +83,10 @@ Record* DataBase::_getRecord() const
     return record;
 }
 
-// ****************************************************************************************************
-// Generic functions
-// ****************************************************************************************************
-
-DataBase* getDataBase()
-// ********************
+DataBase* DataBase::getDB()
+// ************************
 {
-    return DATA_BASE;
+    return _db;
 }
 
 

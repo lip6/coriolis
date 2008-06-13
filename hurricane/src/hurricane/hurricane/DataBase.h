@@ -34,6 +34,7 @@ class DataBase : public DBo {
 // Attributes
 // **********
 
+    private: static DataBase* _db;
     private: Technology* _technology;
     private: Library* _rootLibrary;
 
@@ -65,17 +66,9 @@ class DataBase : public DBo {
 
     public: Technology* getTechnology() const {return _technology;};
     public: Library* getRootLibrary() const {return _rootLibrary;};
+    public: static DataBase* getDB();
 
 };
-
-
-// ****************************************************************************************************
-// Generic functions
-// ****************************************************************************************************
-
-DataBase* getDataBase();
-
-
 
 } // End of Hurricane namespace.
 
