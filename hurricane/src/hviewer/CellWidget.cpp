@@ -17,6 +17,7 @@
 # include "hurricane/Slice.h"
 # include "hurricane/Segment.h"
 # include "hurricane/Contact.h"
+# include "hurricane/Pad.h"
 
 # include "hurricane/viewer/Graphics.h"
 # include "hurricane/viewer/PaletteEntry.h"
@@ -130,7 +131,7 @@ void  CellWidget::redraw ( QRect redrawArea )
   update ();
   popCursor ();
 
-  cerr << "Redrawed rectangles: " << _redrawRectCount << endl;
+  //cerr << "Redrawed rectangles: " << _redrawRectCount << endl;
 }
 
 
@@ -237,6 +238,12 @@ void CellWidget::drawGo ( const Go*             go
     drawContact ( contact, basicLayer, redrawArea, transformation );
     return;
   }
+
+  const Pad* pad = dynamic_cast<const Pad*>(go);
+  if (pad) {
+    drawPad ( pad, basicLayer, redrawArea, transformation );
+    return;
+  }
 }
 
 
@@ -262,6 +269,15 @@ void CellWidget::drawContact ( const Contact*        contact
                              )
 {
   drawBox ( transformation.getBox(contact->getBoundingBox(basicLayer)) );
+}
+
+void CellWidget::drawPad ( const Pad*            pad
+                         , const BasicLayer*     basicLayer
+                         , const Box&            redrawArea
+                         , const Transformation& transformation
+                         )
+{
+  drawBox ( transformation.getBox(pad->getBoundingBox(basicLayer)) );
 }
 
 

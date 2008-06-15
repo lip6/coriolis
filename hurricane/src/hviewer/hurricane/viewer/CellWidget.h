@@ -41,6 +41,7 @@ namespace Hurricane {
   class Slice;
   class Segment;
   class Contact;
+  class Pad;
 
   class PaletteEntry;
   class Palette;
@@ -127,6 +128,7 @@ namespace Hurricane {
               void                  drawGo            ( const Go*      , const BasicLayer*, const Box&, const Transformation& );
               void                  drawSegment       ( const Segment* , const BasicLayer*, const Box&, const Transformation& );
               void                  drawContact       ( const Contact* , const BasicLayer*, const Box&, const Transformation& );
+              void                  drawPad           ( const Pad*     , const BasicLayer*, const Box&, const Transformation& );
               void                  drawBox           ( const Box& );
               void                  drawLine          ( const Point&, const Point& );
 

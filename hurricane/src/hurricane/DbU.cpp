@@ -91,8 +91,6 @@ namespace Hurricane {
   { return _realsPerLambda; }
 
 
-  void  DbU::setStringMode ( unsigned int mode )
-  { _stringMode = mode; }
 
 
  

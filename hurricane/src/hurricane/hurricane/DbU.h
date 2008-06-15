@@ -68,7 +68,7 @@ namespace Hurricane {
       static inline double              getReal             ( Unit u );
       static inline double              getLambda           ( Unit u );
       static        string              getValueString      ( Unit u );
-      inline        void                setStringMode       ( unsigned int mode );
+      static inline void                setStringMode       ( unsigned int mode );
 
     public:
     // Static Attributes: constants.
@@ -85,12 +85,13 @@ namespace Hurricane {
 
 
 // Inline Functions.
-  inline DbU::Unit  DbU::db            ( long value )   { return value; }
-  inline DbU::Unit  DbU::real          ( double value ) { return (long)rint( value/_resolution ); }
-  inline DbU::Unit  DbU::lambda        ( double value ) { return real(value*_realsPerLambda); }
-  inline long       DbU::getDb         ( DbU::Unit u )  { return u; }
-  inline double     DbU::getReal       ( DbU::Unit u )  { return _resolution*(double)u; }
-  inline double     DbU::getLambda     ( DbU::Unit u )  { return getReal(u)/_realsPerLambda; }
+  inline DbU::Unit  DbU::db            ( long value )        { return value; }
+  inline DbU::Unit  DbU::real          ( double value )      { return (long)rint( value/_resolution ); }
+  inline DbU::Unit  DbU::lambda        ( double value )      { return real(value*_realsPerLambda); }
+  inline long       DbU::getDb         ( DbU::Unit u )       { return u; }
+  inline double     DbU::getReal       ( DbU::Unit u )       { return _resolution*(double)u; }
+  inline double     DbU::getLambda     ( DbU::Unit u )       { return getReal(u)/_realsPerLambda; }
+  inline void       DbU::setStringMode ( unsigned int mode ) { _stringMode = mode; }
 
 
 } // End of Hurricane namespace.
