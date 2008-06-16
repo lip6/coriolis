@@ -31,6 +31,19 @@ class ATechnology : public PrivateProperty {
                 double getValue() const { return _value; }
         };
 
+        class TwoLayersPhysicalRule : public PhysicalRule {
+            public:
+                TwoLayersPhysicalRule(const Name& name,
+                        DbU::Unit value,
+                        const string& reference,
+                        bool symetric):
+                    PhysicalRule(name, value, reference),
+                    _symetric(symetric) {}
+
+                bool isSymetric() const { return _symetric; } 
+                const bool _symetric; 
+        };
+
         struct PhysicalRuleNameCompare:
             public std::binary_function<const PhysicalRule*, const PhysicalRule*, bool> {
                 bool operator()(const PhysicalRule* pr1, const PhysicalRule* pr2) const {
@@ -41,8 +54,9 @@ class ATechnology : public PrivateProperty {
         typedef pair<const Layer*, const Layer*> LayerPair;
 
         typedef set<ATechnology::PhysicalRule*, PhysicalRuleNameCompare> PhysicalRules;
+        typedef set<ATechnology::TwoLayersPhysicalRule*, PhysicalRuleNameCompare> TwoLayersPhysicalRulesSet;
         typedef map<const Layer*, PhysicalRules> OneLayerPhysicalRules;
-        typedef map<LayerPair, PhysicalRules> TwoLayersPhysicalRules;
+        typedef map<LayerPair, TwoLayersPhysicalRulesSet> TwoLayersPhysicalRules;
 
         static ATechnology* create(Hurricane::Technology* technology);
         static ATechnology* getATechnology(Hurricane::Technology* technology);
@@ -52,7 +66,7 @@ class ATechnology : public PrivateProperty {
         void addPhysicalRule(const Name& name, DbU::Unit value, const string& reference);
         void addPhysicalRule(const Name& name, const Name& layerName, DbU::Unit value, const string& reference);
         void addPhysicalRule(const Name& name, const Name& layer1Name,
-                const Name& layer2Name, DbU::Unit value, const string& reference);
+                const Name& layer2Name, bool symetric, DbU::Unit value, const string& reference);
         Layer* getLayer(const Name& layerName);
         void print();
 

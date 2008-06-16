@@ -23,7 +23,22 @@ void readPhysicalRules(xmlNode* node, ATechnology* aTechnology) {
             ruleNode;
             ruleNode = ruleNode->next) {
             if (ruleNode->type == XML_ELEMENT_NODE) {
-                if (xmlStrEqual(ruleNode->name, (xmlChar*)"rule")) {
+                if (xmlStrEqual(ruleNode->name, (xmlChar*)"arule")) {
+                    xmlChar* ruleNameC = xmlGetProp(ruleNode, (xmlChar*)"name");
+                    xmlChar* valueC = xmlGetProp(ruleNode, (xmlChar*)"value");
+                    xmlChar* refC = xmlGetProp(ruleNode, (xmlChar*)"ref");
+                    xmlChar* layer1C = xmlGetProp(ruleNode, (xmlChar*)"layer1");
+                    xmlChar* layer2C = xmlGetProp(ruleNode, (xmlChar*)"layer2");
+                    if (ruleNameC && valueC && refC && layer1C && layer2C) {
+                        string ruleName((const char*)ruleNameC);
+                        double value = atof((const char*)valueC);
+                        DbU::Unit unitValue= DbU::real(value);
+                        string reference((const char*)refC);
+                        Name layer1Name((const char*)layer1C);
+                        Name layer2Name((const char*)layer2C);
+                        aTechnology->addPhysicalRule(ruleName, layer1Name, layer2Name, false, unitValue, reference);
+                    }
+                } else if (xmlStrEqual(ruleNode->name, (xmlChar*)"rule")) {
                     xmlChar* ruleNameC = xmlGetProp(ruleNode, (xmlChar*)"name");
                     xmlChar* valueC = xmlGetProp(ruleNode, (xmlChar*)"value");
                     xmlChar* refC = xmlGetProp(ruleNode, (xmlChar*)"ref");
@@ -41,7 +56,7 @@ void readPhysicalRules(xmlNode* node, ATechnology* aTechnology) {
                         } else if (layer1C && layer2C) {
                             Name layer1Name((const char*)layer1C);
                             Name layer2Name((const char*)layer2C);
-                            aTechnology->addPhysicalRule(ruleName, layer1Name, layer2Name, unitValue, reference);
+                            aTechnology->addPhysicalRule(ruleName, layer1Name, layer2Name, true, unitValue, reference);
                         } else {
                             aTechnology->addPhysicalRule(ruleName, unitValue, reference);
                         }

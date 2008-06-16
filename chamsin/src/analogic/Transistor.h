@@ -17,7 +17,9 @@ class Transistor : public Cell {
         enum Polarity {N=0, P=1};
         enum AbutmentType { INTERNAL=0, LEFT=1, RIGHT=2, SINGLE=3};
 
-        static Transistor* create(Library* library, const Name& name, const Polarity& polarity);		
+        static Transistor* create(Library* library, const Name& name,
+                const Polarity& polarity,
+                DbU::Unit l, DbU::Unit w);
         void createLayout();
 
         bool isNmos() const { return _polarity == N; };
@@ -45,7 +47,9 @@ class Transistor : public Cell {
         Pad *_grid00, *_grid01, *_grid30, *_grid31;
         Pad *_anonymous10, *_anonymous11, *_anonymous12;
 
-        Transistor(Library* library, const Name& name, const Polarity& polarity);
+        Transistor(Library* library, const Name& name,
+                const Polarity& polarity,
+                DbU::Unit l, DbU::Unit w);
 };
 
 }

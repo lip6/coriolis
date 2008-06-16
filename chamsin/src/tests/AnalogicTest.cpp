@@ -6,6 +6,8 @@
 #include "hurricane/Error.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Library.h"
+#include "hurricane/viewer/CellViewer.h"
+
 using namespace Hurricane;
 
 #include "AEnv.h"
@@ -14,6 +16,7 @@ using namespace Hurricane;
 
 
 int main(int argc, char* argv[]) {
+    int  returnCode;
     try {
 
 	QApplication* qa = new QApplication(argc, argv);
@@ -33,10 +36,15 @@ int main(int argc, char* argv[]) {
             exit(56);
         }
         aTechnology->print();
-        Transistor* trans = Transistor::create(userLibrary, Name("TEST"), Transistor::P);
+        Transistor* trans = Transistor::create(userLibrary, Name("TEST"), Transistor::P, 10, 10);
         trans->createLayout();
-        cerr << trans << endl;
-        exit(0);
+        CellViewer* viewer = new CellViewer ( trans );
+        viewer->show();
+
+        returnCode = qa->exec();
+        delete viewer;
+        delete qa;
+
     } catch (Hurricane::Warning& w) {
         cerr << w.what() << endl;
     } catch (Hurricane::Error& e) {
@@ -46,4 +54,5 @@ int main(int argc, char* argv[]) {
         cout << "Abnormal termination\n" << endl;
         exit(2);
     }
+    return returnCode;
 }
