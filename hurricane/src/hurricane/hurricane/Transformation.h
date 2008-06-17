@@ -163,7 +163,6 @@ template<>
 inline std::string  getString<Hurricane::Transformation::Orientation::Code*>
                              ( Hurricane::Transformation::Orientation::Code* object )
                              {
-                               std::cerr << "Orientation::_getString(): " << std::hex << (void*)&object << " " << (unsigned int)object << std::endl;
                                switch ( *object ) {
                                  case Hurricane::Transformation::Orientation::ID: return "ID";
                                  case Hurricane::Transformation::Orientation::R1: return "R1";
@@ -181,7 +180,6 @@ template<>
 inline Hurricane::Record* getRecord<Hurricane::Transformation::Orientation::Code*>
                                    ( Hurricane::Transformation::Orientation::Code* object )
                                    {
-                                     std::cerr << "Orientation::_getRecord(): " << std::hex << (void*)&object << " " << (unsigned int)object << std::endl;
                                      Hurricane::Record* record = new Hurricane::Record(getString(object));
                                      record->add(getSlot("Code", (unsigned int*)object));
                                      return record;
