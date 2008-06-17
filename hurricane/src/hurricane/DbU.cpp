@@ -36,10 +36,45 @@ namespace Hurricane {
   const unsigned int  DbU::_maximalPrecision = 3;
   unsigned int        DbU::_precision        = 1;
   double              DbU::_resolution       = 0.1;
-  double              DbU::_realsPerLambda   = 10.0;
+  double              DbU::_gridsPerLambda   = 10.0;
+  double              DbU::_physicalsPerGrid = 1.0;
   unsigned int        DbU::_stringMode       = DbU::Symbolic;
   const DbU::Unit     DbU::Min               = LONG_MIN;
   const DbU::Unit     DbU::Max               = LONG_MAX;
+
+
+// -------------------------------------------------------------------
+// Class :  "Hurricane::DbUSlot".
+
+
+  class DbUSlot : public Slot {
+
+    public:
+    // Constructor.
+                               DbUSlot       ( const string& name, const DbU::Unit* data );
+                               DbUSlot       (       string& name, const DbU::Unit* data );
+    // Accessors.
+      virtual string           getDataString () const;
+      virtual Record*          getDataRecord () const;
+      virtual DbUSlot*         getClone      () const;
+
+    protected:
+    // Internal: Attributes.
+              const DbU::Unit* _unit;
+
+    private:
+    // Internal: Constructors.
+                               DbUSlot      ( const DbUSlot& );
+              DbUSlot&         operator=    ( const DbUSlot& );
+  };
+
+
+// Inline Member Functions.
+           DbUSlot::DbUSlot       ( const string& name, const DbU::Unit* unit ) : Slot(name), _unit(unit) {}
+           DbUSlot::DbUSlot       (       string& name, const DbU::Unit* unit ) : Slot(name), _unit(unit) {}
+  string   DbUSlot::getDataString () const { return DbU::getValueString(*_unit); }
+  Record*  DbUSlot::getDataRecord () const { return DbU::getValueRecord( _unit); }
+  DbUSlot* DbUSlot::getClone      () const { return new DbUSlot(_name,_unit); }
 
 
 // -------------------------------------------------------------------
@@ -75,20 +110,44 @@ namespace Hurricane {
   }
 
 
-  void  DbU::setRealsPerLambda ( double realsPerLambda )
+  double DbU::getUnitPower ( UnitPower p )
   {
-    if (   ( rint(realsPerLambda) != realsPerLambda ) 
-        || ( remainder(realsPerLambda,2.0) != 0.0   ) )
-      throw Error ( "DbU::Unit::setRealPerLambdas(): \"realsPerLambda\" (%f) must be an even integer."
-                  , realsPerLambda
-                  );
-
-    _realsPerLambda = realsPerLambda;
+    switch ( p ) {
+      case Pico:  return 1.0e-12;
+      case Nano:  return 1.0e-9;
+      case Micro: return 1.0e-6;
+      case Milli: return 1.0e-3;
+      case Unity: return 1.0;
+      case Kilo:  return 1.0e+3;
+    }
+    return 1.0;
   }
 
 
-  double  DbU::getRealsPerLambda ()
-  { return _realsPerLambda; }
+  void  DbU::setPhysicalsPerGrid ( double physicalsPerGrid, UnitPower p )
+  {
+    _physicalsPerGrid = physicalsPerGrid * getUnitPower(p);
+  }
+
+
+  double  DbU::getPhysicalsPerGrid ()
+  { return _physicalsPerGrid; }
+
+
+  void  DbU::setGridsPerLambda ( double gridsPerLambda )
+  {
+    if (   ( rint(gridsPerLambda) != gridsPerLambda ) 
+        || ( remainder(gridsPerLambda,2.0) != 0.0   ) )
+      throw Error ( "DbU::Unit::setGridPerLambdas(): \"gridsPerLambda\" (%f) must be an even integer."
+                  , gridsPerLambda
+                  );
+
+    _gridsPerLambda = gridsPerLambda;
+  }
+
+
+  double  DbU::getGridsPerLambda ()
+  { return _gridsPerLambda; }
 
 
 
@@ -154,11 +213,11 @@ namespace Hurricane {
     char buffer[1024];
     char unitSymbol = 'u';
 
-    if ( _stringMode == Real ) {
+    if ( _stringMode == Grid ) {
       if ( u == 0 ) return "0g";
 
       unitSymbol = 'g';
-      snprintf ( buffer, 1024, "%.1f", getReal(u) );
+      snprintf ( buffer, 1024, "%.1f", getGrid(u) );
     } else if ( _stringMode == Symbolic ) {
       if ( u == 0 ) return "0l";
 
@@ -182,6 +241,20 @@ namespace Hurricane {
     buffer[++length] = '\0';
 
     return buffer;
+  }
+
+
+  Record* DbU::getValueRecord ( const DbU::Unit* u )
+  {
+    Record* record = new Record(getValueString(*u));
+    record->add(getSlot("DbU::Unit", u));
+    return record;
+  }
+
+
+  Slot* DbU::getValueSlot ( const string& name, const DbU::Unit* u )
+  {
+    return new DbUSlot ( name, u );
   }
 
 

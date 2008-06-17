@@ -33,5 +33,24 @@
 namespace Hurricane {
 
 
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::Slot".
+
+
+  size_t  Slot::_allocateds = 0;
+
+
+  size_t  Slot::getAllocateds ()
+  {
+    return _allocateds;
+  }
+
+
+  Slot::~Slot ()
+  {
+  //cerr << "Slot::~Slot() - " << _name << ": " << hex << (void*)this << dec << endl;
+    _allocateds--;
+  }
+
 
 } // End of Hurricane namespace.

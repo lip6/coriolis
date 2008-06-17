@@ -23,8 +23,8 @@ template<class Type> class SubSetCollection;
 // Collection declaration
 // ****************************************************************************************************
 
-template<class Type> class Collection : public NestedSlotAdapter {
-// *************************************************************
+template<class Type> class Collection {
+// ************************************
 
 // Constructors
 // ************
@@ -813,15 +813,27 @@ template<class Type> class SubSetCollection : public Collection<Type> {
         _locator->progress();
 
 
-template<typename T>
-    class IsNestedSlotAdapter<const Hurricane::GenericCollection<T> > {
-      public:
-        enum { True=1, False=0 };
-    };
-
-
 
 } // End of Hurricane namespace.
+
+
+template<typename Type> inline std::string  getString ( Hurricane::Collection<Type>& collection )
+{ return collection._getString(); }
+
+template<typename Type> inline std::string  getString ( Hurricane::Collection<Type>* collection )
+{ return collection->_getString(); }
+
+template<typename Type> inline std::string  getString ( const Hurricane::Collection<Type>* collection )
+{ return collection->_getString(); }
+
+template<typename Type> inline Hurricane::Record* getRecord ( Hurricane::Collection<Type>& collection )
+{ return collection._getRecord(); }
+
+template<typename Type> inline Hurricane::Record* getRecord ( Hurricane::Collection<Type>* collection )
+{ return collection->_getRecord(); }
+
+template<typename Type> inline Hurricane::Record* getRecord ( const Hurricane::Collection<Type>* collection )
+{ return collection->_getRecord(); }
 
 
 #include "hurricane/MultisetCollection.h"

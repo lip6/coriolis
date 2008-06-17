@@ -120,7 +120,7 @@ class Box {
 } // End of Hurricane namespace.
 
 
-ValueIOStreamSupport(Hurricane::Box)
+INSPECTOR_PV_SUPPORT(Hurricane::Box);
 
 
 #endif // HURRICANE_BOX

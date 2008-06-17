@@ -325,14 +325,10 @@ template<class Key, class Element> class IntrusiveMap {
             record = new Record(getString(this));
             unsigned n = 1;
             for (unsigned index = 0; index < _length; index++) {
-                /**/
                 n = 1;
-                /**/
                 Element* element = _array[index];
                 while (element) {
-                    // record->add(getSlot(getString(n++), element));
-                    record->add(getSlot(getString(index) + ":" + getString(n++), element));
-                    /**/
+                  record->add(getSlot(getString(index) + ":" + getString(n++), element));
                     element = _getNextElement(element);
                 }
             }
@@ -441,6 +437,24 @@ template<class Key, class Element> class IntrusiveMap {
 
 
 } // End of Hurricane namespace.
+
+
+template<typename Key, typename Element>
+inline std::string  getString ( Hurricane::IntrusiveMap<Key,Element>* intrusiveMap )
+                              { return intrusiveMap->_getString(); }
+
+template<typename Key, typename Element>
+inline std::string  getString ( const Hurricane::IntrusiveMap<Key,Element>* intrusiveMap )
+                              { return intrusiveMap->_getString(); }
+
+template<typename Key, typename Element>
+inline Hurricane::Record* getRecord ( Hurricane::IntrusiveMap<Key,Element>* intrusiveMap )
+                                    { return intrusiveMap->_getRecord(); }
+
+template<typename Key, typename Element>
+inline Hurricane::Record* getRecord ( const Hurricane::IntrusiveMap<Key,Element>* intrusiveMap )
+                                    { return intrusiveMap->_getRecord(); }
+
 
 #endif // HURRICANE_INTRUSIVE_MAP
 

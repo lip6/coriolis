@@ -2,6 +2,7 @@
                include ( ${QT_USE_FILE} )
 
    include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane
+                         ${HURRICANE_SOURCE_DIR}/src/hinspector
                          ${HURRICANE_SOURCE_DIR}/src/hviewer
                        )
 

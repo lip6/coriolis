@@ -61,8 +61,6 @@ class Warning : public Exception {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::Warning)
-
 #endif // HURRICANE_WARNING
 
 // ****************************************************************************************************

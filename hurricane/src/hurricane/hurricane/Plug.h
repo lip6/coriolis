@@ -104,7 +104,8 @@ class Plug : public Component {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::Plug)
+INSPECTOR_P_SUPPORT(Hurricane::Plug);
+
 
 #endif // HURRICANE_PLUG
 

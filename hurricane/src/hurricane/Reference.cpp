@@ -30,7 +30,7 @@ Reference::Reference(Cell* cell, const Name& name, DbU::Unit x, DbU::Unit y)
   _name(name),
   _point(x,y)
 {
-  if ( !_extend ) _extend = DbU::real(0.5);
+  if ( !_extend ) _extend = DbU::grid(0.5);
 
   if (_name.isEmpty())
     throw Error("Can't create " + _TName("Reference") + " : empty name");

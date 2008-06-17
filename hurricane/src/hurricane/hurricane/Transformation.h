@@ -127,47 +127,70 @@ class Transformation {
 
 
 
-
-// -------------------------------------------------------------------
-// Class  :  "Proxy...<const Transformation::Orientation::Code*>".
-
-template<>
-  inline string  ProxyTypeName<Transformation::Orientation::Code>
-                              ( const Transformation::Orientation::Code* object )
-                              { return "<PointerSlotAdapter<Transformation::Orientation::Code>>"; }
-
-template<>
-  inline string  ProxyString  <Transformation::Orientation::Code>
-                              ( const Transformation::Orientation::Code* object )
-                              {
-                                switch ( *object ) {
-                                  case Transformation::Orientation::ID: return "ID";
-                                  case Transformation::Orientation::R1: return "R1";
-                                  case Transformation::Orientation::R2: return "R2";
-                                  case Transformation::Orientation::R3: return "R3";
-                                  case Transformation::Orientation::MX: return "MX";
-                                  case Transformation::Orientation::XR: return "XR";
-                                  case Transformation::Orientation::MY: return "MY";
-                                  case Transformation::Orientation::YR: return "YR";
-                                }
-                                return "ABNORMAL";
-                              }
-
-template<>
-  inline Record* ProxyRecord  <Transformation::Orientation::Code>
-                              ( const Transformation::Orientation::Code* object )
-                              {
-                                Record* record = new Record(getString(object));
-                                record->add(getSlot("Code", (unsigned int*)object));
-                                return record;
-                              }
-
-
-
 } // End of Hurricane namespace.
 
 
-ValueIOStreamSupport(Hurricane::Transformation)
+// -------------------------------------------------------------------
+// Inspector Support for  :  "Transformation::Orientation::Code*".
+
+template<>
+inline std::string  getString<const Hurricane::Transformation::Orientation::Code*>
+                             ( const Hurricane::Transformation::Orientation::Code* object )
+                             {
+                               switch ( *object ) {
+                                 case Hurricane::Transformation::Orientation::ID: return "ID";
+                                 case Hurricane::Transformation::Orientation::R1: return "R1";
+                                 case Hurricane::Transformation::Orientation::R2: return "R2";
+                                 case Hurricane::Transformation::Orientation::R3: return "R3";
+                                 case Hurricane::Transformation::Orientation::MX: return "MX";
+                                 case Hurricane::Transformation::Orientation::XR: return "XR";
+                                 case Hurricane::Transformation::Orientation::MY: return "MY";
+                                 case Hurricane::Transformation::Orientation::YR: return "YR";
+                               }
+                               return "ABNORMAL";
+                             }
+
+template<>
+inline Hurricane::Record* getRecord<const Hurricane::Transformation::Orientation::Code*>
+                                   ( const Hurricane::Transformation::Orientation::Code* object )
+                                   {
+                                     Hurricane::Record* record = new Hurricane::Record(getString(object));
+                                     record->add(getSlot("Code", (unsigned int*)object));
+                                     return record;
+                                   }
+
+template<>
+inline std::string  getString<Hurricane::Transformation::Orientation::Code*>
+                             ( Hurricane::Transformation::Orientation::Code* object )
+                             {
+                               std::cerr << "Orientation::_getString(): " << std::hex << (void*)&object << " " << (unsigned int)object << std::endl;
+                               switch ( *object ) {
+                                 case Hurricane::Transformation::Orientation::ID: return "ID";
+                                 case Hurricane::Transformation::Orientation::R1: return "R1";
+                                 case Hurricane::Transformation::Orientation::R2: return "R2";
+                                 case Hurricane::Transformation::Orientation::R3: return "R3";
+                                 case Hurricane::Transformation::Orientation::MX: return "MX";
+                                 case Hurricane::Transformation::Orientation::XR: return "XR";
+                                 case Hurricane::Transformation::Orientation::MY: return "MY";
+                                 case Hurricane::Transformation::Orientation::YR: return "YR";
+                               }
+                               return "ABNORMAL";
+                             }
+
+template<>
+inline Hurricane::Record* getRecord<Hurricane::Transformation::Orientation::Code*>
+                                   ( Hurricane::Transformation::Orientation::Code* object )
+                                   {
+                                     std::cerr << "Orientation::_getRecord(): " << std::hex << (void*)&object << " " << (unsigned int)object << std::endl;
+                                     Hurricane::Record* record = new Hurricane::Record(getString(object));
+                                     record->add(getSlot("Code", (unsigned int*)object));
+                                     return record;
+                                   }
+
+
+INSPECTOR_PV_SUPPORT(Hurricane::Transformation);
+INSPECTOR_PV_SUPPORT(Hurricane::Transformation::Orientation);
+IOSTREAM_POINTER_SUPPORT(Hurricane::Transformation::Orientation::Code);
 
 
 #endif // HURRICANE_TRANSFORMATION

@@ -51,7 +51,7 @@ class Timer {
 } // End of Hurricane namespace.
 
 
-ValueIOStreamSupport(Hurricane::Timer)
+INSPECTOR_PV_SUPPORT(Hurricane::Timer);
 
 
 #endif // HURRICANE_TIMER

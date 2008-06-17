@@ -84,6 +84,9 @@ class SharedName {
 } // End of Hurricane namespace.
 
 
+INSPECTOR_P_SUPPORT(Hurricane::SharedName);
+
+
 #endif // HURRICANE_SHARED_NAME
 
 // ****************************************************************************************************

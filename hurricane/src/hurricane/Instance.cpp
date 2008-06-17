@@ -471,7 +471,7 @@ Record* Instance::_getRecord() const
         record->add(getSlot("Name", &_name));
         record->add(getSlot("MasterCell", _masterCell));
         record->add(getSlot("Transformation", &_transformation));
-        record->add(getSlot("PlacementStatus", _placementStatus));
+        record->add(getSlot("PlacementStatus", &_placementStatus));
         record->add(getSlot("XCenter", DbU::getValueString(getAbutmentBox().getXCenter())));
         record->add(getSlot("YCenter", DbU::getValueString(getAbutmentBox().getYCenter())));
         record->add(getSlot("Plugs", &_plugMap));

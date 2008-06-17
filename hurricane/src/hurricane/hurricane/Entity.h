@@ -61,7 +61,8 @@ class Entity : public DBo {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::Entity)
+INSPECTOR_P_SUPPORT(Hurricane::Entity);
+
 
 #endif // HURRICANE_ENTITY
 

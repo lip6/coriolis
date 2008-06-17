@@ -79,8 +79,6 @@ class UpdateSession : public SharedProperty {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::UpdateSession)
-
 #endif // HURRICANE_UPDATE_SESSION
 
 // ****************************************************************************************************

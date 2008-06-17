@@ -71,7 +71,7 @@ bool IsHyperNetRootNetOccurrence(Occurrence netoccurrence);
 } // End of Hurricane namespace.
 
 
-PointerIOStreamSupport(Hurricane::HyperNet)
+INSPECTOR_P_SUPPORT(Hurricane::HyperNet);
 
 
 

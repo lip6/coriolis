@@ -261,6 +261,7 @@ Record* Cell::_getRecord() const
         record->add(getSlot("Pins", &_pinMap));
         record->add(getSlot("Slices", &_sliceMap));
         record->add(getSlot("Markers", &_markerSet));
+        record->add(getSlot("SlaveEntityMap", &_slaveEntityMap));
         record->add(getSlot("AbutmentBox", &_abutmentBox));
         record->add(getSlot("BoundingBox", &_boundingBox));
         record->add(getSlot("isTerminal", &_isTerminal));

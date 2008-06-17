@@ -286,7 +286,14 @@ class Cell : public Entity {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::Cell)
+INSPECTOR_P_SUPPORT(Hurricane::Cell);
+INSPECTOR_P_SUPPORT(Hurricane::Cell::InstanceMap);
+INSPECTOR_P_SUPPORT(Hurricane::Cell::SlaveInstanceSet);
+INSPECTOR_P_SUPPORT(Hurricane::Cell::NetMap);
+INSPECTOR_P_SUPPORT(Hurricane::Cell::PinMap);
+INSPECTOR_P_SUPPORT(Hurricane::Cell::SliceMap);
+INSPECTOR_P_SUPPORT(Hurricane::Cell::MarkerSet);
+
 
 #endif // HURRICANE_CELL
 

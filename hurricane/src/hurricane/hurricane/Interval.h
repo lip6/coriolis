@@ -93,7 +93,7 @@ class Interval {
 } // End of Hurricane namespace.
 
 
-ValueIOStreamSupport(Hurricane::Interval)
+INSPECTOR_PV_SUPPORT(Hurricane::Interval);
 
 
 #endif // HURRICANE_INTERVAL

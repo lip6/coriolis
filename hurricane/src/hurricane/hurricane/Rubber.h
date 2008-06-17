@@ -96,7 +96,8 @@ class Rubber : public Go {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::Rubber)
+INSPECTOR_P_SUPPORT(Hurricane::Rubber);
+
 
 #endif // HURRICANE_RUBBER
 

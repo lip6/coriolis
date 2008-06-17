@@ -6,7 +6,7 @@
 //
 // ===================================================================
 //
-// $Id: Slot.h,v 1.9 2007/07/29 15:25:00 jpc Exp $
+// $Id$
 //
 // x-----------------------------------------------------------------x
 // |                                                                 |
@@ -42,109 +42,200 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "Slot".
 
-  class Slot : public NestedSlotAdapter {
 
-    // Attributes
-    protected:
-      const string       _name;
-      const SlotAdapter* _data;
+  class Slot {
 
-    // Constructors
-    protected:
-      Slot ( const string& name, const SlotAdapter* data ) : _name(name), _data(data) {};
-    private:
-      Slot ( const Slot&   slot ); // Not implemented to forbid copy.
-
-    // Destructor
     public:
-      virtual ~Slot () {};
-
-    // Operators
-    private:
-      Slot& operator= ( const Slot& slot ); // Not implemented to forbid assignment.
-
-    // Accessors
-    public:
-      const   string& getName       () const { return _name; };
-      virtual string  getDataString () const { return _data->_getString(); };
-      virtual Record* getDataRecord () const { return _data->_getRecord(); };
-
-   // Inspector Managment.
-   public:
-      virtual string _getString () const
-                                {
-                                  return "<" + _getTypeName()
-                                             + " " + getName() + " "
-                                             + _data->_getString() + ">";
-                                };
-
-};
-
-
-
-
-// -------------------------------------------------------------------
-// Class  :  "PointerSlot".
-//
-// The SlotAdapter is not duplicated, it is for objects in which
-// it's directly integrated (inheritance). This is used for Hurricane
-// objects with virtual functions.
-//
-// This is default behavior of Slot, so PointerSlot doesn't change
-// it, but it's more clear for developpers.
-
-  class PointerSlot : public Slot {
-
-    // Constructors
-    public:
-      PointerSlot ( const string& name, const SlotAdapter* data ) : Slot(name,data) {};
-
     // Destructor.
-    public:
-      virtual ~PointerSlot () {};
-    
+      virtual              ~Slot          ();
+    // Accessors.
+      static  size_t        getAllocateds ();
+      const   string&       getName       () const;
+      virtual string        getDataString () const = 0;
+      virtual Record*       getDataRecord () const = 0;
+      virtual Slot*         getClone      () const = 0;
 
-    // Accessors
-    public:
-      virtual string  _getTypeName   () const { return _TName("PointerSlot"); };
+    protected:
+    // Internal: Static Attributes.
+      static  size_t        _allocateds;
+    // Internal: Attributes.
+              const string  _name;
 
+    protected:
+    // Internal: Constructors & Destructors.
+                            Slot          ( const string& name );
   };
 
 
+// Inline Member Functions.
+  inline  Slot::Slot    ( const string& name ) : _name(name)
+  {
+    _allocateds++;
+  //cerr << "Slot::Slot() - " << _name << " " << hex << (void*)this << endl;
+  }
+
+  inline const string& Slot::getName () const { return _name; }
 
 
 // -------------------------------------------------------------------
-// Class  :  "ValueSlot".
-//
-// The SlotAdapter is duplicated. It's for objects coming from
-// external libraries or that do not have virtual functions (like
-// Points or Boxes).
+// Class  :  "SlotTemplate".
 
-  class ValueSlot : public Slot {
+  template<typename Data>
+  class SlotTemplate : public Slot {
 
-    // Constructors
     public:
-      ValueSlot (const string& name, const SlotAdapter* data ) : Slot(name,data) {};
+    // Constructor.
+                             SlotTemplate  ( const string& name, const Data data );
+                             SlotTemplate  (       string& name, const Data data );
+    // Accessors.
+      virtual string         getDataString () const;
+      virtual Record*        getDataRecord () const;
+      virtual SlotTemplate<Data>*
+                             getClone      () const;
 
-    // Destructor.
-    public:
-      virtual ~ValueSlot () { delete _data; };
+    protected:
+    // Internal: Attributes.
+              const Data     _data;
 
-   // Accessors
-   public:
-      virtual string  _getTypeName () const { return _TName("ValueSlot"); };
-
+    private:
+    // Internal: Constructors.
+                             SlotTemplate  ( const SlotTemplate& );
+              SlotTemplate&  operator=     ( const SlotTemplate& );
   };
+
+
+// Inline Member Functions.
+  template<typename Data>
+  SlotTemplate<Data>::SlotTemplate ( const string& name, const Data data )
+                                   : Slot(name), _data(data) { }
+
+  template<typename Data>
+  SlotTemplate<Data>::SlotTemplate ( string& name, const Data data )
+                                   : Slot(name), _data(data) { }
+
+  template<typename Data>
+  string  SlotTemplate<Data>::getDataString () const { return getString(_data); }
+
+  template<typename Data>
+  Record* SlotTemplate<Data>::getDataRecord () const { return getRecord(_data); }
+
+  template<typename Data>
+  SlotTemplate<Data>* SlotTemplate<Data>::getClone () const
+  { return new SlotTemplate(_name,_data); }
+
+
+// -------------------------------------------------------------------
+// Class  :  "SlotTemplate".
+
+
+  template<typename Data>
+  class SlotTemplate<Data*> : public Slot {
+
+    public:
+    // Constructor.
+                           SlotTemplate  ( const string& name, Data* data );
+                           SlotTemplate  (       string& name, Data* data );
+    // Accessors.
+      virtual string       getDataString () const;
+      virtual Record*      getDataRecord () const;
+      virtual SlotTemplate<Data*>*
+                           getClone      () const;
+
+    protected:
+    // Internal: Attributes.
+              Data*        _data;
+
+    private:
+    // Internal: Constructors.
+                           SlotTemplate  ( const SlotTemplate& );
+              SlotTemplate& operator=    ( const SlotTemplate& );
+  };
+
+
+// Inline Member Functions.
+  template<typename Data>
+  SlotTemplate<Data*>::SlotTemplate ( const string& name, Data* data )
+                                    : Slot(name), _data(data) {}
+
+  template<typename Data>
+  SlotTemplate<Data*>::SlotTemplate ( string& name, Data* data )
+                                    : Slot(name), _data(data) {}
+
+  template<typename Data>
+  string  SlotTemplate<Data*>::getDataString () const { return getString(_data); }
+
+  template<typename Data>
+  Record* SlotTemplate<Data*>::getDataRecord () const { return getRecord(_data); }
+
+  template<typename Data>
+  SlotTemplate<Data*>* SlotTemplate<Data*>::getClone () const
+  { return new SlotTemplate(_name,_data); }
+
+
+// -------------------------------------------------------------------
+// Class  :  "SlotTemplate".
+
+
+  template<>
+  class SlotTemplate<Record*> : public Slot {
+
+    public:
+    // Constructor.
+      inline                      SlotTemplate  ( const string& name, Record* data );
+      inline                      SlotTemplate  (       string& name, Record* data );
+    // Accessors.
+      inline virtual string       getDataString () const;
+      inline virtual Record*      getDataRecord () const;
+      inline virtual SlotTemplate<Record*>*
+                                  getClone      () const;
+
+    protected:
+    // Internal: Attributes.
+                     Record*      _data;
+
+    private:
+    // Internal: Constructors.
+                           SlotTemplate  ( const SlotTemplate& );
+              SlotTemplate& operator=    ( const SlotTemplate& );
+  };
+
+
+// Inline Member Functions.
+  inline SlotTemplate<Record*>::SlotTemplate ( const string& name, Record* data )
+                                             : Slot(name), _data(data) {}
+
+  inline SlotTemplate<Record*>::SlotTemplate ( string& name, Record* data )
+                                             : Slot(name), _data(data) {}
+
+  inline string  SlotTemplate<Record*>::getDataString () const { return _name; }
+  inline Record* SlotTemplate<Record*>::getDataRecord () const { return _data; }
+
+  inline SlotTemplate<Record*>* SlotTemplate<Record*>::getClone () const
+  { return new SlotTemplate<Record*>(_name,_data); }
 
 
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::Slot)
-SetNestedSlotAdapter(Hurricane::PointerSlot)
-SetNestedSlotAdapter(Hurricane::ValueSlot)
+template<typename Data>
+inline Hurricane::Slot* getSlot( std::string& name, Data d )
+{
+  return new Hurricane::SlotTemplate<Data> ( name, d );
+}
 
 
+template<typename Data>
+inline Hurricane::Slot* getSlot( const std::string& name, Data d )
+{
+  return new Hurricane::SlotTemplate<Data> ( name, d );
+}
+
+
+template<typename Data>
+inline Hurricane::Slot* getSlot( const std::string& name, Data* d )
+{
+  return new Hurricane::SlotTemplate<Data*> ( name, d );
+}
 
 
 #endif

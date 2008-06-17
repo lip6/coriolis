@@ -111,6 +111,11 @@ class QuadTree {
 
 } // End of Hurricane namespace.
 
+
+INSPECTOR_P_SUPPORT(Hurricane::QuadTree);
+INSPECTOR_P_SUPPORT(Hurricane::QuadTree::GoSet);
+
+
 #endif // HURRICANE_QUAD_TREE
 
 // ****************************************************************************************************

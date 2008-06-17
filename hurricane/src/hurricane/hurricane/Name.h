@@ -76,10 +76,8 @@ class Name {
 } // End of Hurricane namespace.
 
 
-ValueIOStreamSupport(Hurricane::Name)
+INSPECTOR_PV_SUPPORT(Hurricane::Name);
 
-
-bool Scan ( const string& s, Hurricane::Name& name );
 
 #endif // HURRICANE_NAME
 

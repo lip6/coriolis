@@ -61,9 +61,6 @@ class Interruption : public Exception {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::Interruption)
-
-
 #endif // HURRICANE_INTERRUPTION
 
 // ****************************************************************************************************

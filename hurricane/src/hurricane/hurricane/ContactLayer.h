@@ -108,7 +108,4 @@ namespace Hurricane {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::ContactLayer)
-
-
 # endif

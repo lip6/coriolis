@@ -101,9 +101,6 @@ class StandardRelation : public Relation {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::Relation)
-SetNestedSlotAdapter(Hurricane::StandardRelation)
-
 #endif // HURRICANE_RELATION
 
 // ****************************************************************************************************

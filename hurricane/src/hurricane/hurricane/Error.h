@@ -63,7 +63,4 @@ namespace Hurricane {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::Error)
-
-
 # endif // __HURRICANE_ERROR__

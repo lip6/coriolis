@@ -69,7 +69,8 @@ class Pad : public Component {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::Pad)
+INSPECTOR_P_SUPPORT(Hurricane::Pad);
+
 
 #endif // HURRICANE_PAD
 

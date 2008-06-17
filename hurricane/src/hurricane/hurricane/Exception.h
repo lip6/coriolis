@@ -17,8 +17,8 @@ namespace Hurricane {
 // Exception declaration
 // ****************************************************************************************************
 
-class Exception : public NestedSlotAdapter {
-// ***************************************
+class Exception {
+// **************
 
 // Constructors
 // ************
@@ -51,9 +51,6 @@ class Exception : public NestedSlotAdapter {
 
 
 } // End of Hurricane namespace.
-
-
-SetNestedSlotAdapter(Hurricane::Exception)
 
 
 #endif // HURRICANE_EXCEPTION

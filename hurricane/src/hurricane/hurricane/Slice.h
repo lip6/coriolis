@@ -90,6 +90,10 @@ class Slice {
 
 } // End of Hurricane namespace.
 
+
+INSPECTOR_P_SUPPORT(Hurricane::Slice);
+
+
 #endif // HURRICANE_SLICE
 
 // ****************************************************************************************************

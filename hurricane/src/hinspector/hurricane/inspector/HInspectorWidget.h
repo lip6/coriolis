@@ -1,39 +1,53 @@
-#ifndef HINSPECTORWIDGET_H
-#define HINSPECTORWIDGET_H
 
-#include "hurricane/Commons.h"
+#ifndef  __HINSPECTOR_WIDGET_H__
+#define  __HINSPECTOR_WIDGET_H__
+
+
+#include  "hurricane/Commons.h"
+
 using namespace Hurricane;
 
-#include <QWidget>
+#include  <QWidget>
+
 class QSortFilterProxyModel;
 class QTableView;
 class QLineEdit;
 class QComboBox;
+class QHeaderView;
+
+class RecordModel;
+
 
 class HInspectorWidget : public QWidget {
-    Q_OBJECT
+    Q_OBJECT;
 
-    public:
-        typedef map<Record*, QSortFilterProxyModel*> FilterProxyModels;
-        typedef vector<QSortFilterProxyModel*> FilterProxyModelsHistory;
-        HInspectorWidget(QWidget* parent=0);
-        void setRecord(Record* record);
+  public:
+    typedef vector<Slot*>             SlotsVector;
 
-    private slots:
-        void recordChanged(size_t index);
-        void textFilterChanged();
+  public:
+                                      HInspectorWidget  ( Record* rootRecord, QWidget* parent=NULL );
+                                     ~HInspectorWidget  ();
+            void                      setRootRecord     ( Record*  record );
+  private slots:
+            void                      textFilterChanged ();
+  protected:
+            void                      keyPressEvent     ( QKeyEvent * event );
+  private:
+            void                      clearHistory      ();
+            void                      pushSlot          ( Slot* slot );
+            void                      popSlot           ();
+            bool                      setSlot           ( Slot* slot );
 
-    protected:
-        void keyPressEvent(QKeyEvent * event);
-
-    private:
-        void internalSetRecord(Record* record);
-        FilterProxyModels filterProxyModels;
-        FilterProxyModelsHistory filterProxyModelsHistory;
-        QComboBox* recordsHistoryComboBox;
-        QTableView* slotsView;
-        QLineEdit* filterPatternLineEdit;
+  private:
+            SlotsVector               _slotsHistory;
+            RecordModel*              _recordModel;
+            QSortFilterProxyModel*    _sortModel;
+            QComboBox*                _recordsHistoryComboBox;
+            QTableView*               _slotsView;
+            QLineEdit*                _filterPatternLineEdit;
+            int                       _rowHeight;
+            Record*                   _rootRecord;
 };
 
 
-#endif // HINSPECTORWIDGET_H
+#endif // __HINSPECTOR_WIDGET_H__

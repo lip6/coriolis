@@ -112,6 +112,9 @@ class SharedPath {
 } // End of Hurricane namespace.
 
 
+INSPECTOR_P_SUPPORT(Hurricane::SharedPath);
+
+
 
 #endif // HURRICANE_SHARED_PATH
 

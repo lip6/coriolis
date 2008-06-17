@@ -73,7 +73,8 @@ class DataBase : public DBo {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::DataBase)
+INSPECTOR_P_SUPPORT(Hurricane::DataBase);
+
 
 #endif // HURRICANE_DATA_BASE
 

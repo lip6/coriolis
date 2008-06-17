@@ -92,7 +92,7 @@ class Occurrence {
 } // End of Hurricane namespace.
 
 
-ValueIOStreamSupport(Hurricane::Occurrence)
+INSPECTOR_PV_SUPPORT(Hurricane::Occurrence);
 
 
 #endif // HURRICANE_OCCURENCE

@@ -119,8 +119,9 @@ double  getArea ( Component* component );
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::Component)
-SetNestedSlotAdapter(Hurricane::Component::BodyHook)
+INSPECTOR_P_SUPPORT(Hurricane::Component);
+INSPECTOR_P_SUPPORT(Hurricane::Component::BodyHook);
+
 
 #endif // HURRICANE_COMPONENT
 

@@ -20,8 +20,8 @@ namespace Hurricane {
 // Property declaration
 // ****************************************************************************************************
 
-class Property : public NestedSlotAdapter {
-// **************************************
+class Property {
+// *************
 
 // Constructors
 // ************
@@ -352,21 +352,11 @@ template<class Value> class StandardSharedProperty : public SharedProperty {
 };
 
 
-template<typename T>
-  class IsNestedSlotAdapter<StandardPrivateProperty<T> > {
-    public:
-      enum { True=1, False=0 };
-  };
-
-
-template<typename T>
-  class IsNestedSlotAdapter<StandardSharedProperty<T> > {
-    public:
-      enum { True=1, False=0 };
-  };
-
-
 } // End of Hurricane namespace.
+
+
+INSPECTOR_P_SUPPORT(Hurricane::Property);
+
 
 #endif // HURRICANE_PROPERTY
 

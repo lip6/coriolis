@@ -255,8 +255,8 @@ Box& Box::shrinkByFactor(double factor)
 // **************************************
 {
     assert((0.0 <= factor) && (factor <= 1.0));
-    DbU::Unit dx = DbU::real ( 0.5 * (1-factor) * (DbU::getReal(_xMax) - DbU::getReal(_xMin)) );
-    DbU::Unit dy = DbU::real ( 0.5 * (1-factor) * (DbU::getReal(_yMax) - DbU::getReal(_yMin)) );
+    DbU::Unit dx = DbU::grid ( 0.5 * (1-factor) * (DbU::getGrid(_xMax) - DbU::getGrid(_xMin)) );
+    DbU::Unit dy = DbU::grid ( 0.5 * (1-factor) * (DbU::getGrid(_yMax) - DbU::getGrid(_yMin)) );
 
   //DbU::Unit dx=getUnit(0.5*(1- factor) * (getValue(_xMax) - getValue(_xMin)));
   //DbU::Unit dy=getUnit(0.5*(1- factor) * (getValue(_yMax) - getValue(_yMin)));

@@ -10,6 +10,7 @@
 #include "hurricane/BasicLayer.h"
 #include "hurricane/Plug.h"
 #include "hurricane/Error.h"
+# include  "hurricane/Slot.h"
 
 namespace Hurricane {
 

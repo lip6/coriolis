@@ -103,24 +103,24 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Module Method  :  "PyDbU_real ()"
+  // Module Method  :  "PyDbU_grid ()"
 
-  extern PyObject* PyDbU_real ( PyObject* module, PyObject* args )
+  extern PyObject* PyDbU_grid ( PyObject* module, PyObject* args )
   {
-    trace << "PyDbU_real ()" << endl;
+    trace << "PyDbU_grid ()" << endl;
     
     PyObject*  arg0;
     DbU::Unit  result = 0;
 
     HTRY
     
-    __cs.Init ( "DbU.real" );
-    if ( ! PyArg_ParseTuple(args,"|O&:DbU.real",Converter,&arg0) )
+    __cs.Init ( "DbU.grid" );
+    if ( ! PyArg_ParseTuple(args,"|O&:DbU.grid",Converter,&arg0) )
       return ( NULL );
     
-    if ( __cs.getObjectIds() == FLOAT_ARG   ) { result = DbU::real ( PyFloat_AsDouble ( arg0 ) ); }
+    if ( __cs.getObjectIds() == FLOAT_ARG   ) { result = DbU::grid ( PyFloat_AsDouble ( arg0 ) ); }
     else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters or bad type for DbU.real converter." );
+      PyErr_SetString ( ConstructorError, "invalid number of parameters or bad type for DbU.grid converter." );
       return ( NULL );
     }
     
@@ -173,16 +173,16 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Module Method  :  "PyDbU_getReal ()"
+  // Module Method  :  "PyDbU_getGrid ()"
 
-  extern PyObject* PyDbU_getReal ( PyObject* module, PyObject* args )
+  extern PyObject* PyDbU_getGrid ( PyObject* module, PyObject* args )
   {
-    trace << "PyDbU_getReal ()" << endl;
+    trace << "PyDbU_getGrid ()" << endl;
     
     PyObject* arg0;
-    if ( ! ParseOneArg ( "Dbu.getReal", args,INT_ARG, &arg0 ) ) return ( NULL );
+    if ( ! ParseOneArg ( "Dbu.getGrid", args,INT_ARG, &arg0 ) ) return ( NULL );
 
-    return ( Py_BuildValue("d",DbU::getReal(PyInt_AsLong(arg0))) );
+    return ( Py_BuildValue("d",DbU::getGrid(PyInt_AsLong(arg0))) );
   }
 
 

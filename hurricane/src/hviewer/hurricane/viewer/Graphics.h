@@ -30,7 +30,7 @@ namespace Hurricane {
     public:
     // Accessors.
       static  Graphics*             getGraphics   ();
-      static  const QFont           getFixedFont  ( bool bold=false, bool underline=false );
+      static  const QFont           getFixedFont  ( int weight=-1, bool italic=false, bool underline=false );
       static  const Name&           getGroup      ( const Name& key );
       static  const QColor&         getColor      ( const Name& key );
       static  const QPen&           getPen        ( const Name& key );

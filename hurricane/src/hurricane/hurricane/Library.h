@@ -114,7 +114,9 @@ class Library : public DBo {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::Library)
+INSPECTOR_P_SUPPORT(Hurricane::Library);
+INSPECTOR_P_SUPPORT(Hurricane::Library::LibraryMap);
+INSPECTOR_P_SUPPORT(Hurricane::Library::CellMap);
 
 #endif // HURRICANE_LIBRARY
 

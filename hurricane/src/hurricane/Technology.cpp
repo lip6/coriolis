@@ -209,6 +209,7 @@ Record* Technology::_getRecord() const
     if (record) {
         record->add(getSlot("DataBase", _dataBase));
         record->add(getSlot("Name", &_name));
+        cerr << "Adding Layers Slot - " << hex << (void*)&_layerList << endl;
         record->add(getSlot("Layers", &_layerList));
     }
     return record;

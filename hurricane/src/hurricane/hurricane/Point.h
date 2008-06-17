@@ -78,7 +78,7 @@ class Point {
 } // End of Hurricane namespace.
 
 
-ValueIOStreamSupport(Hurricane::Point)
+INSPECTOR_PV_SUPPORT(Hurricane::Point);
 
 
 #endif // HURRICANE_POINT

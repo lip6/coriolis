@@ -123,9 +123,10 @@ class Segment : public Component {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::Segment)
-SetNestedSlotAdapter(Hurricane::Segment::SourceHook)
-SetNestedSlotAdapter(Hurricane::Segment::TargetHook)
+INSPECTOR_P_SUPPORT(Hurricane::Segment);
+INSPECTOR_P_SUPPORT(Hurricane::Segment::SourceHook);
+INSPECTOR_P_SUPPORT(Hurricane::Segment::TargetHook);
+
 
 #endif // HURRICANE_SEGMENT
 

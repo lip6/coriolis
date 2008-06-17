@@ -649,8 +649,8 @@ Record* Net::_getRecord() const
         record->add(getSlot("Arity", &_arity));
         record->add(getSlot("Global", &_isGlobal));
         record->add(getSlot("External", &_isExternal));
-        record->add(getSlot("Type", _type));
-        record->add(getSlot("Direction", _direction));
+        record->add(getSlot("Type", &_type));
+        record->add(getSlot("Direction", &_direction));
         record->add(getSlot("Position", &_position));
         record->add(getSlot("Components", &_componentSet));
         record->add(getSlot("Rubbers", &_rubberSet));

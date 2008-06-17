@@ -44,7 +44,7 @@ namespace Hurricane {
     _button = new QPushButton ( this );
     _button->setFlat  ( true );
     _button->setText  ( getString(getName()).c_str() );
-    _button->setFont  ( Graphics::getFixedFont(true,true) );
+    _button->setFont  ( Graphics::getFixedFont(QFont::Bold,false,true) );
 
     layout->addWidget  ( _button );
     layout->addStretch ();
@@ -139,9 +139,9 @@ namespace Hurricane {
     }
 
     if ( !_expanded )
-      _button->setFont  ( Graphics::getFixedFont(true,true) );
+      _button->setFont  ( Graphics::getFixedFont(QFont::Bold,false,true) );
     else
-      _button->setFont  ( Graphics::getFixedFont(true,false) );
+      _button->setFont  ( Graphics::getFixedFont(QFont::Bold,false,false) );
 
     label.insert ( 0, spacingLeft, ' ' );
     label.append ( spacingRight, ' ' );

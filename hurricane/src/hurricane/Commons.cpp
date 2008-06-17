@@ -112,6 +112,7 @@ string  demangle ( const char* symbol )
 // Generic functions
 // ****************************************************************************************************
 
+# if 0
 bool Scan(const string& s, unsigned& u)
 // ************************************
 {
@@ -215,6 +216,7 @@ bool Scan ( const string         &s
 
   return ( true );
 }
+# endif
 
 // ****************************************************************************************************
 // Copyright (c) BULL S.A. 2000-2004, All Rights Reserved

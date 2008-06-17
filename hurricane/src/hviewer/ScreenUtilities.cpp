@@ -36,7 +36,7 @@ namespace {
   } 
 
 
-  bool  getPattern ( uchar bits[], const string& pattern )
+  bool  getPattern ( uchar bits[], const std::string& pattern )
   {
     bool isValid = true;
 

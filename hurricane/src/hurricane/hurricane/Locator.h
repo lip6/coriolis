@@ -18,8 +18,8 @@ namespace Hurricane {
 // Locator declaration
 // ****************************************************************************************************
 
-template<class Type> class Locator : public NestedSlotAdapter {
-// **********************************************************
+template<class Type> class Locator {
+// *********************************
 
 // Constructors
 // ************
@@ -247,14 +247,6 @@ template<class Type> class GenericLocator : public Locator<Type> {
 // ****************************************************************************************************
 // Generic functions
 // ****************************************************************************************************
-
-
-template<typename T>
-  class IsNestedSlotAdapter<const Hurricane::GenericLocator<T> > {
-      public:
-        enum { True=1, False=0 };
-    };
-
 
 
 } // End of Hurricane namespace.

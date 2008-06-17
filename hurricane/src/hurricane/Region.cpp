@@ -2742,7 +2742,7 @@ Region& Region::Inflate(const DbU::Unit& quantity)
             }
         }
       else if (quantity < 0) {
-        _growthToFit(getBoundingBox().inflate(DbU::real(1.0)));
+        _growthToFit(getBoundingBox().inflate(DbU::grid(1.0)));
             list<Box> boxList;
             for_each_object(Tile*, tile, Region_Tiles(this).getSubSet(Tile::getIsVoidFilter())) {
                 boxList.push_back(tile->getBoundingBox());
@@ -3007,7 +3007,7 @@ Region::verticalEnhancement()
 {
   bool modif = false;
   Region result;
-  double minSide = DbU::getReal(DbU::real(5.0));
+  double minSide = DbU::getGrid(DbU::grid(5.0));
   double minArea = minSide*minSide;
   do {
     // Rechercher la box de plus grande surface
@@ -3015,7 +3015,7 @@ Region::verticalEnhancement()
     double area = minArea;
     for_each_box (box, getBoxes()) {
       if (! box.isEmpty()) {
-        double a = DbU::getReal(box.getWidth()) * DbU::getReal(box.getHeight());
+        double a = DbU::getGrid(box.getWidth()) * DbU::getGrid(box.getHeight());
                 if (area < a) {
                     area = a;
                     maxBox = box;
@@ -3025,7 +3025,7 @@ Region::verticalEnhancement()
     }
     if (maxBox.isEmpty()) break;
     Tile* tile = _getTileAt (maxBox.getCenter());
-    if (maxBox.getWidth() >= DbU::real(2.0)) {
+    if (maxBox.getWidth() >= DbU::grid(2.0)) {
       modif = tile->VerticalEnhancement (this);
     }
     result.fill (tile->getBoundingBox());
@@ -3054,7 +3054,7 @@ Region::horizontalEnhancement()
 {
   bool modif = false;
   Region result;
-  const double minSide = DbU::getReal(DbU::real(5.0));
+  const double minSide = DbU::getGrid(DbU::grid(5.0));
   double minArea = minSide*minSide;
   do {
     // Rechercher la box de plus grande surface
@@ -3062,7 +3062,7 @@ Region::horizontalEnhancement()
     double area = minArea;
     for_each_box (box, getBoxes()) {
       if (! box.isEmpty()) {
-        double a = DbU::getReal(box.getWidth()) * DbU::getReal(box.getHeight());
+        double a = DbU::getGrid(box.getWidth()) * DbU::getGrid(box.getHeight());
                 if (area < a) {
                     area = a;
                     maxBox = box;
@@ -3072,7 +3072,7 @@ Region::horizontalEnhancement()
     }
     if (maxBox.isEmpty()) break;
     Tile* tile = _getTileAt (maxBox.getCenter());
-    if (maxBox.getWidth() >= DbU::real(2.0)) {
+    if (maxBox.getWidth() >= DbU::grid(2.0)) {
       modif = tile->HorizontalEnhancement (this);
     }
     result.fill (tile->getBoundingBox());

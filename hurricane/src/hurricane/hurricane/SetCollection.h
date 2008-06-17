@@ -10,8 +10,6 @@
 #include "hurricane/Commons.h"
 
 #include "hurricane/Tabulation.h"
-#include "hurricane/Record.h"
-#include "hurricane/Slot.h"
 
 
 namespace Hurricane {

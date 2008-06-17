@@ -133,46 +133,46 @@ namespace Hurricane {
   void            BasicLayer::setRealName                    ( const char* realName) { _realName = realName; }
 
 
+} // End of Hurricane namespace.
+
+
 // -------------------------------------------------------------------
-// Class  :  "Proxy...<const BasicLayer::Material::Code*>".
-
-template<>
-inline string  ProxyTypeName<BasicLayer::Material::Code> ( const BasicLayer::Material::Code* object )
-{ return "<PointerSlotAdapter<BasicLayer::Material::Code>>"; }
+// Inspector Support for  :  BasicLayer::Material::Code.
 
 
 template<>
-inline string  ProxyString<BasicLayer::Material::Code> ( const BasicLayer::Material::Code* object )
+inline std::string  getString<const Hurricane::BasicLayer::Material::Code*>
+                             ( const Hurricane::BasicLayer::Material::Code* object )
 {
   switch ( *object ) {
-    case BasicLayer::Material::nWell:    return "nWell";
-    case BasicLayer::Material::pWell:    return "pWell";
-    case BasicLayer::Material::nImplant: return "nImplant";
-    case BasicLayer::Material::pImplant: return "pImplant";
-    case BasicLayer::Material::active:   return "active";
-    case BasicLayer::Material::poly:     return "poly";
-    case BasicLayer::Material::cut:      return "cut";
-    case BasicLayer::Material::metal:    return "metal";
-    case BasicLayer::Material::blockage: return "blockage";
-    case BasicLayer::Material::other:    return "other";
+    case Hurricane::BasicLayer::Material::nWell:    return "nWell";
+    case Hurricane::BasicLayer::Material::pWell:    return "pWell";
+    case Hurricane::BasicLayer::Material::nImplant: return "nImplant";
+    case Hurricane::BasicLayer::Material::pImplant: return "pImplant";
+    case Hurricane::BasicLayer::Material::active:   return "active";
+    case Hurricane::BasicLayer::Material::poly:     return "poly";
+    case Hurricane::BasicLayer::Material::cut:      return "cut";
+    case Hurricane::BasicLayer::Material::metal:    return "metal";
+    case Hurricane::BasicLayer::Material::blockage: return "blockage";
+    case Hurricane::BasicLayer::Material::other:    return "other";
   }
   return "abnormal";
 }
 
 
 template<>
-inline Record* ProxyRecord<BasicLayer::Material::Code> ( const BasicLayer::Material::Code* object )
+inline Hurricane::Record* getRecord<const Hurricane::BasicLayer::Material::Code*>
+                                   ( const Hurricane::BasicLayer::Material::Code* object )
 {
-  Record* record = new Record(getString(object));
+  Hurricane::Record* record = new Hurricane::Record(getString(object));
   record->add(getSlot("Code", (unsigned int*)object));
   return record;
 }
 
 
-} // End of Hurricane namespace.
-
-
-SetNestedSlotAdapter(Hurricane::BasicLayer)
+INSPECTOR_P_SUPPORT(Hurricane::BasicLayer);
+INSPECTOR_P_SUPPORT(Hurricane::BasicLayer::Material);
+IOSTREAM_POINTER_SUPPORT(Hurricane::BasicLayer::Material::Code);
 
 
 # endif

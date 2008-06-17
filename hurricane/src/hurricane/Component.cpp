@@ -924,7 +924,7 @@ double  getArea ( Component* component )
 {
   Box  bb = component->getBoundingBox ();
 
-  return DbU::getReal(bb.getWidth()) * DbU::getReal(bb.getHeight());
+  return DbU::getGrid(bb.getWidth()) * DbU::getGrid(bb.getHeight());
 }
 
 

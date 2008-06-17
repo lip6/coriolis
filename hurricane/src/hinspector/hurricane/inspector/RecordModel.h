@@ -1,22 +1,39 @@
-#ifndef RECORDMODEL_H
-#define RECORDMODEL_H
 
-#include <QAbstractTableModel>
+#ifndef  __RECORD_MODEL_H__
+#define  __RECORD_MODEL_H__
 
-#include "hurricane/Commons.h"
+#include  <QAbstractTableModel>
+
+#include  "hurricane/Commons.h"
+
 using namespace Hurricane;
 
-class RecordModel : public QAbstractTableModel {
-    Q_OBJECT
 
-    public:
-        RecordModel(Record* record, QObject* parent=0);
-        int rowCount(const QModelIndex &parent = QModelIndex()) const;
-        int columnCount(const QModelIndex &parent = QModelIndex()) const;
-        QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-        Record* getRecord() { return record; }
-    private:
-        Record* record;
+
+class RecordModel : public QAbstractTableModel {
+    Q_OBJECT;
+
+  public:
+                     RecordModel   ( Slot* slot, QObject* parent=NULL );
+                    ~RecordModel   ();
+           bool      setSlot       ( Slot* slot, size_t depth );
+           int       rowCount      ( const QModelIndex& parent=QModelIndex() ) const;
+           int       columnCount   ( const QModelIndex& parent=QModelIndex() ) const;
+           QVariant  data          ( const QModelIndex& index, int role=Qt::DisplayRole ) const;
+           QVariant  headerData    ( int section, Qt::Orientation orientation, int role=Qt::DisplayRole ) const;
+    inline Record*   getRecord     ();
+    inline Slot*     getSlot       ();
+
+  private:
+    Slot*     _slot;
+    Record*   _record;
+    size_t    _depth;
 };
 
-#endif // RECORDMODEL_H 
+
+// Inline Functions.
+inline Record* RecordModel::getRecord     () { return _record; }
+inline Slot*   RecordModel::getSlot       () { return _slot; }
+
+
+#endif // __RECORD_MODEL_H__ 

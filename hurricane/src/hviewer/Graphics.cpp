@@ -48,13 +48,14 @@ namespace Hurricane {
   }
 
 
-  const QFont  Graphics::getFixedFont ( bool bold, bool underline )
+  const QFont  Graphics::getFixedFont ( int weight, bool italic, bool underline )
   {
     const QFont defaultFont = QApplication::font ();
 
     QFont fixedFont ( "Bitstream Vera Sans Mono", defaultFont.pointSize() );
-    if ( bold      ) fixedFont.setBold      ( true );
-    if ( underline ) fixedFont.setUnderline ( true );
+    fixedFont.setWeight    ( weight );
+    fixedFont.setUnderline ( italic );
+    fixedFont.setUnderline ( underline );
 
     return fixedFont;
   }

@@ -20,8 +20,8 @@ namespace Hurricane {
 // IntrusiveSet declaration
 // ****************************************************************************************************
 
-template<class Element> class IntrusiveSet : public NestedSlotAdapter {
-// ******************************************************************
+template<class Element> class IntrusiveSet {
+// *****************************************
 
 // Types
 // *****
@@ -326,14 +326,10 @@ template<class Element> class IntrusiveSet : public NestedSlotAdapter {
             record = new Record(getString(this));
             unsigned n = 1;
             for (unsigned index = 0; index < _length; index++) {
-                /**/
                 n = 1;
-                /**/
                 Element* element = _array[index];
                 while (element) {
-                    // record->add(getSlot(getString(n++), element));
-                    record->add(getSlot(getString(index) + ":" + getString(n++), element));
-                    /**/
+                  record->add(getSlot(getString(index) + ":" + getString(n++), element));
                     element = _getNextElement(element);
                 }
             }
@@ -462,6 +458,16 @@ template<class Element> class IntrusiveSet : public NestedSlotAdapter {
 
 
 } // End of Hurricane namespace.
+
+
+template<typename Type>
+inline std::string  getString ( Hurricane::IntrusiveSet<Type>& intrusiveSet )
+{ return intrusiveSet._getString(); }
+
+template<typename Type>
+inline Hurricane::Record* getRecord ( Hurricane::IntrusiveSet<Type>& intrusiveSet )
+{ return intrusiveSet._getRecord(); }
+
 
 #endif // HURRICANE_INTRUSIVE_SET
 

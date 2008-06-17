@@ -219,76 +219,70 @@ class Net : public Entity {
 
 
 
-// -------------------------------------------------------------------
-// Class  :  "Proxy...<const Net::Type::Code*>".
-
-template<>
-  inline string  ProxyTypeName<Net::Type::Code>
-                              ( const Net::Type::Code* object )
-                              { return "<PointerSlotAdapter<Net::Type::Code>>"; }
-
-template<>
-  inline string  ProxyString  <Net::Type::Code>
-                              ( const Net::Type::Code* object )
-                              {
-                                switch ( *object ) {
-                                  case Net::Type::UNDEFINED: return "UNDEFINED";
-                                  case Net::Type::LOGICAL:   return "LOGICAL";
-                                  case Net::Type::CLOCK:     return "CLOCK";
-                                  case Net::Type::POWER:     return "POWER";
-                                  case Net::Type::GROUND:    return "GROUND";
-                                }
-                                return "ABNORMAL";
-                              }
-
-template<>
-  inline Record* ProxyRecord  <Net::Type::Code>
-                              ( const Net::Type::Code* object )
-                              {
-                                Record* record = new Record(getString(object));
-                                record->add(getSlot("Code", (unsigned int*)object));
-                                return record;
-                              }
-
-
-
-
-// -------------------------------------------------------------------
-// Class  :  "Proxy...<const Net::Direction::Code*>".
-
-template<>
-  inline string  ProxyTypeName<Net::Direction::Code>
-                              ( const Net::Direction::Code* object )
-                              { return "<PointerSlotAdapter<Net::Direction::Code>>"; }
-
-template<>
-  inline string  ProxyString  <Net::Direction::Code>
-                              ( const Net::Direction::Code* object )
-                              {
-                                switch ( *object ) {
-                                  case Net::Direction::UNDEFINED: return "UNDEFINED";
-                                  case Net::Direction::IN:        return "IN";
-                                  case Net::Direction::OUT:       return "OUT";
-                                  case Net::Direction::INOUT:     return "INOUT";
-                                  case Net::Direction::TRISTATE:  return "TRISTATE";
-                                }
-                                return "ABNORMAL";
-                              }
-
-template<>
-  inline Record* ProxyRecord  <Net::Direction::Code>
-                              ( const Net::Direction::Code* object )
-                              {
-                                Record* record = new Record(getString(object));
-                                record->add(getSlot("Code", (unsigned int*)object));
-                                return record;
-                              }
 
 
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::Net)
+// -------------------------------------------------------------------
+// Inspector Support for  :  Net::Type::Code*".
+
+template<>
+inline std::string  getString<const Hurricane::Net::Type::Code*>
+                             ( const Hurricane::Net::Type::Code* object )
+                             {
+                               switch ( *object ) {
+                                 case Hurricane::Net::Type::UNDEFINED: return "UNDEFINED";
+                                 case Hurricane::Net::Type::LOGICAL:   return "LOGICAL";
+                                 case Hurricane::Net::Type::CLOCK:     return "CLOCK";
+                                 case Hurricane::Net::Type::POWER:     return "POWER";
+                                 case Hurricane::Net::Type::GROUND:    return "GROUND";
+                               }
+                               return "ABNORMAL";
+                             }
+
+template<>
+inline Hurricane::Record* getRecord<const Hurricane::Net::Type::Code*>
+                                   ( const  Hurricane::Net::Type::Code* object )
+                                   {
+                                     Hurricane::Record* record = new Hurricane::Record(getString(object));
+                                     record->add(getSlot("Code", (unsigned int*)object));
+                                     return record;
+                                   }
+
+
+// -------------------------------------------------------------------
+// Inspector Support for  :  "const Net::Direction::Code*".
+
+template<>
+inline std::string  getString<const Hurricane::Net::Direction::Code*>
+                             ( const Hurricane::Net::Direction::Code* object )
+                             {
+                               switch ( *object ) {
+                                 case Hurricane::Net::Direction::UNDEFINED: return "UNDEFINED";
+                                 case Hurricane::Net::Direction::IN:        return "IN";
+                                 case Hurricane::Net::Direction::OUT:       return "OUT";
+                                 case Hurricane::Net::Direction::INOUT:     return "INOUT";
+                                 case Hurricane::Net::Direction::TRISTATE:  return "TRISTATE";
+                               }
+                               return "ABNORMAL";
+                             }
+
+template<>
+inline Hurricane::Record* getRecord<const Hurricane::Net::Direction::Code*>
+                                   ( const Hurricane::Net::Direction::Code* object )
+                                   {
+                                     Hurricane::Record* record = new Hurricane::Record(getString(object));
+                                     record->add(getSlot("Code", (unsigned int*)object));
+                                     return record;
+                                   }
+
+
+INSPECTOR_P_SUPPORT(Hurricane::Net);
+INSPECTOR_P_SUPPORT(Hurricane::Net::ComponentSet);
+INSPECTOR_P_SUPPORT(Hurricane::Net::RubberSet);
+INSPECTOR_P_SUPPORT(Hurricane::Net::Type);
+INSPECTOR_P_SUPPORT(Hurricane::Net::Direction);
 
 
 #endif // HURRICANE_NET

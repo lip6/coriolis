@@ -101,7 +101,8 @@ class Horizontal : public Segment {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::Horizontal)
+INSPECTOR_P_SUPPORT(Hurricane::Horizontal);
+
 
 #endif // HURRICANE_HORIZONTAL
 

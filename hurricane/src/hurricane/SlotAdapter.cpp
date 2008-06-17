@@ -50,8 +50,7 @@
 
 
 
-# include  <typeinfo>
-#include "hurricane/Commons.h"
+# include  "hurricane/Commons.h"
 
 
 

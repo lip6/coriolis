@@ -145,11 +145,9 @@ string DBo::_getString() const
 Record* DBo::_getRecord() const
 // **********************
 {
-     Record* record = new Record(getString(this));
-    if (record) {
-        record->add(getSlot("Properties", &_propertySet));
-    }
-    return record;
+  Record* record = new Record(getString(this));
+  record->add(getSlot("Properties", &_propertySet));
+  return record;
 }
 
 void DBo::_onDestroyed(Property* property)

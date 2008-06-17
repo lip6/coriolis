@@ -84,7 +84,8 @@ class Go : public Entity {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::Go)
+INSPECTOR_P_SUPPORT(Hurricane::Go);
+
 
 #endif // HURRICANE_GO
 

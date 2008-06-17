@@ -20,7 +20,7 @@ template<class Type> class NotFilter;
 // Filter declaration
 // ****************************************************************************************************
 
-template<class Type> class Filter : public NestedSlotAdapter {
+template<class Type> class Filter {
 // *********************************************************
 
 // Constructors
@@ -284,13 +284,6 @@ template<class Type> class NotFilter : public Filter<Type> {
 // ****************************************************************************************************
 // Generic functions
 // ****************************************************************************************************
-
-
-template<typename T>
-    class IsNestedSlotAdapter<const Hurricane::GenericFilter<T> > {
-      public:
-        enum { True=1, False=0 };
-    };
 
 
 

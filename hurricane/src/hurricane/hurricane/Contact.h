@@ -138,7 +138,9 @@ class Contact : public Component {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::Contact)
+INSPECTOR_P_SUPPORT(Hurricane::Contact);
+INSPECTOR_P_SUPPORT(Hurricane::Contact::AnchorHook);
+
 
 #endif // HURRICANE_CONTACT
 

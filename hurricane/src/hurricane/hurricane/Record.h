@@ -26,8 +26,8 @@
 
 
 
-#ifndef  __RECORD__
-#define  __RECORD__
+#ifndef  __HURRICANE_RECORD__
+#define  __HURRICANE_RECORD__
 
 
 #ifndef  __HURRICANE_COMMONS__
@@ -38,55 +38,43 @@
 namespace Hurricane {
 
 
-// -------------------------------------------------------------------
-// Forward Declarations.
-
   class Slot;
 
 
-
-
-// -------------------------------------------------------------------
-// Class  :  "Record".
-
   class Record {
 
+    public:
     // Types.
+      typedef list<Slot*>   SlotList;
+
     public:
-      typedef list<Slot*> SlotList;
+    // Constructor & Destructor.
+                            Record        ( const string& name );
+      virtual              ~Record        ();
+    // Methods.
+      static  size_t        getAllocateds ();
+      inline  const string& getName       () const;
+              Slot*         getSlot       ( unsigned no ) const;
+              void          add           ( Slot* slot );
+      inline  SlotList&     _getSlotList  ();
 
-    // Attributes
 	private:
-      string    _name;
-      SlotList  _slotList;
+    // Internal: Static Attributes.
+      static  size_t        _allocateds;
+    // Internal: Attributes
+              string        _name;
+              SlotList      _slotList;
 
-    // Constructors
-    public:
-      Record ( const string& name );
 	private:
-      Record            ( const Record& record );
-      Record& operator= ( const Record& record );
-
-    // Destructor
-	public:
-      virtual ~Record();
-
-    // Accessors
-	public:
-      const string&   getName          ()              const { return _name; };
-            Slot*     getSlot          ( unsigned no ) const;
-
-    // Updators
-	public:
-            void      add              ( Slot* slot );
-
-    // Others
-	public:
-            string    _getTypeName     () const { return _TName("Record"); };
-            string    _getString       () const;
-            SlotList& _getSlotList     () { return _slotList; };
-			  	
+    // Forbidden: Constructors
+                            Record        ( const Record& record );
+              Record&       operator=     ( const Record& record );
 };
+
+
+// Inline Functions.
+  inline  const string&     Record::getName      () const { return _name; }
+  inline  Record::SlotList& Record::_getSlotList () { return _slotList; }
 
 
 } // End of Hurricane namespace.

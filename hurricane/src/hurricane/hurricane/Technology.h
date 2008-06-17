@@ -105,7 +105,8 @@ class Technology : public DBo {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::Technology)
+INSPECTOR_P_SUPPORT(Hurricane::Technology);
+
 
 #endif // HURRICANE_TECHNOLOGY
 

@@ -9,6 +9,10 @@
 
 #include "hurricane/Commons.h"
 
+#ifndef __HURRICANE_SLOT__
+#error "Tabulation.h must be included after Commons.h"
+#endif
+
 namespace Hurricane {
 
 
@@ -71,7 +75,8 @@ extern Tabulation tab;
 } // End of Hurricane namespace.
 
 
-ValueIOStreamSupport(Hurricane::Tabulation)
+INSPECTOR_PV_SUPPORT(Hurricane::Tabulation);
+
 
 
 // ****************************************************************************************************

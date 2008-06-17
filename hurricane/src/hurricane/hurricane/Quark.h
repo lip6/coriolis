@@ -64,7 +64,8 @@ class Quark : public DBo {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::Quark)
+INSPECTOR_P_SUPPORT(Hurricane::Quark);
+
 
 #endif // HURRICANE_QUARK
 

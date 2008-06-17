@@ -19,8 +19,8 @@ class Component;
 // Hook declaration
 // ****************************************************************************************************
 
-class Hook : public NestedSlotAdapter {
-// **********************************
+class Hook {
+// *********
 
 // Attributes
 // **********
@@ -92,7 +92,8 @@ class Hook : public NestedSlotAdapter {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::Hook)
+INSPECTOR_P_SUPPORT(Hurricane::Hook);
+
 
 #endif // HURRICANE_HOOK
 

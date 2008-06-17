@@ -19,8 +19,8 @@ namespace Hurricane {
 // DBo declaration
 // ****************************************************************************************************
 
-class DBo : public NestedSlotAdapter {
-// *********************************
+class DBo {
+// ********
 
 #if !defined(__DOXYGEN_PROCESSOR__)
 
@@ -97,8 +97,22 @@ class DBo : public NestedSlotAdapter {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::DBo)
-PointerIOStreamSupport(Hurricane::DBo)
+INSPECTOR_P_SUPPORT(Hurricane::DBo);
+
+
+template<>
+inline Hurricane::Slot* getSlot ( const std::string& name, const std::set<Hurricane::Property*>* s )
+{
+  return new Hurricane::SlotTemplate<const std::set<Hurricane::Property*>*>(name,s);
+}
+
+
+template<>
+inline Hurricane::Slot* getSlot ( const std::string& name, std::set<Hurricane::Property*>* s )
+{
+  return new Hurricane::SlotTemplate<std::set<Hurricane::Property*>*>(name,s);
+}
+
 
 #endif // HURRICANE_DBO
 

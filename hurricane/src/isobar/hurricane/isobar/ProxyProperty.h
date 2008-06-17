@@ -132,8 +132,5 @@ using  namespace  Hurricane;
 }  // End of Isobar namespace.
 
 
-SetNestedSlotAdapter(Isobar::ProxyProperty)
-
-
 
 #endif

@@ -114,9 +114,6 @@ class CompositeLayer : public Layer {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::CompositeLayer)
-
-
 
 // ****************************************************************************************************
 // Generic functions

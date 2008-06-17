@@ -97,7 +97,7 @@ class Path {
 } // End of Hurricane namespace.
 
 
-ValueIOStreamSupport(Hurricane::Path)
+INSPECTOR_PV_SUPPORT(Hurricane::Path);
 
 
 #endif // HURRICANE_PATH

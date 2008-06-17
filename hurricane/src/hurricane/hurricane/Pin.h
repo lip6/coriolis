@@ -146,6 +146,4 @@ class Pin : public Contact {
 } // End of Hurricane namespace.
 
 
-SetNestedSlotAdapter(Hurricane::Pin)
-
 #endif // HURRICANE_PIN
