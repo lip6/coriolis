@@ -67,6 +67,7 @@ namespace Hurricane {
       static        double              getUnitPower        ( UnitPower p );
       static        void                setPhysicalsPerGrid ( double gridsPerLambda, UnitPower p );
       static        double              getPhysicalsPerGrid ();
+      static        double              physicalToGrid      ( double physical, UnitPower p );
     // Lamba Managment.
       static        void                setGridsPerLambda   ( double gridsPerLambda );
       static        double              getGridsPerLambda   ();

@@ -3,51 +3,84 @@
 #define  __HINSPECTOR_WIDGET_H__
 
 
-#include  "hurricane/Commons.h"
-
-using namespace Hurricane;
-
 #include  <QWidget>
 
+#include  "hurricane/Commons.h"
+
+
 class QSortFilterProxyModel;
+class QModelIndex;
 class QTableView;
 class QLineEdit;
 class QComboBox;
 class QHeaderView;
 
-class RecordModel;
+
+namespace Hurricane {
 
 
-class HInspectorWidget : public QWidget {
-    Q_OBJECT;
+  class RecordModel;
 
-  public:
-    typedef vector<Slot*>             SlotsVector;
 
-  public:
-                                      HInspectorWidget  ( Record* rootRecord, QWidget* parent=NULL );
-                                     ~HInspectorWidget  ();
-            void                      setRootRecord     ( Record*  record );
-  private slots:
-            void                      textFilterChanged ();
-  protected:
-            void                      keyPressEvent     ( QKeyEvent * event );
-  private:
-            void                      clearHistory      ();
-            void                      pushSlot          ( Slot* slot );
-            void                      popSlot           ();
-            bool                      setSlot           ( Slot* slot );
+  class HInspectorWidget : public QWidget {
 
-  private:
-            SlotsVector               _slotsHistory;
-            RecordModel*              _recordModel;
-            QSortFilterProxyModel*    _sortModel;
-            QComboBox*                _recordsHistoryComboBox;
-            QTableView*               _slotsView;
-            QLineEdit*                _filterPatternLineEdit;
-            int                       _rowHeight;
-            Record*                   _rootRecord;
-};
+    public:
+      typedef vector<Slot*>             SlotsVector;
+
+    private:
+      class History {
+        public:
+                       History       ();
+                      ~History       ();
+          void         push          ( Slot* slot );
+          void         pop           ();
+          void         back          ();
+          void         goTo          ( int depth );
+          void         clear         ( bool inDelete=false );
+          void         setComboBox   ( QComboBox* comboBox );
+          void         setRootRecord ( Record* rootRecord );
+          size_t       getDepth      () const;
+          Slot*        getSlot       () const;
+        private:
+          size_t       _depth;
+          SlotsVector  _slots;
+          QComboBox*   _comboBox;
+        private:
+                       History       ( const History& );
+          History&     operator=     ( const History& );
+      };
+
+      Q_OBJECT;
+
+    public:
+                                        HInspectorWidget  ( Record* rootRecord, QWidget* parent=NULL );
+                                       ~HInspectorWidget  ();
+              void                      setRootRecord     ( Record*  record );
+    private slots:
+              void                      textFilterChanged ();
+              void                      historyChanged    ( int depth );
+              void                      forkInspector     ( const QModelIndex& index );
+    protected:
+              void                      keyPressEvent     ( QKeyEvent * event );
+    private:
+              void                      pushSlot          ( Slot* slot );
+              void                      popSlot           ();
+              void                      back              ();
+              bool                      setSlot           ();
+
+    private:
+              RecordModel*              _recordModel;
+              QSortFilterProxyModel*    _sortModel;
+              QComboBox*                _historyComboBox;
+              QTableView*               _slotsView;
+              QLineEdit*                _filterPatternLineEdit;
+              int                       _rowHeight;
+              Record*                   _rootRecord;
+              History                   _history;
+  };
+
+
+} // End of Hurricane namespace.
 
 
 #endif // __HINSPECTOR_WIDGET_H__

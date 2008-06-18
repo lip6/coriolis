@@ -134,6 +134,12 @@ namespace Hurricane {
   { return _physicalsPerGrid; }
 
 
+  double  DbU::physicalToGrid ( double physical, UnitPower p )
+  {
+    return ( physical * getUnitPower(p) ) / _physicalsPerGrid;
+  }
+
+
   void  DbU::setGridsPerLambda ( double gridsPerLambda )
   {
     if (   ( rint(gridsPerLambda) != gridsPerLambda ) 
