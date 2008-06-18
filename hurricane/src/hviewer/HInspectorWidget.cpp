@@ -12,8 +12,8 @@
 #include <QVBoxLayout>
 
 #include "hurricane/viewer/Graphics.h"
-#include "hurricane/inspector/RecordModel.h"
-#include "hurricane/inspector/HInspectorWidget.h"
+#include "hurricane/viewer/RecordModel.h"
+#include "hurricane/viewer/HInspectorWidget.h"
 #include "hurricane/Slot.h"
 
 

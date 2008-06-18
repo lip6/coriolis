@@ -15,7 +15,7 @@
 #include  "hurricane/viewer/Palette.h"
 #include  "hurricane/viewer/CellWidget.h"
 #include  "hurricane/viewer/CellViewer.h"
-#include  "hurricane/inspector/HInspectorWidget.h"
+#include  "hurricane/viewer/HInspectorWidget.h"
 
 
 namespace Hurricane {

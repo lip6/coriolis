@@ -2,13 +2,12 @@
                include ( ${QT_USE_FILE} )
 
    include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane
-                         ${HURRICANE_SOURCE_DIR}/src/hinspector
-                         ${HURRICANE_SOURCE_DIR}/src/hviewer
-                       )
+                         ${HURRICANE_SOURCE_DIR}/src/hviewer )
 
                    set ( includes    hurricane/viewer/ScreenUtilities.h
                                      hurricane/viewer/DisplayStyle.h
                                      hurricane/viewer/Graphics.h
+                                     hurricane/viewer/HInspectorWidget.h
                        )
                    set ( mocincludes hurricane/viewer/PaletteEntry.h
                                      hurricane/viewer/LayerPaletteEntry.h
@@ -17,6 +16,8 @@
                                      hurricane/viewer/Palette.h
                                      hurricane/viewer/CellWidget.h
                                      hurricane/viewer/CellViewer.h
+                                     hurricane/viewer/RecordModel.h
+                                     hurricane/viewer/HInspectorWidget.h
                        )
                    set ( exports     hurricane/viewer/ScreenUtilities.h
                                      hurricane/viewer/PaletteEntry.h
@@ -35,6 +36,8 @@
                                      Palette.cpp
                                      CellWidget.cpp
                                      CellViewer.cpp
+                                     RecordModel.cpp
+                                     HInspectorWidget.cpp
                        )
 
           qt4_wrap_cpp ( MOC_SRCS    ${mocincludes} )

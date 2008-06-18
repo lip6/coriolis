@@ -4,7 +4,7 @@
 
 #include  "hurricane/Name.h"
 #include  "hurricane/viewer/Graphics.h"
-#include  "hurricane/inspector/RecordModel.h"
+#include  "hurricane/viewer/RecordModel.h"
 
 
 namespace Hurricane {
