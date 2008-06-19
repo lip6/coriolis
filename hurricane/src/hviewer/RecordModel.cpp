@@ -10,10 +10,10 @@
 namespace Hurricane {
 
 
-  RecordModel::RecordModel ( Slot* slot, QObject* parent )
+  RecordModel::RecordModel ( QObject* parent )
     : QAbstractTableModel(parent)
-    , _slot(slot)
-    , _record(slot->getDataRecord())
+    , _slot(NULL)
+    , _record(NULL)
     , _depth(0)
   { }
 
@@ -35,9 +35,8 @@ namespace Hurricane {
 
     emit layoutAboutToBeChanged ();
 
-    if ( _depth )
-      delete _record;
-    delete _slot;
+    if ( _depth ) delete _record;
+    if ( _slot  ) delete _slot;
 
     _slot   = slot;
     _record = record;
@@ -100,7 +99,8 @@ namespace Hurricane {
 
   int  RecordModel::rowCount ( const QModelIndex& parent ) const
   {
-    return _record->_getSlotList().size();
+
+    return (_record) ? _record->_getSlotList().size() : 0;
   }
 
 

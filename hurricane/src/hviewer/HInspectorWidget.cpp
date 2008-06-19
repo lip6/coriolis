@@ -129,14 +129,13 @@ namespace Hurricane {
 
 
 
-  HInspectorWidget::HInspectorWidget ( Record* rootRecord, QWidget* parent )
+  HInspectorWidget::HInspectorWidget ( QWidget* parent )
       : QWidget(parent)
       , _recordModel(NULL)
       , _sortModel(NULL)
       , _historyComboBox(NULL)
       , _slotsView(NULL)
       , _rowHeight(20)
-      , _rootRecord(rootRecord)
       , _history()
   {
     setAttribute ( Qt::WA_DeleteOnClose );
@@ -157,23 +156,7 @@ namespace Hurricane {
     verticalHeader->setVisible ( false );
 
     _historyComboBox = new QComboBox ( this );
-    _history.setComboBox   ( _historyComboBox );
-    _history.setRootRecord ( _rootRecord );
-
-    _recordModel = new RecordModel ( _history.getSlot(), this );
-    _sortModel   = new QSortFilterProxyModel ( this );
-    _sortModel->setSourceModel       ( _recordModel );
-    _sortModel->setDynamicSortFilter ( true );
-    _sortModel->setFilterKeyColumn   ( 1 );
-
-    _slotsView->setModel ( _sortModel );
-    _slotsView->horizontalHeader()->setStretchLastSection ( true );
-    _slotsView->resizeColumnToContents ( 0 );
-
-    int rows = _sortModel->rowCount ();
-    for ( rows-- ; rows >= 0 ; rows-- )
-      _slotsView->setRowHeight ( rows, _rowHeight );
-    _slotsView->selectRow ( 0 );
+    _history.setComboBox ( _historyComboBox );
 
     _filterPatternLineEdit = new QLineEdit(this);
     QLabel* filterPatternLabel = new QLabel(tr("&Filter pattern:"), this);
@@ -187,7 +170,6 @@ namespace Hurricane {
 
     setLayout ( inspectorLayout );
 
-    connect ( _historyComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(historyChanged(int)) );
     connect ( _filterPatternLineEdit, SIGNAL(textChanged(const QString &))
             , this                  , SLOT(textFilterChanged())
             );
@@ -199,17 +181,33 @@ namespace Hurricane {
 
   HInspectorWidget::~HInspectorWidget ()
   {
-  //cerr << "HInspectorWidget::~HInspectorWidget()" << endl;
-  //cerr << "Records: " << Record::getAllocateds()  << endl;
-  //cerr << "Slots:   " << Slot::getAllocateds()  << endl;
+    cerr << "HInspectorWidget::~HInspectorWidget()" << endl;
+    cerr << "Records: " << Record::getAllocateds()  << endl;
+    cerr << "Slots:   " << Slot::getAllocateds()  << endl;
   }
 
 
   void  HInspectorWidget::setRootRecord ( Record* record )
   {
     _history.setRootRecord ( record );
-    _recordModel->setSlot ( _history.getSlot(), _history.getDepth() );
-    _slotsView->selectRow ( 0 );
+
+    if ( !_recordModel ) {
+      _recordModel = new RecordModel ( this );
+      _sortModel   = new QSortFilterProxyModel ( this );
+      _sortModel->setSourceModel       ( _recordModel );
+      _sortModel->setDynamicSortFilter ( true );
+      _sortModel->setFilterKeyColumn   ( 1 );
+
+      _slotsView->setModel ( _sortModel );
+      _slotsView->horizontalHeader()->setStretchLastSection ( true );
+      _slotsView->resizeColumnToContents ( 0 );
+
+    // Only after creating the RecordModel can we connect the ComboBox.
+      connect ( _historyComboBox, SIGNAL(currentIndexChanged(int))
+              , this            , SLOT(historyChanged(int)) );
+    }
+
+    setSlot ();
   }
 
 
@@ -263,7 +261,7 @@ namespace Hurricane {
       }
     } else if ( event->key() == Qt::Key_Left ) {
       back ();
-    } else if ( event->key() == Qt::Key_O ) {
+    } else if ( event->key() == Qt::Key_o ) {
       forkInspector ( _slotsView->currentIndex() );
     } else {
       event->ignore();
@@ -291,7 +289,8 @@ namespace Hurricane {
       Record* record = slot->getDataRecord();
 
       if ( record ) {
-        HInspectorWidget* fork = new HInspectorWidget ( record );
+        HInspectorWidget* fork = new HInspectorWidget ();
+        fork->setRootRecord ( record );
         fork->show ();
       }
     }

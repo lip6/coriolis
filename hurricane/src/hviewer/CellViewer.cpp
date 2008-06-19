@@ -165,7 +165,8 @@ namespace Hurricane {
   //cerr << "Inspector created." << endl;
 
     if ( record ) {
-      HInspectorWidget* inspector = new HInspectorWidget ( record );
+      HInspectorWidget* inspector = new HInspectorWidget ();
+      inspector->setRootRecord ( record );
       inspector->show ();
     } else
       cerr << "[ERROR] Attempt to run Inspector on NULL record." << endl;

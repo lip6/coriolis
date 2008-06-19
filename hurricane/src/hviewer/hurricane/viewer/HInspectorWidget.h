@@ -53,7 +53,7 @@ namespace Hurricane {
       Q_OBJECT;
 
     public:
-                                        HInspectorWidget  ( Record* rootRecord, QWidget* parent=NULL );
+                                        HInspectorWidget  ( QWidget* parent=NULL );
                                        ~HInspectorWidget  ();
               void                      setRootRecord     ( Record*  record );
     private slots:
@@ -75,7 +75,6 @@ namespace Hurricane {
               QTableView*               _slotsView;
               QLineEdit*                _filterPatternLineEdit;
               int                       _rowHeight;
-              Record*                   _rootRecord;
               History                   _history;
   };
 
