@@ -181,9 +181,9 @@ namespace Hurricane {
 
   HInspectorWidget::~HInspectorWidget ()
   {
-    cerr << "HInspectorWidget::~HInspectorWidget()" << endl;
-    cerr << "Records: " << Record::getAllocateds()  << endl;
-    cerr << "Slots:   " << Slot::getAllocateds()  << endl;
+  //cerr << "HInspectorWidget::~HInspectorWidget()" << endl;
+  //cerr << "Records: " << Record::getAllocateds()  << endl;
+  //cerr << "Slots:   " << Slot::getAllocateds()  << endl;
   }
 
 
@@ -261,7 +261,7 @@ namespace Hurricane {
       }
     } else if ( event->key() == Qt::Key_Left ) {
       back ();
-    } else if ( event->key() == Qt::Key_o ) {
+    } else if ( event->key() == Qt::Key_O ) {
       forkInspector ( _slotsView->currentIndex() );
     } else {
       event->ignore();
