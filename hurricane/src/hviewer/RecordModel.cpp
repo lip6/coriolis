@@ -20,7 +20,7 @@ namespace Hurricane {
 
   RecordModel::~RecordModel ()
   {
-    delete _record;
+    if ( _depth ) delete _record;
     delete _slot;
   }
 
@@ -32,8 +32,6 @@ namespace Hurricane {
       delete slot;
       return false;
     }
-
-    emit layoutAboutToBeChanged ();
 
     if ( _depth ) delete _record;
     if ( _slot  ) delete _slot;
@@ -99,7 +97,6 @@ namespace Hurricane {
 
   int  RecordModel::rowCount ( const QModelIndex& parent ) const
   {
-
     return (_record) ? _record->_getSlotList().size() : 0;
   }
 

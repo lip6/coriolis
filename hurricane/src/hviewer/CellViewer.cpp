@@ -160,12 +160,12 @@ namespace Hurricane {
 
   void  CellViewer::runInspector ( Record* record )
   {
-  //cerr << "INITIAL Records: " << Record::getAllocateds()  << endl;
-  //cerr << "INITIAL Slots:   " << Slot::getAllocateds()  << endl;
-  //cerr << "Inspector created." << endl;
+    static HInspectorWidget* inspector = NULL;
 
     if ( record ) {
-      HInspectorWidget* inspector = new HInspectorWidget ();
+    //if ( !inspector )
+      inspector = new HInspectorWidget ();
+
       inspector->setRootRecord ( record );
       inspector->show ();
     } else

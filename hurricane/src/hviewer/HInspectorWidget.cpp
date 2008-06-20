@@ -91,17 +91,17 @@ namespace Hurricane {
   void  HInspectorWidget::History::clear ( bool inDelete )
   {
     if ( !_slots.empty() ) {
-    // Delete the rootRecord only if it'not the current viewed record.
-      if ( _depth != 0 ) {
-        delete _slots[0]->getDataRecord();
-      }
+      _comboBox->clear ();
+
+    // Delete the rootRecord as it's the only one not deleted
+    // automatically through RecordModel (case of depth 0).
+      delete _slots[0]->getDataRecord();
 
       for ( size_t i=0 ; i < _slots.size() ; i++ )
         delete _slots[i];
 
       _slots.clear ();
-      if ( !inDelete )
-        _comboBox->clear ();
+      _depth = 0;
     }
   }
 
@@ -124,7 +124,6 @@ namespace Hurricane {
     Slot* rootSlot = ::getSlot ( "<TopLevelSlot>", rootRecord );
     _slots.push_back ( rootSlot );
     _comboBox->addItem ( QString("%1: %2").arg(_depth).arg(_slots[_slots.size()-1]->getDataString().c_str()));
-    _depth = 0;
   }
 
 
@@ -277,6 +276,8 @@ namespace Hurricane {
 
   void  HInspectorWidget::historyChanged ( int depth )
   {
+    if ( depth < 0 ) return;
+
     _history.goTo ( depth );
     setSlot ();
   }
