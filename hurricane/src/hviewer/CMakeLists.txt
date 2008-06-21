@@ -4,11 +4,6 @@
    include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane
                          ${HURRICANE_SOURCE_DIR}/src/hviewer )
 
-                   set ( includes    hurricane/viewer/ScreenUtilities.h
-                                     hurricane/viewer/DisplayStyle.h
-                                     hurricane/viewer/Graphics.h
-                                     hurricane/viewer/HInspectorWidget.h
-                       )
                    set ( mocincludes hurricane/viewer/PaletteEntry.h
                                      hurricane/viewer/LayerPaletteEntry.h
                                      hurricane/viewer/GroupPaletteEntry.h
@@ -25,6 +20,7 @@
                                      hurricane/viewer/DisplayStyle.h
                                      hurricane/viewer/Graphics.h
                                      hurricane/viewer/CellViewer.h
+                                     hurricane/viewer/HInspectorWidget.h
                        )
                    set ( cpps        ScreenUtilities.cpp 
                                      DisplayStyle.cpp 
