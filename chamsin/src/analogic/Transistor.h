@@ -14,11 +14,26 @@ class Transistor : public Cell {
                 enum Code {N=0, P=1};
                 
                 Polarity(const Code& code): _code(code) {}
-
                 operator const Code&() const { return _code; };
                 string _getString() const;
                 Record* _getRecord() const;
+
             private:
+                Polarity() {}
+                Code _code;
+        };
+
+        class AbutmentType {
+            public:
+                enum Code {INTERNAL=0, LEFT=1, RIGHT=2, SINGLE=3};
+
+                AbutmentType(const Code& code): _code(code) {}
+                operator const Code&() const { return _code; };
+                string _getString() const;
+                Record* _getRecord() const;
+
+            private:
+                AbutmentType() {}
                 Code _code;
         };
 
@@ -28,19 +43,19 @@ class Transistor : public Cell {
         static const Name BulkName;
         static const Name AnonymousName;
 
-        enum AbutmentType { INTERNAL=0, LEFT=1, RIGHT=2, SINGLE=3};
 
         static Transistor* create(Library* library, const Name& name,
                 const Polarity& polarity,
-                DbU::Unit l, DbU::Unit w);
+                DbU::Unit l, DbU::Unit w,
+                const AbutmentType& abutmentType=AbutmentType::SINGLE);
         void createLayout();
 
         bool isNmos() const { return _polarity == Polarity::N; };
         bool isPmos() const { return _polarity == Polarity::P; };
-        bool isInternal() const { return _abutmentType == INTERNAL; };
-        bool isLeft() const     { return _abutmentType == LEFT; };
-        bool isRight() const    { return _abutmentType == RIGHT; };
-        bool isSingle() const   { return _abutmentType == SINGLE; };
+        bool isInternal() const { return _abutmentType == AbutmentType::INTERNAL; };
+        bool isLeft() const     { return _abutmentType == AbutmentType::LEFT; };
+        bool isRight() const    { return _abutmentType == AbutmentType::RIGHT; };
+        bool isSingle() const   { return _abutmentType == AbutmentType::SINGLE; };
 
         virtual Record* _getRecord() const;
 
@@ -64,7 +79,8 @@ class Transistor : public Cell {
 
         Transistor(Library* library, const Name& name,
                 const Polarity& polarity,
-                DbU::Unit l, DbU::Unit w);
+                DbU::Unit l, DbU::Unit w,
+                const AbutmentType& abutmentType);
 };
 
 }
@@ -85,7 +101,26 @@ template<> inline Hurricane::Record* getRecord<const Hurricane::Transistor::Pola
     return record;
 }
 
+template<> inline std::string getString<const Hurricane::Transistor::AbutmentType::Code*>
+(const Hurricane::Transistor::AbutmentType::Code* object ) {
+    switch (*object) {
+        case Hurricane::Transistor::AbutmentType::INTERNAL: return "INTERNAL";
+        case Hurricane::Transistor::AbutmentType::LEFT: return "LEFT";
+        case Hurricane::Transistor::AbutmentType::RIGHT: return "RIGHT";
+        case Hurricane::Transistor::AbutmentType::SINGLE: return "SINGLE";
+        default: return "ABNORMAL";
+    }
+}
+
+template<> inline Hurricane::Record* getRecord<const Hurricane::Transistor::AbutmentType::Code*>
+(const Hurricane::Transistor::AbutmentType::Code* object) {
+    Hurricane::Record* record = new Hurricane::Record(getString(object));
+    record->add(getSlot("Code", (unsigned int*)object));
+    return record;
+}
+
 INSPECTOR_P_SUPPORT(Hurricane::Transistor);
 INSPECTOR_P_SUPPORT(Hurricane::Transistor::Polarity);
+INSPECTOR_P_SUPPORT(Hurricane::Transistor::AbutmentType);
 
 #endif // TRANSISTOR_H

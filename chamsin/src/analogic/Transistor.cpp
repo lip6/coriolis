@@ -72,7 +72,19 @@ Record* Transistor::Polarity::_getRecord() const {
     return record;
 }
 
-Transistor::Transistor(Library* library, const Name& name, const Polarity& polarity, DbU::Unit l, DbU::Unit w):
+string Transistor::AbutmentType::_getString() const {
+    return getString(&_code);
+}
+
+Record* Transistor::AbutmentType::_getRecord() const {
+    Record* record = new Record(getString(this));
+    record->add(getSlot("Code", &_code));
+    return record;
+}
+
+Transistor::Transistor(Library* library, const Name& name,
+        const Polarity& polarity, DbU::Unit l, DbU::Unit w,
+        const AbutmentType& abutmentType):
     Cell(library, name),
     _drain(NULL),
     _source(NULL),
@@ -80,7 +92,7 @@ Transistor::Transistor(Library* library, const Name& name, const Polarity& polar
     _bulk(NULL),
     _anonymous(NULL),
     _polarity(polarity),
-    _abutmentType(),
+    _abutmentType(abutmentType),
     _l(l),
     _w(w),
     _source20(NULL), _source22(NULL),
@@ -90,9 +102,11 @@ Transistor::Transistor(Library* library, const Name& name, const Polarity& polar
 {}
 
 
-Transistor* Transistor::create(Library* library, const Name& name, const Polarity& polarity,
-        DbU::Unit l, DbU::Unit w) {
-    Transistor* transistor = new Transistor(library, name, polarity, l, w);
+Transistor* Transistor::create(Library* library, const Name& name,
+        const Polarity& polarity,
+        DbU::Unit l, DbU::Unit w,
+        const AbutmentType& abutmentType) {
+    Transistor* transistor = new Transistor(library, name, polarity, l, w, abutmentType);
 
     transistor->_postCreate();
 
