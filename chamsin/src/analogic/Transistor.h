@@ -9,12 +9,25 @@ namespace Hurricane {
 
 class Transistor : public Cell {
     public:
+        class Polarity {
+            public:
+                enum Code {N=0, P=1};
+                
+                Polarity(const Code& code): _code(code) {}
+
+                operator const Code&() const { return _code; };
+                string _getString() const;
+                Record* _getRecord() const;
+            private:
+                Code _code;
+        };
+
         static const Name DrainName;
         static const Name SourceName;
         static const Name GridName;
         static const Name BulkName;
         static const Name AnonymousName;
-        enum Polarity {N=0, P=1};
+
         enum AbutmentType { INTERNAL=0, LEFT=1, RIGHT=2, SINGLE=3};
 
         static Transistor* create(Library* library, const Name& name,
@@ -22,17 +35,19 @@ class Transistor : public Cell {
                 DbU::Unit l, DbU::Unit w);
         void createLayout();
 
-        bool isNmos() const { return _polarity == N; };
-        bool isPmos() const { return _polarity == P; };
+        bool isNmos() const { return _polarity == Polarity::N; };
+        bool isPmos() const { return _polarity == Polarity::P; };
         bool isInternal() const { return _abutmentType == INTERNAL; };
         bool isLeft() const     { return _abutmentType == LEFT; };
         bool isRight() const    { return _abutmentType == RIGHT; };
         bool isSingle() const   { return _abutmentType == SINGLE; };
+
+        virtual Record* _getRecord() const;
+
     protected:
         void _postCreate();
 
     private:
-
         Net* _drain;
         Net* _source;
         Net* _grid;
@@ -53,5 +68,24 @@ class Transistor : public Cell {
 };
 
 }
+
+template<> inline std::string getString<const Hurricane::Transistor::Polarity::Code*>
+(const Hurricane::Transistor::Polarity::Code* object ) {
+    switch (*object) {
+        case Hurricane::Transistor::Polarity::N: return "N";
+        case Hurricane::Transistor::Polarity::P: return "P";
+        default: return "ABNORMAL";
+    }
+}
+
+template<> inline Hurricane::Record* getRecord<const Hurricane::Transistor::Polarity::Code*>
+(const Hurricane::Transistor::Polarity::Code* object) {
+    Hurricane::Record* record = new Hurricane::Record(getString(object));
+    record->add(getSlot("Code", (unsigned int*)object));
+    return record;
+}
+
+INSPECTOR_P_SUPPORT(Hurricane::Transistor);
+INSPECTOR_P_SUPPORT(Hurricane::Transistor::Polarity);
 
 #endif // TRANSISTOR_H

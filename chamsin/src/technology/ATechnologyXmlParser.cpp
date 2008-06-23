@@ -32,7 +32,7 @@ void readPhysicalRules(xmlNode* node, ATechnology* aTechnology) {
                     if (ruleNameC && valueC && refC && layer1C && layer2C) {
                         string ruleName((const char*)ruleNameC);
                         double value = atof((const char*)valueC);
-                        DbU::Unit unitValue= DbU::real(value);
+                        DbU::Unit unitValue= DbU::grid(value);
                         string reference((const char*)refC);
                         Name layer1Name((const char*)layer1C);
                         Name layer2Name((const char*)layer2C);
@@ -48,7 +48,7 @@ void readPhysicalRules(xmlNode* node, ATechnology* aTechnology) {
                     if (ruleNameC && valueC && refC) {
                         string ruleName((const char*)ruleNameC);
                         double value = atof((const char*)valueC);
-                        DbU::Unit unitValue= DbU::real(value);
+                        DbU::Unit unitValue= DbU::grid(value);
                         string reference((const char*)refC);
                         if (layerC) {
                             Name layerName((const char*)layerC);

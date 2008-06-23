@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
             exit(56);
         }
         aTechnology->print();
-        Transistor* trans = Transistor::create(userLibrary, Name("TEST"), Transistor::P, 10, 10);
+        Transistor* trans = Transistor::create(userLibrary, Name("TEST"), Transistor::Polarity::P, 10, 10);
         trans->createLayout();
         CellViewer* viewer = new CellViewer ( trans );
         viewer->show();

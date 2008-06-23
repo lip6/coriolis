@@ -10,8 +10,6 @@ using namespace Hurricane;
 
 namespace {
 
-
-
 void createContactMatrix(Net* net, const Layer* layer, const Box& box, unsigned columns,
         const DbU::Unit& rwCont, const DbU::Unit& rdCont) {
     unsigned contacts = 0;
@@ -63,6 +61,17 @@ const Name Transistor::GridName("GRID");
 const Name Transistor::BulkName("BULK");
 const Name Transistor::AnonymousName("ANONYMOUS");
 
+
+string Transistor::Polarity::_getString() const {
+    return getString(&_code);
+}
+
+Record* Transistor::Polarity::_getRecord() const {
+    Record* record = new Record(getString(this));
+    record->add(getSlot("Code", &_code));
+    return record;
+}
+
 Transistor::Transistor(Library* library, const Name& name, const Polarity& polarity, DbU::Unit l, DbU::Unit w):
     Cell(library, name),
     _drain(NULL),
@@ -112,7 +121,7 @@ void Transistor::_postCreate() {
    _grid30      = createPad(technology, _grid,      "cut0");
    _grid31      = createPad(technology, _grid,      "metal1");
    _anonymous10 = createPad(technology, _anonymous, "active");
-   if (_polarity == N) { 
+   if (_polarity == Polarity::N) { 
        _anonymous11 = createPad(technology, _anonymous, "nImplant");
        _anonymous12 = createPad(technology, _anonymous, "nImplant");
    } else {
@@ -145,7 +154,7 @@ void Transistor::createLayout() {
     DbU::Unit enclosureImplantPoly = 0;
     DbU::Unit extImplantActive = 0;
     DbU::Unit extImplantCut0 = 0;
-    if (_polarity == N) {
+    if (_polarity == Polarity::N) {
         enclosureImplantPoly   = atechno->getPhysicalRule("minEnclosure",
                 getLayer(techno, "nImplant"), getLayer(techno, "poly"))->getValue();
         extImplantActive = atechno->getPhysicalRule("minExtension",
@@ -223,4 +232,30 @@ void Transistor::createLayout() {
 
     //setAbutmentBox(getAbutmentBox());
     UpdateSession::close();
+}
+
+Record* Transistor::_getRecord() const {
+    Record* record = Inherit::_getRecord();
+    if (record) {
+        record->add(getSlot("Drain", _drain));
+        record->add(getSlot("Source", _source));
+        record->add(getSlot("Grid", _grid));
+        record->add(getSlot("Bulk", _bulk));
+        record->add(getSlot("Polarity", &_polarity));
+        record->add(getSlot("AbutmentType", &_abutmentType));
+        record->add(getSlot("L", &_l));
+        record->add(getSlot("W", &_w));
+        record->add(getSlot("Source20", _source20));
+        record->add(getSlot("Source22", _source22));
+        record->add(getSlot("Drain40", _drain40));
+        record->add(getSlot("Drain42", _drain42));
+        record->add(getSlot("Grid00", _grid00));
+        record->add(getSlot("Grid01", _grid01));
+        record->add(getSlot("Grid30", _grid30));
+        record->add(getSlot("Grid31", _grid31));
+        record->add(getSlot("10", _anonymous10));
+        record->add(getSlot("11", _anonymous11));
+        record->add(getSlot("12", _anonymous12));
+    }
+    return record;
 }
