@@ -129,7 +129,7 @@ template<typename Data> inline Hurricane::Slot* getSlot ( const std::string& nam
 // Default match.
 
 template<typename Data> inline std::string  getString ( Data data )
-{ return "<Data Unsupported by Inspector>"; }
+{ return "<Data Unsupported by getString>"; }
 
 // "const *" flavors.
 
@@ -440,6 +440,8 @@ inline Hurricane::Record* getRecord ( const std::set<Element,Compare>* s )
   return record;
 }
 
+// -------------------------------------------------------------------
+// Inspector Support for  :  "std::set<Element,Compare>*".
 
 template<typename Element, typename Compare>
 inline std::string  getString ( std::set<Element,Compare>* s )
@@ -465,6 +467,33 @@ inline Hurricane::Record* getRecord ( std::set<Element,Compare>* s )
   return record;
 }
 
+// -------------------------------------------------------------------
+// Inspector Support for  :  "[const] std::set<Element,Compare>&".
+
+
+template<typename Element, typename Compare>
+inline std::string  getString ( const std::set<Element,Compare>& s )
+{
+  std::string name = "const std::set<Element>:";
+  return name + getString<size_t>(s.size());
+}
+
+
+template<typename Element, typename Compare>
+inline Hurricane::Record* getRecord ( const std::set<Element,Compare>& s )
+{
+  Hurricane::Record* record = NULL;
+  if ( !s.empty() ) {
+    record = new Hurricane::Record ( "const std::set<Element>" );
+    unsigned n = 1;
+    typename std::set<Element,Compare>::const_iterator iterator = s.begin();
+    while ( iterator != s.end() ) {
+      record->add ( getSlot<Element>(getString(n++), *iterator) );
+      ++iterator;
+    }
+  }
+  return record;
+}
 
 // -------------------------------------------------------------------
 // Inspector Support for  :  "const std::multiset<Element,Compare>*".
