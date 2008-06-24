@@ -5,7 +5,10 @@ class ATechnology;
 
 class AEnv {
     public:
-        static void create(const char* technoFilePath, const char* graphicFilePath, const char* analogTechnoFilePath);
+        static void create(const char* symbTechnoFilePath,
+                const char* realTechnoFilePath,
+                const char* graphicFilePath,
+                const char* analogTechnoFilePath);
         static ATechnology* getATechnology();
 };
 

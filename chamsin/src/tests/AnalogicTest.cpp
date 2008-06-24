@@ -22,11 +22,11 @@ int main(int argc, char* argv[]) {
 	QApplication* qa = new QApplication(argc, argv);
 
         cout << "simple analogic test" << endl;
-        if (argc != 4) {
-            cerr << "atest techno.xml graphic.xml anatechno.xml";
+        if (argc != 5) {
+            cerr << "atest symbtechno.xml s2rtechno.xml graphic.xml anatechno.xml";
             exit(56);
         }
-        AEnv::create(argv[1], argv[2], argv[3]);
+        AEnv::create(argv[1], argv[2], argv[3], argv[4]);
         DataBase* db = DataBase::getDB();
         Library* rootLibrary = db->getRootLibrary();
         Library* userLibrary = Library::create(rootLibrary, Name("USER"));

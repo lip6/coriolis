@@ -17,6 +17,11 @@ void syntaxError(const string& reason) {
     throw Error(reason);
 }
 
+DbU::Unit getUnitValue(double physicalValue) {
+    cerr << "akecoucou : " << DbU::getPhysicalsPerGrid() << endl;
+    return DbU::grid(DbU::physicalToGrid(physicalValue, DbU::Micro));
+}
+
 void readPhysicalRules(xmlNode* node, ATechnology* aTechnology) {
     if (node->type == XML_ELEMENT_NODE && node->children) {
         for (xmlNode* ruleNode = node->children;
@@ -32,7 +37,8 @@ void readPhysicalRules(xmlNode* node, ATechnology* aTechnology) {
                     if (ruleNameC && valueC && refC && layer1C && layer2C) {
                         string ruleName((const char*)ruleNameC);
                         double value = atof((const char*)valueC);
-                        DbU::Unit unitValue= DbU::grid(value);
+                        DbU::Unit unitValue = getUnitValue(value);
+                        cerr << value << ", " << unitValue << endl;
                         string reference((const char*)refC);
                         Name layer1Name((const char*)layer1C);
                         Name layer2Name((const char*)layer2C);
@@ -48,7 +54,7 @@ void readPhysicalRules(xmlNode* node, ATechnology* aTechnology) {
                     if (ruleNameC && valueC && refC) {
                         string ruleName((const char*)ruleNameC);
                         double value = atof((const char*)valueC);
-                        DbU::Unit unitValue= DbU::grid(value);
+                        DbU::Unit unitValue = getUnitValue(value);
                         string reference((const char*)refC);
                         if (layerC) {
                             Name layerName((const char*)layerC);

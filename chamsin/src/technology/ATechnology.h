@@ -29,10 +29,16 @@ class ATechnology : public PrivateProperty {
                 const DbU::Unit _value;
                 const string _reference;
                 double getValue() const { return _value; }
+
+                string _getTypeName() const;
+                string _getString() const;
+                Record* _getRecord() const;
         };
 
         class TwoLayersPhysicalRule : public PhysicalRule {
             public:
+                typedef PhysicalRule Inherit;
+
                 TwoLayersPhysicalRule(const Name& name,
                         DbU::Unit value,
                         const string& reference,
@@ -42,6 +48,10 @@ class ATechnology : public PrivateProperty {
 
                 bool isSymetric() const { return _symetric; } 
                 const bool _symetric; 
+
+                string _getTypeName() const;
+                string _getString() const;
+                Record* _getRecord() const;
         };
 
         struct PhysicalRuleNameCompare:
@@ -73,6 +83,7 @@ class ATechnology : public PrivateProperty {
         virtual Name getName() const;
 
         virtual string _getTypeName() const;
+        virtual Record* _getRecord() const;
 
         ATechnology():
             Inherit(),
@@ -85,5 +96,26 @@ class ATechnology : public PrivateProperty {
         OneLayerPhysicalRules _oneLayerPhysicalRules;
         TwoLayersPhysicalRules _twoLayersPhysicalRules;
 };
+
+
+// -------------------------------------------------------------------
+// Inspector Support for  :  "ATechnology::LayerPair&".
+
+template<>
+inline std::string getString<ATechnology::LayerPair&> (ATechnology::LayerPair& lp) {
+    return "<LayerPair layer1=" + getString(lp.first) + ", layer2=" + getString(lp.second);
+}
+
+template<>
+inline Hurricane::Record* getRecord<ATechnology::LayerPair&> (ATechnology::LayerPair& lp) {
+    Hurricane::Record* record = new Hurricane::Record(getString(&lp));
+    record->add(getSlot("Layer1", lp.first));
+    record->add(getSlot("Layer2", lp.second));
+    return record;
+}
+
+INSPECTOR_P_SUPPORT(ATechnology);
+INSPECTOR_P_SUPPORT(ATechnology::PhysicalRule);
+INSPECTOR_P_SUPPORT(ATechnology::TwoLayersPhysicalRule);
 
 #endif /* ATECHNOLOGY_H_*/

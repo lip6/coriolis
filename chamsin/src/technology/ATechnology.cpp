@@ -32,12 +32,54 @@ void printPhysicalRules(const ATechnology::TwoLayersPhysicalRulesSet& physicalRu
 
 }
 
+string ATechnology::PhysicalRule::_getTypeName() const {
+    return "PhysicalRule";
+}
+
+string ATechnology::PhysicalRule::_getString() const {
+    return "<" + _getTypeName() + " " + getString(_name) + ">";
+}
+
+Record* ATechnology::PhysicalRule::_getRecord() const {
+    Record* record = new Record(getString(this));
+    record->add(getSlot("Name", &_name));
+    record->add(getSlot("Value", &_value));
+    record->add(getSlot("Reference", &_reference));
+    return record;
+}
+
+string ATechnology::TwoLayersPhysicalRule::_getTypeName() const {
+    return "TwoLayersPhysicalRule";
+}
+
+string ATechnology::TwoLayersPhysicalRule::_getString() const {
+    return "<" + _getTypeName() + " " + getString(_name) + ">";
+}
+
+Record* ATechnology::TwoLayersPhysicalRule::_getRecord() const {
+    Record* record = Inherit::_getRecord();
+    if (record) {
+        record->add(getSlot("Symetric", _symetric));
+    }
+    return record;
+}
+
 Name ATechnology::getName() const {
     return ATechnologyPropertyName;
 }
 
 string ATechnology::_getTypeName() const {
     return _TName("ATechnologyProperty");
+}
+
+Record* ATechnology::_getRecord() const {
+    Record* record = Inherit::_getRecord();
+    if (record) {
+        record->add(getSlot("NoLayerPhysicalRules", &_noLayerPhysicalRules));
+        record->add(getSlot("OneLayerPhysicalRules", &_oneLayerPhysicalRules));
+        record->add(getSlot("TwoLayersPhysicalRules", &_twoLayersPhysicalRules));
+    }
+    return record;
 }
 
 void ATechnology::addPhysicalRule(const Name& name, DbU::Unit value, const string& reference) {

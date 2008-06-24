@@ -5,6 +5,7 @@ using namespace Hurricane;
 
 #include "crlcore/GraphicsParser.h"
 #include "crlcore/SymbolicTechnologyParser.h"
+#include "crlcore/RealTechnologyParser.h"
 using namespace CRL;
 
 #include "ATechnology.h"
@@ -12,13 +13,17 @@ using namespace CRL;
 
 #include "AEnv.h"
 
-void AEnv::create(const char* technoFilePath, const char* graphicFilePath, const char* analogTechnoFilePath) {
+void AEnv::create(const char* symbTechnoFilePath,
+        const char* realTechnoFilePath,
+        const char* graphicFilePath,
+        const char* analogTechnoFilePath) {
     DataBase* db = DataBase::getDB();
     if (db) {
         throw Error("");
     }
     db = DataBase::create();
-    SymbolicTechnologyParser::load(db, technoFilePath); 
+    SymbolicTechnologyParser::load(db, symbTechnoFilePath); 
+    RealTechnologyParser::load(db, realTechnoFilePath);
     GraphicsParser::load(graphicFilePath);
 
     Library* rootLibrary = Library::create(db, Name("RootLibrary"));
