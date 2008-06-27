@@ -281,8 +281,8 @@ inline Hurricane::Record* getRecord<const Hurricane::Net::Direction::Code*>
 INSPECTOR_P_SUPPORT(Hurricane::Net);
 INSPECTOR_P_SUPPORT(Hurricane::Net::ComponentSet);
 INSPECTOR_P_SUPPORT(Hurricane::Net::RubberSet);
-INSPECTOR_P_SUPPORT(Hurricane::Net::Type);
-INSPECTOR_P_SUPPORT(Hurricane::Net::Direction);
+INSPECTOR_PV_SUPPORT(Hurricane::Net::Type);
+INSPECTOR_PV_SUPPORT(Hurricane::Net::Direction);
 
 
 #endif // HURRICANE_NET
