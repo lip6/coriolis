@@ -1,5 +1,10 @@
 <technology name="hcmos9">
   <physical_rules>
+    <rule name="transistorMinL" value="0.13" ref="13-1.a"/>
+    <rule name="transistorMaxL" value="13.0" ref="13-1.a"/>
+    <rule name="transistorMinW" value="0.15" ref="2-1"/>
+    <rule name="transistorMaxW" value="1500.0" ref="2-1"/>
+
     <rule name="minWidth"     layer="cut0" value="0.16" ref="19-1"/> 
     <arule name="minExtension" layer1="poly" layer2="cut0" value="0.07" ref="19-3"/> 
 

@@ -18,7 +18,6 @@ void syntaxError(const string& reason) {
 }
 
 DbU::Unit getUnitValue(double physicalValue) {
-    cerr << "akecoucou : " << DbU::getPhysicalsPerGrid() << endl;
     return DbU::grid(DbU::physicalToGrid(physicalValue, DbU::Micro));
 }
 

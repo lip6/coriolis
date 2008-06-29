@@ -193,9 +193,9 @@ void Transistor::createLayout() {
     DbU::Unit dx00 = _l;
     DbU::Unit dy00 = _w - y00*2; 
     Box box00(x00, y00, dx00, dy00);
+    cerr << _w << endl;
+    cerr << box00 << endl;
     _grid00->setBoundingBox(box00);
-    Contact* contact = Contact::create(_grid, getLayer(techno, "metal1"), box00.getXCenter(), box00.getYCenter(), box00.getWidth(), box00.getHeight());
-    Pad* pad = Pad::create(_grid, getLayer(techno, "metal1"), box00);
 
     //grid30
     DbU::Unit maxValue = widthCut0 + 2*extPolyCut0;

@@ -36,7 +36,13 @@ int main(int argc, char* argv[]) {
             exit(56);
         }
         aTechnology->print();
-        Transistor* trans = Transistor::create(userLibrary, Name("TEST"), Transistor::Polarity::P, 10, 10);
+
+        DbU::Unit transistorMinL = aTechnology->getPhysicalRule("transistorMinL")->getValue();
+        DbU::Unit transistorMinW = aTechnology->getPhysicalRule("transistorMinW")->getValue();
+
+        DbU::Unit L = transistorMinL; 
+        DbU::Unit W = transistorMinW; 
+        Transistor* trans = Transistor::create(userLibrary, Name("TEST"), Transistor::Polarity::P, L, W);
         trans->createLayout();
         CellViewer* viewer = new CellViewer ( trans );
         viewer->show();
