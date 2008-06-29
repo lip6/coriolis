@@ -2560,7 +2560,7 @@ Region::SwapLine Region::getHorizontalSwapLine(const DbU::Unit& y, const Interva
 bool Region::isEmpty() const
 // *************************
 {
-    return Region_Tiles(this).getSubSet(!Tile::getIsVoidFilter()).IsEmpty();
+    return Region_Tiles(this).getSubSet(!Tile::getIsVoidFilter()).isEmpty();
 }
 
 bool Region::contains(const Point& point) const
@@ -2575,7 +2575,7 @@ bool Region::contains(const Box& box) const
     if (box.isPonctual()) return contains(box.getCenter());
     return getBoundingBox().contains(box) &&
       Region_TilesUnder (this, Box(box).inflate(-1))
-                         .getSubSet(Tile::getIsVoidFilter()).IsEmpty();
+                         .getSubSet(Tile::getIsVoidFilter()).isEmpty();
 }
 
 bool Region::contains(const Region& region) const
@@ -2664,7 +2664,7 @@ Region& Region::fill(const Box& box)
     else {
         Tile* startTile = _getStartTile(_getTileAt(Point(box.getXMax(), box.getYMin())));
         GenericCollection<Tile*> tiles = _getTilesUnder(Box(box).inflate(0,0,-1,-1), startTile);
-        if (!tiles.getSubSet(Tile::getIsVoidFilter()).IsEmpty()) _update(box, false, startTile);
+        if (!tiles.getSubSet(Tile::getIsVoidFilter()).isEmpty()) _update(box, false, startTile);
     }
 
     return *this;
@@ -2697,7 +2697,7 @@ Region& Region::groove(const Box& box)
 
     Tile* startTile = _getStartTile(_getTileAt(Point(correctedBox.getXMax(), correctedBox.getYMin())));
     GenericCollection<Tile*> tiles = _getTilesUnder(Box(correctedBox).inflate(0,0,-1,-1), startTile);
-    if (!tiles.getSubSet(!Tile::getIsVoidFilter()).IsEmpty()) _update(box, true, startTile);
+    if (!tiles.getSubSet(!Tile::getIsVoidFilter()).isEmpty()) _update(box, true, startTile);
 
     return *this;
 }

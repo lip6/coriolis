@@ -271,7 +271,7 @@ template<class Key, class Element> class IntrusiveMap {
 // Predicates
 // **********
 
-    public: bool IsEmpty() const
+    public: bool isEmpty() const
     // *************************
     {
         return (_size == 0);
@@ -311,7 +311,7 @@ template<class Key, class Element> class IntrusiveMap {
     public: string _getString() const
     // ******************************
     {
-        if (IsEmpty())
+        if (isEmpty())
             return "<" + _getTypeName() + " empty>";
         else
             return "<" + _getTypeName() + " " + getString(_size) + ">";
@@ -321,7 +321,7 @@ template<class Key, class Element> class IntrusiveMap {
     // *************************
     {
         Record* record = NULL;
-        if (!IsEmpty()) {
+        if (!isEmpty()) {
             record = new Record(getString(this));
             unsigned n = 1;
             for (unsigned index = 0; index < _length; index++) {

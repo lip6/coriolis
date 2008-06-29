@@ -84,7 +84,7 @@ Box Cell::getBoundingBox() const
 bool Cell::isLeaf() const
 // **********************
 {
-    return _instanceMap.IsEmpty();
+    return _instanceMap.isEmpty();
 }
 
 bool Cell::isCalledBy(Cell* cell) const
@@ -145,7 +145,7 @@ void Cell::flattenNets(bool buildRings)
       for_each_component ( component, net->getComponents() ) {
         Plug* primaryPlug = dynamic_cast<Plug*>( component );
         if ( primaryPlug ) {
-          if ( !primaryPlug->getBodyHook()->getSlaveHooks().IsEmpty() ) {
+          if ( !primaryPlug->getBodyHook()->getSlaveHooks().isEmpty() ) {
             cerr << "[ERROR] " << primaryPlug << "\n"
                  << "        has attached components, not managed yet." << endl;
           } else {

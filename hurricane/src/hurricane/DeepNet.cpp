@@ -181,7 +181,7 @@ Net* getDeepNet(HyperNet& hypernet)
     Occurrence  rootNetOccurrence = getHyperNetRootNetOccurrence ( hypernet.getNetOccurrence() );
 
   //if (  rootNetOccurrence.getMasterCell()->IsFlattenLeaf() ) return NULL;
-  //if (  rootNetOccurrence.getPath().IsEmpty() )              return NULL;
+  //if (  rootNetOccurrence.getPath().isEmpty() )              return NULL;
 
     return  rootNetOccurrence.getOwnerCell()->getNet(rootNetOccurrence.getName());
 

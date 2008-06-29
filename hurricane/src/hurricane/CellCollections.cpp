@@ -4044,7 +4044,7 @@ Cell_RecursiveSlavePathes::Locator::Locator ( const Cell* cell )
   do {
     Instances slaveInstances = topCell->getSlaveInstances();
 
-    if ( !slaveInstances.IsEmpty() ) {
+    if ( !slaveInstances.isEmpty() ) {
       _instancesStack.push_back ( *slaveInstances.getLocator() );
       _instancePath = Path ( _instancesStack.back().getElement(), _instancePath );
 
@@ -4080,7 +4080,7 @@ void  Cell_RecursiveSlavePathes::Locator::progress ()
     do {
       Instances slaveInstances = topCell->getSlaveInstances();
 
-      if ( !slaveInstances.IsEmpty() ) {
+      if ( !slaveInstances.isEmpty() ) {
         _instancesStack.push_back ( *slaveInstances.getLocator() );
 //         cerr << "Instances of R: " << topCell->getName() << endl;
 //         cerr << "Head         R: " << _instancesStack.back().getElement()->getName() << endl;

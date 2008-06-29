@@ -104,7 +104,7 @@ template<class Type> class Collection {
 // Predicates
 // **********
 
-    public: bool IsEmpty() const
+    public: bool isEmpty() const
     // *************************
     {
         // we use a GenericLocator to delete the locator allocated by getLocator()
@@ -169,7 +169,7 @@ template<class Type> class Collection {
     // *************************
     {
         Record* record = NULL;
-        if (!IsEmpty()) {
+        if (!isEmpty()) {
             record = new Record(getString(this));
             unsigned n = 1;
             GenericLocator<Type> locator = getLocator();

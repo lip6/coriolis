@@ -443,7 +443,7 @@ void Net::setExternal(bool isExternal)
 {
     if (isExternal != _isExternal) {
         if (!isExternal) {
-            if (!getConnectedSlavePlugs().IsEmpty())
+            if (!getConnectedSlavePlugs().isEmpty())
                 throw Error("Can't set internal : has connected slave plugs");
             _direction = Direction::UNDEFINED;
         }
@@ -547,7 +547,7 @@ void Net::merge(Net* net)
     if (net->getCell() != _cell)
         throw Error("Can't merge net : incompatible net");
 
-    if (!isExternal() && net->isExternal() && !net->getConnectedSlavePlugs().IsEmpty())
+    if (!isExternal() && net->isExternal() && !net->getConnectedSlavePlugs().isEmpty())
         throw Error("Can't merge net : incompatible net");
 
     for_each_rubber(rubber, net->getRubbers()) rubber->_setNet(this); end_for;
@@ -570,7 +570,7 @@ void Net::merge(Net* net)
                 mainPlug->getBodyHook()->merge(nextMasterHook);
             }
             Hooks slaveHooks = masterHook->getSlaveHooks();
-            while (!slaveHooks.IsEmpty()) {
+            while (!slaveHooks.isEmpty()) {
                 Hook* slaveHook = slaveHooks.getFirst();
                 slaveHook->detach();
                 slaveHook->attach(mainPlug->getBodyHook());

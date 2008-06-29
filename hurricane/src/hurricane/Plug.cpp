@@ -126,7 +126,7 @@ void Plug::setNet(Net* net)
         if (net && (getCell() != net->getCell()))
             throw Error("Can't change net of plug : net : " + getString(net) + "does not belong to the cell : " + getString(getCell()));
 
-        if (!getBodyHook()->getSlaveHooks().IsEmpty())
+        if (!getBodyHook()->getSlaveHooks().isEmpty())
             throw Error("Can't change net of plug : not empty slave hooks");
 
         _setNet(net);
