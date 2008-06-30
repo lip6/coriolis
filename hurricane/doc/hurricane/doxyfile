@@ -98,8 +98,6 @@ WARN_LOGFILE           =
 # Configuration options related to the input files
 
 INPUT                  = \
-  ../../src/hurricane/hurricane/SlotAdapter.h      \
-                                SlotAdapter.dox    \
   ../../src/hurricane/hurricane/Commons.h          \ 
                                 Commons.dox        \
   ../../src/hurricane/hurricane/Exception.h        \

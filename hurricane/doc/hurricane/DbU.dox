@@ -52,20 +52,20 @@
   *
   *                The resolution is associated to the precision. Indeed it 
   *                represents the external value associated to the smallest 
-  *                unit, that is the value returned by getReal(Unit::db(1)). 
+  *                unit, that is the value returned by getGrid(Unit::db(1)). 
   *
   *                Related functions :
   *                <b>DbU::getResolution()</b>
   *
-  *  \section      secDbURealsPerLamba  Reals per Lambda ratio
+  *  \section      secDbUGridsPerLamba  Grids per Lambda ratio
   *
-  *                Set the ratio between reals and lambdas. This must be an
+  *                Set the ratio between grids and lambdas. This must be an
   *                even integer. Once sets, musn't be changed.
   *
   *                Related functions :
   *                <ul>
-  *                  <li><b>DbU::setRealsPerLambda()</b>
-  *                  <li><b>DbU::getRealsPerLambda()</b>
+  *                  <li><b>DbU::setGridsPerLambda()</b>
+  *                  <li><b>DbU::getGridsPerLambda()</b>
   *                </ul>
   * 
   * 
@@ -84,14 +84,14 @@
   *                Translate a DbU::Unit into grid or lambda length :
   *                <ul>
   *                  <li><b>long   DbU::getDb    (DbU::Unit u)</b>
-  *                  <li><b>double DbU::getReal  (DbU::Unit u)</b>
+  *                  <li><b>double DbU::getGrid  (DbU::Unit u)</b>
   *                  <li><b>double DbU::getLambda(DbU::Unit u)</b>
   *                </ul>
   *
   *                Translate a lambda length into a DbU::Unit :
   *                <ul>
   *                  <li><b>DbU::Unit DbU::db(long u)</b>
-  *                  <li><b>DbU::Unit DbU::real(double u)</b>
+  *                  <li><b>DbU::Unit DbU::grid(double u)</b>
   *                  <li><b>DbU::Unit DbU::lambda(double u)</b>
   *                </ul>
   */
@@ -127,8 +127,8 @@
   *                Units are printed "as is", their true value as stored in the
   *                DataBase.
   */
- /*! \var          Dbu::StringMode DbU::Real
-  *                Units are printed as real (founder grid steps).
+ /*! \var          Dbu::StringMode DbU::Grid
+  *                Units are printed as founder grid steps.
   */
  /*! \var          Dbu::StringMode DbU::Symbolic
   *                Units are printed as symbolic (lambdas).
@@ -159,13 +159,13 @@
   *  \remark       Throw an exception for any other \c \<s\> argument value. 
   */
 
- /*! \function     void  DbU::setRealsPerLambda(double realsPerLambda);
-  *  \Return       Sets how many reals (founder grid steps) makes one <i>lambda</i>.
+ /*! \function     void  DbU::setGridsPerLambda(double gridsPerLambda);
+  *  \Return       Sets how many founder grid steps makes one <i>lambda</i>.
   *                It must be an event integer otherwise an exception is thrown.
   */
 
- /*! \function     double  DbU::getRealsPerLambda();
-  *  \Return       How many reals (founder grid steps) makes one <i>lambda</i>.
+ /*! \function     double  DbU::getGridsPerLambda();
+  *  \Return       How many founder grid steps makes one <i>lambda</i>.
   */
 
  /*! \function     DbU::Unit DbU::db(long u);
@@ -174,8 +174,8 @@
   *                cast.
   */
 
- /*! \function     DbU::Unit DbU::real(double value);
-  *  \Return       the unit corresponding to the <i>real</i> value \c \<value\>
+ /*! \function     DbU::Unit DbU::grid(double value);
+  *  \Return       the unit corresponding to the <i>grid</i> value \c \<value\>
   *                according to the current precision.
   */
 
@@ -190,8 +190,8 @@
   *                nothing apart from a type cast.
   */
 
- /*! \function     double DbU::getReal(Unit unit);
-  *  \Return       the real value (expressed as a number of founder grid steps)
+ /*! \function     double DbU::getGrid(Unit unit);
+  *  \Return       the value expressed as a number of founder grid steps
   *                associated to the unit \c \<unit\> according to the current
   *                precision.
   */
@@ -210,7 +210,7 @@
  /*! \function     string DbU::getValueString(Unit  unit);
   *  \return       A character string representing the external value of 
   *                \c \<unit\>. The value is converted in the length according
-  *                to setStringMode(): database, real or symbolic.
+  *                to setStringMode(): database, grid or symbolic.
   *
   *  \remark       This string is shorter than the one we could print from the 
   *                external value because non needed decimals are not drawn (nor 

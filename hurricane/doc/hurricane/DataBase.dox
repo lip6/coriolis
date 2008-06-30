@@ -58,6 +58,20 @@
   */
 
 
+<<<<<<< .mine
+
+ /*! \addtogroup   Generalities
+  *  \{
+  */
+
+ /*! \function     DataBase* DataBase::getDB ();
+  *                This global generic function returns the current
+  *                DataBase, if it has been created and not destroyed,
+  *                else \NULL.
+  */
+
+=======
+>>>>>>> .r207
  // \}
 
  }

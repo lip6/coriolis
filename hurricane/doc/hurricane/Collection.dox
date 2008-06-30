@@ -258,7 +258,7 @@ Segments segments = netgetComponents()->getSubSet<Segment*>(IsOnLayer(metal));
   */
  //  \{
 
- /*! \function     bool Collection::IsEmpty() const;
+ /*! \function     bool Collection::isEmpty() const;
   *                This function returns \true if the collection designates no 
   *                element and else \false. 
   */
