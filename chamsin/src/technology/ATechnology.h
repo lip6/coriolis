@@ -99,19 +99,11 @@ class ATechnology : public PrivateProperty {
 
 
 // -------------------------------------------------------------------
-// Inspector Support for  :  "ATechnology::LayerPair&".
+// Inspector Support for  :  "ATechnology::LayerPair".
 
 template<>
-inline std::string getString<ATechnology::LayerPair&> (ATechnology::LayerPair& lp) {
-    return "<LayerPair layer1=" + getString(lp.first) + ", layer2=" + getString(lp.second);
-}
-
-template<>
-inline Hurricane::Record* getRecord<ATechnology::LayerPair&> (ATechnology::LayerPair& lp) {
-    Hurricane::Record* record = new Hurricane::Record(getString(&lp));
-    record->add(getSlot("Layer1", lp.first));
-    record->add(getSlot("Layer2", lp.second));
-    return record;
+inline std::string getString<ATechnology::LayerPair> (ATechnology::LayerPair lp) {
+    return "<LayerPair layer1=" + getString(lp.first) + ", layer2=" + getString(lp.second) + ">";
 }
 
 INSPECTOR_P_SUPPORT(ATechnology);

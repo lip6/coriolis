@@ -6,9 +6,11 @@
     <rule name="transistorMaxW" value="1500.0" ref="2-1"/>
 
     <rule name="minWidth"     layer="cut0" value="0.16" ref="19-1"/> 
+    <rule name="minSpacing"   layer="cut0" value="0.18" ref="19-2.a"/> 
     <arule name="minExtension" layer1="poly" layer2="cut0" value="0.07" ref="19-3"/> 
 
-    <arule name="minExtension" layer1="nImplant" layer2="poly" value="0.2" ref="16-17"/>
+    <arule name="minGateEnclosure" layer1="nImplant" layer2="poly" value="0.4" ref="16-6"/>
+    <arule name="minEnclosure" layer1="nImplant" layer2="poly" value="0.2" ref="16-17"/>
     <arule name="minExtension" layer1="nImplant" layer2="active" value="0.18" ref="16-8"/>
 
     <arule name="minGateEnclosure" layer1="pImplant" layer2="poly" value="0.4" ref="17-6"/>
@@ -19,8 +21,10 @@
     <arule name="minExtension" layer1="pImplant" layer2="cut0" value="0.09" ref="19-4.b"/> 
     <arule name="minExtension" layer1="nImplant" layer2="cut0" value="0.09" ref="19-4.c"/> 
 
-    <rule name="minSpacing"   layer1="active" layer2="cut0" value="0.14" ref="19-5"/>
-    <rule name="minSpacing"   layer1="active" layer2="poly" value="0.07" ref="13-5"/>
+    <rule name="minSpacing" layer1="active" layer2="cut0" value="0.14" ref="19-5"/>
+    <arule name="minGateSpacing" layer1="cut0" layer2="active" value="0.11" ref="19-6.a"/>
+    <rule name="minSpacing" layer1="active" layer2="poly" value="0.07" ref="13-5"/>
+    <arule name="minSourceDrainWidth" layer1="active" layer2="poly" value="0.23" ref="13-6"/>
 
     <arule name="minExtension" layer1="poly" layer2="active" value="0.18" ref="13-7"/>
 
