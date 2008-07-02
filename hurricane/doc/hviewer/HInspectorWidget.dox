@@ -1,0 +1,65 @@
+
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        HInspectorWidget
+  *  \brief        A Widget to browse through the Hurricane objetcs.
+  *
+  *  \section      secInspectorMM  Inspector Memory Management
+  *
+  *                In order to keep the memory footprint of the Inspector as
+  *                small as possible only the currently viewed Record is allocated.
+  *                The only exception is the root Record itself, which we must
+  *                kept for it has not been passed as a Slot but as a Record.
+  *                Be aware however, that the root Record is destroyed the
+  *                moment the Inspector is, so do not uses the root Record in
+  *                context from which the Inspector has been spawned.
+  *
+  *                The history from the root Record to the deepest reached
+  *                level of the data structure is kept in a vector of Slots.
+  *                We choose Slot over Record because they are lightweight object.
+  *                Slots containts only a name (usually the object's attribute
+  *                name) and a pointer to that attribute. The Record associated
+  *                to the attribute is generated on demand. To have a completly
+  *                uniform history we must create a special Slot from the root
+  *                Record, unlike others this Slot contains directly the Record
+  *                and not the attribute pointer it has been generated from.
+  *
+  *                When an Inspector windows is closed by the window manager,
+  *                the widget is not simply hidden, it is fully destroyed
+  *                (see the QWidget \c Qt::WA_DeleteOnClose attribute). Thus, pointers
+  *                to an Inspector Widget are not to be kept.
+  *
+  *                Any number of Inspector could be created simultanously, even
+  *                on the same datas. Slot & Record beeing on demand, expandables,
+  *                objects.
+  */
+
+
+ //! \name         Constructors & Destructors
+ //  \{
+   
+ /*! \function     HInspectorWidget::HInspectorWidget(QWidget* parent=NULL);
+  *                Construct a HInspectorWidget. The root Record to browse must
+  *                be sets immediatly afterwards with the setRootRecord()
+  *                method.
+  */
+
+ //  \}
+
+
+ //! \name         Modifiers
+ //  \{
+   
+ /*! \function     void HInspectorWidget::setRootRecord(Record* record);
+  *                Sets the root record of the Inspector. Note that the
+  *                previous root record is freed.
+  */
+
+ //  \}
+
+
+ }

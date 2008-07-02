@@ -1,0 +1,24 @@
+
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        CellViewer
+  *  \brief        A simple top level window embedding the CellWidget.
+  */
+
+
+ /*! \name         Constructors & Destructors
+  */
+ //  \{
+   
+ /*! \function     CellViewer::CellViewer(QWidget* parent=NULL);
+  *                Construct a CellView window no Cell is actually loaded.
+  */
+
+ //  \}
+
+
+ }

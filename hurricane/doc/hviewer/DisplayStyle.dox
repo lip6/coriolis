@@ -1,0 +1,108 @@
+
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        DisplayStyle
+  *  \brief        A complete set of DrawinStyles to uses with the CellWidget.
+  *
+  *                For a synthetic explanation, have a look to :
+  *
+  *                Except in configuration parsers that have to builds them
+  *                DisplayStyles shoudn't be manipulated directly but used
+  *                through the Graphics methods.
+  */
+
+
+ /*! \name         Constructors & Destructors
+  */
+ //  \{
+   
+ /*! \function     DisplayStyle::DisplayStyle(const Name& name);
+  *                Construct a DisplayStyle named \e name. The DisplayStyle
+  *                is populated with a minimal sets of DrawingStyles which
+  *                allows it to be used straight (in CellWidget) but to the
+  *                cost of very ugly rendering.
+  */
+
+ /*! \function     DisplayStyle::~DisplayStyle();
+  *                The standart destructor.
+  */
+
+ //  \}
+
+
+ /*! \name         Accessors
+  */
+ //  \{
+
+ /*! \function     const Name& DisplayStyle::getName() const;
+  *  \Return       The name of this DisplayStyle.
+  */
+
+ /*! \function     const Name& DisplayStyle::getGroup(const Name& key) const;
+  *  \Return       The group owning the DrawingStyle of which key is \e key.
+  */
+
+ /*! \function     const QColor& DisplayStyle::getColor(const Name& key) const;
+  *  \Return       The QColor associated to the DrawingStyle \e key.
+  */
+
+ /*! \function     const QPen& DisplayStyle::getColor(const Name& key) const;
+  *  \Return       The QPen associated to the DrawingStyle \e key.
+  */
+
+ /*! \function     const QBrush& DisplayStyle::getBrush(const Name& key) const;
+  *  \Return       The QBrush associated to the DrawingStyle \e key.
+  */
+
+ /*! \function     const string& DisplayStyle::getPattern(const Name& key) const;
+  *  \Return       The pattern associated to the DrawingStyle \e key.
+  */
+
+ /*! \function     const float DisplayStyle::getThreshold(const Name& key) const;
+  *  \Return       The display threshold associated to the DrawingStyle \e key.
+  */
+
+ /*! \function     vector<DrawingGroup*>& DisplayStyle::getDrawingGroups();
+  *  \Return       The vector of groups.
+  */
+
+ /*! \function     DrawingStyle* DisplayStyle::find(const Name& key) const;
+  *  \Return       The DrawingStyle associated with key \e key. If no DrawingStyle
+  *                matches \e key, the \e default DrawingStyle is returned.
+  */
+
+ //  \}
+
+
+ /*! \name         Modifiers
+  */
+ //  \{
+
+ /*! \function     void  DisplayStyle::inheritFrom(const DisplayStyle* base);
+  *                Clone the \e base DisplayStyle into the current one. Any
+  *                previous settings are eraseds.
+  *                
+  */
+
+ /*! \function     void DisplayStyle::addDrawingStyle(const Name& groupKey, const Name& key, const string& pattern, int red, int green, int blue, int borderWidth, float threshold);
+  *  \param        groupKey     in which group to insert this DrawinStyle.
+  *  \param        key          the DrawingStyle's name.
+  *  \param        pattern      the stipple pattern (for the brush).
+  *  \param        red          the red color component (for Brush & Pen).
+  *  \param        green        the green color component (for Brush & Pen).
+  *  \param        blue         the blue color component (for Brush & Pen).
+  *  \param        borderWidth  the width of the drawing (for Pen).
+  *  \param        threshold    the display threshold.
+  *
+  *                Adds a new DrawingStyle. If any previous DrawingStyle of the same
+  *                name was existing it is erased.
+  */
+
+ //  \}
+
+
+ }

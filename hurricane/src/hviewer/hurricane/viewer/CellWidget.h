@@ -77,6 +77,7 @@ namespace Hurricane {
               void                    drawPad            ( const Pad*     , const BasicLayer*, const Box&, const Transformation& );
               void                    drawBox            ( const Box& );
               void                    drawLine           ( const Point&, const Point& );
+              void                    drawGrid           ();
     // Geometric conversions.
               QRect                   dbuToDisplayRect   ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2 ) const;
               QRect                   dbuToDisplayRect   ( const Box& box ) const;
@@ -85,6 +86,9 @@ namespace Hurricane {
       inline  int                     dbuToDisplayX      ( DbU::Unit x ) const;
       inline  int                     dbuToDisplayY      ( DbU::Unit y ) const;
       inline  int                     dbuToDisplayLength ( DbU::Unit length ) const;
+      inline  int                     dbuToScreenX       ( DbU::Unit x ) const;
+      inline  int                     dbuToScreenY       ( DbU::Unit y ) const;
+              QPoint                  dbuToScreenPoint   ( DbU::Unit x, DbU::Unit y ) const;
       inline  DbU::Unit               displayToDbuX      ( int  x ) const;
       inline  DbU::Unit               displayToDbuY      ( int  y ) const;
       inline  DbU::Unit               displayToDbuLength ( int  length ) const;
@@ -158,6 +162,14 @@ inline int  CellWidget::dbuToDisplayY ( DbU::Unit y ) const
 
 inline int  CellWidget::dbuToDisplayLength ( DbU::Unit length ) const
 { return (int)rint ( (float)length * _scale ); }
+
+
+inline int  CellWidget::dbuToScreenX ( DbU::Unit x ) const
+{ return (int)rint ( (float)( x - _displayArea.getXMin() ) * _scale ) - _offsetVA.x(); }
+
+
+inline int  CellWidget::dbuToScreenY ( DbU::Unit y ) const
+{ return (int)rint ( (float)( _displayArea.getYMax() - y ) * _scale ) - _offsetVA.y(); }
 
 
 inline DbU::Unit  CellWidget::displayToDbuX ( int x ) const

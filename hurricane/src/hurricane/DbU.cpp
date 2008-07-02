@@ -39,6 +39,7 @@ namespace Hurricane {
   double              DbU::_gridsPerLambda   = 10.0;
   double              DbU::_physicalsPerGrid = 1.0;
   unsigned int        DbU::_stringMode       = DbU::Symbolic;
+  DbU::Unit           DbU::_snapGridStep     = DbU::lambda(1.0);
   const DbU::Unit     DbU::Min               = LONG_MIN;
   const DbU::Unit     DbU::Max               = LONG_MAX;
 
@@ -106,7 +107,7 @@ namespace Hurricane {
     _resolution = 1;
     while ( precision-- ) _resolution /= 10;
 
-  //setGridStep(getUnit(1));
+    setSnapGridStep ( DbU::lambda(1) );
   }
 
 
@@ -149,6 +150,8 @@ namespace Hurricane {
                   );
 
     _gridsPerLambda = gridsPerLambda;
+
+    setSnapGridStep ( DbU::lambda(1) );
   }
 
 
@@ -156,7 +159,24 @@ namespace Hurricane {
   { return _gridsPerLambda; }
 
 
+  DbU::Unit  DbU::getSnapGridStep ()
+  {
+    return _snapGridStep;
+  }
 
+
+  DbU::Unit  DbU::getOnSnapGrid ( DbU::Unit u, SnapMode mode )
+  {
+    DbU::Unit  inferior = ( u / _snapGridStep ) * _snapGridStep;
+    DbU::Unit  modulo   =   u % _snapGridStep;
+
+    if ( !modulo ) return u;
+
+    if      ( mode == Inferior ) { return inferior; }
+    else if ( mode == Superior ) { return inferior + _snapGridStep; }
+     
+    return inferior + ( (modulo > (_snapGridStep/2)) ? _snapGridStep : 0 );
+  }
 
  
 

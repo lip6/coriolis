@@ -1,0 +1,139 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \defgroup     graphicsGroup  Graphics: Access to Graphical Resources.
+  *
+  *  \section      secGraphicsStructure  General Structure of the Graphics Object
+  *
+  *                First, the Graphics object is a singleton that has to be
+  *                accessed through the static getGraphics methods.
+  *
+  *                The Graphics object contains a set of DisplayStyles of which
+  *                one is active at a time and so used to do all drawings.
+  *                Each DisplayStyle is identified though a name and can be
+  *                selected with the setStyle() method.
+  *
+  *                The DisplayStyle itself is a set of DrawingStyle.
+  *                Each DrawingStyle is named and provides a QColor, a QPen
+  *                and a QBrush. QColor, QPen & QBrush are build from the
+  *                \c (red,green,blue) , \c BorderWidth and \c pattern .
+  *
+  *                Direct access to the DrawingStyle: once a DisplayStyle has
+  *                been selected, the Graphics accessors getColor(), getPen()
+  *                or getBrush() gives you access to the DrawingStyles.
+  *
+  *                Minimal DisplayStyle: any DisplayStyle contains at least
+  *                the following DrawingStyles :
+  *                <ul>
+  *                  <li>\b Fallback : the default DrawingStyle.
+  *                  <li>\b Background
+  *                  <li>\b Foreground
+  *                  <li>\b Rubber
+  *                  <li>\b Phantom
+  *                  <li>\b Boundaries
+  *                  <li>\b Marker
+  *                  <li>\b SelectionDraw
+  *                  <li>\b SelectionFill
+  *                  <li>\b Grid
+  *                  <li>\b Spot
+  *                  <li>\b Ghost
+  *                  <li>\b Text
+  *                  <li>\b Undef
+  *                </ul>
+  *
+  *                Configuration parsers should create a DrawingStyle for each
+  *                BasicLayer, with the name of the BasicLayer as the key. So the
+  *                following code should be valid :
+\code
+  QBrush layerBrush = Graphics::getBrush ( layer->getName() );
+\endcode
+  *                If no DrawingStyle of that name is defined, the \b Fallback
+  *                will be used.
+  *
+  */
+
+ //! \addtogroup   graphicsGroup
+ //! \{
+
+ /*! \class        Graphics
+  *  \brief        Manage basic graphical configuration (\b API)
+  *
+  *                The Graphics class is a singleton which provides a simplificated
+  *                access to graphical resources from Qt and manages graphics
+  *                styles used to draw all the objects from the CellWidget.
+  */
+
+ // !}
+
+
+ //! \name         Accessors
+ //  \{
+   
+ /*! \function     Graphics* Graphics::getGraphics();
+  *  \Return       The Graphics singleton.
+  */
+
+ /*! \function     const QFont Graphics::getFixedFont(int weight=-1, bool italic=false, bool underline=false);
+  *  \param        weight     the font's weight (see Qt::Weight).
+  *  \param        italic     select the italic variant of the font.
+  *  \param        underline  the font will be underlined.
+  *  \return       A QFont, the size of the font is guessed from the system's default.
+  */
+
+ /*! \function     const Name& Graphics::getGroup(const Name& key);
+  *  \Return       The group owning the DrawingStyle of which key is \e key.
+  */
+
+ /*! \function     const QColor& Graphics::getColor(const Name& key);
+  *  \Return       The QColor associated to the DrawingStyle \e key.
+  */
+
+ /*! \function     const QPen& Graphics::getPen(const Name& key);
+  *  \Return       The QPen associated to the DrawingStyle \e key.
+  */
+
+ /*! \function     const QBrush& Graphics::getBrush(const Name& key);
+  *  \Return       The QBrush associated to the DrawingStyle \e key.
+  */
+
+ /*! \function     const string& Graphics::getPattern(const Name& key);
+  *  \Return       The pattern associated to the DrawingStyle \e key.
+  */
+
+ /*! \function     const float Graphics::getThreshold(const Name& key);
+  *  \Return       The display threshold associated to the DrawingStyle \e key.
+  */
+
+ //  \}
+
+
+ //! \name         Modifiers
+ //  \{
+
+ /*! \function     const void Graphics::addStyle(DisplayStyle* displayStyle);
+  *                Adds a new DisplayStyle to the Graphics environment.
+  *                The DisplayStyle contains it's name by which it can be
+  *                accessed later. If any previous DisplayStyle of the same
+  *                name was existing it is silently replaced.
+  */
+
+ /*! \function     void Graphics::setStyle(const Name& key);
+  *                Make the DisplayStyle whose name is \e key the currently
+  *                used one.
+  */
+
+ /*! \function     DisplayStyle* Graphics::getStyle(const Name& key);
+  *  \Return       The DisplayStyle whose name is \e key.
+  */
+
+ /*! \function     DisplayStyle* Graphics::getStyle();
+  *  \Return       The DisplayStyle which is currently in use.
+  */
+
+ //  \}
+
+
+ }
