@@ -22,6 +22,7 @@
                                      hurricane/viewer/Graphics.h
                                      hurricane/viewer/CellViewer.h
                                      hurricane/viewer/HInspectorWidget.h
+                                     hurricane/viewer/CellWidget.h
                        )
                    set ( cpps        ScreenUtilities.cpp 
                                      DisplayStyle.cpp 
