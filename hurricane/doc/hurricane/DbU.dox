@@ -207,7 +207,7 @@
   *                getValueString(). Avalaibles modes are :
   */
 
- /*! \function     string DbU::getValueString(Unit  unit);
+ /*! \function     string DbU::getValueString(Unit  unit, int mode=SmartTruncate);
   *  \return       A character string representing the external value of 
   *                \c \<unit\>. The value is converted in the length according
   *                to setStringMode(): database, grid or symbolic.

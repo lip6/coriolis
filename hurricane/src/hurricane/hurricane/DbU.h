@@ -48,9 +48,10 @@ namespace Hurricane {
     public:
       typedef  long  Unit;
     public:
-      enum  StringMode { Db       = 1
-                       , Grid     = 2
-                       , Symbolic = 4
+      enum  StringMode { Db            = 1
+                       , Grid          = 2
+                       , Symbolic      = 4
+                       , SmartTruncate = 8
                        };
 
     public:
@@ -80,7 +81,7 @@ namespace Hurricane {
       static inline long                getDb               ( Unit u );
       static inline double              getGrid             ( Unit u );
       static inline double              getLambda           ( Unit u );
-      static        string              getValueString      ( Unit u );
+      static        string              getValueString      ( Unit u, int mode=SmartTruncate );
       static        Record*             getValueRecord      ( const Unit* u );
       static        Slot*               getValueSlot        ( const string& name, const Unit* u );
       static inline void                setStringMode       ( unsigned int mode );

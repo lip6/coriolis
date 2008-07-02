@@ -8,6 +8,8 @@
 # include <QPainter>
 # include <QStylePainter>
 # include <QBitmap>
+# include <QLabel>
+# include <QStatusBar>
 
 # include "hurricane/DataBase.h"
 # include "hurricane/Technology.h"
@@ -22,6 +24,7 @@
 # include "hurricane/viewer/Graphics.h"
 # include "hurricane/viewer/PaletteEntry.h"
 # include "hurricane/viewer/Palette.h"
+# include "hurricane/viewer/DynamicLabel.h"
 // # include "MapView.h"
 # include "hurricane/viewer/CellWidget.h"
 
@@ -36,35 +39,50 @@ const int  CellWidget::_stripWidth = 100;
 
 
 
-CellWidget::CellWidget ( Cell* cell ) : QWidget()
-                                      , _palette(NULL)
-                                      , _displayArea(0,0,6*_stripWidth,6*_stripWidth)
-                                      , _visibleArea(_stripWidth,_stripWidth,4*_stripWidth,4*_stripWidth)
-                                      , _scale(1.0)
-                                      , _offsetVA(_stripWidth,_stripWidth)
-                                      , _drawingBuffer(6*_stripWidth,6*_stripWidth)
-                                      , _painter()
-                                      , _lastMousePosition(0,0)
-                                      , _cell(cell)
-                                      , _mouseGo(false)
-                                      , _openCell(true)
-                                      , _showBoundaries(true)
-                                      , _redrawRectCount(0)
+CellWidget::CellWidget ( QWidget* parent ) : QWidget(parent)
+                                           , _statusBar(NULL)
+                                           , _palette(NULL)
+                                           , _xPosition(NULL)
+                                           , _yPosition(NULL)
+                                           , _displayArea(0,0,6*_stripWidth,6*_stripWidth)
+                                           , _visibleArea(_stripWidth,_stripWidth,4*_stripWidth,4*_stripWidth)
+                                           , _scale(1.0)
+                                           , _offsetVA(_stripWidth,_stripWidth)
+                                           , _drawingBuffer(6*_stripWidth,6*_stripWidth)
+                                           , _painter()
+                                           , _lastMousePosition(0,0)
+                                           , _cell(NULL)
+                                           , _mouseGo(false)
+                                           , _showBoundaries(true)
+                                           , _redrawRectCount(0)
 {
 //setBackgroundRole ( QPalette::Dark );
 //setAutoFillBackground ( false );
-  setAttribute   ( Qt::WA_OpaquePaintEvent );
-//setAttribute   ( Qt::WA_NoSystemBackground );
-//setAttribute   ( Qt::WA_PaintOnScreen );
-//setAttribute   ( Qt::WA_StaticContents );
-  setSizePolicy  ( QSizePolicy::Expanding, QSizePolicy::Expanding );
-  setFocusPolicy ( Qt::StrongFocus );
+  setAttribute     ( Qt::WA_OpaquePaintEvent );
+//setAttribute     ( Qt::WA_NoSystemBackground );
+//setAttribute     ( Qt::WA_PaintOnScreen );
+//setAttribute     ( Qt::WA_StaticContents );
+  setSizePolicy    ( QSizePolicy::Expanding, QSizePolicy::Expanding );
+  setFocusPolicy   ( Qt::StrongFocus );
+  setMouseTracking ( true );
+
+  _statusBar = new QStatusBar ( this );
+
+  _xPosition = new DynamicLabel ();
+  _xPosition->setStaticText  ( "X:" );
+  _xPosition->setDynamicText ( "0l" );
+
+  _yPosition = new DynamicLabel ();
+  _yPosition->setStaticText  ( "Y:" );
+  _yPosition->setDynamicText ( "0l" );
+
+  _statusBar->addPermanentWidget ( _xPosition );
+  _statusBar->addPermanentWidget ( _yPosition );
 
 //_mapView = new MapView ( this );
   _palette = new Palette ( this );
 
   fitToContents ();
-  _openCell = false;
 }
 
 
@@ -110,20 +128,21 @@ void  CellWidget::redraw ( QRect redrawArea )
   _painter.setClipRect   ( redrawArea );
   _painter.eraseRect     ( redrawArea );
 
-  Box  redrawBox = getBox ( redrawArea );
+  if ( _cell ) {
+    Box  redrawBox = displayToDbuBox ( redrawArea );
 
-  vector<PaletteEntry*>& paletteEntries = _palette->getEntries ();
-  for ( size_t i=0 ; i<paletteEntries.size() ; i++ ) {
-    _painter.setPen   ( Graphics::getPen  (paletteEntries[i]->getName()) );
-    _painter.setBrush ( Graphics::getBrush(paletteEntries[i]->getName()) );
-
-    if ( paletteEntries[i]->isBasicLayer() && isDrawable(paletteEntries[i]) ) {
-      drawCell ( _cell, paletteEntries[i]->getBasicLayer(), redrawBox, Transformation() );
-    } else if ( (paletteEntries[i]->getName() == DisplayStyle::Boundaries)
-              && paletteEntries[i]->isChecked() ) {
-      drawBoundaries ( _cell, redrawBox, Transformation() );
+    vector<PaletteEntry*>& paletteEntries = _palette->getEntries ();
+    for ( size_t i=0 ; i<paletteEntries.size() ; i++ ) {
+      _painter.setPen   ( Graphics::getPen  (paletteEntries[i]->getName()) );
+      _painter.setBrush ( Graphics::getBrush(paletteEntries[i]->getName()) );
+      
+      if ( paletteEntries[i]->isBasicLayer() && isDrawable(paletteEntries[i]) ) {
+        drawCell ( _cell, paletteEntries[i]->getBasicLayer(), redrawBox, Transformation() );
+      } else if ( (paletteEntries[i]->getName() == DisplayStyle::Boundaries)
+                && paletteEntries[i]->isChecked() ) {
+        drawBoundaries ( _cell, redrawBox, Transformation() );
+      }
     }
-
   }
 
   _painter.end ();
@@ -253,7 +272,7 @@ void CellWidget::drawSegment ( const Segment*        segment
                              , const Transformation& transformation
                              )
 {
-  if ( 1 < getScreenLength(segment->getWidth()) ) {
+  if ( 1 < dbuToDisplayLength(segment->getWidth()) ) {
     drawBox ( transformation.getBox(segment->getBoundingBox(basicLayer)) );
   } else {
     drawLine ( transformation.getPoint(segment->getSourcePosition()),
@@ -284,13 +303,13 @@ void CellWidget::drawPad ( const Pad*            pad
 void  CellWidget::drawBox ( const Box& box )
 {
   _redrawRectCount++;
-  _painter.drawRect ( getScreenRect(box) );
+  _painter.drawRect ( dbuToDisplayRect(box) );
 }
 
 
 void  CellWidget::drawLine ( const Point& p1, const Point& p2 )
 {
-  _painter.drawLine ( getScreenPoint(p1), getScreenPoint(p2) );
+  _painter.drawLine ( dbuToDisplayPoint(p1), dbuToDisplayPoint(p2) );
 }
 
 
@@ -411,7 +430,7 @@ void  CellWidget::reframe ( const Box& box )
 
 void  CellWidget::fitToContents ()
 {
-  reframe ( _cell->getBoundingBox() );
+  if ( _cell ) reframe ( _cell->getBoundingBox() );
 }
 
 
@@ -596,8 +615,6 @@ void  CellWidget::keyPressEvent ( QKeyEvent* event )
 
 void  CellWidget::mouseMoveEvent ( QMouseEvent* event )
 {
-//cerr << "CellWidget::mouseMoveEvent()" << endl;
-
   if ( _mouseGo ) {
     int  dx = event->x() - _lastMousePosition.x();
     dx <<= 1;
@@ -612,6 +629,10 @@ void  CellWidget::mouseMoveEvent ( QMouseEvent* event )
     if ( dy < 0 ) goDown ( -dy );
 
     _lastMousePosition = event->pos();
+  } else {
+  //cerr << "x:" << event->x() << " y:" << event->y() << endl;
+    _xPosition->setDynamicText ( screenToDbuX(event->x()) );
+    _yPosition->setDynamicText ( screenToDbuY(event->y()) );
   }
 }
 
@@ -635,35 +656,35 @@ void  CellWidget::mouseReleaseEvent ( QMouseEvent* event )
 }
 
 
-QPoint  CellWidget::getScreenPoint ( DbU::Unit x, DbU::Unit y ) const
+QPoint  CellWidget::dbuToDisplayPoint ( DbU::Unit x, DbU::Unit y ) const
 {
-  return QPoint ( getScreenX(x), getScreenY(y) );
+  return QPoint ( dbuToDisplayX(x), dbuToDisplayY(y) );
 }
 
 
-QPoint  CellWidget::getScreenPoint ( const Point& point ) const
+QPoint  CellWidget::dbuToDisplayPoint ( const Point& point ) const
 {
-  return getScreenPoint ( point.getX(), point.getY() );
+  return dbuToDisplayPoint ( point.getX(), point.getY() );
 }
 
 
-QRect  CellWidget::getScreenRect ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2 ) const
+QRect  CellWidget::dbuToDisplayRect ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2 ) const
 {
-  return QRect ( getScreenX(x1)
-               , getScreenY(y2)
-               , getScreenX(x2) - getScreenX(x1)
-               , getScreenY(y1) - getScreenY(y2)
+  return QRect ( dbuToDisplayX(x1)
+               , dbuToDisplayY(y2)
+               , dbuToDisplayX(x2) - dbuToDisplayX(x1)
+               , dbuToDisplayY(y1) - dbuToDisplayY(y2)
                );
 }
 
 
-QRect  CellWidget::getScreenRect ( const Box& box ) const
+QRect  CellWidget::dbuToDisplayRect ( const Box& box ) const
 {
-  return getScreenRect ( box.getXMin()
-                       , box.getYMin()
-                       , box.getXMax()
-                       , box.getYMax()
-                       );
+  return dbuToDisplayRect ( box.getXMin()
+                          , box.getYMin()
+                          , box.getXMax()
+                          , box.getYMax()
+                          );
 }
 
 
@@ -674,6 +695,13 @@ void  CellWidget::setShowBoundaries ( bool state )
     redraw ();
   }
 }
+
+
+  void  CellWidget::setCell ( Cell* cell )
+  {
+    _cell = cell;
+    fitToContents ();
+  }
 
 
 } // End of Hurricane namespace.

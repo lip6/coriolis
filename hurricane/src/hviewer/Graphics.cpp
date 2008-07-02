@@ -5,6 +5,7 @@
 
 # include  <assert.h>
 
+# include  <Qt>
 # include  <QBrush>
 # include  <QPen>
 # include  <QFont>

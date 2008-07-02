@@ -21,27 +21,26 @@
 namespace Hurricane {
 
 
-  CellViewer::CellViewer ( Cell* cell ) : QMainWindow()
-                                        , _openAction(NULL)
-                                        , _nextCellAction(NULL)
-                                        , _previousCellAction(NULL)
-                                        , _nextAction(NULL)
-                                        , _saveAction(NULL)
-                                        , _exitAction(NULL)
-                                        , _refreshAction(NULL)
-                                        , _fitToContentsAction(NULL)
-                                        , _showBoundariesAction(NULL)
-                                        , _runInspectorOnDataBase(NULL)
-                                        , _runInspectorOnCell(NULL)
-                                        , _fileMenu(NULL)
-                                        , _viewMenu(NULL)
-                                        , _toolsMenu(NULL)
-                                      //, _mapView(NULL)
-                                        , _palette(NULL)
-                                        , _cellWidget(NULL)
+  CellViewer::CellViewer ( QWidget* parent ) : QMainWindow(parent)
+                                             , _openAction(NULL)
+                                             , _nextCellAction(NULL)
+                                             , _previousCellAction(NULL)
+                                             , _nextAction(NULL)
+                                             , _saveAction(NULL)
+                                             , _exitAction(NULL)
+                                             , _refreshAction(NULL)
+                                             , _fitToContentsAction(NULL)
+                                             , _runInspectorOnDataBase(NULL)
+                                             , _runInspectorOnCell(NULL)
+                                             , _fileMenu(NULL)
+                                             , _viewMenu(NULL)
+                                             , _toolsMenu(NULL)
+                                             //, _mapView(NULL)
+                                             , _palette(NULL)
+                                             , _cellWidget(NULL)
   {
     createMenus  ();
-    createLayout ( cell );
+    createLayout ();
   }
 
 
@@ -81,10 +80,6 @@ namespace Hurricane {
     _fitToContentsAction->setStatusTip ( tr("Adjust zoom to fit the whole cell's contents") );
     _fitToContentsAction->setShortcut  ( Qt::Key_F );
 
-    _showBoundariesAction = new QAction ( tr("&Boundaries"), this );
-    _showBoundariesAction->setCheckable ( true );
-    _showBoundariesAction->setStatusTip ( tr("Show/hide cell & instances abutment boxes") );
-
     _runInspectorOnDataBase= new QAction ( tr("Inspect &DataBase"), this );
     _runInspectorOnDataBase->setStatusTip ( tr("Run Inspector on Hurricane DataBase") );
 
@@ -110,7 +105,6 @@ namespace Hurricane {
     _viewMenu = menuBar()->addMenu ( tr("View") );
     _viewMenu->addAction ( _refreshAction );
     _viewMenu->addAction ( _fitToContentsAction );
-  //_viewMenu->addAction ( _showBoundariesAction );
 
     _toolsMenu = menuBar()->addMenu ( tr("Tool") );
     _toolsMenu->addAction ( _runInspectorOnDataBase );
@@ -119,13 +113,15 @@ namespace Hurricane {
 
 
 
-  void  CellViewer::createLayout ( Cell* cell )
+  void  CellViewer::createLayout ()
   {
     if ( _cellWidget ) return;
 
-    _cellWidget = new CellWidget ( cell );
+    _cellWidget = new CellWidget ();
     _palette    = _cellWidget->getPalette();
   //_mapView    = _cellWidget->getMapView ();
+
+    setStatusBar ( _cellWidget->getStatusBar() );
 
     setCorner ( Qt::TopLeftCorner    , Qt::LeftDockWidgetArea  );
     setCorner ( Qt::BottomLeftCorner , Qt::LeftDockWidgetArea  );
@@ -151,10 +147,13 @@ namespace Hurricane {
     connect ( _runInspectorOnDataBase, SIGNAL(triggered())  , this       , SLOT(runInspectorOnDataBase()));
     connect ( _runInspectorOnCell    , SIGNAL(triggered())  , this       , SLOT(runInspectorOnCell    ()));
 
-  //_showBoundariesAction->setChecked ( _cellWidget->showBoundaries() );
-  //connect ( _showBoundariesAction, SIGNAL(toggled(bool)), _cellWidget, SLOT(setShowBoundaries(bool)) );
-
     _cellWidget->redraw ();
+  }
+
+
+  void  CellViewer::setCell ( Cell* cell )
+  {
+    _cellWidget->setCell ( cell );
   }
 
 
@@ -181,7 +180,8 @@ namespace Hurricane {
 
   void  CellViewer::runInspectorOnCell ()
   {
-    runInspector ( getRecord(_cellWidget->getCell()) );
+    Cell* cell = _cellWidget->getCell();
+    if ( cell ) runInspector ( getRecord(cell) );
   }
 
 

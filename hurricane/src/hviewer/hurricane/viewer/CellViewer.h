@@ -32,7 +32,8 @@ namespace Hurricane {
       Q_OBJECT;
 
     public:
-                  CellViewer             ( Cell* cell );
+                  CellViewer             ( QWidget* parent=NULL );
+      void        setCell                ( Cell* cell );
     public slots:
       void        runInspectorOnDataBase ();
       void        runInspectorOnCell     ();
@@ -46,7 +47,6 @@ namespace Hurricane {
       QAction*    _exitAction;
       QAction*    _refreshAction;
       QAction*    _fitToContentsAction;
-      QAction*    _showBoundariesAction;
       QAction*    _runInspectorOnDataBase;
       QAction*    _runInspectorOnCell;
       QMenu*      _fileMenu;
@@ -59,7 +59,7 @@ namespace Hurricane {
     protected:
       void        createActions          ();
       void        createMenus            ();
-      void        createLayout           ( Cell* cell );
+      void        createLayout           ();
       void        runInspector           ( Record* record );
   };
 

@@ -214,34 +214,30 @@ namespace Hurricane {
 // }
 
 
-  string  DbU::getValueString ( DbU::Unit u )
+  string  DbU::getValueString ( DbU::Unit u, int mode )
   {
     char buffer[1024];
     char unitSymbol = 'u';
 
     if ( _stringMode == Grid ) {
-      if ( u == 0 ) return "0g";
-
       unitSymbol = 'g';
       snprintf ( buffer, 1024, "%.1f", getGrid(u) );
     } else if ( _stringMode == Symbolic ) {
-      if ( u == 0 ) return "0l";
-
       unitSymbol = 'l';
       snprintf ( buffer, 1024, "%.1f", getLambda(u) );
     } else {
       if ( _stringMode != Db )
         cerr << "[ERROR] Unknown Unit representation mode: " << _stringMode << endl;
 
-      if ( u == 0 ) return "0u";
-
       snprintf ( buffer, 1024, "%ld", u );
     }
 
     size_t length = strlen(buffer) - 1;
-    for ( ; length > 0 ; length-- ) {
-      if ( (buffer[length] != '0') && (buffer[length] != '.') )
-        break;
+    if ( mode & SmartTruncate ) {
+      for ( ; length > 0 ; length-- ) {
+        if ( buffer[length] == '.' ) { length--; break; }
+        if ( buffer[length] != '0' ) break;
+      }
     }
     buffer[++length] = unitSymbol;
     buffer[++length] = '\0';

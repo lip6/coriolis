@@ -9,6 +9,7 @@
                                      hurricane/viewer/GroupPaletteEntry.h
                                      hurricane/viewer/ViewerPaletteEntry.h
                                      hurricane/viewer/Palette.h
+                                     hurricane/viewer/DynamicLabel.h
                                      hurricane/viewer/CellWidget.h
                                      hurricane/viewer/CellViewer.h
                                      hurricane/viewer/RecordModel.h
@@ -30,6 +31,7 @@
                                      GroupPaletteEntry.cpp
                                      ViewerPaletteEntry.cpp
                                      Palette.cpp
+                                     DynamicLabel.cpp
                                      CellWidget.cpp
                                      CellViewer.cpp
                                      RecordModel.cpp
