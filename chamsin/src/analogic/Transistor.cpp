@@ -98,7 +98,7 @@ Transistor::Transistor(Library* library, const Name& name,
     _source20(NULL), _source22(NULL),
     _drain40(NULL), _drain42(NULL),
     _grid00(NULL), _grid01(NULL), _grid30(NULL), _grid31(NULL),
-    _anonymous10(NULL), _anonymous11(NULL), _anonymous12(NULL)
+    _anonymous10(NULL), _anonymous11(NULL), _anonymous12(NULL), _anonymous50(NULL)
 {}
 
 
@@ -145,6 +145,24 @@ void Transistor::_postCreate() {
    setTerminal(false);
 }
 
+void Transistor::setPolarity(const Polarity& polarity) {
+    UpdateSession::open();
+    if (polarity != _polarity) {
+        _polarity = polarity;
+        DataBase* db = DataBase::getDB();
+        Technology* technology = db->getTechnology();
+        if (_polarity == Polarity::N) { 
+            _anonymous11->setLayer(getLayer(technology, "nImplant"));
+            _anonymous12->setLayer(getLayer(technology, "nImplant"));
+        } else {
+            _anonymous11->setLayer(getLayer(technology, "pImplant"));
+            _anonymous12->setLayer(getLayer(technology, "pImplant"));
+        }
+        createLayout();
+    }
+    UpdateSession::close();
+}
+
 void Transistor::createLayout() {
     DataBase* db = DataBase::getDB();
     if (!db) {
@@ -168,10 +186,12 @@ void Transistor::createLayout() {
             getLayer(techno, "cut0"), getLayer(techno, "active"))->getValue();
     DbU::Unit spacingActivePoly = atechno->getPhysicalRule("minSpacing",
             getLayer(techno, "active"), getLayer(techno, "poly"))->getValue();
-    DbU::Unit sourceDrainWidth = atechno->getPhysicalRule("minSourceDrainWidth",
+    DbU::Unit sourceDrainWidth = atechno->getPhysicalRule("minExtension",
             getLayer(techno, "active"), getLayer(techno, "poly"))->getValue();
     DbU::Unit extActiveCut0      = atechno->getPhysicalRule("minExtension",
             getLayer(techno, "active"), getLayer(techno, "cut0"))->getValue();
+    DbU::Unit enclosurePPlusActive = atechno->getPhysicalRule("minEnclosure",
+            getLayer(techno, "nWell"), getLayer(techno, "active"))->getValue();
     DbU::Unit enclosureImplantPoly = 0;
     DbU::Unit enclosureGateImplant = 0;
     DbU::Unit extImplantActive = 0;
@@ -289,6 +309,7 @@ void Transistor::createLayout() {
     DbU::Unit dx23 = x10;
     DbU::Unit dy23 = _w;
 
+
     //_anonymous11
     DbU::Unit extension11_1 = enclosureGateImplant;
     DbU::Unit extension11_2 = extImplantCut0 - x20;
@@ -296,7 +317,7 @@ void Transistor::createLayout() {
 
     DbU::Unit extension11_4 = max(max(extension11_1, extension11_2), extension11_3);
 
-    DbU::Unit x11 = extension11_4;
+    DbU::Unit x11 = -extension11_4;
 
     extension11_1 = enclosureGateImplant + x00 + dx00;
     extension11_2 = extImplantCut0 + x40 + dx40;
@@ -312,9 +333,24 @@ void Transistor::createLayout() {
     Box box11(x11, y11, x11 + dx11, y11 + dy11);
     _anonymous11->setBoundingBox(box11);
 
-#if 0
+    if (_polarity == Polarity::P) { 
+        DbU::Unit x50 = x10 - enclosurePPlusActive;
+        DbU::Unit y50 = y10 - enclosurePPlusActive;
+        DbU::Unit dx50 = dx10 + 2 * enclosurePPlusActive;
+        DbU::Unit dy50 = dy10 + 2 * enclosurePPlusActive;
+        Box box50(x50, y50, x50 + dx50, y50 + dy50);
+        if (!_anonymous50) {
+            _anonymous50 = createPad(techno, _anonymous, "nWell");
+        }
+       _anonymous50->setBoundingBox(box50);
+    } else {
+        if (_anonymous50) {
+            _anonymous50->destroy();
+            _anonymous50 = NULL;
+        }
+    }
+
     //setAbutmentBox(getAbutmentBox());
-#endif
     UpdateSession::close();
 }
 

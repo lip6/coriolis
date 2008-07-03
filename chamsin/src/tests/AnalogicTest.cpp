@@ -13,6 +13,7 @@ using namespace Hurricane;
 #include "AEnv.h"
 #include "ATechnology.h"
 #include "Transistor.h"
+#include "AnalogicViewer.h"
 
 
 int main(int argc, char* argv[]) {
@@ -35,16 +36,9 @@ int main(int argc, char* argv[]) {
         if (!aTechnology) {
             exit(56);
         }
-        aTechnology->print();
 
-        DbU::Unit transistorMinL = aTechnology->getPhysicalRule("transistorMinL")->getValue();
-        DbU::Unit transistorMinW = aTechnology->getPhysicalRule("transistorMinW")->getValue();
+        AnalogicViewer* viewer = new AnalogicViewer(userLibrary);
 
-        DbU::Unit L = transistorMinL; 
-        DbU::Unit W = 2 * transistorMinW; 
-        Transistor* trans = Transistor::create(userLibrary, Name("TEST"), Transistor::Polarity::N, L, W);
-        trans->createLayout();
-        CellViewer* viewer = new CellViewer ( trans );
         viewer->show();
 
         returnCode = qa->exec();

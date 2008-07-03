@@ -2,6 +2,7 @@
 #define ATECHNOLOGY_H_
 
 #include "hurricane/Property.h"
+#include "hurricane/DbU.h"
 using namespace Hurricane;
 
 namespace Hurricane {
