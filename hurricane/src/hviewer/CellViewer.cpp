@@ -135,6 +135,10 @@ namespace Hurricane {
   //   addDockWidget ( Qt::RightDockWidgetArea, mapViewDock );
 
     QDockWidget* layerMapDock = new QDockWidget ( tr("Layers") );
+    layerMapDock->setFeatures     ( QDockWidget::DockWidgetVerticalTitleBar
+                                  | QDockWidget::DockWidgetMovable
+                                  | QDockWidget::DockWidgetFloatable
+                                  );
     layerMapDock->setObjectName   ( "Palette" );
     layerMapDock->setWidget       ( _palette );
     layerMapDock->setAllowedAreas ( Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea );

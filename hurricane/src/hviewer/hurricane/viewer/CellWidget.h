@@ -78,6 +78,7 @@ namespace Hurricane {
               void                    drawBox            ( const Box& );
               void                    drawLine           ( const Point&, const Point& );
               void                    drawGrid           ();
+              void                    drawSpot           ();
     // Geometric conversions.
               QRect                   dbuToDisplayRect   ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2 ) const;
               QRect                   dbuToDisplayRect   ( const Box& box ) const;
@@ -89,12 +90,14 @@ namespace Hurricane {
       inline  int                     dbuToScreenX       ( DbU::Unit x ) const;
       inline  int                     dbuToScreenY       ( DbU::Unit y ) const;
               QPoint                  dbuToScreenPoint   ( DbU::Unit x, DbU::Unit y ) const;
+      inline  QPoint                  dbuToScreenPoint   ( const Point& point ) const;
       inline  DbU::Unit               displayToDbuX      ( int  x ) const;
       inline  DbU::Unit               displayToDbuY      ( int  y ) const;
       inline  DbU::Unit               displayToDbuLength ( int  length ) const;
       inline  Box                     displayToDbuBox    ( const QRect& rect ) const;
       inline  DbU::Unit               screenToDbuX       ( int  x ) const;
       inline  DbU::Unit               screenToDbuY       ( int  y ) const;
+      inline  Point                   screenToDbuPoint   ( const QPoint& point ) const;
     // Qt QWidget Functions Overloads.
               void                    pushCursor         ( Qt::CursorShape cursor );
               void                    popCursor          ();
@@ -107,8 +110,11 @@ namespace Hurricane {
               void                    mouseReleaseEvent  ( QMouseEvent* );
     public slots:
     // Qt QWidget Slots Overload & CellWidget Specifics.
+      inline  QPainter&               getScreenPainter   ();
               void                    redraw             ( QRect redrawArea );
       inline  void                    redraw             ();
+      inline  void                    copyToScreen       ( int sx, int sy, int h, int w );
+      inline  void                    copyToScreen       ();
               void                    goLeft             ( int dx = 0 );
               void                    goRight            ( int dx = 0 );
               void                    goUp               ( int dy = 0 );
@@ -117,11 +123,24 @@ namespace Hurricane {
               void                    setScale           ( float scale );
               void                    setShowBoundaries  ( bool state );
               void                    reframe            ( const Box& box );
-              void                    screenReframe      ();
+              void                    displayReframe     ();
               void                    shiftLeft          ( int dx );
               void                    shiftRight         ( int dx );
               void                    shiftUp            ( int dy );
               void                    shiftDown          ( int dy );
+
+    private:
+      class Spot {
+        public:
+                      Spot       ( CellWidget* cw );
+          void        setRestore ( bool restore );
+          void        restore    ();
+          void        moveTo     ( const QPoint& point );
+        private:
+          CellWidget* _cellWidget;
+          QPoint      _spotPoint;
+          bool        _restore;
+      };
 
     protected:
     // Internal: Attributes.
@@ -137,8 +156,10 @@ namespace Hurricane {
               float                   _scale;
               QPoint                  _offsetVA;
               QPixmap                 _drawingBuffer;
-              QPainter                _painter;
+              QPainter                _drawingPainter;
+              QPainter                _screenPainter;
               QPoint                  _lastMousePosition;
+              Spot                    _spot;
               Cell*                   _cell;
               bool                    _mouseGo;
               bool                    _showBoundaries;
@@ -146,6 +167,18 @@ namespace Hurricane {
   };
 
 
+
+
+inline QPainter& CellWidget::getScreenPainter ()
+{ return _screenPainter; }
+
+
+inline void  CellWidget::copyToScreen ( int sx, int sy, int w, int h )
+{ _screenPainter.drawPixmap ( sx, sy, _drawingBuffer, _offsetVA.rx()+sx, _offsetVA.ry()+sy, w, h ); }
+
+
+inline void  CellWidget::copyToScreen ()
+{ copyToScreen ( 0, 0, width(), height() ); }
 
 
 inline void  CellWidget::redraw ()
@@ -170,6 +203,10 @@ inline int  CellWidget::dbuToScreenX ( DbU::Unit x ) const
 
 inline int  CellWidget::dbuToScreenY ( DbU::Unit y ) const
 { return (int)rint ( (float)( _displayArea.getYMax() - y ) * _scale ) - _offsetVA.y(); }
+
+
+inline QPoint  CellWidget::dbuToScreenPoint ( const Point& point ) const
+{ return QPoint ( dbuToScreenX(point.getX()), dbuToScreenY(point.getY()) ); }
 
 
 inline DbU::Unit  CellWidget::displayToDbuX ( int x ) const
@@ -200,6 +237,10 @@ inline DbU::Unit  CellWidget::screenToDbuX ( int x ) const
 
 inline DbU::Unit  CellWidget::screenToDbuY ( int y ) const
 { return displayToDbuY(y+_offsetVA.y()); }
+
+
+inline Point  CellWidget::screenToDbuPoint ( const QPoint& point ) const
+{ return Point ( screenToDbuX(point.x()), screenToDbuY(point.y()) ); }
 
 
 inline Cell* CellWidget::getCell () const

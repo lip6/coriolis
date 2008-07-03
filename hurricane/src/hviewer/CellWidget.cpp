@@ -34,9 +34,56 @@
 namespace Hurricane {
 
 
+// -------------------------------------------------------------------
+// Class :  "Hurricane::CellWidget::Spot".
+
+
+  CellWidget::Spot::Spot ( CellWidget* cw )
+    : _cellWidget(cw)
+    , _spotPoint()
+    , _restore(false)
+  { }
+
+
+  void  CellWidget::Spot::restore ()
+  {
+    if ( _restore ) {
+      _cellWidget->copyToScreen ( _spotPoint.x()-5, _spotPoint.y()-5, 10, 10 );
+      _restore = false;
+    }
+  }
+
+
+  void  CellWidget::Spot::setRestore ( bool state )
+  {
+    _restore = state;
+  }
+
+
+  void  CellWidget::Spot::moveTo ( const QPoint& screenPoint )
+  {
+    QPainter& screenPainter = _cellWidget->getScreenPainter();
+
+    Point mousePoint = _cellWidget->screenToDbuPoint ( screenPoint );
+    Point  spotPoint = Point ( DbU::getOnSnapGrid(mousePoint.getX())
+                             , DbU::getOnSnapGrid(mousePoint.getY())
+                             );
+    QPoint center = _cellWidget->dbuToScreenPoint(spotPoint);
+
+    restore ();
+    _restore = true;
+
+    screenPainter.setPen ( Graphics::getPen("spot") );
+    screenPainter.drawRect ( center.x()-3, center.y()-3, 6, 6 );
+  }
+
+
+
+// -------------------------------------------------------------------
+// Class :  "Hurricane::CellWidget".
+
+
   const int  CellWidget::_stripWidth = 100;
-
-
 
 
   CellWidget::CellWidget ( QWidget* parent ) : QWidget(parent)
@@ -49,8 +96,10 @@ namespace Hurricane {
                                              , _scale(1.0)
                                              , _offsetVA(_stripWidth,_stripWidth)
                                              , _drawingBuffer(6*_stripWidth,6*_stripWidth)
-                                             , _painter()
+                                             , _drawingPainter()
+                                             , _screenPainter()
                                              , _lastMousePosition(0,0)
+                                             , _spot(this)
                                              , _cell(NULL)
                                              , _mouseGo(false)
                                              , _showBoundaries(true)
@@ -121,20 +170,21 @@ namespace Hurricane {
 
     pushCursor ( Qt::BusyCursor );
 
-    _painter.begin ( &_drawingBuffer );
+    _spot.setRestore ( false );
+    _drawingPainter.begin ( &_drawingBuffer );
 
-    _painter.setPen        ( Qt::NoPen );
-    _painter.setBackground ( Graphics::getBrush("background") );
-    _painter.setClipRect   ( redrawArea );
-    _painter.eraseRect     ( redrawArea );
+    _drawingPainter.setPen        ( Qt::NoPen );
+    _drawingPainter.setBackground ( Graphics::getBrush("background") );
+    _drawingPainter.setClipRect   ( redrawArea );
+    _drawingPainter.eraseRect     ( redrawArea );
 
     if ( _cell ) {
       Box  redrawBox = displayToDbuBox ( redrawArea );
 
       vector<PaletteEntry*>& paletteEntries = _palette->getEntries ();
       for ( size_t i=0 ; i<paletteEntries.size() ; i++ ) {
-        _painter.setPen   ( Graphics::getPen  (paletteEntries[i]->getName()) );
-        _painter.setBrush ( Graphics::getBrush(paletteEntries[i]->getName()) );
+        _drawingPainter.setPen   ( Graphics::getPen  (paletteEntries[i]->getName()) );
+        _drawingPainter.setBrush ( Graphics::getBrush(paletteEntries[i]->getName()) );
 
         if ( paletteEntries[i]->isBasicLayer() && isDrawable(paletteEntries[i]) ) {
           drawCell ( _cell, paletteEntries[i]->getBasicLayer(), redrawBox, Transformation() );
@@ -145,7 +195,7 @@ namespace Hurricane {
       }
     }
 
-    _painter.end ();
+    _drawingPainter.end ();
 
     update ();
     popCursor ();
@@ -303,32 +353,41 @@ namespace Hurricane {
   void  CellWidget::drawBox ( const Box& box )
   {
     _redrawRectCount++;
-    _painter.drawRect ( dbuToDisplayRect(box) );
+    _drawingPainter.drawRect ( dbuToDisplayRect(box) );
   }
 
 
   void  CellWidget::drawLine ( const Point& p1, const Point& p2 )
   {
-    _painter.drawLine ( dbuToDisplayPoint(p1), dbuToDisplayPoint(p2) );
+    _drawingPainter.drawLine ( dbuToDisplayPoint(p1), dbuToDisplayPoint(p2) );
   }
 
 
   void  CellWidget::drawGrid ()
   {
-    cerr << "drawGrid()" << endl;
+    _screenPainter.setPen ( Graphics::getPen("grid") );
 
-    QPainter painter ( this );
+    DbU::Unit  gridStep      = DbU::getSnapGridStep();
+    DbU::Unit  superGridStep = gridStep*5;
+    DbU::Unit  xGrid;
+    DbU::Unit  yGrid;
+    QPoint     center;
 
-    painter.setPen ( Graphics::getPen("grid") );
-
-    DbU::Unit  gridStep = DbU::getSnapGridStep();
-    DbU::Unit  xGrid    = DbU::getOnSnapGrid(_visibleArea.getXMin());
-    DbU::Unit  yGrid    = DbU::getOnSnapGrid(_visibleArea.getYMin());
-
-    for ( ; yGrid < _visibleArea.getYMax() ; yGrid += gridStep ) {
-      for ( ; xGrid < _visibleArea.getXMax() ; xGrid += gridStep ) {
-        cerr << xGrid << " " << yGrid << " -> " << dbuToScreenX(xGrid) << " " <<  dbuToScreenY(yGrid) << endl;
-        painter.drawPoint ( dbuToScreenPoint(xGrid,yGrid) );
+    for ( yGrid = DbU::getOnSnapGrid(_visibleArea.getYMin())
+        ; yGrid < _visibleArea.getYMax()
+        ; yGrid += gridStep
+        ) {
+      for ( xGrid = DbU::getOnSnapGrid(_visibleArea.getXMin())
+          ; xGrid < _visibleArea.getXMax()
+          ; xGrid += gridStep
+          ) {
+        center = dbuToScreenPoint(xGrid,yGrid);
+        if ( (xGrid % superGridStep) || (yGrid % superGridStep) )
+          _screenPainter.drawPoint ( center );
+        else {
+          _screenPainter.drawLine ( center.x()-3, center.y()  , center.x()+3, center.y()   );
+          _screenPainter.drawLine ( center.x()  , center.y()-3, center.x()  , center.y()+3 );
+        }
       }
     }
   }
@@ -337,6 +396,9 @@ namespace Hurricane {
   void  CellWidget::goLeft ( int dx )
   {
     if ( !dx ) dx = geometry().size().width() / 4;
+
+    _visibleArea.translate ( - (DbU::Unit)( dx / _scale ) , 0 );
+
     if ( _offsetVA.rx() - dx >= 0 ) {
       _offsetVA.rx() -= dx;
       update ();
@@ -351,6 +413,7 @@ namespace Hurricane {
     if ( !dx ) dx = geometry().size().width() / 4;
 
   //cerr << "CellWidget::goRight() - dx: " << dx << " (offset: " << _offsetVA.rx() << ")" << endl;
+    _visibleArea.translate ( (DbU::Unit)( dx / _scale ) , 0 );
 
     if ( _offsetVA.rx() + dx < 2*_stripWidth ) {
       _offsetVA.rx() += dx;
@@ -364,6 +427,9 @@ namespace Hurricane {
   void  CellWidget::goUp ( int dy )
   {
     if ( !dy ) dy = geometry().size().height() / 4;
+
+    _visibleArea.translate ( 0, (DbU::Unit)( dy / _scale ) );
+
     if ( _offsetVA.ry() - dy >= 0 ) {
       _offsetVA.ry() -= dy;
       update ();
@@ -376,6 +442,9 @@ namespace Hurricane {
   void  CellWidget::goDown ( int dy )
   {
     if ( !dy ) dy = geometry().size().height() / 4;
+
+    _visibleArea.translate ( 0, - (DbU::Unit)( dy / _scale ) );
+
     if ( _offsetVA.ry() + dy < 2*_stripWidth ) {
       _offsetVA.ry() += dy;
       update ();
@@ -385,7 +454,7 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::screenReframe ()
+  void  CellWidget::displayReframe ()
   {
     _offsetVA.rx() = _stripWidth;
     _offsetVA.ry() = _stripWidth;
@@ -417,7 +486,7 @@ namespace Hurricane {
   //cerr << "_visibleArea: " << _visibleArea << " (offset: " << _offsetVA.x() << ")" << endl;
   //cerr << "              " << center << endl;
 
-    screenReframe ();
+    displayReframe ();
   }
 
 
@@ -443,7 +512,7 @@ namespace Hurricane {
                        , (DbU::Unit)( center.getX() + width  / _scale )
                        , (DbU::Unit)( center.getY() + height / _scale )
                        );
-    screenReframe ();
+    displayReframe ();
 
   //cerr << "  _displayArea: " << _displayArea << " (offset: " << _offsetVA.x() << ")" << endl;
   }
@@ -462,20 +531,19 @@ namespace Hurricane {
     int  leftShift  = ( 1 + ( dx - _offsetVA.rx() ) / _stripWidth ) * _stripWidth;
 
     _displayArea.translate ( - (DbU::Unit)( leftShift / _scale ) , 0 );
-    _visibleArea.translate ( - (DbU::Unit)( leftShift / _scale ) , 0 );
     _offsetVA.rx() -= dx - leftShift;
 
     if ( leftShift >= _drawingBuffer.width() ) {
       redraw ();
     } else {
     //cerr << "Left Shift " << leftShift << " (offset: " << _offsetVA.rx() << ")" << endl;
-      _painter.begin ( &_drawingBuffer );
-      _painter.drawPixmap ( leftShift, 0
+      _drawingPainter.begin ( &_drawingBuffer );
+      _drawingPainter.drawPixmap ( leftShift, 0
                           , _drawingBuffer
                           , 0, 0
                           , _drawingBuffer.width()-leftShift, _drawingBuffer.height()
                           );
-      _painter.end ();
+      _drawingPainter.end ();
 
       redraw ( QRect ( QPoint ( 0, 0 )
                      , QSize  ( leftShift, _drawingBuffer.height() )) );
@@ -492,7 +560,6 @@ namespace Hurricane {
     int  rightShift  = ( ( _offsetVA.rx() + dx ) / _stripWidth ) * _stripWidth;
 
     _displayArea.translate ( (DbU::Unit)( rightShift / _scale ) , 0 );
-    _visibleArea.translate ( (DbU::Unit)( rightShift / _scale ) , 0 );
     _offsetVA.rx() += dx - rightShift;
 
   //cerr << "  _displayArea: " << _displayArea << endl;
@@ -501,13 +568,13 @@ namespace Hurricane {
       redraw ();
     } else {
     //cerr << "  Right Shift " << rightShift << " (offset: " << _offsetVA.rx() << ")" << endl;
-      _painter.begin ( &_drawingBuffer );
-      _painter.drawPixmap ( 0, 0
+      _drawingPainter.begin ( &_drawingBuffer );
+      _drawingPainter.drawPixmap ( 0, 0
                           , _drawingBuffer
                           , rightShift, 0
                           , _drawingBuffer.width()-rightShift, _drawingBuffer.height()
                           );
-      _painter.end ();
+      _drawingPainter.end ();
 
       redraw ( QRect ( QPoint ( _drawingBuffer.width()-rightShift, 0 )
                      , QSize  ( rightShift, _drawingBuffer.height() )) );
@@ -524,20 +591,19 @@ namespace Hurricane {
     int  upShift  = ( 1 + ( dy - _offsetVA.ry() ) / _stripWidth ) * _stripWidth;
 
     _displayArea.translate ( 0, (DbU::Unit)( upShift / _scale ) );
-    _visibleArea.translate ( 0, (DbU::Unit)( upShift / _scale ) );
     _offsetVA.ry() -= dy - upShift;
 
     if ( upShift >= _drawingBuffer.height() ) {
       redraw ();
     } else {
     //cerr << "Left Shift " << upShift << " (offset: " << _offsetVA.ry() << ")" << endl;
-      _painter.begin ( &_drawingBuffer );
-      _painter.drawPixmap ( 0, upShift
+      _drawingPainter.begin ( &_drawingBuffer );
+      _drawingPainter.drawPixmap ( 0, upShift
                           , _drawingBuffer
                           , 0, 0
                           , _drawingBuffer.width(), _drawingBuffer.height()-upShift
                           );
-      _painter.end ();
+      _drawingPainter.end ();
 
       redraw ( QRect ( QPoint ( 0, 0 )
                      , QSize  ( _drawingBuffer.width(), upShift )) );
@@ -554,20 +620,19 @@ namespace Hurricane {
     int  downShift  = (  ( _offsetVA.ry() + dy ) / _stripWidth ) * _stripWidth;
 
     _displayArea.translate ( 0, - (DbU::Unit)( downShift / _scale ) );
-    _visibleArea.translate ( 0, - (DbU::Unit)( downShift / _scale ) );
     _offsetVA.ry() += dy - downShift;
 
     if ( downShift >= _drawingBuffer.height() ) {
       redraw ();
     } else {
     //cerr << "Right Shift " << downShift << " (offset: " << _offsetVA.ry() << ")" << endl;
-      _painter.begin ( &_drawingBuffer );
-      _painter.drawPixmap ( 0, 0
+      _drawingPainter.begin ( &_drawingBuffer );
+      _drawingPainter.drawPixmap ( 0, 0
                           , _drawingBuffer
                           , 0, downShift
                           , _drawingBuffer.width(), _drawingBuffer.height()-downShift
                           );
-      _painter.end ();
+      _drawingPainter.end ();
 
       redraw ( QRect ( QPoint ( 0, _drawingBuffer.height()-downShift )
                      , QSize  ( _drawingBuffer.width(), downShift )) );
@@ -579,12 +644,14 @@ namespace Hurricane {
 
   void  CellWidget::paintEvent ( QPaintEvent* )
   {
-  //cerr << "CellWidget::paintEvent()" << endl;
+    _screenPainter.begin ( this );
 
-    QPainter painter ( this );
-    painter.drawPixmap ( 0, 0, _drawingBuffer, _offsetVA.rx(), _offsetVA.ry(), width(), height() );
+    copyToScreen ();
 
-    drawGrid ();
+    if ( isDrawable(_palette->find("grid")) ) drawGrid ();
+    if ( isDrawable(_palette->find("spot")) ) _spot.moveTo ( _lastMousePosition );
+
+    _screenPainter.end ();
   }
 
 
@@ -656,6 +723,10 @@ namespace Hurricane {
     //cerr << "x:" << event->x() << " y:" << event->y() << endl;
       _xPosition->setDynamicText ( screenToDbuX(event->x()) );
       _yPosition->setDynamicText ( screenToDbuY(event->y()) );
+
+      _lastMousePosition = event->pos();
+
+      update ();
     }
   }
 

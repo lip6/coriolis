@@ -2,7 +2,7 @@
 // -*- C++ -*-
 
 
-# ifndef  __PALETTET__
+# ifndef  __PALETTE__
 #   define  __PALETTE__
 
 # include  <vector>
