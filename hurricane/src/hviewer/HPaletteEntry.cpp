@@ -5,13 +5,13 @@
 # include  <QPainter>
 
 # include  "hurricane/viewer/Graphics.h"
-# include  "hurricane/viewer/PaletteEntry.h"
+# include  "hurricane/viewer/HPaletteEntry.h"
 
 
 namespace Hurricane {
 
 
-  PaletteSample::PaletteSample ( PaletteEntry* entry )
+  HPaletteSample::HPaletteSample ( HPaletteEntry* entry )
     : QWidget()
     , _sample(QSize(20,20))
     , _entry(entry)
@@ -24,7 +24,7 @@ namespace Hurricane {
   }
 
 
-  void  PaletteSample::redraw ()
+  void  HPaletteSample::redraw ()
   {
     QPainter  painter ( &_sample );
 
@@ -37,14 +37,14 @@ namespace Hurricane {
   }
 
 
-  void  PaletteSample::paintEvent ( QPaintEvent* )
+  void  HPaletteSample::paintEvent ( QPaintEvent* )
   {
     QPainter painter ( this );
     painter.drawPixmap ( 0, 0, _sample );
   }
 
 
-  PaletteEntry::PaletteEntry ( Palette* palette )
+  HPaletteEntry::HPaletteEntry ( HPalette* palette )
     : QWidget()
     , _palette(palette)
   {

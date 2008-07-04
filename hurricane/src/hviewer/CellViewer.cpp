@@ -6,16 +6,18 @@
 #include  <QAction>
 #include  <QMenu>
 #include  <QMenuBar>
+#include  <QStatusBar>
 #include  <QDockWidget>
 
 #include  "hurricane/DataBase.h"
 #include  "hurricane/Cell.h"
 
 //#include  "MapView.h"
-#include  "hurricane/viewer/Palette.h"
+#include  "hurricane/viewer/HPalette.h"
 #include  "hurricane/viewer/CellWidget.h"
 #include  "hurricane/viewer/CellViewer.h"
 #include  "hurricane/viewer/HInspectorWidget.h"
+#include  "hurricane/viewer/HMousePosition.h"
 
 
 namespace Hurricane {
@@ -37,6 +39,7 @@ namespace Hurricane {
                                              , _toolsMenu(NULL)
                                              //, _mapView(NULL)
                                              , _palette(NULL)
+                                             , _mousePosition(NULL)
                                              , _cellWidget(NULL)
   {
     createMenus  ();
@@ -118,10 +121,13 @@ namespace Hurricane {
     if ( _cellWidget ) return;
 
     _cellWidget = new CellWidget ();
-    _palette    = _cellWidget->getPalette();
+    _palette    = new HPalette ();
   //_mapView    = _cellWidget->getMapView ();
 
-    setStatusBar ( _cellWidget->getStatusBar() );
+    _cellWidget->bindToPalette ( _palette );
+
+    HMousePosition* _mousePosition = new HMousePosition ();
+    statusBar()->addPermanentWidget ( _mousePosition );
 
     setCorner ( Qt::TopLeftCorner    , Qt::LeftDockWidgetArea  );
     setCorner ( Qt::BottomLeftCorner , Qt::LeftDockWidgetArea  );
@@ -139,7 +145,7 @@ namespace Hurricane {
                                   | QDockWidget::DockWidgetMovable
                                   | QDockWidget::DockWidgetFloatable
                                   );
-    layerMapDock->setObjectName   ( "Palette" );
+    layerMapDock->setObjectName   ( "HPalette" );
     layerMapDock->setWidget       ( _palette );
     layerMapDock->setAllowedAreas ( Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea );
     addDockWidget ( Qt::RightDockWidgetArea, layerMapDock );
@@ -150,6 +156,8 @@ namespace Hurricane {
     connect ( _fitToContentsAction   , SIGNAL(triggered())  , _cellWidget, SLOT(fitToContents         ()));
     connect ( _runInspectorOnDataBase, SIGNAL(triggered())  , this       , SLOT(runInspectorOnDataBase()));
     connect ( _runInspectorOnCell    , SIGNAL(triggered())  , this       , SLOT(runInspectorOnCell    ()));
+    connect ( _cellWidget            , SIGNAL(mousePositionChanged(const Point&))
+            , _mousePosition         , SLOT(setPosition(const Point&)) );
 
     _cellWidget->redraw ();
   }

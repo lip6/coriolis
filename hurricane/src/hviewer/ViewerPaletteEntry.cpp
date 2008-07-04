@@ -9,20 +9,20 @@
 
 # include  "hurricane/viewer/Graphics.h"
 # include  "hurricane/viewer/ViewerPaletteEntry.h"
-# include  "hurricane/viewer/Palette.h"
+# include  "hurricane/viewer/HPalette.h"
 
 
 namespace Hurricane {
 
 
-  ViewerPaletteEntry::ViewerPaletteEntry ( Palette* entry, const Name& name )
-    : PaletteEntry(entry)
+  ViewerPaletteEntry::ViewerPaletteEntry ( HPalette* entry, const Name& name )
+    : HPaletteEntry(entry)
     , _name(name)
   {
   }
 
 
-  ViewerPaletteEntry* ViewerPaletteEntry::create ( Palette* palette, const Name& name )
+  ViewerPaletteEntry* ViewerPaletteEntry::create ( HPalette* palette, const Name& name )
   {
     ViewerPaletteEntry* entry = new ViewerPaletteEntry ( palette, name );
 
@@ -37,7 +37,7 @@ namespace Hurricane {
     QHBoxLayout* layout = new QHBoxLayout ();
     layout->setContentsMargins ( 0, 0, 0, 0 );
 
-    layout->addWidget ( new PaletteSample(this) );
+    layout->addWidget ( new HPaletteSample(this) );
 
     _checkBox = new QCheckBox ( this );
     _checkBox->setChecked ( true );

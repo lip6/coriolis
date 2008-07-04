@@ -4,20 +4,21 @@
    include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane
                          ${HURRICANE_SOURCE_DIR}/src/hviewer )
 
-                   set ( mocincludes hurricane/viewer/PaletteEntry.h
+                   set ( mocincludes hurricane/viewer/HPaletteEntry.h
                                      hurricane/viewer/LayerPaletteEntry.h
                                      hurricane/viewer/GroupPaletteEntry.h
                                      hurricane/viewer/ViewerPaletteEntry.h
-                                     hurricane/viewer/Palette.h
+                                     hurricane/viewer/HPalette.h
                                      hurricane/viewer/DynamicLabel.h
+                                     hurricane/viewer/HMousePosition.h
                                      hurricane/viewer/CellWidget.h
                                      hurricane/viewer/CellViewer.h
                                      hurricane/viewer/RecordModel.h
                                      hurricane/viewer/HInspectorWidget.h
                        )
                    set ( exports     hurricane/viewer/ScreenUtilities.h
-                                     hurricane/viewer/PaletteEntry.h
-                                     hurricane/viewer/Palette.h
+                                     hurricane/viewer/HPaletteEntry.h
+                                     hurricane/viewer/HPalette.h
                                      hurricane/viewer/DisplayStyle.h
                                      hurricane/viewer/Graphics.h
                                      hurricane/viewer/CellViewer.h
@@ -27,12 +28,13 @@
                    set ( cpps        ScreenUtilities.cpp 
                                      DisplayStyle.cpp 
                                      Graphics.cpp
-                                     PaletteEntry.cpp
+                                     HPaletteEntry.cpp
                                      LayerPaletteEntry.cpp
                                      GroupPaletteEntry.cpp
                                      ViewerPaletteEntry.cpp
-                                     Palette.cpp
+                                     HPalette.cpp
                                      DynamicLabel.cpp
+                                     HMousePosition.cpp
                                      CellWidget.cpp
                                      CellViewer.cpp
                                      RecordModel.cpp

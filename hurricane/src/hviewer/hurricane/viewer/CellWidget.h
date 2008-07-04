@@ -20,7 +20,6 @@ class QResizeEvent;
 class QMouseEvent;
 class QKeyEvent;
 class QAction;
-class QStatusBar;
 
 
 # include  "hurricane/Commons.h"
@@ -35,6 +34,7 @@ class QStatusBar;
 
 namespace Hurricane {
 
+  class Technology;
   class BasicLayer;
   class Go;
   class Cell;
@@ -44,9 +44,8 @@ namespace Hurricane {
   class Contact;
   class Pad;
 
-  class PaletteEntry;
-  class Palette;
-  class DynamicLabel;
+  class HPaletteEntry;
+  class HPalette;
 //class MapView;
 
 
@@ -55,79 +54,82 @@ namespace Hurricane {
 
     public:
     // Constructor & Destructor.
-                                      CellWidget         ( QWidget* parent=NULL );
-      virtual                        ~CellWidget         ();
+                                      CellWidget           ( QWidget* parent=NULL );
+      virtual                        ~CellWidget           ();
     // Accessors.
-    //        MapView*                getMapView         () { return _mapView; };
-              void                    setCell            ( Cell* cell );
-      inline  Cell*                   getCell            () const;
-      inline  Palette*                getPalette         ();
-      inline  QStatusBar*             getStatusBar       ();
-      inline  bool                    showBoundaries     () const;
+    //        MapView*                getMapView           () { return _mapView; };
+              void                    setCell              ( Cell* cell );
+      inline  Cell*                   getCell              () const;
+      inline  HPalette*               getPalette           ();
+              void                    bindToPalette        ( HPalette* palette );
+              void                    detachFromPalette    ();
+      inline  bool                    showBoundaries       () const;
     // Painter control & Hurricane objects drawing primitives.
-              void                    drawBoundaries     ( const Cell*    , const Box&, const Transformation& );
-              void                    drawBoundaries     ( const Instance*, const Box&, const Transformation& );
-              bool                    isDrawable         ( PaletteEntry* entry );
-              void                    drawCell           ( const Cell*    , const BasicLayer*, const Box&, const Transformation& );
-              void                    drawInstance       ( const Instance*, const BasicLayer*, const Box&, const Transformation& );
-              void                    drawSlice          ( const Slice*   , const BasicLayer*, const Box&, const Transformation& );
-              void                    drawGo             ( const Go*      , const BasicLayer*, const Box&, const Transformation& );
-              void                    drawSegment        ( const Segment* , const BasicLayer*, const Box&, const Transformation& );
-              void                    drawContact        ( const Contact* , const BasicLayer*, const Box&, const Transformation& );
-              void                    drawPad            ( const Pad*     , const BasicLayer*, const Box&, const Transformation& );
-              void                    drawBox            ( const Box& );
-              void                    drawLine           ( const Point&, const Point& );
-              void                    drawGrid           ();
-              void                    drawSpot           ();
+              void                    drawBoundaries       ( const Cell*    , const Box&, const Transformation& );
+              void                    drawBoundaries       ( const Instance*, const Box&, const Transformation& );
+              bool                    isDrawable           ( const Name& entryName );
+              void                    drawCell             ( const Cell*    , const BasicLayer*, const Box&, const Transformation& );
+              void                    drawInstance         ( const Instance*, const BasicLayer*, const Box&, const Transformation& );
+              void                    drawSlice            ( const Slice*   , const BasicLayer*, const Box&, const Transformation& );
+              void                    drawGo               ( const Go*      , const BasicLayer*, const Box&, const Transformation& );
+              void                    drawSegment          ( const Segment* , const BasicLayer*, const Box&, const Transformation& );
+              void                    drawContact          ( const Contact* , const BasicLayer*, const Box&, const Transformation& );
+              void                    drawPad              ( const Pad*     , const BasicLayer*, const Box&, const Transformation& );
+              void                    drawBox              ( const Box& );
+              void                    drawLine             ( const Point&, const Point& );
+              void                    drawGrid             ();
+              void                    drawSpot             ();
     // Geometric conversions.
-              QRect                   dbuToDisplayRect   ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2 ) const;
-              QRect                   dbuToDisplayRect   ( const Box& box ) const;
-              QPoint                  dbuToDisplayPoint  ( DbU::Unit x, DbU::Unit y ) const;
-              QPoint                  dbuToDisplayPoint  ( const Point& point ) const;
-      inline  int                     dbuToDisplayX      ( DbU::Unit x ) const;
-      inline  int                     dbuToDisplayY      ( DbU::Unit y ) const;
-      inline  int                     dbuToDisplayLength ( DbU::Unit length ) const;
-      inline  int                     dbuToScreenX       ( DbU::Unit x ) const;
-      inline  int                     dbuToScreenY       ( DbU::Unit y ) const;
-              QPoint                  dbuToScreenPoint   ( DbU::Unit x, DbU::Unit y ) const;
-      inline  QPoint                  dbuToScreenPoint   ( const Point& point ) const;
-      inline  DbU::Unit               displayToDbuX      ( int  x ) const;
-      inline  DbU::Unit               displayToDbuY      ( int  y ) const;
-      inline  DbU::Unit               displayToDbuLength ( int  length ) const;
-      inline  Box                     displayToDbuBox    ( const QRect& rect ) const;
-      inline  DbU::Unit               screenToDbuX       ( int  x ) const;
-      inline  DbU::Unit               screenToDbuY       ( int  y ) const;
-      inline  Point                   screenToDbuPoint   ( const QPoint& point ) const;
+              QRect                   dbuToDisplayRect     ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2 ) const;
+              QRect                   dbuToDisplayRect     ( const Box& box ) const;
+              QPoint                  dbuToDisplayPoint    ( DbU::Unit x, DbU::Unit y ) const;
+              QPoint                  dbuToDisplayPoint    ( const Point& point ) const;
+      inline  int                     dbuToDisplayX        ( DbU::Unit x ) const;
+      inline  int                     dbuToDisplayY        ( DbU::Unit y ) const;
+      inline  int                     dbuToDisplayLength   ( DbU::Unit length ) const;
+      inline  int                     dbuToScreenX         ( DbU::Unit x ) const;
+      inline  int                     dbuToScreenY         ( DbU::Unit y ) const;
+              QPoint                  dbuToScreenPoint     ( DbU::Unit x, DbU::Unit y ) const;
+      inline  QPoint                  dbuToScreenPoint     ( const Point& point ) const;
+      inline  DbU::Unit               displayToDbuX        ( int  x ) const;
+      inline  DbU::Unit               displayToDbuY        ( int  y ) const;
+      inline  DbU::Unit               displayToDbuLength   ( int  length ) const;
+      inline  Box                     displayToDbuBox      ( const QRect& rect ) const;
+      inline  DbU::Unit               screenToDbuX         ( int  x ) const;
+      inline  DbU::Unit               screenToDbuY         ( int  y ) const;
+      inline  Point                   screenToDbuPoint     ( const QPoint& point ) const;
     // Qt QWidget Functions Overloads.
-              void                    pushCursor         ( Qt::CursorShape cursor );
-              void                    popCursor          ();
-              QSize                   minimumSizeHint    () const;
-              void                    paintEvent         ( QPaintEvent* );
-              void                    resizeEvent        ( QResizeEvent* );
-              void                    keyPressEvent      ( QKeyEvent* );
-              void                    mouseMoveEvent     ( QMouseEvent* );
-              void                    mousePressEvent    ( QMouseEvent* );
-              void                    mouseReleaseEvent  ( QMouseEvent* );
+              void                    pushCursor           ( Qt::CursorShape cursor );
+              void                    popCursor            ();
+              QSize                   minimumSizeHint      () const;
+              void                    paintEvent           ( QPaintEvent* );
+              void                    resizeEvent          ( QResizeEvent* );
+              void                    keyPressEvent        ( QKeyEvent* );
+              void                    mouseMoveEvent       ( QMouseEvent* );
+              void                    mousePressEvent      ( QMouseEvent* );
+              void                    mouseReleaseEvent    ( QMouseEvent* );
+    signals:
+              void                    mousePositionChanged ( const Point& position );
     public slots:
     // Qt QWidget Slots Overload & CellWidget Specifics.
-      inline  QPainter&               getScreenPainter   ();
-              void                    redraw             ( QRect redrawArea );
-      inline  void                    redraw             ();
-      inline  void                    copyToScreen       ( int sx, int sy, int h, int w );
-      inline  void                    copyToScreen       ();
-              void                    goLeft             ( int dx = 0 );
-              void                    goRight            ( int dx = 0 );
-              void                    goUp               ( int dy = 0 );
-              void                    goDown             ( int dy = 0 );
-              void                    fitToContents      ();
-              void                    setScale           ( float scale );
-              void                    setShowBoundaries  ( bool state );
-              void                    reframe            ( const Box& box );
-              void                    displayReframe     ();
-              void                    shiftLeft          ( int dx );
-              void                    shiftRight         ( int dx );
-              void                    shiftUp            ( int dy );
-              void                    shiftDown          ( int dy );
+      inline  QPainter&               getScreenPainter     ();
+              void                    redraw               ( QRect redrawArea );
+      inline  void                    redraw               ();
+      inline  void                    copyToScreen         ( int sx, int sy, int h, int w );
+      inline  void                    copyToScreen         ();
+              void                    goLeft               ( int dx = 0 );
+              void                    goRight              ( int dx = 0 );
+              void                    goUp                 ( int dy = 0 );
+              void                    goDown               ( int dy = 0 );
+              void                    fitToContents        ();
+              void                    setScale             ( float scale );
+              void                    setShowBoundaries    ( bool state );
+              void                    reframe              ( const Box& box );
+              void                    displayReframe       ();
+              void                    shiftLeft            ( int dx );
+              void                    shiftRight           ( int dx );
+              void                    shiftUp              ( int dy );
+              void                    shiftDown            ( int dy );
 
     private:
       class Spot {
@@ -146,11 +148,9 @@ namespace Hurricane {
     // Internal: Attributes.
       static  const int               _stripWidth;
               vector<Qt::CursorShape> _cursors;
-              QStatusBar*             _statusBar;
     //        MapView*                _mapView;
-              Palette*                _palette;
-              DynamicLabel*           _xPosition;
-              DynamicLabel*           _yPosition;
+              Technology*             _technology;
+              HPalette*                _palette;
               Box                     _displayArea;
               Box                     _visibleArea;
               float                   _scale;
@@ -247,12 +247,8 @@ inline Cell* CellWidget::getCell () const
 { return _cell; }
 
 
-inline Palette* CellWidget::getPalette ()
+inline HPalette* CellWidget::getPalette ()
 { return _palette; }
-
-
-inline QStatusBar* CellWidget::getStatusBar ()
-{ return _statusBar; }
 
 
 inline bool  CellWidget::showBoundaries () const

@@ -16,11 +16,11 @@
 # include  "hurricane/BasicLayers.h"
 
 # include  "hurricane/viewer/Graphics.h"
-# include  "hurricane/viewer/PaletteEntry.h"
+# include  "hurricane/viewer/HPaletteEntry.h"
 # include  "hurricane/viewer/LayerPaletteEntry.h"
 # include  "hurricane/viewer/GroupPaletteEntry.h"
 # include  "hurricane/viewer/ViewerPaletteEntry.h"
-# include  "hurricane/viewer/Palette.h"
+# include  "hurricane/viewer/HPalette.h"
 # include  "hurricane/viewer/CellWidget.h"
 
 
@@ -28,11 +28,10 @@ namespace Hurricane {
 
 
 
-  Palette::Palette ( CellWidget* cellWidget ) : QScrollArea()
-                                              , _cellWidget(cellWidget)
-                                              , _entries()
-                                              , _showAll(NULL)
-                                              , _hideAll(NULL)
+  HPalette::HPalette ( QWidget* parent ) : QScrollArea(parent)
+                                       , _entries()
+                                       , _showAll(NULL)
+                                       , _hideAll(NULL)
   {
     setWidgetResizable ( true );
 
@@ -135,7 +134,7 @@ namespace Hurricane {
   }
 
 
-  bool  Palette::isDrawable ( size_t index )
+  bool  HPalette::isDrawable ( size_t index )
   {
     if ( index < _entries.size() )
       return _entries[index]->isChecked ();
@@ -144,33 +143,33 @@ namespace Hurricane {
   }
 
 
-  void  Palette::showAll ()
+  void  HPalette::showAll ()
   {
     for ( size_t i=0 ; i<_entries.size() ; i++ )
       if ( !_entries[i]->isGroup() )
         _entries[i]->setChecked ( true );
 
-    _cellWidget->redraw ();
+    emit paletteChanged();
   }
 
 
-  void  Palette::hideAll ()
+  void  HPalette::hideAll ()
   {
     for ( size_t i=0 ; i<_entries.size() ; i++ )
       if ( !_entries[i]->isGroup() )
         _entries[i]->setChecked ( false );
 
-    _cellWidget->redraw ();
+    emit paletteChanged();
   }
 
 
-  void  Palette::redrawCellWidget ()
+  void  HPalette::redrawCellWidget ()
   {
-    _cellWidget->redraw ();
+    emit paletteChanged();
   }
 
 
-  PaletteEntry* Palette::find ( const Name& name )
+  HPaletteEntry* HPalette::find ( const Name& name )
   {
     for ( size_t i=0 ; i<_entries.size() ; i++ ) {
       if ( _entries[i]->getName() == name )

@@ -23,44 +23,46 @@ namespace Hurricane {
 
 
   class Cell;
-  class Palette;
+  class HPalette;
 //class MapView;
   class CellWidget;
+  class HMousePosition;
 
 
   class CellViewer : public QMainWindow {
       Q_OBJECT;
 
     public:
-                  CellViewer             ( QWidget* parent=NULL );
-      void        setCell                ( Cell* cell );
+                      CellViewer             ( QWidget* parent=NULL );
+      void            setCell                ( Cell* cell );
     public slots:
-      void        runInspectorOnDataBase ();
-      void        runInspectorOnCell     ();
+      void            runInspectorOnDataBase ();
+      void            runInspectorOnCell     ();
 
     protected:
-      QAction*    _openAction;
-      QAction*    _nextCellAction;
-      QAction*    _previousCellAction;
-      QAction*    _nextAction;
-      QAction*    _saveAction;
-      QAction*    _exitAction;
-      QAction*    _refreshAction;
-      QAction*    _fitToContentsAction;
-      QAction*    _runInspectorOnDataBase;
-      QAction*    _runInspectorOnCell;
-      QMenu*      _fileMenu;
-      QMenu*      _viewMenu;
-      QMenu*      _toolsMenu;
-    //MapView*    _mapView;
-      Palette*    _palette;
-      CellWidget* _cellWidget;
+      QAction*        _openAction;
+      QAction*        _nextCellAction;
+      QAction*        _previousCellAction;
+      QAction*        _nextAction;
+      QAction*        _saveAction;
+      QAction*        _exitAction;
+      QAction*        _refreshAction;
+      QAction*        _fitToContentsAction;
+      QAction*        _runInspectorOnDataBase;
+      QAction*        _runInspectorOnCell;
+      QMenu*          _fileMenu;
+      QMenu*          _viewMenu;
+      QMenu*          _toolsMenu;
+    //MapView*        _mapView;
+      HPalette*       _palette;
+      HMousePosition* _mousePosition;
+      CellWidget*     _cellWidget;
 
     protected:
-      void        createActions          ();
-      void        createMenus            ();
-      void        createLayout           ();
-      void        runInspector           ( Record* record );
+      void            createActions          ();
+      void            createMenus            ();
+      void            createLayout           ();
+      void            runInspector           ( Record* record );
   };
 
 

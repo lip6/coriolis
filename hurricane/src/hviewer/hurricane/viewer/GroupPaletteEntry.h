@@ -2,26 +2,26 @@
 // -*- C++ -*-
 
 
-# ifndef  __GROUP_PALETTE_ENTRY_H__
-#   define  __GROUP_PALETTE_ENTRY_H__
+# ifndef  __GROUP_HPALETTE_ENTRY_H__
+#   define  __GROUP_HPALETTE_ENTRY_H__
 
 
 class QPushButton;
 
 # include  "hurricane/Name.h"
 
-# include  "hurricane/viewer/PaletteEntry.h"
+# include  "hurricane/viewer/HPaletteEntry.h"
 
 
 namespace Hurricane {
 
 
-  class GroupPaletteEntry : public PaletteEntry {
+  class GroupPaletteEntry : public HPaletteEntry {
       Q_OBJECT;
 
     // Constructor.
     public:
-      static  GroupPaletteEntry* create             ( Palette* palette, const Name& name );
+      static  GroupPaletteEntry* create             ( HPalette* palette, const Name& name );
 
     // Methods.
     public:
@@ -44,7 +44,7 @@ namespace Hurricane {
               bool               _expanded;
 
     // Internal - Constructor.
-                                 GroupPaletteEntry  ( Palette* palette, const Name& name );
+                                 GroupPaletteEntry  ( HPalette* palette, const Name& name );
                                  GroupPaletteEntry  ( const GroupPaletteEntry& );
               GroupPaletteEntry& operator=          ( const GroupPaletteEntry& );
       virtual void               _postCreate        ();

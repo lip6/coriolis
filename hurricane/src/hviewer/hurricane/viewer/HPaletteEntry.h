@@ -20,21 +20,21 @@ namespace Hurricane {
 
   class Name;
   class BasicLayer;
-  class Palette;
-  class PaletteEntry;
+  class HPalette;
+  class HPaletteEntry;
 
 
-  class PaletteSample : public QWidget {
+  class HPaletteSample : public QWidget {
       Q_OBJECT;
 
     // Constructor.
     public:
-                     PaletteSample ( PaletteEntry* entry );
+                     HPaletteSample ( HPaletteEntry* entry );
 
     // Internals - Attributes.
     protected:
       QPixmap        _sample;
-      PaletteEntry*  _entry;
+      HPaletteEntry*  _entry;
 
     // Internals - Methods.
       void           redraw        ();
@@ -43,7 +43,7 @@ namespace Hurricane {
   };
 
 
-  class PaletteEntry : public QWidget {
+  class HPaletteEntry : public QWidget {
       Q_OBJECT;
 
     // Methods.
@@ -61,13 +61,13 @@ namespace Hurricane {
 
     // Internal - Attributes.
     protected:
-              Palette*      _palette;
+              HPalette*      _palette;
 
     // Internal - Constructor.
-                            PaletteEntry  ( Palette* palette );
-                            PaletteEntry  ( const PaletteEntry& );
-              PaletteEntry& operator=     ( const PaletteEntry& );
-      virtual void          _postCreate   () = 0;
+                             HPaletteEntry ( HPalette* palette );
+                             HPaletteEntry ( const HPaletteEntry& );
+              HPaletteEntry& operator=     ( const HPaletteEntry& );
+      virtual void           _postCreate   () = 0;
 
   };
 

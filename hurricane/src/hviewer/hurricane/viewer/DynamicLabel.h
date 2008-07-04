@@ -38,7 +38,6 @@ namespace Hurricane {
     // Internal - Constructor.
                             DynamicLabel   ( const DynamicLabel& );
               DynamicLabel& operator=      ( const DynamicLabel& );
-
   };
 
 

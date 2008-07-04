@@ -7,14 +7,14 @@
 
 # include  "hurricane/viewer/Graphics.h"
 # include  "hurricane/viewer/GroupPaletteEntry.h"
-# include  "hurricane/viewer/Palette.h"
+# include  "hurricane/viewer/HPalette.h"
 
 
 namespace Hurricane {
 
 
-  GroupPaletteEntry::GroupPaletteEntry ( Palette* palette, const Name& name )
-    : PaletteEntry(palette)
+  GroupPaletteEntry::GroupPaletteEntry ( HPalette* palette, const Name& name )
+    : HPaletteEntry(palette)
     , _name(name)
     , _button(NULL)
     , _index(0)
@@ -23,7 +23,7 @@ namespace Hurricane {
   }
 
 
-  GroupPaletteEntry* GroupPaletteEntry::create ( Palette* palette, const Name& name )
+  GroupPaletteEntry* GroupPaletteEntry::create ( HPalette* palette, const Name& name )
   {
     GroupPaletteEntry* entry = new GroupPaletteEntry ( palette, name );
 
@@ -103,7 +103,7 @@ namespace Hurricane {
 
   void  GroupPaletteEntry::hideShow ()
   {
-    vector<PaletteEntry*>  entries = _palette->getEntries ();
+    vector<HPaletteEntry*>  entries = _palette->getEntries ();
 
     if ( entries[_index] != this )
       cerr << "[ERROR] Incoherent index for group \"" << getString(getName()) << "\"." << endl;

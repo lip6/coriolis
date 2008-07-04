@@ -8,18 +8,18 @@
 
 class QCheckBox;
 
-# include  "hurricane/viewer/PaletteEntry.h"
+# include  "hurricane/viewer/HPaletteEntry.h"
 
 
 namespace Hurricane {
 
 
-  class LayerPaletteEntry : public PaletteEntry {
+  class LayerPaletteEntry : public HPaletteEntry {
       Q_OBJECT;
 
     // Constructor.
     public:
-      static  LayerPaletteEntry* create              ( Palette* palette, BasicLayer* basicLayer );
+      static  LayerPaletteEntry* create              ( HPalette* palette, BasicLayer* basicLayer );
 
     // Methods.
     public:
@@ -40,7 +40,7 @@ namespace Hurricane {
               QCheckBox*         _checkBox;
 
     // Internal - Constructor.
-                                 LayerPaletteEntry  ( Palette* palette, BasicLayer* basicLayer );
+                                 LayerPaletteEntry  ( HPalette* palette, BasicLayer* basicLayer );
                                  LayerPaletteEntry  ( const LayerPaletteEntry& );
               LayerPaletteEntry& operator=          ( const LayerPaletteEntry& );
       virtual void               _postCreate        ();

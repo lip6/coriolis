@@ -9,7 +9,6 @@
 # include <QStylePainter>
 # include <QBitmap>
 # include <QLabel>
-# include <QStatusBar>
 
 # include "hurricane/DataBase.h"
 # include "hurricane/Technology.h"
@@ -22,9 +21,8 @@
 # include "hurricane/Pad.h"
 
 # include "hurricane/viewer/Graphics.h"
-# include "hurricane/viewer/PaletteEntry.h"
-# include "hurricane/viewer/Palette.h"
-# include "hurricane/viewer/DynamicLabel.h"
+# include "hurricane/viewer/HPaletteEntry.h"
+# include "hurricane/viewer/HPalette.h"
 // # include "MapView.h"
 # include "hurricane/viewer/CellWidget.h"
 
@@ -87,10 +85,8 @@ namespace Hurricane {
 
 
   CellWidget::CellWidget ( QWidget* parent ) : QWidget(parent)
-                                             , _statusBar(NULL)
+                                             , _technology(NULL)
                                              , _palette(NULL)
-                                             , _xPosition(NULL)
-                                             , _yPosition(NULL)
                                              , _displayArea(0,0,6*_stripWidth,6*_stripWidth)
                                              , _visibleArea(_stripWidth,_stripWidth,4*_stripWidth,4*_stripWidth)
                                              , _scale(1.0)
@@ -115,21 +111,23 @@ namespace Hurricane {
     setFocusPolicy   ( Qt::StrongFocus );
     setMouseTracking ( true );
 
-    _statusBar = new QStatusBar ( this );
+//     _statusBar = new QStatusBar ( this );
 
-    _xPosition = new DynamicLabel ();
-    _xPosition->setStaticText  ( "X:" );
-    _xPosition->setDynamicText ( "0l" );
+//     _xPosition = new DynamicLabel ();
+//     _xPosition->setStaticText  ( "X:" );
+//     _xPosition->setDynamicText ( "0l" );
 
-    _yPosition = new DynamicLabel ();
-    _yPosition->setStaticText  ( "Y:" );
-    _yPosition->setDynamicText ( "0l" );
+//     _yPosition = new DynamicLabel ();
+//     _yPosition->setStaticText  ( "Y:" );
+//     _yPosition->setDynamicText ( "0l" );
 
-    _statusBar->addPermanentWidget ( _xPosition );
-    _statusBar->addPermanentWidget ( _yPosition );
+//     _statusBar->addPermanentWidget ( _xPosition );
+//     _statusBar->addPermanentWidget ( _yPosition );
 
   //_mapView = new MapView ( this );
-    _palette = new Palette ( this );
+    DataBase* database = DataBase::getDB();
+    if ( database )
+      _technology = database->getTechnology ();
 
     fitToContents ();
   }
@@ -138,6 +136,25 @@ namespace Hurricane {
   CellWidget::~CellWidget ()
   {
     cerr << "CellWidget::~CellWidget()" << endl;
+  }
+
+
+
+  void  CellWidget::bindToPalette ( HPalette* palette )
+  {
+    detachFromPalette ();
+    _palette = palette;
+
+    connect ( _palette, SIGNAL(paletteChanged()), this,  SLOT(redraw()) );
+  }
+
+
+  void  CellWidget::detachFromPalette ()
+  {
+    if ( _palette ) {
+      disconnect ( _palette, SIGNAL(paletteChanged()), this,  SLOT(redraw()) );
+      _palette = NULL;
+    }
   }
 
 
@@ -181,18 +198,33 @@ namespace Hurricane {
     if ( _cell ) {
       Box  redrawBox = displayToDbuBox ( redrawArea );
 
-      vector<PaletteEntry*>& paletteEntries = _palette->getEntries ();
-      for ( size_t i=0 ; i<paletteEntries.size() ; i++ ) {
-        _drawingPainter.setPen   ( Graphics::getPen  (paletteEntries[i]->getName()) );
-        _drawingPainter.setBrush ( Graphics::getBrush(paletteEntries[i]->getName()) );
+      for_each_basic_layer ( basicLayer, _technology->getBasicLayers() ) {
+        _drawingPainter.setPen   ( Graphics::getPen  (basicLayer->getName()) );
+        _drawingPainter.setBrush ( Graphics::getBrush(basicLayer->getName()) );
 
-        if ( paletteEntries[i]->isBasicLayer() && isDrawable(paletteEntries[i]) ) {
-          drawCell ( _cell, paletteEntries[i]->getBasicLayer(), redrawBox, Transformation() );
-        } else if ( (paletteEntries[i]->getName() == DisplayStyle::Boundaries)
-                  && paletteEntries[i]->isChecked() ) {
-          drawBoundaries ( _cell, redrawBox, Transformation() );
-        }
+        if ( isDrawable(basicLayer->getName()) )
+          drawCell ( _cell, basicLayer, redrawBox, Transformation() );
+        end_for;
       }
+      if ( isDrawable("boundaries") ) {
+        _drawingPainter.setPen   ( Graphics::getPen  ("boundaries") );
+        _drawingPainter.setBrush ( Graphics::getBrush("boundaries") );
+
+        drawBoundaries ( _cell, redrawBox, Transformation() );
+      }
+
+//       vector<HPaletteEntry*>& paletteEntries = _palette->getEntries ();
+//       for ( size_t i=0 ; i<paletteEntries.size() ; i++ ) {
+//         _drawingPainter.setPen   ( Graphics::getPen  (paletteEntries[i]->getName()) );
+//         _drawingPainter.setBrush ( Graphics::getBrush(paletteEntries[i]->getName()) );
+
+//         if ( paletteEntries[i]->isBasicLayer() && isDrawable(paletteEntries[i]) ) {
+//           drawCell ( _cell, paletteEntries[i]->getBasicLayer(), redrawBox, Transformation() );
+//         } else if ( (paletteEntries[i]->getName() == DisplayStyle::Boundaries)
+//                   && paletteEntries[i]->isChecked() ) {
+//           drawBoundaries ( _cell, redrawBox, Transformation() );
+//         }
+//       }
     }
 
     _drawingPainter.end ();
@@ -232,10 +264,12 @@ namespace Hurricane {
   }
 
 
-  bool  CellWidget::isDrawable ( PaletteEntry* entry )
+  bool  CellWidget::isDrawable ( const Name& entryName )
   {
-    return entry->isChecked()
-      && ( Graphics::getThreshold(entry->getName())/DbU::lambda(1.0) < _scale );
+    HPaletteEntry* entry = (_palette) ? _palette->find(entryName) : NULL;
+
+    return (!entry || entry->isChecked())
+      && ( Graphics::getThreshold(entryName)/DbU::lambda(1.0) < _scale );
   }
 
 
@@ -648,8 +682,8 @@ namespace Hurricane {
 
     copyToScreen ();
 
-    if ( isDrawable(_palette->find("grid")) ) drawGrid ();
-    if ( isDrawable(_palette->find("spot")) ) _spot.moveTo ( _lastMousePosition );
+    if ( isDrawable("grid") ) drawGrid ();
+    if ( isDrawable("spot") ) _spot.moveTo ( _lastMousePosition );
 
     _screenPainter.end ();
   }
@@ -720,11 +754,8 @@ namespace Hurricane {
 
       _lastMousePosition = event->pos();
     } else {
-    //cerr << "x:" << event->x() << " y:" << event->y() << endl;
-      _xPosition->setDynamicText ( screenToDbuX(event->x()) );
-      _yPosition->setDynamicText ( screenToDbuY(event->y()) );
-
       _lastMousePosition = event->pos();
+      emit mousePositionChanged ( screenToDbuPoint(event->pos()) );
 
       update ();
     }
