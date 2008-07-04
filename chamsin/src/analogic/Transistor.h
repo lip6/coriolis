@@ -2,12 +2,13 @@
 #define TRANSISTOR_H
 
 #include "hurricane/Name.h"
-#include "hurricane/Cell.h"
 using namespace Hurricane;
+
+#include "Device.h"
 
 namespace Hurricane {
 
-class Transistor : public Cell {
+class Transistor : public Device {
     public:
         class Polarity {
             public:

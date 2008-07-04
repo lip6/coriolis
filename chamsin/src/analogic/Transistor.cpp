@@ -6,6 +6,7 @@ using namespace Hurricane;
 
 #include "AEnv.h"
 #include "ATechnology.h"
+#include "ChoiceParameter.h"
 #include "Transistor.h"
 
 namespace {
@@ -85,7 +86,7 @@ Record* Transistor::AbutmentType::_getRecord() const {
 Transistor::Transistor(Library* library, const Name& name,
         const Polarity& polarity, DbU::Unit l, DbU::Unit w,
         const AbutmentType& abutmentType):
-    Cell(library, name),
+    Device(library, name),
     _drain(NULL),
     _source(NULL),
     _grid(NULL),
@@ -115,6 +116,12 @@ Transistor* Transistor::create(Library* library, const Name& name,
 
 void Transistor::_postCreate() {
    Inherit::_postCreate();
+
+   ChoiceParameter::Choices choices;
+   choices.push_back(string("N"));
+   choices.push_back(string("P"));
+   addParameter(ChoiceParameter("polarity", choices, 0));
+
    DataBase* db = DataBase::getDB();
    Technology* technology = db->getTechnology();
    _drain = Net::create(this, DrainName);
