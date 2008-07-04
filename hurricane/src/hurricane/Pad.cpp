@@ -81,6 +81,18 @@ void Pad::translate(const DbU::Unit& dx, const DbU::Unit& dy)
     }
 }
 
+void Pad::setLayer(const Layer* layer)
+// ***********************************
+{
+    if (!layer)
+        throw Error("Can't set layer : null layer");
+
+    if (layer != _layer) {
+        invalidate(false);
+        _layer = layer;
+    }
+}
+
 void Pad::setBoundingBox(const Box& boundingBox)
 // *********************************************
 {

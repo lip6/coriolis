@@ -53,6 +53,7 @@ class Pad : public Component {
 // Updators
 // ********
 
+    public: void setLayer(const Layer* layer);
     public: virtual void translate(const DbU::Unit& dx, const DbU::Unit& dy);
     public: void setBoundingBox(const Box& boundingBox);
 
