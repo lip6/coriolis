@@ -43,7 +43,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./ScreenUtilities.h"                      |
+// |  C++ Module  :       "./HNetlistModel.cpp"                      |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
@@ -53,35 +53,95 @@
 #include  <QAction>
 #include  <QMenu>
 #include  <QMenuBar>
+#include  <QFont>
+#include  <QApplication>
 
-
-# ifndef  __SCREENUTILITIES_H__
-#   define  __SCREENUTILITIES_H__
-
-# include  <string>
-# include  <QBrush>
-
-# include  "hurricane/Commons.h"
+#include  "hurricane/Name.h"
+#include  "hurricane/Net.h"
+#include  "hurricane/Cell.h"
+#include  "hurricane/viewer/Graphics.h"
+#include  "hurricane/viewer/NetInformations.h"
+#include  "hurricane/viewer/HNetlistModel.h"
 
 
 namespace Hurricane {
 
 
-  class BasicLayer;
+  HNetlistModel::HNetlistModel ( QObject* parent )
+    : QAbstractTableModel(parent)
+    , _cell(NULL)
+    , _netlist(NULL)
+  { }
 
 
-  // Constants.
-  const size_t  InvalidIndex = (size_t)-1;
+  HNetlistModel::~HNetlistModel ()
+  {
+    if ( _netlist ) delete _netlist; 
+  }
 
 
-  // Functions.
+  QVariant  HNetlistModel::data ( const QModelIndex& index, int role ) const
+  {
+    static QFont nameFont  = Graphics::getFixedFont ( QFont::Bold );
+    static QFont valueFont = Graphics::getFixedFont ( QFont::Normal, true );
 
-  QBrush  getBrush ( const string& pattern, int red, int green, int blue );
+    if ( !index.isValid() ) return QVariant ();
+
+    if ( role == Qt::SizeHintRole ) {
+      switch (index.column()) {
+        case 0:  return 200;
+        default: return -1;
+      }
+    }
+
+    if ( role == Qt::FontRole ) {
+      switch (index.column()) {
+        case 0:  return nameFont;
+        default: return valueFont;
+      }
+    }
+
+    if ( role == Qt::DisplayRole ) {
+      int row = index.row ();
+      return _netlist->getRow(row)->getColumn(index.column());
+    }
+    return QVariant();
+  }
 
 
+  QVariant  HNetlistModel::headerData ( int             section
+                                      , Qt::Orientation orientation
+                                      , int             role ) const
+  {
+    if ( !_netlist ) return QVariant();
+
+    if (   ( orientation == Qt::Vertical )
+        || ( section >= _netlist->getColumnCount() )
+        || (role != Qt::DisplayRole) )
+      return QVariant();
+
+    return _netlist->getColumnName(section);
+  }
+
+
+  int  HNetlistModel::rowCount ( const QModelIndex& parent ) const
+  {
+    return (_netlist) ? _netlist->size() : 0;
+  }
+
+
+  int  HNetlistModel::columnCount ( const QModelIndex& parent ) const
+  {
+    return (_netlist) ? _netlist->getColumnCount() : 0;
+  }
+
+
+  const Net* HNetlistModel::getNet ( int row )
+  {
+    if ( !_netlist || ( row >= (int)_netlist->size() ) ) return NULL;
+
+    return _netlist->getRow(row)->getNet();
+  }
 
 
 } // End of Hurricane namespace.
-
-
-# endif

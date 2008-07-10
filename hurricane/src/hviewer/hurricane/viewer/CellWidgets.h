@@ -1,4 +1,5 @@
 
+
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Project.
@@ -32,56 +33,32 @@
 // License-Tag
 // Authors-Tag
 // ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
-// |                  H U R R I C A N E                              |
-// |     V L S I   B a c k e n d   D a t a - B a s e                 |
-// |                                                                 |
-// |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
-// | =============================================================== |
-// |  C++ Header  :       "./ScreenUtilities.h"                      |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
 
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
+# ifndef __CELL_WIDGETS_H__
+#   define __CELL_WIDGETS_H__
 
 
-# ifndef  __SCREENUTILITIES_H__
-#   define  __SCREENUTILITIES_H__
-
-# include  <string>
-# include  <QBrush>
-
-# include  "hurricane/Commons.h"
+# include  "hurricane/Collection.h"
 
 
 namespace Hurricane {
 
 
-  class BasicLayer;
+  class CellWidget;
 
 
-  // Constants.
-  const size_t  InvalidIndex = (size_t)-1;
+  typedef GenericCollection<CellWidget*> CellWidgets;
+  typedef GenericLocator<CellWidget*>    CellWidgetLocator;
+  typedef GenericFilter<CellWidget*>     CellWidgetFilter;
+
+# define  for_each_cell_widget(cellWidget, cellWidgets) {  \
+    CellWidgetLocator _locator = cellWidgets.getLocator(); \
+    while ( _locator.isValid() ) {                         \
+      CellWidget* cellWidget = _locator.getElement();      \
+      _locator.progress();
+
+}
 
 
-  // Functions.
-
-  QBrush  getBrush ( const string& pattern, int red, int green, int blue );
-
-
-
-
-} // End of Hurricane namespace.
-
-
-# endif
+# endif  // __CELL_WIDGETS__

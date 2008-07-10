@@ -43,7 +43,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./ScreenUtilities.h"                      |
+// |  C++ Header  :       "./HNetlistModel.h"                        |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
@@ -53,35 +53,80 @@
 #include  <QAction>
 #include  <QMenu>
 #include  <QMenuBar>
+#ifndef  __NETLIST_MODEL_H__
+#define  __NETLIST_MODEL_H__
 
+#include  <vector>
 
-# ifndef  __SCREENUTILITIES_H__
-#   define  __SCREENUTILITIES_H__
+#include  <QFont>
+#include  <QApplication>
+#include  <QAbstractTableModel>
 
-# include  <string>
-# include  <QBrush>
-
-# include  "hurricane/Commons.h"
+#include  "hurricane/Commons.h"
+#include  "hurricane/Name.h"
+#include  "hurricane/Net.h"
+#include  "hurricane/Cell.h"
+#include  "hurricane/viewer/Graphics.h"
+#include  "hurricane/viewer/NetInformations.h"
+#include  "hurricane/viewer/HNetlistModel.h"
 
 
 namespace Hurricane {
 
 
-  class BasicLayer;
+  class Net;
+  class Cell;
 
 
-  // Constants.
-  const size_t  InvalidIndex = (size_t)-1;
+  class HNetlistModel : public QAbstractTableModel {
+      Q_OBJECT;
+
+    public:
+                                            HNetlistModel ( QObject* parent=NULL );
+                                           ~HNetlistModel ();
+      template<typename InformationType>
+             void                           setCell       ( Cell* cell );
+             int                            rowCount      ( const QModelIndex& parent=QModelIndex() ) const;
+             int                            columnCount   ( const QModelIndex& parent=QModelIndex() ) const;
+             QVariant                       data          ( const QModelIndex& index, int role=Qt::DisplayRole ) const;
+             QVariant                       headerData    ( int section, Qt::Orientation orientation, int role=Qt::DisplayRole ) const;
+      inline Cell*                          getCell       ();
+             const Net*                     getNet        ( int row );
+
+    private:
+             Cell*                          _cell;
+             AbstractNetInformationsVector* _netlist;
+  };
 
 
-  // Functions.
+// Inline Functions.
 
-  QBrush  getBrush ( const string& pattern, int red, int green, int blue );
+  inline Cell* HNetlistModel::getCell () { return _cell; }
 
 
+// Template Functions.
+
+  template<typename InformationType>
+  void  HNetlistModel::setCell ( Cell* cell )
+  {
+    if ( _cell != cell ) {
+      if ( _cell )
+        delete _netlist;
+
+      _cell    = cell;
+      _netlist = new NetInformationsVector<InformationType>();
+
+      for_each_net ( net, _cell->getNets() ) {
+        _netlist->addNet ( net );
+        end_for;
+      }
+
+      emit layoutChanged ();
+    }
+  }
 
 
 } // End of Hurricane namespace.
 
 
-# endif
+#endif // __NETLIST_MODEL_H__ 

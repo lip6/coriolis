@@ -43,7 +43,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./ScreenUtilities.h"                      |
+// |  C++ Header  :       "./HNetlist.h"                             |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
@@ -53,35 +53,85 @@
 #include  <QAction>
 #include  <QMenu>
 #include  <QMenuBar>
+#ifndef  __HNETLIST_WIDGET_H__
+#define  __HNETLIST_WIDGET_H__
 
 
-# ifndef  __SCREENUTILITIES_H__
-#   define  __SCREENUTILITIES_H__
+#include  <QWidget>
+#include  <QTableView>
+#include  <QSortFilterProxyModel>
 
-# include  <string>
-# include  <QBrush>
+#include  "hurricane/Commons.h"
+#include  "hurricane/viewer/CellWidget.h"
+#include  "hurricane/viewer/HNetlistModel.h"
 
-# include  "hurricane/Commons.h"
+
+class QSortFilterProxyModel;
+class QModelIndex;
+class QTableView;
+class QLineEdit;
+class QComboBox;
+class QHeaderView;
 
 
 namespace Hurricane {
 
 
-  class BasicLayer;
+  class Cell;
+  class CellWidget;
 
 
-  // Constants.
-  const size_t  InvalidIndex = (size_t)-1;
+  class HNetlist : public QWidget {
+      Q_OBJECT;
+
+    public:
+                                     HNetlist          ( QWidget* parent=NULL );
+      template<typename InformationType>
+              void                   setCell           ( Cell* cell );
+      template<typename InformationType>
+              void                   setCellWidget     ( CellWidget* cw );
+    private slots:
+              void                   textFilterChanged ();
+              void                   selectNet         ( const QModelIndex& index );
+    protected:
+              void                   keyPressEvent     ( QKeyEvent * event );
+
+    private:
+              HNetlistModel*         _netlistModel;
+              QSortFilterProxyModel* _sortModel;
+              QTableView*            _netlistView;
+              QLineEdit*             _filterPatternLineEdit;
+              int                    _rowHeight;
+              CellWidget*            _cellWidget;
+  };
 
 
-  // Functions.
+  template<typename InformationType>
+  void  HNetlist::setCell ( Cell* cell )
+  {
+    _netlistModel->setCell<InformationType> ( cell );
+     
+    string windowTitle = "Netlist" + getString(cell);
+    setWindowTitle ( tr(windowTitle.c_str()) );
 
-  QBrush  getBrush ( const string& pattern, int red, int green, int blue );
+    int rows = _sortModel->rowCount ();
+    for ( rows-- ; rows >= 0 ; rows-- )
+      _netlistView->setRowHeight ( rows, _rowHeight );
+    _netlistView->selectRow ( 0 );
+  }
 
 
+  template<typename InformationType>
+  void  HNetlist::setCellWidget ( CellWidget* cw )
+  {
+    if ( _netlistModel->getCell() != cw->getCell() )
+      setCell<InformationType>( cw->getCell() );
+
+    _cellWidget = cw;
+  }
 
 
 } // End of Hurricane namespace.
 
 
-# endif
+#endif // __HNETLIST_WIDGET_H__

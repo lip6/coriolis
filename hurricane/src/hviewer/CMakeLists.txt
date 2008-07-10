@@ -11,19 +11,27 @@
                                      hurricane/viewer/HPalette.h
                                      hurricane/viewer/DynamicLabel.h
                                      hurricane/viewer/HMousePosition.h
+                                     hurricane/viewer/Selector.h
                                      hurricane/viewer/CellWidget.h
+                                     hurricane/viewer/CellWidgets.h
                                      hurricane/viewer/CellViewer.h
                                      hurricane/viewer/RecordModel.h
                                      hurricane/viewer/HInspectorWidget.h
+                                     hurricane/viewer/HNetlistModel.h
+                                     hurricane/viewer/HNetlist.h
                        )
                    set ( exports     hurricane/viewer/ScreenUtilities.h
                                      hurricane/viewer/HPaletteEntry.h
                                      hurricane/viewer/HPalette.h
                                      hurricane/viewer/DisplayStyle.h
                                      hurricane/viewer/Graphics.h
+                                     hurricane/viewer/Selector.h
+                                     hurricane/viewer/CellWidget.h
+                                     hurricane/viewer/CellWidgets.h
                                      hurricane/viewer/CellViewer.h
                                      hurricane/viewer/HInspectorWidget.h
-                                     hurricane/viewer/CellWidget.h
+                                     hurricane/viewer/NetInformations.h
+                                     hurricane/viewer/HNetlist.h
                        )
                    set ( cpps        ScreenUtilities.cpp 
                                      DisplayStyle.cpp 
@@ -35,10 +43,14 @@
                                      HPalette.cpp
                                      DynamicLabel.cpp
                                      HMousePosition.cpp
+                                     Selector.cpp
                                      CellWidget.cpp
                                      CellViewer.cpp
                                      RecordModel.cpp
                                      HInspectorWidget.cpp
+                                     NetInformations.cpp
+                                     HNetlistModel.cpp
+                                     HNetlist.cpp
                        )
 
           qt4_wrap_cpp ( MOC_SRCS    ${mocincludes} )

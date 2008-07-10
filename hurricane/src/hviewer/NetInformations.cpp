@@ -43,7 +43,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./ScreenUtilities.h"                      |
+// |  C++ Module  :       "./NetInformations.cpp"                    |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
@@ -53,35 +53,95 @@
 #include  <QAction>
 #include  <QMenu>
 #include  <QMenuBar>
+#include  <QObject>
 
-
-# ifndef  __SCREENUTILITIES_H__
-#   define  __SCREENUTILITIES_H__
-
-# include  <string>
-# include  <QBrush>
-
-# include  "hurricane/Commons.h"
+#include  "hurricane/Name.h"
+#include  "hurricane/Net.h"
+#include  "hurricane/viewer/NetInformations.h"
 
 
 namespace Hurricane {
 
 
-  class BasicLayer;
+// -------------------------------------------------------------------
+// Class  :  "NetInformations"
 
 
-  // Constants.
-  const size_t  InvalidIndex = (size_t)-1;
+  int  NetInformations::getColumnCount ()
+  { return 1; }
 
 
-  // Functions.
+  QVariant  NetInformations::getColumnName ( int column )
+  {
+    switch ( column ) {
+      case 0: return QVariant(QObject::tr("Net"));
+    }
+    return QVariant(QObject::tr("Column Out of Bound"));
+  }
 
-  QBrush  getBrush ( const string& pattern, int red, int green, int blue );
+
+  QVariant  NetInformations::getColumn ( int column )
+  {
+    switch ( column ) {
+      case 0: return QVariant(getString(getName()).c_str());
+    }
+    return QVariant(QObject::tr("Column Out of Bound"));
+  }
 
 
+  NetInformations::NetInformations ( const Net* net )
+    : _net(net)
+  { }
+
+
+  NetInformations::~NetInformations ()
+  { }
+
+
+// -------------------------------------------------------------------
+// Class  :  "SimpleNetInformations"
+
+
+  int  SimpleNetInformations::getColumnCount ()
+  { return 2; }
+
+
+  QVariant  SimpleNetInformations::getColumnName ( int column )
+  {
+    switch ( column ) {
+      case 0: return QVariant(QObject::tr("Net"));
+      case 1: return QVariant(QObject::tr("Plugs"));
+    }
+    return QVariant(QObject::tr("Column Out of Bound"));
+  }
+
+
+  QVariant  SimpleNetInformations::getColumn ( int column )
+  {
+    switch ( column ) {
+      case 0: return QVariant(getString(getName()).c_str());
+      case 1: return QVariant(getPlugsCount());
+    }
+    return QVariant(QObject::tr("Column Out of Bound"));
+  }
+
+
+  SimpleNetInformations::SimpleNetInformations ( const Net* net )
+    : NetInformations(net)
+    , _plugsCount(_net->getPlugs().getSize())
+  { }
+
+
+  SimpleNetInformations::~SimpleNetInformations ()
+  { }
+
+
+// -------------------------------------------------------------------
+// Class  :  "AbstractNetInformationsVector"
+
+
+  AbstractNetInformationsVector::~AbstractNetInformationsVector  ()
+  { }
 
 
 } // End of Hurricane namespace.
-
-
-# endif

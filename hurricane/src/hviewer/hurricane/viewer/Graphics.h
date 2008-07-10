@@ -1,5 +1,58 @@
 
 // -*- C++ -*-
+//
+// This file is part of the Coriolis Project.
+// Copyright (C) Laboratoire LIP6 - Departement ASIM
+// Universite Pierre et Marie Curie
+//
+// Main contributors :
+//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
+//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
+//        Hugo Clément                   <Hugo.Clement@lip6.fr>
+//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
+//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
+//        Christian Masson           <Christian.Masson@lip6.fr>
+//        Marek Sroka                     <Marek.Sroka@lip6.fr>
+// 
+// The  Coriolis Project  is  free software;  you  can redistribute it
+// and/or modify it under the  terms of the GNU General Public License
+// as published by  the Free Software Foundation; either  version 2 of
+// the License, or (at your option) any later version.
+// 
+// The  Coriolis Project is  distributed in  the hope that it  will be
+// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
+// GNU General Public License for more details.
+// 
+// You should have  received a copy of the  GNU General Public License
+// along with the Coriolis Project; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA
+//
+// License-Tag
+// Authors-Tag
+// ===================================================================
+//
+// $Id$
+//
+// x-----------------------------------------------------------------x 
+// |                                                                 |
+// |                  H U R R I C A N E                              |
+// |     V L S I   B a c k e n d   D a t a - B a s e                 |
+// |                                                                 |
+// |  Author      :                    Jean-Paul CHAPUT              |
+// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// | =============================================================== |
+// |  C++ Header  :       "./Graphics.h"                             |
+// | *************************************************************** |
+// |  U p d a t e s                                                  |
+// |                                                                 |
+// x-----------------------------------------------------------------x
+
+
+#include  <QAction>
+#include  <QMenu>
+#include  <QMenuBar>
 
 
 # ifndef  __GRAPHICS_H__
@@ -32,9 +85,9 @@ namespace Hurricane {
       static  Graphics*             getGraphics   ();
       static  const QFont           getFixedFont  ( int weight=-1, bool italic=false, bool underline=false );
       static  const Name&           getGroup      ( const Name& key );
-      static  const QColor&         getColor      ( const Name& key );
-      static  const QPen&           getPen        ( const Name& key );
-      static  const QBrush&         getBrush      ( const Name& key );
+      static  QColor                getColor      ( const Name& key, int darkening=100 );
+      static  QPen                  getPen        ( const Name& key, int darkening=100 );
+      static  QBrush                getBrush      ( const Name& key, int darkening=100 );
       static  const string&         getPattern    ( const Name& key );
       static  float                 getThreshold  ( const Name& key );
 
@@ -63,34 +116,34 @@ namespace Hurricane {
               DisplayStyle*         _getStyle     ( const Name& key );
               DisplayStyle*         _getStyle     () const;
       inline  const Name&           _getGroup     ( const Name& key ) const;
-      inline  const QColor&         _getColor     ( const Name& key ) const;
-      inline  const QPen&           _getPen       ( const Name& key ) const;
-      inline  const QBrush&         _getBrush     ( const Name& key ) const;
+      inline  QColor                _getColor     ( const Name& key, int darkening ) const;
+      inline  QPen                  _getPen       ( const Name& key, int darkening ) const;
+      inline  QBrush                _getBrush     ( const Name& key, int darkening ) const;
       inline  const string&         _getPattern   ( const Name& key ) const;
       inline  float                 _getThreshold ( const Name& key ) const;
 
   };
 
 
-  inline const Name&     Graphics::_getGroup     ( const Name& name ) const
+  inline const Name& Graphics::_getGroup ( const Name& name ) const
   { return _active->getGroup(name); }
 
-  inline const QColor&   Graphics::_getColor     ( const Name& name ) const
-  { return _active->getColor(name); }
+  inline QColor  Graphics::_getColor ( const Name& name, int darkening ) const
+  { return _active->getColor(name,darkening); }
 
-  inline const QPen&     Graphics::_getPen       ( const Name& name ) const
-  { return _active->getPen(name); }
+  inline QPen  Graphics::_getPen ( const Name& name, int darkening ) const
+  { return _active->getPen(name,darkening); }
 
-  inline const QBrush&   Graphics::_getBrush     ( const Name& name ) const
-  { return _active->getBrush(name); }
+  inline QBrush  Graphics::_getBrush ( const Name& name, int darkening ) const
+  { return _active->getBrush(name,darkening); }
 
-  inline const string&   Graphics::_getPattern   ( const Name& name ) const
+  inline const string& Graphics::_getPattern ( const Name& name ) const
   { return _active->getPattern(name); }
 
-  inline float           Graphics::_getThreshold ( const Name& name ) const
+  inline float  Graphics::_getThreshold ( const Name& name ) const
   { return _active->getThreshold(name); }
 
-  inline DisplayStyle*   Graphics::_getStyle     () const
+  inline DisplayStyle* Graphics::_getStyle () const
   { return _active; }
 
 

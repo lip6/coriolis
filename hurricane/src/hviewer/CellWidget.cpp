@@ -1,5 +1,58 @@
 
 // -*- C++ -*-
+//
+// This file is part of the Coriolis Project.
+// Copyright (C) Laboratoire LIP6 - Departement ASIM
+// Universite Pierre et Marie Curie
+//
+// Main contributors :
+//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
+//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
+//        Hugo Clément                   <Hugo.Clement@lip6.fr>
+//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
+//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
+//        Christian Masson           <Christian.Masson@lip6.fr>
+//        Marek Sroka                     <Marek.Sroka@lip6.fr>
+// 
+// The  Coriolis Project  is  free software;  you  can redistribute it
+// and/or modify it under the  terms of the GNU General Public License
+// as published by  the Free Software Foundation; either  version 2 of
+// the License, or (at your option) any later version.
+// 
+// The  Coriolis Project is  distributed in  the hope that it  will be
+// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
+// GNU General Public License for more details.
+// 
+// You should have  received a copy of the  GNU General Public License
+// along with the Coriolis Project; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA
+//
+// License-Tag
+// Authors-Tag
+// ===================================================================
+//
+// $Id$
+//
+// x-----------------------------------------------------------------x 
+// |                                                                 |
+// |                  H U R R I C A N E                              |
+// |     V L S I   B a c k e n d   D a t a - B a s e                 |
+// |                                                                 |
+// |  Author      :                    Jean-Paul CHAPUT              |
+// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// | =============================================================== |
+// |  C++ Module  :       "./CellWidget.cpp"                         |
+// | *************************************************************** |
+// |  U p d a t e s                                                  |
+// |                                                                 |
+// x-----------------------------------------------------------------x
+
+
+#include  <QAction>
+#include  <QMenu>
+#include  <QMenuBar>
 
 
 # include <QMouseEvent>
@@ -46,7 +99,7 @@ namespace Hurricane {
   void  CellWidget::Spot::restore ()
   {
     if ( _restore ) {
-      _cellWidget->copyToScreen ( _spotPoint.x()-5, _spotPoint.y()-5, 10, 10 );
+      _cellWidget->getDrawingPlanes().copyToScreen ( _spotPoint.x()-5, _spotPoint.y()-5, 10, 10 );
       _restore = false;
     }
   }
@@ -60,7 +113,7 @@ namespace Hurricane {
 
   void  CellWidget::Spot::moveTo ( const QPoint& screenPoint )
   {
-    QPainter& screenPainter = _cellWidget->getScreenPainter();
+    QPainter& screenPainter = _cellWidget->getDrawingPlanes().painter(2);
 
     Point mousePoint = _cellWidget->screenToDbuPoint ( screenPoint );
     Point  spotPoint = Point ( DbU::getOnSnapGrid(mousePoint.getX())
@@ -75,6 +128,106 @@ namespace Hurricane {
     screenPainter.drawRect ( center.x()-3, center.y()-3, 6, 6 );
   }
 
+
+// -------------------------------------------------------------------
+// Class :  "Hurricane::CellWidget::Drawingplanes".
+
+
+  CellWidget::DrawingPlanes::DrawingPlanes ( const QSize& size, CellWidget* cw )
+    : _cellWidget(cw)
+    , _workingPlane(0)
+  {
+    for ( size_t i=0 ; i<2 ; i++ )
+      _planes[i] = new QPixmap ( size );
+  }
+
+
+  CellWidget::DrawingPlanes::~DrawingPlanes ()
+  {
+    for ( size_t i=0 ; i<2 ; i++ ) {
+      if ( _painters[i].isActive() ) _painters[i].end();
+      delete _planes[i];
+    }
+  }
+
+
+  void  CellWidget::DrawingPlanes::resize ( const QSize& size )
+  {
+    for ( size_t i=0 ; i<2 ; i++ ) {
+      bool activePainter = _painters[i].isActive();
+
+      if ( activePainter ) _painters[i].end();
+      delete _planes[i];
+
+      _planes[i] = new QPixmap ( size );
+      if ( activePainter ) _painters[i].begin ( _planes[i] );
+    }
+  }
+
+
+  void  CellWidget::DrawingPlanes::shiftLeft ( int dx )
+  {
+    paintersBegin ();
+    _painters[0].drawPixmap ( dx, 0, *_planes[0], 0, 0, width()-dx, height() );
+    _painters[1].drawPixmap ( dx, 0, *_planes[1], 0, 0, width()-dx, height() );
+    paintersEnd ();
+  }
+
+
+  void  CellWidget::DrawingPlanes::shiftRight ( int dx )
+  {
+    paintersBegin ();
+    _painters[0].drawPixmap ( 0, 0, *_planes[0], dx, 0, width()-dx, height() );
+    _painters[1].drawPixmap ( 0, 0, *_planes[1], dx, 0, width()-dx, height() );
+    paintersEnd ();
+  }
+
+
+  void  CellWidget::DrawingPlanes::shiftUp ( int dy )
+  {
+    paintersBegin ();
+    _painters[0].drawPixmap ( 0, dy, *_planes[0], 0, 0, width(), height()-dy );
+    _painters[1].drawPixmap ( 0, dy, *_planes[1], 0, 0, width(), height()-dy );
+    paintersEnd ();
+  }
+
+
+  void  CellWidget::DrawingPlanes::shiftDown ( int dy )
+  {
+    paintersBegin ();
+    _painters[0].drawPixmap ( 0, 0, *_planes[0], 0, dy, width(), height()-dy );
+    _painters[1].drawPixmap ( 0, 0, *_planes[1], 0, dy, width(), height()-dy );
+    paintersEnd ();
+  }
+
+
+  void  CellWidget::DrawingPlanes::copyToSelect ( int sx, int sy, int w, int h )
+  {
+    painterBegin ( 1 );
+    _painters[1].setPen        ( Qt::NoPen );
+    _painters[1].setBackground ( Graphics::getBrush("background") );
+    _painters[1].eraseRect     ( sx, sy, w, h );
+  //_painters[1].setOpacity    ( 0.5 );
+    _painters[1].drawPixmap    ( sx, sy, *_planes[0], sx, sy, w, h );
+    painterEnd ( 1 );
+  }
+
+
+  void  CellWidget::DrawingPlanes::copyToScreen ( int sx, int sy, int w, int h )
+  {
+    if ( _cellWidget->showSelection() )
+      _painters[2].drawPixmap ( sx, sy
+                              , *_planes[1]
+                              , _cellWidget->getOffsetVA().rx()+sx, _cellWidget->getOffsetVA().ry()+sy
+                              , w, h
+                              );
+    else
+      _painters[2].drawPixmap ( sx, sy
+                              , *_planes[0]
+                              , _cellWidget->getOffsetVA().rx()+sx, _cellWidget->getOffsetVA().ry()+sy
+                              , w, h
+                              );
+  }
 
 
 // -------------------------------------------------------------------
@@ -91,14 +244,14 @@ namespace Hurricane {
                                              , _visibleArea(_stripWidth,_stripWidth,4*_stripWidth,4*_stripWidth)
                                              , _scale(1.0)
                                              , _offsetVA(_stripWidth,_stripWidth)
-                                             , _drawingBuffer(6*_stripWidth,6*_stripWidth)
-                                             , _drawingPainter()
-                                             , _screenPainter()
+                                             , _drawingPlanes(QSize(6*_stripWidth,6*_stripWidth),this)
                                              , _lastMousePosition(0,0)
                                              , _spot(this)
                                              , _cell(NULL)
                                              , _mouseGo(false)
                                              , _showBoundaries(true)
+                                             , _showSelection(false)
+                                             , _selectionHasChanged(false)
                                              , _redrawRectCount(0)
   {
   //setBackgroundRole ( QPalette::Dark );
@@ -110,19 +263,6 @@ namespace Hurricane {
     setSizePolicy    ( QSizePolicy::Expanding, QSizePolicy::Expanding );
     setFocusPolicy   ( Qt::StrongFocus );
     setMouseTracking ( true );
-
-//     _statusBar = new QStatusBar ( this );
-
-//     _xPosition = new DynamicLabel ();
-//     _xPosition->setStaticText  ( "X:" );
-//     _xPosition->setDynamicText ( "0l" );
-
-//     _yPosition = new DynamicLabel ();
-//     _yPosition->setStaticText  ( "Y:" );
-//     _yPosition->setDynamicText ( "0l" );
-
-//     _statusBar->addPermanentWidget ( _xPosition );
-//     _statusBar->addPermanentWidget ( _yPosition );
 
   //_mapView = new MapView ( this );
     DataBase* database = DataBase::getDB();
@@ -181,58 +321,113 @@ namespace Hurricane {
   }
 
 
+  void  CellWidget::setShowSelection ( bool state )
+  {
+    if ( state != _showSelection ) {
+      _showSelection = state;
+      redraw ();
+    }
+  }
+
+
   void  CellWidget::redraw ( QRect redrawArea )
   {
+    cerr << "CellWidget::redraw()" << endl;
+
     _redrawRectCount = 0;
 
     pushCursor ( Qt::BusyCursor );
 
-    _spot.setRestore ( false );
-    _drawingPainter.begin ( &_drawingBuffer );
+    if ( !_selectionHasChanged ) {
+      _spot.setRestore ( false );
+      _drawingPlanes.select ( 0 );
+      _drawingPlanes.painterBegin ();
 
-    _drawingPainter.setPen        ( Qt::NoPen );
-    _drawingPainter.setBackground ( Graphics::getBrush("background") );
-    _drawingPainter.setClipRect   ( redrawArea );
-    _drawingPainter.eraseRect     ( redrawArea );
+      _drawingPlanes.painter().setPen        ( Qt::NoPen );
+      _drawingPlanes.painter().setBackground ( Graphics::getBrush("background") );
+      _drawingPlanes.painter().setClipRect   ( redrawArea );
+      _drawingPlanes.painter().eraseRect     ( redrawArea );
 
-    if ( _cell ) {
-      Box  redrawBox = displayToDbuBox ( redrawArea );
+      int darkening = (_showSelection) ? 200 : 100;
 
-      for_each_basic_layer ( basicLayer, _technology->getBasicLayers() ) {
-        _drawingPainter.setPen   ( Graphics::getPen  (basicLayer->getName()) );
-        _drawingPainter.setBrush ( Graphics::getBrush(basicLayer->getName()) );
+      if ( _cell ) {
+        Box  redrawBox = displayToDbuBox ( redrawArea );
 
-        if ( isDrawable(basicLayer->getName()) )
-          drawCell ( _cell, basicLayer, redrawBox, Transformation() );
-        end_for;
+        for_each_basic_layer ( basicLayer, _technology->getBasicLayers() ) {
+          _drawingPlanes.painter().setPen   ( Graphics::getPen  (basicLayer->getName(),darkening) );
+          _drawingPlanes.painter().setBrush ( Graphics::getBrush(basicLayer->getName(),darkening) );
+
+          if ( isDrawable(basicLayer->getName()) )
+            drawCell ( _cell, basicLayer, redrawBox, Transformation() );
+          end_for;
+        }
+        if ( isDrawable("boundaries") ) {
+          _drawingPlanes.painter().setPen   ( Graphics::getPen  ("boundaries") );
+          _drawingPlanes.painter().setBrush ( Graphics::getBrush("boundaries") );
+
+          drawBoundaries ( _cell, redrawBox, Transformation() );
+        }
       }
-      if ( isDrawable("boundaries") ) {
-        _drawingPainter.setPen   ( Graphics::getPen  ("boundaries") );
-        _drawingPainter.setBrush ( Graphics::getBrush("boundaries") );
 
-        drawBoundaries ( _cell, redrawBox, Transformation() );
-      }
-
-//       vector<HPaletteEntry*>& paletteEntries = _palette->getEntries ();
-//       for ( size_t i=0 ; i<paletteEntries.size() ; i++ ) {
-//         _drawingPainter.setPen   ( Graphics::getPen  (paletteEntries[i]->getName()) );
-//         _drawingPainter.setBrush ( Graphics::getBrush(paletteEntries[i]->getName()) );
-
-//         if ( paletteEntries[i]->isBasicLayer() && isDrawable(paletteEntries[i]) ) {
-//           drawCell ( _cell, paletteEntries[i]->getBasicLayer(), redrawBox, Transformation() );
-//         } else if ( (paletteEntries[i]->getName() == DisplayStyle::Boundaries)
-//                   && paletteEntries[i]->isChecked() ) {
-//           drawBoundaries ( _cell, redrawBox, Transformation() );
-//         }
-//       }
+      _drawingPlanes.painterEnd ();
     }
 
-    _drawingPainter.end ();
+    if ( _showSelection )
+      redrawSelection ( redrawArea );
+
+    cerr << "CellWidget::redraw() - finished." << endl;
 
     update ();
     popCursor ();
 
     //cerr << "Redrawed rectangles: " << _redrawRectCount << endl;
+  }
+
+
+  void  CellWidget::redrawSelection ( QRect redrawArea )
+  {
+    cerr << "CellWidget::redrawSelection()" << endl;
+
+    _drawingPlanes.copyToSelect ( redrawArea.x()
+                                , redrawArea.y()
+                                , redrawArea.width()
+                                , redrawArea.height()
+                                );
+
+    _drawingPlanes.select ( 1 );
+    _drawingPlanes.painterBegin ();
+    _drawingPlanes.painter().setPen        ( Qt::NoPen );
+    _drawingPlanes.painter().setBackground ( Graphics::getBrush("background") );
+    _drawingPlanes.painter().setClipRect   ( redrawArea );
+
+    if ( _cell ) {
+      Box  redrawBox = displayToDbuBox ( redrawArea );
+
+      for_each_basic_layer ( basicLayer, _technology->getBasicLayers() ) {
+        if ( !isDrawable(basicLayer->getName()) ) continue;
+
+        _drawingPlanes.painter().setPen   ( Graphics::getPen  (basicLayer->getName()) );
+        _drawingPlanes.painter().setBrush ( Graphics::getBrush(basicLayer->getName()) );
+
+        set<Selector*>::iterator  iselector = _selectors.begin ();
+        for ( ; iselector != _selectors.end() ; iselector++ ) {
+          Occurrence      occurrence     = (*iselector)->getOccurrence();
+          Transformation  transformation = occurrence.getPath().getTransformation();
+
+          Instance* instance = dynamic_cast<Instance*>(occurrence.getEntity());
+          if ( instance ) {
+            drawInstance ( instance, basicLayer, redrawBox, transformation );
+            continue;
+          }
+
+          drawGo ( dynamic_cast<Go*>(occurrence.getEntity()), basicLayer, redrawBox, transformation );
+        }
+        end_for;
+      }
+    }
+
+    _drawingPlanes.painterEnd ();
+    _selectionHasChanged = false;
   }
 
 
@@ -387,19 +582,19 @@ namespace Hurricane {
   void  CellWidget::drawBox ( const Box& box )
   {
     _redrawRectCount++;
-    _drawingPainter.drawRect ( dbuToDisplayRect(box) );
+    _drawingPlanes.painter().drawRect ( dbuToDisplayRect(box) );
   }
 
 
   void  CellWidget::drawLine ( const Point& p1, const Point& p2 )
   {
-    _drawingPainter.drawLine ( dbuToDisplayPoint(p1), dbuToDisplayPoint(p2) );
+    _drawingPlanes.painter().drawLine ( dbuToDisplayPoint(p1), dbuToDisplayPoint(p2) );
   }
 
 
   void  CellWidget::drawGrid ()
   {
-    _screenPainter.setPen ( Graphics::getPen("grid") );
+    _drawingPlanes.painter(2).setPen ( Graphics::getPen("grid") );
 
     DbU::Unit  gridStep      = DbU::getSnapGridStep();
     DbU::Unit  superGridStep = gridStep*5;
@@ -417,10 +612,10 @@ namespace Hurricane {
           ) {
         center = dbuToScreenPoint(xGrid,yGrid);
         if ( (xGrid % superGridStep) || (yGrid % superGridStep) )
-          _screenPainter.drawPoint ( center );
+          _drawingPlanes.painter(2).drawPoint ( center );
         else {
-          _screenPainter.drawLine ( center.x()-3, center.y()  , center.x()+3, center.y()   );
-          _screenPainter.drawLine ( center.x()  , center.y()-3, center.x()  , center.y()+3 );
+          _drawingPlanes.painter(2).drawLine ( center.x()-3, center.y()  , center.x()+3, center.y()   );
+          _drawingPlanes.painter(2).drawLine ( center.x()  , center.y()-3, center.x()  , center.y()+3 );
         }
       }
     }
@@ -494,9 +689,9 @@ namespace Hurricane {
     _offsetVA.ry() = _stripWidth;
 
     DbU::Unit xmin = (DbU::Unit)( _visibleArea.getXMin() - ((float)_offsetVA.x()/_scale) );
-    DbU::Unit xmax = (DbU::Unit)( xmin + ((float)_drawingBuffer.width()/_scale) ) ;
+    DbU::Unit xmax = (DbU::Unit)( xmin + ((float)_drawingPlanes.width()/_scale) ) ;
     DbU::Unit ymax = (DbU::Unit)( _visibleArea.getYMax() + ((float)_offsetVA.y()/_scale) );
-    DbU::Unit ymin = (DbU::Unit)( ymax - ((float)_drawingBuffer.height()/_scale) ) ;
+    DbU::Unit ymin = (DbU::Unit)( ymax - ((float)_drawingPlanes.height()/_scale) ) ;
 
     _displayArea = Box ( xmin, ymin, xmax, ymax );
 
@@ -527,7 +722,7 @@ namespace Hurricane {
   void  CellWidget::reframe ( const Box& box )
   {
   //cerr << "CellWidget::reframe() - " << box << endl;
-  //cerr << "  widget size := " << _drawingBuffer.width() << "x" << _drawingBuffer.height() << endl;
+  //cerr << "  widget size := " << _drawingPlanes.width() << "x" << _drawingPlanes.height() << endl;
 
     int  width  = this->width  ();
     int  height = this->height ();
@@ -567,20 +762,13 @@ namespace Hurricane {
     _displayArea.translate ( - (DbU::Unit)( leftShift / _scale ) , 0 );
     _offsetVA.rx() -= dx - leftShift;
 
-    if ( leftShift >= _drawingBuffer.width() ) {
+    if ( leftShift >= _drawingPlanes.width() ) {
       redraw ();
     } else {
-    //cerr << "Left Shift " << leftShift << " (offset: " << _offsetVA.rx() << ")" << endl;
-      _drawingPainter.begin ( &_drawingBuffer );
-      _drawingPainter.drawPixmap ( leftShift, 0
-                          , _drawingBuffer
-                          , 0, 0
-                          , _drawingBuffer.width()-leftShift, _drawingBuffer.height()
-                          );
-      _drawingPainter.end ();
+      _drawingPlanes.shiftLeft ( leftShift );
 
       redraw ( QRect ( QPoint ( 0, 0 )
-                     , QSize  ( leftShift, _drawingBuffer.height() )) );
+                     , QSize  ( leftShift, _drawingPlanes.height() )) );
     }
 
     assert ( _offsetVA.rx() >= 0 );
@@ -598,20 +786,13 @@ namespace Hurricane {
 
   //cerr << "  _displayArea: " << _displayArea << endl;
 
-    if ( rightShift >= _drawingBuffer.width() ) {
+    if ( rightShift >= _drawingPlanes.width() ) {
       redraw ();
     } else {
-    //cerr << "  Right Shift " << rightShift << " (offset: " << _offsetVA.rx() << ")" << endl;
-      _drawingPainter.begin ( &_drawingBuffer );
-      _drawingPainter.drawPixmap ( 0, 0
-                          , _drawingBuffer
-                          , rightShift, 0
-                          , _drawingBuffer.width()-rightShift, _drawingBuffer.height()
-                          );
-      _drawingPainter.end ();
+      _drawingPlanes.shiftRight ( rightShift );
 
-      redraw ( QRect ( QPoint ( _drawingBuffer.width()-rightShift, 0 )
-                     , QSize  ( rightShift, _drawingBuffer.height() )) );
+      redraw ( QRect ( QPoint ( _drawingPlanes.width()-rightShift, 0 )
+                     , QSize  ( rightShift, _drawingPlanes.height() )) );
     }
 
     assert ( _offsetVA.rx() >= 0 );
@@ -627,20 +808,13 @@ namespace Hurricane {
     _displayArea.translate ( 0, (DbU::Unit)( upShift / _scale ) );
     _offsetVA.ry() -= dy - upShift;
 
-    if ( upShift >= _drawingBuffer.height() ) {
+    if ( upShift >= _drawingPlanes.height() ) {
       redraw ();
     } else {
-    //cerr << "Left Shift " << upShift << " (offset: " << _offsetVA.ry() << ")" << endl;
-      _drawingPainter.begin ( &_drawingBuffer );
-      _drawingPainter.drawPixmap ( 0, upShift
-                          , _drawingBuffer
-                          , 0, 0
-                          , _drawingBuffer.width(), _drawingBuffer.height()-upShift
-                          );
-      _drawingPainter.end ();
+      _drawingPlanes.shiftUp ( upShift );
 
       redraw ( QRect ( QPoint ( 0, 0 )
-                     , QSize  ( _drawingBuffer.width(), upShift )) );
+                     , QSize  ( _drawingPlanes.width(), upShift )) );
     }
 
     assert ( _offsetVA.ry() >= 0 );
@@ -656,20 +830,13 @@ namespace Hurricane {
     _displayArea.translate ( 0, - (DbU::Unit)( downShift / _scale ) );
     _offsetVA.ry() += dy - downShift;
 
-    if ( downShift >= _drawingBuffer.height() ) {
+    if ( downShift >= _drawingPlanes.height() ) {
       redraw ();
     } else {
-    //cerr << "Right Shift " << downShift << " (offset: " << _offsetVA.ry() << ")" << endl;
-      _drawingPainter.begin ( &_drawingBuffer );
-      _drawingPainter.drawPixmap ( 0, 0
-                          , _drawingBuffer
-                          , 0, downShift
-                          , _drawingBuffer.width(), _drawingBuffer.height()-downShift
-                          );
-      _drawingPainter.end ();
+      _drawingPlanes.shiftDown ( downShift );
 
-      redraw ( QRect ( QPoint ( 0, _drawingBuffer.height()-downShift )
-                     , QSize  ( _drawingBuffer.width(), downShift )) );
+      redraw ( QRect ( QPoint ( 0, _drawingPlanes.height()-downShift )
+                     , QSize  ( _drawingPlanes.width(), downShift )) );
     }
 
     assert ( _offsetVA.ry() >= 0 );
@@ -678,14 +845,13 @@ namespace Hurricane {
 
   void  CellWidget::paintEvent ( QPaintEvent* )
   {
-    _screenPainter.begin ( this );
-
-    copyToScreen ();
+    _drawingPlanes.painterBegin ( 2 );
+    _drawingPlanes.copyToScreen ();
 
     if ( isDrawable("grid") ) drawGrid ();
     if ( isDrawable("spot") ) _spot.moveTo ( _lastMousePosition );
 
-    _screenPainter.end ();
+    _drawingPlanes.painterEnd ( 2 );
   }
 
 
@@ -697,11 +863,11 @@ namespace Hurricane {
     uaSize.rwidth () += 2*_stripWidth;
     uaSize.rheight() += 2*_stripWidth;
 
-    if ( uaSize.width () > _drawingBuffer.width () )
-      uaDelta.rwidth () = uaSize.width () - _drawingBuffer.width ();
+    if ( uaSize.width () > _drawingPlanes.width () )
+      uaDelta.rwidth () = uaSize.width () - _drawingPlanes.width ();
 
-    if ( uaSize.height() > _drawingBuffer.height() )
-      uaDelta.rheight() = uaSize.height() - _drawingBuffer.height();
+    if ( uaSize.height() > _drawingPlanes.height() )
+      uaDelta.rheight() = uaSize.height() - _drawingPlanes.height();
 
   //cerr << "New UA widget size: " << uaSize.width() << "x" << uaSize.height() << endl;
 
@@ -710,12 +876,12 @@ namespace Hurricane {
       _visibleArea.inflate ( 0, 0, (DbU::Unit)(uaDelta.width()/_scale), (DbU::Unit)(uaDelta.height()/_scale) );
     //cerr << "new      " << _displayArea << endl;
 
-    //cerr << "Previous buffer size: " << _drawingBuffer.width () << "x"
-    //                                 << _drawingBuffer.height() << endl;
+    //cerr << "Previous buffer size: " << _drawingPlanes.width () << "x"
+    //                                 << _drawingPlanes.height() << endl;
 
       QSize bufferSize ( ( ( uaSize.width () / _stripWidth ) + 1 ) * _stripWidth
                        , ( ( uaSize.height() / _stripWidth ) + 1 ) * _stripWidth );
-      _drawingBuffer = QPixmap ( bufferSize );
+      _drawingPlanes.resize ( bufferSize );
 
     //cerr << "Effective buffer resize to: " << bufferSize.width() << "x"
     //                                       << bufferSize.height() << endl;
@@ -733,6 +899,7 @@ namespace Hurricane {
       case Qt::Key_Right: goRight  (); break;
       case Qt::Key_Z:     setScale ( _scale*2.0 ); break;
       case Qt::Key_M:     setScale ( _scale/2.0 ); break;
+      default:            QWidget::keyPressEvent ( event );
     }
   }
 
@@ -832,6 +999,74 @@ namespace Hurricane {
   {
     _cell = cell;
     fitToContents ();
+  }
+
+
+  void  CellWidget::select ( const Net* net, bool delayRedraw )
+  {
+    for_each_component ( component, net->getComponents() ) {
+      Occurrence occurrence ( component );
+      select ( occurrence );
+      end_for;
+    }
+    if ( !delayRedraw ) redraw ();
+  }
+
+
+  void  CellWidget::select ( Occurrence& occurrence )
+  {
+	if ( !occurrence.isValid() )
+      throw Error ( "Can't select occurrence : invalid occurrence" );
+
+	if ( occurrence.getOwnerCell() != getCell() )
+      throw Error ( "Can't select occurrence : incompatible occurrence" );
+
+	Property* property = occurrence.getProperty ( Selector::getPropertyName() );
+    Selector* selector = NULL;
+	if ( !property )
+      selector = Selector::create ( occurrence );
+	else {
+      selector = dynamic_cast<Selector*>(property);
+      if ( !selector )
+        throw Error ( "Abnormal property named " + getString(Selector::getPropertyName()) );
+    }
+
+	selector->attachTo(this);
+
+    _selectionHasChanged = true;
+  }
+
+
+  void  CellWidget::unselect ( Occurrence& occurrence )
+  {
+	if ( !occurrence.isValid() )
+		throw Error ( "Can't unselect occurrence : invalid occurrence" );
+
+	if ( occurrence.getOwnerCell() != getCell() )
+		throw Error ( "Can't unselect occurrence : incompatible occurrence" );
+
+	Property* property = occurrence.getProperty ( Selector::getPropertyName() );
+	if ( property ) {
+      Selector* selector = dynamic_cast<Selector*>(property);
+      if ( !selector )
+        throw Error ( "Abnormal property named " + getString(Selector::getPropertyName()) );
+
+      selector->detachFrom(this);
+    }
+
+    _selectionHasChanged = true;
+  }
+
+
+  void  CellWidget::unselectAll ( bool delayRedraw )
+  {
+    set<Selector*>::iterator iselector = _selectors.begin ();
+    for ( ; iselector != _selectors.end() ; iselector++ ) {
+      (*iselector)->detachFrom ( this );
+    }
+
+    _selectionHasChanged = true;
+    if ( !delayRedraw ) redraw ();
   }
 
 

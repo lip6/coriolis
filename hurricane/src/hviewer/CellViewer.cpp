@@ -1,6 +1,53 @@
 
-
 // -*- C++ -*-
+//
+// This file is part of the Coriolis Project.
+// Copyright (C) Laboratoire LIP6 - Departement ASIM
+// Universite Pierre et Marie Curie
+//
+// Main contributors :
+//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
+//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
+//        Hugo Clément                   <Hugo.Clement@lip6.fr>
+//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
+//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
+//        Christian Masson           <Christian.Masson@lip6.fr>
+//        Marek Sroka                     <Marek.Sroka@lip6.fr>
+// 
+// The  Coriolis Project  is  free software;  you  can redistribute it
+// and/or modify it under the  terms of the GNU General Public License
+// as published by  the Free Software Foundation; either  version 2 of
+// the License, or (at your option) any later version.
+// 
+// The  Coriolis Project is  distributed in  the hope that it  will be
+// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
+// GNU General Public License for more details.
+// 
+// You should have  received a copy of the  GNU General Public License
+// along with the Coriolis Project; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA
+//
+// License-Tag
+// Authors-Tag
+// ===================================================================
+//
+// $Id$
+//
+// x-----------------------------------------------------------------x 
+// |                                                                 |
+// |                  H U R R I C A N E                              |
+// |     V L S I   B a c k e n d   D a t a - B a s e                 |
+// |                                                                 |
+// |  Author      :                    Jean-Paul CHAPUT              |
+// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// | =============================================================== |
+// |  C++ Module  :       "./CellViewer.cpp"                         |
+// | *************************************************************** |
+// |  U p d a t e s                                                  |
+// |                                                                 |
+// x-----------------------------------------------------------------x
 
 
 #include  <QAction>
@@ -17,6 +64,7 @@
 #include  "hurricane/viewer/CellWidget.h"
 #include  "hurricane/viewer/CellViewer.h"
 #include  "hurricane/viewer/HInspectorWidget.h"
+#include  "hurricane/viewer/HNetlist.h"
 #include  "hurricane/viewer/HMousePosition.h"
 
 
@@ -32,8 +80,10 @@ namespace Hurricane {
                                              , _exitAction(NULL)
                                              , _refreshAction(NULL)
                                              , _fitToContentsAction(NULL)
+                                             , _showSelectionAction(NULL)
                                              , _runInspectorOnDataBase(NULL)
                                              , _runInspectorOnCell(NULL)
+                                             , _browseNetlist(NULL)
                                              , _fileMenu(NULL)
                                              , _viewMenu(NULL)
                                              , _toolsMenu(NULL)
@@ -83,11 +133,19 @@ namespace Hurricane {
     _fitToContentsAction->setStatusTip ( tr("Adjust zoom to fit the whole cell's contents") );
     _fitToContentsAction->setShortcut  ( Qt::Key_F );
 
+    _showSelectionAction = new QAction ( tr("&Show Selection"), this );
+    _showSelectionAction->setStatusTip ( tr("Highlight the selected items (darken others)") );
+    _showSelectionAction->setShortcut  ( Qt::Key_S );
+    _showSelectionAction->setCheckable ( true );
+
     _runInspectorOnDataBase= new QAction ( tr("Inspect &DataBase"), this );
     _runInspectorOnDataBase->setStatusTip ( tr("Run Inspector on Hurricane DataBase") );
 
     _runInspectorOnCell= new QAction ( tr("Inspect &Cell"), this );
     _runInspectorOnCell->setStatusTip ( tr("Run Inspector on the current Cell") );
+
+    _browseNetlist= new QAction ( tr("Browse &Netlist"), this );
+    _browseNetlist->setStatusTip ( tr("Browse netlist from the current Cell") );
   }
 
 
@@ -108,10 +166,12 @@ namespace Hurricane {
     _viewMenu = menuBar()->addMenu ( tr("View") );
     _viewMenu->addAction ( _refreshAction );
     _viewMenu->addAction ( _fitToContentsAction );
+    _viewMenu->addAction ( _showSelectionAction );
 
     _toolsMenu = menuBar()->addMenu ( tr("Tool") );
     _toolsMenu->addAction ( _runInspectorOnDataBase );
     _toolsMenu->addAction ( _runInspectorOnCell );
+    _toolsMenu->addAction ( _browseNetlist );
   }
 
 
@@ -154,8 +214,10 @@ namespace Hurricane {
 
     connect ( _refreshAction         , SIGNAL(triggered())  , _cellWidget, SLOT(redraw                ()));
     connect ( _fitToContentsAction   , SIGNAL(triggered())  , _cellWidget, SLOT(fitToContents         ()));
+    connect ( _showSelectionAction   , SIGNAL(toggled(bool)), _cellWidget, SLOT(setShowSelection  (bool)));
     connect ( _runInspectorOnDataBase, SIGNAL(triggered())  , this       , SLOT(runInspectorOnDataBase()));
     connect ( _runInspectorOnCell    , SIGNAL(triggered())  , this       , SLOT(runInspectorOnCell    ()));
+    connect ( _browseNetlist         , SIGNAL(triggered())  , this       , SLOT(browseNetlist         ()));
     connect ( _cellWidget            , SIGNAL(mousePositionChanged(const Point&))
             , _mousePosition         , SLOT(setPosition(const Point&)) );
 
@@ -195,6 +257,26 @@ namespace Hurricane {
     Cell* cell = _cellWidget->getCell();
     if ( cell ) runInspector ( getRecord(cell) );
   }
+
+
+  void  CellViewer::browseNetlist ()
+  {
+    HNetlist* netlistBrowser = new HNetlist ();
+    netlistBrowser->setCellWidget<SimpleNetInformations> ( _cellWidget );
+    netlistBrowser->show ();
+  }
+
+
+  void  CellViewer::select ( Occurrence& occurrence )
+  { if ( _cellWidget ) _cellWidget->select ( occurrence ); }
+
+
+  void  CellViewer::unselect ( Occurrence& occurrence )
+  { if ( _cellWidget ) _cellWidget->unselect ( occurrence ); }
+
+
+  void  CellViewer::unselectAll ()
+  { if ( _cellWidget ) _cellWidget->unselectAll(); }
 
 
 } // End of Hurricane namespace.
