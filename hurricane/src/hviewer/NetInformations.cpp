@@ -120,7 +120,7 @@ namespace Hurricane {
   {
     switch ( column ) {
       case 0: return QVariant(getString(getName()).c_str());
-      case 1: return QVariant(getPlugsCount());
+      case 1: return QVariant((unsigned int)getPlugsCount());
     }
     return QVariant(QObject::tr("Column Out of Bound"));
   }
