@@ -48,7 +48,7 @@ Transistor::Type& Transistor::Type::operator=(const Type& type) {
 }
 
 Transistor::Transistor(Library* library, const Name& name):
-    Device(library, name),
+    AnalogComponent(library, name),
     _drain(NULL),
     _source(NULL),
     _grid(NULL),

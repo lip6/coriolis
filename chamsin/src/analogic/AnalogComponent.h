@@ -1,12 +1,12 @@
-#ifndef DEVICE_H
-#define DEVICE_H
+#ifndef ANALOGCOMPONENT_H
+#define ANALOGCOMPONENT_H
 
 #include "hurricane/Cell.h"
 using namespace Hurricane;
 
 //#include "DeviceParameter.h"
 
-class Device : public Cell {
+class AnalogComponent : public Cell {
 #if 0
     public:
         struct ParameterCompare:
@@ -20,7 +20,7 @@ class Device : public Cell {
         Parameter* getParameter(const string& parameterId) const;
 #endif
     protected:
-        Device(Library* library, const Name& name): Cell(library, name) {}
+        AnalogComponent(Library* library, const Name& name): Cell(library, name) {}
 #if 0
         void addParameter(const Parameter* parameter) {
             _parameterSet.insert(parameter);
@@ -31,4 +31,4 @@ class Device : public Cell {
         
 };
 
-#endif // DEVICE_H
+#endif // ANALOGCOMPONENT_H

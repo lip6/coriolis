@@ -1,9 +1,9 @@
 #ifndef TRANSISTOR_H
 #define TRANSISTOR_H
 
-#include "Device.h"
+#include "AnalogComponent.h"
 
-class Transistor : public Device {
+class Transistor : public AnalogComponent {
     public:
         class Type {
             public:
