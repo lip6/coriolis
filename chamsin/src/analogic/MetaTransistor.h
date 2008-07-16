@@ -1,30 +1,9 @@
-// ****************************************************************************************************
-// File: MetaTransistor.h
-// Authors: Wu YiFei
-// Date   : 21/12/2006 
-// ****************************************************************************************************
+#ifndef METATRANSISTOR_H
+#define METATRANSISTOR_H
 
-#ifndef HURRICANE_METATRANSISTOR
-#define HURRICANE_METATRANSISTOR
+#include "AnalogComponent.h"
 
-#include "Cell.h"
-using namespace Hurricane;
-#include "AnalogicalCommons.h"
-
-namespace Hurricane {
-
-class MetaTransistor: public Cell {
-// ********************************
-
-
-// Types
-// *****
-     public : typedef Cell Inherit; 
-
-#   if !defined(__DOXYGEN_PROCESSOR__)
-
-// Logicals Attributes
-// *******************
+class MetaTransistor: public AnalogComponent {
      private : char _type;
      private : unsigned _m;              
      private : Micro _le, _we;           // length and width expected
@@ -37,55 +16,19 @@ class MetaTransistor: public Cell {
      private : double _cgb, _cgs, _cdb, _cds, _csb, _cgd;
 
 
-// Behaviorals attributes
-// **********************	       
-     private : double _temp, _vds, _vgs;  // DC 
-     private : double _vg, _vd, _vs, _vb; 
-     private : char _region; 
-     private : double _ids; 
-     private : double _vth, _vdsat;       // AC
-
-# endif 
-
-// Constructors
-// ************
-#   if !defined(__DOXYGEN_PROCESSOR__)
     protected : MetaTransistor(Library* library, const Name& name, char type);
-# endif 
 
     public : static MetaTransistor* create(Library* library, const Name& name, char type);		
    
-#   if !defined(__DOXYGEN_PROCESSOR__)
     protected : virtual void _postCreate();
 
 
-// Destructors
-// ***********
-    protected : ~MetaTransistor() {};
-    protected : virtual void _preDestroy();
-# endif 
-
-// Operations
-// **********
-
-    // Create the connection between all instances.
     // ********************************************
     public : void createConnection();
 		
     // Create the layout of all motifs in this metatransistor. 
     // *******************************************************	     
     public : void createLayout();
-
-
-#   if !defined(__DOXYGEN_PROCESSOR__)
-    // get all paramters after generation of Layout (capa..). 
-    // *****************************************************
-    public : void getParameterOfGeneration() { /* to do */};
-
-    // Delete all instances and all motifs in this metatransistor.
-    // ***********************************************************	     
-    public : void Flush();
-#   endif
 
 
 // Accessors
@@ -103,16 +46,6 @@ class MetaTransistor: public Cell {
     public : void setType(const char type)  { _type=type; };
     public : void setM   (const unsigned m)  { _m=m; };
 
-
-//#endif 
-
-#   if !defined(__DOXYGEN_PROCESSOR__)
-// Others
-// ******
-    public: virtual string _getTypeName() const {return _TName("MetaTransistor");};
-    public: virtual string _getString() const;
-    public: virtual Record* _getRecord() const;
-# endif
 
 };
 

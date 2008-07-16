@@ -3,11 +3,13 @@
 
 #include "DeviceParameter.h"
 
-class ChoiceParameter : public DeviceParameter {
+template <class Class>
+class ChoiceParameter : public Parameter<Class> {
     public:
         typedef vector<string> Choices;
-        ChoiceParameter(string id, Choices& choices, unsigned value):
-            DeviceParameter(id), _choices(), _value(value) {
+        ChoiceParameter<Class>(string id, Choices& choices,
+                unsigned value, CallBack<Class>* callBack):
+            Parameter<Class>(id, callBack), _choices(), _value(value) {
             if (_value > choices.size()) {
                 throw Error("");
             }

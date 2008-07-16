@@ -5,10 +5,11 @@
 
 namespace Hurricane {
   class Library;
-  class Transistor;
   class CellWidget;
 }
 using namespace Hurricane;
+
+class Transistor;
 
 class AnalogicViewer : public QMainWindow {
     Q_OBJECT
@@ -17,7 +18,6 @@ class AnalogicViewer : public QMainWindow {
     private slots:
         void lvalueChanged(int value);
         void wvalueChanged(int value);
-        void transistorTypeChanged(int value);
 
     private:
         AnalogicViewer();

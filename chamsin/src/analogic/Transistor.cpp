@@ -6,37 +6,9 @@ using namespace Hurricane;
 
 #include "AEnv.h"
 #include "ATechnology.h"
-#include "ChoiceParameter.h"
 #include "Transistor.h"
 
 namespace {
-
-void createContactMatrix(Net* net, const Layer* layer, const Box& box, unsigned columns,
-        const DbU::Unit& rwCont, const DbU::Unit& rdCont) {
-    unsigned contacts = 0;
-    if (box.getHeight() < rwCont) {
-        contacts = 0;
-    } else {
-        contacts = (box.getHeight() - rwCont) / (rwCont + rdCont) + 1;
-    }
-
-    Point padMin(box.getXMin(), box.getYMin());
-    Point padMax(padMin);
-    padMax += Point(rwCont, rwCont);
-
-    for (unsigned i=0; i<columns; i++) {
-        for (unsigned j=0; j<contacts; j++) {
-            Box padBox(padMin, padMax);
-            Pad::create(net, layer, padBox);
-            padMin.setY(padMin.getY() + rwCont + rdCont);
-            padMax.setY(padMax.getY() + rwCont + rdCont);
-        }
-        padMin.setX(padMin.getX() + rwCont + rdCont);
-        padMax.setX(padMax.getX() + rwCont + rdCont);
-        padMin.setY(box.getYMin());
-        padMax.setY(box.getYMax());
-    }
-}
 
 Layer* getLayer(Technology* technology, const string& layerStr) {
    Layer* layer = technology->getLayer(layerStr);
@@ -62,40 +34,29 @@ const Name Transistor::GridName("GRID");
 const Name Transistor::BulkName("BULK");
 const Name Transistor::AnonymousName("ANONYMOUS");
 
+Transistor::Type::Type(const Code& code):
+    _code(code)
+{}
 
-string Transistor::Polarity::_getString() const {
-    return getString(&_code);
+Transistor::Type::Type(const Type& type):
+    _code(type._code)
+{}
+
+Transistor::Type& Transistor::Type::operator=(const Type& type) {
+    _code = type._code;
+    return *this;
 }
 
-Record* Transistor::Polarity::_getRecord() const {
-    Record* record = new Record(getString(this));
-    record->add(getSlot("Code", &_code));
-    return record;
-}
-
-string Transistor::AbutmentType::_getString() const {
-    return getString(&_code);
-}
-
-Record* Transistor::AbutmentType::_getRecord() const {
-    Record* record = new Record(getString(this));
-    record->add(getSlot("Code", &_code));
-    return record;
-}
-
-Transistor::Transistor(Library* library, const Name& name,
-        const Polarity& polarity, DbU::Unit l, DbU::Unit w,
-        const AbutmentType& abutmentType):
+Transistor::Transistor(Library* library, const Name& name):
     Device(library, name),
     _drain(NULL),
     _source(NULL),
     _grid(NULL),
     _bulk(NULL),
     _anonymous(NULL),
-    _polarity(polarity),
-    _abutmentType(abutmentType),
-    _l(l),
-    _w(w),
+    _type(),
+    _l(0),
+    _w(0),
     _source20(NULL), _source22(NULL),
     _drain40(NULL), _drain42(NULL),
     _grid00(NULL), _grid01(NULL), _grid30(NULL), _grid31(NULL),
@@ -103,11 +64,8 @@ Transistor::Transistor(Library* library, const Name& name,
 {}
 
 
-Transistor* Transistor::create(Library* library, const Name& name,
-        const Polarity& polarity,
-        DbU::Unit l, DbU::Unit w,
-        const AbutmentType& abutmentType) {
-    Transistor* transistor = new Transistor(library, name, polarity, l, w, abutmentType);
+Transistor* Transistor::create(Library* library, const Name& name) {
+    Transistor* transistor = new Transistor(library, name);
 
     transistor->_postCreate();
 
@@ -115,62 +73,62 @@ Transistor* Transistor::create(Library* library, const Name& name,
 }
 
 void Transistor::_postCreate() {
-   Inherit::_postCreate();
+    Inherit::_postCreate();
 
-   ChoiceParameter::Choices choices;
-   choices.push_back(string("N"));
-   choices.push_back(string("P"));
-   addParameter(ChoiceParameter("polarity", choices, 0));
+    //ChoiceParameter<Transistor>::Choices choices;
+    //choices.push_back(string("N"));
+    //choices.push_back(string("P"));
+    //addParameter(ChoiceParameter<Transistor>("type", choices, 0, new CallBack<Transistor>(this, &Transistor::updateType)));
 
-   DataBase* db = DataBase::getDB();
-   Technology* technology = db->getTechnology();
-   _drain = Net::create(this, DrainName);
-   _drain->setExternal(true);
-   _source = Net::create(this, SourceName);
-   _source->setExternal(true);
-   _grid = Net::create(this, GridName);
-   _grid->setExternal(true);
-   _bulk = Net::create(this, BulkName);
-   _bulk->setExternal(true);
-   _anonymous = Net::create(this, AnonymousName);
-   _source20    = createPad(technology, _source,    "cut0");
-   _source22    = createPad(technology, _source,    "cut1");
-   _drain40     = createPad(technology, _drain,     "cut0");
-   _drain42     = createPad(technology, _drain,     "cut1");
-   _grid00      = createPad(technology, _grid,      "poly");
-   _grid01      = createPad(technology, _grid,      "poly");
-   _grid30      = createPad(technology, _grid,      "cut0");
-   _grid31      = createPad(technology, _grid,      "metal1");
-   _anonymous10 = createPad(technology, _anonymous, "active");
-   if (_polarity == Polarity::N) { 
-       _anonymous11 = createPad(technology, _anonymous, "nImplant");
-       _anonymous12 = createPad(technology, _anonymous, "nImplant");
-   } else {
-       _anonymous11 = createPad(technology, _anonymous, "pImplant");
-       _anonymous12 = createPad(technology, _anonymous, "pImplant");
-   }
-   setTerminal(false);
+    DataBase* db = DataBase::getDB();
+    Technology* technology = db->getTechnology();
+    _drain = Net::create(this, DrainName);
+    _drain->setExternal(true);
+    _source = Net::create(this, SourceName);
+    _source->setExternal(true);
+    _grid = Net::create(this, GridName);
+    _grid->setExternal(true);
+    _bulk = Net::create(this, BulkName);
+    _bulk->setExternal(true);
+    _anonymous = Net::create(this, AnonymousName);
+    _source20    = createPad(technology, _source,    "cut0");
+    _source22    = createPad(technology, _source,    "cut1");
+    _drain40     = createPad(technology, _drain,     "cut0");
+    _drain42     = createPad(technology, _drain,     "cut1");
+    _grid00      = createPad(technology, _grid,      "poly");
+    _grid01      = createPad(technology, _grid,      "poly");
+    _grid30      = createPad(technology, _grid,      "cut0");
+    _grid31      = createPad(technology, _grid,      "metal1");
+    _anonymous10 = createPad(technology, _anonymous, "active");
+    if (_type == Type::NMOS) { 
+        _anonymous11 = createPad(technology, _anonymous, "nImplant");
+        _anonymous12 = createPad(technology, _anonymous, "nImplant");
+    } else {
+        _anonymous11 = createPad(technology, _anonymous, "pImplant");
+        _anonymous12 = createPad(technology, _anonymous, "pImplant");
+    }
+    setTerminal(false);
 }
 
-void Transistor::setPolarity(const Polarity& polarity) {
+void Transistor::setType(Type type) {
     UpdateSession::open();
-    if (polarity != _polarity) {
-        _polarity = polarity;
+    if (type != _type) {
+        _type = type;
         DataBase* db = DataBase::getDB();
         Technology* technology = db->getTechnology();
-        if (_polarity == Polarity::N) { 
+        if (_type == Type::NMOS) { 
             _anonymous11->setLayer(getLayer(technology, "nImplant"));
             _anonymous12->setLayer(getLayer(technology, "nImplant"));
         } else {
             _anonymous11->setLayer(getLayer(technology, "pImplant"));
             _anonymous12->setLayer(getLayer(technology, "pImplant"));
         }
-        createLayout();
+        updateLayout();
     }
     UpdateSession::close();
 }
 
-void Transistor::createLayout() {
+void Transistor::updateLayout() {
     DataBase* db = DataBase::getDB();
     if (!db) {
         throw Error("Error : no DataBase");
@@ -203,7 +161,8 @@ void Transistor::createLayout() {
     DbU::Unit enclosureGateImplant = 0;
     DbU::Unit extImplantActive = 0;
     DbU::Unit extImplantCut0 = 0;
-    if (_polarity == Polarity::N) {
+
+    if (_type == Type::NMOS) {
         enclosureImplantPoly   = atechno->getPhysicalRule("minEnclosure",
                 getLayer(techno, "nImplant"), getLayer(techno, "poly"))->getValue();
         enclosureGateImplant   = atechno->getPhysicalRule("minGateEnclosure",
@@ -340,7 +299,7 @@ void Transistor::createLayout() {
     Box box11(x11, y11, x11 + dx11, y11 + dy11);
     _anonymous11->setBoundingBox(box11);
 
-    if (_polarity == Polarity::P) { 
+    if (_type == Type::PMOS) { 
         DbU::Unit x50 = x10 - enclosurePPlusActive;
         DbU::Unit y50 = y10 - enclosurePPlusActive;
         DbU::Unit dx50 = dx10 + 2 * enclosurePPlusActive;
@@ -368,8 +327,6 @@ Record* Transistor::_getRecord() const {
         record->add(getSlot("Source", _source));
         record->add(getSlot("Grid", _grid));
         record->add(getSlot("Bulk", _bulk));
-        record->add(getSlot("Polarity", &_polarity));
-        record->add(getSlot("AbutmentType", &_abutmentType));
         record->add(getSlot("L", &_l));
         record->add(getSlot("W", &_w));
         record->add(getSlot("Source20", _source20));

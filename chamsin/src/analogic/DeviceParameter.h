@@ -1,13 +1,15 @@
-#ifndef DEVICEPARAMETER_H
-#define DEVICEPARAMETER_H
+#ifndef PARAMETER_H
+#define PARAMETER_H
 
-class DeviceParameter {
+#include "CallBack.h"
+
+class Parameter {
     public:
         const string _id;
-        string _getString() const;
-        Record* _getRecord() const;
     protected:
-        DeviceParameter(string id): _id(id) {}
+        Parameter(string id, CallBack* callBack): _id(id), _callBack(callBack) {}
+    private:
+        CallBack* _callBack;
 };
 
-#endif // DEVICEPARAMETER_H
+#endif // PARAMETER_H
