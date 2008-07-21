@@ -1,6 +1,7 @@
 INCLUDE_DIRECTORIES(${CHAMSIN_SOURCE_DIR}/src/technology ${HURRICANE_INCLUDE_DIR})
 
-ADD_LIBRARY(analogic SHARED Transistor.cpp Capacitor.cpp Resistor.cpp)
+ADD_LIBRARY(analogic SHARED Transistor.cpp Capacitor.cpp Resistor.cpp Device.cpp
+        MetaTransistor.cpp)
 
 TARGET_LINK_LIBRARIES(analogic atechnology ${HURRICANE_LIBRARIES})
 

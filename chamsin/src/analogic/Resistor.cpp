@@ -18,7 +18,4 @@ Resistor* Resistor::create(Library* library, const Name& name) {
 void Resistor::_postCreate() {
     Inherit::_postCreate();
 
-    UpdateSession::open();
-    /////
-    UpdateSession::close();
 }

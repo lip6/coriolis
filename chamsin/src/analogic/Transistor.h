@@ -29,8 +29,8 @@ class Transistor : public AnalogComponent {
 
         static Transistor* create(Library* library, const Name& name);
         void updateLayout();
-        void setType(Type type);
 
+        void setType(Type type);
         void setW(DbU::Unit value) { _w = value; updateLayout(); }
         void setL(DbU::Unit value) { _l = value; updateLayout(); }
 

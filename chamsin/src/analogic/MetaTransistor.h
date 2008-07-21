@@ -1,55 +1,61 @@
 #ifndef METATRANSISTOR_H
 #define METATRANSISTOR_H
 
-#include "AnalogComponent.h"
+#include "Device.h"
 
-class MetaTransistor: public AnalogComponent {
-     private : char _type;
-     private : unsigned _m;              
-     private : Micro _le, _we;           // length and width expected
-     private : Micro _lr, _wr;           // real length and real width
-     private : unsigned _nSex, _nDex, nSin, _nDin, _nSsh, _nDsh;
-     private : Micro _dgg, _de;
-     private : MicroPower2 _as, _ad;
-     private : Micro _ps, _pd;
-     private : double _capaDrain, _capaGate, _capaSource;
-     private : double _cgb, _cgs, _cdb, _cds, _csb, _cgd;
+class Transistor;
 
+class MetaTransistor : public Device {
+    public:
+        class Type {
+            public:
+                enum Code {UNDEFINED=0, NMOS=1, PMOS=2};
 
-    protected : MetaTransistor(Library* library, const Name& name, char type);
+                Type(const Code& code = UNDEFINED);
+                Type(const Type& type);
 
-    public : static MetaTransistor* create(Library* library, const Name& name, char type);		
-   
-    protected : virtual void _postCreate();
+                Type& operator=(const Type& type);
+                operator const Code&() const {return _code;};
 
+                const Code& getCode() const {return _code;};
 
-    // ********************************************
-    public : void createConnection();
-		
-    // Create the layout of all motifs in this metatransistor. 
-    // *******************************************************	     
-    public : void createLayout();
+            private:
+                Code _code;
+        };
 
+        typedef deque<Transistor*> Transistors;
 
-// Accessors
-// *********	    
-    public : const Micro&  getLe() const { return _le; };
-    public : const Micro&  getWe()  const  { return _we; };
-    public : const char  getType() const { return _type; };
-    public : const unsigned  getM() const { return _m; };
+        static const Name DrainName;
+        static const Name SourceName;
+        static const Name GridName;
+        static const Name BulkName;
+        static const Name AnonymousName;
 
+        static MetaTransistor* create(Library* library, const Name& name);
+        void updateLayout();
 
-// Updators
-// ********
-    public : void setLe  (const Micro le)   { _le=le; };
-    public : void setWe  (const Micro we)  { _we=we; };
-    public : void setType(const char type)  { _type=type; };
-    public : void setM   (const unsigned m)  { _m=m; };
+        void setType(Type type);
+        void setM(unsigned m);
+        void setW(DbU::Unit value);
+        void setL(DbU::Unit value);
 
+    protected:
+        void _postCreate();
 
+    private:
+        Net* _drain;
+        Net* _source;
+        Net* _grid;
+        Net* _bulk;
+        Net* _anonymous;
+        Type _type;
+        unsigned _m;
+        DbU::Unit _l;
+        DbU::Unit _w;
+        Transistors _transistors;
+
+        MetaTransistor(Library* library, const Name& name);
 };
 
 
-}
-
-#endif // HURRICANE_METATRANSISTOR
+#endif // METATRANSISTOR_H

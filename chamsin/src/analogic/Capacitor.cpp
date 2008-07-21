@@ -18,7 +18,4 @@ Capacitor* Capacitor::create(Library* library, const Name& name) {
 void Capacitor::_postCreate() {
     Inherit::_postCreate();
 
-    UpdateSession::open();
-    /////
-    UpdateSession::close();
 }
