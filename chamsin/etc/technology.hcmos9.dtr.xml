@@ -30,6 +30,13 @@
 
     <arule name="minExtension" layer1="poly" layer2="active" value="0.18" ref="13-7"/>
 
-
+    <!-- physical rules for PADOPEN-MIM -->
+    <rule name="padOpenMIMWidth" value="1.0" ref="M-40.1"/>
+    <rule name="padOpenMIMSpace" value="1.0" ref="M-40.2"/>
+    <rule name="padOpenMIMMETAL6Enclosure" value="0.7" ref="M-40.4"/>
+    <!-- physical rules for ALUCAP-MIM -->
+    <rule name="aluCapMIMWidth" value="1.0" ref="M-41.1"/>
+    <rule name="aluCapMIMSpace" value="1.0" ref="M-41.2"/>
+    <rule name="aluCapMIMVIA6Enclosure" value="0.7" ref="M-41.3"/>
   </physical_rules>
 </technology>
