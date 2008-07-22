@@ -13,7 +13,7 @@ using namespace Hurricane;
 #include "AEnv.h"
 #include "ATechnology.h"
 #include "Transistor.h"
-#include "AnalogicViewer.h"
+#include "CapacitorViewer.h"
 
 
 int main(int argc, char* argv[]) {
@@ -22,9 +22,8 @@ int main(int argc, char* argv[]) {
 
 	QApplication* qa = new QApplication(argc, argv);
 
-        cout << "simple analogic test" << endl;
         if (argc != 5) {
-            cerr << "atest symbtechno.xml s2rtechno.xml graphic.xml anatechno.xml";
+            cerr << "capview symbtechno.xml s2rtechno.xml graphic.xml anatechno.xml";
             exit(56);
         }
         AEnv::create(argv[1], argv[2], argv[3], argv[4]);
@@ -37,7 +36,7 @@ int main(int argc, char* argv[]) {
             exit(56);
         }
 
-        AnalogicViewer* viewer = new AnalogicViewer(userLibrary);
+        CapacitorViewer* viewer = new CapacitorViewer(userLibrary);
 
         viewer->show();
 

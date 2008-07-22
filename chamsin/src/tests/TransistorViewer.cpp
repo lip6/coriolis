@@ -8,10 +8,10 @@
 #include "AEnv.h"
 #include "ATechnology.h"
 
-#include "AnalogicViewer.h"
+#include "TransistorViewer.h"
 
 
-AnalogicViewer::AnalogicViewer(Library* library) {
+TransistorViewer::TransistorViewer(Library* library) {
 
     ATechnology* aTechnology = AEnv::getATechnology();
     if (!aTechnology) {
@@ -27,7 +27,6 @@ AnalogicViewer::AnalogicViewer(Library* library) {
     _transistor->setType(Transistor::Type::NMOS);
     _transistor->setL(transistorMinL);
     _transistor->setW(transistorMinW);
-    //_transistor->createLayout();
     _cellWidget = new CellWidget;
     _cellWidget->setCell(_transistor);
     _cellWidget->fitToContents();
@@ -63,17 +62,17 @@ AnalogicViewer::AnalogicViewer(Library* library) {
     connect(choiceBox, SIGNAL(currentIndexChanged(int)), this, SLOT(transistorTypeChanged(int)));
 }
 
-void AnalogicViewer::wvalueChanged(int value) {
+void TransistorViewer::wvalueChanged(int value) {
     _transistor->setW(value);
     _cellWidget->redraw();
 }
 
-void AnalogicViewer::lvalueChanged(int value) {
+void TransistorViewer::lvalueChanged(int value) {
     _transistor->setL(value);
     _cellWidget->redraw();
 }
 
-void AnalogicViewer::transistorTypeChanged(int value) {
+void TransistorViewer::transistorTypeChanged(int value) {
     if (value == 0) {
         _transistor->setType(Transistor::Type::NMOS);
         _cellWidget->redraw();

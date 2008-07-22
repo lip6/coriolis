@@ -1,5 +1,5 @@
-#ifndef _ANALOGICVIEWER_H
-#define _ANALOGICVIEWER_H
+#ifndef _TRANSISTORVIEWER_H
+#define _TRANSISTORVIEWER_H
 
 #include <QMainWindow>
 
@@ -11,20 +11,20 @@ using namespace Hurricane;
 
 class Transistor;
 
-class AnalogicViewer : public QMainWindow {
+class TransistorViewer : public QMainWindow {
     Q_OBJECT
     public:
-        AnalogicViewer(Library* library);
+        TransistorViewer(Library* library);
     private slots:
         void lvalueChanged(int value);
         void wvalueChanged(int value);
         void transistorTypeChanged(int value);
 
     private:
-        AnalogicViewer();
+        TransistorViewer();
         CellWidget* _cellWidget;
         Transistor* _transistor;
 };
 
 
-#endif /* _ANALOGICVIEWER_H */
+#endif /* _TRANSISTORVIEWER_H */
