@@ -18,6 +18,7 @@ class AnalogicViewer : public QMainWindow {
     private slots:
         void lvalueChanged(int value);
         void wvalueChanged(int value);
+        void transistorTypeChanged(int value);
 
     private:
         AnalogicViewer();
