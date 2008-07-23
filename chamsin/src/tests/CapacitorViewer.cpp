@@ -18,14 +18,14 @@ CapacitorViewer::CapacitorViewer(Library* library) {
         exit(56);
     }
 
-    DbU::Unit capacitorMinL = 0;
-    DbU::Unit capacitorMaxL = 0;
-    DbU::Unit capacitorMinW = 0;
-    DbU::Unit capacitorMaxW = 0;
+    DbU::Unit capacitorMinL = aTechnology->getPhysicalRule("topPlateMIMminWidth")->getValue();
+    DbU::Unit capacitorMaxL = 10 * capacitorMinL;
+    DbU::Unit capacitorMinW = aTechnology->getPhysicalRule("topPlateMIMminWidth")->getValue();
+    DbU::Unit capacitorMaxW = 10 * capacitorMinW;
 
     _capacitor = Capacitor::create(library, Name("TEST"));
-    //_capacitor->setL(capacitorMinL);
-    //_capacitor->setW(capacitorMinW);
+    _capacitor->setL(capacitorMinL);
+    _capacitor->setW(capacitorMinW);
     _cellWidget = new CellWidget;
     _cellWidget->setCell(_capacitor);
     _cellWidget->fitToContents();
@@ -56,11 +56,11 @@ CapacitorViewer::CapacitorViewer(Library* library) {
 }
 
 void CapacitorViewer::wvalueChanged(int value) {
-    //_capacitor->setW(value);
+    _capacitor->setW(value);
     _cellWidget->redraw();
 }
 
 void CapacitorViewer::lvalueChanged(int value) {
-    //_capacitor->setL(value);
+    _capacitor->setL(value);
     _cellWidget->redraw();
 }

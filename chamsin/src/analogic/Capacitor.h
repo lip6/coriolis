@@ -9,7 +9,12 @@ class Capacitor : public AnalogComponent {
         static const Name TopPlateName;
 
         static Capacitor* create(Library* library, const Name& name);
+        void updateLayout();
 
+        void setW(DbU::Unit value) { _w = value; updateLayout(); }
+        void setL(DbU::Unit value) { _l = value; updateLayout(); }
+
+        virtual Record* _getRecord() const;
     protected:
         void _postCreate();
 
@@ -18,7 +23,10 @@ class Capacitor : public AnalogComponent {
         Net* _topPlate;
         DbU::Unit _l;
         DbU::Unit _w;
-        Pad *_topPlate20;
+        Pad* _topPlate10;
+        Pad* _topPlate20;
+        Pad* _topPlate30;
+        Pad* _bottomPlate00;
 
         Capacitor(Library* library, const Name& name);
 };
