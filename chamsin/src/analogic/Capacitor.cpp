@@ -31,17 +31,54 @@ Pad* createPad(Technology* technology, Net* net, const string& layerName) {
 const Name Capacitor::BottomPlateName("BOTTOMPLATE");
 const Name Capacitor::TopPlateName("TOPPLATE");
 
+#if 0
+const Name Transistor::AnonymousName("ANONYMOUS");
+
+
+//les 4 types des capas unitaire:
+//1-capa unitaire
+//2-le Rectangle
+//3-le Stub
+//4-le Trou
+Capacitor::Type::Type(const Code& code):
+    _code(code)
+{}
+
+Capacitor::Type::Type(const Type& type):
+    _code(type._code)
+{}SVN 
+
+Capasitor::Type& Capasitor::Type::operator=(const Type& type) {
+    _code = type._code;
+    return *this;
+}
+#endif
+
 
 //la mise des valeurs initials:
 //c'est le Constructeur:
 //*********************
 Capacitor::Capacitor(Library* library, const Name& name):
     AnalogComponent(library, name),
-    _bottomPlate(NULL), _topPlate(NULL),
+    _bottomPlate(NULL), 
+    _topPlate(NULL),
+    _anonymous(NULL),
     _l(0), _w(0),
     _topPlate10(NULL),
     _topPlate20(NULL),_topPlate30(NULL),
     _bottomPlate00(NULL)
+#if 0
+    _anonymous01(NULL),
+    _anonymous11(NULL), 
+    _anonymous12(NULL),
+    _anonymous13(NULL),
+    _anonymous21(NULL),
+    _anonymousT11(NULL),
+    _anonymousT12(NULL),
+    _anonymousT13(NULL),
+    _anonymousT14(NULL),
+    _anonymousT21(NULL)
+#endif    
 {}
 
 
@@ -67,12 +104,55 @@ void Capacitor::_postCreate() {
     _topPlate = Net::create(this, TopPlateName);
     _topPlate->setExternal(true);
 
-    _topPlate10 = createPad(technology, _topPlate, "topmim6");
-    _topPlate20 = createPad(technology, _topPlate, "padopen");
-    _topPlate30 = createPad(technology, _topPlate, "alucap");
+    _topPlate10    = createPad(technology, _topPlate, "topmim6");
+    _topPlate20    = createPad(technology, _topPlate, "padopen");
+    _topPlate30    = createPad(technology, _topPlate, "alucap");
     _bottomPlate00 = createPad(technology, _bottomPlate, "botmim6");
+ #if 0
+
+    _anonymous01  = createPad(technology, _anonymous, "Implant");
+    _anonymous11  = createPad(technology, _anonymous, "topmim6");
+    _anonymous12  = createPad(technology, _anonymous, "topmim6");
+    _anonymous13  = createPad(technology, _anonymous, "topmim6");
+    _anonymous21  = createPad(technology, _anonymous, "padopen");
+    _anonymous14 = createPad(technology, _anonymous, "topmim6");
+
+#endif
+
 }
 
+#if 0
+void Capacitor::setType(Type type) {
+    UpdateSession::open();
+    if (type != _type) {
+        _type = type;
+        DataBase* db = DataBase::getDB();
+        Technology* technology = db->getTechnology();
+        
+        if (_type == Type::unitaire)    { 
+            _anonymous01->setLayer(getLayer(technology, "Implant"));
+        } else if (_type == Type::Rectangle) {
+            _anonymous11->setLayer(getLayer(technology, "topmim6"));
+            _anonymous12->setLayer(getLayer(technology, "topmim6"));
+            _anonymous21->setLayer(getLayer(technology, "padopen"));        
+        } else if (_type == Type::Stub) {
+            _anonymous11->setLayer(getLayer(technology, "topmim6"));
+            _anonymous12->setLayer(getLayer(technology, "topmim6"));
+            _anonymous13->setLayer(getLayer(technology, "topmim6"));
+            _anonymous21->setLayer(getLayer(technology, "padopen"));
+        } else if (_type == Type::Trou) {
+            _anonymous11->setLayer(getLayer(technology, "topmim6"));
+            _anonymous12->setLayer(getLayer(technology, "topmim6"));
+            _anonymous13->setLayer(getLayer(technology, "topmim6"));
+            _anonymous14->setLayer(getLayer(technology, "topmim6"));
+            _anonymous21->setLayer(getLayer(technology, "padopen"));
+
+        updateLayout();
+    }
+    UpdateSession::close();
+}
+
+#endif
 
 //la fonction updateLayout 
 //qui met en oeuvre de nouvau les parametres du capa 
@@ -131,12 +211,14 @@ void Capacitor::updateLayout() {
  //l'armature haute est le reference 
  //car la valeur du capa corespond au W et L de l'armature haute
  //*************************************************************
+
     DbU::Unit x10 = 0;
     DbU::Unit y10 = 0;
     DbU::Unit dx10 = _l;
     DbU::Unit dy10 = _w;
     Box box10(x10, y10, x10 + dx10, y10 + dy10);
     _topPlate10->setBoundingBox(box10);
+    
 
  //topPlate 30:
  //***********
@@ -146,15 +228,17 @@ void Capacitor::updateLayout() {
     DbU::Unit dy30 = _w -(2 * enclosureTopMim) ;
     Box box30(x30, y30, x30 + dx30, y30 + dy30);
     _topPlate30->setBoundingBox(box30);
+    
 
  //topPlate 20:
  //***********
     DbU::Unit x20 = enclosureTopMim +  enclosureVia6 ;
     DbU::Unit y20 = enclosureTopMim +  enclosureVia6 ;
-    DbU::Unit dx20 = _l -(2 * enclosureTopMim)-(2 *  enclosureVia6 );
-    DbU::Unit dy20 = _w -(2 * enclosureTopMim)-(2 *  enclosureVia6 );
+    DbU::Unit dx20 = widthCut6 ;
+    DbU::Unit dy20 = widthCut6 ;
     Box box20(x20, y20, x20 + dx20, y20 + dy20);
     _topPlate20->setBoundingBox(box20);
+ 
 
  //bottomPlate 00:
  //**************
@@ -165,11 +249,20 @@ void Capacitor::updateLayout() {
     Box box00(x00, y00, x00 + dx00, y00 + dy00);
     _bottomPlate00->setBoundingBox(box00);
 
+
+ //emboitement->anonymous01:
+ //************************
+    DbU::Unit x01 = 0 - enclosureByBotmimTopmim - spacingTopmim ;
+    DbU::Unit y01 = 0 - enclosureByBotmimTopmim - spacingTopmim ;
+    DbU::Unit dx01 = _l + (2 * enclosureByBotmimTopmim) + (2 * spacingTopmim);
+    DbU::Unit dy01 = _w + (2 * enclosureByBotmimTopmim) + (2 * spacingTopmim);
+    Box box01(x01, y01, x01 + dx01, y01 + dy01);
+    _anonymous01->setBoundingBox(box01);
+
     UpdateSession::close();
 }
 
  
-
 Record* Capacitor::_getRecord() const {
     Record* record = Inherit::_getRecord();
     if (record) {
@@ -183,7 +276,19 @@ Record* Capacitor::_getRecord() const {
         record->add(getSlot("TopPlate30", _topPlate30));
         record->add(getSlot("TopPlate10", _topPlate10));
         record->add(getSlot("BottomPlate00", _bottomPlate00));
-       
+
+#if 0
+        record->add(getSlot("Anonymous01", _anonymous01));
+        record->add(getSlot("Anonymous11", _anonymous11));
+        record->add(getSlot("Anonymous12", _anonymous12));
+        record->add(getSlot("Anonymous13", _anonymous13));
+        record->add(getSlot("Anonymous21", _anonymous21));
+        record->add(getSlot("AnonymousT11", _anonymousT11));
+        record->add(getSlot("AnonymousT12", _anonymousT12));
+        record->add(getSlot("AnonymousT13", _anonymousT13));
+        record->add(getSlot("AnonymousT14", _anonymousT14));
+        record->add(getSlot("AnonymousT21", _anonymousT21));
+#endif
       }
     return record;
 }
