@@ -57,8 +57,10 @@ Transistor::Transistor(Library* library, const Name& name):
     _type(),
     _l(0),
     _w(0),
-    _source20(NULL), _source22(NULL),
-    _drain40(NULL), _drain42(NULL),
+    //_source20(NULL),
+    _source22(NULL),
+    //_drain40(NULL),
+    _drain42(NULL),
     _grid00(NULL), _grid01(NULL), _grid30(NULL), _grid31(NULL),
     _anonymous10(NULL), _anonymous11(NULL), _anonymous12(NULL), _anonymous50(NULL)
 {}
@@ -91,9 +93,9 @@ void Transistor::_postCreate() {
     _bulk = Net::create(this, BulkName);
     _bulk->setExternal(true);
     _anonymous = Net::create(this, AnonymousName);
-    _source20    = createPad(technology, _source,    "cut0");
+    //_source20    = createPad(technology, _source,    "cut0");
     _source22    = createPad(technology, _source,    "cut1");
-    _drain40     = createPad(technology, _drain,     "cut0");
+    //_drain40     = createPad(technology, _drain,     "cut0");
     _drain42     = createPad(technology, _drain,     "cut1");
     _grid00      = createPad(technology, _grid,      "poly");
     _grid01      = createPad(technology, _grid,      "poly");
@@ -240,24 +242,24 @@ void Transistor::updateLayout() {
     Box box12(x12, y12, x12 + dx12, y12 + dy12);
     _anonymous12->setBoundingBox(box12);
 
-    //_source20
+    ////_source20
     DbU::Unit y20 = extActiveCut0;
     DbU::Unit dy20 = _w - 2 * extActiveCut0;
     unsigned sourceColumnNumber = 1;
     DbU::Unit dx20 = sourceColumnNumber * widthCut0 + (sourceColumnNumber - 1) * spacingCut0;
     DbU::Unit x20 = -(dx20 + spacingGateCut0);
-    Box box20(x20, y20, x20 + dx20, y20 + dy20);
-    _source20->setBoundingBox(box20);
+    //Box box20(x20, y20, x20 + dx20, y20 + dy20);
+    ////_source20->setBoundingBox(box20);
 
-    //_drain40
-    DbU::Unit y40 = y20;
+    ////_drain40
+    //DbU::Unit y40 = y20;
     DbU::Unit x40 = x00 + dx00 + spacingGateCut0;
     unsigned drainColumnNumber = 1;
     DbU::Unit dx40 = drainColumnNumber * widthCut0 + (drainColumnNumber - 1) * (spacingCut0);
-    DbU::Unit dy40 = dy20;
+    //DbU::Unit dy40 = dy20;
 
-    Box box40(x40, y40, x40 + dx40, y40 + dy40);
-    _drain40->setBoundingBox(box40);
+    //Box box40(x40, y40, x40 + dx40, y40 + dy40);
+    //_drain40->setBoundingBox(box40);
 
     //_anonymous10
     DbU::Unit y10 = 0;
@@ -316,7 +318,7 @@ void Transistor::updateLayout() {
         }
     }
 
-    //setAbutmentBox(getAbutmentBox());
+    setAbutmentBox(box12);
     UpdateSession::close();
 }
 
@@ -329,9 +331,9 @@ Record* Transistor::_getRecord() const {
         record->add(getSlot("Bulk", _bulk));
         record->add(getSlot("L", &_l));
         record->add(getSlot("W", &_w));
-        record->add(getSlot("Source20", _source20));
+        //record->add(getSlot("Source20", _source20));
         record->add(getSlot("Source22", _source22));
-        record->add(getSlot("Drain40", _drain40));
+        //record->add(getSlot("Drain40", _drain40));
         record->add(getSlot("Drain42", _drain42));
         record->add(getSlot("Grid00", _grid00));
         record->add(getSlot("Grid01", _grid01));

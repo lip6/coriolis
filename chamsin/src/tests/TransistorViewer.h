@@ -9,7 +9,7 @@ namespace Hurricane {
 }
 using namespace Hurricane;
 
-class Transistor;
+class MetaTransistor;
 
 class TransistorViewer : public QMainWindow {
     Q_OBJECT
@@ -19,11 +19,12 @@ class TransistorViewer : public QMainWindow {
         void lvalueChanged(int value);
         void wvalueChanged(int value);
         void transistorTypeChanged(int value);
+        void mvalueChanged(int value);
 
     private:
         TransistorViewer();
         CellWidget* _cellWidget;
-        Transistor* _transistor;
+        MetaTransistor* _transistor;
 };
 
 

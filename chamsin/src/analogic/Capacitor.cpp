@@ -249,6 +249,7 @@ void Capacitor::updateLayout() {
     Box box00(x00, y00, x00 + dx00, y00 + dy00);
     _bottomPlate00->setBoundingBox(box00);
 
+#if 0
 
  //emboitement->anonymous01:
  //************************
@@ -258,6 +259,7 @@ void Capacitor::updateLayout() {
     DbU::Unit dy01 = _w + (2 * enclosureByBotmimTopmim) + (2 * spacingTopmim);
     Box box01(x01, y01, x01 + dx01, y01 + dy01);
     _anonymous01->setBoundingBox(box01);
+#endif
 
     UpdateSession::close();
 }
