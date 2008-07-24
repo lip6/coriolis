@@ -32,7 +32,7 @@ const Name Capacitor::BottomPlateName("BOTTOMPLATE");
 const Name Capacitor::TopPlateName("TOPPLATE");
 
 #if 0
-const Name Transistor::AnonymousName("ANONYMOUS");
+const Name Capacitor::AnonymousName("ANONYMOUS");
 
 
 //les 4 types des capas unitaire:
@@ -103,6 +103,8 @@ void Capacitor::_postCreate() {
     _bottomPlate->setExternal(true);
     _topPlate = Net::create(this, TopPlateName);
     _topPlate->setExternal(true);
+//    _anonymous = Net::create(this, AnonymousName);
+
 
     _topPlate10    = createPad(technology, _topPlate, "topmim6");
     _topPlate20    = createPad(technology, _topPlate, "padopen");
