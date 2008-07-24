@@ -124,6 +124,7 @@ void MetaTransistor::setM(unsigned m) {
         }
         UpdateSession::close();
         _m = m;
+        updateLayout();
     }
 }
 
