@@ -126,11 +126,11 @@ CloseUpdateSession();
   */
  //  \{
 
- /*! \function     bool Go::AutoMaterializationIsDisabled();
+ /*! \function     bool Go::autoMaterializationIsDisabled();
   *                No description.
   */
 
- /*! \function     bool Go::IsMaterialized() const;
+ /*! \function     bool Go::isMaterialized() const;
   *                No description.
   */
 
@@ -141,11 +141,11 @@ CloseUpdateSession();
   */
  //  \{
 
- /*! \function     void Go::EnableAutoMaterialization();
+ /*! \function     void Go::enableAutoMaterialization();
   *  \see          Go::DisableAutoMaterialization().
   */
 
- /*! \function     void Go::DisableAutoMaterialization();
+ /*! \function     void Go::disableAutoMaterialization();
   *                Those two static member functions allows to inhibit
   *                or restore the automatic materialization of all
   *                graphic objects.
@@ -179,15 +179,15 @@ Cell* LoadCellFromFile(...)
 \endcode
   */
 
- /*! \function     void Go::Materialize();
+ /*! \function     void Go::materialize();
   *                No description.
   */
 
- /*! \function     void Go::Unmaterialize();
+ /*! \function     void Go::unmaterialize();
   *                No description.
   */
 
- /*! \function     void Go::Invalidate(bool propagateFlag = true);
+ /*! \function     void Go::invalidate(bool propagateFlag = true);
   *                This method must be called before a change of the
   *                object geometry.
   *
@@ -271,7 +271,7 @@ void Instance::SetTransformation(const Transformation& transformation)
 \endcode
   */
 
- /*! \function     void Go::Translate(const Unit& dx, const Unit& dy);
+ /*! \function     void Go::translate(const DbU::Unit& dx, const DbU::Unit& dy);
   *                Translate the graphic object of the quantity \c \<dx\> and 
   *                \c \<dy\>. 
   *

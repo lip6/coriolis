@@ -23,7 +23,7 @@
   * 
   *  \section      secInstancePredefinedFilters  Predefined filters
   *
-  *                <b>Hurricane::Instance::GetIsUnderFilter</b>
+  *                <b>Hurricane::Instance::getIsUnderFilter</b>
   */
 
 
@@ -37,11 +37,11 @@
   */
  //  \{
 
- /*! \function     Instance* Instance::Create(Cell* cell, const Name& name, Cell* masterCell, bool secureFlag = true);
+ /*! \function     Instance* Instance::create(Cell* cell, const Name& name, Cell* masterCell, bool secureFlag = true);
   *                No description.
   */
 
- /*! \function     Instance* Instance::Create(Cell* cell, const Name& name, Cell* masterCell,const Transformation& transformation, const PlacementStatus& placementstatus, bool secureFlag = true);
+ /*! \function     Instance* Instance::create(Cell* cell, const Name& name, Cell* masterCell,const Transformation& transformation, const PlacementStatus& placementstatus, bool secureFlag = true);
   *                Create and return a pointer to a new instance of name 
   *                \c \<name\> belonging to the cell \c \<cell\> and refering 
   *                the cell \c \<masterCell\> through a transformation 
@@ -64,24 +64,24 @@
   */
  //  \{
 
- /*! \function     const Name& Instance::GetName() const;
+ /*! \function     const Name& Instance::getName() const;
   *  \Return       the instance name. 
   */
 
- /*! \function     Cell* Instance::GetMasterCell() const;
+ /*! \function     Cell* Instance::getMasterCell() const;
   *  \Return       the cell model referenced by the instance. 
   */
 
- /*! \function     const Transformation& Instance::GetTransformation() const;
+ /*! \function     const Transformation& Instance::getTransformation() const;
   *  \Return       the transformation associated to the instance. 
   */
 
- /*! \function     Plug* Instance::GetPlug(const Net* masterNet) const;
+ /*! \function     Plug* Instance::getPlug(const Net* masterNet) const;
   *  \Return       the plug associated to the \c \<masterNet\> if it exists or 
   *                else NULL (if the net is not external). 
   */
 
- /*! \function     Plugs Instance::GetPlugs() const;
+ /*! \function     Plugs Instance::getPlugs() const;
   *  \Return       the collection of instance plugs. 
   *
   *  \important    Each external net of the master cell of the instance has by 
@@ -89,20 +89,20 @@
   *                not to a net in the owner cell of the instance. 
   */
 
- /*! \function     Plugs Instance::GetConnectedPlugs() const;
+ /*! \function     Plugs Instance::getConnectedPlugs() const;
   *  \Return       the collection of instance plugs which are effectively 
   *                connected. 
   */
 
- /*! \function     Plugs Instance::GetUnconnectedPlugs() const;
+ /*! \function     Plugs Instance::getUnconnectedPlugs() const;
   *  \Return       the collection of instance plugs which are not connected. 
   */
 
- /*! \function     Path Instance::GetPath(const Path& tailPath=Path()) const;
+ /*! \function     Path Instance::getPath(const Path& tailPath=Path()) const;
   *  \Return       the path composed of the instance solely. 
   */
 
- /*! \function     Path Instance::GetPath(const Path& tailPath) const;
+ /*! \function     Path Instance::getPath(const Path& tailPath) const;
   *  \Return       the path resulting of the concatenation of the instance and 
   *                the tail path (possibly empty). 
   *
@@ -111,13 +111,13 @@
   *                the tail path is not the master cell of the instance). 
   */
 
- /*! \function     Box Instance::GetAbutmentBox() const;
+ /*! \function     Box Instance::getAbutmentBox() const;
   *  \Return       the abutment box of the instance, that is the abutment box of 
   *                the master cell to which has been applied the instance 
   *                transformation. 
   */
 
- /*! \function     InstanceFilter Instance::GetIsUnderFilter(const Box& area);
+ /*! \function     InstanceFilter Instance::getIsUnderFilter(const Box& area);
   *  \Return       the filter selecting instances which intersect the given 
   *                area. 
   */
@@ -129,18 +129,18 @@
   */
  //  \{
 
- /*! \function     void Instance::SetName(const Name& name);
+ /*! \function     void Instance::setName(const Name& name);
   *                Allows to change the instance name. 
   *
   *  \remark       Throws an exception if the name is empty or if an instance 
   *                with the same name exists in the owner cell. 
   */
 
- /*! \function     void Instance::SetTransformation(const Transformation& transformation);
+ /*! \function     void Instance::setTransformation(const Transformation& transformation);
   *                Allows to modify the instance transformation. 
   */
 
- /*! \function     void Instance::SetMasterCell(Cell* masterCell, bool secureFlag = true);
+ /*! \function     void Instance::setMasterCell(Cell* masterCell, bool secureFlag = true);
   *                Allows to change the cell referenced by this instance. 
   *
   *  \caution      Throws an exception if either the cell is null, a cyclic 

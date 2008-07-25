@@ -161,13 +161,13 @@ INPUT                  = \
                                 Cell.dox           \
   ../../src/hurricane/hurricane/Nets.h             \
   ../../src/hurricane/hurricane/Net.h              \
-                                Cell.dox           \
+                                Net.dox            \
   ../../src/hurricane/hurricane/Gos.h              \
   ../../src/hurricane/hurricane/Go.h               \
-                                Cell.dox           \
+                                Go.dox             \
   ../../src/hurricane/hurricane/Instances.h        \
   ../../src/hurricane/hurricane/Instance.h         \
-                                Cell.dox           \
+                                Instance.dox       \
   ../../src/hurricane/hurricane/Components.h       \
   ../../src/hurricane/hurricane/Component.h        \
                                 Component.dox      \
