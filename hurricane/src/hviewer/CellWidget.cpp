@@ -332,7 +332,7 @@ namespace Hurricane {
 
   void  CellWidget::redraw ( QRect redrawArea )
   {
-    cerr << "CellWidget::redraw()" << endl;
+    //cerr << "CellWidget::redraw()" << endl;
 
     _redrawRectCount = 0;
 
@@ -375,7 +375,7 @@ namespace Hurricane {
     if ( _showSelection )
       redrawSelection ( redrawArea );
 
-    cerr << "CellWidget::redraw() - finished." << endl;
+    //cerr << "CellWidget::redraw() - finished." << endl;
 
     update ();
     popCursor ();
