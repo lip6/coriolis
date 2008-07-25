@@ -46,16 +46,16 @@
   *  \Return       The group owning the DrawingStyle of which key is \e key.
   */
 
- /*! \function     const QColor& DisplayStyle::getColor(const Name& key) const;
-  *  \Return       The QColor associated to the DrawingStyle \e key.
+ /*! \function     const QColor& DisplayStyle::getColor(const Name& key, int darkening) const;
+  *  \Return       The QColor associated to the DrawingStyle \e key darkened by a factor \e darkening.
   */
 
- /*! \function     const QPen& DisplayStyle::getColor(const Name& key) const;
-  *  \Return       The QPen associated to the DrawingStyle \e key.
+ /*! \function     const QPen& DisplayStyle::getColor(const Name& key, int darkening) const;
+  *  \Return       The QPen associated to the DrawingStyle \e key darkened by a factor \e darkening.
   */
 
- /*! \function     const QBrush& DisplayStyle::getBrush(const Name& key) const;
-  *  \Return       The QBrush associated to the DrawingStyle \e key.
+ /*! \function     const QBrush& DisplayStyle::getBrush(const Name& key, int darkening) const;
+  *  \Return       The QBrush associated to the DrawingStyle \e key darkened by a factor \e darkening.
   */
 
  /*! \function     const string& DisplayStyle::getPattern(const Name& key) const;
