@@ -21,7 +21,7 @@ IF(UNIX)
   #
   # Look for an installation.
   #
-  FIND_PATH(OPENACCESS_INCLUDE_PATH NAMES oa/oaBase.h PATHS
+  FIND_PATH(OPENACCESS_INCLUDE_PATH NAMES oa/oaDesign.h PATHS
     # Look in other places.
     ${OPENACCESS_DIR_SEARCH}
     PATH_SUFFIXES include
@@ -30,9 +30,9 @@ IF(UNIX)
   )
 
   FIND_LIBRARY(OPENACCESS_LIBRARY_PATH
-    NAMES oaLib
+    NAMES oaDesignD
     PATHS ${OPENACCESS_DIR_SEARCH}
-    PATH_SUFFIXES lib
+    PATH_SUFFIXES lib/linux_rhel30_64/dbg #for the moment...
     # Help the user find it if we cannot.
     DOC "The ${OPENACCESS_INCLUDE_PATH_DESCRIPTION}"
   )
