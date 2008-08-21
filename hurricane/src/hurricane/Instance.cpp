@@ -173,7 +173,7 @@ Instance::Instance(Cell* cell, const Name& name, Cell* masterCell, const Transfo
         throw Error("Can't create " + _TName("Instance") + " : empty name");
 
     if (_cell->getInstance(_name))
-        throw Error("Can't create " + _TName("Instance") + " : already exists");
+        throw Error("Can't create " + _TName("Instance") + " " + getString(_name) + " : already exists");
 
     if (!_masterCell)
         throw Error("Can't create " + _TName("Instance") + " : null master cell");
