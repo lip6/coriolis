@@ -96,6 +96,7 @@ namespace Hurricane {
               void            unselect               ( Occurrence& occurence );
               void            unselectAll            ();
     public slots:
+              void            setShowPalette         ( bool show );
               void            openHistoryCell        ();
               void            runInspectorOnDataBase ();
               void            runInspectorOnCell     ();
@@ -113,6 +114,7 @@ namespace Hurricane {
               QAction*        _refreshAction;
               QAction*        _fitToContentsAction;
               QAction*        _showSelectionAction;
+              QAction*        _showPaletteAction;
               QAction*        _runInspectorOnDataBase;
               QAction*        _runInspectorOnCell;
               QAction*        _browseNetlist;

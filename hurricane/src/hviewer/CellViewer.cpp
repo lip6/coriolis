@@ -80,6 +80,7 @@ namespace Hurricane {
                                              , _refreshAction(NULL)
                                              , _fitToContentsAction(NULL)
                                              , _showSelectionAction(NULL)
+                                             , _showPaletteAction(NULL)
                                              , _runInspectorOnDataBase(NULL)
                                              , _runInspectorOnCell(NULL)
                                              , _browseNetlist(NULL)
@@ -152,6 +153,12 @@ namespace Hurricane {
     _showSelectionAction->setShortcut   ( Qt::Key_S );
     _showSelectionAction->setCheckable  ( true );
 
+    _showPaletteAction = new QAction  ( tr("Show &Palette"), this );
+    _showPaletteAction->setObjectName ( "viewer.view.showPalette" );
+    _showPaletteAction->setStatusTip  ( tr("Hide/Show the Palette sub-window") );
+    _showPaletteAction->setCheckable  ( true );
+    _showPaletteAction->setChecked    ( true );
+
     _runInspectorOnDataBase= new QAction   ( tr("Inspect &DataBase"), this );
     _runInspectorOnDataBase->setObjectName ( "viewer.tool.inspectDb" );
     _runInspectorOnDataBase->setStatusTip  ( tr("Run Inspector on Hurricane DataBase") );
@@ -189,6 +196,7 @@ namespace Hurricane {
     _viewMenu->addAction ( _refreshAction );
     _viewMenu->addAction ( _fitToContentsAction );
     _viewMenu->addAction ( _showSelectionAction );
+    _viewMenu->addAction ( _showPaletteAction );
 
     _toolsMenu = menuBar()->addMenu ( tr("Tool") );
     _toolsMenu->setObjectName ( "viewer.tool" );
@@ -228,7 +236,7 @@ namespace Hurricane {
                                   | QDockWidget::DockWidgetMovable
                                   | QDockWidget::DockWidgetFloatable
                                   );
-    layerMapDock->setObjectName   ( "HPalette" );
+    layerMapDock->setObjectName   ( "viewer.dock.paletteWindow" );
     layerMapDock->setWidget       ( _palette );
     layerMapDock->setAllowedAreas ( Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea );
     addDockWidget ( Qt::RightDockWidgetArea, layerMapDock );
@@ -238,6 +246,7 @@ namespace Hurricane {
     connect ( _refreshAction         , SIGNAL(triggered())  , _cellWidget, SLOT(redraw                ()));
     connect ( _fitToContentsAction   , SIGNAL(triggered())  , _cellWidget, SLOT(fitToContents         ()));
     connect ( _showSelectionAction   , SIGNAL(toggled(bool)), _cellWidget, SLOT(setShowSelection  (bool)));
+    connect ( _showPaletteAction     , SIGNAL(toggled(bool)), this       , SLOT(setShowPalette    (bool)));
     connect ( _runInspectorOnDataBase, SIGNAL(triggered())  , this       , SLOT(runInspectorOnDataBase()));
     connect ( _runInspectorOnCell    , SIGNAL(triggered())  , this       , SLOT(runInspectorOnCell    ()));
     connect ( _browseNetlist         , SIGNAL(triggered())  , this       , SLOT(browseNetlist         ()));
@@ -309,6 +318,23 @@ namespace Hurricane {
       inspector->show ();
     } else
       cerr << "[ERROR] Attempt to run Inspector on NULL record." << endl;
+  }
+
+
+  void  CellViewer::setShowPalette ( bool show )
+  {
+    QDockWidget* paletteWindow = findChild<QDockWidget*>("viewer.dock.paletteWindow");
+
+    if ( !paletteWindow ) {
+      cerr << "paletteWindow not found." << endl;
+      return;
+    }
+
+    if ( show ) paletteWindow->show ();
+    else        paletteWindow->hide ();
+
+//  if ( show ) _palette->show ();
+//  else        _palette->hide ();
   }
 
 
