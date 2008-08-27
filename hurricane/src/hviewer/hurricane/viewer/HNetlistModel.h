@@ -50,9 +50,6 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
 #ifndef  __NETLIST_MODEL_H__
 #define  __NETLIST_MODEL_H__
 

@@ -50,11 +50,6 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
-
-
 # ifndef  __HMOUSE_POSITION_H__
 #   define  __HMOUSE_POSITION_H__
 

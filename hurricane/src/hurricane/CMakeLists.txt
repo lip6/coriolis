@@ -51,6 +51,7 @@
                                 hurricane/Properties.h            hurricane/Property.h
                                 hurricane/QuadTree.h
                                 hurricane/Quark.h                 hurricane/Quarks.h
+                                hurricane/Query.h
                                 hurricane/Record.h
                                 hurricane/Reference.h             hurricane/References.h
                                 hurricane/Region.h
@@ -137,6 +138,7 @@
                                 Slice.cpp
                                 UpdateSession.cpp
                                 Region.cpp
+                                Query.cpp
                                 DisplaySlot.cpp
                                 Marker.cpp
                                 Timer.cpp

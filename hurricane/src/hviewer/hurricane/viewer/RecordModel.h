@@ -50,9 +50,6 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
 #ifndef  __RECORD_MODEL_H__
 #define  __RECORD_MODEL_H__
 

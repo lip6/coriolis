@@ -50,11 +50,6 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
-
-
 # ifndef  __HPALETTE__
 #   define  __HPALETTE__
 

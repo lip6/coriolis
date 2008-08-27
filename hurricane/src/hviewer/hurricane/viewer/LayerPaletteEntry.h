@@ -50,11 +50,6 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
-
-
 # ifndef  __LAYER_PALETTE_ENTRY_H__
 #   define  __LAYER_PALETTE_ENTRY_H__
 

@@ -813,6 +813,61 @@ template<class Type> class SubSetCollection : public Collection<Type> {
         _locator->progress();
 
 
+// -------------------------------------------------------------------
+// Template Class  :  "ForEachIterator"
+
+
+template<typename Element>
+class ForEachIterator {
+  public:
+    inline                             ForEachIterator ( GenericCollection<Element> coll );
+    inline bool                        isValid         ();
+    inline Element                     operator*       ();
+    inline ForEachIterator&            operator++      (int);
+  public:
+           GenericCollection<Element>& collection;
+           GenericLocator<Element>     locator;
+           Element                     element;
+};
+
+
+template<typename Element>
+inline ForEachIterator<Element>::ForEachIterator ( GenericCollection<Element> coll )
+  : collection(coll)
+  , locator(collection.getLocator())
+  , element()
+{
+  if ( locator.isValid() ) element = locator.getElement();
+}
+
+
+template< typename Element >
+inline bool  ForEachIterator<Element>::isValid ()
+{
+  if ( locator.isValid() ) element = locator.getElement();
+  return locator.isValid();
+}
+
+
+template< typename Element >
+inline Element  ForEachIterator<Element>::operator* ()
+{
+  return element;
+}
+
+
+template< typename Element >
+inline ForEachIterator<Element>& ForEachIterator<Element>::operator++ (int)
+{
+  locator.progress ();
+  return *this;
+}
+
+
+#define  forEach(type,iterator,collection) \
+  for ( ForEachIterator<type> iterator(collection); iterator.isValid() ; iterator++ )
+
+
 
 } // End of Hurricane namespace.
 
@@ -841,6 +896,9 @@ template<typename Type> inline Hurricane::Record* getRecord ( const Hurricane::C
 #include "hurricane/MapCollection.h"
 #include "hurricane/ListCollection.h"
 #include "hurricane/VectorCollection.h"
+
+
+
 
 #endif // HURRICANE_COLLECTION
 

@@ -50,11 +50,6 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
-
-
 # include  <QHBoxLayout>
 
 # include  "hurricane/viewer/DynamicLabel.h"

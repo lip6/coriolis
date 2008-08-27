@@ -50,11 +50,6 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
-
-
 # ifndef  __GROUP_HPALETTE_ENTRY_H__
 #   define  __GROUP_HPALETTE_ENTRY_H__
 

@@ -95,8 +95,6 @@ namespace Hurricane {
       virtual string          _getString             () const;
       virtual Record*         _getRecord             () const;
 
-
-
     private:
     // Internal: Attributes
               Material        _material;

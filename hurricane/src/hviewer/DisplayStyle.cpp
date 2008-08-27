@@ -50,11 +50,6 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
-
-
 # include  <cassert>
 
 # include  "hurricane/viewer/DisplayStyle.h"
@@ -99,8 +94,10 @@ namespace Hurricane {
                                , _threshold(threshold)
                                , _refcount(1)
   {
-    if ( borderWidth )
+    if ( borderWidth ) {
+      _pen.setStyle ( Qt::SolidLine );
       _pen.setWidth ( borderWidth );
+    }
     else
       _pen.setStyle ( Qt::NoPen );
   }

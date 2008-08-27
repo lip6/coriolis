@@ -50,11 +50,6 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
-
-
 # ifndef  __CELL_WIDGET_H__
 #   define  __CELL_WIDGET_H__
 
@@ -79,6 +74,7 @@ class QAction;
 # include  "hurricane/Point.h"
 # include  "hurricane/Box.h"
 # include  "hurricane/Transformation.h"
+# include  "hurricane/Query.h"
 
 # include  "hurricane/viewer/DisplayStyle.h"
 # include  "hurricane/viewer/CellWidgets.h"
@@ -131,16 +127,7 @@ namespace Hurricane {
               void                    unselect             ( Occurrence& occurence );
               void                    unselectAll          ( bool delayRedraw=true );
     // Painter control & Hurricane objects drawing primitives.
-              void                    drawBoundaries       ( const Cell*    , const Box&, const Transformation& );
-              void                    drawBoundaries       ( const Instance*, const Box&, const Transformation& );
               bool                    isDrawable           ( const Name& entryName );
-              void                    drawCell             ( const Cell*    , const BasicLayer*, const Box&, const Transformation& );
-              void                    drawInstance         ( const Instance*, const BasicLayer*, const Box&, const Transformation& );
-              void                    drawSlice            ( const Slice*   , const BasicLayer*, const Box&, const Transformation& );
-              void                    drawGo               ( const Go*      , const BasicLayer*, const Box&, const Transformation& );
-              void                    drawSegment          ( const Segment* , const BasicLayer*, const Box&, const Transformation& );
-              void                    drawContact          ( const Contact* , const BasicLayer*, const Box&, const Transformation& );
-              void                    drawPad              ( const Pad*     , const BasicLayer*, const Box&, const Transformation& );
               void                    drawBox              ( const Box& );
               void                    drawLine             ( const Point&, const Point& );
               void                    drawGrid             ();
@@ -217,6 +204,7 @@ namespace Hurricane {
         public:
                                 DrawingPlanes ( const QSize& size, CellWidget* cw );
                                ~DrawingPlanes ();
+          inline bool           getLineMode   () const;
           inline int            width         () const;
           inline int            height        () const;
           inline QSize          size          () const;
@@ -231,6 +219,9 @@ namespace Hurricane {
           inline void           painterEnd    ();
           inline void           painterEnd    ( size_t i );
           inline void           paintersEnd   ();
+                 void           setLineMode   ( bool mode );
+                 void           setPen        ( const QPen& pen );
+                 void           setBrush      ( const QBrush& brush );
                  void           resize        ( const QSize& size );
                  void           shiftLeft     ( int dx );
                  void           shiftRight    ( int dx );
@@ -244,10 +235,36 @@ namespace Hurricane {
                  CellWidget*    _cellWidget;
                  QPixmap*       _planes[2];
                  QPainter       _painters[3];
+                 QPen           _normalPen;
+                 QPen           _linePen;
                  size_t         _workingPlane;
+                 bool           _lineMode;
         private:
                                 DrawingPlanes ( const DrawingPlanes& );
                  DrawingPlanes& operator=     ( const DrawingPlanes& );
+      };
+
+    private:
+      class DrawingQuery : public Query {
+        public:
+                              DrawingQuery          ( CellWidget* widget );
+          inline  void        setQuery              ( const Box&            area
+                                                    , const Transformation& transformation
+                                                    , const BasicLayer*     basicLayer
+                                                    , unsigned int          filter
+                                                    );
+          virtual bool        hasMasterCellCallback () const;
+          virtual bool        hasGoCallback         () const;
+          virtual void        masterCellCallback    ();
+          virtual void        goCallback            ( Go* go );
+                  void        drawGo                ( const Go*              go
+                                                    , const BasicLayer*      basicLayer
+                                                    , const Box&             area
+                                                    , const Transformation&  transformation
+                                                    );
+    
+        protected:
+                  CellWidget* _cellWidget;
       };
 
     protected:
@@ -262,6 +279,7 @@ namespace Hurricane {
               float                   _scale;
               QPoint                  _offsetVA;
               DrawingPlanes           _drawingPlanes;
+              DrawingQuery            _drawingQuery;
               QPoint                  _lastMousePosition;
               Spot                    _spot;
               Cell*                   _cell;
@@ -274,6 +292,18 @@ namespace Hurricane {
   };
 
 
+
+
+  inline void  CellWidget::DrawingQuery::setQuery ( const Box&            area
+                                                  , const Transformation& transformation
+                                                  , const BasicLayer*     basicLayer
+                                                  , unsigned int          filter
+                                                  )
+  { Query::setQuery ( _cellWidget->getCell(), area, transformation, basicLayer, filter ); }
+
+
+  inline bool  CellWidget::DrawingPlanes::getLineMode () const
+  { return _lineMode; }
 
 
   inline int  CellWidget::DrawingPlanes::width () const
@@ -315,7 +345,7 @@ namespace Hurricane {
   inline void  CellWidget::DrawingPlanes::painterBegin ( size_t i )
   {
     if ( i<2 ) _painters[i].begin ( _planes[i] );
-    else  _painters[i].begin ( _cellWidget );
+    else       _painters[i].begin ( _cellWidget );
   }
 
 

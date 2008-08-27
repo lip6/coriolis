@@ -50,10 +50,6 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
-
 #include <QFontMetrics>
 #include <QComboBox>
 #include <QLabel>
@@ -192,6 +188,7 @@ namespace Hurricane {
       , _history()
   {
     setAttribute ( Qt::WA_DeleteOnClose );
+    setAttribute ( Qt::WA_QuitOnClose, false );
 
     _rowHeight = QFontMetrics(Graphics::getFixedFont()).height() + 4;
 

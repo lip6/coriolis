@@ -50,9 +50,6 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
 #ifndef  __HINSPECTOR_WIDGET_H__
 #define  __HINSPECTOR_WIDGET_H__
 

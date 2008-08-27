@@ -50,11 +50,6 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
-
-
 # include <QMouseEvent>
 # include <QKeyEvent>
 # include <QAction>
@@ -135,7 +130,10 @@ namespace Hurricane {
 
   CellWidget::DrawingPlanes::DrawingPlanes ( const QSize& size, CellWidget* cw )
     : _cellWidget(cw)
+    , _normalPen()
+    , _linePen()
     , _workingPlane(0)
+    , _lineMode(false)
   {
     for ( size_t i=0 ; i<2 ; i++ )
       _planes[i] = new QPixmap ( size );
@@ -147,6 +145,40 @@ namespace Hurricane {
     for ( size_t i=0 ; i<2 ; i++ ) {
       if ( _painters[i].isActive() ) _painters[i].end();
       delete _planes[i];
+    }
+  }
+
+
+  void  CellWidget::DrawingPlanes::setPen ( const QPen& pen )
+  {
+    _normalPen = pen;
+    _linePen   = pen;
+    _linePen.setStyle ( Qt::SolidLine );
+    _linePen.setWidth ( 1 );
+ 
+    if ( _lineMode ) {
+      _painters[0].setPen ( _linePen );
+      _painters[1].setPen ( _linePen );
+    } else {
+      _painters[0].setPen ( _normalPen );
+      _painters[1].setPen ( _normalPen );
+    }
+  }
+
+
+  void  CellWidget::DrawingPlanes::setBrush ( const QBrush& brush )
+  {
+    _painters[0].setBrush ( brush );
+    _painters[1].setBrush ( brush );
+  }
+
+
+  void  CellWidget::DrawingPlanes::setLineMode ( bool mode )
+  {
+    if ( _lineMode != mode ) {
+      _lineMode = mode;
+      if ( _lineMode ) painter().setPen ( _linePen );
+      else             painter().setPen ( _normalPen );
     }
   }
 
@@ -231,6 +263,71 @@ namespace Hurricane {
 
 
 // -------------------------------------------------------------------
+// Class :  "Hurricane::CellWidget::DrawingQuery".
+
+
+  CellWidget::DrawingQuery::DrawingQuery ( CellWidget* widget )
+    : Query()
+    ,_cellWidget(widget)
+  { }
+
+
+  bool  CellWidget::DrawingQuery::hasMasterCellCallback () const
+  {
+    return true;
+  }
+
+
+  void  CellWidget::DrawingQuery::masterCellCallback ()
+  {
+    _cellWidget->drawBox ( getTransformation().getBox(getMasterCell()->getAbutmentBox()) );
+  }
+
+
+  bool  CellWidget::DrawingQuery::hasGoCallback () const
+  {
+    return true;
+  }
+
+
+  void  CellWidget::DrawingQuery::goCallback ( Go* go )
+  {
+    drawGo ( go, getBasicLayer(), getArea(), getTransformation() );
+  }
+
+
+  void  CellWidget::DrawingQuery::drawGo ( const Go*              go
+                                         , const BasicLayer*      basicLayer
+                                         , const Box&             area
+                                         , const Transformation&  transformation
+                                         )
+  {
+    const Segment* segment = dynamic_cast<const Segment*>(go);
+    if ( segment ) {
+      if ( 1 < _cellWidget->dbuToDisplayLength(segment->getWidth()) ) {
+        _cellWidget->drawBox ( transformation.getBox(segment->getBoundingBox(basicLayer)) );
+      } else {
+        _cellWidget->drawLine ( transformation.getPoint(segment->getSourcePosition())
+                              , transformation.getPoint(segment->getTargetPosition()) );
+      }
+      return;
+    }
+
+    const Contact* contact = dynamic_cast<const Contact*>(go);
+    if ( contact ) {
+      _cellWidget->drawBox ( transformation.getBox(contact->getBoundingBox(basicLayer)) );
+      return;
+    }
+
+    const Pad* pad = dynamic_cast<const Pad*>(go);
+    if ( pad ) {
+      _cellWidget->drawBox ( transformation.getBox(pad->getBoundingBox(basicLayer)) );
+      return;
+    }
+  }
+
+
+// -------------------------------------------------------------------
 // Class :  "Hurricane::CellWidget".
 
 
@@ -245,6 +342,7 @@ namespace Hurricane {
                                              , _scale(1.0)
                                              , _offsetVA(_stripWidth,_stripWidth)
                                              , _drawingPlanes(QSize(6*_stripWidth,6*_stripWidth),this)
+                                             , _drawingQuery(this)
                                              , _lastMousePosition(0,0)
                                              , _spot(this)
                                              , _cell(NULL)
@@ -324,7 +422,8 @@ namespace Hurricane {
   void  CellWidget::setShowSelection ( bool state )
   {
     if ( state != _showSelection ) {
-      _showSelection = state;
+      _showSelection       = state;
+      _selectionHasChanged = false;
       redraw ();
     }
   }
@@ -332,13 +431,16 @@ namespace Hurricane {
 
   void  CellWidget::redraw ( QRect redrawArea )
   {
-    //cerr << "CellWidget::redraw()" << endl;
+    cerr << "CellWidget::redraw() - " << _selectionHasChanged << endl;
+
+  //_drawingQuery.setStartLevel ( 1 );
+  //_drawingQuery.setStopLevel  ( 2 );
 
     _redrawRectCount = 0;
 
     pushCursor ( Qt::BusyCursor );
 
-    if ( !_selectionHasChanged ) {
+    if ( ! ( _selectionHasChanged && _showSelection ) ) {
       _spot.setRestore ( false );
       _drawingPlanes.select ( 0 );
       _drawingPlanes.painterBegin ();
@@ -351,21 +453,31 @@ namespace Hurricane {
       int darkening = (_showSelection) ? 200 : 100;
 
       if ( _cell ) {
-        Box  redrawBox = displayToDbuBox ( redrawArea );
 
-        for_each_basic_layer ( basicLayer, _technology->getBasicLayers() ) {
-          _drawingPlanes.painter().setPen   ( Graphics::getPen  (basicLayer->getName(),darkening) );
-          _drawingPlanes.painter().setBrush ( Graphics::getBrush(basicLayer->getName(),darkening) );
+        Box redrawBox = displayToDbuBox ( redrawArea );
 
-          if ( isDrawable(basicLayer->getName()) )
-            drawCell ( _cell, basicLayer, redrawBox, Transformation() );
-          end_for;
+        _drawingQuery.setArea           ( redrawBox );
+        _drawingQuery.setTransformation ( Transformation() );
+
+        forEach ( BasicLayer*, iLayer, _technology->getBasicLayers() ) {
+          _drawingPlanes.setPen   ( Graphics::getPen  ((*iLayer)->getName(),darkening));
+          _drawingPlanes.setBrush ( Graphics::getBrush((*iLayer)->getName(),darkening) );
+
+          if ( isDrawable((*iLayer)->getName()) ) {
+          //drawCell ( _cell, (*iLayer), redrawBox, Transformation() );
+            _drawingQuery.setBasicLayer ( *iLayer );
+            _drawingQuery.setFilter     ( Query::DoComponents );
+            _drawingQuery.doQuery ();
+          }
         }
         if ( isDrawable("boundaries") ) {
-          _drawingPlanes.painter().setPen   ( Graphics::getPen  ("boundaries") );
-          _drawingPlanes.painter().setBrush ( Graphics::getBrush("boundaries") );
+          _drawingPlanes.setPen   ( Graphics::getPen  ("boundaries") );
+          _drawingPlanes.setBrush ( Graphics::getBrush("boundaries") );
 
-          drawBoundaries ( _cell, redrawBox, Transformation() );
+        //drawBoundaries ( _cell, redrawBox, Transformation() );
+          _drawingQuery.setBasicLayer ( NULL );
+          _drawingQuery.setFilter     ( Query::DoMasterCells );
+          _drawingQuery.doQuery ();
         }
       }
 
@@ -386,8 +498,6 @@ namespace Hurricane {
 
   void  CellWidget::redrawSelection ( QRect redrawArea )
   {
-    cerr << "CellWidget::redrawSelection()" << endl;
-
     _drawingPlanes.copyToSelect ( redrawArea.x()
                                 , redrawArea.y()
                                 , redrawArea.width()
@@ -404,10 +514,10 @@ namespace Hurricane {
       Box  redrawBox = displayToDbuBox ( redrawArea );
 
       for_each_basic_layer ( basicLayer, _technology->getBasicLayers() ) {
-        if ( !isDrawable(basicLayer->getName()) ) continue;
+      //if ( !isDrawable(basicLayer->getName()) ) continue;
 
-        _drawingPlanes.painter().setPen   ( Graphics::getPen  (basicLayer->getName()) );
-        _drawingPlanes.painter().setBrush ( Graphics::getBrush(basicLayer->getName()) );
+        _drawingPlanes.setPen   ( Graphics::getPen  (basicLayer->getName()) );
+        _drawingPlanes.setBrush ( Graphics::getBrush(basicLayer->getName()) );
 
         set<Selector*>::iterator  iselector = _selectors.begin ();
         for ( ; iselector != _selectors.end() ; iselector++ ) {
@@ -416,11 +526,21 @@ namespace Hurricane {
 
           Instance* instance = dynamic_cast<Instance*>(occurrence.getEntity());
           if ( instance ) {
-            drawInstance ( instance, basicLayer, redrawBox, transformation );
+          // Temporary.
+          //drawInstance ( instance, basicLayer, redrawBox, transformation );
             continue;
           }
 
-          drawGo ( dynamic_cast<Go*>(occurrence.getEntity()), basicLayer, redrawBox, transformation );
+          Component* component = dynamic_cast<Component*>(occurrence.getEntity());
+          if ( !component ) continue;
+          if ( !component->getLayer() ) continue;
+          if ( !component->getLayer()->contains(basicLayer) ) continue;
+
+          _drawingQuery.drawGo ( dynamic_cast<Go*>(occurrence.getEntity())
+                               , basicLayer
+                               , redrawBox
+                               , transformation
+                               );
         }
         end_for;
       }
@@ -428,34 +548,6 @@ namespace Hurricane {
 
     _drawingPlanes.painterEnd ();
     _selectionHasChanged = false;
-  }
-
-
-  void  CellWidget::drawBoundaries ( const Cell*           cell
-                                   , const Box&            redrawArea
-                                   , const Transformation& transformation
-                                   )
-  {
-    drawBox ( transformation.getBox(cell->getAbutmentBox()) );
-    for_each_instance ( instance, cell->getInstances() ) {
-      drawBoundaries ( instance, redrawArea, transformation );
-      end_for;
-    }
-  }
-
-
-  void  CellWidget::drawBoundaries ( const Instance*       instance
-                                   , const Box&            redrawArea
-                                   , const Transformation& transformation
-                                   )
-  {
-    Box            masterArea           = redrawArea;
-    Transformation masterTransformation = instance->getTransformation();
-
-    instance->getTransformation().getInvert().applyOn ( masterArea );
-    transformation.applyOn ( masterTransformation );
-
-    drawBoundaries ( instance->getMasterCell(), masterArea, masterTransformation );
   }
 
 
@@ -468,126 +560,17 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::drawCell ( const Cell*           cell
-                             , const BasicLayer*     basicLayer
-                             , const Box&            redrawArea
-                             , const Transformation& transformation
-                             ) 
-  {
-    for_each_instance ( instance, cell->getInstancesUnder(redrawArea) ) {
-      drawInstance ( instance, basicLayer, redrawArea, transformation );
-      end_for;
-    }
-
-    for_each_slice ( slice, cell->getSlices() ) {
-      drawSlice ( slice, basicLayer, redrawArea, transformation );
-      end_for;
-    }
-  }
-
-
-  void CellWidget::drawInstance ( const Instance*       instance
-                                , const BasicLayer*     basicLayer
-                                , const Box&            redrawArea
-                                , const Transformation& transformation
-                                )
-  {
-    Box            masterArea           = redrawArea;
-    Transformation masterTransformation = instance->getTransformation();
-
-    instance->getTransformation().getInvert().applyOn ( masterArea );
-    transformation.applyOn ( masterTransformation );
-
-    drawCell ( instance->getMasterCell(), basicLayer, masterArea, masterTransformation );
-  }
-
-
-  void CellWidget::drawSlice ( const Slice*          slice
-                             , const BasicLayer*     basicLayer
-                             , const Box&            redrawArea
-                             , const Transformation& transformation
-                             )
-  {
-    if ( slice->getLayer()->contains(basicLayer) ) {
-      if ( slice->getBoundingBox().intersect(redrawArea) ) {
-        for_each_go ( go, slice->getGosUnder(redrawArea) ) {
-          drawGo ( go, basicLayer, redrawArea, transformation );
-          end_for;
-        }
-      }
-    }
-  }
-
-
-  void CellWidget::drawGo ( const Go*             go
-                          , const BasicLayer*     basicLayer
-                          , const Box&            redrawArea
-                          , const Transformation& transformation
-                          )
-  {
-    const Segment* segment = dynamic_cast<const Segment*>(go);
-    if (segment) {
-      drawSegment ( segment, basicLayer, redrawArea, transformation );
-      return;
-    }
-
-    const Contact* contact = dynamic_cast<const Contact*>(go);
-    if (contact) {
-      drawContact ( contact, basicLayer, redrawArea, transformation );
-      return;
-    }
-
-    const Pad* pad = dynamic_cast<const Pad*>(go);
-    if (pad) {
-      drawPad ( pad, basicLayer, redrawArea, transformation );
-      return;
-    }
-  }
-
-
-  void CellWidget::drawSegment ( const Segment*        segment
-                               , const BasicLayer*     basicLayer
-                               , const Box&            redrawArea
-                               , const Transformation& transformation
-                               )
-  {
-    if ( 1 < dbuToDisplayLength(segment->getWidth()) ) {
-      drawBox ( transformation.getBox(segment->getBoundingBox(basicLayer)) );
-    } else {
-      drawLine ( transformation.getPoint(segment->getSourcePosition()),
-                 transformation.getPoint(segment->getTargetPosition()) );
-    }
-  }
-
-
-  void CellWidget::drawContact ( const Contact*        contact
-                               , const BasicLayer*     basicLayer
-                               , const Box&            redrawArea
-                               , const Transformation& transformation
-                               )
-  {
-    drawBox ( transformation.getBox(contact->getBoundingBox(basicLayer)) );
-  }
-
-  void CellWidget::drawPad ( const Pad*            pad
-                           , const BasicLayer*     basicLayer
-                           , const Box&            redrawArea
-                           , const Transformation& transformation
-                           )
-  {
-    drawBox ( transformation.getBox(pad->getBoundingBox(basicLayer)) );
-  }
-
-
   void  CellWidget::drawBox ( const Box& box )
   {
     _redrawRectCount++;
+    _drawingPlanes.setLineMode ( false );
     _drawingPlanes.painter().drawRect ( dbuToDisplayRect(box) );
   }
 
 
   void  CellWidget::drawLine ( const Point& p1, const Point& p2 )
   {
+    _drawingPlanes.setLineMode ( true );
     _drawingPlanes.painter().drawLine ( dbuToDisplayPoint(p1), dbuToDisplayPoint(p2) );
   }
 
@@ -998,6 +981,8 @@ namespace Hurricane {
   void  CellWidget::setCell ( Cell* cell )
   {
     _cell = cell;
+    _drawingQuery.setCell ( cell );
+
     fitToContents ();
   }
 

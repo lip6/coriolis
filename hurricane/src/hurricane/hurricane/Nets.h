@@ -51,6 +51,9 @@ typedef GenericFilter<Net*> NetFilter;
         Net* net = _locator.getElement();\
         _locator.progress();
 
+#define forEachNet(iterator,collection) forEach(Net*,iterator,collection)
+   
+
 
 
 } // End of Hurricane namespace.

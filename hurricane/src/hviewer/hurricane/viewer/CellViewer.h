@@ -50,14 +50,11 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
-
-
 #ifndef  __CELL_VIEWER_H__
 #define  __CELL_VIEWER_H__
 
+
+#include   <list>
 
 using namespace std;
 
@@ -69,6 +66,7 @@ class QAction;
 class QMenu;
 
 #include  "hurricane/Commons.h"
+#include  "hurricane/Name.h"
 #include  "hurricane/Occurrence.h"
 
 
@@ -89,21 +87,27 @@ namespace Hurricane {
 
     public:
                               CellViewer             ( QWidget* parent=NULL );
+      inline  void            setApplicationName     ( const QString& name );
               void            setCell                ( Cell* cell );
+              Cell*           getCell                ();
+      virtual Cell*           getCellFromDb          ( const char* name );
       inline  CellWidget*     getCellWidget          ();
               void            select                 ( Occurrence& occurence );
               void            unselect               ( Occurrence& occurence );
               void            unselectAll            ();
     public slots:
+              void            openHistoryCell        ();
               void            runInspectorOnDataBase ();
               void            runInspectorOnCell     ();
               void            browseNetlist          ();
 
+    public:
+              enum            { CellHistorySize = 10 };
     protected:
+              QString         _applicationName;
               QAction*        _openAction;
-              QAction*        _nextCellAction;
-              QAction*        _previousCellAction;
               QAction*        _nextAction;
+              QAction*        _cellHistoryAction[CellHistorySize];
               QAction*        _saveAction;
               QAction*        _exitAction;
               QAction*        _refreshAction;
@@ -119,18 +123,20 @@ namespace Hurricane {
               HPalette*       _palette;
               HMousePosition* _mousePosition;
               CellWidget*     _cellWidget;
+              list<Cell*>     _cellHistory;
 
     protected:
               void            createActions          ();
               void            createMenus            ();
               void            createLayout           ();
+              void            refreshHistory         ();
               void            runInspector           ( Record* record );
   };
 
 
 // Inline Functions.
-  inline CellWidget* CellViewer::getCellWidget ()
-  { return _cellWidget; }
+  inline CellWidget* CellViewer::getCellWidget      () { return _cellWidget; }
+  inline void        CellViewer::setApplicationName ( const QString& name ) { _applicationName = name; }
 
 
 

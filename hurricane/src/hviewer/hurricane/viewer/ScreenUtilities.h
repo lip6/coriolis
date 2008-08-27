@@ -50,11 +50,6 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
-
-
 # ifndef  __SCREENUTILITIES_H__
 #   define  __SCREENUTILITIES_H__
 

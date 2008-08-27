@@ -72,9 +72,8 @@ namespace Hurricane {
 
 
   CellViewer::CellViewer ( QWidget* parent ) : QMainWindow(parent)
+                                             , _applicationName(tr("Viewer"))
                                              , _openAction(NULL)
-                                             , _nextCellAction(NULL)
-                                             , _previousCellAction(NULL)
                                              , _nextAction(NULL)
                                              , _saveAction(NULL)
                                              , _exitAction(NULL)
@@ -91,7 +90,10 @@ namespace Hurricane {
                                              , _palette(NULL)
                                              , _mousePosition(NULL)
                                              , _cellWidget(NULL)
+                                             , _cellHistory()
   {
+    setObjectName("viewer");
+
     createMenus  ();
     createLayout ();
   }
@@ -103,49 +105,64 @@ namespace Hurricane {
   {
     if ( _openAction ) return;
 
-    _openAction = new QAction ( tr("&Open Cell"), this );
-    _openAction->setIcon ( QIcon(":/images/stock_open.png") );
-    _openAction->setStatusTip ( tr("Open (load) a new Cell") );
+    _openAction = new QAction  ( tr("&Open Cell"), this );
+    _openAction->setObjectName ( "viewer.file.openCell" );
+    _openAction->setIcon       ( QIcon(":/images/stock_open.png") );
+    _openAction->setStatusTip  ( tr("Open (load) a new Cell") );
+    cerr << "_openAction: " << _openAction << endl;
 
-    _nextCellAction = new QAction ( tr("Next Cell"), this );
-    _nextCellAction->setStatusTip ( tr("Go to the next Cell in history") );
+    _nextAction = new QAction  ( tr("&Next Breakpoint"), this );
+    _nextAction->setObjectName ( "viewer.file.nextBreakpoint" );
+    _nextAction->setStatusTip  ( tr("Proceed to the next breakpoint") );
 
-    _previousCellAction = new QAction ( tr("Previous Cell"), this );
-    _previousCellAction->setStatusTip ( tr("Go to the previous Cell in history") );
+    for ( size_t i=0 ; i<CellHistorySize ; i++ ) {
+      _cellHistoryAction[i] = new QAction ( this );
+      _cellHistoryAction[i]->setObjectName ( QString("viewer.file.cellHistory[%1]").arg(i) );
+      _cellHistoryAction[i]->setVisible ( false );
+      _cellHistoryAction[i]->setData    ( i );
+      _cellHistoryAction[i]->setFont    ( Graphics::getFixedFont(QFont::Bold,false,false) );
+      connect ( _cellHistoryAction[i], SIGNAL(triggered()), this, SLOT(openHistoryCell()));
+    }
 
-    _nextAction = new QAction ( tr("&Next Breakpoint"), this );
-    _nextAction->setStatusTip ( tr("Proceed to the next breakpoint") );
+    _saveAction = new QAction  ( tr("&Save Cell"), this );
+    _saveAction->setObjectName ( "viewer.file.saveCell" );
+    _saveAction->setIcon       ( QIcon(":/images/stock_save.png") );
+    _saveAction->setStatusTip  ( tr("Save the current Cell") );
+    _saveAction->setVisible    ( false );
 
-    _saveAction = new QAction ( tr("&Save Cell"), this );
-    _saveAction->setIcon ( QIcon(":/images/stock_save.png") );
-    _saveAction->setStatusTip ( tr("Save the current Cell") );
-
-    _exitAction = new QAction ( tr("&Exit"), this );
-    _exitAction->setStatusTip ( tr("Close Coriolis CellViewer") );
-    _exitAction->setShortcut  ( QKeySequence(tr("CTRL+Q")) );
+    _exitAction = new QAction  ( tr("&Exit"), this );
+    _exitAction->setObjectName ( "viewer.file.exit" );
+    _exitAction->setStatusTip  ( tr("Close Coriolis CellViewer") );
+    _exitAction->setShortcut   ( QKeySequence(tr("CTRL+Q")) );
     connect ( _exitAction, SIGNAL(triggered()), this, SLOT(close()) );
 
-    _refreshAction = new QAction ( tr("&Refresh"), this );
-    _refreshAction->setStatusTip ( tr("Force full redrawing of the display") );
-    _refreshAction->setShortcut  ( QKeySequence(tr("CTRL+L")) );
+    _refreshAction = new QAction  ( tr("&Refresh"), this );
+    _refreshAction->setObjectName ( "viewer.view.refresh" );
+    _refreshAction->setStatusTip  ( tr("Force full redrawing of the display") );
+    _refreshAction->setShortcut   ( QKeySequence(tr("CTRL+L")) );
 
-    _fitToContentsAction = new QAction ( tr("&Fit to Contents"), this );
-    _fitToContentsAction->setStatusTip ( tr("Adjust zoom to fit the whole cell's contents") );
-    _fitToContentsAction->setShortcut  ( Qt::Key_F );
+    _fitToContentsAction = new QAction  ( tr("&Fit to Contents"), this );
+    _fitToContentsAction->setObjectName ( "viewer.view.fit" );
+    _fitToContentsAction->setStatusTip  ( tr("Adjust zoom to fit the whole cell's contents") );
+    _fitToContentsAction->setShortcut   ( Qt::Key_F );
 
-    _showSelectionAction = new QAction ( tr("&Show Selection"), this );
-    _showSelectionAction->setStatusTip ( tr("Highlight the selected items (darken others)") );
-    _showSelectionAction->setShortcut  ( Qt::Key_S );
-    _showSelectionAction->setCheckable ( true );
+    _showSelectionAction = new QAction  ( tr("&Show Selection"), this );
+    _showSelectionAction->setObjectName ( "viewer.view.showSelection" );
+    _showSelectionAction->setStatusTip  ( tr("Highlight the selected items (darken others)") );
+    _showSelectionAction->setShortcut   ( Qt::Key_S );
+    _showSelectionAction->setCheckable  ( true );
 
-    _runInspectorOnDataBase= new QAction ( tr("Inspect &DataBase"), this );
-    _runInspectorOnDataBase->setStatusTip ( tr("Run Inspector on Hurricane DataBase") );
+    _runInspectorOnDataBase= new QAction   ( tr("Inspect &DataBase"), this );
+    _runInspectorOnDataBase->setObjectName ( "viewer.tool.inspectDb" );
+    _runInspectorOnDataBase->setStatusTip  ( tr("Run Inspector on Hurricane DataBase") );
 
-    _runInspectorOnCell= new QAction ( tr("Inspect &Cell"), this );
-    _runInspectorOnCell->setStatusTip ( tr("Run Inspector on the current Cell") );
+    _runInspectorOnCell= new QAction   ( tr("Inspect &Cell"), this );
+    _runInspectorOnCell->setObjectName ( "viewer.tool.inspectCell" );
+    _runInspectorOnCell->setStatusTip  ( tr("Run Inspector on the current Cell") );
 
-    _browseNetlist= new QAction ( tr("Browse &Netlist"), this );
-    _browseNetlist->setStatusTip ( tr("Browse netlist from the current Cell") );
+    _browseNetlist= new QAction   ( tr("Browse &Netlist"), this );
+    _browseNetlist->setObjectName ( "viewer.tool.browseNetlist" );
+    _browseNetlist->setStatusTip  ( tr("Browse netlist from the current Cell") );
   }
 
 
@@ -156,19 +173,25 @@ namespace Hurricane {
     if ( !_openAction ) createActions ();
 
     _fileMenu = menuBar()->addMenu ( tr("File") );
+    _fileMenu->setObjectName ( "viewer.file" );
     _fileMenu->addAction ( _openAction );
-    _fileMenu->addAction ( _nextCellAction );
-    _fileMenu->addAction ( _previousCellAction );
     _fileMenu->addAction ( _nextAction );
+    _fileMenu->addSeparator ();
+    for ( size_t i=0 ; i<CellHistorySize ; i++ ) {
+      _fileMenu->addAction ( _cellHistoryAction[i] );
+    }
+    _fileMenu->addSeparator ();
     _fileMenu->addAction ( _saveAction );
     _fileMenu->addAction ( _exitAction );
 
     _viewMenu = menuBar()->addMenu ( tr("View") );
+    _viewMenu->setObjectName ( "viewer.view" );
     _viewMenu->addAction ( _refreshAction );
     _viewMenu->addAction ( _fitToContentsAction );
     _viewMenu->addAction ( _showSelectionAction );
 
     _toolsMenu = menuBar()->addMenu ( tr("Tool") );
+    _toolsMenu->setObjectName ( "viewer.tool" );
     _toolsMenu->addAction ( _runInspectorOnDataBase );
     _toolsMenu->addAction ( _runInspectorOnCell );
     _toolsMenu->addAction ( _browseNetlist );
@@ -225,9 +248,52 @@ namespace Hurricane {
   }
 
 
+  void  CellViewer::refreshHistory ()
+  {
+    Cell* activeCell = getCell();
+    _cellHistory.remove ( activeCell );
+
+    if ( _cellHistory.size() > CellHistorySize-1 )
+      _cellHistory.pop_front ();
+    _cellHistory.push_back ( activeCell );
+
+    list<Cell*>::iterator iname = _cellHistory.begin();
+    for ( size_t i=0 ; i<CellHistorySize ; i++ ) {
+      if ( iname != _cellHistory.end() ) {
+        QString entry = tr("&%1: %2").arg(i+1).arg( getString((*iname)->getName()).c_str() );
+        _cellHistoryAction[i]->setText    ( entry );
+        _cellHistoryAction[i]->setVisible ( true );
+        iname++;
+      } else {
+        _cellHistoryAction[i]->setVisible ( false );
+      }
+    }
+  }
+
+
   void  CellViewer::setCell ( Cell* cell )
   {
     _cellWidget->setCell ( cell );
+
+    QString  title
+      = QString("%1:<%2>").arg(_applicationName).arg(getString(cell->getName()).c_str());
+    setWindowTitle ( title );
+
+    refreshHistory ();
+  }
+
+
+  Cell* CellViewer::getCell ()
+  { return getCellWidget()->getCell(); }
+
+
+  Cell* CellViewer::getCellFromDb ( const char* name )
+  {
+    cerr << "[ERROR] virtual function CellViewer::getCellFromDb() has not been overloaded.\n"
+         << "        (this will prevent \"Open Cell\" to work)"
+         << endl;
+
+    return NULL;
   }
 
 
@@ -243,6 +309,21 @@ namespace Hurricane {
       inspector->show ();
     } else
       cerr << "[ERROR] Attempt to run Inspector on NULL record." << endl;
+  }
+
+
+  void  CellViewer::openHistoryCell ()
+  {
+    QAction* historyAction = qobject_cast<QAction*> ( sender() );
+    if ( historyAction ) {
+      list<Cell*>::iterator  icell = _cellHistory.begin();
+      size_t                 index = historyAction->data().toUInt();
+
+      for ( ; index>0 ; index--, icell++ );
+
+      cerr << "History: " << *icell << endl;
+      setCell ( *icell );
+    }
   }
 
 

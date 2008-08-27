@@ -38,7 +38,6 @@
 // x-----------------------------------------------------------------x 
 // |                                                                 |
 // |                  H U R R I C A N E                              |
-// |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
@@ -50,17 +49,13 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
-
-#include <QFontMetrics>
-#include <QLabel>
-#include <QLineEdit>
-#include <QHeaderView>
-#include <QKeyEvent>
-#include <QGroupBox>
-#include <QVBoxLayout>
+#include  <QFontMetrics>
+#include  <QLabel>
+#include  <QLineEdit>
+#include  <QHeaderView>
+#include  <QKeyEvent>
+#include  <QGroupBox>
+#include  <QVBoxLayout>
 
 #include "hurricane/Commons.h"
 #include "hurricane/Net.h"
@@ -68,6 +63,7 @@
 #include "hurricane/viewer/Graphics.h"
 #include "hurricane/viewer/HNetlistModel.h"
 #include "hurricane/viewer/HNetlist.h"
+#include "hurricane/viewer/HInspectorWidget.h"
 
 
 namespace Hurricane {
@@ -83,6 +79,7 @@ namespace Hurricane {
       , _cellWidget(NULL)
   {
     setAttribute ( Qt::WA_DeleteOnClose );
+    setAttribute ( Qt::WA_QuitOnClose, false );
 
     _rowHeight = QFontMetrics(Graphics::getFixedFont()).height() + 4;
 
@@ -146,11 +143,8 @@ namespace Hurricane {
 
   void  HNetlist::keyPressEvent ( QKeyEvent* event )
   {
-    cerr << "keyPressEvent" << endl;
-
-    if ( event->key() == Qt::Key_Left ) {
-      cerr << "Key Left Pressed." << endl;
-    } else {
+    if ( event->key() == Qt::Key_I ) { runInspector(_netlistView->currentIndex()); }
+    else {
       event->ignore();
     }
   }
@@ -159,6 +153,19 @@ namespace Hurricane {
   void  HNetlist::textFilterChanged ()
   {
     _sortModel->setFilterRegExp ( _filterPatternLineEdit->text() );
+  }
+
+
+  void  HNetlist::runInspector ( const QModelIndex& index  )
+  {
+    if ( index.isValid() ) {
+      const Net* net = _netlistModel->getNet ( _sortModel->mapToSource(index).row() );
+
+      HInspectorWidget* inspector = new HInspectorWidget ();
+
+      inspector->setRootRecord ( getRecord(net) );
+      inspector->show ();
+    }
   }
 
 

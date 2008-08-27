@@ -50,9 +50,6 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
 #include  <QObject>
 
 #include  "hurricane/Name.h"

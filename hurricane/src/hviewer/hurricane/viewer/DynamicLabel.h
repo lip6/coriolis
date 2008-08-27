@@ -50,11 +50,6 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
-
-
 # ifndef  __DYNAMIC_LABEL_H__
 #   define  __DYNAMIC_LABEL_H__
 

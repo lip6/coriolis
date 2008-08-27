@@ -50,9 +50,6 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
 #ifndef  __NET_INFORMATIONS_H__
 #define  __NET_INFORMATIONS_H__
 

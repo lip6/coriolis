@@ -50,9 +50,6 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
 #ifndef  __HNETLIST_WIDGET_H__
 #define  __HNETLIST_WIDGET_H__
 
@@ -90,6 +87,7 @@ namespace Hurricane {
               void                   setCell           ( Cell* cell );
       template<typename InformationType>
               void                   setCellWidget     ( CellWidget* cw );
+              void                   runInspector      ( const QModelIndex& index  );
     private slots:
               void                   textFilterChanged ();
               void                   selectNet         ( const QModelIndex& index );

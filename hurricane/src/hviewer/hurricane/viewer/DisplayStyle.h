@@ -50,11 +50,6 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
-
-
 # ifndef  __DISPLAYSTYLE_H__
 #   define  __DISPLAYSTYLE_H__
 
