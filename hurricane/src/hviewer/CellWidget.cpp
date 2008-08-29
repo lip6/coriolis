@@ -450,7 +450,7 @@ namespace Hurricane {
       _drawingPlanes.painter().setClipRect   ( redrawArea );
       _drawingPlanes.painter().eraseRect     ( redrawArea );
 
-      int darkening = (_showSelection) ? 200 : 100;
+      int darkening = (_showSelection) ? Graphics::getDarkening() : 100;
 
       if ( _cell ) {
 
@@ -826,7 +826,7 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::paintEvent ( QPaintEvent* )
+  void  CellWidget::paintEvent ( QPaintEvent* event )
   {
     _drawingPlanes.painterBegin ( 2 );
     _drawingPlanes.copyToScreen ();

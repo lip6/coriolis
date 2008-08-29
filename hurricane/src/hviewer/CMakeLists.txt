@@ -9,6 +9,7 @@
                                      hurricane/viewer/GroupPaletteEntry.h
                                      hurricane/viewer/ViewerPaletteEntry.h
                                      hurricane/viewer/HPalette.h
+                                     hurricane/viewer/HGraphics.h
                                      hurricane/viewer/DynamicLabel.h
                                      hurricane/viewer/HMousePosition.h
                                      hurricane/viewer/Selector.h
@@ -19,12 +20,14 @@
                                      hurricane/viewer/HInspectorWidget.h
                                      hurricane/viewer/HNetlistModel.h
                                      hurricane/viewer/HNetlist.h
+                                     hurricane/viewer/HDisplayFilter.h
                        )
                    set ( exports     hurricane/viewer/ScreenUtilities.h
                                      hurricane/viewer/HPaletteEntry.h
                                      hurricane/viewer/HPalette.h
                                      hurricane/viewer/DisplayStyle.h
                                      hurricane/viewer/Graphics.h
+                                     hurricane/viewer/HGraphics.h
                                      hurricane/viewer/Selector.h
                                      hurricane/viewer/CellWidget.h
                                      hurricane/viewer/CellWidgets.h
@@ -32,10 +35,12 @@
                                      hurricane/viewer/HInspectorWidget.h
                                      hurricane/viewer/NetInformations.h
                                      hurricane/viewer/HNetlist.h
+                                     hurricane/viewer/HDisplayFilter.h
                        )
                    set ( cpps        ScreenUtilities.cpp 
                                      DisplayStyle.cpp 
                                      Graphics.cpp
+                                     HGraphics.cpp
                                      HPaletteEntry.cpp
                                      LayerPaletteEntry.cpp
                                      GroupPaletteEntry.cpp
@@ -51,6 +56,7 @@
                                      NetInformations.cpp
                                      HNetlistModel.cpp
                                      HNetlist.cpp
+                                     HDisplayFilter.cpp
                        )
 
           qt4_wrap_cpp ( MOC_SRCS    ${mocincludes} )

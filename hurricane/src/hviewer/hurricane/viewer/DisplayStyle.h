@@ -186,6 +186,8 @@ namespace Hurricane {
 
     // Accessors.
              const Name&            getName          () const;
+      inline const string&          getDescription   () const;
+      inline int                    getDarkening     () const;
              const Name&            getGroup         ( const Name& key ) const;
              const string&          getPattern       ( const Name& key ) const;
              QColor                 getColor         ( const Name& key, int darkening ) const;
@@ -196,7 +198,10 @@ namespace Hurricane {
              DrawingStyle*          find             ( const Name& key ) const;
 
     // Modifiers.
+      inline void                   setDescription   ( const string& description );
+      inline void                   setDescription   ( const char* description );
              void                   inheritFrom      ( const DisplayStyle* base );
+             void                   setDarkening     ( int darkening );
              void                   addDrawingStyle  ( const Name&   groupKey
                                                      , const Name&   key
                                                      , const string& pattern
@@ -210,7 +215,9 @@ namespace Hurricane {
     protected:
     // Internals - Attributes.
              const Name             _name;
+             string                 _description;
              vector<DrawingGroup*>  _groups;
+             int                    _darkening;
 
     // Internals - Methods.
              void                   findOrCreate     ( const Name& groupKey
@@ -235,6 +242,10 @@ namespace Hurricane {
 
   inline const Name&            DisplayStyle::getName          () const { return _name; }
   inline vector<DrawingGroup*>& DisplayStyle::getDrawingGroups () { return _groups; }
+  inline int                    DisplayStyle::getDarkening     () const { return _darkening; }
+  inline const string&          DisplayStyle::getDescription   () const { return _description; }
+  inline void                   DisplayStyle::setDescription   ( const string& description ) { _description = description; }
+  inline void                   DisplayStyle::setDescription   ( const char* description ) { _description = description; }
 
 
 } // End of Hurricane namespace.

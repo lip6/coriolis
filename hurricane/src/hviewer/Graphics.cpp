@@ -78,6 +78,7 @@ namespace Hurricane {
   {
     _styles.push_back ( new DisplayStyle("Fallback") );
     _active = _styles[0];
+    _active->setDescription ( "Builtin fallback style" );
   }
 
 
@@ -102,10 +103,22 @@ namespace Hurricane {
 
     QFont fixedFont ( "Bitstream Vera Sans Mono", defaultFont.pointSize() );
     fixedFont.setWeight    ( weight );
-    fixedFont.setUnderline ( italic );
+    fixedFont.setItalic    ( italic );
     fixedFont.setUnderline ( underline );
 
     return fixedFont;
+  }
+
+
+  const QFont  Graphics::getNormalFont ( bool bold, bool italic, bool underline )
+  {
+    QFont defaultFont = QApplication::font ();
+
+    defaultFont.setBold      ( bold );
+    defaultFont.setItalic    ( italic );
+    defaultFont.setUnderline ( underline );
+
+    return defaultFont;
   }
 
 
@@ -150,6 +163,17 @@ namespace Hurricane {
   }
 
 
+  void  Graphics::_setStyle ( size_t id )
+  {
+    if ( id >= _styles.size() ) {
+      cerr << "[WARNING] Graphics::setStyle(): no style id \"" << id << "\"." << endl;
+      return;
+    }
+
+    _active = _styles [ id ];
+  }
+
+
   DisplayStyle* Graphics::_getStyle ( const Name& key )
   {
     size_t si = _findStyle(key);
@@ -172,6 +196,12 @@ namespace Hurricane {
   }
 
 
+  void  Graphics::setStyle ( size_t id )
+  {
+    getGraphics()->_setStyle ( id );
+  }
+
+
   DisplayStyle* Graphics::getStyle ( const Name& key )
   {
     return getGraphics()->_getStyle ( key );
@@ -181,6 +211,12 @@ namespace Hurricane {
   DisplayStyle* Graphics::getStyle ()
   {
     return getGraphics()->_getStyle ();
+  }
+
+
+  const vector<DisplayStyle*>& Graphics::getStyles ()
+  {
+    return getGraphics()->_getStyles ();
   }
 
 
@@ -217,6 +253,12 @@ namespace Hurricane {
   float  Graphics::getThreshold ( const Name& key )
   {
     return getGraphics()->_getThreshold ( key );
+  }
+
+
+  int  Graphics::getDarkening ()
+  {
+    return getGraphics()->_getDarkening ();
   }
 
 

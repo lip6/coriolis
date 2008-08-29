@@ -55,6 +55,7 @@
 #include  <QMenuBar>
 #include  <QStatusBar>
 #include  <QDockWidget>
+#include  <QApplication>
 
 #include  "hurricane/DataBase.h"
 #include  "hurricane/Cell.h"
@@ -66,6 +67,8 @@
 #include  "hurricane/viewer/HInspectorWidget.h"
 #include  "hurricane/viewer/HNetlist.h"
 #include  "hurricane/viewer/HMousePosition.h"
+#include  "hurricane/viewer/HGraphics.h"
+#include  "hurricane/viewer/HDisplayFilter.h"
 
 
 namespace Hurricane {
@@ -76,11 +79,14 @@ namespace Hurricane {
                                              , _openAction(NULL)
                                              , _nextAction(NULL)
                                              , _saveAction(NULL)
+                                             , _closeAction(NULL)
                                              , _exitAction(NULL)
                                              , _refreshAction(NULL)
                                              , _fitToContentsAction(NULL)
                                              , _showSelectionAction(NULL)
                                              , _showPaletteAction(NULL)
+                                             , _graphicsSettingsAction(NULL)
+                                             , _displayFilterAction(NULL)
                                              , _runInspectorOnDataBase(NULL)
                                              , _runInspectorOnCell(NULL)
                                              , _browseNetlist(NULL)
@@ -90,6 +96,8 @@ namespace Hurricane {
                                              //, _mapView(NULL)
                                              , _palette(NULL)
                                              , _mousePosition(NULL)
+                                             , _graphicsSettings(NULL)
+                                             , _displayFilter(NULL)
                                              , _cellWidget(NULL)
                                              , _cellHistory()
   {
@@ -116,7 +124,7 @@ namespace Hurricane {
     _nextAction->setObjectName ( "viewer.file.nextBreakpoint" );
     _nextAction->setStatusTip  ( tr("Proceed to the next breakpoint") );
 
-    for ( unsigned i=0 ; i<CellHistorySize ; i++ ) {
+    for ( size_t i=0 ; i<CellHistorySize ; i++ ) {
       _cellHistoryAction[i] = new QAction ( this );
       _cellHistoryAction[i]->setObjectName ( QString("viewer.file.cellHistory[%1]").arg(i) );
       _cellHistoryAction[i]->setVisible ( false );
@@ -131,11 +139,17 @@ namespace Hurricane {
     _saveAction->setStatusTip  ( tr("Save the current Cell") );
     _saveAction->setVisible    ( false );
 
+    _closeAction = new QAction  ( tr("&Close"), this );
+    _closeAction->setObjectName ( "viewer.file.close" );
+    _closeAction->setStatusTip  ( tr("Close This Coriolis CellViewer") );
+    _closeAction->setShortcut   ( QKeySequence(tr("CTRL+W")) );
+    connect ( _closeAction, SIGNAL(triggered()), this, SLOT(close()) );
+
     _exitAction = new QAction  ( tr("&Exit"), this );
     _exitAction->setObjectName ( "viewer.file.exit" );
-    _exitAction->setStatusTip  ( tr("Close Coriolis CellViewer") );
+    _exitAction->setStatusTip  ( tr("Exit All Coriolis CellViewer") );
     _exitAction->setShortcut   ( QKeySequence(tr("CTRL+Q")) );
-    connect ( _exitAction, SIGNAL(triggered()), this, SLOT(close()) );
+    connect ( _exitAction, SIGNAL(triggered()), qApp, SLOT(closeAllWindows()) );
 
     _refreshAction = new QAction  ( tr("&Refresh"), this );
     _refreshAction->setObjectName ( "viewer.view.refresh" );
@@ -159,16 +173,24 @@ namespace Hurricane {
     _showPaletteAction->setCheckable  ( true );
     _showPaletteAction->setChecked    ( true );
 
+    _graphicsSettingsAction = new QAction  ( tr("Graphics Settings"), this );
+    _graphicsSettingsAction->setObjectName ( "viewer.view.graphicsSettings" );
+    _graphicsSettingsAction->setStatusTip  ( tr("Tune Graphics Settings") );
+
+    _displayFilterAction = new QAction  ( tr("Display Filter"), this );
+    _displayFilterAction->setObjectName ( "viewer.view.displayFilter" );
+    _displayFilterAction->setStatusTip  ( tr("Tune Cell Displaying") );
+
     _runInspectorOnDataBase= new QAction   ( tr("Inspect &DataBase"), this );
-    _runInspectorOnDataBase->setObjectName ( "viewer.tool.inspectDb" );
+    _runInspectorOnDataBase->setObjectName ( "viewer.tools.inspectDb" );
     _runInspectorOnDataBase->setStatusTip  ( tr("Run Inspector on Hurricane DataBase") );
 
     _runInspectorOnCell= new QAction   ( tr("Inspect &Cell"), this );
-    _runInspectorOnCell->setObjectName ( "viewer.tool.inspectCell" );
+    _runInspectorOnCell->setObjectName ( "viewer.tools.inspectCell" );
     _runInspectorOnCell->setStatusTip  ( tr("Run Inspector on the current Cell") );
 
     _browseNetlist= new QAction   ( tr("Browse &Netlist"), this );
-    _browseNetlist->setObjectName ( "viewer.tool.browseNetlist" );
+    _browseNetlist->setObjectName ( "viewer.tools.browseNetlist" );
     _browseNetlist->setStatusTip  ( tr("Browse netlist from the current Cell") );
   }
 
@@ -189,6 +211,7 @@ namespace Hurricane {
     }
     _fileMenu->addSeparator ();
     _fileMenu->addAction ( _saveAction );
+    _fileMenu->addAction ( _closeAction );
     _fileMenu->addAction ( _exitAction );
 
     _viewMenu = menuBar()->addMenu ( tr("View") );
@@ -197,9 +220,11 @@ namespace Hurricane {
     _viewMenu->addAction ( _fitToContentsAction );
     _viewMenu->addAction ( _showSelectionAction );
     _viewMenu->addAction ( _showPaletteAction );
+    _viewMenu->addAction ( _displayFilterAction );
+    _viewMenu->addAction ( _graphicsSettingsAction );
 
-    _toolsMenu = menuBar()->addMenu ( tr("Tool") );
-    _toolsMenu->setObjectName ( "viewer.tool" );
+    _toolsMenu = menuBar()->addMenu ( tr("Tools") );
+    _toolsMenu->setObjectName ( "viewer.tools" );
     _toolsMenu->addAction ( _runInspectorOnDataBase );
     _toolsMenu->addAction ( _runInspectorOnCell );
     _toolsMenu->addAction ( _browseNetlist );
@@ -211,11 +236,14 @@ namespace Hurricane {
   {
     if ( _cellWidget ) return;
 
-    _cellWidget = new CellWidget ();
-    _palette    = new HPalette ();
+    _cellWidget       = new CellWidget     ();
+    _palette          = new HPalette       ();
+    _graphicsSettings = new HGraphics      ();
+    _displayFilter    = new HDisplayFilter ();
   //_mapView    = _cellWidget->getMapView ();
 
     _cellWidget->bindToPalette ( _palette );
+    _displayFilter->setCellWidget ( _cellWidget );
 
     HMousePosition* _mousePosition = new HMousePosition ();
     statusBar()->addPermanentWidget ( _mousePosition );
@@ -243,13 +271,16 @@ namespace Hurricane {
 
     setCentralWidget ( _cellWidget );
 
-    connect ( _refreshAction         , SIGNAL(triggered())  , _cellWidget, SLOT(redraw                ()));
-    connect ( _fitToContentsAction   , SIGNAL(triggered())  , _cellWidget, SLOT(fitToContents         ()));
-    connect ( _showSelectionAction   , SIGNAL(toggled(bool)), _cellWidget, SLOT(setShowSelection  (bool)));
-    connect ( _showPaletteAction     , SIGNAL(toggled(bool)), this       , SLOT(setShowPalette    (bool)));
-    connect ( _runInspectorOnDataBase, SIGNAL(triggered())  , this       , SLOT(runInspectorOnDataBase()));
-    connect ( _runInspectorOnCell    , SIGNAL(triggered())  , this       , SLOT(runInspectorOnCell    ()));
-    connect ( _browseNetlist         , SIGNAL(triggered())  , this       , SLOT(browseNetlist         ()));
+    connect ( _graphicsSettings      , SIGNAL(styleChanged()), _cellWidget, SLOT(redraw())                );
+    connect ( _refreshAction         , SIGNAL(triggered())   , _cellWidget, SLOT(redraw())                );
+    connect ( _fitToContentsAction   , SIGNAL(triggered())   , _cellWidget, SLOT(fitToContents())         );
+    connect ( _showSelectionAction   , SIGNAL(toggled(bool)) , _cellWidget, SLOT(setShowSelection(bool))  );
+    connect ( _showPaletteAction     , SIGNAL(toggled(bool)) , this       , SLOT(setShowPalette(bool))    );
+    connect ( _graphicsSettingsAction, SIGNAL(triggered())   , this       , SLOT(showGraphicsSettings())  );
+    connect ( _displayFilterAction   , SIGNAL(triggered())   , this       , SLOT(showDisplayFilter())     );
+    connect ( _runInspectorOnDataBase, SIGNAL(triggered())   , this       , SLOT(runInspectorOnDataBase()));
+    connect ( _runInspectorOnCell    , SIGNAL(triggered())   , this       , SLOT(runInspectorOnCell())    );
+    connect ( _browseNetlist         , SIGNAL(triggered())   , this       , SLOT(browseNetlist())         );
     connect ( _cellWidget            , SIGNAL(mousePositionChanged(const Point&))
             , _mousePosition         , SLOT(setPosition(const Point&)) );
 
@@ -259,6 +290,8 @@ namespace Hurricane {
 
   void  CellViewer::refreshHistory ()
   {
+    if ( !getCell() ) return;
+
     Cell* activeCell = getCell();
     _cellHistory.remove ( activeCell );
 
@@ -284,8 +317,11 @@ namespace Hurricane {
   {
     _cellWidget->setCell ( cell );
 
-    QString  title
-      = QString("%1:<%2>").arg(_applicationName).arg(getString(cell->getName()).c_str());
+    QString  cellName = "None";
+    if ( cell )
+      cellName = getString(cell->getName()).c_str();
+
+    QString  title = QString("%1:<%2>").arg(_applicationName).arg(cellName);
     setWindowTitle ( title );
 
     refreshHistory ();
@@ -335,6 +371,18 @@ namespace Hurricane {
 
 //  if ( show ) _palette->show ();
 //  else        _palette->hide ();
+  }
+
+
+  void  CellViewer::showGraphicsSettings ()
+  {
+    _graphicsSettings->show ();
+  }
+
+
+  void  CellViewer::showDisplayFilter ()
+  {
+    _displayFilter->show ();
   }
 
 

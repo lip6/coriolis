@@ -70,13 +70,13 @@ class QMenu;
 #include  "hurricane/Occurrence.h"
 
 
-
-
 namespace Hurricane {
 
 
   class Cell;
   class HPalette;
+  class HGraphics;
+  class HDisplayFilter;
 //class MapView;
   class CellWidget;
   class HMousePosition;
@@ -97,6 +97,8 @@ namespace Hurricane {
               void            unselectAll            ();
     public slots:
               void            setShowPalette         ( bool show );
+              void            showGraphicsSettings   ();
+              void            showDisplayFilter      ();
               void            openHistoryCell        ();
               void            runInspectorOnDataBase ();
               void            runInspectorOnCell     ();
@@ -110,11 +112,14 @@ namespace Hurricane {
               QAction*        _nextAction;
               QAction*        _cellHistoryAction[CellHistorySize];
               QAction*        _saveAction;
+              QAction*        _closeAction;
               QAction*        _exitAction;
               QAction*        _refreshAction;
               QAction*        _fitToContentsAction;
               QAction*        _showSelectionAction;
               QAction*        _showPaletteAction;
+              QAction*        _graphicsSettingsAction;
+              QAction*        _displayFilterAction;
               QAction*        _runInspectorOnDataBase;
               QAction*        _runInspectorOnCell;
               QAction*        _browseNetlist;
@@ -124,6 +129,8 @@ namespace Hurricane {
             //MapView*        _mapView;
               HPalette*       _palette;
               HMousePosition* _mousePosition;
+              HGraphics*      _graphicsSettings;
+              HDisplayFilter* _displayFilter;
               CellWidget*     _cellWidget;
               list<Cell*>     _cellHistory;
 

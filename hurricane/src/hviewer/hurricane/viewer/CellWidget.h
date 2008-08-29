@@ -126,6 +126,8 @@ namespace Hurricane {
               void                    select               ( Occurrence& occurence );
               void                    unselect             ( Occurrence& occurence );
               void                    unselectAll          ( bool delayRedraw=true );
+      inline  void                    setStartLevel        ( int level );
+      inline  void                    setStopLevel         ( int level );
     // Painter control & Hurricane objects drawing primitives.
               bool                    isDrawable           ( const Name& entryName );
               void                    drawBox              ( const Box& );
@@ -379,11 +381,19 @@ namespace Hurricane {
   { copyToScreen ( 0, 0, width(), height() ); }
 
 
-  inline  CellWidget::DrawingPlanes& CellWidget::getDrawingPlanes ()
+  inline void  CellWidget::setStartLevel ( int level )
+  { _drawingQuery.setStartLevel ( level ); }
+
+
+  inline void  CellWidget::setStopLevel ( int level )
+  { _drawingQuery.setStopLevel ( level ); }
+
+
+  inline CellWidget::DrawingPlanes& CellWidget::getDrawingPlanes ()
   { return _drawingPlanes; }
 
 
-  inline  set<Selector*>& CellWidget::getSelectorSet ()
+  inline set<Selector*>& CellWidget::getSelectorSet ()
   { return _selectors; }
 
 

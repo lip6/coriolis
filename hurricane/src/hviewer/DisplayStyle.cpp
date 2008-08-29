@@ -234,7 +234,10 @@ namespace Hurricane {
 
 
    DisplayStyle::DisplayStyle ( const Name& name )
-     : _name(name), _groups()
+     : _name(name)
+     , _description("<No Description>")
+     , _groups()
+     , _darkening(200)
   {
     addDrawingStyle ( Viewer, Fallback     , "FFFFFFFFFFFFFFFF",   0,   0,   0, 1, 1.0 );
     addDrawingStyle ( Viewer, Background   , "FFFFFFFFFFFFFFFF",  50,  50,  50, 1, 1.0 );
@@ -245,8 +248,8 @@ namespace Hurricane {
     addDrawingStyle ( Viewer, Marker       , "FFFFFFFFFFFFFFFF",  80, 250,  80, 1, 1.0 );
     addDrawingStyle ( Viewer, SelectionDraw, "FFFFFFFFFFFFFFFF", 255, 255, 255, 1, 1.0 );
     addDrawingStyle ( Viewer, SelectionFill, "FFFFFFFFFFFFFFFF", 255, 255, 255, 1, 1.0 );
-    addDrawingStyle ( Viewer, Grid         , "FFFFFFFFFFFFFFFF", 255, 255, 255, 1, 1.0 );
-    addDrawingStyle ( Viewer, Spot         , "FFFFFFFFFFFFFFFF", 255, 255, 255, 1, 1.0 );
+    addDrawingStyle ( Viewer, Grid         , "FFFFFFFFFFFFFFFF", 255, 255, 255, 1, 8.0 );
+    addDrawingStyle ( Viewer, Spot         , "FFFFFFFFFFFFFFFF", 255, 255, 255, 1, 8.0 );
     addDrawingStyle ( Viewer, Ghost        , "FFFFFFFFFFFFFFFF", 255, 255, 255, 1, 1.0 );
     addDrawingStyle ( Viewer, Text         , "8822441188224411", 255, 255, 255, 0, 1.0 );
     addDrawingStyle ( Viewer, Undef        , "2244118822441188", 238, 130, 238, 0, 1.0 );
@@ -345,6 +348,17 @@ namespace Hurricane {
   }
 
 
+  void  DisplayStyle::setDarkening ( int darkening )
+  {
+    if ( darkening <= 0 ) {
+      cerr << "[ERROR] Invalid darkening factor: " << darkening << "." << endl;
+      return;
+    }
+
+    _darkening = darkening;
+  }
+
+
   void  DisplayStyle::addDrawingStyle  ( const Name&   groupKey
                                        , const Name&   key
                                        , const string& pattern
@@ -366,9 +380,12 @@ namespace Hurricane {
   {
     assert ( base != NULL );
 
-    for ( size_t gi=0 ; gi < base->_groups.size() ; gi++ ) {
-      _groups.push_back ( base->_groups[gi]->getClone() );
-    }
+    for ( size_t i=0 ; i<_groups.size() ; i++ )
+      delete _groups[i];
+    _groups.clear ();
+
+    for ( size_t gi=0 ; gi < base->_groups.size() ; gi++ )
+      _groups.push_back ( base->_groups[gi]->getClone());
   }
 
 
