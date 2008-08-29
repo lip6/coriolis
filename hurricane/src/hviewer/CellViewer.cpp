@@ -124,7 +124,7 @@ namespace Hurricane {
     _nextAction->setObjectName ( "viewer.file.nextBreakpoint" );
     _nextAction->setStatusTip  ( tr("Proceed to the next breakpoint") );
 
-    for ( size_t i=0 ; i<CellHistorySize ; i++ ) {
+    for ( int i=0 ; i<CellHistorySize ; i++ ) {
       _cellHistoryAction[i] = new QAction ( this );
       _cellHistoryAction[i]->setObjectName ( QString("viewer.file.cellHistory[%1]").arg(i) );
       _cellHistoryAction[i]->setVisible ( false );
