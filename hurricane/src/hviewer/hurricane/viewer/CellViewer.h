@@ -69,6 +69,10 @@ class QMenu;
 #include  "hurricane/Name.h"
 #include  "hurricane/Occurrence.h"
 
+#include  "hurricane/viewer/MoveCommand.h"
+#include  "hurricane/viewer/ZoomCommand.h"
+#include  "hurricane/viewer/SelectCommand.h"
+
 
 namespace Hurricane {
 
@@ -80,29 +84,34 @@ namespace Hurricane {
 //class MapView;
   class CellWidget;
   class HMousePosition;
+  class HNetlist;
+  class HSelection;
 
 
   class CellViewer : public QMainWindow {
       Q_OBJECT;
 
     public:
-                              CellViewer             ( QWidget* parent=NULL );
-      inline  void            setApplicationName     ( const QString& name );
-              void            setCell                ( Cell* cell );
-              Cell*           getCell                ();
-      virtual Cell*           getCellFromDb          ( const char* name );
-      inline  CellWidget*     getCellWidget          ();
-              void            select                 ( Occurrence& occurence );
-              void            unselect               ( Occurrence& occurence );
-              void            unselectAll            ();
+                              CellViewer                ( QWidget* parent=NULL );
+      inline  void            setApplicationName        ( const QString& name );
+              void            setCell                   ( Cell* cell );
+              Cell*           getCell                   ();
+      virtual Cell*           getCellFromDb             ( const char* name );
+      inline  CellWidget*     getCellWidget             ();
+              void            select                    ( Occurrence& occurence );
+              void            unselect                  ( Occurrence& occurence );
+              void            unselectAll               ();
     public slots:
-              void            setShowPalette         ( bool show );
-              void            showGraphicsSettings   ();
-              void            showDisplayFilter      ();
-              void            openHistoryCell        ();
-              void            runInspectorOnDataBase ();
-              void            runInspectorOnCell     ();
-              void            browseNetlist          ();
+              void            setShowPalette            ( bool show );
+              void            showGraphicsSettings      ();
+              void            showDisplayFilter         ();
+              void            openHistoryCell           ();
+              void            runInspectorOnDataBase    ();
+              void            runInspectorOnCell        ();
+              void            browseSelection           ();
+              void            browseNetlist             ();
+              void            selectionBrowserDestroyed ();
+              void            netlistBrowserDestroyed   ();
 
     public:
               enum            { CellHistorySize = 10 };
@@ -122,6 +131,7 @@ namespace Hurricane {
               QAction*        _displayFilterAction;
               QAction*        _runInspectorOnDataBase;
               QAction*        _runInspectorOnCell;
+              QAction*        _browseSelection;
               QAction*        _browseNetlist;
               QMenu*          _fileMenu;
               QMenu*          _viewMenu;
@@ -132,14 +142,19 @@ namespace Hurricane {
               HGraphics*      _graphicsSettings;
               HDisplayFilter* _displayFilter;
               CellWidget*     _cellWidget;
+              MoveCommand     _moveCommand;
+              ZoomCommand     _zoomCommand;
+              SelectCommand   _selectCommand;
               list<Cell*>     _cellHistory;
+              HSelection*     _selectionBrowser;
+              HNetlist*       _netlistBrowser;
 
     protected:
-              void            createActions          ();
-              void            createMenus            ();
-              void            createLayout           ();
-              void            refreshHistory         ();
-              void            runInspector           ( Record* record );
+              void            createActions             ();
+              void            createMenus               ();
+              void            createLayout              ();
+              void            refreshHistory            ();
+              void            runInspector              ( Record* record );
   };
 
 

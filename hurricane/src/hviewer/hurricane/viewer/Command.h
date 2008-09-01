@@ -43,94 +43,62 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./HNetlist.h"                             |
+// |  C++ Header  :       "./Command.h"                              |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
 
-#ifndef  __HNETLIST_WIDGET_H__
-#define  __HNETLIST_WIDGET_H__
+#ifndef  __HURRICANE_COMMAND_H__
+#define  __HURRICANE_COMMAND_H__
 
 
-#include  <QWidget>
-#include  <QTableView>
-#include  <QSortFilterProxyModel>
+#include  <set>
 
-#include  "hurricane/Commons.h"
-#include  "hurricane/viewer/CellWidget.h"
-#include  "hurricane/viewer/HNetlistModel.h"
+using namespace std;
 
 
-class QSortFilterProxyModel;
-class QModelIndex;
-class QTableView;
-class QLineEdit;
-class QComboBox;
-class QHeaderView;
+class QKeyEvent;
+class QMouseEvent;
 
 
 namespace Hurricane {
 
 
-  class Cell;
   class CellWidget;
 
 
-  class HNetlist : public QWidget {
-      Q_OBJECT;
-
+  class Command {
     public:
-                                     HNetlist          ( QWidget* parent=NULL );
-      template<typename InformationType>
-              void                   setCell           ( Cell* cell );
-      template<typename InformationType>
-              void                   setCellWidget     ( CellWidget* cw );
-              void                   runInspector      ( const QModelIndex& index  );
-    private slots:
-              void                   textFilterChanged ();
-              void                   selectNet         ( const QModelIndex& index );
+                                Command              ();
+      virtual                  ~Command              ();
+      inline  bool              isActive             ();
+      inline  void              setActive            ( bool state );
+      virtual bool              keyPressEvent        ( CellWidget*, QKeyEvent* );
+      virtual bool              mouseMoveEvent       ( CellWidget*, QMouseEvent* );
+      virtual bool              mousePressEvent      ( CellWidget*, QMouseEvent* );
+      virtual bool              mouseReleaseEvent    ( CellWidget*, QMouseEvent* );
+      virtual void              draw                 ( CellWidget* );
+      inline  set<CellWidget*>& getCellWidgets       ();
     protected:
-              void                   keyPressEvent     ( QKeyEvent * event );
-
+              set<CellWidget*>  _cellWidgets;
+              bool              _active;
     private:
-              HNetlistModel*         _netlistModel;
-              QSortFilterProxyModel* _sortModel;
-              QTableView*            _netlistView;
-              QLineEdit*             _filterPatternLineEdit;
-              int                    _rowHeight;
-              CellWidget*            _cellWidget;
+                                Command              ( const Command& );
+              Command&          operator=            ( const Command& );
   };
 
 
-  template<typename InformationType>
-  void  HNetlist::setCell ( Cell* cell )
-  {
-    _netlistModel->setCell<InformationType> ( cell );
-     
-    string windowTitle = "Netlist" + getString(cell);
-    setWindowTitle ( tr(windowTitle.c_str()) );
-
-    int rows = _sortModel->rowCount ();
-    for ( rows-- ; rows >= 0 ; rows-- )
-      _netlistView->setRowHeight ( rows, _rowHeight );
-    _netlistView->selectRow ( 0 );
-    _netlistView->resizeColumnToContents ( 0 );
-  }
+// Inline Functions.
+  inline set<CellWidget*>& Command::getCellWidgets () { return _cellWidgets; }
+  inline bool              Command::isActive       () { return _active; }
+  inline void              Command::setActive      ( bool state ) { _active = state; }
 
 
-  template<typename InformationType>
-  void  HNetlist::setCellWidget ( CellWidget* cw )
-  {
-    if ( _netlistModel->getCell() != cw->getCell() )
-      setCell<InformationType>( cw->getCell() );
-
-    _cellWidget = cw;
-  }
+}
 
 
-} // End of Hurricane namespace.
 
+#endif
 
-#endif // __HNETLIST_WIDGET_H__

@@ -43,94 +43,77 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./HNetlist.h"                             |
+// |  C++ Module  :       "./AreaCommand.cpp"                        |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
 
-#ifndef  __HNETLIST_WIDGET_H__
-#define  __HNETLIST_WIDGET_H__
+# include <QMouseEvent>
+# include <QKeyEvent>
 
-
-#include  <QWidget>
-#include  <QTableView>
-#include  <QSortFilterProxyModel>
-
-#include  "hurricane/Commons.h"
-#include  "hurricane/viewer/CellWidget.h"
-#include  "hurricane/viewer/HNetlistModel.h"
-
-
-class QSortFilterProxyModel;
-class QModelIndex;
-class QTableView;
-class QLineEdit;
-class QComboBox;
-class QHeaderView;
+# include <hurricane/viewer/CellWidget.h>
+# include <hurricane/viewer/AreaCommand.h>
 
 
 namespace Hurricane {
 
 
-  class Cell;
-  class CellWidget;
+// -------------------------------------------------------------------
+// Class  :  "AreaCommand".
 
 
-  class HNetlist : public QWidget {
-      Q_OBJECT;
-
-    public:
-                                     HNetlist          ( QWidget* parent=NULL );
-      template<typename InformationType>
-              void                   setCell           ( Cell* cell );
-      template<typename InformationType>
-              void                   setCellWidget     ( CellWidget* cw );
-              void                   runInspector      ( const QModelIndex& index  );
-    private slots:
-              void                   textFilterChanged ();
-              void                   selectNet         ( const QModelIndex& index );
-    protected:
-              void                   keyPressEvent     ( QKeyEvent * event );
-
-    private:
-              HNetlistModel*         _netlistModel;
-              QSortFilterProxyModel* _sortModel;
-              QTableView*            _netlistView;
-              QLineEdit*             _filterPatternLineEdit;
-              int                    _rowHeight;
-              CellWidget*            _cellWidget;
-  };
+  AreaCommand::AreaCommand ()
+    : Command()
+    , _startPoint()
+    , _stopPoint()
+  { }
 
 
-  template<typename InformationType>
-  void  HNetlist::setCell ( Cell* cell )
+  AreaCommand::~AreaCommand ()
+  { }
+
+
+
+  bool  AreaCommand::mouseMoveEvent ( CellWidget* widget, QMouseEvent* event )
   {
-    _netlistModel->setCell<InformationType> ( cell );
-     
-    string windowTitle = "Netlist" + getString(cell);
-    setWindowTitle ( tr(windowTitle.c_str()) );
+    if ( !isActive() ) return false;
 
-    int rows = _sortModel->rowCount ();
-    for ( rows-- ; rows >= 0 ; rows-- )
-      _netlistView->setRowHeight ( rows, _rowHeight );
-    _netlistView->selectRow ( 0 );
-    _netlistView->resizeColumnToContents ( 0 );
+    setStopPoint ( event->pos() );
+    widget->update ();
+
+    return true;
   }
 
 
-  template<typename InformationType>
-  void  HNetlist::setCellWidget ( CellWidget* cw )
+  void  AreaCommand::draw ( CellWidget* widget )
   {
-    if ( _netlistModel->getCell() != cw->getCell() )
-      setCell<InformationType>( cw->getCell() );
+    if ( !_active ) return;
 
-    _cellWidget = cw;
+    widget->drawScreenRect ( _startPoint, _stopPoint );
+    drawCorner ( widget, true  );
+    drawCorner ( widget, false );
+  }
+
+
+  void  AreaCommand::drawCorner ( CellWidget* widget, bool bottomLeft )
+  {
+    QRect  zoomRect = QRect(_startPoint,_stopPoint).normalized();
+    QPoint base     = (bottomLeft) ? zoomRect.bottomLeft() : zoomRect.topRight();
+
+    if ( bottomLeft ) base.rx() += 2;
+    else              base.ry() += 2;
+
+    _cornerPoints[0] = base;
+    _cornerPoints[1] = base;
+    _cornerPoints[2] = base;
+
+    _cornerPoints[0].ry() += (bottomLeft) ? -10 :  10;
+    _cornerPoints[2].rx() += (bottomLeft) ?  10 : -10;
+
+    widget->drawScreenPolyline ( _cornerPoints, 3, 4 );
   }
 
 
 } // End of Hurricane namespace.
-
-
-#endif // __HNETLIST_WIDGET_H__

@@ -43,94 +43,52 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./HNetlist.h"                             |
+// |  C++ Header  :       "./AreaCommand.h"                          |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
 
-#ifndef  __HNETLIST_WIDGET_H__
-#define  __HNETLIST_WIDGET_H__
+#ifndef  __HURRICANE_AREA_COMMAND_H__
+#define  __HURRICANE_AREA_COMMAND_H__
 
+#include  <QPoint>
 
-#include  <QWidget>
-#include  <QTableView>
-#include  <QSortFilterProxyModel>
-
-#include  "hurricane/Commons.h"
-#include  "hurricane/viewer/CellWidget.h"
-#include  "hurricane/viewer/HNetlistModel.h"
-
-
-class QSortFilterProxyModel;
-class QModelIndex;
-class QTableView;
-class QLineEdit;
-class QComboBox;
-class QHeaderView;
+#include  "hurricane/viewer/Command.h"
 
 
 namespace Hurricane {
 
 
-  class Cell;
-  class CellWidget;
-
-
-  class HNetlist : public QWidget {
-      Q_OBJECT;
-
+  class AreaCommand : public Command {
     public:
-                                     HNetlist          ( QWidget* parent=NULL );
-      template<typename InformationType>
-              void                   setCell           ( Cell* cell );
-      template<typename InformationType>
-              void                   setCellWidget     ( CellWidget* cw );
-              void                   runInspector      ( const QModelIndex& index  );
-    private slots:
-              void                   textFilterChanged ();
-              void                   selectNet         ( const QModelIndex& index );
+                                AreaCommand          ();
+      virtual                  ~AreaCommand          ();
+      inline  void              setStartPoint        ( const QPoint& start );
+      inline  void              setStopPoint         ( const QPoint& stop );
+      virtual void              draw                 ( CellWidget* widget );
+      virtual void              drawCorner           ( CellWidget* widget, bool bottomLeft );
+      virtual bool              mouseMoveEvent       ( CellWidget* widget, QMouseEvent* event );
     protected:
-              void                   keyPressEvent     ( QKeyEvent * event );
-
+              QPoint            _startPoint;
+              QPoint            _stopPoint;
+              QPoint            _cornerPoints[3];
     private:
-              HNetlistModel*         _netlistModel;
-              QSortFilterProxyModel* _sortModel;
-              QTableView*            _netlistView;
-              QLineEdit*             _filterPatternLineEdit;
-              int                    _rowHeight;
-              CellWidget*            _cellWidget;
+                                AreaCommand          ( const AreaCommand& );
+              AreaCommand&      operator=            ( const AreaCommand& );
   };
 
 
-  template<typename InformationType>
-  void  HNetlist::setCell ( Cell* cell )
-  {
-    _netlistModel->setCell<InformationType> ( cell );
-     
-    string windowTitle = "Netlist" + getString(cell);
-    setWindowTitle ( tr(windowTitle.c_str()) );
-
-    int rows = _sortModel->rowCount ();
-    for ( rows-- ; rows >= 0 ; rows-- )
-      _netlistView->setRowHeight ( rows, _rowHeight );
-    _netlistView->selectRow ( 0 );
-    _netlistView->resizeColumnToContents ( 0 );
-  }
+  inline void  AreaCommand::setStartPoint ( const QPoint& start )
+  { _startPoint = start; _stopPoint = start; }
 
 
-  template<typename InformationType>
-  void  HNetlist::setCellWidget ( CellWidget* cw )
-  {
-    if ( _netlistModel->getCell() != cw->getCell() )
-      setCell<InformationType>( cw->getCell() );
-
-    _cellWidget = cw;
-  }
+  inline void  AreaCommand::setStopPoint ( const QPoint& stop )
+  { _stopPoint  = stop; }
 
 
-} // End of Hurricane namespace.
+}
 
 
-#endif // __HNETLIST_WIDGET_H__
+#endif

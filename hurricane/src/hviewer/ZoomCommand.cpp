@@ -43,94 +43,69 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./HNetlist.h"                             |
+// |  C++ Module  :       "./ZoomCommand.cpp"                        |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
 
-#ifndef  __HNETLIST_WIDGET_H__
-#define  __HNETLIST_WIDGET_H__
+# include <QMouseEvent>
+# include <QKeyEvent>
 
-
-#include  <QWidget>
-#include  <QTableView>
-#include  <QSortFilterProxyModel>
-
-#include  "hurricane/Commons.h"
-#include  "hurricane/viewer/CellWidget.h"
-#include  "hurricane/viewer/HNetlistModel.h"
-
-
-class QSortFilterProxyModel;
-class QModelIndex;
-class QTableView;
-class QLineEdit;
-class QComboBox;
-class QHeaderView;
+# include <hurricane/viewer/CellWidget.h>
+# include <hurricane/viewer/ZoomCommand.h>
 
 
 namespace Hurricane {
 
 
-  class Cell;
-  class CellWidget;
+// -------------------------------------------------------------------
+// Class  :  "ZoomCommand".
 
 
-  class HNetlist : public QWidget {
-      Q_OBJECT;
-
-    public:
-                                     HNetlist          ( QWidget* parent=NULL );
-      template<typename InformationType>
-              void                   setCell           ( Cell* cell );
-      template<typename InformationType>
-              void                   setCellWidget     ( CellWidget* cw );
-              void                   runInspector      ( const QModelIndex& index  );
-    private slots:
-              void                   textFilterChanged ();
-              void                   selectNet         ( const QModelIndex& index );
-    protected:
-              void                   keyPressEvent     ( QKeyEvent * event );
-
-    private:
-              HNetlistModel*         _netlistModel;
-              QSortFilterProxyModel* _sortModel;
-              QTableView*            _netlistView;
-              QLineEdit*             _filterPatternLineEdit;
-              int                    _rowHeight;
-              CellWidget*            _cellWidget;
-  };
+  ZoomCommand::ZoomCommand ()
+    : AreaCommand()
+  { }
 
 
-  template<typename InformationType>
-  void  HNetlist::setCell ( Cell* cell )
-  {
-    _netlistModel->setCell<InformationType> ( cell );
-     
-    string windowTitle = "Netlist" + getString(cell);
-    setWindowTitle ( tr(windowTitle.c_str()) );
+  ZoomCommand::~ZoomCommand ()
+  { }
 
-    int rows = _sortModel->rowCount ();
-    for ( rows-- ; rows >= 0 ; rows-- )
-      _netlistView->setRowHeight ( rows, _rowHeight );
-    _netlistView->selectRow ( 0 );
-    _netlistView->resizeColumnToContents ( 0 );
+
+  bool  ZoomCommand::keyPressEvent ( CellWidget* widget, QKeyEvent* event )
+  { 
+    switch ( event->key() ) {
+      case Qt::Key_Z: widget->setScale ( widget->getScale()*2.0 ); return true;
+      case Qt::Key_M: widget->setScale ( widget->getScale()/2.0 ); return true;
+    }
+    return false;
   }
 
 
-  template<typename InformationType>
-  void  HNetlist::setCellWidget ( CellWidget* cw )
+  bool  ZoomCommand::mousePressEvent ( CellWidget* widget, QMouseEvent* event )
   {
-    if ( _netlistModel->getCell() != cw->getCell() )
-      setCell<InformationType>( cw->getCell() );
+    if ( isActive() ) return true;
 
-    _cellWidget = cw;
+    if ( (event->button() == Qt::LeftButton) && (event->modifiers() & Qt::ControlModifier) ) {
+      setActive     ( true );
+      setStartPoint ( event->pos() );
+    }
+
+    return isActive();
+  }
+
+
+  bool  ZoomCommand::mouseReleaseEvent ( CellWidget* widget, QMouseEvent* event )
+  {
+    if ( !isActive() ) return false;
+
+    setActive ( false );
+
+    widget->reframe ( widget->screenToDbuBox(QRect(_startPoint,_stopPoint)) );
+
+    return false;
   }
 
 
 } // End of Hurricane namespace.
-
-
-#endif // __HNETLIST_WIDGET_H__

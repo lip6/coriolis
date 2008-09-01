@@ -99,6 +99,7 @@ namespace Hurricane {
   class Selector;
   class HPaletteEntry;
   class HPalette;
+  class Command;
 //class MapView;
 
 
@@ -119,21 +120,26 @@ namespace Hurricane {
       inline  HPalette*               getPalette           ();
               void                    bindToPalette        ( HPalette* palette );
               void                    detachFromPalette    ();
+              void                    bindCommand          ( Command* command );
+              void                    unbindCommand        ( Command* command );
       inline  bool                    showBoundaries       () const;
       inline  set<Selector*>&         getSelectorSet       ();
       inline  bool                    showSelection        () const;
               void                    select               ( const Net* net, bool delayRedraw=false );
-              void                    select               ( Occurrence& occurence );
-              void                    unselect             ( Occurrence& occurence );
+              void                    select               ( Occurrence occurence );
+              void                    unselect             ( Occurrence occurence );
               void                    unselectAll          ( bool delayRedraw=true );
       inline  void                    setStartLevel        ( int level );
       inline  void                    setStopLevel         ( int level );
     // Painter control & Hurricane objects drawing primitives.
+      inline  float                   getScale             () const;
               bool                    isDrawable           ( const Name& entryName );
               void                    drawBox              ( const Box& );
               void                    drawLine             ( const Point&, const Point& );
               void                    drawGrid             ();
               void                    drawSpot             ();
+              void                    drawScreenRect       ( const QPoint&, const QPoint& );
+              void                    drawScreenPolyline   ( const QPoint*, int, int );
     // Geometric conversions.
               QRect                   dbuToDisplayRect     ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2 ) const;
               QRect                   dbuToDisplayRect     ( const Box& box ) const;
@@ -153,6 +159,7 @@ namespace Hurricane {
       inline  DbU::Unit               screenToDbuX         ( int  x ) const;
       inline  DbU::Unit               screenToDbuY         ( int  y ) const;
       inline  Point                   screenToDbuPoint     ( const QPoint& point ) const;
+      inline  Box                     screenToDbuBox       ( const QRect& rect ) const;
     // Qt QWidget Functions Overloads.
               void                    pushCursor           ( Qt::CursorShape cursor );
               void                    popCursor            ();
@@ -191,14 +198,16 @@ namespace Hurricane {
     private:
       class Spot {
         public:
-                      Spot       ( CellWidget* cw );
-          void        setRestore ( bool restore );
-          void        restore    ();
-          void        moveTo     ( const QPoint& point );
+                             Spot        ( CellWidget* cw );
+                 void        setRestore  ( bool restore );
+          inline void        setShowSpot ( bool show );
+                 void        restore     ();
+                 void        moveTo      ( const QPoint& point );
         private:
-          CellWidget* _cellWidget;
-          QPoint      _spotPoint;
-          bool        _restore;
+                 CellWidget* _cellWidget;
+                 QPoint      _spotPoint;
+                 bool        _restore;
+                 bool        _showSpot;
       };
 
     private:
@@ -282,18 +291,20 @@ namespace Hurricane {
               QPoint                  _offsetVA;
               DrawingPlanes           _drawingPlanes;
               DrawingQuery            _drawingQuery;
-              QPoint                  _lastMousePosition;
+              QPoint                  _mousePosition;
               Spot                    _spot;
               Cell*                   _cell;
-              bool                    _mouseGo;
               bool                    _showBoundaries;
               bool                    _showSelection;
               bool                    _selectionHasChanged;
               set<Selector*>          _selectors;
+              vector<Command*>        _commands;
               size_t                  _redrawRectCount;
   };
 
 
+  inline void  CellWidget::Spot::setShowSpot ( bool show )
+  { _showSpot = show; }
 
 
   inline void  CellWidget::DrawingQuery::setQuery ( const Box&            area
@@ -467,6 +478,16 @@ namespace Hurricane {
   { return Point ( screenToDbuX(point.x()), screenToDbuY(point.y()) ); }
 
 
+  inline Box  CellWidget::screenToDbuBox ( const QRect& rect ) const
+  {
+    return Box ( screenToDbuX(rect.x())
+               , screenToDbuY(rect.y())
+               , screenToDbuX(rect.x()+rect.width ())
+               , screenToDbuY(rect.y()+rect.height())
+               );
+  }
+
+
   inline Cell* CellWidget::getCell () const
   { return _cell; }
 
@@ -481,6 +502,10 @@ namespace Hurricane {
 
   inline  bool  CellWidget::showSelection  () const
   { return _showSelection; }
+
+
+  inline  float  CellWidget::getScale () const
+  { return _scale; }
 
 
 } // End of Hurricane namespace.

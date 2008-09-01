@@ -43,94 +43,75 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./HNetlist.h"                             |
+// |  C++ Module  :       "./SelectCommand.cpp"                      |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
 
-#ifndef  __HNETLIST_WIDGET_H__
-#define  __HNETLIST_WIDGET_H__
+# include <QMouseEvent>
+# include <QKeyEvent>
 
+# include "hurricane/Cell.h"
 
-#include  <QWidget>
-#include  <QTableView>
-#include  <QSortFilterProxyModel>
-
-#include  "hurricane/Commons.h"
-#include  "hurricane/viewer/CellWidget.h"
-#include  "hurricane/viewer/HNetlistModel.h"
-
-
-class QSortFilterProxyModel;
-class QModelIndex;
-class QTableView;
-class QLineEdit;
-class QComboBox;
-class QHeaderView;
+# include "hurricane/viewer/CellWidget.h"
+# include "hurricane/viewer/SelectCommand.h"
 
 
 namespace Hurricane {
 
 
-  class Cell;
-  class CellWidget;
+// -------------------------------------------------------------------
+// Class  :  "SelectCommand".
 
 
-  class HNetlist : public QWidget {
-      Q_OBJECT;
-
-    public:
-                                     HNetlist          ( QWidget* parent=NULL );
-      template<typename InformationType>
-              void                   setCell           ( Cell* cell );
-      template<typename InformationType>
-              void                   setCellWidget     ( CellWidget* cw );
-              void                   runInspector      ( const QModelIndex& index  );
-    private slots:
-              void                   textFilterChanged ();
-              void                   selectNet         ( const QModelIndex& index );
-    protected:
-              void                   keyPressEvent     ( QKeyEvent * event );
-
-    private:
-              HNetlistModel*         _netlistModel;
-              QSortFilterProxyModel* _sortModel;
-              QTableView*            _netlistView;
-              QLineEdit*             _filterPatternLineEdit;
-              int                    _rowHeight;
-              CellWidget*            _cellWidget;
-  };
+  SelectCommand::SelectCommand ()
+    : AreaCommand()
+  { }
 
 
-  template<typename InformationType>
-  void  HNetlist::setCell ( Cell* cell )
+  SelectCommand::~SelectCommand ()
+  { }
+
+
+  bool  SelectCommand::mousePressEvent ( CellWidget* widget, QMouseEvent* event )
   {
-    _netlistModel->setCell<InformationType> ( cell );
-     
-    string windowTitle = "Netlist" + getString(cell);
-    setWindowTitle ( tr(windowTitle.c_str()) );
+    if ( isActive() ) return true;
 
-    int rows = _sortModel->rowCount ();
-    for ( rows-- ; rows >= 0 ; rows-- )
-      _netlistView->setRowHeight ( rows, _rowHeight );
-    _netlistView->selectRow ( 0 );
-    _netlistView->resizeColumnToContents ( 0 );
+    if ( (event->button() == Qt::RightButton) && !event->modifiers() ) {
+      setActive     ( true );
+      setStartPoint ( event->pos() );
+    }
+
+    return isActive();
   }
 
 
-  template<typename InformationType>
-  void  HNetlist::setCellWidget ( CellWidget* cw )
+  bool  SelectCommand::mouseReleaseEvent ( CellWidget* widget, QMouseEvent* event )
   {
-    if ( _netlistModel->getCell() != cw->getCell() )
-      setCell<InformationType>( cw->getCell() );
+    if ( !isActive() ) return false;
 
-    _cellWidget = cw;
+    setActive ( false );
+
+    QRect selectArea;
+    if ( _startPoint == _stopPoint )
+      selectArea = QRect ( _startPoint - QPoint(2,2), QSize(4,4) );
+    else
+      selectArea = QRect ( _startPoint, _stopPoint );
+      
+    widget->unselectAll ();
+    forEach ( Occurrence, ioccurrence
+            , widget->getCell()->getOccurrencesUnder(widget->screenToDbuBox(selectArea)) ) {
+      widget->select ( *ioccurrence );
+    }
+    widget->setShowSelection ( true );
+    widget->redraw ();
+
+    emit selectionChanged(widget->getSelectorSet(),widget->getCell());
+
+    return false;
   }
 
 
 } // End of Hurricane namespace.
-
-
-#endif // __HNETLIST_WIDGET_H__

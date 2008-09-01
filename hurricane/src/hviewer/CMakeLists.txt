@@ -13,11 +13,14 @@
                                      hurricane/viewer/DynamicLabel.h
                                      hurricane/viewer/HMousePosition.h
                                      hurricane/viewer/Selector.h
+                                     hurricane/viewer/SelectCommand.h
                                      hurricane/viewer/CellWidget.h
                                      hurricane/viewer/CellWidgets.h
                                      hurricane/viewer/CellViewer.h
                                      hurricane/viewer/RecordModel.h
                                      hurricane/viewer/HInspectorWidget.h
+                                     hurricane/viewer/HSelectionModel.h
+                                     hurricane/viewer/HSelection.h
                                      hurricane/viewer/HNetlistModel.h
                                      hurricane/viewer/HNetlist.h
                                      hurricane/viewer/HDisplayFilter.h
@@ -29,10 +32,17 @@
                                      hurricane/viewer/Graphics.h
                                      hurricane/viewer/HGraphics.h
                                      hurricane/viewer/Selector.h
+                                     hurricane/viewer/Command.h
+                                     hurricane/viewer/AreaCommand.h
+                                     hurricane/viewer/MoveCommand.h
+                                     hurricane/viewer/ZoomCommand.h
+                                     hurricane/viewer/SelectCommand.h
                                      hurricane/viewer/CellWidget.h
                                      hurricane/viewer/CellWidgets.h
                                      hurricane/viewer/CellViewer.h
                                      hurricane/viewer/HInspectorWidget.h
+                                     hurricane/viewer/HSelectionModel.h
+                                     hurricane/viewer/HSelection.h
                                      hurricane/viewer/NetInformations.h
                                      hurricane/viewer/HNetlist.h
                                      hurricane/viewer/HDisplayFilter.h
@@ -49,10 +59,17 @@
                                      DynamicLabel.cpp
                                      HMousePosition.cpp
                                      Selector.cpp
+                                     Command.cpp
+                                     AreaCommand.cpp
+                                     MoveCommand.cpp
+                                     ZoomCommand.cpp
+                                     SelectCommand.cpp
                                      CellWidget.cpp
                                      CellViewer.cpp
                                      RecordModel.cpp
                                      HInspectorWidget.cpp
+                                     HSelectionModel.cpp
+                                     HSelection.cpp
                                      NetInformations.cpp
                                      HNetlistModel.cpp
                                      HNetlist.cpp

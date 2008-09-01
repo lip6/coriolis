@@ -42,7 +42,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./HNetlist.cpp"                           |
+// |  C++ Module  :       "./HSelection.cpp"                         |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
@@ -58,11 +58,11 @@
 #include  <QVBoxLayout>
 
 #include "hurricane/Commons.h"
-#include "hurricane/Net.h"
+#include "hurricane/Cell.h"
 
 #include "hurricane/viewer/Graphics.h"
-#include "hurricane/viewer/HNetlistModel.h"
-#include "hurricane/viewer/HNetlist.h"
+#include "hurricane/viewer/HSelectionModel.h"
+#include "hurricane/viewer/HSelection.h"
 #include "hurricane/viewer/HInspectorWidget.h"
 
 
@@ -70,39 +70,38 @@ namespace Hurricane {
 
 
 
-  HNetlist::HNetlist ( QWidget* parent )
-      : QWidget(parent)
-      , _netlistModel(NULL)
-      , _sortModel(NULL)
-      , _netlistView(NULL)
-      , _rowHeight(20)
-      , _cellWidget(NULL)
+  HSelection::HSelection ( QWidget* parent )
+    : QWidget(parent)
+    , _selectionModel(NULL)
+    , _sortModel(NULL)
+    , _selectionView(NULL)
+    , _rowHeight(20)
   {
     setAttribute ( Qt::WA_DeleteOnClose );
     setAttribute ( Qt::WA_QuitOnClose, false );
 
     _rowHeight = QFontMetrics(Graphics::getFixedFont()).height() + 4;
 
-    _netlistModel = new HNetlistModel ( this );
+    _selectionModel = new HSelectionModel ( this );
 
     _sortModel = new QSortFilterProxyModel ( this );
-    _sortModel->setSourceModel       ( _netlistModel );
+    _sortModel->setSourceModel       ( _selectionModel );
     _sortModel->setDynamicSortFilter ( true );
     _sortModel->setFilterKeyColumn   ( 0 );
 
-    _netlistView = new QTableView(this);
-    _netlistView->setShowGrid(false);
-    _netlistView->setAlternatingRowColors(true);
-    _netlistView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    _netlistView->setSortingEnabled(true);
-    _netlistView->setModel ( _sortModel );
-    _netlistView->horizontalHeader()->setStretchLastSection ( true );
+    _selectionView = new QTableView(this);
+    _selectionView->setShowGrid(false);
+    _selectionView->setAlternatingRowColors(true);
+    _selectionView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _selectionView->setSortingEnabled(true);
+    _selectionView->setModel ( _sortModel );
+    _selectionView->horizontalHeader()->setStretchLastSection ( true );
 
-    QHeaderView* horizontalHeader = _netlistView->horizontalHeader ();
+    QHeaderView* horizontalHeader = _selectionView->horizontalHeader ();
     horizontalHeader->setStretchLastSection ( true );
     horizontalHeader->setMinimumSectionSize ( 200 );
 
-    QHeaderView* verticalHeader = _netlistView->verticalHeader ();
+    QHeaderView* verticalHeader = _selectionView->verticalHeader ();
     verticalHeader->setVisible ( false );
 
     _filterPatternLineEdit = new QLineEdit(this);
@@ -110,7 +109,7 @@ namespace Hurricane {
     filterPatternLabel->setBuddy(_filterPatternLineEdit);
 
     QGridLayout* inspectorLayout = new QGridLayout();
-    inspectorLayout->addWidget(_netlistView          , 1, 0, 1, 2);
+    inspectorLayout->addWidget(_selectionView        , 1, 0, 1, 2);
     inspectorLayout->addWidget(filterPatternLabel    , 2, 0);
     inspectorLayout->addWidget(_filterPatternLineEdit, 2, 1);
 
@@ -119,50 +118,58 @@ namespace Hurricane {
     connect ( _filterPatternLineEdit, SIGNAL(textChanged(const QString &))
             , this                  , SLOT(textFilterChanged())
             );
-    connect ( _netlistView          , SIGNAL(activated(const QModelIndex&))
-            , this                  , SLOT(selectNet(const QModelIndex&))
-            );
 
-    setWindowTitle(tr("Netlist"));
+    setWindowTitle(tr("Selection<None>"));
     resize(500, 300);
-
   }
 
 
-  void  HNetlist::selectNet ( const QModelIndex& index )
+  void  HSelection::keyPressEvent ( QKeyEvent* event )
   {
-    const Net* net = _netlistModel->getNet ( _sortModel->mapToSource(index).row() );
-    
-    if ( _cellWidget && net ) {
-      _cellWidget->unselectAll ();
-      _cellWidget->select ( net );
-    }
+    if ( event->key() == Qt::Key_I ) { runInspector(_selectionView->currentIndex()); }
+    else event->ignore();
   }
 
 
-  void  HNetlist::keyPressEvent ( QKeyEvent* event )
-  {
-    if ( event->key() == Qt::Key_I ) { runInspector(_netlistView->currentIndex()); }
-    else {
-      event->ignore();
-    }
-  }
-
-
-  void  HNetlist::textFilterChanged ()
+  void  HSelection::textFilterChanged ()
   {
     _sortModel->setFilterRegExp ( _filterPatternLineEdit->text() );
   }
 
 
-  void  HNetlist::runInspector ( const QModelIndex& index  )
+  void  HSelection::addToSelection ( Selector* selector )
+  {
+    _selectionModel->addToSelection ( selector );
+    int rows = _sortModel->rowCount () - 1;
+    _selectionView->setRowHeight ( rows, _rowHeight );
+  }
+
+
+  void  HSelection::setSelection ( const set<Selector*>& selection, Cell* cell )
+  {
+    _selectionModel->setSelection ( selection );
+     
+    string windowTitle = "Selection";
+    if ( cell ) windowTitle += getString(cell);
+    else        windowTitle += "<None>";
+    setWindowTitle ( tr(windowTitle.c_str()) );
+
+    int rows = _sortModel->rowCount ();
+    for ( rows-- ; rows >= 0 ; rows-- )
+      _selectionView->setRowHeight ( rows, _rowHeight );
+    _selectionView->selectRow ( 0 );
+    _selectionView->resizeColumnToContents ( 0 );
+  }
+
+
+  void  HSelection::runInspector ( const QModelIndex& index  )
   {
     if ( index.isValid() ) {
-      const Net* net = _netlistModel->getNet ( _sortModel->mapToSource(index).row() );
+      Occurrence occurrence = _selectionModel->getOccurrence ( _sortModel->mapToSource(index).row() );
 
       HInspectorWidget* inspector = new HInspectorWidget ();
 
-      inspector->setRootRecord ( getRecord(net) );
+      inspector->setRootRecord ( getRecord(occurrence) );
       inspector->show ();
     }
   }

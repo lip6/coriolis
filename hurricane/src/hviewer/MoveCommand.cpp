@@ -43,94 +43,93 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./HNetlist.h"                             |
+// |  C++ Module  :       "./MoveCommand.cpp"                        |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
 
-#ifndef  __HNETLIST_WIDGET_H__
-#define  __HNETLIST_WIDGET_H__
+# include <QMouseEvent>
+# include <QKeyEvent>
 
-
-#include  <QWidget>
-#include  <QTableView>
-#include  <QSortFilterProxyModel>
-
-#include  "hurricane/Commons.h"
-#include  "hurricane/viewer/CellWidget.h"
-#include  "hurricane/viewer/HNetlistModel.h"
-
-
-class QSortFilterProxyModel;
-class QModelIndex;
-class QTableView;
-class QLineEdit;
-class QComboBox;
-class QHeaderView;
+# include <hurricane/viewer/CellWidget.h>
+# include <hurricane/viewer/MoveCommand.h>
 
 
 namespace Hurricane {
 
 
-  class Cell;
-  class CellWidget;
+// -------------------------------------------------------------------
+// Class  :  "MoveCommand".
 
 
-  class HNetlist : public QWidget {
-      Q_OBJECT;
-
-    public:
-                                     HNetlist          ( QWidget* parent=NULL );
-      template<typename InformationType>
-              void                   setCell           ( Cell* cell );
-      template<typename InformationType>
-              void                   setCellWidget     ( CellWidget* cw );
-              void                   runInspector      ( const QModelIndex& index  );
-    private slots:
-              void                   textFilterChanged ();
-              void                   selectNet         ( const QModelIndex& index );
-    protected:
-              void                   keyPressEvent     ( QKeyEvent * event );
-
-    private:
-              HNetlistModel*         _netlistModel;
-              QSortFilterProxyModel* _sortModel;
-              QTableView*            _netlistView;
-              QLineEdit*             _filterPatternLineEdit;
-              int                    _rowHeight;
-              CellWidget*            _cellWidget;
-  };
+  MoveCommand::MoveCommand ()
+    : Command()
+    , _active(false)
+    , _lastPosition()
+  { }
 
 
-  template<typename InformationType>
-  void  HNetlist::setCell ( Cell* cell )
-  {
-    _netlistModel->setCell<InformationType> ( cell );
-     
-    string windowTitle = "Netlist" + getString(cell);
-    setWindowTitle ( tr(windowTitle.c_str()) );
+  MoveCommand::~MoveCommand ()
+  { }
 
-    int rows = _sortModel->rowCount ();
-    for ( rows-- ; rows >= 0 ; rows-- )
-      _netlistView->setRowHeight ( rows, _rowHeight );
-    _netlistView->selectRow ( 0 );
-    _netlistView->resizeColumnToContents ( 0 );
+
+  bool  MoveCommand::keyPressEvent ( CellWidget* widget, QKeyEvent* event )
+  { 
+    switch ( event->key() ) {
+      case Qt::Key_Up:    widget->goUp    (); return true;
+      case Qt::Key_Down:  widget->goDown  (); return true;
+      case Qt::Key_Left:  widget->goLeft  (); return true;
+      case Qt::Key_Right: widget->goRight (); return true;
+    }
+    return false;
   }
 
 
-  template<typename InformationType>
-  void  HNetlist::setCellWidget ( CellWidget* cw )
+  bool  MoveCommand::mouseMoveEvent ( CellWidget* widget, QMouseEvent* event )
   {
-    if ( _netlistModel->getCell() != cw->getCell() )
-      setCell<InformationType>( cw->getCell() );
+    if ( !_active ) return false;
 
-    _cellWidget = cw;
+    int  dx = event->x() - _lastPosition.x();
+    dx <<= 1;
+    if ( dx > 0 ) widget->goLeft  (  dx );
+    if ( dx < 0 ) widget->goRight ( -dx );
+
+    int dy = event->y() - _lastPosition.y();
+    dy <<= 1;
+    if ( dy > 0 ) widget->goUp   (  dy );
+    if ( dy < 0 ) widget->goDown ( -dy );
+
+    _lastPosition = event->pos();
+
+    return true;
+  }
+
+
+  bool  MoveCommand::mousePressEvent ( CellWidget* widget, QMouseEvent* event )
+  {
+    if ( _active ) return true;
+
+    if ( ( event->button() == Qt::LeftButton ) && !event->modifiers() ) {
+      _active       = true;
+      _lastPosition = event->pos();
+      widget->pushCursor ( Qt::ClosedHandCursor );
+    }
+
+    return _active;
+  }
+
+
+  bool  MoveCommand::mouseReleaseEvent ( CellWidget* widget, QMouseEvent* event )
+  {
+    if ( !_active ) return false;
+
+    _active = false;
+    widget->popCursor ();
+
+    return false;
   }
 
 
 } // End of Hurricane namespace.
-
-
-#endif // __HNETLIST_WIDGET_H__

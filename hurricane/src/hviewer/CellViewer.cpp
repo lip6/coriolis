@@ -65,6 +65,7 @@
 #include  "hurricane/viewer/CellWidget.h"
 #include  "hurricane/viewer/CellViewer.h"
 #include  "hurricane/viewer/HInspectorWidget.h"
+#include  "hurricane/viewer/HSelection.h"
 #include  "hurricane/viewer/HNetlist.h"
 #include  "hurricane/viewer/HMousePosition.h"
 #include  "hurricane/viewer/HGraphics.h"
@@ -89,6 +90,7 @@ namespace Hurricane {
                                              , _displayFilterAction(NULL)
                                              , _runInspectorOnDataBase(NULL)
                                              , _runInspectorOnCell(NULL)
+                                             , _browseSelection(NULL)
                                              , _browseNetlist(NULL)
                                              , _fileMenu(NULL)
                                              , _viewMenu(NULL)
@@ -99,7 +101,12 @@ namespace Hurricane {
                                              , _graphicsSettings(NULL)
                                              , _displayFilter(NULL)
                                              , _cellWidget(NULL)
+                                             , _moveCommand()
+                                             , _zoomCommand()
+                                             , _selectCommand()
                                              , _cellHistory()
+                                             , _selectionBrowser(NULL)
+                                             , _netlistBrowser(NULL)
   {
     setObjectName("viewer");
 
@@ -189,11 +196,14 @@ namespace Hurricane {
     _runInspectorOnCell->setObjectName ( "viewer.tools.inspectCell" );
     _runInspectorOnCell->setStatusTip  ( tr("Run Inspector on the current Cell") );
 
+    _browseSelection= new QAction   ( tr("Browse &Selection"), this );
+    _browseSelection->setObjectName ( "viewer.tools.browseSelection" );
+    _browseSelection->setStatusTip  ( tr("Browse objects currently selecteds") );
+
     _browseNetlist= new QAction   ( tr("Browse &Netlist"), this );
     _browseNetlist->setObjectName ( "viewer.tools.browseNetlist" );
     _browseNetlist->setStatusTip  ( tr("Browse netlist from the current Cell") );
   }
-
 
 
   void  CellViewer::createMenus ()
@@ -227,9 +237,9 @@ namespace Hurricane {
     _toolsMenu->setObjectName ( "viewer.tools" );
     _toolsMenu->addAction ( _runInspectorOnDataBase );
     _toolsMenu->addAction ( _runInspectorOnCell );
+    _toolsMenu->addAction ( _browseSelection );
     _toolsMenu->addAction ( _browseNetlist );
   }
-
 
 
   void  CellViewer::createLayout ()
@@ -243,7 +253,11 @@ namespace Hurricane {
   //_mapView    = _cellWidget->getMapView ();
 
     _cellWidget->bindToPalette ( _palette );
+    _cellWidget->bindCommand ( &_moveCommand );
+    _cellWidget->bindCommand ( &_zoomCommand );
+    _cellWidget->bindCommand ( &_selectCommand );
     _displayFilter->setCellWidget ( _cellWidget );
+
 
     HMousePosition* _mousePosition = new HMousePosition ();
     statusBar()->addPermanentWidget ( _mousePosition );
@@ -280,6 +294,7 @@ namespace Hurricane {
     connect ( _displayFilterAction   , SIGNAL(triggered())   , this       , SLOT(showDisplayFilter())     );
     connect ( _runInspectorOnDataBase, SIGNAL(triggered())   , this       , SLOT(runInspectorOnDataBase()));
     connect ( _runInspectorOnCell    , SIGNAL(triggered())   , this       , SLOT(runInspectorOnCell())    );
+    connect ( _browseSelection       , SIGNAL(triggered())   , this       , SLOT(browseSelection())       );
     connect ( _browseNetlist         , SIGNAL(triggered())   , this       , SLOT(browseNetlist())         );
     connect ( _cellWidget            , SIGNAL(mousePositionChanged(const Point&))
             , _mousePosition         , SLOT(setPosition(const Point&)) );
@@ -416,9 +431,25 @@ namespace Hurricane {
 
   void  CellViewer::browseNetlist ()
   {
-    HNetlist* netlistBrowser = new HNetlist ();
-    netlistBrowser->setCellWidget<SimpleNetInformations> ( _cellWidget );
-    netlistBrowser->show ();
+    if ( !_netlistBrowser ) {
+      _netlistBrowser = new HNetlist ();
+      _netlistBrowser->setCellWidget<SimpleNetInformations> ( _cellWidget );
+      connect ( _netlistBrowser, SIGNAL(destroyed()), this, SLOT(netlistBrowserDestroyed()) );
+    }
+    _netlistBrowser->show ();
+  }
+
+
+  void  CellViewer::browseSelection ()
+  {
+    if ( !_selectionBrowser ) {
+      _selectionBrowser = new HSelection ();
+      _selectionBrowser->setSelection ( _cellWidget->getSelectorSet() );
+      connect ( _selectionBrowser, SIGNAL(destroyed()), this, SLOT(selectionBrowserDestroyed()) );
+      connect ( &_selectCommand   , SIGNAL(selectionChanged(const set<Selector*>&,Cell*))
+              ,  _selectionBrowser, SLOT  (setSelection    (const set<Selector*>&,Cell*)) );
+    }
+    _selectionBrowser->show ();
   }
 
 
@@ -432,6 +463,24 @@ namespace Hurricane {
 
   void  CellViewer::unselectAll ()
   { if ( _cellWidget ) _cellWidget->unselectAll(); }
+
+
+  void  CellViewer::selectionBrowserDestroyed ()
+  {
+    if ( _selectionBrowser ) {
+      _selectionBrowser = NULL;
+    } else
+      cerr << "[ERROR] Double-destruction of the Selection Browser." << endl;
+  }
+
+
+  void  CellViewer::netlistBrowserDestroyed ()
+  {
+    if ( _netlistBrowser ) {
+      _netlistBrowser = NULL;
+    } else
+      cerr << "[ERROR] Double-destruction of the Netlist Browser." << endl;
+  }
 
 
 } // End of Hurricane namespace.

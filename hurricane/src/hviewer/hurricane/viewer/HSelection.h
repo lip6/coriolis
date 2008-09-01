@@ -43,15 +43,15 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./HNetlist.h"                             |
+// |  C++ Header  :       "./HSelection.h"                           |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
 
-#ifndef  __HNETLIST_WIDGET_H__
-#define  __HNETLIST_WIDGET_H__
+#ifndef  __HURRICANE_SELECTION_WIDGET_H__
+#define  __HURRICANE_SELECTION_WIDGET_H__
 
 
 #include  <QWidget>
@@ -59,8 +59,7 @@
 #include  <QSortFilterProxyModel>
 
 #include  "hurricane/Commons.h"
-#include  "hurricane/viewer/CellWidget.h"
-#include  "hurricane/viewer/HNetlistModel.h"
+#include  "hurricane/viewer/HSelectionModel.h"
 
 
 class QSortFilterProxyModel;
@@ -74,63 +73,33 @@ class QHeaderView;
 namespace Hurricane {
 
 
-  class Cell;
-  class CellWidget;
+  class Selector;
 
 
-  class HNetlist : public QWidget {
+  class HSelection : public QWidget {
       Q_OBJECT;
 
     public:
-                                     HNetlist          ( QWidget* parent=NULL );
-      template<typename InformationType>
-              void                   setCell           ( Cell* cell );
-      template<typename InformationType>
-              void                   setCellWidget     ( CellWidget* cw );
+                                     HSelection        ( QWidget* parent=NULL );
               void                   runInspector      ( const QModelIndex& index  );
+    public slots:
+              void                   setSelection      ( const set<Selector*>& selection, Cell* cell=NULL );
+              void                   addToSelection    ( Selector* selector );
     private slots:
               void                   textFilterChanged ();
-              void                   selectNet         ( const QModelIndex& index );
     protected:
               void                   keyPressEvent     ( QKeyEvent * event );
 
     private:
-              HNetlistModel*         _netlistModel;
+              HSelectionModel*       _selectionModel;
               QSortFilterProxyModel* _sortModel;
-              QTableView*            _netlistView;
+              QTableView*            _selectionView;
               QLineEdit*             _filterPatternLineEdit;
               int                    _rowHeight;
-              CellWidget*            _cellWidget;
   };
-
-
-  template<typename InformationType>
-  void  HNetlist::setCell ( Cell* cell )
-  {
-    _netlistModel->setCell<InformationType> ( cell );
-     
-    string windowTitle = "Netlist" + getString(cell);
-    setWindowTitle ( tr(windowTitle.c_str()) );
-
-    int rows = _sortModel->rowCount ();
-    for ( rows-- ; rows >= 0 ; rows-- )
-      _netlistView->setRowHeight ( rows, _rowHeight );
-    _netlistView->selectRow ( 0 );
-    _netlistView->resizeColumnToContents ( 0 );
-  }
-
-
-  template<typename InformationType>
-  void  HNetlist::setCellWidget ( CellWidget* cw )
-  {
-    if ( _netlistModel->getCell() != cw->getCell() )
-      setCell<InformationType>( cw->getCell() );
-
-    _cellWidget = cw;
-  }
 
 
 } // End of Hurricane namespace.
 
 
-#endif // __HNETLIST_WIDGET_H__
+#endif // __HURRICANE_SELECTION_WIDGET_H__

@@ -72,6 +72,7 @@
 # include "hurricane/viewer/HPaletteEntry.h"
 # include "hurricane/viewer/HPalette.h"
 // # include "MapView.h"
+# include "hurricane/viewer/Command.h"
 # include "hurricane/viewer/CellWidget.h"
 
 
@@ -88,6 +89,7 @@ namespace Hurricane {
     : _cellWidget(cw)
     , _spotPoint()
     , _restore(false)
+    , _showSpot(true)
   { }
 
 
@@ -101,13 +103,16 @@ namespace Hurricane {
 
 
   void  CellWidget::Spot::setRestore ( bool state )
-  {
-    _restore = state;
-  }
+  { _restore = state; }
 
 
   void  CellWidget::Spot::moveTo ( const QPoint& screenPoint )
   {
+    restore ();
+    if ( !_showSpot ) return;
+
+    _restore = true;
+
     QPainter& screenPainter = _cellWidget->getDrawingPlanes().painter(2);
 
     Point mousePoint = _cellWidget->screenToDbuPoint ( screenPoint );
@@ -115,9 +120,6 @@ namespace Hurricane {
                              , DbU::getOnSnapGrid(mousePoint.getY())
                              );
     QPoint center = _cellWidget->dbuToScreenPoint(spotPoint);
-
-    restore ();
-    _restore = true;
 
     screenPainter.setPen ( Graphics::getPen("spot") );
     screenPainter.drawRect ( center.x()-3, center.y()-3, 6, 6 );
@@ -343,13 +345,13 @@ namespace Hurricane {
                                              , _offsetVA(_stripWidth,_stripWidth)
                                              , _drawingPlanes(QSize(6*_stripWidth,6*_stripWidth),this)
                                              , _drawingQuery(this)
-                                             , _lastMousePosition(0,0)
+                                             , _mousePosition(0,0)
                                              , _spot(this)
                                              , _cell(NULL)
-                                             , _mouseGo(false)
                                              , _showBoundaries(true)
                                              , _showSelection(false)
                                              , _selectionHasChanged(false)
+                                             , _commands()
                                              , _redrawRectCount(0)
   {
   //setBackgroundRole ( QPalette::Dark );
@@ -374,6 +376,9 @@ namespace Hurricane {
   CellWidget::~CellWidget ()
   {
     cerr << "CellWidget::~CellWidget()" << endl;
+
+    for ( size_t i=0 ; i<_commands.size() ; i++ )
+      unbindCommand ( _commands[i] );
   }
 
 
@@ -393,6 +398,28 @@ namespace Hurricane {
       disconnect ( _palette, SIGNAL(paletteChanged()), this,  SLOT(redraw()) );
       _palette = NULL;
     }
+  }
+
+
+  void  CellWidget::bindCommand ( Command* command )
+  {
+    for ( size_t i=0 ; i<_commands.size() ; i++ )
+      if ( _commands[i] == command ) return;
+
+    _commands.push_back ( command );
+  }
+
+
+  void  CellWidget::unbindCommand ( Command* command )
+  {
+    size_t i = 0;
+    for ( ; i<_commands.size() ; i++ )
+      if ( _commands[i] == command ) break;
+
+    for ( ; i+1<_commands.size() ; i++ )
+      _commands[i] = _commands[i+1];
+
+    _commands.pop_back ();
   }
 
 
@@ -575,9 +602,30 @@ namespace Hurricane {
   }
 
 
+  void  CellWidget::drawScreenPolyline ( const QPoint* points, int count, int width )
+  {
+    QPen pen = Graphics::getPen("grid");
+    pen.setWidth ( width );
+
+    _drawingPlanes.painter(2).setPen ( pen );
+    _drawingPlanes.painter(2).drawPolyline ( points, count );
+  }
+
+
+  void  CellWidget::drawScreenRect ( const QPoint& p1, const QPoint& p2 )
+  {
+    _drawingPlanes.painter(2).setPen ( Graphics::getPen("grid") );
+    _drawingPlanes.painter(2).drawRect ( QRect(p1,p2) );
+  }
+
+
   void  CellWidget::drawGrid ()
   {
     _drawingPlanes.painter(2).setPen ( Graphics::getPen("grid") );
+
+    bool lambdaGrid = false;
+    if ( Graphics::getThreshold("grid")/DbU::lambda(1.0) < _scale/5 )
+      lambdaGrid = true;
 
     DbU::Unit  gridStep      = DbU::getSnapGridStep();
     DbU::Unit  superGridStep = gridStep*5;
@@ -594,11 +642,16 @@ namespace Hurricane {
           ; xGrid += gridStep
           ) {
         center = dbuToScreenPoint(xGrid,yGrid);
-        if ( (xGrid % superGridStep) || (yGrid % superGridStep) )
-          _drawingPlanes.painter(2).drawPoint ( center );
-        else {
-          _drawingPlanes.painter(2).drawLine ( center.x()-3, center.y()  , center.x()+3, center.y()   );
-          _drawingPlanes.painter(2).drawLine ( center.x()  , center.y()-3, center.x()  , center.y()+3 );
+        if ( (xGrid % superGridStep) || (yGrid % superGridStep) ) {
+          if ( lambdaGrid )
+            _drawingPlanes.painter(2).drawPoint ( center );
+        } else {
+          if ( lambdaGrid ) {
+            _drawingPlanes.painter(2).drawLine ( center.x()-3, center.y()  , center.x()+3, center.y()   );
+            _drawingPlanes.painter(2).drawLine ( center.x()  , center.y()-3, center.x()  , center.y()+3 );
+          } else {
+            _drawingPlanes.painter(2).drawPoint ( center );
+          }
         }
       }
     }
@@ -831,8 +884,11 @@ namespace Hurricane {
     _drawingPlanes.painterBegin ( 2 );
     _drawingPlanes.copyToScreen ();
 
+    for ( size_t i=0 ; i<_commands.size() ; i++ )
+      _commands[i]->draw ( this );
+
     if ( isDrawable("grid") ) drawGrid ();
-    if ( isDrawable("spot") ) _spot.moveTo ( _lastMousePosition );
+    if ( isDrawable("spot") ) _spot.moveTo ( _mousePosition );
 
     _drawingPlanes.painterEnd ( 2 );
   }
@@ -875,36 +931,22 @@ namespace Hurricane {
 
   void  CellWidget::keyPressEvent ( QKeyEvent* event )
   {
-    switch ( event->key() ) {
-      case Qt::Key_Up:    goUp     (); break;
-      case Qt::Key_Down:  goDown   (); break;
-      case Qt::Key_Left:  goLeft   (); break;
-      case Qt::Key_Right: goRight  (); break;
-      case Qt::Key_Z:     setScale ( _scale*2.0 ); break;
-      case Qt::Key_M:     setScale ( _scale/2.0 ); break;
-      default:            QWidget::keyPressEvent ( event );
-    }
+    bool commandActive = false;
+    for ( size_t i=0 ; i<_commands.size() && !commandActive; i++ )
+      commandActive = _commands[i]->keyPressEvent ( this, event );
+
+    if ( !commandActive ) QWidget::keyPressEvent ( event );
   }
 
 
   void  CellWidget::mouseMoveEvent ( QMouseEvent* event )
   {
-    if ( _mouseGo ) {
-      int  dx = event->x() - _lastMousePosition.x();
-      dx <<= 1;
-    //cerr << "dX (px): " << dx << " _offsetVA.rx() " << _offsetVA.rx() << endl;
-      if ( dx > 0 ) goLeft  (  dx );
-      if ( dx < 0 ) goRight ( -dx );
+    bool commandActive = false;
+    for ( size_t i=0 ; i<_commands.size() && !commandActive; i++ )
+      commandActive = _commands[i]->mouseMoveEvent ( this, event );
 
-      int dy = event->y() - _lastMousePosition.y();
-      dy <<= 1;
-    //cerr << "dY (px): " << dy << " _offsetVA.ry() " << _offsetVA.ry() << endl;
-      if ( dy > 0 ) goUp   (  dy );
-      if ( dy < 0 ) goDown ( -dy );
-
-      _lastMousePosition = event->pos();
-    } else {
-      _lastMousePosition = event->pos();
+    if ( !commandActive ) {
+      _mousePosition = event->pos();
       emit mousePositionChanged ( screenToDbuPoint(event->pos()) );
 
       update ();
@@ -914,20 +956,21 @@ namespace Hurricane {
 
   void  CellWidget::mousePressEvent ( QMouseEvent* event )
   {
-    if ( ( event->button() == Qt::LeftButton ) && !_mouseGo ) {
-      _mouseGo           = true;
-      _lastMousePosition = event->pos();
-      pushCursor ( Qt::ClosedHandCursor );
-    }
+    bool commandActive = false;
+    for ( size_t i=0 ; i<_commands.size() && !commandActive; i++ )
+      commandActive = _commands[i]->mousePressEvent ( this, event );
+
+    _spot.setShowSpot ( !commandActive );
   }
 
 
   void  CellWidget::mouseReleaseEvent ( QMouseEvent* event )
   {
-    if ( ( event->button() == Qt::LeftButton ) && _mouseGo ) {
-      _mouseGo = false;
-      popCursor ();
-    }
+    bool commandActive = false;
+    for ( size_t i=0 ; i<_commands.size() && !commandActive; i++ )
+      commandActive = _commands[i]->mouseReleaseEvent ( this, event );
+
+    _spot.setShowSpot ( true );
   }
 
 
@@ -998,7 +1041,7 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::select ( Occurrence& occurrence )
+  void  CellWidget::select ( Occurrence occurrence )
   {
 	if ( !occurrence.isValid() )
       throw Error ( "Can't select occurrence : invalid occurrence" );
@@ -1022,7 +1065,7 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::unselect ( Occurrence& occurrence )
+  void  CellWidget::unselect ( Occurrence occurrence )
   {
 	if ( !occurrence.isValid() )
 		throw Error ( "Can't unselect occurrence : invalid occurrence" );
