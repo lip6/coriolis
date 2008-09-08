@@ -79,8 +79,14 @@
           qt4_wrap_cpp ( MOC_SRCS    ${mocincludes} )
      qt4_add_resources ( RCC_SRCS    CellViewer.qrc )
 
-           add_library ( hviewer     SHARED ${cpps} ${MOC_SRCS} ${RCC_SRCS} )
- target_link_libraries ( hviewer     ${QT_LIBRARIES} hurricane )
+               install ( FILES           ${exports}     DESTINATION /include/hurricane/viewer ) 
 
-               install ( FILES       ${exports} DESTINATION /include/hurricane/viewer ) 
-               install ( TARGETS     hviewer    DESTINATION /lib )
+ if ( BUILD_STATIC )
+           add_library ( hviewer-static  STATIC ${cpps} ${MOC_SRCS} ${RCC_SRCS} )
+ target_link_libraries ( hviewer-static  hurricane-static ${QT_LIBRARIES} )
+               install ( TARGETS         hviewer-static DESTINATION /lib )
+ else ( BUILD_STATIC )
+           add_library ( hviewer         SHARED ${cpps} ${MOC_SRCS} ${RCC_SRCS} )
+ target_link_libraries ( hviewer         ${QT_LIBRARIES} hurricane )
+               install ( TARGETS         hviewer        DESTINATION /lib )
+ endif ( BUILD_STATIC )

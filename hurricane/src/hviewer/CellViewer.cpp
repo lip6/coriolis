@@ -95,6 +95,7 @@ namespace Hurricane {
                                              , _fileMenu(NULL)
                                              , _viewMenu(NULL)
                                              , _toolsMenu(NULL)
+                                             , _debugMenu(NULL)
                                              //, _mapView(NULL)
                                              , _palette(NULL)
                                              , _mousePosition(NULL)
@@ -125,7 +126,6 @@ namespace Hurricane {
     _openAction->setObjectName ( "viewer.file.openCell" );
     _openAction->setIcon       ( QIcon(":/images/stock_open.png") );
     _openAction->setStatusTip  ( tr("Open (load) a new Cell") );
-    cerr << "_openAction: " << _openAction << endl;
 
     _nextAction = new QAction  ( tr("&Next Breakpoint"), this );
     _nextAction->setObjectName ( "viewer.file.nextBreakpoint" );
@@ -239,6 +239,10 @@ namespace Hurricane {
     _toolsMenu->addAction ( _runInspectorOnCell );
     _toolsMenu->addAction ( _browseSelection );
     _toolsMenu->addAction ( _browseNetlist );
+
+    _debugMenu = menuBar()->addMenu ( tr("Debug") );
+    _debugMenu->setObjectName ( "viewer.debug" );
+    _debugMenu->hide ();
   }
 
 
@@ -258,6 +262,7 @@ namespace Hurricane {
     _cellWidget->bindCommand ( &_selectCommand );
     _displayFilter->setCellWidget ( _cellWidget );
 
+    _selectCommand.bindToAction ( _showSelectionAction );
 
     HMousePosition* _mousePosition = new HMousePosition ();
     statusBar()->addPermanentWidget ( _mousePosition );
@@ -299,6 +304,7 @@ namespace Hurricane {
     connect ( _cellWidget            , SIGNAL(mousePositionChanged(const Point&))
             , _mousePosition         , SLOT(setPosition(const Point&)) );
 
+    _showPaletteAction->setChecked ( false );
     _cellWidget->redraw ();
   }
 

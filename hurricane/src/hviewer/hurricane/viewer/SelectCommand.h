@@ -53,10 +53,12 @@
 #ifndef  __HURRICANE_SELECT_COMMAND_H__
 #define  __HURRICANE_SELECT_COMMAND_H__
 
+#include  <set>
+
 #include  <QObject>
 #include  <QPoint>
 
-#include  <set>
+class QAction;
 
 #include  "hurricane/viewer/AreaCommand.h"
 
@@ -79,8 +81,11 @@ namespace Hurricane {
       virtual                  ~SelectCommand        ();
       virtual bool              mousePressEvent      ( CellWidget*, QMouseEvent* );
       virtual bool              mouseReleaseEvent    ( CellWidget*, QMouseEvent* );
+              void              bindToAction         ( QAction* action );
     signals:
               void              selectionChanged     ( const set<Selector*>&, Cell* );
+    private:
+              QAction*          _selectAction;
     private:
                                 SelectCommand        ( const SelectCommand& );
               SelectCommand&    operator=            ( const SelectCommand& );

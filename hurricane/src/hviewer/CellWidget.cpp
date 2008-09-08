@@ -345,6 +345,7 @@ namespace Hurricane {
                                              , _offsetVA(_stripWidth,_stripWidth)
                                              , _drawingPlanes(QSize(6*_stripWidth,6*_stripWidth),this)
                                              , _drawingQuery(this)
+                                             , _queryFilter(Query::DoAll)
                                              , _mousePosition(0,0)
                                              , _spot(this)
                                              , _cell(NULL)
@@ -458,7 +459,9 @@ namespace Hurricane {
 
   void  CellWidget::redraw ( QRect redrawArea )
   {
-    cerr << "CellWidget::redraw() - " << _selectionHasChanged << endl;
+//     cerr << "CellWidget::redraw() - "
+//          << _selectionHasChanged << " filter:"
+//          << _queryFilter << endl;
 
   //_drawingQuery.setStartLevel ( 1 );
   //_drawingQuery.setStopLevel  ( 2 );
@@ -493,7 +496,7 @@ namespace Hurricane {
           if ( isDrawable((*iLayer)->getName()) ) {
           //drawCell ( _cell, (*iLayer), redrawBox, Transformation() );
             _drawingQuery.setBasicLayer ( *iLayer );
-            _drawingQuery.setFilter     ( Query::DoComponents );
+            _drawingQuery.setFilter     ( _queryFilter & ~Query::DoMasterCells );
             _drawingQuery.doQuery ();
           }
         }
@@ -503,7 +506,7 @@ namespace Hurricane {
 
         //drawBoundaries ( _cell, redrawBox, Transformation() );
           _drawingQuery.setBasicLayer ( NULL );
-          _drawingQuery.setFilter     ( Query::DoMasterCells );
+          _drawingQuery.setFilter     ( _queryFilter & ~Query::DoComponents );
           _drawingQuery.doQuery ();
         }
       }

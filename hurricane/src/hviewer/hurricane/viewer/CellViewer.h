@@ -136,6 +136,7 @@ namespace Hurricane {
               QMenu*          _fileMenu;
               QMenu*          _viewMenu;
               QMenu*          _toolsMenu;
+              QMenu*          _debugMenu;
             //MapView*        _mapView;
               HPalette*       _palette;
               HMousePosition* _mousePosition;

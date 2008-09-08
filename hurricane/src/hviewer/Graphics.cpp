@@ -55,7 +55,6 @@
 # include  <Qt>
 # include  <QBrush>
 # include  <QPen>
-# include  <QFont>
 # include  <QApplication>
 
 # include  "hurricane/Name.h"

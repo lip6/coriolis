@@ -51,6 +51,7 @@
 
 
 #include  <QLabel>
+#include  <QCheckBox>
 #include  <QSpinBox>
 #include  <QGroupBox>
 #include  <QGridLayout>
@@ -72,12 +73,13 @@ namespace Hurricane {
     , _cellWidget(NULL)
     , _startSpinBox(NULL)
     , _stopSpinBox(NULL)
+    , _queryFilter(Query::DoAll)
   {
     setAttribute   ( Qt::WA_QuitOnClose, false );
     setWindowTitle ( tr("Display Filter") );
     setFont        ( Graphics::getNormalFont(true) );
 
-    QGroupBox*    groupBox = new QGroupBox    ( tr("Hierarchy Levels") );
+    QGroupBox*    groupBox = new QGroupBox    ( tr("Hierarchy Settings") );
     QGridLayout*  gLayout  = new QGridLayout  ();
     QGridLayout*  wLayout  = new QGridLayout  ();
 
@@ -101,6 +103,35 @@ namespace Hurricane {
 
     gLayout->addWidget ( label       , 1, 0 );
     gLayout->addWidget ( _stopSpinBox, 1, 1 );
+
+    QFrame* separator = new QFrame ();
+    separator->setFrameShape  ( QFrame::HLine );
+    separator->setFrameShadow ( QFrame::Sunken );
+    gLayout->addWidget ( separator, 2, 0, 1, 2 );
+
+    QCheckBox* filterBox = new QCheckBox ();
+    filterBox->setFont    ( Graphics::getNormalFont() );
+    filterBox->setText    ( tr("Process Master Cells") );
+    filterBox->setChecked ( true );
+
+    gLayout->addWidget ( filterBox, 3, 0, 1, 2 );
+    connect ( filterBox, SIGNAL(stateChanged(int)), this, SLOT(setDoMasterCells(int)) );
+
+    filterBox = new QCheckBox ();
+    filterBox->setFont    ( Graphics::getNormalFont() );
+    filterBox->setText    ( tr("Process Terminal Cells") );
+    filterBox->setChecked ( true );
+
+    gLayout->addWidget ( filterBox, 4, 0, 1, 2 );
+    connect ( filterBox, SIGNAL(stateChanged(int)), this, SLOT(setDoTerminalCells(int)) );
+
+    filterBox = new QCheckBox ();
+    filterBox->setFont    ( Graphics::getNormalFont() );
+    filterBox->setText    ( tr("Process Components") );
+    filterBox->setChecked ( true );
+
+    gLayout->addWidget ( filterBox, 5, 0, 1, 2 );
+    connect ( filterBox, SIGNAL(stateChanged(int)), this, SLOT(setDoComponents(int)) );
 
     groupBox->setLayout ( gLayout );
     wLayout->addWidget ( groupBox, 0, 0 );
@@ -147,6 +178,39 @@ namespace Hurricane {
       }
       emit filterChanged();
     }
+  }
+
+
+  void  HDisplayFilter::setDoMasterCells ( int state )
+  {
+    if ( state != Qt::Unchecked ) _queryFilter |=  Query::DoMasterCells;
+    else                          _queryFilter &= ~Query::DoMasterCells;
+
+    _cellWidget->setQueryFilter ( _queryFilter );
+
+    emit filterChanged();
+  }
+
+
+  void  HDisplayFilter::setDoTerminalCells ( int state )
+  {
+    if ( state != Qt::Unchecked ) _queryFilter |=  Query::DoTerminalCells;
+    else                          _queryFilter &= ~Query::DoTerminalCells;
+
+    _cellWidget->setQueryFilter ( _queryFilter );
+
+    emit filterChanged();
+  }
+
+
+  void  HDisplayFilter::setDoComponents ( int state )
+  {
+    if ( state != Qt::Unchecked ) _queryFilter |=  Query::DoComponents;
+    else                          _queryFilter &= ~Query::DoComponents;
+
+    _cellWidget->setQueryFilter ( _queryFilter );
+
+    emit filterChanged();
   }
 
 

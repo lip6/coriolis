@@ -59,7 +59,8 @@
 
 # include  "hurricane/viewer/DisplayStyle.h"
 
-class QFont;
+# include  <QFont>
+
 class QColor;
 class QPen;
 class QBrush;
@@ -78,7 +79,7 @@ namespace Hurricane {
     public:
     // Accessors.
       static  Graphics*                    getGraphics   ();
-      static  const QFont                  getFixedFont  ( int weight=-1, bool italic=false, bool underline=false );
+      static  const QFont                  getFixedFont  ( int weight=QFont::Normal, bool italic=false, bool underline=false );
       static  const QFont                  getNormalFont ( bool bold=false, bool italic=false, bool underline=false );
       static  const Name&                  getGroup      ( const Name& key );
       static  QColor                       getColor      ( const Name& key, int darkening=100 );

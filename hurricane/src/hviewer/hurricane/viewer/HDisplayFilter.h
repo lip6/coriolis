@@ -69,20 +69,24 @@ namespace Hurricane {
       Q_OBJECT;
 
     public:
-                  HDisplayFilter    ( QWidget* parent=NULL );
-      void        setCellWidget     ( CellWidget* );
+                  HDisplayFilter     ( QWidget* parent=NULL );
+      void        setCellWidget      ( CellWidget* );
 
     signals:
-      void        filterChanged     ();
+      void        filterChanged      ();
 
     public slots:
-      void        startLevelChanged ( int level );
-      void        stopLevelChanged  ( int level );
+      void        startLevelChanged  ( int level );
+      void        stopLevelChanged   ( int level );
+      void        setDoMasterCells   ( int state );
+      void        setDoComponents    ( int state );
+      void        setDoTerminalCells ( int state );
 
     protected:
       CellWidget* _cellWidget;
       QSpinBox*   _startSpinBox;
       QSpinBox*   _stopSpinBox;
+      int         _queryFilter;
   };
 
 

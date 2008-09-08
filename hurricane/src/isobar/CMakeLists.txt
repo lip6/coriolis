@@ -79,6 +79,23 @@
                                   hurricane/isobar/PyVertical.h
                        )
 
+
+               install ( FILES   ${includes} DESTINATION /include/hurricane/isobar )
+
+ if ( BUILD_STATIC )
+           add_library ( isobar-static STATIC ${sources} )
+ target_link_libraries ( isobar-static hurricane-static ${PYTHON_LIBRARIES} )
+
+           add_library ( Hurricane-static MODULE ${sources} ) 
+ set_target_properties ( Hurricane-static PROPERTIES
+                                          COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
+                                          PREFIX        ""
+                       )
+ target_link_libraries ( Hurricane-static isobar-static hurricane-static ${PYTHON_LIBRARIES} )
+
+               install ( TARGETS isobar-static      DESTINATION /lib )
+               install ( TARGETS Hurricane-static   DESTINATION /lib/python )
+ else ( BUILD_STATIC )
            add_library ( isobar SHARED ${sources} )
  target_link_libraries ( isobar hurricane ${PYTHON_LIBRARIES} )
 
@@ -91,4 +108,4 @@
 
                install ( TARGETS isobar      DESTINATION /lib )
                install ( TARGETS Hurricane   DESTINATION /lib/python )
-               install ( FILES   ${includes} DESTINATION /include/hurricane/isobar )
+ endif ( BUILD_STATIC )

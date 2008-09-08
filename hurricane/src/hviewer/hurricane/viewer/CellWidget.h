@@ -131,6 +131,7 @@ namespace Hurricane {
               void                    unselectAll          ( bool delayRedraw=true );
       inline  void                    setStartLevel        ( int level );
       inline  void                    setStopLevel         ( int level );
+      inline  void                    setQueryFilter       ( int filter );
     // Painter control & Hurricane objects drawing primitives.
       inline  float                   getScale             () const;
               bool                    isDrawable           ( const Name& entryName );
@@ -291,6 +292,7 @@ namespace Hurricane {
               QPoint                  _offsetVA;
               DrawingPlanes           _drawingPlanes;
               DrawingQuery            _drawingQuery;
+              int                     _queryFilter;
               QPoint                  _mousePosition;
               Spot                    _spot;
               Cell*                   _cell;
@@ -506,6 +508,10 @@ namespace Hurricane {
 
   inline  float  CellWidget::getScale () const
   { return _scale; }
+
+
+  inline  void  CellWidget::setQueryFilter ( int filter )
+  { _queryFilter = filter; }
 
 
 } // End of Hurricane namespace.

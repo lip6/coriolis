@@ -304,9 +304,12 @@ namespace Hurricane {
   class Query {
     public:
     // Types.
-      enum  QueryFilter { DoMasterCells = 1
-                        , DoComponents  = 2
-                        , DoAll         = DoMasterCells || DoComponents
+      enum  QueryFilter { DoMasterCells   = 1
+                        , DoTerminalCells = 2
+                        , DoComponents    = 4
+                        , DoAll           =   DoMasterCells
+                                            | DoTerminalCells
+                                            | DoComponents
                         };
     public:
     // Constructors & Destructors.

@@ -11,6 +11,20 @@ SET(CMAKE_SHARED_LINKER_FLAGS_DEBUG "-pg"          CACHE STRING "Debug options."
 SET(CMAKE_MODULE_LINKER_FLAGS_DEBUG "-pg"          CACHE STRING "Debug options." FORCE)
 SET(CMAKE_EXE_LINKER_FLAGS_DEBUG    "-pg"          CACHE STRING "Debug options." FORCE)
 
+OPTION(BUILD_STATIC "Build static version of libraries & binaries" OFF)
+
+IF(BUILD_STATIC)
+  MESSAGE(STATUS "Building static libraries.")
+# check for qmake
+  FIND_PROGRAM(QT_QMAKE_EXECUTABLE NAMES qmake-qt4 qmake PATHS
+    /opt/qt4-static-4.3.2/bin
+    NO_DEFAULT_PATH
+    )
+  MESSAGE(STATUS "qmake: ${QT_QMAKE_EXECUTABLE}")
+ELSE(BUILD_STATIC)
+  MESSAGE(STATUS "Building dynamic libraries.")
+ENDIF(BUILD_STATIC)
+
 SET(QT_USE_QTXML "true")
 
 FIND_PACKAGE(Qt4 REQUIRED) # find and setup Qt4 for this project

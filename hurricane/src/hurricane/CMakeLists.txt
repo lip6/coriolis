@@ -144,7 +144,14 @@
                                 Timer.cpp
                  )
     
-     add_library ( hurricane SHARED ${cpps} )
-    
+
+ if ( BUILD_STATIC )
+     add_library (         hurricane-static STATIC ${cpps} )
+         install ( TARGETS hurricane-static DESTINATION /lib)
+ else ( BUILD_STATIC )
+     add_library (         hurricane SHARED ${cpps} )
+         install ( TARGETS hurricane DESTINATION /lib)
+ endif ( BUILD_STATIC )
+
          install ( FILES   ${includes} DESTINATION /include/hurricane) 
-         install ( TARGETS hurricane   DESTINATION /lib)
+ 

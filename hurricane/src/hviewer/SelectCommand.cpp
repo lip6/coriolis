@@ -52,6 +52,7 @@
 
 # include <QMouseEvent>
 # include <QKeyEvent>
+# include <QAction>
 
 # include "hurricane/Cell.h"
 
@@ -68,11 +69,18 @@ namespace Hurricane {
 
   SelectCommand::SelectCommand ()
     : AreaCommand()
+    , _selectAction(NULL)
   { }
 
 
   SelectCommand::~SelectCommand ()
   { }
+
+
+  void  SelectCommand::bindToAction ( QAction* action )
+  {
+    _selectAction = action;
+  }
 
 
   bool  SelectCommand::mousePressEvent ( CellWidget* widget, QMouseEvent* event )
@@ -105,8 +113,15 @@ namespace Hurricane {
             , widget->getCell()->getOccurrencesUnder(widget->screenToDbuBox(selectArea)) ) {
       widget->select ( *ioccurrence );
     }
-    widget->setShowSelection ( true );
-    widget->redraw ();
+    if ( _selectAction ) {
+      if ( !_selectAction->isChecked() )
+        _selectAction->setChecked ( true );
+      else
+        widget->redraw ();
+    } else {
+      widget->setShowSelection ( true );
+      widget->redraw ();
+    }
 
     emit selectionChanged(widget->getSelectorSet(),widget->getCell());
 

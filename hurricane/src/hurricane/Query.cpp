@@ -133,12 +133,14 @@ namespace Hurricane {
       //else
       //  cerr << "  TopCell: " << getMasterCell() << " " << getTransformation() << endl;
 
-        forEach ( Slice*, islice, getMasterCell()->getSlices() ) {
-          if ( !(*islice)->getLayer()->contains(getBasicLayer()) ) continue;
-          if ( !(*islice)->getBoundingBox().intersect(getArea()) ) continue;
+        if ( !getMasterCell()->isTerminal() || (_filter & DoTerminalCells) ) {
+          forEach ( Slice*, islice, getMasterCell()->getSlices() ) {
+            if ( !(*islice)->getLayer()->contains(getBasicLayer()) ) continue;
+            if ( !(*islice)->getBoundingBox().intersect(getArea()) ) continue;
 
-          forEach ( Go*, igo, (*islice)->getGosUnder(_stack.getArea()) )
-            goCallback ( *igo );
+            forEach ( Go*, igo, (*islice)->getGosUnder(_stack.getArea()) )
+              goCallback ( *igo );
+          }
         }
       }
 
