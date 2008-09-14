@@ -71,22 +71,58 @@ namespace Hurricane {
   class Selector;
 
 
+  class OccurrenceItem {
+    public:
+      enum Flags { Selected=1 };
+    public:
+      inline                OccurrenceItem ( Occurrence occurrence, unsigned int flags=Selected );
+      inline  void          toggle         ();
+      inline  bool          operator==     ( const OccurrenceItem& other ) const;
+    public:
+              unsigned int  _flags;
+              Occurrence    _occurrence;
+  };
+
+
+  inline OccurrenceItem::OccurrenceItem ( Occurrence occurrence, unsigned int flags )
+    : _flags(flags)
+    , _occurrence(occurrence)
+  { }
+
+
+  inline void  OccurrenceItem::toggle ()
+  {
+    if ( _flags & Selected ) _flags &= ~Selected;
+    else                     _flags |=  Selected;
+  }
+
+
+  inline  bool  OccurrenceItem::operator== ( const OccurrenceItem& other ) const
+  {
+    return _occurrence == other._occurrence;
+  }
+
+
   class HSelectionModel : public QAbstractTableModel {
       Q_OBJECT;
 
     public:
-                                 HSelectionModel ( QObject* parent=NULL );
-                                ~HSelectionModel ();
-             void                setSelection    ( const set<Selector*>& selection );
-             void                addToSelection  ( Selector* selector );
-             int                 rowCount        ( const QModelIndex& parent=QModelIndex() ) const;
-             int                 columnCount     ( const QModelIndex& parent=QModelIndex() ) const;
-             QVariant            data            ( const QModelIndex& index, int role=Qt::DisplayRole ) const;
-             QVariant            headerData      ( int section, Qt::Orientation orientation, int role=Qt::DisplayRole ) const;
-             const Occurrence    getOccurrence   ( int row );
+                                     HSelectionModel ( QObject* parent=NULL );
+                                    ~HSelectionModel ();
+             void                    setSelection    ( const set<Selector*>& selection );
+             void                    toggleSelection ( Occurrence occurrence );
+             Occurrence              toggleSelection ( const QModelIndex& index );
+             int                     rowCount        ( const QModelIndex& parent=QModelIndex() ) const;
+             int                     columnCount     ( const QModelIndex& parent=QModelIndex() ) const;
+             QVariant                data            ( const QModelIndex& index, int role=Qt::DisplayRole ) const;
+             QVariant                headerData      ( int section, Qt::Orientation orientation, int role=Qt::DisplayRole ) const;
+             const Occurrence        getOccurrence   ( int row );
+             bool                    isCumulative    () const;
+    public slots:
+             void                    clear           ();
 
     private:
-             vector<Occurrence>  _selection;
+             vector<OccurrenceItem>  _selection;
   };
 
 

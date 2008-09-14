@@ -50,6 +50,8 @@
 // x-----------------------------------------------------------------x
 
 
+#include  <algorithm>
+
 #include  <QFont>
 
 #include  "hurricane/Path.h"
@@ -58,6 +60,7 @@
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/Selector.h"
 #include  "hurricane/viewer/HSelectionModel.h"
+#include  "hurricane/viewer/HSelection.h"
 
 
 namespace Hurricane {
@@ -73,22 +76,77 @@ namespace Hurricane {
   { }
 
 
-  void  HSelectionModel::setSelection ( const set<Selector*>& selection )
+  bool  HSelectionModel::isCumulative () const
+  {
+    HSelection* widget = qobject_cast<HSelection*>(QObject::parent());
+    if ( widget )
+      return widget->isCumulative();
+
+    return true;
+  }
+
+
+  void  HSelectionModel::clear ()
   {
     _selection.clear ();
+    emit layoutChanged ();
+  }
 
-    set<Selector*>::const_iterator iselector = selection.begin();
-    for ( ; iselector != selection.end() ; iselector++ )
-      _selection.push_back ( (*iselector)->getOccurrence() );
+
+  void  HSelectionModel::setSelection ( const set<Selector*>& selection )
+  {
+    if ( !isCumulative() ) _selection.clear ();
+
+    set<Selector*>::const_iterator    iselector = selection.begin();
+    vector<OccurrenceItem>::iterator  iitem;
+    for ( ; iselector != selection.end() ; iselector++ ) {
+      if ( isCumulative() ) {
+        iitem = find( _selection.begin(), _selection.end(), (*iselector)->getOccurrence() );
+        if ( iitem != _selection.end() ) {
+          (*iitem)._flags |= OccurrenceItem::Selected;
+          continue;
+        }
+      }
+      _selection.push_back ( OccurrenceItem((*iselector)->getOccurrence()) );
+    }
 
     emit layoutChanged ();
   }
 
 
-  void  HSelectionModel::addToSelection ( Selector* selector )
+  Occurrence  HSelectionModel::toggleSelection ( const QModelIndex& index )
   {
-    _selection.push_back ( selector->getOccurrence() );
+    if ( index.isValid() && ( index.row() < (int)_selection.size() ) ) {
+      _selection[index.row()].toggle();
+      emit layoutChanged ();
 
+      return _selection[index.row()]._occurrence;
+    }
+
+    return Occurrence ();
+  }
+
+
+  void  HSelectionModel::toggleSelection ( Occurrence occurrence )
+  {
+    bool   found = false;
+    size_t i     = 0;
+    for ( ; i<_selection.size() ; i++ ) {
+      if ( !found && (_selection[i]._occurrence == occurrence) ) {
+        found = true;
+        if ( isCumulative() ) break;
+      }
+      if (  found && ( i < _selection.size()-1 ) )
+        _selection[i] = _selection[i+1];
+    }
+
+    if ( !found )
+      _selection.push_back ( OccurrenceItem(occurrence) );
+    else {
+      if ( isCumulative() ) _selection[i].toggle ();
+      else                  _selection.pop_back ();
+    }
+    
     emit layoutChanged ();
   }
 
@@ -107,20 +165,24 @@ namespace Hurricane {
       }
     }
 
+    int row = index.row ();
+    if ( row >= (int)_selection.size() ) return QVariant ();
+
     if ( role == Qt::FontRole ) {
       switch (index.column()) {
         case 0:  return occurrenceFont;
-        default: return entityFont;
+        case 1:
+          if ( _selection[row]._flags & OccurrenceItem::Selected )
+            return entityFont;
+        default:
+          return occurrenceFont;
       }
     }
 
     if ( role == Qt::DisplayRole ) {
-      int row = index.row ();
-      if ( row < (int)_selection.size() ) {
-        switch ( index.column() ) {
-          case 0: return getString(_selection[row].getPath()).c_str();
-          case 1: return getString(_selection[row].getEntity()).c_str();
-        }
+      switch ( index.column() ) {
+        case 0: return getString(_selection[row]._occurrence.getPath()).c_str();
+        case 1: return getString(_selection[row]._occurrence.getEntity()).c_str();
       }
     }
     return QVariant();
@@ -159,7 +221,7 @@ namespace Hurricane {
   {
     if ( row >= (int)_selection.size() ) return Occurrence();
 
-    return _selection[row];
+    return _selection[row]._occurrence;
   }
 
 

@@ -88,8 +88,9 @@ namespace Hurricane {
     if ( isActive() ) return true;
 
     if ( (event->button() == Qt::LeftButton) && (event->modifiers() & Qt::ControlModifier) ) {
-      setActive     ( true );
-      setStartPoint ( event->pos() );
+      setActive         ( true );
+      setStartPoint     ( event->pos() );
+      setDrawingEnabled ( true );
     }
 
     return isActive();
@@ -100,7 +101,8 @@ namespace Hurricane {
   {
     if ( !isActive() ) return false;
 
-    setActive ( false );
+    setActive         ( false );
+    setDrawingEnabled ( false );
 
     widget->reframe ( widget->screenToDbuBox(QRect(_startPoint,_stopPoint)) );
 

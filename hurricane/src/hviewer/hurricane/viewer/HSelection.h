@@ -59,6 +59,7 @@
 #include  <QSortFilterProxyModel>
 
 #include  "hurricane/Commons.h"
+#include  "hurricane/Occurrence.h"
 #include  "hurricane/viewer/HSelectionModel.h"
 
 
@@ -68,12 +69,14 @@ class QTableView;
 class QLineEdit;
 class QComboBox;
 class QHeaderView;
+class QCheckBox;
 
 
 namespace Hurricane {
 
 
   class Selector;
+  class QCloseEvent;
 
 
   class HSelection : public QWidget {
@@ -82,19 +85,29 @@ namespace Hurricane {
     public:
                                      HSelection        ( QWidget* parent=NULL );
               void                   runInspector      ( const QModelIndex& index  );
+              bool                   isCumulative      () const;
+    signals:
+              void                   showSelected      ( bool );
+              void                   occurrenceToggled ( Occurrence, bool );
+              void                   cumulativeToggled ( bool );
+              void                   selectionCleared  ();
     public slots:
               void                   setSelection      ( const set<Selector*>& selection, Cell* cell=NULL );
-              void                   addToSelection    ( Selector* selector );
+              void                   toggleSelection   ( Occurrence occurrence );
+              void                   toggleSelection   ( const QModelIndex& index );
+              void                   forceRowHeight    ();
     private slots:
               void                   textFilterChanged ();
     protected:
-              void                   keyPressEvent     ( QKeyEvent * event );
+      virtual void                   keyPressEvent     ( QKeyEvent * event );
+      virtual void                   hideEvent         ( QHideEvent* event );
 
     private:
-              HSelectionModel*       _selectionModel;
+              HSelectionModel*       _baseModel;
               QSortFilterProxyModel* _sortModel;
-              QTableView*            _selectionView;
+              QTableView*            _view;
               QLineEdit*             _filterPatternLineEdit;
+              QCheckBox*             _cumulative;
               int                    _rowHeight;
   };
 

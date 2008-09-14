@@ -43,59 +43,55 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./SelectCommand.h"                        |
+// |  C++ Header  :       "./HSelectionPopupModel.h"                 |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
 
-#ifndef  __HURRICANE_SELECT_COMMAND_H__
-#define  __HURRICANE_SELECT_COMMAND_H__
+#ifndef  __HURRICANE_SELECTION_POPUP_MODEL_H__
+#define  __HURRICANE_SELECTION_POPUP_MODEL_H__
 
+#include  <vector>
 #include  <set>
 
-#include  <QObject>
-#include  <QPoint>
+#include  <QFont>
+#include  <QApplication>
+#include  <QAbstractTableModel>
 
-class QAction;
-
+#include  "hurricane/Commons.h"
 #include  "hurricane/Occurrence.h"
-#include  "hurricane/viewer/AreaCommand.h"
-
-
-using namespace std;
+#include  "hurricane/viewer/Graphics.h"
 
 
 namespace Hurricane {
 
 
-  class Cell;
   class Selector;
-  class HSelectionPopup;
 
 
-  class SelectCommand : public QObject, public AreaCommand {
+  class HSelectionPopupModel : public QAbstractTableModel {
       Q_OBJECT;
 
     public:
-                                SelectCommand        ();
-      virtual                  ~SelectCommand        ();
-      virtual bool              mousePressEvent      ( CellWidget*, QMouseEvent* );
-      virtual bool              mouseReleaseEvent    ( CellWidget*, QMouseEvent* );
-              void              bindToAction         ( QAction* action );
-    signals:
-              void              selectionToggled     ( Occurrence occurrence, bool fromPopup );
+                                 HSelectionPopupModel ( QObject* parent=NULL );
+                                ~HSelectionPopupModel ();
+             void                add                  ( Occurrence occurrence, bool showChange=false );
+             void                clear                ();
+             void                updateLayout         ();
+             int                 rowCount             ( const QModelIndex& parent=QModelIndex() ) const;
+             int                 columnCount          ( const QModelIndex& parent=QModelIndex() ) const;
+             QVariant            data                 ( const QModelIndex& index, int role=Qt::DisplayRole ) const;
+             QVariant            headerData           ( int section, Qt::Orientation orientation, int role=Qt::DisplayRole ) const;
+             Occurrence          getOccurrence        ( int row );
+
     private:
-              QAction*          _selectAction;
-              HSelectionPopup*  _selectionPopup;
-    private:
-                                SelectCommand        ( const SelectCommand& );
-              SelectCommand&    operator=            ( const SelectCommand& );
+             vector<Occurrence>* _occurrences;
   };
 
 
 } // End of Hurricane namespace.
 
 
-#endif
+#endif // __HURRICANE_SELECTION_POPUP_MODEL_H__ 

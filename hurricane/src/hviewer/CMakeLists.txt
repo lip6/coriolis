@@ -19,6 +19,8 @@
                                      hurricane/viewer/CellViewer.h
                                      hurricane/viewer/RecordModel.h
                                      hurricane/viewer/HInspectorWidget.h
+                                     hurricane/viewer/HSelectionPopupModel.h
+                                     hurricane/viewer/HSelectionPopup.h
                                      hurricane/viewer/HSelectionModel.h
                                      hurricane/viewer/HSelection.h
                                      hurricane/viewer/HNetlistModel.h
@@ -41,6 +43,8 @@
                                      hurricane/viewer/CellWidgets.h
                                      hurricane/viewer/CellViewer.h
                                      hurricane/viewer/HInspectorWidget.h
+                                     hurricane/viewer/HSelectionPopupModel.h
+                                     hurricane/viewer/HSelectionPopup.h
                                      hurricane/viewer/HSelectionModel.h
                                      hurricane/viewer/HSelection.h
                                      hurricane/viewer/NetInformations.h
@@ -68,6 +72,8 @@
                                      CellViewer.cpp
                                      RecordModel.cpp
                                      HInspectorWidget.cpp
+                                     HSelectionPopupModel.cpp
+                                     HSelectionPopup.cpp
                                      HSelectionModel.cpp
                                      HSelection.cpp
                                      NetInformations.cpp

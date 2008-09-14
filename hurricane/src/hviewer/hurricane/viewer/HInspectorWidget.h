@@ -108,6 +108,7 @@ namespace Hurricane {
                                        ~HInspectorWidget  ();
               void                      setRootRecord     ( Record*  record );
     private slots:
+              void                      forceRowHeight    ();
               void                      textFilterChanged ();
               void                      historyChanged    ( int depth );
               void                      forkInspector     ( const QModelIndex& index );
@@ -120,10 +121,10 @@ namespace Hurricane {
               bool                      setSlot           ();
 
     private:
-              RecordModel*              _recordModel;
+              RecordModel*              _baseModel;
               QSortFilterProxyModel*    _sortModel;
               QComboBox*                _historyComboBox;
-              QTableView*               _slotsView;
+              QTableView*               _view;
               QLineEdit*                _filterPatternLineEdit;
               int                       _rowHeight;
               History                   _history;

@@ -42,7 +42,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./HNetlist.cpp"                           |
+// |  C++ Module  :       "./HSelectionPopup.cpp"                    |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
@@ -51,129 +51,135 @@
 
 #include  <QFontMetrics>
 #include  <QLabel>
-#include  <QLineEdit>
 #include  <QHeaderView>
 #include  <QKeyEvent>
 #include  <QGroupBox>
 #include  <QVBoxLayout>
 
 #include "hurricane/Commons.h"
-#include "hurricane/Net.h"
 
 #include "hurricane/viewer/Graphics.h"
-#include "hurricane/viewer/HNetlistModel.h"
-#include "hurricane/viewer/HNetlist.h"
-#include "hurricane/viewer/HInspectorWidget.h"
+#include "hurricane/viewer/HSelectionPopupModel.h"
+#include "hurricane/viewer/HSelectionPopup.h"
 
 
 namespace Hurricane {
 
 
 
-  HNetlist::HNetlist ( QWidget* parent )
-      : QWidget(parent)
-      , _baseModel(NULL)
-      , _sortModel(NULL)
-      , _view(NULL)
-      , _rowHeight(20)
-      , _cellWidget(NULL)
+  HSelectionPopup::HSelectionPopup ( QWidget* parent )
+    : QWidget(parent)
+    , _model(NULL)
+    , _view(NULL)
+    , _rowHeight(20)
   {
-    setAttribute ( Qt::WA_DeleteOnClose );
-    setAttribute ( Qt::WA_QuitOnClose, false );
+    setAttribute     ( Qt::WA_DeleteOnClose );
+    setAttribute     ( Qt::WA_QuitOnClose, false );
+  //setWindowFlags   ( Qt::Popup );
+    setWindowFlags   ( Qt::FramelessWindowHint );
+    setWindowOpacity ( 0.7 );
 
     _rowHeight = QFontMetrics(Graphics::getFixedFont()).height() + 4;
 
-    _baseModel = new HNetlistModel ( this );
+    _model = new HSelectionPopupModel ( this );
 
-    _sortModel = new QSortFilterProxyModel ( this );
-    _sortModel->setSourceModel       ( _baseModel );
-    _sortModel->setDynamicSortFilter ( true );
-    _sortModel->setFilterKeyColumn   ( 0 );
-
-    _view = new QTableView(this);
-    _view->setShowGrid(false);
-    _view->setAlternatingRowColors(true);
-    _view->setSelectionBehavior(QAbstractItemView::SelectRows);
-    _view->setSortingEnabled(true);
-    _view->setModel ( _sortModel );
+    _view = new QTableView ( this );
+    _view->setShowGrid ( false );
+    _view->setAlternatingRowColors ( true );
+    _view->setSelectionBehavior ( QAbstractItemView::SelectRows );
+    _view->setModel ( _model );
     _view->horizontalHeader()->setStretchLastSection ( true );
+    _view->setWordWrap ( false );
+  //_view->setTextElideMode ( Qt::ElideRight );
+  //_view->setFixedSize ( QSize(300,100) );
+  //_view->setIconSize ( QSize(600,40) );
+  //_view->setStyleSheet ( "QTableView { background-color: #555555; }" );
 
     QHeaderView* horizontalHeader = _view->horizontalHeader ();
     horizontalHeader->setStretchLastSection ( true );
     horizontalHeader->setMinimumSectionSize ( 200 );
+    horizontalHeader->setVisible ( false );
 
     QHeaderView* verticalHeader = _view->verticalHeader ();
     verticalHeader->setVisible ( false );
 
-    _filterPatternLineEdit = new QLineEdit(this);
-    QLabel* filterPatternLabel = new QLabel(tr("&Filter pattern:"), this);
-    filterPatternLabel->setBuddy(_filterPatternLineEdit);
+    connect ( _model, SIGNAL(layoutChanged()), this, SLOT(forceRowHeight()) );
 
-    QGridLayout* inspectorLayout = new QGridLayout();
-    inspectorLayout->addWidget(_view          , 1, 0, 1, 2);
-    inspectorLayout->addWidget(filterPatternLabel    , 2, 0);
-    inspectorLayout->addWidget(_filterPatternLineEdit, 2, 1);
-
-    setLayout ( inspectorLayout );
-
-    connect ( _filterPatternLineEdit, SIGNAL(textChanged(const QString &))
-            , this                  , SLOT(textFilterChanged())
-            );
-    connect ( _view          , SIGNAL(activated(const QModelIndex&))
-            , this                  , SLOT(selectNet(const QModelIndex&))
-            );
-    connect ( _baseModel , SIGNAL(layoutChanged()), this, SLOT(forceRowHeight()) );
-
-    setWindowTitle(tr("Netlist"));
-    resize(500, 300);
-
+    resize ( 600, 10 );
   }
 
 
-  void  HNetlist::forceRowHeight ()
+  void  HSelectionPopup::popup ()
   {
-    for (  int rows=_sortModel->rowCount()-1; rows >= 0 ; rows-- )
+    show ();
+    grabMouse ();
+  }
+
+
+  void  HSelectionPopup::forceRowHeight ()
+  {
+    for (  int rows=_model->rowCount()-1; rows >= 0 ; rows-- )
       _view->setRowHeight ( rows, _rowHeight );
   }
 
 
-  void  HNetlist::selectNet ( const QModelIndex& index )
+  void  HSelectionPopup::keyPressEvent ( QKeyEvent* event )
   {
-    const Net* net = _baseModel->getNet ( _sortModel->mapToSource(index).row() );
-    
-    if ( _cellWidget && net ) {
-      _cellWidget->unselectAll ();
-      _cellWidget->select ( net );
-    }
+    event->ignore();
   }
 
 
-  void  HNetlist::keyPressEvent ( QKeyEvent* event )
+
+  void  HSelectionPopup::mouseMoveEvent ( QMouseEvent* event )
   {
-    if ( event->key() == Qt::Key_I ) { runInspector(_view->currentIndex()); }
-    else {
-      event->ignore();
-    }
+    QModelIndex index = _view->indexAt ( event->pos() );
+    if ( index.isValid() )
+      _view->selectionModel()->select ( index, QItemSelectionModel::ClearAndSelect );
+    else
+      _view->selectionModel()->clearSelection ();
   }
 
 
-  void  HNetlist::textFilterChanged ()
-  {
-    _sortModel->setFilterRegExp ( _filterPatternLineEdit->text() );
-    forceRowHeight ();
-  }
 
-
-  void  HNetlist::runInspector ( const QModelIndex& index  )
+  void  HSelectionPopup::mouseReleaseEvent ( QMouseEvent* event )
   {
+    releaseMouse ();
+    hide ();
+
+    QModelIndex index = _view->indexAt ( event->pos() );
     if ( index.isValid() ) {
-      const Net* net = _baseModel->getNet ( _sortModel->mapToSource(index).row() );
-
-      HInspectorWidget* inspector = new HInspectorWidget ();
-
-      inspector->setRootRecord ( getRecord(net) );
-      inspector->show ();
+      Occurrence occurrence = _model->getOccurrence(index.row());
+      if ( occurrence.getEntity() )
+        emit occurrenceSelected ( occurrence, true );
     }
+
+    clear ();
+  }
+
+
+  void  HSelectionPopup::add ( Occurrence occurrence, bool showChange )
+  {
+    _model->add ( occurrence, showChange );
+  }
+
+
+  void  HSelectionPopup::clear ()
+  {
+    _model->clear ();
+  }
+
+
+  void  HSelectionPopup::updateLayout ()
+  {
+    _model->updateLayout ();
+
+  // This seems a very bad way to set the size of the popup window
+  // and underlying QTableView (top-down instead of bottom-up).
+    int   rows       = _model->rowCount();
+    QSize windowSize = QSize ( 600, _rowHeight*rows + 4 );
+
+    resize ( windowSize );
+    _view->resize ( windowSize );
   }
 
 

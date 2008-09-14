@@ -88,6 +88,8 @@ namespace Hurricane {
       template<typename InformationType>
               void                   setCellWidget     ( CellWidget* cw );
               void                   runInspector      ( const QModelIndex& index  );
+    public slots:
+              void                   forceRowHeight    ();
     private slots:
               void                   textFilterChanged ();
               void                   selectNet         ( const QModelIndex& index );
@@ -95,9 +97,9 @@ namespace Hurricane {
               void                   keyPressEvent     ( QKeyEvent * event );
 
     private:
-              HNetlistModel*         _netlistModel;
+              HNetlistModel*         _baseModel;
               QSortFilterProxyModel* _sortModel;
-              QTableView*            _netlistView;
+              QTableView*            _view;
               QLineEdit*             _filterPatternLineEdit;
               int                    _rowHeight;
               CellWidget*            _cellWidget;
@@ -107,23 +109,23 @@ namespace Hurricane {
   template<typename InformationType>
   void  HNetlist::setCell ( Cell* cell )
   {
-    _netlistModel->setCell<InformationType> ( cell );
+    _baseModel->setCell<InformationType> ( cell );
      
     string windowTitle = "Netlist" + getString(cell);
     setWindowTitle ( tr(windowTitle.c_str()) );
 
     int rows = _sortModel->rowCount ();
     for ( rows-- ; rows >= 0 ; rows-- )
-      _netlistView->setRowHeight ( rows, _rowHeight );
-    _netlistView->selectRow ( 0 );
-    _netlistView->resizeColumnToContents ( 0 );
+      _view->setRowHeight ( rows, _rowHeight );
+    _view->selectRow ( 0 );
+    _view->resizeColumnToContents ( 0 );
   }
 
 
   template<typename InformationType>
   void  HNetlist::setCellWidget ( CellWidget* cw )
   {
-    if ( _netlistModel->getCell() != cw->getCell() )
+    if ( _baseModel->getCell() != cw->getCell() )
       setCell<InformationType>( cw->getCell() );
 
     _cellWidget = cw;

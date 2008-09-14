@@ -351,6 +351,7 @@ namespace Hurricane {
                                              , _cell(NULL)
                                              , _showBoundaries(true)
                                              , _showSelection(false)
+                                             , _cumulativeSelection(false)
                                              , _selectionHasChanged(false)
                                              , _commands()
                                              , _redrawRectCount(0)
@@ -454,6 +455,13 @@ namespace Hurricane {
       _selectionHasChanged = false;
       redraw ();
     }
+  }
+
+
+  void  CellWidget::setCumulativeSelection ( bool state )
+  {
+    cerr << "CellWidget::setCumulativeSelection() - " << state << endl;
+    _cumulativeSelection = state;
   }
 
 
@@ -1068,6 +1076,17 @@ namespace Hurricane {
   }
 
 
+  void  CellWidget::selectOccurrencesUnder ( Box selectArea )
+  {
+    if ( !_cumulativeSelection ) unselectAll ( true );
+
+    forEach ( Occurrence, ioccurrence, _cell->getOccurrencesUnder(selectArea) )
+      select ( *ioccurrence );
+
+    emit selectionChanged(_selectors,_cell);
+  }
+
+
   void  CellWidget::unselect ( Occurrence occurrence )
   {
 	if ( !occurrence.isValid() )
@@ -1098,6 +1117,33 @@ namespace Hurricane {
 
     _selectionHasChanged = true;
     if ( !delayRedraw ) redraw ();
+  }
+
+
+  void  CellWidget::toggleSelect ( Occurrence occurrence, bool fromPopup )
+  {
+	if ( !occurrence.isValid() )
+      throw Error ( "Can't select occurrence : invalid occurrence" );
+
+	if ( occurrence.getOwnerCell() != getCell() )
+      throw Error ( "Can't select occurrence : incompatible occurrence" );
+
+	Property* property = occurrence.getProperty ( Selector::getPropertyName() );
+    Selector* selector = NULL;
+	if ( !property ) {
+      selector = Selector::create ( occurrence );
+      selector->attachTo ( this );
+	} else {
+      selector = dynamic_cast<Selector*>(property);
+      if ( !selector )
+        throw Error ( "Abnormal property named " + getString(Selector::getPropertyName()) );
+      selector->detachFrom ( this );
+    }
+
+    _selectionHasChanged = true;
+    redraw ();
+
+    if ( fromPopup ) emit occurrenceToggled ( occurrence );
   }
 
 

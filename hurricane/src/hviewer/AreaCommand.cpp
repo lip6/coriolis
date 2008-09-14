@@ -68,6 +68,7 @@ namespace Hurricane {
     : Command()
     , _startPoint()
     , _stopPoint()
+    , _drawingEnabled(false)
   { }
 
 
@@ -78,7 +79,7 @@ namespace Hurricane {
 
   bool  AreaCommand::mouseMoveEvent ( CellWidget* widget, QMouseEvent* event )
   {
-    if ( !isActive() ) return false;
+    if ( !_drawingEnabled ) return false;
 
     setStopPoint ( event->pos() );
     widget->update ();
@@ -89,7 +90,7 @@ namespace Hurricane {
 
   void  AreaCommand::draw ( CellWidget* widget )
   {
-    if ( !_active ) return;
+    if ( !_drawingEnabled ) return;
 
     widget->drawScreenRect ( _startPoint, _stopPoint );
     drawCorner ( widget, true  );

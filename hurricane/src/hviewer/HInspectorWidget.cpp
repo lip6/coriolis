@@ -180,10 +180,10 @@ namespace Hurricane {
 
   HInspectorWidget::HInspectorWidget ( QWidget* parent )
       : QWidget(parent)
-      , _recordModel(NULL)
+      , _baseModel(NULL)
       , _sortModel(NULL)
       , _historyComboBox(NULL)
-      , _slotsView(NULL)
+      , _view(NULL)
       , _rowHeight(20)
       , _history()
   {
@@ -192,17 +192,17 @@ namespace Hurricane {
 
     _rowHeight = QFontMetrics(Graphics::getFixedFont()).height() + 4;
 
-    _slotsView = new QTableView(this);
-    _slotsView->setShowGrid(false);
-    _slotsView->setAlternatingRowColors(true);
-    _slotsView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    _slotsView->setSortingEnabled(true);
+    _view = new QTableView(this);
+    _view->setShowGrid(false);
+    _view->setAlternatingRowColors(true);
+    _view->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _view->setSortingEnabled(true);
 
-    QHeaderView* horizontalHeader = _slotsView->horizontalHeader ();
+    QHeaderView* horizontalHeader = _view->horizontalHeader ();
     horizontalHeader->setStretchLastSection ( true );
     horizontalHeader->setMinimumSectionSize ( 200 );
 
-    QHeaderView* verticalHeader = _slotsView->verticalHeader ();
+    QHeaderView* verticalHeader = _view->verticalHeader ();
     verticalHeader->setVisible ( false );
 
     _historyComboBox = new QComboBox ( this );
@@ -214,7 +214,7 @@ namespace Hurricane {
 
     QGridLayout* inspectorLayout = new QGridLayout();
     inspectorLayout->addWidget(_historyComboBox      , 0, 0, 1, 2);
-    inspectorLayout->addWidget(_slotsView            , 1, 0, 1, 2);
+    inspectorLayout->addWidget(_view            , 1, 0, 1, 2);
     inspectorLayout->addWidget(filterPatternLabel    , 2, 0);
     inspectorLayout->addWidget(_filterPatternLineEdit, 2, 1);
 
@@ -237,24 +237,32 @@ namespace Hurricane {
   }
 
 
+  void  HInspectorWidget::forceRowHeight ()
+  {
+    for (  int rows=_sortModel->rowCount()-1; rows >= 0 ; rows-- )
+      _view->setRowHeight ( rows, _rowHeight );
+  }
+
+
   void  HInspectorWidget::setRootRecord ( Record* record )
   {
     _history.setRootRecord ( record );
 
-    if ( !_recordModel ) {
-      _recordModel = new RecordModel ( this );
+    if ( !_baseModel ) {
+      _baseModel = new RecordModel ( this );
       _sortModel   = new QSortFilterProxyModel ( this );
-      _sortModel->setSourceModel       ( _recordModel );
+      _sortModel->setSourceModel       ( _baseModel );
       _sortModel->setDynamicSortFilter ( true );
       _sortModel->setFilterKeyColumn   ( 1 );
 
-      _slotsView->setModel ( _sortModel );
-      _slotsView->horizontalHeader()->setStretchLastSection ( true );
-      _slotsView->resizeColumnToContents ( 0 );
+      _view->setModel ( _sortModel );
+      _view->horizontalHeader()->setStretchLastSection ( true );
+      _view->resizeColumnToContents ( 0 );
 
     // Only after creating the RecordModel can we connect the ComboBox.
       connect ( _historyComboBox, SIGNAL(currentIndexChanged(int))
               , this            , SLOT(historyChanged(int)) );
+      connect ( _baseModel, SIGNAL(layoutChanged()), this, SLOT(forceRowHeight()) );
     }
 
     setSlot ();
@@ -265,13 +273,13 @@ namespace Hurricane {
   {
     bool change = true;
 
-    change = _recordModel->setSlot ( _history.getSlot(), _history.getDepth() );
-    if ( change ) {
-      int rows = _sortModel->rowCount ();
-      for ( rows-- ; rows >= 0 ; rows-- )
-        _slotsView->setRowHeight ( rows, _rowHeight );
-      _slotsView->selectRow ( 0 );
-    }
+    change = _baseModel->setSlot ( _history.getSlot(), _history.getDepth() );
+//     if ( change ) {
+//       int rows = _sortModel->rowCount ();
+//       for ( rows-- ; rows >= 0 ; rows-- )
+//         _view->setRowHeight ( rows, _rowHeight );
+//       _view->selectRow ( 0 );
+//     }
 
     return change;
   }
@@ -302,9 +310,9 @@ namespace Hurricane {
   void  HInspectorWidget::keyPressEvent ( QKeyEvent *event )
   {
     if ( event->key() == Qt::Key_Right ) {
-      QModelIndex index = _slotsView->currentIndex();
+      QModelIndex index = _view->currentIndex();
       if ( index.isValid() ) {
-        Slot* slot = _recordModel->getRecord()->getSlot(_sortModel->mapToSource(index).row());
+        Slot* slot = _baseModel->getRecord()->getSlot(_sortModel->mapToSource(index).row());
 
         if ( slot )
           pushSlot ( slot );
@@ -312,7 +320,7 @@ namespace Hurricane {
     } else if ( event->key() == Qt::Key_Left ) {
       back ();
     } else if ( event->key() == Qt::Key_O ) {
-      forkInspector ( _slotsView->currentIndex() );
+      forkInspector ( _view->currentIndex() );
     } else {
       event->ignore();
     }
@@ -322,6 +330,7 @@ namespace Hurricane {
   void  HInspectorWidget::textFilterChanged ()
   {
     _sortModel->setFilterRegExp ( _filterPatternLineEdit->text() );
+    forceRowHeight ();
   }
 
 
@@ -337,7 +346,7 @@ namespace Hurricane {
   void  HInspectorWidget::forkInspector ( const QModelIndex& index )
   {
     if ( index.isValid() ) {
-      Slot*   slot   = _recordModel->getRecord()->getSlot(_sortModel->mapToSource(index).row());
+      Slot*   slot   = _baseModel->getRecord()->getSlot(_sortModel->mapToSource(index).row());
       Record* record = slot->getDataRecord();
 
       if ( record ) {

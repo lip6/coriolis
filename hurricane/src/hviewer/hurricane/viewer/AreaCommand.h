@@ -67,13 +67,16 @@ namespace Hurricane {
       virtual                  ~AreaCommand          ();
       inline  void              setStartPoint        ( const QPoint& start );
       inline  void              setStopPoint         ( const QPoint& stop );
+      inline  void              setDrawingEnabled    ( bool state );
       virtual void              draw                 ( CellWidget* widget );
       virtual void              drawCorner           ( CellWidget* widget, bool bottomLeft );
       virtual bool              mouseMoveEvent       ( CellWidget* widget, QMouseEvent* event );
+      inline  bool              isDrawingEnabled     () const;
     protected:
               QPoint            _startPoint;
               QPoint            _stopPoint;
               QPoint            _cornerPoints[3];
+              bool              _drawingEnabled;
     private:
                                 AreaCommand          ( const AreaCommand& );
               AreaCommand&      operator=            ( const AreaCommand& );
@@ -86,6 +89,14 @@ namespace Hurricane {
 
   inline void  AreaCommand::setStopPoint ( const QPoint& stop )
   { _stopPoint  = stop; }
+
+
+  inline void  AreaCommand::setDrawingEnabled ( bool state )
+  { _drawingEnabled  = state; }
+
+
+  inline bool  AreaCommand::isDrawingEnabled () const
+  { return _drawingEnabled; }
 
 
 }

@@ -58,6 +58,7 @@
 
 # include "hurricane/viewer/CellWidget.h"
 # include "hurricane/viewer/SelectCommand.h"
+# include "hurricane/viewer/HSelectionPopup.h"
 
 
 namespace Hurricane {
@@ -70,11 +71,19 @@ namespace Hurricane {
   SelectCommand::SelectCommand ()
     : AreaCommand()
     , _selectAction(NULL)
-  { }
+    , _selectionPopup(NULL)
+  {
+    _selectionPopup = new HSelectionPopup ();
+
+    connect ( _selectionPopup, SIGNAL(occurrenceSelected(Occurrence,bool))
+            , this           , SIGNAL(selectionToggled  (Occurrence,bool)) );
+  }
 
 
   SelectCommand::~SelectCommand ()
-  { }
+  {
+    delete _selectionPopup;
+  }
 
 
   void  SelectCommand::bindToAction ( QAction* action )
@@ -87,9 +96,21 @@ namespace Hurricane {
   {
     if ( isActive() ) return true;
 
-    if ( (event->button() == Qt::RightButton) && !event->modifiers() ) {
-      setActive     ( true );
-      setStartPoint ( event->pos() );
+    if ( event->button() == Qt::RightButton ) {
+      if ( !event->modifiers() ) {
+        setActive         ( true );
+        setStartPoint     ( event->pos() );
+        setDrawingEnabled ( true );
+      } else if ( event->modifiers() == Qt::ControlModifier ) {
+        QRect selectArea ( event->pos() - QPoint(2,2), QSize(4,4) );
+        forEach ( Occurrence, ioccurrence
+                , widget->getCell()->getOccurrencesUnder(widget->screenToDbuBox(selectArea)) ) {
+          _selectionPopup->add ( *ioccurrence );
+        }
+        _selectionPopup->updateLayout ();
+        _selectionPopup->move ( event->globalPos() );
+        _selectionPopup->popup ();
+      }
     }
 
     return isActive();
@@ -101,6 +122,7 @@ namespace Hurricane {
     if ( !isActive() ) return false;
 
     setActive ( false );
+    setDrawingEnabled ( false );
 
     QRect selectArea;
     if ( _startPoint == _stopPoint )
@@ -108,11 +130,9 @@ namespace Hurricane {
     else
       selectArea = QRect ( _startPoint, _stopPoint );
       
-    widget->unselectAll ();
-    forEach ( Occurrence, ioccurrence
-            , widget->getCell()->getOccurrencesUnder(widget->screenToDbuBox(selectArea)) ) {
-      widget->select ( *ioccurrence );
-    }
+  //widget->unselectAll ();
+    widget->selectOccurrencesUnder ( widget->screenToDbuBox(selectArea) );
+
     if ( _selectAction ) {
       if ( !_selectAction->isChecked() )
         _selectAction->setChecked ( true );
@@ -122,11 +142,10 @@ namespace Hurricane {
       widget->setShowSelection ( true );
       widget->redraw ();
     }
-
-    emit selectionChanged(widget->getSelectorSet(),widget->getCell());
-
+    
     return false;
   }
+
 
 
 } // End of Hurricane namespace.

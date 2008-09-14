@@ -450,10 +450,23 @@ namespace Hurricane {
   {
     if ( !_selectionBrowser ) {
       _selectionBrowser = new HSelection ();
-      _selectionBrowser->setSelection ( _cellWidget->getSelectorSet() );
-      connect ( _selectionBrowser, SIGNAL(destroyed()), this, SLOT(selectionBrowserDestroyed()) );
-      connect ( &_selectCommand   , SIGNAL(selectionChanged(const set<Selector*>&,Cell*))
+      _selectionBrowser->setSelection ( _cellWidget->getSelectorSet(), _cellWidget->getCell() );
+
+      connect ( _selectionBrowser , SIGNAL(destroyed()), this, SLOT(selectionBrowserDestroyed()) );
+      connect (  _cellWidget      , SIGNAL(selectionChanged(const set<Selector*>&,Cell*))
               ,  _selectionBrowser, SLOT  (setSelection    (const set<Selector*>&,Cell*)) );
+      connect ( &_selectCommand   , SIGNAL(selectionToggled (Occurrence,bool))
+              ,  _cellWidget      , SLOT  (toggleSelect     (Occurrence,bool)) );
+      connect (  _selectionBrowser, SIGNAL(occurrenceToggled(Occurrence,bool))
+              ,  _cellWidget      , SLOT  (toggleSelect     (Occurrence,bool)) );
+      connect (  _cellWidget      , SIGNAL(occurrenceToggled(Occurrence))
+              ,  _selectionBrowser, SLOT  (toggleSelection  (Occurrence)) );
+      connect (  _selectionBrowser, SIGNAL(cumulativeToggled     (bool))
+              ,  _cellWidget      , SLOT  (setCumulativeSelection(bool)) );
+      connect (  _selectionBrowser, SIGNAL(selectionCleared())
+              ,  _cellWidget      , SLOT  (unselectAll     ()) );
+      connect (  _selectionBrowser, SIGNAL(showSelected    (bool))
+              ,  _cellWidget      , SLOT  (setShowSelection(bool)) );
     }
     _selectionBrowser->show ();
   }
