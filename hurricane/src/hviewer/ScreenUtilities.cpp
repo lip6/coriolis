@@ -104,7 +104,7 @@ namespace {
 namespace Hurricane {
 
 
-QBrush  getBrush ( const string& pattern, int red, int green, int blue )
+QBrush* getBrush ( const string& pattern, int red, int green, int blue )
 {
   if ( pattern != "FFFFFFFFFFFFFFFF" ) {
     uchar  bits[8];
@@ -112,10 +112,10 @@ QBrush  getBrush ( const string& pattern, int red, int green, int blue )
     if ( !getPattern(bits,pattern) )
       cerr << "[WARNING] Invalid stipple pattern: \"0x" << pattern << "\"." << endl;
     
-    return QBrush ( QColor(red,green,blue), QBitmap::fromData(QSize(8,8),bits,QImage::Format_Mono) );
+    return new QBrush ( QColor(red,green,blue), QBitmap::fromData(QSize(8,8),bits,QImage::Format_Mono) );
   }
 
-  return QBrush ( QColor(red,green,blue), Qt::SolidPattern );
+  return new QBrush ( QColor(red,green,blue), Qt::SolidPattern );
 }
 
 

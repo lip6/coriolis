@@ -133,6 +133,7 @@ namespace Hurricane {
               bool                    isDrawable             ( const Name& entryName );
               void                    drawBox                ( const Box& );
               void                    drawLine               ( const Point&, const Point& );
+              void                    drawText               ( const Point&, const Name&, int angle=0, bool reverse=false  );
               void                    drawGrid               ();
               void                    drawSpot               ();
               void                    drawScreenRect         ( const QPoint&, const QPoint& );
@@ -219,35 +220,37 @@ namespace Hurricane {
     private:
       class DrawingPlanes {
         public:
-                                DrawingPlanes ( const QSize& size, CellWidget* cw );
-                               ~DrawingPlanes ();
-          inline bool           getLineMode   () const;
-          inline int            width         () const;
-          inline int            height        () const;
-          inline QSize          size          () const;
-          inline void           select        ( size_t i );
-          inline QPixmap*       plane         (); 
-          inline QPixmap*       plane         ( size_t i ); 
-          inline QPainter&      painter       (); 
-          inline QPainter&      painter       ( size_t i ); 
-          inline void           painterBegin  ();
-          inline void           painterBegin  ( size_t i );
-          inline void           paintersBegin ();
-          inline void           painterEnd    ();
-          inline void           painterEnd    ( size_t i );
-          inline void           paintersEnd   ();
-                 void           setLineMode   ( bool mode );
-                 void           setPen        ( const QPen& pen );
-                 void           setBrush      ( const QBrush& brush );
-                 void           resize        ( const QSize& size );
-                 void           shiftLeft     ( int dx );
-                 void           shiftRight    ( int dx );
-                 void           shiftUp       ( int dy );
-                 void           shiftDown     ( int dy );
-          inline void           copyToSelect  ();
-                 void           copyToSelect  ( int sx, int sy, int h, int w );
-          inline void           copyToScreen  ();
-                 void           copyToScreen  ( int sx, int sy, int h, int w );
+                                DrawingPlanes      ( const QSize& size, CellWidget* cw );
+                               ~DrawingPlanes      ();
+          inline bool           getLineMode        () const;
+          inline int            width              () const;
+          inline int            height             () const;
+          inline QSize          size               () const;
+          inline void           select             ( size_t i );
+          inline QPixmap*       plane              (); 
+          inline QPixmap*       plane              ( size_t i ); 
+          inline QPainter&      painter            (); 
+          inline QPainter&      painter            ( size_t i ); 
+          inline void           painterBegin       ();
+          inline void           painterBegin       ( size_t i );
+          inline void           paintersBegin      ();
+          inline void           painterEnd         ();
+          inline void           painterEnd         ( size_t i );
+          inline void           paintersEnd        ();
+                 void           setLineMode        ( bool mode );
+                 void           setPen             ( const QPen& pen );
+                 void           setBrush           ( const QBrush& brush );
+                 void           setBackground      ( const QBrush& brush );
+                 void           setBackgroundMode  ( Qt::BGMode mode );
+                 void           resize             ( const QSize& size );
+                 void           shiftLeft          ( int dx );
+                 void           shiftRight         ( int dx );
+                 void           shiftUp            ( int dy );
+                 void           shiftDown          ( int dy );
+          inline void           copyToSelect       ();
+                 void           copyToSelect       ( int sx, int sy, int h, int w );
+          inline void           copyToScreen       ();
+                 void           copyToScreen       ( int sx, int sy, int h, int w );
         private:
                  CellWidget*    _cellWidget;
                  QPixmap*       _planes[2];
@@ -284,6 +287,22 @@ namespace Hurricane {
                   CellWidget* _cellWidget;
       };
 
+    private:
+      class TextDrawingQuery : public Query {
+        public:
+                              TextDrawingQuery      ( CellWidget* widget );
+          inline  void        setQuery              ( const Box&            area
+                                                    , const Transformation& transformation
+                                                    );
+          virtual bool        hasMasterCellCallback () const;
+          virtual bool        hasGoCallback         () const;
+          virtual void        masterCellCallback    ();
+          virtual void        goCallback            ( Go* go );
+    
+        protected:
+                  CellWidget* _cellWidget;
+      };
+
     protected:
     // Internal: Attributes.
       static  const int               _stripWidth;
@@ -297,6 +316,7 @@ namespace Hurricane {
               QPoint                  _offsetVA;
               DrawingPlanes           _drawingPlanes;
               DrawingQuery            _drawingQuery;
+              TextDrawingQuery        _textDrawingQuery;
               int                     _queryFilter;
               QPoint                  _mousePosition;
               Spot                    _spot;
@@ -308,6 +328,7 @@ namespace Hurricane {
               set<Selector*>          _selectors;
               vector<Command*>        _commands;
               size_t                  _redrawRectCount;
+              int                     _textFontHeight;
   };
 
 

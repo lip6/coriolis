@@ -74,7 +74,8 @@ namespace Hurricane {
   const Name  DisplayStyle::Grid          = "grid";
   const Name  DisplayStyle::Spot          = "spot";
   const Name  DisplayStyle::Ghost         = "ghost";
-  const Name  DisplayStyle::Text          = "text";
+  const Name  DisplayStyle::TextCell      = "text.cell";
+  const Name  DisplayStyle::TextInstance  = "text.instance";
   const Name  DisplayStyle::Undef         = "undef";
 
 
@@ -87,19 +88,17 @@ namespace Hurricane {
                              ,       int     borderWidth
                              ,       float   threshold
                              ) : _name(name)
+                               , _red(red)
+                               , _green(green)
+                               , _blue(blue)
+                               , _borderWidth(borderWidth)
                                , _pattern(pattern)
-                               , _color(QColor(red,green,blue))
-                               , _pen(_color)
-                               , _brush(Hurricane::getBrush(_pattern,red,green,blue))
+                               , _color(NULL)
+                               , _pen(NULL)
+                               , _brush(NULL)
                                , _threshold(threshold)
                                , _refcount(1)
   {
-    if ( borderWidth ) {
-      _pen.setStyle ( Qt::SolidLine );
-      _pen.setWidth ( borderWidth );
-    }
-    else
-      _pen.setStyle ( Qt::NoPen );
   }
 
 
@@ -117,24 +116,47 @@ namespace Hurricane {
   }
 
 
+  void  DrawingStyle::qtAllocate ()
+  {
+    if ( !_color ) {
+      _color = new QColor ( _red, _green, _blue );
+
+      _pen = new QPen ( *_color );
+      if ( _borderWidth ) {
+        _pen->setStyle ( Qt::SolidLine );
+        _pen->setWidth ( _borderWidth );
+      } else
+        _pen->setStyle ( Qt::NoPen );
+
+      _brush = Hurricane::getBrush ( _pattern, _red, _green, _blue );
+    }
+  }
+
+
   QColor  DrawingStyle::getColor ( int darkening ) const
   {
-    return _color.darker ( darkening );
+    assert ( _color != NULL );
+
+    return _color->darker ( darkening );
   }
 
 
   QPen  DrawingStyle::getPen ( int darkening ) const
   {
-    QPen pen ( _pen );
-    pen.setColor ( _color.darker(darkening) );
+    assert ( _pen != NULL );
+
+    QPen pen ( *_pen );
+    pen.setColor ( _color->darker(darkening) );
     return pen;
   }
 
 
   QBrush  DrawingStyle::getBrush ( int darkening ) const
   {
-    QBrush brush ( _brush );
-    brush.setColor ( _color.darker(darkening) );
+    assert ( _brush != NULL );
+
+    QBrush brush ( *_brush );
+    brush.setColor ( _color->darker(darkening) );
     return brush;
   }
 
@@ -142,6 +164,11 @@ namespace Hurricane {
   DrawingStyle::~DrawingStyle ()
   {
     assert ( _refcount == 0 );
+    if ( _color ) {
+      delete _color;
+      delete _pen;
+      delete _brush;
+    }
   }
 
 
@@ -168,7 +195,13 @@ namespace Hurricane {
 
   DrawingGroup::DrawingGroup ( const Name& name )
     : _name(name), _drawingStyles()
+  { }
+
+
+  void  DrawingGroup::qtAllocate ()
   {
+    for ( size_t i=0 ; i < _drawingStyles.size() ; i++ )
+      _drawingStyles[i]->qtAllocate ();
   }
 
 
@@ -251,7 +284,8 @@ namespace Hurricane {
     addDrawingStyle ( Viewer, Grid         , "FFFFFFFFFFFFFFFF", 255, 255, 255, 1, 8.0 );
     addDrawingStyle ( Viewer, Spot         , "FFFFFFFFFFFFFFFF", 255, 255, 255, 1, 8.0 );
     addDrawingStyle ( Viewer, Ghost        , "FFFFFFFFFFFFFFFF", 255, 255, 255, 1, 1.0 );
-    addDrawingStyle ( Viewer, Text         , "8822441188224411", 255, 255, 255, 0, 1.0 );
+    addDrawingStyle ( Viewer, TextCell     , "8822441188224411", 255, 255, 255, 0, 1.0 );
+    addDrawingStyle ( Viewer, TextInstance , "8822441188224411", 255, 255, 255, 0, 1.0 );
     addDrawingStyle ( Viewer, Undef        , "2244118822441188", 238, 130, 238, 0, 1.0 );
   }
 
@@ -261,6 +295,13 @@ namespace Hurricane {
     for ( size_t i=0 ; i < _groups.size() ; i++ ) {
       delete _groups[i];
     }
+  }
+
+
+  void  DisplayStyle::qtAllocate ()
+  {
+    for ( size_t gi=0 ; gi < _groups.size() ; gi++ )
+      _groups[gi]->qtAllocate ();
   }
 
 

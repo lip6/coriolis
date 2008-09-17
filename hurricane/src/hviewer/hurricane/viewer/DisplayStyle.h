@@ -88,6 +88,7 @@ namespace Hurricane {
              size_t        unlink       ();
 
     // Accessors.
+             void          qtAllocate   ();
       inline const Name&   getName      () const;
       inline const string& getPattern   () const;
              QColor        getColor     ( int darkening ) const;
@@ -98,10 +99,14 @@ namespace Hurricane {
     protected:
     // Internal - Attributes.
              const Name    _name;
+                   int     _red;
+                   int     _green;
+                   int     _blue;
+                   int     _borderWidth;
                    string  _pattern;
-                   QColor  _color;
-                   QPen    _pen;
-                   QBrush  _brush;
+                   QColor *_color;
+                   QPen   *_pen;
+                   QBrush *_brush;
                    float   _threshold;
                    size_t  _refcount;
 
@@ -130,6 +135,7 @@ namespace Hurricane {
                                     DrawingGroup     ( const Name&   name );
                                    ~DrawingGroup     ();
               DrawingGroup*         getClone         ();
+              void                  qtAllocate       ();
 
     // Methods.
       inline const Name&            getName          () const;
@@ -176,7 +182,8 @@ namespace Hurricane {
       static const Name             Grid;
       static const Name             Spot;
       static const Name             Ghost;
-      static const Name             Text;
+      static const Name             TextCell;
+      static const Name             TextInstance;
       static const Name             Undef;
       static const Name             UnmatchedGroup;
 
@@ -198,6 +205,7 @@ namespace Hurricane {
              DrawingStyle*          find             ( const Name& key ) const;
 
     // Modifiers.
+             void                   qtAllocate       ();
       inline void                   setDescription   ( const string& description );
       inline void                   setDescription   ( const char* description );
              void                   inheritFrom      ( const DisplayStyle* base );

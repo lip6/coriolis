@@ -175,6 +175,20 @@ namespace Hurricane {
   }
 
 
+  void  CellWidget::DrawingPlanes::setBackground ( const QBrush& brush )
+  {
+    _painters[0].setBackground ( brush );
+    _painters[1].setBackground ( brush );
+  }
+
+
+  void  CellWidget::DrawingPlanes::setBackgroundMode ( Qt::BGMode mode )
+  {
+    _painters[0].setBackgroundMode ( mode );
+    _painters[1].setBackgroundMode ( mode );
+  }
+
+
   void  CellWidget::DrawingPlanes::setLineMode ( bool mode )
   {
     if ( _lineMode != mode ) {
@@ -282,7 +296,8 @@ namespace Hurricane {
 
   void  CellWidget::DrawingQuery::masterCellCallback ()
   {
-    _cellWidget->drawBox ( getTransformation().getBox(getMasterCell()->getAbutmentBox()) );
+    Box bbox = getTransformation().getBox(getMasterCell()->getAbutmentBox());
+    _cellWidget->drawBox ( bbox );
   }
 
 
@@ -330,6 +345,45 @@ namespace Hurricane {
 
 
 // -------------------------------------------------------------------
+// Class :  "Hurricane::CellWidget::TextDrawingQuery".
+
+
+  CellWidget::TextDrawingQuery::TextDrawingQuery ( CellWidget* widget )
+    : Query()
+    ,_cellWidget(widget)
+  {
+    setBasicLayer ( NULL );
+    setFilter     ( Query::DoMasterCells|Query::DoTerminalCells );
+    setStartLevel ( 0 );
+    setStopLevel  ( 1 );
+  }
+
+
+  bool  CellWidget::TextDrawingQuery::hasMasterCellCallback () const
+  { return true; }
+
+
+  void  CellWidget::TextDrawingQuery::masterCellCallback ()
+  {
+    Box bbox = getTransformation().getBox(getMasterCell()->getAbutmentBox());
+    if ( getDepth() == 2 )
+      _cellWidget->drawText ( Point(bbox.getXMin(),bbox.getYMin())
+                            , getInstance()->getName()
+                            , -90
+                            , true
+                            );
+  }
+
+
+  bool  CellWidget::TextDrawingQuery::hasGoCallback () const
+  { return false; }
+
+
+  void  CellWidget::TextDrawingQuery::goCallback ( Go* go )
+  { }
+
+
+// -------------------------------------------------------------------
 // Class :  "Hurricane::CellWidget".
 
 
@@ -345,6 +399,7 @@ namespace Hurricane {
                                              , _offsetVA(_stripWidth,_stripWidth)
                                              , _drawingPlanes(QSize(6*_stripWidth,6*_stripWidth),this)
                                              , _drawingQuery(this)
+                                             , _textDrawingQuery(this)
                                              , _queryFilter(Query::DoAll)
                                              , _mousePosition(0,0)
                                              , _spot(this)
@@ -355,6 +410,7 @@ namespace Hurricane {
                                              , _selectionHasChanged(false)
                                              , _commands()
                                              , _redrawRectCount(0)
+                                             , _textFontHeight(20)
   {
   //setBackgroundRole ( QPalette::Dark );
   //setAutoFillBackground ( false );
@@ -370,6 +426,9 @@ namespace Hurricane {
     DataBase* database = DataBase::getDB();
     if ( database )
       _technology = database->getTechnology ();
+
+    QFont font = Graphics::getNormalFont();
+    _textFontHeight = QFontMetrics(font).ascent();
 
     fitToContents ();
   }
@@ -471,9 +530,6 @@ namespace Hurricane {
 //          << _selectionHasChanged << " filter:"
 //          << _queryFilter << endl;
 
-  //_drawingQuery.setStartLevel ( 1 );
-  //_drawingQuery.setStopLevel  ( 2 );
-
     _redrawRectCount = 0;
 
     pushCursor ( Qt::BusyCursor );
@@ -498,24 +554,31 @@ namespace Hurricane {
         _drawingQuery.setTransformation ( Transformation() );
 
         forEach ( BasicLayer*, iLayer, _technology->getBasicLayers() ) {
-          _drawingPlanes.setPen   ( Graphics::getPen  ((*iLayer)->getName(),darkening));
+          _drawingPlanes.setPen   ( Graphics::getPen  ((*iLayer)->getName(),darkening) );
           _drawingPlanes.setBrush ( Graphics::getBrush((*iLayer)->getName(),darkening) );
 
           if ( isDrawable((*iLayer)->getName()) ) {
-          //drawCell ( _cell, (*iLayer), redrawBox, Transformation() );
             _drawingQuery.setBasicLayer ( *iLayer );
             _drawingQuery.setFilter     ( _queryFilter & ~Query::DoMasterCells );
-            _drawingQuery.doQuery ();
+            _drawingQuery.doQuery       ();
           }
         }
         if ( isDrawable("boundaries") ) {
-          _drawingPlanes.setPen   ( Graphics::getPen  ("boundaries") );
-          _drawingPlanes.setBrush ( Graphics::getBrush("boundaries") );
+          _drawingPlanes.setPen   ( Graphics::getPen  ("boundaries",darkening) );
+          _drawingPlanes.setBrush ( Graphics::getBrush("boundaries",darkening) );
 
-        //drawBoundaries ( _cell, redrawBox, Transformation() );
           _drawingQuery.setBasicLayer ( NULL );
           _drawingQuery.setFilter     ( _queryFilter & ~Query::DoComponents );
-          _drawingQuery.doQuery ();
+          _drawingQuery.doQuery       ();
+        }
+
+        if ( isDrawable("text.instance") ) {
+          _drawingPlanes.setPen               ( Graphics::getPen  ("text.instance",darkening) );
+          _drawingPlanes.setBrush             ( Graphics::getBrush("text.instance",darkening) );
+          _drawingPlanes.setBackground        ( Graphics::getBrush("boundaries"   ,darkening) );
+          _textDrawingQuery.setArea           ( redrawBox );
+          _textDrawingQuery.setTransformation ( Transformation() );
+          _textDrawingQuery.doQuery           ();
         }
       }
 
@@ -603,6 +666,20 @@ namespace Hurricane {
     _redrawRectCount++;
     _drawingPlanes.setLineMode ( false );
     _drawingPlanes.painter().drawRect ( dbuToDisplayRect(box) );
+  }
+
+
+  void  CellWidget::drawText ( const Point& point, const Name& text, int angle, bool reverse )
+  {
+    _drawingPlanes.painter().save();
+    if ( reverse ) {
+      _drawingPlanes.painter().setPen            ( Graphics::getPen  ("background") );
+      _drawingPlanes.painter().setBackgroundMode ( Qt::OpaqueMode );
+    }
+    _drawingPlanes.painter().translate( dbuToDisplayPoint(point) );
+    _drawingPlanes.painter().rotate( angle );
+    _drawingPlanes.painter().drawText ( 0, _textFontHeight, getString(text).c_str() );
+    _drawingPlanes.painter().restore();
   }
 
 
@@ -1036,6 +1113,7 @@ namespace Hurricane {
   {
     _cell = cell;
     _drawingQuery.setCell ( cell );
+    _textDrawingQuery.setCell ( cell );
 
     fitToContents ();
   }

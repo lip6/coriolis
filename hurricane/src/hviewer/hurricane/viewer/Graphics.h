@@ -79,6 +79,7 @@ namespace Hurricane {
     public:
     // Accessors.
       static  Graphics*                    getGraphics   ();
+      static  bool                         isEnabled     ();
       static  const QFont                  getFixedFont  ( int weight=QFont::Normal, bool italic=false, bool underline=false );
       static  const QFont                  getNormalFont ( bool bold=false, bool italic=false, bool underline=false );
       static  const Name&                  getGroup      ( const Name& key );
@@ -96,12 +97,14 @@ namespace Hurricane {
       static  DisplayStyle*                getStyle      ( const Name& key );
       static  DisplayStyle*                getStyle      ();
       static  const vector<DisplayStyle*>& getStyles     ();
+      static  void                         enable        ();
 
     // Internals - Attributes.
     protected:
       static  Graphics*                    _singleton;
               vector<DisplayStyle*>        _styles;
               DisplayStyle*                _active;
+              bool                         _qtEnabled;
 
     // Internals - Constructors & Destructors.
                                            Graphics      ();
@@ -124,6 +127,7 @@ namespace Hurricane {
       inline  const string&                _getPattern   ( const Name& key ) const;
       inline  float                        _getThreshold ( const Name& key ) const;
       inline  int                          _getDarkening () const;
+      inline  void                         _enable       ();
 
   };
 

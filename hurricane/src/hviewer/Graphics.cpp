@@ -74,6 +74,7 @@ namespace Hurricane {
   Graphics::Graphics ()
     : _styles()
     , _active(NULL)
+    , _qtEnabled(false)
   {
     _styles.push_back ( new DisplayStyle("Fallback") );
     _active = _styles[0];
@@ -121,6 +122,14 @@ namespace Hurricane {
   }
 
 
+  void  Graphics::_enable ()
+  {
+    _qtEnabled = true;
+    for ( size_t si=0 ; si < _styles.size() ; si++ )
+      _styles[si]->qtAllocate ();
+  }
+
+
   size_t  Graphics::_findStyle ( const Name& name ) const
   {
     size_t si = 0;
@@ -147,6 +156,9 @@ namespace Hurricane {
 
     _styles [ si ] = displayStyle;
     _active = _styles [ si ];
+
+    if ( _qtEnabled )
+      _active->qtAllocate ();
   }
 
 
@@ -175,11 +187,26 @@ namespace Hurricane {
 
   DisplayStyle* Graphics::_getStyle ( const Name& key )
   {
+//  if ( !_qtEnabled )
+//    cerr << "[ERROR] Graphics has not been enabled, you are likely to crash..." << endl;
+
     size_t si = _findStyle(key);
     if ( si == _styles.size() ) 
       return NULL;
 
     return _styles [ si ];
+  }
+
+
+  bool  Graphics::isEnabled ()
+  {
+    return getGraphics()->_qtEnabled;
+  }
+
+
+  void  Graphics::enable ()
+  {
+    return getGraphics()->_enable();
   }
 
 
