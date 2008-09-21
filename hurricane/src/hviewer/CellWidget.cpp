@@ -1188,10 +1188,9 @@ namespace Hurricane {
 
   void  CellWidget::unselectAll ( bool delayRedraw )
   {
-    set<Selector*>::iterator iselector = _selectors.begin ();
-    for ( ; iselector != _selectors.end() ; iselector++ ) {
-      (*iselector)->detachFrom ( this );
-    }
+    set<Selector*>::iterator iselector;
+    while ( !_selectors.empty() )
+      (*_selectors.begin())->detachFrom ( this );
 
     _selectionHasChanged = true;
     if ( !delayRedraw ) redraw ();
