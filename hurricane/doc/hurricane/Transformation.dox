@@ -21,40 +21,83 @@
 
 
  /*! \class        Transformation::Orientation
-  *                This enumeration defines the orientation associated to a 
-  *                transformation object.
-  *                <TABLE><CAPTION>Orientation codes and associated transformation matrix</CAPTION>
-  *                <TR>Name Aspect Code Signification a b c d</TR>
-  *                <TR>
-  *                <TD>ID</TD><TD><img src="gif/id.gif"></TD><TD>0</TD><TD>Identity</TD>
-  *                <TD>1</TD><TD>0</TD><TD>0</TD><TD>1</TD>
-  *                </TR>
-  *                <TR>
-  *                <TD>R1</TD><TD><img src="gif/r1.gif"></TD><TD>1</TD><TD>Simple rotation (90°)</TD>
-  *                <TD>0</TD><TD>-1</TD><TD>1</TD><TD>0</TD>
-  *                </TR>
-  * slots: R2 <img 
-  *                src='./gif/r2.gif'> 2 Double rotation (180°) 
-  *                &nbsp;&nbsp;-1&nbsp;&nbsp 0 0 &nbsp;&nbsp;-1&nbsp;&nbsp 
-  *                slots: R3 <img src='./gif/r3.gif'> 3 Triple rotation (270°) 0 
-  *                1 &nbsp;&nbsp;-1&nbsp;&nbsp 0 slots: MX <img 
-  *                src='./gif/mx.gif'> 4 Horizontal symetry (Miror X) 
-  *                &nbsp;&nbsp;-1&nbsp;&nbsp 0 0 1 slots: XR <img 
-  *                src='./gif/xr.gif'> 5 Horizontal symetry followed by a 90° 
-  *                rotation 0 &nbsp;&nbsp;-1&nbsp;&nbsp 
-  *                &nbsp;&nbsp;-1&nbsp;&nbsp 0 slots: MY <img 
-  *                src='./gif/my.gif'> 6 Vertical symetry (Miror Y) 1 0 0 
-  *                &nbsp;&nbsp;-1&nbsp;&nbsp slots: YR <img src='./gif/yr.gif'> 
-  *                7 Vertical symetry followed by a 90° rotation 0 1 1 0 To each 
-  *                orientation corresponds a 2x2 matrix whose coefficients are 
-  *                named a and b for the first line and c and d for the second 
-  *                one.
-  *                </TABLE>
+  * This enumeration defines the orientation associated to a 
+  * transformation object.
+  * <TABLE>
+  * <CAPTION>Orientation codes and associated transformation matrix</CAPTION>
+  * <TR>
+  * <TD>Name</TD><TD>Aspect</TD><TD>Code</TD><TD>Signification</TD><TD>a</TD><TD>b</TD><TD>c</TD><TD>d</TD>
+  * </TR>
+  * <TR>
+  * <TD>ID</TD>
+  * <TD>
+  * \image html id.gif
+  * </TD>
+  * <TD>0</TD><TD>Identity</TD>
+  * <TD>1</TD><TD>0</TD><TD>0</TD><TD>1</TD>
+  * </TR>
+  * <TR>
+  * <TD>R1</TD>
+  * <TD>
+  * \image html r1.gif
+  * </TD>
+  * <TD>1</TD><TD>Simple rotation (90°)</TD>
+  * <TD>0</TD><TD>-1</TD><TD>1</TD><TD>0</TD>
+  * </TR>
+  * <TR>
+  * <TD>R2</TD>
+  * <TD>
+  * \image html r2.gif
+  * </TD>
+  * <TD>2</TD><TD>Double rotation (180°)</TD>
+  * <TD>-1</TD><TD>0</TD><TD>0</TD><TD>-1</TD> 
+  * </TR>
+  * <TR>
+  * <TD>R3</TD>
+  * <TD>
+  * \image html r3.gif
+  * </TD>
+  * <TD>3</TD><TD>Triple rotation (270°)</TD>
+  * <TD>0</TD><TD>1</TD><TD>-1</TD><TD>0</TD>
+  * </TR>
+  * <TR>
+  * <TD>MX</TD>
+  * <TD>
+  * \image html mx.gif
+  * </TD>
+  * <TD>4</TD><TD>Horizontal symetry (Mirror X)</TD> 
+  * <TD>-1</TD><TD>0</TD><TD>0</TD><TD>1</TD>
+  * </TR>
+  * <TR>
+  * <TD>XR</TD>
+  * <TD>
+  * \image html xr.gif
+  * </TD>
+  * <TD>5</TD><TD>Horizontal symetry followed by a 90° rotation</TD>
+  * <TD>0</TD><TD>-1</TD><TD>-1</TD><TD>0</TD>
+  * </TR>
+  * <TR>
+  * <TD>MY</TD>
+  * <TD>
+  * \image html my.gif
+  * </TD>
+  * <TD>6</TD><TD>Vertical symetry (Mirror Y)</TD>
+  * <TD>1</TD><TD>0</TD><TD>0</TD><TD>-1</TD>
+  * </TR>
+  * <TR>
+  * <TD>YR</TD>
+  * <TD>
+  * \image html yr.gif
+  * </TD>
+  * <TD>7</TD><TD>Vertical symetry followed by a 90° rotation</TD>
+  * <TD>0</TD><TD>1</TD><TD>1</TD><TD>0</TD>
+  * </TR>
+  * </TABLE>
   *
   *                The transformation formula is given by : x' = (a * x) + (b * 
-  *                y) + tx y' = (c * x) + (d * y) + ty Where x and y are the 
+  *                y) + tx y' = (c * x) + (d * y) + ty where x and y are the 
   *                coordinates of any point, x' and y' the coordinates of the 
-  *                trasformed point, tx and ty the horizontal and vertical 
+  *                transformed point, tx and ty the horizontal and vertical 
   *                components of the translation and where a, b, c and d are the 
   *                coefficients of the matrix associated to the orientation. 
   *
