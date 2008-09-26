@@ -22,11 +22,18 @@
 
  /*! \class        Transformation::Orientation
   *                This enumeration defines the orientation associated to a 
-  *                transformation object. table: Orientation codes and 
-  *                associated transfornation matrix headers: Name Aspect Code 
-  *                Signification a b c d slots: ID <img src='./gif/id.gif'> 0 
-  *                Identity 1 0 0 1 slots: R1 <img src='./gif/r1.gif'> 1 Simple 
-  *                rotation (90°) 0 &nbsp;&nbsp;-1&nbsp;&nbsp 1 0 slots: R2 <img 
+  *                transformation object.
+  *                <TABLE><CAPTION>Orientation codes and associated transformation matrix</CAPTION>
+  *                <TR>Name Aspect Code Signification a b c d</TR>
+  *                <TR>
+  *                <TD>ID</TD><TD><img src="gif/id.gif"></TD><TD>0</TD><TD>Identity</TD>
+  *                <TD>1</TD><TD>0</TD><TD>0</TD><TD>1</TD>
+  *                </TR>
+  *                <TR>
+  *                <TD>R1</TD><TD><img src="gif/r1.gif"></TD><TD>1</TD><TD>Simple rotation (90°)</TD>
+  *                <TD>0</TD><TD>-1</TD><TD>1</TD><TD>0</TD>
+  *                </TR>
+  * slots: R2 <img 
   *                src='./gif/r2.gif'> 2 Double rotation (180°) 
   *                &nbsp;&nbsp;-1&nbsp;&nbsp 0 0 &nbsp;&nbsp;-1&nbsp;&nbsp 
   *                slots: R3 <img src='./gif/r3.gif'> 3 Triple rotation (270°) 0 
@@ -41,7 +48,8 @@
   *                7 Vertical symetry followed by a 90° rotation 0 1 1 0 To each 
   *                orientation corresponds a 2x2 matrix whose coefficients are 
   *                named a and b for the first line and c and d for the second 
-  *                one. 
+  *                one.
+  *                </TABLE>
   *
   *                The transformation formula is given by : x' = (a * x) + (b * 
   *                y) + tx y' = (c * x) + (d * y) + ty Where x and y are the 
