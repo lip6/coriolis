@@ -341,7 +341,7 @@ RoutingPad* createRoutingPad ( Net* net, Occurrence plugOccurrence )
     Component*      bestComponent  = NULL;
     Plug* plug = static_cast<Plug*>(plugOccurrence.getEntity());
 
-    for_each_component ( component, getExternalComponents(plug->getMasterNet()) ) {
+    for_each_component (component, NetExternalComponents::get(plug->getMasterNet()) ) {
       if ( !bestComponent ) { bestComponent = component; continue; }
       if ( /*    IsOnTop(component->getLayer(),bestComponent->getLayer())
            ||*/ ( getArea(component) > getArea(bestComponent) ) ) {

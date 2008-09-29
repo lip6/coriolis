@@ -15,10 +15,11 @@
 
 namespace Hurricane {
 
-Components getExternalComponents(const Net* net);
-
-void setExternal(Component* component);
-
+class NetExternalComponents {
+    public:
+        static Components get(const Net* net);
+        static void setExternal(Component* component);
+};
 
 } // End of Hurricane namespace.
 

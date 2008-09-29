@@ -30,7 +30,7 @@ static StandardRelation* getExternalComponentsRelation(const Net* net) {
     }
 }
 
-Components getExternalComponents(const Net* net) {
+Components NetExternalComponents::get(const Net* net) {
     if (!net->isExternal())
         throw Error("Impossible to retrieve external components on non external net "
                 + net->getName()._getString());
@@ -41,7 +41,7 @@ Components getExternalComponents(const Net* net) {
     return externalComponentsRelation->getSlaveOwners().getSubSet<Component*>();
 }
 
-void setExternal(Component* component) {
+void NetExternalComponents::setExternal(Component* component) {
     Net* net = component->getNet();
     if (!net->isExternal())
         throw Error("Impossible to set as external a component member of non external net "

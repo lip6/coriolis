@@ -506,7 +506,7 @@ extern "C" {
 
     HTRY
 
-    Components components = getExternalComponents ( PYNET_O ( arg0 ) );
+    Components components = NetExternalComponents::get( PYNET_O ( arg0 ) );
 
     pyComponentLocator = PyObject_NEW ( PyComponentLocator, &PyTypeComponentLocator );
     if (pyComponentLocator == NULL) { return NULL; }

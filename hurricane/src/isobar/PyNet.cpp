@@ -327,7 +327,7 @@ extern "C" {
 
     METHOD_HEAD ( "Net.getExternalcomponentsLocator()" )
 
-    Components externalComponents = getExternalComponents(net);
+    Components externalComponents = NetExternalComponents::get(net);
 
     PyComponentLocator* pyExternalComponentsLocator = PyObject_NEW ( PyComponentLocator, &PyTypeComponentLocator );
     if (pyExternalComponentsLocator == NULL) { return NULL; }
