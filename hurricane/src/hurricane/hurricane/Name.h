@@ -23,6 +23,9 @@ class SharedName;
 class Name {
 // *******
 
+    private: static const Name _emptyName;
+    public: static const Name& emptyName () { return _emptyName; };
+
 // Attributes
 // **********
 

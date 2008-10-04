@@ -15,6 +15,10 @@ namespace Hurricane {
 // Name implementation
 // ****************************************************************************************************
 
+
+  const Name  Name::_emptyName;
+
+
 Name::Name()
 // *********
 :  _sharedName(NULL)

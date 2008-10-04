@@ -53,6 +53,7 @@
 # include  <cassert>
 
 # include  "hurricane/viewer/DisplayStyle.h"
+# include  "hurricane/viewer/Graphics.h"
 
 
 
@@ -112,7 +113,11 @@ namespace Hurricane {
                                      ,       float   threshold
                                      )
   {
-    return new DrawingStyle ( name, pattern, red, green, blue, borderWidth, threshold );
+    DrawingStyle* style = new DrawingStyle ( name, pattern, red, green, blue, borderWidth, threshold );
+  //if ( Graphics::isEnabled() )
+  //  style->qtAllocate ();
+
+    return style;
   }
 
 

@@ -129,7 +129,7 @@ template<typename Data> inline Hurricane::Slot* getSlot ( const std::string& nam
 // Default match.
 
 template<typename Data> inline std::string  getString ( Data data )
-{ return "<Data Unsupported by getString>"; }
+{ return "<Data type unsupported by getString()>"; }
 
 // "const *" flavors.
 
@@ -524,26 +524,28 @@ inline Hurricane::Record* getRecord ( const std::multiset<Element,Compare>* s )
 }
 
 
+# define GETSTRING_POINTER_SUPPORT(Data) \
+  template<> inline std::string getString<Data*>( Data* data )             \
+  { if (!data) return "NULL " #Data; return data->_getString(); }          \
+                                                                           \
+  template<> inline std::string getString<const Data*>( const Data* data ) \
+  { if (!data) return "NULL const " #Data; return data->_getString(); }
+
+
 # define IOSTREAM_POINTER_SUPPORT(Data) \
-  inline std::ostream& operator<< ( std::ostream& o, Data* d )       \
-  {                                                                  \
-    if (!d) return o << "NULL";                                      \
-    return o << "&" << getString<Data*>(d);                          \
-  }                                                                  \
-  inline std::ostream& operator<< ( std::ostream& o, const Data* d ) \
-  {                                                                  \
-    if (!d) return o << "NULL";                                      \
-    return o << "&" << getString<const Data*>(d);                    \
+  inline std::ostream& operator<< ( std::ostream& o, Data* d )             \
+  {                                                                        \
+    if (!d) return o << "NULL";                                            \
+    return o << "&" << getString<Data*>(d);                                \
+  }                                                                        \
+  inline std::ostream& operator<< ( std::ostream& o, const Data* d )       \
+  {                                                                        \
+    if (!d) return o << "NULL";                                            \
+    return o << "&" << getString<const Data*>(d);                          \
   }
 
 
-# define INSPECTOR_POINTER_SUPPORT(Data) \
-  template<> inline std::string getString<Data*>( Data* data )                      \
-  { if (!data) return "NULL " #Data; return data->_getString(); }                   \
-                                                                                    \
-  template<> inline std::string getString<const Data*>( const Data* data )          \
-  { if (!data) return "NULL const " #Data; return data->_getString(); }             \
-                                                                                    \
+# define GETRECORD_POINTER_SUPPORT(Data) \
   template<> inline Hurricane::Record* getRecord<Data*>( Data* data )               \
   { if (!data) return NULL; return data->_getRecord(); }                            \
                                                                                     \
@@ -551,21 +553,23 @@ inline Hurricane::Record* getRecord ( const std::multiset<Element,Compare>* s )
   { if (!data) return NULL; return data->_getRecord(); }                            \
 
 
+# define GETSTRING_REFERENCE_SUPPORT(Data) \
+  template<> inline std::string getString<Data&>( Data& data )             \
+  { return data._getString(); }                                            \
+                                                                           \
+  template<> inline std::string getString<const Data&>( const Data& data ) \
+  { return data._getString(); }
+
+
 # define IOSTREAM_REFERENCE_SUPPORT(Data) \
-  inline std::ostream& operator<< ( std::ostream& o, Data& d )       \
-  { return o << getString<Data&>(d); }                               \
-                                                                     \
-  inline std::ostream& operator<< ( std::ostream& o, const Data& d ) \
+  inline std::ostream& operator<< ( std::ostream& o, Data& d )             \
+  { return o << getString<Data&>(d); }                                     \
+                                                                           \
+  inline std::ostream& operator<< ( std::ostream& o, const Data& d )       \
   { return o << getString<Data&>(d); }
 
 
-# define INSPECTOR_REFERENCE_SUPPORT(Data) \
-  template<> inline std::string getString<Data&>( Data& data )                    \
-  { return data._getString(); }                                                   \
-                                                                                  \
-  template<> inline std::string getString<const Data&>( const Data& data )        \
-  { return data._getString(); }                                                   \
-                                                                                  \
+# define GETRECORD_REFERENCE_SUPPORT(Data) \
   template<> inline Hurricane::Record* getRecord<Data&>( Data& data )             \
   { return data._getRecord(); }                                                   \
                                                                                   \
@@ -573,44 +577,53 @@ inline Hurricane::Record* getRecord ( const std::multiset<Element,Compare>* s )
   { return data._getRecord(); }
 
 
+# define GETSTRING_VALUE_SUPPORT(Data) \
+  template<> inline std::string getString<Data>( Data data )  \
+  { return data._getString(); }
+
+
 # define IOSTREAM_VALUE_SUPPORT(Data) \
   inline std::ostream& operator<< ( std::ostream& o, Data d ) \
   { return o << getString<Data>(d); }
 
 
-# define INSPECTOR_VALUE_SUPPORT(Data) \
-  template<> inline std::string getString<Data>( Data data )        \
-  { return data._getString(); }                                     \
-                                                                    \
+# define GETRECORD_VALUE_SUPPORT(Data) \
   template<> inline Hurricane::Record* getRecord<Data>( Data data ) \
   { return data._getRecord(); }
 
 
 # define INSPECTOR_P_SUPPORT(Data)   \
-  INSPECTOR_POINTER_SUPPORT(Data)    \
+  GETRECORD_POINTER_SUPPORT(Data)    \
+  GETSTRING_POINTER_SUPPORT(Data)    \
   IOSTREAM_POINTER_SUPPORT(Data)
 
 
 # define INSPECTOR_R_SUPPORT(Data)   \
-  INSPECTOR_REFERENCE_SUPPORT(Data)  \
+  GETRECORD_REFERENCE_SUPPORT(Data)  \
+  GETSTRING_REFERENCE_SUPPORT(Data)  \
   IOSTREAM_REFERENCE_SUPPORT(Data)
 
 
 # define INSPECTOR_V_SUPPORT(Data)   \
-  INSPECTOR_VALUE_SUPPORT(Data)      \
+  GETRECORD_VALUE_SUPPORT(Data)      \
+  GETSTRING_VALUE_SUPPORT(Data)      \
   IOSTREAM_VALUE_SUPPORT(Data)
 
 
 # define INSPECTOR_PR_SUPPORT(Data)  \
-  INSPECTOR_POINTER_SUPPORT(Data)    \
-  INSPECTOR_REFERENCE_SUPPORT(Data)  \
+  GETRECORD_POINTER_SUPPORT(Data)    \
+  GETSTRING_POINTER_SUPPORT(Data)    \
+  GETRECORD_REFERENCE_SUPPORT(Data)  \
+  GETSTRING_REFERENCE_SUPPORT(Data)  \
   IOSTREAM_POINTER_SUPPORT(Data)     \
   IOSTREAM_REFERENCE_SUPPORT(Data)
 
 
 # define INSPECTOR_PV_SUPPORT(Data)  \
-  INSPECTOR_POINTER_SUPPORT(Data)    \
-  INSPECTOR_VALUE_SUPPORT(Data)      \
+  GETRECORD_POINTER_SUPPORT(Data)    \
+  GETSTRING_POINTER_SUPPORT(Data)    \
+  GETRECORD_VALUE_SUPPORT(Data)      \
+  GETSTRING_VALUE_SUPPORT(Data)      \
   IOSTREAM_POINTER_SUPPORT(Data)     \
   IOSTREAM_VALUE_SUPPORT(Data)
 

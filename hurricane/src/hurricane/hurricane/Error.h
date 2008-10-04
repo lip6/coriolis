@@ -63,4 +63,10 @@ namespace Hurricane {
 } // End of Hurricane namespace.
 
 
+GETSTRING_POINTER_SUPPORT(Hurricane::Error);
+GETSTRING_VALUE_SUPPORT(Hurricane::Error);
+IOSTREAM_POINTER_SUPPORT(Hurricane::Error);
+IOSTREAM_VALUE_SUPPORT(Hurricane::Error);
+
+
 # endif // __HURRICANE_ERROR__

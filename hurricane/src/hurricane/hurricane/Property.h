@@ -1,355 +1,443 @@
-// ****************************************************************************************************
-// File: Property.h
-// Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
-// ****************************************************************************************************
 
-#ifndef HURRICANE_PROPERTY
-#define HURRICANE_PROPERTY
+// -*- C++ -*-
+//
+// This file is part of the Hurricane Software.
+// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+//
+// ===================================================================
+//
+// $Id$
+//
+// x-----------------------------------------------------------------x
+// |                                                                 |
+// |                  H U R R I C A N E                              |
+// |     V L S I   B a c k e n d   D a t a - B a s e                 |
+// |                                                                 |
+// |  Author      :                    Jean-Paul Chaput              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
+// | =============================================================== |
+// |  C++ Header  :       "./Property.h"                             |
+// | *************************************************************** |
+// |  U p d a t e s                                                  |
+// |                                                                 |
+// x-----------------------------------------------------------------x
 
-#include "hurricane/Name.h"
-#include "hurricane/Properties.h"
-#include "hurricane/DBos.h"
-#include "hurricane/Error.h"
+
+#ifndef  __HURRICANE_PROPERTY__
+#define  __HURRICANE_PROPERTY__
+
+#include  "hurricane/Name.h"
+#include  "hurricane/Properties.h"
+#include  "hurricane/DBo.h"
+#include  "hurricane/Error.h"
+
 
 namespace Hurricane {
 
 
+  extern const char* propertyTypeNameError;
+
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::Property".
+
+
+  class Property {
+
+    public:
+    // Static Method.
+      template<typename DerivedProperty>
+      static  DerivedProperty* get           ( const DBo* );
+      static  Name             staticGetName ();
+    // Constructor.
+      template<typename DerivedProperty>
+      static  DerivedProperty* create        ();
+      template<typename DerivedProperty, typename Value>
+      static  DerivedProperty* create        ( const Value& );
+    // Destructor.
+      virtual void             destroy       ();
+    // Methods.
+      virtual Name             getName       () const = 0;
+      virtual void             onCapturedBy  ( DBo* owner ) = 0;
+      virtual void             onReleasedBy  ( DBo* owner ) = 0;
+    // Hurricane Managment.
+      virtual string           _getTypeName  () const = 0;
+      virtual string           _getString    () const;
+      virtual Record*          _getRecord    () const;
+
+    private:
+      static  Name             _baseName;
+    protected:
+    // Internal: Constructors & Destructors.
+                               Property      ();
+      virtual                 ~Property      ();
+      virtual void             _postCreate   () {};
+      virtual void             _preDestroy   () {};
+    private:
+                               Property      ( const Property& );
+                     Property& operator=     ( const Property& );
+  };
+
+
+  template<typename DerivedProperty>
+  DerivedProperty* Property::create ()
+  {
+    DerivedProperty* property = new DerivedProperty();
+    property->_postCreate();
+    return property;
+  }
+
+
+  template<typename DerivedProperty, typename Value>
+  DerivedProperty* Property::create ( const Value& value )
+  {
+    DerivedProperty* property = new DerivedProperty(value);
+    property->_postCreate();
+    return property;
+  }
+
+
+  template<typename DerivedProperty>
+  DerivedProperty* Property::get ( const DBo* object )
+  {
+    Property*        property1 = object->getProperty ( DerivedProperty::staticGetName() );
+    DerivedProperty* property2 = dynamic_cast<DerivedProperty*> ( property1 );
+    
+    if ( property1 && !property2 )
+      throw Error ( propertyTypeNameError
+                  , getString(DerivedProperty::staticGetName()).c_str()
+                  , getString(object).c_str() );
+
+    return property2;
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::PrivateProperty".
+
+
+  class PrivateProperty : public Property {
+
+    public:
+    // Methods.
+      inline  DBo*    getOwner        () const;
+      virtual void    onCapturedBy    ( DBo* owner );
+      virtual void    onReleasedBy    ( DBo* owner );
+      virtual void    onNotOwned      ();
+      virtual string  _getString      () const;
+      virtual Record* _getRecord      () const;
+
+    private:
+    // Internal: Attributes.
+              DBo*    _owner;
+    protected:
+    // Internal: Constructor & Destructors.
+                      PrivateProperty ();
+      virtual void    _preDestroy     ();
+  };
+
 
-// ****************************************************************************************************
-// Property declaration
-// ****************************************************************************************************
+// Inline Functions.
+  inline  DBo* PrivateProperty::getOwner () const { return _owner; };
 
-class Property {
-// *************
 
-// Constructors
-// ************
+// -------------------------------------------------------------------
+// Template Class  :  "Hurricane::StandardPrivateProperty".
 
-    protected: Property();
+
+  template<typename Value> class StandardPrivateProperty : public PrivateProperty {
 
-    private: Property(const Property& property); // not implemented to forbid copy construction
+    public:
+      static  Name                     staticGetName ();
+      static  StandardPrivateProperty* get           ( const DBo* );
+    // Constructors.
+      static  StandardPrivateProperty* create        ();
+      static  StandardPrivateProperty* create        ( const Value& );
+    // Methods.
+      virtual Name                     getName       () const;
+              Value&                   getValue      () const;
+              void                     setValue      ( const Value& );
+      virtual string                   _getTypeName  () const;
+      virtual string                   _getString    () const;
+      virtual Record*                  _getRecord    () const;
+
+    private:
+    // Internal: Attributes.
+      static  Name    _name;
+      mutable Value   _value;
+
+    protected:
+    // Internal: Constructor.
+      StandardPrivateProperty ();
+      StandardPrivateProperty ( const Value& );
+  };
+
+
+  template<typename Value>
+  Name  StandardPrivateProperty<Value>::staticGetName ()
+  {
+    return _name;
+  }
 
-// Destructors
-// ***********
 
-    protected: virtual ~Property();
+  template<typename Value>
+  StandardPrivateProperty<Value>* StandardPrivateProperty<Value>::create ()
+  {
+    StandardPrivateProperty<Value>* property = new StandardPrivateProperty<Value>();
+    property->_postCreate();
+    return property;
+  }
+
+
+  template<typename Value>
+  StandardPrivateProperty<Value>* StandardPrivateProperty<Value>::create ( const Value& value )
+  {
+    StandardPrivateProperty<Value>* property = new StandardPrivateProperty<Value>(value);
+    property->_postCreate();
+    return property;
+  }
+
+
+  template<typename Value>
+  StandardPrivateProperty<Value>* StandardPrivateProperty<Value>::get ( const DBo* object )
+  {
+    Property*                property1 = object->getProperty ( StandardPrivateProperty<Value>::staticGetName() );
+    StandardPrivateProperty* property2 = dynamic_cast<StandardPrivateProperty<Value>*> ( property1 );
+    
+    if ( property1 && !property2 )
+      throw Error ( propertyTypeNameError
+                  , getString(StandardPrivateProperty<Value>::staticGetName()).c_str()
+                  , getString(object).c_str() );
+
+    return property2;
+  }
+  
 
-    public: virtual void destroy();
-
-// Operators
-// *********
-
-    private: Property& operator=(const Property& property); // not implemented to forbid assignment
-
-// Accessors
-// *********
-
-    public: virtual Name getName() const = 0;
-
-// Managers
-// ********
-
-    public: virtual void onCapturedBy(DBo* owner) = 0;
-    public: virtual void onReleasedBy(DBo* owner) = 0;
-
-// Others
-// ******
-
-    protected: virtual void _postCreate() {};
-
-    protected: virtual void _preDestroy() {};
-
-    public: virtual string _getTypeName() const = 0;
-    public: virtual string _getString() const;
-    public: virtual Record* _getRecord() const;
-
-};
-
-
-
-// ****************************************************************************************************
-// PrivateProperty declaration
-// ****************************************************************************************************
-
-class PrivateProperty : public Property {
-// ************************************
-
-// Types
-// *****
-
-    public: typedef Property Inherit;
-
-// Attributes
-// **********
-
-    private: DBo* _owner;
-
-// Constructors
-// ************
-
-    protected: PrivateProperty();
-
-// Accessors
-// *********
-
-    public: DBo* getOwner() const {return _owner;};
-
-// Managers
-// ********
-
-    public: virtual void onCapturedBy(DBo* owner);
-    public: virtual void onReleasedBy(DBo* owner);
-    public: virtual void onNotOwned();
-
-// Others
-// ******
-
-    protected: virtual void _preDestroy();
-
-    public: virtual string _getString() const;
-    public: virtual Record* _getRecord() const;
-
-};
-
-
-
-// ****************************************************************************************************
-// StandardPrivateProperty declaration
-// ****************************************************************************************************
-
-template<class Value> class StandardPrivateProperty : public PrivateProperty {
-// *************************************************************************
-
-// Types
-// *****
-
-    public: typedef PrivateProperty Inherit;
-
-// Attributes
-// **********
-
-    private: Name _name;
-    private: Value _value;
-
-// Constructors
-// ************
-
-    protected: StandardPrivateProperty(const Name& name, const Value& value)
-    // *********************************************************************
-    :    Inherit(),
-        _name(name),
-        _value(value)
-    {
-    };
-
-    public: static StandardPrivateProperty* create(const Name& name, const Value& value )
-    // **********************************************************************************
-    {
-        StandardPrivateProperty* property = new StandardPrivateProperty(name, value);
-
-        property->_postCreate();
-
-        return property;
-    };
-
-// Accessors
-// *********
-
-    public: virtual Name getName() const
-    // *********************************
-    {
-        return _name;
-    };
-
-    public: const Value& getValue() const
-    // **********************************
-    {
-        return _value;
-    };
-
-// Modifieurs
-// **********
-
-    public: void setValue(const Value& value)
-    // **************************************
-    {
-        _value = value;
-    };
-
-// Others
-// ******
-
-    public: virtual string _getTypeName() const
-    // ****************************************
-    {
-        return _TName("StandardPrivateProperty");
-    };
-
-    public: virtual string _getString() const
-    // **************************************
-    {
-        string s = Inherit::_getString();
-        s.insert(s.length() - 1, " " + getString(_value));
-        return s;
-    };
-
-    public: virtual Record* _getRecord() const
-    // *********************************
-    {
-        Record* record = Inherit::_getRecord();
-        if (record) {
-            record->add(getSlot("Name", &_name));
-            record->add(getSlot("Value", _value));
-        }
-        return record;
-    };
-
-};
-
-
-
-// ****************************************************************************************************
-// SharedProperty declaration
-// ****************************************************************************************************
-
-class SharedProperty : public Property {
-// ***********************************
-
-// Types
-// *****
-
-    public: typedef Property Inherit;
-    public: typedef set<DBo*> DBoSet;
-
-// Attributes
-// **********
-
-    private: DBoSet _ownerSet;
-
-// Constructors
-// ************
-
-    protected: SharedProperty();
-
-// Accessors
-// *********
-
-    public: DBos getOwners() const {return getCollection(_ownerSet);};
-
-// Managers
-// ********
-
-    public: virtual void onCapturedBy(DBo* owner);
-    public: virtual void onReleasedBy(DBo* owner);
-    public: virtual void onNotOwned();
-
-// Accessors
-// *********
-
-    protected: virtual void _preDestroy();
-
-    public: virtual string _getString() const;
-    public: virtual Record* _getRecord() const;
-
-    public: DBoSet& _getOwnerSet() {return _ownerSet;};
-
-};
-
-
-
-// ****************************************************************************************************
-// StandardSharedProperty declaration
-// ****************************************************************************************************
-
-template<class Value> class StandardSharedProperty : public SharedProperty {
-// ***********************************************************************
-
-// Types
-// *****
-
-    public: typedef SharedProperty Inherit;
-
-// Attributes
-// **********
-
-    private: Name _name;
-    private: Value _value;
-
-// Constructors
-// ************
-
-    protected: StandardSharedProperty(const Name& name, const Value& value)
-    // ********************************************************************
-    :    Inherit(),
-        _name(name),
-        _value(value)
-    {
-    };
-
-    public: static StandardSharedProperty* create(const Name& name, const Value& value )
-    // *********************************************************************************
-    {
-        StandardSharedProperty* property = new StandardSharedProperty(name, value);
-
-        property->_postCreate();
-
-        return property;
-    };
-
-// Accessors
-// *********
-
-    public: virtual Name getName() const
-    // *********************************
-    {
-        return _name;
-    };
-
-    public: const Value& getValue() const
-    // **********************************
-    {
-        return _value;
-    };
-
-// Modifieurs
-// **********
-
-    public: void setValue(const Value& value)
-    // **************************************
-    {
-        _value = value;
-    };
-
-// Others
-// ******
-
-    public: virtual string _getTypeName() const
-    // ****************************************
-    {
-        return _TName("StandardSharedProperty");
-    };
-
-    public: virtual string _getString() const
-    // **************************************
-    {
-        string s = Inherit::_getString();
-        s.insert(s.length() - 1, " " + getString(_value));
-        return s;
-    };
-
-    public: virtual Record* _getRecord() const
-    // *********************************
-    {
-        Record* record = Inherit::_getRecord();
-        if (record) {
-            record->add(getSlot("Name", &_name));
-            record->add(getSlot("Value", &_value));
-        }
-        return record;
-    };
-
-};
+  template<typename Value>
+  StandardPrivateProperty<Value>::StandardPrivateProperty ()
+    : PrivateProperty(), _value()
+  { }
+
+
+  template<typename Value>
+  StandardPrivateProperty<Value>::StandardPrivateProperty ( const Value& value )
+    : PrivateProperty(), _value(value)
+  { }
+
+
+  template<typename Value>
+  Name StandardPrivateProperty<Value>::getName() const
+  {
+    return staticGetName();
+  }
+
+
+  template<typename Value>
+  Value& StandardPrivateProperty<Value>::getValue () const
+  {
+    return _value;
+  }
+
+
+  template<typename Value>
+  void StandardPrivateProperty<Value>::setValue ( const Value& value )
+  {
+    _value = value;
+  }
+
+
+  template<typename Value>
+  string  StandardPrivateProperty<Value>::_getTypeName () const
+  {
+    return _TName("StandardPrivateProperty");
+  }
+
+  template<typename Value>
+  string  StandardPrivateProperty<Value>::_getString () const
+  {
+    string s = PrivateProperty::_getString();
+    s.insert(s.length() - 1, " " + getString(_value));
+    return s;
+  }
+
+  template<typename Value>
+  Record* StandardPrivateProperty<Value>::_getRecord () const
+  {
+    Record* record = PrivateProperty::_getRecord();
+    if (record) {
+      record->add ( getSlot("Name" , staticGetName()) );
+      record->add ( getSlot("Value",&_value)          );
+    }
+    return record;
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::SharedProperty".
+
+
+  class SharedProperty : public Property {
+
+    public:
+    // Types.
+      typedef set<DBo*>  DBoSet;
+    // Methods.
+      inline  DBos       getOwners      () const;
+      virtual void       onCapturedBy   ( DBo* owner );
+      virtual void       onReleasedBy   ( DBo* owner );
+      virtual void       onNotOwned     ();
+      inline  DBoSet&    _getOwnerSet   ();
+      virtual string     _getString     () const;
+      virtual Record*    _getRecord     () const;
+
+    private:
+    // Internal: Attributes.
+              DBoSet     _ownerSet;
+
+    protected:
+    // Internal: Constructor & Destructor.
+                         SharedProperty ();
+      virtual void       _preDestroy    ();
+  };
+
+
+// Inline Functions.
+  DBos                     SharedProperty::getOwners    () const { return getCollection(_ownerSet); }
+  SharedProperty::DBoSet&  SharedProperty::_getOwnerSet () { return _ownerSet; }
+
+
+// -------------------------------------------------------------------
+// Template Class  :  "Hurricane::StandardSharedProperty".
+
+
+  template<typename Value> class StandardSharedProperty : public SharedProperty {
+
+    public:
+      static  Name                    staticGetName ();
+      static  StandardSharedProperty* get           ( const DBo* );
+    // Constructors.
+      static  StandardSharedProperty* create        ();
+      static  StandardSharedProperty* create        ( const Value& );
+    // Methods.
+      virtual Name                    getName       () const;
+              Value&                  getValue      () const;
+              void                    setValue      ( const Value& );
+      virtual string                  _getTypeName  () const;
+      virtual string                  _getString    () const;
+      virtual Record*                 _getRecord    () const;
+
+    private:
+    // Internal: Attributes.
+      static  Name    _name;
+      mutable Value   _value;
+
+    protected:
+    // Internal: Constructor.
+      StandardSharedProperty ();
+      StandardSharedProperty ( const Value& );
+  };
+
+
+// Template function members.
+  template<typename Value>
+  Name  StandardSharedProperty<Value>::staticGetName ()
+  {
+    return _name;
+  }
+
+
+  template<typename Value>
+  StandardSharedProperty<Value>* StandardSharedProperty<Value>::create ()
+  {
+    StandardSharedProperty<Value>* property = new StandardSharedProperty<Value>();
+    property->_postCreate();
+    return property;
+  }
+
+
+  template<typename Value>
+  StandardSharedProperty<Value>* StandardSharedProperty<Value>::create ( const Value& value )
+  {
+    StandardSharedProperty<Value>* property = new StandardPrivateProperty<Value>(value);
+    property->_postCreate();
+    return property;
+  }
+
+
+  template<typename Value>
+  StandardSharedProperty<Value>* StandardSharedProperty<Value>::get ( const DBo* object )
+  {
+    Property*               property1 = object->getProperty ( StandardSharedProperty<Value>::staticGetName() );
+    StandardSharedProperty* property2 = dynamic_cast<StandardSharedProperty<Value>*> ( property1 );
+    
+    if ( property1 && !property2 )
+      throw Error ( propertyTypeNameError
+                  , getString(StandardSharedProperty<Value>::staticGetName()).c_str()
+                  , getString(object).c_str() );
+
+    return property2;
+  }
+
+
+  template<typename Value>
+  StandardSharedProperty<Value>::StandardSharedProperty ()
+    : SharedProperty(), _value()
+  { }
+
+
+  template<typename Value>
+  StandardSharedProperty<Value>::StandardSharedProperty ( const Value& value )
+    : SharedProperty(), _value(value)
+  { }
+
+
+  template<typename Value>
+  Name  StandardSharedProperty<Value>::getName() const
+  {
+    return staticGetName();
+  }
+
+
+  template<typename Value>
+  Value& StandardSharedProperty<Value>::getValue() const
+  {
+    return _value;
+  }
+
+
+  template<typename Value>
+  void  StandardSharedProperty<Value>::setValue(const Value& value)
+  {
+    _value = value;
+  }
+
+
+  template<typename Value>
+  string  StandardSharedProperty<Value>::_getTypeName() const
+  {
+    return _TName("StandardSharedProperty");
+  }
+
+
+  template<typename Value>
+  string  StandardSharedProperty<Value>::_getString() const
+  {
+    string s = SharedProperty::_getString();
+    s.insert(s.length() - 1, " " + getString(_value));
+    return s;
+  }
+
+
+  template<typename Value>
+  Record* StandardSharedProperty<Value>::_getRecord() const
+  {
+    Record* record = SharedProperty::_getRecord();
+    if (record) {
+      record->add ( getSlot("Name" ,  staticGetName()) );
+      record->add ( getSlot("Value", &_value)          );
+    }
+    return record;
+  }
 
 
 } // End of Hurricane namespace.
@@ -358,8 +446,4 @@ template<class Value> class StandardSharedProperty : public SharedProperty {
 INSPECTOR_P_SUPPORT(Hurricane::Property);
 
 
-#endif // HURRICANE_PROPERTY
-
-// ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
-// ****************************************************************************************************
+#endif // __HURRICANE_PROPERTY__

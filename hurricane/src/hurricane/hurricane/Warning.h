@@ -1,68 +1,73 @@
-// ****************************************************************************************************
-// File: Warning.h
-// Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
-// ****************************************************************************************************
 
-#ifndef HURRICANE_WARNING
-#define HURRICANE_WARNING
+// -*- C++ -*-
+//
+// This file is part of the Hurricane Software.
+// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
+//
+// ===================================================================
+//
+// $Id$
+//
+// x-----------------------------------------------------------------x
+// |                                                                 |
+// |                  H U R R I C A N E                              |
+// |     V L S I   B a c k e n d   D a t a - B a s e                 |
+// |                                                                 |
+// |  Author      :                       Remy Escassut              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
+// | =============================================================== |
+// |  C++ Header  :       "./Warning.h"                              |
+// | *************************************************************** |
+// |  U p d a t e s                                                  |
+// |                                                                 |
+// x-----------------------------------------------------------------x
+
+
+# ifndef  __HURRICANE_WARNING__
+# define  __HURRICANE_WARNING__
 
 #include "hurricane/Exception.h"
+
 
 namespace Hurricane {
 
 
+  class Warning : public Exception {
 
-// ****************************************************************************************************
-// Warning declaration
-// ****************************************************************************************************
+    public:
+    // Constructors.
+                       Warning      ( const string& reason );
+                       Warning      ( const char*   format, ... );
+                       Warning      ( int code, const string& reason );
+                       Warning      ( int code, const char*   format, ... );
+                       Warning      ( const Warning& warning );
+              Warning& operator=    ( const Warning& warning );
+    // Methods.
+      inline  string   getReason    () const;
+      inline  int      getCode      () const;
+    // Hurricane Managment.
+      virtual string   _getTypeName () const;
+      virtual string   _getString   () const;
 
-class Warning : public Exception {
-// *****************************
+    protected:
+    // Internal: Attributes.
+              string   _reason;
+              int      _code;
+  };
 
-// Types
-// *****
 
-    public: typedef Exception Inherit;
-
-// Attributes
-// **********
-
-    private: string _reason;
-    private: int _code;
-
-// Constructors
-// ************
-
-    public: Warning(const string& reason, int code = 0);
-
-    public: Warning(const Warning& warning);
-
-// Operators
-// *********
-
-    public: Warning& operator=(const Warning& warning);
-
-// Accessors
-// *********
-
-    public: string getReason() const {return _reason;};
-    public: int getCode() const {return _code;};
-
-// Others
-// ******
-
-    public: virtual string _getTypeName() const { return _TName("Warning"); };
-    public: virtual string _getString() const;
-
-};
+// Inline Functions.
+  inline  string  Warning::getReason () const { return _reason; }
+  inline  int     Warning::getCode   () const { return _code; }
 
 
 } // End of Hurricane namespace.
 
 
-#endif // HURRICANE_WARNING
+GETSTRING_POINTER_SUPPORT(Hurricane::Warning);
+GETSTRING_VALUE_SUPPORT(Hurricane::Warning);
+IOSTREAM_POINTER_SUPPORT(Hurricane::Warning);
+IOSTREAM_VALUE_SUPPORT(Hurricane::Warning);
 
-// ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
-// ****************************************************************************************************
+
+# endif // __HURRICANE_WARNING__

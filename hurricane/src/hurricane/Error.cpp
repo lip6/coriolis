@@ -39,21 +39,19 @@ namespace Hurricane {
     : Exception()
     , _reason(reason)
     , _code(0)
-  {
-  }
+  { }
 
 
   Error::Error ( int code, const string& reason )
     : Exception()
     , _reason(reason)
     , _code(code)
-  {
-  }
+  { }
 
 
   Error::Error ( const char* format, ... )
     : Exception()
-    , _reason("")
+    , _reason()
     , _code(0)
   {
     static char     formatted [ 8192 ];
@@ -69,7 +67,7 @@ namespace Hurricane {
 
   Error::Error ( int code, const char* format, ... )
     : Exception()
-    , _reason("")
+    , _reason()
     , _code(code)
   {
     static char     formatted [ 8192 ];
@@ -95,7 +93,7 @@ namespace Hurricane {
   { return _TName("Error"); }
 
 
-  string Error::_getString() const
+  string Error::_getString () const
   {
     if ( !_code )
       return "[ERROR] " + _reason;

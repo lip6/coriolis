@@ -1,97 +1,87 @@
-// ****************************************************************************************************
-// File: DBo.h
-// Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
-// ****************************************************************************************************
 
-#ifndef HURRICANE_DBO
-#define HURRICANE_DBO
+// -*- C++ -*-
+//
+// This file is part of the Hurricane Software.
+// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+//
+// ===================================================================
+//
+// $Id$
+//
+// x-----------------------------------------------------------------x
+// |                                                                 |
+// |                  H U R R I C A N E                              |
+// |     V L S I   B a c k e n d   D a t a - B a s e                 |
+// |                                                                 |
+// |  Author      :                    Jean-Paul Chaput              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
+// | =============================================================== |
+// |  C++ Header  :       "./DBo.h"                                  |
+// | *************************************************************** |
+// |  U p d a t e s                                                  |
+// |                                                                 |
+// x-----------------------------------------------------------------x
 
-#include "hurricane/DBos.h"
-#include "hurricane/Name.h"
-#include "hurricane/Property.h"
+
+#ifndef  __HURRICANE_DBO__
+#define  __HURRICANE_DBO__
+
+#include  "hurricane/DBos.h"
+#include  "hurricane/Properties.h"
+#include  "hurricane/Name.h"
+
 
 namespace Hurricane {
 
 
+  class Property;
 
-// ****************************************************************************************************
-// DBo declaration
-// ****************************************************************************************************
 
-class DBo {
-// ********
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::DBo".
 
-#if !defined(__DOXYGEN_PROCESSOR__)
 
-// Types
-// *****
+  class DBo {
 
-    public: typedef set<Property*> PropertySet;
+    public:
+    // Types.
+      typedef set<Property*> PropertySet;
+    // Methods.
+      virtual void           destroy();
+      inline  PropertySet&   _getPropertySet ();
+              void           _onDestroyed    ( Property* property );
+              Property*      getProperty     ( const Name& ) const;
+              Properties     getProperties   () const;
+      inline  bool           hasProperty     () const;
+              void           put             ( Property* );
+              void           remove          ( Property* );
+              void           removeProperty  ( const Name& );
+              void           clearProperties ();
+    // Hurricane Managment.
+      virtual string         _getTypeName    () const;
+      virtual string         _getString      () const;
+      virtual Record*        _getRecord      () const;
 
-// Attributs
-// *********
+    private:
+    // Internal: Attributes.
+      mutable PropertySet _propertySet;
 
-    private: mutable PropertySet _propertySet;
+    protected:
+    // Internal: Constructors & Destructors.
+                             DBo             ();
+      virtual               ~DBo             ();
+      virtual void           _postCreate     ();
+      virtual void           _preDestroy     ();
+    private:
+    // Forbidden: Copies.
+                             DBo             ( const DBo& );
+              DBo&           operator=       ( const DBo& );
+  };
 
-// Constructors
-// ************
 
-    protected: DBo();
-
-    private: DBo(const DBo& dbo); // not implemented to forbid copy construction
-
-// Destructors
-// ***********
-
-    protected: virtual ~DBo();
-
-// Operators
-// *********
-
-    private: DBo& operator=(const DBo& dbo); // not implemented to forbid assignment
-
-// Others
-// ******
-
-    protected: virtual void _postCreate();
-
-    protected: virtual void _preDestroy();
-
-    public: virtual string _getTypeName() const;
-    public: virtual string _getString() const;
-    public: virtual Record* _getRecord() const;
-    public: PropertySet& _getPropertySet() {return _propertySet;};
-
-    public: void _onDestroyed(Property* property);
-
-#endif
-
-// Destructors
-// ***********
-
-    public: virtual void destroy();
-
-// Accessors
-// *********
-
-    public: Property* getProperty(const Name& name) const;
-    public: Properties getProperties() const {return getCollection(_propertySet);};
-
-// Predicates
-// **********
-
-    public: bool hasProperty() const {return !_propertySet.empty();};
-
-// Updators
-// ********
-
-    public: void put(Property* property);
-    public: void remove(Property* property);
-    public: void removeProperty(const Name& name);
-    public: void clearProperties();
-
-};
+// Inline Functions.
+  inline DBo::PropertySet& DBo::_getPropertySet () { return _propertySet; }
+  inline bool              DBo::hasProperty     () const { return !_propertySet.empty(); }
 
 
 } // End of Hurricane namespace.
@@ -114,8 +104,4 @@ inline Hurricane::Slot* getSlot ( const std::string& name, std::set<Hurricane::P
 }
 
 
-#endif // HURRICANE_DBO
-
-// ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
-// ****************************************************************************************************
+#endif // __HURRICANE_DBO__

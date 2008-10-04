@@ -76,9 +76,6 @@ namespace Hurricane {
     , _active(NULL)
     , _qtEnabled(false)
   {
-    _styles.push_back ( new DisplayStyle("Fallback") );
-    _active = _styles[0];
-    _active->setDescription ( "Builtin fallback style" );
   }
 
 
@@ -90,8 +87,12 @@ namespace Hurricane {
 
   Graphics* Graphics::getGraphics ()
   {
-    if ( !_singleton )
+    if ( !_singleton ) {
       _singleton = new Graphics ();
+      DisplayStyle* fallback = new DisplayStyle("Fallback");
+      fallback->setDescription ( "Builtin fallback style" );
+      _singleton->_addStyle ( fallback );
+    }
 
     return _singleton;
   }
