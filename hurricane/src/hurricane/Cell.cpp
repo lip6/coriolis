@@ -21,6 +21,50 @@
 
 namespace Hurricane {
 
+
+  void  Cell::_insertSlice ( ExtensionSlice* slice )
+  {
+    ExtensionSliceMap::iterator islice = _extensionSlices.find ( slice->getName() );
+    if ( islice != _extensionSlices.end() )
+      throw Error ( "Attempt to re-create ExtensionSlice %s in Cell %s."
+                  , getString(slice->getName()).c_str()
+                  , getString(slice->getCell()->getName()).c_str()
+                  );
+
+    _extensionSlices.insert ( pair<Name,ExtensionSlice*>(slice->getName(),slice) );
+  }
+
+
+  void  Cell::_removeSlice ( ExtensionSlice* slice )
+  {
+    ExtensionSliceMap::iterator islice = _extensionSlices.find ( slice->getName() );
+    if ( islice != _extensionSlices.end() ) {
+      islice->second->_destroy ();
+      _extensionSlices.erase ( islice );
+    }
+  }
+
+
+  ExtensionSlice* Cell::getExtensionSlice ( const Name& name ) const
+  {
+    ExtensionSliceMap::const_iterator islice = _extensionSlices.find ( name );
+    if ( islice != _extensionSlices.end() )
+      return islice->second;
+
+    return NULL;
+  }
+
+
+  ExtensionSlice::Mask  Cell::getExtensionSliceMask ( const Name& name ) const
+  {
+    ExtensionSliceMap::const_iterator islice = _extensionSlices.find ( name );
+    if ( islice != _extensionSlices.end() )
+      return islice->second->getMask();
+
+    return 0;
+  }
+
+
 // ****************************************************************************************************
 // Cell implementation
 // ****************************************************************************************************
@@ -35,6 +79,7 @@ Cell::Cell(Library* library, const Name& name)
     _slaveInstanceSet(),
     _netMap(),
     _sliceMap(),
+    _extensionSlices(),
     _markerSet(),
     //_viewSet(),
     _abutmentBox(),
@@ -215,16 +260,14 @@ void Cell::unmaterialize()
 void Cell::_postCreate()
 // *********************
 {
-    _library->_getCellMap()._insert(this);
-
     Inherit::_postCreate();
+
+    _library->_getCellMap()._insert(this);
 }
 
 void Cell::_preDestroy()
 // ********************
 {
-    Inherit::_preDestroy();
-
     while(_slaveEntityMap.size()) {
       _slaveEntityMap.begin()->second->destroy();
     }
@@ -235,8 +278,11 @@ void Cell::_preDestroy()
     for_each_instance(instance, getInstances()) instance->destroy(); end_for;
     for_each_net(net, getNets()) net->destroy(); end_for;
     for_each_slice(slice, getSlices()) slice->_destroy(); end_for;
+    while(!_extensionSlices.empty()) _removeSlice(_extensionSlices.begin()->second);
 
     _library->_getCellMap()._remove(this);
+
+    Inherit::_preDestroy();
 }
 
 string Cell::_getString() const

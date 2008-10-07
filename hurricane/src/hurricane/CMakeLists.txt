@@ -16,13 +16,13 @@
                                 hurricane/DataBase.h
                                 hurricane/DBo.h                   hurricane/DBos.h
                                 hurricane/DeepNet.h
-                                hurricane/DisplaySlot.h           hurricane/DisplaySlots.h
                                 hurricane/DRCError.h
                                 hurricane/Entities.h              hurricane/Entity.h
                                 hurricane/Error.h
                                 hurricane/Exception.h
                                 hurricane/Filter.h
                                 hurricane/Go.h                    hurricane/Gos.h
+                                hurricane/ExtensionGo.h           hurricane/ExtensionGos.h
                                 hurricane/Hook.h                  hurricane/Hooks.h
                                 hurricane/Horizontal.h            hurricane/Horizontals.h
                                 hurricane/HyperNet.h
@@ -64,6 +64,7 @@
                                 hurricane/SharedName.h
                                 hurricane/SharedPathes.h          hurricane/SharedPath.h
                                 hurricane/Slice.h                 hurricane/Slices.h
+                                hurricane/ExtensionSlice.h        hurricane/ExtensionSlices.h
                                 hurricane/SlotAdapter.h
                                 hurricane/Slot.h
                                 hurricane/Symbols.h
@@ -73,7 +74,6 @@
                                 hurricane/Transformation.h
                                 hurricane/DbU.h
                                 hurricane/UpdateSession.h
-                                hurricane/UserGo.h                hurricane/UserGos.h
                                 hurricane/VectorCollection.h
                                 hurricane/Vertical.h              hurricane/Verticals.h
                                 hurricane/Views.h
@@ -112,7 +112,7 @@
                                 DeepNet.cpp
                                 HyperNet.cpp
                                 Go.cpp
-                                UserGo.cpp
+                                ExtensionGo.cpp
                                 Hook.cpp
                                 Instance.cpp
                                 Component.cpp
@@ -136,10 +136,10 @@
                                 Occurrence.cpp
                                 QuadTree.cpp
                                 Slice.cpp
+                                ExtensionSlice.cpp
                                 UpdateSession.cpp
                                 Region.cpp
                                 Query.cpp
-                                DisplaySlot.cpp
                                 Marker.cpp
                                 Timer.cpp
                  )

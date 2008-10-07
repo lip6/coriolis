@@ -50,17 +50,17 @@
 // x-----------------------------------------------------------------x
 
 
-# ifndef  __PALETTE_ENTRY_H__
-#   define  __PALETTE_ENTRY_H__
+#ifndef  __HURRICANE_PALETTE_ENTRY__
+#define  __HURRICANE_PALETTE_ENTRY__
 
-# include  <QPixmap>
-# include  <QWidget>
-# include  <QFont>
+#include  <QPixmap>
+#include  <QWidget>
+#include  <QFont>
 
 class QPaintEvent;
 class QCheckBox;
 
-# include  "hurricane/Commons.h"
+#include  "hurricane/Commons.h"
 
 
 namespace Hurricane {
@@ -99,6 +99,7 @@ namespace Hurricane {
       virtual const Name&   getName        () const = 0;
       virtual bool          isGroup        () const = 0;
       virtual bool          isBasicLayer   () const = 0;
+      virtual bool          isExtension    () const = 0;
       virtual BasicLayer*   getBasicLayer  () = 0;
       virtual bool          isChecked      () const = 0;
       virtual void          setChecked     ( bool state ) = 0;
@@ -123,4 +124,4 @@ namespace Hurricane {
 } // End of Hurricane namespace.
 
 
-# endif
+# endif  // __HURRICANE_PALETTE_ENTRY__

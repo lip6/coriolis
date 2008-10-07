@@ -50,15 +50,14 @@
 // x-----------------------------------------------------------------x
 
 
-# ifndef  __GROUP_HPALETTE_ENTRY_H__
-#   define  __GROUP_HPALETTE_ENTRY_H__
+#ifndef  __GROUP_HPALETTE_ENTRY__
+#define  __GROUP_HPALETTE_ENTRY__
 
 
 class QPushButton;
 
-# include  "hurricane/Name.h"
-
-# include  "hurricane/viewer/HPaletteEntry.h"
+#include  "hurricane/Name.h"
+#include  "hurricane/viewer/HPaletteEntry.h"
 
 
 namespace Hurricane {
@@ -75,6 +74,7 @@ namespace Hurricane {
     public:
       virtual bool               isGroup            () const;
       virtual bool               isBasicLayer       () const;
+      virtual bool               isExtension        () const;
       virtual const Name&        getName            () const;
       virtual BasicLayer*        getBasicLayer      ();
       virtual bool               isChecked          () const;
@@ -106,4 +106,4 @@ namespace Hurricane {
 } // End of Hurricane namespace.
 
 
-# endif
+#endif  // __GROUP_HPALETTE_ENTRY__

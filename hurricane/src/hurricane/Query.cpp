@@ -105,11 +105,13 @@ namespace Hurricane {
                         , const Box&            area
                         , const Transformation& transformation
                         , const BasicLayer*     basicLayer
+                        , ExtensionSlice::Mask  mask
                         , unsigned int          filter
                         )
   {
-    _basicLayer = basicLayer;
-    _filter     = filter;
+    _basicLayer    = basicLayer;
+    _filter        = filter;
+    _extensionMask = mask;
 
     _stack.setTopCell           ( cell );
     _stack.setTopArea           ( area );
@@ -144,6 +146,18 @@ namespace Hurricane {
         }
       }
 
+      if ( hasExtensionGoCallback() && (_filter & DoExtensionGos) ) {
+        if ( !getMasterCell()->isTerminal() || (_filter & DoTerminalCells) ) {
+          forEach ( ExtensionSlice*, islice, getMasterCell()->getExtensionSlices() ) {
+            if ( !( (*islice)->getMask() & _extensionMask ) ) continue;
+            if ( !(*islice)->getBoundingBox().intersect(getArea()) ) continue;
+
+            forEach ( Go*, igo, (*islice)->getGosUnder(_stack.getArea()) )
+              extensionGoCallback ( *igo );
+          }
+        }
+      }
+
       if ( (_filter & DoMasterCells) && hasMasterCellCallback() )
         masterCellCallback ();
 
@@ -153,6 +167,12 @@ namespace Hurricane {
 
 
   bool  Query::hasGoCallback () const
+  {
+    return false;
+  }
+
+
+  bool  Query::hasExtensionGoCallback () const
   {
     return false;
   }

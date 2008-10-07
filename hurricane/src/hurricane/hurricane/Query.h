@@ -307,48 +307,55 @@ namespace Hurricane {
       enum  QueryFilter { DoMasterCells   = 1
                         , DoTerminalCells = 2
                         , DoComponents    = 4
+                        , DoExtensionGos  = 8
                         , DoAll           =   DoMasterCells
                                             | DoTerminalCells
                                             | DoComponents
+                                            | DoExtensionGos
                         };
     public:
     // Constructors & Destructors.
-                                    Query                 ();
-      virtual                      ~Query                 ();
+                                    Query                  ();
+      virtual                      ~Query                  ();
     // Accessors.
-      inline  unsigned int          getStartLevel         () const;
-      inline  unsigned int          getStopLevel          () const;
-      inline  size_t                getDepth              () const;
-      inline  const Transformation& getTransformation     () const;
-      inline  const Box&            getArea               () const;
-      inline  const BasicLayer*     getBasicLayer         () const;
-      inline  Cell*                 getMasterCell         ();
-      inline  Instance*             getInstance           ();
-    //inline  const Tabulation&     getTab                () const;
-      virtual bool                  hasGoCallback         () const;
-      virtual bool                  hasMasterCellCallback () const;
-      virtual void                  goCallback            ( Go* go ) = 0;
-      virtual void                  masterCellCallback    () = 0;
+      inline  unsigned int          getStartLevel          () const;
+      inline  unsigned int          getStopLevel           () const;
+      inline  size_t                getDepth               () const;
+      inline  const Transformation& getTransformation      () const;
+      inline  const Box&            getArea                () const;
+      inline  const BasicLayer*     getBasicLayer          () const;
+      inline  Cell*                 getMasterCell          ();
+      inline  Instance*             getInstance            ();
+    //inline  const Tabulation&     getTab                 () const;
+      virtual bool                  hasGoCallback          () const;
+      virtual bool                  hasExtensionGoCallback () const;
+      virtual bool                  hasMasterCellCallback  () const;
+      virtual void                  goCallback             ( Go* go ) = 0;
+      virtual void                  extensionGoCallback    ( Go* go ) = 0;
+      virtual void                  masterCellCallback     () = 0;
     // Modifiers.
-              void                  setQuery              ( Cell*                 cell
-                                                          , const Box&            area
-                                                          , const Transformation& transformation
-                                                          , const BasicLayer*     basicLayer
-                                                          , unsigned int          filter
-                                                          );
-      inline  void                  setCell               ( Cell*                 cell );
-      inline  void                  setArea               ( const Box&            area );
-      inline  void                  setTransformation     ( const Transformation& transformation );
-      inline  void                  setBasicLayer         ( const BasicLayer*     basicLayer );
-      inline  void                  setFilter             ( unsigned int          mode );
-      inline  void                  setStartLevel         ( unsigned int          level );
-      inline  void                  setStopLevel          ( unsigned int          level );
-              void                  doQuery               ();
+              void                  setQuery               ( Cell*                 cell
+                                                           , const Box&            area
+                                                           , const Transformation& transformation
+                                                           , const BasicLayer*     basicLayer
+                                                           , ExtensionSlice::Mask  extensionMask
+                                                           , unsigned int          filter
+                                                           );
+      inline  void                  setCell                ( Cell*                 cell );
+      inline  void                  setArea                ( const Box&            area );
+      inline  void                  setTransformation      ( const Transformation& transformation );
+      inline  void                  setBasicLayer          ( const BasicLayer*     basicLayer );
+      inline  void                  setExtensionMask       ( ExtensionSlice::Mask  mode );
+      inline  void                  setFilter              ( unsigned int          mode );
+      inline  void                  setStartLevel          ( unsigned int          level );
+      inline  void                  setStopLevel           ( unsigned int          level );
+              void                  doQuery                ();
 
     protected:
     // Internal: Attributes.
               QueryStack            _stack;
               const BasicLayer*     _basicLayer;
+              ExtensionSlice::Mask  _extensionMask;
               unsigned int          _filter;
   };
 
@@ -360,6 +367,7 @@ namespace Hurricane {
   inline  void  Query::setTransformation ( const Transformation& transformation ) { _stack.setTopTransformation(transformation); }
   inline  void  Query::setBasicLayer     ( const BasicLayer*     basicLayer )     { _basicLayer = basicLayer; }
   inline  void  Query::setFilter         ( unsigned int          filter )         { _filter = filter; }
+  inline  void  Query::setExtensionMask  ( ExtensionSlice::Mask  mask )           { _extensionMask = mask; }
   inline  void  Query::setStartLevel     ( unsigned int          level )          { _stack.setStartLevel(level); }
   inline  void  Query::setStopLevel      ( unsigned int          level )          { _stack.setStopLevel(level); }
 

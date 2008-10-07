@@ -74,6 +74,7 @@ namespace Hurricane {
     public:
       virtual bool                isGroup            () const;
       virtual bool                isBasicLayer       () const;
+      virtual bool                isExtension        () const;
       virtual const Name&         getName            () const;
       virtual BasicLayer*         getBasicLayer      ();
       virtual bool                isChecked          () const;

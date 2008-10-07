@@ -533,24 +533,24 @@ inline Hurricane::Record* getRecord ( const std::multiset<Element,Compare>* s )
 
 
 # define IOSTREAM_POINTER_SUPPORT(Data) \
-  inline std::ostream& operator<< ( std::ostream& o, Data* d )             \
-  {                                                                        \
-    if (!d) return o << "NULL";                                            \
-    return o << "&" << getString<Data*>(d);                                \
-  }                                                                        \
-  inline std::ostream& operator<< ( std::ostream& o, const Data* d )       \
-  {                                                                        \
-    if (!d) return o << "NULL";                                            \
-    return o << "&" << getString<const Data*>(d);                          \
+  inline std::ostream& operator<< ( std::ostream& o, Data* d )       \
+  {                                                                  \
+    if (!d) return o << "NULL";                                      \
+    return o << "&" << getString<Data*>(d);                          \
+  }                                                                  \
+  inline std::ostream& operator<< ( std::ostream& o, const Data* d ) \
+  {                                                                  \
+    if (!d) return o << "NULL";                                      \
+    return o << "&" << getString<const Data*>(d);                    \
   }
 
 
 # define GETRECORD_POINTER_SUPPORT(Data) \
-  template<> inline Hurricane::Record* getRecord<Data*>( Data* data )               \
-  { if (!data) return NULL; return data->_getRecord(); }                            \
-                                                                                    \
-  template<> inline Hurricane::Record* getRecord<const Data*>( const Data* data )   \
-  { if (!data) return NULL; return data->_getRecord(); }                            \
+  template<> inline Hurricane::Record* getRecord<Data*>( Data* data )             \
+  { if (!data) return NULL; return data->_getRecord(); }                          \
+                                                                                  \
+  template<> inline Hurricane::Record* getRecord<const Data*>( const Data* data ) \
+  { if (!data) return NULL; return data->_getRecord(); }
 
 
 # define GETSTRING_REFERENCE_SUPPORT(Data) \

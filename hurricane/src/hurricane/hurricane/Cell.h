@@ -15,6 +15,7 @@
 #include "hurricane/Pin.h"
 #include "hurricane/Pins.h"
 #include "hurricane/Slices.h"
+#include "hurricane/ExtensionSlice.h"
 #include "hurricane/Rubbers.h"
 #include "hurricane/Markers.h"
 #include "hurricane/Marker.h"
@@ -26,6 +27,7 @@
 #include "hurricane/QuadTree.h"
 #include "hurricane/IntrusiveMap.h"
 #include "hurricane/IntrusiveSet.h"
+#include "hurricane/MapCollection.h"
 
 
 namespace Hurricane {
@@ -51,6 +53,7 @@ class Cell : public Entity {
 // *****
 
     public: typedef Entity Inherit;
+    public: typedef map<Name,ExtensionSlice*> ExtensionSliceMap;
 
     class InstanceMap : public IntrusiveMap<Name, Instance> {
     // ****************************************************
@@ -145,6 +148,7 @@ class Cell : public Entity {
     private: NetMap _netMap;
     private: PinMap _pinMap;
     private: SliceMap _sliceMap;
+    private: ExtensionSliceMap _extensionSlices;
     private: MarkerSet _markerSet;
     private: Box _abutmentBox;
     private: Box _boundingBox;
@@ -177,6 +181,7 @@ class Cell : public Entity {
     public: NetMap& _getNetMap() {return _netMap;};
     public: PinMap& _getPinMap() {return _pinMap;};
     public: SliceMap& _getSliceMap() {return _sliceMap;};
+    public: ExtensionSliceMap& _getExtensionSliceMap() {return _extensionSlices;};
     public: MarkerSet& _getMarkerSet() {return _markerSet;};
     public: Cell* _getNextOfLibraryCellMap() const {return _nextOfLibraryCellMap;};
     public: Cell* _getNextOfSymbolCellSet() const {return _nextOfSymbolCellSet;};
@@ -191,6 +196,8 @@ class Cell : public Entity {
     public: void _removeSlaveEntity(Entity* entity, Entity* slaveEntity);
     public: void _getSlaveEntities(SlaveEntityMap::iterator& begin, SlaveEntityMap::iterator& end);
     public: void _getSlaveEntities(Entity* entity, SlaveEntityMap::iterator& begin, SlaveEntityMap::iterator& end);
+    public: void _insertSlice ( ExtensionSlice* );
+    public: void _removeSlice ( ExtensionSlice* );
 
 #endif
 
@@ -239,6 +246,9 @@ class Cell : public Entity {
     public: Pins getPins() const {return _pinMap.getElements();};
     public: Slice* getSlice(const Layer* layer) const {return _sliceMap.getElement(layer);};
     public: Slices getSlices(const Layer::Mask& mask = ~0) const;
+    public: const ExtensionSliceMap& getExtensionSliceMap() const { return _extensionSlices; };
+    public: ExtensionSlice* getExtensionSlice(const Name& name) const;
+    public: ExtensionSlices getExtensionSlices(ExtensionSlice::Mask mask=~0) const;
     public: Rubbers getRubbers() const;
     public: Rubbers getRubbersUnder(const Box& area) const;
     public: Markers getMarkers() const {return _markerSet.getElements();};
@@ -255,6 +265,11 @@ class Cell : public Entity {
     public: Occurrences getComponentOccurrences(const Layer::Mask& mask = ~0) const;
     public: Occurrences getComponentOccurrencesUnder(const Box& area, const Layer::Mask& mask = ~0) const;
     public: Occurrences getHyperNetRootNetOccurrences() const;
+    public: ExtensionSlice::Mask getExtensionSliceMask ( const Name& name ) const;
+    public: Gos getExtensionGos ( const Name& name ) const;
+    public: Gos getExtensionGos ( ExtensionSlice::Mask mask = ~0 ) const;
+    public: Gos getExtensionGosUnder ( const Box& area, const Name& name ) const;
+    public: Gos getExtensionGosUnder ( const Box& area, ExtensionSlice::Mask mask = ~0 ) const;
     public: Cells getSubCells() const;
     public: Pathes getRecursiveSlavePathes() const;
     public: const Box& getAbutmentBox() const {return _abutmentBox;};

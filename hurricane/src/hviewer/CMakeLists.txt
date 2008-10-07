@@ -6,6 +6,7 @@
 
                    set ( mocincludes hurricane/viewer/HPaletteEntry.h
                                      hurricane/viewer/LayerPaletteEntry.h
+                                     hurricane/viewer/HExtensionPaletteEntry.h
                                      hurricane/viewer/GroupPaletteEntry.h
                                      hurricane/viewer/ViewerPaletteEntry.h
                                      hurricane/viewer/HPalette.h
@@ -57,6 +58,7 @@
                                      HGraphics.cpp
                                      HPaletteEntry.cpp
                                      LayerPaletteEntry.cpp
+                                     HExtensionPaletteEntry.cpp
                                      GroupPaletteEntry.cpp
                                      ViewerPaletteEntry.cpp
                                      HPalette.cpp

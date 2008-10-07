@@ -110,6 +110,12 @@ namespace Hurricane {
   }
 
 
+  bool ViewerPaletteEntry::isExtension () const
+  {
+    return false;
+  }
+
+
   const Name& ViewerPaletteEntry::getName () const
   {
     return _name;

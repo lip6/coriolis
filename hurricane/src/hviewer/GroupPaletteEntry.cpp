@@ -50,12 +50,12 @@
 // x-----------------------------------------------------------------x
 
 
-# include  <QPushButton>
-# include  <QHBoxLayout>
+#include  <QPushButton>
+#include  <QHBoxLayout>
 
-# include  "hurricane/viewer/Graphics.h"
-# include  "hurricane/viewer/GroupPaletteEntry.h"
-# include  "hurricane/viewer/HPalette.h"
+#include  "hurricane/viewer/Graphics.h"
+#include  "hurricane/viewer/GroupPaletteEntry.h"
+#include  "hurricane/viewer/HPalette.h"
 
 
 namespace Hurricane {
@@ -110,6 +110,12 @@ namespace Hurricane {
 
 
   bool GroupPaletteEntry::isBasicLayer () const
+  {
+    return false;
+  }
+
+
+  bool GroupPaletteEntry::isExtension () const
   {
     return false;
   }

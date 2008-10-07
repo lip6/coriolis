@@ -50,26 +50,28 @@
 // x-----------------------------------------------------------------x
 
 
-# include  <vector>
+#include  <vector>
 
-# include  <QHBoxLayout>
-# include  <QVBoxLayout>
-# include  <QCheckBox>
-# include  <QPushButton>
+#include  <QHBoxLayout>
+#include  <QVBoxLayout>
+#include  <QCheckBox>
+#include  <QPushButton>
 
-# include  "hurricane/Name.h"
-# include  "hurricane/DataBase.h"
-# include  "hurricane/Technology.h"
-# include  "hurricane/BasicLayer.h"
-# include  "hurricane/BasicLayers.h"
+#include  "hurricane/Name.h"
+#include  "hurricane/DataBase.h"
+#include  "hurricane/Technology.h"
+#include  "hurricane/BasicLayer.h"
+#include  "hurricane/BasicLayers.h"
+#include  "hurricane/ExtensionSlice.h"
+#include  "hurricane/Cell.h"
 
-# include  "hurricane/viewer/Graphics.h"
-# include  "hurricane/viewer/HPaletteEntry.h"
-# include  "hurricane/viewer/LayerPaletteEntry.h"
-# include  "hurricane/viewer/GroupPaletteEntry.h"
-# include  "hurricane/viewer/ViewerPaletteEntry.h"
-# include  "hurricane/viewer/HPalette.h"
-# include  "hurricane/viewer/CellWidget.h"
+#include  "hurricane/viewer/Graphics.h"
+#include  "hurricane/viewer/HPaletteEntry.h"
+#include  "hurricane/viewer/LayerPaletteEntry.h"
+#include  "hurricane/viewer/HExtensionPaletteEntry.h"
+#include  "hurricane/viewer/GroupPaletteEntry.h"
+#include  "hurricane/viewer/ViewerPaletteEntry.h"
+#include  "hurricane/viewer/HPalette.h"
 
 
 namespace Hurricane {
@@ -77,14 +79,31 @@ namespace Hurricane {
 
 
   HPalette::HPalette ( QWidget* parent ) : QScrollArea(parent)
-                                       , _entries()
-                                       , _showAll(NULL)
-                                       , _hideAll(NULL)
+                                         , _entries()
+                                         , _showAll(NULL)
+                                         , _hideAll(NULL)
   {
     setWidgetResizable ( true );
 
     QWidget*     adaptator = new QWidget ();
     QVBoxLayout* layout    = new QVBoxLayout ();
+
+    _showAll = new QPushButton ( this );
+    _showAll->setIcon ( QIcon(":/images/palette_show_all.png") );
+    _showAll->setFlat ( true );
+
+    _hideAll = new QPushButton ( this );
+    _hideAll->setIcon ( QIcon(":/images/palette_hide_all.png") );
+    _hideAll->setFlat ( true );
+
+    connect ( _showAll, SIGNAL(clicked()), this, SLOT(showAll()) );
+    connect ( _hideAll, SIGNAL(clicked()), this, SLOT(hideAll()) );
+
+    QHBoxLayout* topEntry = new QHBoxLayout ();
+    topEntry->setContentsMargins ( 0, 0, 0, 0 );
+    topEntry->addWidget ( _showAll );
+    topEntry->addWidget ( _hideAll );
+    layout->addLayout ( topEntry );
 
   //layout->setContentsMargins ( 0, 0, 0, 0 );
 
@@ -133,8 +152,8 @@ namespace Hurricane {
           gentry->setChecked ( false );
         }
         bool unmatched = false;
-        for_each_basic_layer ( basicLayer, technology->getBasicLayers() ) {
-          if ( !find(basicLayer->getName()) ) {
+        forEach ( BasicLayer*, basicLayer, technology->getBasicLayers() ) {
+          if ( !find((*basicLayer)->getName()) ) {
             if ( !unmatched ) {
               unmatched = true;
               gentry    = GroupPaletteEntry::create ( this, "Unmatcheds" );
@@ -142,36 +161,19 @@ namespace Hurricane {
               layout->addSpacing ( -5 );
               _entries.push_back ( gentry );
             }
-            LayerPaletteEntry* entry = LayerPaletteEntry::create ( this, basicLayer );
+            LayerPaletteEntry* entry = LayerPaletteEntry::create ( this, *basicLayer );
             layout->addWidget  ( entry, 0, Qt::AlignLeft );
             _entries.push_back ( entry );
 
-            cerr << "[WARNING] BasicLayer \"" << basicLayer->getName()
+            cerr << "[WARNING] BasicLayer \"" << (*basicLayer)->getName()
                  << "\" has no associated DisplayStyle." << endl;
           }
-          end_for;
         }
         if ( unmatched )
           gentry->setChecked ( false );
+
       }
     }
-
-    _showAll = new QPushButton ( this );
-    _showAll->setIcon ( QIcon(":/images/palette_show_all.png") );
-    _showAll->setFlat ( true );
-
-    _hideAll = new QPushButton ( this );
-    _hideAll->setIcon ( QIcon(":/images/palette_hide_all.png") );
-    _hideAll->setFlat ( true );
-
-    connect ( _showAll, SIGNAL(clicked()), this, SLOT(showAll()) );
-    connect ( _hideAll, SIGNAL(clicked()), this, SLOT(hideAll()) );
-
-    QHBoxLayout* bottomEntry = new QHBoxLayout ();
-    bottomEntry->setContentsMargins ( 0, 0, 0, 0 );
-    bottomEntry->addWidget ( _showAll );
-    bottomEntry->addWidget ( _hideAll );
-    layout->addLayout ( bottomEntry );
     layout->addStretch ();
 
     adaptator->setLayout ( layout );
@@ -179,6 +181,40 @@ namespace Hurricane {
     setHorizontalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
     setVerticalScrollBarPolicy   ( Qt::ScrollBarAsNeeded );
     setFrameStyle                ( QFrame::Plain );
+  }
+
+
+  void  HPalette::updateExtensions ( Cell* cell )
+  {
+    QVBoxLayout* layout        = qobject_cast<QVBoxLayout*> ( widget()->layout() );
+    const Name   extensionName = "Extensions";
+
+    for ( size_t ientry=0 ; ientry<_entries.size() ; ) {
+      if (  ( _entries[ientry]->getName() == extensionName )
+           || _entries[ientry]->isExtension() ) {
+        layout->removeWidget ( _entries[ientry] );
+        _entries[ientry]->deleteLater ();
+
+        for ( size_t j=ientry+1 ; j<_entries.size() ; j++ )
+          _entries[j-1] = _entries[j];
+        _entries.pop_back ();
+      } else
+        ientry++;
+    }
+
+    if ( !cell ) return;
+
+    GroupPaletteEntry* gentry = GroupPaletteEntry::create ( this, extensionName );
+    layout->insertWidget  ( -1, gentry, 0, Qt::AlignLeft );
+    layout->addSpacing ( -5 );
+    _entries.push_back ( gentry );
+
+    forEach ( ExtensionSlice*, extension, cell->getExtensionSlices() ) {
+      HExtensionPaletteEntry* entry = HExtensionPaletteEntry::create ( this, (*extension)->getName() );
+      layout->insertWidget  ( -1, entry, 0, Qt::AlignLeft );
+      _entries.push_back ( entry );
+    }
+    gentry->setChecked ( false );
   }
 
 

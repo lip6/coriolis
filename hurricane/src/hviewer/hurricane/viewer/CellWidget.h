@@ -108,7 +108,14 @@ namespace Hurricane {
 
     private:
       class DrawingPlanes;
-
+    public:
+      typedef void ( DrawExtensionGo_t )  ( CellWidget*
+                                          , const Go*
+                                          , const BasicLayer*
+                                          , const Box&
+                                          , const Transformation&
+                                          );
+      typedef void ( InitDrawExtension_t )( CellWidget* );
     public:
     // Constructor & Destructor.
                                       CellWidget             ( QWidget* parent=NULL );
@@ -128,9 +135,11 @@ namespace Hurricane {
       inline  void                    setStartLevel          ( int level );
       inline  void                    setStopLevel           ( int level );
       inline  void                    setQueryFilter         ( int filter );
+      inline  void                    addDrawExtensionGo     ( const Name&, InitDrawExtension_t*, DrawExtensionGo_t* );
     // Painter control & Hurricane objects drawing primitives.
       inline  float                   getScale               () const;
-              bool                    isDrawable             ( const Name& entryName );
+              bool                    isDrawableLayer        ( const Name& );
+              bool                    isDrawableExtension    ( const Name& );
               void                    drawBox                ( const Box& );
               void                    drawLine               ( const Point&, const Point& );
               void                    drawText               ( const Point&, const Name&, int angle=0, bool reverse=false  );
@@ -169,6 +178,7 @@ namespace Hurricane {
               void                    mousePressEvent        ( QMouseEvent* );
               void                    mouseReleaseEvent      ( QMouseEvent* );
     signals:
+              void                    cellChanged            ( Cell* );
               void                    mousePositionChanged   ( const Point& position );
               void                    selectionChanged       ( const set<Selector*>&, Cell* );
               void                    occurrenceToggled      ( Occurrence );
@@ -267,37 +277,50 @@ namespace Hurricane {
     private:
       class DrawingQuery : public Query {
         public:
-                              DrawingQuery          ( CellWidget* widget );
-          inline  void        setQuery              ( const Box&            area
-                                                    , const Transformation& transformation
-                                                    , const BasicLayer*     basicLayer
-                                                    , unsigned int          filter
-                                                    );
-          virtual bool        hasMasterCellCallback () const;
-          virtual bool        hasGoCallback         () const;
-          virtual void        masterCellCallback    ();
-          virtual void        goCallback            ( Go* go );
-                  void        drawGo                ( const Go*              go
-                                                    , const BasicLayer*      basicLayer
-                                                    , const Box&             area
-                                                    , const Transformation&  transformation
-                                                    );
+                              DrawingQuery           ( CellWidget* widget );
+          inline  void        setQuery               ( const Box&            area
+                                                     , const Transformation& transformation
+                                                     , const BasicLayer*     basicLayer
+                                                     , ExtensionSlice::Mask  extensionMask
+                                                     , unsigned int          filter
+                                                     );
+          inline  void        addDrawExtensionGo     ( const Name&
+                                                     , InitDrawExtension_t*
+                                                     , DrawExtensionGo_t*
+                                                     );
+                  void        setDrawExtensionGo     ( const Name& );
+          virtual bool        hasMasterCellCallback  () const;
+          virtual bool        hasGoCallback          () const;
+          virtual bool        hasExtensionGoCallback () const;
+          virtual void        masterCellCallback     ();
+          virtual void        goCallback             ( Go* go );
+          virtual void        extensionGoCallback    ( Go* go );
+                  void        drawGo                 ( const Go*              go
+                                                     , const BasicLayer*      basicLayer
+                                                     , const Box&             area
+                                                     , const Transformation&  transformation
+                                                     );
     
         protected:
-                  CellWidget* _cellWidget;
+                  CellWidget*        _cellWidget;
+                  DrawExtensionGo_t* _drawExtensionGo;
+                  map<Name,pair<InitDrawExtension_t*,DrawExtensionGo_t*> >
+                                     _drawExtensionGos;
       };
 
     private:
       class TextDrawingQuery : public Query {
         public:
-                              TextDrawingQuery      ( CellWidget* widget );
-          inline  void        setQuery              ( const Box&            area
-                                                    , const Transformation& transformation
-                                                    );
-          virtual bool        hasMasterCellCallback () const;
-          virtual bool        hasGoCallback         () const;
-          virtual void        masterCellCallback    ();
-          virtual void        goCallback            ( Go* go );
+                              TextDrawingQuery       ( CellWidget* widget );
+          inline  void        setQuery               ( const Box&            area
+                                                     , const Transformation& transformation
+                                                     );
+          virtual bool        hasMasterCellCallback  () const;
+          virtual bool        hasGoCallback          () const;
+          virtual bool        hasExtensionGoCallback () const;
+          virtual void        masterCellCallback     ();
+          virtual void        extensionGoCallback    ( Go* go );
+          virtual void        goCallback             ( Go* go );
     
         protected:
                   CellWidget* _cellWidget;
@@ -339,9 +362,25 @@ namespace Hurricane {
   inline void  CellWidget::DrawingQuery::setQuery ( const Box&            area
                                                   , const Transformation& transformation
                                                   , const BasicLayer*     basicLayer
+                                                  , ExtensionSlice::Mask  extensionMask
                                                   , unsigned int          filter
                                                   )
-  { Query::setQuery ( _cellWidget->getCell(), area, transformation, basicLayer, filter ); }
+  {
+    Query::setQuery ( _cellWidget->getCell()
+                    , area
+                    , transformation
+                    , basicLayer
+                    , extensionMask
+                    , filter
+                    );
+  }
+
+
+  inline void  CellWidget::DrawingQuery::addDrawExtensionGo ( const Name&          name
+                                                            , InitDrawExtension_t* initDrawExtension
+                                                            , DrawExtensionGo_t*   drawExtensionGo
+                                                            )
+  { _drawExtensionGos[name] = make_pair(initDrawExtension,drawExtensionGo); }
 
 
   inline bool  CellWidget::DrawingPlanes::getLineMode () const
@@ -419,6 +458,13 @@ namespace Hurricane {
 
   inline void  CellWidget::DrawingPlanes::copyToScreen ()
   { copyToScreen ( 0, 0, width(), height() ); }
+
+
+  inline void  CellWidget::addDrawExtensionGo ( const Name&          name
+                                              , InitDrawExtension_t* initDrawExtension
+                                              , DrawExtensionGo_t*   drawExtensionGo
+                                              )
+  { _drawingQuery.addDrawExtensionGo ( name, initDrawExtension, drawExtensionGo ); }
 
 
   inline void  CellWidget::setStartLevel ( int level )

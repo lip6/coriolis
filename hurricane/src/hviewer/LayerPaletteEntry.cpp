@@ -111,6 +111,12 @@ namespace Hurricane {
   }
 
 
+  bool LayerPaletteEntry::isExtension () const
+  {
+    return false;
+  }
+
+
   const Name& LayerPaletteEntry::getName () const
   {
     return _basicLayer->getName();

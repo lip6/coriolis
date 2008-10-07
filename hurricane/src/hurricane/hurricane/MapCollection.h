@@ -45,13 +45,13 @@ template<class Key, class Element, class Compare = less<Key> >
 			if (_elementMap) _iterator = _elementMap->begin();
 		};
 
-		public: virtual Element GetElement() const
+		public: virtual Element getElement() const
 		// ***************************************
 		{
 			return (isValid()) ? (*_iterator).second : Element();
 		};
 
-		public: virtual Hurricane::Locator<Element>* GetClone() const
+		public: virtual Hurricane::Locator<Element>* getClone() const
 		// **********************************************************
 		{
 			return new Locator(_elementMap);
@@ -113,13 +113,13 @@ template<class Key, class Element, class Compare = less<Key> >
 // Accessors
 // *********
 
-	public: virtual Collection<Element>* GetClone() const
+	public: virtual Collection<Element>* getClone() const
 	// **************************************************
 	{
 		return new MapCollection(*this);
 	}
 
-	public: virtual Hurricane::Locator<Element>* GetLocator() const
+	public: virtual Hurricane::Locator<Element>* getLocator() const
 	// ************************************************************
 	{
 		// return (_elementMap) ? new Locator<Key, Element, Compare>(_elementMap) : NULL;
@@ -127,7 +127,7 @@ template<class Key, class Element, class Compare = less<Key> >
 		return (_elementMap) ? new Locator(_elementMap) : NULL;
 	}
 
-	public: virtual unsigned GetSize() const
+	public: virtual unsigned getSize() const
 	// *************************************
 	{
 		return (_elementMap) ? _elementMap->size() : 0;
@@ -136,34 +136,34 @@ template<class Key, class Element, class Compare = less<Key> >
 // Others
 // ******
 
-    public: virtual string _GetTypeName() const
+    public: virtual string _getTypeName() const
 	// **************************************
     {
       return _TName("MapCollection");
     };
 
-	public: virtual string _GetString() const
+	public: virtual string _getString() const
 	// **************************************
 	{
 		if (!_elementMap)
-			return "<" + _GetTypeName() + " unbound>";
+			return "<" + _getTypeName() + " unbound>";
 		else {
 			if (_elementMap->empty())
-				return "<" + _GetTypeName() + " empty>";
+				return "<" + _getTypeName() + " empty>";
 			else
-				return "<" + _GetTypeName() + " " + GetString(_elementMap->size()) + ">";
+				return "<" + _getTypeName() + " " + getString(_elementMap->size()) + ">";
 		}
 	};
 
-	Record* _GetRecord() const
+	Record* _getRecord() const
     // ********************
     {
       Record* record = NULL;
       if (!_elementMap->empty()) {
-		record = new Record(_GetString());
+		record = new Record(_getString());
 		typename map<Key, Element, Compare>::const_iterator iterator = _elementMap->begin(); // AD
 		while (iterator != _elementMap->end()) {
-          record->add(getSlot<Element>(GetString((*iterator).first), (*iterator).second));
+          record->add(getSlot<Element>(getString((*iterator).first), (*iterator).second));
           ++iterator;
 		}
       }
@@ -179,14 +179,14 @@ template<class Key, class Element, class Compare = less<Key> >
 // ****************************************************************************************************
 
 template<class Key, class Element, class Compare>
-	inline GenericCollection<Element> GetCollection(const map<Key, Element, Compare>& elementMap)
+	inline GenericCollection<Element> getCollection(const map<Key, Element, Compare>& elementMap)
 // *********************************************************************************************
 {
 	return MapCollection<Key, Element, Compare>(elementMap);
 }
 
 template<class Key, class Element, class Compare>
-	inline GenericCollection<Element> GetCollection(const map<Key, Element, Compare>* elementMap)
+	inline GenericCollection<Element> getCollection(const map<Key, Element, Compare>* elementMap)
 // *********************************************************************************************
 {
 	return MapCollection<Key, Element, Compare>(elementMap);

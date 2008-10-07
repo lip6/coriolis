@@ -50,15 +50,15 @@
 // x-----------------------------------------------------------------x
 
 
-# ifndef  __HPALETTE__
-#   define  __HPALETTE__
+#ifndef  __HURRICANE_PALETTE__
+#define  __HURRICANE_PALETTE__
 
-# include  <vector>
-# include  <QWidget>
-# include  <QScrollArea>
-# include  <QPixmap>
+#include  <vector>
+#include  <QWidget>
+#include  <QScrollArea>
+#include  <QPixmap>
 
-# include  "hurricane/Commons.h"
+#include  "hurricane/Commons.h"
 
 
   class QCheckBox;
@@ -73,8 +73,9 @@ namespace Hurricane {
 
   class Name;
   class BasicLayer;
-  class HPaletteEntry;
+  class Cell;
   class CellWidget;
+  class HPaletteEntry;
 
 
   class HPalette : public QScrollArea {
@@ -94,6 +95,7 @@ namespace Hurricane {
              void                    paletteChanged   ();
     public slots:
     // Slots.
+             void                    updateExtensions ( Cell* cell );
              void                    showAll          ();
              void                    hideAll          ();
 
@@ -116,4 +118,4 @@ namespace Hurricane {
 } // End of Hurricane namespace.
 
 
-# endif
+#endif  // __HURRICANE_PALETTE__

@@ -50,13 +50,13 @@
 // x-----------------------------------------------------------------x
 
 
-# ifndef  __LAYER_PALETTE_ENTRY_H__
-#   define  __LAYER_PALETTE_ENTRY_H__
+#ifndef  __LAYER_PALETTE_ENTRY__
+#define  __LAYER_PALETTE_ENTRY__
 
 
 class QCheckBox;
 
-# include  "hurricane/viewer/HPaletteEntry.h"
+#include  "hurricane/viewer/HPaletteEntry.h"
 
 
 namespace Hurricane {
@@ -73,6 +73,7 @@ namespace Hurricane {
     public:
       virtual bool               isGroup             () const;
       virtual bool               isBasicLayer        () const;
+      virtual bool               isExtension         () const;
       virtual const Name&        getName             () const;
       virtual BasicLayer*        getBasicLayer       ();
       virtual bool               isChecked           () const;
@@ -99,4 +100,4 @@ namespace Hurricane {
 } // End of Hurricane namespace.
 
 
-# endif
+#endif  // __LAYER_PALETTE_ENTRY__

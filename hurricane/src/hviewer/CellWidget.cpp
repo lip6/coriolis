@@ -284,8 +284,23 @@ namespace Hurricane {
 
   CellWidget::DrawingQuery::DrawingQuery ( CellWidget* widget )
     : Query()
-    ,_cellWidget(widget)
+    , _cellWidget(widget)
+    , _drawExtensionGo(NULL)
   { }
+
+
+  void  CellWidget::DrawingQuery::setDrawExtensionGo ( const Name& name )
+  {
+    map<Name,pair<InitDrawExtension_t*,DrawExtensionGo_t*> >::iterator idraw
+      = _drawExtensionGos.find ( name );
+
+    if ( idraw != _drawExtensionGos.end() ) {
+      _drawExtensionGo = idraw->second.second;
+      if ( idraw->second.first )
+        idraw->second.first ( _cellWidget );
+    } else
+      _drawExtensionGo = NULL;
+  }
 
 
   bool  CellWidget::DrawingQuery::hasMasterCellCallback () const
@@ -344,6 +359,19 @@ namespace Hurricane {
   }
 
 
+  bool  CellWidget::DrawingQuery::hasExtensionGoCallback () const
+  {
+    return true;
+  }
+
+
+  void  CellWidget::DrawingQuery::extensionGoCallback ( Go* go )
+  {
+    if ( _drawExtensionGo )
+      _drawExtensionGo ( _cellWidget, go, getBasicLayer(), getArea(), getTransformation() );
+  }
+
+
 // -------------------------------------------------------------------
 // Class :  "Hurricane::CellWidget::TextDrawingQuery".
 
@@ -380,6 +408,14 @@ namespace Hurricane {
 
 
   void  CellWidget::TextDrawingQuery::goCallback ( Go* go )
+  { }
+
+
+  bool  CellWidget::TextDrawingQuery::hasExtensionGoCallback () const
+  { return false; }
+
+
+  void  CellWidget::TextDrawingQuery::extensionGoCallback ( Go* go )
   { }
 
 
@@ -449,7 +485,8 @@ namespace Hurricane {
     detachFromPalette ();
     _palette = palette;
 
-    connect ( _palette, SIGNAL(paletteChanged()), this,  SLOT(redraw()) );
+    connect ( _palette, SIGNAL(paletteChanged())  , this    , SLOT(redraw()) );
+    connect ( this    , SIGNAL(cellChanged(Cell*)), _palette, SLOT(updateExtensions(Cell*)));
   }
 
 
@@ -550,6 +587,7 @@ namespace Hurricane {
 
         Box redrawBox = displayToDbuBox ( redrawArea );
 
+        _drawingQuery.setExtensionMask  ( 0 );
         _drawingQuery.setArea           ( redrawBox );
         _drawingQuery.setTransformation ( Transformation() );
 
@@ -557,13 +595,13 @@ namespace Hurricane {
           _drawingPlanes.setPen   ( Graphics::getPen  ((*iLayer)->getName(),darkening) );
           _drawingPlanes.setBrush ( Graphics::getBrush((*iLayer)->getName(),darkening) );
 
-          if ( isDrawable((*iLayer)->getName()) ) {
+          if ( isDrawableLayer((*iLayer)->getName()) ) {
             _drawingQuery.setBasicLayer ( *iLayer );
             _drawingQuery.setFilter     ( _queryFilter & ~Query::DoMasterCells );
             _drawingQuery.doQuery       ();
           }
         }
-        if ( isDrawable("boundaries") ) {
+        if ( isDrawableLayer("boundaries") ) {
           _drawingPlanes.setPen   ( Graphics::getPen  ("boundaries",darkening) );
           _drawingPlanes.setBrush ( Graphics::getBrush("boundaries",darkening) );
 
@@ -572,13 +610,23 @@ namespace Hurricane {
           _drawingQuery.doQuery       ();
         }
 
-        if ( isDrawable("text.instance") ) {
+        if ( isDrawableLayer("text.instance") ) {
           _drawingPlanes.setPen               ( Graphics::getPen  ("text.instance",darkening) );
           _drawingPlanes.setBrush             ( Graphics::getBrush("text.instance",darkening) );
           _drawingPlanes.setBackground        ( Graphics::getBrush("boundaries"   ,darkening) );
           _textDrawingQuery.setArea           ( redrawBox );
           _textDrawingQuery.setTransformation ( Transformation() );
           _textDrawingQuery.doQuery           ();
+        }
+
+        _drawingQuery.setFilter        ( _queryFilter & ~Query::DoMasterCells );
+
+        forEach ( ExtensionSlice*, islice, _cell->getExtensionSlices() ) {
+          if ( isDrawableLayer((*islice)->getName()) ) {
+            _drawingQuery.setExtensionMask   ( (*islice)->getMask() );
+            _drawingQuery.setDrawExtensionGo ( (*islice)->getName() );
+            _drawingQuery.doQuery            ();
+          }
         }
       }
 
@@ -615,7 +663,7 @@ namespace Hurricane {
       Box  redrawBox = displayToDbuBox ( redrawArea );
 
       for_each_basic_layer ( basicLayer, _technology->getBasicLayers() ) {
-      //if ( !isDrawable(basicLayer->getName()) ) continue;
+      //if ( !isDrawableLayer(basicLayer->getName()) ) continue;
 
         _drawingPlanes.setPen   ( Graphics::getPen  (basicLayer->getName()) );
         _drawingPlanes.setBrush ( Graphics::getBrush(basicLayer->getName()) );
@@ -652,12 +700,20 @@ namespace Hurricane {
   }
 
 
-  bool  CellWidget::isDrawable ( const Name& entryName )
+  bool  CellWidget::isDrawableLayer ( const Name& entryName )
   {
     HPaletteEntry* entry = (_palette) ? _palette->find(entryName) : NULL;
 
     return (!entry || entry->isChecked())
       && ( Graphics::getThreshold(entryName)/DbU::lambda(1.0) < _scale );
+  }
+
+
+  bool  CellWidget::isDrawableExtension ( const Name& entryName )
+  {
+    HPaletteEntry* entry = (_palette) ? _palette->find(entryName) : NULL;
+
+    return (!entry || entry->isChecked());
   }
 
 
@@ -975,8 +1031,8 @@ namespace Hurricane {
     for ( size_t i=0 ; i<_commands.size() ; i++ )
       _commands[i]->draw ( this );
 
-    if ( isDrawable("grid") ) drawGrid ();
-    if ( isDrawable("spot") ) _spot.moveTo ( _mousePosition );
+    if ( isDrawableLayer("grid") ) drawGrid ();
+    if ( isDrawableLayer("spot") ) _spot.moveTo ( _mousePosition );
 
     _drawingPlanes.painterEnd ( 2 );
   }
@@ -1114,6 +1170,8 @@ namespace Hurricane {
     _cell = cell;
     _drawingQuery.setCell ( cell );
     _textDrawingQuery.setCell ( cell );
+
+    emit cellChanged ( cell );
 
     fitToContents ();
   }

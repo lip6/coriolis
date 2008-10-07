@@ -229,6 +229,604 @@ class Cell_ComponentsUnder : public Collection<Component*> {
 };
 
 
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::Cell::Cell_ExtensionSlices".
+
+
+  class Cell_ExtensionSlices : public Collection<ExtensionSlice*> {
+
+    public:
+      class Locator : public Hurricane::Locator<ExtensionSlice*> {
+        public:
+                                         Locator    ();
+                                         Locator    ( const Cell* , ExtensionSlice::Mask mask=~0 );
+                                         Locator    ( const Locator& );
+                  Locator&               operator=  ( const Locator& );
+          virtual ExtensionSlice*        getElement () const;
+          virtual Hurricane::Locator<ExtensionSlice*>*
+                                         getClone   () const;
+          virtual bool                   isValid    () const;
+          virtual void                   progress   ();
+          virtual string                 _getString () const;
+        private:
+                  const Cell*            _cell;
+                  ExtensionSlice::Mask   _mask;
+                  ExtensionSliceLocator  _sliceLocator;
+
+    };
+
+    private:
+              const Cell*           _cell;
+              ExtensionSlice::Mask  _mask;
+
+    public:
+                                    Cell_ExtensionSlices     ();
+                                    Cell_ExtensionSlices     ( const Cell* , ExtensionSlice::Mask mask=~0 );
+                                    Cell_ExtensionSlices     ( const Cell_ExtensionSlices& );
+              Cell_ExtensionSlices& operator=                ( const Cell_ExtensionSlices& );
+      virtual Collection<ExtensionSlice*>*         getClone  () const;
+      virtual Hurricane::Locator<ExtensionSlice*>* getLocator() const;
+      virtual string                _getString               () const;
+
+  };
+
+
+  Cell_ExtensionSlices::Cell_ExtensionSlices ()
+    : Collection<ExtensionSlice*>()
+    , _cell(NULL)
+    , _mask(0)
+  { }
+
+
+  Cell_ExtensionSlices::Cell_ExtensionSlices ( const Cell* cell, ExtensionSlice::Mask mask )
+    : Collection<ExtensionSlice*>()
+    , _cell(cell)
+    , _mask(mask)
+  { }
+
+
+  Cell_ExtensionSlices::Cell_ExtensionSlices ( const Cell_ExtensionSlices& slices )
+    : Collection<ExtensionSlice*>()
+    , _cell(slices._cell)
+    , _mask(slices._mask)
+  { }
+
+
+  Cell_ExtensionSlices& Cell_ExtensionSlices::operator= ( const Cell_ExtensionSlices& slices )
+  {
+    _cell = slices._cell;
+    _mask = slices._mask;
+    return *this;
+  }
+
+
+  Collection<ExtensionSlice*>* Cell_ExtensionSlices::getClone () const
+  {
+    return new Cell_ExtensionSlices(*this);
+  }
+
+
+  Locator<ExtensionSlice*>* Cell_ExtensionSlices::getLocator () const
+  {
+    return new Locator(_cell,_mask);
+  }
+
+
+  string Cell_ExtensionSlices::_getString () const
+  {
+    string s = "<" + _TName("Cell::ExtensionSlices");
+    if (_cell) {
+      s += " " + getString(_cell);
+    //s += " " + getString(_mask);
+    }
+    s += ">";
+    return s;
+  }
+
+
+  Cell_ExtensionSlices::Locator::Locator()
+    : Hurricane::Locator<ExtensionSlice*>()
+    , _cell(NULL)
+    , _mask(0)
+    , _sliceLocator()
+  { }
+
+
+  Cell_ExtensionSlices::Locator::Locator ( const Cell* cell, ExtensionSlice::Mask mask )
+    : Hurricane::Locator<ExtensionSlice*>()
+    , _cell(cell)
+    , _mask(mask)
+    , _sliceLocator()
+  {
+    if (_cell && (_mask != 0)) {
+      _sliceLocator = getCollection(_cell->getExtensionSliceMap()).getLocator();
+      while (_sliceLocator.isValid() && !(_sliceLocator.getElement()->getMask() & _mask))
+        _sliceLocator.progress();
+    }
+  }
+
+
+  Cell_ExtensionSlices::Locator::Locator ( const Locator& locator )
+    : Hurricane::Locator<ExtensionSlice*>()
+    , _cell(locator._cell)
+    , _mask(locator._mask)
+    , _sliceLocator(locator._sliceLocator)
+  { }
+
+
+  Cell_ExtensionSlices::Locator& Cell_ExtensionSlices::Locator::operator= ( const Locator& locator )
+  {
+    _cell = locator._cell;
+    _mask = locator._mask;
+    _sliceLocator = locator._sliceLocator;
+    return *this;
+  }
+
+
+  ExtensionSlice* Cell_ExtensionSlices::Locator::getElement () const
+  {
+    return _sliceLocator.getElement();
+  }
+
+
+  Locator<ExtensionSlice*>* Cell_ExtensionSlices::Locator::getClone () const
+  {
+    return new Locator(*this);
+  }
+
+
+  bool Cell_ExtensionSlices::Locator::isValid () const
+  {
+    return _sliceLocator.isValid();
+  }
+
+
+  void Cell_ExtensionSlices::Locator::progress ()
+  {
+    if (_sliceLocator.isValid()) {
+      do {
+        _sliceLocator.progress();
+      }
+      while (_sliceLocator.isValid() && !(_sliceLocator.getElement()->getMask() & _mask));
+    }
+  }
+
+
+  string Cell_ExtensionSlices::Locator::_getString () const
+  {
+    string s = "<" + _TName("Cell::ExtensionSlices::Locator");
+    if (_cell) {
+      s += " " + getString(_cell);
+    //s += " " + getString(_mask);
+    }
+    s += ">";
+    return s;
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::Cell::Cell_ExtensionGos".
+
+
+  class Cell_ExtensionGos : public Collection<Go*> {
+
+    public:
+      class Locator : public Hurricane::Locator<Go*> {
+
+        public:
+                                           Locator    ();
+                                           Locator    ( const Cell* , ExtensionSlice::Mask mask=~0 );
+                                           Locator    ( const Locator& );
+                  Locator&                 operator=  ( const Locator& );
+          virtual Go*                      getElement () const;
+          virtual Hurricane::Locator<Go*>* getClone   () const;
+          virtual bool                     isValid    () const;
+          virtual void                     progress   ();
+          virtual string                   _getString () const;
+        private:
+                  const Cell*              _cell;
+                  ExtensionSlice::Mask     _mask;
+                  ExtensionSliceLocator    _sliceLocator;
+                  GoLocator                _goLocator;
+                  Go*                      _go;
+      };
+
+    public:
+                                       Cell_ExtensionGos ();
+                                       Cell_ExtensionGos ( const Cell* , ExtensionSlice::Mask mask=~0 );
+                                       Cell_ExtensionGos ( const Cell_ExtensionGos& );
+              Cell_ExtensionGos&       operator=         ( const Cell_ExtensionGos& );
+      virtual Collection<Go*>*         getClone          () const;
+      virtual Hurricane::Locator<Go*>* getLocator        () const;
+      virtual string                   _getString        () const;
+    private:
+              const Cell*              _cell;
+              ExtensionSlice::Mask     _mask;
+  };
+
+
+  Cell_ExtensionGos::Cell_ExtensionGos ()
+    : Collection<Go*>()
+    , _cell(NULL)
+    , _mask(0)
+  { }
+
+
+  Cell_ExtensionGos::Cell_ExtensionGos ( const Cell* cell
+                                       , ExtensionSlice::Mask mask
+                                       )
+    : Collection<Go*>()
+    , _cell(cell)
+    , _mask(mask)
+  { }
+
+
+  Cell_ExtensionGos::Cell_ExtensionGos ( const Cell_ExtensionGos& gos )
+    : Collection<Go*>()
+    , _cell(gos._cell)
+    , _mask(gos._mask)
+  { }
+
+
+  Cell_ExtensionGos& Cell_ExtensionGos::operator= ( const Cell_ExtensionGos& gos )
+  { 
+    _cell = gos._cell;
+    _mask = gos._mask;
+    return *this;
+  }
+
+
+  Collection<Go*>* Cell_ExtensionGos::getClone () const
+  {
+    return new Cell_ExtensionGos(*this);
+  }
+
+
+  Locator<Go*>* Cell_ExtensionGos::getLocator () const
+  {
+    return new Locator(_cell,_mask);
+  }
+
+
+  string  Cell_ExtensionGos::_getString () const
+  {
+    string s = "<" + _TName("Cell::ExtensionGos");
+    if (_cell) {
+      s += " " + getString(_cell);
+    //s += " " + getString(_mask);
+    }
+    s += ">";
+    return s;
+  }
+
+
+  Cell_ExtensionGos::Locator::Locator()
+    : Hurricane::Locator<Go*>()
+    , _cell(NULL)
+    , _mask(0)
+    , _sliceLocator()
+    , _goLocator()
+    , _go(NULL)
+  { }
+
+
+  Cell_ExtensionGos::Locator::Locator ( const Cell* cell
+                                      , ExtensionSlice::Mask mask
+                                      )
+    : Hurricane::Locator<Go*>()
+    , _cell(cell)
+    , _mask(mask)
+    , _sliceLocator()
+    , _goLocator()
+    , _go(NULL)
+  {
+    if (_cell) {
+      _sliceLocator = _cell->getExtensionSlices(_mask).getLocator();
+      while (!_go && _sliceLocator.isValid()) {
+        ExtensionSlice* slice = _sliceLocator.getElement();
+        if (slice) {
+          _goLocator = slice->getGos().getLocator();
+          if (_goLocator.isValid())
+            _go = _goLocator.getElement();
+        }
+        if (!_go) _sliceLocator.progress();
+      }
+    }
+  }
+
+
+  Cell_ExtensionGos::Locator::Locator ( const Locator& locator )
+    : Hurricane::Locator<Go*>()
+    , _cell(locator._cell)
+    , _mask(locator._mask)
+    , _sliceLocator(locator._sliceLocator)
+    , _goLocator(locator._goLocator)
+    , _go(locator._go)
+  { }
+
+
+  Cell_ExtensionGos::Locator& Cell_ExtensionGos::Locator::operator= ( const Locator& locator )
+  {
+    _cell = locator._cell;
+    _mask = locator._mask;
+    _sliceLocator = locator._sliceLocator;
+    _goLocator = locator._goLocator;
+    _go = locator._go;
+    return *this;
+  }
+
+
+  Go* Cell_ExtensionGos::Locator::getElement () const
+  {
+    return _go;
+  }
+
+
+  Locator<Go*>* Cell_ExtensionGos::Locator::getClone () const
+  {
+    return new Locator(*this);
+  }
+
+
+  bool  Cell_ExtensionGos::Locator::isValid () const
+  {
+    return (_go != NULL);
+  }
+
+
+
+  void Cell_ExtensionGos::Locator::progress()
+  {
+    if (_go) {
+      _go = NULL;
+      _goLocator.progress();
+      if (_goLocator.isValid())
+        _go = _goLocator.getElement();
+      else {
+        do {
+          _sliceLocator.progress();
+          ExtensionSlice* slice = _sliceLocator.getElement();
+          if (slice) {
+            _goLocator = slice->getGos().getLocator();
+            if (_goLocator.isValid())
+              _go = _goLocator.getElement();
+          }
+        } while (!_go && _sliceLocator.isValid());
+      }
+    }
+  }
+
+
+  string  Cell_ExtensionGos::Locator::_getString () const
+  {
+    string s = "<" + _TName("Cell::ExtensionGos::Locator");
+    if (_cell) {
+      s += " " + getString(_cell);
+    //s += " " + getString(_mask);
+    }
+    s += ">";
+    return s;
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::Cell::Cell_ExtensionGosUnder".
+
+
+  class Cell_ExtensionGosUnder : public Collection<Go*> {
+
+    public:
+      class Locator : public Hurricane::Locator<Go*> {
+
+        public:
+                                           Locator    ();
+                                           Locator    ( const Cell* , const Box& , ExtensionSlice::Mask mask=~0 );
+                                           Locator    ( const Locator& );
+                  Locator&                 operator=  ( const Locator& );
+          virtual Go*                      getElement () const;
+          virtual Hurricane::Locator<Go*>* getClone   () const;
+          virtual bool                     isValid    () const;
+          virtual void                     progress   ();
+          virtual string                   _getString () const;
+        private:
+                  const Cell*              _cell;
+                  Box                      _area;
+                  ExtensionSlice::Mask     _mask;
+                  ExtensionSliceLocator    _sliceLocator;
+                  GoLocator                _goLocator;
+                  Go*                      _go;
+      };
+
+    public:
+                                       Cell_ExtensionGosUnder ();
+                                       Cell_ExtensionGosUnder ( const Cell* , const Box& , ExtensionSlice::Mask mask=~0 );
+                                       Cell_ExtensionGosUnder ( const Cell_ExtensionGosUnder& );
+              Cell_ExtensionGosUnder&  operator=              ( const Cell_ExtensionGosUnder& );
+      virtual Collection<Go*>*         getClone               () const;
+      virtual Hurricane::Locator<Go*>* getLocator             () const;
+      virtual string                   _getString             () const;
+    private:
+              const Cell*              _cell;
+              Box                      _area;
+              ExtensionSlice::Mask     _mask;
+  };
+
+
+  Cell_ExtensionGosUnder::Cell_ExtensionGosUnder ()
+    : Collection<Go*>()
+    , _cell(NULL)
+    , _area()
+    , _mask(0)
+  { }
+
+
+  Cell_ExtensionGosUnder::Cell_ExtensionGosUnder ( const Cell* cell
+                                                 , const Box& area
+                                                 , ExtensionSlice::Mask mask
+                                                 )
+    : Collection<Go*>()
+    , _cell(cell)
+    , _area(area)
+    , _mask(mask)
+  { }
+
+
+  Cell_ExtensionGosUnder::Cell_ExtensionGosUnder ( const Cell_ExtensionGosUnder& gos )
+    : Collection<Go*>()
+    , _cell(gos._cell)
+    , _area(gos._area)
+    , _mask(gos._mask)
+  { }
+
+
+  Cell_ExtensionGosUnder& Cell_ExtensionGosUnder::operator= ( const Cell_ExtensionGosUnder& gos )
+  { 
+    _cell = gos._cell;
+    _area = gos._area;
+    _mask = gos._mask;
+    return *this;
+  }
+
+
+  Collection<Go*>* Cell_ExtensionGosUnder::getClone () const
+  {
+    return new Cell_ExtensionGosUnder(*this);
+  }
+
+
+  Locator<Go*>* Cell_ExtensionGosUnder::getLocator () const
+  {
+    return new Locator(_cell,_area,_mask);
+  }
+
+
+  string  Cell_ExtensionGosUnder::_getString () const
+  {
+    string s = "<" + _TName("Cell::ExtensionGosUnder");
+    if (_cell) {
+      s += " " + getString(_cell);
+      s += " " + getString(_area);
+    //s += " " + getString(_mask);
+    }
+    s += ">";
+    return s;
+  }
+
+
+  Cell_ExtensionGosUnder::Locator::Locator()
+    : Hurricane::Locator<Go*>()
+    , _cell(NULL)
+    , _area()
+    , _mask(0)
+    , _sliceLocator()
+    , _goLocator()
+    , _go(NULL)
+  { }
+
+
+  Cell_ExtensionGosUnder::Locator::Locator ( const Cell* cell
+                                           , const Box& area
+                                           , ExtensionSlice::Mask mask
+                                           )
+    : Hurricane::Locator<Go*>()
+    , _cell(cell)
+    , _area(area)
+    , _mask(mask)
+    , _sliceLocator()
+    , _goLocator()
+    , _go(NULL)
+  {
+    if (_cell && !_area.isEmpty()) {
+      _sliceLocator = _cell->getExtensionSlices(_mask).getLocator();
+      while (!_go && _sliceLocator.isValid()) {
+        ExtensionSlice* slice = _sliceLocator.getElement();
+        if (slice) {
+          _goLocator = slice->getGosUnder(_area).getLocator();
+          if (_goLocator.isValid())
+            _go = _goLocator.getElement();
+        }
+        if (!_go) _sliceLocator.progress();
+      }
+    }
+  }
+
+
+  Cell_ExtensionGosUnder::Locator::Locator ( const Locator& locator )
+    : Hurricane::Locator<Go*>()
+    , _cell(locator._cell)
+    , _area(locator._area)
+    , _mask(locator._mask)
+    , _sliceLocator(locator._sliceLocator)
+    , _goLocator(locator._goLocator)
+    , _go(locator._go)
+  { }
+
+
+  Cell_ExtensionGosUnder::Locator& Cell_ExtensionGosUnder::Locator::operator= ( const Locator& locator )
+  {
+    _cell = locator._cell;
+    _area = locator._area;
+    _mask = locator._mask;
+    _sliceLocator = locator._sliceLocator;
+    _goLocator = locator._goLocator;
+    _go = locator._go;
+    return *this;
+  }
+
+
+  Go* Cell_ExtensionGosUnder::Locator::getElement () const
+  {
+    return _go;
+  }
+
+
+  Locator<Go*>* Cell_ExtensionGosUnder::Locator::getClone () const
+  {
+    return new Locator(*this);
+  }
+
+
+  bool  Cell_ExtensionGosUnder::Locator::isValid () const
+  {
+    return (_go != NULL);
+  }
+
+
+
+  void Cell_ExtensionGosUnder::Locator::progress()
+  {
+    if (_go) {
+      _go = NULL;
+      _goLocator.progress();
+      if (_goLocator.isValid())
+        _go = _goLocator.getElement();
+      else {
+        do {
+          _sliceLocator.progress();
+          ExtensionSlice* slice = _sliceLocator.getElement();
+          if (slice) {
+            _goLocator = slice->getGosUnder(_area).getLocator();
+            if (_goLocator.isValid())
+              _go = _goLocator.getElement();
+          }
+        } while (!_go && _sliceLocator.isValid());
+      }
+    }
+  }
+
+
+  string  Cell_ExtensionGosUnder::Locator::_getString () const
+  {
+    string s = "<" + _TName("Cell::ExtensionGosUnder::Locator");
+    if (_cell) {
+      s += " " + getString(_cell);
+      s += " " + getString(_area);
+    //s += " " + getString(_mask);
+    }
+    s += ">";
+    return s;
+  }
+
 
 // ****************************************************************************************************
 // Cell_Occurrences implementation
@@ -1249,6 +1847,12 @@ Slices Cell::getSlices(const Layer::Mask& mask) const
     return Cell_Slices(this, mask);
 }
 
+ExtensionSlices Cell::getExtensionSlices(ExtensionSlice::Mask mask) const
+// *************************************************************
+{
+    return Cell_ExtensionSlices(this,mask);
+}
+
 //MainViews Cell::getMainViews() const
 //// *********************************
 //{
@@ -1362,9 +1966,33 @@ Pathes Cell::getRecursiveSlavePathes() const
 }
 
 Occurrences Cell::getHyperNetRootNetOccurrences() const
-// *********************************
+// ****************************************************
 {
     return Cell_HyperNetRootNetOccurrences(this,Path());
+}
+
+Gos Cell::getExtensionGos ( const Name& name ) const
+// **********************************************************
+{
+  return Cell_ExtensionGos(this,getExtensionSliceMask(name));
+}
+
+Gos Cell::getExtensionGos ( ExtensionSlice::Mask mask ) const
+// ****************************************************************
+{
+  return Cell_ExtensionGos(this,mask);
+}
+
+Gos Cell::getExtensionGosUnder ( const Box& area, const Name& name ) const
+// ********************************************************************************
+{
+  return Cell_ExtensionGosUnder(this,area,getExtensionSliceMask(name));
+}
+
+Gos Cell::getExtensionGosUnder ( const Box& area, ExtensionSlice::Mask mask ) const
+// **************************************************************************************
+{
+  return Cell_ExtensionGosUnder(this,area,mask);
 }
 
 // ****************************************************************************************************
