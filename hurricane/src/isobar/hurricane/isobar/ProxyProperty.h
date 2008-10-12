@@ -64,7 +64,7 @@
 namespace  Isobar {
 
 
-using  namespace  Hurricane;
+using namespace Hurricane;
 
 
 
@@ -72,9 +72,9 @@ using  namespace  Hurricane;
 // -------------------------------------------------------------------
 // Miscellaneous.
 
-#define    F_PY_OWNED    ( 1 << 0 )
+#define F_PY_OWNED    ( 1 << 0 )
 
-#define    CHECK_OFFSET(PY_STRUCT)                                             \
+#define CHECK_OFFSET(PY_STRUCT)                                                 \
   if ( ProxyProperty::getOffset() < 0 )                                         \
       ProxyProperty::SetOffset (   (unsigned long)(&(PY_STRUCT->ACCESS_OBJECT)) \
                                  - (unsigned long)PY_STRUCT );

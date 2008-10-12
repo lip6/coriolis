@@ -242,16 +242,15 @@ extern "C" {
 
 
   // Link/Creation Method.
-  DBoLinkCreateMethod(PyReference_Link,PyReference,PyTypeReference,Reference)
-
+  DBoLinkCreateMethod(Reference)
 
 
   // ---------------------------------------------------------------
   // PyReference Object Definitions.
-  PyTypeInheritedObjectDefinitions(Reference, Entity)
+  PyTypeObjectDefinitions(Reference)
 
 
-# endif  // End of Shared Library Code Part.
+#endif  // End of Shared Library Code Part.
 
 
 }  // End of extern "C".

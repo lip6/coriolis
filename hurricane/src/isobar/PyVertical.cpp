@@ -185,7 +185,7 @@ extern "C" {
 
     HCATCH
 
-    return PyVertical_Link ( vertical );
+    return PyVertical_Link(vertical);
   }
 
   DBoDeleteMethod(Vertical)
@@ -203,17 +203,14 @@ extern "C" {
 
 
   // Link/Creation Method.
-  DBoLinkCreateMethod(PyVertical_Link,PyVertical,PyTypeVertical,Vertical)
-
-
-
+  DBoLinkCreateMethod(Vertical)
 
   // ---------------------------------------------------------------
   // PyVertical Object Definitions.
 
-  PyTypeInheritedObjectDefinitions(Vertical, Segment)
+  PyTypeObjectDefinitions(Vertical)
 
-# endif  // End of Shared Library Code Part.
+#endif  // End of Shared Library Code Part.
 
 
 }  // End of extern "C".

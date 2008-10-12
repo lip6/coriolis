@@ -128,7 +128,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // PyReferenceLocator Object Definitions.
 
-  PyTypeRootObjectDefinitions(ReferenceLocator)
+  PyTypeObjectDefinitions(ReferenceLocator)
 
 # endif  // End of Shared Library Code Part.
 

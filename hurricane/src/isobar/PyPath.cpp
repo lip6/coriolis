@@ -367,10 +367,10 @@ extern "C" {
   // ---------------------------------------------------------------
   // PyPath Object Definitions.
   
-  PyTypeRootObjectDefinitions(Path)
+  PyTypeObjectDefinitions(Path)
 
 
-# endif  // End of Shared Library Code Part.
+#endif  // End of Shared Library Code Part.
 
 
 }  // End of extern "C".

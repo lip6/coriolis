@@ -178,7 +178,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // PyOccurrenceLocator Object Definitions.
 
-  PyTypeRootObjectDefinitions(OccurrenceLocator)
+  PyTypeObjectDefinitions(OccurrenceLocator)
 
 # endif  // End of Shared Library Code Part.
 

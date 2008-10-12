@@ -184,7 +184,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // PyPoint Object Definitions.
   
-  PyTypeRootObjectDefinitions(Point)
+  PyTypeObjectDefinitions(Point)
 
 
 #endif  // End of Shared Library Code Part.

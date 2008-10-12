@@ -135,10 +135,6 @@ using namespace Hurricane;
                                         = "comp";
   ConverterState         __cs           = ConverterState ();
   int                    __objectOffset = offsetof ( PyPoint, _object );
-  map <void*,PyObject*>  H2PMap;
-
-
-
 
 // x-----------------------------------------------------------------x
 // |                 "PyHurricane" C++ Functions                     |

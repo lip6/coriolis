@@ -135,10 +135,10 @@ extern "C" {
   // ---------------------------------------------------------------
   // PySegmentLocator Object Definitions.
   
-  PyTypeRootObjectDefinitions(SegmentLocator)
+  PyTypeObjectDefinitions(SegmentLocator)
 
 
-# endif  // End of Shared Library Code Part.
+#endif  // End of Shared Library Code Part.
 
 
 }  // End of extern "C".

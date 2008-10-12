@@ -133,7 +133,7 @@ extern "C" {
 
   // ---------------------------------------------------------------
   // PyInstanceLocator Object Definitions.
-  PyTypeRootObjectDefinitions(InstanceLocator)
+  PyTypeObjectDefinitions(InstanceLocator)
 
 
 

@@ -185,11 +185,11 @@ extern "C" {
 
 
   // Link/Creation Method.
-  DBoLinkCreateMethod(PyTechnology_Link,PyTechnology,PyTypeTechnology,Technology)
+  DBoLinkCreateMethod(Technology)
 
   // ---------------------------------------------------------------
   // PyTechnology Object Definitions.
-  PyTypeRootObjectDefinitions(Technology)
+  PyTypeObjectDefinitions(Technology)
 
 
 #endif  // End of Shared Library Code Part.

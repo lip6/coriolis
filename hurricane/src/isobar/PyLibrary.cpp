@@ -206,7 +206,7 @@ extern "C" {
 
 
   // Link/Creation Method.
-  DBoLinkCreateMethod(PyLibrary_Link,PyLibrary,PyTypeLibrary,Library)
+  DBoLinkCreateMethod(Library)
 
 
 
@@ -214,7 +214,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // PyLibrary Object Definitions.
 
-  PyTypeRootObjectDefinitions(Library)
+  PyTypeObjectDefinitions(Library)
 
 
 #endif  // End of Shared Library Code Part.

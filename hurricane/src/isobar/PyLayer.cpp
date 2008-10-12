@@ -179,7 +179,7 @@ extern "C" {
 
 
   // Link/Creation Method.
-  DBoLinkCreateMethod(PyLayer_Link,PyLayer,PyTypeLayer,Layer)
+  DBoLinkCreateMethod(Layer)
 
 
 
@@ -187,7 +187,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // PyLayer Object Definitions.
 
-  PyTypeRootObjectDefinitions(Layer)
+  PyTypeObjectDefinitions(Layer)
 
 
 #endif  // End of Shared Library Code Part.

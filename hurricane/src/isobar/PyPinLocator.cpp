@@ -135,9 +135,9 @@ extern "C" {
   // PyPinLocator Object Definitions.
 
 
-  PyTypeRootObjectDefinitions(PinLocator)
+  PyTypeObjectDefinitions(PinLocator)
 
-# endif  // End of Shared Library Code Part.
+#endif  // End of Shared Library Code Part.
 
 
 }  // End of extern "C".

@@ -656,26 +656,7 @@ extern "C" {
     return PyCell_Link(cell);
   }
 
-  static void PyCell_DeAlloc ( PyCell *self ) {                                                                      
-    trace << "PyDbObject_DeAlloc(" << hex << self << ") "                
-          << self->ACCESS_OBJECT << endl;                                
-                                                                         
-    if ( self->ACCESS_OBJECT != NULL ) {                                 
-        ProxyProperty* proxy = dynamic_cast<ProxyProperty*>              
-                               ( self->ACCESS_OBJECT->getProperty ( ProxyProperty::getPropertyName() ) ); \
-        if (proxy == NULL) {                                             
-          ostringstream  message;                                        
-          message << "deleting a Python object with no Proxy attached "; 
-          cerr << "yes man" << endl;
-          PyErr_SetString ( ProxyError, message.str().c_str() );         
-        }                                                                
-        self->ACCESS_OBJECT->remove ( proxy );                           
-    } else {
-        cerr << "ACCESS_OBJECT is NULL" << endl;
-    }
-    PyObject_DEL ( self );                                               
-  }
-
+  DBoDeleteMethod(Cell)
   PyTypeObjectLinkPyType(Cell)
   PyTypeObjectConstructor(Cell)
 
@@ -688,12 +669,12 @@ extern "C" {
 
 
   // Link/Creation Method.
-  DBoLinkCreateMethod(PyCell_Link,PyCell,PyTypeCell,Cell)
+  DBoLinkCreateMethod(Cell)
 
 
   // ---------------------------------------------------------------
   // PyCell Object Definitions.
-  PyTypeInheritedObjectDefinitions(Cell, Entity)
+  PyTypeObjectDefinitions(Cell)
 
 
 #endif  // End of Shared Library Code Part.

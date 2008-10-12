@@ -298,7 +298,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // PyOccurrence Object Definitions.
   
-  PyTypeRootObjectDefinitions(Occurrence)
+  PyTypeObjectDefinitions(Occurrence)
 
 
 #endif  // End of Shared Library Code Part.

@@ -238,7 +238,7 @@ extern "C" {
 
 
   // Link/Creation Method.
-  DBoLinkCreateMethod(PyPin_Link,PyPin,PyTypePin,Pin)
+  DBoLinkCreateMethod(Pin)
 
 
 
@@ -246,7 +246,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // PyPin Object Definitions.
 
-  PyTypeInheritedObjectDefinitions(Pin, Contact)
+  PyTypeObjectDefinitions(Pin)
 
 #endif  // End of Shared Library Code Part.
 

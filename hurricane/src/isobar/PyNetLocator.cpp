@@ -128,7 +128,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // PyNetLocator Object Definitions.
   
-  PyTypeRootObjectDefinitions(NetLocator)
+  PyTypeObjectDefinitions(NetLocator)
 
 
 # endif  // End of Shared Library Code Part.

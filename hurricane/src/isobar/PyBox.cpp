@@ -494,7 +494,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // PyBox Object Definitions.
   
-  PyTypeRootObjectDefinitions(Box)
+  PyTypeObjectDefinitions(Box)
 
 # endif  // End of Shared Library Code Part.
 

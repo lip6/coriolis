@@ -43,7 +43,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./PyCataBase.cpp"                         |
+// |  C++ Module  :       "./PyDataBase.cpp"                         |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
@@ -63,25 +63,25 @@ using namespace Hurricane;
 extern "C" {
 
 
-# define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(DataBase,db,function)
+#define METHOD_HEAD(function) GENERIC_METHOD_HEAD(DataBase,db,function)
 
 
 // x=================================================================x
 // |             "PyDataBase" Python Module Code Part               |
 // x=================================================================x
 
-# if defined(__PYTHON_MODULE__)
+#if defined(__PYTHON_MODULE__)
 
 
-  // x-------------------------------------------------------------x
-  // |             "PyDataBase" Attribute Methods                 |
-  // x-------------------------------------------------------------x
+// x-------------------------------------------------------------x
+// |             "PyDataBase" Attribute Methods                 |
+// x-------------------------------------------------------------x
 
 
 
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyDataBase_getDataBase ()"
+// ---------------------------------------------------------------
+// Attribute Method  :  "PyDataBase_getDataBase ()"
 
   PyObject* PyDataBase_getDataBase ( PyObject* module ) {
     trace << "PyDataBase_getDataBase()" << endl;
@@ -132,7 +132,7 @@ extern "C" {
 
   PyMethodDef PyDataBase_Methods[] =
     { { "getTechnology", (PyCFunction)PyDataBase_getTechnology, METH_NOARGS, "Return the Technology" }
-    , { "destroy"       , (PyCFunction)PyDataBase_destroy      , METH_NOARGS
+    , { "destroy"      , (PyCFunction)PyDataBase_destroy      , METH_NOARGS
                        , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
@@ -166,19 +166,19 @@ extern "C" {
 
 
 // x=================================================================x
-// |               "PyCell" Shared Library Code Part                 |
+// |               "PyDataBase" Shared Library Code Part             |
 // x=================================================================x
 
 
 
   // Link/Creation Method.
 
-  DBoLinkCreateMethod(PyDataBase_Link,PyDataBase,PyTypeDataBase,DataBase)
+  DBoLinkCreateMethod(DataBase)
 
   // ---------------------------------------------------------------
   // PyDataBase Object Definitions.
       
-  PyTypeRootObjectDefinitions(DataBase)
+  PyTypeObjectDefinitions(DataBase)
 
 #endif  // End of Shared Library Code Part.
 

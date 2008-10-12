@@ -222,14 +222,14 @@ extern "C" {
 
 
   // Link/Creation Method.
-  DBoLinkCreateMethod(PyContact_Link,PyContact,PyTypeContact,Contact)
+  DBoLinkCreateMethod(Contact)
 
 
 
   // ---------------------------------------------------------------
   // PyContact Object Definitions.
 
-  PyTypeInheritedObjectDefinitions(Contact, Component)
+  PyTypeObjectDefinitions(Contact)
 
 #endif  // End of Shared Library Code Part.
 

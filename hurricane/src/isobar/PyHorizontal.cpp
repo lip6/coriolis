@@ -211,15 +211,13 @@ extern "C" {
 
 
   // Link/Creation Method.
-  DBoLinkCreateMethod(PyHorizontal_Link,PyHorizontal,PyTypeHorizontal,Horizontal)
-
-
+  DBoLinkCreateMethod(Horizontal)
 
 
   // ---------------------------------------------------------------
   // PyHorizontal Object Definitions.
 
-  PyTypeInheritedObjectDefinitions(Horizontal, Segment)
+  PyTypeObjectDefinitions(Horizontal)
 
 #endif  // End of Shared Library Code Part.
 

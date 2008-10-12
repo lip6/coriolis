@@ -608,7 +608,7 @@ extern "C" {
 
   // ---------------------------------------------------------------
   // PyTransformation Object Definitions.
-  PyTypeRootObjectDefinitions(Transformation)
+  PyTypeObjectDefinitions(Transformation)
 
 
 #endif  // End of Shared Library Code Part.

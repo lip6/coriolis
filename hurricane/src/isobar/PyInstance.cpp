@@ -489,18 +489,16 @@ extern "C" {
 
 
   // Link/Creation Method.
-  DBoLinkCreateMethod(PyInstance_Link,PyInstance,PyTypeInstance,Instance)
-
-
+  DBoLinkCreateMethod(Instance)
 
 
   // ---------------------------------------------------------------
   // PyInstance Object Definitions.
 
-  PyTypeInheritedObjectDefinitions(Instance, Entity)
+  PyTypeObjectDefinitions(Instance)
 
 
-# endif  // End of Shared Library Code Part.
+#endif  // End of Shared Library Code Part.
 
 
 }  // End of extern "C".
@@ -509,5 +507,3 @@ extern "C" {
 
 
 }  // End of Isobar namespace.
- 
-

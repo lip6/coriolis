@@ -206,7 +206,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // PyHyperNet Object Definitions.
 
-  PyTypeRootObjectDefinitions(HyperNet)
+  PyTypeObjectDefinitions(HyperNet)
 
 
 # endif  // End of Shared Library Code Part.

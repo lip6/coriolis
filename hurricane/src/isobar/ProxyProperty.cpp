@@ -98,7 +98,7 @@ namespace {
 // x-----------------------------------------------------------------x
 
 
- Name  ProxyProperty::_name   = "::ProxyProperty";
+ Name  ProxyProperty::_name   = "Isobar::ProxyProperty";
  int   ProxyProperty::_offset = -1;
 
 
@@ -124,8 +124,7 @@ ProxyProperty::ProxyProperty ( void* shadow )
 // -------------------------------------------------------------------
 // Constructor  :  "ProxyProperty::create ()".
 
-ProxyProperty* ProxyProperty::create ( void* shadow )
-{
+ProxyProperty* ProxyProperty::create ( void* shadow ) {
   ProxyProperty* property = new ProxyProperty ( shadow );
 
   if ( property == NULL )

@@ -587,7 +587,7 @@ extern "C" {
 
 
   // Link/Creation Method.
-  DBoLinkCreateMethod(PyNet_Link,PyNet,PyTypeNet,Net)
+  DBoLinkCreateMethod(Net)
 
 
 
@@ -595,7 +595,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // PyNet Object Definitions.
 
-  PyTypeInheritedObjectDefinitions(Net, Entity)
+  PyTypeObjectDefinitions(Net)
 
 
 # endif  // End of Shared Library Code Part.

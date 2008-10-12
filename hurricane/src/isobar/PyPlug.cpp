@@ -202,16 +202,16 @@ extern "C" {
 
 
   // Link/Creation Method.
-  DBoLinkCreateMethod(PyPlug_Link,PyPlug,PyTypePlug,Plug)
+  DBoLinkCreateMethod(Plug)
 
 
   // ---------------------------------------------------------------
   // PyPlug Object Definitions.
  
-  PyTypeInheritedObjectDefinitions(Plug, Component)
+  PyTypeObjectDefinitions(Plug)
 
 
-# endif  // End of Shared Library Code Part.
+#endif  // End of Shared Library Code Part.
 
 
 }  // End of extern "C".

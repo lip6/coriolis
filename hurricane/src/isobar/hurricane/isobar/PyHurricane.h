@@ -72,11 +72,6 @@
 namespace Isobar {
 
 
-#if PY_VERSION_HEX < 0x02040000
-    #define Py_RETURN_NONE return Py_INCREF(Py_None), Py_None
-#endif
-
-
 using namespace std;
 
 
@@ -212,19 +207,16 @@ extern "C" {
 // Miscellaneous.
 
 
-# define  DEFERRED_ADDRESS(ADDR)  0
-
-
 // This macro must be redefined in derived classes.
 // Example : _baseOject._object
-# define  ACCESS_OBJECT            _object
-# define  ACCESS_CLASS(_pyObject)  _pyObject
+#define  ACCESS_OBJECT            _object
+#define  ACCESS_CLASS(_pyObject)  _pyObject
 
 
-# define  LOAD_CONSTANT(CONSTANT_VALUE,CONSTANT_NAME)             \
-  constant = PyInt_FromLong ( (long)CONSTANT_VALUE );             \
-  PyDict_SetItemString ( dictionnary, CONSTANT_NAME, constant );  \
-  Py_DECREF ( constant );
+#define  LOAD_CONSTANT(CONSTANT_VALUE,CONSTANT_NAME)             \
+ constant = PyInt_FromLong ( (long)CONSTANT_VALUE );             \
+ PyDict_SetItemString ( dictionnary, CONSTANT_NAME, constant );  \
+ Py_DECREF ( constant );
 
 
 
@@ -232,15 +224,15 @@ extern "C" {
 // -------------------------------------------------------------------
 // Generic Method Header.
 
-# define  GENERIC_METHOD_HEAD(SELF_TYPE,SELF_OBJECT,function)               \
-    if ( self->ACCESS_OBJECT == NULL ) {                                    \
+#define GENERIC_METHOD_HEAD(SELF_TYPE,SELF_OBJECT,function)                \
+    if ( self->ACCESS_OBJECT == NULL ) {                                   \
       PyErr_SetString ( ProxyError, "Attempt to call " function " on an unbound hurricane object" ); \
-      return ( NULL );                                                      \
-    }                                                                       \
-    SELF_TYPE* SELF_OBJECT = dynamic_cast<SELF_TYPE*>(self->ACCESS_OBJECT); \
-    if ( self->ACCESS_OBJECT == NULL ) {                                    \
+      return ( NULL );                                                     \
+    }                                                                      \
+    SELF_TYPE* SELF_OBJECT = dynamic_cast<SELF_TYPE*>(self->ACCESS_OBJECT);\
+    if ( self->ACCESS_OBJECT == NULL ) {                                   \
       PyErr_SetString ( ProxyError, "Invalid dynamic_cast while calling " function "" ); \
-      return ( NULL );                                                      \
+      return ( NULL );                                                     \
     }
 
 
@@ -249,13 +241,13 @@ extern "C" {
 // -------------------------------------------------------------------
 // Attribute Method Macro For Checking Bound.
 
-# define  GetBoundStateAttribute(PY_FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
-  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self )                \
-  {                                                                   \
-    long  result = 1;                                                 \
-    if ( self->ACCESS_OBJECT == NULL ) result = 0;                    \
-                                                                      \
-    return ( Py_BuildValue ("i",result) );                            \
+#define  GetBoundStateAttribute(PY_FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
+  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self )               \
+  {                                                                  \
+    long  result = 1;                                                \
+    if ( self->ACCESS_OBJECT == NULL ) result = 0;                   \
+                                                                     \
+    return ( Py_BuildValue ("i",result) );                           \
   }
 
 
@@ -365,7 +357,7 @@ extern "C" {
 // -------------------------------------------------------------------
 // Attribute Method For getting Attributes.
 
-# define  DirectGetAttrMethod(PY_FUNC_NAME,PY_OBJECT_METHODS)  \
+#define DirectGetAttrMethod(PY_FUNC_NAME,PY_OBJECT_METHODS)    \
   static PyObject* PY_FUNC_NAME ( PyObject* self, char* name ) \
   {                                                            \
     return ( Py_FindMethod(PY_OBJECT_METHODS,self,name) );     \
@@ -389,7 +381,7 @@ extern "C" {
 // -------------------------------------------------------------------
 // Locator Attribute Method For Progress.
 
-# define  LocatorProgressAttribute(SELF_TYPE)  \
+#define LocatorProgressAttribute(SELF_TYPE)             \
   static PyObject* Py##SELF_TYPE##Locator_progress ( Py##SELF_TYPE##Locator *self ) \
   {                                                     \
     trace << #SELF_TYPE "Locator.progress()" << endl;   \
@@ -553,7 +545,7 @@ extern "C" {
         PyErr_SetString ( ProxyError, message.str().c_str() );                           \
       return ( NULL );                                                                   \
     }                                                                                    \
-    ProxyProperty* proxy = dynamic_cast<ProxyProperty*>                                  \
+    ProxyProperty* proxy = static_cast<ProxyProperty*>                                   \
                            ( self->ACCESS_OBJECT->getProperty ( ProxyProperty::getPropertyName() ) ); \
     if (proxy == NULL) {                                                                 \
       ostringstream  message;                                                            \
@@ -569,31 +561,31 @@ extern "C" {
 // -------------------------------------------------------------------
 // Attribute Macro For BDo Link/Creation.
 
-# define  DBoLinkCreateMethod(PY_FUNC_NAME,PY_SELF_TYPE,PY_SELF_CLASS,SELF_TYPE) \
-  PyObject* PY_FUNC_NAME ( SELF_TYPE* object )                                   \
-  {                                                                              \
-    if ( object == NULL )                                                        \
-      Py_RETURN_NONE;                                                            \
-    PY_SELF_TYPE* pyObject = NULL;                                               \
-    HTRY                                                                         \
-    ProxyProperty* proxy = dynamic_cast<ProxyProperty*>                          \
-      ( object->getProperty ( ProxyProperty::getPropertyName() ) );              \
-    if ( proxy == NULL ) {                                                       \
-      pyObject = PyObject_NEW(PY_SELF_TYPE, &PY_SELF_CLASS);                     \
-      if (pyObject == NULL) { return NULL; }                                     \
-                                                                                 \
-      proxy = ProxyProperty::create ( (void*)pyObject );                         \
-      CHECK_OFFSET ( pyObject )                                                  \
-                                                                                 \
-      pyObject->ACCESS_OBJECT = object;                                          \
-      object->put ( proxy );                                                     \
-    } else {                                                                     \
-      pyObject = (PY_SELF_TYPE*)proxy->getShadow ();                             \
-      Py_INCREF ( ACCESS_CLASS(pyObject) );                                      \
-    }                                                                            \
-    HCATCH                                                                       \
-                                                                                 \
-    return ( (PyObject*)pyObject );                                              \
+#define DBoLinkCreateMethod(SELF_TYPE)                                         \
+  PyObject* Py##SELF_TYPE##_Link ( SELF_TYPE* object ) {                       \
+    if ( object == NULL ) {                                                    \
+      Py_RETURN_NONE;                                                          \
+    }                                                                          \
+    Py##SELF_TYPE* pyObject = NULL;                                            \
+    HTRY                                                                       \
+    ProxyProperty* proxy = static_cast<ProxyProperty*>                         \
+      ( object->getProperty ( ProxyProperty::getPropertyName() ) );            \
+    if ( proxy == NULL ) {                                                     \
+      pyObject = PyObject_NEW(Py##SELF_TYPE, &PyType##SELF_TYPE);              \
+      if (pyObject == NULL) { return NULL; }                                   \
+                                                                               \
+      proxy = ProxyProperty::create ( (void*)pyObject );                       \
+      CHECK_OFFSET ( pyObject )                                                \
+                                                                               \
+      pyObject->ACCESS_OBJECT = object;                                        \
+      object->put ( proxy );                                                   \
+    } else {                                                                   \
+      pyObject = (Py##SELF_TYPE*)proxy->getShadow ();                          \
+      Py_INCREF ( ACCESS_CLASS(pyObject) );                                    \
+    }                                                                          \
+    HCATCH                                                                     \
+                                                                               \
+    return ( (PyObject*)pyObject );                                            \
   }
 
 // -------------------------------------------------------------------
@@ -606,7 +598,7 @@ extern "C" {
           << self->ACCESS_OBJECT << endl;                                \
                                                                          \
     if ( self->ACCESS_OBJECT != NULL ) {                                 \
-        ProxyProperty* proxy = dynamic_cast<ProxyProperty*>              \
+        ProxyProperty* proxy = static_cast<ProxyProperty*>               \
                                ( self->ACCESS_OBJECT->getProperty ( ProxyProperty::getPropertyName() ) ); \
         if (proxy == NULL) {                                             \
           ostringstream  message;                                        \
@@ -692,7 +684,7 @@ extern "C" {
     HTRY                                                                        \
     if (!ParseOneArg("get" #CENGINE, args, CELL_ARG, &arg0 ) ) return ( NULL ); \
     Cell* cell = PYCELL_O(arg0);                                                \
-    cengine = dynamic_cast<CENGINE*>(getCEngine(cell, Name(#CENGINE)));         \
+    cengine = static_cast<CENGINE*>(getCEngine(cell, Name(#CENGINE)));          \
     if (!cengine) {                                                             \
         cengine = CENGINE::create (cell);                                       \
     }                                                                           \
@@ -700,16 +692,13 @@ extern "C" {
     return Py##CENGINE##_Link( cengine );                                       \
   }
 
-// -------------------------------------------------------------------
-// Object Definitions for inherited types
-// root of the inheritance tree 
 
-# define PyTypeRootObjectDefinitions(SELF_TYPE)                         \
+#define PyTypeObjectDefinitions(SELF_TYPE)                              \
   PyTypeObject  PyType##SELF_TYPE =                                     \
-    { PyObject_HEAD_INIT(&PyType_Type)                                  \
-       0                              /* ob_size.          */           \
-    ,  #SELF_TYPE                     /* tp_name.          */           \
-    ,  sizeof(Py##SELF_TYPE)          /* tp_basicsize.     */           \
+    { PyObject_HEAD_INIT(NULL)                                          \
+      0                               /* ob_size.          */           \
+    , "Hurricane.##SELF_TYPE"         /* tp_name.          */           \
+    , sizeof(Py##SELF_TYPE)           /* tp_basicsize.     */           \
     , 0                               /* tp_itemsize.      */           \
     /* methods. */                                                      \
     , 0                               /* tp_dealloc.       */           \
@@ -729,84 +718,13 @@ extern "C" {
     , 0                               /* tp_as_buffer.     */           \
     , Py_TPFLAGS_DEFAULT                                                \
     | Py_TPFLAGS_BASETYPE             /* tp_flags.         */           \
-    , 0                               /* tp_doc.           */           \
-    , 0                               /* tp_traverse.      */           \
-    , 0                               /* tp_clear.         */           \
-    , 0                               /* tp_richcompare.   */           \
-    , 0                               /* tp_weaklistoffset.*/           \
-    , 0                               /* tp_iter.          */           \
-    , 0                               /* tp_iternext.      */           \
-    , 0                               /* tp_methods.       */           \
-    , 0                               /* tp_members.       */           \
-    , 0                               /* tp_getset.        */           \
-    , 0                               /* tp_base.          */           \
-    , 0                               /* tp_dict.          */           \
-    , 0                               /* tp_descr_get.     */           \
-    , 0                               /* tp_descr_set.     */           \
-    , 0                               /* tp_dictoffset.    */           \
-    , 0                               /* tp_init.          */           \
-    , 0                               /* tp_alloc.         */           \
-    , 0                               /* tp_new.           */           \
-    , 0                               /* tp_free.          */           \
-    , 0                               /* tp_is_gc.         */           \
-  };
-
-
-// -------------------------------------------------------------------
-// Object Definitions for types with inheritance (from Inherited or Root)
-
-# define PyTypeInheritedObjectDefinitions(SELF_TYPE, INHERITED_TYPE) \
-  PyTypeObject  PyType##SELF_TYPE =                                     \
-    { PyObject_HEAD_INIT(DEFERRED_ADDRESS(&PyType##INHERITED_TYPE))     \
-       0                              /* ob_size.          */           \
-    ,  #SELF_TYPE                     /* tp_name.          */           \
-    ,  sizeof(Py##SELF_TYPE)          /* tp_basicsize.     */           \
-    , 0                               /* tp_itemsize.      */           \
-    /* methods. */                                                      \
-    , 0                               /* tp_dealloc.       */           \
-    , 0                               /* tp_print.         */           \
-    , 0                               /* tp_getattr.       */           \
-    , 0                               /* tp_setattr.       */           \
-    , 0                               /* tp_compare.       */           \
-    , 0                               /* tp_repr.          */           \
-    , 0                               /* tp_as_number.     */           \
-    , 0                               /* tp_as_sequence.   */           \
-    , 0                               /* tp_as_mapping.    */           \
-    , 0                               /* tp_hash.          */           \
-    , 0                               /* tp_call.          */           \
-    , 0                               /* tp_str            */           \
-    , 0                               /* tp_getattro.      */           \
-    , 0                               /* tp_setattro.      */           \
-    , 0                               /* tp_as_buffer.     */           \
-    , Py_TPFLAGS_DEFAULT                                                \
-    | Py_TPFLAGS_BASETYPE             /* tp_flags.         */           \
-    , 0                               /* tp_doc.           */           \
-    , 0                               /* tp_traverse.      */           \
-    , 0                               /* tp_clear.         */           \
-    , 0                               /* tp_richcompare.   */           \
-    , 0                               /* tp_weaklistoffset.*/           \
-    , 0                               /* tp_iter.          */           \
-    , 0                               /* tp_iternext.      */           \
-    , 0                               /* tp_methods.       */           \
-    , 0                               /* tp_members.       */           \
-    , 0                               /* tp_getset.        */           \
-    , DEFERRED_ADDRESS(&PyType##INHERITED_TYPE)                         \
-                                      /* tp_base.          */           \
-    , 0                               /* tp_dict.          */           \
-    , 0                               /* tp_descr_get.     */           \
-    , 0                               /* tp_descr_set.     */           \
-    , 0                               /* tp_dictoffset.    */           \
-    , 0                               /* tp_init.          */           \
-    , 0                               /* tp_alloc.         */           \
-    , 0                               /* tp_new.           */           \
-    , 0                               /* tp_free.          */           \
-    , 0                               /* tp_is_gc.         */           \
+    , "#SELF_TYPE objects"            /* tp_doc.           */           \
   };
 
 // -------------------------------------------------------------------
 //PyType_Ready Methods
 
-# define  PYTYPE_READY(TYPE)                      \
+#define  PYTYPE_READY(TYPE)                       \
   if ( PyType_Ready( &PyType##TYPE ) < 0 ) {      \
     cerr << "[ERROR]\n"                           \
          << "  Failed to initialize <Py" #TYPE ">." << endl; \
@@ -814,7 +732,7 @@ extern "C" {
   }
 
 
-# define  PYTYPE_READY_SUB(TYPE, TYPE_BASE)       \
+#define  PYTYPE_READY_SUB(TYPE, TYPE_BASE)        \
   PyType##TYPE.tp_base = &PyType##TYPE_BASE;      \
   if ( PyType_Ready( &PyType##TYPE ) < 0 ) {      \
     cerr << "[ERROR]\n"                           \

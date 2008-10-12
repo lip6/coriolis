@@ -148,7 +148,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // PyName Object Definitions.
   
-  PyTypeRootObjectDefinitions(Name)
+  PyTypeObjectDefinitions(Name)
 
 
 #endif  // End of Shared Library Code Part.

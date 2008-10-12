@@ -128,7 +128,7 @@ extern "C" {
 
   // ---------------------------------------------------------------
   // PyPlugLocator Object Definitions.
-  PyTypeRootObjectDefinitions(PlugLocator)
+  PyTypeObjectDefinitions(PlugLocator)
 
 
 #endif  // End of Shared Library Code Part.

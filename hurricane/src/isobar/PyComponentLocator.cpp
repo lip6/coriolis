@@ -127,7 +127,7 @@ extern "C" {
 
   // ---------------------------------------------------------------
   // PyComponentLocator Object Definitions.
-  PyTypeRootObjectDefinitions(ComponentLocator)
+  PyTypeObjectDefinitions(ComponentLocator)
 
 
 # endif  // End of Shared Library Code Part.

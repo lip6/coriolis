@@ -4,6 +4,11 @@
    include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane
                          ${HURRICANE_SOURCE_DIR}/src/hviewer )
 
+                   set ( hierarchy_viewer_cpps hierarchy/HierarchyScene.cpp
+                                               hierarchy/HierarchyItem.cpp
+                                               hierarchy/Arrow.cpp
+                       )
+
                    set ( mocincludes hurricane/viewer/HPaletteEntry.h
                                      hurricane/viewer/LayerPaletteEntry.h
                                      hurricane/viewer/HExtensionPaletteEntry.h
@@ -82,6 +87,7 @@
                                      HNetlistModel.cpp
                                      HNetlist.cpp
                                      HDisplayFilter.cpp
+                                     ${hierarchy_viewer_cpps}
                        )
 
           qt4_wrap_cpp ( MOC_SRCS    ${mocincludes} )

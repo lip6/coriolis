@@ -134,7 +134,7 @@ extern "C" {
 
   // ---------------------------------------------------------------
   // PyCellLocator Object Definitions.
-  PyTypeRootObjectDefinitions(CellLocator)
+  PyTypeObjectDefinitions(CellLocator)
 
 # endif  // End of Shared Library Code Part.
 
