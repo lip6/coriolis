@@ -172,7 +172,7 @@ extern "C" {
     PyObject* arg8;
 
     __cs.Init ("Pin.new");
-    if ( ! PyArg_ParseTuple(args,"O&O&O&O&O&O&O&|O&O&:Pin.new"
+    if (!PyArg_ParseTuple(args,"O&O&O&O&O&O&O&|O&O&:Pin.new"
                            , Converter, &arg0
                            , Converter, &arg1
                            , Converter, &arg2
@@ -182,7 +182,10 @@ extern "C" {
                            , Converter, &arg6
                            , Converter, &arg7
                            , Converter, &arg8
-                           ) ) return ( NULL );
+                           )) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Pin constructor." );
+        return NULL;
+    }
 
     string pin_arg1 = ":ent:name:int:int:layer:int:int:int:int";
     string pin_arg2 = ":ent:name:int:int:layer:int:int:int";
@@ -213,7 +216,7 @@ extern "C" {
                                                                     , PyInt_AsLong ( arg6 ) ); }
     else {
         PyErr_SetString ( ConstructorError, "invalid number of parameters for Pin constructor." );
-        return ( NULL );
+        return NULL;
     }
 
     HCATCH

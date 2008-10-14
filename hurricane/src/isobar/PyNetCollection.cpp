@@ -66,15 +66,16 @@ extern "C" {
 
 
 #endif
+  DirectDeleteMethod(PyNetCollection_DeAlloc, PyNetCollection)
+  DirectDeleteMethod(PyNetCollectionLocator_DeAlloc, PyNetCollectionLocator)
 
   static PyObject* GetNetLocator(PyNetCollection *collection) {
       PyNetCollectionLocator* nl = PyObject_New(PyNetCollectionLocator, &PyTypeNetCollectionLocator);
       if (nl == NULL) {
           return NULL;
       }
-      Py_INCREF(nl);
 
-      nl->_object = collection->_object.getLocator();
+      nl->_object = collection->_object->getLocator();
       return (PyObject *)nl;
   }
 
@@ -95,8 +96,11 @@ extern "C" {
   extern void PyNetCollection_LinkPyType () {
     trace << "PyNetCollection_LinkType()" << endl;
     PyTypeNetCollection.tp_iter = (getiterfunc)GetNetLocator;      /* tp_iter */
+    PyTypeNetCollection.tp_dealloc = (destructor)PyNetCollection_DeAlloc;
+    PyTypeNetCollectionLocator.tp_dealloc = (destructor)PyNetCollectionLocator_DeAlloc;
     PyTypeNetCollectionLocator.tp_iter = PyObject_SelfIter;
     PyTypeNetCollectionLocator.tp_iternext = (iternextfunc)NetLocatorNext;
+    PyTypeNetCollection.tp_dealloc = (destructor)PyNetCollection_DeAlloc;
   }
 
 

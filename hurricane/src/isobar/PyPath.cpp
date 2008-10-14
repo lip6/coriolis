@@ -322,7 +322,10 @@ extern "C" {
     if ( ! PyArg_ParseTuple(args,"|O&O&:Path.new"
                            ,Converter,&arg0
                            ,Converter,&arg1
-                           ) ) return ( NULL );
+                           )) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Path constructor." );
+        return NULL;
+    }
 
     HTRY
 

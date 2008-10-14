@@ -447,7 +447,7 @@ extern "C" {
                                                                    , PyInt_AsLong(arg2)
                                                                    , PyInt_AsLong(arg3) ); }
     else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Box constructor." );
+      PyErr_SetString(ConstructorError, "invalid number of parameters for Box constructor." );
       return ( NULL );
     }
 

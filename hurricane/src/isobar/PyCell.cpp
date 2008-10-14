@@ -57,7 +57,6 @@
 #include "hurricane/isobar/PyOccurrence.h"
 #include "hurricane/isobar/ProxyProperty.h"
 #include "hurricane/isobar/PyNet.h"
-#include "hurricane/isobar/PyNetLocator.h"
 #include "hurricane/isobar/PyNetCollection.h"
 #include "hurricane/isobar/PyReferenceLocator.h"
 #include "hurricane/isobar/PyInstanceLocator.h"
@@ -383,138 +382,146 @@ extern "C" {
   static PyObject* PyCell_getNets ( PyCell *self ) {
     trace << "PyCell_getNets()" << endl;
 
-    METHOD_HEAD ( "Cell.getNets()" )
+    METHOD_HEAD("Cell.getNets()")
 
     PyNetCollection* pyNetCollection = NULL;
 
     HTRY
-    Nets nets = cell->getNets ();
+    Nets* nets = new Nets(cell->getNets());
 
-    pyNetCollection = PyObject_NEW ( PyNetCollection, &PyTypeNetCollection);
-    if (pyNetCollection == NULL) { return NULL; }
+    pyNetCollection = PyObject_NEW(PyNetCollection, &PyTypeNetCollection);
+    if (pyNetCollection == NULL) { 
+        return NULL;
+    }
 
     pyNetCollection->_object = nets;
     HCATCH
-
+    
     return ( (PyObject*)pyNetCollection);
   }
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_getExternalNetsLocator ()"
+  // Attribute Method  :  "PyCell_getExternalNets()"
 
-  static PyObject* PyCell_getExternalNetsLocator ( PyCell *self ) {
-    trace << "PyCell_getExternalNetsLocator ()" << endl;
+  static PyObject* PyCell_getExternalNets(PyCell *self) {
+    trace << "PyCell_getExternalNets()" << endl;
 
-    METHOD_HEAD ( "Cell.getExternalNetsLocator()" )
+    METHOD_HEAD("Cell.getExternalNets()")
 
-    PyNetLocator* pyNetLocator = NULL;
+    PyNetCollection* pyNetCollection = NULL;
 
     HTRY
-    Nets nets = cell->getExternalNets ();
+    Nets* nets = new Nets(cell->getExternalNets());
 
-    pyNetLocator = PyObject_NEW ( PyNetLocator, &PyTypeNetLocator );
-    if (pyNetLocator == NULL) { return NULL; }
+    pyNetCollection = PyObject_NEW(PyNetCollection, &PyTypeNetCollection);
+    if (pyNetCollection == NULL) { 
+        return NULL;
+    }
+    pyNetCollection->_object = nets;
 
-    pyNetLocator->_object = nets.getLocator ();
     HCATCH
 
-    return ( (PyObject*)pyNetLocator );
+    return ((PyObject*)pyNetCollection);
   }  
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_getClockNetsLocator ()"
+  // Attribute Method  :  "PyCell_getClockNets()"
 
-  static PyObject* PyCell_getClockNetsLocator ( PyCell *self ) {
-    trace << "PyCell_getClockNetsLocator ()" << endl;
+  static PyObject* PyCell_getClockNets(PyCell *self) {
+    trace << "PyCell_getClockNets()" << endl;
 
-    METHOD_HEAD ( "Cell.getClockNetsLocator()" )
+    METHOD_HEAD("Cell.getClockNets")
 
-    PyNetLocator* pyNetLocator = NULL;
+    PyNetCollection* pyNetCollection = NULL;
 
     HTRY
-    Nets nets = cell->getClockNets ();
+    Nets* nets = new Nets(cell->getClockNets());
 
-    pyNetLocator = PyObject_NEW ( PyNetLocator, &PyTypeNetLocator );
-    if (pyNetLocator == NULL) { return NULL; }
+    pyNetCollection = PyObject_NEW(PyNetCollection, &PyTypeNetCollection);
+    if (pyNetCollection == NULL) { 
+        return NULL;
+    }
+    pyNetCollection->_object = nets;
 
-    pyNetLocator->_object = nets.getLocator ();
     HCATCH
 
-    return ( (PyObject*)pyNetLocator );
+    return ((PyObject*)pyNetCollection);
   }
 
-
-
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_getSupplyNetsLocator ()"
+  // Attribute Method  :  "PyCell_getSupplyNets()"
 
-  static PyObject* PyCell_getSupplyNetsLocator ( PyCell *self ) {
-    trace << "PyCell_getSupplyNetsLocator ()" << endl;
+  static PyObject* PyCell_getSupplyNets(PyCell *self) {
+    trace << "PyCell_getSupplyNets()" << endl;
 
-    METHOD_HEAD ( "Cell.getSupplyNetsLocator()" )
+    METHOD_HEAD ( "Cell.getSupplyNets()" )
 
-    PyNetLocator* pyNetLocator = NULL;
+    PyNetCollection* pyNetCollection = NULL;
 
     HTRY
-    Nets nets = cell->getSupplyNets ();
+    Nets* nets = new Nets(cell->getSupplyNets());
 
-    pyNetLocator = PyObject_NEW ( PyNetLocator, &PyTypeNetLocator );
-    if (pyNetLocator == NULL) { return NULL; }
+    pyNetCollection = PyObject_NEW(PyNetCollection, &PyTypeNetCollection);
+    if (pyNetCollection == NULL) { 
+        return NULL;
+    }
+    pyNetCollection->_object = nets;
 
-    pyNetLocator->_object = nets.getLocator ();
     HCATCH
 
-    return ( (PyObject*)pyNetLocator );
-  }
-
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_getPowerNetsLocator ()"
-
-  static PyObject* PyCell_getPowerNetsLocator ( PyCell *self )
-  {
-    trace << "PyCell_getPowerNetsLocator ()" << endl;
-
-    METHOD_HEAD ( "Cell.getPowerNetsLocator()" )
-
-    PyNetLocator* pyNetLocator = NULL;
-
-    HTRY
-    Nets nets = cell->getPowerNets ();
-
-    pyNetLocator = PyObject_NEW ( PyNetLocator, &PyTypeNetLocator );
-    if (pyNetLocator == NULL) { return NULL; }
-
-    pyNetLocator->_object = nets.getLocator ();
-    HCATCH
-
-    return ( (PyObject*)pyNetLocator );
+    return ((PyObject*)pyNetCollection);
   }
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_getGroundNetsLocator ()"
+  // Attribute Method  :  "PyCell_getPowerNets()"
 
-  static PyObject* PyCell_getGroundNetsLocator ( PyCell *self ) {
-    trace << "PyCell_getGroundNetsLocator ()" << endl;
+  static PyObject* PyCell_getPowerNets(PyCell *self) {
+    trace << "PyCell_getPowerNets()" << endl;
 
-    METHOD_HEAD ( "Cell.getGroundNetsLocator()" )
+    METHOD_HEAD ( "Cell.getPowerNets()" )
 
-    PyNetLocator* pyNetLocator = NULL;
+    PyNetCollection* pyNetCollection = NULL;
 
     HTRY
-    Nets nets = cell->getGroundNets ();
+    Nets* nets = new Nets(cell->getPowerNets());
 
-    pyNetLocator = PyObject_NEW ( PyNetLocator, &PyTypeNetLocator );
-    if (pyNetLocator == NULL) { return NULL; }
+    pyNetCollection = PyObject_NEW(PyNetCollection, &PyTypeNetCollection);
+    if (pyNetCollection == NULL) { 
+        return NULL;
+    }
+    pyNetCollection->_object = nets;
 
-    pyNetLocator->_object = nets.getLocator ();
     HCATCH
 
-    return ( (PyObject*)pyNetLocator );
+    return ((PyObject*)pyNetCollection);
   }
 
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyCell_getGroundNets()"
+
+  static PyObject* PyCell_getGroundNets(PyCell *self) {
+    trace << "PyCell_getGroundNets()" << endl;
+
+    METHOD_HEAD ( "Cell.getGroundNets()" )
+
+    PyNetCollection* pyNetCollection = NULL;
+
+    HTRY
+    Nets* nets = new Nets(cell->getGroundNets());
+
+    pyNetCollection = PyObject_NEW(PyNetCollection, &PyTypeNetCollection);
+    if (pyNetCollection == NULL) { 
+        return NULL;
+    }
+    pyNetCollection->_object = nets;
+
+    HCATCH
+
+    return ((PyObject*)pyNetCollection);
+  }
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyCell_getAbutmentBox ()"
@@ -614,11 +621,11 @@ extern "C" {
     , { "getHyperNetsLocator"       , (PyCFunction)PyCell_getHyperNetsLocator       , METH_VARARGS, "Returns the collection of all hyperNets belonging to the cell." }
     , { "getNet"              , (PyCFunction)PyCell_getNet              , METH_VARARGS, "Returns the net of name <name> if it exists, else NULL." }
     , { "getNets"              , (PyCFunction)PyCell_getNets      , METH_NOARGS , "Returns the collection of all nets of the cell." }
-    , { "getExternalNetsLocator", (PyCFunction)PyCell_getExternalNetsLocator, METH_NOARGS , "Returns the collection of all external nets of the cell." }
-    , { "getClockNetsLocator" , (PyCFunction)PyCell_getClockNetsLocator , METH_NOARGS , "Returns the collection of all clock nets of the cell." }
-    , { "getSupplyNetsLocator", (PyCFunction)PyCell_getSupplyNetsLocator, METH_NOARGS , "Returns the collection of all supply nets of the cell." }
-    , { "getPowerNetsLocator" , (PyCFunction)PyCell_getPowerNetsLocator , METH_NOARGS , "Returns the collection of all power nets of the cell." }
-    , { "getGroundNetsLocator", (PyCFunction)PyCell_getGroundNetsLocator, METH_NOARGS , "Returns the collection of all ground nets of the cell." }
+    , { "getExternalNets", (PyCFunction)PyCell_getExternalNets, METH_NOARGS , "Returns the collection of all external nets of the cell." }
+    , { "getClockNets" , (PyCFunction)PyCell_getClockNets, METH_NOARGS , "Returns the collection of all clock nets of the cell." }
+    , { "getSupplyNets", (PyCFunction)PyCell_getSupplyNets, METH_NOARGS , "Returns the collection of all supply nets of the cell." }
+    , { "getPowerNets" , (PyCFunction)PyCell_getPowerNets, METH_NOARGS , "Returns the collection of all power nets of the cell." }
+    , { "getGroundNets", (PyCFunction)PyCell_getGroundNets, METH_NOARGS , "Returns the collection of all ground nets of the cell." }
     , { "getAbutmentBox"      , (PyCFunction)PyCell_getAbutmentBox      , METH_NOARGS , "Returns the abutment box of the cell(which is defined by the designer unlike the bounding box which is managed dynamically)" }
     , { "isTerminal"          , (PyCFunction)PyCell_isTerminal          , METH_NOARGS , "Returns true if the cell is marked as terminal, else false." }
     , { "isLeaf"              , (PyCFunction)PyCell_isLeaf              , METH_NOARGS , "Returns true if the cell is a leaf of the hierarchy, else false." }
@@ -643,9 +650,8 @@ extern "C" {
     PyObject* arg1;
     string lib_name_arg = ":library:name";
     if (!ParseTwoArg("Cell.init", args, lib_name_arg, &arg0, &arg1)) {
-        cerr << "argument error" << endl;
-        PyErr_SetString ( ConstructorError, "invalid number of parameters for Cell constructor." );
-        return(NULL);
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Cell constructor.");
+        return NULL;
     }
 
     Cell* cell = NULL;

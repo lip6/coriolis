@@ -453,7 +453,10 @@ extern "C" {
                            ,Converter,&arg1
                            ,Converter,&arg2
                            ,Converter,&arg3
-                           ) ) return ( NULL );
+                           )) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Instance constructor." );
+        return NULL;
+    }
 
     if      ( __cs.getObjectIds() == CELL_NAME_CELL_ARG       ) { instance = Instance::create (  PYCELL_O(arg0)
                                                                                               , *PYNAME_O(arg1)

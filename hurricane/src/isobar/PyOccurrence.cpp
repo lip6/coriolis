@@ -254,7 +254,10 @@ extern "C" {
     if ( ! PyArg_ParseTuple(args,"|O&O&:Occurrence.new"
                            ,Converter,&arg0
                            ,Converter,&arg1
-                           ) ) return ( NULL );
+                           )) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Occurrence constructor. " );
+        return NULL;
+    }
 
     if      ( __cs.getObjectIds() == NO_ARG       ) { occurrence = new Occurrence (); }
     else if ( __cs.getObjectIds() == ENT_ARG      ) { occurrence = new Occurrence (  PYENTITY_O(arg0) ); }

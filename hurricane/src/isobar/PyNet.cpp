@@ -99,8 +99,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // Local Function  :  "PyInt_AsType ()"
   
-  static Net::Type  PyInt_AsType ( PyObject* object )
-  {
+  static Net::Type  PyInt_AsType ( PyObject* object ) {
     switch ( PyInt_AsLong(object) ) {
       case Net::Type::UNDEFINED : return ( Net::Type(Net::Type::UNDEFINED) );
       case Net::Type::LOGICAL   : return ( Net::Type(Net::Type::LOGICAL) );
@@ -428,9 +427,12 @@ extern "C" {
     METHOD_HEAD ( "Net.setType()" )
     
     PyObject* arg0;
-    if ( ! ParseOneArg ( "Net.setType", args, INT_ARG, (PyObject**)&arg0 ) ) return ( NULL );
+    if (!ParseOneArg("Net.setType", args, INT_ARG, (PyObject**)&arg0)) {
+        PyErr_SetString(ConstructorError, "wrong parameter for NetType.");
+        return NULL;
+    }
     
-    net->setType ( PyInt_AsType(arg0) );
+    net->setType(PyInt_AsType(arg0));
 
     HCATCH
     
@@ -562,7 +564,10 @@ extern "C" {
     PyObject* arg0;
     PyObject* arg1;
     
-    if ( ! ParseTwoArg ( "Net.new", args, CELL_NAME_ARG, &arg0, &arg1 ) ) return ( NULL );
+    if (!ParseTwoArg("Net.new", args, CELL_NAME_ARG, &arg0, &arg1)) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Net constructor." );
+        return NULL;
+    }
 
     HTRY
     net = Net::create ( PYCELL_O(arg0), *PYNAME_O(arg1) );

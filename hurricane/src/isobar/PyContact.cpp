@@ -147,7 +147,10 @@ extern "C" {
                            ,Converter,&arg3
                            ,Converter,&arg4
                            ,Converter,&arg5
-                           ) ) return ( NULL );
+                           )) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Contact constructor." );
+        return ( NULL );
+    }
 
 
     //cerr << "Format := " << __cs.getObjectIds() << endl;

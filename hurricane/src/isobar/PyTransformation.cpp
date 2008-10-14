@@ -556,7 +556,10 @@ extern "C" {
                            ,Converter,&arg0
                            ,Converter,&arg1
                            ,Converter,&arg2
-                           ) ) return ( NULL );
+                           )) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Transformation constructor." );
+        return NULL;
+    }
 
     if      ( __cs.getObjectIds() == NO_ARG        ) { transf = new Transformation (); }
     else if ( __cs.getObjectIds() == POINT_ARG     ) { transf = new Transformation ( *PYPOINT_O(arg0) ); }
@@ -570,11 +573,11 @@ extern "C" {
                                                                                    , PyInt_AsOrientation(arg2) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Transformation constructor." );
-      return ( NULL );
+      return NULL;
     }
 
     PyTransformation* pyTransformation = PyObject_NEW(PyTransformation, &PyTypeTransformation);
-    if (pyTransformation == NULL) { ; return NULL; }
+    if (pyTransformation == NULL) { return NULL; }
     
     trace_in ();
     trace << "new PyTransformation [" << hex << pyTransformation << "]" << endl;
@@ -586,7 +589,7 @@ extern "C" {
 
     HCATCH
 
-    return ( (PyObject*)pyTransformation );
+    return (PyObject*)pyTransformation;
   }
 
   DirectDeleteMethod(PyTransformation_DeAlloc,PyTransformation)

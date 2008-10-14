@@ -327,10 +327,10 @@ extern "C" {
 // -------------------------------------------------------------------
 // Attribute Method For Deletion.
 
-# define  DirectDeleteMethod(PY_FUNC_NAME,PY_SELF_TYPE)     \
+#define  DirectDeleteMethod(PY_FUNC_NAME, PY_SELF_TYPE)     \
   static void PY_FUNC_NAME ( PY_SELF_TYPE *self )           \
   {                                                         \
-    trace << "PyHObject_DeAlloc(" << hex << self << ") "    \
+    trace << #PY_SELF_TYPE"_DeAlloc(" << hex << self << ") "    \
           << self->ACCESS_OBJECT << endl;                   \
                                                             \
     if ( self->ACCESS_OBJECT ) delete self->ACCESS_OBJECT;  \
@@ -342,7 +342,7 @@ extern "C" {
 // -------------------------------------------------------------------
 // Attribute Method For Deletion.
 
-# define  PlugDeleteMethod(PY_FUNC_NAME,PY_SELF_TYPE)            \
+#define PlugDeleteMethod(PY_FUNC_NAME,PY_SELF_TYPE)              \
   static void PY_FUNC_NAME ( PY_SELF_TYPE *self )                \
   {                                                              \
     trace << "PyHObject_DeAlloc(" << hex << self << ") "         \
@@ -697,7 +697,7 @@ extern "C" {
   PyTypeObject  PyType##SELF_TYPE =                                     \
     { PyObject_HEAD_INIT(NULL)                                          \
       0                               /* ob_size.          */           \
-    , "Hurricane.##SELF_TYPE"         /* tp_name.          */           \
+    , "Hurricane."#SELF_TYPE          /* tp_name.          */           \
     , sizeof(Py##SELF_TYPE)           /* tp_basicsize.     */           \
     , 0                               /* tp_itemsize.      */           \
     /* methods. */                                                      \

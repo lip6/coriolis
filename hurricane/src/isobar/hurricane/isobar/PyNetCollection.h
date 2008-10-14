@@ -19,7 +19,7 @@ extern "C" {
 
   typedef struct {
       PyObject_HEAD
-      Hurricane::Nets _object;
+      Hurricane::Nets* _object;
   } PyNetCollection;
 
   typedef struct {

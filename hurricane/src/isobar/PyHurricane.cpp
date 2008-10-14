@@ -369,11 +369,6 @@ using namespace Hurricane;
     string firstArgType    = ConverterState::getObjectType ( __cs.getObjectIds(), 0 );
     string firstArgTypeExp = ConverterState::getObjectType ( format             , 0 );
     if ( firstArgType != firstArgTypeExp ) {
-      message << "First argument of call to " << __cs.getFunction()
-              << "() is of unexpected type " << (*arg)->ob_type->tp_name
-              << ", must be of type " << __cs.getObjectName( firstArgTypeExp );
-
-      PyErr_SetString ( ProxyError, message.str().c_str() );
       return ( false );
     }
 
@@ -388,26 +383,17 @@ using namespace Hurricane;
 
   bool  ParseTwoArg  ( char* function, PyObject* args, string format, PyObject** arg0, PyObject** arg1 ) {
     ostringstream  message;
-
     __cs.Init ( function );
     if ( ! PyArg_ParseTuple(args,"O&O&",Converter,arg0,Converter,arg1) ) return ( false );
 
     string firstArgType    = ConverterState::getObjectType ( __cs.getObjectIds(), 0 );
     string firstArgTypeExp = ConverterState::getObjectType ( format             , 0 );
     if ( firstArgType != firstArgTypeExp ) {
-      message << "First argument of call to " << __cs.getFunction()
-              << "() is of unexpected type " << (*arg0)->ob_type->tp_name
-              << ", must be of type " << __cs.getObjectName( firstArgTypeExp );
-      PyErr_SetString ( ProxyError, message.str().c_str() );
       return ( false );
     }
     string secondArgType    = ConverterState::getObjectType ( __cs.getObjectIds(), 1 );
     string secondArgTypeExp = ConverterState::getObjectType ( format             , 1 );
     if ( secondArgType != secondArgTypeExp ) {
-      message << "Second argument of call to " << __cs.getFunction()
-              << "() is of unexpected type " << (*arg1)->ob_type->tp_name
-              << ", must be of type " << __cs.getObjectName( secondArgTypeExp );
-      PyErr_SetString ( ProxyError, message.str().c_str() );
       return ( false );
     }
 
@@ -423,6 +409,7 @@ using namespace Hurricane;
 
   bool  ParseThreeArg  ( char* function, PyObject* args, string format, PyObject** arg0, PyObject** arg1, PyObject** arg2 ) {
     ostringstream  message;
+    cerr << "akecoucou2" << endl;
 
     __cs.Init ( function );
     if ( ! PyArg_ParseTuple(args,"O&O&O&",Converter,arg0,Converter,arg1,Converter,arg2) ) return ( false );
@@ -430,18 +417,11 @@ using namespace Hurricane;
     string firstArgType    = ConverterState::getObjectType ( __cs.getObjectIds(), 0 );
     string firstArgTypeExp = ConverterState::getObjectType ( format             , 0 );
     if ( firstArgType != firstArgTypeExp ) {
-      message << "First argument of call to " << __cs.getFunction()
-              << "() is of unexpected type " << (*arg0)->ob_type->tp_name
-              << ", must be of type " << __cs.getObjectName( firstArgTypeExp );
-      PyErr_SetString ( ProxyError, message.str().c_str() );
       return ( false );
     }
     string secondArgType    = ConverterState::getObjectType ( __cs.getObjectIds(), 1 );
     string secondArgTypeExp = ConverterState::getObjectType ( format             , 1 );
     if ( secondArgType != secondArgTypeExp ) {
-      message << "Second argument of call to " << __cs.getFunction()
-              << "() is of unexpected type " << (*arg1)->ob_type->tp_name
-              << ", must be of type " << __cs.getObjectName( secondArgTypeExp );
       PyErr_SetString ( ProxyError, message.str().c_str() );
       return ( false );
     }
@@ -717,6 +697,8 @@ extern "C" {
     NetLoadConstants            ( dictionnary );
     InstanceLoadConstants       ( dictionnary );
     PinLoadConstants            ( dictionnary );
+
+    trace_on();
   }
 
   

@@ -172,7 +172,10 @@ extern "C" {
     HyperNet*      hyperNet = NULL;
     PyObject* arg0;
     
-    if ( ! ParseOneArg ( "HyperNet.new()", args, ":occur", &arg0 ) ) return ( NULL );
+    if (! ParseOneArg ( "HyperNet.new()", args, ":occur", &arg0 )) {
+        PyErr_SetString(ConstructorError, "invalid number of parameters for HyperNet constructor." );
+        return ( NULL );
+    }
 
     hyperNet =  new HyperNet ( *PYOCCURRENCE_O(arg0) );
 

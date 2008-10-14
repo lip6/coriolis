@@ -186,6 +186,7 @@ extern "C" {
           library = Library::create(masterLibrary, *PYNAME_O(arg1));
           HCATCH
       } else {
+          PyErr_SetString(ConstructorError, "wrong arguments");
           return NULL;
       }
 

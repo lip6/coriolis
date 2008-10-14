@@ -201,7 +201,10 @@ extern "C" {
                            ,Converter,&arg1
                            ,Converter,&arg2
                            ,Converter,&arg3
-                           ) ) return ( NULL );
+                           )) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Reference constructor." );
+        return NULL;
+    }
 
     if      ( __cs.getObjectIds() == CELL_NAME_INTS2_ARG )
       reference = Reference::create (  PYCELL_O(arg0)
@@ -214,10 +217,8 @@ extern "C" {
                                     , *PYPOINT_O(arg2) );
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Reference constructor." );
-      return ( NULL );
+      return NULL;
     }
-
-    if (reference == NULL)  {  printf("error of creation of reference \n"); return (NULL) ; }
 
     HCATCH
 

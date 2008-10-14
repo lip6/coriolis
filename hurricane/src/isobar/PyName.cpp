@@ -109,14 +109,17 @@ extern "C" {
     PyObject* arg0;
 
     __cs.Init ("Name.new");
-    if (!PyArg_ParseTuple(args,"|O&:Name.new",Converter,&arg0) ) return ( NULL );
+    if (!PyArg_ParseTuple(args,"|O&:Name.new",Converter,&arg0)) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Name constructor." );
+        return NULL;
+    }
     
     HTRY
     if      (__cs.getObjectIds() == NO_ARG     ) { name = new Name (); }
     else if (__cs.getObjectIds() == STRING_ARG ) { name = new Name ( PyString_AsString(arg0) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Name constructor." );
-      return(NULL);
+      return NULL;
     }
     HCATCH
 

@@ -131,7 +131,10 @@ extern "C" {
                            ,Converter,&arg4
                            ,Converter,&arg5
                            ,Converter,&arg6
-                           ) ) return ( NULL );
+                           )) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Horizontal constructor." );
+        return NULL;
+    }
 
     if      ( __cs.getObjectIds() == NET_LAYER_INT_ARG )
       horizontal = Horizontal::create ( PYNET_O(arg0)
@@ -182,9 +185,8 @@ extern "C" {
                                       , PyInt_AsLong(arg5)
                                       , PyInt_AsLong(arg6) );
     else {
-      cerr << __cs.getObjectIds() << endl;
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Horizontal constructor." );
-      return ( NULL );
+      return NULL;
     }
 
     HCATCH

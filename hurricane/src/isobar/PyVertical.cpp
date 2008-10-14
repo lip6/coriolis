@@ -126,10 +126,12 @@ extern "C" {
                            ,Converter,&arg4
                            ,Converter,&arg5
                            ,Converter,&arg6
-                           ) ) return ( NULL );
+                           )) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Vertical constructor." );
+        return NULL;
+    }
 
 
-    //cerr << "Format := " << __cs.getObjectIds() << endl;
     if      ( __cs.getObjectIds() == NET_LAYER_INT_ARG )
       vertical = Vertical::create ( PYNET_O(arg0)
                                   , PYLAYER_O(arg1)
@@ -180,7 +182,7 @@ extern "C" {
                                   , PyInt_AsLong(arg6) );
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Vertical constructor." );
-      return ( NULL );
+      return NULL;
     }
 
     HCATCH

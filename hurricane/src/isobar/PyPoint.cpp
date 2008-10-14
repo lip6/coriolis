@@ -147,7 +147,10 @@ extern "C" {
     if ( ! PyArg_ParseTuple(args,"|O&O&:Point.create"
                            ,Converter,&arg0
                            ,Converter,&arg1
-                           ) ) return ( NULL );
+                           )) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Point constructor." );
+        return NULL;
+    }
 
     if      ( __cs.getObjectIds() == NO_ARG    ) { point = new Point (); }
     else if ( __cs.getObjectIds() == POINT_ARG ) { point = new Point ( *PYPOINT_O(arg0) ); }
@@ -155,7 +158,7 @@ extern "C" {
                                                                      , PyInt_AsLong(arg1) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Point constructor." );
-      return ( NULL );
+      return NULL;
     }
 
     PyPoint* pyPoint = PyObject_NEW(PyPoint, &PyTypePoint);
