@@ -58,6 +58,7 @@
 #include "hurricane/isobar/ProxyProperty.h"
 #include "hurricane/isobar/PyNet.h"
 #include "hurricane/isobar/PyNetLocator.h"
+#include "hurricane/isobar/PyNetCollection.h"
 #include "hurricane/isobar/PyReferenceLocator.h"
 #include "hurricane/isobar/PyInstanceLocator.h"
 #include "hurricane/isobar/PyOccurrenceLocator.h"
@@ -377,25 +378,25 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_getNetsLocator ()"
+  // Attribute Method  :  "PyCell_getNets ()"
 
-  static PyObject* PyCell_getNetsLocator ( PyCell *self ) {
-    trace << "PyCell_getNetsLocator ()" << endl;
+  static PyObject* PyCell_getNets ( PyCell *self ) {
+    trace << "PyCell_getNets()" << endl;
 
-    METHOD_HEAD ( "Cell.getNetsLocator()" )
+    METHOD_HEAD ( "Cell.getNets()" )
 
-    PyNetLocator* pyNetLocator = NULL;
+    PyNetCollection* pyNetCollection = NULL;
 
     HTRY
     Nets nets = cell->getNets ();
 
-    pyNetLocator = PyObject_NEW ( PyNetLocator, &PyTypeNetLocator );
-    if (pyNetLocator == NULL) { return NULL; }
+    pyNetCollection = PyObject_NEW ( PyNetCollection, &PyTypeNetCollection);
+    if (pyNetCollection == NULL) { return NULL; }
 
-    pyNetLocator->_object = nets.getLocator ();
+    pyNetCollection->_object = nets;
     HCATCH
 
-    return ( (PyObject*)pyNetLocator );
+    return ( (PyObject*)pyNetCollection);
   }
 
 
@@ -612,7 +613,7 @@ extern "C" {
     , { "getReferencesLocator"      , (PyCFunction)PyCell_getReferencesLocator      , METH_VARARGS, "Returns the collection of all references belonging to the cell." }
     , { "getHyperNetsLocator"       , (PyCFunction)PyCell_getHyperNetsLocator       , METH_VARARGS, "Returns the collection of all hyperNets belonging to the cell." }
     , { "getNet"              , (PyCFunction)PyCell_getNet              , METH_VARARGS, "Returns the net of name <name> if it exists, else NULL." }
-    , { "getNetsLocator"      , (PyCFunction)PyCell_getNetsLocator      , METH_NOARGS , "Returns the collection of all nets of the cell." }
+    , { "getNets"              , (PyCFunction)PyCell_getNets      , METH_NOARGS , "Returns the collection of all nets of the cell." }
     , { "getExternalNetsLocator", (PyCFunction)PyCell_getExternalNetsLocator, METH_NOARGS , "Returns the collection of all external nets of the cell." }
     , { "getClockNetsLocator" , (PyCFunction)PyCell_getClockNetsLocator , METH_NOARGS , "Returns the collection of all clock nets of the cell." }
     , { "getSupplyNetsLocator", (PyCFunction)PyCell_getSupplyNetsLocator, METH_NOARGS , "Returns the collection of all supply nets of the cell." }

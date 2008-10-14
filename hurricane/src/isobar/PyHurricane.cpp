@@ -84,6 +84,7 @@
 #include "hurricane/isobar/PyComponentLocator.h"
 #include "hurricane/isobar/PyOccurrenceLocator.h"
 #include "hurricane/isobar/PyNetLocator.h"
+#include "hurricane/isobar/PyNetCollection.h"
 #include "hurricane/isobar/PyCellLocator.h"
 #include "hurricane/isobar/PyReferenceLocator.h"
 #include "hurricane/isobar/PyTechnology.h"
@@ -555,6 +556,7 @@ extern "C" {
     PyInstanceLocator_LinkPyType ();
     PyPlugLocator_LinkPyType ();
     PyNetLocator_LinkPyType ();
+    PyNetCollection_LinkPyType ();
     PyCellLocator_LinkPyType ();
     PyPinLocator_LinkPyType ();
     PySegmentLocator_LinkPyType ();
@@ -607,6 +609,8 @@ extern "C" {
     PYTYPE_READY ( InstanceLocator  )
     PYTYPE_READY ( PlugLocator      )
     PYTYPE_READY ( NetLocator       )
+    PYTYPE_READY ( NetCollection    )
+    PYTYPE_READY ( NetCollectionLocator    )
     PYTYPE_READY ( CellLocator      )
     PYTYPE_READY ( PinLocator       )
     PYTYPE_READY ( SegmentLocator   )
@@ -656,6 +660,7 @@ extern "C" {
     __cs.AddType ( "refLoc"     , &PyTypeReferenceLocator , "<ReferenceLocator>" , false );
     __cs.AddType ( "net"        , &PyTypeNet              , "<Net>"              , false, "ent" );
     __cs.AddType ( "netLoc"     , &PyTypeNetLocator       , "<NetLocator>"       , false );
+    __cs.AddType ( "netCol"     , &PyTypeNetCollection    , "<NetCollection>"    , false );
     __cs.AddType ( "hyperNet"   , &PyTypeHyperNet         , "<HyperNet>"         , false );
     __cs.AddType ( "pin"        , &PyTypePin              , "<Pin>"              , false, "contact" );
     __cs.AddType ( "pinLoc"     , &PyTypePinLocator       , "<PinLocator>"       , false );

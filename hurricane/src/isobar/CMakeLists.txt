@@ -22,6 +22,7 @@
                                   PyName.cpp
                                   PyNet.cpp
                                   PyNetLocator.cpp
+                                  PyNetCollection.cpp
                                   PyOccurrence.cpp
                                   PyOccurrenceLocator.cpp
                                   PyPath.cpp
