@@ -23,36 +23,11 @@ extern "C" {
 
   DirectDeleteMethod(PyNetCollection_DeAlloc, PyNetCollection)
 
-  static void PyNetCollectionLocator_DeAlloc(PyNetCollectionLocator* pyLocator) {
-      Py_XDECREF(pyLocator->_collection);
-      if (pyLocator->_object) {
-          delete pyLocator->_object;
-      }
-      PyObject_Del(pyLocator);
-  }
 
-  GetLocatorMethod(Net)
+  LocatorNextMethod(Net)
+  CollectionMethods(Net)
 
-  static PyObject* NetLocatorNext(PyNetCollectionLocator* pyLocator) {
-      Locator<Net*>* locator = pyLocator->_object;
 
-      if (locator->isValid()) {
-          Net* net = locator->getElement();
-          locator->progress();
-          return PyNet_Link(net); 
-      }
-      return NULL;
-  }
-
-  extern void PyNetCollection_LinkPyType () {
-    trace << "PyNetCollection_LinkType()" << endl;
-    PyTypeNetCollection.tp_iter = (getiterfunc)GetLocator;      /* tp_iter */
-    PyTypeNetCollection.tp_dealloc = (destructor)PyNetCollection_DeAlloc;
-    PyTypeNetCollectionLocator.tp_dealloc = (destructor)PyNetCollectionLocator_DeAlloc;
-    PyTypeNetCollectionLocator.tp_iter = PyObject_SelfIter;
-    PyTypeNetCollectionLocator.tp_iternext = (iternextfunc)NetLocatorNext;
-    PyTypeNetCollection.tp_dealloc = (destructor)PyNetCollection_DeAlloc;
-  }
 
 
 #else  // End of Python Module Code Part.

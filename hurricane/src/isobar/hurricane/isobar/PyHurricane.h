@@ -382,7 +382,7 @@ extern "C" {
 // Collection and Locator macros
 
 
-#define GetLocatorMethod(TYPE)                                                         \
+#define CollectionMethods(TYPE)                                                        \
   static PyObject* GetLocator(Py##TYPE##Collection* collection) {                      \
       Py##TYPE##CollectionLocator* cl =                                                \
           PyObject_New(Py##TYPE##CollectionLocator, &PyType##TYPE##CollectionLocator); \
@@ -393,7 +393,37 @@ extern "C" {
       cl->_object = collection->_object->getLocator();                                 \
       Py_INCREF(collection);                                                           \
       return (PyObject *)cl;                                                           \
+  }                                                                                    \
+                                                                                       \
+  static void Py##TYPE##CollectionLocatorDeAlloc(Py##TYPE##CollectionLocator* locator) {         \
+      Py_XDECREF(locator->_collection);                                                \
+      if (locator->_object) {                                                          \
+          delete locator->_object;                                                     \
+      }                                                                                \
+      PyObject_Del(locator);                                                           \
+  }                                                                                    \
+                                                                                       \
+  extern void Py##TYPE##Collection_LinkPyType () {                                     \
+    trace << "Py"#TYPE"Collection_LinkType()" << endl;                                 \
+    PyType##TYPE##Collection.tp_iter = (getiterfunc)GetLocator;      /* tp_iter */     \
+    PyType##TYPE##Collection.tp_dealloc = (destructor)Py##TYPE##Collection_DeAlloc;    \
+    PyType##TYPE##CollectionLocator.tp_dealloc = (destructor)Py##TYPE##CollectionLocatorDeAlloc; \
+    PyType##TYPE##CollectionLocator.tp_iter = PyObject_SelfIter;                       \
+    PyType##TYPE##CollectionLocator.tp_iternext = (iternextfunc)Py##TYPE##LocatorNext; \
   }
+
+#define LocatorNextMethod(TYPE)                                         \
+  static PyObject* Py##TYPE##LocatorNext(Py##TYPE##CollectionLocator* pyLocator) {  \
+      Locator<TYPE*>* locator = pyLocator->_object;                     \
+                                                                        \
+      if (locator->isValid()) {                                         \
+          TYPE* object = locator->getElement();                         \
+          locator->progress();                                          \
+          return Py##TYPE##_Link(object);                               \
+      }                                                                 \
+      return NULL;                                                      \
+  }
+
 
 
 // -------------------------------------------------------------------
