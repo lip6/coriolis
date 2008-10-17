@@ -54,7 +54,7 @@
 #include "hurricane/isobar/PyPath.h"
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/isobar/PyInstance.h"
-#include "hurricane/isobar/PyInstanceLocator.h"
+#include "hurricane/isobar/PyInstanceCollection.h"
 
 
 namespace Isobar {
@@ -257,25 +257,28 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPath_getInstancesLocator ()"
+  // Attribute Method  :  "PyPath_getInstances()"
 
-  static PyObject* PyPath_getInstancesLocator ( PyPath *self )
-  {
+  static PyObject* PyPath_getInstances(PyPath *self) {
 
-    trace << "PyPath_getInstancesLocator ()" << endl;
+    trace << "PyPath_getInstances()" << endl;
 
-    METHOD_HEAD ( "Path.getInstancesLocator()" )
+    METHOD_HEAD ( "Path.getInstances()" )
 
-    Instances instances = path->getInstances ();
-
-    PyInstanceLocator* pyInstanceLocator = PyObject_NEW ( PyInstanceLocator, &PyTypeInstanceLocator );
-    if (pyInstanceLocator == NULL) { return NULL; }
+    PyInstanceCollection* pyInstanceCollection = NULL;
 
     HTRY
-    pyInstanceLocator->_object = instances.getLocator ();
-    HCATCH
+    Instances* instances = new Instances(path->getInstances());
 
-    return ( (PyObject*)pyInstanceLocator );
+    pyInstanceCollection = PyObject_NEW(PyInstanceCollection, &PyTypeInstanceCollection);
+    if (pyInstanceCollection == NULL) { 
+        return NULL;
+    }
+
+    pyInstanceCollection->_object = instances;
+    HCATCH
+    
+    return (PyObject*)pyInstanceCollection;
   }
 
 
@@ -293,7 +296,7 @@ extern "C" {
     , { "getMasterCell"      , (PyCFunction)PyPath_getMasterCell      , METH_NOARGS , "Returns the master cell referenced by the last instance of the path." }
     , { "getName"            , (PyCFunction)PyPath_getName            , METH_NOARGS , "Returns the concatenation of instances names." }
     , { "getTransformation"  , (PyCFunction)PyPath_getTransformation  , METH_VARARGS, "Return the resulting transformation." }
-    , { "getInstancesLocator", (PyCFunction)PyPath_getInstancesLocator, METH_NOARGS , "Returns the collection of instances defining the path." }
+    , { "getInstances", (PyCFunction)PyPath_getInstances, METH_NOARGS , "Returns the collection of instances defining the path." }
     , { "isEmpty"            , (PyCFunction)PyPath_isEmpty            , METH_NOARGS , "Return true if the path is empty." }
     , { "destroy"            , (PyCFunction)PyPath_destroy            , METH_NOARGS
                              , "Destroy associated hurricane object, the python object remains." }

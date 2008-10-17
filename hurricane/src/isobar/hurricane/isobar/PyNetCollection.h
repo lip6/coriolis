@@ -25,10 +25,8 @@ extern "C" {
   typedef struct {
       PyObject_HEAD
       Hurricane::Locator<Hurricane::Net*>* _object;
+      PyNetCollection* _collection;
   } PyNetCollectionLocator;
-
-
-
 
 // -------------------------------------------------------------------
 // Functions & Types exported to "PyHurricane.ccp".

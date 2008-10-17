@@ -6,9 +6,9 @@
                    set ( sources  ProxyProperty.cpp
                                   PyBox.cpp
                                   PyCell.cpp
-                                  PyCellLocator.cpp
+#PyCellCollection.cpp
                                   PyComponent.cpp
-                                  PyComponentLocator.cpp
+#                                  PyComponentLocator.cpp
                                   PyContact.cpp
                                   PyDataBase.cpp
                                   PyEntity.cpp
@@ -16,25 +16,24 @@
                                   PyHurricane.cpp
                                   PyHyperNet.cpp
                                   PyInstance.cpp
-                                  PyInstanceLocator.cpp
+#PyInstanceLocator.cpp
                                   PyLayer.cpp
                                   PyLibrary.cpp
                                   PyName.cpp
                                   PyNet.cpp
-                                  PyNetLocator.cpp
                                   PyNetCollection.cpp
                                   PyOccurrence.cpp
-                                  PyOccurrenceLocator.cpp
+                                  #PyOccurrenceLocator.cpp
                                   PyPath.cpp
                                   PyPin.cpp
-                                  PyPinLocator.cpp
+                                  #PyPinLocator.cpp
                                   PyPlug.cpp
-                                  PyPlugLocator.cpp
+                                  #PyPlugLocator.cpp
                                   PyPoint.cpp
                                   PyReference.cpp
-                                  PyReferenceLocator.cpp
+                                  #PyReferenceLocator.cpp
                                   PySegment.cpp
-                                  PySegmentLocator.cpp
+                                  #PySegmentLocator.cpp
                                   PyTechnology.cpp
                                   PyTransformation.cpp
                                   PyDbU.cpp
@@ -45,9 +44,9 @@
                    set ( includes hurricane/isobar/ProxyProperty.h
                                   hurricane/isobar/PyBox.h
                                   hurricane/isobar/PyCell.h
-                                  hurricane/isobar/PyCellLocator.h
+                                  hurricane/isobar/PyCellCollection.h
                                   hurricane/isobar/PyComponent.h
-                                  hurricane/isobar/PyComponentLocator.h
+                                  hurricane/isobar/PyComponentCollection.h
                                   hurricane/isobar/PyContact.h
                                   hurricane/isobar/PyDataBase.h
                                   hurricane/isobar/PyEntity.h
@@ -55,24 +54,24 @@
                                   hurricane/isobar/PyHurricane.h
                                   hurricane/isobar/PyHyperNet.h
                                   hurricane/isobar/PyInstance.h
-                                  hurricane/isobar/PyInstanceLocator.h
+                                  hurricane/isobar/PyInstanceCollection.h
                                   hurricane/isobar/PyLayer.h
                                   hurricane/isobar/PyLibrary.h
                                   hurricane/isobar/PyName.h
                                   hurricane/isobar/PyNet.h
-                                  hurricane/isobar/PyNetLocator.h
+                                  hurricane/isobar/PyNetCollection.h
                                   hurricane/isobar/PyOccurrence.h
-                                  hurricane/isobar/PyOccurrenceLocator.h
+                                  hurricane/isobar/PyOccurrenceCollection.h
                                   hurricane/isobar/PyPath.h
                                   hurricane/isobar/PyPin.h
-                                  hurricane/isobar/PyPinLocator.h
+                                  hurricane/isobar/PyPinCollection.h
                                   hurricane/isobar/PyPlug.h
-                                  hurricane/isobar/PyPlugLocator.h
+                                  hurricane/isobar/PyPlugCollection.h
                                   hurricane/isobar/PyPoint.h
                                   hurricane/isobar/PyReference.h
-                                  hurricane/isobar/PyReferenceLocator.h
+                                  hurricane/isobar/PyReferenceCollection.h
                                   hurricane/isobar/PySegment.h
-                                  hurricane/isobar/PySegmentLocator.h
+                                  hurricane/isobar/PySegmentCollection.h
                                   hurricane/isobar/PyTechnology.h
                                   hurricane/isobar/PyTransformation.h
                                   hurricane/isobar/PyDbU.h

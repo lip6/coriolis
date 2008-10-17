@@ -55,7 +55,7 @@
 #include "hurricane/isobar/PyHyperNet.h"
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/isobar/PyOccurrence.h"
-#include "hurricane/isobar/PyOccurrenceLocator.h" 
+#include "hurricane/isobar/PyOccurrenceCollection.h" 
 
 using namespace Hurricane;
 
@@ -96,30 +96,28 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyHyperNet_getPlugsLocator ()"
+  // Attribute Method  :  "PyHyperNet_getLeafPlugOccurrences()"
 
-  static PyObject* PyHyperNet_getLeafPlugOccurrenceLocator ( PyHyperNet *self )
+  static PyObject* PyHyperNet_getLeafPlugOccurrences(PyHyperNet *self)
   {
-    trace << "PyHyperNet_getLeafPlugOccurrenceLocator ()" << endl;
+    trace << "PyHyperNet_getLeafPlugOccurrences()" << endl;
 
-    METHOD_HEAD ( "HyperNet.getLeafPlugOccurrenceLocator()" )
+    METHOD_HEAD ( "HyperNet.getLeafPlugOccurrences()" )
 
-    Occurrences occurrences = hyperNet->getLeafPlugOccurrences ();
-
-    PyOccurrenceLocator* pyOccurrenceLocator = PyObject_NEW ( PyOccurrenceLocator, &PyTypeOccurrenceLocator );
-    if (pyOccurrenceLocator == NULL) { return NULL; }
-  
-    trace_in ();
-    trace << "new PyOccurrenceLocator [" << hex << pyOccurrenceLocator << "]" << endl;
-    trace_out ();
+    PyOccurrenceCollection* pyOccurrenceCollection = NULL;
 
     HTRY
+    Occurrences* occurrences = new Occurrences(hyperNet->getLeafPlugOccurrences());
 
-    pyOccurrenceLocator->_object = occurrences.getLocator ();
+    pyOccurrenceCollection = PyObject_NEW(PyOccurrenceCollection, &PyTypeOccurrenceCollection);
+    if (pyOccurrenceCollection == NULL) { 
+        return NULL;
+    }
 
+    pyOccurrenceCollection->_object = occurrences;
     HCATCH
-
-    return ( (PyObject*)pyOccurrenceLocator );
+    
+    return (PyObject*)pyOccurrenceCollection;
   }
 
     
@@ -150,7 +148,7 @@ extern "C" {
   PyMethodDef PyHyperNet_Methods[] =
     { { "getCell"                     , (PyCFunction)PyHyperNet_getCell                     , METH_NOARGS , "Returns the hyperNet cell." }
     , { "isValid"                     , (PyCFunction)PyHyperNet_isValid                     , METH_NOARGS , "Returns trus if the HyperNet isValid." }
-    , { "getLeafPlugOccurrenceLocator", (PyCFunction)PyHyperNet_getLeafPlugOccurrenceLocator, METH_NOARGS 
+    , { "getLeafPlugOccurrences", (PyCFunction)PyHyperNet_getLeafPlugOccurrences, METH_NOARGS 
                                       , "Returns the collection of leaf occurrences" }
     , { "destroy"                     , (PyCFunction)PyHyperNet_destroy                     , METH_NOARGS
                                       , "Destroy associated hurricane object, the python object remains." }

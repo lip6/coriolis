@@ -63,30 +63,29 @@
 #include "hurricane/isobar/PyLibrary.h"
 #include "hurricane/isobar/PyEntity.h"
 #include "hurricane/isobar/PyCell.h"
+#include "hurricane/isobar/PyCellCollection.h"
 #include "hurricane/isobar/PyLayer.h"
 #include "hurricane/isobar/PyPin.h"
+#include "hurricane/isobar/PyPinCollection.h"
 #include "hurricane/isobar/PyInstance.h"
+#include "hurricane/isobar/PyInstanceCollection.h"
 #include "hurricane/isobar/PyReference.h"
+#include "hurricane/isobar/PyReferenceCollection.h"
 #include "hurricane/isobar/PyNet.h"
+#include "hurricane/isobar/PyNetCollection.h"
 #include "hurricane/isobar/PyHyperNet.h"
 #include "hurricane/isobar/PyComponent.h"
+#include "hurricane/isobar/PyComponentCollection.h"
 #include "hurricane/isobar/PyPlug.h"
+#include "hurricane/isobar/PyPlugCollection.h"
 #include "hurricane/isobar/PySegment.h"
+#include "hurricane/isobar/PySegmentCollection.h"
 #include "hurricane/isobar/PyContact.h"
 #include "hurricane/isobar/PyHorizontal.h"
 #include "hurricane/isobar/PyVertical.h"
 #include "hurricane/isobar/PyPath.h"
 #include "hurricane/isobar/PyOccurrence.h"
-#include "hurricane/isobar/PyInstanceLocator.h"
-#include "hurricane/isobar/PyPlugLocator.h"
-#include "hurricane/isobar/PyPinLocator.h"
-#include "hurricane/isobar/PySegmentLocator.h"
-#include "hurricane/isobar/PyComponentLocator.h"
-#include "hurricane/isobar/PyOccurrenceLocator.h"
-#include "hurricane/isobar/PyNetLocator.h"
-#include "hurricane/isobar/PyNetCollection.h"
-#include "hurricane/isobar/PyCellLocator.h"
-#include "hurricane/isobar/PyReferenceLocator.h"
+#include "hurricane/isobar/PyOccurrenceCollection.h"
 #include "hurricane/isobar/PyTechnology.h"
 #include "hurricane/NetExternalComponents.h"
 
@@ -479,20 +478,20 @@ extern "C" {
     PyObject* arg0;
     if ( ! ParseOneArg ( "getExternalComponents", args, ":ent", &arg0) ) return ( NULL );
 
-    PyComponentLocator* pyComponentLocator = NULL;
+    PyComponentCollection* pyComponentCollection = NULL;
 
     HTRY
 
-    Components components = NetExternalComponents::get( PYNET_O ( arg0 ) );
+    Components* components = new Components(NetExternalComponents::get(PYNET_O(arg0)));
 
-    pyComponentLocator = PyObject_NEW ( PyComponentLocator, &PyTypeComponentLocator );
-    if (pyComponentLocator == NULL) { return NULL; }
+    pyComponentCollection = PyObject_NEW(PyComponentCollection, &PyTypeComponentCollection);
+    if (pyComponentCollection == NULL) { return NULL; }
 
-    pyComponentLocator->_object = components.getLocator ();
+    pyComponentCollection->_object = components;
 
     HCATCH
 
-    return ( (PyObject*)pyComponentLocator );
+    return ((PyObject*)pyComponentCollection);
   }
 
   // x-------------------------------------------------------------x
@@ -533,16 +532,16 @@ extern "C" {
     PyLayer_LinkPyType ();
     PyPath_LinkPyType ();
     PyOccurrence_LinkPyType ();
-    PyInstanceLocator_LinkPyType ();
-    PyPlugLocator_LinkPyType ();
-    PyNetLocator_LinkPyType ();
+    PyInstanceCollection_LinkPyType ();
+    PyPlugCollection_LinkPyType ();
     PyNetCollection_LinkPyType ();
-    PyCellLocator_LinkPyType ();
-    PyPinLocator_LinkPyType ();
-    PySegmentLocator_LinkPyType ();
-    PyOccurrenceLocator_LinkPyType ();
-    PyComponentLocator_LinkPyType ();
-    PyReferenceLocator_LinkPyType ();
+    PyNetCollection_LinkPyType ();
+    PyCellCollection_LinkPyType ();
+    PyPinCollection_LinkPyType ();
+    PySegmentCollection_LinkPyType ();
+    PyOccurrenceCollection_LinkPyType ();
+    PyComponentCollection_LinkPyType ();
+    PyReferenceCollection_LinkPyType ();
     PyCell_LinkPyType ();
     PyInstance_LinkPyType ();
     PyReference_LinkPyType ();
@@ -575,29 +574,36 @@ extern "C" {
     PyPath_Constructor();
     PyOccurrence_Constructor();
 
-    PYTYPE_READY ( Point            )
-    PYTYPE_READY ( Box              )
-    PYTYPE_READY ( Transformation   )
-    PYTYPE_READY ( Name             )
-    PYTYPE_READY ( DataBase         )
-    PYTYPE_READY ( Technology       )
-    PYTYPE_READY ( Library          )
-    PYTYPE_READY ( Entity           )
-    PYTYPE_READY ( Layer            )
-    PYTYPE_READY ( Path             )
-    PYTYPE_READY ( Occurrence       )
-    PYTYPE_READY ( InstanceLocator  )
-    PYTYPE_READY ( PlugLocator      )
-    PYTYPE_READY ( NetLocator       )
-    PYTYPE_READY ( NetCollection    )
-    PYTYPE_READY ( NetCollectionLocator    )
-    PYTYPE_READY ( CellLocator      )
-    PYTYPE_READY ( PinLocator       )
-    PYTYPE_READY ( SegmentLocator   )
-    PYTYPE_READY ( ComponentLocator )
-    PYTYPE_READY ( OccurrenceLocator)
-    PYTYPE_READY ( ReferenceLocator )
-    PYTYPE_READY ( HyperNet         )
+    PYTYPE_READY ( Point                       )
+    PYTYPE_READY ( Box                         )
+    PYTYPE_READY ( Transformation              )
+    PYTYPE_READY ( Name                        )
+    PYTYPE_READY ( DataBase                    )
+    PYTYPE_READY ( Technology                  )
+    PYTYPE_READY ( Library                     )
+    PYTYPE_READY ( Entity                      )
+    PYTYPE_READY ( Layer                       )
+    PYTYPE_READY ( Path                        )
+    PYTYPE_READY ( Occurrence                  )
+    PYTYPE_READY ( InstanceCollection          )
+    PYTYPE_READY ( InstanceCollectionLocator   )
+    PYTYPE_READY ( PlugCollection              )
+    PYTYPE_READY ( PlugCollectionLocator       )
+    PYTYPE_READY ( NetCollection               )
+    PYTYPE_READY ( NetCollectionLocator        )
+    PYTYPE_READY ( CellCollection              )
+    PYTYPE_READY ( CellCollectionLocator       )
+    PYTYPE_READY ( PinCollection               )
+    PYTYPE_READY ( PinCollectionLocator        )
+    PYTYPE_READY ( SegmentCollection           )
+    PYTYPE_READY ( SegmentCollectionLocator    )
+    PYTYPE_READY ( ComponentCollection         ) 
+    PYTYPE_READY ( ComponentCollectionLocator  )
+    PYTYPE_READY ( OccurrenceCollection        )
+    PYTYPE_READY ( OccurrenceCollectionLocator )
+    PYTYPE_READY ( ReferenceCollection         )
+    PYTYPE_READY ( ReferenceCollectionLocator  )
+    PYTYPE_READY ( HyperNet                    )
 
     PYTYPE_READY_SUB ( Cell      , Entity   )
     PYTYPE_READY_SUB ( Instance  , Entity   )
@@ -617,9 +623,9 @@ extern "C" {
     __cs.AddType ( "box"        , &PyTypeBox              , "<Box>"              , false );
     __cs.AddType ( "ent"        , &PyTypeEntity           , "<Entity>"           , false );
     __cs.AddType ( "cell"       , &PyTypeCell             , "<Cell>"             , false, "ent" );
-    __cs.AddType ( "cellLoc"    , &PyTypeCellLocator      , "<CellLocator>"      , false );
+    __cs.AddType ( "cellCol"    , &PyTypeCellCollection   , "<CellCollection>"   , false );
     __cs.AddType ( "comp"       , &PyTypeComponent        , "<Component>"        , false, "ent" );
-    __cs.AddType ( "compLoc"    , &PyTypeComponentLocator , "<ComponentLocator>" , false );
+    __cs.AddType ( "compCol"    , &PyTypeComponentCollection, "<ComponentCollection>" , false );
     __cs.AddType ( "contact"    , &PyTypeContact          , "<Contact>"          , false, "comp" );
     // Do not change the "none" string. It's hardwired to the None object.
     __cs.AddType ( "none"       ,  Py_None->ob_type       , "<None>"             , true  );
@@ -632,30 +638,29 @@ extern "C" {
     __cs.AddType ( "function"   , NULL                    , "<Function>"         , true  );
     __cs.AddType ( "horiz"      , &PyTypeHorizontal       , "<Horizontal>"       , false, "segment" );
     __cs.AddType ( "inst"       , &PyTypeInstance         , "<Instance>"         , false, "ent" );
-    __cs.AddType ( "instLoc"    , &PyTypeInstanceLocator  , "<InstanceLocator>"  , false );
+    __cs.AddType ( "instCol"    , &PyTypeInstanceCollection, "<InstanceCollection>"  , false );
     __cs.AddType ( "layer"      , &PyTypeLayer            , "<Layer>"            , false );
     __cs.AddType ( "library"    , &PyTypeLibrary          , "<Library>"          , false );
     __cs.AddType ( "name"       , &PyTypeName             , "<Name>"             , false );
     __cs.AddType ( "ref"        , &PyTypeReference        , "<Reference>"        , false, "ent" );
-    __cs.AddType ( "refLoc"     , &PyTypeReferenceLocator , "<ReferenceLocator>" , false );
+    __cs.AddType ( "refCol"     , &PyTypeReferenceCollection, "<ReferenceCollection>" , false );
     __cs.AddType ( "net"        , &PyTypeNet              , "<Net>"              , false, "ent" );
-    __cs.AddType ( "netLoc"     , &PyTypeNetLocator       , "<NetLocator>"       , false );
     __cs.AddType ( "netCol"     , &PyTypeNetCollection    , "<NetCollection>"    , false );
     __cs.AddType ( "hyperNet"   , &PyTypeHyperNet         , "<HyperNet>"         , false );
     __cs.AddType ( "pin"        , &PyTypePin              , "<Pin>"              , false, "contact" );
-    __cs.AddType ( "pinLoc"     , &PyTypePinLocator       , "<PinLocator>"       , false );
+    __cs.AddType ( "pinCol"     , &PyTypePinCollection    , "<PinCollection>"    , false );
     __cs.AddType ( "plug"       , &PyTypePlug             , "<Plug>"             , false, "comp" );
-    __cs.AddType ( "plugLoc"    , &PyTypePlugLocator      , "<PlugLocator>"      , false );
+    __cs.AddType ( "plugCol"    , &PyTypePlugCollection   , "<PlugCollection>"   , false );
     __cs.AddType ( "point"      , &PyTypePoint            , "<Point>"            , false );
     __cs.AddType ( "segment"    , &PyTypeSegment          , "<Segment>"          , false, "comp" );
-    __cs.AddType ( "segmentLoc" , &PyTypeSegmentLocator   , "<SegmentLocator>"   , false );
+    __cs.AddType ( "segmentCol" , &PyTypeSegmentCollection, "<SegmentCollection>", false );
     __cs.AddType ( "db"         , &PyTypeDataBase         , "<DataBase>"         , false );
     __cs.AddType ( "techno"     , &PyTypeTechnology       , "<Technology>"       , false );
     __cs.AddType ( "transfo"    , &PyTypeTransformation   , "<Transformation>"   , false );
     __cs.AddType ( "vert"       , &PyTypeVertical         , "<Vertical>"         , false, "segment" );
     __cs.AddType ( "path"       , &PyTypePath             , "<Path>"             , false );
     __cs.AddType ( "occur"      , &PyTypeOccurrence       , "<Occurrence>"       , false );
-    __cs.AddType ( "occurLoc"   , &PyTypeOccurrenceLocator, "<OccurrenceLocator>", false );
+    __cs.AddType ( "occurCol"   , &PyTypeOccurrenceCollection, "<OccurrenceCollection>", false );
 
 
     PyObject* module = Py_InitModule ( "Hurricane", PyHurricane_Methods );

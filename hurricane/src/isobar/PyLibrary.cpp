@@ -56,7 +56,7 @@
 #include "hurricane/isobar/PyName.h"
 #include "hurricane/isobar/PyLibrary.h"
 #include "hurricane/isobar/PyCell.h"
-#include "hurricane/isobar/PyCellLocator.h"
+#include "hurricane/isobar/PyCellCollection.h"
 
 
 namespace Isobar {
@@ -124,24 +124,28 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyLibrary_getCellsLocator ()"
+  // Attribute Method  :  "PyLibrary_getCells()"
 
-  static PyObject* PyLibrary_getCellsLocator ( PyLibrary *self ) {
-    trace << "PyLibrary_getCellsLocator ()" << endl;
-    METHOD_HEAD ( "Library.getCellsLocator()" )
+  static PyObject* PyLibrary_getCells(PyLibrary *self) {
+    trace << "PyLibrary_getCells()" << endl;
 
-    Cells cells = lib->getCells ();
+    METHOD_HEAD ( "Library.getCells()" )
 
-    PyCellLocator* pyCellLocator = PyObject_NEW ( PyCellLocator, &PyTypeCellLocator );
-    if (pyCellLocator == NULL) { return NULL; }
+    PyCellCollection* pyCellCollection = NULL;
 
     HTRY
-    pyCellLocator->_object = cells.getLocator ();
+    Cells* cells = new Cells(lib->getCells ());
+
+    pyCellCollection = PyObject_NEW(PyCellCollection, &PyTypeCellCollection);
+    if (pyCellCollection == NULL) { 
+        return NULL;
+    }
+
+    pyCellCollection->_object = cells;
     HCATCH
-
-    return ( (PyObject*)pyCellLocator );
+    
+    return (PyObject*)pyCellCollection;
   }
-
 
   // Standart Accessors (Attributes).
 
@@ -156,7 +160,7 @@ extern "C" {
     {
       { "getName"      , (PyCFunction)PyLibrary_getName      , METH_NOARGS , "Returns the name of the library." }
     , { "getCell"        , (PyCFunction)PyLibrary_getCell        , METH_VARARGS, "Get the cell of name <name>" }
-    , { "getCellsLocator", (PyCFunction)PyLibrary_getCellsLocator, METH_NOARGS , "Returns the collection of all cells of the library." }
+    , { "getCells", (PyCFunction)PyLibrary_getCells, METH_NOARGS , "Returns the collection of all cells of the library." }
     , { "destroy"       , (PyCFunction)PyLibrary_destroy       , METH_NOARGS
                        , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */

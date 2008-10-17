@@ -57,7 +57,7 @@
 #include "hurricane/isobar/PyInstance.h"
 #include "hurricane/isobar/PyNet.h"
 #include "hurricane/isobar/PyPlug.h"
-#include "hurricane/isobar/PyPlugLocator.h"
+#include "hurricane/isobar/PyPlugCollection.h"
 
 
 namespace  Isobar {
@@ -245,78 +245,79 @@ extern "C" {
   }
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_getPlugsLocator ()"
+  // Attribute Method  :  "PyInstance_getPlugs()"
 
-  static PyObject* PyInstance_getPlugsLocator ( PyInstance *self ) {
-    trace << "PyInstance_getPlugsLocator ()" << endl;
-    METHOD_HEAD ( "Instance.getPlugsLocator()" )
+  static PyObject* PyInstance_getPlugs(PyInstance *self ) {
+    trace << "PyInstance_getPlugs()" << endl;
 
-    PyPlugLocator* pyPlugLocator = NULL;
+    METHOD_HEAD ( "Instance.getPlugs()" )
+
+    PyPlugCollection* pyPlugCollection = NULL;
 
     HTRY
-    Plugs plugs = instance->getPlugs ();
+    Plugs* plugs = new Plugs(instance->getPlugs());
 
-    pyPlugLocator = PyObject_NEW ( PyPlugLocator, &PyTypePlugLocator );
-    if (pyPlugLocator == NULL) { return NULL; }
-    
-    pyPlugLocator->_object = plugs.getLocator ();
+    pyPlugCollection = PyObject_NEW(PyPlugCollection, &PyTypePlugCollection);
+    if (pyPlugCollection == NULL) { 
+        return NULL;
+    }
+
+    pyPlugCollection->_object = plugs;
     HCATCH
-
-    return ( (PyObject*)pyPlugLocator );
+    
+    return (PyObject*)pyPlugCollection;
   }
 
 
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_getConnectedPlugsLocator ()"
+  // Attribute Method  :  "PyInstance_getConnectedPlugs()"
 
-  static PyObject* PyInstance_getConnectedPlugsLocator ( PyInstance *self )
-  {
-    trace << "PyInstance_getConnectedPlugsLocator ()" << endl;
-    METHOD_HEAD ( "Instance.getConnectedPlugsLocator()" )
+  static PyObject* PyInstance_getConnectedPlugs(PyInstance *self) {
+    trace << "PyInstance_getConnectedPlugs ()" << endl;
 
-    PyPlugLocator* pyPlugLocator = NULL;
+    METHOD_HEAD ( "Instance.getConnectedPlugs()")
+
+    PyPlugCollection* pyPlugCollection = NULL;
 
     HTRY
-    Plugs plugs = instance->getConnectedPlugs ();
+    Plugs* plugs = new Plugs(instance->getConnectedPlugs());
 
-    pyPlugLocator = PyObject_NEW ( PyPlugLocator, &PyTypePlugLocator );
-    if (pyPlugLocator == NULL) { return NULL; }
-    
-    pyPlugLocator->_object = plugs.getLocator ();
+    pyPlugCollection = PyObject_NEW(PyPlugCollection, &PyTypePlugCollection);
+    if (pyPlugCollection == NULL) { 
+        return NULL;
+    }
+
+    pyPlugCollection->_object = plugs;
     HCATCH
-
-    return ( (PyObject*)pyPlugLocator );
+    
+    return (PyObject*)pyPlugCollection;
   }
-
-
-
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyInstance_getUnconnectedPlugsLocator ()"
 
-  static PyObject* PyInstance_getUnconnectedPlugsLocator ( PyInstance *self )
-  {
-    trace << "PyInstance_getUnconnectedPlugsLocator ()" << endl;
-    METHOD_HEAD ( "Instance.getUnconnectedPlugsLocator()" )
+  static PyObject* PyInstance_getUnconnectedPlugs(PyInstance *self) {
+    trace << "PyInstance_getUnconnectedPlugs ()" << endl;
 
-    PyPlugLocator* pyPlugLocator = NULL;
+    METHOD_HEAD ( "Instance.getUnconnectedPlugs()")
+
+    PyPlugCollection* pyPlugCollection = NULL;
 
     HTRY
-    Plugs plugs = instance->getUnconnectedPlugs ();
+    Plugs* plugs = new Plugs(instance->getUnconnectedPlugs());
 
-    pyPlugLocator = PyObject_NEW ( PyPlugLocator, &PyTypePlugLocator );
-    if (pyPlugLocator == NULL) { return NULL; }
-    
-    pyPlugLocator->_object = plugs.getLocator ();
+    pyPlugCollection = PyObject_NEW(PyPlugCollection, &PyTypePlugCollection);
+    if (pyPlugCollection == NULL) { 
+        return NULL;
+    }
+
+    pyPlugCollection->_object = plugs;
     HCATCH
-
-    return ( (PyObject*)pyPlugLocator );
+    
+    return (PyObject*)pyPlugCollection;
   }
-
-
-
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyInstance_getAbutmentBox ()"
@@ -411,9 +412,9 @@ extern "C" {
     , { "getTransformation"         , (PyCFunction)PyInstance_getTransformation         , METH_NOARGS , "Returns the transformation associated to the instance." }
     , { "getPlacementStatus"        , (PyCFunction)PyInstance_getPlacementStatus        , METH_NOARGS , "Returns the placement status of the instance." }
     , { "getPlug"                   , (PyCFunction)PyInstance_getPlug                   , METH_VARARGS, "Returns the plug associated to the <masterNet> if it exists or else NULL (if the net is not external)." }
-    , { "getPlugsLocator"           , (PyCFunction)PyInstance_getPlugsLocator           , METH_NOARGS , "Returns the collection of instance plugs." }
-    , { "getConnectedPlugsLocator"  , (PyCFunction)PyInstance_getConnectedPlugsLocator  , METH_NOARGS , "Returns the collection of instance plugs which are effectively connected." }
-    , { "getUnconnectedPlugsLocator", (PyCFunction)PyInstance_getUnconnectedPlugsLocator, METH_NOARGS , "Returns the collection of instance plugs which are not connected." }
+    , { "getPlugs"           , (PyCFunction)PyInstance_getPlugs           , METH_NOARGS , "Returns the collection of instance plugs." }
+    , { "getConnectedPlugs"  , (PyCFunction)PyInstance_getConnectedPlugs  , METH_NOARGS , "Returns the collection of instance plugs which are effectively connected." }
+    , { "getUnconnectedPlugs", (PyCFunction)PyInstance_getUnconnectedPlugs, METH_NOARGS , "Returns the collection of instance plugs which are not connected." }
     , { "getAbutmentBox"            , (PyCFunction)PyInstance_getAbutmentBox            , METH_NOARGS , "Returns the abutment box of the instance, that is the abutment box of the master cell to which has been applied the instance transformation." }
     , { "isTerminal"                , (PyCFunction)PyInstance_isTerminal                , METH_NOARGS , "Returns true if the instance is a terminal instance." }
     , { "isLeaf"                    , (PyCFunction)PyInstance_isLeaf                    , METH_NOARGS , "Returns true if the instance is a leaf instance." }

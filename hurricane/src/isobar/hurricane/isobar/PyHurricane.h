@@ -379,97 +379,28 @@ extern "C" {
   
 
 // -------------------------------------------------------------------
-// Locator Attribute Method For Progress.
+// Collection and Locator macros
 
-#define LocatorProgressAttribute(SELF_TYPE)             \
-  static PyObject* Py##SELF_TYPE##Locator_progress ( Py##SELF_TYPE##Locator *self ) \
-  {                                                     \
-    trace << #SELF_TYPE "Locator.progress()" << endl;   \
-    METHOD_HEAD ( #SELF_TYPE "Locator.progress()" )     \
-                                                        \
-    HTRY                                                \
-    locator->progress ();                               \
-    HCATCH                                              \
-                                                        \
-    Py_RETURN_NONE;                                     \
+
+#define GetLocatorMethod(TYPE)                                                         \
+  static PyObject* GetLocator(Py##TYPE##Collection* collection) {                      \
+      Py##TYPE##CollectionLocator* cl =                                                \
+          PyObject_New(Py##TYPE##CollectionLocator, &PyType##TYPE##CollectionLocator); \
+      if (cl == NULL) {                                                                \
+          return NULL;                                                                 \
+      }                                                                                \
+      cl->_collection = collection;                                                    \
+      cl->_object = collection->_object->getLocator();                                 \
+      Py_INCREF(collection);                                                           \
+      return (PyObject *)cl;                                                           \
   }
-
-
-  
-
-// -------------------------------------------------------------------
-// Locator Attribute Method For getElement.
-
-# define  LocatorGetElementAttribute(SELF_TYPE)         \
-  static PyObject* Py##SELF_TYPE##Locator_getElement ( Py##SELF_TYPE##Locator *self ) \
-  {                                                     \
-    trace << #SELF_TYPE "Locator.getElement()" << endl; \
-    METHOD_HEAD ( #SELF_TYPE "Locator.getElement()" )   \
-                                                        \
-    SELF_TYPE* element = NULL;                          \
-                                                        \
-    HTRY                                                \
-    element = locator->getElement ();                   \
-    HCATCH                                              \
-                                                        \
-    return Py##SELF_TYPE##_Link ( element );            \
-  }
-
-
-  
-
-// -------------------------------------------------------------------
-// Locator Attribute Method For getElement (element is PyEntity).
-
-# define  LocatorGetElementEntityAttribute(SELF_TYPE)   \
-  static PyObject* Py##SELF_TYPE##Locator_getElement ( Py##SELF_TYPE##Locator *self ) \
-  {                                                     \
-    trace << #SELF_TYPE "Locator.getElement()" << endl; \
-    METHOD_HEAD ( #SELF_TYPE "Locator.getElement()" )   \
-                                                        \
-    PyObject* pyElement = NULL;                         \
-                                                        \
-    HTRY                                                \
-    SELF_TYPE* element = locator->getElement ();        \
-    if ( element == NULL )                              \
-      Py_RETURN_NONE;                                   \
-    pyElement = PyEntity_NEW ( element );               \
-    HCATCH                                              \
-                                                        \
-    return pyElement;                                   \
-  }
-
-
-  
-
-// -------------------------------------------------------------------
-// Locator Attribute Method For getClone.
-
-# define  LocatorGetCloneAttribute(SELF_TYPE)           \
-  static PyObject* Py##SELF_TYPE##Locator_getClone ( Py##SELF_TYPE##Locator *self ) \
-  {                                                     \
-    trace << #SELF_TYPE "Locator.getClone()" << endl;   \
-    METHOD_HEAD ( #SELF_TYPE "Locator.getClone()" )     \
-                                                        \
-    Py##SELF_TYPE##Locator* cloneLocator = NULL;        \
-                                                        \
-    HTRY                                                \
-    cloneLocator = PyObject_NEW ( Py##SELF_TYPE##Locator, &PyType##SELF_TYPE##Locator ); \
-    if (cloneLocator == NULL) { return NULL; }          \
-                                                        \
-    cloneLocator->_object = locator->getClone();        \
-    HCATCH                                              \
-                                                        \
-    return ( (PyObject*)cloneLocator );                 \
-  }
-
-
 
 
 // -------------------------------------------------------------------
 // Attribute Method For Repr.
 
-# define  DirectReprMethod(PY_FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)          \
+
+#define DirectReprMethod(PY_FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)            \
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self )                   \
   {                                                                      \
     if ( self->ACCESS_OBJECT == NULL )                                   \
@@ -718,6 +649,33 @@ extern "C" {
     , 0                               /* tp_as_buffer.     */           \
     , Py_TPFLAGS_DEFAULT                                                \
     | Py_TPFLAGS_BASETYPE             /* tp_flags.         */           \
+    , "#SELF_TYPE objects"            /* tp_doc.           */           \
+  };
+
+#define PyTypeCollectionObjectDefinitions(SELF_TYPE)                    \
+  PyTypeObject  PyType##SELF_TYPE =                                     \
+    { PyObject_HEAD_INIT(NULL)                                          \
+      0                               /* ob_size.          */           \
+    , "Hurricane."#SELF_TYPE          /* tp_name.          */           \
+    , sizeof(Py##SELF_TYPE)           /* tp_basicsize.     */           \
+    , 0                               /* tp_itemsize.      */           \
+    /* methods. */                                                      \
+    , 0                               /* tp_dealloc.       */           \
+    , 0                               /* tp_print.         */           \
+    , 0                               /* tp_getattr.       */           \
+    , 0                               /* tp_setattr.       */           \
+    , 0                               /* tp_compare.       */           \
+    , 0                               /* tp_repr.          */           \
+    , 0                               /* tp_as_number.     */           \
+    , 0                               /* tp_as_sequence.   */           \
+    , 0                               /* tp_as_mapping.    */           \
+    , 0                               /* tp_hash.          */           \
+    , 0                               /* tp_call.          */           \
+    , 0                               /* tp_str            */           \
+    , PyObject_GenericGetAttr         /* tp_getattro.      */           \
+    , 0                               /* tp_setattro.      */           \
+    , 0                               /* tp_as_buffer.     */           \
+    , Py_TPFLAGS_DEFAULT              /* tp_flags.         */           \
     , "#SELF_TYPE objects"            /* tp_doc.           */           \
   };
 

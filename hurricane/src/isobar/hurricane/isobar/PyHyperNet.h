@@ -54,7 +54,6 @@
 
 
 #include "hurricane/isobar/PyHurricane.h"
-#include "hurricane/isobar/PyPlugLocator.h"
 
 #include "hurricane/HyperNet.h"
 

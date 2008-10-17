@@ -56,10 +56,10 @@
 #include "hurricane/isobar/PyName.h"
 #include "hurricane/isobar/PyCell.h" 
 #include "hurricane/isobar/PyPoint.h" 
-#include "hurricane/isobar/PyPlugLocator.h" 
-#include "hurricane/isobar/PySegmentLocator.h" 
-#include "hurricane/isobar/PyComponentLocator.h" 
-#include "hurricane/isobar/PyPinLocator.h" 
+#include "hurricane/isobar/PyPlugCollection.h" 
+#include "hurricane/isobar/PySegmentCollection.h" 
+#include "hurricane/isobar/PyComponentCollection.h" 
+#include "hurricane/isobar/PyPinCollection.h" 
 
 #include "hurricane/NetExternalComponents.h"
 using namespace Hurricane;
@@ -72,23 +72,23 @@ namespace  Isobar {
 extern "C" {
 
 
-# undef   ACCESS_OBJECT
-# undef   ACCESS_CLASS
-# define  ACCESS_OBJECT           _baseObject._object
-# define  ACCESS_CLASS(_pyObject)  &(_pyObject->_baseObject)
-# define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Net,net,function)
+#undef  ACCESS_OBJECT
+#undef  ACCESS_CLASS
+#define ACCESS_OBJECT           _baseObject._object
+#define ACCESS_CLASS(_pyObject)  &(_pyObject->_baseObject)
+#define METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Net,net,function)
 
-# define  LOAD_CONSTANT(CONSTANT_VALUE,CONSTANT_NAME)             \
-  constant = PyInt_FromLong ( (long)CONSTANT_VALUE );             \
-  PyDict_SetItemString ( dictionnary, CONSTANT_NAME, constant );  \
-  Py_DECREF ( constant );
+#define  LOAD_CONSTANT(CONSTANT_VALUE,CONSTANT_NAME)             \
+ constant = PyInt_FromLong ( (long)CONSTANT_VALUE );             \
+ PyDict_SetItemString ( dictionnary, CONSTANT_NAME, constant );  \
+ Py_DECREF ( constant );
 
 
 // x=================================================================x
 // |                 "PyNet" Python Module Code Part                 |
 // x=================================================================x
 
-# if defined(__PYTHON_MODULE__)
+#if defined(__PYTHON_MODULE__)
 
 
   // x-------------------------------------------------------------x
@@ -136,8 +136,7 @@ extern "C" {
   // |                  Global Constants Loading                   |
   // x-------------------------------------------------------------x
 
-  extern void  NetLoadConstants ( PyObject* dictionnary )
-  {
+  extern void  NetLoadConstants ( PyObject* dictionnary ) {
     PyObject* constant;
 
     LOAD_CONSTANT ( Net::Type::UNDEFINED        , "TypeUNDEFINED" )
@@ -235,113 +234,101 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_getPlugsLocator ()"
+  // Attribute Method  :  "PyNet_getPlugs()"
 
-  static PyObject* PyNet_getPlugsLocator ( PyNet *self )
-  {
-    trace << "PyNet_getPlugsLocator ()" << endl;
+  static PyObject* PyNet_getPlugs(PyNet *self) {
+    trace << "PyNet_getPlugs()" << endl;
 
-    METHOD_HEAD ( "Net.getPlugsLocator()" )
-
-    Plugs plugs = net->getPlugs ();
-
-    PyPlugLocator* pyPlugLocator = PyObject_NEW ( PyPlugLocator, &PyTypePlugLocator );
-    if (pyPlugLocator == NULL) { return NULL; }
-  
-    trace_in ();
-    trace << "new PyPlugLocator [" << hex << pyPlugLocator << "]" << endl;
-    trace_out ();
+    METHOD_HEAD("Net.getPlugs()")
+        
+    PyPlugCollection* pyPlugCollection = NULL;
 
     HTRY
+    Plugs* plugs = new Plugs(net->getPlugs());
 
-    pyPlugLocator->_object = plugs.getLocator ();
+    pyPlugCollection = PyObject_NEW(PyPlugCollection, &PyTypePlugCollection);
+    if (pyPlugCollection == NULL) { 
+        return NULL;
+    }
 
+    pyPlugCollection->_object = plugs;
     HCATCH
-
-    return ( (PyObject*)pyPlugLocator );
+    
+    return (PyObject*)pyPlugCollection;
   }
 
     
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_getSegmentsLocator ()"
+  // Attribute Method  :  "PyNet_getSegments()"
 
-  static PyObject* PyNet_getSegmentsLocator ( PyNet *self )
-  {
-    trace << "PyNet_getSegmentsLocator ()" << endl;
+  static PyObject* PyNet_getSegments(PyNet *self) {
+    trace << "PyNet_getSegments()" << endl;
 
-    METHOD_HEAD ( "Net.getSegmentsLocator()" )
+    METHOD_HEAD ("Net.getSegments()")
 
-    Segments segments = net->getSegments ();
-
-    PySegmentLocator* pySegmentLocator = PyObject_NEW ( PySegmentLocator, &PyTypeSegmentLocator );
-    if (pySegmentLocator == NULL) { return NULL; }
-  
-    trace_in ();
-    trace << "new PySegmentLocator [" << hex << pySegmentLocator << "]" << endl;
-    trace_out ();
+    PySegmentCollection* pySegmentCollection = NULL;
 
     HTRY
+    Segments* nets = new Segments(net->getSegments());
 
-    pySegmentLocator->_object = segments.getLocator ();
+    pySegmentCollection = PyObject_NEW(PySegmentCollection, &PyTypeSegmentCollection);
+    if (pySegmentCollection == NULL) { 
+        return NULL;
+    }
 
+    pySegmentCollection->_object = nets;
     HCATCH
-
-    return ( (PyObject*)pySegmentLocator );
+    
+    return (PyObject*)pySegmentCollection;
   }
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_getPinsLocator ()"
+  // Attribute Method  :  "PyNet_getPins()"
 
-  static PyObject* PyNet_getPinsLocator ( PyNet *self )
-  {
-    trace << "PyNet_getPinsLocator ()" << endl;
+  static PyObject* PyNet_getPins(PyNet *self) {
+    trace << "PyNet_getPins()" << endl;
 
-    METHOD_HEAD ( "Net.getPinsLocator()" )
+    METHOD_HEAD ("Net.getPins()")
 
-    Pins pins = net->getPins ();
-
-    PyPinLocator* pyPinLocator = PyObject_NEW ( PyPinLocator, &PyTypePinLocator );
-    if (pyPinLocator == NULL) { return NULL; }
-  
-    trace_in ();
-    trace << "new PyPinLocator [" << hex << pyPinLocator << "]" << endl;
-    trace_out ();
+    PyPinCollection* pyPinCollection = NULL;
 
     HTRY
+    Pins* pins = new Pins(net->getPins());
 
-    pyPinLocator->_object = pins.getLocator ();
+    pyPinCollection = PyObject_NEW(PyPinCollection, &PyTypePinCollection);
+    if (pyPinCollection == NULL) { 
+        return NULL;
+    }
 
+    pyPinCollection->_object = pins;
     HCATCH
-
-    return ( (PyObject*)pyPinLocator );
+    
+    return (PyObject*)pyPinCollection;
   }
   
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_getExternalComponentsLocator ()"
+  // Attribute Method  :  "PyNet_getExternalComponents()"
 
-  static PyObject* PyNet_getExternalComponentsLocator ( PyNet *self )
-  {
-    trace << "PyNet_getExternalComponentsLocator ()" << endl;
+  static PyObject* PyNet_getExternalComponents(PyNet *self) {
+    trace << "PyNet_getExternalComponents()" << endl;
 
-    METHOD_HEAD ( "Net.getExternalcomponentsLocator()" )
+    METHOD_HEAD ( "Net.getExternalcomponents()" )
 
-    Components externalComponents = NetExternalComponents::get(net);
-
-    PyComponentLocator* pyExternalComponentsLocator = PyObject_NEW ( PyComponentLocator, &PyTypeComponentLocator );
-    if (pyExternalComponentsLocator == NULL) { return NULL; }
-  
-    trace_in ();
-    trace << "new PyExternalComponentsLocator [" << hex << pyExternalComponentsLocator << "]" << endl;
-    trace_out ();
+    PyComponentCollection* pyComponentCollection = NULL;
 
     HTRY
+    Components* components = new Components(NetExternalComponents::get(net));
 
-    pyExternalComponentsLocator->_object = externalComponents.getLocator ();
+    pyComponentCollection = PyObject_NEW(PyComponentCollection, &PyTypeComponentCollection);
+    if (pyComponentCollection == NULL) { 
+        return NULL;
+    }
 
+    pyComponentCollection->_object = components;
     HCATCH
-
-    return ( (PyObject*)pyExternalComponentsLocator );
+    
+    return (PyObject*)pyComponentCollection;
   }
 
 
@@ -522,10 +509,10 @@ extern "C" {
                                , "Returns the signal direction (by default set to UNDEFINED)." }
     , { "getX"                 , (PyCFunction)PyNet_getX                     , METH_NOARGS , "Returns net abscissa." }
     , { "getY"                 , (PyCFunction)PyNet_getY                     , METH_NOARGS , "Returns net ordinate." }
-    , { "getExternalComponents", (PyCFunction)PyNet_getExternalComponentsLocator , METH_NOARGS , "Returns the collection of net's external components. (only for an external net)" }
-    , { "getPlugsLocator"      , (PyCFunction)PyNet_getPlugsLocator          , METH_NOARGS , "Returns the collection of net's plugs." }
-    , { "getPinsLocator"        , (PyCFunction)PyNet_getPinsLocator            , METH_NOARGS , "Returns the collection of net's pins." }
-    , { "getSegmentsLocator"    , (PyCFunction)PyNet_getSegmentsLocator        , METH_NOARGS , "Returns the collection of net's segments." }
+    , { "getExternalComponents", (PyCFunction)PyNet_getExternalComponents , METH_NOARGS , "Returns the collection of net's external components. (only for an external net)" }
+    , { "getPlugs"      , (PyCFunction)PyNet_getPlugs          , METH_NOARGS , "Returns the collection of net's plugs." }
+    , { "getPins"        , (PyCFunction)PyNet_getPins            , METH_NOARGS , "Returns the collection of net's pins." }
+    , { "getSegments"    , (PyCFunction)PyNet_getSegments        , METH_NOARGS , "Returns the collection of net's segments." }
     , { "isGlobal"             , (PyCFunction)PyNet_isGlobal                 , METH_NOARGS, "return true if the net is global" }
     , { "isExternal"           , (PyCFunction)PyNet_isExternal               , METH_NOARGS, "return true if the the net is external." }
     , { "isLogical"            , (PyCFunction)PyNet_isLogical                , METH_NOARGS, "return true if the net is logical ." }
