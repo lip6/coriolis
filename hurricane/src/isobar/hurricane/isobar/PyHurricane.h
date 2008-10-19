@@ -415,12 +415,27 @@ extern "C" {
 #define LocatorNextMethod(TYPE)                                         \
   static PyObject* Py##TYPE##LocatorNext(Py##TYPE##CollectionLocator* pyLocator) {  \
       Locator<TYPE*>* locator = pyLocator->_object;                     \
-                                                                        \
+      HTRY                                                              \
       if (locator->isValid()) {                                         \
           TYPE* object = locator->getElement();                         \
           locator->progress();                                          \
           return Py##TYPE##_Link(object);                               \
       }                                                                 \
+      HCATCH                                                            \
+      return NULL;                                                      \
+  }
+
+
+#define EntityLocatorNextMethod(TYPE)                                         \
+  static PyObject* Py##TYPE##LocatorNext(Py##TYPE##CollectionLocator* pyLocator) {  \
+      Locator<TYPE*>* locator = pyLocator->_object;                     \
+      HTRY                                                              \
+      if (locator->isValid()) {                                         \
+          TYPE* object = locator->getElement();                         \
+          locator->progress();                                          \
+          return PyEntity_NEW(object);                                  \
+      }                                                                 \
+      HCATCH                                                            \
       return NULL;                                                      \
   }
 

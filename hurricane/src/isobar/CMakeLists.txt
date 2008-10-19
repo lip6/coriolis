@@ -6,9 +6,9 @@
                    set ( sources  ProxyProperty.cpp
                                   PyBox.cpp
                                   PyCell.cpp
-#PyCellCollection.cpp
+                                  PyCellCollection.cpp
                                   PyComponent.cpp
-#                                  PyComponentLocator.cpp
+                                  PyComponentCollection.cpp
                                   PyContact.cpp
                                   PyDataBase.cpp
                                   PyEntity.cpp
@@ -16,24 +16,24 @@
                                   PyHurricane.cpp
                                   PyHyperNet.cpp
                                   PyInstance.cpp
-#PyInstanceLocator.cpp
+                                  PyInstanceCollection.cpp
                                   PyLayer.cpp
                                   PyLibrary.cpp
                                   PyName.cpp
                                   PyNet.cpp
                                   PyNetCollection.cpp
                                   PyOccurrence.cpp
-                                  #PyOccurrenceLocator.cpp
+                                  PyOccurrenceCollection.cpp
                                   PyPath.cpp
                                   PyPin.cpp
-                                  #PyPinLocator.cpp
+                                  PyPinCollection.cpp
                                   PyPlug.cpp
-                                  #PyPlugLocator.cpp
+                                  PyPlugCollection.cpp
                                   PyPoint.cpp
                                   PyReference.cpp
-                                  #PyReferenceLocator.cpp
+                                  PyReferenceCollection.cpp
                                   PySegment.cpp
-                                  #PySegmentLocator.cpp
+                                  PySegmentCollection.cpp
                                   PyTechnology.cpp
                                   PyTransformation.cpp
                                   PyDbU.cpp

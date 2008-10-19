@@ -481,15 +481,12 @@ extern "C" {
   PyTypeObjectConstructor(Instance)
 
 
-# else  // End of Python Module Code Part.
+#else  // End of Python Module Code Part.
 
 
 // x=================================================================x
 // |             "PyInstance" Shared Library Code Part               |
 // x=================================================================x
-
-
-
 
 
   // Link/Creation Method.

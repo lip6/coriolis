@@ -702,8 +702,6 @@ extern "C" {
     NetLoadConstants            ( dictionnary );
     InstanceLoadConstants       ( dictionnary );
     PinLoadConstants            ( dictionnary );
-
-    trace_on();
   }
 
   
