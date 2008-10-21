@@ -339,7 +339,7 @@ Occurrence getHyperNetRootNetOccurrence(const Occurrence& netoccurrence)
 }
 
 
-bool IsHyperNetRootNetOccurrence(Occurrence netoccurrence)
+bool isHyperNetRootNetOccurrence(Occurrence netoccurrence)
 // *******************************************************
 {
     Net* net=dynamic_cast<Net*>(netoccurrence.getEntity());

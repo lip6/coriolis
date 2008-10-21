@@ -74,6 +74,7 @@ namespace Hurricane {
   Graphics::Graphics ()
     : _styles()
     , _active(NULL)
+    , _fireColorScale()
     , _qtEnabled(false)
   {
   }
@@ -128,6 +129,8 @@ namespace Hurricane {
     _qtEnabled = true;
     for ( size_t si=0 ; si < _styles.size() ; si++ )
       _styles[si]->qtAllocate ();
+
+    _fireColorScale.qtAllocate ();
   }
 
 
@@ -286,6 +289,12 @@ namespace Hurricane {
   int  Graphics::getDarkening ()
   {
     return getGraphics()->_getDarkening ();
+  }
+
+
+  const ColorScale& Graphics::getColorScale ( ColorScale::ScaleType id )
+  {
+    return getGraphics()->_getColorScale ( id );
   }
 
 

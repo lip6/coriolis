@@ -1,7 +1,7 @@
 
 // -*- C++ -*-
 //
-// This file is part of the Hurricane Software.
+// This file is part of the Coriolis Software.
 // Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
 //
 // ===================================================================

@@ -1,36 +1,9 @@
 
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
 // ===================================================================
 //
 // $Id$
@@ -50,16 +23,17 @@
 // x-----------------------------------------------------------------x
 
 
-# ifndef  __GRAPHICS_H__
-#   define  __GRAPHICS_H__
+#ifndef  __HURRICANE_GRAPHICS__
+#define  __HURRICANE_GRAPHICS__
 
 
-# include  <string>
-# include  <vector>
+#include  <string>
+#include  <vector>
 
-# include  "hurricane/viewer/DisplayStyle.h"
+#include  "hurricane/viewer/DisplayStyle.h"
+#include  "hurricane/viewer/ColorScale.h"
 
-# include  <QFont>
+#include  <QFont>
 
 class QColor;
 class QPen;
@@ -89,6 +63,7 @@ namespace Hurricane {
       static  const string&                getPattern    ( const Name& key );
       static  float                        getThreshold  ( const Name& key );
       static  int                          getDarkening  ();
+      static  const ColorScale&            getColorScale ( ColorScale::ScaleType );
 
     // Modifiers.
       static  void                         addStyle      ( DisplayStyle* displayStyle );
@@ -104,6 +79,7 @@ namespace Hurricane {
       static  Graphics*                    _singleton;
               vector<DisplayStyle*>        _styles;
               DisplayStyle*                _active;
+              FireColorScale               _fireColorScale;
               bool                         _qtEnabled;
 
     // Internals - Constructors & Destructors.
@@ -127,6 +103,7 @@ namespace Hurricane {
       inline  const string&                _getPattern   ( const Name& key ) const;
       inline  float                        _getThreshold ( const Name& key ) const;
       inline  int                          _getDarkening () const;
+      inline  const ColorScale&            _getColorScale ( ColorScale::ScaleType ) const;
       inline  void                         _enable       ();
 
   };
@@ -153,6 +130,17 @@ namespace Hurricane {
   inline int  Graphics::_getDarkening () const
   { return _active->getDarkening(); }
 
+  inline const ColorScale& Graphics::_getColorScale ( ColorScale::ScaleType id ) const
+  {
+    switch ( id ) {
+      case ColorScale::Grey:
+      case ColorScale::Fire:
+      case ColorScale::Rainbow:
+        break;
+    }
+    return _fireColorScale;
+  }
+
   inline DisplayStyle* Graphics::_getStyle () const
   { return _active; }
 
@@ -165,4 +153,4 @@ namespace Hurricane {
 } // End of Hurricane namespace.
 
 
-# endif
+#endif  // __HURRICANE_GRAPHICS__

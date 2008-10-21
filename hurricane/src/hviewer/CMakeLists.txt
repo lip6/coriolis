@@ -32,6 +32,7 @@
                                      hurricane/viewer/HPaletteEntry.h
                                      hurricane/viewer/HPalette.h
                                      hurricane/viewer/DisplayStyle.h
+                                     hurricane/viewer/ColorScale.h
                                      hurricane/viewer/Graphics.h
                                      hurricane/viewer/HGraphics.h
                                      hurricane/viewer/Selector.h
@@ -54,6 +55,7 @@
                        )
                    set ( cpps        ScreenUtilities.cpp 
                                      DisplayStyle.cpp 
+                                     ColorScale.cpp
                                      Graphics.cpp
                                      HGraphics.cpp
                                      HPaletteEntry.cpp

@@ -1,7 +1,8 @@
 
 
  include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane )
-                 set ( includes hurricane/BasicLayer.h            hurricane/BasicLayers.h
+                 set ( includes hurricane/Mask.h
+                                hurricane/BasicLayer.h            hurricane/BasicLayers.h
                                 hurricane/RegularLayer.h          hurricane/RegularLayers.h
                                 hurricane/ViaLayer.h              hurricane/ViaLayers.h
                                 hurricane/ContactLayer.h
@@ -36,8 +37,9 @@
                                 hurricane/ListCollection.h
                                 hurricane/Locator.h
                                 hurricane/MapCollection.h
-                                hurricane/Marker.h                hurricane/Markers.h
+                                hurricane/MultimapCollection.h
                                 hurricane/MultisetCollection.h
+                                hurricane/Marker.h                hurricane/Markers.h
                                 hurricane/Name.h                  hurricane/Names.h
                                 hurricane/NetExternalComponents.h
                                 hurricane/Net.h                   hurricane/Nets.h

@@ -338,9 +338,9 @@ class Cell_ComponentsUnder : public Collection<Component*> {
     , _mask(mask)
     , _sliceLocator()
   {
-    if (_cell && (_mask != 0)) {
+    if (_cell && !_mask.zero()) {
       _sliceLocator = getCollection(_cell->getExtensionSliceMap()).getLocator();
-      while (_sliceLocator.isValid() && !(_sliceLocator.getElement()->getMask() & _mask))
+      while (_sliceLocator.isValid() && !(_sliceLocator.getElement()->getMask().intersect(_mask)))
         _sliceLocator.progress();
     }
   }
@@ -387,7 +387,7 @@ class Cell_ComponentsUnder : public Collection<Component*> {
       do {
         _sliceLocator.progress();
       }
-      while (_sliceLocator.isValid() && !(_sliceLocator.getElement()->getMask() & _mask));
+      while (_sliceLocator.isValid() && !(_sliceLocator.getElement()->getMask().intersect(_mask)));
     }
   }
 
@@ -2077,7 +2077,7 @@ Cell_Slices::Locator::Locator(const Cell* cell, const Layer::Mask& mask)
     _mask(mask),
     _sliceLocator()
 {
-    if (_cell && (_mask != 0)) {
+  if (_cell && !_mask.zero()) {
         _sliceLocator = ((Cell*)_cell)->_getSliceMap().getElements().getLocator();
         while (_sliceLocator.isValid() && !(_sliceLocator.getElement()->getLayer()->getMask() & _mask))
             _sliceLocator.progress();
@@ -2231,7 +2231,7 @@ Cell_Components::Locator::Locator(const Cell* cell, const Layer::Mask& mask)
     _componentLocator(),
     _component(NULL)
 {
-    if (_cell && (_mask != 0)) {
+   if (_cell && !_mask.zero() ) {
         _sliceLocator = _cell->getSlices(_mask).getLocator();
         while (!_component && _sliceLocator.isValid()) {
             Slice* slice = _sliceLocator.getElement();
@@ -3981,7 +3981,7 @@ Cell_ComponentOccurrences::Locator::Locator(const Cell* cell, const Layer::Mask&
     _instanceLocator(),
     _occurrenceLocator()
 {
-    if (_cell && (_mask != 0)) {
+    if (_cell && !_mask.zero() ) {
         _componentLocator = _cell->getComponents(_mask).getLocator();
         if (_componentLocator.isValid())
             _state = 1;
@@ -4202,7 +4202,7 @@ Cell_ComponentOccurrencesUnder::Locator::Locator(const Cell* cell, const Box& ar
     _instanceLocator(),
     _occurrenceLocator()
 {
-    if (_cell && !_area.isEmpty() && (_mask != 0)) {
+    if (_cell && !_area.isEmpty() && !_mask.zero() ) {
         _componentLocator = _cell->getComponentsUnder(_area, _mask).getLocator();
         if (_componentLocator.isValid())
             _state = 1;
@@ -4429,7 +4429,7 @@ Cell_HyperNetRootNetOccurrences::Locator::Locator(const Cell* cell, Path path)
 
     _instanceLocator=cell->getInstances().getLocator();
 
-    while (_netLocator.isValid() && !IsHyperNetRootNetOccurrence(Occurrence(_netLocator.getElement(),_path)))
+    while (_netLocator.isValid() && !isHyperNetRootNetOccurrence(Occurrence(_netLocator.getElement(),_path)))
         _netLocator.progress();
 
     if (!_netLocator.isValid())
@@ -4493,7 +4493,7 @@ void Cell_HyperNetRootNetOccurrences::Locator::progress()
         do {
             _netLocator.progress();
         }
-        while (_netLocator.isValid() && !IsHyperNetRootNetOccurrence(Occurrence(_netLocator.getElement(),_path)));
+        while (_netLocator.isValid() && !isHyperNetRootNetOccurrence(Occurrence(_netLocator.getElement(),_path)));
     }
     else if (_hyperNetRootNetOccurrenceLocator.isValid())
         _hyperNetRootNetOccurrenceLocator.progress();

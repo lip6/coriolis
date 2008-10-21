@@ -51,9 +51,6 @@
 // x-----------------------------------------------------------------x
 
 
-//using namespace std;
-
-
 namespace Hurricane {
 
 
@@ -526,21 +523,21 @@ inline Hurricane::Record* getRecord ( const std::multiset<Element,Compare>* s )
 
 # define GETSTRING_POINTER_SUPPORT(Data) \
   template<> inline std::string getString<Data*>( Data* data )             \
-  { if (!data) return "NULL " #Data; return data->_getString(); }          \
+  { if (!data) return "NULL [" #Data "]"; return data->_getString(); }     \
                                                                            \
   template<> inline std::string getString<const Data*>( const Data* data ) \
-  { if (!data) return "NULL const " #Data; return data->_getString(); }
+  { if (!data) return "NULL [const " #Data "]"; return data->_getString(); }
 
 
 # define IOSTREAM_POINTER_SUPPORT(Data) \
   inline std::ostream& operator<< ( std::ostream& o, Data* d )       \
   {                                                                  \
-    if (!d) return o << "NULL";                                      \
+    if (!d) return o << "NULL [" #Data "]";                          \
     return o << "&" << getString<Data*>(d);                          \
   }                                                                  \
   inline std::ostream& operator<< ( std::ostream& o, const Data* d ) \
   {                                                                  \
-    if (!d) return o << "NULL";                                      \
+    if (!d) return o << "NULL [const " #Data "]";                    \
     return o << "&" << getString<const Data*>(d);                    \
   }
 

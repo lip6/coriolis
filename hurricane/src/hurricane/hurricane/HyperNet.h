@@ -64,7 +64,7 @@ class HyperNet {
 
 Occurrence getHyperNetRootNetOccurrence(const Occurrence& netoccurrence);
 
-bool IsHyperNetRootNetOccurrence(Occurrence netoccurrence);
+bool isHyperNetRootNetOccurrence(Occurrence netoccurrence);
 
 
 

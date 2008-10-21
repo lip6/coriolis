@@ -1,43 +1,16 @@
 
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
 // ===================================================================
 //
 // $Id$
 //
 // x-----------------------------------------------------------------x 
 // |                                                                 |
-// |                  H U R R I C A N E                              |
+// |                   C O R I O L I S                               |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
@@ -50,18 +23,18 @@
 // x-----------------------------------------------------------------x
 
 
-# ifndef  __CELL_WIDGET_H__
-#   define  __CELL_WIDGET_H__
+#ifndef  __HURRICANE_CELL_WIDGET_H__
+#define  __HURRICANE_CELL_WIDGET_H__
 
-# include  <math.h>
+#include  <math.h>
 
-# include  <vector>
+#include  <vector>
 
-# include  <QWidget>
-# include  <QPixmap>
-# include  <QPainter>
-# include  <QRect>
-# include  <QPoint>
+#include  <QWidget>
+#include  <QPixmap>
+#include  <QPainter>
+#include  <QRect>
+#include  <QPoint>
 
 class QCursor;
 class QResizeEvent;
@@ -70,15 +43,15 @@ class QKeyEvent;
 class QAction;
 
 
-# include  "hurricane/Commons.h"
-# include  "hurricane/Point.h"
-# include  "hurricane/Box.h"
-# include  "hurricane/Transformation.h"
-# include  "hurricane/Query.h"
+#include  "hurricane/Commons.h"
+#include  "hurricane/Point.h"
+#include  "hurricane/Box.h"
+#include  "hurricane/Transformation.h"
+#include  "hurricane/Query.h"
 
-# include  "hurricane/viewer/DisplayStyle.h"
-# include  "hurricane/viewer/CellWidgets.h"
-# include  "hurricane/viewer/Selector.h"
+#include  "hurricane/viewer/DisplayStyle.h"
+#include  "hurricane/viewer/CellWidgets.h"
+#include  "hurricane/viewer/Selector.h"
 
 
 
@@ -109,13 +82,13 @@ namespace Hurricane {
     private:
       class DrawingPlanes;
     public:
-      typedef void ( DrawExtensionGo_t )  ( CellWidget*
-                                          , const Go*
-                                          , const BasicLayer*
-                                          , const Box&
-                                          , const Transformation&
-                                          );
-      typedef void ( InitDrawExtension_t )( CellWidget* );
+      typedef void ( DrawExtensionGo_t )( CellWidget*
+                                        , const Go*
+                                        , const BasicLayer*
+                                        , const Box&
+                                        , const Transformation&
+                                        );
+      typedef void ( InitExtensionGo_t )( CellWidget* );
     public:
     // Constructor & Destructor.
                                       CellWidget             ( QWidget* parent=NULL );
@@ -135,12 +108,15 @@ namespace Hurricane {
       inline  void                    setStartLevel          ( int level );
       inline  void                    setStopLevel           ( int level );
       inline  void                    setQueryFilter         ( int filter );
-      inline  void                    addDrawExtensionGo     ( const Name&, InitDrawExtension_t*, DrawExtensionGo_t* );
     // Painter control & Hurricane objects drawing primitives.
+      inline  void                    addDrawExtensionGo     ( const Name&, InitExtensionGo_t*, DrawExtensionGo_t* );
+      inline  QPainter&               getPainter             ();
       inline  float                   getScale               () const;
               bool                    isDrawableLayer        ( const Name& );
               bool                    isDrawableExtension    ( const Name& );
+              void                    drawBox                ( DbU::Unit, DbU::Unit, DbU::Unit, DbU::Unit );
               void                    drawBox                ( const Box& );
+              void                    drawLine               ( DbU::Unit, DbU::Unit, DbU::Unit, DbU::Unit );
               void                    drawLine               ( const Point&, const Point& );
               void                    drawText               ( const Point&, const Name&, int angle=0, bool reverse=false  );
               void                    drawGrid               ();
@@ -179,6 +155,7 @@ namespace Hurricane {
               void                    mouseReleaseEvent      ( QMouseEvent* );
     signals:
               void                    cellChanged            ( Cell* );
+              void                    updatePalette          ( Cell* );
               void                    mousePositionChanged   ( const Point& position );
               void                    selectionChanged       ( const set<Selector*>&, Cell* );
               void                    occurrenceToggled      ( Occurrence );
@@ -194,6 +171,7 @@ namespace Hurricane {
               void                    toggleSelect           ( Occurrence occurence, bool fromPopup );
               void                    setShowSelection       ( bool state );
               void                    setCumulativeSelection ( bool state );
+              void                    updatePalette          ();
       inline  void                    redraw                 ();
               void                    redraw                 ( QRect redrawArea );
       inline  void                    redrawSelection        ();
@@ -285,7 +263,7 @@ namespace Hurricane {
                                                      , unsigned int          filter
                                                      );
           inline  void        addDrawExtensionGo     ( const Name&
-                                                     , InitDrawExtension_t*
+                                                     , InitExtensionGo_t*
                                                      , DrawExtensionGo_t*
                                                      );
                   void        setDrawExtensionGo     ( const Name& );
@@ -304,7 +282,7 @@ namespace Hurricane {
         protected:
                   CellWidget*        _cellWidget;
                   DrawExtensionGo_t* _drawExtensionGo;
-                  map<Name,pair<InitDrawExtension_t*,DrawExtensionGo_t*> >
+                  map<Name,pair<InitExtensionGo_t*,DrawExtensionGo_t*> >
                                      _drawExtensionGos;
       };
 
@@ -376,11 +354,11 @@ namespace Hurricane {
   }
 
 
-  inline void  CellWidget::DrawingQuery::addDrawExtensionGo ( const Name&          name
-                                                            , InitDrawExtension_t* initDrawExtension
-                                                            , DrawExtensionGo_t*   drawExtensionGo
+  inline void  CellWidget::DrawingQuery::addDrawExtensionGo ( const Name&        name
+                                                            , InitExtensionGo_t* initExtensionGo
+                                                            , DrawExtensionGo_t* drawExtensionGo
                                                             )
-  { _drawExtensionGos[name] = make_pair(initDrawExtension,drawExtensionGo); }
+  { _drawExtensionGos[name] = make_pair(initExtensionGo,drawExtensionGo); }
 
 
   inline bool  CellWidget::DrawingPlanes::getLineMode () const
@@ -460,11 +438,11 @@ namespace Hurricane {
   { copyToScreen ( 0, 0, width(), height() ); }
 
 
-  inline void  CellWidget::addDrawExtensionGo ( const Name&          name
-                                              , InitDrawExtension_t* initDrawExtension
-                                              , DrawExtensionGo_t*   drawExtensionGo
+  inline void  CellWidget::addDrawExtensionGo ( const Name&        name
+                                              , InitExtensionGo_t* initExtensionGo
+                                              , DrawExtensionGo_t* drawExtensionGo
                                               )
-  { _drawingQuery.addDrawExtensionGo ( name, initDrawExtension, drawExtensionGo ); }
+  { _drawingQuery.addDrawExtensionGo ( name, initExtensionGo, drawExtensionGo ); }
 
 
   inline void  CellWidget::setStartLevel ( int level )
@@ -575,19 +553,23 @@ namespace Hurricane {
   { return _showBoundaries; }
 
 
-  inline  bool  CellWidget::showSelection  () const
+  inline bool  CellWidget::showSelection  () const
   { return _showSelection; }
 
 
-  inline  float  CellWidget::getScale () const
+  inline QPainter& CellWidget::getPainter ()
+  { return _drawingPlanes.painter(); }
+
+
+  inline float  CellWidget::getScale () const
   { return _scale; }
 
 
-  inline  void  CellWidget::setQueryFilter ( int filter )
+  inline void  CellWidget::setQueryFilter ( int filter )
   { _queryFilter = filter; }
 
 
 } // End of Hurricane namespace.
 
 
-# endif
+#endif  // __HURRICANE_CELL_WIDGET__

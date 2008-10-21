@@ -1,105 +1,138 @@
-// ****************************************************************************************************
-// File: Technology.h
-// Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
-// ****************************************************************************************************
 
-#ifndef HURRICANE_TECHNOLOGY
-#define HURRICANE_TECHNOLOGY
+// -*- C++ -*-
+//
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+//
+// ===================================================================
+//
+// $Id$
+//
+// x-----------------------------------------------------------------x
+// |                                                                 |
+// |                   C O R I O L I S                               |
+// |     V L S I   B a c k e n d   D a t a - B a s e                 |
+// |                                                                 |
+// |  Author      :                    Jean-Paul Chaput              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
+// | =============================================================== |
+// |  C++ Header  :       "./Technology.h"                           |
+// | *************************************************************** |
+// |  U p d a t e s                                                  |
+// |                                                                 |
+// x-----------------------------------------------------------------x
 
-#include "hurricane/DBo.h"
-#include "hurricane/Layer.h"
-#include "hurricane/BasicLayers.h"
-#include "hurricane/RegularLayers.h"
-#include "hurricane/ViaLayers.h"
-#include "hurricane/IntrusiveMap.h"
+
+#ifndef  __HURRICANE_TECHNOLOGY__
+#define  __HURRICANE_TECHNOLOGY__
+
+#include  <map>
+#include  "hurricane/Mask.h"
+#include  "hurricane/DBo.h"
+#include  "hurricane/Layer.h"
+#include  "hurricane/BasicLayers.h"
+#include  "hurricane/RegularLayers.h"
+#include  "hurricane/ViaLayers.h"
+#include  "hurricane/IntrusiveMap.h"
+
 
 namespace Hurricane {
 
-class DataBase;
-class BasicLayer;
-class RegularLayer;
-class ViaLayer;
+  using std::multimap;
+
+  class DataBase;
+  class BasicLayer;
+  class RegularLayer;
+  class ViaLayer;
 
 
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::Technology".
 
-// ****************************************************************************************************
-// Technology declaration
-// ****************************************************************************************************
 
-class Technology : public DBo {
-// **************************
+  class Technology : public DBo {
 
-// Types
-// *****
+    public:
+      typedef DBo Inherit;
+      typedef multimap<Layer::Mask,Layer*> LayerMaskMap;
 
-    public: typedef DBo Inherit;
+    public:
+    // Sub-class : LayerMap.
+      class LayerMap : public IntrusiveMap<Name,Layer> {
+        public:
+          typedef IntrusiveMap<Name,Layer> Inherit;
+        public:
+                            LayerMap        ();
+          virtual Name      _getKey         ( Layer* ) const;
+          virtual unsigned  _getHashValue   ( Name ) const;
+          virtual Layer*    _getNextElement ( Layer* ) const;
+          virtual void      _setNextElement ( Layer* , Layer* nextLayer) const;
+      };
 
-    public: class LayerMap : public IntrusiveMap<Name, Layer> {
-    // ******************************************************
+    public:
+    // Constructor.
+      static  Technology*    create                  ( DataBase* , const Name& );
+    // Accessors.
+      inline  DataBase*      getDataBase             () const;
+      inline  const Name&    getName                 () const;
+      inline  Layer*         getLayer                ( const Name& ) const;
+              BasicLayer*    getBasicLayer           ( const Name& ) const;
+              RegularLayer*  getRegularLayer         ( const Name& ) const;
+              ViaLayer*      getViaLayer             ( const Name& ) const;
+      inline  Layers         getLayers               () const;
+              BasicLayers    getBasicLayers          () const;
+              BasicLayers    getBasicLayers          ( const Layer::Mask& ) const;
+              RegularLayers  getRegularLayers        () const;
+              ViaLayers      getViaLayers            () const;
+              Layer*         getLayer                ( const Layer::Mask&, bool useWorking=true ) const;
+              Layer*         getMetalAbove           ( const Layer*, bool useWorking=true ) const;
+              Layer*         getMetalBelow           ( const Layer*, bool useWorking=true ) const;
+              Layer*         getCutAbove             ( const Layer*, bool useWorking=true ) const;
+              Layer*         getCutBelow             ( const Layer*, bool useWorking=true ) const;
+              Layer*         getViaBetween           ( const Layer*, const Layer* ) const;
+              Layer*         getNthMetal             ( int ) const;
+    // Updators.
+              void           setName                 ( const Name& );
+              bool           setWorkingLayer         ( const Name& );
+              bool           setWorkingLayer         ( const Layer* );
+    // Others.
+      inline  LayerMap&      _getLayerMap            ();
+      inline  LayerMaskMap&  _getLayerMaskMap        ();
+              void           _insertInLayerMaskMap   ( Layer* );
+              void           _removeFromLayerMaskMap ( Layer* );
+      inline  Layer::Mask&   _getCutMask             ();
+      inline  Layer::Mask&   _getMetalMask           ();
+    // Hurricane Managment.
+      virtual string         _getTypeName            () const;
+      virtual string         _getString              () const;
+      virtual Record*        _getRecord              () const;
+      
+    private:
+    // Internal: Attributes.
+              DataBase*      _dataBase;
+              Name           _name;
+              LayerMap       _layerMap;
+              LayerMaskMap   _layerMaskMap;
+              Layer::Mask    _cutMask;
+              Layer::Mask    _metalMask;
 
-        public: typedef IntrusiveMap<Name, Layer> Inherit;
-    
-        public: LayerMap();
+    protected:
+    // Constructors & Destructors.
+                             Technology              ( DataBase* , const Name& );
+      virtual void           _postCreate             ();
+      virtual void           _preDestroy             ();
+  };
 
-        public: virtual Name _getKey(Layer* layer) const;
-        public: virtual unsigned _getHashValue(Name name) const;
-        public: virtual Layer* _getNextElement(Layer* layer) const;
-        public: virtual void _setNextElement(Layer* layer, Layer* nextLayer) const;
 
-    };
-
-    public: typedef list<Layer*> LayerList;
-
-// Attributes
-// **********
-
-    private: DataBase* _dataBase;
-    private: Name _name;
-    private: LayerMap _layerMap;
-    private: LayerList _layerList;
-
-// Constructors
-// ************
-
-    protected: Technology(DataBase* dataBase, const Name& name);
-
-    public: static Technology* create(DataBase* dataBase, const Name& name);
-
-// Accessors
-// *********
-
-    public: DataBase* getDataBase() const {return _dataBase;};
-    public: const Name& getName() const {return _name;};
-    public: Layer* getLayer(const Name& name) const {return _layerMap.getElement(name);};
-    public: BasicLayer* getBasicLayer(const Name& name) const;
-    public: RegularLayer* getRegularLayer(const Name& name) const;
-    public: ViaLayer* getViaLayer(const Name& name) const;
-    public: Layers getLayers() const {return getCollection(_layerList);};
-    public: BasicLayers getBasicLayers() const;
-    public: BasicLayers getBasicLayers(const Layer::Mask& mask) const;
-    public: RegularLayers getRegularLayers() const;
-    public: ViaLayers getViaLayers() const;
-
-// Updators
-// ********
-
-    public: void setName(const Name& name);
-
-// Others
-// ******
-
-    protected: virtual void _postCreate();
-
-    protected: virtual void _preDestroy();
-
-    public: virtual string _getTypeName() const {return _TName("Technology");};
-    public: virtual string _getString() const;
-    public: virtual Record* _getRecord() const;
-    public: LayerMap& _getLayerMap() {return _layerMap;};
-    public: LayerList& _getLayerList() {return _layerList;};
-
-};
+// Inline Functions.
+  inline  DataBase*                 Technology::getDataBase      () const { return _dataBase; }
+  inline  const Name&               Technology::getName          () const { return _name; }
+  inline  Layer*                    Technology::getLayer         ( const Name& name ) const { return _layerMap.getElement(name); }
+  inline  Layers                    Technology::getLayers        () const { return getCollection(&_layerMaskMap); }
+  inline  Technology::LayerMap&     Technology::_getLayerMap     () { return _layerMap; }
+  inline  Technology::LayerMaskMap& Technology::_getLayerMaskMap () { return _layerMaskMap; }
+  inline  Layer::Mask&              Technology::_getCutMask      () { return _cutMask; }
+  inline  Layer::Mask&              Technology::_getMetalMask    () { return _metalMask; }
 
 
 } // End of Hurricane namespace.
@@ -108,8 +141,4 @@ class Technology : public DBo {
 INSPECTOR_P_SUPPORT(Hurricane::Technology);
 
 
-#endif // HURRICANE_TECHNOLOGY
-
-// ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
-// ****************************************************************************************************
+#endif  // __HURRICANE_TECHNOLOGY__

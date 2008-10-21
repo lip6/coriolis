@@ -1,5 +1,4 @@
 
-
 // -*- C++ -*-
 //
 // This file is part of the Hurricane Software.
@@ -27,6 +26,7 @@
 # ifndef __HURRICANE_LAYER__
 # define __HURRICANE_LAYER__
 
+# include  "hurricane/Mask.h"
 # include  "hurricane/DBo.h"
 # include  "hurricane/Layers.h"
 # include  "hurricane/DbU.h"
@@ -43,7 +43,7 @@ namespace Hurricane {
 
     public:
     // Types.
-      typedef unsigned long long Mask;
+      typedef Hurricane::Mask<unsigned long long> Mask;
     // Accessors.
       inline  Technology*       getTechnology                () const;
       inline  const Name&       getName                      () const;
@@ -54,6 +54,13 @@ namespace Hurricane {
       inline  DbU::Unit         getPitch                     () const;
       virtual BasicLayers       getBasicLayers               () const = 0;
       virtual Layer*            getConnectorLayer            () const;
+      virtual const Layer*      getTop                       () const;
+      virtual const Layer*      getBottom                    () const;
+      virtual const Layer*      getOpposite                  ( const Layer* ) const;
+              Layer*            getMetalAbove                ( bool useWorking=true ) const;
+              Layer*            getMetalBelow                ( bool useWorking=true ) const;
+              Layer*            getCutAbove                  ( bool useWorking=true ) const;
+              Layer*            getCutBelow                  ( bool useWorking=true ) const;
       virtual Layer*            getObstructionLayer          () const;
       virtual DbU::Unit         getEnclosure                 () const;
       virtual DbU::Unit         getExtentionCap              () const;
@@ -62,10 +69,14 @@ namespace Hurricane {
       virtual DbU::Unit         getExtentionCap              ( const BasicLayer* layer ) const;
       virtual DbU::Unit         getExtentionWidth            ( const BasicLayer* layer ) const;
     // Predicates
+      inline  bool              above                        ( const Layer* layer ) const;
+      inline  bool              below                        ( const Layer* layer ) const;
               bool              contains                     ( const Layer* layer ) const;
               bool              intersect                    ( const Layer* layer ) const;
+      inline  bool              isWorking                    () const;
     // Updators
               void              setName                      ( const Name& name );
+      inline  void              setWorking                   ( bool );
               void              setMinimalSize               ( const DbU::Unit& minimalSize );
               void              setMinimalSpacing            ( const DbU::Unit& minimalSpacing );
               void              setPitch                     ( const DbU::Unit& pitch );
@@ -79,7 +90,10 @@ namespace Hurricane {
       inline  void              _setMask                     ( const Mask& mask );
       inline  void              _setExtractMask              ( const Mask& extractMask );
       inline  void              _setNextOfTechnologyLayerMap ( Layer* layer );
-
+    public:
+      struct MaskCompare {
+          inline bool operator () ( const Layer*, const Layer* ) const;
+      };
 
     private:
     // Internal: Attributes
@@ -91,6 +105,7 @@ namespace Hurricane {
               DbU::Unit         _minimalSpacing;
               DbU::Unit         _pitch;
               Layer*            _nextOfTechnologyLayerMap;
+              bool              _working;
 
     protected:
     // Internal: Constructors & Destructors.
@@ -106,6 +121,9 @@ namespace Hurricane {
 
 
 // Inline Functions.
+  inline  bool                Layer::isWorking                    () const { return _working; }
+  inline  bool                Layer::above                        ( const Layer* layer ) const { return _mask > layer->getMask(); }
+  inline  bool                Layer::below                        ( const Layer* layer ) const { return _mask < layer->getMask(); }
   inline  Technology*         Layer::getTechnology                () const { return _technology; }
   inline  const Name&         Layer::getName                      () const { return _name; }
   inline  const Layer::Mask&  Layer::getMask                      () const { return _mask; }
@@ -113,10 +131,14 @@ namespace Hurricane {
   inline  const DbU::Unit&    Layer::getMinimalSize               () const { return _minimalSize; }
   inline  const DbU::Unit&    Layer::getMinimalSpacing            () const { return _minimalSpacing; }
   inline  DbU::Unit           Layer::getPitch                     () const { return (!_pitch?(_minimalSize + _minimalSpacing):_pitch); }
+  inline  void                Layer::setWorking                   ( bool state ) { _working = state; }
   inline  Layer*              Layer::_getNextOfTechnologyLayerMap () const { return _nextOfTechnologyLayerMap; }
   inline  void                Layer::_setMask                     ( const Mask& mask ) { _mask = mask; }
   inline  void                Layer::_setExtractMask              ( const Mask& extractMask ) { _extractMask = extractMask; }
   inline  void                Layer::_setNextOfTechnologyLayerMap ( Layer* layer ) { _nextOfTechnologyLayerMap = layer; }
+
+  inline  bool  Layer::MaskCompare::operator () ( const Layer* layer1, const Layer* layer2 ) const
+  { return layer1->getMask() < layer2->getMask(); }
 
 
 
@@ -124,6 +146,7 @@ namespace Hurricane {
 
 
 INSPECTOR_P_SUPPORT(Hurricane::Layer);
+INSPECTOR_PV_SUPPORT(Hurricane::Layer::Mask);
 
 
 # endif

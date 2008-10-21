@@ -97,7 +97,7 @@ Technology::Technology(DataBase* dataBase, const Name& name)
     _dataBase(dataBase),
     _name(name),
     _layerMap(),
-    _layerList()
+    _layerMaskMap()
 {
     if (!_dataBase)
         throw Error("Can't create " + _TName("Technology") + " : null data base");
@@ -118,6 +118,16 @@ Technology* Technology::create(DataBase* dataBase, const Name& name)
 
     return technology;
 }
+
+// Layer* Technology::getLayer ( Layer::Mask mask ) const
+// // ***************************************************
+// {
+//   LayerMaskMap::const_iterator ilayer = _layerMaskMap.find(mask);
+//   if ( ilayer == _layerMaskMap.end() )
+//     return NULL;
+
+//   return ilayer->second;
+// }
 
 BasicLayer* Technology::getBasicLayer(const Name& name) const
 // **********************************************************
@@ -165,6 +175,94 @@ ViaLayers Technology::getViaLayers() const
     return SubTypeCollection<Layer*, ViaLayer*>(getLayers());
 }
 
+
+Layer* Technology::getLayer ( const Layer::Mask& mask, bool useWorking ) const
+{
+  LayerMaskMap::const_iterator lb = _layerMaskMap.lower_bound ( mask );
+  LayerMaskMap::const_iterator ub = _layerMaskMap.upper_bound ( mask );
+  for ( ; lb != ub ; lb++ ) {
+    if ( !useWorking || lb->second->isWorking() ) return lb->second;
+  }
+  return NULL;
+}
+
+
+Layer* Technology::getMetalAbove ( const Layer* layer, bool useWorking ) const
+{
+  if ( !layer ) return NULL;
+
+  LayerMaskMap::const_iterator ub = _layerMaskMap.upper_bound ( layer->getMask() );
+  for ( ; ub != _layerMaskMap.end() ; ub++ ) {
+    if (    _metalMask.contains(ub->second->getMask())
+         && ( !useWorking || ub->second->isWorking() ) )
+      return ub->second;
+  }
+  return NULL;
+}
+
+
+Layer* Technology::getMetalBelow ( const Layer* layer, bool useWorking ) const
+{
+  if ( !layer ) return NULL;
+
+  LayerMaskMap::const_iterator lb = _layerMaskMap.lower_bound ( layer->getMask() );
+  if ( lb->second == layer ) lb--;
+  for ( ; lb != _layerMaskMap.begin() ; lb-- ) {
+    if (    _metalMask.contains(lb->second->getMask())
+         && ( !useWorking || lb->second->isWorking() ) )
+      return lb->second;
+  }
+  return NULL;
+}
+
+
+Layer* Technology::getCutAbove ( const Layer* layer, bool useWorking ) const
+{
+  if ( !layer ) return NULL;
+
+  LayerMaskMap::const_iterator ub = _layerMaskMap.upper_bound ( layer->getMask() );
+  for ( ; ub != _layerMaskMap.end() ; ub++ ) {
+    if (    _cutMask.contains(ub->second->getMask())
+         && ( !useWorking || ub->second->isWorking() ) )
+      return ub->second;
+  }
+  return NULL;
+}
+
+
+Layer* Technology::getCutBelow ( const Layer* layer, bool useWorking ) const
+{
+  if ( !layer ) return NULL;
+
+  LayerMaskMap::const_iterator lb = _layerMaskMap.lower_bound ( layer->getMask() );
+  if ( lb->second == layer ) lb--;
+  for ( ; lb != _layerMaskMap.begin() ; lb-- ) {
+    if (    _cutMask.contains(lb->second->getMask())
+         && ( !useWorking || lb->second->isWorking() ) )
+      return lb->second;
+  }
+  return NULL;
+}
+
+
+Layer* Technology::getViaBetween ( const Layer* metal1, const Layer* metal2 ) const
+{
+  if ( !metal1 || !metal2 ) return NULL;
+  if ( metal1->above(metal2) ) swap ( metal1, metal2 );
+
+  Layer* cutLayer = getCutBelow ( metal2 );
+  if ( !cutLayer ) return NULL;
+
+  return getLayer ( metal1->getMask() | metal2->getMask() | cutLayer->getMask() ); 
+}
+
+
+Layer* Technology::getNthMetal ( int nth ) const
+{
+  return getLayer ( _metalMask.nthbit(nth) );
+}
+
+
 void Technology::setName(const Name& name)
 // ***************************************
 {
@@ -175,6 +273,32 @@ void Technology::setName(const Name& name)
         _name = name;
     }
 }
+
+
+bool  Technology::setWorkingLayer ( const Name& name )
+{
+  Layer* layer = getLayer ( name );
+  if ( !layer ) return false;
+
+  return setWorkingLayer ( layer );
+}
+
+
+bool  Technology::setWorkingLayer ( const Layer* layer )
+{
+  bool  found = false;
+  LayerMaskMap::iterator lb = _layerMaskMap.lower_bound ( layer->getMask() );
+  LayerMaskMap::iterator ub = _layerMaskMap.upper_bound ( layer->getMask() );
+  for ( ; lb != ub ; lb++ ) {
+    if ( lb->second == layer ) {
+      lb->second->setWorking ( true );
+      found = true;
+    } else
+      lb->second->setWorking ( false );
+  }
+  return found;
+}
+
 
 void Technology::_postCreate()
 // ***************************
@@ -194,6 +318,34 @@ void Technology::_preDestroy()
     _dataBase->_setTechnology(NULL);
 }
 
+void Technology::_insertInLayerMaskMap ( Layer* layer )
+// ****************************************************
+{
+  _layerMaskMap.insert ( make_pair(layer->getMask(),layer) );
+}
+
+void Technology::_removeFromLayerMaskMap ( Layer* layer )
+// ******************************************************
+{
+  LayerMaskMap::iterator lb = _layerMaskMap.lower_bound ( layer->getMask() );
+  LayerMaskMap::iterator ub = _layerMaskMap.upper_bound ( layer->getMask() );
+
+  for ( ; lb != ub ; lb++ ) {
+    if ( lb->second == layer ) {
+      _layerMaskMap.erase ( lb );
+      break;
+    }
+  }
+}
+
+
+string  Technology::_getTypeName () const
+{
+  return _TName("Technology");
+}
+
+
+
 string Technology::_getString() const
 // **********************************
 {
@@ -207,9 +359,11 @@ Record* Technology::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->add(getSlot("DataBase", _dataBase));
-        record->add(getSlot("Name", &_name));
-        record->add(getSlot("Layers", &_layerList));
+      record->add(getSlot("DataBase", _dataBase));
+      record->add(getSlot("Name", &_name));
+      record->add(getSlot("Layers", &_layerMaskMap));
+      record->add(getSlot("cutMask", &_cutMask));
+      record->add(getSlot("metalMask", &_metalMask));
     }
     return record;
 }

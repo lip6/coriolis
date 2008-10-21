@@ -206,18 +206,19 @@ namespace Hurricane {
   void BasicLayer::_postCreate ()
   {
     Mask basicLayersMask = 0;
-    for_each_basic_layer(basicLayer, getTechnology()->getBasicLayers()) {
-      basicLayersMask |= basicLayer->getMask();
-      end_for;
+    forEach ( BasicLayer*, basicLayer, getTechnology()->getBasicLayers() ) {
+      basicLayersMask |= (*basicLayer)->getMask();
     }
 
     Mask mask = 1;
-    while (mask && (mask & basicLayersMask)) mask = mask<<1;
+    while (mask && (mask & basicLayersMask)) mask = mask.lshift(1);
 
     if (!mask)
       throw Error("Can't create " + _TName("BasicLayer") + " : mask capacity overflow");
 
     _setMask(mask);
+    if ( _material == Material::metal ) getTechnology()->_getMetalMask().set(getMask());
+    if ( _material == Material::cut   ) getTechnology()->_getCutMask  ().set(getMask());
 
     if (_extractNumber) {
       Mask extractMask = (1 << _extractNumber);
@@ -234,6 +235,8 @@ namespace Hurricane {
 
   void BasicLayer::_preDestroy ()
   {
+    if ( _material == Material::metal ) getTechnology()->_getMetalMask().unset(getMask());
+    if ( _material == Material::cut   ) getTechnology()->_getCutMask  ().unset(getMask());
     Layer::_preDestroy();
   }
 
@@ -287,7 +290,7 @@ namespace Hurricane {
 
 
   string BasicLayer::Material::_getString () const
-  { return getString(_code); }
+  { return getString(&_code); }
 
 
   Record* BasicLayer::Material::_getRecord () const

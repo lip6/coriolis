@@ -26,6 +26,7 @@
 #ifndef  __HURRICANE_EXTENSION_SLICE__
 #define  __HURRICANE_EXTENSION_SLICE__
 
+#include  "hurricane/Mask.h"
 #include  "hurricane/Name.h"
 #include  "hurricane/ExtensionSlices.h"
 #include  "hurricane/QuadTree.h"
@@ -40,7 +41,7 @@ namespace Hurricane {
   class ExtensionSlice {
 
     public:
-      typedef unsigned long long  Mask;
+      typedef Hurricane::Mask<unsigned long long> Mask;
     public:
     // Constructor & Destructor.
       static  ExtensionSlice*     _create        ( Cell* , const Name& );

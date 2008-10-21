@@ -76,8 +76,11 @@ namespace Hurricane {
                                                      );
     // Accessors.
       virtual BasicLayers          getBasicLayers    () const;
-      virtual DbU::Unit                 getEnclosure      () const;
-      virtual DbU::Unit                 getEnclosure      ( const BasicLayer* layer ) const;
+      virtual const Layer*         getTop            () const;
+      virtual const Layer*         getBottom         () const;
+      virtual const Layer*         getOpposite       ( const Layer* ) const;
+      virtual DbU::Unit            getEnclosure      () const;
+      virtual DbU::Unit            getEnclosure      ( const BasicLayer* layer ) const;
     // Updators.
       virtual void                 setEnclosure      ( const BasicLayer* layer, DbU::Unit enclosure );
     // Hurricane Managment.
@@ -88,8 +91,8 @@ namespace Hurricane {
     private:
     // Internal: Attributes
               vector<BasicLayer*>  _basicLayers;
-              vector<DbU::Unit>         _enclosures;
-             DbU::Unit                 _maximalEnclosure;
+              vector<DbU::Unit>    _enclosures;
+              DbU::Unit            _maximalEnclosure;
 
     protected:
     // Internal: Constructors & Destructors.

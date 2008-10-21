@@ -894,6 +894,7 @@ template<typename Type> inline Hurricane::Record* getRecord ( const Hurricane::C
 #include "hurricane/MultisetCollection.h"
 #include "hurricane/SetCollection.h"
 #include "hurricane/MapCollection.h"
+#include "hurricane/MultimapCollection.h"
 #include "hurricane/ListCollection.h"
 #include "hurricane/VectorCollection.h"
 

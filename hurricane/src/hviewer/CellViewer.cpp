@@ -1,36 +1,9 @@
 
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
 // ===================================================================
 //
 // $Id$
@@ -123,17 +96,17 @@ namespace Hurricane {
     if ( _openAction ) return;
 
     _openAction = new QAction  ( tr("&Open Cell"), this );
-    _openAction->setObjectName ( "viewer.file.openCell" );
+    _openAction->setObjectName ( "viewer.menuBar.file.openCell" );
     _openAction->setIcon       ( QIcon(":/images/stock_open.png") );
     _openAction->setStatusTip  ( tr("Open (load) a new Cell") );
 
     _nextAction = new QAction  ( tr("&Next Breakpoint"), this );
-    _nextAction->setObjectName ( "viewer.file.nextBreakpoint" );
+    _nextAction->setObjectName ( "viewer.menuBar.file.nextBreakpoint" );
     _nextAction->setStatusTip  ( tr("Proceed to the next breakpoint") );
 
     for ( int i=0 ; i<CellHistorySize ; i++ ) {
       _cellHistoryAction[i] = new QAction ( this );
-      _cellHistoryAction[i]->setObjectName ( QString("viewer.file.cellHistory[%1]").arg(i) );
+      _cellHistoryAction[i]->setObjectName ( QString("viewer.menuBar.file.cellHistory[%1]").arg(i) );
       _cellHistoryAction[i]->setVisible ( false );
       _cellHistoryAction[i]->setData    ( i );
       _cellHistoryAction[i]->setFont    ( Graphics::getFixedFont(QFont::Bold,false,false) );
@@ -141,67 +114,67 @@ namespace Hurricane {
     }
 
     _saveAction = new QAction  ( tr("&Save Cell"), this );
-    _saveAction->setObjectName ( "viewer.file.saveCell" );
+    _saveAction->setObjectName ( "viewer.menuBar.file.saveCell" );
     _saveAction->setIcon       ( QIcon(":/images/stock_save.png") );
     _saveAction->setStatusTip  ( tr("Save the current Cell") );
     _saveAction->setVisible    ( false );
 
     _closeAction = new QAction  ( tr("&Close"), this );
-    _closeAction->setObjectName ( "viewer.file.close" );
+    _closeAction->setObjectName ( "viewer.menuBar.file.close" );
     _closeAction->setStatusTip  ( tr("Close This Coriolis CellViewer") );
     _closeAction->setShortcut   ( QKeySequence(tr("CTRL+W")) );
     connect ( _closeAction, SIGNAL(triggered()), this, SLOT(close()) );
 
     _exitAction = new QAction  ( tr("&Exit"), this );
-    _exitAction->setObjectName ( "viewer.file.exit" );
+    _exitAction->setObjectName ( "viewer.menuBar.file.exit" );
     _exitAction->setStatusTip  ( tr("Exit All Coriolis CellViewer") );
     _exitAction->setShortcut   ( QKeySequence(tr("CTRL+Q")) );
     connect ( _exitAction, SIGNAL(triggered()), qApp, SLOT(closeAllWindows()) );
 
     _refreshAction = new QAction  ( tr("&Refresh"), this );
-    _refreshAction->setObjectName ( "viewer.view.refresh" );
+    _refreshAction->setObjectName ( "viewer.menuBar.view.refresh" );
     _refreshAction->setStatusTip  ( tr("Force full redrawing of the display") );
     _refreshAction->setShortcut   ( QKeySequence(tr("CTRL+L")) );
 
     _fitToContentsAction = new QAction  ( tr("&Fit to Contents"), this );
-    _fitToContentsAction->setObjectName ( "viewer.view.fit" );
+    _fitToContentsAction->setObjectName ( "viewer.menuBar.view.fit" );
     _fitToContentsAction->setStatusTip  ( tr("Adjust zoom to fit the whole cell's contents") );
     _fitToContentsAction->setShortcut   ( Qt::Key_F );
 
     _showSelectionAction = new QAction  ( tr("&Show Selection"), this );
-    _showSelectionAction->setObjectName ( "viewer.view.showSelection" );
+    _showSelectionAction->setObjectName ( "viewer.menuBar.view.showSelection" );
     _showSelectionAction->setStatusTip  ( tr("Highlight the selected items (darken others)") );
     _showSelectionAction->setShortcut   ( Qt::Key_S );
     _showSelectionAction->setCheckable  ( true );
 
     _showPaletteAction = new QAction  ( tr("Show &Palette"), this );
-    _showPaletteAction->setObjectName ( "viewer.view.showPalette" );
+    _showPaletteAction->setObjectName ( "viewer.menuBar.view.showPalette" );
     _showPaletteAction->setStatusTip  ( tr("Hide/Show the Palette sub-window") );
     _showPaletteAction->setCheckable  ( true );
     _showPaletteAction->setChecked    ( true );
 
     _graphicsSettingsAction = new QAction  ( tr("Graphics Settings"), this );
-    _graphicsSettingsAction->setObjectName ( "viewer.view.graphicsSettings" );
+    _graphicsSettingsAction->setObjectName ( "viewer.menuBar.view.graphicsSettings" );
     _graphicsSettingsAction->setStatusTip  ( tr("Tune Graphics Settings") );
 
     _displayFilterAction = new QAction  ( tr("Display Filter"), this );
-    _displayFilterAction->setObjectName ( "viewer.view.displayFilter" );
+    _displayFilterAction->setObjectName ( "viewer.menuBar.view.displayFilter" );
     _displayFilterAction->setStatusTip  ( tr("Tune Cell Displaying") );
 
     _runInspectorOnDataBase= new QAction   ( tr("Inspect &DataBase"), this );
-    _runInspectorOnDataBase->setObjectName ( "viewer.tools.inspectDb" );
+    _runInspectorOnDataBase->setObjectName ( "viewer.menuBar.tools.inspectDb" );
     _runInspectorOnDataBase->setStatusTip  ( tr("Run Inspector on Hurricane DataBase") );
 
     _runInspectorOnCell= new QAction   ( tr("Inspect &Cell"), this );
-    _runInspectorOnCell->setObjectName ( "viewer.tools.inspectCell" );
+    _runInspectorOnCell->setObjectName ( "viewer.menuBar.tools.inspectCell" );
     _runInspectorOnCell->setStatusTip  ( tr("Run Inspector on the current Cell") );
 
     _browseSelection= new QAction   ( tr("Browse &Selection"), this );
-    _browseSelection->setObjectName ( "viewer.tools.browseSelection" );
+    _browseSelection->setObjectName ( "viewer.menuBar.tools.browseSelection" );
     _browseSelection->setStatusTip  ( tr("Browse objects currently selecteds") );
 
     _browseNetlist= new QAction   ( tr("Browse &Netlist"), this );
-    _browseNetlist->setObjectName ( "viewer.tools.browseNetlist" );
+    _browseNetlist->setObjectName ( "viewer.menuBar.tools.browseNetlist" );
     _browseNetlist->setStatusTip  ( tr("Browse netlist from the current Cell") );
   }
 
@@ -211,8 +184,10 @@ namespace Hurricane {
     if (  _fileMenu   ) return;
     if ( !_openAction ) createActions ();
 
+    menuBar()->setObjectName ( tr("viewer.menuBar") );
+
     _fileMenu = menuBar()->addMenu ( tr("File") );
-    _fileMenu->setObjectName ( "viewer.file" );
+    _fileMenu->setObjectName ( "viewer.menuBar.file" );
     _fileMenu->addAction ( _openAction );
     _fileMenu->addAction ( _nextAction );
     _fileMenu->addSeparator ();
@@ -225,7 +200,7 @@ namespace Hurricane {
     _fileMenu->addAction ( _exitAction );
 
     _viewMenu = menuBar()->addMenu ( tr("View") );
-    _viewMenu->setObjectName ( "viewer.view" );
+    _viewMenu->setObjectName ( "viewer.menuBar.view" );
     _viewMenu->addAction ( _refreshAction );
     _viewMenu->addAction ( _fitToContentsAction );
     _viewMenu->addAction ( _showSelectionAction );
@@ -234,15 +209,21 @@ namespace Hurricane {
     _viewMenu->addAction ( _graphicsSettingsAction );
 
     _toolsMenu = menuBar()->addMenu ( tr("Tools") );
-    _toolsMenu->setObjectName ( "viewer.tools" );
+    _toolsMenu->setObjectName ( "viewer.menuBar.tools" );
     _toolsMenu->addAction ( _runInspectorOnDataBase );
     _toolsMenu->addAction ( _runInspectorOnCell );
     _toolsMenu->addAction ( _browseSelection );
     _toolsMenu->addAction ( _browseNetlist );
+  }
 
-    _debugMenu = menuBar()->addMenu ( tr("Debug") );
-    _debugMenu->setObjectName ( "viewer.debug" );
-    _debugMenu->hide ();
+
+  QMenu* CellViewer::createDebugMenu ()
+  {
+    if ( !_debugMenu ) {
+      _debugMenu = menuBar()->addMenu ( tr("Debug") );
+      _debugMenu->setObjectName ( "viewer.menuBar.debug" );
+    }
+    return _debugMenu;
   }
 
 
@@ -283,24 +264,25 @@ namespace Hurricane {
                                   | QDockWidget::DockWidgetMovable
                                   | QDockWidget::DockWidgetFloatable
                                   );
-    layerMapDock->setObjectName   ( "viewer.dock.paletteWindow" );
+    layerMapDock->setObjectName   ( "viewer.menuBar.dock.paletteWindow" );
     layerMapDock->setWidget       ( _palette );
     layerMapDock->setAllowedAreas ( Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea );
     addDockWidget ( Qt::RightDockWidgetArea, layerMapDock );
 
     setCentralWidget ( _cellWidget );
 
-    connect ( _graphicsSettings      , SIGNAL(styleChanged()), _cellWidget, SLOT(redraw())                );
-    connect ( _refreshAction         , SIGNAL(triggered())   , _cellWidget, SLOT(redraw())                );
-    connect ( _fitToContentsAction   , SIGNAL(triggered())   , _cellWidget, SLOT(fitToContents())         );
-    connect ( _showSelectionAction   , SIGNAL(toggled(bool)) , _cellWidget, SLOT(setShowSelection(bool))  );
-    connect ( _showPaletteAction     , SIGNAL(toggled(bool)) , this       , SLOT(setShowPalette(bool))    );
-    connect ( _graphicsSettingsAction, SIGNAL(triggered())   , this       , SLOT(showGraphicsSettings())  );
-    connect ( _displayFilterAction   , SIGNAL(triggered())   , this       , SLOT(showDisplayFilter())     );
-    connect ( _runInspectorOnDataBase, SIGNAL(triggered())   , this       , SLOT(runInspectorOnDataBase()));
-    connect ( _runInspectorOnCell    , SIGNAL(triggered())   , this       , SLOT(runInspectorOnCell())    );
-    connect ( _browseSelection       , SIGNAL(triggered())   , this       , SLOT(browseSelection())       );
-    connect ( _browseNetlist         , SIGNAL(triggered())   , this       , SLOT(browseNetlist())         );
+    connect ( this                   , SIGNAL(redrawCellWidget()), _cellWidget, SLOT(redraw())                );
+    connect ( _graphicsSettings      , SIGNAL(styleChanged())    , _cellWidget, SLOT(redraw())                );
+    connect ( _refreshAction         , SIGNAL(triggered())       , _cellWidget, SLOT(redraw())                );
+    connect ( _fitToContentsAction   , SIGNAL(triggered())       , _cellWidget, SLOT(fitToContents())         );
+    connect ( _showSelectionAction   , SIGNAL(toggled(bool))     , _cellWidget, SLOT(setShowSelection(bool))  );
+    connect ( _showPaletteAction     , SIGNAL(toggled(bool))     , this       , SLOT(setShowPalette(bool))    );
+    connect ( _graphicsSettingsAction, SIGNAL(triggered())       , this       , SLOT(showGraphicsSettings())  );
+    connect ( _displayFilterAction   , SIGNAL(triggered())       , this       , SLOT(showDisplayFilter())     );
+    connect ( _runInspectorOnDataBase, SIGNAL(triggered())       , this       , SLOT(runInspectorOnDataBase()));
+    connect ( _runInspectorOnCell    , SIGNAL(triggered())       , this       , SLOT(runInspectorOnCell())    );
+    connect ( _browseSelection       , SIGNAL(triggered())       , this       , SLOT(browseSelection())       );
+    connect ( _browseNetlist         , SIGNAL(triggered())       , this       , SLOT(browseNetlist())         );
     connect ( _cellWidget            , SIGNAL(mousePositionChanged(const Point&))
             , _mousePosition         , SLOT(setPosition(const Point&)) );
 
@@ -380,7 +362,7 @@ namespace Hurricane {
 
   void  CellViewer::setShowPalette ( bool show )
   {
-    QDockWidget* paletteWindow = findChild<QDockWidget*>("viewer.dock.paletteWindow");
+    QDockWidget* paletteWindow = findChild<QDockWidget*>("viewer.menuBar.dock.paletteWindow");
 
     if ( !paletteWindow ) {
       cerr << "paletteWindow not found." << endl;

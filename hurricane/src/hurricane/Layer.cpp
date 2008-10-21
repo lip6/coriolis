@@ -51,6 +51,7 @@ namespace Hurricane {
                  , _minimalSpacing(minimalSpacing)
                  , _pitch(pitch)
                  , _nextOfTechnologyLayerMap(NULL)
+                 , _working(false)
   {
     if ( !_technology )
       throw Error ( "Can't create " + _TName("Layer") + " : null technology" );
@@ -69,6 +70,34 @@ namespace Hurricane {
 
   Layer* Layer::getObstructionLayer () const
   { return NULL; } 
+
+
+  const Layer* Layer::getTop () const
+  { return NULL; } 
+
+
+  const Layer* Layer::getBottom () const
+  { return NULL; } 
+
+
+  const Layer* Layer::getOpposite ( const Layer* ) const
+  { return NULL; } 
+
+
+  Layer* Layer::getMetalAbove ( bool useWorking ) const
+  { return _technology->getMetalAbove(this,useWorking); }
+
+
+  Layer* Layer::getMetalBelow ( bool useWorking ) const
+  { return _technology->getMetalBelow(this,useWorking); }
+
+
+  Layer* Layer::getCutAbove ( bool useWorking ) const
+  { return _technology->getCutAbove(this,useWorking); }
+
+
+  Layer* Layer::getCutBelow ( bool useWorking ) const
+  { return _technology->getCutBelow(this,useWorking); }
 
 
   DbU::Unit  Layer::getEnclosure () const
@@ -103,7 +132,7 @@ namespace Hurricane {
 
   bool Layer::intersect ( const Layer* layer ) const
   {
-    return ( (_mask & layer->getMask()) != 0 );
+    return ( layer->getMask().contains(_mask) );
   }
 
 
@@ -165,7 +194,7 @@ namespace Hurricane {
   void Layer::_postCreate ()
   {
     _technology->_getLayerMap()._insert(this);
-    _technology->_getLayerList().push_back(this);
+    _technology->_insertInLayerMaskMap(this);
 
     DBo::_postCreate();
   }
@@ -175,7 +204,7 @@ namespace Hurricane {
   {
     DBo::_preDestroy();
 
-    _technology->_getLayerList().remove(this);
+    _technology->_getLayerMaskMap().erase(_mask);
     _technology->_getLayerMap()._remove(this);
   }
 
@@ -192,13 +221,13 @@ namespace Hurricane {
   {
     Record* record = DBo::_getRecord();
     if (record) {
-      record->add(getSlot("Technology", _technology));
-      record->add(getSlot("Name", &_name));
-      record->add(getSlot("Mask", &_mask));
-      record->add(getSlot("ExtractMask", &_extractMask));
-      record->add(getSlot("MinimalSize", &_minimalSize));
+      record->add(getSlot("Technology"    , _technology     ));
+      record->add(getSlot("Name"          , &_name          ));
+      record->add(getSlot("Mask"          , &_mask          ));
+      record->add(getSlot("ExtractMask"   , &_extractMask   ));
+      record->add(getSlot("MinimalSize"   , &_minimalSize   ));
       record->add(getSlot("MinimalSpacing", &_minimalSpacing));
-      record->add(getSlot("Pitch", &_pitch));
+      record->add(getSlot("Pitch"         , &_pitch         ));
     }
     return record;
   }

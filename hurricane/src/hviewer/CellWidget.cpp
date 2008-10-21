@@ -1,43 +1,16 @@
 
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
 // ===================================================================
 //
 // $Id$
 //
 // x-----------------------------------------------------------------x 
 // |                                                                 |
-// |                  H U R R I C A N E                              |
+// |                   C O R I O L I S                               |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
@@ -291,7 +264,7 @@ namespace Hurricane {
 
   void  CellWidget::DrawingQuery::setDrawExtensionGo ( const Name& name )
   {
-    map<Name,pair<InitDrawExtension_t*,DrawExtensionGo_t*> >::iterator idraw
+    map<Name,pair<InitExtensionGo_t*,DrawExtensionGo_t*> >::iterator idraw
       = _drawExtensionGos.find ( name );
 
     if ( idraw != _drawExtensionGos.end() ) {
@@ -334,6 +307,8 @@ namespace Hurricane {
                                          , const Transformation&  transformation
                                          )
   {
+    cerr << "DrawingQuery::drawGo() - " << go << endl;
+
     const Segment* segment = dynamic_cast<const Segment*>(go);
     if ( segment ) {
       if ( 1 < _cellWidget->dbuToDisplayLength(segment->getWidth()) ) {
@@ -479,14 +454,20 @@ namespace Hurricane {
   }
 
 
+  void  CellWidget::updatePalette ()
+  {
+    emit updatePalette(getCell());
+  }
+
 
   void  CellWidget::bindToPalette ( HPalette* palette )
   {
     detachFromPalette ();
     _palette = palette;
 
-    connect ( _palette, SIGNAL(paletteChanged())  , this    , SLOT(redraw()) );
-    connect ( this    , SIGNAL(cellChanged(Cell*)), _palette, SLOT(updateExtensions(Cell*)));
+    connect ( _palette, SIGNAL(paletteChanged())    , this    , SLOT(redraw()) );
+    connect ( this    , SIGNAL(cellChanged(Cell*))  , _palette, SLOT(updateExtensions(Cell*)) );
+    connect ( this    , SIGNAL(updatePalette(Cell*)), _palette, SLOT(updateExtensions(Cell*)) );
   }
 
 
@@ -619,12 +600,12 @@ namespace Hurricane {
           _textDrawingQuery.doQuery           ();
         }
 
-        _drawingQuery.setFilter        ( _queryFilter & ~Query::DoMasterCells );
-
+      //_drawingQuery.setFilter        ( _queryFilter & ~Query::DoMasterCells );
         forEach ( ExtensionSlice*, islice, _cell->getExtensionSlices() ) {
-          if ( isDrawableLayer((*islice)->getName()) ) {
+          if ( isDrawableExtension((*islice)->getName()) ) {
             _drawingQuery.setExtensionMask   ( (*islice)->getMask() );
             _drawingQuery.setDrawExtensionGo ( (*islice)->getName() );
+            _drawingQuery.setFilter          ( Query::DoExtensionGos );
             _drawingQuery.doQuery            ();
           }
         }
@@ -717,6 +698,14 @@ namespace Hurricane {
   }
 
 
+  void  CellWidget::drawBox ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2 )
+  {
+    _redrawRectCount++;
+    _drawingPlanes.setLineMode ( false );
+    _drawingPlanes.painter().drawRect ( dbuToDisplayRect(x1,y1,x2,y2) );
+  }
+
+
   void  CellWidget::drawBox ( const Box& box )
   {
     _redrawRectCount++;
@@ -736,6 +725,13 @@ namespace Hurricane {
     _drawingPlanes.painter().rotate( angle );
     _drawingPlanes.painter().drawText ( 0, _textFontHeight, getString(text).c_str() );
     _drawingPlanes.painter().restore();
+  }
+
+
+  void  CellWidget::drawLine ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2 )
+  {
+    _drawingPlanes.setLineMode ( true );
+    _drawingPlanes.painter().drawLine ( dbuToDisplayPoint(x1,y1), dbuToDisplayPoint(x2,y2) );
   }
 
 

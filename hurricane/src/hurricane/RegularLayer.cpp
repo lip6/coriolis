@@ -231,6 +231,18 @@ namespace Hurricane {
   { return RegularLayer_RegularLayers(this); }
 
 
+  const Layer* RegularLayer::getTop () const
+  { return getTechnology()->getLayer(_basicLayer->getMask()); } 
+
+
+  const Layer* RegularLayer::getBottom () const
+  { return getTechnology()->getLayer(_basicLayer->getMask()); } 
+
+
+  const Layer* RegularLayer::getOpposite ( const Layer* ) const
+  { return getTechnology()->getLayer(_basicLayer->getMask()); } 
+
+
   DbU::Unit  RegularLayer::getEnclosure () const
   { return _enclosure; }
 
@@ -269,10 +281,14 @@ namespace Hurricane {
     if ( _basicLayer )
       throw Error ( resetLayer, getString(getName()).c_str() );
 
-    _basicLayer     = basicLayer;
+    getTechnology()->_removeFromLayerMaskMap ( this );
+
+    _basicLayer = basicLayer;
 
     _setMask        ( _basicLayer->getMask()        );
     _setExtractMask ( _basicLayer->getExtractMask() );
+
+    getTechnology()->_insertInLayerMaskMap ( this );
   }
 
 

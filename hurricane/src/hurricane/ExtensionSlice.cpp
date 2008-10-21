@@ -112,7 +112,7 @@ namespace Hurricane {
     if (record) {
       record->add(getSlot("Cell"    , _cell    ));
       record->add(getSlot("Name"    , _name    ));
-      record->add(getSlot("Mask"    , _mask    ));
+      record->add(getSlot("Mask"    ,&_mask    ));
       record->add(getSlot("QuadTree",&_quadTree));
     }
     return record;

@@ -104,7 +104,9 @@ namespace Hurricane {
     _basicLayers.reserve ( 3 );
     _enclosures .reserve ( 3 );
 
-  // Have to check wich one is top layer & cutLayer of type cut.
+    if ( bottomLayer->getMask() > topLayer->getMask() )
+      swap ( bottomLayer, topLayer );
+
     _basicLayers.push_back ( bottomLayer );
     _basicLayers.push_back ( cutLayer );
     _basicLayers.push_back ( topLayer );
@@ -144,6 +146,22 @@ namespace Hurricane {
 
   BasicLayers ViaLayer::getBasicLayers () const
   { return getCollection(_basicLayers); }
+
+
+  const Layer* ViaLayer::getTop () const
+  { return getTechnology()->getLayer(_basicLayers[2]->getMask()); } 
+
+
+  const Layer* ViaLayer::getBottom () const
+  { return getTechnology()->getLayer(_basicLayers[0]->getMask()); } 
+
+
+  const Layer* ViaLayer::getOpposite ( const Layer* layer ) const
+  {
+    if ( layer->getMask() == _basicLayers[0]->getMask() ) return getTop();
+    if ( layer->getMask() == _basicLayers[2]->getMask() ) return getBottom();
+    return NULL;
+  } 
 
 
   DbU::Unit  ViaLayer::getEnclosure () const

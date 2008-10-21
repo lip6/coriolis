@@ -148,29 +148,40 @@ namespace Hurricane {
   template<typename Value> class StandardPrivateProperty : public PrivateProperty {
 
     public:
-      static  Name                     staticGetName ();
-      static  StandardPrivateProperty* get           ( const DBo* );
+      static  Name                     staticGetName  ();
+      static  Value*                   staticGetValue ( const DBo* );
+      static  StandardPrivateProperty* get            ( const DBo*, bool create=false );
     // Constructors.
-      static  StandardPrivateProperty* create        ();
-      static  StandardPrivateProperty* create        ( const Value& );
+      static  StandardPrivateProperty* create         ();
+      static  StandardPrivateProperty* create         ( const Value& );
     // Methods.
-      virtual Name                     getName       () const;
-              Value&                   getValue      () const;
-              void                     setValue      ( const Value& );
-      virtual string                   _getTypeName  () const;
-      virtual string                   _getString    () const;
-      virtual Record*                  _getRecord    () const;
+      virtual Name                     getName        () const;
+              Value&                   getValue       () const;
+              void                     setValue       ( const Value& );
+      virtual string                   _getTypeName   () const;
+      virtual string                   _getString     () const;
+      virtual Record*                  _getRecord     () const;
 
     private:
     // Internal: Attributes.
-      static  Name    _name;
-      mutable Value   _value;
+      static  Name                     _name;
+      static  DBo*                     _owner;
+      static  StandardPrivateProperty* _cache;
+      mutable Value                    _value;
 
     protected:
     // Internal: Constructor.
       StandardPrivateProperty ();
       StandardPrivateProperty ( const Value& );
   };
+
+
+  template<typename Value>
+  DBo* StandardPrivateProperty<Value>::_owner = NULL;
+
+
+  template<typename Value>
+  StandardPrivateProperty<Value>* StandardPrivateProperty<Value>::_cache = NULL;
 
 
   template<typename Value>
@@ -181,35 +192,49 @@ namespace Hurricane {
 
 
   template<typename Value>
+  Value* StandardPrivateProperty<Value>::staticGetValue ( const DBo* object )
+  {
+    if ( ( object == _owner ) || get(object) ) return _cache->getValue();
+    return NULL;
+  }
+
+
+  template<typename Value>
   StandardPrivateProperty<Value>* StandardPrivateProperty<Value>::create ()
   {
-    StandardPrivateProperty<Value>* property = new StandardPrivateProperty<Value>();
-    property->_postCreate();
-    return property;
+    _cache = new StandardPrivateProperty<Value>();
+    _cache->_postCreate();
+    return _cache;
   }
 
 
   template<typename Value>
   StandardPrivateProperty<Value>* StandardPrivateProperty<Value>::create ( const Value& value )
   {
-    StandardPrivateProperty<Value>* property = new StandardPrivateProperty<Value>(value);
-    property->_postCreate();
-    return property;
+    _cache = new StandardPrivateProperty<Value>(value);
+    _cache->_postCreate();
+    return _cache;
   }
 
 
   template<typename Value>
-  StandardPrivateProperty<Value>* StandardPrivateProperty<Value>::get ( const DBo* object )
+  StandardPrivateProperty<Value>* StandardPrivateProperty<Value>::get ( const DBo* object, bool create )
   {
-    Property*                property1 = object->getProperty ( StandardPrivateProperty<Value>::staticGetName() );
-    StandardPrivateProperty* property2 = dynamic_cast<StandardPrivateProperty<Value>*> ( property1 );
-    
-    if ( property1 && !property2 )
-      throw Error ( propertyTypeNameError
-                  , getString(StandardPrivateProperty<Value>::staticGetName()).c_str()
-                  , getString(object).c_str() );
+    if ( object == _owner ) return _cache;
 
-    return property2;
+    Property* property = object->getProperty ( StandardPrivateProperty<Value>::staticGetName() );
+    _cache   = dynamic_cast<StandardPrivateProperty<Value>*> ( property );
+    
+    if ( !_cache ) {
+      if ( property )
+        throw Error ( propertyTypeNameError
+                    , getString(StandardPrivateProperty<Value>::staticGetName()).c_str()
+                    , getString(object).c_str() );
+      else if ( create )
+        const_cast<DBo*>(object)->put ( StandardPrivateProperty<Value>::create() );
+    }
+
+    return _cache;
   }
   
 
@@ -313,23 +338,26 @@ namespace Hurricane {
   template<typename Value> class StandardSharedProperty : public SharedProperty {
 
     public:
-      static  Name                    staticGetName ();
-      static  StandardSharedProperty* get           ( const DBo* );
+      static  Name                    staticGetName  ();
+      static  Value*                  staticGetValue ( const DBo* );
+      static  StandardSharedProperty* get            ( const DBo*, bool create=false );
     // Constructors.
-      static  StandardSharedProperty* create        ();
-      static  StandardSharedProperty* create        ( const Value& );
+      static  StandardSharedProperty* create         ();
+      static  StandardSharedProperty* create         ( const Value& );
     // Methods.
-      virtual Name                    getName       () const;
-              Value&                  getValue      () const;
-              void                    setValue      ( const Value& );
-      virtual string                  _getTypeName  () const;
-      virtual string                  _getString    () const;
-      virtual Record*                 _getRecord    () const;
+      virtual Name                    getName        () const;
+              Value&                  getValue       () const;
+              void                    setValue       ( const Value& );
+      virtual string                  _getTypeName   () const;
+      virtual string                  _getString     () const;
+      virtual Record*                 _getRecord     () const;
 
     private:
     // Internal: Attributes.
-      static  Name    _name;
-      mutable Value   _value;
+      static  Name                    _name;
+      static  DBo*                    _owner;
+      static  StandardSharedProperty* _cache;
+      mutable Value                   _value;
 
     protected:
     // Internal: Constructor.
@@ -340,6 +368,14 @@ namespace Hurricane {
 
 // Template function members.
   template<typename Value>
+  DBo* StandardSharedProperty<Value>::_owner = NULL;
+
+
+  template<typename Value>
+  StandardSharedProperty<Value>* StandardSharedProperty<Value>::_cache = NULL;
+
+
+  template<typename Value>
   Name  StandardSharedProperty<Value>::staticGetName ()
   {
     return _name;
@@ -347,35 +383,49 @@ namespace Hurricane {
 
 
   template<typename Value>
+  Value* StandardSharedProperty<Value>::staticGetValue ( const DBo* object )
+  {
+    if ( ( object == _owner ) || get(object) ) return _cache->getValue();
+    return NULL;
+  }
+
+
+  template<typename Value>
   StandardSharedProperty<Value>* StandardSharedProperty<Value>::create ()
   {
-    StandardSharedProperty<Value>* property = new StandardSharedProperty<Value>();
-    property->_postCreate();
-    return property;
+    _cache = new StandardSharedProperty<Value>();
+    _cache->_postCreate();
+    return _cache;
   }
 
 
   template<typename Value>
   StandardSharedProperty<Value>* StandardSharedProperty<Value>::create ( const Value& value )
   {
-    StandardSharedProperty<Value>* property = new StandardPrivateProperty<Value>(value);
-    property->_postCreate();
-    return property;
+    _cache = new StandardPrivateProperty<Value>(value);
+    _cache->_postCreate();
+    return _cache;
   }
 
 
   template<typename Value>
-  StandardSharedProperty<Value>* StandardSharedProperty<Value>::get ( const DBo* object )
+  StandardSharedProperty<Value>* StandardSharedProperty<Value>::get ( const DBo* object, bool create )
   {
-    Property*               property1 = object->getProperty ( StandardSharedProperty<Value>::staticGetName() );
-    StandardSharedProperty* property2 = dynamic_cast<StandardSharedProperty<Value>*> ( property1 );
-    
-    if ( property1 && !property2 )
-      throw Error ( propertyTypeNameError
-                  , getString(StandardSharedProperty<Value>::staticGetName()).c_str()
-                  , getString(object).c_str() );
+    if ( _owner == object ) return _cache;
 
-    return property2;
+    Property* property = object->getProperty ( StandardSharedProperty<Value>::staticGetName() );
+    _cache = dynamic_cast<StandardSharedProperty<Value>*> ( property );
+    
+    if ( !_cache ) {
+      if ( property )
+        throw Error ( propertyTypeNameError
+                    , getString(StandardSharedProperty<Value>::staticGetName()).c_str()
+                    , getString(object).c_str() );
+      else if ( create )
+        const_cast<DBo*>(object)->put ( StandardSharedProperty<Value>::create() );
+    }
+
+    return _cache;
   }
 
 
