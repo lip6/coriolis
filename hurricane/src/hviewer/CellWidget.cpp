@@ -307,7 +307,7 @@ namespace Hurricane {
                                          , const Transformation&  transformation
                                          )
   {
-    cerr << "DrawingQuery::drawGo() - " << go << endl;
+  //cerr << "DrawingQuery::drawGo() - " << go << endl;
 
     const Segment* segment = dynamic_cast<const Segment*>(go);
     if ( segment ) {
@@ -544,9 +544,9 @@ namespace Hurricane {
 
   void  CellWidget::redraw ( QRect redrawArea )
   {
-//     cerr << "CellWidget::redraw() - "
-//          << _selectionHasChanged << " filter:"
-//          << _queryFilter << endl;
+  //cerr << "CellWidget::redraw() - "
+  //     << _selectionHasChanged << " filter:"
+  //     << _queryFilter << endl;
 
     _redrawRectCount = 0;
 
@@ -617,12 +617,12 @@ namespace Hurricane {
     if ( _showSelection )
       redrawSelection ( redrawArea );
 
-    //cerr << "CellWidget::redraw() - finished." << endl;
 
     update ();
     popCursor ();
 
-    //cerr << "Redrawed rectangles: " << _redrawRectCount << endl;
+  //cerr << "Redrawed objects: " << _redrawRectCount << endl;
+  //cerr << "CellWidget::redraw() - finished." << endl;
   }
 
 
@@ -730,6 +730,7 @@ namespace Hurricane {
 
   void  CellWidget::drawLine ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2 )
   {
+    _redrawRectCount++;
     _drawingPlanes.setLineMode ( true );
     _drawingPlanes.painter().drawLine ( dbuToDisplayPoint(x1,y1), dbuToDisplayPoint(x2,y2) );
   }
@@ -737,6 +738,7 @@ namespace Hurricane {
 
   void  CellWidget::drawLine ( const Point& p1, const Point& p2 )
   {
+    _redrawRectCount++;
     _drawingPlanes.setLineMode ( true );
     _drawingPlanes.painter().drawLine ( dbuToDisplayPoint(p1), dbuToDisplayPoint(p2) );
   }
