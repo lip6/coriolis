@@ -4,13 +4,6 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0)
 
 SET(CMAKE_MODULE_PATH "${HURRICANE_SOURCE_DIR}/cmake_modules/")
 
-SET(CMAKE_C_FLAGS_DEBUG             "-pg -g -Wall" CACHE STRING "Debug options." FORCE)
-SET(CMAKE_CXX_FLAGS_DEBUG           "-pg -g -Wall" CACHE STRING "Debug options." FORCE)
-SET(CMAKE_LINKER_FLAGS_DEBUG        "-pg"          CACHE STRING "Debug options." FORCE)
-SET(CMAKE_SHARED_LINKER_FLAGS_DEBUG "-pg"          CACHE STRING "Debug options." FORCE)
-SET(CMAKE_MODULE_LINKER_FLAGS_DEBUG "-pg"          CACHE STRING "Debug options." FORCE)
-SET(CMAKE_EXE_LINKER_FLAGS_DEBUG    "-pg"          CACHE STRING "Debug options." FORCE)
-
 OPTION(BUILD_STATIC "Build static version of libraries & binaries" OFF)
 
 IF(BUILD_STATIC)
@@ -31,7 +24,6 @@ FIND_PACKAGE(Qt4 REQUIRED) # find and setup Qt4 for this project
 FIND_PACKAGE(BISON REQUIRED)
 FIND_PACKAGE(FLEX REQUIRED)
 FIND_PACKAGE(PythonLibs REQUIRED)
-FIND_PACKAGE(PythonInterp REQUIRED)
 FIND_PACKAGE(Doxygen)
 
 ADD_SUBDIRECTORY(src)

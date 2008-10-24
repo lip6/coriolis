@@ -101,17 +101,6 @@
   *                components of the translation and where a, b, c and d are the 
   *                coefficients of the matrix associated to the orientation. 
   *
-  *  \remark       The exact name of the orientation is, i.e. for <b>R1</b> : 
-  *                <b>Transformation::Orientation::R1</b>. It's a little verbose 
-  *                but you use seldom those codes. If nevertheless you make 
-  *                intensive use of them you can locally write :
-\code
-#define  Transformation::Orientation TO
-\endcode
-  *                and then use the expression :
-\code
-TO::R1
-\endcode
   */
 
  /*! \name         Constructors
