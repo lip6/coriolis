@@ -928,6 +928,7 @@ class Cell_OccurrencesUnder : public Collection<Occurrence> {
         private: ComponentLocator _componentLocator;
         private: RubberLocator _rubberLocator;
         private: MarkerLocator _markerLocator;
+        private: GoLocator _extensionGoLocator;
         private: InstanceLocator _instanceLocator;
         private: OccurrenceLocator _occurrenceLocator;
 
@@ -2870,6 +2871,7 @@ Cell_OccurrencesUnder::Locator::Locator()
     _componentLocator(),
     _rubberLocator(),
     _markerLocator(),
+    _extensionGoLocator(),
     _instanceLocator(),
     _occurrenceLocator()
 {
@@ -2885,6 +2887,7 @@ Cell_OccurrencesUnder::Locator::Locator(const Cell* cell, const Box& area, unsig
     _componentLocator(),
     _rubberLocator(),
     _markerLocator(),
+    _extensionGoLocator(),
     _instanceLocator(),
     _occurrenceLocator()
 {
@@ -2901,9 +2904,14 @@ Cell_OccurrencesUnder::Locator::Locator(const Cell* cell, const Box& area, unsig
                 if (_markerLocator.isValid())
                     _state = 3;
                 else {
-                    _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
-                    if (_instanceLocator.isValid())
+                    _extensionGoLocator = _cell->getExtensionGosUnder(_area).getLocator();
+                    if (_extensionGoLocator.isValid())
                         _state = 4;
+                    else {
+                      _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
+                      if (_instanceLocator.isValid())
+                        _state = 5;
+                    }
                 }
             }
         }
@@ -2920,6 +2928,7 @@ Cell_OccurrencesUnder::Locator::Locator(const Locator& locator)
     _componentLocator(locator._componentLocator),
     _rubberLocator(locator._rubberLocator),
     _markerLocator(locator._markerLocator),
+    _extensionGoLocator(locator._extensionGoLocator),
     _instanceLocator(locator._instanceLocator),
     _occurrenceLocator(locator._occurrenceLocator)
 {
@@ -2935,6 +2944,7 @@ Cell_OccurrencesUnder::Locator& Cell_OccurrencesUnder::Locator::operator=(const 
     _componentLocator = locator._componentLocator;
     _rubberLocator = locator._rubberLocator;
     _markerLocator = locator._markerLocator;
+    _extensionGoLocator = locator._extensionGoLocator;
     _instanceLocator = locator._instanceLocator;
     _occurrenceLocator = locator._occurrenceLocator;
     return *this;
@@ -2948,8 +2958,9 @@ Occurrence Cell_OccurrencesUnder::Locator::getElement() const
             case 1 : return Occurrence(_componentLocator.getElement());
             case 2 : return Occurrence(_rubberLocator.getElement());
             case 3 : return Occurrence(_markerLocator.getElement());
-            case 4 : return Occurrence(_instanceLocator.getElement());
-            case 5 : {
+            case 4 : return Occurrence(_extensionGoLocator.getElement());
+            case 5 : return Occurrence(_instanceLocator.getElement());
+            case 6 : {
                 Occurrence occurrence = _occurrenceLocator.getElement();
                 Entity* entity = occurrence.getEntity();
                 Path path = Path(_instanceLocator.getElement(), occurrence.getPath());
@@ -2988,11 +2999,16 @@ void Cell_OccurrencesUnder::Locator::progress()
                         if (_markerLocator.isValid())
                             _state = 3;
                         else {
-                            _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
-                            if (_instanceLocator.isValid())
+                            _extensionGoLocator = _cell->getExtensionGosUnder(_area).getLocator();
+                            if (_extensionGoLocator.isValid())
                                 _state = 4;
-                            else
+                            else {
+                              _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
+                              if (_instanceLocator.isValid())
+                                _state = 5;
+                              else
                                 _state = 0;
+                            }
                         }
                     }
                 }
@@ -3004,25 +3020,45 @@ void Cell_OccurrencesUnder::Locator::progress()
                     if (_markerLocator.isValid())
                         _state = 3;
                     else {
-                        _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
-                        if (_instanceLocator.isValid())
+                        _extensionGoLocator = _cell->getExtensionGosUnder(_area).getLocator();
+                        if (_extensionGoLocator.isValid())
                             _state = 4;
-                        else
+                        else {
+                          _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
+                          if (_instanceLocator.isValid())
+                            _state = 5;
+                          else
                             _state = 0;
+                        }
                     }
                 }
                 break;
             case 3 :
                 _markerLocator.progress();
                 if (!_markerLocator.isValid()) {
-                    _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
-                    if (_instanceLocator.isValid())
+                    _extensionGoLocator = _cell->getExtensionGosUnder(_area).getLocator();
+                    if (_extensionGoLocator.isValid())
                         _state = 4;
-                    else
+                    else {
+                      _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
+                      if (_instanceLocator.isValid())
+                        _state = 5;
+                      else
                         _state = 0;
+                    }
                 }
                 break;
             case 4 :
+                _extensionGoLocator.progress();
+                if (!_extensionGoLocator.isValid()) {
+                  _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
+                  if (_instanceLocator.isValid())
+                    _state = 5;
+                  else
+                    _state = 0;
+                }
+                break;
+            case 5 :
                 if (!_searchDepth) {
                     _instanceLocator.progress();
                     if (!_instanceLocator.isValid()) _state = 0;
@@ -3040,7 +3076,7 @@ void Cell_OccurrencesUnder::Locator::progress()
                         _occurrenceLocator =
                             masterCell->getOccurrencesUnder(masterArea, _searchDepth - 1).getLocator();
                         if (_occurrenceLocator.isValid())
-                            _state = 5;
+                            _state = 6;
                         else {
                             _instanceLocator.progress();
                             if (!_instanceLocator.isValid()) _state = 0;
@@ -3048,12 +3084,12 @@ void Cell_OccurrencesUnder::Locator::progress()
                     }
                 }
                 break;
-            case 5 :
+            case 6 :
                 _occurrenceLocator.progress();
                 if (!_occurrenceLocator.isValid()) {
                     _instanceLocator.progress();
                     if (_instanceLocator.isValid())
-                        _state = 4;
+                        _state = 5;
                     else
                         _state = 0;
                 }

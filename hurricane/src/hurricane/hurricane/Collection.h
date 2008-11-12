@@ -823,6 +823,7 @@ class ForEachIterator {
     inline                             ForEachIterator ( GenericCollection<Element> coll );
     inline bool                        isValid         ();
     inline Element                     operator*       ();
+    inline Element                     operator->      ();
     inline ForEachIterator&            operator++      (int);
   public:
            GenericCollection<Element>& collection;
@@ -851,6 +852,13 @@ inline bool  ForEachIterator<Element>::isValid ()
 
 template< typename Element >
 inline Element  ForEachIterator<Element>::operator* ()
+{
+  return element;
+}
+
+
+template< typename Element >
+inline Element  ForEachIterator<Element>::operator-> ()
 {
   return element;
 }

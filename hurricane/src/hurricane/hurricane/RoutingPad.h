@@ -103,4 +103,7 @@ RoutingPad* createRoutingPad ( Pin* pin );
 
 } // End of Hurricane namespace.
 
+
+INSPECTOR_P_SUPPORT(Hurricane::RoutingPad);
+
 #endif // HURRICANE_ROUTINGPAD

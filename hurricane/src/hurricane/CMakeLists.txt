@@ -2,6 +2,7 @@
 
  include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane )
                  set ( includes hurricane/Mask.h
+                                hurricane/DebugSession.h
                                 hurricane/BasicLayer.h            hurricane/BasicLayers.h
                                 hurricane/RegularLayer.h          hurricane/RegularLayers.h
                                 hurricane/ViaLayer.h              hurricane/ViaLayers.h
@@ -19,6 +20,7 @@
                                 hurricane/DeepNet.h
                                 hurricane/DRCError.h
                                 hurricane/Entities.h              hurricane/Entity.h
+                                hurricane/Bug.h
                                 hurricane/Error.h
                                 hurricane/Exception.h
                                 hurricane/Filter.h
@@ -67,7 +69,6 @@
                                 hurricane/SharedPathes.h          hurricane/SharedPath.h
                                 hurricane/Slice.h                 hurricane/Slices.h
                                 hurricane/ExtensionSlice.h        hurricane/ExtensionSlices.h
-                                hurricane/SlotAdapter.h
                                 hurricane/Slot.h
                                 hurricane/Symbols.h
                                 hurricane/Tabulation.h
@@ -85,11 +86,13 @@
                                 Slot.cpp
                                 Commons.cpp
                                 Exception.cpp
+                                Bug.cpp
                                 Error.cpp
                                 DRCError.cpp
                                 Warning.cpp
                                 Interruption.cpp
                                 Tabulation.cpp
+                                DebugSession.cpp
                                 DbU.cpp
                                 Point.cpp
                                 Box.cpp

@@ -57,7 +57,7 @@ namespace Hurricane {
     layout->setContentsMargins ( 0, 0, 0, 0 );
 
     _checkBox = new QCheckBox ( this );
-    _checkBox->setChecked ( true );
+    _checkBox->setChecked ( false );
     _checkBox->setText    ( getString(getName()).c_str() );
     _checkBox->setFont    ( Graphics::getFixedFont() );
     layout->addWidget ( _checkBox );
