@@ -73,6 +73,7 @@ namespace Hurricane {
     // Constructor.
       static  Technology*    create                  ( DataBase* , const Name& );
     // Accessors.
+      inline  bool           isMetal                 ( const Layer* ) const;
       inline  DataBase*      getDataBase             () const;
       inline  const Name&    getName                 () const;
       inline  Layer*         getLayer                ( const Name& ) const;
@@ -125,6 +126,7 @@ namespace Hurricane {
 
 
 // Inline Functions.
+  inline  bool                      Technology::isMetal          ( const Layer* layer ) const { return _metalMask.contains(layer->getMask()); }
   inline  DataBase*                 Technology::getDataBase      () const { return _dataBase; }
   inline  const Name&               Technology::getName          () const { return _name; }
   inline  Layer*                    Technology::getLayer         ( const Name& name ) const { return _layerMap.getElement(name); }

@@ -39,7 +39,6 @@ namespace Hurricane {
   {
     ExtensionSliceMap::iterator islice = _extensionSlices.find ( slice->getName() );
     if ( islice != _extensionSlices.end() ) {
-      islice->second->_destroy ();
       _extensionSlices.erase ( islice );
     }
   }

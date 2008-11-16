@@ -50,6 +50,7 @@ namespace Hurricane {
 
   ExtensionSlice::~ExtensionSlice ()
   {
+    ltrace(10) << "ExtensionSlice::~ExtensionSlice() - " << (void*)this << endl;
     _cell->_removeSlice ( this );
   }
 

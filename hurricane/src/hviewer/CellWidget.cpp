@@ -23,30 +23,31 @@
 // x-----------------------------------------------------------------x
 
 
-# include <QMouseEvent>
-# include <QKeyEvent>
-# include <QAction>
-# include <QPainter>
-# include <QStylePainter>
-# include <QBitmap>
-# include <QLabel>
+#include <QMouseEvent>
+#include <QKeyEvent>
+#include <QAction>
+#include <QPainter>
+#include <QStylePainter>
+#include <QBitmap>
+#include <QLabel>
 
-# include "hurricane/DataBase.h"
-# include "hurricane/Technology.h"
-# include "hurricane/BasicLayer.h"
-# include "hurricane/Cell.h"
-# include "hurricane/Instance.h"
-# include "hurricane/Slice.h"
-# include "hurricane/Segment.h"
-# include "hurricane/Contact.h"
-# include "hurricane/Pad.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Technology.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Instance.h"
+#include "hurricane/Slice.h"
+#include "hurricane/Segment.h"
+#include "hurricane/Contact.h"
+#include "hurricane/Pad.h"
+#include "hurricane/RoutingPad.h"
 
-# include "hurricane/viewer/Graphics.h"
-# include "hurricane/viewer/HPaletteEntry.h"
-# include "hurricane/viewer/HPalette.h"
-// # include "MapView.h"
-# include "hurricane/viewer/Command.h"
-# include "hurricane/viewer/CellWidget.h"
+#include "hurricane/viewer/Graphics.h"
+#include "hurricane/viewer/HPaletteEntry.h"
+#include "hurricane/viewer/HPalette.h"
+// #include "MapView.h"
+#include "hurricane/viewer/Command.h"
+#include "hurricane/viewer/CellWidget.h"
 
 
 
@@ -329,6 +330,12 @@ namespace Hurricane {
     const Pad* pad = dynamic_cast<const Pad*>(go);
     if ( pad ) {
       _cellWidget->drawBox ( transformation.getBox(pad->getBoundingBox(basicLayer)) );
+      return;
+    }
+
+    const RoutingPad* rp = dynamic_cast<const RoutingPad*>(go);
+    if ( rp ) {
+      _cellWidget->drawBox ( transformation.getBox(rp->getBoundingBox(basicLayer)) );
       return;
     }
   }

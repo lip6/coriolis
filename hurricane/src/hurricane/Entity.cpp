@@ -24,11 +24,11 @@ Entity::Entity()
 {
 }
 
-void Entity::_preDestroy()
-// **********************
-{
-// trace << "entering Entity::_preDestroy: " << this << endl;
-// trace_in();
+
+  void Entity::_preDestroy()
+  {
+  //ltrace(10) << "Entity::_preDestroy() - " << (void*)this << endl;
+  //ltracein(10);
 
     vector<Entity*> slaveEntities;
     SlaveEntityMap::iterator  it;
@@ -46,28 +46,28 @@ void Entity::_preDestroy()
 
     stack<SharedPath*> sharedPathStack;
     for_each_instance(instance, getCell()->getSlaveInstances()) {
-        SharedPath* sharedPath = instance->_getSharedPath(NULL);
-        if (sharedPath) sharedPathStack.push(sharedPath);
-        end_for;
+      SharedPath* sharedPath = instance->_getSharedPath(NULL);
+      if (sharedPath) sharedPathStack.push(sharedPath);
+      end_for;
     }
     while (!sharedPathStack.empty()) {
-        SharedPath* sharedPath = sharedPathStack.top();
-        sharedPathStack.pop();
-        Quark* quark = _getQuark(sharedPath);
-        if (quark) quark->destroy();
-        Cell* cell = sharedPath->getOwnerCell();
-        for_each_instance(instance, cell->getSlaveInstances()) {
-            SharedPath* sharedPath2 = instance->_getSharedPath(sharedPath);
-            if (sharedPath2) sharedPathStack.push(sharedPath2);
-            end_for;
-        }
+      SharedPath* sharedPath = sharedPathStack.top();
+      sharedPathStack.pop();
+      Quark* quark = _getQuark(sharedPath);
+      if (quark) quark->destroy();
+      Cell* cell = sharedPath->getOwnerCell();
+      for_each_instance(instance, cell->getSlaveInstances()) {
+        SharedPath* sharedPath2 = instance->_getSharedPath(sharedPath);
+        if (sharedPath2) sharedPathStack.push(sharedPath2);
+        end_for;
+      }
     }
 
     Inherit::_preDestroy();
 
-// trace << "exiting Entity::_preDestroy:" << endl;
-// trace_out();
-}
+  //ltrace(10) << "Entity::_preDestroy() - exit" << endl;
+  //ltraceout(10);
+  }
 
 string Entity::_getString() const
 // ******************************

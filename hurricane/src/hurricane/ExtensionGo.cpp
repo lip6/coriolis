@@ -42,6 +42,13 @@ namespace Hurricane {
   { }
 
 
+  void  ExtensionGo::_preDestroy ()
+  {
+    ltrace(10) << "ExtensionGo::_preDestroy() - " << (void*)this << endl;
+    Go::_preDestroy ();
+  }
+
+
   void  ExtensionGo::materialize ()
   {
     if ( !isMaterialized() ) {
@@ -60,6 +67,9 @@ namespace Hurricane {
 
   void ExtensionGo::unmaterialize ()
   {
+  //ltrace(9) << "ExtensionGo::unmaterialize() - " << (void*)this << endl;
+  //ltracein(9);
+
     if ( isMaterialized() ) {
       ExtensionSlice* slice = _cell->getExtensionSlice ( getName() );
       if ( slice ) {
@@ -68,6 +78,9 @@ namespace Hurricane {
         if ( slice->isEmpty() ) slice->_destroy ();
       }
     }
+
+  //ltrace(9) << "ExtensionGo::unmaterialize() - exit" << endl;
+  //ltraceout(9);
   }
 
 

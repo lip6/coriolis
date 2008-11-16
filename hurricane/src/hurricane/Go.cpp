@@ -51,18 +51,19 @@ void Go::_postCreate()
     if (!autoMaterializationIsDisabled()) materialize(); // materialized after entire post creation
 }
 
+
 void Go::_preDestroy()
-// ******************
 {
-// trace << "entering Go::_preDestroy: " << this << endl;
-// trace_in();
+//ltrace(10) << "Go::_preDestroy() - " << (void*)this << endl;
+//ltracein(10);
 
-    unmaterialize(); // unmaterialized before starting pre destruction
+  unmaterialize(); // unmaterialized before starting pre destruction
+//ltrace(10) << "Unmaterialize successful"  << endl;
 
-    Inherit::_preDestroy();
+  Inherit::_preDestroy();
 
-// trace << "exiting Go::_preDestroy:" << endl;
-// trace_out();
+//ltrace(10) << "Go::_preDestroy() - exit" << endl;
+//ltraceout(10);
 }
 
 string Go::_getString() const

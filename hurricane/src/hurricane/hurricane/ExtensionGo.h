@@ -52,8 +52,9 @@ namespace Hurricane {
               Cell*       _cell;
 
     protected:
-    // Internal: Constructor.
+    // Internal: Constructor & destructors.
                           ExtensionGo   ( Cell* );
+      virtual void        _preDestroy   ();
   };
 
 
