@@ -448,7 +448,7 @@ extern "C" {
     PyObject* arg3;
 
     HTRY
-    __cs.Init ("Instance.new");
+    __cs.init ("Instance.new");
     if ( ! PyArg_ParseTuple(args,"O&O&O&|O&:Instance.new"
                            ,Converter,&arg0
                            ,Converter,&arg1

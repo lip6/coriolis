@@ -139,7 +139,7 @@ extern "C" {
 
     HTRY
 
-    __cs.Init ("Contact.new");
+    __cs.init ("Contact.new");
     if ( ! PyArg_ParseTuple(args,"O&O&O&O&|O&O&:Contact.new"
                            ,Converter,&arg0
                            ,Converter,&arg1

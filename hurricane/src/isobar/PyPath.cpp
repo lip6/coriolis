@@ -237,7 +237,7 @@ extern "C" {
     PyTransformation* pyTransf = PyObject_NEW ( PyTransformation, &PyTypeTransformation );
     if ( pyTransf == NULL ) { return NULL; }
 
-    __cs.Init ("Path.getTransformation");
+    __cs.init ("Path.getTransformation");
     if ( ! PyArg_ParseTuple(args,"|O&:Path.getTransformation",Converter,&arg0) ) return ( NULL );
 
     HTRY
@@ -321,7 +321,7 @@ extern "C" {
     PyObject* arg1   = NULL;
     PyPath*   pyPath = NULL;
 
-    __cs.Init ("Path.new");
+    __cs.init ("Path.new");
     if ( ! PyArg_ParseTuple(args,"|O&O&:Path.new"
                            ,Converter,&arg0
                            ,Converter,&arg1

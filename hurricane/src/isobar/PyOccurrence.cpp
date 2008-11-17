@@ -250,7 +250,7 @@ extern "C" {
     PyObject*   arg0;
     PyObject*   arg1;
 
-    __cs.Init ("Occurrence.new");
+    __cs.init ("Occurrence.new");
     if ( ! PyArg_ParseTuple(args,"|O&O&:Occurrence.new"
                            ,Converter,&arg0
                            ,Converter,&arg1

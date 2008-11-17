@@ -171,7 +171,7 @@ extern "C" {
     PyObject* arg7;
     PyObject* arg8;
 
-    __cs.Init ("Pin.new");
+    __cs.init ("Pin.new");
     if (!PyArg_ParseTuple(args,"O&O&O&O&O&O&O&|O&O&:Pin.new"
                            , Converter, &arg0
                            , Converter, &arg1

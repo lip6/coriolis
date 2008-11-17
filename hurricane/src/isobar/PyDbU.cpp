@@ -86,7 +86,7 @@ extern "C" {
 
     HTRY
     
-    __cs.Init ( "DbU.db" );
+    __cs.init ( "DbU.db" );
     if ( ! PyArg_ParseTuple(args,"|O&:DbU.db",Converter,&arg0) )
       return ( NULL );
     
@@ -114,7 +114,7 @@ extern "C" {
 
     HTRY
     
-    __cs.Init ( "DbU.grid" );
+    __cs.init ( "DbU.grid" );
     if ( ! PyArg_ParseTuple(args,"|O&:DbU.grid",Converter,&arg0) )
       return ( NULL );
     
@@ -142,7 +142,7 @@ extern "C" {
 
     HTRY
     
-    __cs.Init ( "DbU.symbolic" );
+    __cs.init ( "DbU.symbolic" );
     if ( ! PyArg_ParseTuple(args,"|O&:DbU.symbolic",Converter,&arg0) )
       return ( NULL );
     

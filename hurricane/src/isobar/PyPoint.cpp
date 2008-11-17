@@ -143,7 +143,7 @@ extern "C" {
     PyObject* arg0;
     PyObject* arg1;
 
-    __cs.Init ("Point.create");
+    __cs.init ("Point.create");
     if ( ! PyArg_ParseTuple(args,"|O&O&:Point.create"
                            ,Converter,&arg0
                            ,Converter,&arg1

@@ -108,7 +108,7 @@ extern "C" {
     Name* name = NULL;
     PyObject* arg0;
 
-    __cs.Init ("Name.new");
+    __cs.init ("Name.new");
     if (!PyArg_ParseTuple(args,"|O&:Name.new",Converter,&arg0)) {
         PyErr_SetString ( ConstructorError, "invalid number of parameters for Name constructor." );
         return NULL;

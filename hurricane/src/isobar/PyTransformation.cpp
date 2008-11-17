@@ -167,7 +167,7 @@ extern "C" {
 
     HTRY
 
-    __cs.Init ("Transformation.getX");
+    __cs.init ("Transformation.getX");
     if ( ! PyArg_ParseTuple(args,"|O&O&:Transformation.getX",Converter,&arg0,Converter,&arg1) )
       return ( NULL );
 
@@ -202,7 +202,7 @@ extern "C" {
 
     HTRY
 
-    __cs.Init ("Transformation.getY");
+    __cs.init ("Transformation.getY");
     if ( ! PyArg_ParseTuple(args,"|O&O&:Transformation.getY",Converter,&arg0,Converter,&arg1) )
       return ( NULL );
 
@@ -321,7 +321,7 @@ extern "C" {
     PyObject* arg1;
     Point     result;
 
-    __cs.Init ("Transformation.getPoint");
+    __cs.init ("Transformation.getPoint");
     if ( ! PyArg_ParseTuple(args,"|O&O&:Transformation.getPoint",Converter,&arg0,Converter,&arg1) )
       return ( NULL );
 
@@ -367,7 +367,7 @@ extern "C" {
     PyObject* arg3;
     Box       result;
 
-    __cs.Init ("Transformation.getBox");
+    __cs.init ("Transformation.getBox");
     if ( ! PyArg_ParseTuple(args,"|O&O&O&O&:Transformation.getBox"
                            ,Converter,&arg0
                            ,Converter,&arg1
@@ -472,7 +472,7 @@ extern "C" {
 
     HTRY
 
-    __cs.Init ("Transformation.ApplyOn");
+    __cs.init ("Transformation.ApplyOn");
     if ( ! PyArg_ParseTuple(args,"|O&O&:Transformation.ApplyOn",Converter,&arg0,Converter,&arg1) )
       return ( NULL );
 
@@ -551,7 +551,7 @@ extern "C" {
     PyObject* arg1;
     PyObject* arg2;
 
-    __cs.Init ("Transformation.new");
+    __cs.init ("Transformation.new");
     if ( ! PyArg_ParseTuple(args,"|O&O&O&:Transformation.new"
                            ,Converter,&arg0
                            ,Converter,&arg1

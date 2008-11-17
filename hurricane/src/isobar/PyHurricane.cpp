@@ -198,9 +198,9 @@ using namespace Hurricane;
 
 
 // -------------------------------------------------------------------
-// Method  : "::ConverterState::AddType ()"
+// Method  : "::ConverterState::addType ()"
 
-  void  ConverterState::AddType ( char*         id
+  void  ConverterState::addType ( char*         id
                                 , PyTypeObject* pyType
                                 , char*         name
                                 , bool          isPythonType
@@ -301,11 +301,11 @@ using namespace Hurricane;
   
 
 // -------------------------------------------------------------------
-// Method  : "::ConverterState::Init ()"
+// Method  : "::ConverterState::init ()"
 
-   void  ConverterState::Init ( char* function, char* inheritStop ) {
+   void  ConverterState::init ( char* function, char* inheritStop ) {
      _objectIds = "";
-     SetFunction ( function );
+     setFunction ( function );
      ObjectType::_inheritStop = inheritStop;
    };
 
@@ -323,7 +323,7 @@ using namespace Hurricane;
       if ( PyCallable_Check(object) || baseType ) {
         *pArg = object;
         i = baseType->_index;
-        __cs.AddId ( baseType->_id );
+        __cs.addId ( baseType->_id );
 
         if ( ! __cs.getTypes()[i]->_isPythonType ) {
           void** member = ( (void**)( (unsigned long)object + __objectOffset ) );
@@ -362,7 +362,7 @@ using namespace Hurricane;
   bool  ParseOneArg  ( char* function, PyObject* args, string format, PyObject** arg ) {
     ostringstream  message;
 
-    __cs.Init ( function );
+    __cs.init ( function );
     if ( ! PyArg_ParseTuple(args,"O&",Converter,arg) ) return ( false );
 
     string firstArgType    = ConverterState::getObjectType ( __cs.getObjectIds(), 0 );
@@ -382,7 +382,7 @@ using namespace Hurricane;
 
   bool  ParseTwoArg  ( char* function, PyObject* args, string format, PyObject** arg0, PyObject** arg1 ) {
     ostringstream  message;
-    __cs.Init ( function );
+    __cs.init ( function );
     if ( ! PyArg_ParseTuple(args,"O&O&",Converter,arg0,Converter,arg1) ) return ( false );
 
     string firstArgType    = ConverterState::getObjectType ( __cs.getObjectIds(), 0 );
@@ -408,9 +408,7 @@ using namespace Hurricane;
 
   bool  ParseThreeArg  ( char* function, PyObject* args, string format, PyObject** arg0, PyObject** arg1, PyObject** arg2 ) {
     ostringstream  message;
-    cerr << "akecoucou2" << endl;
-
-    __cs.Init ( function );
+    __cs.init ( function );
     if ( ! PyArg_ParseTuple(args,"O&O&O&",Converter,arg0,Converter,arg1,Converter,arg2) ) return ( false );
 
     string firstArgType    = ConverterState::getObjectType ( __cs.getObjectIds(), 0 );
@@ -620,47 +618,47 @@ extern "C" {
 
    
     // Identifier string can take up to 10 characters !
-    __cs.AddType ( "box"        , &PyTypeBox              , "<Box>"              , false );
-    __cs.AddType ( "ent"        , &PyTypeEntity           , "<Entity>"           , false );
-    __cs.AddType ( "cell"       , &PyTypeCell             , "<Cell>"             , false, "ent" );
-    __cs.AddType ( "cellCol"    , &PyTypeCellCollection   , "<CellCollection>"   , false );
-    __cs.AddType ( "comp"       , &PyTypeComponent        , "<Component>"        , false, "ent" );
-    __cs.AddType ( "compCol"    , &PyTypeComponentCollection, "<ComponentCollection>" , false );
-    __cs.AddType ( "contact"    , &PyTypeContact          , "<Contact>"          , false, "comp" );
+    __cs.addType ( "box"        , &PyTypeBox              , "<Box>"              , false );
+    __cs.addType ( "ent"        , &PyTypeEntity           , "<Entity>"           , false );
+    __cs.addType ( "cell"       , &PyTypeCell             , "<Cell>"             , false, "ent" );
+    __cs.addType ( "cellCol"    , &PyTypeCellCollection   , "<CellCollection>"   , false );
+    __cs.addType ( "comp"       , &PyTypeComponent        , "<Component>"        , false, "ent" );
+    __cs.addType ( "compCol"    , &PyTypeComponentCollection, "<ComponentCollection>" , false );
+    __cs.addType ( "contact"    , &PyTypeContact          , "<Contact>"          , false, "comp" );
     // Do not change the "none" string. It's hardwired to the None object.
-    __cs.AddType ( "none"       ,  Py_None->ob_type       , "<None>"             , true  );
-    __cs.AddType ( "float"      , &PyFloat_Type           , "<Float>"            , true  );
-    __cs.AddType ( "int"        , &PyInt_Type             , "<Int>"              , true  );
-    __cs.AddType ( "bool"       , &PyBool_Type            , "<Bool>"             , true  );
-    __cs.AddType ( "string"     , &PyString_Type          , "<String>"           , true  );
-    __cs.AddType ( "list"       , &PyList_Type            , "<List>"             , true  );
+    __cs.addType ( "none"       ,  Py_None->ob_type       , "<None>"             , true  );
+    __cs.addType ( "float"      , &PyFloat_Type           , "<Float>"            , true  );
+    __cs.addType ( "int"        , &PyInt_Type             , "<Int>"              , true  );
+    __cs.addType ( "bool"       , &PyBool_Type            , "<Bool>"             , true  );
+    __cs.addType ( "string"     , &PyString_Type          , "<String>"           , true  );
+    __cs.addType ( "list"       , &PyList_Type            , "<List>"             , true  );
     // Do not change the "function" string. It's hardwired to callable (function) objects.
-    __cs.AddType ( "function"   , NULL                    , "<Function>"         , true  );
-    __cs.AddType ( "horiz"      , &PyTypeHorizontal       , "<Horizontal>"       , false, "segment" );
-    __cs.AddType ( "inst"       , &PyTypeInstance         , "<Instance>"         , false, "ent" );
-    __cs.AddType ( "instCol"    , &PyTypeInstanceCollection, "<InstanceCollection>"  , false );
-    __cs.AddType ( "layer"      , &PyTypeLayer            , "<Layer>"            , false );
-    __cs.AddType ( "library"    , &PyTypeLibrary          , "<Library>"          , false );
-    __cs.AddType ( "name"       , &PyTypeName             , "<Name>"             , false );
-    __cs.AddType ( "ref"        , &PyTypeReference        , "<Reference>"        , false, "ent" );
-    __cs.AddType ( "refCol"     , &PyTypeReferenceCollection, "<ReferenceCollection>" , false );
-    __cs.AddType ( "net"        , &PyTypeNet              , "<Net>"              , false, "ent" );
-    __cs.AddType ( "netCol"     , &PyTypeNetCollection    , "<NetCollection>"    , false );
-    __cs.AddType ( "hyperNet"   , &PyTypeHyperNet         , "<HyperNet>"         , false );
-    __cs.AddType ( "pin"        , &PyTypePin              , "<Pin>"              , false, "contact" );
-    __cs.AddType ( "pinCol"     , &PyTypePinCollection    , "<PinCollection>"    , false );
-    __cs.AddType ( "plug"       , &PyTypePlug             , "<Plug>"             , false, "comp" );
-    __cs.AddType ( "plugCol"    , &PyTypePlugCollection   , "<PlugCollection>"   , false );
-    __cs.AddType ( "point"      , &PyTypePoint            , "<Point>"            , false );
-    __cs.AddType ( "segment"    , &PyTypeSegment          , "<Segment>"          , false, "comp" );
-    __cs.AddType ( "segmentCol" , &PyTypeSegmentCollection, "<SegmentCollection>", false );
-    __cs.AddType ( "db"         , &PyTypeDataBase         , "<DataBase>"         , false );
-    __cs.AddType ( "techno"     , &PyTypeTechnology       , "<Technology>"       , false );
-    __cs.AddType ( "transfo"    , &PyTypeTransformation   , "<Transformation>"   , false );
-    __cs.AddType ( "vert"       , &PyTypeVertical         , "<Vertical>"         , false, "segment" );
-    __cs.AddType ( "path"       , &PyTypePath             , "<Path>"             , false );
-    __cs.AddType ( "occur"      , &PyTypeOccurrence       , "<Occurrence>"       , false );
-    __cs.AddType ( "occurCol"   , &PyTypeOccurrenceCollection, "<OccurrenceCollection>", false );
+    __cs.addType ( "function"   , NULL                    , "<Function>"         , true  );
+    __cs.addType ( "horiz"      , &PyTypeHorizontal       , "<Horizontal>"       , false, "segment" );
+    __cs.addType ( "inst"       , &PyTypeInstance         , "<Instance>"         , false, "ent" );
+    __cs.addType ( "instCol"    , &PyTypeInstanceCollection, "<InstanceCollection>"  , false );
+    __cs.addType ( "layer"      , &PyTypeLayer            , "<Layer>"            , false );
+    __cs.addType ( "library"    , &PyTypeLibrary          , "<Library>"          , false );
+    __cs.addType ( "name"       , &PyTypeName             , "<Name>"             , false );
+    __cs.addType ( "ref"        , &PyTypeReference        , "<Reference>"        , false, "ent" );
+    __cs.addType ( "refCol"     , &PyTypeReferenceCollection, "<ReferenceCollection>" , false );
+    __cs.addType ( "net"        , &PyTypeNet              , "<Net>"              , false, "ent" );
+    __cs.addType ( "netCol"     , &PyTypeNetCollection    , "<NetCollection>"    , false );
+    __cs.addType ( "hyperNet"   , &PyTypeHyperNet         , "<HyperNet>"         , false );
+    __cs.addType ( "pin"        , &PyTypePin              , "<Pin>"              , false, "contact" );
+    __cs.addType ( "pinCol"     , &PyTypePinCollection    , "<PinCollection>"    , false );
+    __cs.addType ( "plug"       , &PyTypePlug             , "<Plug>"             , false, "comp" );
+    __cs.addType ( "plugCol"    , &PyTypePlugCollection   , "<PlugCollection>"   , false );
+    __cs.addType ( "point"      , &PyTypePoint            , "<Point>"            , false );
+    __cs.addType ( "segment"    , &PyTypeSegment          , "<Segment>"          , false, "comp" );
+    __cs.addType ( "segmentCol" , &PyTypeSegmentCollection, "<SegmentCollection>", false );
+    __cs.addType ( "db"         , &PyTypeDataBase         , "<DataBase>"         , false );
+    __cs.addType ( "techno"     , &PyTypeTechnology       , "<Technology>"       , false );
+    __cs.addType ( "transfo"    , &PyTypeTransformation   , "<Transformation>"   , false );
+    __cs.addType ( "vert"       , &PyTypeVertical         , "<Vertical>"         , false, "segment" );
+    __cs.addType ( "path"       , &PyTypePath             , "<Path>"             , false );
+    __cs.addType ( "occur"      , &PyTypeOccurrence       , "<Occurrence>"       , false );
+    __cs.addType ( "occurCol"   , &PyTypeOccurrenceCollection, "<OccurrenceCollection>", false );
 
 
     PyObject* module = Py_InitModule ( "Hurricane", PyHurricane_Methods );

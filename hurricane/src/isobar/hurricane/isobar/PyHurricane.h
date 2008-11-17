@@ -116,11 +116,11 @@ using namespace std;
     public: char*                   getFunction   () const { return ( _function ); };
     public: int                     getSize       () const { return ( _objectIds.size() ); };
     public: const ObjectTypeVector& getTypes      () const { return ( _types ); };
-    public: void                    AddObject     ( PyObject* object ) { _objectIds += getObjectId ( object ); };
-    public: void                    AddId         ( char* id ) { _objectIds += ":"; _objectIds += id; };
-    public: void                    SetFunction   ( char* function ) { _function = function; };
-    public: void                    Init          ( char* function, char* inheritStop="comp" );
-    public: void                    AddType       ( char* id, PyTypeObject* pyType, char* name, bool isPythonType, char* idBase="" );
+    public: void                    addObject     ( PyObject* object ) { _objectIds += getObjectId ( object ); };
+    public: void                    addId         ( char* id ) { _objectIds += ":"; _objectIds += id; };
+    public: void                    setFunction   ( char* function ) { _function = function; };
+    public: void                    init          ( char* function, char* inheritStop="comp" );
+    public: void                    addType       ( char* id, PyTypeObject* pyType, char* name, bool isPythonType, char* idBase="" );
     public: static string           getObjectType ( string objectsTypes, unsigned n );
   };
 

@@ -192,7 +192,7 @@ extern "C" {
 
     HTRY
 
-    __cs.Init ("Box.contains");
+    __cs.init ("Box.contains");
     if ( ! PyArg_ParseTuple(args,"|O&O&:Box.contains",Converter,&arg0,Converter,&arg1) )
       return ( NULL );
 
@@ -293,7 +293,7 @@ extern "C" {
 
     HTRY
 
-    __cs.Init ("Box.inflate");
+    __cs.init ("Box.inflate");
     if ( ! PyArg_ParseTuple(args,"|O&O&O&O&:Box.inflate",Converter,&arg0,Converter,&arg1) )
       return ( NULL );
 
@@ -335,7 +335,7 @@ extern "C" {
 
     HTRY
 
-    __cs.Init ("Box.merge");
+    __cs.init ("Box.merge");
     if ( ! PyArg_ParseTuple(args,"|O&O&O&O&:Box.merge",Converter,&arg0,Converter,&arg1,Converter,&arg2,Converter,&arg3) )
       return ( NULL );
 
@@ -427,7 +427,7 @@ extern "C" {
     PyObject* arg2;
     PyObject* arg3;
 
-    __cs.Init ("Box.new");
+    __cs.init ("Box.new");
     if ( ! PyArg_ParseTuple(args,"|O&O&O&O&:Box.new"
                            ,Converter,&arg0
                            ,Converter,&arg1

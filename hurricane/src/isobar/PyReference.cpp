@@ -195,7 +195,7 @@ extern "C" {
 
     HTRY
 
-    __cs.Init ("Reference.new");
+    __cs.init ("Reference.new");
     if ( ! PyArg_ParseTuple(args,"O&O&O&|O&:Reference.new"
                            ,Converter,&arg0
                            ,Converter,&arg1

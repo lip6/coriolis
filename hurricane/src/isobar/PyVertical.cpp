@@ -117,7 +117,7 @@ extern "C" {
     Vertical* vertical = NULL;
 
     HTRY
-    __cs.Init ("Vertical.new");
+    __cs.init ("Vertical.new");
     if (!PyArg_ParseTuple(args,"O&O&O&|O&O&O&O&:Vertical.new"
                            ,Converter,&arg0
                            ,Converter,&arg1

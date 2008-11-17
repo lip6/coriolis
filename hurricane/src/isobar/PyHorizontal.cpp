@@ -122,7 +122,7 @@ extern "C" {
 
     HTRY
 
-    __cs.Init ("Horizontal.create");
+    __cs.init ("Horizontal.create");
     if ( ! PyArg_ParseTuple(args,"O&O&O&|O&O&O&O&:Horizontal.create"
                            ,Converter,&arg0
                            ,Converter,&arg1
