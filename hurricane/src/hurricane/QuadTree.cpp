@@ -110,10 +110,12 @@ class QuadTree_GosUnder : public Collection<Go*> {
         private: Box _area;
         private: QuadTree* _currentQuadTree;
         private: GoLocator _goLocator;
+      //private: static size_t _allocateds;
 
         public: Locator();
         public: Locator(const QuadTree* quadTree, const Box& area);
         public: Locator(const Locator& locator);
+      //public: ~Locator() { _allocateds--; }
 
         public: Locator& operator=(const Locator& locator);
 
@@ -123,6 +125,7 @@ class QuadTree_GosUnder : public Collection<Go*> {
         public: virtual bool isValid() const;
 
         public: virtual void progress();
+      //public: static size_t getAllocateds() { return _allocateds; }
 
         public: virtual string _getString() const;
 
@@ -158,6 +161,9 @@ class QuadTree_GosUnder : public Collection<Go*> {
     public: virtual string _getString() const;
 
 };
+
+
+//size_t  QuadTree_GosUnder::Locator::_allocateds = 0;
 
 
 
@@ -203,6 +209,12 @@ QuadTree::~QuadTree()
     if (_llChild) delete _llChild;
     if (_lrChild) delete _lrChild;
 }
+
+//size_t  QuadTree::getLocatorAllocateds ()
+// **************************************
+//{
+//  return QuadTree_GosUnder::Locator::getAllocateds();
+//}
 
 const Box& QuadTree::getBoundingBox() const
 // ****************************************
@@ -731,6 +743,7 @@ QuadTree_GosUnder::Locator::Locator()
     _currentQuadTree(NULL),
     _goLocator()
 {
+  //_allocateds++;
 }
 
 QuadTree_GosUnder::Locator::Locator(const QuadTree* quadTree, const Box& area)
@@ -741,6 +754,7 @@ QuadTree_GosUnder::Locator::Locator(const QuadTree* quadTree, const Box& area)
     _currentQuadTree(NULL),
     _goLocator()
 {
+    //_allocateds++;
     if (_quadTree && !_area.isEmpty()) {
         _currentQuadTree = _quadTree->_getFirstQuadTree(_area);
         if (_currentQuadTree) {
@@ -758,6 +772,7 @@ QuadTree_GosUnder::Locator::Locator(const Locator& locator)
     _currentQuadTree(locator._currentQuadTree),
     _goLocator(locator._goLocator)
 {
+  //_allocateds++;
 }
 
 QuadTree_GosUnder::Locator& QuadTree_GosUnder::Locator::operator=(const Locator& locator)

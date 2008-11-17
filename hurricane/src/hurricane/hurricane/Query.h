@@ -243,7 +243,8 @@ namespace Hurricane {
     //_tab++;
 
       return true;
-    }
+    } else
+      delete locator;
 
     return false;
   }

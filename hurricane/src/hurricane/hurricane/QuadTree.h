@@ -72,6 +72,7 @@ class QuadTree {
 // Accessors
 // *********
 
+  //public: static size_t getLocatorAllocateds ();
     public: const Box& getBoundingBox() const;
     public: Gos getGos() const;
     public: Gos getGosUnder(const Box& area) const;

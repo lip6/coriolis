@@ -589,6 +589,7 @@ namespace Hurricane {
             _drawingQuery.doQuery       ();
           }
         }
+
         if ( isDrawableLayer("boundaries") ) {
           _drawingPlanes.setPen   ( Graphics::getPen  ("boundaries",darkening) );
           _drawingPlanes.setBrush ( Graphics::getBrush("boundaries",darkening) );
