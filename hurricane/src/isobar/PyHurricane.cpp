@@ -131,7 +131,7 @@ using namespace Hurricane;
 // x-----------------------------------------------------------------x
 
 
-  char*                  ConverterState::ObjectType::_inheritStop
+  const char*            ConverterState::ObjectType::_inheritStop
                                         = "comp";
   ConverterState         __cs           = ConverterState ();
   int                    __objectOffset = offsetof ( PyPoint, _object );
@@ -200,11 +200,11 @@ using namespace Hurricane;
 // -------------------------------------------------------------------
 // Method  : "::ConverterState::addType ()"
 
-  void  ConverterState::addType ( char*         id
+  void  ConverterState::addType ( const char*         id
                                 , PyTypeObject* pyType
-                                , char*         name
+                                , const char*         name
                                 , bool          isPythonType
-                                , char*         idBase ) {
+                                , const char*         idBase ) {
     for ( unsigned i=0 ; i < _types.size() ; i++ ) {
       if ( ! strcmp ( _types[i]->_id, id ) )
         throw Error ( objectTypeRedefinition );
@@ -259,7 +259,7 @@ using namespace Hurricane;
 // -------------------------------------------------------------------
 // Method  : "::ConverterState::getObjectId ()"
 
-  char* ConverterState::getObjectId ( PyObject* object ) {
+  const char* ConverterState::getObjectId ( PyObject* object ) const {
     for ( unsigned i=0 ; i < _types.size() ; i++ ) {
       if ( ( ! strcmp ( _types[i]->_id, "function" ) ) && ( PyCallable_Check(object) ) )
         return ( _types[i]->_id );
@@ -290,7 +290,7 @@ using namespace Hurricane;
 // -------------------------------------------------------------------
 // Method  : "::ConverterState::getObjectName ()"
 
-  char *ConverterState::getObjectName ( string id ) {
+  const char *ConverterState::getObjectName ( string id ) const {
     for ( unsigned i=0 ; i < _types.size() ; i++ ) {
       if ( ! strcmp ( id.c_str(), _types[i]->_id ) ) return ( _types[i]->_name );
     }
@@ -303,7 +303,7 @@ using namespace Hurricane;
 // -------------------------------------------------------------------
 // Method  : "::ConverterState::init ()"
 
-   void  ConverterState::init ( char* function, char* inheritStop ) {
+   void  ConverterState::init ( const char* function, const char* inheritStop ) {
      _objectIds = "";
      setFunction ( function );
      ObjectType::_inheritStop = inheritStop;

@@ -82,11 +82,11 @@ using namespace std;
 
     public:
       struct ObjectType {
-        static char*         _inheritStop;
+        static const char*   _inheritStop;
                char          _id    [11];
                char          _idBase[11];
                PyTypeObject* _pyType;
-               char*         _name;
+               const char*         _name;
                bool          _isPythonType;
                unsigned      _index;
   
@@ -99,7 +99,7 @@ using namespace std;
     typedef vector<ObjectType*> ObjectTypeVector;
 
     protected: string            _objectIds;
-    protected: char*             _function;
+    protected: const char*       _function;
     protected: ObjectTypeVector  _types;
      
 
@@ -110,17 +110,17 @@ using namespace std;
     public: ~ConverterState ();
 
     public: ObjectType*             getObject     ( char* id );
-    public: char*                   getObjectId   ( PyObject* object );
-    public: char*                   getObjectName ( string id );
+    public: const char*             getObjectId   ( PyObject* object ) const;
+    public: const char*             getObjectName ( string id ) const;
     public: string                  getObjectIds  () const { return ( _objectIds ); };
-    public: char*                   getFunction   () const { return ( _function ); };
+    public: const char*             getFunction   () const { return ( _function ); };
     public: int                     getSize       () const { return ( _objectIds.size() ); };
     public: const ObjectTypeVector& getTypes      () const { return ( _types ); };
     public: void                    addObject     ( PyObject* object ) { _objectIds += getObjectId ( object ); };
     public: void                    addId         ( char* id ) { _objectIds += ":"; _objectIds += id; };
-    public: void                    setFunction   ( char* function ) { _function = function; };
-    public: void                    init          ( char* function, char* inheritStop="comp" );
-    public: void                    addType       ( char* id, PyTypeObject* pyType, char* name, bool isPythonType, char* idBase="" );
+    public: void                    setFunction   ( const char* function ) { _function = function; };
+    public: void                    init          ( const char* function, const char* inheritStop="comp" );
+    public: void                    addType       ( const char* id, PyTypeObject* pyType, const char* name, bool isPythonType, const char* idBase="" );
     public: static string           getObjectType ( string objectsTypes, unsigned n );
   };
 
@@ -131,9 +131,9 @@ using namespace std;
 // Isobar Global Functions.
 
   int    Converter        ( PyObject* object, void** pArg );
-  bool   ParseOneArg      ( char* function, PyObject* args, string format, PyObject** arg );
-  bool   ParseTwoArg      ( char* function, PyObject* args, string format, PyObject** arg0, PyObject** arg1 );
-  bool   ParseThreeArg    ( char* function, PyObject* args, string format, PyObject** arg0, PyObject** arg1, PyObject** arg2 );
+  bool   ParseOneArg      ( const char* function, PyObject* args, string format, PyObject** arg );
+  bool   ParseTwoArg      ( const char* function, PyObject* args, string format, PyObject** arg0, PyObject** arg1 );
+  bool   ParseThreeArg    ( const char* function, PyObject* args, string format, PyObject** arg0, PyObject** arg1, PyObject** arg2 );
 
 
 
