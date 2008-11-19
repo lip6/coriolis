@@ -359,7 +359,7 @@ using namespace Hurricane;
 // -------------------------------------------------------------------
 // Function  : "ParseOneArg ()"
 
-  bool  ParseOneArg  ( char* function, PyObject* args, string format, PyObject** arg ) {
+  bool  ParseOneArg  ( const char* function, PyObject* args, string format, PyObject** arg ) {
     ostringstream  message;
 
     __cs.init ( function );
@@ -380,7 +380,7 @@ using namespace Hurricane;
 // -------------------------------------------------------------------
 // Function  : "ParseTwoArg ()"
 
-  bool  ParseTwoArg  ( char* function, PyObject* args, string format, PyObject** arg0, PyObject** arg1 ) {
+  bool  ParseTwoArg  ( const char* function, PyObject* args, string format, PyObject** arg0, PyObject** arg1 ) {
     ostringstream  message;
     __cs.init ( function );
     if ( ! PyArg_ParseTuple(args,"O&O&",Converter,arg0,Converter,arg1) ) return ( false );
@@ -406,7 +406,7 @@ using namespace Hurricane;
 // -------------------------------------------------------------------
 // Function  : "ParseThreeArg ()"
 
-  bool  ParseThreeArg  ( char* function, PyObject* args, string format, PyObject** arg0, PyObject** arg1, PyObject** arg2 ) {
+  bool  ParseThreeArg  ( const char* function, PyObject* args, string format, PyObject** arg0, PyObject** arg1, PyObject** arg2 ) {
     ostringstream  message;
     __cs.init ( function );
     if ( ! PyArg_ParseTuple(args,"O&O&O&",Converter,arg0,Converter,arg1,Converter,arg2) ) return ( false );
