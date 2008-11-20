@@ -69,18 +69,18 @@ using namespace Hurricane;
 extern "C" {
 
 
-# undef   ACCESS_OBJECT
-# undef   ACCESS_CLASS
-# define  ACCESS_OBJECT           _baseObject._object
-# define  ACCESS_CLASS(_pyObject)  &(_pyObject->_baseObject)
-# define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Component,component,function)
+#undef   ACCESS_OBJECT
+#undef   ACCESS_CLASS
+#define  ACCESS_OBJECT           _baseObject._object
+#define  ACCESS_CLASS(_pyObject)  &(_pyObject->_baseObject)
+#define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Component,component,function)
 
 
 // x=================================================================x
 // |             "PyComponent" Python Module Code Part               |
 // x=================================================================x
 
-# if defined(__PYTHON_MODULE__)
+#if defined(__PYTHON_MODULE__)
 
 
   // x-------------------------------------------------------------x
@@ -209,7 +209,7 @@ extern "C" {
 
   PyTypeObjectDefinitions(Component)
 
-# endif  // End of Shared Library Code Part.
+#endif  // End of Shared Library Code Part.
 
 
 }  // End of extern "C".
@@ -218,4 +218,3 @@ extern "C" {
 
 
 }  // End of Isobar namespace.
- 

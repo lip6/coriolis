@@ -83,6 +83,7 @@
 #include "hurricane/isobar/PyContact.h"
 #include "hurricane/isobar/PyHorizontal.h"
 #include "hurricane/isobar/PyVertical.h"
+#include "hurricane/isobar/PyPad.h"
 #include "hurricane/isobar/PyPath.h"
 #include "hurricane/isobar/PyOccurrence.h"
 #include "hurricane/isobar/PyOccurrenceCollection.h"
@@ -547,6 +548,7 @@ extern "C" {
     PyHyperNet_LinkPyType ();
     PyComponent_LinkPyType ();
     PySegment_LinkPyType ();
+    PyPad_LinkPyType ();
     PyVertical_LinkPyType ();
     PyHorizontal_LinkPyType ();
     PyContact_LinkPyType ();
@@ -569,6 +571,7 @@ extern "C" {
     PyVertical_Constructor();
     PyContact_Constructor();
     PyPin_Constructor();
+    PyPad_Constructor();
     PyPath_Constructor();
     PyOccurrence_Constructor();
 
@@ -615,6 +618,7 @@ extern "C" {
     PYTYPE_READY_SUB ( Contact   , Component)
     PYTYPE_READY_SUB ( Pin       , Contact  )
     PYTYPE_READY_SUB ( Plug      , Component)
+    PYTYPE_READY_SUB ( Pad       , Component)
 
    
     // Identifier string can take up to 10 characters !
@@ -651,6 +655,7 @@ extern "C" {
     __cs.addType ( "plugCol"    , &PyTypePlugCollection   , "<PlugCollection>"   , false );
     __cs.addType ( "point"      , &PyTypePoint            , "<Point>"            , false );
     __cs.addType ( "segment"    , &PyTypeSegment          , "<Segment>"          , false, "comp" );
+    __cs.addType ( "pad    "    , &PyTypePad              , "<Pad>"              , false, "comp" );
     __cs.addType ( "segmentCol" , &PyTypeSegmentCollection, "<SegmentCollection>", false );
     __cs.addType ( "db"         , &PyTypeDataBase         , "<DataBase>"         , false );
     __cs.addType ( "techno"     , &PyTypeTechnology       , "<Technology>"       , false );
@@ -680,6 +685,7 @@ extern "C" {
     PyModule_AddObject(module, "HyperNet"       , (PyObject*)&PyTypeHyperNet);
     PyModule_AddObject(module, "Horizontal"     , (PyObject*)&PyTypeHorizontal);
     PyModule_AddObject(module, "Vertical"       , (PyObject*)&PyTypeVertical);
+    PyModule_AddObject(module, "Pad"            , (PyObject*)&PyTypePad);
     PyModule_AddObject(module, "Contact"        , (PyObject*)&PyTypeContact);
     PyModule_AddObject(module, "Pin"            , (PyObject*)&PyTypePin);
     PyModule_AddObject(module, "Path"           , (PyObject*)&PyTypePath);

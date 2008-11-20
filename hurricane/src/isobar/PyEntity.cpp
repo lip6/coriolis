@@ -61,6 +61,7 @@
 #include "hurricane/isobar/PyHorizontal.h"
 #include "hurricane/isobar/PyVertical.h"
 #include "hurricane/isobar/PyContact.h"
+#include "hurricane/isobar/PyPad.h"
 #include "hurricane/isobar/PyPin.h"
 
 namespace Isobar {
@@ -143,8 +144,7 @@ extern "C" {
   // No PyEntity should ever be created, it's not a terminal object
   // of the class hierarchy. Instead create the real underlying PyObject.
 
-  PyObject* PyEntity_NEW ( Entity* entity )
-  {
+  PyObject* PyEntity_NEW ( Entity* entity ) {
     if ( !entity ) {
       PyErr_SetString ( HurricaneError, "Invalid Entity (bad occurrence)" );  \
       return NULL;
@@ -164,6 +164,9 @@ extern "C" {
     
     Vertical* vertical = dynamic_cast<Vertical*>(entity);
     if ( vertical ) return PyVertical_Link ( vertical );
+
+    Pad* pad = dynamic_cast<Pad*>(entity);
+    if ( pad ) return PyPad_Link ( pad );
     
     Contact* contact = dynamic_cast<Contact*>(entity);
     if ( contact ) return PyContact_Link ( contact );

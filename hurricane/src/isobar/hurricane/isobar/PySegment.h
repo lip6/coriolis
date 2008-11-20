@@ -53,8 +53,8 @@
 
 
 
-# ifndef  __PYSEGMENT__
-#   define  __PYSEGMENT__
+#ifndef __PYSEGMENT_H
+#define __PYSEGMENT_H
 
 
 #include "hurricane/isobar/PyComponent.h"
@@ -87,9 +87,9 @@ extern "C" {
   extern  void  PySegment_LinkPyType ();
 
 
-# define IsPySegment(v)    ( (v)->ob_type == &PyTypeSegment )
-# define PYSEGMENT(v)      ( (PySegment*)(v) )
-# define PYSEGMENT_O(v)    ( PYSEGMENT(v)->_baseObject._baseObject._object )
+#define IsPySegment(v)    ( (v)->ob_type == &PyTypeSegment )
+#define PYSEGMENT(v)      ( (PySegment*)(v) )
+#define PYSEGMENT_O(v)    ( PYSEGMENT(v)->_baseObject._baseObject._object )
 
 
 }  // End of extern "C".
@@ -102,4 +102,4 @@ extern "C" {
 
 
 
-# endif
+#endif /* __PYSEGMENT_H */
