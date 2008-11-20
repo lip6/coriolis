@@ -56,12 +56,32 @@ extern "C" {
   }
 
   // ---------------------------------------------------------------
+  // Attribute Method  :  "PyPad_setBoudingBox()"
+
+  static PyObject* PyPad_setBoundingBox(PyPad *self, PyObject* args) {
+    trace << "Pad.setBoudingBox()" << endl;
+
+    HTRY
+    METHOD_HEAD ( "Pad.setBoudingBox()" )
+
+    PyBox* box;
+    if (!ParseOneArg("Pad.setBoundingBox", args, BOX_ARG, (PyObject**)&box)) {
+        return NULL;
+    }
+    pad->setBoundingBox(*PYBOX_O(box));
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+  // ---------------------------------------------------------------
   // PyPad Attribute Method table.
 
   PyMethodDef PyPad_Methods[] =
     { { "getX"                 , (PyCFunction)PyPad_getX       , METH_NOARGS, "Return the Pad X value." }
     , { "getY"                 , (PyCFunction)PyPad_getY       , METH_NOARGS, "Return the Pad Y value." }
-    , { "getBoundingBox   "    , (PyCFunction)PyPad_getBoundingBox, METH_NOARGS, "Return the Pad Bounding Box." }
+    , { "getBoundingBox"       , (PyCFunction)PyPad_getBoundingBox, METH_NOARGS, "Return the Pad Bounding Box." }
+    , { "setBoundingBox"       , (PyCFunction)PyPad_setBoundingBox, METH_VARARGS, "Sets the Pad Bounding Box." }
     , { "destroy"              , (PyCFunction)PyPad_destroy          , METH_NOARGS
                                , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
