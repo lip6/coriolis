@@ -105,8 +105,8 @@ INPUT                  = \
   ../../src/hviewer/hurricane/viewer/CellWidget.h         \
   ../../src/hviewer/hurricane/viewer/CellViewer.h         \
                                      CellViewer.dox       \
-  ../../src/hviewer/hurricane/viewer/HInspectorWidget.h   \
-                                     HInspectorWidget.dox
+  ../../src/hviewer/hurricane/viewer/InspectorWidget.h    \
+                                     InspectorWidget.dox
 
 
 FILE_PATTERNS          = *.h   \

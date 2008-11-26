@@ -16,7 +16,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./MousePositionWidget.cpp"                     |
+// |  C++ Module  :       "./MousePositionWidget.cpp"                |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
@@ -26,8 +26,7 @@
 #include  <QHBoxLayout>
 
 #include  "hurricane/viewer/DynamicLabel.h"
-//# include  "hurricane/viewer/MousePositionWidget.h"
-#include  "hurricane/viewer/HMousePosition.h"
+#include  "hurricane/viewer/MousePositionWidget.h"
 
 
 namespace Hurricane {

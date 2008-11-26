@@ -32,8 +32,7 @@
 
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/DisplayStyle.h"
-//#include  "hurricane/viewer/GraphicsWidget.h"
-#include  "hurricane/viewer/HGraphics.h"
+#include  "hurricane/viewer/GraphicsWidget.h"
 
 
 namespace Hurricane {

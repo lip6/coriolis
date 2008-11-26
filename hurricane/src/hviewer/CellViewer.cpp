@@ -37,8 +37,7 @@
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/CellWidget.h"
 #include  "hurricane/viewer/CellViewer.h"
-//#include  "hurricane/viewer/MousePositionWidget.h"
-#include  "hurricane/viewer/HMousePosition.h"
+#include  "hurricane/viewer/MousePositionWidget.h"
 #include  "hurricane/viewer/ControllerWidget.h"
 
 

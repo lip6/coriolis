@@ -8,30 +8,30 @@
                                      hurricane/viewer/PaletteNamedItem.h
                                      hurricane/viewer/PaletteLayerItem.h
                                      hurricane/viewer/PaletteWidget.h
-                                     hurricane/viewer/HGraphics.h
+                                     hurricane/viewer/GraphicsWidget.h
                                      hurricane/viewer/DynamicLabel.h
-                                     hurricane/viewer/HMousePosition.h
+                                     hurricane/viewer/MousePositionWidget.h
                                      hurricane/viewer/Selector.h
                                      hurricane/viewer/SelectCommand.h
                                      hurricane/viewer/CellWidget.h
                                      hurricane/viewer/CellWidgets.h
                                      hurricane/viewer/CellViewer.h
                                      hurricane/viewer/RecordModel.h
-                                     hurricane/viewer/HInspectorWidget.h
-                                     hurricane/viewer/HSelectionPopupModel.h
-                                     hurricane/viewer/HSelectionPopup.h
-                                     hurricane/viewer/HSelectionModel.h
-                                     hurricane/viewer/HSelection.h
-                                     hurricane/viewer/HNetlistModel.h
-                                     hurricane/viewer/HNetlist.h
-                                     hurricane/viewer/HDisplayFilter.h
+                                     hurricane/viewer/InspectorWidget.h
+                                     hurricane/viewer/SelectionPopupModel.h
+                                     hurricane/viewer/SelectionPopup.h
+                                     hurricane/viewer/SelectionModel.h
+                                     hurricane/viewer/SelectionWidget.h
+                                     hurricane/viewer/NetlistModel.h
+                                     hurricane/viewer/NetlistWidget.h
+                                     hurricane/viewer/DisplayFilterWidget.h
                                      hurricane/viewer/ControllerWidget.h
                        )
                    set ( exports     hurricane/viewer/ScreenUtilities.h
                                      hurricane/viewer/DisplayStyle.h
                                      hurricane/viewer/ColorScale.h
                                      hurricane/viewer/Graphics.h
-                                     hurricane/viewer/HGraphics.h
+                                     hurricane/viewer/GraphicsWidget.h
                                      hurricane/viewer/Selector.h
                                      hurricane/viewer/Command.h
                                      hurricane/viewer/AreaCommand.h
@@ -42,27 +42,27 @@
                                      hurricane/viewer/CellWidget.h
                                      hurricane/viewer/CellWidgets.h
                                      hurricane/viewer/CellViewer.h
-                                     hurricane/viewer/HInspectorWidget.h
-                                     hurricane/viewer/HSelectionPopupModel.h
-                                     hurricane/viewer/HSelectionPopup.h
-                                     hurricane/viewer/HSelectionModel.h
-                                     hurricane/viewer/HSelection.h
+                                     hurricane/viewer/InspectorWidget.h
+                                     hurricane/viewer/SelectionPopupModel.h
+                                     hurricane/viewer/SelectionPopup.h
+                                     hurricane/viewer/SelectionModel.h
+                                     hurricane/viewer/SelectionWidget.h
                                      hurricane/viewer/NetInformations.h
-                                     hurricane/viewer/HNetlist.h
-                                     hurricane/viewer/HDisplayFilter.h
+                                     hurricane/viewer/NetlistWidget.h
+                                     hurricane/viewer/DisplayFilterWidget.h
                                      hurricane/viewer/ControllerWidget.h
                        )
                    set ( cpps        ScreenUtilities.cpp 
                                      DisplayStyle.cpp 
                                      ColorScale.cpp
                                      Graphics.cpp
-                                     HGraphics.cpp
+                                     GraphicsWidget.cpp
                                      PaletteItem.cpp
                                      PaletteNamedItem.cpp
                                      PaletteLayerItem.cpp
                                      PaletteWidget.cpp
                                      DynamicLabel.cpp
-                                     HMousePosition.cpp
+                                     MousePositionWidget.cpp
                                      Selector.cpp
                                      Command.cpp
                                      AreaCommand.cpp
@@ -73,15 +73,15 @@
                                      CellWidget.cpp
                                      CellViewer.cpp
                                      RecordModel.cpp
-                                     HInspectorWidget.cpp
-                                     HSelectionPopupModel.cpp
-                                     HSelectionPopup.cpp
-                                     HSelectionModel.cpp
-                                     HSelection.cpp
+                                     InspectorWidget.cpp
+                                     SelectionPopupModel.cpp
+                                     SelectionPopup.cpp
+                                     SelectionModel.cpp
+                                     SelectionWidget.cpp
                                      NetInformations.cpp
-                                     HNetlistModel.cpp
-                                     HNetlist.cpp
-                                     HDisplayFilter.cpp
+                                     NetlistModel.cpp
+                                     NetlistWidget.cpp
+                                     DisplayFilterWidget.cpp
                                      ControllerWidget.cpp
                        )
 

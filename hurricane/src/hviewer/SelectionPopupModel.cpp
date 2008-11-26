@@ -1,36 +1,9 @@
 
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
 // ===================================================================
 //
 // $Id$
@@ -43,7 +16,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./HSelectionPopupModel.cpp"               |
+// |  C++ Module  :       "./SelectionPopupModel.cpp"                |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
@@ -57,25 +30,25 @@
 #include  "hurricane/Occurrence.h"
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/Selector.h"
-#include  "hurricane/viewer/HSelectionPopupModel.h"
+#include  "hurricane/viewer/SelectionPopupModel.h"
 
 
 namespace Hurricane {
 
 
-  HSelectionPopupModel::HSelectionPopupModel ( QObject* parent )
+  SelectionPopupModel::SelectionPopupModel ( QObject* parent )
     : QAbstractTableModel(parent)
     , _occurrences(NULL)
   { }
 
 
-  HSelectionPopupModel::~HSelectionPopupModel ()
+  SelectionPopupModel::~SelectionPopupModel ()
   {
     clear ();
   }
 
 
-  void  HSelectionPopupModel::add ( Occurrence occurrence, bool showChange )
+  void  SelectionPopupModel::add ( Occurrence occurrence, bool showChange )
   {
     if ( !_occurrences ) _occurrences = new vector<Occurrence> ();
 
@@ -84,7 +57,7 @@ namespace Hurricane {
   }
 
 
-  void  HSelectionPopupModel::clear ()
+  void  SelectionPopupModel::clear ()
   {
     if ( _occurrences ) {
       delete _occurrences;
@@ -94,13 +67,13 @@ namespace Hurricane {
   }
 
 
-  void  HSelectionPopupModel::updateLayout ()
+  void  SelectionPopupModel::updateLayout ()
   {
     emit layoutChanged ();
   }
 
 
-  QVariant  HSelectionPopupModel::data ( const QModelIndex& index, int role ) const
+  QVariant  SelectionPopupModel::data ( const QModelIndex& index, int role ) const
   {
     static QFont occurrenceFont = Graphics::getFixedFont ( QFont::Normal );
     static QFont entityFont     = Graphics::getFixedFont ( QFont::Bold, false );
@@ -143,7 +116,7 @@ namespace Hurricane {
   }
 
 
-  QVariant  HSelectionPopupModel::headerData ( int             section
+  QVariant  SelectionPopupModel::headerData ( int             section
                                              , Qt::Orientation orientation
                                              , int             role ) const
   {
@@ -158,20 +131,20 @@ namespace Hurricane {
   }
 
 
-  int  HSelectionPopupModel::rowCount ( const QModelIndex& parent ) const
+  int  SelectionPopupModel::rowCount ( const QModelIndex& parent ) const
   {
     if ( !_occurrences ) return 1;
     return _occurrences->size();
   }
 
 
-  int  HSelectionPopupModel::columnCount ( const QModelIndex& parent ) const
+  int  SelectionPopupModel::columnCount ( const QModelIndex& parent ) const
   {
     return 1;
   }
 
 
-  Occurrence  HSelectionPopupModel::getOccurrence ( int row )
+  Occurrence  SelectionPopupModel::getOccurrence ( int row )
   {
     if ( !_occurrences || (row >= (int)_occurrences->size()) )
       return Occurrence();

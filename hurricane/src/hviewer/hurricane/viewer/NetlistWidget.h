@@ -16,15 +16,15 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./NetlistWidget.h"                             |
+// |  C++ Header  :       "./NetlistWidget.h"                        |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
 
-#ifndef  __HURRICANE_NETLIST_WIDGET_H__
-#define  __HURRICANE_NETLIST_WIDGET_H__
+#ifndef  __HURRICANE_NETLIST_WIDGET__
+#define  __HURRICANE_NETLIST_WIDGET__
 
 
 #include  <QWidget>
@@ -33,7 +33,7 @@
 
 #include  "hurricane/Commons.h"
 #include  "hurricane/viewer/CellWidget.h"
-#include  "hurricane/viewer/HNetlistModel.h"
+#include  "hurricane/viewer/NetlistModel.h"
 
 
 class QSortFilterProxyModel;

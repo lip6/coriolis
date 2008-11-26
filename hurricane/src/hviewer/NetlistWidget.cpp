@@ -34,10 +34,8 @@
 #include "hurricane/Net.h"
 
 #include "hurricane/viewer/Graphics.h"
-//#include "hurricane/viewer/NetlistModel.h"
-//#include "hurricane/viewer/NetlistWidget.h"
-#include "hurricane/viewer/HNetlistModel.h"
-#include "hurricane/viewer/HNetlist.h"
+#include "hurricane/viewer/NetlistModel.h"
+#include "hurricane/viewer/NetlistWidget.h"
 
 
 namespace Hurricane {

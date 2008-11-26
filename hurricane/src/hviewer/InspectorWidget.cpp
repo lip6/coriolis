@@ -36,8 +36,7 @@
 
 #include "hurricane/viewer/Graphics.h"
 #include "hurricane/viewer/RecordModel.h"
-//#include "hurricane/viewer/InspectorWidget.h"
-#include "hurricane/viewer/HInspectorWidget.h"
+#include "hurricane/viewer/InspectorWidget.h"
 #include "hurricane/Slot.h"
 
 

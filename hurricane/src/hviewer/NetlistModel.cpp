@@ -31,7 +31,7 @@
 #include  "hurricane/Cell.h"
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/NetInformations.h"
-#include  "hurricane/viewer/HNetlistModel.h"
+#include  "hurricane/viewer/NetlistModel.h"
 
 
 namespace Hurricane {

@@ -33,8 +33,7 @@
 
 #include  "hurricane/Commons.h"
 #include  "hurricane/Occurrence.h"
-//#include  "hurricane/viewer/SelectionModel.h"
-#include  "hurricane/viewer/HSelectionModel.h"
+#include  "hurricane/viewer/SelectionModel.h"
 
 
 class QSortFilterProxyModel;

@@ -38,10 +38,8 @@
 #include "hurricane/Cell.h"
 
 #include "hurricane/viewer/Graphics.h"
-//#include "hurricane/viewer/SelectionModel.h"
-//#include "hurricane/viewer/SelectionWidget.h"
-#include "hurricane/viewer/HSelectionModel.h"
-#include "hurricane/viewer/HSelection.h"
+#include "hurricane/viewer/SelectionModel.h"
+#include "hurricane/viewer/SelectionWidget.h"
 
 
 namespace Hurricane {

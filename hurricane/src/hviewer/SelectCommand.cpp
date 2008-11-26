@@ -31,7 +31,7 @@
 
 # include "hurricane/viewer/CellWidget.h"
 # include "hurricane/viewer/SelectCommand.h"
-# include "hurricane/viewer/HSelectionPopup.h"
+# include "hurricane/viewer/SelectionPopup.h"
 
 
 namespace Hurricane {
@@ -46,7 +46,7 @@ namespace Hurricane {
     , _selectAction(NULL)
     , _selectionPopup(NULL)
   {
-    _selectionPopup = new HSelectionPopup ();
+    _selectionPopup = new SelectionPopup ();
 
     connect ( _selectionPopup, SIGNAL(occurrenceSelected(Occurrence,bool))
             , this           , SIGNAL(selectionToggled  (Occurrence,bool)) );
