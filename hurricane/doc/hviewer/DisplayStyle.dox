@@ -66,7 +66,7 @@
   *  \Return       The display threshold associated to the DrawingStyle \e key.
   */
 
- /*! \function     vector<DrawingGroup*>& DisplayStyle::getDrawingGroups();
+ /*! \function     const vector<DrawingGroup*>& DisplayStyle::getDrawingGroups() const;
   *  \Return       The vector of groups.
   */
 

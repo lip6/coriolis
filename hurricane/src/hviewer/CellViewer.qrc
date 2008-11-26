@@ -8,5 +8,6 @@
     <file>images/gtk-go-down.png</file>
     <file>images/gtk-go-forward-rtl.png</file>
     <file>images/gtk-go-forward-ltr.png</file>
+    <file>images/swiss-knife.png</file>
   </qresource>
 </RCC>

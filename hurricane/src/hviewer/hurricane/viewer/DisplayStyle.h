@@ -103,24 +103,24 @@ namespace Hurricane {
 
     public:
     // Constructors & Destructors.
-                                    DrawingGroup     ( const Name&   name );
-                                   ~DrawingGroup     ();
-              DrawingGroup*         getClone         ();
-              void                  qtAllocate       ();
+                                          DrawingGroup     ( const Name&   name );
+                                         ~DrawingGroup     ();
+              DrawingGroup*               getClone         ();
+              void                        qtAllocate       ();
 
     // Methods.
-      inline const Name&            getName          () const;
-      inline vector<DrawingStyle*>& getDrawingStyles ();
-             size_t                 findIndex        ( const Name& key ) const;
-             DrawingStyle*          find             ( const Name& key );
-             DrawingStyle*          addDrawingStyle  ( const Name&   key
-                                                     , const string& pattern
-                                                     ,       int     red
-                                                     ,       int     green
-                                                     ,       int     blue
-                                                     ,       int     borderWidth
-                                                     ,       float   threshold
-                                                     );
+      inline const Name&                  getName          () const;
+      inline const vector<DrawingStyle*>& getDrawingStyles () const;
+             size_t                       findIndex        ( const Name& key ) const;
+             DrawingStyle*                find             ( const Name& key ) const;
+             DrawingStyle*                addDrawingStyle  ( const Name&   key
+                                                           , const string& pattern
+                                                           ,       int     red
+                                                           ,       int     green
+                                                           ,       int     blue
+                                                           ,       int     borderWidth
+                                                           ,       float   threshold
+                                                           );
       
     protected:
     // Internal - Attributes.
@@ -140,71 +140,71 @@ namespace Hurricane {
 
     public:
     // Static Members.
-      static const Name             Viewer;
-      static const Name             Fallback;
-      static const Name             Background;
-      static const Name             Foreground;
-      static const Name             Rubber;
-      static const Name             Phantom;
-      static const Name             Boundaries;
-      static const Name             Marker;
-      static const Name             SelectionDraw;
-      static const Name             SelectionFill;
-      static const Name             Grid;
-      static const Name             Spot;
-      static const Name             Ghost;
-      static const Name             TextCell;
-      static const Name             TextInstance;
-      static const Name             Undef;
-      static const Name             UnmatchedGroup;
-
-    // Constructor & Destructor.
-                                    DisplayStyle     ( const Name& name );
-                                   ~DisplayStyle     ();
-
-    // Accessors.
-             const Name&            getName          () const;
-      inline const string&          getDescription   () const;
-      inline int                    getDarkening     () const;
-             const Name&            getGroup         ( const Name& key ) const;
-             const string&          getPattern       ( const Name& key ) const;
-             QColor                 getColor         ( const Name& key, int darkening ) const;
-             QPen                   getPen           ( const Name& key, int darkening ) const;
-             QBrush                 getBrush         ( const Name& key, int darkening ) const;
-             float                  getThreshold     ( const Name& key ) const;
-      inline vector<DrawingGroup*>& getDrawingGroups ();
-             DrawingStyle*          find             ( const Name& key ) const;
-
-    // Modifiers.
-             void                   qtAllocate       ();
-      inline void                   setDescription   ( const string& description );
-      inline void                   setDescription   ( const char* description );
-             void                   inheritFrom      ( const DisplayStyle* base );
-             void                   setDarkening     ( int darkening );
-             void                   addDrawingStyle  ( const Name&   groupKey
-                                                     , const Name&   key
-                                                     , const string& pattern
-                                                     ,       int     red
-                                                     ,       int     green
-                                                     ,       int     blue
-                                                     ,       int     borderWidth
-                                                     ,       float   threshold
-                                                     );
+      static const Name                   Viewer;
+      static const Name                   Fallback;
+      static const Name                   Background;
+      static const Name                   Foreground;
+      static const Name                   Rubber;
+      static const Name                   Phantom;
+      static const Name                   Boundaries;
+      static const Name                   Marker;
+      static const Name                   SelectionDraw;
+      static const Name                   SelectionFill;
+      static const Name                   Grid;
+      static const Name                   Spot;
+      static const Name                   Ghost;
+      static const Name                   TextCell;
+      static const Name                   TextInstance;
+      static const Name                   Undef;
+      static const Name                   UnmatchedGroup;
+                                       
+    // Constructor & Destructor.       
+                                          DisplayStyle     ( const Name& name );
+                                         ~DisplayStyle     ();
+                                       
+    // Accessors.                      
+             const Name&                  getName          () const;
+      inline const string&                getDescription   () const;
+      inline int                          getDarkening     () const;
+             const Name&                  getGroup         ( const Name& key ) const;
+             const string&                getPattern       ( const Name& key ) const;
+             QColor                       getColor         ( const Name& key, int darkening ) const;
+             QPen                         getPen           ( const Name& key, int darkening ) const;
+             QBrush                       getBrush         ( const Name& key, int darkening ) const;
+             float                        getThreshold     ( const Name& key ) const;
+      inline const vector<DrawingGroup*>& getDrawingGroups () const;
+             DrawingStyle*                find             ( const Name& key ) const;
+                                       
+    // Modifiers.                      
+             void                         qtAllocate       ();
+      inline void                         setDescription   ( const string& description );
+      inline void                         setDescription   ( const char* description );
+             void                         inheritFrom      ( const DisplayStyle* base );
+             void                         setDarkening     ( int darkening );
+             void                         addDrawingStyle  ( const Name&   groupKey
+                                                           , const Name&   key
+                                                           , const string& pattern
+                                                           ,       int     red
+                                                           ,       int     green
+                                                           ,       int     blue
+                                                           ,       int     borderWidth
+                                                           ,       float   threshold
+                                                           );
 
     protected:
     // Internals - Attributes.
-             const Name             _name;
-             string                 _description;
-             vector<DrawingGroup*>  _groups;
-             int                    _darkening;
-
-    // Internals - Methods.
-             void                   findOrCreate     ( const Name& groupKey
-                                                     , size_t&     gi );
-             void                   find             ( const Name& groupKey
-                                                     , const Name& key
-                                                     , size_t&     gi
-                                                     , size_t&     si );
+             const Name                   _name;
+             string                       _description;
+             vector<DrawingGroup*>        _groups;
+             int                          _darkening;
+                                        
+    // Internals - Methods.             
+             void                         findOrCreate     ( const Name& groupKey
+                                                           , size_t&     gi );
+             void                         find             ( const Name& groupKey
+                                                           , const Name& key
+                                                           , size_t&     gi
+                                                           , size_t&     si ) const;
 
   };
 
@@ -212,19 +212,19 @@ namespace Hurricane {
 
 
   // Functions.
-  inline const Name&            DrawingStyle::getName          () const { return _name; }
-  inline const string&          DrawingStyle::getPattern       () const { return _pattern; }
-  inline float                  DrawingStyle::getThreshold     () const { return _threshold; }
+  inline const Name&                  DrawingStyle::getName          () const { return _name; }
+  inline const string&                DrawingStyle::getPattern       () const { return _pattern; }
+  inline float                        DrawingStyle::getThreshold     () const { return _threshold; }
+                                   
+  inline const Name&                  DrawingGroup::getName          () const { return _name; }
+  inline const vector<DrawingStyle*>& DrawingGroup::getDrawingStyles () const { return _drawingStyles; }
 
-  inline const Name&            DrawingGroup::getName          () const { return _name; }
-  inline vector<DrawingStyle*>& DrawingGroup::getDrawingStyles () { return _drawingStyles; }
-
-  inline const Name&            DisplayStyle::getName          () const { return _name; }
-  inline vector<DrawingGroup*>& DisplayStyle::getDrawingGroups () { return _groups; }
-  inline int                    DisplayStyle::getDarkening     () const { return _darkening; }
-  inline const string&          DisplayStyle::getDescription   () const { return _description; }
-  inline void                   DisplayStyle::setDescription   ( const string& description ) { _description = description; }
-  inline void                   DisplayStyle::setDescription   ( const char* description ) { _description = description; }
+  inline const Name&                  DisplayStyle::getName          () const { return _name; }
+  inline const vector<DrawingGroup*>& DisplayStyle::getDrawingGroups () const { return _groups; }
+  inline int                          DisplayStyle::getDarkening     () const { return _darkening; }
+  inline const string&                DisplayStyle::getDescription   () const { return _description; }
+  inline void                         DisplayStyle::setDescription   ( const string& description ) { _description = description; }
+  inline void                         DisplayStyle::setDescription   ( const char* description ) { _description = description; }
 
 
 } // End of Hurricane namespace.

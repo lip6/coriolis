@@ -1,36 +1,9 @@
 
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
 // ===================================================================
 //
 // $Id$
@@ -43,7 +16,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./HSelectionModel.cpp"                    |
+// |  C++ Module  :       "./SelectionModel.cpp"                     |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
@@ -59,6 +32,8 @@
 #include  "hurricane/Occurrence.h"
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/Selector.h"
+//#include  "hurricane/viewer/SelectionModel.h"
+//#include  "hurricane/viewer/SelectionWidget.h"
 #include  "hurricane/viewer/HSelectionModel.h"
 #include  "hurricane/viewer/HSelection.h"
 
@@ -66,19 +41,19 @@
 namespace Hurricane {
 
 
-  HSelectionModel::HSelectionModel ( QObject* parent )
+  SelectionModel::SelectionModel ( QObject* parent )
     : QAbstractTableModel(parent)
     , _selection()
   { }
 
 
-  HSelectionModel::~HSelectionModel ()
+  SelectionModel::~SelectionModel ()
   { }
 
 
-  bool  HSelectionModel::isCumulative () const
+  bool  SelectionModel::isCumulative () const
   {
-    HSelection* widget = qobject_cast<HSelection*>(QObject::parent());
+    SelectionWidget* widget = qobject_cast<SelectionWidget*>(QObject::parent());
     if ( widget )
       return widget->isCumulative();
 
@@ -86,14 +61,14 @@ namespace Hurricane {
   }
 
 
-  void  HSelectionModel::clear ()
+  void  SelectionModel::clear ()
   {
     _selection.clear ();
     emit layoutChanged ();
   }
 
 
-  void  HSelectionModel::setSelection ( const set<Selector*>& selection )
+  void  SelectionModel::setSelection ( const set<Selector*>& selection )
   {
     if ( !isCumulative() ) _selection.clear ();
 
@@ -114,7 +89,7 @@ namespace Hurricane {
   }
 
 
-  Occurrence  HSelectionModel::toggleSelection ( const QModelIndex& index )
+  Occurrence  SelectionModel::toggleSelection ( const QModelIndex& index )
   {
     if ( index.isValid() && ( index.row() < (int)_selection.size() ) ) {
       _selection[index.row()].toggle();
@@ -127,7 +102,7 @@ namespace Hurricane {
   }
 
 
-  void  HSelectionModel::toggleSelection ( Occurrence occurrence )
+  void  SelectionModel::toggleSelection ( Occurrence occurrence )
   {
     bool   found = false;
     size_t i     = 0;
@@ -151,7 +126,7 @@ namespace Hurricane {
   }
 
 
-  QVariant  HSelectionModel::data ( const QModelIndex& index, int role ) const
+  QVariant  SelectionModel::data ( const QModelIndex& index, int role ) const
   {
     static QFont occurrenceFont = Graphics::getFixedFont ( QFont::Normal );
     static QFont entityFont     = Graphics::getFixedFont ( QFont::Bold, false );
@@ -189,7 +164,7 @@ namespace Hurricane {
   }
 
 
-  QVariant  HSelectionModel::headerData ( int             section
+  QVariant  SelectionModel::headerData ( int             section
                                         , Qt::Orientation orientation
                                         , int             role ) const
   {
@@ -205,19 +180,19 @@ namespace Hurricane {
   }
 
 
-  int  HSelectionModel::rowCount ( const QModelIndex& parent ) const
+  int  SelectionModel::rowCount ( const QModelIndex& parent ) const
   {
     return _selection.size();
   }
 
 
-  int  HSelectionModel::columnCount ( const QModelIndex& parent ) const
+  int  SelectionModel::columnCount ( const QModelIndex& parent ) const
   {
     return 2;
   }
 
 
-  const Occurrence  HSelectionModel::getOccurrence ( int row )
+  const Occurrence  SelectionModel::getOccurrence ( int row )
   {
     if ( row >= (int)_selection.size() ) return Occurrence();
 

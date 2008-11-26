@@ -23,8 +23,8 @@
 // x-----------------------------------------------------------------x
 
 
-#ifndef  __CELL_VIEWER_H__
-#define  __CELL_VIEWER_H__
+#ifndef  __HURRICANE_CELL_VIEWER__
+#define  __HURRICANE_CELL_VIEWER__
 
 
 #include   <list>
@@ -56,82 +56,65 @@ namespace Hurricane {
   class HDisplayFilter;
 //class MapView;
   class CellWidget;
-  class HMousePosition;
-  class HNetlist;
+  class MousePositionWidget;
   class HSelection;
+  class ControllerWidget;
 
 
   class CellViewer : public QMainWindow {
       Q_OBJECT;
 
     public:
-                              CellViewer                ( QWidget* parent=NULL );
-              QMenu*          createDebugMenu           ();
-      inline  void            setApplicationName        ( const QString& name );
-              void            setCell                   ( Cell* cell );
-              Cell*           getCell                   ();
-      virtual Cell*           getCellFromDb             ( const char* name );
-      inline  CellWidget*     getCellWidget             ();
-              void            select                    ( Occurrence& occurence );
-              void            unselect                  ( Occurrence& occurence );
-              void            unselectAll               ();
-    public slots:
-              void            setShowPalette            ( bool show );
-              void            showGraphicsSettings      ();
-              void            showDisplayFilter         ();
-              void            openHistoryCell           ();
-              void            runInspectorOnDataBase    ();
-              void            runInspectorOnCell        ();
-              void            browseSelection           ();
-              void            browseNetlist             ();
-              void            selectionBrowserDestroyed ();
-              void            netlistBrowserDestroyed   ();
-    signals:
-              void            redrawCellWidget          ();
-
-    public:
-              enum            { CellHistorySize = 10 };
-    protected:
-              QString         _applicationName;
-              QAction*        _openAction;
-              QAction*        _nextAction;
-              QAction*        _cellHistoryAction[CellHistorySize];
-              QAction*        _saveAction;
-              QAction*        _closeAction;
-              QAction*        _exitAction;
-              QAction*        _refreshAction;
-              QAction*        _fitToContentsAction;
-              QAction*        _showSelectionAction;
-              QAction*        _showPaletteAction;
-              QAction*        _graphicsSettingsAction;
-              QAction*        _displayFilterAction;
-              QAction*        _runInspectorOnDataBase;
-              QAction*        _runInspectorOnCell;
-              QAction*        _browseSelection;
-              QAction*        _browseNetlist;
-              QMenu*          _fileMenu;
-              QMenu*          _viewMenu;
-              QMenu*          _toolsMenu;
-              QMenu*          _debugMenu;
-            //MapView*        _mapView;
-              HPalette*       _palette;
-              HMousePosition* _mousePosition;
-              HGraphics*      _graphicsSettings;
-              HDisplayFilter* _displayFilter;
-              CellWidget*     _cellWidget;
-              MoveCommand     _moveCommand;
-              ZoomCommand     _zoomCommand;
-              SelectCommand   _selectCommand;
-              list<Cell*>     _cellHistory;
-              HSelection*     _selectionBrowser;
-              HNetlist*       _netlistBrowser;
-
-    protected:
-              void            createActions             ();
-              void            createMenus               ();
-              void            createLayout              ();
-              void            refreshHistory            ();
-              void            runInspector              ( Record* record );
+                                   CellViewer                ( QWidget* parent=NULL );
+      virtual                     ~CellViewer                ();
+              QMenu*               createDebugMenu           ();
+      inline  void                 setApplicationName        ( const QString& name );
+              void                 setCell                   ( Cell* cell );
+              Cell*                getCell                   ();
+      virtual Cell*                getCellFromDb             ( const char* name );
+      inline  CellWidget*          getCellWidget             ();
+              void                 select                    ( Occurrence& occurence );
+              void                 unselect                  ( Occurrence& occurence );
+              void                 unselectAll               ();
+    public slots:                  
+              void                 showController            ();
+              void                 openHistoryCell           ();
+    signals:                       
+              void                 redrawCellWidget          ();
+                                   
+    public:                        
+              enum                 { CellHistorySize = 10 };
+    protected:                     
+              QString              _applicationName;
+              QAction*             _openAction;
+              QAction*             _nextAction;
+              QAction*             _cellHistoryAction[CellHistorySize];
+              QAction*             _saveAction;
+              QAction*             _closeAction;
+              QAction*             _exitAction;
+              QAction*             _refreshAction;
+              QAction*             _fitToContentsAction;
+              QAction*             _showSelectionAction;
+              QAction*             _controllerAction;
+              QMenu*               _fileMenu;
+              QMenu*               _viewMenu;
+              QMenu*               _toolsMenu;
+              QMenu*               _debugMenu;
+            //MapView*             _mapView;
+              HPalette*            _palette;
+              MousePositionWidget* _mousePosition;
+              ControllerWidget*    _controller;
+              CellWidget*          _cellWidget;
+              MoveCommand          _moveCommand;
+              ZoomCommand          _zoomCommand;
+              SelectCommand        _selectCommand;
+              list<Cell*>          _cellHistory;
+                                   
+    protected:                     
+              void                 createActions             ();
+              void                 createMenus               ();
+              void                 createLayout              ();
+              void                 refreshHistory            ();
   };
 
 

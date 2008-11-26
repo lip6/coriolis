@@ -42,7 +42,7 @@
  //! \name         Constructors & Destructors
  //  \{
    
- /*! \function     HInspectorWidget::HInspectorWidget(QWidget* parent=NULL);
+ /*! \function     InspectorWidget::InspectorWidget(QWidget* parent=NULL);
   *                Construct a HInspectorWidget. The root Record to browse must
   *                be sets immediatly afterwards with the setRootRecord()
   *                method.
@@ -54,7 +54,7 @@
  //! \name         Modifiers
  //  \{
    
- /*! \function     void HInspectorWidget::setRootRecord(Record* record);
+ /*! \function     void InspectorWidget::setRootRecord(Record* record);
   *                Sets the root record of the Inspector. Note that the
   *                previous root record is freed.
   */

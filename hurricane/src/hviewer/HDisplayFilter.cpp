@@ -1,36 +1,9 @@
 
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
 // ===================================================================
 //
 // $Id$
@@ -43,7 +16,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./HDisplayFilter.cpp"                     |
+// |  C++ Module  :       "./DisplayFilterWidget.cpp"                |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
@@ -55,9 +28,11 @@
 #include  <QSpinBox>
 #include  <QGroupBox>
 #include  <QGridLayout>
+#include  <QVBoxLayout>
 
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/CellWidget.h"
+//#include  "hurricane/viewer/DisplayFilterWidget.h"
 #include  "hurricane/viewer/HDisplayFilter.h"
 
 
@@ -65,14 +40,14 @@ namespace Hurricane {
 
 
 // -------------------------------------------------------------------
-// Class  :  "HDisplayFilter".
+// Class  :  "DisplayFilterWidget".
 
 
-  HDisplayFilter::HDisplayFilter ( QWidget* parent )
+  DisplayFilterWidget::DisplayFilterWidget ( QWidget* parent )
     : QWidget(parent)
     , _cellWidget(NULL)
-    , _startSpinBox(NULL)
-    , _stopSpinBox(NULL)
+    , _startSpinBox(new QSpinBox())
+    , _stopSpinBox(new QSpinBox())
     , _queryFilter(Query::DoAll)
   {
     setAttribute   ( Qt::WA_QuitOnClose, false );
@@ -81,13 +56,12 @@ namespace Hurricane {
 
     QGroupBox*    groupBox = new QGroupBox    ( tr("Hierarchy Settings") );
     QGridLayout*  gLayout  = new QGridLayout  ();
-    QGridLayout*  wLayout  = new QGridLayout  ();
+    QVBoxLayout*  wLayout  = new QVBoxLayout  ();
 
     QLabel* label = new QLabel ();
     label->setText ( "Hierarchy Start Level" );
     label->setFont ( Graphics::getNormalFont() );
 
-    _startSpinBox = new QSpinBox ();
     _startSpinBox->setFont ( Graphics::getNormalFont() );
 
     gLayout->addWidget ( label        , 0, 0 );
@@ -97,7 +71,6 @@ namespace Hurricane {
     label->setText ( "Hierarchy Stop Level" );
     label->setFont ( Graphics::getNormalFont() );
 
-    _stopSpinBox = new QSpinBox ();
     _stopSpinBox->setFont  ( Graphics::getNormalFont() );
     _stopSpinBox->setValue ( 100 );
 
@@ -134,7 +107,8 @@ namespace Hurricane {
     connect ( filterBox, SIGNAL(stateChanged(int)), this, SLOT(setDoComponents(int)) );
 
     groupBox->setLayout ( gLayout );
-    wLayout->addWidget ( groupBox, 0, 0 );
+    wLayout->addWidget  ( groupBox );
+    wLayout->addStretch ();
     setLayout ( wLayout );
 
     connect ( _startSpinBox, SIGNAL(valueChanged(int)), this, SLOT(startLevelChanged(int)) );
@@ -142,7 +116,7 @@ namespace Hurricane {
   }
 
 
-  void  HDisplayFilter::setCellWidget ( CellWidget* cw )
+  void  DisplayFilterWidget::setCellWidget ( CellWidget* cw )
   {
     if ( !cw ) {
       if ( _cellWidget )
@@ -155,7 +129,7 @@ namespace Hurricane {
   }
 
 
-  void  HDisplayFilter::startLevelChanged ( int level )
+  void  DisplayFilterWidget::startLevelChanged ( int level )
   {
     if ( _cellWidget ) {
       _cellWidget->setStartLevel ( level );
@@ -168,7 +142,7 @@ namespace Hurricane {
   }
 
 
-  void  HDisplayFilter::stopLevelChanged ( int level )
+  void  DisplayFilterWidget::stopLevelChanged ( int level )
   {
     if ( _cellWidget ) {
       _cellWidget->setStopLevel ( level );
@@ -181,7 +155,7 @@ namespace Hurricane {
   }
 
 
-  void  HDisplayFilter::setDoMasterCells ( int state )
+  void  DisplayFilterWidget::setDoMasterCells ( int state )
   {
     if ( state != Qt::Unchecked ) _queryFilter |=  Query::DoMasterCells;
     else                          _queryFilter &= ~Query::DoMasterCells;
@@ -192,7 +166,7 @@ namespace Hurricane {
   }
 
 
-  void  HDisplayFilter::setDoTerminalCells ( int state )
+  void  DisplayFilterWidget::setDoTerminalCells ( int state )
   {
     if ( state != Qt::Unchecked ) _queryFilter |=  Query::DoTerminalCells;
     else                          _queryFilter &= ~Query::DoTerminalCells;
@@ -203,7 +177,7 @@ namespace Hurricane {
   }
 
 
-  void  HDisplayFilter::setDoComponents ( int state )
+  void  DisplayFilterWidget::setDoComponents ( int state )
   {
     if ( state != Qt::Unchecked ) _queryFilter |=  Query::DoComponents;
     else                          _queryFilter &= ~Query::DoComponents;

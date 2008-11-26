@@ -1,36 +1,9 @@
 
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
 // ===================================================================
 //
 // $Id$
@@ -43,22 +16,22 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./HMousePosition.h"                       |
+// |  C++ Header  :       "./MousePositionWidget.h"                  |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
 
-# ifndef  __HMOUSE_POSITION_H__
-#   define  __HMOUSE_POSITION_H__
+#ifndef  __HURRICANE_MOUSE_POSITION__
+#define  __HURRICANE_MOUSE_POSITION__
 
-# include  <QWidget>
+#include  <QWidget>
 
 class QLabel;
 
-# include  "hurricane/Commons.h"
-# include  "hurricane/Point.h"
+#include  "hurricane/Commons.h"
+#include  "hurricane/Point.h"
 
 
 namespace Hurricane {
@@ -67,23 +40,20 @@ namespace Hurricane {
   class DynamicLabel;
 
 
-  class HMousePosition : public QWidget {
+  class MousePositionWidget : public QWidget {
       Q_OBJECT;
 
     public:
-    // Constructor.
-                              HMousePosition ( QWidget* parent=NULL );
-    public slots:
-              void            setPosition    ( const Point& position );
-
+                                   MousePositionWidget ( QWidget* parent=NULL );
+    public slots:                  
+              void                 setPosition         ( const Point& );
+                                   
+    protected:                     
+              DynamicLabel*        _xPosition;
+              DynamicLabel*        _yPosition;
     protected:
-    // Internal - Attributes.
-              DynamicLabel*   _xPosition;
-              DynamicLabel*   _yPosition;
-
-    // Internal - Constructor.
-                              HMousePosition ( const DynamicLabel& );
-              HMousePosition& operator=      ( const DynamicLabel& );
+                                   MousePositionWidget ( const DynamicLabel& );
+              MousePositionWidget& operator=           ( const DynamicLabel& );
   };
 
 

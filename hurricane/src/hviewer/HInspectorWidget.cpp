@@ -1,36 +1,9 @@
 
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
 // ===================================================================
 //
 // $Id$
@@ -43,7 +16,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./HInspectorWidget.cpp"                   |
+// |  C++ Module  :       "./InspectorWidget.cpp"                    |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
@@ -63,6 +36,7 @@
 
 #include "hurricane/viewer/Graphics.h"
 #include "hurricane/viewer/RecordModel.h"
+//#include "hurricane/viewer/InspectorWidget.h"
 #include "hurricane/viewer/HInspectorWidget.h"
 #include "hurricane/Slot.h"
 
@@ -70,7 +44,7 @@
 namespace Hurricane {
 
 
-  HInspectorWidget::History::History ()
+  InspectorWidget::History::History ()
     : _depth(0)
     , _slots()
     , _comboBox(NULL)
@@ -78,13 +52,13 @@ namespace Hurricane {
   }
 
 
-  HInspectorWidget::History::~History ()
+  InspectorWidget::History::~History ()
   {
     clear ( true );
   }
 
 
-  void  HInspectorWidget::History::push ( Slot* slot )
+  void  InspectorWidget::History::push ( Slot* slot )
   {
     if ( _depth < _slots.size()-1 ) {
       while ( _depth < _slots.size()-1 ) pop ();
@@ -98,7 +72,7 @@ namespace Hurricane {
   }
 
 
-  void  HInspectorWidget::History::pop ()
+  void  InspectorWidget::History::pop ()
   {
     if ( _slots.size() > 1 ) {
       delete _slots.back ();
@@ -110,7 +84,7 @@ namespace Hurricane {
   }
 
 
-  void  HInspectorWidget::History::back ()
+  void  InspectorWidget::History::back ()
   {
     if ( _depth == 0 ) return;
 
@@ -118,7 +92,7 @@ namespace Hurricane {
   }
 
 
-  void  HInspectorWidget::History::goTo ( int depth )
+  void  InspectorWidget::History::goTo ( int depth )
   {
     if ( ( depth < 0 ) || ( depth >= (int)_slots.size() ) ) return;
 
@@ -126,26 +100,28 @@ namespace Hurricane {
   }
 
 
-  size_t  HInspectorWidget::History::getDepth () const
+  size_t  InspectorWidget::History::getDepth () const
   {
     return _depth;
   }
 
 
-  Slot* HInspectorWidget::History::getSlot () const
+  Slot* InspectorWidget::History::getSlot () const
   {
+    if ( !_slots[_depth] ) return NULL;
     return _slots[_depth]->getClone();
   }
 
 
-  void  HInspectorWidget::History::clear ( bool inDelete )
+  void  InspectorWidget::History::clear ( bool inDelete )
   {
     if ( !_slots.empty() ) {
       _comboBox->clear ();
 
     // Delete the rootRecord as it's the only one not deleted
     // automatically through RecordModel (case of depth 0).
-      delete _slots[0]->getDataRecord();
+      if ( _slots[0] )
+        delete _slots[0]->getDataRecord();
 
       for ( size_t i=0 ; i < _slots.size() ; i++ )
         delete _slots[i];
@@ -156,7 +132,7 @@ namespace Hurricane {
   }
 
 
-  void  HInspectorWidget::History::setComboBox ( QComboBox* comboBox )
+  void  InspectorWidget::History::setComboBox ( QComboBox* comboBox )
   {
     assert ( comboBox  != NULL );
 
@@ -164,21 +140,25 @@ namespace Hurricane {
   }
 
 
-  void  HInspectorWidget::History::setRootRecord ( Record* rootRecord )
+  void  InspectorWidget::History::setRootRecord ( Record* rootRecord )
   {
     assert ( _comboBox  != NULL );
-    assert ( rootRecord != NULL );
 
     clear ();
 
-    Slot* rootSlot = ::getSlot ( "<TopLevelSlot>", rootRecord );
-    _slots.push_back ( rootSlot );
-    _comboBox->addItem ( QString("%1: %2").arg(_depth).arg(_slots[_slots.size()-1]->getDataString().c_str()));
+    if ( rootRecord ) {
+      Slot* rootSlot = ::getSlot ( "<TopLevelSlot>", rootRecord );
+      _slots.push_back ( rootSlot );
+      _comboBox->addItem ( QString("%1: %2").arg(_depth).arg(_slots[_slots.size()-1]->getDataString().c_str()));
+    } else {
+      _slots.push_back ( NULL );
+      _comboBox->addItem ( "<Inspector Disabled>" );
+    }
   }
 
 
 
-  HInspectorWidget::HInspectorWidget ( QWidget* parent )
+  InspectorWidget::InspectorWidget ( QWidget* parent )
       : QWidget(parent)
       , _baseModel(NULL)
       , _sortModel(NULL)
@@ -229,28 +209,28 @@ namespace Hurricane {
   }
 
 
-  HInspectorWidget::~HInspectorWidget ()
+  InspectorWidget::~InspectorWidget ()
   {
-  //cerr << "HInspectorWidget::~HInspectorWidget()" << endl;
+  //cerr << "InspectorWidget::~InspectorWidget()" << endl;
   //cerr << "Records: " << Record::getAllocateds()  << endl;
   //cerr << "Slots:   " << Slot::getAllocateds()  << endl;
   }
 
 
-  void  HInspectorWidget::forceRowHeight ()
+  void  InspectorWidget::forceRowHeight ()
   {
     for (  int rows=_sortModel->rowCount()-1; rows >= 0 ; rows-- )
       _view->setRowHeight ( rows, _rowHeight );
   }
 
 
-  void  HInspectorWidget::setRootRecord ( Record* record )
+  void  InspectorWidget::setRootRecord ( Record* record )
   {
     _history.setRootRecord ( record );
 
     if ( !_baseModel ) {
       _baseModel = new RecordModel ( this );
-      _sortModel   = new QSortFilterProxyModel ( this );
+      _sortModel = new QSortFilterProxyModel ( this );
       _sortModel->setSourceModel       ( _baseModel );
       _sortModel->setDynamicSortFilter ( true );
       _sortModel->setFilterKeyColumn   ( 1 );
@@ -269,7 +249,7 @@ namespace Hurricane {
   }
 
 
-  bool  HInspectorWidget::setSlot ()
+  bool  InspectorWidget::setSlot ()
   {
     bool change = true;
 
@@ -285,7 +265,7 @@ namespace Hurricane {
   }
 
 
-  void  HInspectorWidget::pushSlot ( Slot* slot )
+  void  InspectorWidget::pushSlot ( Slot* slot )
   {
     _history.push ( slot );
     if ( !setSlot() )
@@ -293,21 +273,21 @@ namespace Hurricane {
   }
 
 
-  void  HInspectorWidget::popSlot ()
+  void  InspectorWidget::popSlot ()
   {
     _history.pop ();
     setSlot ();
   }
 
 
-  void  HInspectorWidget::back ()
+  void  InspectorWidget::back ()
   {
     _history.back ();
     setSlot ();
   }
 
 
-  void  HInspectorWidget::keyPressEvent ( QKeyEvent *event )
+  void  InspectorWidget::keyPressEvent ( QKeyEvent *event )
   {
     if ( event->key() == Qt::Key_Right ) {
       QModelIndex index = _view->currentIndex();
@@ -327,14 +307,14 @@ namespace Hurricane {
   }
 
 
-  void  HInspectorWidget::textFilterChanged ()
+  void  InspectorWidget::textFilterChanged ()
   {
     _sortModel->setFilterRegExp ( _filterPatternLineEdit->text() );
     forceRowHeight ();
   }
 
 
-  void  HInspectorWidget::historyChanged ( int depth )
+  void  InspectorWidget::historyChanged ( int depth )
   {
     if ( depth < 0 ) return;
 
@@ -343,14 +323,14 @@ namespace Hurricane {
   }
 
 
-  void  HInspectorWidget::forkInspector ( const QModelIndex& index )
+  void  InspectorWidget::forkInspector ( const QModelIndex& index )
   {
     if ( index.isValid() ) {
       Slot*   slot   = _baseModel->getRecord()->getSlot(_sortModel->mapToSource(index).row());
       Record* record = slot->getDataRecord();
 
       if ( record ) {
-        HInspectorWidget* fork = new HInspectorWidget ();
+        InspectorWidget* fork = new InspectorWidget ();
         fork->setRootRecord ( record );
         fork->show ();
       }

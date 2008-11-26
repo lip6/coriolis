@@ -52,6 +52,7 @@ class QAction;
 #include  "hurricane/viewer/DisplayStyle.h"
 #include  "hurricane/viewer/CellWidgets.h"
 #include  "hurricane/viewer/Selector.h"
+#include  "hurricane/viewer/SelectorCommand.h"
 
 
 
@@ -70,8 +71,7 @@ namespace Hurricane {
   class Pad;
 
   class Selector;
-  class HPaletteEntry;
-  class HPalette;
+  class PaletteWidget;
   class Command;
 //class MapView;
 
@@ -91,104 +91,113 @@ namespace Hurricane {
       typedef void ( InitExtensionGo_t )( CellWidget* );
     public:
     // Constructor & Destructor.
-                                      CellWidget             ( QWidget* parent=NULL );
-      virtual                        ~CellWidget             ();
-    // Accessors.
-    //        MapView*                getMapView             () { return _mapView; };
-              void                    setCell                ( Cell* cell );
-      inline  Cell*                   getCell                () const;
-      inline  HPalette*               getPalette             ();
-              void                    bindToPalette          ( HPalette* palette );
-              void                    detachFromPalette      ();
-              void                    bindCommand            ( Command* command );
-              void                    unbindCommand          ( Command* command );
-      inline  bool                    showBoundaries         () const;
-      inline  set<Selector*>&         getSelectorSet         ();
-      inline  bool                    showSelection          () const;
-      inline  void                    setStartLevel          ( int level );
-      inline  void                    setStopLevel           ( int level );
-      inline  void                    setQueryFilter         ( int filter );
+                                      CellWidget              ( QWidget* parent=NULL );
+      virtual                        ~CellWidget              ();
+    // Accessors.                                             
+    //        MapView*                getMapView              () { return _mapView; };
+              void                    setCell                 ( Cell* );
+      inline  Cell*                   getCell                 () const;
+      inline  PaletteWidget*          getPalette              ();
+              void                    bindToPalette           ( PaletteWidget* );
+              void                    detachFromPalette       ();
+              void                    bindCommand             ( Command* );
+              void                    unbindCommand           ( Command* );
+              void                    clearSelectorCommands   ();
+      inline  bool                    showBoundaries          () const;
+      inline  set<Selector*>&         getSelectorSet          ();
+      inline  bool                    showSelection           () const;
+      inline  void                    setStartLevel           ( int );
+      inline  void                    setStopLevel            ( int );
+      inline  void                    setQueryFilter          ( int );
     // Painter control & Hurricane objects drawing primitives.
-      inline  void                    addDrawExtensionGo     ( const Name&, InitExtensionGo_t*, DrawExtensionGo_t* );
-      inline  QPainter&               getPainter             ();
-      inline  float                   getScale               () const;
-              bool                    isDrawableLayer        ( const Name& );
-              bool                    isDrawableExtension    ( const Name& );
-              void                    drawBox                ( DbU::Unit, DbU::Unit, DbU::Unit, DbU::Unit );
-              void                    drawBox                ( const Box& );
-              void                    drawLine               ( DbU::Unit, DbU::Unit, DbU::Unit, DbU::Unit );
-              void                    drawLine               ( const Point&, const Point& );
-              void                    drawText               ( const Point&, const Name&, int angle=0, bool reverse=false  );
-              void                    drawGrid               ();
-              void                    drawSpot               ();
-              void                    drawScreenRect         ( const QPoint&, const QPoint& );
-              void                    drawScreenPolyline     ( const QPoint*, int, int );
-    // Geometric conversions.
-              QRect                   dbuToDisplayRect       ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2 ) const;
-              QRect                   dbuToDisplayRect       ( const Box& box ) const;
-              QPoint                  dbuToDisplayPoint      ( DbU::Unit x, DbU::Unit y ) const;
-              QPoint                  dbuToDisplayPoint      ( const Point& point ) const;
-      inline  int                     dbuToDisplayX          ( DbU::Unit x ) const;
-      inline  int                     dbuToDisplayY          ( DbU::Unit y ) const;
-      inline  int                     dbuToDisplayLength     ( DbU::Unit length ) const;
-      inline  int                     dbuToScreenX           ( DbU::Unit x ) const;
-      inline  int                     dbuToScreenY           ( DbU::Unit y ) const;
-              QPoint                  dbuToScreenPoint       ( DbU::Unit x, DbU::Unit y ) const;
-      inline  QPoint                  dbuToScreenPoint       ( const Point& point ) const;
-      inline  DbU::Unit               displayToDbuX          ( int  x ) const;
-      inline  DbU::Unit               displayToDbuY          ( int  y ) const;
-      inline  DbU::Unit               displayToDbuLength     ( int  length ) const;
-      inline  Box                     displayToDbuBox        ( const QRect& rect ) const;
-      inline  DbU::Unit               screenToDbuX           ( int  x ) const;
-      inline  DbU::Unit               screenToDbuY           ( int  y ) const;
-      inline  Point                   screenToDbuPoint       ( const QPoint& point ) const;
-      inline  Box                     screenToDbuBox         ( const QRect& rect ) const;
-    // Qt QWidget Functions Overloads.
-              void                    pushCursor             ( Qt::CursorShape cursor );
-              void                    popCursor              ();
-              QSize                   minimumSizeHint        () const;
-              void                    paintEvent             ( QPaintEvent* );
-              void                    resizeEvent            ( QResizeEvent* );
-              void                    keyPressEvent          ( QKeyEvent* );
-              void                    mouseMoveEvent         ( QMouseEvent* );
-              void                    mousePressEvent        ( QMouseEvent* );
-              void                    mouseReleaseEvent      ( QMouseEvent* );
-    signals:
-              void                    cellChanged            ( Cell* );
-              void                    updatePalette          ( Cell* );
-              void                    mousePositionChanged   ( const Point& position );
-              void                    selectionChanged       ( const set<Selector*>&, Cell* );
-              void                    occurrenceToggled      ( Occurrence );
-    public slots:
-    // Qt QWidget Slots Overload & CellWidget Specifics.
-      inline  DrawingPlanes&          getDrawingPlanes       ();
-      inline  QPoint&                 getOffsetVA            ();
-              void                    select                 ( const Net* net, bool delayRedraw=false );
-              void                    select                 ( Occurrence occurence );
-              void                    selectOccurrencesUnder ( Box selectArea );
-              void                    unselect               ( Occurrence occurence );
-              void                    unselectAll            ( bool delayRedraw=false );
-              void                    toggleSelect           ( Occurrence occurence, bool fromPopup );
-              void                    setShowSelection       ( bool state );
-              void                    setCumulativeSelection ( bool state );
-              void                    updatePalette          ();
-      inline  void                    redraw                 ();
-              void                    redraw                 ( QRect redrawArea );
-      inline  void                    redrawSelection        ();
-              void                    redrawSelection        ( QRect redrawArea );
-              void                    goLeft                 ( int dx = 0 );
-              void                    goRight                ( int dx = 0 );
-              void                    goUp                   ( int dy = 0 );
-              void                    goDown                 ( int dy = 0 );
-              void                    fitToContents          ();
-              void                    setScale               ( float scale );
-              void                    setShowBoundaries      ( bool state );
-              void                    reframe                ( const Box& box );
-              void                    displayReframe         ();
-              void                    shiftLeft              ( int dx );
-              void                    shiftRight             ( int dx );
-              void                    shiftUp                ( int dy );
-              void                    shiftDown              ( int dy );
+      inline  void                    addDrawExtensionGo      ( const Name&, InitExtensionGo_t*, DrawExtensionGo_t* );
+      inline  QPainter&               getPainter              ();
+      inline  float                   getScale                () const;
+              bool                    isDrawableLayer         ( const Name& );
+              bool                    isDrawableExtension     ( const Name& );
+              void                    drawBox                 ( DbU::Unit, DbU::Unit, DbU::Unit, DbU::Unit );
+              void                    drawBox                 ( const Box& );
+              void                    drawLine                ( DbU::Unit, DbU::Unit, DbU::Unit, DbU::Unit );
+              void                    drawLine                ( const Point&, const Point& );
+              void                    drawText                ( const Point&, const Name&, int angle=0, bool reverse=false  );
+              void                    drawGrid                ();
+              void                    drawSpot                ();
+              void                    drawScreenRect          ( const QPoint&, const QPoint& );
+              void                    drawScreenPolyline      ( const QPoint*, int, int );
+    // Geometric conversions.                                 
+              QRect                   dbuToDisplayRect        ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2 ) const;
+              QRect                   dbuToDisplayRect        ( const Box& box ) const;
+              QPoint                  dbuToDisplayPoint       ( DbU::Unit x, DbU::Unit y ) const;
+              QPoint                  dbuToDisplayPoint       ( const Point& point ) const;
+      inline  int                     dbuToDisplayX           ( DbU::Unit x ) const;
+      inline  int                     dbuToDisplayY           ( DbU::Unit y ) const;
+      inline  int                     dbuToDisplayLength      ( DbU::Unit length ) const;
+      inline  int                     dbuToScreenX            ( DbU::Unit x ) const;
+      inline  int                     dbuToScreenY            ( DbU::Unit y ) const;
+              QPoint                  dbuToScreenPoint        ( DbU::Unit x, DbU::Unit y ) const;
+      inline  QPoint                  dbuToScreenPoint        ( const Point& point ) const;
+      inline  DbU::Unit               displayToDbuX           ( int  x ) const;
+      inline  DbU::Unit               displayToDbuY           ( int  y ) const;
+      inline  DbU::Unit               displayToDbuLength      ( int  length ) const;
+      inline  Box                     displayToDbuBox         ( const QRect& rect ) const;
+      inline  DbU::Unit               screenToDbuX            ( int  x ) const;
+      inline  DbU::Unit               screenToDbuY            ( int  y ) const;
+      inline  Point                   screenToDbuPoint        ( const QPoint& point ) const;
+      inline  Box                     screenToDbuBox          ( const QRect& rect ) const;
+    // Qt QWidget Functions Overloads.                        
+              void                    pushCursor              ( Qt::CursorShape cursor );
+              void                    popCursor               ();
+              QSize                   minimumSizeHint         () const;
+              void                    paintEvent              ( QPaintEvent* );
+              void                    resizeEvent             ( QResizeEvent* );
+              void                    keyPressEvent           ( QKeyEvent* );
+              void                    mouseMoveEvent          ( QMouseEvent* );
+              void                    mousePressEvent         ( QMouseEvent* );
+              void                    mouseReleaseEvent       ( QMouseEvent* );
+    signals:                                                  
+              void                    cellChanged             ( Cell* );
+              void                    cellPreModificated      ();
+              void                    cellPostModificated     ();
+              void                    updatePalette           ( Cell* );
+              void                    mousePositionChanged    ( const Point& position );
+              void                    selectionChanged        ( const set<Selector*>&, Cell* );
+              void                    occurrenceToggled       ( Occurrence );
+              void                    showSelectionToggled    ( bool );
+    public slots:                                             
+    // Qt QWidget Slots Overload & CellWidget Specifics.      
+      inline  DrawingPlanes&          getDrawingPlanes        ();
+      inline  QPoint&                 getOffsetVA             ();
+              void                    select                  ( const Net* net, bool delayRedraw=false );
+              void                    select                  ( Occurrence occurence );
+              void                    selectOccurrencesUnder  ( Box selectArea );
+              void                    unselect                ( Occurrence occurence );
+              void                    unselectAll             ( bool delayRedraw=false );
+              void                    toggleSelect            ( Occurrence occurence, bool fromPopup );
+              void                    setShowSelection        ( bool state );
+              void                    setCumulativeSelection  ( bool state );
+              void                    _select                 ( const Net* net, bool delayRedraw=false );
+              void                    _selectOccurrencesUnder ( Box selectArea );
+              void                    _unselectAll            ( bool delayRedraw );
+              void                    updatePalette           ();
+              void                    cellPreModificate       ();
+              void                    cellPostModificate      ();
+      inline  void                    redraw                  ();
+              void                    redraw                  ( QRect redrawArea );
+      inline  void                    redrawSelection         ();
+              void                    redrawSelection         ( QRect redrawArea );
+              void                    goLeft                  ( int dx = 0 );
+              void                    goRight                 ( int dx = 0 );
+              void                    goUp                    ( int dy = 0 );
+              void                    goDown                  ( int dy = 0 );
+              void                    fitToContents           ();
+              void                    setScale                ( float scale );
+              void                    setShowBoundaries       ( bool state );
+              void                    reframe                 ( const Box& box );
+              void                    displayReframe          ();
+              void                    shiftLeft               ( int dx );
+              void                    shiftRight              ( int dx );
+              void                    shiftUp                 ( int dy );
+              void                    shiftDown               ( int dy );
 
     private:
       class Spot {
@@ -306,30 +315,33 @@ namespace Hurricane {
 
     protected:
     // Internal: Attributes.
-      static  const int               _stripWidth;
-              vector<Qt::CursorShape> _cursors;
-    //        MapView*                _mapView;
-              Technology*             _technology;
-              HPalette*               _palette;
-              Box                     _displayArea;
-              Box                     _visibleArea;
-              float                   _scale;
-              QPoint                  _offsetVA;
-              DrawingPlanes           _drawingPlanes;
-              DrawingQuery            _drawingQuery;
-              TextDrawingQuery        _textDrawingQuery;
-              int                     _queryFilter;
-              QPoint                  _mousePosition;
-              Spot                    _spot;
-              Cell*                   _cell;
-              bool                    _showBoundaries;
-              bool                    _showSelection;
-              bool                    _cumulativeSelection;
-              bool                    _selectionHasChanged;
-              set<Selector*>          _selectors;
-              vector<Command*>        _commands;
-              size_t                  _redrawRectCount;
-              int                     _textFontHeight;
+      static  const int                _stripWidth;
+              vector<Qt::CursorShape>  _cursors;
+    //        MapView*                 _mapView;
+              Technology*              _technology;
+              PaletteWidget*           _palette;
+              Box                      _displayArea;
+              Box                      _visibleArea;
+              float                    _scale;
+              QPoint                   _offsetVA;
+              DrawingPlanes            _drawingPlanes;
+              DrawingQuery             _drawingQuery;
+              TextDrawingQuery         _textDrawingQuery;
+              int                      _queryFilter;
+              QPoint                   _mousePosition;
+              Spot                     _spot;
+              Cell*                    _cell;
+              bool                     _showBoundaries;
+              bool                     _showSelection;
+              bool                     _cumulativeSelection;
+              bool                     _selectionHasChanged;
+              int                      _delaySelectionChanged;
+              bool                     _cellModificated;
+              set<Selector*>           _selectors;
+              vector<SelectorCommand*> _selectorCommands;
+              vector<Command*>         _commands;
+              size_t                   _redrawRectCount;
+              int                      _textFontHeight;
   };
 
 
@@ -545,7 +557,7 @@ namespace Hurricane {
   { return _cell; }
 
 
-  inline HPalette* CellWidget::getPalette ()
+  inline PaletteWidget* CellWidget::getPalette ()
   { return _palette; }
 
 

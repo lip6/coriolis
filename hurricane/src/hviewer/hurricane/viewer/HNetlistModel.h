@@ -1,36 +1,8 @@
-
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
 // ===================================================================
 //
 // $Id$
@@ -43,15 +15,15 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./HNetlistModel.h"                        |
+// |  C++ Header  :       "./NetlistModel.h"                        |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
 
-#ifndef  __NETLIST_MODEL_H__
-#define  __NETLIST_MODEL_H__
+#ifndef  __HURRICANE_NETLIST_MODEL__
+#define  __HURRICANE_NETLIST_MODEL__
 
 #include  <vector>
 
@@ -65,7 +37,6 @@
 #include  "hurricane/Cell.h"
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/NetInformations.h"
-#include  "hurricane/viewer/HNetlistModel.h"
 
 
 namespace Hurricane {
@@ -75,20 +46,20 @@ namespace Hurricane {
   class Cell;
 
 
-  class HNetlistModel : public QAbstractTableModel {
+  class NetlistModel : public QAbstractTableModel {
       Q_OBJECT;
 
     public:
-                                            HNetlistModel ( QObject* parent=NULL );
-                                           ~HNetlistModel ();
+                                            NetlistModel ( QObject* parent=NULL );
+                                           ~NetlistModel ();
       template<typename InformationType>
-             void                           setCell       ( Cell* cell );
-             int                            rowCount      ( const QModelIndex& parent=QModelIndex() ) const;
-             int                            columnCount   ( const QModelIndex& parent=QModelIndex() ) const;
-             QVariant                       data          ( const QModelIndex& index, int role=Qt::DisplayRole ) const;
-             QVariant                       headerData    ( int section, Qt::Orientation orientation, int role=Qt::DisplayRole ) const;
-      inline Cell*                          getCell       ();
-             const Net*                     getNet        ( int row );
+             void                           setCell      ( Cell* cell );
+             int                            rowCount     ( const QModelIndex& parent=QModelIndex() ) const;
+             int                            columnCount  ( const QModelIndex& parent=QModelIndex() ) const;
+             QVariant                       data         ( const QModelIndex& index, int role=Qt::DisplayRole ) const;
+             QVariant                       headerData   ( int section, Qt::Orientation orientation, int role=Qt::DisplayRole ) const;
+      inline Cell*                          getCell      ();
+             const Net*                     getNet       ( int row );
 
     private:
              Cell*                          _cell;
@@ -98,13 +69,13 @@ namespace Hurricane {
 
 // Inline Functions.
 
-  inline Cell* HNetlistModel::getCell () { return _cell; }
+  inline Cell* NetlistModel::getCell () { return _cell; }
 
 
 // Template Functions.
 
   template<typename InformationType>
-  void  HNetlistModel::setCell ( Cell* cell )
+  void  NetlistModel::setCell ( Cell* cell )
   {
     if ( _cell != cell ) {
       if ( _cell )
@@ -113,9 +84,10 @@ namespace Hurricane {
       _cell    = cell;
       _netlist = new NetInformationsVector<InformationType>();
 
-      for_each_net ( net, _cell->getNets() ) {
-        _netlist->addNet ( net );
-        end_for;
+      if ( _cell ) {
+        forEach ( Net*, net, _cell->getNets() ) {
+          _netlist->addNet ( *net );
+        }
       }
 
       emit layoutChanged ();
