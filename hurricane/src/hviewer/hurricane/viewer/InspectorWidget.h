@@ -30,6 +30,7 @@
 #include  <QWidget>
 
 #include  "hurricane/Commons.h"
+#include  "hurricane/Occurrence.h"
 
 
 class QSortFilterProxyModel;
@@ -79,16 +80,18 @@ namespace Hurricane {
     public:
                                         InspectorWidget   ( QWidget* parent=NULL );
                                        ~InspectorWidget   ();
-              void                      setRootRecord     ( Record*  record );
+              void                      setRootRecord     ( Record* );
+              void                      setRootOccurrence ( Occurrence& );
     private slots:
               void                      forceRowHeight    ();
               void                      textFilterChanged ();
               void                      historyChanged    ( int depth );
-              void                      forkInspector     ( const QModelIndex& index );
+              void                      forkInspector     ( const QModelIndex& );
     protected:
-              void                      keyPressEvent     ( QKeyEvent * event );
+              void                      keyPressEvent     ( QKeyEvent* );
     private:
-              void                      pushSlot          ( Slot* slot );
+              void                      _setRootRecord    ( Record* );
+              void                      pushSlot          ( Slot* );
               void                      popSlot           ();
               void                      back              ();
               bool                      setSlot           ();
@@ -101,6 +104,7 @@ namespace Hurricane {
               QLineEdit*                _filterPatternLineEdit;
               int                       _rowHeight;
               History                   _history;
+              Occurrence                _rootOccurrence;
   };
 
 

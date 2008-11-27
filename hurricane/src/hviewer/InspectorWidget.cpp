@@ -165,6 +165,7 @@ namespace Hurricane {
       , _view(NULL)
       , _rowHeight(20)
       , _history()
+      , _rootOccurrence()
   {
     setAttribute ( Qt::WA_DeleteOnClose );
     setAttribute ( Qt::WA_QuitOnClose, false );
@@ -223,9 +224,24 @@ namespace Hurricane {
   }
 
 
+  void  InspectorWidget::setRootOccurrence ( Occurrence& occurrence )
+  {
+    _rootOccurrence = occurrence;
+    _setRootRecord ( getRecord(occurrence) );
+  }
+
+
   void  InspectorWidget::setRootRecord ( Record* record )
   {
+    _rootOccurrence = Occurrence();
+    _setRootRecord ( record );
+  }
+
+
+  void  InspectorWidget::_setRootRecord ( Record* record )
+  {
     _history.setRootRecord ( record );
+    if ( !record ) _rootOccurrence = Occurrence ();
 
     if ( !_baseModel ) {
       _baseModel = new RecordModel ( this );

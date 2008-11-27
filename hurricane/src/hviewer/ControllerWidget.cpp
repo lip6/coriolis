@@ -77,6 +77,91 @@ namespace Hurricane {
 
 
 // -------------------------------------------------------------------
+// Class  :  "Hurricane::TabGraphics".
+
+
+  TabGraphics::TabGraphics ( QWidget* parent )
+    : ControllerTab(parent)
+    , _graphics    (new GraphicsWidget())
+  {
+    _graphics->setObjectName ( "controller.tabGraphics.graphics" );
+
+    QVBoxLayout* wLayout  = new QVBoxLayout ();
+    wLayout->setContentsMargins ( 0, 0, 0, 0 );
+    wLayout->addWidget ( _graphics );
+    setLayout ( wLayout );
+  }
+
+
+  void  TabGraphics::setCellWidget ( CellWidget* cellWidget )
+  {
+    if ( getCellWidget() != cellWidget ) {
+      ControllerTab::setCellWidget ( cellWidget );
+      if ( getCellWidget() ) {
+        connect ( _graphics, SIGNAL(styleChanged()), getCellWidget(), SLOT(redraw()) );
+      }
+    }
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::TabDisplayFilter".
+
+
+  TabDisplayFilter::TabDisplayFilter ( QWidget* parent )
+    : ControllerTab (parent)
+    , _displayFilter(new DisplayFilterWidget())
+  {
+    _displayFilter->setObjectName ( "controller.tabDisplayFilter.graphics" );
+
+    QVBoxLayout* wLayout  = new QVBoxLayout ();
+    wLayout->setContentsMargins ( 0, 0, 0, 0 );
+    wLayout->addWidget ( _displayFilter );
+    setLayout ( wLayout );
+  }
+
+
+  void  TabDisplayFilter::setCellWidget ( CellWidget* cellWidget )
+  {
+    if ( getCellWidget() != cellWidget ) {
+      ControllerTab::setCellWidget ( cellWidget );
+      _displayFilter->setCellWidget ( cellWidget );
+    }
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::TabPalette".
+
+
+  TabPalette::TabPalette ( QWidget* parent )
+    : ControllerTab(parent)
+    , _palette     (new PaletteWidget())
+  {
+    _palette->setObjectName ( "controller.tabPalette.palette" );
+
+    QVBoxLayout* wLayout  = new QVBoxLayout ();
+    wLayout->setContentsMargins ( 0, 0, 0, 0 );
+    wLayout->addWidget ( _palette );
+    setLayout ( wLayout );
+  }
+
+
+  void  TabPalette::setCellWidget ( CellWidget* cellWidget )
+  {
+    if ( getCellWidget() )
+      getCellWidget()->detachFromPalette ();
+
+    if ( getCellWidget() != cellWidget ) {
+      ControllerTab::setCellWidget ( cellWidget );
+      if ( getCellWidget() ) {
+        getCellWidget()->bindToPalette ( _palette );
+      }
+    }
+  }
+
+
+// -------------------------------------------------------------------
 // Class  :  "Hurricane::TabNetlist".
 
 
@@ -132,7 +217,7 @@ namespace Hurricane {
   void  TabNetlist::setCellWidget ( CellWidget* cellWidget )
   {
     if ( getCellWidget() != cellWidget ) {
-      setCellWidget ( cellWidget );
+      ControllerTab::setCellWidget ( cellWidget );
       if ( getCellWidget() ) {
         connect ( getCellWidget(), SIGNAL(cellChanged(Cell*))     , this           , SLOT(setCell(Cell*)) );
         connect ( _netlistBrowser, SIGNAL(netSelected(const Net*)), getCellWidget(), SLOT(select(const Net*)) );
@@ -159,9 +244,8 @@ namespace Hurricane {
 
 
   TabSelection::TabSelection ( QWidget* parent )
-    : QWidget    (parent)
-    , _cellWidget(NULL)
-    , _selection (new SelectionWidget())
+    : ControllerTab(parent)
+    , _selection   (new SelectionWidget())
   {
     _selection->setObjectName ( "controller.tabSelection.selection" );
 
@@ -180,25 +264,25 @@ namespace Hurricane {
 
   void  TabSelection::setCellWidget ( CellWidget* cellWidget )
   {
-    if ( _cellWidget != cellWidget ) {
-      _cellWidget       = cellWidget;
-      if ( _cellWidget ) {
-        connect ( _cellWidget    , SIGNAL(cellChanged(Cell*))
-                , this           , SLOT(setCell(Cell*)) );
-        connect (  _cellWidget   , SIGNAL(selectionChanged(const set<Selector*>&,Cell*))
-                ,  _selection    , SLOT  (setSelection    (const set<Selector*>&,Cell*)) );
-        connect (  _selection    , SIGNAL(occurrenceToggled(Occurrence,bool))
-                ,  _cellWidget   , SLOT  (toggleSelect     (Occurrence,bool)) );
-        connect (  _cellWidget   , SIGNAL(occurrenceToggled(Occurrence))
-                ,  _selection    , SLOT  (toggleSelection  (Occurrence)) );
-        connect (  _selection    , SIGNAL(cumulativeToggled     (bool))
-                ,  _cellWidget   , SLOT  (setCumulativeSelection(bool)) );
-        connect (  _selection    , SIGNAL(showSelectionToggled(bool))
-                ,  _cellWidget   , SLOT  (setShowSelection    (bool)) );
-        connect (  _cellWidget   , SIGNAL(showSelectionToggled(bool))
-                ,  _selection    , SLOT  (setShowSelection    (bool)) );
-        connect (  _selection    , SIGNAL(selectionCleared())
-                ,  _cellWidget   , SLOT  (unselectAll     ()) );
+    if ( getCellWidget() != cellWidget ) {
+      ControllerTab::setCellWidget ( cellWidget );
+      if ( getCellWidget() ) {
+        connect ( getCellWidget() , SIGNAL(cellChanged(Cell*))
+                , this            , SLOT(setCell(Cell*)) );
+        connect (  getCellWidget(), SIGNAL(selectionChanged(const set<Selector*>&,Cell*))
+                ,  _selection     , SLOT  (setSelection    (const set<Selector*>&,Cell*)) );
+        connect (  _selection     , SIGNAL(occurrenceToggled(Occurrence,bool))
+                ,  getCellWidget(), SLOT  (toggleSelect     (Occurrence,bool)) );
+        connect (  getCellWidget(), SIGNAL(occurrenceToggled(Occurrence))
+                ,  _selection     , SLOT  (toggleSelection  (Occurrence)) );
+        connect (  _selection     , SIGNAL(cumulativeToggled     (bool))
+                ,  getCellWidget(), SLOT  (setCumulativeSelection(bool)) );
+        connect (  _selection     , SIGNAL(showSelectionToggled(bool))
+                ,  getCellWidget(), SLOT  (setShowSelection    (bool)) );
+        connect (  getCellWidget(), SIGNAL(showSelectionToggled(bool))
+                ,  _selection     , SLOT  (setShowSelection    (bool)) );
+        connect (  _selection     , SIGNAL(selectionCleared())
+                ,  getCellWidget(), SLOT  (unselectAll     ()) );
       }
     }
   }
@@ -222,8 +306,8 @@ namespace Hurricane {
   void  TabSelection::cellPostModificate ()
   {
   //updateTab ();
-    if ( _cellWidget && _cellWidget->getCell() )
-      _selection->setSelection ( _cellWidget->getSelectorSet(), _cellWidget->getCell() );
+    if ( getCellWidget() && getCellWidget()->getCell() )
+      _selection->setSelection ( getCellWidget()->getSelectorSet(), getCellWidget()->getCell() );
     else
       _selection->setSelection ( set<Selector*>() );
   }
@@ -234,12 +318,11 @@ namespace Hurricane {
 
 
   TabInspector::TabInspector ( QWidget* parent )
-    : QWidget             (parent)
-    , _cellWidget         (NULL)
+    : ControllerTab       (parent)
     , _inspectorWidget    (new InspectorWidget())
     , _bookmarks          (new QComboBox())
-    , _selectionRecord    (NULL)
-    , _updateFromSelection(false)
+    , _selectionOccurrence()
+    , _updateFromSelection(true)
   {
     _inspectorWidget->setObjectName ( "controller.tabInspector.inspectorWidget" );
 
@@ -281,10 +364,10 @@ namespace Hurricane {
 
   void  TabInspector::setCellWidget ( CellWidget* cellWidget )
   {
-    if ( _cellWidget != cellWidget ) {
-      _cellWidget = cellWidget;
-      if ( _cellWidget ) {
-        connect ( _cellWidget, SIGNAL(cellChanged(Cell*)), this, SLOT(setCell(Cell*)) );
+    if ( getCellWidget() != cellWidget ) {
+      ControllerTab::setCellWidget( cellWidget );
+      if ( getCellWidget() ) {
+        connect ( getCellWidget(), SIGNAL(cellChanged(Cell*)), this, SLOT(setCell(Cell*)) );
       }
     }
   }
@@ -296,12 +379,12 @@ namespace Hurricane {
       case 0: _inspectorWidget->setRootRecord ( NULL ); break;
       case 1: _inspectorWidget->setRootRecord ( getRecord(DataBase::getDB()) ); break;
       case 2:
-        if ( _cellWidget && _cellWidget->getCell() )
-          _inspectorWidget->setRootRecord ( getRecord(_cellWidget->getCell()) );
+        if ( getCellWidget() && getCellWidget()->getCell() )
+          _inspectorWidget->setRootRecord ( getRecord(getCellWidget()->getCell()) );
         break;
       case 3:
-        if ( _cellWidget && _cellWidget->getCell() )
-          _inspectorWidget->setRootRecord ( _selectionRecord );
+        if ( getCellWidget() && getCellWidget()->getCell() )
+          _inspectorWidget->setRootRecord ( getRecord(_selectionOccurrence) );
         break;
     }
   }
@@ -309,22 +392,23 @@ namespace Hurricane {
 
   void  TabInspector::updateTab ()
   {
-    if ( _updateFromSelection && (_bookmarks->currentIndex() == 3) )
-      _inspectorWidget->setRootRecord ( _selectionRecord );
+    if ( _updateFromSelection && (_bookmarks->currentIndex() == 3) ) {
+      _inspectorWidget->setRootRecord ( getRecord(_selectionOccurrence) );
+    }
     _updateFromSelection = false;
   }
 
 
-  void  TabInspector::setSelectionRecord ( Record* record )
+  void  TabInspector::setSelectionOccurrence ( Occurrence& occurrence )
   {
     _updateFromSelection = true;
-    _selectionRecord     = record;
+    _selectionOccurrence = occurrence;
   }
 
 
   void  TabInspector::cellPreModificate ()
   {
-    _selectionRecord = NULL;
+    _selectionOccurrence = Occurrence();
     if ( _bookmarks->currentIndex() > 1 )
       _inspectorWidget->setRootRecord ( NULL );
   }
@@ -332,8 +416,8 @@ namespace Hurricane {
 
   void  TabInspector::cellPostModificate ()
   {
-    if ( ( _bookmarks->currentIndex() == 2 ) && _cellWidget && _cellWidget->getCell() )
-      _inspectorWidget->setRootRecord ( getRecord(_cellWidget->getCell()) );
+    if ( ( _bookmarks->currentIndex() == 2 ) && getCellWidget() && getCellWidget()->getCell() )
+      _inspectorWidget->setRootRecord ( getRecord(getCellWidget()->getCell()) );
   }
 
 
@@ -342,14 +426,14 @@ namespace Hurricane {
 
 
   ControllerWidget::ControllerWidget ( QWidget* parent )
-    : QTabWidget    (parent)
-    , _cellWidget   (NULL)
-    , _graphics     (new GraphicsWidget())
-    , _palette      (new PaletteWidget())
-    , _displayFilter(new DisplayFilterWidget())
-    , _tabNetlist   (new TabNetlist())
-    , _tabSelection (new TabSelection())
-    , _tabInspector (new TabInspector())
+    : QTabWidget       (parent)
+    , _cellWidget      (NULL)
+    , _tabGraphics     (new TabGraphics())
+    , _tabPalette      (new TabPalette())
+    , _tabDisplayFilter(new TabDisplayFilter())
+    , _tabNetlist      (new TabNetlist())
+    , _tabSelection    (new TabSelection())
+    , _tabInspector    (new TabInspector())
   {
     setObjectName  ( "controller" );
     setAttribute   ( Qt::WA_QuitOnClose, false );
@@ -357,47 +441,40 @@ namespace Hurricane {
 
   //connect ( _netlistBrowser, SIGNAL(destroyed()), this, SLOT(netlistBrowserDestroyed()) );
 
-    _graphics     ->setObjectName ( "controller.graphics"      );
-    _palette      ->setObjectName ( "controller.palette"       );
-    _displayFilter->setObjectName ( "controller.displayFilter" );
-    _tabNetlist   ->setObjectName ( "controller.tabNetlist"    );
-    _tabSelection ->setObjectName ( "controller.tabSelection"  );
-    _tabInspector ->setObjectName ( "controller.tabInspector"  );
+    _tabGraphics     ->setObjectName ( "controller.graphics"      );
+    _tabPalette      ->setObjectName ( "controller.palette"       );
+    _tabDisplayFilter->setObjectName ( "controller.displayFilter" );
+    _tabNetlist      ->setObjectName ( "controller.tabNetlist"    );
+    _tabSelection    ->setObjectName ( "controller.tabSelection"  );
+    _tabInspector    ->setObjectName ( "controller.tabInspector"  );
 
-    addTab ( _graphics      , "Look"        );
-    addTab ( _displayFilter , "Filter"      );
-    addTab ( _palette       , "Layers&&Gos" );
-    addTab ( _tabNetlist    , "Netlist"     );
-    addTab ( _tabSelection  , "Selection"   );
-    addTab ( _tabInspector  , "Inspector"   );
+    addTab ( _tabGraphics      , "Look"        );
+    addTab ( _tabDisplayFilter , "Filter"      );
+    addTab ( _tabPalette       , "Layers&&Gos" );
+    addTab ( _tabNetlist       , "Netlist"     );
+    addTab ( _tabSelection     , "Selection"   );
+    addTab ( _tabInspector     , "Inspector"   );
 
     connect ( this, SIGNAL(currentChanged(int)), this, SLOT(updateTab(int)) );
   //connect ( _tabNetlist->getNetlistBrowser(), SIGNAL(netSelected(const Net*))
   //        , _tabSelection                   , SLOT(setUpdateFromNetlist(const Net*)) );
-    connect ( _tabSelection->getSelection()   , SIGNAL(inspect(Record*))
-            , _tabInspector                   , SLOT(setSelectionRecord(Record*)) );
+    connect ( _tabSelection->getSelection()   , SIGNAL(inspect(Occurrence&))
+            , _tabInspector                   , SLOT(setSelectionOccurrence(Occurrence&)) );
                                         
     resize ( 540, 540 );
   }
 
 
-  void  ControllerWidget::setCellWidget ( CellWidget* widget )
+  void  ControllerWidget::setCellWidget ( CellWidget* cellWidget )
   {
-    if ( _cellWidget )
-      _cellWidget->detachFromPalette ();
-
-    _cellWidget = widget;
+    _cellWidget = cellWidget;
     if ( _cellWidget ) {
-      _displayFilter->setCellWidget ( _cellWidget );
-      _tabNetlist   ->setCellWidget ( _cellWidget );
-      _tabSelection ->setCellWidget ( _cellWidget );
-      _tabInspector ->setCellWidget ( _cellWidget );
-      _cellWidget   ->bindToPalette ( _palette );
+      for ( int i=0 ; i<count() ; ++i )
+        (static_cast<ControllerTab*>(widget(i)))->setCellWidget ( _cellWidget );
 
-      connect ( _graphics  , SIGNAL(styleChanged())       , _cellWidget, SLOT(redraw())             );
-      connect ( _cellWidget, SIGNAL(cellChanged(Cell*))   , this       , SLOT(cellChanged(Cell*))   );
-      connect ( _cellWidget, SIGNAL(cellPreModificated()) , this       , SLOT(cellPreModificate())  );
-      connect ( _cellWidget, SIGNAL(cellPostModificated()), this       , SLOT(cellPostModificate()) );
+      connect ( _cellWidget, SIGNAL(cellChanged(Cell*))   , this, SLOT(cellChanged(Cell*))   );
+      connect ( _cellWidget, SIGNAL(cellPreModificated()) , this, SLOT(cellPreModificate())  );
+      connect ( _cellWidget, SIGNAL(cellPostModificated()), this, SLOT(cellPostModificate()) );
     }
   }
 
@@ -408,26 +485,21 @@ namespace Hurricane {
 
   void  ControllerWidget::updateTab ( int index )
   {
-    switch ( index ) {
-      case 4: _tabSelection->updateTab (); break;
-      case 5: _tabInspector->updateTab (); break;
-    }
+    (static_cast<ControllerTab*>(widget(index)))->updateTab ();
   }
 
 
   void  ControllerWidget::cellPreModificate ()
   {
-    _tabInspector ->cellPreModificate ();
-    _tabSelection ->cellPreModificate ();
-    _tabNetlist   ->cellPreModificate ();
+    for ( int i=0 ; i<count() ; ++i )
+      (static_cast<ControllerTab*>(widget(i)))->cellPreModificate ();
   }
 
 
   void  ControllerWidget::cellPostModificate ()
   {
-    _tabNetlist   ->cellPostModificate ();
-    _tabSelection ->cellPostModificate ();
-    _tabInspector ->cellPostModificate ();
+    for ( int i=0 ; i<count() ; ++i )
+      (static_cast<ControllerTab*>(widget(i)))->cellPostModificate ();
   }
 
 

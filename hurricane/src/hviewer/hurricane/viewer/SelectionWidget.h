@@ -66,6 +66,7 @@ namespace Hurricane {
               void                   showSelectionToggled ( bool );
               void                   selectionCleared     ();
               void                   inspect              ( Record* );
+              void                   inspect              ( Occurrence& );
     public slots:                                         
               void                   setShowSelection     ( bool );
               void                   selectCurrent        ( const QModelIndex& current, const QModelIndex& );

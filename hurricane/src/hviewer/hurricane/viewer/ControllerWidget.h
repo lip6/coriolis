@@ -31,6 +31,8 @@
 class QCheckBox;
 class QComboBox;
 
+#include  "hurricane/Occurrence.h"
+
 
 namespace Hurricane {
 
@@ -73,6 +75,69 @@ namespace Hurricane {
 
 
 // -------------------------------------------------------------------
+// Class  :  "Hurricane::TabGraphics".
+
+
+  class TabGraphics : public ControllerTab {
+      Q_OBJECT;
+
+    public:
+                             TabGraphics   ( QWidget* parent=NULL );
+      inline GraphicsWidget* getGraphics   ();
+    public slots:
+             void            setCellWidget ( CellWidget* );
+
+    protected:
+      GraphicsWidget* _graphics;
+  };
+
+
+  inline GraphicsWidget* TabGraphics::getGraphics () { return _graphics; }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::TabDisplayFilter".
+
+
+  class TabDisplayFilter : public ControllerTab {
+      Q_OBJECT;
+
+    public:
+                                   TabDisplayFilter ( QWidget* parent=NULL );
+      inline  DisplayFilterWidget* getDisplayFilter ();
+    public slots:
+      virtual void                 setCellWidget    ( CellWidget* );
+
+    protected:
+      DisplayFilterWidget* _displayFilter;
+  };
+
+
+  inline DisplayFilterWidget* TabDisplayFilter::getDisplayFilter () { return _displayFilter; }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::TabPalette".
+
+
+  class TabPalette : public ControllerTab {
+      Q_OBJECT;
+
+    public:
+                             TabPalette    ( QWidget* parent=NULL );
+      inline  PaletteWidget* getPalette    ();
+    public slots:
+      virtual void           setCellWidget ( CellWidget* );
+
+    protected:
+      PaletteWidget* _palette;
+  };
+
+
+  inline PaletteWidget* TabPalette::getPalette () { return _palette; }
+
+
+// -------------------------------------------------------------------
 // Class  :  "Hurricane::TabNetlist".
 
 
@@ -104,28 +169,25 @@ namespace Hurricane {
 // Class  :  "Hurricane::TabSelection".
 
 
-  class TabSelection : public QWidget {
+  class TabSelection : public ControllerTab {
       Q_OBJECT;
 
     public:
-                               TabSelection         ( QWidget* parent=NULL );
-      inline CellWidget*       getCellWidget        ();
-      inline SelectionWidget*  getSelection         ();
-             void              updateTab            ();
-             void              cellPreModificate    ();
-             void              cellPostModificate   ();
+                                TabSelection         ( QWidget* parent=NULL );
+      inline  SelectionWidget*  getSelection         ();
+      virtual void              updateTab            ();
+      virtual void              cellPreModificate    ();
+      virtual void              cellPostModificate   ();
     public slots:
-             void              setCell              ( Cell* );
-             void              setCellWidget        ( CellWidget* );
+      virtual void              setCell              ( Cell* );
+      virtual void              setCellWidget        ( CellWidget* );
 
     protected:
-      CellWidget*      _cellWidget;
       SelectionWidget* _selection;
       bool             _selectionChanged;
   };
 
 
-  inline CellWidget*      TabSelection::getCellWidget () { return _cellWidget; }
   inline SelectionWidget* TabSelection::getSelection  () { return _selection; }
 
 
@@ -133,33 +195,30 @@ namespace Hurricane {
 // Class  :  "Hurricane::TabInspector".
 
 
-  class TabInspector : public QWidget {
+  class TabInspector : public ControllerTab {
       Q_OBJECT;
 
     public:
-                               TabInspector       ( QWidget* parent=NULL );
-      inline CellWidget*       getCellWidget      ();
-      inline InspectorWidget*  getInspectorWidget ();
-      inline QComboBox*        getBookmarks       ();
-             void              updateTab          ();
-             void              cellPreModificate  ();
-             void              cellPostModificate ();
-    public slots:
-             void              setCell            ( Cell* );
-             void              setCellWidget      ( CellWidget* );
-             void              setSelectionRecord ( Record* );
-             void              bookmarkChanged    ( int index );
+                                TabInspector           ( QWidget* parent=NULL );
+      inline  InspectorWidget*  getInspectorWidget     ();
+      inline  QComboBox*        getBookmarks           ();
+      virtual void              updateTab              ();
+      virtual void              cellPreModificate      ();
+      virtual void              cellPostModificate     ();
+    public slots:                                      
+      virtual void              setCell                ( Cell* );
+      virtual void              setCellWidget          ( CellWidget* );
+      virtual void              setSelectionOccurrence ( Occurrence& );
+      virtual void              bookmarkChanged        ( int index );
 
     protected:
-      CellWidget*       _cellWidget;
       InspectorWidget*  _inspectorWidget;
       QComboBox*        _bookmarks;
-      Record*           _selectionRecord;
+      Occurrence        _selectionOccurrence;
       bool              _updateFromSelection;
   };
 
 
-  inline CellWidget*       TabInspector::getCellWidget      () { return _cellWidget; }
   inline InspectorWidget*  TabInspector::getInspectorWidget () { return _inspectorWidget; }
   inline QComboBox*        TabInspector::getBookmarks       () { return _bookmarks; }
 
@@ -188,20 +247,20 @@ namespace Hurricane {
              void                 updateTab          ( int index );
 
     protected:
-      CellWidget*          _cellWidget;
-      GraphicsWidget*      _graphics;
-      PaletteWidget*       _palette;
-      DisplayFilterWidget* _displayFilter;
-      TabNetlist*          _tabNetlist;
-      TabSelection*        _tabSelection;
-      TabInspector*        _tabInspector;
+      CellWidget*       _cellWidget;
+      TabGraphics*      _tabGraphics;
+      TabPalette*       _tabPalette;
+      TabDisplayFilter* _tabDisplayFilter;
+      TabNetlist*       _tabNetlist;
+      TabSelection*     _tabSelection;
+      TabInspector*     _tabInspector;
   };
 
 
   inline CellWidget*          ControllerWidget::getCellWidget      () { return _cellWidget; }
-  inline GraphicsWidget*      ControllerWidget::getGraphics        () { return _graphics; }
-  inline PaletteWidget*       ControllerWidget::getPalette         () { return _palette; }
-  inline DisplayFilterWidget* ControllerWidget::getDisplayFilter   () { return _displayFilter; }
+  inline GraphicsWidget*      ControllerWidget::getGraphics        () { return _tabGraphics->getGraphics(); }
+  inline PaletteWidget*       ControllerWidget::getPalette         () { return _tabPalette->getPalette(); }
+  inline DisplayFilterWidget* ControllerWidget::getDisplayFilter   () { return _tabDisplayFilter->getDisplayFilter(); }
   inline NetlistWidget*       ControllerWidget::getNetlistBrowser  () { return _tabNetlist->getNetlistBrowser(); }
   inline SelectionWidget*     ControllerWidget::getSelection       () { return _tabSelection->getSelection(); }
   inline InspectorWidget*     ControllerWidget::getInspectorWidget () { return _tabInspector->getInspectorWidget(); }

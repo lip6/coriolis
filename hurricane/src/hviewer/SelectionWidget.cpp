@@ -198,6 +198,8 @@ namespace Hurricane {
 
     _view->selectRow ( 0 );
     _view->resizeColumnToContents ( 0 );
+
+  //if ( !_cumulative->isChecked() ) emit inspect ( NULL );
   }
 
 
@@ -211,8 +213,9 @@ namespace Hurricane {
   {
     if ( index.isValid() ) {
       Occurrence occurrence = _baseModel->getOccurrence ( _sortModel->mapToSource(index).row() );
-      emit inspect ( getRecord(occurrence) );
-    }
+      emit inspect ( occurrence );
+    } else
+      emit inspect ( NULL );
   }
 
 
