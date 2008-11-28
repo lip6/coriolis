@@ -147,22 +147,27 @@ namespace Hurricane {
     public:
                              TabNetlist         ( QWidget* parent=NULL );
       inline  NetlistWidget* getNetlistBrowser  ();
-      inline  QCheckBox*     getSyncButton      ();
+      inline  QCheckBox*     getSyncNetlist     ();
+      inline  QCheckBox*     getSyncSelection   ();
       virtual void           cellPreModificate  ();
       virtual void           cellPostModificate ();
     public slots:           
       virtual void           setCell            ( Cell* );
       virtual void           setCellWidget      ( CellWidget* );
-      virtual void           setSynchronize     ( bool );
+      virtual void           setSyncNetlist     ( bool );
+      virtual void           setSyncSelection   ( bool );
 
     protected:
       NetlistWidget* _netlistBrowser;
-      QCheckBox*     _synchronize;
+      QCheckBox*     _syncNetlist;
+      QCheckBox*     _syncSelection;
+      bool           _cwCumulativeSelection;
   };
 
 
   inline NetlistWidget* TabNetlist::getNetlistBrowser () { return _netlistBrowser; }
-  inline QCheckBox*     TabNetlist::getSyncButton     () { return _synchronize; }
+  inline QCheckBox*     TabNetlist::getSyncNetlist    () { return _syncNetlist; }
+  inline QCheckBox*     TabNetlist::getSyncSelection  () { return _syncSelection; }
 
 
 // -------------------------------------------------------------------
@@ -179,7 +184,6 @@ namespace Hurricane {
       virtual void              cellPreModificate    ();
       virtual void              cellPostModificate   ();
     public slots:
-      virtual void              setCell              ( Cell* );
       virtual void              setCellWidget        ( CellWidget* );
 
     protected:

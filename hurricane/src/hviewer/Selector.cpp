@@ -115,6 +115,18 @@ namespace Hurricane {
   }
 
 
+  bool  Selector::isAttachedTo ( CellWidget* widget ) const
+  {
+	if ( !widget )
+      throw Error ( "Can't attach selector : null CellWidget." );
+
+    if ( _cellWidgets.find(widget) == _cellWidgets.end() )
+      return false;
+
+    return true;
+  }
+
+
   void  Selector::attachTo ( CellWidget* widget )
   {
 	if ( !widget )

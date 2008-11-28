@@ -38,31 +38,36 @@
 #include "hurricane/viewer/NetlistWidget.h"
 
 
+namespace {
+
+
+  using namespace Hurricane;
+
+
+} // End of anonymous namespace.
+
+
 namespace Hurricane {
 
 
-
   NetlistWidget::NetlistWidget ( QWidget* parent )
-    : QWidget(parent)
-    , _cell(NULL)
-    , _baseModel(NULL)
-    , _sortModel(NULL)
-    , _view(NULL)
+    : QWidget   (parent)
+    , _cell     (NULL)
+    , _baseModel(new NetlistModel(this))
+    , _sortModel(new QSortFilterProxyModel(this))
+    , _view     (new QTableView(this))
     , _rowHeight(20)
+    , _selecteds()
   {
     setAttribute ( Qt::WA_DeleteOnClose );
     setAttribute ( Qt::WA_QuitOnClose, false );
 
     _rowHeight = QFontMetrics(Graphics::getFixedFont()).height() + 4;
 
-    _baseModel = new NetlistModel ( this );
-
-    _sortModel = new QSortFilterProxyModel ( this );
     _sortModel->setSourceModel       ( _baseModel );
     _sortModel->setDynamicSortFilter ( true );
     _sortModel->setFilterKeyColumn   ( 0 );
 
-    _view = new QTableView(this);
     _view->setShowGrid(false);
     _view->setAlternatingRowColors(true);
     _view->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -89,13 +94,9 @@ namespace Hurricane {
     setLayout ( gLayout );
 
     connect ( _filterPatternLineEdit , SIGNAL(textChanged(const QString &))
-            , this                   , SLOT(textFilterChanged())
-            );                       
-    connect ( _view                  , SIGNAL(activated(const QModelIndex&))
-            , this                   , SLOT(selectNet(const QModelIndex&))
-            );
-//  connect ( _view->selectionModel(), SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&))
-//          , this                   , SLOT(selectCurrent   (const QModelIndex&,const QModelIndex&)) );
+            , this                   , SLOT  (textFilterChanged()) );                       
+    connect ( _view->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&))
+            , this                   , SLOT  (updateSelecteds (const QItemSelection&,const QItemSelection&)) );
     connect ( _baseModel , SIGNAL(layoutChanged()), this, SLOT(forceRowHeight()) );
 
     resize(300, 300);
@@ -120,31 +121,44 @@ namespace Hurricane {
   }
 
 
-  void  NetlistWidget::selectNet ( const QModelIndex& index )
+  void  NetlistWidget::updateSelecteds ( const QItemSelection& , const QItemSelection& )
   {
-    if ( !index.isValid() ) return;
+    const Net* net;
 
-    const Net* net = _baseModel->getNet ( _sortModel->mapToSource(index).row() );
+    _selecteds.resetAccesses ();
 
-    if ( net )
-      emit netSelected ( net );
-  }
+    QModelIndexList iList = _view->selectionModel()->selectedRows();
+    for ( int i=0 ; i<iList.size() ; i++ ) {
+      net = _baseModel->getNet ( _sortModel->mapToSource(iList[i]).row() );
+      if ( net )
+        _selecteds.insert ( net );
+    }
 
-
-  void  NetlistWidget::selectCurrent ( const QModelIndex& current, const QModelIndex& )
-  {
-    selectNet ( current );
+    SelectedNetSet::iterator remove;
+    SelectedNetSet::iterator isel  = _selecteds.begin ();
+    while ( isel != _selecteds.end() ) {
+      switch ( isel->getAccesses() ) {
+        case 1:  break;
+        case 64:
+          emit netSelected ( isel->getNet() );
+          break;
+        case 0:
+          emit netUnselected ( isel->getNet() );
+          remove = isel;
+          ++isel;
+          _selecteds.erase ( remove );
+          continue;
+        default:
+          cerr << Bug("NetlistWidget::updateSelecteds(): invalid code %d"
+                     ,isel->getAccesses()) << endl;
+      }
+      ++isel;
+    }
   }
 
 
   void  NetlistWidget::keyPressEvent ( QKeyEvent* event )
   {
-    if      ( event->key() == Qt::Key_Asterisk ) { selectNet(_view->currentIndex()); }
-    else if ( event->key() == Qt::Key_Plus     ) { goTo( 1); selectNet(_view->currentIndex()); }
-    else if ( event->key() == Qt::Key_Minus    ) { goTo(-1); selectNet(_view->currentIndex()); }
-    else {
-      event->ignore();
-    }
   }
 
 

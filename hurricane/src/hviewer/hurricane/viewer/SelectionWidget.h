@@ -59,6 +59,7 @@ namespace Hurricane {
                                      SelectionWidget      ( QWidget* parent=NULL );
               void                   inspect              ( const QModelIndex& index  );
               bool                   isCumulative         () const;
+              void                   clear                ();
     signals:                                              
               void                   showSelection        ( bool );
               void                   occurrenceToggled    ( Occurrence, bool );

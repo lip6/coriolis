@@ -48,8 +48,9 @@ namespace Hurricane {
       virtual Name              getName          () const;
               Occurrence        getOccurrence    () const;
       inline  set<CellWidget*>& getCellWidgetSet ();
-              void              attachTo         ( CellWidget* widget );
-              void              detachFrom       ( CellWidget* widget, bool inDeletion=false );
+              bool              isAttachedTo     ( CellWidget* ) const;
+              void              attachTo         ( CellWidget* );
+              void              detachFrom       ( CellWidget* , bool inDeletion=false );
     // Inspector Managment.
       virtual string            _getTypeName     () const;
       virtual string            _getString       () const;

@@ -203,6 +203,12 @@ namespace Hurricane {
   }
 
 
+  void  SelectionWidget::clear ()
+  {
+    _baseModel->clear ();
+  }
+
+
   void  SelectionWidget::selectCurrent ( const QModelIndex& current, const QModelIndex& )
   {
     inspect ( current );

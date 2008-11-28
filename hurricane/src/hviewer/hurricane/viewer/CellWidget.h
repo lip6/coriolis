@@ -52,6 +52,7 @@ class QAction;
 #include  "hurricane/viewer/DisplayStyle.h"
 #include  "hurricane/viewer/CellWidgets.h"
 #include  "hurricane/viewer/Selector.h"
+//#include  "hurricane/viewer/SelectorCriterion.h"
 #include  "hurricane/viewer/SelectorCommand.h"
 
 
@@ -102,10 +103,10 @@ namespace Hurricane {
               void                    detachFromPalette       ();
               void                    bindCommand             ( Command* );
               void                    unbindCommand           ( Command* );
-              void                    clearSelectorCommands   ();
       inline  bool                    showBoundaries          () const;
-      inline  set<Selector*>&         getSelectorSet          ();
       inline  bool                    showSelection           () const;
+      inline  bool                    cumulativeSelection     () const;
+      inline  set<Selector*>&         getSelectorSet          ();
       inline  void                    setStartLevel           ( int );
       inline  void                    setStopLevel            ( int );
       inline  void                    setQueryFilter          ( int );
@@ -169,13 +170,16 @@ namespace Hurricane {
       inline  QPoint&                 getOffsetVA             ();
               void                    select                  ( const Net* net, bool delayRedraw=false );
               void                    select                  ( Occurrence occurence );
+              bool                    isSelected              ( Occurrence occurence );
               void                    selectOccurrencesUnder  ( Box selectArea );
+              void                    unselect                ( const Net* net, bool delayRedraw=false );
               void                    unselect                ( Occurrence occurence );
               void                    unselectAll             ( bool delayRedraw=false );
               void                    toggleSelect            ( Occurrence occurence, bool fromPopup );
               void                    setShowSelection        ( bool state );
               void                    setCumulativeSelection  ( bool state );
               void                    _select                 ( const Net* net, bool delayRedraw=false );
+              void                    _unselect               ( const Net* net, bool delayRedraw=false );
               void                    _selectOccurrencesUnder ( Box selectArea );
               void                    _unselectAll            ( bool delayRedraw );
               void                    updatePalette           ();
@@ -313,35 +317,50 @@ namespace Hurricane {
                   CellWidget* _cellWidget;
       };
 
+    private:
+      class SelectorCriterions {
+        public:
+                SelectorCriterions ( CellWidget* );
+               ~SelectorCriterions ();
+          bool  add                ( const Net* net, bool delayRedraw );
+          bool  add                ( Box area );
+          bool  remove             (  const Net* net, bool delayRedraw );
+          void  clear              ();
+          void  revalidate         ();
+        private:
+          CellWidget*                 _cellWidget;
+          vector<SelectorCriterion*>  _criterions;
+      };
+
     protected:
     // Internal: Attributes.
-      static  const int                _stripWidth;
-              vector<Qt::CursorShape>  _cursors;
-    //        MapView*                 _mapView;
-              Technology*              _technology;
-              PaletteWidget*           _palette;
-              Box                      _displayArea;
-              Box                      _visibleArea;
-              float                    _scale;
-              QPoint                   _offsetVA;
-              DrawingPlanes            _drawingPlanes;
-              DrawingQuery             _drawingQuery;
-              TextDrawingQuery         _textDrawingQuery;
-              int                      _queryFilter;
-              QPoint                   _mousePosition;
-              Spot                     _spot;
-              Cell*                    _cell;
-              bool                     _showBoundaries;
-              bool                     _showSelection;
-              bool                     _cumulativeSelection;
-              bool                     _selectionHasChanged;
-              int                      _delaySelectionChanged;
-              bool                     _cellModificated;
-              set<Selector*>           _selectors;
-              vector<SelectorCommand*> _selectorCommands;
-              vector<Command*>         _commands;
-              size_t                   _redrawRectCount;
-              int                      _textFontHeight;
+      static  const int                  _stripWidth;
+              vector<Qt::CursorShape>    _cursors;
+    //        MapView*                   _mapView;
+              Technology*                _technology;
+              PaletteWidget*             _palette;
+              Box                        _displayArea;
+              Box                        _visibleArea;
+              float                      _scale;
+              QPoint                     _offsetVA;
+              DrawingPlanes              _drawingPlanes;
+              DrawingQuery               _drawingQuery;
+              TextDrawingQuery           _textDrawingQuery;
+              int                        _queryFilter;
+              QPoint                     _mousePosition;
+              Spot                       _spot;
+              Cell*                      _cell;
+              bool                       _showBoundaries;
+              bool                       _showSelection;
+              bool                       _cumulativeSelection;
+              bool                       _selectionHasChanged;
+              int                        _delaySelectionChanged;
+              bool                       _cellModificated;
+              set<Selector*>             _selectors;
+              SelectorCriterions         _selection;
+              vector<Command*>           _commands;
+              size_t                     _redrawRectCount;
+              int                        _textFontHeight;
   };
 
 
@@ -567,6 +586,10 @@ namespace Hurricane {
 
   inline bool  CellWidget::showSelection  () const
   { return _showSelection; }
+
+
+  inline bool  CellWidget::cumulativeSelection () const
+  { return _cumulativeSelection; }
 
 
   inline QPainter& CellWidget::getPainter ()

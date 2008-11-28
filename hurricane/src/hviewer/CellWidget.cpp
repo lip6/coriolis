@@ -402,6 +402,83 @@ namespace Hurricane {
 
 
 // -------------------------------------------------------------------
+// Class :  "Hurricane::CellWidget::SelectorCriterions".
+
+
+  CellWidget::SelectorCriterions::SelectorCriterions ( CellWidget* cw )
+    : _cellWidget(cw)
+    , _criterions()
+  { }
+
+
+  CellWidget::SelectorCriterions::~SelectorCriterions ()
+  {
+    clear ();
+  }
+
+
+  bool  CellWidget::SelectorCriterions::add ( const Net* net, bool delayRedraw )
+  {
+    if ( !_cellWidget->isSelected(Occurrence(net)) ) {
+      _criterions.push_back ( new NetSelectorCriterion(net) );
+      _criterions.back()->doSelection ( _cellWidget, delayRedraw );
+      return true;
+    }
+    return false;
+  }
+
+
+  bool  CellWidget::SelectorCriterions::add ( Box area )
+  {
+    _criterions.push_back ( new AreaSelectorCriterion(area) );
+    _criterions.back()->doSelection ( _cellWidget, true );
+    return true;
+  }
+
+
+  bool  CellWidget::SelectorCriterions::remove (  const Net* net, bool delayRedraw )
+  {
+    if ( !_cellWidget->isSelected(Occurrence(net)) ) return false;
+
+    size_t i=0;
+    for ( ; i<_criterions.size() ; i++ )
+      if ( _criterions[i]->getNet() == net ) break;
+
+    if ( i < _criterions.size() ) {
+      swap ( _criterions[i], *(_criterions.end()-1) );
+      _criterions.back()->undoSelection ( _cellWidget, delayRedraw );
+      _criterions.pop_back ();
+    } else
+      return false;
+
+    return true;
+  }
+
+
+  void  CellWidget::SelectorCriterions::clear ()
+  {
+    for ( size_t i=0 ; i<_criterions.size() ; i++ )
+      delete _criterions[i];
+    _criterions.clear ();
+  }
+
+
+  void  CellWidget::SelectorCriterions::revalidate ()
+  {
+    size_t i    = 0;
+    size_t last = _criterions.size ();
+    while ( i < last ) {
+      if ( _criterions[i]->isValid(_cellWidget) ) {
+        _criterions[i]->doSelection ( _cellWidget, true );
+        ++i;
+      } else
+        swap ( _criterions[i], _criterions[--last] );
+    }
+    _criterions.erase ( _criterions.begin()+last, _criterions.end() );
+  }
+
+
+// -------------------------------------------------------------------
 // Class :  "Hurricane::CellWidget".
 
 
@@ -429,7 +506,7 @@ namespace Hurricane {
                                              , _delaySelectionChanged(0)
                                              , _cellModificated(true)
                                              , _selectors()
-                                             , _selectorCommands()
+                                             , _selection(this)
                                              , _commands()
                                              , _redrawRectCount(0)
                                              , _textFontHeight(20)
@@ -459,8 +536,6 @@ namespace Hurricane {
   CellWidget::~CellWidget ()
   {
     cerr << "CellWidget::~CellWidget()" << endl;
-
-    clearSelectorCommands ();
 
     for ( size_t i=0 ; i<_commands.size() ; i++ )
       unbindCommand ( _commands[i] );
@@ -514,15 +589,6 @@ namespace Hurricane {
       _commands[i] = _commands[i+1];
 
     _commands.pop_back ();
-  }
-
-
-  void  CellWidget::clearSelectorCommands ()
-  {
-    while ( !_selectorCommands.empty() ) {
-      delete _selectorCommands.back();
-      _selectorCommands.pop_back ();
-    }
   }
 
 
@@ -1192,6 +1258,8 @@ namespace Hurricane {
 
   void  CellWidget::setCell ( Cell* cell )
   {
+    cellPreModificate ();
+
     _cell = cell;
     _drawingQuery.setCell ( cell );
     _textDrawingQuery.setCell ( cell );
@@ -1199,6 +1267,8 @@ namespace Hurricane {
     emit cellChanged ( cell );
 
     fitToContents ();
+
+    cellPostModificate ();
   }
 
 
@@ -1207,11 +1277,29 @@ namespace Hurricane {
     ++_delaySelectionChanged;
 
     if ( !_cumulativeSelection ) unselectAll ( true );
-  // ToDo: Check here if the Net is already in the Selection.
-    _selectorCommands.push_back ( new NetSelectorCommand(net) );
-    _selectorCommands.back()->doSelection ( this, delayRedraw );
+    bool added = _selection.add ( net, delayRedraw );
 
-    if ( !--_delaySelectionChanged ) emit selectionChanged(_selectors,_cell);
+    if ( !--_delaySelectionChanged && added ) emit selectionChanged(_selectors,_cell);
+  }
+
+
+  bool  CellWidget::isSelected ( Occurrence occurrence )
+  {
+	if ( !occurrence.isValid() )
+      throw Error ( "Can't select occurrence : invalid occurrence" );
+
+	if ( occurrence.getOwnerCell() != getCell() )
+      throw Error ( "Can't select occurrence : incompatible occurrence" );
+
+	Property* property = occurrence.getProperty ( Selector::getPropertyName() );
+	if ( !property )
+      return false;
+
+    Selector* selector = dynamic_cast<Selector*>(property);
+    if ( !selector )
+      throw Error ( "Abnormal property named " + getString(Selector::getPropertyName()) );
+
+	return selector->isAttachedTo(this);
   }
 
 
@@ -1247,11 +1335,18 @@ namespace Hurricane {
     ++_delaySelectionChanged;
 
     if ( !_cumulativeSelection ) unselectAll ( true );
+    bool added = _selection.add ( selectArea );
 
-    _selectorCommands.push_back ( new AreaSelectorCommand(selectArea) );
-    _selectorCommands.back()->doSelection ( this, true );
+    if ( !--_delaySelectionChanged && added ) emit selectionChanged(_selectors,_cell);
+  }
 
-    if ( !--_delaySelectionChanged ) emit selectionChanged(_selectors,_cell);
+
+  void  CellWidget::unselect ( const Net* net, bool delayRedraw )
+  {
+    ++_delaySelectionChanged;
+
+    bool removed = _selection.remove ( net, delayRedraw );
+    if ( !--_delaySelectionChanged && removed ) emit selectionChanged(_selectors,_cell);
   }
 
 
@@ -1281,7 +1376,7 @@ namespace Hurricane {
   {
     ++_delaySelectionChanged;
 
-    clearSelectorCommands ();
+    _selection.clear ();
     _unselectAll ( delayRedraw );
 
     if ( !--_delaySelectionChanged ) emit selectionChanged(_selectors,_cell);
@@ -1317,9 +1412,21 @@ namespace Hurricane {
 
   void  CellWidget::_select ( const Net* net, bool delayRedraw )
   {
+    select ( Occurrence(net) );
     forEach ( Component*, component, net->getComponents() ) {
       Occurrence occurrence ( *component );
       select ( occurrence );
+    }
+    if ( !delayRedraw && _showSelection ) redraw ();
+  }
+
+
+  void  CellWidget::_unselect ( const Net* net, bool delayRedraw )
+  {
+    unselect ( Occurrence(net) );
+    forEach ( Component*, component, net->getComponents() ) {
+      Occurrence occurrence ( *component );
+      unselect ( occurrence );
     }
     if ( !delayRedraw && _showSelection ) redraw ();
   }
@@ -1357,9 +1464,7 @@ namespace Hurricane {
     _cellModificated = true;
 
     ++_delaySelectionChanged;
-    vector<SelectorCommand*>::iterator icommand = _selectorCommands.begin ();
-    for ( ; icommand != _selectorCommands.end() ; icommand++ )
-      (*icommand)->doSelection ( this, true );
+    _selection.revalidate ();
 
     updatePalette ();
     redraw ();

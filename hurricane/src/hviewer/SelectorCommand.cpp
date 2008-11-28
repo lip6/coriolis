@@ -16,7 +16,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./SelectorCommand.cpp"                    |
+// |  C++ Header  :       "./SelectorCriterion.cpp"                  |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
@@ -24,6 +24,7 @@
 
 
 #include  "hurricane/viewer/CellWidget.h"
+//#include  "hurricane/viewer/SelectorCriterion.h"
 #include  "hurricane/viewer/SelectorCommand.h"
 
 
@@ -31,48 +32,71 @@ namespace Hurricane {
 
 
 // -------------------------------------------------------------------
-// Class  :  "Hurricane::SelectorCommand".
+// Class  :  "Hurricane::SelectorCriterion".
 
 
-  SelectorCommand::~SelectorCommand ()
+  SelectorCriterion::~SelectorCriterion ()
+  { }
+
+
+  const Net* SelectorCriterion::getNet () const
+  { return NULL; }
+
+
+  void  SelectorCriterion::undoSelection ( CellWidget* cw, bool delayRedraw )
   { }
 
 
 // -------------------------------------------------------------------
-// Class  :  "Hurricane::NetSelectorCommand".
+// Class  :  "Hurricane::NetSelectorCriterion".
 
 
-  NetSelectorCommand::NetSelectorCommand ( const Net* net )
+  NetSelectorCriterion::NetSelectorCriterion ( const Net* net )
     : _net(net)
+    , _name(_net->getName())
   { }
 
 
-  NetSelectorCommand::~NetSelectorCommand ()
+  NetSelectorCriterion::~NetSelectorCriterion ()
   { }
 
 
-  const Net* NetSelectorCommand::getNet () const
+  const Net* NetSelectorCriterion::getNet () const
   { return _net; }
 
 
-  void  NetSelectorCommand::doSelection ( CellWidget* cw, bool delayRedraw )
+  bool  NetSelectorCriterion::isValid ( CellWidget* cw ) const
+  {
+    if ( !cw->getCell() ) return false;
+    if ( !cw->getCell()->getNet(_name) ) return false;
+    return true;
+  }
+
+
+  void  NetSelectorCriterion::doSelection ( CellWidget* cw, bool delayRedraw )
   {
     cw->_select ( _net, delayRedraw );
   }
 
 
-  string  NetSelectorCommand::_getTypeName () const
-  { return "NetSelectorCommand"; }
+  void  NetSelectorCriterion::undoSelection ( CellWidget* cw, bool delayRedraw )
+  {
+    cw->_unselect ( _net, delayRedraw );
+  }
 
 
-  string  NetSelectorCommand::_getString () const
+  string  NetSelectorCriterion::_getTypeName () const
+  { return "NetSelectorCriterion"; }
+
+
+  string  NetSelectorCriterion::_getString () const
   {
     string s = "<" + _getTypeName() + " " + getString(_net) + ">";
     return s;
   }
 
 
-  Record* NetSelectorCommand::_getRecord () const
+  Record* NetSelectorCriterion::_getRecord () const
   {
     Record* record = new Record ( _getString() );
     record->add ( getSlot("_net",_net) );
@@ -81,40 +105,44 @@ namespace Hurricane {
 
 
 // -------------------------------------------------------------------
-// Class  :  "Hurricane::AreaSelectorCommand".
+// Class  :  "Hurricane::AreaSelectorCriterion".
 
 
-  AreaSelectorCommand::AreaSelectorCommand ( const Box& area )
+  AreaSelectorCriterion::AreaSelectorCriterion ( const Box& area )
     : _area(area)
   { }
 
 
-  AreaSelectorCommand::~AreaSelectorCommand ()
+  AreaSelectorCriterion::~AreaSelectorCriterion ()
   { }
 
 
-  const Box& AreaSelectorCommand::getArea () const
+  const Box& AreaSelectorCriterion::getArea () const
   { return _area; }
 
 
-  void  AreaSelectorCommand::doSelection ( CellWidget* cw, bool delayRedraw )
+  bool  AreaSelectorCriterion::isValid ( CellWidget* ) const
+  { return true; }
+
+
+  void  AreaSelectorCriterion::doSelection ( CellWidget* cw, bool delayRedraw )
   {
     cw->_selectOccurrencesUnder ( _area );
   }
 
 
-  string  AreaSelectorCommand::_getTypeName () const
-  { return "AreaSelectorCommand"; }
+  string  AreaSelectorCriterion::_getTypeName () const
+  { return "AreaSelectorCriterion"; }
 
 
-  string  AreaSelectorCommand::_getString () const
+  string  AreaSelectorCriterion::_getString () const
   {
     string s = "<" + _getTypeName() + " " + getString(_area) + ">";
     return s;
   }
 
 
-  Record* AreaSelectorCommand::_getRecord () const
+  Record* AreaSelectorCriterion::_getRecord () const
   {
     Record* record = new Record ( _getString() );
     record->add ( getSlot("_area",&_area) );
