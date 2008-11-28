@@ -52,8 +52,7 @@ class QAction;
 #include  "hurricane/viewer/DisplayStyle.h"
 #include  "hurricane/viewer/CellWidgets.h"
 #include  "hurricane/viewer/Selector.h"
-//#include  "hurricane/viewer/SelectorCriterion.h"
-#include  "hurricane/viewer/SelectorCommand.h"
+#include  "hurricane/viewer/SelectorCriterion.h"
 
 
 

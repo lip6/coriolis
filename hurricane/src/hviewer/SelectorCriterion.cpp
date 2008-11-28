@@ -24,8 +24,7 @@
 
 
 #include  "hurricane/viewer/CellWidget.h"
-//#include  "hurricane/viewer/SelectorCriterion.h"
-#include  "hurricane/viewer/SelectorCommand.h"
+#include  "hurricane/viewer/SelectorCriterion.h"
 
 
 namespace Hurricane {

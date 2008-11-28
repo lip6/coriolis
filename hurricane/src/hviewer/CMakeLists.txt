@@ -11,7 +11,6 @@
                                      hurricane/viewer/GraphicsWidget.h
                                      hurricane/viewer/DynamicLabel.h
                                      hurricane/viewer/MousePositionWidget.h
-                                     hurricane/viewer/Selector.h
                                      hurricane/viewer/SelectCommand.h
                                      hurricane/viewer/CellWidget.h
                                      hurricane/viewer/CellWidgets.h
@@ -38,7 +37,7 @@
                                      hurricane/viewer/MoveCommand.h
                                      hurricane/viewer/ZoomCommand.h
                                      hurricane/viewer/SelectCommand.h
-                                     hurricane/viewer/SelectorCommand.h
+                                     hurricane/viewer/SelectorCriterion.h
                                      hurricane/viewer/CellWidget.h
                                      hurricane/viewer/CellWidgets.h
                                      hurricane/viewer/CellViewer.h
@@ -69,7 +68,7 @@
                                      MoveCommand.cpp
                                      ZoomCommand.cpp
                                      SelectCommand.cpp
-                                     SelectorCommand.cpp
+                                     SelectorCriterion.cpp
                                      CellWidget.cpp
                                      CellViewer.cpp
                                      RecordModel.cpp
