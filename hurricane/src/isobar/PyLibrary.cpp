@@ -179,20 +179,24 @@ extern "C" {
       PyObject* arg0;
       PyObject* arg1;
       Library* library = NULL;
-      if (ParseTwoArg("Library.new", args, ":db:name", &arg0, &arg1)) {
-          HTRY
+
+      HTRY
+      __cs.init ("Library.new");
+      if (!PyArg_ParseTuple(args,"O&O&:Library.new", Converter, &arg0, Converter, &arg1)) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Library constructor." );
+        return NULL;
+      }
+      if (__cs.getObjectIds() == ":db:name") {
           DataBase* db = PYDATABASE_O(arg0);
           library = Library::create(db, *PYNAME_O(arg1));
-          HCATCH
-      } else if (ParseTwoArg("Library.new", args, ":library:name", &arg0, &arg1)) { 
-          HTRY
+      } else if (__cs.getObjectIds() == ":library:name") { 
           Library* masterLibrary = PYLIBRARY_O(arg0);
           library = Library::create(masterLibrary, *PYNAME_O(arg1));
-          HCATCH
       } else {
-          PyErr_SetString(ConstructorError, "wrong arguments");
+          PyErr_SetString ( ConstructorError, "invalid number of parameters for Library constructor." );
           return NULL;
       }
+      HCATCH
 
       return PyLibrary_Link ( library );
   }

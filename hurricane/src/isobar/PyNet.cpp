@@ -61,6 +61,7 @@
 #include "hurricane/isobar/PyComponentCollection.h" 
 #include "hurricane/isobar/PyPinCollection.h" 
 
+#include "hurricane/Cell.h"
 #include "hurricane/NetExternalComponents.h"
 using namespace Hurricane;
 

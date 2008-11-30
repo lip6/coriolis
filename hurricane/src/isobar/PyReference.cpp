@@ -50,7 +50,8 @@
 // x-----------------------------------------------------------------x
 
 
-
+#include "hurricane/Cell.h"
+using namespace Hurricane;
 
 #include "hurricane/isobar/PyReference.h"
 #include "hurricane/isobar/PyPoint.h"
@@ -61,7 +62,6 @@
 
 namespace  Isobar {
 
-using namespace Hurricane;
 
 extern "C" {
 

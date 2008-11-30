@@ -59,13 +59,12 @@
 
 #include "hurricane/isobar/PyEntity.h"
 
-#include "hurricane/Cell.h"
 
+namespace Hurricane {
+    class Cell;
+}
 
 namespace  Isobar {
-
-using namespace Hurricane;
-
 
 extern "C" {
 
@@ -101,7 +100,4 @@ extern "C" {
 
 }  // End of Isobar namespace.
  
-
-
-
-# endif
+#endif

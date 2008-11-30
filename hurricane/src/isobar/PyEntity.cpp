@@ -49,6 +49,7 @@
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
+#include "hurricane/Cell.h"
 #include "hurricane/isobar/PyNet.h"
 #include "hurricane/isobar/PyLayer.h"
 #include "hurricane/isobar/PyPoint.h"
