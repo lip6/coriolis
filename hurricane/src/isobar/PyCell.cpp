@@ -1,40 +1,3 @@
-
-// -*- C++ -*-
-//
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
-//
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
-// ===================================================================
-//
-// $Id: PyCell.cpp,v 1.34 2008/02/07 17:09:41 xtof Exp $
-//
 // x-----------------------------------------------------------------x 
 // |                                                                 |
 // |                   C O R I O L I S                               |
@@ -51,7 +14,6 @@
 
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/isobar/PyBox.h"
-#include "hurricane/isobar/PyName.h"
 #include "hurricane/isobar/PyLibrary.h"
 #include "hurricane/isobar/PyInstance.h"
 #include "hurricane/isobar/PyOccurrence.h"
@@ -120,17 +82,13 @@ extern "C" {
 
   static PyObject* PyCell_getName(PyCell *self) {
     trace << "PyCell_getName ()" << endl;
-    
-    METHOD_HEAD ( "Cell.getName()" )
-
-    PyName* pyName = PyObject_NEW ( PyName, &PyTypeName );
-    if ( pyName == NULL ) { return NULL; }
 
     HTRY
-    pyName->_object = new Name ( cell->getName() );
+    METHOD_HEAD ( "Cell.getName()" )
+    return PyString_FromString(getString(cell->getName()).c_str());
     HCATCH
-    
-    return (PyObject*)pyName;
+
+    return NULL;
   }
 
 
@@ -139,20 +97,21 @@ extern "C" {
 
   static PyObject* PyCell_getInstance ( PyCell *self, PyObject* args ) {
     trace << "PyCell_getInstance ()" << endl;
+    METHOD_HEAD("Cell.getInstance()")
 
     Instance* instance = NULL;
     
     HTRY
-    METHOD_HEAD ( "Cell.getInstance()" )
-
-    PyName* arg0;
-    if ( ! ParseOneArg ( "Cell.getInstance", args, NAME_ARG, (PyObject**)&arg0 ) )
+    char* name;
+    if (PyArg_ParseTuple(args,"s:Cell.getInstance", &name)) {
+        instance = cell->getInstance(Name(name));
+    } else {
+        PyErr_SetString(ConstructorError, "invalid number of parameters for Cell.getInstance." );
         return NULL;
-
-    instance = cell->getInstance ( *PYNAME_O(arg0) );
+    }
     HCATCH
     
-    return PyInstance_Link ( instance );
+    return PyInstance_Link(instance);
   }
 
 
@@ -397,22 +356,23 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyCell_getNet ()"
 
-  static PyObject* PyCell_getNet ( PyCell *self, PyObject* args ) {
-    trace << "PyCell_getNet ()" << endl;
+  static PyObject* PyCell_getNet(PyCell *self, PyObject* args) {
+      trace << "PyCell_getNet ()" << endl;
+      METHOD_HEAD ( "Cell.getNet()" )
 
-    Net* net = NULL;
+      Net* net = NULL;
 
-    HTRY
-    METHOD_HEAD ( "Cell.getNet()" )
-
-    PyName* arg0;
-    if ( ! ParseOneArg ( "Cell.getNet", args, NAME_ARG, (PyObject**)&arg0 ) )
-        return NULL;
-    
-    net = cell->getNet ( *PYNAME_O(arg0) );
-    HCATCH
-    
-    return PyNet_Link ( net );
+      HTRY
+      char* name = NULL;
+      if (PyArg_ParseTuple(args,"s:Cell.getNet", &name)) {
+          net = cell->getNet(Name(name));
+      } else {
+          PyErr_SetString(ConstructorError, "invalid number of parameters for getNet." );
+          return NULL;
+      }
+      HCATCH
+      
+      return PyNet_Link(net);
   }
 
 
@@ -585,17 +545,18 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyCell_setName ()"
 
-  static PyObject* PyCell_setName ( PyCell *self, PyObject* args )
-  {
+  static PyObject* PyCell_setName ( PyCell *self, PyObject* args ) {
     trace << "Cell.setName()" << endl;
 
     HTRY
-    METHOD_HEAD ( "Cell.setName()" )
-
-    PyName* name;
-    if ( ! ParseOneArg ( "Cell.setName", args, NAME_ARG, (PyObject**)&name ) )
+    METHOD_HEAD("Cell.setName()")
+    char* name = NULL;
+    if (PyArg_ParseTuple(args,"s:Cell.setName", &name)) {
+        cell->setName(Name(name));
+    } else {
+        PyErr_SetString(ConstructorError, "invalid number of parameters for Cell.setName.");
         return NULL;
-    cell->setName ( *PYNAME_O(name) );
+    }
     HCATCH
 
     Py_RETURN_NONE;
@@ -689,18 +650,17 @@ extern "C" {
   static PyObject* PyCell_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
     trace << "PyCell_new()" << endl;
 
-    PyObject* arg0;
-    PyObject* arg1;
-    string lib_name_arg = ":library:name";
-    if (!ParseTwoArg("Cell.init", args, lib_name_arg, &arg0, &arg1)) {
-        PyErr_SetString ( ConstructorError, "invalid number of parameters for Cell constructor.");
-        return NULL;
-    }
-
+    char* name = NULL;
+    PyLibrary* pyLibrary = NULL;
     Cell* cell = NULL;
 
     HTRY
-    cell = Cell::create(PYLIBRARY_O(arg0), getString(*PYNAME_O(arg1)));
+    if (PyArg_ParseTuple(args,"O!s:Cell.new", &PyTypeLibrary, &pyLibrary, &name)) {
+        cell = Cell::create(PYLIBRARY_O(pyLibrary), Name(name));
+    } else {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Cell constructor.");
+        return NULL;
+    }
     HCATCH
 
     return PyCell_Link(cell);

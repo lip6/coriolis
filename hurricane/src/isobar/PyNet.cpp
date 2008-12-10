@@ -1,40 +1,3 @@
-
-// -*- C++ -*-
-//
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
-//
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
-// ===================================================================
-//
-// $Id: PyNet.cpp,v 1.27 2008/02/07 17:09:41 xtof Exp $
-//
 // x-----------------------------------------------------------------x 
 // |                                                                 |
 // |                   C O R I O L I S                               |
@@ -53,7 +16,6 @@
 
 
 #include "hurricane/isobar/PyNet.h"
-#include "hurricane/isobar/PyName.h"
 #include "hurricane/isobar/PyCell.h" 
 #include "hurricane/isobar/PyPoint.h" 
 #include "hurricane/isobar/PyPlugCollection.h" 
@@ -186,23 +148,13 @@ extern "C" {
 
   static PyObject* PyNet_getName ( PyNet *self ) {
     trace << "PyNet_getName ()" << endl;
-    
-    METHOD_HEAD ( "Net.getName()" )
-
-    PyName* pyName = PyObject_NEW ( PyName, &PyTypeName );
-    if ( pyName == NULL ) { return NULL; }
-  
-    trace_in ();
-    trace << "new PyName [" << hex << pyName << "]" << endl;
-    trace_out ();
 
     HTRY
-
-    pyName->_object = new Name ( net->getName() );
-
+    METHOD_HEAD("Net.getName()")
+    return PyString_FromString(getString(net->getName()).c_str());
     HCATCH
-    
-    return ( (PyObject*)pyName ); 
+
+    return NULL;
   }
 
 
@@ -343,14 +295,14 @@ extern "C" {
     trace << "PyNet_setName()" << endl;
 
     HTRY
-
-    METHOD_HEAD ( "Net.setName()" )
-    
-    PyObject* arg0;
-    if ( ! ParseOneArg ( "Net.setName", args, NET_ARG, (PyObject**)&arg0 ) ) return ( NULL );
-
-    net->setName ( *PYNAME_O(arg0) );
-
+    METHOD_HEAD("Net.setName()")
+    char* name = NULL;
+    if (PyArg_ParseTuple(args,"s:Net.setName", &name)) {
+        net->setName(Name(name));
+    } else {
+        PyErr_SetString(ConstructorError, "invalid number of parameters for Net.setName.");
+        return NULL;
+    }
     HCATCH
 
     Py_RETURN_NONE;
@@ -548,20 +500,20 @@ extern "C" {
   static PyObject* PyNet_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
     trace << "PyNet_new()" << endl;
 
-    Net*      net = NULL;
-    PyObject* arg0;
-    PyObject* arg1;
+    char* name = NULL;
+    PyCell* pyCell = NULL;
+    Net* net = NULL;
     
-    if (!ParseTwoArg("Net.new", args, CELL_NAME_ARG, &arg0, &arg1)) {
+    HTRY
+    if (PyArg_ParseTuple(args,"O!s:Net.new", &PyTypeCell, &pyCell, &name)) {
+        net = Net::create(PYCELL_O(pyCell), Name(name));
+    } else {
         PyErr_SetString ( ConstructorError, "invalid number of parameters for Net constructor." );
         return NULL;
     }
-
-    HTRY
-    net = Net::create ( PYCELL_O(arg0), *PYNAME_O(arg1) );
     HCATCH
 
-    return PyNet_Link ( net );
+    return PyNet_Link(net);
   }
 
   DBoDeleteMethod(Net)
