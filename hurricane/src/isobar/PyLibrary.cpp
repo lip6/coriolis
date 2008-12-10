@@ -110,12 +110,15 @@ extern "C" {
     Cell* cell = NULL;
 
     HTRY
-    METHOD_HEAD ( "Library.getCell()" )
+    METHOD_HEAD("Library.getCell()")
 
-    PyObject* arg0;
-    if ( ! ParseOneArg ( "Library.getCell", args, NAME_ARG, &arg0 ) ) return ( NULL );
-
-    cell = lib->getCell ( *PYNAME_O(arg0) );
+    char* name = NULL;
+    if (PyArg_ParseTuple(args,"s:Library.getCell", &name)) {
+        cell = lib->getCell (Name(name));
+    } else {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Library constructor." );
+        return NULL;
+    }
     HCATCH
 
     return PyCell_Link ( cell );
@@ -176,25 +179,22 @@ extern "C" {
   static PyObject* PyLibrary_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
       trace << "PyLibrary_new()" << endl;
 
-      PyObject* arg0;
-      PyObject* arg1;
+      char* name = NULL;
+      PyDataBase* pyDataBase = NULL;
+      PyLibrary* pyRootLibrary = NULL;
+
       Library* library = NULL;
 
       HTRY
-      __cs.init ("Library.new");
-      if (!PyArg_ParseTuple(args,"O&O&:Library.new", Converter, &arg0, Converter, &arg1)) {
+      if (PyArg_ParseTuple(args,"O!s:Library.new", &PyTypeDataBase, &pyDataBase, &name)) {
+          DataBase* db = PYDATABASE_O(pyDataBase);
+          library = Library::create(db, Name(name));
+      } else if (PyArg_ParseTuple(args,"O!s:Library.new", &PyTypeLibrary, &pyRootLibrary, &name)) {
+          Library* rootLibrary = PYLIBRARY_O(pyRootLibrary);
+          library = Library::create(rootLibrary, Name(name));
+      } else {
         PyErr_SetString ( ConstructorError, "invalid number of parameters for Library constructor." );
         return NULL;
-      }
-      if (__cs.getObjectIds() == ":db:name") {
-          DataBase* db = PYDATABASE_O(arg0);
-          library = Library::create(db, *PYNAME_O(arg1));
-      } else if (__cs.getObjectIds() == ":library:name") { 
-          Library* masterLibrary = PYLIBRARY_O(arg0);
-          library = Library::create(masterLibrary, *PYNAME_O(arg1));
-      } else {
-          PyErr_SetString ( ConstructorError, "invalid number of parameters for Library constructor." );
-          return NULL;
       }
       HCATCH
 
