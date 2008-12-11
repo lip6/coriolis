@@ -1,40 +1,3 @@
-
-// -*- C++ -*-
-//
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
-//
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
-// ===================================================================
-//
-// $Id: PyInstance.cpp,v 1.31 2008/02/07 17:09:41 xtof Exp $
-//
 // x-----------------------------------------------------------------x 
 // |                                                                 |
 // |                   C O R I O L I S                               |
@@ -50,7 +13,6 @@
 // x-----------------------------------------------------------------x
 
 #include "hurricane/isobar/PyBox.h"
-#include "hurricane/isobar/PyName.h"
 #include "hurricane/isobar/PyTransformation.h"
 #include "hurricane/isobar/PyLibrary.h"
 #include "hurricane/isobar/PyCell.h"
@@ -141,22 +103,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyInstance_getName ()"
 
-  static PyObject* PyInstance_getName ( PyInstance *self ) {
-    trace << "PyInstance_getName ()" << endl;
-    METHOD_HEAD ( "Instance.getName()" )
-
-    PyName* pyName = PyObject_NEW ( PyName, &PyTypeName );
-    if ( pyName == NULL ) { return NULL; }
-
-    HTRY
-    pyName->_object = new Name ( instance->getName() );
-    HCATCH
-    
-    return ( (PyObject*)pyName ); 
-  }
-
-
-
+  GetNameMethod(Instance, instance)
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyInstance_getMasterCell ()"
@@ -342,20 +289,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyInstance_setName ()"
 
-  static PyObject* PyInstance_setName ( PyInstance *self, PyObject* args ) {
-    trace << "PyInstance_setName()" << endl;
-    METHOD_HEAD ( "Instance.setName()" )
-
-    HTRY
-    PyName* name;
-    if ( ! ParseOneArg ( "Instance.setName", args, NAME_ARG, (PyObject**)&name ) ) return ( NULL );
-
-    instance->setName ( *PYNAME_O(name) );
-    HCATCH
-
-    Py_RETURN_NONE;
-  }
-
+  SetNameMethod(Instance, instance)
 
 
   // ---------------------------------------------------------------
@@ -442,6 +376,7 @@ extern "C" {
     trace << "PyInstance_new ()" << endl;
     
     Instance* instance = NULL;
+#if 0 //FIXME
     PyObject* arg0;
     PyObject* arg1;
     PyObject* arg2;
@@ -459,7 +394,7 @@ extern "C" {
         return NULL;
     }
 
-    if      ( __cs.getObjectIds() == CELL_NAME_CELL_ARG       ) { instance = Instance::create (  PYCELL_O(arg0)
+    if      ( __cs.getObjectIds() == :ent:string:ent       ) { instance = Instance::create (  PYCELL_O(arg0)
                                                                                               , *PYNAME_O(arg1)
                                                                                               ,  PYCELL_O(arg2) ); }
     else if ( __cs.getObjectIds() == CELL_NAME_CELL_TRANS_ARG ) { instance = Instance::create (  PYCELL_O(arg0)
@@ -472,6 +407,7 @@ extern "C" {
       return ( NULL );
     }
     HCATCH
+#endif
 
       return PyInstance_Link ( instance );
   }

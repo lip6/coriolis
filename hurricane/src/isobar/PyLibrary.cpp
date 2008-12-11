@@ -46,18 +46,7 @@ extern "C" {
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyLibrary_getName ()"
-
-  static PyObject* PyLibrary_getName ( PyLibrary *self ) {
-    trace << "PyLibrary_getName ()" << endl;
-
-    METHOD_HEAD ( "Library.getName()" )
-    
-    HTRY
-    return PyString_FromString(getString(lib->getName()).c_str());
-    HCATCH
-
-    return NULL;
-  }
+  GetNameMethod(Library, lib)
 
 
   // ---------------------------------------------------------------
@@ -137,13 +126,12 @@ extern "C" {
   static PyObject* PyLibrary_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
       trace << "PyLibrary_new()" << endl;
 
-      char* name = NULL;
-      PyDataBase* pyDataBase = NULL;
-      PyLibrary* pyRootLibrary = NULL;
-
       Library* library = NULL;
 
       HTRY
+      char* name = NULL;
+      PyDataBase* pyDataBase = NULL;
+      PyLibrary* pyRootLibrary = NULL;
       if (PyArg_ParseTuple(args,"O!s:Library.new", &PyTypeDataBase, &pyDataBase, &name)) {
           DataBase* db = PYDATABASE_O(pyDataBase);
           library = Library::create(db, Name(name));

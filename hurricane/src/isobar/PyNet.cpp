@@ -145,18 +145,7 @@ extern "C" {
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyNet_getName ()"
-
-  static PyObject* PyNet_getName ( PyNet *self ) {
-    trace << "PyNet_getName ()" << endl;
-
-    HTRY
-    METHOD_HEAD("Net.getName()")
-    return PyString_FromString(getString(net->getName()).c_str());
-    HCATCH
-
-    return NULL;
-  }
-
+  GetNameMethod(Net, net)
 
 
   // ---------------------------------------------------------------
@@ -290,41 +279,24 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyNet_setName ()"
 
-  static PyObject* PyNet_setName ( PyNet *self, PyObject* args )
-  {
-    trace << "PyNet_setName()" << endl;
-
-    HTRY
-    METHOD_HEAD("Net.setName()")
-    char* name = NULL;
-    if (PyArg_ParseTuple(args,"s:Net.setName", &name)) {
-        net->setName(Name(name));
-    } else {
-        PyErr_SetString(ConstructorError, "invalid number of parameters for Net.setName.");
-        return NULL;
-    }
-    HCATCH
-
-    Py_RETURN_NONE;
-  }
+  SetNameMethod(Net, net)
 
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyNet_setGlobal ()"
 
-  static PyObject* PyNet_setGlobal ( PyNet *self, PyObject* args )
-  {
+  static PyObject* PyNet_setGlobal ( PyNet *self, PyObject* args ) {
     trace << "PyNet_setGlobal()" << endl;
 
     HTRY
-
     METHOD_HEAD ( "Net.setGlobal()" )
-    
     PyObject* arg0;
-    if ( ! ParseOneArg ( "Net.setGlobal", args, INT_ARG, (PyObject**)&arg0 ) ) return ( NULL );
-
-    net->setGlobal ( PyInt_AsLong(arg0) != 0 );
-
+    if (PyArg_ParseTuple(args,"O:Net.setGlobal", &arg0) && PyBool_Check(arg0)) {
+      (arg0 == Py_True)?net->setGlobal(true):net->setGlobal(false);
+    } else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Net.setGlobal." );
+      return NULL;
+    }
     HCATCH
 
     Py_RETURN_NONE;
@@ -335,19 +307,18 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyNet_setExternal ()"
 
-  static PyObject* PyNet_setExternal ( PyNet *self, PyObject* args )
-  {
+  static PyObject* PyNet_setExternal ( PyNet *self, PyObject* args ) {
     trace << "PyNet_setExternal()" << endl;
 
     HTRY
-
     METHOD_HEAD ( "Net.setExternal()" )
-    
     PyObject* arg0;
-    if ( ! ParseOneArg ( "Net.setExternal", args, INT_ARG, (PyObject**)&arg0 ) ) return ( NULL );
-
-    net->setExternal ( PyInt_AsLong(arg0) != 0 );
-
+    if (PyArg_ParseTuple(args,"O:Net.setExternal", &arg0) && PyBool_Check(arg0)) {
+      (arg0 == Py_True)?net->setExternal(true):net->setExternal(false);
+    } else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Net.setExternal." );
+      return NULL;
+    }
     HCATCH
 
     Py_RETURN_NONE;
@@ -433,13 +404,14 @@ extern "C" {
     trace << "PyNet_merge()" << endl;
 
     HTRY
-
+    PyNet* pyNetToMerge;
     METHOD_HEAD ( "Net.merge()" )
-
-    PyObject* arg0;
-    if ( ! ParseOneArg ( "Net.merge", args, NET_ARG, (PyObject**)&arg0 ) ) return ( NULL );
-
-    net->merge ( PYNET_O(arg0) );
+    if (PyArg_ParseTuple(args, "O!:Net.merge", &PyTypeNet, &pyNetToMerge)) {
+      net->merge(PYNET_O(pyNetToMerge));
+    } else {
+      PyErr_SetString (ConstructorError, "invalid number of parameters for Net.merge.");
+      return NULL;
+    }
 
     HCATCH
     

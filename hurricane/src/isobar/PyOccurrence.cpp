@@ -1,40 +1,3 @@
-
-// -*- C++ -*-
-//
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
-//
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
-// ===================================================================
-//
-// $Id: PyOccurrence.cpp,v 1.7 2007/05/02 11:50:46 d2 Exp $
-//
 // x-----------------------------------------------------------------x 
 // |                                                                 |
 // |                   C O R I O L I S                               |
@@ -51,7 +14,6 @@
 
 #include "hurricane/isobar/PyBox.h"
 #include "hurricane/isobar/PyTransformation.h"
-#include "hurricane/isobar/PyName.h"
 #include "hurricane/isobar/PyPath.h"
 #include "hurricane/isobar/PyOccurrence.h"
 #include "hurricane/isobar/PyCell.h"
@@ -177,21 +139,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyOccurrence_getName ()"
 
-  static PyObject* PyOccurrence_getName ( PyOccurrence *self )
-  {
-    trace << "PyOccurrence_getName ()" << endl;
-    
-    METHOD_HEAD ( "Occurrence.getName()" )
-
-    PyName* pyName = PyObject_NEW ( PyName, &PyTypeName );
-    if ( pyName == NULL ) { return NULL; }
-
-    HTRY
-    pyName->_object = new Name ( occurrence->getName() );
-    HCATCH
-    
-    return ( (PyObject*)pyName );
-  }
+  GetNameMethod(Occurrence, occurrence)
 
 
   // ---------------------------------------------------------------

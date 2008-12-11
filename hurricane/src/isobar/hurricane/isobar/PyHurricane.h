@@ -1,39 +1,3 @@
-// -*- C++ -*-
-//
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
-//
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
-// ===================================================================
-//
-// $Id: PyHurricane.h,v 1.41 2008/02/07 17:09:41 xtof Exp $
-//
 // x-----------------------------------------------------------------x 
 // |                                                                 |
 // |                   C O R I O L I S                               |
@@ -291,7 +255,7 @@ extern "C" {
 // -------------------------------------------------------------------
 // Attribute Method Macro For Long.
 
-# define  DirectSetLongAttribute(PY_FUNC_NAME,FUNC_NAME,PY_FORMAT,PY_SELF_TYPE,SELF_TYPE) \
+#define  DirectSetLongAttribute(PY_FUNC_NAME,FUNC_NAME,PY_FORMAT,PY_SELF_TYPE,SELF_TYPE) \
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args ) \
   {                                                                    \
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectSetLongAttribute()")  \
@@ -305,7 +269,34 @@ extern "C" {
   }
 
 
+// -------------------------------------------------------------------
+// Attribute Method Macro For Names.
 
+#define GetNameMethod(SELF_TYPE, SELF)                                 \
+  static PyObject* Py##SELF_TYPE##_getName(Py##SELF_TYPE* self) {      \
+    trace << "Py"#SELF_TYPE"_getName()" << endl;                       \
+    HTRY                                                               \
+    METHOD_HEAD (#SELF_TYPE".getName()")                               \
+    return PyString_FromString(getString(SELF->getName()).c_str());    \
+    HCATCH                                                             \
+    return NULL;                                                       \
+  }
+
+#define SetNameMethod(SELF_TYPE, SELF)                                                 \
+  static PyObject* Py##SELF_TYPE##_setName(Py##SELF_TYPE* self, PyObject* args) {      \
+    trace << "Py"#SELF_TYPE"_setName()" << endl;                                       \
+    HTRY                                                                               \
+    METHOD_HEAD (#SELF_TYPE".setName()")                                               \
+    char* name = NULL;                                                                 \
+    if (PyArg_ParseTuple(args,"s:"#SELF_TYPE".setName", &name)) {                      \
+        SELF->setName(Name(name));                                                     \
+    } else {                                                                           \
+        PyErr_SetString(ConstructorError, "invalid number of parameters for "#SELF_TYPE".setName."); \
+        return NULL;                                                                                 \
+    }                                                                                                \
+    HCATCH                                                                                           \
+    Py_RETURN_NONE;                                                                                  \
+  }
 
 // -------------------------------------------------------------------
 // Attribute Macro For Deletion.
@@ -635,40 +626,6 @@ extern "C" {
     PyType##PY_SELF_TYPE##Locator.tp_methods = Py##PY_SELF_TYPE##Locator_Methods;                          \
   }
 
-// -------------------------------------------------------------------
-// CEngine Initialization
-#define CEngineModuleInitialization(CENGINE)                                         \
-  DL_EXPORT(void) init##CENGINE () {                                                 \
-    trace << "init" #CENGINE "()" << endl;                                           \
-    Py##CENGINE##_LinkPyType ();                                                     \
-    PYTYPE_READY_SUB ( CENGINE, CEngine )                                            \
-    __cs.AddType ( #CENGINE, &PyType##CENGINE, "<" #CENGINE ">", false, "cengine" ); \
-    PyObject* module = Py_InitModule(#CENGINE, Py##CENGINE##Module_Methods);         \
-    if ( module == NULL ) {                                                          \
-      cerr << "[ERROR]\n"                                                            \
-           << "  Failed to initialize " #CENGINE " module." << endl;                 \
-    }                                                                                \
-  }                
-
-// -------------------------------------------------------------------
-// Direct getCEngine() Method (no argument)
-#define DirectGetCEngine(CENGINE)                                               \
-  PyObject* Py##CENGINE##_get##CENGINE ( PyObject* module, PyObject* args )     \
-  {                                                                             \
-    PyObject* arg0;                                                             \
-    CENGINE* cengine = NULL;                                                    \
-    HTRY                                                                        \
-    if (!ParseOneArg("get" #CENGINE, args, CELL_ARG, &arg0 ) ) return ( NULL ); \
-    Cell* cell = PYCELL_O(arg0);                                                \
-    cengine = static_cast<CENGINE*>(getCEngine(cell, Name(#CENGINE)));          \
-    if (!cengine) {                                                             \
-        cengine = CENGINE::create (cell);                                       \
-    }                                                                           \
-    HCATCH                                                                      \
-    return Py##CENGINE##_Link( cengine );                                       \
-  }
-
-
 #define PyTypeObjectDefinitions(SELF_TYPE)                              \
   PyTypeObject  PyType##SELF_TYPE =                                     \
     { PyObject_HEAD_INIT(NULL)                                          \
@@ -702,7 +659,7 @@ extern "C" {
     { PyObject_HEAD_INIT(NULL)                                          \
       0                               /* ob_size.          */           \
     , "Hurricane."#SELF_TYPE          /* tp_name.          */           \
-    , sizeof(Py##SELF_TYPE)           /* tp_basicsize.     */           \
+    , sizeof(Py ##SELF_TYPE)           /* tp_basicsize.     */           \
     , 0                               /* tp_itemsize.      */           \
     /* methods. */                                                      \
     , 0                               /* tp_dealloc.       */           \

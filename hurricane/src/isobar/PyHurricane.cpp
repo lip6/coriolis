@@ -58,7 +58,6 @@
 #include "hurricane/isobar/PyPoint.h"
 #include "hurricane/isobar/PyBox.h"
 #include "hurricane/isobar/PyTransformation.h"
-#include "hurricane/isobar/PyName.h"
 #include "hurricane/isobar/PyDataBase.h"
 #include "hurricane/isobar/PyLibrary.h"
 #include "hurricane/isobar/PyEntity.h"
@@ -523,7 +522,6 @@ extern "C" {
     PyPoint_LinkPyType ();
     PyBox_LinkPyType ();
     PyTransformation_LinkPyType ();
-    PyName_LinkPyType ();
     PyDataBase_LinkPyType ();
     PyTechnology_LinkPyType ();
     PyLibrary_LinkPyType ();
@@ -561,7 +559,6 @@ extern "C" {
     PyLibrary_Constructor();
     PyBox_Constructor();
     PyTransformation_Constructor();
-    PyName_Constructor();
     PyReference_Constructor();
     PyCell_Constructor();
     PyInstance_Constructor();
@@ -578,7 +575,6 @@ extern "C" {
     PYTYPE_READY ( Point                       )
     PYTYPE_READY ( Box                         )
     PYTYPE_READY ( Transformation              )
-    PYTYPE_READY ( Name                        )
     PYTYPE_READY ( DataBase                    )
     PYTYPE_READY ( Technology                  )
     PYTYPE_READY ( Library                     )
@@ -643,7 +639,6 @@ extern "C" {
     __cs.addType ( "instCol"    , &PyTypeInstanceCollection, "<InstanceCollection>"  , false );
     __cs.addType ( "layer"      , &PyTypeLayer            , "<Layer>"            , false );
     __cs.addType ( "library"    , &PyTypeLibrary          , "<Library>"          , false );
-    __cs.addType ( "name"       , &PyTypeName             , "<Name>"             , false );
     __cs.addType ( "ref"        , &PyTypeReference        , "<Reference>"        , false, "ent" );
     __cs.addType ( "refCol"     , &PyTypeReferenceCollection, "<ReferenceCollection>" , false );
     __cs.addType ( "net"        , &PyTypeNet              , "<Net>"              , false, "ent" );
@@ -677,7 +672,6 @@ extern "C" {
     PyModule_AddObject(module, "Library"        , (PyObject*)&PyTypeLibrary);
     PyModule_AddObject(module, "Box"            , (PyObject*)&PyTypeBox);
     PyModule_AddObject(module, "Transformation" , (PyObject*)&PyTypeTransformation);
-    PyModule_AddObject(module, "Name"           , (PyObject*)&PyTypeName);
     PyModule_AddObject(module, "Reference"      , (PyObject*)&PyTypeReference);
     PyModule_AddObject(module, "Cell"           , (PyObject*)&PyTypeCell);
     PyModule_AddObject(module, "Instance"       , (PyObject*)&PyTypeInstance);

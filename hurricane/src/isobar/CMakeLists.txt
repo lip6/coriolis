@@ -19,7 +19,6 @@
                                   PyInstanceCollection.cpp
                                   PyLayer.cpp
                                   PyLibrary.cpp
-                                  PyName.cpp
                                   PyNet.cpp
                                   PyNetCollection.cpp
                                   PyOccurrence.cpp
@@ -58,7 +57,6 @@
                                   hurricane/isobar/PyInstanceCollection.h
                                   hurricane/isobar/PyLayer.h
                                   hurricane/isobar/PyLibrary.h
-                                  hurricane/isobar/PyName.h
                                   hurricane/isobar/PyNet.h
                                   hurricane/isobar/PyNetCollection.h
                                   hurricane/isobar/PyOccurrence.h

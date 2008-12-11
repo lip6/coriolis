@@ -80,17 +80,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyCell_getName ()"
 
-  static PyObject* PyCell_getName(PyCell *self) {
-    trace << "PyCell_getName ()" << endl;
-
-    HTRY
-    METHOD_HEAD ( "Cell.getName()" )
-    return PyString_FromString(getString(cell->getName()).c_str());
-    HCATCH
-
-    return NULL;
-  }
-
+  GetNameMethod(Cell, cell)
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyCell_getInstance ()"
@@ -545,23 +535,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyCell_setName ()"
 
-  static PyObject* PyCell_setName ( PyCell *self, PyObject* args ) {
-    trace << "Cell.setName()" << endl;
-
-    HTRY
-    METHOD_HEAD("Cell.setName()")
-    char* name = NULL;
-    if (PyArg_ParseTuple(args,"s:Cell.setName", &name)) {
-        cell->setName(Name(name));
-    } else {
-        PyErr_SetString(ConstructorError, "invalid number of parameters for Cell.setName.");
-        return NULL;
-    }
-    HCATCH
-
-    Py_RETURN_NONE;
-  }
-
+  SetNameMethod(Cell, cell)
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyCell_setAbutmentBox ()"
