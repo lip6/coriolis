@@ -49,6 +49,7 @@ namespace Hurricane {
   class PaletteItem;
   class PaletteNamedItem;
   class PaletteLayerItem;
+  class PaletteExtensionGoItem;
 
 
   class PaletteWidget : public QScrollArea {
@@ -60,6 +61,7 @@ namespace Hurricane {
                                PaletteWidget    ( QWidget* parent=NULL );
              PaletteItem*      find             ( const Name& name ) const;
              bool              isDrawable       ( const Name& name ) const;
+             bool              isSelectable     ( const Name& name ) const;
     signals:                   
              void              paletteChanged   ();
     public slots:              
@@ -78,12 +80,13 @@ namespace Hurricane {
              QWidget*         _extensionGroup;
                              
     protected:               
-                               PaletteWidget    ( const PaletteWidget& );
-             PaletteWidget&    operator=        ( const PaletteWidget& );
-    protected:               
-             QWidget*          _createGroupItem ( const Name& );
-             PaletteNamedItem* _createNamedItem ( const Name&, bool checked=true );
-             PaletteLayerItem* _createLayerItem ( BasicLayer*, bool checked=true );
+                                     PaletteWidget          ( const PaletteWidget& );
+             PaletteWidget&          operator=              ( const PaletteWidget& );
+    protected:                                              
+             QWidget*                _createGroupItem       ( const Name& );
+             PaletteNamedItem*       _createNamedItem       ( const Name&, bool checked=true );
+             PaletteLayerItem*       _createLayerItem       ( BasicLayer*, bool checked=true );
+             PaletteExtensionGoItem* _createExtensionGoItem ( const Name&, bool checked=true );
   };
 
 

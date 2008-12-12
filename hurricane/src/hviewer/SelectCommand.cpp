@@ -76,10 +76,9 @@ namespace Hurricane {
         setDrawingEnabled ( true );
       } else if ( event->modifiers() == Qt::ControlModifier ) {
         QRect selectArea ( event->pos() - QPoint(2,2), QSize(4,4) );
-        forEach ( Occurrence, ioccurrence
-                , widget->getCell()->getOccurrencesUnder(widget->screenToDbuBox(selectArea)) ) {
+        forEach ( Occurrence, ioccurrence, widget->getOccurrencesUnder(selectArea) )
           _selectionPopup->add ( *ioccurrence );
-        }
+
         _selectionPopup->updateLayout ();
         _selectionPopup->move ( event->globalPos() );
         _selectionPopup->popup ();

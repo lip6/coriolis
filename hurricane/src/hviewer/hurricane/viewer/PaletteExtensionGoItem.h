@@ -43,11 +43,14 @@ namespace Hurricane {
     public:
       static  PaletteExtensionGoItem* create                ( const Name& );
       virtual const Name&             getName               () const;
-      virtual bool                    isChecked             () const;
-      virtual void                    setChecked            ( bool );
+      virtual bool                    isItemVisible         () const;
+      virtual bool                    isItemSelectable      () const;
+      virtual void                    setItemVisible        ( bool state );
+      virtual void                    setItemSelectable     ( bool state );
 
     protected:
-              QCheckBox*              _checkBox;
+              QCheckBox*              _visible;
+              QCheckBox*              _selectable;
               Name                    _name;
 
     protected:

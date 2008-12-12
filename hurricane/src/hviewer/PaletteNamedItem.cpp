@@ -33,28 +33,28 @@
 namespace Hurricane {
 
 
-  PaletteNamedItem::PaletteNamedItem ( const Name& name, bool checked )
+  PaletteNamedItem::PaletteNamedItem ( const Name& name, bool visible )
     : PaletteItem()
-    , _name(name)
+    , _visible   (new QCheckBox(this))
+    , _name      (name)
   {
     QHBoxLayout* layout = new QHBoxLayout ();
     layout->setContentsMargins ( 0, 0, 0, 0 );
 
-    _checkBox = new QCheckBox ( this );
-    _checkBox->setChecked ( checked );
-    _checkBox->setText    ( getString(getName()).c_str() );
-    _checkBox->setFont    ( Graphics::getFixedFont() );
-    layout->addWidget ( _checkBox );
+    _visible->setChecked ( visible );
+    _visible->setText    ( getString(getName()).c_str() );
+    _visible->setFont    ( Graphics::getFixedFont() );
+    layout->addWidget ( _visible );
 
     setLayout ( layout );
 
-    connect ( _checkBox, SIGNAL(clicked()), this, SIGNAL(toggled()) );
+    connect ( _visible, SIGNAL(clicked()), this, SIGNAL(visibleToggled()) );
   }
 
 
-  PaletteNamedItem* PaletteNamedItem::create ( const Name& name, bool checked )
+  PaletteNamedItem* PaletteNamedItem::create ( const Name& name, bool visible )
   {
-    PaletteNamedItem* item = new PaletteNamedItem ( name, checked );
+    PaletteNamedItem* item = new PaletteNamedItem ( name, visible );
     return item;
   }
 
@@ -65,15 +65,15 @@ namespace Hurricane {
   }
 
 
-  bool  PaletteNamedItem::isChecked () const
+  bool  PaletteNamedItem::isItemVisible () const
   {
-    return _checkBox->isChecked ();
+    return _visible->isChecked ();
   }
 
 
-  void  PaletteNamedItem::setChecked ( bool state )
+  void  PaletteNamedItem::setItemVisible ( bool state )
   {
-    _checkBox->setChecked ( state );
+    _visible->setChecked ( state );
   }
 
 

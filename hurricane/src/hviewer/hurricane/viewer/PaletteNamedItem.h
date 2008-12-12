@@ -41,17 +41,17 @@ namespace Hurricane {
 
     // Constructor.
     public:
-      static  PaletteNamedItem* create           ( const Name&, bool checked=true );
+      static  PaletteNamedItem* create           ( const Name&, bool visible=true );
       virtual const Name&       getName          () const;
-      virtual bool              isChecked        () const;
-      virtual void              setChecked       ( bool );
+      virtual bool              isItemVisible    () const;
+      virtual void              setItemVisible   ( bool );
 
     protected:
-              QCheckBox*        _checkBox;
+              QCheckBox*        _visible;
               Name              _name;
 
     protected:
-                                PaletteNamedItem ( const Name&, bool checked );
+                                PaletteNamedItem ( const Name&, bool visible );
                                 PaletteNamedItem ( const PaletteNamedItem& );
               PaletteNamedItem& operator=        ( const PaletteNamedItem& );
   };

@@ -105,6 +105,8 @@ namespace Hurricane {
       inline  bool                    showBoundaries          () const;
       inline  bool                    showSelection           () const;
       inline  bool                    cumulativeSelection     () const;
+      inline  Occurrences             getOccurrencesUnder     ( const QRect& ) const;
+              Occurrences             getOccurrencesUnder     ( const Box& ) const;
       inline  set<Selector*>&         getSelectorSet          ();
       inline  void                    setStartLevel           ( int );
       inline  void                    setStopLevel            ( int );
@@ -115,6 +117,8 @@ namespace Hurricane {
       inline  float                   getScale                () const;
               bool                    isDrawableLayer         ( const Name& );
               bool                    isDrawableExtension     ( const Name& );
+              bool                    isSelectable            ( const Name& ) const;
+              bool                    isSelectable            ( const Layer* ) const;
               void                    drawBox                 ( DbU::Unit, DbU::Unit, DbU::Unit, DbU::Unit );
               void                    drawBox                 ( const Box& );
               void                    drawLine                ( DbU::Unit, DbU::Unit, DbU::Unit, DbU::Unit );
@@ -489,6 +493,10 @@ namespace Hurricane {
 
   inline set<Selector*>& CellWidget::getSelectorSet ()
   { return _selectors; }
+
+
+  Occurrences  CellWidget::getOccurrencesUnder ( const QRect& area ) const
+  { return getOccurrencesUnder(screenToDbuBox(area)); }
 
 
   inline  QPoint& CellWidget::getOffsetVA ()

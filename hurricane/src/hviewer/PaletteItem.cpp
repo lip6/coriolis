@@ -78,4 +78,14 @@ namespace Hurricane {
   { }
 
 
+  bool  PaletteItem::isItemSelectable () const
+  {
+    return true;
+  }
+
+
+  void  PaletteItem::setItemSelectable ( bool )
+  { }
+
+
 } // End of Hurricane namespace.

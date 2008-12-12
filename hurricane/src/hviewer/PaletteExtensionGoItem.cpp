@@ -35,6 +35,8 @@ namespace Hurricane {
 
   PaletteExtensionGoItem::PaletteExtensionGoItem ( const Name& name )
     : PaletteItem()
+    , _visible(NULL)
+    , _selectable(NULL)
     , _name(name)
   { }
 
@@ -52,15 +54,23 @@ namespace Hurricane {
     QHBoxLayout* layout = new QHBoxLayout ();
     layout->setContentsMargins ( 0, 0, 0, 0 );
 
-    _checkBox = new QCheckBox ( this );
-    _checkBox->setChecked ( false );
-    _checkBox->setText    ( getString(getName()).c_str() );
-    _checkBox->setFont    ( Graphics::getFixedFont() );
-    layout->addWidget ( _checkBox );
+    _visible = new QCheckBox ( this );
+    _visible->setChecked ( false );
+    _visible->setText    ( getString(getName()).c_str() );
+    _visible->setFont    ( Graphics::getFixedFont() );
 
+    _selectable = new QCheckBox ( this );
+    _selectable->setFixedWidth ( 23 );
+    _selectable->setChecked    ( true );
+    _selectable->setStyleSheet ( "QCheckBox { background-color: red;"
+                                 "            padding:          5px }" );
+
+    layout->addWidget ( _selectable );
+    layout->addWidget ( _visible );
     setLayout ( layout );
 
-    connect ( _checkBox, SIGNAL(clicked()), this, SIGNAL(toggled()) );
+    connect ( _visible   , SIGNAL(clicked()), this, SIGNAL(visibleToggled   ()) );
+    connect ( _selectable, SIGNAL(clicked()), this, SIGNAL(selectableToggled()) );
   }
 
 
@@ -70,15 +80,27 @@ namespace Hurricane {
   }
 
 
-  bool  PaletteExtensionGoItem::isChecked () const
+  bool  PaletteExtensionGoItem::isItemVisible () const
   {
-    return _checkBox->isChecked ();
+    return _visible->isChecked ();
   }
 
 
-  void  PaletteExtensionGoItem::setChecked ( bool state )
+  void  PaletteExtensionGoItem::setItemVisible ( bool state )
   {
-    _checkBox->setChecked ( state );
+    _visible->setChecked ( state );
+  }
+
+
+  bool  PaletteExtensionGoItem::isItemSelectable () const
+  {
+    return _selectable->isChecked ();
+  }
+
+
+  void  PaletteExtensionGoItem::setItemSelectable ( bool state )
+  {
+    _visible->setChecked ( state );
   }
 
 

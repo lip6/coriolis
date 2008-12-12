@@ -7,6 +7,7 @@
                    set ( mocincludes hurricane/viewer/PaletteItem.h
                                      hurricane/viewer/PaletteNamedItem.h
                                      hurricane/viewer/PaletteLayerItem.h
+                                     hurricane/viewer/PaletteExtensionGoItem.h
                                      hurricane/viewer/PaletteWidget.h
                                      hurricane/viewer/GraphicsWidget.h
                                      hurricane/viewer/DynamicLabel.h
@@ -59,6 +60,7 @@
                                      PaletteItem.cpp
                                      PaletteNamedItem.cpp
                                      PaletteLayerItem.cpp
+                                     PaletteExtensionGoItem.cpp
                                      PaletteWidget.cpp
                                      DynamicLabel.cpp
                                      MousePositionWidget.cpp

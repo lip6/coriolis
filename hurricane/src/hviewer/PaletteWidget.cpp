@@ -39,8 +39,9 @@
 
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/PaletteItem.h"
-#include  "hurricane/viewer/PaletteLayerItem.h"
 #include  "hurricane/viewer/PaletteNamedItem.h"
+#include  "hurricane/viewer/PaletteLayerItem.h"
+#include  "hurricane/viewer/PaletteExtensionGoItem.h"
 #include  "hurricane/viewer/PaletteWidget.h"
 
 
@@ -145,7 +146,7 @@ namespace Hurricane {
   PaletteNamedItem* PaletteWidget::_createNamedItem ( const Name& name, bool checked )
   {
     PaletteNamedItem* item = PaletteNamedItem::create ( name, checked );
-    connect ( item, SIGNAL(toggled()), this, SIGNAL(paletteChanged()) );
+    connect ( item, SIGNAL(visibleToggled()), this, SIGNAL(paletteChanged()) );
     return item;
   }
 
@@ -153,7 +154,15 @@ namespace Hurricane {
   PaletteLayerItem* PaletteWidget::_createLayerItem ( BasicLayer* layer, bool checked )
   {
     PaletteLayerItem* item = PaletteLayerItem::create ( layer, checked );
-    connect ( item, SIGNAL(toggled()), this, SIGNAL(paletteChanged()) );
+    connect ( item, SIGNAL(visibleToggled()), this, SIGNAL(paletteChanged()) );
+    return item;
+  }
+
+
+  PaletteExtensionGoItem* PaletteWidget::_createExtensionGoItem ( const Name& name, bool checked )
+  {
+    PaletteExtensionGoItem* item = PaletteExtensionGoItem::create ( name );
+    connect ( item, SIGNAL(visibleToggled()), this, SIGNAL(paletteChanged()) );
     return item;
   }
 
@@ -297,7 +306,7 @@ namespace Hurricane {
     gridBuffer.addSection ( _extensionGroup, Qt::AlignHCenter );
 
     forEach ( ExtensionSlice*, extension, cell->getExtensionSlices() ) {
-      PaletteNamedItem* item = _createNamedItem ( (*extension)->getName(), false );
+      PaletteExtensionGoItem* item = _createExtensionGoItem ( (*extension)->getName(), false );
       gridBuffer.addWidget ( item );
       _extensionGoItems [ item->getName() ] = item;
     }
@@ -309,7 +318,17 @@ namespace Hurricane {
   {
     PaletteItem* item = find ( name );
     if ( item )
-      return item->isChecked ();
+      return item->isItemVisible ();
+
+    return false;
+  }
+
+
+  bool  PaletteWidget::isSelectable ( const Name& name ) const
+  {
+    PaletteItem* item = find ( name );
+    if ( item )
+      return item->isItemSelectable ();
 
     return false;
   }
@@ -319,11 +338,11 @@ namespace Hurricane {
   {
     PaletteItems::iterator iitem = _layerItems.begin();
     for ( ; iitem != _layerItems.end() ; iitem++ )
-      iitem->second->setChecked ( true );
+      iitem->second->setItemVisible ( true );
 
     iitem = _extensionGoItems.begin();
     for ( ; iitem != _extensionGoItems.end() ; iitem++ )
-      iitem->second->setChecked ( true );
+      iitem->second->setItemVisible ( true );
 
     emit paletteChanged();
   }
@@ -333,11 +352,11 @@ namespace Hurricane {
   {
     PaletteItems::iterator iitem = _layerItems.begin();
     for ( ; iitem != _layerItems.end() ; iitem++ )
-      iitem->second->setChecked ( false );
+      iitem->second->setItemVisible ( false );
        
     iitem = _extensionGoItems.begin();
     for ( ; iitem != _extensionGoItems.end() ; iitem++ )
-      iitem->second->setChecked ( false );
+      iitem->second->setItemVisible ( false );
 
     emit paletteChanged();
   }

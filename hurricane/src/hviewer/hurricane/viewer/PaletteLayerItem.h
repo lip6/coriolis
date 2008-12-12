@@ -42,19 +42,22 @@ namespace Hurricane {
       Q_OBJECT;
 
     public:
-      static  PaletteLayerItem* create           ( BasicLayer*, bool checked=true );
-      virtual const Name&       getName          () const;
-      virtual bool              isChecked        () const;
-      virtual void              setChecked       ( bool state );
-
-    protected:
-              BasicLayer*       _basicLayer;
-              QCheckBox*        _checkBox;
-
-    protected:
-                                PaletteLayerItem ( BasicLayer*, bool checked );
-                                PaletteLayerItem ( const PaletteLayerItem& );
-              PaletteLayerItem& operator=        ( const PaletteLayerItem& );
+      static  PaletteLayerItem* create            ( BasicLayer*, bool visible=true );
+      virtual const Name&       getName           () const;
+      virtual bool              isItemVisible     () const;
+      virtual bool              isItemSelectable  () const;
+      virtual void              setItemVisible    ( bool state );
+      virtual void              setItemSelectable ( bool state );
+                                                  
+    protected:                                    
+              BasicLayer*       _basicLayer;      
+              QCheckBox*        _visible;         
+              QCheckBox*        _selectable;      
+                                                  
+    protected:                                    
+                                PaletteLayerItem  ( BasicLayer*, bool visible );
+                                PaletteLayerItem  ( const PaletteLayerItem& );
+              PaletteLayerItem& operator=         ( const PaletteLayerItem& );
   };
 
 

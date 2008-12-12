@@ -41,6 +41,7 @@
 #include "hurricane/Contact.h"
 #include "hurricane/Pad.h"
 #include "hurricane/RoutingPad.h"
+#include "hurricane/ExtensionGo.h"
 
 #include "hurricane/viewer/Graphics.h"
 #include "hurricane/viewer/PaletteItem.h"
@@ -53,6 +54,75 @@
 
 
 namespace Hurricane {
+
+
+// -------------------------------------------------------------------
+// Collections.
+
+
+  typedef Hurricane::Filter<Occurrence>     OccurrenceHF;
+  typedef Hurricane::Locator<Occurrence>    OccurrenceHL;
+  typedef Hurricane::Collection<Occurrence> OccurrenceHC;
+
+
+
+// -------------------------------------------------------------------
+// Class  :  "Occurrences_IsSelectable".
+
+
+  class Occurrences_IsSelectable : public OccurrenceHF {
+    public:
+      inline                    Occurrences_IsSelectable ( const CellWidget* );
+      inline                    Occurrences_IsSelectable ( const Occurrences_IsSelectable& );
+      virtual OccurrenceHF*     getClone                 () const;
+      virtual bool              accept                   ( Occurrence ) const;
+      virtual string            _getString               () const;
+    private:
+              const CellWidget* _cellWidget;    
+  };
+
+
+  inline Occurrences_IsSelectable::Occurrences_IsSelectable ( const CellWidget* widget )
+    : OccurrenceHF()
+    , _cellWidget(widget)
+  { }
+
+
+  inline Occurrences_IsSelectable::Occurrences_IsSelectable ( const Occurrences_IsSelectable& rhs )
+    : OccurrenceHF()
+    , _cellWidget(rhs._cellWidget)
+  { }
+
+
+  OccurrenceHF* Occurrences_IsSelectable::getClone () const
+  {
+    return new Occurrences_IsSelectable(_cellWidget);
+  }
+
+
+  bool  Occurrences_IsSelectable::accept ( Occurrence occurrence ) const
+  {
+    Entity* entity = occurrence.getEntity();
+    if ( !entity ) return false;
+
+    ExtensionGo* eGo = dynamic_cast<ExtensionGo*>(entity);
+    if ( eGo )
+      return _cellWidget->isSelectable ( eGo->getName() );
+
+    Component* component = dynamic_cast<Component*>(entity);
+    if ( component ) {
+      return _cellWidget->isSelectable ( component->getLayer() );
+    }
+
+    return true;
+  }
+
+
+  string  Occurrences_IsSelectable::_getString () const
+  {
+    return "<Occurrences_IsSelectable>";
+  }
+
 
 
 // -------------------------------------------------------------------
@@ -778,7 +848,7 @@ namespace Hurricane {
   {
     PaletteItem* item = (_palette) ? _palette->find(layerName) : NULL;
 
-    return (!item || item->isChecked())
+    return (!item || item->isItemVisible())
       && ( Graphics::getThreshold(layerName)/DbU::lambda(1.0) < _scale );
   }
 
@@ -787,7 +857,27 @@ namespace Hurricane {
   {
     PaletteItem* item = (_palette) ? _palette->find(extensionName) : NULL;
 
-    return (!item || item->isChecked());
+    return (!item || item->isItemVisible());
+  }
+
+
+  bool  CellWidget::isSelectable ( const Name& name ) const
+  {
+    PaletteItem* item = (_palette) ? _palette->find(name) : NULL;
+
+    return (!item || item->isItemSelectable());
+  }
+
+
+  bool  CellWidget::isSelectable ( const Layer* layer ) const
+  {
+    PaletteItem* item = NULL;
+    forEach ( BasicLayer*, ilayer, layer->getBasicLayers() ) {
+      item = (_palette) ? _palette->find(ilayer->getName()) : NULL;
+      if ( item && item->isItemSelectable() )
+        return true;
+    }
+    return false;
   }
 
 
@@ -1272,6 +1362,12 @@ namespace Hurricane {
   }
 
 
+  Occurrences  CellWidget::getOccurrencesUnder ( const Box& area ) const
+  {
+    return getCell()->getOccurrencesUnder(area).getSubSet(Occurrences_IsSelectable(this));
+  }
+
+
   void  CellWidget::select ( const Net* net, bool delayRedraw )
   {
     ++_delaySelectionChanged;
@@ -1434,7 +1530,7 @@ namespace Hurricane {
 
   void  CellWidget::_selectOccurrencesUnder ( Box selectArea )
   {
-    forEach ( Occurrence, ioccurrence, _cell->getOccurrencesUnder(selectArea) )
+    forEach ( Occurrence, ioccurrence, getOccurrencesUnder(selectArea) )
       select ( *ioccurrence );
   }
 

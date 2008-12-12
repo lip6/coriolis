@@ -35,30 +35,40 @@
 namespace Hurricane {
 
 
-  PaletteLayerItem::PaletteLayerItem ( BasicLayer* basicLayer, bool checked )
+  PaletteLayerItem::PaletteLayerItem ( BasicLayer* basicLayer, bool visible )
     : PaletteItem()
     , _basicLayer(basicLayer)
+    , _visible   (new QCheckBox())
+    , _selectable(new QCheckBox())
   {
     QHBoxLayout* layout = new QHBoxLayout ();
     layout->setContentsMargins ( 0, 0, 0, 0 );
-
     layout->addWidget ( new DrawingStyleSample(this) );
 
-    _checkBox = new QCheckBox ( this );
-    _checkBox->setChecked ( checked );
-    _checkBox->setText    ( getString(getName()).c_str() );
-    _checkBox->setFont    ( Graphics::getFixedFont() );
-    layout->addWidget ( _checkBox );
+    _visible->setChecked ( visible );
+    _visible->setText    ( getString(getName()).c_str() );
+    _visible->setFont    ( Graphics::getFixedFont() );
+
+    _selectable->setFixedWidth ( 23 );
+    _selectable->setChecked ( true );
+    _selectable->setStyleSheet ( "QCheckBox { background-color: red;"
+                                 "            padding:          5px }" );
+
+    layout->addWidget  ( _selectable );
+  //layout->addSpacing ( -15 );
+    layout->addWidget  ( _visible    );
+    layout->addStretch ();
 
     setLayout ( layout );
 
-    connect ( _checkBox, SIGNAL(clicked()), this, SIGNAL(toggled()) );
+    connect ( _visible   , SIGNAL(clicked()), this, SIGNAL(visibleToggled   ()) );
+    connect ( _selectable, SIGNAL(clicked()), this, SIGNAL(selectableToggled()) );
   }
 
 
-  PaletteLayerItem* PaletteLayerItem::create ( BasicLayer* basicLayer, bool checked )
+  PaletteLayerItem* PaletteLayerItem::create ( BasicLayer* basicLayer, bool visible )
   {
-    PaletteLayerItem* item = new PaletteLayerItem ( basicLayer, checked );
+    PaletteLayerItem* item = new PaletteLayerItem ( basicLayer, visible );
     return item;
   }
 
@@ -69,15 +79,27 @@ namespace Hurricane {
   }
 
 
-  bool  PaletteLayerItem::isChecked () const
+  bool  PaletteLayerItem::isItemVisible () const
   {
-    return _checkBox->isChecked ();
+    return _visible->isChecked ();
   }
 
 
-  void  PaletteLayerItem::setChecked ( bool state )
+  void  PaletteLayerItem::setItemVisible ( bool state )
   {
-    _checkBox->setChecked ( state );
+    _visible->setChecked ( state );
+  }
+
+
+  bool  PaletteLayerItem::isItemSelectable () const
+  {
+    return _selectable->isChecked ();
+  }
+
+
+  void  PaletteLayerItem::setItemSelectable ( bool state )
+  {
+    _selectable->setChecked ( state );
   }
 
 

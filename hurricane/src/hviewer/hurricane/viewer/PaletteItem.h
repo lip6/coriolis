@@ -69,16 +69,19 @@ namespace Hurricane {
       Q_OBJECT;
 
     public:
-      virtual const Name&    getName     () const = 0;
-      virtual bool           isChecked   () const = 0;
-      virtual void           setChecked  ( bool state ) = 0;
+      virtual const Name&    getName           () const = 0;
+      virtual bool           isItemVisible     () const = 0;
+      virtual bool           isItemSelectable  () const;
+      virtual void           setItemVisible    ( bool ) = 0;
+      virtual void           setItemSelectable ( bool );
     signals:
-      virtual void           toggled     ();
+              void           visibleToggled    ();
+              void           selectableToggled ();
 
     protected:
-                             PaletteItem ();
-                             PaletteItem ( const PaletteItem& );
-              PaletteItem&   operator=   ( const PaletteItem& );
+                             PaletteItem       ();
+                             PaletteItem       ( const PaletteItem& );
+              PaletteItem&   operator=         ( const PaletteItem& );
   };
 
 
