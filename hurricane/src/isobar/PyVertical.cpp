@@ -70,29 +70,88 @@ extern "C" {
 
   static PyObject* PyVertical_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
     trace << "PyVertical_new()" << endl;
+
+    PyObject* arg0;
+    PyObject* arg1;
+    PyObject* arg2;
+    PyObject* arg3;
+    PyObject* arg4;
+    PyObject* arg5;
+    PyObject* arg6;
     Vertical* vertical = NULL;
 
     HTRY
-    PyNet* pyNet=NULL;
-    PyComponent *pySource = NULL, *pyTarget = NULL;
-    PyLayer* pyLayer = NULL;
-    long x = 0, width = 0, dySource = 0, dyTarget = 0;
-    if (PyArg_ParseTuple(args,"O!O!l|lll:Vertical.New", &PyTypeNet, &pyNet,
-                &PyTypeLayer, &pyLayer, &x, &width, &dySource, &dyTarget)) {
-        vertical = Vertical::create(PYNET_O(pyNet), PYLAYER_O(pyLayer), x, width, dySource, dyTarget);
-    } else if (PyArg_ParseTuple(args,"O!O!O!l|lll:Vertical.New",
-                &PyTypeComponent, &pySource, &PyTypeComponent, &pyTarget,
-                &PyTypeLayer, &pyLayer,
-                &x, &width, &dySource, &dyTarget)) {
-        vertical = Vertical::create(PYCOMPONENT_O(pySource), PYCOMPONENT_O(pyTarget), PYLAYER_O(pyLayer),
-                x, width, dySource, dyTarget);
-    } else { 
+    __cs.init ("Vertical.new");
+    if (!PyArg_ParseTuple(args,"O&O&O&|O&O&O&O&:Vertical.new"
+                           ,Converter,&arg0
+                           ,Converter,&arg1
+                           ,Converter,&arg2
+                           ,Converter,&arg3
+                           ,Converter,&arg4
+                           ,Converter,&arg5
+                           ,Converter,&arg6
+                           )) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Vertical constructor." );
+        return NULL;
+    }
+
+
+    if      ( __cs.getObjectIds() == NET_LAYER_INT_ARG )
+      vertical = Vertical::create ( PYNET_O(arg0)
+                                  , PYLAYER_O(arg1)
+                                  , PyInt_AsLong(arg2) );
+    else if ( __cs.getObjectIds() == NET_LAYER_INTS2_ARG )
+      vertical = Vertical::create ( PYNET_O(arg0)
+                                  , PYLAYER_O(arg1)
+                                  , PyInt_AsLong(arg2)
+                                  , PyInt_AsLong(arg3) );
+    else if ( __cs.getObjectIds() == COMPS2_LAYER_INT_ARG )
+      vertical = Vertical::create ( ComponentCast(arg0)
+                                  , ComponentCast(arg1)
+                                  , PYLAYER_O(arg2)
+                                  , PyInt_AsLong(arg3) );
+    else if ( __cs.getObjectIds() == NET_LAYER_INTS3_ARG )
+      vertical = Vertical::create ( PYNET_O(arg0)
+                                  , PYLAYER_O(arg1)
+                                  , PyInt_AsLong(arg2)
+                                  , PyInt_AsLong(arg3)
+                                  , PyInt_AsLong(arg4) );
+    else if ( __cs.getObjectIds() == COMPS2_LAYER_INTS2_ARG )
+      vertical = Vertical::create ( ComponentCast(arg0)
+                                  , ComponentCast(arg1)
+                                  , PYLAYER_O(arg2)
+                                  , PyInt_AsLong(arg3)
+                                  , PyInt_AsLong(arg4) );
+    else if ( __cs.getObjectIds() == NET_LAYER_INTS4_ARG )
+      vertical = Vertical::create ( PYNET_O(arg0)
+                                  , PYLAYER_O(arg1)
+                                  , PyInt_AsLong(arg2)
+                                  , PyInt_AsLong(arg3)
+                                  , PyInt_AsLong(arg4)
+                                  , PyInt_AsLong(arg5) );
+    else if ( __cs.getObjectIds() == COMPS2_LAYER_INTS3_ARG )
+      vertical = Vertical::create ( ComponentCast(arg0)
+                                  , ComponentCast(arg1)
+                                  , PYLAYER_O(arg2)
+                                  , PyInt_AsLong(arg3)
+                                  , PyInt_AsLong(arg4)
+                                  , PyInt_AsLong(arg5) );
+    else if ( __cs.getObjectIds() == COMPS2_LAYER_INTS4_ARG )
+      vertical = Vertical::create ( ComponentCast(arg0)
+                                  , ComponentCast(arg1)
+                                  , PYLAYER_O(arg2)
+                                  , PyInt_AsLong(arg3)
+                                  , PyInt_AsLong(arg4)
+                                  , PyInt_AsLong(arg5)
+                                  , PyInt_AsLong(arg6) );
+    else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Vertical constructor." );
       return NULL;
     }
-    HCATCH
-    return PyVertical_Link(vertical);
 
+    HCATCH
+
+    return PyVertical_Link(vertical);
   }
 
   DBoDeleteMethod(Vertical)

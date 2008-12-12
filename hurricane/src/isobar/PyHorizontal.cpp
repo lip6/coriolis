@@ -73,30 +73,91 @@ extern "C" {
 
   static PyObject* PyHorizontal_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
     trace << "PyHorizontal_new()" << endl;
-    Horizontal* horizontal = NULL;
+
+    PyObject* arg0;
+    PyObject* arg1;
+    PyObject* arg2;
+    PyObject* arg3;
+    PyObject* arg4;
+    PyObject* arg5;
+    PyObject* arg6;
+
+    Horizontal*   horizontal = NULL;
 
     HTRY
-    PyNet* pyNet=NULL;
-    PyComponent *pySource = NULL, *pyTarget = NULL;
-    PyLayer* pyLayer = NULL;
-    long y = 0, width = 0, dxSource = 0, dxTarget = 0;
-    if (PyArg_ParseTuple(args,"O!O!l|lll:Horizontal.New", &PyTypeNet, &pyNet,
-                &PyTypeLayer, &pyLayer, &y, &width, &dxSource, &dxTarget)) {
-        horizontal = Horizontal::create(PYNET_O(pyNet), PYLAYER_O(pyLayer), y, width, dxSource, dxTarget);
-    } else if (PyArg_ParseTuple(args,"O!O!O!l|lll:Horizontal.New",
-                &PyTypeComponent, &pySource, &PyTypeComponent, &pyTarget,
-                &PyTypeLayer, &pyLayer,
-                &y, &width, &dxSource, &dxTarget)) {
-        horizontal = Horizontal::create(PYCOMPONENT_O(pySource), PYCOMPONENT_O(pyTarget), PYLAYER_O(pyLayer),
-                y, width, dxSource, dxTarget);
-    } else { 
+
+    __cs.init ("Horizontal.create");
+    if ( ! PyArg_ParseTuple(args,"O&O&O&|O&O&O&O&:Horizontal.create"
+                           ,Converter,&arg0
+                           ,Converter,&arg1
+                           ,Converter,&arg2
+                           ,Converter,&arg3
+                           ,Converter,&arg4
+                           ,Converter,&arg5
+                           ,Converter,&arg6
+                           )) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Horizontal constructor." );
+        return NULL;
+    }
+
+    if      ( __cs.getObjectIds() == NET_LAYER_INT_ARG )
+      horizontal = Horizontal::create ( PYNET_O(arg0)
+                                      , PYLAYER_O(arg1)
+                                      , PyInt_AsLong(arg2) );
+    else if ( __cs.getObjectIds() == NET_LAYER_INTS2_ARG )
+      horizontal = Horizontal::create ( PYNET_O(arg0)
+                                      , PYLAYER_O(arg1)
+                                      , PyInt_AsLong(arg2)
+                                      , PyInt_AsLong(arg3) );
+    else if ( __cs.getObjectIds() == COMPS2_LAYER_INT_ARG )
+      horizontal = Horizontal::create ( ComponentCast(arg0)
+                                      , ComponentCast(arg1)
+                                      , PYLAYER_O(arg2)
+                                      , PyInt_AsLong(arg3) );
+    else if ( __cs.getObjectIds() == NET_LAYER_INTS3_ARG )
+      horizontal = Horizontal::create ( PYNET_O(arg0)
+                                      , PYLAYER_O(arg1)
+                                      , PyInt_AsLong(arg2)
+                                      , PyInt_AsLong(arg3)
+                                      , PyInt_AsLong(arg4) );
+    else if ( __cs.getObjectIds() == COMPS2_LAYER_INTS2_ARG )
+      horizontal = Horizontal::create ( ComponentCast(arg0)
+                                      , ComponentCast(arg1)
+                                      , PYLAYER_O(arg2)
+                                      , PyInt_AsLong(arg3)
+                                      , PyInt_AsLong(arg4) );
+    else if ( __cs.getObjectIds() == NET_LAYER_INTS4_ARG )
+      horizontal = Horizontal::create ( PYNET_O(arg0)
+                                      , PYLAYER_O(arg1)
+                                      , PyInt_AsLong(arg2)
+                                      , PyInt_AsLong(arg3)
+                                      , PyInt_AsLong(arg4)
+                                      , PyInt_AsLong(arg5) );
+    else if ( __cs.getObjectIds() == COMPS2_LAYER_INTS3_ARG )
+      horizontal = Horizontal::create ( ComponentCast(arg0)
+                                      , ComponentCast(arg1)
+                                      , PYLAYER_O(arg2)
+                                      , PyInt_AsLong(arg3)
+                                      , PyInt_AsLong(arg4)
+                                      , PyInt_AsLong(arg5) );
+    else if ( __cs.getObjectIds() == COMPS2_LAYER_INTS4_ARG )
+      horizontal = Horizontal::create ( ComponentCast(arg0)
+                                      , ComponentCast(arg1)
+                                      , PYLAYER_O(arg2)
+                                      , PyInt_AsLong(arg3)
+                                      , PyInt_AsLong(arg4)
+                                      , PyInt_AsLong(arg5)
+                                      , PyInt_AsLong(arg6) );
+    else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Horizontal constructor." );
       return NULL;
     }
+
     HCATCH
 
     return PyHorizontal_Link ( horizontal );
   }
+
 
   DBoDeleteMethod(Horizontal)
   PyTypeObjectLinkPyType(Horizontal)

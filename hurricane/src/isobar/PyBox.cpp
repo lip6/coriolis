@@ -144,24 +144,25 @@ extern "C" {
 
   static PyObject* PyBox_contains ( PyBox *self, PyObject* args ) {
     trace << "PyBox_contains ()" << endl;
-    
-    bool result = false;
-    HTRY
-
-    PyBox* pyBox = NULL;
-    PyPoint* pyPoint = NULL;
-    DbU::Unit x = 0, y = 0;
 
     METHOD_HEAD ( "Box.contains()" )
 
-    if (PyArg_ParseTuple(args,"O!:Box.contains", &PyTypeBox, &pyBox)) {
-        result = box->contains(*PYBOX_O(pyBox));
-    } else if (PyArg_ParseTuple(args,"O!:Box.contains", &PyTypePoint, &pyPoint)) {
-        result = box->contains(*PYPOINT_O(pyPoint));
-    } else if (PyArg_ParseTuple(args,"ll:Box.contains", &x, &y)) {
-        result = box->contains(x,y);
-    } else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Box.contains." );
+    PyObject* arg0;
+    PyObject* arg1;
+    bool result = false;
+
+    HTRY
+
+    __cs.init ("Box.contains");
+    if ( ! PyArg_ParseTuple(args,"|O&O&:Box.contains",Converter,&arg0,Converter,&arg1) )
+        return NULL;
+
+    if      ( __cs.getObjectIds() == BOX_ARG   ) { result = box->contains ( *PYBOX_O(arg0) ); }
+    else if ( __cs.getObjectIds() == POINT_ARG ) { result = box->contains ( *PYPOINT_O(arg0) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG ) { result = box->contains ( PyInt_AsLong(arg0)
+                                                                          , PyInt_AsLong(arg1) ); }
+    else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Box.contains constructor." );
       return NULL;
     }
 
@@ -251,65 +252,76 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyBox_inflate ()"
 
-  static PyObject* PyBox_inflate(PyBox *self, PyObject* args) {
+  static PyObject* PyBox_inflate ( PyBox *self, PyObject* args ) {
     trace << "PyBox_inflate ()" << endl;
-    
-    METHOD_HEAD("Box.inflate()")
+
+    METHOD_HEAD ( "Box.inflate()" )
+
+    PyObject* arg0;
+    PyObject* arg1;
+    PyObject* arg2 = NULL;
+    PyObject* arg3 = NULL;
 
     HTRY
-    DbU::Unit arg0=0, arg1=0, arg2=0, arg3=0;
 
-    if (PyArg_ParseTuple(args,"l:Box.inflate", &arg0)) {
-        box->inflate(arg0);
-    } else if (PyArg_ParseTuple(args,"ll:Box.inflate", &arg0, &arg1)) {
-        box->inflate(arg0, arg1);
-    } else if (PyArg_ParseTuple(args,"llll:Box.inflate", &arg0, &arg1, &arg2, &arg3)) {
-        box->inflate(arg0, arg1, arg2, arg3);
-    } else {
+    __cs.init ("Box.inflate");
+    if ( ! PyArg_ParseTuple(args,"|O&O&O&O&:Box.inflate",Converter,&arg0,Converter,&arg1) )
+      return ( NULL );
+
+    if      ( __cs.getObjectIds() == INT_ARG   ) { box->inflate ( PyInt_AsLong(arg0) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG ) { box->inflate ( PyInt_AsLong(arg0)
+                                                                , PyInt_AsLong(arg1) ); }
+    else if ( __cs.getObjectIds() == INTS4_ARG ) { box->inflate ( PyInt_AsLong(arg0)
+                                                                , PyInt_AsLong(arg1)
+                                                                , PyInt_AsLong(arg2)
+                                                                , PyInt_AsLong(arg3) ); }
+    else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Box.inflate()" );
-      return NULL;
+      return ( NULL );
     }
+
     HCATCH
 
-    Py_INCREF ( self ); //FIXME ??
-    return (PyObject*)self;
+    Py_INCREF ( self );
+    return ( (PyObject*)self );
   }
-
-
-
-
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyBox_merge ()"
 
   static PyObject* PyBox_merge ( PyBox *self, PyObject* args ) {
     trace << "Box_merge()" << endl;
-    
+
     METHOD_HEAD ( "Box.merge()" )
-    
+
+    PyObject* arg0;
+    PyObject* arg1;
+    PyObject* arg2;
+    PyObject* arg3;
 
     HTRY
-    PyBox* pyBox = NULL;
-    PyPoint* pyPoint = NULL;
-    DbU::Unit arg0=0, arg1=0, arg2=0, arg3=0;
 
-    if (PyArg_ParseTuple(args,"O!:Box.merge", &PyTypeBox, &pyBox)) {
-        box->merge(*PYBOX_O(pyBox));
-    } else if (PyArg_ParseTuple(args,"O!:Box.merge", &PyTypePoint, &pyPoint)) {
-        box->merge(*PYPOINT_O(pyPoint));
-    } else if (PyArg_ParseTuple(args,"ll:Box.merge", &arg0, &arg1)) {
-        box->merge(arg0, arg1);
-    } else if (PyArg_ParseTuple(args,"llll:Box.merge", &arg0, &arg1, &arg2, &arg3)) {
-        box->merge(arg0, arg1, arg2, arg3);
-    } else {
+    __cs.init ("Box.merge");
+    if ( ! PyArg_ParseTuple(args,"|O&O&O&O&:Box.merge",Converter,&arg0,Converter,&arg1,Converter,&arg2,Converter,&arg3) )
+      return ( NULL );
+
+    if      ( __cs.getObjectIds() == POINT_ARG ) { box->merge ( *PYPOINT_O(arg0) ); }
+    else if ( __cs.getObjectIds() == BOX_ARG   ) { box->merge ( *PYBOX_O(arg0) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG ) { box->merge ( PyInt_AsLong(arg0)
+                                                              , PyInt_AsLong(arg1) ); }
+    else if ( __cs.getObjectIds() == INTS4_ARG ) { box->merge ( PyInt_AsLong(arg0)
+                                                              , PyInt_AsLong(arg1)
+                                                              , PyInt_AsLong(arg2)
+                                                              , PyInt_AsLong(arg3) ); }
+    else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Box.merge()" );
-      return NULL;
+      return ( NULL );
     }
-    
+
     HCATCH
 
     Py_INCREF ( self );
-    return (PyObject*)self;
+    return ( (PyObject*)self );
   }
 
   // ---------------------------------------------------------------
@@ -369,42 +381,47 @@ extern "C" {
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyBox_new ()"
-
   PyObject* PyBox_new (PyTypeObject *type, PyObject *args, PyObject *kwds) {
     trace << "PyBox_new()" << endl;
 
-    PyBox* pyBox=NULL;
-    HTRY
     Box* box = NULL;
-    PyPoint *pyPoint1=NULL, *pyPoint2=NULL;
-    DbU::Unit arg0=0, arg1=0, arg2=0, arg3=0;
+    PyBox* pyBox = NULL;
 
-    if (PyArg_ParseTuple(args, ":Box.new")) {
-        box = new Box;
-    } else if (PyArg_ParseTuple(args, "O!:Box.new", &PyTypePoint, &pyPoint1)) {
-        box = new Box(*PYPOINT_O(pyPoint1));
-    } else if (PyArg_ParseTuple(args, "O!:Box.new", &PyTypeBox, &pyBox)) {
-        box = new Box(*PYBOX_O(pyBox));
-    } else if (PyArg_ParseTuple(args, "O!O!:Box.new", &PyTypePoint, &pyPoint1, &PyTypePoint, &pyPoint2)) {
-        box = new Box(*PYPOINT_O(pyPoint1), *PYPOINT_O(pyPoint2));
-    } else if (PyArg_ParseTuple(args, "ll:Box.new", &arg0, &arg1)) {
-        box = new Box(arg0, arg1);
-    } else if (PyArg_ParseTuple(args, "llll:Box.new", &arg0, &arg1, &arg2, &arg3)) {
-        box = new Box(arg0, arg1, arg2, arg3);
-    } else {
-      PyErr_SetString(ConstructorError, "invalid number of parameters for Box constructor." );
-      return ( NULL );
+    HTRY
+    PyObject* arg0;
+    PyObject* arg1;
+    PyObject* arg2;
+    PyObject* arg3;
+    __cs.init ("Box.new");
+
+    if (! PyArg_ParseTuple(args,"|O&O&O&O&:Box.new",
+                Converter, &arg0,
+                Converter, &arg1,
+                Converter, &arg2,
+                Converter, &arg3)) {
+        return NULL;
     }
+
+    if  (__cs.getObjectIds() == NO_ARG) { box = new Box (); }
+    else if ( __cs.getObjectIds() == POINT_ARG   ) { box = new Box ( *PYPOINT_O(arg0) ); }
+    else if ( __cs.getObjectIds() == BOX_ARG     ) { box = new Box ( *PYBOX_O(arg0) ); }
+    else if ( __cs.getObjectIds() == POINTS2_ARG ) { box = new Box ( *PYPOINT_O(arg0) , *PYPOINT_O(arg1) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG   ) { box = new Box ( PyInt_AsLong(arg0) , PyInt_AsLong(arg1) ); }
+    else if ( __cs.getObjectIds() == INTS4_ARG   ) {
+        box = new Box ( PyInt_AsLong(arg0), PyInt_AsLong(arg1), PyInt_AsLong(arg2) , PyInt_AsLong(arg3) );
+    } else {
+        PyErr_SetString(ConstructorError, "invalid number of parameters for Box constructor." );
+        return NULL;
+    }
+
     pyBox = PyObject_NEW(PyBox, &PyTypeBox);
     if (pyBox == NULL) return NULL;
 
     pyBox->_object = box;
     HCATCH
 
-    return (PyObject*)pyBox;
+    return ( (PyObject*)pyBox );
   }
-
-
 
   // x-------------------------------------------------------------x
   // |                  "PyBox" Object Methods                     |

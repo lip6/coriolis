@@ -126,21 +126,25 @@ extern "C" {
   static PyObject* PyLibrary_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
       trace << "PyLibrary_new()" << endl;
 
+      PyObject* arg0;
+      PyObject* arg1;
       Library* library = NULL;
 
       HTRY
-      char* name = NULL;
-      PyDataBase* pyDataBase = NULL;
-      PyLibrary* pyRootLibrary = NULL;
-      if (PyArg_ParseTuple(args,"O!s:Library.new", &PyTypeDataBase, &pyDataBase, &name)) {
-          DataBase* db = PYDATABASE_O(pyDataBase);
-          library = Library::create(db, Name(name));
-      } else if (PyArg_ParseTuple(args,"O!s:Library.new", &PyTypeLibrary, &pyRootLibrary, &name)) {
-          Library* rootLibrary = PYLIBRARY_O(pyRootLibrary);
-          library = Library::create(rootLibrary, Name(name));
-      } else {
+      __cs.init ("Library.new");
+      if (!PyArg_ParseTuple(args,"O&O&:Library.new", Converter, &arg0, Converter, &arg1)) {
         PyErr_SetString ( ConstructorError, "invalid number of parameters for Library constructor." );
         return NULL;
+      }
+      if (__cs.getObjectIds() == ":db:string") {
+          DataBase* db = PYDATABASE_O(arg0);
+          library = Library::create(db, Name(PyString_AsString(arg1)));
+      } else if (__cs.getObjectIds() == ":library:string") {
+          Library* masterLibrary = PYLIBRARY_O(arg0);
+          library = Library::create(masterLibrary, Name(PyString_AsString(arg1)));
+      } else {
+          PyErr_SetString ( ConstructorError, "invalid number of parameters for Library constructor." );
+          return NULL;
       }
       HCATCH
 
