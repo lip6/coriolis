@@ -376,7 +376,6 @@ extern "C" {
     trace << "PyInstance_new ()" << endl;
     
     Instance* instance = NULL;
-#if 0 //FIXME
     PyObject* arg0;
     PyObject* arg1;
     PyObject* arg2;
@@ -394,22 +393,25 @@ extern "C" {
         return NULL;
     }
 
-    if      ( __cs.getObjectIds() == :ent:string:ent       ) { instance = Instance::create (  PYCELL_O(arg0)
-                                                                                              , *PYNAME_O(arg1)
-                                                                                              ,  PYCELL_O(arg2) ); }
-    else if ( __cs.getObjectIds() == CELL_NAME_CELL_TRANS_ARG ) { instance = Instance::create (  PYCELL_O(arg0)
-                                                                                              , *PYNAME_O(arg1)
-                                                                                              ,  PYCELL_O(arg2)
-                                                                                              , *PYTRANSFORMATION_O(arg3)
-                                                                                              ,  Instance::PlacementStatus::PLACED); } else {
-      cerr << __cs.getObjectIds() << endl;
+    if      ( __cs.getObjectIds() == ":ent:string:ent") {
+        instance = Instance::create(
+                PYCELL_O(arg0),
+                Name(PyString_AsString(arg1)),
+                PYCELL_O(arg2) );
+    } else if ( __cs.getObjectIds() == ":ent:string:ent:transfo") {
+        instance = Instance::create(
+                PYCELL_O(arg0),
+                Name(PyString_AsString(arg1)),
+                PYCELL_O(arg2),
+                *PYTRANSFORMATION_O(arg3),
+                Instance::PlacementStatus::PLACED);
+    } else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Instance constructor." );
-      return ( NULL );
+      return NULL;
     }
     HCATCH
-#endif
 
-      return PyInstance_Link ( instance );
+    return PyInstance_Link ( instance );
   }
 
   DBoDeleteMethod(Instance)

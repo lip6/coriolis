@@ -122,9 +122,6 @@ extern "C" {
     HTRY
 
     trace << "PyPin_new()" << endl;
-
-#if 0
-
     PyObject* arg0;
     PyObject* arg1;
     PyObject* arg2;
@@ -151,45 +148,47 @@ extern "C" {
         return NULL;
     }
 
-    string pin_arg1 = ":ent:name:int:int:layer:int:int:int:int";
-    string pin_arg2 = ":ent:name:int:int:layer:int:int:int";
-    string pin_arg3 = ":ent:name:int:int:layer:int:int";
-    if      ( __cs.getObjectIds() == pin_arg1 ) { pin = Pin::create ( PYNET_O ( arg0 )
-                                                                    , *PYNAME_O ( arg1 )
- 											        				, PyInt_AsAccessDirection ( arg2 )
-  											        				, PyInt_AsPlacementStatus ( arg3 )
-                                                                    , PYLAYER_O ( arg4 )
-                                                                    , PyInt_AsLong ( arg5 )
-                                                                    , PyInt_AsLong ( arg6 )
-                                                                    , PyInt_AsLong ( arg7 )
-                                                                    , PyInt_AsLong ( arg8 ) ); }
-    else if ( __cs.getObjectIds() == pin_arg2 ) { pin = Pin::create ( PYNET_O ( arg0 )
-                                                                    , *PYNAME_O ( arg1 )
- 											        				, PyInt_AsAccessDirection ( arg2 )
-  											        				, PyInt_AsPlacementStatus ( arg3 )
-                                                                    , PYLAYER_O ( arg4 )
-                                                                    , PyInt_AsLong ( arg5 )
-                                                                    , PyInt_AsLong ( arg6 )
-                                                                    , PyInt_AsLong ( arg7 ) ); }
-    else if ( __cs.getObjectIds() == pin_arg3 ) { pin = Pin::create ( PYNET_O ( arg0 )
-                                                                    , *PYNAME_O ( arg1 )
- 											        				, PyInt_AsAccessDirection ( arg2 )
-  											        				, PyInt_AsPlacementStatus ( arg3 )
-                                                                    , PYLAYER_O ( arg4 )
-                                                                    , PyInt_AsLong ( arg5 )
-                                                                    , PyInt_AsLong ( arg6 ) ); }
-    else {
+    string pin_arg1 = ":ent:string:int:int:layer:int:int:int:int";
+    string pin_arg2 = ":ent:string:int:int:layer:int:int:int";
+    string pin_arg3 = ":ent:string:int:int:layer:int:int";
+    if ( __cs.getObjectIds() == pin_arg1 ) {
+        pin = Pin::create(
+                PYNET_O ( arg0 ),
+                Name(PyString_AsString(arg1)),
+                PyInt_AsAccessDirection ( arg2 ),
+                PyInt_AsPlacementStatus ( arg3 ),
+                PYLAYER_O ( arg4 ),
+                PyInt_AsLong ( arg5 ),
+                PyInt_AsLong ( arg6 ),
+                PyInt_AsLong ( arg7 ),
+                PyInt_AsLong ( arg8 ) );
+    } else if ( __cs.getObjectIds() == pin_arg2 ) {
+        pin = Pin::create (
+                PYNET_O ( arg0 ),
+                Name(PyString_AsString(arg1)),
+                PyInt_AsAccessDirection ( arg2 ),
+                PyInt_AsPlacementStatus ( arg3 ),
+                PYLAYER_O ( arg4 ),
+                PyInt_AsLong ( arg5 ),
+                PyInt_AsLong ( arg6 ),
+                PyInt_AsLong ( arg7 ) );
+    } else if ( __cs.getObjectIds() == pin_arg3 ) {
+        pin = Pin::create ( PYNET_O ( arg0 ),
+                Name(PyString_AsString(arg1)),
+                PyInt_AsAccessDirection ( arg2 ),
+                PyInt_AsPlacementStatus ( arg3 ),
+                PYLAYER_O ( arg4 ),
+                PyInt_AsLong ( arg5 ),
+                PyInt_AsLong ( arg6 ) );
+    } else {
         PyErr_SetString ( ConstructorError, "invalid number of parameters for Pin constructor." );
         return NULL;
     }
 
-#endif
     HCATCH
 
     return PyPin_Link ( pin );
   }
-
-
 
   DBoDeleteMethod(Pin)
   PyTypeObjectLinkPyType(Pin)

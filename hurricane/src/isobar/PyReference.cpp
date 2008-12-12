@@ -127,8 +127,6 @@ extern "C" {
     trace << "PyReference_new()" << endl;
     Reference*  reference = NULL;
 
-#if 0
-
     PyObject* arg0;
     PyObject* arg1;
     PyObject* arg2;
@@ -147,14 +145,14 @@ extern "C" {
         return NULL;
     }
 
-    if      ( __cs.getObjectIds() == CELL_NAME_INTS2_ARG )
+    if      ( __cs.getObjectIds() == ":ent:string:int:int" )
       reference = Reference::create (  PYCELL_O(arg0)
-                                    , *PYNAME_O(arg1)
+                                    ,  Name(PyString_AsString(arg1))
                                     ,  PyInt_AsLong(arg2)
                                     ,  PyInt_AsLong(arg3) );
-    else if ( __cs.getObjectIds() == CELL_NAME_POINT_ARG )
+    else if ( __cs.getObjectIds() == ":ent:name:point" )
       reference = Reference::create (  PYCELL_O(arg0)
-                                    , *PYNAME_O(arg1)
+                                    ,  Name(PyString_AsString(arg1))
                                     , *PYPOINT_O(arg2) );
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Reference constructor." );
@@ -162,8 +160,6 @@ extern "C" {
     }
 
     HCATCH
-#endif
-
     return PyReference_Link ( reference );
   }
 

@@ -133,14 +133,12 @@ extern "C" {
 #define INTS2_FUNCTION_ARG       ":int:int:function"
 #define FLOAT_ARG                ":float"
 #define BOOL_ARG                 ":bool"
-#define NAME_ARG                 ":name"
 #define INSTANCE_ARG             ":ent"
 #define HOOK_ARG                 ":hook"
 #define TRANS_ARG                ":transfo"
 #define STRING_ARG               ":string"
 #define STRING_CELL_ARG          ":string:ent"
 #define NET_ARG                  ":ent"
-#define NET_NAME_ARG             ":ent:name"
 #define NET_LAYER_INT_ARG        ":ent:layer:int"
 #define NET_LAYER_INTS2_ARG      ":ent:layer:int:int"
 #define NET_LAYER_INTS3_ARG      ":ent:layer:int:int:int"
@@ -154,11 +152,6 @@ extern "C" {
 #define COMPS2_LAYER_INTS4_ARG   ":comp:comp:layer:int:int:int:int"
 #define CELL_BOX_ARG             ":ent:box"
 #define CELL_INT_ARG             ":ent:int"
-#define CELL_NAME_ARG            ":ent:name"
-#define CELL_NAME_CELL_ARG       ":ent:name:ent"
-#define CELL_NAME_CELL_TRANS_ARG ":ent:name:ent:transfo"
-#define CELL_NAME_INTS2_ARG      ":ent:name:int:int"
-#define CELL_NAME_POINT_ARG      ":ent:name:point"
 #define INST_ARG                 ":ent"
 #define INST_PATH_ARG            ":ent:path"
 #define PATH_INST_ARG            ":path:ent"
@@ -224,7 +217,11 @@ extern "C" {
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )          \
   {                                                                             \
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectGetBoolAttribute()")           \
-    return ( Py_BuildValue ("i",cobject->FUNC_NAME()) );                        \
+    if (cobject->FUNC_NAME()) {                                                 \
+        Py_RETURN_TRUE;                                                         \
+    } else {                                                                    \
+        Py_RETURN_FALSE;                                                        \
+    }                                                                           \
   }
 
 

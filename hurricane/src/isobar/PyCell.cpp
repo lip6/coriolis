@@ -138,14 +138,15 @@ extern "C" {
 
     METHOD_HEAD("Cell.getInstancesUnder()")
 
-    PyBox* arg0;
-    if (!ParseOneArg("Cell.getInstancesUnder", args, BOX_ARG, (PyObject**)&arg0))
-        return NULL;        
+    PyBox* pyBox;
+    if (!PyArg_ParseTuple(args,"O!:Cell.getInstancesUnder", &PyTypeBox, &pyBox)) {
+        return NULL;
+    }
 
     PyInstanceCollection* pyInstanceCollection = NULL;
 
     HTRY
-    Instances* instances = new Instances(cell->getInstancesUnder(*PYBOX_O(arg0)));
+    Instances* instances = new Instances(cell->getInstancesUnder(*PYBOX_O(pyBox)));
 
     pyInstanceCollection = PyObject_NEW(PyInstanceCollection, &PyTypeInstanceCollection);
     if (pyInstanceCollection == NULL) { 
@@ -218,14 +219,14 @@ extern "C" {
 
     METHOD_HEAD("Cell.getOccurrencesUnder()")
 
-    PyBox* arg0;
-    if (!ParseOneArg("Cell.getOccurrencesUnder", args, BOX_ARG, (PyObject**)&arg0))
+    PyBox* pyBox;
+    if (!PyArg_ParseTuple(args,"O!:Cell.getInstancesUnder", &PyTypeBox, &pyBox)) {
         return NULL;
-
+    }
     PyOccurrenceCollection* pyOccurrenceCollection = NULL;
 
     HTRY
-    Occurrences* occurrences = new Occurrences(cell->getOccurrencesUnder(*PYBOX_O(arg0)));
+    Occurrences* occurrences = new Occurrences(cell->getOccurrencesUnder(*PYBOX_O(pyBox)));
 
     pyOccurrenceCollection = PyObject_NEW(PyOccurrenceCollection, &PyTypeOccurrenceCollection);
     if (pyOccurrenceCollection == NULL) { 
@@ -272,14 +273,15 @@ extern "C" {
 
     METHOD_HEAD ( "Cell.getLeafInstanceOccurrencesUnder()" )
 
-    PyBox* arg0;
-    if (!ParseOneArg("Cell.getLeafInstanceOccurencesUnder", args, BOX_ARG, (PyObject**)&arg0))
-        return NULL;        
+    PyBox* pyBox;
+    if (!PyArg_ParseTuple(args,"O!:Cell.getInstancesUnder", &PyTypeBox, &pyBox)) {
+        return NULL;
+    }
 
     PyOccurrenceCollection* pyOccurrenceCollection = NULL;
 
     HTRY
-    Occurrences* occurrences = new Occurrences(cell->getLeafInstanceOccurrencesUnder(*PYBOX_O(arg0)));
+    Occurrences* occurrences = new Occurrences(cell->getLeafInstanceOccurrencesUnder(*PYBOX_O(pyBox)));
 
     pyOccurrenceCollection = PyObject_NEW(PyOccurrenceCollection, &PyTypeOccurrenceCollection);
     if (pyOccurrenceCollection == NULL) { 
@@ -354,12 +356,10 @@ extern "C" {
 
       HTRY
       char* name = NULL;
-      if (PyArg_ParseTuple(args,"s:Cell.getNet", &name)) {
-          net = cell->getNet(Name(name));
-      } else {
-          PyErr_SetString(ConstructorError, "invalid number of parameters for getNet." );
+      if (!PyArg_ParseTuple(args,"s:Cell.getNet", &name)) {
           return NULL;
-      }
+      } 
+      net = cell->getNet(Name(name));
       HCATCH
       
       return PyNet_Link(net);
@@ -546,10 +546,11 @@ extern "C" {
     HTRY
     METHOD_HEAD ( "Cell.setAbutmentBox()" )
 
-    PyBox* abutmentBox;
-    if ( ! ParseOneArg ( "Cell.setAbutmentBox", args, BOX_ARG, (PyObject**)&abutmentBox ) )
+    PyBox* pyBox;
+    if (!PyArg_ParseTuple(args,"O!:Cell.getInstancesUnder", &PyTypeBox, &pyBox)) {
         return NULL;
-    cell->setAbutmentBox ( *PYBOX_O(abutmentBox) );
+    }
+    cell->setAbutmentBox ( *PYBOX_O(pyBox) );
     HCATCH
 
     Py_RETURN_NONE;
@@ -564,13 +565,12 @@ extern "C" {
 
     HTRY
     METHOD_HEAD ( "Cell.setTerminal()" )
-
     PyObject* arg0;
-    if ( ! ParseOneArg ( "Cell.setTerminal", args, INT_ARG, (PyObject**)&arg0 ) )
-        return NULL;
-    cell->setTerminal ( PyInt_AsLong(arg0) != 0 );
+    if (!PyArg_ParseTuple(args,"O:Cell.setTerminal", &arg0) && PyBool_Check(arg0)) {
+      return NULL;
+    }
+    (arg0 == Py_True)?cell->setTerminal(true):cell->setTerminal(false);
     HCATCH
-
     Py_RETURN_NONE;
   }
 
