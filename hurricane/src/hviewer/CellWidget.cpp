@@ -23,6 +23,7 @@
 // x-----------------------------------------------------------------x
 
 
+#include <QApplication>
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <QAction>
@@ -38,6 +39,8 @@
 #include "hurricane/Instance.h"
 #include "hurricane/Slice.h"
 #include "hurricane/Segment.h"
+#include "hurricane/Horizontal.h"
+#include "hurricane/Vertical.h"
 #include "hurricane/Contact.h"
 #include "hurricane/Pad.h"
 #include "hurricane/RoutingPad.h"
@@ -150,6 +153,16 @@ namespace Hurricane {
   { _restore = state; }
 
 
+  QPoint  CellWidget::Spot::computeSpotPoint ( const QPoint& screenPoint )
+  {
+    Point mousePoint = _cellWidget->screenToDbuPoint ( screenPoint );
+    Point  spotPoint = Point ( DbU::getOnSnapGrid(mousePoint.getX())
+                             , DbU::getOnSnapGrid(mousePoint.getY())
+                             );
+    return _cellWidget->dbuToScreenPoint(spotPoint);
+  }
+
+
   void  CellWidget::Spot::moveTo ( const QPoint& screenPoint )
   {
     restore ();
@@ -158,20 +171,146 @@ namespace Hurricane {
     _restore = true;
 
     QPainter& screenPainter = _cellWidget->getDrawingPlanes().painter(2);
-
-    Point mousePoint = _cellWidget->screenToDbuPoint ( screenPoint );
-    Point  spotPoint = Point ( DbU::getOnSnapGrid(mousePoint.getX())
-                             , DbU::getOnSnapGrid(mousePoint.getY())
-                             );
-    QPoint center = _cellWidget->dbuToScreenPoint(spotPoint);
+    _spotPoint = computeSpotPoint ( screenPoint );
 
     screenPainter.setPen ( Graphics::getPen("spot") );
-    screenPainter.drawRect ( center.x()-3, center.y()-3, 6, 6 );
+    screenPainter.drawRect ( _spotPoint.x()-3, _spotPoint.y()-3, 6, 6 );
   }
 
 
 // -------------------------------------------------------------------
-// Class :  "Hurricane::CellWidget::Drawingplanes".
+// Class :  "Hurricane::CellWidget::RedrawEvent".
+
+
+  CellWidget::RedrawEvent::RedrawEvent ( EventType type, int shift, CellWidget* widget )
+    : _type(type)
+    , _shift(shift)
+  { }
+
+
+// -------------------------------------------------------------------
+// Class :  "Hurricane::CellWidget::RedrawManager".
+
+
+  CellWidget::RedrawManager::RedrawManager ( CellWidget* widget )
+    : _widget (widget)
+    , _events ()
+    , _overrun(false)
+    , _refreshInterrupt(false)
+  { }
+
+
+  CellWidget::RedrawManager::~RedrawManager ()
+  {
+    while ( !_events.empty() ) {
+      delete _events.front ();
+      _events.pop_front ();
+    }
+  }
+
+
+  void  CellWidget::RedrawManager::goLeft ( int shift )
+  {
+    list<RedrawEvent*>::iterator ievent = _events.end();
+    if ( !_events.empty() && (_events.back()->getType() == RedrawEvent::Refresh) )
+      --ievent;
+    _events.insert ( ievent, new RedrawEvent(RedrawEvent::GoLeft,shift,_widget) );
+
+    if ( !_overrun ) {
+      if ( _events.size() == 1 ) process ();
+      else _overrun = true;
+    }
+  }
+
+
+  void  CellWidget::RedrawManager::goRight ( int shift )
+  {
+    list<RedrawEvent*>::iterator ievent = _events.end();
+    if ( !_events.empty() && (_events.back()->getType() == RedrawEvent::Refresh) )
+      --ievent;
+    _events.insert ( ievent, new RedrawEvent(RedrawEvent::GoRight,shift,_widget) );
+
+    if ( !_overrun ) {
+      if ( _events.size() == 1 ) process ();
+      else _overrun = true;
+    }
+  }
+
+
+  void  CellWidget::RedrawManager::goUp ( int shift )
+  {
+    list<RedrawEvent*>::iterator ievent = _events.end();
+    if ( !_events.empty() && (_events.back()->getType() == RedrawEvent::Refresh) )
+      --ievent;
+    _events.insert ( ievent, new RedrawEvent(RedrawEvent::GoUp,shift,_widget) );
+
+    if ( !_overrun ) {
+      if ( _events.size() == 1 ) process ();
+      else _overrun = true;
+    }
+  }
+
+
+  void  CellWidget::RedrawManager::goDown ( int shift )
+  {
+    list<RedrawEvent*>::iterator ievent = _events.end();
+    if ( !_events.empty() && (_events.back()->getType() == RedrawEvent::Refresh) )
+      --ievent;
+    _events.insert ( ievent, new RedrawEvent(RedrawEvent::GoDown,shift,_widget) );
+
+    if ( !_overrun ) {
+      if ( _events.size() == 1 ) process ();
+      else _overrun = true;
+    }
+  }
+
+
+  void  CellWidget::RedrawManager::refresh ()
+  {
+    if ( !_events.empty() && (_events.back()->getType() == RedrawEvent::Refresh) ) {
+      _refreshInterrupt = true;
+    } else if ( _events.empty() ) {
+      _events.push_back ( new RedrawEvent(RedrawEvent::Refresh,0,_widget) );
+
+      if ( !_overrun ) {
+        if ( _events.size() == 1 ) process ();
+        else _overrun = true;
+      }
+    }
+  }
+
+
+  inline void  CellWidget::RedrawManager::process ()
+  {
+    while ( !_events.empty() ) {
+      RedrawEvent* event = _events.front ();
+
+      switch ( event->getType() ) {
+        case RedrawEvent::GoLeft:  _widget->_goLeft  ( event->getShift() ); break;
+        case RedrawEvent::GoRight: _widget->_goRight ( event->getShift() ); break;
+        case RedrawEvent::GoUp:    _widget->_goUp    ( event->getShift() ); break;
+        case RedrawEvent::GoDown:  _widget->_goDown  ( event->getShift() ); break;
+        case RedrawEvent::Refresh: _widget->_refresh (); break;
+      }
+
+      if ( event->getType() == RedrawEvent::Refresh )
+        _events.pop_back ();
+      else
+        _events.pop_front ();
+
+      delete event;
+
+      if ( _events.empty() && (_overrun || _refreshInterrupt) ) {
+        _events.push_back ( new RedrawEvent(RedrawEvent::Refresh,0,_widget) );
+        _overrun          = false;
+        _refreshInterrupt = false;
+      }
+    }
+  }
+
+
+// -------------------------------------------------------------------
+// Class :  "Hurricane::CellWidget::DrawingPlanes".
 
 
   CellWidget::DrawingPlanes::DrawingPlanes ( const QSize& size, CellWidget* cw )
@@ -330,6 +469,8 @@ namespace Hurricane {
     : Query()
     , _cellWidget(widget)
     , _drawExtensionGo(NULL)
+    , _goCount(0)
+    , _instanceCount(0)
   { }
 
 
@@ -355,6 +496,8 @@ namespace Hurricane {
 
   void  CellWidget::DrawingQuery::masterCellCallback ()
   {
+    _instanceCount++;
+
     Box bbox = getTransformation().getBox(getMasterCell()->getAbutmentBox());
     _cellWidget->drawBox ( bbox );
   }
@@ -380,33 +523,20 @@ namespace Hurricane {
   {
   //cerr << "DrawingQuery::drawGo() - " << go << endl;
 
-    const Segment* segment = dynamic_cast<const Segment*>(go);
-    if ( segment ) {
-      if ( 1 < _cellWidget->dbuToDisplayLength(segment->getWidth()) ) {
-        _cellWidget->drawBox ( transformation.getBox(segment->getBoundingBox(basicLayer)) );
-      } else {
-        _cellWidget->drawLine ( transformation.getPoint(segment->getSourcePosition())
-                              , transformation.getPoint(segment->getTargetPosition()) );
-      }
-      return;
-    }
+    static QRect         rectangle;
+    static unsigned int  state;
 
-    const Contact* contact = dynamic_cast<const Contact*>(go);
-    if ( contact ) {
-      _cellWidget->drawBox ( transformation.getBox(contact->getBoundingBox(basicLayer)) );
-      return;
-    }
+    const Component* component = dynamic_cast<const Component*>(go);
+    if ( !component ) return;
 
-    const Pad* pad = dynamic_cast<const Pad*>(go);
-    if ( pad ) {
-      _cellWidget->drawBox ( transformation.getBox(pad->getBoundingBox(basicLayer)) );
-      return;
-    }
-
-    const RoutingPad* rp = dynamic_cast<const RoutingPad*>(go);
-    if ( rp ) {
-      _cellWidget->drawBox ( transformation.getBox(rp->getBoundingBox(basicLayer)) );
-      return;
+    _goCount++;
+    rectangle = _cellWidget->dbuToDisplayRect ( transformation.getBox(component->getBoundingBox(basicLayer)) );
+    state     = ( (rectangle.width() > 2) ? 1:0) | ( (rectangle.height() > 2) ? 2:0); 
+    switch ( state ) {
+      case 0: break;
+      case 1: _cellWidget->drawScreenLine ( rectangle.bottomLeft(), rectangle.bottomRight() ); break;
+      case 2: _cellWidget->drawScreenLine ( rectangle.bottomLeft(), rectangle.topLeft    () ); break;
+      case 3: _cellWidget->drawScreenRect ( rectangle ); break;
     }
   }
 
@@ -562,13 +692,15 @@ namespace Hurricane {
                                              , _visibleArea(_stripWidth,_stripWidth,4*_stripWidth,4*_stripWidth)
                                              , _scale(1.0)
                                              , _offsetVA(_stripWidth,_stripWidth)
+                                             , _redrawManager(this)
                                              , _drawingPlanes(QSize(6*_stripWidth,6*_stripWidth),this)
                                              , _drawingQuery(this)
                                              , _textDrawingQuery(this)
-                                             , _queryFilter(Query::DoAll)
+                                             , _queryFilter(~Query::DoTerminalCells)
                                              , _mousePosition(0,0)
                                              , _spot(this)
                                              , _cell(NULL)
+                                             , _cellChanged(true)
                                              , _showBoundaries(true)
                                              , _showSelection(false)
                                              , _cumulativeSelection(false)
@@ -598,8 +730,6 @@ namespace Hurricane {
 
     QFont font = Graphics::getNormalFont();
     _textFontHeight = QFontMetrics(font).ascent();
-
-    fitToContents ();
   }
 
 
@@ -623,7 +753,7 @@ namespace Hurricane {
     detachFromPalette ();
     _palette = palette;
 
-    connect ( _palette, SIGNAL(paletteChanged())    , this    , SLOT(redraw()) );
+    connect ( _palette, SIGNAL(paletteChanged())    , this    , SLOT(refresh()) );
     connect ( this    , SIGNAL(cellChanged(Cell*))  , _palette, SLOT(updateExtensions(Cell*)) );
     connect ( this    , SIGNAL(updatePalette(Cell*)), _palette, SLOT(updateExtensions(Cell*)) );
   }
@@ -632,7 +762,7 @@ namespace Hurricane {
   void  CellWidget::detachFromPalette ()
   {
     if ( _palette ) {
-      disconnect ( _palette, SIGNAL(paletteChanged()), this,  SLOT(redraw()) );
+      disconnect ( _palette, SIGNAL(paletteChanged())    , this    ,  SLOT(refresh()) );
       disconnect ( this    , SIGNAL(cellChanged(Cell*))  , _palette, SLOT(updateExtensions(Cell*)) );
       disconnect ( this    , SIGNAL(updatePalette(Cell*)), _palette, SLOT(updateExtensions(Cell*)) );
       _palette = NULL;
@@ -690,7 +820,7 @@ namespace Hurricane {
     if ( state != _showSelection ) {
       _showSelection       = state;
       _selectionHasChanged = false;
-      redraw ();
+      refresh ();
 
       emit showSelectionToggled ( state );
     }
@@ -703,18 +833,27 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::redraw ( QRect redrawArea )
+  void  CellWidget::_redraw ( QRect redrawArea )
   {
-  //cerr << "CellWidget::redraw() - "
-  //     << _selectionHasChanged << " filter:"
-  //     << _queryFilter << endl;
+//     cerr << "CellWidget::redraw() - start "
+//          << _selectionHasChanged << " filter:"
+//          << _queryFilter << endl;
 
+    static bool  timedout;
+    static Timer timer;
+
+    if ( !isVisible() ) return;
+
+    timer.start ();
+    timedout         = false;
+    _cellChanged     = false;
     _redrawRectCount = 0;
 
     pushCursor ( Qt::BusyCursor );
 
     if ( ! ( _selectionHasChanged && _showSelection ) || _cellModificated ) {
       _spot.setRestore ( false );
+      _drawingPlanes.copyToSelect ();
       _drawingPlanes.select ( 0 );
       _drawingPlanes.painterBegin ();
 
@@ -722,6 +861,7 @@ namespace Hurricane {
       _drawingPlanes.painter().setBackground ( Graphics::getBrush("background") );
       _drawingPlanes.painter().setClipRect   ( redrawArea );
       _drawingPlanes.painter().eraseRect     ( redrawArea );
+      repaint ();
 
       int darkening = (_showSelection) ? Graphics::getDarkening() : 100;
 
@@ -729,6 +869,8 @@ namespace Hurricane {
 
         Box redrawBox = displayToDbuBox ( redrawArea );
 
+        _drawingQuery.resetGoCount      ();
+        _drawingQuery.resetInstanceCount();
         _drawingQuery.setExtensionMask  ( 0 );
         _drawingQuery.setArea           ( redrawBox );
         _drawingQuery.setTransformation ( Transformation() );
@@ -737,38 +879,60 @@ namespace Hurricane {
           _drawingPlanes.setPen   ( Graphics::getPen  ((*iLayer)->getName(),darkening) );
           _drawingPlanes.setBrush ( Graphics::getBrush((*iLayer)->getName(),darkening) );
 
-          if ( isDrawableLayer((*iLayer)->getName()) ) {
+          if ( isDrawable((*iLayer)->getName()) ) {
             _drawingQuery.setBasicLayer ( *iLayer );
             _drawingQuery.setFilter     ( _queryFilter & ~Query::DoMasterCells );
             _drawingQuery.doQuery       ();
+            _drawingPlanes.copyToSelect ();
+            repaint ();
+          }
+          QApplication::processEvents();
+          if ( _redrawManager.interrupted() ) {
+          //cerr << "CellWidget::redraw() - interrupt after " << (*iLayer)->getName() << endl;
+            break;
+          }
+        //if ( timeout("redraw [layer]",timer,10.0,timedout) ) break;
+        }
+
+        if ( /*!timeout("redraw [boundaries]",timer,10.0,timedout) &&*/ (!_redrawManager.interrupted()) ) {
+          if ( isDrawable("boundaries") ) {
+             _drawingPlanes.setPen   ( Graphics::getPen  ("boundaries",darkening) );
+             _drawingPlanes.setBrush ( Graphics::getBrush("boundaries",darkening) );
+
+             _drawingQuery.setBasicLayer ( NULL );
+             _drawingQuery.setFilter     ( _queryFilter & ~Query::DoComponents );
+             _drawingQuery.doQuery       ();
+             _drawingPlanes.copyToSelect ();
+             repaint ();
           }
         }
 
-        if ( isDrawableLayer("boundaries") ) {
-          _drawingPlanes.setPen   ( Graphics::getPen  ("boundaries",darkening) );
-          _drawingPlanes.setBrush ( Graphics::getBrush("boundaries",darkening) );
-
-          _drawingQuery.setBasicLayer ( NULL );
-          _drawingQuery.setFilter     ( _queryFilter & ~Query::DoComponents );
-          _drawingQuery.doQuery       ();
-        }
-
-        if ( isDrawableLayer("text.instance") ) {
-          _drawingPlanes.setPen               ( Graphics::getPen  ("text.instance",darkening) );
-          _drawingPlanes.setBrush             ( Graphics::getBrush("text.instance",darkening) );
-          _drawingPlanes.setBackground        ( Graphics::getBrush("boundaries"   ,darkening) );
-          _textDrawingQuery.setArea           ( redrawBox );
-          _textDrawingQuery.setTransformation ( Transformation() );
-          _textDrawingQuery.doQuery           ();
+        QApplication::processEvents();
+        if ( /*!timeout("redraw [text.instances]",timer,10.0,timedout) &&*/ (!_redrawManager.interrupted()) ) {
+          if ( isDrawable("text.instance") ) {
+            _drawingPlanes.setPen               ( Graphics::getPen  ("text.instance",darkening) );
+            _drawingPlanes.setBrush             ( Graphics::getBrush("text.instance",darkening) );
+            _drawingPlanes.setBackground        ( Graphics::getBrush("boundaries"   ,darkening) );
+            _textDrawingQuery.setArea           ( redrawBox );
+            _textDrawingQuery.setTransformation ( Transformation() );
+            _textDrawingQuery.doQuery           ();
+            _drawingPlanes.copyToSelect         ();
+            repaint ();
+          }
         }
 
       //_drawingQuery.setFilter        ( _queryFilter & ~Query::DoMasterCells );
         forEach ( ExtensionSlice*, islice, _cell->getExtensionSlices() ) {
+          QApplication::processEvents();
+          if ( /*timeout("redraw [extension]",timer,10.0,timedout) ||*/ (_redrawManager.interrupted()) ) break;
+
           if ( isDrawableExtension((*islice)->getName()) ) {
             _drawingQuery.setExtensionMask   ( (*islice)->getMask() );
             _drawingQuery.setDrawExtensionGo ( (*islice)->getName() );
             _drawingQuery.setFilter          ( Query::DoExtensionGos );
             _drawingQuery.doQuery            ();
+            _drawingPlanes.copyToSelect      ();
+            repaint ();
           }
         }
       }
@@ -780,12 +944,23 @@ namespace Hurricane {
     if ( _showSelection )
       redrawSelection ( redrawArea );
 
-
-    update ();
     popCursor ();
 
-  //cerr << "Redrawed objects: " << _redrawRectCount << endl;
-  //cerr << "CellWidget::redraw() - finished." << endl;
+    timer.stop ();
+//  cerr << "CellWidget::redraw() - " << _redrawRectCount
+//       << " in " << timer.getCombTime() << "s ("
+//       << setprecision(3) << (timer.getCombTime()/_redrawRectCount) << " s/r)";
+//  if ( _drawingQuery.getGoCount() )
+//    cerr << " " << _drawingQuery.getGoCount()
+//         << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getGoCount()) << " s/go)";
+//  else
+//    cerr << " 0 Gos";
+//  if ( _drawingQuery.getInstanceCount() )
+//    cerr << " " << _drawingQuery.getInstanceCount()
+//         << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getInstanceCount()) << " s/inst)";
+//  else
+//    cerr << " 0 Instances";
+//  cerr << endl;
   }
 
 
@@ -837,6 +1012,7 @@ namespace Hurricane {
         }
         end_for;
       }
+      repaint ();
     }
 
     _drawingPlanes.painterEnd ();
@@ -844,12 +1020,20 @@ namespace Hurricane {
   }
 
 
+  bool  CellWidget::isDrawable ( const Name& name )
+  {
+    PaletteItem* item = (_palette) ? _palette->find(name) : NULL;
+
+    return (!item || item->isItemVisible())
+      && ( Graphics::getThreshold(name)/DbU::lambda(1.0) < _scale );
+  }
+
+
   bool  CellWidget::isDrawableLayer ( const Name& layerName )
   {
     PaletteItem* item = (_palette) ? _palette->find(layerName) : NULL;
 
-    return (!item || item->isItemVisible())
-      && ( Graphics::getThreshold(layerName)/DbU::lambda(1.0) < _scale );
+    return !item || item->isItemVisible();
   }
 
 
@@ -927,20 +1111,36 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::drawScreenPolyline ( const QPoint* points, int count, int width )
+  void  CellWidget::drawScreenLine ( const QPoint& p1, const QPoint& p2, size_t plane )
   {
-    QPen pen = Graphics::getPen("grid");
-    pen.setWidth ( width );
-
-    _drawingPlanes.painter(2).setPen ( pen );
-    _drawingPlanes.painter(2).drawPolyline ( points, count );
+    _redrawRectCount++;
+    _drawingPlanes.setLineMode ( true );
+    _drawingPlanes.painter(plane).drawLine ( p1, p2 );
   }
 
 
-  void  CellWidget::drawScreenRect ( const QPoint& p1, const QPoint& p2 )
+  void  CellWidget::drawScreenPolyline ( const QPoint* points, int count, int width, size_t plane )
   {
-    _drawingPlanes.painter(2).setPen ( Graphics::getPen("grid") );
-    _drawingPlanes.painter(2).drawRect ( QRect(p1,p2) );
+    QPen pen = _drawingPlanes.painter(plane).pen ();
+    pen.setWidth ( width );
+
+    _drawingPlanes.painter(plane).setPen ( pen );
+    _drawingPlanes.painter(plane).drawPolyline ( points, count );
+  }
+
+
+  void  CellWidget::drawScreenRect ( const QPoint& p1, const QPoint& p2, size_t plane )
+  {
+    _drawingPlanes.setLineMode ( false );
+    _drawingPlanes.painter(plane).drawRect ( QRect(p1,p2) );
+  }
+
+
+  void  CellWidget::drawScreenRect ( const QRect& r, size_t plane )
+  {
+    _redrawRectCount++;
+    _drawingPlanes.setLineMode ( false );
+    _drawingPlanes.painter(plane).drawRect ( r );
   }
 
 
@@ -987,14 +1187,7 @@ namespace Hurricane {
   {
     if ( !dx ) dx = geometry().size().width() / 4;
 
-    _visibleArea.translate ( - (DbU::Unit)( dx / _scale ) , 0 );
-
-    if ( _offsetVA.rx() - dx >= 0 ) {
-      _offsetVA.rx() -= dx;
-      update ();
-    } else {
-      shiftLeft ( dx );
-    }
+    _redrawManager.goLeft ( dx );
   }
 
 
@@ -1002,15 +1195,7 @@ namespace Hurricane {
   {
     if ( !dx ) dx = geometry().size().width() / 4;
 
-  //cerr << "CellWidget::goRight() - dx: " << dx << " (offset: " << _offsetVA.rx() << ")" << endl;
-    _visibleArea.translate ( (DbU::Unit)( dx / _scale ) , 0 );
-
-    if ( _offsetVA.rx() + dx < 2*_stripWidth ) {
-      _offsetVA.rx() += dx;
-      update ();
-    } else {
-      shiftRight ( dx );
-    }
+    _redrawManager.goRight ( dx );
   }
 
 
@@ -1018,14 +1203,7 @@ namespace Hurricane {
   {
     if ( !dy ) dy = geometry().size().height() / 4;
 
-    _visibleArea.translate ( 0, (DbU::Unit)( dy / _scale ) );
-
-    if ( _offsetVA.ry() - dy >= 0 ) {
-      _offsetVA.ry() -= dy;
-      update ();
-    } else {
-      shiftUp ( dy );
-    }
+    _redrawManager.goUp ( dy );
   }
 
 
@@ -1033,18 +1211,11 @@ namespace Hurricane {
   {
     if ( !dy ) dy = geometry().size().height() / 4;
 
-    _visibleArea.translate ( 0, - (DbU::Unit)( dy / _scale ) );
-
-    if ( _offsetVA.ry() + dy < 2*_stripWidth ) {
-      _offsetVA.ry() += dy;
-      update ();
-    } else {
-      shiftDown ( dy );
-    }
+    _redrawManager.goDown ( dy );
   }
 
 
-  void  CellWidget::displayReframe ()
+  void  CellWidget::displayReframe ( bool delayed )
   {
     _offsetVA.rx() = _stripWidth;
     _offsetVA.ry() = _stripWidth;
@@ -1056,7 +1227,7 @@ namespace Hurricane {
 
     _displayArea = Box ( xmin, ymin, xmax, ymax );
 
-    redraw ();
+    if ( !delayed ) _redrawManager.refresh ();
   }
 
 
@@ -1080,11 +1251,12 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::reframe ( const Box& box )
+  void  CellWidget::reframe ( const Box& box, bool delayed )
   {
   //cerr << "CellWidget::reframe() - " << box << endl;
   //cerr << "  widget size := " << _drawingPlanes.width() << "x" << _drawingPlanes.height() << endl;
 
+  //cerr << "  CellWidget::reframe() - widget size := " << width() << "x" << height() << endl;
     int  width  = this->width  ();
     int  height = this->height ();
 
@@ -1102,105 +1274,147 @@ namespace Hurricane {
                        , (DbU::Unit)( center.getX() + width  / _scale )
                        , (DbU::Unit)( center.getY() + height / _scale )
                        );
-    displayReframe ();
+    displayReframe ( delayed );
 
   //cerr << "  _displayArea: " << _displayArea << " (offset: " << _offsetVA.x() << ")" << endl;
   }
 
 
-  void  CellWidget::fitToContents ()
+  void  CellWidget::fitToContents ( bool delayed )
   {
-    if ( _cell ) reframe ( _cell->getBoundingBox() );
+    Box boundingBox = Box ( DbU::lambda(0)
+                          , DbU::lambda(0)
+                          , DbU::lambda(10)
+                          , DbU::lambda(50)
+                          );
+
+    if ( _cell ) boundingBox = _cell->getBoundingBox();
+    reframe ( boundingBox, delayed );
   }
 
 
-  void  CellWidget::shiftLeft ( int dx )
+  void  CellWidget::_goLeft ( int dx )
   {
-  //cerr << "CellWidget::shiftLeft() - " << dx << " (offset: " << _offsetVA.rx() << ")" << endl;
+    _visibleArea.translate ( - (DbU::Unit)( dx / _scale ) , 0 );
 
-    int  leftShift  = ( 1 + ( dx - _offsetVA.rx() ) / _stripWidth ) * _stripWidth;
+    if ( _offsetVA.rx() - dx >= 0 ) {
+      _offsetVA.rx() -= dx;
+      repaint ();
+      return;
+    }
 
-    _displayArea.translate ( - (DbU::Unit)( leftShift / _scale ) , 0 );
-    _offsetVA.rx() -= dx - leftShift;
+    int shift = ( 1 + ( dx - _offsetVA.rx() ) / _stripWidth ) * _stripWidth;
 
-    if ( leftShift >= _drawingPlanes.width() ) {
-      redraw ();
-    } else {
-      _drawingPlanes.shiftLeft ( leftShift );
+    _displayArea.translate ( - (DbU::Unit)( shift / _scale ) , 0 );
+    _offsetVA.rx() -= dx - shift;
 
-      redraw ( QRect ( QPoint ( 0, 0 )
-                     , QSize  ( leftShift, _drawingPlanes.height() )) );
+    if ( shift >= _drawingPlanes.width() )
+      _redrawManager.refresh ();
+    else {
+      _drawingPlanes.shiftLeft ( shift );
+      _redraw ( QRect ( QPoint(0,0), QSize(shift,_drawingPlanes.height()) ) );
     }
 
     assert ( _offsetVA.rx() >= 0 );
   }
 
 
-  void  CellWidget::shiftRight ( int dx )
+  void  CellWidget::_goRight ( int dx )
   {
-  //cerr << "CellWidget::shiftRight() - " << dx << " (offset: " << _offsetVA.rx() << ")" << endl;
+  //cerr << "CellWidget::goRight() - dx: " << dx << " (offset: " << _offsetVA.rx() << ")" << endl;
 
-    int  rightShift  = ( ( _offsetVA.rx() + dx ) / _stripWidth ) * _stripWidth;
+    _visibleArea.translate ( (DbU::Unit)( dx / _scale ) , 0 );
 
-    _displayArea.translate ( (DbU::Unit)( rightShift / _scale ) , 0 );
-    _offsetVA.rx() += dx - rightShift;
+    if ( _offsetVA.rx() + dx < 2*_stripWidth ) {
+      _offsetVA.rx() += dx;
+      repaint ();
+      return;
+    }
 
-  //cerr << "  _displayArea: " << _displayArea << endl;
+    int shift = ( ( _offsetVA.rx() + dx ) / _stripWidth ) * _stripWidth;
 
-    if ( rightShift >= _drawingPlanes.width() ) {
-      redraw ();
-    } else {
-      _drawingPlanes.shiftRight ( rightShift );
+    _displayArea.translate ( (DbU::Unit)( shift / _scale ) , 0 );
+    _offsetVA.rx() += dx - shift;
 
-      redraw ( QRect ( QPoint ( _drawingPlanes.width()-rightShift, 0 )
-                     , QSize  ( rightShift, _drawingPlanes.height() )) );
+    if ( shift >= _drawingPlanes.width() )
+      _redrawManager.refresh ();
+    else {
+      _drawingPlanes.shiftRight ( shift );
+      _redraw ( QRect ( QPoint(_drawingPlanes.width()-shift,0)
+                      , QSize (shift,_drawingPlanes.height()) ) );
     }
 
     assert ( _offsetVA.rx() >= 0 );
   }
 
 
-  void  CellWidget::shiftUp ( int dy )
+  void  CellWidget::_goUp ( int dy )
   {
   //cerr << "CellWidget::shiftUp() - " << dy << " (offset: " << _offsetVA.ry() << ")" << endl;
 
-    int  upShift  = ( 1 + ( dy - _offsetVA.ry() ) / _stripWidth ) * _stripWidth;
+    _visibleArea.translate ( 0, (DbU::Unit)( dy / _scale ) );
 
-    _displayArea.translate ( 0, (DbU::Unit)( upShift / _scale ) );
-    _offsetVA.ry() -= dy - upShift;
+    if ( _offsetVA.ry() - dy >= 0 ) {
+      _offsetVA.ry() -= dy;
+      repaint ();
+      return;
+    }
 
-    if ( upShift >= _drawingPlanes.height() ) {
-      redraw ();
-    } else {
-      _drawingPlanes.shiftUp ( upShift );
+    int shift = ( 1 + ( dy - _offsetVA.ry() ) / _stripWidth ) * _stripWidth;
 
-      redraw ( QRect ( QPoint ( 0, 0 )
-                     , QSize  ( _drawingPlanes.width(), upShift )) );
+    _displayArea.translate ( 0, (DbU::Unit)( shift / _scale ) );
+    _offsetVA.ry() -= dy - shift;
+
+    if ( shift >= _drawingPlanes.height() )
+      _redrawManager.refresh ();
+    else {
+      _drawingPlanes.shiftUp ( shift );
+      _redraw ( QRect ( QPoint(0,0), QSize(_drawingPlanes.width(),shift) ) );
     }
 
     assert ( _offsetVA.ry() >= 0 );
   }
 
 
-  void  CellWidget::shiftDown ( int dy )
+  void  CellWidget::_goDown ( int dy )
   {
   //cerr << "CellWidget::shiftDown() - " << dy << " (offset: " << _offsetVA.ry() << ")" << endl;
 
-    int  downShift  = (  ( _offsetVA.ry() + dy ) / _stripWidth ) * _stripWidth;
+    _visibleArea.translate ( 0, - (DbU::Unit)( dy / _scale ) );
 
-    _displayArea.translate ( 0, - (DbU::Unit)( downShift / _scale ) );
-    _offsetVA.ry() += dy - downShift;
+    if ( _offsetVA.ry() + dy < 2*_stripWidth ) {
+      _offsetVA.ry() += dy;
+      repaint ();
+      return;
+    }
 
-    if ( downShift >= _drawingPlanes.height() ) {
-      redraw ();
-    } else {
-      _drawingPlanes.shiftDown ( downShift );
+    int shift = ( ( _offsetVA.ry() + dy ) / _stripWidth ) * _stripWidth;
 
-      redraw ( QRect ( QPoint ( 0, _drawingPlanes.height()-downShift )
-                     , QSize  ( _drawingPlanes.width(), downShift )) );
+    _displayArea.translate ( 0, - (DbU::Unit)( shift / _scale ) );
+    _offsetVA.ry() += dy - shift;
+
+    if ( shift >= _drawingPlanes.height() )
+      _redrawManager.refresh ();
+    else {
+      _drawingPlanes.shiftDown ( shift );
+      _redraw ( QRect ( QPoint (0,_drawingPlanes.height()-shift)
+                      , QSize  (_drawingPlanes.width(), shift) ) );
     }
 
     assert ( _offsetVA.ry() >= 0 );
+  }
+
+
+  void  CellWidget::_refresh ()
+  {
+    _redraw ( QRect(QPoint(0,0),_drawingPlanes.size()) );
+  }
+
+
+  void  CellWidget::showEvent ( QShowEvent* )
+  {
+  //cerr << "CellWidget::showEvent() - size: " << geometry().width() << "x" << geometry().height() << endl;
+    if ( _cellChanged ) fitToContents();
   }
 
 
@@ -1208,19 +1422,19 @@ namespace Hurricane {
   {
     _drawingPlanes.painterBegin ( 2 );
     _drawingPlanes.copyToScreen ();
-
     for ( size_t i=0 ; i<_commands.size() ; i++ )
       _commands[i]->draw ( this );
 
-    if ( isDrawableLayer("grid") ) drawGrid ();
-    if ( isDrawableLayer("spot") ) _spot.moveTo ( _mousePosition );
-
+    if ( isDrawable("grid") ) drawGrid ();
+    if ( isDrawable("spot") ) _spot.moveTo ( _mousePosition );
     _drawingPlanes.painterEnd ( 2 );
   }
 
 
   void  CellWidget::resizeEvent ( QResizeEvent* )
   {
+  //cerr << "CellWidget::resizeEvent() - size: " << geometry().width() << "x" << geometry().height() << endl;
+
     QSize uaDelta ( 0, 0 );
     QSize uaSize  = geometry().size();
 
@@ -1233,24 +1447,26 @@ namespace Hurricane {
     if ( uaSize.height() > _drawingPlanes.height() )
       uaDelta.rheight() = uaSize.height() - _drawingPlanes.height();
 
-  //cerr << "New UA widget size: " << uaSize.width() << "x" << uaSize.height() << endl;
-
     if ( uaDelta.width() || uaDelta.height() ) {
       _displayArea.inflate ( 0, 0, (DbU::Unit)(uaDelta.width()/_scale), (DbU::Unit)(uaDelta.height()/_scale) );
       _visibleArea.inflate ( 0, 0, (DbU::Unit)(uaDelta.width()/_scale), (DbU::Unit)(uaDelta.height()/_scale) );
-    //cerr << "new      " << _displayArea << endl;
-
-    //cerr << "Previous buffer size: " << _drawingPlanes.width () << "x"
-    //                                 << _drawingPlanes.height() << endl;
 
       QSize bufferSize ( ( ( uaSize.width () / _stripWidth ) + 1 ) * _stripWidth
                        , ( ( uaSize.height() / _stripWidth ) + 1 ) * _stripWidth );
       _drawingPlanes.resize ( bufferSize );
-
-    //cerr << "Effective buffer resize to: " << bufferSize.width() << "x"
-    //                                       << bufferSize.height() << endl;
     }
-    redraw ();
+
+    _redrawManager.refresh ();
+  }
+
+
+  void  CellWidget::wheelEvent ( QWheelEvent* event )
+  {
+    bool commandActive = false;
+    for ( size_t i=0 ; i<_commands.size() && !commandActive; i++ )
+      commandActive = _commands[i]->wheelEvent ( this, event );
+
+    if ( !commandActive ) QWidget::wheelEvent ( event );
   }
 
 
@@ -1264,6 +1480,16 @@ namespace Hurricane {
   }
 
 
+  void  CellWidget::keyReleaseEvent ( QKeyEvent* event )
+  {
+    bool commandActive = false;
+    for ( size_t i=0 ; i<_commands.size() && !commandActive; i++ )
+      commandActive = _commands[i]->keyReleaseEvent ( this, event );
+
+    if ( !commandActive ) QWidget::keyReleaseEvent ( event );
+  }
+
+
   void  CellWidget::mouseMoveEvent ( QMouseEvent* event )
   {
     bool commandActive = false;
@@ -1271,10 +1497,12 @@ namespace Hurricane {
       commandActive = _commands[i]->mouseMoveEvent ( this, event );
 
     if ( !commandActive ) {
-      _mousePosition = event->pos();
-      emit mousePositionChanged ( screenToDbuPoint(event->pos()) );
+      Point mousePoint = screenToDbuPoint ( _mousePosition = event->pos() );
+      emit mousePositionChanged ( Point ( DbU::getOnSnapGrid(mousePoint.getX())
+                                        , DbU::getOnSnapGrid(mousePoint.getY())
+                                        ) );
 
-      update ();
+      repaint ();
     }
   }
 
@@ -1341,22 +1569,25 @@ namespace Hurricane {
   {
     if ( _showBoundaries != state ) {
       _showBoundaries = state;
-      redraw ();
+      _redrawManager.refresh ();
     }
   }
 
 
   void  CellWidget::setCell ( Cell* cell )
   {
+  //cerr << "CellWidget::setCell() - " << cell << endl;
+
     cellPreModificate ();
 
-    _cell = cell;
-    _drawingQuery.setCell ( cell );
+    _cellChanged = true;
+    _cell        = cell;
+    _drawingQuery    .setCell ( cell );
     _textDrawingQuery.setCell ( cell );
 
     emit cellChanged ( cell );
 
-    fitToContents ();
+    fitToContents ( true );
 
     cellPostModificate ();
   }
@@ -1500,7 +1731,7 @@ namespace Hurricane {
     }
 
     _selectionHasChanged = true;
-    if ( _showSelection ) redraw ();
+    if ( _showSelection ) _redrawManager.refresh ();
 
     if ( fromPopup ) emit occurrenceToggled ( occurrence );
   }
@@ -1513,7 +1744,7 @@ namespace Hurricane {
       Occurrence occurrence ( *component );
       select ( occurrence );
     }
-    if ( !delayRedraw && _showSelection ) redraw ();
+    if ( !delayRedraw && _showSelection ) _redrawManager.refresh ();
   }
 
 
@@ -1524,7 +1755,7 @@ namespace Hurricane {
       Occurrence occurrence ( *component );
       unselect ( occurrence );
     }
-    if ( !delayRedraw && _showSelection ) redraw ();
+    if ( !delayRedraw && _showSelection ) _redrawManager.refresh ();
   }
 
 
@@ -1542,7 +1773,7 @@ namespace Hurricane {
       (*_selectors.begin())->detachFrom ( this );
 
     if ( !_selectionHasChanged ) _selectionHasChanged = true;
-    if ( !delayRedraw && _showSelection ) redraw ();
+    if ( !delayRedraw && _showSelection ) _redrawManager.refresh ();
   }
 
 
@@ -1563,7 +1794,7 @@ namespace Hurricane {
     _selection.revalidate ();
 
     updatePalette ();
-    redraw ();
+    _redrawManager.refresh ();
 
     --_delaySelectionChanged;
     emit selectionChanged(_selectors,_cell);

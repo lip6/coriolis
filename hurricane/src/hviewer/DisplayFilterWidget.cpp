@@ -43,11 +43,14 @@ namespace Hurricane {
 
 
   DisplayFilterWidget::DisplayFilterWidget ( QWidget* parent )
-    : QWidget(parent)
-    , _cellWidget(NULL)
-    , _startSpinBox(new QSpinBox())
-    , _stopSpinBox(new QSpinBox())
-    , _queryFilter(Query::DoAll)
+    : QWidget         (parent)
+    , _cellWidget     (NULL)
+    , _startSpinBox   (new QSpinBox())
+    , _stopSpinBox    (new QSpinBox())
+    , _doMasterCells  (new QCheckBox())
+    , _doTerminalCells(new QCheckBox())
+    , _doComponents   (new QCheckBox())
+    , _queryFilter    (Query::DoAll)
   {
     setAttribute   ( Qt::WA_QuitOnClose, false );
     setWindowTitle ( tr("Display Filter") );
@@ -81,29 +84,26 @@ namespace Hurricane {
     separator->setFrameShadow ( QFrame::Sunken );
     gLayout->addWidget ( separator, 2, 0, 1, 2 );
 
-    QCheckBox* filterBox = new QCheckBox ();
-    filterBox->setFont    ( Graphics::getNormalFont() );
-    filterBox->setText    ( tr("Process Master Cells") );
-    filterBox->setChecked ( true );
+    _doMasterCells->setFont    ( Graphics::getNormalFont() );
+    _doMasterCells->setText    ( tr("Process Master Cells") );
+    _doMasterCells->setChecked ( true );
 
-    gLayout->addWidget ( filterBox, 3, 0, 1, 2 );
-    connect ( filterBox, SIGNAL(stateChanged(int)), this, SLOT(setDoMasterCells(int)) );
+    gLayout->addWidget ( _doMasterCells, 3, 0, 1, 2 );
+    connect ( _doMasterCells, SIGNAL(stateChanged(int)), this, SLOT(setDoMasterCells(int)) );
 
-    filterBox = new QCheckBox ();
-    filterBox->setFont    ( Graphics::getNormalFont() );
-    filterBox->setText    ( tr("Process Terminal Cells") );
-    filterBox->setChecked ( true );
+    _doTerminalCells->setFont    ( Graphics::getNormalFont() );
+    _doTerminalCells->setText    ( tr("Process Terminal Cells") );
+    _doTerminalCells->setChecked ( true );
 
-    gLayout->addWidget ( filterBox, 4, 0, 1, 2 );
-    connect ( filterBox, SIGNAL(stateChanged(int)), this, SLOT(setDoTerminalCells(int)) );
+    gLayout->addWidget ( _doTerminalCells, 4, 0, 1, 2 );
+    connect ( _doTerminalCells, SIGNAL(stateChanged(int)), this, SLOT(setDoTerminalCells(int)) );
 
-    filterBox = new QCheckBox ();
-    filterBox->setFont    ( Graphics::getNormalFont() );
-    filterBox->setText    ( tr("Process Components") );
-    filterBox->setChecked ( true );
+    _doComponents->setFont    ( Graphics::getNormalFont() );
+    _doComponents->setText    ( tr("Process Components") );
+    _doComponents->setChecked ( true );
 
-    gLayout->addWidget ( filterBox, 5, 0, 1, 2 );
-    connect ( filterBox, SIGNAL(stateChanged(int)), this, SLOT(setDoComponents(int)) );
+    gLayout->addWidget ( _doComponents, 5, 0, 1, 2 );
+    connect ( _doComponents, SIGNAL(stateChanged(int)), this, SLOT(setDoComponents(int)) );
 
     groupBox->setLayout ( gLayout );
     wLayout->addWidget  ( groupBox );
@@ -119,12 +119,17 @@ namespace Hurricane {
   {
     if ( !cw ) {
       if ( _cellWidget )
-        disconnect ( _cellWidget, SLOT(redraw()) );
+        disconnect ( _cellWidget, SLOT(refresh()) );
       _cellWidget = NULL;
       return;
     }
+
     _cellWidget = cw;
-    connect ( this, SIGNAL(filterChanged()), _cellWidget, SLOT(redraw()) );
+    connect ( this, SIGNAL(filterChanged()), _cellWidget, SLOT(refresh()) );
+
+    _doMasterCells  ->setChecked ( _cellWidget->getQueryFilter() & Query::DoMasterCells   );
+    _doTerminalCells->setChecked ( _cellWidget->getQueryFilter() & Query::DoTerminalCells );
+    _doComponents   ->setChecked ( _cellWidget->getQueryFilter() & Query::DoComponents    );
   }
 
 

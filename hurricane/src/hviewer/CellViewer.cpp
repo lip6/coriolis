@@ -68,6 +68,7 @@ namespace Hurricane {
                                              , _zoomCommand()
                                              , _selectCommand()
                                              , _cellHistory()
+                                             , _firstShow(false)
   {
     setObjectName("viewer");
 
@@ -224,8 +225,8 @@ namespace Hurricane {
 
     setCentralWidget ( _cellWidget );
 
-    connect ( this                   , SIGNAL(redrawCellWidget()), _cellWidget, SLOT(redraw())                );
-    connect ( _refreshAction         , SIGNAL(triggered())       , _cellWidget, SLOT(redraw())                );
+    connect ( this                   , SIGNAL(redrawCellWidget()), _cellWidget, SLOT(refresh())               );
+    connect ( _refreshAction         , SIGNAL(triggered())       , _cellWidget, SLOT(refresh())               );
     connect ( _fitToContentsAction   , SIGNAL(triggered())       , _cellWidget, SLOT(fitToContents())         );
     connect ( _showSelectionAction   , SIGNAL(toggled(bool))     , _cellWidget, SLOT(setShowSelection(bool))  );
     connect ( _controllerAction      , SIGNAL(triggered())       , this       , SLOT(showController())        );
@@ -236,7 +237,7 @@ namespace Hurricane {
     connect ( &_selectCommand        , SIGNAL(selectionToggled (Occurrence,bool))
             ,  _cellWidget           , SLOT  (toggleSelect     (Occurrence,bool)) );
 
-    _cellWidget->redraw ();
+    _cellWidget->refresh ();
   }
 
 

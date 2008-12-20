@@ -98,7 +98,7 @@ namespace Hurricane {
     if ( getCellWidget() != cellWidget ) {
       ControllerTab::setCellWidget ( cellWidget );
       if ( getCellWidget() ) {
-        connect ( _graphics, SIGNAL(styleChanged()), getCellWidget(), SLOT(redraw()) );
+        connect ( _graphics, SIGNAL(styleChanged()), getCellWidget(), SLOT(refresh()) );
       }
     }
   }
@@ -112,7 +112,7 @@ namespace Hurricane {
     : ControllerTab (parent)
     , _displayFilter(new DisplayFilterWidget())
   {
-    _displayFilter->setObjectName ( "controller.tabDisplayFilter.graphics" );
+    _displayFilter->setObjectName ( "controller.tabDisplayFilter.displayFilter" );
 
     QVBoxLayout* wLayout  = new QVBoxLayout ();
     wLayout->setContentsMargins ( 0, 0, 0, 0 );
@@ -247,7 +247,7 @@ namespace Hurricane {
     if ( getCellWidget() != cellWidget ) {
       ControllerTab::setCellWidget ( cellWidget );
       if ( getCellWidget() ) {
-        connect ( getCellWidget(), SIGNAL(cellChanged(Cell*))     , this           , SLOT(setCell(Cell*)) );
+        connect ( getCellWidget(), SIGNAL(cellChanged(Cell*)), this, SLOT(setCell(Cell*)) );
       }
       setSyncNetlist ( _syncNetlist->isChecked() );
     }

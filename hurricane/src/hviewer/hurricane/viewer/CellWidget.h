@@ -37,13 +37,16 @@
 #include  <QPoint>
 
 class QCursor;
+class QShowEvent;
 class QResizeEvent;
 class QMouseEvent;
 class QKeyEvent;
 class QAction;
 
 
+#include  "hurricane/Timer.h"
 #include  "hurricane/Commons.h"
+#include  "hurricane/Warning.h"
 #include  "hurricane/Point.h"
 #include  "hurricane/Box.h"
 #include  "hurricane/Transformation.h"
@@ -111,14 +114,19 @@ namespace Hurricane {
       inline  void                    setStartLevel           ( int );
       inline  void                    setStopLevel            ( int );
       inline  void                    setQueryFilter          ( int );
+      inline  int                     getQueryFilter          () const ;
+      inline  bool                    timeout                 ( const char*, const Timer&, double timeout, bool& timedout ) const;
     // Painter control & Hurricane objects drawing primitives.
       inline  void                    addDrawExtensionGo      ( const Name&, InitExtensionGo_t*, DrawExtensionGo_t* );
-      inline  QPainter&               getPainter              ();
+      inline  QPainter&               getPainter              ( size_t plane=3 );
       inline  float                   getScale                () const;
+      inline  const QPoint&           getMousePosition        () const;
+              bool                    isDrawable              ( const Name& );
               bool                    isDrawableLayer         ( const Name& );
               bool                    isDrawableExtension     ( const Name& );
               bool                    isSelectable            ( const Name& ) const;
               bool                    isSelectable            ( const Layer* ) const;
+      inline  void                    setPen                  ( const QPen& , size_t plane=3 );
               void                    drawBox                 ( DbU::Unit, DbU::Unit, DbU::Unit, DbU::Unit );
               void                    drawBox                 ( const Box& );
               void                    drawLine                ( DbU::Unit, DbU::Unit, DbU::Unit, DbU::Unit );
@@ -126,8 +134,10 @@ namespace Hurricane {
               void                    drawText                ( const Point&, const Name&, int angle=0, bool reverse=false  );
               void                    drawGrid                ();
               void                    drawSpot                ();
-              void                    drawScreenRect          ( const QPoint&, const QPoint& );
-              void                    drawScreenPolyline      ( const QPoint*, int, int );
+              void                    drawScreenLine          ( const QPoint&, const QPoint&, size_t plane=3 );
+              void                    drawScreenRect          ( const QPoint&, const QPoint&, size_t plane=3 );
+              void                    drawScreenRect          ( const QRect&, size_t plane=3 );
+              void                    drawScreenPolyline      ( const QPoint*, int, int, size_t plane=3 );
     // Geometric conversions.                                 
               QRect                   dbuToDisplayRect        ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2 ) const;
               QRect                   dbuToDisplayRect        ( const Box& box ) const;
@@ -151,13 +161,16 @@ namespace Hurricane {
     // Qt QWidget Functions Overloads.                        
               void                    pushCursor              ( Qt::CursorShape cursor );
               void                    popCursor               ();
-              QSize                   minimumSizeHint         () const;
-              void                    paintEvent              ( QPaintEvent* );
-              void                    resizeEvent             ( QResizeEvent* );
-              void                    keyPressEvent           ( QKeyEvent* );
-              void                    mouseMoveEvent          ( QMouseEvent* );
-              void                    mousePressEvent         ( QMouseEvent* );
-              void                    mouseReleaseEvent       ( QMouseEvent* );
+      virtual QSize                   minimumSizeHint         () const;
+      virtual void                    showEvent               ( QShowEvent* );
+      virtual void                    paintEvent              ( QPaintEvent* );
+      virtual void                    resizeEvent             ( QResizeEvent* );
+      virtual void                    wheelEvent              ( QWheelEvent* );
+      virtual void                    keyPressEvent           ( QKeyEvent* );
+      virtual void                    keyReleaseEvent         ( QKeyEvent* );
+      virtual void                    mouseMoveEvent          ( QMouseEvent* );
+      virtual void                    mousePressEvent         ( QMouseEvent* );
+      virtual void                    mouseReleaseEvent       ( QMouseEvent* );
     signals:                                                  
               void                    cellChanged             ( Cell* );
               void                    cellPreModificated      ();
@@ -188,37 +201,80 @@ namespace Hurricane {
               void                    updatePalette           ();
               void                    cellPreModificate       ();
               void                    cellPostModificate      ();
-      inline  void                    redraw                  ();
-              void                    redraw                  ( QRect redrawArea );
+      inline  void                    refresh                 ();
+              void                    _redraw                 ( QRect redrawArea );
       inline  void                    redrawSelection         ();
               void                    redrawSelection         ( QRect redrawArea );
               void                    goLeft                  ( int dx = 0 );
               void                    goRight                 ( int dx = 0 );
               void                    goUp                    ( int dy = 0 );
               void                    goDown                  ( int dy = 0 );
-              void                    fitToContents           ();
+              void                    fitToContents           ( bool delayed=false );
               void                    setScale                ( float scale );
               void                    setShowBoundaries       ( bool state );
-              void                    reframe                 ( const Box& box );
-              void                    displayReframe          ();
-              void                    shiftLeft               ( int dx );
-              void                    shiftRight              ( int dx );
-              void                    shiftUp                 ( int dy );
-              void                    shiftDown               ( int dy );
+              void                    reframe                 ( const Box& box, bool delayed=false  );
+              void                    displayReframe          ( bool delayed=false );
+              void                    _goLeft                 ( int dx );
+              void                    _goRight                ( int dx );
+              void                    _goUp                   ( int dy );
+              void                    _goDown                 ( int dy );
+              void                    _refresh                ();
 
     private:
       class Spot {
         public:
-                             Spot        ( CellWidget* cw );
-                 void        setRestore  ( bool restore );
-          inline void        setShowSpot ( bool show );
-                 void        restore     ();
-                 void        moveTo      ( const QPoint& point );
+                               Spot             ( CellWidget* );
+                 void          setRestore       ( bool );
+          inline void          setShowSpot      ( bool );
+          inline const QPoint& getSpotPoint     () const;
+                 void          restore          ();
+                 QPoint        computeSpotPoint ( const QPoint& );
+                 void          moveTo           ( const QPoint& );
         private:
                  CellWidget* _cellWidget;
                  QPoint      _spotPoint;
                  bool        _restore;
                  bool        _showSpot;
+      };
+
+    private:
+      class RedrawEvent {
+        public:
+          enum EventType { GoLeft  = 1
+                         , GoRight = 2
+                         , GoUp    = 3
+                         , GoDown  = 4
+                         , Refresh = 5
+                         };
+        public:
+                              RedrawEvent ( EventType, int shift, CellWidget* );
+          inline EventType    getType     () const;
+          inline int          getShift    () const;
+        private:
+          EventType  _type;
+          int        _shift;
+      };
+
+    private:
+      class RedrawManager {
+        public:
+          inline              RedrawManager ( CellWidget* );
+                             ~RedrawManager ();
+                 void         goLeft        ( int );
+                 void         goRight       ( int );
+                 void         goUp          ( int );
+                 void         goDown        ( int );
+                 void         refresh       ();
+                 void         process       ();
+          inline void         clearOverrun  ();
+          inline bool         isOverrun     () const;
+          inline bool         interrupted   () const;
+          inline size_t       getPendings   () const;
+        private:
+          CellWidget*         _widget;
+          list<RedrawEvent*>  _events;
+          bool                _overrun;
+          bool                _refreshInterrupt;
       };
 
     private:
@@ -231,15 +287,10 @@ namespace Hurricane {
           inline int            height             () const;
           inline QSize          size               () const;
           inline void           select             ( size_t i );
-          inline QPixmap*       plane              (); 
-          inline QPixmap*       plane              ( size_t i ); 
-          inline QPainter&      painter            (); 
-          inline QPainter&      painter            ( size_t i ); 
-          inline void           painterBegin       ();
-          inline void           painterBegin       ( size_t i );
+          inline QPainter&      painter            ( size_t i=3 ); 
+          inline void           painterBegin       ( size_t i=3 );
           inline void           paintersBegin      ();
-          inline void           painterEnd         ();
-          inline void           painterEnd         ( size_t i );
+          inline void           painterEnd         ( size_t i=3 );
           inline void           paintersEnd        ();
                  void           setLineMode        ( bool mode );
                  void           setPen             ( const QPen& pen );
@@ -271,35 +322,41 @@ namespace Hurricane {
     private:
       class DrawingQuery : public Query {
         public:
-                              DrawingQuery           ( CellWidget* widget );
-          inline  void        setQuery               ( const Box&            area
-                                                     , const Transformation& transformation
-                                                     , const BasicLayer*     basicLayer
-                                                     , ExtensionSlice::Mask  extensionMask
-                                                     , unsigned int          filter
-                                                     );
-          inline  void        addDrawExtensionGo     ( const Name&
-                                                     , InitExtensionGo_t*
-                                                     , DrawExtensionGo_t*
-                                                     );
-                  void        setDrawExtensionGo     ( const Name& );
-          virtual bool        hasMasterCellCallback  () const;
-          virtual bool        hasGoCallback          () const;
-          virtual bool        hasExtensionGoCallback () const;
-          virtual void        masterCellCallback     ();
-          virtual void        goCallback             ( Go* go );
-          virtual void        extensionGoCallback    ( Go* go );
-                  void        drawGo                 ( const Go*              go
-                                                     , const BasicLayer*      basicLayer
-                                                     , const Box&             area
-                                                     , const Transformation&  transformation
-                                                     );
+                                DrawingQuery           ( CellWidget* widget );
+          inline  void          setQuery               ( const Box&            area
+                                                       , const Transformation& transformation
+                                                       , const BasicLayer*     basicLayer
+                                                       , ExtensionSlice::Mask  extensionMask
+                                                       , unsigned int          filter
+                                                       );
+          inline  void          addDrawExtensionGo     ( const Name&
+                                                       , InitExtensionGo_t*
+                                                       , DrawExtensionGo_t*
+                                                       );
+                  void          setDrawExtensionGo     ( const Name& );
+          virtual bool          hasMasterCellCallback  () const;
+          virtual bool          hasGoCallback          () const;
+          virtual bool          hasExtensionGoCallback () const;
+          virtual void          masterCellCallback     ();
+          virtual void          goCallback             ( Go* go );
+          virtual void          extensionGoCallback    ( Go* go );
+                  void          drawGo                 ( const Go*              go
+                                                       , const BasicLayer*      basicLayer
+                                                       , const Box&             area
+                                                       , const Transformation&  transformation
+                                                       );
+          inline  unsigned int  getGoCount             () const;
+          inline  unsigned int  getInstanceCount       () const;
+          inline  void          resetGoCount           ();
+          inline  void          resetInstanceCount     ();
     
         protected:
                   CellWidget*        _cellWidget;
                   DrawExtensionGo_t* _drawExtensionGo;
                   map<Name,pair<InitExtensionGo_t*,DrawExtensionGo_t*> >
                                      _drawExtensionGos;
+                  unsigned int       _goCount;
+                  unsigned int       _instanceCount;
       };
 
     private:
@@ -346,6 +403,7 @@ namespace Hurricane {
               Box                        _visibleArea;
               float                      _scale;
               QPoint                     _offsetVA;
+              RedrawManager              _redrawManager;
               DrawingPlanes              _drawingPlanes;
               DrawingQuery               _drawingQuery;
               TextDrawingQuery           _textDrawingQuery;
@@ -353,6 +411,7 @@ namespace Hurricane {
               QPoint                     _mousePosition;
               Spot                       _spot;
               Cell*                      _cell;
+              bool                       _cellChanged;
               bool                       _showBoundaries;
               bool                       _showSelection;
               bool                       _cumulativeSelection;
@@ -364,11 +423,17 @@ namespace Hurricane {
               vector<Command*>           _commands;
               size_t                     _redrawRectCount;
               int                        _textFontHeight;
+
+      friend class RedrawManager;
   };
 
 
   inline void  CellWidget::Spot::setShowSpot ( bool show )
   { _showSpot = show; }
+
+
+  inline const QPoint& CellWidget::Spot::getSpotPoint () const
+  { return _spotPoint; }
 
 
   inline void  CellWidget::DrawingQuery::setQuery ( const Box&            area
@@ -395,6 +460,46 @@ namespace Hurricane {
   { _drawExtensionGos[name] = make_pair(initExtensionGo,drawExtensionGo); }
 
 
+  inline void  CellWidget::DrawingQuery::resetGoCount ()
+  { _goCount = 0; }
+
+
+  inline void  CellWidget::DrawingQuery::resetInstanceCount ()
+  { _instanceCount = 0; }
+
+
+  inline unsigned int  CellWidget::DrawingQuery::getGoCount () const
+  { return _goCount; }
+
+
+  inline unsigned int  CellWidget::DrawingQuery::getInstanceCount () const
+  { return _instanceCount; }
+
+
+  inline CellWidget::RedrawEvent::EventType  CellWidget::RedrawEvent::getType () const
+  { return _type; }
+
+
+  inline int  CellWidget::RedrawEvent::getShift () const
+  { return _shift; }
+
+
+  inline bool  CellWidget::RedrawManager::isOverrun () const
+  { return _overrun; }
+
+
+  inline void  CellWidget::RedrawManager::clearOverrun ()
+  { _overrun = false; }
+
+
+  inline size_t  CellWidget::RedrawManager::getPendings () const
+  { return _events.size(); }
+
+
+  inline bool  CellWidget::RedrawManager::interrupted () const
+  { return ( _events.size() > 5 ) || _refreshInterrupt; }
+
+
   inline bool  CellWidget::DrawingPlanes::getLineMode () const
   { return _lineMode; }
 
@@ -415,28 +520,13 @@ namespace Hurricane {
   { _workingPlane = i; }
 
 
-  inline QPixmap*  CellWidget::DrawingPlanes::plane () 
-  { return plane(_workingPlane); }
-
-
-  inline QPixmap*  CellWidget::DrawingPlanes::plane ( size_t i ) 
-  { return _planes[i]; }
-
-
-  inline QPainter&  CellWidget::DrawingPlanes::painter () 
-  { return painter(_workingPlane); }
-
-
   inline QPainter&  CellWidget::DrawingPlanes::painter ( size_t i ) 
-  { return _painters[i]; }
-
-
-  inline void  CellWidget::DrawingPlanes::painterBegin ()
-  { painterBegin ( _workingPlane ); }
+  { return _painters[(i>2)?_workingPlane:i]; }
 
 
   inline void  CellWidget::DrawingPlanes::painterBegin ( size_t i )
   {
+    if ( i>2 ) i = _workingPlane;
     if ( i<2 ) _painters[i].begin ( _planes[i] );
     else       _painters[i].begin ( _cellWidget );
   }
@@ -449,12 +539,8 @@ namespace Hurricane {
   }
 
 
-  inline void  CellWidget::DrawingPlanes::painterEnd   ()
-  { painterEnd ( _workingPlane ); }
-
-
   inline void  CellWidget::DrawingPlanes::painterEnd   ( size_t i )
-  { _painters[i].end (); }
+  { _painters[(i>2)?_workingPlane:i].end (); }
 
 
   inline void  CellWidget::DrawingPlanes::paintersEnd ()
@@ -503,8 +589,8 @@ namespace Hurricane {
   { return _offsetVA; }
 
 
-  inline void  CellWidget::redraw ()
-  { redraw ( QRect(QPoint(0,0),_drawingPlanes.size()) ); }
+  inline  void  CellWidget::refresh ()
+  { _redrawManager.refresh(); }
 
 
   inline void  CellWidget::redrawSelection ()
@@ -599,16 +685,40 @@ namespace Hurricane {
   { return _cumulativeSelection; }
 
 
-  inline QPainter& CellWidget::getPainter ()
-  { return _drawingPlanes.painter(); }
+  inline QPainter& CellWidget::getPainter ( size_t plane )
+  { return _drawingPlanes.painter(plane); }
 
 
   inline float  CellWidget::getScale () const
   { return _scale; }
 
 
+  inline const QPoint& CellWidget::getMousePosition () const
+  { return _mousePosition; }
+
+
   inline void  CellWidget::setQueryFilter ( int filter )
   { _queryFilter = filter; }
+
+
+  inline int  CellWidget::getQueryFilter () const
+  { return _queryFilter; }
+
+
+  inline void  CellWidget::setPen ( const QPen& pen, size_t plane )
+  { _drawingPlanes.painter(plane).setPen(pen); }
+
+
+  inline  bool  CellWidget::timeout ( const char* fname, const Timer& timer, double timeout, bool& timedout ) const
+  {
+    if ( timedout ) return true;
+    if ( timer.getCombTimeOnTheFly() < timeout ) return false;
+
+    timedout = true;
+    cerr << Warning("CellWidget::%s(): timeout %.3f (limit:%.1f)."
+                   ,fname,timer.getCombTimeOnTheFly(),timeout) << endl;
+    return true;
+  }
 
 
 } // End of Hurricane namespace.

@@ -98,7 +98,7 @@ namespace Hurricane {
       if ( _occurrences ) {
         if ( row < (int)_occurrences->size() ) {
           if ( index.column() == 0 ) {
-            name = getString ( (*_occurrences)[row].getPath() )
+            name = getString ( (*_occurrences)[row].getPath().getName() ) + "::"
                  + getString ( (*_occurrences)[row].getEntity() );
             return name.c_str();
           }

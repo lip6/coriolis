@@ -30,6 +30,7 @@
 #include  <QWidget>
 
 class QSpinBox;
+class QCheckBox;
 
 
 namespace Hurricane {
@@ -59,6 +60,9 @@ namespace Hurricane {
       CellWidget* _cellWidget;
       QSpinBox*   _startSpinBox;
       QSpinBox*   _stopSpinBox;
+      QCheckBox*  _doMasterCells;
+      QCheckBox*  _doTerminalCells;
+      QCheckBox*  _doComponents;
       int         _queryFilter;
   };
 

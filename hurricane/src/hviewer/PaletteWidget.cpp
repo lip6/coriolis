@@ -299,16 +299,17 @@ namespace Hurricane {
     }
     _extensionGoItems.clear ();
 
-    if ( !cell ) return;
 
     GridBuffer gridBuffer ( _grid, 22, _extensionRow, _extensionColumn );
     _extensionGroup  = _createGroupItem ( "Extensions" );
     gridBuffer.addSection ( _extensionGroup, Qt::AlignHCenter );
 
-    forEach ( ExtensionSlice*, extension, cell->getExtensionSlices() ) {
-      PaletteExtensionGoItem* item = _createExtensionGoItem ( (*extension)->getName(), false );
-      gridBuffer.addWidget ( item );
-      _extensionGoItems [ item->getName() ] = item;
+    if ( cell ) {
+      forEach ( ExtensionSlice*, extension, cell->getExtensionSlices() ) {
+        PaletteExtensionGoItem* item = _createExtensionGoItem ( (*extension)->getName(), false );
+        gridBuffer.addWidget ( item );
+        _extensionGoItems [ item->getName() ] = item;
+      }
     }
     gridBuffer.flushWidgets ();
   }

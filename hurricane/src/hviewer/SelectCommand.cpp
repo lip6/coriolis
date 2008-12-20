@@ -109,10 +109,10 @@ namespace Hurricane {
       if ( !_selectAction->isChecked() )
         _selectAction->setChecked ( true );
       else
-        widget->redraw ();
+        widget->refresh ();
     } else {
       widget->setShowSelection ( true );
-      widget->redraw ();
+      widget->refresh ();
     }
     
     return false;

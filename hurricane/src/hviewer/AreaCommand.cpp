@@ -53,6 +53,7 @@
 # include <QMouseEvent>
 # include <QKeyEvent>
 
+# include <hurricane/viewer/Graphics.h>
 # include <hurricane/viewer/CellWidget.h>
 # include <hurricane/viewer/AreaCommand.h>
 
@@ -92,7 +93,8 @@ namespace Hurricane {
   {
     if ( !_drawingEnabled ) return;
 
-    widget->drawScreenRect ( _startPoint, _stopPoint );
+    widget->setPen ( Graphics::getPen("grid"), 2 );
+    widget->drawScreenRect ( _startPoint, _stopPoint, 2 );
     drawCorner ( widget, true  );
     drawCorner ( widget, false );
   }
@@ -113,7 +115,7 @@ namespace Hurricane {
     _cornerPoints[0].ry() += (bottomLeft) ? -10 :  10;
     _cornerPoints[2].rx() += (bottomLeft) ?  10 : -10;
 
-    widget->drawScreenPolyline ( _cornerPoints, 3, 4 );
+    widget->drawScreenPolyline ( _cornerPoints, 3, 4, 2 );
   }
 
 

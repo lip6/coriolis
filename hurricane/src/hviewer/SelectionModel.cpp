@@ -154,7 +154,7 @@ namespace Hurricane {
 
     if ( role == Qt::DisplayRole ) {
       switch ( index.column() ) {
-        case 0: return getString(_selection[row]._occurrence.getPath()).c_str();
+        case 0: return getString(_selection[row]._occurrence.getPath().getName()).c_str();
         case 1: return getString(_selection[row]._occurrence.getEntity()).c_str();
       }
     }

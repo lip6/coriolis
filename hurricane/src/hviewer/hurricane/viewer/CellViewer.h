@@ -109,6 +109,7 @@ namespace Hurricane {
               ZoomCommand          _zoomCommand;
               SelectCommand        _selectCommand;
               list<Cell*>          _cellHistory;
+              bool                 _firstShow;
                                    
     protected:                     
               void                 createActions             ();
