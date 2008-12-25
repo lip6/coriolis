@@ -31,7 +31,6 @@
 #include  "hurricane/Entity.h"
 #include  "hurricane/Occurrence.h"
 #include  "hurricane/viewer/Graphics.h"
-#include  "hurricane/viewer/Selector.h"
 #include  "hurricane/viewer/SelectionModel.h"
 #include  "hurricane/viewer/SelectionWidget.h"
 
@@ -66,11 +65,11 @@ namespace Hurricane {
   }
 
 
-  void  SelectionModel::setSelection ( const set<Selector*>& selection )
+  void  SelectionModel::setSelection ( const SelectorSet& selection )
   {
     if ( !isCumulative() ) _selection.clear ();
 
-    set<Selector*>::const_iterator    iselector = selection.begin();
+    SelectorSet::const_iterator       iselector = selection.begin();
     vector<OccurrenceItem>::iterator  iitem;
     for ( ; iselector != selection.end() ; iselector++ ) {
       if ( isCumulative() ) {

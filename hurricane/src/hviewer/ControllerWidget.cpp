@@ -288,8 +288,8 @@ namespace Hurricane {
     if ( getCellWidget() != cellWidget ) {
       ControllerTab::setCellWidget ( cellWidget );
       if ( getCellWidget() ) {
-        connect (  getCellWidget(), SIGNAL(selectionChanged(const set<Selector*>&,Cell*))
-                ,  _selection     , SLOT  (setSelection    (const set<Selector*>&,Cell*)) );
+        connect (  getCellWidget(), SIGNAL(selectionChanged(const SelectorSet&,Cell*))
+                ,  _selection     , SLOT  (setSelection    (const SelectorSet&,Cell*)) );
         connect (  _selection     , SIGNAL(occurrenceToggled(Occurrence,bool))
                 ,  getCellWidget(), SLOT  (toggleSelect     (Occurrence,bool)) );
         connect (  getCellWidget(), SIGNAL(occurrenceToggled(Occurrence))

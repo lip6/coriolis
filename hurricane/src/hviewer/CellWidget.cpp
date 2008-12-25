@@ -170,7 +170,7 @@ namespace Hurricane {
 
     _restore = true;
 
-    QPainter& screenPainter = _cellWidget->getDrawingPlanes().painter(2);
+    QPainter& screenPainter = _cellWidget->getDrawingPlanes().painter(PlaneId::Widget);
     _spotPoint = computeSpotPoint ( screenPoint );
 
     screenPainter.setPen ( Graphics::getPen("spot") );
@@ -315,6 +315,7 @@ namespace Hurricane {
 
   CellWidget::DrawingPlanes::DrawingPlanes ( const QSize& size, CellWidget* cw )
     : _cellWidget(cw)
+    , _printer(NULL)
     , _normalPen()
     , _linePen()
     , _workingPlane(0)
@@ -353,22 +354,22 @@ namespace Hurricane {
 
   void  CellWidget::DrawingPlanes::setBrush ( const QBrush& brush )
   {
-    _painters[0].setBrush ( brush );
-    _painters[1].setBrush ( brush );
+    _painters[PlaneId::Normal   ].setBrush ( brush );
+    _painters[PlaneId::Selection].setBrush ( brush );
   }
 
 
   void  CellWidget::DrawingPlanes::setBackground ( const QBrush& brush )
   {
-    _painters[0].setBackground ( brush );
-    _painters[1].setBackground ( brush );
+    _painters[PlaneId::Normal   ].setBackground ( brush );
+    _painters[PlaneId::Selection].setBackground ( brush );
   }
 
 
   void  CellWidget::DrawingPlanes::setBackgroundMode ( Qt::BGMode mode )
   {
-    _painters[0].setBackgroundMode ( mode );
-    _painters[1].setBackgroundMode ( mode );
+    _painters[PlaneId::Normal   ].setBackgroundMode ( mode );
+    _painters[PlaneId::Selection].setBackgroundMode ( mode );
   }
 
 
@@ -399,8 +400,8 @@ namespace Hurricane {
   void  CellWidget::DrawingPlanes::shiftLeft ( int dx )
   {
     paintersBegin ();
-    _painters[0].drawPixmap ( dx, 0, *_planes[0], 0, 0, width()-dx, height() );
-    _painters[1].drawPixmap ( dx, 0, *_planes[1], 0, 0, width()-dx, height() );
+    _painters[PlaneId::Normal   ].drawPixmap ( dx, 0, *_planes[0], 0, 0, width()-dx, height() );
+    _painters[PlaneId::Selection].drawPixmap ( dx, 0, *_planes[1], 0, 0, width()-dx, height() );
     paintersEnd ();
   }
 
@@ -408,8 +409,8 @@ namespace Hurricane {
   void  CellWidget::DrawingPlanes::shiftRight ( int dx )
   {
     paintersBegin ();
-    _painters[0].drawPixmap ( 0, 0, *_planes[0], dx, 0, width()-dx, height() );
-    _painters[1].drawPixmap ( 0, 0, *_planes[1], dx, 0, width()-dx, height() );
+    _painters[PlaneId::Normal   ].drawPixmap ( 0, 0, *_planes[0], dx, 0, width()-dx, height() );
+    _painters[PlaneId::Selection].drawPixmap ( 0, 0, *_planes[1], dx, 0, width()-dx, height() );
     paintersEnd ();
   }
 
@@ -417,8 +418,8 @@ namespace Hurricane {
   void  CellWidget::DrawingPlanes::shiftUp ( int dy )
   {
     paintersBegin ();
-    _painters[0].drawPixmap ( 0, dy, *_planes[0], 0, 0, width(), height()-dy );
-    _painters[1].drawPixmap ( 0, dy, *_planes[1], 0, 0, width(), height()-dy );
+    _painters[PlaneId::Normal   ].drawPixmap ( 0, dy, *_planes[0], 0, 0, width(), height()-dy );
+    _painters[PlaneId::Selection].drawPixmap ( 0, dy, *_planes[1], 0, 0, width(), height()-dy );
     paintersEnd ();
   }
 
@@ -426,38 +427,108 @@ namespace Hurricane {
   void  CellWidget::DrawingPlanes::shiftDown ( int dy )
   {
     paintersBegin ();
-    _painters[0].drawPixmap ( 0, 0, *_planes[0], 0, dy, width(), height()-dy );
-    _painters[1].drawPixmap ( 0, 0, *_planes[1], 0, dy, width(), height()-dy );
+    _painters[PlaneId::Normal   ].drawPixmap ( 0, 0, *_planes[0], 0, dy, width(), height()-dy );
+    _painters[PlaneId::Selection].drawPixmap ( 0, 0, *_planes[1], 0, dy, width(), height()-dy );
     paintersEnd ();
   }
 
 
   void  CellWidget::DrawingPlanes::copyToSelect ( int sx, int sy, int w, int h )
   {
-    painterBegin ( 1 );
-    _painters[1].setPen        ( Qt::NoPen );
-    _painters[1].setBackground ( Graphics::getBrush("background") );
-    _painters[1].eraseRect     ( sx, sy, w, h );
-  //_painters[1].setOpacity    ( 0.5 );
-    _painters[1].drawPixmap    ( sx, sy, *_planes[0], sx, sy, w, h );
-    painterEnd ( 1 );
+    painterBegin ( PlaneId::Selection );
+    _painters[PlaneId::Selection].setPen        ( Qt::NoPen );
+    _painters[PlaneId::Selection].setBackground ( Graphics::getBrush("background") );
+    _painters[PlaneId::Selection].eraseRect     ( sx, sy, w, h );
+  //_painters[PlaneId::Selection].setOpacity    ( 0.5 );
+    _painters[PlaneId::Selection].drawPixmap    ( sx, sy, *_planes[0], sx, sy, w, h );
+    painterEnd ( PlaneId::Selection );
   }
 
 
   void  CellWidget::DrawingPlanes::copyToScreen ( int sx, int sy, int w, int h )
   {
     if ( _cellWidget->showSelection() )
-      _painters[2].drawPixmap ( sx, sy
-                              , *_planes[1]
-                              , _cellWidget->getOffsetVA().rx()+sx, _cellWidget->getOffsetVA().ry()+sy
-                              , w, h
-                              );
+      _painters[PlaneId::Widget].drawPixmap
+        ( sx, sy
+        , *_planes[PlaneId::Selection]
+        , _cellWidget->getOffsetVA().rx()+sx, _cellWidget->getOffsetVA().ry()+sy
+        , w, h
+        );
     else
-      _painters[2].drawPixmap ( sx, sy
-                              , *_planes[0]
-                              , _cellWidget->getOffsetVA().rx()+sx, _cellWidget->getOffsetVA().ry()+sy
-                              , w, h
-                              );
+      _painters[PlaneId::Widget].drawPixmap
+        ( sx, sy
+        , *_planes[PlaneId::Normal]
+        , _cellWidget->getOffsetVA().rx()+sx, _cellWidget->getOffsetVA().ry()+sy
+        , w, h
+        );
+  }
+
+
+  void  CellWidget::DrawingPlanes::copyToPrinter ( int sx, int sy, int w, int h, QPrinter* printer )
+  {
+    bool  imageOnly = false;
+    int   ximage    = 0;
+    int   yimage    = 0;
+
+    if ( !printer ) return;
+    if ( imageOnly ) {
+      printer->setPaperSize   ( QSizeF(w,h),        QPrinter::DevicePixel );
+      printer->setPageMargins ( 0.0, 0.0, 0.0, 0.0, QPrinter::DevicePixel );
+    }
+
+    _printer = printer;
+    painterBegin ( PlaneId::Printer );
+
+    if ( !imageOnly ) {
+      QFont font ( "Bitstream Vera Sans", 12 );
+      font.setWeight ( QFont::Bold );
+
+      DbU::Unit x1 = _cellWidget->displayToDbuX ( sx );
+      DbU::Unit x2 = _cellWidget->displayToDbuX ( sx+w );
+      DbU::Unit y1 = _cellWidget->displayToDbuY ( sy );
+      DbU::Unit y2 = _cellWidget->displayToDbuY ( sy+h );
+
+      string title = "Unicorn:" + getString(_cellWidget->getCell())
+                   + " area [ " + DbU::getValueString(x1)
+                   + " "        + DbU::getValueString(y1)
+                   + " ] [ "    + DbU::getValueString(x2)
+                   + " "        + DbU::getValueString(y2)
+                   + " ]";
+
+      QRect titleArea = QRect ( 0, 0, _printer->width(), 50 );
+
+      _painters[PlaneId::Printer].setFont ( font );
+      _painters[PlaneId::Printer].drawText ( titleArea, Qt::AlignVCenter|Qt::AlignHCenter, title.c_str() );
+
+      ximage = (_printer->width() > w) ? (_printer->width()-w)/2 : 0;
+      yimage = 100;
+    }
+
+    cerr << "sy: " << sy << " offsetVA.ry(): " << _cellWidget->getOffsetVA().ry() << endl;
+    cerr << "w: " << w << " h:" << h << endl;
+
+    if ( _cellWidget->showSelection() )
+      _painters[PlaneId::Printer].drawPixmap
+        ( ximage, yimage
+        , *_planes[PlaneId::Selection]
+        , _cellWidget->getOffsetVA().rx()+sx, _cellWidget->getOffsetVA().ry()+sy
+        , w, h
+        );
+    else
+      _painters[PlaneId::Printer].drawPixmap
+        ( ximage, yimage
+        , *_planes[PlaneId::Normal]
+        , _cellWidget->getOffsetVA().rx()+sx, _cellWidget->getOffsetVA().ry()+sy
+        , w, h
+        );
+
+    if ( !imageOnly ) {
+      _painters[PlaneId::Printer].setPen ( QPen(QBrush(QColor("black")), 1.0) );
+      _painters[PlaneId::Printer].drawRect ( ximage-2, 98, w+4, h+4 );
+    }
+
+    painterEnd ( PlaneId::Printer );
+    _printer = NULL;
   }
 
 
@@ -527,16 +598,16 @@ namespace Hurricane {
     static unsigned int  state;
 
     const Component* component = dynamic_cast<const Component*>(go);
-    if ( !component ) return;
-
-    _goCount++;
-    rectangle = _cellWidget->dbuToDisplayRect ( transformation.getBox(component->getBoundingBox(basicLayer)) );
-    state     = ( (rectangle.width() > 2) ? 1:0) | ( (rectangle.height() > 2) ? 2:0); 
-    switch ( state ) {
-      case 0: break;
-      case 1: _cellWidget->drawScreenLine ( rectangle.bottomLeft(), rectangle.bottomRight() ); break;
-      case 2: _cellWidget->drawScreenLine ( rectangle.bottomLeft(), rectangle.topLeft    () ); break;
-      case 3: _cellWidget->drawScreenRect ( rectangle ); break;
+    if ( component ) {
+      _goCount++;
+      rectangle = _cellWidget->dbuToDisplayRect ( transformation.getBox(component->getBoundingBox(basicLayer)) );
+      state     = ( (rectangle.width() > 2) ? 1:0) | ( (rectangle.height() > 2) ? 2:0); 
+      switch ( state ) {
+        case 0: break;
+        case 1: _cellWidget->drawScreenLine ( rectangle.bottomLeft(), rectangle.bottomRight() ); break;
+        case 2: _cellWidget->drawScreenLine ( rectangle.bottomLeft(), rectangle.topLeft    () ); break;
+        case 3: _cellWidget->drawScreenRect ( rectangle ); break;
+      }
     }
   }
 
@@ -549,8 +620,72 @@ namespace Hurricane {
 
   void  CellWidget::DrawingQuery::extensionGoCallback ( Go* go )
   {
+    drawExtensionGo ( _cellWidget, go, getBasicLayer(), getArea(), getTransformation() );
+  }
+
+
+  void  CellWidget::DrawingQuery::drawExtensionGo ( CellWidget*           widget
+                                                  , const Go*             go
+                                                  , const BasicLayer*     basicLayer
+                                                  , const Box&            area
+                                                  , const Transformation& transformation
+                                                  )
+  {
     if ( _drawExtensionGo )
-      _drawExtensionGo ( _cellWidget, go, getBasicLayer(), getArea(), getTransformation() );
+      _drawExtensionGo ( widget, go, basicLayer, area, transformation );
+  }
+
+
+  bool  CellWidget::DrawingQuery::hasRubberCallback () const
+  {
+    return true;
+  }
+
+
+  void  CellWidget::DrawingQuery::rubberCallback ( Rubber* rubber )
+  {
+    drawRubber ( rubber, getArea(), getTransformation() );
+  }
+
+
+  void  CellWidget::DrawingQuery::drawRubber ( const Rubber*          rubber
+                                             , const Box&             area
+                                             , const Transformation&  transformation
+                                             )
+  {
+    static QPoint center;
+    static QPoint extremity;
+    static QPoint steiner;
+
+    switch ( _cellWidget->getRubberShape() ) {
+      case CellWidget::Steiner:
+        center = _cellWidget->dbuToDisplayPoint(transformation.getPoint(rubber->getBarycenter()));
+        forEach ( Hook*, hook, rubber->getHooks() ) {
+          extremity = _cellWidget->dbuToDisplayPoint
+            ( transformation.getPoint(hook->getComponent()->getCenter()) );
+          steiner = QPoint ( extremity.x(), center.y() );
+          _cellWidget->drawScreenLine ( center , steiner  , PlaneId::Working, false );
+          _cellWidget->drawScreenLine ( steiner, extremity, PlaneId::Working, false );
+        }
+        break;
+      case CellWidget::Barycentric:
+        center = _cellWidget->dbuToDisplayPoint(transformation.getPoint(rubber->getBarycenter()));
+        forEach ( Hook*, hook, rubber->getHooks() ) {
+          extremity = _cellWidget->dbuToDisplayPoint
+            ( transformation.getPoint(hook->getComponent()->getCenter()) );
+          _cellWidget->drawScreenLine ( center, extremity, PlaneId::Working, false );
+        }
+        break;
+      case CellWidget::Centric:
+      default:
+        center = _cellWidget->dbuToDisplayPoint(transformation.getPoint(rubber->getCenter()));
+        forEach ( Hook*, hook, rubber->getHooks() ) {
+          extremity = _cellWidget->dbuToDisplayPoint
+            ( transformation.getPoint(hook->getComponent()->getCenter()) );
+          _cellWidget->drawScreenLine ( center, extremity, PlaneId::Working, false );
+        }
+        break;
+    }
   }
 
 
@@ -589,7 +724,15 @@ namespace Hurricane {
   { return false; }
 
 
-  void  CellWidget::TextDrawingQuery::goCallback ( Go* go )
+  void  CellWidget::TextDrawingQuery::goCallback ( Go* )
+  { }
+
+
+  bool  CellWidget::TextDrawingQuery::hasRubberCallback () const
+  { return false; }
+
+
+  void  CellWidget::TextDrawingQuery::rubberCallback ( Rubber* )
   { }
 
 
@@ -597,7 +740,7 @@ namespace Hurricane {
   { return false; }
 
 
-  void  CellWidget::TextDrawingQuery::extensionGoCallback ( Go* go )
+  void  CellWidget::TextDrawingQuery::extensionGoCallback ( Go* )
   { }
 
 
@@ -697,6 +840,7 @@ namespace Hurricane {
                                              , _drawingQuery(this)
                                              , _textDrawingQuery(this)
                                              , _queryFilter(~Query::DoTerminalCells)
+                                             , _darkening(100)
                                              , _mousePosition(0,0)
                                              , _spot(this)
                                              , _cell(NULL)
@@ -712,6 +856,7 @@ namespace Hurricane {
                                              , _commands()
                                              , _redrawRectCount(0)
                                              , _textFontHeight(20)
+                                             , _rubberShape(Steiner)
   {
   //setBackgroundRole ( QPalette::Dark );
   //setAutoFillBackground ( false );
@@ -815,6 +960,17 @@ namespace Hurricane {
   }
 
 
+  void  CellWidget::rubberChange ()
+  {
+    switch ( getRubberShape() ) {
+      case Centric:     setRubberShape(Barycentric); break;
+      case Barycentric: setRubberShape(Steiner    ); break;
+      case Steiner:     setRubberShape(Centric    ); break;
+    }
+    emit settingsChanged();
+  }
+
+
   void  CellWidget::setShowSelection ( bool state )
   {
     if ( state != _showSelection ) {
@@ -853,8 +1009,8 @@ namespace Hurricane {
 
     if ( ! ( _selectionHasChanged && _showSelection ) || _cellModificated ) {
       _spot.setRestore ( false );
-      _drawingPlanes.copyToSelect ();
-      _drawingPlanes.select ( 0 );
+      _drawingPlanes.copyToSelect ( redrawArea );
+      _drawingPlanes.select ( PlaneId::Normal );
       _drawingPlanes.painterBegin ();
 
       _drawingPlanes.painter().setPen        ( Qt::NoPen );
@@ -863,7 +1019,7 @@ namespace Hurricane {
       _drawingPlanes.painter().eraseRect     ( redrawArea );
       repaint ();
 
-      int darkening = (_showSelection) ? Graphics::getDarkening() : 100;
+      setDarkening ( (_showSelection) ? Graphics::getDarkening() : 100 );
 
       if ( _cell ) {
 
@@ -876,14 +1032,14 @@ namespace Hurricane {
         _drawingQuery.setTransformation ( Transformation() );
 
         forEach ( BasicLayer*, iLayer, _technology->getBasicLayers() ) {
-          _drawingPlanes.setPen   ( Graphics::getPen  ((*iLayer)->getName(),darkening) );
-          _drawingPlanes.setBrush ( Graphics::getBrush((*iLayer)->getName(),darkening) );
+          _drawingPlanes.setPen   ( Graphics::getPen  ((*iLayer)->getName(),getDarkening()) );
+          _drawingPlanes.setBrush ( Graphics::getBrush((*iLayer)->getName(),getDarkening()) );
 
           if ( isDrawable((*iLayer)->getName()) ) {
             _drawingQuery.setBasicLayer ( *iLayer );
-            _drawingQuery.setFilter     ( _queryFilter & ~Query::DoMasterCells );
+            _drawingQuery.setFilter     ( _queryFilter & ~(Query::DoMasterCells|Query::DoRubbers) );
             _drawingQuery.doQuery       ();
-            _drawingPlanes.copyToSelect ();
+            _drawingPlanes.copyToSelect ( redrawArea );
             repaint ();
           }
           QApplication::processEvents();
@@ -896,13 +1052,26 @@ namespace Hurricane {
 
         if ( /*!timeout("redraw [boundaries]",timer,10.0,timedout) &&*/ (!_redrawManager.interrupted()) ) {
           if ( isDrawable("boundaries") ) {
-             _drawingPlanes.setPen   ( Graphics::getPen  ("boundaries",darkening) );
-             _drawingPlanes.setBrush ( Graphics::getBrush("boundaries",darkening) );
+             _drawingPlanes.setPen   ( Graphics::getPen  ("boundaries",getDarkening()) );
+             _drawingPlanes.setBrush ( Graphics::getBrush("boundaries",getDarkening()) );
 
              _drawingQuery.setBasicLayer ( NULL );
-             _drawingQuery.setFilter     ( _queryFilter & ~Query::DoComponents );
+             _drawingQuery.setFilter     ( _queryFilter & ~(Query::DoComponents|Query::DoRubbers) );
              _drawingQuery.doQuery       ();
-             _drawingPlanes.copyToSelect ();
+             _drawingPlanes.copyToSelect ( redrawArea );
+             repaint ();
+          }
+        }
+
+        if ( /*!timeout("redraw [rubbers]",timer,10.0,timedout) &&*/ (!_redrawManager.interrupted()) ) {
+          if ( isDrawable("rubber") ) {
+             _drawingPlanes.setPen   ( Graphics::getPen  ("rubber",getDarkening()) );
+             _drawingPlanes.setBrush ( Graphics::getBrush("rubber",getDarkening()) );
+
+             _drawingQuery.setBasicLayer ( NULL );
+             _drawingQuery.setFilter     ( _queryFilter & ~(Query::DoComponents|Query::DoMasterCells) );
+             _drawingQuery.doQuery       ();
+             _drawingPlanes.copyToSelect ( redrawArea );
              repaint ();
           }
         }
@@ -910,13 +1079,13 @@ namespace Hurricane {
         QApplication::processEvents();
         if ( /*!timeout("redraw [text.instances]",timer,10.0,timedout) &&*/ (!_redrawManager.interrupted()) ) {
           if ( isDrawable("text.instance") ) {
-            _drawingPlanes.setPen               ( Graphics::getPen  ("text.instance",darkening) );
-            _drawingPlanes.setBrush             ( Graphics::getBrush("text.instance",darkening) );
-            _drawingPlanes.setBackground        ( Graphics::getBrush("boundaries"   ,darkening) );
+            _drawingPlanes.setPen               ( Graphics::getPen  ("text.instance",getDarkening()) );
+            _drawingPlanes.setBrush             ( Graphics::getBrush("text.instance",getDarkening()) );
+            _drawingPlanes.setBackground        ( Graphics::getBrush("boundaries"   ,getDarkening()) );
             _textDrawingQuery.setArea           ( redrawBox );
             _textDrawingQuery.setTransformation ( Transformation() );
             _textDrawingQuery.doQuery           ();
-            _drawingPlanes.copyToSelect         ();
+            _drawingPlanes.copyToSelect         ( redrawArea );
             repaint ();
           }
         }
@@ -931,7 +1100,7 @@ namespace Hurricane {
             _drawingQuery.setDrawExtensionGo ( (*islice)->getName() );
             _drawingQuery.setFilter          ( Query::DoExtensionGos );
             _drawingQuery.doQuery            ();
-            _drawingPlanes.copyToSelect      ();
+            _drawingPlanes.copyToSelect      ( redrawArea );
             repaint ();
           }
         }
@@ -941,26 +1110,27 @@ namespace Hurricane {
       _cellModificated = false;
     }
 
+    setDarkening ( 100 );
     if ( _showSelection )
       redrawSelection ( redrawArea );
 
     popCursor ();
 
     timer.stop ();
-//  cerr << "CellWidget::redraw() - " << _redrawRectCount
-//       << " in " << timer.getCombTime() << "s ("
-//       << setprecision(3) << (timer.getCombTime()/_redrawRectCount) << " s/r)";
-//  if ( _drawingQuery.getGoCount() )
-//    cerr << " " << _drawingQuery.getGoCount()
-//         << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getGoCount()) << " s/go)";
-//  else
-//    cerr << " 0 Gos";
-//  if ( _drawingQuery.getInstanceCount() )
-//    cerr << " " << _drawingQuery.getInstanceCount()
-//         << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getInstanceCount()) << " s/inst)";
-//  else
-//    cerr << " 0 Instances";
-//  cerr << endl;
+    cerr << "CellWidget::redraw() - " << _redrawRectCount
+         << " in " << timer.getCombTime() << "s ("
+         << setprecision(3) << (timer.getCombTime()/_redrawRectCount) << " s/r)";
+    if ( _drawingQuery.getGoCount() )
+      cerr << " " << _drawingQuery.getGoCount()
+           << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getGoCount()) << " s/go)";
+    else
+      cerr << " 0 Gos";
+    if ( _drawingQuery.getInstanceCount() )
+      cerr << " " << _drawingQuery.getInstanceCount()
+           << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getInstanceCount()) << " s/inst)";
+    else
+      cerr << " 0 Instances";
+    cerr << endl;
   }
 
 
@@ -972,22 +1142,23 @@ namespace Hurricane {
                                 , redrawArea.height()
                                 );
 
-    _drawingPlanes.select ( 1 );
+    _drawingPlanes.select ( PlaneId::Selection );
     _drawingPlanes.painterBegin ();
     _drawingPlanes.painter().setPen        ( Qt::NoPen );
     _drawingPlanes.painter().setBackground ( Graphics::getBrush("background") );
     _drawingPlanes.painter().setClipRect   ( redrawArea );
 
     if ( _cell ) {
-      Box  redrawBox = displayToDbuBox ( redrawArea );
+      Box                    redrawBox = displayToDbuBox ( redrawArea );
+      SelectorSet::iterator  iselector;
 
-      for_each_basic_layer ( basicLayer, _technology->getBasicLayers() ) {
+      forEach ( BasicLayer*, basicLayer, _technology->getBasicLayers() ) {
       //if ( !isDrawableLayer(basicLayer->getName()) ) continue;
 
         _drawingPlanes.setPen   ( Graphics::getPen  (basicLayer->getName()) );
         _drawingPlanes.setBrush ( Graphics::getBrush(basicLayer->getName()) );
 
-        set<Selector*>::iterator  iselector = _selectors.begin ();
+        iselector = _selectors.begin ();
         for ( ; iselector != _selectors.end() ; iselector++ ) {
           Occurrence      occurrence     = (*iselector)->getOccurrence();
           Transformation  transformation = occurrence.getPath().getTransformation();
@@ -1000,18 +1171,48 @@ namespace Hurricane {
           }
 
           Component* component = dynamic_cast<Component*>(occurrence.getEntity());
-          if ( !component ) continue;
+          if ( !component ) break;
           if ( !component->getLayer() ) continue;
-          if ( !component->getLayer()->contains(basicLayer) ) continue;
+          if ( !component->getLayer()->contains(*basicLayer) ) continue;
 
           _drawingQuery.drawGo ( dynamic_cast<Go*>(occurrence.getEntity())
-                               , basicLayer
+                               , *basicLayer
                                , redrawBox
                                , transformation
                                );
         }
-        end_for;
       }
+
+      _drawingPlanes.setPen   ( Graphics::getPen  ("rubber") );
+      _drawingPlanes.setBrush ( Graphics::getBrush("rubber") );
+
+      for ( ; iselector != _selectors.end() ; iselector++ ) {
+        Occurrence      occurrence     = (*iselector)->getOccurrence();
+        Transformation  transformation = occurrence.getPath().getTransformation();
+
+        Rubber* rubber = dynamic_cast<Rubber*>(occurrence.getEntity());
+        if ( !rubber ) break;
+
+        _drawingQuery.drawRubber ( rubber, redrawBox, transformation );
+      }
+
+      Name extensionName = "";
+      for ( ; iselector != _selectors.end() ; iselector++ ) {
+        Occurrence      occurrence     = (*iselector)->getOccurrence();
+        Transformation  transformation = occurrence.getPath().getTransformation();
+
+        ExtensionGo* eGo = dynamic_cast<ExtensionGo*>(occurrence.getEntity());
+        if ( !eGo ) break;
+
+        if ( eGo->getName() != extensionName ) {
+          extensionName = eGo->getName();
+          _drawingQuery.setDrawExtensionGo ( extensionName );
+        }
+
+        if ( isDrawable(extensionName) )
+          _drawingQuery.drawExtensionGo ( this, eGo, NULL, redrawBox, transformation );
+      }
+
       repaint ();
     }
 
@@ -1095,26 +1296,26 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::drawLine ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2 )
+  void  CellWidget::drawLine ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2, bool mode )
   {
     _redrawRectCount++;
-    _drawingPlanes.setLineMode ( true );
+    _drawingPlanes.setLineMode ( mode );
     _drawingPlanes.painter().drawLine ( dbuToDisplayPoint(x1,y1), dbuToDisplayPoint(x2,y2) );
   }
 
 
-  void  CellWidget::drawLine ( const Point& p1, const Point& p2 )
+  void  CellWidget::drawLine ( const Point& p1, const Point& p2, bool mode )
   {
     _redrawRectCount++;
-    _drawingPlanes.setLineMode ( true );
+    _drawingPlanes.setLineMode ( mode );
     _drawingPlanes.painter().drawLine ( dbuToDisplayPoint(p1), dbuToDisplayPoint(p2) );
   }
 
 
-  void  CellWidget::drawScreenLine ( const QPoint& p1, const QPoint& p2, size_t plane )
+  void  CellWidget::drawScreenLine ( const QPoint& p1, const QPoint& p2, size_t plane, bool mode )
   {
     _redrawRectCount++;
-    _drawingPlanes.setLineMode ( true );
+    _drawingPlanes.setLineMode ( mode );
     _drawingPlanes.painter(plane).drawLine ( p1, p2 );
   }
 
@@ -1146,7 +1347,7 @@ namespace Hurricane {
 
   void  CellWidget::drawGrid ()
   {
-    _drawingPlanes.painter(2).setPen ( Graphics::getPen("grid") );
+    _drawingPlanes.painter(PlaneId::Widget).setPen ( Graphics::getPen("grid") );
 
     bool lambdaGrid = false;
     if ( Graphics::getThreshold("grid")/DbU::lambda(1.0) < _scale/5 )
@@ -1169,13 +1370,13 @@ namespace Hurricane {
         center = dbuToScreenPoint(xGrid,yGrid);
         if ( (xGrid % superGridStep) || (yGrid % superGridStep) ) {
           if ( lambdaGrid )
-            _drawingPlanes.painter(2).drawPoint ( center );
+            _drawingPlanes.painter(PlaneId::Widget).drawPoint ( center );
         } else {
           if ( lambdaGrid ) {
-            _drawingPlanes.painter(2).drawLine ( center.x()-3, center.y()  , center.x()+3, center.y()   );
-            _drawingPlanes.painter(2).drawLine ( center.x()  , center.y()-3, center.x()  , center.y()+3 );
+            _drawingPlanes.painter(PlaneId::Widget).drawLine ( center.x()-3, center.y()  , center.x()+3, center.y()   );
+            _drawingPlanes.painter(PlaneId::Widget).drawLine ( center.x()  , center.y()-3, center.x()  , center.y()+3 );
           } else {
-            _drawingPlanes.painter(2).drawPoint ( center );
+            _drawingPlanes.painter(PlaneId::Widget).drawPoint ( center );
           }
         }
       }
@@ -1420,14 +1621,14 @@ namespace Hurricane {
 
   void  CellWidget::paintEvent ( QPaintEvent* event )
   {
-    _drawingPlanes.painterBegin ( 2 );
+    _drawingPlanes.painterBegin ( PlaneId::Widget );
     _drawingPlanes.copyToScreen ();
     for ( size_t i=0 ; i<_commands.size() ; i++ )
       _commands[i]->draw ( this );
 
     if ( isDrawable("grid") ) drawGrid ();
     if ( isDrawable("spot") ) _spot.moveTo ( _mousePosition );
-    _drawingPlanes.painterEnd ( 2 );
+    _drawingPlanes.painterEnd ( PlaneId::Widget );
   }
 
 
@@ -1744,6 +1945,10 @@ namespace Hurricane {
       Occurrence occurrence ( *component );
       select ( occurrence );
     }
+    forEach ( Rubber*, rubber, net->getRubbers() ) {
+      Occurrence occurrence ( *rubber );
+      select ( occurrence );
+    }
     if ( !delayRedraw && _showSelection ) _redrawManager.refresh ();
   }
 
@@ -1753,6 +1958,10 @@ namespace Hurricane {
     unselect ( Occurrence(net) );
     forEach ( Component*, component, net->getComponents() ) {
       Occurrence occurrence ( *component );
+      unselect ( occurrence );
+    }
+    forEach ( Rubber*, rubber, net->getRubbers() ) {
+      Occurrence occurrence ( *rubber );
       unselect ( occurrence );
     }
     if ( !delayRedraw && _showSelection ) _redrawManager.refresh ();
@@ -1768,7 +1977,7 @@ namespace Hurricane {
 
   void  CellWidget::_unselectAll ( bool delayRedraw )
   {
-    set<Selector*>::iterator iselector;
+    SelectorSet::iterator iselector;
     while ( !_selectors.empty() )
       (*_selectors.begin())->detachFrom ( this );
 

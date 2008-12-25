@@ -29,6 +29,8 @@
 #include  <QStatusBar>
 #include  <QDockWidget>
 #include  <QApplication>
+#include  <QPrinter>
+#include  <QPrintDialog>
 
 #include  "hurricane/DataBase.h"
 #include  "hurricane/Cell.h"
@@ -48,12 +50,14 @@ namespace Hurricane {
                                              , _applicationName(tr("Viewer"))
                                              , _openAction(NULL)
                                              , _nextAction(NULL)
+                                             , _printAction(NULL)
                                              , _saveAction(NULL)
                                              , _closeAction(NULL)
                                              , _exitAction(NULL)
                                              , _refreshAction(NULL)
                                              , _fitToContentsAction(NULL)
                                              , _showSelectionAction(NULL)
+                                             , _rubberChangeAction(NULL)
                                              , _controllerAction(NULL)
                                              , _fileMenu(NULL)
                                              , _viewMenu(NULL)
@@ -91,6 +95,7 @@ namespace Hurricane {
 
     _openAction = new QAction  ( tr("&Open Cell"), this );
     _openAction->setObjectName ( "viewer.menuBar.file.openCell" );
+    _openAction->setShortcut   ( QKeySequence(tr("CTRL+O")) );
     _openAction->setIcon       ( QIcon(":/images/stock_open.png") );
     _openAction->setStatusTip  ( tr("Open (load) a new Cell") );
 
@@ -106,6 +111,13 @@ namespace Hurricane {
       _cellHistoryAction[i]->setFont    ( Graphics::getFixedFont(QFont::Bold,false,false) );
       connect ( _cellHistoryAction[i], SIGNAL(triggered()), this, SLOT(openHistoryCell()));
     }
+
+    _printAction = new QAction  ( tr("&Print"), this );
+    _printAction->setObjectName ( "viewer.menuBar.file.print" );
+    _printAction->setStatusTip  ( tr("Print the displayed area") );
+    _printAction->setShortcut   ( QKeySequence(tr("CTRL+P")) );
+    _printAction->setVisible    ( true );
+    connect ( _printAction, SIGNAL(triggered()), this, SLOT(printDisplay()) );
 
     _saveAction = new QAction  ( tr("&Save Cell"), this );
     _saveAction->setObjectName ( "viewer.menuBar.file.saveCell" );
@@ -141,10 +153,16 @@ namespace Hurricane {
     _showSelectionAction->setShortcut   ( Qt::Key_S );
     _showSelectionAction->setCheckable  ( true );
 
+    _rubberChangeAction = new QAction  ( tr("Change Rubber Style"), this );
+    _rubberChangeAction->setObjectName ( "viewer.menuBar.view.changeRubber" );
+    _rubberChangeAction->setStatusTip  ( tr("Cycle through all avalaibles rubber drawing styles") );
+    _rubberChangeAction->setShortcut   ( Qt::Key_Asterisk );
+
     _controllerAction = new QAction  ( tr("Controller"), this );
     _controllerAction->setObjectName ( "viewer.menuBar.tools.controller" );
-    _controllerAction->setIcon       ( QIcon(":/images/swiss-knife.png") );
     _controllerAction->setStatusTip  ( tr("Fine Tune && Inspect DataBase") );
+    _controllerAction->setIcon       ( QIcon(":/images/swiss-knife.png") );
+    _controllerAction->setShortcut   ( QKeySequence(tr("CTRL+I")) );
   }
 
 
@@ -164,7 +182,9 @@ namespace Hurricane {
       _fileMenu->addAction ( _cellHistoryAction[i] );
     }
     _fileMenu->addSeparator ();
+    _fileMenu->addAction ( _printAction );
     _fileMenu->addAction ( _saveAction );
+    _fileMenu->addSeparator ();
     _fileMenu->addAction ( _closeAction );
     _fileMenu->addAction ( _exitAction );
 
@@ -173,6 +193,7 @@ namespace Hurricane {
     _viewMenu->addAction ( _refreshAction );
     _viewMenu->addAction ( _fitToContentsAction );
     _viewMenu->addAction ( _showSelectionAction );
+    _viewMenu->addAction ( _rubberChangeAction );
 
     _toolsMenu = menuBar()->addMenu ( tr("Tools") );
     _toolsMenu->setObjectName ( "viewer.menuBar.tools" );
@@ -225,11 +246,12 @@ namespace Hurricane {
 
     setCentralWidget ( _cellWidget );
 
-    connect ( this                   , SIGNAL(redrawCellWidget()), _cellWidget, SLOT(refresh())               );
-    connect ( _refreshAction         , SIGNAL(triggered())       , _cellWidget, SLOT(refresh())               );
-    connect ( _fitToContentsAction   , SIGNAL(triggered())       , _cellWidget, SLOT(fitToContents())         );
-    connect ( _showSelectionAction   , SIGNAL(toggled(bool))     , _cellWidget, SLOT(setShowSelection(bool))  );
-    connect ( _controllerAction      , SIGNAL(triggered())       , this       , SLOT(showController())        );
+    connect ( this                   , SIGNAL(redrawCellWidget()), _cellWidget, SLOT(refresh())              );
+    connect ( _refreshAction         , SIGNAL(triggered())       , _cellWidget, SLOT(refresh())              );
+    connect ( _fitToContentsAction   , SIGNAL(triggered())       , _cellWidget, SLOT(fitToContents())        );
+    connect ( _showSelectionAction   , SIGNAL(toggled(bool))     , _cellWidget, SLOT(setShowSelection(bool)) );
+    connect ( _rubberChangeAction    , SIGNAL(triggered())       , _cellWidget, SLOT(rubberChange())         );
+    connect ( _controllerAction      , SIGNAL(triggered())       , this       , SLOT(showController())       );
     connect ( _cellWidget            , SIGNAL(mousePositionChanged(const Point&))
             , _mousePosition         , SLOT(setPosition(const Point&)) );
     connect ( _cellWidget            , SIGNAL(showSelectionToggled(bool))
@@ -326,6 +348,23 @@ namespace Hurricane {
 
   void  CellViewer::unselectAll ()
   { if ( _cellWidget ) _cellWidget->unselectAll(); }
+
+
+  void  CellViewer::printDisplay ()
+  {
+    if ( !_cellWidget ) return;
+    if ( !_cellWidget->getCell() ) {
+      cerr << Warning("Unable to print, no cell loaded yet.") << endl;
+      return;
+    }
+
+    QPrinter printer ( QPrinter::ScreenResolution );
+    printer.setOutputFileName ( "unicorn-snapshot.pdf" );
+
+    QPrintDialog  dialog ( &printer );
+    if ( dialog.exec() == QDialog::Accepted )
+      _cellWidget->copyToPrinter ( &printer );
+  }
 
 
 } // End of Hurricane namespace.

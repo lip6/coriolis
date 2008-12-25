@@ -40,8 +40,8 @@ namespace Hurricane {
   MoveCommand::MoveCommand ()
     : Command      ()
     , _active      (false)
-    , _lastPosition()
     , _firstEvent  (true)
+    , _lastPosition()
   { }
 
 
@@ -76,9 +76,11 @@ namespace Hurricane {
         if ( _active && !event->isAutoRepeat() ) {
           _active = false;
           widget->popCursor ();
+          return true;
         }
         break;
     }
+    return false;
   }
 
 

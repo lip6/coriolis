@@ -31,6 +31,7 @@
 
 class QSpinBox;
 class QCheckBox;
+class QRadioButton;
 
 
 namespace Hurricane {
@@ -43,27 +44,35 @@ namespace Hurricane {
       Q_OBJECT;
 
     public:
-                  DisplayFilterWidget ( QWidget* parent=NULL );
-      void        setCellWidget       ( CellWidget* );
-                                      
-    signals:                          
-      void        filterChanged       ();
-                                      
-    public slots:                     
-      void        startLevelChanged   ( int level );
-      void        stopLevelChanged    ( int level );
-      void        setDoMasterCells    ( int state );
-      void        setDoComponents     ( int state );
-      void        setDoTerminalCells  ( int state );
+                  DisplayFilterWidget  ( QWidget* parent=NULL );
+      void        setCellWidget        ( CellWidget* );
+                                       
+    signals:                           
+      void        filterChanged        ();
+                                       
+    public slots:                      
+      void        syncFromCellWidget   ();
+      void        startLevelChanged    ( int level );
+      void        stopLevelChanged     ( int level );
+      void        setDoMasterCells     ( int state );
+      void        setDoComponents      ( int state );
+      void        setDoTerminalCells   ( int state );
+      void        setRubberSteiner     ();
+      void        setRubberCentric     ();
+      void        setRubberBarycentric ();
 
     protected:
-      CellWidget* _cellWidget;
-      QSpinBox*   _startSpinBox;
-      QSpinBox*   _stopSpinBox;
-      QCheckBox*  _doMasterCells;
-      QCheckBox*  _doTerminalCells;
-      QCheckBox*  _doComponents;
-      int         _queryFilter;
+      CellWidget*    _cellWidget;
+      QSpinBox*      _startSpinBox;
+      QSpinBox*      _stopSpinBox;
+      QCheckBox*     _doMasterCells;
+      QCheckBox*     _doTerminalCells;
+      QCheckBox*     _doComponents;
+      QRadioButton*  _steiner;
+      QRadioButton*  _centric;
+      QRadioButton*  _barycentric;
+      int            _queryFilter;
+      bool           _signalEmitter;
   };
 
 

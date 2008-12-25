@@ -305,13 +305,15 @@ namespace Hurricane {
   class Query {
     public:
     // Types.
-      enum  QueryFilter { DoMasterCells   = 1
-                        , DoTerminalCells = 2
-                        , DoComponents    = 4
-                        , DoExtensionGos  = 8
+      enum  QueryFilter { DoMasterCells   =  1
+                        , DoTerminalCells =  2
+                        , DoComponents    =  4
+                        , DoRubbers       =  8
+                        , DoExtensionGos  = 16
                         , DoAll           =   DoMasterCells
                                             | DoTerminalCells
                                             | DoComponents
+                                            | DoRubbers
                                             | DoExtensionGos
                         };
     public:
@@ -329,10 +331,12 @@ namespace Hurricane {
       inline  Instance*             getInstance            ();
     //inline  const Tabulation&     getTab                 () const;
       virtual bool                  hasGoCallback          () const;
+      virtual bool                  hasRubberCallback      () const;
       virtual bool                  hasExtensionGoCallback () const;
       virtual bool                  hasMasterCellCallback  () const;
-      virtual void                  goCallback             ( Go* go ) = 0;
-      virtual void                  extensionGoCallback    ( Go* go ) = 0;
+      virtual void                  goCallback             ( Go*     ) = 0;
+      virtual void                  rubberCallback         ( Rubber* );
+      virtual void                  extensionGoCallback    ( Go*     ) = 0;
       virtual void                  masterCellCallback     () = 0;
     // Modifiers.
               void                  setQuery               ( Cell*                 cell

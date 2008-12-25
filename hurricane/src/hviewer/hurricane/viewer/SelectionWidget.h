@@ -71,7 +71,7 @@ namespace Hurricane {
     public slots:                                         
               void                   setShowSelection     ( bool );
               void                   selectCurrent        ( const QModelIndex& current, const QModelIndex& );
-              void                   setSelection         ( const set<Selector*>& selection, Cell* cell=NULL );
+              void                   setSelection         ( const SelectorSet& selection, Cell* cell=NULL );
               void                   toggleSelection      ( Occurrence occurrence );
               void                   toggleSelection      ( const QModelIndex& index );
               void                   forceRowHeight       ();

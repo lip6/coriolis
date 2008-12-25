@@ -36,12 +36,10 @@
 #include  "hurricane/Commons.h"
 #include  "hurricane/Occurrence.h"
 #include  "hurricane/viewer/Graphics.h"
+#include  "hurricane/viewer/Selector.h"
 
 
 namespace Hurricane {
-
-
-  class Selector;
 
 
   class OccurrenceItem {
@@ -82,7 +80,7 @@ namespace Hurricane {
     public:
                                      SelectionModel  ( QObject* parent=NULL );
                                     ~SelectionModel  ();
-             void                    setSelection    ( const set<Selector*>& selection );
+             void                    setSelection    ( const SelectorSet& selection );
              void                    toggleSelection ( Occurrence occurrence );
              Occurrence              toggleSelection ( const QModelIndex& index );
              int                     rowCount        ( const QModelIndex& parent=QModelIndex() ) const;

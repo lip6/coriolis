@@ -187,7 +187,7 @@ namespace Hurricane {
   }
 
 
-  void  SelectionWidget::setSelection ( const set<Selector*>& selection, Cell* cell )
+  void  SelectionWidget::setSelection ( const SelectorSet& selection, Cell* cell )
   {
     _baseModel->setSelection ( selection );
      

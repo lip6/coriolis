@@ -79,6 +79,7 @@ namespace Hurricane {
     public slots:                  
               void                 showController            ();
               void                 openHistoryCell           ();
+              void                 printDisplay              ();
     signals:                       
               void                 redrawCellWidget          ();
                                    
@@ -89,12 +90,14 @@ namespace Hurricane {
               QAction*             _openAction;
               QAction*             _nextAction;
               QAction*             _cellHistoryAction[CellHistorySize];
+              QAction*             _printAction;
               QAction*             _saveAction;
               QAction*             _closeAction;
               QAction*             _exitAction;
               QAction*             _refreshAction;
               QAction*             _fitToContentsAction;
               QAction*             _showSelectionAction;
+              QAction*             _rubberChangeAction;
               QAction*             _controllerAction;
               QMenu*               _fileMenu;
               QMenu*               _viewMenu;

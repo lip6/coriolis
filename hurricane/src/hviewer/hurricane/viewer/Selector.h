@@ -38,6 +38,11 @@ namespace Hurricane {
   class CellWidget;
 
 
+  struct SelectorLess {
+      bool operator () ( const Selector* lhs, const Selector* rhs ) const;
+  };
+
+
   class Selector : public PrivateProperty {
 
     public:
@@ -70,6 +75,9 @@ namespace Hurricane {
 
 // Inline Functions.
   inline set<CellWidget*>& Selector::getCellWidgetSet () { return _cellWidgets; }
+
+
+  typedef set<Selector*,SelectorLess>  SelectorSet;
 
 
 } // End of Hurricane namespace.

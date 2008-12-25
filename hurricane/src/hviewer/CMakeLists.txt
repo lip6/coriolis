@@ -14,7 +14,6 @@
                                      hurricane/viewer/MousePositionWidget.h
                                      hurricane/viewer/SelectCommand.h
                                      hurricane/viewer/CellWidget.h
-                                     hurricane/viewer/CellWidgets.h
                                      hurricane/viewer/CellViewer.h
                                      hurricane/viewer/RecordModel.h
                                      hurricane/viewer/InspectorWidget.h
