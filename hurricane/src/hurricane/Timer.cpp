@@ -143,11 +143,11 @@ namespace Hurricane {
   } 
 
 
-  std::ostream& operator<<(std::ostream& os, const Timer& tm)
+  string  Timer::_getString () const
   {
     //CPUNormalizer cpunorm;
-    double  userSec = tm.getUserTime ();
-    double  normSec = tm.getUserTime (); // * cpunorm.getNormalizingFactor();
+    double  userSec = getUserTime ();
+    double  normSec = getUserTime (); // * cpunorm.getNormalizingFactor();
     char    buffer[20];
 
     if ( userSec > 0.01 ) {
@@ -160,15 +160,16 @@ namespace Hurricane {
       normSec -= delta;
     }
   
-    sprintf ( buffer, "%.1e", tm.getSysTime() );
+    sprintf ( buffer, "%.1e", getSysTime() );
     
-    os << " " << userSec          << " user,"
-       << " " << buffer           << " system," 
-       << " " << tm.getRealTime() << " real," 
-       << " " << normSec          << " norm'd "
+    ostringstream os;
+    os << " " << userSec       << " user,"
+       << " " << buffer        << " system," 
+       << " " << getRealTime() << " real," 
+       << " " << normSec       << " norm'd "
        << "sec ";
 
-    return os;
+    return os.str();
   }
 
 

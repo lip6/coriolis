@@ -100,8 +100,7 @@ namespace Hurricane {
       inline  size_t         getMemorySize       () const;
       inline  size_t         getIncrease         () const;
       inline  void           resetIncrease       ();
-    // Friends Functions.                        
-      friend  std::ostream&  operator<<          ( std::ostream& os, const Timer& tm );
+              string         _getString          () const;
 
     protected:
     // Internal: Enum.
@@ -181,6 +180,9 @@ namespace Hurricane {
 
 
 }  // End of Hurricane namespace.
+
+
+IOSTREAM_VALUE_SUPPORT(Hurricane::Timer);
 
 
 #endif  // __HURRICANE_TIMER__
