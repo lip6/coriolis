@@ -150,8 +150,8 @@ namespace Hurricane {
               void                    drawScreenRect          ( const QRect& ,                size_t plane=PlaneId::Working );
               void                    drawScreenPolyline      ( const QPoint*, int, int,      size_t plane=PlaneId::Working );
     // Geometric conversions.                                 
-              QRect                   dbuToDisplayRect        ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2 ) const;
-              QRect                   dbuToDisplayRect        ( const Box& box ) const;
+              QRect                   dbuToDisplayRect        ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2, bool usePoint=true ) const;
+              QRect                   dbuToDisplayRect        ( const Box& box , bool usePoint=true ) const;
               QPoint                  dbuToDisplayPoint       ( DbU::Unit x, DbU::Unit y ) const;
               QPoint                  dbuToDisplayPoint       ( const Point& point ) const;
       inline  int                     dbuToDisplayX           ( DbU::Unit x ) const;
@@ -386,8 +386,10 @@ namespace Hurricane {
                                                        , const Transformation&  transformation
                                                        );
           inline  unsigned int  getGoCount             () const;
+          inline  unsigned int  getGoExtensionCount    () const;
           inline  unsigned int  getInstanceCount       () const;
           inline  void          resetGoCount           ();
+          inline  void          resetGoExtensionCount  ();
           inline  void          resetInstanceCount     ();
     
         protected:
@@ -396,6 +398,7 @@ namespace Hurricane {
                   map<Name,pair<InitExtensionGo_t*,DrawExtensionGo_t*> >
                                      _drawExtensionGos;
                   unsigned int       _goCount;
+                  unsigned int       _goExtensionCount;
                   unsigned int       _instanceCount;
       };
 
@@ -508,12 +511,20 @@ namespace Hurricane {
   { _goCount = 0; }
 
 
+  inline void  CellWidget::DrawingQuery::resetGoExtensionCount ()
+  { _goExtensionCount = 0; }
+
+
   inline void  CellWidget::DrawingQuery::resetInstanceCount ()
   { _instanceCount = 0; }
 
 
   inline unsigned int  CellWidget::DrawingQuery::getGoCount () const
   { return _goCount; }
+
+
+  inline unsigned int  CellWidget::DrawingQuery::getGoExtensionCount () const
+  { return _goExtensionCount; }
 
 
   inline unsigned int  CellWidget::DrawingQuery::getInstanceCount () const
