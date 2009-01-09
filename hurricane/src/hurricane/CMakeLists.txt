@@ -23,6 +23,7 @@
                                 hurricane/Bug.h
                                 hurricane/Error.h
                                 hurricane/Exception.h
+                                hurricane/Breakpoint.h
                                 hurricane/Filter.h
                                 hurricane/Go.h                    hurricane/Gos.h
                                 hurricane/ExtensionGo.h           hurricane/ExtensionGos.h
@@ -88,6 +89,7 @@
                                 Exception.cpp
                                 Bug.cpp
                                 Error.cpp
+                                Breakpoint.cpp
                                 DRCError.cpp
                                 Warning.cpp
                                 Interruption.cpp

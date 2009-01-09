@@ -10,6 +10,7 @@
                                      hurricane/viewer/PaletteExtensionGoItem.h
                                      hurricane/viewer/PaletteWidget.h
                                      hurricane/viewer/GraphicsWidget.h
+                                     hurricane/viewer/BreakpointWidget.h
                                      hurricane/viewer/DynamicLabel.h
                                      hurricane/viewer/MousePositionWidget.h
                                      hurricane/viewer/SelectCommand.h
@@ -31,6 +32,7 @@
                                      hurricane/viewer/ColorScale.h
                                      hurricane/viewer/Graphics.h
                                      hurricane/viewer/GraphicsWidget.h
+                                     hurricane/viewer/BreakpointWidget.h
                                      hurricane/viewer/Selector.h
                                      hurricane/viewer/Command.h
                                      hurricane/viewer/AreaCommand.h
@@ -56,6 +58,7 @@
                                      ColorScale.cpp
                                      Graphics.cpp
                                      GraphicsWidget.cpp
+                                     BreakpointWidget.cpp
                                      PaletteItem.cpp
                                      PaletteNamedItem.cpp
                                      PaletteLayerItem.cpp

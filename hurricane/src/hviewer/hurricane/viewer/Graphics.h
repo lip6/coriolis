@@ -30,8 +30,10 @@
 #include  <string>
 #include  <vector>
 
+#include  "hurricane/Breakpoint.h"
 #include  "hurricane/viewer/DisplayStyle.h"
 #include  "hurricane/viewer/ColorScale.h"
+#include  "hurricane/viewer/BreakpointWidget.h"
 
 #include  <QFont>
 
@@ -52,27 +54,28 @@ namespace Hurricane {
 
     public:
     // Accessors.
-      static  Graphics*                    getGraphics   ();
-      static  bool                         isEnabled     ();
-      static  const QFont                  getFixedFont  ( int weight=QFont::Normal, bool italic=false, bool underline=false );
-      static  const QFont                  getNormalFont ( bool bold=false, bool italic=false, bool underline=false );
-      static  const Name&                  getGroup      ( const Name& key );
-      static  QColor                       getColor      ( const Name& key, int darkening=100 );
-      static  QPen                         getPen        ( const Name& key, int darkening=100 );
-      static  QBrush                       getBrush      ( const Name& key, int darkening=100 );
-      static  const string&                getPattern    ( const Name& key );
-      static  float                        getThreshold  ( const Name& key );
-      static  int                          getDarkening  ();
-      static  const ColorScale&            getColorScale ( ColorScale::ScaleType );
+      static  Graphics*                    getGraphics      ();
+      static  bool                         isEnabled        ();
+      static  const QFont                  getFixedFont     ( int weight=QFont::Normal, bool italic=false, bool underline=false );
+      static  const QFont                  getNormalFont    ( bool bold=false, bool italic=false, bool underline=false );
+      static  const Name&                  getGroup         ( const Name& key );
+      static  QColor                       getColor         ( const Name& key, int darkening=100 );
+      static  QPen                         getPen           ( const Name& key, int darkening=100 );
+      static  QBrush                       getBrush         ( const Name& key, int darkening=100 );
+      static  const string&                getPattern       ( const Name& key );
+      static  float                        getThreshold     ( const Name& key );
+      static  int                          getDarkening     ();
+      static  const ColorScale&            getColorScale    ( ColorScale::ScaleType );
+      static  bool                         breakpointStopCb ( const string& message );
 
     // Modifiers.
-      static  void                         addStyle      ( DisplayStyle* displayStyle );
-      static  void                         setStyle      ( const Name& key );
-      static  void                         setStyle      ( size_t id );
-      static  DisplayStyle*                getStyle      ( const Name& key );
-      static  DisplayStyle*                getStyle      ();
-      static  const vector<DisplayStyle*>& getStyles     ();
-      static  void                         enable        ();
+      static  void                         addStyle         ( DisplayStyle* displayStyle );
+      static  void                         setStyle         ( const Name& key );
+      static  void                         setStyle         ( size_t id );
+      static  DisplayStyle*                getStyle         ( const Name& key );
+      static  DisplayStyle*                getStyle         ();
+      static  const vector<DisplayStyle*>& getStyles        ();
+      static  void                         enable           ();
 
     // Internals - Attributes.
     protected:
@@ -83,28 +86,28 @@ namespace Hurricane {
               bool                         _qtEnabled;
 
     // Internals - Constructors & Destructors.
-                                           Graphics      ();
-                                           Graphics      ( const Graphics& );
-              Graphics&                    operator=     ( const Graphics& );
-                                          ~Graphics      ();
-
-    // Internals - Methods.
-              size_t                       _findStyle    ( const Name& key ) const;
-              void                         _addStyle     ( DisplayStyle* displayStyle );
-              void                         _setStyle     ( const Name& key );
-              void                         _setStyle     ( size_t id );
-              DisplayStyle*                _getStyle     ( const Name& key );
-              DisplayStyle*                _getStyle     () const;
-      inline  const vector<DisplayStyle*>& _getStyles    () const;
-      inline  const Name&                  _getGroup     ( const Name& key ) const;
-      inline  QColor                       _getColor     ( const Name& key, int darkening ) const;
-      inline  QPen                         _getPen       ( const Name& key, int darkening ) const;
-      inline  QBrush                       _getBrush     ( const Name& key, int darkening ) const;
-      inline  const string&                _getPattern   ( const Name& key ) const;
-      inline  float                        _getThreshold ( const Name& key ) const;
-      inline  int                          _getDarkening () const;
-      inline  const ColorScale&            _getColorScale ( ColorScale::ScaleType ) const;
-      inline  void                         _enable       ();
+                                           Graphics         ();
+                                           Graphics         ( const Graphics& );
+              Graphics&                    operator=        ( const Graphics& );
+                                          ~Graphics         ();
+                                                            
+    // Internals - Methods.                                 
+              size_t                       _findStyle       ( const Name& key ) const;
+              void                         _addStyle        ( DisplayStyle* displayStyle );
+              void                         _setStyle        ( const Name& key );
+              void                         _setStyle        ( size_t id );
+              DisplayStyle*                _getStyle        ( const Name& key );
+              DisplayStyle*                _getStyle        () const;
+      inline  const vector<DisplayStyle*>& _getStyles       () const;
+      inline  const Name&                  _getGroup        ( const Name& key ) const;
+      inline  QColor                       _getColor        ( const Name& key, int darkening ) const;
+      inline  QPen                         _getPen          ( const Name& key, int darkening ) const;
+      inline  QBrush                       _getBrush        ( const Name& key, int darkening ) const;
+      inline  const string&                _getPattern      ( const Name& key ) const;
+      inline  float                        _getThreshold    ( const Name& key ) const;
+      inline  int                          _getDarkening    () const;
+      inline  const ColorScale&            _getColorScale   ( ColorScale::ScaleType ) const;
+      inline  void                         _enable          ();
 
   };
 

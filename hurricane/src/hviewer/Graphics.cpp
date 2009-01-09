@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -25,15 +25,15 @@
 
 # include  <assert.h>
 
-# include  <Qt>
-# include  <QBrush>
-# include  <QPen>
-# include  <QApplication>
+#include  <Qt>
+#include  <QBrush>
+#include  <QPen>
+#include  <QApplication>
 
-# include  "hurricane/Name.h"
+#include  "hurricane/Name.h"
 
-# include  "hurricane/viewer/DisplayStyle.h"
-# include  "hurricane/viewer/Graphics.h"
+#include  "hurricane/viewer/DisplayStyle.h"
+#include  "hurricane/viewer/Graphics.h"
 
 
 
@@ -104,6 +104,8 @@ namespace Hurricane {
       _styles[si]->qtAllocate ();
 
     _fireColorScale.qtAllocate ();
+
+    Breakpoint::setStopCb ( Graphics::breakpointStopCb );
   }
 
 
@@ -268,6 +270,18 @@ namespace Hurricane {
   const ColorScale& Graphics::getColorScale ( ColorScale::ScaleType id )
   {
     return getGraphics()->_getColorScale ( id );
+  }
+
+
+  bool  Graphics::breakpointStopCb ( const string& message )
+  {
+    static BreakpointWidget* bpw = NULL;
+
+    if ( !bpw )
+      bpw = new BreakpointWidget ();
+    bpw->setMessage ( message.c_str() );
+
+    return ( bpw->exec() == QDialog::Accepted );
   }
 
 

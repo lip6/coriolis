@@ -386,10 +386,10 @@ namespace Hurricane {
                                                        , const Transformation&  transformation
                                                        );
           inline  unsigned int  getGoCount             () const;
-          inline  unsigned int  getGoExtensionCount    () const;
+          inline  unsigned int  getExtensionGoCount    () const;
           inline  unsigned int  getInstanceCount       () const;
           inline  void          resetGoCount           ();
-          inline  void          resetGoExtensionCount  ();
+          inline  void          resetExtensionGoCount  ();
           inline  void          resetInstanceCount     ();
     
         protected:
@@ -398,7 +398,7 @@ namespace Hurricane {
                   map<Name,pair<InitExtensionGo_t*,DrawExtensionGo_t*> >
                                      _drawExtensionGos;
                   unsigned int       _goCount;
-                  unsigned int       _goExtensionCount;
+                  unsigned int       _extensionGoCount;
                   unsigned int       _instanceCount;
       };
 
@@ -511,8 +511,8 @@ namespace Hurricane {
   { _goCount = 0; }
 
 
-  inline void  CellWidget::DrawingQuery::resetGoExtensionCount ()
-  { _goExtensionCount = 0; }
+  inline void  CellWidget::DrawingQuery::resetExtensionGoCount ()
+  { _extensionGoCount = 0; }
 
 
   inline void  CellWidget::DrawingQuery::resetInstanceCount ()
@@ -523,8 +523,8 @@ namespace Hurricane {
   { return _goCount; }
 
 
-  inline unsigned int  CellWidget::DrawingQuery::getGoExtensionCount () const
-  { return _goExtensionCount; }
+  inline unsigned int  CellWidget::DrawingQuery::getExtensionGoCount () const
+  { return _extensionGoCount; }
 
 
   inline unsigned int  CellWidget::DrawingQuery::getInstanceCount () const

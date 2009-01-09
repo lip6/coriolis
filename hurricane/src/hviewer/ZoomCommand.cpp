@@ -60,8 +60,8 @@ namespace Hurricane {
   bool  ZoomCommand::keyPressEvent ( CellWidget* widget, QKeyEvent* event )
   { 
     switch ( event->key() ) {
-      case Qt::Key_Z: widget->setScale ( widget->getScale()*2.0 ); return true;
-      case Qt::Key_M: widget->setScale ( widget->getScale()/2.0 ); return true;
+      case Qt::Key_Z: widget->setScale ( widget->getScale()/2.0 ); return true;
+      case Qt::Key_M: widget->setScale ( widget->getScale()*2.0 ); return true;
     }
     return false;
   }
@@ -89,7 +89,7 @@ namespace Hurricane {
     setDrawingEnabled ( false );
 
     QRect zoomArea = QRect ( _startPoint, _stopPoint );
-    if ( ( zoomArea.width() > 10 ) && ( zoomArea.height() > 10 ) )
+    if ( ( abs(zoomArea.width()) > 10 ) && ( abs(zoomArea.height()) > 10 ) )
       widget->reframe ( widget->screenToDbuBox(zoomArea) );
     else {
       cerr << Warning("Rejecting too small zoom request.") << endl;

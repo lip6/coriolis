@@ -9,5 +9,6 @@
     <file>images/gtk-go-forward-rtl.png</file>
     <file>images/gtk-go-forward-ltr.png</file>
     <file>images/swiss-knife.png</file>
+    <file>images/gnome-gmush.png</file>
   </qresource>
 </RCC>

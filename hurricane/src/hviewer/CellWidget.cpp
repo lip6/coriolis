@@ -541,7 +541,7 @@ namespace Hurricane {
     , _cellWidget(widget)
     , _drawExtensionGo(NULL)
     , _goCount(0)
-    , _goExtensionCount(0)
+    , _extensionGoCount(0)
     , _instanceCount(0)
   { }
 
@@ -633,7 +633,7 @@ namespace Hurricane {
                                                   )
   {
     if ( _drawExtensionGo ) {
-      _goExtensionCount++;
+      _extensionGoCount++;
       _drawExtensionGo ( widget, go, basicLayer, area, transformation );
     }
   }
@@ -1029,7 +1029,7 @@ namespace Hurricane {
         Box redrawBox = displayToDbuBox ( redrawArea );
 
         _drawingQuery.resetGoCount      ();
-        _drawingQuery.resetGoExtensionCount();
+        _drawingQuery.resetExtensionGoCount();
         _drawingQuery.resetInstanceCount();
         _drawingQuery.setExtensionMask  ( 0 );
         _drawingQuery.setArea           ( redrawBox );
@@ -1129,9 +1129,9 @@ namespace Hurricane {
            << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getGoCount()) << " s/go)";
     else
       cerr << " 0 Gos";
-    if ( _drawingQuery.getGoExtensionCount() )
-      cerr << " " << _drawingQuery.getGoExtensionCount()
-           << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getGoExtensionCount()) << " s/ego)";
+    if ( _drawingQuery.getExtensionGoCount() )
+      cerr << " " << _drawingQuery.getExtensionGoCount()
+           << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getExtensionGoCount()) << " s/ego)";
     else
       cerr << " 0 eGos";
     if ( _drawingQuery.getInstanceCount() )
@@ -1751,23 +1751,21 @@ namespace Hurricane {
 
   QRect  CellWidget::dbuToDisplayRect ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2, bool usePoint ) const
   {
+    int width, height;
+
     if ( usePoint ) {
-        int width = dbuToDisplayX(x2) - dbuToDisplayX(x1);
-        int height = dbuToDisplayY(y1) - dbuToDisplayY(y2);
-        return QRect ( dbuToDisplayX(x1)
-                     , dbuToDisplayY(y2)
-                     , width?width:1
-                     , height?height:1
-                     );
+      width  = dbuToDisplayX(x2) - dbuToDisplayX(x1);
+      height = dbuToDisplayY(y1) - dbuToDisplayY(y2);
     } else {
-        int width = dbuToDisplayLength ( x2 - x1 );
-        int height = dbuToDisplayLength ( y2 - y1 );
-        return QRect ( dbuToDisplayX(x1)
-                     , dbuToDisplayY(y2)
-                     , width?width:1
-                     , height?height:1
-                     );
+      width  = dbuToDisplayLength ( x2 - x1 );
+      height = dbuToDisplayLength ( y2 - y1 );
     }
+
+    return QRect ( dbuToDisplayX(x1)
+                 , dbuToDisplayY(y2)
+                 , width  ? width  : 1
+                 , height ? height : 1
+                 );
   }
 
 
