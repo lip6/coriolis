@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -10,42 +10,45 @@
 //
 // x-----------------------------------------------------------------x 
 // |                                                                 |
-// |                  H U R R I C A N E                              |
-// |     V L S I   B a c k e n d   D a t a - B a s e                 |
+// |                   C O R I O L I S                               |
+// |          U n i c o r n  -  M a i n   G U I                      |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./GraphicsWidget.h"                       |
+// |  C++ Header  :       "./HApplication.h"                         |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
 
-#ifndef  __HURRICANE_GRAPHICS_WIDGET__
-#define  __HURRICANE_GRAPHICS_WIDGET__
 
 
-#include  <QWidget>
+#ifndef  __HURRICANE_HAPPLICATION__
+#define  __HURRICANE_HAPPLICATION__
+
+#include  <QApplication>
 
 
 namespace Hurricane {
 
 
-  class GraphicsWidget : public QWidget {
+  class HApplication : public QApplication {
       Q_OBJECT;
 
     public:
-            GraphicsWidget ( QWidget* parent=NULL );
-    signals:
-      void  styleChanged   ( void* emitter );
-    public slots:
-      void  styleChange    ( int id );
+                    HApplication ( int& argc, char** argv );
+                    HApplication ( int& argc, char** argv, bool GUIenabled );
+                    HApplication ( int& argc, char** argv, Type type );
+                    HApplication ( Display*, Qt::HANDLE visual=0, Qt::HANDLE colormap=0 );
+                    HApplication ( Display*, int& argc, char** argv, Qt::HANDLE visual=0, Qt::HANDLE colormap=0 );
+      virtual bool  notify       ( QObject*, QEvent* );
   };
 
 
 } // End of Hurricane namespace.
 
 
-#endif
+#endif  // __HURRICANE_HAPPLICATION__
+

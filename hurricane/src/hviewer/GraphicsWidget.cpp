@@ -79,15 +79,15 @@ namespace Hurricane {
     wLayout->addStretch ();
     setLayout ( wLayout );
 
-    connect ( group, SIGNAL(buttonClicked(int)), this, SLOT(styleChanged(int)) );
+    connect ( group, SIGNAL(buttonClicked(int)), this, SLOT(styleChange(int)) );
   }
 
 
-  void  GraphicsWidget::styleChanged ( int id )
+  void  GraphicsWidget::styleChange ( int id )
   {
     Graphics::setStyle ( (size_t)id );
   //cerr << "GraphicsWidget::setStyle() - " << getString(Graphics::getStyle()->getName()) << endl;
-    emit styleChanged ();
+    emit styleChanged ( (void*)this );
   }
 
 

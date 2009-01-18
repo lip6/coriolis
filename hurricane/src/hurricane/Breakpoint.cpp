@@ -94,7 +94,6 @@ namespace Hurricane {
 
   void  Breakpoint::setStopCb ( Breakpoint::StopCb_t* cb )
   {
-    cerr << "Breakpoint::setStopCb() - " << (void*)cb << endl;
     _stopCb = cb;
   }
 

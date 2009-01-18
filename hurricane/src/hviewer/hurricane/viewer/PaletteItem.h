@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -55,7 +55,7 @@ namespace Hurricane {
     protected:
       QPixmap      _sample;
       PaletteItem* _entry;
-    protected:
+    protected slots:
       void         redraw             ();
       void         paintEvent         ( QPaintEvent* );
   };
@@ -74,10 +74,12 @@ namespace Hurricane {
       virtual bool           isItemSelectable  () const;
       virtual void           setItemVisible    ( bool ) = 0;
       virtual void           setItemSelectable ( bool );
+    public slots:
+      virtual void           styleChange       ();
     signals:
+              void           styleChanged      ();
               void           visibleToggled    ();
               void           selectableToggled ();
-
     protected:
                              PaletteItem       ();
                              PaletteItem       ( const PaletteItem& );

@@ -61,11 +61,11 @@ namespace Hurricane {
     vLine->setFrameShadow ( QFrame::Sunken );
 
     QGridLayout* layout = new QGridLayout ();
-    layout->addWidget ( ok        , 0, 0, 2, 1, Qt::AlignVCenter );
-    layout->addWidget ( vLine     , 0, 1, 2, 1 );
-    layout->addWidget ( _message  , 0, 2 );
-    layout->addWidget ( stopLabel , 1, 2 );
-    layout->addWidget ( _stopLevel, 1, 3 );
+    layout->addWidget ( _message  , 0, 0 );
+    layout->addWidget ( stopLabel , 1, 0 );
+    layout->addWidget ( _stopLevel, 1, 1 );
+    layout->addWidget ( vLine     , 0, 2, 2, 1 );
+    layout->addWidget ( ok        , 0, 3, 2, 1, Qt::AlignVCenter );
     setLayout ( layout );
 
     connect ( ok        , SIGNAL(clicked())        , this, SLOT(accept()) );

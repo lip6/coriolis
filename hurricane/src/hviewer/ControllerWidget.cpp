@@ -98,7 +98,7 @@ namespace Hurricane {
     if ( getCellWidget() != cellWidget ) {
       ControllerTab::setCellWidget ( cellWidget );
       if ( getCellWidget() ) {
-        connect ( _graphics, SIGNAL(styleChanged()), getCellWidget(), SLOT(refresh()) );
+        connect ( _graphics, SIGNAL(styleChanged(void*)), getCellWidget(), SLOT(styleChange(void*)) );
       }
     }
   }

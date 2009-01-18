@@ -187,6 +187,7 @@ namespace Hurricane {
               void                    cellPreModificated      ();
               void                    cellPostModificated     ();
               void                    settingsChanged         ();
+              void                    styleChanged            ( void* emitter );
               void                    updatePalette           ( Cell* );
               void                    mousePositionChanged    ( const Point& position );
               void                    selectionChanged        ( const SelectorSet&, Cell* );
@@ -211,6 +212,7 @@ namespace Hurricane {
               void                    _selectOccurrencesUnder ( Box selectArea );
               void                    _unselectAll            ( bool delayRedraw );
               void                    rubberChange            ();
+              void                    styleChange             ( void* emitter );
               void                    updatePalette           ();
               void                    cellPreModificate       ();
               void                    cellPostModificate      ();

@@ -377,4 +377,18 @@ namespace Hurricane {
   }
 
 
+  void  PaletteWidget::styleChange ( void* emitter )
+  {
+    if ( emitter == this ) return;
+
+    PaletteItems::iterator iitem = _layerItems.begin();
+    for ( ; iitem != _layerItems.end() ; iitem++ )
+      iitem->second->styleChange ();
+
+    iitem = _extensionGoItems.begin();
+    for ( ; iitem != _extensionGoItems.end() ; iitem++ )
+      iitem->second->styleChange ();
+  }
+
+
 } // End of Hurricane namespace.

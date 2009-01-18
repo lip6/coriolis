@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -59,6 +59,8 @@ namespace Hurricane {
     painter.setPen        ( Graphics::getPen  (_entry->getName()) );
     painter.setBrush      ( Graphics::getBrush(_entry->getName()) );
     painter.drawRect      ( 2, 2, 16, 16 );
+
+    update ();
   }
 
 
@@ -86,6 +88,12 @@ namespace Hurricane {
 
   void  PaletteItem::setItemSelectable ( bool )
   { }
+
+
+  void  PaletteItem::styleChange ()
+  {
+    emit styleChanged ();
+  }
 
 
 } // End of Hurricane namespace.

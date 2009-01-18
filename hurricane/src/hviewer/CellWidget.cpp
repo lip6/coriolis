@@ -890,6 +890,13 @@ namespace Hurricane {
   }
 
 
+  void  CellWidget::styleChange ( void* emitter )
+  {
+    refresh ();
+    emit styleChanged(emitter);
+  }
+
+
   void  CellWidget::updatePalette ()
   {
     emit updatePalette(getCell());
@@ -904,6 +911,7 @@ namespace Hurricane {
     connect ( _palette, SIGNAL(paletteChanged())    , this    , SLOT(refresh()) );
     connect ( this    , SIGNAL(cellChanged(Cell*))  , _palette, SLOT(updateExtensions(Cell*)) );
     connect ( this    , SIGNAL(updatePalette(Cell*)), _palette, SLOT(updateExtensions(Cell*)) );
+    connect ( this    , SIGNAL(styleChanged(void*)) , _palette, SLOT(styleChange(void*)) );
   }
 
 
@@ -913,6 +921,7 @@ namespace Hurricane {
       disconnect ( _palette, SIGNAL(paletteChanged())    , this    ,  SLOT(refresh()) );
       disconnect ( this    , SIGNAL(cellChanged(Cell*))  , _palette, SLOT(updateExtensions(Cell*)) );
       disconnect ( this    , SIGNAL(updatePalette(Cell*)), _palette, SLOT(updateExtensions(Cell*)) );
+      disconnect ( this    , SIGNAL(styleChanged(void*)) , _palette, SLOT(styleChange(void*)) );
       _palette = NULL;
     }
   }
@@ -1094,7 +1103,7 @@ namespace Hurricane {
           }
         }
 
-      //_drawingQuery.setFilter        ( _queryFilter & ~Query::DoMasterCells );
+      //_drawingQuery.setFilter ( _queryFilter & ~Query::DoMasterCells );
         forEach ( ExtensionSlice*, islice, _cell->getExtensionSlices() ) {
           QApplication::processEvents();
           if ( /*timeout("redraw [extension]",timer,10.0,timedout) ||*/ (_redrawManager.interrupted()) ) break;

@@ -10,5 +10,7 @@
     <file>images/gtk-go-forward-ltr.png</file>
     <file>images/swiss-knife.png</file>
     <file>images/gnome-gmush.png</file>
+    <file>images/gnome-core.png</file>
+    <file>images/i-core.png</file>
   </qresource>
 </RCC>

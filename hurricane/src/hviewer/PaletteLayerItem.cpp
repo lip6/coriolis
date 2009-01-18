@@ -43,7 +43,9 @@ namespace Hurricane {
   {
     QHBoxLayout* layout = new QHBoxLayout ();
     layout->setContentsMargins ( 0, 0, 0, 0 );
-    layout->addWidget ( new DrawingStyleSample(this) );
+
+    DrawingStyleSample* sample = new DrawingStyleSample(this);
+    layout->addWidget ( sample );
 
     _visible->setChecked ( visible );
     _visible->setText    ( getString(getName()).c_str() );
@@ -61,8 +63,9 @@ namespace Hurricane {
 
     setLayout ( layout );
 
-    connect ( _visible   , SIGNAL(clicked()), this, SIGNAL(visibleToggled   ()) );
-    connect ( _selectable, SIGNAL(clicked()), this, SIGNAL(selectableToggled()) );
+    connect ( this       , SIGNAL(styleChanged()), sample, SLOT  (redraw           ()) );
+    connect ( _visible   , SIGNAL(clicked     ()), this  , SIGNAL(visibleToggled   ()) );
+    connect ( _selectable, SIGNAL(clicked     ()), this  , SIGNAL(selectableToggled()) );
   }
 
 

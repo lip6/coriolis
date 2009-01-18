@@ -4,12 +4,14 @@
    include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane
                          ${HURRICANE_SOURCE_DIR}/src/hviewer )
 
-                   set ( mocincludes hurricane/viewer/PaletteItem.h
+                   set ( mocincludes hurricane/viewer/HApplication.h
+                                     hurricane/viewer/PaletteItem.h
                                      hurricane/viewer/PaletteNamedItem.h
                                      hurricane/viewer/PaletteLayerItem.h
                                      hurricane/viewer/PaletteExtensionGoItem.h
                                      hurricane/viewer/PaletteWidget.h
                                      hurricane/viewer/GraphicsWidget.h
+                                     hurricane/viewer/ExceptionWidget.h
                                      hurricane/viewer/BreakpointWidget.h
                                      hurricane/viewer/DynamicLabel.h
                                      hurricane/viewer/MousePositionWidget.h
@@ -27,11 +29,13 @@
                                      hurricane/viewer/DisplayFilterWidget.h
                                      hurricane/viewer/ControllerWidget.h
                        )
-                   set ( exports     hurricane/viewer/ScreenUtilities.h
+                   set ( exports     hurricane/viewer/HApplication.h
+                                     hurricane/viewer/ScreenUtilities.h
                                      hurricane/viewer/DisplayStyle.h
                                      hurricane/viewer/ColorScale.h
                                      hurricane/viewer/Graphics.h
                                      hurricane/viewer/GraphicsWidget.h
+                                     hurricane/viewer/ExceptionWidget.h
                                      hurricane/viewer/BreakpointWidget.h
                                      hurricane/viewer/Selector.h
                                      hurricane/viewer/Command.h
@@ -53,11 +57,13 @@
                                      hurricane/viewer/DisplayFilterWidget.h
                                      hurricane/viewer/ControllerWidget.h
                        )
-                   set ( cpps        ScreenUtilities.cpp 
+                   set ( cpps        HApplication.cpp
+                                     ScreenUtilities.cpp 
                                      DisplayStyle.cpp 
                                      ColorScale.cpp
                                      Graphics.cpp
                                      GraphicsWidget.cpp
+                                     ExceptionWidget.cpp
                                      BreakpointWidget.cpp
                                      PaletteItem.cpp
                                      PaletteNamedItem.cpp

@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -68,6 +68,7 @@ namespace Hurricane {
              void              updateExtensions ( Cell* cell );
              void              showAll          ();
              void              hideAll          ();
+             void              styleChange      ( void* emitter );
                              
     protected:               
              PaletteItems     _layerItems;
