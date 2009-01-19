@@ -43,12 +43,16 @@ namespace Hurricane {
       void  setMessage       ( const QString& );
       int   getStopLevel     () const;
       void  setStopLevel     ( int );
+      int   execNoModal      ();
     public slots:
       void  updateStopLevel  ( int );
+    protected slots:
+      int   raiseFinished    ( int );
 
     private:
       QLabel*   _message;
       QSpinBox* _stopLevel;
+      bool      _isFinished;
   };
 
 

@@ -23,6 +23,7 @@
 // x-----------------------------------------------------------------x
 
 
+#include  <QApplication>
 #include  <QLabel>
 #include  <QPushButton>
 #include  <QSpinBox>
@@ -37,11 +38,12 @@ namespace Hurricane {
 
 
   BreakpointWidget::BreakpointWidget ( QWidget* parent )
-    : QDialog   (parent)
-    , _message  (new QLabel())
-    , _stopLevel(new QSpinBox())
+    : QDialog    (parent)
+    , _message   (new QLabel())
+    , _stopLevel (new QSpinBox())
+    , _isFinished(false)
   {
-    setModal       ( true );
+    setModal       ( false );
     setWindowTitle ( "Breakpoint" );
     setToolTip     ( "Crush the Mush to continue..." );
 
@@ -70,6 +72,25 @@ namespace Hurricane {
 
     connect ( ok        , SIGNAL(clicked())        , this, SLOT(accept()) );
     connect ( _stopLevel, SIGNAL(valueChanged(int)), this, SLOT(updateStopLevel(int)) );
+    connect ( this      , SIGNAL(finished(int))    , this, SLOT(raiseFinished(int)) );
+  }
+
+
+  int  BreakpointWidget::execNoModal ()
+  {
+    if ( isVisible() ) return -1;
+
+    _isFinished = false;
+    show ();
+    while ( !_isFinished )
+      QApplication::processEvents ();
+    return result();
+  }
+
+
+  int  BreakpointWidget::raiseFinished ( int )
+  {
+    _isFinished = true;
   }
 
 

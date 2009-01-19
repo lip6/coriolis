@@ -280,8 +280,9 @@ namespace Hurricane {
     if ( !bpw )
       bpw = new BreakpointWidget ();
     bpw->setMessage ( message.c_str() );
+    bpw->execNoModal ();
 
-    return ( bpw->exec() == QDialog::Accepted );
+    return ( bpw->result() == QDialog::Accepted );
   }
 
 
