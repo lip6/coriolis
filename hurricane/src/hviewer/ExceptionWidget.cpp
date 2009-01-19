@@ -84,9 +84,10 @@ namespace Hurricane {
     vLayout1->addLayout  ( hLayout2, Qt::AlignCenter );
 
     QHBoxLayout* hLayout1 = new QHBoxLayout ();
+    hLayout1->setSizeConstraint  ( QLayout::SetFixedSize );
     hLayout1->setContentsMargins ( 0, 0, 0, 0 );
-    hLayout1->addWidget ( ok );
-    hLayout1->addLayout ( vLayout1 );
+    hLayout1->addWidget          ( ok );
+    hLayout1->addLayout          ( vLayout1 );
 
     setLayout ( hLayout1 );
 
