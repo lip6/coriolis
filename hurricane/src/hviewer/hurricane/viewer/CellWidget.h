@@ -143,7 +143,7 @@ namespace Hurricane {
               void                    drawLine                ( DbU::Unit, DbU::Unit, DbU::Unit, DbU::Unit, bool mode=true );
               void                    drawLine                ( const Point&, const Point&, bool mode=true );
               void                    drawText                ( const Point&, const Name&, int angle=0, bool reverse=false );
-              void                    drawGrid                ();
+              void                    drawGrid                ( QRect );
               void                    drawSpot                ();
               void                    drawScreenLine          ( const QPoint&, const QPoint&, size_t plane=PlaneId::Working, bool mode=true );
               void                    drawScreenRect          ( const QPoint&, const QPoint&, size_t plane=PlaneId::Working );

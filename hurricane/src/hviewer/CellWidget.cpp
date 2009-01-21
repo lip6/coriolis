@@ -23,6 +23,9 @@
 // x-----------------------------------------------------------------x
 
 
+#include <sys/resource.h>
+#include <ctime>
+
 #include <QApplication>
 #include <QMouseEvent>
 #include <QKeyEvent>
@@ -864,9 +867,9 @@ namespace Hurricane {
   //setBackgroundRole ( QPalette::Dark );
   //setAutoFillBackground ( false );
     setAttribute     ( Qt::WA_OpaquePaintEvent );
-  //setAttribute     ( Qt::WA_NoSystemBackground );
-  //setAttribute     ( Qt::WA_PaintOnScreen );
-  //setAttribute     ( Qt::WA_StaticContents );
+    setAttribute     ( Qt::WA_NoSystemBackground );
+    setAttribute     ( Qt::WA_PaintOnScreen );
+    setAttribute     ( Qt::WA_StaticContents );
     setSizePolicy    ( QSizePolicy::Expanding, QSizePolicy::Expanding );
     setFocusPolicy   ( Qt::StrongFocus );
     setMouseTracking ( true );
@@ -1123,6 +1126,8 @@ namespace Hurricane {
       _cellModificated = false;
     }
 
+    if ( isDrawable("grid") ) drawGrid ( redrawArea );
+
     setDarkening ( 100 );
     if ( _showSelection )
       redrawSelection ( redrawArea );
@@ -1130,25 +1135,25 @@ namespace Hurricane {
     popCursor ();
 
     timer.stop ();
-    cerr << "CellWidget::redraw() - " << _redrawRectCount
-         << " in " << timer.getCombTime() << "s ("
-         << setprecision(3) << (timer.getCombTime()/_redrawRectCount) << " s/r)";
-    if ( _drawingQuery.getGoCount() )
-      cerr << " " << _drawingQuery.getGoCount()
-           << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getGoCount()) << " s/go)";
-    else
-      cerr << " 0 Gos";
-    if ( _drawingQuery.getExtensionGoCount() )
-      cerr << " " << _drawingQuery.getExtensionGoCount()
-           << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getExtensionGoCount()) << " s/ego)";
-    else
-      cerr << " 0 eGos";
-    if ( _drawingQuery.getInstanceCount() )
-      cerr << " " << _drawingQuery.getInstanceCount()
-           << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getInstanceCount()) << " s/inst)";
-    else
-      cerr << " 0 Instances";
-    cerr << endl;
+//     cerr << "CellWidget::redraw() - " << _redrawRectCount
+//          << " in " << timer.getCombTime() << "s ("
+//          << setprecision(3) << (timer.getCombTime()/_redrawRectCount) << " s/r)";
+//     if ( _drawingQuery.getGoCount() )
+//       cerr << " " << _drawingQuery.getGoCount()
+//            << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getGoCount()) << " s/go)";
+//     else
+//       cerr << " 0 Gos";
+//     if ( _drawingQuery.getExtensionGoCount() )
+//       cerr << " " << _drawingQuery.getExtensionGoCount()
+//            << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getExtensionGoCount()) << " s/ego)";
+//     else
+//       cerr << " 0 eGos";
+//     if ( _drawingQuery.getInstanceCount() )
+//       cerr << " " << _drawingQuery.getInstanceCount()
+//            << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getInstanceCount()) << " s/inst)";
+//     else
+//       cerr << " 0 Instances";
+//     cerr << endl;
   }
 
 
@@ -1363,9 +1368,14 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::drawGrid ()
+  void  CellWidget::drawGrid ( QRect redrawArea )
   {
-    _drawingPlanes.painter(PlaneId::Widget).setPen ( Graphics::getPen("grid") );
+    _drawingPlanes.select       ( PlaneId::Normal );
+    _drawingPlanes.painterBegin ();
+    _drawingPlanes.painter      ().setClipRect   ( redrawArea );
+    _drawingPlanes.painter      ( PlaneId::Normal ).setPen ( Graphics::getPen("grid") );
+
+    Box redrawBox = displayToDbuBox ( redrawArea ).inflate ( DbU::lambda(1.0) );
 
     bool lambdaGrid = false;
     if ( Graphics::getThreshold("grid")/DbU::lambda(1.0) < _scale/5 )
@@ -1377,28 +1387,33 @@ namespace Hurricane {
     DbU::Unit  yGrid;
     QPoint     center;
 
-    for ( yGrid = DbU::getOnSnapGrid(_visibleArea.getYMin())
-        ; yGrid < _visibleArea.getYMax()
+    for ( yGrid = DbU::getOnSnapGrid(redrawBox.getYMin())
+        ; yGrid < redrawBox.getYMax()
         ; yGrid += gridStep
         ) {
-      for ( xGrid = DbU::getOnSnapGrid(_visibleArea.getXMin())
-          ; xGrid < _visibleArea.getXMax()
+      for ( xGrid = DbU::getOnSnapGrid(redrawBox.getXMin())
+          ; xGrid < redrawBox.getXMax()
           ; xGrid += gridStep
           ) {
-        center = dbuToScreenPoint(xGrid,yGrid);
+        center = dbuToDisplayPoint(xGrid,yGrid);
         if ( (xGrid % superGridStep) || (yGrid % superGridStep) ) {
-          if ( lambdaGrid )
-            _drawingPlanes.painter(PlaneId::Widget).drawPoint ( center );
+          if ( lambdaGrid ) {
+            _drawingPlanes.painter(PlaneId::Normal).drawPoint ( center );
+          }
         } else {
           if ( lambdaGrid ) {
-            _drawingPlanes.painter(PlaneId::Widget).drawLine ( center.x()-3, center.y()  , center.x()+3, center.y()   );
-            _drawingPlanes.painter(PlaneId::Widget).drawLine ( center.x()  , center.y()-3, center.x()  , center.y()+3 );
+            _drawingPlanes.painter(PlaneId::Normal).drawLine ( center.x()-3, center.y()  , center.x()+3, center.y()   );
+            _drawingPlanes.painter(PlaneId::Normal).drawLine ( center.x()  , center.y()-3, center.x()  , center.y()+3 );
           } else {
-            _drawingPlanes.painter(PlaneId::Widget).drawPoint ( center );
+            _drawingPlanes.painter(PlaneId::Normal).drawPoint ( center );
           }
         }
       }
     }
+
+    _drawingPlanes.copyToSelect ( redrawArea );
+    _drawingPlanes.painterEnd   ();
+    repaint ();
   }
 
 
@@ -1639,14 +1654,28 @@ namespace Hurricane {
 
   void  CellWidget::paintEvent ( QPaintEvent* event )
   {
+    static Timer   timer;
+    static time_t  prevTime = 0;
+    static time_t  currTime = 0;
+
+    timer.start ();
     _drawingPlanes.painterBegin ( PlaneId::Widget );
     _drawingPlanes.copyToScreen ();
     for ( size_t i=0 ; i<_commands.size() ; i++ )
       _commands[i]->draw ( this );
 
-    if ( isDrawable("grid") ) drawGrid ();
+//     if ( isDrawable("grid") ) drawGrid ();
     if ( isDrawable("spot") ) _spot.moveTo ( _mousePosition );
     _drawingPlanes.painterEnd ( PlaneId::Widget );
+    timer.stop ();
+
+    time ( &currTime );
+    double delta = difftime ( currTime, prevTime );
+
+//    if ( delta )
+//       cerr << "CellWidget::paintEvent() - lagging: " << delta << endl;
+
+    prevTime = currTime;
   }
 
 

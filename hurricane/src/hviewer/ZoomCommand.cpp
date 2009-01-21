@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -60,8 +60,8 @@ namespace Hurricane {
   bool  ZoomCommand::keyPressEvent ( CellWidget* widget, QKeyEvent* event )
   { 
     switch ( event->key() ) {
-      case Qt::Key_Z: widget->setScale ( widget->getScale()/2.0 ); return true;
-      case Qt::Key_M: widget->setScale ( widget->getScale()*2.0 ); return true;
+      case Qt::Key_Z: widget->setScale ( widget->getScale()*2.0 ); return true;
+      case Qt::Key_M: widget->setScale ( widget->getScale()/2.0 ); return true;
     }
     return false;
   }
