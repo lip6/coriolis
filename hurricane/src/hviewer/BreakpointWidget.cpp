@@ -89,7 +89,7 @@ namespace Hurricane {
   }
 
 
-  int  BreakpointWidget::raiseFinished ( int )
+  void  BreakpointWidget::raiseFinished ( int )
   {
     _isFinished = true;
   }

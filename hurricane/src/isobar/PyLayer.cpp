@@ -51,8 +51,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyLayer_getTechnology ()"
 
-  static PyObject* PyLayer_getTechnology ( PyLayer *self )
-  {
+  static PyObject* PyLayer_getTechnology ( PyLayer *self ) {
     trace << "PyLayer_getTechnology ()" << endl;
 
     Technology* techno = NULL;

@@ -58,6 +58,7 @@ namespace Hurricane {
   { }
 
 
+#if defined(Q_WS_X11)
   HApplication::HApplication ( Display* display, Qt::HANDLE visual, Qt::HANDLE colormap )
     : QApplication ( display, visual, colormap )
   { }
@@ -66,6 +67,7 @@ namespace Hurricane {
   HApplication::HApplication ( Display* display, int& argc, char** argv, Qt::HANDLE visual, Qt::HANDLE colormap )
     : QApplication ( display, argc, argv, visual, colormap )
   { }
+#endif
 
 
   bool  HApplication::notify ( QObject* object, QEvent* event )

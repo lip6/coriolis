@@ -1,37 +1,3 @@
-
-// -*- C++ -*-
-//
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
-//
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
-// ===================================================================
 //
 // $Id: PyComponent.cpp,v 1.17 2008/02/07 17:09:41 xtof Exp $
 //
@@ -98,8 +64,7 @@ extern "C" {
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyComponent_getPosition ()"
-  static PyObject* PyComponent_getPosition ( PyComponent *self )
-  {
+  static PyObject* PyComponent_getPosition ( PyComponent *self ) {
     trace << "PyComponent_getPosition ()" << endl;
     METHOD_HEAD ( "Component.getPosition()" )
 
@@ -117,8 +82,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyComponent_getNet ()"
 
-  static PyObject* PyComponent_getNet ( PyComponent *self )
-  {
+  static PyObject* PyComponent_getNet ( PyComponent *self ) {
     trace << "PyComponent_getNet ()" << endl;
     
     Net* net = NULL;
@@ -135,8 +99,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyComponent_getLayer ()"
 
-  static PyObject* PyComponent_getLayer ( PyComponent *self )
-  {
+  static PyObject* PyComponent_getLayer ( PyComponent *self ) {
     trace << "PyComponent_getLayer ()" << endl;
     METHOD_HEAD ( "Component.getLayer()" )
 
@@ -153,8 +116,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyComponent_getBoundingBox ()"
 
-  static PyObject* PyComponent_getBoundingBox ( PyComponent *self )
-  {
+  static PyObject* PyComponent_getBoundingBox ( PyComponent *self ) {
     trace << "PyComponent_getBoundingBox ()" << endl;
     METHOD_HEAD ( "Component.getBoundingBox()" )
 
@@ -195,7 +157,7 @@ extern "C" {
   PyTypeObjectLinkPyType(Component)
 
 
-# else  // End of Python Module Code Part.
+#else  // End of Python Module Code Part.
 
 
 // x=================================================================x

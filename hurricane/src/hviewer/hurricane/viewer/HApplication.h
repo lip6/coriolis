@@ -41,8 +41,10 @@ namespace Hurricane {
                     HApplication ( int& argc, char** argv );
                     HApplication ( int& argc, char** argv, bool GUIenabled );
                     HApplication ( int& argc, char** argv, Type type );
+#if defined(Q_WS_X11)
                     HApplication ( Display*, Qt::HANDLE visual=0, Qt::HANDLE colormap=0 );
                     HApplication ( Display*, int& argc, char** argv, Qt::HANDLE visual=0, Qt::HANDLE colormap=0 );
+#endif
       virtual bool  notify       ( QObject*, QEvent* );
   };
 

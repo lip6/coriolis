@@ -47,7 +47,7 @@ namespace Hurricane {
     public slots:
       void  updateStopLevel  ( int );
     protected slots:
-      int   raiseFinished    ( int );
+      void  raiseFinished    ( int );
 
     private:
       QLabel*   _message;

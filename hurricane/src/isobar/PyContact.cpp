@@ -151,6 +151,4 @@ extern "C" {
 }  // End of extern "C".
 
 
-
-
 }  // End of Isobar namespace.
