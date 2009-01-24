@@ -273,23 +273,23 @@ namespace Hurricane {
     private:
       class RedrawManager {
         public:
-          inline              RedrawManager ( CellWidget* );
-                             ~RedrawManager ();
-                 void         goLeft        ( int );
-                 void         goRight       ( int );
-                 void         goUp          ( int );
-                 void         goDown        ( int );
-                 void         refresh       ();
-                 void         process       ();
-          inline void         clearOverrun  ();
-          inline bool         isOverrun     () const;
-          inline bool         interrupted   () const;
-          inline size_t       getPendings   () const;
+          inline              RedrawManager  ( CellWidget* );
+                             ~RedrawManager  ();
+                 void         goLeft         ( int );
+                 void         goRight        ( int );
+                 void         goUp           ( int );
+                 void         goDown         ( int );
+                 void         refresh        ();
+                 void         process        ();
+          inline void         stopProcessing ();
+          inline bool         isProcessing   () const;
+          inline bool         interrupted    () const;
+          inline size_t       getPendings    () const;
         private:
           CellWidget*         _widget;
           list<RedrawEvent*>  _events;
-          bool                _overrun;
-          bool                _refreshInterrupt;
+          bool                _processing;
+          bool                _interrupted;
       };
 
     public:
@@ -442,6 +442,7 @@ namespace Hurricane {
     protected:
     // Internal: Attributes.
       static  const int                  _stripWidth;
+      static  const int                  _initialSide;
               vector<Qt::CursorShape>    _cursors;
     //        MapView*                   _mapView;
               Technology*                _technology;
@@ -541,12 +542,12 @@ namespace Hurricane {
   { return _shift; }
 
 
-  inline bool  CellWidget::RedrawManager::isOverrun () const
-  { return _overrun; }
+  inline bool  CellWidget::RedrawManager::isProcessing () const
+  { return _processing; }
 
 
-  inline void  CellWidget::RedrawManager::clearOverrun ()
-  { _overrun = false; }
+  inline void  CellWidget::RedrawManager::stopProcessing ()
+  { _processing = false; }
 
 
   inline size_t  CellWidget::RedrawManager::getPendings () const
@@ -554,7 +555,13 @@ namespace Hurricane {
 
 
   inline bool  CellWidget::RedrawManager::interrupted () const
-  { return ( _events.size() > 5 ) || _refreshInterrupt; }
+  {
+#ifdef ALLOW_REQUEST_INTERRUPT
+    return ( _events.size() > 5 ) || _interrupted;
+#else
+    return _interrupted;
+#endif
+  }
 
 
   inline bool  CellWidget::DrawingPlanes::getLineMode () const

@@ -91,9 +91,13 @@ namespace Hurricane {
     QPoint eventPosition = event->pos();
     if ( _firstEvent ) { _firstEvent = false; _lastPosition = eventPosition; }
 
-    int dx = ( eventPosition.x() - _lastPosition.x() ) << 1;
-    int dy = ( eventPosition.y() - _lastPosition.y() ) << 1;
-    _lastPosition = eventPosition;
+    int dx = eventPosition.x() - _lastPosition.x();
+    int dy = eventPosition.y() - _lastPosition.y();
+    int rx = dx%2;
+    int ry = dy%2;
+    _lastPosition = QPoint ( eventPosition.x() - rx, eventPosition.y() - ry );
+    dx -= rx;
+    dy -= ry;
 
     if ( dx > 0 ) widget->goLeft  (  dx );
     if ( dx < 0 ) widget->goRight ( -dx );

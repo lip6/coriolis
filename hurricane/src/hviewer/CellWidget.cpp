@@ -196,10 +196,10 @@ namespace Hurricane {
 
 
   CellWidget::RedrawManager::RedrawManager ( CellWidget* widget )
-    : _widget (widget)
-    , _events ()
-    , _overrun(false)
-    , _refreshInterrupt(false)
+    : _widget     (widget)
+    , _events     ()
+    , _processing (false)
+    , _interrupted(false)
   { }
 
 
@@ -214,77 +214,86 @@ namespace Hurricane {
 
   void  CellWidget::RedrawManager::goLeft ( int shift )
   {
+#ifdef ALLOW_REQUEST_INTERRUPT
     list<RedrawEvent*>::iterator ievent = _events.end();
     if ( !_events.empty() && (_events.back()->getType() == RedrawEvent::Refresh) )
       --ievent;
     _events.insert ( ievent, new RedrawEvent(RedrawEvent::GoLeft,shift,_widget) );
+#else
+    _events.push_back ( new RedrawEvent(RedrawEvent::GoLeft,shift,_widget) );
+#endif
 
-    if ( !_overrun ) {
-      if ( _events.size() == 1 ) process ();
-      else _overrun = true;
-    }
+    if ( !_processing ) process ();
   }
 
 
   void  CellWidget::RedrawManager::goRight ( int shift )
   {
+#ifdef ALLOW_REQUEST_INTERRUPT
     list<RedrawEvent*>::iterator ievent = _events.end();
     if ( !_events.empty() && (_events.back()->getType() == RedrawEvent::Refresh) )
       --ievent;
     _events.insert ( ievent, new RedrawEvent(RedrawEvent::GoRight,shift,_widget) );
+#else
+    _events.push_back ( new RedrawEvent(RedrawEvent::GoRight,shift,_widget) );
+#endif
 
-    if ( !_overrun ) {
-      if ( _events.size() == 1 ) process ();
-      else _overrun = true;
-    }
+    if ( !_processing ) process ();
   }
 
 
   void  CellWidget::RedrawManager::goUp ( int shift )
   {
+#ifdef ALLOW_REQUEST_INTERRUPT
     list<RedrawEvent*>::iterator ievent = _events.end();
     if ( !_events.empty() && (_events.back()->getType() == RedrawEvent::Refresh) )
       --ievent;
     _events.insert ( ievent, new RedrawEvent(RedrawEvent::GoUp,shift,_widget) );
+#else
+    _events.push_back ( new RedrawEvent(RedrawEvent::GoUp,shift,_widget) );
+#endif
 
-    if ( !_overrun ) {
-      if ( _events.size() == 1 ) process ();
-      else _overrun = true;
-    }
+    if ( !_processing ) process ();
   }
 
 
   void  CellWidget::RedrawManager::goDown ( int shift )
   {
+#ifdef ALLOW_REQUEST_INTERRUPT
     list<RedrawEvent*>::iterator ievent = _events.end();
     if ( !_events.empty() && (_events.back()->getType() == RedrawEvent::Refresh) )
       --ievent;
     _events.insert ( ievent, new RedrawEvent(RedrawEvent::GoDown,shift,_widget) );
+#else
+    _events.push_back ( new RedrawEvent(RedrawEvent::GoDown,shift,_widget) );
+#endif
 
-    if ( !_overrun ) {
-      if ( _events.size() == 1 ) process ();
-      else _overrun = true;
-    }
+    if ( !_processing ) process ();
   }
 
 
   void  CellWidget::RedrawManager::refresh ()
   {
+#ifdef ALLOW_REQUEST_INTERRUPT
     if ( !_events.empty() && (_events.back()->getType() == RedrawEvent::Refresh) ) {
-      _refreshInterrupt = true;
+      _interrupted = true;
     } else if ( _events.empty() ) {
       _events.push_back ( new RedrawEvent(RedrawEvent::Refresh,0,_widget) );
 
-      if ( !_overrun ) {
-        if ( _events.size() == 1 ) process ();
-        else _overrun = true;
-      }
+      if ( !_processing ) process ();
     }
+#else
+    _events.push_back ( new RedrawEvent(RedrawEvent::Refresh,0,_widget) );
+
+    if ( !_processing ) process ();
+#endif
   }
 
 
   inline void  CellWidget::RedrawManager::process ()
   {
+    _processing = true;
+
     while ( !_events.empty() ) {
       RedrawEvent* event = _events.front ();
 
@@ -296,19 +305,24 @@ namespace Hurricane {
         case RedrawEvent::Refresh: _widget->_refresh (); break;
       }
 
-      if ( event->getType() == RedrawEvent::Refresh )
+#ifdef ALLOW_REQUEST_INTERRUPT
+      if ( event->getType() == RedrawEvent::Refresh ) {
         _events.pop_back ();
-      else
+      } else
         _events.pop_front ();
 
       delete event;
 
-      if ( _events.empty() && (_overrun || _refreshInterrupt) ) {
+      if ( _events.empty() && _interrupted ) {
         _events.push_back ( new RedrawEvent(RedrawEvent::Refresh,0,_widget) );
-        _overrun          = false;
-        _refreshInterrupt = false;
+        _interrupted = false;
       }
+#else
+      _events.pop_front ();
+#endif
     }
+
+    _processing = false;
   }
 
 
@@ -831,38 +845,40 @@ namespace Hurricane {
 // Class :  "Hurricane::CellWidget".
 
 
-  const int  CellWidget::_stripWidth = 100;
+  const int  CellWidget::_stripWidth  = 10;
+  const int  CellWidget::_initialSide = (400/_stripWidth)*_stripWidth;
 
 
-  CellWidget::CellWidget ( QWidget* parent ) : QWidget(parent)
-                                             , _technology(NULL)
-                                             , _palette(NULL)
-                                             , _displayArea(0,0,6*_stripWidth,6*_stripWidth)
-                                             , _visibleArea(_stripWidth,_stripWidth,4*_stripWidth,4*_stripWidth)
-                                             , _scale(1.0)
-                                             , _offsetVA(_stripWidth,_stripWidth)
-                                             , _redrawManager(this)
-                                             , _drawingPlanes(QSize(6*_stripWidth,6*_stripWidth),this)
-                                             , _drawingQuery(this)
-                                             , _textDrawingQuery(this)
-                                             , _queryFilter(~Query::DoTerminalCells)
-                                             , _darkening(100)
-                                             , _mousePosition(0,0)
-                                             , _spot(this)
-                                             , _cell(NULL)
-                                             , _cellChanged(true)
-                                             , _showBoundaries(true)
-                                             , _showSelection(false)
-                                             , _cumulativeSelection(false)
-                                             , _selectionHasChanged(false)
-                                             , _delaySelectionChanged(0)
-                                             , _cellModificated(true)
-                                             , _selectors()
-                                             , _selection(this)
-                                             , _commands()
-                                             , _redrawRectCount(0)
-                                             , _textFontHeight(20)
-                                             , _rubberShape(Steiner)
+  CellWidget::CellWidget ( QWidget* parent )
+    : QWidget               (parent)
+    , _technology           (NULL)
+    , _palette              (NULL)
+    , _displayArea          (0,0,_initialSide+2*_stripWidth,_initialSide+2*_stripWidth)
+    , _visibleArea          (_stripWidth,_stripWidth,_initialSide,_initialSide)
+    , _scale                (1.0)
+    , _offsetVA             (_stripWidth,_stripWidth)
+    , _redrawManager        (this)
+    , _drawingPlanes        (QSize(_initialSide+2*_stripWidth,_initialSide+2*_stripWidth),this)
+    , _drawingQuery         (this)
+    , _textDrawingQuery     (this)
+    , _queryFilter          (~Query::DoTerminalCells)
+    , _darkening            (100)
+    , _mousePosition        (0,0)
+    , _spot                 (this)
+    , _cell                 (NULL)
+    , _cellChanged          (true)
+    , _showBoundaries       (true)
+    , _showSelection        (false)
+    , _cumulativeSelection  (false)
+    , _selectionHasChanged  (false)
+    , _delaySelectionChanged(0)
+    , _cellModificated      (true)
+    , _selectors            ()
+    , _selection            (this)
+    , _commands             ()
+    , _redrawRectCount      (0)
+    , _textFontHeight       (20)
+    , _rubberShape          (Steiner)
   {
   //setBackgroundRole ( QPalette::Dark );
   //setAutoFillBackground ( false );
@@ -971,7 +987,7 @@ namespace Hurricane {
 
   QSize  CellWidget::minimumSizeHint () const
   {
-    return QSize(_stripWidth*4,_stripWidth*4);
+    return QSize(_initialSide,_initialSide);
   }
 
 
@@ -1010,13 +1026,13 @@ namespace Hurricane {
 //          << _selectionHasChanged << " filter:"
 //          << _queryFilter << endl;
 
-    static bool  timedout;
-    static Timer timer;
+//     static bool  timedout;
+//     static Timer timer;
 
     if ( !isVisible() ) return;
 
-    timer.start ();
-    timedout         = false;
+//     timer.start ();
+//     timedout         = false;
     _cellChanged     = false;
     _redrawRectCount = 0;
 
@@ -1024,7 +1040,7 @@ namespace Hurricane {
 
     if ( ! ( _selectionHasChanged && _showSelection ) || _cellModificated ) {
       _spot.setRestore ( false );
-      _drawingPlanes.copyToSelect ( redrawArea );
+    //_drawingPlanes.copyToSelect ( redrawArea );
       _drawingPlanes.select ( PlaneId::Normal );
       _drawingPlanes.painterBegin ();
 
@@ -1032,7 +1048,7 @@ namespace Hurricane {
       _drawingPlanes.painter().setBackground ( Graphics::getBrush("background") );
       _drawingPlanes.painter().setClipRect   ( redrawArea );
       _drawingPlanes.painter().eraseRect     ( redrawArea );
-      repaint ();
+    //repaint ();
 
       setDarkening ( (_showSelection) ? Graphics::getDarkening() : 100 );
 
@@ -1055,8 +1071,8 @@ namespace Hurricane {
             _drawingQuery.setBasicLayer ( *iLayer );
             _drawingQuery.setFilter     ( _queryFilter & ~(Query::DoMasterCells|Query::DoRubbers) );
             _drawingQuery.doQuery       ();
-            _drawingPlanes.copyToSelect ( redrawArea );
-            repaint ();
+          //_drawingPlanes.copyToSelect ( redrawArea );
+          //repaint ();
           }
           QApplication::processEvents();
           if ( _redrawManager.interrupted() ) {
@@ -1074,8 +1090,8 @@ namespace Hurricane {
              _drawingQuery.setBasicLayer ( NULL );
              _drawingQuery.setFilter     ( _queryFilter & ~(Query::DoComponents|Query::DoRubbers) );
              _drawingQuery.doQuery       ();
-             _drawingPlanes.copyToSelect ( redrawArea );
-             repaint ();
+           //_drawingPlanes.copyToSelect ( redrawArea );
+           //repaint ();
           }
         }
 
@@ -1087,8 +1103,8 @@ namespace Hurricane {
              _drawingQuery.setBasicLayer ( NULL );
              _drawingQuery.setFilter     ( _queryFilter & ~(Query::DoComponents|Query::DoMasterCells) );
              _drawingQuery.doQuery       ();
-             _drawingPlanes.copyToSelect ( redrawArea );
-             repaint ();
+           //_drawingPlanes.copyToSelect ( redrawArea );
+           //repaint ();
           }
         }
 
@@ -1101,8 +1117,8 @@ namespace Hurricane {
             _textDrawingQuery.setArea           ( redrawBox );
             _textDrawingQuery.setTransformation ( Transformation() );
             _textDrawingQuery.doQuery           ();
-            _drawingPlanes.copyToSelect         ( redrawArea );
-            repaint ();
+          //_drawingPlanes.copyToSelect         ( redrawArea );
+          //repaint ();
           }
         }
 
@@ -1116,10 +1132,11 @@ namespace Hurricane {
             _drawingQuery.setDrawExtensionGo ( (*islice)->getName() );
             _drawingQuery.setFilter          ( Query::DoExtensionGos );
             _drawingQuery.doQuery            ();
-            _drawingPlanes.copyToSelect      ( redrawArea );
-            repaint ();
+          //_drawingPlanes.copyToSelect      ( redrawArea );
+          //repaint ();
           }
         }
+        repaint ();
       }
 
       _drawingPlanes.painterEnd ();
@@ -1134,7 +1151,7 @@ namespace Hurricane {
 
     popCursor ();
 
-    timer.stop ();
+//     timer.stop ();
 //     cerr << "CellWidget::redraw() - " << _redrawRectCount
 //          << " in " << timer.getCombTime() << "s ("
 //          << setprecision(3) << (timer.getCombTime()/_redrawRectCount) << " s/r)";
@@ -1654,34 +1671,33 @@ namespace Hurricane {
 
   void  CellWidget::paintEvent ( QPaintEvent* event )
   {
-    static Timer   timer;
-    static time_t  prevTime = 0;
-    static time_t  currTime = 0;
+//  static Timer   timer;
+//  static time_t  prevTime = 0;
+//  static time_t  currTime = 0;
 
-    timer.start ();
+//  timer.start ();
     _drawingPlanes.painterBegin ( PlaneId::Widget );
     _drawingPlanes.copyToScreen ();
     for ( size_t i=0 ; i<_commands.size() ; i++ )
       _commands[i]->draw ( this );
 
-//     if ( isDrawable("grid") ) drawGrid ();
     if ( isDrawable("spot") ) _spot.moveTo ( _mousePosition );
     _drawingPlanes.painterEnd ( PlaneId::Widget );
-    timer.stop ();
+//  timer.stop ();
 
-    time ( &currTime );
-    double delta = difftime ( currTime, prevTime );
+//  time ( &currTime );
+//  double delta = difftime ( currTime, prevTime );
 
-//    if ( delta )
-//       cerr << "CellWidget::paintEvent() - lagging: " << delta << endl;
+//  if ( delta )
+//    cerr << "CellWidget::paintEvent() - lagging: " << delta << endl;
 
-    prevTime = currTime;
+//  prevTime = currTime;
   }
 
 
   void  CellWidget::resizeEvent ( QResizeEvent* )
   {
-  //cerr << "CellWidget::resizeEvent() - size: " << geometry().width() << "x" << geometry().height() << endl;
+//  cerr << "CellWidget::resizeEvent() - size: " << geometry().width() << "x" << geometry().height() << endl;
 
     QSize uaDelta ( 0, 0 );
     QSize uaSize  = geometry().size();
