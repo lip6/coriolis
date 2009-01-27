@@ -273,6 +273,26 @@ namespace Hurricane {
   }
 
 
+  string  Graphics::toHtml ( const string& s )
+  {
+    string protect = s;
+
+    if ( !isEnabled() ) return protect;
+
+    unsigned int  pos     = protect.find ( '<' );
+    while ( pos < protect.size() ) {
+      protect.replace ( pos, 1, "&lt;" );
+      pos = protect.find ( '<', pos );
+    }
+    pos = protect.find ( '>' );
+    while ( pos < protect.size() ) {
+      protect.replace ( pos, 1, "&gt;" );
+      pos = protect.find ( '>', pos );
+    }
+    return protect;
+  }
+
+
   bool  Graphics::breakpointStopCb ( const string& message )
   {
     static BreakpointWidget* bpw = NULL;

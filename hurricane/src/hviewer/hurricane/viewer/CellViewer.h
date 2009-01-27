@@ -77,10 +77,12 @@ namespace Hurricane {
               void                 unselect                  ( Occurrence& occurence );
               void                 unselectAll               ();
     public slots:                  
+              void                 setShowSelection          ( bool );
               void                 showController            ();
               void                 openHistoryCell           ();
               void                 printDisplay              ();
     signals:                       
+              void                 showSelectionToggled      ( bool );
               void                 redrawCellWidget          ();
                                    
     public:                        

@@ -149,6 +149,7 @@ namespace Hurricane {
   void  NetlistWidget::setCell ( Cell* cell )
   {
     _cell = cell;
+    _view->selectionModel()->clear ();
     _baseModel->setCell<InformationType> ( cell );
      
     string windowTitle = "Netlist" + getString(cell);

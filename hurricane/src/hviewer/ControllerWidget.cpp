@@ -224,7 +224,7 @@ namespace Hurricane {
       if ( !_cwCumulativeSelection )
         getCellWidget()->unselectAll ( true );
       getCellWidget()->setCumulativeSelection ( true );
-      getCellWidget()->setShowSelection ( true );
+      getCellWidget()->setShowSelection       ( true );
       connect ( _netlistBrowser, SIGNAL(netSelected  (const Net*)), getCellWidget(), SLOT(select  (const Net*)) );
       connect ( _netlistBrowser, SIGNAL(netUnselected(const Net*)), getCellWidget(), SLOT(unselect(const Net*)) );
     } else {
@@ -296,12 +296,12 @@ namespace Hurricane {
                 ,  _selection     , SLOT  (toggleSelection  (Occurrence)) );
         connect (  _selection     , SIGNAL(cumulativeToggled     (bool))
                 ,  getCellWidget(), SLOT  (setCumulativeSelection(bool)) );
+        connect (  _selection     , SIGNAL(selectionCleared())
+                ,  getCellWidget(), SLOT  (unselectAll     ()) );
         connect (  _selection     , SIGNAL(showSelectionToggled(bool))
                 ,  getCellWidget(), SLOT  (setShowSelection    (bool)) );
         connect (  getCellWidget(), SIGNAL(showSelectionToggled(bool))
                 ,  _selection     , SLOT  (setShowSelection    (bool)) );
-        connect (  _selection     , SIGNAL(selectionCleared())
-                ,  getCellWidget(), SLOT  (unselectAll     ()) );
       }
     }
   }

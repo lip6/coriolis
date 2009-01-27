@@ -59,16 +59,15 @@ namespace Hurricane {
                                      SelectionWidget      ( QWidget* parent=NULL );
               void                   inspect              ( const QModelIndex& index  );
               bool                   isCumulative         () const;
-              void                   clear                ();
     signals:                                              
-              void                   showSelection        ( bool );
+              void                   showSelectionToggled ( bool );
               void                   occurrenceToggled    ( Occurrence, bool );
               void                   cumulativeToggled    ( bool );
-              void                   showSelectionToggled ( bool );
               void                   selectionCleared     ();
               void                   inspect              ( Record* );
               void                   inspect              ( Occurrence& );
     public slots:                                         
+              void                   clear                ();
               void                   setShowSelection     ( bool );
               void                   selectCurrent        ( const QModelIndex& current, const QModelIndex& );
               void                   setSelection         ( const SelectorSet& selection, Cell* cell=NULL );

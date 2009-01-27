@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -66,6 +66,7 @@ namespace Hurricane {
       static  float                        getThreshold     ( const Name& key );
       static  int                          getDarkening     ();
       static  const ColorScale&            getColorScale    ( ColorScale::ScaleType );
+      static  string                       toHtml           ( const string& );
       static  bool                         breakpointStopCb ( const string& message );
 
     // Modifiers.

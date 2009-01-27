@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -768,8 +768,8 @@ namespace Hurricane {
 // Class :  "Hurricane::CellWidget::SelectorCriterions".
 
 
-  CellWidget::SelectorCriterions::SelectorCriterions ( CellWidget* cw )
-    : _cellWidget(cw)
+  CellWidget::SelectorCriterions::SelectorCriterions ()
+    : _cellWidget(NULL)
     , _criterions()
   { }
 
@@ -782,6 +782,7 @@ namespace Hurricane {
 
   bool  CellWidget::SelectorCriterions::add ( const Net* net, bool delayRedraw )
   {
+    if ( !_cellWidget ) return false;
     if ( !_cellWidget->isSelected(Occurrence(net)) ) {
       _criterions.push_back ( new NetSelectorCriterion(net) );
       _criterions.back()->doSelection ( _cellWidget, delayRedraw );
@@ -793,6 +794,7 @@ namespace Hurricane {
 
   bool  CellWidget::SelectorCriterions::add ( Box area )
   {
+    if ( !_cellWidget ) return false;
     _criterions.push_back ( new AreaSelectorCriterion(area) );
     _criterions.back()->doSelection ( _cellWidget, true );
     return true;
@@ -801,6 +803,7 @@ namespace Hurricane {
 
   bool  CellWidget::SelectorCriterions::remove (  const Net* net, bool delayRedraw )
   {
+    if ( !_cellWidget ) return false;
     if ( !_cellWidget->isSelected(Occurrence(net)) ) return false;
 
     size_t i=0;
@@ -820,14 +823,17 @@ namespace Hurricane {
 
   void  CellWidget::SelectorCriterions::clear ()
   {
-    for ( size_t i=0 ; i<_criterions.size() ; i++ )
+    for ( size_t i=0 ; i<_criterions.size() ; i++ ) {
       delete _criterions[i];
+    }
     _criterions.clear ();
   }
 
 
   void  CellWidget::SelectorCriterions::revalidate ()
   {
+    if ( !_cellWidget ) return;
+
     size_t i    = 0;
     size_t last = _criterions.size ();
     while ( i < last ) {
@@ -865,16 +871,12 @@ namespace Hurricane {
     , _darkening            (100)
     , _mousePosition        (0,0)
     , _spot                 (this)
-    , _cell                 (NULL)
+    , _state                (new State(NULL))
     , _cellChanged          (true)
-    , _showBoundaries       (true)
-    , _showSelection        (false)
-    , _cumulativeSelection  (false)
     , _selectionHasChanged  (false)
     , _delaySelectionChanged(0)
     , _cellModificated      (true)
     , _selectors            ()
-    , _selection            (this)
     , _commands             ()
     , _redrawRectCount      (0)
     , _textFontHeight       (20)
@@ -1004,8 +1006,8 @@ namespace Hurricane {
 
   void  CellWidget::setShowSelection ( bool state )
   {
-    if ( state != _showSelection ) {
-      _showSelection       = state;
+    if ( state != _state->showSelection() ) {
+      _state->setShowSelection ( state );
       _selectionHasChanged = false;
       refresh ();
 
@@ -1016,7 +1018,21 @@ namespace Hurricane {
 
   void  CellWidget::setCumulativeSelection ( bool state )
   {
-    _cumulativeSelection = state;
+    if ( state != _state->cumulativeSelection() ) {
+      _state->setCumulativeSelection ( state );
+      emit cumulativeSelectionToggled ( state );
+    }
+  }
+
+
+  void  CellWidget::setShowBoundaries ( bool state )
+  {
+    if ( _state->showBoundaries() != state ) {
+      _state->setShowBoundaries ( state );
+      refresh ();
+
+      emit showBoundariesToggled ( state );
+    }
   }
 
 
@@ -1038,7 +1054,7 @@ namespace Hurricane {
 
     pushCursor ( Qt::BusyCursor );
 
-    if ( ! ( _selectionHasChanged && _showSelection ) || _cellModificated ) {
+    if ( ! ( _selectionHasChanged && _state->showSelection() ) || _cellModificated ) {
       _spot.setRestore ( false );
     //_drawingPlanes.copyToSelect ( redrawArea );
       _drawingPlanes.select ( PlaneId::Normal );
@@ -1050,9 +1066,9 @@ namespace Hurricane {
       _drawingPlanes.painter().eraseRect     ( redrawArea );
     //repaint ();
 
-      setDarkening ( (_showSelection) ? Graphics::getDarkening() : 100 );
+      setDarkening ( (_state->showSelection()) ? Graphics::getDarkening() : 100 );
 
-      if ( _cell ) {
+      if ( getCell() ) {
 
         Box redrawBox = displayToDbuBox ( redrawArea );
 
@@ -1123,7 +1139,7 @@ namespace Hurricane {
         }
 
       //_drawingQuery.setFilter ( _queryFilter & ~Query::DoMasterCells );
-        forEach ( ExtensionSlice*, islice, _cell->getExtensionSlices() ) {
+        forEach ( ExtensionSlice*, islice, getCell()->getExtensionSlices() ) {
           QApplication::processEvents();
           if ( /*timeout("redraw [extension]",timer,10.0,timedout) ||*/ (_redrawManager.interrupted()) ) break;
 
@@ -1146,7 +1162,7 @@ namespace Hurricane {
     if ( isDrawable("grid") ) drawGrid ( redrawArea );
 
     setDarkening ( 100 );
-    if ( _showSelection )
+    if ( _state->showSelection() )
       redrawSelection ( redrawArea );
 
     popCursor ();
@@ -1188,7 +1204,7 @@ namespace Hurricane {
     _drawingPlanes.painter().setBackground ( Graphics::getBrush("background") );
     _drawingPlanes.painter().setClipRect   ( redrawArea );
 
-    if ( _cell ) {
+    if ( getCell() ) {
       Box                    redrawBox = displayToDbuBox ( redrawArea );
       SelectorSet::iterator  iselector;
 
@@ -1539,7 +1555,7 @@ namespace Hurricane {
                           , DbU::lambda(50)
                           );
 
-    if ( _cell ) boundingBox = _cell->getBoundingBox();
+    if ( getCell() ) boundingBox = getCell()->getBoundingBox();
     reframe ( boundingBox, delayed );
   }
 
@@ -1840,27 +1856,35 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::setShowBoundaries ( bool state )
-  {
-    if ( _showBoundaries != state ) {
-      _showBoundaries = state;
-      _redrawManager.refresh ();
-    }
-  }
-
-
   void  CellWidget::setCell ( Cell* cell )
   {
   //cerr << "CellWidget::setCell() - " << cell << endl;
 
+    if ( cell == getCell() ) return;
+
+    shared_ptr<State>  state ( new State(cell) );
+    setState ( state );
+  }
+
+
+  void  CellWidget::setState ( shared_ptr<State>& state )
+  {
+  //cerr << "CellWidget::setCell() - " << cell << endl;
+
+    if ( state.get() == _state.get() ) return;
+
     cellPreModificate ();
+    _state->getSelection().clear ();
+    _state->setCellWidget ( NULL );
 
     _cellChanged = true;
-    _cell        = cell;
-    _drawingQuery    .setCell ( cell );
-    _textDrawingQuery.setCell ( cell );
+    _state       = state;
 
-    emit cellChanged ( cell );
+    _state->setCellWidget ( this );
+    _drawingQuery    .setCell ( getCell() );
+    _textDrawingQuery.setCell ( getCell() );
+
+    emit cellChanged ( getCell() );
 
     fitToContents ( true );
 
@@ -1878,10 +1902,10 @@ namespace Hurricane {
   {
     ++_delaySelectionChanged;
 
-    if ( !_cumulativeSelection ) unselectAll ( true );
-    bool added = _selection.add ( net, delayRedraw );
+    if ( !_state->cumulativeSelection() ) unselectAll ( true );
+    bool added = _state->getSelection().add ( net, delayRedraw );
 
-    if ( !--_delaySelectionChanged && added ) emit selectionChanged(_selectors,_cell);
+    if ( !--_delaySelectionChanged && added ) emit selectionChanged(_selectors,getCell());
   }
 
 
@@ -1890,8 +1914,12 @@ namespace Hurricane {
 	if ( !occurrence.isValid() )
       throw Error ( "Can't select occurrence : invalid occurrence" );
 
-	if ( occurrence.getOwnerCell() != getCell() )
-      throw Error ( "Can't select occurrence : incompatible occurrence" );
+	if ( occurrence.getOwnerCell() != getCell() ) {
+      string s1 = Graphics::toHtml ( getString(occurrence.getOwnerCell()) );
+      string s2 = Graphics::toHtml ( getString(getCell()) );
+      throw Error ( "Can't select occurrence : incompatible occurrence %s vs. %s"
+                  , s1.c_str(), s2.c_str() );
+    }
 
 	Property* property = occurrence.getProperty ( Selector::getPropertyName() );
 	if ( !property )
@@ -1910,10 +1938,14 @@ namespace Hurricane {
 	if ( !occurrence.isValid() )
       throw Error ( "Can't select occurrence : invalid occurrence" );
 
-	if ( occurrence.getOwnerCell() != getCell() )
-      throw Error ( "Can't select occurrence : incompatible occurrence" );
+	if ( occurrence.getOwnerCell() != getCell() ) {
+      string s1 = Graphics::toHtml ( getString(occurrence.getOwnerCell()) );
+      string s2 = Graphics::toHtml ( getString(getCell()) );
+      throw Error ( "Can't select occurrence : incompatible occurrence %s vs. %s" 
+                  , s1.c_str(), s2.c_str() );
+    }
 
-  //if ( !_cumulativeSelection ) unselectAll ( true );
+  //if ( !_state->cumulativeSelection() ) unselectAll ( true );
 
 	Property* property = occurrence.getProperty ( Selector::getPropertyName() );
     Selector* selector = NULL;
@@ -1928,7 +1960,7 @@ namespace Hurricane {
 	selector->attachTo(this);
 
     _selectionHasChanged = true;
-    if ( !_delaySelectionChanged ) emit selectionChanged(_selectors,_cell);
+    if ( !_delaySelectionChanged ) emit selectionChanged(_selectors,getCell());
   }
 
 
@@ -1936,10 +1968,10 @@ namespace Hurricane {
   {
     ++_delaySelectionChanged;
 
-    if ( !_cumulativeSelection ) unselectAll ( true );
-    bool added = _selection.add ( selectArea );
+    if ( !_state->cumulativeSelection() ) unselectAll ( true );
+    bool added = _state->getSelection().add ( selectArea );
 
-    if ( !--_delaySelectionChanged && added ) emit selectionChanged(_selectors,_cell);
+    if ( !--_delaySelectionChanged && added ) emit selectionChanged(_selectors,getCell());
   }
 
 
@@ -1947,8 +1979,8 @@ namespace Hurricane {
   {
     ++_delaySelectionChanged;
 
-    bool removed = _selection.remove ( net, delayRedraw );
-    if ( !--_delaySelectionChanged && removed ) emit selectionChanged(_selectors,_cell);
+    bool removed = _state->getSelection().remove ( net, delayRedraw );
+    if ( !--_delaySelectionChanged && removed ) emit selectionChanged(_selectors,getCell());
   }
 
 
@@ -1970,7 +2002,7 @@ namespace Hurricane {
     }
 
     _selectionHasChanged = true;
-    if ( !_delaySelectionChanged ) emit selectionChanged(_selectors,_cell);
+    if ( !_delaySelectionChanged ) emit selectionChanged(_selectors,getCell());
   }
 
 
@@ -1978,10 +2010,10 @@ namespace Hurricane {
   {
     ++_delaySelectionChanged;
 
-    _selection.clear ();
+    _state->getSelection().clear ();
     _unselectAll ( delayRedraw );
 
-    if ( !--_delaySelectionChanged ) emit selectionChanged(_selectors,_cell);
+    if ( !--_delaySelectionChanged ) emit selectionChanged(_selectors,getCell());
   }
 
 
@@ -2006,7 +2038,7 @@ namespace Hurricane {
     }
 
     _selectionHasChanged = true;
-    if ( _showSelection ) _redrawManager.refresh ();
+    if ( _state->showSelection() ) _redrawManager.refresh ();
 
     if ( fromPopup ) emit occurrenceToggled ( occurrence );
   }
@@ -2023,7 +2055,7 @@ namespace Hurricane {
       Occurrence occurrence ( *rubber );
       select ( occurrence );
     }
-    if ( !delayRedraw && _showSelection ) _redrawManager.refresh ();
+    if ( !delayRedraw && _state->showSelection() ) _redrawManager.refresh ();
   }
 
 
@@ -2038,7 +2070,7 @@ namespace Hurricane {
       Occurrence occurrence ( *rubber );
       unselect ( occurrence );
     }
-    if ( !delayRedraw && _showSelection ) _redrawManager.refresh ();
+    if ( !delayRedraw && _state->showSelection() ) _redrawManager.refresh ();
   }
 
 
@@ -2056,7 +2088,7 @@ namespace Hurricane {
       (*_selectors.begin())->detachFrom ( this );
 
     if ( !_selectionHasChanged ) _selectionHasChanged = true;
-    if ( !delayRedraw && _showSelection ) _redrawManager.refresh ();
+    if ( !delayRedraw && _state->showSelection() ) _redrawManager.refresh ();
   }
 
 
@@ -2064,7 +2096,7 @@ namespace Hurricane {
   {
     _unselectAll ( true );
     
-    emit selectionChanged(_selectors,_cell);
+    emit selectionChanged(_selectors,getCell());
     emit cellPreModificated ();
   }
 
@@ -2074,13 +2106,13 @@ namespace Hurricane {
     _cellModificated = true;
 
     ++_delaySelectionChanged;
-    _selection.revalidate ();
+    _state->getSelection().revalidate ();
 
     updatePalette ();
     _redrawManager.refresh ();
 
     --_delaySelectionChanged;
-    emit selectionChanged(_selectors,_cell);
+    emit selectionChanged(_selectors,getCell());
     emit cellPostModificated ();
   }
 

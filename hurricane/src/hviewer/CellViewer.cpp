@@ -246,16 +246,18 @@ namespace Hurricane {
 
     setCentralWidget ( _cellWidget );
 
-    connect ( this                   , SIGNAL(redrawCellWidget()), _cellWidget, SLOT(refresh())              );
-    connect ( _refreshAction         , SIGNAL(triggered())       , _cellWidget, SLOT(refresh())              );
-    connect ( _fitToContentsAction   , SIGNAL(triggered())       , _cellWidget, SLOT(fitToContents())        );
-    connect ( _showSelectionAction   , SIGNAL(toggled(bool))     , _cellWidget, SLOT(setShowSelection(bool)) );
-    connect ( _rubberChangeAction    , SIGNAL(triggered())       , _cellWidget, SLOT(rubberChange())         );
-    connect ( _controllerAction      , SIGNAL(triggered())       , this       , SLOT(showController())       );
+    connect ( this                   , SIGNAL(redrawCellWidget()) , _cellWidget, SLOT(refresh()) );
+    connect ( _refreshAction         , SIGNAL(triggered())        , _cellWidget, SLOT(refresh()) );
+    connect ( _fitToContentsAction   , SIGNAL(triggered())        , _cellWidget, SLOT(fitToContents()) );
+    connect ( _showSelectionAction   , SIGNAL(toggled(bool))      , this       , SLOT(setShowSelection(bool)) );
+    connect ( _rubberChangeAction    , SIGNAL(triggered())        , _cellWidget, SLOT(rubberChange()) );
+    connect ( _controllerAction      , SIGNAL(triggered())        , this       , SLOT(showController()) );
     connect ( _cellWidget            , SIGNAL(mousePositionChanged(const Point&))
             , _mousePosition         , SLOT(setPosition(const Point&)) );
+    connect ( this                   , SIGNAL(showSelectionToggled(bool))
+            , _cellWidget            , SLOT  (setShowSelection    (bool)) );
     connect ( _cellWidget            , SIGNAL(showSelectionToggled(bool))
-            , _showSelectionAction   , SLOT(setChecked(bool)) );
+            , this                   , SLOT  (setShowSelection    (bool)) );
     connect ( &_selectCommand        , SIGNAL(selectionToggled (Occurrence,bool))
             ,  _cellWidget           , SLOT  (toggleSelect     (Occurrence,bool)) );
 
@@ -320,6 +322,24 @@ namespace Hurricane {
   void  CellViewer::showController ()
   {
     _controller->show ();
+  }
+
+
+  void  CellViewer::setShowSelection ( bool state )
+  {
+    static bool isEmitter = false;
+
+    if ( sender() == _showSelectionAction ) {
+      isEmitter = true;
+      emit showSelectionToggled ( state );
+    } else {
+      if ( !isEmitter ) {
+        _showSelectionAction->blockSignals ( true );
+        _showSelectionAction->setChecked   ( state );
+        _showSelectionAction->blockSignals ( false );
+      } else
+        isEmitter = false;
+    }
   }
 
 

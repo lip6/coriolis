@@ -101,7 +101,7 @@ namespace Hurricane {
 
     QHeaderView* horizontalHeader = _view->horizontalHeader ();
     horizontalHeader->setStretchLastSection ( true );
-    horizontalHeader->setMinimumSectionSize ( 200 );
+  //horizontalHeader->setMinimumSectionSize ( 200 );
 
     QHeaderView* verticalHeader = _view->verticalHeader ();
     verticalHeader->setVisible ( false );
@@ -117,13 +117,13 @@ namespace Hurricane {
 
     connect ( _filterPatternLineEdit, SIGNAL(textChanged(const QString &))
             , this                  , SLOT(textFilterChanged()) );
-    connect ( _baseModel    , SIGNAL(layoutChanged()), this, SLOT(forceRowHeight()) );
+    connect ( _baseModel    , SIGNAL(layoutChanged()), this, SLOT  (forceRowHeight()) );
     connect ( _cumulative   , SIGNAL(toggled(bool))  , this, SIGNAL(cumulativeToggled(bool)) );
-    connect ( _showSelection, SIGNAL(toggled(bool))  , this, SIGNAL(showSelectionToggled(bool)) );
+    connect ( _showSelection, SIGNAL(toggled(bool))  , this, SLOT  (setShowSelection(bool)) );
     connect ( clear         , SIGNAL(clicked())      , this, SIGNAL(selectionCleared()) );
     connect ( clear         , SIGNAL(clicked())      , _baseModel, SLOT(clear()) );
     connect ( _view->selectionModel(), SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&))
-            , this                   , SLOT(selectCurrent   (const QModelIndex&,const QModelIndex&)) );
+            , this                   , SLOT  (selectCurrent (const QModelIndex&,const QModelIndex&)) );
 
     setWindowTitle ( tr("Selection<None>") );
     resize ( 500, 300 );
@@ -180,10 +180,19 @@ namespace Hurricane {
 
   void  SelectionWidget::setShowSelection ( bool state )
   {
-    if ( state == _showSelection->isChecked() ) return;
+    static bool isEmitter = false;
 
-    _showSelection->setChecked ( state );
-    emit showSelection ( state );
+    if ( sender() == _showSelection ) {
+        isEmitter = true;
+        emit showSelectionToggled ( state );
+    } else {
+      if ( !isEmitter ) {
+        _showSelection->blockSignals ( true );
+        _showSelection->setChecked   ( state );
+        _showSelection->blockSignals ( false );
+      } else
+        isEmitter = false;
+    }
   }
 
 
@@ -206,6 +215,7 @@ namespace Hurricane {
   void  SelectionWidget::clear ()
   {
     _baseModel->clear ();
+    _view->selectionModel()->clearSelection ();
   }
 
 
