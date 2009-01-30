@@ -62,6 +62,8 @@ namespace Hurricane {
     switch ( event->key() ) {
       case Qt::Key_Z: widget->setScale ( widget->getScale()*2.0 ); return true;
       case Qt::Key_M: widget->setScale ( widget->getScale()/2.0 ); return true;
+      case Qt::Key_U: widget->scaleHistoryUp  (); return true;
+      case Qt::Key_D: widget->scaleHistoryDown(); return true;
     }
     return false;
   }

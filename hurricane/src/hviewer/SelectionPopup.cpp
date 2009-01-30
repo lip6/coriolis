@@ -98,7 +98,7 @@ namespace Hurricane {
 
   void  SelectionPopup::keyPressEvent ( QKeyEvent* event )
   {
-    event->ignore();
+    QWidget::keyPressEvent ( event );
   }
 
 
@@ -123,7 +123,7 @@ namespace Hurricane {
     if ( index.isValid() ) {
       Occurrence occurrence = _model->getOccurrence(index.row());
       if ( occurrence.getEntity() )
-        emit occurrenceSelected ( occurrence, true );
+        emit selectionToggled ( occurrence );
     }
 
     clear ();

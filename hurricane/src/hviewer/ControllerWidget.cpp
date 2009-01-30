@@ -290,10 +290,10 @@ namespace Hurricane {
       if ( getCellWidget() ) {
         connect (  getCellWidget(), SIGNAL(selectionChanged(const SelectorSet&,Cell*))
                 ,  _selection     , SLOT  (setSelection    (const SelectorSet&,Cell*)) );
-        connect (  _selection     , SIGNAL(occurrenceToggled(Occurrence,bool))
-                ,  getCellWidget(), SLOT  (toggleSelect     (Occurrence,bool)) );
-        connect (  getCellWidget(), SIGNAL(occurrenceToggled(Occurrence))
-                ,  _selection     , SLOT  (toggleSelection  (Occurrence)) );
+        connect (  _selection     , SIGNAL(selectionToggled(Occurrence))
+                ,  getCellWidget(), SLOT  (toggleSelection (Occurrence)) );
+        connect (  getCellWidget(), SIGNAL(selectionToggled(Occurrence))
+                ,  _selection     , SLOT  (toggleSelection (Occurrence)) );
         connect (  _selection     , SIGNAL(cumulativeToggled     (bool))
                 ,  getCellWidget(), SLOT  (setCumulativeSelection(bool)) );
         connect (  _selection     , SIGNAL(selectionCleared())

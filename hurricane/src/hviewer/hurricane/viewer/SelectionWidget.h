@@ -61,7 +61,7 @@ namespace Hurricane {
               bool                   isCumulative         () const;
     signals:                                              
               void                   showSelectionToggled ( bool );
-              void                   occurrenceToggled    ( Occurrence, bool );
+              void                   selectionToggled     ( Occurrence );
               void                   cumulativeToggled    ( bool );
               void                   selectionCleared     ();
               void                   inspect              ( Record* );
@@ -88,6 +88,7 @@ namespace Hurricane {
               QCheckBox*             _cumulative;
               QCheckBox*             _showSelection;
               int                    _rowHeight;
+              bool                   _isEmitter;
   };
 
 

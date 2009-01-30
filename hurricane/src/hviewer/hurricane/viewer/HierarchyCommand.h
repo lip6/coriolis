@@ -16,15 +16,15 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./SelectCommand.h"                        |
+// |  C++ Header  :       "./HierarchyCommand.h"                     |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
 
-#ifndef  __HURRICANE_SELECT_COMMAND_H__
-#define  __HURRICANE_SELECT_COMMAND_H__
+#ifndef  __HURRICANE_HIERARCHY_COMMAND__
+#define  __HURRICANE_HIERARCHY_COMMAND__
 
 #include  <set>
 
@@ -34,7 +34,8 @@
 class QAction;
 
 #include  "hurricane/Occurrence.h"
-#include  "hurricane/viewer/AreaCommand.h"
+#include  "hurricane/viewer/Command.h"
+#include  "hurricane/viewer/CellWidget.h"
 
 
 using namespace std;
@@ -44,28 +45,39 @@ namespace Hurricane {
 
 
   class Cell;
-  class Selector;
-  class SelectionPopup;
 
 
-  class SelectCommand : public QObject, public AreaCommand {
-      Q_OBJECT;
-
+  class HierarchyCommand : public Command {
     public:
-                               SelectCommand        ();
-      virtual                 ~SelectCommand        ();
-      virtual bool             mousePressEvent      ( CellWidget*, QMouseEvent* );
-      virtual bool             mouseReleaseEvent    ( CellWidget*, QMouseEvent* );
-              void             bindToAction         ( QAction* action );
-    signals:
-              void             selectionToggled     ( Occurrence occurrence );
+                                HierarchyCommand  ();
+      virtual                  ~HierarchyCommand  ();
+      virtual bool              keyReleaseEvent   ( CellWidget*, QKeyEvent* );
+
     private:
-              QAction*         _selectAction;
-              SelectionPopup*  _selectionPopup;
+      class HistoryEntry {
+        public:
+          inline HistoryEntry ( Instance*, shared_ptr<CellWidget::State> );
+        public:
+          Instance*                      _instance;
+          shared_ptr<CellWidget::State>  _state;
+      };
+
+    private:                  
+                                HierarchyCommand  ( const HierarchyCommand& );
+              HierarchyCommand& operator=         ( const HierarchyCommand& );
     private:
-                               SelectCommand        ( const SelectCommand& );
-              SelectCommand&   operator=            ( const SelectCommand& );
+      vector<HistoryEntry>  _history;
+      size_t                _historyIndex;
   };
+
+
+// Inline Functions.
+  inline HierarchyCommand::HistoryEntry::HistoryEntry  ( Instance*                     instance
+                                                       , shared_ptr<CellWidget::State> state
+                                                       )
+    : _instance(instance)
+    , _state   (state)
+  { }
 
 
 } // End of Hurricane namespace.

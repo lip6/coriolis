@@ -43,6 +43,7 @@
                                      hurricane/viewer/MoveCommand.h
                                      hurricane/viewer/ZoomCommand.h
                                      hurricane/viewer/SelectCommand.h
+                                     hurricane/viewer/HierarchyCommand.h
                                      hurricane/viewer/SelectorCriterion.h
                                      hurricane/viewer/CellWidget.h
                                      hurricane/viewer/CellWidgets.h
@@ -78,6 +79,7 @@
                                      MoveCommand.cpp
                                      ZoomCommand.cpp
                                      SelectCommand.cpp
+                                     HierarchyCommand.cpp
                                      SelectorCriterion.cpp
                                      CellWidget.cpp
                                      CellViewer.cpp

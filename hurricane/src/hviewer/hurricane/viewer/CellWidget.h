@@ -29,6 +29,7 @@
 #include  <math.h>
 
 #include  <vector>
+#include  <functional>
 #include  <tr1/memory>
 
 #include  <QWidget>
@@ -65,6 +66,7 @@ class QAction;
 namespace Hurricane {
 
   using std::vector;
+  using std::unary_function;
   using std::tr1::shared_ptr;
 
   class Technology;
@@ -109,7 +111,6 @@ namespace Hurricane {
     // Accessors.                                                
     //        MapView*                getMapView                 () { return _mapView; };
               void                    setCell                    ( Cell* );
-              void                    setState                   ( shared_ptr<State>& );
       inline  Cell*                   getCell                    () const;
       inline  shared_ptr<State>&      getState                   ();
       inline  PaletteWidget*          getPalette                 ();
@@ -131,11 +132,12 @@ namespace Hurricane {
       inline  int                     getQueryFilter             () const ;
       inline  bool                    timeout                    ( const char*, const Timer&, double timeout, bool& timedout ) const;
     // Painter control & Hurricane objects drawing primitives.   
+      inline  void                    setEnableRedrawInterrupt   ( bool );
       inline  void                    addDrawExtensionGo         ( const Name&, InitExtensionGo_t*, DrawExtensionGo_t* );
       inline  QPainter&               getPainter                 ( size_t plane=PlaneId::Working );
       inline  int                     getDarkening               () const;
       inline  void                    copyToPrinter              ( QPrinter* printer );
-      inline  float                   getScale                   () const;
+      inline  const float&            getScale                   () const;
       inline  const QPoint&           getMousePosition           () const;
               bool                    isDrawable                 ( const Name& );
               bool                    isDrawableLayer            ( const Name& );
@@ -175,6 +177,10 @@ namespace Hurricane {
       inline  DbU::Unit               screenToDbuY               ( int  y ) const;
       inline  Point                   screenToDbuPoint           ( const QPoint& point ) const;
       inline  Box                     screenToDbuBox             ( const QRect& rect ) const;
+      inline  Point                   getTopLeft                 () const;
+              Box                     computeVisibleArea         ( float scale ) const;
+              Box                     computeVisibleArea         ( float scale, const Point& topLeft ) const;
+              Box                     computeVisibleArea         ( const Box&, float& scale ) const;
     // Qt QWidget Functions Overloads.                           
               void                    pushCursor                 ( Qt::CursorShape cursor );
               void                    popCursor                  ();
@@ -192,17 +198,19 @@ namespace Hurricane {
               void                    cellChanged                ( Cell* );
               void                    cellPreModificated         ();
               void                    cellPostModificated        ();
+              void                    stateChanged               ( shared_ptr<CellWidget::State>& );
               void                    settingsChanged            ();
               void                    styleChanged               ( void* emitter );
               void                    updatePalette              ( Cell* );
               void                    mousePositionChanged       ( const Point& position );
               void                    selectionChanged           ( const SelectorSet&, Cell* );
-              void                    occurrenceToggled          ( Occurrence );
+              void                    selectionToggled           ( Occurrence );
               void                    showSelectionToggled       ( bool );
               void                    cumulativeSelectionToggled ( bool );
               void                    showBoundariesToggled      ( bool );
     public slots:                                                
     // Qt QWidget Slots Overload & CellWidget Specifics.         
+              void                    setState                   ( shared_ptr<CellWidget::State>& );
       inline  DrawingPlanes&          getDrawingPlanes           ();
       inline  QPoint&                 getOffsetVA                ();
               void                    select                     ( const Net* net, bool delayRedraw=false );
@@ -212,7 +220,7 @@ namespace Hurricane {
               void                    unselect                   ( const Net* net, bool delayRedraw=false );
               void                    unselect                   ( Occurrence occurence );
               void                    unselectAll                ( bool delayRedraw=false );
-              void                    toggleSelect               ( Occurrence occurence, bool fromPopup );
+              void                    toggleSelection            ( Occurrence occurence );
               void                    setShowSelection           ( bool state );
               void                    setCumulativeSelection     ( bool state );
               void                    _select                    ( const Net* net, bool delayRedraw=false );
@@ -232,9 +240,12 @@ namespace Hurricane {
               void                    goRight                    ( int dx = 0 );
               void                    goUp                       ( int dy = 0 );
               void                    goDown                     ( int dy = 0 );
-              void                    fitToContents              ( bool delayed=false );
+              void                    fitToContents              ( bool delayed=false, bool historyEnable=true );
               void                    setScale                   ( float );
+              void                    scaleHistoryUp             ();
+              void                    scaleHistoryDown           ();
               void                    setShowBoundaries          ( bool state );
+              void                    reframe                    ( bool delayed=false  );
               void                    reframe                    ( const Box& box, bool delayed=false  );
               void                    displayReframe             ( bool delayed=false );
               void                    _goLeft                    ( int dx );
@@ -458,17 +469,50 @@ namespace Hurricane {
           inline void                setShowBoundaries      ( bool );
           inline void                setShowSelection       ( bool );
           inline void                setCumulativeSelection ( bool );
+                 void                setScale               ( float );
+          inline void                setTopLeft             ( DbU::Unit, DbU::Unit );
+          inline void                setTopLeft             ( const Point& );
+          inline void                setHistoryEnable       ( bool );
+                 bool                scaleHistoryUp         ();
+                 bool                scaleHistoryDown       ();
           inline Cell*               getCell                () const;
+                 const Name&         getName                () const;
           inline SelectorCriterions& getSelection           ();
-          inline bool                showBoundaries      () const;
-          inline bool                showSelection       () const;
-          inline bool                cumulativeSelection () const;
+          inline bool                showBoundaries         () const;
+          inline bool                showSelection          () const;
+          inline bool                cumulativeSelection    () const;
+          inline bool                getHistoryEnable       () const;
+          inline size_t              getHistorySize         () const;
+          inline const float&        getScale               () const;
+          inline const Point&        getTopLeft             () const;
+
+        private:
+          class ScaleEntry {
+            public:
+              inline ScaleEntry ( float, const Point& );
+            public:
+              float  _scale;
+              Point  _topLeft;
+          };
+
         private:
           Cell*               _cell;
+          CellWidget*         _cellWidget;
           SelectorCriterions  _selection;
           bool                _showBoundaries;
           bool                _showSelection;
           bool                _cumulativeSelection;
+          vector<ScaleEntry>  _scaleHistory;
+          size_t              _ihistory;
+          bool                _historyEnable;
+      };
+    public:
+      class FindStateName : public unary_function< const shared_ptr<State>&, bool > {
+        public:
+          inline      FindStateName ( const Name& );
+          inline bool operator()    ( const shared_ptr<State>& );
+        private:
+          const Name  _cellName;
       };
 
     protected:
@@ -481,7 +525,6 @@ namespace Hurricane {
               PaletteWidget*             _palette;
               Box                        _displayArea;
               Box                        _visibleArea;
-              float                      _scale;
               QPoint                     _offsetVA;
               RedrawManager              _redrawManager;
               DrawingPlanes              _drawingPlanes;
@@ -496,6 +539,7 @@ namespace Hurricane {
               bool                       _selectionHasChanged;
               int                        _delaySelectionChanged;
               bool                       _cellModificated;
+              bool                       _enableRedrawInterrupt;
               SelectorSet                _selectors;
               vector<Command*>           _commands;
               size_t                     _redrawRectCount;
@@ -529,6 +573,10 @@ namespace Hurricane {
                     , filter
                     );
   }
+
+
+  inline void  CellWidget::setEnableRedrawInterrupt ( bool state )
+  { _enableRedrawInterrupt = state; }
 
 
   inline void  CellWidget::DrawingQuery::addDrawExtensionGo ( const Name&        name
@@ -677,13 +725,23 @@ namespace Hurricane {
   { return _criterions.size(); }
 
 
+  inline CellWidget::State::ScaleEntry::ScaleEntry ( float scale, const Point& topLeft )
+    : _scale(scale), _topLeft(topLeft)
+  { }
+
+
   inline CellWidget::State::State ( Cell* cell )
     : _cell               (cell)
     , _selection          ()
     , _showBoundaries     (true)
     , _showSelection      (false)
     , _cumulativeSelection(false)
-  { }
+    , _scaleHistory       ()
+    , _ihistory           (0)
+    , _historyEnable      (false)
+  {
+    _scaleHistory.push_back ( ScaleEntry(1.0,Point(0,0)) );
+  }
 
 
   inline void  CellWidget::State::setCell ( Cell* cell )
@@ -691,7 +749,10 @@ namespace Hurricane {
 
 
   inline void  CellWidget::State::setCellWidget ( CellWidget* cw )
-  { _selection.setCellWidget ( cw ); }
+  {
+    _cellWidget = cw;
+    _selection.setCellWidget ( cw );
+  }
 
 
   inline void  CellWidget::State::setShowBoundaries ( bool state )
@@ -704,6 +765,23 @@ namespace Hurricane {
 
   inline void  CellWidget::State::setCumulativeSelection ( bool state )
   { _cumulativeSelection = state; }
+
+
+  inline void  CellWidget::State::setTopLeft ( DbU::Unit x, DbU::Unit y )
+  {
+    _scaleHistory[_ihistory]._topLeft.setX(x);
+    _scaleHistory[_ihistory]._topLeft.setY(y);
+  }
+
+
+  inline void  CellWidget::State::setTopLeft ( const Point& topLeft )
+  {
+    _scaleHistory[_ihistory]._topLeft = topLeft;
+  }
+
+
+  inline void  CellWidget::State::setHistoryEnable ( bool enable )
+  { _historyEnable = enable; }
 
 
   inline Cell* CellWidget::State::getCell () const
@@ -726,8 +804,37 @@ namespace Hurricane {
   { return _cumulativeSelection; }
 
 
+  inline bool  CellWidget::State::getHistoryEnable () const
+  { return _historyEnable; }
+
+
+  inline size_t  CellWidget::State::getHistorySize () const
+  { return _scaleHistory.size(); }
+
+
+  inline const Point& CellWidget::State::getTopLeft () const
+  { return _scaleHistory[_ihistory]._topLeft; }
+
+
+  inline const float& CellWidget::State::getScale () const
+  { return _scaleHistory[_ihistory]._scale; }
+
+
+  CellWidget::FindStateName::FindStateName ( const Name& cellName )
+    : unary_function< const shared_ptr<State>&, bool >()
+    , _cellName(cellName)
+  { }
+
+
+  bool  CellWidget::FindStateName::operator () ( const shared_ptr<State>& state )
+  { return state->getName() == _cellName; }
+
+
   inline shared_ptr<CellWidget::State>& CellWidget::getState ()
-  { return _state; }
+  {
+    _state->setTopLeft ( getTopLeft() );
+    return _state;
+  }
   
 
   inline void  CellWidget::addDrawExtensionGo ( const Name&        name
@@ -774,23 +881,23 @@ namespace Hurricane {
 
 
   inline int  CellWidget::dbuToDisplayX ( DbU::Unit x ) const
-  { return (int)rint ( (float)( x - _displayArea.getXMin() ) * _scale ); }
+  { return (int)rint ( (float)( x - _displayArea.getXMin() ) * getScale() ); }
 
 
   inline int  CellWidget::dbuToDisplayY ( DbU::Unit y ) const
-  { return (int)rint ( (float)( _displayArea.getYMax() - y ) * _scale ); }
+  { return (int)rint ( (float)( _displayArea.getYMax() - y ) * getScale() ); }
 
 
   inline int  CellWidget::dbuToDisplayLength ( DbU::Unit length ) const
-  { return (int)rint ( (float)length * _scale ); }
+  { return (int)rint ( (float)length * getScale() ); }
 
 
   inline int  CellWidget::dbuToScreenX ( DbU::Unit x ) const
-  { return (int)rint ( (float)( x - _displayArea.getXMin() ) * _scale ) - _offsetVA.x(); }
+  { return (int)rint ( (float)( x - _displayArea.getXMin() ) * getScale() ) - _offsetVA.x(); }
 
 
   inline int  CellWidget::dbuToScreenY ( DbU::Unit y ) const
-  { return (int)rint ( (float)( _displayArea.getYMax() - y ) * _scale ) - _offsetVA.y(); }
+  { return (int)rint ( (float)( _displayArea.getYMax() - y ) * getScale() ) - _offsetVA.y(); }
 
 
   inline QPoint  CellWidget::dbuToScreenPoint ( const Point& point ) const
@@ -798,15 +905,15 @@ namespace Hurricane {
 
 
   inline DbU::Unit  CellWidget::displayToDbuX ( int x ) const
-  { return (DbU::Unit)(x/_scale) + _displayArea.getXMin(); }
+  { return (DbU::Unit)(x/getScale()) + _displayArea.getXMin(); }
 
 
   inline DbU::Unit  CellWidget::displayToDbuY ( int y ) const
-  { return _displayArea.getYMax() - (DbU::Unit)(y/_scale); }
+  { return _displayArea.getYMax() - (DbU::Unit)(y/getScale()); }
 
 
   inline DbU::Unit  CellWidget::displayToDbuLength ( int length ) const
-  { return (int)( (float)length / _scale ); }
+  { return (int)( (float)length / getScale() ); }
 
 
   inline Box  CellWidget::displayToDbuBox ( const QRect& rect ) const
@@ -841,6 +948,10 @@ namespace Hurricane {
   }
 
 
+  inline Point  CellWidget::getTopLeft () const
+  { return Point(_visibleArea.getXMin(),_visibleArea.getYMax()); }
+
+
   inline Cell* CellWidget::getCell () const
   { return _state->getCell(); }
 
@@ -869,8 +980,8 @@ namespace Hurricane {
   { return _darkening; }
 
 
-  inline float  CellWidget::getScale () const
-  { return _scale; }
+  inline const float& CellWidget::getScale () const
+  { return _state->getScale(); }
 
 
   inline const QPoint& CellWidget::getMousePosition () const

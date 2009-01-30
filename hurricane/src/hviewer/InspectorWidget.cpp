@@ -317,7 +317,7 @@ namespace Hurricane {
     } else if ( event->key() == Qt::Key_O ) {
       forkInspector ( _view->currentIndex() );
     } else {
-      event->ignore();
+      QWidget::keyPressEvent ( event );
     }
   }
 

@@ -18,7 +18,8 @@ ELSE(BUILD_STATIC)
   MESSAGE(STATUS "Building dynamic libraries.")
 ENDIF(BUILD_STATIC)
 
-SET(QT_USE_QTXML "true")
+SET(QT_USE_QTXML    "true")
+#SET(QT_USE_QTOPENGL "true")
 
 FIND_PACKAGE(Qt4 REQUIRED) # find and setup Qt4 for this project
 FIND_PACKAGE(BISON REQUIRED)

@@ -23,6 +23,8 @@
 // x-----------------------------------------------------------------x
 
 
+#include  <algorithm>
+
 #include  <QAction>
 #include  <QMenu>
 #include  <QMenuBar>
@@ -37,7 +39,6 @@
 
 //#include  "MapView.h"
 #include  "hurricane/viewer/Graphics.h"
-#include  "hurricane/viewer/CellWidget.h"
 #include  "hurricane/viewer/CellViewer.h"
 #include  "hurricane/viewer/MousePositionWidget.h"
 #include  "hurricane/viewer/ControllerWidget.h"
@@ -71,6 +72,7 @@ namespace Hurricane {
                                              , _moveCommand()
                                              , _zoomCommand()
                                              , _selectCommand()
+                                             , _hierarchyCommand()
                                              , _cellHistory()
                                              , _firstShow(false)
   {
@@ -222,6 +224,7 @@ namespace Hurricane {
     _cellWidget->bindCommand ( &_moveCommand );
     _cellWidget->bindCommand ( &_zoomCommand );
     _cellWidget->bindCommand ( &_selectCommand );
+    _cellWidget->bindCommand ( &_hierarchyCommand );
     _controller->setCellWidget ( _cellWidget );
 
     _selectCommand.bindToAction ( _showSelectionAction );
@@ -252,16 +255,34 @@ namespace Hurricane {
     connect ( _showSelectionAction   , SIGNAL(toggled(bool))      , this       , SLOT(setShowSelection(bool)) );
     connect ( _rubberChangeAction    , SIGNAL(triggered())        , _cellWidget, SLOT(rubberChange()) );
     connect ( _controllerAction      , SIGNAL(triggered())        , this       , SLOT(showController()) );
+
     connect ( _cellWidget            , SIGNAL(mousePositionChanged(const Point&))
             , _mousePosition         , SLOT(setPosition(const Point&)) );
+
     connect ( this                   , SIGNAL(showSelectionToggled(bool))
             , _cellWidget            , SLOT  (setShowSelection    (bool)) );
     connect ( _cellWidget            , SIGNAL(showSelectionToggled(bool))
             , this                   , SLOT  (setShowSelection    (bool)) );
-    connect ( &_selectCommand        , SIGNAL(selectionToggled (Occurrence,bool))
-            ,  _cellWidget           , SLOT  (toggleSelect     (Occurrence,bool)) );
+    connect ( &_selectCommand        , SIGNAL(selectionToggled (Occurrence))
+            ,  _cellWidget           , SLOT  (toggleSelection  (Occurrence)) );
+
+    connect ( _cellWidget            , SIGNAL(stateChanged(shared_ptr<CellWidget::State>&))
+            , this                   , SLOT  (setState    (shared_ptr<CellWidget::State>&)) );
+    connect ( this                   , SIGNAL(stateChanged(shared_ptr<CellWidget::State>&))
+            , _cellWidget            , SLOT  (setState    (shared_ptr<CellWidget::State>&)) );
 
     _cellWidget->refresh ();
+  }
+
+
+  void  CellViewer::refreshTitle ()
+  {
+    QString  cellName = "None";
+    if ( getCell() )
+      cellName = getString(getCell()->getName()).c_str();
+
+    QString  title = QString("%1:<%2>").arg(_applicationName).arg(cellName);
+    setWindowTitle ( title );
   }
 
 
@@ -269,20 +290,20 @@ namespace Hurricane {
   {
     if ( !getCell() ) return;
 
-    Cell* activeCell = getCell();
-    _cellHistory.remove ( activeCell );
+    shared_ptr<CellWidget::State> activeState = _cellWidget->getState();
+    _cellHistory.remove ( activeState );
 
     if ( _cellHistory.size() > CellHistorySize-1 )
       _cellHistory.pop_front ();
-    _cellHistory.push_back ( activeCell );
+    _cellHistory.push_back ( activeState );
 
-    list<Cell*>::iterator iname = _cellHistory.begin();
+    list< shared_ptr<CellWidget::State> >::iterator istate = _cellHistory.begin();
     for ( size_t i=0 ; i<CellHistorySize ; i++ ) {
-      if ( iname != _cellHistory.end() ) {
-        QString entry = tr("&%1: %2").arg(i+1).arg( getString((*iname)->getName()).c_str() );
+      if ( istate != _cellHistory.end() ) {
+        QString entry = tr("&%1: %2").arg(i+1).arg( getString((*istate)->getName()).c_str() );
         _cellHistoryAction[i]->setText    ( entry );
         _cellHistoryAction[i]->setVisible ( true );
-        iname++;
+        istate++;
       } else {
         _cellHistoryAction[i]->setVisible ( false );
       }
@@ -290,18 +311,38 @@ namespace Hurricane {
   }
 
 
+  void  CellViewer::setState ( shared_ptr<CellWidget::State>& state )
+  {
+    static bool isEmitter = false;
+
+    if ( sender() == this ) {
+        isEmitter = true;
+        emit stateChanged ( state );
+    } else {
+      if ( !isEmitter ) {
+        blockSignals ( true );
+
+        refreshTitle   ();
+        refreshHistory ();
+        
+        blockSignals ( false );
+      } else
+        isEmitter = false;
+    }
+  }
+
+
   void  CellViewer::setCell ( Cell* cell )
   {
+    list< shared_ptr<CellWidget::State> >::iterator istate
+      = find_if ( _cellHistory.begin(), _cellHistory.end(), CellWidget::FindStateName(cell->getName()) );
+
+    if ( istate != _cellHistory.end() ) {
+      emit stateChanged ( *istate );
+      return;
+    }
+
     _cellWidget->setCell ( cell );
-
-    QString  cellName = "None";
-    if ( cell )
-      cellName = getString(cell->getName()).c_str();
-
-    QString  title = QString("%1:<%2>").arg(_applicationName).arg(cellName);
-    setWindowTitle ( title );
-
-    refreshHistory ();
   }
 
 
@@ -347,13 +388,13 @@ namespace Hurricane {
   {
     QAction* historyAction = qobject_cast<QAction*> ( sender() );
     if ( historyAction ) {
-      list<Cell*>::iterator  icell = _cellHistory.begin();
-      size_t                 index = historyAction->data().toUInt();
+      list< shared_ptr<CellWidget::State> >::iterator  istate = _cellHistory.begin();
+      size_t index = historyAction->data().toUInt();
 
-      for ( ; index>0 ; index--, icell++ );
+      for ( ; index>0 ; index--, istate++ );
 
-      cerr << "History: " << *icell << endl;
-      setCell ( *icell );
+    //cerr << "History: " << (*istate)->getName() << endl;
+      emit stateChanged ( *istate );
     }
   }
 

@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -51,18 +51,18 @@ namespace Hurricane {
 
     public:
                                      SelectionPopup    ( QWidget* parent=NULL );
-              void                   updateLayout       ();
-              void                   popup              ();
+              void                   updateLayout      ();
+              void                   popup             ();
     signals:
-              void                   occurrenceSelected ( Occurrence occurrence, bool fromPopup );
+              void                   selectionToggled  ( Occurrence occurrence );
     public slots:
-              void                   add                ( Occurrence occurrence, bool showChange=false );
-              void                   clear              ();
-              void                   forceRowHeight     ();
+              void                   add               ( Occurrence occurrence, bool showChange=false );
+              void                   clear             ();
+              void                   forceRowHeight    ();
     protected:
-      virtual void                   keyPressEvent      ( QKeyEvent * event );
-      virtual void                   mouseMoveEvent     ( QMouseEvent* event );
-      virtual void                   mouseReleaseEvent  ( QMouseEvent* event );
+      virtual void                   keyPressEvent     ( QKeyEvent * event );
+      virtual void                   mouseMoveEvent    ( QMouseEvent* event );
+      virtual void                   mouseReleaseEvent ( QMouseEvent* event );
 
     private:
               SelectionPopupModel*  _model;

@@ -47,14 +47,15 @@ namespace Hurricane {
 
 
   SelectionWidget::SelectionWidget ( QWidget* parent )
-    : QWidget(parent)
-    , _baseModel(new SelectionModel(this))
-    , _sortModel(new QSortFilterProxyModel(this))
-    , _view(new QTableView(this))
+    : QWidget               (parent)
+    , _baseModel            (new SelectionModel(this))
+    , _sortModel            (new QSortFilterProxyModel(this))
+    , _view                 (new QTableView(this))
     , _filterPatternLineEdit(new QLineEdit(this))
-    , _cumulative(new QCheckBox())
-    , _showSelection(new QCheckBox())
-    , _rowHeight(20)
+    , _cumulative           (new QCheckBox())
+    , _showSelection        (new QCheckBox())
+    , _rowHeight            (20)
+    , _isEmitter            (false)
   {
     setAttribute ( Qt::WA_DeleteOnClose );
     setAttribute ( Qt::WA_QuitOnClose, false );
@@ -147,7 +148,7 @@ namespace Hurricane {
   {
     if      ( event->key() == Qt::Key_I ) { inspect         ( _view->currentIndex() ); }
     else if ( event->key() == Qt::Key_T ) { toggleSelection ( _view->currentIndex() ); }
-    else event->ignore();
+    else QWidget::keyPressEvent ( event );
   }
 
 
@@ -167,14 +168,19 @@ namespace Hurricane {
   void  SelectionWidget::toggleSelection ( const QModelIndex& index )
   {
     Occurrence occurrence = _baseModel->toggleSelection ( index );
-    if ( occurrence.isValid() )
-      emit occurrenceToggled ( occurrence, false );
+    if ( occurrence.isValid() ) {
+      _isEmitter = true;
+      emit selectionToggled ( occurrence );
+    }
   }
 
 
   void  SelectionWidget::toggleSelection ( Occurrence occurrence )
   {
-    _baseModel->toggleSelection ( occurrence );
+    if ( !_isEmitter ) {
+      _baseModel->toggleSelection ( occurrence );
+      _isEmitter = false;
+    }
   }
 
 

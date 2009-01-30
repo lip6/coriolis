@@ -159,7 +159,7 @@ namespace Hurricane {
 
   void  NetlistWidget::keyPressEvent ( QKeyEvent* event )
   {
-    event->ignore ();
+    QWidget::keyPressEvent ( event );
   }
 
 

@@ -848,6 +848,52 @@ namespace Hurricane {
 
 
 // -------------------------------------------------------------------
+// Class :  "Hurricane::CellWidget::State".
+
+
+  void  CellWidget::State::setScale ( float scale )
+  {
+    _scaleHistory.erase ( _scaleHistory.begin()+_ihistory+1,_scaleHistory.end() );
+    if ( _historyEnable ) {
+      _scaleHistory.push_back ( ScaleEntry(scale,Point(0,0)) );
+      _ihistory++;
+    } else {
+      _scaleHistory[_ihistory]._scale   = scale;
+      _scaleHistory[_ihistory]._topLeft = Point(0,0);
+    }
+  }
+
+
+  bool  CellWidget::State::scaleHistoryUp ()
+  {
+    if ( _ihistory == 0 ) return false;
+
+    _ihistory--;
+
+    return true;
+  }
+
+
+  bool  CellWidget::State::scaleHistoryDown ()
+  {
+    if ( _ihistory+2 > _scaleHistory.size() ) return false;
+
+    _ihistory++;
+
+    return true;
+  }
+
+
+  const Name& CellWidget::State::getName () const
+  {
+    static const Name noCell = "None";
+
+    if ( !_cell ) return noCell;
+    return _cell->getName();
+  }
+
+
+// -------------------------------------------------------------------
 // Class :  "Hurricane::CellWidget".
 
 
@@ -861,7 +907,6 @@ namespace Hurricane {
     , _palette              (NULL)
     , _displayArea          (0,0,_initialSide+2*_stripWidth,_initialSide+2*_stripWidth)
     , _visibleArea          (_stripWidth,_stripWidth,_initialSide,_initialSide)
-    , _scale                (1.0)
     , _offsetVA             (_stripWidth,_stripWidth)
     , _redrawManager        (this)
     , _drawingPlanes        (QSize(_initialSide+2*_stripWidth,_initialSide+2*_stripWidth),this)
@@ -875,6 +920,7 @@ namespace Hurricane {
     , _cellChanged          (true)
     , _selectionHasChanged  (false)
     , _delaySelectionChanged(0)
+    , _enableRedrawInterrupt(false)
     , _cellModificated      (true)
     , _selectors            ()
     , _commands             ()
@@ -1029,7 +1075,7 @@ namespace Hurricane {
   {
     if ( _state->showBoundaries() != state ) {
       _state->setShowBoundaries ( state );
-      refresh ();
+      _redrawManager.refresh ();
 
       emit showBoundariesToggled ( state );
     }
@@ -1064,7 +1110,6 @@ namespace Hurricane {
       _drawingPlanes.painter().setBackground ( Graphics::getBrush("background") );
       _drawingPlanes.painter().setClipRect   ( redrawArea );
       _drawingPlanes.painter().eraseRect     ( redrawArea );
-    //repaint ();
 
       setDarkening ( (_state->showSelection()) ? Graphics::getDarkening() : 100 );
 
@@ -1087,10 +1132,8 @@ namespace Hurricane {
             _drawingQuery.setBasicLayer ( *iLayer );
             _drawingQuery.setFilter     ( _queryFilter & ~(Query::DoMasterCells|Query::DoRubbers) );
             _drawingQuery.doQuery       ();
-          //_drawingPlanes.copyToSelect ( redrawArea );
-          //repaint ();
           }
-          QApplication::processEvents();
+          if ( _enableRedrawInterrupt ) QApplication::processEvents();
           if ( _redrawManager.interrupted() ) {
           //cerr << "CellWidget::redraw() - interrupt after " << (*iLayer)->getName() << endl;
             break;
@@ -1106,8 +1149,6 @@ namespace Hurricane {
              _drawingQuery.setBasicLayer ( NULL );
              _drawingQuery.setFilter     ( _queryFilter & ~(Query::DoComponents|Query::DoRubbers) );
              _drawingQuery.doQuery       ();
-           //_drawingPlanes.copyToSelect ( redrawArea );
-           //repaint ();
           }
         }
 
@@ -1119,12 +1160,10 @@ namespace Hurricane {
              _drawingQuery.setBasicLayer ( NULL );
              _drawingQuery.setFilter     ( _queryFilter & ~(Query::DoComponents|Query::DoMasterCells) );
              _drawingQuery.doQuery       ();
-           //_drawingPlanes.copyToSelect ( redrawArea );
-           //repaint ();
           }
         }
 
-        QApplication::processEvents();
+        if ( _enableRedrawInterrupt ) QApplication::processEvents();
         if ( /*!timeout("redraw [text.instances]",timer,10.0,timedout) &&*/ (!_redrawManager.interrupted()) ) {
           if ( isDrawable("text.instance") ) {
             _drawingPlanes.setPen               ( Graphics::getPen  ("text.instance",getDarkening()) );
@@ -1133,14 +1172,12 @@ namespace Hurricane {
             _textDrawingQuery.setArea           ( redrawBox );
             _textDrawingQuery.setTransformation ( Transformation() );
             _textDrawingQuery.doQuery           ();
-          //_drawingPlanes.copyToSelect         ( redrawArea );
-          //repaint ();
           }
         }
 
       //_drawingQuery.setFilter ( _queryFilter & ~Query::DoMasterCells );
         forEach ( ExtensionSlice*, islice, getCell()->getExtensionSlices() ) {
-          QApplication::processEvents();
+          if ( _enableRedrawInterrupt ) QApplication::processEvents();
           if ( /*timeout("redraw [extension]",timer,10.0,timedout) ||*/ (_redrawManager.interrupted()) ) break;
 
           if ( isDrawableExtension((*islice)->getName()) ) {
@@ -1148,8 +1185,6 @@ namespace Hurricane {
             _drawingQuery.setDrawExtensionGo ( (*islice)->getName() );
             _drawingQuery.setFilter          ( Query::DoExtensionGos );
             _drawingQuery.doQuery            ();
-          //_drawingPlanes.copyToSelect      ( redrawArea );
-          //repaint ();
           }
         }
         repaint ();
@@ -1282,7 +1317,7 @@ namespace Hurricane {
     PaletteItem* item = (_palette) ? _palette->find(name) : NULL;
 
     return (!item || item->isItemVisible())
-      && ( Graphics::getThreshold(name)/DbU::lambda(1.0) < _scale );
+      && ( Graphics::getThreshold(name)/DbU::lambda(1.0) < getScale() );
   }
 
 
@@ -1411,7 +1446,7 @@ namespace Hurricane {
     Box redrawBox = displayToDbuBox ( redrawArea ).inflate ( DbU::lambda(1.0) );
 
     bool lambdaGrid = false;
-    if ( Graphics::getThreshold("grid")/DbU::lambda(1.0) < _scale/5 )
+    if ( Graphics::getThreshold("grid")/DbU::lambda(1.0) < getScale()/5 )
       lambdaGrid = true;
 
     DbU::Unit  gridStep      = DbU::getSnapGridStep();
@@ -1487,10 +1522,10 @@ namespace Hurricane {
     _offsetVA.rx() = _stripWidth;
     _offsetVA.ry() = _stripWidth;
 
-    DbU::Unit xmin = (DbU::Unit)( _visibleArea.getXMin() - ((float)_offsetVA.x()/_scale) );
-    DbU::Unit xmax = (DbU::Unit)( xmin + ((float)_drawingPlanes.width()/_scale) ) ;
-    DbU::Unit ymax = (DbU::Unit)( _visibleArea.getYMax() + ((float)_offsetVA.y()/_scale) );
-    DbU::Unit ymin = (DbU::Unit)( ymax - ((float)_drawingPlanes.height()/_scale) ) ;
+    DbU::Unit xmin = (DbU::Unit)( _visibleArea.getXMin() - ((float)_offsetVA.x()/getScale()) );
+    DbU::Unit xmax = (DbU::Unit)( xmin + ((float)_drawingPlanes.width()/getScale()) ) ;
+    DbU::Unit ymax = (DbU::Unit)( _visibleArea.getYMax() + ((float)_offsetVA.y()/getScale()) );
+    DbU::Unit ymin = (DbU::Unit)( ymax - ((float)_drawingPlanes.height()/getScale()) ) ;
 
     _displayArea = Box ( xmin, ymin, xmax, ymax );
 
@@ -1498,23 +1533,92 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::setScale ( float scale )
+  Box  CellWidget::computeVisibleArea ( float scale ) const
   {
-    _scale = scale;
-
     Point center = _visibleArea.getCenter();
 
-    _visibleArea.makeEmpty ();
-    _visibleArea.merge ( (DbU::Unit)( center.getX() - width () / (_scale*2) ) 
-                       , (DbU::Unit)( center.getY() - height() / (_scale*2) ) 
-                       , (DbU::Unit)( center.getX() + width () / (_scale*2) )
-                       , (DbU::Unit)( center.getY() + height() / (_scale*2) )
-                       );
+    return Box ( (DbU::Unit)( center.getX() - width () / (scale*2) ) 
+               , (DbU::Unit)( center.getY() - height() / (scale*2) ) 
+               , (DbU::Unit)( center.getX() + width () / (scale*2) )
+               , (DbU::Unit)( center.getY() + height() / (scale*2) )
+               );
+  }
+
+
+  Box  CellWidget::computeVisibleArea ( float scale, const Point& topLeft ) const
+  {
+    return Box ( topLeft.getX()
+               , (DbU::Unit)( topLeft.getY() - height() / scale )
+               , (DbU::Unit)( topLeft.getX() + width () / scale )
+               , topLeft.getY() 
+               );
+  }
+
+
+  Box  CellWidget::computeVisibleArea ( const Box& area, float& scale ) const
+  {
+    int  widgetWidth  = width  ();
+    int  widgetHeight = height ();
+
+    float scaleX = widgetWidth  / (float)area.getWidth ();
+    float scaleY = widgetHeight / (float)area.getHeight();
+    scale = min ( scaleX, scaleY );
+
+    Point center = area.getCenter();
+
+    widgetWidth  /= 2;
+    widgetHeight /= 2;
+
+    return Box ( (DbU::Unit)( center.getX() - widgetWidth  / scale ) 
+               , (DbU::Unit)( center.getY() - widgetHeight / scale ) 
+               , (DbU::Unit)( center.getX() + widgetWidth  / scale )
+               , (DbU::Unit)( center.getY() + widgetHeight / scale )
+               );
+  }
+
+
+  void  CellWidget::setScale ( float scale )
+  {
+  //cerr << "CellWidget::setScale() - " << scale << endl;
+
+    _state->setTopLeft ( getTopLeft() );
+    _visibleArea = computeVisibleArea ( scale );
+    _state->setScale ( scale );
 
   //cerr << "_visibleArea: " << _visibleArea << " (offset: " << _offsetVA.x() << ")" << endl;
   //cerr << "              " << center << endl;
 
     displayReframe ();
+  }
+
+
+  void  CellWidget::scaleHistoryUp ()
+  {
+    _state->setTopLeft ( getTopLeft() );
+    if ( _state->scaleHistoryUp () ) {
+      _visibleArea = computeVisibleArea ( _state->getScale(), _state->getTopLeft() );
+      displayReframe ();
+    }
+  }
+
+
+  void  CellWidget::scaleHistoryDown ()
+  {
+    _state->setTopLeft ( getTopLeft() );
+    if ( _state->scaleHistoryDown () ) {
+      _visibleArea = computeVisibleArea ( _state->getScale(), _state->getTopLeft() );
+      displayReframe ();
+    }
+  }
+
+
+  void  CellWidget::reframe ( bool delayed )
+  {
+  //cerr << "CellWidget::reframe() - scale:" << _state->getScale()
+  //     << " topLeft:" << _state->getTopLeft() << endl;
+
+    _visibleArea = computeVisibleArea ( _state->getScale(), _state->getTopLeft() );
+    displayReframe ( delayed );
   }
 
 
@@ -1524,31 +1628,25 @@ namespace Hurricane {
   //cerr << "  widget size := " << _drawingPlanes.width() << "x" << _drawingPlanes.height() << endl;
 
   //cerr << "  CellWidget::reframe() - widget size := " << width() << "x" << height() << endl;
-    int  width  = this->width  ();
-    int  height = this->height ();
 
-    float scaleX = width  / (float)box.getWidth ();
-    float scaleY = height / (float)box.getHeight();
-    _scale = min ( scaleX, scaleY );
+    float scale;
 
-    Point center = box.getCenter();
-
-    width  /= 2;
-    height /= 2;
-
-    _visibleArea = Box ( (DbU::Unit)( center.getX() - width  / _scale ) 
-                       , (DbU::Unit)( center.getY() - height / _scale ) 
-                       , (DbU::Unit)( center.getX() + width  / _scale )
-                       , (DbU::Unit)( center.getY() + height / _scale )
-                       );
+    _state->setTopLeft ( getTopLeft() );
+    _visibleArea = computeVisibleArea ( box, scale );
+    _state->setScale ( scale );
     displayReframe ( delayed );
 
   //cerr << "  _displayArea: " << _displayArea << " (offset: " << _offsetVA.x() << ")" << endl;
   }
 
 
-  void  CellWidget::fitToContents ( bool delayed )
+  void  CellWidget::fitToContents ( bool delayed, bool historyEnable )
   {
+  //cerr << "CellWidget::fitToContents()" << endl;
+
+    bool backupHistoryEnable = _state->getHistoryEnable ();
+    _state->setHistoryEnable ( historyEnable );
+
     Box boundingBox = Box ( DbU::lambda(0)
                           , DbU::lambda(0)
                           , DbU::lambda(10)
@@ -1557,12 +1655,14 @@ namespace Hurricane {
 
     if ( getCell() ) boundingBox = getCell()->getBoundingBox();
     reframe ( boundingBox, delayed );
+
+    _state->setHistoryEnable ( backupHistoryEnable );
   }
 
 
   void  CellWidget::_goLeft ( int dx )
   {
-    _visibleArea.translate ( - (DbU::Unit)( dx / _scale ) , 0 );
+    _visibleArea.translate ( - (DbU::Unit)( dx / getScale() ) , 0 );
 
     if ( _offsetVA.rx() - dx >= 0 ) {
       _offsetVA.rx() -= dx;
@@ -1572,7 +1672,7 @@ namespace Hurricane {
 
     int shift = ( 1 + ( dx - _offsetVA.rx() ) / _stripWidth ) * _stripWidth;
 
-    _displayArea.translate ( - (DbU::Unit)( shift / _scale ) , 0 );
+    _displayArea.translate ( - (DbU::Unit)( shift / getScale() ) , 0 );
     _offsetVA.rx() -= dx - shift;
 
     if ( shift >= _drawingPlanes.width() )
@@ -1590,7 +1690,7 @@ namespace Hurricane {
   {
   //cerr << "CellWidget::goRight() - dx: " << dx << " (offset: " << _offsetVA.rx() << ")" << endl;
 
-    _visibleArea.translate ( (DbU::Unit)( dx / _scale ) , 0 );
+    _visibleArea.translate ( (DbU::Unit)( dx / getScale() ) , 0 );
 
     if ( _offsetVA.rx() + dx < 2*_stripWidth ) {
       _offsetVA.rx() += dx;
@@ -1600,7 +1700,7 @@ namespace Hurricane {
 
     int shift = ( ( _offsetVA.rx() + dx ) / _stripWidth ) * _stripWidth;
 
-    _displayArea.translate ( (DbU::Unit)( shift / _scale ) , 0 );
+    _displayArea.translate ( (DbU::Unit)( shift / getScale() ) , 0 );
     _offsetVA.rx() += dx - shift;
 
     if ( shift >= _drawingPlanes.width() )
@@ -1619,7 +1719,7 @@ namespace Hurricane {
   {
   //cerr << "CellWidget::shiftUp() - " << dy << " (offset: " << _offsetVA.ry() << ")" << endl;
 
-    _visibleArea.translate ( 0, (DbU::Unit)( dy / _scale ) );
+    _visibleArea.translate ( 0, (DbU::Unit)( dy / getScale() ) );
 
     if ( _offsetVA.ry() - dy >= 0 ) {
       _offsetVA.ry() -= dy;
@@ -1629,7 +1729,7 @@ namespace Hurricane {
 
     int shift = ( 1 + ( dy - _offsetVA.ry() ) / _stripWidth ) * _stripWidth;
 
-    _displayArea.translate ( 0, (DbU::Unit)( shift / _scale ) );
+    _displayArea.translate ( 0, (DbU::Unit)( shift / getScale() ) );
     _offsetVA.ry() -= dy - shift;
 
     if ( shift >= _drawingPlanes.height() )
@@ -1647,7 +1747,7 @@ namespace Hurricane {
   {
   //cerr << "CellWidget::shiftDown() - " << dy << " (offset: " << _offsetVA.ry() << ")" << endl;
 
-    _visibleArea.translate ( 0, - (DbU::Unit)( dy / _scale ) );
+    _visibleArea.translate ( 0, - (DbU::Unit)( dy / getScale() ) );
 
     if ( _offsetVA.ry() + dy < 2*_stripWidth ) {
       _offsetVA.ry() += dy;
@@ -1657,7 +1757,7 @@ namespace Hurricane {
 
     int shift = ( ( _offsetVA.ry() + dy ) / _stripWidth ) * _stripWidth;
 
-    _displayArea.translate ( 0, - (DbU::Unit)( shift / _scale ) );
+    _displayArea.translate ( 0, - (DbU::Unit)( shift / getScale() ) );
     _offsetVA.ry() += dy - shift;
 
     if ( shift >= _drawingPlanes.height() )
@@ -1681,7 +1781,8 @@ namespace Hurricane {
   void  CellWidget::showEvent ( QShowEvent* )
   {
   //cerr << "CellWidget::showEvent() - size: " << geometry().width() << "x" << geometry().height() << endl;
-    if ( _cellChanged ) fitToContents();
+    if ( _cellChanged )
+      fitToContents ( false, false );
   }
 
 
@@ -1728,8 +1829,8 @@ namespace Hurricane {
       uaDelta.rheight() = uaSize.height() - _drawingPlanes.height();
 
     if ( uaDelta.width() || uaDelta.height() ) {
-      _displayArea.inflate ( 0, 0, (DbU::Unit)(uaDelta.width()/_scale), (DbU::Unit)(uaDelta.height()/_scale) );
-      _visibleArea.inflate ( 0, 0, (DbU::Unit)(uaDelta.width()/_scale), (DbU::Unit)(uaDelta.height()/_scale) );
+      _displayArea.inflate ( 0, 0, (DbU::Unit)(uaDelta.width()/getScale()), (DbU::Unit)(uaDelta.height()/getScale()) );
+      _visibleArea.inflate ( 0, 0, (DbU::Unit)(uaDelta.width()/getScale()), (DbU::Unit)(uaDelta.height()/getScale()) );
 
       QSize bufferSize ( ( ( uaSize.width () / _stripWidth ) + 1 ) * _stripWidth
                        , ( ( uaSize.height() / _stripWidth ) + 1 ) * _stripWidth );
@@ -1864,29 +1965,43 @@ namespace Hurricane {
 
     shared_ptr<State>  state ( new State(cell) );
     setState ( state );
+
+    fitToContents ( false, false );
+
+    _state->setHistoryEnable ( true );
   }
 
 
   void  CellWidget::setState ( shared_ptr<State>& state )
   {
-  //cerr << "CellWidget::setCell() - " << cell << endl;
+  //cerr << "CellWidget::setState() - " << state->getName() << endl;
 
-    if ( state.get() == _state.get() ) return;
+    if ( state == _state ) return;
 
     cellPreModificate ();
-    _state->getSelection().clear ();
+    _state->getSelection  ().clear ();
     _state->setCellWidget ( NULL );
+    _state->setTopLeft    ( getTopLeft() ); 
 
     _cellChanged = true;
     _state       = state;
 
+//     cerr << "  about to restore " << (void*)_state.get()
+//          << " " << _state->getName()
+//          << ": _state->setTopLeft("
+//          << DbU::getValueString(_state->getTopLeft().getX()) << ","
+//          << DbU::getValueString(_state->getTopLeft().getY()) << ")" << endl;
+
+    _state->setHistoryEnable ( false );
     _state->setCellWidget ( this );
     _drawingQuery    .setCell ( getCell() );
     _textDrawingQuery.setCell ( getCell() );
 
-    emit cellChanged ( getCell() );
+    reframe ( true );
+    _state->setHistoryEnable ( true );
 
-    fitToContents ( true );
+    emit cellChanged  ( getCell() );
+    emit stateChanged ( _state );
 
     cellPostModificate ();
   }
@@ -2017,7 +2132,7 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::toggleSelect ( Occurrence occurrence, bool fromPopup )
+  void  CellWidget::toggleSelection ( Occurrence occurrence )
   {
 	if ( !occurrence.isValid() )
       throw Error ( "Can't select occurrence : invalid occurrence" );
@@ -2040,7 +2155,7 @@ namespace Hurricane {
     _selectionHasChanged = true;
     if ( _state->showSelection() ) _redrawManager.refresh ();
 
-    if ( fromPopup ) emit occurrenceToggled ( occurrence );
+    emit selectionToggled ( occurrence );
   }
 
 

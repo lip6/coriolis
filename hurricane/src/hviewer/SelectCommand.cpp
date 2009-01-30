@@ -48,8 +48,8 @@ namespace Hurricane {
   {
     _selectionPopup = new SelectionPopup ();
 
-    connect ( _selectionPopup, SIGNAL(occurrenceSelected(Occurrence,bool))
-            , this           , SIGNAL(selectionToggled  (Occurrence,bool)) );
+    connect ( _selectionPopup, SIGNAL(selectionToggled(Occurrence))
+            , this           , SIGNAL(selectionToggled(Occurrence)) );
   }
 
 

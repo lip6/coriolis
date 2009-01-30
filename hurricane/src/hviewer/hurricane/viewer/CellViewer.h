@@ -45,6 +45,8 @@ class QMenu;
 #include  "hurricane/viewer/MoveCommand.h"
 #include  "hurricane/viewer/ZoomCommand.h"
 #include  "hurricane/viewer/SelectCommand.h"
+#include  "hurricane/viewer/HierarchyCommand.h"
+#include  "hurricane/viewer/CellWidget.h"
 
 
 namespace Hurricane {
@@ -55,7 +57,6 @@ namespace Hurricane {
   class HGraphics;
   class HDisplayFilter;
 //class MapView;
-  class CellWidget;
   class MousePositionWidget;
   class HSelection;
   class ControllerWidget;
@@ -68,21 +69,24 @@ namespace Hurricane {
                                    CellViewer                ( QWidget* parent=NULL );
       virtual                     ~CellViewer                ();
               QMenu*               createDebugMenu           ();
-      inline  void                 setApplicationName        ( const QString& name );
-              void                 setCell                   ( Cell* cell );
+      inline  void                 setEnableRedrawInterrupt  ( bool );
+      inline  void                 setApplicationName        ( const QString& );
+              void                 setCell                   ( Cell* );
               Cell*                getCell                   ();
       virtual Cell*                getCellFromDb             ( const char* name );
       inline  CellWidget*          getCellWidget             ();
-              void                 select                    ( Occurrence& occurence );
-              void                 unselect                  ( Occurrence& occurence );
+              void                 select                    ( Occurrence& );
+              void                 unselect                  ( Occurrence& );
               void                 unselectAll               ();
     public slots:                  
               void                 setShowSelection          ( bool );
+              void                 setState                  ( shared_ptr<CellWidget::State>& );
               void                 showController            ();
               void                 openHistoryCell           ();
               void                 printDisplay              ();
     signals:                       
               void                 showSelectionToggled      ( bool );
+              void                 stateChanged              ( shared_ptr<CellWidget::State>& );
               void                 redrawCellWidget          ();
                                    
     public:                        
@@ -113,18 +117,24 @@ namespace Hurricane {
               MoveCommand          _moveCommand;
               ZoomCommand          _zoomCommand;
               SelectCommand        _selectCommand;
-              list<Cell*>          _cellHistory;
+              HierarchyCommand     _hierarchyCommand;
+              list< shared_ptr<CellWidget::State> >
+                                   _cellHistory;
               bool                 _firstShow;
                                    
     protected:                     
               void                 createActions             ();
               void                 createMenus               ();
               void                 createLayout              ();
+              void                 refreshTitle              ();
               void                 refreshHistory            ();
   };
 
 
 // Inline Functions.
+  inline void        CellViewer::setEnableRedrawInterrupt  ( bool state )
+  { _cellWidget->setEnableRedrawInterrupt(state); }
+
   inline CellWidget* CellViewer::getCellWidget      () { return _cellWidget; }
   inline void        CellViewer::setApplicationName ( const QString& name ) { _applicationName = name; }
 
