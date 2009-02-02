@@ -18,6 +18,15 @@ int main() {
         cout << "Error in RootLibrary creation" << endl;
         return 1;
     }
+    try {
+        Library* rootLibrary2 = Library::create(db, Name("RootLibrary2"));
+        if (rootLibrary2) {
+            cout << "Error in RootLibrary creation" << endl;
+            return 1;
+        }
+    } catch (const Hurricane::Error& e) {
+        cout << e.what() << endl;
+    }
 
     Library* workLibrary = Library::create(rootLibrary, Name("WorkLibrary"));
     if (!workLibrary) {
