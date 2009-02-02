@@ -1,0 +1,5 @@
+INCLUDE_DIRECTORIES(${HURRICANE_SOURCE_DIR}/src/hurricane)
+
+ADD_EXECUTABLE(htest HTest.cpp)
+
+TARGET_LINK_LIBRARIES(htest hurricane)

@@ -160,5 +160,6 @@
          install ( TARGETS hurricane DESTINATION /lib)
  endif ( BUILD_STATIC )
 
-         install ( FILES   ${includes} DESTINATION /include/hurricane) 
- 
+install(FILES ${includes} DESTINATION /include/hurricane) 
+
+add_subdirectory(tests)
