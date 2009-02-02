@@ -161,5 +161,3 @@
  endif ( BUILD_STATIC )
 
 install(FILES ${includes} DESTINATION /include/hurricane) 
-
-add_subdirectory(tests)
