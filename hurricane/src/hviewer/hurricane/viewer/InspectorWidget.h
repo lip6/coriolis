@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -88,7 +88,7 @@ namespace Hurricane {
               void                      historyChanged    ( int depth );
               void                      forkInspector     ( const QModelIndex& );
     protected:
-              void                      keyPressEvent     ( QKeyEvent* );
+              bool                      eventFilter       ( QObject*, QEvent* );
     private:
               void                      _setRootRecord    ( Record* );
               void                      pushSlot          ( Slot* );

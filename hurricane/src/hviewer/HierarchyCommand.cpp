@@ -65,12 +65,12 @@ namespace Hurricane {
     Box    pointBox ( widget->screenToDbuBox(QRect(position,QSize(1,1))) );
 
     switch ( event->key() ) {
-      case Qt::Key_U:
+      case Qt::Key_Up:
         if ( ( _historyIndex > 0 ) && (shift || control) ) {
           widget->setState ( _history[--_historyIndex]._state );
         }
         break;
-      case Qt::Key_D:
+      case Qt::Key_Down:
         {
           if ( control ) {
             if ( _history.empty() )

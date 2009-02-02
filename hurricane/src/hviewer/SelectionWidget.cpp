@@ -99,6 +99,7 @@ namespace Hurricane {
     _view->setSortingEnabled(true);
     _view->setModel ( _sortModel );
     _view->horizontalHeader()->setStretchLastSection ( true );
+    _view->installEventFilter(this);
 
     QHeaderView* horizontalHeader = _view->horizontalHeader ();
     horizontalHeader->setStretchLastSection ( true );
@@ -144,11 +145,16 @@ namespace Hurricane {
   }
 
 
-  void  SelectionWidget::keyPressEvent ( QKeyEvent* event )
+  bool  SelectionWidget::eventFilter ( QObject* object, QEvent* event )
   {
-    if      ( event->key() == Qt::Key_I ) { inspect         ( _view->currentIndex() ); }
-    else if ( event->key() == Qt::Key_T ) { toggleSelection ( _view->currentIndex() ); }
-    else QWidget::keyPressEvent ( event );
+    if ( event->type() == QEvent::KeyPress ) {
+      QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+
+      if      ( keyEvent->key() == Qt::Key_I ) { inspect         ( _view->currentIndex() ); }
+      else if ( keyEvent->key() == Qt::Key_T ) { toggleSelection ( _view->currentIndex() ); }
+    }
+
+    return QObject::eventFilter ( object, event );
   }
 
 
@@ -189,8 +195,8 @@ namespace Hurricane {
     static bool isEmitter = false;
 
     if ( sender() == _showSelection ) {
-        isEmitter = true;
-        emit showSelectionToggled ( state );
+      isEmitter = true;
+      emit showSelectionToggled ( state );
     } else {
       if ( !isEmitter ) {
         _showSelection->blockSignals ( true );

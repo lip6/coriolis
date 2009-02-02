@@ -114,6 +114,13 @@ namespace Hurricane {
       inline  Cell*                   getCell                    () const;
       inline  shared_ptr<State>&      getState                   ();
       inline  PaletteWidget*          getPalette                 ();
+      inline  Occurrences             getOccurrencesUnder        ( const QRect& ) const;
+              Occurrences             getOccurrencesUnder        ( const Box& ) const;
+      inline  SelectorSet&            getSelectorSet             ();
+      inline  RubberShape             getRubberShape             () const;
+      inline  int                     getStartLevel              () const;
+      inline  int                     getStopLevel               () const;
+      inline  Query::Mask             getQueryFilter             () const ;
               void                    bindToPalette              ( PaletteWidget* );
               void                    detachFromPalette          ();
               void                    bindCommand                ( Command* );
@@ -121,22 +128,17 @@ namespace Hurricane {
       inline  bool                    showBoundaries             () const;
       inline  bool                    showSelection              () const;
       inline  bool                    cumulativeSelection        () const;
-      inline  Occurrences             getOccurrencesUnder        ( const QRect& ) const;
-              Occurrences             getOccurrencesUnder        ( const Box& ) const;
-      inline  SelectorSet&            getSelectorSet             ();
       inline  void                    setRubberShape             ( RubberShape );
-      inline  RubberShape             getRubberShape             () const;
       inline  void                    setStartLevel              ( int );
       inline  void                    setStopLevel               ( int );
-      inline  void                    setQueryFilter             ( int );
-      inline  int                     getQueryFilter             () const ;
+      inline  void                    setQueryFilter             ( Query::Mask );
       inline  bool                    timeout                    ( const char*, const Timer&, double timeout, bool& timedout ) const;
     // Painter control & Hurricane objects drawing primitives.   
       inline  void                    setEnableRedrawInterrupt   ( bool );
       inline  void                    addDrawExtensionGo         ( const Name&, InitExtensionGo_t*, DrawExtensionGo_t* );
       inline  QPainter&               getPainter                 ( size_t plane=PlaneId::Working );
       inline  int                     getDarkening               () const;
-      inline  void                    copyToPrinter              ( QPrinter* printer );
+      inline  void                    copyToPrinter              ( QPrinter* );
       inline  const float&            getScale                   () const;
       inline  const QPoint&           getMousePosition           () const;
               bool                    isDrawable                 ( const Name& );
@@ -199,8 +201,8 @@ namespace Hurricane {
               void                    cellPreModificated         ();
               void                    cellPostModificated        ();
               void                    stateChanged               ( shared_ptr<CellWidget::State>& );
-              void                    settingsChanged            ();
               void                    styleChanged               ( void* emitter );
+              void                    queryFilterChanged         ();
               void                    updatePalette              ( Cell* );
               void                    mousePositionChanged       ( const Point& position );
               void                    selectionChanged           ( const SelectorSet&, Cell* );
@@ -211,22 +213,25 @@ namespace Hurricane {
     public slots:                                                
     // Qt QWidget Slots Overload & CellWidget Specifics.         
               void                    setState                   ( shared_ptr<CellWidget::State>& );
+      inline  void                    openRefreshSession         ();
+      inline  void                    closeRefreshSession        ();
       inline  DrawingPlanes&          getDrawingPlanes           ();
       inline  QPoint&                 getOffsetVA                ();
-              void                    select                     ( const Net* net, bool delayRedraw=false );
-              void                    select                     ( Occurrence occurence );
-              bool                    isSelected                 ( Occurrence occurence );
+              void                    select                     ( const Net* );
+              void                    select                     ( Occurrence );
+              bool                    isSelected                 ( Occurrence );
               void                    selectOccurrencesUnder     ( Box selectArea );
-              void                    unselect                   ( const Net* net, bool delayRedraw=false );
-              void                    unselect                   ( Occurrence occurence );
-              void                    unselectAll                ( bool delayRedraw=false );
-              void                    toggleSelection            ( Occurrence occurence );
+              void                    unselect                   ( const Net* );
+              void                    unselect                   ( Occurrence );
+              void                    unselectAll                ();
+              void                    toggleSelection            ( Occurrence );
               void                    setShowSelection           ( bool state );
               void                    setCumulativeSelection     ( bool state );
-              void                    _select                    ( const Net* net, bool delayRedraw=false );
-              void                    _unselect                  ( const Net* net, bool delayRedraw=false );
+              void                    _select                    ( const Net* );
+              void                    _unselect                  ( const Net* );
               void                    _selectOccurrencesUnder    ( Box selectArea );
-              void                    _unselectAll               ( bool delayRedraw );
+              void                    _unselectAll               ();
+              void                    changeQueryFilter          ();
               void                    rubberChange               ();
               void                    styleChange                ( void* emitter );
               void                    updatePalette              ();
@@ -240,14 +245,15 @@ namespace Hurricane {
               void                    goRight                    ( int dx = 0 );
               void                    goUp                       ( int dy = 0 );
               void                    goDown                     ( int dy = 0 );
-              void                    fitToContents              ( bool delayed=false, bool historyEnable=true );
+              void                    fitToContents              ( bool historyEnable=true );
+              void                    fitToNet                   ( const Net*, bool historyEnable=true );
               void                    setScale                   ( float );
               void                    scaleHistoryUp             ();
               void                    scaleHistoryDown           ();
               void                    setShowBoundaries          ( bool state );
-              void                    reframe                    ( bool delayed=false  );
-              void                    reframe                    ( const Box& box, bool delayed=false  );
-              void                    displayReframe             ( bool delayed=false );
+              void                    reframe                    ();
+              void                    reframe                    ( const Box& box, bool historyEnable=true );
+              void                    displayReframe             ();
               void                    _goLeft                    ( int dx );
               void                    _goRight                   ( int dx );
               void                    _goUp                      ( int dy );
@@ -292,21 +298,24 @@ namespace Hurricane {
     private:
       class RedrawManager {
         public:
-          inline              RedrawManager  ( CellWidget* );
-                             ~RedrawManager  ();
-                 void         goLeft         ( int );
-                 void         goRight        ( int );
-                 void         goUp           ( int );
-                 void         goDown         ( int );
-                 void         refresh        ();
-                 void         process        ();
-          inline void         stopProcessing ();
-          inline bool         isProcessing   () const;
-          inline bool         interrupted    () const;
-          inline size_t       getPendings    () const;
+          inline              RedrawManager       ( CellWidget* );
+                             ~RedrawManager       ();
+                 void         goLeft              ( int );
+                 void         goRight             ( int );
+                 void         goUp                ( int );
+                 void         goDown              ( int );
+                 void         refresh             ();
+                 void         process             ();
+          inline void         stopProcessing      ();
+          inline bool         isProcessing        () const;
+          inline bool         interrupted         () const;
+          inline size_t       getPendings         () const;
+          inline void         openRefreshSession  ();
+          inline void         closeRefreshSession ();
         private:
           CellWidget*         _widget;
           list<RedrawEvent*>  _events;
+          int                 _refreshSession;
           bool                _processing;
           bool                _interrupted;
       };
@@ -449,9 +458,9 @@ namespace Hurricane {
                          SelectorCriterions ();
                         ~SelectorCriterions ();
           inline void    setCellWidget      ( CellWidget* );
-                 bool    add                ( const Net* net, bool delayRedraw );
+                 bool    add                ( const Net* net );
                  bool    add                ( Box area );
-                 bool    remove             (  const Net* net, bool delayRedraw );
+                 bool    remove             (  const Net* net );
                  void    clear              ();
                  void    revalidate         ();
           inline size_t  size               () const;
@@ -472,6 +481,10 @@ namespace Hurricane {
                  void                setScale               ( float );
           inline void                setTopLeft             ( DbU::Unit, DbU::Unit );
           inline void                setTopLeft             ( const Point& );
+          inline void                setQueryFilter         ( Query::Mask );
+          inline void                setStartLevel          ( int );
+          inline void                setStopLevel           ( int );
+          inline void                setRubberShape         ( RubberShape );
           inline void                setHistoryEnable       ( bool );
                  bool                scaleHistoryUp         ();
                  bool                scaleHistoryDown       ();
@@ -485,6 +498,10 @@ namespace Hurricane {
           inline size_t              getHistorySize         () const;
           inline const float&        getScale               () const;
           inline const Point&        getTopLeft             () const;
+          inline Query::Mask         getQueryFilter         () const;
+          inline int                 getStartLevel          () const;
+          inline int                 getStopLevel           () const;
+          inline RubberShape         getRubberShape         () const;
 
         private:
           class ScaleEntry {
@@ -501,6 +518,10 @@ namespace Hurricane {
           SelectorCriterions  _selection;
           bool                _showBoundaries;
           bool                _showSelection;
+          Query::Mask         _queryFilter;
+          int                 _startLevel;
+          int                 _stopLevel;
+          RubberShape         _rubberShape;
           bool                _cumulativeSelection;
           vector<ScaleEntry>  _scaleHistory;
           size_t              _ihistory;
@@ -530,7 +551,6 @@ namespace Hurricane {
               DrawingPlanes              _drawingPlanes;
               DrawingQuery               _drawingQuery;
               TextDrawingQuery           _textDrawingQuery;
-              int                        _queryFilter;
               int                        _darkening;
               QPoint                     _mousePosition;
               Spot                       _spot;
@@ -544,7 +564,6 @@ namespace Hurricane {
               vector<Command*>           _commands;
               size_t                     _redrawRectCount;
               int                        _textFontHeight;
-              RubberShape                _rubberShape;
 
       friend class RedrawManager;
   };
@@ -577,6 +596,14 @@ namespace Hurricane {
 
   inline void  CellWidget::setEnableRedrawInterrupt ( bool state )
   { _enableRedrawInterrupt = state; }
+
+
+  inline void  CellWidget::openRefreshSession ()
+  { _redrawManager.openRefreshSession (); }
+
+
+  inline void  CellWidget::closeRefreshSession ()
+  { _redrawManager.closeRefreshSession (); }
 
 
   inline void  CellWidget::DrawingQuery::addDrawExtensionGo ( const Name&        name
@@ -628,6 +655,17 @@ namespace Hurricane {
 
   inline size_t  CellWidget::RedrawManager::getPendings () const
   { return _events.size(); }
+
+
+  inline void  CellWidget::RedrawManager::openRefreshSession ()
+  { _refreshSession++; }
+
+
+  inline void  CellWidget::RedrawManager::closeRefreshSession ()
+  {
+    _refreshSession--;
+    if ( !_processing && (_refreshSession == 0) ) process ();
+  }
 
 
   inline bool  CellWidget::RedrawManager::interrupted () const
@@ -733,6 +771,10 @@ namespace Hurricane {
   inline CellWidget::State::State ( Cell* cell )
     : _cell               (cell)
     , _selection          ()
+    , _queryFilter        (~Query::DoTerminalCells)
+    , _startLevel         (0)
+    , _stopLevel          (99)
+    , _rubberShape        (CellWidget::Steiner)
     , _showBoundaries     (true)
     , _showSelection      (false)
     , _cumulativeSelection(false)
@@ -775,9 +817,23 @@ namespace Hurricane {
 
 
   inline void  CellWidget::State::setTopLeft ( const Point& topLeft )
-  {
-    _scaleHistory[_ihistory]._topLeft = topLeft;
-  }
+  { _scaleHistory[_ihistory]._topLeft = topLeft; }
+
+
+  inline void  CellWidget::State::setQueryFilter ( Query::Mask mask )
+  { _queryFilter = mask; }
+
+
+  inline void  CellWidget::State::setStartLevel ( int level )
+  { _startLevel = level; }
+
+
+  inline void  CellWidget::State::setStopLevel ( int level )
+  { _stopLevel = level; }
+
+
+  inline void  CellWidget::State::setRubberShape ( RubberShape shape )
+  { _rubberShape = shape; }
 
 
   inline void  CellWidget::State::setHistoryEnable ( bool enable )
@@ -816,6 +872,22 @@ namespace Hurricane {
   { return _scaleHistory[_ihistory]._topLeft; }
 
 
+  inline Query::Mask  CellWidget::State::getQueryFilter () const
+  { return _queryFilter; }
+
+
+  inline int  CellWidget::State::getStartLevel () const
+  { return _startLevel; }
+
+
+  inline int  CellWidget::State::getStopLevel () const
+  { return _stopLevel; }
+
+
+  inline CellWidget::RubberShape  CellWidget::State::getRubberShape () const
+  { return _rubberShape; }
+
+
   inline const float& CellWidget::State::getScale () const
   { return _scaleHistory[_ihistory]._scale; }
 
@@ -845,11 +917,27 @@ namespace Hurricane {
 
 
   inline void  CellWidget::setStartLevel ( int level )
-  { _drawingQuery.setStartLevel ( level ); }
+  {
+    _drawingQuery.setStartLevel ( level );
+    _state->setStartLevel ( level );
+    emit queryFilterChanged ();
+  }
 
 
   inline void  CellWidget::setStopLevel ( int level )
-  { _drawingQuery.setStopLevel ( level ); }
+  {
+    _drawingQuery.setStopLevel ( level );
+    _state->setStopLevel ( level );
+    emit queryFilterChanged ();
+  }
+
+
+  inline int  CellWidget::getStartLevel () const
+  { return _drawingQuery.getStartLevel (); }
+
+
+  inline int  CellWidget::getStopLevel () const
+  { return _drawingQuery.getStopLevel (); }
 
 
   inline CellWidget::DrawingPlanes& CellWidget::getDrawingPlanes ()
@@ -988,23 +1076,26 @@ namespace Hurricane {
   { return _mousePosition; }
 
 
-  inline void  CellWidget::setQueryFilter ( int filter )
-  { _queryFilter = filter; }
+  inline void  CellWidget::setQueryFilter ( Query::Mask filter )
+  {
+    _state->setQueryFilter ( filter );
+    emit queryFilterChanged ();
+  }
 
 
-  inline int  CellWidget::getQueryFilter () const
-  { return _queryFilter; }
+  inline Query::Mask  CellWidget::getQueryFilter () const
+  { return _state->getQueryFilter(); }
 
 
   inline void  CellWidget::setRubberShape ( RubberShape shape )
   {
-    _rubberShape = shape;
-    refresh ();
+    _state->setRubberShape ( shape );
+    emit queryFilterChanged ();
   }
 
 
   inline CellWidget::RubberShape  CellWidget::getRubberShape () const
-  { return _rubberShape; }
+  { return _state->getRubberShape(); }
 
 
   inline void  CellWidget::setPen ( const QPen& pen, size_t plane )

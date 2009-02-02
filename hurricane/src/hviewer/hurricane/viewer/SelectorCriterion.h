@@ -44,8 +44,8 @@ namespace Hurricane {
       virtual           ~SelectorCriterion ();
       virtual bool       isValid           ( CellWidget* ) const = 0;
       virtual const Net* getNet            () const;
-      virtual void       doSelection       ( CellWidget*, bool delayRedraw ) = 0;
-      virtual void       undoSelection     ( CellWidget*, bool delayRedraw );
+      virtual void       doSelection       ( CellWidget* ) = 0;
+      virtual void       undoSelection     ( CellWidget* );
       virtual Record*    _getRecord        () const = 0;
       virtual string     _getString        () const = 0;
       virtual string     _getTypeName      () const = 0;
@@ -58,8 +58,8 @@ namespace Hurricane {
       virtual           ~NetSelectorCriterion ();
       virtual const Net* getNet               () const;
       virtual bool       isValid              ( CellWidget* ) const;
-      virtual void       doSelection          ( CellWidget*, bool delayRedraw );
-      virtual void       undoSelection        ( CellWidget*, bool delayRedraw );
+      virtual void       doSelection          ( CellWidget* );
+      virtual void       undoSelection        ( CellWidget* );
       virtual Record*    _getRecord           () const;
       virtual string     _getString           () const;
       virtual string     _getTypeName         () const;
@@ -75,7 +75,7 @@ namespace Hurricane {
       virtual           ~AreaSelectorCriterion ();
               const Box& getArea               () const;
       virtual bool       isValid               ( CellWidget* ) const;
-      virtual void       doSelection           ( CellWidget*, bool delayRedraw );
+      virtual void       doSelection           ( CellWidget* );
       virtual Record*    _getRecord            () const;
       virtual string     _getString            () const;
       virtual string     _getTypeName          () const;

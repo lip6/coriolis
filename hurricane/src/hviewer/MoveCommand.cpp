@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -51,6 +51,9 @@ namespace Hurricane {
 
   bool  MoveCommand::keyPressEvent ( CellWidget* widget, QKeyEvent* event )
   { 
+    if ( event->modifiers() & (Qt::ControlModifier|Qt::ShiftModifier) )
+      return false;
+
     switch ( event->key() ) {
       case Qt::Key_Up:    widget->goUp    (); return true;
       case Qt::Key_Down:  widget->goDown  (); return true;

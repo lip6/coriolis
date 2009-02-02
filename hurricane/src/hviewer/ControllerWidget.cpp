@@ -221,8 +221,11 @@ namespace Hurricane {
   {
     if ( state && getCellWidget() && _syncNetlist->isChecked() ) {
       _cwCumulativeSelection = getCellWidget()->cumulativeSelection();
-      if ( !_cwCumulativeSelection )
-        getCellWidget()->unselectAll ( true );
+      if ( !_cwCumulativeSelection ) {
+        getCellWidget()->openRefreshSession ();
+        getCellWidget()->unselectAll ();
+        getCellWidget()->closeRefreshSession ();
+      }
       getCellWidget()->setCumulativeSelection ( true );
       getCellWidget()->setShowSelection       ( true );
       connect ( _netlistBrowser, SIGNAL(netSelected  (const Net*)), getCellWidget(), SLOT(select  (const Net*)) );
@@ -247,7 +250,13 @@ namespace Hurricane {
     if ( getCellWidget() != cellWidget ) {
       ControllerTab::setCellWidget ( cellWidget );
       if ( getCellWidget() ) {
+        connect ( _netlistBrowser, SIGNAL(refreshSessionOpened())
+                , getCellWidget(), SLOT  (openRefreshSession()) );
+        connect ( _netlistBrowser, SIGNAL(refreshSessionClosed())
+                , getCellWidget(), SLOT  (closeRefreshSession()) );
         connect ( getCellWidget(), SIGNAL(cellChanged(Cell*)), this, SLOT(setCell(Cell*)) );
+        connect ( _netlistBrowser, SIGNAL(netFitted(const Net*))
+                , getCellWidget(), SLOT  (fitToNet (const Net*)) );
       }
       setSyncNetlist ( _syncNetlist->isChecked() );
     }

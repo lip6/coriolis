@@ -98,6 +98,8 @@ namespace Hurricane {
 
   void  SelectionPopup::keyPressEvent ( QKeyEvent* event )
   {
+    cerr << "SelectionPopup::keyPressEvent()" << endl;
+
     QWidget::keyPressEvent ( event );
   }
 

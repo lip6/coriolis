@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -55,8 +55,7 @@ namespace Hurricane {
     , _steiner        (new QRadioButton())
     , _centric        (new QRadioButton())
     , _barycentric    (new QRadioButton())
-    , _queryFilter    (Query::DoAll)
-    , _signalEmitter  (false)
+    , _updateState    (External)
   {
     setAttribute   ( Qt::WA_QuitOnClose, false );
     setWindowTitle ( tr("Display Filter") );
@@ -152,55 +151,79 @@ namespace Hurricane {
   void  DisplayFilterWidget::setCellWidget ( CellWidget* cw )
   {
     if ( !cw ) {
-      if ( _cellWidget )
-        disconnect ( _cellWidget, SLOT(refresh()) );
+      if ( _cellWidget ) {
+        disconnect ( this        , SIGNAL(queryFilterChanged()), _cellWidget, SLOT(changeQueryFilter()) );
+        disconnect ( _cellWidget , SIGNAL(queryFilterChanged()), this       , SLOT(changeQueryFilter()) );
+      }
       _cellWidget = NULL;
       return;
     }
 
     _cellWidget = cw;
-    connect ( this        , SIGNAL(filterChanged())  , _cellWidget, SLOT(refresh()) );
-    connect ( _cellWidget , SIGNAL(settingsChanged()), this       , SLOT(syncFromCellWidget()) );
-    connect ( _steiner    , SIGNAL(clicked())        , this       , SLOT(setRubberSteiner()) );
-    connect ( _centric    , SIGNAL(clicked())        , this       , SLOT(setRubberCentric()) );
-    connect ( _barycentric, SIGNAL(clicked())        , this       , SLOT(setRubberBarycentric()) );
+    connect ( this        , SIGNAL(queryFilterChanged()), _cellWidget, SLOT(changeQueryFilter()) );
+    connect ( _cellWidget , SIGNAL(queryFilterChanged()), this       , SLOT(changeQueryFilter()) );
+    connect ( _steiner    , SIGNAL(clicked())           , this       , SLOT(setRubberSteiner()) );
+    connect ( _centric    , SIGNAL(clicked())           , this       , SLOT(setRubberCentric()) );
+    connect ( _barycentric, SIGNAL(clicked())           , this       , SLOT(setRubberBarycentric()) );
 
-    _signalEmitter = false;
-    syncFromCellWidget ();
+    _updateState = External;
+    changeQueryFilter ();
   }
 
 
-  void  DisplayFilterWidget::syncFromCellWidget ()
+  void  DisplayFilterWidget::changeQueryFilter()
   {
-    if ( !_cellWidget    ) return;
-    if (  _signalEmitter ) {
-      _signalEmitter = false;
-      return;
-    }
+    if ( !_cellWidget ) return;
 
-    _doMasterCells  ->setChecked ( _cellWidget->getQueryFilter() & Query::DoMasterCells   );
-    _doTerminalCells->setChecked ( _cellWidget->getQueryFilter() & Query::DoTerminalCells );
-    _doComponents   ->setChecked ( _cellWidget->getQueryFilter() & Query::DoComponents    );
+    if ( _updateState == InternalEmit ) {
+      _updateState = InternalReceive;
+      emit queryFilterChanged ();
+    } else {
+      if ( _updateState == External ) {
+        blockAllSignals ( true );
 
-    switch ( _cellWidget->getRubberShape() ) {
-      case CellWidget::Steiner:     _steiner->setChecked(true); break;
-      case CellWidget::Centric:     _centric->setChecked(true); break;
-      case CellWidget::Barycentric: _barycentric->setChecked(true); break;
+        _startSpinBox->setValue ( _cellWidget->getStartLevel() );
+        _stopSpinBox ->setValue ( _cellWidget->getStopLevel()  );
+
+        _doMasterCells  ->setChecked ( _cellWidget->getQueryFilter().isSet(Query::DoMasterCells  ) );
+        _doTerminalCells->setChecked ( _cellWidget->getQueryFilter().isSet(Query::DoTerminalCells) );
+        _doComponents   ->setChecked ( _cellWidget->getQueryFilter().isSet(Query::DoComponents   ) );
+
+        switch ( _cellWidget->getRubberShape() ) {
+          case CellWidget::Steiner:     _steiner->setChecked(true); break;
+          case CellWidget::Centric:     _centric->setChecked(true); break;
+          case CellWidget::Barycentric: _barycentric->setChecked(true); break;
+        }
+        blockAllSignals ( false );
+      }
+      _updateState = External;
     }
-    _signalEmitter = false;
+  }
+
+
+  void  DisplayFilterWidget::blockAllSignals ( bool state )
+  {
+    _startSpinBox   ->blockSignals ( state );
+    _stopSpinBox    ->blockSignals ( state );
+    _doMasterCells  ->blockSignals ( state );
+    _doTerminalCells->blockSignals ( state );
+    _doComponents   ->blockSignals ( state );
+    _steiner        ->blockSignals ( state );
+    _centric        ->blockSignals ( state );
+    _barycentric    ->blockSignals ( state );
   }
 
 
   void  DisplayFilterWidget::startLevelChanged ( int level )
   {
     if ( _cellWidget ) {
-      _cellWidget->setStartLevel ( level );
       if ( _stopSpinBox->value() < level ) {
-        _stopSpinBox->setValue ( level );
-        return;
+        _stopSpinBox->blockSignals ( true );
+        _stopSpinBox->setValue     ( level );
+        _stopSpinBox->blockSignals ( false );
       }
-      _signalEmitter = true;
-      emit filterChanged();
+      _updateState = InternalEmit;
+      _cellWidget->setStartLevel ( level );
     }
   }
 
@@ -208,59 +231,66 @@ namespace Hurricane {
   void  DisplayFilterWidget::stopLevelChanged ( int level )
   {
     if ( _cellWidget ) {
-      _cellWidget->setStopLevel ( level );
       if ( _startSpinBox->value() > level ) {
-        _startSpinBox->setValue ( level );
-        return;
+        _startSpinBox->blockSignals ( true );
+        _startSpinBox->setValue     ( level );
+        _startSpinBox->blockSignals ( false );
       }
-      _signalEmitter = true;
-      emit filterChanged();
+      _updateState = InternalEmit;
+      _cellWidget->setStopLevel ( level );
     }
   }
 
 
   void  DisplayFilterWidget::setDoMasterCells ( int state )
   {
-    if ( state != Qt::Unchecked ) _queryFilter |=  Query::DoMasterCells;
-    else                          _queryFilter &= ~Query::DoMasterCells;
+    if ( _cellWidget ) {
+      _updateState = InternalEmit;
+      Query::Mask  queryFilter = _cellWidget->getQueryFilter();
+      
+      if ( state != Qt::Unchecked ) queryFilter.set   ( Query::DoMasterCells );
+      else                          queryFilter.unset ( Query::DoMasterCells );
 
-    _cellWidget->setQueryFilter ( _queryFilter );
-
-    _signalEmitter = true;
-    emit filterChanged();
+      _cellWidget->setQueryFilter ( queryFilter );
+    }
   }
 
 
   void  DisplayFilterWidget::setDoTerminalCells ( int state )
   {
-    if ( state != Qt::Unchecked ) _queryFilter |=  Query::DoTerminalCells;
-    else                          _queryFilter &= ~Query::DoTerminalCells;
+    if ( _cellWidget ) {
+      _updateState = InternalEmit;
+      Query::Mask  queryFilter = _cellWidget->getQueryFilter();
+      
+      if ( state != Qt::Unchecked ) queryFilter.set   ( Query::DoTerminalCells );
+      else                          queryFilter.unset ( Query::DoTerminalCells );
 
-    _cellWidget->setQueryFilter ( _queryFilter );
-
-    _signalEmitter = true;
-    emit filterChanged();
+      _cellWidget->setQueryFilter ( queryFilter );
+    }
   }
 
 
   void  DisplayFilterWidget::setDoComponents ( int state )
   {
-    if ( state != Qt::Unchecked ) _queryFilter |=  Query::DoComponents;
-    else                          _queryFilter &= ~Query::DoComponents;
+    if ( _cellWidget ) {
+      _updateState = InternalEmit;
+      Query::Mask  queryFilter = _cellWidget->getQueryFilter();
+      
+      if ( state != Qt::Unchecked ) queryFilter.set   ( Query::DoComponents );
+      else                          queryFilter.unset ( Query::DoComponents );
 
-    _cellWidget->setQueryFilter ( _queryFilter );
-
-    _signalEmitter = true;
-    emit filterChanged();
+      _cellWidget->setQueryFilter ( queryFilter );
+    }
   }
 
 
   void  DisplayFilterWidget::setRubberSteiner ()
   {
     if ( _cellWidget ) {
-      if ( _cellWidget->getRubberShape() != CellWidget::Steiner )
+      if ( _cellWidget->getRubberShape() != CellWidget::Steiner ) {
+        _updateState = InternalEmit;
         _cellWidget->setRubberShape ( CellWidget::Steiner );
-    //emit filterChanged();
+      }
     }
   }
 
@@ -268,9 +298,10 @@ namespace Hurricane {
   void  DisplayFilterWidget::setRubberCentric ()
   {
     if ( _cellWidget ) {
-      if ( _cellWidget->getRubberShape() != CellWidget::Centric )
+      if ( _cellWidget->getRubberShape() != CellWidget::Centric ) {
+        _updateState = InternalEmit;
         _cellWidget->setRubberShape ( CellWidget::Centric );
-    //emit filterChanged();
+      }
     }
   }
 
@@ -278,9 +309,10 @@ namespace Hurricane {
   void  DisplayFilterWidget::setRubberBarycentric ()
   {
     if ( _cellWidget ) {
-      if ( _cellWidget->getRubberShape() != CellWidget::Barycentric )
+      if ( _cellWidget->getRubberShape() != CellWidget::Barycentric ) {
+        _updateState = InternalEmit;
         _cellWidget->setRubberShape ( CellWidget::Barycentric );
-    //emit filterChanged();
+      }
     }
   }
 

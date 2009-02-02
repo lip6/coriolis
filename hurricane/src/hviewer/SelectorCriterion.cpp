@@ -42,7 +42,7 @@ namespace Hurricane {
   { return NULL; }
 
 
-  void  SelectorCriterion::undoSelection ( CellWidget* cw, bool delayRedraw )
+  void  SelectorCriterion::undoSelection ( CellWidget* cw )
   { }
 
 
@@ -72,15 +72,15 @@ namespace Hurricane {
   }
 
 
-  void  NetSelectorCriterion::doSelection ( CellWidget* cw, bool delayRedraw )
+  void  NetSelectorCriterion::doSelection ( CellWidget* cw )
   {
-    cw->_select ( _net, delayRedraw );
+    cw->_select ( _net );
   }
 
 
-  void  NetSelectorCriterion::undoSelection ( CellWidget* cw, bool delayRedraw )
+  void  NetSelectorCriterion::undoSelection ( CellWidget* cw )
   {
-    cw->_unselect ( _net, delayRedraw );
+    cw->_unselect ( _net );
   }
 
 
@@ -124,7 +124,7 @@ namespace Hurricane {
   { return true; }
 
 
-  void  AreaSelectorCriterion::doSelection ( CellWidget* cw, bool delayRedraw )
+  void  AreaSelectorCriterion::doSelection ( CellWidget* cw )
   {
     cw->_selectOccurrencesUnder ( _area );
   }

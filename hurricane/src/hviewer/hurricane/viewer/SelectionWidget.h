@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -77,7 +77,7 @@ namespace Hurricane {
     private slots:                                        
               void                   textFilterChanged    ();
     protected:                                            
-      virtual void                   keyPressEvent        ( QKeyEvent * event );
+      virtual bool                   eventFilter          ( QObject*, QEvent* );
       virtual void                   hideEvent            ( QHideEvent* event );
 
     private:

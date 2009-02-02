@@ -1,36 +1,9 @@
 
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
 // ===================================================================
 //
 // $Id$
@@ -304,6 +277,8 @@ namespace Hurricane {
 
   class Query {
     public:
+      typedef Hurricane::Mask<int> Mask;
+    public:
     // Types.
       enum  QueryFilter { DoMasterCells   =  1
                         , DoTerminalCells =  2
@@ -344,14 +319,14 @@ namespace Hurricane {
                                                            , const Transformation& transformation
                                                            , const BasicLayer*     basicLayer
                                                            , ExtensionSlice::Mask  extensionMask
-                                                           , unsigned int          filter
+                                                           , Mask                  filter
                                                            );
       inline  void                  setCell                ( Cell*                 cell );
       inline  void                  setArea                ( const Box&            area );
       inline  void                  setTransformation      ( const Transformation& transformation );
       inline  void                  setBasicLayer          ( const BasicLayer*     basicLayer );
       inline  void                  setExtensionMask       ( ExtensionSlice::Mask  mode );
-      inline  void                  setFilter              ( unsigned int          mode );
+      inline  void                  setFilter              ( Mask                  mode );
       inline  void                  setStartLevel          ( unsigned int          level );
       inline  void                  setStopLevel           ( unsigned int          level );
               void                  doQuery                ();
@@ -361,7 +336,7 @@ namespace Hurricane {
               QueryStack            _stack;
               const BasicLayer*     _basicLayer;
               ExtensionSlice::Mask  _extensionMask;
-              unsigned int          _filter;
+              Mask                  _filter;
   };
 
 
@@ -371,7 +346,7 @@ namespace Hurricane {
   inline  void  Query::setArea           ( const Box&            area )           { _stack.setTopArea(area); }
   inline  void  Query::setTransformation ( const Transformation& transformation ) { _stack.setTopTransformation(transformation); }
   inline  void  Query::setBasicLayer     ( const BasicLayer*     basicLayer )     { _basicLayer = basicLayer; }
-  inline  void  Query::setFilter         ( unsigned int          filter )         { _filter = filter; }
+  inline  void  Query::setFilter         ( Mask                  filter )         { _filter = filter; }
   inline  void  Query::setExtensionMask  ( ExtensionSlice::Mask  mask )           { _extensionMask = mask; }
   inline  void  Query::setStartLevel     ( unsigned int          level )          { _stack.setStartLevel(level); }
   inline  void  Query::setStopLevel      ( unsigned int          level )          { _stack.setStopLevel(level); }

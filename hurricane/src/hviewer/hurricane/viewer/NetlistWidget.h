@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -116,23 +116,23 @@ namespace Hurricane {
       Q_OBJECT;
 
     public:
-                                     NetlistWidget     ( QWidget* parent=NULL );
-      inline  Cell*                  getCell           ();
-      template<typename InformationType>
-              void                   setCell           ( Cell* );
-              void                   goTo              ( int );
+                                     NetlistWidget        ( QWidget* parent=NULL );
+      inline  Cell*                  getCell              ();
+      template<typename InformationType>                  
+              void                   setCell              ( Cell* );
+              void                   goTo                 ( int );
     signals:
-              void                   netSelected       ( const Net* );
-              void                   netUnselected     ( const Net* );
-    public slots:
-              void                   forceRowHeight    ();
-    private slots:
-              void                   textFilterChanged ();
-    //        void                   selectNet         ( const QModelIndex& );
-    //        void                   selectCurrent     ( const QModelIndex&    , const QModelIndex& );
-              void                   updateSelecteds   ( const QItemSelection& , const QItemSelection& );
-    protected:
-              void                   keyPressEvent     ( QKeyEvent* );
+              void                   refreshSessionOpened ();
+              void                   refreshSessionClosed ();
+              void                   netSelected          ( const Net* );
+              void                   netUnselected        ( const Net* );
+              void                   netFitted            ( const Net* );
+    public slots:                                         
+              void                   forceRowHeight       ();
+    private slots:                                        
+              void                   textFilterChanged    ();
+              void                   updateSelecteds      ( const QItemSelection& , const QItemSelection& );
+              void                   fitToNet             ();
 
     private:
               Cell*                  _cell;

@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -41,6 +41,7 @@ namespace Hurricane {
       inline bool    zero             () const;
       inline Mask&   set              ( const Mask mask );
       inline Mask&   unset            ( const Mask mask );
+      inline bool    isSet            ( const Mask mask ) const;
       inline bool    contains         ( const Mask mask ) const;
       inline bool    intersect        ( const Mask mask ) const;
       inline Mask&   merge            ( const Mask mask ) const;
@@ -84,6 +85,10 @@ namespace Hurricane {
   template<typename IntType>
   inline Mask<IntType>& Mask<IntType>::unset ( const Mask<IntType> mask )
   { _mask &= ~mask._mask; return *this; }
+
+  template<typename IntType>
+  inline bool  Mask<IntType>::isSet ( const Mask<IntType> mask ) const
+  { return _mask & mask._mask; }
 
   template<typename IntType>
   inline bool  Mask<IntType>::contains ( const Mask<IntType> mask ) const

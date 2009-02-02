@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -29,6 +29,7 @@
 #include  <QKeyEvent>
 #include  <QGroupBox>
 #include  <QVBoxLayout>
+#include  <QAction>
 
 #include "hurricane/Commons.h"
 #include "hurricane/Net.h"
@@ -61,6 +62,7 @@ namespace Hurricane {
   {
     setAttribute ( Qt::WA_DeleteOnClose );
     setAttribute ( Qt::WA_QuitOnClose, false );
+    setContextMenuPolicy ( Qt::ActionsContextMenu );
 
     _rowHeight = QFontMetrics(Graphics::getFixedFont()).height() + 4;
 
@@ -93,11 +95,17 @@ namespace Hurricane {
 
     setLayout ( gLayout );
 
+    QAction* fitAction = new QAction  ( tr("&Fit to Net"), this );
+    fitAction->setShortcut   ( QKeySequence(tr("CTRL+F")) );
+    fitAction->setStatusTip  ( tr("Fit the view to the Net's bounding box") );
+    addAction ( fitAction );
+
     connect ( _filterPatternLineEdit , SIGNAL(textChanged(const QString &))
             , this                   , SLOT  (textFilterChanged()) );                       
     connect ( _view->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&))
             , this                   , SLOT  (updateSelecteds (const QItemSelection&,const QItemSelection&)) );
-    connect ( _baseModel , SIGNAL(layoutChanged()), this, SLOT(forceRowHeight()) );
+    connect ( _baseModel, SIGNAL(layoutChanged()), this, SLOT(forceRowHeight()) );
+    connect ( fitAction , SIGNAL(triggered    ()), this, SLOT(fitToNet      ()) );
 
     resize(300, 300);
   }
@@ -123,10 +131,12 @@ namespace Hurricane {
 
   void  NetlistWidget::updateSelecteds ( const QItemSelection& , const QItemSelection& )
   {
-    const Net* net;
+    cerr << "open refresh session" << endl;
+    emit refreshSessionOpened ();
 
     _selecteds.resetAccesses ();
 
+    const Net* net;
     QModelIndexList iList = _view->selectionModel()->selectedRows();
     for ( int i=0 ; i<iList.size() ; i++ ) {
       net = _baseModel->getNet ( _sortModel->mapToSource(iList[i]).row() );
@@ -154,12 +164,9 @@ namespace Hurricane {
       }
       ++isel;
     }
-  }
 
-
-  void  NetlistWidget::keyPressEvent ( QKeyEvent* event )
-  {
-    QWidget::keyPressEvent ( event );
+    emit refreshSessionClosed ();
+    cerr << "close refresh session" << endl;
   }
 
 
@@ -167,6 +174,14 @@ namespace Hurricane {
   {
     _sortModel->setFilterRegExp ( _filterPatternLineEdit->text() );
     forceRowHeight ();
+  }
+
+
+  void  NetlistWidget::fitToNet ()
+  {
+    const Net* net = _baseModel->getNet ( _sortModel->mapToSource(_view->currentIndex()).row() );
+
+    if ( net ) emit netFitted ( net );
   }
 
 

@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -46,12 +46,10 @@ namespace Hurricane {
     public:
                   DisplayFilterWidget  ( QWidget* parent=NULL );
       void        setCellWidget        ( CellWidget* );
-                                       
     signals:                           
-      void        filterChanged        ();
-                                       
+      void        queryFilterChanged   ();
     public slots:                      
-      void        syncFromCellWidget   ();
+      void        changeQueryFilter    ();
       void        startLevelChanged    ( int level );
       void        stopLevelChanged     ( int level );
       void        setDoMasterCells     ( int state );
@@ -60,6 +58,14 @@ namespace Hurricane {
       void        setRubberSteiner     ();
       void        setRubberCentric     ();
       void        setRubberBarycentric ();
+    protected:
+      void        blockAllSignals      ( bool state );
+
+    protected:
+      enum UpdateState { External        = 0
+                       , InternalEmit
+                       , InternalReceive
+                       };
 
     protected:
       CellWidget*    _cellWidget;
@@ -71,8 +77,7 @@ namespace Hurricane {
       QRadioButton*  _steiner;
       QRadioButton*  _centric;
       QRadioButton*  _barycentric;
-      int            _queryFilter;
-      bool           _signalEmitter;
+      UpdateState    _updateState;
   };
 
 

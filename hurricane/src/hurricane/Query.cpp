@@ -79,7 +79,7 @@ namespace Hurricane {
                         , const Transformation& transformation
                         , const BasicLayer*     basicLayer
                         , ExtensionSlice::Mask  mask
-                        , unsigned int          filter
+                        , Mask                  filter
                         )
   {
     _basicLayer    = basicLayer;
@@ -102,13 +102,13 @@ namespace Hurricane {
 
     while ( !_stack.empty() ) {
     // Process the Components of the current instance.
-      if ( hasGoCallback() && _basicLayer && (_filter & DoComponents) ) {
+      if ( hasGoCallback() && _basicLayer && (_filter.isSet(DoComponents)) ) {
       //if ( getInstance() )
       //  cerr << getTab() << getInstance() << " " << getTransformation() << endl;
       //else
       //  cerr << "  TopCell: " << getMasterCell() << " " << getTransformation() << endl;
 
-        if ( !getMasterCell()->isTerminal() || (_filter & DoTerminalCells) ) {
+        if ( !getMasterCell()->isTerminal() || (_filter.isSet(DoTerminalCells)) ) {
           forEach ( Slice*, islice, getMasterCell()->getSlices() ) {
             if ( !(*islice)->getLayer()->contains(getBasicLayer()) ) continue;
             if ( !(*islice)->getBoundingBox().intersect(getArea()) ) continue;
@@ -119,13 +119,13 @@ namespace Hurricane {
         }
       }
 
-      if ( !getMasterCell()->isTerminal() && (_filter & DoRubbers) ) {
+      if ( !getMasterCell()->isTerminal() && (_filter.isSet(DoRubbers)) ) {
         forEach ( Rubber*, rubber, getMasterCell()->getRubbersUnder(_stack.getArea()) )
           rubberCallback ( *rubber );
       }
 
-      if ( hasExtensionGoCallback() && (_filter & DoExtensionGos) ) {
-        if ( !getMasterCell()->isTerminal() || (_filter & DoTerminalCells) ) {
+      if ( hasExtensionGoCallback() && (_filter.isSet(DoExtensionGos)) ) {
+        if ( !getMasterCell()->isTerminal() || (_filter.isSet(DoTerminalCells)) ) {
           forEach ( ExtensionSlice*, islice, getMasterCell()->getExtensionSlices() ) {
             if ( !( (*islice)->getMask() & _extensionMask ) ) continue;
             if ( !(*islice)->getBoundingBox().intersect(getArea()) ) continue;
@@ -136,7 +136,7 @@ namespace Hurricane {
         }
       }
 
-      if ( (_filter & DoMasterCells) && hasMasterCellCallback() )
+      if ( (_filter.isSet(DoMasterCells)) && hasMasterCellCallback() )
         masterCellCallback ();
 
       _stack.progress ();

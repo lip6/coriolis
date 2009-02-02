@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -177,6 +177,7 @@ namespace Hurricane {
     _view->setAlternatingRowColors(true);
     _view->setSelectionBehavior(QAbstractItemView::SelectRows);
     _view->setSortingEnabled(true);
+    _view->installEventFilter(this);
 
     QHeaderView* horizontalHeader = _view->horizontalHeader ();
     horizontalHeader->setStretchLastSection ( true );
@@ -302,23 +303,27 @@ namespace Hurricane {
   }
 
 
-  void  InspectorWidget::keyPressEvent ( QKeyEvent *event )
+  bool  InspectorWidget::eventFilter ( QObject* object, QEvent* event )
   {
-    if ( event->key() == Qt::Key_Right ) {
-      QModelIndex index = _view->currentIndex();
-      if ( index.isValid() ) {
-        Slot* slot = _baseModel->getRecord()->getSlot(_sortModel->mapToSource(index).row());
+    if ( event->type() == QEvent::KeyPress ) {
+      QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
 
-        if ( slot )
-          pushSlot ( slot );
+      if ( keyEvent->key() == Qt::Key_Right ) {
+        QModelIndex index = _view->currentIndex();
+        if ( index.isValid() ) {
+          Slot* slot = _baseModel->getRecord()->getSlot(_sortModel->mapToSource(index).row());
+
+          if ( slot )
+            pushSlot ( slot );
+        }
+      } else if ( keyEvent->key() == Qt::Key_Left ) {
+        back ();
+      } else if ( keyEvent->key() == Qt::Key_O ) {
+        forkInspector ( _view->currentIndex() );
       }
-    } else if ( event->key() == Qt::Key_Left ) {
-      back ();
-    } else if ( event->key() == Qt::Key_O ) {
-      forkInspector ( _view->currentIndex() );
-    } else {
-      QWidget::keyPressEvent ( event );
     }
+
+    return QObject::eventFilter ( object, event );
   }
 
 

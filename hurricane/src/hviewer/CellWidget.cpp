@@ -196,10 +196,11 @@ namespace Hurricane {
 
 
   CellWidget::RedrawManager::RedrawManager ( CellWidget* widget )
-    : _widget     (widget)
-    , _events     ()
-    , _processing (false)
-    , _interrupted(false)
+    : _widget        (widget)
+    , _events        ()
+    , _refreshSession(0)
+    , _processing    (false)
+    , _interrupted   (false)
   { }
 
 
@@ -283,14 +284,25 @@ namespace Hurricane {
       if ( !_processing ) process ();
     }
 #else
-    _events.push_back ( new RedrawEvent(RedrawEvent::Refresh,0,_widget) );
+    bool addRefresh = true;
+    if ( _refreshSession ) {
+      list<RedrawEvent*>::iterator ievent = _events.begin();
+      for ( ; ievent != _events.end() ; ievent++ ) {
+        if ( (_events.back()->getType() == RedrawEvent::Refresh) ) {
+          addRefresh = false;
+          break;
+        }
+      }
+    }
+    if ( addRefresh )
+      _events.push_back ( new RedrawEvent(RedrawEvent::Refresh,0,_widget) );
 
-    if ( !_processing ) process ();
+    if ( !_processing && (_refreshSession == 0) ) process ();
 #endif
   }
 
 
-  inline void  CellWidget::RedrawManager::process ()
+  void  CellWidget::RedrawManager::process ()
   {
     _processing = true;
 
@@ -780,12 +792,12 @@ namespace Hurricane {
   }
 
 
-  bool  CellWidget::SelectorCriterions::add ( const Net* net, bool delayRedraw )
+  bool  CellWidget::SelectorCriterions::add ( const Net* net )
   {
     if ( !_cellWidget ) return false;
     if ( !_cellWidget->isSelected(Occurrence(net)) ) {
       _criterions.push_back ( new NetSelectorCriterion(net) );
-      _criterions.back()->doSelection ( _cellWidget, delayRedraw );
+      _criterions.back()->doSelection ( _cellWidget );
       return true;
     }
     return false;
@@ -796,12 +808,12 @@ namespace Hurricane {
   {
     if ( !_cellWidget ) return false;
     _criterions.push_back ( new AreaSelectorCriterion(area) );
-    _criterions.back()->doSelection ( _cellWidget, true );
+    _criterions.back()->doSelection ( _cellWidget );
     return true;
   }
 
 
-  bool  CellWidget::SelectorCriterions::remove (  const Net* net, bool delayRedraw )
+  bool  CellWidget::SelectorCriterions::remove (  const Net* net )
   {
     if ( !_cellWidget ) return false;
     if ( !_cellWidget->isSelected(Occurrence(net)) ) return false;
@@ -812,7 +824,7 @@ namespace Hurricane {
 
     if ( i < _criterions.size() ) {
       swap ( _criterions[i], *(_criterions.end()-1) );
-      _criterions.back()->undoSelection ( _cellWidget, delayRedraw );
+      _criterions.back()->undoSelection ( _cellWidget );
       _criterions.pop_back ();
     } else
       return false;
@@ -838,7 +850,7 @@ namespace Hurricane {
     size_t last = _criterions.size ();
     while ( i < last ) {
       if ( _criterions[i]->isValid(_cellWidget) ) {
-        _criterions[i]->doSelection ( _cellWidget, true );
+        _criterions[i]->doSelection ( _cellWidget );
         ++i;
       } else
         swap ( _criterions[i], _criterions[--last] );
@@ -912,7 +924,6 @@ namespace Hurricane {
     , _drawingPlanes        (QSize(_initialSide+2*_stripWidth,_initialSide+2*_stripWidth),this)
     , _drawingQuery         (this)
     , _textDrawingQuery     (this)
-    , _queryFilter          (~Query::DoTerminalCells)
     , _darkening            (100)
     , _mousePosition        (0,0)
     , _spot                 (this)
@@ -926,7 +937,6 @@ namespace Hurricane {
     , _commands             ()
     , _redrawRectCount      (0)
     , _textFontHeight       (20)
-    , _rubberShape          (Steiner)
   {
   //setBackgroundRole ( QPalette::Dark );
   //setAutoFillBackground ( false );
@@ -1046,7 +1056,6 @@ namespace Hurricane {
       case Barycentric: setRubberShape(Steiner    ); break;
       case Steiner:     setRubberShape(Centric    ); break;
     }
-    emit settingsChanged();
   }
 
 
@@ -1082,11 +1091,18 @@ namespace Hurricane {
   }
 
 
+  void  CellWidget::changeQueryFilter ()
+  {
+    _redrawManager.refresh ();
+    emit queryFilterChanged ();
+  }
+
+
   void  CellWidget::_redraw ( QRect redrawArea )
   {
 //     cerr << "CellWidget::redraw() - start "
 //          << _selectionHasChanged << " filter:"
-//          << _queryFilter << endl;
+//          << _state->getQueryFilter() << endl;
 
 //     static bool  timedout;
 //     static Timer timer;
@@ -1130,7 +1146,7 @@ namespace Hurricane {
 
           if ( isDrawable((*iLayer)->getName()) ) {
             _drawingQuery.setBasicLayer ( *iLayer );
-            _drawingQuery.setFilter     ( _queryFilter & ~(Query::DoMasterCells|Query::DoRubbers) );
+            _drawingQuery.setFilter     ( getQueryFilter().unset(Query::DoMasterCells|Query::DoRubbers) );
             _drawingQuery.doQuery       ();
           }
           if ( _enableRedrawInterrupt ) QApplication::processEvents();
@@ -1147,7 +1163,7 @@ namespace Hurricane {
              _drawingPlanes.setBrush ( Graphics::getBrush("boundaries",getDarkening()) );
 
              _drawingQuery.setBasicLayer ( NULL );
-             _drawingQuery.setFilter     ( _queryFilter & ~(Query::DoComponents|Query::DoRubbers) );
+             _drawingQuery.setFilter     ( getQueryFilter().unset(Query::DoComponents|Query::DoRubbers) );
              _drawingQuery.doQuery       ();
           }
         }
@@ -1158,7 +1174,7 @@ namespace Hurricane {
              _drawingPlanes.setBrush ( Graphics::getBrush("rubber",getDarkening()) );
 
              _drawingQuery.setBasicLayer ( NULL );
-             _drawingQuery.setFilter     ( _queryFilter & ~(Query::DoComponents|Query::DoMasterCells) );
+             _drawingQuery.setFilter     ( getQueryFilter().unset(Query::DoComponents|Query::DoMasterCells) );
              _drawingQuery.doQuery       ();
           }
         }
@@ -1175,7 +1191,7 @@ namespace Hurricane {
           }
         }
 
-      //_drawingQuery.setFilter ( _queryFilter & ~Query::DoMasterCells );
+      //_drawingQuery.setFilter ( getQueryFilter() & ~Query::DoMasterCells );
         forEach ( ExtensionSlice*, islice, getCell()->getExtensionSlices() ) {
           if ( _enableRedrawInterrupt ) QApplication::processEvents();
           if ( /*timeout("redraw [extension]",timer,10.0,timedout) ||*/ (_redrawManager.interrupted()) ) break;
@@ -1517,7 +1533,7 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::displayReframe ( bool delayed )
+  void  CellWidget::displayReframe ()
   {
     _offsetVA.rx() = _stripWidth;
     _offsetVA.ry() = _stripWidth;
@@ -1529,7 +1545,7 @@ namespace Hurricane {
 
     _displayArea = Box ( xmin, ymin, xmax, ymax );
 
-    if ( !delayed ) _redrawManager.refresh ();
+    _redrawManager.refresh ();
   }
 
 
@@ -1612,40 +1628,41 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::reframe ( bool delayed )
+  void  CellWidget::reframe ()
   {
   //cerr << "CellWidget::reframe() - scale:" << _state->getScale()
   //     << " topLeft:" << _state->getTopLeft() << endl;
 
     _visibleArea = computeVisibleArea ( _state->getScale(), _state->getTopLeft() );
-    displayReframe ( delayed );
+    displayReframe ();
   }
 
 
-  void  CellWidget::reframe ( const Box& box, bool delayed )
+  void  CellWidget::reframe ( const Box& box, bool historyEnable )
   {
   //cerr << "CellWidget::reframe() - " << box << endl;
   //cerr << "  widget size := " << _drawingPlanes.width() << "x" << _drawingPlanes.height() << endl;
 
   //cerr << "  CellWidget::reframe() - widget size := " << width() << "x" << height() << endl;
 
-    float scale;
+    bool backupHistoryEnable = _state->getHistoryEnable ();
+    _state->setHistoryEnable ( historyEnable );
+    _state->setTopLeft       ( getTopLeft() );
 
-    _state->setTopLeft ( getTopLeft() );
+    float scale;
     _visibleArea = computeVisibleArea ( box, scale );
     _state->setScale ( scale );
-    displayReframe ( delayed );
+    displayReframe ();
+
+    _state->setHistoryEnable ( backupHistoryEnable );
 
   //cerr << "  _displayArea: " << _displayArea << " (offset: " << _offsetVA.x() << ")" << endl;
   }
 
 
-  void  CellWidget::fitToContents ( bool delayed, bool historyEnable )
+  void  CellWidget::fitToContents ( bool historyEnable )
   {
   //cerr << "CellWidget::fitToContents()" << endl;
-
-    bool backupHistoryEnable = _state->getHistoryEnable ();
-    _state->setHistoryEnable ( historyEnable );
 
     Box boundingBox = Box ( DbU::lambda(0)
                           , DbU::lambda(0)
@@ -1654,9 +1671,26 @@ namespace Hurricane {
                           );
 
     if ( getCell() ) boundingBox = getCell()->getBoundingBox();
-    reframe ( boundingBox, delayed );
+    reframe ( boundingBox, historyEnable );
+  }
 
-    _state->setHistoryEnable ( backupHistoryEnable );
+
+  void  CellWidget::fitToNet ( const Net* net, bool historyEnable )
+  {
+    if ( !net )
+      throw Error ( "<b>CellWidget::fitToNet()</b>: NULL net argument." );
+
+    if ( net->getCell() != getCell() )
+      throw Error ( "<b>CellWidget::fitToNet()</b>:<br>"
+                    "Net %s (cell: %s) do not belong to Cell %s"
+                  , Graphics::toHtml(getString(net->getName())).c_str()
+                  , Graphics::toHtml(getString(net->getCell()->getName())).c_str()
+                  , Graphics::toHtml(getString(getCell()->getName())).c_str()
+                  );
+
+    Box boundingBox = net->getBoundingBox ();
+    if ( !boundingBox.isEmpty() )
+      reframe ( boundingBox, historyEnable );
   }
 
 
@@ -1782,7 +1816,7 @@ namespace Hurricane {
   {
   //cerr << "CellWidget::showEvent() - size: " << geometry().width() << "x" << geometry().height() << endl;
     if ( _cellChanged )
-      fitToContents ( false, false );
+      fitToContents ( false );
   }
 
 
@@ -1963,12 +1997,16 @@ namespace Hurricane {
 
     if ( cell == getCell() ) return;
 
+    openRefreshSession ();
+
     shared_ptr<State>  state ( new State(cell) );
     setState ( state );
 
-    fitToContents ( false, false );
+    fitToContents ( false );
 
     _state->setHistoryEnable ( true );
+
+    closeRefreshSession ();
   }
 
 
@@ -1977,6 +2015,8 @@ namespace Hurricane {
   //cerr << "CellWidget::setState() - " << state->getName() << endl;
 
     if ( state == _state ) return;
+
+    openRefreshSession ();
 
     cellPreModificate ();
     _state->getSelection  ().clear ();
@@ -1994,16 +2034,21 @@ namespace Hurricane {
 
     _state->setHistoryEnable ( false );
     _state->setCellWidget ( this );
-    _drawingQuery    .setCell ( getCell() );
-    _textDrawingQuery.setCell ( getCell() );
+    _drawingQuery    .setCell       ( getCell() );
+    _drawingQuery    .setStartLevel ( _state->getStartLevel() );
+    _drawingQuery    .setStopLevel  ( _state->getStopLevel() );
+    _textDrawingQuery.setCell       ( getCell() );
 
-    reframe ( true );
+    reframe ();
     _state->setHistoryEnable ( true );
 
-    emit cellChanged  ( getCell() );
-    emit stateChanged ( _state );
+    emit cellChanged        ( getCell() );
+    emit stateChanged       ( _state );
+    emit queryFilterChanged ();
 
     cellPostModificate ();
+
+    closeRefreshSession ();
   }
 
 
@@ -2013,12 +2058,16 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::select ( const Net* net, bool delayRedraw )
+  void  CellWidget::select ( const Net* net )
   {
     ++_delaySelectionChanged;
 
-    if ( !_state->cumulativeSelection() ) unselectAll ( true );
-    bool added = _state->getSelection().add ( net, delayRedraw );
+    if ( !_state->cumulativeSelection() ) {
+      openRefreshSession ();
+      unselectAll ();
+      closeRefreshSession ();
+    }
+    bool added = _state->getSelection().add ( net );
 
     if ( !--_delaySelectionChanged && added ) emit selectionChanged(_selectors,getCell());
   }
@@ -2083,18 +2132,22 @@ namespace Hurricane {
   {
     ++_delaySelectionChanged;
 
-    if ( !_state->cumulativeSelection() ) unselectAll ( true );
+    if ( !_state->cumulativeSelection() ) {
+      openRefreshSession ();
+      unselectAll ();
+      closeRefreshSession ();
+    }
     bool added = _state->getSelection().add ( selectArea );
 
     if ( !--_delaySelectionChanged && added ) emit selectionChanged(_selectors,getCell());
   }
 
 
-  void  CellWidget::unselect ( const Net* net, bool delayRedraw )
+  void  CellWidget::unselect ( const Net* net )
   {
     ++_delaySelectionChanged;
 
-    bool removed = _state->getSelection().remove ( net, delayRedraw );
+    bool removed = _state->getSelection().remove ( net );
     if ( !--_delaySelectionChanged && removed ) emit selectionChanged(_selectors,getCell());
   }
 
@@ -2121,12 +2174,12 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::unselectAll ( bool delayRedraw )
+  void  CellWidget::unselectAll ()
   {
     ++_delaySelectionChanged;
 
     _state->getSelection().clear ();
-    _unselectAll ( delayRedraw );
+    _unselectAll ();
 
     if ( !--_delaySelectionChanged ) emit selectionChanged(_selectors,getCell());
   }
@@ -2159,7 +2212,7 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::_select ( const Net* net, bool delayRedraw )
+  void  CellWidget::_select ( const Net* net )
   {
     select ( Occurrence(net) );
     forEach ( Component*, component, net->getComponents() ) {
@@ -2170,11 +2223,11 @@ namespace Hurricane {
       Occurrence occurrence ( *rubber );
       select ( occurrence );
     }
-    if ( !delayRedraw && _state->showSelection() ) _redrawManager.refresh ();
+    if ( _state->showSelection() ) _redrawManager.refresh ();
   }
 
 
-  void  CellWidget::_unselect ( const Net* net, bool delayRedraw )
+  void  CellWidget::_unselect ( const Net* net )
   {
     unselect ( Occurrence(net) );
     forEach ( Component*, component, net->getComponents() ) {
@@ -2185,7 +2238,7 @@ namespace Hurricane {
       Occurrence occurrence ( *rubber );
       unselect ( occurrence );
     }
-    if ( !delayRedraw && _state->showSelection() ) _redrawManager.refresh ();
+    if ( _state->showSelection() ) _redrawManager.refresh ();
   }
 
 
@@ -2196,28 +2249,32 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::_unselectAll ( bool delayRedraw )
+  void  CellWidget::_unselectAll ()
   {
     SelectorSet::iterator iselector;
     while ( !_selectors.empty() )
       (*_selectors.begin())->detachFrom ( this );
 
     if ( !_selectionHasChanged ) _selectionHasChanged = true;
-    if ( !delayRedraw && _state->showSelection() ) _redrawManager.refresh ();
+    if ( _state->showSelection() ) _redrawManager.refresh ();
   }
 
 
   void  CellWidget::cellPreModificate ()
   {
-    _unselectAll ( true );
+    openRefreshSession ();
+    _unselectAll ();
     
     emit selectionChanged(_selectors,getCell());
     emit cellPreModificated ();
+
+    closeRefreshSession ();
   }
 
 
   void  CellWidget::cellPostModificate ()
   {
+    openRefreshSession ();
     _cellModificated = true;
 
     ++_delaySelectionChanged;
@@ -2229,6 +2286,8 @@ namespace Hurricane {
     --_delaySelectionChanged;
     emit selectionChanged(_selectors,getCell());
     emit cellPostModificated ();
+
+    closeRefreshSession ();
   }
 
 
