@@ -71,7 +71,6 @@ namespace Hurricane {
   typedef Hurricane::Collection<Occurrence> OccurrenceHC;
 
 
-
 // -------------------------------------------------------------------
 // Class  :  "Occurrences_IsSelectable".
 
@@ -967,10 +966,12 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::styleChange ( void* emitter )
+  void  CellWidget::setStyle ( int id )
   {
+    Graphics::setStyle ( (size_t)id );
     refresh ();
-    emit styleChanged(emitter);
+
+    emit styleChanged ();
   }
 
 
@@ -988,7 +989,7 @@ namespace Hurricane {
     connect ( _palette, SIGNAL(paletteChanged())    , this    , SLOT(refresh()) );
     connect ( this    , SIGNAL(cellChanged(Cell*))  , _palette, SLOT(updateExtensions(Cell*)) );
     connect ( this    , SIGNAL(updatePalette(Cell*)), _palette, SLOT(updateExtensions(Cell*)) );
-    connect ( this    , SIGNAL(styleChanged(void*)) , _palette, SLOT(styleChange(void*)) );
+    connect ( this    , SIGNAL(styleChanged())      , _palette, SLOT(changeStyle()) );
   }
 
 
@@ -1066,7 +1067,7 @@ namespace Hurricane {
       _selectionHasChanged = false;
       refresh ();
 
-      emit showSelectionToggled ( state );
+      emit selectionModeChanged ();
     }
   }
 
@@ -1075,7 +1076,7 @@ namespace Hurricane {
   {
     if ( state != _state->cumulativeSelection() ) {
       _state->setCumulativeSelection ( state );
-      emit cumulativeSelectionToggled ( state );
+      emit selectionModeChanged ();
     }
   }
 
@@ -2062,14 +2063,9 @@ namespace Hurricane {
   {
     ++_delaySelectionChanged;
 
-    if ( !_state->cumulativeSelection() ) {
-      openRefreshSession ();
-      unselectAll ();
-      closeRefreshSession ();
-    }
     bool added = _state->getSelection().add ( net );
 
-    if ( !--_delaySelectionChanged && added ) emit selectionChanged(_selectors,getCell());
+    if ( !--_delaySelectionChanged && added ) emit selectionChanged(_selectors);
   }
 
 
@@ -2109,8 +2105,6 @@ namespace Hurricane {
                   , s1.c_str(), s2.c_str() );
     }
 
-  //if ( !_state->cumulativeSelection() ) unselectAll ( true );
-
 	Property* property = occurrence.getProperty ( Selector::getPropertyName() );
     Selector* selector = NULL;
 	if ( !property )
@@ -2124,7 +2118,7 @@ namespace Hurricane {
 	selector->attachTo(this);
 
     _selectionHasChanged = true;
-    if ( !_delaySelectionChanged ) emit selectionChanged(_selectors,getCell());
+    if ( !_delaySelectionChanged ) emit selectionChanged(_selectors);
   }
 
 
@@ -2139,7 +2133,7 @@ namespace Hurricane {
     }
     bool added = _state->getSelection().add ( selectArea );
 
-    if ( !--_delaySelectionChanged && added ) emit selectionChanged(_selectors,getCell());
+    if ( !--_delaySelectionChanged && added ) emit selectionChanged(_selectors);
   }
 
 
@@ -2148,7 +2142,7 @@ namespace Hurricane {
     ++_delaySelectionChanged;
 
     bool removed = _state->getSelection().remove ( net );
-    if ( !--_delaySelectionChanged && removed ) emit selectionChanged(_selectors,getCell());
+    if ( !--_delaySelectionChanged && removed ) emit selectionChanged(_selectors);
   }
 
 
@@ -2170,7 +2164,7 @@ namespace Hurricane {
     }
 
     _selectionHasChanged = true;
-    if ( !_delaySelectionChanged ) emit selectionChanged(_selectors,getCell());
+    if ( !_delaySelectionChanged ) emit selectionChanged(_selectors);
   }
 
 
@@ -2181,7 +2175,7 @@ namespace Hurricane {
     _state->getSelection().clear ();
     _unselectAll ();
 
-    if ( !--_delaySelectionChanged ) emit selectionChanged(_selectors,getCell());
+    if ( !--_delaySelectionChanged ) emit selectionChanged(_selectors);
   }
 
 
@@ -2265,7 +2259,7 @@ namespace Hurricane {
     openRefreshSession ();
     _unselectAll ();
     
-    emit selectionChanged(_selectors,getCell());
+    emit selectionChanged(_selectors);
     emit cellPreModificated ();
 
     closeRefreshSession ();
@@ -2284,7 +2278,7 @@ namespace Hurricane {
     _redrawManager.refresh ();
 
     --_delaySelectionChanged;
-    emit selectionChanged(_selectors,getCell());
+    emit selectionChanged(_selectors);
     emit cellPostModificated ();
 
     closeRefreshSession ();

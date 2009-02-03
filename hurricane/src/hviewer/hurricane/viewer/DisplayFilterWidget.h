@@ -33,11 +33,10 @@ class QSpinBox;
 class QCheckBox;
 class QRadioButton;
 
+#include  "hurricane/viewer/CellWidget.h"
+
 
 namespace Hurricane {
-
-
-  class CellWidget;
 
 
   class DisplayFilterWidget : public QWidget {
@@ -60,12 +59,6 @@ namespace Hurricane {
       void        setRubberBarycentric ();
     protected:
       void        blockAllSignals      ( bool state );
-
-    protected:
-      enum UpdateState { External        = 0
-                       , InternalEmit
-                       , InternalReceive
-                       };
 
     protected:
       CellWidget*    _cellWidget;

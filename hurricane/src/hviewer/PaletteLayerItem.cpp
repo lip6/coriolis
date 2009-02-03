@@ -40,12 +40,12 @@ namespace Hurricane {
     , _basicLayer(basicLayer)
     , _visible   (new QCheckBox())
     , _selectable(new QCheckBox())
+    , _sample    (new DrawingStyleSample(this))
   {
     QHBoxLayout* layout = new QHBoxLayout ();
     layout->setContentsMargins ( 0, 0, 0, 0 );
 
-    DrawingStyleSample* sample = new DrawingStyleSample(this);
-    layout->addWidget ( sample );
+    layout->addWidget ( _sample );
 
     _visible->setChecked ( visible );
     _visible->setText    ( getString(getName()).c_str() );
@@ -63,7 +63,6 @@ namespace Hurricane {
 
     setLayout ( layout );
 
-    connect ( this       , SIGNAL(styleChanged()), sample, SLOT  (redraw           ()) );
     connect ( _visible   , SIGNAL(clicked     ()), this  , SIGNAL(visibleToggled   ()) );
     connect ( _selectable, SIGNAL(clicked     ()), this  , SIGNAL(selectableToggled()) );
   }
@@ -79,6 +78,12 @@ namespace Hurricane {
   const Name& PaletteLayerItem::getName () const
   {
     return _basicLayer->getName();
+  }
+
+
+  void  PaletteLayerItem::changeStyle ()
+  {
+    _sample->redraw ();
   }
 
 

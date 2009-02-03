@@ -85,6 +85,11 @@ namespace Hurricane {
   class Command;
 //class MapView;
 
+  enum UpdateState { ExternalEmit    = 0
+                   , InternalEmit
+                   , InternalReceive
+                   };
+
 
   class CellWidget : public QWidget {
       Q_OBJECT;
@@ -201,14 +206,13 @@ namespace Hurricane {
               void                    cellPreModificated         ();
               void                    cellPostModificated        ();
               void                    stateChanged               ( shared_ptr<CellWidget::State>& );
-              void                    styleChanged               ( void* emitter );
+              void                    styleChanged               ();
               void                    queryFilterChanged         ();
               void                    updatePalette              ( Cell* );
               void                    mousePositionChanged       ( const Point& position );
-              void                    selectionChanged           ( const SelectorSet&, Cell* );
+              void                    selectionModeChanged       ();
+              void                    selectionChanged           ( const SelectorSet& );
               void                    selectionToggled           ( Occurrence );
-              void                    showSelectionToggled       ( bool );
-              void                    cumulativeSelectionToggled ( bool );
               void                    showBoundariesToggled      ( bool );
     public slots:                                                
     // Qt QWidget Slots Overload & CellWidget Specifics.         
@@ -233,7 +237,7 @@ namespace Hurricane {
               void                    _unselectAll               ();
               void                    changeQueryFilter          ();
               void                    rubberChange               ();
-              void                    styleChange                ( void* emitter );
+              void                    setStyle                   ( int id );
               void                    updatePalette              ();
               void                    cellPreModificate          ();
               void                    cellPostModificate         ();

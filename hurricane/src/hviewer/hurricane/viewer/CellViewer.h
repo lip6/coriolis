@@ -79,6 +79,7 @@ namespace Hurricane {
               void                 unselect                  ( Occurrence& );
               void                 unselectAll               ();
     public slots:                  
+              void                 changeSelectionMode       ();
               void                 setShowSelection          ( bool );
               void                 setState                  ( shared_ptr<CellWidget::State>& );
               void                 showController            ();
@@ -121,6 +122,7 @@ namespace Hurricane {
               list< shared_ptr<CellWidget::State> >
                                    _cellHistory;
               bool                 _firstShow;
+              UpdateState          _updateState;
                                    
     protected:                     
               void                 createActions             ();

@@ -55,7 +55,7 @@ namespace Hurricane {
     , _steiner        (new QRadioButton())
     , _centric        (new QRadioButton())
     , _barycentric    (new QRadioButton())
-    , _updateState    (External)
+    , _updateState    (ExternalEmit)
   {
     setAttribute   ( Qt::WA_QuitOnClose, false );
     setWindowTitle ( tr("Display Filter") );
@@ -145,28 +145,26 @@ namespace Hurricane {
 
     connect ( _startSpinBox, SIGNAL(valueChanged(int)), this, SLOT(startLevelChanged(int)) );
     connect ( _stopSpinBox , SIGNAL(valueChanged(int)), this, SLOT(stopLevelChanged (int)) );
+    connect ( _steiner     , SIGNAL(clicked())        , this, SLOT(setRubberSteiner()) );
+    connect ( _centric     , SIGNAL(clicked())        , this, SLOT(setRubberCentric()) );
+    connect ( _barycentric , SIGNAL(clicked())        , this, SLOT(setRubberBarycentric()) );
   }
 
 
   void  DisplayFilterWidget::setCellWidget ( CellWidget* cw )
   {
-    if ( !cw ) {
-      if ( _cellWidget ) {
-        disconnect ( this        , SIGNAL(queryFilterChanged()), _cellWidget, SLOT(changeQueryFilter()) );
-        disconnect ( _cellWidget , SIGNAL(queryFilterChanged()), this       , SLOT(changeQueryFilter()) );
-      }
-      _cellWidget = NULL;
-      return;
+    if ( _cellWidget ) {
+      disconnect ( this        , SIGNAL(queryFilterChanged()), _cellWidget, SLOT(changeQueryFilter()) );
+      disconnect ( _cellWidget , SIGNAL(queryFilterChanged()), this       , SLOT(changeQueryFilter()) );
     }
 
     _cellWidget = cw;
+    if ( !_cellWidget ) return;
+
     connect ( this        , SIGNAL(queryFilterChanged()), _cellWidget, SLOT(changeQueryFilter()) );
     connect ( _cellWidget , SIGNAL(queryFilterChanged()), this       , SLOT(changeQueryFilter()) );
-    connect ( _steiner    , SIGNAL(clicked())           , this       , SLOT(setRubberSteiner()) );
-    connect ( _centric    , SIGNAL(clicked())           , this       , SLOT(setRubberCentric()) );
-    connect ( _barycentric, SIGNAL(clicked())           , this       , SLOT(setRubberBarycentric()) );
 
-    _updateState = External;
+    _updateState = ExternalEmit;
     changeQueryFilter ();
   }
 
@@ -179,7 +177,7 @@ namespace Hurricane {
       _updateState = InternalReceive;
       emit queryFilterChanged ();
     } else {
-      if ( _updateState == External ) {
+      if ( _updateState == ExternalEmit ) {
         blockAllSignals ( true );
 
         _startSpinBox->setValue ( _cellWidget->getStartLevel() );
@@ -196,7 +194,7 @@ namespace Hurricane {
         }
         blockAllSignals ( false );
       }
-      _updateState = External;
+      _updateState = ExternalEmit;
     }
   }
 

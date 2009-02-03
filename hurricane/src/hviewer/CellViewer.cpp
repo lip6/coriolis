@@ -75,6 +75,7 @@ namespace Hurricane {
                                              , _hierarchyCommand()
                                              , _cellHistory()
                                              , _firstShow(false)
+                                             , _updateState(ExternalEmit)
   {
     setObjectName("viewer");
 
@@ -227,8 +228,6 @@ namespace Hurricane {
     _cellWidget->bindCommand ( &_hierarchyCommand );
     _controller->setCellWidget ( _cellWidget );
 
-    _selectCommand.bindToAction ( _showSelectionAction );
-
     MousePositionWidget* _mousePosition = new MousePositionWidget ();
     statusBar()->addPermanentWidget ( _mousePosition );
 
@@ -259,10 +258,8 @@ namespace Hurricane {
     connect ( _cellWidget            , SIGNAL(mousePositionChanged(const Point&))
             , _mousePosition         , SLOT(setPosition(const Point&)) );
 
-    connect ( this                   , SIGNAL(showSelectionToggled(bool))
-            , _cellWidget            , SLOT  (setShowSelection    (bool)) );
-    connect ( _cellWidget            , SIGNAL(showSelectionToggled(bool))
-            , this                   , SLOT  (setShowSelection    (bool)) );
+    connect ( _cellWidget            , SIGNAL(selectionModeChanged())
+            , this                   , SLOT  (changeSelectionMode ()) );
     connect ( &_selectCommand        , SIGNAL(selectionToggled (Occurrence))
             ,  _cellWidget           , SLOT  (toggleSelection  (Occurrence)) );
 
@@ -366,21 +363,21 @@ namespace Hurricane {
   }
 
 
+  void  CellViewer::changeSelectionMode ()
+  {
+    if ( _updateState != InternalEmit ) {
+      _showSelectionAction->blockSignals ( true );
+      _showSelectionAction->setChecked   ( _cellWidget->getState()->cumulativeSelection() );
+      _showSelectionAction->blockSignals ( false );
+    }
+    _updateState = ExternalEmit;
+  }
+
+
   void  CellViewer::setShowSelection ( bool state )
   {
-    static bool isEmitter = false;
-
-    if ( sender() == _showSelectionAction ) {
-      isEmitter = true;
-      emit showSelectionToggled ( state );
-    } else {
-      if ( !isEmitter ) {
-        _showSelectionAction->blockSignals ( true );
-        _showSelectionAction->setChecked   ( state );
-        _showSelectionAction->blockSignals ( false );
-      } else
-        isEmitter = false;
-    }
+    _updateState = InternalEmit;
+    _cellWidget->setShowSelection ( state );
   }
 
 

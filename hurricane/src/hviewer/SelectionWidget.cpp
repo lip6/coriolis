@@ -40,6 +40,7 @@
 #include "hurricane/viewer/Graphics.h"
 #include "hurricane/viewer/SelectionModel.h"
 #include "hurricane/viewer/SelectionWidget.h"
+#include "hurricane/viewer/CellWidget.h"
 
 
 namespace Hurricane {
@@ -48,6 +49,7 @@ namespace Hurricane {
 
   SelectionWidget::SelectionWidget ( QWidget* parent )
     : QWidget               (parent)
+    , _cellWidget           (NULL)
     , _baseModel            (new SelectionModel(this))
     , _sortModel            (new QSortFilterProxyModel(this))
     , _view                 (new QTableView(this))
@@ -55,7 +57,7 @@ namespace Hurricane {
     , _cumulative           (new QCheckBox())
     , _showSelection        (new QCheckBox())
     , _rowHeight            (20)
-    , _isEmitter            (false)
+    , _updateState          (ExternalEmit)
   {
     setAttribute ( Qt::WA_DeleteOnClose );
     setAttribute ( Qt::WA_QuitOnClose, false );
@@ -118,23 +120,19 @@ namespace Hurricane {
     setLayout ( vLayout );
 
     connect ( _filterPatternLineEdit, SIGNAL(textChanged(const QString &))
-            , this                  , SLOT(textFilterChanged()) );
-    connect ( _baseModel    , SIGNAL(layoutChanged()), this, SLOT  (forceRowHeight()) );
-    connect ( _cumulative   , SIGNAL(toggled(bool))  , this, SIGNAL(cumulativeToggled(bool)) );
-    connect ( _showSelection, SIGNAL(toggled(bool))  , this, SLOT  (setShowSelection(bool)) );
-    connect ( clear         , SIGNAL(clicked())      , this, SIGNAL(selectionCleared()) );
+            , this                  , SLOT  (textFilterChanged()) );
+
+    connect ( _baseModel    , SIGNAL(layoutChanged()), this      , SLOT(forceRowHeight()) );
+    connect ( _showSelection, SIGNAL(toggled(bool))  , this      , SLOT(setShowSelection(bool)) );
+    connect ( _cumulative   , SIGNAL(toggled(bool))  , this      , SLOT(setCumulativeSelection(bool)) );
     connect ( clear         , SIGNAL(clicked())      , _baseModel, SLOT(clear()) );
+    connect ( clear         , SIGNAL(clicked())      , this      , SLOT(clear()) );
+
     connect ( _view->selectionModel(), SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&))
             , this                   , SLOT  (selectCurrent (const QModelIndex&,const QModelIndex&)) );
 
     setWindowTitle ( tr("Selection<None>") );
     resize ( 500, 300 );
-  }
-
-
-  void  SelectionWidget::hideEvent ( QHideEvent* event )
-  {
-  //emit showSelected(false);
   }
 
 
@@ -158,6 +156,77 @@ namespace Hurricane {
   }
 
 
+  void  SelectionWidget::setCellWidget ( CellWidget* cw )
+  {
+    if ( _cellWidget ) {
+      disconnect ( _cellWidget, 0, this       , 0 );
+      disconnect ( this       , 0, _cellWidget, 0 );
+    }
+
+    _cellWidget = cw;
+    if ( !_cellWidget ) return;
+
+    connect ( _cellWidget, SIGNAL(selectionModeChanged()), this       , SLOT(changeSelectionMode()) );
+
+    connect ( _cellWidget, SIGNAL(selectionChanged(const SelectorSet&))
+            , this       , SLOT  (setSelection    (const SelectorSet&)) );
+
+    connect ( _cellWidget, SIGNAL(selectionToggled(Occurrence)), this, SLOT(toggleSelection(Occurrence)) );
+
+    _updateState = ExternalEmit;
+    changeSelectionMode ();
+  }
+
+
+  void  SelectionWidget::changeSelectionMode ()
+  {
+    if ( !_cellWidget ) return;
+
+    if ( _updateState == InternalEmit ) {
+      _updateState = InternalReceive;
+      emit selectionModeChanged ();
+    } else {
+      if ( _updateState == ExternalEmit ) {
+        blockAllSignals ( true );
+
+        _showSelection->setChecked ( _cellWidget->getState()->showSelection      () );
+        _cumulative   ->setChecked ( _cellWidget->getState()->cumulativeSelection() );
+
+        blockAllSignals ( false );
+      }
+      _updateState = ExternalEmit;
+    }
+  }
+
+
+  void  SelectionWidget::blockAllSignals ( bool state )
+  {
+    _showSelection->blockSignals ( state );
+    _cumulative   ->blockSignals ( state );
+    _baseModel    ->blockSignals ( state );
+  }
+
+
+  void  SelectionWidget::setShowSelection ( bool state )
+  {
+    _updateState = InternalEmit;
+    _cellWidget->setShowSelection ( state );
+  }
+
+
+  void  SelectionWidget::setCumulativeSelection ( bool state )
+  {
+    _updateState = InternalEmit;
+    _cellWidget->setCumulativeSelection ( state );
+  }
+
+
+  bool  SelectionWidget::cumulativeSelection () const
+  {
+    return _cumulative->isChecked ();
+  }
+
+
   void  SelectionWidget::textFilterChanged ()
   {
     _sortModel->setFilterRegExp ( _filterPatternLineEdit->text() );
@@ -165,62 +234,39 @@ namespace Hurricane {
   }
 
 
-  bool  SelectionWidget::isCumulative () const
-  {
-    return _cumulative->isChecked();
-  }
-
-
   void  SelectionWidget::toggleSelection ( const QModelIndex& index )
   {
     Occurrence occurrence = _baseModel->toggleSelection ( index );
     if ( occurrence.isValid() ) {
-      _isEmitter = true;
-      emit selectionToggled ( occurrence );
+      _updateState = InternalEmit;
+      _cellWidget->toggleSelection ( occurrence );
     }
   }
 
 
   void  SelectionWidget::toggleSelection ( Occurrence occurrence )
   {
-    if ( !_isEmitter ) {
+    if ( _updateState != InternalEmit ) {
+      blockAllSignals ( true );
       _baseModel->toggleSelection ( occurrence );
-      _isEmitter = false;
+      blockAllSignals ( false );
     }
+    _updateState = ExternalEmit;
   }
 
 
-  void  SelectionWidget::setShowSelection ( bool state )
-  {
-    static bool isEmitter = false;
-
-    if ( sender() == _showSelection ) {
-      isEmitter = true;
-      emit showSelectionToggled ( state );
-    } else {
-      if ( !isEmitter ) {
-        _showSelection->blockSignals ( true );
-        _showSelection->setChecked   ( state );
-        _showSelection->blockSignals ( false );
-      } else
-        isEmitter = false;
-    }
-  }
-
-
-  void  SelectionWidget::setSelection ( const SelectorSet& selection, Cell* cell )
+  void  SelectionWidget::setSelection ( const SelectorSet& selection )
   {
     _baseModel->setSelection ( selection );
      
     string windowTitle = "Selection";
+    Cell*  cell = (_cellWidget) ? _cellWidget->getCell() : NULL;
     if ( cell ) windowTitle += getString(cell);
     else        windowTitle += "<None>";
     setWindowTitle ( tr(windowTitle.c_str()) );
 
     _view->selectRow ( 0 );
     _view->resizeColumnToContents ( 0 );
-
-  //if ( !_cumulative->isChecked() ) emit inspect ( NULL );
   }
 
 
@@ -228,6 +274,8 @@ namespace Hurricane {
   {
     _baseModel->clear ();
     _view->selectionModel()->clearSelection ();
+    if ( _cellWidget )
+      _cellWidget->unselectAll();
   }
 
 

@@ -43,7 +43,6 @@ namespace Hurricane {
 
   SelectCommand::SelectCommand ()
     : AreaCommand()
-    , _selectAction(NULL)
     , _selectionPopup(NULL)
   {
     _selectionPopup = new SelectionPopup ();
@@ -56,12 +55,6 @@ namespace Hurricane {
   SelectCommand::~SelectCommand ()
   {
     delete _selectionPopup;
-  }
-
-
-  void  SelectCommand::bindToAction ( QAction* action )
-  {
-    _selectAction = action;
   }
 
 
@@ -105,15 +98,10 @@ namespace Hurricane {
   //widget->unselectAll ();
     widget->selectOccurrencesUnder ( widget->screenToDbuBox(selectArea) );
 
-    if ( _selectAction ) {
-      if ( !_selectAction->isChecked() )
-        _selectAction->setChecked ( true );
-      else
-        widget->refresh ();
-    } else {
+    if ( !widget->getState()->showSelection() )
       widget->setShowSelection ( true );
+    else
       widget->refresh ();
-    }
     
     return false;
   }

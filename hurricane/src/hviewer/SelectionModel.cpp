@@ -52,7 +52,7 @@ namespace Hurricane {
   {
     SelectionWidget* widget = qobject_cast<SelectionWidget*>(QObject::parent());
     if ( widget )
-      return widget->isCumulative();
+      return widget->cumulativeSelection();
 
     return true;
   }

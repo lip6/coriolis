@@ -29,6 +29,8 @@
 
 #include  <QWidget>
 
+#include  "hurricane/viewer/CellWidget.h"
+
 
 namespace Hurricane {
 
@@ -38,10 +40,14 @@ namespace Hurricane {
 
     public:
             GraphicsWidget ( QWidget* parent=NULL );
-    signals:
-      void  styleChanged   ( void* emitter );
+      void  setCellWidget  ( CellWidget* );
     public slots:
-      void  styleChange    ( int id );
+      void  changeStyle    ();
+      void  setStyle       ( int id );
+
+    protected:
+      CellWidget*  _cellWidget;
+      UpdateState  _updateState;
   };
 
 

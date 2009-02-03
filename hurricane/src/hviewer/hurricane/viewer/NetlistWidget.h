@@ -37,6 +37,7 @@
 #include  "hurricane/Bug.h"
 #include  "hurricane/viewer/CellWidget.h"
 #include  "hurricane/viewer/NetlistModel.h"
+#include  "hurricane/viewer/CellWidget.h"
 
 
 class QSortFilterProxyModel;
@@ -53,6 +54,10 @@ namespace Hurricane {
   using std::set;
   class Net;
   class Cell;
+
+
+// -------------------------------------------------------------------
+// Class  :  "SelectedNet".
 
 
   class SelectedNet {
@@ -88,6 +93,10 @@ namespace Hurricane {
   }
 
 
+// -------------------------------------------------------------------
+// Class  :  "SelectedNetSet".
+
+
   class SelectedNetSet : public set<SelectedNet,SelectedNetCompare>{
     public:
       void  insert        ( const Net* );
@@ -112,6 +121,10 @@ namespace Hurricane {
   }
 
 
+// -------------------------------------------------------------------
+// Class  :  "NetlistWidget".
+
+
   class NetlistWidget : public QWidget {
       Q_OBJECT;
 
@@ -119,11 +132,11 @@ namespace Hurricane {
                                      NetlistWidget        ( QWidget* parent=NULL );
       inline  Cell*                  getCell              ();
       template<typename InformationType>                  
+              void                   setCellWidget        ( CellWidget* );
+      template<typename InformationType>                  
               void                   setCell              ( Cell* );
               void                   goTo                 ( int );
     signals:
-              void                   refreshSessionOpened ();
-              void                   refreshSessionClosed ();
               void                   netSelected          ( const Net* );
               void                   netUnselected        ( const Net* );
               void                   netFitted            ( const Net* );
@@ -135,6 +148,7 @@ namespace Hurricane {
               void                   fitToNet             ();
 
     private:
+              CellWidget*            _cellWidget;
               Cell*                  _cell;
               NetlistModel*          _baseModel;
               QSortFilterProxyModel* _sortModel;
@@ -143,6 +157,22 @@ namespace Hurricane {
               int                    _rowHeight;
               SelectedNetSet         _selecteds;
   };
+
+
+  template<typename InformationType>
+  void  NetlistWidget::setCellWidget ( CellWidget* cw )
+  {
+    if ( _cellWidget ) {
+      disconnect ( this, 0, _cellWidget, 0 );
+    }
+
+    _cellWidget = cw;
+    if ( _cellWidget ) {
+      setCell<InformationType> ( _cellWidget->getCell() );
+      connect ( this, SIGNAL(netFitted(const Net*)), _cellWidget, SLOT(fitToNet (const Net*)) );
+    } else
+      setCell<InformationType> ( NULL );
+  }
 
 
   template<typename InformationType>

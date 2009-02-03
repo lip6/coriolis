@@ -42,22 +42,25 @@ namespace Hurricane {
       Q_OBJECT;
 
     public:
-      static  PaletteLayerItem* create            ( BasicLayer*, bool visible=true );
-      virtual const Name&       getName           () const;
-      virtual bool              isItemVisible     () const;
-      virtual bool              isItemSelectable  () const;
-      virtual void              setItemVisible    ( bool state );
-      virtual void              setItemSelectable ( bool state );
+      static  PaletteLayerItem*   create            ( BasicLayer*, bool visible=true );
+      virtual const Name&         getName           () const;
+      virtual bool                isItemVisible     () const;
+      virtual bool                isItemSelectable  () const;
+      virtual void                setItemVisible    ( bool state );
+      virtual void                setItemSelectable ( bool state );
+    public slots:                 
+      virtual void                changeStyle       ();
                                                   
     protected:                                    
-              BasicLayer*       _basicLayer;      
-              QCheckBox*        _visible;         
-              QCheckBox*        _selectable;      
+              BasicLayer*         _basicLayer;      
+              QCheckBox*          _visible;         
+              QCheckBox*          _selectable;      
+              DrawingStyleSample* _sample;
                                                   
     protected:                                    
-                                PaletteLayerItem  ( BasicLayer*, bool visible );
-                                PaletteLayerItem  ( const PaletteLayerItem& );
-              PaletteLayerItem& operator=         ( const PaletteLayerItem& );
+                                  PaletteLayerItem  ( BasicLayer*, bool visible );
+                                  PaletteLayerItem  ( const PaletteLayerItem& );
+              PaletteLayerItem&   operator=         ( const PaletteLayerItem& );
   };
 
 

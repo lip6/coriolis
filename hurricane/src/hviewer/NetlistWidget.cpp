@@ -52,13 +52,14 @@ namespace Hurricane {
 
 
   NetlistWidget::NetlistWidget ( QWidget* parent )
-    : QWidget   (parent)
-    , _cell     (NULL)
-    , _baseModel(new NetlistModel(this))
-    , _sortModel(new QSortFilterProxyModel(this))
-    , _view     (new QTableView(this))
-    , _rowHeight(20)
-    , _selecteds()
+    : QWidget    (parent)
+    , _cellWidget(NULL)
+    , _cell      (NULL)
+    , _baseModel (new NetlistModel(this))
+    , _sortModel (new QSortFilterProxyModel(this))
+    , _view      (new QTableView(this))
+    , _rowHeight (20)
+    , _selecteds ()
   {
     setAttribute ( Qt::WA_DeleteOnClose );
     setAttribute ( Qt::WA_QuitOnClose, false );
@@ -131,8 +132,7 @@ namespace Hurricane {
 
   void  NetlistWidget::updateSelecteds ( const QItemSelection& , const QItemSelection& )
   {
-    cerr << "open refresh session" << endl;
-    emit refreshSessionOpened ();
+    if ( _cellWidget ) _cellWidget->openRefreshSession ();
 
     _selecteds.resetAccesses ();
 
@@ -165,8 +165,7 @@ namespace Hurricane {
       ++isel;
     }
 
-    emit refreshSessionClosed ();
-    cerr << "close refresh session" << endl;
+    if ( _cellWidget ) _cellWidget->closeRefreshSession ();
   }
 
 

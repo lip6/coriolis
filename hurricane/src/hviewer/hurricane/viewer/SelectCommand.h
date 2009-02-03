@@ -60,7 +60,6 @@ namespace Hurricane {
     signals:
               void             selectionToggled     ( Occurrence occurrence );
     private:
-              QAction*         _selectAction;
               SelectionPopup*  _selectionPopup;
     private:
                                SelectCommand        ( const SelectCommand& );

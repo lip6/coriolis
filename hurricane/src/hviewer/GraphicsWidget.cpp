@@ -43,7 +43,9 @@ namespace Hurricane {
 
 
   GraphicsWidget::GraphicsWidget ( QWidget* parent )
-    : QWidget(parent)
+    : QWidget     (parent)
+    , _cellWidget (NULL)
+    , _updateState(ExternalEmit)
   {
     setAttribute   ( Qt::WA_QuitOnClose, false );
     setWindowTitle ( tr("Display Styles") );
@@ -79,15 +81,42 @@ namespace Hurricane {
     wLayout->addStretch ();
     setLayout ( wLayout );
 
-    connect ( group, SIGNAL(buttonClicked(int)), this, SLOT(styleChange(int)) );
+    connect ( group, SIGNAL(buttonClicked(int)), this, SLOT(setStyle(int)) );
   }
 
 
-  void  GraphicsWidget::styleChange ( int id )
+  void  GraphicsWidget::setCellWidget ( CellWidget* cw )
   {
-    Graphics::setStyle ( (size_t)id );
-  //cerr << "GraphicsWidget::setStyle() - " << getString(Graphics::getStyle()->getName()) << endl;
-    emit styleChanged ( (void*)this );
+    if ( _cellWidget ) {
+      disconnect ( _cellWidget, 0, this       , 0 );
+      disconnect ( this       , 0, _cellWidget, 0 );
+    }
+
+    _cellWidget = cw;
+    if ( !_cellWidget ) return;
+
+    connect ( _cellWidget, SIGNAL(styleChanged()), this, SLOT(changeStyle()) );
+
+    _updateState = ExternalEmit;
+    changeStyle ();
+  }
+
+
+  void  GraphicsWidget::changeStyle ()
+  {
+    if ( _updateState != InternalEmit ) {
+    // Should read style here and sets the widget accordingly.
+    }
+    _updateState = ExternalEmit;
+  }
+
+
+  void  GraphicsWidget::setStyle ( int id )
+  {
+    if ( _cellWidget ) {
+      _updateState = InternalEmit;
+      _cellWidget->setStyle ( (size_t)id );
+    }
   }
 
 

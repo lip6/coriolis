@@ -34,8 +34,10 @@
 #include  "hurricane/Commons.h"
 #include  "hurricane/Occurrence.h"
 #include  "hurricane/viewer/SelectionModel.h"
+#include  "hurricane/viewer/CellWidget.h"
 
 
+class QCloseEvent;
 class QSortFilterProxyModel;
 class QModelIndex;
 class QTableView;
@@ -49,38 +51,39 @@ namespace Hurricane {
 
 
   class Selector;
-  class QCloseEvent;
 
 
   class SelectionWidget : public QWidget {
       Q_OBJECT;
 
     public:
-                                     SelectionWidget      ( QWidget* parent=NULL );
-              void                   inspect              ( const QModelIndex& index  );
-              bool                   isCumulative         () const;
-    signals:                                              
-              void                   showSelectionToggled ( bool );
-              void                   selectionToggled     ( Occurrence );
-              void                   cumulativeToggled    ( bool );
-              void                   selectionCleared     ();
-              void                   inspect              ( Record* );
-              void                   inspect              ( Occurrence& );
-    public slots:                                         
-              void                   clear                ();
-              void                   setShowSelection     ( bool );
-              void                   selectCurrent        ( const QModelIndex& current, const QModelIndex& );
-              void                   setSelection         ( const SelectorSet& selection, Cell* cell=NULL );
-              void                   toggleSelection      ( Occurrence occurrence );
-              void                   toggleSelection      ( const QModelIndex& index );
-              void                   forceRowHeight       ();
-    private slots:                                        
-              void                   textFilterChanged    ();
-    protected:                                            
-      virtual bool                   eventFilter          ( QObject*, QEvent* );
-      virtual void                   hideEvent            ( QHideEvent* event );
+                                     SelectionWidget        ( QWidget* parent=NULL );
+              void                   inspect                ( const QModelIndex& index  );
+              bool                   cumulativeSelection    () const;
+    signals:                                                
+              void                   selectionModeChanged   ();
+              void                   selectionToggled       ( Occurrence );
+              void                   inspect                ( Record* );
+              void                   inspect                ( Occurrence& );
+    public slots:                                           
+              void                   setCellWidget          ( CellWidget* );
+              void                   clear                  ();
+              void                   changeSelectionMode    ();
+              void                   setShowSelection       ( bool );
+              void                   setCumulativeSelection ( bool );
+              void                   selectCurrent          ( const QModelIndex& current, const QModelIndex& );
+              void                   setSelection           ( const SelectorSet& selection );
+              void                   toggleSelection        ( Occurrence );
+              void                   toggleSelection        ( const QModelIndex& );
+              void                   forceRowHeight         ();
+    private slots:                                          
+              void                   textFilterChanged      ();
+    protected:                                              
+              void                   blockAllSignals        ( bool );
+      virtual bool                   eventFilter            ( QObject*, QEvent* );
 
     private:
+              CellWidget*            _cellWidget;
               SelectionModel*        _baseModel;
               QSortFilterProxyModel* _sortModel;
               QTableView*            _view;
@@ -88,7 +91,7 @@ namespace Hurricane {
               QCheckBox*             _cumulative;
               QCheckBox*             _showSelection;
               int                    _rowHeight;
-              bool                   _isEmitter;
+              UpdateState            _updateState;
   };
 
 

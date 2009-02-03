@@ -90,10 +90,8 @@ namespace Hurricane {
   { }
 
 
-  void  PaletteItem::styleChange ()
-  {
-    emit styleChanged ();
-  }
+  void  PaletteItem::changeStyle ()
+  { }
 
 
 } // End of Hurricane namespace.

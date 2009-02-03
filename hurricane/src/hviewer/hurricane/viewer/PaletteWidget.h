@@ -68,7 +68,7 @@ namespace Hurricane {
              void              updateExtensions ( Cell* cell );
              void              showAll          ();
              void              hideAll          ();
-             void              styleChange      ( void* emitter );
+             void              changeStyle      ();
                              
     protected:               
              PaletteItems     _layerItems;

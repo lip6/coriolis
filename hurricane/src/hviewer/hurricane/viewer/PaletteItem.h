@@ -55,7 +55,7 @@ namespace Hurricane {
     protected:
       QPixmap      _sample;
       PaletteItem* _entry;
-    protected slots:
+    public slots:
       void         redraw             ();
       void         paintEvent         ( QPaintEvent* );
   };
@@ -75,9 +75,8 @@ namespace Hurricane {
       virtual void           setItemVisible    ( bool ) = 0;
       virtual void           setItemSelectable ( bool );
     public slots:
-      virtual void           styleChange       ();
+      virtual void           changeStyle       ();
     signals:
-              void           styleChanged      ();
               void           visibleToggled    ();
               void           selectableToggled ();
     protected:
