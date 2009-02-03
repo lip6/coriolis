@@ -331,8 +331,10 @@ namespace Hurricane {
 
   void  CellViewer::setCell ( Cell* cell )
   {
+    Name cellName = (cell) ? cell->getName() : "empty";
+
     list< shared_ptr<CellWidget::State> >::iterator istate
-      = find_if ( _cellHistory.begin(), _cellHistory.end(), CellWidget::FindStateName(cell->getName()) );
+      = find_if ( _cellHistory.begin(), _cellHistory.end(), CellWidget::FindStateName(cellName) );
 
     if ( istate != _cellHistory.end() ) {
       emit stateChanged ( *istate );

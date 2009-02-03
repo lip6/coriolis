@@ -33,6 +33,7 @@
 #include <cstdio>
 #include <cassert>
 
+#include <tr1/memory>
 #include <string>
 #include <list>
 #include <set>
@@ -79,6 +80,27 @@ namespace Hurricane {
 
 #define        trace            if (in_trace()     ) cerr << tab
 #define        ltrace(level)    if (inltrace(level)) cerr << tab
+
+
+
+
+  // x-------------------------------------------------------------x
+  // |                shared_ptr<> support for DBo                 |
+  // x-------------------------------------------------------------x
+
+
+  template<typename DboType>
+  class DboDestroy {
+    public:
+      inline void operator() ( DboType* dbo ) { dbo->destroy(); }
+  };
+
+
+  template<typename DboType>
+  class dbo_ptr : public tr1::shared_ptr<DboType> {
+    public:
+      dbo_ptr ( DboType* dbo ) : tr1::shared_ptr<DboType>(dbo,DboDestroy<DboType>()) { }
+  };
 
 
 
