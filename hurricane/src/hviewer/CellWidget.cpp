@@ -1329,6 +1329,13 @@ namespace Hurricane {
   }
 
 
+  void  CellWidget::setLayerVisible ( const Name& layer, bool visible )
+  {
+    if ( !_palette ) return;
+    _palette->setItemVisible ( layer, visible ); 
+  }
+
+
   bool  CellWidget::isDrawable ( const Name& name )
   {
     PaletteItem* item = (_palette) ? _palette->find(name) : NULL;

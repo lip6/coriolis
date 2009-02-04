@@ -377,6 +377,16 @@ namespace Hurricane {
   }
 
 
+  void  PaletteWidget::setItemVisible ( const Name& name, bool visible )
+  {
+    PaletteItem* item = find ( name );
+    if ( item ) {
+      item->setItemVisible ( visible );
+      emit paletteChanged();
+    }
+  }
+
+
   void  PaletteWidget::changeStyle ()
   {
     PaletteItems::iterator iitem = _layerItems.begin();

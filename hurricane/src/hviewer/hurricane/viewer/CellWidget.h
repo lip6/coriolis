@@ -146,6 +146,7 @@ namespace Hurricane {
       inline  void                    copyToPrinter              ( QPrinter* );
       inline  const float&            getScale                   () const;
       inline  const QPoint&           getMousePosition           () const;
+              void                    setLayerVisible            ( const Name& layer, bool visible );
               bool                    isDrawable                 ( const Name& );
               bool                    isDrawableLayer            ( const Name& );
               bool                    isDrawableExtension        ( const Name& );

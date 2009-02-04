@@ -69,6 +69,7 @@ namespace Hurricane {
              void              showAll          ();
              void              hideAll          ();
              void              changeStyle      ();
+             void              setItemVisible   ( const Name& name, bool visible );
                              
     protected:               
              PaletteItems     _layerItems;
