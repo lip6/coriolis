@@ -492,9 +492,8 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::DrawingPlanes::copyToPrinter ( int sx, int sy, int w, int h, QPrinter* printer )
+  void  CellWidget::DrawingPlanes::copyToPrinter ( int sx, int sy, int w, int h, QPrinter* printer, bool imageOnly )
   {
-    bool  imageOnly = false;
     int   ximage    = 0;
     int   yimage    = 0;
 

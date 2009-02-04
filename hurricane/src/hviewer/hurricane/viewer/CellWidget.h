@@ -143,7 +143,7 @@ namespace Hurricane {
       inline  void                    addDrawExtensionGo         ( const Name&, InitExtensionGo_t*, DrawExtensionGo_t* );
       inline  QPainter&               getPainter                 ( size_t plane=PlaneId::Working );
       inline  int                     getDarkening               () const;
-      inline  void                    copyToPrinter              ( QPrinter* );
+      inline  void                    copyToPrinter              ( QPrinter*, bool imageOnly = false );
       inline  const float&            getScale                   () const;
       inline  const QPoint&           getMousePosition           () const;
               void                    setLayerVisible            ( const Name& layer, bool visible );
@@ -366,8 +366,10 @@ namespace Hurricane {
                  void           copyToSelect       ( int sx, int sy, int h, int w );
           inline void           copyToScreen       ();
                  void           copyToScreen       ( int sx, int sy, int h, int w );
-          inline void           copyToPrinter      ( QPrinter* );
-                 void           copyToPrinter      ( int sx, int sy, int h, int w, QPrinter* );
+          inline void           copyToPrinter      ( QPrinter*, bool imageOnly );
+                 void           copyToPrinter      ( int sx, int sy, int h, int w, QPrinter*, bool imageOnly );
+          inline void           copyToImage        ( QImage* );
+                 void           copyToImage        ( int sx, int sy, int h, int w, QImage* );
         private:
                  CellWidget*    _cellWidget;
                  QPrinter*      _printer;
@@ -749,13 +751,14 @@ namespace Hurricane {
   { copyToScreen ( 0, 0, width(), height() ); }
 
 
-  inline void  CellWidget::DrawingPlanes::copyToPrinter ( QPrinter* printer )
+  inline void  CellWidget::DrawingPlanes::copyToPrinter ( QPrinter* printer, bool imageOnly )
   {
     copyToPrinter ( 0
                   , 0
                   , _cellWidget->geometry().width()
                   , _cellWidget->geometry().height()
                   , printer
+                  , imageOnly
                   );
   }
 
@@ -969,8 +972,8 @@ namespace Hurricane {
   { redrawSelection ( QRect(QPoint(0,0),_drawingPlanes.size()) ); }
 
 
-  inline void  CellWidget::copyToPrinter ( QPrinter* printer )
-  { _drawingPlanes.copyToPrinter ( printer ); }
+  inline void  CellWidget::copyToPrinter ( QPrinter* printer, bool imageOnly )
+  { _drawingPlanes.copyToPrinter ( printer, imageOnly ); }
 
 
   inline int  CellWidget::dbuToDisplayX ( DbU::Unit x ) const

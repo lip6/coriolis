@@ -48,6 +48,7 @@ namespace Hurricane {
     : _styles()
     , _active(NULL)
     , _fireColorScale()
+    , _rainbowColorScale()
     , _qtEnabled(false)
   {
   }
@@ -104,6 +105,7 @@ namespace Hurricane {
       _styles[si]->qtAllocate ();
 
     _fireColorScale.qtAllocate ();
+    _rainbowColorScale.qtAllocate ();
 
     Breakpoint::setStopCb ( Graphics::breakpointStopCb );
   }

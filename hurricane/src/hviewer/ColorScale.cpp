@@ -103,4 +103,44 @@ namespace Hurricane {
   }
 
 
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::RainbowColorScale"
+
+
+  RainbowColorScale::RainbowColorScale ()
+    : ColorScale("Rainbow")
+  {
+    size_t slice = 51;
+    for ( size_t i=0 ; i<256 ; i++ ) {
+      switch ( i / slice ) {
+        case 0:  // Red --> Yellow.
+          _red  [i] = 255;
+          _green[i] = ( 255 * i ) / slice;
+          _blue [i] = 0;
+          break;
+        case 1:  // Yellow --> Green.
+          _red  [i] = 510 - ( 255 * i ) / slice;
+          _green[i] = 255;
+          _blue [i] = 0;
+          break;
+        case 2:  // Green --> Cyan.
+          _red  [i] = 0;
+          _green[i] = 255;
+          _blue [i] = ( 255 * i ) / slice - 510;
+          break;
+        case 3:  // Cyan --> Blue.
+          _red  [i] = 0;
+          _green[i] = 1020 - ( 255 * i ) / slice;
+          _blue [i] = 255;
+          break;
+        default:  // Blue --> Magenta.
+          _red  [i] = ( 255 * i ) / slice - 1020;
+          _green[i] = 0;
+          _blue [i] = 255;
+          break;
+      }
+    }
+  }
+
+
 } // End of Hurricane namespace.

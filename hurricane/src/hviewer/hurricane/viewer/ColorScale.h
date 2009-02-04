@@ -84,6 +84,16 @@ namespace Hurricane {
   };
 
 
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::RainbowColorScale"
+
+
+  class RainbowColorScale : public ColorScale {
+    public:
+      RainbowColorScale ();
+  };
+
+
 // Functions.
   inline const Name& ColorScale::getName () const { return _name; }
 

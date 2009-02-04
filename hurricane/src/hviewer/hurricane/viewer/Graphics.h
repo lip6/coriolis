@@ -84,6 +84,7 @@ namespace Hurricane {
               vector<DisplayStyle*>        _styles;
               DisplayStyle*                _active;
               FireColorScale               _fireColorScale;
+              RainbowColorScale            _rainbowColorScale;
               bool                         _qtEnabled;
 
     // Internals - Constructors & Destructors.
@@ -139,7 +140,10 @@ namespace Hurricane {
     switch ( id ) {
       case ColorScale::Grey:
       case ColorScale::Fire:
+        return _fireColorScale;
+        break;
       case ColorScale::Rainbow:
+        return _rainbowColorScale;
         break;
     }
     return _fireColorScale;
