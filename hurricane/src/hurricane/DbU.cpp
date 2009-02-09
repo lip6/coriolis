@@ -25,6 +25,7 @@
 
 
 # include  <climits>
+# include  <cstring>
 
 # include  "hurricane/DbU.h"
 # include  "hurricane/Error.h"

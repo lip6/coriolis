@@ -7,6 +7,7 @@
 #ifndef HURRICANE_INTRUSIVE_MAP
 #define HURRICANE_INTRUSIVE_MAP
 
+#include <cstring>
 #include <algorithm>
 
 #include "hurricane/Collection.h"

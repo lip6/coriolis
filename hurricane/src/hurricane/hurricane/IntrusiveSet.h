@@ -7,6 +7,7 @@
 #ifndef HURRICANE_INTRUSIVE_SET
 #define HURRICANE_INTRUSIVE_SET
 
+#include <cstring>
 #include <algorithm>
 
 #include "hurricane/Collection.h"
