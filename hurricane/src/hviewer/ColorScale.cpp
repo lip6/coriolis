@@ -143,4 +143,29 @@ namespace Hurricane {
   }
 
 
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::TemperatureColorScale"
+
+
+  TemperatureColorScale::TemperatureColorScale ()
+    : ColorScale("Temperature")
+  {
+    for ( size_t i=0 ; i<153 ; i++ ) {
+      _red  [i] = 0;
+      _green[i] = 0;
+      _blue [i] = (size_t)(0.83*(float)(i))+128;
+    }
+    for ( size_t i=153 ; i<204 ; i++ ) {
+      _red  [i] = (size_t)(2.5*(float)(i)-382.5);
+      _green[i] = 0;
+      _blue [i] = 255;
+    }
+    for ( size_t i=204 ; i<256 ; i++ ) {
+      _red  [i] = (size_t)(2.5*(float)(i)-382.5);
+      _green[i] = 0;
+      _blue [i] = (size_t)(-5*(int)(i)+1275);
+    }
+  }
+
+
 } // End of Hurricane namespace.

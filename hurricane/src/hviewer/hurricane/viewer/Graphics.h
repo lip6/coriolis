@@ -85,6 +85,7 @@ namespace Hurricane {
               DisplayStyle*                _active;
               FireColorScale               _fireColorScale;
               RainbowColorScale            _rainbowColorScale;
+              TemperatureColorScale        _temperatureColorScale;
               bool                         _qtEnabled;
 
     // Internals - Constructors & Destructors.
@@ -144,6 +145,9 @@ namespace Hurricane {
         break;
       case ColorScale::Rainbow:
         return _rainbowColorScale;
+        break;
+      case ColorScale::Temperature:
+        return _temperatureColorScale;
         break;
     }
     return _fireColorScale;

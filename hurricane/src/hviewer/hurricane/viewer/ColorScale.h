@@ -46,6 +46,7 @@ namespace Hurricane {
       enum ScaleType { Grey = 1
                      , Fire
                      , Rainbow
+                     , Temperature
                      };
 
     public:
@@ -91,6 +92,16 @@ namespace Hurricane {
   class RainbowColorScale : public ColorScale {
     public:
       RainbowColorScale ();
+  };
+
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::TemperatureColorScale"
+
+
+  class TemperatureColorScale : public ColorScale {
+    public:
+      TemperatureColorScale ();
   };
 
 
