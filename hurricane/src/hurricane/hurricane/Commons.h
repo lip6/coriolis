@@ -114,7 +114,7 @@ namespace Hurricane {
   inline string _PName ( const string& s ) { return "Hurricane::" + s; }
 
   template<class Type>
-    inline Type abs ( const Type& value ) { return (value<0) ? -value : value; }
+  inline Type abs ( const Type& value ) { return (value<0) ? -value : value; }
 
          string  demangle ( const char*      symbol );
   inline string  demangle ( const type_info& info   ) { return demangle(info.name()); }

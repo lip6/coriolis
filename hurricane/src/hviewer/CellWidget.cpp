@@ -329,6 +329,7 @@ namespace Hurricane {
         _interrupted = false;
       }
 #else
+      delete _events.front ();
       _events.pop_front ();
 #endif
     }
@@ -929,8 +930,8 @@ namespace Hurricane {
     , _cellChanged          (true)
     , _selectionHasChanged  (false)
     , _delaySelectionChanged(0)
-    , _enableRedrawInterrupt(false)
     , _cellModificated      (true)
+    , _enableRedrawInterrupt(false)
     , _selectors            ()
     , _commands             ()
     , _redrawRectCount      (0)
