@@ -12,14 +12,19 @@
 #define HURRICANE_NET_EXTERNAL_COMPONENTS
 
 #include "hurricane/Component.h"
+#include "hurricane/Relation.h"
 
 namespace Hurricane {
 
-class NetExternalComponents {
+  class NetExternalComponents {
     public:
-        static Components get(const Net* net);
-        static void setExternal(Component* component);
-};
+      static Components        get         ( const Net* );
+      static void              setExternal ( Component* );
+    protected:
+      static StandardRelation* getRelation ( const Net* );
+    private:
+      static const Name  _name;
+  };
 
 } // End of Hurricane namespace.
 

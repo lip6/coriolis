@@ -9,17 +9,16 @@
 // ****************************************************************************************************
 
 #include "hurricane/Error.h"
-#include "hurricane/Relation.h"
 #include "hurricane/Net.h"
 
 #include "hurricane/NetExternalComponents.h"
 
 namespace Hurricane {
 
-static Name ExternalComponentsRelationName("ExternalComponentsRelation");
+  const Name NetExternalComponents::_name = "ExternalComponentsRelation";
 
-static StandardRelation* getExternalComponentsRelation(const Net* net) {
-    Property* property = net->getProperty(ExternalComponentsRelationName);
+  StandardRelation* NetExternalComponents::getRelation(const Net* net) {
+    Property* property = net->getProperty(_name);
     if (!property) {
         return NULL;
     } else {
@@ -35,7 +34,7 @@ Components NetExternalComponents::get(const Net* net) {
         throw Error("Impossible to retrieve external components on non external net "
                 + net->getName()._getString());
     
-    StandardRelation* externalComponentsRelation = getExternalComponentsRelation(net);
+    StandardRelation* externalComponentsRelation = getRelation(net);
     if (!externalComponentsRelation)
         return Components();
     return externalComponentsRelation->getSlaveOwners().getSubSet<Component*>();
@@ -46,9 +45,9 @@ void NetExternalComponents::setExternal(Component* component) {
     if (!net->isExternal())
         throw Error("Impossible to set as external a component member of non external net "
                 + net->getName()._getString());
-    StandardRelation* externalComponentsRelation = getExternalComponentsRelation(net);
+    StandardRelation* externalComponentsRelation = getRelation(net);
     if (!externalComponentsRelation)
-        externalComponentsRelation = StandardRelation::create(net, ExternalComponentsRelationName);
+        externalComponentsRelation = StandardRelation::create(net, _name);
     component->put(externalComponentsRelation);
 }
 

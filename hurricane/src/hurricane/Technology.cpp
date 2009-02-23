@@ -311,11 +311,14 @@ void Technology::_postCreate()
 void Technology::_preDestroy()
 // **************************
 {
-    Inherit::_preDestroy();
 
-    for_each_layer(layer, getLayers()) layer->destroy(); end_for;
+    while ( !_layerMap.isEmpty() ) {
+      _layerMap.getElements().getFirst()->destroy();
+    }
+  //for_each_layer(layer, getLayers()) layer->destroy(); end_for;
 
     _dataBase->_setTechnology(NULL);
+    DBo::_preDestroy();
 }
 
 void Technology::_insertInLayerMaskMap ( Layer* layer )

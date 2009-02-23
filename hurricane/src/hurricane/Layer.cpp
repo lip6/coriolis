@@ -202,10 +202,10 @@ namespace Hurricane {
 
   void Layer::_preDestroy ()
   {
-    DBo::_preDestroy();
-
     _technology->_getLayerMaskMap().erase(_mask);
     _technology->_getLayerMap()._remove(this);
+
+    DBo::_preDestroy ();
   }
 
 
