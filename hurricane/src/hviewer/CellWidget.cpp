@@ -579,6 +579,24 @@ namespace Hurricane {
       , w, h
       );
 
+    int xGradient = (w-510)/2;
+    _painters[PlaneId::Image].setPen(Qt::white);
+    _painters[PlaneId::Image].drawRect(xGradient-1, h+9, 512, 31);
+    _painters[PlaneId::Image].setPen(Qt::NoPen);
+    for ( unsigned i = 0 ; i < 256 ; i++ ) {
+        _painters[PlaneId::Image].setBrush(Graphics::getColorScale(ColorScale::Fire).getBrush(i,100) );
+        _painters[PlaneId::Image].drawRect(xGradient+(i*2), h+10, 2, 30);
+        if ( i==0 || i==51 || i==102 || i==153 || i==204 || i==255 ) {
+            QRect tArea (xGradient+(i*2)-15, h+44, 30, 12);
+            std::ostringstream oss;
+            oss << (float)(i)/255;
+            _painters[PlaneId::Image].setPen(Qt::white);
+            _painters[PlaneId::Image].drawLine(xGradient+(i*2), h+38, xGradient+(i*2), h+42);
+            _painters[PlaneId::Image].drawText(tArea, Qt::AlignCenter, oss.str().c_str());
+            _painters[PlaneId::Image].setPen(Qt::NoPen);
+        }
+    }
+
     painterEnd ( PlaneId::Image );
     _image = NULL;
   }
