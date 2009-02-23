@@ -345,6 +345,7 @@ namespace Hurricane {
   CellWidget::DrawingPlanes::DrawingPlanes ( const QSize& size, CellWidget* cw )
     : _cellWidget(cw)
     , _printer(NULL)
+    , _image(NULL)
     , _normalPen()
     , _linePen()
     , _workingPlane(0)
@@ -559,6 +560,28 @@ namespace Hurricane {
     _printer = NULL;
   }
 
+
+  void  CellWidget::DrawingPlanes::copyToImage ( int sx, int sy, int w, int h, QImage* image )
+  {
+    int   ximage    = 0;
+    int   yimage    = 0;
+
+    if ( !image ) return;
+    _image = image;
+
+    painterBegin ( PlaneId::Image );
+
+    _painters[PlaneId::Image].setRenderHint(QPainter::Antialiasing, false);
+    _painters[PlaneId::Image].drawPixmap
+      ( ximage, yimage
+      , *_planes[PlaneId::Normal]
+      , _cellWidget->getOffsetVA().rx()+sx, _cellWidget->getOffsetVA().ry()+sy
+      , w, h
+      );
+
+    painterEnd ( PlaneId::Image );
+    _image = NULL;
+  }
 
 // -------------------------------------------------------------------
 // Class :  "Hurricane::CellWidget::DrawingQuery".

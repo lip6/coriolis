@@ -36,6 +36,7 @@
 #include  <QPixmap>
 #include  <QPainter>
 #include  <QPrinter>
+#include  <QImage>
 #include  <QRect>
 #include  <QPoint>
 
@@ -144,6 +145,7 @@ namespace Hurricane {
       inline  QPainter&               getPainter                 ( size_t plane=PlaneId::Working );
       inline  int                     getDarkening               () const;
       inline  void                    copyToPrinter              ( QPrinter*, bool imageOnly = false );
+      inline  void                    copyToImage                ( QImage* );
       inline  const float&            getScale                   () const;
       inline  const QPoint&           getMousePosition           () const;
               void                    setLayerVisible            ( const Name& layer, bool visible );
@@ -332,7 +334,8 @@ namespace Hurricane {
                    , Selection = 1
                    , Widget    = 2
                    , Printer   = 3
-                   , Working   = 4
+                   , Image     = 4
+                   , Working   = 5
                    };
       };
 
@@ -373,8 +376,9 @@ namespace Hurricane {
         private:
                  CellWidget*    _cellWidget;
                  QPrinter*      _printer;
+                 QImage*        _image;
                  QPixmap*       _planes[2];
-                 QPainter       _painters[4];
+                 QPainter       _painters[5];
                  QPen           _normalPen;
                  QPen           _linePen;
                  size_t         _workingPlane;
@@ -712,11 +716,12 @@ namespace Hurricane {
   inline void  CellWidget::DrawingPlanes::painterBegin ( size_t i )
   {
     switch ( i ) {
-      case 4: i = _workingPlane;
+      case 5: i = _workingPlane;
       case 0:
       case 1: _painters[i].begin ( _planes[i]  ); break;
       case 2: _painters[2].begin ( _cellWidget ); break;
       case 3: _painters[3].begin ( _printer    ); break;
+      case 4: _painters[4].begin ( _image      ); break;
     }
   }
 
@@ -729,7 +734,7 @@ namespace Hurricane {
 
 
   inline void  CellWidget::DrawingPlanes::painterEnd   ( size_t i )
-  { _painters[(i>3)?_workingPlane:i].end (); }
+  { _painters[(i>4)?_workingPlane:i].end (); }
 
 
   inline void  CellWidget::DrawingPlanes::paintersEnd ()
@@ -760,6 +765,17 @@ namespace Hurricane {
                   , printer
                   , imageOnly
                   );
+  }
+
+
+  inline void  CellWidget::DrawingPlanes::copyToImage ( QImage* image )
+  {
+    copyToImage ( 0
+                , 0
+                , _cellWidget->geometry().width()
+                , _cellWidget->geometry().height()
+                , image
+                );
   }
 
 
@@ -975,6 +991,10 @@ namespace Hurricane {
 
   inline void  CellWidget::copyToPrinter ( QPrinter* printer, bool imageOnly )
   { _drawingPlanes.copyToPrinter ( printer, imageOnly ); }
+
+
+  inline void  CellWidget::copyToImage ( QImage* image )
+  { _drawingPlanes.copyToImage ( image ); }
 
 
   inline int  CellWidget::dbuToDisplayX ( DbU::Unit x ) const
