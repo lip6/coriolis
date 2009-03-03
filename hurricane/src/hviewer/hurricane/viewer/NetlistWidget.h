@@ -67,6 +67,7 @@ namespace Hurricane {
       inline const Net* getNet        () const;
       inline size_t     getAccesses   () const;
       inline void       incAccesses   () const;
+      inline void       setInserted   () const;
       inline void       resetAccesses () const;
     private:
               const Net* _net;
@@ -77,6 +78,7 @@ namespace Hurricane {
   inline            SelectedNet::SelectedNet   () : _net(NULL), _accesses(0) { }
   inline            SelectedNet::SelectedNet   ( const Net* net, size_t accesses ) : _net(net), _accesses(accesses) { }
   inline const Net* SelectedNet::getNet        () const { return _net; }
+  inline void       SelectedNet::setInserted   () const { _accesses = 64; }
   inline size_t     SelectedNet::getAccesses   () const { return _accesses; }
   inline void       SelectedNet::incAccesses   () const { ++_accesses; }
   inline void       SelectedNet::resetAccesses () const { _accesses = 0; }
@@ -99,8 +101,9 @@ namespace Hurricane {
 
   class SelectedNetSet : public set<SelectedNet,SelectedNetCompare>{
     public:
-      void  insert        ( const Net* );
-      void  resetAccesses ();
+      void  insert         ( const Net* );
+      void  forceInserteds ();
+      void  resetAccesses  ();
   };
 
 
@@ -111,6 +114,13 @@ namespace Hurricane {
       iselected->incAccesses ();
     else
       set<SelectedNet,SelectedNetCompare>::insert ( SelectedNet(net,64) );
+  }
+
+
+  inline void  SelectedNetSet::forceInserteds ()
+  {
+    for ( iterator iselected=begin() ; iselected != end() ; ++iselected )
+      iselected->setInserted ();
   }
 
 
@@ -136,6 +146,7 @@ namespace Hurricane {
       template<typename InformationType>                  
               void                   setCell              ( Cell* );
               void                   goTo                 ( int );
+              void                   updateSelecteds      ();
     signals:
               void                   netSelected          ( const Net* );
               void                   netUnselected        ( const Net* );
@@ -156,6 +167,7 @@ namespace Hurricane {
               QLineEdit*             _filterPatternLineEdit;
               int                    _rowHeight;
               SelectedNetSet         _selecteds;
+              bool                   _forceReselect;
   };
 
 

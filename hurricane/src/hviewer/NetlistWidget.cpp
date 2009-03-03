@@ -52,14 +52,15 @@ namespace Hurricane {
 
 
   NetlistWidget::NetlistWidget ( QWidget* parent )
-    : QWidget    (parent)
-    , _cellWidget(NULL)
-    , _cell      (NULL)
-    , _baseModel (new NetlistModel(this))
-    , _sortModel (new QSortFilterProxyModel(this))
-    , _view      (new QTableView(this))
-    , _rowHeight (20)
-    , _selecteds ()
+    : QWidget       (parent)
+    , _cellWidget   (NULL)
+    , _cell         (NULL)
+    , _baseModel    (new NetlistModel(this))
+    , _sortModel    (new QSortFilterProxyModel(this))
+    , _view         (new QTableView(this))
+    , _rowHeight    (20)
+    , _selecteds    ()
+    , _forceReselect(false)
   {
     setAttribute ( Qt::WA_DeleteOnClose );
     setAttribute ( Qt::WA_QuitOnClose, false );
@@ -130,6 +131,15 @@ namespace Hurricane {
   }
 
 
+  void  NetlistWidget::updateSelecteds ()
+  {
+    _forceReselect = true;
+
+    QItemSelection  dummy;
+    updateSelecteds ( dummy, dummy );
+  }
+
+
   void  NetlistWidget::updateSelecteds ( const QItemSelection& , const QItemSelection& )
   {
     if ( _cellWidget ) _cellWidget->openRefreshSession ();
@@ -142,6 +152,11 @@ namespace Hurricane {
       net = _baseModel->getNet ( _sortModel->mapToSource(iList[i]).row() );
       if ( net )
         _selecteds.insert ( net );
+    }
+
+    if ( _forceReselect ) {
+      _selecteds.forceInserteds();
+      _forceReselect = false;
     }
 
     SelectedNetSet::iterator remove;
@@ -172,7 +187,8 @@ namespace Hurricane {
   void  NetlistWidget::textFilterChanged ()
   {
     _sortModel->setFilterRegExp ( _filterPatternLineEdit->text() );
-    forceRowHeight ();
+    forceRowHeight  ();
+  //updateSelecteds ();
   }
 
 

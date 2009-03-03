@@ -33,6 +33,7 @@
 #include  <QGroupBox>
 #include  <QHBoxLayout>
 #include  <QVBoxLayout>
+#include  <QAction>
 
 #include "hurricane/Commons.h"
 #include "hurricane/Cell.h"
@@ -61,6 +62,7 @@ namespace Hurricane {
   {
     setAttribute ( Qt::WA_DeleteOnClose );
     setAttribute ( Qt::WA_QuitOnClose, false );
+    setContextMenuPolicy ( Qt::ActionsContextMenu );
 
     _rowHeight = QFontMetrics(Graphics::getFixedFont()).height() + 4;
 
@@ -93,7 +95,7 @@ namespace Hurricane {
 
     _sortModel->setSourceModel       ( _baseModel );
     _sortModel->setDynamicSortFilter ( true );
-    _sortModel->setFilterKeyColumn   ( 0 );
+    _sortModel->setFilterKeyColumn   ( 1 );
 
     _view->setShowGrid(false);
     _view->setAlternatingRowColors(true);
@@ -131,6 +133,19 @@ namespace Hurricane {
     connect ( _view->selectionModel(), SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&))
             , this                   , SLOT  (selectCurrent (const QModelIndex&,const QModelIndex&)) );
 
+    QAction* toggleAction = new QAction  ( tr("&Toggle Selection"), this );
+    toggleAction->setShortcut   ( QKeySequence(tr("T")) );
+    toggleAction->setStatusTip  ( tr("Toggle the selection state of this Occurrence") );
+    addAction ( toggleAction );
+
+    QAction* inspectAction = new QAction  ( tr("&Inspect"), this );
+    inspectAction->setShortcut   ( QKeySequence(tr("I")) );
+    inspectAction->setStatusTip  ( tr("Load this Occurrence in the Inspector") );
+    addAction ( inspectAction );
+
+    connect ( toggleAction , SIGNAL(triggered()), this, SLOT(toggleSelection ()) );
+    connect ( inspectAction, SIGNAL(triggered()), this, SLOT(inspect()) );
+
     setWindowTitle ( tr("Selection<None>") );
     resize ( 500, 300 );
   }
@@ -140,19 +155,6 @@ namespace Hurricane {
   {
     for (  int rows=_sortModel->rowCount()-1; rows >= 0 ; rows-- )
       _view->setRowHeight ( rows, _rowHeight );
-  }
-
-
-  bool  SelectionWidget::eventFilter ( QObject* object, QEvent* event )
-  {
-    if ( event->type() == QEvent::KeyPress ) {
-      QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
-
-      if      ( keyEvent->key() == Qt::Key_I ) { inspect         ( _view->currentIndex() ); }
-      else if ( keyEvent->key() == Qt::Key_T ) { toggleSelection ( _view->currentIndex() ); }
-    }
-
-    return QObject::eventFilter ( object, event );
   }
 
 
@@ -234,12 +236,20 @@ namespace Hurricane {
   }
 
 
+  void  SelectionWidget::toggleSelection ()
+  {
+    toggleSelection ( _view->currentIndex() );
+  }
+
+
   void  SelectionWidget::toggleSelection ( const QModelIndex& index )
   {
-    Occurrence occurrence = _baseModel->toggleSelection ( index );
-    if ( occurrence.isValid() ) {
-      _updateState = InternalEmit;
-      _cellWidget->toggleSelection ( occurrence );
+    if ( index.isValid() ) {
+      Occurrence occurrence = _baseModel->toggleSelection ( _sortModel->mapToSource(index) );
+      if ( occurrence.isValid() ) {
+        _updateState = InternalEmit;
+        _cellWidget->toggleSelection ( occurrence );
+      }
     }
   }
 
@@ -282,6 +292,12 @@ namespace Hurricane {
   void  SelectionWidget::selectCurrent ( const QModelIndex& current, const QModelIndex& )
   {
     inspect ( current );
+  }
+
+
+  void  SelectionWidget::inspect ()
+  {
+    inspect ( _view->currentIndex() );
   }
 
 

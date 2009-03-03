@@ -227,6 +227,7 @@ namespace Hurricane {
       getCellWidget()->setShowSelection ( true );
       connect ( _netlistBrowser, SIGNAL(netSelected  (const Net*)), getCellWidget(), SLOT(select  (const Net*)) );
       connect ( _netlistBrowser, SIGNAL(netUnselected(const Net*)), getCellWidget(), SLOT(unselect(const Net*)) );
+      _netlistBrowser->updateSelecteds ();
     } else {
       getCellWidget()->setShowSelection ( false );
       getCellWidget()->setCumulativeSelection ( _cwCumulativeSelection );

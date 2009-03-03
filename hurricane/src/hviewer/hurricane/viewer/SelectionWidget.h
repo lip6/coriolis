@@ -73,14 +73,15 @@ namespace Hurricane {
               void                   setCumulativeSelection ( bool );
               void                   selectCurrent          ( const QModelIndex& current, const QModelIndex& );
               void                   setSelection           ( const SelectorSet& selection );
+              void                   toggleSelection        ();
               void                   toggleSelection        ( Occurrence );
               void                   toggleSelection        ( const QModelIndex& );
               void                   forceRowHeight         ();
+              void                   inspect                ();
     private slots:                                          
               void                   textFilterChanged      ();
     protected:                                              
               void                   blockAllSignals        ( bool );
-      virtual bool                   eventFilter            ( QObject*, QEvent* );
 
     private:
               CellWidget*            _cellWidget;

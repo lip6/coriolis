@@ -241,6 +241,8 @@ namespace Hurricane {
 
   void  InspectorWidget::_setRootRecord ( Record* record )
   {
+  //if ( _baseModel ) _baseModel->setSlot ( NULL, 0 );
+
     _history.setRootRecord ( record );
     if ( !record ) _rootOccurrence = Occurrence ();
 

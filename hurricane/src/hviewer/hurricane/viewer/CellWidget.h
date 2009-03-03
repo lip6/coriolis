@@ -330,8 +330,8 @@ namespace Hurricane {
     public:
       class PlaneId {
         public:
-          enum Ids { Normal    = 0
-                   , Selection = 1
+          enum Ids { Normal    = 0  // _planes[0]
+                   , Selection = 1  // _planes[1]
                    , Widget    = 2
                    , Printer   = 3
                    , Image     = 4
@@ -378,7 +378,7 @@ namespace Hurricane {
                  QPrinter*      _printer;
                  QImage*        _image;
                  QPixmap*       _planes[2];
-                 QPainter       _painters[5];
+                 QPainter       _painters[PlaneId::Working];
                  QPen           _normalPen;
                  QPen           _linePen;
                  size_t         _workingPlane;
@@ -694,15 +694,15 @@ namespace Hurricane {
 
 
   inline int  CellWidget::DrawingPlanes::width () const
-  { return _planes[0]->width(); }
+  { return _planes[PlaneId::Normal]->width(); }
 
 
   inline int  CellWidget::DrawingPlanes::height () const
-  { return _planes[0]->height(); }
+  { return _planes[PlaneId::Normal]->height(); }
 
 
   inline QSize  CellWidget::DrawingPlanes::size () const
-  { return _planes[0]->size(); }
+  { return _planes[PlaneId::Normal]->size(); }
 
 
   inline void  CellWidget::DrawingPlanes::select ( size_t i )
@@ -710,37 +710,37 @@ namespace Hurricane {
 
 
   inline QPainter&  CellWidget::DrawingPlanes::painter ( size_t i ) 
-  { return _painters[(i>3)?_workingPlane:i]; }
+  { return _painters[(i>=PlaneId::Working)?_workingPlane:i]; }
 
 
   inline void  CellWidget::DrawingPlanes::painterBegin ( size_t i )
   {
     switch ( i ) {
-      case 5: i = _workingPlane;
-      case 0:
-      case 1: _painters[i].begin ( _planes[i]  ); break;
-      case 2: _painters[2].begin ( _cellWidget ); break;
-      case 3: _painters[3].begin ( _printer    ); break;
-      case 4: _painters[4].begin ( _image      ); break;
+      case PlaneId::Working: i = _workingPlane;
+      case PlaneId::Normal:
+      case PlaneId::Selection: _painters[i].begin ( _planes[i]  ); break;
+      case PlaneId::Widget:    _painters[2].begin ( _cellWidget ); break;
+      case PlaneId::Printer:   _painters[3].begin ( _printer    ); break;
+      case PlaneId::Image:     _painters[4].begin ( _image      ); break;
     }
   }
 
 
   inline void  CellWidget::DrawingPlanes::paintersBegin ()
   {
-    painterBegin ( 0 );
-    painterBegin ( 1 );
+    painterBegin ( PlaneId::Normal );
+    painterBegin ( PlaneId::Selection );
   }
 
 
   inline void  CellWidget::DrawingPlanes::painterEnd   ( size_t i )
-  { _painters[(i>4)?_workingPlane:i].end (); }
+  { _painters[(i>=PlaneId::Working)?_workingPlane:i].end (); }
 
 
   inline void  CellWidget::DrawingPlanes::paintersEnd ()
   {
-    painterEnd ( 0 );
-    painterEnd ( 1 );
+    painterEnd ( PlaneId::Normal );
+    painterEnd ( PlaneId::Selection  );
   }
 
 

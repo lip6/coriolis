@@ -430,8 +430,8 @@ namespace Hurricane {
   void  CellWidget::DrawingPlanes::shiftLeft ( int dx )
   {
     paintersBegin ();
-    _painters[PlaneId::Normal   ].drawPixmap ( dx, 0, *_planes[0], 0, 0, width()-dx, height() );
-    _painters[PlaneId::Selection].drawPixmap ( dx, 0, *_planes[1], 0, 0, width()-dx, height() );
+    _painters[PlaneId::Normal   ].drawPixmap ( dx, 0, *_planes[PlaneId::Normal   ], 0, 0, width()-dx, height() );
+    _painters[PlaneId::Selection].drawPixmap ( dx, 0, *_planes[PlaneId::Selection], 0, 0, width()-dx, height() );
     paintersEnd ();
   }
 
@@ -439,8 +439,8 @@ namespace Hurricane {
   void  CellWidget::DrawingPlanes::shiftRight ( int dx )
   {
     paintersBegin ();
-    _painters[PlaneId::Normal   ].drawPixmap ( 0, 0, *_planes[0], dx, 0, width()-dx, height() );
-    _painters[PlaneId::Selection].drawPixmap ( 0, 0, *_planes[1], dx, 0, width()-dx, height() );
+    _painters[PlaneId::Normal   ].drawPixmap ( 0, 0, *_planes[PlaneId::Normal   ], dx, 0, width()-dx, height() );
+    _painters[PlaneId::Selection].drawPixmap ( 0, 0, *_planes[PlaneId::Selection], dx, 0, width()-dx, height() );
     paintersEnd ();
   }
 
@@ -448,8 +448,8 @@ namespace Hurricane {
   void  CellWidget::DrawingPlanes::shiftUp ( int dy )
   {
     paintersBegin ();
-    _painters[PlaneId::Normal   ].drawPixmap ( 0, dy, *_planes[0], 0, 0, width(), height()-dy );
-    _painters[PlaneId::Selection].drawPixmap ( 0, dy, *_planes[1], 0, 0, width(), height()-dy );
+    _painters[PlaneId::Normal   ].drawPixmap ( 0, dy, *_planes[PlaneId::Normal   ], 0, 0, width(), height()-dy );
+    _painters[PlaneId::Selection].drawPixmap ( 0, dy, *_planes[PlaneId::Selection], 0, 0, width(), height()-dy );
     paintersEnd ();
   }
 
@@ -457,8 +457,8 @@ namespace Hurricane {
   void  CellWidget::DrawingPlanes::shiftDown ( int dy )
   {
     paintersBegin ();
-    _painters[PlaneId::Normal   ].drawPixmap ( 0, 0, *_planes[0], 0, dy, width(), height()-dy );
-    _painters[PlaneId::Selection].drawPixmap ( 0, 0, *_planes[1], 0, dy, width(), height()-dy );
+    _painters[PlaneId::Normal   ].drawPixmap ( 0, 0, *_planes[PlaneId::Normal   ], 0, dy, width(), height()-dy );
+    _painters[PlaneId::Selection].drawPixmap ( 0, 0, *_planes[PlaneId::Selection], 0, dy, width(), height()-dy );
     paintersEnd ();
   }
 
@@ -470,7 +470,7 @@ namespace Hurricane {
     _painters[PlaneId::Selection].setBackground ( Graphics::getBrush("background") );
     _painters[PlaneId::Selection].eraseRect     ( sx, sy, w, h );
   //_painters[PlaneId::Selection].setOpacity    ( 0.5 );
-    _painters[PlaneId::Selection].drawPixmap    ( sx, sy, *_planes[0], sx, sy, w, h );
+    _painters[PlaneId::Selection].drawPixmap    ( sx, sy, *_planes[PlaneId::Normal], sx, sy, w, h );
     painterEnd ( PlaneId::Selection );
   }
 
@@ -571,7 +571,7 @@ namespace Hurricane {
 
     painterBegin ( PlaneId::Image );
 
-    _painters[PlaneId::Image].setRenderHint(QPainter::Antialiasing, false);
+    _painters[PlaneId::Image].setRenderHint ( QPainter::Antialiasing, false );
     _painters[PlaneId::Image].drawPixmap
       ( ximage, yimage
       , *_planes[PlaneId::Normal]
@@ -1001,6 +1001,8 @@ namespace Hurricane {
   CellWidget::~CellWidget ()
   {
     cerr << "CellWidget::~CellWidget()" << endl;
+
+    unselectAll ();
 
     for ( size_t i=0 ; i<_commands.size() ; i++ )
       unbindCommand ( _commands[i] );
