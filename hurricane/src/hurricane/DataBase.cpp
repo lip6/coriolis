@@ -53,8 +53,6 @@ void DataBase::_postCreate()
 void DataBase::_preDestroy()
 // ************************
 {
-  cerr << "DataBase::_preDestroy()" << endl;
-
     UpdateSession::open();
     Inherit::_preDestroy();
 

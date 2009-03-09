@@ -533,8 +533,8 @@ namespace Hurricane {
       yimage = 100;
     }
 
-    cerr << "sy: " << sy << " offsetVA.ry(): " << _cellWidget->getOffsetVA().ry() << endl;
-    cerr << "w: " << w << " h:" << h << endl;
+  //cerr << "sy: " << sy << " offsetVA.ry(): " << _cellWidget->getOffsetVA().ry() << endl;
+  //cerr << "w: " << w << " h:" << h << endl;
 
     if ( _cellWidget->showSelection() )
       _painters[PlaneId::Printer].drawPixmap
@@ -1000,8 +1000,6 @@ namespace Hurricane {
 
   CellWidget::~CellWidget ()
   {
-    cerr << "CellWidget::~CellWidget()" << endl;
-
     unselectAll ();
 
     for ( size_t i=0 ; i<_commands.size() ; i++ )
