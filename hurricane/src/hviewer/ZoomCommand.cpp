@@ -98,9 +98,10 @@ namespace Hurricane {
 
     QRect zoomArea = QRect ( _startPoint, _stopPoint );
     if (   ( abs(zoomArea.width ()) > getDrawingThreshold() )
-        && ( abs(zoomArea.height()) > getDrawingThreshold() ) )
-      widget->reframe ( widget->screenToDbuBox(zoomArea) );
-  //else {
+         && ( abs(zoomArea.height()) > getDrawingThreshold() ) ) {
+      widget->reframe ( widget->screenToDbuBox(zoomArea) ); 
+      return true;
+    } // else {
   //  cerr << Warning("Rejecting too small zoom request.") << endl;
   //  widget->update ();
   //}

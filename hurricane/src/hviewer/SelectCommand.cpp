@@ -84,7 +84,8 @@ namespace Hurricane {
 
   bool  SelectCommand::mouseReleaseEvent ( CellWidget* widget, QMouseEvent* event )
   {
-    if ( !isActive() ) return false;
+    if ( !isActive() )
+      _startPoint = _stopPoint = event->pos();
 
     setActive ( false );
     setDrawingEnabled ( false );
@@ -97,13 +98,14 @@ namespace Hurricane {
       
   //widget->unselectAll ();
     widget->selectOccurrencesUnder ( widget->screenToDbuBox(selectArea) );
+    bool somethingSelected = !widget->getSelectorSet().empty();
 
-    if ( !widget->getState()->showSelection() )
-      widget->setShowSelection ( true );
+    if ( widget->getState()->showSelection() != somethingSelected )
+      widget->setShowSelection ( somethingSelected );
     else
       widget->refresh ();
     
-    return false;
+    return true;
   }
 
 
