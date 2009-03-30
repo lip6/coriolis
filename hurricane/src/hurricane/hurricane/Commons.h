@@ -545,7 +545,10 @@ inline Hurricane::Record* getRecord ( const std::multiset<Element,Compare>* s )
 
 # define GETSTRING_POINTER_SUPPORT(Data) \
   template<> inline std::string getString<Data*>( Data* data )             \
-  { if (!data) return "NULL [" #Data "]"; return data->_getString(); }     \
+  {                                                                        \
+    if (!data) return "NULL [" #Data "]";                                  \
+    return const_cast<const Data*>(data)->_getString();                    \
+  }                                                                        \
                                                                            \
   template<> inline std::string getString<const Data*>( const Data* data ) \
   { if (!data) return "NULL [const " #Data "]"; return data->_getString(); }
@@ -555,7 +558,7 @@ inline Hurricane::Record* getRecord ( const std::multiset<Element,Compare>* s )
   inline std::ostream& operator<< ( std::ostream& o, Data* d )       \
   {                                                                  \
     if (!d) return o << "NULL [" #Data "]";                          \
-    return o << "&" << getString<Data*>(d);                          \
+    return o << "&" << getString<const Data*>(d);                    \
   }                                                                  \
   inline std::ostream& operator<< ( std::ostream& o, const Data* d ) \
   {                                                                  \
