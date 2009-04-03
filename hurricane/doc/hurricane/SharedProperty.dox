@@ -81,7 +81,4 @@
  //  \}
 
 
- /*! \name         Messages
-  */
- //  \{
-
+ } // End of Hurricane namespace.

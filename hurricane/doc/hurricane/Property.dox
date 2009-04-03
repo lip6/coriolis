@@ -108,11 +108,11 @@ Properties  Occurrence::getProperties() const;
   * 
   *                <b>Does the object have properties ?</b> 
 \code
-bool DBo::HasProperty() const;
+bool DBo::hasProperty() const;
 \endcode
   *                Return \true if the object owns at least a property, else \false. 
 \code
-bool Occurrence::HasProperty() const;
+bool Occurrence::hasProperty() const;
 \endcode
   *                This function searches the quark representing the occurence. 
   *
@@ -123,12 +123,12 @@ bool Occurrence::HasProperty() const;
   *
   *                <b>Adding a property : things becomes a little harder</b> 
 \code
-void DBo::Put(Property* property);
+void DBo::put(Property* property);
 \endcode
   *                Adds the property \c \<property\> to the set of properties of 
   *                the object. 
 \code
-void Occurence::Put(Property* property);
+void Occurence::put(Property* property);
 \endcode
   *                This function searches the quark representing the occurence. 
   *
@@ -188,11 +188,11 @@ void Occurence::Remove(Property* property);
   *
   *                <b>Clearing all properties</b> 
 \code
-void DBo::ClearProperties();
+void DBo::clearProperties();
 \endcode
   *                Removes all properties attached to the object. 
 \code
-void Occurence::ClearProperties();
+void Occurence::clearProperties();
 \endcode
   *                First searches for the quark associated to the occurence. 
   *

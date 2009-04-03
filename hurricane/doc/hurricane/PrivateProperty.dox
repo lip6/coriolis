@@ -71,15 +71,11 @@
   */
  //  \{
 
- /*! \function     DBo* PrivateProperty::GetOwner() const;
+ /*! \function     DBo* PrivateProperty::getOwner() const;
   *  \Return       the current owner of the property (or NULL if at not been 
   *                assigned yet). 
   */
 
  //  \}
 
-
- /*! \name         Messages
-  */
- //  \{
-
+ } // End of Hurricane namespace.

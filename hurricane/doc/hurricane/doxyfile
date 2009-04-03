@@ -572,7 +572,7 @@ WARN_FORMAT            = "$file:$line: $text"
 # and error messages should be written. If left blank the output is written 
 # to stderr.
 
-WARN_LOGFILE           = 
+WARN_LOGFILE           = doxygen.warn.log
 
 #---------------------------------------------------------------------------
 # configuration options related to the input files
@@ -603,6 +603,7 @@ INPUT                  = ../../src/hurricane/hurricane/Commons.h \
                          Filter.dox \
                          ../../src/hurricane/hurricane/Relation.h \
                          Relation.dox \
+                         StandardRelation.dox \
                          ../../src/hurricane/hurricane/Tabulation.h \
                          Tabulation.dox \
                          ../../src/hurricane/hurricane/DbU.h \
@@ -685,6 +686,10 @@ INPUT                  = ../../src/hurricane/hurricane/Commons.h \
                          ../../src/hurricane/hurricane/Properties.h \
                          ../../src/hurricane/hurricane/Property.h \
                          Property.dox \
+                         PrivateProperty.dox \
+                         SharedProperty.dox \
+                         StandardSharedProperty.dox \
+                         StandardPrivateProperty.dox \
                          ../../src/hurricane/hurricane/Hooks.h \
                          ../../src/hurricane/hurricane/Hook.h \
                          Hook.dox \

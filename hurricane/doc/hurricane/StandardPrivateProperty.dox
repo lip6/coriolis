@@ -14,8 +14,4 @@
   */
 
 
-
- /*! \name         Constructors
-  */
- //  \{
-
+ } // End of Hurricane namespace.

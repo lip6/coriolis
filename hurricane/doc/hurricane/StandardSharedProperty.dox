@@ -13,9 +13,7 @@
   *                relation between a name and a value. 
   */
 
+ //  \}
 
 
- /*! \name         Constructors
-  */
- //  \{
-
+ } // End of Hurricane namespace.
