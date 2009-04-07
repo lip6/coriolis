@@ -71,6 +71,8 @@ class Interval {
 // ********
 
     public: Interval& makeEmpty();
+    public: Interval& shrinkVMin(const DbU::Unit& vMin);
+    public: Interval& shrinkVMax(const DbU::Unit& vMax);
     public: Interval& inflate(const DbU::Unit& dv);
     public: Interval& inflate(const DbU::Unit& dvMin, const DbU::Unit& dvMax);
     public: Interval& merge(const DbU::Unit& v);

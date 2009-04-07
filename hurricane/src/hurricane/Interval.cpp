@@ -140,6 +140,22 @@ Interval& Interval::makeEmpty()
     return *this;
 }
 
+Interval& Interval::shrinkVMin(const DbU::Unit& vMin)
+// **************************************************
+{
+  if ( vMin > _vMin )
+    _vMin = vMin;
+  return *this;
+}
+
+Interval& Interval::shrinkVMax(const DbU::Unit& vMax)
+// **************************************************
+{
+  if ( vMax < _vMax )
+    _vMax = vMax;
+  return *this;
+}
+
 Interval& Interval::inflate(const DbU::Unit& dv)
 // ****************************************
 {
