@@ -57,6 +57,7 @@
                                      hurricane/viewer/NetlistWidget.h
                                      hurricane/viewer/DisplayFilterWidget.h
                                      hurricane/viewer/ControllerWidget.h
+                                     hurricane/viewer/PaletteWidget.h
                        )
                    set ( cpps        HApplication.cpp
                                      ScreenUtilities.cpp 
