@@ -547,7 +547,7 @@ inline Hurricane::Record* getRecord ( const std::multiset<Element,Compare>* s )
   template<> inline std::string getString<Data*>( Data* data )             \
   {                                                                        \
     if (!data) return "NULL [" #Data "]";                                  \
-    return const_cast<const Data*>(data)->_getString();                    \
+    return data->_getString();                                             \
   }                                                                        \
                                                                            \
   template<> inline std::string getString<const Data*>( const Data* data ) \
@@ -605,7 +605,7 @@ inline Hurricane::Record* getRecord ( const std::multiset<Element,Compare>* s )
 
 
 # define IOSTREAM_VALUE_SUPPORT(Data) \
-  inline std::ostream& operator<< ( std::ostream& o, Data d ) \
+  inline std::ostream& operator<< ( std::ostream& o, Data d )   \
   { return o << getString<Data>(d); }
 
 

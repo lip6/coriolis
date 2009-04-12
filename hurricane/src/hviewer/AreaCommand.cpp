@@ -23,12 +23,12 @@
 // x-----------------------------------------------------------------x
 
 
-# include <QMouseEvent>
-# include <QKeyEvent>
+#include <QMouseEvent>
+#include <QKeyEvent>
 
-# include <hurricane/viewer/Graphics.h>
-# include <hurricane/viewer/CellWidget.h>
-# include <hurricane/viewer/AreaCommand.h>
+#include <hurricane/viewer/Graphics.h>
+#include <hurricane/viewer/CellWidget.h>
+#include <hurricane/viewer/AreaCommand.h>
 
 
 namespace Hurricane {
@@ -40,10 +40,10 @@ namespace Hurricane {
 
   AreaCommand::AreaCommand ()
     : Command()
-    , _startPoint()
-    , _stopPoint()
+    , _startPoint      ()
+    , _stopPoint       ()
     , _drawingThreshold(10)
-    , _drawingEnabled(false)
+    , _drawingEnabled  (false)
   { }
 
 

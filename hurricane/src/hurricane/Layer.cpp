@@ -209,6 +209,14 @@ namespace Hurricane {
   }
 
 
+  void  Layer::_onDbuChange ( float scale )
+  {
+    _minimalSize    = (DbU::Unit)( (float)_minimalSize    * scale );
+    _minimalSpacing = (DbU::Unit)( (float)_minimalSpacing * scale );
+    _pitch          = (DbU::Unit)( (float)_pitch          * scale );
+  }
+
+
   string Layer::_getString() const
   {
     string s = DBo::_getString();

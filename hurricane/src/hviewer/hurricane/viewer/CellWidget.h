@@ -131,6 +131,8 @@ namespace Hurricane {
               void                    detachFromPalette          ();
               void                    bindCommand                ( Command* );
               void                    unbindCommand              ( Command* );
+      inline  bool                    realMode                   () const;
+      inline  bool                    symbolicMode               () const;
       inline  bool                    showBoundaries             () const;
       inline  bool                    showSelection              () const;
       inline  bool                    cumulativeSelection        () const;
@@ -148,6 +150,7 @@ namespace Hurricane {
       inline  void                    copyToImage                ( QImage* );
       inline  const float&            getScale                   () const;
       inline  const QPoint&           getMousePosition           () const;
+      inline  void                    updateMousePosition        ();
               void                    setLayerVisible            ( const Name& layer, bool visible );
               bool                    isDrawable                 ( const Name& );
               bool                    isDrawableLayer            ( const Name& );
@@ -191,6 +194,9 @@ namespace Hurricane {
               Box                     computeVisibleArea         ( float scale ) const;
               Box                     computeVisibleArea         ( float scale, const Point& topLeft ) const;
               Box                     computeVisibleArea         ( const Box&, float& scale ) const;
+      inline  bool                    _underDetailedGridThreshold() const;
+      inline  DbU::Unit               _snapGridStep              () const;
+      inline  DbU::Unit               _onSnapGrid                ( DbU::Unit ) const;
     // Qt QWidget Functions Overloads.                           
               void                    pushCursor                 ( Qt::CursorShape cursor );
               void                    popCursor                  ();
@@ -211,6 +217,7 @@ namespace Hurricane {
               void                    stateChanged               ( shared_ptr<CellWidget::State>& );
               void                    styleChanged               ();
               void                    queryFilterChanged         ();
+              void                    layoutModeChanged          ();
               void                    updatePalette              ( Cell* );
               void                    mousePositionChanged       ( const Point& position );
               void                    selectionModeChanged       ();
@@ -240,6 +247,7 @@ namespace Hurricane {
               void                    _unselectAll               ();
               void                    changeQueryFilter          ();
               void                    rubberChange               ();
+              void                    changeLayoutMode           ();
               void                    setStyle                   ( int id );
               void                    updatePalette              ();
               void                    cellPreModificate          ();
@@ -257,6 +265,8 @@ namespace Hurricane {
               void                    setScale                   ( float );
               void                    scaleHistoryUp             ();
               void                    scaleHistoryDown           ();
+              void                    setRealMode                ();
+              void                    setSymbolicMode            ();
               void                    setShowBoundaries          ( bool state );
               void                    reframe                    ();
               void                    reframe                    ( const Box& box, bool historyEnable=true );
@@ -486,6 +496,8 @@ namespace Hurricane {
           inline                     State                  ( Cell* cell=NULL );
           inline void                setCell                ( Cell* );
           inline void                setCellWidget          ( CellWidget* );
+          inline void                setRealMode            ();
+          inline void                setSymbolicMode        ();
           inline void                setShowBoundaries      ( bool );
           inline void                setShowSelection       ( bool );
           inline void                setCumulativeSelection ( bool );
@@ -502,6 +514,8 @@ namespace Hurricane {
           inline Cell*               getCell                () const;
                  const Name&         getName                () const;
           inline SelectorCriterions& getSelection           ();
+          inline bool                realMode               () const;
+          inline bool                symbolicMode           () const;
           inline bool                showBoundaries         () const;
           inline bool                showSelection          () const;
           inline bool                cumulativeSelection    () const;
@@ -527,6 +541,7 @@ namespace Hurricane {
           Cell*               _cell;
           CellWidget*         _cellWidget;
           SelectorCriterions  _selection;
+          bool                _symbolicMode;
           bool                _showBoundaries;
           bool                _showSelection;
           Query::Mask         _queryFilter;
@@ -796,6 +811,7 @@ namespace Hurricane {
     : _cell               (cell)
     , _cellWidget         (NULL)
     , _selection          ()
+    , _symbolicMode       (true)
     , _showBoundaries     (true)
     , _showSelection      (false)
     , _queryFilter        (~Query::DoTerminalCells)
@@ -811,6 +827,10 @@ namespace Hurricane {
   }
 
 
+  inline bool  CellWidget::State::symbolicMode () const
+  { return _symbolicMode; }
+
+
   inline void  CellWidget::State::setCell ( Cell* cell )
   { _cell = cell; }
 
@@ -820,6 +840,14 @@ namespace Hurricane {
     _cellWidget = cw;
     _selection.setCellWidget ( cw );
   }
+
+
+  inline void  CellWidget::State::setRealMode ()
+  { _symbolicMode = false; }
+
+
+  inline void  CellWidget::State::setSymbolicMode ()
+  { _symbolicMode = true; }
 
 
   inline void  CellWidget::State::setShowBoundaries ( bool state )
@@ -1077,6 +1105,14 @@ namespace Hurricane {
   { return _palette; }
 
 
+  inline bool  CellWidget::realMode () const
+  { return !_state->symbolicMode(); }
+
+
+  inline bool  CellWidget::symbolicMode () const
+  { return _state->symbolicMode(); }
+
+
   inline bool  CellWidget::showBoundaries () const
   { return _state->showBoundaries(); }
 
@@ -1103,6 +1139,15 @@ namespace Hurricane {
 
   inline const QPoint& CellWidget::getMousePosition () const
   { return _mousePosition; }
+
+
+  inline void  CellWidget::updateMousePosition ()
+  {
+    Point mousePoint = screenToDbuPoint ( _mousePosition );
+    emit mousePositionChanged ( Point ( _onSnapGrid(mousePoint.getX())
+                                      , _onSnapGrid(mousePoint.getY())
+                                      ) );
+  }
 
 
   inline void  CellWidget::setQueryFilter ( Query::Mask filter )
@@ -1145,6 +1190,14 @@ namespace Hurricane {
                    ,fname,timer.getCombTimeOnTheFly(),timeout) << endl;
     return true;
   }
+
+
+  inline DbU::Unit  CellWidget::_snapGridStep () const
+  { return  symbolicMode() ? DbU::getSymbolicSnapGridStep() : DbU::getRealSnapGridStep(); }
+
+
+  inline DbU::Unit  CellWidget::_onSnapGrid ( DbU::Unit u ) const
+  { return symbolicMode() ? DbU::getOnSymbolicSnapGrid(u) : DbU::getOnRealSnapGrid(u); }
 
 
 } // End of Hurricane namespace.

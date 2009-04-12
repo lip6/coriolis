@@ -103,6 +103,7 @@ namespace Hurricane {
               void           _removeFromLayerMaskMap ( Layer* );
       inline  Layer::Mask&   _getCutMask             ();
       inline  Layer::Mask&   _getMetalMask           ();
+              void           _onDbuChange            ( float scale );
     // Hurricane Managment.
       virtual string         _getTypeName            () const;
       virtual string         _getString              () const;

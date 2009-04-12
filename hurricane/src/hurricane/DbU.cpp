@@ -1,9 +1,8 @@
 
-
 // -*- C++ -*-
 //
-// This file is part of the Hurricane Software.
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -24,25 +23,28 @@
 // x-----------------------------------------------------------------x
 
 
-# include  <climits>
-# include  <cstring>
+#include  <climits>
+#include  <cstring>
 
-# include  "hurricane/DbU.h"
-# include  "hurricane/Error.h"
+#include  "hurricane/DbU.h"
+#include  "hurricane/Error.h"
+#include  "hurricane/DataBase.h"
+#include  "hurricane/Technology.h"
 
 
 namespace Hurricane {
 
 
-  const unsigned int  DbU::_maximalPrecision = 3;
-  unsigned int        DbU::_precision        = 1;
-  double              DbU::_resolution       = 0.1;
-  double              DbU::_gridsPerLambda   = 10.0;
-  double              DbU::_physicalsPerGrid = 1.0;
-  unsigned int        DbU::_stringMode       = DbU::Symbolic;
-  DbU::Unit           DbU::_snapGridStep     = DbU::lambda(1.0);
-  const DbU::Unit     DbU::Min               = LONG_MIN;
-  const DbU::Unit     DbU::Max               = LONG_MAX;
+  const unsigned int  DbU::_maximalPrecision     = 3;
+  unsigned int        DbU::_precision            = 1;
+  double              DbU::_resolution           = 0.1;
+  double              DbU::_gridsPerLambda       = 10.0;
+  double              DbU::_physicalsPerGrid     = 1.0;
+  unsigned int        DbU::_stringMode           = DbU::Symbolic;
+  DbU::Unit           DbU::_symbolicSnapGridStep = DbU::lambda(1.0);
+  DbU::Unit           DbU::_realSnapGridStep     = DbU::grid  (10.0);
+  const DbU::Unit     DbU::Min                   = LONG_MIN;
+  const DbU::Unit     DbU::Max                   = LONG_MAX;
 
 
 // -------------------------------------------------------------------
@@ -103,12 +105,17 @@ namespace Hurricane {
                   , _maximalPrecision
                   );
 
+    float scale = (float)precision / (float)_precision;
+
     _precision  = precision;
 
     _resolution = 1;
     while ( precision-- ) _resolution /= 10;
 
-    setSnapGridStep ( DbU::lambda(1) );
+    DataBase::getDB()->getTechnology()->_onDbuChange ( scale );
+
+    setSymbolicSnapGridStep ( DbU::lambda( 1.0) );
+    setRealSnapGridStep     ( DbU::grid  (10.0) );
   }
 
 
@@ -127,9 +134,7 @@ namespace Hurricane {
 
 
   void  DbU::setPhysicalsPerGrid ( double physicalsPerGrid, UnitPower p )
-  {
-    _physicalsPerGrid = physicalsPerGrid * getUnitPower(p);
-  }
+  { _physicalsPerGrid = physicalsPerGrid * getUnitPower(p); }
 
 
   double  DbU::getPhysicalsPerGrid ()
@@ -137,9 +142,7 @@ namespace Hurricane {
 
 
   double  DbU::physicalToGrid ( double physical, UnitPower p )
-  {
-    return ( physical * getUnitPower(p) ) / _physicalsPerGrid;
-  }
+  { return ( physical * getUnitPower(p) ) / _physicalsPerGrid; }
 
 
   void  DbU::setGridsPerLambda ( double gridsPerLambda )
@@ -150,9 +153,13 @@ namespace Hurricane {
                   , gridsPerLambda
                   );
 
+    float scale = gridsPerLambda / (float)_gridsPerLambda;
+
     _gridsPerLambda = gridsPerLambda;
 
-    setSnapGridStep ( DbU::lambda(1) );
+    DataBase::getDB()->getTechnology()->_onDbuChange ( scale );
+
+    setSymbolicSnapGridStep ( DbU::lambda(1) );
   }
 
 
@@ -160,79 +167,40 @@ namespace Hurricane {
   { return _gridsPerLambda; }
 
 
-  DbU::Unit  DbU::getSnapGridStep ()
-  {
-    return _snapGridStep;
-  }
+  DbU::Unit  DbU::getSymbolicSnapGridStep ()
+  { return _symbolicSnapGridStep; }
 
 
-  DbU::Unit  DbU::getOnSnapGrid ( DbU::Unit u, SnapMode mode )
+  DbU::Unit  DbU::getOnSymbolicSnapGrid ( DbU::Unit u, SnapMode mode )
   {
-    DbU::Unit  inferior = ( u / _snapGridStep ) * _snapGridStep;
-    DbU::Unit  modulo   =   u % _snapGridStep;
+    DbU::Unit  inferior = ( u / _symbolicSnapGridStep ) * _symbolicSnapGridStep;
+    DbU::Unit  modulo   =   u % _symbolicSnapGridStep;
 
     if ( !modulo ) return u;
 
     if      ( mode == Inferior ) { return inferior; }
-    else if ( mode == Superior ) { return inferior + _snapGridStep; }
+    else if ( mode == Superior ) { return inferior + _symbolicSnapGridStep; }
      
-    return inferior + ( (modulo > (_snapGridStep/2)) ? _snapGridStep : 0 );
+    return inferior + ( (modulo > (_symbolicSnapGridStep/2)) ? _symbolicSnapGridStep : 0 );
   }
 
- 
+
+  DbU::Unit  DbU::getRealSnapGridStep ()
+  { return _realSnapGridStep; }
 
 
-// ****************************************************************************************************
-// Grid managers
-// ****************************************************************************************************
+  DbU::Unit  DbU::getOnRealSnapGrid ( DbU::Unit u, SnapMode mode )
+  {
+    DbU::Unit  inferior = ( u / _realSnapGridStep ) * _realSnapGridStep;
+    DbU::Unit  modulo   =   u % _realSnapGridStep;
 
-// const DbU::Unit& getGridStep()
-// // **********************
-// {
-//     return GRID_STEP;
-// }
+    if ( !modulo ) return u;
 
-// void setGridStep(const DbU::Unit& gridStep)
-// // ***********************************
-// {
-//     if (!gridStep) throw Error("Can't set grid step : invalid value");
-
-//     GRID_STEP = gridStep;
-// }
-
-// bool isOnGrid(const DbU::Unit& unit, int n)
-// // ***********************************
-// {
-//     if (n <= 0) throw Error("Can't compute : invalid value");
-
-//     n *= GRID_STEP;
-
-//     return (((abs(unit) / n) * n) == abs(unit));
-// }
-
-// DbU::Unit getOnGridUnit(const DbU::Unit& unit, int s)
-// // ****************************************
-// {
-//     switch (s) {
-//         case -1 : {
-//             if (0 < unit) return (unit / GRID_STEP) * GRID_STEP;
-//             else if (unit < 0) return ((unit / GRID_STEP) - 1) * GRID_STEP;
-//             return unit;
-//         }
-//         case 0 : {
-//             int g1 = (unit / GRID_STEP) * GRID_STEP;
-//            int g2 = ((g1 < unit) ? (g1 + GRID_STEP) : (g1 - GRID_STEP));
-//             return (abs(g1 - unit) <= abs(g2 - unit)) ? g1 : g2;
-//         }
-//         case +1 : {
-//             if (0 < unit) return ((unit / GRID_STEP) + 1) * GRID_STEP;
-//             else if (unit < 0) return (unit / GRID_STEP) * GRID_STEP;
-//             return unit;
-//         }
-//     }
-//     throw Error("Can't get on grid unit : invalid parameter s (should be -1, 0 or +1)");
-//     return 0;
-// }
+    if      ( mode == Inferior ) { return inferior; }
+    else if ( mode == Superior ) { return inferior + _realSnapGridStep; }
+     
+    return inferior + ( (modulo > (_realSnapGridStep/2)) ? _realSnapGridStep : 0 );
+  }
 
 
   string  DbU::getValueString ( DbU::Unit u, int mode )

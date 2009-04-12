@@ -176,91 +176,98 @@ ViaLayers Technology::getViaLayers() const
 }
 
 
-Layer* Technology::getLayer ( const Layer::Mask& mask, bool useWorking ) const
-{
-  LayerMaskMap::const_iterator lb = _layerMaskMap.lower_bound ( mask );
-  LayerMaskMap::const_iterator ub = _layerMaskMap.upper_bound ( mask );
-  for ( ; lb != ub ; lb++ ) {
-    if ( !useWorking || lb->second->isWorking() ) return lb->second;
+  Layer* Technology::getLayer ( const Layer::Mask& mask, bool useWorking ) const
+  {
+    LayerMaskMap::const_iterator lb = _layerMaskMap.lower_bound ( mask );
+    LayerMaskMap::const_iterator ub = _layerMaskMap.upper_bound ( mask );
+    for ( ; lb != ub ; lb++ ) {
+      if ( !useWorking || lb->second->isWorking() ) return lb->second;
+    }
+    return NULL;
   }
-  return NULL;
-}
 
 
-Layer* Technology::getMetalAbove ( const Layer* layer, bool useWorking ) const
-{
-  if ( !layer ) return NULL;
+  Layer* Technology::getMetalAbove ( const Layer* layer, bool useWorking ) const
+  {
+    if ( !layer ) return NULL;
 
-  LayerMaskMap::const_iterator ub = _layerMaskMap.upper_bound ( layer->getMask() );
-  for ( ; ub != _layerMaskMap.end() ; ub++ ) {
-    if (    _metalMask.contains(ub->second->getMask())
+    LayerMaskMap::const_iterator ub = _layerMaskMap.upper_bound ( layer->getMask() );
+    for ( ; ub != _layerMaskMap.end() ; ub++ ) {
+      if (    _metalMask.contains(ub->second->getMask())
          && ( !useWorking || ub->second->isWorking() ) )
-      return ub->second;
+        return ub->second;
+    }
+    return NULL;
   }
-  return NULL;
-}
 
 
-Layer* Technology::getMetalBelow ( const Layer* layer, bool useWorking ) const
-{
-  if ( !layer ) return NULL;
+  Layer* Technology::getMetalBelow ( const Layer* layer, bool useWorking ) const
+  {
+    if ( !layer ) return NULL;
 
-  LayerMaskMap::const_iterator lb = _layerMaskMap.lower_bound ( layer->getMask() );
-  if ( lb->second == layer ) lb--;
-  for ( ; lb != _layerMaskMap.begin() ; lb-- ) {
-    if (    _metalMask.contains(lb->second->getMask())
+    LayerMaskMap::const_iterator lb = _layerMaskMap.lower_bound ( layer->getMask() );
+    if ( lb->second == layer ) lb--;
+    for ( ; lb != _layerMaskMap.begin() ; lb-- ) {
+      if (    _metalMask.contains(lb->second->getMask())
          && ( !useWorking || lb->second->isWorking() ) )
-      return lb->second;
+        return lb->second;
+    }
+    return NULL;
   }
-  return NULL;
-}
 
 
-Layer* Technology::getCutAbove ( const Layer* layer, bool useWorking ) const
-{
-  if ( !layer ) return NULL;
+  Layer* Technology::getCutAbove ( const Layer* layer, bool useWorking ) const
+  {
+    if ( !layer ) return NULL;
 
-  LayerMaskMap::const_iterator ub = _layerMaskMap.upper_bound ( layer->getMask() );
-  for ( ; ub != _layerMaskMap.end() ; ub++ ) {
-    if (    _cutMask.contains(ub->second->getMask())
+    LayerMaskMap::const_iterator ub = _layerMaskMap.upper_bound ( layer->getMask() );
+    for ( ; ub != _layerMaskMap.end() ; ub++ ) {
+      if (    _cutMask.contains(ub->second->getMask())
          && ( !useWorking || ub->second->isWorking() ) )
-      return ub->second;
+        return ub->second;
+    }
+    return NULL;
   }
-  return NULL;
-}
 
 
-Layer* Technology::getCutBelow ( const Layer* layer, bool useWorking ) const
-{
-  if ( !layer ) return NULL;
+  Layer* Technology::getCutBelow ( const Layer* layer, bool useWorking ) const
+  {
+    if ( !layer ) return NULL;
 
-  LayerMaskMap::const_iterator lb = _layerMaskMap.lower_bound ( layer->getMask() );
-  if ( lb->second == layer ) lb--;
-  for ( ; lb != _layerMaskMap.begin() ; lb-- ) {
-    if (    _cutMask.contains(lb->second->getMask())
+    LayerMaskMap::const_iterator lb = _layerMaskMap.lower_bound ( layer->getMask() );
+    if ( lb->second == layer ) lb--;
+    for ( ; lb != _layerMaskMap.begin() ; lb-- ) {
+      if (    _cutMask.contains(lb->second->getMask())
          && ( !useWorking || lb->second->isWorking() ) )
-      return lb->second;
+        return lb->second;
+    }
+    return NULL;
   }
-  return NULL;
-}
 
 
-Layer* Technology::getViaBetween ( const Layer* metal1, const Layer* metal2 ) const
-{
-  if ( !metal1 || !metal2 ) return NULL;
-  if ( metal1->above(metal2) ) swap ( metal1, metal2 );
+  Layer* Technology::getViaBetween ( const Layer* metal1, const Layer* metal2 ) const
+  {
+    if ( !metal1 || !metal2 ) return NULL;
+    if ( metal1->above(metal2) ) swap ( metal1, metal2 );
 
-  Layer* cutLayer = getCutBelow ( metal2 );
-  if ( !cutLayer ) return NULL;
+    Layer* cutLayer = getCutBelow ( metal2 );
+    if ( !cutLayer ) return NULL;
 
-  return getLayer ( metal1->getMask() | metal2->getMask() | cutLayer->getMask() ); 
-}
+    return getLayer ( metal1->getMask() | metal2->getMask() | cutLayer->getMask() ); 
+  }
 
 
-Layer* Technology::getNthMetal ( int nth ) const
-{
-  return getLayer ( _metalMask.nthbit(nth) );
-}
+  Layer* Technology::getNthMetal ( int nth ) const
+  {
+    return getLayer ( _metalMask.nthbit(nth) );
+  }
+
+
+  void  Technology::_onDbuChange ( float scale )
+  {
+    forEach ( Layer*, layer, getLayers() )
+      layer->_onDbuChange ( scale );
+  }
 
 
 void Technology::setName(const Name& name)
@@ -275,29 +282,29 @@ void Technology::setName(const Name& name)
 }
 
 
-bool  Technology::setWorkingLayer ( const Name& name )
-{
-  Layer* layer = getLayer ( name );
-  if ( !layer ) return false;
+  bool  Technology::setWorkingLayer ( const Name& name )
+  {
+    Layer* layer = getLayer ( name );
+    if ( !layer ) return false;
 
-  return setWorkingLayer ( layer );
-}
-
-
-bool  Technology::setWorkingLayer ( const Layer* layer )
-{
-  bool  found = false;
-  LayerMaskMap::iterator lb = _layerMaskMap.lower_bound ( layer->getMask() );
-  LayerMaskMap::iterator ub = _layerMaskMap.upper_bound ( layer->getMask() );
-  for ( ; lb != ub ; lb++ ) {
-    if ( lb->second == layer ) {
-      lb->second->setWorking ( true );
-      found = true;
-    } else
-      lb->second->setWorking ( false );
+    return setWorkingLayer ( layer );
   }
-  return found;
-}
+
+
+  bool  Technology::setWorkingLayer ( const Layer* layer )
+  {
+    bool  found = false;
+    LayerMaskMap::iterator lb = _layerMaskMap.lower_bound ( layer->getMask() );
+    LayerMaskMap::iterator ub = _layerMaskMap.upper_bound ( layer->getMask() );
+    for ( ; lb != ub ; lb++ ) {
+      if ( lb->second == layer ) {
+        lb->second->setWorking ( true );
+        found = true;
+      } else
+        lb->second->setWorking ( false );
+    }
+    return found;
+  }
 
 
 void Technology::_postCreate()

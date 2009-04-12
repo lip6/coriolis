@@ -78,14 +78,14 @@ namespace Hurricane {
                                                      , const DbU::Unit&     minimalSize    = 0
                                                      , const DbU::Unit&     minimalSpacing = 0
                                                      );
-    // Accessors.
+    // Accessors.                                    
       inline  const Material& getMaterial            () const;
       inline  unsigned        getExtractNumber       () const;
       virtual BasicLayers     getBasicLayers         () const;
       virtual BasicLayer*     getConnectorLayer      () const;
       virtual BasicLayer*     getObstructionLayer    () const;
       inline  const Name&     getRealName            () const;
-    // Updators
+    // Updators                                      
       inline  void            setConnectorLayer      ( BasicLayer* layer);
       inline  void            setObstructionLayer    ( BasicLayer* layer);
       inline  void            setRealName            ( const char* realName);
@@ -105,12 +105,12 @@ namespace Hurricane {
 
     protected:
     // Internal: Constructors & Destructors.
-                              BasicLayer             ( Technology*     technology
-                                                     , const Name&     name
-                                                     , const Material& material
-                                                     , unsigned        extractNumber
-                                                     , const DbU::Unit&     minimalSize    = 0
-                                                     , const DbU::Unit&     minimalSpacing = 0
+                              BasicLayer             ( Technology*      technology
+                                                     , const Name&      name
+                                                     , const Material&  material
+                                                     , unsigned         extractNumber
+                                                     , const DbU::Unit& minimalSize    = 0
+                                                     , const DbU::Unit& minimalSpacing = 0
                                                      );
      virtual void             _postCreate            ();
      virtual void             _preDestroy            ();

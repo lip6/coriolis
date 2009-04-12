@@ -60,38 +60,37 @@ namespace Hurricane {
 
     public:
     // User to DB Converters.
-      static inline Unit                db                  ( long value );
-      static inline Unit                grid                ( double value );
-      static inline Unit                lambda              ( double value );
-    // Precision & Resolution Managment.
-      static        unsigned int        getPrecision        ();
-      static        unsigned int        getMaximalPrecision ();
-      static        double              getResolution       ();
-      static        void                setPrecision        ( unsigned int precision );
-    // Founder Grid Managment.
-      static        double              getUnitPower        ( UnitPower p );
-      static        void                setPhysicalsPerGrid ( double gridsPerLambda, UnitPower p );
-      static        double              getPhysicalsPerGrid ();
-      static        double              physicalToGrid      ( double physical, UnitPower p );
-    // Lamba Managment.
-      static        void                setGridsPerLambda   ( double gridsPerLambda );
-      static        double              getGridsPerLambda   ();
+      static inline Unit                db                      ( long value );
+      static inline Unit                grid                    ( double value );
+      static inline Unit                lambda                  ( double value );
+    // Precision & Resolution Managment.                        
+      static        unsigned int        getPrecision            ();
+      static        unsigned int        getMaximalPrecision     ();
+      static        double              getResolution           ();
+      static        void                setPrecision            ( unsigned int precision );
+    // Founder Grid Managment.                                  
+      static        double              getUnitPower            ( UnitPower p );
+      static        void                setPhysicalsPerGrid     ( double gridsPerLambda, UnitPower p );
+      static        double              getPhysicalsPerGrid     ();
+      static        double              physicalToGrid          ( double physical, UnitPower p );
+    // Lamba Managment.                                         
+      static        void                setGridsPerLambda       ( double gridsPerLambda );
+      static        double              getGridsPerLambda       ();
     // Snap Grid Managment.
-      static        DbU::Unit           getSnapGridStep     ();
-      static        DbU::Unit           getOnSnapGrid       ( DbU::Unit u, SnapMode mode=Nearest );
-      static inline void                setSnapGridStep     ( DbU::Unit step );
-    //static        void                setGridStep         ( const Unit& gridStep );
-    //static        const Unit          getGridStep         ();
-    //static        Unit                getOnGridUnit       ( const DbU::Unit& unit, int s=0 );
-    //static        bool                isOnGrid            ( const Unit& unit, int n=1 );
+      static        DbU::Unit           getRealSnapGridStep     ();
+      static        DbU::Unit           getOnRealSnapGrid       ( DbU::Unit u, SnapMode mode=Nearest );
+      static inline void                setRealSnapGridStep     ( DbU::Unit step );
+      static        DbU::Unit           getSymbolicSnapGridStep ();
+      static        DbU::Unit           getOnSymbolicSnapGrid   ( DbU::Unit u, SnapMode mode=Nearest );
+      static inline void                setSymbolicSnapGridStep ( DbU::Unit step );
     // Conversions.
-      static inline long                getDb               ( Unit u );
-      static inline double              getGrid             ( Unit u );
-      static inline double              getLambda           ( Unit u );
-      static        string              getValueString      ( Unit u, int mode=SmartTruncate );
-      static        Record*             getValueRecord      ( const Unit* u );
-      static        Slot*               getValueSlot        ( const string& name, const Unit* u );
-      static inline void                setStringMode       ( unsigned int mode );
+      static inline long                getDb                   ( Unit u );
+      static inline double              getGrid                 ( Unit u );
+      static inline double              getLambda               ( Unit u );
+      static        string              getValueString          ( Unit u, int mode=SmartTruncate );
+      static        Record*             getValueRecord          ( const Unit* u );
+      static        Slot*               getValueSlot            ( const string& name, const Unit* u );
+      static inline void                setStringMode           ( unsigned int mode );
 
     public:
     // Static Attributes: constants.
@@ -105,19 +104,21 @@ namespace Hurricane {
       static double              _gridsPerLambda;
       static double              _physicalsPerGrid;
       static unsigned int        _stringMode;
-      static DbU::Unit           _snapGridStep;
+      static DbU::Unit           _realSnapGridStep;
+      static DbU::Unit           _symbolicSnapGridStep;
   };
 
 
 // Inline Functions.
-  inline DbU::Unit  DbU::db              ( long value )        { return value; }
-  inline DbU::Unit  DbU::grid            ( double value )      { return (long)rint( value/_resolution ); }
-  inline DbU::Unit  DbU::lambda          ( double value )      { return grid(value*_gridsPerLambda); }
-  inline long       DbU::getDb           ( DbU::Unit u )       { return u; }
-  inline double     DbU::getGrid         ( DbU::Unit u )       { return _resolution*(double)u; }
-  inline double     DbU::getLambda       ( DbU::Unit u )       { return getGrid(u)/_gridsPerLambda; }
-  inline void       DbU::setStringMode   ( unsigned int mode ) { _stringMode = mode; }
-  inline void       DbU::setSnapGridStep ( DbU::Unit step )    { _snapGridStep = step; }
+  inline DbU::Unit  DbU::db                      ( long value )        { return value; }
+  inline DbU::Unit  DbU::grid                    ( double value )      { return (long)rint( value/_resolution ); }
+  inline DbU::Unit  DbU::lambda                  ( double value )      { return grid(value*_gridsPerLambda); }
+  inline long       DbU::getDb                   ( DbU::Unit u )       { return u; }
+  inline double     DbU::getGrid                 ( DbU::Unit u )       { return _resolution*(double)u; }
+  inline double     DbU::getLambda               ( DbU::Unit u )       { return getGrid(u)/_gridsPerLambda; }
+  inline void       DbU::setStringMode           ( unsigned int mode ) { _stringMode = mode; }
+  inline void       DbU::setRealSnapGridStep     ( DbU::Unit step )    { _realSnapGridStep = step; }
+  inline void       DbU::setSymbolicSnapGridStep ( DbU::Unit step )    { _symbolicSnapGridStep = step; }
 
 
 } // End of Hurricane namespace.

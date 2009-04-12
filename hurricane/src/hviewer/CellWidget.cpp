@@ -158,8 +158,8 @@ namespace Hurricane {
   QPoint  CellWidget::Spot::computeSpotPoint ( const QPoint& screenPoint )
   {
     Point mousePoint = _cellWidget->screenToDbuPoint ( screenPoint );
-    Point  spotPoint = Point ( DbU::getOnSnapGrid(mousePoint.getX())
-                             , DbU::getOnSnapGrid(mousePoint.getY())
+    Point  spotPoint = Point ( _cellWidget->_onSnapGrid(mousePoint.getX())
+                             , _cellWidget->_onSnapGrid(mousePoint.getY())
                              );
     return _cellWidget->dbuToScreenPoint(spotPoint);
   }
@@ -1037,7 +1037,7 @@ namespace Hurricane {
   void  CellWidget::detachFromPalette ()
   {
     if ( _palette ) {
-      disconnect ( _palette, SIGNAL(paletteChanged())    , this    ,  SLOT(refresh()) );
+      disconnect ( _palette, SIGNAL(paletteChanged())    , this    , SLOT(refresh()) );
       disconnect ( this    , SIGNAL(cellChanged(Cell*))  , _palette, SLOT(updateExtensions(Cell*)) );
       disconnect ( this    , SIGNAL(updatePalette(Cell*)), _palette, SLOT(updateExtensions(Cell*)) );
       disconnect ( this    , SIGNAL(styleChanged(void*)) , _palette, SLOT(styleChange(void*)) );
@@ -1097,6 +1097,43 @@ namespace Hurricane {
       case Centric:     setRubberShape(Barycentric); break;
       case Barycentric: setRubberShape(Steiner    ); break;
       case Steiner:     setRubberShape(Centric    ); break;
+    }
+  }
+
+
+  void  CellWidget::changeLayoutMode ()
+  {
+    if ( symbolicMode() )
+      setSymbolicMode ();
+    else
+      setRealMode ();
+  }
+
+
+  void  CellWidget::setRealMode ()
+  {
+    if ( !realMode() ) {
+      _state->setRealMode ();
+      DbU::setStringMode ( DbU::Grid );
+
+      updateMousePosition ();
+      refresh ();
+
+      emit layoutModeChanged ();
+    }
+  }
+
+
+  void  CellWidget::setSymbolicMode ()
+  {
+    if ( !symbolicMode() ) {
+      _state->setSymbolicMode ();
+      DbU::setStringMode ( DbU::Symbolic );
+
+      updateMousePosition ();
+      refresh ();
+
+      emit layoutModeChanged ();
     }
   }
 
@@ -1162,7 +1199,7 @@ namespace Hurricane {
       _spot.setRestore ( false );
     //_drawingPlanes.copyToSelect ( redrawArea );
       _drawingPlanes.select ( PlaneId::Normal );
-      _drawingPlanes.painterBegin ();
+      _drawingPlanes.paintersBegin ();
 
       _drawingPlanes.painter().setPen        ( Qt::NoPen );
       _drawingPlanes.painter().setBackground ( Graphics::getBrush("background") );
@@ -1248,7 +1285,7 @@ namespace Hurricane {
         repaint ();
       }
 
-      _drawingPlanes.painterEnd ();
+      _drawingPlanes.paintersEnd ();
       _cellModificated = false;
     }
 
@@ -1292,7 +1329,7 @@ namespace Hurricane {
                                 );
 
     _drawingPlanes.select ( PlaneId::Selection );
-    _drawingPlanes.painterBegin ();
+    _drawingPlanes.paintersBegin ();
     _drawingPlanes.painter().setPen        ( Qt::NoPen );
     _drawingPlanes.painter().setBackground ( Graphics::getBrush("background") );
     _drawingPlanes.painter().setClipRect   ( redrawArea );
@@ -1365,7 +1402,7 @@ namespace Hurricane {
       repaint ();
     }
 
-    _drawingPlanes.painterEnd ();
+    _drawingPlanes.paintersEnd ();
     _selectionHasChanged = false;
   }
 
@@ -1379,10 +1416,12 @@ namespace Hurricane {
 
   bool  CellWidget::isDrawable ( const Name& name )
   {
-    PaletteItem* item = (_palette) ? _palette->find(name) : NULL;
+    PaletteItem* item  = (_palette) ? _palette->find(name) : NULL;
+  //DbU::Unit    unity = symbolicMode() ? DbU::lambda(1.0) : DbU::grid(10.0);
+    DbU::Unit    unity = DbU::lambda(1.0);
 
     return (!item || item->isItemVisible())
-      && ( Graphics::getThreshold(name)/DbU::lambda(1.0) < getScale() );
+      && ( Graphics::getThreshold(name) < getScale()*unity );
   }
 
 
@@ -1501,6 +1540,14 @@ namespace Hurricane {
   }
 
 
+  bool  CellWidget::_underDetailedGridThreshold () const
+  {
+    if ( symbolicMode() )
+      return Graphics::getThreshold("grid")/DbU::lambda(1.0) < getScale()/5;
+    return Graphics::getThreshold("grid")/DbU::grid(10.0) < getScale()/5;
+  }
+
+
   void  CellWidget::drawGrid ( QRect redrawArea )
   {
     _drawingPlanes.select       ( PlaneId::Normal );
@@ -1510,31 +1557,29 @@ namespace Hurricane {
 
     Box redrawBox = displayToDbuBox ( redrawArea ).inflate ( DbU::lambda(1.0) );
 
-    bool lambdaGrid = false;
-    if ( Graphics::getThreshold("grid")/DbU::lambda(1.0) < getScale()/5 )
-      lambdaGrid = true;
+    bool detailedGrid = _underDetailedGridThreshold();
 
-    DbU::Unit  gridStep      = DbU::getSnapGridStep();
+    DbU::Unit  gridStep      = _snapGridStep();
     DbU::Unit  superGridStep = gridStep*5;
     DbU::Unit  xGrid;
     DbU::Unit  yGrid;
     QPoint     center;
 
-    for ( yGrid = DbU::getOnSnapGrid(redrawBox.getYMin())
+    for ( yGrid = _onSnapGrid(redrawBox.getYMin())
         ; yGrid < redrawBox.getYMax()
         ; yGrid += gridStep
         ) {
-      for ( xGrid = DbU::getOnSnapGrid(redrawBox.getXMin())
+      for ( xGrid = _onSnapGrid(redrawBox.getXMin())
           ; xGrid < redrawBox.getXMax()
           ; xGrid += gridStep
           ) {
         center = dbuToDisplayPoint(xGrid,yGrid);
         if ( (xGrid % superGridStep) || (yGrid % superGridStep) ) {
-          if ( lambdaGrid ) {
+          if ( detailedGrid ) {
             _drawingPlanes.painter(PlaneId::Normal).drawPoint ( center );
           }
         } else {
-          if ( lambdaGrid ) {
+          if ( detailedGrid ) {
             _drawingPlanes.painter(PlaneId::Normal).drawLine ( center.x()-3, center.y()  , center.x()+3, center.y()   );
             _drawingPlanes.painter(PlaneId::Normal).drawLine ( center.x()  , center.y()-3, center.x()  , center.y()+3 );
           } else {
@@ -1961,11 +2006,8 @@ namespace Hurricane {
       commandActive = _commands[i]->mouseMoveEvent ( this, event );
 
     if ( !commandActive ) {
-      Point mousePoint = screenToDbuPoint ( _mousePosition = event->pos() );
-      emit mousePositionChanged ( Point ( DbU::getOnSnapGrid(mousePoint.getX())
-                                        , DbU::getOnSnapGrid(mousePoint.getY())
-                                        ) );
-
+      _mousePosition = event->pos();
+      updateMousePosition ();
       repaint ();
     }
   }
@@ -2050,6 +2092,7 @@ namespace Hurricane {
 
     shared_ptr<State>  state ( new State(cell) );
     setState ( state );
+  //setRealMode ();
 
     fitToContents ( false );
 

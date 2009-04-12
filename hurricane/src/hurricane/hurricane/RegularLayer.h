@@ -1,9 +1,8 @@
 
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -24,11 +23,11 @@
 // x-----------------------------------------------------------------x
 
 
-# ifndef  __HURRICANE_REGULAR_LAYER__
-# define  __HURRICANE_REGULAR_LAYER__
+#ifndef  __HURRICANE_REGULAR_LAYER__
+#define  __HURRICANE_REGULAR_LAYER__
 
-# include  "hurricane/Layer.h"
-# include  "hurricane/RegularLayers.h"
+#include  "hurricane/Layer.h"
+#include  "hurricane/RegularLayers.h"
 
 
 namespace Hurricane {
@@ -59,6 +58,7 @@ namespace Hurricane {
       virtual void            setExtentionCap   ( const BasicLayer* layer, DbU::Unit cap );
       virtual void            setExtentionWidth ( const BasicLayer* layer, DbU::Unit width );
     // Hurricane Managment.
+      virtual void            _onDbuChange      ( float scale );
       virtual string          _getTypeName      () const;
       virtual string          _getString        () const;
       virtual Record*         _getRecord        () const;

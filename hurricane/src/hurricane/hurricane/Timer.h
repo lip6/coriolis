@@ -182,7 +182,10 @@ namespace Hurricane {
 }  // End of Hurricane namespace.
 
 
+GETSTRING_VALUE_SUPPORT(Hurricane::Timer);
 IOSTREAM_VALUE_SUPPORT(Hurricane::Timer);
+//inline std::ostream& operator<< ( std::ostream& o, Hurricane::Timer d )
+//{ return o << "<" << "Hurricane::Timer" << ">" << getString<Hurricane::Timer>(d); }
 
 
 #endif  // __HURRICANE_TIMER__

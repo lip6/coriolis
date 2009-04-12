@@ -47,8 +47,10 @@ namespace Hurricane {
       void        setCellWidget        ( CellWidget* );
     signals:                           
       void        queryFilterChanged   ();
+      void        layoutModeChanged    ();
     public slots:                      
       void        changeQueryFilter    ();
+      void        changeLayoutMode     ();
       void        startLevelChanged    ( int level );
       void        stopLevelChanged     ( int level );
       void        setDoMasterCells     ( int state );
@@ -57,6 +59,8 @@ namespace Hurricane {
       void        setRubberSteiner     ();
       void        setRubberCentric     ();
       void        setRubberBarycentric ();
+      void        setSymbolicMode      ();
+      void        setRealMode          ();
     protected:
       void        blockAllSignals      ( bool state );
 
@@ -70,6 +74,8 @@ namespace Hurricane {
       QRadioButton*  _steiner;
       QRadioButton*  _centric;
       QRadioButton*  _barycentric;
+      QRadioButton*  _symbolicMode;
+      QRadioButton*  _realMode;
       UpdateState    _updateState;
   };
 

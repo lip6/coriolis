@@ -1,5 +1,4 @@
 
-
 // -*- C++ -*-
 //
 // This file is part of the Hurricane Software.
@@ -158,12 +157,12 @@ namespace Hurricane {
 // Class :  "Hurricane::BasicLayer".
 
 
-  BasicLayer::BasicLayer ( Technology*     technology
-                         , const Name&     name
-                         , const Material& material
-                         , unsigned        extractNumber
-                         , const DbU::Unit&     minimalSize
-                         , const DbU::Unit&     minimalSpacing
+  BasicLayer::BasicLayer ( Technology*      technology
+                         , const Name&      name
+                         , const Material&  material
+                         , unsigned         extractNumber
+                         , const DbU::Unit& minimalSize
+                         , const DbU::Unit& minimalSpacing
                          ) : Layer(technology
                                   ,name
                                   ,minimalSize
@@ -174,12 +173,12 @@ namespace Hurricane {
   { }
 
 
-  BasicLayer* BasicLayer::create ( Technology*     technology
-                                 , const Name&     name
-                                 , const Material& material
-                                 , unsigned        extractNumber
-                                 , const DbU::Unit&     minimalSize
-                                 , const DbU::Unit&     minimalSpacing
+  BasicLayer* BasicLayer::create ( Technology*      technology
+                                 , const Name&      name
+                                 , const Material&  material
+                                 , unsigned         extractNumber
+                                 , const DbU::Unit& minimalSize
+                                 , const DbU::Unit& minimalSpacing
                                  )
   {
     BasicLayer* basicLayer =

@@ -191,6 +191,17 @@ namespace Hurricane {
   }
 
 
+  void  ViaLayer::_onDbuChange ( float scale )
+  {
+    Layer::_onDbuChange ( scale );
+
+    for ( size_t i=0 ; i<_enclosures.size() ; i++ )
+      _enclosures[i] = (DbU::Unit)( (float)_enclosures[i] * scale );
+
+    _maximalEnclosure = (DbU::Unit)( (float)_maximalEnclosure * scale );
+  }
+
+
   string  ViaLayer::_getTypeName () const
   { return _TName("ViaLayer"); }
 

@@ -23,12 +23,12 @@
 // x-----------------------------------------------------------------x
 
 
-# include <QKeyEvent>
-# include <QMouseEvent>
-# include <QWheelEvent>
+#include <QKeyEvent>
+#include <QMouseEvent>
+#include <QWheelEvent>
 
-# include <hurricane/viewer/CellWidget.h>
-# include <hurricane/viewer/Command.h>
+#include <hurricane/viewer/CellWidget.h>
+#include <hurricane/viewer/Command.h>
 
 
 namespace Hurricane {

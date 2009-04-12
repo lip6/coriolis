@@ -55,6 +55,8 @@ namespace Hurricane {
     , _steiner        (new QRadioButton())
     , _centric        (new QRadioButton())
     , _barycentric    (new QRadioButton())
+    , _symbolicMode   (new QRadioButton())
+    , _realMode       (new QRadioButton())
     , _updateState    (ExternalEmit)
   {
     setAttribute   ( Qt::WA_QuitOnClose, false );
@@ -139,6 +141,27 @@ namespace Hurricane {
 
     groupBox->setLayout ( hLayout );
     wLayout->addWidget  ( groupBox );
+
+    groupBox = new QGroupBox ( tr("Layout Mode") );
+    hLayout  = new QHBoxLayout  ();
+    group    = new QButtonGroup ();
+
+    hLayout->setContentsMargins (  5,  0,  5,  0 );
+
+    _symbolicMode->setText  ( tr("Symbolic (lambda)") );
+    _symbolicMode->setFont  ( Graphics::getNormalFont() );
+    group->setId       ( _symbolicMode, 0 );
+    group->addButton   ( _symbolicMode );
+    hLayout->addWidget ( _symbolicMode );
+
+    _realMode->setText  ( tr("Real (foundry grid)") );
+    _realMode->setFont  ( Graphics::getNormalFont() );
+    group->setId       ( _realMode, 0 );
+    group->addButton   ( _realMode );
+    hLayout->addWidget ( _realMode );
+
+    groupBox->setLayout ( hLayout );
+    wLayout->addWidget  ( groupBox );
     wLayout->addStretch ();
 
     setLayout ( wLayout );
@@ -148,6 +171,8 @@ namespace Hurricane {
     connect ( _steiner     , SIGNAL(clicked())        , this, SLOT(setRubberSteiner()) );
     connect ( _centric     , SIGNAL(clicked())        , this, SLOT(setRubberCentric()) );
     connect ( _barycentric , SIGNAL(clicked())        , this, SLOT(setRubberBarycentric()) );
+    connect ( _symbolicMode, SIGNAL(clicked())        , this, SLOT(setSymbolicMode()) );
+    connect ( _realMode    , SIGNAL(clicked())        , this, SLOT(setRealMode()) );
   }
 
 
@@ -156,6 +181,8 @@ namespace Hurricane {
     if ( _cellWidget ) {
       disconnect ( this        , SIGNAL(queryFilterChanged()), _cellWidget, SLOT(changeQueryFilter()) );
       disconnect ( _cellWidget , SIGNAL(queryFilterChanged()), this       , SLOT(changeQueryFilter()) );
+      disconnect ( this        , SIGNAL(layoutModeChanged ()), _cellWidget, SLOT(changeLayoutMode ()) );
+      disconnect ( _cellWidget , SIGNAL(layoutModeChanged ()), this       , SLOT(changeLayoutMode ()) );
     }
 
     _cellWidget = cw;
@@ -163,13 +190,39 @@ namespace Hurricane {
 
     connect ( this        , SIGNAL(queryFilterChanged()), _cellWidget, SLOT(changeQueryFilter()) );
     connect ( _cellWidget , SIGNAL(queryFilterChanged()), this       , SLOT(changeQueryFilter()) );
+    connect ( this        , SIGNAL(layoutModeChanged ()), _cellWidget, SLOT(changeLayoutMode ()) );
+    connect ( _cellWidget , SIGNAL(layoutModeChanged ()), this       , SLOT(changeLayoutMode ()) );
 
     _updateState = ExternalEmit;
     changeQueryFilter ();
+    changeLayoutMode ();
   }
 
 
-  void  DisplayFilterWidget::changeQueryFilter()
+  void  DisplayFilterWidget::changeLayoutMode ()
+  {
+    if ( !_cellWidget ) return;
+
+    if ( _updateState == InternalEmit ) {
+      _updateState = InternalReceive;
+      emit layoutModeChanged ();
+    } else {
+      if ( _updateState == ExternalEmit ) {
+        blockAllSignals ( true );
+
+        if ( _cellWidget->symbolicMode() )
+          _symbolicMode->setChecked(true);
+        else
+          _realMode->setChecked(true);
+         
+        blockAllSignals ( false );
+      }
+      _updateState = ExternalEmit;
+    }
+  }
+
+
+  void  DisplayFilterWidget::changeQueryFilter ()
   {
     if ( !_cellWidget ) return;
 
@@ -192,6 +245,7 @@ namespace Hurricane {
           case CellWidget::Centric:     _centric->setChecked(true); break;
           case CellWidget::Barycentric: _barycentric->setChecked(true); break;
         }
+         
         blockAllSignals ( false );
       }
       _updateState = ExternalEmit;
@@ -209,6 +263,8 @@ namespace Hurricane {
     _steiner        ->blockSignals ( state );
     _centric        ->blockSignals ( state );
     _barycentric    ->blockSignals ( state );
+    _symbolicMode   ->blockSignals ( state );
+    _realMode       ->blockSignals ( state );
   }
 
 
@@ -310,6 +366,28 @@ namespace Hurricane {
       if ( _cellWidget->getRubberShape() != CellWidget::Barycentric ) {
         _updateState = InternalEmit;
         _cellWidget->setRubberShape ( CellWidget::Barycentric );
+      }
+    }
+  }
+
+
+  void  DisplayFilterWidget::setSymbolicMode ()
+  {
+    if ( _cellWidget ) {
+      if ( !_cellWidget->symbolicMode() ) {
+        _updateState = InternalEmit;
+        _cellWidget->setSymbolicMode ();
+      }
+    }
+  }
+
+
+  void  DisplayFilterWidget::setRealMode ()
+  {
+    if ( _cellWidget ) {
+      if ( !_cellWidget->realMode() ) {
+        _updateState = InternalEmit;
+        _cellWidget->setRealMode ();
       }
     }
   }

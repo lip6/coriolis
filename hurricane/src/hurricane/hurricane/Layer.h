@@ -23,14 +23,14 @@
 // x-----------------------------------------------------------------x
 
 
-# ifndef __HURRICANE_LAYER__
-# define __HURRICANE_LAYER__
+#ifndef __HURRICANE_LAYER__
+#define __HURRICANE_LAYER__
 
-# include  "hurricane/Mask.h"
-# include  "hurricane/DBo.h"
-# include  "hurricane/Layers.h"
-# include  "hurricane/DbU.h"
-# include  "hurricane/BasicLayers.h"
+#include  "hurricane/Mask.h"
+#include  "hurricane/DBo.h"
+#include  "hurricane/Layers.h"
+#include  "hurricane/DbU.h"
+#include  "hurricane/BasicLayers.h"
 
 
 namespace Hurricane {
@@ -90,6 +90,7 @@ namespace Hurricane {
       inline  void              _setMask                     ( const Mask& mask );
       inline  void              _setExtractMask              ( const Mask& extractMask );
       inline  void              _setNextOfTechnologyLayerMap ( Layer* layer );
+      virtual void              _onDbuChange                 ( float scale );
     public:
       struct MaskCompare {
           inline bool operator () ( const Layer*, const Layer* ) const;
