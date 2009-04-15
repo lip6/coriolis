@@ -153,6 +153,7 @@ namespace Hurricane {
       static const Name                   Grid;
       static const Name                   Spot;
       static const Name                   Ghost;
+      static const Name                   TextRuler;
       static const Name                   TextCell;
       static const Name                   TextInstance;
       static const Name                   Undef;

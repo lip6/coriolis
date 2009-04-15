@@ -59,6 +59,7 @@ namespace Hurricane {
                                              , _fitToContentsAction(NULL)
                                              , _showSelectionAction(NULL)
                                              , _rubberChangeAction(NULL)
+                                             , _clearRulersAction(NULL)
                                              , _controllerAction(NULL)
                                              , _fileMenu(NULL)
                                              , _viewMenu(NULL)
@@ -71,6 +72,7 @@ namespace Hurricane {
                                              , _cellWidget(NULL)
                                              , _moveCommand()
                                              , _zoomCommand()
+                                             , _rulerCommand()
                                              , _selectCommand()
                                              , _hierarchyCommand()
                                              , _cellHistory()
@@ -161,6 +163,11 @@ namespace Hurricane {
     _rubberChangeAction->setStatusTip  ( tr("Cycle through all avalaibles rubber drawing styles") );
     _rubberChangeAction->setShortcut   ( Qt::Key_Asterisk );
 
+    _clearRulersAction = new QAction  ( tr("Clear Rulers"), this );
+    _clearRulersAction->setObjectName ( "viewer.menuBar.view.clearRulers" );
+    _clearRulersAction->setStatusTip  ( tr("Remove all rulers") );
+    _clearRulersAction->setShortcut   ( QKeySequence(tr("CTRL+R")) );
+
     _controllerAction = new QAction  ( tr("Controller"), this );
     _controllerAction->setObjectName ( "viewer.menuBar.tools.controller" );
     _controllerAction->setStatusTip  ( tr("Fine Tune && Inspect DataBase") );
@@ -197,6 +204,7 @@ namespace Hurricane {
     _viewMenu->addAction ( _fitToContentsAction );
     _viewMenu->addAction ( _showSelectionAction );
     _viewMenu->addAction ( _rubberChangeAction );
+    _viewMenu->addAction ( _clearRulersAction );
 
     _toolsMenu = menuBar()->addMenu ( tr("Tools") );
     _toolsMenu->setObjectName ( "viewer.menuBar.tools" );
@@ -224,6 +232,7 @@ namespace Hurricane {
 
     _cellWidget->bindCommand ( &_moveCommand );
     _cellWidget->bindCommand ( &_zoomCommand );
+    _cellWidget->bindCommand ( &_rulerCommand );
     _cellWidget->bindCommand ( &_selectCommand );
     _cellWidget->bindCommand ( &_hierarchyCommand );
     _controller->setCellWidget ( _cellWidget );
@@ -253,6 +262,7 @@ namespace Hurricane {
     connect ( _fitToContentsAction   , SIGNAL(triggered())        , _cellWidget, SLOT(fitToContents()) );
     connect ( _showSelectionAction   , SIGNAL(toggled(bool))      , this       , SLOT(setShowSelection(bool)) );
     connect ( _rubberChangeAction    , SIGNAL(triggered())        , _cellWidget, SLOT(rubberChange()) );
+    connect ( _clearRulersAction     , SIGNAL(triggered())        , _cellWidget, SLOT(clearRulers()) );
     connect ( _controllerAction      , SIGNAL(triggered())        , this       , SLOT(showController()) );
 
     connect ( _cellWidget            , SIGNAL(mousePositionChanged(const Point&))

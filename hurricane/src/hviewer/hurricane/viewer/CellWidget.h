@@ -60,6 +60,7 @@ class QAction;
 #include  "hurricane/viewer/CellWidgets.h"
 #include  "hurricane/viewer/Selector.h"
 #include  "hurricane/viewer/SelectorCriterion.h"
+#include  "hurricane/viewer/Ruler.h"
 
 
 
@@ -90,6 +91,10 @@ namespace Hurricane {
                    , InternalEmit
                    , InternalReceive
                    };
+
+
+// -------------------------------------------------------------------
+// Class :  "Hurricane::CellWidget".
 
 
   class CellWidget : public QWidget {
@@ -123,6 +128,7 @@ namespace Hurricane {
       inline  Occurrences             getOccurrencesUnder        ( const QRect& ) const;
               Occurrences             getOccurrencesUnder        ( const Box& ) const;
       inline  SelectorSet&            getSelectorSet             ();
+      inline  RulerSet&               getRulerSet                ();
       inline  RubberShape             getRubberShape             () const;
       inline  int                     getStartLevel              () const;
       inline  int                     getStopLevel               () const;
@@ -163,9 +169,12 @@ namespace Hurricane {
               void                    drawBox                    ( const Box& );
               void                    drawLine                   ( DbU::Unit, DbU::Unit, DbU::Unit, DbU::Unit, bool mode=true );
               void                    drawLine                   ( const Point&, const Point&, bool mode=true );
-              void                    drawText                   ( const Point&, const Name&, int angle=0, bool reverse=false );
+              void                    drawText                   ( const Point&, const char*, bool bold=false, int angle=0, bool reverse=false );
               void                    drawGrid                   ( QRect );
               void                    drawSpot                   ();
+              void                    drawRuler                  ( shared_ptr<Ruler> );
+              void                    drawRulers                 ( QRect );
+              void                    drawDisplayText            ( const QPoint&, const char*, bool bold=false, int angle=0, bool reverse=false );
               void                    drawScreenLine             ( const QPoint&, const QPoint&, size_t plane=PlaneId::Working, bool mode=true );
               void                    drawScreenRect             ( const QPoint&, const QPoint&, size_t plane=PlaneId::Working );
               void                    drawScreenRect             ( const QRect& ,                size_t plane=PlaneId::Working );
@@ -190,6 +199,7 @@ namespace Hurricane {
       inline  DbU::Unit               screenToDbuY               ( int  y ) const;
       inline  Point                   screenToDbuPoint           ( const QPoint& point ) const;
       inline  Box                     screenToDbuBox             ( const QRect& rect ) const;
+      inline  Box&                    pixelInflate               ( Box&, int pixels ) const;
       inline  Point                   getTopLeft                 () const;
               Box                     computeVisibleArea         ( float scale ) const;
               Box                     computeVisibleArea         ( float scale, const Point& topLeft ) const;
@@ -197,6 +207,7 @@ namespace Hurricane {
       inline  bool                    _underDetailedGridThreshold() const;
       inline  DbU::Unit               _snapGridStep              () const;
       inline  DbU::Unit               _onSnapGrid                ( DbU::Unit ) const;
+      inline  Point                   _onSnapGrid                ( const Point& ) const;
     // Qt QWidget Functions Overloads.                           
               void                    pushCursor                 ( Qt::CursorShape cursor );
               void                    popCursor                  ();
@@ -245,6 +256,9 @@ namespace Hurricane {
               void                    _unselect                  ( const Net* );
               void                    _selectOccurrencesUnder    ( Box selectArea );
               void                    _unselectAll               ();
+      inline  void                    addRuler                   ( const Point&, const Point& );
+      inline  void                    addRuler                   ( shared_ptr<Ruler> );
+      inline  void                    clearRulers                ();
               void                    changeQueryFilter          ();
               void                    rubberChange               ();
               void                    changeLayoutMode           ();
@@ -352,37 +366,40 @@ namespace Hurricane {
     private:
       class DrawingPlanes {
         public:
-                                DrawingPlanes      ( const QSize& size, CellWidget* cw );
-                               ~DrawingPlanes      ();
-          inline bool           getLineMode        () const;
-          inline int            width              () const;
-          inline int            height             () const;
-          inline QSize          size               () const;
-          inline void           select             ( size_t i );
-          inline QPainter&      painter            ( size_t i=PlaneId::Working ); 
-          inline void           painterBegin       ( size_t i=PlaneId::Working );
-          inline void           paintersBegin      ();
-          inline void           painterEnd         ( size_t i=PlaneId::Working );
-          inline void           paintersEnd        ();
-                 void           setLineMode        ( bool mode );
-                 void           setPen             ( const QPen& pen );
-                 void           setBrush           ( const QBrush& brush );
-                 void           setBackground      ( const QBrush& brush );
-                 void           setBackgroundMode  ( Qt::BGMode mode );
-                 void           resize             ( const QSize& size );
-                 void           shiftLeft          ( int dx );
-                 void           shiftRight         ( int dx );
-                 void           shiftUp            ( int dy );
-                 void           shiftDown          ( int dy );
-          inline void           copyToSelect       ();
-          inline void           copyToSelect       ( const QRect& );
-                 void           copyToSelect       ( int sx, int sy, int h, int w );
-          inline void           copyToScreen       ();
-                 void           copyToScreen       ( int sx, int sy, int h, int w );
-          inline void           copyToPrinter      ( QPrinter*, bool imageOnly );
-                 void           copyToPrinter      ( int sx, int sy, int h, int w, QPrinter*, bool imageOnly );
-          inline void           copyToImage        ( QImage* );
-                 void           copyToImage        ( int sx, int sy, int h, int w, QImage* );
+                                DrawingPlanes       ( const QSize& size, CellWidget* cw );
+                               ~DrawingPlanes       ();
+          inline bool           getLineMode         () const;
+          inline size_t         getWorkingPlane     () const;
+          inline void           pushWorkingPlane    ();
+          inline void           popWorkingPlane     ();
+          inline int            width               () const;
+          inline int            height              () const;
+          inline QSize          size                () const;
+          inline void           select              ( size_t i );
+          inline QPainter&      painter             ( size_t i=PlaneId::Working ); 
+          inline void           begin               ( size_t i=PlaneId::Working );
+          inline void           end                 ( size_t i=PlaneId::Working );
+          inline void           buffersBegin        ();
+          inline void           buffersEnd          ();
+                 void           setLineMode         ( bool mode );
+                 void           setPen              ( const QPen& pen );
+                 void           setBrush            ( const QBrush& brush );
+                 void           setBackground       ( const QBrush& brush );
+                 void           setBackgroundMode   ( Qt::BGMode mode );
+                 void           resize              ( const QSize& size );
+                 void           shiftLeft           ( int dx );
+                 void           shiftRight          ( int dx );
+                 void           shiftUp             ( int dy );
+                 void           shiftDown           ( int dy );
+          inline void           copyToSelect        ();
+          inline void           copyToSelect        ( const QRect& );
+                 void           copyToSelect        ( int sx, int sy, int h, int w );
+          inline void           copyToScreen        ();
+                 void           copyToScreen        ( int sx, int sy, int h, int w );
+          inline void           copyToPrinter       ( QPrinter*, bool imageOnly );
+                 void           copyToPrinter       ( int sx, int sy, int h, int w, QPrinter*, bool imageOnly );
+          inline void           copyToImage         ( QImage* );
+                 void           copyToImage         ( int sx, int sy, int h, int w, QImage* );
         private:
                  CellWidget*    _cellWidget;
                  QPrinter*      _printer;
@@ -392,6 +409,7 @@ namespace Hurricane {
                  QPen           _normalPen;
                  QPen           _linePen;
                  size_t         _workingPlane;
+                 size_t         _pushWorkingPlane;
                  bool           _lineMode;
         private:
                                 DrawingPlanes ( const DrawingPlanes& );
@@ -514,6 +532,7 @@ namespace Hurricane {
           inline Cell*               getCell                () const;
                  const Name&         getName                () const;
           inline SelectorCriterions& getSelection           ();
+          inline RulerSet&           getRulers              ();
           inline bool                realMode               () const;
           inline bool                symbolicMode           () const;
           inline bool                showBoundaries         () const;
@@ -541,6 +560,7 @@ namespace Hurricane {
           Cell*               _cell;
           CellWidget*         _cellWidget;
           SelectorCriterions  _selection;
+          RulerSet            _rulers;
           bool                _symbolicMode;
           bool                _showBoundaries;
           bool                _showSelection;
@@ -708,6 +728,18 @@ namespace Hurricane {
   { return _lineMode; }
 
 
+  inline size_t  CellWidget::DrawingPlanes::getWorkingPlane () const
+  { return _workingPlane; }
+
+
+  inline void  CellWidget::DrawingPlanes::pushWorkingPlane ()
+  { _pushWorkingPlane = _workingPlane; }
+
+
+  inline void  CellWidget::DrawingPlanes::popWorkingPlane ()
+  { _workingPlane = _pushWorkingPlane; }
+
+
   inline int  CellWidget::DrawingPlanes::width () const
   { return _planes[PlaneId::Normal]->width(); }
 
@@ -725,37 +757,39 @@ namespace Hurricane {
 
 
   inline QPainter&  CellWidget::DrawingPlanes::painter ( size_t i ) 
-  { return _painters[(i>=PlaneId::Working)?_workingPlane:i]; }
+  { return _painters[ (i>=PlaneId::Working) ? _workingPlane : i ]; }
 
 
-  inline void  CellWidget::DrawingPlanes::painterBegin ( size_t i )
+  inline void  CellWidget::DrawingPlanes::begin ( size_t i )
   {
-    switch ( i ) {
-      case PlaneId::Working: i = _workingPlane;
+    size_t wp = (i>=PlaneId::Working) ? _workingPlane : i;
+    switch ( wp ) {
       case PlaneId::Normal:
-      case PlaneId::Selection: _painters[i].begin ( _planes[i]  ); break;
-      case PlaneId::Widget:    _painters[2].begin ( _cellWidget ); break;
-      case PlaneId::Printer:   _painters[3].begin ( _printer    ); break;
-      case PlaneId::Image:     _painters[4].begin ( _image      ); break;
+      case PlaneId::Selection: _painters[wp].begin ( _planes[wp]  ); break;
+      case PlaneId::Widget:    _painters[ 2].begin ( _cellWidget ); break;
+      case PlaneId::Printer:   _painters[ 3].begin ( _printer    ); break;
+      case PlaneId::Image:     _painters[ 4].begin ( _image      ); break;
+      default:
+        cerr << "[BUG] Bad plane selection." << endl;
     }
   }
 
 
-  inline void  CellWidget::DrawingPlanes::paintersBegin ()
-  {
-    painterBegin ( PlaneId::Normal );
-    painterBegin ( PlaneId::Selection );
-  }
-
-
-  inline void  CellWidget::DrawingPlanes::painterEnd   ( size_t i )
+  inline void  CellWidget::DrawingPlanes::end   ( size_t i )
   { _painters[(i>=PlaneId::Working)?_workingPlane:i].end (); }
 
 
-  inline void  CellWidget::DrawingPlanes::paintersEnd ()
+  inline void  CellWidget::DrawingPlanes::buffersBegin ()
   {
-    painterEnd ( PlaneId::Normal );
-    painterEnd ( PlaneId::Selection  );
+    begin ( PlaneId::Normal );
+    begin ( PlaneId::Selection );
+  }
+
+
+  inline void  CellWidget::DrawingPlanes::buffersEnd ()
+  {
+    end ( PlaneId::Normal );
+    end ( PlaneId::Selection  );
   }
 
 
@@ -811,6 +845,7 @@ namespace Hurricane {
     : _cell               (cell)
     , _cellWidget         (NULL)
     , _selection          ()
+    , _rulers             ()
     , _symbolicMode       (true)
     , _showBoundaries     (true)
     , _showSelection      (false)
@@ -901,11 +936,15 @@ namespace Hurricane {
   { return _selection; }
 
 
-  inline bool  CellWidget::State::showBoundaries      () const
+  inline RulerSet& CellWidget::State::getRulers ()
+  { return _rulers; }
+
+
+  inline bool  CellWidget::State::showBoundaries () const
   { return _showBoundaries; }
 
 
-  inline bool  CellWidget::State::showSelection       () const
+  inline bool  CellWidget::State::showSelection () const
   { return _showSelection; }
 
 
@@ -1009,6 +1048,24 @@ namespace Hurricane {
   { return _offsetVA; }
 
 
+  inline void  CellWidget::addRuler ( const Point& origin, const Point& extremity )
+  {
+    _state->getRulers().insert ( shared_ptr<Ruler>( new Ruler(origin,extremity) ) );
+    refresh ();
+  }
+
+
+  inline void  CellWidget::addRuler ( shared_ptr<Ruler> ruler )
+  {
+    _state->getRulers().insert ( ruler );
+    refresh ();
+  }
+
+
+  inline void  CellWidget::clearRulers ()
+  { _state->getRulers().clear (); refresh(); }
+
+
   inline  void  CellWidget::refresh ()
   { _redrawManager.refresh(); }
 
@@ -1093,6 +1150,10 @@ namespace Hurricane {
   }
 
 
+  inline Box& CellWidget::pixelInflate ( Box& box, int pixels ) const
+  { return box.inflate(displayToDbuLength(pixels)); }
+
+
   inline Point  CellWidget::getTopLeft () const
   { return Point(_visibleArea.getXMin(),_visibleArea.getYMax()); }
 
@@ -1144,9 +1205,7 @@ namespace Hurricane {
   inline void  CellWidget::updateMousePosition ()
   {
     Point mousePoint = screenToDbuPoint ( _mousePosition );
-    emit mousePositionChanged ( Point ( _onSnapGrid(mousePoint.getX())
-                                      , _onSnapGrid(mousePoint.getY())
-                                      ) );
+    emit mousePositionChanged ( _onSnapGrid(mousePoint) );
   }
 
 
@@ -1198,6 +1257,10 @@ namespace Hurricane {
 
   inline DbU::Unit  CellWidget::_onSnapGrid ( DbU::Unit u ) const
   { return symbolicMode() ? DbU::getOnSymbolicSnapGrid(u) : DbU::getOnRealSnapGrid(u); }
+
+
+  inline Point  CellWidget::_onSnapGrid ( const Point& p ) const
+  { return Point(_onSnapGrid(p.getX()),_onSnapGrid(p.getY())); }
 
 
 } // End of Hurricane namespace.

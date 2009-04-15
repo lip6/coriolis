@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -16,39 +16,41 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./MoveCommand.h"                          |
+// |  C++ Header  :       "./RulerCommand.h"                         |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
 
-#ifndef  __HURRICANE_MOVE_COMMAND_H__
-#define  __HURRICANE_MOVE_COMMAND_H__
+#ifndef  __HURRICANE_RULER_COMMAND__
+#define  __HURRICANE_RULER_COMMAND__
 
 #include  <QPoint>
 
 #include  "hurricane/viewer/Command.h"
+#include  "hurricane/viewer/Ruler.h"
 
 
 namespace Hurricane {
 
 
-  class MoveCommand : public Command {
+  class RulerCommand : public Command {
     public:
-                                MoveCommand          ();
-      virtual                  ~MoveCommand          ();
+                                RulerCommand         ();
+      virtual                  ~RulerCommand         ();
       virtual bool              keyPressEvent        ( CellWidget*, QKeyEvent* );
       virtual bool              keyReleaseEvent      ( CellWidget*, QKeyEvent* );
       virtual bool              mouseMoveEvent       ( CellWidget*, QMouseEvent* );
       virtual bool              mousePressEvent      ( CellWidget*, QMouseEvent* );
       virtual bool              mouseReleaseEvent    ( CellWidget*, QMouseEvent* );
+      virtual void              draw                 ( CellWidget* );
+    protected:
+              bool                         _active;
+              std::tr1::shared_ptr<Ruler>  _ruler;
     private:
-              bool              _firstEvent;
-              QPoint            _lastPosition;
-    private:
-                                MoveCommand          ( const MoveCommand& );
-              MoveCommand&      operator=            ( const MoveCommand& );
+                                 RulerCommand         ( const RulerCommand& );
+              RulerCommand&      operator=            ( const RulerCommand& );
   };
 
 

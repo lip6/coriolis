@@ -39,7 +39,6 @@ namespace Hurricane {
 
   MoveCommand::MoveCommand ()
     : Command      ()
-    , _active      (false)
     , _firstEvent  (true)
     , _lastPosition()
   { }
@@ -60,9 +59,9 @@ namespace Hurricane {
       case Qt::Key_Left:  widget->goLeft  (); return true;
       case Qt::Key_Right: widget->goRight (); return true;
       case Qt::Key_Space:
-        if ( !_active ) {
-          _active       = true;
-          _firstEvent   = true;
+        if ( !isActive() ) {
+          setActive ( true );
+          _firstEvent = true;
         //_lastPosition = widget->getMousePosition();
           widget->pushCursor ( Qt::ClosedHandCursor );
           return true;
@@ -76,8 +75,8 @@ namespace Hurricane {
   { 
     switch ( event->key() ) {
       case Qt::Key_Space:
-        if ( _active && !event->isAutoRepeat() ) {
-          _active = false;
+        if ( isActive() && !event->isAutoRepeat() ) {
+          setActive ( false );
           widget->popCursor ();
           return true;
         }
@@ -89,7 +88,7 @@ namespace Hurricane {
 
   bool  MoveCommand::mouseMoveEvent ( CellWidget* widget, QMouseEvent* event )
   {
-    if ( !_active ) return false;
+    if ( !isActive() ) return false;
 
     QPoint eventPosition = event->pos();
     if ( _firstEvent ) { _firstEvent = false; _lastPosition = eventPosition; }
@@ -113,13 +112,13 @@ namespace Hurricane {
 
   bool  MoveCommand::mousePressEvent ( CellWidget* widget, QMouseEvent* event )
   {
-    return _active;
+    return isActive();
   }
 
 
   bool  MoveCommand::mouseReleaseEvent ( CellWidget* widget, QMouseEvent* event )
   {
-    return _active;
+    return isActive();
   }
 
 

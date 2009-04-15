@@ -57,7 +57,7 @@ namespace Hurricane {
       virtual bool              mouseReleaseEvent    ( CellWidget*, QMouseEvent* );
       virtual void              draw                 ( CellWidget* );
       inline  set<CellWidget*>& getCellWidgets       ();
-    protected:
+    private:
               set<CellWidget*>  _cellWidgets;
               bool              _active;
     private:

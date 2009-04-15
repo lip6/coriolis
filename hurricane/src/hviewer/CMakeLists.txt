@@ -42,6 +42,7 @@
                                      hurricane/viewer/AreaCommand.h
                                      hurricane/viewer/MoveCommand.h
                                      hurricane/viewer/ZoomCommand.h
+                                     hurricane/viewer/RulerCommand.h
                                      hurricane/viewer/SelectCommand.h
                                      hurricane/viewer/HierarchyCommand.h
                                      hurricane/viewer/SelectorCriterion.h
@@ -53,6 +54,7 @@
                                      hurricane/viewer/SelectionPopup.h
                                      hurricane/viewer/SelectionModel.h
                                      hurricane/viewer/SelectionWidget.h
+                                     hurricane/viewer/Ruler.h
                                      hurricane/viewer/NetInformations.h
                                      hurricane/viewer/NetlistWidget.h
                                      hurricane/viewer/DisplayFilterWidget.h
@@ -79,6 +81,7 @@
                                      AreaCommand.cpp
                                      MoveCommand.cpp
                                      ZoomCommand.cpp
+                                     RulerCommand.cpp
                                      SelectCommand.cpp
                                      HierarchyCommand.cpp
                                      SelectorCriterion.cpp
@@ -90,6 +93,7 @@
                                      SelectionPopup.cpp
                                      SelectionModel.cpp
                                      SelectionWidget.cpp
+                                     Ruler.cpp
                                      NetInformations.cpp
                                      NetlistModel.cpp
                                      NetlistWidget.cpp

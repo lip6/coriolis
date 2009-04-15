@@ -44,6 +44,7 @@ class QMenu;
 
 #include  "hurricane/viewer/MoveCommand.h"
 #include  "hurricane/viewer/ZoomCommand.h"
+#include  "hurricane/viewer/RulerCommand.h"
 #include  "hurricane/viewer/SelectCommand.h"
 #include  "hurricane/viewer/HierarchyCommand.h"
 #include  "hurricane/viewer/CellWidget.h"
@@ -105,6 +106,7 @@ namespace Hurricane {
               QAction*             _fitToContentsAction;
               QAction*             _showSelectionAction;
               QAction*             _rubberChangeAction;
+              QAction*             _clearRulersAction;
               QAction*             _controllerAction;
               QMenu*               _fileMenu;
               QMenu*               _viewMenu;
@@ -117,6 +119,7 @@ namespace Hurricane {
               CellWidget*          _cellWidget;
               MoveCommand          _moveCommand;
               ZoomCommand          _zoomCommand;
+              RulerCommand         _rulerCommand;
               SelectCommand        _selectCommand;
               HierarchyCommand     _hierarchyCommand;
               list< shared_ptr<CellWidget::State> >

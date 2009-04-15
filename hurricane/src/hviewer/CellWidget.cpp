@@ -25,6 +25,7 @@
 
 #include <sys/resource.h>
 #include <ctime>
+#include <cmath>
 
 #include <QApplication>
 #include <QMouseEvent>
@@ -127,7 +128,6 @@ namespace Hurricane {
   {
     return "<Occurrences_IsSelectable>";
   }
-
 
 
 // -------------------------------------------------------------------
@@ -372,34 +372,28 @@ namespace Hurricane {
     _linePen.setStyle ( Qt::SolidLine );
     _linePen.setWidth ( 1 );
  
-    if ( _lineMode ) {
-      _painters[0].setPen ( _linePen );
-      _painters[1].setPen ( _linePen );
-    } else {
-      _painters[0].setPen ( _normalPen );
-      _painters[1].setPen ( _normalPen );
-    }
+    if ( _lineMode ) painter().setPen ( _linePen );
+    else             painter().setPen ( _normalPen );
   }
 
 
   void  CellWidget::DrawingPlanes::setBrush ( const QBrush& brush )
   {
-    _painters[PlaneId::Normal   ].setBrush ( brush );
-    _painters[PlaneId::Selection].setBrush ( brush );
+    painter().setBrush ( brush );
   }
 
 
   void  CellWidget::DrawingPlanes::setBackground ( const QBrush& brush )
   {
-    _painters[PlaneId::Normal   ].setBackground ( brush );
-    _painters[PlaneId::Selection].setBackground ( brush );
+    painter().setBackground ( brush );
+    painter().setBackground ( brush );
   }
 
 
   void  CellWidget::DrawingPlanes::setBackgroundMode ( Qt::BGMode mode )
   {
-    _painters[PlaneId::Normal   ].setBackgroundMode ( mode );
-    _painters[PlaneId::Selection].setBackgroundMode ( mode );
+    painter().setBackgroundMode ( mode );
+    painter().setBackgroundMode ( mode );
   }
 
 
@@ -429,49 +423,49 @@ namespace Hurricane {
 
   void  CellWidget::DrawingPlanes::shiftLeft ( int dx )
   {
-    paintersBegin ();
+    buffersBegin ();
     _painters[PlaneId::Normal   ].drawPixmap ( dx, 0, *_planes[PlaneId::Normal   ], 0, 0, width()-dx, height() );
     _painters[PlaneId::Selection].drawPixmap ( dx, 0, *_planes[PlaneId::Selection], 0, 0, width()-dx, height() );
-    paintersEnd ();
+    buffersEnd ();
   }
 
 
   void  CellWidget::DrawingPlanes::shiftRight ( int dx )
   {
-    paintersBegin ();
+    buffersBegin ();
     _painters[PlaneId::Normal   ].drawPixmap ( 0, 0, *_planes[PlaneId::Normal   ], dx, 0, width()-dx, height() );
     _painters[PlaneId::Selection].drawPixmap ( 0, 0, *_planes[PlaneId::Selection], dx, 0, width()-dx, height() );
-    paintersEnd ();
+    buffersEnd ();
   }
 
 
   void  CellWidget::DrawingPlanes::shiftUp ( int dy )
   {
-    paintersBegin ();
+    buffersBegin ();
     _painters[PlaneId::Normal   ].drawPixmap ( 0, dy, *_planes[PlaneId::Normal   ], 0, 0, width(), height()-dy );
     _painters[PlaneId::Selection].drawPixmap ( 0, dy, *_planes[PlaneId::Selection], 0, 0, width(), height()-dy );
-    paintersEnd ();
+    buffersEnd ();
   }
 
 
   void  CellWidget::DrawingPlanes::shiftDown ( int dy )
   {
-    paintersBegin ();
+    buffersBegin ();
     _painters[PlaneId::Normal   ].drawPixmap ( 0, 0, *_planes[PlaneId::Normal   ], 0, dy, width(), height()-dy );
     _painters[PlaneId::Selection].drawPixmap ( 0, 0, *_planes[PlaneId::Selection], 0, dy, width(), height()-dy );
-    paintersEnd ();
+    buffersEnd ();
   }
 
 
   void  CellWidget::DrawingPlanes::copyToSelect ( int sx, int sy, int w, int h )
   {
-    painterBegin ( PlaneId::Selection );
+    begin ( PlaneId::Selection );
     _painters[PlaneId::Selection].setPen        ( Qt::NoPen );
     _painters[PlaneId::Selection].setBackground ( Graphics::getBrush("background") );
     _painters[PlaneId::Selection].eraseRect     ( sx, sy, w, h );
   //_painters[PlaneId::Selection].setOpacity    ( 0.5 );
     _painters[PlaneId::Selection].drawPixmap    ( sx, sy, *_planes[PlaneId::Normal], sx, sy, w, h );
-    painterEnd ( PlaneId::Selection );
+    end ( PlaneId::Selection );
   }
 
 
@@ -506,7 +500,7 @@ namespace Hurricane {
     }
 
     _printer = printer;
-    painterBegin ( PlaneId::Printer );
+    begin ( PlaneId::Printer );
 
     if ( !imageOnly ) {
       QFont font ( "Bitstream Vera Sans", 12 );
@@ -556,7 +550,7 @@ namespace Hurricane {
       _painters[PlaneId::Printer].drawRect ( ximage-2, 98, w+4, h+4 );
     }
 
-    painterEnd ( PlaneId::Printer );
+    end ( PlaneId::Printer );
     _printer = NULL;
   }
 
@@ -569,7 +563,7 @@ namespace Hurricane {
     if ( !image ) return;
     _image = image;
 
-    painterBegin ( PlaneId::Image );
+    begin ( PlaneId::Image );
 
     _painters[PlaneId::Image].setRenderHint ( QPainter::Antialiasing, false );
     _painters[PlaneId::Image].drawPixmap
@@ -597,7 +591,7 @@ namespace Hurricane {
         }
     }
 
-    painterEnd ( PlaneId::Image );
+    end ( PlaneId::Image );
     _image = NULL;
   }
 
@@ -785,7 +779,8 @@ namespace Hurricane {
     Box bbox = getTransformation().getBox(getMasterCell()->getAbutmentBox());
     if ( getDepth() == 2 )
       _cellWidget->drawText ( Point(bbox.getXMin(),bbox.getYMin())
-                            , getInstance()->getName()
+                            , getString(getInstance()->getName()).c_str()
+                            , false
                             , -90
                             , true
                             );
@@ -1199,8 +1194,7 @@ namespace Hurricane {
       _spot.setRestore ( false );
     //_drawingPlanes.copyToSelect ( redrawArea );
       _drawingPlanes.select ( PlaneId::Normal );
-      _drawingPlanes.paintersBegin ();
-
+      _drawingPlanes.begin  ();
       _drawingPlanes.painter().setPen        ( Qt::NoPen );
       _drawingPlanes.painter().setBackground ( Graphics::getBrush("background") );
       _drawingPlanes.painter().setClipRect   ( redrawArea );
@@ -1282,20 +1276,21 @@ namespace Hurricane {
             _drawingQuery.doQuery            ();
           }
         }
-        repaint ();
       }
 
-      _drawingPlanes.paintersEnd ();
+      _drawingPlanes.end ();
       _cellModificated = false;
     }
 
-    if ( isDrawable("grid") ) drawGrid ( redrawArea );
+    if ( isDrawable("grid")       ) drawGrid   ( redrawArea );
+    if ( isDrawable("text.ruler") ) drawRulers ( redrawArea );
 
     setDarkening ( 100 );
     if ( _state->showSelection() )
       redrawSelection ( redrawArea );
 
     popCursor ();
+    repaint ();
 
 //     timer.stop ();
 //     cerr << "CellWidget::redraw() - " << _redrawRectCount
@@ -1329,7 +1324,7 @@ namespace Hurricane {
                                 );
 
     _drawingPlanes.select ( PlaneId::Selection );
-    _drawingPlanes.paintersBegin ();
+    _drawingPlanes.begin  ();
     _drawingPlanes.painter().setPen        ( Qt::NoPen );
     _drawingPlanes.painter().setBackground ( Graphics::getBrush("background") );
     _drawingPlanes.painter().setClipRect   ( redrawArea );
@@ -1398,11 +1393,9 @@ namespace Hurricane {
         if ( isDrawable(extensionName) )
           _drawingQuery.drawExtensionGo ( this, eGo, NULL, redrawBox, transformation );
       }
-
-      repaint ();
     }
 
-    _drawingPlanes.paintersEnd ();
+    _drawingPlanes.end ();
     _selectionHasChanged = false;
   }
 
@@ -1477,17 +1470,25 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::drawText ( const Point& point, const Name& text, int angle, bool reverse )
+  void  CellWidget::drawText ( const Point& point, const char* text, bool bold, int angle, bool reverse )
+  {
+    drawDisplayText ( dbuToDisplayPoint(point), text, bold, angle, reverse );
+  }
+
+
+  void  CellWidget::drawDisplayText ( const QPoint& point, const char* text, bool bold, int angle, bool reverse )
   {
     _drawingPlanes.painter().save();
     if ( reverse ) {
       _drawingPlanes.painter().setPen            ( Graphics::getPen  ("background") );
       _drawingPlanes.painter().setBackgroundMode ( Qt::OpaqueMode );
     }
-    _drawingPlanes.painter().translate( dbuToDisplayPoint(point) );
-    _drawingPlanes.painter().rotate( angle );
-    _drawingPlanes.painter().drawText ( 0, _textFontHeight, getString(text).c_str() );
-    _drawingPlanes.painter().restore();
+
+    _drawingPlanes.painter().setFont ( Graphics::getNormalFont(bold) );
+    _drawingPlanes.painter().translate ( point );
+    _drawingPlanes.painter().rotate ( angle );
+    _drawingPlanes.painter().drawText ( 0, _textFontHeight, text );
+    _drawingPlanes.painter().restore ();
   }
 
 
@@ -1550,10 +1551,10 @@ namespace Hurricane {
 
   void  CellWidget::drawGrid ( QRect redrawArea )
   {
-    _drawingPlanes.select       ( PlaneId::Normal );
-    _drawingPlanes.painterBegin ();
-    _drawingPlanes.painter      ().setClipRect   ( redrawArea );
-    _drawingPlanes.painter      ( PlaneId::Normal ).setPen ( Graphics::getPen("grid") );
+    _drawingPlanes.select  ( PlaneId::Normal );
+    _drawingPlanes.begin   ();
+    _drawingPlanes.painter ().setClipRect   ( redrawArea );
+    _drawingPlanes.painter ().setPen ( Graphics::getPen("grid") );
 
     Box redrawBox = displayToDbuBox ( redrawArea ).inflate ( DbU::lambda(1.0) );
 
@@ -1576,22 +1577,196 @@ namespace Hurricane {
         center = dbuToDisplayPoint(xGrid,yGrid);
         if ( (xGrid % superGridStep) || (yGrid % superGridStep) ) {
           if ( detailedGrid ) {
-            _drawingPlanes.painter(PlaneId::Normal).drawPoint ( center );
+            _drawingPlanes.painter().drawPoint ( center );
           }
         } else {
           if ( detailedGrid ) {
-            _drawingPlanes.painter(PlaneId::Normal).drawLine ( center.x()-3, center.y()  , center.x()+3, center.y()   );
-            _drawingPlanes.painter(PlaneId::Normal).drawLine ( center.x()  , center.y()-3, center.x()  , center.y()+3 );
+            _drawingPlanes.painter().drawLine ( center.x()-3, center.y()  , center.x()+3, center.y()   );
+            _drawingPlanes.painter().drawLine ( center.x()  , center.y()-3, center.x()  , center.y()+3 );
           } else {
-            _drawingPlanes.painter(PlaneId::Normal).drawPoint ( center );
+            _drawingPlanes.painter().drawPoint ( center );
           }
         }
       }
     }
 
     _drawingPlanes.copyToSelect ( redrawArea );
-    _drawingPlanes.painterEnd   ();
-    repaint ();
+    _drawingPlanes.end          ();
+  }
+
+
+  void  CellWidget::drawRulers ( QRect redrawArea )
+  {
+    _drawingPlanes.select  ( PlaneId::Normal );
+    _drawingPlanes.begin   ();
+    _drawingPlanes.painter ().setClipRect ( redrawArea );
+
+    redrawArea.adjust ( -50, -50, 50, 50 );
+    Box redrawBox = displayToDbuBox ( redrawArea );
+
+    RulerSet::iterator iruler = _state->getRulers().begin();
+    RulerSet::iterator end    = _state->getRulers().end();
+    for ( ; iruler != end ; iruler++ ) {
+      if ( !(*iruler)->intersect(redrawBox) ) continue;
+      drawRuler ( *iruler );
+    }
+
+    _drawingPlanes.copyToSelect ( redrawArea );
+    _drawingPlanes.end          ();
+  }
+
+
+  void  CellWidget::drawRuler ( shared_ptr<Ruler> ruler )
+  {
+    QFont        font          = Graphics::getNormalFont();
+    QFontMetrics metrics       = QFontMetrics(font);
+    int          tickLength    = metrics.width ( "+00000" );
+    Point        origin        = ruler->getOrigin    ();
+    Point        extremity     = ruler->getExtremity ();
+    Point        angle         = ruler->getAngle     ();
+    DbU::Unit    graduation;
+    DbU::Unit    gradStep;
+    QPoint       pxOrigin;
+    QPoint       pxExtremity;
+    QPoint       pxAngle;
+    bool         onScreen = ( _drawingPlanes.getWorkingPlane() > PlaneId::Selection );
+
+  // Never less than 5 pixels between two graduations ticks.
+    if ( symbolicMode() )
+      gradStep = DbU::lambda(pow(10.0,ceil(log10(DbU::getLambda(displayToDbuLength(50))))))/10;
+    else
+      gradStep = DbU::grid(pow(10.0,ceil(log10(DbU::getGrid(displayToDbuLength(50))))))/10;
+
+    if ( onScreen ) {
+      pxOrigin    = dbuToScreenPoint ( origin );
+      pxExtremity = dbuToScreenPoint ( extremity );
+      pxAngle     = dbuToScreenPoint ( angle );
+    } else {
+      pxOrigin    = dbuToDisplayPoint ( origin );
+      pxExtremity = dbuToDisplayPoint ( extremity );
+      pxAngle     = dbuToDisplayPoint ( angle );
+    }
+
+    int    pxGrad;
+    int    pyGrad;
+    string textGrad;
+    int    tick;
+
+    _drawingPlanes.painter().setPen ( Graphics::getPen("text.ruler") );
+
+  // The horizontal ruler.
+    bool increase = ( origin.getX() < extremity.getX() );
+    if ( !increase )
+      gradStep = -gradStep;
+
+    if ( abs(pxAngle.x() - pxOrigin.x()) > 20 ) {
+    // The horizontal ruler axis.
+      _drawingPlanes.painter().drawLine ( pxOrigin, pxAngle );
+
+    // The horizontal ruler ticks.
+      for ( graduation=origin.getX(), tick=0 ; true ; graduation+=gradStep, tick++ ) {
+        if ( increase ) {
+          if ( graduation >= angle.getX() ) break;
+        } else
+          if ( graduation <= angle.getX() ) break;
+
+        if ( onScreen ) pxGrad = dbuToScreenX  ( graduation );
+        else            pxGrad = dbuToDisplayX ( graduation );
+
+        if ( tick % 10 ) {
+          _drawingPlanes.painter().drawLine ( pxGrad, pxOrigin.y()
+                                            , pxGrad, pxOrigin.y()+((tick%2)?5:10) );
+        } else {
+          _drawingPlanes.painter().drawLine ( pxGrad, pxOrigin.y()
+                                            , pxGrad, pxOrigin.y()+tickLength );
+
+          if ( !tick ) continue;
+
+          textGrad = DbU::getValueString( gradStep*tick );
+          textGrad.resize ( textGrad.size()-1 );
+
+          drawDisplayText ( QPoint(pxGrad - _textFontHeight - 1
+                                  ,pxOrigin.y() + tickLength)
+                          , textGrad.c_str()
+                          , true
+                          , -90
+                          , false
+                          );
+        }
+      }
+
+    // The last horizontal tick.
+      _drawingPlanes.painter().drawLine ( pxAngle.x(), pxAngle.y()
+                                        , pxAngle.x(), pxAngle.y()+tickLength );
+
+      textGrad = DbU::getValueString ( angle.getX() - origin.getX() );
+      textGrad.resize ( textGrad.size()-1 );
+
+      drawDisplayText ( QPoint(pxAngle.x() - _textFontHeight - 1
+                              ,pxAngle.y() + tickLength)
+                      , textGrad.c_str()
+                      , true
+                      , -90
+                      , false
+                      );
+    }
+
+    if ( abs(pxExtremity.y() - pxAngle.y()) > 20 ) {
+    // The vertical ruler.
+      increase = ( angle.getY() < extremity.getY() );
+      if ( increase xor ( gradStep > 0 ) )
+        gradStep = -gradStep;
+
+    // The vertical ruler axis.
+      _drawingPlanes.painter().drawLine ( pxAngle, pxExtremity );
+
+    // The vertical ruler ticks.
+      for ( graduation=angle.getY(), tick=0 ; true ; graduation+=gradStep, tick++ ) {
+        if ( increase ) {
+          if ( graduation >= extremity.getY() ) break;
+        } else
+          if ( graduation <= extremity.getY() ) break;
+
+        if ( onScreen ) pyGrad = dbuToScreenY  ( graduation );
+        else            pyGrad = dbuToDisplayY ( graduation );
+
+        if ( tick % 10 ) {
+          _drawingPlanes.painter().drawLine ( pxAngle.x()                , pyGrad
+                                            , pxAngle.x()-((tick%2)?5:10), pyGrad );
+        } else {
+          _drawingPlanes.painter().drawLine ( pxAngle.x()           , pyGrad
+                                            , pxAngle.x()-tickLength, pyGrad );
+
+          if ( !tick ) continue;
+
+          textGrad  = DbU::getValueString( gradStep*tick );
+          textGrad.resize ( textGrad.size()-1 );
+
+          drawDisplayText ( QPoint(pxAngle.x() - tickLength
+                                  ,pyGrad + 1)
+                          , textGrad.c_str()
+                          , true
+                          , 0
+                          , false
+                          );
+        }
+      }
+
+    // The last vertical tick.
+      _drawingPlanes.painter().drawLine ( pxAngle.x()           , pxExtremity.y()
+                                        , pxAngle.x()-tickLength, pxExtremity.y() );
+
+      textGrad  = DbU::getValueString( extremity.getY() - angle.getY() );
+      textGrad.resize ( textGrad.size()-1 );
+
+      drawDisplayText ( QPoint(pxAngle.x() - tickLength
+                              ,pxExtremity.y() + 1)
+                      , textGrad.c_str()
+                      , true
+                      , 0
+                      , false
+                      );
+    }
   }
 
 
@@ -1921,13 +2096,16 @@ namespace Hurricane {
 //  static time_t  currTime = 0;
 
 //  timer.start ();
-    _drawingPlanes.painterBegin ( PlaneId::Widget );
-    _drawingPlanes.copyToScreen ();
+    _drawingPlanes.pushWorkingPlane ();
+    _drawingPlanes.select           ( PlaneId::Widget );
+    _drawingPlanes.begin            ();
+    _drawingPlanes.copyToScreen     ();
     for ( size_t i=0 ; i<_commands.size() ; i++ )
       _commands[i]->draw ( this );
 
     if ( isDrawable("spot") ) _spot.moveTo ( _mousePosition );
-    _drawingPlanes.painterEnd ( PlaneId::Widget );
+    _drawingPlanes.end             ();
+    _drawingPlanes.popWorkingPlane ();
 //  timer.stop ();
 
 //  time ( &currTime );

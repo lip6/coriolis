@@ -49,6 +49,7 @@ namespace Hurricane {
   const Name  DisplayStyle::Grid          = "grid";
   const Name  DisplayStyle::Spot          = "spot";
   const Name  DisplayStyle::Ghost         = "ghost";
+  const Name  DisplayStyle::TextRuler     = "text.ruler";
   const Name  DisplayStyle::TextCell      = "text.cell";
   const Name  DisplayStyle::TextInstance  = "text.instance";
   const Name  DisplayStyle::Undef         = "undef";
@@ -263,6 +264,7 @@ namespace Hurricane {
     addDrawingStyle ( Viewer, Grid         , "FFFFFFFFFFFFFFFF", 255, 255, 255, 1, 8.0 );
     addDrawingStyle ( Viewer, Spot         , "FFFFFFFFFFFFFFFF", 255, 255, 255, 1, 8.0 );
     addDrawingStyle ( Viewer, Ghost        , "FFFFFFFFFFFFFFFF", 255, 255, 255, 1, 1.0 );
+    addDrawingStyle ( Viewer, TextRuler    , "FFFFFFFFFFFFFFFF", 255, 255, 255, 1, 0.0 );
     addDrawingStyle ( Viewer, TextCell     , "8822441188224411", 255, 255, 255, 0, 1.0 );
     addDrawingStyle ( Viewer, TextInstance , "8822441188224411", 255, 255, 255, 0, 1.0 );
     addDrawingStyle ( Viewer, Undef        , "2244118822441188", 238, 130, 238, 0, 1.0 );
