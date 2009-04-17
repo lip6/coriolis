@@ -1,45 +1,48 @@
 
-
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
+// This file is part of Hurricane.
 //
-// License-Tag
-// Authors-Tag
+// Hurricane is free software: you can redistribute it  and/or  modify
+// it under the terms of the GNU  Lesser  General  Public  License  as
+// published by the Free Software Foundation, either version 3 of  the
+// License, or (at your option) any later version.
+//
+// Hurricane is distributed in the hope that it will  be  useful,  but
+// WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-
+// TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See  the  Lesser  GNU
+// General Public License for more details.
+//
+// You should have received a copy of the Lesser  GNU  General  Public
+// License along with Hurricane. If not, see
+//                                     <http://www.gnu.org/licenses/>.
+//
 // ===================================================================
+//
+// $Id$
+//
+// x-----------------------------------------------------------------x
+// |                                                                 |
+// |                  H U R R I C A N E                              |
+// |     V L S I   B a c k e n d   D a t a - B a s e                 |
+// |                                                                 |
+// |  Author      :                    Jean-Paul Chaput              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
+// | =============================================================== |
+// |  C++ Header  :  "./hurricane/RegularLayers.h"                   |
+// | *************************************************************** |
+// |  U p d a t e s                                                  |
+// |                                                                 |
+// x-----------------------------------------------------------------x
 
 
-# ifndef __HURRICANE_REGULAR_LAYERS_H__
-#   define __HURRICANE_REGULAR_LAYERS_H__
+#ifndef __HURRICANE_REGULAR_LAYERS_H__
+#define __HURRICANE_REGULAR_LAYERS_H__
 
 
-# include  "hurricane/Collection.h"
+#include  "hurricane/Collection.h"
 
 
 namespace Hurricane {
@@ -52,11 +55,11 @@ namespace Hurricane {
   typedef GenericLocator<RegularLayer*>    RegularLayerLocator;
   typedef GenericFilter<RegularLayer*>     RegularLayerFilter;
 
-# define  for_each_regular_layer(regularLayer, regularLayers) {  \
-    RegularLayerLocator _locator = regularLayers.getLocator();   \
-    while ( _locator.isValid() ) {                               \
-        RegularLayer* regularLayer = _locator.getElement();      \
-        _locator.progress();
+#define  for_each_regular_layer(regularLayer, regularLayers) {  \
+   RegularLayerLocator _locator = regularLayers.getLocator();   \
+   while ( _locator.isValid() ) {                               \
+       RegularLayer* regularLayer = _locator.getElement();      \
+       _locator.progress();
 
 }
 

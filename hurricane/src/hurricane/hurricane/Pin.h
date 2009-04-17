@@ -1,11 +1,20 @@
 // ****************************************************************************************************
-// 
-// This file is part of the Tsunami Project.
-// Copyright (c) 2001-2004  Laboratoire LIP6 - Departement ASIM
-//                          Universite Pierre et Marie Curie.
-// 
-// File: Pin.h
-// Author: C. Alexandre freely inspired from Remy's Contact.h
+// File: ./hurricane/Pin.h
+// Authors: C. Alexandre
+// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+//
+// This file is part of Hurricane.
+//
+// Hurricane is free software: you can redistribute it  and/or  modify it under the  terms  of the  GNU
+// Lesser General Public License as published by the Free Software Foundation, either version 3 of  the
+// License, or (at your option) any later version.
+//
+// Hurricane is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without  even
+// the implied warranty of MERCHANTABILITY or FITNESS FOR A  PARTICULAR  PURPOSE. See  the  Lesser  GNU
+// General Public License for more details.
+//
+// You should have received a copy of the Lesser GNU General Public License along  with  Hurricane.  If
+// not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
 #ifndef HURRICANE_PIN
@@ -147,3 +156,7 @@ class Pin : public Contact {
 
 
 #endif // HURRICANE_PIN
+
+// ****************************************************************************************************
+// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// ****************************************************************************************************
