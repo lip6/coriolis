@@ -27,15 +27,17 @@
 #define  __HURRICANE_PALETTE_WIDGET__
 
 #include  <map>
+#include  <limits>
 #include  <QScrollArea>
 
 #include  "hurricane/Commons.h"
 #include  "hurricane/Name.h"
 
 
-  class QCheckBox;
-  class QPushButton;
-  class QGridLayout;
+class QLabel;
+class QCheckBox;
+class QPushButton;
+class QGridLayout;
 
 
 namespace Hurricane {
@@ -58,18 +60,24 @@ namespace Hurricane {
     public:
       typedef  map<const Name,PaletteItem*>  PaletteItems;
     public:
-                               PaletteWidget    ( QWidget* parent=NULL );
-             PaletteItem*      find             ( const Name& name ) const;
-             bool              isDrawable       ( const Name& name ) const;
-             bool              isSelectable     ( const Name& name ) const;
-    signals:                   
-             void              paletteChanged   ();
+                               PaletteWidget     ( QWidget* parent=NULL );
+             PaletteItem*      find              ( const Name& name ) const;
+             bool              isDrawable        ( const Name& name ) const;
+             bool              isSelectable      ( const Name& name ) const;
+      inline void              setOneColumn      ();
+      inline void              setColumnHeight   ( size_t height=std::numeric_limits<size_t>::max() );
+             void              build             ();
+    signals:                                     
+             void              paletteChanged    ();
     public slots:              
-             void              updateExtensions ( Cell* cell );
-             void              showAll          ();
-             void              hideAll          ();
-             void              changeStyle      ();
-             void              setItemVisible   ( const Name& name, bool visible );
+             void              updateExtensions  ( Cell* cell );
+             void              showAll           ();
+             void              hideAll           ();
+             void              hideSection       ( const QString );
+             void              showSection       ( const QString );
+             void              setSectionVisible ( const QString, bool visible );
+             void              changeStyle       ();
+             void              setItemVisible    ( const Name& name, bool visible );
                              
     protected:               
              PaletteItems     _layerItems;
@@ -77,19 +85,26 @@ namespace Hurricane {
              QPushButton*     _showAll;
              QPushButton*     _hideAll;
              QGridLayout*     _grid;
+             size_t           _columnHeight;
              int              _extensionRow;
              int              _extensionColumn;
              QWidget*         _extensionGroup;
                              
-    protected:               
+    private:               
                                      PaletteWidget          ( const PaletteWidget& );
              PaletteWidget&          operator=              ( const PaletteWidget& );
-    protected:                                              
+    private:                                              
              QWidget*                _createGroupItem       ( const Name& );
              PaletteNamedItem*       _createNamedItem       ( const Name&, bool checked=true );
              PaletteLayerItem*       _createLayerItem       ( BasicLayer*, bool checked=true );
              PaletteExtensionGoItem* _createExtensionGoItem ( const Name&, bool checked=true );
+             void                    _getSection            ( const QString, QLabel*&, vector<PaletteItem*>& ) const;
   };
+
+
+// Inline Functions.
+  inline void  PaletteWidget::setOneColumn    () { setColumnHeight(std::numeric_limits<size_t>::max()); }
+  inline void  PaletteWidget::setColumnHeight ( size_t height ) { _columnHeight = height; }
 
 
 } // End of Hurricane namespace.

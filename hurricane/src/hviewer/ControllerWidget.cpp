@@ -136,7 +136,10 @@ namespace Hurricane {
     : ControllerTab(parent)
     , _palette     (new PaletteWidget())
   {
+  //_palette->setOneColumn  ();
     _palette->setObjectName ( "controller.tabPalette.palette" );
+    _palette->build ();
+  //_palette->setSectionVisible ( "Viewer", false );
 
     QVBoxLayout* wLayout  = new QVBoxLayout ();
     wLayout->setContentsMargins ( 0, 0, 0, 0 );

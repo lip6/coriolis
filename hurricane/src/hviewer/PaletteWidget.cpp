@@ -23,6 +23,8 @@
 // x-----------------------------------------------------------------x
 
 
+#include  <limits>
+
 #include  <QLabel>
 #include  <QCheckBox>
 #include  <QPushButton>
@@ -54,7 +56,7 @@ namespace {
 
   class GridBuffer {
     public:
-                     GridBuffer      ( QGridLayout*, int rowMax, int startRow=0, int startColumn=0 );
+                     GridBuffer      ( QGridLayout*, size_t rowMax, size_t startRow=0, size_t startColumn=0 );
       inline int     getRow          () const;
       inline int     getColumn       () const;
       inline int     getCurrentRow   () const;
@@ -65,21 +67,21 @@ namespace {
       inline bool    columnOverload  () const;
     protected:
       QGridLayout*           _grid;
-      int                    _rowMax;
-      int                    _row;
-      int                    _column;
+      size_t                 _rowMax;
+      size_t                 _row;
+      size_t                 _column;
       vector<QWidget*>       _widgets;
       vector<Qt::Alignment>  _aligns;
   };
 
 
-  GridBuffer::GridBuffer ( QGridLayout* grid, int maxRow, int startRow, int startColumn )
-    : _grid(grid)
-    , _rowMax(maxRow)
-    , _row(startRow)
-    , _column(startColumn)
+  GridBuffer::GridBuffer ( QGridLayout* grid, size_t maxRow, size_t startRow, size_t startColumn )
+    : _grid   (grid)
+    , _rowMax (maxRow)
+    , _row    (startRow)
+    , _column (startColumn)
     , _widgets()
-    , _aligns()
+    , _aligns ()
   { }
 
 
@@ -167,15 +169,17 @@ namespace Hurricane {
   }
 
 
-  PaletteWidget::PaletteWidget ( QWidget* parent ) : QScrollArea(parent)
-                                                   , _layerItems()
-                                                   , _extensionGoItems()
-                                                   , _showAll(new QPushButton(this))
-                                                   , _hideAll(new QPushButton(this))
-                                                   , _grid(new QGridLayout())
-                                                   , _extensionRow(0)
-                                                   , _extensionColumn(0)
-                                                   , _extensionGroup(NULL)
+  PaletteWidget::PaletteWidget ( QWidget* parent )
+    : QScrollArea      (parent)
+    , _layerItems      ()
+    , _extensionGoItems()
+    , _showAll         (new QPushButton(this))
+    , _hideAll         (new QPushButton(this))
+    , _grid            (new QGridLayout())
+    , _columnHeight    (22)
+    , _extensionRow    (0)
+    , _extensionColumn (0)
+    , _extensionGroup  (NULL)
   {
     setWidgetResizable ( true );
     QVBoxLayout* vLayout = new QVBoxLayout ();
@@ -191,9 +195,9 @@ namespace Hurricane {
     connect ( _hideAll, SIGNAL(clicked()), this, SLOT(hideAll()) );
 
     hLayout->addStretch ();
-    hLayout->addWidget ( _showAll );
+    hLayout->addWidget  ( _showAll );
     hLayout->addStretch ();
-    hLayout->addWidget ( _hideAll );
+    hLayout->addWidget  ( _hideAll );
     hLayout->addStretch ();
 
     QFrame* separator = new QFrame ();
@@ -201,15 +205,29 @@ namespace Hurricane {
     separator->setFrameShadow ( QFrame::Sunken );
 
     vLayout->setSpacing ( 0 );
-    vLayout->addLayout ( hLayout );
-    vLayout->addWidget ( separator );
+    vLayout->addLayout  ( hLayout );
+    vLayout->addWidget  ( separator );
     vLayout->addSpacing ( 5 );
-    vLayout->addLayout ( _grid );
+    vLayout->addLayout  ( _grid );
 
-    GridBuffer gridBuffer ( _grid, 22 );
     _grid->setHorizontalSpacing ( 10 );
     _grid->setVerticalSpacing   ( 0 );
   //_grid->setSizeConstraint    ( QLayout::SetFixedSize );
+
+    vLayout->addStretch ();
+
+    QWidget* adaptator = new QWidget ();
+    adaptator->setLayout ( vLayout );
+    setWidget ( adaptator );
+    setHorizontalScrollBarPolicy ( Qt::ScrollBarAsNeeded );
+    setVerticalScrollBarPolicy   ( Qt::ScrollBarAsNeeded );
+    setFrameStyle                ( QFrame::Plain );
+  }
+
+
+  void  PaletteWidget::build ()
+  {
+    GridBuffer gridBuffer ( _grid, _columnHeight );
 
     size_t                       gi     = 0;
     const vector<DrawingGroup*>& groups = Graphics::getStyle()->getDrawingGroups();
@@ -228,7 +246,10 @@ namespace Hurricane {
       gridBuffer.addWidget ( item );
       _layerItems [ item->getName() ] = item;
     }
-    gridBuffer.newColumn ();
+    if ( _columnHeight < numeric_limits<size_t>::max() )
+      gridBuffer.newColumn ();
+    else
+      gridBuffer.flushWidgets ();
 
     DataBase* database = DataBase::getDB();
     if ( database ) {
@@ -268,21 +289,16 @@ namespace Hurricane {
       }
     }
 
-    gridBuffer.newColumn ();
+    if ( _columnHeight < numeric_limits<size_t>::max() )
+      gridBuffer.newColumn ();
+    else
+      gridBuffer.flushWidgets ();
+
     _extensionRow    = gridBuffer.getRow();
     _extensionColumn = gridBuffer.getColumn();
     _extensionGroup  = _createGroupItem ( "Extensions" );
     gridBuffer.addSection ( _extensionGroup, Qt::AlignHCenter );
     gridBuffer.flushWidgets ();
-
-    vLayout->addStretch ();
-
-    QWidget* adaptator = new QWidget ();
-    adaptator->setLayout ( vLayout );
-    setWidget ( adaptator );
-    setHorizontalScrollBarPolicy ( Qt::ScrollBarAsNeeded );
-    setVerticalScrollBarPolicy   ( Qt::ScrollBarAsNeeded );
-    setFrameStyle                ( QFrame::Plain );
   }
 
 
@@ -300,7 +316,7 @@ namespace Hurricane {
     _extensionGoItems.clear ();
 
 
-    GridBuffer gridBuffer ( _grid, 22, _extensionRow, _extensionColumn );
+    GridBuffer gridBuffer ( _grid, _columnHeight, _extensionRow, _extensionColumn );
     _extensionGroup  = _createGroupItem ( "Extensions" );
     gridBuffer.addSection ( _extensionGroup, Qt::AlignHCenter );
 
@@ -312,6 +328,49 @@ namespace Hurricane {
       }
     }
     gridBuffer.flushWidgets ();
+  }
+
+
+  void  PaletteWidget::_getSection ( const QString section, QLabel*& label, vector<PaletteItem*>& items ) const
+  {
+    label = NULL;
+    items.clear ();
+
+    bool found = false;
+    for ( int index=0 ; index < _grid->count() ; index++ ) {
+      QLayoutItem* item = _grid->itemAt ( index );
+      if ( !item ) continue;
+
+      QLabel* ilabel = dynamic_cast<QLabel*>(item->widget());
+      if ( ilabel ) {
+        if ( found ) break;
+        if ( ilabel->text() != section ) continue;
+        found = true;
+
+        label = ilabel;
+      } else if ( found ) {
+        PaletteItem* paletteItem = dynamic_cast<PaletteItem*>(item->widget());
+        if ( paletteItem ) items.push_back ( paletteItem );
+      }
+    }
+  }
+
+
+  void  PaletteWidget::setSectionVisible ( const QString section, bool visible )
+  {
+    QLabel* label;
+    vector<PaletteItem*> items;
+
+    _getSection ( section, label, items );
+    if ( !label ) return;
+
+    if ( visible ) label->show ();
+    else           label->hide ();
+
+    for ( size_t i=0 ; i<items.size() ; ++i ) {
+      if ( visible ) items[i]->show ();
+      else           items[i]->hide ();
+    }
   }
 
 
@@ -360,6 +419,32 @@ namespace Hurricane {
       iitem->second->setItemVisible ( false );
 
     emit paletteChanged();
+  }
+
+
+  void  PaletteWidget::showSection ( const QString section )
+  {
+    QLabel* label;
+    vector<PaletteItem*> items;
+
+    _getSection ( section, label, items );
+    if ( !label ) return;
+
+    for ( size_t i=0 ; i<items.size() ; ++i )
+      items[i]->setItemVisible ( true );
+  }
+
+
+  void  PaletteWidget::hideSection ( const QString section )
+  {
+    QLabel* label;
+    vector<PaletteItem*> items;
+
+    _getSection ( section, label, items );
+    if ( !label ) return;
+
+    for ( size_t i=0 ; i<items.size() ; ++i )
+      items[i]->setItemVisible ( false );
   }
 
 

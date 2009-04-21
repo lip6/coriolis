@@ -23,16 +23,23 @@
 // x-----------------------------------------------------------------x
 
 
-# include  <QCheckBox>
-# include  <QHBoxLayout>
+#include  <sstream>
+#include  <iomanip>
 
-# include  "hurricane/BasicLayer.h"
+#include  <QCheckBox>
+#include  <QHBoxLayout>
 
-# include  "hurricane/viewer/Graphics.h"
-# include  "hurricane/viewer/PaletteLayerItem.h"
+#include  "hurricane/BasicLayer.h"
+
+#include  "hurricane/viewer/Graphics.h"
+#include  "hurricane/viewer/PaletteLayerItem.h"
 
 
 namespace Hurricane {
+
+
+  using std::ostringstream;
+  using std::setw;
 
 
   PaletteLayerItem::PaletteLayerItem ( BasicLayer* basicLayer, bool visible )
@@ -47,14 +54,20 @@ namespace Hurricane {
 
     layout->addWidget ( _sample );
 
+    ostringstream label;
+    label << setw(12) << left << getName();
     _visible->setChecked ( visible );
-    _visible->setText    ( getString(getName()).c_str() );
+    _visible->setText    ( label.str().c_str() );
     _visible->setFont    ( Graphics::getFixedFont() );
 
     _selectable->setFixedWidth ( 23 );
-    _selectable->setChecked ( true );
+    _selectable->setChecked    ( true );
     _selectable->setStyleSheet ( "QCheckBox { background-color: red;"
-                                 "            padding:          5px }" );
+                                 "            padding:          2px 3px 2px 3px; }" );
+  //_selectable->setStyleSheet ( "QCheckBox::indicator {"
+  //                             "  border:  2px solid red;"
+  //                             "}"
+  //                           );
 
     layout->addWidget  ( _selectable );
   //layout->addSpacing ( -15 );

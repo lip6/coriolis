@@ -63,7 +63,7 @@ namespace Hurricane {
     _selectable->setFixedWidth ( 23 );
     _selectable->setChecked    ( true );
     _selectable->setStyleSheet ( "QCheckBox { background-color: red;"
-                                 "            padding:          5px }" );
+                                 "            padding:          2px 3px 2px 3px }" );
 
     layout->addWidget ( _selectable );
     layout->addWidget ( _visible );
