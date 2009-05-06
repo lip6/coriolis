@@ -1603,6 +1603,7 @@ namespace Hurricane {
 
     redrawArea.adjust ( -50, -50, 50, 50 );
     Box redrawBox = displayToDbuBox ( redrawArea );
+    redrawArea.adjust ( 50, 50, -50, -50 );
 
     RulerSet::iterator iruler = _state->getRulers().begin();
     RulerSet::iterator end    = _state->getRulers().end();

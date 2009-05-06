@@ -1223,6 +1223,7 @@ namespace Hurricane {
   inline void  CellWidget::setRubberShape ( RubberShape shape )
   {
     _state->setRubberShape ( shape );
+    _redrawManager.refresh ();
     emit queryFilterChanged ();
   }
 

@@ -266,7 +266,7 @@ namespace Hurricane {
     connect ( _controllerAction      , SIGNAL(triggered())        , this       , SLOT(showController()) );
 
     connect ( _cellWidget            , SIGNAL(mousePositionChanged(const Point&))
-            , _mousePosition         , SLOT(setPosition(const Point&)) );
+            , _mousePosition         , SLOT  (setPosition(const Point&)) );
 
     connect ( _cellWidget            , SIGNAL(selectionModeChanged())
             , this                   , SLOT  (changeSelectionMode ()) );

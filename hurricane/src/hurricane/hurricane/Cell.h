@@ -60,8 +60,6 @@ typedef  multimap<Entity*,Entity*>  SlaveEntityMap;
 class Cell : public Entity {
 // ***********************
 
-#   if !defined(__DOXYGEN_PROCESSOR__)
-
 // Types
 // *****
 
@@ -211,8 +209,6 @@ class Cell : public Entity {
     public: void _getSlaveEntities(Entity* entity, SlaveEntityMap::iterator& begin, SlaveEntityMap::iterator& end);
     public: void _insertSlice ( ExtensionSlice* );
     public: void _removeSlice ( ExtensionSlice* );
-
-#endif
 
 // Constructors
 // ************
