@@ -296,6 +296,10 @@ INSPECTOR_P_SUPPORT(Hurricane::Net::ComponentSet);
 INSPECTOR_P_SUPPORT(Hurricane::Net::RubberSet);
 INSPECTOR_PV_SUPPORT(Hurricane::Net::Type);
 INSPECTOR_PV_SUPPORT(Hurricane::Net::Direction);
+IOSTREAM_POINTER_SUPPORT(Hurricane::Net::Type::Code);
+IOSTREAM_VALUE_SUPPORT(Hurricane::Net::Type::Code);
+IOSTREAM_POINTER_SUPPORT(Hurricane::Net::Direction::Code);
+IOSTREAM_VALUE_SUPPORT(Hurricane::Net::Direction::Code);
 
 
 #endif // HURRICANE_NET

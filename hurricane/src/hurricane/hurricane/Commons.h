@@ -44,6 +44,7 @@
 
 #include <cstdio>
 #include <cassert>
+#include <cmath>
 
 #include <tr1/memory>
 #include <string>
@@ -130,6 +131,33 @@ namespace Hurricane {
 
          string  demangle ( const char*      symbol );
   inline string  demangle ( const type_info& info   ) { return demangle(info.name()); }
+
+
+// For a complete explanation of this function, please look at :
+// http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm
+
+  inline int  floatCompare ( float a, float b )
+  {
+    assert ( sizeof(float) == sizeof(int) );
+
+    if ( a == b ) return 0;
+    return *(int*)&a - *(int*)&b;
+  }
+
+  inline int  floatDifference ( float a, float b, int threshold )
+  {
+    int difference = floatCompare(a,b);
+    if ( abs(difference) < threshold ) return 0;
+
+    return (difference<0) ? -1 : 1;
+  }
+
+
+  inline void  floatRound ( float& value, float precision )
+  {
+    float rounded = roundf ( value*precision );
+    value = rounded / precision;
+  }
 
 
 } // End of Hurricane namespace.
