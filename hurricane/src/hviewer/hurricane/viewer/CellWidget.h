@@ -391,6 +391,11 @@ namespace Hurricane {
                  void           shiftRight          ( int dx );
                  void           shiftUp             ( int dy );
                  void           shiftDown           ( int dy );
+                 void           drawCartouche       ( int right
+                                                    , int bottom
+                                                    , const string& title
+                                                    , const string& area
+                                                    );
           inline void           copyToSelect        ();
           inline void           copyToSelect        ( const QRect& );
                  void           copyToSelect        ( int sx, int sy, int h, int w );
@@ -401,6 +406,9 @@ namespace Hurricane {
           inline void           copyToImage         ( QImage* );
                  void           copyToImage         ( int sx, int sy, int h, int w, QImage* );
         private:
+          static const int      _cartoucheWidth;
+          static const int      _cartoucheHeight;
+          static const int      _titleHeight;
                  CellWidget*    _cellWidget;
                  QPrinter*      _printer;
                  QImage*        _image;

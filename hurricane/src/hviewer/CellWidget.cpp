@@ -58,6 +58,22 @@
 #include "hurricane/viewer/CellWidget.h"
 
 
+namespace {
+
+
+  string  getTime ( const char* format )
+  {
+    time_t     t  = time(NULL);
+    struct tm* bt = localtime(&t);
+    char       formatted[1024];
+    
+    strftime ( formatted, 1024, format, bt );
+
+    return formatted;
+  }
+
+
+}  // End of anonymous namespace.
 
 
 namespace Hurricane {
@@ -342,6 +358,11 @@ namespace Hurricane {
 // Class :  "Hurricane::CellWidget::DrawingPlanes".
 
 
+  const int  CellWidget::DrawingPlanes::_cartoucheWidth  = 773;
+  const int  CellWidget::DrawingPlanes::_cartoucheHeight = 80;
+  const int  CellWidget::DrawingPlanes::_titleHeight     = 60;
+
+
   CellWidget::DrawingPlanes::DrawingPlanes ( const QSize& size, CellWidget* cw )
     : _cellWidget(cw)
     , _printer(NULL)
@@ -488,47 +509,107 @@ namespace Hurricane {
   }
 
 
+  void  CellWidget::DrawingPlanes::drawCartouche ( int right
+                                                 , int bottom
+                                                 , const string& title
+                                                 , const string& area
+                                                 )
+  {
+    QFont font ( "Bitstream Vera Sans", 18 );
+    font.setWeight ( QFont::Bold );
+
+    string user = getenv ( "USER" );
+    if ( user.empty() ) user = "unkown";
+    else {
+      size_t equal = user.find('=');
+      if ( equal != string::npos )
+        user.erase ( 0, equal );
+    }
+
+    string date = getTime ( "%d %b %Y" );
+
+    QPen cartouchePen = QPen ( QBrush(QColor("black")), 1.0 );
+    _painters[PlaneId::Printer].setPen ( cartouchePen );
+
+    QRect cartoucheRect = QRect ( right  - _cartoucheWidth
+                                , bottom - _cartoucheHeight
+                                , _cartoucheWidth
+                                , _cartoucheHeight
+                                );
+    QRect titleRect = cartoucheRect;
+    titleRect.adjust ( 0, 0, 0,  _titleHeight - _cartoucheHeight );
+
+    cartouchePen.setWidth ( 2 );
+    _painters[PlaneId::Printer].setPen   ( cartouchePen );
+    _painters[PlaneId::Printer].drawRect ( cartoucheRect );
+    cartouchePen.setWidth ( 1 );
+    _painters[PlaneId::Printer].setPen   ( cartouchePen );
+    _painters[PlaneId::Printer].drawLine ( titleRect.bottomLeft(), titleRect.bottomRight() );
+    _painters[PlaneId::Printer].setFont  ( font );
+    _painters[PlaneId::Printer].drawText ( titleRect, Qt::AlignVCenter|Qt::AlignHCenter, title.c_str() );
+
+    QRect fieldRect = QRect ( cartoucheRect.x()
+                            , cartoucheRect.y() + _titleHeight
+                            , 100
+                            , _cartoucheHeight - _titleHeight
+                            );
+    font.setPointSize ( 11 );
+    _painters[PlaneId::Printer].setFont  ( font );
+    _painters[PlaneId::Printer].drawLine ( fieldRect.topRight(), fieldRect.bottomRight() );
+    _painters[PlaneId::Printer].drawText ( fieldRect, Qt::AlignVCenter|Qt::AlignHCenter, user.c_str() );
+
+    fieldRect = QRect ( cartoucheRect.x() + 100
+                      , cartoucheRect.y() + _titleHeight
+                      , 120
+                      , _cartoucheHeight - _titleHeight
+                      );
+    font.setWeight ( QFont::Normal );
+    _painters[PlaneId::Printer].setFont  ( font );
+    _painters[PlaneId::Printer].drawLine ( fieldRect.topRight(), fieldRect.bottomRight() );
+    _painters[PlaneId::Printer].drawText ( fieldRect, Qt::AlignVCenter|Qt::AlignHCenter, date.c_str() );
+
+    fieldRect = QRect ( cartoucheRect.x() + 220
+                      , cartoucheRect.y() + _titleHeight
+                      , 300
+                      , _cartoucheHeight - _titleHeight
+                      );
+    _painters[PlaneId::Printer].setFont  ( font );
+    _painters[PlaneId::Printer].drawLine ( fieldRect.topRight(), fieldRect.bottomRight() );
+    _painters[PlaneId::Printer].drawText ( fieldRect, Qt::AlignVCenter|Qt::AlignHCenter, area.c_str() );
+  }
+
+
   void  CellWidget::DrawingPlanes::copyToPrinter ( int sx, int sy, int w, int h, QPrinter* printer, bool imageOnly )
   {
-    int   ximage    = 0;
-    int   yimage    = 0;
-
     if ( !printer ) return;
-    if ( imageOnly ) {
-      printer->setPaperSize   ( QSizeF(w,h),        QPrinter::DevicePixel );
-      printer->setPageMargins ( 0.0, 0.0, 0.0, 0.0, QPrinter::DevicePixel );
-    }
-
     _printer = printer;
-    begin ( PlaneId::Printer );
+    _printer->setPageMargins ( 0.0, 0.0, 0.0, 0.0, QPrinter::DevicePixel );
 
-    if ( !imageOnly ) {
-      QFont font ( "Bitstream Vera Sans", 12 );
-      font.setWeight ( QFont::Bold );
+    int paperWidth    = _printer->width ();
+    int paperHeight   = _printer->height ();
+    int frameMargin   = 10;
+    int drawingWidth  = paperWidth  - (frameMargin<<1);
+    int drawingHeight = paperHeight - (frameMargin<<1);
+    int ximage        = 0;
+    int yimage        = 0;
 
-      DbU::Unit x1 = _cellWidget->displayToDbuX ( sx );
-      DbU::Unit x2 = _cellWidget->displayToDbuX ( sx+w );
-      DbU::Unit y1 = _cellWidget->displayToDbuY ( sy );
-      DbU::Unit y2 = _cellWidget->displayToDbuY ( sy+h );
-
-      string title = "Unicorn:" + getString(_cellWidget->getCell())
-                   + " area [ " + DbU::getValueString(x1)
-                   + " "        + DbU::getValueString(y1)
-                   + " ] [ "    + DbU::getValueString(x2)
-                   + " "        + DbU::getValueString(y2)
-                   + " ]";
-
-      QRect titleArea = QRect ( 0, 0, _printer->width(), 50 );
-
-      _painters[PlaneId::Printer].setFont ( font );
-      _painters[PlaneId::Printer].drawText ( titleArea, Qt::AlignVCenter|Qt::AlignHCenter, title.c_str() );
-
-      ximage = (_printer->width() > w) ? (_printer->width()-w)/2 : 0;
-      yimage = 100;
+  // Substract the cartouche size only for A4 format.
+    if ( _printer->paperSize  () == QPrinter::A4 ) {
+      if ( _printer->orientation() == QPrinter::Landscape ) {
+        drawingWidth -= _cartoucheHeight;
+      } else {
+        drawingHeight -= _cartoucheHeight;
+      }
     }
 
-  //cerr << "sy: " << sy << " offsetVA.ry(): " << _cellWidget->getOffsetVA().ry() << endl;
-  //cerr << "w: " << w << " h:" << h << endl;
+    if ( imageOnly ) {
+      _printer->setPaperSize ( QSizeF(w,h), QPrinter::DevicePixel );
+    } else {
+      ximage = frameMargin + ((drawingWidth  > w) ? (drawingWidth -w)/2 : 0);
+      yimage = frameMargin + ((drawingHeight > h) ? (drawingHeight-h)/2 : 0);
+    }
+
+    begin ( PlaneId::Printer );
 
     if ( _cellWidget->showSelection() )
       _painters[PlaneId::Printer].drawPixmap
@@ -546,8 +627,34 @@ namespace Hurricane {
         );
 
     if ( !imageOnly ) {
-      _painters[PlaneId::Printer].setPen ( QPen(QBrush(QColor("black")), 1.0) );
-      _painters[PlaneId::Printer].drawRect ( ximage-2, 98, w+4, h+4 );
+      DbU::Unit x1 = _cellWidget->displayToDbuX ( sx );
+      DbU::Unit x2 = _cellWidget->displayToDbuX ( sx+w );
+      DbU::Unit y1 = _cellWidget->displayToDbuY ( sy );
+      DbU::Unit y2 = _cellWidget->displayToDbuY ( sy+h );
+
+      string title = getString(_cellWidget->getCell()->getName());
+      string area  = "Area: [" + DbU::getValueString(x1)
+                   + " "       + DbU::getValueString(y1)
+                   + "] ["     + DbU::getValueString(x2)
+                   + " "       + DbU::getValueString(y2)
+                   + "]";
+
+      QPen framePen = QPen ( QBrush(QColor("black")), 1.0 );
+      _painters[PlaneId::Printer].setPen ( framePen );
+      _painters[PlaneId::Printer].drawRect ( frameMargin
+                                           , frameMargin
+                                           , paperWidth  - (frameMargin<<1)
+                                           , paperHeight - (frameMargin<<1)
+                                           );
+
+      if (    (_printer->paperSize  () == QPrinter::A4)
+           && (_printer->orientation() == QPrinter::Landscape) ) {
+        _painters[PlaneId::Printer].translate ( paperWidth - frameMargin, frameMargin );
+        _painters[PlaneId::Printer].rotate ( -90 );
+      } else
+        _painters[PlaneId::Printer].translate ( paperWidth - frameMargin, paperHeight - frameMargin );
+
+      drawCartouche ( 0, 0, title , area );
     }
 
     end ( PlaneId::Printer );
@@ -594,6 +701,7 @@ namespace Hurricane {
     end ( PlaneId::Image );
     _image = NULL;
   }
+
 
 // -------------------------------------------------------------------
 // Class :  "Hurricane::CellWidget::DrawingQuery".
