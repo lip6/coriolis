@@ -358,7 +358,7 @@ namespace Hurricane {
 // Class :  "Hurricane::CellWidget::DrawingPlanes".
 
 
-  const int  CellWidget::DrawingPlanes::_cartoucheWidth  = 773;
+  const int  CellWidget::DrawingPlanes::_cartoucheWidth  = 743;
   const int  CellWidget::DrawingPlanes::_cartoucheHeight = 80;
   const int  CellWidget::DrawingPlanes::_titleHeight     = 60;
 
@@ -587,7 +587,7 @@ namespace Hurricane {
 
     int paperWidth    = _printer->width ();
     int paperHeight   = _printer->height ();
-    int frameMargin   = 10;
+    int frameMargin   = 25;
     int drawingWidth  = paperWidth  - (frameMargin<<1);
     int drawingHeight = paperHeight - (frameMargin<<1);
     int ximage        = 0;
