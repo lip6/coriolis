@@ -33,6 +33,7 @@
 #include  <QApplication>
 #include  <QPrinter>
 #include  <QPrintDialog>
+#include  <QFileDialog>
 
 #include  "hurricane/DataBase.h"
 #include  "hurricane/Cell.h"
@@ -52,6 +53,7 @@ namespace Hurricane {
                                              , _openAction(NULL)
                                              , _nextAction(NULL)
                                              , _printAction(NULL)
+                                             , _imageAction(NULL)
                                              , _saveAction(NULL)
                                              , _closeAction(NULL)
                                              , _exitAction(NULL)
@@ -124,6 +126,12 @@ namespace Hurricane {
     _printAction->setVisible    ( true );
     connect ( _printAction, SIGNAL(triggered()), this, SLOT(printDisplay()) );
 
+    _imageAction = new QAction  ( tr("Save to &Image"), this );
+    _imageAction->setObjectName ( "viewer.menuBar.file.image" );
+    _imageAction->setStatusTip  ( tr("Save the displayed area to image") );
+    _imageAction->setVisible    ( true );
+    connect ( _imageAction, SIGNAL(triggered()), this, SLOT(imageDisplay()) );
+
     _saveAction = new QAction  ( tr("&Save Cell"), this );
     _saveAction->setObjectName ( "viewer.menuBar.file.saveCell" );
     _saveAction->setIcon       ( QIcon(":/images/stock_save.png") );
@@ -193,6 +201,7 @@ namespace Hurricane {
     }
     _fileMenu->addSeparator ();
     _fileMenu->addAction ( _printAction );
+    _fileMenu->addAction ( _imageAction );
     _fileMenu->addAction ( _saveAction );
     _fileMenu->addSeparator ();
     _fileMenu->addAction ( _closeAction );
@@ -434,6 +443,23 @@ namespace Hurricane {
     QPrintDialog  dialog ( &printer );
     if ( dialog.exec() == QDialog::Accepted )
       _cellWidget->copyToPrinter ( &printer );
+  }
+
+
+  void  CellViewer::imageDisplay ()
+  {
+    if ( !_cellWidget ) return;
+    if ( !_cellWidget->getCell() ) {
+      cerr << Warning("Unable to save to image, no cell loaded yet.") << endl;
+      return;
+    }
+
+    QImage image ( _cellWidget->width(), _cellWidget->height(), QImage::Format_RGB32 );
+    _cellWidget->copyToImage ( &image, true ); //true for no scale (use for map congestion)
+
+    QString filePath = QFileDialog::getSaveFileName ( this, tr("Save image as ..."), "", tr("Image PNG ( *.png )") );
+
+    image.save ( filePath, "png" );
   }
 
 

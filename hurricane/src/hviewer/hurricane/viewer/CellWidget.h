@@ -153,7 +153,7 @@ namespace Hurricane {
       inline  QPainter&               getPainter                 ( size_t plane=PlaneId::Working );
       inline  int                     getDarkening               () const;
       inline  void                    copyToPrinter              ( QPrinter*, bool imageOnly = false );
-      inline  void                    copyToImage                ( QImage* );
+      inline  void                    copyToImage                ( QImage*, bool noScale = false );
       inline  const float&            getScale                   () const;
       inline  const QPoint&           getMousePosition           () const;
       inline  void                    updateMousePosition        ();
@@ -403,8 +403,8 @@ namespace Hurricane {
                  void           copyToScreen        ( int sx, int sy, int h, int w );
           inline void           copyToPrinter       ( QPrinter*, bool imageOnly );
                  void           copyToPrinter       ( int sx, int sy, int h, int w, QPrinter*, bool imageOnly );
-          inline void           copyToImage         ( QImage* );
-                 void           copyToImage         ( int sx, int sy, int h, int w, QImage* );
+          inline void           copyToImage         ( QImage*, bool noScale );
+                 void           copyToImage         ( int sx, int sy, int h, int w, QImage*, bool noScale );
         private:
           static const int      _cartoucheWidth;
           static const int      _cartoucheHeight;
@@ -447,6 +447,9 @@ namespace Hurricane {
           virtual void          goCallback             ( Go*     );
           virtual void          rubberCallback         ( Rubber* );
           virtual void          extensionGoCallback    ( Go*     );
+                  void          drawMasterCell         ( const Cell*            cell
+                                                       , const Transformation&  transformation
+                                                       );
                   void          drawGo                 ( const Go*              go
                                                        , const BasicLayer*      basicLayer
                                                        , const Box&             area
@@ -825,13 +828,14 @@ namespace Hurricane {
   }
 
 
-  inline void  CellWidget::DrawingPlanes::copyToImage ( QImage* image )
+  inline void  CellWidget::DrawingPlanes::copyToImage ( QImage* image, bool noScale )
   {
     copyToImage ( 0
                 , 0
                 , _cellWidget->geometry().width()
                 , _cellWidget->geometry().height()
                 , image
+                , noScale
                 );
   }
 
@@ -1086,8 +1090,8 @@ namespace Hurricane {
   { _drawingPlanes.copyToPrinter ( printer, imageOnly ); }
 
 
-  inline void  CellWidget::copyToImage ( QImage* image )
-  { _drawingPlanes.copyToImage ( image ); }
+  inline void  CellWidget::copyToImage ( QImage* image, bool noScale )
+  { _drawingPlanes.copyToImage ( image, noScale ); }
 
 
   inline int  CellWidget::dbuToDisplayX ( DbU::Unit x ) const

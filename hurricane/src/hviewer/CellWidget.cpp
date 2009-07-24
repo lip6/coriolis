@@ -662,7 +662,7 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::DrawingPlanes::copyToImage ( int sx, int sy, int w, int h, QImage* image )
+  void  CellWidget::DrawingPlanes::copyToImage ( int sx, int sy, int w, int h, QImage* image, bool noScale )
   {
     int   ximage    = 0;
     int   yimage    = 0;
@@ -673,28 +673,40 @@ namespace Hurricane {
     begin ( PlaneId::Image );
 
     _painters[PlaneId::Image].setRenderHint ( QPainter::Antialiasing, false );
-    _painters[PlaneId::Image].drawPixmap
-      ( ximage, yimage
-      , *_planes[PlaneId::Normal]
-      , _cellWidget->getOffsetVA().rx()+sx, _cellWidget->getOffsetVA().ry()+sy
-      , w, h
-      );
+    if ( _cellWidget->showSelection() ) {
+        _painters[PlaneId::Image].drawPixmap
+          ( ximage, yimage
+          , *_planes[PlaneId::Selection]
+          , _cellWidget->getOffsetVA().rx()+sx, _cellWidget->getOffsetVA().ry()+sy
+          , w, h
+          );
+    } 
+    else {
+        _painters[PlaneId::Image].drawPixmap
+          ( ximage, yimage
+          , *_planes[PlaneId::Normal]
+          , _cellWidget->getOffsetVA().rx()+sx, _cellWidget->getOffsetVA().ry()+sy
+          , w, h
+          );
+    }
 
-    int xGradient = (w-510)/2;
-    _painters[PlaneId::Image].setPen(Qt::white);
-    _painters[PlaneId::Image].drawRect(xGradient-1, h+9, 512, 31);
-    _painters[PlaneId::Image].setPen(Qt::NoPen);
-    for ( unsigned i = 0 ; i < 256 ; i++ ) {
-        _painters[PlaneId::Image].setBrush(Graphics::getColorScale(ColorScale::Fire).getBrush(i,100) );
-        _painters[PlaneId::Image].drawRect(xGradient+(i*2), h+10, 2, 30);
-        if ( i==0 || i==51 || i==102 || i==153 || i==204 || i==255 ) {
-            QRect tArea (xGradient+(i*2)-15, h+44, 30, 12);
-            std::ostringstream oss;
-            oss << (float)(i)/255;
-            _painters[PlaneId::Image].setPen(Qt::white);
-            _painters[PlaneId::Image].drawLine(xGradient+(i*2), h+38, xGradient+(i*2), h+42);
-            _painters[PlaneId::Image].drawText(tArea, Qt::AlignCenter, oss.str().c_str());
-            _painters[PlaneId::Image].setPen(Qt::NoPen);
+    if ( !noScale ) {
+        int xGradient = (w-510)/2;
+        _painters[PlaneId::Image].setPen(Qt::white);
+        _painters[PlaneId::Image].drawRect(xGradient-1, h+9, 512, 31);
+        _painters[PlaneId::Image].setPen(Qt::NoPen);
+        for ( unsigned i = 0 ; i < 256 ; i++ ) {
+            _painters[PlaneId::Image].setBrush(Graphics::getColorScale(ColorScale::Fire).getBrush(i,100) );
+            _painters[PlaneId::Image].drawRect(xGradient+(i*2), h+10, 2, 30);
+            if ( i==0 || i==51 || i==102 || i==153 || i==204 || i==255 ) {
+                QRect tArea (xGradient+(i*2)-15, h+44, 30, 12);
+                std::ostringstream oss;
+                oss << (float)(i)/255;
+                _painters[PlaneId::Image].setPen(Qt::white);
+                _painters[PlaneId::Image].drawLine(xGradient+(i*2), h+38, xGradient+(i*2), h+42);
+                _painters[PlaneId::Image].drawText(tArea, Qt::AlignCenter, oss.str().c_str());
+                _painters[PlaneId::Image].setPen(Qt::NoPen);
+            }
         }
     }
 
@@ -741,7 +753,14 @@ namespace Hurricane {
   {
     _instanceCount++;
 
-    Box bbox = getTransformation().getBox(getMasterCell()->getAbutmentBox());
+    drawMasterCell ( getMasterCell(), getTransformation() );
+  }
+
+  void CellWidget::DrawingQuery::drawMasterCell ( const Cell*            cell
+                                                , const Transformation&  transformation
+                                                )
+  {
+    Box bbox = transformation.getBox(cell->getAbutmentBox());
     _cellWidget->drawBox ( bbox );
   }
 
@@ -1454,8 +1473,10 @@ namespace Hurricane {
 
           Instance* instance = dynamic_cast<Instance*>(occurrence.getEntity());
           if ( instance ) {
-          // Temporary.
-          //drawInstance ( instance, basicLayer, redrawBox, transformation );
+             _drawingPlanes.setPen   ( Graphics::getPen  ("boundaries",getDarkening()) );
+             _drawingPlanes.setBrush ( Graphics::getBrush("boundaries",getDarkening()) );
+
+            _drawingQuery.drawMasterCell ( instance->getMasterCell(), instance->getTransformation().getTransformation(transformation) );
             continue;
           }
 

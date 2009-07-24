@@ -1,4 +1,3 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
@@ -86,6 +85,7 @@ namespace Hurricane {
               void                 showController            ();
               void                 openHistoryCell           ();
               void                 printDisplay              ();
+              void                 imageDisplay              ();
     signals:                       
               void                 showSelectionToggled      ( bool );
               void                 stateChanged              ( shared_ptr<CellWidget::State>& );
@@ -99,6 +99,7 @@ namespace Hurricane {
               QAction*             _nextAction;
               QAction*             _cellHistoryAction[CellHistorySize];
               QAction*             _printAction;
+              QAction*             _imageAction;
               QAction*             _saveAction;
               QAction*             _closeAction;
               QAction*             _exitAction;
