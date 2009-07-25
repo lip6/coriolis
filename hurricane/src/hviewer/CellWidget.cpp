@@ -744,9 +744,7 @@ namespace Hurricane {
 
 
   bool  CellWidget::DrawingQuery::hasMasterCellCallback () const
-  {
-    return true;
-  }
+  { return true; }
 
 
   void  CellWidget::DrawingQuery::masterCellCallback ()
@@ -1466,25 +1464,16 @@ namespace Hurricane {
         _drawingPlanes.setPen   ( Graphics::getPen  (basicLayer->getName()) );
         _drawingPlanes.setBrush ( Graphics::getBrush(basicLayer->getName()) );
 
-        iselector = _selectors.begin ();
+        iselector = _selectors.begin();
         for ( ; iselector != _selectors.end() ; iselector++ ) {
-          Occurrence      occurrence     = (*iselector)->getOccurrence();
-          Transformation  transformation = occurrence.getPath().getTransformation();
+          Occurrence occurrence = (*iselector)->getOccurrence();
+          Component* component  = dynamic_cast<Component*>(occurrence.getEntity());
 
-          Instance* instance = dynamic_cast<Instance*>(occurrence.getEntity());
-          if ( instance ) {
-             _drawingPlanes.setPen   ( Graphics::getPen  ("boundaries",getDarkening()) );
-             _drawingPlanes.setBrush ( Graphics::getBrush("boundaries",getDarkening()) );
-
-            _drawingQuery.drawMasterCell ( instance->getMasterCell(), instance->getTransformation().getTransformation(transformation) );
-            continue;
-          }
-
-          Component* component = dynamic_cast<Component*>(occurrence.getEntity());
           if ( !component ) break;
           if ( !component->getLayer() ) continue;
           if ( !component->getLayer()->contains(*basicLayer) ) continue;
 
+          Transformation  transformation = occurrence.getPath().getTransformation();
           _drawingQuery.drawGo ( dynamic_cast<Go*>(occurrence.getEntity())
                                , *basicLayer
                                , redrawBox
@@ -1493,27 +1482,40 @@ namespace Hurricane {
         }
       }
 
+      _drawingPlanes.setPen   ( Graphics::getPen  ("boundaries") );
+      _drawingPlanes.setBrush ( Graphics::getBrush("boundaries") );
+
+      for ( ; iselector != _selectors.end() ; iselector++ ) {
+        Occurrence  occurrence = (*iselector)->getOccurrence();
+        Instance*   instance   = dynamic_cast<Instance*>(occurrence.getEntity());
+        if ( instance ) {
+          Transformation  transformation
+            = occurrence.getPath().getTransformation().getTransformation(instance->getTransformation());
+          _drawingQuery.drawMasterCell ( instance->getMasterCell(), transformation );
+        }
+      }
+
       _drawingPlanes.setPen   ( Graphics::getPen  ("rubber") );
       _drawingPlanes.setBrush ( Graphics::getBrush("rubber") );
 
       for ( ; iselector != _selectors.end() ; iselector++ ) {
-        Occurrence      occurrence     = (*iselector)->getOccurrence();
-        Transformation  transformation = occurrence.getPath().getTransformation();
+        Occurrence occurrence = (*iselector)->getOccurrence();
+        Rubber*    rubber     = dynamic_cast<Rubber*>(occurrence.getEntity());
 
-        Rubber* rubber = dynamic_cast<Rubber*>(occurrence.getEntity());
         if ( !rubber ) break;
 
+        Transformation  transformation = occurrence.getPath().getTransformation();
         _drawingQuery.drawRubber ( rubber, redrawBox, transformation );
       }
 
       Name extensionName = "";
       for ( ; iselector != _selectors.end() ; iselector++ ) {
-        Occurrence      occurrence     = (*iselector)->getOccurrence();
-        Transformation  transformation = occurrence.getPath().getTransformation();
+        Occurrence   occurrence = (*iselector)->getOccurrence();
+        ExtensionGo* eGo        = dynamic_cast<ExtensionGo*>(occurrence.getEntity());
 
-        ExtensionGo* eGo = dynamic_cast<ExtensionGo*>(occurrence.getEntity());
         if ( !eGo ) break;
 
+        Transformation transformation = occurrence.getPath().getTransformation();
         if ( eGo->getName() != extensionName ) {
           extensionName = eGo->getName();
           _drawingQuery.setDrawExtensionGo ( extensionName );

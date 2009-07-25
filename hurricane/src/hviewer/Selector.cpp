@@ -48,8 +48,14 @@ namespace Hurricane {
 
   bool SelectorLess::operator () ( const Selector* lhs, const Selector* rhs ) const
   {
-    const Entity*   lhsEntity   = lhs->getOccurrence().getEntity();
-    const Entity*   rhsEntity   = rhs->getOccurrence().getEntity();
+    const Entity* lhsEntity = lhs->getOccurrence().getEntity();
+    const Entity* rhsEntity = rhs->getOccurrence().getEntity();
+
+    const Component* lhsComponent = dynamic_cast<const Component*> ( lhsEntity );
+    const Component* rhsComponent = dynamic_cast<const Component*> ( rhsEntity );
+    if (  lhsComponent &&  rhsComponent ) return lhs < rhs; // lhs & rhs are Components.
+    if (  lhsComponent && !rhsComponent ) return true;      // lhs only is an Component.
+    if ( !lhsComponent &&  rhsComponent ) return false;     // rhs only is an Component.
 
     const Instance* lhsInstance = dynamic_cast<const Instance*> ( lhsEntity );
     const Instance* rhsInstance = dynamic_cast<const Instance*> ( rhsEntity );
@@ -58,12 +64,6 @@ namespace Hurricane {
     if (  lhsInstance &&  rhsInstance ) return lhs < rhs; // lhs & rhs are Instances.
     if (  lhsInstance && !rhsInstance ) return true;      // lhs only is an Instance.
     if ( !lhsInstance &&  rhsInstance ) return false;     // rhs only is an Instance.
-
-    const Component* lhsComponent = dynamic_cast<const Component*> ( lhsEntity );
-    const Component* rhsComponent = dynamic_cast<const Component*> ( rhsEntity );
-    if (  lhsComponent &&  rhsComponent ) return lhs < rhs; // lhs & rhs are Components.
-    if (  lhsComponent && !rhsComponent ) return true;      // lhs only is an Component.
-    if ( !lhsComponent &&  rhsComponent ) return false;     // rhs only is an Component.
 
     const Rubber* lhsRubber = dynamic_cast<const Rubber*> ( lhsEntity );
     const Rubber* rhsRubber = dynamic_cast<const Rubber*> ( rhsEntity );

@@ -240,6 +240,8 @@ Interval& Interval::translate(const DbU::Unit& dv)
 string Interval::_getString() const
 // ********************************
 {
+  if ( isEmpty() )
+    return "<" + _TName("Interval") + " (empty) " + DbU::getValueString(_vMin) + " " + DbU::getValueString(_vMax) + ">";
   return "<" + _TName("Interval") + " " + DbU::getValueString(_vMin) + " " + DbU::getValueString(_vMax) + ">";
 }
 

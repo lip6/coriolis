@@ -261,6 +261,7 @@ ViaLayers Technology::getViaLayers() const
   Layer* Technology::getViaBetween ( const Layer* metal1, const Layer* metal2 ) const
   {
     if ( !metal1 || !metal2 ) return NULL;
+    if (  metal1 ==  metal2 ) return const_cast<Layer*>(metal1);
     if ( metal1->above(metal2) ) swap ( metal1, metal2 );
 
     Layer* cutLayer = getCutBelow ( metal2 );
