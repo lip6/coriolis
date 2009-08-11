@@ -202,9 +202,14 @@ Interval& Interval::merge(const DbU::Unit& v)
 Interval& Interval::merge(const Interval& interval)
 // ************************************************
 {
-    if (!interval.isEmpty()) {
-        _vMin = min(_vMin, interval._vMin);
-        _vMax = max(_vMax, interval._vMax);
+    if ( isEmpty() ) {
+        _vMin = interval._vMin;
+        _vMax = interval._vMax;
+    } else {
+        if (!interval.isEmpty()) {
+            _vMin = min(_vMin, interval._vMin);
+            _vMax = max(_vMax, interval._vMax);
+        }
     }
     return *this;
 }

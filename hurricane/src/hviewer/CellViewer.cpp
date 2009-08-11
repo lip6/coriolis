@@ -23,6 +23,7 @@
 // x-----------------------------------------------------------------x
 
 
+#include  <unistd.h>
 #include  <algorithm>
 
 #include  <QAction>
@@ -457,7 +458,14 @@ namespace Hurricane {
     QImage image ( _cellWidget->width(), _cellWidget->height(), QImage::Format_RGB32 );
     _cellWidget->copyToImage ( &image, true ); //true for no scale (use for map congestion)
 
-    QString filePath = QFileDialog::getSaveFileName ( this, tr("Save image as ..."), "", tr("Image PNG ( *.png )") );
+    char workingDirectory [1024];
+    getcwd ( workingDirectory, 1024 );
+
+    QString filePath = QFileDialog::getSaveFileName ( this
+                                                    , tr("Save Image as ...")
+                                                    , workingDirectory
+                                                    , tr("Image (*.png)")
+                                                    );
 
     image.save ( filePath, "png" );
   }

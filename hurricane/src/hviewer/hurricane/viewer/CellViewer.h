@@ -75,6 +75,7 @@ namespace Hurricane {
               Cell*                getCell                   ();
       virtual Cell*                getCellFromDb             ( const char* name );
       inline  CellWidget*          getCellWidget             ();
+      inline  ControllerWidget*    getControllerWidget       ();
               void                 select                    ( Occurrence& );
               void                 unselect                  ( Occurrence& );
               void                 unselectAll               ();
@@ -141,8 +142,9 @@ namespace Hurricane {
   inline void        CellViewer::setEnableRedrawInterrupt  ( bool state )
   { _cellWidget->setEnableRedrawInterrupt(state); }
 
-  inline CellWidget* CellViewer::getCellWidget      () { return _cellWidget; }
-  inline void        CellViewer::setApplicationName ( const QString& name ) { _applicationName = name; }
+  inline CellWidget*       CellViewer::getCellWidget       () { return _cellWidget; }
+  inline ControllerWidget* CellViewer::getControllerWidget () { return _controller; }
+  inline void              CellViewer::setApplicationName  ( const QString& name ) { _applicationName = name; }
 
 
 } // End of Hurricane namespace.
