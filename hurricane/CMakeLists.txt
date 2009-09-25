@@ -6,6 +6,7 @@ IF(COMMAND CMAKE_POLICY)
 ENDIF(COMMAND CMAKE_POLICY)
 
 SET(CMAKE_MODULE_PATH "${HURRICANE_SOURCE_DIR}/cmake_modules/")
+SET(CMAKE_OSX_ARCHITECTURES "i386;ppc") # for QT4.5 32bits on snow leopard
 
 OPTION(BUILD_STATIC "Build static version of libraries & binaries" OFF)
 OPTION(BUILD_DOC    "Build the documentation (doxygen)" OFF)
