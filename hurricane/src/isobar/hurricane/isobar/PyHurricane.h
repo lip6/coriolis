@@ -321,7 +321,11 @@ extern "C" {
     trace << #PY_SELF_TYPE"_DeAlloc(" << hex << self << ") "    \
           << self->ACCESS_OBJECT << endl;                   \
                                                             \
-    if ( self->ACCESS_OBJECT ) delete self->ACCESS_OBJECT;  \
+    if ( self->ACCESS_OBJECT ) {                            \
+        trace << "C++ object := " << hex                    \
+              << &(self->ACCESS_OBJECT) << endl;                \
+        delete self->ACCESS_OBJECT;                         \
+    }                                                       \
     PyObject_DEL ( self );                                  \
   }
 

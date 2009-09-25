@@ -206,8 +206,11 @@ using namespace Hurricane;
                                 , bool          isPythonType
                                 , const char*         idBase ) {
     for ( unsigned i=0 ; i < _types.size() ; i++ ) {
-      if ( ! strcmp ( _types[i]->_id, id ) )
-        throw Error ( objectTypeRedefinition );
+      if ( ! strcmp ( _types[i]->_id, id ) ) {
+        //throw Error ( objectTypeRedefinition ); // 04.09.2009 d2 modification
+        cerr << objectTypeRedefinition << endl;
+        return;
+      }
     }
   
     assert ( strlen ( id ) < 11 );
