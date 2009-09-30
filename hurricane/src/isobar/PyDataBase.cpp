@@ -143,11 +143,22 @@ extern "C" {
   // x-------------------------------------------------------------x
   // |               "PyDataBase" Object Methods                  |
   // x-------------------------------------------------------------x
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyDataBase_new ()"
 
-  static PyObject* PyDataBase_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
-    trace << "PyDataBase_new()" << endl;
+  DBoDeleteMethod(DataBase)
+  PyTypeObjectLinkPyType(DataBase)
+
+#else  // End of Python Module Code Part.
+
+
+// x=================================================================x
+// |               "PyDataBase" Shared Library Code Part             |
+// x=================================================================x
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyDataBase_create ()"
+
+  PyObject* PyDataBase_create ( PyObject *module ) {
+    trace << "PyDataBase_create()" << endl;
 
     DataBase* db = NULL;
     
@@ -157,17 +168,6 @@ extern "C" {
 
     return PyDataBase_Link(db);
   }
-
-  DBoDeleteMethod(DataBase)
-  PyTypeObjectLinkPyType(DataBase)
-  PyTypeObjectConstructor(DataBase)
-
-#else  // End of Python Module Code Part.
-
-
-// x=================================================================x
-// |               "PyDataBase" Shared Library Code Part             |
-// x=================================================================x
 
 
 

@@ -29,9 +29,9 @@ extern "C" {
   extern  PyTypeObject  PyTypePad;
   extern  PyMethodDef   PyPad_Methods[];
 
+  extern  PyObject* PyPad_create     ( PyObject* module, PyObject* args );
   extern  PyObject* PyPad_Link       ( Hurricane::Pad* object );
   extern  void      PyPad_LinkPyType ();
-  extern  void      PyPad_Constructor();
 
 
 #define IsPyPad(v)    ( (v)->ob_type == &PyTypePad )

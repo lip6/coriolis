@@ -84,8 +84,8 @@ extern "C" {
   extern PyTypeObject  PyTypeBox;
   extern PyMethodDef   PyBox_Methods[];
 
-  extern void PyBox_LinkPyType();
-  extern void PyBox_Constructor();
+  extern PyObject* PyBox_create     ( PyObject* self, PyObject* args );
+  extern void      PyBox_LinkPyType ();
 
 
 #define IsPyBox(v)    ( (v)->ob_type == &PyTypeBox )

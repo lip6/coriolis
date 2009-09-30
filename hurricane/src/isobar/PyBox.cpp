@@ -379,10 +379,27 @@ extern "C" {
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 
+  // x-------------------------------------------------------------x
+  // |                  "PyBox" Object Methods                     |
+  // x-------------------------------------------------------------x
+
+
+  DirectDeleteMethod(PyBox_DeAlloc,PyBox)
+  PyTypeObjectLinkPyType(Box)
+
+#else  // End of Python Module Code Part.
+
+
+// x=================================================================x
+// |                "PyBox" Shared Library Code Part                 |
+// x=================================================================x
+  
+
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_new ()"
-  PyObject* PyBox_new (PyTypeObject *type, PyObject *args, PyObject *kwds) {
-    trace << "PyBox_new()" << endl;
+  // Attribute Method  :  "PyBox_create ()"
+
+  PyObject* PyBox_create (PyObject *module, PyObject *args) {
+    trace << "PyBox_create()" << endl;
 
     Box* box = NULL;
     PyBox* pyBox = NULL;
@@ -392,9 +409,9 @@ extern "C" {
     PyObject* arg1;
     PyObject* arg2;
     PyObject* arg3;
-    __cs.init ("Box.new");
+    __cs.init ("Box.create");
 
-    if (! PyArg_ParseTuple(args,"|O&O&O&O&:Box.new",
+    if (! PyArg_ParseTuple(args,"|O&O&O&O&:Box.create",
                 Converter, &arg0,
                 Converter, &arg1,
                 Converter, &arg2,
@@ -422,23 +439,6 @@ extern "C" {
 
     return ( (PyObject*)pyBox );
   }
-
-  // x-------------------------------------------------------------x
-  // |                  "PyBox" Object Methods                     |
-  // x-------------------------------------------------------------x
-
-
-  DirectDeleteMethod(PyBox_DeAlloc,PyBox)
-  PyTypeObjectLinkPyType(Box)
-  PyTypeObjectConstructor(Box)
-
-#else  // End of Python Module Code Part.
-
-
-// x=================================================================x
-// |                "PyBox" Shared Library Code Part                 |
-// x=================================================================x
-  
 
 
 

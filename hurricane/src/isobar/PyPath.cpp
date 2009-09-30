@@ -260,19 +260,30 @@ extern "C" {
   // |                  "PyPath" Object Methods                    |
   // x-------------------------------------------------------------x
   
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPath_new ()"
+  DirectDeleteMethod(PyPath_DeAlloc,PyPath)
+  PyTypeObjectLinkPyType(Path)
 
-  static PyObject* PyPath_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
-    trace << "PyPath_new()" << endl;
+
+# else  // End of Python Module Code Part.
+
+
+// x=================================================================x
+// |               "PyPath" Shared Library Code Part                 |
+// x=================================================================x
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyPath_create ()"
+
+  PyObject* PyPath_create ( PyObject *module, PyObject *args ) {
+    trace << "PyPath_create()" << endl;
 
     Path*     path   = NULL;
     PyObject* arg0   = NULL;
     PyObject* arg1   = NULL;
     PyPath*   pyPath = NULL;
 
-    __cs.init ("Path.new");
-    if ( ! PyArg_ParseTuple(args,"|O&O&:Path.new"
+    __cs.init ("Path.create");
+    if ( ! PyArg_ParseTuple(args,"|O&O&:Path.create"
                            ,Converter,&arg0
                            ,Converter,&arg1
                            )) {
@@ -304,20 +315,6 @@ extern "C" {
 
     return ( (PyObject*)pyPath );
   }
-
-  DirectDeleteMethod(PyPath_DeAlloc,PyPath)
-  PyTypeObjectLinkPyType(Path)
-  PyTypeObjectConstructor(Path)
-
-
-# else  // End of Python Module Code Part.
-
-
-// x=================================================================x
-// |               "PyPath" Shared Library Code Part                 |
-// x=================================================================x
-
-
 
 
   // ---------------------------------------------------------------

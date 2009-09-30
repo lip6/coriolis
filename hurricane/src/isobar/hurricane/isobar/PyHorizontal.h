@@ -84,9 +84,9 @@ extern "C" {
   extern  PyTypeObject  PyTypeHorizontal;
   extern  PyMethodDef   PyHorizontal_Methods[];
 
-  extern  PyObject* PyHorizontal_Link( Hurricane::Horizontal* object );
-  extern  void PyHorizontal_LinkPyType();
-  extern  void PyHorizontal_Constructor();
+  extern  PyObject* PyHorizontal_create     ( PyObject* module, PyObject* args );
+  extern  PyObject* PyHorizontal_Link       ( Hurricane::Horizontal* object );
+  extern  void      PyHorizontal_LinkPyType ();
 
 
 

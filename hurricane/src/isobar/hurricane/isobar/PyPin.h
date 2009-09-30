@@ -76,10 +76,10 @@ extern "C" {
   extern  PyTypeObject  PyTypePin;
   extern  PyMethodDef   PyPin_Methods[];
 
-  extern  PyObject* PyPin_Link(Hurricane::Pin* object );
-  extern  void      PinLoadConstants( PyObject* dictionnary );
-  extern  void      PyPin_LinkPyType();
-  extern  void      PyPin_Constructor();
+  extern  PyObject* PyPin_create     ( PyObject* module, PyObject* args );
+  extern  PyObject* PyPin_Link       (Hurricane::Pin* object );
+  extern  void      PinLoadConstants ( PyObject* dictionnary );
+  extern  void      PyPin_LinkPyType ();
 
 
 # define IsPyPin(v)    ( (v)->ob_type == &PyTypePin )

@@ -208,7 +208,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // PyPlug Object Definitions.
  
-  PyTypeObjectDefinitions(Plug)
+  PyTypeInheritedObjectDefinitions(Plug, Component)
 
 
 #endif  // End of Shared Library Code Part.

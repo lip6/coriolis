@@ -369,11 +369,22 @@ extern "C" {
   // |                "PyInstance" Object Methods                  |
   // x-------------------------------------------------------------x
   
+  DBoDeleteMethod(Instance)
+  PyTypeObjectLinkPyType(Instance)
+
+
+#else  // End of Python Module Code Part.
+
+
+// x=================================================================x
+// |             "PyInstance" Shared Library Code Part               |
+// x=================================================================x
+
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyInstance_new ()"
 
-  static PyObject* PyInstance_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
-    trace << "PyInstance_new ()" << endl;
+  PyObject* PyInstance_create ( PyObject *module, PyObject *args ) {
+    trace << "PyInstance_create ()" << endl;
     
     Instance* instance = NULL;
     PyObject* arg0;
@@ -382,7 +393,7 @@ extern "C" {
     PyObject* arg3;
 
     HTRY
-    __cs.init ("Instance.new");
+    __cs.init ("Instance.create");
     if ( ! PyArg_ParseTuple(args,"O&O&O&|O&:Instance.new"
                            ,Converter,&arg0
                            ,Converter,&arg1
@@ -414,18 +425,6 @@ extern "C" {
     return PyInstance_Link ( instance );
   }
 
-  DBoDeleteMethod(Instance)
-  PyTypeObjectLinkPyType(Instance)
-  PyTypeObjectConstructor(Instance)
-
-
-#else  // End of Python Module Code Part.
-
-
-// x=================================================================x
-// |             "PyInstance" Shared Library Code Part               |
-// x=================================================================x
-
 
   // Link/Creation Method.
   DBoLinkCreateMethod(Instance)
@@ -434,7 +433,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // PyInstance Object Definitions.
 
-  PyTypeObjectDefinitions(Instance)
+  PyTypeInheritedObjectDefinitions(Instance, Entity)
 
 
 #endif  // End of Shared Library Code Part.

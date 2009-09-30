@@ -83,9 +83,9 @@ extern "C" {
   extern PyTypeObject  PyTypeContact;
   extern PyMethodDef   PyContact_Methods[];
   
-  extern PyObject* PyContact_Link(Hurricane::Contact* object);
-  extern void      PyContact_LinkPyType();
-  extern void      PyContact_Constructor();
+  extern PyObject* PyContact_create     ( PyObject* module, PyObject* args );
+  extern PyObject* PyContact_Link       ( Hurricane::Contact* object );
+  extern void      PyContact_LinkPyType ();
 
 
 

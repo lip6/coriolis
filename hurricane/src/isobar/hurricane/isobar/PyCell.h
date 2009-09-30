@@ -83,9 +83,9 @@ extern "C" {
   extern  PyTypeObject  PyTypeCell;
   extern  PyMethodDef   PyCell_Methods[];
 
+  extern  PyObject* PyCell_create     ( PyObject* module, PyObject* args );
   extern  PyObject* PyCell_Link       ( Hurricane::Cell* object );
   extern  void      PyCell_LinkPyType ();
-  extern  void      PyCell_Constructor ();
   
 
 #define IsPyCell(v)    ((v)->ob_type == &PyTypeCell)

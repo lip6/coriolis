@@ -47,10 +47,10 @@ extern "C" {
   extern  PyTypeObject  PyTypeNet;
   extern  PyMethodDef   PyNet_Methods[];
 
-  extern  PyObject* PyNet_Link(Hurricane::Net* object);
-  extern  void      NetLoadConstants(PyObject* dictionnary);
-  extern  void      PyNet_LinkPyType();
-  extern  void      PyNet_Constructor();
+  extern  PyObject* PyNet_create     ( PyObject* module, PyObject* args );
+  extern  PyObject* PyNet_Link       ( Hurricane::Net* object );
+  extern  void      NetLoadConstants ( PyObject* dictionnary );
+  extern  void      PyNet_LinkPyType ();
 
 
 

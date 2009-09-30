@@ -68,11 +68,23 @@ extern "C" {
   // |               "PyHorizontal" Object Methods                 |
   // x-------------------------------------------------------------x
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyHorizontal_new ()"
 
-  static PyObject* PyHorizontal_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
-    trace << "PyHorizontal_new()" << endl;
+  DBoDeleteMethod(Horizontal)
+  PyTypeObjectLinkPyType(Horizontal)
+
+
+#else  // End of Python Module Code Part.
+
+
+// x=================================================================x
+// |            "PyHorizontal" Shared Library Code Part              |
+// x=================================================================x
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyHorizontal_create ()"
+
+  PyObject* PyHorizontal_create ( PyObject *module, PyObject *args ) {
+    trace << "PyHorizontal_create()" << endl;
 
     PyObject* arg0;
     PyObject* arg1;
@@ -159,21 +171,6 @@ extern "C" {
   }
 
 
-  DBoDeleteMethod(Horizontal)
-  PyTypeObjectLinkPyType(Horizontal)
-  PyTypeObjectConstructor(Horizontal)
-
-
-#else  // End of Python Module Code Part.
-
-
-// x=================================================================x
-// |            "PyHorizontal" Shared Library Code Part              |
-// x=================================================================x
-
-
-
-
 
   // Link/Creation Method.
   DBoLinkCreateMethod(Horizontal)
@@ -182,7 +179,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // PyHorizontal Object Definitions.
 
-  PyTypeObjectDefinitions(Horizontal)
+  PyTypeInheritedObjectDefinitions(Horizontal, Segment)
 
 #endif  // End of Shared Library Code Part.
 

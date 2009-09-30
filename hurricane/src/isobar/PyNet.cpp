@@ -466,31 +466,8 @@ extern "C" {
   // |                  "PyNet" Object Methods                     |
   // x-------------------------------------------------------------x
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_new ()"
-
-  static PyObject* PyNet_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
-    trace << "PyNet_new()" << endl;
-
-    char* name = NULL;
-    PyCell* pyCell = NULL;
-    Net* net = NULL;
-    
-    HTRY
-    if (PyArg_ParseTuple(args,"O!s:Net.new", &PyTypeCell, &pyCell, &name)) {
-        net = Net::create(PYCELL_O(pyCell), Name(name));
-    } else {
-        PyErr_SetString ( ConstructorError, "invalid number of parameters for Net constructor." );
-        return NULL;
-    }
-    HCATCH
-
-    return PyNet_Link(net);
-  }
-
   DBoDeleteMethod(Net)
   PyTypeObjectLinkPyType(Net)
-  PyTypeObjectConstructor(Net)
 
 
 #else  // End of Python Module Code Part.
@@ -500,6 +477,28 @@ extern "C" {
 // |                "PyNet" Shared Library Code Part                 |
 // x=================================================================x
 
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyNet_create ()"
+
+  PyObject* PyNet_create ( PyObject *module, PyObject *args ) {
+    trace << "PyNet_create()" << endl;
+
+    char* name = NULL;
+    PyCell* pyCell = NULL;
+    Net* net = NULL;
+    
+    HTRY
+    if (PyArg_ParseTuple(args,"O!s:Net.create", &PyTypeCell, &pyCell, &name)) {
+        net = Net::create(PYCELL_O(pyCell), Name(name));
+    } else {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Net constructor." );
+        return NULL;
+    }
+    HCATCH
+
+    return PyNet_Link(net);
+  }
 
 
 
@@ -512,7 +511,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // PyNet Object Definitions.
 
-  PyTypeObjectDefinitions(Net)
+  PyTypeInheritedObjectDefinitions(Net, Entity)
 
 
 # endif  // End of Shared Library Code Part.

@@ -123,16 +123,30 @@ extern "C" {
   // |                "PyLibrary" Object Methods                   |
   // x-------------------------------------------------------------x
 
-  static PyObject* PyLibrary_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
-      trace << "PyLibrary_new()" << endl;
+  DBoDeleteMethod(Library)
+  PyTypeObjectLinkPyType(Library)
+
+
+#else  // End of Python Module Code Part.
+
+
+// x=================================================================x
+// |             "PyLibrary" Shared Library Code Part                |
+// x=================================================================x
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyLibrary_create()"
+
+  PyObject* PyLibrary_create ( PyObject *module, PyObject *args ) {
+      trace << "PyLibrary_create()" << endl;
 
       PyObject* arg0;
       PyObject* arg1;
       Library* library = NULL;
 
       HTRY
-      __cs.init ("Library.new");
-      if (!PyArg_ParseTuple(args,"O&O&:Library.new", Converter, &arg0, Converter, &arg1)) {
+      __cs.init ("Library.create");
+      if (!PyArg_ParseTuple(args,"O&O&:Library.create", Converter, &arg0, Converter, &arg1)) {
         PyErr_SetString ( ConstructorError, "invalid number of parameters for Library constructor." );
         return NULL;
       }
@@ -151,17 +165,26 @@ extern "C" {
       return PyLibrary_Link ( library );
   }
 
-  DBoDeleteMethod(Library)
-  PyTypeObjectLinkPyType(Library)
-  PyTypeObjectConstructor(Library)
+#if 0
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyLibrary_getLibrary ()"
 
+  //needs args, have to check hurricane object code
 
-#else  // End of Python Module Code Part.
+  PyObject* PyLibrary_getLibrary ( PyObject* module )
+  {
+    trace << "PyLibrary_getLibrary()" << endl;
+    Library* lib = NULL;
 
+    HTRY
+    lib = Library::getLibrary ();
+    if ( lib == NULL )
+      PyErr_SetString ( HurricaneError, "Library has not been created yet" );
+    HCATCH
 
-// x=================================================================x
-// |             "PyLibrary" Shared Library Code Part                |
-// x=================================================================x
+    return PyLibrary_Link ( lib );
+  }
+#endif
 
 
   // Link/Creation Method.

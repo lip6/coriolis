@@ -86,11 +86,24 @@ extern "C" {
   // |                "PyContact" Object Methods                   |
   // x-------------------------------------------------------------x
   
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyContact_new ()"
 
-  static PyObject* PyContact_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
-    trace << "PyContact_new()" << endl;
+
+  DBoDeleteMethod(Contact)
+  PyTypeObjectLinkPyType(Contact)
+
+
+#else  // End of Python Module Code Part.
+
+
+// x=================================================================x
+// |             "PyContact" Shared Library Code Part                |
+// x=================================================================x
+  
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyContact_create ()"
+
+  PyObject* PyContact_create ( PyObject *module, PyObject *args ) {
+    trace << "PyContact_create()" << endl;
 
     Contact* contact = NULL;
 
@@ -99,11 +112,11 @@ extern "C" {
     PyLayer* pyLayer = NULL;
     PyComponent* pyComponent = NULL;
     DbU::Unit x=0, y=0, width=0, height=0;
-    if (PyArg_ParseTuple(args, "O!O!ll|ll:Contact.new",
+    if (PyArg_ParseTuple(args, "O!O!ll|ll:Contact.create",
                 &PyTypeNet, &pyNet, &PyTypeLayer, &pyLayer,
                 &x, &y, &width, &height)) {
         contact = Contact::create(PYNET_O(pyNet), PYLAYER_O(pyLayer), x, y, width, height);
-    } else if (PyArg_ParseTuple(args, "O!O!ll|ll:Contact.new",
+    } else if (PyArg_ParseTuple(args, "O!O!ll|ll:Contact.create",
                 &PyTypeComponent, &pyComponent, &PyTypeLayer, &pyLayer,
                 &x, &y, &width, &height)) {
         contact = Contact::create(PYCOMPONENT_O(pyComponent), PYLAYER_O(pyLayer), x, y, width, height);
@@ -120,20 +133,6 @@ extern "C" {
 
 
 
-  DBoDeleteMethod(Contact)
-  PyTypeObjectLinkPyType(Contact)
-  PyTypeObjectConstructor(Contact)
-
-
-#else  // End of Python Module Code Part.
-
-
-// x=================================================================x
-// |             "PyContact" Shared Library Code Part                |
-// x=================================================================x
-  
-
-
 
   // Link/Creation Method.
   DBoLinkCreateMethod(Contact)
@@ -143,7 +142,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // PyContact Object Definitions.
 
-  PyTypeObjectDefinitions(Contact)
+  PyTypeInheritedObjectDefinitions(Contact, Component)
 
 #endif  // End of Shared Library Code Part.
 

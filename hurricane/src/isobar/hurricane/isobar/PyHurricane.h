@@ -162,6 +162,7 @@ extern "C" {
 
 // -------------------------------------------------------------------
 // Miscellaneous.
+#define DEFERRED_ADDRESS(ADDR)  0
 
 
 // This macro must be redefined in derived classes.
@@ -600,16 +601,6 @@ extern "C" {
     PyType##SELF_TYPE.tp_methods = Py##SELF_TYPE##_Methods;              \
   }
 
-// -------------------------------------------------------------------
-// Initialisation Function for PyTypeObject Runtime Link.
-// Special method to add constructor new function
-#define PyTypeObjectConstructor(SELF_TYPE)                               \
-  extern void Py##SELF_TYPE##_Constructor() {                            \
-      trace << "Py" #SELF_TYPE "_Constructor()" << endl;                 \
-                                                                         \
-      PyType##SELF_TYPE.tp_new = Py##SELF_TYPE##_new;                    \
-  }
-
 
 // Special Initialisation Function for Locator PyTypeObject Runtime Link.
 #define LocatorPyTypeObjectLinkPyType(PY_SELF_TYPE, SELF_TYPE)                                             \
@@ -650,9 +641,75 @@ extern "C" {
     , 0                               /* tp_getattro.      */           \
     , 0                               /* tp_setattro.      */           \
     , 0                               /* tp_as_buffer.     */           \
+    , Py_TPFLAGS_DEFAULT              /* tp_flags          */           \
+    , "#SELF_TYPE objects"            /* tp_doc.           */           \
+  };
+
+# define PyTypeRootObjectDefinitions(SELF_TYPE)                         \
+  PyTypeObject  PyType##SELF_TYPE =                                     \
+    { PyObject_HEAD_INIT(&PyType_Type)                                  \
+       0                              /* ob_size.          */           \
+    ,  "Hurricane.Py" #SELF_TYPE      /* tp_name.          */           \
+    ,  sizeof(Py##SELF_TYPE)          /* tp_basicsize.     */           \
+    , 0                               /* tp_itemsize.      */           \
+    /* methods. */                                                      \
+    , 0                               /* tp_dealloc.       */           \
+    , 0                               /* tp_print.         */           \
+    , 0                               /* tp_getattr.       */           \
+    , 0                               /* tp_setattr.       */           \
+    , 0                               /* tp_compare.       */           \
+    , 0                               /* tp_repr.          */           \
+    , 0                               /* tp_as_number.     */           \
+    , 0                               /* tp_as_sequence.   */           \
+    , 0                               /* tp_as_mapping.    */           \
+    , 0                               /* tp_hash.          */           \
+    , 0                               /* tp_call.          */           \
+    , 0                               /* tp_str            */           \
+    , 0                               /* tp_getattro.      */           \
+    , 0                               /* tp_setattro.      */           \
+    , 0                               /* tp_as_buffer.     */           \
     , Py_TPFLAGS_DEFAULT                                                \
     | Py_TPFLAGS_BASETYPE             /* tp_flags.         */           \
     , "#SELF_TYPE objects"            /* tp_doc.           */           \
+  };
+
+# define PyTypeInheritedObjectDefinitions(SELF_TYPE, INHERITED_TYPE) \
+  PyTypeObject  PyType##SELF_TYPE =                                     \
+    { PyObject_HEAD_INIT(DEFERRED_ADDRESS(&PyType##INHERITED_TYPE))     \
+       0                              /* ob_size.          */           \
+    ,  "Hurricane.Py" #SELF_TYPE      /* tp_name.          */           \
+    ,  sizeof(Py##SELF_TYPE)          /* tp_basicsize.     */           \
+    , 0                               /* tp_itemsize.      */           \
+    /* methods. */                                                      \
+    , 0                               /* tp_dealloc.       */           \
+    , 0                               /* tp_print.         */           \
+    , 0                               /* tp_getattr.       */           \
+    , 0                               /* tp_setattr.       */           \
+    , 0                               /* tp_compare.       */           \
+    , 0                               /* tp_repr.          */           \
+    , 0                               /* tp_as_number.     */           \
+    , 0                               /* tp_as_sequence.   */           \
+    , 0                               /* tp_as_mapping.    */           \
+    , 0                               /* tp_hash.          */           \
+    , 0                               /* tp_call.          */           \
+    , 0                               /* tp_str            */           \
+    , 0                               /* tp_getattro.      */           \
+    , 0                               /* tp_setattro.      */           \
+    , 0                               /* tp_as_buffer.     */           \
+    , Py_TPFLAGS_DEFAULT                                                \
+    | Py_TPFLAGS_BASETYPE             /* tp_flags.         */           \
+    , 0                               /* tp_doc.           */           \
+    , 0                               /* tp_traverse.      */           \
+    , 0                               /* tp_clear.         */           \
+    , 0                               /* tp_richcompare.   */           \
+    , 0                               /* tp_weaklistoffset.*/           \
+    , 0                               /* tp_iter.          */           \
+    , 0                               /* tp_iternext.      */           \
+    , 0                               /* tp_methods.       */           \
+    , 0                               /* tp_members.       */           \
+    , 0                               /* tp_getset.        */           \
+    , DEFERRED_ADDRESS(&PyType##INHERITED_TYPE)                         \
+                                      /* tp_base.          */           \
   };
 
 #define PyTypeCollectionObjectDefinitions(SELF_TYPE)                    \

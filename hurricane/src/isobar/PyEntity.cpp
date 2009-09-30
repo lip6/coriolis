@@ -150,7 +150,7 @@ extern "C" {
   }
 
 
-  PyTypeObjectDefinitions(Entity)
+  PyTypeRootObjectDefinitions(Entity)
 
   // ---------------------------------------------------------------
   // PyEntity Object Definitions.

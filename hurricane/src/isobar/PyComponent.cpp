@@ -169,7 +169,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // PyComponent Object Definitions.
 
-  PyTypeObjectDefinitions(Component)
+  PyTypeInheritedObjectDefinitions(Component, Entity)
 
 #endif  // End of Shared Library Code Part.
 

@@ -65,11 +65,22 @@ extern "C" {
   // |                "PyVertical" Object Methods                  |
   // x-------------------------------------------------------------x
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyVertical_new ()"
+  DBoDeleteMethod(Vertical)
+  PyTypeObjectLinkPyType(Vertical)
 
-  static PyObject* PyVertical_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
-    trace << "PyVertical_new()" << endl;
+
+#else  // End of Python Module Code Part.
+
+
+// x=================================================================x
+// |             "PyVertical" Shared Library Code Part               |
+// x=================================================================x
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyVertical_create ()"
+
+  PyObject* PyVertical_create ( PyObject *module, PyObject *args ) {
+    trace << "PyVertical_create()" << endl;
 
     PyObject* arg0;
     PyObject* arg1;
@@ -81,8 +92,8 @@ extern "C" {
     Vertical* vertical = NULL;
 
     HTRY
-    __cs.init ("Vertical.new");
-    if (!PyArg_ParseTuple(args,"O&O&O&|O&O&O&O&:Vertical.new"
+    __cs.init ("Vertical.create");
+    if (!PyArg_ParseTuple(args,"O&O&O&|O&O&O&O&:Vertical.create"
                            ,Converter,&arg0
                            ,Converter,&arg1
                            ,Converter,&arg2
@@ -154,18 +165,6 @@ extern "C" {
     return PyVertical_Link(vertical);
   }
 
-  DBoDeleteMethod(Vertical)
-  PyTypeObjectLinkPyType(Vertical)
-  PyTypeObjectConstructor(Vertical)
-
-
-#else  // End of Python Module Code Part.
-
-
-// x=================================================================x
-// |             "PyVertical" Shared Library Code Part               |
-// x=================================================================x
-
 
 
   // Link/Creation Method.
@@ -174,7 +173,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // PyVertical Object Definitions.
 
-  PyTypeObjectDefinitions(Vertical)
+  PyTypeInheritedObjectDefinitions(Vertical, Segment)
 
 #endif  // End of Shared Library Code Part.
 

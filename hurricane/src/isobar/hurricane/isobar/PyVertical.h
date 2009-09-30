@@ -84,9 +84,9 @@ extern "C" {
   extern  PyTypeObject  PyTypeVertical;
   extern  PyMethodDef   PyVertical_Methods[];
 
+  extern  PyObject* PyVertical_create     ( PyObject* module, PyObject* args );
   extern  PyObject* PyVertical_Link       ( Hurricane::Vertical* object );
   extern  void      PyVertical_LinkPyType ();
-  extern  void      PyVertical_Constructor();
 
 
 

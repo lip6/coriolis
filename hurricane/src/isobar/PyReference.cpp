@@ -120,11 +120,23 @@ extern "C" {
   // |               "PyReference" Object Methods                  |
   // x-------------------------------------------------------------x
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyReference_new ()"
+  DBoDeleteMethod(Reference)
+  PyTypeObjectLinkPyType(Reference)
 
-  static PyObject* PyReference_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
-    trace << "PyReference_new()" << endl;
+
+# else  // End of Python Module Code Part.
+
+
+// x=================================================================x
+// |            "PyReference" Shared Library Code Part               |
+// x=================================================================x
+  
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyReference_create ()"
+
+  PyObject* PyReference_create ( PyObject *module, PyObject *args ) {
+    trace << "PyReference_create()" << endl;
     Reference*  reference = NULL;
 
     PyObject* arg0;
@@ -134,8 +146,8 @@ extern "C" {
 
     HTRY
 
-    __cs.init ("Reference.new");
-    if ( ! PyArg_ParseTuple(args,"O&O&O&|O&:Reference.new"
+    __cs.init ("Reference.create");
+    if ( ! PyArg_ParseTuple(args,"O&O&O&|O&:Reference.create"
                            ,Converter,&arg0
                            ,Converter,&arg1
                            ,Converter,&arg2
@@ -165,28 +177,13 @@ extern "C" {
 
 
 
-  DBoDeleteMethod(Reference)
-  PyTypeObjectLinkPyType(Reference)
-  PyTypeObjectConstructor(Reference)
-
-
-# else  // End of Python Module Code Part.
-
-
-// x=================================================================x
-// |            "PyReference" Shared Library Code Part               |
-// x=================================================================x
-  
-
-
-
   // Link/Creation Method.
   DBoLinkCreateMethod(Reference)
 
 
   // ---------------------------------------------------------------
   // PyReference Object Definitions.
-  PyTypeObjectDefinitions(Reference)
+  PyTypeInheritedObjectDefinitions(Reference, Entity)
 
 
 #endif  // End of Shared Library Code Part.

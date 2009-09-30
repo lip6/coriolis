@@ -85,8 +85,8 @@ extern "C" {
   extern  PyTypeObject  PyTypePoint;
   extern  PyMethodDef   PyPoint_Methods[];
 
+  extern  PyObject* PyPoint_create    ( PyObject* self, PyObject* args );
   extern  void      PyPoint_LinkPyType();
-  extern  void      PyPoint_Constructor();
 
 
 # define IsPyPoint(v)    ( (v)->ob_type == &PyTypePoint )

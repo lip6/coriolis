@@ -84,8 +84,8 @@ extern "C" {
   extern  PyTypeObject  PyTypePath;
   extern  PyMethodDef   PyPath_Methods[];
 
-  extern  void      PyPath_LinkPyType();
-  extern  void      PyPath_Constructor();
+  extern  PyObject* PyPath_create     ( PyObject* module, PyObject* args );
+  extern  void      PyPath_LinkPyType ();
 
 
 #define IsPyPath(v)    ( (v)->ob_type == &PyTypePath )

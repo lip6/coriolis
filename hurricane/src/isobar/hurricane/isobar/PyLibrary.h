@@ -84,10 +84,10 @@ extern "C" {
   extern  PyTypeObject  PyTypeLibrary;
   extern  PyMethodDef   PyLibrary_Methods[];
 
-  extern  PyObject* PyLibrary_GetLibrary ( PyObject* module );
+  extern  PyObject* PyLibrary_create     ( PyObject* module, PyObject* args );
+  extern  PyObject* PyLibrary_getLibrary ( PyObject* module );
   extern  PyObject* PyLibrary_Link       ( Hurricane::Library* lib );
   extern  void      PyLibrary_LinkPyType ();
-  extern  void      PyLibrary_Constructor();
 
 
 #define IsPyLibrary(v) ( (v)->ob_type == &PyTypeLibrary )

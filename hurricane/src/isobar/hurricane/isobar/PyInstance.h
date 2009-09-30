@@ -87,10 +87,10 @@ extern "C" {
   extern  PyTypeObject  PyTypeInstance;
   extern  PyMethodDef   PyInstance_Methods[];
 
-  extern  PyObject* PyInstance_Link(Hurricane::Instance* object);
-  extern  void      InstanceLoadConstants(PyObject* dictionnary);
-  extern  void      PyInstance_LinkPyType();
-  extern  void      PyInstance_Constructor();
+  extern  PyObject* PyInstance_create     ( PyObject* module, PyObject* args );
+  extern  PyObject* PyInstance_Link       ( Hurricane::Instance* object);
+  extern  void      InstanceLoadConstants ( PyObject* dictionnary );
+  extern  void      PyInstance_LinkPyType ();
 
 
 

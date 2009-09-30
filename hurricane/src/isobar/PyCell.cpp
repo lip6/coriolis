@@ -621,15 +621,28 @@ extern "C" {
   // |                  "PyCell" Object Methods                    |
   // x-------------------------------------------------------------x
 
-  static PyObject* PyCell_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
-    trace << "PyCell_new()" << endl;
+  DBoDeleteMethod(Cell)
+  PyTypeObjectLinkPyType(Cell)
+
+
+#else  // End of Python Module Code Part.
+
+
+// x=================================================================x
+// |               "PyCell" Shared Library Code Part                 |
+// x=================================================================x
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyCell_create ()"
+  PyObject* PyCell_create ( PyObject *module, PyObject *args ) {
+    trace << "PyCell_create()" << endl;
 
     char* name = NULL;
     PyLibrary* pyLibrary = NULL;
     Cell* cell = NULL;
 
     HTRY
-    if (PyArg_ParseTuple(args,"O!s:Cell.new", &PyTypeLibrary, &pyLibrary, &name)) {
+    if (PyArg_ParseTuple(args,"O!s:Cell.create", &PyTypeLibrary, &pyLibrary, &name)) {
         cell = Cell::create(PYLIBRARY_O(pyLibrary), Name(name));
     } else {
         PyErr_SetString ( ConstructorError, "invalid number of parameters for Cell constructor.");
@@ -640,25 +653,13 @@ extern "C" {
     return PyCell_Link(cell);
   }
 
-  DBoDeleteMethod(Cell)
-  PyTypeObjectLinkPyType(Cell)
-  PyTypeObjectConstructor(Cell)
-
-#else  // End of Python Module Code Part.
-
-
-// x=================================================================x
-// |               "PyCell" Shared Library Code Part                 |
-// x=================================================================x
-
-
   // Link/Creation Method.
   DBoLinkCreateMethod(Cell)
 
 
   // ---------------------------------------------------------------
   // PyCell Object Definitions.
-  PyTypeObjectDefinitions(Cell)
+  PyTypeInheritedObjectDefinitions(Cell, Entity)
 
 
 #endif  // End of Shared Library Code Part.

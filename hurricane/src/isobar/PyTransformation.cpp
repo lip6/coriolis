@@ -491,6 +491,17 @@ extern "C" {
   // |             "PyTransformation" Object Methods               |
   // x-------------------------------------------------------------x
 
+  DirectDeleteMethod(PyTransformation_DeAlloc,PyTransformation)
+  PyTypeObjectLinkPyType(Transformation)
+
+
+#else  // End of Python Module Code Part.
+
+
+// x=================================================================x
+// |          "PyTransformation" Shared Library Code Part            |
+// x=================================================================x
+  
   static Transformation::Orientation  PyInt_AsOrientation ( PyObject* object ) {
     switch ( PyInt_AsLong(object) ) {
       case Transformation::Orientation::ID : return ( Transformation::Orientation(Transformation::Orientation::ID) );
@@ -507,18 +518,18 @@ extern "C" {
   }
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyTransformation_new ()"
+  // Attribute Method  :  "PyTransformation_create ()"
 
-  static PyObject* PyTransformation_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
-    trace << "PyTransformation_new()" << endl;
+  PyObject* PyTransformation_create (PyObject *module, PyObject *args) {
+    trace << "PyTransformation_create()" << endl;
 
     Transformation* transf;
     PyObject* arg0;
     PyObject* arg1;
     PyObject* arg2;
 
-    __cs.init ("Transformation.new");
-    if ( ! PyArg_ParseTuple(args,"|O&O&O&:Transformation.new"
+    __cs.init ("Transformation.create");
+    if ( ! PyArg_ParseTuple(args,"|O&O&O&:Transformation.create"
                            ,Converter,&arg0
                            ,Converter,&arg1
                            ,Converter,&arg2
@@ -558,18 +569,6 @@ extern "C" {
     return (PyObject*)pyTransformation;
   }
 
-  DirectDeleteMethod(PyTransformation_DeAlloc,PyTransformation)
-  PyTypeObjectLinkPyType(Transformation)
-  PyTypeObjectConstructor(Transformation)
-
-
-#else  // End of Python Module Code Part.
-
-
-// x=================================================================x
-// |          "PyTransformation" Shared Library Code Part            |
-// x=================================================================x
-  
 
   // x-------------------------------------------------------------x
   // |            "PyTransformation" Local Functions               |

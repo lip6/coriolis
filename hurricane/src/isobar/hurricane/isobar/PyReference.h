@@ -83,9 +83,9 @@ extern "C" {
   extern PyTypeObject PyTypeReference;
   extern PyMethodDef  PyReference_Methods[];
   
+  extern PyObject* PyReference_create     ( PyObject* module, PyObject* args );
   extern PyObject* PyReference_Link       ( Hurricane::Reference* object );
-  extern void PyReference_LinkPyType();
-  extern void PyReference_Constructor();
+  extern void      PyReference_LinkPyType ();
 
 
 

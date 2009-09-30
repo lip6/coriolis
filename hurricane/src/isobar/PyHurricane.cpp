@@ -207,8 +207,8 @@ using namespace Hurricane;
                                 , const char*         idBase ) {
     for ( unsigned i=0 ; i < _types.size() ; i++ ) {
       if ( ! strcmp ( _types[i]->_id, id ) ) {
-        //throw Error ( objectTypeRedefinition ); // 04.09.2009 d2 modification
-        cerr << objectTypeRedefinition << endl;
+        //throw Error ( objectTypeRedefinition ); // 04.09.2009 d2 modification so Pharos can run several scripts during one execution
+        trace << objectTypeRedefinition << endl; 
         return;
       }
     }
@@ -500,15 +500,31 @@ extern "C" {
   // x-------------------------------------------------------------x
 
   static PyMethodDef PyHurricane_Methods[] =
-    { { "DbU_db"                ,              PyDbU_db                          , METH_VARARGS, "Convert an integer to DbU::Unit (no scale factor)." }
-    , { "DbU_grid"              ,              PyDbU_grid                        , METH_VARARGS, "Convert a founder grid to DbU::Unit." }
-    , { "DbU_lambda"            ,              PyDbU_lambda                      , METH_VARARGS, "Convert a symbolic (lambda) to DbU::Unit." }
-    , { "DbU_getDb"             ,              PyDbU_getDb                       , METH_VARARGS, "Convert a DbU::Unit to an integer value (no scale factor)." }
-    , { "DbU_getGrid"           ,              PyDbU_getGrid                     , METH_VARARGS, "Convert a DbU::Unit to a to grid founder." }
-    , { "DbU_getLambda"         ,              PyDbU_getLambda                   , METH_VARARGS, "Convert a DbU::Unit to a symbolic value (to lambda)." }
-    , { "getDataBase"           , (PyCFunction)PyDataBase_getDataBase            , METH_NOARGS , "Get the current DataBase." }
-  //, { "openUpdateSession"     , (PyCFunction)PyUpdateSession_openUpdateSession , METH_NOARGS , "Open an UpdateSession." }
-  //, { "closeUpdateSession"    , (PyCFunction)PyUpdateSession_closeUpdateSession, METH_NOARGS , "Close an UpdateSession." }
+    { { "DbU_db"                ,              PyDbU_db                          , METH_VARARGS, "Converts an integer to DbU::Unit (no scale factor)." }
+    , { "DbU_grid"              ,              PyDbU_grid                        , METH_VARARGS, "Converts a founder grid to DbU::Unit." }
+    , { "DbU_lambda"            ,              PyDbU_lambda                      , METH_VARARGS, "Converts a symbolic (lambda) to DbU::Unit." }
+    , { "DbU_getDb"             ,              PyDbU_getDb                       , METH_VARARGS, "Converts a DbU::Unit to an integer value (no scale factor)." }
+    , { "DbU_getGrid"           ,              PyDbU_getGrid                     , METH_VARARGS, "Converts a DbU::Unit to a to grid founder." }
+    , { "DbU_getLambda"         ,              PyDbU_getLambda                   , METH_VARARGS, "Converts a DbU::Unit to a symbolic value (to lambda)." }
+    , { "Point"                 ,              PyPoint_create                    , METH_VARARGS, "Creates a new Point." }
+    , { "Box"                   ,              PyBox_create                      , METH_VARARGS, "Creates a new Box." }
+    , { "Transformation"        ,              PyTransformation_create           , METH_VARARGS, "Creates a new Transformation." }
+    , { "DataBase"              , (PyCFunction)PyDataBase_create                 , METH_NOARGS , "Creates the DataBase." }
+    , { "getDataBase"           , (PyCFunction)PyDataBase_getDataBase            , METH_NOARGS , "Gets the current DataBase." }
+    , { "Library"               , (PyCFunction)PyLibrary_create                  , METH_VARARGS, "Creates a new Library." }
+//    , { "getLibrary"            , (PyCFunction)PyLibrary_getLibrary              , METH_NOARGS , "Gets the current Library." }
+    , { "Reference"             , (PyCFunction)PyReference_create                , METH_VARARGS, "Creates a new Reference." }
+    , { "Cell"                  , (PyCFunction)PyCell_create                     , METH_VARARGS, "Creates a new Cell." }
+    , { "Instance"              , (PyCFunction)PyInstance_create                 , METH_VARARGS, "Creates a new Instance." }
+    , { "Net"                   , (PyCFunction)PyNet_create                      , METH_VARARGS, "Creates a new Net." }
+    , { "HyperNet"              , (PyCFunction)PyHyperNet_create                 , METH_VARARGS, "Creates a new HyperNet." }
+    , { "Horizontal"            , (PyCFunction)PyHorizontal_create               , METH_VARARGS, "Creates a new Horizontal." }
+    , { "Vertical"              , (PyCFunction)PyVertical_create                 , METH_VARARGS, "Creates a new Vertical." }
+    , { "Contact"               , (PyCFunction)PyContact_create                  , METH_VARARGS, "Creates a new Contact." }
+    , { "Pin"                   , (PyCFunction)PyPin_create                      , METH_VARARGS, "Creates a new Pin." }
+    , { "Pad"                   , (PyCFunction)PyPad_create                      , METH_VARARGS, "Creates a new Pad." }
+    , { "Path"                  , (PyCFunction)PyPath_create                     , METH_VARARGS, "Creates a new Path." }
+    , { "Occurrence"            , (PyCFunction)PyOccurrence_create               , METH_VARARGS, "Creates a new Occurrence." }
     , { "getExternalComponents" , (PyCFunction)PyNetExternalComponents_getExternalComponents, METH_VARARGS, "Returns the components collection of an external net" }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
@@ -555,25 +571,6 @@ extern "C" {
     PyContact_LinkPyType ();
     PyPin_LinkPyType ();
     PyPlug_LinkPyType ();
-
-    //constructors
-    PyPoint_Constructor();
-    PyDataBase_Constructor();
-    PyLibrary_Constructor();
-    PyBox_Constructor();
-    PyTransformation_Constructor();
-    PyReference_Constructor();
-    PyCell_Constructor();
-    PyInstance_Constructor();
-    PyNet_Constructor();
-    PyHyperNet_Constructor();
-    PyHorizontal_Constructor();
-    PyVertical_Constructor();
-    PyContact_Constructor();
-    PyPin_Constructor();
-    PyPad_Constructor();
-    PyPath_Constructor();
-    PyOccurrence_Constructor();
 
     PYTYPE_READY ( Point                       )
     PYTYPE_READY ( Box                         )
@@ -670,23 +667,6 @@ extern "C" {
            << "  Failed to initialize Hurricane module." << endl;
       return;
     }
-    PyModule_AddObject(module, "Point"          , (PyObject*)&PyTypePoint);
-    PyModule_AddObject(module, "DataBase"       , (PyObject*)&PyTypeDataBase);
-    PyModule_AddObject(module, "Library"        , (PyObject*)&PyTypeLibrary);
-    PyModule_AddObject(module, "Box"            , (PyObject*)&PyTypeBox);
-    PyModule_AddObject(module, "Transformation" , (PyObject*)&PyTypeTransformation);
-    PyModule_AddObject(module, "Reference"      , (PyObject*)&PyTypeReference);
-    PyModule_AddObject(module, "Cell"           , (PyObject*)&PyTypeCell);
-    PyModule_AddObject(module, "Instance"       , (PyObject*)&PyTypeInstance);
-    PyModule_AddObject(module, "Net"            , (PyObject*)&PyTypeNet);
-    PyModule_AddObject(module, "HyperNet"       , (PyObject*)&PyTypeHyperNet);
-    PyModule_AddObject(module, "Horizontal"     , (PyObject*)&PyTypeHorizontal);
-    PyModule_AddObject(module, "Vertical"       , (PyObject*)&PyTypeVertical);
-    PyModule_AddObject(module, "Pad"            , (PyObject*)&PyTypePad);
-    PyModule_AddObject(module, "Contact"        , (PyObject*)&PyTypeContact);
-    PyModule_AddObject(module, "Pin"            , (PyObject*)&PyTypePin);
-    PyModule_AddObject(module, "Path"           , (PyObject*)&PyTypePath);
-    PyModule_AddObject(module, "Occurrence"     , (PyObject*)&PyTypeOccurrence);
     
     PyObject* dictionnary = PyModule_GetDict ( module );
 

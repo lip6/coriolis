@@ -91,6 +91,18 @@ extern "C" {
   // |                  "PyPin" Object Methods                     |
   // x-------------------------------------------------------------x
 
+
+  DBoDeleteMethod(Pin)
+  PyTypeObjectLinkPyType(Pin)
+
+
+#else  // End of Python Module Code Part.
+
+
+// x=================================================================x
+// |                "PyPin" Shared Library Code Part                 |
+// x=================================================================x
+
   static Pin::PlacementStatus  PyInt_AsPlacementStatus ( PyObject* object ) {
     switch ( PyInt_AsLong(object) ) {
       case Pin::PlacementStatus::UNPLACED : return ( Pin::PlacementStatus(Pin::PlacementStatus::UNPLACED) );
@@ -114,14 +126,14 @@ extern "C" {
   }
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPin_new ()"
+  // Attribute Method  :  "PyPin_create ()"
 
-  static PyObject* PyPin_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
+  PyObject* PyPin_create ( PyObject *module, PyObject *args ) {
     Pin* pin = NULL;
     
     HTRY
 
-    trace << "PyPin_new()" << endl;
+    trace << "PyPin_create()" << endl;
     PyObject* arg0;
     PyObject* arg1;
     PyObject* arg2;
@@ -132,8 +144,8 @@ extern "C" {
     PyObject* arg7;
     PyObject* arg8;
 
-    __cs.init ("Pin.new");
-    if (!PyArg_ParseTuple(args,"O&O&O&O&O&O&O&|O&O&:Pin.new"
+    __cs.init ("Pin.create");
+    if (!PyArg_ParseTuple(args,"O&O&O&O&O&O&O&|O&O&:Pin.create"
                            , Converter, &arg0
                            , Converter, &arg1
                            , Converter, &arg2
@@ -190,18 +202,6 @@ extern "C" {
     return PyPin_Link ( pin );
   }
 
-  DBoDeleteMethod(Pin)
-  PyTypeObjectLinkPyType(Pin)
-  PyTypeObjectConstructor(Pin)
-
-
-#else  // End of Python Module Code Part.
-
-
-// x=================================================================x
-// |                "PyPin" Shared Library Code Part                 |
-// x=================================================================x
-
 
 
   // Link/Creation Method.
@@ -213,7 +213,7 @@ extern "C" {
   // ---------------------------------------------------------------
   // PyPin Object Definitions.
 
-  PyTypeObjectDefinitions(Pin)
+  PyTypeInheritedObjectDefinitions(Pin, Contact)
 
 #endif  // End of Shared Library Code Part.
 

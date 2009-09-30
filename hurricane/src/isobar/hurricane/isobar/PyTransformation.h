@@ -85,9 +85,9 @@ extern "C" {
   extern PyTypeObject  PyTypeTransformation;
   extern PyMethodDef   PyTransformation_Methods[];
 
-  extern void TransformationLoadConstants(PyObject* dictionnary);
-  extern void PyTransformation_LinkPyType();
-  extern void PyTransformation_Constructor();
+  extern PyObject* PyTransformation_create     (PyObject* self, PyObject* args);
+  extern void      TransformationLoadConstants (PyObject* dictionnary);
+  extern void      PyTransformation_LinkPyType ();
 
 
 # define IsPyTransformation(v)    ( (v)->ob_type == &PyTypeTransformation )

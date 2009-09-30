@@ -188,18 +188,31 @@ extern "C" {
   // |               "PyOccurrence" Object Methods                 |
   // x-------------------------------------------------------------x
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyOccurrence_new ()"
 
-  static PyObject* PyOccurrence_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
-    trace << "PyOccurrence_new()" << endl;
+
+  DirectDeleteMethod(PyOccurrence_DeAlloc,PyOccurrence)
+  PyTypeObjectLinkPyType(Occurrence)
+
+
+#else  // End of Python Module Code Part.
+
+
+// x=================================================================x
+// |            "PyOccurrence" Shared Library Code Part              |
+// x=================================================================x
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyOccurrence_create ()"
+
+  PyObject* PyOccurrence_create ( PyObject *module, PyObject *args ) {
+    trace << "PyOccurrence_create()" << endl;
 
     Occurrence* occurrence;
     PyObject*   arg0;
     PyObject*   arg1;
 
-    __cs.init ("Occurrence.new");
-    if ( ! PyArg_ParseTuple(args,"|O&O&:Occurrence.new"
+    __cs.init ("Occurrence.create");
+    if ( ! PyArg_ParseTuple(args,"|O&O&:Occurrence.create"
                            ,Converter,&arg0
                            ,Converter,&arg1
                            )) {
@@ -227,22 +240,6 @@ extern "C" {
 
     return ( (PyObject*)pyOccurrence );
   }
-
-
-
-  DirectDeleteMethod(PyOccurrence_DeAlloc,PyOccurrence)
-  PyTypeObjectLinkPyType(Occurrence)
-  PyTypeObjectConstructor(Occurrence)
-
-
-#else  // End of Python Module Code Part.
-
-
-// x=================================================================x
-// |            "PyOccurrence" Shared Library Code Part              |
-// x=================================================================x
-
-
 
 
 

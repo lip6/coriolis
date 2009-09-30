@@ -81,8 +81,8 @@ extern "C" {
   extern PyTypeObject PyTypeHyperNet;
   extern PyMethodDef  PyHyperNet_Methods[];
 
-  extern void  PyHyperNet_LinkPyType();
-  extern void  PyHyperNet_Constructor();
+  extern PyObject* PyHyperNet_create ( PyObject* module, PyObject* args );
+  extern void      PyHyperNet_LinkPyType();
 
 
 #define IsPyHyperNet(v)    ( (v)->ob_type == &PyTypeHyperNet )

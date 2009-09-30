@@ -84,8 +84,8 @@ extern "C" {
   extern  PyTypeObject  PyTypeOccurrence;
   extern  PyMethodDef   PyOccurrence_Methods[];
 
-  extern  void      PyOccurrence_LinkPyType();
-  extern  void      PyOccurrence_Constructor();
+  extern  PyObject* PyOccurrence_create     ( PyObject* module, PyObject* args );
+  extern  void      PyOccurrence_LinkPyType ();
 
 
 #define IsPyOccurrence(v)    ( (v)->ob_type == &PyTypeOccurrence )

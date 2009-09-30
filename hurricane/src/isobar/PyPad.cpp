@@ -92,11 +92,23 @@ extern "C" {
   // |                "PyPad" Object Methods                       |
   // x-------------------------------------------------------------x
 
+
+  DBoDeleteMethod(Pad)
+  PyTypeObjectLinkPyType(Pad)
+
+
+#else  // End of Python Module Code Part.
+
+
+// x=================================================================x
+// |             "PyPad" Shared Library Code Part                    |
+// x=================================================================x
+
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyPad_new ()"
 
-  static PyObject* PyPad_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
-    trace << "PyPad_new()" << endl;
+  PyObject* PyPad_create ( PyObject *module, PyObject *args ) {
+    trace << "PyPad_create()" << endl;
 
     PyObject* arg0;
     PyObject* arg1;
@@ -104,8 +116,8 @@ extern "C" {
     Pad* pad = NULL;
 
     HTRY
-    __cs.init ("Pad.new");
-    if (!PyArg_ParseTuple(args,"O&O&O&:Pad.new"
+    __cs.init ("Pad.create");
+    if (!PyArg_ParseTuple(args,"O&O&O&:Pad.create"
                            ,Converter,&arg0
                            ,Converter,&arg1
                            ,Converter,&arg2
@@ -127,19 +139,6 @@ extern "C" {
   }
 
 
-  DBoDeleteMethod(Pad)
-  PyTypeObjectLinkPyType(Pad)
-  PyTypeObjectConstructor(Pad)
-
-
-#else  // End of Python Module Code Part.
-
-
-// x=================================================================x
-// |             "PyPad" Shared Library Code Part                    |
-// x=================================================================x
-
-
   // Link/Creation Method.
   DBoLinkCreateMethod(Pad)
 
@@ -148,7 +147,7 @@ extern "C" {
   // PyPad Object Definitions.
 
 
-  PyTypeObjectDefinitions(Pad)
+  PyTypeInheritedObjectDefinitions(Pad, Component)
 
 #endif  // End of Shared Library Code Part.
 

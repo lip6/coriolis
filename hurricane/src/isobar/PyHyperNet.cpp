@@ -161,16 +161,27 @@ extern "C" {
   // x-------------------------------------------------------------x
   // |                  "PyHyperNet" Object Methods                     |
   // x-------------------------------------------------------------x
+  DirectDeleteMethod(PyHyperNet_DeAlloc,PyHyperNet)
+  PyTypeObjectLinkPyType(HyperNet)
+
+
+# else  // End of Python Module Code Part.
+
+
+// x=================================================================x
+// |                "PyHyperNet" Shared Library Code Part                 |
+// x=================================================================x
+
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyHyperNet_new ()"
+  // Attribute Method  :  "PyHyperNet_create ()"
 
-  static PyObject* PyHyperNet_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
-    trace << "PyHyperNet_new()" << endl;
+  PyObject* PyHyperNet_create ( PyObject *module, PyObject *args ) {
+    trace << "PyHyperNet_create()" << endl;
 
-    HyperNet*      hyperNet = NULL;
+    HyperNet* hyperNet = NULL;
     PyObject* arg0;
     
-    if (! ParseOneArg ( "HyperNet.new()", args, ":occur", &arg0 )) {
+    if (! ParseOneArg ( "HyperNet.create()", args, ":occur", &arg0 )) {
         PyErr_SetString(ConstructorError, "invalid number of parameters for HyperNet constructor." );
         return ( NULL );
     }
@@ -187,20 +198,6 @@ extern "C" {
 
     return ( (PyObject*)pyHyperNet );
   }
-
-  DirectDeleteMethod(PyHyperNet_DeAlloc,PyHyperNet)
-  PyTypeObjectLinkPyType(HyperNet)
-  PyTypeObjectConstructor(HyperNet)
-
-
-# else  // End of Python Module Code Part.
-
-
-// x=================================================================x
-// |                "PyHyperNet" Shared Library Code Part                 |
-// x=================================================================x
-
-
 
 
 

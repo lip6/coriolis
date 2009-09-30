@@ -136,8 +136,25 @@ extern "C" {
   // |                 "PyPoint" Object Methods                    |
   // x-------------------------------------------------------------x
 
-  static PyObject* PyPoint_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
-    trace << "PyPoint_new()" << endl;
+
+
+  DirectDeleteMethod(PyPoint_DeAlloc,PyPoint)
+  PyTypeObjectLinkPyType(Point)
+
+#else  // End of Python Module Code Part.
+
+
+// x=================================================================x
+// |               "PyPoint" Shared Library Code Part                |
+// x=================================================================x
+
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyPoint_create ()"
+
+  PyObject* PyPoint_create ( PyObject* module, PyObject *args )
+  {
+    trace << "PyPoint_create()" << endl;
 
     Point*    point;
     PyObject* arg0;
@@ -170,20 +187,6 @@ extern "C" {
 
     return ( (PyObject*)pyPoint );
   }
-
-
-  DirectDeleteMethod(PyPoint_DeAlloc,PyPoint)
-  PyTypeObjectLinkPyType(Point)
-  PyTypeObjectConstructor(Point)
-
-#else  // End of Python Module Code Part.
-
-
-// x=================================================================x
-// |               "PyPoint" Shared Library Code Part                |
-// x=================================================================x
-
-
   // ---------------------------------------------------------------
   // PyPoint Object Definitions.
   

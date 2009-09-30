@@ -141,7 +141,7 @@ extern "C" {
   // PySegment Object Definitions.
 
 
-  PyTypeObjectDefinitions(Segment)
+  PyTypeInheritedObjectDefinitions(Segment, Component)
 
 # endif  // End of Shared Library Code Part.
 
