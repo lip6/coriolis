@@ -38,8 +38,9 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <climits>
 #include  <cstring>
+#include  <cstdlib>
+#include  <limits>
 
 #include  "hurricane/DbU.h"
 #include  "hurricane/Error.h"
@@ -58,8 +59,8 @@ namespace Hurricane {
   unsigned int        DbU::_stringMode           = DbU::Symbolic;
   DbU::Unit           DbU::_symbolicSnapGridStep = DbU::lambda(1.0);
   DbU::Unit           DbU::_realSnapGridStep     = DbU::grid  (10.0);
-  const DbU::Unit     DbU::Min                   = LONG_MIN;
-  const DbU::Unit     DbU::Max                   = LONG_MAX;
+  const DbU::Unit     DbU::Min                   = std::numeric_limits<long>::min();
+  const DbU::Unit     DbU::Max                   = std::numeric_limits<long>::max();
 
 
 // -------------------------------------------------------------------
@@ -192,10 +193,14 @@ namespace Hurricane {
     DbU::Unit  modulo   =   u % _symbolicSnapGridStep;
 
     if ( !modulo ) return u;
+    if (  modulo < 0  ) inferior -= _symbolicSnapGridStep;
 
     if      ( mode == Inferior ) { return inferior; }
     else if ( mode == Superior ) { return inferior + _symbolicSnapGridStep; }
      
+    if ( modulo < 0 )
+      return inferior + ( (modulo > - (_symbolicSnapGridStep/2)) ? _symbolicSnapGridStep : 0 );
+
     return inferior + ( (modulo > (_symbolicSnapGridStep/2)) ? _symbolicSnapGridStep : 0 );
   }
 
@@ -210,11 +215,33 @@ namespace Hurricane {
     DbU::Unit  modulo   =   u % _realSnapGridStep;
 
     if ( !modulo ) return u;
+    if (  modulo < 0  ) inferior -= _realSnapGridStep;
 
     if      ( mode == Inferior ) { return inferior; }
     else if ( mode == Superior ) { return inferior + _realSnapGridStep; }
      
+    if ( modulo < 0 )
+      return inferior + ( (modulo > - (_realSnapGridStep/2)) ? _realSnapGridStep : 0 );
+     
     return inferior + ( (modulo > (_realSnapGridStep/2)) ? _realSnapGridStep : 0 );
+  }
+
+
+  DbU::Unit  DbU::getOnCustomGrid ( DbU::Unit u, DbU::Unit step, SnapMode mode )
+  {
+    DbU::Unit  inferior =     ( u / step ) * step;
+    DbU::Unit  modulo   = abs ( u % step );
+
+    if ( !modulo ) return u;
+    if (  modulo < 0  ) inferior -= step;
+
+    if      ( mode == Inferior ) { return inferior; }
+    else if ( mode == Superior ) { return inferior + step; }
+     
+    if ( modulo < 0 )
+      return inferior + ( (modulo > - (step/2)) ? step : 0 );
+     
+    return inferior + ( (modulo > (step/2)) ? step : 0 );
   }
 
 

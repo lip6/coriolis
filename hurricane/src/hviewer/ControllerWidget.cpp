@@ -23,6 +23,7 @@
 // x-----------------------------------------------------------------x
 
 
+#include  <QAction>
 #include  <QFrame>
 #include  <QHBoxLayout>
 #include  <QVBoxLayout>
@@ -464,12 +465,22 @@ namespace Hurricane {
     addTab ( _tabSelection     , "Selection"   );
     addTab ( _tabInspector     , "Inspector"   );
 
-    connect ( this, SIGNAL(currentChanged(int)), this, SLOT(updateTab(int)) );
+    QAction* toggleShow = new QAction ( tr("Controller"), this );
+    toggleShow->setObjectName ( "controller.action.hideShow" );
+    toggleShow->setShortcut   ( QKeySequence(tr("CTRL+I")) );
+    addAction ( toggleShow );
+
+    connect ( toggleShow, SIGNAL(triggered())        , this, SLOT(toggleShow()) );
+    connect ( this      , SIGNAL(currentChanged(int)), this, SLOT(updateTab(int)) );
     connect ( _tabSelection->getSelection(), SIGNAL(inspect(Occurrence&))
             , _tabInspector                , SLOT  (setSelectionOccurrence(Occurrence&)) );
                                         
     resize ( 540, 540 );
   }
+
+
+  void  ControllerWidget::toggleShow ()
+  { setVisible ( !isVisible() ); }
 
 
   void  ControllerWidget::setCellWidget ( CellWidget* cellWidget )

@@ -177,6 +177,7 @@ namespace Hurricane {
     Point  spotPoint = Point ( _cellWidget->_onSnapGrid(mousePoint.getX())
                              , _cellWidget->_onSnapGrid(mousePoint.getY())
                              );
+
     return _cellWidget->dbuToScreenPoint(spotPoint);
   }
 

@@ -249,6 +249,7 @@ namespace Hurricane {
              void                 cellPostModificate ();
              void                 cellChanged        ( Cell* );
              void                 updateTab          ( int index );
+             void                 toggleShow         ();
 
     protected:
       CellWidget*       _cellWidget;

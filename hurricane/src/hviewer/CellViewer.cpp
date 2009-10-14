@@ -49,38 +49,40 @@
 namespace Hurricane {
 
 
-  CellViewer::CellViewer ( QWidget* parent ) : QMainWindow(parent)
-                                             , _applicationName(tr("Viewer"))
-                                             , _openAction(NULL)
-                                             , _nextAction(NULL)
-                                             , _printAction(NULL)
-                                             , _imageAction(NULL)
-                                             , _saveAction(NULL)
-                                             , _closeAction(NULL)
-                                             , _exitAction(NULL)
-                                             , _refreshAction(NULL)
+  CellViewer::CellViewer ( QWidget* parent ) : QMainWindow         (parent)
+                                             , _applicationName    (tr("Viewer"))
+                                             , _toolInterruptAction(NULL)
+                                             , _openAction         (NULL)
+                                             , _nextAction         (NULL)
+                                             , _printAction        (NULL)
+                                             , _imageAction        (NULL)
+                                             , _saveAction         (NULL)
+                                             , _closeAction        (NULL)
+                                             , _exitAction         (NULL)
+                                             , _refreshAction      (NULL)
                                              , _fitToContentsAction(NULL)
                                              , _showSelectionAction(NULL)
-                                             , _rubberChangeAction(NULL)
-                                             , _clearRulersAction(NULL)
-                                             , _controllerAction(NULL)
-                                             , _fileMenu(NULL)
-                                             , _viewMenu(NULL)
-                                             , _toolsMenu(NULL)
-                                             , _debugMenu(NULL)
-                                             //, _mapView(NULL)
-                                             , _palette(NULL)
-                                             , _mousePosition(NULL)
-                                             , _controller(NULL)
-                                             , _cellWidget(NULL)
-                                             , _moveCommand()
-                                             , _zoomCommand()
-                                             , _rulerCommand()
-                                             , _selectCommand()
-                                             , _hierarchyCommand()
-                                             , _cellHistory()
-                                             , _firstShow(false)
-                                             , _updateState(ExternalEmit)
+                                             , _rubberChangeAction (NULL)
+                                             , _clearRulersAction  (NULL)
+                                             , _controllerAction   (NULL)
+                                             , _fileMenu           (NULL)
+                                             , _viewMenu           (NULL)
+                                             , _toolsMenu          (NULL)
+                                             , _debugMenu          (NULL)
+                                           //, _mapView            (NULL)
+                                             , _palette            (NULL)
+                                             , _mousePosition      (NULL)
+                                             , _controller         (NULL)
+                                             , _cellWidget         (NULL)
+                                             , _moveCommand        ()
+                                             , _zoomCommand        ()
+                                             , _rulerCommand       ()
+                                             , _selectCommand      ()
+                                             , _hierarchyCommand   ()
+                                             , _cellHistory        ()
+                                             , _firstShow          (false)
+                                             , _toolInterrupt      (false)
+                                             , _updateState        (ExternalEmit)
   {
     setObjectName("viewer");
 
@@ -100,6 +102,14 @@ namespace Hurricane {
   void  CellViewer::createActions ()
   {
     if ( _openAction ) return;
+
+    _toolInterruptAction = new QAction  ( tr("Interrupt"), this );
+    _toolInterruptAction->setObjectName ( "viewer.interrupt" );
+    _toolInterruptAction->setShortcut   ( QKeySequence(tr("CTRL+C")) );
+  //_toolInterruptAction->setIcon       ( QIcon(":/images/stock_open.png") );
+    _toolInterruptAction->setStatusTip  ( tr("Interrupt the running tool") );
+    connect ( _toolInterruptAction, SIGNAL(triggered()), this, SLOT(raiseToolInterrupt()) );
+    addAction ( _toolInterruptAction );
 
     _openAction = new QAction  ( tr("&Open Cell"), this );
     _openAction->setObjectName ( "viewer.menuBar.file.openCell" );
@@ -273,7 +283,7 @@ namespace Hurricane {
     connect ( _showSelectionAction   , SIGNAL(toggled(bool))      , this       , SLOT(setShowSelection(bool)) );
     connect ( _rubberChangeAction    , SIGNAL(triggered())        , _cellWidget, SLOT(rubberChange()) );
     connect ( _clearRulersAction     , SIGNAL(triggered())        , _cellWidget, SLOT(clearRulers()) );
-    connect ( _controllerAction      , SIGNAL(triggered())        , this       , SLOT(showController()) );
+    connect ( _controllerAction      , SIGNAL(triggered())        , _controller, SLOT(toggleShow()) );
 
     connect ( _cellWidget            , SIGNAL(mousePositionChanged(const Point&))
             , _mousePosition         , SLOT  (setPosition(const Point&)) );
@@ -379,12 +389,6 @@ namespace Hurricane {
   }
 
 
-  void  CellViewer::showController ()
-  {
-    _controller->show ();
-  }
-
-
   void  CellViewer::changeSelectionMode ()
   {
     if ( _updateState != InternalEmit ) {
@@ -401,6 +405,14 @@ namespace Hurricane {
     _updateState = InternalEmit;
     _cellWidget->setShowSelection ( state );
   }
+
+
+  void  CellViewer::raiseToolInterrupt ()
+  { _toolInterrupt = true; }
+
+
+  void  CellViewer::clearToolInterrupt ()
+  { _toolInterrupt = false; }
 
 
   void  CellViewer::openHistoryCell ()

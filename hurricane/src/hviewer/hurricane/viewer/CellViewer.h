@@ -68,6 +68,7 @@ namespace Hurricane {
     public:
                                    CellViewer                ( QWidget* parent=NULL );
       virtual                     ~CellViewer                ();
+      inline  bool                 isToolInterrupted         () const;
               QMenu*               createDebugMenu           ();
       inline  void                 setEnableRedrawInterrupt  ( bool );
       inline  void                 setApplicationName        ( const QString& );
@@ -83,10 +84,11 @@ namespace Hurricane {
               void                 changeSelectionMode       ();
               void                 setShowSelection          ( bool );
               void                 setState                  ( shared_ptr<CellWidget::State>& );
-              void                 showController            ();
               void                 openHistoryCell           ();
               void                 printDisplay              ();
               void                 imageDisplay              ();
+              void                 raiseToolInterrupt        ();
+              void                 clearToolInterrupt        ();
     signals:                       
               void                 showSelectionToggled      ( bool );
               void                 stateChanged              ( shared_ptr<CellWidget::State>& );
@@ -96,6 +98,7 @@ namespace Hurricane {
               enum                 { CellHistorySize = 10 };
     protected:                     
               QString              _applicationName;
+              QAction*             _toolInterruptAction;
               QAction*             _openAction;
               QAction*             _nextAction;
               QAction*             _cellHistoryAction[CellHistorySize];
@@ -127,6 +130,7 @@ namespace Hurricane {
               list< shared_ptr<CellWidget::State> >
                                    _cellHistory;
               bool                 _firstShow;
+              bool                 _toolInterrupt;
               UpdateState          _updateState;
                                    
     protected:                     
@@ -142,6 +146,7 @@ namespace Hurricane {
   inline void        CellViewer::setEnableRedrawInterrupt  ( bool state )
   { _cellWidget->setEnableRedrawInterrupt(state); }
 
+  inline bool              CellViewer::isToolInterrupted   () const { return _toolInterrupt; }
   inline CellWidget*       CellViewer::getCellWidget       () { return _cellWidget; }
   inline ControllerWidget* CellViewer::getControllerWidget () { return _controller; }
   inline void              CellViewer::setApplicationName  ( const QString& name ) { _applicationName = name; }

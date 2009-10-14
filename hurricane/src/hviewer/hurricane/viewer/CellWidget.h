@@ -137,6 +137,7 @@ namespace Hurricane {
               void                    detachFromPalette          ();
               void                    bindCommand                ( Command* );
               void                    unbindCommand              ( Command* );
+      inline  void                    setCursorStep              ( DbU::Unit );
       inline  bool                    realMode                   () const;
       inline  bool                    symbolicMode               () const;
       inline  bool                    showBoundaries             () const;
@@ -204,10 +205,13 @@ namespace Hurricane {
               Box                     computeVisibleArea         ( float scale ) const;
               Box                     computeVisibleArea         ( float scale, const Point& topLeft ) const;
               Box                     computeVisibleArea         ( const Box&, float& scale ) const;
+      inline  DbU::Unit               cursorStep                 () const;
       inline  bool                    _underDetailedGridThreshold() const;
       inline  DbU::Unit               _snapGridStep              () const;
       inline  DbU::Unit               _onSnapGrid                ( DbU::Unit ) const;
       inline  Point                   _onSnapGrid                ( const Point& ) const;
+      inline  DbU::Unit               _onCursorGrid              ( DbU::Unit ) const;
+      inline  Point                   _onCursorGrid              ( const Point& ) const;
     // Qt QWidget Functions Overloads.                           
               void                    pushCursor                 ( Qt::CursorShape cursor );
               void                    popCursor                  ();
@@ -525,6 +529,7 @@ namespace Hurricane {
           inline                     State                  ( Cell* cell=NULL );
           inline void                setCell                ( Cell* );
           inline void                setCellWidget          ( CellWidget* );
+          inline void                setCursorStep          ( DbU::Unit );
           inline void                setRealMode            ();
           inline void                setSymbolicMode        ();
           inline void                setShowBoundaries      ( bool );
@@ -544,6 +549,7 @@ namespace Hurricane {
                  const Name&         getName                () const;
           inline SelectorCriterions& getSelection           ();
           inline RulerSet&           getRulers              ();
+          inline DbU::Unit           cursorStep             () const;
           inline bool                realMode               () const;
           inline bool                symbolicMode           () const;
           inline bool                showBoundaries         () const;
@@ -572,6 +578,7 @@ namespace Hurricane {
           CellWidget*         _cellWidget;
           SelectorCriterions  _selection;
           RulerSet            _rulers;
+          DbU::Unit           _cursorStep;
           bool                _symbolicMode;
           bool                _showBoundaries;
           bool                _showSelection;
@@ -858,6 +865,7 @@ namespace Hurricane {
     , _cellWidget         (NULL)
     , _selection          ()
     , _rulers             ()
+    , _cursorStep         (DbU::lambda(0.5))
     , _symbolicMode       (true)
     , _showBoundaries     (true)
     , _showSelection      (false)
@@ -889,12 +897,22 @@ namespace Hurricane {
   }
 
 
+  inline void  CellWidget::State::setCursorStep ( DbU::Unit step )
+  { _cursorStep = step; }
+
+
   inline void  CellWidget::State::setRealMode ()
-  { _symbolicMode = false; }
+  {
+    _symbolicMode = false;
+    _cursorStep   = DbU::grid ( 1.0 );
+  }
 
 
   inline void  CellWidget::State::setSymbolicMode ()
-  { _symbolicMode = true; }
+  {
+    _symbolicMode = true;
+    _cursorStep   = DbU::lambda ( 0.5 );
+  }
 
 
   inline void  CellWidget::State::setShowBoundaries ( bool state )
@@ -942,6 +960,10 @@ namespace Hurricane {
 
   inline Cell* CellWidget::State::getCell () const
   { return _cell; }
+
+
+  inline DbU::Unit  CellWidget::State::cursorStep () const
+  { return _cursorStep; }
 
 
   inline CellWidget::SelectorCriterions& CellWidget::State::getSelection ()
@@ -1004,6 +1026,10 @@ namespace Hurricane {
 
   bool  CellWidget::FindStateName::operator () ( const shared_ptr<State>& state )
   { return state->getName() == _cellName; }
+
+
+  inline void  CellWidget::setCursorStep ( DbU::Unit step )
+  { _state->setCursorStep(step); }
 
 
   inline shared_ptr<CellWidget::State>& CellWidget::getState ()
@@ -1178,6 +1204,10 @@ namespace Hurricane {
   { return _palette; }
 
 
+  inline DbU::Unit  CellWidget::cursorStep () const
+  { return _state->cursorStep(); }
+
+
   inline bool  CellWidget::realMode () const
   { return !_state->symbolicMode(); }
 
@@ -1217,7 +1247,7 @@ namespace Hurricane {
   inline void  CellWidget::updateMousePosition ()
   {
     Point mousePoint = screenToDbuPoint ( _mousePosition );
-    emit mousePositionChanged ( _onSnapGrid(mousePoint) );
+    emit mousePositionChanged ( _onCursorGrid(mousePoint) );
   }
 
 
@@ -1274,6 +1304,14 @@ namespace Hurricane {
 
   inline Point  CellWidget::_onSnapGrid ( const Point& p ) const
   { return Point(_onSnapGrid(p.getX()),_onSnapGrid(p.getY())); }
+
+
+  inline DbU::Unit  CellWidget::_onCursorGrid ( DbU::Unit u ) const
+  { return DbU::getOnCustomGrid(u,cursorStep()); }
+
+
+  inline Point  CellWidget::_onCursorGrid ( const Point& p ) const
+  { return Point(_onCursorGrid(p.getX()),_onCursorGrid(p.getY())); }
 
 
 } // End of Hurricane namespace.
