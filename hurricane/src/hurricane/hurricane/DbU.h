@@ -131,7 +131,7 @@ namespace Hurricane {
   inline DbU::Unit  DbU::grid                    ( double value )               { return (long)rint( value/_resolution ); }
   inline DbU::Unit  DbU::lambda                  ( double value )               { return grid(value*_gridsPerLambda); }
   inline long       DbU::getDb                   ( DbU::Unit u )                { return u; }
-  inline double     DbU::getGrid                 ( DbU::Unit u )                { return _physicalsPerGrid*_resolution*(double)u; }
+  inline double     DbU::getGrid                 ( DbU::Unit u )                { return _resolution*(double)u; }
   inline double     DbU::getLambda               ( DbU::Unit u )                { return getGrid(u)/_gridsPerLambda; }
   inline double     DbU::getPhysical             ( DbU::Unit u, UnitPower p )   { return (_physicalsPerGrid*_resolution*(double)u)/getUnitPower(p); }
   inline void       DbU::setStringMode           ( unsigned int mode )          { _stringMode = mode; }
