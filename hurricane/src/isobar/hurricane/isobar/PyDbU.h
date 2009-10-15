@@ -77,13 +77,17 @@ extern "C" {
 // -------------------------------------------------------------------
 // Functions & Types exported to "PyHurricane.ccp".
 
-  extern  PyObject* PyDbU_db            ( PyObject* module, PyObject* args );
-  extern  PyObject* PyDbU_grid          ( PyObject* module, PyObject* args );
-  extern  PyObject* PyDbU_lambda        ( PyObject* module, PyObject* args );
-  extern  PyObject* PyDbU_getDb         ( PyObject* module, PyObject* args );
-  extern  PyObject* PyDbU_getGrid       ( PyObject* module, PyObject* args );
-  extern  PyObject* PyDbU_getLambda     ( PyObject* module, PyObject* args );
-  extern  PyObject* PyDbU_getResolution ( PyObject* module );
+  extern  PyObject* PyDbU_db                ( PyObject* module, PyObject* args );
+  extern  PyObject* PyDbU_grid              ( PyObject* module, PyObject* args );
+  extern  PyObject* PyDbU_lambda            ( PyObject* module, PyObject* args );
+  extern  PyObject* PyDbU_getDb             ( PyObject* module, PyObject* args );
+  extern  PyObject* PyDbU_getGrid           ( PyObject* module, PyObject* args );
+  extern  PyObject* PyDbU_getLambda         ( PyObject* module, PyObject* args );
+  extern  PyObject* PyDbU_getPhysical       ( PyObject* module, PyObject* args );
+  extern  PyObject* PyDbU_getResolution     ( PyObject* module );
+  extern  PyObject* PyDbU_getOnPhysicalGrid ( PyObject* module, PyObject* args );
+
+  extern  void DbULoadConstants ( PyObject* dictionnary );
 
 
 }  // End of extern "C".

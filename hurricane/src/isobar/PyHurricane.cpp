@@ -506,6 +506,8 @@ extern "C" {
     , { "DbU_getDb"             ,              PyDbU_getDb                       , METH_VARARGS, "Converts a DbU::Unit to an integer value (no scale factor)." }
     , { "DbU_getGrid"           ,              PyDbU_getGrid                     , METH_VARARGS, "Converts a DbU::Unit to a to grid founder." }
     , { "DbU_getLambda"         ,              PyDbU_getLambda                   , METH_VARARGS, "Converts a DbU::Unit to a symbolic value (to lambda)." }
+    , { "DbU_getPhysical"       ,              PyDbU_getPhysical                 , METH_VARARGS, "Converts a DbU::Unit to a physical value." }
+    , { "DbU_getOnPhysicalGrid" ,              PyDbU_getOnPhysicalGrid           , METH_VARARGS, "Adjusts a DbU::Unit to physical grid." }
     , { "Point"                 ,              PyPoint_create                    , METH_VARARGS, "Creates a new Point." }
     , { "Box"                   ,              PyBox_create                      , METH_VARARGS, "Creates a new Box." }
     , { "Transformation"        ,              PyTransformation_create           , METH_VARARGS, "Creates a new Transformation." }
@@ -679,6 +681,7 @@ extern "C" {
     PyDict_SetItemString ( dictionnary, "ProxyError"      , ProxyError );
     PyDict_SetItemString ( dictionnary, "HurricaneError"  , HurricaneError );
 
+    DbULoadConstants            ( dictionnary );
     TransformationLoadConstants ( dictionnary );
     NetLoadConstants            ( dictionnary );
     InstanceLoadConstants       ( dictionnary );

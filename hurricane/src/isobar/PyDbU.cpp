@@ -61,6 +61,10 @@ using namespace Hurricane;
 
 extern "C" {
 
+#define  LOAD_CONSTANT(CONSTANT_VALUE,CONSTANT_NAME)             \
+ constant = PyInt_FromLong ( (long)CONSTANT_VALUE );             \
+ PyDict_SetItemString ( dictionnary, CONSTANT_NAME, constant );  \
+ Py_DECREF ( constant );
 
 // x=================================================================x
 // |                 "PyDbU" Python Module Code Part                 |
@@ -68,6 +72,50 @@ extern "C" {
 
 #if defined(__PYTHON_MODULE__)
 
+  // x-------------------------------------------------------------x
+  // |                  "PyDbU" Local Functions                    |
+  // x-------------------------------------------------------------x
+
+  static DbU::SnapMode PyInt_AsSnapMode ( PyObject* object ) {
+    switch ( PyInt_AsLong(object) ) {
+      case DbU::Inferior : return ( DbU::Inferior );
+      case DbU::Superior : return ( DbU::Superior );
+      case DbU::Nearest  : return ( DbU::Nearest );
+    }
+
+    return ( DbU::Superior );
+  }
+
+  static DbU::UnitPower PyInt_AsUnitPower ( PyObject* object ) {
+    switch ( PyInt_AsLong(object) ) {
+        case DbU::Pico  : return ( DbU::Pico );
+        case DbU::Nano  : return ( DbU::Nano );
+        case DbU::Micro : return ( DbU::Micro );
+        case DbU::Milli : return ( DbU::Milli );
+        case DbU::Unity : return ( DbU::Unity );
+        case DbU::Kilo  : return ( DbU::Kilo );
+    }
+
+    return ( DbU::Micro );
+  }
+
+  // x-------------------------------------------------------------x
+  // |                  Global Constants Loading                   |
+  // x-------------------------------------------------------------x
+
+  extern void  DbULoadConstants ( PyObject* dictionnary ) {
+    PyObject* constant;
+
+    LOAD_CONSTANT ( DbU::Inferior, "SnapModeInferior" )
+    LOAD_CONSTANT ( DbU::Superior, "SnapModeSuperior" )
+    LOAD_CONSTANT ( DbU::Nearest , "SnapModeNearest" )
+    LOAD_CONSTANT ( DbU::Pico    , "UnitPowerPico" )
+    LOAD_CONSTANT ( DbU::Nano    , "UnitPowerNano" )
+    LOAD_CONSTANT ( DbU::Micro   , "UnitPowerMicro" )
+    LOAD_CONSTANT ( DbU::Milli   , "UnitPowerMilli" )
+    LOAD_CONSTANT ( DbU::Unity   , "UnitPowerUnity" )
+    LOAD_CONSTANT ( DbU::Kilo    , "UnitPowerKilo" )
+  }
 
   // x-------------------------------------------------------------x
   // |                  "PyDbU" General Methods                    |
@@ -201,6 +249,20 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
+  // Module Method  :  "PyDbU_getPhysical ()"
+
+  extern PyObject* PyDbU_getPhysical ( PyObject* module, PyObject* args )
+  {
+    trace << "PyDbU_getPhysical ()" << endl;
+
+    PyObject* arg0;
+    PyObject* arg1;
+    if ( ! ParseTwoArg ( "Dbu.getPhysical", args,INTS2_ARG, &arg0, &arg1 ) ) return ( NULL );
+
+    return ( Py_BuildValue("d",DbU::getPhysical(PyInt_AsLong(arg0), PyInt_AsUnitPower(arg1))) );
+  }
+
+  // ---------------------------------------------------------------
   // Module Method  :  "PyDbU_getResolution ()"
 
   extern PyObject* PyDbU_getResolution ( PyObject* module )
@@ -208,6 +270,36 @@ extern "C" {
     trace << "PyDbU_getResolution ()" << endl;
     
     return ( Py_BuildValue("d",DbU::getResolution()) );
+  }
+
+
+  // ---------------------------------------------------------------
+  // Module Method  :  "PyDbu_getOnPhysicalGrid ()"
+
+  extern PyObject* PyDbU_getOnPhysicalGrid ( PyObject* module, PyObject* args )
+  {
+    trace << "PyDbU_getOnPhysicalGrid ()" << endl;
+
+    PyObject* arg0;
+    PyObject* arg1;
+    DbU::Unit result;
+
+    HTRY
+    __cs.init ( "DbU.getOnPhysicalGrid" );
+    if (!PyArg_ParseTuple(args, "O&|O&O&:DbU.getOnPhysicalGrid", Converter, &arg0, Converter, &arg1)) {
+        return NULL;
+    }
+
+    if ( __cs.getObjectIds() == INTS2_ARG ) {
+        result = DbU::getOnPhysicalGrid ( PyInt_AsLong(arg0), PyInt_AsSnapMode(arg1) );
+    } else if ( __cs.getObjectIds() == INT_ARG ) {
+        result = DbU::getOnPhysicalGrid ( PyInt_AsLong(arg0) );
+    } else {
+        return NULL;
+    }
+    HCATCH
+
+    return ( Py_BuildValue ( "i", result ) );
   }
 
 

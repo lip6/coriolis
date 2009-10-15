@@ -37,6 +37,7 @@
                                      hurricane/viewer/GraphicsWidget.h
                                      hurricane/viewer/ExceptionWidget.h
                                      hurricane/viewer/BreakpointWidget.h
+                                     hurricane/viewer/MousePositionWidget.h
                                      hurricane/viewer/Selector.h
                                      hurricane/viewer/Command.h
                                      hurricane/viewer/AreaCommand.h
