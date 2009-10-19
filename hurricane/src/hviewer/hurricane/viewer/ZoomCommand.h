@@ -36,15 +36,19 @@ namespace Hurricane {
 
   class ZoomCommand : public AreaCommand {
     public:
-                                ZoomCommand          ();
-      virtual                  ~ZoomCommand          ();
-      virtual bool              wheelEvent           ( CellWidget*, QWheelEvent* );
-      virtual bool              keyPressEvent        ( CellWidget*, QKeyEvent* );
-      virtual bool              mousePressEvent      ( CellWidget*, QMouseEvent* );
-      virtual bool              mouseReleaseEvent    ( CellWidget*, QMouseEvent* );
-    private:
-                                ZoomCommand          ( const ZoomCommand& );
-              ZoomCommand&      operator=            ( const ZoomCommand& );
+                            ZoomCommand       ();
+      virtual              ~ZoomCommand       ();
+      virtual const string& getName           () const;
+      virtual Type          getType           () const;
+      virtual void          wheelEvent        ( QWheelEvent* );
+      virtual void          keyPressEvent     ( QKeyEvent* );
+      virtual void          mousePressEvent   ( QMouseEvent* );
+      virtual void          mouseReleaseEvent ( QMouseEvent* );
+    private:              
+                            ZoomCommand       ( const ZoomCommand& );
+              ZoomCommand&  operator=         ( const ZoomCommand& );
+    private:              
+      static string  _name;
   };
 
 

@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -35,6 +35,7 @@
 
 #include  "hurricane/Commons.h"
 #include  "hurricane/Occurrence.h"
+#include  "hurricane/Occurrences.h"
 #include  "hurricane/viewer/Graphics.h"
 
 
@@ -48,19 +49,23 @@ namespace Hurricane {
       Q_OBJECT;
 
     public:
-                                 SelectionPopupModel  ( QObject* parent=NULL );
-                                ~SelectionPopupModel  ();
-             void                add                  ( Occurrence occurrence, bool showChange=false );
-             void                clear                ();
-             void                updateLayout         ();
-             int                 rowCount             ( const QModelIndex& parent=QModelIndex() ) const;
-             int                 columnCount          ( const QModelIndex& parent=QModelIndex() ) const;
-             QVariant            data                 ( const QModelIndex& index, int role=Qt::DisplayRole ) const;
-             QVariant            headerData           ( int section, Qt::Orientation orientation, int role=Qt::DisplayRole ) const;
-             Occurrence          getOccurrence        ( int row );
+                          SelectionPopupModel  ( QObject* parent=NULL );
+                         ~SelectionPopupModel  ();
+      void                clearFilter          ();
+      void                setFilter            ( OccurrenceFilter );
+      OccurrenceFilter    getFilter            ();
+      void                loadOccurrences      ( Occurrences, bool showChange=false );
+      void                clear                ();
+      void                updateLayout         ();
+      int                 rowCount             ( const QModelIndex& parent=QModelIndex() ) const;
+      int                 columnCount          ( const QModelIndex& parent=QModelIndex() ) const;
+      QVariant            data                 ( const QModelIndex& index, int role=Qt::DisplayRole ) const;
+      QVariant            headerData           ( int section, Qt::Orientation orientation, int role=Qt::DisplayRole ) const;
+      Occurrence          getOccurrence        ( int row );
 
     private:
-             vector<Occurrence>* _occurrences;
+      OccurrenceFilter    _filter;
+      vector<Occurrence>* _occurrences;
   };
 
 

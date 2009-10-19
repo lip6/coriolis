@@ -36,23 +36,56 @@
 namespace Hurricane {
 
 
+// -------------------------------------------------------------------
+// Class  :  "Occurrence_AcceptAll".
+
+
+  class Occurrence_AcceptAll : public Filter<Occurrence> {
+    public:
+      virtual Filter<Occurrence>* getClone   () const;
+      virtual bool                accept     ( Occurrence ) const;
+      virtual string              _getString () const;
+  };
+
+
+  Filter<Occurrence>* Occurrence_AcceptAll::getClone   () const { return new Occurrence_AcceptAll(); }
+  bool                Occurrence_AcceptAll::accept     ( Occurrence ) const { return true; }
+  string              Occurrence_AcceptAll::_getString () const { return "<Occurrence_AcceptAll>"; }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::SelectionPopupModel".
+
+
   SelectionPopupModel::SelectionPopupModel ( QObject* parent )
     : QAbstractTableModel(parent)
-    , _occurrences(NULL)
+    , _filter            (new Occurrence_AcceptAll())
+    , _occurrences       (NULL)
   { }
 
 
   SelectionPopupModel::~SelectionPopupModel ()
-  {
-    clear ();
-  }
+  { clear (); }
 
 
-  void  SelectionPopupModel::add ( Occurrence occurrence, bool showChange )
+  void  SelectionPopupModel::clearFilter ()
+  { _filter = new Occurrence_AcceptAll(); }
+
+
+  void  SelectionPopupModel::setFilter ( OccurrenceFilter filter )
+  { _filter = filter; }
+
+
+  OccurrenceFilter  SelectionPopupModel::getFilter ()
+  { return _filter; }
+
+
+  void  SelectionPopupModel::loadOccurrences ( Occurrences occurrences, bool showChange )
   {
     if ( !_occurrences ) _occurrences = new vector<Occurrence> ();
-
-    _occurrences->push_back ( occurrence );
+    forEach ( Occurrence, ioccurrence, occurrences.getSubSet(getFilter()) ) {
+      _occurrences->push_back ( *ioccurrence );
+    }
     if ( showChange ) emit layoutChanged ();
   }
 
@@ -68,9 +101,7 @@ namespace Hurricane {
 
 
   void  SelectionPopupModel::updateLayout ()
-  {
-    emit layoutChanged ();
-  }
+  { emit layoutChanged (); }
 
 
   QVariant  SelectionPopupModel::data ( const QModelIndex& index, int role ) const

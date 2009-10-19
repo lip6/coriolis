@@ -61,6 +61,9 @@
 namespace {
 
 
+  using namespace std;
+
+
   string  getTime ( const char* format )
   {
     time_t     t  = time(NULL);
@@ -1095,6 +1098,7 @@ namespace Hurricane {
     , _cellModificated      (true)
     , _enableRedrawInterrupt(false)
     , _selectors            ()
+    , _activeCommand        (NULL)
     , _commands             ()
     , _redrawRectCount      (0)
     , _textFontHeight       (20)
@@ -1172,6 +1176,7 @@ namespace Hurricane {
     for ( size_t i=0 ; i<_commands.size() ; i++ )
       if ( _commands[i] == command ) return;
 
+    command->setCellWidget ( this );
     _commands.push_back ( command );
   }
 
@@ -1181,6 +1186,8 @@ namespace Hurricane {
     size_t i = 0;
     for ( ; i<_commands.size() ; i++ )
       if ( _commands[i] == command ) break;
+
+    if ( i < _commands.size() ) _commands[i]->setCellWidget ( NULL );
 
     for ( ; i+1<_commands.size() ; i++ )
       _commands[i] = _commands[i+1];
@@ -1806,10 +1813,17 @@ namespace Hurricane {
         if ( onScreen ) pxGrad = dbuToScreenX  ( graduation );
         else            pxGrad = dbuToDisplayX ( graduation );
 
+
         if ( tick % 10 ) {
           _drawingPlanes.painter().drawLine ( pxGrad, pxOrigin.y()
                                             , pxGrad, pxOrigin.y()+((tick%2)?5:10) );
         } else {
+          if ( tick == 0 ) {
+            int delta = (increase) ? 2 : -2;
+            _drawingPlanes.painter().drawLine ( pxGrad-delta, pxOrigin.y()
+                                              , pxGrad-delta, pxOrigin.y()+tickLength );
+          }
+
           _drawingPlanes.painter().drawLine ( pxGrad, pxOrigin.y()
                                             , pxGrad, pxOrigin.y()+tickLength );
 
@@ -1867,6 +1881,11 @@ namespace Hurricane {
           _drawingPlanes.painter().drawLine ( pxAngle.x()                , pyGrad
                                             , pxAngle.x()-((tick%2)?5:10), pyGrad );
         } else {
+          if ( tick == 0 ) {
+            _drawingPlanes.painter().drawLine ( pxAngle.x()           , pyGrad-2
+                                              , pxAngle.x()-tickLength, pyGrad-2);
+          }
+
           _drawingPlanes.painter().drawLine ( pxAngle.x()           , pyGrad
                                             , pxAngle.x()-tickLength, pyGrad );
 
@@ -2234,7 +2253,7 @@ namespace Hurricane {
     _drawingPlanes.begin            ();
     _drawingPlanes.copyToScreen     ();
     for ( size_t i=0 ; i<_commands.size() ; i++ )
-      _commands[i]->draw ( this );
+      _commands[i]->draw ();
 
     if ( isDrawable("spot") ) _spot.moveTo ( _mousePosition );
     _drawingPlanes.end             ();
@@ -2282,63 +2301,94 @@ namespace Hurricane {
 
   void  CellWidget::wheelEvent ( QWheelEvent* event )
   {
-    bool commandActive = false;
-    for ( size_t i=0 ; i<_commands.size() && !commandActive; i++ )
-      commandActive = _commands[i]->wheelEvent ( this, event );
-
-    if ( !commandActive ) QWidget::wheelEvent ( event );
+    event->ignore ();
+    for ( size_t i=0 ; (i<_commands.size()) and not event->isAccepted(); i++ ) {
+      if ( _activeCommand
+         and (_commands[i]            != _activeCommand       )
+         and (_commands[i]->getType() != Command::AlwaysActive) )
+        continue;
+      _commands[i]->wheelEvent ( event );
+    }
   }
 
 
   void  CellWidget::keyPressEvent ( QKeyEvent* event )
   {
-    bool commandActive = false;
-    for ( size_t i=0 ; i<_commands.size() && !commandActive; i++ )
-      commandActive = _commands[i]->keyPressEvent ( this, event );
-
-    if ( !commandActive ) QWidget::keyPressEvent ( event );
+    event->ignore ();
+  //cerr << "CellWidget::keyPressEvent " << event->isAccepted() << endl;
+    for ( size_t i=0 ; (i<_commands.size()) and not event->isAccepted(); i++ ) {
+      if ( _activeCommand
+         and (_commands[i]            != _activeCommand       )
+         and (_commands[i]->getType() != Command::AlwaysActive) )
+        continue;
+    //cerr << "  Calling [" << i << "] " << _commands[i]->getName() << endl;
+      _commands[i]->keyPressEvent ( event );
+    }
   }
 
 
   void  CellWidget::keyReleaseEvent ( QKeyEvent* event )
   {
-    bool commandActive = false;
-    for ( size_t i=0 ; i<_commands.size() && !commandActive; i++ )
-      commandActive = _commands[i]->keyReleaseEvent ( this, event );
-
-    if ( !commandActive ) QWidget::keyReleaseEvent ( event );
+    event->ignore ();
+  //cerr << "CellWidget::keyReleaseEvent " << event->isAccepted() << endl;
+    for ( size_t i=0 ; (i<_commands.size()) and not event->isAccepted(); i++ ) {
+      if ( _activeCommand
+         and (_commands[i]            != _activeCommand       )
+         and (_commands[i]->getType() != Command::AlwaysActive) )
+        continue;
+    //cerr << "  Calling [" << i << "] " << _commands[i]->getName() << endl;
+      _commands[i]->keyReleaseEvent ( event );
+    }
   }
 
 
   void  CellWidget::mouseMoveEvent ( QMouseEvent* event )
   {
-    bool commandActive = false;
-    for ( size_t i=0 ; i<_commands.size() && !commandActive; i++ )
-      commandActive = _commands[i]->mouseMoveEvent ( this, event );
-
-    if ( !commandActive ) {
-      _mousePosition = event->pos();
-      updateMousePosition ();
-      repaint ();
+    event->ignore ();
+    for ( size_t i=0 ; (i<_commands.size()) and not event->isAccepted(); i++ ) {
+      if ( _activeCommand
+         and (_commands[i]            != _activeCommand       )
+         and (_commands[i]->getType() != Command::AlwaysActive) )
+        continue;
+      _commands[i]->mouseMoveEvent ( event );
     }
+
+    _mousePosition = event->pos();
+    updateMousePosition ();
+    repaint ();
   }
 
 
   void  CellWidget::mousePressEvent ( QMouseEvent* event )
   {
-    bool commandActive = false;
-    for ( size_t i=0 ; i<_commands.size() && !commandActive; i++ )
-      commandActive = _commands[i]->mousePressEvent ( this, event );
+    event->ignore ();
+  //cerr << "CellWidget::mousePressEvent " << event->isAccepted() << endl;
+    for ( size_t i=0 ; (i<_commands.size()) and not event->isAccepted(); i++ ) {
+      if ( _activeCommand
+         and (_commands[i]            != _activeCommand       )
+         and (_commands[i]->getType() != Command::AlwaysActive) )
+        continue;
+    //cerr << "  Calling [" << i << "] " << _commands[i]->getName() << endl;
+      _commands[i]->mousePressEvent ( event );
+    }
 
-    _spot.setShowSpot ( !commandActive );
+    _spot.setShowSpot ( !_activeCommand );
   }
 
 
   void  CellWidget::mouseReleaseEvent ( QMouseEvent* event )
   {
-    bool commandActive = false;
-    for ( size_t i=0 ; i<_commands.size() && !commandActive; i++ )
-      commandActive = _commands[i]->mouseReleaseEvent ( this, event );
+    event->ignore ();
+  //cerr << "CellWidget::mouseReleaseEvent " << event->isAccepted() << endl;
+    for ( size_t i=0 ; (i<_commands.size()) and not event->isAccepted(); i++ ) {
+      if ( _activeCommand
+         and (_commands[i]            != _activeCommand       )
+         and (_commands[i]->getType() != Command::AlwaysActive) )
+        continue;
+    //cerr << "  Calling [" << i << "] " << _commands[i]->getName() << endl;
+      _commands[i]->mouseReleaseEvent ( event );
+    }
+  //if ( not _activeCommand ) QWidget::mouseReleaseEvent ( event );
 
     _spot.setShowSpot ( true );
   }
@@ -2457,7 +2507,7 @@ namespace Hurricane {
 
   Occurrences  CellWidget::getOccurrencesUnder ( const Box& area ) const
   {
-    return getCell()->getOccurrencesUnder(area).getSubSet(Occurrences_IsSelectable(this));
+    return getCell()->getOccurrencesUnder(area,3).getSubSet(Occurrences_IsSelectable(this));
   }
 
 
@@ -2519,6 +2569,7 @@ namespace Hurricane {
 
 	selector->attachTo(this);
 
+    setShowSelection ( true );
     _selectionHasChanged = true;
     if ( !_delaySelectionChanged ) emit selectionChanged(_selectors);
   }
@@ -2592,13 +2643,35 @@ namespace Hurricane {
 	Property* property = occurrence.getProperty ( Selector::getPropertyName() );
     Selector* selector = NULL;
 	if ( !property ) {
-      selector = Selector::create ( occurrence );
-      selector->attachTo ( this );
+    // Net special case.
+      Net* net = dynamic_cast<Net*>(occurrence.getEntity());
+      if ( net ) {
+        if ( occurrence.getPath().isEmpty() ) {
+          select ( net );
+        } else {
+          cerr << "[UNIMPLEMENTED] Selection of " << occurrence << endl;
+        }
+      } else {
+        selector = Selector::create ( occurrence );
+        selector->attachTo ( this );
+        setShowSelection ( true );
+      }
 	} else {
       selector = dynamic_cast<Selector*>(property);
       if ( !selector )
         throw Error ( "Abnormal property named " + getString(Selector::getPropertyName()) );
-      selector->detachFrom ( this );
+
+    // Net special case.
+      Net* net = dynamic_cast<Net*>(occurrence.getEntity());
+      if ( net ) {
+        if ( occurrence.getPath().isEmpty() ) {
+          unselect ( net );
+        } else {
+          cerr << "[UNIMPLEMENTED] Selection of " << occurrence << endl;
+        }
+      } else {
+        selector->detachFrom ( this );
+      }
     }
 
     _selectionHasChanged = true;

@@ -37,6 +37,9 @@ namespace Hurricane {
 // Class  :  "MoveCommand".
 
 
+  string MoveCommand::_name = "MoveCommand";
+
+
   MoveCommand::MoveCommand ()
     : Command      ()
     , _firstEvent  (true)
@@ -48,47 +51,53 @@ namespace Hurricane {
   { }
 
 
-  bool  MoveCommand::keyPressEvent ( CellWidget* widget, QKeyEvent* event )
+  const string& MoveCommand::getName () const
+  { return _name; }
+
+
+  Command::Type  MoveCommand::getType () const
+  { return AlwaysActive; }
+
+
+  void  MoveCommand::keyPressEvent ( QKeyEvent* event )
   { 
     if ( event->modifiers() & (Qt::ControlModifier|Qt::ShiftModifier) )
-      return false;
+      return;
 
     switch ( event->key() ) {
-      case Qt::Key_Up:    widget->goUp    (); return true;
-      case Qt::Key_Down:  widget->goDown  (); return true;
-      case Qt::Key_Left:  widget->goLeft  (); return true;
-      case Qt::Key_Right: widget->goRight (); return true;
+      case Qt::Key_Up:    _cellWidget->goUp    (); return;
+      case Qt::Key_Down:  _cellWidget->goDown  (); return;
+      case Qt::Key_Left:  _cellWidget->goLeft  (); return;
+      case Qt::Key_Right: _cellWidget->goRight (); return;
       case Qt::Key_Space:
         if ( !isActive() ) {
           setActive ( true );
           _firstEvent = true;
-        //_lastPosition = widget->getMousePosition();
-          widget->pushCursor ( Qt::ClosedHandCursor );
-          return true;
+        //_lastPosition = _cellWidget->getMousePosition();
+          _cellWidget->pushCursor ( Qt::ClosedHandCursor );
+          return;
         }
     }
-    return false;
   }
 
 
-  bool  MoveCommand::keyReleaseEvent ( CellWidget* widget, QKeyEvent* event )
+  void  MoveCommand::keyReleaseEvent ( QKeyEvent* event )
   { 
     switch ( event->key() ) {
       case Qt::Key_Space:
         if ( isActive() && !event->isAutoRepeat() ) {
           setActive ( false );
-          widget->popCursor ();
-          return true;
+          _cellWidget->popCursor ();
+          return;
         }
         break;
     }
-    return false;
   }
 
 
-  bool  MoveCommand::mouseMoveEvent ( CellWidget* widget, QMouseEvent* event )
+  void  MoveCommand::mouseMoveEvent ( QMouseEvent* event )
   {
-    if ( !isActive() ) return false;
+    if ( !isActive() ) return;
 
     QPoint eventPosition = event->pos();
     if ( _firstEvent ) { _firstEvent = false; _lastPosition = eventPosition; }
@@ -101,24 +110,10 @@ namespace Hurricane {
     dx -= rx;
     dy -= ry;
 
-    if ( dx > 0 ) widget->goLeft  (  dx );
-    if ( dx < 0 ) widget->goRight ( -dx );
-    if ( dy > 0 ) widget->goUp    (  dy );
-    if ( dy < 0 ) widget->goDown  ( -dy );
-
-    return true;
-  }
-
-
-  bool  MoveCommand::mousePressEvent ( CellWidget* widget, QMouseEvent* event )
-  {
-    return isActive();
-  }
-
-
-  bool  MoveCommand::mouseReleaseEvent ( CellWidget* widget, QMouseEvent* event )
-  {
-    return isActive();
+    if ( dx > 0 ) _cellWidget->goLeft  (  dx );
+    if ( dx < 0 ) _cellWidget->goRight ( -dx );
+    if ( dy > 0 ) _cellWidget->goUp    (  dy );
+    if ( dy < 0 ) _cellWidget->goDown  ( -dy );
   }
 
 

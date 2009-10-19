@@ -37,9 +37,12 @@ namespace Hurricane {
 // Class  :  "RulerCommand".
 
 
+  string RulerCommand::_name = "RulerCommand";
+
+
   RulerCommand::RulerCommand ()
-    : Command ()
-    , _ruler  ()
+    : Command()
+    , _ruler ()
   { }
 
 
@@ -47,62 +50,54 @@ namespace Hurricane {
   { }
 
 
-  bool  RulerCommand::keyPressEvent ( CellWidget* widget, QKeyEvent* event )
-  { 
-    return false;
-  }
+  const string& RulerCommand::getName () const
+  { return _name; }
 
 
-  bool  RulerCommand::keyReleaseEvent ( CellWidget* widget, QKeyEvent* event )
-  { 
-    return false;
-  }
-
-
-  bool  RulerCommand::mouseMoveEvent ( CellWidget* widget, QMouseEvent* event )
-  {
-    if ( !isActive() ) return false;
-
-    _ruler->setExtremity ( widget->_onSnapGrid(widget->screenToDbuPoint(event->pos())) );
-    widget->update ();
-
-    return true;
-  }
-
-
-  bool  RulerCommand::mousePressEvent ( CellWidget* widget, QMouseEvent* event )
-  {
-    if ( event->modifiers() & Qt::ShiftModifier ) {
-      if ( event->button() == Qt::LeftButton ) {
-        if ( !isActive() ) {
-          setActive ( true );
-          _ruler.reset ( new Ruler
-                       (widget->_onSnapGrid(widget->screenToDbuPoint(widget->getMousePosition())) ) );
-          return true;
-        } else {
-          widget->addRuler ( _ruler );
-          setActive ( false );
-          _ruler.reset ();
-        }
-      } else if ( event->button() == Qt::RightButton ){
-        if ( isActive() ) {
-          setActive ( false );
-          _ruler.reset ();
-        }
-      }
-    }
-    return isActive();
-  }
-
-
-  bool  RulerCommand::mouseReleaseEvent ( CellWidget* widget, QMouseEvent* event )
-  { return false; }
-
-
-  void  RulerCommand::draw ( CellWidget* widget )
+  void  RulerCommand::mouseMoveEvent ( QMouseEvent* event )
   {
     if ( !isActive() ) return;
-    widget->drawRuler ( _ruler );
+
+    _ruler->setExtremity ( _cellWidget->_onSnapGrid(_cellWidget->screenToDbuPoint(event->pos())) );
+    _cellWidget->update ();
+  }
+
+
+  void  RulerCommand::mousePressEvent ( QMouseEvent* event )
+  {
+    if (   (event->modifiers() &  Qt::ShiftModifier )
+       and (event->button()    == Qt::LeftButton    ) ) {
+      setActive ( true );
+      _ruler.reset ( new Ruler
+                   (_cellWidget->_onSnapGrid(_cellWidget->screenToDbuPoint(_cellWidget->getMousePosition())) ) );
+      return;
+    }
+
+    if ( isActive() ) {
+      if ( event->button() != Qt::RightButton )
+        _cellWidget->addRuler ( _ruler );
+
+      setActive ( false );
+      _ruler.reset ();
+    }
+  }
+
+
+  void  RulerCommand::keyPressEvent ( QKeyEvent* event )
+  {
+    if ( !isActive() ) return;
+
+    if ( event->key() == Qt::Key_Escape ) {
+      setActive ( false );
+      _ruler.reset ();
+    }
+  }
+
+
+  void  RulerCommand::draw ()
+  {
+    if ( !isActive() ) return;
+    _cellWidget->drawRuler ( _ruler );
   }
 
 

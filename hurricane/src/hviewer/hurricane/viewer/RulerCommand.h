@@ -37,20 +37,19 @@ namespace Hurricane {
 
   class RulerCommand : public Command {
     public:
-                                RulerCommand         ();
-      virtual                  ~RulerCommand         ();
-      virtual bool              keyPressEvent        ( CellWidget*, QKeyEvent* );
-      virtual bool              keyReleaseEvent      ( CellWidget*, QKeyEvent* );
-      virtual bool              mouseMoveEvent       ( CellWidget*, QMouseEvent* );
-      virtual bool              mousePressEvent      ( CellWidget*, QMouseEvent* );
-      virtual bool              mouseReleaseEvent    ( CellWidget*, QMouseEvent* );
-      virtual void              draw                 ( CellWidget* );
-    protected:
-              bool                         _active;
-              std::tr1::shared_ptr<Ruler>  _ruler;
+                            RulerCommand    ();
+      virtual              ~RulerCommand    ();
+      virtual const string& getName         () const;
+      virtual void          mouseMoveEvent  ( QMouseEvent* );
+      virtual void          mousePressEvent ( QMouseEvent* );
+      virtual void          keyPressEvent   ( QKeyEvent* );
+      virtual void          draw            ();
     private:
-                                 RulerCommand         ( const RulerCommand& );
-              RulerCommand&      operator=            ( const RulerCommand& );
+                            RulerCommand    ( const RulerCommand& );
+              RulerCommand& operator=       ( const RulerCommand& );
+    protected:
+      static string                _name;
+      std::tr1::shared_ptr<Ruler>  _ruler;
   };
 
 

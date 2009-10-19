@@ -40,62 +40,64 @@ namespace Hurricane {
 // Class  :  "HierarchyCommand".
 
 
+  string HierarchyCommand::_name = "HierarchyCommand";
+
+
   HierarchyCommand::HierarchyCommand ()
-    : Command ()
-    , _history()
+    : Command      ()
+    , _history     ()
     , _historyIndex(0)
-  {
-  }
+  { }
 
 
   HierarchyCommand::~HierarchyCommand ()
-  {
-  }
+  { }
 
 
-  bool  HierarchyCommand::keyReleaseEvent ( CellWidget* widget, QKeyEvent* event )
+  const string& HierarchyCommand::getName () const
+  { return _name; }
+
+
+  void  HierarchyCommand::keyReleaseEvent ( QKeyEvent* event )
   {
     bool  control = (event->modifiers() & Qt::ControlModifier);
     bool  shift   = (event->modifiers() & Qt::ShiftModifier  );
 
-    if ( !shift && !control ) return false;
-    if ( !widget->getCell() ) return false;
+    if ( !shift && !control ) return;
+    if ( !_cellWidget->getCell() ) return;
 
-    QPoint position ( widget->mapFromGlobal(QCursor::pos()) );
-    Box    pointBox ( widget->screenToDbuBox(QRect(position,QSize(1,1))) );
+    QPoint position ( _cellWidget->mapFromGlobal(QCursor::pos()) );
+    Box    pointBox ( _cellWidget->screenToDbuBox(QRect(position,QSize(1,1))) );
 
     switch ( event->key() ) {
       case Qt::Key_Up:
         if ( ( _historyIndex > 0 ) && (shift || control) ) {
-          widget->setState ( _history[--_historyIndex]._state );
+          _cellWidget->setState ( _history[--_historyIndex]._state );
         }
         break;
       case Qt::Key_Down:
         {
           if ( control ) {
             if ( _history.empty() )
-              _history.push_back ( HistoryEntry ( NULL, widget->getState() ) );
+              _history.push_back ( HistoryEntry ( NULL, _cellWidget->getState() ) );
 
-            Instances instances = widget->getCell()->getInstancesUnder ( pointBox );
+            Instances instances = _cellWidget->getCell()->getInstancesUnder ( pointBox );
             if ( !instances.isEmpty() ) {
               _history.erase ( _history.begin()+_historyIndex+1, _history.end() );
 
               Instance* instance = instances.getFirst ();
-              widget->setCell ( instance->getMasterCell() );
-              _history.push_back ( HistoryEntry ( instance, widget->getState() ) );
+              _cellWidget->setCell ( instance->getMasterCell() );
+              _history.push_back ( HistoryEntry ( instance, _cellWidget->getState() ) );
               _historyIndex++;
             }
           } else if ( shift ) {
             if ( _historyIndex+1 < _history.size() ) {
-              widget->setState ( _history[++_historyIndex]._state );
+              _cellWidget->setState ( _history[++_historyIndex]._state );
             }
           }
         }
         break;
-      default:
-        return false;
     }
-    return true;
   }
 
 

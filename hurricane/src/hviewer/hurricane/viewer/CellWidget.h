@@ -137,6 +137,9 @@ namespace Hurricane {
               void                    detachFromPalette          ();
               void                    bindCommand                ( Command* );
               void                    unbindCommand              ( Command* );
+      inline  void                    setActiveCommand           ( Command* );
+      inline  Command*                getActiveCommand           () const;
+      inline  void                    resetActiveCommand         ();
       inline  void                    setCursorStep              ( DbU::Unit );
       inline  bool                    realMode                   () const;
       inline  bool                    symbolicMode               () const;
@@ -625,6 +628,7 @@ namespace Hurricane {
               bool                       _cellModificated;
               bool                       _enableRedrawInterrupt;
               SelectorSet                _selectors;
+              Command*                   _activeCommand;
               vector<Command*>           _commands;
               size_t                     _redrawRectCount;
               int                        _textFontHeight;
@@ -1018,14 +1022,26 @@ namespace Hurricane {
   { return _scaleHistory[_ihistory]._scale; }
 
 
-  CellWidget::FindStateName::FindStateName ( const Name& cellName )
+  inline CellWidget::FindStateName::FindStateName ( const Name& cellName )
     : unary_function< const shared_ptr<State>&, bool >()
     , _cellName(cellName)
   { }
 
 
-  bool  CellWidget::FindStateName::operator () ( const shared_ptr<State>& state )
+  inline bool  CellWidget::FindStateName::operator () ( const shared_ptr<State>& state )
   { return state->getName() == _cellName; }
+
+
+  inline void  CellWidget::setActiveCommand ( Command* command )
+  { _activeCommand = command; }
+
+
+  inline Command* CellWidget::getActiveCommand () const
+  { return _activeCommand; }
+
+
+  inline void  CellWidget::resetActiveCommand ()
+  { _activeCommand = NULL; }
 
 
   inline void  CellWidget::setCursorStep ( DbU::Unit step )

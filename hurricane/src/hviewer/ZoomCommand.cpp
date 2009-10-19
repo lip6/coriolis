@@ -38,6 +38,9 @@ namespace Hurricane {
 // Class  :  "ZoomCommand".
 
 
+  string ZoomCommand::_name = "ZoomCommand";
+
+
   ZoomCommand::ZoomCommand ()
     : AreaCommand()
   { }
@@ -47,51 +50,56 @@ namespace Hurricane {
   { }
 
 
-  bool  ZoomCommand::wheelEvent ( CellWidget* widget, QWheelEvent* event )
-  {
-    if      ( event->delta() > 0 ) widget->setScale ( widget->getScale()/1.2 );
-    else if ( event->delta() < 0 ) widget->setScale ( widget->getScale()*1.2 );
-    event->accept ();
+  const string& ZoomCommand::getName () const
+  { return _name; }
 
-    return true;
+
+  Command::Type  ZoomCommand::getType () const
+  { return AlwaysActive; }
+
+
+  void  ZoomCommand::wheelEvent ( QWheelEvent* event )
+  {
+    if      ( event->delta() > 0 ) _cellWidget->setScale ( _cellWidget->getScale()/1.2 );
+    else if ( event->delta() < 0 ) _cellWidget->setScale ( _cellWidget->getScale()*1.2 );
+    event->accept ();
   }
 
 
-  bool  ZoomCommand::keyPressEvent ( CellWidget* widget, QKeyEvent* event )
+  void  ZoomCommand::keyPressEvent ( QKeyEvent* event )
   { 
     bool  control = (event->modifiers() & Qt::ControlModifier);
 
     switch ( event->key() ) {
       case Qt::Key_Z:
-        if ( control ) widget->scaleHistoryDown();
-        else           widget->setScale ( widget->getScale()*2.0 );
-        return true;
+        if ( control ) _cellWidget->scaleHistoryDown();
+        else           _cellWidget->setScale ( _cellWidget->getScale()*2.0 );
+        return;
       case Qt::Key_M:
-        if ( control ) widget->scaleHistoryUp ();
-        else           widget->setScale ( widget->getScale()/2.0 );
-        return true;
+        if ( control ) _cellWidget->scaleHistoryUp ();
+        else           _cellWidget->setScale ( _cellWidget->getScale()/2.0 );
+        return;
     }
-    return false;
   }
 
 
-  bool  ZoomCommand::mousePressEvent ( CellWidget* widget, QMouseEvent* event )
+  void  ZoomCommand::mousePressEvent ( QMouseEvent* event )
   {
-    if ( isActive() ) return true;
+    if ( isActive() ) return;
+    if ( _cellWidget->getActiveCommand() and (_cellWidget->getActiveCommand() != this) )
+      return;
 
     if ( ( event->button() == Qt::LeftButton ) && !event->modifiers() ) {
       setActive         ( true );
       setStartPoint     ( event->pos() );
       setDrawingEnabled ( true );
     }
-
-    return isActive();
   }
 
 
-  bool  ZoomCommand::mouseReleaseEvent ( CellWidget* widget, QMouseEvent* event )
+  void  ZoomCommand::mouseReleaseEvent ( QMouseEvent* event )
   {
-    if ( !isActive() ) return false;
+    if ( !isActive() ) return;
 
     setActive         ( false );
     setDrawingEnabled ( false );
@@ -99,14 +107,13 @@ namespace Hurricane {
     QRect zoomArea = QRect ( _startPoint, _stopPoint );
     if (   ( abs(zoomArea.width ()) > getDrawingThreshold() )
          && ( abs(zoomArea.height()) > getDrawingThreshold() ) ) {
-      widget->reframe ( widget->screenToDbuBox(zoomArea) ); 
-      return true;
-    } // else {
+      _cellWidget->reframe ( _cellWidget->screenToDbuBox(zoomArea) ); 
+      return;
+    }
+  //else {
   //  cerr << Warning("Rejecting too small zoom request.") << endl;
-  //  widget->update ();
+  //  _cellWidget->update ();
   //}
-
-    return false;
   }
 
 

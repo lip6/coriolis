@@ -32,6 +32,7 @@
 
 #include  "hurricane/Commons.h"
 #include  "hurricane/Occurrence.h"
+#include  "hurricane/Occurrences.h"
 
 
 class QModelIndex;
@@ -43,6 +44,10 @@ class QHeaderView;
 namespace Hurricane {
 
 
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::SelectionPopup".
+
+
   class SelectionPopupModel;
 
 
@@ -50,24 +55,26 @@ namespace Hurricane {
       Q_OBJECT;
 
     public:
-                                     SelectionPopup    ( QWidget* parent=NULL );
-              void                   updateLayout      ();
-              void                   popup             ();
+                    SelectionPopup    ( QWidget* parent=NULL );
+              void  updateLayout      ();
+              void  popup             ();
+              void  clearFilter       ();
+              void  setFilter         ( OccurrenceFilter );
     signals:
-              void                   selectionToggled  ( Occurrence occurrence );
+              void  selectionToggled  ( Occurrence );
     public slots:
-              void                   add               ( Occurrence occurrence, bool showChange=false );
-              void                   clear             ();
-              void                   forceRowHeight    ();
+              void  loadOccurrences   ( Occurrences, bool showChange=false );
+              void  clear             ();
+              void  forceRowHeight    ();
     protected:
-      virtual void                   keyPressEvent     ( QKeyEvent * event );
-      virtual void                   mouseMoveEvent    ( QMouseEvent* event );
-      virtual void                   mouseReleaseEvent ( QMouseEvent* event );
+      virtual void  keyPressEvent     ( QKeyEvent * );
+      virtual void  mouseMoveEvent    ( QMouseEvent* );
+      virtual void  mouseReleaseEvent ( QMouseEvent* );
 
     private:
-              SelectionPopupModel*  _model;
-              QTableView*            _view;
-              int                    _rowHeight;
+      SelectionPopupModel*  _model;
+      QTableView*           _view;
+      int                   _rowHeight;
   };
 
 

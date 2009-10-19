@@ -36,19 +36,20 @@ namespace Hurricane {
 
   class MoveCommand : public Command {
     public:
-                                MoveCommand          ();
-      virtual                  ~MoveCommand          ();
-      virtual bool              keyPressEvent        ( CellWidget*, QKeyEvent* );
-      virtual bool              keyReleaseEvent      ( CellWidget*, QKeyEvent* );
-      virtual bool              mouseMoveEvent       ( CellWidget*, QMouseEvent* );
-      virtual bool              mousePressEvent      ( CellWidget*, QMouseEvent* );
-      virtual bool              mouseReleaseEvent    ( CellWidget*, QMouseEvent* );
+                            MoveCommand          ();
+      virtual              ~MoveCommand          ();
+      virtual const string& getName              () const;
+      virtual Type          getType              () const;
+      virtual void          keyPressEvent        ( QKeyEvent* );
+      virtual void          keyReleaseEvent      ( QKeyEvent* );
+      virtual void          mouseMoveEvent       ( QMouseEvent* );
     private:
-              bool              _firstEvent;
-              QPoint            _lastPosition;
+                            MoveCommand          ( const MoveCommand& );
+              MoveCommand&  operator=            ( const MoveCommand& );
     private:
-                                MoveCommand          ( const MoveCommand& );
-              MoveCommand&      operator=            ( const MoveCommand& );
+      static string  _name;
+             bool    _firstEvent;
+             QPoint  _lastPosition;
   };
 
 

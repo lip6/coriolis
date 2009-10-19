@@ -64,7 +64,9 @@ namespace Hurricane {
 
   class CellViewer : public QMainWindow {
       Q_OBJECT;
-
+                                   
+    public:                        
+      enum  { CellHistorySize = 10 };
     public:
                                    CellViewer                ( QWidget* parent=NULL );
       virtual                     ~CellViewer                ();
@@ -93,52 +95,50 @@ namespace Hurricane {
               void                 showSelectionToggled      ( bool );
               void                 stateChanged              ( shared_ptr<CellWidget::State>& );
               void                 redrawCellWidget          ();
-                                   
-    public:                        
-              enum                 { CellHistorySize = 10 };
-    protected:                     
-              QString              _applicationName;
-              QAction*             _toolInterruptAction;
-              QAction*             _openAction;
-              QAction*             _nextAction;
-              QAction*             _cellHistoryAction[CellHistorySize];
-              QAction*             _printAction;
-              QAction*             _imageAction;
-              QAction*             _saveAction;
-              QAction*             _closeAction;
-              QAction*             _exitAction;
-              QAction*             _refreshAction;
-              QAction*             _fitToContentsAction;
-              QAction*             _showSelectionAction;
-              QAction*             _rubberChangeAction;
-              QAction*             _clearRulersAction;
-              QAction*             _controllerAction;
-              QMenu*               _fileMenu;
-              QMenu*               _viewMenu;
-              QMenu*               _toolsMenu;
-              QMenu*               _debugMenu;
-            //MapView*             _mapView;
-              HPalette*            _palette;
-              MousePositionWidget* _mousePosition;
-              ControllerWidget*    _controller;
-              CellWidget*          _cellWidget;
-              MoveCommand          _moveCommand;
-              ZoomCommand          _zoomCommand;
-              RulerCommand         _rulerCommand;
-              SelectCommand        _selectCommand;
-              HierarchyCommand     _hierarchyCommand;
-              list< shared_ptr<CellWidget::State> >
-                                   _cellHistory;
-              bool                 _firstShow;
-              bool                 _toolInterrupt;
-              UpdateState          _updateState;
-                                   
     protected:                     
               void                 createActions             ();
               void                 createMenus               ();
               void                 createLayout              ();
               void                 refreshTitle              ();
               void                 refreshHistory            ();
+
+    protected:                     
+      QString                  _applicationName;
+      QAction*                 _toolInterruptAction;
+      QAction*                 _openAction;
+      QAction*                 _nextAction;
+      QAction*                 _cellHistoryAction[CellHistorySize];
+      QAction*                 _printAction;
+      QAction*                 _imageAction;
+      QAction*                 _saveAction;
+      QAction*                 _closeAction;
+      QAction*                 _exitAction;
+      QAction*                 _refreshAction;
+      QAction*                 _fitToContentsAction;
+      QAction*                 _showSelectionAction;
+      QAction*                 _rubberChangeAction;
+      QAction*                 _clearRulersAction;
+      QAction*                 _controllerAction;
+      QMenu*                   _fileMenu;
+      QMenu*                   _viewMenu;
+      QMenu*                   _toolsMenu;
+      QMenu*                   _debugMenu;
+    //MapView*                 _mapView;
+      HPalette*                _palette;
+      MousePositionWidget*     _mousePosition;
+      ControllerWidget*        _controller;
+      CellWidget*              _cellWidget;
+      MoveCommand              _moveCommand;
+      ZoomCommand              _zoomCommand;
+      RulerCommand             _rulerCommand;
+      SelectCommand            _selectCommand;
+      HierarchyCommand         _hierarchyCommand;
+      list< shared_ptr<CellWidget::State> >
+                               _cellHistory;
+      bool                     _firstShow;
+      bool                     _toolInterrupt;
+      UpdateState              _updateState;
+
   };
 
 

@@ -27,9 +27,9 @@
 #define  __HURRICANE_COMMAND_H__
 
 
-#include  <set>
+#include  <map>
 
-using namespace std;
+using std::map;
 
 
 class QKeyEvent;
@@ -45,31 +45,34 @@ namespace Hurricane {
 
   class Command {
     public:
-                                Command              ();
-      virtual                  ~Command              ();
-      inline  bool              isActive             ();
-      inline  void              setActive            ( bool state );
-      virtual bool              wheelEvent           ( CellWidget*, QWheelEvent* );
-      virtual bool              keyPressEvent        ( CellWidget*, QKeyEvent* );
-      virtual bool              keyReleaseEvent      ( CellWidget*, QKeyEvent* );
-      virtual bool              mouseMoveEvent       ( CellWidget*, QMouseEvent* );
-      virtual bool              mousePressEvent      ( CellWidget*, QMouseEvent* );
-      virtual bool              mouseReleaseEvent    ( CellWidget*, QMouseEvent* );
-      virtual void              draw                 ( CellWidget* );
-      inline  set<CellWidget*>& getCellWidgets       ();
+      enum  Type  { Normal=1, AlwaysActive=2 };
+    public:
+                            Command           ();
+      virtual              ~Command           ();
+      virtual const string& getName           () const = 0;
+      virtual Type          getType           () const;
+      inline  bool          isActive          () const;
+              void          setActive         ( bool state );
+      inline  void          setCellWidget     ( CellWidget* );
+      virtual void          wheelEvent        ( QWheelEvent* );
+      virtual void          keyPressEvent     ( QKeyEvent* );
+      virtual void          keyReleaseEvent   ( QKeyEvent* );
+      virtual void          mouseMoveEvent    ( QMouseEvent* );
+      virtual void          mousePressEvent   ( QMouseEvent* );
+      virtual void          mouseReleaseEvent ( QMouseEvent* );
+      virtual void          draw              ();
     private:
-              set<CellWidget*>  _cellWidgets;
-              bool              _active;
-    private:
-                                Command              ( const Command& );
-              Command&          operator=            ( const Command& );
+                            Command           ( const Command& );
+              Command&      operator=         ( const Command& );
+    protected:
+      CellWidget* _cellWidget;
+      bool        _active;
   };
 
 
 // Inline Functions.
-  inline set<CellWidget*>& Command::getCellWidgets () { return _cellWidgets; }
-  inline bool              Command::isActive       () { return _active; }
-  inline void              Command::setActive      ( bool state ) { _active = state; }
+  bool  Command::isActive      () const { return _active; }
+  void  Command::setCellWidget ( CellWidget* widget ) { _cellWidget=widget; }
 
 
 }

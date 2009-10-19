@@ -51,7 +51,11 @@ namespace Hurricane {
     public:
                                 HierarchyCommand  ();
       virtual                  ~HierarchyCommand  ();
-      virtual bool              keyReleaseEvent   ( CellWidget*, QKeyEvent* );
+      virtual const string&     getName           () const;
+      virtual void              keyReleaseEvent   ( QKeyEvent* );
+    private:                  
+                                HierarchyCommand  ( const HierarchyCommand& );
+              HierarchyCommand& operator=         ( const HierarchyCommand& );
 
     private:
       class HistoryEntry {
@@ -61,11 +65,8 @@ namespace Hurricane {
           Instance*                      _instance;
           shared_ptr<CellWidget::State>  _state;
       };
-
-    private:                  
-                                HierarchyCommand  ( const HierarchyCommand& );
-              HierarchyCommand& operator=         ( const HierarchyCommand& );
     private:
+      static string         _name;
       vector<HistoryEntry>  _history;
       size_t                _historyIndex;
   };

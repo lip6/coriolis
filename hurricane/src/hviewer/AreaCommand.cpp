@@ -39,7 +39,7 @@ namespace Hurricane {
 
 
   AreaCommand::AreaCommand ()
-    : Command()
+    : Command          ()
     , _startPoint      ()
     , _stopPoint       ()
     , _drawingThreshold(10)
@@ -52,32 +52,30 @@ namespace Hurricane {
 
 
 
-  bool  AreaCommand::mouseMoveEvent ( CellWidget* widget, QMouseEvent* event )
+  void  AreaCommand::mouseMoveEvent ( QMouseEvent* event )
   {
-    if ( !_drawingEnabled ) return false;
+    if ( !_drawingEnabled ) return;
 
     setStopPoint ( event->pos() );
-    widget->update ();
-
-    return true;
+    _cellWidget->update ();
   }
 
 
-  void  AreaCommand::draw ( CellWidget* widget )
+  void  AreaCommand::draw ()
   {
     if ( !_drawingEnabled ) return;
 
     if (    ( abs(_stopPoint.x()-_startPoint.x()) > _drawingThreshold )
          && ( abs(_stopPoint.y()-_startPoint.y()) > _drawingThreshold ) ) {
-      widget->setPen ( Graphics::getPen("grid"), 2 );
-      widget->drawScreenRect ( _startPoint, _stopPoint, 2 );
-      drawCorner ( widget, true  );
-      drawCorner ( widget, false );
+      _cellWidget->setPen ( Graphics::getPen("grid"), 2 );
+      _cellWidget->drawScreenRect ( _startPoint, _stopPoint, 2 );
+      drawCorner ( true  );
+      drawCorner ( false );
     }
   }
 
 
-  void  AreaCommand::drawCorner ( CellWidget* widget, bool bottomLeft )
+  void  AreaCommand::drawCorner ( bool bottomLeft )
   {
     QRect  zoomRect = QRect(_startPoint,_stopPoint).normalized();
     QPoint base     = (bottomLeft) ? zoomRect.bottomLeft() : zoomRect.topRight();
@@ -92,7 +90,7 @@ namespace Hurricane {
     _cornerPoints[0].ry() += (bottomLeft) ? -10 :  10;
     _cornerPoints[2].rx() += (bottomLeft) ?  10 : -10;
 
-    widget->drawScreenPolyline ( _cornerPoints, 3, 4, 2 );
+    _cellWidget->drawScreenPolyline ( _cornerPoints, 3, 4, 2 );
   }
 
 

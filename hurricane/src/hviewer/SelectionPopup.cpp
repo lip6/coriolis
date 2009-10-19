@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
 //
 // ===================================================================
 //
@@ -29,15 +29,17 @@
 #include  <QGroupBox>
 #include  <QVBoxLayout>
 
-#include "hurricane/Commons.h"
-
-#include "hurricane/viewer/Graphics.h"
-#include "hurricane/viewer/SelectionPopupModel.h"
-#include "hurricane/viewer/SelectionPopup.h"
+#include  "hurricane/Commons.h"
+#include  "hurricane/viewer/Graphics.h"
+#include  "hurricane/viewer/SelectionPopupModel.h"
+#include  "hurricane/viewer/SelectionPopup.h"
 
 
 namespace Hurricane {
 
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::SelectionPopup".
 
 
   SelectionPopup::SelectionPopup ( QWidget* parent )
@@ -98,9 +100,8 @@ namespace Hurricane {
 
   void  SelectionPopup::keyPressEvent ( QKeyEvent* event )
   {
-    cerr << "SelectionPopup::keyPressEvent()" << endl;
-
-    QWidget::keyPressEvent ( event );
+  //cerr << "SelectionPopup::keyPressEvent()" << endl;
+  //QWidget::keyPressEvent ( event );
   }
 
 
@@ -132,16 +133,12 @@ namespace Hurricane {
   }
 
 
-  void  SelectionPopup::add ( Occurrence occurrence, bool showChange )
-  {
-    _model->add ( occurrence, showChange );
-  }
+  void  SelectionPopup::loadOccurrences ( Occurrences occurrences, bool showChange )
+  { _model->loadOccurrences ( occurrences, showChange ); }
 
 
   void  SelectionPopup::clear ()
-  {
-    _model->clear ();
-  }
+  { _model->clear (); }
 
 
   void  SelectionPopup::updateLayout ()
@@ -156,6 +153,14 @@ namespace Hurricane {
     resize ( windowSize );
     _view->resize ( windowSize );
   }
+
+
+  void  SelectionPopup::clearFilter ()
+  { if (_model) _model->clearFilter(); }
+
+
+  void  SelectionPopup::setFilter ( OccurrenceFilter filter )
+  { if (_model) _model->setFilter(filter); }
 
 
 } // End of Hurricane namespace.

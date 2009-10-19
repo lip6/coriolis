@@ -36,26 +36,26 @@ namespace Hurricane {
 
   class AreaCommand : public Command {
     public:
-                                AreaCommand          ();
-      virtual                  ~AreaCommand          ();
-      inline  void              setStartPoint        ( const QPoint& start );
-      inline  void              setStopPoint         ( const QPoint& stop );
-      inline  void              setDrawingEnabled    ( bool state );
-      inline  void              setDrawingThreshold  ( int );
-      virtual void              draw                 ( CellWidget* widget );
-      virtual void              drawCorner           ( CellWidget* widget, bool bottomLeft );
-      virtual bool              mouseMoveEvent       ( CellWidget* widget, QMouseEvent* event );
-      inline  bool              isDrawingEnabled     () const;
-      inline  int               getDrawingThreshold  () const;
+                           AreaCommand          ();
+      virtual             ~AreaCommand          ();
+      inline  void         setStartPoint        ( const QPoint& start );
+      inline  void         setStopPoint         ( const QPoint& stop );
+      inline  void         setDrawingEnabled    ( bool state );
+      inline  void         setDrawingThreshold  ( int );
+      virtual void         draw                 ();
+      virtual void         drawCorner           ( bool bottomLeft );
+      virtual void         mouseMoveEvent       ( QMouseEvent* event );
+      inline  bool         isDrawingEnabled     () const;
+      inline  int          getDrawingThreshold  () const;
     protected:
-              QPoint            _startPoint;
-              QPoint            _stopPoint;
-              QPoint            _cornerPoints[3];
-              int               _drawingThreshold;
-              bool              _drawingEnabled;
+              QPoint       _startPoint;
+              QPoint       _stopPoint;
+              QPoint       _cornerPoints[3];
+              int          _drawingThreshold;
+              bool         _drawingEnabled;
     private:
-                                AreaCommand          ( const AreaCommand& );
-              AreaCommand&      operator=            ( const AreaCommand& );
+                           AreaCommand          ( const AreaCommand& );
+              AreaCommand& operator=            ( const AreaCommand& );
   };
 
 

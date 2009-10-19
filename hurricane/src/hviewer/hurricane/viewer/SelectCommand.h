@@ -52,18 +52,22 @@ namespace Hurricane {
       Q_OBJECT;
 
     public:
-                               SelectCommand        ();
-      virtual                 ~SelectCommand        ();
-      virtual bool             mousePressEvent      ( CellWidget*, QMouseEvent* );
-      virtual bool             mouseReleaseEvent    ( CellWidget*, QMouseEvent* );
-              void             bindToAction         ( QAction* action );
+                             SelectCommand     ();
+      virtual               ~SelectCommand     ();
+      virtual const string&  getName           () const;
+      virtual void           keyPressEvent     ( QKeyEvent* );
+      virtual void           mousePressEvent   ( QMouseEvent* );
+      virtual void           mouseReleaseEvent ( QMouseEvent* );
+              void           bindToAction      ( QAction* );
     signals:
-              void             selectionToggled     ( Occurrence occurrence );
+              void           selectionToggled  ( Occurrence );
     private:
-              SelectionPopup*  _selectionPopup;
+                             SelectCommand     ( const SelectCommand& );
+              SelectCommand& operator=         ( const SelectCommand& );
     private:
-                               SelectCommand        ( const SelectCommand& );
-              SelectCommand&   operator=            ( const SelectCommand& );
+      static string           _name;
+             SelectionPopup*  _selectionPopup;
+             unsigned int     _selectMode;
   };
 
 

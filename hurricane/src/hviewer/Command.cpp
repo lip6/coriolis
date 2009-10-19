@@ -39,45 +39,35 @@ namespace Hurricane {
 
 
   Command::Command ()
-    : _cellWidgets()
-    , _active(false)
+    : _cellWidget()
+    , _active    (false)
   { }
 
 
   Command::~Command ()
   {
-    set<CellWidget*>::iterator iwidget = _cellWidgets.begin();
-    for ( ; iwidget != _cellWidgets.end() ; iwidget++ )
-      (*iwidget)->unbindCommand ( this );
+    if ( _cellWidget ) _cellWidget->unbindCommand ( this );
   }
 
 
-  bool  Command::wheelEvent ( CellWidget*, QWheelEvent* )
-  { return false; }
+  Command::Type  Command::getType () const
+  { return Normal; }
 
 
-  bool  Command::keyPressEvent ( CellWidget*, QKeyEvent* )
-  { return false; }
+  void  Command::setActive ( bool state )
+  {
+    _active = state;
+    _cellWidget->setActiveCommand ( (state and (getType() != AlwaysActive)) ? this : NULL );
+  }
 
 
-  bool  Command::keyReleaseEvent ( CellWidget*, QKeyEvent* )
-  { return false; }
-
-
-  bool  Command::mouseMoveEvent ( CellWidget*, QMouseEvent* )
-  { return false; }
-
-
-  bool  Command::mousePressEvent ( CellWidget*, QMouseEvent* )
-  { return false; }
-
-
-  bool  Command::mouseReleaseEvent ( CellWidget*, QMouseEvent* )
-  { return false; }
-
-
-  void  Command::draw ( CellWidget* )
-  { }
+  void  Command::wheelEvent        ( QWheelEvent* ) { }
+  void  Command::keyPressEvent     ( QKeyEvent*   ) { }
+  void  Command::keyReleaseEvent   ( QKeyEvent*   ) { }
+  void  Command::mouseMoveEvent    ( QMouseEvent* ) { }
+  void  Command::mousePressEvent   ( QMouseEvent* ) { }
+  void  Command::mouseReleaseEvent ( QMouseEvent* ) { }
+  void  Command::draw              ()               { }
 
 
 } // End of Hurricane namespace.
