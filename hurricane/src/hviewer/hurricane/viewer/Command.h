@@ -27,9 +27,8 @@
 #define  __HURRICANE_COMMAND_H__
 
 
+#include  <string>
 #include  <map>
-
-using std::map;
 
 
 class QKeyEvent;
@@ -39,6 +38,8 @@ class QWheelEvent;
 
 namespace Hurricane {
 
+  using std::map;
+  using std::string;
 
   class CellWidget;
 

@@ -23,11 +23,12 @@
 // x-----------------------------------------------------------------x
 
 
+#include  <QString>
 #include  <QMouseEvent>
 #include  <QKeyEvent>
 #include  <QAction>
 
-#include  <boost/regex.hpp>
+//#include  <boost/regex.hpp>
 
 #include  "hurricane/Path.h"
 #include  "hurricane/Entity.h"
@@ -140,8 +141,8 @@ namespace Hurricane {
   {
     ltrace(80) << "Occurrences_GetNets::Locator::progress()" << endl;
 
-    boost::regex   pattern ( "onymous" );
-    boost::smatch  match;
+  //boost::regex   pattern ( "onymous" );
+  //boost::smatch  match;
 
     for ( ; _primaryLoc->isValid() ; _primaryLoc->progress() ) {
       Occurrence element = _primaryLoc->getElement();
@@ -152,8 +153,11 @@ namespace Hurricane {
       Net*       net = component->getNet();
       Occurrence netOccurrence ( net, element.getPath() );
 
+      //if ( _hideAnonymous
+      //   and boost::regex_search(getString(net->getName()),match,pattern,boost::match_extra) )
+      //  continue;
       if ( _hideAnonymous
-         and boost::regex_search(getString(net->getName()),match,pattern,boost::match_extra) )
+         and QString(getString(net->getName()).c_str()).contains("onymous") )
         continue;
 
       _element = getHyperNetRootNetOccurrence ( netOccurrence );
@@ -238,16 +242,15 @@ namespace Hurricane {
         event->accept ();
 
         QRect selectArea ( event->pos() - QPoint(2,2), QSize(4,4) );
-      //_selectionPopup->loadOccurrences ( _cellWidget->getOccurrencesUnder(selectArea) );
         Occurrences  selection;
         switch ( _selectMode ) {
-          case 0:
+          case AllMode: // 0
             selection = _cellWidget->getOccurrencesUnder(selectArea);
             break;
-          case 1:
+          case NetMode: // 1
             selection = Occurrences_GetNets(_cellWidget->getOccurrencesUnder(selectArea),false);
             break;
-          case 2:
+          case NoAnonNetMode: // 2
             selection = Occurrences_GetNets(_cellWidget->getOccurrencesUnder(selectArea),true);
             break;
         }

@@ -51,6 +51,7 @@ namespace Hurricane {
 
 
   unsigned int  ExtensionSlice::_masks = 0;
+  vector<Name>  ExtensionSlice::_names;
 
 
   ExtensionSlice::ExtensionSlice ( Cell* cell, const Name& name, ExtensionSlice::Mask mask )
@@ -95,7 +96,16 @@ namespace Hurricane {
                   , getString(name).c_str()
                   );
 
-    ExtensionSlice* slice = new ExtensionSlice(cell,name,(1<<++_masks));
+    size_t ibit = 0;
+    for ( ibit=0 ; ibit<_masks ; ibit++ ) {
+      if ( _names[ibit] == name ) break;
+    }
+    if ( ibit == _masks ) {
+      _names.push_back ( name );
+      _masks++;
+    }
+
+    ExtensionSlice* slice = new ExtensionSlice(cell,name,(1<<ibit));
 
     return slice;
   }

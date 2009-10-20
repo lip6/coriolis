@@ -29,6 +29,7 @@ namespace Hurricane {
 class Entity;
 class SharedPath;
 class Quark;
+class BasicLayer;
 
 
 
@@ -72,6 +73,7 @@ class Occurrence {
     public: Property* getProperty(const Name& name) const;
     public: Properties getProperties() const;
     public: Box getBoundingBox() const;
+    public: Box getBoundingBox(const BasicLayer*) const;
 
 // Predicates
 // **********

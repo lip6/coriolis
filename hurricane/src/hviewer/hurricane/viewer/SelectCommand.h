@@ -52,9 +52,13 @@ namespace Hurricane {
       Q_OBJECT;
 
     public:
+      enum SelectMode { AllMode=0, NetMode=1, NoAnonNetMode=2 };
+    public:
                              SelectCommand     ();
       virtual               ~SelectCommand     ();
       virtual const string&  getName           () const;
+      inline  unsigned int   getSelectMode     () const;
+      inline  void           setSelectMode     ( unsigned int );
       virtual void           keyPressEvent     ( QKeyEvent* );
       virtual void           mousePressEvent   ( QMouseEvent* );
       virtual void           mouseReleaseEvent ( QMouseEvent* );
@@ -69,6 +73,10 @@ namespace Hurricane {
              SelectionPopup*  _selectionPopup;
              unsigned int     _selectMode;
   };
+
+
+  inline unsigned int  SelectCommand::getSelectMode () const { return _selectMode; }
+  inline void          SelectCommand::setSelectMode ( unsigned int mode ) { _selectMode = mode%3; }
 
 
 } // End of Hurricane namespace.

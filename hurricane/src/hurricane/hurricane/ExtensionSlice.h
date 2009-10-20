@@ -78,6 +78,7 @@ namespace Hurricane {
     private:
     // Internal: Attributes.
       static  unsigned int        _masks;
+      static  vector<Name>        _names;
               Cell*               _cell;
               Name                _name;
               Mask                _mask;

@@ -134,6 +134,16 @@ Box Occurrence::getBoundingBox() const
     return _sharedPath->getTransformation().getBox(_entity->getBoundingBox());
 }
 
+Box Occurrence::getBoundingBox(const BasicLayer* basicLayer) const
+// ***************************************************************
+{
+  const Component* component = dynamic_cast<const Component*>(_entity);
+  if ( not component ) return getBoundingBox();
+    
+  if (!_sharedPath) return component->getBoundingBox(basicLayer);
+  return _sharedPath->getTransformation().getBox(component->getBoundingBox(basicLayer));
+}
+
 bool Occurrence::hasProperty() const
 // ********************************
 {
