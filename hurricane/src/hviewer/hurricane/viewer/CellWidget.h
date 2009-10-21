@@ -533,6 +533,7 @@ namespace Hurricane {
           inline void                setCell                ( Cell* );
           inline void                setCellWidget          ( CellWidget* );
           inline void                setCursorStep          ( DbU::Unit );
+          inline  DbU::Unit          getCursorStep          () const;
           inline void                setRealMode            ();
           inline void                setSymbolicMode        ();
           inline void                setShowBoundaries      ( bool );
@@ -903,6 +904,9 @@ namespace Hurricane {
 
   inline void  CellWidget::State::setCursorStep ( DbU::Unit step )
   { _cursorStep = step; }
+
+  inline DbU::Unit CellWidget::State::getCursorStep () const
+  { return _cursorStep; }
 
 
   inline void  CellWidget::State::setRealMode ()
