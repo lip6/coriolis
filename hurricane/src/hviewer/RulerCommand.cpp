@@ -58,7 +58,7 @@ namespace Hurricane {
   {
     if ( !isActive() ) return;
 
-    _ruler->setExtremity ( _cellWidget->_onSnapGrid(_cellWidget->screenToDbuPoint(event->pos())) );
+    _ruler->setExtremity ( _cellWidget->_onCursorGrid(_cellWidget->screenToDbuPoint(event->pos())) );
     _cellWidget->update ();
   }
 
@@ -69,7 +69,7 @@ namespace Hurricane {
        and (event->button()    == Qt::LeftButton    ) ) {
       setActive ( true );
       _ruler.reset ( new Ruler
-                   (_cellWidget->_onSnapGrid(_cellWidget->screenToDbuPoint(_cellWidget->getMousePosition())) ) );
+                   (_cellWidget->_onCursorGrid(_cellWidget->screenToDbuPoint(_cellWidget->getMousePosition())) ) );
       return;
     }
 
