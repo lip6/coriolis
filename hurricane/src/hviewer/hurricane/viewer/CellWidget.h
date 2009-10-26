@@ -141,6 +141,7 @@ namespace Hurricane {
       inline  Command*                getActiveCommand           () const;
       inline  void                    resetActiveCommand         ();
       inline  void                    setCursorStep              ( DbU::Unit );
+      inline  void                    setRealSnapGridStep        ( DbU::Unit step );
       inline  bool                    realMode                   () const;
       inline  bool                    symbolicMode               () const;
       inline  bool                    showBoundaries             () const;
@@ -1050,6 +1051,10 @@ namespace Hurricane {
 
   inline void  CellWidget::setCursorStep ( DbU::Unit step )
   { _state->setCursorStep(step); }
+
+
+  inline void  CellWidget::setRealSnapGridStep ( DbU::Unit step )
+  { DbU::setRealSnapGridStep(step); }
 
 
   inline shared_ptr<CellWidget::State>& CellWidget::getState ()
