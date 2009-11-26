@@ -125,6 +125,16 @@ void Horizontal::translate(const DbU::Unit& dx, const DbU::Unit& dy)
         invalidate(true);
         _y += dy;
     }
+    if (dx != 0) {
+        if (!getSourceHook()->isAttached()) {
+            invalidate(true);
+            _dxSource += dx;
+        }
+        if (!getTargetHook()->isAttached()) {
+            invalidate(true);
+            _dxTarget += dx;
+        }
+    }
 }
 
 void Horizontal::setY(const DbU::Unit& y)

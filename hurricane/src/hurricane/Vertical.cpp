@@ -128,6 +128,16 @@ void Vertical::translate(const DbU::Unit& dx, const DbU::Unit& dy)
         invalidate(true);
         _x += dx;
     }
+    if (dy != 0) {
+        if (!getSourceHook()->isAttached()) {
+            invalidate(true);
+            _dySource += dy;
+        }
+        if (!getTargetHook()->isAttached()) {
+            invalidate(true);
+            _dyTarget += dy;
+        }
+    }
 }
 
 void Vertical::setX(const DbU::Unit& x)
