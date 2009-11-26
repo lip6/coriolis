@@ -166,7 +166,8 @@ extern "C" {
     if ( ! PyArg_ParseTuple(args,"|O&:DbU.grid",Converter,&arg0) )
       return ( NULL );
     
-    if ( __cs.getObjectIds() == FLOAT_ARG   ) { result = DbU::grid ( PyFloat_AsDouble ( arg0 ) ); }
+    if      ( __cs.getObjectIds() == FLOAT_ARG )  { result = DbU::grid ( PyFloat_AsDouble ( arg0 ) ); }
+    else if ( __cs.getObjectIds() == INT_ARG   )  { result = DbU::grid (     PyInt_AsLong ( arg0 ) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters or bad type for DbU.grid converter." );
       return ( NULL );

@@ -511,6 +511,8 @@ extern "C" {
     , { "Point"                 ,              PyPoint_create                    , METH_VARARGS, "Creates a new Point." }
     , { "Box"                   ,              PyBox_create                      , METH_VARARGS, "Creates a new Box." }
     , { "Transformation"        ,              PyTransformation_create           , METH_VARARGS, "Creates a new Transformation." }
+    , { "UpdateSession_open"    , (PyCFunction)PyUpdateSession_open              , METH_NOARGS , "Opens an update session." }
+    , { "UpdateSession_close"   , (PyCFunction)PyUpdateSession_close             , METH_NOARGS , "Closes an update session." }
     , { "DataBase"              , (PyCFunction)PyDataBase_create                 , METH_NOARGS , "Creates the DataBase." }
     , { "getDataBase"           , (PyCFunction)PyDataBase_getDataBase            , METH_NOARGS , "Gets the current DataBase." }
     , { "Library"               , (PyCFunction)PyLibrary_create                  , METH_VARARGS, "Creates a new Library." }
@@ -669,6 +671,7 @@ extern "C" {
            << "  Failed to initialize Hurricane module." << endl;
       return;
     }
+    //PyModule_AddObject(module, "Box", (PyObject*)&PyTypeBox); // To add Hurricane.Box type in module -> the Hurricane.Box() method must be renamed
     
     PyObject* dictionnary = PyModule_GetDict ( module );
 

@@ -74,6 +74,28 @@ extern "C" {
     Py_RETURN_NONE;
   }
 
+  
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyPad_translate ()"
+
+  static PyObject* PyPad_translate ( PyPad *self, PyObject* args ) {
+    trace << "PyPad_translate ()" << endl;
+    
+    HTRY
+    METHOD_HEAD ( "Pad.translate()" )
+    DbU::Unit dx=0, dy=0;
+    if (PyArg_ParseTuple(args,"ll:Pad.translate", &dx, &dy)) {
+        pad->translate(dx, dy);
+    } else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Pad.translate()" );
+      return NULL;
+    }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
   // ---------------------------------------------------------------
   // PyPad Attribute Method table.
 
@@ -82,6 +104,7 @@ extern "C" {
     , { "getY"                 , (PyCFunction)PyPad_getY       , METH_NOARGS, "Return the Pad Y value." }
     , { "getBoundingBox"       , (PyCFunction)PyPad_getBoundingBox, METH_NOARGS, "Return the Pad Bounding Box." }
     , { "setBoundingBox"       , (PyCFunction)PyPad_setBoundingBox, METH_VARARGS, "Sets the Pad Bounding Box." }
+    , { "translate"            , (PyCFunction)PyPad_translate     , METH_VARARGS, "Translates the Pad of dx and dy." }
     , { "destroy"              , (PyCFunction)PyPad_destroy          , METH_NOARGS
                                , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */

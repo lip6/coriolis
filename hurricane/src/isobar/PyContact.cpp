@@ -65,6 +65,27 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
+  // Attribute Method  :  "PyContact_translate ()"
+
+  static PyObject* PyContact_translate ( PyContact *self, PyObject* args ) {
+    trace << "PyContact_translate ()" << endl;
+    
+    HTRY
+    METHOD_HEAD ( "Contact.translate()" )
+    DbU::Unit dx=0, dy=0;
+    if (PyArg_ParseTuple(args,"ll:Contact.translate", &dx, &dy)) {
+        contact->translate(dx, dy);
+    } else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Contact.translate()" );
+      return NULL;
+    }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
+  // ---------------------------------------------------------------
   // PyContact Attribute Method table.
 
   PyMethodDef PyContact_Methods[] =
@@ -76,6 +97,7 @@ extern "C" {
     , { "getHalfHeight"  , (PyCFunction)PyContact_getHalfHeight  , METH_NOARGS , "Return the contact half height." }
     , { "getDx"          , (PyCFunction)PyContact_getDx          , METH_NOARGS , "Return the contact dx value." }
     , { "getDy"          , (PyCFunction)PyContact_getDy          , METH_NOARGS , "Return the contact dy value." }
+    , { "translate"      , (PyCFunction)PyContact_translate      , METH_VARARGS, "Translates the Contact of dx and dy." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

@@ -50,11 +50,33 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
+  // Attribute Method  :  "PyVertical_translate ()"
+
+  static PyObject* PyVertical_translate ( PyVertical *self, PyObject* args ) {
+    trace << "PyVertical_translate ()" << endl;
+    
+    HTRY
+    METHOD_HEAD ( "Vertical.translate()" )
+    DbU::Unit dx=0, dy=0;
+    if (PyArg_ParseTuple(args,"ll:Vertical.translate", &dx, &dy)) {
+        vertical->translate(dx, dy);
+    } else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Vertical.translate()" );
+      return NULL;
+    }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
+  // ---------------------------------------------------------------
   // PyVertical Attribute Method table.
 
   PyMethodDef PyVertical_Methods[] =
-    { { "destroy"              , (PyCFunction)PyVertical_destroy                     , METH_NOARGS
+    { { "destroy"              , (PyCFunction)PyVertical_destroy   , METH_NOARGS
                                , "Destroy associated hurricane object, the python object remains." }
+    , { "translate"            , (PyCFunction)PyVertical_translate , METH_VARARGS, "Translates the Vertical segment of dx and dy." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 
