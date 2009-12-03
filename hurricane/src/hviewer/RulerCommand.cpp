@@ -41,8 +41,9 @@ namespace Hurricane {
 
 
   RulerCommand::RulerCommand ()
-    : Command()
-    , _ruler ()
+    : Command ()
+    , _ruler  ()
+    , _drawing(false)
   { }
 
 
@@ -56,7 +57,7 @@ namespace Hurricane {
 
   void  RulerCommand::mouseMoveEvent ( QMouseEvent* event )
   {
-    if ( !isActive() ) return;
+    if ( not isActive() or not _drawing ) return;
 
     _ruler->setExtremity ( _cellWidget->_onCursorGrid(_cellWidget->screenToDbuPoint(event->pos())) );
     _cellWidget->update ();
@@ -65,38 +66,46 @@ namespace Hurricane {
 
   void  RulerCommand::mousePressEvent ( QMouseEvent* event )
   {
-    if (   (event->modifiers() &  Qt::ShiftModifier )
-       and (event->button()    == Qt::LeftButton    ) ) {
-      setActive ( true );
-      _ruler.reset ( new Ruler
-                   (_cellWidget->_onCursorGrid(_cellWidget->screenToDbuPoint(_cellWidget->getMousePosition())) ) );
-      return;
-    }
+    if ( not isActive() ) return;
 
-    if ( isActive() ) {
-      if ( event->button() != Qt::RightButton )
+    if ( event->button() == Qt::LeftButton ) {
+      if ( not _drawing ) {
+        _drawing = true;
+        _ruler.reset ( new Ruler
+                     (_cellWidget->_onCursorGrid(_cellWidget->screenToDbuPoint(_cellWidget->getMousePosition())) ) );
+      } else {
+        setActive ( false );
+        _drawing = false;
         _cellWidget->addRuler ( _ruler );
-
-      setActive ( false );
-      _ruler.reset ();
+        _ruler.reset ();
+      }
     }
   }
 
 
   void  RulerCommand::keyPressEvent ( QKeyEvent* event )
   {
-    if ( !isActive() ) return;
-
-    if ( event->key() == Qt::Key_Escape ) {
+    if ( isActive() and (event->key() == Qt::Key_Escape) ) {
       setActive ( false );
+      _drawing = false;
       _ruler.reset ();
+      return;
     }
+
+    if ( event->key() != Qt::Key_K ) return;
+
+    if ( event->modifiers() & Qt::ShiftModifier ) {
+      _cellWidget->clearRulers ();
+      return;
+    }
+
+    setActive ( true );
   }
 
 
   void  RulerCommand::draw ()
   {
-    if ( !isActive() ) return;
+    if ( not _drawing ) return;
     _cellWidget->drawRuler ( _ruler );
   }
 

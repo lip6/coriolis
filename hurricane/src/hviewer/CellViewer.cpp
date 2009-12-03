@@ -185,7 +185,7 @@ namespace Hurricane {
     _clearRulersAction = new QAction  ( tr("Clear Rulers"), this );
     _clearRulersAction->setObjectName ( "viewer.menuBar.view.clearRulers" );
     _clearRulersAction->setStatusTip  ( tr("Remove all rulers") );
-    _clearRulersAction->setShortcut   ( QKeySequence(tr("CTRL+R")) );
+  //_clearRulersAction->setShortcut   ( QKeySequence(tr("K")) );
 
     _controllerAction = new QAction  ( tr("Controller"), this );
     _controllerAction->setObjectName ( "viewer.menuBar.tools.controller" );

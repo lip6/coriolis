@@ -47,9 +47,10 @@ namespace Hurricane {
     private:
                             RulerCommand    ( const RulerCommand& );
               RulerCommand& operator=       ( const RulerCommand& );
-    protected:
+    private:
       static string                _name;
       std::tr1::shared_ptr<Ruler>  _ruler;
+      bool                         _drawing;
   };
 
 
