@@ -85,12 +85,12 @@ namespace Hurricane {
 
     public:
     // Constructor.
-      static  BasicLayer*     create                 ( Technology*     technology
-                                                     , const Name&     name
-                                                     , const Material& material
-                                                     , unsigned        extractNumber
-                                                     , const DbU::Unit&     minimalSize    = 0
-                                                     , const DbU::Unit&     minimalSpacing = 0
+      static  BasicLayer*     create                 ( Technology*      technology
+                                                     , const Name&      name
+                                                     , const Material&  material
+                                                     , unsigned         extractNumber
+                                                     , const DbU::Unit& minimalSize    = 0
+                                                     , const DbU::Unit& minimalSpacing = 0
                                                      );
     // Accessors.                                    
       inline  const Material& getMaterial            () const;
@@ -102,6 +102,7 @@ namespace Hurricane {
     // Updators                                      
       inline  void            setConnectorLayer      ( BasicLayer* layer);
       inline  void            setObstructionLayer    ( BasicLayer* layer);
+      inline  void            setExtractNumber       ( unsigned int );
       inline  void            setRealName            ( const char* realName);
     // Hurricane Managment.
       virtual BasicLayer*     _getSymbolicBasicLayer ();
@@ -132,17 +133,18 @@ namespace Hurricane {
 
 
 // Inline Functions.
-                  BasicLayer::Material::operator const Code& () const { return _code; }
-  const BasicLayer::Material::Code&
-                  BasicLayer::Material::getCode              () const { return _code; }
-  string          BasicLayer::Material::_getTypeName         () const { return _TName("BasicLayer::Material"); }
-  const BasicLayer::Material&
-                  BasicLayer::getMaterial                    () const { return _material; }
-  unsigned        BasicLayer::getExtractNumber               () const { return _extractNumber; }
-  const Name&     BasicLayer::getRealName                    () const { return _realName; }
-  void            BasicLayer::setConnectorLayer              ( BasicLayer* layer) { _connectorLayer = layer; }
-  void            BasicLayer::setObstructionLayer            ( BasicLayer* layer) { _obstructionLayer = layer; }
-  void            BasicLayer::setRealName                    ( const char* realName) { _realName = realName; }
+  inline                 BasicLayer::Material::operator const Code& () const { return _code; }
+  inline const BasicLayer::Material::Code&
+  inline                 BasicLayer::Material::getCode              () const { return _code; }
+  inline string          BasicLayer::Material::_getTypeName         () const { return _TName("BasicLayer::Material"); }
+  inline const BasicLayer::Material&
+  inline                 BasicLayer::getMaterial                    () const { return _material; }
+  inline unsigned        BasicLayer::getExtractNumber               () const { return _extractNumber; }
+  inline const Name&     BasicLayer::getRealName                    () const { return _realName; }
+  inline void            BasicLayer::setConnectorLayer              ( BasicLayer* layer) { _connectorLayer = layer; }
+  inline void            BasicLayer::setObstructionLayer            ( BasicLayer* layer) { _obstructionLayer = layer; }
+  inline void            BasicLayer::setExtractNumber               ( unsigned int number ) { _extractNumber=number; }
+  inline void            BasicLayer::setRealName                    ( const char* realName) { _realName = realName; }
 
 
 } // End of Hurricane namespace.
