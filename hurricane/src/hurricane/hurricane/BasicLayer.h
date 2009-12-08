@@ -135,10 +135,10 @@ namespace Hurricane {
 // Inline Functions.
   inline                 BasicLayer::Material::operator const Code& () const { return _code; }
   inline const BasicLayer::Material::Code&
-  inline                 BasicLayer::Material::getCode              () const { return _code; }
+                         BasicLayer::Material::getCode              () const { return _code; }
   inline string          BasicLayer::Material::_getTypeName         () const { return _TName("BasicLayer::Material"); }
   inline const BasicLayer::Material&
-  inline                 BasicLayer::getMaterial                    () const { return _material; }
+                         BasicLayer::getMaterial                    () const { return _material; }
   inline unsigned        BasicLayer::getExtractNumber               () const { return _extractNumber; }
   inline const Name&     BasicLayer::getRealName                    () const { return _realName; }
   inline void            BasicLayer::setConnectorLayer              ( BasicLayer* layer) { _connectorLayer = layer; }
