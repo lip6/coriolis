@@ -133,6 +133,7 @@ namespace Hurricane {
   inline string  demangle ( const type_info& info   ) { return demangle(info.name()); }
 
 
+#if DEPRECATED
 // For a complete explanation of this function, please look at :
 // http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm
 
@@ -158,6 +159,9 @@ namespace Hurricane {
     float rounded = roundf ( value*precision );
     value = rounded / precision;
   }
+#endif
+
+  inline float  roundfp ( float value, float precision=100.0 ) { return roundf(value*precision)/precision; }
 
 
 } // End of Hurricane namespace.
