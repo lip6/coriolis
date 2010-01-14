@@ -40,9 +40,10 @@ bool GdsLibrary::write(string filename) {
          << "  LASTACC {" << date << "};" << endl
          << "LIBNAME " << _libName << ".DB;" << endl
          << "UNITS;" << endl
-         << "  USERUNITS " << _userUnits << ";" << endl
-         << "  PHYSUNITS " << _physUnits << ";" << endl
+         << "  USERUNITS " << _userUnits << ";" << endl;
+    file << scientific << "  PHYSUNITS " << _physUnits << ";" << endl
          << endl;
+    file.unsetf(ios::floatfield);
 
     // For each Struct : write struct.
     for ( vector<GdsStructure*>::iterator it = _structs.begin() ; it < _structs.end() ; it++ ) {
