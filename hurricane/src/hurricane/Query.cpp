@@ -90,6 +90,10 @@ namespace Hurricane {
   { }
 
 
+  void  Query::setBasicLayer ( const BasicLayer* basicLayer )
+  { _basicLayer = basicLayer; }
+
+
   void  Query::setQuery ( Cell*                 cell
                         , const Box&            area
                         , const Transformation& transformation

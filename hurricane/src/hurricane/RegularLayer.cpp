@@ -221,6 +221,10 @@ namespace Hurricane {
 
     return regularLayer;
   }
+
+
+  const Layer* RegularLayer::getBlockageLayer () const
+  { return _basicLayer->getBlockageLayer(); }
  
 
   BasicLayers  RegularLayer::getBasicLayers () const

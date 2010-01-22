@@ -97,11 +97,11 @@ namespace Hurricane {
       inline  unsigned        getExtractNumber       () const;
       virtual BasicLayers     getBasicLayers         () const;
       virtual BasicLayer*     getConnectorLayer      () const;
-      virtual BasicLayer*     getObstructionLayer    () const;
+      virtual BasicLayer*     getBlockageLayer       () const;
       inline  const Name&     getRealName            () const;
     // Updators                                      
       inline  void            setConnectorLayer      ( BasicLayer* layer);
-      inline  void            setObstructionLayer    ( BasicLayer* layer);
+      inline  void            setBlockageLayer       ( BasicLayer* layer);
       inline  void            setExtractNumber       ( unsigned int );
       inline  void            setRealName            ( const char* realName);
     // Hurricane Managment.
@@ -115,7 +115,7 @@ namespace Hurricane {
               Material        _material;
               unsigned        _extractNumber;
               BasicLayer*     _connectorLayer;
-              BasicLayer*     _obstructionLayer;
+              BasicLayer*     _blockageLayer;
               Name            _realName;
 
     protected:
@@ -142,7 +142,7 @@ namespace Hurricane {
   inline unsigned        BasicLayer::getExtractNumber               () const { return _extractNumber; }
   inline const Name&     BasicLayer::getRealName                    () const { return _realName; }
   inline void            BasicLayer::setConnectorLayer              ( BasicLayer* layer) { _connectorLayer = layer; }
-  inline void            BasicLayer::setObstructionLayer            ( BasicLayer* layer) { _obstructionLayer = layer; }
+  inline void            BasicLayer::setBlockageLayer               ( BasicLayer* layer) { _blockageLayer = layer; }
   inline void            BasicLayer::setExtractNumber               ( unsigned int number ) { _extractNumber=number; }
   inline void            BasicLayer::setRealName                    ( const char* realName) { _realName = realName; }
 

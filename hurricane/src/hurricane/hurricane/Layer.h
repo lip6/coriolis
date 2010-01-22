@@ -69,6 +69,7 @@ namespace Hurricane {
       inline  DbU::Unit         getPitch                     () const;
       virtual BasicLayers       getBasicLayers               () const = 0;
       virtual Layer*            getConnectorLayer            () const;
+      virtual const Layer*      getBlockageLayer             () const;
       virtual const Layer*      getTop                       () const;
       virtual const Layer*      getBottom                    () const;
       virtual const Layer*      getOpposite                  ( const Layer* ) const;
@@ -76,7 +77,6 @@ namespace Hurricane {
               Layer*            getMetalBelow                ( bool useWorking=true ) const;
               Layer*            getCutAbove                  ( bool useWorking=true ) const;
               Layer*            getCutBelow                  ( bool useWorking=true ) const;
-      virtual Layer*            getObstructionLayer          () const;
       virtual DbU::Unit         getEnclosure                 () const;
       virtual DbU::Unit         getExtentionCap              () const;
       virtual DbU::Unit         getExtentionWidth            () const;

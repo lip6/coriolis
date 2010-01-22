@@ -257,6 +257,7 @@ Net::Net(Cell* cell, const Name& name)
     _arity(1),
     _isGlobal(false),
     _isExternal(false),
+    _isAutomatic(false),
     _type(),
     _direction(),
      _position(0,0),
@@ -473,6 +474,12 @@ void Net::setExternal(bool isExternal)
     }
 }
 
+void Net::setAutomatic(bool isAutomatic)
+// *************************************
+{
+    _isAutomatic = isAutomatic;
+}
+
 void Net::setType(const Type& type)
 // ********************************
 {
@@ -662,12 +669,12 @@ Record* Net::_getRecord() const
         record->add(getSlot("Arity", &_arity));
         record->add(getSlot("Global", &_isGlobal));
         record->add(getSlot("External", &_isExternal));
+        record->add(getSlot("Automatic", &_isAutomatic));
         record->add(getSlot("Type", &_type));
         record->add(getSlot("Direction", &_direction));
         record->add(getSlot("Position", &_position));
         record->add(getSlot("Components", &_componentSet));
         record->add(getSlot("Rubbers", &_rubberSet));
-        record->add(getSlot("External", &_isExternal));
     }
     return record;
 }

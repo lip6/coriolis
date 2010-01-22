@@ -82,8 +82,8 @@ namespace Hurricane {
   { return NULL; }
 
 
-  Layer* Layer::getObstructionLayer () const
-  { return NULL; } 
+  const Layer* Layer::getBlockageLayer () const
+  { return NULL; }
 
 
   const Layer* Layer::getTop () const

@@ -45,10 +45,11 @@ namespace Hurricane {
   { }
 
 
-  bool  Ruler::intersect ( const Box& area ) const
+  Point  Ruler::getAngle () const
   {
-    Point angle = getAngle ();
-    return area.intersect(Box(_origin,angle)) || area.intersect(Box(angle,_extremity));
+    if ( abs(_extremity.getX() - _origin.getX()) >=  abs(_extremity.getY() - _origin.getY()) )
+      return Point(_extremity.getX(),_origin.getY());
+    return Point(_origin.getX(),_extremity.getY());
   }
 
 

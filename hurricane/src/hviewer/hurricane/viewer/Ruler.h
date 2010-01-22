@@ -46,10 +46,10 @@ namespace Hurricane {
                           Ruler          ( const Point& origin, const Point& extremity );
       inline const Point& getOrigin      () const;
       inline const Point& getExtremity   () const;
-      inline Point        getAngle       () const;
+             Point        getAngle       () const;
       inline Box          getBoundingBox () const;
       inline void         setExtremity   ( const Point& );
-             bool         intersect      ( const Box& ) const;
+      inline bool         intersect      ( const Box& ) const;
     private:
       Point  _origin;
       Point  _extremity;
@@ -59,9 +59,9 @@ namespace Hurricane {
 // Inline Functions.
   inline const Point& Ruler::getOrigin      () const { return _origin; }
   inline const Point& Ruler::getExtremity   () const { return _extremity; }
-  inline Point        Ruler::getAngle       () const { return Point(_extremity.getX(),_origin.getY()); }
   inline Box          Ruler::getBoundingBox () const { return Box(_origin,_extremity); }
   inline void         Ruler::setExtremity   ( const Point& extremity ) { _extremity = extremity; }
+  inline bool         Ruler::intersect      ( const Box& area ) const { return area.intersect(Box(_origin,getAngle())); }
 
   typedef  std::set< std::tr1::shared_ptr<Ruler> >  RulerSet;
 

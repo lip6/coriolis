@@ -52,6 +52,7 @@ namespace Hurricane {
   const Name  DisplayStyle::TextRuler     = "text.ruler";
   const Name  DisplayStyle::TextCell      = "text.cell";
   const Name  DisplayStyle::TextInstance  = "text.instance";
+  const Name  DisplayStyle::TextComponent = "text.component";
   const Name  DisplayStyle::Undef         = "undef";
 
 
@@ -101,12 +102,13 @@ namespace Hurricane {
     if ( !_color ) {
       _color = new QColor ( _red, _green, _blue );
 
-      _pen = new QPen ( *_color );
+      _pen = new QPen ();
       if ( _borderWidth ) {
         _pen->setStyle ( Qt::SolidLine );
         _pen->setWidth ( _borderWidth );
       } else
         _pen->setStyle ( Qt::NoPen );
+      _pen->setColor ( *_color );
 
       _brush = Hurricane::getBrush ( _pattern, _red, _green, _blue );
     }
@@ -267,6 +269,7 @@ namespace Hurricane {
     addDrawingStyle ( Viewer, TextRuler    , "FFFFFFFFFFFFFFFF", 255, 255, 255, 1, 0.0 );
     addDrawingStyle ( Viewer, TextCell     , "8822441188224411", 255, 255, 255, 0, 1.0 );
     addDrawingStyle ( Viewer, TextInstance , "8822441188224411", 255, 255, 255, 0, 1.0 );
+    addDrawingStyle ( Viewer, TextComponent, "FFFFFFFFFFFFFFFF", 255, 255, 255, 0, 1.0 );
     addDrawingStyle ( Viewer, Undef        , "2244118822441188", 238, 130, 238, 0, 1.0 );
   }
 

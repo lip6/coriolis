@@ -339,12 +339,12 @@ namespace Hurricane {
       inline  void                  setCell                ( Cell*                 cell );
       inline  void                  setArea                ( const Box&            area );
       inline  void                  setTransformation      ( const Transformation& transformation );
-      inline  void                  setBasicLayer          ( const BasicLayer*     basicLayer );
+      virtual void                  setBasicLayer          ( const BasicLayer*     basicLayer );
       inline  void                  setExtensionMask       ( ExtensionSlice::Mask  mode );
       inline  void                  setFilter              ( Mask                  mode );
       inline  void                  setStartLevel          ( unsigned int          level );
       inline  void                  setStopLevel           ( unsigned int          level );
-              void                  doQuery                ();
+      virtual void                  doQuery                ();
 
     protected:
     // Internal: Attributes.
@@ -360,7 +360,6 @@ namespace Hurricane {
   inline  void  Query::setCell           ( Cell*                 cell )           { _stack.setTopCell(cell); }
   inline  void  Query::setArea           ( const Box&            area )           { _stack.setTopArea(area); }
   inline  void  Query::setTransformation ( const Transformation& transformation ) { _stack.setTopTransformation(transformation); }
-  inline  void  Query::setBasicLayer     ( const BasicLayer*     basicLayer )     { _basicLayer = basicLayer; }
   inline  void  Query::setFilter         ( Mask                  filter )         { _filter = filter; }
   inline  void  Query::setExtensionMask  ( ExtensionSlice::Mask  mask )           { _extensionMask = mask; }
   inline  void  Query::setStartLevel     ( unsigned int          level )          { _stack.setStartLevel(level); }

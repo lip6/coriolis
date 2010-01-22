@@ -111,9 +111,13 @@ namespace Hurricane {
                                         , const Transformation&
                                         );
       typedef void ( InitExtensionGo_t )( CellWidget* );
-      enum    RubberShape { Centric     = 1
-                          , Barycentric
-                          , Steiner
+      enum    RubberShape { Centric=1, Barycentric, Steiner };
+      enum    TextFlag    { Bold   =0x01
+                          , BigFont=0x02
+                          , Reverse=0x04
+                          , Frame  =0x08
+                          , Center =0x10
+                          , Top    =0x20
                           };
     public:
     // Constructor & Destructor.
@@ -174,12 +178,13 @@ namespace Hurricane {
               void                    drawBox                    ( const Box& );
               void                    drawLine                   ( DbU::Unit, DbU::Unit, DbU::Unit, DbU::Unit, bool mode=true );
               void                    drawLine                   ( const Point&, const Point&, bool mode=true );
-              void                    drawText                   ( const Point&, const char*, bool bold=false, int angle=0, bool reverse=false );
+              void                    drawText                   ( const Point&, const char*, unsigned int flags=0, int angle=0 );
               void                    drawGrid                   ( QRect );
               void                    drawSpot                   ();
               void                    drawRuler                  ( shared_ptr<Ruler> );
               void                    drawRulers                 ( QRect );
-              void                    drawDisplayText            ( const QPoint&, const char*, bool bold=false, int angle=0, bool reverse=false );
+              void                    drawDisplayText            ( const QRect& , const char*, unsigned int flags=0 );
+              void                    drawDisplayText            ( const QPoint&, const char*, unsigned int flags=0, int angle=0 );
               void                    drawScreenLine             ( const QPoint&, const QPoint&, size_t plane=PlaneId::Working, bool mode=true );
               void                    drawScreenRect             ( const QPoint&, const QPoint&, size_t plane=PlaneId::Working );
               void                    drawScreenRect             ( const QRect& ,                size_t plane=PlaneId::Working );

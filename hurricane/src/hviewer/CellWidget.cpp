@@ -36,6 +36,7 @@
 #include <QBitmap>
 #include <QLabel>
 
+#include "hurricane/SharedName.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
 #include "hurricane/BasicLayer.h"
@@ -793,13 +794,25 @@ namespace Hurricane {
     const Component* component = dynamic_cast<const Component*>(go);
     if ( component ) {
       _goCount++;
-      rectangle = _cellWidget->dbuToDisplayRect ( transformation.getBox(component->getBoundingBox(basicLayer)) );
+      Box bb = transformation.getBox(component->getBoundingBox(basicLayer));
+      rectangle = _cellWidget->dbuToDisplayRect ( bb );
       state     = ( (rectangle.width() > 2) ? 1:0) | ( (rectangle.height() > 2) ? 2:0); 
       switch ( state ) {
         case 0: break;
         case 1: _cellWidget->drawScreenLine ( rectangle.bottomLeft(), rectangle.bottomRight() ); break;
         case 2: _cellWidget->drawScreenLine ( rectangle.bottomLeft(), rectangle.topLeft    () ); break;
         case 3: _cellWidget->drawScreenRect ( rectangle ); break;
+      }
+
+      if ( _cellWidget->isDrawable("text.component")
+         and (getDepth() < 2)
+         and (rectangle.width () > 30)
+         and (rectangle.height() > 30) ) {
+        const Net* net = component->getNet();
+        if ( not net->isAutomatic() ) {
+          const char* netName = net->getName()._getSharedName()->_getSString().c_str();
+          _cellWidget->drawDisplayText ( rectangle, netName, BigFont|Bold|Center|Frame );
+        }
       }
     }
   }
@@ -909,9 +922,8 @@ namespace Hurricane {
     if ( getDepth() == 2 )
       _cellWidget->drawText ( Point(bbox.getXMin(),bbox.getYMin())
                             , getString(getInstance()->getName()).c_str()
-                            , false
+                            , Reverse|Top
                             , -90
-                            , true
                             );
   }
 
@@ -1609,25 +1621,69 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::drawText ( const Point& point, const char* text, bool bold, int angle, bool reverse )
+  void  CellWidget::drawText ( const Point& point, const char* text, unsigned int flags, int angle )
   {
-    drawDisplayText ( dbuToDisplayPoint(point), text, bold, angle, reverse );
+    drawDisplayText ( dbuToDisplayPoint(point), text, flags, angle );
   }
 
 
-  void  CellWidget::drawDisplayText ( const QPoint& point, const char* text, bool bold, int angle, bool reverse )
+  void  CellWidget::drawDisplayText ( const QRect& box, const char* text, unsigned int flags )
   {
-    _drawingPlanes.painter().save();
-    if ( reverse ) {
-      _drawingPlanes.painter().setPen            ( Graphics::getPen  ("background") );
-      _drawingPlanes.painter().setBackgroundMode ( Qt::OpaqueMode );
+    QFont  font = Graphics::getNormalFont(flags&Bold);
+
+    if ( flags & BigFont ) font.setPointSize ( 18 );
+
+    QFontMetrics metrics = QFontMetrics(font);
+    int          width   = metrics.width  ( text );
+    int          height  = metrics.height ();
+    int          angle   = 0;
+
+    if ( (width > box.width()) and (box.height() > 2*box.width()) )
+      angle = -90;
+
+    drawDisplayText ( box.center(), text, flags, angle );
+  }
+
+
+  void  CellWidget::drawDisplayText ( const QPoint& point, const char* text, unsigned int flags, int angle )
+  {
+    QPainter&    painter = _drawingPlanes.painter();
+    QPen         pen     = painter.pen ();
+    QBrush       brush   = painter.brush ();
+    QFont        font    = Graphics::getNormalFont(flags&Bold);
+
+    painter.save();
+    if ( flags & Reverse ) painter.setPen ( Graphics::getPen("background") );
+    if ( flags & Reverse ) painter.setBackgroundMode ( Qt::OpaqueMode );
+    if ( flags & BigFont ) font.setPointSize ( 18 );
+
+    QFontMetrics metrics = QFontMetrics(font);
+    int          width   = metrics.width  ( text );
+    int          height  = metrics.height ();
+
+    pen.setStyle ( Qt::SolidLine );
+    pen.setColor ( painter.brush().color() );
+
+    brush.setStyle ( Qt::NoBrush );
+
+    painter.setPen    ( pen );
+    painter.setBrush  ( brush );
+    painter.setFont   ( font );
+    painter.translate ( point );
+    painter.rotate    ( angle );
+
+    QPoint bottomLeft ( 0, 0);
+    if ( flags &  Center ) {
+      bottomLeft.rx() -= width /2;
+      bottomLeft.ry() += height/2;
+    } else if ( flags & Top ) {
+      bottomLeft.ry() += height;
     }
 
-    _drawingPlanes.painter().setFont ( Graphics::getNormalFont(bold) );
-    _drawingPlanes.painter().translate ( point );
-    _drawingPlanes.painter().rotate ( angle );
-    _drawingPlanes.painter().drawText ( 0, _textFontHeight, text );
-    _drawingPlanes.painter().restore ();
+    if ( flags & Frame ) painter.drawRect ( bottomLeft.x()-1, bottomLeft.y()-height, width+2, height );
+
+    painter.drawText  ( bottomLeft.x(), bottomLeft.y()-metrics.descent(), text );
+    painter.restore   ();
   }
 
 
@@ -1787,19 +1843,21 @@ namespace Hurricane {
       pxAngle     = dbuToDisplayPoint ( angle );
     }
 
+    bool   hRuler = ( abs(pxAngle.x() - pxOrigin.x()) >= abs(pxAngle.y() - pxOrigin.y()) );
     int    pxGrad;
     int    pyGrad;
     string textGrad;
     int    tick;
 
-    _drawingPlanes.painter().setPen ( Graphics::getPen("text.ruler") );
+    _drawingPlanes.painter().setPen   ( Graphics::getPen  ("text.ruler") );
+    _drawingPlanes.painter().setBrush ( Graphics::getBrush("text.ruler") );
 
   // The horizontal ruler.
     bool increase = ( origin.getX() < extremity.getX() );
     if ( !increase )
       gradStep = -gradStep;
 
-    if ( abs(pxAngle.x() - pxOrigin.x()) > 20 ) {
+    if ( hRuler and (abs(pxAngle.x() - pxOrigin.x()) > 20) ) {
     // The horizontal ruler axis.
       _drawingPlanes.painter().drawLine ( pxOrigin, pxAngle );
 
@@ -1818,26 +1876,24 @@ namespace Hurricane {
           _drawingPlanes.painter().drawLine ( pxGrad, pxOrigin.y()
                                             , pxGrad, pxOrigin.y()+((tick%2)?5:10) );
         } else {
-          if ( tick == 0 ) {
-            int delta = (increase) ? 2 : -2;
-            _drawingPlanes.painter().drawLine ( pxGrad-delta, pxOrigin.y()
-                                              , pxGrad-delta, pxOrigin.y()+tickLength );
-          }
+          // if ( tick == 0 ) {
+          //   int delta = (increase) ? 2 : -2;
+          //   _drawingPlanes.painter().drawLine ( pxGrad-delta, pxOrigin.y()
+          //                                     , pxGrad-delta, pxOrigin.y()+tickLength );
+          // }
 
           _drawingPlanes.painter().drawLine ( pxGrad, pxOrigin.y()
                                             , pxGrad, pxOrigin.y()+tickLength );
 
-          if ( !tick ) continue;
+          // if ( !tick ) continue;
 
           textGrad = DbU::getValueString( gradStep*tick );
           textGrad.resize ( textGrad.size()-1 );
 
-          drawDisplayText ( QPoint(pxGrad - _textFontHeight - 1
-                                  ,pxOrigin.y() + tickLength)
+          drawDisplayText ( QPoint ( pxGrad - 1, pxOrigin.y() + tickLength )
                           , textGrad.c_str()
-                          , true
+                          , Bold
                           , -90
-                          , false
                           );
         }
       }
@@ -1849,74 +1905,68 @@ namespace Hurricane {
       textGrad = DbU::getValueString ( angle.getX() - origin.getX() );
       textGrad.resize ( textGrad.size()-1 );
 
-      drawDisplayText ( QPoint(pxAngle.x() - _textFontHeight - 1
-                              ,pxAngle.y() + tickLength)
+      drawDisplayText ( QPoint ( pxAngle.x() - 1,pxAngle.y() + tickLength )
                       , textGrad.c_str()
-                      , true
+                      , Bold
                       , -90
-                      , false
                       );
     }
 
-    if ( abs(pxExtremity.y() - pxAngle.y()) > 20 ) {
+    if ( not hRuler and (abs(pxAngle.y() - pxOrigin.y()) > 20) ) {
     // The vertical ruler.
-      increase = ( angle.getY() < extremity.getY() );
+      increase = ( origin.getY() < angle.getY() );
       if ( increase xor ( gradStep > 0 ) )
         gradStep = -gradStep;
 
     // The vertical ruler axis.
-      _drawingPlanes.painter().drawLine ( pxAngle, pxExtremity );
+      _drawingPlanes.painter().drawLine ( pxOrigin, pxAngle );
 
     // The vertical ruler ticks.
-      for ( graduation=angle.getY(), tick=0 ; true ; graduation+=gradStep, tick++ ) {
+      for ( graduation=origin.getY(), tick=0 ; true ; graduation+=gradStep, tick++ ) {
         if ( increase ) {
-          if ( graduation >= extremity.getY() ) break;
+          if ( graduation >= angle.getY() ) break;
         } else
-          if ( graduation <= extremity.getY() ) break;
+          if ( graduation <= angle.getY() ) break;
 
         if ( onScreen ) pyGrad = dbuToScreenY  ( graduation );
         else            pyGrad = dbuToDisplayY ( graduation );
 
         if ( tick % 10 ) {
-          _drawingPlanes.painter().drawLine ( pxAngle.x()                , pyGrad
-                                            , pxAngle.x()-((tick%2)?5:10), pyGrad );
+          _drawingPlanes.painter().drawLine ( pxOrigin.x()                , pyGrad
+                                            , pxOrigin.x()-((tick%2)?5:10), pyGrad );
         } else {
-          if ( tick == 0 ) {
-            _drawingPlanes.painter().drawLine ( pxAngle.x()           , pyGrad-2
-                                              , pxAngle.x()-tickLength, pyGrad-2);
-          }
+          // if ( tick == 0 ) {
+          //   _drawingPlanes.painter().drawLine ( pxOrigin.x()           , pyGrad-2
+          //                                     , pxOrigin.x()-tickLength, pyGrad-2);
+          // }
 
-          _drawingPlanes.painter().drawLine ( pxAngle.x()           , pyGrad
-                                            , pxAngle.x()-tickLength, pyGrad );
+          _drawingPlanes.painter().drawLine ( pxOrigin.x()           , pyGrad
+                                            , pxOrigin.x()-tickLength, pyGrad );
 
-          if ( !tick ) continue;
+          // if ( !tick ) continue;
 
           textGrad  = DbU::getValueString( gradStep*tick );
           textGrad.resize ( textGrad.size()-1 );
 
-          drawDisplayText ( QPoint(pxAngle.x() - tickLength
-                                  ,pyGrad + 1)
+          drawDisplayText ( QPoint(pxOrigin.x() - tickLength,pyGrad + 1)
                           , textGrad.c_str()
-                          , true
+                          , Bold
                           , 0
-                          , false
                           );
         }
       }
 
     // The last vertical tick.
-      _drawingPlanes.painter().drawLine ( pxAngle.x()           , pxExtremity.y()
-                                        , pxAngle.x()-tickLength, pxExtremity.y() );
+      _drawingPlanes.painter().drawLine ( pxOrigin.x()           , pxAngle.y()
+                                        , pxOrigin.x()-tickLength, pxAngle.y() );
 
-      textGrad  = DbU::getValueString( extremity.getY() - angle.getY() );
+      textGrad  = DbU::getValueString( angle.getY() - origin.getY() );
       textGrad.resize ( textGrad.size()-1 );
 
-      drawDisplayText ( QPoint(pxAngle.x() - tickLength
-                              ,pxExtremity.y() + 1)
+      drawDisplayText ( QPoint(pxOrigin.x() - tickLength,pxAngle.y() + 1)
                       , textGrad.c_str()
-                      , true
+                      , Bold
                       , 0
-                      , false
                       );
     }
   }
@@ -2453,6 +2503,7 @@ namespace Hurricane {
 
     shared_ptr<State>  state ( new State(cell) );
     setState ( state );
+    if ( cell->isTerminal() ) setQueryFilter ( ~0 );
   //setRealMode ();
 
     fitToContents ( false );

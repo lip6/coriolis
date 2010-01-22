@@ -132,6 +132,7 @@ class Net : public Entity {
     private: Arity _arity;
     private: bool _isGlobal;
     private: bool _isExternal;
+    private: bool _isAutomatic;
     private: Type _type;
     private: Direction _direction;
     private: Point _position;
@@ -188,14 +189,15 @@ class Net : public Entity {
 // Predicates
 // **********
 
-    public: virtual bool isDeepNet () const {return false;};
-    public:         bool isGlobal  () const {return _isGlobal;};
-    public:         bool isExternal() const {return _isExternal;};
-    public:         bool isLogical () const {return (_type == Type::LOGICAL);};
-    public:         bool isClock   () const {return (_type == Type::CLOCK);};
-    public:         bool isPower   () const {return (_type == Type::POWER);};
-    public:         bool isGround  () const {return (_type == Type::GROUND);};
-    public:         bool isSupply  () const {return (isPower() || isGround());};
+    public: virtual bool isDeepNet  () const {return false;};
+    public:         bool isGlobal   () const {return _isGlobal;};
+    public:         bool isExternal () const {return _isExternal;};
+    public:         bool isAutomatic() const {return _isAutomatic;};
+    public:         bool isLogical  () const {return (_type == Type::LOGICAL);};
+    public:         bool isClock    () const {return (_type == Type::CLOCK);};
+    public:         bool isPower    () const {return (_type == Type::POWER);};
+    public:         bool isGround   () const {return (_type == Type::GROUND);};
+    public:         bool isSupply   () const {return (isPower() || isGround());};
 
 // Updators
 // ********
@@ -204,6 +206,7 @@ class Net : public Entity {
     public: void setArity(const Arity& arity);
     public: void setGlobal(bool isGlobal);
     public: void setExternal(bool isExternal);
+    public: void setAutomatic(bool isAutomatic);
     public: void setType(const Type& type);
     public: void setDirection(const Direction& direction);
     public: void setPosition(const Point& position);

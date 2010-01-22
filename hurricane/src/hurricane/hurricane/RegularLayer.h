@@ -58,6 +58,7 @@ namespace Hurricane {
     // Accessors.
       virtual BasicLayers     getBasicLayers    () const;
       inline  BasicLayer*     getBasicLayer     () const;
+      virtual const Layer*    getBlockageLayer  () const;
       virtual const Layer*    getTop            () const;
       virtual const Layer*    getBottom         () const;
       virtual const Layer*    getOpposite       ( const Layer* ) const;
@@ -94,7 +95,7 @@ namespace Hurricane {
 
 
 // Inline Functions.
-  BasicLayer* RegularLayer::getBasicLayer     () const { return _basicLayer; }
+  inline BasicLayer*  RegularLayer::getBasicLayer    () const { return _basicLayer; }
 
 
 } // End of Hurricane namespace.

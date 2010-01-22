@@ -209,8 +209,8 @@ namespace Hurricane {
   { return _connectorLayer; } 
 
 
-  BasicLayer* BasicLayer::getObstructionLayer () const
-  { return _obstructionLayer; }
+  BasicLayer* BasicLayer::getBlockageLayer () const
+  { return _blockageLayer; }
  
 
   BasicLayers BasicLayer::getBasicLayers () const
