@@ -2503,7 +2503,7 @@ namespace Hurricane {
 
     shared_ptr<State>  state ( new State(cell) );
     setState ( state );
-    if ( cell->isTerminal() ) setQueryFilter ( ~0 );
+    if ( cell and cell->isTerminal() ) setQueryFilter ( ~0 );
   //setRealMode ();
 
     fitToContents ( false );
