@@ -97,7 +97,7 @@
                install ( TARGETS Hurricane-static   DESTINATION /lib/python )
  else ( BUILD_STATIC )
            add_library ( isobar SHARED ${sources} )
- target_link_libraries ( isobar hurricane ${PYTHON_LIBRARIES} )
+ target_link_libraries ( isobar hurricane ${PYTHON_LIBRARIES} -lutil )
 
            add_library ( Hurricane MODULE ${sources} ) 
  set_target_properties ( Hurricane PROPERTIES

@@ -178,8 +178,8 @@ namespace Hurricane {
   QPoint  CellWidget::Spot::computeSpotPoint ( const QPoint& screenPoint )
   {
     Point mousePoint = _cellWidget->screenToDbuPoint ( screenPoint );
-    Point  spotPoint = Point ( _cellWidget->_onSnapGrid(mousePoint.getX())
-                             , _cellWidget->_onSnapGrid(mousePoint.getY())
+    Point  spotPoint = Point ( _cellWidget->_onCursorGrid(mousePoint.getX())
+                             , _cellWidget->_onCursorGrid(mousePoint.getY())
                              );
 
     return _cellWidget->dbuToScreenPoint(spotPoint);

@@ -229,8 +229,8 @@ namespace Hurricane {
 
   DbU::Unit  DbU::getOnCustomGrid ( DbU::Unit u, DbU::Unit step, SnapMode mode )
   {
-    DbU::Unit  inferior =     ( u / step ) * step;
-    DbU::Unit  modulo   = abs ( u % step );
+    DbU::Unit  inferior = ( u / step ) * step;
+    DbU::Unit  modulo   = ( u % step );
 
     if ( !modulo ) return u;
     if (  modulo < 0  ) inferior -= step;
