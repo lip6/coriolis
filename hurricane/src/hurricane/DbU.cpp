@@ -260,10 +260,10 @@ namespace Hurricane {
 
     if ( _stringMode == Grid ) {
       unitSymbol = 'g';
-      snprintf ( buffer, 1024, "%.1f", getGrid(u) );
+      snprintf ( buffer, 1024, "%.3f", getGrid(u) );
     } else if ( _stringMode == Symbolic ) {
       unitSymbol = 'l';
-      snprintf ( buffer, 1024, "%.1f", getLambda(u) );
+      snprintf ( buffer, 1024, "%.3f", getLambda(u) );
     } else if ( _stringMode == Physical ) {
       switch ( _stringModeUnitPower ) {
         case Pico:  unitSymbol = 'p'; break;
@@ -274,7 +274,7 @@ namespace Hurricane {
         case Kilo:  unitSymbol = 'k'; break;
         default:    unitSymbol = '?'; break;
       }
-      snprintf ( buffer, 1024, "%.1f", getPhysical(u,_stringModeUnitPower) );
+      snprintf ( buffer, 1024, "%.3f", getPhysical(u,_stringModeUnitPower) );
     } else {
       if ( _stringMode != Db )
         cerr << "[ERROR] Unknown Unit representation mode: " << _stringMode << endl;

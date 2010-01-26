@@ -1904,7 +1904,8 @@ namespace Hurricane {
 
           // if ( !tick ) continue;
 
-          textGrad = DbU::getValueString( gradStep*tick, (symbolicMode()) ? DbU::Symbolic : DbU::Grid );
+          textGrad = DbU::getValueString( gradStep*tick
+                                        , DbU::SmartTruncate|((symbolicMode())?DbU::Symbolic:DbU::Grid) );
           textGrad.resize ( textGrad.size()-1 );
 
           drawDisplayText ( QPoint ( pxGrad - 1, pxOrigin.y() + tickLength )
@@ -1920,7 +1921,7 @@ namespace Hurricane {
                                         , pxAngle.x(), pxAngle.y()+tickLength );
 
       textGrad = DbU::getValueString ( angle.getX() - origin.getX()
-                                     , (symbolicMode()) ? DbU::Symbolic : DbU::Grid );
+                                     , DbU::SmartTruncate|((symbolicMode())?DbU::Symbolic:DbU::Grid) );
       textGrad.resize ( textGrad.size()-1 );
 
       drawDisplayText ( QPoint ( pxAngle.x() - 1,pxAngle.y() + tickLength )
@@ -1963,7 +1964,8 @@ namespace Hurricane {
 
           // if ( !tick ) continue;
 
-          textGrad  = DbU::getValueString( gradStep*tick, (symbolicMode()) ? DbU::Symbolic : DbU::Grid );
+          textGrad  = DbU::getValueString( gradStep*tick
+                                         , DbU::SmartTruncate|((symbolicMode())?DbU::Symbolic:DbU::Grid) );
           textGrad.resize ( textGrad.size()-1 );
 
           drawDisplayText ( QPoint(pxOrigin.x() - tickLength,pyGrad + 1)
@@ -1979,7 +1981,7 @@ namespace Hurricane {
                                         , pxOrigin.x()-tickLength, pxAngle.y() );
 
       textGrad  = DbU::getValueString( angle.getY() - origin.getY()
-                                     , (symbolicMode()) ? DbU::Symbolic : DbU::Grid );
+                                     , DbU::SmartTruncate|((symbolicMode())?DbU::Symbolic:DbU::Grid) );
       textGrad.resize ( textGrad.size()-1 );
 
       drawDisplayText ( QPoint(pxOrigin.x() - tickLength,pxAngle.y() + 1)
