@@ -56,7 +56,9 @@ namespace Hurricane {
     , _centric        (new QRadioButton())
     , _barycentric    (new QRadioButton())
     , _symbolicMode   (new QRadioButton())
-    , _realMode       (new QRadioButton())
+    , _gridMode       (new QRadioButton())
+    , _nanoMode       (new QRadioButton())
+    , _microMode      (new QRadioButton())
     , _updateState    (ExternalEmit)
   {
     setAttribute   ( Qt::WA_QuitOnClose, false );
@@ -154,11 +156,23 @@ namespace Hurricane {
     group->addButton   ( _symbolicMode );
     hLayout->addWidget ( _symbolicMode );
 
-    _realMode->setText  ( tr("Real (foundry grid)") );
-    _realMode->setFont  ( Graphics::getNormalFont() );
-    group->setId       ( _realMode, 0 );
-    group->addButton   ( _realMode );
-    hLayout->addWidget ( _realMode );
+    _gridMode->setText  ( tr("Real (foundry grid)") );
+    _gridMode->setFont  ( Graphics::getNormalFont() );
+    group->setId       ( _gridMode, 0 );
+    group->addButton   ( _gridMode );
+    hLayout->addWidget ( _gridMode );
+
+    _nanoMode->setText  ( tr("nanometer") );
+    _nanoMode->setFont  ( Graphics::getNormalFont() );
+    group->setId       ( _nanoMode, 0 );
+    group->addButton   ( _nanoMode );
+    hLayout->addWidget ( _nanoMode );
+
+    _microMode->setText  ( tr("micrometer") );
+    _microMode->setFont  ( Graphics::getNormalFont() );
+    group->setId       ( _microMode, 0 );
+    group->addButton   ( _microMode );
+    hLayout->addWidget ( _microMode );
 
     groupBox->setLayout ( hLayout );
     wLayout->addWidget  ( groupBox );
@@ -172,7 +186,9 @@ namespace Hurricane {
     connect ( _centric     , SIGNAL(clicked())        , this, SLOT(setRubberCentric()) );
     connect ( _barycentric , SIGNAL(clicked())        , this, SLOT(setRubberBarycentric()) );
     connect ( _symbolicMode, SIGNAL(clicked())        , this, SLOT(setSymbolicMode()) );
-    connect ( _realMode    , SIGNAL(clicked())        , this, SLOT(setRealMode()) );
+    connect ( _gridMode    , SIGNAL(clicked())        , this, SLOT(setGridMode()) );
+    connect ( _nanoMode    , SIGNAL(clicked())        , this, SLOT(setNanoMode()) );
+    connect ( _microMode   , SIGNAL(clicked())        , this, SLOT(setMicroMode()) );
   }
 
 
@@ -212,8 +228,14 @@ namespace Hurricane {
 
         if ( _cellWidget->symbolicMode() )
           _symbolicMode->setChecked(true);
-        else
-          _realMode->setChecked(true);
+        else if ( _cellWidget->gridMode() )
+          _gridMode->setChecked(true);
+        else if ( _cellWidget->physicalMode() ) {
+          switch ( _cellWidget->getUnitPower() ) {
+            case DbU::Nano:  _nanoMode->setChecked(true); break;
+            case DbU::Micro: _microMode->setChecked(true); break;
+          }
+        }
          
         blockAllSignals ( false );
       }
@@ -264,7 +286,9 @@ namespace Hurricane {
     _centric        ->blockSignals ( state );
     _barycentric    ->blockSignals ( state );
     _symbolicMode   ->blockSignals ( state );
-    _realMode       ->blockSignals ( state );
+    _gridMode       ->blockSignals ( state );
+    _nanoMode       ->blockSignals ( state );
+    _microMode      ->blockSignals ( state );
   }
 
 
@@ -382,12 +406,34 @@ namespace Hurricane {
   }
 
 
-  void  DisplayFilterWidget::setRealMode ()
+  void  DisplayFilterWidget::setGridMode ()
   {
     if ( _cellWidget ) {
-      if ( !_cellWidget->realMode() ) {
+      if ( !_cellWidget->gridMode() ) {
         _updateState = InternalEmit;
-        _cellWidget->setRealMode ();
+        _cellWidget->setGridMode ();
+      }
+    }
+  }
+
+
+  void  DisplayFilterWidget::setNanoMode ()
+  {
+    if ( _cellWidget ) {
+      if ( not _cellWidget->physicalMode() or (_cellWidget->getUnitPower() != DbU::Nano) ) {
+        _updateState = InternalEmit;
+        _cellWidget->setPhysicalMode ( DbU::Nano );
+      }
+    }
+  }
+
+
+  void  DisplayFilterWidget::setMicroMode ()
+  {
+    if ( _cellWidget ) {
+      if ( not _cellWidget->physicalMode() or (_cellWidget->getUnitPower() != DbU::Micro) ) {
+        _updateState = InternalEmit;
+        _cellWidget->setPhysicalMode ( DbU::Micro );
       }
     }
   }

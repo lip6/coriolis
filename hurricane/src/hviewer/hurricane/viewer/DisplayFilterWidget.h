@@ -60,7 +60,9 @@ namespace Hurricane {
       void        setRubberCentric     ();
       void        setRubberBarycentric ();
       void        setSymbolicMode      ();
-      void        setRealMode          ();
+      void        setGridMode          ();
+      void        setNanoMode          ();
+      void        setMicroMode         ();
     protected:
       void        blockAllSignals      ( bool state );
 
@@ -75,7 +77,9 @@ namespace Hurricane {
       QRadioButton*  _centric;
       QRadioButton*  _barycentric;
       QRadioButton*  _symbolicMode;
-      QRadioButton*  _realMode;
+      QRadioButton*  _gridMode;
+      QRadioButton*  _nanoMode;
+      QRadioButton*  _microMode;
       UpdateState    _updateState;
   };
 

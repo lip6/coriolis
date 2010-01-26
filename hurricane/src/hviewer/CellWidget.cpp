@@ -1243,17 +1243,20 @@ namespace Hurricane {
 
   void  CellWidget::changeLayoutMode ()
   {
-    if ( symbolicMode() )
+    if ( symbolicMode() ) {
       setSymbolicMode ();
-    else
-      setRealMode ();
+    } else if ( gridMode() ) {
+      setGridMode ();
+    } else {
+      setPhysicalMode(_state->getUnitPower());
+    }
   }
 
 
-  void  CellWidget::setRealMode ()
+  void  CellWidget::setGridMode ()
   {
-    if ( !realMode() ) {
-      _state->setRealMode ();
+    if ( not gridMode() ) {
+      _state->setGridMode ();
       DbU::setStringMode ( DbU::Grid );
 
       updateMousePosition ();
@@ -1266,9 +1269,23 @@ namespace Hurricane {
 
   void  CellWidget::setSymbolicMode ()
   {
-    if ( !symbolicMode() ) {
+    if ( not symbolicMode() ) {
       _state->setSymbolicMode ();
       DbU::setStringMode ( DbU::Symbolic );
+
+      updateMousePosition ();
+      refresh ();
+
+      emit layoutModeChanged ();
+    }
+  }
+
+
+  void  CellWidget::setPhysicalMode ( DbU::UnitPower p )
+  {
+    if ( not physicalMode() or (_state->getUnitPower() != p) ) {
+      _state->setPhysicalMode ( p );
+      DbU::setStringMode ( DbU::Physical, p );
 
       updateMousePosition ();
       refresh ();
@@ -1816,7 +1833,7 @@ namespace Hurricane {
   {
     QFont        font          = Graphics::getNormalFont();
     QFontMetrics metrics       = QFontMetrics(font);
-    int          tickLength    = metrics.width ( "+00000" );
+    int          tickLength    = metrics.width ( "+00000u" );
     Point        origin        = ruler->getOrigin    ();
     Point        extremity     = ruler->getExtremity ();
     Point        angle         = ruler->getAngle     ();
@@ -1887,7 +1904,7 @@ namespace Hurricane {
 
           // if ( !tick ) continue;
 
-          textGrad = DbU::getValueString( gradStep*tick );
+          textGrad = DbU::getValueString( gradStep*tick, (symbolicMode()) ? DbU::Symbolic : DbU::Grid );
           textGrad.resize ( textGrad.size()-1 );
 
           drawDisplayText ( QPoint ( pxGrad - 1, pxOrigin.y() + tickLength )
@@ -1902,7 +1919,8 @@ namespace Hurricane {
       _drawingPlanes.painter().drawLine ( pxAngle.x(), pxAngle.y()
                                         , pxAngle.x(), pxAngle.y()+tickLength );
 
-      textGrad = DbU::getValueString ( angle.getX() - origin.getX() );
+      textGrad = DbU::getValueString ( angle.getX() - origin.getX()
+                                     , (symbolicMode()) ? DbU::Symbolic : DbU::Grid );
       textGrad.resize ( textGrad.size()-1 );
 
       drawDisplayText ( QPoint ( pxAngle.x() - 1,pxAngle.y() + tickLength )
@@ -1945,7 +1963,7 @@ namespace Hurricane {
 
           // if ( !tick ) continue;
 
-          textGrad  = DbU::getValueString( gradStep*tick );
+          textGrad  = DbU::getValueString( gradStep*tick, (symbolicMode()) ? DbU::Symbolic : DbU::Grid );
           textGrad.resize ( textGrad.size()-1 );
 
           drawDisplayText ( QPoint(pxOrigin.x() - tickLength,pyGrad + 1)
@@ -1960,7 +1978,8 @@ namespace Hurricane {
       _drawingPlanes.painter().drawLine ( pxOrigin.x()           , pxAngle.y()
                                         , pxOrigin.x()-tickLength, pxAngle.y() );
 
-      textGrad  = DbU::getValueString( angle.getY() - origin.getY() );
+      textGrad  = DbU::getValueString( angle.getY() - origin.getY()
+                                     , (symbolicMode()) ? DbU::Symbolic : DbU::Grid );
       textGrad.resize ( textGrad.size()-1 );
 
       drawDisplayText ( QPoint(pxOrigin.x() - tickLength,pxAngle.y() + 1)
@@ -2142,7 +2161,15 @@ namespace Hurricane {
                           );
 
     if ( getCell() ) boundingBox = getCell()->getBoundingBox();
-    reframe ( boundingBox, historyEnable );
+
+    DbU::Unit expand;
+    if ( boundingBox.getWidth() < boundingBox.getHeight() ) {
+      expand = DbU::grid( DbU::getGrid(boundingBox.getWidth()) * 0.05 );
+    } else {
+      expand = DbU::grid( DbU::getGrid(boundingBox.getHeight()) * 0.05 );
+    }
+
+    reframe ( boundingBox.inflate(expand), historyEnable );
   }
 
 

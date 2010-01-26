@@ -146,8 +146,10 @@ namespace Hurricane {
       inline  void                    resetActiveCommand         ();
       inline  void                    setCursorStep              ( DbU::Unit );
       inline  void                    setRealSnapGridStep        ( DbU::Unit step );
-      inline  bool                    realMode                   () const;
+      inline  bool                    gridMode                   () const;
       inline  bool                    symbolicMode               () const;
+      inline  bool                    physicalMode               () const;
+      inline  DbU::UnitPower          getUnitPower               () const;
       inline  bool                    showBoundaries             () const;
       inline  bool                    showSelection              () const;
       inline  bool                    cumulativeSelection        () const;
@@ -292,8 +294,9 @@ namespace Hurricane {
               void                    setScale                   ( float );
               void                    scaleHistoryUp             ();
               void                    scaleHistoryDown           ();
-              void                    setRealMode                ();
+              void                    setGridMode                ();
               void                    setSymbolicMode            ();
+              void                    setPhysicalMode            ( DbU::UnitPower );
               void                    setShowBoundaries          ( bool state );
               void                    reframe                    ();
               void                    reframe                    ( const Box& box, bool historyEnable=true );
@@ -539,9 +542,11 @@ namespace Hurricane {
           inline void                setCell                ( Cell* );
           inline void                setCellWidget          ( CellWidget* );
           inline void                setCursorStep          ( DbU::Unit );
-          inline  DbU::Unit          getCursorStep          () const;
-          inline void                setRealMode            ();
+          inline DbU::Unit           getCursorStep          () const;
+          inline DbU::UnitPower      getUnitPower           () const;
+          inline void                setGridMode            ();
           inline void                setSymbolicMode        ();
+          inline void                setPhysicalMode        ( DbU::UnitPower );
           inline void                setShowBoundaries      ( bool );
           inline void                setShowSelection       ( bool );
           inline void                setCumulativeSelection ( bool );
@@ -560,8 +565,11 @@ namespace Hurricane {
           inline SelectorCriterions& getSelection           ();
           inline RulerSet&           getRulers              ();
           inline DbU::Unit           cursorStep             () const;
-          inline bool                realMode               () const;
+          inline bool                gridMode               () const;
           inline bool                symbolicMode           () const;
+          inline bool                physicalMode           () const;
+          inline bool                nanoMode               () const;
+          inline bool                microMode              () const;
           inline bool                showBoundaries         () const;
           inline bool                showSelection          () const;
           inline bool                cumulativeSelection    () const;
@@ -589,7 +597,8 @@ namespace Hurricane {
           SelectorCriterions  _selection;
           RulerSet            _rulers;
           DbU::Unit           _cursorStep;
-          bool                _symbolicMode;
+          unsigned int        _displayMode;
+          DbU::UnitPower      _unitPower;
           bool                _showBoundaries;
           bool                _showSelection;
           Query::Mask         _queryFilter;
@@ -877,7 +886,8 @@ namespace Hurricane {
     , _selection          ()
     , _rulers             ()
     , _cursorStep         (DbU::lambda(0.5))
-    , _symbolicMode       (true)
+    , _displayMode        (DbU::Symbolic)
+    , _unitPower          (DbU::Nano)
     , _showBoundaries     (true)
     , _showSelection      (false)
     , _queryFilter        (~Query::DoTerminalCells)
@@ -894,7 +904,15 @@ namespace Hurricane {
 
 
   inline bool  CellWidget::State::symbolicMode () const
-  { return _symbolicMode; }
+  { return (_displayMode == DbU::Symbolic); }
+
+
+  inline bool  CellWidget::State::gridMode () const
+  { return (_displayMode == DbU::Grid); }
+
+
+  inline bool  CellWidget::State::physicalMode () const
+  { return (_displayMode == DbU::Physical); }
 
 
   inline void  CellWidget::State::setCell ( Cell* cell )
@@ -915,17 +933,29 @@ namespace Hurricane {
   { return _cursorStep; }
 
 
-  inline void  CellWidget::State::setRealMode ()
+  inline DbU::UnitPower CellWidget::State::getUnitPower () const
+  { return _unitPower; }
+
+
+  inline void  CellWidget::State::setGridMode ()
   {
-    _symbolicMode = false;
-    _cursorStep   = DbU::grid ( 1.0 );
+    _displayMode = DbU::Grid;
+    _cursorStep  = DbU::grid ( 1.0 );
   }
 
 
   inline void  CellWidget::State::setSymbolicMode ()
   {
-    _symbolicMode = true;
-    _cursorStep   = DbU::lambda ( 0.5 );
+    _displayMode = DbU::Symbolic;
+    _cursorStep  = DbU::lambda ( 0.5 );
+  }
+
+
+  inline void  CellWidget::State::setPhysicalMode ( DbU::UnitPower p )
+  {
+    _displayMode = DbU::Physical;
+    _cursorStep  = DbU::grid ( 1.0 );
+    _unitPower   = p;
   }
 
 
@@ -1238,12 +1268,20 @@ namespace Hurricane {
   { return _state->cursorStep(); }
 
 
-  inline bool  CellWidget::realMode () const
-  { return !_state->symbolicMode(); }
+  inline bool  CellWidget::gridMode () const
+  { return _state->gridMode(); }
 
 
   inline bool  CellWidget::symbolicMode () const
   { return _state->symbolicMode(); }
+
+
+  inline bool  CellWidget::physicalMode () const
+  { return _state->physicalMode(); }
+
+
+  inline DbU::UnitPower CellWidget::getUnitPower () const
+  { return _state->getUnitPower(); }
 
 
   inline bool  CellWidget::showBoundaries () const

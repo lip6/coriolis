@@ -57,6 +57,7 @@ namespace Hurricane {
   double              DbU::_gridsPerLambda       = 10.0;
   double              DbU::_physicalsPerGrid     = 1.0;
   unsigned int        DbU::_stringMode           = DbU::Symbolic;
+  DbU::UnitPower      DbU::_stringModeUnitPower  = DbU::Nano;
   DbU::Unit           DbU::_symbolicSnapGridStep = DbU::lambda(1.0);
   DbU::Unit           DbU::_realSnapGridStep     = DbU::grid  (10.0);
   const DbU::Unit     DbU::Min                   = std::numeric_limits<long>::min();
@@ -245,6 +246,13 @@ namespace Hurricane {
   }
 
 
+  void  DbU::setStringMode ( unsigned int mode, UnitPower p )
+  {
+    _stringMode = mode;
+    if ( _stringMode == Physical ) _stringModeUnitPower = p;
+  }
+
+
   string  DbU::getValueString ( DbU::Unit u, int mode )
   {
     char buffer[1024];
@@ -256,6 +264,17 @@ namespace Hurricane {
     } else if ( _stringMode == Symbolic ) {
       unitSymbol = 'l';
       snprintf ( buffer, 1024, "%.1f", getLambda(u) );
+    } else if ( _stringMode == Physical ) {
+      switch ( _stringModeUnitPower ) {
+        case Pico:  unitSymbol = 'p'; break;
+        case Nano:  unitSymbol = 'n'; break;
+        case Micro: unitSymbol = 'm'; break;
+        case Milli: unitSymbol = 'M'; break;
+        case Unity: unitSymbol = 'U'; break;
+        case Kilo:  unitSymbol = 'k'; break;
+        default:    unitSymbol = '?'; break;
+      }
+      snprintf ( buffer, 1024, "%.1f", getPhysical(u,_stringModeUnitPower) );
     } else {
       if ( _stringMode != Db )
         cerr << "[ERROR] Unknown Unit representation mode: " << _stringMode << endl;

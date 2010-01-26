@@ -62,10 +62,11 @@ namespace Hurricane {
     public:
       typedef  long  Unit;
     public:
-      enum  StringMode { Db            = 1
-                       , Grid          = 2
-                       , Symbolic      = 4
-                       , SmartTruncate = 8
+      enum  StringMode { Db            = (1<<0)
+                       , Grid          = (1<<1)
+                       , Symbolic      = (1<<2)
+                       , Physical      = (1<<3)
+                       , SmartTruncate = (1<<4)
                        };
       enum  SnapMode   { Inferior      = 1
                        , Superior      = 2
@@ -107,7 +108,7 @@ namespace Hurricane {
       static        string              getValueString          ( Unit u, int mode=SmartTruncate );
       static        Record*             getValueRecord          ( const Unit* u );
       static        Slot*               getValueSlot            ( const string& name, const Unit* u );
-      static inline void                setStringMode           ( unsigned int mode );
+      static        void                setStringMode           ( unsigned int mode, UnitPower p=Nano );
 
     public:
     // Static Attributes: constants.
@@ -121,6 +122,7 @@ namespace Hurricane {
       static double              _gridsPerLambda;
       static double              _physicalsPerGrid;
       static unsigned int        _stringMode;
+      static DbU::UnitPower      _stringModeUnitPower;
       static DbU::Unit           _realSnapGridStep;
       static DbU::Unit           _symbolicSnapGridStep;
   };
@@ -134,7 +136,6 @@ namespace Hurricane {
   inline double     DbU::getGrid                 ( DbU::Unit u )                { return _resolution*(double)u; }
   inline double     DbU::getLambda               ( DbU::Unit u )                { return getGrid(u)/_gridsPerLambda; }
   inline double     DbU::getPhysical             ( DbU::Unit u, UnitPower p )   { return (_physicalsPerGrid*_resolution*(double)u)/getUnitPower(p); }
-  inline void       DbU::setStringMode           ( unsigned int mode )          { _stringMode = mode; }
   inline void       DbU::setRealSnapGridStep     ( DbU::Unit step )             { _realSnapGridStep = step; }
   inline void       DbU::setSymbolicSnapGridStep ( DbU::Unit step )             { _symbolicSnapGridStep = step; }
   inline DbU::Unit  DbU::getOnPhysicalGrid       ( DbU::Unit u, SnapMode mode ) { return getOnCustomGrid(u, grid(1), mode); }
