@@ -358,3 +358,4 @@ bool Circuit::writeToFile(string filePath) {
 }
 
 }
+

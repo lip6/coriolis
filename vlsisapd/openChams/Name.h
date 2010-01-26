@@ -41,3 +41,4 @@ const string& Name::getString() const{
 } // namespace
 
 #endif
+

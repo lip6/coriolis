@@ -11,7 +11,7 @@
 #include <algorithm>
 using namespace std;
 
-#include "NetList.h"
+#include "Netlist.h"
 #include "Circuit.h"
 
 namespace OpenChams {

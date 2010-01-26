@@ -50,3 +50,4 @@ bool Name::operator<(const Name n) const {
     return (_id < n._id);
 }
 } // namespace
+

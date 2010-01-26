@@ -31,3 +31,4 @@ void Parameters::addParameter(Name name, double value) {
     _params[name] = value;
 }
 } // namespace
+

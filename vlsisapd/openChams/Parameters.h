@@ -38,3 +38,4 @@ inline map<Name, double>::iterator Parameters::getLastIt()  { return _params.end
 
 } // namespace
 #endif
+

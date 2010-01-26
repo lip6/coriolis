@@ -52,3 +52,4 @@ inline vector<Net*>::iterator      Netlist::getLastNetIt()       { return _nets.
     
 } // namespace
 #endif
+

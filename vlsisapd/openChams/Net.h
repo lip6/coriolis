@@ -51,3 +51,4 @@ inline vector<pair<Name, Name> >::iterator Net::getLastConnectionIt() { return _
     
 } // namespace
 #endif
+

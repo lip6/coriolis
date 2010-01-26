@@ -59,3 +59,4 @@ inline map<Name, Net*>::iterator Instance::getLastConnectorIt() { return _netMap
     
 } // namespace
 #endif
+
