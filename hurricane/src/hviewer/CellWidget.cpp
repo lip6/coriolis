@@ -1904,7 +1904,7 @@ namespace Hurricane {
 
           // if ( !tick ) continue;
 
-          textGrad = DbU::getValueString( gradStep*tick
+          textGrad = DbU::getValueString( abs(gradStep*tick)
                                         , DbU::SmartTruncate|((symbolicMode())?DbU::Symbolic:DbU::Grid) );
           textGrad.resize ( textGrad.size()-((*textGrad.rbegin()=='m')?2:1) );
 
@@ -1964,7 +1964,7 @@ namespace Hurricane {
 
           // if ( !tick ) continue;
 
-          textGrad  = DbU::getValueString( gradStep*tick
+          textGrad  = DbU::getValueString( abs(gradStep*tick)
                                          , DbU::SmartTruncate|((symbolicMode())?DbU::Symbolic:DbU::Grid) );
           textGrad.resize ( textGrad.size()-((*textGrad.rbegin()=='m')?2:1) );
 
