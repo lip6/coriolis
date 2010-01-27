@@ -260,16 +260,16 @@ namespace Hurricane {
 
     if ( _stringMode == Grid ) {
       unitSymbol = 'g';
-      snprintf ( buffer, 1024, "%.3f", getGrid(u) );
+      snprintf ( buffer, 1024, "%.1f", getGrid(u) );
     } else if ( _stringMode == Symbolic ) {
       unitSymbol = 'l';
-      snprintf ( buffer, 1024, "%.3f", getLambda(u) );
+      snprintf ( buffer, 1024, "%.1f", getLambda(u) );
     } else if ( _stringMode == Physical ) {
       switch ( _stringModeUnitPower ) {
         case Pico:  unitSymbol = 'p'; break;
         case Nano:  unitSymbol = 'n'; break;
-        case Micro: unitSymbol = 'm'; break;
-        case Milli: unitSymbol = 'M'; break;
+        case Micro: unitSymbol = 'u'; break;
+        case Milli: unitSymbol = 'm'; break;
         case Unity: unitSymbol = 'U'; break;
         case Kilo:  unitSymbol = 'k'; break;
         default:    unitSymbol = '?'; break;
