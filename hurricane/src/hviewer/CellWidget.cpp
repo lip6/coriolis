@@ -1906,7 +1906,7 @@ namespace Hurricane {
 
           textGrad = DbU::getValueString( gradStep*tick
                                         , DbU::SmartTruncate|((symbolicMode())?DbU::Symbolic:DbU::Grid) );
-          if ( tick ) textGrad.resize ( textGrad.size()-1 );
+          textGrad.resize ( textGrad.size()-((*textGrad.rbegin()=='m')?2:1) );
 
           drawDisplayText ( QPoint ( pxGrad - 1, pxOrigin.y() + tickLength )
                           , textGrad.c_str()
@@ -1920,7 +1920,7 @@ namespace Hurricane {
       _drawingPlanes.painter().drawLine ( pxAngle.x(), pxAngle.y()
                                         , pxAngle.x(), pxAngle.y()+tickLength );
 
-      textGrad = DbU::getValueString ( angle.getX() - origin.getX()
+      textGrad = DbU::getValueString ( abs(angle.getX() - origin.getX())
                                      , DbU::SmartTruncate|((symbolicMode())?DbU::Symbolic:DbU::Grid) );
     //textGrad.resize ( textGrad.size()-1 );
 
@@ -1966,7 +1966,7 @@ namespace Hurricane {
 
           textGrad  = DbU::getValueString( gradStep*tick
                                          , DbU::SmartTruncate|((symbolicMode())?DbU::Symbolic:DbU::Grid) );
-          if ( tick ) textGrad.resize ( textGrad.size()-1 );
+          textGrad.resize ( textGrad.size()-((*textGrad.rbegin()=='m')?2:1) );
 
           drawDisplayText ( QPoint(pxOrigin.x() - tickLength,pyGrad + 1)
                           , textGrad.c_str()
@@ -1980,8 +1980,8 @@ namespace Hurricane {
       _drawingPlanes.painter().drawLine ( pxOrigin.x()           , pxAngle.y()
                                         , pxOrigin.x()-tickLength, pxAngle.y() );
 
-      textGrad  = DbU::getValueString( angle.getY() - origin.getY()
-                                     , DbU::SmartTruncate|((symbolicMode())?DbU::Symbolic:DbU::Grid) );
+      textGrad = DbU::getValueString( abs(angle.getY() - origin.getY())
+                                    , DbU::SmartTruncate|((symbolicMode())?DbU::Symbolic:DbU::Grid) );
     //textGrad.resize ( textGrad.size()-1 );
 
       drawDisplayText ( QPoint(pxOrigin.x() - tickLength,pxAngle.y() + 1)
