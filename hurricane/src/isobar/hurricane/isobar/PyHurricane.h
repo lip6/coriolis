@@ -251,6 +251,26 @@ extern "C" {
 
 
 // -------------------------------------------------------------------
+// Attribute Method Macro For Booleans.
+
+#define  DirectSetBoolAttribute(PY_FUNC_NAME,FUNC_NAME,PY_FORMAT,PY_SELF_TYPE,SELF_TYPE) \
+  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args ) \
+  {                                                                    \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectSetBoolAttribute()")  \
+                                                                       \
+    PyObject* arg0;                                                    \
+    if ( ! PyArg_ParseTuple ( args, "O:" PY_FORMAT, &arg0 ) )          \
+      return ( NULL );                                                 \
+    if(arg0 == Py_True)                                                \
+      cobject->FUNC_NAME (true);                                       \
+    else                                                               \
+      cobject->FUNC_NAME (false);                                      \
+                                                                       \
+    Py_RETURN_NONE;                                                    \
+  }
+
+
+// -------------------------------------------------------------------
 // Attribute Method Macro For Long.
 
 #define  DirectSetLongAttribute(PY_FUNC_NAME,FUNC_NAME,PY_FORMAT,PY_SELF_TYPE,SELF_TYPE) \
