@@ -5,7 +5,7 @@
 #include <QFileDialog>
 #include <QGroupBox>
 
-#include "configDialog.h"
+#include "ConfigDialog.h"
 
 #define LINEEDITWIDTH 300
 
