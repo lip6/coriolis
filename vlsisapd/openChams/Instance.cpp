@@ -13,12 +13,14 @@ using namespace std;
 #include "Instance.h"
 #include "Netlist.h"
 #include "Net.h"
+#include "OpenChamsException.h"
 
 namespace OpenChams {
-Instance::Instance(Name name, Name model, Name mosType, Netlist* netlist)
+Instance::Instance(Name name, Name model, Name mosType, bool sourceBulkConnected, Netlist* netlist)
     : _name(name)
     , _model(model)
     , _mosType(mosType)
+    , _sourceBulkConnected(sourceBulkConnected)
     , _netlist(netlist) {}
 
 void Instance::addConnector(Name name) {
@@ -26,8 +28,12 @@ void Instance::addConnector(Name name) {
     map<Name, Net*>::iterator it = _netMap.find(name);
     if (it == _netMap.end())
         _netMap[name] = NULL;
-    else
-        cerr << "[ERROR] The same instance cannot have several connectors with same name (" << name.getString() << ")." << endl;
+    else {
+        string error("[ERROR] The same instance cannot have several connectors with same name (");
+        error += name.getString();
+        error += ").";
+        throw OpenChamsException(error);
+    }
 }
     
 void Instance::connect(Name connectorName, Name netName) {
@@ -37,13 +43,20 @@ void Instance::connect(Name connectorName, Name netName) {
     map<Name, Net*>::iterator it = _netMap.find(connectorName);
     if (it != _netMap.end()) {
         Net* net = _netlist->getNet(netName);
-        if (!net)
-            cerr << "[ERROR] While connecting instance : net (" << netName.getString() << ") does not exist." << endl;
+        if (!net) {
+            string error("[ERROR] While connecting instance : net (");
+            error += netName.getString();
+            error += ") does not exist.";
+            throw OpenChamsException(error);
+        }
         else
             _netMap[connectorName] = net;
     }
-    else
-        cerr << "[ERROR] While connecting instance : connector (" << connectorName.getString() << ") does not exist." << endl;
+    else {
+        string error("[ERROR] While connecting instance : connector (");
+        error += connectorName.getString();
+        error += ") does not exist.";
+        throw OpenChamsException(error);
+    }
 }
 }
-

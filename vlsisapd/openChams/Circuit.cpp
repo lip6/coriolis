@@ -11,9 +11,11 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <algorithm>
 using namespace std;
 
 #include "Circuit.h"
+#include "OpenChamsException.h"
 
 namespace {
 	template<class T> T getValue(xmlChar* str) {
@@ -31,9 +33,42 @@ static bool readCircuitParametersDone = false;
 static bool readNetListDone = false;
 static bool readInstancesDone = false;
 static bool readNetsDone = false;
+static bool readSchematicDone = false;
     
-Circuit::Circuit(Name name, Name techno) : _name(name), _techno(techno) {}
+Circuit::Circuit(Name name, Name techno) : _name(name), _techno(techno), _netlist(NULL), _schematic(NULL) {
+    readCircuitParametersDone = false;
+    readNetListDone           = false;
+    readInstancesDone         = false;
+    readNetsDone              = false;
+    readSchematicDone         = false;
+}
 
+void Circuit::check_uppercase(string& str, vector<string>& compares, string message) {
+    transform(str.begin(), str.end(), str.begin(), ::toupper);
+    bool equal = false;
+    for (size_t i = 0 ; i < compares.size() ; i++) {
+        if (str == compares[i]) {
+            equal = true;
+        }
+    }
+    if (!equal) {
+        throw OpenChamsException(message);
+    }
+}
+    
+void Circuit::check_lowercase(string& str, vector<string>& compares, string message) {
+    transform(str.begin(), str.end(), str.begin(), ::tolower);
+    bool equal = false;
+    for (size_t i = 0 ; i < compares.size() ; i++) {
+        if (str == compares[i]) {
+            equal = true;
+        }
+    }
+    if (!equal) {
+        throw OpenChamsException(message);
+    }
+}
+    
 Name Circuit::readParameter(xmlNode* node, double& value) {
     xmlChar* paramNameC = xmlGetProp(node, (xmlChar*)"name");
     xmlChar* valueC     = xmlGetProp(node, (xmlChar*)"value");
@@ -42,8 +77,8 @@ Name Circuit::readParameter(xmlNode* node, double& value) {
         value = ::getValue<double>(valueC);
         return name;
     } else {
-        cerr << "[ERROR] 'parameter' node must have 'name' and 'value' properties." << endl;
-        return Name("");
+        throw OpenChamsException("[ERROR] 'parameter' node must have 'name' and 'value' properties.");
+        //return Name("");
     }
 }
     
@@ -53,8 +88,8 @@ Name Circuit::readConnector(xmlNode* node) {
         Name name((const char*)connectorNameC);
         return name;
     } else {
-        cerr << "[ERROR] 'connector' node must have 'name' property." << endl;
-        return Name("");
+        throw OpenChamsException("[ERROR] 'connector' node must have 'name' property.");
+        //return Name("");
     }
 }
     
@@ -126,15 +161,24 @@ Instance* Circuit::readInstance(xmlNode* node, Netlist* netlist) {
     xmlChar* iNameC  = xmlGetProp(node, (xmlChar*)"name");
     xmlChar* iModelC = xmlGetProp(node, (xmlChar*)"model");
     xmlChar* iMOSC   = xmlGetProp(node, (xmlChar*)"mostype");
+    xmlChar* iSBCC   = xmlGetProp(node, (xmlChar*)"sourceBulkConnected");
     Instance* inst = NULL;
-    if (iNameC && iModelC && iMOSC) {
+    if (iNameC && iModelC && iMOSC && iSBCC) {
         Name instanceName((const char*)iNameC);
         Name modelName((const char*)iModelC);
-        Name mosName((const char*)iMOSC);
-        inst = new Instance(instanceName, modelName, mosName, netlist);
+        string mosStr((const char*)iMOSC);
+        string mosComp[2] = {"NMOS", "PMOS"};
+        vector<string> mosComps (mosComp, mosComp+2);
+        check_uppercase(mosStr, mosComps, "[ERROR] In 'instance', 'mostype' must be 'NMOS' or 'PMOS'.");
+        string sourceBulkStr((const char*)iSBCC);
+        string sbcComp[4] = {"true", "false", "on", "off"};
+        vector<string> sbcComps(sbcComp, sbcComp+4);
+        check_lowercase(sourceBulkStr, sbcComps, "[ERROR] In 'instance', 'sourceBulkConnected' must 'true', 'false', 'on' or 'off'.");
+        bool sourceBulkConnected = ((sourceBulkStr == "true") || (sourceBulkStr == "on")) ? true : false;
+        inst = new Instance(instanceName, modelName, Name(mosStr), sourceBulkConnected, netlist);
     } else {
-        cerr << "[ERROR] 'instance' node must have 'name', 'model' and 'mos' properties." << endl;
-        return inst;
+        throw OpenChamsException("[ERROR] 'instance' node must have 'name', 'model', 'mostype' and 'sourceBulkConnected' properties.");
+        //return inst;
     }
 
     xmlNode* child = node->children;
@@ -205,14 +249,20 @@ Net* Circuit::readNet(xmlNode* node, Netlist* netlist) {
     Net* net = NULL;
     if (nNameC && nTypeC && nExternC) {
         Name netName((const char*)nNameC);
-        Name typeName((const char*)nTypeC);
+        string typeStr((const char*)nTypeC);
+        string typeComp[3] = {"power", "ground", "logical"};
+        vector<string> typeComps(typeComp, typeComp+3);
+        check_lowercase(typeStr, typeComps, "[ERROR] In 'net', 'type' must be 'power', 'ground' or 'logical'.");
         string externStr((const char*)nExternC);
-        bool isExternal = (externStr == "True") ? true : false;
-        net = new Net(netName, typeName, isExternal, netlist);
+        string extComp[4] = {"true", "false", "on", "off"};
+        vector<string> extComps(extComp, extComp+4);
+        check_lowercase(externStr, extComps, "[ERROR] In 'net', 'isExternal' must be 'true', 'false', 'on' or 'off'.");
+        bool isExternal = ((externStr == "true") || (externStr == "on")) ? true : false;
+        net = new Net(netName, Name(typeStr), isExternal, netlist);
         netlist->addNet(net);
     } else {
-        cerr << "[ERROR] 'net' node must have 'name', 'type' and 'isExternal' properties." << endl;
-        return net;
+        throw OpenChamsException("[ERROR] 'net' node must have 'name', 'type' and 'isExternal' properties.");
+        //return net;
     }
     
     xmlNode* child = node->children;
@@ -237,23 +287,77 @@ void Circuit::readNetConnector(xmlNode* node, Net* net) {
         Name cName((const char*)connectorNameC);
         Instance* inst = net->getNetlist()->getInstance(iName);
         if (!inst) {
-            cerr << "[ERROR] no instance named \"" << iName.getString() << "\" in connector of net \"" << net->getName().getString() << "\"." << endl;
-            return;
+            string error("[ERROR] no instance named \"");
+            error += iName.getString();
+            error += "\" in connector of net \"";
+            error += net->getName().getString();
+            error += "\".";
+            throw OpenChamsException(error);
+            //return;
         }
         inst->connect(cName, net->getName());
         net->connectTo(iName, cName);
     } else {
-        cerr << "[ERROR] 'connector' node must have 'instance' and 'name' properties (for net)." << endl;
+        throw OpenChamsException("[ERROR] 'connector' node must have 'instance' and 'name' properties (for net).");
     }
 }
     
-Circuit* Circuit::readFromFile(string filePath) {
+void Circuit::readSchematic(xmlNode* node) {
+    if (readSchematicDone) {
+        cerr << "[WARNING] Only one 'schematic' node is allowed in circuit, others will be ignored." << endl;
+        return;
+    }
+    xmlChar* zoomC = xmlGetProp(node, (xmlChar*)"zoom");
+    double zoom = 1.0;
+    if (zoomC) {
+        zoom = ::getValue<double>(zoomC);
+    } else {
+        throw OpenChamsException("[ERROR] 'schematic' node must have 'zoom' property.");
+    }
+
+    Schematic* schematic = new Schematic(this, zoom);
+    xmlNode* child = node->children;
+    for (xmlNode* node = child; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE) {
+            if (xmlStrEqual(node->name, (xmlChar*)"instance")) {
+                readInstanceSchematic(node, schematic);
+            } else {
+                cerr << "[WARNING] Only 'instance' nodes are allowed in 'schematic', others will be ignored." << endl;
+            }
+        }
+    }
+    readSchematicDone = true;
+    _schematic = schematic;
+}
+    
+void Circuit::readInstanceSchematic(xmlNode* node, Schematic* schematic) {
+    xmlChar* nameC = xmlGetProp(node, (xmlChar*)"name");
+    xmlChar* xC    = xmlGetProp(node, (xmlChar*)"x");
+    xmlChar* yC    = xmlGetProp(node, (xmlChar*)"y");
+    xmlChar* symC  = xmlGetProp(node, (xmlChar*)"sym");
+    if (nameC && xC && yC && symC) {
+        Name   iName((const char*)nameC);
+        double x = ::getValue<double>(xC);
+        double y = ::getValue<double>(yC);
+        string symStr((const char*)symC);
+        string symComp[8] = {"ID", "R1", "R2", "R3", "MX", "XR", "MY", "YR"};
+    	vector<string> symComps (symComp, symComp+8);
+        check_uppercase(symStr, symComps, "[ERROR] In 'schematic/instance', 'sym' must be 'ID', 'R1', 'R2', 'R3', 'MX', 'XR', 'MY' or 'YR'.");
+        schematic->addInstance(iName, x, y, Name(symStr));
+    } else {
+        throw OpenChamsException("[ERROR] 'instance' node in 'schematic' must have 'name', 'x', 'y' and 'sym' properties.");
+    }
+}
+    
+Circuit* Circuit::readFromFile(const string filePath) {
     LIBXML_TEST_VERSION;
     Circuit* cir = NULL;
     xmlDoc* doc = xmlReadFile(filePath.c_str(), NULL, 0);
     if (doc == NULL) {
-        cerr << "[ERROR] Failed to parse: " << filePath << endl;
-        return NULL;
+        string error ("[ERROR] Failed to parse: ");
+        error += filePath;
+        throw OpenChamsException(error);
+        //return NULL;
     }
     xmlNode* rootElement = xmlDocGetRootElement(doc);
     if (rootElement->type == XML_ELEMENT_NODE && xmlStrEqual(rootElement->name, (xmlChar*)"circuit")) {
@@ -265,7 +369,7 @@ Circuit* Circuit::readFromFile(string filePath) {
             Name technoName  ((const char*)technoNameC);
             cir = new Circuit(circuitName, technoName);
         } else {
-            cerr << "[ERROR] 'circuit' node must have 'name' and 'techno' properties." << endl;
+            throw OpenChamsException("[ERROR] 'circuit' node must have 'name' and 'techno' properties.");
             return NULL;
         }
 
@@ -279,8 +383,14 @@ Circuit* Circuit::readFromFile(string filePath) {
                 if (xmlStrEqual(node->name, (xmlChar*)"netlist")) {
                     cir->readNetList(node);
                 }
+                if (xmlStrEqual(node->name, (xmlChar*)"schematic")) {
+                    cir->readSchematic(node);
+                }
             }
         }
+    }
+    if (!readNetListDone) {
+        throw OpenChamsException("[ERROR] no <netlist> section was found in parsed file !");
     }
     return cir;
 }
@@ -290,45 +400,49 @@ bool Circuit::writeToFile(string filePath) {
     file.open(filePath.c_str());
     // checks before do anything
     if (!_netlist) {
-        cerr << "[ERROR] Cannot writeToFile since no netlist is defined !" << endl;
-        return false;
+        throw OpenChamsException("[ERROR] Cannot writeToFile since no netlist is defined !");
+        //return false;
     }    
     if (_netlist->hasNoInstances()) {
-        cerr << "[ERROR] Cannot writeToFile since no instance is defined in netlist !" << endl;
-        return false;
+        throw OpenChamsException("[ERROR] Cannot writeToFile since no instance is defined in netlist !");
+        //return false;
     }
     if (_netlist->hasNoNets()) {
-        cerr << "[ERROR] Cannot writeToFile since no net is defined in netlist !" << endl;
-        return false;
+        throw OpenChamsException("[ERROR] Cannot writeToFile since no net is defined in netlist !");
+        //return false;
     }
     
     file << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << endl
          << "<circuit name=\"" << _name.getString() << "\" techno=\"" << _techno.getString() << "\">" << endl;
     if (!_params.isEmpty()) {
         file << "  <parameters>" << endl;
-    	for (map<Name, double>::iterator it = _params.getFirstIt() ; it != _params.getLastIt() ; ++it) {
+    	for (map<Name, double>::const_iterator it = _params.getValues().begin() ; it != _params.getValues().end() ; ++it) {
         	file << "    <parameter name=\"" << (*it).first.getString() << "\" value=\"" << (*it).second << "\"/>" << endl;
     	}
         file << "  </parameters>" << endl;
     }
     file << "  <netlist>" << endl
          << "    <instances>" << endl;
-    for (vector<Instance*>::iterator it = _netlist->getFirstInstanceIt() ; it != _netlist->getLastInstanceIt() ; ++it) {
+    for (vector<Instance*>::const_iterator it = _netlist->getInstances().begin() ; it != _netlist->getInstances().end() ; ++it) {
         Instance* inst = (*it);
         if (inst->hasNoConnectors()) {
-            cerr << "[ERROR] Cannot writeToFile since instance (" << inst->getName().getString() << ") has no connectors !" << endl;
-            return false;
+            string error("[ERROR] Cannot writeToFile since instance (");
+            error += inst->getName().getString();
+            error += ") has no connectors !";
+            throw OpenChamsException(error);
+            //return false;
         }
-        file << "      <instance name=\"" << inst->getName().getString() << "\" model=\"" << inst->getModel().getString() << "\" mostype=\"" << inst->getMosType().getString() << "\">" << endl;
+        string sourceBulkStr = (inst->isSourceBulkConnected()) ? "True" : "False";
+        file << "      <instance name=\"" << inst->getName().getString() << "\" model=\"" << inst->getModel().getString() << "\" mostype=\"" << inst->getMosType().getString() << "\" sourceBulkConnected=\"" << sourceBulkStr << "\">" << endl;
         file << "        <connectors>" << endl;
-        for (map<Name, Net*>::iterator it = inst->getFirstConnectorIt() ; it != inst->getLastConnectorIt() ; ++it) {
+        for (map<Name, Net*>::const_iterator it = inst->getConnectors().begin() ; it != inst->getConnectors().end() ; ++it) {
             file << "          <connector name=\"" << (*it).first.getString() << "\"/>" << endl;
         }
         file << "        </connectors>" << endl;
         if (!inst->getParameters().isEmpty()) {
             Parameters params = inst->getParameters();
             file << "        <parameters>" << endl;
-            for (map<Name, double>::iterator it = params.getFirstIt() ; it != params.getLastIt() ; ++it) {
+            for (map<Name, double>::const_iterator it = params.getValues().begin() ; it != params.getValues().end() ; ++it) {
                 file << "          <parameter name=\"" << (*it).first.getString() << "\" value=\"" << (*it).second << "\"/>" << endl;
             }
             file << "        </parameters>" << endl;
@@ -337,21 +451,32 @@ bool Circuit::writeToFile(string filePath) {
     }
     file << "    </instances>" << endl
          << "    <nets>" << endl;
-    for (vector<Net*>::iterator it = _netlist->getFirstNetIt() ; it != _netlist->getLastNetIt() ; ++it) {
+    for (vector<Net*>::const_iterator it = _netlist->getNets().begin() ; it != _netlist->getNets().end() ; ++it) {
         Net* net = (*it);
         if (net->hasNoConnectors()) {
-            cerr << "[ERROR] Cannot writeToFile since net (" << net->getName().getString() << ") has no connectors !" << endl;
-            return false;
+            string error("[ERROR] Cannot writeToFile since net (");
+            error += net->getName().getString();
+            error += ") has no connectors !";
+            throw OpenChamsException(error);
+            //return false;
         }
         string externStr = (net->isExternal()) ? "True" : "False";
         file << "      <net name=\"" << net->getName().getString() << "\" type=\"" << net->getType().getString() << "\" isExternal=\"" << externStr << "\">" << endl;
-        for (vector<pair<Name, Name> >::iterator it = net->getFirstConnectionIt() ; it != net->getLastConnectionIt() ; ++it) {
+        for (vector<pair<Name, Name> >::const_iterator it = net->getConnections().begin() ; it != net->getConnections().end() ; ++it) {
             file << "        <connector instance=\"" << (*it).first.getString() << "\" name=\"" << (*it).second.getString() << "\"/>" << endl;
         }
 		file << "      </net>" << endl;
     }
     file << "    </nets>" << endl;
     file << "  </netlist>" << endl;
+    if (_schematic && !_schematic->hasNoInstances()) {
+        file << "  <schematic zoom=\"" << _schematic->getZoom() << "\">" << endl;
+        for (map<Name, Schematic::Infos*>::const_iterator it = _schematic->getInstances().begin() ; it != _schematic->getInstances().end(); ++it ) {
+            Schematic::Infos* infos = (*it).second;
+            file << "    <instance name=\"" << ((*it).first).getString() << "\" x=\"" << infos->getX() << "\" y=\"" << infos->getY() << "\" sym=\"" << infos->getSymetry().getString() << "\"/>" << endl;
+        }
+        file << "  </schematic>" << endl;
+    }
     file << "</circuit>" << endl;
     file.close();
 	return true;        

@@ -11,13 +11,16 @@
 using namespace std;
 
 #include "Parameters.h"
+#include "OpenChamsException.h"
 
 namespace OpenChams {
 double Parameters::getValue(Name name) {
     map<Name, double>::iterator it = _params.find(name);
     if (it == _params.end()) {
-        cerr << "[ERROR] No parameters named " << name.getString() << endl;
-        return 0.0;
+        string error("[ERROR] No parameters named ");
+        error += name.getString();
+        throw OpenChamsException(error);
+        //return 0.0;
     }
     return (*it).second;
 }
@@ -25,8 +28,11 @@ double Parameters::getValue(Name name) {
 void Parameters::addParameter(Name name, double value) {
 	map<Name, double>::iterator it = _params.find(name);
     if ( it != _params.end() ) {
-        cerr << "[ERROR] Cannot addParameter " << name.getString() << " because it already exists !" << endl;
-        return;
+        string error("[ERROR] Cannot addParameter ");
+        error += name.getString();
+        error += " because it already exists !";
+        throw OpenChamsException(error);
+        //return;
     }
     _params[name] = value;
 }

@@ -7,13 +7,15 @@
  *
  */
 
+using namespace std;
+
 #include "Name.h"
 
 namespace OpenChams {
 unsigned long Name::_globalId = 0;
 map<string, unsigned long> Name::_dict;
 
-Name::Name(string str) {
+Name::Name(string str) : _str(NULL) {
     map<string, unsigned long>::iterator it = _dict.find(str);
     if (it != _dict.end()) {
         _id  = (*it).second;
@@ -25,7 +27,7 @@ Name::Name(string str) {
     }
 }
     
-Name::Name(const char* c) {
+Name::Name(const char* c) : _str(NULL) {
     string str(c);
     map<string, unsigned long>::iterator it = _dict.find(str);
     if (it != _dict.end()) {

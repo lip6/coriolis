@@ -11,7 +11,6 @@
 #define __OPENCHAMS_PARAMETERS_H__
 
 #include <map>
-using namespace std;
 
 #include "Name.h"
 
@@ -25,16 +24,18 @@ public:
     
     // pour parcourir la map :
     inline bool isEmpty();
-    inline map<Name, double>::iterator getFirstIt();
-    inline map<Name, double>::iterator getLastIt();
+    //inline map<Name, double>::iterator getFirstIt();
+    //inline map<Name, double>::iterator getLastIt();
+    inline const std::map<Name, double>& getValues();
     
 private:
-    map<Name, double> _params;
+    std::map<Name, double> _params;
 };
     
 inline bool Parameters::isEmpty() { return (_params.size() == 0)? true : false; }
-inline map<Name, double>::iterator Parameters::getFirstIt() { return _params.begin(); }
-inline map<Name, double>::iterator Parameters::getLastIt()  { return _params.end(); }
+//inline map<Name, double>::iterator Parameters::getFirstIt() { return _params.begin(); }
+//inline map<Name, double>::iterator Parameters::getLastIt()  { return _params.end(); }
+inline const std::map<Name, double>& Parameters::getValues() { return _params; };
 
 } // namespace
 #endif

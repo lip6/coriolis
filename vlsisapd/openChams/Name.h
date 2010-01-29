@@ -12,33 +12,36 @@
 
 #include <string>
 #include <map>
-using namespace std;
+
+#include "OpenChamsException.h"
 
 namespace OpenChams {
 class Name {
     public:
-        Name(string);
-	    Name(const char*);
+    Name(std::string);
+	Name(const char*);
     
-	    bool operator==(const Name&);
-	    bool operator==(const string&);
-	    bool operator<(const Name) const;
+	bool operator==(const Name&);
+	bool operator==(const std::string&);
+	bool operator<(const Name) const;
     
-	    inline const string& getString() const;
+	inline const std::string& getString() const;
         
     private:
-        unsigned long _id;
-        const string *_str;
+    unsigned long _id;
+	const std::string *_str;
     
-    	static map<string, unsigned long> _dict;
-	    static unsigned long              _globalId;
+	static std::map<std::string, unsigned long> _dict;
+	static unsigned long              _globalId;
 };
     
-const string& Name::getString() const{
+inline const std::string& Name::getString() const{
+    if (!_str) {
+        throw OpenChamsException("[ERROR] Name object has no string");
+    }
     return *_str;
 }
 
 } // namespace
-
 #endif
 

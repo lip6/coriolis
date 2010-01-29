@@ -11,26 +11,35 @@
 #include <algorithm>
 using namespace std;
 
-#include "Netlist.h"
+#include "NetList.h"
 #include "Circuit.h"
+#include "OpenChamsException.h"
 
 namespace OpenChams {
 Netlist::Netlist(Circuit* circuit) : _circuit(circuit) {}
     
 void Netlist::addInstance(Instance* inst) {
-    vector<Instance*>::iterator it = find(_instances.begin(), _instances.end(), inst);
-    if (it != _instances.end())
-        cerr << "[WARNING] Cannot add instance twice in netlist (" << inst->getName().getString() << ")." << endl;
-    else
-        _instances.push_back(inst);
+    for (vector<Instance*>::iterator it = _instances.begin() ; it != _instances.end() ; ++it) {
+        if ((*it)->getName() == inst->getName()) {
+            string error("[ERROR] Cannot define two instances with the same name in netlist (");
+            error += inst->getName().getString();
+            error += ").";
+            throw OpenChamsException(error);
+        }
+    }
+    _instances.push_back(inst);
 }
 
 void Netlist::addNet(Net* net) {
-	vector<Net*>::iterator it = find(_nets.begin(), _nets.end(), net);
-    if (it != _nets.end())
-        cerr << "[WARNING] Cannot add net twice in netlist (" << net->getName().getString() << ")." << endl;
-    else
-        _nets.push_back(net);
+	for (vector<Net*>::iterator it = _nets.begin() ; it != _nets.end() ; ++it ) {
+        if ((*it)->getName() == net->getName()) {
+            string error("[ERROR] Cannot define two nets with the same name in netlist (");
+            error += net->getName().getString();
+            error += ").";
+            throw OpenChamsException(error);
+        }
+    }
+    _nets.push_back(net);
 }
  
 Instance* Netlist::getInstance(Name instanceName) {
@@ -51,3 +60,4 @@ Net* Netlist::getNet(Name netName) {
     return NULL;
 }
 } // namespace
+

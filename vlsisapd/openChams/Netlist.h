@@ -11,7 +11,6 @@
 #define __OPENCHAMS_NETLIST_H__
 
 #include <vector>
-using namespace std;
 
 #include "Name.h"
 #include "Instance.h"
@@ -32,23 +31,27 @@ class Netlist {
     //pour parcourir les vector
     inline bool hasNoInstances();
     inline bool hasNoNets();
-    inline vector<Instance*>::iterator getFirstInstanceIt();
-    inline vector<Instance*>::iterator getLastInstanceIt();
-    inline vector<Net*>::iterator getFirstNetIt();
-    inline vector<Net*>::iterator getLastNetIt();
-        
+    //inline vector<Instance*>::iterator getFirstInstanceIt();
+    //inline vector<Instance*>::iterator getLastInstanceIt();
+    //inline vector<Net*>::iterator getFirstNetIt();
+    //inline vector<Net*>::iterator getLastNetIt();
+    inline const std::vector<Instance*>& getInstances();
+    inline const std::vector<Net*>& getNets();
+    
     private:
     Circuit*          _circuit;
-    vector<Instance*> _instances;
-    vector<Net*>      _nets;
+    std::vector<Instance*> _instances;
+    std::vector<Net*>      _nets;
 };
     
-inline bool 					   Netlist::hasNoInstances() 	 { return (_instances.size() == 0)? true : false; }
-inline bool 					   Netlist::hasNoNets()      	 { return (_nets.size() == 0)? true : false; }
-inline vector<Instance*>::iterator Netlist::getFirstInstanceIt() { return _instances.begin(); }
-inline vector<Instance*>::iterator Netlist::getLastInstanceIt()  { return _instances.end(); }
-inline vector<Net*>::iterator      Netlist::getFirstNetIt()      { return _nets.begin(); }
-inline vector<Net*>::iterator      Netlist::getLastNetIt()       { return _nets.end(); }
+inline bool 					Netlist::hasNoInstances() { return (_instances.size() == 0)? true : false; }
+inline bool 					Netlist::hasNoNets()      { return (_nets.size() == 0)? true : false; }
+//inline vector<Instance*>::iterator Netlist::getFirstInstanceIt() { return _instances.begin(); }
+//inline vector<Instance*>::iterator Netlist::getLastInstanceIt()  { return _instances.end(); }
+//inline vector<Net*>::iterator      Netlist::getFirstNetIt()      { return _nets.begin(); }
+//inline vector<Net*>::iterator      Netlist::getLastNetIt()       { return _nets.end(); }
+inline const std::vector<Instance*>& Netlist::getInstances()   { return _instances; };
+inline const std::vector<Net*>&      Netlist::getNets()        { return _nets; };
     
 } // namespace
 #endif

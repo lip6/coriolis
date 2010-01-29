@@ -7,6 +7,8 @@
  *
  */
 
+using namespace std;
+
 #include "Net.h"
 #include "Netlist.h"
 
