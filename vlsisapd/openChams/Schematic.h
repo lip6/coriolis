@@ -56,3 +56,4 @@ inline Name   Schematic::Infos::getSymetry() { return _sym; };
     
 } // namespace
 #endif
+

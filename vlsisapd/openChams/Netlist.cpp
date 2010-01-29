@@ -1,5 +1,5 @@
 /*
- *  NetList.cpp
+ *  Netlist.cpp
  *  openChams
  *
  *  Created by damien dupuis on 12/01/10.
@@ -11,7 +11,7 @@
 #include <algorithm>
 using namespace std;
 
-#include "NetList.h"
+#include "Netlist.h"
 #include "Circuit.h"
 #include "OpenChamsException.h"
 
