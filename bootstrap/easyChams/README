@@ -1,0 +1,5 @@
+easyChams readme
+
+This tool allows every one to easily compile & install chams project's sources.
+
+To compile this tool use ./compile.sh which is platform independant.
