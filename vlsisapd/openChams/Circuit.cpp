@@ -148,7 +148,8 @@ void Circuit::readInstances(xmlNode* node, Netlist* netlist) {
         if (node->type == XML_ELEMENT_NODE) {
             if (xmlStrEqual(node->name, (xmlChar*)"instance")) {
                 Instance* inst =readInstance(node, netlist);
-                netlist->addInstance(inst);
+                if (inst)
+                	netlist->addInstance(inst);
             } else {
                 cerr << "[WARNING] Only 'instance' nodes are allowed in 'instances', others will be ignored." << endl;
             }
@@ -184,19 +185,21 @@ Instance* Circuit::readInstance(xmlNode* node, Netlist* netlist) {
     xmlNode* child = node->children;
     for (xmlNode* node = child; node; node = node->next) {
         if (node->type == XML_ELEMENT_NODE) {
-            if (xmlStrEqual(node->name, (xmlChar*)"connectors")) {
-                readInstanceConnectors(node, inst);
-            } else if (xmlStrEqual(node->name, (xmlChar*)"parameters")) {
+            //if (xmlStrEqual(node->name, (xmlChar*)"connectors")) {
+            //    readInstanceConnectors(node, inst);
+            //} else
+            if (xmlStrEqual(node->name, (xmlChar*)"parameters")) {
                 readInstanceParameters(node, inst);
             } else {
-                cerr << "[WARNING] Only 'conectors' and 'parameters' nodes are allowed in 'instance', others will be ignored." << endl;
-                return NULL;
+                cerr << "[WARNING] Only 'parameters' node is allowed in 'instance', others will be ignored." << endl;
+                //cerr << "[WARNING] Only 'conectors' and 'parameters' nodes are allowed in 'instance', others will be ignored." << endl;
             }
         }
     }
     return inst;
 }
  
+/*
 void Circuit::readInstanceConnectors(xmlNode* node, Instance* inst) {
 	xmlNode* child = node->children;
     for (xmlNode* node = child; node; node = node->next) {
@@ -209,6 +212,7 @@ void Circuit::readInstanceConnectors(xmlNode* node, Instance* inst) {
         }
     }
 }
+*/
     
 void Circuit::readInstanceParameters(xmlNode* node, Instance* inst) {
     xmlNode* child = node->children;
@@ -295,7 +299,7 @@ void Circuit::readNetConnector(xmlNode* node, Net* net) {
             throw OpenChamsException(error);
             //return;
         }
-        inst->connect(cName, net->getName());
+        //inst->connect(cName, net->getName());
         net->connectTo(iName, cName);
     } else {
         throw OpenChamsException("[ERROR] 'connector' node must have 'instance' and 'name' properties (for net).");
@@ -400,14 +404,17 @@ bool Circuit::writeToFile(string filePath) {
     file.open(filePath.c_str());
     // checks before do anything
     if (!_netlist) {
+        cerr << "no netlist" << endl; cerr.flush();
         throw OpenChamsException("[ERROR] Cannot writeToFile since no netlist is defined !");
         //return false;
     }    
     if (_netlist->hasNoInstances()) {
+        cerr << "no instances" << endl; cerr.flush();
         throw OpenChamsException("[ERROR] Cannot writeToFile since no instance is defined in netlist !");
         //return false;
     }
     if (_netlist->hasNoNets()) {
+        cerr << "no nets" << endl; cerr.flush();
         throw OpenChamsException("[ERROR] Cannot writeToFile since no net is defined in netlist !");
         //return false;
     }
@@ -425,20 +432,20 @@ bool Circuit::writeToFile(string filePath) {
          << "    <instances>" << endl;
     for (vector<Instance*>::const_iterator it = _netlist->getInstances().begin() ; it != _netlist->getInstances().end() ; ++it) {
         Instance* inst = (*it);
-        if (inst->hasNoConnectors()) {
+        /*if (inst->hasNoConnectors()) {
             string error("[ERROR] Cannot writeToFile since instance (");
             error += inst->getName().getString();
             error += ") has no connectors !";
             throw OpenChamsException(error);
             //return false;
-        }
+        }*/
         string sourceBulkStr = (inst->isSourceBulkConnected()) ? "True" : "False";
         file << "      <instance name=\"" << inst->getName().getString() << "\" model=\"" << inst->getModel().getString() << "\" mostype=\"" << inst->getMosType().getString() << "\" sourceBulkConnected=\"" << sourceBulkStr << "\">" << endl;
-        file << "        <connectors>" << endl;
+        /*file << "        <connectors>" << endl;
         for (map<Name, Net*>::const_iterator it = inst->getConnectors().begin() ; it != inst->getConnectors().end() ; ++it) {
             file << "          <connector name=\"" << (*it).first.getString() << "\"/>" << endl;
         }
-        file << "        </connectors>" << endl;
+        file << "        </connectors>" << endl;*/
         if (!inst->getParameters().isEmpty()) {
             Parameters params = inst->getParameters();
             file << "        <parameters>" << endl;

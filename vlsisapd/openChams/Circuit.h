@@ -31,6 +31,10 @@ class Circuit {
     inline Netlist*   getNetlist();
     inline Schematic* getSchematic();
     inline void       addParameter(Name, double);
+    inline Parameters getParameters();
+    
+    inline void       setNetlist(Netlist*);
+    inline void       setSchematic(Schematic*);
     
     bool writeToFile(string filePath);
     static Circuit* readFromFile(const string filePath);
@@ -43,7 +47,7 @@ class Circuit {
     void      readInstances(xmlNode*, Netlist*);
     Instance* readInstance (xmlNode*, Netlist*);
     void      readInstanceParameters(xmlNode*, Instance*);
-    void      readInstanceConnectors(xmlNode*, Instance*);
+    //void      readInstanceConnectors(xmlNode*, Instance*);
     void      readNets(xmlNode*, Netlist*);
     Net*      readNet (xmlNode*, Netlist*);
     void      readNetConnector(xmlNode*, Net*);
@@ -60,12 +64,15 @@ class Circuit {
     Schematic* _schematic;
 };
     
-inline Name       Circuit::getName()    	   { return _name; }    
-inline Name       Circuit::getTechno()         { return _techno; }
-inline double     Circuit::getValue(Name name) { return _params.getValue(name); }
+inline Name       Circuit::getName()    	   { return _name; }    ;
+inline Name       Circuit::getTechno()         { return _techno; };
+inline double     Circuit::getValue(Name name) { return _params.getValue(name); };
 inline Netlist*   Circuit::getNetlist()        { return _netlist; };
 inline Schematic* Circuit::getSchematic()      { return _schematic; };
-inline void       Circuit::addParameter(Name name, double value) { _params.addParameter(name, value); }
+inline void       Circuit::addParameter(Name name, double value) { _params.addParameter(name, value); };
+inline Parameters Circuit::getParameters()     { return _params; };
+inline void       Circuit::setNetlist(Netlist* netlist)   { _netlist = netlist; };
+inline void       Circuit::setSchematic(Schematic* schem) { _schematic = schem; };
     
     
 } // namespace IO
