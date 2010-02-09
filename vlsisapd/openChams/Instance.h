@@ -28,6 +28,7 @@ class Instance {
     Instance* getInstance(Name);
     
     inline void addParameter(Name, double);
+    inline void addParameter(Name, std::string);
     inline Name getName();
     inline Name getModel();
     inline Name getMosType();
@@ -50,6 +51,7 @@ class Instance {
 };
 
 inline void Instance::addParameter(Name name, double value) { _params.addParameter(name, value); };
+inline void Instance::addParameter(Name name, std::string eqStr) { _params.addParameter(name, eqStr); };
 inline Name Instance::getName() { return _name; };
 inline Name Instance::getModel() { return _model; };
 inline Name Instance::getMosType() { return _mosType; };

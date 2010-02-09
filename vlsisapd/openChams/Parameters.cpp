@@ -8,6 +8,7 @@
  */
 
 #include <iostream>
+#include <string>
 using namespace std;
 
 #include "Parameters.h"
@@ -27,14 +28,26 @@ double Parameters::getValue(Name name) {
     
 void Parameters::addParameter(Name name, double value) {
 	map<Name, double>::iterator it = _params.find(name);
-    if ( it != _params.end() ) {
+    map<Name, string>::iterator it2 = _paramsEq.find(name);
+    if ( it != _params.end() || it2 != _paramsEq.end() ) {
         string error("[ERROR] Cannot addParameter ");
         error += name.getString();
         error += " because it already exists !";
         throw OpenChamsException(error);
-        //return;
     }
     _params[name] = value;
+}
+    
+void Parameters::addParameter(Name name, string eqStr) {
+    map<Name, double>::iterator it = _params.find(name);
+    map<Name, string>::iterator it2 = _paramsEq.find(name);
+    if ( it != _params.end() || it2 != _paramsEq.end() ) {
+        string error("[ERROR] Cannot addParameter ");
+        error += name.getString();
+        error += " because it already exists !";
+        throw OpenChamsException(error);
+    }
+    _paramsEq[name] = eqStr;
 }
 } // namespace
 

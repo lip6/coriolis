@@ -34,6 +34,7 @@ static bool readNetListDone = false;
 static bool readInstancesDone = false;
 static bool readNetsDone = false;
 static bool readSchematicDone = false;
+static bool readSizingDone = false;
     
 Circuit::Circuit(Name name, Name techno) : _name(name), _techno(techno), _netlist(NULL), _schematic(NULL) {
     readCircuitParametersDone = false;
@@ -41,6 +42,7 @@ Circuit::Circuit(Name name, Name techno) : _name(name), _techno(techno), _netlis
     readInstancesDone         = false;
     readNetsDone              = false;
     readSchematicDone         = false;
+    readSizingDone            = false;
 }
 
 void Circuit::check_uppercase(string& str, vector<string>& compares, string message) {
@@ -78,7 +80,18 @@ Name Circuit::readParameter(xmlNode* node, double& value) {
         return name;
     } else {
         throw OpenChamsException("[ERROR] 'parameter' node must have 'name' and 'value' properties.");
-        //return Name("");
+    }
+}
+    
+Name Circuit::readParameterEq(xmlNode* node, string& eqStr) {
+    xmlChar* paramNameC = xmlGetProp(node, (xmlChar*)"name");
+    xmlChar* equationC  = xmlGetProp(node, (xmlChar*)"equation");
+    if (paramNameC && equationC) {
+        Name name((const char*)paramNameC);
+        eqStr = string ((const char*)equationC);
+        return name;
+    } else {
+        throw OpenChamsException("[ERROR] 'parameterEq' node must have 'name' and 'equation' properties.");
     }
 }
     
@@ -106,8 +119,13 @@ void Circuit::readCircuitParameters(xmlNode* node) {
                     Name paramName = readParameter(paramNode, value);
                     if (paramName == Name("")) return; // error
                     addParameter(paramName, value);
+                } else if (xmlStrEqual(paramNode->name, (xmlChar*)"parameterEq")) {
+                    string eqStr = "";
+                    Name paramName = readParameterEq(paramNode, eqStr);
+                    if (paramName == Name("")) return; // error
+        			addParameter(paramName, eqStr);
                 } else {
-                    cerr << "[WARNING] Only 'parameter' nodes are authorized under 'parameters' node." << endl;
+                    cerr << "[WARNING] Only 'parameter' and 'parameterEq' nodes are allowed under 'parameters' node." << endl;
                     return;
                 }
             }
@@ -223,6 +241,14 @@ void Circuit::readInstanceParameters(xmlNode* node, Instance* inst) {
                 Name paramName = readParameter(node, value);
                 if (paramName == Name("")) return; // error
                 inst->addParameter(paramName, value);
+            } else if (xmlStrEqual(node->name, (xmlChar*)"parameterEq")) {
+                string eqStr = "";
+                Name paramName = readParameterEq(node, eqStr);
+                if (paramName == Name("")) return; // error
+                inst->addParameter(paramName, eqStr);
+            } else {
+                cerr << "[WARNING] Only 'parameter' and 'parameterEq' nodes are allowed under 'instance' node." << endl;
+                return;
             }
         }
     }
@@ -352,6 +378,111 @@ void Circuit::readInstanceSchematic(xmlNode* node, Schematic* schematic) {
         throw OpenChamsException("[ERROR] 'instance' node in 'schematic' must have 'name', 'x', 'y' and 'sym' properties.");
     }
 }
+
+void Circuit::readSizing(xmlNode* node) {
+    if (readSizingDone) {
+        cerr << "[WARNING] Only one 'sizing' node is allowed in circuit, others will be ignored." << endl;
+        return;
+    }
+    
+    Sizing* sizing = new Sizing(this);
+    xmlNode* child = node->children;
+    for (xmlNode* node = child; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE) {
+            if (xmlStrEqual(node->name, (xmlChar*)"instance")) {
+                readInstanceSizing(node, sizing);
+            } else if (xmlStrEqual(node->name, (xmlChar*)"equations")) {
+                readEquations(node, sizing);
+            } else {
+                cerr << "[WARNING] Only 'instance' and 'equations' nodes are allowed in 'sizing', others will be ignored." << endl;
+            }
+        }
+    }
+    readSizingDone = true;
+    _sizing = sizing;
+}
+    
+void Circuit::readInstanceSizing(xmlNode* node, Sizing* sizing) {
+    xmlChar* nameC     = xmlGetProp(node, (xmlChar*)"name");
+    xmlChar* operatorC = xmlGetProp(node, (xmlChar*)"operator");
+    xmlChar* simulModC = xmlGetProp(node, (xmlChar*)"simulModel");
+    xmlChar* orderC    = xmlGetProp(node, (xmlChar*)"callOrder");
+    if (nameC && operatorC && simulModC && orderC) {
+        Name     iName   ((const char*)nameC);
+        Name     opName  ((const char*)operatorC);
+        Name     simulMod((const char*)simulModC);
+        unsigned callOrder = ::getValue<unsigned>(orderC);
+        Operator* op = sizing->addOperator(iName, opName, simulMod, callOrder);
+        xmlNode* child = node->children;
+        for (xmlNode* node = child; node; node = node->next) {
+            if (node->type == XML_ELEMENT_NODE) {
+                if (xmlStrEqual(node->name, (xmlChar*)"constraint")) {
+                    readConstraint(node, op);
+                } else {
+                    cerr << "[WARNING] Only 'constraint' nodes are allowed in 'instance' of 'sizing', others will be ignored." << endl;
+                }
+            }
+        }
+        
+    } else {
+        throw OpenChamsException("[ERROR] 'instance' node in 'sizing' must have 'name', 'operator', 'simulModel' and 'callOrder' properties.");
+    }
+}
+    
+void Circuit::readConstraint(xmlNode* node, Operator* op) {
+    // attributes of constraint may be :
+    //    param ref refParam [factor]
+    //    param refEquation [factor]
+    xmlChar* paramC    = xmlGetProp(node, (xmlChar*)"param");
+    xmlChar* refC      = xmlGetProp(node, (xmlChar*)"ref");
+    xmlChar* refParamC = xmlGetProp(node, (xmlChar*)"refParam");
+    xmlChar* refEqC    = xmlGetProp(node, (xmlChar*)"refEquation");
+    xmlChar* factorC   = xmlGetProp(node, (xmlChar*)"factor");
+    if (paramC && refC && refParamC) {
+        Name param    ((const char*)paramC);
+        Name ref      ((const char*)refC);
+        Name refParam ((const char*)refParamC);
+        double factor = 1.0;
+        if (factorC) {
+            factor = ::getValue<double>(factorC);
+        }
+        op->addConstraint(param, ref, refParam, factor);
+    } else if (paramC && refEqC) {
+        Name param ((const char*)paramC);
+        Name refEq ((const char*)refEqC);
+        double factor = 1.0;
+        if (factorC) {
+            factor = ::getValue<double>(factorC);
+        }
+        op->addConstraint(param, refEq, factor);
+    } else {
+        throw OpenChamsException("[ERROR] 'constraint' node must have 'param, ref, refParam, [factor]' or 'param, refEq, [factor]' properties.");
+    }
+}
+void Circuit::readEquations(xmlNode* node, Sizing* sizing) {
+    xmlNode* child = node->children;
+    for (xmlNode* node = child; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE) {
+            if (xmlStrEqual(node->name, (xmlChar*)"eq")) {
+                readEquation(node, sizing);
+            } else {
+                throw OpenChamsException("[ERROR] Only 'eq' nodes are allowed in 'equations'.");
+            }
+        }
+    }
+}
+    
+void Circuit::readEquation(xmlNode* node, Sizing* sizing) {
+    xmlChar* nameC     = xmlGetProp(node, (xmlChar*)"name");
+    xmlChar* equationC = xmlGetProp(node, (xmlChar*)"equation");
+    if (nameC && equationC) {
+        Name   eName ((const char*)nameC);
+        string eqStr ((const char*)equationC);
+        sizing->addEquation(eName, eqStr);
+    } else {
+        throw OpenChamsException("[ERROR] 'eq' node in 'equations' must have 'name' and 'equation' properties.");
+    }
+}
     
 Circuit* Circuit::readFromFile(const string filePath) {
     LIBXML_TEST_VERSION;
@@ -390,6 +521,9 @@ Circuit* Circuit::readFromFile(const string filePath) {
                 if (xmlStrEqual(node->name, (xmlChar*)"schematic")) {
                     cir->readSchematic(node);
                 }
+                if (xmlStrEqual(node->name, (xmlChar*)"sizing")) {
+                    cir->readSizing(node);
+                }
             }
         }
     }
@@ -426,6 +560,9 @@ bool Circuit::writeToFile(string filePath) {
     	for (map<Name, double>::const_iterator it = _params.getValues().begin() ; it != _params.getValues().end() ; ++it) {
         	file << "    <parameter name=\"" << (*it).first.getString() << "\" value=\"" << (*it).second << "\"/>" << endl;
     	}
+        for (map<Name, string>::const_iterator it = _params.getEqValues().begin() ; it != _params.getEqValues().end() ; ++it) {
+            file << "    <parameterEq name=\"" << (*it).first.getString() << "\" equation=\"" << (*it).second << "\"/>" << endl;
+        }
         file << "  </parameters>" << endl;
     }
     file << "  <netlist>" << endl
@@ -483,6 +620,33 @@ bool Circuit::writeToFile(string filePath) {
             file << "    <instance name=\"" << ((*it).first).getString() << "\" x=\"" << infos->getX() << "\" y=\"" << infos->getY() << "\" sym=\"" << infos->getSymetry().getString() << "\"/>" << endl;
         }
         file << "  </schematic>" << endl;
+    }
+    if (_sizing && !_sizing->hasNoOperators()) {
+        file << "  <sizing>" << endl;
+        for (map<Name, Operator*>::const_iterator it = _sizing->getOperators().begin() ; it != _sizing->getOperators().end() ; ++it) {
+            Operator* op = (*it).second;
+            file << "    <instance name=\"" << ((*it).first).getString() << "\" operator=\"" << op->getName().getString() << "\" simulModel=\"" << op->getSimulModel().getString() << "\" callOrder=\"" << op->getCallOrder() << "\">" << endl;
+            if (!op->hasNoConstraints()) {
+                for (map<Name, Operator::Constraint*>::const_iterator cit = op->getConstraints().begin() ; cit != op->getConstraints().end() ; ++cit) {
+                    Operator::Constraint* cn = (*cit).second;
+                    Name ref = cn->getRef();
+                    if (ref == Name("")) {
+                        file << "      <constraint param=\"" << ((*cit).first).getString() << "\" refEquation=\"" << cn->getRefParam().getString() << "\" factor=\"" << cn->getFactor() << "\"/>" << endl;
+                    } else {
+                        file << "      <constraint param=\"" << ((*cit).first).getString() << "\" ref=\"" << cn->getRef().getString() << "\" refParam=\"" << cn->getRefParam().getString() << "\" factor=\"" << cn->getFactor() << "\"/>" << endl;
+                    }
+                }
+            }
+            file << "    </instance>" << endl;
+        }
+        if (!_sizing->hasNoEquations()) {
+            file << "    <equations>" << endl;
+            for (map<Name, string>::const_iterator it = _sizing->getEquations().begin() ; it != _sizing->getEquations().end() ; ++it) {
+                file << "      <eq name=\"" << ((*it).first).getString() << "\" equation=\"" << (*it).second << "\"/>" << endl;
+            }
+            file << "    </equations>" << endl;
+        }
+        file << "  </sizing>" << endl;
     }
     file << "</circuit>" << endl;
     file.close();

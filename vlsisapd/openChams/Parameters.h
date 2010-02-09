@@ -19,23 +19,24 @@ class Parameters {
 public:
     Parameters() {};
     
-    double getValue(Name);    
-    void   addParameter(Name, double);
+    double      getValue(Name);
+    std::string getEqValue(Name);
+    void        addParameter(Name, double);
+    void        addParameter(Name, std::string);
     
     // pour parcourir la map :
     inline bool isEmpty();
-    //inline map<Name, double>::iterator getFirstIt();
-    //inline map<Name, double>::iterator getLastIt();
-    inline const std::map<Name, double>& getValues();
+    inline const std::map<Name, double>&      getValues();
+    inline const std::map<Name, std::string>& getEqValues();
     
 private:
-    std::map<Name, double> _params;
+    std::map<Name, double>      _params;
+    std::map<Name, std::string> _paramsEq;
 };
     
-inline bool Parameters::isEmpty() { return (_params.size() == 0)? true : false; }
-//inline map<Name, double>::iterator Parameters::getFirstIt() { return _params.begin(); }
-//inline map<Name, double>::iterator Parameters::getLastIt()  { return _params.end(); }
-inline const std::map<Name, double>& Parameters::getValues() { return _params; };
+inline bool Parameters::isEmpty() { return ((_params.size() == 0)&&(_paramsEq.size() == 0))? true : false; }
+inline const std::map<Name, double>& Parameters::getValues()   { return _params; };
+inline const std::map<Name, string>& Parameters::getEqValues() { return _paramsEq; };
 
 } // namespace
 #endif

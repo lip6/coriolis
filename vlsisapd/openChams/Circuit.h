@@ -19,6 +19,8 @@
 #include "Instance.h"
 #include "Net.h"
 #include "Schematic.h"
+#include "Sizing.h"
+#include "Operator.h"
 
 namespace OpenChams {
 class Circuit {
@@ -31,16 +33,19 @@ class Circuit {
     inline Netlist*   getNetlist();
     inline Schematic* getSchematic();
     inline void       addParameter(Name, double);
+    inline void       addParameter(Name, string);
     inline Parameters getParameters();
     
     inline void       setNetlist(Netlist*);
     inline void       setSchematic(Schematic*);
+    inline void       setSizing(Sizing*);
     
     bool writeToFile(string filePath);
     static Circuit* readFromFile(const string filePath);
     
 	private:
     Name      readParameter(xmlNode*, double&);
+    Name      readParameterEq(xmlNode*, string&);
     Name      readConnector(xmlNode*);
     void      readCircuitParameters(xmlNode*);
     void      readNetList(xmlNode*);
@@ -53,6 +58,11 @@ class Circuit {
     void      readNetConnector(xmlNode*, Net*);
     void      readSchematic(xmlNode*);
     void      readInstanceSchematic(xmlNode*, Schematic*);
+    void      readSizing(xmlNode*);
+    void      readInstanceSizing(xmlNode*, Sizing*);
+    void      readConstraint(xmlNode*, Operator*);
+    void      readEquations(xmlNode*, Sizing*);
+    void      readEquation(xmlNode*, Sizing*);
     
     void      check_uppercase(string& str, vector<string>& compares, string message);
     void      check_lowercase(string& str, vector<string>& compares, string message);
@@ -62,17 +72,20 @@ class Circuit {
     Parameters _params;
     Netlist*   _netlist;
     Schematic* _schematic;
+    Sizing*    _sizing;
 };
     
-inline Name       Circuit::getName()    	   { return _name; }    ;
+inline Name       Circuit::getName()    	   { return _name; };
 inline Name       Circuit::getTechno()         { return _techno; };
 inline double     Circuit::getValue(Name name) { return _params.getValue(name); };
 inline Netlist*   Circuit::getNetlist()        { return _netlist; };
 inline Schematic* Circuit::getSchematic()      { return _schematic; };
 inline void       Circuit::addParameter(Name name, double value) { _params.addParameter(name, value); };
+inline void       Circuit::addParameter(Name name, string eqStr) { _params.addParameter(name, eqStr); };
 inline Parameters Circuit::getParameters()     { return _params; };
 inline void       Circuit::setNetlist(Netlist* netlist)   { _netlist = netlist; };
 inline void       Circuit::setSchematic(Schematic* schem) { _schematic = schem; };
+inline void       Circuit::setSizing(Sizing* sizing)      { _sizing = sizing; };
     
     
 } // namespace IO
