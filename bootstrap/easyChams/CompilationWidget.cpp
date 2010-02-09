@@ -145,8 +145,8 @@ void CompilationWidget::compile() {
     if (_chams->isChecked())        arguments << "-t chams";
     if (_hurricaneAMS->isChecked()) arguments << "-t hurricaneAMS";
     
-    for (int i = 0; i < arguments.size(); ++i)
-          cout << arguments.at(i).toLocal8Bit().constData() << endl;
+    //for (int i = 0; i < arguments.size(); ++i)
+    //      cout << arguments.at(i).toLocal8Bit().constData() << endl;
 
     _myProcess->start(_cProgram, arguments);
 }
