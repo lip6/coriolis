@@ -101,7 +101,7 @@ compile() {
     fi
     echo "#### Now compiling $TOOL ####"
     echo ""
-    cmake -D "CMAKE_BUILD_TYPE:STRING=$MODE" -D "BUILD_DOC:STRING=$DOC" -D "BUILD_STATIC:STRING=$STATIC" $SOURCE/$TOOL
+    cmake -D "CMAKE_BUILD_TYPE:STRING=$MODE" -D "BUILD_DOC:STRING=$DOC" -D "BUILD_SHARED_LIBS:STRING=$SHARED" $SOURCE/$TOOL
     make "DESTDIR=$INSTALL" -j2 install
     if [ $? -ne 0 ]
     then
@@ -118,7 +118,7 @@ TOOLS=""
 OSTYPE=""
 MODE=""
 LIBMODE="Shared"
-STATIC="OFF"
+SHARED="ON"
 DOC="OFF"
 SVNUP=0
 CLEAN=0
@@ -136,7 +136,7 @@ do
     t) TOOL=${OPTARG}
        TOOLS="$TOOLS $TOOL";;
     m) MODE=${OPTARG};;
-    s) STATIC="ON"
+    s) SHARED="OFF"
        LIBMODE="Static";;
     d) DOC="ON";;
     u) SVNUP=1;;
