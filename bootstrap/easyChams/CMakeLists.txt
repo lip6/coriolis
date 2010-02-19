@@ -1,0 +1,22 @@
+PROJECT(EASYCHAMS)
+
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0)
+
+SET(CMAKE_BUILD_TYPE release)
+
+FIND_PACKAGE(Qt4 REQUIRED)
+
+INCLUDE(${QT_USE_FILE})
+
+SET(CPP_FILES main.cpp MainWindow.cpp CompilationWidget.cpp CompileHighlighter.cpp ConfigDialog.cpp)
+
+QT4_WRAP_CPP(MOC_EASYCHAMS MainWindow.h CompilationWidget.h CompileHighlighter.h ConfigDialog.h)
+
+IF(APPLE)
+    ADD_EXECUTABLE(easyChams MACOSX_BUNDLE ${MOC_EASYCHAMS} ${CPP_FILES})
+ELSE(APPLE)
+    ADD_EXECUTABLE(easyChams ${MOC_EASYCHAMS} ${CPP_FILES})
+ENDIF(APPLE)
+
+TARGET_LINK_LIBRARIES(easyChams ${QT_LIBRARIES})
+INSTALL(TARGETS easyChams DESTINATION /)
