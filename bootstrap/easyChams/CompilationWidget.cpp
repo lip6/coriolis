@@ -229,14 +229,14 @@ void CompilationWidget::updateConfig(QStringList list) {
 
 void CompilationWidget::updateError() {
     QByteArray data = _myProcess->readAllStandardError();
-    _console->insertPlainText(QString(data));
+    _console->insertPlainText(QString::fromUtf8(data.constData()));
     int end = _console->verticalScrollBar()->maximum();
     _console->verticalScrollBar()->setValue(end);
 }
 
 void CompilationWidget::updateText() {
     QByteArray data = _myProcess->readAllStandardOutput();
-    QString str(data);
+    QString str = QString::fromUtf8(data.constData());
     QRegExp rx = QRegExp ( "([0-9]+)%" );
     if ( str.contains(rx) ) {
         bool ok;

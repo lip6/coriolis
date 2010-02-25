@@ -81,7 +81,8 @@ compile() {
         echo " -> Please update manually"
         exit 1
       fi
-      svn update --accept postpone # par defaut on prendra la decision en cas de conflits plus tard (au cas ou le status n'est pas suffisant)
+      #svn update --accept postpone # par defaut on prendra la decision en cas de conflits plus tard (au cas ou le status n'est pas suffisant)
+      svn update # par defaut on prendra la decision en cas de conflits plus tard (au cas ou le status n'est pas suffisant)
     fi
     if [ ! -d "$BUILD/$TOOL" ]
     then
@@ -102,7 +103,7 @@ compile() {
     echo "#### Now compiling $TOOL ####"
     echo ""
     cmake -D "CMAKE_BUILD_TYPE:STRING=$MODE" -D "BUILD_DOC:STRING=$DOC" -D "BUILD_SHARED_LIBS:STRING=$SHARED" $SOURCE/$TOOL
-    make "DESTDIR=$INSTALL" -j2 install
+    make "DESTDIR=$INSTALL" -j8 install
     if [ $? -ne 0 ]
     then
       exit 1
