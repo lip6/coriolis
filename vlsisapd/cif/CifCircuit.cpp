@@ -8,7 +8,7 @@ using namespace std;
 
 namespace IO {
 
-CifCircuit::CifCircuit(string name) : _name(name) {}
+CifCircuit::CifCircuit(string name, string unit, double scale) : _name(name), _unit(unit), _scale(scale) {}
 
 
 bool CifCircuit::addPolygon(CifPolygon* polygon) {
@@ -33,6 +33,7 @@ bool CifCircuit::write(string filename) {
     file.open(filename.c_str(), ios::out);
     // Header
     file << "(CIF file written on " << date << " by IO_CIF_DRIVER);" << endl
+         << "(Units: " << _unit << "  -  UU/DB Scale: " << _scale << ");" << endl
          << "DS 1 1 1;" << endl
          << "9 " << _name << ";" << endl;
 

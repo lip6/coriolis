@@ -7,13 +7,15 @@ namespace IO {
 class CifPolygon;
 class CifCircuit {
     public:
-        CifCircuit(string);
+        CifCircuit(string name, string unit, double scale);
 
         bool addPolygon ( CifPolygon* );
         bool write ( string );
 
     private:
         string _name;
+        string _unit;
+        double _scale;
 
         std::vector<CifPolygon*> _polygons;
 };
