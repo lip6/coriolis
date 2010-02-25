@@ -43,3 +43,4 @@ void Sizing::addEquation(Name equationName, string equation) {
 }
     
 } // namespace
+

@@ -10,6 +10,8 @@
 #ifndef __OPENCHAMS_CIRCUIT_H__
 #define __OPENCHAMS_CIRCUIT_H__
 
+#include <vector>
+
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
@@ -33,19 +35,19 @@ class Circuit {
     inline Netlist*   getNetlist();
     inline Schematic* getSchematic();
     inline void       addParameter(Name, double);
-    inline void       addParameter(Name, string);
+    inline void       addParameter(Name, std::string);
     inline Parameters getParameters();
     
     inline void       setNetlist(Netlist*);
     inline void       setSchematic(Schematic*);
     inline void       setSizing(Sizing*);
     
-    bool writeToFile(string filePath);
-    static Circuit* readFromFile(const string filePath);
+    bool writeToFile(std::string filePath);
+    static Circuit* readFromFile(const std::string filePath);
     
 	private:
     Name      readParameter(xmlNode*, double&);
-    Name      readParameterEq(xmlNode*, string&);
+    Name      readParameterEq(xmlNode*, std::string&);
     Name      readConnector(xmlNode*);
     void      readCircuitParameters(xmlNode*);
     void      readNetList(xmlNode*);
@@ -64,8 +66,8 @@ class Circuit {
     void      readEquations(xmlNode*, Sizing*);
     void      readEquation(xmlNode*, Sizing*);
     
-    void      check_uppercase(string& str, vector<string>& compares, string message);
-    void      check_lowercase(string& str, vector<string>& compares, string message);
+    void      check_uppercase(std::string& str, std::vector<std::string>& compares, std::string message);
+    void      check_lowercase(std::string& str, std::vector<std::string>& compares, std::string message);
     
     Name 	   _name;
     Name 	   _techno;
@@ -81,7 +83,7 @@ inline double     Circuit::getValue(Name name) { return _params.getValue(name); 
 inline Netlist*   Circuit::getNetlist()        { return _netlist; };
 inline Schematic* Circuit::getSchematic()      { return _schematic; };
 inline void       Circuit::addParameter(Name name, double value) { _params.addParameter(name, value); };
-inline void       Circuit::addParameter(Name name, string eqStr) { _params.addParameter(name, eqStr); };
+inline void       Circuit::addParameter(Name name, std::string eqStr) { _params.addParameter(name, eqStr); };
 inline Parameters Circuit::getParameters()     { return _params; };
 inline void       Circuit::setNetlist(Netlist* netlist)   { _netlist = netlist; };
 inline void       Circuit::setSchematic(Schematic* schem) { _schematic = schem; };

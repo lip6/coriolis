@@ -36,7 +36,7 @@ private:
     
 inline bool Parameters::isEmpty() { return ((_params.size() == 0)&&(_paramsEq.size() == 0))? true : false; }
 inline const std::map<Name, double>& Parameters::getValues()   { return _params; };
-inline const std::map<Name, string>& Parameters::getEqValues() { return _paramsEq; };
+inline const std::map<Name, std::string>& Parameters::getEqValues() { return _paramsEq; };
 
 } // namespace
 #endif
