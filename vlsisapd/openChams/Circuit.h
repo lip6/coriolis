@@ -22,6 +22,7 @@
 #include "Net.h"
 #include "Schematic.h"
 #include "Sizing.h"
+#include "Transistor.h"
 #include "Operator.h"
 
 namespace OpenChams {
@@ -54,7 +55,10 @@ class Circuit {
     void      readInstances(xmlNode*, Netlist*);
     Instance* readInstance (xmlNode*, Netlist*);
     void      readInstanceParameters(xmlNode*, Instance*);
-    //void      readInstanceConnectors(xmlNode*, Instance*);
+    void      readInstanceConnectors(xmlNode*, Instance*);
+    void      readInstanceTransistors(xmlNode*, Instance*);
+    void      readTransistor(xmlNode*, Instance*);
+    void      readTransistorConnection(xmlNode*, Transistor*);
     void      readNets(xmlNode*, Netlist*);
     Net*      readNet (xmlNode*, Netlist*);
     void      readNetConnector(xmlNode*, Net*);

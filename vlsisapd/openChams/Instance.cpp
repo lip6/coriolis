@@ -13,6 +13,7 @@ using namespace std;
 #include "Instance.h"
 #include "Netlist.h"
 #include "Net.h"
+#include "Transistor.h"
 #include "OpenChamsException.h"
 
 namespace OpenChams {
