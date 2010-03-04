@@ -36,7 +36,7 @@ static bool readNetsDone = false;
 static bool readSchematicDone = false;
 static bool readSizingDone = false;
     
-Circuit::Circuit(Name name, Name techno) : _name(name), _techno(techno), _netlist(NULL), _schematic(NULL) {
+Circuit::Circuit(Name name, Name techno) : _name(name), _techno(techno), _netlist(NULL), _schematic(NULL), _sizing(NULL) {
     readCircuitParametersDone = false;
     readNetListDone           = false;
     readInstancesDone         = false;
@@ -603,19 +603,25 @@ Circuit* Circuit::readFromFile(const string filePath) {
 bool Circuit::writeToFile(string filePath) {
     ofstream file;
     file.open(filePath.c_str());
+    if (!file.is_open()) {
+        string error("[ERROR] Cannot open file ");
+        error += filePath;
+        error += " for writting.";
+        throw OpenChamsException(error);
+    }
     // checks before do anything
     if (!_netlist) {
-        cerr << "no netlist" << endl; cerr.flush();
+        //cerr << "no netlist" << endl; cerr.flush();
         throw OpenChamsException("[ERROR] Cannot writeToFile since no netlist is defined !");
         //return false;
     }    
     if (_netlist->hasNoInstances()) {
-        cerr << "no instances" << endl; cerr.flush();
+        //cerr << "no instances" << endl; cerr.flush();
         throw OpenChamsException("[ERROR] Cannot writeToFile since no instance is defined in netlist !");
         //return false;
     }
     if (_netlist->hasNoNets()) {
-        cerr << "no nets" << endl; cerr.flush();
+        //cerr << "no nets" << endl; cerr.flush();
         throw OpenChamsException("[ERROR] Cannot writeToFile since no net is defined in netlist !");
         //return false;
     }
