@@ -108,18 +108,9 @@
 
                install ( FILES           ${exports}     DESTINATION /include/hurricane/viewer ) 
 
- if ( BUILD_STATIC )
-           add_library ( hviewer-static  STATIC ${cpps} ${MOC_SRCS} ${RCC_SRCS} )
- target_link_libraries ( hviewer-static  hurricane-static
-                                         ${QT_LIBRARIES}
-#                                        ${Boost_LIBRARIES}
-                       )
-               install ( TARGETS         hviewer-static DESTINATION /lib )
- else ( BUILD_STATIC )
-           add_library ( hviewer         SHARED ${cpps} ${MOC_SRCS} ${RCC_SRCS} )
+           add_library ( hviewer         ${cpps} ${MOC_SRCS} ${RCC_SRCS} )
  target_link_libraries ( hviewer         hurricane
                                          ${QT_LIBRARIES}
 #                                        ${Boost_LIBRARIES}
                        )
                install ( TARGETS         hviewer        DESTINATION /lib )
- endif ( BUILD_STATIC )

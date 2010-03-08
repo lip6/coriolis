@@ -72,6 +72,12 @@ bool  inltrace ( unsigned int level )
   return TRACE_SHOW_LEVEL <= level;
 }
 
+unsigned int  ltracelevel ()
+//**************************
+{
+  return TRACE_SHOW_LEVEL;
+}
+
 unsigned int  ltracelevel ( unsigned int level )
 //**********************************************
 {

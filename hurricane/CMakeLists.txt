@@ -7,20 +7,19 @@ ENDIF(COMMAND CMAKE_POLICY)
 
 SET(CMAKE_MODULE_PATH "${HURRICANE_SOURCE_DIR}/cmake_modules/")
 
-OPTION(BUILD_STATIC "Build static version of libraries & binaries" OFF)
 OPTION(BUILD_DOC    "Build the documentation (doxygen)" OFF)
 
-IF(BUILD_STATIC)
-  MESSAGE(STATUS "Building static libraries.")
-# check for qmake
+#SET_LIB_LINK_MODE()
+IF(NOT BUILD_SHARED_LIBS)
+  # check for qmake
   FIND_PROGRAM(QT_QMAKE_EXECUTABLE NAMES qmake-qt4 qmake PATHS
     /opt/qt4-static-4.3.2/bin
     NO_DEFAULT_PATH
     )
-  MESSAGE(STATUS "qmake: ${QT_QMAKE_EXECUTABLE}")
-ELSE(BUILD_STATIC)
+  MESSAGE(STATUS "Building static libraries.")
+ELSE(NOT BUILD_SHARED_LIBS)
   MESSAGE(STATUS "Building dynamic libraries.")
-ENDIF(BUILD_STATIC)
+ENDIF(NOT BUILD_SHARED_LIBS)
 
 SET(QT_USE_QTXML    "true")
 #SET(QT_USE_QTOPENGL "true")

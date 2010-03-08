@@ -109,12 +109,15 @@ namespace Hurricane {
   {
     if ( _singleton->_isTraced(symbol) )
       _singleton->_levels.push ( ltracelevel(traceLevel) );
+    else {
+      _singleton->_levels.push ( ltracelevel() );
+    }
   }
 
 
   void  DebugSession::close ()
   {
-    if ( !_singleton->_levels.empty() ) {
+    if ( not _singleton->_levels.empty() ) {
       ltracelevel ( _singleton->_levels.top() );
       _singleton->_levels.pop ();
     }

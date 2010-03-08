@@ -1,10 +1,4 @@
 
-if ( BUILD_STATIC )
-   include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane )
-        add_executable ( htest-static HTest.cpp )
- target_link_libraries ( htest-static hurricane-static )
-else ( BUILD_STATIC )
    include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane )
         add_executable ( htest HTest.cpp )
  target_link_libraries ( htest hurricane )
-endif ( BUILD_STATIC )

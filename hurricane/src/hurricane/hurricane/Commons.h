@@ -87,6 +87,7 @@ namespace Hurricane {
   void          trace_in    ();
   void          trace_out   ();
   bool          inltrace    ( unsigned int level );
+  unsigned int  ltracelevel ();
   unsigned int  ltracelevel ( unsigned int level );
   void          ltracein    ( unsigned int level, unsigned int count=1 );
   void          ltraceout   ( unsigned int level, unsigned int count=1 );

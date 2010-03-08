@@ -8,7 +8,6 @@
 
 MACRO(SET_LIBRARIES_PATH configname library)
   SET(${configname}_FOUND        "NOTFOUND")
-  SET(${configname}_STATIC_FOUND "NOTFOUND")
 
   IF(${library}_LIBRARY_PATH)
     SET(${configname}_FOUND "YES")
@@ -17,16 +16,8 @@ MACRO(SET_LIBRARIES_PATH configname library)
     MARK_AS_ADVANCED(${configname}_INCLUDE_DIR ${configname}_LIBRARIES)
   ENDIF(${library}_LIBRARY_PATH)
 
-  IF(${library}_STATIC_LIBRARY_PATH)
-    SET(${configname}_STATIC_FOUND "YES")
-    SET(${configname}_INCLUDE_DIR      ${${library}_INCLUDE_PATH})
-    SET(${configname}_STATIC_LIBRARIES ${${library}_STATIC_LIBRARY_PATH} ${${configname}_STATIC_LIBRARIES})
-    MARK_AS_ADVANCED(${configname}_INCLUDE_DIR ${configname}_STATIC_LIBRARIES)
-  ENDIF(${library}_STATIC_LIBRARY_PATH)
-
   IF(NOT ${library}_INCLUDE_PATH)
     SET(${configname}_FOUND        "NOTFOUND")
-    SET(${configname}_STATIC_FOUND "NOTFOUND")
   ENDIF(NOT ${library}_INCLUDE_PATH)
 ENDMACRO ( SET_LIBRARIES_PATH )
 
@@ -36,21 +27,31 @@ MACRO(HURRICANE_CHECK_LIBRARIES)
   ELSE(ARGC LESS 2)
     SET(REQUIRED ${argv1})
   ENDIF(ARGC LESS 2)
-  IF(${argv0}_FOUND OR ${argv0}_STATIC_FOUND)
+  IF(${argv0}_FOUND)
     IF(NOT ${argv0}_FIND_QUIETLY)
       IF(${argv0}_FOUND)
         MESSAGE(STATUS "Found ${argv0} : ${${argv0}_LIBRARIES}")
       ENDIF(${argv0}_FOUND)
-      IF(${argv0}_STATIC_FOUND)
-        MESSAGE(STATUS "Found ${argv0} (static): ${${argv0}_STATIC_LIBRARIES}")
-      ENDIF(${argv0}_STATIC_FOUND)
     ENDIF(NOT ${argv0}_FIND_QUIETLY)
-  ELSE(${argv0}_FOUND OR ${argv0}_STATIC_FOUND)
+  ELSE(${argv0}_FOUND)
     IF(REQUIRED)
         MESSAGE(FATAL_ERROR "${argv0} was not found. ${${argv0}_DIR_MESSAGE}")
     ENDIF(REQUIRED)
-  ENDIF(${argv0}_FOUND OR ${argv0}_STATIC_FOUND)
+  ENDIF(${argv0}_FOUND)
 ENDMACRO(HURRICANE_CHECK_LIBRARIES)
+
+MACRO(SET_LIB_LINK_MODE)
+  IF(NOT BUILD_SHARED_LIBS)
+  # check for qmake
+    FIND_PROGRAM(QT_QMAKE_EXECUTABLE NAMES qmake-qt4 qmake PATHS
+      /opt/qt4-static-4.3.2/bin
+      NO_DEFAULT_PATH
+      )
+    MESSAGE(STATUS "Building static libraries.")
+  ELSE(NOT BUILD_SHARED_LIBS)
+    MESSAGE(STATUS "Building dynamic libraries.")
+  ENDIF(NOT BUILD_SHARED_LIBS)
+ENDMACRO(SET_LIB_LINK_MODE)
 
 
 SET(HURRICANE_INCLUDE_PATH_DESCRIPTION "The directory containing the Hurricane include files. E.g /usr/local/include or /asim/coriolis/include")
@@ -84,14 +85,6 @@ IF(UNIX)
     DOC "${HURRICANE_LIBRARY_PATH_DESCRIPTION}"
   )
 
-  FIND_LIBRARY(HURRICANE_STATIC_LIBRARY_PATH
-    NAMES hurricane-static
-    PATHS ${HURRICANE_DIR_SEARCH}
-    PATH_SUFFIXES lib
-    # Help the user find it if we cannot.
-    DOC "${HURRICANE_LIBRARY_PATH_DESCRIPTION}"
-  )
-
   FIND_PATH(HURRICANE_VIEWER_INCLUDE_PATH
     NAMES hurricane/viewer/CellWidget.h
     PATHS ${HURRICANE_DIR_SEARCH}
@@ -102,14 +95,6 @@ IF(UNIX)
 
   FIND_LIBRARY(HURRICANE_VIEWER_LIBRARY_PATH
     NAMES hviewer 
-    PATHS ${HURRICANE_DIR_SEARCH}
-    PATH_SUFFIXES lib
-    # Help the user find it if we cannot.
-    DOC "${HURRICANE_LIBRARY_PATH_DESCRIPTION}"
-  )
-
-  FIND_LIBRARY(HURRICANE_VIEWER_STATIC_LIBRARY_PATH
-    NAMES hviewer-static 
     PATHS ${HURRICANE_DIR_SEARCH}
     PATH_SUFFIXES lib
     # Help the user find it if we cannot.
