@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<technology>
+  <real>
+    <name>hcmos9</name>
+    <grid value="0.005" unit="micron"/>
+    <gridsperlambda value="24"/>
+    <layers>
+      <!-- Non routing layers -->
+      <processlayer symbolic="nWell"    real="NWELL"    gdsII="3" />
+      <processlayer symbolic="nImplant" real="NPLUS"    gdsII="26"/>
+      <processlayer symbolic="pImplant" real="PPLUS"    gdsII="25"/>
+      <processlayer symbolic="active"   real="ACTIVE"   gdsII="6" />
+      <processlayer symbolic="poly"     real="POLY"     gdsII="17"/>
+      <!-- Routing layers -->
+      <processlayer symbolic="cut0"     real="CONTACT"  gdsII="30"/>
+      <processlayer symbolic="metal1"   real="METAL1"   gdsII="31"/>
+      <processlayer symbolic="cut1"     real="VIA1"     gdsII="51"/>
+      <processlayer symbolic="metal2"   real="METAL2"   gdsII="32"/>
+      <processlayer symbolic="cut2"     real="VIA2"     gdsII="52"/>
+      <processlayer symbolic="metal3"   real="METAL3"   gdsII="33"/>
+      <processlayer symbolic="cut3"     real="VIA3"     gdsII="53"/>
+      <processlayer symbolic="metal4"   real="METAL4"   gdsII="34"/>
+      <processlayer symbolic="cut4"     real="VIA4"     gdsII="54"/>
+      <processlayer symbolic="metal5"   real="METAL5"   gdsII="35"/>
+      <processlayer symbolic="cut5"     real="VIA5"     gdsII="55"/>
+      <processlayer symbolic="metal6"   real="METAL6"   gdsII="36"/>
+    </layers>
+  </real>
+</technology>

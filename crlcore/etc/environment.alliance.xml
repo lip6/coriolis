@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<environment>
+  <variable name="CELL_TOP" value="/opt/alliance-5.0"/>
+  <technologies>
+    <hurricane>
+      <config>${CORIOLIS_TOP}/share/etc/technology.symbolic.xml</config>
+    </hurricane>
+    <real>
+      <config>${CORIOLIS_TOP}/share/etc/technology.hcmos9.s2r.xml</config>
+    </real>
+    <lef>
+      <config>${CORIOLIS_TOP}/share/etc/cmos.lef</config>
+    </lef>
+    <display>
+      <config>${CORIOLIS_TOP}/share/etc/display.xml</config>
+    </display>
+  </technologies>
+  <libraries>
+    <catalog>CATAL</catalog>
+    <working>
+      <library>.</library>
+    </working>
+    <system operation="append">
+      <library>${CELL_TOP}/cells/sxlib</library>
+      <library>${CELL_TOP}/cells/dp_sxlib</library>
+      <library>${CELL_TOP}/cells/ramlib</library>
+      <library>${CELL_TOP}/cells/romlib</library>
+      <library>${CELL_TOP}/cells/rflib</library>
+      <library>${CELL_TOP}/cells/rf2lib</library>
+      <library>${CELL_TOP}/cells/pxlib</library>
+      <library>${CORIOLIS_TOP}/share/cells/stratus2sxlib</library>
+    </system>
+  </libraries>
+  <formats>
+    <scale>100</scale>
+    <input>
+      <logical>vst</logical>
+      <physical>ap</physical>
+    </input>
+    <output>
+      <logical>vst</logical>
+      <physical>ap</physical>
+    </output>
+  </formats>
+  <signals>
+    <vdd>vdd</vdd>
+    <vss>vss</vss>
+    <clock>^ck$</clock>
+  </signals>
+</environment>

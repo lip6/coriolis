@@ -1,0 +1,1 @@
+#cmakedefine CORIOLIS_TOP

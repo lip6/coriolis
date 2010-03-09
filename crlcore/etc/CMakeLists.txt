@@ -1,0 +1,6 @@
+ install ( FILES   environment.alliance.xml   DESTINATION /share/etc ) 
+ install ( FILES   technology.symbolic.xml    DESTINATION /share/etc ) 
+ install ( FILES   technology.hcmos9.s2r.xml  DESTINATION /share/etc ) 
+ install ( FILES   technology.cmos065.s2r.xml DESTINATION /share/etc ) 
+ install ( FILES   technology.fake.s2r.xml    DESTINATION /share/etc ) 
+ install ( FILES   display.xml                DESTINATION /share/etc ) 
