@@ -1,0 +1,242 @@
+
+ // -*- C++ -*-
+
+
+ namespace KNIK {
+
+ /*! \class        Vertex
+  *  \brief        A routing graph vertex.\n
+  *                - \ref VertexAttributes   "Attributes"
+  *                - \ref VertexConstructors "Constructors"
+  *                - \ref VertexAccessors    "Accessors"
+  *                - \ref VertexModifiers    "Modifiers"
+  *                - \ref VertexPredicates   "Predicates"
+  *
+  *                The Edge was written to be a light object which simplifies the way the routing graph is covered.
+  *                Edges are thus separated into two sub-classes : VEdge and HEdge respectively representing vertical edge and
+  *                horizontal edge.
+  *
+  *  \section      secVertexImplementation  Edge Implementation
+  *                The Global Router CEngine uses a technique based on routing graph and thus relies on another
+  *                CEngine : Nimbus.
+  */
+
+ /*! \anchor       VertexAttributes Attributes
+  *  \name
+  */
+ // \{
+ /*! \var          Graph* Vertex::_routingGraph
+  *                The routingGraph to which current vertex belongs
+  *
+  *  \Initial      by constructor
+  */
+
+ /*! \var          GCell* Vertex::_gcell
+  *                The gcell associated with current vertex
+  *
+  *  \Initial      by constructor
+  */
+
+ /*! \var          Edge* Vertex::_firstEdges[4]
+  *                This array regroups the first edge of each type, it is ordered as follow :
+  *                - _firstEdges[0] = first horizontal edge out
+  *                - _firstEdges[1] = first vertical edge out
+  *                - _firstEdges[2] = first horizontal edge in
+  *                - _firstEdges[3] = first vertical edge in
+  *
+  *  \Initial      empty
+  *
+  *  \note         Not all the firstEdges need to be defined. For example some vertex may only have 2 edges
+  */
+
+ /*! \var          Edge* Vertex::_predecessor
+  *                When global routing one needs to know what was the predecessor vertex, instead of the vertex, the vertex hold the edge between
+  *                the 2 vertexes
+  *
+  *  \Initial      \NULL
+  */
+
+ /*! \var          Point* Vertex::_position
+  *                The position of the vertex
+  *
+  *  \Initial      _gcell->GetCenter()
+  */
+
+ /*! \var          Tuple* Vertex::_tuple
+  *                In Dijkstra's algortihm implementation a priority stack is used to ordered vertexes, the stack contains Tuple and each vertex
+  *                may have an associated Tuple
+  *
+  *  \Initial      \NULL
+  */
+
+ /*! \var          float Vertex::_distance
+  *                In Dijkstra's algorithm implementation each vertex has a distance from source vertex
+  *
+  *  \Initial      (float)(HUGE)
+  */
+
+ /*! \var          int Vertex::_connexID
+  *                The identification flag for connex component
+  *
+  *  \Initial      \p -1
+  *  \see          \ref grpConnexID
+  */
+
+ /*! \var          unsigned Vertex::_netStamp
+  *                The net stamp associated with the current net
+  *
+  *  \Initial      \p 0
+  *  \see          \ref grpNetStamp
+  */
+
+ /*! \var          Unit Vertex::_halfWidth
+  *                The half width of the correspoding gcell, it is useful for all graphic parts
+  *
+  *  \Initial      _gcell->GetHalfWidth()
+  */
+
+ /*! \var          Unit Vertex::_halfHeight
+  *                The half height of the corresponding gcell, it is useful for all graphic parts
+  *
+  *  \Initial      _gcell->GetHalfHeight()
+  */
+ // \}
+
+ /*! \anchor       VertexConstructors Constructors
+  *  \name
+  */
+ // \{
+ /*! \function     static Vertex* Vertex::Create ( GCell* gcell, DisplaySlot* displaySlot, Graph* routingGraph );
+  *  \param        gcell        the corresponding gcell in the partitionning
+  *  \param        displaySlot  the GTK displaySlot for vertexes' graphical display
+  *  \param        routingGraph the routingGraph to which current vertex belongs
+  *  \return       the newly created vertex
+  *  \exception    error if the vertex cannot be allocated
+  */
+ // \}
+ 
+ /*! \anchor       VertexAccessors Accessors
+  *  \name
+  */
+ // \{
+
+ /*! \function     GCell* Vertex::GetGCell();
+  *  \Return       The corresponding GCell
+  */
+
+ /*! \function     Edge* Vertex::GetHEdgeOut() const;
+  *  \Return       The first horizontal edge out : Vertex::_firstEdges[0]
+  */
+
+ /*! \function     Edge* Vertex::GetVEdgeOut() const;
+  *  \Return       The first vertical edge out : Vertex::_firstEdges[1]
+  */
+
+ /*! \function     Edge* Vertex::GetHEdgeIn() const;
+  *  \Return       The first horizontal edge in : Vertex::_firstEdges[2]
+  */
+
+ /*! \function     Edge* Vertex::GetVEdgeIn() const;
+  *  \Return       The first vertical edge in : Vertex::_firstEdges[3]
+  */
+
+ /*! \function     Edges* Vertex::GetAdjacentEdges() const;
+  *  \Return       The collection of all edges attached to thecurrent vertex
+  */
+
+ /*! \function     Edge* Vertex::GetPredecessor() const;
+  *  \Return       The predecessor edge : Vertex::_predecessor
+  */
+
+ /*! \function     int* Vertex::GetConnexID() const;
+  *  \Return       The ConnexID of the vertex : Vertex::_connexID
+  */
+
+ /*! \function     float* Vertex::GetDistance() const;
+  *  \Return       The distance from the source vertex : Vertex::_distance
+  */
+
+ /*! \function     unsigned Vertex::GetNetStamp() const;
+  *  \return       The netStamp of the vertex : Vertex::_netStamp
+  *  \see          \ref grpNetStamp
+  */
+
+ /*! \function     Point* Vertex::GetPosition() const;
+  *  \Return       The position of the vertex : Vertex::_position
+  */
+
+ /*! \function     Tuple* Vertex::GetTuple() const;
+  *  \Return       The tuple associated with the vertex : Vertex::_tuple
+  */
+
+ /*! \function     Graph* Vertex::GetRoutingGraph() const;
+  *  \Return       The routing graph
+  */
+ // \}
+
+ /*! \anchor       VertexModifiers Modifiers
+  *  \name
+  */
+ // \{
+
+ /*! \function     void Vertex::SetHEdgeOut ( Edge* edge );
+  *  \param        edge is the first horizontal edge out
+  */
+
+ /*! \function     void Vertex::SetVEdgeOut ( Edge* edge );
+  *  \param        edge is the first vertical edge out
+  */
+
+ /*! \function     void Vertex::SetHEdgeIn ( Edge* edge );
+  *  \param        edge is the first horizontal edge in
+  */
+
+ /*! \function     void Vertex::SetVEdgeIn ( Edge* edge );
+  *  \param        edge is the first vertical edge in
+  */
+
+ /*! \function     void Vertex::SetPredecessor ( Edge* edge );
+  *  \param        edge is the predecessor of the vertex
+  */
+
+ /*! \function     void Vertex::SetConnexID ( int connexID );
+  *  \param        connexID is the connexID of the vertex
+  *  \see          \ref grpConnexID
+  */
+
+ /*! \function     void Vertex::SetDistance ( float distance );
+  *  \param        distance is the distance from the source vertex (in Dijkstra's algorithm implementation)
+  */
+
+ /*! \function     void Vertex::SetNetStamp ( unsigned netStamp );
+  *  \param        netStamp is the netStamp of the edge for the current net
+  *  \see          \ref grpNetStamp
+  */
+
+ /*! \function     void Vertex::SetTuple ( Tuple* tuple );
+  *  \param        tuple the tuple associated with the vertex
+  */
+
+ /*! \function     void Vertex::AttachToLocalRing ( Component* component );
+  *  \param        component the component which has a master hook to add to the local ring
+  *  \exception    assert if component does not exist
+  */
+
+ // \}
+
+ /*! \anchor       VertexPredicates Predicates
+  *  \name
+  */
+ // \{
+
+ /*! \function     bool Vertex::IsVerticallyAligned ( Vertex* vertex );
+  *  \return       Return \True if current vertex y coordinate is equal to vertex's one, else \False
+  */
+
+ /*! \function     bool Vertex::IsHorizontallyAligned ( Vertex* vertex);
+  *  \return       Return \True if current vertex x coordinate is equal to vertex's one, else \False
+  */
+
+ // \}
+ 
+}

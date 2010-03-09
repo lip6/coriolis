@@ -1,0 +1,130 @@
+
+ // -*- C++ -*-
+
+
+ namespace KNIK {
+
+ /*! \class        Knik
+  *  \brief        The Global Router CEngine itself.\n
+  *                - \ref KnikTypes        "Types"
+  *                - \ref KnikAttributes   "Attributes"
+  *                - \ref KnikConstructors "Constructors"
+  *                - \ref KnikModifiers    "Modifiers"
+  *
+  *  \section      secKnikImplementation  Knik Implementation
+  *                The Global Router CEngine uses a technique based on routing graph and thus relies on another
+  *                CEngine : Nimbus.
+  */
+
+ /* \struct       Knik::NetRecord
+  *
+  *  \brief        A NetRecord in Knik
+  *
+  *                blablablabla
+  */
+
+ /*! \anchor       KnikAttributes Attributes
+  *  \name
+  */
+ // \{
+ //
+ /*! \var          NIMBUS::Nimbus* Knik::_nimbus
+  *                The CEngine Nimbus corresponding to the partitionning
+  *
+  *  \Initial      \NULL
+  */
+
+ /*! \var          Graph* Knik::_routingGraph
+  *                The routing graph for Knik
+  *
+  *  \Initial      \NULL
+  */
+
+ /*! \var          CRLCORE::CTimer Knik::_timer
+  *                A useful timer to measure execution time
+  */
+
+ /*! \var          Knik::NetVector Knik::_nets_to_route
+  *                The \STL vector of nets to route by Knik
+  *
+  *  \Initial       empty
+  */
+ // \}
+
+ /*! \anchor       KnikConstructors Constructors
+  *  \name
+  */
+ // \{
+ /*! \function     static Knik* Knik::Create ( Cell* cell, unsigned congestion, unsigned precongestion, bool benchMode, bool useSegments, float edgeCost );
+  *  \param        cell is the cell on which the Knik CEngine will work
+  *  \param        congestion 0: None, 1: Congestion
+  *  \param        precongestion 0: None, 1: Static, 2: Dynamic
+  *  \param        benchMode for ispr 2007 global routing benchmarks
+  *  \param        useSegments defines whether routing is done with segments or splitters
+  *  \param        edgeCost
+  *  \return       the newly created Knik CEngine
+  */
+ // \}
+
+ /*! \anchor       KnikModifiers Modifiers
+  *  \name
+  */
+ // \{
+ /*! \function     void Knik::InitGlobalRouting();
+  *                This function initializes several thngs that the global routing algorithms will need :
+  *                 - creates the routing graph
+  *                 - lists the net that will be routed (filters supply and clock nets and also nets with too many pins)
+  *                 - creates the estimated congestion (if needed)
+  *
+  *  \overview
+  *  \code
+  * if no routing graph exists:
+  *     // creates the routing graph
+  *     Graph::Create ( Knik::_nimbus );
+  *
+  *     for each net of cell:
+  *         // filters net
+  *         if net->IsGlobal() or net->IsSupply() or net->IsClock() :
+  *             continue;
+  *
+  *         // get netDegree
+  *         netDegree = Graph::CountVertexes ();
+  *         // still filtering
+  *         if netDegree > 1 and netDegree < 1000
+  *             Knik::_nets_to_route .push_back ( net );
+  *
+  *             #if defined __USE_STATIC_PRECONGESTION__ or __USE_DYNAMIC_PRECONGESTION__
+  *                 // creates the estimate congestion on the routing graph
+  *                 Graph::UpdateEstimateCongestion ( true );
+  *
+  *         // cleans routing graph
+  *         Graph::ResetVertexes ();
+  *  \endcode
+  *
+  *                \b Note \b 1:
+  *                The <em>for each net of cell</em> loop is in fact a loop on net occurrences which allows to get all nets of the hierarchy
+  *                of the cell. The first thing done in the loop is then to get the net corresponding to the occurrence.
+  *
+  *                \b Note\b 2:
+  *                The Knik::_nets_to_route vector does not contains Net but NetRecord which is a structure that associates a Net with a value that
+  *                measures it's size. The cost function of the size is :
+  *  \code         cost = ( netBoundingBoxWidth + 1 ) * ( netBoundingBoxHeight + 1 )
+  *  \endcode
+  *                This cost function allows to sort nets so flat and small nets will be routed first.
+  *  \exception    error if the routing graph already exists
+  *  \exception    asserts that Knik::_nets_to_route is empty when the function is called
+  *  \see          \ref KNIK_USESTATIC "__USE_STATIC_PRECONGESTION__", \ref KNIK_USEDYNAMIC "__USE_DYNAMIC_PRECONGESTION__"
+  */
+ // \}
+ 
+ /*! \anchor       KnikTypes Types
+  *  \name
+  */
+ // \{
+ /* \typedef      vector<Knik::NetRecord> Knik::NetVector;
+  */
+ // \}
+
+
+ }
+

@@ -1,0 +1,347 @@
+
+ // -*- C++ -*-
+
+
+ namespace KNIK {
+
+ /*! \class        Edge
+  *  \brief        A routing graph edge.\n
+  *                - \ref EdgeAttributes "Attributes"
+  *                - \ref EdgeAccessors  "Accessors"
+  *                - \ref EdgeModifiers  "Modifiers"
+  *                - \ref EdgePredicates "Predicates"
+  *
+  *                The Edge was written to be a light object which simplifies the way the routing graph is covered.
+  *                Edges are thus separated into two sub-classes : VEdge and HEdge respectively representing vertical edge and
+  *                horizontal edge.
+  *
+  *                Considering one vertex \b V, we define 4 types of edge :
+  *                <ul>
+  *                  <li> HEdgeOut: a Horizontal Edge linking \b V to a vertex \e w
+  *                  <li> VEdgeOut: a Vertical Edge linking \b V to a vertex \e x
+  *                  <li> HEdgeIn: a Horizontal Edge linking a vertex \e y to \b V
+  *                  <li> VEdgeIn: a Vertical Edge linking a vertex \e z to \b V
+  *                </ul>
+  *
+  *  \section      secEdgeImplementation  Edge Implementation
+  *                The Global Router CEngine uses a technique based on routing graph and thus relies on another
+  *                CEngine : Nimbus.
+  */
+
+ /*! \anchor       EdgeAttributes Attributes
+  *  \name
+  */
+ // \{
+ /*! \var          Fence* Edge::_fence
+  *                The corresponding fence in the partitionning
+  *
+  *  \Initial      by constructor
+  */
+
+ /*! \var          Splitter* Edge::_splitter
+  *                The fence may already have a splitter associted with current net
+  *
+  *  \Initial      \NULL
+  */
+
+ /*! \var          Vertex* Edge::_from
+  *                The source vertex
+  *
+  *  \Initial      by constructor
+  */
+
+ /*! \var          Edge* Edge::_nextFrom
+  *                Next edge of the same type and with the same source vertex
+  *
+  *  \Initial      \NULL
+  */
+
+ /*! \var          Vertex* Edge::_to
+  *                The target vertex
+  *
+  *  \Initial      by constructor
+  */
+
+ /*! \var          Edge* Edge::_nextTo
+  *                Next edge of the same type and with the same target vertex
+  *
+  *  \Initial      \NULL
+  */
+
+ /*! \var          int Edge::_connexID
+  *                The identification flag for connex component
+  *
+  *  \Initial      \p -1
+  *  \see          \ref grpConnexID
+  */
+
+ /*! \var          float Edge::_cost
+  *                The cost of the edge
+  *
+  *  \Initial      \p 0.0
+  *  \see          Edge::GetCost
+  */
+
+ /*! \var          unsigned Edge::_capacity
+  *                The capacity of the edge which is the copy of the fence capacity based on the routing ressources
+  *
+  *  \Initial      \p 0
+  */
+
+ /*! \var          unsigned Edge::_realOccupancy
+  *                The occupancy of the edge based on the routed nets
+  *
+  *  \Initial      \p 0
+  */
+
+ /*! \var          float Edge::_estimateOccupancy
+  *                The estimated occupancy of the edge based on the estimation technique
+  *
+  *  \Initial      \p 0.0
+  *  \see          Graph::UpdateEstimateCongestion
+  */
+
+ /*! \var          unsigned Edge::_netStamp
+  *                The net stamp associated with the current net
+  *
+  *  \Initial      \p 0
+  *  \see          \ref grpNetStamp
+  */
+ // \}
+
+ /*! \anchor       EdgeAccessors Accessors
+  *  \name
+  */
+ // \{
+
+ /*! \function     Nimbus::Fence* Edge::GetFence();
+  *  \Return       The corresponding Fence in the partitionning.
+  */
+
+ /*! \function     Vertex* Edge::GetFrom() const;
+  *  \Return       The source vertex of the edge.
+  */
+
+ /*! \function     Edge* Edge::GetNextFrom() const;
+  *  \Return       The next edge of the same type with the same source vertex if one exists, \NULL else.
+  */
+
+ /*! \function     Vertex* Edge::GetTo() const;
+  *  \Return       The target vertex of the edge.
+  */
+
+ /*! \function     Edge* Edge::GetNextTo() const;
+  *  \Return       The next edge of the same type with the same target vertex if one exists, \NULL else.
+  */
+
+ /*! \function     Edge* Edge::GetSplitter() const;
+  *  \Return       The splitter associated with the edge if one exists, \NULL else.
+  */
+
+ /*! \function     int* Edge::GetConnexID() const;
+  *  \Return       The ConnexID of the edge.
+  */
+
+ /*! \function     float* Edge::GetCapacity() const;
+  *  \Return       The capacity of the edge.
+  */
+
+ /*! \function     unsigned Edge::GetRealOccupancy() const;
+  *  \return       The occupancy of the edge based on the class member Edge::_realOccupancy
+  *  \exception    assert that Edge::_realOccupancy equals Edge::_fence->GetOccupancy()
+  */
+
+ /*! \function     unsigned Edge::GetNetStamp() const;
+  *  \return       The netStamp of the edge
+  *  \see          \ref grpNetStamp
+  */
+
+ /*! \function     Vertex* Edge::GetOpposite(const Vertex* v) const;
+  *  \return       The opposite vertex of the edge considering the one given as argument.
+  *  \param        v is the vertex of which we want to get the opposite one
+  *  \exception    assert that \e v is one of the 2 vertexes of the edge
+  */
+
+ /*! \function     float Edge::GetEstimateOccupancy() const;
+  *  \return       The estimated occupancy of the edge
+  *  \note         Althought the Edge::_realOccupancy is an \p unsigned \p int, the Edge::_estimateOccupancy is a \p float.
+  *  \see          Edge::GetCost
+  */
+
+ /*! \function     float Edge::GetCost ( Edge* arrivalEdge );
+  *  \param        arrivalEdge 
+  *  \return       The cost of the edge Edge::_cost
+  *
+  *                Edge::_cost is computed considering several variables:
+  *                <ul>
+  *                  <li>\ref KNIK_USECONGESTION "__USE_CONGESTION__"
+  *                  <li>\ref KNIK_USESTATIC     "__USE_STATIC_PRECONGESTION__"
+  *                  <li>\ref KNIK_USEDYNAMIC    "__USE_DYNAMIC_PRECONGESTION__"
+  *                </ul>
+  *
+  *                <b>1st case: </b> None of the previous variables is defined :
+  *
+  *  \code         _cost = 1.0
+  *  \endcode
+  *
+  *                For <b>2nd</b> and <b>3rd case</b> the \ref KNIK_USECONGESTION "__USE_CONGESTION__" variable is defined which means that when
+  *                computing the Edge::_cost the existing congestion is taken into account.
+  *
+  *                The Edge::_cost is so computed according to a cost function such as the following exemple :
+  *                \image html  FonctionCout.png "Cost function for _cost"
+  *                \image latex FonctionCout.pdf "Cost function for _cost" width=0.7\textwidth
+  *
+  *                The corresponding code:
+  *  \code         
+  *  float edge_capacity =(float)1.0;
+  *  float edge_occupancy;
+  *  float h = 9.0;
+  *  float k = 30.0;
+  *   ...
+  *  _cost = 1.0 + (h / (1.0 + exp(-k * (edge_occupancy - edge_capacity))));
+  *  \endcode
+  *                The way \p edge_occupancy is computed depends on the variables defined :
+  *
+  *                <b>2nd case: </b> only \ref KNIK_USECONGESTION "__USE_CONGESTION__" is defined :
+  *  \code         edge_occupancy = (float)GetRealOccupancy() / (float)_capacity;
+  *  \endcode
+  *
+  *                <b>3rd case: </b> \ref KNIK_USESTATIC "__USE_STATIC_PRECONGESTION__" 
+  *                               or \ref KNIK_USEDYNAMIC "__USE_DYNAMIC_PRECONGESTION__" is defined :
+  *  \code         edge_occupancy = ((float)GetRealOccupancy() + GetEstimateOccupancy()) / (float)_capacity;
+  *  \endcode
+  *
+  */
+
+ /*! \function     virtual Hook* Edge::GetSplitterHook ( Vertex* vertex ) = 0;
+  *  \param        vertex the vertex of the edge from which we want to get the splitter's hook
+  *  \return       The splitter's hook of the specified vertex
+  *  \exception    assert that Edge::_splitter exists
+  *  \exception    assert that the given vertex is Edge::_from or Edge::_to
+  *  \note         This function is pure virtual.
+  */
+
+ // \}
+
+ /*! \anchor       EdgeModifiers Modifiers
+  *  \name
+  */
+ // \{
+
+ /*! \function     void Edge::SetNextFrom ( Edge* edge );
+  *  \param        edge is the next edge of the same type with the same source vertex
+  */
+
+ /*! \function     void Edge::SetNextTo ( Edge* edge );
+  *  \param        edge is the next edge of the same type with the same target vertex
+  */
+
+ /*! \function     void Edge::SetSplitter ( Splitter* splitter );
+  *  \param        splitter is the splitter associated to the edge for the current net
+  */
+
+ /*! \function     void Edge::SetConnexID ( int connexID );
+  *  \param        connexID is the connexID of the edge
+  *  \see          \ref grpConnexID
+  */
+
+ /*! \function     void Edge::SetCost ( float cost );
+  *  \param        cost is the new cost for the edge
+  */
+
+ /*! \function     void Edge::IncCost ( float inc );
+  *  \param        inc is an increment, it is added to the current Edge::_cost
+  */
+
+ /*! \function     void Edge::SetNetStamp ( unsigned netStamp );
+  *  \param        netStamp is the netStamp of the edge for the current net
+  *  \see          \ref grpNetStamp
+  */
+
+ /*! \function     void Edge::AddSubEstimateOccupancy ( float increment, bool add );
+  *  \param        increment is the value added / substracted to the estimate occupancy
+  *  \param        add is a boolean : if set to \True an addition is performed whether if set to \False a substraction is performed
+  */
+
+ /*! \function     virtual void Edge::CreateSplitter ( Net* net ) = 0;
+  *  \param        net the current net for which we want to create a splitter on the Edge
+  *  \note         This function is pure virtual.
+  */
+
+ // \}
+
+ /*! \anchor       EdgePredicates Predicates
+  *  \name
+  */
+ // \{
+
+ /*! \function     virtual bool Edge::IsVertical ();
+  *  \return       Return \True if the edge is a vertical edge, else \False
+  *  \note         This function is pure virtual.
+  */
+
+ /*! \function     virtual bool Edge::IsHorizontal ();
+  *  \return       Return \True if the edge is a horizontal edge, else \False
+  *  \note         This function is pure virtual.
+  */
+
+ // \}
+ 
+ /*! \defgroup     grpConnexComponent What is a Connex Component ?
+  *              
+  *  \section      secDefinition Definition
+  *
+  *                A connex component is a set of vertexes and edges representing a connex part of a net, such as :
+  *                <ul>
+  *                  <li> a connector contained in a GCell
+  *                  <li> a connector spread over several GCells
+  *                  <li> a pre-routed part of a net
+  *                  <li> an already routed part of a net (by previous steps)
+  *                </ul>
+  *
+  *                \image html  ConnexComp.png "Connex components exemples for connectors (left) and a routed net (right)"
+  *                \image latex ConnexComp.pdf "Connex components exemples for connectors (left) and a routed net (right)" width=0.7\textwidth
+  *
+  *                It is also important to note that a connex component has a treelike topology, i.e without any cycle.
+  * 
+  *  \section      secUse Use
+  *                Global routing a net consists in transforming a list of several connex components into a unique connex component.
+  *
+  *  \see          \ref grpConnexID
+  */
+
+ /*! \defgroup     grpConnexID What is a ConnexID ?
+  * 
+  *  \section      secDefinition Definition
+  *
+  *                A ConnexID is closely linked with the Connex Component concept.
+  *                In fact, for a given net, each connex component has its own ConnexID
+  *
+  *  \section      secImplementation Implementation
+  *
+  *                A ConnexID is represented as an \p int. All positive values from 0, may represent a connex component, whereas a connexID
+  *                set to \p -1 means that the element (vertex or edge) isn't part of any connex component.
+  *
+  *                By construction each element has its connexID set to \p -1
+  *
+  *  \section      secUse Use
+  *                When global routing and thus merging connex components it is always the smaller ConnexID that is kept.
+  *                This implies that the last unique connex component will have a ConnexID equal to 0 (when global routing is finished
+  *                for the net)
+  *
+  *  \see          \ref grpConnexComponent
+  *
+  */
+
+ /*! \defgroup     grpNetStamp What is a netStamp ?
+  *
+  *  \section      secDefinition Definition
+  *
+  *                blablabla
+  *
+  *
+  *
+  */
+
+}
+

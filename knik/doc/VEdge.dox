@@ -1,0 +1,76 @@
+
+ // -*- C++ -*-
+
+
+ namespace KNIK {
+
+ /*! \class        VEdge
+  *  \brief        A routing graph vertical edge.\n
+  *                - \ref VEdgeConstructors "Constructors"
+  *                - \ref VEdgeAccessors    "Accessors"
+  *                - \ref VEdgeModifiers    "Modifiers"
+  *                - \ref VEdgePredicates   "Predicates"
+  *
+  *                The VEdge represents a horizontal edge of the routing graph. The class is derivated from KNIK::Edge and can be instanciated.
+  *
+  *  \section      secVEdgeImplementation  VEdge Implementation
+  *                This class exists only because it simplifies a lot the way specific functions are written
+  */
+
+ /*! \anchor       VEdgeConstructors Constructors
+  *  \name
+  */
+ // \{
+ 
+ /*! \function     static VEdge* VEdge::Create( Fence* fence, Vertex* from, Vertex* to, DisplaySlot* displaySlot );
+  *  \param        fence       is the fence associated to the edge
+  *  \param        from        is the source vertex
+  *  \param        to          is the target vertex
+  *  \param        displaySlot is the displaySlot used by GTK for graphical display
+  *  \return       The newly created VEdge
+  *  \exception    error       if \e from or \e to are \NULL
+  *  \exception    error       if the object can not be allocated
+  */
+ 
+ // \}
+
+ /*! \anchor       VEdgeAccessors Accessors
+  *  \name
+  */
+ // \{
+
+ /*! \function     virtual Hook* VEdge::GetSplitterHook ( Vertex* vertex );
+  *  \param        vertex the vertex of the edge from which we want to get the splitter's hook
+  *  \return       The splitter's hook of the specified vertex
+  *  \exception    assert that Edge::_splitter exists
+  *  \exception    assert that the given vertex is Edge::_from or Edge::_to
+  */
+ // \}
+
+ /*! \anchor       VEdgeModifiers Modifiers
+  *  \name
+  */
+ // \{
+
+ /*! \function     virtual void VEdge::CreateSplitter ( Net* net );
+  *  \param        net the current net for which we want to create a splitter on the Edge
+  */
+
+ // \}
+
+ /*! \anchor       VEdgePredicates Predicates
+  *  \name
+  */
+ // \{
+
+ /*! \function     virtual bool VEdge::IsVertical ();
+  *  \return       Return \True
+  */
+
+ /*! \function     virtual bool VEdge::IsHorizontal ();
+  *  \return       Return \False
+  */
+
+ // \}
+
+}
