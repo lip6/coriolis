@@ -109,6 +109,8 @@ namespace Hurricane {
       
     protected:
               size_t      _plugsCount;
+              QVariant    _columnNet;
+              QVariant    _columnPlug;
   };
 
 

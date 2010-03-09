@@ -116,8 +116,8 @@ namespace Hurricane {
   QVariant  SimpleNetInformations::getColumn ( int column )
   {
     switch ( column ) {
-      case 0: return QVariant(getString(getName()).c_str());
-      case 1: return QVariant((unsigned int)getPlugsCount());
+      case 0: return _columnNet;
+      case 1: return _columnPlug;
     }
     return QVariant(QObject::tr("Column Out of Bound"));
   }
@@ -125,7 +125,9 @@ namespace Hurricane {
 
   SimpleNetInformations::SimpleNetInformations ( const Net* net )
     : NetInformations(net)
-    , _plugsCount(_net->getPlugs().getSize())
+    , _plugsCount    (_net->getPlugs().getSize())
+    , _columnNet     (getString(getName()).c_str())
+    , _columnPlug    ((unsigned int)_plugsCount)
   { }
 
 
