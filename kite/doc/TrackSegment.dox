@@ -1,0 +1,170 @@
+
+ // -*- C++ -*-
+
+
+ namespace Kite {
+
+ /*! \typedef      SegmentOverlapCostCB
+  *                Prototype of overlap cost callback functions.
+  *
+  *                \see TrackSegment::setOverlapCostCB(), TrackSegment::getOverlapCost().
+  */
+
+ /*! \class        TrackSegment
+  *  \brief        Derived Katabatic::AutoSegment for the router.
+  *
+  *                We create one TrackSegment per aligned Katabatic::AutoSegment set,
+  *                the TrackSegment is associated to the canonical one of the set.
+  *
+  *                To provide some speedup, the full extention of the aligned segment
+  *                set is computed once and stored in the TrackSegment itself.
+  *                The drawback beeing that whenever one segment from the aligned
+  *                set has it's extention modified, the full extention must be
+  *                recomputed.
+  */
+
+
+ /*! \name         Constructors & Destructors
+  */
+ // \{
+
+ /*! \function     static TrackSegment* TrackSegment::create ( AutoSegment* segment, Track* track, bool& created );
+  *  \param        segment  The Katabatic AutoSegment to decorate.
+  *  \param        track    A Track into which insert the TrackSegment (may be \NULL).
+  *  \param        created  This flag is sets is a new TrackSegment has be created.
+  *  \return       A TrackSegment wrapped around an AutoSegment.
+  *
+  *                Constructor mainly used at loading time to decorate the Katabatic
+  *                data-base with the router attributes.
+  */
+
+ // \}
+
+
+ /*! \name         Predicates
+  */
+ // \{
+
+ /*! \function     bool  TrackSegment::isLocked () const;
+  *  \Return       \True if the TrackSegment is locked (cannot be deleted from the
+  *                Track).
+  */
+
+ // \}
+
+
+ /*! \name         Callback modifier
+  */
+ // \{
+
+ /*! \function     SegmentOverlapCostCB*  TrackSegment::setOverlapCostCB ( SegmentOverlapCostCB* cb );
+  *  \param        cb  the new overlap cost callback.
+  *  \return       the previous overlap cost callback.
+  *
+  *                sets the overlap callback.
+  */
+
+ // \}
+
+
+ /*! \name         Accessors
+  */
+ // \{
+
+ /*! \function     Track* TrackSegment::getTrack () const;
+  *  \Return       The Track in which this TrackSegment is inserted (can be \NULL).
+  */
+
+ /*! \function     size_t  TrackSegment::getIndex () const;
+  *  \Return       Index of the TrackSegment inside the Track's vector. set to
+  *                Track::NPOS if not inserted in any Track.
+  */
+
+ /*! \function     unsigned long  TrackSegment::getArea () const;
+  *  \Return       The priority value used for TrackSegment sorting. Currently,
+  *                the slack of the AutoSegment.
+  */
+
+ /*! \function     TrackSegment* TrackSegment::getNext () const;
+  *  \Return       The next TrackSegment in the Track (can be \NULL).
+  *
+  *  \see          Track::getNext().
+  */
+
+ /*! \function     TrackSegment* TrackSegment::getPrevious () const;
+  *  \Return       The previous TrackSegment in the Track (can be \NULL).
+  *
+  *  \see          Track::getPrevious().
+  */
+
+ /*! \function     Interval  TrackSegment::getFreeInterval () const;
+  *  \Return       The free interval around this TrackSegment in the Track.
+  */
+
+ /*! \function     DbU::Unit  TrackSegment::getSourceCanonical () const;
+  *  \Return       The leftmost position of the associated aligned segment set.
+  */
+
+ /*! \function     DbU::Unit  TrackSegment::getTargetCanonical () const;
+  *  \Return       The rightmost position of the associated aligned segment set.
+  */
+
+ /*! \function     DbU::Unit  TrackSegment::getCanonicalInterval () const;
+  *  \Return       The canonical interval of the associated aligned segment set.
+  */
+
+ /*  \function     DbU::Unit  TrackSegment::getOverlapCost ( Interval interval, Net* net ) const;
+  *  \param        interval  the overlaping interval.
+  *  \param        net       the \Net owning the overlaping interval.
+  *  \return       The cost of overlaping the TrackSegment with \e interval from \Net \e net.
+  */
+
+ // \}
+
+
+ /*! \name         Modifiers
+  */
+ // \{
+
+ /*! \function     void  TrackSegment::setLock ( bool state );
+  *  \param        state  set the Track locking state.
+  */
+
+ /*! \function     void  TrackSegment::setTrack ( Track* track );
+  *  \param        track  The Track the TrackSegment is assigned to.
+  */
+
+ /*! \function     void  TrackSegment::setIndex ( size_t  index );
+  *  \param        index  The index of TrackSegment in the Track's vector.
+  */
+
+ /*! \function     void  TrackSegment::setArea ();
+  *                compute the the sorting criterion used as priority, for
+  *                now it's simply the AutoSegment's slack.
+  */
+
+ /*! \function     void  TrackSegment::detach ();
+  *                remove the TrackSegment from the Track.
+  *
+  *  \important    This function <em>do not</em> update the Track itself. The
+  *                program must take care of it under penalty of introducing
+  *                incoherencies.
+  *
+  *  \see          Track::detach().
+  */
+
+ /*  \function     void  TrackSegment::autoInvalidate ();
+  *                add \e this TrackSegment to the Kite level update Session.
+  *                Something maybe buggy here, or at least not very clean.
+  */
+
+ /*  \function     void  TrackSegment::refreshCanonical ();
+  *                Recompute the letfmost & rightmost position of the collapsed set.
+  *                Must be done after each modification of the TrackSegment.
+  *                Dealt by the TrackSession mechanism.
+  *                
+  */
+
+ // \}
+
+ }

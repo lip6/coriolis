@@ -1,0 +1,133 @@
+
+ // -*- C++ -*-
+
+
+ namespace Kite {
+
+ /*! \class        Session
+  *  \brief        Kite update Session (\b API).
+  *
+  *                Session extend the Katabatic update session to the Kite
+  *                router level. Mainly by managing Track update.
+  *
+  *                For details on how Katabatic Sessions works, have a look to
+  *                \ref katabaticSession.
+  *
+  *
+  *  \section      secSessionMechanism  The Session Mechanism.
+  *
+  *                Delayed modification procedure :
+  *                <ol>
+  *                  <li>Modifications events are recorded into the Session.
+  *                      At this step, no modification are actually done, the
+  *                      data-base retains it's previous state and coherency. 
+  *                  <li>The Revalidate() procedure is called (or the Session
+  *                      is closed), then all the modification events are applied.
+  *                      the data-base is in it's new state.
+  *                </ol>
+  *
+  *
+  *  \section      secKiteSessionRevalidate  The Revalidate Algorithm.
+  *
+  *                Revalidation steps :
+  *                <ol>
+  *                  <li>process all remove events. detach TrackSegment from
+  *                      their Track, but do not remove the pointer from the
+  *                      internal \vector.
+  *                  <li>Pack all Track in which removal have took place.
+  *                  <li>process all insert events. This is the time TrackSegment
+  *                      are moved into their new Track (physical displacement).
+  *                  <li>Call the Katabatic::Session::revalidate() method.
+  *                  <li>Recompute the canonical position of source and target
+  *                      of all invalidateds TrackSegment (take account of
+  *                      extention modifications).
+  *                  <li>Perform a sort() on all Track that have been modifieds.
+  *                </ol>
+  */
+
+
+ /*! \name         Accessors
+  */
+ // \{
+
+ /*! \function     static Session* Session::get ();
+  *  \Return       The currently opened session, \c NULL if no session has
+  *                been opened.
+  */
+
+ /*! \function     static KiteEngine* Session::getKiteEngine ();
+  *  \Return       The Kite ToolEngine associated to the current update
+  *                session.
+  */
+
+ // \}
+
+
+ /*! \name         Miscellaneous
+  */
+ // \{
+
+ /*! \function     bool  Session::isEmpty ();
+  *                Ensure that the Session is empty and can be closed (deleted)
+  *                safely.
+  */
+
+ /*! \function     static Session* Session::open ( KiteEngine* kite );
+  *  \param        kite  A Kite ToolEngine on which to work.
+  *  \return       A new Kite update Session.
+  *
+  *                Open a new Kite update Session on the \c kite \c ToolEngine.
+  *                At this point only one session can be opened at a time. Attempt
+  *                to open a second one will result in an exception.
+  */
+
+ // \}
+
+
+ /*! \name         Event Scheduling
+  */
+ // \{
+
+ /*  \function     void  Session::addInvalidated ( TrackSegment* segment );
+  *  \param        segment An AutoSegment that has been moved.
+  *
+  *                add \e segment to the \vector of TrackSegment for which we
+  *                have to recompute the canonical size (i.e. extentions may
+  *                have moved).
+  */
+
+ /*! \function     void  Session::addInsertEvent ( TrackSegment* segment, Track* track );
+  *  \param        segment An AutoSegment to insert in a Track.
+  *  \param        track   The Track into which the \e segment will be inserted.
+  *
+  *                Schedule the insertion of \e segment into Track \e track.
+  *                The \e segment must not already be part of a Track.
+  */
+
+ /*! \function     void  Session::addRemoveEvent ( TrackSegment* segment );
+  *  \param        segment An AutoSegment to remove from a Track.
+  *
+  *                Schedule the removal of \e segment from Track \e track.
+  */
+
+ /*! \function     void  Session::addMoveEvent ( TrackSegment* segment, Track* track );
+  *  \param        segment An AutoSegment to move into a new Track.
+  *  \param        track   The Track into which the \e segment will be moved.
+  *
+  *                Schedule the displacement of \e segment into Track \e track.
+  */
+
+ /*! \function     void  Session::addSortEvent ( Track* track, bool forced=false );
+  *  \param        track   The Track to update.
+  *  \param        forced  Force the invalidation of the \Track.
+  *
+  *                Schedule the update of Track \e track. If the \Track has not been
+  *                invalidated, no actual sort will takes place. To force a sort
+  *                (manually invalidating the \Track), sets \b forced to \true.
+  *
+  *  \see          Track::pack() & Track::sort().
+  */
+
+ // \}
+
+ }

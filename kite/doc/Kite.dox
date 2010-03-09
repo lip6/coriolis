@@ -1,0 +1,97 @@
+
+ // -*- C++ -*-
+
+
+ namespace Kite {
+
+ /*! \mainpage     Detailed Router Documentation
+  *
+  *                This documentation adresses two level of explanations :
+  *
+  *                <ul>
+  *                  <li>The \b API description which explains how to use Kite,
+  *                      thoses parts as flagged as \b API.
+  *                  <li>The internal description which details how Kite do
+  *                      things. It's mostly intended for myself to help me not to
+  *                      forget how I've done things when debug time will come...
+  *                      It may also be valuable to people who may want to use
+  *                      or patch Kite for their own purpose (my secret hope).
+  *                </ul>
+  *
+  *
+  *  \defgroup     AlgorithmOverview  Algorithm Overview (internal)
+  *
+  *                The algorithm top-level is implemented in the \c NegociateWindow.
+  *
+  *                <b>First step&nbsp;:</b> NegociateWindow::_loadRouting()
+  *                <ol>
+  *                  <li>Load routing wires (\c AutoSegment) from \c KatabaticEngine
+  *                      inside the Kite \c GCell's. Then update the \c GCell's density.
+  *                  <li>Sort the \c GCell's according to decreasing density (denser
+  *                      \c GCell's are to be routed first).
+  *                  <li>Agglomerate clusters of contiguous GCell's whose density
+  *                      is superior to 0.7 to the seed GCell. See \c GCellRoutingSet
+  *                      for the mechanism.
+  *
+  *                      GCellRoutingSet receive an increasing order number. The higher
+  *                      the order the lower the density. This order is transmitted
+  *                      to the \c TrackSegment of the \c GCellRoutingSet to be taken into
+  *                      account by the track cost function.
+  *                </ol>
+  *
+  *                <b>Second step&nbsp;:</b> \c NegociateWindow::_runOnGCellRoutingSet()
+  *
+  *                For each \c GCellRoutingSet in decreasing density, negociate the
+  *                set of associated \c TrackSegment.
+  *                <ol>
+  *                  <li>Build a \c RoutingEventQueue from the list of \c TrackSegment.
+  *                      The queue is responsible for allocating the \c RoutingEvent
+  *                      associated to each \c TrackSegment.
+  *                  <li>The queue is sorted according to the "event level" then
+  *                      to the priority, which is for now the slack of the \c TrackSegment.
+  *                      That is, constrained \c TrackSegment are routed first.
+  *                  <li>The queue is processed till it's empty (no unprocessed \c RoutingEvent
+  *                      remains).
+  *
+  *                      Processing a \c RoutingEvent is trying to insert a \c TrackSegment in
+  *                      a suitable Track. We proceed as follow&nbsp;:
+  *                      <ul>
+  *                        <li>The maximum ripup count for the to be inserted segment has
+  *                            been reached. Issue a severe warning and left unrouted
+  *                            this \c TrackSegment (for now).
+  *                        <li>Compute the Tracks in which the \c TrackSegment can be inserted,
+  *                            then compute the insertion cost in each one. The candidates
+  *                            are ordered by the insertion cost.
+  *                        <li>Now consider the lower cost \c Track. If there is a free interval
+  *                            for the \c TrackSegment. Issue a \c Session::addInsertEvent() then
+  *                            finish.
+  *
+  *                            If there is a <i>"soft overlap"</i>, that is the overlaping
+  *                            \c TrackSegment already in the \c Track could be shrunk either to
+  *                            the left or the right so the new \c TrackSegment can be inserted.
+  *                            This is managed by \c RoutingEvent::_setAside(), for each soft
+  *                            overlaping \c TrackSegment, gets its perpandiculars and issue
+  *                            a displacement request for all of them. That is, re-post a
+  *                            \c RoutingEvent with updated constraints and remove the
+  *                            perpandicular from it's Track if it has already been routed.
+  *                            Note that no request is issued for the overlaping \c TrackSegment
+  *                            itself has it do not change of Track.
+  *
+  *                            If there is a <i>"hard overlap"</i>, that is the two \c TrackSegment
+  *                            cannot share the same \c Track, remove the previous one from
+  *                            the \c Track and re-post a \c RoutingEvent. Note that, the
+  *                            cost object should have selected a \c TrackSegment which could
+  *                            be ripped-up. Otherwise the \c Track would'nt even be a candidate.
+  *                      </ul>
+  *
+  *                      When a TrackSegment is riped up, it is re-routed immediately
+  *                      afterward. This is done by increasing his event level.
+  *                </ol>
+  */
+
+
+ /*! \namespace    Kite
+  *  \brief        The namespace dedicated to Kite.
+  */
+
+ }
