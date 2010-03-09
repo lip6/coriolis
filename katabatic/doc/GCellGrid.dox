@@ -1,0 +1,21 @@
+
+ // -*- C++ -*-
+
+
+ namespace Katabatic {
+
+ /*! \class        GCellGrid
+  *  \brief        Routing Grid (\b API).
+  *
+  *  \attention    This class is can only be allocated through a Katabatic
+  *                \c ToolEngine thus Constructors/Destructors are protecteds.
+  *
+  *  \section      GCellGridImplementation GCellGrid Implementation Details
+  */
+
+ /*! \function     void  GCellGrid::updateDensity ();
+  *  \return       Recompute the density of each GCell in the grid.
+  *  \see          GCell::updateDensity().
+  */
+
+ }

@@ -1,0 +1,677 @@
+
+ // -*- C++ -*-
+
+
+ namespace Katabatic {
+
+ /*! \class        AutoSegment
+  *  \brief        Self-sizing segment (\b API).
+  *
+  *                AutoSegment provide an uniform way of accessing AutoHorizontal
+  *                and AutoVertical self-sizing segments. AutoSegments mainly contains
+  *                a pointer to the associated Horizontal/Vertical Hurricane segment.
+  *                This is the Hurricane segment which is part of the ring of the
+  *                AutoContact. Thus we can directly access the Hurricane segment
+  *                from the AutoSegment, but for the othey around we uses a lookup
+  *                table in the Katabatic \c ToolEngine (see the
+  *                Katabatic::_Lookup() member function).
+  *
+  *                In order to inform the router of an AutoSegment state change,
+  *                a callback function SegmentRevalidateCB can be positionned.
+  *
+  *                \c Segment associated to AutoSegment are automatically oriented
+  *                in such a way that the source \c Hook is always \e lower than
+  *                the target \c hook. For an Horizontal segment it means that
+  *                the abcissa of the source is inferior to the abcsissa of the
+  *                target. It goes the same way for Vertical segment with the
+  *                ordinate.
+  *
+  *                KatabaticSession mechanism : this is fairly similar to the
+  *                \c Hurricane updateSession one. When a segment is either moved
+  *                by the router or resized by it's AutoContact it is invalidated
+  *                with autoInvalidate() and put into the set of invalidated
+  *                segments. When the KatabaticSession is closed the onRevalidate()
+  *                member function is called on each segment, which in turn calls
+  *                the router's callback. See Session::open(), Session::revalidate(),
+  *                Session::close() and \ref katabaticSession.
+  *
+  * \remark        As this object uses the decorator Design Pattern, almost all
+  *                functions are pure virtuals. Implementation take place in a
+  *                derived class \c AutoSegmentConcrete which is not documented,
+  *                (same specifications as AutoSegment).
+  *
+  * \see           AutoSegmentDecorator class.
+  */
+
+ /*! \typedef      AutoSegment::RevalidateCb_t ( AutoSegment* )
+  *                Function type for the router callback. See AutoSegment::setRevalidateCb().
+  */
+
+ /*  \function     static AutoSegment::RevalidateCb_t* AutoSegment::setRevalidateCb ( RevalidateCb_t* cb );
+  *  \param        cb The new router callback to install.
+  *  \return       The previous router callback.
+  *
+  *                Install the callback to call when an AutoSegment is revalidated,
+  *                The callback is called by onRevalidate() on closing the Katabatic
+  *                update session.
+  */
+
+ /*! \function     bool AutoSegment::isHorizontal () const;
+  *  \return       \true if the AutoSegment is horizontal.
+  */
+
+ /*! \function     bool AutoSegment::isVertical () const;
+  *  \return       \true if the AutoSegment is vertical.
+  */
+
+ /*! \function     bool AutoSegment::isGlobal () const;
+  *  \return       \true if the AutoSegment is global : source and target
+  *                AutoContact are not in the same GCell.
+  */
+
+ /*! \function     bool AutoSegment::isLocal () const;
+  *  \return       \true if the AutoSegment is local : source and target
+  *                belongs to the same GCell.
+  */
+
+ /*! \function     bool AutoSegment::isTerminal () const;
+  *  \return       \true if the AutoSegment is terminal : the only way
+  *                to access a terminal AutoContact (may not be directly
+  *                achored on that terminal).
+  */
+
+ /*! \function     bool AutoSegment::isCollapsed () const;
+  *  \return       \true if the AutoSegment is collapsed : kept to zero-length.
+  */
+
+ /*! \function     bool AutoSegment::isCanonical () const;
+  *  \return       \true if the AutoSegment is canonical that is, the leftmost
+  *                (for horizontal) or lowest (for vertical) segment of a set
+  *                of collapsed segments. The canonical segment must be used
+  *                as the unique representant for the collapsed set.
+  */
+
+ /*! \function     bool AutoSegment::isFixed () const;
+  *  \return       \true if the AutoSegment cannot be moved (through setAxis()).
+  */
+
+ /*! \function     bool AutoSegment::isAccountable () const;
+  *  \return       \true if the AutoSegment is canonical and not collapsed.
+  *                Normally those flags are mutually exclusives, but better safe
+  *                than sorry.
+  *
+  */
+
+ /*! \function     virtual GCell* AutoSegment::getGCell () const;
+  *  \return       The GCell owning the source AutoContact.
+  */
+
+ /*! \function     Net* AutoSegment::getNet () const;
+  *  \return       The net this AutoSegment is part of.
+  */
+
+ /*! \function     Layer* AutoSegment::getLayer () const;
+  *  \return       The layer of the AutoSegment.
+  */
+
+ /*! \function     virtual Segment* AutoSegment::getSegment ();
+  *  \return       The associated \c Hurricane segment.
+  */
+
+ /*! \function     virtual Segment* AutoSegment::getSegment () const;
+  *  \return       The associated \c Hurricane segment.
+  *
+  *  This function is for use in const members.
+  */
+
+ /*! \function     virtual Segment* AutoSegment::getHorizontal ();
+  *  \return       If the the associated segment is horizontal, returns it.
+  *                Otherwise (vertical) returns \c NULL.
+  */
+
+ /*! \function     virtual Segment* AutoSegment::getVertical ();
+  *  \return       If the the associated segment is vertical, returns it.
+  *                Otherwise (horizontal) returns \c NULL.
+  */
+
+ /*! \function     DbU::Unit  AutoSegment::getAxis () const;
+  *  \return       The segment axis : Y for horizontals and X for verticals.
+  */
+
+ /*! \function     AutoContact* AutoSegment::getSource () const;
+  *  \return       The source AutoContact.
+  */
+
+ /*! \function     AutoContact* AutoSegment::getTarget () const;
+  *  \return       The target AutoContact.
+  */
+
+ /*! \function     DbU::Unit  AutoSegment::getSourcePosition () const;
+  *  \return       The lower bound of the segment into the routing track, equal
+  *                the source coordinate minus the half pitch.
+  */
+
+ /*! \function     DbU::Unit  AutoSegment::getTargetPosition () const;
+  *  \return       The upper bound of the segment into the routing track, equal
+  *                the target coordinate plus the half pitch.
+  */
+
+ /*! \function     virtual void  AutoSegment::setAxis ( DbU::Unit axis, bool realignate=false, set<AutoSegment*>* processeds=NULL );
+  *  \param        axis       New coordinate of the axis. For an horizontal segment
+  *                           it will change the Y coordinate and for a vertical,
+  *                           the X coordinate.
+  *  \param        realignate It set to true, the new axis position will be propagated
+  *                           to all collapsed segments, even if the current AutoSegment
+  *                           don't need to be moved.
+  *  \param        processeds The set of already processeds aligneds AutoSegments.
+  *
+  *                setAxis is the API frontend to the alignate function. It actually
+  *                only checks if the segment has to be moved and if the move is to
+  *                be propagated to the aligned AutoSegments.
+  */
+
+ /*! \function     virtual void  AutoSegment::orient ();
+  *                sets the source and target \c Hook of the Hurricane segment so
+  *                the source is always lower than the target.
+  */
+
+ /*! \function     virtual void  AutoSegment::invalidate ();
+  *                adds the AutoSegment to the invalidate session. This will happens
+  *                whenever a segment is moved by the router through setAxis() or
+  *                resized by it's AutoContact.
+  */
+
+ /*  \function     virtual void  AutoSegment::onRevalidate ();
+  *                This function is called at the time the AutoUpdate session is closed
+  *                and calls the router's callback.
+  */
+
+ /*! \function     virtual void  AutoSegment::getConstraints ( DbU::Unit& constraintMin, DbU::Unit& constraintMax ) const;
+  *  \param        constraintMin  Where to store the constraint lower bound.
+  *  \param        constraintMax  Where to store the constraint upper bound.
+  *  \return       Always \true (don't remember why...).
+  *
+  *                Constraints are deduced from the constraint box of the source
+  *                AutoContact.
+  *
+  *  \see          \ref NetConstraints
+  */
+
+ /*! \function     virtual void  AutoSegment::getConstraints ( Interval& i ) const;
+  *  \param        i  The constraint interval.
+  *  \return       Always \true (don't remember why...).
+  *
+  *  \see          getConstraints(), \ref NetConstraints
+  */
+
+ /*! \function     DbU::Unit  AutoSegment::getSlack () const;
+  *  \return       The length of the constraint interval.
+  *
+  *  \see          \ref NetOptimals
+  */
+
+ /*! \function     DbU::Unit  AutoSegment::getOptimalMin () const;
+  *  \return       The lower bound of the optimal interval.
+  *
+  *  \see          \ref NetOptimals
+  */
+
+ /*! \function     DbU::Unit  AutoSegment::getOptimalMax () const;
+  *  \return       The upper bound of the optimal interval.
+  *
+  *  \see          \ref NetOptimals
+  */
+
+ /*! \function     Interval&  AutoSegment::getOptimal ( Interval& i ) const;
+  *  \param        i The optimal interval.
+  *  \return       The interval given as argument.
+  *
+  *  \see          \ref NetOptimals
+  */
+
+ /*! \function     DbU::Unit  AutoSegment::getCost ( DbU::Unit axis ) const;
+  *  \param        axis  An axis coordinate.
+  *  \return       The distance from the nearest optimal interval bound.
+  *
+  *  \see          \ref NetOptimals
+  */
+
+ /*! \function     AutoSegment* AutoSegment::getCanonical ( DbU::Unit& sourcePosition, DbU::Unit& targetPosition );
+  *  \param        sourcePosition  Lower bound of the super-AutoSegment.
+  *  \param        targetPosition  Upper bound of the super-AutoSegment.
+  *  \return       The canonical AutoSegment of the super-AutoSegment.
+  *
+  *                A super-AutoSegment is the set of all AutoSegment which have been
+  *                bound together through (perpandicular) collapsed AutoSegment.
+  *                They behave like one big AutoSegment. For algorithmic purpose we
+  *                needs a canonical representant : it will be the lower AutoSegment
+  *                (the one with the lower source coordinates).
+  *                We also needs to know the real extend of the super-AutoSegment : it's
+  *                returned through \c sourcePosition and \c targetPosition parameters.
+  */
+
+ /*! \function     AutoSegment* AutoSegment::getCanonical ( Interval& i );
+  *  \param        i  interval of the super-AutoSegment.
+  *  \return       The canonical AutoSegment of the super-AutoSegment.
+  *
+  *  \see          AutoSegment::getCanonical().
+  */
+
+ /*! \function     AutoSegments  AutoSegment::getCollapseds ( bool withPerpand=false );
+  *  \return       The \Collection of AutoSegment that are collapsed to this one
+  *                (i.e. linked through perpandicual collapsed ones). Together
+  *                they forms one big virtual AutoSegment.
+  */
+
+ /*! \function     AutoSegments  AutoSegment::getCollapsedPerpandiculars ();
+  *  \return       The \Collection of AutoSegment that are perpandicular to this
+  *                one and it's collapsed fellows.
+  *
+  *                Note that this \Collection contains only \b GLOBAL perpandicular
+  *                AutoSegment and \b Terminal perpandicular AutoSegment.
+  */
+
+ /*! \function     void  AutoSegment::setCanonical ( bool state );
+  *  \param        state  sets the isCanonical() flag to this value.
+  */
+
+ /*! \function     void  AutoSegment::setTerminal ( bool state );
+  *  \param        state  sets the isTerminal() flag to this value.
+  */
+
+ /*! \function     void  AutoSegment::setLayer ( const Layer* layer );
+  *  \param        layer  Changes the \Hurricane segment layer.
+  */
+
+ /*! \function     void  AutoSegment::setPositions ();
+  *                compute the positions of the AutoSegment into the routing track,
+  *                from the \Hurricane segment extentions and the half-pitch.
+  *
+  *  \see          getSourcePosition() & getTargetPosition().
+  */
+
+ /*! \function     void  AutoSegment::collapse ();
+  *                sets the AutoSegment into collapsed state (zero-length).
+  */
+
+ /*! \function     void  AutoSegment::expand ();
+  *                Uncollapse the AutoSegment, re-compute the constraints on
+  *                the splitted sets.
+  */
+
+ /*! \function     bool  AutoSegment::toConstraintAxis ( set<AutoSegment*>* processeds=NULL );
+  *  \return       \True if the AutoSegment axis has been moved.
+  *
+  *                If the segment axis is outside the constraint interval, set it
+  *                the nearest constraint interval bound.
+  */
+
+ /*! \function     bool  AutoSegment::toOptimalAxis ( set<AutoSegment*>* processeds=NULL );
+  *  \return       \True if the AutoSegment axis has been moved.
+  *
+  *                If the segment axis is outside the optimal interval, set it
+  *                the nearest optimal interval bound.
+  */
+
+ /*! \function     void  AutoSegment::alignate ( DbU::Unit axis );
+  *  \param        axis  New axis's coordinate.
+  *
+  *                Move the segment axis to a new position. Adjust positions
+  *                of the supporting Contact whenever they are anchored on terminals
+  *                (i.e. RoutingPad).
+  *                  This function is atomic and should not be called directly
+  *                but rather through setAxis(). It's implemented in the
+  *                derived classes AutoHorizontal & AutoVertical.
+  */
+
+ /*! \function     void  AutoSegment::setOptimalMin ( DbU::Unit  oMin );
+  *  \param        oMin  sets the lower bound of the optimal interval.
+  *
+  *  \see          getOptimalMin(), getOptimalMax(), getCost().
+  */
+
+ /*! \function     void  AutoSegment::setOptimalMax ( DbU::Unit  oMin );
+  *  \param        oMin  sets the upper bound of the optimal interval.
+  *
+  *  \see          getOptimalMin(), getOptimalMax(), getCost().
+  */
+
+ /*! \function     void  AutoSegment::checkPositions () const;
+  *                check the coherency between the locally shadowed values
+  *                of source \& target position and the real ones. If a discrepancy
+  *                is found issue an error (but do not stop the program).
+  *
+  *                Note that discrepancies are legal while the AutoSegment is
+  *                invalidated (see \ref katabaticSession).
+  */
+
+ /*! \function     void  AutoSegment::checkInvalidated () const;
+  *                issue an error if the AutoSegment is invalidated. Mainly used
+  *                to debug the Katabatic Session mechanism (\ref katabaticSession).
+  */
+
+
+ //! \addtogroup   NetOptimals
+ //! \{
+
+ /*! \function     virtual void  AutoSegment::computeOptimal ( set<AutoSegment*>* processeds=NULL );
+  *                compute the AutoSegment optimal position interval.
+  */
+
+ /*! \function     virtual DbU::Unit  AutoSegment::getOrigin () const;
+  *  \return       The lower bound of the GCell in which the AutoSegment is
+  *                (\c YMin for horizontals, \c XMin for verticals).
+  */
+
+ /*! \function     virtual DbU::Unit  AutoSegment::getExtremity () const;
+  *  \return       The upper bound of the GCell in which the AutoSegment is
+  *                (\c YMax for horizontals, \c XMax for verticals).
+  */
+
+ //! \}
+
+
+ //! \addtogroup   katabaticSession
+ //! \{
+
+ /*! \function     bool  AutoSegment::isInvalidated () const;
+  *  \return       \True if the AutoSegment is invalidated, i.e. in the
+  *                Katabatic Session, it's axis having being moved by the
+  *                router.
+  *
+  *  \see          autoInvalidate().
+  */
+
+ /*! \function     bool  AutoSegment::setInvalidated ( bool state );
+  *  \param        state  set the state of the AutoSegment regarding the
+  *                       Katabatic Session. 
+  *
+  *  \see          autoInvalidate().
+  */
+
+ //! \}
+
+
+ /*! \class        AutoHorizontal
+  *  \brief        Horizontal AutoSegment (\b API).
+  */
+
+ /*! \function     static AutoHorizontal* AutoHorizontal::create ( Horizontal* horizontal, int type, bool terminal=false, bool collapsed=false );
+  *  \param        horizontal The associated \c Hurricane segment.
+  *  \param        type       Global, local or guessed kind.
+  *  \param        terminal   Whether the segment is tightly linked to a terminal.
+  *  \param        collapsed  Whether the segment must be kept of null length.
+  *  \return       The newly created AutoSegment.
+  */
+
+ /*! \function     static AutoHorizontal* AutoHorizontal::create ( AutoContact* source, AutoContact* target, const Layer* layer, DbU::Unit y, DbU::Unit width, int type, bool terminal=false, bool collapsed=false );
+  *  \param        source     The source \c Component.
+  *  \param        target     The target \c Component.
+  *  \param        layer      The segment's layer.
+  *  \param        y          The segment's Y coordinate.
+  *  \param        width      The segment's width.
+  *  \param        type       Global, local or guessed kind.
+  *  \param        terminal   Whether the segment is tightly linked to a terminal.
+  *  \param        collapsed  Whether the segment must be kept of null length.
+  *  \return       The newly created AutoSegment.
+  *
+  *                Allocate both \c Hurricane segment and Katabatic AutoSegment.
+  */
+
+
+ /*! \class        AutoVertical
+  *  \brief        Vertical AutoSegment (\b API).
+  */
+
+ /*! \function     static AutoVertical* AutoVertical::create ( Vertical* vertical, int type, bool terminal=false, bool collapsed=false );
+  *  \param        vertical   The associated \c Hurricane segment.
+  *  \param        type       Global, local or guessed kind.
+  *  \param        terminal   Whether the segment is tightly linked to a terminal.
+  *  \param        collapsed  Whether the segment must be kept of null length.
+  *  \return       The newly created AutoSegment.
+  */
+
+ /*! \function     static AutoVertical* AutoVertical::create ( AutoContact* source, AutoContact* target, const Layer* layer, DbU::Unit x, DbU::Unit width, int type, bool terminal=false, bool collapsed=false );
+  *  \param        source     The source \c Component.
+  *  \param        target     The target \c Component.
+  *  \param        layer      The segment's layer.
+  *  \param        x          The segment's X coordinate.
+  *  \param        width      The segment's width.
+  *  \param        type       Global, local or guessed kind.
+  *  \param        terminal   Whether the segment is tightly linked to a terminal.
+  *  \param        collapsed  Whether the segment must be kept of null length.
+  *  \return       The newly created AutoSegment.
+  *
+  *                Allocate both \c Hurricane segment and Katabatic AutoSegment.
+  */
+
+
+ /*! \function     AutoSegment* AutoSegment::create ( AutoContact* source, AutoContact* target, unsigned int dir, int type, bool terminal=false, bool collapsed=false );
+  *  \param        source    The source AutoContact.
+  *  \param        target    The target AutoContact.
+  *  \param        dir       The AutoSegment direction (\b H / \b V).
+  *  \param        type      Whether the AutoSegment is \b LOCAL, \b GLOBAL or must be guessed.
+  *  \param        terminal  The AutoSegment is used to connect a terminal.
+  *  \param        collapsed The AutoSegment is collapsed.
+  *  \return       A new AutoSegment.
+  *
+  *                create the AutoSegment between \c source and \c target, update the GCell
+  *                density if needed.
+  *
+  *                If the \c dir parameter do not contains the \b HORIZONTAL or \b VERTICAL
+  *                boolean flags an error will be thrown.
+  */
+
+
+ /*! \enum         AutoSegment::Type
+  *                This enumeration is used to hints AutoSegment constructor about
+  *                the kind of segment we are about to create. Once created, the
+  *                kind of AutoSegment is stored in a single boolean telling
+  *                wether it's \b GLOBAL or \b LOCAL (see AutoSegment::isGlobal()).
+  *
+  *                It is always best to avoid using AutoSegment::Guess as it implies findind
+  *                and checking source and target anchors (through ring access).
+  *                And in most cases we already known the kind of segment because
+  *                we created the source and target AutoContact just before...
+  *                See GCellConfiguration related functions.
+  */
+
+ /*! \var          AutoSegment::Global
+  *                The AutosSegment crosses at least one GCell boundary (i.e.
+  *                source and target AutoContact do not belong to the same GCell).
+  */
+
+ /*! \var          AutoSegment::Local
+  *                The AutoSegment is fully included in one GCell.
+  */
+
+ /*! \var          AutoSegment::Guess
+  *                The AutoSegment constructor will guess the kind of AutoSegment
+  *                by examining source and target anchors.
+  */
+
+ /*! \defgroup     collapseCanonical 3. AutoSegment collapse & Canonical (internal)
+  *
+  *  \section      AlignedAS Collapsing AutoSegment
+  *
+  *                A set of AutoSegment can be aligned together. The set will
+  *                behave like one big AutoSegment, especially, moving one
+  *                AutoSegment through setAxis() will move the whole set.
+  *
+  *                For each set of aligned AutoSegment, we provide a canonical
+  *                AutoSegment : the leftmost (for horizontal) or lowermost for
+  *                verticals.
+  *
+  *                There are two ways AutoSegments could be aligned :
+  *                <ul>
+  *                  <li>Through a collapsed perpandicular AutoSegment.
+  *                  <li>Through a locked AutoContact. 
+  *                </ul>
+  *
+  * \subsection    AlignedByCollapsed Aligned through collapsed AutoSegment
+  *
+  *                When an AutoSegment is collapsed, all perpandicular AutoSegment
+  *                to it's source and target AutoContact are aligneds. Collapsing
+  *                an AutoSegment means that it should be kept to zero length and
+  *                thus not managed by the overlying router.
+  *
+  *                \image html  AutoSegmentCollapse-5.png "collapse by AutoSegment"
+  *                \image latex AutoSegmentCollapse-5.pdf "collapse by AutoSegment" width=0.4\textwidth
+  *
+  * \subsection    AlignedByAutoContact Aligned through collapsed AutoContact
+  *
+  *                With the setHAlignate() and setVAlignate() the alignment of
+  *                horizontal (resp. vertical) AutoSegment of an AutoContact can be
+  *                forced.
+  *
+  *                \image html  AutoSegmentCollapse-6.png "collapse by AutoContact"
+  *                \image latex AutoSegmentCollapse-6.pdf "collapse by AutoContact" width=0.4\textwidth
+  *
+  * \subsection    collapsedExample An example of collapse/alignment
+  *
+  *                \image html  AutoSegmentCollapse-1.png "collapse - Step 1"
+  *                \image latex AutoSegmentCollapse-1.pdf "collapse - Step 1" width=0.4\textwidth
+  *
+  *                \image html  AutoSegmentCollapse-2.png "collapse - Step 2"
+  *                \image latex AutoSegmentCollapse-2.pdf "collapse - Step 2" width=0.4\textwidth
+  *
+  *                \image html  AutoSegmentCollapse-3.png "collapse - Step 3"
+  *                \image latex AutoSegmentCollapse-3.pdf "collapse - Step 3" width=0.4\textwidth
+  *
+  *                \image html  AutoSegmentCollapse-4.png "collapse - Step 4"
+  *                \image latex AutoSegmentCollapse-4.pdf "collapse - Step 4" width=0.4\textwidth
+  */
+
+
+ //! \addtogroup   collapseCanonical
+ //! \{
+
+ /*! \enum         AutoSegment::PerpandicularState
+  *                set of flags used to build the state of two AutoSegment.
+  *  \see          getPerpandicularState().
+  */
+
+ /*! \var          AutoSegment::PerpandicularAny
+  *                The \e current AutoSegment is perpandicular to the \e master.
+  *                May it be or not through collapsed perpandiculars.
+  */
+
+ /*! \var          AutoSegment::PerpandicularIndirect
+  *                The \e current AutoSegment is perpandicular to the \e master
+  *                through at least one collapsed perpandicular.
+  */
+
+ /*! \var          AutoSegment::ParallelOrExpanded
+  *                The \e current AutoSegment is not part of the aligned set,
+  *                it's either parallel but not aligned (no constraint on the
+  *                AutoContact) or perpandicular and not collapsed.
+  */
+
+ /*! \var          AutoSegment::ParallelAndLayerChange
+  *                The \e current AutoSegment is parallel to the master but not on
+  *                the same layer as the \e source (the \e master by transitivity).
+  */
+
+ /*! \function     unsigned int AutoSegment::getPerpandicularState ( AutoContact* contact, AutoSegment* source, AutoSegment* current, bool isHorizontalMaster, const Layer* masterLayer=NULL )
+  *  \param        contact             The AutoContact shared by source \& current.
+  *  \param        source              The AutoSegment from where we came.
+  *  \param        current             The AutoSegment we are exploring.
+  *  \param        isHorizontalMaster  The direction of the reference AutoSegment.
+  *  \param        masterLayer         The \Layer of the reference AutoSegment.
+  *  \return       A composite value telling the position of current relative to
+  *                source and reference.
+  *
+  *                Locators of \Collections like AutoSegment::getCollapseds() or
+  *                AutoSegment::getCollapsedPerpandiculars() are built on this
+  *                function. Any \Collection manipulating aligned sets must uses
+  *                this function which is the keystone of the aligned set walk-through.
+  *
+  *                The return value is a combination of binary flags from the
+  *                AutoSegment::PerpandicularState enumeration. The function
+  *                compute the following boolean values :
+  *                <ul>
+  *                  <li>\e sourcePerpandicular : \True if the \e source is perpandicular
+  *                      to the \e master AutoSegment.
+  *                  <li>\e currentPerpandicular : \True if the \e current is perpandicular
+  *                      to the \e master AutoSegment.
+  *                  <li>\e contactAlignate : \True if the alignment constraint on the
+  *                      AutoContact (if any) applies to \e source \& \e current. For instance
+  *                      it will be \True if both source and current are horizontal
+  *                      \b and AutoContact::isHAlignate() is \True.
+  *                </ul>
+  *                Then the return value is computed as follow :
+  *                <ol>
+  *                  <li>If \e current is parallel to \e master \b but not on the same
+  *                      layer.
+  *
+  *                      sets the AutoSegment::AutoSegment::ParallelAndLayerChange flag.
+  *                  <li>If \e current is perpandicular to \e master \b and not
+  *                      collapsed, it is perpandicular to the aligned set of the
+  *                      \e master.
+  *
+  *                      sets the AutoSegment::AutoSegment::PerpandicularAny flag.
+  *                  <li>\e source is perpandicular to \e master. There is an implicit
+  *                      context : the only way a perpandicular segment gets took into
+  *                      account, is to be collapsed. Then if the \e current AutoSegment
+  *                      is also perpandicular \b and \b not collapsed, it means
+  *                      that it's a perpandicular to the aligned set of the \e master,
+  *                      The difference with the previous case, is that it's through at
+  *                      least one collapsed perpandicular.
+  *
+  *                      sets the AutoSegment::AutoSegment::PerpandicularIndirect flag.
+  *                  <li>\e source is parallel to \e master. Then we check for
+  *                      disconnection in the aligned set. Disconnection arises
+  *                      if the \e contactAlignate flag is \false (either no
+  *                      alignment constraint on the AutoContact or different
+  *                      directions), \b and the \e current segment is not a
+  *                      collapsed perpandicular. 
+  *
+  *                      sets the AutoSegment::AutoSegment::ParallelOrExpanded flag.
+  *                </ol>
+  *                The \b zero return value means that the \e current AutoSegment
+  *                belong to the same aligned set as the \e master \b or is a
+  *                perpandicular collapsed AutoSegment.
+  *
+  *                The figures below demonstrate all thoses case :
+  *
+  *                \image html  PerpandicularState-1.png "Simple Perpandicular (case 2)"
+  *                \image latex PerpandicularState-1.pdf "Simple Perpandicular (case 2)" width=0.8\textwidth
+  *
+  *                \image html  PerpandicularState-2.png "Indirect Perpandicular (case 3)"
+  *                \image latex PerpandicularState-2.pdf "Indirect Perpandicular (case 3)" width=0.8\textwidth
+  *
+  *                \image html  PerpandicularState-3.png "Parallel (case 4.1)"
+  *                \image latex PerpandicularState-3.pdf "Parallel (case 4.1)" width=0.8\textwidth
+  *
+  *                \image html  PerpandicularState-4.png "Aligned through AutoContact (case 4.2)"
+  *                \image latex PerpandicularState-4.pdf "Aligned through AutoContact (case 4.2)" width=0.8\textwidth
+  */
+
+ /*! \function     unsigned int AutoSegment::getPerpandicularState ( AutoContact* contact, AutoSegment* source, AutoSegment* current, AutoSegment* master )
+  *  \param        contact  The AutoContact shared by source \& current.
+  *  \param        source   The AutoSegment from where we came.
+  *  \param        current  The AutoSegment we are exploring.
+  *  \param        master   The reference AutoSegment.
+  *  \return       A composite value telling the position of current relative to
+  *                source and reference.
+  */
+
+ /*! \function     bool  AutoSegment::arePerpandiculars ( AutoSegment* a, AutoSegment* b );
+  *  \param        a  First AutoSegment.
+  *  \param        b  Second AutoSegment.
+  *  \return       true if a \& b have perpandicular directions.
+  */
+
+ /*! \function     bool  AutoSegment::areAligneds ( AutoSegment* a, AutoSegment* b );
+  *  \param        a  First AutoSegment.
+  *  \param        b  Second AutoSegment.
+  *  \return       true if a \& b have same directions.
+  */
+
+ /*! \function     bool  AutoSegment::arePerpandiculars ( bool isHorizontalA, AutoSegment* b );
+  *  \param        isHorizontalA  is the A AutoSegment horizontal.
+  *  \param        b              Second AutoSegment.
+  *  \return       true if a \& have perpandicular directions.
+  */
+
+ }

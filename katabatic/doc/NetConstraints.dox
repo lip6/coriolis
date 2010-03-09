@@ -1,0 +1,128 @@
+
+ // -*- C++ -*-
+
+
+ namespace Katabatic {
+
+ /*! \defgroup     NetConstraints 5. Constraints Computations (internal)
+  *
+  *                This module documents how constraints computation are performed.
+  *                It is intented for developpers only.
+  *
+  *                Constraints gives the absolute minimal and maximal position an
+  *                \c AutoSegment axis can be set. They materialize the bounds over
+  *                which we may have an electrical disconnection.
+  *
+  *                Practically, due to the magic of \c AutoContact, disconnections
+  *                can only occurs on \c AutoContact anchored on \c RoutingPad :
+  *                if they go outside the \c RoutingPad area, we are in trouble.
+  *                Those \c AutoContact can be spotted either by the fact they have
+  *                an anchor or the AutoContact::isTerminal() flag is set.
+  *
+  *
+  *  \section      secConstraintsOrgan Organisation
+  *
+  *                Due to algorithmic consideration, instead of storing constraint
+  *                interval (one axis) in \c AutoSegment, we store constraint \c Box
+  *                (both axis) in \c AutoContact. They are easier to propagate during the
+  *                computation stage and should takes less memory as \c AutoContact
+  *                are often shared by more than two \c AutoSegment.
+  *  
+  *                To spare memory, each coordinate of the constraint \c Box is expressed
+  *                as a strictly positive offset in \e lambdas from the lower left corner
+  *                of the \c FCell owning the \c AutoContact. Offsets are 8 bits <code>unsigned int</code>,
+  *                thus a \c Box takes one word (32 bits). This leads to two restrictions :
+  *                <ul>
+  *                  <li>A \c FCell side cannot be greater than 256 \e lambdas.
+  *                  <li>The constraint \c Box minimal precision is the \e lambda.
+  *                </ul>
+  *                In all cases I can foresee, none of them should be a problem.
+  *
+  *                Constraint interval on \c AutoSegment can be deduced from any of
+  *                the source or target \c AutoContact. For an horizontal \c AutoSegment
+  *                we take the constraint \c Box vertical interval and for a vertical,
+  *                the horizontal interval.   
+  *
+  *
+  *  \section      secNativeConstraints Native Constraints
+  *
+  *                Before the contraints computation starts, we needs to initialize
+  *                each \c AutoContact \c Box to a reasonable default : the
+  *                <em>Native Constraint Box</em>. Wich is :
+  *                <ul>
+  *                  <li>For an anchored/passive \c AutoContact : the bounding box
+  *                      of the underlying terminal.
+  *                  <li>For any other \c AutoContact : the bounding box of the
+  *                      \c FCell owner.
+  *                </ul>
+  *
+  *
+  *  \section      secConstraintsPropagation Constraints Propagation
+  *
+  *                The only source of constraints being the anchored \c AutoContact
+  *                we do a full propagation from each of them. Propagation is done
+  *                through \c AutoSegment as follow :
+  *                <ul>
+  *                  <li>Horizontal \c AutoSegment propagate the vertical (\b DY)
+  *                      constraint part.
+  *                  <li>Vertical \c AutoSegment propagate the horizontal (\b DX)
+  *                      constraint part.
+  *                </ul>
+  *                Obviously, any constraint diseapear after we have gone through
+  *                exactly one horizontal and one vertical, thus the propagation is
+  *                somewhat limited.
+  *
+  *                Case of collapsed \c AutoSegment : those are to be kept at
+  *                zero-length, thus they act as a bypass between two \c AutoContact.
+  *                Their source and target can be considered as <em>stacked</em>
+  *                and propagate both vertical and horizontal constraint (that is :
+  *                the whole constraint \c Box).
+  *
+  *
+  *  \section      secCollapseUncollapse Collapsing & Uncollapsing
+  *
+  *                Only local \c AutoSegment can be collapsed, as a global
+  *                \c AutoSegment crosses the boundary of at least one \c FCell
+  *                it can't have a null length.
+  *
+  *                When collapsing a new \c AutoSegment, we can do an incremental
+  *                constraint computation as it will result in a further increase 
+  *                of constraint (if any).
+  *
+  *                When uncollapsing an \c AutoSegment we may have to slacken the
+  *                constraint, but we do not know to which extend. So to make it
+  *                simple we fully recompute constraints from scratch.
+  *
+  *                Note that collapsing/uncollapsing are exceptionnal operations,
+  *                so we can afford losing a little time there.
+  *
+  *
+  *  \section      secCollapseExample progressive Collapsing Example
+  *
+  *                In this set of example we show how constraints propagate along the
+  *                \c AutoSegment, depending on the collapsed ones. We starts we no
+  *                collapse and ends with all \e local \c AutoSegment collapseds.
+  *
+  *                \image html  NetConstraints-1.png "Fully expanded"
+  *                \image latex NetConstraints-1.pdf "Fully expanded" width=0.4\textwidth
+  *                \image html  NetConstraints-2.png "After One Vertical collapse"
+  *                \image latex NetConstraints-2.pdf "After One Vertical collapse" width=0.4\textwidth
+  *                \image html  NetConstraints-3.png "After Horizontal collapse"
+  *                \image latex NetConstraints-3.pdf "After Horizontal collapse" width=0.4\textwidth
+  *                \image html  NetConstraints-4.png "Fully collapsed"
+  *                \image latex NetConstraints-4.pdf "Fully collapsed" width=0.4\textwidth
+  */
+
+
+ //! \addtogroup   NetConstraints
+ //! \{
+
+ /*! \function     void  KatabaticEngine::_computeNetConstraints ( Net* net );
+  *  \param        net The net for which to compute constraints.
+  *
+  *                compute constraints on a net.
+  */
+
+ //! \}
+
+ }

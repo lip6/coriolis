@@ -1,0 +1,179 @@
+
+ // -*- C++ -*-
+
+
+ namespace Katabatic {
+
+ /*! \class        GCell
+  *  \brief        Global Routing cell (\b API).
+  *
+  *  \attention    This class can only be allocated through a GCellGrid thus
+  *                Constructors/Destructors are protecteds.
+  *
+  * \remark        As this object uses the decorator Design Pattern, almost all
+  *                functions are pure virtuals. Implementation take place in a
+  *                derived class \c GCellConcrete which is not documented,
+  *                (same specifications as GCell).
+  *
+  * \see           GCellDecorator class.
+  */
+
+ /*! \function     GCellGrid* GCell::getGCellGrid () const;
+  *  \return       The GCellGrid to which the GCell belongs.
+  */
+
+ /*! \function     unsigned int  GCell::getIndex () const;
+  *  \return       The linear index of this GCell inside the GCellGrid GCell table.
+  */
+
+ /*! \function     unsigned int  GCell::getRow () const;
+  *  \return       The GCell's row inside the GCellGrid (this is a Y coordinate).
+  */
+
+ /*! \function     unsigned int  GCell::getColumn () const;
+  *  \return       The GCell's row inside the GCellGrid (this is a X coordinate).
+  */
+
+ /*! \function     Point  GCell::getCenter () const;
+  *  \return       The center of the GCell.
+  */
+
+ /*! \function     DbU::Unit  GCell::getX () const;
+  *  \return       The X coordinate of the GCell's lower left corner (\b XMin).
+  */
+
+ /*! \function     DbU::Unit  GCell::getY () const;
+  *  \return       The Y coordinate of the GCell's lower left corner (\b YMin).
+  */
+
+ /*! \function     DbU::Unit  GCell::getXMax () const;
+  *  \return       The X coordinate of the GCell's upper right corner.
+  */
+
+ /*! \function     DbU::Unit  GCell::getYMax () const;
+  *  \return       The Y coordinate of the GCell's lower upper right corner.
+  */
+
+ /*! \function     Box  GCell::getBoundingBox () const;
+  *  \return       The GCell bounding box.
+  */
+
+ /*! \function     GCell* GCell::getLeft () const;
+  *  \return       The CCell's left neighbour (may be \c NULL if first of the row).
+  */
+
+ /*! \function     GCell* GCell::getRight () const;
+  *  \return       The CCell's right neighbour (may be \c NULL if last of the row).
+  */
+
+ /*! \function     GCell* GCell::getUp () const;
+  *  \return       The CCell's up neighbour (may be \c NULL if top of the column).
+  */
+
+ /*! \function     GCell* GCell::getDown () const;
+  *  \return       The CCell's down neighbour (may be \c NULL if bottom of the column).
+  */
+
+ /*! \function     unsigned int  GCell::getDensity ( unsigned int depth ) const;
+  *  \return       The density of vertical wires going through this GCell.
+  *  \see          updateDensity()
+  */
+
+ /*! \function     unsigned int  GCell::getCDensity () const;
+  *  \return       The AutoContact density.
+  *  \see          updateDensity()
+  */
+
+ /*! \function     unsigned int  GCell::getDensity () const;
+  *  \return       The average of horizontal and vertical density.
+  *  \see          updateDensity()
+  */
+
+ /*! \function     vector<AutoSegment*>* GCell::getVSegments ();
+  *  \return       All vertical AutoSegment, starting, ending or crossing this GCell.
+  */
+
+ /*! \function     vector<AutoSegment*>* GCell::getHSegments ();
+  *  \return       All horizontal AutoSegment, starting, ending or crossing this GCell.
+  */
+
+ /*! \function     vector<AutoContact*>* GCell::getContacts ();
+  *  \return       All AutoContact belonging to this GCell.
+  */
+
+ /*! \function     AutoSegments GCell::getVStartSegments ();
+  *  \return       All vertical AutoSegment starting from this GCell.
+  */
+
+ /*! \function     AutoSegments GCell::getHStartSegments ();
+  *  \return       All horizontal AutoSegment starting from this GCell.
+  */
+
+ /*! \function     AutoSegments GCell::getVStopSegments ();
+  *  \return       All vertical AutoSegment ending in this GCell.
+  */
+
+ /*! \function     AutoSegments GCell::getHStopSegments ();
+  *  \return       All horizontal AutoSegment ending in this GCell.
+  */
+
+ /*! \function     AutoSegments GCell::getStartSegments ( unsigned int direction );
+  *  \param        direction  The selected direction.
+  *  \return       All AutoSegment starting from this GCell in \b direction.
+  */
+
+ /*! \function     AutoSegments GCell::getStopSegments ( unsigned int direction );
+  *  \param        direction  The selected direction.
+  *  \return       All AutoSegment ending in this GCell in \b direction.
+  */
+
+ /*! \function     void GCell::addVSegment ( AutoSegment* segment );
+  *  \param        segment A vertical AutoSegment.
+  *
+  *                Indicate that the vertical \c segment is going straigh through this
+  *                GCell (no AutoContact).
+  */
+
+ /*! \function     void GCell::addHSegment ( AutoSegment* segment );
+  *  \param        segment An horizontal AutoSegment.
+  *
+  *                Indicate that the horizontal \c segment is going straigh through this
+  *                GCell (no AutoContact).
+  */
+
+ /*! \function     void GCell::addContact ( AutoContact* contact );
+  *  \param        contact An AutoContact.
+  *
+  *                Indicate that the \c contact is owned by this GCell. This means that
+  *                either it's a branching point or there are terminals in the GCell.
+  *                The AutoContact is geometrically bound by the GCell bounding box.
+  */
+
+ /*! \function     void GCell::updateContacts ();
+  *                Force the geometrical recalculation of all AutoContact owned by
+  *                this GCell.
+  */
+
+ /*! \function     void GCell::updateDensity ();
+  *                Recompute the horizontal, vertical, global and contact of
+  *                this GCell.
+  *
+  *                The horizontal density is computed as follow : the sum of the length
+  *                of all horizontal wires divided by the the total length of horizontal
+  *                wires (the width of the GCell times the number of horizontal tracks).
+  *                A density equal to one means a totally saturated GCell, and greater
+  *                than one an overloaded GCell (unroutable).
+  *
+  *                The vertical density is computed in a similar way to the horizontal
+  *                one.
+  *
+  *                The global density is the average of horizontal and vertical
+  *                density.
+  *
+  *                AutoContact density is the ratio of number of contact with length of
+  *                the diagonal of the GCell multiplied by two. This is a rough approximate.
+  *
+  *  \see          GCellGrid::updateDensity().
+  */
+
+ }

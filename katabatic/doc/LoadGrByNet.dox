@@ -1,0 +1,27 @@
+
+ // -*- C++ -*-
+
+
+ namespace Katabatic {
+
+ /*! \function     void KatabaticEngine::_loadGrByNet ()
+  *                Load the global routing from the Nimbus structure (built by the Tornado
+  *                global router) into the Katabatic ToolEngine.
+  */
+
+ /*! \function     void KatabaticEngine::_loadNetGlobalRouting ( Net* net )
+  *  \param        net The net for which to build the final routing.
+  *
+  *                Load the global routing from the Nimbus structure. Do a recursive
+  *                walk through the GCells. Recursivity is handled with the
+  *                ForkStack stack.
+  */
+
+ }
+
+
+
+
+ namespace {
+
+ }

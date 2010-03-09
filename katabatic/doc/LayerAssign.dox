@@ -1,0 +1,143 @@
+
+ // -*- C++ -*-
+
+
+ namespace Katabatic {
+
+ /*! \defgroup     layerAssign 4. Layer Assignment (internal)
+  *
+  *                This modules documents how layer assignment is performed. It is intented
+  *                for developpers only.
+  *
+  *                Layer Assignment functions works in two steps :
+  *                <ol>
+  *                  <li>For a given net, go through the \c AutoSegment and migrate them
+  *                      to upper (global) layers if needed.
+  *                  <li>For each \c AutoContact of which at least one \c AutoSegment has been
+  *                      migrated, split the \c AutoContact (with SplitAutoContact()).
+  *                </ol>
+  *
+  *                SplitAutoContact() relies on the hypothesis that the split occurs
+  *                between two sets of \b HV layers. For example between \b M2/M3 and
+  *                \b M4/M5 but not between \b M2/M3 and \b M6/M7.
+  *
+  *                The following figures shows all possible configurations, except for
+  *                the most obvious : when all \c AutoSegment are migrated from \b M2/M3 to
+  *                \b M4/M5 we just change the layer of the \c AutoContact from \b C23 to \b C34.
+  *                SplitAutoContact() compute the <em>layer span</em> of the AutoContact,
+  *                that is, the distance between the lowest layer and the higher one (it
+  *                cannot exceed 3 as from \b M2 to \b M5). Then it detach the higher
+  *                \c AutoSegment and re-attach them to a newly created \c AutoContact.
+  *                In turn this new \c AutoContact is connected to the previous one.
+  *                <ul>
+  *                  <li>The span is 3 (\b M2 to \b M5) : creates 2 \c AutoContact and
+  *                      2 \c AutoSegment.
+  *                  <li>The span is 2 (\b M2 to \b M4 or \b M3 to \b M5) : creates one
+  *                      \c AutoContact and one \c AutoSegment.
+  *                  <li>The span is 1 (\b M3 to \b M4) : just change the layer of the
+  *                      \c AutoContact to \b C34.
+  *                </ul>
+  *                Simpler rules could be formulated : if \b M2 is present creates the
+  *                \b M3 additionnal \c AutoSegment. If \b M5 is present, created the
+  *                \b M4 additionnal \c AutoSegment.
+  *
+  *                In <b>M2+M3+M4+M5</b>, <b>M3+M4+M5</b> and <b>M2+M3+M4</b> configurations
+  *                two separates \b M4 \c AutoSegment (resp. \b M3 \c AutoSegment) are needed
+  *                to avoid the <em>incomplete AutoContact wiring</em> problem
+  *                (see \ref ssecFaultyTopologies).
+  *
+  *                \image html  SplitAutoContact-1.png "Full Configuration"
+  *                \image latex SplitAutoContact-1.pdf "Full Configuration" width=0.4\textwidth
+  *                \image html  SplitAutoContact-2.png "No M3 Configuration"
+  *                \image latex SplitAutoContact-2.pdf "No M3 Configuration" width=0.4\textwidth
+  *                \image html  SplitAutoContact-3.png "No M3,M4 Configuration"
+  *                \image latex SplitAutoContact-3.pdf "No M3,M4 Configuration" width=0.4\textwidth
+  *                \image html  SplitAutoContact-4.png "No M2 Configuration (degenerate)"
+  *                \image latex SplitAutoContact-4.pdf "No M2 Configuration (degenerate)" width=0.4\textwidth
+  *                \image html  SplitAutoContact-5.png "No M5 Configuration (degenerate)"
+  *                \image latex SplitAutoContact-5.pdf "No M5 Configuration (degenerate)" width=0.4\textwidth
+  *                \image html  SplitAutoContact-6.png "No M2,M5 Configuration (degenerate)"
+  *                \image latex SplitAutoContact-6.pdf "No M2,M5 Configuration (degenerate)" width=0.4\textwidth
+  */
+
+
+ /*! \enum         LayerAssignMethod
+  *                List all avalaible global layer assignment algorithm avalaible for
+  *                layerAssign().
+  */
+
+ /*! \var          LayerAssign LayerAssignByLength
+  *                See layerAssign().
+  */
+
+ /*! \var          LayerAssign LayerAssignByTrunk
+  *                See layerAssign().
+  */
+
+
+ /*! \function     void  KatabaticEngine::layerAssign ( unsigned int method )
+  *  \param        method specify the algorithm used to perform the layer assignement.
+  *
+  *                The loadGlobalRouting() method build a topology for each net using only the
+  *                two first routing layers avalaibles (usually \e metal2 and \e metal3).
+  *                To use upper routing layer we needs to go through a <em>layer assignment</em>
+  *                step. The layerAssign() method provides two simples approaches to do so :
+  *                <ul>
+  *                  <li> layerAssignByLength : every global AutoSegment which
+  *                       length is superior to the global threshold is moved to the upper layer. 
+  *                  <li> layerAssignByTrunk : if any AutoSegment of a net
+  *                       exceed the global threshold, then all the global wiring of this
+  *                       net is put into the upper layers.
+  *                </ul>
+  *
+  *                This method is a switch to _layerAssignByLength() or _layerAssignByTrunk().
+  *
+  *                The <em>global threshold</em> is to be sets using the setGlobalThreshold()
+  *                method.
+  */
+
+
+ //! \addtogroup   layerAssign
+ //! \{
+
+
+ /*! \function     void  KatabaticEngine::_layerAssignByLength ( unsigned long& total, unsigned long& global, set<Net*>& globalNets );
+  *
+  *                Perform the layer assignment on all nets, using the
+  *                layerAssignByLength algorithm. See layerAssign().
+  */
+
+ /*! \function     void  KatabaticEngine::_layerAssignByLength ( Net* net, unsigned long& total, unsigned long& global, set<Net*>& globalNets );
+  *  \param        net         The net to process.
+  *  \param        total       The total number of AutoSegment.
+  *  \param        global      The number of AutoSegment that have been sets global.
+  *  \param        globalNets  Set of global Nets.
+  *
+  *                Perform the layer assignment on one net, using the
+  *                layerAssignByLength algorithm. See layerAssign().
+  */
+
+ /*! \function     void  KatabaticEngine::_layerAssignByTrunk ( unsigned long& total, unsigned long& global, set<Net*>& globalNets );
+  *
+  *                Perform the layer assignment on all nets, using the
+  *                layerAssignByTrunk algorithm. See layerAssign().
+  */
+
+ /*! \function     void  KatabaticEngine::_layerAssignByTrunk ( Net* net, unsigned long& total, unsigned long& global, set<Net*>& globalNets );
+  *  \param        net         The net to process.
+  *  \param        total       The total number of AutoSegment.
+  *  \param        global      The number of AutoSegment that have been sets global.
+  *  \param        globalNets  Set of global Nets.
+  *
+  *                Perform the layer assignment on one net, using the
+  *                layerAssignByTrunk algorithm. See layerAssign().
+  */
+
+ //! \}
+
+}
+
+
+ namespace {
+
+ }

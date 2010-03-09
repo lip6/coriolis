@@ -1,0 +1,153 @@
+
+ // -*- C++ -*-
+
+
+ namespace Katabatic {
+
+ /*! \defgroup     katabaticSession 7. Katabatic update Session Mechanism (internal)
+  *
+  *                This module documents the Katabatic update Session Mechanism.
+  *                It is intented for developpers only.
+  *
+  *
+  *  \section      secSessionGoal Goal of The Katabatic::Session
+  *
+  *                Due to obvious performance issue, we do not recompute the
+  *                geometry of source and target of a Katabatic::AutoSegment
+  *                each time it's moved by the router. Instead we uses a simple
+  *                queuing mechanism : the Katabatic::Session.
+  *
+  *                Note that, most of the time, the router only moves segments,
+  *                that is, never modifies directly Katabatic::AutoContact.
+  *                The only exceptions being during the initial building stage
+  *                or when the router decide to change the topology of a net.
+  *                
+  *                The router knows which Katabatic::AutoSegment it has moved,
+  *                but during the update of a Katabatic::AutoContact geometry
+  *                more segments will be modified. The modification being a
+  *                change in their soure and/or target extention. And of thoses
+  *                the router will not know about. To solve this problem,
+  *                the router has to set a callback Katabatic::SegmentRevalidateCB
+  *                which will be called for each modificated Katabatic::AutoSegment.
+  *
+  *                Note that, in order to uniformize the procedure, this callback
+  *                will also be run on Katabatic::AutoSegment modificated by
+  *                the router.
+  *
+  *
+  *  \section      secSectionLookup The lookup function.
+  *
+  *                To find a Katabatic::AutoSegment from it's associated \Hurricane
+  *                segment, we build a simple \STL map in the Katabatic \c ToolEngine.
+  *                This lookup table, can be accessed through the Session lookup()
+  *                function, once the session is open.
+  *
+  *              
+  *  \section      secSessionRevalidate The Revalidate procedure
+  *              
+  *                The sequence of calls is as follow :
+  *                <ol>
+  *                  <li>The Router modifies some Katabatic::AutoSegment by moving
+  *                      their axis. For example, horizontal segments in an horizontal
+  *                      routing channel.
+  *                  <li>The Katabatic::AutoSegment is then invalidated : put in the
+  *                      invalidated segment set. It's Katabatic::AutoContact anchors
+  *                      are also invalidated and put in the set of invalidated contacts.
+  *                  <li>At some point, a global revalidation is performed :
+  *                      Katabatic::Session::revalidate(). Says, when the channel
+  *                      is successfully routed.
+  *                  <li>Katabatic::updateGeometry() is called and update the
+  *                      geometry of all invalided Katabatic::AutoContact. Doing so
+  *                      almost surely leads to the invalidation of more Katabatic::AutoSegment
+  *                      which are added to the invalidated set. In this example, as
+  *                      we moved horizontal segments, the new invalidated segments
+  *                      will be vertical ones incident to the formers.
+  *                  <li>Finally we call Katabatic::AutoSegment::onRevalidate()
+  *                      fonction for each Katabatic::AutoSegment.
+  *                      This function encapsulate the callback from the router, so it
+  *                      can take into account the segment extension change.
+  *                </ol>
+  *              
+  *                \image html  AutoInvalidate-1.png "Revalidate Procedure"
+  *                \image latex AutoInvalidate-1.pdf "Revalidate Procedure" width=0.9\textwidth
+  *
+  *
+  *  \section      secStaticAccess  The Static Member choice
+  *
+  *                Almost all Session function members are \c static, this is
+  *                because they refers to the currently opened Session which is
+  *                kept entirely internal to the \c KatabaticSession module.
+  *                This avoid carrying a global variable for the Session object.
+  */
+
+
+ /*! \class        Session
+  *  \brief        Katabatic update Session (\b API).
+  *
+  *                The Katabatic Session is mandatory before any AutoSegment /
+  *                AutoContact to be modified (supposedly by a router).
+  *
+  *                Unlike \Hurricane \c update \c Session only one session
+  *                can be opened at a time (no stacking mechanism). Opening a
+  *                Katabatic update Session also opens an \Hurricane \c update
+  *                \c Session.
+  *
+  *                For details on how Katabatic Sessions works, have a look to
+  *                \ref katabaticSession.
+  */
+
+ /*! \function     static Session* Session::get ();
+  *  \return       The currently opened session, \c NULL if no session has
+  *                been opened.
+  */
+
+ /*! \function     static Katabatic* Session::getKatabatic ();
+  *  \return       The Katabatic ToolEngine associated to the current update
+  *                session.
+  */
+
+ /*! \function     static AutoSegment* Session::lookup ( Segment* segment );
+  *  \param        segment An \Hurricane segment.
+  *  \return       The associated Katabatic AutoSegment.
+  *
+  *                For this function to work, a Katabatic Session must be opened
+  *                as it's a simple bypass to the Katabatic::_Lookup() member.
+  */
+
+ /*! \function     static Session* Session::open ( KatabaticEngine* ktbt );
+  *  \param        ktbt A Katabatic ToolEngine on which to work.
+  *
+  *                Open a new Katabatic update Session on the \c ktbt \c ToolEngine.
+  *                At this point only one session can be opened at a time. Attempt
+  *                to open a second one will result in an exception.
+  */
+
+ /*! \function     static size_t  Session::close ();
+  *  \return       The number of AutoContact / AutoSegment that have been revalidateds.
+  *
+  *                Ends an update Session. This functions made a call to Revalidate to
+  *                ensure that no AutoContact / AutoSegment remains invalidated.
+  */
+
+ /*! \function     static size_t  Session::revalidate ();
+  *  \return       The number of AutoContact / AutoSegment that have been revalidateds.
+  *
+  *                Revalidate all AutoContact / AutoSegment currently in the queue :
+  *                that is, update the AutoContact geometry and AutoSegment extentions.
+  */
+
+ /*! \function     void  Session::invalidate ( AutoSegment* segment );
+  *  \param        segment An AutoSegment that has been moved.
+  *
+  *                The invalidated AutoSegment are stored into a \STL set,
+  *                so it can be added multiples times without problems.
+  */
+
+ /*! \function     void  Session::invalidate ( AutoContact* contact );
+  *  \param        contact An AutoContact of which a AutoSegment has been moved.
+  *
+  *                The invalidated AutoContact are stored into a \STL set,
+  *                so it can be added multiples times without problems.
+  */
+
+ }

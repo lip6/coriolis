@@ -1,0 +1,114 @@
+
+ // -*- C++ -*-
+
+
+ namespace Katabatic {
+
+ /*! \class        BaseGrid
+  *  \brief        Grid Common Skeleton (\b API).
+  *
+  *  \attention    Provide a non-template common skeleton for the Grid class
+  *                template. Specifically manage the axis graduation, the geometric
+  *                search functions and the indexes computation (assuming a linear
+  *                storage of the grid elements).
+  *                
+  *
+  *  \section      BaseGridImplementation Grid Implementation Details
+  *
+  *                The matrix of GCell is stored in a linear vector of GCell's pointer,
+  *                row by row. The Grid class provide convenient functions to
+  *                convert a linear index into row / column and the other way around.
+  */
+
+ /*! \function     unsigned int BaseGrid::getColumns () const;
+  *  \return       The number of columns of the GCell matrix.
+  */
+
+ /*! \function     unsigned int BaseGrid::getRows () const;
+  *  \return       The number of rows of the GCell matrix.
+  */
+
+ /*! \function     unsigned int BaseGrid::getRawSize () const;
+  *  \return       The size of the vector holding the GCell matrix.
+  */
+
+ /*! \function     unsigned int BaseGrid::getIndex ( unsigned int column, unsigned int row ) const;
+  *  \param        column The GCell's column.
+  *  \param        row    The GCell's row.
+  *  \return       The linear index of the GCell at <code>(column,row)</code>.
+  */
+
+ /*! \function     unsigned int BaseGrid::getRow ( unsigned int index ) const;
+  *  \param        index A linear index.
+  *  \return       extract the row number from the linear index.
+  */
+
+ /*! \function     unsigned int BaseGrid::getColumn ( unsigned int index ) const;
+  *  \param        index A linear index.
+  *  \return       extract the column number from the linear index.
+  */
+
+ /*! \class        Grid
+  *  \brief        Routing Grid (\b API).
+  *
+  *  \attention    This class is can only be allocated through a Katabatic
+  *                \c ToolEngine thus Constructors/Destructors are protecteds.
+  *
+  *  \section      GridImplementation Grid Implementation Details
+  *
+  *                The matrix of GCell is stored in a linear vector of GCell's pointer,
+  *                row by row. The Grid class provide convenient functions to
+  *                convert a linear index into row / column and the other way around.
+  */
+
+
+ /*! \function     GCell* Grid::getGCell ( const Point p1, const Point p2 ) const;
+  *  \param        p1 First point.
+  *  \param        p2 Second point.
+  *  \return       Returns the GCell enclosing both points.
+  *
+  *                When we build a Net's routing wires, and the Net span more than one
+  *                GCell, we can always find the appropriate GCell through the
+  *                \c Hook, \c GCell and GCell association.
+  *
+  *                Problem arises for a Net fully contained inside one GCell, in this
+  *                case there is no SplitterContact telling us where we are. We have
+  *                to guess the GCell by only using RoutingPad's positions. And unfortunatly
+  *                \c RoutingPad can be on the edge of one GCell so we cannot tell if
+  *                it belongs to the left or the right. To solve this problem we guess
+  *                the GCell from two (different) \c RoutingPad positions.
+  *
+  *                Note that if there is only one \c RoutingPad, there is no problem at
+  *                all : we are dealing with a <em>one \c Plug</em> \c Net...
+  *
+  *                If points do not belongs to one GCell (too far appart), strange
+  *                results may occurs.
+  */
+
+ /*! \function     GCell* Grid::getGCell ( unsigned int index ) const;
+  *  \param        index A linear index.
+  *  \return       The GCell at the given index.
+  *
+  *                Be aware that no check is performed if the index is out of bound,
+  *                this may leads to catastrophic results.
+  */
+
+ /*! \function     vector<GCell*> Grid::getGCellVector ();
+  *  \return       The \vector holding all GCells.
+  */
+
+ /*! \function     GCells Grid::getGCellsColumn ( unsigned int column, unsigned int rowStart, unsigned int rowStop );
+  *  \param        column   The column index.
+  *  \param        rowStart The start row index inside the column.
+  *  \param        rowStop  The stop row index inside the column.
+  *  \return       The \c Collection of a partial row.
+  */
+
+ /*! \function     GCells Grid::getGCellsRow ( unsigned int row, unsigned int columnStart, unsigned int columnStop );
+  *  \param        row         The row index.
+  *  \param        columnStart The start column index inside the row.
+  *  \param        columnStop  The stop column index inside the row.
+  *  \return       The \c Collection of a partial column.
+  */
+
+ }

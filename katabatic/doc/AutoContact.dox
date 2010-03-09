@@ -1,0 +1,364 @@
+
+ // -*- C++ -*-
+
+
+ namespace Katabatic {
+
+ /*! \class        AutoContact
+  *  \brief        Self-sizing Contact (\b API).
+  *
+  *  \see          \ref buildRules.
+  *
+  *  \section      secAutoContactSplitting  AutoContact splitting mechanism
+  *
+  *                An AutoContact splitting occurs when more than two layers connects
+  *                to a single AutoContact.
+  *
+  *                <b>General Case</b>
+  *
+  *                <ol>
+  *                  <li>Create a \b secondary contact, so that both the original
+  *                      and the secondary abide by the two layers rule.
+  *                  <li>Create new AutoSegments to connect original to secondary.
+  *                      There could be one or two segments created according to
+  *                      the <i>layers distance</i>.
+  *                  <li>Re-attach the AutoSegments to the right AutoContact.
+  *                      The rule being that an AutoSegment is attached to the
+  *                      lowest AutoContact containing it's Layer.
+  *                  <li>The orignal &amp; secondary contact are passed trough
+  *                      the connexity restauration procedure.
+  *                </ol>
+  *
+  *                <b>Importants Points</b>
+  *
+  *                <ul>
+  *                  <li>In the second step: the new AutoSegments must be put on
+  *                      axis so that after resizing original and secondary AutoContact,
+  *                      the AutoSegments do not extend outside their previous extension.
+  *                  <li>Constraints splitting: the constraints on the splitted
+  *                      AutoSegment mustn't be more restrictive than thoses on the
+  *                      original one. For example, two AutoSegments that weren't
+  *                      HAligneds must not become so.
+  *                </ul>
+  *
+  *                <b>Special Cases</b>
+  *                <ul>
+  *                  <li>The AutoContact is anchored on a \c METAL1 terminal, then
+  *                      there is only one \c M4 AutoSegment to be re-connected, we
+  *                      simply create a two-VIA dog leg.
+  *                  <li>The AutoContact still have connect two connex Layers, just
+  *                      changes the AutoContact Layer.
+  *                </ul>
+  *
+  *                \image html  AutoContact-12.png
+  *                \image html  AutoContact-13.png
+  *                \image html  AutoContact-14.png
+  *                \image html  AutoContact-15.png
+  *                \image latex AutoContact-12.pdf
+  *                \image latex AutoContact-13.pdf
+  *                \image latex AutoContact-14.pdf
+  *                \image latex AutoContact-15.pdf
+  */
+
+ /*  \var          GCell* AutoContact::_gcell
+  *  \brief        The GCell into which the AutoContact is located.
+  */
+
+ /*! \function     AutoContact* AutoContact::fromRp ( GCell* gcell, RoutingPad* routingPad, const Layer* layer, Point point, DbU::Unit width, DbU::Unit height, bool fixed=false );
+  *  \param        gcell      The GCell in which to create the AutoContact.
+  *  \param        routingPad The RoutingPad on which to anchor the AutoContact.
+  *  \param        layer      The AutoContact's layer.
+  *  \param        point      The absolute position of the AutoContact.
+  *  \param        width      AutoContact's width.
+  *  \param        height     AutoContact's height.
+  *  \param        fixed      The AutoContact cannot be moved.
+  *  \return       Newly created AutoContact.
+  *
+  *                create an AutoContact anchored on a \c RoutingPad. The AutoContact can
+  *                be moved along the \c RoutingPad but not outside it.
+  *
+  *                A remark on the \c point parameter : it must be absolute coordinates, but
+  *                as we uses the \c RoutingPad as an anchor they are translated into an
+  *                offset from the \c RoutingPad (see how \c Hurricane handles coordinates
+  *                through anchoring). It is also assumed that the AutoContact is to be
+  *                electrically connected to the \c RoutingPad (no disconnection).
+  *                So, we will faces three cases, depending on the \c RoutingPad
+  *                underlying \c Entity :
+  *                <ul>
+  *                  <li>The \c Entity is an horizontal segment :
+  *                      the Y coordinate is sets to zero, the X coordinate is kept.
+  *                  <li>The \c Entity is a vertical segment :
+  *                      keep the Y coordinate, the X coordinate is sets to zero.
+  *                  <li>The \c Entity is a \c Contact or a \c Pin :
+  *                      both X and Y are sets to zero.
+  *                </ul>
+  */
+
+ /*! \function     AutoContact*  AutoContact::create ( GCell* gcell, Net* net, const Layer* layer, bool hAlignate=false, bool vAlignate=false )
+  *  \param        gcell      The GCell into which the AutoContact will be put.
+  *  \param        net        The AutoContact's owner Net.
+  *  \param        layer      The AutoContact's layer.
+  *  \param        hAlignate  Keeps alignate (all) horizontal segments.
+  *  \param        vAlignate  Keeps alignate (all) vertical segments.
+  *  \return                  A new AutoContact.
+  *
+  *                As AutoContact are Contacts restricted to, at best, two adjacent
+  *                routing layers, the layer argument is either a single routing
+  *                contact or a two metals only VIA.
+  */
+
+ /*! \function     AutoContact*  AutoContact::create ( GCell* gcell, RoutingPad* rp, const Layer* layer, const DbU::Unit dx, const DbU::Unit dy, const DbU::Unit width, const DbU::Unit height, bool hAlignate=false, bool vAlignate=false, bool fixed=false );
+  *  \param        gcell      The GCell into which the AutoContact will be put.
+  *  \param        rp         The RoutingPad anchor.
+  *  \param        layer      The AutoContact's layer.
+  *  \param        dx         Horizontal offset to the component.
+  *  \param        dy         Vertical offset to the component.
+  *  \param        width      Width of the AutoContact.
+  *  \param        height     Height of the AutoContact.
+  *  \param        hAlignate  Keeps alignate (all) horizontal segments.
+  *  \param        vAlignate  Keeps alignate (all) vertical segments.
+  *  \param        fixed      The AutoContact cannot be moved.
+  *  \return                  A new AutoContact.
+  *
+  *                create an AutoContact anchored on a component : the component must
+  *                be a \RoutingPad, sets the isTerminal() flag.
+  *
+  *                As AutoContact are Contacts restricted to, at best, two adjacent
+  *                routing layers, the layer argument is either a single routing
+  *                contact or a two metals only VIA.
+  */
+
+ /*! \function     GCell* AutoContact::getGCell() const
+  *  \brief        Returns the GCell into which the AutoContact is located.
+  */
+
+ /*! \function     void  AutoContact::updateGeometry()
+  *  \brief        Perform the segment resizing.
+  *
+  *                As it will resizes Hurricane components, this function call must
+  *                be enclosed into an updateSession.
+  */
+
+ /*! \function     AutoContacts  AutoContact::getCollapseds ( unsigned int direction );
+  *  \param        direction restrict the search to that direction.
+  *  \return       The \c Collection of AutoContact that are collapsed on this one,
+  *                       that is, linked through collapsed AutoSegment of type
+  *                       \c direction.
+  */
+
+ /*! \function     bool  AutoContact::isTerminal () const;
+  *  \return       \true if the AutoContact is anchored on a terminal.
+  */
+
+ /*! \function     bool  AutoContact::isHAlignate () const;
+  *  \return       \true if the horizontal AutoSegment anchored on the AutoContact
+  *                must be kept aligned.
+  *  \see          \ref collapseCanonical
+  */
+
+ /*! \function     bool  AutoContact::isVAlignate () const;
+  *  \return       \true if the vertical AutoSegment anchored on the AutoContact
+  *                must be kept aligned.
+  *  \see          \ref collapseCanonical
+  */
+
+ /*! \function     void  AutoContact::getLengths ( DbU::Unit* lengths, set<AutoSegment*>& segments );
+  *  \return       Increment the table of lengths for the lengths of segments of
+  *                this AutoContact and inside it's owning GCell.
+  */
+
+ /*! \function     void  AutoContact::setTerminal ( bool isTerminal );
+  *  \param        isTerminal  set the terminal flag.
+  */
+
+ /*! \function     bool  AutoContact::isHExtended ();
+  *  \return       \true if the \b privileged direction of the AutoContact is horizontal.
+  *
+  *                To be privileged in horizontal direction means that the \c Y coordinates
+  *                of all horizontals of the AutoContact are the same and imposed in either
+  *                of the following ways:
+  *                <ul>
+  *                  <li>Have a horizontal global (i.e. stem). The AutoContact could
+  *                      be non-punctual along the horizontal axis.
+  *                  <li>All it's horizontals are kept aligneds.
+  *                </ul>
+  *  \note         An AutoContact can be neither horizontally extended nor vertically
+  *                extended. In which case it is punctual.
+  *
+  *                \image html  AutoContact-10.png
+  *                \image latex AutoContact-10.pdf
+  */
+
+ /*! \function     bool  AutoContact::isVExtended ();
+  *  \return       \true if the \b privileged direction of the AutoContact is vertical.
+  *
+  *                To be privileged in vertical direction means that the \c X coordinates
+  *                of all verticals of the AutoContact are the same and imposed in either
+  *                the following way:
+  *                <ul>
+  *                  <li>Have a vertical global (i.e. stem). The AutoContact could
+  *                      be non-punctual along the vertical axis.
+  *                  <li>All it's vertical are kept aligneds.
+  *                </ul>
+  *  \note         An AutoContact can be neither horizontally extended nor vertically
+  *                extended. In which case it is punctual.
+  *
+  *                \image html  AutoContact-11.png
+  *                \image latex AutoContact-11.pdf
+  */
+
+ /*! \function     void  AutoContact::setHAlignate ( bool hAlignate );
+  *  \param        hAlignate  The new horizontal alignement mode.
+  *
+  *                When horizontal aligment mode is active, all horizontals of the
+  *                AutoContact are kept aligned (on the same \b Y coordinate).
+  *  \see          \ref collapseCanonical
+  */
+
+ /*! \function     void  AutoContact::setVAlignate ( bool vAlignate );
+  *  \param        vAlignate  The new vertical alignement mode.
+  *
+  *                When vertical aligment mode is active, all verticals of the
+  *                AutoContact are kept aligned (on the same \b X coordinate).
+  *  \see          \ref collapseCanonical
+  */
+
+ /*! \function     void  AutoContact::restoreHConnexity ( DbU::Unit y, bool split=false );
+  *  \param        y      When splitting, the coordinate of the vertical strap segments.
+  *  \param        split  Wether to separate the various horizontals or not.
+  *
+  *                Ensure that there is no gap between horizontals of this AutoContact.
+  *                <ul>
+  *                  <li>The default behavior (<tt>split=false</tt>) is simply to sets the
+  *                      <b>H Alignate</b> flags, thus forcing the alignment on the same \c Y.
+  *                  <li>To allow the horizontals to be on different axis, we can split
+  *                      them on differents AutoContacts aligneds vertically. The AutoSegments
+  *                      created between thoses secondary contacts are calleds "straps" and
+  *                      sets on the \c Y axis.
+  *                </ul>
+  *                In case of splitting, all the verticals are kept on the original AutoContact.
+  */
+
+ /*! \function     void  AutoContact::restoreVConnexity ( DbU::Unit x, bool split=false );
+  *  \param        x      When splitting, the coordinate of the horizontal strap segments.
+  *  \param        split  Wether to separate the various verticals or not.
+  *
+  *                Ensure that there is no gap between verticals of this AutoContact.
+  *                <ul>
+  *                  <li>The default behavior (<tt>split=false</tt>) is simply to sets the
+  *                      <b>V Alignate</b> flags, thus forcing the alignment on the same \c X.
+  *                  <li>To allow the verticals to be on different axis, we can split
+  *                      them on differents AutoContacts aligneds horizontally. The AutoSegments
+  *                      created between thoses secondary contacts are calleds "straps" and
+  *                      sets on the \c X axis.
+  *                </ul>
+  *                In case of splitting, all the horizontals are kept on the original AutoContact.
+  */
+
+ /*! \function     void  AutoContact::invalidate ();
+  *                Put this AutoContact into the invalidated set (see \ref katabaticSession).
+  */
+
+
+ //! \addtogroup   katabaticSession
+ //! \{
+
+ /*! \function     bool  AutoContact::isInvalidated () const;
+  *  \return       \True if the AutoContact is invalidated, i.e. in the
+  *                Katabatic Session, one or more of it's anchored AutoSegment
+  *                being moved.
+  *
+  *  \see          autoInvalidate().
+  */
+
+ /*! \function     bool  AutoContact::setInvalidated ( bool state );
+  *  \param        state  set the state of the AutoContact regarding the
+  *                       Katabatic Session. 
+  *
+  *  \see          autoInvalidate().
+  */
+
+ /*! \function     Box  AutoContact::getNativeConstraintBox () const;
+  *                Return the native constraint box, that is, the \Box of the
+  *                owning GCell or the bounding box of the terminal it's anchored
+  *                upon.
+  */
+
+ /*! \function     DbU::Unit  AutoContact::getCBXMin () const;
+  *  \return       The X coordinate of the lower left corner.
+  */
+
+ /*! \function     DbU::Unit  AutoContact::getCBYMin () const;
+  *  \return       The Y coordinate of the lower left corner.
+  */
+
+ /*! \function     DbU::Unit  AutoContact::getCBXMax () const;
+  *  \return       The X coordinate of the upper right corner.
+  */
+
+ /*! \function     DbU::Unit  AutoContact::getCBYMax () const;
+  *  \return       The Y coordinate of the upper right corner.
+  */
+
+ /*! \function     Box  AutoContact::getConstraintBox () const;
+  *  \return       The current constraint box.
+  */
+
+ /*! \function     Box& AutoContact::intersectConstraintBox ( Box& box ) const;
+  *  \param        box The box to intersect width.
+  *  \return       A reference on the the box given as argument.
+  *
+  *                Do the intersection of the constraint box and the one given
+  *                as argument. Store the result in place.
+  */
+
+ /*! \function     void  AutoContact::restoreNativeConstraintBox ();
+  *                reset the constraint box to the native constraint box.
+  */
+
+ /*! \function     void  AutoContact::setConstraintBox ( const Box& box );
+  *  \param        box  The new constraint box.
+  *
+  *                sets the constraint box.
+  */
+
+ /*! \function     void  AutoContact::restrictConstraintBox ( DbU::Unit constraintMin, DbU::Unit constraintMax, unsigned int direction );
+  *  \param        constraintMin  The constraint lower bound.
+  *  \param        constraintMax  The constraint upper bound.
+  *  \param        direction      The direction into which apply the constraint.
+  *
+  *                restrict the constraint box in one direction.
+  */
+
+ /*! \function     void  AutoContact::setCBXMin ( DbU::Unit xMin );
+  *  \param        xMin  The X cooordinate of the lower left corner.
+  *
+  *                sets the X coordinate of the lower left corner.
+  */
+
+ /*! \function     void  AutoContact::setCBYMin ( DbU::Unit yMin );
+  *  \param        yMin  The Y cooordinate of the lower left corner.
+  *
+  *                sets the Y coordinate of the lower left corner.
+  */
+
+ /*! \function     void  AutoContact::setCBXMax ( DbU::Unit xMax );
+  *  \param        xMax  The X cooordinate of the upper right corner.
+  *
+  *                sets the X coordinate of the upper right corner.
+  */
+
+ /*! \function     void  AutoContact::setCBYMax ( DbU::Unit yMax );
+  *  \param        yMax  The Y cooordinate of the upper right corner.
+  *
+  *                sets the Y coordinate of the upper right corner.
+  */
+
+ //! \}
+
+ }
+
+
+ namespace {
+
+ }
