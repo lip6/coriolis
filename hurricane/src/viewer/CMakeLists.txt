@@ -3,7 +3,7 @@
 
    include_directories ( ${Boost_INCLUDE_DIRS}
                          ${HURRICANE_SOURCE_DIR}/src/hurricane
-                         ${HURRICANE_SOURCE_DIR}/src/hviewer )
+                         ${HURRICANE_SOURCE_DIR}/src/viewer )
 
                    set ( mocincludes hurricane/viewer/HApplication.h
                                      hurricane/viewer/PaletteItem.h
