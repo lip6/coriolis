@@ -4,7 +4,6 @@
                          ${HURRICANE_INCLUDE_DIR}
                          ${CORIOLIS_INCLUDE_DIR}
                        )
-      link_directories ( . )
 
                    set ( mocincludes   unicorn/UnicornGui.h
                                        unicorn/COpenCellDialog.h
@@ -18,10 +17,10 @@
      qt4_add_resources ( RCC_SRCS      Unicorn.qrc )
 
            add_library ( unicorn        ${cpps} ${MOCcpps} )
- target_link_libraries ( unicorn        ${SOLSTICE_GRAPHICAL_LIBRARIES}
-                                        ${SOLSTICE_LIBRARIES}
-                                        ${EQUINOX_GRAPHICAL_LIBRARIES}
-                                        ${EQUINOX_LIBRARIES}
+ target_link_libraries ( unicorn       #${SOLSTICE_GRAPHICAL_LIBRARIES}
+                                       #${SOLSTICE_LIBRARIES}
+                                       #${EQUINOX_GRAPHICAL_LIBRARIES}
+                                       #${EQUINOX_LIBRARIES}
                                         ${KITE_GRAPHICAL_LIBRARIES}
                                         ${KITE_LIBRARIES}
                                         ${KATABATIC_GRAPHICAL_LIBRARIES}
@@ -31,6 +30,8 @@
                                         ${CORIOLIS_LIBRARIES}
                                         ${HURRICANE_GRAPHICAL_LIBRARIES}
                                         ${HURRICANE_LIBRARIES}
+                                        ${AGDS_LIBRARY}
+                                        ${CIF_LIBRARY}
                                         ${LEFDEF_LIBRARIES}
                                         ${OA_LIBRARIES}
                                         ${QT_LIBRARIES}
