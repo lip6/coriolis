@@ -71,6 +71,8 @@
                                           ${CORIOLIS_LIBRARIES}
                                           ${HURRICANE_LIBRARIES}
                                           ${HURRICANE_GRAPHICAL_LIBRARIES}
+                                          ${CIF_LIBRARY}
+                                          ${AGDS_LIBRARY}
                                           ${QT_LIBRARIES}
                                           ${LEFDEF_LIBRARIES}
                                           ${OA_LIBRARIES}
@@ -82,6 +84,8 @@
                                           ${CORIOLIS_LIBRARIES}
                                           ${HURRICANE_LIBRARIES}
                                           ${HURRICANE_GRAPHICAL_LIBRARIES}
+                                          ${CIF_LIBRARY}
+                                          ${AGDS_LIBRARY}
                                           ${QT_LIBRARIES}
                                           ${LEFDEF_LIBRARIES}
                                           ${OA_LIBRARIES}
