@@ -17,7 +17,7 @@
                              ${CRLCORE_SOURCE_DIR}/src/ccore/toolbox
                            )
 
-           add_definitions ( -DCORIOLIS_TOP=\\"${PROJECT_BINARY_DIR}\\" )
+           add_definitions ( -DCORIOLIS_TOP="${PROJECT_BINARY_DIR}" )
 
                        set ( includes          crlcore/Utilities.h
                                                crlcore/Memory.h
@@ -124,7 +124,6 @@
                          set ( VstParserGrammar    ${VstParserSourceDir}/VstParserGrammar.yy  )
                          set ( VstParserScannerCpp ${VstParserBinaryDir}/VstParserScanner.cpp )
                          set ( VstParserGrammarCpp ${VstParserBinaryDir}/VstParserGrammar.cpp )
-            add_subdirectory ( alliance )
            add_custom_target ( VstParser echo "Creating VST parser" )
           add_custom_command ( SOURCE   ${VstParserScanner}
                                COMMAND  ${FLEX_EXECUTABLE}
@@ -153,7 +152,6 @@
                          set ( IocParserGrammar    ${IocParserSourceDir}/IocParserGrammar.yy  )
                          set ( IocParserScannerCpp ${IocParserBinaryDir}/IocParserScanner.cpp )
                          set ( IocParserGrammarCpp ${IocParserBinaryDir}/IocParserGrammar.cpp )
-            add_subdirectory ( ioc )
            add_custom_target ( IocParser echo "Creating IOC parser" )
           add_custom_command ( SOURCE   ${IocParserScanner}
                                COMMAND  ${FLEX_EXECUTABLE}
@@ -182,7 +180,6 @@
 # #                          set ( LibertyParserGrammar    ${LibertyParserSourceDir}/LibertyParserGrammar.yy  )
 # #                          set ( LibertyParserScannerCpp ${LibertyParserBinaryDir}/LibertyParserScanner.cpp )
 # #                          set ( LibertyParserGrammarCpp ${LibertyParserBinaryDir}/LibertyParserGrammar.cpp )
-# #             add_subdirectory ( liberty )
 # #            add_custom_target ( LibertyParser echo "Creating LIBERTY parser" )
 # #           add_custom_command ( SOURCE   ${LibertyParserScanner}
 #                                COMMAND  ${FLEX_EXECUTABLE}
