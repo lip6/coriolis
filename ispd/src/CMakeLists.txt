@@ -21,6 +21,8 @@
                                      ${CORIOLIS_LIBRARIES}
                                      ${HURRICANE_GRAPHICAL_LIBRARIES}
                                      ${HURRICANE_LIBRARIES}
+                                     ${AGDS_LIBRARY}
+                                     ${CIF_LIBRARY}
                                      ${OA_LIBRARIES}
                                      ${LEFDEF_LIBRARIES}
                                      ${QT_LIBRARIES}
