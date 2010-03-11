@@ -2237,7 +2237,7 @@ namespace Katabatic {
 
   unsigned int  AutoContact::getMinDepth () const
   {
-    unsigned int minDepth = (unsigned int)-1;
+    size_t minDepth = (size_t)-1;
     Component* anchor = getAnchor ();
     if ( anchor ) {
       minDepth = min ( minDepth, Session::getRoutingGauge()->getLayerDepth(anchor->getLayer()) );
@@ -2249,7 +2249,7 @@ namespace Katabatic {
     //ltrace(200) << "Slave:" << *icomponent << endl;
     }
 
-    return minDepth;
+    return (unsigned int)minDepth;
   }
 
 

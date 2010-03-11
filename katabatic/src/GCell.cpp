@@ -62,7 +62,7 @@ namespace Katabatic {
 // Class  :  "Katabatic::GCell::CompareByDensity".
 
 
-  GCell::CompareByDensity::CompareByDensity ( unsigned int depth )
+  GCell::CompareByDensity::CompareByDensity ( size_t depth )
     : _depth(depth)
   { }
 
@@ -166,7 +166,7 @@ namespace Katabatic {
   }
 
 
-  bool  GCell::isSaturated ( unsigned int depth ) const
+  bool  GCell::isSaturated ( size_t depth ) const
   { return getDensity(depth) > Session::getSaturateRatio(); }
 
 

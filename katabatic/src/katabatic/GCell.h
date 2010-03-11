@@ -74,10 +74,10 @@ namespace Katabatic {
     public:
       class CompareByDensity : public binary_function<GCell*,GCell*,bool> {
         public:
-               CompareByDensity ( unsigned int depth );
+               CompareByDensity ( size_t depth );
           bool operator()       ( GCell* lhs, GCell* rhs );
         private:
-          unsigned int  _depth;
+          size_t  _depth;
       };
 
     public:
@@ -90,7 +90,7 @@ namespace Katabatic {
       virtual const Name&           getName             () const;
     // Accessors.                                       
       inline  bool                  isSaturated         () const;
-              bool                  isSaturated         ( unsigned int depth ) const;
+              bool                  isSaturated         ( size_t depth ) const;
       inline  bool                  isValid             () const;
               bool                  isAboveDensity      ( float threshold ) const;
               bool                  hasFreeTrack        ( size_t depth ) const;
@@ -115,7 +115,7 @@ namespace Katabatic {
               float                 getHCapacity        () const;
               float                 getVCapacity        () const;
       inline  float                 getCDensity         ( bool update=true ) const;
-      inline  float                 getDensity          ( unsigned int depth, bool update=true  ) const;
+      inline  float                 getDensity          ( size_t depth, bool update=true  ) const;
               float                 getDensity          ( bool update=true ) const;
               float                 getMaxHVDensity     ( bool update=true ) const;
               float                 getStiffness        () const;
@@ -225,7 +225,7 @@ namespace Katabatic {
   inline  float  GCell::getCDensity ( bool update ) const
   { if (_invalid and update) const_cast<GCell*>(this)->updateDensity(); return _cDensity; }
 
-  inline  float  GCell::getDensity ( unsigned int depth, bool update  ) const
+  inline  float  GCell::getDensity ( size_t depth, bool update  ) const
   { if (_invalid and update) const_cast<GCell*>(this)->updateDensity(); return _densities[depth]; }
 
   inline  void  GCell::addVSegment ( AutoSegment* segment )
