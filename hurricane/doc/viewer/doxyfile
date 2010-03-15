@@ -583,14 +583,14 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = ../../src/hviewer/hurricane/viewer/Graphics.h \
+INPUT                  = ../../src/viewer/hurricane/viewer/Graphics.h \
                          Graphics.dox \
-                         ../../src/hviewer/hurricane/viewer/DisplayStyle.h \
+                         ../../src/viewer/hurricane/viewer/DisplayStyle.h \
                          DisplayStyle.dox \
-                         ../../src/hviewer/hurricane/viewer/CellWidget.h \
-                         ../../src/hviewer/hurricane/viewer/CellViewer.h \
+                         ../../src/viewer/hurricane/viewer/CellWidget.h \
+                         ../../src/viewer/hurricane/viewer/CellViewer.h \
                          CellViewer.dox \
-                         ../../src/hviewer/hurricane/viewer/InspectorWidget.h \
+                         ../../src/viewer/hurricane/viewer/InspectorWidget.h \
                          InspectorWidget.dox
 
 # This tag can be used to specify the character encoding of the source files 
@@ -1291,7 +1291,7 @@ TAGFILES               = "../hurricane/html/hurricane.tag=../hurricane"
 # When a file name is specified after GENERATE_TAGFILE, doxygen will create 
 # a tag file that is based on the input files it reads.
 
-GENERATE_TAGFILE       = html/hviewer.tag
+GENERATE_TAGFILE       = html/viewer.tag
 
 # If the ALLEXTERNALS tag is set to YES all external classes will be listed 
 # in the class index. If set to NO only the inherited external classes 

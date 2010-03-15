@@ -108,9 +108,9 @@
 
                install ( FILES           ${exports}     DESTINATION /include/hurricane/viewer ) 
 
-           add_library ( hviewer         ${cpps} ${MOC_SRCS} ${RCC_SRCS} )
- target_link_libraries ( hviewer         hurricane
+           add_library ( viewer          ${cpps} ${MOC_SRCS} ${RCC_SRCS} )
+ target_link_libraries ( viewer          hurricane
                                          ${QT_LIBRARIES}
 #                                        ${Boost_LIBRARIES}
                        )
-               install ( TARGETS         hviewer        DESTINATION /lib )
+               install ( TARGETS         viewer        DESTINATION /lib )

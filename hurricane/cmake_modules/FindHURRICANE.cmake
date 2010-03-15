@@ -94,7 +94,7 @@ IF(UNIX)
   )
 
   FIND_LIBRARY(HURRICANE_VIEWER_LIBRARY_PATH
-    NAMES hviewer 
+    NAMES viewer 
     PATHS ${HURRICANE_DIR_SEARCH}
     PATH_SUFFIXES lib
     # Help the user find it if we cannot.
