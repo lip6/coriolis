@@ -595,7 +595,11 @@ namespace {
           _printError ( false, "Segment neither horizontal nor vertical." );
         }
         if ( layerInfo->isConnector()) {
-            NetExternalComponents::setExternal(segment);
+          if ( not net->isExternal() ) {
+            _printWarning ( "External component on non-external net %s", getString(net->getName()).c_str() );
+            net->setExternal ( true );
+          }
+          NetExternalComponents::setExternal(segment);
         }
       }
       else
