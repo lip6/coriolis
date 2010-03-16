@@ -1,0 +1,378 @@
+#!/usr/bin/env python
+
+import sys
+import re
+import os
+import os.path
+import time
+import socket
+import subprocess
+import optparse
+
+
+class Project:
+
+    def __init__ ( self, name, tools, repository ):
+        self._name       = name
+        self._tools      = tools
+        self._repository = repository
+        self._actives    = []
+        return
+
+    def getName       ( self ): return self._name
+    def getTools      ( self ): return self._tools
+    def getRepository ( self ): return self._repository
+    def getActives    ( self ): return self._actives
+    def hasTool       ( self, tool ): return self._tools.has_key(tool)
+
+    def desactivate ( self ):
+        self._active = []
+        return
+
+    def activateAll ( self ):
+        self._actives = self._tools
+        return
+    
+    def activate ( self, tools ):
+       # Build the ordered list.
+        for tool in self._tools:
+            if tool in tools:
+                self._actives += [ tool ]
+       # Find the tools not part of the project.
+        rejecteds = []
+        for tool in tools:
+            if not (tool in self._tools):
+                rejecteds += [ tool ]
+        return rejecteds
+
+
+
+class ProjectBuilder:
+
+    def __init__ ( self ):
+        self._projects         = []
+        self._standalones      = []
+        self._svnTag           = "x"
+        self._rootDir          = os.path.join ( os.environ["HOME"], "coriolis-2.x" )
+        self._buildMode        = "Release"
+        self._doBuild          = True
+        self._noCache          = False
+        self._enableShared     = "ON"
+        self._enableDoc        = "OFF"
+        self._checkDatabase    = "OFF"
+        self._checkDeterminism = "OFF"
+        self._verboseMakefile  = "OFF"
+        self._libMode          = "Shared"
+        self._makeArguments    = []
+
+        self._guessOs ()
+        self._updateSecondary ()
+        return
+
+
+    def __setattr__ ( self, attribute, value ):
+        if attribute[0] == "_":
+            self.__dict__[attribute] = value
+            return
+        
+        if   attribute == "svnTag":           self._svnTag           = value
+        elif attribute == "rootDir":          self._rootDir          = value
+        elif attribute == "buildMode":        self._buildMode        = value
+        elif attribute == "doBuild":          self._doBuild          = value
+        elif attribute == "noCache":          self._noCache          = value
+        elif attribute == "enableShared":     self._enableShared     = value
+        elif attribute == "enableDoc":        self._enableDoc        = value
+        elif attribute == "enableShared":     self._enableShared     = value
+        elif attribute == "checkDatabase":    self._checkDatabase    = value
+        elif attribute == "checkDeterminism": self._checkDeterminism = value
+        elif attribute == "verboseMakefile":  self._verboseMakefile  = value
+        elif attribute == "makeArguments":    self._makeArguments    = value.split ()
+        elif attribute == "libMode":          self._libMode          = value
+        self._updateSecondary ()
+        return
+
+
+    def _updateSecondary ( self ):
+        self._sourceDir  = os.path.join ( self._rootDir, "src" )
+        self._osDir      = os.path.join ( self._rootDir
+                                        , self._osType
+                                        , "%s.%s" % (self._buildMode,self._libMode) )
+        self._buildDir   = os.path.join ( self._osDir, "build" )
+        self._installDir = os.path.join ( self._osDir, "install" )
+
+        if self._enableShared == "ON": self._libMode = "Shared"
+        else:                          self._libMode = "Static"
+        return
+
+
+    def _orderTools ( self, tools ):
+        if tools:
+           # Checks if the requested tools are in the various projects.
+            self._standalones = tools
+            for project in self._projects:
+                self._standalones = project.activate ( self._standalones ) 
+            for tool in self._standalones:
+                print "[WARNING] Tool \"%s\" is not part of any project." % tool
+        else:
+            for project in self._projects:
+                project.activateAll ()
+            
+        return
+
+
+    def _guessOs ( self ):
+        self._osSLSoC5x_64     = re.compile (".*Linux.*el5.*x86_64.*")
+        self._osSLSoC5x        = re.compile (".*Linux.*(el5|2.6.23.13.*SoC).*")
+        self._osLinux_64       = re.compile (".*Linux.*x86_64.*")
+        self._osLinux          = re.compile (".*Linux.*")
+        self._osDarwin         = re.compile (".*Darwin.*")
+
+        uname = subprocess.Popen ( ["uname", "-srm"], stdout=subprocess.PIPE )
+        lines = uname.stdout.readlines()
+
+        if   self._osSLSoC5x_64.match(lines[0]): self._osType = "Linux.SLSoC5x_64"
+        elif self._osSLSoC5x   .match(lines[0]): self._osType = "Linux.SLSoC5x"
+        elif self._osLinux_64  .match(lines[0]): self._osType = "Linux.x86_64"
+        elif self._osLinux     .match(lines[0]): self._osType = "Linux.i386"
+        elif self._osDarwin    .match(lines[0]): self._osType = "Darwin"
+        else:
+            uname = subprocess.Popen ( ["uname", "-sr"], stdout=subprocess.PIPE )
+            self._osType = uname.stdout.readlines()[0][:-1]
+
+            print "[WARNING] Unrecognized OS: \"%s\"." % lines[0][:-1]
+            print "          (using: \"%s\")" % self._osType
+        
+        return
+
+
+    def _execute ( self, environment, command, error ):
+        child = subprocess.Popen ( command, env=environment, stdout=None )
+        (pid,status) = os.waitpid ( child.pid, 0 )
+        if status != 0:
+            print "[ERROR] %s (%d)." % (error,status)
+            sys.exit ( status )
+        return
+
+
+    def _build ( self, tool ):
+        toolSourceDir = os.path.join ( self._sourceDir, tool )
+        toolBuildDir  = os.path.join ( self._buildDir , tool )
+       # Supplied directly in the CMakeLists.txt.
+       #cmakeModules  = os.path.join ( self._installDir, "share", "cmake_modules" )
+        environment   = os.environ
+        if not environment.has_key("IO_TOP"       ): environment[ "IO_TOP"       ] = self._installDir
+        if not environment.has_key("HURRICANE_TOP"): environment[ "HURRICANE_TOP"] = self._installDir
+        if not environment.has_key("CORIOLIS_TOP" ): environment[ "CORIOLIS_TOP" ] = self._installDir
+
+        if not os.path.isdir(toolSourceDir):
+            print "[ERROR] Missing tool source directory: \"%s\" (skipped)." % toolSourceDir
+            return
+        if not os.path.isdir(toolBuildDir):
+            print "Creating tool build directory: \"%s\"." % toolBuildDir
+            os.makedirs ( toolBuildDir )
+            os.chdir    ( toolBuildDir )
+
+            command = ["cmake", "-D", "CMAKE_BUILD_TYPE:STRING=%s"  % self._buildMode
+                              , "-D", "BUILD_SHARED_LIBS:STRING=%s" % self._enableShared
+                             #, "-D", "CMAKE_MODULE_PATH:STRING=%s" % cmakeModules
+                                    , toolSourceDir ]
+            self._execute ( environment, command, "First CMake failed" )
+
+        os.chdir ( toolBuildDir )
+        if self._noCache:
+            os.unlink ( os.path.join(toolBuildDir,"CMakeCache.txt") )
+
+        command = ["cmake", "-D", "BUILD_SHARED_LIBS:STRING=%s"      % self._enableShared
+                          , "-D", "BUILD_DOC:STRING=%s"              % self._enableDoc
+                          , "-D", "CHECK_DATABASE:STRING=%s"         % self._checkDatabase
+                          , "-D", "CHECK_DETERMINISM:STRING=%s"      % self._checkDeterminism
+                          , "-D", "CMAKE_VERBOSE_MAKEFILE:STRING=%s" % self._verboseMakefile
+                          , toolSourceDir ]
+        self._execute ( environment, command, "Second CMake failed" )
+
+        if self._doBuild:
+            print "Make arguments:", self._makeArguments
+            command  = ["make", "DESTDIR=%s" % self._installDir]
+            command += self._makeArguments
+            self._execute ( environment, command, "Build failed" )
+        return
+
+
+    def _svnStatus ( self, tool ):
+        environment   = os.environ
+        toolSourceDir = os.path.join ( self._sourceDir , tool )
+        os.chdir ( toolSourceDir )
+
+        print "Checking SVN status of tool: ", tool
+        command = [ "svn", "status", "-u", "-q" ]
+        self._execute ( environment, command, "svn status -u -q" )
+        print
+        return
+
+
+    def _svnUpdate ( self, tool ):
+        environment   = os.environ
+        toolSourceDir = os.path.join ( self._sourceDir , tool )
+        os.chdir ( toolSourceDir )
+
+        print "Doing a SVN update of tool: ", tool
+        command = [ "svn", "update" ]
+        self._execute ( environment, command, "svn update" )
+        print
+        return
+
+
+    def _svnCheckout ( self, tool ):
+        project = self.getToolProject ( tool )
+        if not project:
+            print "[ERROR] Tool \"%s\" is not part of any project." % tool
+            print "        Cannot guess the SVN repository."
+            return
+        if not project.getRepository ():
+            print "[ERROR] Project \"%s\" isn't associated to a repository." % project.getName()
+            return
+        
+        environment     = os.environ
+        toolSvnTrunkDir = os.path.join ( self._coriolisSvnDir , tool, "trunk" )
+        os.chdir ( self._sourceDir )
+
+        print "Doing a SVN checkout of tool: ", tool
+        command = [ "svn", "co", toolSvnTrunkDir, tool ]
+        self._execute ( environment, command, "svn checkout %s" % tool )
+        print
+        return
+
+
+    def getProject ( self, name ):
+        for project in self._projects:
+            if project.getName() == name:
+                return project
+        return None
+
+
+    def getToolProject ( self, name ):
+        for project in self._projects:
+            if project.hasTool(name):
+                return project
+        return None
+
+
+    def register ( self, project ):
+        for registered in self._projects:
+            if registered.getName() == project.getName():
+                print "[ERROR] Project \"%s\" is already registered (ignored)."
+                return
+        self._projects += [ project ]
+        return
+
+
+    def _commandTemplate ( self, tools, projectName, command ):
+        if projectName:
+            project = self.getProject ( projectName )
+            if not project:
+                print "[ERROR] No project of name \"%s\"." % projectName
+                sys.exit ( 1 )
+            project.activateAll()
+            for tool in project.getActives():
+                getattr(self,command) ( tool )
+        else:
+            self._orderTools ( tools )
+            for project in self._projects:
+                for tool in project.getActives():
+                    getattr(self,command) ( tool )
+            for tool in self._standalones:
+                getattr(self,command) ( tool )
+        return
+
+
+    def build ( self, tools, projectName ):
+        self._commandTemplate ( tools, projectName, "_build" )
+        return
+
+
+    def svnStatus ( self, tools, projectName ):
+        self._commandTemplate ( tools, projectName, "_svnStatus" )
+        return
+
+
+    def svnUpdate ( self, tools, projectName ):
+        self._commandTemplate ( tools, projectName, "_svnUpdate" )
+        return
+
+
+    def svnCheckout ( self, tools, projectName ):
+        self._commandTemplate ( tools, projectName, "_svnCheckout" )
+        return
+
+
+if __name__ == "__main__":
+
+    coriolis = Project ( name     ="coriolis"
+                       , tools    =[ "io"
+                                   , "hurricane"
+                                   , "crlcore"
+                                   , "knik"
+                                   , "katabatic"
+                                   , "kite"
+                                   , "equinox"
+                                   , "solstice"
+                                   , "unicorn"
+                                   , "ispd"
+                                   ]
+                       , repository="svn+ssh://coriolis.soc.lip6.fr/users/outil/coriolis/svn"
+                       )
+    chams    = Project ( name     ="chams"
+                       , tools    =[ "hurricaneAMS"
+                                   , "amsCore"
+                                   , "opSim"
+                                   , "scribe"
+                                   , "pharos"
+                                   , "schematic"
+                                   ]
+                       , repository="svn+ssh://coriolis.soc.lip6.fr/users/outil/chams/svn"
+                       )
+
+    parser = optparse.OptionParser ()  
+  # Build relateds.
+    parser.add_option ( "-r", "--release"    , action="store_true",                dest="release" )
+    parser.add_option ( "-d", "--debug"      , action="store_true",                dest="debug"   )
+    parser.add_option ( "-s", "--static"     , action="store_true",                dest="static"  )
+    parser.add_option (       "--doc"        , action="store_true",                dest="doc"     )
+    parser.add_option ( "-D", "--check-db"   , action="store_true",                dest="checkDb" )
+    parser.add_option ( "-u", "--check-deter", action="store_true",                dest="checkDeterminism" )
+    parser.add_option ( "-v", "--verbose"    , action="store_true",                dest="verboseMakefile" )
+    parser.add_option (       "--root"       , action="store"     , type="string", dest="rootDir" )
+    parser.add_option (       "--no-build"   , action="store_true",                dest="noBuild" )
+    parser.add_option (       "--no-cache"   , action="store_true",                dest="noCache" )
+    parser.add_option (       "--svn-tag"    , action="store"     , type="string", dest="svnTag"  )
+    parser.add_option (       "--make"       , action="store"     , type="string", dest="makeArguments")
+    parser.add_option (       "--project"    , action="store"     , type="string", dest="project" )
+    parser.add_option ( "-t", "--tool"       , action="append"    , type="string", dest="tools"   )
+   # SVN repository relateds.
+    parser.add_option ( "--svn-status"   , action="store_true", dest="svnStatus"   )
+    parser.add_option ( "--svn-update"   , action="store_true", dest="svnUpdate"   )
+    parser.add_option ( "--svn-checkout" , action="store_true", dest="svnCheckout" )
+    ( options, args ) = parser.parse_args ()
+
+    builder = ProjectBuilder ()
+    builder.register ( coriolis )
+
+    if options.release:          builder.buildMode         = "Release"
+    if options.debug:            builder.buildMode         = "Debug"
+    if options.static:           builder.enableShared      = "OFF"
+    if options.doc:              builder.enableDoc         = "ON"
+    if options.checkDb:          builder.enableDatabase    = "ON"
+    if options.checkDeterminism: builder.enableDeterminism = "ON"
+    if options.verboseMakefile:  builder.verboseMakefile   = "ON"
+    if options.rootDir:          builder.rootDir           = options.rootDir
+    if options.noBuild:          builder.doBuild           = False
+    if options.noCache:          builder.noCache           = True
+    if options.makeArguments:    builder.makeArguments     = options.makeArguments
+    if options.svnTag:           builder.svnTag            = options.svnTag
+
+    if   options.svnStatus:   builder.svnStatus   ( tools=options.tools, projectName=options.project )
+    elif options.svnUpdate:   builder.svnUpdate   ( tools=options.tools, projectName=options.project )
+    elif options.svnCheckout: builder.svnCheckout ( tools=options.tools, projectName=options.project )
+    else:                     builder.build       ( tools=options.tools, projectName=options.project )
+
+    sys.exit ( 0 )
