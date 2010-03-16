@@ -208,6 +208,24 @@ namespace Kite {
   typedef GenericFilter<GCell*>     GCellFilter;
 
 
+// -------------------------------------------------------------------
+// Class  :  "DyKeyQueue".
+ 
+
+  class DyKeyQueue {
+    public:
+              DyKeyQueue ();
+             ~DyKeyQueue ();
+      GCell*  pop        ();
+      void    push       ( GCell* );
+      void    invalidate ( GCell* );
+      void    revalidate ();
+    private:
+      set<GCell*,GCell::CompareByKey>  _map;
+      set<GCell*>                      _requests;
+  };
+
+
 } // End of Kite namespace.
 
 

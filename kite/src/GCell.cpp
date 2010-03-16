@@ -566,4 +566,24 @@ namespace Kite {
   { return _base->_getRecord(); }
 
 
+// -------------------------------------------------------------------
+// Class  :  "Kite::DyKeyQueue".
+
+
+  DyKeyQueue::DyKeyQueue ()
+    : _map     ()
+    , _requests()
+  { }
+
+
+  DyKeyQueue::~DyKeyQueue ()
+  {
+    if ( (not _map.empty()) or (not _requests.empty()) ) {
+      cerr << Warning("~DyKeyQueue(): Still contains %d elements and %d requests."
+                     ,_map.size(),_requests.size()) << endl;
+    }
+  }
+  
+
+
 } // End of Kite namespace.
