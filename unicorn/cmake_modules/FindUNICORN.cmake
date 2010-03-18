@@ -12,14 +12,12 @@ SET(UNICORN_DIR_MESSAGE "Set the UNICORN_INCLUDE_DIR cmake cache entry to the ${
 
 # don't even bother under WIN32
 IF(UNIX)
-
-  SET(UNICORN_DIR_SEARCH $ENV{CORIOLIS_TOP} $ENV{HURRICANE_TOP})
   #
   # Look for an installation.
   #
   FIND_PATH(UNICORN_INCLUDE_PATH NAMES unicorn/UnicornEngine.h PATHS
     # Look in other places.
-    ${UNICORN_DIR_SEARCH}
+    ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES include/coriolis
     # Help the user find it if we cannot.
     DOC "The ${UNICORN_INCLUDE_PATH_DESCRIPTION}"
@@ -27,15 +25,7 @@ IF(UNIX)
 
   FIND_LIBRARY(UNICORN_LIBRARY_PATH
     NAMES unicorn
-    PATHS ${UNICORN_DIR_SEARCH}
-    PATH_SUFFIXES lib
-    # Help the user find it if we cannot.
-    DOC "The ${UNICORN_INCLUDE_PATH_DESCRIPTION}"
-  )
-
-  FIND_LIBRARY(UNICORN_STATIC_LIBRARY_PATH
-    NAMES unicorn-static
-    PATHS ${UNICORN_DIR_SEARCH}
+    PATHS ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES lib
     # Help the user find it if we cannot.
     DOC "The ${UNICORN_INCLUDE_PATH_DESCRIPTION}"
