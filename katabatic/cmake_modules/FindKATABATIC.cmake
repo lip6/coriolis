@@ -12,14 +12,12 @@ SET(KATABATIC_DIR_MESSAGE "Set the KATABATIC_INCLUDE_DIR cmake cache entry to th
 
 # don't even bother under WIN32
 IF(UNIX)
-
-  SET(KATABATIC_DIR_SEARCH $ENV{CORIOLIS_TOP} $ENV{HURRICANE_TOP})
   #
   # Look for an installation.
   #
   FIND_PATH(KATABATIC_INCLUDE_PATH NAMES katabatic/KatabaticEngine.h PATHS
     # Look in other places.
-    ${KATABATIC_DIR_SEARCH}
+    ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES include/coriolis
     # Help the user find it if we cannot.
     DOC "The ${KATABATIC_INCLUDE_PATH_DESCRIPTION}"
@@ -27,7 +25,7 @@ IF(UNIX)
 
   FIND_LIBRARY(KATABATIC_LIBRARY_PATH
     NAMES katabatic
-    PATHS ${KATABATIC_DIR_SEARCH}
+    PATHS ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES lib
     # Help the user find it if we cannot.
     DOC "The ${KATABATIC_INCLUDE_PATH_DESCRIPTION}"
@@ -35,7 +33,7 @@ IF(UNIX)
 
   FIND_LIBRARY(KATABATIC_STATIC_LIBRARY_PATH
     NAMES katabatic-static
-    PATHS ${KATABATIC_DIR_SEARCH}
+    PATHS ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES lib
     # Help the user find it if we cannot.
     DOC "The ${KATABATIC_INCLUDE_PATH_DESCRIPTION}"
