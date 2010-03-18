@@ -12,14 +12,12 @@ SET(EQUINOX_DIR_MESSAGE "Set the EQUINOX_INCLUDE_DIR cmake cache entry to the ${
 
 # don't even bother under WIN32
 IF(UNIX)
-
-  SET(EQUINOX_DIR_SEARCH $ENV{CORIOLIS_TOP} $ENV{HURRICANE_TOP})
   #
   # Look for an installation.
   #
   FIND_PATH(EQUINOX_INCLUDE_PATH NAMES equinox/Equi.h PATHS
     # Look in other places.
-    ${EQUINOX_DIR_SEARCH}
+    ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES include/coriolis
     # Help the user find it if we cannot.
     DOC "The ${EQUINOX_INCLUDE_PATH_DESCRIPTION}"
@@ -27,15 +25,7 @@ IF(UNIX)
 
   FIND_LIBRARY(EQUINOX_LIBRARY_PATH
     NAMES equinox
-    PATHS ${EQUINOX_DIR_SEARCH}
-    PATH_SUFFIXES lib
-    # Help the user find it if we cannot.
-    DOC "The ${EQUINOX_INCLUDE_PATH_DESCRIPTION}"
-  )
-
-  FIND_LIBRARY(EQUINOX_STATIC_LIBRARY_PATH
-    NAMES equinox-static
-    PATHS ${EQUINOX_DIR_SEARCH}
+    PATHS ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES lib
     # Help the user find it if we cannot.
     DOC "The ${EQUINOX_INCLUDE_PATH_DESCRIPTION}"
