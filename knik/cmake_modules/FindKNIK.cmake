@@ -12,14 +12,12 @@ SET(KNIK_DIR_MESSAGE "Set the KNIK_INCLUDE_DIR cmake cache entry to the ${KNIK_I
 
 # don't even bother under WIN32
 IF(UNIX)
-
-  SET(KNIK_DIR_SEARCH $ENV{CORIOLIS_TOP} $ENV{HURRICANE_TOP})
   #
   # Look for an installation.
   #
   FIND_PATH(KNIK_INCLUDE_PATH NAMES knik/KnikEngine.h PATHS
     # Look in other places.
-    ${KNIK_DIR_SEARCH}
+    ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES include/coriolis
     # Help the user find it if we cannot.
     DOC "The ${KNIK_INCLUDE_PATH_DESCRIPTION}"
@@ -27,7 +25,7 @@ IF(UNIX)
 
   FIND_LIBRARY(KNIK_LIBRARY_PATH
     NAMES knik
-    PATHS ${KNIK_DIR_SEARCH}
+    PATHS ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES lib
     # Help the user find it if we cannot.
     DOC "The ${KNIK_INCLUDE_PATH_DESCRIPTION}"
@@ -35,7 +33,7 @@ IF(UNIX)
 
   FIND_LIBRARY(KNIK_STATIC_LIBRARY_PATH
     NAMES knik-static
-    PATHS ${KNIK_DIR_SEARCH}
+    PATHS ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES lib
     # Help the user find it if we cannot.
     DOC "The ${KNIK_INCLUDE_PATH_DESCRIPTION}"
@@ -43,7 +41,7 @@ IF(UNIX)
 
   FIND_LIBRARY(FLUTE_LIBRARY_PATH
     NAMES flute
-    PATHS ${KNIK_DIR_SEARCH}
+    PATHS ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES lib
     # Help the user find it if we cannot.
     DOC "The ${KNIK_INCLUDE_PATH_DESCRIPTION}"
@@ -51,7 +49,7 @@ IF(UNIX)
 
   FIND_LIBRARY(FLUTE_STATIC_LIBRARY_PATH
     NAMES flute-static
-    PATHS ${KNIK_DIR_SEARCH}
+    PATHS ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES lib
     # Help the user find it if we cannot.
     DOC "The ${KNIK_INCLUDE_PATH_DESCRIPTION}"
