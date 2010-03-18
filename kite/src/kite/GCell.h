@@ -27,6 +27,7 @@
 #define  __KITE_GCELL__
 
 #include  <vector>
+#include  <set>
 #include  <iostream>
 #include  <string>
 
@@ -70,6 +71,11 @@ namespace Kite {
     public:
     // Sub-Class: "CompareByDensity()".
       class CompareByDensity {
+        public:
+          bool  operator() ( GCell* lhs, GCell* rhs );
+      };
+    // Sub-Class: "CompareByKey()".
+      class CompareByKey {
         public:
           bool  operator() ( GCell* lhs, GCell* rhs );
       };
@@ -221,8 +227,8 @@ namespace Kite {
       void    invalidate ( GCell* );
       void    revalidate ();
     private:
-      set<GCell*,GCell::CompareByKey>  _map;
-      set<GCell*>                      _requests;
+      std::set<GCell*,GCell::CompareByKey>  _map;
+      std::set<GCell*>                      _requests;
   };
 
 

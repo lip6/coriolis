@@ -12,14 +12,12 @@ SET(KITE_DIR_MESSAGE "Set the KITE_INCLUDE_DIR cmake cache entry to the ${KITE_I
 
 # don't even bother under WIN32
 IF(UNIX)
-
-  SET(KITE_DIR_SEARCH $ENV{CORIOLIS_TOP} $ENV{HURRICANE_TOP})
   #
   # Look for an installation.
   #
   FIND_PATH(KITE_INCLUDE_PATH NAMES kite/KiteEngine.h PATHS
     # Look in other places.
-    ${KITE_DIR_SEARCH}
+    ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES include/coriolis
     # Help the user find it if we cannot.
     DOC "The ${KITE_INCLUDE_PATH_DESCRIPTION}"
@@ -27,7 +25,7 @@ IF(UNIX)
 
   FIND_LIBRARY(KITE_LIBRARY_PATH
     NAMES kite
-    PATHS ${KITE_DIR_SEARCH}
+    PATHS ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES lib
     # Help the user find it if we cannot.
     DOC "The ${KITE_INCLUDE_PATH_DESCRIPTION}"
@@ -35,7 +33,7 @@ IF(UNIX)
 
   FIND_LIBRARY(KITE_STATIC_LIBRARY_PATH
     NAMES kite-static
-    PATHS ${KITE_DIR_SEARCH}
+    PATHS ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES lib
     # Help the user find it if we cannot.
     DOC "The ${KITE_INCLUDE_PATH_DESCRIPTION}"

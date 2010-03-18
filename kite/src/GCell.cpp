@@ -30,6 +30,7 @@
 #include  "hurricane/DebugSession.h"
 #include  "hurricane/Bug.h"
 #include  "hurricane/Error.h"
+#include  "hurricane/Warning.h"
 #include  "hurricane/Component.h"
 #include  "hurricane/RoutingPad.h"
 #include  "katabatic/AutoSegment.h"
@@ -137,6 +138,7 @@ namespace Kite {
   using Hurricane::roundfp;
   using Hurricane::Bug;
   using Hurricane::Error;
+  using Hurricane::Warning;
   using Hurricane::ForEachIterator;
   using Hurricane::Component;
   using Hurricane::RoutingPad;
@@ -151,6 +153,25 @@ namespace Kite {
 
 
   bool  GCell::CompareByDensity::operator() ( GCell* lhs, GCell* rhs )
+  {
+  //int difference = floatCompare ( lhs->base()->getDensity(), rhs->base()->getDensity() );
+  //if ( abs(difference) > 1000 ) return difference > 0;
+
+    float difference = roundfp ( lhs->base()->getDensity() - rhs->base()->getDensity() );
+    if ( difference != 0.0 ) return (difference > 0.0);
+
+    if ( lhs->getIndex() < rhs->getIndex() ) return true;
+    return false;
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Kite::GCell::CompareByKey".
+//
+// lhs < rhs --> true
+
+
+  bool  GCell::CompareByKey::operator() ( GCell* lhs, GCell* rhs )
   {
   //int difference = floatCompare ( lhs->base()->getDensity(), rhs->base()->getDensity() );
   //if ( abs(difference) > 1000 ) return difference > 0;
@@ -582,6 +603,39 @@ namespace Kite {
       cerr << Warning("~DyKeyQueue(): Still contains %d elements and %d requests."
                      ,_map.size(),_requests.size()) << endl;
     }
+  }
+
+
+  void  DyKeyQueue::invalidate ( GCell* gcell )
+  {
+    std::set<GCell*,GCell::CompareByKey>::iterator igcell = _map.find(gcell);
+    if ( igcell != _map.end() ) {
+      _map.erase ( igcell );
+    }
+    push ( gcell );
+  }
+
+
+  void  DyKeyQueue::push ( GCell* gcell )
+  {
+    _requests.insert ( gcell );
+  }
+
+
+  void  DyKeyQueue::revalidate ()
+  {
+    std::set<GCell*>::iterator igcell = _requests.begin();
+    for ( ; igcell != _requests.end() ; ++igcell )
+      _map.insert ( *igcell );
+  }
+
+
+  GCell*  DyKeyQueue::pop ()
+  {
+    if ( _map.empty() ) return NULL;
+    std::set<GCell*,GCell::CompareByKey>::iterator igcell = _map.begin();
+    GCell* gcell = *igcell;
+    _map.erase ( igcell );
   }
   
 
