@@ -12,14 +12,12 @@ SET(SOLSTICE_DIR_MESSAGE "Set the SOLSTICE_INCLUDE_DIR cmake cache entry to the 
 
 # don't even bother under WIN32
 IF(UNIX)
-
-  SET(SOLSTICE_DIR_SEARCH $ENV{CORIOLIS_TOP} $ENV{HURRICANE_TOP})
   #
   # Look for an installation.
   #
   FIND_PATH(SOLSTICE_INCLUDE_PATH NAMES solstice/Equi.h PATHS
     # Look in other places.
-    ${SOLSTICE_DIR_SEARCH}
+    ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES include/coriolis
     # Help the user find it if we cannot.
     DOC "The ${SOLSTICE_INCLUDE_PATH_DESCRIPTION}"
@@ -27,15 +25,7 @@ IF(UNIX)
 
   FIND_LIBRARY(SOLSTICE_LIBRARY_PATH
     NAMES solstice
-    PATHS ${SOLSTICE_DIR_SEARCH}
-    PATH_SUFFIXES lib
-    # Help the user find it if we cannot.
-    DOC "The ${SOLSTICE_INCLUDE_PATH_DESCRIPTION}"
-  )
-
-  FIND_LIBRARY(SOLSTICE_STATIC_LIBRARY_PATH
-    NAMES solstice-static
-    PATHS ${SOLSTICE_DIR_SEARCH}
+    PATHS ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES lib
     # Help the user find it if we cannot.
     DOC "The ${SOLSTICE_INCLUDE_PATH_DESCRIPTION}"

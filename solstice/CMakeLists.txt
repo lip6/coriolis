@@ -5,14 +5,39 @@ IF(COMMAND CMAKE_POLICY)
   CMAKE_POLICY(SET CMP0003 NEW)
 ENDIF(COMMAND CMAKE_POLICY)
 
+# This macro has to be included in all the tools CMakeLists.txt as it's
+# the sole means of localizing other tools/projects.
+MACRO(SETUP_PROJECT_PATHS project)
+  IF( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
+    MESSAGE("-- ${project}_USER_TOP is set to $ENV{${project}_USER_TOP}")
+    SET(${project}_DIR_SEARCH "$ENV{${project}_USER_TOP}")
+    SET(PROJECT_MODULE_PATH   "$ENV{${project}_USER_TOP}/share/cmake_modules/")
+    LIST(FIND CMAKE_MODULE_PATH "${PROJECT_MODULE_PATH}" DIR_INDEX)
+    IF( DIR_INDEX LESS 0)
+      LIST(APPEND CMAKE_MODULE_PATH "${PROJECT_MODULE_PATH}")
+    ENDIF( DIR_INDEX LESS 0)
+  ENDIF( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
+  
+  IF( NOT("$ENV{${project}_TOP}" STREQUAL "") )
+    MESSAGE("-- ${project}_TOP is set to $ENV{${project}_TOP}")
+    LIST(APPEND ${project}_DIR_SEARCH     "$ENV{${project}_TOP}")
+    SET(PROJECT_MODULE_PATH               "$ENV{${project}_TOP}/share/cmake_modules/")
+    LIST(FIND CMAKE_MODULE_PATH "${PROJECT_MODULE_PATH}" DIR_INDEX)
+    IF( DIR_INDEX LESS 0)
+      LIST(APPEND CMAKE_MODULE_PATH "${PROJECT_MODULE_PATH}")
+    ENDIF( DIR_INDEX LESS 0)
+  ENDIF( NOT("$ENV{${project}_TOP}" STREQUAL "") )
+ENDMACRO(SETUP_PROJECT_PATHS project)
+
+SETUP_PROJECT_PATHS(IO)
+SETUP_PROJECT_PATHS(CORIOLIS)
+
 SET(CMAKE_C_FLAGS_DEBUG             "-g -Wall" CACHE STRING "Debug options." FORCE)
 SET(CMAKE_CXX_FLAGS_DEBUG           "-g -Wall" CACHE STRING "Debug options." FORCE)
 #SET(CMAKE_LINKER_FLAGS_DEBUG        "-pg"          CACHE STRING "Debug options." FORCE)
 #SET(CMAKE_SHARED_LINKER_FLAGS_DEBUG "-pg"          CACHE STRING "Debug options." FORCE)
 #SET(CMAKE_MODULE_LINKER_FLAGS_DEBUG "-pg"          CACHE STRING "Debug options." FORCE)
 #SET(CMAKE_EXE_LINKER_FLAGS_DEBUG    "-pg"          CACHE STRING "Debug options." FORCE)
-
-SET(CMAKE_MODULE_PATH "$ENV{HURRICANE_TOP}/share/cmake_modules/")
 
 SET(QT_USE_QTXML "true")
 
