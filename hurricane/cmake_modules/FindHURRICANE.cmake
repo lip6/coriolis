@@ -53,25 +53,18 @@ MACRO(SET_LIB_LINK_MODE)
   ENDIF(NOT BUILD_SHARED_LIBS)
 ENDMACRO(SET_LIB_LINK_MODE)
 
-
 SET(HURRICANE_INCLUDE_PATH_DESCRIPTION "The directory containing the Hurricane include files. E.g /usr/local/include or /asim/coriolis/include")
 SET(HURRICANE_LIBRARY_PATH_DESCRIPTION "The directory containing the Hurricane library files. E.g /usr/local/lib or /asim/coriolis/lib")
 SET(HURRICANE_DIR_MESSAGE              "Set the HURRICANE_INCLUDE_DIR cmake cache entry to the ${HURRICANE_INCLUDE_PATH_DESCRIPTION}")
 
 # don't even bother under WIN32
 IF(UNIX)
-
-  SET(HURRICANE_DIR_SEARCH $ENV{HURRICANE_TOP})
-  IF(HURRICANE_DIR_SEARCH)
-    FILE(TO_CMAKE_PATH ${HURRICANE_DIR_SEARCH} HURRICANE_DIR_SEARCH)
-  ENDIF(HURRICANE_DIR_SEARCH)
-
   #
   # Look for an installation.
   #
   FIND_PATH(HURRICANE_INCLUDE_PATH NAMES hurricane/Cell.h PATHS
     # Look in other places.
-    ${HURRICANE_DIR_SEARCH}
+    ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES include
     # Help the user find it if we cannot.
     DOC "${HURRICANE_INCLUDE_PATH_DESCRIPTION}"
@@ -79,7 +72,7 @@ IF(UNIX)
 
   FIND_LIBRARY(HURRICANE_LIBRARY_PATH
     NAMES hurricane
-    PATHS ${HURRICANE_DIR_SEARCH}
+    PATHS ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES lib
     # Help the user find it if we cannot.
     DOC "${HURRICANE_LIBRARY_PATH_DESCRIPTION}"
@@ -87,7 +80,7 @@ IF(UNIX)
 
   FIND_PATH(HURRICANE_VIEWER_INCLUDE_PATH
     NAMES hurricane/viewer/CellWidget.h
-    PATHS ${HURRICANE_DIR_SEARCH}
+    PATHS ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES include
     # Help the user find it if we cannot.
     DOC "${HURRICANE_LIBRARY_PATH_DESCRIPTION}"
@@ -95,7 +88,7 @@ IF(UNIX)
 
   FIND_LIBRARY(HURRICANE_VIEWER_LIBRARY_PATH
     NAMES viewer 
-    PATHS ${HURRICANE_DIR_SEARCH}
+    PATHS ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES lib
     # Help the user find it if we cannot.
     DOC "${HURRICANE_LIBRARY_PATH_DESCRIPTION}"
@@ -103,7 +96,7 @@ IF(UNIX)
 
   FIND_PATH(HURRICANE_PYTHON_INCLUDE_PATH
     NAMES hurricane/isobar/PyCell.h
-    PATHS ${HURRICANE_DIR_SEARCH}
+    PATHS ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES include
     # Help the user find it if we cannot.
     DOC "${HURRICANE_LIBRARY_PATH_DESCRIPTION}"
@@ -111,7 +104,7 @@ IF(UNIX)
 
   FIND_LIBRARY(HURRICANE_PYTHON_LIBRARY_PATH
     NAMES isobar 
-    PATHS ${HURRICANE_DIR_SEARCH}
+    PATHS ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES lib
     # Help the user find it if we cannot.
     DOC "${HURRICANE_LIBRARY_PATH_DESCRIPTION}"
