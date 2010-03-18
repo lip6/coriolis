@@ -64,6 +64,7 @@ class ProjectBuilder:
         self._verboseMakefile  = "OFF"
         self._libMode          = "Shared"
         self._makeArguments    = []
+        self._environment      = os.environ
 
         self._guessOs ()
         self._updateSecondary ()
@@ -145,8 +146,8 @@ class ProjectBuilder:
         return
 
 
-    def _execute ( self, environment, command, error ):
-        child = subprocess.Popen ( command, env=environment, stdout=None )
+    def _execute ( self, command, error ):
+        child = subprocess.Popen ( command, env=self._environment, stdout=None )
         (pid,status) = os.waitpid ( child.pid, 0 )
         if status != 0:
             print "[ERROR] %s (%d)." % (error,status)
@@ -159,10 +160,6 @@ class ProjectBuilder:
         toolBuildDir  = os.path.join ( self._buildDir , tool )
        # Supplied directly in the CMakeLists.txt.
        #cmakeModules  = os.path.join ( self._installDir, "share", "cmake_modules" )
-        environment   = os.environ
-        if not environment.has_key("IO_TOP"       ): environment[ "IO_TOP"       ] = self._installDir
-        if not environment.has_key("HURRICANE_TOP"): environment[ "HURRICANE_TOP"] = self._installDir
-        if not environment.has_key("CORIOLIS_TOP" ): environment[ "CORIOLIS_TOP" ] = self._installDir
 
         if not os.path.isdir(toolSourceDir):
             print "[ERROR] Missing tool source directory: \"%s\" (skipped)." % toolSourceDir
@@ -176,7 +173,7 @@ class ProjectBuilder:
                               , "-D", "BUILD_SHARED_LIBS:STRING=%s" % self._enableShared
                              #, "-D", "CMAKE_MODULE_PATH:STRING=%s" % cmakeModules
                                     , toolSourceDir ]
-            self._execute ( environment, command, "First CMake failed" )
+            self._execute ( command, "First CMake failed" )
 
         os.chdir ( toolBuildDir )
         if self._noCache:
@@ -188,36 +185,34 @@ class ProjectBuilder:
                           , "-D", "CHECK_DETERMINISM:STRING=%s"      % self._checkDeterminism
                           , "-D", "CMAKE_VERBOSE_MAKEFILE:STRING=%s" % self._verboseMakefile
                           , toolSourceDir ]
-        self._execute ( environment, command, "Second CMake failed" )
+        self._execute ( command, "Second CMake failed" )
 
         if self._doBuild:
             print "Make arguments:", self._makeArguments
             command  = ["make", "DESTDIR=%s" % self._installDir]
             command += self._makeArguments
-            self._execute ( environment, command, "Build failed" )
+            self._execute ( command, "Build failed" )
         return
 
 
     def _svnStatus ( self, tool ):
-        environment   = os.environ
         toolSourceDir = os.path.join ( self._sourceDir , tool )
         os.chdir ( toolSourceDir )
 
         print "Checking SVN status of tool: ", tool
         command = [ "svn", "status", "-u", "-q" ]
-        self._execute ( environment, command, "svn status -u -q" )
+        self._execute ( command, "svn status -u -q" )
         print
         return
 
 
     def _svnUpdate ( self, tool ):
-        environment   = os.environ
         toolSourceDir = os.path.join ( self._sourceDir , tool )
         os.chdir ( toolSourceDir )
 
         print "Doing a SVN update of tool: ", tool
         command = [ "svn", "update" ]
-        self._execute ( environment, command, "svn update" )
+        self._execute ( command, "svn update" )
         print
         return
 
@@ -232,13 +227,12 @@ class ProjectBuilder:
             print "[ERROR] Project \"%s\" isn't associated to a repository." % project.getName()
             return
         
-        environment     = os.environ
         toolSvnTrunkDir = os.path.join ( self._coriolisSvnDir , tool, "trunk" )
         os.chdir ( self._sourceDir )
 
         print "Doing a SVN checkout of tool: ", tool
         command = [ "svn", "co", toolSvnTrunkDir, tool ]
-        self._execute ( environment, command, "svn checkout %s" % tool )
+        self._execute ( command, "svn checkout %s" % tool )
         print
         return
 
@@ -267,6 +261,16 @@ class ProjectBuilder:
 
 
     def _commandTemplate ( self, tools, projectName, command ):
+       # Set or guess the various projects TOP environment variables.
+        for project in self._projects:
+            topVariable     = "%s_TOP"      % project.getName().upper()
+            topUserVariable = "%s_USER_TOP" % project.getName().upper()
+            if not self._environment.has_key(topVariable):
+                self._environment[ topVariable ] = self._installDir
+            self._environment[ topUserVariable ] = self._installDir
+            print "Setting %s = \"%s\"." % (topVariable    ,self._environment[topVariable])
+            print "Setting %s = \"%s\"." % (topUserVariable,self._environment[topUserVariable])
+
         if projectName:
             project = self.getProject ( projectName )
             if not project:
@@ -307,7 +311,12 @@ class ProjectBuilder:
 
 if __name__ == "__main__":
 
-    coriolis = Project ( name     ="coriolis"
+    io       = Project ( name     = "io"
+                       , tools    =[ "io" ]
+                       , repository="svn+ssh://coriolis.soc.lip6.fr/users/outil/coriolis/svn"
+                       )
+
+    coriolis = Project ( name     = "coriolis"
                        , tools    =[ "io"
                                    , "hurricane"
                                    , "crlcore"
@@ -321,7 +330,7 @@ if __name__ == "__main__":
                                    ]
                        , repository="svn+ssh://coriolis.soc.lip6.fr/users/outil/coriolis/svn"
                        )
-    chams    = Project ( name     ="chams"
+    chams    = Project ( name     = "chams"
                        , tools    =[ "hurricaneAMS"
                                    , "amsCore"
                                    , "opSim"
@@ -355,7 +364,9 @@ if __name__ == "__main__":
     ( options, args ) = parser.parse_args ()
 
     builder = ProjectBuilder ()
+    builder.register ( io       )
     builder.register ( coriolis )
+    builder.register ( chams    )
 
     if options.release:          builder.buildMode         = "Release"
     if options.debug:            builder.buildMode         = "Debug"
