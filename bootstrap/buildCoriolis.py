@@ -54,6 +54,7 @@ class ProjectBuilder:
         self._standalones      = []
         self._svnTag           = "x"
         self._rootDir          = os.path.join ( os.environ["HOME"], "coriolis-2.x" )
+        self._quiet            = False
         self._buildMode        = "Release"
         self._doBuild          = True
         self._noCache          = False
@@ -78,6 +79,7 @@ class ProjectBuilder:
         
         if   attribute == "svnTag":           self._svnTag           = value
         elif attribute == "rootDir":          self._rootDir          = value
+        elif attribute == "quiet":            self._quiet            = value
         elif attribute == "buildMode":        self._buildMode        = value
         elif attribute == "doBuild":          self._doBuild          = value
         elif attribute == "noCache":          self._noCache          = value
@@ -198,8 +200,9 @@ class ProjectBuilder:
     def _svnStatus ( self, tool ):
         toolSourceDir = os.path.join ( self._sourceDir , tool )
         if not os.path.isdir(toolSourceDir):
-            print "[ERROR] Missing tool source directory: \"%s\" (skipped)." % toolSourceDir
-            return
+            if not self._quiet:
+                print "[ERROR] Missing tool source directory: \"%s\" (skipped)." % toolSourceDir
+                return
         os.chdir ( toolSourceDir )
 
         print "Checking SVN status of tool: ", tool
@@ -212,7 +215,8 @@ class ProjectBuilder:
     def _svnUpdate ( self, tool ):
         toolSourceDir = os.path.join ( self._sourceDir , tool )
         if not os.path.isdir(toolSourceDir):
-            print "[ERROR] Missing tool source directory: \"%s\" (skipped)." % toolSourceDir
+            if not self._quiet:
+                print "[ERROR] Missing tool source directory: \"%s\" (skipped)." % toolSourceDir
             return
         os.chdir ( toolSourceDir )
 
@@ -349,6 +353,7 @@ if __name__ == "__main__":
 
     parser = optparse.OptionParser ()  
   # Build relateds.
+    parser.add_option ( "-q", "--quiet"      , action="store_true",                dest="quiet"   )
     parser.add_option ( "-r", "--release"    , action="store_true",                dest="release" )
     parser.add_option ( "-d", "--debug"      , action="store_true",                dest="debug"   )
     parser.add_option ( "-s", "--static"     , action="store_true",                dest="static"  )
@@ -374,6 +379,7 @@ if __name__ == "__main__":
     builder.register ( coriolis )
     builder.register ( chams    )
 
+    if options.quiet:            builder.quiet             = True
     if options.release:          builder.buildMode         = "Release"
     if options.debug:            builder.buildMode         = "Debug"
     if options.static:           builder.enableShared      = "OFF"
