@@ -7,7 +7,7 @@
 
 
 MACRO(SET_LIBRARIES_PATH configname library)
-  SET(${configname}_FOUND        "NOTFOUND")
+  SET(${configname}_FOUND "NOTFOUND")
 
   IF(${library}_LIBRARY_PATH)
     SET(${configname}_FOUND "YES")
@@ -17,27 +17,27 @@ MACRO(SET_LIBRARIES_PATH configname library)
   ENDIF(${library}_LIBRARY_PATH)
 
   IF(NOT ${library}_INCLUDE_PATH)
-    SET(${configname}_FOUND        "NOTFOUND")
+    SET(${configname}_FOUND "NOTFOUND")
   ENDIF(NOT ${library}_INCLUDE_PATH)
 ENDMACRO ( SET_LIBRARIES_PATH )
 
 MACRO(HURRICANE_CHECK_LIBRARIES)
   IF(ARGC LESS 2)
-    SET(REQUIRED ${argv0}_FIND_REQUIRED)
+    SET(REQUIRED ${ARGV0}_FIND_REQUIRED)
   ELSE(ARGC LESS 2)
-    SET(REQUIRED ${argv1})
+    SET(REQUIRED ${ARGV1})
   ENDIF(ARGC LESS 2)
-  IF(${argv0}_FOUND)
-    IF(NOT ${argv0}_FIND_QUIETLY)
-      IF(${argv0}_FOUND)
-        MESSAGE(STATUS "Found ${argv0} : ${${argv0}_LIBRARIES}")
-      ENDIF(${argv0}_FOUND)
-    ENDIF(NOT ${argv0}_FIND_QUIETLY)
-  ELSE(${argv0}_FOUND)
+  IF(${ARGV0}_FOUND)
+    IF(NOT ${ARGV0}_FIND_QUIETLY)
+      IF(${ARGV0}_FOUND)
+        MESSAGE(STATUS "Found ${ARGV0} : ${${ARGV0}_LIBRARIES}")
+      ENDIF(${ARGV0}_FOUND)
+    ENDIF(NOT ${ARGV0}_FIND_QUIETLY)
+  ELSE(${ARGV0}_FOUND)
     IF(REQUIRED)
-        MESSAGE(FATAL_ERROR "${argv0} was not found. ${${argv0}_DIR_MESSAGE}")
+        MESSAGE(FATAL_ERROR "${ARGV0} was not found. ${${ARGV0}_DIR_MESSAGE}")
     ENDIF(REQUIRED)
-  ENDIF(${argv0}_FOUND)
+  ENDIF(${ARGV0}_FOUND)
 ENDMACRO(HURRICANE_CHECK_LIBRARIES)
 
 MACRO(SET_LIB_LINK_MODE)
@@ -59,6 +59,26 @@ SET(HURRICANE_DIR_MESSAGE              "Set the HURRICANE_INCLUDE_DIR cmake cach
 
 # don't even bother under WIN32
 IF(UNIX)
+  # Setup the DIR_SEARCH_PATH.
+  MACRO(SETUP_SEARCH_DIR project)
+    IF( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
+      MESSAGE("-- ${project}_USER_TOP is set to $ENV{${project}_USER_TOP}")
+      LIST(FIND ${project}_DIR_SEARCH "${${project}_DIR_SEARCH}" DIR_INDEX)
+      IF( DIR_INDEX LESS 0)
+        LIST(INSERT ${project}_DIR_SEARCH 0 "$ENV{${project}_USER_TOP}")
+      ENDIF( DIR_INDEX LESS 0)
+    ENDIF( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
+    
+    IF( NOT("$ENV{${project}_TOP}" STREQUAL "") )
+      MESSAGE("-- ${project}_TOP is set to $ENV{${project}_TOP}")
+      LIST(FIND ${project}_DIR_SEARCH "${${project}_DIR_SEARCH}" DIR_INDEX)
+      IF( DIR_INDEX LESS 0)
+        LIST(INSERT ${project}_DIR_SEARCH 0 "$ENV{${project}_TOP}")
+      ENDIF( DIR_INDEX LESS 0)
+    ENDIF( NOT("$ENV{${project}_TOP}" STREQUAL "") )
+  ENDMACRO(SETUP_SEARCH_DIR project)
+  
+  SETUP_SEARCH_DIR(CORIOLIS)
   #
   # Look for an installation.
   #
@@ -112,7 +132,7 @@ IF(UNIX)
 
   SET_LIBRARIES_PATH(HURRICANE HURRICANE)
   SET_LIBRARIES_PATH(HURRICANE_GRAPHICAL HURRICANE_VIEWER)
-  SET_LIBRARIES_PATH(HURRICANE_PYTHON HURRICANE_PYTHON)
+  SET_LIBRARIES_PATH(HURRICANE_PYTHON    HURRICANE_PYTHON)
 
   HURRICANE_CHECK_LIBRARIES(HURRICANE           )
   HURRICANE_CHECK_LIBRARIES(HURRICANE_GRAPHICAL ${HURRICANE_FIND_REQUIRED})
