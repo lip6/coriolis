@@ -197,6 +197,9 @@ class ProjectBuilder:
 
     def _svnStatus ( self, tool ):
         toolSourceDir = os.path.join ( self._sourceDir , tool )
+        if not os.path.isdir(toolSourceDir):
+            print "[ERROR] Missing tool source directory: \"%s\" (skipped)." % toolSourceDir
+            return
         os.chdir ( toolSourceDir )
 
         print "Checking SVN status of tool: ", tool
@@ -208,6 +211,9 @@ class ProjectBuilder:
 
     def _svnUpdate ( self, tool ):
         toolSourceDir = os.path.join ( self._sourceDir , tool )
+        if not os.path.isdir(toolSourceDir):
+            print "[ERROR] Missing tool source directory: \"%s\" (skipped)." % toolSourceDir
+            return
         os.chdir ( toolSourceDir )
 
         print "Doing a SVN update of tool: ", tool
