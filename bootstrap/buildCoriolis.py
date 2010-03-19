@@ -290,6 +290,7 @@ class ProjectBuilder:
                 sys.exit ( 1 )
             project.activateAll()
             for tool in project.getActives():
+                print "\nProcessing tool: \"%s\"." % tool
                 getattr(self,command) ( tool )
         else:
             self._orderTools ( tools )
@@ -297,6 +298,7 @@ class ProjectBuilder:
                 for tool in project.getActives():
                     getattr(self,command) ( tool )
             for tool in self._standalones:
+                print "\nProcessing tool: \"%s\"." % tool
                 getattr(self,command) ( tool )
         return
 
