@@ -202,7 +202,7 @@ class ProjectBuilder:
         if not os.path.isdir(toolSourceDir):
             if not self._quiet:
                 print "[ERROR] Missing tool source directory: \"%s\" (skipped)." % toolSourceDir
-                return
+            return
         os.chdir ( toolSourceDir )
 
         print "Checking SVN status of tool: ", tool
@@ -278,8 +278,9 @@ class ProjectBuilder:
             if not self._environment.has_key(topVariable):
                 self._environment[ topVariable ] = self._installDir
             self._environment[ topUserVariable ] = self._installDir
-            print "Setting %s = \"%s\"." % (topVariable    ,self._environment[topVariable])
-            print "Setting %s = \"%s\"." % (topUserVariable,self._environment[topUserVariable])
+            if not self._quiet:
+                print "Setting %s = \"%s\"." % (topVariable    ,self._environment[topVariable])
+                print "Setting %s = \"%s\"." % (topUserVariable,self._environment[topUserVariable])
 
         if projectName:
             project = self.getProject ( projectName )
