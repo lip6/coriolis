@@ -277,7 +277,8 @@ class ProjectBuilder:
             topUserVariable = "%s_USER_TOP" % project.getName().upper()
             if not self._environment.has_key(topVariable):
                 self._environment[ topVariable ] = self._installDir
-            self._environment[ topUserVariable ] = self._installDir
+            if not self._environment.has_key(topUserVariable):
+                self._environment[ topUserVariable ] = self._installDir
             if not self._quiet:
                 print "Setting %s = \"%s\"." % (topVariable    ,self._environment[topVariable])
                 print "Setting %s = \"%s\"." % (topUserVariable,self._environment[topUserVariable])
