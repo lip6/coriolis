@@ -78,7 +78,7 @@ class ProjectBuilder:
             return
         
         if   attribute == "svnTag":           self._svnTag           = value
-        elif attribute == "rootDir":          self._rootDir          = value
+        elif attribute == "rootDir":          self._rootDir          = os.path.expanduser(value)
         elif attribute == "quiet":            self._quiet            = value
         elif attribute == "buildMode":        self._buildMode        = value
         elif attribute == "doBuild":          self._doBuild          = value
@@ -179,9 +179,11 @@ class ProjectBuilder:
 
         os.chdir ( toolBuildDir )
         if self._noCache:
-            os.unlink ( os.path.join(toolBuildDir,"CMakeCache.txt") )
+            cmakeCache = os.path.join(toolBuildDir,"CMakeCache.txt")
+            if os.isfile ( cmakeCache ): os.unlink ( cmakeCache )
 
-        command = ["cmake", "-D", "BUILD_SHARED_LIBS:STRING=%s"      % self._enableShared
+        command = ["cmake", "-D", "CMAKE_BUILD_TYPE:STRING=%s"       % self._buildMode
+                          , "-D", "BUILD_SHARED_LIBS:STRING=%s"      % self._enableShared
                           , "-D", "BUILD_DOC:STRING=%s"              % self._enableDoc
                           , "-D", "CHECK_DATABASE:STRING=%s"         % self._checkDatabase
                           , "-D", "CHECK_DETERMINISM:STRING=%s"      % self._checkDeterminism
@@ -282,7 +284,7 @@ class ProjectBuilder:
             if not self._quiet:
                 print "Setting %s = \"%s\"." % (topVariable    ,self._environment[topVariable])
                 if self._environment.has_key(topUserVariable):
-                    print "Setting %s = \"%s\"." % (topUserVariable,self._environment[topUserVariable])
+                    print "Transmitting %s = \"%s\"." % (topUserVariable,self._environment[topUserVariable])
 
         if projectName:
             project = self.getProject ( projectName )
