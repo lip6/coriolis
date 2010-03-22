@@ -180,7 +180,7 @@ class ProjectBuilder:
         os.chdir ( toolBuildDir )
         if self._noCache:
             cmakeCache = os.path.join(toolBuildDir,"CMakeCache.txt")
-            if os.isfile ( cmakeCache ): os.unlink ( cmakeCache )
+            if os.path.isfile ( cmakeCache ): os.unlink ( cmakeCache )
 
         command = ["cmake", "-D", "CMAKE_BUILD_TYPE:STRING=%s"       % self._buildMode
                           , "-D", "BUILD_SHARED_LIBS:STRING=%s"      % self._enableShared
