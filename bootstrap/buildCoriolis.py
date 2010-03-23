@@ -23,7 +23,7 @@ class Project:
     def getTools      ( self ): return self._tools
     def getRepository ( self ): return self._repository
     def getActives    ( self ): return self._actives
-    def hasTool       ( self, tool ): return self._tools.has_key(tool)
+    def hasTool       ( self, tool ): return tool in self._tools
 
     def desactivate ( self ):
         self._active = []
@@ -239,7 +239,7 @@ class ProjectBuilder:
             print "[ERROR] Project \"%s\" isn't associated to a repository." % project.getName()
             return
         
-        toolSvnTrunkDir = os.path.join ( self._coriolisSvnDir , tool, "trunk" )
+        toolSvnTrunkDir = os.path.join ( project.getRepository(), tool, "trunk" )
         os.chdir ( self._sourceDir )
 
         print "Doing a SVN checkout of tool: ", tool
