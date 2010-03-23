@@ -56,7 +56,7 @@ namespace Hurricane {
     // Accessors.
       static  Graphics*                    getGraphics      ();
       static  bool                         isEnabled        ();
-      static  const QFont                  getFixedFont     ( int weight=QFont::Normal, bool italic=false, bool underline=false );
+      static  const QFont                  getFixedFont     ( int weight=QFont::Normal, bool italic=false, bool underline=false, int scale=0 );
       static  const QFont                  getNormalFont    ( bool bold=false, bool italic=false, bool underline=false );
       static  const Name&                  getGroup         ( const Name& key );
       static  QColor                       getColor         ( const Name& key, int darkening=100 );

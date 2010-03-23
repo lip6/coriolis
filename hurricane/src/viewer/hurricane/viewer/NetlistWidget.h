@@ -31,6 +31,7 @@
 
 #include  <QWidget>
 #include  <QTableView>
+#include  <QItemDelegate>
 #include  <QSortFilterProxyModel>
 
 #include  "hurricane/Commons.h"
@@ -151,8 +152,6 @@ namespace Hurricane {
               void                   netSelected          ( const Net* );
               void                   netUnselected        ( const Net* );
               void                   netFitted            ( const Net* );
-    public slots:                                         
-              void                   forceRowHeight       ();
     private slots:                                        
               void                   textFilterChanged    ();
               void                   updateSelecteds      ( const QItemSelection& , const QItemSelection& );
@@ -198,8 +197,6 @@ namespace Hurricane {
     setWindowTitle ( tr(windowTitle.c_str()) );
 
     int rows = _sortModel->rowCount ();
-    for ( rows-- ; rows >= 0 ; rows-- )
-      _view->setRowHeight ( rows, _rowHeight );
     _view->selectRow ( 0 );
     _view->resizeColumnToContents ( 0 );
   }

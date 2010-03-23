@@ -63,10 +63,12 @@ namespace Hurricane {
     }
 
     if ( role == Qt::FontRole ) {
+      if ( index.row() == 0 ) return QVariant();
       switch (index.column()) {
         case 0:  return nameFont;
         default: return valueFont;
       }
+      return QVariant();
     }
 
     if ( !index.isValid() ) return QVariant ();
@@ -83,10 +85,14 @@ namespace Hurricane {
                                      , Qt::Orientation orientation
                                      , int             role ) const
   {
-    if ( ( orientation == Qt::Vertical ) || (role != Qt::DisplayRole) )
-      return QVariant();
+    if ( orientation == Qt::Vertical ) return QVariant();
 
-    if ( !_netlist ) {
+    static QFont headerFont = Graphics::getFixedFont ( QFont::Bold, false, false, +2 );
+
+    if ( role == Qt::FontRole    ) return headerFont;
+    if ( role != Qt::DisplayRole ) return QVariant();
+
+    if ( not _netlist ) {
       if ( section == 0 ) return QVariant("Net");
       return QVariant();
     }

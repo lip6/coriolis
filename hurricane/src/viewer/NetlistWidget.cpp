@@ -72,12 +72,11 @@ namespace Hurricane {
     _sortModel->setDynamicSortFilter ( true );
     _sortModel->setFilterKeyColumn   ( 0 );
 
-    _view->setShowGrid(false);
-    _view->setAlternatingRowColors(true);
-    _view->setSelectionBehavior(QAbstractItemView::SelectRows);
-    _view->setSortingEnabled(true);
-    _view->setModel ( _sortModel );
-    _view->horizontalHeader()->setStretchLastSection ( true );
+    _view->setShowGrid             ( false );
+    _view->setAlternatingRowColors ( true );
+    _view->setSelectionBehavior    ( QAbstractItemView::SelectRows );
+    _view->setSortingEnabled       ( true );
+    _view->setModel                ( _sortModel );
 
     QHeaderView* horizontalHeader = _view->horizontalHeader ();
     horizontalHeader->setStretchLastSection ( true );
@@ -85,6 +84,16 @@ namespace Hurricane {
 
     QHeaderView* verticalHeader = _view->verticalHeader ();
     verticalHeader->setVisible ( false );
+    verticalHeader->setDefaultSectionSize ( _rowHeight );
+
+    // verticalHeader->setStyleSheet( "QHeaderView::section {"
+    //                                  "padding-bottom: 0px;"
+    //                                  "padding-top:    0px;"
+    //                                  "padding-left:   0px;"
+    //                                  "padding-right:  1px;"
+    //                                  "margin:         0px;"
+    //                                "}"
+    //                              );
 
     _filterPatternLineEdit = new QLineEdit(this);
     QLabel* filterPatternLabel = new QLabel(tr("&Filter pattern:"), this);
@@ -106,17 +115,9 @@ namespace Hurricane {
             , this                   , SLOT  (textFilterChanged()) );                       
     connect ( _view->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&))
             , this                   , SLOT  (updateSelecteds (const QItemSelection&,const QItemSelection&)) );
-    connect ( _baseModel, SIGNAL(layoutChanged()), this, SLOT(forceRowHeight()) );
     connect ( fitAction , SIGNAL(triggered    ()), this, SLOT(fitToNet      ()) );
 
     resize(300, 300);
-  }
-
-
-  void  NetlistWidget::forceRowHeight ()
-  {
-    for (  int rows=_sortModel->rowCount()-1; rows >= 0 ; rows-- )
-      _view->setRowHeight ( rows, _rowHeight );
   }
 
 
@@ -187,7 +188,6 @@ namespace Hurricane {
   void  NetlistWidget::textFilterChanged ()
   {
     _sortModel->setFilterRegExp ( _filterPatternLineEdit->text() );
-    forceRowHeight  ();
   //updateSelecteds ();
   }
 
