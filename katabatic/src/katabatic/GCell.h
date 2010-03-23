@@ -79,6 +79,21 @@ namespace Katabatic {
         private:
           size_t  _depth;
       };
+      class CompareByKey {
+        public:
+          bool  operator() ( const GCell* lhs, const GCell* rhs );
+      };
+      class Key {
+        private:
+          float         _density;
+          unsigned int  _index;
+        public:
+          inline               Key        ( float, unsigned int );
+          inline float         getDensity () const;
+          inline unsigned int  getIndex   () const;
+          inline void          update     ( GCell*, unsigned int );
+          friend bool          operator<  ( const Key&, const Key& );
+      };
 
     public:
     // Static Utilities.
@@ -130,6 +145,7 @@ namespace Katabatic {
               AutoSegments          getVStopSegments    ();
       inline  AutoSegments          getStartSegments    ( unsigned int direction );
       inline  AutoSegments          getStopSegments     ( unsigned int direction );
+      inline  const Key&            getKey              () const;
               size_t                checkDensity        () const;
               bool                  checkEdgeSaturation ( float threshold ) const;
     // Modifiers.
@@ -144,8 +160,9 @@ namespace Katabatic {
               void                  removeContact       ( AutoContact* );
               void                  updateContacts      ();
               size_t                updateDensity       ();
+      inline  void                  updateKey           ( unsigned int depth );
               void                  desaturate          ( unsigned int depth, set<Net*>& );
-              bool                  stepDesaturate      ( unsigned int depth, set<Net*>& );
+              bool                  stepDesaturate      ( unsigned int depth, set<Net*>&, AutoSegment*& moved );
       inline  void                  invalidate          ();
     // Inspector Management.                            
               Record*               _getRecord          () const;
@@ -175,6 +192,7 @@ namespace Katabatic {
               unsigned int          _routedSegmentCount;
               bool                  _saturated;
               bool                  _invalid;
+              Key                   _key;
 
     protected:
     // Constructors & Destructors.
@@ -197,7 +215,7 @@ namespace Katabatic {
   };
 
 
-// Inline Functions.
+// GCell Inline Functions.
   inline  bool                  GCell::isSaturated       () const { return _saturated; }
   inline  bool                  GCell::isValid           () const { return !_invalid; }
   inline  GCellGrid*            GCell::getGCellGrid      () const { return _gcellGrid; }
@@ -215,6 +233,8 @@ namespace Katabatic {
   inline  unsigned int          GCell::getRoutedCount    () const { return _routedSegmentCount; }
   inline  string                GCell::_getTypeName      () const { return _TName("GCell"); }
   inline  void                  GCell::invalidate        () { _invalid = true; }
+  inline  const GCell::Key&     GCell::getKey            () const { return _key; }
+  inline  void                  GCell::updateKey         ( unsigned int depth ) { _key.update(this,depth); }
 
   inline  AutoSegments  GCell::getStartSegments ( unsigned int direction )
   { return (direction&Constant::Horizontal) ? getHStartSegments() : getVStartSegments(); }
@@ -236,6 +256,43 @@ namespace Katabatic {
 
   inline  void  GCell::addContact ( AutoContact* contact )
   { invalidate(); _contacts.push_back(contact); }
+
+
+// GCell::Key Inline Functions.
+  inline               GCell::Key::Key        ( float density, unsigned int index ) : _density(density), _index(index) {}
+  inline float         GCell::Key::getDensity () const { return _density; }
+  inline unsigned int  GCell::Key::getIndex   () const { return _index; }
+  inline void          GCell::Key::update     ( GCell* gcell, unsigned int depth )
+                       { _density=gcell->getDensity(depth); _index=gcell->getIndex(); }
+
+  inline bool  operator< ( const GCell::Key& lhs, const GCell::Key& rhs )
+  {
+    float difference = Hurricane::roundfp ( lhs._density - rhs._density );
+    if ( difference != 0.0 ) return (difference > 0.0);
+
+    return ( lhs._index < rhs._index );
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "DyKeyQueue".
+ 
+
+  class DyKeyQueue {
+    public:
+                                                  DyKeyQueue ( unsigned int depth );
+                                                  DyKeyQueue ( unsigned int depth, const std::vector<GCell*>& );
+                                                 ~DyKeyQueue ();
+      const std::set<GCell*,GCell::CompareByKey>& getGCells  () const;
+      GCell*                                      pop        ();
+      void                                        push       ( GCell* );
+      void                                        invalidate ( GCell* );
+      void                                        revalidate ();
+    private:
+      unsigned int                          _depth;
+      std::set<GCell*,GCell::CompareByKey>  _map;
+      std::set<GCell*>                      _requests;
+  };
 
 
 // -------------------------------------------------------------------

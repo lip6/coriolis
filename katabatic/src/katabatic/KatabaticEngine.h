@@ -163,7 +163,7 @@ namespace Katabatic {
               void                 _loadNetGlobalRouting     ( Net* );
               void                 _alignate                 ( Net* );
               void                 _canonize                 ( Net* );
-              void                 _desaturate               ( unsigned int depth, set<Net*>& );
+              void                 _desaturate               ( unsigned int depth, set<Net*>&, unsigned long& total, unsigned long& globals );
               void                 _layerAssignByLength      ( unsigned long& total, unsigned long& global, set<Net*>& );
               void                 _layerAssignByLength      ( Net* , unsigned long& total, unsigned long& global, set<Net*>& );
               void                 _layerAssignByTrunk       ( unsigned long& total, unsigned long& global, set<Net*>& );

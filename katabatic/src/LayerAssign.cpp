@@ -88,7 +88,10 @@ namespace Katabatic {
   }
 
 
-  void  KatabaticEngine::_desaturate ( unsigned int depth, set<Net*>& globalNets )
+  void  KatabaticEngine::_desaturate ( unsigned int   depth
+                                     , set<Net*>&     globalNets
+                                     , unsigned long& total
+                                     , unsigned long& globals )
   {
     if ( depth+2 >= Session::getRoutingGauge()->getDepth() ) {
       cerr << Warning("Katabatic::_desaturate(): %s, no remaining upper layers."
@@ -100,16 +103,43 @@ namespace Katabatic {
     cmess1 << "  o  Desaturate layer "
            << Session::getRoutingGauge()->getRoutingLayer(depth)->getName() << endl;
 
-    vector<GCell*> gcells = *(_gcellGrid->getGCellVector());
+  //vector<GCell*> gcells  = *(_gcellGrid->getGCellVector());
+    DyKeyQueue     queue   ( depth, *(_gcellGrid->getGCellVector()) );
+    AutoSegment*   segment = NULL;
+    vector<GCell*> invalidateds;
 
     bool optimized = true;
     while ( optimized ) {
       optimized = false;
-      sort ( gcells.begin(), gcells.end(), GCell::CompareByDensity(depth) );
-      for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-        if ( !gcells[i]->isSaturated ( depth ) ) break;
+    //sort ( gcells.begin(), gcells.end(), GCell::CompareByDensity(depth) );
+      queue.revalidate ();
 
-        optimized = gcells[i]->stepDesaturate ( depth, globalNets );
+      std::set<GCell*,GCell::CompareByKey>::const_iterator igcell = queue.getGCells().begin();
+      size_t i = 0;
+      for ( ; igcell!=queue.getGCells().end() ; ++igcell, ++i ) {
+        if ( not (*igcell)->isSaturated ( depth ) ) {
+          ltrace(190) << "STOP desaturated: @" << i << " " << *igcell << endl;
+          for ( ; igcell!=queue.getGCells().end() ; ++igcell ) {
+            if ( (*igcell)->isSaturated ( depth ) ) {
+              cerr << "[ERROR] Still saturated: @" << i << " " << *igcell << endl;
+              break;
+            }
+          }
+          break;
+        }
+
+        ltrace(190) << "step desaturate @: " << i << " " << *igcell << endl;
+
+        optimized = (*igcell)->stepDesaturate ( depth, globalNets, segment );
+
+        if ( segment ) {
+          ++total; ++globals;
+          segment->getGCells ( invalidateds );
+          for ( size_t j=0 ; j<invalidateds.size() ; j++ ) {
+            queue.invalidate ( invalidateds[j] );
+          }
+        }
+
         if ( optimized ) break;
       }
     }
@@ -246,8 +276,8 @@ namespace Katabatic {
     Session::revalidate ();
 
     for ( int i=0 ; i < 3 ; i++ ) {
-      _desaturate ( 1, globalNets );
-      _desaturate ( 2, globalNets );
+      _desaturate ( 1, globalNets, total, global );
+      _desaturate ( 2, globalNets, total, global );
 
       globalNets.clear ();
 

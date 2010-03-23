@@ -81,6 +81,18 @@ namespace Katabatic {
 
 
 // -------------------------------------------------------------------
+// Class  :  "Kite::GCell::CompareByKey".
+//
+// lhs < rhs --> true
+
+
+  bool  GCell::CompareByKey::operator() ( const GCell* lhs, const GCell* rhs )
+  {
+    return lhs->getKey() < rhs->getKey();
+  }
+
+
+// -------------------------------------------------------------------
 // Class  :  "Katabatic::GCell".
 
 
@@ -107,6 +119,7 @@ namespace Katabatic {
     , _routedSegmentCount(0)
     , _saturated         (false)
     , _invalid           (true)
+    , _key               (0.0,_index)
   {
     for ( size_t i=0 ; i<_depth ; i++ ) {
       _blockages        [i] = 0.0;
@@ -719,7 +732,7 @@ namespace Katabatic {
   }
 
 
-  bool  GCell::stepDesaturate ( unsigned int depth, set<Net*>& globalNets )
+  bool  GCell::stepDesaturate ( unsigned int depth, set<Net*>& globalNets, AutoSegment*& moved )
   {
 #if defined(CHECK_DETERMINISM)
     cerr << "Order: stepDesaturate [" << getIndex() << "] depth:" << depth << endl;
@@ -761,6 +774,7 @@ namespace Katabatic {
 #endif
     //cerr << "Move up " << (*isegment) << endl;
       (*isegment)->changeDepth ( depth+2, false, false );
+      moved = (*isegment);
 
       updateDensity ();
 
@@ -973,6 +987,73 @@ namespace Katabatic {
              );
 
     o << line;
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Kite::DyKeyQueue".
+
+
+  DyKeyQueue::DyKeyQueue ( unsigned int depth )
+    : _depth   (depth)
+    , _map     ()
+    , _requests()
+  { }
+
+
+  DyKeyQueue::DyKeyQueue ( unsigned int depth, const vector<GCell*>& gcells )
+    : _depth   (depth)
+    , _map     ()
+    , _requests()
+  {
+    for ( size_t i=0 ; i<gcells.size() ; i++ )
+      _requests.insert ( gcells[i] );
+  }
+
+
+  DyKeyQueue::~DyKeyQueue ()
+  {
+    if ( not _requests.empty() ) {
+      cerr << Warning("~DyKeyQueue(): Still contains %d requests (and %d elements)."
+                     ,_requests.size(),_map.size()) << endl;
+    }
+  }
+
+
+  const std::set<GCell*,GCell::CompareByKey>& DyKeyQueue::getGCells () const
+  { return _map; }
+
+
+  void  DyKeyQueue::invalidate ( GCell* gcell )
+  { push ( gcell ); }
+
+
+  void  DyKeyQueue::push ( GCell* gcell )
+  { _requests.insert ( gcell ); }
+
+
+  void  DyKeyQueue::revalidate ()
+  {
+    std::set<GCell*,GCell::CompareByKey>::iterator iinserted;
+    std::set<GCell*>::iterator                     igcell    = _requests.begin();
+    for ( ; igcell != _requests.end() ; ++igcell ) {
+      iinserted = _map.find(*igcell);
+      if ( iinserted != _map.end() ) {
+        _map.erase ( iinserted );
+      }
+      (*igcell)->updateKey (_depth);
+      _map.insert ( *igcell );
+    }
+    _requests.clear ();
+  }
+
+
+  GCell*  DyKeyQueue::pop ()
+  {
+    if ( _map.empty() ) return NULL;
+    std::set<GCell*,GCell::CompareByKey>::iterator igcell = _map.begin();
+    GCell* gcell = *igcell;
+    _map.erase ( igcell );
   }
 
 
