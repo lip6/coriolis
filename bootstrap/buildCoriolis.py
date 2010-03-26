@@ -151,8 +151,9 @@ class ProjectBuilder:
     def _execute ( self, command, error ):
         child = subprocess.Popen ( command, env=self._environment, stdout=None )
         (pid,status) = os.waitpid ( child.pid, 0 )
+        status >>= 8
         if status != 0:
-            print "[ERROR] %s (%d)." % (error,status)
+            print "[ERROR] %s (status:%d)." % (error,status)
             sys.exit ( status )
         return
 
@@ -334,8 +335,7 @@ if __name__ == "__main__":
                        )
 
     coriolis = Project ( name     = "coriolis"
-                       , tools    =[ "io"
-                                   , "hurricane"
+                       , tools    =[ "hurricane"
                                    , "crlcore"
                                    , "knik"
                                    , "katabatic"
