@@ -374,7 +374,7 @@ namespace Kite {
         cmess2.flush();
       }
 
-      if ( RoutingEvent::getProcesseds() >= /*10471*/ 1000000 ) setInterrupt ( true );
+      if ( RoutingEvent::getProcesseds() >= /*10471*/ 4000000 ) setInterrupt ( true );
       count++;
 
 #if ENABLE_STIFFNESS
@@ -412,7 +412,8 @@ namespace Kite {
         event->process ( _eventQueue, _eventHistory );
 
         if (tty::enabled()) {
-          cmess1 << "       <SecondPass:Packing - event:" << tty::fgcolor(tty::Red) << setw(7) << setfill('0')
+          cmess1 << "       <SecondPass:Packing - event:"
+                 << tty::bold << tty::fgcolor(tty::Red) << setw(7) << setfill('0')
                  << RoutingEvent::getProcesseds() << setfill(' ') << tty::reset << ">" << tty::cr;
           cmess1.flush ();
         } else {

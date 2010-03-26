@@ -74,11 +74,6 @@ namespace Kite {
         public:
           bool  operator() ( GCell* lhs, GCell* rhs );
       };
-    // Sub-Class: "CompareByKey()".
-      class CompareByKey {
-        public:
-          bool  operator() ( GCell* lhs, GCell* rhs );
-      };
     // Sub-Class: "CompareByStiffness()".
       class CompareByStiffness {
         public:
@@ -155,15 +150,15 @@ namespace Kite {
 
     protected:
     // Constructors & Destructors.
-                     GCell       ( GCellGrid*, Katabatic::GCell* );
-      virtual       ~GCell       ();
+                     GCell            ( GCellGrid*, Katabatic::GCell* );
+      virtual       ~GCell            ();
     private:
-              GCell              ( const GCell& );
-              GCell& operator=   ( const GCell& );
+                     GCell            ( const GCell& );
+                     GCell& operator= ( const GCell& );
   };
 
 
-// Inline Functions.
+// GCell Inline Functions.
   inline  Katabatic::GCell*            GCell::base               () { return _base; }
   inline  bool                         GCell::isInRoutingSet     () const { return _isInRoutingSet; }
   inline  bool                         GCell::isRouted           () const { return _isRouted; }
@@ -212,24 +207,6 @@ namespace Kite {
   typedef GenericCollection<GCell*> GCells;
   typedef GenericLocator<GCell*>    GCellLocator;
   typedef GenericFilter<GCell*>     GCellFilter;
-
-
-// -------------------------------------------------------------------
-// Class  :  "DyKeyQueue".
- 
-
-  class DyKeyQueue {
-    public:
-              DyKeyQueue ();
-             ~DyKeyQueue ();
-      GCell*  pop        ();
-      void    push       ( GCell* );
-      void    invalidate ( GCell* );
-      void    revalidate ();
-    private:
-      std::set<GCell*,GCell::CompareByKey>  _map;
-      std::set<GCell*>                      _requests;
-  };
 
 
 } // End of Kite namespace.

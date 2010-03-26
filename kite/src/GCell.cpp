@@ -166,25 +166,6 @@ namespace Kite {
 
 
 // -------------------------------------------------------------------
-// Class  :  "Kite::GCell::CompareByKey".
-//
-// lhs < rhs --> true
-
-
-  bool  GCell::CompareByKey::operator() ( GCell* lhs, GCell* rhs )
-  {
-  //int difference = floatCompare ( lhs->base()->getDensity(), rhs->base()->getDensity() );
-  //if ( abs(difference) > 1000 ) return difference > 0;
-
-    float difference = roundfp ( lhs->base()->getDensity() - rhs->base()->getDensity() );
-    if ( difference != 0.0 ) return (difference > 0.0);
-
-    if ( lhs->getIndex() < rhs->getIndex() ) return true;
-    return false;
-  }
-
-
-// -------------------------------------------------------------------
 // Class  :  "Kite::GCell::CompareByStiffness".
 //
 // lhs < rhs --> true
@@ -585,58 +566,6 @@ namespace Kite {
 
   Record* GCell::_getRecord () const
   { return _base->_getRecord(); }
-
-
-// -------------------------------------------------------------------
-// Class  :  "Kite::DyKeyQueue".
-
-
-  DyKeyQueue::DyKeyQueue ()
-    : _map     ()
-    , _requests()
-  { }
-
-
-  DyKeyQueue::~DyKeyQueue ()
-  {
-    if ( (not _map.empty()) or (not _requests.empty()) ) {
-      cerr << Warning("~DyKeyQueue(): Still contains %d elements and %d requests."
-                     ,_map.size(),_requests.size()) << endl;
-    }
-  }
-
-
-  void  DyKeyQueue::invalidate ( GCell* gcell )
-  {
-    std::set<GCell*,GCell::CompareByKey>::iterator igcell = _map.find(gcell);
-    if ( igcell != _map.end() ) {
-      _map.erase ( igcell );
-    }
-    push ( gcell );
-  }
-
-
-  void  DyKeyQueue::push ( GCell* gcell )
-  {
-    _requests.insert ( gcell );
-  }
-
-
-  void  DyKeyQueue::revalidate ()
-  {
-    std::set<GCell*>::iterator igcell = _requests.begin();
-    for ( ; igcell != _requests.end() ; ++igcell )
-      _map.insert ( *igcell );
-  }
-
-
-  GCell*  DyKeyQueue::pop ()
-  {
-    if ( _map.empty() ) return NULL;
-    std::set<GCell*,GCell::CompareByKey>::iterator igcell = _map.begin();
-    GCell* gcell = *igcell;
-    _map.erase ( igcell );
-  }
   
 
 
