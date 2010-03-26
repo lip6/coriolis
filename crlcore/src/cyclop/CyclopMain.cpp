@@ -31,6 +31,9 @@ using namespace std;
 namespace poptions = boost::program_options;
 
 #include  <QtGui>
+#if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and not defined (__APPLE__)
+#  include  <QGtkStyle>
+#endif
 
 #include  "hurricane/DataBase.h"
 #include  "hurricane/Technology.h"
@@ -186,6 +189,9 @@ int main ( int argc, char *argv[] )
 
     if ( not textMode ) {
       auto_ptr<QApplication> qa ( new HApplication(argc,argv) );
+#if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and not defined (__APPLE__)
+      qa->setStyle ( new QGtkStyle() );
+#endif
       Graphics::enable ();
 
 //    Layer* layer = DataBase::getDB()->getTechnology()->getLayer("poly");
