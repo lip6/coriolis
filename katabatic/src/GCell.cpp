@@ -1054,6 +1054,7 @@ namespace Katabatic {
     std::set<GCell*,GCell::CompareByKey>::iterator igcell = _map.begin();
     GCell* gcell = *igcell;
     _map.erase ( igcell );
+    return gcell;
   }
 
 
