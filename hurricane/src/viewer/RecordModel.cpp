@@ -36,9 +36,10 @@ namespace Hurricane {
 
   RecordModel::RecordModel ( QObject* parent )
     : QAbstractTableModel(parent)
-    , _slot(NULL)
-    , _record(NULL)
-    , _depth(0)
+    , _slot              (NULL)
+    , _record            (NULL)
+    , _depth             (0)
+    , _cache             ()
   { }
 
 
@@ -49,29 +50,52 @@ namespace Hurricane {
   }
 
 
-  bool  RecordModel::setSlot ( Slot* slot, size_t depth )
+  bool  RecordModel::setSlot ( Slot* slot, Record* record, size_t depth )
   {
-    if ( !slot ) {
-      _slot   = NULL;
-      _record = NULL;
-      _depth  = depth;
+  //cerr << "    Slot change" << endl;
+
+    vector< pair<QVariant,QVariant> >().swap ( _cache );
+
+    if ( _slot  ) {
+      delete _slot;
+      if ( _depth ) delete _record;
+    }
+
+    _slot   = NULL;
+    _record = NULL;
+    _depth  = depth;
+
+    if ( slot == NULL ) {
+    //cerr << "    NULL Slot" << endl;
 
       emit layoutChanged ();
       return false;
     }
 
-    Record* record = slot->getDataRecord ();
-    if ( !record ) {
-      delete slot;
-      return false;
+  // Now supplied by argument.
+    if ( record == NULL ) {
+      record = slot->getDataRecord ();
+    //cerr << "    New record build" << endl;
+      if ( record == NULL ) {
+    //  cerr << "    Slot " << slot->getDataString() << " has NULL Record" << endl;
+
+        delete slot;
+        return false;
+      }
     }
 
-    if ( _depth ) delete _record;
-    if ( _slot  ) delete _slot;
+  //cerr << "    New Slot [" << depth << "] " << slot->getDataString() << endl;
 
     _slot   = slot;
     _record = record;
     _depth  = depth;
+
+    Record::SlotVector&          slotVector = _record->_getSlotVector();
+    Record::SlotVector::iterator islot      = slotVector.begin();
+    for ( ; islot != slotVector.end() ; islot++ ) {
+      _cache.push_back ( make_pair(QVariant(getString((*islot)->getName()).c_str())
+                                  ,QVariant((*islot)->getDataString().c_str())) );
+    }
 
     emit layoutChanged ();
 
@@ -84,7 +108,7 @@ namespace Hurricane {
     static QFont nameFont  = Graphics::getFixedFont ( QFont::Bold );
     static QFont valueFont = Graphics::getFixedFont ( QFont::Normal, true );
 
-    if ( !index.isValid() ) return QVariant ();
+    if ( not index.isValid() ) return QVariant ();
 
     if ( role == Qt::SizeHintRole ) {
       switch (index.column()) {
@@ -94,6 +118,7 @@ namespace Hurricane {
     }
 
     if ( role == Qt::FontRole ) {
+    //if ( index.row() == 0 ) return QVariant();
       switch (index.column()) {
         case 0: return nameFont;
         case 1: return valueFont;
@@ -102,11 +127,13 @@ namespace Hurricane {
 
     if ( role == Qt::DisplayRole ) {
       int   row  = index.row ();
-      Slot* slot = _record->getSlot ( row );
-      if ( slot ) {
+    //Slot* slot = _record->getSlot ( row );
+      if ( row < _cache.size() ) {
         switch ( index.column() ) {
-          case 0: return QVariant(slot->getName      ().c_str());
-          case 1: return QVariant(slot->getDataString().c_str());
+          case 0: return _cache[row].first;
+          case 1: return _cache[row].second;
+        //case 0: return QVariant(slot->getName      ().c_str());
+        //case 1: return QVariant(slot->getDataString().c_str());
         }
       } 
     }
@@ -118,8 +145,13 @@ namespace Hurricane {
                                     , Qt::Orientation orientation
                                     , int             role ) const
   {
-    if ( ( orientation == Qt::Vertical ) || ( section > 1 ) || (role != Qt::DisplayRole) )
+    if ( ( orientation == Qt::Vertical ) or ( section > 1 ) )
       return QVariant();
+
+    static QFont headerFont = Graphics::getFixedFont ( QFont::Bold, false, false, +2 );
+
+    if ( role == Qt::FontRole    ) return headerFont;
+    if ( role != Qt::DisplayRole ) return QVariant();
 
     if ( section == 0 )
       return QVariant ( tr("Object Attribute") );
@@ -130,7 +162,8 @@ namespace Hurricane {
 
   int  RecordModel::rowCount ( const QModelIndex& parent ) const
   {
-    return (_record) ? _record->_getSlotList().size() : 0;
+  //return (_record != NULL) ? _record->_getSlotList().size() : 0;
+    return _cache.size();
   }
 
 

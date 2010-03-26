@@ -17,6 +17,8 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
+//#define  TEST_INTRUSIVESET
+
 #include "hurricane/Cell.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Library.h"
@@ -369,7 +371,7 @@ void Cell::_removeSlaveEntity(Entity* entity, Entity* slaveEntity)
 
   pair<SlaveEntityMap::iterator,SlaveEntityMap::iterator>
     bounds = _slaveEntityMap.equal_range(entity);
-  multimap<Entity*,Entity*>::iterator it = bounds.first;
+  SlaveEntityMap::iterator it = bounds.first;
   for(; it != bounds.second ; it++ ) {
     if (it->second == slaveEntity) {
       _slaveEntityMap.erase(it);

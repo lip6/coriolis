@@ -53,6 +53,7 @@
 #ifndef  __RECORD_MODEL_H__
 #define  __RECORD_MODEL_H__
 
+#include  <vector>
 #include  <QAbstractTableModel>
 
 #include  "hurricane/Commons.h"
@@ -67,7 +68,7 @@ namespace Hurricane {
     public:
                        RecordModel   ( QObject* parent=NULL );
                       ~RecordModel   ();
-             bool      setSlot       ( Slot* slot, size_t depth );
+             bool      setSlot       ( Slot* slot, Record* record, size_t depth );
              int       rowCount      ( const QModelIndex& parent=QModelIndex() ) const;
              int       columnCount   ( const QModelIndex& parent=QModelIndex() ) const;
              QVariant  data          ( const QModelIndex& index, int role=Qt::DisplayRole ) const;
@@ -76,9 +77,10 @@ namespace Hurricane {
       inline Slot*     getSlot       ();
 
     private:
-      Slot*     _slot;
-      Record*   _record;
-      size_t    _depth;
+      Slot*                                   _slot;
+      Record*                                 _record;
+      size_t                                  _depth;
+      std::vector< pair<QVariant,QVariant> >  _cache;
   };
 
 

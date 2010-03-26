@@ -52,8 +52,8 @@ namespace Hurricane {
 
 
   Record::Record ( const string& name )
-    : _name(name)
-    , _slotList()
+    : _name (name)
+    , _slots()
   {
     _allocateds++;
   }
@@ -62,11 +62,9 @@ namespace Hurricane {
   Record::~Record ()
   {
   //cerr << "Record::~Record() - " << _name << ": " << hex << (void*)this << dec << endl;
-	while (!_slotList.empty()) {
-      Slot* slot = *_slotList.begin();
-      _slotList.remove(slot);
-      delete slot;
-	}
+    for ( size_t i=0 ; i<_slots.size() ; i++ )
+      delete _slots[i];
+
     _allocateds--;
   }
 
@@ -79,9 +77,8 @@ namespace Hurricane {
 
   Slot* Record::getSlot ( unsigned no ) const
   {
-	SlotList::const_iterator iterator = _slotList.begin();
-	while (no-- && (iterator != _slotList.end())) ++iterator;
-	return (iterator == _slotList.end()) ? NULL : *iterator;
+    if ( no >= _slots.size() ) return NULL;
+    return _slots[no];
   }
 
 
@@ -91,7 +88,7 @@ namespace Hurricane {
       cerr << "[ERROR] Record::add(): Attempt to add NULL Slot." << endl;
       return;
     }
-    _slotList.push_back(slot);
+    _slots.push_back(slot);
   }
 
 

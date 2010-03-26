@@ -57,7 +57,7 @@ namespace Hurricane {
   }
 
 
-  void  InspectorWidget::History::push ( Slot* slot )
+  void  InspectorWidget::History::push ( Slot* slot, Record* record )
   {
     if ( _depth < _slots.size()-1 ) {
       while ( _depth < _slots.size()-1 ) pop ();
@@ -66,8 +66,9 @@ namespace Hurricane {
     _depth++;
     _slots.push_back ( slot->getClone() );
     _comboBox->addItem ( QString("%1: %2").arg(_depth).arg(_slots[_slots.size()-1]->getDataString().c_str()));
-    _comboBox->setCurrentIndex ( _depth );
+  //_comboBox->setCurrentIndex ( _depth );
 
+  //cerr << "After History::push()" << endl;
   }
 
 
@@ -94,8 +95,10 @@ namespace Hurricane {
   void  InspectorWidget::History::goTo ( int depth )
   {
     if ( ( depth < 0 ) || ( depth >= (int)_slots.size() ) ) return;
-
-    _depth = depth;
+    if ( depth != _depth ) {
+      _depth = depth;
+      _comboBox->setCurrentIndex ( _depth );
+    }
   }
 
 
@@ -185,6 +188,7 @@ namespace Hurricane {
 
     QHeaderView* verticalHeader = _view->verticalHeader ();
     verticalHeader->setVisible ( false );
+    verticalHeader->setDefaultSectionSize ( _rowHeight );
 
     _historyComboBox = new QComboBox ( this );
     _history.setComboBox ( _historyComboBox );
@@ -218,13 +222,6 @@ namespace Hurricane {
   }
 
 
-  void  InspectorWidget::forceRowHeight ()
-  {
-    for (  int rows=_sortModel->rowCount()-1; rows >= 0 ; rows-- )
-      _view->setRowHeight ( rows, _rowHeight );
-  }
-
-
   void  InspectorWidget::setRootOccurrence ( Occurrence& occurrence )
   {
     _rootOccurrence = occurrence;
@@ -241,12 +238,12 @@ namespace Hurricane {
 
   void  InspectorWidget::_setRootRecord ( Record* record )
   {
+  //cerr << "InspectorWidget::_setRootRecord()." << endl;
   //if ( _baseModel ) _baseModel->setSlot ( NULL, 0 );
 
-    _history.setRootRecord ( record );
-    if ( !record ) _rootOccurrence = Occurrence ();
+    if ( record == NULL ) _rootOccurrence = Occurrence ();
 
-    if ( !_baseModel ) {
+    if ( _baseModel == NULL ) {
       _baseModel = new RecordModel ( this );
       _sortModel = new QSortFilterProxyModel ( this );
       _sortModel->setSourceModel       ( _baseModel );
@@ -259,49 +256,53 @@ namespace Hurricane {
 
     // Only after creating the RecordModel can we connect the ComboBox.
       connect ( _historyComboBox, SIGNAL(currentIndexChanged(int))
-              , this            , SLOT(historyChanged(int)) );
-      connect ( _baseModel, SIGNAL(layoutChanged()), this, SLOT(forceRowHeight()) );
+              , this            , SLOT  (historyChanged(int)) );
     }
 
-    setSlot ();
+    _history.setRootRecord ( record );
   }
 
 
-  bool  InspectorWidget::setSlot ()
+  bool  InspectorWidget::setSlot ( Record* record )
   {
     bool change = true;
 
-    change = _baseModel->setSlot ( _history.getSlot(), _history.getDepth() );
-//     if ( change ) {
-//       int rows = _sortModel->rowCount ();
-//       for ( rows-- ; rows >= 0 ; rows-- )
-//         _view->setRowHeight ( rows, _rowHeight );
-//       _view->selectRow ( 0 );
-//     }
+    if ( (_history.getSlot() != NULL) and (record == NULL) )
+      record = _history.getSlot()->getDataRecord();
+
+  //cerr << "  Effective setSlot() ." << endl;
+    change = _baseModel->setSlot ( _history.getSlot(), record, _history.getDepth() );
 
     return change;
   }
 
 
-  void  InspectorWidget::pushSlot ( Slot* slot )
+  void  InspectorWidget::pushSlot ( Slot* slot, Record* record )
   {
-    _history.push ( slot );
-    if ( !setSlot() )
-      _history.pop ();
+  //cerr << "InspectorWidget::pushSlot()" << endl;
+
+    if ( slot   == NULL ) return;
+    if ( record == NULL ) {
+      record = slot->getDataRecord ();
+      if ( record == NULL ) return;
+    }
+
+    _history.push ( slot, record );
+    setSlot ( record );
   }
 
 
   void  InspectorWidget::popSlot ()
   {
     _history.pop ();
-    setSlot ();
+  //setSlot ();
   }
 
 
   void  InspectorWidget::back ()
   {
     _history.back ();
-    setSlot ();
+  //setSlot ();
   }
 
 
@@ -313,10 +314,11 @@ namespace Hurricane {
       if ( keyEvent->key() == Qt::Key_Right ) {
         QModelIndex index = _view->currentIndex();
         if ( index.isValid() ) {
+        //cerr << "Key Right: do to sub-slot." << endl;
           Slot* slot = _baseModel->getRecord()->getSlot(_sortModel->mapToSource(index).row());
 
-          if ( slot )
-            pushSlot ( slot );
+          if ( slot != NULL )
+            pushSlot ( slot, slot->getDataRecord() );
         }
       } else if ( keyEvent->key() == Qt::Key_Left ) {
         back ();
@@ -332,7 +334,6 @@ namespace Hurricane {
   void  InspectorWidget::textFilterChanged ()
   {
     _sortModel->setFilterRegExp ( _filterPatternLineEdit->text() );
-    forceRowHeight ();
   }
 
 

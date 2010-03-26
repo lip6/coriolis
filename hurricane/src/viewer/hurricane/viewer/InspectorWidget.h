@@ -57,7 +57,7 @@ namespace Hurricane {
         public:
                        History       ();
                       ~History       ();
-          void         push          ( Slot* slot );
+          void         push          ( Slot*, Record* );
           void         pop           ();
           void         back          ();
           void         goTo          ( int depth );
@@ -83,7 +83,6 @@ namespace Hurricane {
               void                      setRootRecord     ( Record* );
               void                      setRootOccurrence ( Occurrence& );
     private slots:
-              void                      forceRowHeight    ();
               void                      textFilterChanged ();
               void                      historyChanged    ( int depth );
               void                      forkInspector     ( const QModelIndex& );
@@ -91,10 +90,10 @@ namespace Hurricane {
               bool                      eventFilter       ( QObject*, QEvent* );
     private:
               void                      _setRootRecord    ( Record* );
-              void                      pushSlot          ( Slot* );
+              void                      pushSlot          ( Slot*, Record* record=NULL );
               void                      popSlot           ();
               void                      back              ();
-              bool                      setSlot           ();
+              bool                      setSlot           ( Record* record=NULL );
 
     private:
               RecordModel*              _baseModel;

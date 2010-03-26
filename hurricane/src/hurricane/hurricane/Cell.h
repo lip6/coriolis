@@ -23,8 +23,8 @@
 #include "hurricane/Pathes.h"
 #include "hurricane/Entity.h"
 #include "hurricane/Cells.h"
-#include "hurricane/Instance.h"
 #include "hurricane/DeepNet.h"
+#include "hurricane/Instance.h"
 #include "hurricane/Pin.h"
 #include "hurricane/Pins.h"
 #include "hurricane/Slices.h"
@@ -38,9 +38,10 @@
 #include "hurricane/Transformation.h"
 #include "hurricane/Layer.h"
 #include "hurricane/QuadTree.h"
-#include "hurricane/IntrusiveMap.h"
+//#include "hurricane/IntrusiveMap.h"
 #include "hurricane/IntrusiveSet.h"
 #include "hurricane/MapCollection.h"
+
 
 
 namespace Hurricane {
@@ -168,7 +169,7 @@ class Cell : public Entity {
     private: bool _isPad;
     private: Cell* _nextOfLibraryCellMap;
     private: Cell* _nextOfSymbolCellSet;
-    private: multimap<Entity*,Entity*> _slaveEntityMap;
+    private: SlaveEntityMap _slaveEntityMap;
 
 // Constructors
 // ************

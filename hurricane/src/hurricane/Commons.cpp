@@ -17,12 +17,9 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifdef  HAVE_LIBIBERTY
-#include "hurricane/demangle.h"
-#include "hurricane/libiberty.h"
-#endif
 
-#include "hurricane/Commons.h"
+#include  <cxxabi.h>
+#include  "hurricane/Commons.h"
 
 
 namespace Hurricane {
@@ -100,26 +97,31 @@ void  ltraceout (unsigned int level, unsigned int count )
 }
 
 // -------------------------------------------------------------------
-// Function  :  "Demangle ()".
+// Function  :  "demangle ()".
+
+
+#define HAVE_CXA_DEMANGLE
+
+#ifdef  HAVE_CXA_DEMANGLE
 
 string  demangle ( const char* symbol )
-{
-  string  mangled   = "_Z";
-  mangled += symbol;
-  
-# ifdef  HAVE_LIBIBERTY
-  char* result = cplus_demangle ( mangled.c_str(), DMGL_PARAMS|DMGL_ANSI|DMGL_TYPES );
+{  
+  int          status;
+  unsigned int length = 4096;
+  char         demangled[length];
 
-  if ( result ) {
-    mangled = result;
-    free ( result );
-    return mangled;
-  }
-# endif
-
-  return mangled;
+  abi::__cxa_demangle ( symbol, demangled, &length, &status );
+  return demangled;
 }
 
+#else
+
+string  demangle ( const char* symbol )
+{  
+  return symbol;
+}
+
+#endif
 
 
 } // End of Hurricane namespace.

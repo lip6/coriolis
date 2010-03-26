@@ -38,8 +38,8 @@
 // x-----------------------------------------------------------------x
 
 
-#include "hurricane/DBo.h"
 #include "hurricane/Property.h"
+#include "hurricane/DBo.h"
 #include "hurricane/Quark.h"
 #include "hurricane/Error.h"
 
@@ -79,7 +79,7 @@ namespace Hurricane {
 
   Property* DBo::getProperty ( const Name& name ) const
   {
-    PropertySet::const_iterator iterator = _propertySet.begin();
+    set<Property*>::const_iterator iterator = _propertySet.begin();
     while ( iterator != _propertySet.end() ) {
       Property* property = *iterator;
       if (property->getName() == name) return property;
@@ -173,7 +173,7 @@ namespace Hurricane {
   Record* DBo::_getRecord () const
   {
     Record* record = new Record ( getString(this) );
-    record->add ( getSlot("Properties", &_propertySet) );
+    record->add ( getSlot("_propertySet", &_propertySet) );
     return record;
   }
 

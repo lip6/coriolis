@@ -18,12 +18,14 @@
 // ****************************************************************************************************
 
 #include "hurricane/DRCError.h"
-#include "hurricane/Cell.h"
+//#include "hurricane/Cell.h"
 #include "hurricane/Slice.h"
 #include "hurricane/Error.h"
 
 namespace Hurricane {
 
+
+  class Cell;
 
 
 // ****************************************************************************************************

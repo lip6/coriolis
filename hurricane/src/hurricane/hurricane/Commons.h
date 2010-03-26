@@ -182,9 +182,10 @@ namespace Hurricane {
 
 // Forward declaration of "getSlot<>()" template.
 
-template<typename Data> inline Hurricane::Slot* getSlot (       std::string& name, Data  d );
-template<typename Data> inline Hurricane::Slot* getSlot ( const std::string& name, Data  d );
-template<typename Data> inline Hurricane::Slot* getSlot ( const std::string& name, Data* d );
+template<typename Data> inline Hurricane::Slot* getSlot (       std::string& name, Data  );
+template<typename Data> inline Hurricane::Slot* getSlot (       std::string& name, Data* );
+template<typename Data> inline Hurricane::Slot* getSlot ( const std::string& name, Data  );
+template<typename Data> inline Hurricane::Slot* getSlot ( const std::string& name, Data* );
 
 
 // -------------------------------------------------------------------
@@ -193,7 +194,9 @@ template<typename Data> inline Hurricane::Slot* getSlot ( const std::string& nam
 // Default match.
 
 template<typename Data> inline std::string  getString ( Data data )
-{ return "<Data type unsupported by getString()>"; }
+{ return std::string("<type ")
+         + Hurricane::demangle(typeid(data).name())
+         + std::string(" unsupported by getString()>"); }
 
 // "const *" flavors.
 
@@ -278,7 +281,7 @@ template<> inline std::string  getString<std::string*> ( std::string* s )
 template<> inline std::string  getString<bool> ( bool b )
 { return (b)?"True":"False" ; }
 
-template<> inline std::string  getString<char> ( const char c )
+template<> inline std::string  getString<char> ( char c )
 { return std::string(1,c); }
 
 template<> inline std::string  getString<int> ( int i )
@@ -314,7 +317,32 @@ template<typename Data> inline Hurricane::Record* getRecord ( Data data )
 
 
 // -------------------------------------------------------------------
-// Inspector Support for  :  "const std::vector<Element>*".
+// Inspector Support for  :  "[const] std::vector<Element>*".
+
+
+template<typename Element>
+inline std::string  getString ( std::vector<Element>* v )
+{
+  std::string name = "const std::vector<Element>:";
+  return name + getString<size_t>(v->size());
+}
+
+
+template<typename Element>
+inline Hurricane::Record* getRecord ( std::vector<Element>* v )
+{
+  Hurricane::Record* record = NULL;
+  if ( !v->empty() ) {
+    record = new Hurricane::Record ( "std::vector<Element>" );
+    unsigned n = 1;
+    typename std::vector<Element>::iterator iterator = v->begin();
+    while ( iterator != v->end() ) {
+      record->add ( getSlot<Element>(getString(n++), *iterator) );
+      ++iterator;
+    }
+  }
+  return record;
+}
 
 
 template<typename Element>
@@ -334,7 +362,7 @@ inline Hurricane::Record* getRecord ( const std::vector<Element>* v )
     unsigned n = 1;
     typename std::vector<Element>::const_iterator iterator = v->begin();
     while ( iterator != v->end() ) {
-      record->add ( getSlot<Element>(getString(n++), *iterator) );
+      record->add ( getSlot<const Element>(getString(n++), *iterator) );
       ++iterator;
     }
   }
@@ -363,7 +391,7 @@ inline Hurricane::Record* getRecord ( const std::list<Element>* l )
     unsigned n = 1;
     typename std::list<Element>::const_iterator iterator = l->begin();
     while ( iterator != l->end() ) {
-      record->add ( getSlot<Element>(getString(n++), *iterator) );
+      record->add ( getSlot<const Element>(getString(n++), *iterator) );
       ++iterator;
     }
   }
@@ -401,7 +429,7 @@ inline Hurricane::Record* getRecord ( std::list<Element>* l )
 
 
 template<typename Key, typename Element, typename Compare>
-inline std::string  getString ( const std::map<Key,Element,Compare>* m )
+inline std::string  getString ( std::map<Key,Element,Compare>* m )
 {
   std::string name = "std::map<Element>:";
   return name + getString<size_t>(m->size());
@@ -409,12 +437,12 @@ inline std::string  getString ( const std::map<Key,Element,Compare>* m )
 
 
 template<typename Key, typename Element, typename Compare>
-inline Hurricane::Record* getRecord ( const std::map<Key,Element,Compare>* m )
+inline Hurricane::Record* getRecord ( std::map<Key,Element,Compare>* m )
 {
   Hurricane::Record* record = NULL;
   if ( !m->empty() ) {
     record = new Hurricane::Record ( "std::map<Element>" );
-    typename std::map<Key,Element,Compare>::const_iterator iterator = m->begin();
+    typename std::map<Key,Element,Compare>::iterator iterator = m->begin();
     while ( iterator != m->end() ) {
       record->add ( getSlot<Element>(getString(iterator->first), iterator->second) );
       ++iterator;
@@ -424,14 +452,38 @@ inline Hurricane::Record* getRecord ( const std::map<Key,Element,Compare>* m )
 }
 
 
+template<typename Key, typename Element, typename Compare>
+inline std::string  getString ( const std::map<Key,Element,Compare>* m )
+{
+  std::string name = "const std::map<Element>:";
+  return name + getString<size_t>(m->size());
+}
+
+
+template<typename Key, typename Element, typename Compare>
+inline Hurricane::Record* getRecord ( const std::map<Key,Element,Compare>* m )
+{
+  Hurricane::Record* record = NULL;
+  if ( !m->empty() ) {
+    record = new Hurricane::Record ( "const std::map<Element>" );
+    typename std::map<Key,Element,Compare>::const_iterator iterator = m->begin();
+    while ( iterator != m->end() ) {
+      record->add ( getSlot<const Element>(getString(iterator->first), iterator->second) );
+      ++iterator;
+    }
+  }
+  return record;
+}
+
+
 // -------------------------------------------------------------------
-// Inspector Support for  :  "[const] std::multimap<Key,Element,Compare>*.
+// Inspector Support for  :  "const std::multimap<Key,Element,Compare>*".
 
 
 template<typename Key, typename Element, typename Compare>
 inline std::string  getString ( const std::multimap<Key,Element,Compare>* m )
 {
-  std::string name = "std::multimap<Element>:";
+  std::string name = "const std::multimap<Element>:";
   return name + getString<size_t>(m->size());
 }
 
@@ -441,10 +493,10 @@ inline Hurricane::Record* getRecord ( const std::multimap<Key,Element,Compare>* 
 {
   Hurricane::Record* record = NULL;
   if ( !m->empty() ) {
-    record = new Hurricane::Record ( "std::multimap<Element>" );
+    record = new Hurricane::Record ( "const std::multimap<Element>" );
     typename std::multimap<Key,Element,Compare>::const_iterator iterator = m->begin();
     while ( iterator != m->end() ) {
-      record->add ( getSlot<Element>(getString(iterator->first), iterator->second) );
+      record->add ( getSlot<const Element>(getString(iterator->first), iterator->second) );
       ++iterator;
     }
   }
@@ -497,32 +549,30 @@ inline Hurricane::Record* getRecord ( const std::set<Element,Compare>* s )
     unsigned n = 1;
     typename std::set<Element,Compare>::const_iterator iterator = s->begin();
     while ( iterator != s->end() ) {
-      record->add ( getSlot<Element>(getString(n++), *iterator) );
+      record->add ( getSlot<const Element>(getString(n++), *iterator) );
       ++iterator;
     }
   }
   return record;
 }
 
-// -------------------------------------------------------------------
-// Inspector Support for  :  "std::set<Element,Compare>*".
 
-template<typename Element, typename Compare>
-inline std::string  getString ( std::set<Element,Compare>* s )
+template< typename Element, typename Compare, typename Allocator >
+inline std::string  getString ( std::set<Element,Compare,Allocator>* s )
 {
   std::string name = "std::set<Element>:";
   return name + getString<size_t>(s->size());
 }
 
 
-template<typename Element, typename Compare>
-inline Hurricane::Record* getRecord ( std::set<Element,Compare>* s )
+template< typename Element, typename Compare, typename Allocator >
+inline Hurricane::Record* getRecord ( std::set<Element,Compare,Allocator>* s )
 {
   Hurricane::Record* record = NULL;
   if ( !s->empty() ) {
     record = new Hurricane::Record ( "std::set<Element>" );
     unsigned n = 1;
-    typename std::set<Element,Compare>::iterator iterator = s->begin();
+    typename std::set<Element,Compare,Allocator>::iterator iterator = s->begin();
     while ( iterator != s->end() ) {
       record->add ( getSlot<Element>(getString(n++), *iterator) );
       ++iterator;

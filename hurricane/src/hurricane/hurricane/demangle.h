@@ -21,7 +21,7 @@
 #if !defined (DEMANGLE_H)
 #define DEMANGLE_H
 
-#include "hurricane/libiberty.h"
+//#include "hurricane/libiberty.h"
 
 #ifdef __cplusplus
 extern "C" {

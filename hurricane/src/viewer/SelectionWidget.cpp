@@ -124,7 +124,6 @@ namespace Hurricane {
     connect ( _filterPatternLineEdit, SIGNAL(textChanged(const QString &))
             , this                  , SLOT  (textFilterChanged()) );
 
-    connect ( _baseModel    , SIGNAL(layoutChanged()), this      , SLOT(forceRowHeight()) );
     connect ( _showSelection, SIGNAL(toggled(bool))  , this      , SLOT(setShowSelection(bool)) );
     connect ( _cumulative   , SIGNAL(toggled(bool))  , this      , SLOT(setCumulativeSelection(bool)) );
     connect ( clear         , SIGNAL(clicked())      , _baseModel, SLOT(clear()) );
@@ -151,13 +150,6 @@ namespace Hurricane {
   }
 
 
-  void  SelectionWidget::forceRowHeight ()
-  {
-    for (  int rows=_sortModel->rowCount()-1; rows >= 0 ; rows-- )
-      _view->setRowHeight ( rows, _rowHeight );
-  }
-
-
   void  SelectionWidget::setCellWidget ( CellWidget* cw )
   {
     if ( _cellWidget ) {
@@ -168,7 +160,7 @@ namespace Hurricane {
     _cellWidget = cw;
     if ( !_cellWidget ) return;
 
-    connect ( _cellWidget, SIGNAL(selectionModeChanged()), this       , SLOT(changeSelectionMode()) );
+    connect ( _cellWidget, SIGNAL(selectionModeChanged()), this, SLOT(changeSelectionMode()) );
 
     connect ( _cellWidget, SIGNAL(selectionChanged(const SelectorSet&))
             , this       , SLOT  (setSelection    (const SelectorSet&)) );
@@ -232,7 +224,6 @@ namespace Hurricane {
   void  SelectionWidget::textFilterChanged ()
   {
     _sortModel->setFilterRegExp ( _filterPatternLineEdit->text() );
-    forceRowHeight ();
   }
 
 

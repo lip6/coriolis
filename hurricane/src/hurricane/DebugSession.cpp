@@ -47,8 +47,6 @@
 #include  "hurricane/DebugSession.h"
 
 
-
-
 namespace Hurricane {
 
 

@@ -57,25 +57,25 @@ namespace Hurricane {
 
     public:
     // Types.
-      typedef list<Slot*>   SlotList;
+      typedef vector<Slot*>  SlotVector;
 
     public:
     // Constructor & Destructor.
-                            Record        ( const string& name );
-      virtual              ~Record        ();
-    // Methods.
-      static  size_t        getAllocateds ();
-      inline  const string& getName       () const;
-              Slot*         getSlot       ( unsigned no ) const;
-              void          add           ( Slot* slot );
-      inline  SlotList&     _getSlotList  ();
+                            Record         ( const string& name );
+      virtual              ~Record         ();
+    // Methods.                            
+      static  size_t        getAllocateds  ();
+      inline  const string& getName        () const;
+              Slot*         getSlot        ( unsigned no ) const;
+              void          add            ( Slot* slot );
+      inline  SlotVector&   _getSlotVector ();
 
 	private:
     // Internal: Static Attributes.
       static  size_t        _allocateds;
     // Internal: Attributes
               string        _name;
-              SlotList      _slotList;
+              SlotVector    _slots;
 
 	private:
     // Forbidden: Constructors
@@ -85,8 +85,8 @@ namespace Hurricane {
 
 
 // Inline Functions.
-  inline  const string&     Record::getName      () const { return _name; }
-  inline  Record::SlotList& Record::_getSlotList () { return _slotList; }
+  inline  const string&       Record::getName        () const { return _name; }
+  inline  Record::SlotVector& Record::_getSlotVector () { return _slots; }
 
 
 } // End of Hurricane namespace.

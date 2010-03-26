@@ -131,6 +131,7 @@ namespace Hurricane {
     if ( !index.isValid() ) return QVariant ();
 
     if ( role == Qt::SizeHintRole ) {
+      if ( index.row() == 0 ) return QVariant();
       switch (index.column()) {
         case 0:  return 200;
         default: return -1;
@@ -165,8 +166,13 @@ namespace Hurricane {
                                         , Qt::Orientation orientation
                                         , int             role ) const
   {
-    if ( ( orientation == Qt::Vertical ) || (role != Qt::DisplayRole) )
+    if ( orientation == Qt::Vertical )
       return QVariant();
+
+    static QFont headerFont = Graphics::getFixedFont ( QFont::Bold, false, false, +2 );
+
+    if ( role == Qt::FontRole    ) return headerFont;
+    if ( role != Qt::DisplayRole ) return QVariant();
 
     switch ( section ) {
       case 0: return "Path";

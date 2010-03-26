@@ -1,5 +1,4 @@
 
-
  include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane )
                  set ( includes hurricane/Mask.h
                                 hurricane/DebugSession.h
@@ -151,7 +150,6 @@
                                 Timer.cpp
                  )
     
-     add_library (         hurricane ${cpps} )
-         install ( TARGETS hurricane DESTINATION /lib)
-
-install(FILES ${includes} DESTINATION /include/hurricane) 
+          add_library ( hurricane ${cpps} )
+              install ( TARGETS hurricane DESTINATION /lib)
+              install ( FILES ${includes} DESTINATION /include/hurricane ) 

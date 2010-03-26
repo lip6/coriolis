@@ -76,7 +76,6 @@ namespace Hurricane {
               void                   toggleSelection        ();
               void                   toggleSelection        ( Occurrence );
               void                   toggleSelection        ( const QModelIndex& );
-              void                   forceRowHeight         ();
               void                   inspect                ();
     private slots:                                          
               void                   textFilterChanged      ();

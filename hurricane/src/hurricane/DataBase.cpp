@@ -20,8 +20,6 @@
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
 #include "hurricane/Library.h"
-#include "hurricane/Cell.h"
-#include "hurricane/Timer.h"
 #include "hurricane/Error.h"
 #include "hurricane/UpdateSession.h"
 
@@ -87,10 +85,10 @@ Record* DataBase::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->add(getSlot("Technology", _technology));
-        record->add(getSlot("RootLibrary", _rootLibrary));
-        record->add(getSlot("Precision", DbU::getPrecision()));
-        record->add(getSlot("Resolution", DbU::db(1)));
+        record->add(getSlot("_technology"    , _technology        ));
+        record->add(getSlot("_rootLibrary"   , _rootLibrary       ));
+        record->add(getSlot("DbU::precision" , DbU::getPrecision()));
+        record->add(getSlot("DbU::resolution", DbU::db(1)         ));
       //record->add(getSlot("GridStep", getValueString(getGridStep())));
     }
     return record;

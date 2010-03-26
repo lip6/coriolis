@@ -342,7 +342,7 @@ template<class Key, class Element> class IntrusiveMap {
                 n = 1;
                 Element* element = _array[index];
                 while (element) {
-                  record->add(getSlot(getString(index) + ":" + getString(n++), element));
+                  record->add(getSlot<Element*>(getString(index) + ":" + getString(n++), element));
                     element = _getNextElement(element);
                 }
             }

@@ -23,7 +23,7 @@
 #include "hurricane/Go.h"
 #include "hurricane/Plug.h"
 #include "hurricane/SharedPath.h"
-#include "hurricane/IntrusiveMap.h"
+//#include "hurricane/IntrusiveMap.h"
 
 namespace Hurricane {
 

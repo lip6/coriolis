@@ -42,14 +42,11 @@
 #define  __HURRICANE_DBO__
 
 #include  "hurricane/DBos.h"
-#include  "hurricane/Properties.h"
 #include  "hurricane/Name.h"
+#include  "hurricane/Properties.h"
 
 
 namespace Hurricane {
-
-
-  class Property;
 
 
 // -------------------------------------------------------------------
@@ -59,27 +56,25 @@ namespace Hurricane {
   class DBo {
 
     public:
-    // Types.
-      typedef set<Property*> PropertySet;
     // Methods.
-      virtual void           destroy();
-      inline  PropertySet&   _getPropertySet ();
-              void           _onDestroyed    ( Property* property );
-              Property*      getProperty     ( const Name& ) const;
-              Properties     getProperties   () const;
-      inline  bool           hasProperty     () const;
-              void           put             ( Property* );
-              void           remove          ( Property* );
-              void           removeProperty  ( const Name& );
-              void           clearProperties ();
-    // Hurricane Managment.
-      virtual string         _getTypeName    () const;
-      virtual string         _getString      () const;
-      virtual Record*        _getRecord      () const;
+      virtual void            destroy();
+      inline  set<Property*>& _getPropertySet ();
+              void            _onDestroyed    ( Property* property );
+              Property*       getProperty     ( const Name& ) const;
+              Properties      getProperties   () const;
+      inline  bool            hasProperty     () const;
+              void            put             ( Property* );
+              void            remove          ( Property* );
+              void            removeProperty  ( const Name& );
+              void            clearProperties ();
+    // Hurricane Managment.  
+      virtual string          _getTypeName    () const;
+      virtual string          _getString      () const;
+      virtual Record*         _getRecord      () const;
 
     private:
     // Internal: Attributes.
-      mutable PropertySet _propertySet;
+      mutable set<Property*>   _propertySet;
 
     protected:
     // Internal: Constructors & Destructors.
@@ -95,28 +90,14 @@ namespace Hurricane {
 
 
 // Inline Functions.
-  inline DBo::PropertySet& DBo::_getPropertySet () { return _propertySet; }
-  inline bool              DBo::hasProperty     () const { return !_propertySet.empty(); }
+  inline set<Property*>& DBo::_getPropertySet () { return _propertySet; }
+  inline bool            DBo::hasProperty     () const { return !_propertySet.empty(); }
 
 
 } // End of Hurricane namespace.
 
 
 INSPECTOR_P_SUPPORT(Hurricane::DBo);
-
-
-template<>
-inline Hurricane::Slot* getSlot ( const std::string& name, const std::set<Hurricane::Property*>* s )
-{
-  return new Hurricane::SlotTemplate<const std::set<Hurricane::Property*>*>(name,s);
-}
-
-
-template<>
-inline Hurricane::Slot* getSlot ( const std::string& name, std::set<Hurricane::Property*>* s )
-{
-  return new Hurricane::SlotTemplate<std::set<Hurricane::Property*>*>(name,s);
-}
 
 
 #endif // __HURRICANE_DBO__

@@ -15,7 +15,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./NetlistModel.h"                        |
+// |  C++ Header  :       "./NetlistModel.h"                         |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |

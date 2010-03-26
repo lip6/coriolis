@@ -118,6 +118,7 @@ namespace Hurricane {
     }
 
     if ( role == Qt::FontRole ) {
+      if ( index.row() == 0 ) return QVariant();
       switch (index.column()) {
         default: return entityFont;
       }
@@ -148,11 +149,16 @@ namespace Hurricane {
 
 
   QVariant  SelectionPopupModel::headerData ( int             section
-                                             , Qt::Orientation orientation
-                                             , int             role ) const
+                                            , Qt::Orientation orientation
+                                            , int             role ) const
   {
-    if ( ( orientation == Qt::Vertical ) || (role != Qt::DisplayRole) )
+    if ( orientation == Qt::Vertical )
       return QVariant();
+
+    static QFont headerFont = Graphics::getFixedFont ( QFont::Bold, false, false, +2 );
+
+    if ( role == Qt::FontRole    ) return headerFont;
+    if ( role != Qt::DisplayRole ) return QVariant();
 
     if ( section == 0 ) {
       return "Path+Entity";
