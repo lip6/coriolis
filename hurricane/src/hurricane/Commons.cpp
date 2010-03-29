@@ -107,7 +107,7 @@ void  ltraceout (unsigned int level, unsigned int count )
 string  demangle ( const char* symbol )
 {  
   int          status;
-  unsigned int length = 4096;
+  size_t       length = 4096;
   char         demangled[length];
 
   abi::__cxa_demangle ( symbol, demangled, &length, &status );
