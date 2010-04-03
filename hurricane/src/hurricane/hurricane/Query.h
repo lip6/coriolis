@@ -298,11 +298,13 @@ namespace Hurricane {
       enum  QueryFilter { DoMasterCells   =  1
                         , DoTerminalCells =  2
                         , DoComponents    =  4
-                        , DoRubbers       =  8
-                        , DoExtensionGos  = 16
+                        , DoMarkers       =  8
+                        , DoRubbers       = 16
+                        , DoExtensionGos  = 32
                         , DoAll           =   DoMasterCells
                                             | DoTerminalCells
                                             | DoComponents
+                                            | DoMarkers
                                             | DoRubbers
                                             | DoExtensionGos
                         };
@@ -321,10 +323,12 @@ namespace Hurricane {
       inline  Instance*             getInstance            ();
     //inline  const Tabulation&     getTab                 () const;
       virtual bool                  hasGoCallback          () const;
+      virtual bool                  hasMarkerCallback      () const;
       virtual bool                  hasRubberCallback      () const;
       virtual bool                  hasExtensionGoCallback () const;
       virtual bool                  hasMasterCellCallback  () const;
       virtual void                  goCallback             ( Go*     ) = 0;
+      virtual void                  markerCallback         ( Marker* );
       virtual void                  rubberCallback         ( Rubber* );
       virtual void                  extensionGoCallback    ( Go*     ) = 0;
       virtual void                  masterCellCallback     () = 0;

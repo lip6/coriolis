@@ -844,16 +844,41 @@ namespace Hurricane {
   }
 
 
-  bool  CellWidget::DrawingQuery::hasRubberCallback () const
+  bool  CellWidget::DrawingQuery::hasMarkerCallback () const
+  { return true; }
+
+
+  void  CellWidget::DrawingQuery::markerCallback ( Marker* marker )
+  { drawMarker ( marker, getArea(), getTransformation() ); }
+
+
+  void  CellWidget::DrawingQuery::drawMarker ( const Marker*          marker
+                                             , const Box&             area
+                                             , const Transformation&  transformation
+                                             )
   {
-    return true;
+    static QRect  rectangle;
+
+    const Reference* reference = dynamic_cast<const Reference*>(marker);
+    if ( reference ) {
+      _goCount++;
+      Box bb = transformation.getBox(reference->getBoundingBox()).inflate(DbU::lambda(5.0));
+      rectangle = _cellWidget->dbuToDisplayRect ( bb );
+
+      if ( _cellWidget->isDrawable("text.reference") and (getDepth() < 2) ) {
+        const char* refName = reference->getName()._getSharedName()->_getSString().c_str();
+        _cellWidget->drawDisplayText ( rectangle, refName, BigFont|Bold|Center|Frame );
+      }
+    }
   }
+
+
+  bool  CellWidget::DrawingQuery::hasRubberCallback () const
+  { return true; }
 
 
   void  CellWidget::DrawingQuery::rubberCallback ( Rubber* rubber )
-  {
-    drawRubber ( rubber, getArea(), getTransformation() );
-  }
+  { drawRubber ( rubber, getArea(), getTransformation() ); }
 
 
   void  CellWidget::DrawingQuery::drawRubber ( const Rubber*          rubber
@@ -1381,7 +1406,7 @@ namespace Hurricane {
 
           if ( isDrawable((*iLayer)->getName()) ) {
             _drawingQuery.setBasicLayer ( *iLayer );
-            _drawingQuery.setFilter     ( getQueryFilter().unset(Query::DoMasterCells|Query::DoRubbers) );
+            _drawingQuery.setFilter     ( getQueryFilter().unset(Query::DoMasterCells|Query::DoRubbers|Query::DoMarkers) );
             _drawingQuery.doQuery       ();
           }
           if ( _enableRedrawInterrupt ) QApplication::processEvents();
@@ -1398,7 +1423,18 @@ namespace Hurricane {
              _drawingPlanes.setBrush ( Graphics::getBrush("boundaries",getDarkening()) );
 
              _drawingQuery.setBasicLayer ( NULL );
-             _drawingQuery.setFilter     ( getQueryFilter().unset(Query::DoComponents|Query::DoRubbers) );
+             _drawingQuery.setFilter     ( getQueryFilter().unset(Query::DoComponents|Query::DoRubbers|Query::DoMarkers) );
+             _drawingQuery.doQuery       ();
+          }
+        }
+
+        if ( /*!timeout("redraw [markers]",timer,10.0,timedout) &&*/ (!_redrawManager.interrupted()) ) {
+          if ( isDrawable("text.reference") ) {
+             _drawingPlanes.setPen   ( Graphics::getPen  ("text.reference",getDarkening()) );
+             _drawingPlanes.setBrush ( Graphics::getBrush("text.reference",getDarkening()) );
+
+             _drawingQuery.setBasicLayer ( NULL );
+             _drawingQuery.setFilter     ( getQueryFilter().unset(Query::DoComponents|Query::DoMasterCells) );
              _drawingQuery.doQuery       ();
           }
         }
@@ -1409,7 +1445,7 @@ namespace Hurricane {
              _drawingPlanes.setBrush ( Graphics::getBrush("rubber",getDarkening()) );
 
              _drawingQuery.setBasicLayer ( NULL );
-             _drawingQuery.setFilter     ( getQueryFilter().unset(Query::DoComponents|Query::DoMasterCells) );
+             _drawingQuery.setFilter     ( getQueryFilter().unset(Query::DoComponents|Query::DoMasterCells|Query::DoMarkers) );
              _drawingQuery.doQuery       ();
           }
         }

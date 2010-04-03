@@ -157,6 +157,7 @@ namespace Hurricane {
       static const Name                   TextCell;
       static const Name                   TextInstance;
       static const Name                   TextComponent;
+      static const Name                   TextReference;
       static const Name                   Undef;
       static const Name                   UnmatchedGroup;
                                        

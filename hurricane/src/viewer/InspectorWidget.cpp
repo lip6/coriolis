@@ -66,7 +66,7 @@ namespace Hurricane {
     _depth++;
     _slots.push_back ( slot->getClone() );
     _comboBox->addItem ( QString("%1: %2").arg(_depth).arg(_slots[_slots.size()-1]->getDataString().c_str()));
-  //_comboBox->setCurrentIndex ( _depth );
+    _comboBox->setCurrentIndex ( _depth );
 
   //cerr << "After History::push()" << endl;
   }
@@ -161,14 +161,14 @@ namespace Hurricane {
 
 
   InspectorWidget::InspectorWidget ( QWidget* parent )
-      : QWidget(parent)
-      , _baseModel(NULL)
-      , _sortModel(NULL)
-      , _historyComboBox(NULL)
-      , _view(NULL)
-      , _rowHeight(20)
-      , _history()
-      , _rootOccurrence()
+    : QWidget         (parent)
+    , _baseModel      (NULL)
+    , _sortModel      (NULL)
+    , _historyComboBox(NULL)
+    , _view           (NULL)
+    , _rowHeight      (20)
+    , _history        ()
+    , _rootOccurrence ()
   {
     setAttribute ( Qt::WA_DeleteOnClose );
     setAttribute ( Qt::WA_QuitOnClose, false );

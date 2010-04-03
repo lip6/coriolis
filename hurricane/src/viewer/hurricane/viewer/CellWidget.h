@@ -457,11 +457,13 @@ namespace Hurricane {
                   void          setDrawExtensionGo     ( const Name& );
           virtual bool          hasMasterCellCallback  () const;
           virtual bool          hasGoCallback          () const;
+          virtual bool          hasMarkerCallback      () const;
           virtual bool          hasRubberCallback      () const;
           virtual bool          hasExtensionGoCallback () const;
           virtual void          masterCellCallback     ();
           virtual void          goCallback             ( Go*     );
           virtual void          rubberCallback         ( Rubber* );
+          virtual void          markerCallback         ( Marker* );
           virtual void          extensionGoCallback    ( Go*     );
                   void          drawMasterCell         ( const Cell*            cell
                                                        , const Transformation&  transformation
@@ -472,6 +474,10 @@ namespace Hurricane {
                                                        , const Transformation&  transformation
                                                        );
                   void          drawRubber             ( const Rubber*          rubber
+                                                       , const Box&             area
+                                                       , const Transformation&  transformation
+                                                       );
+                  void          drawMarker             ( const Marker*          marker
                                                        , const Box&             area
                                                        , const Transformation&  transformation
                                                        );

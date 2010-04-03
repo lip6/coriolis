@@ -53,6 +53,7 @@ namespace Hurricane {
   const Name  DisplayStyle::TextCell      = "text.cell";
   const Name  DisplayStyle::TextInstance  = "text.instance";
   const Name  DisplayStyle::TextComponent = "text.component";
+  const Name  DisplayStyle::TextReference = "text.reference";
   const Name  DisplayStyle::Undef         = "undef";
 
 
@@ -270,6 +271,7 @@ namespace Hurricane {
     addDrawingStyle ( Viewer, TextCell     , "8822441188224411", 255, 255, 255, 0, 1.0 );
     addDrawingStyle ( Viewer, TextInstance , "8822441188224411", 255, 255, 255, 0, 1.0 );
     addDrawingStyle ( Viewer, TextComponent, "FFFFFFFFFFFFFFFF", 255, 255, 255, 0, 1.0 );
+    addDrawingStyle ( Viewer, TextReference, "FFFFFFFFFFFFFFFF", 255, 255, 255, 0, 1.0 );
     addDrawingStyle ( Viewer, Undef        , "2244118822441188", 238, 130, 238, 0, 1.0 );
   }
 

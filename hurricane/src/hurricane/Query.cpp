@@ -114,7 +114,7 @@ namespace Hurricane {
 
   void  Query::doQuery ()
   {
-    if ( _stack.getTopArea().isEmpty() || !_stack.getTopCell() ) return;
+    if ( _stack.getTopArea().isEmpty() or not _stack.getTopCell() ) return;
     
   //cerr << "Query::doQuery() - " << _stack.getTopCell() << " " << _stack.getTopArea() << " " << _basicLayer << endl;
 
@@ -122,16 +122,16 @@ namespace Hurricane {
 
     while ( !_stack.empty() ) {
     // Process the Components of the current instance.
-      if ( hasGoCallback() && _basicLayer && (_filter.isSet(DoComponents)) ) {
+      if ( hasGoCallback() and _basicLayer and (_filter.isSet(DoComponents)) ) {
       //if ( getInstance() )
       //  cerr << getTab() << getInstance() << " " << getTransformation() << endl;
       //else
       //  cerr << "  TopCell: " << getMasterCell() << " " << getTransformation() << endl;
 
-        if ( !getMasterCell()->isTerminal() || (_filter.isSet(DoTerminalCells)) ) {
+        if ( not getMasterCell()->isTerminal() or (_filter.isSet(DoTerminalCells)) ) {
           forEach ( Slice*, islice, getMasterCell()->getSlices() ) {
-            if ( !(*islice)->getLayer()->contains(getBasicLayer()) ) continue;
-            if ( !(*islice)->getBoundingBox().intersect(getArea()) ) continue;
+            if ( not (*islice)->getLayer()->contains(getBasicLayer()) ) continue;
+            if ( not (*islice)->getBoundingBox().intersect(getArea()) ) continue;
 
             forEach ( Go*, igo, (*islice)->getGosUnder(_stack.getArea()) )
               goCallback ( *igo );
@@ -139,16 +139,22 @@ namespace Hurricane {
         }
       }
 
-      if ( !getMasterCell()->isTerminal() && (_filter.isSet(DoRubbers)) ) {
+      if ( (not getMasterCell()->isTerminal() or (_filter.isSet(DoTerminalCells)))
+         and _filter.isSet(DoMarkers) ) {
+        forEach ( Marker*, marker, getMasterCell()->getMarkersUnder(_stack.getArea()) )
+          markerCallback ( *marker );
+      }
+
+      if ( not getMasterCell()->isTerminal() and (_filter.isSet(DoRubbers)) ) {
         forEach ( Rubber*, rubber, getMasterCell()->getRubbersUnder(_stack.getArea()) )
           rubberCallback ( *rubber );
       }
 
-      if ( hasExtensionGoCallback() && (_filter.isSet(DoExtensionGos)) ) {
-        if ( !getMasterCell()->isTerminal() || (_filter.isSet(DoTerminalCells)) ) {
+      if ( hasExtensionGoCallback() and (_filter.isSet(DoExtensionGos)) ) {
+        if ( not getMasterCell()->isTerminal() or (_filter.isSet(DoTerminalCells)) ) {
           forEach ( ExtensionSlice*, islice, getMasterCell()->getExtensionSlices() ) {
-            if ( !( (*islice)->getMask() & _extensionMask ) ) continue;
-            if ( !(*islice)->getBoundingBox().intersect(getArea()) ) continue;
+            if ( not ( (*islice)->getMask() & _extensionMask ) ) continue;
+            if ( not (*islice)->getBoundingBox().intersect(getArea()) ) continue;
 
             forEach ( Go*, igo, (*islice)->getGosUnder(_stack.getArea()) )
               extensionGoCallback ( *igo );
@@ -156,7 +162,7 @@ namespace Hurricane {
         }
       }
 
-      if ( (_filter.isSet(DoMasterCells)) && hasMasterCellCallback() )
+      if ( (_filter.isSet(DoMasterCells)) and hasMasterCellCallback() )
         masterCellCallback ();
 
       _stack.progress ();
@@ -165,27 +171,27 @@ namespace Hurricane {
 
 
   bool  Query::hasGoCallback () const
-  {
-    return false;
-  }
+  { return false; }
+
+
+  bool  Query::hasMarkerCallback () const
+  { return false; }
 
 
   bool  Query::hasRubberCallback () const
-  {
-    return false;
-  }
+  { return false; }
 
 
   bool  Query::hasExtensionGoCallback () const
-  {
-    return false;
-  }
+  { return false; }
 
 
   bool  Query::hasMasterCellCallback () const
-  {
-    return false;
-  }
+  { return false; }
+
+
+  void  Query::markerCallback ( Marker* )
+  { }
 
 
   void  Query::rubberCallback ( Rubber* )
