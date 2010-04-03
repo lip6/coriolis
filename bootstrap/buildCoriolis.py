@@ -273,7 +273,7 @@ class ProjectBuilder:
         return
 
 
-    def _commandTemplate ( self, tools, projectName, command ):
+    def _commandTemplate ( self, tools, projects, command ):
        # Set or guess the various projects TOP environment variables.
         for project in self._projects:
             topVariable     = "%s_TOP"      % project.getName().upper()
@@ -287,19 +287,21 @@ class ProjectBuilder:
                 if self._environment.has_key(topUserVariable):
                     print "Transmitting %s = \"%s\"." % (topUserVariable,self._environment[topUserVariable])
 
-        if projectName:
-            project = self.getProject ( projectName )
-            if not project:
-                print "[ERROR] No project of name \"%s\"." % projectName
-                sys.exit ( 1 )
-            project.activateAll()
-            for tool in project.getActives():
-                print "\nProcessing tool: \"%s\"." % tool
-                getattr(self,command) ( tool )
+        if projects:
+            for projectName in projects:
+                project = self.getProject ( projectName )
+                if not project:
+                    print "[ERROR] No project of name \"%s\"." % projectName
+                    sys.exit ( 1 )
+                project.activateAll()
+                for tool in project.getActives():
+                    print "\nProcessing tool: \"%s\"." % tool
+                    getattr(self,command) ( tool )
         else:
             self._orderTools ( tools )
             for project in self._projects:
                 for tool in project.getActives():
+                    print "\nProcessing tool: \"%s\"." % tool
                     getattr(self,command) ( tool )
             for tool in self._standalones:
                 print "\nProcessing tool: \"%s\"." % tool
@@ -307,23 +309,23 @@ class ProjectBuilder:
         return
 
 
-    def build ( self, tools, projectName ):
-        self._commandTemplate ( tools, projectName, "_build" )
+    def build ( self, tools, projects ):
+        self._commandTemplate ( tools, projects, "_build" )
         return
 
 
-    def svnStatus ( self, tools, projectName ):
-        self._commandTemplate ( tools, projectName, "_svnStatus" )
+    def svnStatus ( self, tools, projects ):
+        self._commandTemplate ( tools, projects, "_svnStatus" )
         return
 
 
-    def svnUpdate ( self, tools, projectName ):
-        self._commandTemplate ( tools, projectName, "_svnUpdate" )
+    def svnUpdate ( self, tools, projects ):
+        self._commandTemplate ( tools, projects, "_svnUpdate" )
         return
 
 
-    def svnCheckout ( self, tools, projectName ):
-        self._commandTemplate ( tools, projectName, "_svnCheckout" )
+    def svnCheckout ( self, tools, projects ):
+        self._commandTemplate ( tools, projects, "_svnCheckout" )
         return
 
 
@@ -360,21 +362,21 @@ if __name__ == "__main__":
 
     parser = optparse.OptionParser ()  
   # Build relateds.
-    parser.add_option ( "-q", "--quiet"      , action="store_true",                dest="quiet"   )
-    parser.add_option ( "-r", "--release"    , action="store_true",                dest="release" )
-    parser.add_option ( "-d", "--debug"      , action="store_true",                dest="debug"   )
-    parser.add_option ( "-s", "--static"     , action="store_true",                dest="static"  )
-    parser.add_option (       "--doc"        , action="store_true",                dest="doc"     )
-    parser.add_option ( "-D", "--check-db"   , action="store_true",                dest="checkDb" )
+    parser.add_option ( "-q", "--quiet"      , action="store_true",                dest="quiet"    )
+    parser.add_option ( "-r", "--release"    , action="store_true",                dest="release"  )
+    parser.add_option ( "-d", "--debug"      , action="store_true",                dest="debug"    )
+    parser.add_option ( "-s", "--static"     , action="store_true",                dest="static"   )
+    parser.add_option (       "--doc"        , action="store_true",                dest="doc"      )
+    parser.add_option ( "-D", "--check-db"   , action="store_true",                dest="checkDb"  )
     parser.add_option ( "-u", "--check-deter", action="store_true",                dest="checkDeterminism" )
     parser.add_option ( "-v", "--verbose"    , action="store_true",                dest="verboseMakefile" )
-    parser.add_option (       "--root"       , action="store"     , type="string", dest="rootDir" )
-    parser.add_option (       "--no-build"   , action="store_true",                dest="noBuild" )
-    parser.add_option (       "--no-cache"   , action="store_true",                dest="noCache" )
-    parser.add_option (       "--svn-tag"    , action="store"     , type="string", dest="svnTag"  )
+    parser.add_option (       "--root"       , action="store"     , type="string", dest="rootDir"  )
+    parser.add_option (       "--no-build"   , action="store_true",                dest="noBuild"  )
+    parser.add_option (       "--no-cache"   , action="store_true",                dest="noCache"  )
+    parser.add_option (       "--svn-tag"    , action="store"     , type="string", dest="svnTag"   )
     parser.add_option (       "--make"       , action="store"     , type="string", dest="makeArguments")
-    parser.add_option (       "--project"    , action="store"     , type="string", dest="project" )
-    parser.add_option ( "-t", "--tool"       , action="append"    , type="string", dest="tools"   )
+    parser.add_option (       "--project"    , action="append"    , type="string", dest="projects" )
+    parser.add_option ( "-t", "--tool"       , action="append"    , type="string", dest="tools"    )
    # SVN repository relateds.
     parser.add_option ( "--svn-status"   , action="store_true", dest="svnStatus"   )
     parser.add_option ( "--svn-update"   , action="store_true", dest="svnUpdate"   )
@@ -400,9 +402,9 @@ if __name__ == "__main__":
     if options.makeArguments:    builder.makeArguments     = options.makeArguments
     if options.svnTag:           builder.svnTag            = options.svnTag
 
-    if   options.svnStatus:   builder.svnStatus   ( tools=options.tools, projectName=options.project )
-    elif options.svnUpdate:   builder.svnUpdate   ( tools=options.tools, projectName=options.project )
-    elif options.svnCheckout: builder.svnCheckout ( tools=options.tools, projectName=options.project )
-    else:                     builder.build       ( tools=options.tools, projectName=options.project )
+    if   options.svnStatus:   builder.svnStatus   ( tools=options.tools, projects=options.projects )
+    elif options.svnUpdate:   builder.svnUpdate   ( tools=options.tools, projects=options.projects )
+    elif options.svnCheckout: builder.svnCheckout ( tools=options.tools, projects=options.projects )
+    else:                     builder.build       ( tools=options.tools, projects=options.projects )
 
     sys.exit ( 0 )
