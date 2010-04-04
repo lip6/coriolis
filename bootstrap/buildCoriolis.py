@@ -36,12 +36,12 @@ class Project:
     def activate ( self, tools ):
        # Build the ordered list.
         for tool in self._tools:
-            if tool in tools:
+            if (tool in tools) and not (tool in self._actives):
                 self._actives += [ tool ]
        # Find the tools not part of the project.
         rejecteds = []
         for tool in tools:
-            if not (tool in self._tools):
+            if not (tool in self._tools) and (not tool in rejecteds):
                 rejecteds += [ tool ]
         return rejecteds
 
@@ -105,21 +105,6 @@ class ProjectBuilder:
 
         if self._enableShared == "ON": self._libMode = "Shared"
         else:                          self._libMode = "Static"
-        return
-
-
-    def _orderTools ( self, tools ):
-        if tools:
-           # Checks if the requested tools are in the various projects.
-            self._standalones = tools
-            for project in self._projects:
-                self._standalones = project.activate ( self._standalones ) 
-            for tool in self._standalones:
-                print "[WARNING] Tool \"%s\" is not part of any project." % tool
-        else:
-            for project in self._projects:
-                project.activateAll ()
-            
         return
 
 
@@ -287,6 +272,14 @@ class ProjectBuilder:
                 if self._environment.has_key(topUserVariable):
                     print "Transmitting %s = \"%s\"." % (topUserVariable,self._environment[topUserVariable])
 
+        if tools:
+           # Checks if the requested tools are in the various projects.
+            self._standalones = tools
+            for project in self._projects:
+                self._standalones = project.activate ( self._standalones ) 
+            for tool in self._standalones:
+                print "[WARNING] Tool \"%s\" is not part of any project." % tool
+
         if projects:
             for projectName in projects:
                 project = self.getProject ( projectName )
@@ -294,18 +287,19 @@ class ProjectBuilder:
                     print "[ERROR] No project of name \"%s\"." % projectName
                     sys.exit ( 1 )
                 project.activateAll()
-                for tool in project.getActives():
-                    print "\nProcessing tool: \"%s\"." % tool
-                    getattr(self,command) ( tool )
-        else:
-            self._orderTools ( tools )
+
+        if not tools and not projects:
             for project in self._projects:
-                for tool in project.getActives():
-                    print "\nProcessing tool: \"%s\"." % tool
-                    getattr(self,command) ( tool )
-            for tool in self._standalones:
+                project.activateAll ()
+
+        for project in self._projects:
+            for tool in project.getActives():
                 print "\nProcessing tool: \"%s\"." % tool
                 getattr(self,command) ( tool )
+
+        for tool in self._standalones:
+            print "\nProcessing tool: \"%s\"." % tool
+            getattr(self,command) ( tool )
         return
 
 
