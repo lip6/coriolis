@@ -34,25 +34,33 @@ namespace {
 namespace DTR {
 Techno::Techno(Name name, Name unit) : _name(name), _unit(unit) {}
 
-Rule* Techno::addRule (Name type, double value, Name ref, Name layer1, Name layer2) {
-    Rule* rule = new Rule(type, value, ref, layer1, layer2);
+Rule* Techno::addRule (Name name, double value, Name ref, Name layer1, Name layer2) {
+    Rule* rule = new Rule(name, value, ref, layer1, layer2);
     _rules.push_back(rule);
     return rule;
 }
 
-ARule* Techno::addARule (Name type, double value, Name ref, Name layer1, Name layer2) {
-    ARule* arule = new ARule(type, value, ref, layer1, layer2);
+ARule* Techno::addARule (Name name, double value, Name ref, Name layer1, Name layer2) {
+    ARule* arule = new ARule(name, value, ref, layer1, layer2);
     _rules.push_back(arule);
     return arule;
 }
 
-double Techno::getValue(Name type, Name layer1, Name layer2) {
-    bool testL1 = (layer1 == Name("")) ? false : true;
-    bool testL2 = (layer2 == Name("")) ? false : true;
+double Techno::getValue(Name name) {
+    return getValue(name, Name(""), Name(""));
+}
+
+double Techno::getValue(Name name, Name layer) {
+    return getValue(name, layer, Name(""));
+}
+
+double Techno::getValue(Name name, Name layer1, Name layer2) {
+    bool testL1   = (layer1 == Name("")) ? false : true;
+    bool testL2   = (layer2 == Name("")) ? false : true;
 
     for (size_t i = 0 ; i < _rules.size() ; i++) {
         Rule* rule = _rules[i];
-        if (rule->getType() == type) {
+        if (rule->getName() == name) {
             if (testL1) {
                 if (rule->getLayer1() == layer1) {
                     if (testL2) {
@@ -69,7 +77,7 @@ double Techno::getValue(Name type, Name layer1, Name layer2) {
         }
     }
     string error ("[ERROR] Could not found rule: ");
-    error += type.getString();
+    error += name.getString();
     error += ".";
     error += layer1.getString();
     error += ".";

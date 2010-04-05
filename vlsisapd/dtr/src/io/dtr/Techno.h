@@ -31,7 +31,9 @@ class Techno {
     Rule*  addRule (Name name, double value, Name ref, Name layer1=Name(""), Name layer2=Name(""));
     ARule* addARule(Name name, double value, Name ref, Name layer1         , Name layer2);
 
-    double getValue(Name type, Name layer1=Name(""), Name layer2=Name(""));
+    double getValue(Name name);
+    double getValue(Name name, Name layer);
+    double getValue(Name name, Name layer1, Name layer2);
     
     bool writeToFile(std::string filePath);
     static Techno* readFromFile(const std::string filePath);
