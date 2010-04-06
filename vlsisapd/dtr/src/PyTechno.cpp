@@ -3,8 +3,13 @@ using namespace boost::python;
 
 #include "io/dtr/Techno.h"
 #include "io/dtr/Rules.h"
+#include "io/dtr/DTRException.h"
 
 namespace DTR {
+void translator(DTRException const& e) {
+    PyErr_SetString(PyExc_UserWarning, e.what());
+}
+
 BOOST_PYTHON_MODULE(pyDTR) {
     // class DTR::Name
     class_<Name>("Name", init<std::string>())
@@ -38,6 +43,10 @@ BOOST_PYTHON_MODULE(pyDTR) {
         .def("getValue"    , static_cast<double(Techno::*)(Name            )>(&Techno::getValue))
         .def("getValue"    , static_cast<double(Techno::*)(Name, Name      )>(&Techno::getValue))
         .def("getValue"    , static_cast<double(Techno::*)(Name, Name, Name)>(&Techno::getValue))
+    ;
+
+    // DTRException translator
+    register_exception_translator<DTRException>(translator)
     ;
 }
 }
