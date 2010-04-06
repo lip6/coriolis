@@ -1,5 +1,3 @@
-SET(Boost_USE_STATIC_LIBS   ON)
-SET(Boost_USE_MULTITHREADED ON)
 FIND_PACKAGE(Boost 1.32.0 COMPONENTS python)
 IF (Boost_FOUND)
   MESSAGE(STATUS "Found Boost.Python libraries in ${Boost_INCLUDE_DIR} as ${Boost_LIBRARIES}")
