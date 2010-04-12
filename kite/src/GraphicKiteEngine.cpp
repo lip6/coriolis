@@ -286,14 +286,14 @@ namespace Kite {
     if ( dRouteAction )
       cerr << Warning("GraphicKiteEngine::addToMenu() - Kite detailed router already hooked in.") << endl;
     else {
-      QAction* gLoadSolutionAction = new QAction  ( tr("Kite - &Load Global Solution"), _viewer );
-      gLoadSolutionAction->setObjectName ( "viewer.menuBar.placeAndRoute.stepByStep.loadSolution" );
+      QAction* gLoadSolutionAction = new QAction  ( tr("Kite - &Load Global Routing"), _viewer );
+      gLoadSolutionAction->setObjectName ( "viewer.menuBar.placeAndRoute.stepByStep.loadGlobalRouting" );
       gLoadSolutionAction->setStatusTip  ( tr("Load a solution for the global routing (.kgr)") );
       gLoadSolutionAction->setVisible    ( true );
       stepMenu->addAction ( gLoadSolutionAction );
 
-      QAction* gSaveSolutionAction = new QAction  ( tr("Kite - &Save Global Solution"), _viewer );
-      gSaveSolutionAction->setObjectName ( "viewer.menuBar.placeAndRoute.stepByStep.saveSolution" );
+      QAction* gSaveSolutionAction = new QAction  ( tr("Kite - &Save Global Routing"), _viewer );
+      gSaveSolutionAction->setObjectName ( "viewer.menuBar.placeAndRoute.stepByStep.saveGlobalRouting" );
       gSaveSolutionAction->setStatusTip  ( tr("Save a global router solution (.kgr)") );
       gSaveSolutionAction->setVisible    ( true );
       stepMenu->addAction ( gSaveSolutionAction );

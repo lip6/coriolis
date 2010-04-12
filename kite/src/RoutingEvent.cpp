@@ -1188,6 +1188,16 @@ namespace {
 
       Interval overlap0 = candidates[icandidate].getConflict(0);
       if ( candidates[icandidate].getLength() == 1 ) {
+        Track*        track = candidates[icandidate].getTrack();
+        TrackElement* other = track->getSegment(candidates[icandidate].getBegin());
+
+        if (    other->isGlobal()
+           and (other->getDataNegociate()->getGCellOrder() == Session::getOrder())
+           and  other->canMoveUp() ) {
+          ltrace(200) << "conflictSolve1() - One conflict, other move up" << endl;
+          if ( (success = other->moveUp()) ) break;
+        }
+
         ltrace(200) << "conflictSolve1() - One conflict, relaxing self" << endl;
 
         if ( Manipulator(segment,*this).relax(overlap0,relaxFlags) ) {
@@ -1233,7 +1243,7 @@ namespace {
   //if ( track && (track->getAxis() < constraints.getVMin()) ) track = track->getNext();
   //for ( ; !success && track && (track->getAxis() <= constraints.getVMax()) ; track = track->getNext() ) 
 
-    if ( !success && constraintByPerpandiculars ) {
+    if ( not success and constraintByPerpandiculars ) {
       ltrace(200) << "Overconstrained perpandiculars, rip them up. On track:" << endl;
       ltrace(200) << "  " << track << endl;
       Manipulator(segment,*this).ripupPerpandiculars ();
@@ -1355,6 +1365,8 @@ namespace {
 
   bool  State::slackenTopology ( TrackElement* segment, unsigned int flags )
   {
+    DebugSession::open ( segment->getNet() );
+
     bool           success   = false;
     bool           blocked   = false;
     bool           repush    = true;
@@ -1365,7 +1377,7 @@ namespace {
                 << " " << segment << endl;
     ltracein(200);
 
-    if ( (not segment) or (not data) ) { ltraceout(200); return false; }
+    if ( (not segment) or (not data) ) { ltraceout(200); DebugSession::close(); return false; }
     if ( segment == _event->getSegment() ) _event->resetInsertState();
 
     if ( not (data->isBorder() or data->isRing()) ) {
@@ -1374,6 +1386,7 @@ namespace {
       if ( not Manipulator(segment,*this).canRipup() ) {
         cerr << "[UNSOLVED] " << segment << " slacken topology not allowed for border/ring." << endl;
         ltraceout(200);
+        DebugSession::close ();
         return false;
       } 
     }
@@ -1387,6 +1400,7 @@ namespace {
       } else {
         ltrace(200) << "Refusing to slacken border segment." << endl;
         ltraceout(200);
+        DebugSession::close ();
         return false;
       }
     }
@@ -1612,6 +1626,7 @@ namespace {
     }
 
     ltraceout(200);
+    DebugSession::close ();
 
     return success;
   }

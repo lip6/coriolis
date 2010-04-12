@@ -31,6 +31,7 @@
 #include  "hurricane/Warning.h"
 #include  "hurricane/Net.h"
 #include  "hurricane/Name.h"
+#include  "hurricane/RoutingPad.h"
 #include  "katabatic/AutoContact.h"
 #include  "crlcore/RoutingGauge.h"
 #include  "kite/GCell.h"
@@ -57,6 +58,7 @@ namespace Kite {
   using Hurricane::Error;
   using Hurricane::Net;
   using Hurricane::Name;
+  using Hurricane::RoutingPad;
 
 
 // -------------------------------------------------------------------
@@ -532,6 +534,11 @@ namespace Kite {
     } else {
       if ( _data and _data->hasRoutingEvent() )
         _data->getRoutingEvent()->setDisabled();
+
+      if ( getOrder() > Session::getOrder() ) {
+        if ( _track != NULL )
+          Session::addRemoveEvent ( this );
+      }
     }
     ltraceout(200);
   }
@@ -1000,6 +1007,16 @@ namespace Kite {
             ltrace(200) << "Adding to ring: " << segments[i] << endl;
             Session::getNegociateWindow()->addToRing ( segments[i] );
           }
+        } else {
+          if ( segments[i]->getOrder() > Session::getOrder()) {
+            AutoContact* source = segments[i]->base()->getAutoSource();
+            AutoContact* target = segments[i]->base()->getAutoTarget();
+            if (  (source and dynamic_cast<RoutingPad*>(source->getAnchor()))
+               or (target and dynamic_cast<RoutingPad*>(target->getAnchor()))) {
+              ltrace(200) << "Adding to ring: " << segments[i] << endl;
+              Session::getNegociateWindow()->addToRing ( segments[i] );
+            }
+          }
         }
       //if ( i == 1 ) {
       //  RoutingEvent* event = segments[i]->getDataNegociate()->getRoutingEvent();
@@ -1041,7 +1058,9 @@ namespace Kite {
 #if ENABLE_STIFFNESS
     updateGCellsStiffness ( TrackElement::RemoveFromGCells );
 #endif
+
     _base->desalignate ();
+
 #if ENABLE_STIFFNESS
     updateGCellsStiffness ( TrackElement::AddToGCells );
 #endif
@@ -1081,7 +1100,7 @@ namespace Kite {
     unsigned int perpandicularDir = Constant::perpandicular ( parallelDir );
 
     const vector<AutoSegment*>& invalidateds = Session::getInvalidateds();
-    vector<TrackElement*> segments;
+    vector<TrackElement*>       segments;
 
     if ( not invalidateds.empty() ) {
       for ( size_t i=0 ; i<invalidateds.size() ; i++ ) {
@@ -1113,6 +1132,16 @@ namespace Kite {
             }
           }
           segment->reschedule ( 0 );
+        }
+      } else if ( segment->getDataNegociate()->getGCellOrder() > Session::getOrder()) {
+        if ( segment->getDirection() == parallelDir ) {
+          AutoContact* source = segment->base()->getAutoSource();
+          AutoContact* target = segment->base()->getAutoTarget();
+          if (  (source and dynamic_cast<RoutingPad*>(source->getAnchor()))
+             or (target and dynamic_cast<RoutingPad*>(target->getAnchor()))) {
+            ltrace(200) << "Adding to ring: " << segment << endl;
+            Session::getNegociateWindow()->addToRing ( segment );
+          }
         }
       }
     }

@@ -368,7 +368,8 @@ namespace Kite {
         cmess1.flush ();
       } else {
         cmess2 << "       <FirstPass:Negociation - event:" << setw(7) << setfill('0')
-               << RoutingEvent::getProcesseds() << setfill(' ') << "> "
+               << RoutingEvent::getProcesseds() << setfill(' ') << "> id:"
+               << event->getSegment()->getId() << " "
                << event->getSegment()->getNet()->getName()
                << endl;
         cmess2.flush();
