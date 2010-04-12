@@ -26,6 +26,8 @@ namespace {
   using std::cerr;
   using std::endl;
   using std::string;
+  using std::set;
+  using std::vector;
   using Hurricane::ForEachIterator;
   using Hurricane::_TName;
   using Hurricane::Error;
@@ -47,6 +49,7 @@ namespace {
     public:
     // Static Methods.
       static ToolEnginesRelation* getToolEnginesRelation          ( const Cell* cell );
+      static void                 destroyAllToolEnginesRelations  ();
     // Constructor.
       static ToolEnginesRelation* create                          ( Cell* masterOwner );
     // Methods.
@@ -57,17 +60,21 @@ namespace {
       inline  unsigned int        updateRoutingModificationFlag   ();
       virtual string              _getTypeName                    () const;
       virtual Record*             _getRecord                      () const;
-
     private:
-    // Internal: Attributes
-              unsigned int        _placementModificationFlag;
-              unsigned int        _routingModificationFlag;
-
     // Internal: Constructor.
                                   ToolEnginesRelation             ( Cell* masterOwner );
     protected:
       virtual void                _preDestroy                     ();
+
+    private:
+    // Internal: Attributes
+      static  set<ToolEnginesRelation*>  _toolEnginesRelations;
+              unsigned int               _placementModificationFlag;
+              unsigned int               _routingModificationFlag;
   };
+
+
+  set<ToolEnginesRelation*>  ToolEnginesRelation::_toolEnginesRelations;
 
 
   ToolEnginesRelation::ToolEnginesRelation ( Cell* masterOwner )
@@ -82,6 +89,7 @@ namespace {
     ToolEnginesRelation* enginesRelation = new ToolEnginesRelation(masterOwner);
 
     enginesRelation->_postCreate();
+    _toolEnginesRelations.insert ( enginesRelation );
 
     return enginesRelation;
   }
@@ -149,6 +157,22 @@ namespace {
   }
 
 
+  void  ToolEnginesRelation::destroyAllToolEnginesRelations ()
+  {
+    set<ToolEnginesRelation*>::iterator irelation = _toolEnginesRelations.begin();
+    for ( ; irelation != _toolEnginesRelations.end() ; ++irelation ) {
+      vector<ToolEngine*> tools;
+      forEach ( ToolEngine*, itool, (*irelation)->getSlaveOwners().getSubSet<ToolEngine*>() )
+        tools.push_back ( *itool );
+
+      for ( size_t i=0 ; i<tools.size() ; ++i ) {
+        tools[i]->destroy ();
+      }
+    }
+    _toolEnginesRelations.clear ();
+  }
+
+
 } // End of anonymous namespace.
 
 
@@ -198,6 +222,12 @@ namespace CRL {
       remove ( relation );
     }
     DBo::_preDestroy();
+  }
+
+
+  void  ToolEngine::destroyAll ()
+  {
+    ToolEnginesRelation::destroyAllToolEnginesRelations  ();
   }
 
 
@@ -300,10 +330,9 @@ namespace CRL {
       return NULL;
     else
     {
-      for_each_toolengine(toolengine, relation->getSlaveOwners().getSubSet<ToolEngine*>()) {
-        if (toolengine->getName() == name)
-          return toolengine;
-        end_for;
+      forEach ( ToolEngine*, itool, relation->getSlaveOwners().getSubSet<ToolEngine*>()) {
+        if (itool->getName() == name)
+          return *itool;
       }
       return NULL;
     }

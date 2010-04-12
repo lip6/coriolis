@@ -25,21 +25,22 @@
                     11110111
       -->
       <group name="Viewer">
-        <drawingstyle name="fallback"      color="238,238,238" border="1" pattern="55AA55AA55AA55AA"/>
-        <drawingstyle name="background"    color="50,50,50"    border="1"/>
-        <drawingstyle name="foreground"    color="255,255,255" border="1"/>
-        <drawingstyle name="rubber"        color="192,0,192"   border="4" threshold="0.02"/>
-        <drawingstyle name="phantom"       color="139,134,130" border="1"/>
-        <drawingstyle name="boundaries"    color="208,199,192" border="1" pattern="0000000000000000" threshold="0"/>
-        <drawingstyle name="marker"        color="80,250,80"   border="1"/>
-        <drawingstyle name="selectionDraw" color="255,255,255" border="1"/>
-        <drawingstyle name="selectionFill" color="255,255,255" border="1"/>
-        <drawingstyle name="grid"          color="255,255,255" border="1" threshold="2.0"/>
-        <drawingstyle name="spot"          color="255,255,255" border="2" threshold="6.0"/>
-        <drawingstyle name="ghost"         color="255,255,255" border="1"/>
-        <drawingstyle name="text.ruler"    color="255,255,255" border="1" threshold="0.0"/>
-        <drawingstyle name="text.instance" color="0,0,0"       border="1" threshold="4.0"/>
-        <drawingstyle name="undef"         color="238,130,238" border="0" pattern="2244118822441188"/>
+        <drawingstyle name="fallback"       color="238,238,238" border="1" pattern="55AA55AA55AA55AA"/>
+        <drawingstyle name="background"     color="50,50,50"    border="1"/>
+        <drawingstyle name="foreground"     color="255,255,255" border="1"/>
+        <drawingstyle name="rubber"         color="192,0,192"   border="4" threshold="0.02"/>
+        <drawingstyle name="phantom"        color="139,134,130" border="1"/>
+        <drawingstyle name="boundaries"     color="208,199,192" border="1" pattern="0000000000000000" threshold="0"/>
+        <drawingstyle name="marker"         color="80,250,80"   border="1"/>
+        <drawingstyle name="selectionDraw"  color="255,255,255" border="1"/>
+        <drawingstyle name="selectionFill"  color="255,255,255" border="1"/>
+        <drawingstyle name="grid"           color="255,255,255" border="1" threshold="2.0"/>
+        <drawingstyle name="spot"           color="255,255,255" border="2" threshold="6.0"/>
+        <drawingstyle name="ghost"          color="255,255,255" border="1"/>
+        <drawingstyle name="text.ruler"     color="255,255,255" border="1" threshold="0.0"/>
+        <drawingstyle name="text.instance"  color="0,0,0"       border="1" threshold="4.0"/>
+        <drawingstyle name="text.reference" color="255,255,255" border="1" threshold="20.0"/>
+        <drawingstyle name="undef"          color="238,130,238" border="0" pattern="2244118822441188"/>
       </group>
       <group name="Active Layers">
         <drawingstyle name="nWell"    color="210,180,140" pattern="55AA55AA55AA55AA" threshold="1.50"/>
@@ -109,21 +110,22 @@
       <description>Alliance Standard Look - black background</description>
       <darkening>3.0</darkening>
       <group name="Viewer">
-        <drawingstyle name="fallback"      color="238,238,238" border="1" pattern="55AA55AA55AA55AA"/>
-        <drawingstyle name="background"    color="50,50,50"    border="1"/>
-        <drawingstyle name="foreground"    color="255,255,255" border="1"/>
-        <drawingstyle name="rubber"        color="192,0,192"   border="4" threshold="0.02"/>
-        <drawingstyle name="phantom"       color="139,134,130" border="1"/>
-        <drawingstyle name="boundaries"    color="208,199,192" border="1" pattern="0000000000000000" threshold="0"/>
-        <drawingstyle name="marker"        color="80,250,80"   border="1"/>
-        <drawingstyle name="selectionDraw" color="255,255,255" border="1"/>
-        <drawingstyle name="selectionFill" color="255,255,255" border="1"/>
-        <drawingstyle name="grid"          color="255,255,255" border="1" threshold="2.0"/>
-        <drawingstyle name="spot"          color="255,255,255" border="2" threshold="6.0"/>
-        <drawingstyle name="ghost"         color="255,255,255" border="1"/>
-        <drawingstyle name="text.ruler"    color="255,255,255" border="1" threshold="0.0"/>
-        <drawingstyle name="text.instance" color="255,255,255" border="1" threshold="4.0"/>
-        <drawingstyle name="undef"         color="238,130,238" border="0" pattern="2244118822441188"/>
+        <drawingstyle name="fallback"       color="238,238,238" border="1" pattern="55AA55AA55AA55AA"/>
+        <drawingstyle name="background"     color="50,50,50"    border="1"/>
+        <drawingstyle name="foreground"     color="255,255,255" border="1"/>
+        <drawingstyle name="rubber"         color="192,0,192"   border="4" threshold="0.02"/>
+        <drawingstyle name="phantom"        color="139,134,130" border="1"/>
+        <drawingstyle name="boundaries"     color="208,199,192" border="1" pattern="0000000000000000" threshold="0"/>
+        <drawingstyle name="marker"         color="80,250,80"   border="1"/>
+        <drawingstyle name="selectionDraw"  color="255,255,255" border="1"/>
+        <drawingstyle name="selectionFill"  color="255,255,255" border="1"/>
+        <drawingstyle name="grid"           color="255,255,255" border="1" threshold="2.0"/>
+        <drawingstyle name="spot"           color="255,255,255" border="2" threshold="6.0"/>
+        <drawingstyle name="ghost"          color="255,255,255" border="1"/>
+        <drawingstyle name="text.ruler"     color="255,255,255" border="1" threshold="0.0"/>
+        <drawingstyle name="text.instance"  color="255,255,255" border="1" threshold="4.0"/>
+        <drawingstyle name="text.reference" color="255,255,255" border="1" threshold="20.0"/>
+        <drawingstyle name="undef"          color="238,130,238" border="0" pattern="2244118822441188"/>
       </group>
       <group name="Active Layers">
         <drawingstyle name="nWell"    color="210,180,140" pattern="feffffffefffffff" border="1" threshold="1.50"/>
@@ -176,17 +178,18 @@
       <description>Alliance Standard Look - white background</description>
       <darkening>3.0</darkening>
       <group name="Viewer">
-        <drawingstyle name="fallback"      color="0,0,0"       border="1" pattern="55AA55AA55AA55AA"/>
-        <drawingstyle name="background"    color="255,255,255" border="1"/>
-        <drawingstyle name="foreground"    color="0,0,0"       border="1"/>
-        <drawingstyle name="selectionDraw" color="0,0,0"       border="1"/>
-        <drawingstyle name="selectionFill" color="0,0,0"       border="1"/>
-        <drawingstyle name="grid"          color="0,0,0"       border="1" threshold="6.0"/>
-        <drawingstyle name="spot"          color="0,0,0"       border="1" threshold="6.0"/>
-        <drawingstyle name="ghost"         color="0,0,0"       border="1"/>
-        <drawingstyle name="text.ruler"    color="0,0,0"       border="1" threshold="0.0"/>
-        <drawingstyle name="text.instance" color="0,0,0"       border="1" threshold="4.0"/>
-        <drawingstyle name="undef"         color="0,0,0"       border="0" pattern="2244118822441188"/>
+        <drawingstyle name="fallback"       color="0,0,0"       border="1" pattern="55AA55AA55AA55AA"/>
+        <drawingstyle name="background"     color="255,255,255" border="1"/>
+        <drawingstyle name="foreground"     color="0,0,0"       border="1"/>
+        <drawingstyle name="selectionDraw"  color="0,0,0"       border="1"/>
+        <drawingstyle name="selectionFill"  color="0,0,0"       border="1"/>
+        <drawingstyle name="grid"           color="0,0,0"       border="1" threshold="6.0"/>
+        <drawingstyle name="spot"           color="0,0,0"       border="1" threshold="6.0"/>
+        <drawingstyle name="ghost"          color="0,0,0"       border="1"/>
+        <drawingstyle name="text.ruler"     color="0,0,0"       border="1" threshold="0.0"/>
+        <drawingstyle name="text.instance"  color="0,0,0"       border="1" threshold="4.0"/>
+        <drawingstyle name="text.reference" color="0,0,0"       border="1" threshold="20.0"/>
+        <drawingstyle name="undef"          color="0,0,0"       border="0" pattern="2244118822441188"/>
       </group>
     </displaystyle>
     <displaystyle name="Ispd Global Route">
@@ -237,10 +240,11 @@
       <description>Useful for debugging layout - white background</description>
       <darkening>3.0</darkening>
       <group name="Viewer">
-        <drawingstyle name="background" color="255,255,255" border="1"/>
-        <drawingstyle name="grid"       color="0,0,0"       border="1" threshold="2.0"/>
-        <drawingstyle name="spot"       color="0,0,0"       border="1" threshold="2.0"/>
-        <drawingstyle name="text.ruler" color="0,0,0"       border="1" threshold="0.0"/>
+        <drawingstyle name="background"     color="255,255,255" border="1"/>
+        <drawingstyle name="grid"           color="0,0,0"       border="1" threshold="2.0"/>
+        <drawingstyle name="spot"           color="0,0,0"       border="1" threshold="2.0"/>
+        <drawingstyle name="text.ruler"     color="0,0,0"       border="1" threshold="0.0"/>
+        <drawingstyle name="text.reference" color="0,0,0"       border="1" threshold="20.0"/>
       </group>
       <group name="Active Layers">
         <drawingstyle name="active"     color="175,175,175" pattern="0000000000000000" threshold="1.50" border="2"/>

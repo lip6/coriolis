@@ -29,6 +29,7 @@
 
 
 #include  <string>
+#include  <vector>
 
 #include  "hurricane/Commons.h"
 #include  "hurricane/DBo.h"
@@ -46,6 +47,7 @@ namespace CRL {
 
 
   using std::string;
+  using std::vector;
   using Hurricane::Record;
   using Hurricane::Name;
   using Hurricane::DBo;
@@ -61,6 +63,7 @@ namespace CRL {
     // Static Methods.
       static  ToolEngines  get                                 ( const Cell* cell );
       static  ToolEngine*  get                                 ( const Cell* cell, const Name& name );
+      static  void         destroyAll                          ();
     // Methods.
       virtual const Name&  getName                             () const = 0;
       inline  Cell*        getCell                             () const;
