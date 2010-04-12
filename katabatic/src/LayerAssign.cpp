@@ -256,7 +256,7 @@ namespace Katabatic {
 
     switch ( method ) {
       case LayerAssignByLength: _layerAssignByLength(total,global,globalNets); break;
-      case LayerAssignByTrunk:  _layerAssignByTrunk (total,global,globalNets);  break;
+      case LayerAssignByTrunk:  _layerAssignByTrunk (total,global,globalNets); break;
       case NoNetLayerAssign:    break;
       default:
         stopMeasures ();
@@ -293,6 +293,20 @@ namespace Katabatic {
     for ( size_t i=0 ; i < _routingNets.size() ; i++ )
       _print ( _routingNets[i] );
 #endif
+
+  // Look for RoutingPad overload.
+    vector<GCell*> gcells = *(_gcellGrid->getGCellVector());
+    for ( size_t i=0 ; i<gcells.size() ; ++i ) {
+      gcells[i]->rpDesaturate ( globalNets );
+      // set<RoutingPad*> rps;
+      // gcells[i]->getRoutingPads ( rps );
+
+      // if ( rps.size() > 7 ) {
+      //   cerr << "[WARNING] " << gcells[i] << "has " << rps.size() << " terminals." << endl;
+      // }
+    }
+
+    Session::revalidate ();
 
     Session::setWarnGCellOverload ( true );
     _gcellGrid->checkDensity ();

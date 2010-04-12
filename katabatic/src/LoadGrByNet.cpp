@@ -1988,16 +1988,38 @@ namespace {
       AutoContact* localContact = (_south) ? _southWestContact : _northEastContact;
     //localContact->setHAlignate ( true );
 
+      bool doTurn = (_topology & GLOBAL_SPLIT) and (_routingPads.size() == 1);
       for ( unsigned int i = 0 ; i < _routingPads.size() ; i++ ) {
         AutoContact* rpContact = _GCell_rp_Access ( _gcell, _routingPads[i], true, false );
+        AutoContact* turn1
+          = (doTurn) ? AutoContact::create(_gcell,_net,Session::getContactLayer(1)) : localContact;
+
         segment = AutoSegment::create ( rpContact
-                                      , localContact
+                                      , turn1
                                       , Constant::Horizontal
                                       , AutoSegment::Local
                                       , true
                                       , false );
         setIsRoutingPadSmall ( _routingPads[i], hsmall, vsmall, punctual );
         if ( not vsmall ) segment->setStrap ( true );
+
+        if ( doTurn ) {
+          AutoContact* turn2 = AutoContact::create ( _gcell, _net, Session::getContactLayer(1) );
+          segment = AutoSegment::create ( turn1
+                                        , turn2
+                                        , Constant::Vertical
+                                        , AutoSegment::Local
+                                        , true
+                                        , false );
+          segment->setStrap ( true );
+          segment = AutoSegment::create ( turn2
+                                        , localContact
+                                        , Constant::Horizontal
+                                        , AutoSegment::Local
+                                        , true
+                                        , false );
+          segment->setStrap ( true );
+        }
       }
 
       if ( _topology & (GLOBAL_VERTICAL|GLOBAL_FORK) ) {

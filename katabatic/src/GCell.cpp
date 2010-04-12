@@ -34,6 +34,7 @@
 #include  "hurricane/Layer.h"
 #include  "hurricane/Horizontal.h"
 #include  "hurricane/Vertical.h"
+#include  "hurricane/RoutingPad.h"
 #include  "crlcore/RoutingGauge.h"
 #include  "katabatic/AutoContact.h"
 #include  "katabatic/AutoSegment.h"
@@ -301,6 +302,18 @@ namespace Katabatic {
   AutoSegments  GCell::getVStopSegments ()
   {
     return new AutoSegments_AnchorOnGCell (this,false,Constant::Vertical);
+  }
+
+
+  size_t  GCell::getRoutingPads ( set<RoutingPad*>& rps )
+  {
+    for ( size_t i=0 ; i<_contacts.size() ; ++i ) {
+      RoutingPad* rp = dynamic_cast<RoutingPad*>(_contacts[i]->getAnchor());
+      if ( rp ) {
+        rps.insert ( rp );
+      }
+    }
+    return rps.size();
   }
 
 
@@ -684,6 +697,42 @@ namespace Katabatic {
   }
 
 
+  void  GCell::rpDesaturate ( set<Net*>& globalNets )
+  {
+    set<RoutingPad*> rps;
+    getRoutingPads ( rps );
+
+    set<Net*> rpNets;
+    set<RoutingPad*>::iterator irp = rps.begin();
+    for ( ; irp != rps.end() ; ++irp ) {
+      if ( (*irp)->getLayer() != Session::getRoutingLayer(0) ) continue;
+      rpNets.insert ( (*irp)->getNet() );
+    }
+
+    if ( rpNets.size() < 8 ) return;
+
+    cerr << "[WARNING] " << this << " has " << rps.size() << " terminals h:"
+         << _hsegments.size() << endl;
+
+    irp = rps.begin();
+    for ( ; irp != rps.end() ; ++irp )
+      cerr << "  " << *irp << endl;
+
+    AutoSegment* segment;
+    while ( stepDesaturate ( 1, globalNets, segment, true ) ) {
+    //cerr << "Moved up: " << segment << endl;
+    }
+
+#if 0
+    set<RoutingPad*>::iterator ipad = rps.begin();
+    for ( ; ipad != rps.end() ; ++ipad ) {
+      forEach ( Segment*, isegment, (*ipad)->getSlaveComponents().getSubSet<Segment*>() ) {
+      }
+    }
+#endif
+  }
+
+
   bool  GCell::hasFreeTrack ( size_t depth ) const
   {
     if (_invalid) const_cast<GCell*>(this)->updateDensity();
@@ -732,7 +781,7 @@ namespace Katabatic {
   }
 
 
-  bool  GCell::stepDesaturate ( unsigned int depth, set<Net*>& globalNets, AutoSegment*& moved )
+  bool  GCell::stepDesaturate ( unsigned int depth, set<Net*>& globalNets, AutoSegment*& moved, bool force )
   {
 #if defined(CHECK_DETERMINISM)
     cerr << "Order: stepDesaturate [" << getIndex() << "] depth:" << depth << endl;
@@ -743,7 +792,7 @@ namespace Katabatic {
   //float density   = _densities[depth];
   //float densityUp = _densities[depth+2];
 
-    if ( !isSaturated(depth) ) return false;
+    if ( not force and not isSaturated(depth) ) return false;
 
     float capacity;
     vector<AutoSegment*>::iterator isegment;

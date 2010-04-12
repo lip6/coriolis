@@ -38,6 +38,7 @@
 #include  "hurricane/ExtensionGo.h"
 namespace Hurricane {
   class Name;
+  class RoutingPad;
 }
 
 #include  "crlcore/RoutingLayerGauge.h"
@@ -59,6 +60,7 @@ namespace Katabatic {
   using Hurricane::Box;
   using Hurricane::Interval;
   using Hurricane::ExtensionGo;
+  using Hurricane::RoutingPad;
 
   class GCellGrid;
   class AutoContact;
@@ -145,6 +147,7 @@ namespace Katabatic {
               AutoSegments          getVStopSegments    ();
       inline  AutoSegments          getStartSegments    ( unsigned int direction );
       inline  AutoSegments          getStopSegments     ( unsigned int direction );
+              size_t                getRoutingPads      ( set<RoutingPad*>& );
       inline  const Key&            getKey              () const;
               size_t                checkDensity        () const;
               bool                  checkEdgeSaturation ( float threshold ) const;
@@ -162,7 +165,8 @@ namespace Katabatic {
               size_t                updateDensity       ();
       inline  void                  updateKey           ( unsigned int depth );
               void                  desaturate          ( unsigned int depth, set<Net*>& );
-              bool                  stepDesaturate      ( unsigned int depth, set<Net*>&, AutoSegment*& moved );
+              bool                  stepDesaturate      ( unsigned int depth, set<Net*>&, AutoSegment*& moved, bool force=false );
+              void                  rpDesaturate        ( set<Net*>& );
       inline  void                  invalidate          ();
     // Inspector Management.                            
               Record*               _getRecord          () const;
