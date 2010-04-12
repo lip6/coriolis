@@ -236,7 +236,8 @@ int main ( int argc, char *argv[] )
     //DebugSession::addToTrace ( cell, "mips_r3000_1m_ct_not_kill_se" );
     //DebugSession::addToTrace ( cell, "mips_r3000_1m_ct_not_opcod_sd_2" );
     //DebugSession::addToTrace ( cell, "rsdnbr_sd(14)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_otheri_sd(20)" );
+    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_otheri_sd(31)" );
+    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_soper_se(31)" );
     //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_braadr_sd(3)" );
     //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_seqadr_sd(30)" );
     //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_data_rm(30)" );
@@ -250,6 +251,12 @@ int main ( int argc, char *argv[] )
     // eFPGA/04x04.
     //DebugSession::addToTrace ( cell, "group_2_4_nq_mem_45" );
     //DebugSession::addToTrace ( cell, "g_2_1_rig_7" );
+    // eFPGA/08x08.
+    //DebugSession::addToTrace ( cell, "group_1_7_lut_mux_q01" );
+    //DebugSession::addToTrace ( cell, "group_0_5_decoder_vertical_track_0_not_cmd(1)" );
+    // eFPGA/16x16.
+    //DebugSession::addToTrace ( cell, "group_15_6_clb_topside_in1_mux_q01" );
+    //DebugSession::addToTrace ( cell, "g_7_14_top_2" );
     }
 
     if ( not textMode ) {
@@ -276,7 +283,8 @@ int main ( int argc, char *argv[] )
       unicorn->setCell ( cell );
       unicorn->show    ();
 
-      returnCode = qa->exec();
+      returnCode = qa->exec ();
+      ToolEngine::destroyAll ();
     } else {
       if ( arguments.count("tool") and (arguments["tool"].as<string>() == "kite") ) {
       //cell->flattenNets ( not arguments.count("global") );
