@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -217,6 +217,7 @@ namespace Kite {
     KiteEngine* kite = KiteEngine::get ( getCell() );
     if ( kite ) {
       kite->finalizeLayout ();
+      kite->dumpMeasures ();
       kite->destroy ();
     }
     emit cellPostModificated ();

@@ -1365,7 +1365,7 @@ namespace {
 
   bool  State::slackenTopology ( TrackElement* segment, unsigned int flags )
   {
-    DebugSession::open ( segment->getNet() );
+    DebugSession::open ( segment->getNet(), 200 );
 
     bool           success   = false;
     bool           blocked   = false;
@@ -1650,7 +1650,7 @@ namespace {
     if ( !_segment )
       throw Error("Manipulator::Manipulator(): cannot build upon a NULL TrackElement.");
 
-    DebugSession::open ( _segment->getNet() );
+    DebugSession::open ( _segment->getNet(), 200 );
 
     _data = _segment->getDataNegociate();
     if ( _data )
@@ -2464,7 +2464,7 @@ namespace {
       _segment->setAxis ( _S.getCost(itrack).getTrack()->getAxis() );
     }
 
-    return true;
+    return success;
   }
 
 
@@ -3458,6 +3458,7 @@ namespace Kite {
           for ( itrack=0 ; itrack<S.getCosts().size() ; itrack++ ) {
             if ( S.getCost(itrack).isInfinite() ) break;
             if ( S.insertInTrack(itrack) ) break;
+            resetInsertState ();
           }
 
         //if ( S.getCosts().size() and not S.getCost(itrack).isInfinite() )

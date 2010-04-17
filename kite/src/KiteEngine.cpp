@@ -24,6 +24,7 @@
 
 
 #include  <sstream>
+#include  <fstream>
 #include  <iomanip>
 
 #include  "hurricane/Bug.h"
@@ -39,6 +40,7 @@
 #include  "hurricane/Horizontal.h"
 #include  "hurricane/UpdateSession.h"
 
+#include  "crlcore/Measures.h"
 #include  "knik/KnikEngine.h"
 #include  "katabatic/AutoContact.h"
 #include  "kite/DataNegociate.h"
@@ -58,6 +60,7 @@ namespace Kite {
   using std::endl;
   using std::setw;
   using std::left;
+  using std::ofstream;
   using std::ostringstream;
   using std::setprecision;
   using Hurricane::tab;
@@ -70,6 +73,9 @@ namespace Kite {
   using Hurricane::Warning;
   using Hurricane::Layer;
   using Hurricane::Cell;
+  using CRL::addMeasure;
+  using CRL::Measures;
+  using CRL::MeasuresSet;
   using Knik::KnikEngine;
 
 
@@ -405,7 +411,7 @@ namespace Kite {
   //if ( _editor ) _editor->refresh ();
 
     stopMeasures ();
-    printMeasures ();
+    printMeasures ( "algo" );
     printCompletion ();
 
     Session::open ( this );
@@ -474,6 +480,41 @@ namespace Kite {
     }
 
     _toolSuccess = (unrouteds == 0);
+
+    addMeasure<size_t> ( getCell(), "Segs", routeds+unrouteds );
+  }
+
+
+  void  KiteEngine::dumpMeasures ( ostream& out ) const
+  {
+    vector<Name> measuresLabels;
+    measuresLabels.push_back ( "Gates" );
+    measuresLabels.push_back ( "GCells" );
+    measuresLabels.push_back ( "loadT" );
+    measuresLabels.push_back ( "loadS" );
+    measuresLabels.push_back ( "assignT" );
+    measuresLabels.push_back ( "algoT" );
+    measuresLabels.push_back ( "algoS" );
+    measuresLabels.push_back ( "finT" );
+    measuresLabels.push_back ( "Segs" );
+
+    const MeasuresSet* measures = Measures::get(getCell());
+
+    out << "#" << endl;
+    out << "# " << getCell()->getName() << endl;
+    out << measures->toStringHeaders(measuresLabels) << endl;
+    out << measures->toStringDatas  (measuresLabels) << endl;
+  }
+
+
+  void  KiteEngine::dumpMeasures () const
+  {
+    ostringstream path;
+    path << getCell()->getName() << ".knik-kite.dat";
+
+    ofstream sfile ( path.str().c_str() );
+    dumpMeasures ( sfile );
+    sfile.close ();
   }
 
 

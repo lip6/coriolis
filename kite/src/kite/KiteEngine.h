@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -25,6 +25,8 @@
 
 #ifndef  __KITE_KITE_ENGINE__
 #define  __KITE_KITE_ENGINE__
+
+#include  <iostream>
 
 #include  "hurricane/Name.h"
 namespace Hurricane {
@@ -99,6 +101,8 @@ namespace Kite {
               RoutingPlane*    getRoutingPlaneByLayer     ( const Layer* ) const;
               Track*           getTrackByPosition         ( const Layer*, DbU::Unit axis, unsigned int mode=Constant::Nearest ) const;
               void             printCompletion            () const;
+              void             dumpMeasures               ( std::ostream& ) const;
+              void             dumpMeasures               () const;
       inline  void             setPostEventCb             ( Configuration::PostEventCb_t );
       inline  void             setMinimumWL               ( double );
       inline  void             setRipupLimit              ( unsigned int, unsigned int type );

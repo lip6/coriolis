@@ -652,8 +652,11 @@ namespace Kite {
       for ( size_t i=0 ; i<segments.size() ; i++ ) {
         ltrace(200) << "moved: " << segments[i] << endl;
       }
+    }
 
-      if ( _data ) _data->setState ( DataNegociate::ConflictSolve1, true );
+    if ( _data ) {
+      _data->setState ( DataNegociate::ConflictSolve1, true );
+      _data->resetRipupCount ();
     }
       
     ltraceout(200);

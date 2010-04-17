@@ -54,7 +54,7 @@ namespace {
     size_t depth = Session::getConfiguration()->getLayerDepth ( rp->getLayer() );
     if ( depth > 2 ) return NULL;
 
-    DebugSession::open ( rp->getNet() );
+    DebugSession::open ( rp->getNet(), 200 );
 
   //if ( (depth != 0) and (depth != 2) ) return NULL;
 
