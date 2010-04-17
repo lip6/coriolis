@@ -34,6 +34,7 @@
                                                crlcore/LefDefExtension.h
                                                crlcore/Ioc.h
                                                crlcore/NetExtension.h
+                                               crlcore/Measures.h
                                                crlcore/RoutingGauge.h
                                                crlcore/RoutingLayerGauge.h
                                                crlcore/CellGauge.h
@@ -92,7 +93,9 @@
                                                toolbox/RoutingPads.cpp
                            )
                        set ( vst_driver_cpps   alliance/vst/VstDriver.cpp )
-                       set ( properties_cpps   properties/NetExtension.cpp )
+                       set ( properties_cpps   properties/NetExtension.cpp
+                                               properties/Measures.cpp
+                           )
 #                      set ( liberty_cpps      liberty/CellPath.cpp
 #                                              liberty/LuTableTemplate.cpp
 #                                              liberty/LibertyTechnology.cpp
