@@ -117,7 +117,9 @@ namespace Hurricane {
                           , Reverse=0x04
                           , Frame  =0x08
                           , Center =0x10
-                          , Top    =0x20
+                          , Left   =0x20
+                          , Right  =0x40
+                          , Top    =0x80
                           };
     public:
     // Constructor & Destructor.
@@ -187,6 +189,7 @@ namespace Hurricane {
               void                    drawRulers                 ( QRect );
               void                    drawDisplayText            ( const QRect& , const char*, unsigned int flags=0 );
               void                    drawDisplayText            ( const QPoint&, const char*, unsigned int flags=0, int angle=0 );
+              void                    drawScreenPolygon          ( const QPoint*, int count,     size_t plane=PlaneId::Working );
               void                    drawScreenLine             ( const QPoint&, const QPoint&, size_t plane=PlaneId::Working, bool mode=true );
               void                    drawScreenRect             ( const QPoint&, const QPoint&, size_t plane=PlaneId::Working );
               void                    drawScreenRect             ( const QRect& ,                size_t plane=PlaneId::Working );

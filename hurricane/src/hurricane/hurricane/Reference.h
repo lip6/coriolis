@@ -38,21 +38,23 @@ class Reference : public Marker {
 // *****
 
     public: typedef Marker Inherit;
+    public: enum Type { Label=1, Position=2 };
 
 // Attributes
 // **********
 
-    public: Name _name;
-    public: Point _point;
-    public: static DbU::Unit _extend;
+    private: Name _name;
+    private: Point _point;
+    private: Type  _type;
+    private: static DbU::Unit _extend;
 
 // Constructors
 // ************
 
-    protected: Reference(Cell* cell, const Name& name, DbU::Unit x, DbU::Unit y);
+    protected: Reference(Cell* cell, const Name& name, DbU::Unit x, DbU::Unit y, Type type);
 
-    public: static Reference* create(Cell* cell, const Name& name, DbU::Unit x, DbU::Unit y );
-    public: static Reference* create(Cell* cell, const Name& name, const Point& point );
+    public: static Reference* create(Cell* cell, const Name& name, DbU::Unit x, DbU::Unit y, Type type=Position );
+    public: static Reference* create(Cell* cell, const Name& name, const Point& point, Type type=Position );
 
 // Accessors
 // *********
@@ -60,11 +62,13 @@ class Reference : public Marker {
     public: virtual Box getBoundingBox() const;
     public: const Name& getName() const {return _name;};
     public: const Point& getPoint() const {return _point;};
+    public: Type getType() const { return _type; }
 
 // Updators
 // ********
 
     public: virtual void translate(const DbU::Unit& dx, const DbU::Unit& dy);
+    public: void setType ( Type type ) { _type=type; }
 
 // Others
 // ******

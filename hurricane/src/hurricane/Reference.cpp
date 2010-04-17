@@ -37,11 +37,12 @@ namespace Hurricane {
   DbU::Unit Reference::_extend = 0;
 
 
-Reference::Reference(Cell* cell, const Name& name, DbU::Unit x, DbU::Unit y)
-// ***************************************************************
+Reference::Reference(Cell* cell, const Name& name, DbU::Unit x, DbU::Unit y, Type type)
+// ************************************************************************************
 :  Inherit(cell),
   _name(name),
-  _point(x,y)
+  _point(x,y),
+  _type(type)
 {
   if ( !_extend ) _extend = DbU::grid(0.5);
 
@@ -49,20 +50,20 @@ Reference::Reference(Cell* cell, const Name& name, DbU::Unit x, DbU::Unit y)
     throw Error("Can't create " + _TName("Reference") + " : empty name");
 }
 
-Reference* Reference::create(Cell* cell, const Name& name, DbU::Unit x, DbU::Unit y)
-// ***********************************************************************
+Reference* Reference::create(Cell* cell, const Name& name, DbU::Unit x, DbU::Unit y, Type type )
+// *********************************************************************************************
 {
-  Reference* reference = new Reference(cell, name, x, y);
+  Reference* reference = new Reference(cell, name, x, y, type);
 
   reference->_postCreate();
 
   return reference;
 }
 
-Reference* Reference::create(Cell* cell, const Name& name, const Point& point)
-// ***************************************************************************
+Reference* Reference::create(Cell* cell, const Name& name, const Point& point, Type type)
+// **************************************************************************************
 {
-  return create(cell,name,point.getX(),point.getY());
+  return create(cell,name,point.getX(),point.getY(),type);
 }
 
 Box  Reference::getBoundingBox() const

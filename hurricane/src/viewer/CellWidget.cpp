@@ -860,14 +860,34 @@ namespace Hurricane {
     static QRect  rectangle;
 
     const Reference* reference = dynamic_cast<const Reference*>(marker);
-    if ( reference ) {
+    if ( reference and _cellWidget->isDrawable("text.reference") and (getDepth() < 2) ) {
       _goCount++;
-      Box bb = transformation.getBox(reference->getBoundingBox()).inflate(DbU::lambda(5.0));
-      rectangle = _cellWidget->dbuToDisplayRect ( bb );
+      unsigned int flags = BigFont|Bold|Frame;
 
-      if ( _cellWidget->isDrawable("text.reference") and (getDepth() < 2) ) {
-        const char* refName = reference->getName()._getSharedName()->_getSString().c_str();
-        _cellWidget->drawDisplayText ( rectangle, refName, BigFont|Bold|Center|Frame );
+      Box bb = transformation.getBox ( reference->getBoundingBox() );
+      rectangle = _cellWidget->dbuToDisplayRect ( bb );
+      rectangle.adjust ( 10, 10, 10, 10 );
+
+      if ( reference->getType() == Reference::Position ) {
+        QPoint point = _cellWidget->dbuToDisplayPoint ( reference->getPoint() );
+        rectangle.translate ( point.x() - rectangle.x(), point.y() - rectangle.y() );
+
+        flags |= Left;
+      } else {
+        flags |= Center;
+      }
+
+      const char* refName = reference->getName()._getSharedName()->_getSString().c_str();
+      _cellWidget->drawDisplayText ( rectangle, refName, flags );
+
+      if ( reference->getType() == Reference::Position ) {
+        QPoint losange [5] = { QPoint(rectangle.x()  ,rectangle.y()-6)
+                             , QPoint(rectangle.x()-6,rectangle.y()  )
+                             , QPoint(rectangle.x()  ,rectangle.y()+6)
+                             , QPoint(rectangle.x()+6,rectangle.y()  )
+                             , QPoint(rectangle.x()  ,rectangle.y()-6)
+                             };
+        _cellWidget->drawScreenPolyline ( losange, 5, 2 );
       }
     }
   }
@@ -1731,6 +1751,7 @@ namespace Hurricane {
       bottomLeft.ry() += height/2;
     } else if ( flags & Top ) {
       bottomLeft.ry() += height;
+    } else if ( flags & Left ) {
     }
 
     if ( flags & Frame ) painter.drawRect ( bottomLeft.x()-1, bottomLeft.y()-height, width+2, height );
@@ -1764,13 +1785,23 @@ namespace Hurricane {
   }
 
 
+  void  CellWidget::drawScreenPolygon ( const QPoint* points, int count, size_t plane )
+  {
+    _drawingPlanes.painter(plane).drawPolygon ( points, count );
+  }
+
+
   void  CellWidget::drawScreenPolyline ( const QPoint* points, int count, int width, size_t plane )
   {
+    _drawingPlanes.painter(plane).save ();
+
     QPen pen = _drawingPlanes.painter(plane).pen ();
     pen.setWidth ( width );
 
     _drawingPlanes.painter(plane).setPen ( pen );
     _drawingPlanes.painter(plane).drawPolyline ( points, count );
+
+    _drawingPlanes.painter(plane).restore ();
   }
 
 
