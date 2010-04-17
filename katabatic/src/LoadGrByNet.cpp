@@ -2315,7 +2315,7 @@ namespace Katabatic {
     Session::close ();
 
     stopMeasures ();
-    printMeasures ();
+    printMeasures ( "load" );
   }
 
 

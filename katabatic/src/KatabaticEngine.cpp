@@ -38,6 +38,7 @@
 #include  "hurricane/Cell.h"
 
 #include  "crlcore/Utilities.h"
+#include  "crlcore/Measures.h"
 #include  "crlcore/AllianceFramework.h"
 
 #include  "katabatic/Session.h"
@@ -169,6 +170,9 @@ namespace Katabatic {
   using  Hurricane::BasicLayer;
   using  Hurricane::NetExternalComponents;
   using  CRL::AllianceFramework;
+  using  CRL::Measures;
+  using  CRL::addMeasure;
+  using  CRL::getMeasure;
 
 
 // -------------------------------------------------------------------
@@ -225,7 +229,9 @@ namespace Katabatic {
     , _configuration     (gauge)
     , _gcellGrid         (NULL)
     , _routingNets       ()
-  { }
+  {
+    addMeasure<size_t> ( cell, "Gates", cell->getInstances().getSize() );
+  }
 
 
   void  KatabaticEngine::_postCreate ()
@@ -238,6 +244,8 @@ namespace Katabatic {
   {
     _gcellGrid = GCellGrid::create ( this );
     Session::revalidate ();
+
+    addMeasure<size_t> ( getCell(), "GCells", _gcellGrid->getGCellVector()->size() );
   }
 
 
@@ -407,13 +415,18 @@ namespace Katabatic {
   }
 
 
-  void  KatabaticEngine::printMeasures () const
+  void  KatabaticEngine::printMeasures ( const string& tag ) const
   {
     cmess1 << "     - Done in " << Timer::getStringTime(_timer.getCombTime()) 
            << " [+" << Timer::getStringMemory(_timer.getIncrease()) << "]." << endl;
     cmess1 << "       (raw measurements : " << _timer.getCombTime()
            << "s [+" << (_timer.getIncrease()>>10) <<  "Ko/"
            << (_timer.getMemorySize()>>10) << "Ko])" << endl;
+
+    if ( not tag.empty() ) {
+      addMeasure<double> ( getCell(), tag+"T",  _timer.getCombTime  () );
+      addMeasure<size_t> ( getCell(), tag+"S", (_timer.getMemorySize() >> 20) );
+    }
   }
 
 
@@ -542,7 +555,7 @@ namespace Katabatic {
     startMeasures ();
     _gutKatabatic ();
     stopMeasures  ();
-    printMeasures ();
+    printMeasures ( "fin" );
 
     _state = StateGutted;
   }

@@ -267,7 +267,7 @@ namespace Katabatic {
   inline float         GCell::Key::getDensity () const { return _density; }
   inline unsigned int  GCell::Key::getIndex   () const { return _index; }
   inline void          GCell::Key::update     ( GCell* gcell, unsigned int depth )
-                       { _density=gcell->getDensity(depth); _index=gcell->getIndex(); }
+                       { _density=gcell->getDensity((size_t)depth); _index=gcell->getIndex(); }
 
   inline bool  operator< ( const GCell::Key& lhs, const GCell::Key& rhs )
   {

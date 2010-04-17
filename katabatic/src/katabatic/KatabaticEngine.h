@@ -138,7 +138,7 @@ namespace Katabatic {
       inline  void                 setSaturateRatio          ( float );
               void                 startMeasures             ();
               void                 stopMeasures              ();
-              void                 printMeasures             () const;
+              void                 printMeasures             ( const string& ) const;
               void                 refresh                   ( bool openSession=true );
               void                 makePowerRails            ();
       virtual void                 createDetailedGrid        ();

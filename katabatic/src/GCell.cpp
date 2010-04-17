@@ -711,25 +711,13 @@ namespace Katabatic {
 
     if ( rpNets.size() < 8 ) return;
 
-    cerr << "[WARNING] " << this << " has " << rps.size() << " terminals h:"
-         << _hsegments.size() << endl;
-
-    irp = rps.begin();
-    for ( ; irp != rps.end() ; ++irp )
-      cerr << "  " << *irp << endl;
+    cerr << "[WARNING] " << this << " has " << rps.size() << " terminals (h:"
+         << _hsegments.size() << ")" << endl;
 
     AutoSegment* segment;
     while ( stepDesaturate ( 1, globalNets, segment, true ) ) {
-    //cerr << "Moved up: " << segment << endl;
+      ltrace(200) << "Moved up: " << segment << endl;
     }
-
-#if 0
-    set<RoutingPad*>::iterator ipad = rps.begin();
-    for ( ; ipad != rps.end() ; ++ipad ) {
-      forEach ( Segment*, isegment, (*ipad)->getSlaveComponents().getSubSet<Segment*>() ) {
-      }
-    }
-#endif
   }
 
 

@@ -314,7 +314,7 @@ namespace Katabatic {
     Session::close ();
 
     stopMeasures ();
-    printMeasures ();
+    printMeasures ( "assign" );
 
     cmess2 << "     - Total segments  : " << total  << endl;
     cmess2 << "     - Global segments : " << global << endl;
