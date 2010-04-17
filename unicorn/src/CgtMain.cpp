@@ -302,6 +302,7 @@ int main ( int argc, char *argv[] )
         kite->runNegociate          ();
         kiteSuccess = kite->getToolSuccess ();
         kite->finalizeLayout        ();
+        kite->dumpMeasures          ();
         kite->destroy               ();
 
         if ( saveDesign ) {
