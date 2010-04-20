@@ -53,6 +53,7 @@ class ProjectBuilder:
         self._projects         = []
         self._standalones      = []
         self._svnTag           = "x"
+        self._svnMethod        = "svn+ssh://coriolis.lip6.fr"
         self._rootDir          = os.path.join ( os.environ["HOME"], "coriolis-2.x" )
         self._quiet            = False
         self._buildMode        = "Release"
@@ -78,6 +79,7 @@ class ProjectBuilder:
             return
         
         if   attribute == "svnTag":           self._svnTag           = value
+        elif attribute == "svnMethod":        self._svnMethod        = value
         elif attribute == "rootDir":          self._rootDir          = os.path.expanduser(value)
         elif attribute == "quiet":            self._quiet            = value
         elif attribute == "buildMode":        self._buildMode        = value
@@ -228,7 +230,7 @@ class ProjectBuilder:
             print "[ERROR] Project \"%s\" isn't associated to a repository." % project.getName()
             return
         
-        toolSvnTrunkDir = os.path.join ( project.getRepository(), tool, "trunk" )
+        toolSvnTrunkDir = os.path.join ( self._svnMethod+project.getRepository(), tool, "trunk" )
         os.chdir ( self._sourceDir )
 
         print "Doing a SVN checkout of tool: ", tool
@@ -328,8 +330,8 @@ class ProjectBuilder:
 
 if __name__ == "__main__":
 
-    io       = Project ( name     = "io"
-                       , tools    =[ "io" ]
+    io       = Project ( name      = "io"
+                       , tools     =[ "io" ]
                        , repository="svn+ssh://coriolis.soc.lip6.fr/users/outil/coriolis/svn"
                        )
 
@@ -371,6 +373,7 @@ if __name__ == "__main__":
     parser.add_option (       "--no-build"   , action="store_true",                dest="noBuild"  )
     parser.add_option (       "--no-cache"   , action="store_true",                dest="noCache"  )
     parser.add_option (       "--svn-tag"    , action="store"     , type="string", dest="svnTag"   )
+    parser.add_option (       "--svn-method" , action="store"     , type="string", dest="svnMethod")
     parser.add_option (       "--make"       , action="store"     , type="string", dest="makeArguments")
     parser.add_option (       "--project"    , action="append"    , type="string", dest="projects" )
     parser.add_option ( "-t", "--tool"       , action="append"    , type="string", dest="tools"    )
@@ -397,6 +400,7 @@ if __name__ == "__main__":
     if options.noBuild:          builder.doBuild           = False
     if options.noCache:          builder.noCache           = True
     if options.makeArguments:    builder.makeArguments     = options.makeArguments
+    if options.svnMethod:        builder.svnMethod         = options.svnMethod
     if options.svnTag:           builder.svnTag            = options.svnTag
 
     if   options.svnStatus:   builder.svnStatus   ( tools=options.tools, projects=options.projects )
