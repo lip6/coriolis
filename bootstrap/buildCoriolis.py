@@ -134,6 +134,8 @@ class ProjectBuilder:
 
 
     def _execute ( self, command, error ):
+        sys.stdout.flush ()
+        sys.stderr.flush ()
         child = subprocess.Popen ( command, env=self._environment, stdout=None )
         (pid,status) = os.waitpid ( child.pid, 0 )
         status >>= 8
@@ -179,6 +181,7 @@ class ProjectBuilder:
 
         if self._doBuild:
             print "Make arguments:", self._makeArguments
+            sys.stdout.flush ()
             command  = ["make", "DESTDIR=%s" % self._installDir]
             command += self._makeArguments
             self._execute ( command, "Build failed" )
