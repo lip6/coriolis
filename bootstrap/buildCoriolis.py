@@ -332,7 +332,7 @@ if __name__ == "__main__":
 
     io       = Project ( name      = "io"
                        , tools     =[ "io" ]
-                       , repository="svn+ssh://coriolis.soc.lip6.fr/users/outil/coriolis/svn"
+                       , repository="/users/outil/coriolis/svn"
                        )
 
     coriolis = Project ( name     = "coriolis"
@@ -346,7 +346,7 @@ if __name__ == "__main__":
                                    , "unicorn"
                                    , "ispd"
                                    ]
-                       , repository="svn+ssh://coriolis.soc.lip6.fr/users/outil/coriolis/svn"
+                       , repository="/users/outil/coriolis/svn"
                        )
     chams    = Project ( name     = "chams"
                        , tools    =[ "hurricaneAMS"
@@ -356,7 +356,7 @@ if __name__ == "__main__":
                                    , "pharos"
                                    , "schematic"
                                    ]
-                       , repository="svn+ssh://coriolis.soc.lip6.fr/users/outil/chams/svn"
+                       , repository="/users/outil/chams/svn"
                        )
 
     parser = optparse.OptionParser ()  
