@@ -54,6 +54,7 @@ namespace Kite {
       inline  Katabatic::GCellGrid* base                ();
       inline  KiteEngine*           getKite             ();
               Cell*                 getCell             () const;
+      inline  Interval              getUSide            ( unsigned int ) const;
       inline  bool                  checkEdgeSaturation ( float threshold ) const;
               void                  updateContacts      ( bool openSession=true );
               void                  updateDensity       ();
@@ -81,6 +82,9 @@ namespace Kite {
 // Inline Functions.
   inline  Katabatic::GCellGrid* GCellGrid::base                () { return _kite->base()->getGCellGrid(); }
   inline  KiteEngine*           GCellGrid::getKite             () { return _kite; };
+
+  inline  Interval  GCellGrid::getUSide ( unsigned int dir ) const
+  { return const_cast<GCellGrid*>(this)->base()->getUSide(dir); }
 
   inline  bool  GCellGrid::checkEdgeSaturation ( float threshold ) const
   { return const_cast<GCellGrid*>(this)->base()->checkEdgeSaturation(threshold); }

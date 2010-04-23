@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -16,7 +16,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./Configuartion.cpp"                      |
+// |  C++ Module  :       "./Configuration.cpp"                      |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
@@ -62,15 +62,16 @@ namespace Kite {
     , _base               (base)
     , _postEventCb        ()
     , _edgeCapacityPercent(_defaultEdgeCapacity)
-    , _expandStep         (0.30)
+    , _expandStep         (0.40)
     , _ripupLimits        ()
     , _ripupCost          (3)
+    , _eventsLimit        (4000000)
   {
     _ripupLimits[BorderRipupLimit]     = 26;
     _ripupLimits[StrapRipupLimit]      = 16;
     _ripupLimits[LocalRipupLimit]      =  7;
-    _ripupLimits[GlobalRipupLimit]     =  7;
-    _ripupLimits[LongGlobalRipupLimit] =  7;
+    _ripupLimits[GlobalRipupLimit]     =  5;
+    _ripupLimits[LongGlobalRipupLimit] =  5;
   }
 
 

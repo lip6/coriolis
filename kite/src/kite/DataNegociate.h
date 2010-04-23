@@ -105,6 +105,7 @@ namespace Kite {
       inline void              incRipupCount     ();
       inline void              decRipupCount     ();
       inline void              resetRipupCount   ();
+      inline void              resetStateCount   ();
       inline void              invalidate        ( bool withPerpandiculars=false, bool withConstraints=false );
              void              update            ();
       static string            getStateString    ( DataNegociate* );
@@ -156,6 +157,7 @@ namespace Kite {
   inline void              DataNegociate::incRipupCount     () { _cost.incRipupCount(); }
   inline void              DataNegociate::decRipupCount     () { _cost.decRipupCount(); }
   inline void              DataNegociate::resetRipupCount   () { _cost.resetRipupCount(); }
+  inline void              DataNegociate::resetStateCount   () { _stateCount=0; }
   inline string            DataNegociate::_getTypeName      () const { return "DataNegociate"; }
 
   inline void  DataNegociate::invalidate ( bool withPerpandiculars, bool withConstraints )

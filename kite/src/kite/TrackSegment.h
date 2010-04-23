@@ -78,8 +78,8 @@ namespace Kite {
       virtual bool                  canDesalignate             () const;
       virtual bool                  canGoOutsideGCell          () const;
       virtual bool                  canSlacken                 () const;
-      virtual bool                  canPivotUp                 () const;
-      virtual bool                  canMoveUp                  () const;
+      virtual bool                  canPivotUp                 ( float reserve ) const;
+      virtual bool                  canMoveUp                  ( float reserve ) const;
       virtual bool                  canRipple                  () const;
       virtual bool                  hasSourceDogLeg            () const;
       virtual bool                  hasTargetDogLeg            () const;

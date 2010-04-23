@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -800,13 +800,14 @@ namespace {
     public:
       enum { ToRipupLimit=1, AllowExpand  =2, NoExpand=4, PerpandicularsFirst=8, ToMoveUp=16 };
       enum { LeftAxisHint=1, RightAxisHint=2 };
+      enum { NoRingLimit=1 };
     public:
                                   Manipulator             ( TrackElement*, State& );
                                  ~Manipulator             ();
       inline TrackElement*        getSegment              () const;
       inline DataNegociate*       getData                 () const;
       inline RoutingEvent*        getEvent                () const;
-             bool                 canRipup                () const;
+             bool                 canRipup                ( unsigned int flags=0 ) const;
              bool                 isCaged                 ( DbU::Unit ) const;
              bool                 ripup                   ( Interval     overlap
                                                           , unsigned int type
@@ -1131,7 +1132,7 @@ namespace {
     Interval              constraints;
     vector<Cs1Candidate>  candidates;
     TrackElement*         segment    = _event->getSegment();
-    bool                  canMoveUp  = (segment->isLocal()) ? segment->canPivotUp() : segment->canMoveUp();
+    bool                  canMoveUp  = (segment->isLocal()) ? segment->canPivotUp(1.0) : segment->canMoveUp(1.0);
     unsigned int          relaxFlags
       = (_data and (_data->getStateCount() < 2)) ? Manipulator::AllowExpand : Manipulator::NoExpand;
 
@@ -1193,7 +1194,7 @@ namespace {
 
         if (    other->isGlobal()
            and (other->getDataNegociate()->getGCellOrder() == Session::getOrder())
-           and  other->canMoveUp() ) {
+           and  other->canMoveUp(1.0) ) {
           ltrace(200) << "conflictSolve1() - One conflict, other move up" << endl;
           if ( (success = other->moveUp()) ) break;
         }
@@ -1367,11 +1368,12 @@ namespace {
   {
     DebugSession::open ( segment->getNet(), 200 );
 
-    bool           success   = false;
-    bool           blocked   = false;
-    bool           repush    = true;
-    DataNegociate* data      = segment->getDataNegociate ();
-    unsigned int   nextState = 0;
+    bool           success     = false;
+    bool           blocked     = false;
+    bool           repush      = true;
+    DataNegociate* data        = segment->getDataNegociate ();
+    unsigned int   nextState   = data->getState();
+    unsigned int   actionFlags = SegmentAction::SelfInsert|SegmentAction::EventLevel5;
 
     ltrace(200) << "Slacken Topology for " << segment->getNet()
                 << " " << segment << endl;
@@ -1383,7 +1385,7 @@ namespace {
     if ( not (data->isBorder() or data->isRing()) ) {
       data->resetRipupCount ();
     } else {
-      if ( not Manipulator(segment,*this).canRipup() ) {
+      if ( not Manipulator(segment,*this).canRipup(Manipulator::NoRingLimit) ) {
         cerr << "[UNSOLVED] " << segment << " slacken topology not allowed for border/ring." << endl;
         ltraceout(200);
         DebugSession::close ();
@@ -1394,7 +1396,7 @@ namespace {
   // Ring cases.
     if ( data->isBorder() ) {
       ltrace(200) << "Segment is Ripup only (border), bypass to Unimplemented." << endl;
-      if ( not Manipulator(segment,*this).canRipup () ) {
+      if ( not Manipulator(segment,*this).canRipup (Manipulator::NoRingLimit) ) {
         ltrace(200) << "Cannot ripup, bypass to Unimplemented." << endl;
         data->setState ( DataNegociate::Unimplemented );
       } else {
@@ -1421,6 +1423,7 @@ namespace {
   // Normal cases.
     if ( not blocked and not success ) {
       if ( segment->isStrap() ) {
+        ltrace(200) << "Strap segment FSM." << endl;
         switch ( data->getState() ) {
           case DataNegociate::RipupPerpandiculars:
             nextState = DataNegociate::Desalignate;
@@ -1452,13 +1455,11 @@ namespace {
         }
 
         if ( not success and (nextState != DataNegociate::Unimplemented) ) {
-        // if ( segment->canRipple() )
-        //   success = Manipulator(segment,*this).ripple();
-        // else
           success = Manipulator(segment,*this).ripupPerpandiculars(Manipulator::ToRipupLimit);
         }
       } else if ( segment->isLocal() ) {
       // Local TrackElement State Machine.
+        ltrace(200) << "Local segment FSM." << endl;
         switch ( data->getState() ) {
           case DataNegociate::RipupPerpandiculars:
             nextState = DataNegociate::Desalignate;
@@ -1502,7 +1503,7 @@ namespace {
             }
           case DataNegociate::MaximumSlack:
             if ( segment->isSlackenStrap() ) { 
-              if ( nextState < DataNegociate::MaximumSlack ) {
+              if ( (nextState < DataNegociate::MaximumSlack) or (data->getStateCount() < 2) ) {
                 nextState = DataNegociate::MaximumSlack;
                 success = conflictSolve1 ();
                 if ( success ) break;
@@ -1514,10 +1515,8 @@ namespace {
         }
 
         if ( not success and (nextState != DataNegociate::Unimplemented) ) {
-        // if ( segment->canRipple() )
-        //   success = Manipulator(segment,*this).ripple();
-        // else
-          success = Manipulator(segment,*this).ripupPerpandiculars(Manipulator::ToRipupLimit);
+          if ( data->getStateCount() < 6 )
+            success = Manipulator(segment,*this).ripupPerpandiculars(Manipulator::ToRipupLimit);
         }
 
       // Special case: all tracks are overlaping a blockage.
@@ -1560,6 +1559,7 @@ namespace {
       } else {
       // Global TrackElement State Machine.
         switch ( data->getState() ) {
+          ltrace(200) << "Global segment FSM." << endl;
           case DataNegociate::RipupPerpandiculars:
             ltrace(200) << "Global, State: RipupPerpandiculars." << endl;
             nextState = DataNegociate::Desalignate;
@@ -1603,7 +1603,8 @@ namespace {
         }
 
         if ( not success and (nextState != DataNegociate::Unimplemented) ) {
-          success = Manipulator(segment,*this).ripupPerpandiculars(Manipulator::ToRipupLimit);
+          if ( data->getStateCount() < 6 )
+            success = Manipulator(segment,*this).ripupPerpandiculars(Manipulator::ToRipupLimit);
         }
       }
     }
@@ -1612,11 +1613,10 @@ namespace {
 
     if ( success ) {
       if ( repush ) {
-        unsigned int flags = SegmentAction::SelfInsert|SegmentAction::EventLevel5;
         if ( not (data->isRing() or data->isBorder()) )
-          flags |= SegmentAction::ResetRipup;
+          actionFlags |= SegmentAction::ResetRipup;
       
-        addAction ( segment, flags );
+        addAction ( segment, actionFlags );
       }
     } else {
       clearActions ();
@@ -1664,11 +1664,19 @@ namespace {
   }
 
 
-  bool  Manipulator::canRipup () const
+  bool  Manipulator::canRipup ( unsigned int flags ) const
   {
     if ( _data ) {
+      if ( not _event or _event->isUnimplemented() ) return false;
+
       unsigned int limit = Session::getKiteEngine()->getRipupLimit(_segment);
-      return (_data->getRipupCount() < limit) and _event and not _event->isUnimplemented();
+
+      if (   not ( flags & NoRingLimit )
+         and (_data->isRing() or _data->isBorder())
+         and not (_data->getRipupCount() < limit) )
+        return false;
+
+      return (_data->getRipupCount() < limit);
     }
 
     return false;
@@ -1713,8 +1721,10 @@ namespace {
     ltrace(200) << "TrackElement:" << _data->getGCellOrder()
                 << " < Session:" << Session::getOrder() << endl;
 
+    if ( not canRipup() ) return false;
+
     if ( _segment->isFixed() ) return false;
-    if ( !_data ) return true;
+    if ( _data == NULL ) return true;
 
     if ( _segment->getTrack() ) {
       if ( _data->getGCellOrder() < Session::getOrder() ) {
@@ -1764,6 +1774,8 @@ namespace {
       }
 
       placedPerpandiculars++;
+
+    // Try to ripup the perpandicular itself.
       DataNegociate* data2 = perpandiculars[i]->getDataNegociate();
       if ( data2->getGCellOrder() == Session::getOrder() ) {
         ltrace(200) << "| " << perpandiculars[i] << endl;
@@ -1771,11 +1783,13 @@ namespace {
         if (   (flags & Manipulator::ToMoveUp)
            and (data2->getState() < DataNegociate::MoveUp) )
           data2->setState ( DataNegociate::MoveUp );
-
-        Manipulator(perpandiculars[i],_S).ripup ( _event->getSegment()->getAxis(), perpandicularActionFlags );
-        continue;
+        
+        if ( Manipulator(perpandiculars[i],_S).ripup(_event->getSegment()->getAxis()
+                                                    ,perpandicularActionFlags) )
+          continue;
       }
 
+    // Cannot ripup the perpandicular, try to ripup it's neigbors.
       size_t begin;
       size_t end;
       track->getOverlapBounds ( constraints, begin, end );
@@ -1796,8 +1810,14 @@ namespace {
           continue;
         }
 
-        ltrace(200) << "  | Ripup: " << begin << " " << other << endl;
-        _S.addAction ( other, SegmentAction::OtherRipup );
+      // Try to ripup conflicting neighbor.
+        if ( Manipulator(other,_S).canRipup() ) {
+          ltrace(200) << "  | Ripup: " << begin << " " << other << endl;
+          _S.addAction ( other, SegmentAction::OtherRipup );
+        } else {
+          ltrace(200) << "Aborted ripup of perpandiculars, blocked by border/ring." << endl;
+          return false;
+        }
       }
     }
 
@@ -1808,7 +1828,7 @@ namespace {
     }
 
     if ( _segment->isLocal() and not placedPerpandiculars ) {
-      ltrace(200) << "No placed perpandiculars, tight native constraints." << endl;
+      ltrace(200) << "No placed perpandiculars, tight native constraints, place perpandiculars FIRST." << endl;
       for ( size_t i=0 ; i < perpandiculars.size() ; i++ ) {
         _S.addAction ( perpandiculars[i], perpandicularActionFlags|SegmentAction::EventLevel4 );
       }
@@ -1838,8 +1858,9 @@ namespace {
     ltrace(200) << "Manipulator::relax() of: " << _segment << " " << interval << endl; 
 
     if ( _segment->isFixed() ) return false;
-    if ( !interval.intersect(_segment->getCanonicalInterval()) ) return false;
-    if ( !_data ) return false;
+    if ( not interval.intersect(_segment->getCanonicalInterval()) ) return false;
+    if ( not _data ) return false;
+  //if ( _data->isBorder() or _data->isRing() ) return false;
 
     if (    _segment->isTerminal()
        and (_segment->getLayer() == Session::getRoutingGauge()->getRoutingLayer(1)) ) {
@@ -2323,7 +2344,8 @@ namespace {
 
         if ( not (shrinkLeft xor shrinkRight) ) {
           ltrace(200) << "- Hard overlap/enclosure/shrink " << segment2 << endl;
-          Manipulator(segment2,_S).ripup ( toFree, SegmentAction::OtherRipup );
+          if ( not (success = Manipulator(segment2,_S).ripup(toFree,SegmentAction::OtherRipup)) )
+            continue;
         }
 
         canonicals.clear ();
@@ -2344,11 +2366,13 @@ namespace {
 
           if ( shrinkRight xor shrinkLeft ) {
             if ( shrinkRight ) {
-              Manipulator(*isegment3,_S).ripup ( track->getAxis()
-                                               , SegmentAction::OtherPushAside
-                                               | SegmentAction::AxisHint
-                                               , toFree.getVMin() - DbU::lambda(1.0)
-                                               );
+              if ( not (success=Manipulator(*isegment3,_S).ripup ( track->getAxis()
+                                                                 , SegmentAction::OtherPushAside
+                                                                 | SegmentAction::AxisHint
+                                                                 , toFree.getVMin() - DbU::lambda(1.0)
+                                                                 )) )
+                break;
+
               if ( event3->getTracksFree() == 1 ) {
                 ltrace(200) << "Potential left intrication with other perpandicular." << endl;
                 if ( isegment3->getAxis() == segment2->getTargetU() - Session::getExtensionCap() ) {
@@ -2358,11 +2382,12 @@ namespace {
               }
             }
             if ( shrinkLeft  ) {
-              Manipulator(*isegment3,_S).ripup ( track->getAxis()
-                                               , SegmentAction::OtherPushAside
-                                               | SegmentAction::AxisHint
-                                               , toFree.getVMax() + DbU::lambda(1.0)
-                                               );
+              if ( not (success=Manipulator(*isegment3,_S).ripup ( track->getAxis()
+                                                                 , SegmentAction::OtherPushAside
+                                                                 | SegmentAction::AxisHint
+                                                                 , toFree.getVMax() + DbU::lambda(1.0)
+                                                                 )) )
+                break;
               if ( event3->getTracksFree() == 1 ) {
                 ltrace(200) << "Potential right intrication with other perpandicular." << endl;
                 if ( isegment3->getAxis() == segment2->getSourceU() + Session::getExtensionCap() ) {
@@ -2375,14 +2400,15 @@ namespace {
             // DbU::Unit axisHint
             //   = (event3->getAxisHint() - toFree.getVMin() < toFree.getVMax() - event3->getAxisHint()) 
             //   ? (toFree.getVMin() - DbU::lambda(1.0)) : (toFree.getVMax() + DbU::lambda(1.0));
-            Manipulator(*isegment3,_S).ripup
-              ( track->getAxis()
-              , SegmentAction::OtherRipup
-              | SegmentAction::EventLevel3
-            //| SegmentAction::AxisHint, axisHint
-              );
+            if ( not (success=Manipulator(*isegment3,_S).ripup ( track->getAxis()
+                                                               , SegmentAction::OtherRipup
+                                                               | SegmentAction::EventLevel3
+                                                             //| SegmentAction::AxisHint, axisHint
+                                                               )) )
+              break;
           }
         }
+        if ( not success ) break;
       }
     }
 
@@ -2442,7 +2468,8 @@ namespace {
         success = Manipulator(segment2,_S).relax ( toFree );
       } else {
         ltrace(200) << "- Forced ripup " << segment2 << endl;
-        Manipulator(segment2,_S).ripup ( toFree, SegmentAction::OtherRipup );
+        if ( not (success=Manipulator(segment2,_S).ripup(toFree,SegmentAction::OtherRipup)) )
+          continue;
 
         canonicals.clear ();
         forEach ( TrackElement*, isegment3
@@ -2453,7 +2480,8 @@ namespace {
           RoutingEvent* event3 = data3->getRoutingEvent();
           if ( !event3 ) continue;
 
-          _S.addAction ( *isegment3, SegmentAction::OtherRipup );
+          if ( Manipulator(*isegment3,_S).canRipup() )
+            _S.addAction ( *isegment3, SegmentAction::OtherRipup );
         }
       }
     }
@@ -2669,8 +2697,8 @@ namespace {
   {
     ltrace(200) << "Manipulator::pivotUp() " << _segment << endl; 
 
-    if (     _segment->isFixed  () ) return false;
-    if ( not _segment->canMoveUp() ) return false;
+    if (     _segment->isFixed  ()    ) return false;
+    if ( not _segment->canMoveUp(0.0) ) return false;
 
     _segment->moveUp ();
     return true;
@@ -2682,8 +2710,8 @@ namespace {
     ltrace(200) << "Manipulator::moveUp() " << _segment << endl; 
 
     if ( _segment->isFixed  () ) return false;
-    if ( _segment->isLocal() and not _segment->canPivotUp() ) return false;
-    if ( not _segment->canMoveUp() ) return false;
+    if ( _segment->isLocal() and not _segment->canPivotUp(0.0) ) return false;
+    if ( not _segment->canMoveUp(0.5) ) return false;
 
 #if DISABLED
     ltrace(200) << "| Repack Tracks: " << endl;
@@ -3306,7 +3334,8 @@ namespace Kite {
     if ( not isProcessed() ) {
       fork = this;
       ltrace(200) << "Reschedule/Self: "
-                  << (void*)this << " -> " << (void*)fork << ":" << fork << endl;
+                  << (void*)this << " -> "
+                  << (void*)fork << ":" << eventLevel << ":" << fork << endl;
     } else {
       fork = clone();
       fork->_processed  = false;

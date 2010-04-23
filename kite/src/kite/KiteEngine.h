@@ -86,6 +86,7 @@ namespace Kite {
       inline  Net*             getBlockageNet             ();
       virtual Configuration*   getConfiguration           ();
       inline  bool             getToolSuccess             () const;
+      inline  unsigned long    getEventsLimit             () const;
       inline  unsigned int     getRipupLimit              ( unsigned int type ) const;
               unsigned int     getRipupLimit              ( const TrackElement* ) const;
       inline  unsigned int     getRipupCost               () const;
@@ -104,6 +105,7 @@ namespace Kite {
               void             dumpMeasures               ( std::ostream& ) const;
               void             dumpMeasures               () const;
       inline  void             setPostEventCb             ( Configuration::PostEventCb_t );
+      inline  void             setEventLimit              ( unsigned long );
       inline  void             setMinimumWL               ( double );
       inline  void             setRipupLimit              ( unsigned int, unsigned int type );
       inline  void             setRipupCost               ( unsigned int );
@@ -167,6 +169,7 @@ namespace Kite {
   inline  Net*                          KiteEngine::getBlockageNet         () { return _obstacleNet; }
   inline  Configuration::PostEventCb_t& KiteEngine::getPostEventCb         () { return _configuration.getPostEventCb(); }
   inline  bool                          KiteEngine::getToolSuccess         () const { return _toolSuccess; }
+  inline  unsigned long                 KiteEngine::getEventsLimit         () const { return _configuration.getEventsLimit(); }
   inline  unsigned int                  KiteEngine::getRipupCost           () const { return _configuration.getRipupCost(); }
   inline  float                         KiteEngine::getExpandStep          () const { return _configuration.getExpandStep(); }
   inline  float                         KiteEngine::getEdgeCapacityPercent () const { return _configuration.getEdgeCapacityPercent(); }
@@ -174,6 +177,7 @@ namespace Kite {
   inline  GCellGrid*                    KiteEngine::getGCellGrid           () const { return _kiteGrid; }
   inline  NegociateWindow*              KiteEngine::getNegociateWindow     () { return _negociateWindow; }
   inline  size_t                        KiteEngine::getRoutingPlanesSize   () const { return _routingPlanes.size(); }
+  inline  void                          KiteEngine::setEventLimit          ( unsigned long limit ) { _configuration.setEventsLimit(limit); }
   inline  void                          KiteEngine::setRipupLimit          ( unsigned int limit, unsigned int type ) { _configuration.setRipupLimit(limit,type); }
   inline  void                          KiteEngine::setRipupCost           ( unsigned int cost ) { _configuration.setRipupCost(cost); }
   inline  void                          KiteEngine::setExpandStep          ( float step ) { _configuration.setExpandStep(step); }

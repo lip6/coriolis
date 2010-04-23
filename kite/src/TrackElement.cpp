@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -176,8 +176,8 @@ namespace Kite {
 
 
   bool           TrackElement::canDesalignate             () const { return false; }
-  bool           TrackElement::canPivotUp                 () const { return false; };
-  bool           TrackElement::canMoveUp                  () const { return false; };
+  bool           TrackElement::canPivotUp                 ( float ) const { return false; };
+  bool           TrackElement::canMoveUp                  ( float ) const { return false; };
   bool           TrackElement::canDogLeg                  () { return false; };
   bool           TrackElement::canDogLeg                  ( Interval ) { return false; };
   bool           TrackElement::canDogLegAt                ( GCell*, bool allowReuse ) { return false; };

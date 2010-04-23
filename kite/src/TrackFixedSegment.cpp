@@ -89,12 +89,15 @@ namespace Kite {
       if ( layer2 ) {
         DbU::Unit extention = layer2->getExtentionCap();
         if ( track->getDirection() == Constant::Horizontal ) {
-          _sourceU = boundingBox.getXMin()-extention;
-          _targetU = boundingBox.getXMax()+extention;
+          Interval uside = track->getKiteEngine()->getGCellGrid()->getUSide ( Constant::Horizontal );
+
+          _sourceU = max ( boundingBox.getXMin()-extention, uside.getVMin());
+          _targetU = min ( boundingBox.getXMax()+extention, uside.getVMax());
 
           GCell* gcell = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(_sourceU,track->getAxis()) );
           GCell* end   = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(_targetU,track->getAxis()) );
           GCell* right = NULL;
+
           if ( gcell ) {
             while ( gcell and (gcell != end) ) {
               right = gcell->getRight();
@@ -106,8 +109,10 @@ namespace Kite {
           } else
             cerr << Warning("TrackFixedSegment(): TrackFixedElement outside GCell grid.") << endl;
         } else {
-          _sourceU = boundingBox.getYMin()-extention;
-          _targetU = boundingBox.getYMax()+extention;
+          Interval uside = track->getKiteEngine()->getGCellGrid()->getUSide ( Constant::Vertical );
+
+          _sourceU = max ( boundingBox.getYMin()-extention, uside.getVMin());
+          _targetU = min ( boundingBox.getYMax()+extention, uside.getVMax());
 
           GCell* gcell = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(track->getAxis(),_sourceU) );
           GCell* end   = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(track->getAxis(),_targetU) );

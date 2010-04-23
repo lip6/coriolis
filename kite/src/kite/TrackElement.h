@@ -3,7 +3,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -115,8 +115,8 @@ namespace Kite {
       virtual bool                  canDesalignate             () const;
       virtual bool                  canGoOutsideGCell          () const;
       virtual bool                  canSlacken                 () const;
-      virtual bool                  canPivotUp                 () const;
-      virtual bool                  canMoveUp                  () const;
+      virtual bool                  canPivotUp                 ( float reserve ) const;
+      virtual bool                  canMoveUp                  ( float reserve ) const;
       virtual bool                  canRipple                  () const;
       virtual bool                  hasSourceDogLeg            () const;
       virtual bool                  hasTargetDogLeg            () const;

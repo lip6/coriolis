@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -78,10 +78,12 @@ namespace Kite {
     // Methods.
       inline  Katabatic::Configuration*  base                   ();
       inline  PostEventCb_t&             getPostEventCb         ();
+      inline  unsigned long              getEventsLimit         () const;
       inline  float                      getExpandStep          () const;
       inline  unsigned int               getRipupCost           () const;
               unsigned int               getRipupLimit          ( unsigned int type ) const;
       inline  float                      getEdgeCapacityPercent () const;
+      inline  void                       setEventsLimit         ( unsigned long );
       inline  void                       setExpandStep          ( float );
       inline  void                       setRipupCost           ( unsigned int );
               void                       setRipupLimit          ( unsigned int type, unsigned int limit );
@@ -101,6 +103,7 @@ namespace Kite {
              float                       _expandStep;
              unsigned int                _ripupLimits[RipupLimitsTableSize];
              unsigned int                _ripupCost;
+             unsigned long               _eventsLimit;
     private:
                      Configuration ( const Configuration& );
       Configuration& operator=     ( const Configuration& );
@@ -110,12 +113,14 @@ namespace Kite {
 // Inline Functions.
   inline Katabatic::Configuration*     Configuration::base                   () { return _base; }
   inline Configuration::PostEventCb_t& Configuration::getPostEventCb         () { return _postEventCb; }
+  inline unsigned long                 Configuration::getEventsLimit         () const { return _eventsLimit; }
   inline unsigned int                  Configuration::getRipupCost           () const { return _ripupCost; }
   inline float                         Configuration::getExpandStep          () const { return _expandStep; }
   inline float                         Configuration::getEdgeCapacityPercent () const { return _edgeCapacityPercent; }
   inline void                          Configuration::setRipupCost           ( unsigned int cost ) { _ripupCost = cost; }
   inline void                          Configuration::setExpandStep          ( float step ) { _expandStep = step; }
   inline void                          Configuration::setPostEventCb         ( PostEventCb_t cb ) { _postEventCb = cb; }
+  inline void                          Configuration::setEventsLimit         ( unsigned long limit ) { _eventsLimit = limit; }
   inline void                          Configuration::setEdgeCapacityPercent ( float percent ) { _edgeCapacityPercent = percent; }
 
 

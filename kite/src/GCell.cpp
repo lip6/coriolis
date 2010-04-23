@@ -393,7 +393,7 @@ namespace Kite {
       Interval      blockageSpan;
 
       autoSegment->getCanonical ( fixedSpan );
-      fixedSpan.inflate ( Session::getExtensionCap() );
+      fixedSpan.inflate ( Session::getExtensionCap()-1 );
 
       track->getOverlapBounds ( fixedSpan, begin, end );
       for ( ; (begin < end) ; begin++ ) {

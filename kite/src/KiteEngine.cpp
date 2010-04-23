@@ -488,15 +488,19 @@ namespace Kite {
   void  KiteEngine::dumpMeasures ( ostream& out ) const
   {
     vector<Name> measuresLabels;
-    measuresLabels.push_back ( "Gates" );
-    measuresLabels.push_back ( "GCells" );
-    measuresLabels.push_back ( "loadT" );
-    measuresLabels.push_back ( "loadS" );
+    measuresLabels.push_back ( "Gates"   );
+    measuresLabels.push_back ( "GCells"  );
+    measuresLabels.push_back ( "knikT"   );
+    measuresLabels.push_back ( "knikS"   );
+    measuresLabels.push_back ( "loadT"   );
+    measuresLabels.push_back ( "loadS"   );
+    measuresLabels.push_back ( "Globals" );
+    measuresLabels.push_back ( "Edges"   );
     measuresLabels.push_back ( "assignT" );
-    measuresLabels.push_back ( "algoT" );
-    measuresLabels.push_back ( "algoS" );
-    measuresLabels.push_back ( "finT" );
-    measuresLabels.push_back ( "Segs" );
+    measuresLabels.push_back ( "algoT"   );
+    measuresLabels.push_back ( "algoS"   );
+    measuresLabels.push_back ( "finT"    );
+    measuresLabels.push_back ( "Segs"    );
 
     const MeasuresSet* measures = Measures::get(getCell());
 

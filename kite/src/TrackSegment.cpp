@@ -609,19 +609,19 @@ namespace Kite {
   }
 
 
-  bool  TrackSegment::canPivotUp () const
+  bool  TrackSegment::canPivotUp ( float reserve ) const
   {
-    return _base->canPivotUp();
+    return _base->canPivotUp(reserve);
   }
 
 
-  bool  TrackSegment::canMoveUp () const
+  bool  TrackSegment::canMoveUp ( float reserve ) const
   {
     // if ( isLocal() /*and (hasSourceDogLeg() or hasTargetDogLeg())*/ ) {
     //   return _base->canPivotUp();
     // }
 
-    return _base->canMoveUp ( true );
+    return _base->canMoveUp ( true, reserve );
   }
 
 
@@ -645,8 +645,11 @@ namespace Kite {
       vector<TrackElement*> segments;
       for ( size_t i=0 ; i<invalidateds.size() ; i++ ) {
         ltrace(200) << "moved: " << invalidateds[i] << endl;
-        segments.push_back ( GCell::addTrackSegment(NULL,invalidateds[i],false) );
-        segments.back()->reschedule ( 0 );
+        TrackElement* segment = GCell::addTrackSegment(NULL,invalidateds[i],false);
+        segments.push_back ( segment );
+        // if (  (segment->getTrack() == NULL)
+        //    or (segment->getLayer() != segment->getTrack()->getLayer()) )
+        segment->reschedule ( 0 );
       }
 
       for ( size_t i=0 ; i<segments.size() ; i++ ) {
@@ -1198,11 +1201,13 @@ namespace Kite {
               +  " "   + getString(_dogLegLevel)
               +  " o:" + getString(_data->getGCellOrder())
               + " ["   + ((_track) ? getString(_index) : "npos") + "] "
-              + ((isSlackened()) ? "S" : "-")
-              + ((_track       ) ? "T" : "-")
-              + ((_canRipple   ) ? "r" : "-")
-              + ((_sourceDogLeg) ? "s" : "-")
-              + ((_targetDogLeg) ? "t" : "-");
+              + ((isSlackened()    ) ? "S" : "-")
+              + ((_track           ) ? "T" : "-")
+              + ((_canRipple       ) ? "r" : "-")
+              + ((_data->isBorder()) ? "B" : "-")
+              + ((_data->isRing  ()) ? "R" : "-")
+              + ((_sourceDogLeg    ) ? "s" : "-")
+              + ((_targetDogLeg    ) ? "t" : "-");
 
     s1.insert ( s1.size()-1, s2 );
 

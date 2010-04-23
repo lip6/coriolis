@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -82,14 +82,15 @@ namespace {
     if ( data->getGCellOrder() >= Session::getOrder() ) {
       cost.mergeRipupCount ( data->getRipupCount() );
       if ( segment->isLocal() ) {
-        cost.mergeDataState  ( data->getState() );
+        cost.mergeDataState ( data->getState() );
         if ( data->getState() >=  DataNegociate::LocalVsGlobal ) {
           ltrace(200) << "MaximumSlack/LocalVsGlobal for " << segment << endl;
         }
       }
     }
 
-    if ( /*(data->getGCellOrder() < Session::getOrder()) ||*/ segment->isFixed() ) {
+    if ( /*(data->getGCellOrder() < Session::getOrder()) ||*/ segment->isFixed()
+       or ((data->isRing() or data->isBorder()) and (data->getRipupCount() > 3)) ) {
       ltrace(200) << "Infinite cost from: " << segment << endl;
       cost.setFixed       ();
       cost.setInfinite    ();
@@ -272,7 +273,7 @@ namespace Kite {
 
     unsigned int order = 0;
     for ( size_t i=0 ; i < gcells.size() ; i++ ) {
-      if ( !gcells[i]->isInRoutingSet() ) {
+      if ( not gcells[i]->isInRoutingSet() ) {
         Session::setOrder ( order );
         GCellRoutingSet* rs = GCellRoutingSet::create ( gcells[i], _kite->getExpandStep() );
         rs->expand      ( grid  );
@@ -336,6 +337,7 @@ namespace Kite {
       DataNegociate* data    = segment->getDataNegociate ();
 
       data->resetRipupCount ();
+      data->resetStateCount ();
       data->setGCellOrder ( order );
       if ( _ring[i].getOrder() == order ) {
         ltrace(200) << "Removing from ring: " << segment << endl;
@@ -352,6 +354,8 @@ namespace Kite {
   {
     ltrace(150) << "NegociateWindow::_negociate() - " << segments.size() << endl;
     ltracein(149);
+
+    unsigned long limit = _kite->getEventsLimit();
 
     _eventHistory.clear();
     _eventQueue.load ( segments );
@@ -375,7 +379,7 @@ namespace Kite {
         cmess2.flush();
       }
 
-      if ( RoutingEvent::getProcesseds() >= /*10471*/ 4000000 ) setInterrupt ( true );
+      if ( RoutingEvent::getProcesseds() >= limit ) setInterrupt ( true );
       count++;
 
 #if ENABLE_STIFFNESS

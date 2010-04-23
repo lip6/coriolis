@@ -49,7 +49,7 @@ namespace Kite {
 
 
   GCellGrid::GCellGrid ( KiteEngine* kite )
-    : Katabatic::Grid<GCell>()
+    : Katabatic::Grid<GCell>(kite->getCell()->getBoundingBox())
     , _kite(kite)
   { }
 
