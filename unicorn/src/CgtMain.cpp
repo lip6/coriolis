@@ -110,6 +110,7 @@ int main ( int argc, char *argv[] )
 
   try {
     float         edgeCapacity;
+    unsigned long eventsLimit;
     unsigned int  traceLevel;
     bool          verbose1;
     bool          verbose2;
@@ -145,6 +146,9 @@ int main ( int argc, char *argv[] )
                         , "The tool to be run, in text mode." )
       ( "edge,e"        , poptions::value<float>(&edgeCapacity)->default_value(0.65)
                         , "The egde density ratio applied on global router's edges." )
+      ( "events-limit"  , poptions::value<unsigned long>(&eventsLimit)
+                        , "The maximum number of iterations (events) that the router is"
+                          "allowed to perform." )
       ( "cell,c"        , poptions::value<string>()
                         , "The name of the cell to load, whithout extension." )
       ( "save,s"        , poptions::bool_switch(&saveDesign)->default_value(false)
@@ -240,7 +244,7 @@ int main ( int argc, char *argv[] )
     //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_soper_se(31)" );
     //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_braadr_sd(3)" );
     //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_seqadr_sd(30)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_data_rm(30)" );
+    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_data_rm(8)" );
     //DebugSession::addToTrace ( cell, "mips_r3000_1m_ct_not_i_ri(11)" );
     //DebugSession::addToTrace ( cell, "mips_r3000_1m_ct_noa22_x1_61_sig" );
     //DebugSession::addToTrace ( cell, "mips_r3000_1m_ct_not_opcod_rd(6)" );
@@ -248,6 +252,11 @@ int main ( int argc, char *argv[] )
     //DebugSession::addToTrace ( cell, "s_eq_t_sd" );
     //DebugSession::addToTrace ( cell, "i(22)" );
     //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_mux32_data_o_sm_sel0" );
+    // DCT/lvl3
+    //DebugSession::addToTrace ( cell, "instance139_fixed_multiplier_mixed_direct_nbit0_16_nbit1_16_specified_report_5_18_0" );
+    //DebugSession::addToTrace ( cell, "instance129_fixed_multiplier_mixed_direct_nbit0_16_nbit1_16_cin_i0_true_specified_colout_1_11_2" );
+    //DebugSession::addToTrace ( cell, "coef0(7)" );
+    //DebugSession::addToTrace ( cell, "c1_0(3)" );
     // eFPGA/04x04.
     //DebugSession::addToTrace ( cell, "group_2_4_nq_mem_45" );
     //DebugSession::addToTrace ( cell, "g_2_1_rig_7" );
@@ -294,6 +303,7 @@ int main ( int argc, char *argv[] )
 
         static vector<Net*> routingNets;
         KiteEngine* kite = KiteEngine::create ( af->getRoutingGauge(), cell );
+        
         kite->runGlobalRouter ( globalFlags );
         if ( saveGlobal ) kite->saveGlobalSolution ();
 
