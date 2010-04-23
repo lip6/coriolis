@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -300,8 +300,9 @@ namespace Katabatic {
 // Class  :  "Katabatic::AutoSegment".
 
 
-  size_t         AutoSegment::_allocateds  = 0;
-  unsigned long  AutoSegment::_maxId       = 0;
+  size_t         AutoSegment::_allocateds   = 0;
+  size_t         AutoSegment::_globalsCount = 0;
+  unsigned long  AutoSegment::_maxId        = 0;
 
 
   DbU::Unit  AutoSegment::getX () const
@@ -831,10 +832,10 @@ namespace Katabatic {
 #if defined(CHECK_DETERMINISM)
     cerr << "Order: AutoSegment::AutoSegment() - <id:" << _id << ">" << endl;
 #endif
-    _allocateds++;
-
     AutoContact* source = Session::lookup(dynamic_cast<Contact*>(segment->getSource()));
     AutoContact* target = Session::lookup(dynamic_cast<Contact*>(segment->getTarget()));
+
+    _allocateds++;
 
     _gcell = source->getGCell();
     setOptimalMax ( (_isHorizontal) ? _gcell->getBoundingBox().getYMax()
@@ -847,8 +848,8 @@ namespace Katabatic {
         _isGlobal = ( source->getGCell() != target->getGCell() );
         break;
     }
-
-    _isCanonicalLocal = !_isGlobal;
+    _globalsCount   += (_isGlobal) ? 1 : 0;
+    _isCanonicalLocal = not _isGlobal;
 
     _computeTerminal ( segment );
   //if ( source->isTerminal() or target->isTerminal() ) _isTerminal = true;
@@ -907,6 +908,7 @@ namespace Katabatic {
   AutoSegment::~AutoSegment ()
   {
     _allocateds--;
+    if ( _isGlobal and (_globalsCount > 0) ) _globalsCount--;
   }
 
 
@@ -1238,7 +1240,7 @@ namespace Katabatic {
   }
 
 
-  bool  AutoSegment::canPivotUp ( bool propagate )
+  bool  AutoSegment::canPivotUp ( bool propagate, float reserve )
   {
     ltrace(200) << "AutoSegment::canPivotUp()" << endl;
 
@@ -1250,7 +1252,7 @@ namespace Katabatic {
     vector<GCell*> gcells;
     getGCells ( gcells );
     for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-      if ( !gcells[i]->hasFreeTrack(depth) ) return false;
+      if ( !gcells[i]->hasFreeTrack(depth,reserve) ) return false;
     }
 
     ltrace(200) << getAutoSource() << endl;
@@ -1270,7 +1272,7 @@ namespace Katabatic {
       forEach ( AutoSegment*, isegment, getCollapseds() ) {
         isegment->getGCells ( gcells );
         for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-          if ( !gcells[i]->hasFreeTrack(depth) ) return false;
+          if ( !gcells[i]->hasFreeTrack(depth,reserve) ) return false;
         }
         if ( isegment->getAutoSource()->getMinDepth() < depth ) return false;
         if ( isegment->getAutoTarget()->getMinDepth() < depth ) return false;
@@ -1283,7 +1285,7 @@ namespace Katabatic {
   }
 
 
-  bool  AutoSegment::canMoveUp ( bool propagate )
+  bool  AutoSegment::canMoveUp ( bool propagate, float reserve )
   {
     ltrace(200) << "AutoSegment::canMoveUp()" << endl;
 
@@ -1296,7 +1298,7 @@ namespace Katabatic {
     vector<GCell*> gcells;
     getGCells ( gcells );
     for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-      if ( not gcells[i]->hasFreeTrack(depth) ) return false;
+      if ( not gcells[i]->hasFreeTrack(depth,reserve) ) return false;
     }
 
     if ( isLocal() and not propagate ) {
@@ -1314,7 +1316,7 @@ namespace Katabatic {
 
         isegment->getGCells ( gcells );
         for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-          if ( not gcells[i]->hasFreeTrack(depth) ) {
+          if ( not gcells[i]->hasFreeTrack(depth,reserve) ) {
             ltrace(200) << "Not enough free track in " << gcells[i] << endl;
             return false;
           }
@@ -1523,9 +1525,9 @@ namespace Katabatic {
 
     Contact*     contact     = dynamic_cast<Contact*>(hurricaneSegment->getSource());
     AutoContact* autoContact = Session::lookup(contact);
-    if ( !contact ) {
+    if ( contact == NULL ) {
       throw Error ( badSegmentSource, getString(hurricaneSegment).c_str() );
-      if ( autoContact && ( autoContact != source ) )
+      if ( autoContact and ( autoContact != source ) )
         throw Error ( mismatchSegmentSource
                     , getString(hurricaneSegment).c_str()
                     , getString(contact).c_str() );
@@ -1533,9 +1535,9 @@ namespace Katabatic {
 
     contact     = dynamic_cast<Contact*>(hurricaneSegment->getTarget());
     autoContact = Session::lookup(contact);
-    if ( !contact ) {
+    if ( contact == NULL ) {
       throw Error ( badSegmentTarget, getString(hurricaneSegment).c_str() );
-      if ( autoContact && ( autoContact != target ) )
+      if ( autoContact and ( autoContact != target ) )
         throw Error ( mismatchSegmentTarget
                     , getString(hurricaneSegment).c_str()
                     , getString(contact).c_str() );

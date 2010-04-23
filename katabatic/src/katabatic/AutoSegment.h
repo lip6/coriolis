@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -131,7 +131,8 @@ namespace Katabatic {
                                                              , vector<AutoSegment*>& collapseds
                                                              );
       static inline int           getTerminalCount           ( AutoSegment* seed );
-      static size_t               getAllocateds              () { return _allocateds; };
+      static inline size_t        getGlobalsCount            ();
+      static inline size_t        getAllocateds              ();
       static inline unsigned long getMaxId                   ();
     // Constructors & Destructor.                            
       static  AutoSegment*        create                     ( AutoContact*  source
@@ -195,8 +196,8 @@ namespace Katabatic {
       inline  bool                allowOutsideGCell          () const;
               bool                canDesalignate             ();
       virtual bool                canDesalignate             ( AutoContact* ) const = 0;
-              bool                canMoveUp                  ( bool propagate=false );
-              bool                canPivotUp                 ( bool propagate=false );
+              bool                canMoveUp                  ( bool propagate=false, float reserve=0.0 );
+              bool                canPivotUp                 ( bool propagate=false, float reserve=0.0 );
               bool                canSlacken                 ( bool propagate=false );
       virtual bool                _canSlacken                () const = 0;
               bool                canGoOutsideGCell          () const;
@@ -302,6 +303,7 @@ namespace Katabatic {
     protected:                    
     // Internal: Static Attributes.
       static size_t               _allocateds;
+      static size_t               _globalsCount;
       static bool                 _destroyBase;
       static bool                 _destroyTool;
       static unsigned long        _maxId;
@@ -467,6 +469,10 @@ namespace Katabatic {
 
     return getTerminalCount ( seed, collapseds );
   }
+
+
+  inline size_t  AutoSegment::getGlobalsCount () { return _globalsCount; }
+  inline size_t  AutoSegment::getAllocateds   () { return _allocateds; }
 
 
 } // End of Katabatic namespace.

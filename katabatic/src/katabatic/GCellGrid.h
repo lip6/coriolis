@@ -50,15 +50,16 @@ namespace Katabatic {
   class GCellGrid : public Grid<GCell> {
 
     public:
-              Cell*   getCell             () const;
-              void    updateContacts      ( bool openSession=true );
-              size_t  checkDensity        () const;
-              size_t  updateDensity       ();
-              bool    checkEdgeSaturation ( float threshold ) const;
-              void    _xmlWrite           ( ostream& );
-      virtual Record* _getRecord          () const;
-      virtual string  _getString          () const;
-      virtual string  _getTypeName        () const;
+              Cell*     getCell             () const;
+              Interval  getUSide            ( unsigned int ) const;
+              void      updateContacts      ( bool openSession=true );
+              size_t    checkDensity        () const;
+              size_t    updateDensity       ();
+              bool      checkEdgeSaturation ( float threshold ) const;
+              void      _xmlWrite           ( ostream& );
+      virtual Record*   _getRecord          () const;
+      virtual string    _getString          () const;
+      virtual string    _getTypeName        () const;
 
     // Attributes.
     protected:

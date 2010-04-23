@@ -721,7 +721,7 @@ namespace Katabatic {
   }
 
 
-  bool  GCell::hasFreeTrack ( size_t depth ) const
+  bool  GCell::hasFreeTrack ( size_t depth, float reserve ) const
   {
     if (_invalid) const_cast<GCell*>(this)->updateDensity();
 
@@ -765,7 +765,7 @@ namespace Katabatic {
                 << " " << (_saturateDensities[depth]*capacity) << " vs. " << capacity
                 << endl;
 
-    return (_saturateDensities[depth]*capacity + 1.0 <= capacity);
+    return (_saturateDensities[depth]*capacity + 1.0 + reserve <= capacity);
   }
 
 

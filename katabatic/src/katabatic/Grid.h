@@ -58,19 +58,20 @@ namespace Katabatic {
     public:
       class  Axis;
     public:
-      inline  void          destroy    ();
+      inline  void          destroy        ();
     // Accessors.
-      inline  unsigned int  getColumns () const;
-      inline  unsigned int  getRows    () const;
-      inline  unsigned int  getRawSize () const;
-      inline  unsigned int  getIndex   ( unsigned int c, unsigned int r ) const;
-      inline  unsigned int  getRow     ( unsigned int ) const;
-      inline  unsigned int  getColumn  ( unsigned int ) const;
-      inline  const Axis&   getXGrads  () const;
-      inline  const Axis&   getYGrads  () const;
-    // Inspector Managment.
-      virtual Record*       _getRecord () const;
-      virtual string        _getString () const = 0;
+      inline  const Box&    getBoundingBox () const;
+      inline  unsigned int  getColumns     () const;
+      inline  unsigned int  getRows        () const;
+      inline  unsigned int  getRawSize     () const;
+      inline  unsigned int  getIndex       ( unsigned int c, unsigned int r ) const;
+      inline  unsigned int  getRow         ( unsigned int ) const;
+      inline  unsigned int  getColumn      ( unsigned int ) const;
+      inline  const Axis&   getXGrads      () const;
+      inline  const Axis&   getYGrads      () const;
+    // Inspector Managment.                
+      virtual Record*       _getRecord     () const;
+      virtual string        _getString     () const = 0;
 
     public:
     // Sub-Class Grid::Axis. 
@@ -96,6 +97,7 @@ namespace Katabatic {
 
     protected:
     // Attributes.
+      Box           _boundingBox;
       Axis          _xGraduations;
       Axis          _yGraduations;
       unsigned int  _rows;
@@ -104,7 +106,7 @@ namespace Katabatic {
 
     // Constructors & Destructors.
     protected:
-                        BaseGrid    ();
+                        BaseGrid    ( const Box& );
       virtual          ~BaseGrid    ();
       virtual void      _postCreate ();
       virtual void      _preDestroy ();
@@ -120,13 +122,14 @@ namespace Katabatic {
   inline DbU::Unit&    BaseGrid::Axis::operator[]    ( unsigned int i ) { return _graduations[i]; }
   inline string        BaseGrid::Axis::_getTypeName  () const { return _TName("BaseGrid::Axis"); }
 
-  inline void         BaseGrid::destroy    () { _preDestroy(); delete this; }
-  inline unsigned int BaseGrid::getColumns () const { return _columns; };
-  inline unsigned int BaseGrid::getRows    () const { return _rows; };
-  inline unsigned int BaseGrid::getRawSize () const { return getColumns() * getRows(); }
-  inline unsigned int BaseGrid::getIndex   ( unsigned int c, unsigned int r ) const { return c+(r*getColumns()); }
-  inline unsigned int BaseGrid::getRow     ( unsigned int i ) const { return i / getColumns(); }
-  inline unsigned int BaseGrid::getColumn  ( unsigned int i ) const { return i % getColumns(); }
+  inline void         BaseGrid::destroy        () { _preDestroy(); delete this; }
+  inline const Box&   BaseGrid::getBoundingBox () const { return _boundingBox; };
+  inline unsigned int BaseGrid::getColumns     () const { return _columns; };
+  inline unsigned int BaseGrid::getRows        () const { return _rows; };
+  inline unsigned int BaseGrid::getRawSize     () const { return getColumns() * getRows(); }
+  inline unsigned int BaseGrid::getIndex       ( unsigned int c, unsigned int r ) const { return c+(r*getColumns()); }
+  inline unsigned int BaseGrid::getRow         ( unsigned int i ) const { return i / getColumns(); }
+  inline unsigned int BaseGrid::getColumn      ( unsigned int i ) const { return i % getColumns(); }
 
   inline const BaseGrid::Axis& BaseGrid::getXGrads () const { return _xGraduations; }
   inline const BaseGrid::Axis& BaseGrid::getYGrads () const { return _yGraduations; }
@@ -166,7 +169,7 @@ namespace Katabatic {
 
     // Constructors & Destructors.
     protected:
-      inline        Grid        ();
+      inline        Grid        ( const Box& );
       virtual      ~Grid        ();
     private:
                     Grid        ( const Grid& );
@@ -187,8 +190,9 @@ namespace Katabatic {
 // Inline Functions.
 
   template<typename GCellT>
-  Grid<GCellT>::Grid () : BaseGrid()
-                        , _gcells()
+  Grid<GCellT>::Grid ( const Box& bb )
+    : BaseGrid(bb)
+    , _gcells ()
   { }
 
 

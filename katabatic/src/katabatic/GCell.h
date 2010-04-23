@@ -110,7 +110,7 @@ namespace Katabatic {
               bool                  isSaturated         ( size_t depth ) const;
       inline  bool                  isValid             () const;
               bool                  isAboveDensity      ( float threshold ) const;
-              bool                  hasFreeTrack        ( size_t depth ) const;
+              bool                  hasFreeTrack        ( size_t depth, float reserve ) const;
       inline  GCellGrid*            getGCellGrid        () const;
       inline  unsigned int          getDepth            () const;
       inline  unsigned int          getIndex            () const;

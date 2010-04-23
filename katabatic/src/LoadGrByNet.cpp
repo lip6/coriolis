@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -39,11 +39,13 @@
 #include  "hurricane/RoutingPads.h"
 #include  "hurricane/Pad.h"
 #include  "hurricane/Plug.h"
+#include  "hurricane/Cell.h"
 #include  "hurricane/Instance.h"
 #include  "hurricane/Vertical.h"
 #include  "hurricane/Horizontal.h"
 
 #include  "crlcore/RoutingGauge.h"
+#include  "crlcore/Measures.h"
 
 #include  "katabatic/AutoContact.h"
 #include  "katabatic/AutoSegment.h"
@@ -2217,16 +2219,18 @@ namespace {
       return;
     }
 
-    if ( routingPads.size() > 2 ) {
-      cerr << Error("For %s, more than two Plugs/Pins (%d) in single GCell."
-                   ,getString(net).c_str()
-                   ,routingPads.size()) << endl;
-      ltraceout(99);
-      return;
-    }
+    // if ( routingPads.size() > 2 ) {
+    //   cerr << Error("For %s, more than two Plugs/Pins (%d) in single GCell."
+    //                ,getString(net).c_str()
+    //                ,routingPads.size()) << endl;
+    //   ltraceout(99);
+    //   return;
+    // }
 
-    GCell* gcell = ktbt->getGCellGrid()->getGCell ( routingPads[0]->getCenter()
-                                                  , routingPads[1]->getCenter() );
+    sort ( routingPads.begin(), routingPads.end(), SortRpByX(false) ); // increasing X.
+
+    GCell* gcell = ktbt->getGCellGrid()->getGCell ( (*routingPads.begin ())->getCenter()
+                                                  , (*routingPads.rbegin())->getCenter() );
 
     if ( !gcell ) {
       cerr << Error("No GCell under %s.",getString(routingPads[0]).c_str()) << endl;
@@ -2239,36 +2243,30 @@ namespace {
     AutoContact* dummy  = NULL;
     AutoContact* source = NULL;
     AutoContact* target = NULL;
-    GCellConfiguration::_GCell_rp_AutoContacts ( gcell, routingPads[0], source, dummy, true );
-    GCellConfiguration::_GCell_rp_AutoContacts ( gcell, routingPads[1], target, dummy, true );
 
-    // AutoContact* source = AutoContact::fromRp ( gcell
-    //                                           , routingPads[0]
-    //                                           , Session::getContactLayer(0)
-    //                                           , routingPads[0]->getCenter()
-    //                                           , DbU::lambda(1.0), DbU::lambda(1.0)
-    //                                           );
-    // AutoContact* target = AutoContact::fromRp ( gcell
-    //                                           ,  routingPads[1]
-    //                                           , Session::getContactLayer(0)
-    //                                           , routingPads[1]->getCenter()
-    //                                           , DbU::lambda(1.0), DbU::lambda(1.0)
-    //                                           );
-
-    Box sourceBox = source->getNativeConstraintBox ();
-    Box targetBox = target->getNativeConstraintBox ();
-
-    if (    ( sourceBox.getYMax() < targetBox.getYMin() ) 
-         || ( sourceBox.getYMin() > targetBox.getYMax() ) ) {
-      AutoContact* subContact1 = AutoContact::create ( gcell, net, Session::getContactLayer(1) );
-      AutoSegment::create ( source, subContact1, Constant::Vertical, AutoSegment::Local, true );
-
-      AutoContact* subContact2 = AutoContact::create ( gcell, net, Session::getContactLayer(1) );
-      AutoSegment::create ( target, subContact2, Constant::Vertical, AutoSegment::Local, true );
-
-      AutoSegment::create ( subContact1, subContact2, Constant::Horizontal, AutoSegment::Local, false );
-    } else
+    for ( size_t irp=1 ; irp<routingPads.size() ; ++irp ) {
+      GCellConfiguration::_GCell_rp_AutoContacts ( gcell, routingPads[irp-1], source, dummy, true );
+      GCellConfiguration::_GCell_rp_AutoContacts ( gcell, routingPads[irp  ], target, dummy, true );
       AutoSegment::create ( source, target, Constant::Horizontal, AutoSegment::Local, true );
+    }
+
+    // GCellConfiguration::_GCell_rp_AutoContacts ( gcell, routingPads[0], source, dummy, true );
+    // GCellConfiguration::_GCell_rp_AutoContacts ( gcell, routingPads[1], target, dummy, true );
+
+    // Box sourceBox = source->getNativeConstraintBox ();
+    // Box targetBox = target->getNativeConstraintBox ();
+
+    // if (    ( sourceBox.getYMax() < targetBox.getYMin() ) 
+    //      || ( sourceBox.getYMin() > targetBox.getYMax() ) ) {
+    //   AutoContact* subContact1 = AutoContact::create ( gcell, net, Session::getContactLayer(1) );
+    //   AutoSegment::create ( source, subContact1, Constant::Vertical, AutoSegment::Local, true );
+
+    //   AutoContact* subContact2 = AutoContact::create ( gcell, net, Session::getContactLayer(1) );
+    //   AutoSegment::create ( target, subContact2, Constant::Vertical, AutoSegment::Local, true );
+
+    //   AutoSegment::create ( subContact1, subContact2, Constant::Horizontal, AutoSegment::Local, false );
+    // } else
+    //   AutoSegment::create ( source, target, Constant::Horizontal, AutoSegment::Local, true );
 
     ltraceout(99);
   }
@@ -2282,10 +2280,12 @@ namespace {
 namespace Katabatic {
 
 
+  using Hurricane::Name;
   using Hurricane::DebugSession;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Hurricane::Bug;
+  using CRL::addMeasure;
 
 
   void  KatabaticEngine::_loadGrByNet ()
@@ -2316,6 +2316,9 @@ namespace Katabatic {
 
     stopMeasures ();
     printMeasures ( "load" );
+
+    addMeasure<size_t> ( getCell(), "Globals", AutoSegment::getGlobalsCount() );
+    addMeasure<size_t> ( getCell(), "Edges"  , AutoSegment::getAllocateds() );
   }
 
 

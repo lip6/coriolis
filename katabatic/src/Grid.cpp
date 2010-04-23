@@ -49,6 +49,11 @@ namespace Katabatic {
 
   unsigned int  BaseGrid::Axis::getGraduationNumber ( DbU::Unit position, bool& onGraduation ) const
   {
+    if ( position == _graduations[_graduations.size()-1] ) {
+      onGraduation = true;
+      return _graduations.size()-2;
+    }
+
     vector<DbU::Unit>::const_iterator  it = lower_bound ( _graduations.begin()
                                                         , _graduations.end()
                                                         , position+1
@@ -99,11 +104,13 @@ namespace Katabatic {
 // Class  :  "Katabatic::BaseGrid::Axis".
 
 
-  BaseGrid::BaseGrid () : _xGraduations()
-                        , _yGraduations()
-                        , _rows(0)
-                        , _columns(0)
-                        , _rawSize(0)
+  BaseGrid::BaseGrid ( const Box& bb )
+    : _boundingBox (bb)
+    , _xGraduations()
+    , _yGraduations()
+    , _rows        (0)
+    , _columns     (0)
+    , _rawSize     (0)
   { }
 
 

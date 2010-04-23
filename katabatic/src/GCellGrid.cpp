@@ -54,7 +54,7 @@ namespace Katabatic {
 
 
   GCellGrid::GCellGrid ( KatabaticEngine* ktbt )
-    : Grid<GCell>()
+    : Grid<GCell>(ktbt->getCell()->getAbutmentBox())
     , _katabatic(ktbt)
   { }
 
@@ -137,6 +137,18 @@ namespace Katabatic {
   Cell* GCellGrid::getCell () const
   {
     return _katabatic->getCell();
+  }
+
+
+  Interval  GCellGrid::getUSide ( unsigned int direction ) const
+  {
+    Interval side;
+    switch ( direction ) {
+      default:
+      case Constant::Horizontal: side = Interval(_boundingBox.getXMin(),_boundingBox.getXMax()); break;
+      case Constant::Vertical:   side = Interval(_boundingBox.getYMin(),_boundingBox.getYMax()); break;
+    }
+    return side;
   }
 
 

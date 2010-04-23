@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -38,6 +38,7 @@
 #include  "hurricane/Cell.h"
 
 #include  "crlcore/Utilities.h"
+#include  "crlcore/Catalog.h"
 #include  "crlcore/Measures.h"
 #include  "crlcore/AllianceFramework.h"
 
@@ -170,6 +171,8 @@ namespace Katabatic {
   using  Hurricane::BasicLayer;
   using  Hurricane::NetExternalComponents;
   using  CRL::AllianceFramework;
+  using  CRL::Catalog;
+  using  CRL::CatalogProperty;
   using  CRL::Measures;
   using  CRL::addMeasure;
   using  CRL::getMeasure;
@@ -230,7 +233,9 @@ namespace Katabatic {
     , _gcellGrid         (NULL)
     , _routingNets       ()
   {
-    addMeasure<size_t> ( cell, "Gates", cell->getInstances().getSize() );
+    addMeasure<size_t> ( cell, "Gates"
+                       , AllianceFramework::getInstancesCount(cell,AllianceFramework::IgnoreFeeds
+                                                                  |AllianceFramework::Recursive) );
   }
 
 
