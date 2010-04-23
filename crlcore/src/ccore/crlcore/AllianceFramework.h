@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -43,7 +43,8 @@ namespace CRL {
 
 
   class AllianceFramework {
-
+    public:
+      enum InstancesCountFlags { Recursive=0x1, IgnoreFeeds=0x2 };
     public:
     // Constructors.
       static AllianceFramework* create                   ();
@@ -86,6 +87,7 @@ namespace CRL {
              void               saveCell                 ( Cell* cell , unsigned int mode );
              unsigned int       loadLibraryCells         ( Library* library );
              unsigned int       loadLibraryCells         ( const Name& name );
+      static size_t             getInstancesCount        ( Cell* cell, unsigned int flags );
 
     // Internals - Attributes.
     protected:

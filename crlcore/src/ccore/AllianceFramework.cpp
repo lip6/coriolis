@@ -1,10 +1,34 @@
 
 // -*- C++ -*-
+//
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+//
+// ===================================================================
+//
+// $Id$
+//
+// x-----------------------------------------------------------------x 
+// |                                                                 |
+// |                   C O R I O L I S                               |
+// |          Alliance / Hurricane  Interface                        |
+// |                                                                 |
+// |  Author      :                    Jean-Paul CHAPUT              |
+// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// | =============================================================== |
+// |  C++ Module  :       "./AllianceFramework.cpp"                  |
+// | *************************************************************** |
+// |  U p d a t e s                                                  |
+// |                                                                 |
+// x-----------------------------------------------------------------x
+
 
 #include  "hurricane/Warning.h"
 #include  "hurricane/Technology.h"
 #include  "hurricane/DataBase.h"
 #include  "hurricane/Library.h"
+#include  "hurricane/Cell.h"
+#include  "hurricane/Instance.h"
 #include  "hurricane/viewer/Graphics.h"
 
 #include  "crlcore/Utilities.h"
@@ -23,6 +47,8 @@ namespace CRL {
   using Hurricane::Warning;
   using Hurricane::tab;
   using Hurricane::Graphics;
+  using Hurricane::ForEachIterator;
+  using Hurricane::Instance;
 
 
   AllianceFramework* AllianceFramework::_singleton         = NULL;
@@ -492,6 +518,29 @@ namespace CRL {
 
     _cellGauges [ gauge->getName() ] = gauge;
     _defaultCellGauge                = gauge;
+  }
+
+
+  size_t  AllianceFramework::getInstancesCount ( Cell* cell, unsigned int flags )
+  {
+    size_t gates = 0;
+
+    forEach ( Instance*, iinstance,  cell->getInstances() ) {
+      CatalogProperty *catalogProperty = static_cast<CatalogProperty*>
+        ((*iinstance)->getMasterCell()->getProperty ( CatalogProperty::getPropertyName()) );
+
+      if ( catalogProperty != NULL ) {
+        Catalog::State* state = catalogProperty->getState ();
+        if ( (flags and IgnoreFeeds) and state->isFeed() ) continue;
+      }
+      ++gates;
+
+      if ( flags & Recursive ) {
+        gates += getInstancesCount ( iinstance->getMasterCell(), flags );
+      }
+    }
+
+    return gates;
   }
 
 

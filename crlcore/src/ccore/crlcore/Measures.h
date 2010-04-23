@@ -61,7 +61,6 @@ namespace CRL {
   };
 
 
-                     BaseMeasure::~BaseMeasure () {}
   inline             BaseMeasure::BaseMeasure  ( const Name& name ) : _name(name) {}
   inline const Name& BaseMeasure::getName      () const { return _name; }
 

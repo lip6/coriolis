@@ -42,6 +42,13 @@ namespace CRL {
   using Hurricane::Error;
   using Hurricane::ForEachIterator;
 
+  
+// -------------------------------------------------------------------
+// Class  :  "CRL::MeasuresSet".
+
+
+  BaseMeasure::~BaseMeasure () {}
+
 
   const char* MissingMeasures = "Measures::%s(): %s missing the Measures extension.";
 
