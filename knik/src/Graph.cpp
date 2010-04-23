@@ -364,7 +364,7 @@ Vertex* Graph::getVertex ( Point p )
 Vertex* Graph::getVertex ( DbU::Unit x, DbU::Unit y )
 // **************************************************
 {
-  return getVertex ( Point ( x, y ) );
+  return getVertex ( Point(x,y) );
 }
 
 unsigned Graph::getGridLength ( Segment* segment )

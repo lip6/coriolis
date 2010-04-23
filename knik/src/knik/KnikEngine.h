@@ -52,6 +52,7 @@ using Hurricane::Timer;
 using Hurricane::Name;
 using Hurricane::DbU;
 using Hurricane::Point;
+using Hurricane::Box;
 using Hurricane::Net;
 using Hurricane::Segment;
 using Hurricane::Contact;
@@ -168,8 +169,13 @@ typedef vector<NetRecord> NetVector;
         void     initGlobalRouting(); // Making it public, so it can be called earlier and then capacities on edges can be ajusted
         void     run();
         void     Route();
-        void     createRoutingGrid ( unsigned nbXTiles, unsigned nbYTiles
-                                   , DbU::Unit lowerLeftX, DbU::Unit lowerLeftY, DbU::Unit tileWidth, DbU::Unit tileHeight, unsigned hcapacity, unsigned vcapacity );
+        void     createRoutingGrid ( unsigned   nbXTiles
+                                   , unsigned   nbYTiles
+                                   , const Box& boundingBox
+                                   , DbU::Unit  tileWidth
+                                   , DbU::Unit  tileHeight
+                                   , unsigned   hcapacity
+                                   , unsigned   vcapacity );
         void     updateEdgeCapacity ( unsigned col1, unsigned row1, unsigned col2, unsigned row2, unsigned capacity );
         void     increaseEdgeCapacity ( unsigned col1, unsigned row1, unsigned col2, unsigned row2, int capacity );
         void     insertSegment ( Segment* segment );

@@ -14,8 +14,7 @@ namespace Knik {
         private: 
                 unsigned   _nbXTiles;
                 unsigned   _nbYTiles;
-                DbU::Unit  _lowerLeftX;
-                DbU::Unit  _lowerLeftY;
+                Box        _boundingBox;
                 DbU::Unit  _tileWidth;
                 DbU::Unit  _tileHeight;
                 unsigned   _hcapacity;
@@ -24,37 +23,53 @@ namespace Knik {
     // Constructors & Destructors
     // **************************
         protected:
-            RoutingGrid ( unsigned nbXTiles, unsigned nbYTiles, DbU::Unit lowerLeftX, DbU::Unit lowerLeftY
-                        , DbU::Unit tileWidth, DbU::Unit tileHeight, unsigned hcapacity, unsigned vcapacity )
-                        : _nbXTiles ( nbXTiles )
-                        , _nbYTiles ( nbYTiles )
-                        , _lowerLeftX ( lowerLeftX )
-                        , _lowerLeftY ( lowerLeftY )
-                        , _tileWidth ( tileWidth )
-                        , _tileHeight ( tileHeight )
-                        , _hcapacity ( hcapacity )
-                        , _vcapacity ( vcapacity )
-                        {};
+            RoutingGrid ( unsigned   nbXTiles
+                        , unsigned   nbYTiles
+                        , const Box& boundingBox
+                        , DbU::Unit  tileWidth
+                        , DbU::Unit  tileHeight
+                        , unsigned   hcapacity
+                        , unsigned   vcapacity )
+              : _nbXTiles   (nbXTiles)
+              , _nbYTiles   (nbYTiles)
+              , _boundingBox(boundingBox)
+              , _tileWidth  (tileWidth)
+              , _tileHeight (tileHeight)
+              , _hcapacity  (hcapacity)
+              , _vcapacity  (vcapacity)
+              { };
             ~RoutingGrid () {};
         public:
-            static RoutingGrid* create ( unsigned nbXTiles, unsigned nbYTiles, DbU::Unit lowerLeftX
-                                       , DbU::Unit lowerLeftY, DbU::Unit tileWidth, DbU::Unit tileHeight, unsigned hcapacity, unsigned vcapacity )
+            static RoutingGrid* create ( unsigned   nbXTiles
+                                       , unsigned   nbYTiles
+                                       , const Box& boundingBox
+                                       , DbU::Unit  tileWidth
+                                       , DbU::Unit  tileHeight
+                                       , unsigned   hcapacity
+                                       , unsigned   vcapacity )
             {
-                RoutingGrid* _routingGrid = new RoutingGrid ( nbXTiles, nbYTiles, lowerLeftX, lowerLeftY, tileWidth, tileHeight, hcapacity, vcapacity );
-                return _routingGrid;
+              RoutingGrid* _routingGrid = new RoutingGrid ( nbXTiles
+                                                          , nbYTiles
+                                                          , boundingBox
+                                                          , tileWidth
+                                                          , tileHeight
+                                                          , hcapacity
+                                                          , vcapacity );
+              return _routingGrid;
             };
 
     // Accessors
     // *********
         public:
-            unsigned  getNbXTiles()   { return _nbXTiles;   };
-            unsigned  getNbYTiles()   { return _nbYTiles;   };
-            DbU::Unit getLowerLeftX() { return _lowerLeftX; };
-            DbU::Unit getLowerLeftY() { return _lowerLeftY; };
-            DbU::Unit getTileWidth()  { return _tileWidth;  };
-            DbU::Unit getTileHeight() { return _tileHeight; };
-            unsigned  getHCapacity()  { return _hcapacity;  };
-            unsigned  getVCapacity()  { return _vcapacity;  };
+            unsigned   getNbXTiles()    { return _nbXTiles;   };
+            unsigned   getNbYTiles()    { return _nbYTiles;   };
+            const Box& getBoundingBox() const { return _boundingBox; }
+            DbU::Unit  getLowerLeftX()  { return _boundingBox.getXMin(); };
+            DbU::Unit  getLowerLeftY()  { return _boundingBox.getYMin(); };
+            DbU::Unit  getTileWidth()   { return _tileWidth;  };
+            DbU::Unit  getTileHeight()  { return _tileHeight; };
+            unsigned   getHCapacity()   { return _hcapacity;  };
+            unsigned   getVCapacity()   { return _vcapacity;  };
 
     // Modifiers
     // *********

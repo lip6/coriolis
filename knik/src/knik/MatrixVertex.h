@@ -38,8 +38,7 @@ namespace Knik {
             unsigned  _nbYTiles;
             DbU::Unit _tileWidth;
             DbU::Unit _tileHeight;
-            DbU::Unit _lowerLeftX;
-            DbU::Unit _lowerLeftY;
+            Box       _boundingBox;
             Graph*    _routingGraph;
             vector< vector<Vertex*> >     _matrix;
             vector< pair<DbU::Unit,unsigned> > _linesIndexes;

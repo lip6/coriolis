@@ -37,6 +37,7 @@
 #include  "hurricane/UpdateSession.h"
 
 #include  "crlcore/Utilities.h"
+#include  "crlcore/Measures.h"
 
 #include  "knik/Configuration.h"
 #include  "knik/Graph.h"
@@ -412,6 +413,8 @@ namespace {
 
 namespace Knik {
 
+  using CRL::addMeasure;
+
 
   void  KnikEngine::loadSolution ( const string& fileName )
   {
@@ -421,6 +424,9 @@ namespace Knik {
 
     SolutionParser parser ( this, loadFileName );
     parser.load ();
+
+    addMeasure<double> ( getCell(), "knikT",  0.0 );
+    addMeasure<size_t> ( getCell(), "knikS",  0   );
   }
 
 

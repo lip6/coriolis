@@ -61,6 +61,7 @@
 
 #include "crlcore/Utilities.h"
 #include "crlcore/ToolBox.h"
+#include "crlcore/Measures.h"
 
 #include "knik/Configuration.h"
 #include "knik/Edge.h"
@@ -74,6 +75,8 @@
 #define MAX_ITERATION UINT_MAX
 
 namespace Knik {
+
+  using CRL::addMeasure;
 
 //globale variables
 unsigned __congestion__;
@@ -264,18 +267,23 @@ void KnikEngine::initGlobalRouting()
     __initialized__ = true;
 }
 
-void KnikEngine::createRoutingGrid ( unsigned nbXTiles
-                                   , unsigned nbYTiles
-                                   , DbU::Unit lowerLeftX
-                                   , DbU::Unit lowerLeftY
-                                   , DbU::Unit tileWidth
-                                   , DbU::Unit tileHeight
-                                   , unsigned hcapacity
-                                   , unsigned vcapacity )
-// ******************************************************
+void KnikEngine::createRoutingGrid ( unsigned   nbXTiles
+                                   , unsigned   nbYTiles
+                                   , const Box& boundingBox
+                                   , DbU::Unit  tileWidth
+                                   , DbU::Unit  tileHeight
+                                   , unsigned   hcapacity
+                                   , unsigned   vcapacity )
 {
-    _routingGrid = RoutingGrid::create ( nbXTiles, nbYTiles, lowerLeftX, lowerLeftY, tileWidth, tileHeight, hcapacity, vcapacity ); 
+    _routingGrid = RoutingGrid::create ( nbXTiles
+                                       , nbYTiles
+                                       , boundingBox
+                                       , tileWidth
+                                       , tileHeight
+                                       , hcapacity
+                                       , vcapacity ); 
 }
+
 
 void KnikEngine::createRoutingGraph()
 // **********************************
@@ -340,6 +348,7 @@ void KnikEngine::printTime()
     cmess2 << "             (raw measurements : " << _timer.getCombTime()
            << "s [+" << (_timer.getIncrease()>>10) <<  "Ko/"
            << (_timer.getMemorySize()>>10) << "Ko])" << endl;
+
 
 }
 // void KnikEngine::showEstimateOccupancy()
@@ -1011,6 +1020,9 @@ void KnikEngine::run()
         reroute();
         done = analyseRouting();
     }
+
+    addMeasure<double> ( getCell(), "knikT",  _timer.getCombTime  () );
+    addMeasure<size_t> ( getCell(), "knikS", (_timer.getMemorySize() >> 20) );
 }
 
 void KnikEngine::Route()

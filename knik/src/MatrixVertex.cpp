@@ -24,8 +24,7 @@ MatrixVertex::MatrixVertex ( Graph* routingGraph )
     , _nbYTiles(0)
     , _tileWidth(0)
     , _tileHeight(0)
-    , _lowerLeftX(0)
-    , _lowerLeftY(0)
+    , _boundingBox(0,0,1,1)
     , _routingGraph(routingGraph)
 {
 }
@@ -76,7 +75,7 @@ void MatrixVertex::_preDestroy()
 //{
 //    if ( _yInit )
 //        throw Error ("MatrixVertex::createYRegular(): cannot initialize Y vector twice.");
-//    _lowerLeftY = routingGrid->getLowerLeftY();
+//    _boundingBox.getYMin() = routingGrid->getLowerLeftY();
 //    _nbYTiles   = routingGrid->getNbYTiles();
 //    _tileHeight = routingGrid->getTileHeight();
 //    _yRegular   = true;
@@ -92,16 +91,15 @@ Vertex* MatrixVertex::createRegularMatrix ( RoutingGrid* routingGrid )
     if ( _xInit || _yInit )
         throw Error ("MatrixVertex::createRegularMatrix(): cannot initialize matrix twice.");
 
-    _lowerLeftX = routingGrid->getLowerLeftX();
-    _lowerLeftY = routingGrid->getLowerLeftY();
-    _nbXTiles   = routingGrid->getNbXTiles();
-    _nbYTiles   = routingGrid->getNbYTiles();
-    _tileWidth  = routingGrid->getTileWidth();
-    _tileHeight = routingGrid->getTileHeight();
-    _xInit      = true;    // XXX Nécessaire pour les fonctions comme getLineIndex
-    _yInit      = true;
-    _xRegular   = true;    // XXX Nécessaire pour les fonctions comme getLineIndex
-    _yRegular   = true;
+    _boundingBox = routingGrid->getBoundingBox();
+    _nbXTiles    = routingGrid->getNbXTiles();
+    _nbYTiles    = routingGrid->getNbYTiles();
+    _tileWidth   = routingGrid->getTileWidth();
+    _tileHeight  = routingGrid->getTileHeight();
+    _xInit       = true;    // XXX Nécessaire pour les fonctions comme getLineIndex
+    _yInit       = true;
+    _xRegular    = true;    // XXX Nécessaire pour les fonctions comme getLineIndex
+    _yRegular    = true;
 
     DbU::Unit halfWidth  = _tileWidth / 2;
     DbU::Unit halfHeight = _tileHeight / 2;
@@ -110,7 +108,7 @@ Vertex* MatrixVertex::createRegularMatrix ( RoutingGrid* routingGrid )
     for ( unsigned j = 0 ; j < _nbYTiles ; j++ ) {
         vector<Vertex*> vect;
         for ( unsigned i = 0 ; i < _nbXTiles ; i++ ) {
-            Point position ( _lowerLeftX+(i*_tileWidth)+halfWidth, _lowerLeftY+(j*_tileHeight)+halfHeight );
+          Point position ( _boundingBox.getXMin()+(i*_tileWidth)+halfWidth, _boundingBox.getYMin()+(j*_tileHeight)+halfHeight );
             // on cree le vertex
             Vertex* vertex = _routingGraph->createVertex ( position, halfWidth, halfHeight );
             assert ( vertex );
@@ -148,8 +146,7 @@ Vertex* MatrixVertex::createRegularMatrix ()
     DbU::Unit sliceHeight = AllianceFramework::get()->getCellGauge()->getSliceHeight();
     DbU::Unit cellWidth  = cell->getAbutmentBox().getWidth();
     DbU::Unit cellHeight = cell->getAbutmentBox().getHeight();
-    _lowerLeftX = cell->getAbutmentBox().getXMin();
-    _lowerLeftY = cell->getAbutmentBox().getYMin();
+    _boundingBox = cell->getAbutmentBox();
     _nbXTiles   = (unsigned int)ceil(float(cellWidth)  / float(sliceHeight));
     _nbYTiles   = (unsigned int)ceil(float(cellHeight) / float(sliceHeight));
     _tileWidth  = sliceHeight;
@@ -165,8 +162,7 @@ Vertex* MatrixVertex::createRegularMatrix ()
 //          << "    - this             : " << (void*)this       << endl
 //          << "    - cellWidth        : " << cellWidth         << endl
 //          << "    - cellHeight       : " << cellHeight        << endl
-//          << "    - lowerLeftX       : " << _lowerLeftX       << endl
-//          << "    - lowerLeftY       : " << _lowerLeftY       << endl
+//          << "    - boundingBox      : " << _boundingBox      << endl
 //          << "    - nbXTiles         : " << _nbXTiles         << endl
 //          << "    - nbYTiles         : " << _nbYTiles         << endl
 //          << "    - tileWidth        : " << _tileWidth        << endl
@@ -181,7 +177,7 @@ Vertex* MatrixVertex::createRegularMatrix ()
         for ( unsigned i = 0 ; i < _nbXTiles ; i++ ) {
             DbU::Unit halfWidth  = (i == _nbXTiles - 1)?_latestTileWidth/2:_tileWidth/2;
             DbU::Unit halfHeight = (j == _nbYTiles - 1)?_latestTileHeight/2:_tileHeight/2;
-            Point position ( _lowerLeftX+(i*_tileWidth)+halfWidth, _lowerLeftY+(j*_tileHeight)+halfHeight );
+            Point position ( _boundingBox.getXMin()+(i*_tileWidth)+halfWidth, _boundingBox.getYMin()+(j*_tileHeight)+halfHeight );
             // on cree le vertex
             Vertex* vertex = _routingGraph->createVertex ( position, halfWidth, halfHeight );
             assert ( vertex );
@@ -293,24 +289,37 @@ unsigned int MatrixVertex::getLineIndex ( DbU::Unit y )
 // ***********************************************
 {
     assert(_yInit );
-         
+
     if ( _yRegular ) {
-//       cerr << "y:" << DbU::getValueString(y-_lowerLeftY) << "/" << DbU::getValueString(_tileHeight)
-//            << "=" << (DbU::getLambda(y-_lowerLeftY)/_tileHeight)
-//            << "<=>" << (unsigned int)floor((y-_lowerLeftY)/_tileHeight) << endl;
-        return (unsigned int)floor((y-_lowerLeftY)/_tileHeight);
+//       cerr << "y:" << DbU::getValueString(y-_boundingBox.getYMin()) << "/" << DbU::getValueString(_tileHeight)
+//            << "=" << (DbU::getLambda(y-_boundingBox.getYMin())/_tileHeight)
+//            << "<=>" << (unsigned int)floor((y-_boundingBox.getYMin())/_tileHeight) << endl;
+      if ( (y < _boundingBox.getYMin()) or (y > _boundingBox.getYMax()) )
+        throw Error ("MatrixVertex::getLineIndex(): search value (%s) is out of bounds [%s,%s]."
+                    ,DbU::getValueString(y).c_str()
+                    ,DbU::getValueString(_boundingBox.getYMin()).c_str()
+                    ,DbU::getValueString(_boundingBox.getYMax()).c_str());
+
+      unsigned int index = (unsigned int)floor((y-_boundingBox.getYMin())/_tileHeight);
+      if ( y == _boundingBox.getYMax() ) --index;
+
+      return index;
     }
+
     assert(is_sorted(_linesIndexes.begin(), _linesIndexes.end()));
-    if ( y == (*_linesIndexes.rbegin()).first )
-        return (*_linesIndexes.rbegin()).second-1;
+    if ( _linesIndexes.empty() );
+      throw Error ( "MatrixVertex::getLineIndex(): Indexes map is empty." );
+
     pair<pairIterator,pairIterator> result = equal_range (_linesIndexes.begin(), _linesIndexes.end()
                                                          , pair<DbU::Unit,unsigned>(y,0), MatrixVertex::IndexComp());
     if ( result.second == _linesIndexes.begin() )
         throw Error ("MatrixVertex::getLineIndex(): search value (%s) is lower than lowest bound (%s)."
-                    ,getString(y).c_str(),getString((*_linesIndexes.begin()).first).c_str());
+                    ,DbU::getValueString(y).c_str()
+                    ,DbU::getValueString((*_linesIndexes.begin()).first).c_str());
     if ( result.second == _linesIndexes.end() )
         throw Error ("MatrixVertex::getLineIndex(): search value (%s) is upper than uppest bound (%s)."
-                    ,getString(y).c_str(),getString((*_linesIndexes.rbegin()).first).c_str());
+                    ,DbU::getValueString(y).c_str()
+                    ,DbU::getValueString((*_linesIndexes.rbegin()).first).c_str());
 
     return ((*result.second).second-1);
 }
@@ -319,14 +328,28 @@ unsigned int MatrixVertex::getColumnIndex ( DbU::Unit x )
 // *************************************************
 {
     assert(_xInit );
+
+    unsigned int maxIndex = (*_columnsIndexes.rbegin()).second - 1;
+
     if ( _xRegular ) {
-//       cerr << "x:" << DbU::getValueString(x-DbU::lambda(_lowerLeftX)) << "/" << _tileWidth << "=" << (DbU::getLambda(x-DbU::lambda(_lowerLeftX))/_tileWidth)
-//            << "<=>" << (unsigned int)floor(DbU::getLambda(x-DbU::lambda(_lowerLeftX))/_tileWidth) << endl;
-        return (unsigned int)floor((x-_lowerLeftX)/_tileWidth);
+//       cerr << "x:" << DbU::getValueString(x-DbU::lambda(_boundingBox.getXMin())) << "/" << _tileWidth << "=" << (DbU::getLambda(x-DbU::lambda(_lowerLeftX))/_tileWidth)
+//            << "<=>" << (unsigned int)floor(DbU::getLambda(x-DbU::lambda(_boundingBox.getXMin()))/_tileWidth) << endl;
+      if ( (x < _boundingBox.getXMin()) or (x > _boundingBox.getXMax()) )
+          throw Error ("MatrixVertex::getColumnIndex(): search value (%s) is out of bounds [%s,%s]."
+                      ,DbU::getValueString(x).c_str()
+                      ,DbU::getValueString(_boundingBox.getXMin()).c_str()
+                      ,DbU::getValueString(_boundingBox.getXMax()).c_str());
+
+        unsigned int index = (unsigned int)floor((x-_boundingBox.getXMin())/_tileWidth);
+        if ( x == _boundingBox.getXMax() ) --index;
+
+        return index;
     }
+
     assert(is_sorted(_columnsIndexes.begin(),_columnsIndexes.end()));
-    if ( x == (*_columnsIndexes.rbegin()).first )
-        return (*_columnsIndexes.rbegin()).second-1;
+    if ( _columnsIndexes.empty() );
+      throw Error ( "MatrixVertex::getColumnIndex(): Indexes map is empty." );
+
     pair<pairIterator,pairIterator> result = equal_range (_columnsIndexes.begin(), _columnsIndexes.end()
                                                          , pair<DbU::Unit,unsigned>(x,0), MatrixVertex::IndexComp());
     if ( result.second == _columnsIndexes.begin() )
