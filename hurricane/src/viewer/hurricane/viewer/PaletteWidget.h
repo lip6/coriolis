@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -54,7 +54,7 @@ namespace Hurricane {
   class PaletteExtensionGoItem;
 
 
-  class PaletteWidget : public QScrollArea {
+  class PaletteWidget : public QWidget {
       Q_OBJECT;
 
     public:
@@ -80,6 +80,7 @@ namespace Hurricane {
              void              setItemVisible    ( const Name& name, bool visible );
                              
     protected:               
+             QScrollArea*     _scrollArea;
              PaletteItems     _layerItems;
              PaletteItems     _extensionGoItems;
              QPushButton*     _showAll;

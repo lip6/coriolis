@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -26,6 +26,7 @@
 #include  <algorithm>
 
 #include  <QFont>
+#include  <QFontMetrics>
 
 #include  "hurricane/Path.h"
 #include  "hurricane/Entity.h"
@@ -125,8 +126,9 @@ namespace Hurricane {
 
   QVariant  SelectionModel::data ( const QModelIndex& index, int role ) const
   {
-    static QFont occurrenceFont = Graphics::getFixedFont ( QFont::Normal );
-    static QFont entityFont     = Graphics::getFixedFont ( QFont::Bold, false );
+    static QFont        occurrenceFont = Graphics::getFixedFont ( QFont::Normal );
+    static QFont        entityFont     = Graphics::getFixedFont ( QFont::Bold, false );
+    static QFontMetrics entityMetrics  = QFontMetrics(entityFont);
 
     if ( !index.isValid() ) return QVariant ();
 
@@ -134,7 +136,9 @@ namespace Hurricane {
       if ( index.row() == 0 ) return QVariant();
       switch (index.column()) {
         case 0:  return 200;
-        default: return -1;
+        default:
+          if ( index.row() > (int)_selection.size() ) return 0;
+          return entityMetrics.width(getString(_selection[index.row()]._occurrence.getEntity()).c_str());
       }
     }
 

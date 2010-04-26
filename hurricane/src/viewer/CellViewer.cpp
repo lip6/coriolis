@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -44,6 +44,7 @@
 #include  "hurricane/viewer/CellViewer.h"
 #include  "hurricane/viewer/MousePositionWidget.h"
 #include  "hurricane/viewer/ControllerWidget.h"
+#include  "hurricane/viewer/GotoWidget.h"
 
 
 namespace Hurricane {
@@ -61,6 +62,7 @@ namespace Hurricane {
                                              , _exitAction             (NULL)
                                              , _refreshAction          (NULL)
                                              , _fitToContentsAction    (NULL)
+                                             , _gotoAction             (NULL)
                                              , _showSelectionAction    (NULL)
                                              , _rubberChangeAction     (NULL)
                                              , _clearRulersAction      (NULL)
@@ -70,9 +72,9 @@ namespace Hurricane {
                                              , _toolsMenu              (NULL)
                                              , _debugMenu              (NULL)
                                            //, _mapView                (NULL)
-                                             , _palette                (NULL)
                                              , _mousePosition          (NULL)
                                              , _controller             (NULL)
+                                             , _goto                   (NULL)
                                              , _cellWidget             (NULL)
                                              , _moveCommand            ()
                                              , _zoomCommand            ()
@@ -94,6 +96,7 @@ namespace Hurricane {
   CellViewer::~CellViewer ()
   {
     _controller->deleteLater ();
+    _goto->deleteLater ();
   }
 
 
@@ -171,6 +174,11 @@ namespace Hurricane {
     _fitToContentsAction->setStatusTip  ( tr("Adjust zoom to fit the whole cell's contents") );
     _fitToContentsAction->setShortcut   ( Qt::Key_F );
 
+    _gotoAction = new QAction  ( tr("&Goto"), this );
+    _gotoAction->setObjectName ( "viewer.menuBar.view.goto" );
+    _gotoAction->setStatusTip  ( tr("Center view on that point, with zoom adjustment") );
+    _gotoAction->setShortcut   ( Qt::Key_G );
+
     _showSelectionAction = new QAction  ( tr("&Show Selection"), this );
     _showSelectionAction->setObjectName ( "viewer.menuBar.view.showSelection" );
     _showSelectionAction->setStatusTip  ( tr("Highlight the selected items (darken others)") );
@@ -222,6 +230,7 @@ namespace Hurricane {
     _viewMenu->setObjectName ( "viewer.menuBar.view" );
     _viewMenu->addAction ( _refreshAction );
     _viewMenu->addAction ( _fitToContentsAction );
+    _viewMenu->addAction ( _gotoAction );
     _viewMenu->addAction ( _showSelectionAction );
     _viewMenu->addAction ( _rubberChangeAction );
     _viewMenu->addAction ( _clearRulersAction );
@@ -248,6 +257,8 @@ namespace Hurricane {
 
     _cellWidget       = new CellWidget       ();
     _controller       = new ControllerWidget ();
+    _goto             = new GotoWidget       ();
+    _goto->changeDbuMode ( _cellWidget->getDbuMode(), _cellWidget->getUnitPower() );
   //_mapView    = _cellWidget->getMapView ();
 
     _cellWidget->bindCommand ( &_moveCommand );
@@ -284,6 +295,10 @@ namespace Hurricane {
     connect ( _rubberChangeAction    , SIGNAL(triggered())        , _cellWidget, SLOT(rubberChange()) );
     connect ( _clearRulersAction     , SIGNAL(triggered())        , _cellWidget, SLOT(clearRulers()) );
     connect ( _controllerAction      , SIGNAL(triggered())        , _controller, SLOT(toggleShow()) );
+    connect ( _gotoAction            , SIGNAL(triggered())        , this       , SLOT(doGoto()) );
+
+    connect ( _cellWidget            , SIGNAL(dbuModeChanged(int,DbU::UnitPower))
+            , _goto                  , SLOT  (changeDbuMode (int,DbU::UnitPower)) );
 
     connect ( _cellWidget            , SIGNAL(mousePositionChanged(const Point&))
             , _mousePosition         , SLOT  (setPosition(const Point&)) );
@@ -386,6 +401,29 @@ namespace Hurricane {
          << endl;
 
     return NULL;
+  }
+
+
+  void  CellViewer::doGoto ()
+  {
+    if ( _goto->exec() == QDialog::Accepted ) {
+      if ( not _goto->hasXy() ) return;
+
+      Box        gotoArea ( _goto->getX(), _goto->getY() );
+      DbU::Unit  width;
+      DbU::Unit  height;
+
+      if ( _goto->hasAperture() ) {
+        width = height = _goto->getAperture() / 2;
+      } else {
+        Box visibleArea = _cellWidget->getVisibleArea ();
+        width  = visibleArea.getWidth ()/2;
+        height = visibleArea.getHeight()/2;
+      }
+
+      gotoArea.inflate ( width, height );
+      _cellWidget->reframe ( gotoArea );
+    }
   }
 
 

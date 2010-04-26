@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -47,10 +47,10 @@ namespace Hurricane {
       void        setCellWidget        ( CellWidget* );
     signals:                           
       void        queryFilterChanged   ();
-      void        layoutModeChanged    ();
+      void        dbuModeChanged       ( int mode, DbU::UnitPower );
     public slots:                      
       void        changeQueryFilter    ();
-      void        changeLayoutMode     ();
+      void        changeDbuMode        ( int mode, DbU::UnitPower );
       void        startLevelChanged    ( int level );
       void        stopLevelChanged     ( int level );
       void        setDoMasterCells     ( int state );

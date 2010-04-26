@@ -1286,56 +1286,18 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::changeLayoutMode ()
+  void  CellWidget::changeDbuMode ( int mode, DbU::UnitPower p )
   {
-    if ( symbolicMode() ) {
-      setSymbolicMode ();
-    } else if ( gridMode() ) {
-      setGridMode ();
-    } else {
-      setPhysicalMode(_state->getUnitPower());
-    }
-  }
-
-
-  void  CellWidget::setGridMode ()
-  {
-    if ( not gridMode() ) {
-      _state->setGridMode ();
-      DbU::setStringMode ( DbU::Grid );
+    if ( (_state->getDbuMode() != mode) or (_state->getUnitPower() != p) ) {
+      _state->setDbuMode   ( mode );
+      _state->setUnitPower ( p );
+      
+      DbU::setStringMode ( mode, p );
 
       updateMousePosition ();
       refresh ();
 
-      emit layoutModeChanged ();
-    }
-  }
-
-
-  void  CellWidget::setSymbolicMode ()
-  {
-    if ( not symbolicMode() ) {
-      _state->setSymbolicMode ();
-      DbU::setStringMode ( DbU::Symbolic );
-
-      updateMousePosition ();
-      refresh ();
-
-      emit layoutModeChanged ();
-    }
-  }
-
-
-  void  CellWidget::setPhysicalMode ( DbU::UnitPower p )
-  {
-    if ( not physicalMode() or (_state->getUnitPower() != p) ) {
-      _state->setPhysicalMode ( p );
-      DbU::setStringMode ( DbU::Physical, p );
-
-      updateMousePosition ();
-      refresh ();
-
-      emit layoutModeChanged ();
+      emit dbuModeChanged ( _state->getDbuMode(), _state->getUnitPower() );
     }
   }
 

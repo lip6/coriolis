@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -475,7 +475,7 @@ namespace Hurricane {
     connect ( _tabSelection->getSelection(), SIGNAL(inspect(Occurrence&))
             , _tabInspector                , SLOT  (setSelectionOccurrence(Occurrence&)) );
                                         
-    resize ( 540, 540 );
+    resize ( 600, 560 );
   }
 
 

@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -170,18 +170,20 @@ namespace Hurricane {
 
 
   PaletteWidget::PaletteWidget ( QWidget* parent )
-    : QScrollArea      (parent)
+    : QWidget          (parent)
+    , _scrollArea      (new QScrollArea(this))
     , _layerItems      ()
     , _extensionGoItems()
-    , _showAll         (new QPushButton(this))
-    , _hideAll         (new QPushButton(this))
+    , _showAll         (new QPushButton(_scrollArea))
+    , _hideAll         (new QPushButton(_scrollArea))
     , _grid            (new QGridLayout())
     , _columnHeight    (22)
     , _extensionRow    (0)
     , _extensionColumn (0)
     , _extensionGroup  (NULL)
   {
-    setWidgetResizable ( true );
+    setContentsMargins ( 0, 0, 0, 0 );
+    _scrollArea->setWidgetResizable ( true );
     QVBoxLayout* vLayout = new QVBoxLayout ();
     QHBoxLayout* hLayout = new QHBoxLayout ();
 
@@ -216,12 +218,19 @@ namespace Hurricane {
 
     vLayout->addStretch ();
 
-    QWidget* adaptator = new QWidget ();
-    adaptator->setLayout ( vLayout );
-    setWidget ( adaptator );
-    setHorizontalScrollBarPolicy ( Qt::ScrollBarAsNeeded );
-    setVerticalScrollBarPolicy   ( Qt::ScrollBarAsNeeded );
-    setFrameStyle                ( QFrame::Plain );
+    QWidget* scrollAdaptator = new QWidget ();
+    scrollAdaptator->setLayout ( vLayout );
+    _scrollArea->setContentsMargins           ( 0, 0, 0, 0 );
+    _scrollArea->setWidget                    ( scrollAdaptator );
+    _scrollArea->setHorizontalScrollBarPolicy ( Qt::ScrollBarAsNeeded );
+    _scrollArea->setVerticalScrollBarPolicy   ( Qt::ScrollBarAsNeeded );
+    _scrollArea->setFrameStyle                ( QFrame::Plain );
+
+    vLayout = new QVBoxLayout ();
+    vLayout->setSpacing ( 0 );
+    vLayout->addWidget  ( _scrollArea );
+
+    setLayout ( vLayout );
   }
 
 

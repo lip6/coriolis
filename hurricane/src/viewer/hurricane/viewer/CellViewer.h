@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -53,12 +53,9 @@ namespace Hurricane {
 
 
   class Cell;
-  class HPalette;
-  class HGraphics;
-  class HDisplayFilter;
 //class MapView;
+  class GotoWidget;
   class MousePositionWidget;
-  class HSelection;
   class ControllerWidget;
 
 
@@ -83,6 +80,7 @@ namespace Hurricane {
               void                 unselect                  ( Occurrence& );
               void                 unselectAll               ();
     public slots:                  
+              void                 doGoto                    ();
               void                 changeSelectionMode       ();
               void                 setShowSelection          ( bool );
               void                 setState                  ( shared_ptr<CellWidget::State>& );
@@ -115,6 +113,7 @@ namespace Hurricane {
       QAction*                 _exitAction;
       QAction*                 _refreshAction;
       QAction*                 _fitToContentsAction;
+      QAction*                 _gotoAction;
       QAction*                 _showSelectionAction;
       QAction*                 _rubberChangeAction;
       QAction*                 _clearRulersAction;
@@ -124,9 +123,9 @@ namespace Hurricane {
       QMenu*                   _toolsMenu;
       QMenu*                   _debugMenu;
     //MapView*                 _mapView;
-      HPalette*                _palette;
       MousePositionWidget*     _mousePosition;
       ControllerWidget*        _controller;
+      GotoWidget*              _goto;
       CellWidget*              _cellWidget;
       MoveCommand              _moveCommand;
       ZoomCommand              _zoomCommand;

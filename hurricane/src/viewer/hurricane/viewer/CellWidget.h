@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -148,6 +148,7 @@ namespace Hurricane {
       inline  void                    resetActiveCommand         ();
       inline  void                    setCursorStep              ( DbU::Unit );
       inline  void                    setRealSnapGridStep        ( DbU::Unit step );
+      inline  unsigned int            getDbuMode                 () const;
       inline  bool                    gridMode                   () const;
       inline  bool                    symbolicMode               () const;
       inline  bool                    physicalMode               () const;
@@ -155,6 +156,8 @@ namespace Hurricane {
       inline  bool                    showBoundaries             () const;
       inline  bool                    showSelection              () const;
       inline  bool                    cumulativeSelection        () const;
+      inline  void                    setDbuMode                 ( int );
+      inline  void                    setUnitPower               ( DbU::UnitPower );
       inline  void                    setRubberShape             ( RubberShape );
       inline  void                    setStartLevel              ( int );
       inline  void                    setStopLevel               ( int );
@@ -195,6 +198,7 @@ namespace Hurricane {
               void                    drawScreenRect             ( const QRect& ,                size_t plane=PlaneId::Working );
               void                    drawScreenPolyline         ( const QPoint*, int, int,      size_t plane=PlaneId::Working );
     // Geometric conversions.                                    
+      inline  DbU::Unit               toDbu                      ( float ) const;
               QRect                   dbuToDisplayRect           ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2, bool usePoint=true ) const;
               QRect                   dbuToDisplayRect           ( const Box& box , bool usePoint=true ) const;
               QPoint                  dbuToDisplayPoint          ( DbU::Unit x, DbU::Unit y ) const;
@@ -216,6 +220,7 @@ namespace Hurricane {
       inline  Box                     screenToDbuBox             ( const QRect& rect ) const;
       inline  Box&                    pixelInflate               ( Box&, int pixels ) const;
       inline  Point                   getTopLeft                 () const;
+      inline  Box                     getVisibleArea             () const;
               Box                     computeVisibleArea         ( float scale ) const;
               Box                     computeVisibleArea         ( float scale, const Point& topLeft ) const;
               Box                     computeVisibleArea         ( const Box&, float& scale ) const;
@@ -246,7 +251,7 @@ namespace Hurricane {
               void                    stateChanged               ( shared_ptr<CellWidget::State>& );
               void                    styleChanged               ();
               void                    queryFilterChanged         ();
-              void                    layoutModeChanged          ();
+              void                    dbuModeChanged             ( int mode, DbU::UnitPower );
               void                    updatePalette              ( Cell* );
               void                    mousePositionChanged       ( const Point& position );
               void                    selectionModeChanged       ();
@@ -279,7 +284,7 @@ namespace Hurricane {
       inline  void                    clearRulers                ();
               void                    changeQueryFilter          ();
               void                    rubberChange               ();
-              void                    changeLayoutMode           ();
+              void                    changeDbuMode              ( int mode, DbU::UnitPower );
               void                    setStyle                   ( int id );
               void                    updatePalette              ();
               void                    cellPreModificate          ();
@@ -297,9 +302,9 @@ namespace Hurricane {
               void                    setScale                   ( float );
               void                    scaleHistoryUp             ();
               void                    scaleHistoryDown           ();
-              void                    setGridMode                ();
-              void                    setSymbolicMode            ();
-              void                    setPhysicalMode            ( DbU::UnitPower );
+    //        void                    setGridMode                ();
+    //        void                    setSymbolicMode            ();
+    //        void                    setPhysicalMode            ( DbU::UnitPower );
               void                    setShowBoundaries          ( bool state );
               void                    reframe                    ();
               void                    reframe                    ( const Box& box, bool historyEnable=true );
@@ -553,9 +558,8 @@ namespace Hurricane {
           inline void                setCursorStep          ( DbU::Unit );
           inline DbU::Unit           getCursorStep          () const;
           inline DbU::UnitPower      getUnitPower           () const;
-          inline void                setGridMode            ();
-          inline void                setSymbolicMode        ();
-          inline void                setPhysicalMode        ( DbU::UnitPower );
+          inline void                setDbuMode             ( int );
+          inline void                setUnitPower           ( DbU::UnitPower );
           inline void                setShowBoundaries      ( bool );
           inline void                setShowSelection       ( bool );
           inline void                setCumulativeSelection ( bool );
@@ -574,6 +578,7 @@ namespace Hurricane {
           inline SelectorCriterions& getSelection           ();
           inline RulerSet&           getRulers              ();
           inline DbU::Unit           cursorStep             () const;
+          inline unsigned int        getDbuMode             () const;
           inline bool                gridMode               () const;
           inline bool                symbolicMode           () const;
           inline bool                physicalMode           () const;
@@ -606,7 +611,7 @@ namespace Hurricane {
           SelectorCriterions  _selection;
           RulerSet            _rulers;
           DbU::Unit           _cursorStep;
-          unsigned int        _displayMode;
+          unsigned int        _dbuMode;
           DbU::UnitPower      _unitPower;
           bool                _showBoundaries;
           bool                _showSelection;
@@ -895,7 +900,7 @@ namespace Hurricane {
     , _selection          ()
     , _rulers             ()
     , _cursorStep         (DbU::lambda(0.5))
-    , _displayMode        (DbU::Symbolic)
+    , _dbuMode            (DbU::Symbolic)
     , _unitPower          (DbU::Nano)
     , _showBoundaries     (true)
     , _showSelection      (false)
@@ -912,16 +917,20 @@ namespace Hurricane {
   }
 
 
+  inline unsigned int  CellWidget::State::getDbuMode () const
+  { return _dbuMode; }
+
+
   inline bool  CellWidget::State::symbolicMode () const
-  { return (_displayMode == DbU::Symbolic); }
+  { return (_dbuMode == DbU::Symbolic); }
 
 
   inline bool  CellWidget::State::gridMode () const
-  { return (_displayMode == DbU::Grid); }
+  { return (_dbuMode == DbU::Grid); }
 
 
   inline bool  CellWidget::State::physicalMode () const
-  { return (_displayMode == DbU::Physical); }
+  { return (_dbuMode == DbU::Physical); }
 
 
   inline void  CellWidget::State::setCell ( Cell* cell )
@@ -946,26 +955,19 @@ namespace Hurricane {
   { return _unitPower; }
 
 
-  inline void  CellWidget::State::setGridMode ()
+  inline void  CellWidget::State::setDbuMode ( int mode )
   {
-    _displayMode = DbU::Grid;
-    _cursorStep  = DbU::grid ( 1.0 );
+    _dbuMode = mode;
+    switch ( _dbuMode ) {
+      case DbU::Symbolic: _cursorStep = DbU::lambda(0.5); break;
+      case DbU::Grid:     _cursorStep = DbU::grid  (1.0); break;
+      case DbU::Physical: _cursorStep = DbU::grid  (1.0); break;
+    }
   }
 
 
-  inline void  CellWidget::State::setSymbolicMode ()
-  {
-    _displayMode = DbU::Symbolic;
-    _cursorStep  = DbU::lambda ( 0.5 );
-  }
-
-
-  inline void  CellWidget::State::setPhysicalMode ( DbU::UnitPower p )
-  {
-    _displayMode = DbU::Physical;
-    _cursorStep  = DbU::grid ( 1.0 );
-    _unitPower   = p;
-  }
+  inline void  CellWidget::State::setUnitPower ( DbU::UnitPower p )
+  { _unitPower = p; }
 
 
   inline void  CellWidget::State::setShowBoundaries ( bool state )
@@ -1189,6 +1191,20 @@ namespace Hurricane {
   { _drawingPlanes.copyToImage ( image, noScale ); }
 
 
+  inline DbU::Unit  CellWidget::toDbu ( float d ) const
+  {
+    DbU::Unit unit;
+    switch ( getDbuMode() ) {
+      case DbU::Physical: unit = DbU::grid(DbU::physicalToGrid(d,DbU::Micro)); break;
+      case DbU::Grid:     unit = DbU::grid(d); break;
+      case DbU::Db:       unit = DbU::db((long)d); break;
+      default:
+      case DbU::Symbolic: unit = DbU::lambda(d); break;
+    }
+    return unit;
+  }
+
+
   inline int  CellWidget::dbuToDisplayX ( DbU::Unit x ) const
   { return (int)rint ( (float)( x - _displayArea.getXMin() ) * getScale() ); }
 
@@ -1265,6 +1281,10 @@ namespace Hurricane {
   { return Point(_visibleArea.getXMin(),_visibleArea.getYMax()); }
 
 
+  inline Box  CellWidget::getVisibleArea () const
+  { return computeVisibleArea(getScale()); }
+
+
   inline Cell* CellWidget::getCell () const
   { return _state->getCell(); }
 
@@ -1275,6 +1295,10 @@ namespace Hurricane {
 
   inline DbU::Unit  CellWidget::cursorStep () const
   { return _state->cursorStep(); }
+
+
+  inline unsigned int  CellWidget::getDbuMode () const
+  { return _state->getDbuMode(); }
 
 
   inline bool  CellWidget::gridMode () const
@@ -1337,6 +1361,14 @@ namespace Hurricane {
 
   inline Query::Mask  CellWidget::getQueryFilter () const
   { return _state->getQueryFilter(); }
+
+
+  inline void  CellWidget::setDbuMode ( int mode )
+  { _state->setDbuMode(mode); }
+
+
+  inline void  CellWidget::setUnitPower ( DbU::UnitPower p )
+  { _state->setUnitPower(p); }
 
 
   inline void  CellWidget::setRubberShape ( RubberShape shape )

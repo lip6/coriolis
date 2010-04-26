@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -197,8 +197,10 @@ namespace Hurricane {
     if ( _cellWidget ) {
       disconnect ( this        , SIGNAL(queryFilterChanged()), _cellWidget, SLOT(changeQueryFilter()) );
       disconnect ( _cellWidget , SIGNAL(queryFilterChanged()), this       , SLOT(changeQueryFilter()) );
-      disconnect ( this        , SIGNAL(layoutModeChanged ()), _cellWidget, SLOT(changeLayoutMode ()) );
-      disconnect ( _cellWidget , SIGNAL(layoutModeChanged ()), this       , SLOT(changeLayoutMode ()) );
+      disconnect ( this        , SIGNAL(dbuModeChanged    (int,DbU::UnitPower))
+                 , _cellWidget , SLOT  (changeDbuMode     (int,DbU::UnitPower)) );
+      disconnect ( _cellWidget , SIGNAL(dbuModeChanged    (int,DbU::UnitPower))
+                 , this        , SLOT  (changeDbuMode     (int,DbU::UnitPower)) );
     }
 
     _cellWidget = cw;
@@ -206,35 +208,37 @@ namespace Hurricane {
 
     connect ( this        , SIGNAL(queryFilterChanged()), _cellWidget, SLOT(changeQueryFilter()) );
     connect ( _cellWidget , SIGNAL(queryFilterChanged()), this       , SLOT(changeQueryFilter()) );
-    connect ( this        , SIGNAL(layoutModeChanged ()), _cellWidget, SLOT(changeLayoutMode ()) );
-    connect ( _cellWidget , SIGNAL(layoutModeChanged ()), this       , SLOT(changeLayoutMode ()) );
+    connect ( this        , SIGNAL(dbuModeChanged    (int,DbU::UnitPower))
+            , _cellWidget , SLOT  (changeDbuMode     (int,DbU::UnitPower)) );
+    connect ( _cellWidget , SIGNAL(dbuModeChanged    (int,DbU::UnitPower))
+            , this        , SLOT  (changeDbuMode     (int,DbU::UnitPower)) );
 
     _updateState = ExternalEmit;
     changeQueryFilter ();
-    changeLayoutMode ();
+    changeDbuMode ( _cellWidget->getDbuMode(), _cellWidget->getUnitPower() );
   }
 
 
-  void  DisplayFilterWidget::changeLayoutMode ()
+  void  DisplayFilterWidget::changeDbuMode ( int mode, DbU::UnitPower p )
   {
-    if ( !_cellWidget ) return;
+    if ( _cellWidget == NULL ) return;
 
     if ( _updateState == InternalEmit ) {
       _updateState = InternalReceive;
-      emit layoutModeChanged ();
+      emit dbuModeChanged ( mode, p );
     } else {
       if ( _updateState == ExternalEmit ) {
         blockAllSignals ( true );
 
-        if ( _cellWidget->symbolicMode() )
-          _symbolicMode->setChecked(true);
-        else if ( _cellWidget->gridMode() )
-          _gridMode->setChecked(true);
-        else if ( _cellWidget->physicalMode() ) {
-          switch ( _cellWidget->getUnitPower() ) {
-            case DbU::Nano:  _nanoMode->setChecked(true); break;
-            case DbU::Micro: _microMode->setChecked(true); break;
-          }
+        switch ( _cellWidget->getDbuMode() ) {
+          case DbU::Symbolic: _symbolicMode->setChecked(true); break;
+          case DbU::Grid:     _gridMode    ->setChecked(true); break;
+          case DbU::Physical: 
+            switch ( _cellWidget->getUnitPower() ) {
+              case DbU::Nano:  _nanoMode ->setChecked(true); break;
+              case DbU::Micro: _microMode->setChecked(true); break;
+            }
+            break;
         }
          
         blockAllSignals ( false );
@@ -400,7 +404,7 @@ namespace Hurricane {
     if ( _cellWidget ) {
       if ( !_cellWidget->symbolicMode() ) {
         _updateState = InternalEmit;
-        _cellWidget->setSymbolicMode ();
+        _cellWidget->changeDbuMode ( DbU::Symbolic, _cellWidget->getUnitPower() );
       }
     }
   }
@@ -409,9 +413,9 @@ namespace Hurricane {
   void  DisplayFilterWidget::setGridMode ()
   {
     if ( _cellWidget ) {
-      if ( !_cellWidget->gridMode() ) {
+      if ( not _cellWidget->gridMode() ) {
         _updateState = InternalEmit;
-        _cellWidget->setGridMode ();
+        _cellWidget->changeDbuMode ( DbU::Grid, _cellWidget->getUnitPower()  );
       }
     }
   }
@@ -422,7 +426,7 @@ namespace Hurricane {
     if ( _cellWidget ) {
       if ( not _cellWidget->physicalMode() or (_cellWidget->getUnitPower() != DbU::Nano) ) {
         _updateState = InternalEmit;
-        _cellWidget->setPhysicalMode ( DbU::Nano );
+        _cellWidget->changeDbuMode ( DbU::Physical, DbU::Nano );
       }
     }
   }
@@ -433,7 +437,7 @@ namespace Hurricane {
     if ( _cellWidget ) {
       if ( not _cellWidget->physicalMode() or (_cellWidget->getUnitPower() != DbU::Micro) ) {
         _updateState = InternalEmit;
-        _cellWidget->setPhysicalMode ( DbU::Micro );
+        _cellWidget->changeDbuMode ( DbU::Physical, DbU::Micro );
       }
     }
   }

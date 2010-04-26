@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -100,17 +100,19 @@ namespace Hurricane {
     _view->setShowGrid(false);
     _view->setAlternatingRowColors(true);
     _view->setSelectionBehavior(QAbstractItemView::SelectRows);
+  //_view->setTextElideMode(Qt::ElideNone);
     _view->setSortingEnabled(true);
     _view->setModel ( _sortModel );
-    _view->horizontalHeader()->setStretchLastSection ( true );
     _view->installEventFilter(this);
 
     QHeaderView* horizontalHeader = _view->horizontalHeader ();
     horizontalHeader->setStretchLastSection ( true );
-  //horizontalHeader->setMinimumSectionSize ( 200 );
+  //horizontalHeader->setResizeMode ( QHeaderView::ResizeToContents );
+    horizontalHeader->setMinimumSectionSize ( 200 );
 
     QHeaderView* verticalHeader = _view->verticalHeader ();
     verticalHeader->setVisible ( false );
+    verticalHeader->setDefaultSectionSize ( _rowHeight );
 
     QVBoxLayout* vLayout = new QVBoxLayout ();
   //vLayout->setSpacing ( 0 );
