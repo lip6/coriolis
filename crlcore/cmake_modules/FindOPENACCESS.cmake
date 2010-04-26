@@ -1,10 +1,21 @@
 # - Find the OpenAccess includes and libraries.
+# x-----------------------------------------------------------------x
+# |  This file is part of the hurricaneAMS Software.                |
+# |  Copyright (c) UPMC/LIP6 2009-2010, All Rights Reserved         |
+# | =============================================================== |
+# |  Author      :                    Jean-Manuel Caba              |
+# |  E-mail      :       Jean-Manuel.Caba@asim.lip6.fr              |
+# | =============================================================== |
+# |  Author      :                 Chistophe Alexandre              |
+# |  E-mail      :   Christophe.Alexandre@asim.lip6.fr              |
+# x-----------------------------------------------------------------x
 # The following variables are set if OpenAccess is found.  If OpenAccess is not
 # found, OA_FOUND is set to false.
 #  OA_FOUND        - True when OpenAccess is found.
 #  OA_INCLUDE_DIR - the path to where the OpenAccess include files are.
 #  OA_LIBRARIES - The path to where the OpenAccess library files are.
 #
+#  In OpenAccess si2 version the base library (without the plugins) are
 #  The OpenAccess oaCommon library: OA_COMMON_LIBRARY
 #                                   OA_COMMON_LIBRARY_RELEASE
 #                                   OA_COMMON_DEBUG
@@ -12,6 +23,10 @@
 #  The OpenAccess oaBase library:   OA_BASE_LIBRARY
 #                                   OA_BASE_LIBRARY_RELEASE
 #                                   OA_BASE_DEBUG
+#
+#  The OpenAccess oaDM library:     OA_CM_LIBRARY
+#                                   OA_CM_LIBRARY_RELEASE
+#                                   OA_CM_DEBUG
 #
 #  The OpenAccess oaDM library:     OA_DM_LIBRARY
 #                                   OA_DM_LIBRARY_RELEASE
@@ -32,7 +47,33 @@
 #  The OpenAccess oaPlugin library: OA_PLUGIN_LIBRARY
 #                                   OA_PLUGIN_LIBRARY_RELEASE
 #                                   OA_PLUGIN_DEBUG
-
+#
+#
+# Cadence version of OpenAccess has also
+#
+#liboaCMExportSample.so 
+#liboaCMTrackingSample.so 
+#liboaDMFileSysBase.so 
+#liboaDMFileSys.so 
+#liboaDMTurboBase.so 
+#liboaDMTurbo.so 
+#liboaLangBase.so
+#liboaLangInfo.so
+#liboaNativeLibDef.so
+#liboaNativeText.so
+#liboaPcellCPP.so
+#liboaPcellScript.so
+#liboaRQCDS.so
+#liboaRQHGCDS.so
+#liboaRQXYTree.so
+#liboaTclCommon.so
+#liboaTclBase.so
+#liboaTclPlugIn.so
+#liboaTclEngine.so
+#liboaTclHelp.so
+#liboaTcl.so
+#
+#
 
 SET(OA_INCLUDE_PATH_DESCRIPTION "directory containing the OpenAccess include files. E.g /usr/local/include")
 
@@ -80,6 +121,10 @@ IF(UNIX)
   # Set OA_OABASE_LIBRARY 
   FIND_LIBRARY(OA_OABASE_LIBRARY_RELEASE NAMES oaBase PATHS ${OA_LIBRARY_DIR} NO_DEFAULT_PATH )
   FIND_LIBRARY(OA_OABASE_LIBRARY_DEBUG NAMES oaBaseD PATHS ${OA_LIBRARY_DIR} NO_DEFAULT_PATH)
+
+  # Set OA_OACM_LIBRARY 
+  FIND_LIBRARY(OA_OACM_LIBRARY_RELEASE NAMES oaCM PATHS ${OA_LIBRARY_DIR} NO_DEFAULT_PATH )
+  FIND_LIBRARY(OA_OACM_LIBRARY_DEBUG NAMES oaCMD PATHS ${OA_LIBRARY_DIR} NO_DEFAULT_PATH)
 
   # Set OA_OADM_LIBRARY 
   FIND_LIBRARY(OA_OADM_LIBRARY_RELEASE NAMES oaDM PATHS ${OA_LIBRARY_DIR} NO_DEFAULT_PATH )
@@ -146,6 +191,7 @@ IF(UNIX)
 
   _OA_ADJUST_LIB_VARS(OACOMMON)
   _OA_ADJUST_LIB_VARS(OABASE)
+  _OA_ADJUST_LIB_VARS(OACM)
   _OA_ADJUST_LIB_VARS(OADM)
   _OA_ADJUST_LIB_VARS(OATECH)
   _OA_ADJUST_LIB_VARS(OADESIGN)
@@ -166,6 +212,7 @@ IF(UNIX)
     SET(OA_LIBRARIES
       ${OA_OACOMMON_LIBRARY} 
       ${OA_OABASE_LIBRARY} 
+      ${OA_OACM_LIBRARY}
       ${OA_OADM_LIBRARY}
       ${OA_OATECH_LIBRARY} 
       ${OA_OADESIGN_LIBRARY} 
