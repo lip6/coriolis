@@ -53,7 +53,7 @@ class ProjectBuilder:
         self._projects         = []
         self._standalones      = []
         self._svnTag           = "x"
-        self._svnMethod        = "svn+ssh://coriolis.lip6.fr"
+        self._svnMethod        = "svn+ssh://coriolis.soc.lip6.fr"
         self._rootDir          = os.path.join ( os.environ["HOME"], "coriolis-2.x" )
         self._quiet            = False
         self._buildMode        = "Release"
