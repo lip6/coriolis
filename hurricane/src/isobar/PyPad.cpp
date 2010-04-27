@@ -38,7 +38,7 @@ extern "C" {
   DBoDestroyAttribute(PyPad_destroy, PyPad)
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPad_getSourcePosition ()"
+  // Attribute Method  :  "PyPad_getBoundingBox ()"
 
   static PyObject* PyPad_getBoundingBox( PyPad *self ) {
     trace << "PyPad_getBoundingBox()" << endl;

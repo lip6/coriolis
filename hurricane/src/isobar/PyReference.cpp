@@ -20,14 +20,11 @@ using namespace Hurricane;
 #include "hurricane/isobar/PyPoint.h"
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/isobar/PyNet.h"
-
+#include "hurricane/isobar/PyBox.h"
 
 namespace  Isobar {
 
-
 extern "C" {
-
-
 #undef   ACCESS_OBJECT
 #undef   ACCESS_CLASS
 #define  ACCESS_OBJECT           _baseObject._object
@@ -74,6 +71,24 @@ extern "C" {
   }
 
 
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyReference_getBoundingBox ()"
+
+  static PyObject* PyReference_getBoundingBox( PyReference *self ) {
+    trace << "PyReference_getBoundingBox()" << endl;
+
+    METHOD_HEAD ( "Reference.BoundingBox()" )
+
+    PyBox* pyBox = PyObject_NEW ( PyBox, &PyTypeBox );
+    if (pyBox == NULL) { return NULL; }
+    
+    HTRY
+    pyBox->_object = new Box ( reference->getBoundingBox() );
+    HCATCH    
+
+    return ( (PyObject*)pyBox );
+  }
+
 
 
   // ---------------------------------------------------------------
@@ -109,6 +124,7 @@ extern "C" {
                          , "destroy associated hurricane object, the python object remains." }
     , { "getName"        , (PyCFunction)PyReference_getName        , METH_NOARGS , "Returns the name of the reference." }
     , { "getPoint"       , (PyCFunction)PyReference_getPoint       , METH_NOARGS , "Return the reference point." }
+    , { "getBoundingBox" , (PyCFunction)PyReference_getBoundingBox , METH_NOARGS , "Return the reference boundingBox." }
     , { "translate"      , (PyCFunction)PyReference_translate      , METH_VARARGS, "Translate the reference of dx and dy." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
