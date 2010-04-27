@@ -866,7 +866,7 @@ namespace Hurricane {
 
       Box bb = transformation.getBox ( reference->getBoundingBox() );
       rectangle = _cellWidget->dbuToDisplayRect ( bb );
-      rectangle.adjust ( 10, 10, 10, 10 );
+    //rectangle.adjust ( 10, 10, 10, 10 );
 
       if ( reference->getType() == Reference::Position ) {
         QPoint point = _cellWidget->dbuToDisplayPoint ( reference->getPoint() );
@@ -874,7 +874,7 @@ namespace Hurricane {
 
         flags |= Left;
       } else {
-        flags |= Center;
+        flags |= Center/*|Rounded*/;
       }
 
       const char* refName = reference->getName()._getSharedName()->_getSString().c_str();
@@ -1716,7 +1716,12 @@ namespace Hurricane {
     } else if ( flags & Left ) {
     }
 
-    if ( flags & Frame ) painter.drawRect ( bottomLeft.x()-1, bottomLeft.y()-height, width+2, height );
+    if ( flags & Frame ) {
+      if ( flags & Rounded )
+        painter.drawRoundedRect ( bottomLeft.x()-1, bottomLeft.y()-height, width+2, height, 8, 8 );
+      else
+        painter.drawRect ( bottomLeft.x()-1, bottomLeft.y()-height, width+2, height );
+    }
 
     painter.drawText  ( bottomLeft.x(), bottomLeft.y()-metrics.descent(), text );
     painter.restore   ();

@@ -112,14 +112,15 @@ namespace Hurricane {
                                         );
       typedef void ( InitExtensionGo_t )( CellWidget* );
       enum    RubberShape { Centric=1, Barycentric, Steiner };
-      enum    TextFlag    { Bold   =0x01
-                          , BigFont=0x02
-                          , Reverse=0x04
-                          , Frame  =0x08
-                          , Center =0x10
-                          , Left   =0x20
-                          , Right  =0x40
-                          , Top    =0x80
+      enum    TextFlag    { Bold    =0x001
+                          , BigFont =0x002
+                          , Reverse =0x004
+                          , Frame   =0x008
+                          , Rounded =0x010
+                          , Center  =0x020
+                          , Left    =0x040
+                          , Right   =0x080
+                          , Top     =0x100
                           };
     public:
     // Constructor & Destructor.
