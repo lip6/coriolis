@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -23,6 +23,7 @@
 // x-----------------------------------------------------------------x
 
 
+#include  <csignal>
 #include  <memory>
 using namespace std;
 
@@ -110,11 +111,13 @@ int main ( int argc, char *argv[] )
 
   try {
     float         edgeCapacity;
+    float         expandStep;
     unsigned long eventsLimit;
     unsigned int  traceLevel;
     bool          verbose1;
     bool          verbose2;
     bool          info;
+    bool          showConf;
     bool          coreDump;
     bool          logMode;
     bool          textMode;
@@ -131,6 +134,8 @@ int main ( int argc, char *argv[] )
                         , "Second level of verbosity.")
       ( "info,i"        , poptions::bool_switch(&info)->default_value(false)
                         , "Lots of informational messages.")
+      ( "show-conf"     , poptions::bool_switch(&showConf)->default_value(false)
+                        , "Print Kite configuration settings.")
       ( "core-dump,D"   , poptions::bool_switch(&coreDump)->default_value(false)
                         , "Enable core dumping.")
       ( "log-mode,L"    , poptions::bool_switch(&logMode)->default_value(false)
@@ -146,6 +151,8 @@ int main ( int argc, char *argv[] )
                         , "The tool to be run, in text mode." )
       ( "edge,e"        , poptions::value<float>(&edgeCapacity)->default_value(0.65)
                         , "The egde density ratio applied on global router's edges." )
+      ( "expand-step"   , poptions::value<float>(&expandStep)->default_value(0.40)
+                        , "The density delta above which GCells are aggregateds." )
       ( "events-limit"  , poptions::value<unsigned long>(&eventsLimit)
                         , "The maximum number of iterations (events) that the router is"
                           "allowed to perform." )
@@ -187,8 +194,13 @@ int main ( int argc, char *argv[] )
       }
     }
 
-    Kite::Configuration::setDefaultEdgeCapacity ( edgeCapacity );
-  //KnikEngine::setEdgeCapacityPercent ( edgeCapacity );
+    Kite::Configuration::getDefault()->setEdgeCapacityPercent ( edgeCapacity );
+
+    if ( arguments.count("events-limit") )
+      Kite::Configuration::getDefault()->setEventsLimit ( eventsLimit );
+
+    if ( arguments.count("expand-step") )
+      Kite::Configuration::getDefault()->setExpandStep ( expandStep );
 
     if ( cell ) {
     // addaccu.
@@ -302,7 +314,9 @@ int main ( int argc, char *argv[] )
                                                                     : Kite::BuildGlobalSolution;
 
         static vector<Net*> routingNets;
-        KiteEngine* kite = KiteEngine::create ( af->getRoutingGauge(), cell );
+        KiteEngine* kite = KiteEngine::create ( cell );
+        kite->getConfiguration()->setExpandStep ( expandStep );
+        if ( showConf ) kite->printConfiguration ();
         
         kite->runGlobalRouter ( globalFlags );
         if ( saveGlobal ) kite->saveGlobalSolution ();
