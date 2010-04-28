@@ -61,21 +61,17 @@ SET(HURRICANE_DIR_MESSAGE              "Set the HURRICANE_INCLUDE_DIR cmake cach
 IF(UNIX)
   # Setup the DIR_SEARCH_PATH.
   MACRO(SETUP_SEARCH_DIR project)
-    IF( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
-      MESSAGE("-- ${project}_USER_TOP is set to $ENV{${project}_USER_TOP}")
-      LIST(FIND ${project}_DIR_SEARCH "${${project}_DIR_SEARCH}" DIR_INDEX)
-      IF( DIR_INDEX LESS 0)
-        LIST(INSERT ${project}_DIR_SEARCH 0 "$ENV{${project}_USER_TOP}")
-      ENDIF( DIR_INDEX LESS 0)
-    ENDIF( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
-    
     IF( NOT("$ENV{${project}_TOP}" STREQUAL "") )
       MESSAGE("-- ${project}_TOP is set to $ENV{${project}_TOP}")
-      LIST(FIND ${project}_DIR_SEARCH "${${project}_DIR_SEARCH}" DIR_INDEX)
-      IF( DIR_INDEX LESS 0)
-        LIST(INSERT ${project}_DIR_SEARCH 0 "$ENV{${project}_TOP}")
-      ENDIF( DIR_INDEX LESS 0)
+      LIST(INSERT ${project}_DIR_SEARCH 0 "$ENV{${project}_TOP}")
     ENDIF( NOT("$ENV{${project}_TOP}" STREQUAL "") )
+
+    IF( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
+      MESSAGE("-- ${project}_USER_TOP is set to $ENV{${project}_USER_TOP}")
+      LIST(INSERT ${project}_DIR_SEARCH 0 "$ENV{${project}_USER_TOP}")
+    ENDIF( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
+
+    LIST(REMOVE_DUPLICATES ${project}_DIR_SEARCH)
   ENDMACRO(SETUP_SEARCH_DIR project)
   
   SETUP_SEARCH_DIR(CORIOLIS)
