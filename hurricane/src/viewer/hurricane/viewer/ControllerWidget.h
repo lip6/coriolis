@@ -228,6 +228,29 @@ namespace Hurricane {
 
 
 // -------------------------------------------------------------------
+// Class  :  "Hurricane::TabSettings".
+
+
+  class TabSettings : public ControllerTab {
+      Q_OBJECT;
+
+    public:
+                         TabSettings   ( QWidget* parent=NULL );
+      inline QTabWidget* getSettings   ();
+      inline int         addSetting    ( QWidget* page, const QString& label );
+    public slots:
+             void        setCellWidget ( CellWidget* );
+
+    protected:
+      QTabWidget* _settings;
+  };
+
+
+  inline QTabWidget* TabSettings::getSettings () { return _settings; }
+  inline int         TabSettings::addSetting  ( QWidget* page, const QString& label ) { return _settings->addTab(page,label); }
+
+
+// -------------------------------------------------------------------
 // Class  :  "Hurricane::ControllerWidget".
 
 
@@ -243,7 +266,9 @@ namespace Hurricane {
       inline NetlistWidget*       getNetlistBrowser  ();
       inline SelectionWidget*     getSelection       ();
       inline InspectorWidget*     getInspectorWidget ();
+      inline TabSettings*         getSettings        ();
              void                 setCellWidget      ( CellWidget* );
+      inline int                  addSetting         ( QWidget* page, const QString& label );
     public slots:                 
              void                 cellPreModificate  ();
              void                 cellPostModificate ();
@@ -259,6 +284,7 @@ namespace Hurricane {
       TabNetlist*       _tabNetlist;
       TabSelection*     _tabSelection;
       TabInspector*     _tabInspector;
+      TabSettings*      _tabSettings;
   };
 
 
@@ -269,6 +295,8 @@ namespace Hurricane {
   inline NetlistWidget*       ControllerWidget::getNetlistBrowser  () { return _tabNetlist->getNetlistBrowser(); }
   inline SelectionWidget*     ControllerWidget::getSelection       () { return _tabSelection->getSelection(); }
   inline InspectorWidget*     ControllerWidget::getInspectorWidget () { return _tabInspector->getInspectorWidget(); }
+  inline TabSettings*         ControllerWidget::getSettings        () { return _tabSettings; }
+  inline int                  ControllerWidget::addSetting         ( QWidget* page, const QString& label ) { return _tabSettings->addSetting(page,label); }
 
 
 }  // End of Hurricane namespace.

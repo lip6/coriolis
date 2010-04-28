@@ -432,6 +432,29 @@ namespace Hurricane {
 
 
 // -------------------------------------------------------------------
+// Class  :  "Hurricane::TabSettings".
+
+
+  TabSettings::TabSettings ( QWidget* parent )
+    : ControllerTab(parent)
+    , _settings(new QTabWidget())
+  { 
+    setContentsMargins ( 5, 0, 5, 5 );
+
+    _settings->setObjectName ( "controller.tabSettings.settings" );
+
+    QVBoxLayout* vLayout  = new QVBoxLayout ();
+    vLayout->setContentsMargins ( 0, 0, 0, 0 );
+    vLayout->addWidget ( _settings );
+    setLayout ( vLayout );
+  }
+
+
+  void  TabSettings::setCellWidget ( CellWidget* )
+  { }
+
+
+// -------------------------------------------------------------------
 // Class  :  "Hurricane::ControllerWidget".
 
 
@@ -444,6 +467,7 @@ namespace Hurricane {
     , _tabNetlist      (new TabNetlist())
     , _tabSelection    (new TabSelection())
     , _tabInspector    (new TabInspector())
+    , _tabSettings     (new TabSettings())
   {
     setObjectName  ( "controller" );
     setAttribute   ( Qt::WA_QuitOnClose, false );
@@ -457,6 +481,7 @@ namespace Hurricane {
     _tabNetlist      ->setObjectName ( "controller.tabNetlist"    );
     _tabSelection    ->setObjectName ( "controller.tabSelection"  );
     _tabInspector    ->setObjectName ( "controller.tabInspector"  );
+    _tabSettings     ->setObjectName ( "controller.tabSettings"  );
 
     addTab ( _tabGraphics      , "Look"        );
     addTab ( _tabDisplayFilter , "Filter"      );
@@ -464,6 +489,7 @@ namespace Hurricane {
     addTab ( _tabNetlist       , "Netlist"     );
     addTab ( _tabSelection     , "Selection"   );
     addTab ( _tabInspector     , "Inspector"   );
+    addTab ( _tabSettings      , "Settings"    );
 
     QAction* toggleShow = new QAction ( tr("Controller"), this );
     toggleShow->setObjectName ( "controller.action.hideShow" );
