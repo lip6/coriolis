@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -101,11 +101,11 @@ namespace Kite {
   }
 
 
-  KiteEngine::KiteEngine ( const RoutingGauge* gauge, Cell* cell )
-    : KatabaticEngine  (gauge,cell)
+  KiteEngine::KiteEngine ( Cell* cell )
+    : KatabaticEngine  (cell)
     , _knik            (NULL)
     , _obstacleNet     (NULL)
-    , _configuration   (getKatabaticConfiguration())
+    , _configuration   (Configuration::getDefault()->clone(this))
     , _routingPlanes   ()
     , _kiteGrid        (NULL)
     , _negociateWindow (NULL)
@@ -133,9 +133,9 @@ namespace Kite {
   }
 
 
-  KiteEngine* KiteEngine::create ( const RoutingGauge* gauge, Cell* cell )
+  KiteEngine* KiteEngine::create ( Cell* cell )
   {
-    KiteEngine* kite = new KiteEngine ( gauge, cell );
+    KiteEngine* kite = new KiteEngine ( cell );
 
     kite->_postCreate ();
     return kite;
@@ -165,7 +165,9 @@ namespace Kite {
 
 
   KiteEngine::~KiteEngine ()
-  { }
+  {
+    delete _configuration;
+  }
 
 
   const Name& KiteEngine::getName () const
@@ -173,7 +175,7 @@ namespace Kite {
 
 
   Configuration* KiteEngine::getConfiguration ()
-  { return &_configuration; }
+  { return _configuration; }
 
 
   unsigned int  KiteEngine::getRipupLimit ( const TrackElement* segment ) const
@@ -182,21 +184,21 @@ namespace Kite {
 
     if ( segment->getDataNegociate() ) {
       if ( segment->getDataNegociate()->isBorder() )
-        return _configuration.getRipupLimit(Configuration::BorderRipupLimit);
+        return _configuration->getRipupLimit(Configuration::BorderRipupLimit);
 
       if ( segment->getDataNegociate()->isRing() )
-        return _configuration.getRipupLimit(Configuration::GlobalRipupLimit);
+        return _configuration->getRipupLimit(Configuration::GlobalRipupLimit);
     }
 
-    if ( segment->isStrap () ) return _configuration.getRipupLimit(Configuration::StrapRipupLimit);
+    if ( segment->isStrap () ) return _configuration->getRipupLimit(Configuration::StrapRipupLimit);
     if ( segment->isGlobal() ) {
       vector<GCell*> gcells;
       segment->getGCells(gcells);
       if ( gcells.size() > 2 )
-        return _configuration.getRipupLimit(Configuration::LongGlobalRipupLimit);
-      return _configuration.getRipupLimit(Configuration::GlobalRipupLimit);
+        return _configuration->getRipupLimit(Configuration::LongGlobalRipupLimit);
+      return _configuration->getRipupLimit(Configuration::GlobalRipupLimit);
     }
-    return _configuration.getRipupLimit(Configuration::LocalRipupLimit);
+    return _configuration->getRipupLimit(Configuration::LocalRipupLimit);
   }
 
 

@@ -41,10 +41,13 @@
 #include  <hurricane/viewer/Graphics.h>
 #include  <hurricane/viewer/CellWidget.h>
 #include  <hurricane/viewer/CellViewer.h>
+#include  <hurricane/viewer/ControllerWidget.h>
+#include  <crlcore/Utilities.h>
 #include  <crlcore/AllianceFramework.h>
 #include  <katabatic/GCell.h>
 #include  <knik/KnikEngine.h>
 #include  <kite/GraphicKiteEngine.h>
+#include  <kite/ConfigurationWidget.h>
 
 
 namespace Kite {
@@ -59,6 +62,7 @@ namespace Kite {
   using Hurricane::Net;
   using Hurricane::Graphics;
   using Hurricane::ColorScale;
+  using Hurricane::ControllerWidget;
   using CRL::Catalog;
   using CRL::AllianceFramework;
   using Knik::KnikEngine;
@@ -112,13 +116,13 @@ namespace Kite {
   }
 
 
-  KiteEngine* GraphicKiteEngine::createEngine ( const RoutingGauge* rg )
+  KiteEngine* GraphicKiteEngine::createEngine ()
   {
     Cell* cell = getCell ();
 
     KiteEngine* kite = KiteEngine::get ( cell );
     if ( not kite ) {
-      kite = KiteEngine::create ( rg, cell );
+      kite = KiteEngine::create ( cell );
       kite->setPostEventCb ( boost::bind(&GraphicKiteEngine::postEvent,this) );
     } else
       cerr << Warning("%s already has a Kite engine.",getString(cell).c_str()) << endl;
@@ -134,8 +138,7 @@ namespace Kite {
     KiteEngine* kite = KiteEngine::get ( getCell() );
     if ( kite ) return kite;
 
-    AllianceFramework* af = AllianceFramework::get ();
-    kite = createEngine ( af->getRoutingGauge() );
+    kite = createEngine ();
     
     if ( not kite ) 
       throw Error("Failed to create Kite engine on %s.",getString(getCell()).c_str());
@@ -181,6 +184,8 @@ namespace Kite {
     if ( not kite ) {
       throw Error("KiteEngine not created yet, run the global router first.");
     } 
+    if ( cmess1.enabled() )
+      kite->printConfiguration ();
 
     emit cellPreModificated ();
 
@@ -333,6 +338,17 @@ namespace Kite {
 
     connect ( this, SIGNAL(cellPreModificated ()), _viewer->getCellWidget(), SLOT(cellPreModificate ()) );
     connect ( this, SIGNAL(cellPostModificated()), _viewer->getCellWidget(), SLOT(cellPostModificate()) );
+
+    ControllerWidget* controller = _viewer->getControllerWidget();
+    ConfigurationWidget* setting = controller->getSettings()
+      ->findChild<ConfigurationWidget*>("controller.tabSettings.setting.kite");
+
+    if ( setting == NULL ) {
+      setting = new ConfigurationWidget ();
+      setting->setObjectName    ( "controller.tabSettings.setting.kite" );
+      setting->setConfiguration ( Configuration::getDefault() );
+      controller->addSetting ( setting, "Kite" );
+    }
   }
 
 

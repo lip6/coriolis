@@ -161,8 +161,7 @@ int main ( int argc, char *argv[] )
       }
     }
 
-  //KnikEngine::setEdgeCapacityPercent ( edgeCapacity );
-    Kite::Configuration::setDefaultEdgeCapacity ( edgeCapacity );
+    Kite::Configuration::getDefault()->setEdgeCapacityPercent ( edgeCapacity );
 
     cell->flattenNets ( not arguments.count("global") );
 
@@ -175,7 +174,7 @@ int main ( int argc, char *argv[] )
     }
 
     static vector<Net*> routingNets;
-    KiteEngine* kite = KiteEngine::create ( af->getRoutingGauge(), cell );
+    KiteEngine* kite = KiteEngine::create ( cell );
     // kite->setSaturateRatio      ( 0.85 );
     // kite->setExpandStep         ( 0.20 );
     // kite->setRipupCost          ( 3 );

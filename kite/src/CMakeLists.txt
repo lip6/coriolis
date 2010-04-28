@@ -30,8 +30,11 @@
                                        kite/Configuration.h
                                        kite/KiteEngine.h
                                        kite/GraphicKiteEngine.h
+                                       kite/ConfigurationWidget.h
                        )
-		   set ( mocIncludes   kite/GraphicKiteEngine.h )
+		   set ( mocIncludes   kite/GraphicKiteEngine.h
+                                       kite/ConfigurationWidget.h
+                       )
                    set ( cpps          TrackSegmentCost.cpp
                                        TrackCost.cpp
                                        DataNegociate.cpp
@@ -60,6 +63,7 @@
                                        Configuration.cpp
                                        KiteEngine.cpp
                                        GraphicKiteEngine.cpp
+                                       ConfigurationWidget.cpp
                        )
                    set ( kitecpps      KiteMain.cpp )
           qt4_wrap_cpp ( mocCpps       ${mocIncludes} )

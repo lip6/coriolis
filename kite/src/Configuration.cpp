@@ -23,6 +23,10 @@
 // x-----------------------------------------------------------------x
 
 
+#include  <string>
+
+#include  "hurricane/Cell.h"
+#include  "crlcore/Utilities.h"
 #include  "kite/Configuration.h"
 #include  "kite/KiteEngine.h"
 
@@ -31,29 +35,29 @@
 namespace Kite {
 
 
-  using  std::cerr;
-  using  std::endl;
-  using  std::ostringstream;
-  using  Hurricane::tab;
-  using  Hurricane::inltrace;
-  using  Hurricane::Error;
-  using  Hurricane::Technology;
+  using std::cout;
+  using std::cerr;
+  using std::endl;
+  using std::ostringstream;
+  using Hurricane::tab;
+  using Hurricane::inltrace;
+  using Hurricane::Error;
+  using Hurricane::Technology;
 
 
 // -------------------------------------------------------------------
 // Class  :  "Kite::Configuration".
 
 
-  float  Configuration::_defaultEdgeCapacity = 0.80;
+  Configuration* Configuration::_default = NULL;
 
 
-  void  Configuration::setDefaultEdgeCapacity ( float percent )
+  Configuration* Configuration::getDefault ()
   {
-    if ( percent > 1.0 )
-      throw Error("Configuration::setDefaultEdgeCapacity(): edge capacity ratio greater than 1.0 (%.1f)."
-                 ,percent);
-
-    _defaultEdgeCapacity = percent;
+    if ( _default == NULL ) {
+      _default = new Configuration ( Katabatic::Configuration::getDefault() );
+    }
+    return _default;
   }
 
 
@@ -61,8 +65,8 @@ namespace Kite {
     : Katabatic::Configuration()
     , _base               (base)
     , _postEventCb        ()
-    , _edgeCapacityPercent(_defaultEdgeCapacity)
-    , _expandStep         (0.40)
+    , _edgeCapacityPercent(0.80)
+    , _expandStep         (0.60)
     , _ripupLimits        ()
     , _ripupCost          (3)
     , _eventsLimit        (4000000)
@@ -75,8 +79,36 @@ namespace Kite {
   }
 
 
+  Configuration::Configuration ( const Configuration& other, Katabatic::Configuration* base )
+    : Katabatic::Configuration()
+    , _base               (base)
+    , _postEventCb        (other._postEventCb)
+    , _edgeCapacityPercent(other._edgeCapacityPercent)
+    , _expandStep         (other._expandStep)
+    , _ripupLimits        ()
+    , _ripupCost          (other._ripupCost)
+    , _eventsLimit        (other._eventsLimit)
+  {
+    if ( _base == NULL ) _base = other._base->clone();
+
+    _ripupLimits[BorderRipupLimit]     = other._ripupLimits[BorderRipupLimit];
+    _ripupLimits[StrapRipupLimit]      = other._ripupLimits[StrapRipupLimit];
+    _ripupLimits[LocalRipupLimit]      = other._ripupLimits[LocalRipupLimit];
+    _ripupLimits[GlobalRipupLimit]     = other._ripupLimits[GlobalRipupLimit];
+    _ripupLimits[LongGlobalRipupLimit] = other._ripupLimits[LongGlobalRipupLimit];
+  }
+
+
   Configuration::~Configuration ()
   { }
+
+
+  Configuration* Configuration::clone () const
+  { return new Configuration(*this); }
+
+
+  Configuration* Configuration::clone ( KiteEngine* kite ) const
+  { return new Configuration(*this,kite->base()->getKatabaticConfiguration()); }
 
 
   bool  Configuration::isGMetal ( const Layer* layer ) const
@@ -139,6 +171,16 @@ namespace Kite {
   }
 
 
+  void  Configuration::setEdgeCapacityPercent ( float percent )
+  {
+    if ( percent > 1.0 )
+      throw Error("Configuration::setEdgeCapacityPercent(): edge capacity ratio greater than 1.0 (%.1f)."
+                 ,percent);
+
+    _edgeCapacityPercent = percent;
+  }
+
+
   unsigned int  Configuration::getRipupLimit ( unsigned int type ) const
   {
     if ( type >= RipupLimitsTableSize ) {
@@ -147,6 +189,22 @@ namespace Kite {
       return 0;
     }
     return _ripupLimits[type];
+  }
+
+
+  void  Configuration::print ( Cell* cell ) const
+  {
+    cout << "  o  Configuration of ToolEngine<Kite> for Cell <" << cell->getName() << ">" << endl;
+    cout << Dots::asPercentage("     - Global router edge capacity"        ,_edgeCapacityPercent) << endl;
+    cout << Dots::asPercentage("     - GCell aggregation threshold (delta)",_expandStep) << endl;
+    cout << Dots::asULong     ("     - Events limit (iterations)"          ,_eventsLimit) << endl;
+    cout << Dots::asUInt      ("     - Ripup limit, borders"               ,_ripupLimits[BorderRipupLimit]) << endl;
+    cout << Dots::asUInt      ("     - Ripup limit, straps"                ,_ripupLimits[StrapRipupLimit]) << endl;
+    cout << Dots::asUInt      ("     - Ripup limit, locals"                ,_ripupLimits[LocalRipupLimit]) << endl;
+    cout << Dots::asUInt      ("     - Ripup limit, globals"               ,_ripupLimits[GlobalRipupLimit]) << endl;
+    cout << Dots::asUInt      ("     - Ripup limit, long globals"          ,_ripupLimits[LongGlobalRipupLimit]) << endl;
+
+    _base->print ( cell );
   }
 
 

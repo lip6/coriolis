@@ -579,7 +579,7 @@ namespace Kite {
 
     forEach ( BasicLayer*, iLayer, technology->getBasicLayers() ) {
       if ( iLayer->getMaterial() != BasicLayer::Material::metal ) continue;
-      if ( _configuration.isGMetal(*iLayer) ) continue;
+      if ( _configuration->isGMetal(*iLayer) ) continue;
 
       cmess1 << "     - PowerRails in " << iLayer->getName() << " ..." << endl;
 

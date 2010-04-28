@@ -33,12 +33,15 @@
 
 namespace Kite {
 
-  using  std::string;
-  using  Hurricane::Record;
-  using  Hurricane::Layer;
-  using  Hurricane::DbU;
-  using  CRL::RoutingGauge;
-  using  CRL::RoutingLayerGauge;
+  using std::string;
+  using Hurricane::Record;
+  using Hurricane::Layer;
+  using Hurricane::DbU;
+  using Hurricane::Cell;
+  using CRL::RoutingGauge;
+  using CRL::RoutingLayerGauge;
+
+  class KiteEngine;
 
 
 // -------------------------------------------------------------------
@@ -57,10 +60,11 @@ namespace Kite {
                        , RipupLimitsTableSize=5
                        };
     public:
-      static  void                      setDefaultEdgeCapacity ( float );
+      static  Configuration*             getDefault             ();
     public:
     // Constructor & Destructor.
-                                         Configuration          ( Katabatic::Configuration* );
+      virtual Configuration*             clone                  () const;
+      virtual Configuration*             clone                  ( KiteEngine* kite ) const;
                                         ~Configuration          ();
     // Decorateds.                                              
       virtual bool                       isGMetal               ( const Layer* ) const;
@@ -75,6 +79,7 @@ namespace Kite {
       virtual DbU::Unit                  getGlobalThreshold     () const;
       virtual void                       setSaturateRatio       ( float );
       virtual void                       setGlobalThreshold     ( DbU::Unit );
+      virtual void                       print                  ( Cell* ) const;
     // Methods.
       inline  Katabatic::Configuration*  base                   ();
       inline  PostEventCb_t&             getPostEventCb         ();
@@ -88,14 +93,16 @@ namespace Kite {
       inline  void                       setRipupCost           ( unsigned int );
               void                       setRipupLimit          ( unsigned int type, unsigned int limit );
       inline  void                       setPostEventCb         ( PostEventCb_t );
-      inline  void                       setEdgeCapacityPercent ( float );
+              void                       setEdgeCapacityPercent ( float );
       virtual Record*                    _getRecord             () const;
       virtual string                     _getString             () const;
       virtual string                     _getTypeName           () const;
 
+    protected:
+                                         Configuration          ( Katabatic::Configuration* );
     private:
     // Static Attributes.
-      static float                       _defaultEdgeCapacity;
+      static Configuration*              _default;
     // Attributes.
              Katabatic::Configuration*   _base;
              PostEventCb_t               _postEventCb;
@@ -105,7 +112,7 @@ namespace Kite {
              unsigned int                _ripupCost;
              unsigned long               _eventsLimit;
     private:
-                     Configuration ( const Configuration& );
+                     Configuration ( const Configuration& other, Katabatic::Configuration* base=NULL );
       Configuration& operator=     ( const Configuration& );
   };
 
@@ -121,7 +128,6 @@ namespace Kite {
   inline void                          Configuration::setExpandStep          ( float step ) { _expandStep = step; }
   inline void                          Configuration::setPostEventCb         ( PostEventCb_t cb ) { _postEventCb = cb; }
   inline void                          Configuration::setEventsLimit         ( unsigned long limit ) { _eventsLimit = limit; }
-  inline void                          Configuration::setEdgeCapacityPercent ( float percent ) { _edgeCapacityPercent = percent; }
 
 
 }  // End of Kite namespace.

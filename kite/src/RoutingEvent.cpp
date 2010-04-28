@@ -1132,7 +1132,7 @@ namespace {
     Interval              constraints;
     vector<Cs1Candidate>  candidates;
     TrackElement*         segment    = _event->getSegment();
-    bool                  canMoveUp  = (segment->isLocal()) ? segment->canPivotUp(1.0) : segment->canMoveUp(1.0);
+    bool                  canMoveUp  = (segment->isLocal()) ? segment->canPivotUp(0.5) : segment->canMoveUp(0.5);
     unsigned int          relaxFlags
       = (_data and (_data->getStateCount() < 2)) ? Manipulator::AllowExpand : Manipulator::NoExpand;
 
@@ -1194,7 +1194,7 @@ namespace {
 
         if (    other->isGlobal()
            and (other->getDataNegociate()->getGCellOrder() == Session::getOrder())
-           and  other->canMoveUp(1.0) ) {
+           and  other->canMoveUp(0.5) ) {
           ltrace(200) << "conflictSolve1() - One conflict, other move up" << endl;
           if ( (success = other->moveUp()) ) break;
         }

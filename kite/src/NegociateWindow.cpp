@@ -30,6 +30,7 @@
 #include  "hurricane/RoutingPad.h"
 #include  "hurricane/Net.h"
 #include  "hurricane/Cell.h"
+#include  "crlcore/Utilities.h"
 #include  "crlcore/AllianceFramework.h"
 
 #include  "kite/DataNegociate.h"
@@ -538,10 +539,11 @@ namespace Kite {
         biggestRSsize = _gcellRoutingSets[i]->getGCells().size();
     }
     
-    cout << "     - Processeds Events Total := " <<  RoutingEvent::getProcesseds() << endl;
-    cout << "     - Unique Events Total     := " << (RoutingEvent::getProcesseds() - RoutingEvent::getCloneds()) << endl;
-    cout << "     - Biggest Events Chunk    := " << biggestEventsCount << endl;
-    cout << "     - Biggest Routing Set     := " << biggestRSsize << endl;
+    cout << Dots::asSizet("     - Processeds Events Total",RoutingEvent::getProcesseds()) << endl;
+    cout << Dots::asSizet("     - Unique Events Total"
+                         ,(RoutingEvent::getProcesseds() - RoutingEvent::getCloneds())) << endl;
+    cout << Dots::asSizet("     - Biggest Events Chunk"   ,biggestEventsCount) << endl;
+    cout << Dots::asSizet("     - Biggest Routing Set"    ,biggestRSsize) << endl;
   }
 
 

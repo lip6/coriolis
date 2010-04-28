@@ -78,7 +78,7 @@ namespace Kite {
 
     public:
       static  const Name&      staticGetName              ();
-      static  KiteEngine*      create                     ( const RoutingGauge*, Cell* );
+      static  KiteEngine*      create                     ( Cell* );
       static  KiteEngine*      get                        ( const Cell* );
     public:                                               
       inline  KatabaticEngine* base                       ();
@@ -101,6 +101,7 @@ namespace Kite {
               RoutingPlane*    getRoutingPlaneByIndex     ( size_t index ) const;
               RoutingPlane*    getRoutingPlaneByLayer     ( const Layer* ) const;
               Track*           getTrackByPosition         ( const Layer*, DbU::Unit axis, unsigned int mode=Constant::Nearest ) const;
+      inline  void             printConfiguration         () const;
               void             printCompletion            () const;
               void             dumpMeasures               ( std::ostream& ) const;
               void             dumpMeasures               () const;
@@ -143,7 +144,7 @@ namespace Kite {
     protected:
              Knik::KnikEngine*      _knik;
              Net*                   _obstacleNet;
-             Configuration          _configuration;
+             Configuration*         _configuration;
              vector<RoutingPlane*>  _routingPlanes;
              GCellGrid*             _kiteGrid;
              NegociateWindow*       _negociateWindow;
@@ -153,7 +154,7 @@ namespace Kite {
 
     protected:
     // Constructors & Destructors.
-                          KiteEngine  ( const RoutingGauge*, Cell* );
+                          KiteEngine  ( Cell* );
       virtual            ~KiteEngine  ();
       virtual void        _postCreate ();
       virtual void        _preDestroy ();
@@ -165,25 +166,26 @@ namespace Kite {
 
 // Inline Functions.
   inline  KatabaticEngine*              KiteEngine::base                   () { return static_cast<KatabaticEngine*>(this); }
-  inline  Configuration*                KiteEngine::getKiteConfiguration   () { return &_configuration; }
+  inline  Configuration*                KiteEngine::getKiteConfiguration   () { return _configuration; }
   inline  Net*                          KiteEngine::getBlockageNet         () { return _obstacleNet; }
-  inline  Configuration::PostEventCb_t& KiteEngine::getPostEventCb         () { return _configuration.getPostEventCb(); }
+  inline  Configuration::PostEventCb_t& KiteEngine::getPostEventCb         () { return _configuration->getPostEventCb(); }
   inline  bool                          KiteEngine::getToolSuccess         () const { return _toolSuccess; }
-  inline  unsigned long                 KiteEngine::getEventsLimit         () const { return _configuration.getEventsLimit(); }
-  inline  unsigned int                  KiteEngine::getRipupCost           () const { return _configuration.getRipupCost(); }
-  inline  float                         KiteEngine::getExpandStep          () const { return _configuration.getExpandStep(); }
-  inline  float                         KiteEngine::getEdgeCapacityPercent () const { return _configuration.getEdgeCapacityPercent(); }
-  inline  unsigned int                  KiteEngine::getRipupLimit          ( unsigned int type ) const { return _configuration.getRipupLimit(type); }
+  inline  unsigned long                 KiteEngine::getEventsLimit         () const { return _configuration->getEventsLimit(); }
+  inline  unsigned int                  KiteEngine::getRipupCost           () const { return _configuration->getRipupCost(); }
+  inline  float                         KiteEngine::getExpandStep          () const { return _configuration->getExpandStep(); }
+  inline  float                         KiteEngine::getEdgeCapacityPercent () const { return _configuration->getEdgeCapacityPercent(); }
+  inline  unsigned int                  KiteEngine::getRipupLimit          ( unsigned int type ) const { return _configuration->getRipupLimit(type); }
   inline  GCellGrid*                    KiteEngine::getGCellGrid           () const { return _kiteGrid; }
   inline  NegociateWindow*              KiteEngine::getNegociateWindow     () { return _negociateWindow; }
   inline  size_t                        KiteEngine::getRoutingPlanesSize   () const { return _routingPlanes.size(); }
-  inline  void                          KiteEngine::setEventLimit          ( unsigned long limit ) { _configuration.setEventsLimit(limit); }
-  inline  void                          KiteEngine::setRipupLimit          ( unsigned int limit, unsigned int type ) { _configuration.setRipupLimit(limit,type); }
-  inline  void                          KiteEngine::setRipupCost           ( unsigned int cost ) { _configuration.setRipupCost(cost); }
-  inline  void                          KiteEngine::setExpandStep          ( float step ) { _configuration.setExpandStep(step); }
-  inline  void                          KiteEngine::setEdgeCapacityPercent ( float percent ) { _configuration.setEdgeCapacityPercent(percent); }
+  inline  void                          KiteEngine::setEventLimit          ( unsigned long limit ) { _configuration->setEventsLimit(limit); }
+  inline  void                          KiteEngine::setRipupLimit          ( unsigned int limit, unsigned int type ) { _configuration->setRipupLimit(limit,type); }
+  inline  void                          KiteEngine::setRipupCost           ( unsigned int cost ) { _configuration->setRipupCost(cost); }
+  inline  void                          KiteEngine::setExpandStep          ( float step ) { _configuration->setExpandStep(step); }
+  inline  void                          KiteEngine::setEdgeCapacityPercent ( float percent ) { _configuration->setEdgeCapacityPercent(percent); }
   inline  void                          KiteEngine::setMinimumWL           ( double minimum ) { _minimumWL = minimum; }
-  inline  void                          KiteEngine::setPostEventCb         ( Configuration::PostEventCb_t cb ) { _configuration.setPostEventCb(cb); }
+  inline  void                          KiteEngine::setPostEventCb         ( Configuration::PostEventCb_t cb ) { _configuration->setPostEventCb(cb); }
+  inline  void                          KiteEngine::printConfiguration     () const { _configuration->print(getCell()); }
   inline  TrackElementLut&              KiteEngine::_getTrackElementLut    () { return _trackSegmentLut; }
   inline  TrackElement*                 KiteEngine::_lookup                ( AutoSegment* as ) const { return _lookup(as->base()); }
 

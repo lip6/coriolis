@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -38,9 +38,6 @@ namespace Hurricane {
 }
 
 #include  "crlcore/GraphicToolEngine.h"
-namespace CRL {
-  class RoutingGauge;
-}
 
 #include  "kite/KiteEngine.h"
 
@@ -53,19 +50,18 @@ namespace Kite {
   using Hurricane::Transformation;
   using Hurricane::CellWidget;
   using Hurricane::CellViewer;
-  using CRL::RoutingGauge;
   using CRL::GraphicTool;
     
 
 // -------------------------------------------------------------------
-// Class  :  "CRL::GraphicKiteEngine".
+// Class  :  "Kite::GraphicKiteEngine".
 
 
   class GraphicKiteEngine : public GraphicTool {
       Q_OBJECT;
 
     public:
-              KiteEngine*        createEngine       ( const RoutingGauge* );
+              KiteEngine*        createEngine       ();
               KiteEngine*        getForFramework    ();
       static  void               initKatabaticAc    ( CellWidget* );
       static  void               drawKatabaticAc    ( CellWidget*
