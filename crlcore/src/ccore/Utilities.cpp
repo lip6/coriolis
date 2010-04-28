@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -27,10 +27,12 @@
 #include  <csignal>
 #include  <cstdlib>
 #include  <cstring>
+#include  <iomanip>
 
 #include  "crlcore/Utilities.h"
 
 
+int           tty::_width          = 80;
 bool          tty::_enabled        = true;
 unsigned int  mstream::_activeMask = mstream::Verbose0;
 
@@ -38,6 +40,54 @@ mstream  cmess0 ( mstream::Verbose0, std::cout );
 mstream  cmess1 ( mstream::Verbose1, std::cout );
 mstream  cmess2 ( mstream::Verbose2, std::cout );
 mstream  cinfo  ( mstream::Info    , std::cout );
+
+
+// -------------------------------------------------------------------
+// Class  :  "::Dots".
+
+
+Dots::Dots ( const std::string& left, const std::string& right ) : _left(left), _right(right) { }
+
+
+Dots  Dots::asPercentage ( const std::string& left, float value )
+{
+  std::ostringstream right;
+  right << std::setprecision(3) << value << "%";
+  return Dots(left,right.str());
+}
+
+
+Dots  Dots::asUInt ( const std::string& left, unsigned int value )
+{ std::ostringstream right; right << value; return Dots(left,right.str()); }
+
+
+Dots  Dots::asULong ( const std::string& left, unsigned long value )
+{ std::ostringstream right; right << value; return Dots(left,right.str()); }
+
+
+Dots  Dots::asSizet ( const std::string& left, size_t value )
+{ std::ostringstream right; right << value; return Dots(left,right.str()); }
+
+
+Dots  Dots::asDouble ( const std::string& left, double value )
+{ std::ostringstream right; right << value; return Dots(left,right.str()); }
+
+
+Dots  Dots::asIdentifier ( const std::string& left, const std::string& value )
+{ std::ostringstream right; right << "<" << value << ">"; return Dots(left,right.str()); }
+
+
+Dots  Dots::asString ( const std::string& left, const std::string& value )
+{ return Dots(left,value); }
+
+
+std::ostream& operator<< ( std::ostream& out, const Dots& dots )
+{
+  int count = tty::getWidth() - 2 - dots._left.length() - dots._right.length();
+  out << dots._left << " "; while ( count-- > 0 ) out << "."; out << " " << dots._right;
+
+  return out;
+}
 
 
 

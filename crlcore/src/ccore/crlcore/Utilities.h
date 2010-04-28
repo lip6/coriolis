@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -178,6 +178,8 @@ class tty {
                , TypeMask  = 0xF0
                };
   public:
+    inline static void          setWidth     ( int );
+    inline static int           getWidth     ();
     inline static void          enable       ();
     inline static void          disable      ();
     inline static bool          enabled      ();
@@ -202,9 +204,11 @@ class tty {
   private:
     static bool        _enabled;
     static const char* _intensity[4];
+    static int         _width;
 };
 
-
+inline void          tty::setWidth     ( int width ) { _width=width; }
+inline int           tty::getWidth     () { return _width; }
 inline void          tty::enable       () { _enabled=true; }
 inline void          tty::disable      () { _enabled=false; }
 inline bool          tty::enabled      () { return _enabled; }
@@ -327,13 +331,36 @@ inline std::string  tty::bgcolor ( unsigned int mask )
 MSTREAM_PR_SUPPORT(std::string);
 
 
-  // ---------------------------------------------------------------
-  // Shared objects.
+// -------------------------------------------------------------------
+// Shared objects.
 
-  extern mstream  cmess0;
-  extern mstream  cmess1;
-  extern mstream  cmess2;
-  extern mstream  cinfo;
+
+extern mstream  cmess0;
+extern mstream  cmess1;
+extern mstream  cmess2;
+extern mstream  cinfo;
+
+
+// -------------------------------------------------------------------
+// Class  :  "::Dots".
+
+
+class  Dots {
+  public:
+    static Dots          asPercentage ( const std::string& left, float );
+    static Dots          asUInt       ( const std::string& left, unsigned int );
+    static Dots          asULong      ( const std::string& left, unsigned long );
+    static Dots          asSizet      ( const std::string& left, size_t );
+    static Dots          asDouble     ( const std::string& left, double );
+    static Dots          asIdentifier ( const std::string& left, const std::string& );
+    static Dots          asString     ( const std::string& left, const std::string& );
+  private:
+                         Dots         ( const std::string& left, const std::string& right );
+    friend std::ostream& operator<<   ( std::ostream&, const Dots& );
+  private:
+    const std::string _left;
+    const std::string _right;
+};
 
 
 # endif

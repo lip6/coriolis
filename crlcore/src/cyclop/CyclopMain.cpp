@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -202,10 +202,11 @@ int main ( int argc, char *argv[] )
 //        cerr << "Selecting: " << occurrence << endl;
 //      }
 //    }
-//    if ( cell && cell->getName() == "inv_x1" ) {
-//      Box box = cell->getAbutmentBox();
-//      DemoGo::create ( cell, box.inflate(DbU::lambda(2)) );
-//    }
+      if ( cell && cell->getName() == "inv_x1" ) {
+      //      Box box = cell->getAbutmentBox();
+      //      DemoGo::create ( cell, box.inflate(DbU::lambda(2)) );
+        Reference::create ( cell, "Label", DbU::lambda(0.0), DbU::lambda(0.0), Reference::Label );
+      }
 
       dbo_ptr<Cyclop> cyclop ( Cyclop::create() );
       cmess1 << cyclop->getBanner() << endl;;
@@ -217,6 +218,10 @@ int main ( int argc, char *argv[] )
 
       returnCode = qa->exec();
     }
+  }
+  catch ( poptions::error& e ) {
+    cerr << "[ERROR] " << e.what() << endl;
+    exit ( 1 );
   }
   catch ( Error& e ) {
     cerr << e.what() << endl;
