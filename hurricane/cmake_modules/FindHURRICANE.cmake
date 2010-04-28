@@ -72,9 +72,15 @@ IF(UNIX)
     ENDIF( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
 
     LIST(REMOVE_DUPLICATES ${project}_DIR_SEARCH)
+   
+    MESSAGE("-- Components of ${project}_DIR_SEARCH:")
+    FOREACH(PATH IN LISTS ${project}_DIR_SEARCH)
+      MESSAGE("--   ${PATH}")
+    ENDFOREACH(PATH)
   ENDMACRO(SETUP_SEARCH_DIR project)
   
   SETUP_SEARCH_DIR(CORIOLIS)
+
   #
   # Look for an installation.
   #
