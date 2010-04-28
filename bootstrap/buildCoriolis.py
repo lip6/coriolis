@@ -57,6 +57,7 @@ class ProjectBuilder:
         self._rootDir          = os.path.join ( os.environ["HOME"], "coriolis-2.x" )
         self._quiet            = False
         self._buildMode        = "Release"
+        self._rmBuild          = False
         self._doBuild          = True
         self._noCache          = False
         self._enableShared     = "ON"
@@ -83,6 +84,7 @@ class ProjectBuilder:
         elif attribute == "rootDir":          self._rootDir          = os.path.expanduser(value)
         elif attribute == "quiet":            self._quiet            = value
         elif attribute == "buildMode":        self._buildMode        = value
+        elif attribute == "rmBuild":          self._rmBuild          = value
         elif attribute == "doBuild":          self._doBuild          = value
         elif attribute == "noCache":          self._noCache          = value
         elif attribute == "enableShared":     self._enableShared     = value
@@ -156,6 +158,12 @@ class ProjectBuilder:
         if not os.path.isdir(toolSourceDir):
             print "[ERROR] Missing tool source directory: \"%s\" (skipped)." % toolSourceDir
             return
+
+        if self._rmBuild:
+            print "Removing tool build directory: \"%s\"." % toolBuildDir
+            command = [ "/bin/rm", "-r", toolBuildDir ]
+            self._execute ( command, "Removing tool build directory" )
+            
         if not os.path.isdir(toolBuildDir):
             print "Creating tool build directory: \"%s\"." % toolBuildDir
             os.makedirs ( toolBuildDir )
@@ -361,22 +369,23 @@ if __name__ == "__main__":
 
     parser = optparse.OptionParser ()  
   # Build relateds.
-    parser.add_option ( "-q", "--quiet"      , action="store_true",                dest="quiet"    )
-    parser.add_option ( "-r", "--release"    , action="store_true",                dest="release"  )
-    parser.add_option ( "-d", "--debug"      , action="store_true",                dest="debug"    )
-    parser.add_option ( "-s", "--static"     , action="store_true",                dest="static"   )
-    parser.add_option (       "--doc"        , action="store_true",                dest="doc"      )
-    parser.add_option ( "-D", "--check-db"   , action="store_true",                dest="checkDb"  )
-    parser.add_option ( "-u", "--check-deter", action="store_true",                dest="checkDeterminism" )
-    parser.add_option ( "-v", "--verbose"    , action="store_true",                dest="verboseMakefile" )
-    parser.add_option (       "--root"       , action="store"     , type="string", dest="rootDir"  )
-    parser.add_option (       "--no-build"   , action="store_true",                dest="noBuild"  )
-    parser.add_option (       "--no-cache"   , action="store_true",                dest="noCache"  )
-    parser.add_option (       "--svn-tag"    , action="store"     , type="string", dest="svnTag"   )
-    parser.add_option (       "--svn-method" , action="store"     , type="string", dest="svnMethod")
-    parser.add_option (       "--make"       , action="store"     , type="string", dest="makeArguments")
-    parser.add_option (       "--project"    , action="append"    , type="string", dest="projects" )
-    parser.add_option ( "-t", "--tool"       , action="append"    , type="string", dest="tools"    )
+    parser.add_option ( "-q", "--quiet"      , action="store_true" ,                dest="quiet"    )
+    parser.add_option ( "-r", "--release"    , action="store_true" ,                dest="release"  )
+    parser.add_option ( "-d", "--debug"      , action="store_true" ,                dest="debug"    )
+    parser.add_option ( "-s", "--static"     , action="store_true" ,                dest="static"   )
+    parser.add_option (       "--doc"        , action="store_true" ,                dest="doc"      )
+    parser.add_option ( "-D", "--check-db"   , action="store_true" ,                dest="checkDb"  )
+    parser.add_option ( "-u", "--check-deter", action="store_true" ,                dest="checkDeterminism" )
+    parser.add_option ( "-v", "--verbose"    , action="store_true" ,                dest="verboseMakefile" )
+    parser.add_option (       "--root"       , action="store"      , type="string", dest="rootDir"  )
+    parser.add_option (       "--no-build"   , action="store_true" ,                dest="noBuild"  )
+    parser.add_option (       "--no-cache"   , action="store_true" ,                dest="noCache"  )
+    parser.add_option (       "--rm-build"   , action="store_true" ,                dest="rmBuild"  )
+    parser.add_option (       "--svn-tag"    , action="store"      , type="string", dest="svnTag"   )
+    parser.add_option (       "--svn-method" , action="store"      , type="string", dest="svnMethod")
+    parser.add_option (       "--make"       , action="store"      , type="string", dest="makeArguments")
+    parser.add_option (       "--project"    , action="append"     , type="string", dest="projects" )
+    parser.add_option ( "-t", "--tool"       , action="append"     , type="string", dest="tools"    )
    # SVN repository relateds.
     parser.add_option ( "--svn-status"   , action="store_true", dest="svnStatus"   )
     parser.add_option ( "--svn-update"   , action="store_true", dest="svnUpdate"   )
@@ -399,6 +408,7 @@ if __name__ == "__main__":
     if options.rootDir:          builder.rootDir           = options.rootDir
     if options.noBuild:          builder.doBuild           = False
     if options.noCache:          builder.noCache           = True
+    if options.rmBuild:          builder.rmBuild           = True
     if options.makeArguments:    builder.makeArguments     = options.makeArguments
     if options.svnMethod:        builder.svnMethod         = options.svnMethod
     if options.svnTag:           builder.svnTag            = options.svnTag
