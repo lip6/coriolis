@@ -17,10 +17,10 @@
      qt4_add_resources ( RCC_SRCS      Unicorn.qrc )
 
            add_library ( unicorn        ${cpps} ${MOCcpps} )
- target_link_libraries ( unicorn       #${SOLSTICE_GRAPHICAL_LIBRARIES}
-                                       #${SOLSTICE_LIBRARIES}
-                                       #${EQUINOX_GRAPHICAL_LIBRARIES}
-                                       #${EQUINOX_LIBRARIES}
+ target_link_libraries ( unicorn        ${SOLSTICE_GRAPHICAL_LIBRARIES}
+                                        ${SOLSTICE_LIBRARIES}
+                                        ${EQUINOX_GRAPHICAL_LIBRARIES}
+                                        ${EQUINOX_LIBRARIES}
                                         ${KITE_GRAPHICAL_LIBRARIES}
                                         ${KITE_LIBRARIES}
                                         ${KATABATIC_GRAPHICAL_LIBRARIES}
