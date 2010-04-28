@@ -101,7 +101,7 @@ namespace Katabatic {
   {
     KatabaticEngine* ktbt = KatabaticEngine::get ( cell );
     if ( !ktbt )
-      ktbt = KatabaticEngine::create ( rg, cell );
+      ktbt = KatabaticEngine::create ( cell );
     else
       cerr << Warning("%s already has a Katabatic engine.",getString(cell).c_str()) << endl;
 

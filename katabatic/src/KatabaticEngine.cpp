@@ -221,7 +221,7 @@ namespace Katabatic {
   }
 
 
-  KatabaticEngine::KatabaticEngine ( const RoutingGauge* gauge, Cell* cell )
+  KatabaticEngine::KatabaticEngine ( Cell* cell )
     : ToolEngine         (cell)
     , _timer             ()
     , _state             (StateCreation)
@@ -229,7 +229,7 @@ namespace Katabatic {
     , _destroyBaseSegment(false)
     , _demoMode          (false)
     , _warnGCellOverload (false)
-    , _configuration     (gauge)
+    , _configuration     (Configuration::getDefault()->clone())
     , _gcellGrid         (NULL)
     , _routingNets       ()
   {
@@ -254,11 +254,11 @@ namespace Katabatic {
   }
 
 
-  KatabaticEngine* KatabaticEngine::create ( const RoutingGauge* gauge, Cell* cell )
+  KatabaticEngine* KatabaticEngine::create ( Cell* cell )
   {
     ltrace(90) << "KatabaticEngine::create() - " << cell << endl;
 
-    KatabaticEngine* katabatic = new KatabaticEngine ( gauge, cell );
+    KatabaticEngine* katabatic = new KatabaticEngine ( cell );
 
     katabatic->_postCreate ();
 
@@ -267,7 +267,9 @@ namespace Katabatic {
 
 
   KatabaticEngine::~KatabaticEngine ()
-  { }
+  {
+    delete _configuration;
+  }
 
 
   void  KatabaticEngine::_preDestroy ()
@@ -306,8 +308,8 @@ namespace Katabatic {
       ltrace(90) << "Saving AutoContacts/AutoSegments." << endl;
 
       cmess1 << "  o  Driving Hurricane data-base." << endl;
-      cmess1 << "     - AutoSegments  := " << AutoSegment::getAllocateds() << endl;
-      cmess1 << "     - AutoContacts  := " << AutoContact::getAllocateds() << endl;
+      cmess1 << Dots::asSizet("     - AutoSegments",AutoSegment::getAllocateds()) << endl;
+      cmess1 << Dots::asSizet("     - AutoContacts",AutoContact::getAllocateds())<< endl;
 
       forEach ( Net*, inet, _cell->getNets() )
         _saveNet ( *inet );
@@ -502,7 +504,7 @@ namespace Katabatic {
 
 
   Configuration* KatabaticEngine::getConfiguration ()
-  { return &_configuration; }
+  { return _configuration; }
 
 
   void  KatabaticEngine::loadGlobalRouting ( unsigned int method, vector<Net*>& nets )
@@ -907,7 +909,7 @@ namespace Katabatic {
   {
     ostringstream  os;
 
-    os << "<" << "Katabatic " << _cell->getName () << " " << _configuration.getRoutingGauge()->getName() << ">";
+    os << "<" << "Katabatic " << _cell->getName () << " " << _configuration->getRoutingGauge()->getName() << ">";
 
     return ( os.str() );
   }
@@ -918,7 +920,7 @@ namespace Katabatic {
     Record* record = ToolEngine::_getRecord ();
     record->add ( getSlot ( "_demoMode"        ,  _demoMode        ) );
     record->add ( getSlot ( "_state"           ,  _state           ) );
-    record->add ( getSlot ( "_configuration"   , &_configuration   ) );
+    record->add ( getSlot ( "_configuration"   ,  _configuration   ) );
     record->add ( getSlot ( "_gcellGrid"       ,  _gcellGrid       ) );
     record->add ( getSlot ( "_routingNets"     , &_routingNets     ) );
     record->add ( getSlot ( "_autoContactLut"  , &_autoContactLut  ) );

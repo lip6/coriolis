@@ -23,8 +23,14 @@
 // x-----------------------------------------------------------------x
 
 
+#include  <iostream>
+#include  <iomanip>
+
 #include  "hurricane/Technology.h"
 #include  "hurricane/DataBase.h"
+#include  "hurricane/Cell.h"
+#include  "crlcore/Utilities.h"
+#include  "crlcore/AllianceFramework.h"
 #include  "katabatic/Configuration.h"
 
 
@@ -32,17 +38,32 @@
 namespace Katabatic {
 
 
+  using  std::cout;
   using  std::cerr;
   using  std::endl;
+  using  std::setprecision;
   using  std::ostringstream;
   using  Hurricane::tab;
   using  Hurricane::inltrace;
   using  Hurricane::Technology;
   using  Hurricane::DataBase;
+  using  CRL::AllianceFramework;
 
 
 // -------------------------------------------------------------------
 // Class  :  "Katabatic::Configuration".
+
+
+  Configuration* Configuration::_default = NULL;
+
+
+  Configuration* Configuration::getDefault ()
+  {
+    if ( _default == NULL ) {
+      _default = new ConfigurationConcrete ( AllianceFramework::get()->getRoutingGauge() );
+    }
+    return _default;
+  }
 
 
   Configuration::Configuration () { }
@@ -68,11 +89,29 @@ namespace Katabatic {
   }
 
 
+  ConfigurationConcrete::ConfigurationConcrete ( const ConfigurationConcrete& other )
+    : Configuration()
+    , _gmetalh           (other._gmetalh)
+    , _gmetalv           (other._gmetalv)
+    , _gcontact          (other._gcontact)
+    , _rg                (NULL)
+    , _extensionCap      (other._extensionCap)
+    , _saturateRatio     (other._saturateRatio)
+    , _globalThreshold   (other._globalThreshold)
+  {
+    if ( other._rg ) _rg = other._rg->getClone();
+  }
+
+
   ConfigurationConcrete::~ConfigurationConcrete ()
   {
     ltrace(89) << "About to delete attribute _rg (RoutingGauge)." << endl;
     _rg->destroy ();
   }
+
+
+  ConfigurationConcrete* ConfigurationConcrete::clone () const
+  { return new ConfigurationConcrete(*this); }
 
 
   bool  ConfigurationConcrete::isGMetal ( const Layer* layer ) const
@@ -129,6 +168,15 @@ namespace Katabatic {
 
   void  ConfigurationConcrete::setGlobalThreshold ( DbU::Unit threshold )
   { _globalThreshold = threshold; }
+
+
+  void  ConfigurationConcrete::print ( Cell* cell ) const
+  {
+    cout << "  o  Configuration of ToolEngine<Katabatic> for Cell <" << cell->getName() << ">" << endl;
+    cout << Dots::asIdentifier("     - Routing Gauge"               ,getString(_rg->getName())) << endl;
+    cout << Dots::asPercentage("     - GCell saturation threshold"  ,_saturateRatio) << endl;
+    cout << Dots::asDouble    ("     - Long global length threshold",DbU::getLambda(_globalThreshold)) << endl;
+  }
 
 
   string  ConfigurationConcrete::_getTypeName () const

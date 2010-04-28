@@ -31,6 +31,7 @@
 #include  "hurricane/DbU.h"
 namespace Hurricane {
   class Layer;
+  class Cell;
 }
 
 #include  "crlcore/RoutingGauge.h"
@@ -46,6 +47,7 @@ namespace Katabatic {
   using  Hurricane::Record;
   using  Hurricane::Layer;
   using  Hurricane::DbU;
+  using  Hurricane::Cell;
   using  CRL::RoutingGauge;
   using  CRL::RoutingLayerGauge;
 
@@ -56,9 +58,11 @@ namespace Katabatic {
 
   class Configuration {
     public:
+      static  Configuration*     getDefault         ();
+    public:
     // Constructor & Destructor.
-                                 Configuration      ();
       virtual                   ~Configuration      ();
+      virtual Configuration*     clone              () const = 0;
     // Methods.                                     
       virtual bool               isGMetal           ( const Layer* ) const = 0;
       virtual size_t             getDepth           () const = 0;
@@ -72,12 +76,17 @@ namespace Katabatic {
       virtual DbU::Unit          getGlobalThreshold () const = 0;
       virtual void               setSaturateRatio   ( float ) = 0;
       virtual void               setGlobalThreshold ( DbU::Unit ) = 0;
+      virtual void               print              ( Cell* ) const = 0;
       virtual Record*            _getRecord         () const = 0;
       virtual string             _getString         () const = 0;
       virtual string             _getTypeName       () const = 0;
+    protected:
+                                 Configuration      ();
     private:
-                     Configuration ( const Configuration& );
-      Configuration& operator=     ( const Configuration& );
+                                 Configuration      ( const Configuration& );
+              Configuration&     operator=          ( const Configuration& );
+    private:
+      static  Configuration*     _default;
   };
 
 
@@ -86,27 +95,30 @@ namespace Katabatic {
 
 
   class ConfigurationConcrete : public Configuration {
+      friend class Configuration;
     public:
     // Constructor & Destructor.
-                                 ConfigurationConcrete ( const RoutingGauge* );
-      virtual                   ~ConfigurationConcrete ();
+      virtual ConfigurationConcrete* clone                 () const;
+      virtual                       ~ConfigurationConcrete ();
     // Methods.
-      virtual bool               isGMetal              ( const Layer* ) const;
-      virtual size_t             getDepth              () const;
-      virtual size_t             getLayerDepth         ( const Layer* ) const;
-      virtual RoutingGauge*      getRoutingGauge       () const;
-      virtual RoutingLayerGauge* getLayerGauge         ( size_t depth ) const;
-      virtual const Layer*       getRoutingLayer       ( size_t depth ) const;
-      virtual Layer*             getContactLayer       ( size_t depth ) const;
-      virtual DbU::Unit          getExtensionCap       () const;
-      virtual float              getSaturateRatio      () const;
-      virtual DbU::Unit          getGlobalThreshold    () const;
-      virtual void               setSaturateRatio      ( float );
-      virtual void               setGlobalThreshold    ( DbU::Unit );
-      virtual Record*            _getRecord            () const;
-      virtual string             _getString            () const;
-      virtual string             _getTypeName          () const;
-
+      virtual bool                   isGMetal              ( const Layer* ) const;
+      virtual size_t                 getDepth              () const;
+      virtual size_t                 getLayerDepth         ( const Layer* ) const;
+      virtual RoutingGauge*          getRoutingGauge       () const;
+      virtual RoutingLayerGauge*     getLayerGauge         ( size_t depth ) const;
+      virtual const Layer*           getRoutingLayer       ( size_t depth ) const;
+      virtual Layer*                 getContactLayer       ( size_t depth ) const;
+      virtual DbU::Unit              getExtensionCap       () const;
+      virtual float                  getSaturateRatio      () const;
+      virtual DbU::Unit              getGlobalThreshold    () const;
+      virtual void                   setSaturateRatio      ( float );
+      virtual void                   setGlobalThreshold    ( DbU::Unit );
+      virtual void                   print                 ( Cell* ) const;
+      virtual Record*                _getRecord            () const;
+      virtual string                 _getString            () const;
+      virtual string                 _getTypeName          () const;
+    protected:                      
+                                     ConfigurationConcrete ( const RoutingGauge* );
     protected:
     // Attributes.
       const Layer*  _gmetalh;
