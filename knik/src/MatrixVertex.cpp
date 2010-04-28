@@ -329,8 +329,6 @@ unsigned int MatrixVertex::getColumnIndex ( DbU::Unit x )
 {
     assert(_xInit );
 
-    unsigned int maxIndex = (*_columnsIndexes.rbegin()).second - 1;
-
     if ( _xRegular ) {
 //       cerr << "x:" << DbU::getValueString(x-DbU::lambda(_boundingBox.getXMin())) << "/" << _tileWidth << "=" << (DbU::getLambda(x-DbU::lambda(_lowerLeftX))/_tileWidth)
 //            << "<=>" << (unsigned int)floor(DbU::getLambda(x-DbU::lambda(_boundingBox.getXMin()))/_tileWidth) << endl;
