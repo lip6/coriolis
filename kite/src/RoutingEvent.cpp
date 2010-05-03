@@ -827,6 +827,7 @@ namespace {
              bool                 pivotUp                 ();
              bool                 moveUp                  ();
              bool                 makeDogLeg              ();
+             bool                 makeDogLeg              ( DbU::Unit );
              bool                 makeDogLeg              ( Interval );
              bool                 relax                   ( Interval, unsigned int flags=AllowExpand );
              bool                 relax                   ( size_t );
@@ -1128,7 +1129,6 @@ namespace {
   bool  State::conflictSolve1 ()
   {
     bool                  success    = false;
-    bool                  constraintByPerpandiculars = false;
     Interval              constraints;
     vector<Cs1Candidate>  candidates;
     TrackElement*         segment    = _event->getSegment();
@@ -1244,7 +1244,15 @@ namespace {
   //if ( track && (track->getAxis() < constraints.getVMin()) ) track = track->getNext();
   //for ( ; !success && track && (track->getAxis() <= constraints.getVMax()) ; track = track->getNext() ) 
 
-    if ( not success and constraintByPerpandiculars ) {
+    if ( not success and (segment->getLength() >= Session::getConfiguration()->getGlobalThreshold()) ) {
+      ltrace(200) << "Long global wire, break in the middle." << endl;
+      Interval span;
+      segment->getCanonical ( span );
+      
+      success = Manipulator(segment,*this).makeDogLeg ( span.getCenter() );
+    }
+
+    if ( not success and segment->isGlobal() and (_costs.size() <= 1) ) {
       ltrace(200) << "Overconstrained perpandiculars, rip them up. On track:" << endl;
       ltrace(200) << "  " << track << endl;
       Manipulator(segment,*this).ripupPerpandiculars ();
@@ -1333,8 +1341,10 @@ namespace {
         }
       }
 
-      if ( candidate )
+      if ( candidate ) {
+        ltrace(200) << "> Accept candidate " << candidate << endl;
         candidates.push_back ( LvGCandidate(candidate,otherOverlap,terminals) );
+      }
     }
 
     if ( candidates.empty() ) {
@@ -1595,6 +1605,8 @@ namespace {
               nextState = DataNegociate::ConflictSolve1;
               break;
             }
+            nextState = DataNegociate::MaximumSlack;
+            break;
           case DataNegociate::MaximumSlack:
           case DataNegociate::Unimplemented:
             ltrace(200) << "Global, State: MaximumSlack or Unimplemented." << endl;
@@ -2132,47 +2144,51 @@ namespace {
 
     // Making first dogleg.
       ltrace(200) << "Making FIRST dogleg at " << ifirstDogleg << endl;
-      TrackElement* segment     = _segment;
-      Track*        track       = _segment->getTrack();
-      GCell*        dogLegGCell = gcells[ifirstDogleg];
-      TrackElement* dogleg      = NULL;
+      TrackElement* segment1     = NULL;
+      TrackElement* segment2     = NULL;
+      Track*        track        = _segment->getTrack();
+      GCell*        dogLegGCell  = gcells[ifirstDogleg];
+      TrackElement* dogleg       = NULL;
       DbU::Unit     doglegAxis;
-      bool          doglegReuse = false;
+      bool          doglegReuse1 = false;
+      bool          doglegReuse2 = false;
 
     // Try to reuse existing dogleg if broken at either end.
-      if ( ifirstDogleg == 0 )               dogleg = segment->getSourceDogLeg();
-      if ( ifirstDogleg == gcells.size()-1 ) dogleg = segment->getTargetDogLeg();
+      if ( ifirstDogleg == 0 )               dogleg = _segment->getSourceDogLeg();
+      if ( ifirstDogleg == gcells.size()-1 ) dogleg = _segment->getTargetDogLeg();
       if ( dogleg ) {
         ltrace(200) << "Reusing dogleg." << endl;
-        doglegReuse = true;
+        doglegReuse1 = true;
+        segment1     = _segment;
       } else {
       // Try to create a new dogleg.
-        if ( not segment->canDogLegAt(dogLegGCell) ) {
+        if ( not _segment->canDogLegAt(dogLegGCell) ) {
           ltrace(200) << "Cannot create FIRST dogleg." << endl;
           ltraceout(200);
           return false;
         }
-        dogleg = segment->makeDogLeg ( dogLegGCell );
+        dogleg   = _segment->makeDogLeg ( dogLegGCell );
+        segment1 = Session::lookup ( Session::getDogLegs()[2] );
       }
 
       if ( firstDogLegIsMin ) {
         if ( minExpanded ) {
-        //doglegAxis = dogLegGCell->getUSide(segment->getDirection(),false).getVMax() - DbU::lambda(1.0);
-          doglegAxis = dogLegGCell->getUSide(segment->getDirection(),false).getCenter();
+        //doglegAxis = dogLegGCell->getUSide(_segment->getDirection(),false).getVMax() - DbU::lambda(1.0);
+          doglegAxis = dogLegGCell->getUSide(_segment->getDirection(),false).getCenter();
         } else {
         // Ugly: hardcoded pitch.
           doglegAxis = interval.getVMin() - DbU::lambda(5.0);
         }
       } else {
         if ( maxExpanded ) {
-          doglegAxis = dogLegGCell->getUSide(segment->getDirection(),false).getVMin();
+          doglegAxis = dogLegGCell->getUSide(_segment->getDirection(),false).getVMin();
         } else {
         // Ugly: hardcoded pitch (5.0 - 1.0).
           doglegAxis = interval.getVMax() + DbU::lambda(4.0);
         }
       }
-      if ( doglegReuse ) _S.addAction ( dogleg, SegmentAction::OtherRipup );
-      else               dogleg->setAxis ( doglegAxis );
+      if ( doglegReuse1 ) _S.addAction ( dogleg, SegmentAction::OtherRipup );
+      else                dogleg->setAxis ( doglegAxis );
 
     // If event is present, the dogleg is in the current RoutingSet.
       RoutingEvent* event = dogleg->getDataNegociate()->getRoutingEvent();
@@ -2184,49 +2200,49 @@ namespace {
       }
 
       if ( (dogLegCount == 2)
-         and not segment->getTrack()
-         and (segment->getGCell()->getOrder() < Session::getOrder()) ) {
-        Session::addInsertEvent ( segment, track );
+         and not _segment->getTrack()
+         and (_segment->getGCell()->getOrder() < Session::getOrder()) ) {
+        Session::addInsertEvent ( _segment, track );
       }
 
     // Making second dogleg.
       if ( dogLegCount > 1 ) {
         ltrace(200) << "Making SECOND dogleg at " << isecondDogleg
-                    << " on " << Session::getDogLegs()[2] << endl;
+                    << " on " << segment1 << endl;
 
         dogleg      = NULL;
-        segment     = Session::lookup ( Session::getDogLegs()[2] );
         dogLegGCell = gcells[isecondDogleg];
 
         if ( ifirstDogleg == isecondDogleg ) {
           ltrace(200) << "Double break in same GCell." << endl;
-          segment->setSourceDogLeg(false);
+          segment1->setSourceDogLeg(false);
         }
 
-        doglegReuse = false;
-        if ( isecondDogleg == gcells.size()-1 ) dogleg = segment->getTargetDogLeg();
+        if ( isecondDogleg == gcells.size()-1 ) dogleg = segment1->getTargetDogLeg();
         if ( dogleg ) {
           ltrace(200) << "Reusing dogleg." << endl;
-          doglegReuse = true;
+          doglegReuse2 = true;
+          segment2     = segment1;
         } else {
         // Try to create a new dogleg.
-          if ( not segment->canDogLegAt(dogLegGCell) ) {
+          if ( not segment1->canDogLegAt(dogLegGCell) ) {
             ltrace(200) << "Cannot create SECOND dogleg." << endl;
             ltraceout(200);
             return false;
           }
-          dogleg = segment->makeDogLeg ( dogLegGCell );
+          dogleg   = segment1->makeDogLeg ( dogLegGCell );
+          segment2 = Session::lookup ( Session::getDogLegs()[2] );
         }
 
         if ( maxExpanded ) {
-        //doglegAxis = dogLegGCell->getUSide(segment->getDirection(),false).getVMin();
-          doglegAxis = dogLegGCell->getUSide(segment->getDirection(),false).getCenter();
+        //doglegAxis = dogLegGCell->getUSide(segment1->getDirection(),false).getVMin();
+          doglegAxis = dogLegGCell->getUSide(segment1->getDirection(),false).getCenter();
         } else {
         // Ugly: hardcoded pitch.
           doglegAxis = interval.getVMax() + DbU::lambda(5.0);
         }
-        if ( doglegReuse ) _S.addAction ( dogleg, SegmentAction::OtherRipup );
-        else               dogleg->setAxis ( doglegAxis );
+        if ( doglegReuse2 ) _S.addAction ( dogleg, SegmentAction::OtherRipup );
+        else                dogleg->setAxis ( doglegAxis );
 
       // If event is present, the dogleg is in the current RoutingSet.
         RoutingEvent* event = dogleg->getDataNegociate()->getRoutingEvent();
@@ -2239,12 +2255,30 @@ namespace {
 
         const vector<AutoSegment*>& doglegs = Session::getDogLegs();
         for ( size_t i=0 ; i<doglegs.size() ; i++ ) { 
-          segment = Session::lookup(doglegs[i]);
+          TrackElement* segment = Session::lookup(doglegs[i]);
           if ( ( segment->getGCell()->getOrder() < Session::getOrder() ) and not segment->getTrack() ) {
             Session::addInsertEvent ( segment, track );
           }
         }
       }
+
+      switch ( dogLegCount ) {
+        case 1:
+          if ( not doglegReuse1 ) {
+            if ( firstDogLegIsMin )
+              _segment->getDataNegociate()->setState ( DataNegociate::RipupPerpandiculars, true );
+            else
+              segment1->getDataNegociate()->setState ( DataNegociate::RipupPerpandiculars, true );
+          }
+          break;
+        case 2:
+          if ( not doglegReuse1 )
+            _segment->getDataNegociate()->setState ( DataNegociate::RipupPerpandiculars, true );
+          if ( not doglegReuse2 )
+            segment2->getDataNegociate()->setState ( DataNegociate::RipupPerpandiculars, true );
+          break;
+      }
+
     } else if ( _data->getGCellOrder() > currentOrder ) {
       cerr << Bug("relax() Routing order problem for %s."
                  ,getString(_segment).c_str()) << endl;
@@ -2814,6 +2848,29 @@ namespace {
     }
 
     return false;
+  }
+
+
+  bool  Manipulator::makeDogLeg ( DbU::Unit position )
+  {
+    ltrace(200) << "Manipulator::makeDogLeg(position) " << _segment << endl; 
+    ltrace(200) << "Breaking position: " << DbU::getValueString(position) << endl;
+
+    if ( _segment->isFixed() ) return false;
+
+    vector<GCell*> gcells;
+    _segment->getGCells ( gcells );
+
+    size_t igcell = 0;
+    for ( ; igcell<gcells.size() ; igcell++ ) {
+      if ( gcells[igcell]->getUSide(_segment->getDirection(),true).contains(position) )
+        break;
+    }
+    if ( igcell == gcells.size() ) return false;
+    if ( not _segment->canDogLegAt(gcells[igcell]) ) return false;
+
+    TrackElement* dogleg = _segment->makeDogLeg(gcells[igcell]);
+    return ( dogleg != NULL );
   }
 
 

@@ -78,40 +78,41 @@ namespace Kite {
                       };
 
     public:
-                               DataNegociate     ( TrackElement* );
-                              ~DataNegociate     ();
-      inline bool              isRing            () const;
-      inline bool              isBorder          () const;
-      inline bool              isLeftBorder      () const;
-      inline bool              isRightBorder     () const;
-      inline bool              hasRoutingEvent   () const;
-      inline RoutingEvent*     getRoutingEvent   () const;
-      inline TrackElement*     getTrackSegment   () const;
-      inline Track*            getTrack          () const;
-      inline TrackSegmentCost& getCost           ();
-      inline unsigned int      getGCellOrder     () const;
-    //inline unsigned int      getZ              () const;
-      inline unsigned int      getState          () const;
-      inline unsigned int      getStateCount     () const;
-      inline unsigned int      getRipupCount     () const;
-      inline void              setGCellOrder     ( unsigned int );
-      inline void              setState          ( unsigned int, bool reset=false );
-      inline void              setRing           ( bool );
-      inline void              setLeftBorder     ( bool );
-      inline void              setRightBorder    ( bool );
-      inline void              resetBorder       ();
-      inline void              setRoutingEvent   ( RoutingEvent* );
-      inline void              setRipupCount     ( unsigned int );
-      inline void              incRipupCount     ();
-      inline void              decRipupCount     ();
-      inline void              resetRipupCount   ();
-      inline void              resetStateCount   ();
-      inline void              invalidate        ( bool withPerpandiculars=false, bool withConstraints=false );
-             void              update            ();
-      static string            getStateString    ( DataNegociate* );
-             Record*           _getRecord        () const;
-             string            _getString        () const;
-      inline string            _getTypeName      () const;
+                               DataNegociate         ( TrackElement* );
+                              ~DataNegociate         ();
+      inline bool              isRing                () const;
+      inline bool              isBorder              () const;
+      inline bool              isLeftBorder          () const;
+      inline bool              isRightBorder         () const;
+      inline bool              hasRoutingEvent       () const;
+      inline RoutingEvent*     getRoutingEvent       () const;
+      inline TrackElement*     getTrackSegment       () const;
+      inline Track*            getTrack              () const;
+      inline TrackSegmentCost& getCost               ();
+      inline unsigned int      getGCellOrder         () const;
+    //inline unsigned int      getZ                  () const;
+      inline unsigned int      getState              () const;
+      inline unsigned int      getStateCount         () const;
+      inline unsigned int      getRipupCount         () const;
+      inline unsigned int      getStateAndRipupCount () const;
+      inline void              setGCellOrder         ( unsigned int );
+      inline void              setState              ( unsigned int, bool reset=false );
+      inline void              setRing               ( bool );
+      inline void              setLeftBorder         ( bool );
+      inline void              setRightBorder        ( bool );
+      inline void              resetBorder           ();
+      inline void              setRoutingEvent       ( RoutingEvent* );
+      inline void              setRipupCount         ( unsigned int );
+      inline void              incRipupCount         ();
+      inline void              decRipupCount         ();
+      inline void              resetRipupCount       ();
+      inline void              resetStateCount       ();
+      inline void              invalidate            ( bool withPerpandiculars=false, bool withConstraints=false );
+             void              update                ();
+      static string            getStateString        ( DataNegociate* );
+             Record*           _getRecord            () const;
+             string            _getString            () const;
+      inline string            _getTypeName          () const;
 
     protected:
     // Attributes.
@@ -171,6 +172,9 @@ namespace Kite {
     } else
       _stateCount++;
   }
+
+  inline unsigned int  DataNegociate::getStateAndRipupCount () const
+  { return (_state << 4) + getRipupCount(); }
 
 
 } // End of Kite namespace.

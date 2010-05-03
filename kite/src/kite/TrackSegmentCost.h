@@ -77,8 +77,8 @@ namespace Kite {
 
     protected:
     // Attributes.
-      unsigned int       _terminals  : 5;
-      unsigned int       _ripupCount : 5;
+      unsigned int       _terminals  :  5;
+      unsigned int       _ripupCount : 16;
       DbU::Unit          _leftMinExtend;
       DbU::Unit          _rightMinExtend;
       Net*               _net;

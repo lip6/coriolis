@@ -404,7 +404,7 @@ namespace Kite {
     count = 0;
 
     ltrace(200) << "Dumping history." << endl;
-    for ( size_t i=0 ; (i<_eventHistory.size()) && !isInterrupted() ; i++ ) {
+    for ( size_t i=0 ; (i<_eventHistory.size()) and not isInterrupted() ; i++ ) {
       RoutingEvent* event = _eventHistory.getNth(i);
       ltrace(200) << (void*)event << " ["
                   << (event->isCloned       ()?"C":"-")

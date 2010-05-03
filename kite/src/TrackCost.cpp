@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -105,8 +105,14 @@ namespace Kite {
     if ( lhs._infinite xor rhs._infinite ) return rhs._infinite;
     if ( lhs._hardOverlap xor rhs._hardOverlap ) return rhs._hardOverlap;
 
-    if ( lhs._ripupCount + (int)Session::getRipupCost() < rhs._ripupCount ) return true;
-    if ( lhs._ripupCount > rhs._ripupCount + (int)Session::getRipupCost() ) return false;
+    int lhsRipupCost = (lhs._dataState<<2) + lhs._ripupCount;
+    int rhsRipupCost = (rhs._dataState<<2) + rhs._ripupCount;
+
+    // if ( lhs._ripupCount + (int)Session::getRipupCost() < rhs._ripupCount ) return true;
+    // if ( lhs._ripupCount > rhs._ripupCount + (int)Session::getRipupCost() ) return false;
+
+    if ( lhsRipupCost + (int)Session::getRipupCost() < rhsRipupCost ) return true;
+    if ( lhsRipupCost > (int)Session::getRipupCost() + rhsRipupCost ) return false;
 
     if ( lhs._overlap xor rhs._overlap ) return rhs._overlap;
 
@@ -155,7 +161,6 @@ namespace Kite {
     string s = "<" + _getTypeName();
 
     s += " " + getString(_track);
-    s += " " + getString(_ripupCount);
     s += " " + getString(_ripupCount);
     s += " " + string ( (_blockage   )?"b":"-" );
     s +=       string ( (_hardOverlap)?"h":"-" );
