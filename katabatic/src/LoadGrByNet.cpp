@@ -1195,6 +1195,8 @@ namespace {
                     , GCELL_3G_4L3     = 3+(4<<9)
                     , GCELL_4G_1L1     = 4+(1<<3)
                     , GCELL_4G_2L1     = 4+(2<<3)
+                    , GCELL_4G_3L1     = 4+(3<<3)
+                    , GCELL_4G_4L1     = 4+(4<<3)
                     , GCELL_4G_1L3     = 4+(1<<9)
                     };
 
@@ -1367,7 +1369,9 @@ namespace {
       case GCELL_3G_3L3:
       case GCELL_3G_4L3:
       case GCELL_4G_1L1:
-      case GCELL_4G_2L1: _GCell_xG_xL1_xL3 (); break;
+      case GCELL_4G_2L1:
+      case GCELL_4G_3L1:
+      case GCELL_4G_4L1: _GCell_xG_xL1_xL3 (); break;
       case GCELL_2G_1L2:
       case GCELL_2G_2L2:
       case GCELL_2G_3L2:

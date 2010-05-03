@@ -1071,6 +1071,8 @@ namespace Katabatic {
 
   void  DyKeyQueue::revalidate ()
   {
+    ltrace(190) << "DyKeyQueue::revalidate()" << endl;
+
     std::set<GCell*,GCell::CompareByKey>::iterator iinserted;
     std::set<GCell*>::iterator                     igcell    = _requests.begin();
     for ( ; igcell != _requests.end() ; ++igcell ) {

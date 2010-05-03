@@ -103,7 +103,8 @@ namespace Katabatic {
     }
 
     cmess1 << "  o  Reading GCell grid from Knik ["
-           << getColumns() << "x" << getRows() << "]." << endl;
+           << getColumns() << "x" << getRows() << "] "
+           << "(" << (getColumns()*getRows()) << ")." << endl;
 
     ltraceout(80);
   }

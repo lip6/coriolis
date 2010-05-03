@@ -105,7 +105,6 @@ namespace Katabatic {
 
   //vector<GCell*> gcells  = *(_gcellGrid->getGCellVector());
     DyKeyQueue     queue   ( depth, *(_gcellGrid->getGCellVector()) );
-    AutoSegment*   segment = NULL;
     vector<GCell*> invalidateds;
 
     bool optimized = true;
@@ -128,8 +127,9 @@ namespace Katabatic {
           break;
         }
 
-        ltrace(190) << "step desaturate @: " << i << " " << *igcell << endl;
+        ltrace(190) << "step desaturate: @ " << i << " " << *igcell << endl;
 
+        AutoSegment* segment = NULL;
         optimized = (*igcell)->stepDesaturate ( depth, globalNets, segment );
 
         if ( segment ) {
