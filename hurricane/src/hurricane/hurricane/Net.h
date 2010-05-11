@@ -305,6 +305,14 @@ IOSTREAM_POINTER_SUPPORT(Hurricane::Net::Direction::Code);
 IOSTREAM_VALUE_SUPPORT(Hurricane::Net::Direction::Code);
 
 
+namespace Hurricane {
+
+// Force SlotTemplate<> expansion on Net* type.
+// Because sometimes it didn't happens (?).
+  const SlotTemplate<Net*> dummyNetSlot ( string("dummyNetSlot"), NULL );
+
+}
+
 #endif // HURRICANE_NET
 
 
