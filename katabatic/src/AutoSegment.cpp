@@ -535,6 +535,9 @@ namespace Katabatic {
 
     getConstraints ( constraintMin, constraintMax );
 
+  // Empty constraint interval: ignore.
+    if ( constraintMin > constraintMax ) return false;
+
     if ( allowOutsideGCell() ) {
     // Ugly: hard-wired value of the track spacing.
       constraintMin -= DbU::lambda(5.0) * 8;

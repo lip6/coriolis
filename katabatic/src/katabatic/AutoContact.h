@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -221,9 +221,10 @@ namespace Katabatic {
       inline  void             setCBYMin                  ( DbU::Unit yMin );
       inline  void             setCBYMax                  ( DbU::Unit yMax );
               void             setConstraintBox           ( const Box& box );
-              void             restrictConstraintBox      ( DbU::Unit constraintMin
+              bool             restrictConstraintBox      ( DbU::Unit constraintMin
                                                           , DbU::Unit constraintMax
-                                                          , unsigned int direction );
+                                                          , unsigned int direction
+                                                          , bool warnOnError=true );
               void             restoreNativeConstraintBox ();
               void             breakUp                    ();
               void             split                      ();

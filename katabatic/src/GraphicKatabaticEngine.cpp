@@ -111,7 +111,7 @@ namespace Katabatic {
 
   void  GraphicKatabaticEngine::run ()
   {
-    static vector<Net*> routingNets;
+    static KatabaticEngine::NetSet  routingNets;
 
     emit cellPreModificated ();
 

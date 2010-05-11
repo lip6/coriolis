@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -280,12 +280,28 @@ namespace Katabatic {
     constraintMin = contact->getCBXMin();
     constraintMax = contact->getCBXMax();
 
+    ltrace(148) << "Source constraints: " << contact << " ["
+                << DbU::getValueString(constraintMin) << ":"
+                << DbU::getValueString(constraintMax) << "]"
+                << endl;
+
     contact = getAutoTarget();
     constraintMin = max ( constraintMin, contact->getCBXMin() );
     constraintMax = min ( constraintMax, contact->getCBXMax() );
 
+    ltrace(148) << "Merge with target constraints: " << contact << " ["
+                << DbU::getValueString(constraintMin) << ":"
+                << DbU::getValueString(constraintMax) << "]"
+                << endl;
+
     constraintMin = max ( constraintMin, getUserConstraints().getVMin() );
     constraintMax = min ( constraintMax, getUserConstraints().getVMax() );
+
+    ltrace(148) << "Merge with user constraints: " << getUserConstraints() << " ["
+                << DbU::getValueString(constraintMin) << ":"
+                << DbU::getValueString(constraintMax) << "]"
+                << endl;
+
     return true;
   }
 

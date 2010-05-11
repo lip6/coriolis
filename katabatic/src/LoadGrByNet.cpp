@@ -1847,11 +1847,12 @@ namespace {
     ltrace(99) << "_GCell_1G_1L1() [Managed Configuration - Optimized] " << _topology << endl;
     ltracein(99);
 
+    bool  haccess    = false;
     Hook* globalHook = NULL;
-    if      ( _east  ) globalHook = _east;
-    else if ( _west  ) globalHook = _west;
-    else if ( _north ) globalHook = _north;
-    else if ( _south ) globalHook = _south;
+    if      ( _east  ) { globalHook = _east; haccess = true; }
+    else if ( _west  ) { globalHook = _west; haccess = true; }
+    else if ( _north ) { globalHook = _north; }
+    else if ( _south ) { globalHook = _south; }
 
   //Segment*  globalSegment = dynamic_cast<Segment*>(globalHook->getComponent());
   //DbU::Unit length        = (globalSegment) ? globalSegment->getLength() : 0;
@@ -1859,7 +1860,7 @@ namespace {
     AutoContact* rpContact = _GCell_rp_Access ( _gcell
                                               , _routingPads[0]
                                               , (_topology & GLOBAL_HORIZONTAL_END)
-                                              , false //(length > DbU::lambda(50.0*2))
+                                              , haccess //(length > DbU::lambda(50.0*2))
                                               );
     _GCell_GlobalContacts ( false, rpContact );
 
@@ -2299,14 +2300,16 @@ namespace Katabatic {
     startMeasures ();
     Session::open ( this );
 
-    sort ( _routingNets.begin(), _routingNets.end(), NetCompareByName() );
-    for ( size_t i=0 ; i < _routingNets.size() ; i++ )
-      _loadNetGlobalRouting ( _routingNets[i] );
+  //sort ( _routingNets.begin(), _routingNets.end(), NetCompareByName() );
+    NetSet::iterator inet = _routingNets.begin();
+    while ( inet != _routingNets.end() ) {
+      _loadNetGlobalRouting ( *(inet++) );
+    }
 
     Session::revalidate ();
 
-    for ( size_t i=0 ; i < _routingNets.size() ; i++ )
-      _toOptimals ( _routingNets[i] );
+    for ( inet=_routingNets.begin() ; inet != _routingNets.end() ; ++inet )
+      _toOptimals ( *inet );
 
     Session::revalidate ();
 
@@ -2353,8 +2356,10 @@ namespace Katabatic {
     }
 
     ltracein(99);
-    Hook*  startHook   = NULL;
-    GCell* lowestGCell = NULL;
+    Hook*  startHook    = NULL;
+    GCell* lowestGCell  = NULL;
+    size_t unconnecteds = 0;
+    size_t connecteds   = 0;
     ltrace(99) << "Start RoutingPad Ring" << endl;
     forEach ( RoutingPad*, startRp, routingPads ) {
       forEach ( Hook*, ihook, startRp->getBodyHook()->getHooks() ) {
@@ -2362,23 +2367,38 @@ namespace Katabatic {
         Segment* segment = dynamic_cast<Segment*>(ihook->getComponent());
 
         if ( segment ) {
+          ++connecteds;
+
           GCellConfiguration  gcellConf ( getGCellGrid(), *ihook, NULL );
           if ( gcellConf.getStateG() == 1 ) {
-            if ( !lowestGCell || (lowestGCell->getIndex() > gcellConf.getGCell()->getIndex()) ) {
+            if ( (lowestGCell == NULL) or (lowestGCell->getIndex() > gcellConf.getGCell()->getIndex()) ) {
               ltrace(99) << "Starting from GCell " << gcellConf.getGCell() << endl;
               lowestGCell = gcellConf.getGCell();
               startHook   = *ihook;
             }
             break;
           }
+        } else {
+          ++unconnecteds;
         }
+      }
+      if ( (unconnecteds > 10) and (connecteds == 0) ) {
+        cerr << Warning("More than 10 unconnected RoutingPads (%u) on %s, missing global routing?"
+                       ,unconnecteds, getString(net->getName()).c_str() ) << endl;
+
+        _routingNets.erase ( net );
+
+        ltraceout(99);
+        DebugSession::close ();
+
+        return;
       }
     // Comment the next line to enable the lowest GCell search.
     //if ( startHook ) break;
     }
     ltraceout(99);
 
-    if ( !startHook ) { singleGCell ( this, net ); ltraceout(99); return; }
+    if ( startHook == NULL ) { singleGCell ( this, net ); ltraceout(99); return; }
 
     GCellConfiguration  startGCellConf ( getGCellGrid(), startHook, NULL );
     startGCellConf.construct ( forks );
@@ -2397,6 +2417,18 @@ namespace Katabatic {
     }
 
     lookupClear ();
+
+    set<AutoSegment*> overconstraineds;
+    _computeNetConstraints ( net, overconstraineds );
+
+    Session::revalidate ();
+    
+    set<AutoSegment*>::iterator iover = overconstraineds.begin();
+    for ( ; iover != overconstraineds.end() ; ++iover ) {
+      (*iover)->makeDogLeg ( (*iover)->getAutoSource()->getGCell(), true );
+    }
+
+    Session::revalidate ();
 
     ltraceout(99);
 

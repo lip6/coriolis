@@ -55,16 +55,6 @@ namespace {
   using namespace Hurricane;
 
 
-  struct NetCompareByName {
-      inline bool operator() ( const Net* lhs, const Net* rhs ) const;
-  };
-
-  inline bool NetCompareByName::operator() ( const Net* lhs, const Net* rhs ) const
-  {
-    return lhs->getName() < rhs->getName();
-  }
-
-
   bool  isTopAndBottomConnected ( Segment* segment, set<const Layer*>& layers )
   {
     ltrace(88) << "* Potential Null Length: " << segment << endl;
@@ -507,7 +497,7 @@ namespace Katabatic {
   { return _configuration; }
 
 
-  void  KatabaticEngine::loadGlobalRouting ( unsigned int method, vector<Net*>& nets )
+  void  KatabaticEngine::loadGlobalRouting ( unsigned int method, NetSet& nets )
   {
     if ( _state < StateGlobalLoaded )
       throw Error ("KatabaticEngine::loadGlobalRouting() : global routing not present yet.");
@@ -522,10 +512,10 @@ namespace Katabatic {
         if ( net->getType() == Net::Type::GROUND ) continue;
         if ( net->getType() == Net::Type::CLOCK  ) continue;
         if ( af->isOBSTACLE(net->getName()) ) continue;
-        _routingNets.push_back ( *net );
+        _routingNets.insert ( *net );
       }
     } else {
-      vector<Net*>::iterator  it = nets.begin();
+      NetSet::iterator  it = nets.begin();
       for ( ; it != nets.end() ; it++ ) {
         if (   ( (*it)->getType() == Net::Type::POWER  )
             || ( (*it)->getType() == Net::Type::GROUND )
@@ -533,7 +523,7 @@ namespace Katabatic {
             || ( af->isOBSTACLE((*it)->getName()) ) ) {
           cerr << Warning("%s is not a routable net, removed from set.",getString(*it).c_str()) << endl;
         } else
-          _routingNets.push_back ( *it );
+          _routingNets.insert ( *it );
       }
     }
 

@@ -711,8 +711,12 @@ namespace Katabatic {
 
     if ( rpNets.size() < 8 ) return;
 
-    cerr << "[WARNING] " << this << " has " << rps.size() << " terminals (h:"
-         << _hsegments.size() << ")" << endl;
+    // cerr << Warning("%s has %ud terminals (h:%ud, v:%ud)"
+    //                ,getString(this).c_str()
+    //                ,rps.size()
+    //                ,_hsegments.size()
+    //                ,_vsegments.size()
+    //                ) << endl;
 
     AutoSegment* segment;
     while ( stepDesaturate ( 1, globalNets, segment, true ) ) {

@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -32,6 +32,7 @@
 #include  <vector>
 #include  <set>
 #include  <map>
+#include  <boost/function.hpp>
 #include  "hurricane/Commons.h"
 #include  "hurricane/DbU.h"
 
@@ -81,7 +82,6 @@ namespace Katabatic {
  
 
   class Session {
-
     public:
       enum InvalidateType { NetSplitContacts = (1<<0)
                           , NetCanonize      = (1<<1)

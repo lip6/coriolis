@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -89,16 +89,16 @@ namespace Katabatic {
 
 
   Session::Session ( KatabaticEngine* ktbt )
-    : _katabatic          (ktbt)
-    , _technology         (ktbt->getRoutingGauge()->getTechnology())
-    , _routingGauge       (ktbt->getRoutingGauge())
-    , _autoContacts       ()
-    , _autoSegments       ()
-    , _revalidateds       ()
-    , _dogLegs            ()
-    , _netInvalidateds    ()
-    , _netRevalidateds    ()
-    , _invalidateMask     (0)
+    : _katabatic       (ktbt)
+    , _technology      (ktbt->getRoutingGauge()->getTechnology())
+    , _routingGauge    (ktbt->getRoutingGauge())
+    , _autoContacts    ()
+    , _autoSegments    ()
+    , _revalidateds    ()
+    , _dogLegs         ()
+    , _netInvalidateds ()
+    , _netRevalidateds ()
+    , _invalidateMask  (0)
   { }
 
 
@@ -243,6 +243,8 @@ namespace Katabatic {
     ltrace(110) << "Katabatic::Session::_revalidateTopology()" << endl;
     ltracein(110);
 
+    set<AutoSegment*> faileds;
+
     if ( not _netInvalidateds.empty() ) {
       set<Net*>::iterator inet = _netInvalidateds.begin();
 
@@ -263,9 +265,8 @@ namespace Katabatic {
 
       if ( _invalidateMask & NetCanonize ) {
         for ( ; inet != _netInvalidateds.end() ; inet++ ) {
-          ltrace(110) << "Katabatic::Session::_revalidateTopoplogy(Net*)" << *inet << endl;
-
-          _katabatic->_computeNetConstraints ( *inet );
+          ltrace(110) << "Katabatic::Session::_revalidateTopology(Net*)" << *inet << endl;
+          _katabatic->_computeNetConstraints ( *inet, faileds );
           _katabatic->_computeNetOptimals    ( *inet );
           _katabatic->_computeNetTerminals   ( *inet );
         }

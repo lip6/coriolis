@@ -181,8 +181,9 @@ namespace Katabatic {
   {
     cmess1 << "  o  Assign Layer (simple wirelength)." << endl;
 
-    for ( size_t i=0 ; i < _routingNets.size() ; i++ )
-      _layerAssignByLength ( _routingNets[i], total, global, globalNets );
+    NetSet::iterator  inet = _routingNets.begin();
+    for ( ; inet != _routingNets.end() ; ++inet )
+      _layerAssignByLength ( *inet, total, global, globalNets );
   }
 
 
@@ -239,8 +240,9 @@ namespace Katabatic {
   {
     cmess1 << "  o  Assign Layer (whole net trunk)." << endl;
 
-    for ( size_t i=0 ; i < _routingNets.size() ; i++ )
-      _layerAssignByTrunk ( _routingNets[i], total, global, globalNets );
+    NetSet::iterator inet = _routingNets.begin();
+    for ( ; inet != _routingNets.end() ; ++inet )
+      _layerAssignByTrunk ( *inet, total, global, globalNets );
   }
 
 
@@ -290,8 +292,9 @@ namespace Katabatic {
     _check ( "after layer assignment" );
 #endif
 #if defined(CHECK_DETERMINISM)
-    for ( size_t i=0 ; i < _routingNets.size() ; i++ )
-      _print ( _routingNets[i] );
+    NetSet::iterator inet = _routingNets.begin();
+    for ( ; inet != _routingNets.end() ; inet++ )
+      _print ( *inet );
 #endif
 
   // Look for RoutingPad overload.

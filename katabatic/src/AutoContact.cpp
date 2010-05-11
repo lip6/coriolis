@@ -2306,7 +2306,7 @@ namespace Katabatic {
   //if ( _fixed ) return Box(getCenter());
 
     Component* component = getAnchor();
-    if ( !component ) return _gcell->getBoundingBox ();
+    if ( component == NULL ) return _gcell->getBoundingBox ();
     
     DbU::Unit   xMin;
     DbU::Unit   xMax;
@@ -2576,50 +2576,52 @@ namespace Katabatic {
   }
 
 
-  void  AutoContact::restrictConstraintBox ( DbU::Unit    constraintMin
+  bool  AutoContact::restrictConstraintBox ( DbU::Unit    constraintMin
                                            , DbU::Unit    constraintMax
-                                           , unsigned int direction )
+                                           , unsigned int direction
+                                           , bool         warnOnError )
   {
     if ( direction & Constant::Horizontal ) {
-      if ( (constraintMin > getCBYMax()) || (constraintMax < getCBYMin()) ) {
-        if ( Session::getDemoMode() ) return;
+      if ( (constraintMin > getCBYMax()) or (constraintMax < getCBYMin()) ) {
+        if ( Session::getDemoMode() or not warnOnError ) return false;
 
         cerr << Error ( "Incompatible DY restriction on %s", _getString().c_str() ) << endl;
         if ( constraintMin > getCBYMax() )
-          cerr << Error ( "(constraintMin > CBYMax : %lf > %lf)"
+          cerr << Error ( "(constraintMin > CBYMax : %.2lf > %.2lf)"
                         , DbU::getLambda(constraintMin)
                         , DbU::getLambda(getCBYMax()) )
                << endl;
         if ( constraintMax < getCBYMin() )
-          cerr << Error ( "(constraintMax < CBYMin : %lf < %lf)"
+          cerr << Error ( "(constraintMax < CBYMin : %.2lf < %.2lf)"
                         , DbU::getLambda(constraintMax)
                         , DbU::getLambda(getCBYMin()) )
                << endl;
-        return;
+        return false;
       }
       setCBYMin ( max(getCBYMin(),constraintMin) );
       setCBYMax ( min(getCBYMax(),constraintMax) );
     } else if ( direction & Constant::Vertical ) {
       if ( (constraintMin > getCBXMax()) || (constraintMax < getCBXMin()) ) {
-        if ( Session::getDemoMode() ) return;
+        if ( Session::getDemoMode() or not warnOnError ) return false;
 
         cerr << Error ( "Incompatible DX restriction on %s", _getString().c_str() ) << endl;
         if ( constraintMin > getCBXMax() )
-          cerr << Error ( "(constraintMin > CBXMax : %lf > %lf)"
+          cerr << Error ( "(constraintMin > CBXMax : %.2lf > %.2lf)"
                         , DbU::getLambda(constraintMin)
                         , DbU::getLambda(getCBXMax()) )
                << endl;
         if ( constraintMax < getCBXMin() )
-          cerr << Error ( "(constraintMax < CBXMin : %lf < %lf)"
+          cerr << Error ( "(constraintMax < CBXMin : %.2lf < %.2lf)"
                         , DbU::getLambda(constraintMax)
                         , DbU::getLambda(getCBXMin()) )
                << endl;
-        return;
+        return false;
       }
       setCBXMin ( max(getCBXMin(),constraintMin) );
       setCBXMax ( min(getCBXMax(),constraintMax) );
     }
     ltrace(110) << "restrictConstraintBox() - " << this << " " << getConstraintBox() << endl;
+    return true;
   }
 
 

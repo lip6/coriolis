@@ -79,26 +79,28 @@ namespace {
 // Local Functions.
 
 
-  void  propagateConstraint ( AutoContactStack& segmentStack
-                            , DbU::Unit         constraintMin
-                            , DbU::Unit         constraintMax
-                            , unsigned int      direction
+  void  propagateConstraint ( AutoContactStack&  segmentStack
+                            , DbU::Unit          constraintMin
+                            , DbU::Unit          constraintMax
+                            , unsigned int       direction
+                            , set<AutoSegment*>& faileds
                             )
   {
     ltracein(99);
 
     while ( !segmentStack.isEmpty() ) {
-      AutoContact* sourceContact = segmentStack.getAutoContact ();
-      Segment*     sourceSegment = segmentStack.getSegment ();
+      AutoContact* sourceContact     = segmentStack.getAutoContact ();
+      Segment*     sourceSegment     = segmentStack.getSegment ();
+      AutoSegment* sourceAutoSegment = Session::lookup ( sourceSegment );
 
       segmentStack.pop ();
 
       if ( sourceContact->isAlignate(direction) ) {
         ltrace(99) << "Apply to (source): " << (void*)sourceContact->base() << ":" << sourceContact << endl;
-        sourceContact->restrictConstraintBox ( constraintMin, constraintMax, direction );
+        if ( not sourceContact->restrictConstraintBox(constraintMin,constraintMax,direction,false) )
+          faileds.insert ( sourceAutoSegment );
       }
 
-      AutoSegment* sourceAutoSegment = Session::lookup ( sourceSegment );
 
       forEach ( Component*, icomponent, sourceContact->getSlaveComponents() ) {
         if ( *icomponent == sourceSegment ) continue;
@@ -119,7 +121,7 @@ namespace {
         AutoContact* targetContact = Session::lookup 
           ( dynamic_cast<Contact*>(targetAutoSegment->getOppositeAnchor(sourceContact->base())) );
 
-        if ( sourceAutoSegment && targetAutoSegment ) {
+        if ( sourceAutoSegment and targetAutoSegment ) {
           unsigned int  state = AutoSegment::getPerpandicularState
             ( sourceContact
             , sourceAutoSegment
@@ -136,7 +138,8 @@ namespace {
                && (targetAutoSegment->getDirection() == direction)
                &&  targetContact->isAlignate(direction) ) {
               ltrace(99) << "Apply to (target): " << (void*)targetContact->base() << ":" << targetContact << endl;
-              targetContact->restrictConstraintBox ( constraintMin, constraintMax, direction );
+              if ( not targetContact->restrictConstraintBox(constraintMin,constraintMax,direction,false) )
+                faileds.insert ( targetAutoSegment );
             }
             continue;
           }
@@ -150,7 +153,7 @@ namespace {
   }
 
 
-  void  propagateConstraintFromRp ( RoutingPad* rp )
+  void  propagateConstraintFromRp ( RoutingPad* rp, set<AutoSegment*>& faileds )
   {
     ltrace(99) << "propagateConstraintFromRp() - " << (void*)rp << " " << rp << endl;
 
@@ -249,14 +252,16 @@ namespace {
         propagateConstraint ( horizontalSegmentsStack
                             , constraintBox.getYMin()
                             , constraintBox.getYMax()
-                            , Constant::Horizontal );
+                            , Constant::Horizontal
+                            , faileds );
 
         // Propagate constraint through vertically bound segments.
         ltrace(99) << "Propagate constraint on vertical segments" << endl;
         propagateConstraint ( verticalSegmentsStack
                             , constraintBox.getXMin()
                             , constraintBox.getXMax()
-                            , Constant::Vertical );
+                            , Constant::Vertical
+                            , faileds );
       }
     }
 
@@ -275,7 +280,7 @@ namespace Katabatic {
   using Hurricane::Cell;
 
 
-  void  KatabaticEngine::_computeNetConstraints ( Net* net )
+  void  KatabaticEngine::_computeNetConstraints ( Net* net, set<AutoSegment*>& faileds )
   {
     DebugSession::open ( net );
 
@@ -298,7 +303,7 @@ namespace Katabatic {
     }
 
     for ( size_t i=0 ; i<routingPads.size() ; i++ )
-      propagateConstraintFromRp ( routingPads[i] );
+      propagateConstraintFromRp ( routingPads[i], faileds );
 
     set<AutoSegment*> processeds;
     forEach ( Segment*, isegment, net->getSegments() ) {
