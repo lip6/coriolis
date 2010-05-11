@@ -151,7 +151,7 @@ int main ( int argc, char *argv[] )
                         , "The tool to be run, in text mode." )
       ( "edge,e"        , poptions::value<float>(&edgeCapacity)->default_value(0.65)
                         , "The egde density ratio applied on global router's edges." )
-      ( "expand-step"   , poptions::value<float>(&expandStep)->default_value(0.40)
+      ( "expand-step"   , poptions::value<float>(&expandStep)->default_value(0.99)
                         , "The density delta above which GCells are aggregateds." )
       ( "events-limit"  , poptions::value<unsigned long>(&eventsLimit)
                         , "The maximum number of iterations (events) that the router is"
@@ -252,7 +252,7 @@ int main ( int argc, char *argv[] )
     //DebugSession::addToTrace ( cell, "mips_r3000_1m_ct_not_kill_se" );
     //DebugSession::addToTrace ( cell, "mips_r3000_1m_ct_not_opcod_sd_2" );
     //DebugSession::addToTrace ( cell, "rsdnbr_sd(14)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_otheri_sd(31)" );
+    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_otheri_sd(25)" );
     //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_soper_se(31)" );
     //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_braadr_sd(3)" );
     //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_seqadr_sd(30)" );
@@ -269,6 +269,15 @@ int main ( int argc, char *argv[] )
     //DebugSession::addToTrace ( cell, "instance129_fixed_multiplier_mixed_direct_nbit0_16_nbit1_16_cin_i0_true_specified_colout_1_11_2" );
     //DebugSession::addToTrace ( cell, "coef0(7)" );
     //DebugSession::addToTrace ( cell, "c1_0(3)" );
+    // DCT/dct_lvl2
+    //DebugSession::addToTrace ( cell, "instance156_fixed_multiplier_mixed_direct_nbit0_8_nbit1_14_specified_report_3_13_1" );
+    //DebugSession::addToTrace ( cell, "created_net11_0(19)" );
+    //DebugSession::addToTrace ( cell, "c11(5)" );
+    //DebugSession::addToTrace ( cell, "instance151_fixed_multiplier_mixed_direct_nbit0_8_nbit1_14_cin_i0_true_specified_colout_3_19_1" );
+    // idct
+    // ieee_division
+    //DebugSession::addToTrace ( cell, "ieee_norm_i_norm_shift_i_muxoutput_259" );
+    //DebugSession::addToTrace ( cell, "ieee_norm_i_norm_shift_i_muxoutput_113" );
     // eFPGA/04x04.
     //DebugSession::addToTrace ( cell, "group_2_4_nq_mem_45" );
     //DebugSession::addToTrace ( cell, "g_2_1_rig_7" );
@@ -313,7 +322,7 @@ int main ( int argc, char *argv[] )
         unsigned int globalFlags = (arguments["global"].as<bool>()) ? Kite::LoadGlobalSolution
                                                                     : Kite::BuildGlobalSolution;
 
-        static vector<Net*> routingNets;
+        static KatabaticEngine::NetSet routingNets;
         KiteEngine* kite = KiteEngine::create ( cell );
         kite->getConfiguration()->setExpandStep ( expandStep );
         if ( showConf ) kite->printConfiguration ();
