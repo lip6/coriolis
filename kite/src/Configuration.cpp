@@ -66,7 +66,7 @@ namespace Kite {
     , _base               (base)
     , _postEventCb        ()
     , _edgeCapacityPercent(0.80)
-    , _expandStep         (0.60)
+    , _expandStep         (0.99)
     , _ripupLimits        ()
     , _ripupCost          (3)
     , _eventsLimit        (4000000)

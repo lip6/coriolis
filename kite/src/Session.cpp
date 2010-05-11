@@ -69,7 +69,9 @@ namespace Kite {
     , _insertEvents()
     , _removeEvents()
     , _sortEvents  ()
-  { }
+  {
+  //_addCanonizeCb ( _computeCagedConstraints );
+  }
 
 
   void  Session::_postCreate ()
@@ -248,8 +250,9 @@ namespace Kite {
 # endif
     }
 
+    set<TrackElement*> faileds;
     for ( set<Net*>::iterator inet=netsModificateds.begin() ; inet != netsModificateds.end() ; inet++ ) {
-      _getKiteEngine()->_computeCagedConstraints ( *inet );
+      _getKiteEngine()->_computeCagedConstraints ( *inet, faileds );
     }
 
 # if defined(CHECK_DATABASE)
@@ -260,6 +263,17 @@ namespace Kite {
 # endif
 
     _sortEvents.clear ();
+
+    if ( not faileds.empty() ) {
+      set<TrackElement*>::iterator ifailed = faileds.begin();
+      vector<GCell*> gcells;
+      for ( ; ifailed != faileds.end() ; ++ifailed ) {
+        (*ifailed)->getGCells ( gcells );
+        (*ifailed)->makeDogLeg ( gcells[0] );
+      }
+
+      count += _revalidate ();
+    }
 
     return count;
   }

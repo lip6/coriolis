@@ -178,7 +178,7 @@ namespace Kite {
 
   void  GraphicKiteEngine::runDetailed ()
   {
-    static vector<Net*> routingNets;
+    static KatabaticEngine::NetSet routingNets;
 
     KiteEngine* kite = KiteEngine::get ( getCell() );
     if ( not kite ) {
@@ -191,14 +191,6 @@ namespace Kite {
 
     _viewer->clearToolInterrupt ();
 
-    // kite->setSaturateRatio  ( 0.85 );
-    // kite->setExpandStep     ( 0.20 );
-    // kite->setRipupLimit     ( 25, Configuration::BorderRipupLimit );
-    // kite->setRipupLimit     ( 15, Configuration::StrapRipupLimit );
-    // kite->setRipupLimit     (  5, Configuration::LocalRipupLimit );
-    // kite->setRipupLimit     (  5, Configuration::GlobalRipupLimit );
-    // kite->setRipupLimit     (  5, Configuration::LongGlobalRipupLimit );
-    // kite->setRipupCost      (  3 );
     kite->loadGlobalRouting ( Katabatic::LoadGrByNet, routingNets );
     emit cellPostModificated ();
 

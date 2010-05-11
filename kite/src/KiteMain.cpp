@@ -173,7 +173,7 @@ int main ( int argc, char *argv[] )
       knik->loadSolution       ();
     }
 
-    static vector<Net*> routingNets;
+    static KatabaticEngine::NetSet routingNets;
     KiteEngine* kite = KiteEngine::create ( cell );
     // kite->setSaturateRatio      ( 0.85 );
     // kite->setExpandStep         ( 0.20 );

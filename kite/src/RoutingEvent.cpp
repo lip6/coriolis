@@ -3614,7 +3614,7 @@ namespace Kite {
   {
     if ( _valid and not force ) return;
 
-    DebugSession::open ( _segment->getNet(), 200 );
+    DebugSession::open ( _segment->getNet(), 148 );
 
     ltrace(200) << "RoutingEvent::revalidate() - " << (void*)this << ":" << this << endl;
     ltracein(200);

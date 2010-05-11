@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -82,7 +82,31 @@ namespace {
   }
 
 
-  void  propagateCagedConstraints ( TrackElement* segment )
+  void  findFailedPerpandiculars ( RoutingPad* rp, unsigned int direction, set<TrackElement*>& faileds )
+  {
+    ltrace(200) << "Find failed caging: " << rp << endl;
+
+    TrackElement* parallel;
+    forEach ( Segment*, isegment, rp->getSlaveComponents().getSubSet<Segment*>() ) {
+      parallel = Session::lookup ( *isegment );
+      ltrace(200) << "* " << parallel << endl;
+
+      if ( parallel->isFixed () ) continue;
+      if ( parallel->getDirection() != direction ) continue;
+
+      AutoContact* contact = parallel->base()->getAutoSource();
+      if ( contact->base()->getAnchor() != rp ) contact = NULL;
+
+      if ( contact == NULL ) contact = parallel->base()->getAutoTarget();
+      if ( contact->base()->getAnchor() != rp ) continue;
+
+    //parallel->makeDogLeg ( contact->getGCell() );
+      faileds.insert ( parallel );
+    }
+  }
+
+
+  void  propagateCagedConstraints ( TrackElement* segment, set<TrackElement*>& faileds )
   {
     if ( not segment->isFixed() ) return;
 
@@ -91,6 +115,7 @@ namespace {
     Track*                 track         = segment->getTrack();
     unsigned int           direction     = Session::getRoutingGauge()->getLayerDirection(segment->getLayer());
     AutoContact*           source        = segment->base()->getAutoSource();
+    RoutingPad*            rp            = NULL;
     Interval               uside         = source->getGCell()->getUSide(direction);
     DbU::Unit              minConstraint = DbU::Min;
     DbU::Unit              maxConstraint = DbU::Max;
@@ -140,7 +165,7 @@ namespace {
 
   // Finding perpandiculars, by way of the source & target RoutingPad.
     if ( source->getAnchor() ) {
-      RoutingPad* rp = dynamic_cast<RoutingPad*>(source->getAnchor());
+      rp = dynamic_cast<RoutingPad*>(source->getAnchor());
       if ( rp ) {
         TrackElement* parallel;
         forEach ( Segment*, isegment, rp->getSlaveComponents().getSubSet<Segment*>() ) {
@@ -163,18 +188,25 @@ namespace {
     ltracein(200);
     if ( perpandiculars.size() == 0 ) {
       ltrace(200) << "No perpandiculars to " << segment << endl;
+      ltraceout(200);
+      return;
     }
 
     Interval constraints ( minConstraint, maxConstraint );
     for ( size_t iperpand=0 ; iperpand<perpandiculars.size() ; iperpand++ ) {
       ltrace(200) << "Caged: " << constraints << " " << perpandiculars[iperpand] << endl;
       perpandiculars[iperpand]->base()->mergeUserConstraints ( constraints );
+      if ( perpandiculars[iperpand]->base()->getUserConstraints().isEmpty() ) {
+        ltrace(200) << "Cumulative caged constraints are too tight on " << perpandiculars[iperpand] << endl;
+        findFailedPerpandiculars ( rp, direction, faileds );
+      }
     }
+
     ltraceout(200);
   }
 
 
-  void  freeCagedTerminals ( Track* track )
+  void  protectCagedTerminals ( Track* track )
   {
     Configuration* configuration = Session::getConfiguration ();
     const Layer*   metal2        = configuration->getRoutingLayer ( 1 );
@@ -193,15 +225,6 @@ namespace {
           AutoContact* support = segment->base()->getAutoSource();
           RoutingPad*  rp      = dynamic_cast<RoutingPad*>(support->getAnchor());
           GCell*       gcell   = Session::lookup ( support->getGCell() );
-
-#if 0
-          Point        point   ( segment->base()->getSourceU(), track->getAxis() );
-          GCell*       gcell   = Session::lookup ( segment->base()->getAutoSource()->getGCell() );
-          AutoContact* source  = AutoContact::create ( gcell->base(), segment->getNet(), metal3 );
-          AutoContact* target  = AutoContact::create ( gcell->base(), segment->getNet(), metal3 );
-          source->setPosition ( point );
-          target->setPosition ( point );
-#endif
 
           AutoContact* source = AutoContact::fromRp ( gcell->base()
                                                     , rp
@@ -278,7 +301,7 @@ namespace Kite {
 
       Track* track = plane->getTrackByIndex ( 0 );
       while ( track ) {
-        freeCagedTerminals ( track );
+        protectCagedTerminals ( track );
         track = track->getNext ();
       }
     }
@@ -288,15 +311,17 @@ namespace Kite {
 
   void  KiteEngine::_computeCagedConstraints ()
   {
+    set<TrackElement*> faileds;
+
     TrackElementLut::iterator isegment = _trackSegmentLut.begin();
     for ( ; isegment != _trackSegmentLut.end() ; isegment++ ) {
       if ( not isegment->second->isFixed() ) continue;
-      propagateCagedConstraints ( isegment->second );
+      propagateCagedConstraints ( isegment->second, faileds );
     }
   }
 
 
-  void  KiteEngine::_computeCagedConstraints ( Net* net )
+  void  KiteEngine::_computeCagedConstraints ( Net* net, set<TrackElement*>& faileds )
   {
     TrackElement* segment = NULL;
 
@@ -311,7 +336,7 @@ namespace Kite {
       segment = Session::lookup ( *isegment );
       if ( not segment ) continue;
 
-      propagateCagedConstraints ( segment );
+      propagateCagedConstraints ( segment, faileds );
     }
   }
 

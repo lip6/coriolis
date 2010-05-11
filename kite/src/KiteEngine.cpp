@@ -377,7 +377,7 @@ namespace Kite {
   }
 
   
-  void  KiteEngine::loadGlobalRouting ( unsigned int method, vector<Net*>& nets )
+  void  KiteEngine::loadGlobalRouting ( unsigned int method, KatabaticEngine::NetSet& nets )
   {
     KatabaticEngine::loadGlobalRouting ( method, nets );
 

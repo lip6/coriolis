@@ -120,7 +120,7 @@ namespace Kite {
               void             saveGlobalSolution         ();
               void             annotateGlobalGraph        ();
               void             runGlobalRouter            ( unsigned int mode );
-      virtual void             loadGlobalRouting          ( unsigned int method, vector<Net*>& );
+      virtual void             loadGlobalRouting          ( unsigned int method, KatabaticEngine::NetSet& );
               void             runNegociate               ( unsigned int slowMotion=0 );
               void             setInterrupt               ( bool );
       virtual void             finalizeLayout             ();
@@ -133,7 +133,7 @@ namespace Kite {
               bool             _check                     ( unsigned int& overlap, const char* message=NULL ) const;
               void             _check                     ( Net* ) const;
               void             _computeCagedConstraints   ();
-              void             _computeCagedConstraints   ( Net* );
+              void             _computeCagedConstraints   ( Net*, set<TrackElement*>& );
       virtual Record*          _getRecord                 () const;
       virtual string           _getString                 () const;
       virtual string           _getTypeName               () const;
