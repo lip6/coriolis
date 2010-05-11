@@ -48,6 +48,7 @@
 
 #include <climits>
 
+#include "hurricane/Warning.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Property.h"
 #include "hurricane/Contact.h"
@@ -76,6 +77,7 @@
 
 namespace Knik {
 
+  using Hurricane::Warning;
   using CRL::addMeasure;
 
 //globale variables
@@ -212,7 +214,9 @@ void KnikEngine::initGlobalRouting()
     _timer.start();
     cmess2 << "        o  Selecting nets to route and create precongestion" << endl;
 
+    const unsigned int MaxDegree = 13000;
     Name obstacleNetName ("obstaclenet");
+
     //for_each_occurrence ( occurrence, cell->getHyperNetRootNetOccurrences() )   // working on deepNets
     for_each_net ( net, getCell()->getNets() ) {
         //Net* net = dynamic_cast<Net*>(occurrence.getEntity());  // working on deepNets
@@ -224,8 +228,8 @@ void KnikEngine::initGlobalRouting()
            or  net->isSupply()
            or  net->isClock()
            or (net->getName() == obstacleNetName) ) {
-            //cerr << "  is global, supply or clock => continue" << endl;
-            continue;
+          cmess1 << "     - <" << net->getName() << "> not routed (global, supply, clock or obstacle)." << endl;
+          continue;
         }
 
         //if ( !isVeryFlatCell &&  net->getCell()->isLeaf() ) { // Don't want to route Leaf Cells nets
@@ -233,9 +237,9 @@ void KnikEngine::initGlobalRouting()
         //    continue;
         //}  // working on deepNets
         
-        // We want to route nets with more at least 2 and less than 1000 vertexes
+        // We want to route nets with more at least 2 and less than MaxDegree vertexes
         unsigned netDegree = _routingGraph->countVertexes ( net );
-        if ( netDegree > 1 && netDegree < 1000 ) {
+        if ( netDegree > 1 && netDegree < MaxDegree ) {
             Box bbox = net->getBoundingBox();
             NetRecord record ( net, (long int)((DbU::getLambda(bbox.getWidth())+1)*(DbU::getLambda(bbox.getHeight())+1)) );
             assert ( record._net );
@@ -247,8 +251,11 @@ void KnikEngine::initGlobalRouting()
             //#endif
             //cerr << "  will be routed." << endl;
         }
-        //else 
-        //    cerr << "  has a degree = 0 or >= 1000 ." << endl;
+        else {
+          if ( netDegree > MaxDegree-1 )
+            cmess1 << Warning("%s has a not a degree in [2:%u[ (%d), not routed."
+                             ,getString(net).c_str(),MaxDegree,netDegree) << endl;
+        }
 
         _routingGraph->resetVertexes();
         end_for;
