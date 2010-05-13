@@ -79,7 +79,7 @@ namespace CRL {
       if ( imeasure == end() ) continue;
 
       const BaseMeasure* measure = (*imeasure).second;
-      out << setw(8) << right << measure->getName();
+      out << setw(measure->getFieldWidth()) << right << measure->getName();
     }
 
     return out.str();
@@ -96,7 +96,7 @@ namespace CRL {
       if ( imeasure == end() ) continue;
 
       const BaseMeasure* measure = (*imeasure).second;
-      out << setw(8) << right << measure->toString();
+      out << setw(measure->getFieldWidth()) << right << measure->toString();
     }
 
     return out.str();

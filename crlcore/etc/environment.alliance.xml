@@ -20,7 +20,7 @@
     <working>
       <library>.</library>
     </working>
-    <system operation="append">
+    <system>
       <library>${CELL_TOP}/cells/sxlib</library>
       <library>${CELL_TOP}/cells/dp_sxlib</library>
       <library>${CELL_TOP}/cells/ramlib</library>

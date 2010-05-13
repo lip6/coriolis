@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -16,7 +16,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./Environnment.h"                         |
+// |  C++ Module  :       "./Environnment.cpp"                       |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
@@ -176,7 +176,7 @@ namespace {
     addTagEntry ( TagsLibraries   , "catalog"     , (tagParser_t)&XmlEnvironmentParser::parseCatalog      );
     addTagEntry ( TagsLibraries   , "working"     , (tagParser_t)&XmlEnvironmentParser::parseWorking      );
     addTagEntry ( TagsWorking     , "library"     , (tagParser_t)&XmlEnvironmentParser::parseLibrary      );
-    addTagEntry ( TagsLibraries   , "system"      , (tagParser_t)&XmlEnvironmentParser::parseSystem      );
+    addTagEntry ( TagsLibraries   , "system"      , (tagParser_t)&XmlEnvironmentParser::parseSystem       );
     addTagEntry ( TagsSystem      , "library"     , (tagParser_t)&XmlEnvironmentParser::parseLibrary      );
 
     addTagEntry ( TagsEnvironment , "formats"     , (tagParser_t)&XmlEnvironmentParser::parseFormats      );
@@ -387,12 +387,12 @@ namespace {
 
     QString  operation;
 
-    operation = _reader->attributes().value("operation").toString();
-    if ( operation.isEmpty() )
-      _environment.getLIBRARIES().reset();
-    else if ( operation != "append" )
-      cerr << "[ERROR] Invalid value for attribute \"operation\" of <system>: \""
-           << qPrintable(operation) << "\"." << endl;
+    // operation = _reader->attributes().value("operation").toString();
+    // if ( operation.isEmpty() )
+    //   _environment.getLIBRARIES().reset();
+    // else if ( operation != "append" )
+    //   cerr << "[ERROR] Invalid value for attribute \"operation\" of <system>: \""
+    //        << qPrintable(operation) << "\"." << endl;
 
     parseTags ( TagsSystem );
   }
@@ -400,11 +400,23 @@ namespace {
 
   void  XmlEnvironmentParser::parseLibrary ()
   {
+    unsigned int mode          = Environment::Append;
+    QString      modeAttribute = _reader->attributes().value("mode").toString();
+
+    if ( not modeAttribute.isEmpty() ) {
+      if      ( modeAttribute == "append"  ) mode = Environment::Append;
+      else if ( modeAttribute == "prepend" ) mode = Environment::Prepend;
+      else if ( modeAttribute == "replace" ) mode = Environment::Replace;
+      else
+        cerr << "[ERROR] Invalid value for attribute \"mode\" of <library>: \""
+             << qPrintable(modeAttribute) << "\"." << endl;
+    }
+
     string library   = readTextAsString().toStdString();
     expandVariables ( library );
     switch ( _state ) {
       case WorkingLibrary: _environment.setWORKING_LIBRARY ( library.c_str() ); break;
-      case SystemLibrary:  _environment.addSYSTEM_LIBRARY  ( library.c_str() ); break;
+      case SystemLibrary:  _environment.addSYSTEM_LIBRARY  ( library.c_str(), mode ); break;
     }
   }
 
@@ -547,7 +559,7 @@ namespace CRL {
   {
     XmlEnvironmentParser::load ( *this, path, warnNotFound );
 
-    check ();
+    _check ();
   }
 
 
@@ -555,7 +567,7 @@ namespace CRL {
   {
     _CORIOLIS_TOP = getEnv ( "CORIOLIS_TOP", CORIOLIS_TOP );
 
-    check ();
+    _check ();
   }
 
 
@@ -586,28 +598,28 @@ namespace CRL {
   void  Environment::setPOWER ( const char* value )
   {
     _POWER = value;
-    setRegex ( &_PowerRegex , _POWER , "Power" );
+    _setRegex ( &_PowerRegex , _POWER , "Power" );
   }
 
 
   void  Environment::setGROUND ( const char* value )
   {
     _GROUND = value;
-    setRegex ( &_GroundRegex , _GROUND , "Ground" );
+    _setRegex ( &_GroundRegex , _GROUND , "Ground" );
   }
 
 
   void  Environment::setCLOCK ( const char* value )
   {
     _CLOCK = value;
-    setRegex ( &_ClockRegex , _CLOCK , "Clock" );
+    _setRegex ( &_ClockRegex , _CLOCK , "Clock" );
   }
 
 
   void  Environment::setOBSTACLE ( const char* value )
   {
     _OBSTACLE = value;
-    setRegex ( &_ObstacleRegex , _OBSTACLE , "Obstacle" );
+    _setRegex ( &_ObstacleRegex , _OBSTACLE , "Obstacle" );
   }
 
 
@@ -657,7 +669,7 @@ namespace CRL {
   }
 
 
-  void  Environment::setRegex ( regex_t* regex, const string& pattern, const char* name )
+  void  Environment::_setRegex ( regex_t* regex, const string& pattern, const char* name )
   {
     char regexError[1024];
     int  regexCode;
@@ -671,7 +683,7 @@ namespace CRL {
   }
 
 
-  void  Environment::check () const
+  void  Environment::_check () const
   {
     switch ( _SCALE_X ) {
       case 1:   break;
@@ -710,6 +722,29 @@ namespace CRL {
     if ( value == NULL ) return defaultValue;
 
     return value;
+  }
+
+
+  void  Environment::addSYSTEM_LIBRARY ( const char* value, unsigned int mode )
+  {
+    if ( mode == Prepend ) { _LIBRARIES.prepend(value); return; }
+    if ( mode == Append  ) { _LIBRARIES.append (value); return; }
+
+    string newLibName = _getLibraryName ( value );
+    for ( size_t i=0 ; i < _LIBRARIES.getSize() ; ++i ) {
+      if ( newLibName == _getLibraryName(_LIBRARIES[i]) ) {
+        _LIBRARIES.replace ( value, i );
+        return;
+      }
+    }
+    _LIBRARIES.append (value);
+  }
+
+
+  string  Environment::_getLibraryName ( const std::string& path )
+  {
+    size_t slash = path.rfind ( '/' );
+    return path.substr ( (slash!=string::npos)?slash+1:0 );
   }
 
 

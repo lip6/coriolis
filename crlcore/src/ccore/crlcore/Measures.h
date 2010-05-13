@@ -52,23 +52,26 @@ namespace CRL {
 
   class BaseMeasure {
     public:
-      inline               BaseMeasure ( const Name& );
-      virtual             ~BaseMeasure ();
-      inline  const Name&  getName     () const;
-      virtual std::string  toString    () const = 0;
+      inline                BaseMeasure   ( const Name&, unsigned int width );
+      virtual              ~BaseMeasure   ();
+      inline  const Name&   getName       () const;
+      inline  unsigned int  getFieldWidth () const;
+      virtual std::string   toString      () const = 0;
     private:
       Name          _name;
+      unsigned int  _fieldWidth;
   };
 
 
-  inline             BaseMeasure::BaseMeasure  ( const Name& name ) : _name(name) {}
-  inline const Name& BaseMeasure::getName      () const { return _name; }
+  inline               BaseMeasure::BaseMeasure   ( const Name& name, unsigned int width ) : _name(name), _fieldWidth(width) {}
+  inline const Name&   BaseMeasure::getName       () const { return _name; }
+  inline unsigned int  BaseMeasure::getFieldWidth () const { return _fieldWidth; }
 
 
   template<typename Data>
   class Measure : public BaseMeasure {
     public:
-      inline               Measure  ( const Name&, const Data& );
+      inline               Measure  ( const Name&, const Data&, unsigned int width );
       inline  const Data&  getData  () const;
       inline  void         setData  ( const Data& );
       virtual std::string  toString () const;
@@ -78,8 +81,8 @@ namespace CRL {
 
 
   template<typename Data>
-  inline Measure<Data>::Measure ( const Name& name, const Data& data )
-    : BaseMeasure(name), _data(data) { }
+  inline Measure<Data>::Measure ( const Name& name, const Data& data, unsigned int width )
+    : BaseMeasure(name,width), _data(data) { }
 
 
   template<typename Data>
@@ -121,24 +124,24 @@ namespace CRL {
     public:
       typedef StandardPrivateProperty<MeasuresDatas> Extension;
     public:
-      template<typename Data> friend void                 addMeasure   ( DBo*, const Name&, const Data& );
-      template<typename Data> friend const Measure<Data>* getMeasure   ( const DBo*, const Name& );
-                              static const MeasuresSet*   get          ( const DBo* );
+      template<typename Data> friend inline void                 addMeasure   ( DBo*, const Name&, const Data&, unsigned int width=8 );
+      template<typename Data> friend inline const Measure<Data>* getMeasure   ( DBo*, const Name& );
+                                     static const MeasuresSet*   get          ( const DBo* );
     private:
-                              static Extension*           _getOrCreate ( DBo* );
+                                     static Extension*           _getOrCreate ( DBo* );
   };
 
 
   template<typename Data>
-  static void  addMeasure ( DBo* object, const Name& name, const Data& data )
+  inline void  addMeasure ( DBo* object, const Name& name, const Data& data, unsigned int width )
   {
     Measures::Extension* extension = Measures::_getOrCreate ( object );
-    extension->getValue()._measures.insert ( std::make_pair(name,new Measure<Data>(name,data)) );
+    extension->getValue()._measures.insert ( std::make_pair(name,new Measure<Data>(name,data,width)) );
   }
 
 
   template<typename Data>
-  static Measure<Data>* getMeasure ( DBo* object, const Name& name )
+  inline const Measure<Data>* getMeasure ( DBo* object, const Name& name )
   {
     Measures::Extension*   extension = Measures::_getOrCreate ( object );
     MeasuresSet::iterator  imeasure  = extension->getValue()._measures.find(name);

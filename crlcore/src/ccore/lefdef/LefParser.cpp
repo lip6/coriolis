@@ -75,6 +75,7 @@
 
 namespace {
 
+  using namespace std;
 
   using Hurricane::Warning;
   using Hurricane::Error;

@@ -1,5 +1,26 @@
 
 // -*- C++ -*-
+//
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+//
+// ===================================================================
+//
+// $Id$
+//
+// x-----------------------------------------------------------------x 
+// |                                                                 |
+// |                   C O R I O L I S                               |
+// |          Alliance / Hurricane  Interface                        |
+// |                                                                 |
+// |  Author      :                    Jean-Paul CHAPUT              |
+// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// | =============================================================== |
+// |  C++ Module  :       "./SearchPath.cpp"                         |
+// | *************************************************************** |
+// |  U p d a t e s                                                  |
+// |                                                                 |
+// x-----------------------------------------------------------------x
 
 
 # include  "crlcore/SearchPath.h"
@@ -7,13 +28,14 @@
 
 namespace CRL {
 
+  using namespace std;
 
   const size_t  SearchPath::npos = (size_t)-1;
 
 
   SearchPath::SearchPath ()
-    : _paths()
-    , _index(npos)
+    : _paths   ()
+    , _index   (npos)
     , _selected("")
   {
   }
@@ -44,11 +66,11 @@ namespace CRL {
   }
 
 
-  bool  SearchPath::hasPath ( const string& path ) const
+  size_t  SearchPath::hasPath ( const string& path ) const
   {
     for ( size_t i=0 ; i < _paths.size() ; i++ )
-      if ( _paths[i] == path ) return true;
-    return false;
+      if ( _paths[i] == path ) return i;
+    return npos;
   }
 
 

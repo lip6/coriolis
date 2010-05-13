@@ -180,11 +180,15 @@ int main ( int argc, char *argv[] )
 
     if ( arguments.count("cell") ) {
       cell = af->getCell (arguments["cell"].as<string>().c_str(), Catalog::State::Views );
-      if (!cell) {
+      if ( cell == NULL ) {
         cerr << af->getPrint() << endl;
         cerr << "[ERROR] Cell not found: " << arguments["cell"].as<string>().c_str() << endl;
         exit ( -45 );
       }
+
+      // Slot*   slot   = getSlot ( "_netMap", &(cell->_getNetMap()) );
+      // Record* record = slot->getDataRecord();
+      // cerr << "_netMap(0): " << record->getSlot(0)->getDataString() << endl;
     }
 
     if ( not textMode ) {

@@ -89,13 +89,13 @@ namespace CRL {
                               AllianceLibrary ( const Name& path, Library* library=NULL );
     // Operators
              AllianceLibrary& operator=       ( const AllianceLibrary& directory );
-             AllianceLibrary& operator=       ( const string& path );
+             AllianceLibrary& operator=       ( const std::string& path );
     // Accessors
       inline const Name&      getPath         () const;
       inline Library*         getLibrary      () const;
     // Hurricane management.
-      inline string           _getTypeName    () const;
-             string           _getString      () const;
+      inline std::string      _getTypeName    () const;
+             std::string      _getString      () const;
              Record*          _getRecord      () const;
 
     protected:
@@ -110,9 +110,9 @@ namespace CRL {
 
 
 // Inline Functions.
-  inline const Name& AllianceLibrary::getPath      () const { return _path; }
-  inline Library*    AllianceLibrary::getLibrary   () const { return _library; }
-  inline string      AllianceLibrary::_getTypeName () const { return _TName("AllianceLibrary"); }
+  inline const Name&  AllianceLibrary::getPath      () const { return _path; }
+  inline Library*     AllianceLibrary::getLibrary   () const { return _library; }
+  inline std::string  AllianceLibrary::_getTypeName () const { return _TName("AllianceLibrary"); }
 
 
 } // End of CRL namespace.
