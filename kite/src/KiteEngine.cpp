@@ -494,6 +494,9 @@ namespace Kite {
     measuresLabels.push_back ( "GCells"  );
     measuresLabels.push_back ( "knikT"   );
     measuresLabels.push_back ( "knikS"   );
+    measuresLabels.push_back ( "GWL(l)"  );
+    measuresLabels.push_back ( "Area(l2)");
+    measuresLabels.push_back ( "Sat."    );
     measuresLabels.push_back ( "loadT"   );
     measuresLabels.push_back ( "loadS"   );
     measuresLabels.push_back ( "Globals" );
