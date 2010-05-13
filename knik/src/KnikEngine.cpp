@@ -1030,6 +1030,8 @@ void KnikEngine::run()
 
     addMeasure<double> ( getCell(), "knikT",  _timer.getCombTime  () );
     addMeasure<size_t> ( getCell(), "knikS", (_timer.getMemorySize() >> 20) );
+
+    computeSymbolicWireLength ();
 }
 
 void KnikEngine::Route()
@@ -1215,6 +1217,36 @@ void KnikEngine::reroute()
     //_routingGraph->destroy();
     UpdateSession::close();
 
+}
+
+
+void  KnikEngine::computeSymbolicWireLength ()
+{
+// Ugly: hardcoded SxLib gauge characteristics.
+  const double       normalize          = (50.0 * 10 * 4) / (50 * 50) ;
+  Name               obstacleNetName    ("obstaclenet");
+  unsigned long long symbolicWireLength = 0;
+
+  forEach ( Net*, net, getCell()->getNets() ) {
+    if (   net->isGlobal()
+       or  net->isSupply()
+       or  net->isClock()
+       or (net->getName() == obstacleNetName) ) {
+      continue;
+    }
+
+    forEach ( Segment*, isegment, net->getSegments() ) {
+      symbolicWireLength += (unsigned long long)DbU::getLambda ( isegment->getLength() );
+    }
+  }
+
+  addMeasure<unsigned long long> ( getCell(), "GWL(l)", symbolicWireLength, 14 );
+
+  Box    ab   ( getCell()->getAbutmentBox() );
+  double area = (DbU::getLambda(ab.getWidth()) * DbU::getLambda(ab.getHeight()) );
+
+  addMeasure<double> ( getCell(), "Area(l2)", area, 14 );
+  addMeasure<double> ( getCell(), "Sat."    , (symbolicWireLength/area)/normalize );
 }
 
 

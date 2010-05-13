@@ -192,21 +192,22 @@ typedef vector<NetRecord> NetVector;
 // Others
 // ******
     public:
-        static  KnikEngine* get                    ( const Cell* );
-        static  const Name& staticGetName          () { return _toolName; };
-        static  float       getEdgeCapacityPercent () { return _edgeCapacityPercent; };
-                const Name& getName                () const { return _toolName; };
-                void        printTime              ();
-                void        computeOverflow        ();
-      //        void        showOccupancy          ();
-      //        void        showEstimateOccupancy  ();
-                void        getHorizontalCutLines  ( vector<DbU::Unit>& horizontalCutLines );
-                void        getVerticalCutLines    ( vector<DbU::Unit>& verticalCutLines );
-                void        saveSolution           ( const string& fileName="" );
-                void        loadSolution           ( const string& fileName="" );
-                string      _getSolutionName       () const;
-        virtual Record*     _getRecord             () const;
-        virtual string      _getTypeName           () const { return _TName ( "KnikEngine" ); };
+        static  KnikEngine* get                       ( const Cell* );
+        static  const Name& staticGetName             () { return _toolName; };
+        static  float       getEdgeCapacityPercent    () { return _edgeCapacityPercent; };
+                const Name& getName                   () const { return _toolName; };
+                void        printTime                 ();
+                void        computeOverflow           ();
+                void        computeSymbolicWireLength ();
+      //        void        showOccupancy             ();
+      //        void        showEstimateOccupancy     ();
+                void        getHorizontalCutLines     ( vector<DbU::Unit>& horizontalCutLines );
+                void        getVerticalCutLines       ( vector<DbU::Unit>& verticalCutLines );
+                void        saveSolution              ( const string& fileName="" );
+                void        loadSolution              ( const string& fileName="" );
+                string      _getSolutionName          () const;
+        virtual Record*     _getRecord                () const;
+        virtual string      _getTypeName              () const { return _TName ( "KnikEngine" ); };
 };
 
 

@@ -1971,7 +1971,9 @@ unsigned Graph::analyseRouting ( set<Segment*>& segmentsToUnroute )
     // This function construct the list of segments that participate to congestion
     // empty Priority queue : easier than update each semgent when removing a semgent ...
     clearSTuplePQ();
-    // 30/01/09 on remplace le parcours des nets/segments par un parcours des edges avec un map trié sur pointeur de segments et définissant un record : nbDep nBTot + sumOv pour chaque segment.
+    // 30/01/09 on  remplace le parcours  des nets/segments par un  parcours des
+    // edges avec un map trié sur pointeur de segments et définissant un record:
+    // nbDep nBTot + sumOv pour chaque segment.
     unsigned nbEdgesTot = 0;
     unsigned nbEdgesOv = 0;
     unsigned overflow = 0;

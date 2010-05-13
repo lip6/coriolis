@@ -427,6 +427,8 @@ namespace Knik {
 
     addMeasure<double> ( getCell(), "knikT",  0.0 );
     addMeasure<size_t> ( getCell(), "knikS",  0   );
+
+    computeSymbolicWireLength ();
   }
 
 
