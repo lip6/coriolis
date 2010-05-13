@@ -2297,6 +2297,8 @@ namespace Katabatic {
   {
     cmess1 << "  o  Loading Nets global routing from Knik." << endl;
 
+    cout << Dots::asDouble("     - Saturation",getMeasure<double>(getCell(),"Sat.")->getData()) << endl;
+
     startMeasures ();
     Session::open ( this );
 
