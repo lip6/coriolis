@@ -28,7 +28,7 @@
 
 #include  "hurricane/viewer/CellWidget.h"
 
-#include  "COpenCellDialog.h"
+#include  "OpenCellDialog.h"
 #include  "DemoGo.h"
 #include  "Cyclop.h"
 
@@ -114,7 +114,7 @@ namespace CRL {
     QString  cellName;
     bool     newViewer;
 
-    if ( COpenCellDialog::runDialog ( this, cellName, newViewer ) ) {
+    if ( OpenCellDialog::runDialog ( this, cellName, newViewer ) ) {
       Cell* cell = getCellFromDb ( cellName.toStdString().c_str() );
       if ( cell ) {
         if ( newViewer ) {

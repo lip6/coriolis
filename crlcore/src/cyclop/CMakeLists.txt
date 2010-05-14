@@ -6,9 +6,9 @@
                        )
 
                    set ( mocincludes   Cyclop.h
-                                       COpenCellDialog.h
+                                       OpenCellDialog.h
                        )
-		   set ( cpps          COpenCellDialog.cpp
+		   set ( cpps          OpenCellDialog.cpp
                                        DemoGo.cpp
                                        Cyclop.cpp
                                        CyclopMain.cpp

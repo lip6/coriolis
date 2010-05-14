@@ -43,7 +43,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./COpenCellDialog.cpp"                    |
+// |  C++ Module  :       "./OpenCellDialog.cpp"                     |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
@@ -67,7 +67,7 @@ using namespace std;
 
 #include  "crlcore/Environment.h"
 #include  "crlcore/AllianceFramework.h"
-#include  "COpenCellDialog.h"
+#include  "OpenCellDialog.h"
 
 
 namespace CRL {
@@ -78,12 +78,12 @@ namespace CRL {
 
 
 // -------------------------------------------------------------------
-// Class  :  "COpenCellDialog".
+// Class  :  "OpenCellDialog".
 
 
-  COpenCellDialog::COpenCellDialog ( QWidget* parent )
-    : QDialog(parent)
-    , _lineEdit(NULL)
+  OpenCellDialog::OpenCellDialog ( QWidget* parent )
+    : QDialog        (parent)
+    , _lineEdit      (NULL)
     , _viewerCheckBox(NULL)
   {
     setWindowTitle ( tr("Open Cell") );
@@ -151,21 +151,21 @@ namespace CRL {
   }
 
 
-  const QString  COpenCellDialog::getCellName () const
+  const QString  OpenCellDialog::getCellName () const
   {
     return _lineEdit->text();
   }
 
 
-  bool  COpenCellDialog::newViewerRequest () const
+  bool  OpenCellDialog::newViewerRequest () const
   {
     return _viewerCheckBox->isChecked();
   }
 
 
-  bool  COpenCellDialog::runDialog ( QWidget* parent, QString& name, bool& newViewerRequest )
+  bool  OpenCellDialog::runDialog ( QWidget* parent, QString& name, bool& newViewerRequest )
   {
-    COpenCellDialog* dialog = new COpenCellDialog ( parent );
+    OpenCellDialog* dialog = new OpenCellDialog ( parent );
     bool dialogResult = (dialog->exec() == Accepted);
 
     name             = dialog->getCellName ();
@@ -177,7 +177,7 @@ namespace CRL {
   }
 
 
-  void  COpenCellDialog::formatChanged ( int index )
+  void  OpenCellDialog::formatChanged ( int index )
   {
     Environment* environment = AllianceFramework::get()->getEnvironment();
     switch ( index ) {

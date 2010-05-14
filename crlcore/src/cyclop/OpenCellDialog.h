@@ -43,7 +43,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./COpenCellDialog.h"                      |
+// |  C++ Header  :       "./OpenCellDialog.h"                       |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
@@ -62,24 +62,20 @@ class QLineEdit;
 namespace CRL {
 
 
-  class COpenCellDialog : public QDialog {
+  class OpenCellDialog : public QDialog {
       Q_OBJECT;
-
     public:
       static  bool           runDialog        ( QWidget* parent, QString& name, bool& newViewerRequest );
               const QString  getCellName      () const;
               bool           newViewerRequest () const;
     protected:
-                             COpenCellDialog  ( QWidget* parent=NULL );
+                             OpenCellDialog   ( QWidget* parent=NULL );
     protected slots:
               void           formatChanged    ( int );
-
     protected:
               QLineEdit*     _lineEdit;
               QCheckBox*     _viewerCheckBox;
   };
-
-
 
 
 } // End of CRL namespace.
