@@ -883,7 +883,7 @@ int main ( int argc, char *argv[] )
 
       GraphicKnikEngine* grKnik = Knik::GraphicKnikEngine::grab();
       ispd->registerTool ( grKnik );
-      ispd->registerTool ( Katabatic::GraphicKatabaticEngine::grab() );
+      //ispd->registerTool ( Katabatic::GraphicKatabaticEngine::grab() );
 
       ispd->setCell ( _cell );
       ispd->show();
