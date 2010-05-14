@@ -53,7 +53,7 @@ Library::Library(DataBase* dataBase, Library* library, const Name& name)
     }
     else {
         if (_library->getLibrary(_name))
-            throw Error("Can't create " + _TName("Library") + " : already exists");
+          throw Error("Can't create Library " + getString(name) + " : already exists");
     }
 }
 

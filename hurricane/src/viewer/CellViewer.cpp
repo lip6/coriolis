@@ -149,7 +149,7 @@ namespace Hurricane {
     _saveAction = new QAction  ( tr("&Save Cell"), this );
     _saveAction->setObjectName ( "viewer.menuBar.file.saveCell" );
     _saveAction->setIcon       ( QIcon(":/images/stock_save.png") );
-    _saveAction->setStatusTip  ( tr("Save the current Cell") );
+    _saveAction->setStatusTip  ( tr("Save (write) the current Cell") );
     _saveAction->setVisible    ( false );
 
     _closeAction = new QAction  ( tr("&Close"), this );
@@ -330,7 +330,7 @@ namespace Hurricane {
 
   void  CellViewer::refreshHistory ()
   {
-    if ( !getCell() ) return;
+    if ( getCell() == NULL ) return;
 
     shared_ptr<CellWidget::State> activeState = _cellWidget->getState();
     _cellHistory.remove ( activeState );
@@ -401,6 +401,18 @@ namespace Hurricane {
          << endl;
 
     return NULL;
+  }
+
+
+  void  CellViewer::renameCell ( const char* name )
+  {
+    Cell* cell = getCell();
+    if ( cell == NULL ) return;
+
+    cell->setName ( name );
+
+    refreshTitle   ();
+    refreshHistory ();
   }
 
 

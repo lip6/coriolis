@@ -71,9 +71,10 @@ namespace Hurricane {
               QMenu*               createDebugMenu           ();
       inline  void                 setEnableRedrawInterrupt  ( bool );
       inline  void                 setApplicationName        ( const QString& );
-              void                 setCell                   ( Cell* );
               Cell*                getCell                   ();
-      virtual Cell*                getCellFromDb             ( const char* name );
+              void                 setCell                   ( Cell* );
+              void                 renameCell                ( const char* );
+      virtual Cell*                getCellFromDb             ( const char* );
       inline  CellWidget*          getCellWidget             ();
       inline  ControllerWidget*    getControllerWidget       ();
               void                 select                    ( Occurrence& );

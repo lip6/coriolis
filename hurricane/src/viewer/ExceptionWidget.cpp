@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -38,18 +38,18 @@ namespace Hurricane {
 
 
   ExceptionWidget::ExceptionWidget ( QWidget* parent )
-    : QDialog   (parent)
-    , _message  (new QLabel())
+    : QDialog (parent)
+    , _message(new QLabel())
+    , _header (new QLabel())
   {
-    setAttribute       ( Qt::WA_DeleteOnClose );
-    setModal           ( true );
-    setWindowTitle     ( tr("<An Exception was Caught>") );
-    setToolTip         ( tr("Ben mon cochon, t'es dans le bouillon") );
+    setAttribute  ( Qt::WA_DeleteOnClose );
+    setModal      ( true );
+    setWindowTitle( tr("<An Exception was Caught>") );
+    setToolTip    ( tr("Ben mon cochon, t'es dans le bouillon") );
 
-    QLabel* header = new QLabel ();
-    header->setMinimumWidth ( 200 );
-    header->setTextFormat   ( Qt::RichText );
-    header->setText         ( "<b>[ERROR]</b>" );
+    _header->setMinimumWidth ( 200 );
+    _header->setTextFormat   ( Qt::RichText );
+    _header->setText         ( "<b>[ERROR]</b>" );
 
     _message->setTextFormat ( Qt::RichText );
     _message->setText       ( "<b>Oups! I did it again!</b>" );
@@ -78,7 +78,7 @@ namespace Hurricane {
     QVBoxLayout* vLayout1 = new QVBoxLayout ();
     vLayout1->setContentsMargins ( 10, 10, 10, 10 );
     vLayout1->setSpacing ( 0 );
-    vLayout1->addWidget  ( header  , Qt::AlignCenter );
+    vLayout1->addWidget  ( _header , Qt::AlignCenter );
     vLayout1->addWidget  ( _message, Qt::AlignCenter );
     vLayout1->addSpacing ( 10 );
     vLayout1->addLayout  ( hLayout2, Qt::AlignCenter );
@@ -104,7 +104,18 @@ namespace Hurricane {
 
   void  ExceptionWidget::setMessage ( const QString& message )
   {
-    _message->setText ( message );
+    QString contents = message;
+
+    if ( contents.startsWith("[ERROR]")) {
+      contents.remove ( 0, 8 );
+      _header->setText ("<b>[ERROR]</b>");
+    } else if ( contents.startsWith("[WARNING]")) {
+      contents.remove ( 0, 10 );
+      _header->setText ("<b>[WARNING]</b>");
+    } else
+      _header->setText ("<b>[UNKNOW]</b>");
+
+    _message->setText ( contents );
   }
 
 
