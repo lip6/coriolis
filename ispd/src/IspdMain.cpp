@@ -343,7 +343,7 @@ namespace {
         vcapacity += _vertiCap[i];
     vcapacity = vcapacity / ( _minWidth[1]+_minSpacing[1] ); // XXX we consider only 2 layers!!!
     
-    _knik->createRoutingGrid ( _nbGCellsX, _nbGCellsY, _lowerLeftX, _lowerLeftY, _tileWidth, _tileHeight, hcapacity, vcapacity );
+    _knik->createRoutingGrid ( _nbGCellsX, _nbGCellsY, _cell->getAbutmentBox(), _tileWidth, _tileHeight, hcapacity, vcapacity );
     // for ispd07 reload
     _knik->createRoutingGraph();
   }
