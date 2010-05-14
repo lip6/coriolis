@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -33,7 +33,8 @@
 #include  "crlcore/AllianceFramework.h"
 #include  "crlcore/GraphicToolEngine.h"
 
-#include  "unicorn/COpenCellDialog.h"
+#include  "unicorn/OpenCellDialog.h"
+#include  "unicorn/SaveCellDialog.h"
 #include  "unicorn/UnicornGui.h"
 
 
@@ -92,6 +93,12 @@ namespace Unicorn {
     if ( openAction ) {
       connect ( openAction, SIGNAL(triggered()), this, SLOT(openCell()) );
     }
+
+    QAction* saveAction = findChild<QAction*>("viewer.menuBar.file.saveCell");
+    if ( saveAction ) {
+      saveAction->setVisible ( true );
+      connect ( saveAction, SIGNAL(triggered()), this, SLOT(saveCell()) );
+    }
   }
 
 
@@ -140,7 +147,7 @@ namespace Unicorn {
     QString     cellName;
     bool        newViewer;
 
-    if ( COpenCellDialog::runDialog ( this, cellName, newViewer ) ) {
+    if ( OpenCellDialog::runDialog ( this, cellName, newViewer ) ) {
       Cell* cell = getCellFromDb ( cellName.toStdString().c_str() );
       if ( cell ) {
         if ( newViewer ) {
@@ -150,6 +157,20 @@ namespace Unicorn {
         viewer->setCell ( cell );
       } else
         cerr << "[ERROR] Cell not found: " << cellName.toStdString() << endl;
+    }
+  }
+
+
+  void  UnicornGui::saveCell ()
+  {
+    Cell* cell = getCell();
+    if ( cell == NULL ) return;
+
+    QString cellName = getString(cell->getName()).c_str();
+
+    if ( SaveCellDialog::runDialog ( this, cellName ) ) {
+      renameCell ( cellName.toStdString().c_str() );
+      AllianceFramework::get()->saveCell ( cell, Catalog::State::Physical );
     }
   }
 

@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -61,9 +61,10 @@ namespace Unicorn {
               void               registerTool  ( GraphicTool* );
     public slots:
               void               openCell      ();
+              void               saveCell      ();
     protected:
                                  UnicornGui    ( QWidget* parent );
-      virtual                    ~UnicornGui    ();
+      virtual                   ~UnicornGui    ();
       virtual void               _postCreate   ();
       virtual void               _preDestroy   ();
     protected:

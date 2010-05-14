@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -16,15 +16,15 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./COpenCellDialog.h"                      |
+// |  C++ Header  :       "./SaveCellDialog.h"                       |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
 
-#ifndef  __UNICORN_OPEN_CELL_DIALOG_H__
-#define  __UNICORN_OPEN_CELL_DIALOG_H__
+#ifndef  __UNICORN_SAVE_CELL_DIALOG_H__
+#define  __UNICORN_SAVE_CELL_DIALOG_H__
 
 #include  <QDialog>
 
@@ -35,21 +35,21 @@ class QLineEdit;
 namespace Unicorn {
 
 
-  class COpenCellDialog : public QDialog {
+  class SaveCellDialog : public QDialog {
       Q_OBJECT;
 
     public:
-      static  bool           runDialog        ( QWidget* parent, QString& name, bool& newViewerRequest );
+      static  bool           runDialog        ( QWidget* parent, QString& name );
               const QString  getCellName      () const;
-              bool           newViewerRequest () const;
+    public slots:
+              void           setCellName      ( const QString& );
     protected:
-                             COpenCellDialog  ( QWidget* parent=NULL );
+                             SaveCellDialog   ( QWidget* parent=NULL );
     protected slots:
               void           formatChanged    ( int );
 
     protected:
               QLineEdit*     _lineEdit;
-              QCheckBox*     _viewerCheckBox;
   };
 
 

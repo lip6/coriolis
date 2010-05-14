@@ -123,7 +123,6 @@ int main ( int argc, char *argv[] )
     bool          textMode;
     bool          loadGlobal;
     bool          saveGlobal;
-    bool          saveDesign;
 
     poptions::options_description options ("Command line arguments & options");
     options.add_options()
@@ -158,7 +157,7 @@ int main ( int argc, char *argv[] )
                           "allowed to perform." )
       ( "cell,c"        , poptions::value<string>()
                         , "The name of the cell to load, whithout extension." )
-      ( "save,s"        , poptions::bool_switch(&saveDesign)->default_value(false)
+      ( "save,s"        , poptions::value<string>()->default_value("")
                         , "Save the routed design.")
       ( "save-global"   , poptions::bool_switch(&saveGlobal)->default_value(false)
                         , "Save the global routing solution.");
@@ -338,9 +337,8 @@ int main ( int argc, char *argv[] )
         kite->dumpMeasures          ();
         kite->destroy               ();
 
-        if ( saveDesign ) {
-          string name = getString(cell->getName()) + "_kite";
-          cell->setName ( name );
+        if ( arguments.count("save") ) {
+          cell->setName ( arguments["save"].as<string>().c_str() );
           af->saveCell ( cell, Catalog::State::Physical );
         }
 
