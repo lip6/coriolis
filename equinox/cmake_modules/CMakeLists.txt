@@ -1,1 +1,1 @@
-install ( FILES FindEQUINOX.cmake DESTINATION /share/cmake_modules )
+install ( FILES FindEQUINOX.cmake DESTINATION share/cmake_modules )

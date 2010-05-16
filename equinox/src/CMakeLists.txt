@@ -47,9 +47,9 @@
            add_library (intervalTree    ${intervalTreeCpps} )
  target_link_libraries (intervalTree    ${CORIOLIS_LIBRARIES}
                                         ${HURRICANE_LIBRARIES} )
-               install ( TARGETS        equinox intervalTree DESTINATION /lib)
+               install ( TARGETS        equinox intervalTree DESTINATION lib)
                install ( FILES          ${includes}
                                         ${mocIncludes} 
-                                        ${intervalTreeIncludes} DESTINATION /include/coriolis/equinox ) 
+                                        ${intervalTreeIncludes} DESTINATION include/coriolis/equinox ) 
 
 
