@@ -1,6 +1,6 @@
 
-               set ( htmlInstallDir  /share/doc/en/html/kite )
-               set ( latexInstallDir /share/doc/en/latex/kite )
+               set ( htmlInstallDir  share/doc/en/html/kite )
+               set ( latexInstallDir share/doc/en/latex/kite )
 
  add_custom_target ( doc ALL cd ${KITE_SOURCE_DIR}/doc && ${DOXYGEN_EXECUTABLE} doxyfile )
 

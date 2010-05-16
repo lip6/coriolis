@@ -95,9 +95,9 @@
                                           ${OA_LIBRARIES}
                                           ${Boost_LIBRARIES}
                        )
-               install ( TARGETS          kite      DESTINATION /lib )
-               install ( TARGETS          kite-text DESTINATION /bin )
+               install ( TARGETS          kite      DESTINATION lib )
+               install ( TARGETS          kite-text DESTINATION bin )
 
                install ( FILES       ${includes}
-                                     ${mocIncludes} DESTINATION /include/coriolis/kite ) 
+                                     ${mocIncludes} DESTINATION include/coriolis/kite ) 
    
