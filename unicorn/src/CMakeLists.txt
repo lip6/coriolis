@@ -58,8 +58,8 @@
                                        ${QT_LIBRARIES}
                                        ${Boost_LIBRARIES}
                        )
-               install ( TARGETS       unicorn DESTINATION /lib)
-               install ( TARGETS       cgt     DESTINATION /bin )
+               install ( TARGETS       unicorn DESTINATION lib )
+               install ( TARGETS       cgt     DESTINATION bin )
                install ( FILES         ${includes}
-                                       ${mocIncludes} DESTINATION /include/coriolis/unicorn ) 
+                                       ${mocIncludes} DESTINATION include/coriolis/unicorn ) 
 
