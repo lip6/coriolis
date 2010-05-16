@@ -27,5 +27,5 @@
                                      ${LEFDEF_LIBRARIES}
                                      ${QT_LIBRARIES}
                                      ${Boost_LIBRARIES} )
-               install ( TARGETS     ispd DESTINATION /bin )
+               install ( TARGETS     ispd DESTINATION bin )
 
