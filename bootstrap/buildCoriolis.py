@@ -100,6 +100,8 @@ class ProjectBuilder:
 
 
     def _updateSecondary ( self ):
+        self._tarballDir = os.path.join ( self._rootDir, "tarball" )
+        self._archiveDir = os.path.join ( self._tarballDir, "coriolis2-1.0" )
         self._sourceDir  = os.path.join ( self._rootDir, "src" )
         self._osDir      = os.path.join ( self._rootDir
                                         , self._osType
@@ -134,6 +136,25 @@ class ProjectBuilder:
             print "[WARNING] Unrecognized OS: \"%s\"." % lines[0][:-1]
             print "          (using: \"%s\")" % self._osType
         
+        return
+
+
+    def _guessSvnTag ( self, project ):
+        revisionPattern = re.compile ( r"^Revision:\s*(?P<revision>\d+)" )
+        projectSvnDir   = os.path.join ( self._svnMethod+project.getRepository() )
+
+        command = [ "svn", "info", projectSvnDir ]
+        svnInfo = subprocess.Popen ( command, stdout=subprocess.PIPE )
+
+        for line in svnInfo.stdout.readlines():
+            m = revisionPattern.match ( line )
+            if m:
+                self._svnTag = m.group("revision")
+                print "Latest revision of project %s is %s." % (project.getName(),self._svnTag)
+                return
+
+        print "[WARNING] Cannot guess revision for project \"%s\"." % project.getName() 
+        print "          (using: \"x\")"
         return
 
 
@@ -186,14 +207,16 @@ class ProjectBuilder:
                           , "-D", "CHECK_DATABASE:STRING=%s"         % self._checkDatabase
                           , "-D", "CHECK_DETERMINISM:STRING=%s"      % self._checkDeterminism
                           , "-D", "CMAKE_VERBOSE_MAKEFILE:STRING=%s" % self._verboseMakefile
+                          , "-D", "CMAKE_INSTALL_PREFIX:STRING=%s"   % self._installDir
                           , toolSourceDir ]
         self._execute ( command, "Second CMake failed" )
 
         if self._doBuild:
             print "Make arguments:", self._makeArguments
             sys.stdout.flush ()
-            command  = ["make", "DESTDIR=%s" % self._installDir]
-            command += self._makeArguments
+           #command  = ["make", "DESTDIR=%s" % self._installDir]
+           #command += self._makeArguments
+            command  = self._makeArguments
             self._execute ( command, "Build failed" )
         return
 
@@ -244,6 +267,37 @@ class ProjectBuilder:
         print "Doing a SVN checkout of tool: ", tool
         command = [ "svn", "co", toolSvnTrunkDir, tool ]
         self._execute ( command, "svn checkout %s" % tool )
+        print
+        return
+
+
+    def _svnExport ( self, tool ):
+        project = self.getToolProject ( tool )
+        if not project:
+            print "[ERROR] Tool \"%s\" is not part of any project." % tool
+            print "        Cannot guess the SVN repository."
+            return
+        if not project.getRepository ():
+            print "[ERROR] Project \"%s\" isn't associated to a repository." % project.getName()
+            return
+        
+        toolSvnTrunkDir = os.path.join ( self._svnMethod+project.getRepository(), tool, "trunk" )
+
+        if not os.path.isdir ( self._archiveDir ):
+            os.mkdir ( self._archiveDir )
+        os.chdir ( self._archiveDir )
+
+        toolExportDir = os.path.join ( self._archiveDir, tool )
+        if os.path.isdir ( toolExportDir ):
+            print "Removing tool export (tarball) directory: \"%s\"." % toolExportDir
+            command = [ "/bin/rm", "-r", toolExportDir ]
+            self._execute ( command, "Removing tool export (tarball) directory" )
+
+        print "Doing a SVN export of tool: ", tool
+        command = [ "svn", "export", toolSvnTrunkDir, toolExportDir ]
+        if self._svnTag != "x":
+            command += [ "--revision", self._svnTag ]
+        self._execute ( command, "svn export %s" % toolExportDir )
         print
         return
 
@@ -336,6 +390,35 @@ class ProjectBuilder:
         return
 
 
+    def svnExport ( self, tools, projects ):
+        self._commandTemplate ( tools, projects, "_svnExport" )
+        return
+
+
+    def tarball ( self, tools, projects ):
+        if self._svnTag == "x":
+            self._guessSvnTag ( self.getProject(projects[0]) )
+        
+        if os.path.isdir(self._tarballDir):
+            print "Removing previous tarball directory: \"%s\"." % self._tarballDir
+            command = [ "/bin/rm", "-r", self._tarballDir ]
+            self._execute ( command, "Removing top export (tarball) directory" )
+
+        print "Creating tarball directory: \"%s\"." % self._tarballDir
+        os.makedirs ( self._tarballDir )
+        self.svnExport ( tools, projects )
+
+        os.chdir ( self._tarballDir )
+        command = [ "/bin/tar", "jcvf", "coriolis2-1.0-%s.tar.bz2" % (self._svnTag), "coriolis2-1.0" ]
+        self._execute ( command, "tar command failed" )
+
+        print "Cleanup SVN export tarball archive directory: \"%s\"." % self._archiveDir
+        command = [ "/bin/rm", "-r", self._archiveDir ]
+        self._execute ( command, "Removing archive export (tarball) directory" )
+
+        return
+
+
 if __name__ == "__main__":
 
     io       = Project ( name      = "io"
@@ -390,6 +473,8 @@ if __name__ == "__main__":
     parser.add_option ( "--svn-status"   , action="store_true", dest="svnStatus"   )
     parser.add_option ( "--svn-update"   , action="store_true", dest="svnUpdate"   )
     parser.add_option ( "--svn-checkout" , action="store_true", dest="svnCheckout" )
+   # Miscellaneous.
+    parser.add_option ( "--tarball"      , action="store_true", dest="tarball" )
     ( options, args ) = parser.parse_args ()
 
     builder = ProjectBuilder ()
@@ -416,6 +501,7 @@ if __name__ == "__main__":
     if   options.svnStatus:   builder.svnStatus   ( tools=options.tools, projects=options.projects )
     elif options.svnUpdate:   builder.svnUpdate   ( tools=options.tools, projects=options.projects )
     elif options.svnCheckout: builder.svnCheckout ( tools=options.tools, projects=options.projects )
+    elif options.tarball:     builder.tarball     ( tools=options.tools, projects=options.projects )
     else:                     builder.build       ( tools=options.tools, projects=options.projects )
 
     sys.exit ( 0 )
