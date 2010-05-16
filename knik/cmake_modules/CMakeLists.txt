@@ -1,1 +1,1 @@
-install ( FILES FindKNIK.cmake DESTINATION /share/cmake_modules ) 
+install ( FILES FindKNIK.cmake DESTINATION share/cmake_modules ) 
