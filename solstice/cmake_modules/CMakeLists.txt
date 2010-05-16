@@ -1,1 +1,1 @@
-install ( FILES FindSOLSTICE.cmake DESTINATION /share/cmake_modules )
+install ( FILES FindSOLSTICE.cmake DESTINATION share/cmake_modules )

@@ -45,8 +45,8 @@
                                         ${LEFDEF_LIBRARIES}
                                         ${OA_LIBRARIES}
                        )
-               install ( TARGETS        solstice DESTINATION /lib)
+               install ( TARGETS        solstice DESTINATION lib)
                install ( FILES          ${includes}
-                                        ${mocIncludes} DESTINATION /include/coriolis/solstice ) 
+                                        ${mocIncludes} DESTINATION include/coriolis/solstice ) 
 
 
