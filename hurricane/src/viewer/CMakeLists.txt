@@ -109,11 +109,11 @@
           qt4_wrap_cpp ( MOC_SRCS    ${mocincludes} )
      qt4_add_resources ( RCC_SRCS    CellViewer.qrc )
 
-               install ( FILES           ${exports}     DESTINATION /include/hurricane/viewer ) 
+               install ( FILES           ${exports}     DESTINATION include/hurricane/viewer ) 
 
            add_library ( viewer          ${cpps} ${MOC_SRCS} ${RCC_SRCS} )
  target_link_libraries ( viewer          hurricane
                                          ${QT_LIBRARIES}
 #                                        ${Boost_LIBRARIES}
                        )
-               install ( TARGETS         viewer        DESTINATION /lib )
+               install ( TARGETS         viewer        DESTINATION lib )

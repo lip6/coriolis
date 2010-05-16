@@ -151,5 +151,5 @@
                  )
     
           add_library ( hurricane ${cpps} )
-              install ( TARGETS hurricane DESTINATION /lib)
-              install ( FILES ${includes} DESTINATION /include/hurricane ) 
+              install ( TARGETS hurricane DESTINATION lib)
+              install ( FILES ${includes} DESTINATION include/hurricane ) 
