@@ -4,6 +4,6 @@ SET ( includes GdsLibrary.h GdsStructure.h GdsElement.h GdsRectangle.h )
 SET ( cpps     GdsLibrary.cpp GdsStructure.cpp GdsRectangle.cpp )
 
 ADD_LIBRARY(agds ${cpps})
-INSTALL(TARGETS agds DESTINATION /lib)
+INSTALL(TARGETS agds DESTINATION lib)
 
-INSTALL(FILES ${includes} DESTINATION /include/io/agds)
+INSTALL(FILES ${includes} DESTINATION include/io/agds)

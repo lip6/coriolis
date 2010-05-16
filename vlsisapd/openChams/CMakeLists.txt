@@ -28,6 +28,6 @@ ADD_LIBRARY(openChams ${cpps})
 
 TARGET_LINK_LIBRARIES(openChams ${LIBXML2_LIBRARIES})
 
-INSTALL(TARGETS openChams DESTINATION /lib)
+INSTALL(TARGETS openChams DESTINATION lib)
 
-INSTALL(FILES ${includes} DESTINATION /include/io/openChams)
+INSTALL(FILES ${includes} DESTINATION include/io/openChams)
