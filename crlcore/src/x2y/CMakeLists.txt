@@ -16,4 +16,4 @@
                                      ${OA_LIBRARIES}
                                      ${QT_LIBRARIES}
                                      ${Boost_LIBRARIES} )
-               install ( TARGETS     cx2y DESTINATION /bin )
+               install ( TARGETS     cx2y DESTINATION bin )

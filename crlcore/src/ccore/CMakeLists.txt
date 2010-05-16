@@ -209,7 +209,7 @@
 
 
                 qt4_wrap_cpp ( moc_cpps ${mocincludes} )
-                     install ( FILES ${includes} ${mocincludes} DESTINATION /include/coriolis/crlcore ) 
+                     install ( FILES ${includes} ${mocincludes} DESTINATION include/coriolis/crlcore ) 
 
                  add_library ( crlcore               ${ccore_cpps}
                                                      ${moc_cpps}
@@ -237,4 +237,4 @@
                                                      ${AGDS_LIBRARY}
                                                      ${CIF_LIBRARY}
                              )
-                     install ( TARGETS               crlcore        DESTINATION /lib )
+                     install ( TARGETS               crlcore        DESTINATION lib )

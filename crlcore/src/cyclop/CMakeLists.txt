@@ -26,5 +26,5 @@
                                        ${OA_LIBRARIES}
                                        ${QT_LIBRARIES}
                                        ${Boost_LIBRARIES} )
-               install ( TARGETS       cyclop        DESTINATION /bin )
+               install ( TARGETS       cyclop        DESTINATION bin )
 
