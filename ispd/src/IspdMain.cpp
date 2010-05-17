@@ -384,7 +384,7 @@ namespace {
   void _parseNode ( Net* net, RoutingPad* &firstRoutingPad )
   {
       DbU::Unit x,y;
-      long layerID;
+      long layerID = 0;
       vector<char*> fields = _splitString ( _rawLine );
       if ( fields.size() != 3 ) {
           for (unsigned i = 0 ; i < fields.size(); i ++ ){
@@ -620,7 +620,7 @@ namespace {
             _printError ( true, "Malformed Net Line." );
         else {
             Name netName = Name ( fields[0] );
-            long netID = _getLong ( fields[1] );
+            /*long netID =*/ _getLong ( fields[1] );
 
             unsigned nbPins = _getLong ( fields[2] );
             Net* net = _cell->getNet ( netName );
@@ -802,7 +802,6 @@ int main ( int argc, char *argv[] )
   int  returnCode = 0;
 
   try {
-    float         edgeCapacity;
     unsigned int  traceLevel;
     bool          verbose1;
     bool          verbose2;
@@ -831,13 +830,13 @@ int main ( int argc, char *argv[] )
       ( "cell,c"        , poptions::value<string>()
                         , "The name of the cell to load, whithout extension." )
       ( "knik,k"        , poptions::bool_switch(&knikSimple)->default_value(false)
-                        , "Perform a simple routing pass.");
+                        , "Perform a simple routing pass.")
       ( "KNIK,K"        , poptions::bool_switch(&knikOverflow)->default_value(false)
-                        , "Perform a routing pass, then analyse & re-route overflowed edges.");
+                        , "Perform a routing pass, then analyse & re-route overflowed edges.")
       ( "solution,s"    , poptions::bool_switch(&loadSolution)->default_value(true)
-                        , "Load a previously generated routing solution.");
+                        , "Load a previously generated routing solution.")
       ( "Save,S"        , poptions::bool_switch(&saveSolution)->default_value(false)
-                        , "Save the routed design.");
+                        , "Save the routed design.")
       ( "editor,e"      , poptions::bool_switch(&graphicMode)->default_value(false)
                         , "Launch the graphical editor.");
 
