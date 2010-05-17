@@ -95,7 +95,7 @@
                                           ${OA_LIBRARIES}
                                           ${Boost_LIBRARIES}
                        )
-               install ( TARGETS          kite      DESTINATION lib )
+               install ( TARGETS          kite      DESTINATION lib${LIB_SUFFIX} )
                install ( TARGETS          kite-text DESTINATION bin )
 
                install ( FILES       ${includes}
