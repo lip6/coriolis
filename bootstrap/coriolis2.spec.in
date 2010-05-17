@@ -66,8 +66,8 @@ Development files for the Coriolis 2 package.
  %{__mkdir} -p %{buildroot}%{_sysconfdir}/ld.so.conf.d/
  cat > %{buildroot}%{_sysconfdir}/ld.so.conf.d/%{name}.conf << EOF
 # Coriolis 2 VLSI design system
-%{prefix}/lib
-%{prefix}/lib/python
+%{coriolisTop}/lib
+%{coriolisTop}/lib/python
 EOF
 
 %if %{with_binarytar}
