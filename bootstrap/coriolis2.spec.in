@@ -58,6 +58,9 @@ Development files for the Coriolis 2 package.
          -D BUILD_SHARED_LIBS:STRING=ON                \
          -D BUILD_DOC:STRING=OFF                       \
          -D CMAKE_INSTALL_PREFIX:STRING=%{coriolisTop} \
+%ifarch x86_64
+         -D LIB_SUFFIX:STRING=x86_64                   \
+%endif
          ../../$tool
    make DESTDIR=%{buildroot} %{_smp_mflags} install
    popd
