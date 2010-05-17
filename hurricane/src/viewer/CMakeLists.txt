@@ -116,4 +116,4 @@
                                          ${QT_LIBRARIES}
 #                                        ${Boost_LIBRARIES}
                        )
-               install ( TARGETS         viewer        DESTINATION lib )
+               install ( TARGETS         viewer        DESTINATION lib${LIB_SUFFIX} )
