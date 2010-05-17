@@ -76,7 +76,7 @@ EOF
 %if %{with_binarytar}
  cd %{buildroot}%{coriolisTop}
  tar --exclude "*/cmake_modules*" \
-     -jcf %{_sourcedir}/%{name}-binary-%{version}-%{release}.%{arch}.tar.bz2 \
+     -jcf %{_sourcedir}/%{name}-binary-%{version}-%{release}.%{_arch}.tar.bz2 \
      bin lib share
 %endif
 
