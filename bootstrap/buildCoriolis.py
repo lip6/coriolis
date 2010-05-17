@@ -121,6 +121,7 @@ class ProjectBuilder:
 
 
     def _guessOs ( self ):
+        self._libSuffix        = None
         self._osSLSoC5x_64     = re.compile (".*Linux.*el5.*x86_64.*")
         self._osSLSoC5x        = re.compile (".*Linux.*(el5|2.6.23.13.*SoC).*")
         self._osLinux_64       = re.compile (".*Linux.*x86_64.*")
@@ -130,9 +131,13 @@ class ProjectBuilder:
         uname = subprocess.Popen ( ["uname", "-srm"], stdout=subprocess.PIPE )
         lines = uname.stdout.readlines()
 
-        if   self._osSLSoC5x_64.match(lines[0]): self._osType = "Linux.SLSoC5x_64"
+        if   self._osSLSoC5x_64.match(lines[0]):
+            self._osType    = "Linux.SLSoC5x_64"
+            self._libSuffix = "64"
         elif self._osSLSoC5x   .match(lines[0]): self._osType = "Linux.SLSoC5x"
-        elif self._osLinux_64  .match(lines[0]): self._osType = "Linux.x86_64"
+        elif self._osLinux_64  .match(lines[0]):
+            self._osType    = "Linux.x86_64"
+            self._libSuffix = "64"
         elif self._osLinux     .match(lines[0]): self._osType = "Linux.i386"
         elif self._osDarwin    .match(lines[0]): self._osType = "Darwin"
         else:
@@ -236,7 +241,10 @@ class ProjectBuilder:
                           , "-D", "CHECK_DETERMINISM:STRING=%s"      % self._checkDeterminism
                           , "-D", "CMAKE_VERBOSE_MAKEFILE:STRING=%s" % self._verboseMakefile
                           , "-D", "CMAKE_INSTALL_PREFIX:STRING=%s"   % self._installDir
-                          , toolSourceDir ]
+                          ]
+        if self._libSuffix:
+            command += [ "-D", "LIB_SUFFIX:STRING=%s" % self._libSuffix ]
+        command += [ toolSourceDir ]
         self._execute ( command, "Second CMake failed" )
 
         if self._doBuild:
