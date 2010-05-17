@@ -8,10 +8,9 @@
 namespace IO {
 class GdsRectangle : public GdsElement {
     public:
-        GdsRectangle(int layer, double xmin, double ymin, double xmax, double ymax);
-
-        virtual bool write ( ofstream &file );
-        
+                      GdsRectangle (int layer, double xmin, double ymin, double xmax, double ymax);
+        virtual      ~GdsRectangle ();
+        virtual bool  write        ( ofstream &file );
     private:
         double _xmin;
         double _ymin;

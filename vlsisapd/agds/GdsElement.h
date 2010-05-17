@@ -4,7 +4,8 @@
 namespace IO {
 class GdsElement {
     protected:
-        inline GdsElement(int layer);
+        inline   GdsElement (int layer);
+        virtual ~GdsElement ();
 
     public:
         virtual bool write ( ofstream &file ) = 0;
