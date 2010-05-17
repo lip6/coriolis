@@ -648,8 +648,12 @@ void Graph::UpdateConnexComp ( VertexList reachedVertexes, Vertex* firstVertex )
 
     //cerr << "  gonna erase : " << toErase << endl;
     // on veut updater toute la composante connexe représenter par le currentVertex
+#ifndef NDEBUG
     unsigned deleteVertex = _vertexes_to_route.erase ( toErase );
     assert ( deleteVertex == 1 );
+#else
+    _vertexes_to_route.erase ( toErase );
+#endif
     // the connexe component corresponding to the vertex must be initialize with the firstConnexID
     initConnexComp ( currentVertex, firstConnexID );
     
@@ -806,9 +810,11 @@ void Graph::popMaxFromSTuplePQ()
 {
     if ( _stuplePriorityQueue.begin() != STuple::_stuplePQEnd ) {
         STuple* stuple = *(_stuplePriorityQueue.begin());
+#ifndef NDEBUG
         STuple::CostProperty* costProperty = stuple->getCostProperty();
         assert ( costProperty );
         assert ( (*costProperty->getPQIter()) == stuple );
+#endif
         stuple->destroy();
         _stuplePriorityQueue.erase ( _stuplePriorityQueue.begin());
     }
