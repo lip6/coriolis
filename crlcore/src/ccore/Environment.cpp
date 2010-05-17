@@ -36,7 +36,7 @@
 
 
 #undef     CORIOLIS_TOP
-#define    CORIOLIS_TOP  "/dsk/l1/jpc/Linux.SLSoC5x/install"
+#define    CORIOLIS_TOP  "/opt/coriolis2"
 
 
 namespace {
