@@ -4,6 +4,6 @@ SET ( includes CifCircuit.h   CifPolygon.h )
 SET ( cpps     CifCircuit.cpp CifPolygon.cpp )
 
 ADD_LIBRARY(cif ${cpps})
-INSTALL(TARGETS cif DESTINATION lib)
+INSTALL(TARGETS cif DESTINATION lib${LIB_SUFFIX})
 
 INSTALL(FILES ${includes} DESTINATION include/io/cif)

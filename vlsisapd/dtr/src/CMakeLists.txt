@@ -21,7 +21,7 @@ SET ( pycpps PyTechno.cpp ${cpps})
 
           ADD_LIBRARY(dtr ${cpps})
 TARGET_LINK_LIBRARIES(dtr ${LIBXML2_LIBRARIES})
-INSTALL(TARGETS dtr     DESTINATION lib)
+INSTALL(TARGETS dtr     DESTINATION lib${LIB_SUFFIX})
 
 IF (Boost_FOUND)
           ADD_LIBRARY(pyDTR MODULE ${pycpps})
@@ -30,7 +30,7 @@ SET_TARGET_PROPERTIES(pyDTR PROPERTIES
                             PREFIX        ""
                      )
 TARGET_LINK_LIBRARIES(pyDTR dtr ${LIBXML2_LIBRARIES} ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
-INSTALL(TARGETS pyDTR   DESTINATION lib/python)
+INSTALL(TARGETS pyDTR   DESTINATION lib${LIB_SUFFIX}/python)
 ENDIF(Boost_FOUND)
 
 INSTALL(FILES   ${hpps} DESTINATION include/io/dtr)
