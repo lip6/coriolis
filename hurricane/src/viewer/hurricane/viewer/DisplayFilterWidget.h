@@ -47,10 +47,10 @@ namespace Hurricane {
       void        setCellWidget        ( CellWidget* );
     signals:                           
       void        queryFilterChanged   ();
-      void        dbuModeChanged       ( int mode, DbU::UnitPower );
+      void        dbuModeChanged       ( unsigned int mode, DbU::UnitPower );
     public slots:                      
       void        changeQueryFilter    ();
-      void        changeDbuMode        ( int mode, DbU::UnitPower );
+      void        changeDbuMode        ( unsigned int mode, DbU::UnitPower );
       void        startLevelChanged    ( int level );
       void        stopLevelChanged     ( int level );
       void        setDoMasterCells     ( int state );

@@ -297,8 +297,8 @@ namespace Hurricane {
     connect ( _controllerAction      , SIGNAL(triggered())        , _controller, SLOT(toggleShow()) );
     connect ( _gotoAction            , SIGNAL(triggered())        , this       , SLOT(doGoto()) );
 
-    connect ( _cellWidget            , SIGNAL(dbuModeChanged(int,DbU::UnitPower))
-            , _goto                  , SLOT  (changeDbuMode (int,DbU::UnitPower)) );
+    connect ( _cellWidget            , SIGNAL(dbuModeChanged(unsigned int,DbU::UnitPower))
+            , _goto                  , SLOT  (changeDbuMode (unsigned int,DbU::UnitPower)) );
 
     connect ( _cellWidget            , SIGNAL(mousePositionChanged(const Point&))
             , _mousePosition         , SLOT  (setPosition(const Point&)) );

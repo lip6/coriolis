@@ -252,7 +252,7 @@ namespace Hurricane {
               void                    stateChanged               ( shared_ptr<CellWidget::State>& );
               void                    styleChanged               ();
               void                    queryFilterChanged         ();
-              void                    dbuModeChanged             ( int mode, DbU::UnitPower );
+              void                    dbuModeChanged             ( unsigned int mode, DbU::UnitPower );
               void                    updatePalette              ( Cell* );
               void                    mousePositionChanged       ( const Point& position );
               void                    selectionModeChanged       ();

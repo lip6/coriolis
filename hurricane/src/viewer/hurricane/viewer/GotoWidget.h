@@ -53,7 +53,7 @@ namespace Hurricane {
              double     fromDbu          ( DbU::Unit ) const;
     public slots:
              void       acceptAndUpdate  ();
-             void       changeDbuMode    ( int, DbU::UnitPower );
+             void       changeDbuMode    ( unsigned int, DbU::UnitPower );
     private:
       QRegExp    _xyRegexp;
       QLineEdit* _xyEdit;

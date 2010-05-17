@@ -197,10 +197,10 @@ namespace Hurricane {
     if ( _cellWidget ) {
       disconnect ( this        , SIGNAL(queryFilterChanged()), _cellWidget, SLOT(changeQueryFilter()) );
       disconnect ( _cellWidget , SIGNAL(queryFilterChanged()), this       , SLOT(changeQueryFilter()) );
-      disconnect ( this        , SIGNAL(dbuModeChanged    (int,DbU::UnitPower))
-                 , _cellWidget , SLOT  (changeDbuMode     (int,DbU::UnitPower)) );
-      disconnect ( _cellWidget , SIGNAL(dbuModeChanged    (int,DbU::UnitPower))
-                 , this        , SLOT  (changeDbuMode     (int,DbU::UnitPower)) );
+      disconnect ( this        , SIGNAL(dbuModeChanged    (unsigned int,DbU::UnitPower))
+                 , _cellWidget , SLOT  (changeDbuMode     (unsigned int,DbU::UnitPower)) );
+      disconnect ( _cellWidget , SIGNAL(dbuModeChanged    (unsigned int,DbU::UnitPower))
+                 , this        , SLOT  (changeDbuMode     (unsigned int,DbU::UnitPower)) );
     }
 
     _cellWidget = cw;
@@ -208,10 +208,10 @@ namespace Hurricane {
 
     connect ( this        , SIGNAL(queryFilterChanged()), _cellWidget, SLOT(changeQueryFilter()) );
     connect ( _cellWidget , SIGNAL(queryFilterChanged()), this       , SLOT(changeQueryFilter()) );
-    connect ( this        , SIGNAL(dbuModeChanged    (int,DbU::UnitPower))
-            , _cellWidget , SLOT  (changeDbuMode     (int,DbU::UnitPower)) );
-    connect ( _cellWidget , SIGNAL(dbuModeChanged    (int,DbU::UnitPower))
-            , this        , SLOT  (changeDbuMode     (int,DbU::UnitPower)) );
+    connect ( this        , SIGNAL(dbuModeChanged    (unsigned int,DbU::UnitPower))
+            , _cellWidget , SLOT  (changeDbuMode     (unsigned int,DbU::UnitPower)) );
+    connect ( _cellWidget , SIGNAL(dbuModeChanged    (unsigned int,DbU::UnitPower))
+            , this        , SLOT  (changeDbuMode     (unsigned int,DbU::UnitPower)) );
 
     _updateState = ExternalEmit;
     changeQueryFilter ();
@@ -219,7 +219,7 @@ namespace Hurricane {
   }
 
 
-  void  DisplayFilterWidget::changeDbuMode ( int mode, DbU::UnitPower p )
+  void  DisplayFilterWidget::changeDbuMode ( unsigned int mode, DbU::UnitPower p )
   {
     if ( _cellWidget == NULL ) return;
 

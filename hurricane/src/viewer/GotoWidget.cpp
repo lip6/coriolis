@@ -136,7 +136,7 @@ namespace Hurricane {
   }
 
 
-  void  GotoWidget::changeDbuMode ( int mode, DbU::UnitPower p )
+  void  GotoWidget::changeDbuMode ( unsigned int mode, DbU::UnitPower p )
   {
     if ( mode == DbU::Physical ) {
       switch ( p ) {
