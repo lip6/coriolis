@@ -1,4 +1,5 @@
 
+%define       coriolisVersion    1.0
 %define       coriolisTop        @coriolisTop@
 %define       svntag             @svntag@
 
@@ -7,11 +8,11 @@
 
 Name:         coriolis2
 Summary:      Coriolis 2 VLSI CAD Sytem
-Version:      1.0
-Release:      1
+Version:      %{coriolisVersion}.%{svntag}
+Release:      1%{dist}
 License:      LGPL/GPL
 Group:        Applications/Engineering
-Source:       %{name}-%{version}-%{svntag}.tar.bz2
+Source:       %{name}-%{version}.tar.bz2
 URL:          http://www-asim.lip6.fr/
 Packager:     Jean-Paul Chaput <Jean-Paul.Chaput@lip6.fr>
 BuildRoot:    %{_tmppath}/root-%{name}
@@ -72,7 +73,7 @@ EOF
 %if %{with_binarytar}
  cd %{buildroot}%{coriolisTop}
  tar --exclude "*/cmake_modules*" \
-     -jcf %{_sourcedir}/%{name}-binary-%{version}-%{release}-%{svntag}.tar.bz2 \
+     -jcf %{_sourcedir}/%{name}-binary-%{version}-%{release}.tar.bz2 \
      bin lib share
 %endif
 

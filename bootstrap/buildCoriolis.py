@@ -102,7 +102,7 @@ class ProjectBuilder:
 
     def _updateSecondary ( self ):
         self._tarballDir = os.path.join ( self._rootDir, "tarball" )
-        self._archiveDir = os.path.join ( self._tarballDir, "coriolis2-1.0" )
+        self._archiveDir = os.path.join ( self._tarballDir, "coriolis2-1.0.%s" % self._svnTag )
         self._sourceDir  = os.path.join ( self._rootDir, "src" )
         self._osDir      = os.path.join ( self._rootDir
                                         , self._osType
@@ -115,8 +115,8 @@ class ProjectBuilder:
 
         self._specFileIn   = os.path.join ( self._sourceDir, "goodies", "coriolis2.spec.in" )
         self._specFile     = os.path.join ( self._sourceDir, "goodies", "coriolis2.spec" )
-        self._sourceTarBz2 = "coriolis2-1.0-%s.tar.bz2"        % self._svnTag
-        self._binaryTarBz2 = "coriolis2-binary-1.0-%s.tar.bz2" % self._svnTag
+        self._sourceTarBz2 = "coriolis2-1.0.%s.tar.bz2"                  % self._svnTag
+        self._binaryTarBz2 = "coriolis2-binary-1.0.%s-1.el5_soc.tar.bz2" % self._svnTag
         return
 
 
