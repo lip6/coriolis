@@ -1,24 +1,24 @@
 
-%define         coriolisVersion    1.0
-%define         coriolisTop        @coriolisTop@
-%define         svntag             @svntag@
-	    
-%define         with_binarytar     %{?_with_binarytar:1}%{!?_with_binarytar:0}
-
-
-Name:           coriolis2
-Summary:        Coriolis 2 VLSI CAD Sytem
-Version:        %{coriolisVersion}.%{svntag}
-Release:        1%{dist}
-License:        LGPL/GPL
-Group:          Applications/Engineering
-Source:         %{name}-%{version}.tar.bz2
-URL:            http://www-asim.lip6.fr/
-Packager:       Jean-Paul Chaput <Jean-Paul.Chaput@lip6.fr>
-Require(post):  ldconfig
-Require:        boost >= 1.33.1
-BuildRequire:   boost-devel >= 1.33.1
-BuildRoot:      %{_tmppath}/root-%{name}
+%define          coriolisVersion    1.0
+%define          coriolisTop        @coriolisTop@
+%define          svntag             @svntag@
+	     
+%define          with_binarytar     %{?_with_binarytar:1}%{!?_with_binarytar:0}
+	     
+	     
+Name:            coriolis2
+Summary:         Coriolis 2 VLSI CAD Sytem
+Version:         %{coriolisVersion}.%{svntag}
+Release:         1%{dist}
+License:         LGPL/GPL
+Group:           Applications/Engineering
+Source:          %{name}-%{version}.tar.bz2
+URL:             http://www-asim.lip6.fr/
+Packager:        Jean-Paul Chaput <Jean-Paul.Chaput@lip6.fr>
+Requires(post):  ldconfig
+Requires:        boost >= 1.33.1
+BuildRequires:   boost-devel >= 1.33.1
+BuildRoot:       %{_tmppath}/root-%{name}
 
 
 %description
