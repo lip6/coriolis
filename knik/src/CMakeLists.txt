@@ -53,7 +53,7 @@
            add_library ( flute        ${fluteCpps} )
  target_link_libraries ( flute        ${CORIOLIS_LIBRARIES}
                                       ${HURRICANE_LIBRARIES} )
-               install ( TARGETS      knik flute DESTINATION lib)
+               install ( TARGETS      knik flute DESTINATION lib${LIB_SUFFIX} )
 
                install ( FILES ${includes}
                                ${mocIncludes}
