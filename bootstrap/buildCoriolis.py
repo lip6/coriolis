@@ -441,7 +441,7 @@ class ProjectBuilder:
         self.svnExport ( tools, projects )
  
         os.chdir ( self._tarballDir )
-        command = [ "/bin/tar", "jcvf", self._sourceTarBz2, "coriolis2-1.0" ]
+        command = [ "/bin/tar", "jcvf", self._sourceTarBz2, os.path.basename(self._archiveDir) ]
         self._execute ( command, "tar command failed" )
  
         print "Cleanup SVN export tarball archive directory: \"%s\"." % self._archiveDir
