@@ -216,7 +216,9 @@ class ProjectBuilder:
             sys.stdout.flush ()
            #command  = ["make", "DESTDIR=%s" % self._installDir]
            #command += self._makeArguments
-            command  = self._makeArguments
+           #command  = self._makeArguments
+            command  = ["make"]
+            command += self._makeArguments
             self._execute ( command, "Build failed" )
         return
 
