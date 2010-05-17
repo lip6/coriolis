@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -74,7 +74,6 @@ bool  toMBKLayer ( const char*& mbkLayer
   static map<const Name,const char*> tableLayer;
   static map<const Name,const char*> tableContact;
   static map<const Name,const char*> tableConnector;
-  static const char* untranslatable = "UNTRANSLATABLE";
 
   if ( firstCall ) {
     firstCall = false;

@@ -36,13 +36,13 @@
 namespace {
 
 
-  const char *missingMandatoryAttr =
-    "CRoutingGauge::createFromXml () :\n\n"
-    "    Can't found mandatory attribute \"%s\".\n";
+// const char *missingMandatoryAttr =
+//   "CRoutingGauge::createFromXml () :\n\n"
+//   "    Can't found mandatory attribute \"%s\".\n";
 
-  const char *badAttrValue =
-    "CRoutingGauge::createFromXml () :\n\n"
-    "    Invalid value \"%s\" for attribute \"%s\".\n";
+// const char *badAttrValue =
+//   "CRoutingGauge::createFromXml () :\n\n"
+//   "    Invalid value \"%s\" for attribute \"%s\".\n";
 
 // const char *missingCellGaugeTag =
 //   "::createCellGaugeFromXml () :\n\n"

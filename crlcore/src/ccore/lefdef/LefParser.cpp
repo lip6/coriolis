@@ -90,14 +90,14 @@ namespace {
   using namespace CRL;
     
 
-  unsigned int       __lefConvertFactor = 1;
-  Library*           __library          = NULL;
-  AllianceFramework* __framework        = NULL;
-  Technology*        __technology       = NULL;
-  Cell*              __cell             = NULL;
-  Net*               __net              = NULL;
-  long               __userData         = 0;
-  Catalog*           __catalog          = NULL; 
+//unsigned int       __lefConvertFactor = 1;
+//Library*           __library          = NULL;
+//AllianceFramework* __framework        = NULL;
+//Technology*        __technology       = NULL;
+//Cell*              __cell             = NULL;
+//Net*               __net              = NULL;
+//long               __userData         = 0;
+//Catalog*           __catalog          = NULL; 
 
 
   // ---------------------------------------------------------------

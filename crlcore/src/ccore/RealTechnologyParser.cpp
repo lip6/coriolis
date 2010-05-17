@@ -62,8 +62,8 @@ namespace CRL {
   void  RealTechnologyParser::parseGrid ()
   {
     QString           value;
-    double            gridValue;
-    DbU::UnitPower    gridUnit;
+    double            gridValue = 1.0;
+    DbU::UnitPower    gridUnit  = DbU::Micro;
 
     value = _reader->attributes().value("value").toString();
     if ( !value.isEmpty() )
@@ -94,7 +94,7 @@ namespace CRL {
   void  RealTechnologyParser::parseGridsPerLambda ()
   {
     QString  value;
-    double   gridsPerLambda;
+    double   gridsPerLambda = 10.0;
 
     value = _reader->attributes().value("value").toString();
     if ( !value.isEmpty() )

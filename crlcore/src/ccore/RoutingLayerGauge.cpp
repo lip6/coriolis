@@ -38,13 +38,13 @@ namespace {
   // ---------------------------------------------------------------
   // Local Variables.
 
-  const char* notBasicLayer =
-    "%s :\n\n"
-    "    %s is not a <BasicLayer>.\n";
+  // const char* notBasicLayer =
+  //   "%s :\n\n"
+  //   "    %s is not a <BasicLayer>.\n";
 
-  const char* notConductingLayer =
-    "%s :\n\n"
-    "    %s is not a CONDUCTING <BasicLayer>.\n";
+  // const char* notConductingLayer =
+  //   "%s :\n\n"
+  //   "    %s is not a CONDUCTING <BasicLayer>.\n";
 
   const char* negativeIndex =
     "RoutingLayerGauge::getTrackIndex() :\n\n"

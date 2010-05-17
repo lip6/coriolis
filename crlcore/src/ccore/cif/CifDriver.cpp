@@ -75,10 +75,10 @@ void CifQuery::goCallback(Go* go) {
         return;
     }
     CifPolygon* poly = new CifPolygon ( layer->getExtractNumber() );
-    long xMin = round(DbU::getPhysical(b.getXMin(), DbU::Nano));
-    long yMin = round(DbU::getPhysical(b.getYMin(), DbU::Nano));
-    long xMax = round(DbU::getPhysical(b.getXMax(), DbU::Nano));
-    long yMax = round(DbU::getPhysical(b.getYMax(), DbU::Nano));
+    long xMin = (long)round(DbU::getPhysical(b.getXMin(), DbU::Nano));
+    long yMin = (long)round(DbU::getPhysical(b.getYMin(), DbU::Nano));
+    long xMax = (long)round(DbU::getPhysical(b.getXMax(), DbU::Nano));
+    long yMax = (long)round(DbU::getPhysical(b.getYMax(), DbU::Nano));
     poly->addPoint(xMin, yMin);
     poly->addPoint(xMax, yMin);
     poly->addPoint(xMax, yMax);

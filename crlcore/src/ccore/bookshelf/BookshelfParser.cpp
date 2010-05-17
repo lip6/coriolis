@@ -810,7 +810,7 @@ void  BKParser::LoadFromFile ( const string& cellPath, Cell* cell )
                 _lineNumber++;
                 continue;
             }
-            char* result = fgets ( &_buffer[1], sizeof ( _buffer ) - 1, _file );
+            fgets ( &_buffer[1], sizeof ( _buffer ) - 1, _file );
             _lineNumber++;
 
             if ( _buffer[0] == '#'  )               continue;
@@ -910,7 +910,7 @@ void  BKParser::LoadFromFile ( const string& cellPath, Cell* cell )
                                     _lineNumber++;
                                     continue;
                                 }
-                                char* result = fgets ( &_buffer[1], sizeof ( _buffer ) - 1, _file );
+                                fgets ( &_buffer[1], sizeof ( _buffer ) - 1, _file );
                                 _lineNumber++;
 
                                 if ( _buffer[0] == '#'  )               continue;
