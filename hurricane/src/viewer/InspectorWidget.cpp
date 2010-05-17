@@ -94,9 +94,9 @@ namespace Hurricane {
 
   void  InspectorWidget::History::goTo ( int depth )
   {
-    if ( ( depth < 0 ) || ( depth >= (int)_slots.size() ) ) return;
-    if ( depth != _depth ) {
-      _depth = depth;
+    if ( ( depth < 0 ) or ( (size_t)depth >= _slots.size() ) ) return;
+    if ( (size_t)depth != _depth ) {
+      _depth = (size_t)depth;
       _comboBox->setCurrentIndex ( _depth );
     }
   }

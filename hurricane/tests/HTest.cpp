@@ -88,7 +88,7 @@ int main() {
     ////
 
     //Net net1 External and IN of Model1 creation
-    Net* net1 = Net::create(model1, Name("net1"));
+    //Net* net1 = Net::create(model1, Name("net1"));
     cout << "Testing net1 presence in cell model1" << endl;
     /////
     //set net1 as External

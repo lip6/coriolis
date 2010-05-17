@@ -285,7 +285,7 @@ namespace Hurricane {
       inline  void                    clearRulers                ();
               void                    changeQueryFilter          ();
               void                    rubberChange               ();
-              void                    changeDbuMode              ( int mode, DbU::UnitPower );
+              void                    changeDbuMode              ( unsigned int mode, DbU::UnitPower );
               void                    setStyle                   ( int id );
               void                    updatePalette              ();
               void                    cellPreModificate          ();

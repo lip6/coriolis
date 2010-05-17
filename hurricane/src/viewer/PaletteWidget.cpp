@@ -88,7 +88,7 @@ namespace {
   inline int   GridBuffer::getRow          () const { return _row; }
   inline int   GridBuffer::getColumn       () const { return _column; }
   inline int   GridBuffer::getCurrentRow   () const { return _widgets.size() + _row; }
-  inline bool  GridBuffer::columnOverload  () const { return getCurrentRow() > _rowMax; }
+  inline bool  GridBuffer::columnOverload  () const { return getCurrentRow() > (int)_rowMax; }
 
 
   void  GridBuffer::flushWidgets ()

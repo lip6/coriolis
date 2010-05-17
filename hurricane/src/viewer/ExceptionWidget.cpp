@@ -39,8 +39,8 @@ namespace Hurricane {
 
   ExceptionWidget::ExceptionWidget ( QWidget* parent )
     : QDialog (parent)
-    , _message(new QLabel())
     , _header (new QLabel())
+    , _message(new QLabel())
   {
     setAttribute  ( Qt::WA_DeleteOnClose );
     setModal      ( true );

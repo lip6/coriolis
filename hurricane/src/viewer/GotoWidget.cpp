@@ -141,7 +141,7 @@ namespace Hurricane {
     if ( mode == DbU::Physical ) {
       switch ( p ) {
         case DbU::Nano:  mode = Nanometer; break;
-        defult:
+        default:
         case DbU::Micro: mode = Micrometer; break;
       }
     }

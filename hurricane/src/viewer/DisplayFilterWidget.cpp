@@ -236,6 +236,7 @@ namespace Hurricane {
           case DbU::Physical: 
             switch ( _cellWidget->getUnitPower() ) {
               case DbU::Nano:  _nanoMode ->setChecked(true); break;
+              default:
               case DbU::Micro: _microMode->setChecked(true); break;
             }
             break;

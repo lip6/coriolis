@@ -283,7 +283,7 @@ extern "C" {
 
     PyObject* arg0;
     PyObject* arg1;
-    DbU::Unit result;
+    DbU::Unit result = 0;
 
     HTRY
     __cs.init ( "DbU.getOnPhysicalGrid" );

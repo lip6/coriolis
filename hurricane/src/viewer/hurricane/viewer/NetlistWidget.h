@@ -196,7 +196,6 @@ namespace Hurricane {
     string windowTitle = "Netlist" + getString(cell);
     setWindowTitle ( tr(windowTitle.c_str()) );
 
-    int rows = _sortModel->rowCount ();
     _view->selectRow ( 0 );
     _view->resizeColumnToContents ( 0 );
   }

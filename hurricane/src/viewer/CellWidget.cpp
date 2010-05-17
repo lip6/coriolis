@@ -1286,7 +1286,7 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::changeDbuMode ( int mode, DbU::UnitPower p )
+  void  CellWidget::changeDbuMode ( unsigned int mode, DbU::UnitPower p )
   {
     if ( (_state->getDbuMode() != mode) or (_state->getUnitPower() != p) ) {
       _state->setDbuMode   ( mode );
@@ -1670,7 +1670,7 @@ namespace Hurricane {
 
     QFontMetrics metrics = QFontMetrics(font);
     int          width   = metrics.width  ( text );
-    int          height  = metrics.height ();
+  //int          height  = metrics.height ();
     int          angle   = 0;
 
     if ( (width > box.width()) and (box.height() > 2*box.width()) )
