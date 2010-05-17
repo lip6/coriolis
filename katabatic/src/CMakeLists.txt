@@ -54,7 +54,7 @@ endif ( CHECK_DETERMINISM )
                                     ${LEFDEF_LIBRARIES}
                                     ${OA_LIBRARIES}
                        )
-               install ( TARGETS katabatic DESTINATION lib)
+               install ( TARGETS katabatic DESTINATION lib${LIB_SUFFIX} )
                install ( FILES ${includes}
                                ${mocIncludes} DESTINATION include/coriolis/katabatic ) 
    
