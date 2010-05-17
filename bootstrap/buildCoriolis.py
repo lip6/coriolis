@@ -68,6 +68,7 @@ class ProjectBuilder:
         self._libMode          = "Shared"
         self._makeArguments    = []
         self._environment      = os.environ
+        self._rpmTopDir        = os.path.join ( os.environ["HOME"], "rpm" )
 
         self._guessOs ()
         self._updateSecondary ()
@@ -111,6 +112,11 @@ class ProjectBuilder:
 
         if self._enableShared == "ON": self._libMode = "Shared"
         else:                          self._libMode = "Static"
+
+        self._specFileIn   = os.path.join ( self._sourceDir, "goodies", "coriolis2.spec.in" )
+        self._specFile     = os.path.join ( self._sourceDir, "goodies", "coriolis2.spec" )
+        self._sourceTarBz2 = "coriolis2-1.0-%s.tar.bz2"        % self._svnTag
+        self._binaryTarBz2 = "coriolis2-binary-1.0-%s.tar.bz2" % self._svnTag
         return
 
 
@@ -151,10 +157,32 @@ class ProjectBuilder:
             if m:
                 self._svnTag = m.group("revision")
                 print "Latest revision of project %s is %s." % (project.getName(),self._svnTag)
+                self._updateSecondary ()
                 return
 
         print "[WARNING] Cannot guess revision for project \"%s\"." % project.getName() 
         print "          (using: \"x\")"
+        return
+
+
+    def _doSpec ( self ):
+        fdSpecFileIn = open ( self._specFileIn, "r" )
+        fdSpecFile   = open ( self._specFile  , "w" )
+
+        for line in fdSpecFileIn.readlines():
+            stable       = False
+            substituted0 = line
+
+            while not stable:
+                substituted1 = re.sub ( r"@svntag@"     , self._svnTag    , substituted0 )
+                substituted1 = re.sub ( r"@coriolisTop@", "/opt/coriolis2", substituted1 )
+                if substituted0 == substituted1: stable = True
+                else: substituted0 = substituted1
+
+            fdSpecFile.write ( substituted0 )
+
+        fdSpecFileIn.close ()
+        fdSpecFile.close ()
         return
 
 
@@ -400,23 +428,48 @@ class ProjectBuilder:
     def tarball ( self, tools, projects ):
         if self._svnTag == "x":
             self._guessSvnTag ( self.getProject(projects[0]) )
+
+        self._doSpec ()
         
         if os.path.isdir(self._tarballDir):
             print "Removing previous tarball directory: \"%s\"." % self._tarballDir
             command = [ "/bin/rm", "-r", self._tarballDir ]
             self._execute ( command, "Removing top export (tarball) directory" )
-
+ 
         print "Creating tarball directory: \"%s\"." % self._tarballDir
         os.makedirs ( self._tarballDir )
         self.svnExport ( tools, projects )
-
+ 
         os.chdir ( self._tarballDir )
-        command = [ "/bin/tar", "jcvf", "coriolis2-1.0-%s.tar.bz2" % (self._svnTag), "coriolis2-1.0" ]
+        command = [ "/bin/tar", "jcvf", self._sourceTarBz2, "coriolis2-1.0" ]
         self._execute ( command, "tar command failed" )
-
+ 
         print "Cleanup SVN export tarball archive directory: \"%s\"." % self._archiveDir
         command = [ "/bin/rm", "-r", self._archiveDir ]
         self._execute ( command, "Removing archive export (tarball) directory" )
+
+        return
+
+
+    def doRpm ( self, tools, projects ):
+        self.tarball ( tools, projects )
+
+        rpmSpecFile   = os.path.join ( self._rpmTopDir, "SPECS/coriolis2.spec" )
+        rpmSourceFile = os.path.join ( self._rpmTopDir, "SOURCES", self._sourceTarBz2 )
+
+        sourceFile = os.path.join ( self._tarballDir, self._sourceTarBz2 )
+
+        if os.path.isfile ( rpmSpecFile ):
+            os.unlink ( rpmSpecFile )
+
+        os.symlink ( self._specFile  , rpmSpecFile   )
+        if not os.path.islink ( rpmSourceFile ):
+            os.symlink ( sourceFile, rpmSourceFile )
+
+        os.chdir ( os.path.join ( os.environ["HOME"], "rpm" ) )
+        command = [ "/usr/bin/rpmbuild", "-ba", "--with", "binarytar", rpmSpecFile ]
+
+        self._execute ( command, "Rebuild rpm packages" )
 
         return
 
@@ -477,6 +530,7 @@ if __name__ == "__main__":
     parser.add_option ( "--svn-checkout" , action="store_true", dest="svnCheckout" )
    # Miscellaneous.
     parser.add_option ( "--tarball"      , action="store_true", dest="tarball" )
+    parser.add_option ( "--do-rpm"       , action="store_true", dest="doRpm"   )
     ( options, args ) = parser.parse_args ()
 
     builder = ProjectBuilder ()
@@ -504,6 +558,7 @@ if __name__ == "__main__":
     elif options.svnUpdate:   builder.svnUpdate   ( tools=options.tools, projects=options.projects )
     elif options.svnCheckout: builder.svnCheckout ( tools=options.tools, projects=options.projects )
     elif options.tarball:     builder.tarball     ( tools=options.tools, projects=options.projects )
+    elif options.doRpm:       builder.doRpm       ( tools=options.tools, projects=options.projects )
     else:                     builder.build       ( tools=options.tools, projects=options.projects )
 
     sys.exit ( 0 )

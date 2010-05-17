@@ -1,0 +1,136 @@
+
+%define       coriolisTop        @coriolisTop@
+%define       svntag             @svntag@
+
+%define       with_binarytar     %{?_with_binarytar:1}%{!?_with_binarytar:0}
+
+
+Name:         coriolis2
+Summary:      Coriolis 2 VLSI CAD Sytem
+Version:      1.0
+Release:      1
+License:      LGPL/GPL
+Group:        Applications/Engineering
+Source:       %{name}-%{version}-%{svntag}.tar.bz2
+URL:          http://www-asim.lip6.fr/
+Packager:     Jean-Paul Chaput <Jean-Paul.Chaput@lip6.fr>
+BuildRoot:    %{_tmppath}/root-%{name}
+
+
+%description
+Coriolis is the new CAD tool suite intended to replace the
+physical backend flow of Alliance.
+
+
+%package devel
+Summary:      Coriolis 2 VLSI CAD Sytem - Development
+Group:        Applications/Engineering
+Requires:     %{name} = %{version}-%{release}
+
+
+%description devel
+Development files for the Coriolis 2 package.
+
+
+%prep
+%setup
+
+
+%build
+ if [ -d %{buildroot} ]; then rm -r %{buildroot}; fi
+
+ IO_TOP=%{buildroot}%{coriolisTop};       export IO_TOP
+ CORIOLIS_TOP=%{buildroot}%{coriolisTop}; export CORIOLIS_TOP
+
+# Do build & install in one step.
+ tools="io hurricane crlcore knik katabatic kite equinox solstice unicorn"
+ for tool in $tools; do
+   %__mkdir_p build/$tool
+   pushd build/$tool;
+   cmake -D CMAKE_BUILD_TYPE:STRING=RELEASE            \
+         -D BUILD_SHARED_LIBS:STRING=ON                \
+         -D BUILD_DOC:STRING=OFF                       \
+         -D CMAKE_INSTALL_PREFIX:STRING=%{coriolisTop} \
+         ../../$tool
+   make DESTDIR=%{buildroot} %{_smp_mflags} install
+   popd
+ done
+
+
+%install
+# Nothing to do here.
+# Removing undistributed binaries.
+ %__rm -f %{buildroot}%{coriolisTop}/bin/{cx2y,kite-text}
+
+ %{__mkdir} -p %{buildroot}%{_sysconfdir}/ld.so.conf.d/
+ cat > %{buildroot}%{_sysconfdir}/ld.so.conf.d/%{name}.conf << EOF
+# Coriolis 2 VLSI design system
+%{prefix}/lib
+%{prefix}/lib/python
+EOF
+
+%if %{with_binarytar}
+ cd %{buildroot}%{coriolisTop}
+ tar --exclude "*/cmake_modules*" \
+     -jcf %{_sourcedir}/%{name}-binary-%{version}-%{release}-%{svntag}.tar.bz2 \
+     bin lib share
+%endif
+
+
+%clean
+ if [ -d %{buildroot} ]; then rm -r %{buildroot}; fi
+
+
+%files
+%defattr(-,root,root,-)
+%dir %{coriolisTop}/share/etc
+%dir %{coriolisTop}/share/etc/flute-2.4
+%dir %{coriolisTop}/bin
+%dir %{coriolisTop}/lib
+%dir %{coriolisTop}/lib/python
+%{coriolisTop}/bin/*
+%{coriolisTop}/lib/*.so
+%{coriolisTop}/lib/python/*.so
+%config(noreplace) %{_sysconfdir}/ld.so.conf.d/*
+%config(noreplace) %{coriolisTop}/share/etc/*.xml
+%config(noreplace) %{coriolisTop}/share/etc/flute-2.4/*.dat
+
+
+%files devel
+%defattr(-,root,root,-)
+%dir %{coriolisTop}/share/cmake_modules
+%dir %{coriolisTop}/include
+%dir %{coriolisTop}/include/io
+%dir %{coriolisTop}/include/io/agds
+%dir %{coriolisTop}/include/io/cif
+%dir %{coriolisTop}/include/io/dtr
+%dir %{coriolisTop}/include/io/openChams
+%dir %{coriolisTop}/include/hurricane
+%dir %{coriolisTop}/include/hurricane/viewer
+%dir %{coriolisTop}/include/hurricane/isobar
+%dir %{coriolisTop}/include/coriolis
+%dir %{coriolisTop}/include/coriolis/crlcore
+%dir %{coriolisTop}/include/coriolis/knik
+%dir %{coriolisTop}/include/coriolis/katabatic
+%dir %{coriolisTop}/include/coriolis/kite
+%dir %{coriolisTop}/include/coriolis/equinox
+%dir %{coriolisTop}/include/coriolis/solstice
+%{coriolisTop}/share/cmake_modules/*.cmake
+%{coriolisTop}/include/io/agds/*.h
+%{coriolisTop}/include/io/cif/*.h
+%{coriolisTop}/include/io/dtr/*.h
+%{coriolisTop}/include/io/openChams/*.h
+%{coriolisTop}/include/hurricane/*.h
+%{coriolisTop}/include/hurricane/viewer/*.h
+%{coriolisTop}/include/hurricane/isobar/*.h
+%{coriolisTop}/include/coriolis/crlcore/*.h
+%{coriolisTop}/include/coriolis/knik/*.h
+%{coriolisTop}/include/coriolis/katabatic/*.h
+%{coriolisTop}/include/coriolis/kite/*.h
+%{coriolisTop}/include/coriolis/equinox/*.h
+%{coriolisTop}/include/coriolis/solstice/*.h
+
+
+%changelog
+* Sun May 16 2010  Jean-Paul.Chaput <Jean-Paul.Chaput@lip6.fr>
+- Initial packaging for svn release 1322 (alpha stage).
