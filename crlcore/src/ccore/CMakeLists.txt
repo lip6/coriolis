@@ -237,4 +237,4 @@
                                                      ${AGDS_LIBRARY}
                                                      ${CIF_LIBRARY}
                              )
-                     install ( TARGETS               crlcore        DESTINATION lib )
+                     install ( TARGETS               crlcore DESTINATION lib${LIB_SUFFIX} )
