@@ -46,11 +46,11 @@ Development files for the Coriolis 2 package.
 %build
  if [ -d %{buildroot} ]; then rm -r %{buildroot}; fi
 
- IO_TOP=%{buildroot}%{coriolisTop};       export IO_TOP
+ VLSISAPD_TOP=%{buildroot}%{coriolisTop}; export VLSISAPD_TOP
  CORIOLIS_TOP=%{buildroot}%{coriolisTop}; export CORIOLIS_TOP
 
 # Do build & install in one step.
- tools="io hurricane crlcore knik katabatic kite equinox solstice unicorn"
+ tools="vlsisapd hurricane crlcore knik katabatic kite equinox solstice unicorn"
  for tool in $tools; do
    %__mkdir_p build/$tool
    pushd build/$tool;
@@ -114,11 +114,11 @@ EOF
 %defattr(-,root,root,-)
 %dir %{coriolisTop}/share/cmake/Modules
 %dir %{coriolisTop}/include
-%dir %{coriolisTop}/include/io
-%dir %{coriolisTop}/include/io/agds
-%dir %{coriolisTop}/include/io/cif
-%dir %{coriolisTop}/include/io/dtr
-%dir %{coriolisTop}/include/io/openChams
+%dir %{coriolisTop}/include/vlsisapd
+%dir %{coriolisTop}/include/vlsisapd/agds
+%dir %{coriolisTop}/include/vlsisapd/cif
+%dir %{coriolisTop}/include/vlsisapd/dtr
+%dir %{coriolisTop}/include/vlsisapd/openChams
 %dir %{coriolisTop}/include/coriolis2/hurricane
 %dir %{coriolisTop}/include/coriolis2/hurricane/viewer
 %dir %{coriolisTop}/include/coriolis2/hurricane/isobar
@@ -130,10 +130,10 @@ EOF
 %dir %{coriolisTop}/include/coriolis2/equinox
 %dir %{coriolisTop}/include/coriolis2/solstice
 %{coriolisTop}/share/cmake/Modules/*.cmake
-%{coriolisTop}/include/io/agds/*.h
-%{coriolisTop}/include/io/cif/*.h
-%{coriolisTop}/include/io/dtr/*.h
-%{coriolisTop}/include/io/openChams/*.h
+%{coriolisTop}/include/vlsisapd/agds/*.h
+%{coriolisTop}/include/vlsisapd/cif/*.h
+%{coriolisTop}/include/vlsisapd/dtr/*.h
+%{coriolisTop}/include/vlsisapd/openChams/*.h
 %{coriolisTop}/include/coriolis2/hurricane/*.h
 %{coriolisTop}/include/coriolis2/hurricane/viewer/*.h
 %{coriolisTop}/include/coriolis2/hurricane/isobar/*.h
