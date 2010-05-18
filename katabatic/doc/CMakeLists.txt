@@ -1,6 +1,6 @@
 
-               set ( htmlInstallDir  share/doc/en/html/katabatic )
-               set ( latexInstallDir share/doc/en/latex/katabatic )
+               set ( htmlInstallDir  share/doc/coriolis2/en/html/katabatic )
+               set ( latexInstallDir share/doc/coriolis2/en/latex/katabatic )
 
  add_custom_target ( doc ALL cd ${KATABATIC_SOURCE_DIR}/doc && ${DOXYGEN_EXECUTABLE} doxyfile )
 
