@@ -50,6 +50,6 @@
                install ( TARGETS        equinox intervalTree DESTINATION lib${LIB_SUFFIX} )
                install ( FILES          ${includes}
                                         ${mocIncludes} 
-                                        ${intervalTreeIncludes} DESTINATION include/coriolis/equinox ) 
+                                        ${intervalTreeIncludes} DESTINATION include/coriolis2/equinox ) 
 
 
