@@ -21,9 +21,9 @@ using namespace std;
 #include "hurricane/Query.h"
 using namespace Hurricane;
 
-#include "agds/GdsLibrary.h"
-#include "agds/GdsStructure.h"
-#include "agds/GdsRectangle.h"
+#include "io/agds/GdsLibrary.h"
+#include "io/agds/GdsStructure.h"
+#include "io/agds/GdsRectangle.h"
 using namespace IO;
 
 #include "Agds.h"
