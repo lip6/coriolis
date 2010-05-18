@@ -484,12 +484,12 @@ class ProjectBuilder:
 
 if __name__ == "__main__":
 
-    io       = Project ( name      = "io"
-                       , tools     =[ "io" ]
+    vlsisapd = Project ( name      =  "vlsisapd"
+                       , tools     =[ "vlsisapd" ]
                        , repository="/users/outil/coriolis/svn"
                        )
 
-    coriolis = Project ( name     = "coriolis"
+    coriolis = Project ( name     =  "coriolis"
                        , tools    =[ "hurricane"
                                    , "crlcore"
                                    , "knik"
@@ -542,7 +542,7 @@ if __name__ == "__main__":
     ( options, args ) = parser.parse_args ()
 
     builder = ProjectBuilder ()
-    builder.register ( io       )
+    builder.register ( vlsisapd )
     builder.register ( coriolis )
     builder.register ( chams    )
 
