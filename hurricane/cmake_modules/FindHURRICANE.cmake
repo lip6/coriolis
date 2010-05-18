@@ -87,7 +87,7 @@ IF(UNIX)
   FIND_PATH(HURRICANE_INCLUDE_PATH NAMES hurricane/Cell.h PATHS
     # Look in other places.
     ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES include
+    PATH_SUFFIXES include/coriolis2 include
     # Help the user find it if we cannot.
     DOC "${HURRICANE_INCLUDE_PATH_DESCRIPTION}"
   )
@@ -103,7 +103,7 @@ IF(UNIX)
   FIND_PATH(HURRICANE_VIEWER_INCLUDE_PATH
     NAMES hurricane/viewer/CellWidget.h
     PATHS ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES include
+    PATH_SUFFIXES include/coriolis2 include
     # Help the user find it if we cannot.
     DOC "${HURRICANE_LIBRARY_PATH_DESCRIPTION}"
   )
@@ -119,7 +119,7 @@ IF(UNIX)
   FIND_PATH(HURRICANE_PYTHON_INCLUDE_PATH
     NAMES hurricane/isobar/PyCell.h
     PATHS ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES include
+    PATH_SUFFIXES include/coriolis2 include
     # Help the user find it if we cannot.
     DOC "${HURRICANE_LIBRARY_PATH_DESCRIPTION}"
   )

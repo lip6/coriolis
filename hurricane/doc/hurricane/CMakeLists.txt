@@ -1,6 +1,6 @@
 
-               set ( htmlInstallDir  share/doc/en/html/hurricane )
-               set ( latexInstallDir share/doc/en/latex/hurricane )
+               set ( htmlInstallDir  share/doc/coriolis2/en/html/hurricane )
+               set ( latexInstallDir share/doc/coriolis2/en/latex/hurricane )
 
  add_custom_target ( doc ALL cd ${HURRICANE_SOURCE_DIR}/doc/hurricane && ${DOXYGEN_EXECUTABLE} doxyfile )
 

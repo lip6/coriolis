@@ -80,7 +80,7 @@
                        )
 
 
-               install ( FILES   ${includes} DESTINATION include/hurricane/isobar )
+               install ( FILES   ${includes} DESTINATION include/coriolis2/hurricane/isobar )
 
            add_library ( isobar ${sources} )
  target_link_libraries ( isobar hurricane ${PYTHON_LIBRARIES} -lutil )

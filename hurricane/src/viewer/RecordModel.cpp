@@ -126,9 +126,9 @@ namespace Hurricane {
     }
 
     if ( role == Qt::DisplayRole ) {
-      int   row  = index.row ();
+      int row = index.row ();
     //Slot* slot = _record->getSlot ( row );
-      if ( row < _cache.size() ) {
+      if ( row < (int)_cache.size() ) {
         switch ( index.column() ) {
           case 0: return _cache[row].first;
           case 1: return _cache[row].second;

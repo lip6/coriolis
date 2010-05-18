@@ -152,4 +152,4 @@
     
           add_library ( hurricane ${cpps} )
               install ( TARGETS hurricane DESTINATION lib${LIB_SUFFIX} )
-              install ( FILES ${includes} DESTINATION include/hurricane ) 
+              install ( FILES ${includes} DESTINATION include/coriolis2/hurricane ) 
