@@ -21,9 +21,9 @@ using namespace std;
 #include "hurricane/Query.h"
 using namespace Hurricane;
 
-#include "io/cif/CifCircuit.h"
-#include "io/cif/CifPolygon.h"
-using namespace IO;
+#include "vlsisapd/cif/CifCircuit.h"
+#include "vlsisapd/cif/CifPolygon.h"
+using namespace vlsisapd;
 
 #include "Cif.h"
 

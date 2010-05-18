@@ -21,10 +21,10 @@ using namespace std;
 #include "hurricane/Query.h"
 using namespace Hurricane;
 
-#include "io/agds/GdsLibrary.h"
-#include "io/agds/GdsStructure.h"
-#include "io/agds/GdsRectangle.h"
-using namespace IO;
+#include "vlsisapd/agds/GdsLibrary.h"
+#include "vlsisapd/agds/GdsStructure.h"
+#include "vlsisapd/agds/GdsRectangle.h"
+using namespace vlsisapd;
 
 #include "Agds.h"
 
