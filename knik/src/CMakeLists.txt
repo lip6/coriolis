@@ -57,6 +57,6 @@
 
                install ( FILES ${includes}
                                ${mocIncludes}
-                               ${fluteIncludes} DESTINATION include/coriolis/knik ) 
+                               ${fluteIncludes} DESTINATION include/coriolis2/knik ) 
                install ( FILES flute-2.4/etc/POST9.dat
-                               flute-2.4/etc/POWV9.dat DESTINATION share/etc/flute-2.4 ) 
+                               flute-2.4/etc/POWV9.dat DESTINATION share/coriolis2/flute-2.4 ) 

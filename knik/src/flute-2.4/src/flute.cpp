@@ -75,7 +75,7 @@ void readLUT()
     Environment* env = AllianceFramework::get()->getEnvironment();
 
     string POWVFILE_string = env->getCORIOLIS_TOP();
-    POWVFILE_string += "/share/etc/flute-2.4/";
+    POWVFILE_string += "/share/coriolis2/flute-2.4/";
     POWVFILE_string += POWVFILE;
 
     fpwv=fopen(POWVFILE_string.c_str(), "r");
@@ -87,7 +87,7 @@ void readLUT()
 
 #if ROUTING==1
     string POSTFILE_string = env->getCORIOLIS_TOP();
-    POSTFILE_string += "/share/etc/flute-2.4/";
+    POSTFILE_string += "/share/coriolis2/flute-2.4/";
     POSTFILE_string += POSTFILE;
     fprt=fopen(POSTFILE_string.c_str(), "r");
     if (fprt == NULL)
