@@ -4,7 +4,7 @@ using namespace std;
 
 #include "GdsStructure.h"
 
-namespace IO {
+namespace vlsisapd {
 GdsStructure::GdsStructure(string strName) 
     : _strName(strName) {}
 

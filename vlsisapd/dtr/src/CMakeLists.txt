@@ -7,12 +7,12 @@ ELSE (Boost_FOUND)
 ENDIF (Boost_FOUND)
 
 
-INCLUDE_DIRECTORIES(${IO_SOURCE_DIR}/dtr/src ${LIBXML2_INCLUDE_DIR} ${Boost_INCLUDE_DIRS} ${PYTHON_INCLUDE_PATH})
+INCLUDE_DIRECTORIES(${VLSISAPD_SOURCE_DIR}/dtr/src ${LIBXML2_INCLUDE_DIR} ${Boost_INCLUDE_DIRS} ${PYTHON_INCLUDE_PATH})
 
-SET ( hpps io/dtr/Techno.h
-           io/dtr/Rules.h
-           io/dtr/Name.h
-           io/dtr/DTRException.h )
+SET ( hpps vlsisapd/dtr/Techno.h
+           vlsisapd/dtr/Rules.h
+           vlsisapd/dtr/Name.h
+           vlsisapd/dtr/DTRException.h )
 
 SET ( cpps Techno.cpp
            Name.cpp )
@@ -33,4 +33,4 @@ TARGET_LINK_LIBRARIES(pyDTR dtr ${LIBXML2_LIBRARIES} ${Boost_LIBRARIES} ${PYTHON
 INSTALL(TARGETS pyDTR   DESTINATION lib${LIB_SUFFIX}/python)
 ENDIF(Boost_FOUND)
 
-INSTALL(FILES   ${hpps} DESTINATION include/io/dtr)
+INSTALL(FILES   ${hpps} DESTINATION include/vlsisapd/dtr)

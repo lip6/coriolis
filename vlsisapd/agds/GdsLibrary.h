@@ -6,7 +6,7 @@ using namespace std;
 
 #include "GdsStructure.h"
 
-namespace IO {
+namespace vlsisapd {
 class GdsLibrary {
     public:
         GdsLibrary(string libName);

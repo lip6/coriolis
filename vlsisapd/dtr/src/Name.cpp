@@ -9,7 +9,7 @@
 
 using namespace std;
 
-#include "io/dtr/Name.h"
+#include "vlsisapd/dtr/Name.h"
 
 namespace DTR {
 unsigned long Name::_globalId = 0;

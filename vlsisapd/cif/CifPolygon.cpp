@@ -5,7 +5,7 @@ using namespace std;
 
 #include "CifPolygon.h"
 
-namespace IO {
+namespace vlsisapd {
 
 CifPolygon::CifPolygon(long layer) : _layer(layer) {}
 

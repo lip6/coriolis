@@ -13,7 +13,7 @@
 #include <string>
 #include <map>
 
-#include "io/dtr/DTRException.h"
+#include "vlsisapd/dtr/DTRException.h"
 
 namespace DTR {
 class Name {

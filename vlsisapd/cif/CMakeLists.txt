@@ -6,4 +6,4 @@ SET ( cpps     CifCircuit.cpp CifPolygon.cpp )
 ADD_LIBRARY(cif ${cpps})
 INSTALL(TARGETS cif DESTINATION lib${LIB_SUFFIX})
 
-INSTALL(FILES ${includes} DESTINATION include/io/cif)
+INSTALL(FILES ${includes} DESTINATION include/vlsisapd/cif)

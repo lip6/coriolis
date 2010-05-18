@@ -4,7 +4,7 @@ using namespace std;
 
 #include "GdsRectangle.h"
 
-namespace IO {
+namespace vlsisapd {
 GdsElement::~GdsElement () { }
 
 GdsRectangle::GdsRectangle(int layer, double xmin, double ymin, double xmax, double ymax) 

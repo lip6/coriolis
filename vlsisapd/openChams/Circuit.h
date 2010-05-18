@@ -94,6 +94,6 @@ inline void       Circuit::setSchematic(Schematic* schem) { _schematic = schem; 
 inline void       Circuit::setSizing(Sizing* sizing)      { _sizing = sizing; };
     
     
-} // namespace IO
+} // namespace OpenChams
 #endif
 

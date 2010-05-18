@@ -5,7 +5,7 @@ using namespace std;
 
 #include "GdsLibrary.h"
 
-namespace IO {
+namespace vlsisapd {
 
 GdsLibrary::GdsLibrary(string libName) 
     : _libName(libName)

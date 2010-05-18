@@ -15,7 +15,7 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#include "io/dtr/Name.h"
+#include "vlsisapd/dtr/Name.h"
 
 namespace DTR {
 class Rule;

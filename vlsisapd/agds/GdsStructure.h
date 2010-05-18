@@ -8,7 +8,7 @@ using namespace std;
 
 #include "GdsElement.h"
 
-namespace IO {
+namespace vlsisapd {
 class GdsStructure {
     public:
         GdsStructure(string strName);

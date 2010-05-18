@@ -1,9 +1,9 @@
 #include <boost/python.hpp>
 using namespace boost::python;
 
-#include "io/dtr/Techno.h"
-#include "io/dtr/Rules.h"
-#include "io/dtr/DTRException.h"
+#include "vlsisapd/dtr/Techno.h"
+#include "vlsisapd/dtr/Rules.h"
+#include "vlsisapd/dtr/DTRException.h"
 
 namespace DTR {
 void translator(DTRException const& e) {

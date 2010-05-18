@@ -6,7 +6,7 @@ using namespace std;
 #include "CifCircuit.h"
 #include "CifPolygon.h"
 
-namespace IO {
+namespace vlsisapd {
 
 CifCircuit::CifCircuit(string name, string unit, double scale) : _name(name), _unit(unit), _scale(scale) {}
 
@@ -32,7 +32,7 @@ bool CifCircuit::write(string filename) {
     ofstream file;
     file.open(filename.c_str(), ios::out);
     // Header
-    file << "(CIF file written on " << date << " by IO_CIF_DRIVER);" << endl
+    file << "(CIF file written on " << date << " by VLSISAPD_CIF_DRIVER);" << endl
          << "(Units: " << _unit << "  -  UU/DB Scale: " << _scale << ");" << endl
          << "DS 1 1 1;" << endl
          << "9 " << _name << ";" << endl;

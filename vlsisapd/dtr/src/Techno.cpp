@@ -17,9 +17,9 @@ using namespace std;
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#include "io/dtr/Techno.h"
-#include "io/dtr/Rules.h"   
-#include "io/dtr/DTRException.h"
+#include "vlsisapd/dtr/Techno.h"
+#include "vlsisapd/dtr/Rules.h"   
+#include "vlsisapd/dtr/DTRException.h"
 
 namespace {
 	template<class T> T getValue(xmlChar* str) {

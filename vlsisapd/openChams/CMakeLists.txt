@@ -30,4 +30,4 @@ TARGET_LINK_LIBRARIES(openChams ${LIBXML2_LIBRARIES})
 
 INSTALL(TARGETS openChams DESTINATION lib${LIB_SUFFIX} )
 
-INSTALL(FILES ${includes} DESTINATION include/io/openChams)
+INSTALL(FILES ${includes} DESTINATION include/vlsisapd/openChams)

@@ -4,7 +4,7 @@
 #include <vector>
 #include <fstream>
 
-namespace IO {
+namespace vlsisapd {
 class CifPolygon {
     public:
         CifPolygon(long);

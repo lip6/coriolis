@@ -5,7 +5,7 @@
 
 #include "GdsElement.h"
 
-namespace IO {
+namespace vlsisapd {
 class GdsRectangle : public GdsElement {
     public:
                       GdsRectangle (int layer, double xmin, double ymin, double xmax, double ymax);

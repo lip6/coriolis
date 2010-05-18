@@ -3,7 +3,7 @@
 
 #include <vector>
 
-namespace IO {
+namespace vlsisapd {
 class CifPolygon;
 class CifCircuit {
     public:
