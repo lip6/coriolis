@@ -1,7 +1,8 @@
 
                    include ( ${QT_USE_FILE} )
 
-       include_directories ( ${HURRICANE_INCLUDE_DIR} )
+       include_directories ( ${CIF_INCLUDE_DIR}
+                             ${HURRICANE_INCLUDE_DIR} )
        include_directories ( ${CRLCORE_SOURCE_DIR}/src/fonts
                              ${CRLCORE_SOURCE_DIR}/src/ccore
                              ${CRLCORE_SOURCE_DIR}/src/ccore/properties
@@ -209,7 +210,7 @@
 
 
                 qt4_wrap_cpp ( moc_cpps ${mocincludes} )
-                     install ( FILES ${includes} ${mocincludes} DESTINATION include/coriolis/crlcore ) 
+                     install ( FILES ${includes} ${mocincludes} DESTINATION include/coriolis2/crlcore ) 
 
                  add_library ( crlcore               ${ccore_cpps}
                                                      ${moc_cpps}

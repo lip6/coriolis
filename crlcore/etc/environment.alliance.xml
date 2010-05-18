@@ -3,16 +3,16 @@
   <variable name="CELL_TOP" value="/opt/alliance-5.0"/>
   <technologies>
     <hurricane>
-      <config>${CORIOLIS_TOP}/share/etc/technology.symbolic.xml</config>
+      <config>${CORIOLIS_TOP}/etc/coriolis2/technology.symbolic.xml</config>
     </hurricane>
     <real>
-      <config>${CORIOLIS_TOP}/share/etc/technology.hcmos9.s2r.xml</config>
+      <config>${CORIOLIS_TOP}/etc/coriolis2/technology.hcmos9.s2r.xml</config>
     </real>
     <lef>
-      <config>${CORIOLIS_TOP}/share/etc/cmos.lef</config>
+      <config>${CORIOLIS_TOP}/etc/coriolis2/cmos.lef</config>
     </lef>
     <display>
-      <config>${CORIOLIS_TOP}/share/etc/display.xml</config>
+      <config>${CORIOLIS_TOP}/etc/coriolis2/display.xml</config>
     </display>
   </technologies>
   <libraries>
@@ -45,6 +45,6 @@
   <signals>
     <vdd>vdd</vdd>
     <vss>vss</vss>
-    <clock>^ck$</clock>
+    <clock>^do_not_find_ck$</clock>
   </signals>
 </environment>

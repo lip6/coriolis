@@ -211,7 +211,7 @@ namespace {
 
     string  envPath = path;
     if ( path.empty() )
-      envPath = env.getCORIOLIS_TOP() + "/share/etc/environment.alliance.xml" ;
+      envPath = env.getCORIOLIS_TOP() + "/etc/coriolis2/environment.alliance.xml" ;
 
     return ep._load ( envPath, warnNotFound );
   }
@@ -525,9 +525,9 @@ namespace CRL {
     : _CORIOLIS_TOP       (CORIOLIS_TOP)
     , _displayStyle       ()
     , _SCALE_X            (10)
-    , _SYMBOLIC_TECHNOLOGY(CORIOLIS_TOP "/share/etc/technology.symbolic.xml")
+    , _SYMBOLIC_TECHNOLOGY(CORIOLIS_TOP "/etc/coriolis2/technology.symbolic.xml")
     , _LEF_TECHNOLOGY     ("")
-    , _DISPLAY            (CORIOLIS_TOP "/share/etc/display.xml")
+    , _DISPLAY            (CORIOLIS_TOP "/etc/coriolis2/display.xml")
     , _IN_LO              ("vst")
     , _IN_PH              ("ap")
     , _OUT_LO             ("vst")

@@ -36,21 +36,13 @@ IF(UNIX)
   FIND_PATH(CRLCORE_INCLUDE_PATH NAMES crlcore/ToolEngine.h PATHS
     # Look in other places.
     ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES include/coriolis
+    PATH_SUFFIXES include/coriolis2 include
     # Help the user find it if we cannot.
     DOC "The ${CORIOLIS_INCLUDE_PATH_DESCRIPTION}"
   )
 
   FIND_LIBRARY(CRLCORE_LIBRARY_PATH
     NAMES crlcore
-    PATHS ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES lib
-    # Help the user find it if we cannot.
-    DOC "The ${CORIOLIS_INCLUDE_PATH_DESCRIPTION}"
-  )
-
-  FIND_LIBRARY(CRLCORE_STATIC_LIBRARY_PATH
-    NAMES crlcore-static
     PATHS ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES lib
     # Help the user find it if we cannot.
