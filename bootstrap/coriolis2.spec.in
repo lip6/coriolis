@@ -97,8 +97,8 @@ EOF
 
 %files
 %defattr(-,root,root,-)
-%dir %{coriolisTop}/share/etc
-%dir %{coriolisTop}/share/etc/flute-2.4
+%dir %{coriolisTop}/etc/coriolis2
+%dir %{coriolisTop}/share/coriolis2/flute-2.4
 %dir %{coriolisTop}/bin
 %dir %{coriolisTop}/%{_lib}
 %dir %{coriolisTop}/%{_lib}/python
@@ -106,43 +106,43 @@ EOF
 %{coriolisTop}/%{_lib}/*.so
 %{coriolisTop}/%{_lib}/python/*.so
 %config(noreplace) %{_sysconfdir}/ld.so.conf.d/*
-%config(noreplace) %{coriolisTop}/share/etc/*.xml
-%config(noreplace) %{coriolisTop}/share/etc/flute-2.4/*.dat
+%config(noreplace) %{coriolisTop}/etc/coriolis2/*.xml
+%config(noreplace) %{coriolisTop}/share/coriolis2/flute-2.4/*.dat
 
 
 %files devel
 %defattr(-,root,root,-)
-%dir %{coriolisTop}/share/cmake_modules
+%dir %{coriolisTop}/share/cmake/Modules
 %dir %{coriolisTop}/include
 %dir %{coriolisTop}/include/io
 %dir %{coriolisTop}/include/io/agds
 %dir %{coriolisTop}/include/io/cif
 %dir %{coriolisTop}/include/io/dtr
 %dir %{coriolisTop}/include/io/openChams
-%dir %{coriolisTop}/include/hurricane
-%dir %{coriolisTop}/include/hurricane/viewer
-%dir %{coriolisTop}/include/hurricane/isobar
-%dir %{coriolisTop}/include/coriolis
-%dir %{coriolisTop}/include/coriolis/crlcore
-%dir %{coriolisTop}/include/coriolis/knik
-%dir %{coriolisTop}/include/coriolis/katabatic
-%dir %{coriolisTop}/include/coriolis/kite
-%dir %{coriolisTop}/include/coriolis/equinox
-%dir %{coriolisTop}/include/coriolis/solstice
-%{coriolisTop}/share/cmake_modules/*.cmake
+%dir %{coriolisTop}/include/coriolis2/hurricane
+%dir %{coriolisTop}/include/coriolis2/hurricane/viewer
+%dir %{coriolisTop}/include/coriolis2/hurricane/isobar
+%dir %{coriolisTop}/include/coriolis2
+%dir %{coriolisTop}/include/coriolis2/crlcore
+%dir %{coriolisTop}/include/coriolis2/knik
+%dir %{coriolisTop}/include/coriolis2/katabatic
+%dir %{coriolisTop}/include/coriolis2/kite
+%dir %{coriolisTop}/include/coriolis2/equinox
+%dir %{coriolisTop}/include/coriolis2/solstice
+%{coriolisTop}/share/cmake/Modules/*.cmake
 %{coriolisTop}/include/io/agds/*.h
 %{coriolisTop}/include/io/cif/*.h
 %{coriolisTop}/include/io/dtr/*.h
 %{coriolisTop}/include/io/openChams/*.h
-%{coriolisTop}/include/hurricane/*.h
-%{coriolisTop}/include/hurricane/viewer/*.h
-%{coriolisTop}/include/hurricane/isobar/*.h
-%{coriolisTop}/include/coriolis/crlcore/*.h
-%{coriolisTop}/include/coriolis/knik/*.h
-%{coriolisTop}/include/coriolis/katabatic/*.h
-%{coriolisTop}/include/coriolis/kite/*.h
-%{coriolisTop}/include/coriolis/equinox/*.h
-%{coriolisTop}/include/coriolis/solstice/*.h
+%{coriolisTop}/include/coriolis2/hurricane/*.h
+%{coriolisTop}/include/coriolis2/hurricane/viewer/*.h
+%{coriolisTop}/include/coriolis2/hurricane/isobar/*.h
+%{coriolisTop}/include/coriolis2/crlcore/*.h
+%{coriolisTop}/include/coriolis2/knik/*.h
+%{coriolisTop}/include/coriolis2/katabatic/*.h
+%{coriolisTop}/include/coriolis2/kite/*.h
+%{coriolisTop}/include/coriolis2/equinox/*.h
+%{coriolisTop}/include/coriolis2/solstice/*.h
 
 
 %changelog
