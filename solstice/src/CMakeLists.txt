@@ -47,6 +47,6 @@
                        )
                install ( TARGETS        solstice DESTINATION lib${LIB_SUFFIX} )
                install ( FILES          ${includes}
-                                        ${mocIncludes} DESTINATION include/coriolis/solstice ) 
+                                        ${mocIncludes} DESTINATION include/coriolis2/solstice ) 
 
 
