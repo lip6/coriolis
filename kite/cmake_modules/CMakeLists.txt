@@ -1,1 +1,1 @@
-install ( FILES FindKITE.cmake DESTINATION share/cmake_modules ) 
+install ( FILES FindKITE.cmake DESTINATION share/cmake/Modules ) 

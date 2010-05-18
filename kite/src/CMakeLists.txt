@@ -99,5 +99,5 @@
                install ( TARGETS          kite-text DESTINATION bin )
 
                install ( FILES       ${includes}
-                                     ${mocIncludes} DESTINATION include/coriolis/kite ) 
+                                     ${mocIncludes} DESTINATION include/coriolis2/kite ) 
    
