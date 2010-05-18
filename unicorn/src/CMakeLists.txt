@@ -61,5 +61,5 @@
                install ( TARGETS       unicorn DESTINATION lib${LIB_SUFFIX} )
                install ( TARGETS       cgt     DESTINATION bin )
                install ( FILES         ${includes}
-                                       ${mocIncludes} DESTINATION include/coriolis/unicorn ) 
+                                       ${mocIncludes} DESTINATION include/coriolis2/unicorn ) 
 
