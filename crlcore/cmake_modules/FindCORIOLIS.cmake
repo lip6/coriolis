@@ -44,7 +44,7 @@ IF(UNIX)
   FIND_LIBRARY(CRLCORE_LIBRARY_PATH
     NAMES crlcore
     PATHS ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES lib
+    PATH_SUFFIXES lib${LIB_SUFFIX}
     # Help the user find it if we cannot.
     DOC "The ${CORIOLIS_INCLUDE_PATH_DESCRIPTION}"
   )
