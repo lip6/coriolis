@@ -215,7 +215,7 @@ class ProjectBuilder:
 
         if self._rmBuild:
             print "Removing tool build directory: \"%s\"." % toolBuildDir
-            command = [ "/bin/rm", "-r", toolBuildDir ]
+            command = [ "/bin/rm", "-rf", toolBuildDir ]
             self._execute ( command, "Removing tool build directory" )
             
         if not os.path.isdir(toolBuildDir):
