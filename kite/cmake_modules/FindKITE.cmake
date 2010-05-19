@@ -26,15 +26,7 @@ IF(UNIX)
   FIND_LIBRARY(KITE_LIBRARY_PATH
     NAMES kite
     PATHS ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES lib
-    # Help the user find it if we cannot.
-    DOC "The ${KITE_INCLUDE_PATH_DESCRIPTION}"
-  )
-
-  FIND_LIBRARY(KITE_STATIC_LIBRARY_PATH
-    NAMES kite-static
-    PATHS ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES lib
+    PATH_SUFFIXES lib${LIB_SUFFIX}
     # Help the user find it if we cannot.
     DOC "The ${KITE_INCLUDE_PATH_DESCRIPTION}"
   )
