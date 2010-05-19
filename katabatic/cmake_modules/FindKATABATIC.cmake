@@ -26,15 +26,7 @@ IF(UNIX)
   FIND_LIBRARY(KATABATIC_LIBRARY_PATH
     NAMES katabatic
     PATHS ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES lib
-    # Help the user find it if we cannot.
-    DOC "The ${KATABATIC_INCLUDE_PATH_DESCRIPTION}"
-  )
-
-  FIND_LIBRARY(KATABATIC_STATIC_LIBRARY_PATH
-    NAMES katabatic-static
-    PATHS ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES lib
+    PATH_SUFFIXES lib${LIB_SUFFIX}
     # Help the user find it if we cannot.
     DOC "The ${KATABATIC_INCLUDE_PATH_DESCRIPTION}"
   )
