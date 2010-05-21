@@ -1,0 +1,559 @@
+
+ \documentclass[11pt]{article}
+
+   \usepackage[T1]{fontenc}
+   \usepackage{ucs}
+   \usepackage[utf8x]{inputenc}
+   \usepackage{palatino}
+   \usepackage{marvosym}
+   \usepackage{pifont}
+   \usepackage{xspace}
+   \usepackage{longtable}
+   \usepackage{array}
+   \usepackage{fancyhdr}
+   \usepackage[sf,bf]{titlesec}
+   \usepackage{titletoc}
+   \usepackage{float}
+   \usepackage{epic}
+   \usepackage{eepic}
+   \usepackage[dvips]{graphicx}
+  %\usepackage[dvips]{color}
+   \usepackage{listings}
+  %\usepackage[hyphens]{url}
+  %\usepackage{html}
+   \usepackage[dvips]{hyperref}
+   \usepackage[paper=a4paper
+              ,headheight=30pt
+              ]{geometry}
+  %\usepackage{layouts}
+
+   \newcommand{\key}[1]{\fbox{\textsf{#1}}}
+   \newcommand{\menu}[1]{\fbox{\textsf{\textbf{{#1}}}}}
+
+   \newcommand {\Alexandre}          {\textsc{Alexandre}\xspace}
+   \newcommand {\Chaput}             {\textsc{Chaput}\xspace}
+   \newcommand {\Dupuis}             {\textsc{Dupuis}\xspace}
+   \newcommand {\Escassut}           {\textsc{Escassut}\xspace}
+   \newcommand {\Masson}             {\textsc{Masson}\xspace}
+   \newcommand {\LIP}                {\textsc{lip6}\xspace}
+   \newcommand {\SoC}                {\textsc{S}o\textsc{C}\xspace}
+                                     
+   \newcommand {\LGPL}               {\textsc{lgpl}\xspace}
+   \newcommand {\GPL}                {\textsc{gpl}\xspace}
+   \newcommand {\ANSI}               {\textsc{ansi}\xspace}
+   \newcommand {\XML}                {\textsc{xml}\xspace}
+   \newcommand {\VHDL}               {\textsc{vhdl}\xspace}
+   \newcommand {\FEL}                {\href{http://spins.fedoraproject.org/fel/}{\textsc{fel}}\xspace}
+   \newcommand {\SiII}               {\href{http://www.si2.org/}{\textsc{Si2}}\xspace}
+   \newcommand {\Bull}               {\href{http://www.bull.com/}{\textsc{Bull}}\xspace}
+   \newcommand {\UPMC}               {\href{http://www.upmc.fr/}{\textsc{upmc}}\xspace}
+   \newcommand {\Cadence}            {\href{http://www.cadence.com/}{\textsc{Cadence}}\xspace}
+   \newcommand {\LEFDEF}             {\textsc{lef/def}\xspace}
+   \newcommand {\RHELV}              {\textsc{rhel 5}\xspace}
+   \newcommand {\CentOSV}            {\textsc{CentOS 5}\xspace}
+   \newcommand {\SLV}                {\textsc{SL 5}\xspace}
+   \newcommand {\FedoraXII}          {\textsc{Fedora 12}\xspace}
+   \newcommand {\QtIV}               {\textsc{Qt 4}\xspace}
+   \newcommand {\rpm}                {\texttt{rpm}\xspace}
+   \newcommand {\tty}                {\texttt{tty}\xspace}
+   \newcommand {\BoxRouter}          {\textsc{BoxRouter}\xspace}
+   \newcommand {\BoxRouterRef}%
+     {\href{http://www.cerc.utexas.edu/~thyeros/boxrouter/boxrouter.htm}{\BoxRouter}\xspace}
+   \newcommand {\netlist}            {\textit{netlist}\xspace}
+   \newcommand {\physical}           {\textit{physical}\xspace}
+   \newcommand {\logical}            {\textit{logical}\xspace}
+
+   \newcommand {\Alliance}           {\textsc{Alliance}\xspace}
+   \newcommand {\MBK}                {\textsc{mbk}\xspace}
+   \newcommand {\SxLib}              {\texttt{SxLib}\xspace}
+   \newcommand {\Nero}               {\texttt{Nero}\xspace}
+   \newcommand {\vst}                {\texttt{vst}\xspace}
+   \newcommand {\ap}                 {\texttt{ap}\xspace}
+   \newcommand {\PHFIG}              {\texttt{PHFIG}\xspace}
+   \newcommand {\LOFIG}              {\texttt{LOFIG}\xspace}
+                                     
+   \newcommand {\Coriolis}           {\textsc{Coriolis}\xspace}
+   \newcommand {\CoriolisII}         {\textsc{Coriolis 2}\xspace}
+   \newcommand {\Hurricane}          {\textsc{Hurricane}\xspace}
+   \newcommand {\Knik}               {\texttt{Knik}\xspace}
+   \newcommand {\Kite}               {\texttt{Kite}\xspace}
+   \newcommand {\Viewer}             {\texttt{Viewer}\xspace}
+   \newcommand {\kgr}                {\texttt{kgr}\xspace}
+   \newcommand {\cgt}                {\texttt{cgt}\xspace}
+   \newcommand {\CELLTOP}            {\texttt{CELL\_TOP}\xspace}
+   \newcommand {\confcoriolisIIalc}  {\texttt{/etc/coriolis2/environment.alliance.xml}\xspace}
+   \newcommand {\usercoriolisIIalc}  {\texttt{.environment.alliance.xml}\xspace}
+   \newcommand {\Cell}               {\texttt{Cell}\xspace}
+   \newcommand {\POWER}              {\texttt{POWER}\xspace}
+   \newcommand {\GROUND}             {\texttt{GROUND}\xspace}
+   \newcommand {\MII}                {\texttt{M2}\xspace}
+   \newcommand {\MV}                 {\texttt{M5}\xspace}
+
+   \newcommand {\coriolisIIfcXIIirpm}%
+     {\href{ftp://asim.lip6.fr/pub/coriolis/2.0/coriolis2-1.0.1390-1.fc12.i386.rpm}%
+      {\texttt{coriolis2-1.0.1390-1.fc12.i386.rpm}\xspace}}
+   \newcommand {\coriolisIIfcXIIxrpm}%
+     {\href{ftp://asim.lip6.fr/pub/coriolis/2.0/coriolis2-1.0.1390-1.fc12.x86\_64.rpm}%
+      {\texttt{coriolis2-1.0.1390-1.fc12.x86\_64.rpm}\xspace}}
+   \newcommand {\coriolisIIslVirpm}%
+     {\href{ftp://asim.lip6.fr/pub/coriolis/2.0/coriolis2-1.0.1390-1.sl5\_soc.i386.rpm}%
+      {\texttt{coriolis2-1.0.1390-1.sl5\_soc.i386.rpm}\xspace}}
+   \newcommand {\coriolisIIslVxrpm}%
+     {\href{ftp://asim.lip6.fr/pub/coriolis/2.0/coriolis2-1.0.1390-1.sl5\_soc.x86\_64.rpm}%
+      {\texttt{coriolis2-1.0.1390-1.sl5\_soc.x86\_64.rpm}\xspace}}
+
+   \newcommand {\qtIVsrpm}%
+     {\href{http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/SLSoC/SRPMS/SL/qt4-4.5.0-8.sl5soc.src.rpm}%
+      {\texttt{qt4-4.5.0-8.sl5soc.src.rpm}\xspace}}
+   \newcommand {\qtIVirpm}%
+     {\href{http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/i386/i386/SL/qt4-4.5.0-8.sl5soc.i386.rpm}%
+      {\texttt{qt4-4.5.0-8.sl5soc.i386.rpm}\xspace}}
+   \newcommand {\qtIVdevelirpm}%
+     {\href{http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/i386/i386/SL/qt4-devel-4.5.0-8.sl5soc.i386.rpm}%
+      {\texttt{qt4-devel-4.5.0-8.sl5soc.i386.rpm}\xspace}}
+   \newcommand {\qtIVdocirpm}%
+     {\href{http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/i386/i386/SL/qt4-doc-4.5.0-8.sl5soc.i386.rpm}%
+      {\texttt{qt4-doc-4.5.0-8.sl5soc.i386.rpm}\xspace}}
+   \newcommand {\qtIVmysqlirpm}%
+     {\href{http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/i386/i386/SL/qt4-mysql-4.5.0-8.sl5soc.i386.rpm}%
+      {\texttt{qt4-mysql-4.5.0-8.sl5soc.i386.rpm}\xspace}}
+   \newcommand {\qtIVodbcirpm}%
+     {\href{http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/i386/i386/SL/qt4-odbc-4.5.0-8.sl5soc.i386.rpm}%
+      {\texttt{qt4-odbc-4.5.0-8.sl5soc.i386.rpm}\xspace}}
+   \newcommand {\qtIVpostgresqlirpm}%
+     {\href{http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/i386/i386/SL/qt4-postgresql-4.5.0-8.sl5soc.i386.rpm}%
+      {\texttt{qt4-postgresql-4.5.0-8.sl5soc.i386.rpm}\xspace}}
+   \newcommand {\qtIVxXIirpm}%
+     {\href{http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/i386/i386/SL/qt4-x11-4.5.0-8.sl5soc.i386.rpm}%
+      {\texttt{qt4-x11-4.5.0-8.sl5soc.i386.rpm}\xspace}}
+
+   \newcommand {\keyUP}             {\key{UP}\xspace}
+   \newcommand {\keyDOWN}           {\key{DOWN}\xspace}
+   \newcommand {\keyLEFT}           {\key{LEFT}\xspace}
+   \newcommand {\keyRIGHT}          {\key{RIGHT}\xspace}
+   \newcommand {\keyCTRL}           {\key{CTRL}\xspace}
+   \newcommand {\keyESC}            {\key{ESC}\xspace}
+   \newcommand {\keyf}              {\key{f}\xspace}
+   \newcommand {\keyG}              {\key{G}\xspace}
+   \newcommand {\keyI}              {\key{I}\xspace}
+   \newcommand {\keyL}              {\key{L}\xspace}
+   \newcommand {\keym}              {\key{m}\xspace}
+   \newcommand {\keyk}              {\key{k}\xspace}
+   \newcommand {\keyK}              {\key{K}\xspace}
+   \newcommand {\keyO}              {\key{O}\xspace}
+   \newcommand {\keyP}              {\key{P}\xspace}
+   \newcommand {\keyQ}              {\key{Q}\xspace}
+   \newcommand {\keys}              {\key{s}\xspace}
+   \newcommand {\keyW}              {\key{W}\xspace}
+   \newcommand {\keyS}              {\key{S}\xspace}
+   \newcommand {\keyz}              {\key{z}\xspace}
+   \newcommand {\keyMouseLeftPress} {\key{\ComputerMouse LEFT\_PRESS}\xspace}
+   \newcommand {\BigMouse}          {{\Huge \ComputerMouse}\xspace}
+
+  %\setlength {\parskip}        {4mm}    
+  %\setlength {\itemsep}        {4mm}    
+
+   \pagestyle{fancy}
+
+  %\renewcommand{\headheight}{14pt}
+   \renewcommand{\headrulewidth}{0.2mm}
+   \renewcommand{\footrulewidth}{0.2mm}
+   \renewcommand{\sectionmark}[1]{\markboth{\thesection\ #1}{\thesection\ #1}}
+   \renewcommand{\subsectionmark}[1]{}
+   \lhead[]{Coriolis 2}
+   \rhead[]{May 20, 2010}
+   \lfoot[]{\LIP/\SoC}
+   \rfoot[]{\thepage}
+   \cfoot[]{}
+
+  %% The LaTeX Companion -- p. 204.
+  %% Miniature display of the page layout.
+  %\newcommand{\showpage}{%
+  %  \setlayoutscale{0.65}\setlabelfont{\tiny}%
+  %  \printheadingsfalse\printparametersfalse%
+  %  \currentpage\pagedesign%
+  %}
+
+   \titlecontents{section}[1pc]
+     {\sffamily\bfseries}                                 % above code.
+     {\contentslabel{1pc}}                                % numbered entry format.
+     {The Numberless Entry Format}                        % numberless entry format.
+     {\titlerule*[8pt]{.}\textsc\textbf{{\contentspage}}} % page format.
+   \titlecontents{subsection}[3pc]
+     {\sffamily}                                          % above code.
+     {\contentslabel{2pc}}                                % numbered entry format.
+     {The Numberless Entry Format}                        % numberless entry format.
+     {\titlerule*[8pt]{.}\textsc\textbf{{\contentspage}}} % page format.
+
+
+ \begin{document}
+
+ \title{\CoriolisII}
+ \author{The Coriolis Team}
+ \date{May 2010}
+
+ \maketitle
+
+ \thispagestyle{fancy}
+
+ \tableofcontents
+
+ \section{Credits \& Licenses}
+
+ \begin{center}
+   \Hurricane     \dotfill\      Rémy \Escassut \& Christian \Masson   \\
+   \Knik          \dotfill     Damien \Dupuis   \\
+   \Kite, \Viewer \dotfill  Jean-Paul \Chaput   \\
+ \end{center}
+
+ The \Hurricane data-base is copyright\textcopyright\ \Bull 2000-2010 and is
+ released under the terms of the \LGPL license. All other tools are
+ copyright\textcopyright\ \UPMC 2008-2010 and released under the \GPL
+ license. 
+
+ \newpage
+
+
+ \section{Release Notes}
+
+ \subsection{Release 1.0.1363}
+
+ This the first preliminary release of the \CoriolisII framework.
+
+ This release mainly ships the global router \Knik and the detailed router
+ \Kite. Together they aims to replace the \Alliance \Nero router.
+ Unlike \Nero, \Kite is based on an innovating routing modeling and ad-hoc
+ algorithm. Although it has been developped under \GPL, the source code
+ will not be made avalaible until it has been properly published.
+ \medskip
+
+ \noindent Contents of this release:
+ \begin{enumerate}
+   \item A graphical interface (viewer only).
+   \item The \Knik global router.
+   \item The \Kite detailed router.
+ \end{enumerate}
+
+ \noindent Supported input/output formats:
+ \begin{itemize}
+   \item \Alliance \vst (netlist) \& \ap (physical) formats.
+   \item Even if there are some references to the \Cadence \LEFDEF format, it's
+         support is not included because it depends on a library only available
+         to \SiII affiliateds members.
+ \end{itemize}
+
+
+ \section{Installation}
+
+ Binary \rpm packages avalaibles:
+ \begin{center}
+ \begin{tabular}{|c|l|}
+   \hline
+   \FedoraXII & \coriolisIIfcXIIirpm  \\
+              & \coriolisIIfcXIIxrpm  \\
+   \hline
+   \RHELV     & \coriolisIIslVirpm  \\
+   \CentOSV   & \coriolisIIslVxrpm  \\
+   \SLV       &                     \\
+   \hline
+ \end{tabular}
+ \end{center}
+ For \RHELV based distributions, additionnal \QtIV packages are neededs:
+
+ \begin{center}
+ \begin{tabular}{|l|}
+   \hline
+   \qtIVsrpm           \\
+   \hline
+   \hline
+   \qtIVirpm           \\
+   \qtIVdevelirpm      \\
+   \qtIVdocirpm        \\
+   \qtIVmysqlirpm      \\
+   \qtIVodbcirpm       \\
+   \qtIVpostgresqlirpm \\
+   \qtIVxXIirpm        \\
+   \hline
+ \end{tabular}
+ \end{center}
+
+ \section{Configuration}
+
+ Configuration of \CoriolisII no longer depends on environment variables.
+ All pathes and options are sets through \XML configuration files. The main
+ configuration file is~:
+ \begin{center}
+   \confcoriolisIIalc
+ \end{center}
+  Contents of this file should be familiar to all thoses already acquainteds
+  with \Alliance as the \XML node names takes back former shell environment
+  variables.
+
+  You may want to customize \CELLTOP to point where the \Alliance cells
+  libraries are installeds (\texttt{/usr/share/alliance}\ if you installed
+  the \Alliance package from \FEL.
+
+  All system settings can be overwritten by a \usercoriolisIIalc file in the
+  user's root directory.
+
+
+  \section{Tools}
+
+  \subsection{The \Hurricane Data-Base}
+
+  The \Alliance flow is based on the \MBK data-base, which have one data-structure
+  for each view. That is, \LOFIG for the \logical view and \PHFIG for the \physical
+  view. The place and route tools where responsibles for maintaining (or not) the
+  coherency between views. Reflecting this weak coupling between views, each one
+  was stored in a separate file with a specific format. The \logical view is stored
+  in a \vst file in \VHDL format and the \physical in an \ap file in an ad-hoc format.
+
+  The \Coriolis flow is based on the \Hurricane data-base, which have a unified
+  structure for \logical and \physical view. That data structure is the \Cell object.
+  The \Cell can have any state between pure netlist and completly placed and
+  routed design. Although the memory representation of the views has deeply
+  changed we still uses the \Alliance files format, but they now really represents
+  views of the same object. The point is that one must be very careful about
+  view coherency when going to and fro \Coriolis.
+
+  As for the first release, \Coriolis can be used only for two purposes~:
+  \begin{itemize}
+    \item \textbf{Routing a design}\xspace, in that case the \netlist\xspace
+          view must be present and the \physical view must be presents and contains
+          a placement. Both views must have the same name. When saving the routed design,
+          it is advised to change the design name otherwise the original placement
+          in the \physical view will be overwritten.
+    \item \textbf{Viewing a design}, the \logical view must be present, if a \physical
+          view is present it still must have the same name but it can be in any
+          state. 
+  \end{itemize}
+
+  \newpage
+
+
+  \subsection{Knik -- Global Router}
+
+  The global router is (not yet) deterministic. To circumvent this limitation,
+  a global routing (also called a ``solution'') can be saved to disk and reloaded
+  for later uses.
+
+  A global routing is saved into a file with the same name as the design and a
+  \kgr extention. It is in \BoxRouterRef output format.
+
+  \noindent Menus~:
+  \begin{itemize}
+    \item \menu{P\&R}$\rightarrow$\menu{\underline{S}tep by Step}
+                     $\rightarrow$\menu{Kite -- \underline{S}ave Global Routing}
+    \item \menu{P\&R}$\rightarrow$\menu{\underline{S}tep by Step}
+                     $\rightarrow$\menu{Kite -- \underline{L}oad Global Routing}
+  \end{itemize}
+
+
+  \subsection{Kite -- Detailed Router}
+
+  \Kite no longer suffers from the limitations of \Nero. It can route big designs
+  as it's runtime and memory footprint is almost linear (with respect to the number
+  of gates). It has successfully routed design of more than \texttt{150K}\ gates.
+
+  \medskip\noindent
+  However, this first release has the following restrictions:
+  \begin{itemize}
+    \item Works only with \SxLib standard cell gauge.
+    \item Works always with 4 routing metal layers (\MII through \MV).
+    \item Do not allow (take into account) pre-routed wires on signals
+          other than \POWER or \GROUND.
+  \end{itemize}
+
+  \medskip\noindent
+  Routing a design is done in three ordered steps~:
+  \begin{enumerate}
+    \item Global routing \menu{P\&R}$\rightarrow$\menu{Kite -- \underline{G}lobal Route}
+    \item Detailed routing \menu{P\&R}$\rightarrow$\menu{Kite -- \underline{D}ailed Route}
+    \item Finalize routing \menu{P\&R}$\rightarrow$\menu{Kite -- \underline{F}inalize Route}
+  \end{enumerate}
+  After the detailed routing step the \Kite data-structure is still active.
+  The wiring is thus represented in a way that allow \Kite to manage it but
+  which is not completly finished. The finalize step perform the removal of
+  the \Kite data-structure and finish/cleanup the wiring so that it's
+  connex in the sense of \Hurricane. \textit{Do not}\xspace try to save
+  your design before that step, you would get gaps in it.
+
+
+  \newpage
+
+  \subsection{Viewer Small Memento}
+
+  The main application binary is \cgt.
+
+  \begin{center}
+  \newlength\keyheight \settoheight\keyheight{\keyUP} \addtolength\keyheight{5pt}
+  \newlength\keydepth  \settodepth \keydepth {\keyUP} \addtolength\keydepth {5pt}
+
+  \newcommand\keytabpar[1]{\parbox[t]{.2\textwidth}{\rule{0pt}{\keyheight} \centering #1 \rule[-\keydepth]{0pt}{0pt}}}
+  \newcommand\sfbf[1]{\textsf{\textbf{#1}}}
+
+  \begin{longtable}{|c|c|p{.55\textwidth}|}
+    \endfirsthead
+      \hline
+    \endhead
+      \hline
+    \endfoot
+    \endlastfoot
+    \hline
+    \sfbf{Moves}
+      & \keytabpar{\keyUP \keyDOWN \\ \keyLEFT \keyRIGHT}
+      & Shift the view \\
+    \hline
+    \sfbf{Fit}
+      & \keytabpar{\keyf}
+      & Fit contents to window \\
+    \hline
+    \sfbf{Refresh}
+      & \keytabpar{\keyCTRL$+$\keyL}
+      & Triggers a complete display redraw \\
+    \hline
+    \sfbf{Goto}
+      & \keytabpar{\keyG}
+      & \texttt{aperture} is the minimum side of the area displayed around
+        the point to go to. It's an alternative way of setting the zoom level \\
+    \hline
+    \sfbf{Zoom}
+      & \keytabpar{\keyz \keym}
+      & \keyz zoom by 2, \keym unzoom by 2 \\
+    \cline{2-3}
+      & \keytabpar{\BigMouse \\ \texttt{Area Zoom}}
+      & You can perform a zoom to an area.
+        Define the zoom area by \textit{holding down the left mouse button}\ 
+        while moving the mouse. \\
+    \hline
+    \sfbf{Selection}
+      & \keytabpar{\BigMouse \\ \texttt{Area Selection}}
+      & You can select displayed object under an area. Define the selection area
+        by \textit{holding down the right mouse button}\ while moving the mouse. \\
+    \cline{2-3}
+      & \keytabpar{\BigMouse \\ \texttt{Toggle Selection}}
+      & You can toggle the selection of one object under the mouse position by
+        pressing \keyCTRL and pressing down \textit{the right mouse button}.
+        A popup list of what's under the position shows up into which you can
+        toggle the selection state of one item. \\
+    \cline{2-3}
+      & \keytabpar{\keys}
+      & Toggle the selection visibility \\
+    \hline
+    \sfbf{Controller}
+      & \keytabpar{\keyCTRL$+$\keyI}
+      & Show/hide the controller window.
+
+        It's the Swiss Army Knife of the viewer. From it, you can fine-control
+        the display and inspect almost everything in your design. \\
+    \hline
+    \sfbf{Rulers}
+      & \keytabpar{\keyk \\ \keyESC}
+      & One stroke on \keyk enters the ruler mode, in which you can draw one
+        ruler. You can exit the ruler mode by pressing \keyESC.
+        Once in ruler mode, the first click on the \textit{left mouse button}
+        sets the ruler's starting point and the second click the ruler's end
+        point. The second click exits automatically the ruler mode. \\
+    \cline{2-3}
+      & \keytabpar{\keyK}
+      & Clears all the drawn rulers \\
+    \hline
+    \sfbf{Print}
+      & \keytabpar{\keyCTRL$+$\keyP}
+      & Currently rather crude. It's a direct copy of what's displayed in pixels.
+        So the resulting picture will be a little blurred due to anti-aliasing
+        mechanism. \\
+    \hline
+    \sfbf{Open/Close}
+      & \keytabpar{\keyCTRL$+$\keyO}
+      & Opens a new design. The design name must be given without path or extention. \\
+    \cline{2-3}
+      & \keytabpar{\keyCTRL$+$\keyW}
+      & Close the current viewer window, but do not quit the application. \\
+    \cline{2-3}
+      & \keytabpar{\keyCTRL$+$\keyQ}
+      & CTRL+Q quit the application (closing all windows). \\
+    \hline
+    \sfbf{Hierarchy}
+      & \keytabpar{\keyCTRL$+$\keyDOWN}
+      & Go one hierarchy level down. That is, if there is an \textit{instance}\ under
+        the cursor position, load it's \textit{model}\ (\Cell) in place of the current one. \\
+    \cline{2-3}
+      & \keytabpar{\keyCTRL$+$\keyUP}
+      & Go one hierarchy level up. if we have entered the current model through
+        \keyCTRL$+$\keyDOWN, reload the previous model (the one in which this model is
+        instanciated). \\
+    \hline
+  \end{longtable}
+  \end{center}
+
+  \subsection{Running \cgt in text mode}
+
+  \begin{center}
+  \begin{longtable}{|c|p{.55\textwidth}|}
+      \hline
+      \textbf{Argument} & Meaning \\
+      \hline
+      \hline
+    \endfirsthead
+      \hline
+      \textbf{Argument} & Meaning \\
+      \hline
+      \hline
+    \endhead
+      \hline
+    \endfoot
+    \endlastfoot
+    \hline
+    \texttt{-t|--text}
+      & Instruct \cgt to run in text mode. \\
+    \hline
+    \texttt{-L|--log-mode}
+      & Disable the uses of \ANSI escape sequence on the \tty. Useful when
+        the output is redirected to a file. \\
+    \hline
+    \texttt{-T|--tool=<TOOL>}
+      & Select the tool to run. Currently only one is avalaible~:
+        \texttt{kite}. \\
+    \hline
+    \texttt{-c|--cell=<design>}
+      & The name of the design to load, without leading path or
+        extention. \\
+    \hline
+    \texttt{-g|--global}
+      & Reload a global routing solution from disk. \linebreak
+        The file containing the solution must be named \texttt{<design>.kgr}. \\
+    \hline
+    \texttt{--save-global}
+      & Save the global routing solution, into a file named \texttt{<design>.kgr}. \\
+    \hline
+    \newpage
+    \multicolumn{2}{|l|}{\texttt{-s|--save-design=<routed\_design>}} \\
+    \cline{1-1}
+      & The design into which the routed layout will be saved. It is strongly
+        recommanded to choose a different name from the source (unrouted)
+        design. \\
+    \hline
+    \texttt{--events-limit=<LIMIT>}
+      & The maximal number of events after which the router will stops. This is
+        mainly a failsafe against looping. The limit is sets to 4 millions of
+        iteration which should suffice to any design of \texttt{100K}\xspace
+        gates. For bigger designs you may wants to increase this limit. \\
+    \hline
+  \end{longtable}
+  \end{center}
+
+  \noindent
+  Some examples~:
+  \begin{itemize}
+    \item Run both global and detailed router, then save the routed design~: \\
+          \texttt{> cgt -v -t --tool=kite --cell=design --save-design=design\_kite}
+    \item Load a previous global solution, run the detailed router, then save the
+          routed design~: \\
+          \texttt{> cgt -v -t --tool=kite --global --cell=design --save-design=design\_kite}
+    \item Run the global router, then save the global routing solution~: \\
+          \texttt{> cgt -v -t --tool=kite --save-global --cell=design}
+  \end{itemize}
+
+
+ \end{document}
