@@ -5,7 +5,7 @@
 	     
 %define          with_binarytar     %{?_with_binarytar:1}%{!?_with_binarytar:0}
 
-%if (%{!?rhel:6} < 6)
+%if %{!?rhel:6} < 6
 %define          qt4                qt4
 %else
 %define          qt4                qt
