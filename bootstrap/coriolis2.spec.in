@@ -4,6 +4,12 @@
 %define          svntag             @svntag@
 	     
 %define          with_binarytar     %{?_with_binarytar:1}%{!?_with_binarytar:0}
+
+%if %{!?rhel:0} && (%{rhel} < 6)
+%define          qt4                qt4
+%else
+%define          qt4                qt
+%endif
 	     
 	     
 Name:            coriolis2
@@ -17,9 +23,9 @@ URL:             http://www-asim.lip6.fr/
 Packager:        Jean-Paul Chaput <Jean-Paul.Chaput@lip6.fr>
 Requires(post):  ldconfig
 Requires:        boost >= 1.33.1
-Requires:        qt4 >= 4.5.0
+Requires:        %{qt4} >= 4.5.0
 BuildRequires:   boost-devel >= 1.33.1
-BuildRequires:   qt4-devel >= 4.5.0
+BuildRequires:   %{qt4}-devel >= 4.5.0
 BuildRoot:       %{_tmppath}/root-%{name}
 
 
@@ -32,7 +38,7 @@ physical backend flow of Alliance.
 Summary:         Coriolis 2 VLSI CAD Sytem - Development
 Group:           Applications/Engineering
 Requires:        %{name} = %{version}-%{release}
-Requires:        qt4-devel >= 4.5.0
+Requires:        %{qt4}-devel >= 4.5.0
 
 
 %description devel
@@ -62,7 +68,11 @@ Development files for the Coriolis 2 package.
          -D LIB_SUFFIX:STRING=64                       \
 %endif
          ../../$tool
-   make DESTDIR=%{buildroot} %{_smp_mflags} install
+   makeArgs=""
+   if [ "$tool" = "crlcore" ]; then
+     makeArgs="dvi safepdf"
+   fi
+   make DESTDIR=%{buildroot} %{_smp_mflags} ${makeArgs} install
    popd
  done
 
@@ -72,19 +82,19 @@ Development files for the Coriolis 2 package.
 # Removing undistributed binaries.
  %__rm -f %{buildroot}%{coriolisTop}/bin/{cx2y,kite-text}
 
- %{__mkdir} -p %{buildroot}%{_sysconfdir}/ld.so.conf.d/
- cat > %{buildroot}%{_sysconfdir}/ld.so.conf.d/%{name}.conf << EOF
+# %{__mkdir} -p %{buildroot}%{_sysconfdir}/ld.so.conf.d/
+# cat > %{buildroot}%{_sysconfdir}/ld.so.conf.d/%{name}.conf << EOF
 # Coriolis 2 VLSI design system
-%{coriolisTop}/%{_lib}
-%{coriolisTop}/%{_lib}/python
-EOF
+#%{coriolisTop}/%{_lib}
+#%{coriolisTop}/%{_lib}/python
+#EOF
 
-%if %{with_binarytar}
- cd %{buildroot}%{coriolisTop}
- tar --exclude "*/cmake_modules*" \
-     -jcf %{_sourcedir}/%{name}-binary-%{version}-%{release}.%{_arch}.tar.bz2 \
-     bin %{_lib} share
-%endif
+#%if %{with_binarytar}
+# cd %{buildroot}%{coriolisTop}
+# tar --exclude "*/cmake_modules*" \
+#     -jcf %{_sourcedir}/%{name}-binary-%{version}-%{release}.%{_arch}.tar.bz2 \
+#     bin %{_lib} share
+#%endif
 
 
 %clean
@@ -97,7 +107,8 @@ EOF
 
 %files
 %defattr(-,root,root,-)
-%dir %{coriolisTop}/etc/coriolis2
+%docdir %{_docdir}/coriolis2/
+%dir %{_sysconfdir}/coriolis2
 %dir %{coriolisTop}/share/coriolis2/flute-2.4
 %dir %{coriolisTop}/bin
 %dir %{coriolisTop}/%{_lib}
@@ -105,8 +116,8 @@ EOF
 %{coriolisTop}/bin/*
 %{coriolisTop}/%{_lib}/*.so
 %{coriolisTop}/%{_lib}/python/*.so
-%config(noreplace) %{_sysconfdir}/ld.so.conf.d/*
-%config(noreplace) %{coriolisTop}/etc/coriolis2/*.xml
+#%config(noreplace) %{_sysconfdir}/ld.so.conf.d/*
+%config(noreplace) %{_sysconfdir}/coriolis2/*.xml
 %config(noreplace) %{coriolisTop}/share/coriolis2/flute-2.4/*.dat
 
 
