@@ -218,18 +218,18 @@
 
  \subsection{Release 1.0.1363}
 
- This the first preliminary release of the \CoriolisII framework.
+ This is the first preliminary release of the \CoriolisII framework.
 
  This release mainly ships the global router \Knik and the detailed router
- \Kite. Together they aims to replace the \Alliance \Nero router.
+ \Kite. Together they aim to replace the \Alliance \Nero router.
  Unlike \Nero, \Kite is based on an innovating routing modeling and ad-hoc
- algorithm. Although it has been developped under \GPL, the source code
- will not be made avalaible until it has been properly published.
+ algorithm. Although it is released under \GPL license, the source code
+ will be avalaible later.
  \medskip
 
  \noindent Contents of this release:
  \begin{enumerate}
-   \item A graphical interface (viewer only).
+   \item A graphical user interface (viewer only).
    \item The \Knik global router.
    \item The \Kite detailed router.
  \end{enumerate}
@@ -237,15 +237,15 @@
  \noindent Supported input/output formats:
  \begin{itemize}
    \item \Alliance \vst (netlist) \& \ap (physical) formats.
-   \item Even if there are some references to the \Cadence \LEFDEF format, it's
+   \item Even if there are some references to the \Cadence \LEFDEF format, its
          support is not included because it depends on a library only available
-         to \SiII affiliateds members.
+         to \SiII affiliated members.
  \end{itemize}
 
 
  \section{Installation}
 
- Binary \rpm packages avalaibles:
+ Binary \rpm packages avalaible:
  \begin{center}
  \begin{tabular}{|c|l|}
    \hline
@@ -258,7 +258,7 @@
    \hline
  \end{tabular}
  \end{center}
- For \RHELV based distributions, additionnal \QtIV packages are neededs:
+ For \RHELV based distributions, additionnal \QtIV packages are needed:
 
  \begin{center}
  \begin{tabular}{|l|}
@@ -285,12 +285,12 @@
  \begin{center}
    \confcoriolisIIalc
  \end{center}
-  Contents of this file should be familiar to all thoses already acquainteds
+  Contents of this file should be familiar to all thoses already acquainted
   with \Alliance as the \XML node names takes back former shell environment
   variables.
 
-  You may want to customize \CELLTOP to point where the \Alliance cells
-  libraries are installeds (\texttt{/usr/share/alliance}\ if you installed
+  You may want to customize \CELLTOP to point to the directory where the \Alliance cells
+  libraries are installed (\texttt{/usr/share/alliance}\ if you installed
   the \Alliance package from \FEL.
 
   All system settings can be overwritten by a \usercoriolisIIalc file in the
@@ -301,27 +301,27 @@
 
   \subsection{The \Hurricane Data-Base}
 
-  The \Alliance flow is based on the \MBK data-base, which have one data-structure
+  The \Alliance flow is based on the \MBK data-base, which has one data-structure
   for each view. That is, \LOFIG for the \logical view and \PHFIG for the \physical
-  view. The place and route tools where responsibles for maintaining (or not) the
+  view. The place and route tools were responsible for maintaining (or not) the
   coherency between views. Reflecting this weak coupling between views, each one
   was stored in a separate file with a specific format. The \logical view is stored
   in a \vst file in \VHDL format and the \physical in an \ap file in an ad-hoc format.
 
-  The \Coriolis flow is based on the \Hurricane data-base, which have a unified
+  The \Coriolis flow is based on the \Hurricane data-base, which has a unified
   structure for \logical and \physical view. That data structure is the \Cell object.
   The \Cell can have any state between pure netlist and completly placed and
   routed design. Although the memory representation of the views has deeply
-  changed we still uses the \Alliance files format, but they now really represents
+  changed we still use the \Alliance files format, but they now really represent
   views of the same object. The point is that one must be very careful about
-  view coherency when going to and fro \Coriolis.
+  view coherency when going to and from \Coriolis.
 
   As for the first release, \Coriolis can be used only for two purposes~:
   \begin{itemize}
     \item \textbf{Routing a design}\xspace, in that case the \netlist\xspace
-          view must be present and the \physical view must be presents and contains
+          view and the \physical view must be present and  \physical view must contain
           a placement. Both views must have the same name. When saving the routed design,
-          it is advised to change the design name otherwise the original placement
+          it is advised to change the design name otherwise the original unrouted placement
           in the \physical view will be overwritten.
     \item \textbf{Viewing a design}, the \logical view must be present, if a \physical
           view is present it still must have the same name but it can be in any
@@ -352,7 +352,7 @@
   \subsection{Kite -- Detailed Router}
 
   \Kite no longer suffers from the limitations of \Nero. It can route big designs
-  as it's runtime and memory footprint is almost linear (with respect to the number
+  as its runtime and memory footprint is almost linear (with respect to the number
   of gates). It has successfully routed design of more than \texttt{150K}\ gates.
 
   \medskip\noindent
@@ -372,9 +372,9 @@
     \item Finalize routing \menu{P\&R}$\rightarrow$\menu{Kite -- \underline{F}inalize Route}
   \end{enumerate}
   After the detailed routing step the \Kite data-structure is still active.
-  The wiring is thus represented in a way that allow \Kite to manage it but
-  which is not completly finished. The finalize step perform the removal of
-  the \Kite data-structure and finish/cleanup the wiring so that it's
+  The wiring is thus represented in a way that allows \Kite to manage it but
+  which is not completly finished. The finalize step performs the removal of
+  the \Kite data-structure and finish/cleanup the wiring so that its
   connex in the sense of \Hurricane. \textit{Do not}\xspace try to save
   your design before that step, you would get gaps in it.
 
