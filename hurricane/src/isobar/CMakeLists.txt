@@ -93,4 +93,4 @@
  target_link_libraries ( Hurricane isobar hurricane ${PYTHON_LIBRARIES} )
 
                install ( TARGETS isobar      DESTINATION lib${LIB_SUFFIX} )
-               install ( TARGETS Hurricane   DESTINATION lib${LIB_SUFFIX}/python )
+               install ( TARGETS Hurricane   DESTINATION ${PYTHON_SITE_PACKAGES} )
