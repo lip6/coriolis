@@ -208,7 +208,7 @@ class ProjectBuilder:
         toolSourceDir = os.path.join ( self._sourceDir, tool )
         toolBuildDir  = os.path.join ( self._buildDir , tool )
        # Supplied directly in the CMakeLists.txt.
-       #cmakeModules  = os.path.join ( self._installDir, "share", "cmake_modules" )
+       #cmakeModules  = os.path.join ( self._installDir, "share", "cmake", "Modules" )
 
         if not os.path.isdir(toolSourceDir):
             print "[ERROR] Missing tool source directory: \"%s\" (skipped)." % toolSourceDir

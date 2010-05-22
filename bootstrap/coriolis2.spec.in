@@ -66,6 +66,7 @@ Development files for the Coriolis 2 package.
          -D BUILD_SHARED_LIBS:STRING=ON                \
          -D BUILD_DOC:STRING=OFF                       \
          -D CMAKE_INSTALL_PREFIX:STRING=%{coriolisTop} \
+         -D CMAKE_MODULE_PATH:STRING=%{buildroot}%{coriolisTop}/share/cmake/Modules \
 %ifarch x86_64
          -D LIB_SUFFIX:STRING=64                       \
 %endif
