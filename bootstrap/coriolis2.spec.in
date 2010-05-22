@@ -1,14 +1,14 @@
 
 %define          coriolisVersion    1.0
-%define          coriolisTop        @coriolisTop@
+%define          coriolisTop        %{_prefix}
 %define          svntag             @svntag@
 	     
 %define          with_binarytar     %{?_with_binarytar:1}%{!?_with_binarytar:0}
 
-%if %{!?rhel:6} < 6
-%define          qt4                qt4
-%else
+%if 0%{?rhel} > 5 || 0%{?fedora} > 10
 %define          qt4                qt
+%else
+%define          qt4                qt4
 %endif
 	     
 	     
@@ -19,6 +19,7 @@ Release:         1%{dist}
 License:         LGPL/GPL
 Group:           Applications/Engineering
 Source:          %{name}-%{version}.tar.bz2
+Patch0:          coriolis2-for-distribution.patch
 URL:             http://www-asim.lip6.fr/
 Packager:        Jean-Paul Chaput <Jean-Paul.Chaput@lip6.fr>
 Requires(post):  ldconfig
@@ -47,6 +48,7 @@ Development files for the Coriolis 2 package.
 
 %prep
 %setup
+%patch0 -p0 -b .soc
 
 
 %build
