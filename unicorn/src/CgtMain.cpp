@@ -157,7 +157,7 @@ int main ( int argc, char *argv[] )
                           "allowed to perform." )
       ( "cell,c"        , poptions::value<string>()
                         , "The name of the cell to load, whithout extension." )
-      ( "save,s"        , poptions::value<string>()->default_value("")
+      ( "save-design,s" , poptions::value<string>()->default_value("")
                         , "Save the routed design.")
       ( "save-global"   , poptions::bool_switch(&saveGlobal)->default_value(false)
                         , "Save the global routing solution.");
@@ -337,8 +337,8 @@ int main ( int argc, char *argv[] )
         kite->dumpMeasures          ();
         kite->destroy               ();
 
-        if ( arguments.count("save") ) {
-          cell->setName ( arguments["save"].as<string>().c_str() );
+        if ( arguments.count("save-design") ) {
+          cell->setName ( arguments["save-design"].as<string>().c_str() );
           af->saveCell ( cell, Catalog::State::Physical );
         }
 
