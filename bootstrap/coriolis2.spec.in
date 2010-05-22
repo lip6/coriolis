@@ -4,6 +4,13 @@
 %define          svntag             @svntag@
 	     
 %define          with_binarytar     %{?_with_binarytar:1}%{!?_with_binarytar:0}
+%define          python_sitedir     %(eval "
+import os.path
+import distutils.sysconfig
+
+pathes = distutils.sysconfig.get_python_lib().split('/')
+print os.path.join ( pathes[-2], pathes[-1] )
+")
 
 %if 0%{?rhel} > 5 || 0%{?fedora} > 10
 %define          qt4                qt
@@ -115,10 +122,10 @@ Development files for the Coriolis 2 package.
 %dir %{coriolisTop}/share/coriolis2/flute-2.4
 %dir %{coriolisTop}/bin
 %dir %{coriolisTop}/%{_lib}
-%dir %{coriolisTop}/%{_lib}/python
+%dir %{coriolisTop}/%{python_sitedir}
 %{coriolisTop}/bin/*
 %{coriolisTop}/%{_lib}/*.so
-%{coriolisTop}/%{_lib}/python/*.so
+%{coriolisTop}/%{python_sitedir}/*.so
 #%config(noreplace) %{_sysconfdir}/ld.so.conf.d/*
 %config(noreplace) %{_sysconfdir}/coriolis2/*.xml
 %config(noreplace) %{coriolisTop}/share/coriolis2/flute-2.4/*.dat
