@@ -54,8 +54,8 @@ Development files for the Coriolis 2 package.
 %build
  if [ -d %{buildroot} ]; then rm -r %{buildroot}; fi
 
- VLSISAPD_TOP=%{buildroot}%{coriolisTop}; export VLSISAPD_TOP
- CORIOLIS_TOP=%{buildroot}%{coriolisTop}; export CORIOLIS_TOP
+ VLSISAPD_TOP=%{coriolisTop}; export VLSISAPD_TOP
+ CORIOLIS_TOP=%{coriolisTop}; export CORIOLIS_TOP
 
 # Do build & install in one step.
  tools="vlsisapd hurricane crlcore knik katabatic kite equinox solstice unicorn"
@@ -110,6 +110,7 @@ Development files for the Coriolis 2 package.
 %files
 %defattr(-,root,root,-)
 %docdir %{_docdir}/coriolis2/
+%doc README.*
 %dir %{_sysconfdir}/coriolis2
 %dir %{coriolisTop}/share/coriolis2/flute-2.4
 %dir %{coriolisTop}/bin

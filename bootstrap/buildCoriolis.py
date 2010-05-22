@@ -117,6 +117,7 @@ class ProjectBuilder:
         self._specFile     = os.path.join ( self._sourceDir, "goodies", "coriolis2.spec" )
         self._sourceTarBz2 = "coriolis2-1.0.%s.tar.bz2"                  % self._svnTag
         self._binaryTarBz2 = "coriolis2-binary-1.0.%s-1.el5_soc.tar.bz2" % self._svnTag
+        self._distribPatch = os.path.join ( self._sourceDir, "goodies", "coriolis2-for-distribution.patch" )
         return
 
 
@@ -464,15 +465,18 @@ class ProjectBuilder:
 
         rpmSpecFile   = os.path.join ( self._rpmTopDir, "SPECS/coriolis2.spec" )
         rpmSourceFile = os.path.join ( self._rpmTopDir, "SOURCES", self._sourceTarBz2 )
+        rpmPatchFile  = os.path.join ( self._rpmTopDir, "SOURCES", "coriolis2-for-distribution.patch" )
 
         sourceFile = os.path.join ( self._tarballDir, self._sourceTarBz2 )
 
         if os.path.isfile ( rpmSpecFile ):
             os.unlink ( rpmSpecFile )
-
         os.symlink ( self._specFile  , rpmSpecFile   )
+
         if not os.path.islink ( rpmSourceFile ):
             os.symlink ( sourceFile, rpmSourceFile )
+        if not os.path.islink ( rpmPatchFile ):
+            os.symlink ( self._distribPatch, rpmPatchFile )
 
         os.chdir ( os.path.join ( os.environ["HOME"], "rpm" ) )
         command = [ "/usr/bin/rpmbuild", "-ba", "--with", "binarytar", rpmSpecFile ]
