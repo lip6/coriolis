@@ -4,13 +4,13 @@
 %define          svntag             @svntag@
 	     
 %define          with_binarytar     %{?_with_binarytar:1}%{!?_with_binarytar:0}
-%define          python_sitedir     %(eval "
+%define          python_sitedir     %{_lib}/%('
 import os.path
 import distutils.sysconfig
 
-pathes = distutils.sysconfig.get_python_lib().split('/')
+pathes = distutils.sysconfig.get_python_lib().split("/")
 print os.path.join ( pathes[-2], pathes[-1] )
-")
+')
 
 %if 0%{?rhel} > 5 || 0%{?fedora} > 10
 %define          qt4                qt
