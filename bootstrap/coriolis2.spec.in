@@ -64,7 +64,7 @@ Development files for the Coriolis 2 package.
  VLSISAPD_TOP=%{coriolisTop}; export VLSISAPD_TOP
  CORIOLIS_TOP=%{coriolisTop}; export CORIOLIS_TOP
 
-# Do build & install in one step, except for docs.
+# Do build & install in one step.
  tools="vlsisapd hurricane crlcore knik katabatic kite equinox solstice unicorn"
  for tool in $tools; do
    %__mkdir_p build/$tool
@@ -78,21 +78,15 @@ Development files for the Coriolis 2 package.
          -D LIB_SUFFIX:STRING=64                       \
 %endif
          ../../$tool
-   make DESTDIR=%{buildroot} %{_smp_mflags} install
-   popd
- done
-
-# Second step: docs.
- docTools="crlcore"
- for tool in $docTools; do
-   pushd build/$tool;
    makeArgs=""
    if [ "$tool" = "crlcore" ]; then
      makeArgs="dvi safepdf"
    fi
-   make DESTDIR=%{buildroot} %{_smp_mflags} ${makeArgs}
+   make DESTDIR=%{buildroot} %{_smp_mflags} ${makeArgs} install
    popd
  done
+
+ %__rm_f %{buildroot}%{coriolisTop}/share/doc/coriolis2
 
 
 %install
