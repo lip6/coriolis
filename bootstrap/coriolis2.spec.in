@@ -86,7 +86,7 @@ Development files for the Coriolis 2 package.
    popd
  done
 
- %__rm -r %{buildroot}%{coriolisTop}/share/doc/coriolis2
+ %__rm -rf %{buildroot}%{coriolisTop}/share/doc/coriolis2
 
 
 %install
