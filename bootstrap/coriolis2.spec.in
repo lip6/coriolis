@@ -71,6 +71,7 @@ Development files for the Coriolis 2 package.
    pushd build/$tool;
 
    makeArgs=""
+   cmakeArgs=""
    if [ "$tool" = "crlcore" ]; then
      makeArgs="dvi safepdf"
      cmakeArgs="-D BUILD_DOC:STRING=ON"
@@ -145,8 +146,8 @@ Development files for the Coriolis 2 package.
 %dir %{coriolisTop}/include/vlsisapd
 %dir %{coriolisTop}/include/vlsisapd/agds
 %dir %{coriolisTop}/include/vlsisapd/cif
-%dir %{coriolisTop}/include/vlsisapd/dtr
-%dir %{coriolisTop}/include/vlsisapd/openChams
+#%dir %{coriolisTop}/include/vlsisapd/dtr
+#%dir %{coriolisTop}/include/vlsisapd/openChams
 %dir %{coriolisTop}/include/coriolis2/hurricane
 %dir %{coriolisTop}/include/coriolis2/hurricane/viewer
 %dir %{coriolisTop}/include/coriolis2/hurricane/isobar
@@ -160,8 +161,8 @@ Development files for the Coriolis 2 package.
 %{coriolisTop}/share/cmake/Modules/*.cmake
 %{coriolisTop}/include/vlsisapd/agds/*.h
 %{coriolisTop}/include/vlsisapd/cif/*.h
-%{coriolisTop}/include/vlsisapd/dtr/*.h
-%{coriolisTop}/include/vlsisapd/openChams/*.h
+#%{coriolisTop}/include/vlsisapd/dtr/*.h
+#%{coriolisTop}/include/vlsisapd/openChams/*.h
 %{coriolisTop}/include/coriolis2/hurricane/*.h
 %{coriolisTop}/include/coriolis2/hurricane/viewer/*.h
 %{coriolisTop}/include/coriolis2/hurricane/isobar/*.h
