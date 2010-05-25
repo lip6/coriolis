@@ -249,13 +249,13 @@ class ProjectBuilder:
         self._execute ( command, "Second CMake failed" )
 
         if self._doBuild:
-            print "Make arguments:", self._makeArguments
-            sys.stdout.flush ()
-           #command  = ["make", "DESTDIR=%s" % self._installDir]
-           #command += self._makeArguments
-           #command  = self._makeArguments
-            command  = ["make"]
+            command  = [ "make" ]
+           #command += [ "DESTDIR=%s" % self._installDir ]
+            if tool == "crlcore" and self._enableDoc == "ON":
+                command += [ "dvi", "safepdf" ]
             command += self._makeArguments
+            print "Make command:", command
+            sys.stdout.flush ()
             self._execute ( command, "Build failed" )
         return
 
@@ -448,6 +448,13 @@ class ProjectBuilder:
         print "Creating tarball directory: \"%s\"." % self._tarballDir
         os.makedirs ( self._tarballDir )
         self.svnExport ( tools, projects )
+
+       # Remove unpublisheds (yet) parsers/drivers.
+        command = [ "/bin/rm", "-r", os.path.join(self._archiveDir,"vlsisapd","openChams") ]
+        self._execute ( command, "rm command failed" )
+
+        command = [ "/bin/rm", "-r", os.path.join(self._archiveDir,"vlsisapd","dtr") ]
+        self._execute ( command, "rm command failed" )
  
         os.chdir ( self._tarballDir )
         command = [ "/bin/tar", "jcvf", self._sourceTarBz2, os.path.basename(self._archiveDir) ]
