@@ -69,6 +69,13 @@ Development files for the Coriolis 2 package.
  for tool in $tools; do
    %__mkdir_p build/$tool
    pushd build/$tool;
+
+   makeArgs=""
+   if [ "$tool" = "crlcore" ]; then
+     makeArgs="dvi safepdf"
+     cmakeArgs="-D BUILD_DOC:STRING=ON"
+   fi
+
    cmake -D CMAKE_BUILD_TYPE:STRING=RELEASE            \
          -D BUILD_SHARED_LIBS:STRING=ON                \
          -D BUILD_DOC:STRING=OFF                       \
@@ -77,11 +84,8 @@ Development files for the Coriolis 2 package.
 %ifarch x86_64
          -D LIB_SUFFIX:STRING=64                       \
 %endif
+         ${cmakeArgs}                                  \
          ../../$tool
-   makeArgs=""
-   if [ "$tool" = "crlcore" ]; then
-     makeArgs="dvi safepdf"
-   fi
    make DESTDIR=%{buildroot} %{_smp_mflags} ${makeArgs} install
    popd
  done
