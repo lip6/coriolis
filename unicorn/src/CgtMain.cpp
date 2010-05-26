@@ -107,7 +107,7 @@ namespace {
 int main ( int argc, char *argv[] )
 {
   int   returnCode  = 0;
-  bool  kiteSuccess = false;
+  bool  kiteSuccess = true;
 
   try {
     float         edgeCapacity;
@@ -121,46 +121,50 @@ int main ( int argc, char *argv[] )
     bool          coreDump;
     bool          logMode;
     bool          textMode;
+    bool          globalRoute;
+    bool          detailedRoute;
     bool          loadGlobal;
     bool          saveGlobal;
 
     poptions::options_description options ("Command line arguments & options");
     options.add_options()
-      ( "help,h"        , "Print this help." )
-      ( "verbose,v"     , poptions::bool_switch(&verbose1)->default_value(false)
-                        , "First level of verbosity.")
-      ( "very-verbose,V", poptions::bool_switch(&verbose2)->default_value(false)
-                        , "Second level of verbosity.")
-      ( "info,i"        , poptions::bool_switch(&info)->default_value(false)
-                        , "Lots of informational messages.")
-      ( "show-conf"     , poptions::bool_switch(&showConf)->default_value(false)
-                        , "Print Kite configuration settings.")
-      ( "core-dump,D"   , poptions::bool_switch(&coreDump)->default_value(false)
-                        , "Enable core dumping.")
-      ( "log-mode,L"    , poptions::bool_switch(&logMode)->default_value(false)
-                        , "Disable ANSI escape sequences displaying.")
-      ( "text,t"        , poptions::bool_switch(&textMode)->default_value(false)
-                        , "Run in pure text mode.")
-      ( "global,g"      , poptions::bool_switch(&loadGlobal)->default_value(false)
-                        , "Reload the global routing from disk.")
-      ( "trace-level,l" , poptions::value<unsigned int>(&traceLevel)->default_value(1000)
-                        , "Set the level of trace, trace messages with a level superior to "
-                          "<arg> will be printed on <stderr>." )
-      ( "tool,T"        , poptions::value<string>()
-                        , "The tool to be run, in text mode." )
-      ( "edge,e"        , poptions::value<float>(&edgeCapacity)->default_value(0.65)
-                        , "The egde density ratio applied on global router's edges." )
-      ( "expand-step"   , poptions::value<float>(&expandStep)->default_value(0.99)
-                        , "The density delta above which GCells are aggregateds." )
-      ( "events-limit"  , poptions::value<unsigned long>(&eventsLimit)
-                        , "The maximum number of iterations (events) that the router is"
-                          "allowed to perform." )
-      ( "cell,c"        , poptions::value<string>()
-                        , "The name of the cell to load, whithout extension." )
-      ( "save-design,s" , poptions::value<string>()->default_value("")
-                        , "Save the routed design.")
-      ( "save-global"   , poptions::bool_switch(&saveGlobal)->default_value(false)
-                        , "Save the global routing solution.");
+      ( "help,h"           , "Print this help." )
+      ( "trace-level,l"    , poptions::value<unsigned int>(&traceLevel)->default_value(1000)
+                           , "Set the level of trace, trace messages with a level superior to "
+                             "<arg> will be printed on <stderr>." )
+      ( "verbose,v"        , poptions::bool_switch(&verbose1)->default_value(false)
+                           , "First level of verbosity.")
+      ( "very-verbose,V"   , poptions::bool_switch(&verbose2)->default_value(false)
+                           , "Second level of verbosity.")
+      ( "info,i"           , poptions::bool_switch(&info)->default_value(false)
+                           , "Lots of informational messages.")
+      ( "show-conf"        , poptions::bool_switch(&showConf)->default_value(false)
+                           , "Print Kite configuration settings.")
+      ( "core-dump,D"      , poptions::bool_switch(&coreDump)->default_value(false)
+                           , "Enable core dumping.")
+      ( "log-mode,L"       , poptions::bool_switch(&logMode)->default_value(false)
+                           , "Disable ANSI escape sequences displaying.")
+      ( "text,t"           , poptions::bool_switch(&textMode)->default_value(false)
+                           , "Run in pure text mode.")
+      ( "global-route,G"   , poptions::bool_switch(&globalRoute)->default_value(false)
+                           , "Run the global router (Knik).")
+      ( "load-global,g"    , poptions::bool_switch(&loadGlobal)->default_value(false)
+                           , "Reload the global routing from disk.")
+      ( "save-global"      , poptions::bool_switch(&saveGlobal)->default_value(false)
+                           , "Save the global routing solution.")
+      ( "edge,e"           , poptions::value<float>(&edgeCapacity)->default_value(0.65)
+                           , "The egde density ratio applied on global router's edges." )
+      ( "expand-step"      , poptions::value<float>(&expandStep)->default_value(0.99)
+                           , "The density delta above which GCells are aggregateds." )
+      ( "events-limit"     , poptions::value<unsigned long>(&eventsLimit)
+                           , "The maximum number of iterations (events) that the router is"
+                             "allowed to perform." )
+      ( "detailed-route,R" , poptions::bool_switch(&detailedRoute)->default_value(false)
+                           , "Run the detailed router (Kite).")
+      ( "cell,c"           , poptions::value<string>()
+                           , "The name of the cell to load, whithout extension." )
+      ( "save-design,s"    , poptions::value<string>()
+                           , "Save the routed design.");
 
     poptions::variables_map arguments;
     poptions::store  ( poptions::parse_command_line(argc,argv,options), arguments );
@@ -191,6 +195,11 @@ int main ( int argc, char *argv[] )
         cerr << "[ERROR] Cell not found: " << arguments["cell"].as<string>() << endl;
         exit ( 2 );
       }
+    } else {
+      loadGlobal    = false;
+      saveGlobal    = false;
+      globalRoute   = false;
+      detailedRoute = false;
     }
 
     Kite::Configuration::getDefault()->setEdgeCapacityPercent ( edgeCapacity );
@@ -315,11 +324,15 @@ int main ( int argc, char *argv[] )
       returnCode = qa->exec ();
       ToolEngine::destroyAll ();
     } else {
-      if ( arguments.count("tool") and (arguments["tool"].as<string>() == "kite") ) {
+      if ( detailedRoute and not (loadGlobal or globalRoute) ) globalRoute = true;
+
+      bool runKiteTool = loadGlobal or globalRoute or detailedRoute;
+
+      if ( runKiteTool ) {
       //cell->flattenNets ( not arguments.count("global") );
 
-        unsigned int globalFlags = (arguments["global"].as<bool>()) ? Kite::LoadGlobalSolution
-                                                                    : Kite::BuildGlobalSolution;
+        unsigned int globalFlags = (loadGlobal) ? Kite::LoadGlobalSolution
+                                                : Kite::BuildGlobalSolution;
 
         static KatabaticEngine::NetSet routingNets;
         KiteEngine* kite = KiteEngine::create ( cell );
@@ -329,17 +342,19 @@ int main ( int argc, char *argv[] )
         kite->runGlobalRouter ( globalFlags );
         if ( saveGlobal ) kite->saveGlobalSolution ();
 
-        kite->loadGlobalRouting     ( Katabatic::LoadGrByNet, routingNets );
-        kite->layerAssign           ( Katabatic::NoNetLayerAssign );
-        kite->runNegociate          ();
-        kiteSuccess = kite->getToolSuccess ();
-        kite->finalizeLayout        ();
-        kite->dumpMeasures          ();
-        kite->destroy               ();
+        if ( detailedRoute ) {
+          kite->loadGlobalRouting     ( Katabatic::LoadGrByNet, routingNets );
+          kite->layerAssign           ( Katabatic::NoNetLayerAssign );
+          kite->runNegociate          ();
+          kiteSuccess = kite->getToolSuccess ();
+          kite->finalizeLayout        ();
+          kite->dumpMeasures          ();
+          kite->destroy               ();
 
-        if ( arguments.count("save-design") ) {
-          cell->setName ( arguments["save-design"].as<string>().c_str() );
-          af->saveCell ( cell, Catalog::State::Physical );
+          if ( arguments.count("save-design") ) {
+            cell->setName ( arguments["save-design"].as<string>().c_str() );
+            af->saveCell ( cell, Catalog::State::Physical );
+          }
         }
 
         returnCode = (kiteSuccess) ? 0 : 1;
