@@ -91,7 +91,7 @@ Development files for the Coriolis 2 package.
    makeArgs=""
    cmakeArgs=""
    if [ "$tool" = "crlcore" ]; then
-     makeArgs="dvi safepdf"
+     makeArgs="dvi safepdf html"
      cmakeArgs="-D BUILD_DOC:STRING=ON"
    fi
 
@@ -143,7 +143,7 @@ Development files for the Coriolis 2 package.
 %files
 %defattr(-,root,root,-)
 #%doc %{_docdir}/coriolis2/README.*
-%doc build/crlcore/doc/README.{tex,dvi,pdf}
+%doc build/crlcore/doc/README.{tex,dvi,pdf} build/crlcore/doc/README
 %dir %{_sysconfdir}/coriolis2
 %dir %{coriolisTop}/share/coriolis2/flute-2.4
 %dir %{coriolisTop}/bin
