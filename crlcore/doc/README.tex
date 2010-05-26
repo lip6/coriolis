@@ -14,14 +14,12 @@
    \usepackage[sf,bf]{titlesec}
    \usepackage{titletoc}
    \usepackage{float}
-   \usepackage{epic}
-   \usepackage{eepic}
    \usepackage[dvips]{graphicx}
   %\usepackage[dvips]{color}
    \usepackage{listings}
-  %\usepackage[hyphens]{url}
-  %\usepackage{html}
    \usepackage[dvips]{hyperref}
+  %\usepackage[hyphens]{url}
+   \usepackage{html}
    \usepackage[paper=a4paper
               ,headheight=30pt
               ]{geometry}
@@ -29,6 +27,30 @@
 
    \newcommand{\key}[1]{\fbox{\textsf{#1}}}
    \newcommand{\menu}[1]{\fbox{\textsf{\textbf{{#1}}}}}
+
+   \newcommand {\crlWebUrl}    [1] {http://asim.lip6.fr/recherche/coriolis/#1}
+   \newcommand {\crlFtpUrl}    [1] {http://asim.lip6.fr/pub/coriolis/2.0/#1}
+   \newcommand {\alcFtpUrl}    [1] {http://asim.lip6.fr/pub/alliance/distribution/5.0/#1}
+   \newcommand {\slSocSrpmsUrl}[1] {http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/i386/SLSoC/SRPMS/#1}
+   \newcommand {\slRpmsUrl}    [1] {http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/i386/i386/SL/#1}
+
+   \latexhtml{
+    %% LaTeX specific code.
+     \newcommand{\xhref}        [2]{\href{#2}{#1}}
+     \newcommand{\crlWebRef}    [1]{\href{\crlWebUrl{#1}}{\texttt{\footnotesize #1}}}
+     \newcommand{\crlFtpRef}    [1]{\href{\crlFtpUrl{#1}}{\texttt{\footnotesize #1}}}
+     \newcommand{\alcFtpRef}    [1]{\href{\alcFtpUrl{#1}}{\texttt{\footnotesize #1}}}
+     \newcommand{\slSocSrpmsRef}[1]{\href{\slSocSrpmsUrl{#1}}{\texttt{\footnotesize #1}}}
+     \newcommand{\slRpmsRef}    [1]{\href{\slRpmsUrl{#1}}{\texttt{\footnotesize #1}}}
+   }{
+    %% LaTeX2HTML specific code.
+     \newcommand{\xhref}        [2]{\htmladdnormallink{#1}{#2}}
+     \newcommand{\crlWebRef}    [1]{\htmladdnormallink{#1}{\crlWebUrl{#1}}}
+     \newcommand{\crlFtpRef}    [1]{\htmladdnormallink{#1}{\crlFtpUrl{#1}}}
+     \newcommand{\alcFtpRef}    [1]{\htmladdnormallink{#1}{\alcFtpUrl{#1}}}
+     \newcommand{\slSocSrpmsRef}[1]{\htmladdnormallink{#1}{\slSocSrpmsUrl{#1}}}
+     \newcommand{\slRpmsRef}    [1]{\htmladdnormallink{#1}{\slRpmsUrl{#1}}}
+   }
 
    \newcommand {\Alexandre}          {\textsc{Alexandre}\xspace}
    \newcommand {\Chaput}             {\textsc{Chaput}\xspace}
@@ -43,11 +65,11 @@
    \newcommand {\ANSI}               {\textsc{ansi}\xspace}
    \newcommand {\XML}                {\textsc{xml}\xspace}
    \newcommand {\VHDL}               {\textsc{vhdl}\xspace}
-   \newcommand {\FEL}                {\href{http://spins.fedoraproject.org/fel/}{\textsc{fel}}\xspace}
-   \newcommand {\SiII}               {\href{http://www.si2.org/}{\textsc{Si2}}\xspace}
-   \newcommand {\Bull}               {\href{http://www.bull.com/}{\textsc{Bull}}\xspace}
-   \newcommand {\UPMC}               {\href{http://www.upmc.fr/}{\textsc{upmc}}\xspace}
-   \newcommand {\Cadence}            {\href{http://www.cadence.com/}{\textsc{Cadence}}\xspace}
+   \newcommand {\FEL}                {\xhref{\textsc{fel}}{http://spins.fedoraproject.org/fel/}\xspace}
+   \newcommand {\SiII}               {\xhref{\textsc{Si2}}{http://www.si2.org/}\xspace}
+   \newcommand {\Bull}               {\xhref{\textsc{Bull}}{http://www.bull.com/}\xspace}
+   \newcommand {\UPMC}               {\xhref{\textsc{upmc}}{http://www.upmc.fr/}\xspace}
+   \newcommand {\Cadence}            {\xhref{\textsc{Cadence}}{http://www.cadence.com/}\xspace}
    \newcommand {\LEFDEF}             {\textsc{lef/def}\xspace}
    \newcommand {\RHELV}              {\textsc{rhel 5}\xspace}
    \newcommand {\CentOSV}            {\textsc{CentOS 5}\xspace}
@@ -57,8 +79,8 @@
    \newcommand {\rpm}                {\texttt{rpm}\xspace}
    \newcommand {\tty}                {\texttt{tty}\xspace}
    \newcommand {\BoxRouter}          {\textsc{BoxRouter}\xspace}
-   \newcommand {\BoxRouterRef}%
-     {\href{http://www.cerc.utexas.edu/~thyeros/boxrouter/boxrouter.htm}{\BoxRouter}\xspace}
+   \newcommand {\BoxRouterRef}       {\xhref{\BoxRouter}%
+                                      {http://www.cerc.utexas.edu/~thyeros/boxrouter/boxrouter.htm}\xspace}
    \newcommand {\netlist}            {\textit{netlist}\xspace}
    \newcommand {\physical}           {\textit{physical}\xspace}
    \newcommand {\logical}            {\textit{logical}\xspace}
@@ -90,69 +112,69 @@
    \newcommand {\MV}                 {\texttt{M5}\xspace}
 
    \newcommand {\knikThesis}%
-     {\href{http://www-soc.lip6.fr/en/users/damiendupuis/thesis/}%
-      {\texttt{http://www-soc.lip6.fr/en/users/damiendupuis/thesis/}\xspace}}
+     {\xhref{\texttt{http://www-soc.lip6.fr/en/users/damiendupuis/thesis/}}%
+            {http://www-soc.lip6.fr/en/users/damiendupuis/thesis/}\xspace}
 
-   \newcommand {\coriolisIIfcXIIirpm}%
-     {\href{ftp://asim.lip6.fr/pub/coriolis/2.0/coriolis2-1.0.1390-1.fc12.i386.rpm}%
-      {\texttt{coriolis2-1.0.1390-1.fc12.i386.rpm}\xspace}}
-   \newcommand {\coriolisIIfcXIIxrpm}%
-     {\href{ftp://asim.lip6.fr/pub/coriolis/2.0/coriolis2-1.0.1390-1.fc12.x86\_64.rpm}%
-      {\texttt{coriolis2-1.0.1390-1.fc12.x86\_64.rpm}\xspace}}
-   \newcommand {\coriolisIIslVirpm}%
-     {\href{ftp://asim.lip6.fr/pub/coriolis/2.0/coriolis2-1.0.1390-1.sl5\_soc.i386.rpm}%
-      {\texttt{coriolis2-1.0.1390-1.sl5\_soc.i386.rpm}\xspace}}
-   \newcommand {\coriolisIIslVxrpm}%
-     {\href{ftp://asim.lip6.fr/pub/coriolis/2.0/coriolis2-1.0.1390-1.sl5\_soc.x86\_64.rpm}%
-      {\texttt{coriolis2-1.0.1390-1.sl5\_soc.x86\_64.rpm}\xspace}}
+   \newcommand {\coriolisIIfcXIIirpm}{\crlFtpRef{coriolis2-1.0.1390-1.fc12.i386.rpm}\xspace}
+   \newcommand {\coriolisIIfcXIIxrpm}{\crlFtpRef{coriolis2-1.0.1390-1.fc12.x86\_64.rpm}\xspace}
+   \newcommand {\coriolisIIslVirpm}  {\crlFtpRef{coriolis2-1.0.1390-1.sl5\_soc.i386.rpm}\xspace}
+   \newcommand {\coriolisIIslVxrpm}  {\crlFtpRef{coriolis2-1.0.1390-1.sl5\_soc.x86\_64.rpm}\xspace}
+   \newcommand {\qtIVsrpm}           {\slSocSrpmsRef{qt4-4.5.0-8.sl5soc.src.rpm}\xspace}
+   \newcommand {\qtIVirpm}           {\slRpmsRef{qt4-4.5.0-8.sl5soc.i386.rpm}\xspace}
+   \newcommand {\qtIVdevelirpm}      {\slRpmsRef{qt4-devel-4.5.0-8.sl5soc.i386.rpm}\xspace}
+   \newcommand {\qtIVdocirpm}        {\slRpmsRef{qt4-doc-4.5.0-8.sl5soc.i386.rpm}\xspace}
+   \newcommand {\qtIVmysqlirpm}      {\slRpmsRef{qt4-mysql-4.5.0-8.sl5soc.i386.rpm}\xspace}
+   \newcommand {\qtIVodbcirpm}       {\slRpmsRef{qt4-odbc-4.5.0-8.sl5soc.i386.rpm}\xspace}
+   \newcommand {\qtIVpostgresqlirpm} {\slRpmsRef{qt4-postgresql-4.5.0-8.sl5soc.i386.rpm}\xspace}
+   \newcommand {\qtIVxXIirpm}        {\slRpmsRef{qt4-x11-4.5.0-8.sl5soc.i386.rpm}\xspace}
 
-   \newcommand {\qtIVsrpm}%
-     {\href{http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/SLSoC/SRPMS/SL/qt4-4.5.0-8.sl5soc.src.rpm}%
-      {\texttt{qt4-4.5.0-8.sl5soc.src.rpm}\xspace}}
-   \newcommand {\qtIVirpm}%
-     {\href{http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/i386/i386/SL/qt4-4.5.0-8.sl5soc.i386.rpm}%
-      {\texttt{qt4-4.5.0-8.sl5soc.i386.rpm}\xspace}}
-   \newcommand {\qtIVdevelirpm}%
-     {\href{http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/i386/i386/SL/qt4-devel-4.5.0-8.sl5soc.i386.rpm}%
-      {\texttt{qt4-devel-4.5.0-8.sl5soc.i386.rpm}\xspace}}
-   \newcommand {\qtIVdocirpm}%
-     {\href{http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/i386/i386/SL/qt4-doc-4.5.0-8.sl5soc.i386.rpm}%
-      {\texttt{qt4-doc-4.5.0-8.sl5soc.i386.rpm}\xspace}}
-   \newcommand {\qtIVmysqlirpm}%
-     {\href{http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/i386/i386/SL/qt4-mysql-4.5.0-8.sl5soc.i386.rpm}%
-      {\texttt{qt4-mysql-4.5.0-8.sl5soc.i386.rpm}\xspace}}
-   \newcommand {\qtIVodbcirpm}%
-     {\href{http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/i386/i386/SL/qt4-odbc-4.5.0-8.sl5soc.i386.rpm}%
-      {\texttt{qt4-odbc-4.5.0-8.sl5soc.i386.rpm}\xspace}}
-   \newcommand {\qtIVpostgresqlirpm}%
-     {\href{http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/i386/i386/SL/qt4-postgresql-4.5.0-8.sl5soc.i386.rpm}%
-      {\texttt{qt4-postgresql-4.5.0-8.sl5soc.i386.rpm}\xspace}}
-   \newcommand {\qtIVxXIirpm}%
-     {\href{http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/i386/i386/SL/qt4-x11-4.5.0-8.sl5soc.i386.rpm}%
-      {\texttt{qt4-x11-4.5.0-8.sl5soc.i386.rpm}\xspace}}
-
-   \newcommand {\keyUP}             {\key{UP}\xspace}
-   \newcommand {\keyDOWN}           {\key{DOWN}\xspace}
-   \newcommand {\keyLEFT}           {\key{LEFT}\xspace}
-   \newcommand {\keyRIGHT}          {\key{RIGHT}\xspace}
-   \newcommand {\keyCTRL}           {\key{CTRL}\xspace}
-   \newcommand {\keyESC}            {\key{ESC}\xspace}
-   \newcommand {\keyf}              {\key{f}\xspace}
-   \newcommand {\keyG}              {\key{G}\xspace}
-   \newcommand {\keyI}              {\key{I}\xspace}
-   \newcommand {\keyL}              {\key{L}\xspace}
-   \newcommand {\keym}              {\key{m}\xspace}
-   \newcommand {\keyk}              {\key{k}\xspace}
-   \newcommand {\keyK}              {\key{K}\xspace}
-   \newcommand {\keyO}              {\key{O}\xspace}
-   \newcommand {\keyP}              {\key{P}\xspace}
-   \newcommand {\keyQ}              {\key{Q}\xspace}
-   \newcommand {\keys}              {\key{s}\xspace}
-   \newcommand {\keyW}              {\key{W}\xspace}
-   \newcommand {\keyS}              {\key{S}\xspace}
-   \newcommand {\keyz}              {\key{z}\xspace}
-   \newcommand {\keyMouseLeftPress} {\key{\ComputerMouse LEFT\_PRESS}\xspace}
-   \newcommand {\BigMouse}          {{\Huge \ComputerMouse}\xspace}
+   \latexhtml{ %% LaTeX version.
+   \newcommand {\keyUP}              {\key{UP}\xspace}
+   \newcommand {\keyDOWN}            {\key{DOWN}\xspace}
+   \newcommand {\keyLEFT}            {\key{LEFT}\xspace}
+   \newcommand {\keyRIGHT}           {\key{RIGHT}\xspace}
+   \newcommand {\keyCTRL}            {\key{CTRL}\xspace}
+   \newcommand {\keyESC}             {\key{ESC}\xspace}
+   \newcommand {\keyf}               {\key{f}\xspace}
+   \newcommand {\keyG}               {\key{G}\xspace}
+   \newcommand {\keyI}               {\key{I}\xspace}
+   \newcommand {\keyL}               {\key{L}\xspace}
+   \newcommand {\keym}               {\key{m}\xspace}
+   \newcommand {\keyk}               {\key{k}\xspace}
+   \newcommand {\keyK}               {\key{K}\xspace}
+   \newcommand {\keyO}               {\key{O}\xspace}
+   \newcommand {\keyP}               {\key{P}\xspace}
+   \newcommand {\keyQ}               {\key{Q}\xspace}
+   \newcommand {\keys}               {\key{s}\xspace}
+   \newcommand {\keyW}               {\key{W}\xspace}
+   \newcommand {\keyS}               {\key{S}\xspace}
+   \newcommand {\keyz}               {\key{z}\xspace}
+   \newcommand {\keyPlus}            {$+$\xspace}
+   \newcommand {\BigMouse}           {{\Huge \ComputerMouse}\xspace}
+   }{ %% HTML version.
+   \newcommand {\keyUP}              {\includegraphics{images/key_UP}\xspace}
+   \newcommand {\keyDOWN}            {\includegraphics{images/key_DOWN}\xspace}
+   \newcommand {\keyLEFT}            {\includegraphics{images/key_LEFT}\xspace}
+   \newcommand {\keyRIGHT}           {\includegraphics{images/key_RIGHT}\xspace}
+   \newcommand {\keyCTRL}            {\includegraphics{images/key_CTRL}\xspace}
+   \newcommand {\keyESC}             {\includegraphics{images/key_ESC}\xspace}
+   \newcommand {\keyf}               {\includegraphics{images/key_f}\xspace}
+   \newcommand {\keyG}               {\includegraphics{images/key_G}\xspace}
+   \newcommand {\keyI}               {\includegraphics{images/key_I}\xspace}
+   \newcommand {\keyL}               {\includegraphics{images/key_L}\xspace}
+   \newcommand {\keym}               {\includegraphics{images/key_m}\xspace}
+   \newcommand {\keyk}               {\includegraphics{images/key_k}\xspace}
+   \newcommand {\keyK}               {\includegraphics{images/key_K}\xspace}
+   \newcommand {\keyO}               {\includegraphics{images/key_O}\xspace}
+   \newcommand {\keyP}               {\includegraphics{images/key_P}\xspace}
+   \newcommand {\keyQ}               {\includegraphics{images/key_Q}\xspace}
+   \newcommand {\keys}               {\includegraphics{images/key_s}\xspace}
+   \newcommand {\keyW}               {\includegraphics{images/key_W}\xspace}
+   \newcommand {\keyS}               {\includegraphics{images/key_S}\xspace}
+   \newcommand {\keyz}               {\includegraphics{images/key_z}\xspace}
+   \newcommand {\keyPlus}            {\includegraphics{images/key_PLUS}\xspace}
+   \newcommand {\BigMouse}           {\includegraphics[scale=.4]{images/ComputerMouse}\xspace}
+   }
 
   %\setlength {\parskip}        {4mm}    
   %\setlength {\itemsep}        {4mm}    
@@ -179,15 +201,15 @@
   %}
 
    \titlecontents{section}[1pc]
-     {\sffamily\bfseries}                                 % above code.
-     {\contentslabel{1pc}}                                % numbered entry format.
-     {The Numberless Entry Format}                        % numberless entry format.
-     {\titlerule*[8pt]{.}\textsc\textbf{{\contentspage}}} % page format.
+     {\sffamily\bfseries}                                   % above code.
+     {\contentslabel{1pc}}                                  % numbered entry format.
+     {The Numberless Entry Format}                          % numberless entry format.
+     {\titlerule*[8pt]{.}\textsc{\textbf{{\contentspage}}}} % page format.
    \titlecontents{subsection}[3pc]
-     {\sffamily}                                          % above code.
-     {\contentslabel{2pc}}                                % numbered entry format.
-     {The Numberless Entry Format}                        % numberless entry format.
-     {\titlerule*[8pt]{.}\textsc\textbf{{\contentspage}}} % page format.
+     {\sffamily}                                            % above code.
+     {\contentslabel{2pc}}                                  % numbered entry format.
+     {The Numberless Entry Format}                          % numberless entry format.
+     {\titlerule*[8pt]{.}\textsc{\textbf{{\contentspage}}}} % page format.
 
 
  \begin{document}
@@ -350,10 +372,14 @@
 
   \noindent Menus~:
   \begin{itemize}
-    \item \menu{P\&R}$\rightarrow$\menu{\underline{S}tep by Step}
-                     $\rightarrow$\menu{Kite -- \underline{S}ave Global Routing}
-    \item \menu{P\&R}$\rightarrow$\menu{\underline{S}tep by Step}
-                     $\rightarrow$\menu{Kite -- \underline{L}oad Global Routing}
+    \item
+      \latexhtml{\menu{P\&R}$\rightarrow$\menu{\underline{S}tep by Step}
+                             $\rightarrow$\menu{Kite -- \underline{S}ave Global Routing}}
+                {\includegraphics{images/PR-SBS-SaveGlobal}}
+    \item
+      \latexhtml{\menu{P\&R}$\rightarrow$\menu{\underline{S}tep by Step}
+                            $\rightarrow$\menu{Kite -- \underline{L}oad Global Routing}}
+                {\includegraphics{images/PR-SBS-LoadGlobal}}
   \end{itemize}
 
 
@@ -375,9 +401,15 @@
   \medskip\noindent
   Routing a design is done in three ordered steps~:
   \begin{enumerate}
-    \item Global routing \menu{P\&R}$\rightarrow$\menu{Kite -- \underline{G}lobal Route}
-    \item Detailed routing \menu{P\&R}$\rightarrow$\menu{Kite -- \underline{D}ailed Route}
-    \item Finalize routing \menu{P\&R}$\rightarrow$\menu{Kite -- \underline{F}inalize Route}
+    \item Global routing
+          \latexhtml{\menu{P\&R}$\rightarrow$\menu{Kite -- \underline{G}lobal Route}}
+                    {\includegraphics{images/PR-GlobalRoute}}
+    \item Detailed routing
+          \latexhtml{\menu{P\&R}$\rightarrow$\menu{Kite -- \underline{D}etailed Route}}
+                    {\includegraphics{images/PR-DetailedRoute}}
+    \item Finalize routing
+          \latexhtml{\menu{P\&R}$\rightarrow$\menu{Kite -- \underline{F}inalize Route}}
+                    {\includegraphics{images/PR-FinalizeRoute}}
   \end{enumerate}
   After the detailed routing step the \Kite data-structure is still active.
   The wiring is thus represented in a way that allows \Kite to manage it but
@@ -394,11 +426,11 @@
   The main application binary is \cgt.
 
   \begin{center}
-  \newlength\keyheight \settoheight\keyheight{\keyUP} \addtolength\keyheight{5pt}
-  \newlength\keydepth  \settodepth \keydepth {\keyUP} \addtolength\keydepth {5pt}
+  \newlength{\keyheight} \settoheight{\keyheight}{\keyUP} \addtolength{\keyheight}{5pt}
+  \newlength{\keydepth}  \settodepth {\keydepth} {\keyUP} \addtolength{\keydepth} {5pt}
 
-  \newcommand\keytabpar[1]{\parbox[t]{.2\textwidth}{\rule{0pt}{\keyheight} \centering #1 \rule[-\keydepth]{0pt}{0pt}}}
-  \newcommand\sfbf[1]{\textsf{\textbf{#1}}}
+  \newcommand{\keytabpar}[1]{\parbox[t]{.2\textwidth}{\rule{0pt}{\keyheight} \centering #1 \rule[-\keydepth]{0pt}{0pt}}}
+  \newcommand{\sfbf}[1]{\textsf{\textbf{#1}}}
 
   \begin{longtable}{|c|c|p{.55\textwidth}|}
     \endfirsthead
@@ -417,7 +449,7 @@
       & Fit contents to window \\
     \hline
     \sfbf{Refresh}
-      & \keytabpar{\keyCTRL$+$\keyL}
+      & \keytabpar{\keyCTRL\keyPlus\keyL}
       & Triggers a complete display redraw \\
     \hline
     \sfbf{Goto}
@@ -449,7 +481,7 @@
       & Toggle the selection visibility \\
     \hline
     \sfbf{Controller}
-      & \keytabpar{\keyCTRL$+$\keyI}
+      & \keytabpar{\keyCTRL\keyPlus\keyI}
       & Show/hide the controller window.
 
         It's the Swiss Army Knife of the viewer. From it, you can fine-control
@@ -467,31 +499,31 @@
       & Clears all the drawn rulers \\
     \hline
     \sfbf{Print}
-      & \keytabpar{\keyCTRL$+$\keyP}
+      & \keytabpar{\keyCTRL\keyPlus\keyP}
       & Currently rather crude. It's a direct copy of what's displayed in pixels.
         So the resulting picture will be a little blurred due to anti-aliasing
         mechanism. \\
     \hline
     \sfbf{Open/Close}
-      & \keytabpar{\keyCTRL$+$\keyO}
+      & \keytabpar{\keyCTRL\keyPlus\keyO}
       & Opens a new design. The design name must be given without path or extention. \\
     \cline{2-3}
-      & \keytabpar{\keyCTRL$+$\keyW}
+      & \keytabpar{\keyCTRL\keyPlus\keyW}
       & Close the current viewer window, but do not quit the application. \\
     \cline{2-3}
-      & \keytabpar{\keyCTRL$+$\keyQ}
+      & \keytabpar{\keyCTRL\keyPlus\keyQ}
       & CTRL+Q quit the application (closing all windows). \\
     \hline
     \sfbf{Hierarchy}
-      & \keytabpar{\keyCTRL$+$\keyDOWN}
+      & \keytabpar{\keyCTRL\keyPlus\keyDOWN}
       & Go one hierarchy level down. That is, if there is an \textit{instance}\ under
         the cursor position, load it's \textit{model}\ (\Cell) in place of the current one. \\
     \cline{2-3}
-      & \keytabpar{\keyCTRL$+$\keyUP}
+      & \keytabpar{\keyCTRL\keyPlus\keyUP}
       & Go one hierarchy level up. if we have entered the current model through
-        \keyCTRL$+$\keyDOWN, reload the previous model (the one in which this model is
+        \keyCTRL\keyPlus\keyDOWN, reload the previous model (the one in which this model is
         instanciated). \\
-    \hline
+    \latex{\hline}
   \end{longtable}
   \end{center}
 
@@ -501,18 +533,18 @@
   \begin{longtable}{|c|p{.55\textwidth}|}
       \hline
       \textbf{Argument} & Meaning \\
-      \hline
+      \latex{\hline}
       \hline
     \endfirsthead
       \hline
       \textbf{Argument} & Meaning \\
-      \hline
+      \latex{\hline}
       \hline
     \endhead
       \hline
     \endfoot
     \endlastfoot
-    \hline
+    \latex{\hline}
     \texttt{-t|--text}
       & Instruct \cgt to run in text mode. \\
     \hline
@@ -520,22 +552,24 @@
       & Disable the uses of \ANSI escape sequence on the \tty. Useful when
         the output is redirected to a file. \\
     \hline
-    \texttt{-T|--tool=<TOOL>}
-      & Select the tool to run. Currently only one is avalaible~:
-        \texttt{kite}. \\
-    \hline
     \texttt{-c|--cell=<design>}
       & The name of the design to load, without leading path or
         extention. \\
     \hline
-    \texttt{-g|--global}
+    \texttt{-g|--load-global}
       & Reload a global routing solution from disk. \linebreak
         The file containing the solution must be named \texttt{<design>.kgr}. \\
     \hline
     \texttt{--save-global}
       & Save the global routing solution, into a file named \texttt{<design>.kgr}. \\
     \hline
+    \texttt{--global-route|-G}
+      & Run the global router (\Knik). \\
+    \hline
     \newpage
+    \texttt{--detailed-route|-G}
+      & Run the detailed router (\Kite). \\
+    \hline
     \multicolumn{2}{|l|}{\texttt{-s|--save-design=<routed\_design>}} \\
     \cline{1-1}
       & The design into which the routed layout will be saved. It is strongly
@@ -547,7 +581,7 @@
         mainly a failsafe against looping. The limit is sets to 4 millions of
         iteration which should suffice to any design of \texttt{100K}\xspace
         gates. For bigger designs you may wants to increase this limit. \\
-    \hline
+    \latex{\hline}
   \end{longtable}
   \end{center}
 
@@ -555,12 +589,12 @@
   Some examples~:
   \begin{itemize}
     \item Run both global and detailed router, then save the routed design~: \\
-          \texttt{> cgt -v -t --tool=kite --cell=design --save-design=design\_kite}
+          \texttt{> cgt -v -t -G -R --cell=design --save-design=design\_kite}
     \item Load a previous global solution, run the detailed router, then save the
           routed design~: \\
-          \texttt{> cgt -v -t --tool=kite --global --cell=design --save-design=design\_kite}
+          \texttt{> cgt -v -t --load-global -R --cell=design --save-design=design\_kite}
     \item Run the global router, then save the global routing solution~: \\
-          \texttt{> cgt -v -t --tool=kite --save-global --cell=design}
+          \texttt{> cgt -v -t -G --save-global --cell=design}
   \end{itemize}
 
 

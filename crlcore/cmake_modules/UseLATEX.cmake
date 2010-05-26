@@ -480,6 +480,9 @@ MACRO(LATEX_PROCESS_IMAGES dvi_outputs pdf_outputs)
       GET_FILENAME_COMPONENT(path "${output_dir}/${file}" PATH)
       MAKE_DIRECTORY("${path}")
 
+      # Copy the source file anyway.
+      FILE ( COPY "${file}" DESTINATION "${path}" )
+
       # Do conversions for dvi.
       LATEX_CONVERT_IMAGE(${dvi_outputs} "${file}" .eps "${convert_flags}"
         "${LATEX_DVI_IMAGE_EXTENSIONS}" "${ARGN}")
