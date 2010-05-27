@@ -1,55 +1,3 @@
---- unicorn/src/CgtMain.cpp.soc	2010-05-26 09:50:43.000000000 +0200
-+++ unicorn/src/CgtMain.cpp	2010-05-26 09:52:22.000000000 +0200
-@@ -66,36 +66,6 @@
- using namespace Unicorn;
- 
- 
--namespace {
--
--
--// -------------------------------------------------------------------
--// Function  :  "printHelp()".
--
--  void  printHelp ()
--  {
--    cout << endl;
--    cout << "Usage: cgt [-v|--verbose] [-V|--very-verbose] [-D|--core-dump]    \\\n"
--         << "           [-l|--trace-level <traceLevel>] [-c|--cell <cellName>] \\\n"
--         << endl;
--    cout << "Options:\n"
--         << "    o  [-v|--verbose]      : First level of verbosity.\n"
--         << "    o  [-V|--very-verbose] : Second level of verbosity (very talkative).\n"
--         << "    o  [-D|--core-dump]    : Enable core dumping.\n"
--         << "    o  [-l|--trace-level <traceLevel>] :\n"
--         << "           Sets the level of trace, trace messages with a level superior to\n"
--         << "           <traceLevel> will be printed on <stderr>.\n"
--         << "    o  [-c|--cell <cellName>] :\n"
--         << "           The name of the Cell to load, without extention.\n"
--         << endl;
--  }
--
--
--} // End of anonymous namespace.
--
--
--
--
- // x-----------------------------------------------------------------x
- // |                      Fonctions Definitions                      |
- // x-----------------------------------------------------------------x
-@@ -129,9 +99,9 @@
-     poptions::options_description options ("Command line arguments & options");
-     options.add_options()
-       ( "help,h"           , "Print this help." )
--      ( "trace-level,l"    , poptions::value<unsigned int>(&traceLevel)->default_value(1000)
--                           , "Set the level of trace, trace messages with a level superior to "
--                             "<arg> will be printed on <stderr>." )
-+      // ( "trace-level,l"    , poptions::value<unsigned int>(&traceLevel)->default_value(1000)
-+      //                      , "Set the level of trace, trace messages with a level superior to "
-+      //                        "<arg> will be printed on <stderr>." )
-       ( "verbose,v"        , poptions::bool_switch(&verbose1)->default_value(false)
-                            , "First level of verbosity.")
-       ( "very-verbose,V"   , poptions::bool_switch(&verbose2)->default_value(false)
 diff --exclude=.svn -uNr crlcore/etc.soc/CMakeLists.txt crlcore/etc/CMakeLists.txt
 --- crlcore/etc.soc/CMakeLists.txt	2010-05-27 13:37:15.000000000 +0200
 +++ crlcore/etc/CMakeLists.txt	2010-05-27 13:37:57.000000000 +0200
@@ -75,7 +23,7 @@ diff --exclude=.svn -uNr crlcore/etc.soc/environment.alliance.xml crlcore/etc/en
 +      <config>/etc/coriolis2/technology.symbolic.xml</config>
      </hurricane>
      <real>
--      <config>${CORIOLIS_TOP}/etc/coriolis2/technology.hcmos9.s2r.xml</config>
+-      <config>${CORIOLIS_TOP}/etc/coriolis2/technology.cmos130.s2r.xml</config>
 +      <config>/etc/coriolis2/technology.fake.s2r.xml</config>
      </real>
      <lef>
@@ -187,3 +135,36 @@ diff --exclude=.svn -uNr crlcore/etc.soc/technology.freePDK45.s2r.xml crlcore/et
 -    </layers>
 -  </real>
 -</technology>
+--- unicorn/src/CgtMain.cpp.soc	2010-05-27 18:22:37.000000000 +0200
++++ unicorn/src/CgtMain.cpp	2010-05-27 18:23:02.000000000 +0200
+@@ -83,7 +83,7 @@
+     float         edgeCapacity;
+     float         expandStep;
+     unsigned long eventsLimit;
+-    unsigned int  traceLevel;
++  //unsigned int  traceLevel;
+     bool          verbose1;
+     bool          verbose2;
+     bool          info;
+@@ -99,9 +99,9 @@
+     poptions::options_description options ("Command line arguments & options");
+     options.add_options()
+       ( "help,h"           , "Print this help." )
+-      ( "trace-level,l"    , poptions::value<unsigned int>(&traceLevel)->default_value(1000)
+-                           , "Set the level of trace, trace messages with a level superior to "
+-                             "<arg> will be printed on <stderr>." )
++      // ( "trace-level,l"    , poptions::value<unsigned int>(&traceLevel)->default_value(1000)
++      //                      , "Set the level of trace, trace messages with a level superior to "
++      //                        "<arg> will be printed on <stderr>." )
+       ( "verbose,v"        , poptions::bool_switch(&verbose1)->default_value(false)
+                            , "First level of verbosity.")
+       ( "very-verbose,V"   , poptions::bool_switch(&verbose2)->default_value(false)
+@@ -152,7 +152,7 @@
+     if ( info     ) mstream::enable ( mstream::Info ); 
+     if ( logMode  ) tty::disable ();
+ 
+-    ltracelevel ( traceLevel );
++  //ltracelevel ( traceLevel );
+ 
+     dbo_ptr<DataBase>          db ( DataBase::create() );
+     dbo_ptr<AllianceFramework> af ( AllianceFramework::create() );
