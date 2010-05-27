@@ -459,9 +459,9 @@ class ProjectBuilder:
             self._execute ( command, "rm of %s failed" % item)
  
         os.chdir ( self._archiveDir )
-        command = [ "/bin/patch", "--remove-empty-files"
-                                , "--no-backup-if-mismatch"
-                                , "-p0", "-i", self._distribPatch ]
+        command = [ "/usr/bin/patch", "--remove-empty-files"
+                                    , "--no-backup-if-mismatch"
+                                    , "-p0", "-i", self._distribPatch ]
         self._execute ( command, "patch for distribution command failed" )
 
         os.chdir ( self._tarballDir )
