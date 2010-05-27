@@ -80,8 +80,12 @@ namespace Katabatic {
     , _extensionCap      (DbU::lambda(1.5))
     , _saturateRatio     (0.80)
     , _globalThreshold   (29*DbU::lambda(50.0)) // Ugly: direct uses of SxLib gauge.
+    , _allowedDepth      (0)
   {
-    if ( rg ) _rg = rg->getClone();
+    if ( rg ) {
+      _rg           = rg->getClone();
+      _allowedDepth = rg->getDepth();
+    }
 
     _gmetalh  = DataBase::getDB()->getTechnology()->getLayer("gmetalh");
     _gmetalv  = DataBase::getDB()->getTechnology()->getLayer("gmetalv");
@@ -98,6 +102,7 @@ namespace Katabatic {
     , _extensionCap      (other._extensionCap)
     , _saturateRatio     (other._saturateRatio)
     , _globalThreshold   (other._globalThreshold)
+    , _allowedDepth      (other._allowedDepth)
   {
     if ( other._rg ) _rg = other._rg->getClone();
   }
@@ -130,6 +135,10 @@ namespace Katabatic {
   { return _rg->getDepth(); }
 
 
+  size_t  ConfigurationConcrete::getAllowedDepth () const
+  { return _allowedDepth; }
+
+
   size_t  ConfigurationConcrete::getLayerDepth ( const Layer* layer ) const
   { return _rg->getLayerDepth(layer); }
 
@@ -160,6 +169,10 @@ namespace Katabatic {
 
   DbU::Unit  ConfigurationConcrete::getGlobalThreshold () const
   { return _globalThreshold; }
+
+
+  void  ConfigurationConcrete::setAllowedDepth ( size_t allowedDepth )
+  { _allowedDepth = (allowedDepth > getDepth()) ? getDepth() : allowedDepth; }
 
 
   void  ConfigurationConcrete::setSaturateRatio ( float ratio )

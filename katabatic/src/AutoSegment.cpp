@@ -1296,7 +1296,7 @@ namespace Katabatic {
     if ( isTerminal() and isLocal() ) return false;
 
     size_t depth = Session::getRoutingGauge()->getLayerDepth(getLayer()) + 2;
-    if ( depth >= Session::getRoutingGauge()->getDepth() ) return false;
+    if ( depth >= Session::getConfiguration()->getAllowedDepth() ) return false;
 
     vector<GCell*> gcells;
     getGCells ( gcells );

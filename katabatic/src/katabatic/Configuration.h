@@ -66,6 +66,7 @@ namespace Katabatic {
     // Methods.                                     
       virtual bool               isGMetal           ( const Layer* ) const = 0;
       virtual size_t             getDepth           () const = 0;
+      virtual size_t             getAllowedDepth    () const = 0;
       virtual size_t             getLayerDepth      ( const Layer* ) const = 0;
       virtual RoutingGauge*      getRoutingGauge    () const = 0;
       virtual RoutingLayerGauge* getLayerGauge      ( size_t depth ) const = 0;
@@ -74,6 +75,7 @@ namespace Katabatic {
       virtual DbU::Unit          getExtensionCap    () const = 0;
       virtual float              getSaturateRatio   () const = 0;
       virtual DbU::Unit          getGlobalThreshold () const = 0;
+      virtual void               setAllowedDepth    ( size_t ) = 0;
       virtual void               setSaturateRatio   ( float ) = 0;
       virtual void               setGlobalThreshold ( DbU::Unit ) = 0;
       virtual void               print              ( Cell* ) const = 0;
@@ -103,6 +105,7 @@ namespace Katabatic {
     // Methods.
       virtual bool                   isGMetal              ( const Layer* ) const;
       virtual size_t                 getDepth              () const;
+      virtual size_t                 getAllowedDepth       () const;
       virtual size_t                 getLayerDepth         ( const Layer* ) const;
       virtual RoutingGauge*          getRoutingGauge       () const;
       virtual RoutingLayerGauge*     getLayerGauge         ( size_t depth ) const;
@@ -111,6 +114,7 @@ namespace Katabatic {
       virtual DbU::Unit              getExtensionCap       () const;
       virtual float                  getSaturateRatio      () const;
       virtual DbU::Unit              getGlobalThreshold    () const;
+      virtual void                   setAllowedDepth       ( size_t );
       virtual void                   setSaturateRatio      ( float );
       virtual void                   setGlobalThreshold    ( DbU::Unit );
       virtual void                   print                 ( Cell* ) const;
@@ -128,6 +132,7 @@ namespace Katabatic {
       DbU::Unit     _extensionCap;
       float         _saturateRatio;
       DbU::Unit     _globalThreshold;
+      size_t        _allowedDepth;
     private:
                              ConfigurationConcrete ( const ConfigurationConcrete& );
       ConfigurationConcrete& operator=             ( const ConfigurationConcrete& );

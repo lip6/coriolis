@@ -93,7 +93,7 @@ namespace Katabatic {
                                      , unsigned long& total
                                      , unsigned long& globals )
   {
-    if ( depth+2 >= Session::getRoutingGauge()->getDepth() ) {
+    if ( depth+2 >= Session::getConfiguration()->getAllowedDepth() ) {
       cerr << Warning("Katabatic::_desaturate(): %s, no remaining upper layers."
                      ,getString(Session::getRoutingGauge()->getRoutingLayer(depth)->getName()).c_str()
                      ) << endl;
