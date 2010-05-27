@@ -449,13 +449,21 @@ class ProjectBuilder:
         os.makedirs ( self._tarballDir )
         self.svnExport ( tools, projects )
 
-       # Remove unpublisheds (yet) parsers/drivers.
-        command = [ "/bin/rm", "-r", os.path.join(self._archiveDir,"vlsisapd","openChams") ]
-        self._execute ( command, "rm command failed" )
+        removeds = [ os.path.join("vlsisapd","openChams")
+                   , os.path.join("vlsisapd","dtr")
+                   ]
 
-        command = [ "/bin/rm", "-r", os.path.join(self._archiveDir,"vlsisapd","dtr") ]
-        self._execute ( command, "rm command failed" )
+       # Remove unpublisheds (yet) tools/files.
+        for item in removeds:
+            command = [ "/bin/rm", "-r", os.path.join(self._archiveDir,item) ]
+            self._execute ( command, "rm of %s failed" % item)
  
+        os.chdir ( self._archiveDir )
+        command = [ "/bin/patch", "--remove-empty-files"
+                                , "--no-backup-if-mismatch"
+                                , "-p0", "-i", self._distribPatch ]
+        self._execute ( command, "patch for distribution command failed" )
+
         os.chdir ( self._tarballDir )
         command = [ "/bin/tar", "jcvf", self._sourceTarBz2, os.path.basename(self._archiveDir) ]
         self._execute ( command, "tar command failed" )
@@ -472,7 +480,6 @@ class ProjectBuilder:
 
         rpmSpecFile   = os.path.join ( self._rpmTopDir, "SPECS/coriolis2.spec" )
         rpmSourceFile = os.path.join ( self._rpmTopDir, "SOURCES", self._sourceTarBz2 )
-        rpmPatchFile  = os.path.join ( self._rpmTopDir, "SOURCES", "coriolis2-for-distribution.patch" )
 
         sourceFile = os.path.join ( self._tarballDir, self._sourceTarBz2 )
 
@@ -482,8 +489,6 @@ class ProjectBuilder:
 
         if not os.path.islink ( rpmSourceFile ):
             os.symlink ( sourceFile, rpmSourceFile )
-        if not os.path.islink ( rpmPatchFile ):
-            os.symlink ( self._distribPatch, rpmPatchFile )
 
         os.chdir ( os.path.join ( os.environ["HOME"], "rpm" ) )
         command = [ "/usr/bin/rpmbuild", "-ba", "--with", "binarytar", rpmSpecFile ]

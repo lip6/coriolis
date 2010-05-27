@@ -23,10 +23,9 @@ Name:            coriolis2
 Summary:         Coriolis 2 VLSI CAD Sytem
 Version:         %{coriolisVersion}.%{svntag}
 Release:         1%{dist}
-License:         LGPL/GPL
+License:         BSD/LGPL/GPL
 Group:           Applications/Engineering
 Source:          %{name}-%{version}.tar.bz2
-Patch0:          coriolis2-for-distribution.patch
 URL:             http://www-asim.lip6.fr/
 Packager:        Jean-Paul Chaput <Jean-Paul.Chaput@lip6.fr>
 Requires(post):  ldconfig
@@ -40,6 +39,10 @@ BuildRoot:       %{_tmppath}/root-%{name}
 %description
 Coriolis is the new CAD tool suite intended to replace the
 physical backend flow of Alliance.
+
+The Knik global router makes use of FLUTE, which is redistributed
+under is own license. FLUTE is copyrighted by Dr. Chris C. N. Chu
+from the Iowa State University <http://home.eng.iastate.edu/~cnchu>.
 
 
 %package devel
@@ -55,7 +58,6 @@ Development files for the Coriolis 2 package.
 
 %prep
 %setup
-%patch0 -p0 -b .soc
 
 
 %build

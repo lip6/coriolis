@@ -1,29 +1,3 @@
---- crlcore/etc/environment.alliance.xml.soc	2010-05-22 11:00:46.000000000 +0200
-+++ crlcore/etc/environment.alliance.xml	2010-05-22 11:02:18.000000000 +0200
-@@ -1,18 +1,18 @@
- <?xml version="1.0"?>
- <environment>
--  <variable name="CELL_TOP" value="/opt/alliance-5.0"/>
-+  <variable name="CELL_TOP" value="/usr/share/alliance"/>
-   <technologies>
-     <hurricane>
--      <config>${CORIOLIS_TOP}/etc/coriolis2/technology.symbolic.xml</config>
-+      <config>/etc/coriolis2/technology.symbolic.xml</config>
-     </hurricane>
-     <real>
--      <config>${CORIOLIS_TOP}/etc/coriolis2/technology.hcmos9.s2r.xml</config>
-+      <config>/etc/coriolis2/technology.hcmos9.s2r.xml</config>
-     </real>
-     <lef>
--      <config>${CORIOLIS_TOP}/etc/coriolis2/cmos.lef</config>
-+      <config>/etc/coriolis2/cmos.lef</config>
-     </lef>
-     <display>
--      <config>${CORIOLIS_TOP}/etc/coriolis2/display.xml</config>
-+      <config>/etc/coriolis2/display.xml</config>
-     </display>
-   </technologies>
-   <libraries>
 --- unicorn/src/CgtMain.cpp.soc	2010-05-26 09:50:43.000000000 +0200
 +++ unicorn/src/CgtMain.cpp	2010-05-26 09:52:22.000000000 +0200
 @@ -66,36 +66,6 @@
@@ -76,3 +50,140 @@
        ( "verbose,v"        , poptions::bool_switch(&verbose1)->default_value(false)
                             , "First level of verbosity.")
        ( "very-verbose,V"   , poptions::bool_switch(&verbose2)->default_value(false)
+diff --exclude=.svn -uNr crlcore/etc.soc/CMakeLists.txt crlcore/etc/CMakeLists.txt
+--- crlcore/etc.soc/CMakeLists.txt	2010-05-27 13:37:15.000000000 +0200
++++ crlcore/etc/CMakeLists.txt	2010-05-27 13:37:57.000000000 +0200
+@@ -1,7 +1,4 @@
+  install ( FILES   environment.alliance.xml     DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
+  install ( FILES   technology.symbolic.xml      DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
+- install ( FILES   technology.cmos130.s2r.xml   DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
+- install ( FILES   technology.mos65.s2r.xml     DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
+- install ( FILES   technology.freePDK45.s2r.xml DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
+  install ( FILES   technology.fake.s2r.xml      DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
+  install ( FILES   display.xml                  DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
+diff --exclude=.svn -uNr crlcore/etc.soc/environment.alliance.xml crlcore/etc/environment.alliance.xml
+--- crlcore/etc.soc/environment.alliance.xml	2010-05-22 11:00:46.000000000 +0200
++++ crlcore/etc/environment.alliance.xml	2010-05-27 13:38:57.000000000 +0200
+@@ -1,18 +1,18 @@
+ <?xml version="1.0"?>
+ <environment>
+-  <variable name="CELL_TOP" value="/opt/alliance-5.0"/>
++  <variable name="CELL_TOP" value="/usr/share/alliance"/>
+   <technologies>
+     <hurricane>
+-      <config>${CORIOLIS_TOP}/etc/coriolis2/technology.symbolic.xml</config>
++      <config>/etc/coriolis2/technology.symbolic.xml</config>
+     </hurricane>
+     <real>
+-      <config>${CORIOLIS_TOP}/etc/coriolis2/technology.hcmos9.s2r.xml</config>
++      <config>/etc/coriolis2/technology.fake.s2r.xml</config>
+     </real>
+     <lef>
+-      <config>${CORIOLIS_TOP}/etc/coriolis2/cmos.lef</config>
++      <config>/etc/coriolis2/cmos.lef</config>
+     </lef>
+     <display>
+-      <config>${CORIOLIS_TOP}/etc/coriolis2/display.xml</config>
++      <config>/etc/coriolis2/display.xml</config>
+     </display>
+   </technologies>
+   <libraries>
+diff --exclude=.svn -uNr crlcore/etc.soc/technology.cmos130.s2r.xml crlcore/etc/technology.cmos130.s2r.xml
+--- crlcore/etc.soc/technology.cmos130.s2r.xml	2010-05-27 13:35:07.000000000 +0200
++++ crlcore/etc/technology.cmos130.s2r.xml	1970-01-01 01:00:00.000000000 +0100
+@@ -1,29 +0,0 @@
+-<?xml version="1.0"?>
+-<technology>
+-  <real>
+-    <name>hcmos9</name>
+-    <grid value="0.005" unit="micron"/>
+-    <gridsperlambda value="24"/>
+-    <layers>
+-      <!-- Non routing layers -->
+-      <processlayer symbolic="nWell"    real="NWELL"    gdsII="3" />
+-      <processlayer symbolic="nImplant" real="NPLUS"    gdsII="26"/>
+-      <processlayer symbolic="pImplant" real="PPLUS"    gdsII="25"/>
+-      <processlayer symbolic="active"   real="ACTIVE"   gdsII="6" />
+-      <processlayer symbolic="poly"     real="POLY"     gdsII="17"/>
+-      <!-- Routing layers -->
+-      <processlayer symbolic="cut0"     real="CONTACT"  gdsII="30"/>
+-      <processlayer symbolic="metal1"   real="METAL1"   gdsII="31"/>
+-      <processlayer symbolic="cut1"     real="VIA1"     gdsII="51"/>
+-      <processlayer symbolic="metal2"   real="METAL2"   gdsII="32"/>
+-      <processlayer symbolic="cut2"     real="VIA2"     gdsII="52"/>
+-      <processlayer symbolic="metal3"   real="METAL3"   gdsII="33"/>
+-      <processlayer symbolic="cut3"     real="VIA3"     gdsII="53"/>
+-      <processlayer symbolic="metal4"   real="METAL4"   gdsII="34"/>
+-      <processlayer symbolic="cut4"     real="VIA4"     gdsII="54"/>
+-      <processlayer symbolic="metal5"   real="METAL5"   gdsII="35"/>
+-      <processlayer symbolic="cut5"     real="VIA5"     gdsII="55"/>
+-      <processlayer symbolic="metal6"   real="METAL6"   gdsII="36"/>
+-    </layers>
+-  </real>
+-</technology>
+diff --exclude=.svn -uNr crlcore/etc.soc/technology.cmos65.s2r.xml crlcore/etc/technology.cmos65.s2r.xml
+--- crlcore/etc.soc/technology.cmos65.s2r.xml	2010-05-27 13:35:07.000000000 +0200
++++ crlcore/etc/technology.cmos65.s2r.xml	1970-01-01 01:00:00.000000000 +0100
+@@ -1,29 +0,0 @@
+-<?xml version="1.0"?>
+-<technology>
+-  <real>
+-    <name>cmos065</name>
+-    <grid value="0.005" unit="micron"/>
+-    <gridsperlambda value="24"/>
+-    <layers>
+-      <!-- Non routing layers -->
+-      <processlayer symbolic="nWell"    real="NW"    gdsII="3" />
+-      <processlayer symbolic="nImplant" real="NP"    gdsII="26"/>
+-      <processlayer symbolic="pImplant" real="PP"    gdsII="25"/>
+-      <processlayer symbolic="active"   real="OD"    gdsII="6" />
+-      <processlayer symbolic="poly"     real="PO"    gdsII="17"/>
+-      <!-- Routing layers -->
+-      <processlayer symbolic="cut0"     real="CO"    gdsII="30"/>
+-      <processlayer symbolic="metal1"   real="M1"    gdsII="31"/>
+-      <processlayer symbolic="cut1"     real="VIA1X" gdsII="51"/>
+-      <processlayer symbolic="metal2"   real="M2X"   gdsII="32"/>
+-      <processlayer symbolic="cut2"     real="VIA2X" gdsII="52"/>
+-      <processlayer symbolic="metal3"   real="M3X"   gdsII="33"/>
+-      <processlayer symbolic="cut3"     real="VIA3X" gdsII="53"/>
+-      <processlayer symbolic="metal4"   real="M4X"   gdsII="34"/>
+-      <processlayer symbolic="cut4"     real="VIA4X" gdsII="54"/>
+-      <processlayer symbolic="metal5"   real="M5X"   gdsII="35"/>
+-      <processlayer symbolic="cut5"     real="VIA5X" gdsII="55"/>
+-      <processlayer symbolic="metal6"   real="M6X"   gdsII="36"/>
+-    </layers>
+-  </real>
+-</technology>
+diff --exclude=.svn -uNr crlcore/etc.soc/technology.freePDK45.s2r.xml crlcore/etc/technology.freePDK45.s2r.xml
+--- crlcore/etc.soc/technology.freePDK45.s2r.xml	2010-04-23 15:26:06.000000000 +0200
++++ crlcore/etc/technology.freePDK45.s2r.xml	1970-01-01 01:00:00.000000000 +0100
+@@ -1,29 +0,0 @@
+-<?xml version="1.0"?>
+-<technology>
+-  <real>
+-    <name>freePDK45</name>
+-    <grid value="0.0025" unit="micron"/>
+-    <gridsperlambda value="24"/>
+-    <layers>
+-      <!-- Non routing layers -->
+-      <processlayer symbolic="nWell"    real="NW"    gdsII="3" />
+-      <processlayer symbolic="nImplant" real="NP"    gdsII="26"/>
+-      <processlayer symbolic="pImplant" real="PP"    gdsII="25"/>
+-      <processlayer symbolic="active"   real="OD"    gdsII="6" />
+-      <processlayer symbolic="poly"     real="PO"    gdsII="17"/>
+-      <!-- Routing layers -->
+-      <processlayer symbolic="cut0"     real="CO"    gdsII="30"/>
+-      <processlayer symbolic="metal1"   real="M1"    gdsII="31"/>
+-      <processlayer symbolic="cut1"     real="VIA1X" gdsII="51"/>
+-      <processlayer symbolic="metal2"   real="M2X"   gdsII="32"/>
+-      <processlayer symbolic="cut2"     real="VIA2X" gdsII="52"/>
+-      <processlayer symbolic="metal3"   real="M3X"   gdsII="33"/>
+-      <processlayer symbolic="cut3"     real="VIA3X" gdsII="53"/>
+-      <processlayer symbolic="metal4"   real="M4X"   gdsII="34"/>
+-      <processlayer symbolic="cut4"     real="VIA4X" gdsII="54"/>
+-      <processlayer symbolic="metal5"   real="M5X"   gdsII="35"/>
+-      <processlayer symbolic="cut5"     real="VIA5X" gdsII="55"/>
+-      <processlayer symbolic="metal6"   real="M6X"   gdsII="36"/>
+-    </layers>
+-  </real>
+-</technology>
