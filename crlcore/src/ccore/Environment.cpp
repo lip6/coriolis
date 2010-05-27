@@ -212,7 +212,7 @@ namespace {
       if ( sysConfDir[0] == '/' )
         envPath = sysConfDir + "/coriolis2/environment.alliance.xml" ;
       else
-        envPath = env.getCORIOLIS_TOP() + sysConfDir + "/coriolis2/environment.alliance.xml" ;
+        envPath = env.getCORIOLIS_TOP() + "/" + sysConfDir + "/coriolis2/environment.alliance.xml" ;
     }
 
     return ep._load ( envPath, warnNotFound );
@@ -541,8 +541,8 @@ namespace CRL {
       _SYMBOLIC_TECHNOLOGY = sysConfDir + "/coriolis2/technology.symbolic.xml";
       _DISPLAY             = sysConfDir + "/coriolis2/display.xml";
     } else {
-      _SYMBOLIC_TECHNOLOGY = _CORIOLIS_TOP + sysConfDir + "/coriolis2/technology.symbolic.xml";
-      _DISPLAY             = _CORIOLIS_TOP + sysConfDir + "/coriolis2/display.xml";
+      _SYMBOLIC_TECHNOLOGY = _CORIOLIS_TOP + "/" + sysConfDir + "/coriolis2/technology.symbolic.xml";
+      _DISPLAY             = _CORIOLIS_TOP + "/" + sysConfDir + "/coriolis2/display.xml";
     }
 
     setPOWER    ( "vdd" );
