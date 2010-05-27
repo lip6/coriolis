@@ -68,7 +68,7 @@ namespace CRL {
       db = DataBase::create ();
 
     _environment.loadFromShell ();
-    _environment.loadFromXml ();
+    _environment.loadFromXml   ();
 
     string  userEnvironment = Environment::getEnv ( "HOME", "<HomeDirectory>" );
     _environment.loadFromXml ( userEnvironment+"/.environment.alliance.xml", false );
@@ -108,57 +108,81 @@ namespace CRL {
   // Temporary: create the SxLib routing gauge.
     Technology* technology = db->getTechnology();
 
-    RoutingGauge* sxlibRg = RoutingGauge::create ( "sxlib" );
-    sxlibRg->addLayerGauge ( RoutingLayerGauge::create( technology->getLayer("METAL1")
-                                                      , Constant::Vertical
-                                                      , Constant::PinOnly
-                                                      , 0              // Depth (?).
-                                                      , 0              // Density.
-                                                      , DbU::lambda(0) // Offset.
-                                                      , DbU::lambda(5) // Pitch.
-                                                      , DbU::lambda(2) // Wire width.
-                                                      , DbU::lambda(3) // Via width.
-                                                      ) );
-    sxlibRg->addLayerGauge ( RoutingLayerGauge::create( technology->getLayer("METAL2")
-                                                      , Constant::Horizontal
-                                                      , Constant::Default
-                                                      , 1              // Depth (?).
-                                                      , 7.7            // Density.
-                                                      , DbU::lambda(0) // Offset.
-                                                      , DbU::lambda(5) // Pitch.
-                                                      , DbU::lambda(2) // Wire width.
-                                                      , DbU::lambda(3) // Via width.
-                                                      ) );
-    sxlibRg->addLayerGauge ( RoutingLayerGauge::create( technology->getLayer("METAL3")
-                                                      , Constant::Vertical
-                                                      , Constant::Default
-                                                      , 2              // Depth (?).
-                                                      , 0              // Density.
-                                                      , DbU::lambda(0) // Offset.
-                                                      , DbU::lambda(5) // Pitch.
-                                                      , DbU::lambda(2) // Wire width.
-                                                      , DbU::lambda(3) // Via width.
-                                                      ) );
-    sxlibRg->addLayerGauge ( RoutingLayerGauge::create( technology->getLayer("METAL4")
-                                                      , Constant::Horizontal
-                                                      , Constant::Default
-                                                      , 3              // Depth (?).
-                                                      , 0              // Density.
-                                                      , DbU::lambda(0) // Offset.
-                                                      , DbU::lambda(5) // Pitch.
-                                                      , DbU::lambda(2) // Wire width.
-                                                      , DbU::lambda(3) // Via width.
-                                                      ) );
-    sxlibRg->addLayerGauge ( RoutingLayerGauge::create( technology->getLayer("METAL5")
-                                                      , Constant::Vertical
-                                                      , Constant::Default
-                                                      , 4              // Depth (?).
-                                                      , 0              // Density.
-                                                      , DbU::lambda(0) // Offset.
-                                                      , DbU::lambda(5) // Pitch.
-                                                      , DbU::lambda(2) // Wire width.
-                                                      , DbU::lambda(3) // Via width.
-                                                      ) );
+    RoutingGauge* sxlibRg      = RoutingGauge::create ( "sxlib" );
+    const Layer*  routingLayer = NULL;
+
+    switch ( 1 ) {
+      default:
+        routingLayer = technology->getLayer("METAL1");
+        if ( routingLayer == NULL ) break;
+
+        sxlibRg->addLayerGauge ( RoutingLayerGauge::create( routingLayer
+                                                          , Constant::Vertical
+                                                          , Constant::PinOnly
+                                                          , 0              // Depth (?).
+                                                          , 0              // Density.
+                                                          , DbU::lambda(0) // Offset.
+                                                          , DbU::lambda(5) // Pitch.
+                                                          , DbU::lambda(2) // Wire width.
+                                                          , DbU::lambda(3) // Via width.
+                                                          ) );
+
+        routingLayer = technology->getLayer("METAL2");
+        if ( routingLayer == NULL ) break;
+
+        sxlibRg->addLayerGauge ( RoutingLayerGauge::create( routingLayer
+                                                          , Constant::Horizontal
+                                                          , Constant::Default
+                                                          , 1              // Depth (?).
+                                                          , 7.7            // Density.
+                                                          , DbU::lambda(0) // Offset.
+                                                          , DbU::lambda(5) // Pitch.
+                                                          , DbU::lambda(2) // Wire width.
+                                                          , DbU::lambda(3) // Via width.
+                                                          ) );
+
+        routingLayer = technology->getLayer("METAL3");
+        if ( routingLayer == NULL ) break;
+
+        sxlibRg->addLayerGauge ( RoutingLayerGauge::create( routingLayer
+                                                          , Constant::Vertical
+                                                          , Constant::Default
+                                                          , 2              // Depth (?).
+                                                          , 0              // Density.
+                                                          , DbU::lambda(0) // Offset.
+                                                          , DbU::lambda(5) // Pitch.
+                                                          , DbU::lambda(2) // Wire width.
+                                                          , DbU::lambda(3) // Via width.
+                                                          ) );
+
+        routingLayer = technology->getLayer("METAL4");
+        if ( routingLayer == NULL ) break;
+
+        sxlibRg->addLayerGauge ( RoutingLayerGauge::create( routingLayer
+                                                          , Constant::Horizontal
+                                                          , Constant::Default
+                                                          , 3              // Depth (?).
+                                                          , 0              // Density.
+                                                          , DbU::lambda(0) // Offset.
+                                                          , DbU::lambda(5) // Pitch.
+                                                          , DbU::lambda(2) // Wire width.
+                                                          , DbU::lambda(3) // Via width.
+                                                          ) );
+
+        routingLayer = technology->getLayer("METAL5");
+        if ( routingLayer == NULL ) break;
+
+        sxlibRg->addLayerGauge ( RoutingLayerGauge::create( routingLayer
+                                                          , Constant::Vertical
+                                                          , Constant::Default
+                                                          , 4              // Depth (?).
+                                                          , 0              // Density.
+                                                          , DbU::lambda(0) // Offset.
+                                                          , DbU::lambda(5) // Pitch.
+                                                          , DbU::lambda(2) // Wire width.
+                                                          , DbU::lambda(3) // Via width.
+                                                          ) );
+    }
     addRoutingGauge ( sxlibRg );
 
     CellGauge* sxlibCg = CellGauge::create ( "sxlib"

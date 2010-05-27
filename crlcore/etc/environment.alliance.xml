@@ -6,7 +6,7 @@
       <config>${CORIOLIS_TOP}/etc/coriolis2/technology.symbolic.xml</config>
     </hurricane>
     <real>
-      <config>${CORIOLIS_TOP}/etc/coriolis2/technology.hcmos9.s2r.xml</config>
+      <config>${CORIOLIS_TOP}/etc/coriolis2/technology.cmos130.s2r.xml</config>
     </real>
     <lef>
       <config>${CORIOLIS_TOP}/etc/coriolis2/cmos.lef</config>

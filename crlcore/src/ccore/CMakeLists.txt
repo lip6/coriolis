@@ -1,4 +1,14 @@
 
+# Try to find a reasonable CORIOLIS_TOP value.
+ if( NOT("$ENV{CORIOLIS_USER_TOP}" STREQUAL "") )
+   set ( CORIOLIS_USER_TOP "$ENV{CORIOLIS_USER_TOP}" )
+ else( NOT("$ENV{CORIOLIS_USER_TOP}" STREQUAL "") )
+   if( NOT("$ENV{CORIOLIS_TOP}" STREQUAL "") )
+     set ( CORIOLIS_TOP "$ENV{CORIOLIS_TOP}" )
+   endif( NOT("$ENV{CORIOLIS_TOP}" STREQUAL "") )
+ endif( NOT("$ENV{CORIOLIS_USER_TOP}" STREQUAL "") )
+
+
                    include ( ${QT_USE_FILE} )
 
        include_directories ( ${CIF_INCLUDE_DIR}
@@ -18,7 +28,7 @@
                              ${CRLCORE_SOURCE_DIR}/src/ccore/toolbox
                            )
 
-           add_definitions ( -DCORIOLIS_TOP="${PROJECT_BINARY_DIR}"
+           add_definitions ( -DCORIOLIS_TOP="${CORIOLIS_TOP}"
                              -DSYS_CONF_DIR="${SYS_CONF_DIR}"
                            )
 

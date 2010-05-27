@@ -32,7 +32,7 @@ namespace CRL {
   bool  XmlParser::_load ( const string& path, bool warnNotFound )
   {
     QFile  file ( path.c_str() );
-    if ( !file.open(QFile::ReadOnly|QFile::Text) ) {
+    if ( path.empty() or (not file.open(QFile::ReadOnly|QFile::Text)) ) {
       if ( warnNotFound ) {
         cerr << "[ERROR] Cannot open " << _getMessage(OpenFile) << " file:" << endl;
         cerr << "        \"" << path << "\"." << endl;
