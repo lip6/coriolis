@@ -18,7 +18,9 @@
                              ${CRLCORE_SOURCE_DIR}/src/ccore/toolbox
                            )
 
-           add_definitions ( -DCORIOLIS_TOP="${PROJECT_BINARY_DIR}" )
+           add_definitions ( -DCORIOLIS_TOP="${PROJECT_BINARY_DIR}"
+                             -DSYS_CONF_DIR="${SYS_CONF_DIR}"
+                           )
 
                        set ( includes          crlcore/Utilities.h
                                                crlcore/Memory.h

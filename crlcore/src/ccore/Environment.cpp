@@ -35,10 +35,6 @@
 #include  "crlcore/Environment.h"
 
 
-#undef     CORIOLIS_TOP
-#define    CORIOLIS_TOP  "/opt/coriolis2"
-
-
 namespace {
 
 
@@ -56,6 +52,8 @@ namespace {
   const char* badEnvironment =
     "Environment::Environment() :\n"
     "    %s logical format \"%s\" incoherent with physical format \"%s\".\n";
+
+  const string  sysConfDir = SYS_CONF_DIR;
 
 
   class XmlEnvironmentParser : public XmlParser {
@@ -210,8 +208,12 @@ namespace {
     XmlEnvironmentParser  ep ( env );
 
     string  envPath = path;
-    if ( path.empty() )
-      envPath = env.getCORIOLIS_TOP() + "/etc/coriolis2/environment.alliance.xml" ;
+    if ( path.empty() ) {
+      if ( sysConfDir[0] == '/' )
+        envPath = sysConfDir + "/coriolis2/environment.alliance.xml" ;
+      else
+        envPath = env.getCORIOLIS_TOP() + sysConfDir + "/coriolis2/environment.alliance.xml" ;
+    }
 
     return ep._load ( envPath, warnNotFound );
   }
@@ -525,9 +527,9 @@ namespace CRL {
     : _CORIOLIS_TOP       (CORIOLIS_TOP)
     , _displayStyle       ()
     , _SCALE_X            (10)
-    , _SYMBOLIC_TECHNOLOGY(CORIOLIS_TOP "/etc/coriolis2/technology.symbolic.xml")
+    , _SYMBOLIC_TECHNOLOGY("")
     , _LEF_TECHNOLOGY     ("")
-    , _DISPLAY            (CORIOLIS_TOP "/etc/coriolis2/display.xml")
+    , _DISPLAY            ("")
     , _IN_LO              ("vst")
     , _IN_PH              ("ap")
     , _OUT_LO             ("vst")
@@ -535,6 +537,14 @@ namespace CRL {
     , _CATALOG            ("CATAL")
     , _inConstructor      (true)
   {
+    if ( sysConfDir[0] == '/' ) {
+      _SYMBOLIC_TECHNOLOGY = sysConfDir + "/coriolis2/technology.symbolic.xml";
+      _DISPLAY             = sysConfDir + "/coriolis2/display.xml";
+    } else {
+      _SYMBOLIC_TECHNOLOGY = _CORIOLIS_TOP + sysConfDir + "/coriolis2/technology.symbolic.xml";
+      _DISPLAY             = _CORIOLIS_TOP + sysConfDir + "/coriolis2/display.xml";
+    }
+
     setPOWER    ( "vdd" );
     setGROUND   ( "vss" );
     setCLOCK    ( "^ck$" );
