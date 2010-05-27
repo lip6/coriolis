@@ -119,6 +119,10 @@ namespace Kite {
   { return _base->getDepth(); }
 
 
+  size_t  Configuration::getAllowedDepth () const
+  { return _base->getAllowedDepth(); }
+
+
   size_t  Configuration::getLayerDepth ( const Layer* layer ) const
   { return _base->getLayerDepth(layer); }
 
@@ -149,6 +153,10 @@ namespace Kite {
 
   DbU::Unit  Configuration::getGlobalThreshold () const
   { return _base->getGlobalThreshold(); }
+
+
+  void  Configuration::setAllowedDepth ( size_t allowedDepth )
+  { _base->setAllowedDepth(allowedDepth); }
 
 
   void  Configuration::setSaturateRatio ( float ratio )

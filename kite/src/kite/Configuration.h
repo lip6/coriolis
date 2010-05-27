@@ -69,6 +69,7 @@ namespace Kite {
     // Decorateds.                                              
       virtual bool                       isGMetal               ( const Layer* ) const;
       virtual size_t                     getDepth               () const;
+      virtual size_t                     getAllowedDepth        () const;
       virtual size_t                     getLayerDepth          ( const Layer* ) const;
       virtual RoutingGauge*              getRoutingGauge        () const;
       virtual RoutingLayerGauge*         getLayerGauge          ( size_t depth ) const;
@@ -77,6 +78,7 @@ namespace Kite {
       virtual DbU::Unit                  getExtensionCap        () const;
       virtual float                      getSaturateRatio       () const;
       virtual DbU::Unit                  getGlobalThreshold     () const;
+      virtual void                       setAllowedDepth        ( size_t );
       virtual void                       setSaturateRatio       ( float );
       virtual void                       setGlobalThreshold     ( DbU::Unit );
       virtual void                       print                  ( Cell* ) const;

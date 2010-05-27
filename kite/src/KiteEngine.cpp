@@ -113,6 +113,7 @@ namespace Kite {
     , _minimumWL       (0.0)
     , _toolSuccess     (false)
   {
+  //_configuration->setAllowedDepth ( 3 );
   }
 
 
