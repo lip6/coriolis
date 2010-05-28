@@ -26,6 +26,7 @@
 
 
 #include  <sstream>
+#include  <limits>
 
 #include  "hurricane/Bug.h"
 #include  "hurricane/Warning.h"
