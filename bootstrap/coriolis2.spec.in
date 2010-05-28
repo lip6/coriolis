@@ -85,8 +85,13 @@ Development files for the Coriolis 2 package.
    popd
  done
 
-# Build documentation, but in -j1.
- tools="crlcore"
+
+%install
+ VLSISAPD_TOP=%{coriolisTop}; export VLSISAPD_TOP
+ CORIOLIS_TOP=%{coriolisTop}; export CORIOLIS_TOP
+
+# Install & build documentation, in -j1.
+ tools="vlsisapd hurricane crlcore knik katabatic kite equinox solstice unicorn"
  for tool in $tools; do
    pushd build/$tool;
 
@@ -95,11 +100,12 @@ Development files for the Coriolis 2 package.
    if [ "$tool" = "crlcore" ]; then
      makeArgs="dvi safepdf html"
      cmakeArgs="-D BUILD_DOC:STRING=ON"
+   else
+     cmakeArgs="-D BUILD_DOC:STRING=OFF"
    fi
 
    cmake -D CMAKE_BUILD_TYPE:STRING=RELEASE            \
          -D BUILD_SHARED_LIBS:STRING=ON                \
-         -D BUILD_DOC:STRING=OFF                       \
          -D CMAKE_INSTALL_PREFIX:STRING=%{coriolisTop} \
          -D DESTDIR:STRING=%{buildroot}                \
 %ifarch x86_64
@@ -113,9 +119,6 @@ Development files for the Coriolis 2 package.
 
  %__rm -rf %{buildroot}%{coriolisTop}/share/doc/coriolis2
 
-
-%install
-# Nothing to do here.
 # Removing undistributed binaries.
  %__rm -f %{buildroot}%{coriolisTop}/bin/{cx2y,kite-text}
 
