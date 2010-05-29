@@ -76,6 +76,8 @@
    \newcommand {\CentOSV}            {\textsc{CentOS 5}\xspace}
    \newcommand {\SLV}                {\textsc{SL 5}\xspace}
    \newcommand {\FedoraXII}          {\textsc{Fedora 12}\xspace}
+   \newcommand {\FedoraXIII}         {\textsc{Fedora 13}\xspace}
+   \newcommand {\Karmik}             {\textsc{Ubuntu Karmik}\xspace}
    \newcommand {\QtIV}               {\textsc{Qt 4}\xspace}
    \newcommand {\rpm}                {\texttt{rpm}\xspace}
    \newcommand {\tty}                {\texttt{tty}\xspace}
@@ -119,18 +121,22 @@
      {\xhref{\texttt{http://www-soc.lip6.fr/en/users/damiendupuis/thesis/}}%
             {http://www-soc.lip6.fr/en/users/damiendupuis/thesis/}\xspace}
 
-   \newcommand {\coriolisIIfcXIIirpm}{\crlFtpRef{coriolis2-1.0.1390-1.fc12.i386.rpm}\xspace}
-   \newcommand {\coriolisIIfcXIIxrpm}{\crlFtpRef{coriolis2-1.0.1390-1.fc12.x86\_64.rpm}\xspace}
-   \newcommand {\coriolisIIslVirpm}  {\crlFtpRef{coriolis2-1.0.1390-1.sl5\_soc.i386.rpm}\xspace}
-   \newcommand {\coriolisIIslVxrpm}  {\crlFtpRef{coriolis2-1.0.1390-1.sl5\_soc.x86\_64.rpm}\xspace}
-   \newcommand {\qtIVsrpm}           {\slSocSrpmsRef{qt4-4.5.0-8.sl5soc.src.rpm}\xspace}
-   \newcommand {\qtIVirpm}           {\slRpmsRef{qt4-4.5.0-8.sl5soc.i386.rpm}\xspace}
-   \newcommand {\qtIVdevelirpm}      {\slRpmsRef{qt4-devel-4.5.0-8.sl5soc.i386.rpm}\xspace}
-   \newcommand {\qtIVdocirpm}        {\slRpmsRef{qt4-doc-4.5.0-8.sl5soc.i386.rpm}\xspace}
-   \newcommand {\qtIVmysqlirpm}      {\slRpmsRef{qt4-mysql-4.5.0-8.sl5soc.i386.rpm}\xspace}
-   \newcommand {\qtIVodbcirpm}       {\slRpmsRef{qt4-odbc-4.5.0-8.sl5soc.i386.rpm}\xspace}
-   \newcommand {\qtIVpostgresqlirpm} {\slRpmsRef{qt4-postgresql-4.5.0-8.sl5soc.i386.rpm}\xspace}
-   \newcommand {\qtIVxXIirpm}        {\slRpmsRef{qt4-x11-4.5.0-8.sl5soc.i386.rpm}\xspace}
+   \newcommand {\coriolisIIfcXIIIirpm}{\crlFtpRef{coriolis2-1.0.1453-1.fc13.i386.rpm}\xspace}
+   \newcommand {\coriolisIIfcXIIIxrpm}{\crlFtpRef{coriolis2-1.0.1453-1.fc13.x86\_64.rpm}\xspace}
+   \newcommand {\coriolisIIfcXIIirpm} {\crlFtpRef{coriolis2-1.0.1453-1.fc12.i386.rpm}\xspace}
+   \newcommand {\coriolisIIfcXIIxrpm} {\crlFtpRef{coriolis2-1.0.1453-1.fc12.x86\_64.rpm}\xspace}
+   \newcommand {\coriolisIIslVirpm}   {\crlFtpRef{coriolis2-1.0.1453-1.sl5\_soc.i386.rpm}\xspace}
+   \newcommand {\coriolisIIslVxrpm}   {\crlFtpRef{coriolis2-1.0.1453-1\_sl5\_soc\_x86\_64.deb}\xspace}
+   \newcommand {\coriolisIIkarmikideb}{\crlFtpRef{coriolis2-1.0.1453-1\_sl5\_soc\_i386.deb}\xspace}
+   \newcommand {\coriolisIIkarmikxdeb}{\crlFtpRef{coriolis2-1.0.1453-1.sl5\_soc.x86\_64.rpm}\xspace}
+   \newcommand {\qtIVsrpm}            {\slSocSrpmsRef{qt4-4.5.0-8.sl5soc.src.rpm}\xspace}
+   \newcommand {\qtIVirpm}            {\slRpmsRef{qt4-4.5.0-8.sl5soc.i386.rpm}\xspace}
+   \newcommand {\qtIVdevelirpm}       {\slRpmsRef{qt4-devel-4.5.0-8.sl5soc.i386.rpm}\xspace}
+   \newcommand {\qtIVdocirpm}         {\slRpmsRef{qt4-doc-4.5.0-8.sl5soc.i386.rpm}\xspace}
+   \newcommand {\qtIVmysqlirpm}       {\slRpmsRef{qt4-mysql-4.5.0-8.sl5soc.i386.rpm}\xspace}
+   \newcommand {\qtIVodbcirpm}        {\slRpmsRef{qt4-odbc-4.5.0-8.sl5soc.i386.rpm}\xspace}
+   \newcommand {\qtIVpostgresqlirpm}  {\slRpmsRef{qt4-postgresql-4.5.0-8.sl5soc.i386.rpm}\xspace}
+   \newcommand {\qtIVxXIirpm}         {\slRpmsRef{qt4-x11-4.5.0-8.sl5soc.i386.rpm}\xspace}
 
    \latexhtml{ %% LaTeX version.
    \newcommand {\keyUP}              {\key{UP}\xspace}
@@ -250,7 +256,7 @@
 
  \section{Release Notes}
 
- \subsection{Release 1.0.1363}
+ \subsection{Release 1.0.1453}
 
  This is the first preliminary release of the \CoriolisII framework.
 
@@ -283,15 +289,24 @@
  \begin{center}
  \begin{tabular}{|c|l|}
    \hline
-   \FedoraXII & \coriolisIIfcXIIirpm  \\
-              & \coriolisIIfcXIIxrpm  \\
+   \FedoraXIII & \coriolisIIfcXIIIirpm  \\
+               & \coriolisIIfcXIIIxrpm  \\
    \hline
-   \RHELV     & \coriolisIIslVirpm  \\
-   \CentOSV   & \coriolisIIslVxrpm  \\
-   \SLV       &                     \\
+   \FedoraXII  & \coriolisIIfcXIIirpm  \\
+               & \coriolisIIfcXIIxrpm  \\
+   \hline
+   \RHELV      & \coriolisIIslVirpm  \\
+   \CentOSV    & \coriolisIIslVxrpm  \\
+   \SLV        &                     \\
+   \hline
+   \Karmik     & \coriolisIIkarmikideb  \\
+               & \coriolisIIkarmikxdeb  \\
    \hline
  \end{tabular}
  \end{center}
+
+ \newpage
+
  For \RHELV based distributions, additionnal \QtIV packages are needed:
 
  \begin{center}
@@ -350,6 +365,8 @@
   views of the same object. The point is that one must be very careful about
   view coherency when going to and from \Coriolis.
 
+  \newpage
+
   As for the first release, \Coriolis can be used only for two purposes~:
   \begin{itemize}
     \item \textbf{Routing a design}\xspace, in that case the \netlist\xspace
@@ -361,8 +378,6 @@
           view is present it still must have the same name but it can be in any
           state. 
   \end{itemize}
-
-  \newpage
 
 
   \subsection{Knik -- Global Router}
@@ -406,6 +421,8 @@
           other than \POWER or \GROUND.
   \end{itemize}
 
+  \newpage
+
   \medskip\noindent
   Routing a design is done in three ordered steps~:
   \begin{enumerate}
@@ -426,8 +443,6 @@
   connex in the sense of \Hurricane. \textit{Do not}\xspace try to save
   your design before that step, you would get gaps in it.
 
-
-  \newpage
 
   \subsection{Viewer Small Memento}
 
@@ -535,6 +550,8 @@
   \end{longtable}
   \end{center}
 
+  \newpage
+
   \subsection{Running \cgt in text mode}
 
   \begin{center}
@@ -574,7 +591,6 @@
     \texttt{--global-route|-G}
       & Run the global router (\Knik). \\
     \hline
-    \newpage
     \texttt{--detailed-route|-G}
       & Run the detailed router (\Kite). \\
     \hline
