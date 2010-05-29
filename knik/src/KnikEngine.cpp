@@ -128,6 +128,11 @@ KnikEngine* KnikEngine::create ( Cell* cell, unsigned congestion, unsigned preco
     
     _knik->_postCreate();
 
+    cout << "  o  Knik -- Global router makes use of FLUTE software" << endl;
+    cout << Dots::asIdentifier("     - Author"       ,"Chris C. N. CHU") << endl;
+    cout << Dots::asIdentifier("     - Prof. Ident. ","Iowa State University") << endl;
+    cout << Dots::asIdentifier("     - URL"          ,"http://home.eng.iastate.edu/~cnchu") << endl;
+
     return _knik;
 }
 
