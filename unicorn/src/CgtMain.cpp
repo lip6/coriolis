@@ -66,36 +66,6 @@ using namespace Solstice;
 using namespace Unicorn;
 
 
-namespace {
-
-
-// -------------------------------------------------------------------
-// Function  :  "printHelp()".
-
-  void  printHelp ()
-  {
-    cout << endl;
-    cout << "Usage: cgt [-v|--verbose] [-V|--very-verbose] [-D|--core-dump]    \\\n"
-         << "           [-l|--trace-level <traceLevel>] [-c|--cell <cellName>] \\\n"
-         << endl;
-    cout << "Options:\n"
-         << "    o  [-v|--verbose]      : First level of verbosity.\n"
-         << "    o  [-V|--very-verbose] : Second level of verbosity (very talkative).\n"
-         << "    o  [-D|--core-dump]    : Enable core dumping.\n"
-         << "    o  [-l|--trace-level <traceLevel>] :\n"
-         << "           Sets the level of trace, trace messages with a level superior to\n"
-         << "           <traceLevel> will be printed on <stderr>.\n"
-         << "    o  [-c|--cell <cellName>] :\n"
-         << "           The name of the Cell to load, without extention.\n"
-         << endl;
-  }
-
-
-} // End of anonymous namespace.
-
-
-
-
 // x-----------------------------------------------------------------x
 // |                      Fonctions Definitions                      |
 // x-----------------------------------------------------------------x
