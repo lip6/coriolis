@@ -280,7 +280,12 @@ int main ( int argc, char *argv[] )
       unicorn->getBanner().setPurpose ( "Coriolis Graphical Tool" );
 
       cmess1 << unicorn->getBanner() << endl;
+      cout << "                  The Knik router makes use of FLUTE software" << endl;
+      cout << "                  Author .................... Chris C. N. CHU" << endl;
+      cout << "                  Prof. Ident. ........ Iowa State University" << endl;
+      cout << "                  URL .... http://home.eng.iastate.edu/~cnchu" << endl;
       cmess2 << af->getPrint() << endl;
+
     //unicorn->registerTool ( Knik::GraphicKnikEngine::grab() );
       unicorn->registerTool ( Kite::GraphicKiteEngine::grab() );
       unicorn->setEnableRedrawInterrupt ( true );
