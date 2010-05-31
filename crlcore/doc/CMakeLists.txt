@@ -11,7 +11,8 @@
 
  latex_get_output_path ( output_dir )
 
-                  file ( COPY "${CMAKE_CURRENT_SOURCE_DIR}/SoC.css" DESTINATION "${output_dir}/README" )
+                 #file ( COPY "${CMAKE_CURRENT_SOURCE_DIR}/SoC.css" DESTINATION "${output_dir}/README" )
+       execute_process ( COMMAND cp -r "${CMAKE_CURRENT_SOURCE_DIR}/SoC.css" "${output_dir}/README" )
 
                install ( FILES ${output_dir}/README.tex
                                ${output_dir}/README.dvi
