@@ -4,6 +4,7 @@
 %define          svntag             @svntag@
 	     
 %define          with_binarytar     %{?_with_binarytar:1}%{!?_with_binarytar:0}
+%define          with_staticlink    %{?_with_staticlink:1}%{!?_with_staticlink:0}
 %define          python_sitedir     %{_lib}/%(python -c '
 import os.path
 import distutils.sysconfig
@@ -77,6 +78,9 @@ Development files for the Coriolis 2 package.
          -D BUILD_DOC:STRING=OFF                       \
          -D CMAKE_INSTALL_PREFIX:STRING=%{coriolisTop} \
          -D DESTDIR:STRING=%{buildroot}                \
+%if %{with_staticlink}
+         -D BUILD_SHARED_LIBS:STRING:OFF               \
+%endif
 %ifarch x86_64
          -D LIB_SUFFIX:STRING=64                       \
 %endif
@@ -155,7 +159,11 @@ Development files for the Coriolis 2 package.
 %dir %{coriolisTop}/%{_lib}
 %dir %{coriolisTop}/%{python_sitedir}
 %{coriolisTop}/bin/*
+%if %{with_staticlink}
+%{coriolisTop}/%{_lib}/*.a
+%else
 %{coriolisTop}/%{_lib}/*.so
+%endif
 %{coriolisTop}/%{python_sitedir}/*.so
 #%config(noreplace) %{_sysconfdir}/ld.so.conf.d/*
 %config(noreplace) %{_sysconfdir}/coriolis2/*.xml
