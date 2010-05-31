@@ -481,7 +481,9 @@ MACRO(LATEX_PROCESS_IMAGES dvi_outputs pdf_outputs)
       MAKE_DIRECTORY("${path}")
 
       # Copy the source file anyway.
-      FILE ( COPY "${file}" DESTINATION "${path}" )
+      # Works only from cmake 2.8.
+      # FILE ( COPY "${file}" DESTINATION "${path}" )
+      EXECUTE_PROCESS(COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${output_dir}/${file})
 
       # Do conversions for dvi.
       LATEX_CONVERT_IMAGE(${dvi_outputs} "${file}" .eps "${convert_flags}"
