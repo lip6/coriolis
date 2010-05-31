@@ -47,6 +47,8 @@ MACRO(SET_LIB_LINK_MODE)
       /opt/qt4-static-4.3.2/bin
       NO_DEFAULT_PATH
       )
+    SET(Boost_USE_STATIC_LIBS ON)
+    MESSAGE(STATUS "Using Boost static libraries.")
     MESSAGE(STATUS "Building static libraries.")
   ELSE(NOT BUILD_SHARED_LIBS)
     MESSAGE(STATUS "Building dynamic libraries.")
