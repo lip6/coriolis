@@ -32,7 +32,8 @@
    \newcommand {\crlFtpUrl}    [1] {http://asim.lip6.fr/pub/coriolis/2.0/#1}
    \newcommand {\alcFtpUrl}    [1] {http://asim.lip6.fr/pub/alliance/distribution/5.0/#1}
    \newcommand {\slSocSrpmsUrl}[1] {http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/i386/SLSoC/SRPMS/#1}
-   \newcommand {\slRpmsUrl}    [1] {http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/i386/i386/SL/#1}
+   \newcommand {\slRpmsiUrl}   [1] {http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/i386/i386/SL/#1}
+   \newcommand {\slRpmsxUrl}   [1] {http://ftp.lip6.fr/pub/linux/distributions/slsoc/5x/x86\_64/x86\_64/SL/#1}
 
    \latexhtml{
     %% LaTeX specific code.
@@ -41,7 +42,8 @@
      \newcommand{\crlFtpRef}    [1]{\href{\crlFtpUrl{#1}}{\texttt{\footnotesize #1}}}
      \newcommand{\alcFtpRef}    [1]{\href{\alcFtpUrl{#1}}{\texttt{\footnotesize #1}}}
      \newcommand{\slSocSrpmsRef}[1]{\href{\slSocSrpmsUrl{#1}}{\texttt{\footnotesize #1}}}
-     \newcommand{\slRpmsRef}    [1]{\href{\slRpmsUrl{#1}}{\texttt{\footnotesize #1}}}
+     \newcommand{\slRpmsiRef}   [1]{\href{\slRpmsiUrl{#1}}{\texttt{\footnotesize #1}}}
+     \newcommand{\slRpmsxRef}   [1]{\href{\slRpmsxUrl{#1}}{\texttt{\footnotesize #1}}}
    }{
     %% LaTeX2HTML specific code.
      \newcommand{\xhref}        [2]{\htmladdnormallink{#1}{#2}}
@@ -49,7 +51,8 @@
      \newcommand{\crlFtpRef}    [1]{\htmladdnormallink{#1}{\crlFtpUrl{#1}}}
      \newcommand{\alcFtpRef}    [1]{\htmladdnormallink{#1}{\alcFtpUrl{#1}}}
      \newcommand{\slSocSrpmsRef}[1]{\htmladdnormallink{#1}{\slSocSrpmsUrl{#1}}}
-     \newcommand{\slRpmsRef}    [1]{\htmladdnormallink{#1}{\slRpmsUrl{#1}}}
+     \newcommand{\slRpmsiRef}   [1]{\htmladdnormallink{#1}{\slRpmsiUrl{#1}}}
+     \newcommand{\slRpmsxRef}   [1]{\htmladdnormallink{#1}{\slRpmsxUrl{#1}}}
    }
 
    \newcommand {\Alexandre}          {\textsc{Alexandre}\xspace}
@@ -121,22 +124,29 @@
      {\xhref{\texttt{http://www-soc.lip6.fr/en/users/damiendupuis/thesis/}}%
             {http://www-soc.lip6.fr/en/users/damiendupuis/thesis/}\xspace}
 
-   \newcommand {\coriolisIIfcXIIIirpm}{\crlFtpRef{coriolis2-1.0.1456-1.fc13.i386.rpm}\xspace}
+   \newcommand {\coriolisIIfcXIIIirpm}{\crlFtpRef{coriolis2-1.0.1456-1.fc13.i686.rpm}\xspace}
    \newcommand {\coriolisIIfcXIIIxrpm}{\crlFtpRef{coriolis2-1.0.1456-1.fc13.x86\_64.rpm}\xspace}
    \newcommand {\coriolisIIfcXIIirpm} {\crlFtpRef{coriolis2-1.0.1456-1.fc12.i386.rpm}\xspace}
    \newcommand {\coriolisIIfcXIIxrpm} {\crlFtpRef{coriolis2-1.0.1456-1.fc12.x86\_64.rpm}\xspace}
    \newcommand {\coriolisIIslVirpm}   {\crlFtpRef{coriolis2-1.0.1456-1.sl5\_soc.i386.rpm}\xspace}
-   \newcommand {\coriolisIIslVxrpm}   {\crlFtpRef{coriolis2-1.0.1456-1\_sl5\_soc\_x86\_64.deb}\xspace}
-   \newcommand {\coriolisIIkarmikideb}{\crlFtpRef{coriolis2-1.0.1456-1\_sl5\_soc\_i386.deb}\xspace}
-   \newcommand {\coriolisIIkarmikxdeb}{\crlFtpRef{coriolis2-1.0.1456-1.sl5\_soc.x86\_64.rpm}\xspace}
+   \newcommand {\coriolisIIslVxrpm}   {\crlFtpRef{coriolis2-1.0.1456-1.sl5\_soc.x86\_64.rpm}\xspace}
+   \newcommand {\coriolisIIkarmikideb}{\crlFtpRef{coriolis2\_1.0.1456-1\_sl5\_soc\_i386.deb}\xspace}
+   \newcommand {\coriolisIIkarmikxdeb}{\crlFtpRef{coriolis2\_1.0.1456-1\_sl5\_soc\_x86\_64.deb}\xspace}
    \newcommand {\qtIVsrpm}            {\slSocSrpmsRef{qt4-4.5.0-8.sl5soc.src.rpm}\xspace}
-   \newcommand {\qtIVirpm}            {\slRpmsRef{qt4-4.5.0-8.sl5soc.i386.rpm}\xspace}
-   \newcommand {\qtIVdevelirpm}       {\slRpmsRef{qt4-devel-4.5.0-8.sl5soc.i386.rpm}\xspace}
-   \newcommand {\qtIVdocirpm}         {\slRpmsRef{qt4-doc-4.5.0-8.sl5soc.i386.rpm}\xspace}
-   \newcommand {\qtIVmysqlirpm}       {\slRpmsRef{qt4-mysql-4.5.0-8.sl5soc.i386.rpm}\xspace}
-   \newcommand {\qtIVodbcirpm}        {\slRpmsRef{qt4-odbc-4.5.0-8.sl5soc.i386.rpm}\xspace}
-   \newcommand {\qtIVpostgresqlirpm}  {\slRpmsRef{qt4-postgresql-4.5.0-8.sl5soc.i386.rpm}\xspace}
-   \newcommand {\qtIVxXIirpm}         {\slRpmsRef{qt4-x11-4.5.0-8.sl5soc.i386.rpm}\xspace}
+   \newcommand {\qtIVirpm}            {\slRpmsiRef{qt4-4.5.0-8.sl5soc.i386.rpm}\xspace}
+   \newcommand {\qtIVdevelirpm}       {\slRpmsiRef{qt4-devel-4.5.0-8.sl5soc.i386.rpm}\xspace}
+   \newcommand {\qtIVdocirpm}         {\slRpmsiRef{qt4-doc-4.5.0-8.sl5soc.i386.rpm}\xspace}
+   \newcommand {\qtIVmysqlirpm}       {\slRpmsiRef{qt4-mysql-4.5.0-8.sl5soc.i386.rpm}\xspace}
+   \newcommand {\qtIVodbcirpm}        {\slRpmsiRef{qt4-odbc-4.5.0-8.sl5soc.i386.rpm}\xspace}
+   \newcommand {\qtIVpostgresqlirpm}  {\slRpmsiRef{qt4-postgresql-4.5.0-8.sl5soc.i386.rpm}\xspace}
+   \newcommand {\qtIVxXIirpm}         {\slRpmsiRef{qt4-x11-4.5.0-8.sl5soc.i386.rpm}\xspace}
+   \newcommand {\qtIVxrpm}            {\slRpmsxRef{qt4-4.5.0-8.sl5soc.x86\_64.rpm}\xspace}
+   \newcommand {\qtIVdevelxrpm}       {\slRpmsxRef{qt4-devel-4.5.0-8.sl5soc.x86\_64.rpm}\xspace}
+   \newcommand {\qtIVdocxrpm}         {\slRpmsxRef{qt4-doc-4.5.0-8.sl5soc.x86\_64.rpm}\xspace}
+   \newcommand {\qtIVmysqlxrpm}       {\slRpmsxRef{qt4-mysql-4.5.0-8.sl5soc.x86\_64.rpm}\xspace}
+   \newcommand {\qtIVodbcxrpm}        {\slRpmsxRef{qt4-odbc-4.5.0-8.sl5soc.x86\_64.rpm}\xspace}
+   \newcommand {\qtIVpostgresqlxrpm}  {\slRpmsxRef{qt4-postgresql-4.5.0-8.sl5soc.x86\_64.rpm}\xspace}
+   \newcommand {\qtIVxXIxrpm}         {\slRpmsxRef{qt4-x11-4.5.0-8.sl5soc.x86\_64.rpm}\xspace}
 
    \latexhtml{ %% LaTeX version.
    \newcommand {\keyUP}              {\key{UP}\xspace}
@@ -298,9 +308,9 @@
    \RHELV      & \coriolisIIslVirpm  \\
    \CentOSV    & \coriolisIIslVxrpm  \\
    \SLV        &                     \\
-   \hline
-   \Karmik     & \coriolisIIkarmikideb  \\
-               & \coriolisIIkarmikxdeb  \\
+  %\hline
+  %\Karmik     & \coriolisIIkarmikideb  \\
+  %            & \coriolisIIkarmikxdeb  \\
    \hline
  \end{tabular}
  \end{center}
@@ -310,18 +320,18 @@
  For \RHELV based distributions, additionnal \QtIV packages are needed:
 
  \begin{center}
- \begin{tabular}{|l|}
+ \begin{tabular}{|l|l|}
    \hline
-   \qtIVsrpm           \\
+   \multicolumn{2}{|l|}{\qtIVsrpm} \\
    \hline
    \hline
-   \qtIVirpm           \\
-   \qtIVdevelirpm      \\
-   \qtIVdocirpm        \\
-   \qtIVmysqlirpm      \\
-   \qtIVodbcirpm       \\
-   \qtIVpostgresqlirpm \\
-   \qtIVxXIirpm        \\
+   \qtIVirpm           & \qtIVxrpm           \\
+   \qtIVdevelirpm      & \qtIVdevelxrpm      \\
+   \qtIVdocirpm        & \qtIVdocxrpm        \\
+   \qtIVmysqlirpm      & \qtIVmysqlxrpm      \\
+   \qtIVodbcirpm       & \qtIVodbcxrpm       \\
+   \qtIVpostgresqlirpm & \qtIVpostgresqlxrpm \\
+   \qtIVxXIirpm        & \qtIVxXIxrpm        \\
    \hline
  \end{tabular}
  \end{center}
