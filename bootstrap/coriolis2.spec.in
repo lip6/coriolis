@@ -79,7 +79,7 @@ Development files for the Coriolis 2 package.
          -D CMAKE_INSTALL_PREFIX:STRING=%{coriolisTop} \
          -D DESTDIR:STRING=%{buildroot}                \
 %if %{with_staticlink}
-         -D BUILD_SHARED_LIBS:STRING:OFF               \
+         -D BUILD_SHARED_LIBS:STRING=OFF               \
 %endif
 %ifarch x86_64
          -D LIB_SUFFIX:STRING=64                       \
@@ -112,6 +112,9 @@ Development files for the Coriolis 2 package.
          -D BUILD_SHARED_LIBS:STRING=ON                \
          -D CMAKE_INSTALL_PREFIX:STRING=%{coriolisTop} \
          -D DESTDIR:STRING=%{buildroot}                \
+%if %{with_staticlink}
+         -D BUILD_SHARED_LIBS:STRING=OFF               \
+%endif
 %ifarch x86_64
          -D LIB_SUFFIX:STRING=64                       \
 %endif
