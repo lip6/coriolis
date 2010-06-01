@@ -192,6 +192,7 @@ namespace CRL {
               string            _authors;
               string            _contributors;
               unsigned int      _screenWidth;
+              size_t            _cartoucheWidth;
               const BannerFont* _font;
               string*           _lines;
               ostringstream     _banner;

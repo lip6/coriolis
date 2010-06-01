@@ -78,11 +78,15 @@
    \newcommand {\RHELV}              {\textsc{rhel 5}\xspace}
    \newcommand {\CentOSV}            {\textsc{CentOS 5}\xspace}
    \newcommand {\SLV}                {\textsc{SL 5}\xspace}
+   \newcommand {\Fedora}             {\textsc{Fedora}\xspace}
    \newcommand {\FedoraXII}          {\textsc{Fedora 12}\xspace}
    \newcommand {\FedoraXIII}         {\textsc{Fedora 13}\xspace}
    \newcommand {\Karmik}             {\textsc{Ubuntu Karmik}\xspace}
+   \newcommand {\Lucid}              {\textsc{Ubuntu Lucid}\xspace}
    \newcommand {\QtIV}               {\textsc{Qt 4}\xspace}
    \newcommand {\rpm}                {\texttt{rpm}\xspace}
+   \newcommand {\alien}              {\texttt{alien}\xspace}
+   \newcommand {\boost}              {\texttt{boost}\xspace}
    \newcommand {\tty}                {\texttt{tty}\xspace}
    \newcommand {\BoxRouter}          {\textsc{BoxRouter}\xspace}
    \newcommand {\BoxRouterRef}       {\xhref{\BoxRouter}%
@@ -124,14 +128,14 @@
      {\xhref{\texttt{http://www-soc.lip6.fr/en/users/damiendupuis/thesis/}}%
             {http://www-soc.lip6.fr/en/users/damiendupuis/thesis/}\xspace}
 
-   \newcommand {\coriolisIIfcXIIIirpm}{\crlFtpRef{coriolis2-1.0.1456-1.fc13.i686.rpm}\xspace}
-   \newcommand {\coriolisIIfcXIIIxrpm}{\crlFtpRef{coriolis2-1.0.1456-1.fc13.x86\_64.rpm}\xspace}
-   \newcommand {\coriolisIIfcXIIirpm} {\crlFtpRef{coriolis2-1.0.1456-1.fc12.i386.rpm}\xspace}
-   \newcommand {\coriolisIIfcXIIxrpm} {\crlFtpRef{coriolis2-1.0.1456-1.fc12.x86\_64.rpm}\xspace}
-   \newcommand {\coriolisIIslVirpm}   {\crlFtpRef{coriolis2-1.0.1456-1.sl5\_soc.i386.rpm}\xspace}
-   \newcommand {\coriolisIIslVxrpm}   {\crlFtpRef{coriolis2-1.0.1456-1.sl5\_soc.x86\_64.rpm}\xspace}
-   \newcommand {\coriolisIIkarmikideb}{\crlFtpRef{coriolis2\_1.0.1456-1\_sl5\_soc\_i386.deb}\xspace}
-   \newcommand {\coriolisIIkarmikxdeb}{\crlFtpRef{coriolis2\_1.0.1456-1\_sl5\_soc\_x86\_64.deb}\xspace}
+   \newcommand {\coriolisIIfcXIIIirpm}{\crlFtpRef{coriolis2-1.0.1470-1.fc13.i686.rpm}\xspace}
+   \newcommand {\coriolisIIfcXIIIxrpm}{\crlFtpRef{coriolis2-1.0.1470-1.fc13.x86\_64.rpm}\xspace}
+   \newcommand {\coriolisIIfcXIIirpm} {\crlFtpRef{coriolis2-1.0.1470-1.fc12.i686.rpm}\xspace}
+   \newcommand {\coriolisIIfcXIIxrpm} {\crlFtpRef{coriolis2-1.0.1470-1.fc12.x86\_64.rpm}\xspace}
+   \newcommand {\coriolisIIslVirpm}   {\crlFtpRef{coriolis2-1.0.1470-1.sl5\_soc.i386.rpm}\xspace}
+   \newcommand {\coriolisIIslVxrpm}   {\crlFtpRef{coriolis2-1.0.1470-1.sl5\_soc.x86\_64.rpm}\xspace}
+   \newcommand {\coriolisIILucidideb} {\crlFtpRef{coriolis2\_1.0.1470-1\_fc13\_i386.deb}\xspace}
+   \newcommand {\coriolisIILucidxdeb} {\crlFtpRef{coriolis2\_1.0.1470-1\_fc13\_amd64.deb}\xspace}
    \newcommand {\qtIVsrpm}            {\slSocSrpmsRef{qt4-4.5.0-8.sl5soc.src.rpm}\xspace}
    \newcommand {\qtIVirpm}            {\slRpmsiRef{qt4-4.5.0-8.sl5soc.i386.rpm}\xspace}
    \newcommand {\qtIVdevelirpm}       {\slRpmsiRef{qt4-devel-4.5.0-8.sl5soc.i386.rpm}\xspace}
@@ -247,9 +251,10 @@
  \section{Credits \& Licenses}
 
  \begin{center}
-   \Hurricane     \dotfill\      Rémy \Escassut \& Christian \Masson   \\
-   \Knik          \dotfill     Damien \Dupuis   \\
-   \Kite, \Viewer \dotfill  Jean-Paul \Chaput   \\
+   \Hurricane           \dotfill\       Rémy \Escassut  \& Christian \Masson   \\
+   \Knik                \dotfill\     Damien \Dupuis    \\
+   \Kite, \Viewer       \dotfill\  Jean-Paul \Chaput    \\
+   Software Engineering \dotfill\ Christophe \Alexandre \\
  \end{center}
 
  The \Hurricane data-base is copyright\textcopyright\ \Bull 2000-2010 and is
@@ -266,7 +271,7 @@
 
  \section{Release Notes}
 
- \subsection{Release 1.0.1456}
+ \subsection{Release 1.0.1470}
 
  This is the first preliminary release of the \CoriolisII framework.
 
@@ -299,21 +304,30 @@
  \begin{center}
  \begin{tabular}{|c|l|}
    \hline
-   \FedoraXIII & \coriolisIIfcXIIIirpm  \\
-               & \coriolisIIfcXIIIxrpm  \\
+   \FedoraXIII & \coriolisIIfcXIIIirpm \\
+               & \coriolisIIfcXIIIxrpm \\
    \hline
-   \FedoraXII  & \coriolisIIfcXIIirpm  \\
-               & \coriolisIIfcXIIxrpm  \\
+   \FedoraXII  & \coriolisIIfcXIIirpm \\
+               & \coriolisIIfcXIIxrpm \\
    \hline
    \RHELV      & \coriolisIIslVirpm  \\
    \CentOSV    & \coriolisIIslVxrpm  \\
    \SLV        &                     \\
-  %\hline
-  %\Karmik     & \coriolisIIkarmikideb  \\
-  %            & \coriolisIIkarmikxdeb  \\
+   \hline
+   \Lucid      & \coriolisIILucidideb \\
+               & \coriolisIILucidxdeb \\
    \hline
  \end{tabular}
  \end{center}
+
+ \noindent\textbf{Note:}\ The \Lucid packages have not beeing natively
+ compiled but converted from \Fedora with \alien, they might not work as
+ well as under \Fedora. As they uses slightly different versions of \boost,
+ you have to create the following link~:
+ \begin{verbatim}
+   > sudo ln -s /usr/lib/libboost_program_options.so.1.40.0 \
+                /usr/lib/libboost_program_options-mt.so.1.41.0
+ \end{verbatim}
 
  \newpage
 

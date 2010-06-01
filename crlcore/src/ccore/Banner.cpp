@@ -321,16 +321,17 @@ namespace CRL {
                  , string date
                  , string authors
                  , string contributors )
-    : _name(name)
-    , _version(version)
-    , _purpose(purpose)
-    , _date(date)
-    , _authors(authors)
-    , _contributors(contributors)
-    , _screenWidth(80)
-    , _font(BannerFont::getBannerFont("Unknown_Bold_Normal_14"))
-    , _lines(NULL)
-    , _banner()
+    : _name          (name)
+    , _version       (version)
+    , _purpose       (purpose)
+    , _date          (date)
+    , _authors       (authors)
+    , _contributors  (contributors)
+    , _screenWidth   (80)
+    , _cartoucheWidth(64)
+    , _font          (BannerFont::getBannerFont("Unknown_Bold_Normal_14"))
+    , _lines         (NULL)
+    , _banner        ()
   {
     _redraw ();
   }
@@ -381,7 +382,7 @@ namespace CRL {
       _banner << "\n" << head << _purpose << "\n";
     }
 
-    half = ( _screenWidth - 44 ) / 2;
+    half = ( _screenWidth - _cartoucheWidth ) / 2;
     head.clear ();
     head.append ( half, ' ' );
 
@@ -389,7 +390,7 @@ namespace CRL {
     if ( _version.size() ) {
       string  nameVersion = _name + " " + _version;
       _banner << "\n" << head << "Coriolis CAD System 1.0,"
-              << setw(19) << nameVersion;
+              << setw(_cartoucheWidth-25) << nameVersion;
     }
     
   // Date.
@@ -397,7 +398,8 @@ namespace CRL {
       time_t  t;
       time(&t);
       _banner << "\n" << head << "Copyright (c) " << _date
-              << "-" << localtime(&t)->tm_year+1900 << ",     ASIM/LIP6/UPMC";
+              << "-" << localtime(&t)->tm_year+1900 << ","
+              << setw(_cartoucheWidth-25) << "SoC/LIP6/UPMC";
     }
 
   // Authors.
@@ -413,9 +415,9 @@ namespace CRL {
 
           author = _authors.substr ( start , tail-start );
           if ( !token )
-            _banner << "\n" << head << "Author(s) :" << setw(32) << author;
+            _banner << "\n" << head << "Author(s):" << setw(_cartoucheWidth-11) << author;
           else
-            _banner << "\n" << head << setw(43) << author;
+            _banner << "\n" << head << setw(_cartoucheWidth-1) << author;
         }
       }
     }
@@ -433,15 +435,15 @@ namespace CRL {
 
           contributor = _contributors.substr ( start , tail-start );
           if ( !token )
-            _banner << "\n" << head << "Contributors(s) :" << setw(26) << contributor;
+            _banner << "\n" << head << "Contributors(s):" << setw(_cartoucheWidth-17) << contributor;
           else
-            _banner << "\n" << head << setw(43) << contributor;
+            _banner << "\n" << head << setw(_cartoucheWidth-1) << contributor;
         }
       }
     }
 
   // E-mail.
-    _banner << "\n" << head << "E-mail  :         coriolis-cvs@asim.lip6.fr";
+    _banner << "\n" << head << "E-mail:" << setw(_cartoucheWidth-8) << "coriolis-cvs@asim.lip6.fr";
 
   // Separate the banner from the following text.
     _banner << "\n";
