@@ -259,7 +259,7 @@ namespace {
 
   inline Interval  Cs1Candidate::getConflict ( size_t i )
   {
-    if (i > _conflicts.size()) return Interval();
+    if (i >= _conflicts.size()) return Interval();
     return _conflicts[i];
   }
 
