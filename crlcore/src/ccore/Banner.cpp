@@ -443,7 +443,7 @@ namespace CRL {
     }
 
   // E-mail.
-    _banner << "\n" << head << "E-mail:" << setw(_cartoucheWidth-8) << "coriolis-cvs@asim.lip6.fr";
+    _banner << "\n" << head << "E-mail:" << setw(_cartoucheWidth-8) << "alliance-users@asim.lip6.fr";
 
   // Separate the banner from the following text.
     _banner << "\n";

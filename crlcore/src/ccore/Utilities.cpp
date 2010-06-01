@@ -174,7 +174,7 @@ namespace CRL {
         if (sig == SIGSEGV) cerr << "(SIGSEGV).";
         if (sig == SIGPIPE) cerr << "(SIGPIPE).";
 
-        cerr << "\n  Please e-mail to <coriolis-sav@asim.lip6.fr>.\n"
+        cerr << "\n  Please e-mail to <alliance-users@asim.lip6.fr>.\n"
              << "\n  program terminated ";
 
         if ( getSystem()->getCatchCore() ) {
