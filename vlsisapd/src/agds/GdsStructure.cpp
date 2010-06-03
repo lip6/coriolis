@@ -2,7 +2,7 @@
 #include <ctime>
 using namespace std;
 
-#include "GdsStructure.h"
+#include "vlsisapd/agds/GdsStructure.h"
 
 namespace vlsisapd {
 GdsStructure::GdsStructure(string strName) 

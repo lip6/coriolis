@@ -3,7 +3,7 @@
 
 #include <fstream>
 
-#include "GdsElement.h"
+#include "vlsisapd/agds/GdsElement.h"
 
 namespace vlsisapd {
 class GdsRectangle : public GdsElement {

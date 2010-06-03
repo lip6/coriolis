@@ -3,7 +3,7 @@
 #include <ctime>
 using namespace std;
 
-#include "GdsLibrary.h"
+#include "vlsisapd/agds/GdsLibrary.h"
 
 namespace vlsisapd {
 

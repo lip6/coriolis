@@ -1,7 +1,14 @@
 INCLUDE_DIRECTORIES(${CHAMS_SOURCE_DIR}/agds)
 
-SET ( includes GdsLibrary.h GdsStructure.h GdsElement.h GdsRectangle.h )
-SET ( cpps     GdsLibrary.cpp GdsStructure.cpp GdsRectangle.cpp )
+SET ( includes vlsisapd/agds/GdsLibrary.h 
+               vlsisapd/agds/GdsStructure.h 
+               vlsisapd/agds/GdsElement.h 
+               vlsisapd/agds/GdsRectangle.h 
+    )
+SET ( cpps GdsLibrary.cpp 
+           GdsStructure.cpp 
+           GdsRectangle.cpp 
+    )
 
 ADD_LIBRARY(agds ${cpps})
 INSTALL(TARGETS agds DESTINATION lib${LIB_SUFFIX})

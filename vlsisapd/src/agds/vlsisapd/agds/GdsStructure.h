@@ -6,7 +6,7 @@
 #include <vector>
 using namespace std;
 
-#include "GdsElement.h"
+#include "vlsisapd/agds/GdsElement.h"
 
 namespace vlsisapd {
 class GdsStructure {

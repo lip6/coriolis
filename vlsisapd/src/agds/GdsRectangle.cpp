@@ -2,7 +2,7 @@
 #include <iomanip>
 using namespace std;
 
-#include "GdsRectangle.h"
+#include "vlsisapd/agds/GdsRectangle.h"
 
 namespace vlsisapd {
 GdsElement::~GdsElement () { }

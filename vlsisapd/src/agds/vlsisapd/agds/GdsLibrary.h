@@ -4,7 +4,7 @@
 #include <vector>
 using namespace std;
 
-#include "GdsStructure.h"
+#include "vlsisapd/agds/GdsStructure.h"
 
 namespace vlsisapd {
 class GdsLibrary {
