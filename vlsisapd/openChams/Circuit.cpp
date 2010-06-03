@@ -45,6 +45,19 @@ Circuit::Circuit(Name name, Name techno) : _name(name), _techno(techno), _netlis
     readSizingDone            = false;
 }
 
+// COMPARISON FUNCTION //
+bool ConnectionsSort(const pair<Name, Name>& p1, const pair<Name, Name>& p2) {
+    return p1.first < p2.first;
+}
+
+bool InstanceNameSort(const Instance* i1, const Instance* i2) {
+    return i1->getName() < i2->getName();
+}
+
+bool NetNameSort(const Net* n1, const Net* n2) {
+    return n1->getName() < n2->getName();
+}
+
 // USEFUL //
 void Circuit::check_uppercase(string& str, vector<string>& compares, string message) {
     transform(str.begin(), str.end(), str.begin(), ::toupper);
@@ -640,7 +653,9 @@ bool Circuit::writeToFile(string filePath) {
     }
     file << "  <netlist>" << endl
          << "    <instances>" << endl;
-    for (vector<Instance*>::const_iterator it = _netlist->getInstances().begin() ; it != _netlist->getInstances().end() ; ++it) {
+    vector<Instance*> instances = _netlist->getInstances();
+    sort(instances.begin(), instances.end(), InstanceNameSort); // sort based on instances' names
+    for (vector<Instance*>::iterator it = instances.begin() ; it != instances.end() ; ++it) {
         Instance* inst = (*it);
         if (inst->hasNoConnectors()) {
             string error("[ERROR] Cannot writeToFile since instance (");
@@ -682,7 +697,9 @@ bool Circuit::writeToFile(string filePath) {
     }
     file << "    </instances>" << endl
          << "    <nets>" << endl;
-    for (vector<Net*>::const_iterator it = _netlist->getNets().begin() ; it != _netlist->getNets().end() ; ++it) {
+    vector<Net*> nets = _netlist->getNets();
+    sort(nets.begin(), nets.end(), NetNameSort); // sort based on nets' names
+    for (vector<Net*>::iterator it = nets.begin() ; it != nets.end() ; ++it) {
         Net* net = (*it);
         if (net->hasNoConnectors()) {
             string error("[ERROR] Cannot writeToFile since net (");
@@ -693,7 +710,9 @@ bool Circuit::writeToFile(string filePath) {
         }
         string externStr = (net->isExternal()) ? "True" : "False";
         file << "      <net name=\"" << net->getName().getString() << "\" type=\"" << net->getType().getString() << "\" isExternal=\"" << externStr << "\">" << endl;
-        for (vector<pair<Name, Name> >::const_iterator it = net->getConnections().begin() ; it != net->getConnections().end() ; ++it) {
+        vector<pair<Name, Name> > connections = net->getConnections();
+        sort(connections.begin(), connections.end(), ConnectionsSort);
+        for (vector<pair<Name, Name> >::iterator it = connections.begin() ; it != connections.end() ; ++it) {
             file << "        <connector instance=\"" << (*it).first.getString() << "\" name=\"" << (*it).second.getString() << "\"/>" << endl;
         }
 		file << "      </net>" << endl;

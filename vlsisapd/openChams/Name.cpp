@@ -48,8 +48,9 @@ bool Name::operator==(const string& str) {
     Name n(str);
     return (_id == n._id);
 }
-bool Name::operator<(const Name n) const {
-    return (_id < n._id);
+bool Name::operator<(const Name& n) const {
+    //return (_id < n._id); // does not assert determinism in driving since hurricane do not care about name's ID --> need an alphabetical check on string
+    return (*_str < n.getString());
 }
 } // namespace
 

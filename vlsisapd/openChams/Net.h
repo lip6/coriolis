@@ -23,7 +23,7 @@ class Net {
         
     void connectTo(Name instanceName, Name connectorName);
     
-    inline Name     getName();
+    inline Name     getName() const;
     inline Name     getType();
     inline bool     isExternal();
     inline Netlist* getNetlist();
@@ -31,7 +31,7 @@ class Net {
     //inline vector<pair<Name, Name> >::iterator getFirstConnectionIt();
     //inline vector<pair<Name, Name> >::iterator getLastConnectionIt();
     inline const std::vector<std::pair<Name, Name> >& getConnections();
-        
+
     private:
     Name     _name;
     Name     _typeName;
@@ -40,7 +40,7 @@ class Net {
     std::vector<std::pair<Name, Name> > _connections; // <instanceName, connectorName>
 };
     
-inline Name Net::getName() { return _name; };
+inline Name Net::getName() const { return _name; };
 inline Name Net::getType() { return _typeName; };
 inline bool Net::isExternal() { return _isExternal; };
 inline Netlist* Net::getNetlist() { return _netlist; };

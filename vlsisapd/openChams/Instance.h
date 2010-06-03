@@ -32,7 +32,7 @@ class Instance {
     inline void addParameter(Name, double);
     inline void addParameter(Name, std::string);
     inline void addTransistor(Transistor*);
-    inline Name getName();
+    inline Name getName() const;
     inline Name getModel();
     inline Name getMosType();
     inline bool isSourceBulkConnected();
@@ -43,7 +43,7 @@ class Instance {
     // pour parcourir les transistors
     inline bool hasNoTransistors();
     inline const std::vector<Transistor*>& getTransistors();
-        
+
 	private:
 	Name 	   		_name;
     Name 	   		_model;
@@ -58,7 +58,7 @@ class Instance {
 inline void Instance::addParameter(Name name, double value) { _params.addParameter(name, value); };
 inline void Instance::addParameter(Name name, std::string eqStr) { _params.addParameter(name, eqStr); };
 inline void Instance::addTransistor(Transistor* tr) { _trans.push_back(tr); };
-inline Name Instance::getName() { return _name; };
+inline Name Instance::getName() const { return _name; };
 inline Name Instance::getModel() { return _model; };
 inline Name Instance::getMosType() { return _mosType; };
 inline bool Instance::isSourceBulkConnected() { return _sourceBulkConnected; };

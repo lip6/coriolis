@@ -35,6 +35,7 @@ class Circuit {
     inline double     getValue(Name);
     inline Netlist*   getNetlist();
     inline Schematic* getSchematic();
+    inline Sizing*    getSizing();
     inline void       addParameter(Name, double);
     inline void       addParameter(Name, std::string);
     inline Parameters getParameters();
@@ -86,6 +87,7 @@ inline Name       Circuit::getTechno()         { return _techno; };
 inline double     Circuit::getValue(Name name) { return _params.getValue(name); };
 inline Netlist*   Circuit::getNetlist()        { return _netlist; };
 inline Schematic* Circuit::getSchematic()      { return _schematic; };
+inline Sizing*    Circuit::getSizing()         { return _sizing; };
 inline void       Circuit::addParameter(Name name, double value) { _params.addParameter(name, value); };
 inline void       Circuit::addParameter(Name name, std::string eqStr) { _params.addParameter(name, eqStr); };
 inline Parameters Circuit::getParameters()     { return _params; };

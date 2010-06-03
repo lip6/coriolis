@@ -3,7 +3,7 @@
  *  openChams
  *
  *  Created by damien dupuis on 08/02/10.
- *  Copyright 2010 UPMC / LIP6. All rights reserved.
+ *  Copyright 2008-2010 UPMC / LIP6. All rights reserved.
  *
  */
 
@@ -31,8 +31,8 @@ namespace OpenChams {
         
     private:
         Circuit* _circuit;
-        std::map<Name, Operator*>   _operators; //instanceName <-> operator
-        std::map<Name, std::string> _equations; //equationName <-> equation (string)
+        std::map<Name, Operator*>   _operators; // instanceName <-> operator
+        std::map<Name, std::string> _equations; // equationName <-> equation (string)
     };
     
     inline bool   Sizing::hasNoOperators() { return (_operators.size() == 0) ? true : false; };

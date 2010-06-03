@@ -23,7 +23,7 @@ class Name {
     
 	bool operator==(const Name&);
 	bool operator==(const std::string&);
-	bool operator<(const Name) const;
+	bool operator<(const Name&) const;
     
 	inline const std::string& getString() const;
         
@@ -32,7 +32,7 @@ class Name {
 	const std::string *_str;
     
 	static std::map<std::string, unsigned long> _dict;
-	static unsigned long              _globalId;
+	static unsigned long _globalId;
 };
     
 inline const std::string& Name::getString() const{
