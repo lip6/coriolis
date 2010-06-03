@@ -1,4 +1,4 @@
-INCLUDE_DIRECTORIES(${CHAMS_SOURCE_DIR}/agds)
+INCLUDE_DIRECTORIES(${VLSISAPD_SOURCE_DIR}/src/agds)
 
 SET ( includes vlsisapd/agds/GdsLibrary.h 
                vlsisapd/agds/GdsStructure.h 
