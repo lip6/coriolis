@@ -15,17 +15,18 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#include "Name.h"
-#include "Parameters.h"
-#include "Netlist.h"
-#include "Instance.h"
-#include "Net.h"
-#include "Schematic.h"
-#include "Sizing.h"
-#include "Transistor.h"
-#include "Operator.h"
+#include "vlsisapd/openChams/Name.h"
+#include "vlsisapd/openChams/Parameters.h"
 
 namespace OpenChams {
+class Netlist;
+class Instance;
+class Net;
+class Schematic;
+class Sizing;
+class Transistor;
+class Operator;
+
 class Circuit {
     public:
     Circuit(Name name, Name techno);

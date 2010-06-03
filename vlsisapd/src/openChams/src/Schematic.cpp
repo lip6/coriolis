@@ -9,8 +9,8 @@
 
 using namespace std;
 
-#include "Schematic.h"
-#include "OpenChamsException.h"
+#include "vlsisapd/openChams/Schematic.h"
+#include "vlsisapd/openChams/OpenChamsException.h"
 
 namespace OpenChams {
 Schematic::Schematic(Circuit* circuit, double zoom) 

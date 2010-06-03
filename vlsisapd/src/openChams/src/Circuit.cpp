@@ -14,8 +14,15 @@
 #include <algorithm>
 using namespace std;
 
-#include "Circuit.h"
-#include "OpenChamsException.h"
+#include "vlsisapd/openChams/Circuit.h"
+#include "vlsisapd/openChams/Netlist.h"
+#include "vlsisapd/openChams/Instance.h"
+#include "vlsisapd/openChams/Net.h"
+#include "vlsisapd/openChams/Schematic.h"
+#include "vlsisapd/openChams/Sizing.h"
+#include "vlsisapd/openChams/Transistor.h"
+#include "vlsisapd/openChams/Operator.h"
+#include "vlsisapd/openChams/OpenChamsException.h"
 
 namespace {
 	template<class T> T getValue(xmlChar* str) {

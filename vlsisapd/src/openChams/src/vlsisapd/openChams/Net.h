@@ -12,8 +12,7 @@
 
 #include <vector>
 
-#include "Name.h"
-#include "Instance.h"
+#include "vlsisapd/openChams/Name.h"
 
 namespace OpenChams {
 class Netlist;

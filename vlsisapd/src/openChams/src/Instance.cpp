@@ -10,11 +10,11 @@
 #include <iostream>
 using namespace std;
 
-#include "Instance.h"
-#include "Netlist.h"
-#include "Net.h"
-#include "Transistor.h"
-#include "OpenChamsException.h"
+#include "vlsisapd/openChams/Instance.h"
+#include "vlsisapd/openChams/Netlist.h"
+#include "vlsisapd/openChams/Net.h"
+#include "vlsisapd/openChams/Transistor.h"
+#include "vlsisapd/openChams/OpenChamsException.h"
 
 namespace OpenChams {
 Instance::Instance(Name name, Name model, Name mosType, bool sourceBulkConnected, Netlist* netlist)

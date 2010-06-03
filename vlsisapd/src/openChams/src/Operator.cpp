@@ -10,8 +10,8 @@
 #include <string>
 using namespace std;
 
-#include "Operator.h"
-#include "OpenChamsException.h"
+#include "vlsisapd/openChams/Operator.h"
+#include "vlsisapd/openChams/OpenChamsException.h"
 
 namespace OpenChams {
 Operator::Operator(Name operatorName, Name simulModel, unsigned callOrder) 

@@ -12,10 +12,11 @@
 
 #include <map>
 
-#include "Name.h"
+#include "vlsisapd/openChams/Name.h"
 
 namespace OpenChams {
 class Circuit;
+
 class Schematic {
 	public:
     class Infos {

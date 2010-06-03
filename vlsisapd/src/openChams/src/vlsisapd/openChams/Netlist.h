@@ -12,12 +12,12 @@
 
 #include <vector>
 
-#include "Name.h"
-#include "Instance.h"
-#include "Net.h"
-
 namespace OpenChams {
+class Name;
+class Instance;
+class Net;
 class Circuit;
+
 class Netlist {
 	public:
     Netlist(Circuit*);
@@ -28,13 +28,8 @@ class Netlist {
     Instance* getInstance(Name);
     Net* getNet(Name);
     
-    //pour parcourir les vector
     inline bool hasNoInstances();
     inline bool hasNoNets();
-    //inline vector<Instance*>::iterator getFirstInstanceIt();
-    //inline vector<Instance*>::iterator getLastInstanceIt();
-    //inline vector<Net*>::iterator getFirstNetIt();
-    //inline vector<Net*>::iterator getLastNetIt();
     inline const std::vector<Instance*>& getInstances();
     inline const std::vector<Net*>& getNets();
     
@@ -44,12 +39,8 @@ class Netlist {
     std::vector<Net*>      _nets;
 };
     
-inline bool 					Netlist::hasNoInstances() { return (_instances.size() == 0)? true : false; }
-inline bool 					Netlist::hasNoNets()      { return (_nets.size() == 0)? true : false; }
-//inline vector<Instance*>::iterator Netlist::getFirstInstanceIt() { return _instances.begin(); }
-//inline vector<Instance*>::iterator Netlist::getLastInstanceIt()  { return _instances.end(); }
-//inline vector<Net*>::iterator      Netlist::getFirstNetIt()      { return _nets.begin(); }
-//inline vector<Net*>::iterator      Netlist::getLastNetIt()       { return _nets.end(); }
+inline bool Netlist::hasNoInstances() { return (_instances.size() == 0)? true : false; }
+inline bool Netlist::hasNoNets()      { return (_nets.size() == 0)? true : false; }
 inline const std::vector<Instance*>& Netlist::getInstances()   { return _instances; };
 inline const std::vector<Net*>&      Netlist::getNets()        { return _nets; };
     

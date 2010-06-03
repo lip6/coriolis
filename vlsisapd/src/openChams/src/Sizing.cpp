@@ -10,10 +10,10 @@
 #include <string>
 using namespace std;
 
-#include "Sizing.h"
-#include "Circuit.h"
-#include "Operator.h"
-#include "OpenChamsException.h"
+#include "vlsisapd/openChams/Sizing.h"
+#include "vlsisapd/openChams/Circuit.h"
+#include "vlsisapd/openChams/Operator.h"
+#include "vlsisapd/openChams/OpenChamsException.h"
 
 namespace OpenChams {
 Sizing::Sizing(Circuit* circuit): _circuit(circuit) {}

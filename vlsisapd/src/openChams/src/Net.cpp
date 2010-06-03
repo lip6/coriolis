@@ -9,8 +9,8 @@
 
 using namespace std;
 
-#include "Net.h"
-#include "Netlist.h"
+#include "vlsisapd/openChams/Net.h"
+#include "vlsisapd/openChams/Netlist.h"
 
 namespace OpenChams {
 Net::Net(Name netName, Name typeName, bool isExternal, Netlist* netlist) 

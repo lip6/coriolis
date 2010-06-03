@@ -13,13 +13,13 @@
 
 #include <map>
 
-#include "Name.h"
-#include "Parameters.h"
+#include "vlsisapd/openChams/Name.h"
+#include "vlsisapd/openChams/Parameters.h"
 
 namespace OpenChams {
-    class Instance;
-    class Net;
-    class Transistor {
+class Instance;
+class Net;
+class Transistor {
 	public:
         Transistor(Name, Instance*);
         

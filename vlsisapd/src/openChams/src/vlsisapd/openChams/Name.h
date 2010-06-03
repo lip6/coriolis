@@ -13,7 +13,7 @@
 #include <string>
 #include <map>
 
-#include "OpenChamsException.h"
+#include "vlsisapd/openChams/OpenChamsException.h"
 
 namespace OpenChams {
 class Name {

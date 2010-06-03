@@ -13,8 +13,8 @@
 #include <map>
 #include <vector>
 
-#include "Name.h"
-#include "Parameters.h"
+#include "vlsisapd/openChams/Name.h"
+#include "vlsisapd/openChams/Parameters.h"
 
 namespace OpenChams {
 class Netlist;

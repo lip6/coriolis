@@ -12,7 +12,7 @@
 
 #include <map>
 
-#include "Name.h"
+#include "vlsisapd/openChams/Name.h"
 
 namespace OpenChams {
 class Operator {

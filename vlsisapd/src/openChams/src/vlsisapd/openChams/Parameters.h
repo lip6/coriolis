@@ -12,9 +12,9 @@
 
 #include <map>
 
-#include "Name.h"
-
 namespace OpenChams {
+class Name;
+
 class Parameters {
 public:
     Parameters() {};

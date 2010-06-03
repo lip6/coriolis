@@ -11,9 +11,11 @@
 #include <algorithm>
 using namespace std;
 
-#include "Netlist.h"
-#include "Circuit.h"
-#include "OpenChamsException.h"
+#include "vlsisapd/openChams/Netlist.h"
+#include "vlsisapd/openChams/Instance.h"
+#include "vlsisapd/openChams/Net.h"
+#include "vlsisapd/openChams/Circuit.h"
+#include "vlsisapd/openChams/OpenChamsException.h"
 
 namespace OpenChams {
 Netlist::Netlist(Circuit* circuit) : _circuit(circuit) {}

@@ -12,12 +12,12 @@
 
 #include <map>
 
-#include "Name.h"
-
 namespace OpenChams {
-    class Circuit;
-    class Operator;
-    class Sizing {
+class Name;
+class Circuit;
+class Operator;
+
+class Sizing {
 	public:
         Sizing(Circuit*);
         

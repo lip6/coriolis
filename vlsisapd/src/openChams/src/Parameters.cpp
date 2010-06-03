@@ -11,8 +11,9 @@
 #include <string>
 using namespace std;
 
-#include "Parameters.h"
-#include "OpenChamsException.h"
+#include "vlsisapd/openChams/Name.h"
+#include "vlsisapd/openChams/Parameters.h"
+#include "vlsisapd/openChams/OpenChamsException.h"
 
 namespace OpenChams {
 double Parameters::getValue(Name name) {

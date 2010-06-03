@@ -10,10 +10,10 @@
 #include <iostream>
 using namespace std;
 
-#include "Transistor.h"
-#include "Instance.h"
-#include "Net.h"
-#include "OpenChamsException.h"
+#include "vlsisapd/openChams/Transistor.h"
+#include "vlsisapd/openChams/Instance.h"
+#include "vlsisapd/openChams/Net.h"
+#include "vlsisapd/openChams/OpenChamsException.h"
 
 namespace OpenChams {
     Transistor::Transistor(Name name, Instance* instance)
