@@ -3,8 +3,8 @@
 #include <ctime>
 using namespace std;
 
-#include "CifCircuit.h"
-#include "CifPolygon.h"
+#include "vlsisapd/cif/CifCircuit.h"
+#include "vlsisapd/cif/CifPolygon.h"
 
 namespace vlsisapd {
 

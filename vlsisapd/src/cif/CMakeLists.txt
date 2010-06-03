@@ -1,7 +1,11 @@
-INCLUDE_DIRECTORIES(${CHAMS_SOURCE_DIR}/cif)
+INCLUDE_DIRECTORIES(${CHAMS_SOURCE_DIR}/src/cif)
 
-SET ( includes CifCircuit.h   CifPolygon.h )
-SET ( cpps     CifCircuit.cpp CifPolygon.cpp )
+SET ( includes vlsisapd/cif/CifCircuit.h   
+               vlsisapd/cif/CifPolygon.h
+    )
+SET ( cpps CifCircuit.cpp 
+           CifPolygon.cpp 
+    )
 
 ADD_LIBRARY(cif ${cpps})
 INSTALL(TARGETS cif DESTINATION lib${LIB_SUFFIX})

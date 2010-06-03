@@ -3,7 +3,7 @@
 #include <ctime>
 using namespace std;
 
-#include "CifPolygon.h"
+#include "vlsisapd/cif/CifPolygon.h"
 
 namespace vlsisapd {
 
