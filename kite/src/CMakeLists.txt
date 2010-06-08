@@ -1,8 +1,8 @@
 
                include ( ${QT_USE_FILE} )
 
-   include_directories ( ${Boost_INCLUDE_DIRS}
-                         ${KITE_SOURCE_DIR}/src
+   include_directories ( ${KITE_SOURCE_DIR}/src
+                         ${Boost_INCLUDE_DIRS}
                          ${HURRICANE_INCLUDE_DIR} 
                          ${CORIOLIS_INCLUDE_DIR} 
                        )

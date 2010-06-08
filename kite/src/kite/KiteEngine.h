@@ -108,7 +108,7 @@ namespace Kite {
       inline  void             setPostEventCb             ( Configuration::PostEventCb_t );
       inline  void             setEventLimit              ( unsigned long );
       inline  void             setMinimumWL               ( double );
-      inline  void             setRipupLimit              ( unsigned int, unsigned int type );
+      inline  void             setRipupLimit              ( unsigned int type, unsigned int );
       inline  void             setRipupCost               ( unsigned int );
       inline  void             setExpandStep              ( float );
       inline  void             setEdgeCapacityPercent     ( float );
@@ -179,7 +179,7 @@ namespace Kite {
   inline  NegociateWindow*              KiteEngine::getNegociateWindow     () { return _negociateWindow; }
   inline  size_t                        KiteEngine::getRoutingPlanesSize   () const { return _routingPlanes.size(); }
   inline  void                          KiteEngine::setEventLimit          ( unsigned long limit ) { _configuration->setEventsLimit(limit); }
-  inline  void                          KiteEngine::setRipupLimit          ( unsigned int limit, unsigned int type ) { _configuration->setRipupLimit(limit,type); }
+  inline  void                          KiteEngine::setRipupLimit          ( unsigned int type, unsigned int limit ) { _configuration->setRipupLimit(limit,type); }
   inline  void                          KiteEngine::setRipupCost           ( unsigned int cost ) { _configuration->setRipupCost(cost); }
   inline  void                          KiteEngine::setExpandStep          ( float step ) { _configuration->setExpandStep(step); }
   inline  void                          KiteEngine::setEdgeCapacityPercent ( float percent ) { _configuration->setEdgeCapacityPercent(percent); }

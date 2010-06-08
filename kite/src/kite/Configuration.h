@@ -93,7 +93,7 @@ namespace Kite {
       inline  void                       setEventsLimit         ( unsigned long );
       inline  void                       setExpandStep          ( float );
       inline  void                       setRipupCost           ( unsigned int );
-              void                       setRipupLimit          ( unsigned int type, unsigned int limit );
+              void                       setRipupLimit          ( unsigned int limit, unsigned int type );
       inline  void                       setPostEventCb         ( PostEventCb_t );
               void                       setEdgeCapacityPercent ( float );
       virtual Record*                    _getRecord             () const;

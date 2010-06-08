@@ -178,11 +178,11 @@ int main ( int argc, char *argv[] )
     // kite->setSaturateRatio      ( 0.85 );
     // kite->setExpandStep         ( 0.20 );
     // kite->setRipupCost          ( 3 );
-    // kite->setRipupLimit         ( 25, Configuration::BorderRipupLimit );
-    // kite->setRipupLimit         ( 15, Configuration::StrapRipupLimit );
-    // kite->setRipupLimit         (  5, Configuration::LocalRipupLimit );
-    // kite->setRipupLimit         (  5, Configuration::GlobalRipupLimit );
-    // kite->setRipupLimit         (  5, Configuration::LongGlobalRipupLimit );
+    // kite->setRipupLimit         ( Configuration::BorderRipupLimit,     25 );
+    // kite->setRipupLimit         ( Configuration::StrapRipupLimit ,     15 );
+    // kite->setRipupLimit         ( Configuration::LocalRipupLimit ,      5 );
+    // kite->setRipupLimit         ( Configuration::GlobalRipupLimit,      5 );
+    // kite->setRipupLimit         ( Configuration::LongGlobalRipupLimit,  5 );
     kite->runGlobalRouter       ( Kite::LoadGlobalSolution );
     kite->loadGlobalRouting     ( Katabatic::LoadGrByNet, routingNets );
     kite->layerAssign           ( Katabatic::NoNetLayerAssign );

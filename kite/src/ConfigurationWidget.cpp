@@ -24,7 +24,9 @@
 
 
 #include <QLabel>
+#include <QPushButton>
 #include <QFrame>
+#include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QGridLayout>
 #include <QSpinBox>
@@ -163,22 +165,38 @@ namespace Kite {
     gLayout->addWidget ( label                  , kiteRow+8, 2, Qt::AlignRight );
     gLayout->addWidget ( _longGlobalRipupLimitSb, kiteRow+8, 3, Qt::AlignLeft );
 
+    separator = new QFrame ();
+    separator->setFrameShape  ( QFrame::HLine );
+    separator->setFrameShadow ( QFrame::Sunken );
+    gLayout->addWidget ( separator, kiteRow+9, 0, 1, 4 );
+
     vLayout->addLayout ( gLayout );
+
+    QHBoxLayout* hLayout = new QHBoxLayout ();
+    hLayout->addStretch ();
+
+    QPushButton* apply = new QPushButton ();
+    apply->setText ( tr("Apply") );
+    hLayout->addWidget ( apply );
+    hLayout->addStretch ();
+
+    vLayout->addLayout ( hLayout );
     vLayout->addStretch ();
 
     setLayout ( vLayout );
 
-    connect ( _saturateRatioEdit     , SIGNAL(returnPressed())  , this, SLOT(_updateSaturateRatio()) );
-    connect ( _globalThresholdEdit   , SIGNAL(returnPressed())  , this, SLOT(_updateGlobalThreshold()) );
-    connect ( _edgeCapacityEdit      , SIGNAL(returnPressed())  , this, SLOT(_updateEdgeCapacity()) );
-    connect ( _expandStepEdit        , SIGNAL(returnPressed())  , this, SLOT(_updateExpandStep()) );
-    connect ( _eventsLimitEdit       , SIGNAL(returnPressed())  , this, SLOT(_updateEventsLimit()) );
-    connect ( _ripupCostSb           , SIGNAL(valueChanged(int)), this, SLOT(_updateRipupCost(int)) );
-    connect ( _borderRipupLimitSb    , SIGNAL(valueChanged(int)), this, SLOT(_updateBorderRipupLimit(int)) );
-    connect ( _strapRipupLimitSb     , SIGNAL(valueChanged(int)), this, SLOT(_updateStrapRipupLimit(int)) );
-    connect ( _localRipupLimitSb     , SIGNAL(valueChanged(int)), this, SLOT(_updateLocalRipupLimit(int)) );
-    connect ( _globalRipupLimitSb    , SIGNAL(valueChanged(int)), this, SLOT(_updateGlobalRipupLimit(int)) );
-    connect ( _longGlobalRipupLimitSb, SIGNAL(valueChanged(int)), this, SLOT(_updateLongGlobalRipupLimit(int)) );
+    connect ( apply, SIGNAL(clicked()), this, SLOT(_applySettings()) );
+    // connect ( _saturateRatioEdit     , SIGNAL(returnPressed())  , this, SLOT(_updateSaturateRatio()) );
+    // connect ( _globalThresholdEdit   , SIGNAL(returnPressed())  , this, SLOT(_updateGlobalThreshold()) );
+    // connect ( _edgeCapacityEdit      , SIGNAL(returnPressed())  , this, SLOT(_updateEdgeCapacity()) );
+    // connect ( _expandStepEdit        , SIGNAL(returnPressed())  , this, SLOT(_updateExpandStep()) );
+    // connect ( _eventsLimitEdit       , SIGNAL(returnPressed())  , this, SLOT(_updateEventsLimit()) );
+    // connect ( _ripupCostSb           , SIGNAL(valueChanged(int)), this, SLOT(_updateRipupCost(int)) );
+    // connect ( _borderRipupLimitSb    , SIGNAL(valueChanged(int)), this, SLOT(_updateBorderRipupLimit(int)) );
+    // connect ( _strapRipupLimitSb     , SIGNAL(valueChanged(int)), this, SLOT(_updateStrapRipupLimit(int)) );
+    // connect ( _localRipupLimitSb     , SIGNAL(valueChanged(int)), this, SLOT(_updateLocalRipupLimit(int)) );
+    // connect ( _globalRipupLimitSb    , SIGNAL(valueChanged(int)), this, SLOT(_updateGlobalRipupLimit(int)) );
+    // connect ( _longGlobalRipupLimitSb, SIGNAL(valueChanged(int)), this, SLOT(_updateLongGlobalRipupLimit(int)) );
   }
 
 
@@ -224,6 +242,24 @@ namespace Kite {
       _longGlobalRipupLimitSb->setEnabled ( false );
     }
     _configuration = config;
+  }
+
+
+  void  ConfigurationWidget::_applySettings ()
+  {
+    if ( _configuration == NULL ) return;
+
+    _updateSaturateRatio       ();
+    _updateGlobalThreshold     ();
+    _updateEdgeCapacity        ();
+    _updateExpandStep          ();
+    _updateEventsLimit         ();
+    _updateRipupCost           (_ripupCostSb           ->value());
+    _updateBorderRipupLimit    (_borderRipupLimitSb    ->value());
+    _updateStrapRipupLimit     (_strapRipupLimitSb     ->value());
+    _updateLocalRipupLimit     (_localRipupLimitSb     ->value());
+    _updateGlobalRipupLimit    (_globalRipupLimitSb    ->value());
+    _updateLongGlobalRipupLimit(_longGlobalRipupLimitSb->value());
   }
 
 

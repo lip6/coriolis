@@ -46,6 +46,7 @@ namespace Kite {
             ConfigurationWidget        ( QWidget* parent=NULL );
     public slots:
       void  setConfiguration           ( Configuration* );
+      void  _applySettings             ();
       void  _updateSaturateRatio       ();
       void  _updateGlobalThreshold     ();
       void  _updateEdgeCapacity        ();

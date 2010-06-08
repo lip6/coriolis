@@ -167,7 +167,7 @@ namespace Kite {
   { _base->setGlobalThreshold(threshold); }
 
 
-  void  Configuration::setRipupLimit ( unsigned int limit, unsigned int type )
+  void  Configuration::setRipupLimit ( unsigned int type, unsigned int limit )
   {
     if ( type >= RipupLimitsTableSize ) {
       cerr << Error("setRipupLimit(): Bad ripup limit index: %ud (> %ud)."
@@ -192,7 +192,7 @@ namespace Kite {
   unsigned int  Configuration::getRipupLimit ( unsigned int type ) const
   {
     if ( type >= RipupLimitsTableSize ) {
-      cerr << Error("getRipupLimit(): Bad ripup limit index: %ud (> %ud)."
+      cerr << Error("getRipupLimit(): Bad ripup limit index: %u (> %u)."
                    ,type,RipupLimitsTableSize) << endl;
       return 0;
     }
