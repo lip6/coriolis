@@ -68,7 +68,6 @@ class ProjectBuilder:
         self._libMode          = "Shared"
         self._makeArguments    = []
         self._environment      = os.environ
-        self._rpmTopDir        = os.path.join ( os.environ["HOME"], "rpm" )
 
         self._guessOs ()
         self._updateSecondary ()
@@ -101,14 +100,16 @@ class ProjectBuilder:
 
 
     def _updateSecondary ( self ):
-        self._tarballDir = os.path.join ( self._rootDir, "tarball" )
-        self._archiveDir = os.path.join ( self._tarballDir, "coriolis2-1.0.%s" % self._svnTag )
-        self._sourceDir  = os.path.join ( self._rootDir, "src" )
-        self._osDir      = os.path.join ( self._rootDir
+        self._rpmbuildDir = os.path.join ( self._rootDir, "rpmbuild" )
+        self._tmppathDir  = os.path.join ( self._rpmbuildDir, "tmp" )
+        self._tarballDir  = os.path.join ( self._rootDir, "tarball" )
+        self._archiveDir  = os.path.join ( self._tarballDir, "coriolis2-1.0.%s" % self._svnTag )
+        self._sourceDir   = os.path.join ( self._rootDir, "src" )
+        self._osDir       = os.path.join ( self._rootDir
                                         , self._osType
                                         , "%s.%s" % (self._buildMode,self._libMode) )
-        self._buildDir   = os.path.join ( self._osDir, "build" )
-        self._installDir = os.path.join ( self._osDir, "install" )
+        self._buildDir    = os.path.join ( self._osDir, "build" )
+        self._installDir  = os.path.join ( self._osDir, "install" )
 
         if self._enableShared == "ON": self._libMode = "Shared"
         else:                          self._libMode = "Static"
@@ -478,10 +479,15 @@ class ProjectBuilder:
     def doRpm ( self, tools, projects ):
         self.tarball ( tools, projects )
 
-        rpmSpecFile   = os.path.join ( self._rpmTopDir, "SPECS/coriolis2.spec" )
-        rpmSourceFile = os.path.join ( self._rpmTopDir, "SOURCES", self._sourceTarBz2 )
+        for rpmDir in [ "SOURCES", "SPECS", "BUILD", "tmp"
+                      , "SRPMS", "RPMS/i386", "RPMS/i686", "RPMS/x86_64" ]:
+            rpmFullDir = os.path.join ( self._rpmbuildDir, rpmDir )
+            if not os.path.isdir(rpmFullDir):
+                os.makedirs ( rpmFullDir )
 
-        sourceFile = os.path.join ( self._tarballDir, self._sourceTarBz2 )
+        rpmSpecFile   = os.path.join ( self._rpmbuildDir, "SPECS"  , "coriolis2.spec" )
+        rpmSourceFile = os.path.join ( self._rpmbuildDir, "SOURCES", self._sourceTarBz2 )
+        sourceFile    = os.path.join ( self._tarballDir, self._sourceTarBz2 )
 
         if os.path.isfile ( rpmSpecFile ):
             os.unlink ( rpmSpecFile )
@@ -490,8 +496,13 @@ class ProjectBuilder:
         if not os.path.islink ( rpmSourceFile ):
             os.symlink ( sourceFile, rpmSourceFile )
 
-        os.chdir ( os.path.join ( os.environ["HOME"], "rpm" ) )
-        command = [ "/usr/bin/rpmbuild", "-ba", "--with", "binarytar", rpmSpecFile ]
+        os.chdir ( self._rpmbuildDir )
+
+        command = [ "/usr/bin/rpmbuild"
+                  , "--define", "_topdir                 %s" % self._rpmbuildDir
+                  , "--define", "_tmppath                %s" % self._tmppathDir
+                  , "--define", "_enable_debug_packages  0"
+                  , "-ba", "--with", "binarytar", rpmSpecFile ]
 
         self._execute ( command, "Rebuild rpm packages" )
 
@@ -508,6 +519,8 @@ if __name__ == "__main__":
     coriolis = Project ( name     =  "coriolis"
                        , tools    =[ "hurricane"
                                    , "crlcore"
+                                   , "nimbus"
+                                   , "mauka"
                                    , "knik"
                                    , "katabatic"
                                    , "kite"
