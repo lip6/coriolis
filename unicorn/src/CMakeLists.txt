@@ -1,8 +1,8 @@
 
                include ( ${QT_USE_FILE} )
-   include_directories ( ${Boost_INCLUDE_DIRS}
-                         ${HURRICANE_INCLUDE_DIR}
+   include_directories ( ${HURRICANE_INCLUDE_DIR}
                          ${CORIOLIS_INCLUDE_DIR}
+                         ${Boost_INCLUDE_DIRS}
                        )
 
                    set ( mocincludes   unicorn/UnicornGui.h
@@ -29,6 +29,10 @@
                                        ${KATABATIC_LIBRARIES}
                                        ${KNIK_GRAPHICAL_LIBRARIES}
                                        ${KNIK_LIBRARIES}
+                                       ${MAUKA_GRAPHICAL_LIBRARIES}
+                                       ${MAUKA_LIBRARIES}
+                                       ${NIMBUS_GRAPHICAL_LIBRARIES}
+                                       ${NIMBUS_LIBRARIES}
                                        ${CORIOLIS_LIBRARIES}
                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
                                        ${HURRICANE_LIBRARIES}

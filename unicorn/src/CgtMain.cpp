@@ -50,6 +50,9 @@ using namespace Hurricane;
 #include  "crlcore/ToolBox.h"
 using namespace CRL;
 
+#include  "mauka/GraphicMaukaEngine.h"
+using namespace Mauka;
+
 #include  "knik/GraphicKnikEngine.h"
 using namespace Knik;
 
@@ -291,8 +294,10 @@ int main ( int argc, char *argv[] )
       cout   << "        Author ........................................ Chris C. N. CHU" << endl;
       cout   << "        Prof. Ident. ............................ Iowa State University" << endl;
       cout   << "        URL ........................ http://home.eng.iastate.edu/~cnchu" << endl;
+      cout   << endl;
       cmess2 << af->getPrint() << endl;
 
+      unicorn->registerTool ( Mauka::GraphicMaukaEngine::grab() );
     //unicorn->registerTool ( Knik::GraphicKnikEngine::grab() );
       unicorn->registerTool ( Kite::GraphicKiteEngine::grab() );
       unicorn->setEnableRedrawInterrupt ( true );
