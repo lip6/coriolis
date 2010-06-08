@@ -1,0 +1,109 @@
+
+// This file is part of the Coriolis Project.
+// Copyright (C) Laboratoire LIP6 - Departement ASIM
+// Universite Pierre et Marie Curie
+//
+// Main contributors :
+//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
+//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
+//        Hugo Clément                   <Hugo.Clement@lip6.fr>
+//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
+//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
+//        Christian Masson           <Christian.Masson@lip6.fr>
+//        Marek Sroka                     <Marek.Sroka@lip6.fr>
+// 
+// The Coriolis Project  is free software;  you can  redistribute it and/or
+// modify  it  under the  terms  of  the  GNU  General  Public License  as
+// published by  the Free  Software Foundation; either  version 2  of  the
+// License, or (at your option) any later version.
+// 
+// The Coriolis Project  is distributed in the hope that it will be useful,
+// but  WITHOUT  ANY  WARRANTY;  without  even  the  implied  warranty  of
+// MERCHANTABILITY  or  FITNESS  FOR A  PARTICULAR PURPOSE.   See  the GNU
+// General Public License for more details.
+// 
+// You should have received a copy  of  the  GNU  General  Public  License
+// along with  the Coriolis Project;  if  not,  write to the  Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
+//
+// License-Tag
+//
+// Date   : 19/07/2006
+// Author : Christophe Alexandre  <Christophe.Alexandre@lip6.fr>
+//
+// Authors-Tag 
+#ifndef __SUBROW_H
+#define __SUBROW_H
+
+#include "Container.h"
+#include "Bin.h"
+
+namespace MAUKA {
+
+class Surface;
+class Row;
+    
+// ****************************************************************************************************
+// SubRow declaration
+// ****************************************************************************************************
+
+class SubRow : public Container {
+// *************************
+    friend class Surface;
+    friend class Bin;
+    friend class Row;
+    friend class BBPlacer;
+// Types
+// *****
+    public: typedef Container Inherit;
+    public: typedef vector<Bin*> BinVector;
+    public: typedef map <double, unsigned> BinXMax;
+    public: typedef vector<Instance*> InstanceVector; // for bbplacer
+            
+// Attributes
+// **********
+    private: Surface* _surface;
+    private: Row* _row;
+    private: BinVector _binVector;
+    private: BinXMax _binXMax;
+    private: Unit _size; // sum of the bins size
+    private: Unit _capa; // ideal occupation of the subrow
+
+// Constructors
+// ************
+    protected: SubRow(const Cell* cell, Surface* surface, const Box& box);
+    public: static SubRow* Create(const Cell* cell, Surface* surface, const Box& box, bool orientation);
+
+// Accessors
+// *********
+    public: virtual Cell* GetCell() const;
+    public: Row* GetRow() { return _row; } 
+    public: Surface* GetSurface() { return _surface; }
+    public: Unit GetCapa() const { return _capa; }
+    public: Unit GetSize() const { return _size; }
+    public: Unit GetCapaVsSize() const { return (_capa - _size);}
+    public: Unit GetWidthVsSize() const { return (GetWidth() - _size);}
+    public: Bin* GetBinBetween(Unit lowerX, Unit upperX, const Bin* srcbin);
+
+// Updators
+// ********
+    private: void _AddSize(Unit value);
+
+// Others
+// ******
+    private: void _ComputeCapacity(double margin);
+    private: bool _MergeBins();
+    public: void DisplayBinHits() const;
+    protected: virtual void _PostCreate(bool orientation);
+    protected: virtual void _PreDelete();
+    public: double GetBinCost() const;
+    public: Unit GetBinsSize() const;
+    public: Unit GetBinsCapa() const;
+    public: double GetCost() const;
+    public: virtual string _GetTypeName() const {return _TName("SubRow");};
+};
+
+}
+
+#endif // __SUBROW_H

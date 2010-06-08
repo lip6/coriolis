@@ -1,0 +1,541 @@
+
+// This file is part of the Coriolis Project.
+// Copyright (C) Laboratoire LIP6 - Departement ASIM
+// Universite Pierre et Marie Curie
+//
+// Main contributors :
+//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
+//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
+//        Hugo Clément                   <Hugo.Clement@lip6.fr>
+//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
+//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
+//        Christian Masson           <Christian.Masson@lip6.fr>
+//        Marek Sroka                     <Marek.Sroka@lip6.fr>
+// 
+// The Coriolis Project  is free software;  you can  redistribute it and/or
+// modify  it  under the  terms  of  the  GNU  General  Public License  as
+// published by  the Free  Software Foundation; either  version 2  of  the
+// License, or (at your option) any later version.
+// 
+// The Coriolis Project  is distributed in the hope that it will be useful,
+// but  WITHOUT  ANY  WARRANTY;  without  even  the  implied  warranty  of
+// MERCHANTABILITY  or  FITNESS  FOR A  PARTICULAR PURPOSE.   See  the GNU
+// General Public License for more details.
+// 
+// You should have received a copy  of  the  GNU  General  Public  License
+// along with  the Coriolis Project;  if  not,  write to the  Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
+//
+// License-Tag
+//
+// Date   : 29/01/2004
+// Author : Christophe Alexandre  <Christophe.Alexandre@lip6.fr>
+//
+// Authors-Tag 
+#include <math.h>
+#include <stdlib.h>
+#include <limits.h>
+using namespace std;
+
+#include "Error.h"
+#include "Plug.h"
+USING_NAMESPACE_HURRICANE
+
+#include "CEditor.h"
+using namespace CRL;
+
+#include "Mauka.h"
+#include "Bin.h"
+#include "SubRow.h"
+#include "Row.h"
+#include "MaukaBox.h"
+#include "SimAnnealingPlacer.h"
+#include "Surface.h"
+
+#include "Move.h"
+
+namespace MAUKA {
+
+namespace {
+    
+Unit PositionRand(const Unit position, const double distance, const Unit min, const Unit max)
+{
+    Unit borneInf, borneSup;
+
+    if ((borneSup = position + GetUnit((int)(distance * GetValue(max) + 0.5)) ) > max )
+        borneSup = max;
+
+    if ((borneInf = position - GetUnit((int)(distance * GetValue(max) + 0.5)) ) < min )
+        borneInf = min;
+    
+    return borneInf + GetUnit((int)(GetValue(borneSup - borneInf) * rand() / (RAND_MAX+1.0)));
+}
+
+}
+
+Move::Move(SimAnnealingPlacer* simannealingplacer)
+    : _simAnnealingPlacer(simannealingplacer)
+    , _mauka(_simAnnealingPlacer->_mauka)
+    , _surface(_mauka->_surface)
+    , _exchange(false)
+    , _srcIns(0)
+    , _srcBin(NULL)
+    , _srcBinInitCost(0.0)
+    , _srcSubRow(NULL)
+    , _srcRow(NULL)
+    , _srcRowInitCost(0.0)
+    , _srcWidth(0)
+    , _dstBin(NULL)
+    , _dstBinInitCost(0.0)
+    , _dstSubRow(NULL)
+    , _dstRow(NULL)
+    , _dstRowInitCost(0.0)
+    , _dstIns(0)
+    , _dstWidth(0)
+    , _affectedNets()
+{}
+
+double Move::GetDeltaRowCost() const
+{
+    double deltaRowCost = -_srcRowInitCost;
+    deltaRowCost -= _dstRowInitCost;
+    deltaRowCost += _srcRow->GetCost();
+    deltaRowCost += _dstRow->GetCost();
+    return deltaRowCost;
+}
+
+double Move::GetDeltaBinCost() const
+{
+    double deltaBinCost = -_srcBinInitCost;
+    deltaBinCost -= _dstBinInitCost;
+    deltaBinCost += _srcBin->GetCost();
+    deltaBinCost += _dstBin->GetCost();
+#if 0
+    cerr << "src init cost " << _srcBinInitCost << endl;
+    cerr << "dst init cost " << _dstBinInitCost << endl;
+    cerr << "src after cost " << _srcBin->GetCost() << endl;
+    cerr << "dst after cost " << _dstBin->GetCost() << endl;
+    cerr << deltaBinCost << endl;
+    if (_exchange)
+    {
+        cerr << "exchange" << endl;
+        cerr << "srcWidth " << _srcWidth << endl;
+        cerr << "dstWidth " << _dstWidth << endl;
+        cerr << "after .... src " << endl;
+        cerr << "srcsize " << _srcBin->GetSize() << endl;
+        cerr << "srccapa " << _srcBin->GetCapa() << endl;
+    }
+    else
+    {
+        cerr << "move" << endl;
+        cerr << _srcWidth << endl;
+        cerr << "after .... src " << endl;
+        cerr << _srcBin->GetSize() << endl;
+        cerr << _srcBin->GetCapa() << endl;
+    }
+#endif
+    return deltaBinCost;
+}
+
+static const unsigned	NetSrc		= 1;
+static const unsigned	NetDst		= 2;
+static const unsigned	NetSrcDst	= 3;
+
+double Move::GetDeltaNetCost()
+{
+    // Find affected nets
+    // ==================
+    _affectedNets.clear();
+    for (Mauka::UVector::const_iterator uvit = _mauka->_instanceNets[_srcIns].begin();
+            uvit != _mauka->_instanceNets[_srcIns].end();
+            uvit++)
+    {
+        _affectedNets[*uvit] = NetSrc;
+    }
+
+    if (_exchange)
+    {
+        for (Mauka::UVector::const_iterator uvit = _mauka->_instanceNets[_dstIns].begin();
+                uvit != _mauka->_instanceNets[_dstIns].end();
+                uvit++)
+        {
+            unsigned netId = *uvit;
+            if (_affectedNets.find(netId) == _affectedNets.end())
+                _affectedNets[netId] = NetDst;
+            else
+                if (_affectedNets[netId] != NetDst)
+                _affectedNets[netId] = NetSrcDst;
+        }
+    }
+    
+    // Compute delta
+    // =============
+
+    double delta = 0.0;
+    for (AffectedNets::iterator anit = _affectedNets.begin();
+	    anit != _affectedNets.end();
+	    anit++) 
+    {
+        unsigned netId = anit->first;
+        unsigned flag = anit->second;
+        double& netCost = _simAnnealingPlacer->_GetNetIdCost(netId);
+        //cerr << "netCost " << netCost << endl;
+        double& netTmpCost = _simAnnealingPlacer->_GetNetIdTmpCost(netId);
+        //cerr << "netTmpCost " << netTmpCost << endl; 
+        Box& currBox = _simAnnealingPlacer->_GetNetIdBBox(netId);
+        Box& tmpBox  = _simAnnealingPlacer->_GetNetTmpBBox(netId);
+        //cerr << "before" << endl;
+        //cerr << "currBox " << currBox << endl;
+        //cerr << "tmpBox " << tmpBox << endl;
+	
+        if (flag == NetSrc)
+        {
+            tmpBox = currBox;
+            if ((tmpBox = Update(tmpBox , _srcBin->GetCenter(), _dstBin->GetCenter())).IsEmpty())
+            {
+                for (Mauka::UVector::const_iterator uvit = _mauka->_netInstances[netId].begin();
+                        uvit != _mauka->_netInstances[netId].end();
+                        uvit++)
+                {
+                    unsigned instanceId = *uvit;
+                    Bin* bin = _simAnnealingPlacer->_instanceBins[instanceId];
+                    tmpBox.Merge(bin->GetCenter().GetX(), bin->GetCenter().GetY());
+                }
+            }
+
+            if (_mauka->_hasInitX[netId])
+                tmpBox.Merge(_mauka->_netInitX[netId], tmpBox.GetYMin());
+            if (_mauka->_hasInitY[netId])
+                tmpBox.Merge(tmpBox.GetXMin(), _mauka->_netInitY[netId]);
+ 
+            Unit width = tmpBox.GetWidth();
+            if (width == 0)
+            {
+                width = _srcBin->GetWidth() / 2;
+            }
+            netTmpCost = GetValue(tmpBox.GetHeight() + width);
+#if 0
+            cerr << "tmpBox " << tmpBox <<endl;
+            cerr << "  SrcPos     = " << _srcBin->GetCenter() << endl;
+            cerr << "  DstPos     = " << _dstBin->GetCenter() << endl;
+            cerr << "netTmpCost(netSrc) " << netTmpCost << endl << endl;
+#endif
+            delta += netTmpCost - netCost;
+            
+#if 0 // code pour debug .... 
+	    Box checkBox;
+            for (Mauka::UVector::const_iterator uvit = _mauka->_netInstances[netId].begin();
+                    uvit != _mauka->_netInstances[netId].end();
+                    uvit++)
+	    {
+                unsigned instanceId = *uvit;
+                Bin* bin = _mauka->_instanceBins[instanceId];
+                checkBox.Merge(bin->GetCenter().GetX(), bin->GetCenter().GetY());
+	    }
+
+	    if (checkBox != tmpBox) {
+            cout << "error: mauvaise bbox : NetSrc" << endl;
+            cout << "  checkBox = " << checkBox << endl;
+            cout << "  tmpBox   = " << tmpBox << endl;
+            cout << "  CurrBBox   = " << currBox  << endl;
+            cout << "  SrcPos     = " << _srcBin->GetCenter() << endl;
+            cout << "  DstPos     = " << _dstBin->GetCenter() << endl;
+            exit(1);
+	    }
+#endif
+        }
+        else
+            if (flag == NetDst)
+            {
+                tmpBox = currBox;
+                if ((tmpBox = Update(tmpBox , _dstBin->GetCenter(), _srcBin->GetCenter())).IsEmpty())
+                {
+                    for (Mauka::UVector::const_iterator uvit = _mauka->_netInstances[netId].begin();
+                            uvit != _mauka->_netInstances[netId].end();
+                            uvit++)
+                    {
+                        Bin* bin = _simAnnealingPlacer->_instanceBins[*uvit];
+                        tmpBox.Merge(bin->GetCenter().GetX(), bin->GetCenter().GetY());
+                    }
+                }
+                if (_mauka->_hasInitX[netId])
+                    tmpBox.Merge(_mauka->_netInitX[netId], tmpBox.GetYMin());
+                if (_mauka->_hasInitY[netId])
+                    tmpBox.Merge(tmpBox.GetXMin(), _mauka->_netInitY[netId]);
+                Unit width = tmpBox.GetWidth();
+                if (width == 0)
+                {
+                    width = _dstBin->GetWidth() / 2;
+                }
+                netTmpCost = GetValue(tmpBox.GetHeight() + width);
+#if 0
+                cerr << "netDst" << endl;
+                cerr << "width " << tmpBox.GetWidth() << endl;
+                cerr << "height " << tmpBox.GetHeight() << endl;
+                cerr << "netTmpCost(netDst) " << netTmpCost << endl << endl;
+#endif
+                delta += netTmpCost - netCost;
+#ifdef MOVE_DEBUG
+	    cout << "end" << endl;
+	    cout << "check" << endl;
+	    Box checkBox;
+	    for_each_plug(plug, net);
+	    {
+		Instance* ins = plug->GetInstance(); 
+		SurfContainer* container = PGetContainer(*ins);
+		cout << container->GetXCenter() << " " << container->GetYCenter() << endl;
+		checkBox.Merge(container->GetXCenter(), container->GetYCenter());
+		end_for;
+	    }
+
+	    if (checkBox != *PTmpBBox(*net)) {
+		cout << "error: mauvaise bbox : NetDst" << endl;
+		cout << "  check_bbox = " << checkBox << endl;
+		cout << "  TmpBBox   = " << PTmpBBox(*net) << endl;
+		cout << "  CurrentBBox   = " <<  PCurrentBBox(*net) << endl;
+		cout << "  SrcPos     = " << _dstBin->GetPos() << endl;
+		cout << "  DstPos     = " << _srcBin->GetPos() << endl;
+		exit(1);
+	    }
+#endif
+            }
+    }
+    return delta;
+}
+
+void Move::TryMove()
+{
+    if (!_exchange)
+    {
+        _srcBin->RemoveInstance(_srcIns);
+        _dstBin->AddInstance(_srcIns);
+    }
+    else
+    {
+        _srcBin->RemoveInstance(_srcIns);
+        _dstBin->RemoveFrontInstance(_dstIns);
+        _dstBin->AddInstance(_srcIns);
+        _srcBin->AddInstance(_dstIns);
+    }
+}
+    
+bool Move::Next(double dist)
+{
+    bool moveCondition;
+    unsigned nbrefused = 0;
+
+    // Choisi un mouvement
+    // ===================
+
+    do {
+#if 0
+        if (1)
+        {
+            if (dist < 0.4)
+                for_each_view(view, _mauka->GetCell()->GetViews())
+                {
+                    if (CEditor* editor = dynamic_cast<CEditor*>(view))
+                    {
+                        if (_srcBin)
+                            editor->Unselect(_srcBin);
+                        if (_dstBin && (_dstBin != _srcBin))
+                            editor->Unselect(_dstBin);
+                        break;
+                    }
+                    end_for;
+                }
+        }
+#endif
+
+
+        moveCondition = true;
+
+        _srcIns = _mauka->GetRandomInstanceId();
+        assert ( _srcIns < _simAnnealingPlacer->_instanceBins.size() );  // d2 11/02/05
+        _srcBin = _simAnnealingPlacer->_instanceBins[_srcIns];
+        _srcSubRow = _srcBin->GetSubRow();
+        _srcRow = _srcSubRow->GetRow();
+        assert ( _srcIns < _mauka->_instanceWidths.size() );  // d2 11/02/05
+        _srcWidth = _mauka->_instanceWidths[_srcIns];
+        _srcBinInitCost = _srcBin->GetCost();
+#if 0
+        cerr << "_srcBin " << endl;
+        cerr << "srcbinsize " << _srcBin->GetSize() << endl;
+        cerr << "srcbincapa " << _srcBin->GetCapa() << endl;
+#endif
+            
+        _srcRowInitCost = _srcRow->GetCost();
+        
+        _dstBin = _surface->GetBinInSurface(_srcBin, dist);
+        _dstSubRow = _dstBin->GetSubRow();
+        _dstRow = _dstSubRow->GetRow();
+
+#if 0
+        if (1)
+        {
+            if (dist < 0.4)
+            {
+                for_each_view(view, _mauka->GetCell()->GetViews())
+                {
+                    if (CEditor* editor = dynamic_cast<CEditor*>(view))
+                    {
+                        cerr << _srcBin << endl;
+                        cerr << _srcRow << endl;
+                        cerr << _srcSubRow << endl;
+                        cerr << _dstBin << endl;
+                        cerr << _dstRow << endl;
+                        cerr << _dstSubRow << endl;
+                        cerr << endl;
+                        editor->Select(_srcBin);
+                        if (_dstBin != _srcBin)
+                            editor->Select(_dstBin);
+                        editor->Stop("gli");
+                        break;
+                    }
+                    end_for;
+                }
+            }
+        }
+#endif
+
+        _dstBinInitCost = _dstBin->GetCost();
+#if 0
+        cerr << "initially .... dst" << endl;
+        cerr << "dstbinsize " << _dstBin->GetSize() << endl;
+        cerr << "dstbincapa " << _dstBin->GetCapa() << endl;
+#endif
+        _dstRowInitCost = _dstRow->GetCost(); 
+
+        if (_dstBin == _srcBin)
+        {
+            _simAnnealingPlacer->IncrSourceEqualTargetMovementNumber();
+            moveCondition = false;
+        }
+        if (moveCondition && _dstBin->UnderOccupied())
+        {
+            _exchange = false;
+            // Le bin destination est sous-occupé
+            // On tente de déplacer l'instance
+            if (_dstSubRow->GetWidth() - _dstSubRow->GetSize() < _srcWidth)
+            {
+                moveCondition = false;
+                _simAnnealingPlacer->IncrSurOccupationTargetMovementNumber();
+            }
+        }
+        else if (moveCondition)
+        {
+            _exchange = true;
+            _dstIns = _dstBin->GetFirstInstanceOccurrenceId();
+            assert ( _dstIns < _mauka->_instanceWidths.size() );  // d2 11/02/05
+            _dstWidth = _mauka->_instanceWidths[_dstIns];
+
+            if (_srcSubRow->GetWidth() - _srcSubRow->GetSize() < _dstWidth - _srcWidth)
+            {
+                //Try to move the src ins to dst bin
+                if (_dstSubRow->GetWidth() - _dstSubRow->GetSize() < _srcWidth)
+                {
+                    moveCondition = false;
+                    _simAnnealingPlacer->IncrSurOccupationTargetMovementNumber();
+                }
+                _exchange = false;
+            }
+            if (_exchange
+                    && (_dstSubRow->GetWidth() - _dstSubRow->GetSize() < _srcWidth - _dstWidth))
+            {
+                //Try to move the dst ins to src bin
+                if (_srcSubRow->GetWidth() - _srcSubRow->GetSize() < _dstWidth)
+                {
+                    moveCondition = false;
+                    _simAnnealingPlacer->IncrSurOccupationTargetMovementNumber();
+                }
+                else
+                {
+                    _exchange = false;
+                    _srcIns = _dstIns;
+                    _srcWidth = _dstWidth;
+                    Bin* tmpBin = _dstBin;
+                    _dstBin = _srcBin;
+                    _srcBin = tmpBin;
+                    SubRow* tmpSubRow = _dstSubRow;
+                    _dstSubRow = _srcSubRow;
+                    _srcSubRow = tmpSubRow;
+                    Row* tmpRow = _dstRow;
+                    _dstRow = _srcRow;
+                    _srcRow = tmpRow;
+                    double tmp2 = _dstRowInitCost;
+                    _dstRowInitCost = _srcRowInitCost;
+                    _srcRowInitCost = tmp2;
+                    tmp2 = _dstBinInitCost;
+                    _dstBinInitCost = _srcBinInitCost;
+                    _srcBinInitCost = tmp2;
+                }
+            }
+        }
+        if (!moveCondition)
+        {
+            ++nbrefused;
+        }
+        if (nbrefused > (unsigned)(1.5 * _mauka->_instanceOccurrencesVector.size()))
+            return false;
+    } while (!moveCondition);
+   
+    // Deplace les instances
+    // =====================
+    _srcBin->IncrementSourceHits();
+    _dstBin->IncrementTargetHits();
+    
+    TryMove();
+
+    if (_mauka->_verbosity.ActionIsOn())
+    {
+        if (dist < 0.4)
+            for_each_view(view, _mauka->GetCell()->GetViews())
+            {
+                if (CEditor* editor = dynamic_cast<CEditor*>(view))
+                {
+                    editor->Refresh();
+                    editor->Stop("coucou");
+                    break;
+                }
+                end_for;
+            }
+    }
+    return true;
+}
+
+void
+Move::Accept()
+{
+    // Sauvegarde des cout des nets
+    for (AffectedNets::iterator anit = _affectedNets.begin();
+            anit != _affectedNets.end();
+            anit++)
+    {
+        unsigned netId = anit->first;
+        unsigned flag = anit->second;
+        if (flag == NetSrc || flag == NetDst)
+        {
+            _simAnnealingPlacer->_InvertNetIdFlag(netId);
+        }
+    }
+}
+
+void
+Move::Reject()
+{
+    if (!_exchange)
+    {
+        _dstBin->RemoveBackInstance(_srcIns);
+        _srcBin->AddInstance(_srcIns);
+    }
+    else
+    {
+        _srcBin->RemoveBackInstance(_dstIns);
+        _dstBin->RemoveBackInstance(_srcIns);
+        _dstBin->AddInstance(_dstIns);
+        _srcBin->AddInstance(_srcIns);
+    }
+}
+
+}

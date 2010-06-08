@@ -1,0 +1,119 @@
+
+// This file is part of the Coriolis Project.
+// Copyright (C) Laboratoire LIP6 - Departement ASIM
+// Universite Pierre et Marie Curie
+//
+// Main contributors :
+//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
+//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
+//        Hugo Clément                   <Hugo.Clement@lip6.fr>
+//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
+//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
+//        Christian Masson           <Christian.Masson@lip6.fr>
+//        Marek Sroka                     <Marek.Sroka@lip6.fr>
+// 
+// The Coriolis Project  is free software;  you can  redistribute it and/or
+// modify  it  under the  terms  of  the  GNU  General  Public License  as
+// published by  the Free  Software Foundation; either  version 2  of  the
+// License, or (at your option) any later version.
+// 
+// The Coriolis Project  is distributed in the hope that it will be useful,
+// but  WITHOUT  ANY  WARRANTY;  without  even  the  implied  warranty  of
+// MERCHANTABILITY  or  FITNESS  FOR A  PARTICULAR PURPOSE.   See  the GNU
+// General Public License for more details.
+// 
+// You should have received a copy  of  the  GNU  General  Public  License
+// along with  the Coriolis Project;  if  not,  write to the  Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
+//
+// License-Tag
+//
+// Date   : 19/07/2006
+// Author : Christophe Alexandre  <Christophe.Alexandre@lip6.fr>
+//
+// Authors-Tag 
+#ifndef __BIN_H
+#define __BIN_H
+
+#include "Occurrences.h"
+USING_NAMESPACE_HURRICANE
+
+#include "Container.h"
+#include "Mauka.h"
+
+namespace MAUKA {
+    
+class SubRow;
+class SimAnnealingPlacer;
+    
+// ****************************************************************************************************
+// Bin declaration
+// ****************************************************************************************************
+
+class Bin : public Container {
+// *************************
+    
+// Friends
+// *******
+    friend class BBPlacer;
+    friend class SubRow;
+
+// Types
+// *****
+    public: typedef Container Inherit;
+
+// Attributes
+// **********
+    private: SubRow*                    _subRow;
+    private: Mauka*                     _mauka;
+    private: Mauka::UList               _instanceOccurrenceIds; 
+    private: Unit                       _size; // sum of the contained instances width
+    private: Unit                       _capa; // ideal occupation of the bin
+    private: unsigned                   _sourceHits;
+    private: unsigned                   _targetHits;
+
+// Constructors
+// ************
+    protected: Bin(const Cell* cell, SubRow* subrow, const Box& box);
+    public: static Bin* Create(const Cell* cell, SubRow* subrow, const Box& box);
+
+// Accessors
+// *********
+    public: virtual Cell* GetCell() const;
+    public: Unit GetCapaVsSize() const { return (_capa - _size);}
+    public: Unit GetSize() const { return _size; }
+    public: Unit GetCapa() const { return _capa; }
+    public: SubRow* GetSubRow() { return _subRow; }
+    public: unsigned GetFirstInstanceOccurrenceId() const { return _instanceOccurrenceIds.front(); }
+    public: double GetCost() const;
+    public: unsigned GetInstanceOccurrenceIdSize() const { return _instanceOccurrenceIds.size(); }
+    public: const Mauka::UList::const_iterator InstanceOccurrenceIdsBegin() const { return _instanceOccurrenceIds.begin(); }
+    public: const Mauka::UList::const_iterator InstanceOccurrenceIdsEnd() const { return _instanceOccurrenceIds.end(); }
+    public: Occurrences GetInstanceOccurrences() const;
+
+// Updators
+// ********
+    public: void RemoveInstance(unsigned instanceid);
+    public: void RemoveFrontInstance(unsigned instanceid);
+    public: void RemoveBackInstance(unsigned instanceid);
+    public: void AddInstance(unsigned instanceid);
+    private:void _AddSize(Unit value);
+
+// Others
+// ******
+    private: void _ComputeCapacity(double margin);
+    public: void DisplayHits() const;
+    public: void IncrementSourceHits();
+    public: void IncrementTargetHits();
+    public: bool TryAddInstance(unsigned instanceid);
+    public: bool UnderOccupied() const;
+    protected: virtual void _PostCreate();
+    public: virtual string _GetTypeName() const {return _TName("Bin");};
+    public: void PlotStats(ofstream& out) const;
+    public: void Plot(ofstream& out) const;
+};
+
+}
+
+#endif // __BIN_H

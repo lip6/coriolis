@@ -1,0 +1,126 @@
+
+// This file is part of the Coriolis Project.
+// Copyright (C) Laboratoire LIP6 - Departement ASIM
+// Universite Pierre et Marie Curie
+//
+// Main contributors :
+//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
+//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
+//        Hugo Clément                   <Hugo.Clement@lip6.fr>
+//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
+//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
+//        Christian Masson           <Christian.Masson@lip6.fr>
+//        Marek Sroka                     <Marek.Sroka@lip6.fr>
+// 
+// The Coriolis Project  is free software;  you can  redistribute it and/or
+// modify  it  under the  terms  of  the  GNU  General  Public License  as
+// published by  the Free  Software Foundation; either  version 2  of  the
+// License, or (at your option) any later version.
+// 
+// The Coriolis Project  is distributed in the hope that it will be useful,
+// but  WITHOUT  ANY  WARRANTY;  without  even  the  implied  warranty  of
+// MERCHANTABILITY  or  FITNESS  FOR A  PARTICULAR PURPOSE.   See  the GNU
+// General Public License for more details.
+// 
+// You should have received a copy  of  the  GNU  General  Public  License
+// along with  the Coriolis Project;  if  not,  write to the  Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
+//
+// License-Tag
+//
+// Date   : 19/07/2006
+// Author : Christophe Alexandre  <Christophe.Alexandre@lip6.fr>
+//
+// Authors-Tag 
+#ifndef __BBPLACER_H
+#define __BBPLACER_H
+
+#include "Instance.h"
+USING_NAMESPACE_HURRICANE
+
+#include "SubRow.h"
+#include "Mauka.h"
+
+namespace MAUKA {
+
+// ****************************************************************************************************
+// BBPlacer declaration
+// ****************************************************************************************************
+
+class BBPlacer {
+// *************
+
+    friend class Mauka;
+    
+// Types
+// *****
+    public: typedef vector<SubRow*> SubRowVector;
+// Attributes
+// **********
+    private: Mauka*                     _mauka;
+    private: SubRowVector               _subRowVector;
+    private: Mauka::UTable              _subRowInstances;
+    private: Mauka::UnitVector          _instanceMarginWidth;
+    private: Mauka::UnitVector          _instanceX; //Left Corner X position
+    private: Mauka::UnitVector          _instanceY;
+    private: Mauka::BVector             _instancePlaced;
+    private: Mauka::NetVector           _netVector;
+    private: Mauka::BBoxes              _netBBoxes;
+    private: Mauka::Costs               _netCosts;
+    private: Mauka::UVector             _netCurrCostMark;
+    private: Mauka::UVector             _netFlags;
+    // For the optimization engine itself
+    private: Mauka::UVector             _instanceToOptimize; 
+    private: Unit                       _leftEdge;
+    private: Unit                       _rightEdge;
+    private: double                     _oldCost;
+    private: double                     _cost;
+    private: double                     _bestCost;
+    // _costFlag is for computing nets costs 
+    // Each net must be visited only one time 
+    private: unsigned                   _costFlag;
+    private: unsigned                   _saveFlag;
+    private: deque<unsigned>            _queue; // ordering 
+    private: Mauka::UVector             _stack;
+    private: Mauka::UVector             _loopVect; // use for loop
+    private: Mauka::UnitVector          _bestSolution;
+    private: int                        _idx;
+            
+// Constructors
+// ************
+    public: BBPlacer(Mauka* mauka);
+
+// Accessors
+// *********
+    public: Unit GetInstanceIdX(unsigned id) const { return _instanceX[id]; }
+
+// Updators
+// ********
+
+// Others
+// ******
+
+    public: void Run();
+    public: void Save();
+    private: bool Optimize();
+    private: double InitCost();
+    private: double CurrentCost();
+    private: void PlaceAll();
+    private: void UnplaceAll();
+    private: void AddIns();
+    private: void RemoveIns();
+    private: double UpdateInstanceCost(unsigned instanceid);
+    private: double UpdateNetCost(unsigned netid);
+    private: double ComputeCost(const Box& box) const;
+    private: double InitInstanceCost(unsigned instanceid);
+    private: double CurrentInstanceCost(unsigned instanceid);
+    private: void ComputeNetBBox(unsigned netid);
+    private: void SaveNetTempValue(unsigned netid);
+    private: double CurrentNetCost(unsigned netid);
+    private: void Plot(ofstream& out) const;
+};
+
+}
+
+#endif // __BBPLACER_H
