@@ -1,11 +1,12 @@
 
                include ( ${QT_USE_FILE} )
 
-   include_directories ( ${HURRICANE_INCLUDE_DIR} 
-                         ${NIMBUS_SOURCE_DIR}/src
+   include_directories ( ${NIMBUS_SOURCE_DIR}/src
+                         ${HURRICANE_INCLUDE_DIR} 
                          ${CORIOLIS_INCLUDE_DIR}
                        )
-                   set ( includes nimbus/SplitterContact.h nimbus/SplitterContacts.h
+                   set ( includes nimbus/Configuration.h
+                                  nimbus/SplitterContact.h nimbus/SplitterContacts.h
                                   nimbus/Splitter.h        nimbus/Splitters.h
                                   nimbus/Fence.h           nimbus/Fences.h
                                   nimbus/HFence.h
@@ -15,10 +16,11 @@
                                   nimbus/StepProperty.h
                                   nimbus/GCell.h           nimbus/GCells.h
                                   nimbus/Grid.h
-                                  nimbus/Nimbus.h
+                                  nimbus/NimbusEngine.h
                                   nimbus/RoutTools.h
                        )
-                   set ( cpps     SplitterContact.cpp
+                   set ( cpps     Configuration.cpp
+                                  SplitterContact.cpp
                                   Splitter.cpp
                                   Fence.cpp
                                   FenceProperty.cpp
@@ -28,7 +30,7 @@
                                   GCell.cpp
                                   Grid.cpp
                                   StepProperty.cpp
-                                  Nimbus.cpp
+                                  NimbusEngine.cpp
                                   RoutTools.cpp
                        )
       

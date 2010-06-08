@@ -7,7 +7,7 @@
 // Author : Hugo Clément                  <Hugo.Clement@lip6.fr>
 
 
-#include "nimbus/Nimbus.h"
+#include "nimbus/NimbusEngine.h"
 #include "nimbus/RoutTools.h"
 #include "nimbus/VFence.h"
 

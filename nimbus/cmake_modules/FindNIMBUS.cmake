@@ -15,7 +15,7 @@ IF(UNIX)
   #
   # Look for an installation.
   #
-  FIND_PATH(NIMBUS_INCLUDE_PATH NAMES nimbus/Nimbus.h PATHS
+  FIND_PATH(NIMBUS_INCLUDE_PATH NAMES nimbus/NimbusEngine.h PATHS
     # Look in other places.
     ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES include/coriolis2
