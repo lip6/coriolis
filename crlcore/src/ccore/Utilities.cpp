@@ -57,6 +57,10 @@ Dots  Dots::asPercentage ( const std::string& left, float value )
 }
 
 
+Dots  Dots::asBool ( const std::string& left, bool value )
+{ std::ostringstream right; right << std::boolalpha << value; return Dots(left,right.str()); }
+
+
 Dots  Dots::asUInt ( const std::string& left, unsigned int value )
 { std::ostringstream right; right << value; return Dots(left,right.str()); }
 
@@ -71,6 +75,10 @@ Dots  Dots::asSizet ( const std::string& left, size_t value )
 
 Dots  Dots::asDouble ( const std::string& left, double value )
 { std::ostringstream right; right << value; return Dots(left,right.str()); }
+
+
+Dots  Dots::asLambda ( const std::string& left, Hurricane::DbU::Unit value )
+{ std::ostringstream right; right << Hurricane::DbU::getValueString(value); return Dots(left,right.str()); }
 
 
 Dots  Dots::asIdentifier ( const std::string& left, const std::string& value )

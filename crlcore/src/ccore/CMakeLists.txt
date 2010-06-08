@@ -11,8 +11,6 @@
 
                    include ( ${QT_USE_FILE} )
 
-       include_directories ( ${CIF_INCLUDE_DIR}
-                             ${HURRICANE_INCLUDE_DIR} )
        include_directories ( ${CRLCORE_SOURCE_DIR}/src/fonts
                              ${CRLCORE_SOURCE_DIR}/src/ccore
                              ${CRLCORE_SOURCE_DIR}/src/ccore/properties
@@ -26,6 +24,8 @@
                              ${CRLCORE_SOURCE_DIR}/src/ccore/spice
                              ${CRLCORE_SOURCE_DIR}/src/ccore/liberty
                              ${CRLCORE_SOURCE_DIR}/src/ccore/toolbox
+                             ${HURRICANE_INCLUDE_DIR}
+                             ${CIF_INCLUDE_DIR}
                            )
 
            add_definitions ( -DCORIOLIS_TOP="${CORIOLIS_TOP}"

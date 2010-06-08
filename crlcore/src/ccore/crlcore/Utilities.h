@@ -36,6 +36,7 @@
 #include  "hurricane/Commons.h"
 #include  "hurricane/Error.h"
 #include  "hurricane/Slot.h"
+#include  "hurricane/DbU.h"
 
 
 namespace CRL {
@@ -348,10 +349,12 @@ extern mstream  cinfo;
 class  Dots {
   public:
     static Dots          asPercentage ( const std::string& left, float );
+    static Dots          asBool       ( const std::string& left, bool );
     static Dots          asUInt       ( const std::string& left, unsigned int );
     static Dots          asULong      ( const std::string& left, unsigned long );
     static Dots          asSizet      ( const std::string& left, size_t );
     static Dots          asDouble     ( const std::string& left, double );
+    static Dots          asLambda     ( const std::string& left, Hurricane::DbU::Unit );
     static Dots          asIdentifier ( const std::string& left, const std::string& );
     static Dots          asString     ( const std::string& left, const std::string& );
   private:

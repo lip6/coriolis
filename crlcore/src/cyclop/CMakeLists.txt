@@ -1,8 +1,8 @@
 
                include ( ${QT_USE_FILE} )
-   include_directories ( ${Boost_INCLUDE_DIRS}
+   include_directories ( ${CRLCORE_SOURCE_DIR}/src/ccore
                          ${HURRICANE_INCLUDE_DIR}
-                         ${CRLCORE_SOURCE_DIR}/src/ccore
+                         ${Boost_INCLUDE_DIRS}
                        )
 
                    set ( mocincludes   Cyclop.h

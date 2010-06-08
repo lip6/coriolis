@@ -3,7 +3,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -17,7 +17,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./CellGauge.cpp"                         |
+// |  C++ Header  :       "./CellGauge.cpp"                          |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
