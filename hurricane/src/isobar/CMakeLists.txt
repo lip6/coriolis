@@ -1,7 +1,7 @@
 
-   include_directories ( ${PYTHON_INCLUDE_PATH}
-                         ${HURRICANE_SOURCE_DIR}/src/hurricane
+   include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane
                          ${HURRICANE_SOURCE_DIR}/src/isobar
+                         ${PYTHON_INCLUDE_PATH}
                        )
                    set ( sources  ProxyProperty.cpp
                                   PyBox.cpp

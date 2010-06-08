@@ -303,7 +303,7 @@ InstanceFilter Instance::getIsNotUnplacedFilter()
 void Instance::materialize()
 // *************************
 {
-    if (!isMaterialized()) {
+  if (not isMaterialized()) {
         Box boundingBox = getBoundingBox();
         if (!boundingBox.isEmpty()) {
             QuadTree* quadTree = _cell->_getQuadTree();
@@ -375,10 +375,17 @@ void Instance::setTransformation(const Transformation& transformation)
 void Instance::setPlacementStatus(const PlacementStatus& placementstatus)
 // **********************************************************************
 {
-//    if (placementstatus != _placementStatus) {
-//        Invalidate(true);
-        _placementStatus = placementstatus;
-//    }
+  if (placementstatus != _placementStatus) {
+    invalidate(true);
+
+    if (_placementStatus == PlacementStatus::UNPLACED)
+      materialize ();
+    else if ( placementstatus == PlacementStatus::UNPLACED )
+      unmaterialize ();
+
+    _placementStatus = placementstatus;
+
+  }
 }
 
 void Instance::setMasterCell(Cell* masterCell, bool secureFlag)
@@ -449,7 +456,12 @@ void Instance::_postCreate()
         end_for;
     }
 
+    bool autoMaterialization = not autoMaterializationIsDisabled();
+    disableAutoMaterialization();
+
     Inherit::_postCreate();
+
+    if ( autoMaterialization ) enableAutoMaterialization();
 }
 
 void Instance::_preDestroy()

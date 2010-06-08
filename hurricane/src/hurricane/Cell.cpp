@@ -258,9 +258,13 @@ void Cell::flattenNets(bool buildRings)
 void Cell::materialize()
 // *********************
 {
-    for_each_instance(instance, getInstances()) instance->materialize(); end_for;
-    for_each_net(net, getNets()) net->materialize(); end_for;
-    for_each_marker(marker, getMarkers()) marker->materialize(); end_for;
+  forEach ( Instance*, iinstance, getInstances() ) {
+    if ( iinstance->getPlacementStatus() != Instance::PlacementStatus::UNPLACED )
+      iinstance->materialize();
+  }
+
+  forEach ( Net*   , inet   , getNets   () ) inet   ->materialize();
+  forEach ( Marker*, imarker, getMarkers() ) imarker->materialize();
 }
 
 void Cell::unmaterialize()

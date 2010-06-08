@@ -1,9 +1,9 @@
 
                include ( ${QT_USE_FILE} )
 
-   include_directories ( ${Boost_INCLUDE_DIRS}
-                         ${HURRICANE_SOURCE_DIR}/src/hurricane
-                         ${HURRICANE_SOURCE_DIR}/src/viewer )
+   include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane
+                         ${HURRICANE_SOURCE_DIR}/src/viewer
+                         ${Boost_INCLUDE_DIRS} )
 
                    set ( mocincludes hurricane/viewer/HApplication.h
                                      hurricane/viewer/PaletteItem.h
