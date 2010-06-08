@@ -2338,7 +2338,7 @@ namespace Katabatic {
     ltrace(100) << "Katabatic::_loadNetGlobalRouting ( " << net << " )" << endl;
     ltracein(99);
 
-    cmess2 << "     - " << net << endl;
+  //cmess2 << "     - " << net << endl;
 
     ForkStack    forks;
     Hook*        sourceHook    = NULL;
