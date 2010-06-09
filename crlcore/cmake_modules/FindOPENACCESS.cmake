@@ -24,7 +24,7 @@
 #                                   OA_BASE_LIBRARY_RELEASE
 #                                   OA_BASE_DEBUG
 #
-#  The OpenAccess oaDM library:     OA_CM_LIBRARY
+#  The OpenAccess oaCM library:     OA_CM_LIBRARY
 #                                   OA_CM_LIBRARY_RELEASE
 #                                   OA_CM_DEBUG
 #
@@ -46,8 +46,7 @@
 #
 #  The OpenAccess oaPlugin library: OA_PLUGIN_LIBRARY
 #                                   OA_PLUGIN_LIBRARY_RELEASE
-#                                   OA_PLUGIN_DEBUG
-#
+#                                   OA_PLUGIN_DEBUG#
 #
 # Cadence version of OpenAccess has also
 #
@@ -75,6 +74,7 @@
 #
 #
 
+MESSAGE(STATUS "Searching for OPENACCESS ...")
 SET(OA_INCLUDE_PATH_DESCRIPTION "directory containing the OpenAccess include files. E.g /usr/local/include")
 
 SET(OA_DIR_MESSAGE "Set the OA_INCLUDE_DIR cmake cache entry to the ${OA_INCLUDE_PATH_DESCRIPTION}")
@@ -99,20 +99,22 @@ IF(UNIX)
   )
 
 
-  FIND_PROGRAM(CMAKE_UNAME uname /bin /usr/bin /usr/local/bin )
-  IF(CMAKE_UNAME)
-    EXEC_PROGRAM(uname ARGS -a OUTPUT_VARIABLE SYSTEM_TYPE)
-  ELSE(CMAKE_UNAME)
-    MESSAGE(FATAL_ERROR, "uname command was not found")
-  ENDIF(CMAKE_UNAME)
+#  FIND_PROGRAM(CMAKE_UNAME uname /bin /usr/bin /usr/local/bin )
+#  IF(CMAKE_UNAME)
+#    EXEC_PROGRAM(uname ARGS -a OUTPUT_VARIABLE SYSTEM_TYPE)
+#  ELSE(CMAKE_UNAME)
+#    MESSAGE(FATAL_ERROR, "uname command was not found")
+#  ENDIF(CMAKE_UNAME)
 
-  IF($SYSTEM_TYPE MATCHES ".*x86_64.*")
-    SET(OA_LIBRARY_DIR ${OA_DIR_SEARCH}/lib/linux_rhel30_64/dbg) 
-  ELSEIF($SYSTEM_TYPE MATCHES ".*i686.*")
-    SET(OA_LIBRARY_DIR ${OA_DIR_SEARCH}/lib/linux_rhel21_32/dbg) 
-  ELSE($SYSTEM_TYPE MATCHES ".*x86_64.*")
-    SET(OA_LIBRARY_DIR "unknown") 
-  ENDIF($SYSTEM_TYPE MATCHES ".*x86_64.*")
+#  IF($SYSTEM_TYPE MATCHES ".*x86_64.*")
+#    SET(OA_LIBRARY_DIR ${OA_DIR_SEARCH}/lib/linux_rhel30_64/dbg) 
+#  ELSEIF($SYSTEM_TYPE MATCHES ".*i686.*")
+#    SET(OA_LIBRARY_DIR ${OA_DIR_SEARCH}/lib/linux_rhel21_32/dbg) 
+#  ELSE($SYSTEM_TYPE MATCHES ".*x86_64.*")
+#    SET(OA_LIBRARY_DIR "unknown") 
+#  ENDIF($SYSTEM_TYPE MATCHES ".*x86_64.*")
+
+    SET(OA_LIBRARY_DIR ${OA_DIR_SEARCH}/lib)
 
   # Set OA_OACOMMON_LIBRARY 
   FIND_LIBRARY(OA_OACOMMON_LIBRARY_RELEASE NAMES oaCommon PATHS ${OA_LIBRARY_DIR} NO_DEFAULT_PATH )
@@ -223,7 +225,9 @@ IF(UNIX)
     SET(OA_FOUND "NO")
     IF(OA_FIND_REQUIRED)
       MESSAGE( FATAL_ERROR "OpenAccess libraries, includes NOT found!")
-    ENDIF( OA_FIND_REQUIRED)
+    ELSE(OA_FIND_REQUIRED)
+      MESSAGE( STATUS "OpenAccess libraries, includes NOT found!")
+    ENDIF(OA_FIND_REQUIRED)
   ENDIF (OA_INCLUDE_PATH AND OA_OACOMMON_LIBRARY AND OA_OABASE_LIBRARY 
       AND OA_OADM_LIBRARY AND OA_OATECH_LIBRARY AND OA_OADESIGN_LIBRARY 
       AND OA_OAWAFER_LIBRARY AND OA_OAPLUGIN_LIBRARY) 
