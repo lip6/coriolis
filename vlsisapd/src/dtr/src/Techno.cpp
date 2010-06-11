@@ -34,14 +34,14 @@ namespace {
 namespace DTR {
 Techno::Techno(Name name, Name unit) : _name(name), _unit(unit) {}
 
-Rule* Techno::addRule (Name name, double value, Name ref, Name layer1, Name layer2) {
-    Rule* rule = new Rule(name, value, ref, layer1, layer2);
+Rule* Techno::addRule (Name name, double value, Name valueStr, Name ref, Name layer1, Name layer2) {
+    Rule* rule = new Rule(name, value, valueStr, ref, layer1, layer2);
     _rules.push_back(rule);
     return rule;
 }
 
-ARule* Techno::addARule (Name name, double value, Name ref, Name layer1, Name layer2) {
-    ARule* arule = new ARule(name, value, ref, layer1, layer2);
+ARule* Techno::addARule (Name name, double value, Name valueStr, Name ref, Name layer1, Name layer2) {
+    ARule* arule = new ARule(name, value, valueStr, ref, layer1, layer2);
     _rules.push_back(arule);
     return arule;
 }
@@ -73,6 +73,46 @@ double Techno::getValue(Name name, Name layer1, Name layer2) {
                 }
             } else {
                 return rule->getValue();
+            }
+        }
+    }
+    string error ("[ERROR] Could not found rule: ");
+    error += name.getString();
+    error += ".";
+    error += layer1.getString();
+    error += ".";
+    error += layer2.getString();
+    error += ".";
+    throw DTRException(error);
+}
+
+string Techno::getValueAsString(Name name) {
+    return getValueAsString(name, Name(""), Name(""));
+}
+
+string Techno::getValueAsString(Name name, Name layer) {
+    return getValueAsString(name, layer, Name(""));
+}
+
+string Techno::getValueAsString(Name name, Name layer1, Name layer2) {
+    bool testL1   = (layer1 == Name("")) ? false : true;
+    bool testL2   = (layer2 == Name("")) ? false : true;
+
+    for (size_t i = 0 ; i < _rules.size() ; i++) {
+        Rule* rule = _rules[i];
+        if (rule->getName() == name) {
+            if (testL1) {
+                if (rule->getLayer1() == layer1) {
+                    if (testL2) {
+                        if (rule->getLayer2() == layer2) {
+                            return rule->getValueAsString();
+                        }
+                    } else {
+                        return rule->getValueAsString();
+                    }
+                }
+            } else {
+                return rule->getValueAsString();
             }
         }
     }
@@ -136,18 +176,21 @@ Techno* Techno::readFromFile(const string filePath) {
                                 Name layer1 ((const char*)layer1C);
                                 Name layer2 ((const char*)layer2C);
                                 double value = ::getValue<double>(valueC);
-                                rule = techno->addRule(name, value, ref, layer1, layer2);
+                                Name valueStr ((const char*)valueC);
+                                rule = techno->addRule(name, value, valueStr, ref, layer1, layer2);
                             } else if (nameC && layerC && valueC && refC) {// rule with only one layer
                                 Name name  ((const char*)nameC);
                                 Name ref   ((const char*)refC);
                                 Name layer ((const char*)layerC);
                                 double value = ::getValue<double>(valueC);
-                                rule = techno->addRule(name, value, ref, layer);
+                                Name valueStr ((const char*)valueC);
+                                rule = techno->addRule(name, value, valueStr, ref, layer);
                             } else if (nameC && valueC && refC) { // rule without layer
                                 Name name ((const char*)nameC);
                                 Name ref  ((const char*)refC);
                                 double value = ::getValue<double>(valueC);
-                                rule = techno->addRule(name, value, ref);
+                                Name valueStr ((const char*)valueC);
+                                rule = techno->addRule(name, value, valueStr, ref);
                             } else { // invalid case
                                 throw DTRException("[ERROR] properties of 'rule' node must be ('name', 'value', 'ref') or ('name', 'layer', 'value', 'ref') or ('name', 'layer1', 'layer2', 'value', 'ref').");
                                 return NULL;
@@ -168,7 +211,8 @@ Techno* Techno::readFromFile(const string filePath) {
                                 Name layer2 ((const char*)layer2C);
                                 Name ref    ((const char*)refC);
                                 double value = ::getValue<double>(valueC);
-                                techno->addARule(name, value, ref, layer1, layer2);
+                                Name valueStr ((const char*)valueC);
+                                techno->addARule(name, value, valueStr, ref, layer1, layer2);
                             } else {
                                 throw DTRException("[ERROR] 'arule' node must have 'name', 'layer1', 'layer2', 'value' and 'ref' properties.");
                                 return NULL;
