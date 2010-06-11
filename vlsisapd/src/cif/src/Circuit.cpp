@@ -3,15 +3,14 @@
 #include <ctime>
 using namespace std;
 
-#include "vlsisapd/cif/CifCircuit.h"
-#include "vlsisapd/cif/CifPolygon.h"
+#include "vlsisapd/cif/Circuit.h"
+#include "vlsisapd/cif/Polygon.h"
 
-namespace vlsisapd {
+namespace CIF {
+Circuit::Circuit(string name, string unit, double scale) : _name(name), _unit(unit), _scale(scale) {}
 
-CifCircuit::CifCircuit(string name, string unit, double scale) : _name(name), _unit(unit), _scale(scale) {}
 
-
-bool CifCircuit::addPolygon(CifPolygon* polygon) {
+bool Circuit::addPolygon(Polygon* polygon) {
     if(polygon)
         _polygons.push_back(polygon);
     else {
@@ -21,7 +20,7 @@ bool CifCircuit::addPolygon(CifPolygon* polygon) {
     return true;
 }
 
-bool CifCircuit::write(string filename) {
+bool Circuit::writeToFile(string filename) {
     time_t curtime = time(0);
     tm now = *localtime(&curtime);
     char date[BUFSIZ]={0};
@@ -38,7 +37,7 @@ bool CifCircuit::write(string filename) {
          << "9 " << _name << ";" << endl;
 
     // For each Polygon : write polygon.
-    for ( vector<CifPolygon*>::iterator it = _polygons.begin() ; it < _polygons.end() ; it++ ) {
+    for ( vector<Polygon*>::iterator it = _polygons.begin() ; it < _polygons.end() ; it++ ) {
         (*it)->write(file);
     }
 

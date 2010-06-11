@@ -1,16 +1,30 @@
-INCLUDE_DIRECTORIES(${VLSISAPD_SOURCE_DIR}/src/agds/src)
+INCLUDE_DIRECTORIES(${VLSISAPD_SOURCE_DIR}/src/agds/src ${Boost_INCLUDE_DIRS} ${PYTHON_INCLUDE_PATH})
 
-SET ( includes vlsisapd/agds/GdsLibrary.h 
-               vlsisapd/agds/GdsStructure.h 
-               vlsisapd/agds/GdsElement.h 
-               vlsisapd/agds/GdsRectangle.h 
+SET ( hpps vlsisapd/agds/Library.h 
+           vlsisapd/agds/Structure.h 
+           vlsisapd/agds/Element.h 
+           vlsisapd/agds/Rectangle.h 
     )
-SET ( cpps GdsLibrary.cpp 
-           GdsStructure.cpp 
-           GdsRectangle.cpp 
+SET ( cpps Library.cpp 
+           Structure.cpp 
+           Rectangle.cpp 
+    )
+SET ( pycpps PyAgds.cpp
+             ${cpps}
     )
 
 ADD_LIBRARY(agds ${cpps})
 INSTALL(TARGETS agds DESTINATION lib${LIB_SUFFIX})
 
-INSTALL(FILES ${includes} DESTINATION include/vlsisapd/agds)
+INSTALL(FILES ${hpps} DESTINATION include/vlsisapd/agds)
+
+IF(Boost_FOUND)
+  ADD_LIBRARY(pyAGDS MODULE ${pycpps})
+  SET_TARGET_PROPERTIES(pyAGDS PROPERTIES
+                               COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
+                               PREFIX        ""
+                       )
+  TARGET_LINK_LIBRARIES(pyAGDS agds ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
+  INSTALL(TARGETS pyAGDS DESTINATION ${PYTHON_SITE_PACKAGES})
+ENDIF(Boost_FOUND)
+

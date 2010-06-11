@@ -1,0 +1,9 @@
+(CIF file written on 11-Jun-2010  13:49:44 by VLSISAPD_CIF_DRIVER);
+(Units: micro  -  UU/DB Scale: 0.001);
+DS 1 1 1;
+9 Transistor;
+L 6; P 130,290 540,290 540,690 130,690;
+L 17; P 305,150 365,150 365,830 305,830;
+DF;
+C 1;
+E

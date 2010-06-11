@@ -2,24 +2,25 @@
 #include <ctime>
 using namespace std;
 
-#include "vlsisapd/agds/GdsStructure.h"
+#include "vlsisapd/agds/Structure.h"
+#include "vlsisapd/agds/Element.h"
 
-namespace vlsisapd {
-GdsStructure::GdsStructure(string strName) 
+namespace AGDS {
+Structure::Structure(string strName) 
     : _strName(strName) {}
 
 
-bool GdsStructure::addElement(GdsElement* gdsElement) {
+bool Structure::addElement(Element* gdsElement) {
     if(gdsElement)
         _elements.push_back(gdsElement);
     else {
-        cerr << "[GDS DRIVE ERROR]: cannot hold GdsElement." << endl;
+        cerr << "[GDS DRIVE ERROR]: cannot hold Element." << endl;
         return false;
     }
     return true;
 }
 
-bool GdsStructure::write(ofstream &file) {
+bool Structure::write(ofstream &file) {
     time_t curtime = time(0);
     tm now = *localtime(&curtime);
     char date[BUFSIZ]={0};
@@ -35,7 +36,7 @@ bool GdsStructure::write(ofstream &file) {
          << endl;
 
     // For each Element : write element.
-    for ( vector<GdsElement*>::iterator it = _elements.begin() ; it < _elements.end() ; it++ ) {
+    for ( vector<Element*>::iterator it = _elements.begin() ; it < _elements.end() ; it++ ) {
         (*it)->write(file);
     }
 

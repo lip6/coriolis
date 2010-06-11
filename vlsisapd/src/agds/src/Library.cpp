@@ -3,17 +3,18 @@
 #include <ctime>
 using namespace std;
 
-#include "vlsisapd/agds/GdsLibrary.h"
+#include "vlsisapd/agds/Library.h"
+#include "vlsisapd/agds/Structure.h"
 
-namespace vlsisapd {
+namespace AGDS {
 
-GdsLibrary::GdsLibrary(string libName) 
+Library::Library(string libName) 
     : _libName(libName)
     , _userUnits(0.00)
     , _physUnits(0.00) {}
 
 
-bool GdsLibrary::addStructure(GdsStructure* gdsStruct) {
+bool Library::addStructure(Structure* gdsStruct) {
     if(gdsStruct)
         _structs.push_back(gdsStruct);
     else {
@@ -23,7 +24,7 @@ bool GdsLibrary::addStructure(GdsStructure* gdsStruct) {
     return true;
 }
 
-bool GdsLibrary::write(string filename) {
+bool Library::writeToFile(string filename) {
     time_t curtime = time(0);
     tm now = *localtime(&curtime);
     char date[BUFSIZ]={0};
@@ -46,7 +47,7 @@ bool GdsLibrary::write(string filename) {
     file.unsetf(ios::floatfield);
 
     // For each Struct : write struct.
-    for ( vector<GdsStructure*>::iterator it = _structs.begin() ; it < _structs.end() ; it++ ) {
+    for ( vector<Structure*>::iterator it = _structs.begin() ; it < _structs.end() ; it++ ) {
         (*it)->write(file);
     }
 

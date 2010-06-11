@@ -4,10 +4,10 @@
 #include <vector>
 #include <fstream>
 
-namespace vlsisapd {
-class CifPolygon {
+namespace CIF {
+class Polygon {
     public:
-        CifPolygon(long);
+        Polygon(long);
 
         void addPoint (long, long);
         void write ( ofstream& );

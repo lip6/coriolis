@@ -2,21 +2,21 @@
 #include <iomanip>
 using namespace std;
 
-#include "vlsisapd/agds/GdsRectangle.h"
+#include "vlsisapd/agds/Rectangle.h"
 
-namespace vlsisapd {
-GdsElement::~GdsElement () { }
+namespace AGDS {
+Element::~Element () { }
 
-GdsRectangle::GdsRectangle(int layer, double xmin, double ymin, double xmax, double ymax) 
-    : GdsElement(layer)
+Rectangle::Rectangle(int layer, double xmin, double ymin, double xmax, double ymax) 
+    : Element(layer)
     , _xmin(xmin)
     , _ymin(ymin)
     , _xmax(xmax)
     , _ymax(ymax) {}
 
-GdsRectangle::~GdsRectangle () { }
+Rectangle::~Rectangle () { }
 
-bool GdsRectangle::write(ofstream &file) {
+bool Rectangle::write(ofstream &file) {
     file << "BOUNDARY;" << endl
          << "LAYER " << _layer << ";" << endl
          << "DATATYPE 0;" << endl
@@ -31,4 +31,4 @@ bool GdsRectangle::write(ofstream &file) {
 
     return true;
 }
-}
+} // namespace

@@ -3,18 +3,17 @@
 #include <ctime>
 using namespace std;
 
-#include "vlsisapd/cif/CifPolygon.h"
+#include "vlsisapd/cif/Polygon.h"
 
-namespace vlsisapd {
+namespace CIF {
+Polygon::Polygon(long layer) : _layer(layer) {}
 
-CifPolygon::CifPolygon(long layer) : _layer(layer) {}
 
-
-void CifPolygon::addPoint(long x, long y) {
+void Polygon::addPoint(long x, long y) {
     _points.push_back(pair<long,long>(x,y));
 }
 
-void CifPolygon::write(ofstream& file) {
+void Polygon::write(ofstream& file) {
     file << "L " << _layer << "; P";
 
     // For each point : write point.

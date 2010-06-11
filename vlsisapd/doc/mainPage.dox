@@ -1,0 +1,37 @@
+/*! \mainpage Presentation
+
+  This is the documentation of VLSI SAPD project. This project aims at providing a set of open-source \b Stand Alone Parser & Drivers for VLSI. APIs for these parser & drivers are provided as C++ libraries and Python modules.
+
+  The list of supported parser & drivers is shown in next table :
+  <center>
+  <table border=1 width=60%>
+  <tr>
+    <td><center><b>Format</b></center></td>
+    <td><center><b>Parser</b></center></td>
+    <td><center><b>Driver</b></center></td>
+  </tr><tr>
+    <td>CIF</td>
+    <td></td>
+    <td><center>x</center></td>
+  </tr><tr>
+    <td>AGDS</td>
+    <td></td>
+    <td><center>x</center></td>
+  </tr><tr>
+    <td>DTR</td>
+    <td><center>x</center></td>
+    <td></td>
+  </tr><tr>
+    <td>OPENCHAMS</td>
+    <td><center>x</center></td>
+    <td><center>x</center></td>
+  </tr>
+  </table>
+  </center>
+
+
+  To quickly access to documentation of a format, one can use the following links :
+  - \subpage CIF CIF Format
+  - \subpage AGDS AGDS Format
+
+*/

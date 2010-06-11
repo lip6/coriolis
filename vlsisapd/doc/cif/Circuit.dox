@@ -1,0 +1,30 @@
+// -*- C++ -*-
+
+namespace CIF {
+/*! \class Circuit
+ *
+ *  This class contains all CIF circuit informations such as the name, the unit used, the scale and the list of all Polygons.
+ */
+
+/*! \fn Circuit::Circuit(std::string name, std::string unit, double scale)
+ *   \brief creates a new Circuit
+ *
+ *   \param  name the name of the circuit.
+ *   \param  unit the unit used for all distances & coordinates.
+ *   \param  scale the scale used to convert DB unit to real unit (specified by the unit).
+ */
+
+/*! \fn bool Circuit::addPolygon(Polygon* polygon)
+ *   \brief adds a Polygon to the Circuit.
+ *
+ *   \param polygon the Polygon object to add.
+ */
+
+/*! \fn bool Circuit::writeToFile(std::string filename)
+ *   \brief writes the database to file.
+ *
+ *   \param filename the destination file name.
+ *
+ *   \note When driving file, current date and time are used to define date in generated CIF file.
+ */
+}

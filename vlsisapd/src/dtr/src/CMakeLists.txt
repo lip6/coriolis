@@ -1,12 +1,3 @@
-FIND_PACKAGE(Boost 1.32.0 COMPONENTS python)
-IF (Boost_FOUND)
-  MESSAGE(STATUS "Found Boost.Python libraries in ${Boost_INCLUDE_DIR} as ${Boost_LIBRARIES}")
-  FIND_PACKAGE(PythonLibs REQUIRED)
-ELSE (Boost_FOUND)
-  MESSAGE(STATUS "Boost.Python libraries were not found")
-ENDIF (Boost_FOUND)
-
-
 INCLUDE_DIRECTORIES(${VLSISAPD_SOURCE_DIR}/src/dtr/src ${LIBXML2_INCLUDE_DIR} ${Boost_INCLUDE_DIRS} ${PYTHON_INCLUDE_PATH})
 
 SET ( hpps vlsisapd/dtr/Techno.h

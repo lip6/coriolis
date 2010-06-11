@@ -1,0 +1,8 @@
+// -*- C++ -*-
+
+namespace AGDS {
+/*! \class Element
+ *
+ *  This is an abstract class which is a base for any GDS II shape. It only defines a layer.
+ */
+}
