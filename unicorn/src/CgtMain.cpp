@@ -50,6 +50,12 @@ using namespace Hurricane;
 #include  "crlcore/ToolBox.h"
 using namespace CRL;
 
+#include  "nimbus/NimbusEngine.h"
+using namespace Nimbus;
+
+#include  "metis/MetisEngine.h"
+using namespace Metis;
+
 #include  "mauka/GraphicMaukaEngine.h"
 using namespace Mauka;
 
@@ -94,6 +100,10 @@ int main ( int argc, char *argv[] )
     bool          coreDump;
     bool          logMode;
     bool          textMode;
+    double        margin;
+    bool          quadriPlace;
+    bool          annealingPlace;
+    unsigned int  partitionSizeStop;
     bool          globalRoute;
     bool          detailedRoute;
     bool          loadGlobal;
@@ -101,43 +111,51 @@ int main ( int argc, char *argv[] )
 
     poptions::options_description options ("Command line arguments & options");
     options.add_options()
-      ( "help,h"           , "Print this help." )
-      ( "trace-level,l"    , poptions::value<unsigned int>(&traceLevel)->default_value(1000)
-                           , "Set the level of trace, trace messages with a level superior to "
-                             "<arg> will be printed on <stderr>." )
-      ( "verbose,v"        , poptions::bool_switch(&verbose1)->default_value(false)
-                           , "First level of verbosity.")
-      ( "very-verbose,V"   , poptions::bool_switch(&verbose2)->default_value(false)
-                           , "Second level of verbosity.")
-      ( "info,i"           , poptions::bool_switch(&info)->default_value(false)
-                           , "Lots of informational messages.")
-      ( "show-conf"        , poptions::bool_switch(&showConf)->default_value(false)
-                           , "Print Kite configuration settings.")
-      ( "core-dump,D"      , poptions::bool_switch(&coreDump)->default_value(false)
-                           , "Enable core dumping.")
-      ( "log-mode,L"       , poptions::bool_switch(&logMode)->default_value(false)
-                           , "Disable ANSI escape sequences displaying.")
-      ( "text,t"           , poptions::bool_switch(&textMode)->default_value(false)
-                           , "Run in pure text mode.")
-      ( "global-route,G"   , poptions::bool_switch(&globalRoute)->default_value(false)
-                           , "Run the global router (Knik).")
-      ( "load-global,g"    , poptions::bool_switch(&loadGlobal)->default_value(false)
-                           , "Reload the global routing from disk.")
-      ( "save-global"      , poptions::bool_switch(&saveGlobal)->default_value(false)
-                           , "Save the global routing solution.")
-      ( "edge,e"           , poptions::value<float>(&edgeCapacity)->default_value(0.65)
-                           , "The egde density ratio applied on global router's edges." )
-      ( "expand-step"      , poptions::value<float>(&expandStep)->default_value(0.99)
-                           , "The density delta above which GCells are aggregateds." )
-      ( "events-limit"     , poptions::value<unsigned long>(&eventsLimit)
-                           , "The maximum number of iterations (events) that the router is"
-                             "allowed to perform." )
-      ( "detailed-route,R" , poptions::bool_switch(&detailedRoute)->default_value(false)
-                           , "Run the detailed router (Kite).")
-      ( "cell,c"           , poptions::value<string>()
-                           , "The name of the cell to load, whithout extension." )
-      ( "save-design,s"    , poptions::value<string>()
-                           , "Save the routed design.");
+      ( "help,h"             , "Print this help." )
+      ( "trace-level,l"      , poptions::value<unsigned int>(&traceLevel)->default_value(1000)
+                             , "Set the level of trace, trace messages with a level superior to "
+                               "<arg> will be printed on <stderr>." )
+      ( "verbose,v"          , poptions::bool_switch(&verbose1)->default_value(false)
+                             , "First level of verbosity.")
+      ( "very-verbose,V"     , poptions::bool_switch(&verbose2)->default_value(false)
+                             , "Second level of verbosity.")
+      ( "info,i"             , poptions::bool_switch(&info)->default_value(false)
+                             , "Lots of informational messages.")
+      ( "show-conf"          , poptions::bool_switch(&showConf)->default_value(false)
+                             , "Print Kite configuration settings.")
+      ( "core-dump,D"        , poptions::bool_switch(&coreDump)->default_value(false)
+                             , "Enable core dumping.")
+      ( "log-mode,L"         , poptions::bool_switch(&logMode)->default_value(false)
+                             , "Disable ANSI escape sequences displaying.")
+      ( "text,t"             , poptions::bool_switch(&textMode)->default_value(false)
+                             , "Run in pure text mode.")
+      ( "margin,m"           , poptions::value<double>(&margin)->default_value(0.40)
+                             , "Percentage of free area to add to the minimal placement area.")
+      ( "quadri-place,p"     , poptions::bool_switch(&quadriPlace)->default_value(false)
+                             , "Place using quadripartitions then placement legalisation.")
+      ( "annealing-place,P"  , poptions::bool_switch(&annealingPlace)->default_value(false)
+                             , "Place using simulated annealing (slow).")
+      ( "partition-size-stop", poptions::value<unsigned int>(&partitionSizeStop)->default_value(45)
+                             , "Sets the size of a leaf partition (quadripartition stage).")
+      ( "global-route,G"     , poptions::bool_switch(&globalRoute)->default_value(false)
+                             , "Run the global router (Knik).")
+      ( "load-global,g"      , poptions::bool_switch(&loadGlobal)->default_value(false)
+                             , "Reload the global routing from disk.")
+      ( "save-global"        , poptions::bool_switch(&saveGlobal)->default_value(false)
+                             , "Save the global routing solution.")
+      ( "edge,e"             , poptions::value<float>(&edgeCapacity)->default_value(0.65)
+                             , "The egde density ratio applied on global router's edges." )
+      ( "expand-step"        , poptions::value<float>(&expandStep)->default_value(0.99)
+                             , "The density delta above which GCells are aggregateds." )
+      ( "events-limit"       , poptions::value<unsigned long>(&eventsLimit)
+                             , "The maximum number of iterations (events) that the router is"
+                               "allowed to perform." )
+      ( "detailed-route,R"   , poptions::bool_switch(&detailedRoute)->default_value(false)
+                             , "Run the detailed router (Kite).")
+      ( "cell,c"             , poptions::value<string>()
+                             , "The name of the cell to load, whithout extension." )
+      ( "save-design,s"      , poptions::value<string>()
+                             , "Save the routed design.");
 
     poptions::variables_map arguments;
     poptions::store  ( poptions::parse_command_line(argc,argv,options), arguments );
@@ -169,13 +187,22 @@ int main ( int argc, char *argv[] )
         exit ( 2 );
       }
     } else {
-      loadGlobal    = false;
-      saveGlobal    = false;
-      globalRoute   = false;
-      detailedRoute = false;
+      quadriPlace    = false;
+      annealingPlace = false;
+      loadGlobal     = false;
+      saveGlobal     = false;
+      globalRoute    = false;
+      detailedRoute  = false;
     }
 
-    Kite::Configuration::getDefault()->setEdgeCapacityPercent ( edgeCapacity );
+    if ( arguments.count("margin") )
+      Nimbus::Configuration::getDefault()->setMargin ( margin );
+
+    if ( arguments.count("partition-size-stop") )
+      Metis::Configuration::getDefault()->setNumberOfInstancesStopCriterion ( partitionSizeStop );
+
+    if ( arguments.count("edge") )
+      Kite::Configuration::getDefault()->setEdgeCapacityPercent ( edgeCapacity );
 
     if ( arguments.count("events-limit") )
       Kite::Configuration::getDefault()->setEventsLimit ( eventsLimit );
@@ -285,10 +312,17 @@ int main ( int argc, char *argv[] )
       cmess1 << unicorn->getBanner() << endl;
       cmess1 << "        Tool Credits" << endl;
       cmess1 << "        Hurricane .................... Remy Escassut & Christian Masson" << endl;
+      cmess1 << "        Nimbus - Infrastructure .......................... Hugo Clement" << endl;
+      cmess1 << "        Mauka - Placer ........................... Christophe Alexandre" << endl;
       cmess1 << "        Knik - Global Router ............................ Damien Dupuis" << endl;
       cmess1 << "        Kite - Detailed Router ....................... Jean-Paul Chaput" << endl;
-      cmess1 << "        Software Engineering ..................... Christophe Alexandre" << endl;
       cmess1 << endl;
+
+      cout   << "        hMETIS software credits" << endl;
+      cout   << "        Author ........................................ Georges Karypis" << endl;
+      cout   << "        Prof. Ident. .......................... University of Minnesota" << endl;
+      cout   << "        URL .......................... http://glaros.dtc.umn.edu/gkhome" << endl;
+      cout   << endl;
 
       cout   << "        The Knik router makes use of FLUTE software" << endl;
       cout   << "        Author ........................................ Chris C. N. CHU" << endl;
@@ -311,6 +345,48 @@ int main ( int argc, char *argv[] )
       returnCode = qa->exec ();
       ToolEngine::destroyAll ();
     } else {
+      if ( quadriPlace or annealingPlace ) {
+        loadGlobal  = false;
+        globalRoute = true;
+      }
+      if ( quadriPlace and annealingPlace )
+        annealingPlace = false;
+
+      if ( not MetisEngine::isHMetisCapable() and quadriPlace ) {
+        cerr << Warning("hMETIS is not avalaible, revert to simulated annealing.") << endl;
+        
+        annealingPlace = true;
+        quadriPlace    = false;
+      }
+
+      bool runMaukaTool = quadriPlace or annealingPlace;
+
+      if ( runMaukaTool ) {
+        NimbusEngine* nimbus = NULL;
+        MetisEngine*  metis  = NULL;
+        MaukaEngine*  mauka  = NULL;
+
+        nimbus = NimbusEngine::create ( cell );
+        if ( showConf ) nimbus->getConfiguration()->print( cell );
+
+        if ( annealingPlace ) {
+          Mauka::Configuration::getDefault()->setStandardSimulatedAnnealing ( true );
+        }
+
+        if ( quadriPlace ) {
+          metis  = MetisEngine ::create ( cell );
+          if ( showConf ) metis->getConfiguration()->print( cell );
+
+          MetisEngine::doQuadriPart ( cell );
+          MaukaEngine::regroupOverloadedGCells ( cell );
+        }
+
+        mauka = MaukaEngine::create ( cell );
+        if ( showConf ) mauka->getConfiguration()->print( cell );
+
+        mauka->Run ();
+      }
+
       if ( detailedRoute and not (loadGlobal or globalRoute) ) globalRoute = true;
 
       bool runKiteTool = loadGlobal or globalRoute or detailedRoute;
@@ -323,7 +399,6 @@ int main ( int argc, char *argv[] )
 
         static KatabaticEngine::NetSet routingNets;
         KiteEngine* kite = KiteEngine::create ( cell );
-        kite->getConfiguration()->setExpandStep ( expandStep );
         if ( showConf ) kite->printConfiguration ();
         
         kite->runGlobalRouter ( globalFlags );

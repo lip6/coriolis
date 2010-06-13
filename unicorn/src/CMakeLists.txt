@@ -31,6 +31,8 @@
                                        ${KNIK_LIBRARIES}
                                        ${MAUKA_GRAPHICAL_LIBRARIES}
                                        ${MAUKA_LIBRARIES}
+                                       ${METIS_LIBRARIES}
+                                       ${HMETIS_LIBRARIES}
                                        ${NIMBUS_GRAPHICAL_LIBRARIES}
                                        ${NIMBUS_LIBRARIES}
                                        ${CORIOLIS_LIBRARIES}
