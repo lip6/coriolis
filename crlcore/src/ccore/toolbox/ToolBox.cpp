@@ -540,4 +540,34 @@ void ConnectPlugHooks(Cell* cell)
     __plughooksconnected.clear();
 }
 
-}
+
+  size_t  _getInstancesCount ( const Cell* cell, map<const Cell*,size_t>& gatesByMaster )
+  {
+    map<const Cell*,size_t>::iterator imaster = gatesByMaster.find ( cell );
+    if ( imaster != gatesByMaster.end() )
+      return imaster->second;
+
+    size_t gates = 0;
+    forEach ( Instance*, iinstance,  cell->getInstances() ) {
+      Cell* masterCell = iinstance->getMasterCell();
+
+      if ( masterCell->isTerminal() )
+        ++gates;
+      else
+        _getInstancesCount ( masterCell, gatesByMaster );
+    }
+    gatesByMaster.insert ( make_pair(cell,gates) );
+
+    return gates;
+  }
+
+
+  size_t  getInstancesCount ( const Cell* cell )
+  {
+    map<const Cell*,size_t>  gatesByMaster;
+
+    return _getInstancesCount ( cell, gatesByMaster );
+  }
+
+
+}  // End of CRL namespace.

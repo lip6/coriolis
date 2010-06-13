@@ -75,11 +75,20 @@ namespace CRL {
                        , const DbU::Unit  pitch
                        , const DbU::Unit  sliceHeight
                        , const DbU::Unit  sliceStep
-                       ) : _name(name)
+                       ) : _name        (name)
                          , _pinLayerName(pinLayerName)
-                         , _pitch(pitch)
-                         , _sliceHeight(sliceHeight)
-                         , _sliceStep(sliceStep)
+                         , _pitch       (pitch)
+                         , _sliceHeight (sliceHeight)
+                         , _sliceStep   (sliceStep)
+  { }
+
+
+  CellGauge::CellGauge ( const CellGauge& other )
+    : _name        (other._name)
+    , _pinLayerName(other._pinLayerName)
+    , _pitch       (other._pitch)
+    , _sliceHeight (other._sliceHeight)
+    , _sliceStep   (other._sliceStep)
   { }
 
 
@@ -108,6 +117,10 @@ namespace CRL {
 
   void  CellGauge::destroy ()
   { delete this; }
+
+
+  CellGauge* CellGauge::getClone () const
+  { return new CellGauge(*this); }
 
 
   string  CellGauge::_getTypeName () const

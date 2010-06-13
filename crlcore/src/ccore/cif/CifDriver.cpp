@@ -21,9 +21,9 @@ using namespace std;
 #include "hurricane/Query.h"
 using namespace Hurricane;
 
-#include "vlsisapd/cif/CifCircuit.h"
-#include "vlsisapd/cif/CifPolygon.h"
-using namespace vlsisapd;
+#include "vlsisapd/cif/Circuit.h"
+#include "vlsisapd/cif/Polygon.h"
+using namespace CIF;
 
 #include "Cif.h"
 
@@ -32,7 +32,7 @@ class CifQuery : public Query {
     public:
         CifQuery ( Cell* );
 
-        inline void setCircuit(CifCircuit*);
+        inline void setCircuit(Circuit*);
 
         virtual bool hasGoCallback() const;
         virtual void goCallback ( Go* );
@@ -41,15 +41,15 @@ class CifQuery : public Query {
         virtual void masterCellCallback() {};
 
   private:
-        Cell*       _cell;
-        CifCircuit* _circuit;
+        Cell*    _cell;
+        Circuit* _circuit;
 };
 
 CifQuery::CifQuery(Cell* cell) : Query(), _cell(cell), _circuit(NULL) {
     Query::setQuery(_cell, _cell->getBoundingBox(), Transformation(), NULL, 0, Query::DoComponents);
 }
 
-inline void CifQuery::setCircuit(CifCircuit* circuit) { _circuit = circuit; }
+inline void CifQuery::setCircuit(Circuit* circuit) { _circuit = circuit; }
 
 bool CifQuery::hasGoCallback() const { return true; }
 
@@ -74,7 +74,7 @@ void CifQuery::goCallback(Go* go) {
     else {
         return;
     }
-    CifPolygon* poly = new CifPolygon ( layer->getExtractNumber() );
+    Polygon* poly = new Polygon ( layer->getExtractNumber() );
     long xMin = (long)round(DbU::getPhysical(b.getXMin(), DbU::Nano));
     long yMin = (long)round(DbU::getPhysical(b.getYMin(), DbU::Nano));
     long xMax = (long)round(DbU::getPhysical(b.getXMax(), DbU::Nano));
@@ -94,7 +94,7 @@ void cifDriver(const string& filePath, Cell* cell, string& name, string& units, 
     replace(name.begin(), name.end(), ' ', '_');
     units = "micro";
     scale = 0.001;
-    CifCircuit* circuit = new CifCircuit(name, units, scale);
+    Circuit* circuit = new Circuit(name, units, scale);
     CifQuery cifQuery (cell);
 
     cifQuery.setCircuit(circuit);
@@ -104,6 +104,6 @@ void cifDriver(const string& filePath, Cell* cell, string& name, string& units, 
         cifQuery.doQuery();
     }
 
-    circuit->write(filePath);
+    circuit->writeToFile(filePath);
 }
 } // namespace CRL

@@ -62,9 +62,9 @@ namespace CRL {
     // Constructors & Destructor.
       static  CellGauge*       create           ( const char*      name
                                                 , const char*      pinLayerName
-                                                , const DbU::Unit  pitch=0
-                                                , const DbU::Unit  sliceHeight=0
-                                                , const DbU::Unit  sliceStep=0 );
+                                                , const DbU::Unit  pitch       =0
+                                                , const DbU::Unit  sliceHeight =0
+                                                , const DbU::Unit  sliceStep   =0 );
       virtual void             destroy          ();
     // Accessors
       inline  const Name&      getName          () const;
@@ -72,6 +72,7 @@ namespace CRL {
       inline  const DbU::Unit  getPitch         () const;
       inline  const DbU::Unit  getSliceHeight   () const;
       inline  const DbU::Unit  getSliceStep     () const;
+              CellGauge*       getClone         () const;
     // Hurricane management.
       virtual string           _getTypeName     () const;
       virtual string           _getString       () const;

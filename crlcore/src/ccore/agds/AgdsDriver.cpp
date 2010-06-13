@@ -21,10 +21,10 @@ using namespace std;
 #include "hurricane/Query.h"
 using namespace Hurricane;
 
-#include "vlsisapd/agds/GdsLibrary.h"
-#include "vlsisapd/agds/GdsStructure.h"
-#include "vlsisapd/agds/GdsRectangle.h"
-using namespace vlsisapd;
+#include "vlsisapd/agds/Library.h"
+#include "vlsisapd/agds/Structure.h"
+#include "vlsisapd/agds/Rectangle.h"
+using namespace AGDS;
 
 #include "Agds.h"
 
@@ -33,7 +33,7 @@ class AgdsQuery : public Query {
     public:
         AgdsQuery ( Cell* );
 
-        inline void setStructure(GdsStructure*);
+        inline void setStructure(Structure*);
 
         virtual bool hasGoCallback() const;
         virtual void goCallback ( Go* );
@@ -43,14 +43,14 @@ class AgdsQuery : public Query {
 
   private:
         Cell*         _cell;
-        GdsStructure* _str;
+        Structure* _str;
 };
 
 AgdsQuery::AgdsQuery(Cell* cell) : Query(), _cell(cell), _str(NULL) {
     Query::setQuery(_cell, _cell->getBoundingBox(), Transformation(), NULL, 0, Query::DoComponents);
 }
 
-inline void AgdsQuery::setStructure(GdsStructure* str) { _str = str; }
+inline void AgdsQuery::setStructure(Structure* str) { _str = str; }
 
 bool AgdsQuery::hasGoCallback() const { return true; }
 
@@ -75,11 +75,11 @@ void AgdsQuery::goCallback(Go* go) {
     else {
         return;
     }
-    GdsRectangle* rect = new GdsRectangle ( layer->getExtractNumber()
-                                          , DbU::getPhysical(b.getXMin(), DbU::Nano)
-                                          , DbU::getPhysical(b.getYMin(), DbU::Nano)
-                                          , DbU::getPhysical(b.getXMax(), DbU::Nano)
-                                          , DbU::getPhysical(b.getYMax(), DbU::Nano));
+    Rectangle* rect = new Rectangle ( layer->getExtractNumber()
+                                    , DbU::getPhysical(b.getXMin(), DbU::Nano)
+                                    , DbU::getPhysical(b.getYMin(), DbU::Nano)
+                                    , DbU::getPhysical(b.getXMax(), DbU::Nano)
+                                    , DbU::getPhysical(b.getYMax(), DbU::Nano));
     _str->addElement(rect);
 }
 } // namespace
@@ -92,12 +92,12 @@ void agdsDriver(const string& filePath, Cell* cell, string& name, string& lib, d
     replace(lib.begin(), lib.end(), ' ', '_');
     uUnits = 0.001;
     pUnits = 1.0E-9;
-    GdsLibrary* gdsLib = new GdsLibrary(lib);
+    AGDS::Library* gdsLib = new AGDS::Library(lib);
     gdsLib->setUserUnits(uUnits);
     gdsLib->setPhysUnits(pUnits);
     AgdsQuery agdsQuery (cell);
 
-    GdsStructure* str = new GdsStructure(getString(name));
+    Structure* str = new Structure(getString(name));
     agdsQuery.setStructure(str);
 
     forEach ( BasicLayer*, basicLayer, DataBase::getDB()->getTechnology()->getBasicLayers() ) {
@@ -106,6 +106,6 @@ void agdsDriver(const string& filePath, Cell* cell, string& name, string& lib, d
     }
 
     gdsLib->addStructure(str);
-    gdsLib->write(filePath);
+    gdsLib->writeToFile(filePath);
 }
 } // namespace CRL

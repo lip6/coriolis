@@ -52,7 +52,7 @@ Dots::Dots ( const std::string& left, const std::string& right ) : _left(left), 
 Dots  Dots::asPercentage ( const std::string& left, float value )
 {
   std::ostringstream right;
-  right << std::setprecision(3) << value << "%";
+  right << std::setprecision(3) << (value*100.0) << "%";
   return Dots(left,right.str());
 }
 
@@ -62,6 +62,10 @@ Dots  Dots::asBool ( const std::string& left, bool value )
 
 
 Dots  Dots::asUInt ( const std::string& left, unsigned int value )
+{ std::ostringstream right; right << value; return Dots(left,right.str()); }
+
+
+Dots  Dots::asInt ( const std::string& left, int value )
 { std::ostringstream right; right << value; return Dots(left,right.str()); }
 
 
@@ -78,6 +82,10 @@ Dots  Dots::asDouble ( const std::string& left, double value )
 
 
 Dots  Dots::asLambda ( const std::string& left, Hurricane::DbU::Unit value )
+{ std::ostringstream right; right << Hurricane::DbU::getValueString(value); return Dots(left,right.str()); }
+
+
+Dots  Dots::asLambda ( const std::string& left, double value )
 { std::ostringstream right; right << Hurricane::DbU::getValueString(value); return Dots(left,right.str()); }
 
 

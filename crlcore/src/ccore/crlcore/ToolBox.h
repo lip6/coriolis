@@ -62,6 +62,7 @@ namespace CRL {
   bool            isNoInstancePlacedOrFixed   ( Cell* );
   Occurrence      getRootNetOccurrence        ( const Occurrence& netoccurrence );
   void            ConnectPlugHooks            ( Cell* );
+  size_t          getInstancesCount           ( const Cell* cell );
 
 } // End of CRL namespace.
 

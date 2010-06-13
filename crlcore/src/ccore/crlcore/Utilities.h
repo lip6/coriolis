@@ -350,11 +350,13 @@ class  Dots {
   public:
     static Dots          asPercentage ( const std::string& left, float );
     static Dots          asBool       ( const std::string& left, bool );
+    static Dots          asInt        ( const std::string& left, int );
     static Dots          asUInt       ( const std::string& left, unsigned int );
     static Dots          asULong      ( const std::string& left, unsigned long );
     static Dots          asSizet      ( const std::string& left, size_t );
     static Dots          asDouble     ( const std::string& left, double );
     static Dots          asLambda     ( const std::string& left, Hurricane::DbU::Unit );
+    static Dots          asLambda     ( const std::string& left, double );
     static Dots          asIdentifier ( const std::string& left, const std::string& );
     static Dots          asString     ( const std::string& left, const std::string& );
   private:
@@ -364,6 +366,92 @@ class  Dots {
     const std::string _left;
     const std::string _right;
 };
+
+
+// -------------------------------------------------------------------
+// Class  :  "::linefill()".
+//
+// Wrapper around the STL ostream which try print unbufferized filed
+// lines.
+
+
+class linefill : public std::ostream {
+  public:
+    inline               linefill                        ( const std::string& header, std::ostream &s );
+  // Overload for formatted outputs.
+    template<typename T> inline linefill&     operator<< ( T& t );
+    template<typename T> inline linefill&     operator<< ( T* t );
+    template<typename T> inline linefill&     operator<< ( const T& t );
+    template<typename T> inline linefill&     operator<< ( const T* t );
+                         inline std::ostream& base       ();
+                         inline void          _print     ( const std::string& field );
+                         inline linefill&     flush      ();
+                         inline linefill&     reset      ();
+  // Overload for manipulators.
+                         inline linefill&     operator<< ( std::ostream &(*pf)(std::ostream &) );
+
+  // Internal: Attributes.
+  private:
+    std::string  _header;
+    size_t       _width;
+    size_t       _lines;
+};
+
+
+inline               linefill::linefill   ( const std::string& header, std::ostream& s ): std::ostream(s.rdbuf()) , _header(header), _width(0), _lines(0) {}  
+inline std::ostream& linefill::base       () { return (*static_cast<std::ostream*>(this)); }  
+inline linefill&     linefill::reset      () { (*this) << std::endl; _width=0; return *this; }  
+inline linefill&     linefill::flush      () { static_cast<std::ostream*>(this)->flush(); return *this; }  
+inline linefill&     linefill::operator<< ( std::ostream& (*pf)(std::ostream&) ) { (*pf)(*this); return *this; }
+
+inline void  linefill::_print ( const std::string& field ) {
+  size_t fieldWidth = field.length();
+  if ( _width+fieldWidth > 80 ) { _width = 0; ++_lines; }
+  if ( _width == 0 ) {
+    if ( _lines > 0 ) base() << std::endl;
+    base() << _header; _width+=_header.length();
+  } else
+    base() << " ";
+
+  _width += fieldWidth + 1;
+  base() << field;
+  base().flush ();
+}
+
+template<typename T>
+inline linefill& linefill::operator<< ( T& t )
+{ std::ostringstream s; s << t; _print(s.str()); return *this; };
+
+template<typename T>
+inline linefill& linefill::operator<< ( T* t )
+{ std::ostringstream s; s << t; _print(s.str()); return *this; };
+
+template<typename T>
+inline linefill& linefill::operator<< ( const T& t )
+{ std::ostringstream s; s << t; _print(s.str()); return *this; };
+
+template<typename T>
+inline linefill& linefill::operator<< ( const T* t )
+{ std::ostringstream s; s << t; _print(s.str()); return *this; };
+
+// Specific non-member operator overload. Must be one for each type.
+#define  LINEFILL_V_SUPPORT(Type)                            \
+  inline linefill& operator<< ( linefill& o, const Type t )  \
+    { std::ostringstream s; s << t; return o; };
+
+#define  LINEFILL_R_SUPPORT(Type)                            \
+  inline linefill& operator<< ( linefill& o, const Type& t ) \
+    { std::ostringstream s; s << t; return o; };
+
+#define  LINEFILL_P_SUPPORT(Type)                            \
+  inline linefill& operator<< ( linefill& o, const Type* t ) \
+    { std::ostringstream s; s << t; return o; };
+
+#define  LINEFILL_PR_SUPPORT(Type) \
+         LINEFILL_P_SUPPORT(Type)  \
+         LINEFILL_R_SUPPORT(Type)
+
+LINEFILL_PR_SUPPORT(std::string);
 
 
 # endif
