@@ -51,12 +51,12 @@ class Grid {
     public: Cell* getCell() const { return _cell; };
     public: NimbusEngine* getNimbus() const { return _nimbus; };
    /*!
-    * \fn void Grid::rectangularShape ( double margin, double aspectRatio, DbU::Unit sumWidth, DbU::Unit minWidth )
+    * \fn void Grid::rectangularShape ( double margin, double aspectRatio, double sumWidth, DbU::Unit minWidth )
     * \param margin       Additionnal free space in the abutment box
     * \param aspectRatio
     * \param sumWidth
     */
-  public: void rectangularShape(double margin, double aspectRatio, DbU::Unit sumWidth, DbU::Unit minWidth);
+  public: void rectangularShape(double margin, double aspectRatio, double sumWidth, DbU::Unit minWidth);
 
    /*!
     * \fn void Grid::horizontalLongSplit (unsigned step, DbU::Unit& Y)

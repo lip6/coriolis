@@ -28,6 +28,7 @@
 
 #include  "hurricane/Cell.h"
 #include  "crlcore/Utilities.h"
+#include  "crlcore/AllianceFramework.h"
 #include  "nimbus/Configuration.h"
 
 
@@ -43,6 +44,7 @@ namespace Nimbus {
   using  std::string;
   using  Hurricane::tab;
   using  Hurricane::inltrace;
+  using  CRL::AllianceFramework;
 
 
 // -------------------------------------------------------------------
@@ -55,22 +57,31 @@ namespace Nimbus {
   Configuration* Configuration::getDefault ()
   {
     if ( _default == NULL ) {
-      _default = new Configuration ();
+      _default = new Configuration ( AllianceFramework::get()->getCellGauge()
+                                   , AllianceFramework::get()->getRoutingGauge()
+                                   );
     }
     return _default;
   }
 
 
-  Configuration::Configuration ()
-    : _pinsPlacement(false)
+  Configuration::Configuration ( CellGauge* cg, RoutingGauge* rg )
+    : _cellGauge    (NULL)
+    , _routingGauge (NULL)
+    , _pinsPlacement(false)
     , _aspectRatio  (1.00)
     , _margin       (0.40)
     , _workZone     ()
-  { }
+  {
+    _cellGauge    = cg->getClone();
+    _routingGauge = rg->getClone();
+  }
 
 
   Configuration::Configuration ( const Configuration& other )
-    : _pinsPlacement(other._pinsPlacement)
+    : _cellGauge    (other._cellGauge->getClone())
+    , _routingGauge (other._routingGauge->getClone())
+    , _pinsPlacement(other._pinsPlacement)
     , _aspectRatio  (other._aspectRatio)
     , _margin       (other._margin)
     , _workZone     (other._workZone)
@@ -88,8 +99,10 @@ namespace Nimbus {
   void  Configuration::print ( Cell* cell ) const
   {
     cout << "  o  Configuration of ToolEngine<Nimbus> for Cell <" << cell->getName() << ">" << endl;
-    cout << Dots::asBool      ("     - Pins Placement"                    ,_pinsPlacement) << endl;
-    cout << Dots::asPercentage("     - Margin Ratio"                      ,_margin) << endl;
+    cout << Dots::asIdentifier("     - Cell Gauge"    ,getString(_cellGauge->getName())) << endl;
+    cout << Dots::asIdentifier("     - Routing Gauge" ,getString(_routingGauge->getName())) << endl;
+    cout << Dots::asBool      ("     - Pins Placement",_pinsPlacement) << endl;
+    cout << Dots::asPercentage("     - Margin Ratio"  ,_margin) << endl;
   }
 
 

@@ -9,7 +9,6 @@
 #include "hurricane/Cell.h"
 #include "hurricane/Instance.h"
 #include "crlcore/CellGauge.h"
-#include "crlcore/AllianceFramework.h"
 #include "nimbus/VFence.h"
 #include "nimbus/HFence.h"
 #include "nimbus/GCell.h"
@@ -458,7 +457,7 @@ void GCell::recFlushSubRoutingLeaves(GCell* gcell)
 double GCell::testMargin()
 //* **********************
 {
-  DbU::Unit sliceHeight = AllianceFramework::get()->getCellGauge()->getSliceHeight();
+  DbU::Unit sliceHeight = _nimbus->getConfiguration()->getSliceHeight();
     if ( isEmpty() || _box.isPonctual() || _box.isFlat() )
         throw Error ( "Very very strange GCell" );
     if ( getHeight() % sliceHeight )

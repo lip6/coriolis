@@ -44,7 +44,6 @@
 #include "crlcore/ToolBox.h"
 #include "crlcore/CellGauge.h"
 #include "crlcore/RoutingGauge.h"
-#include "crlcore/AllianceFramework.h"
 #include "nimbus/Grid.h"
 #include "nimbus/Fence.h"
 #include "nimbus/GCell.h"
@@ -283,10 +282,14 @@ class Nimbus_Layers : public Collection<Layer*> {
     public: virtual string _getString() const;
 };
 
-namespace {
 
-void PreCreate(Cell* cell, const Library* library)
+void NimbusEngine::_preCreate(Cell* cell)
+// **************************************
 {
+  if ( cell->isTerminal() )
+    throw Error("Won't create Nimbus on a standard cell");
+
+#if CORIOLIS_2_DEPRECATED
     if (cell->getLibrary() == library) throw Error("Won't create Nimbus on a standard cell");
     string libname (getString(library->getName()));
 
@@ -349,11 +352,11 @@ void PreCreate(Cell* cell, const Library* library)
     RoutingGauge* routingGauge = AllianceFramework::get()->getRoutingGauge(library->getName());
     if (!routingGauge) throw Error ("Nimbus : unable to find RoutingGauge associated with library : " +
             getString(library->getName()));
-    Fence::setRoutingGauge(routingGauge);
+    Fence::setRoutingGauge(Configuration::getDefault()->getCellGauge());
+#endif  // CORIOLIS_2_DEPRECATED
 
 }
 
-}
 
 const Name  NimbusEngine::_toolName = "Nimbus";
 
@@ -369,10 +372,10 @@ NimbusEngine::NimbusEngine (Cell* cell, const Box& workZone)
   if ( not workZone.isEmpty() ) _configuration->setWorkZone(workZone);
 }
 
-NimbusEngine* NimbusEngine::create (Cell* cell, const Library* library, const Box& workZone)
-// *****************************************************************************************
+NimbusEngine* NimbusEngine::create (Cell* cell, const Box& workZone)
+// *****************************************************************
 {
-    PreCreate(cell, library);
+    _preCreate(cell);
     
     NimbusEngine* nimbus = new NimbusEngine (cell,workZone);
     
@@ -420,26 +423,39 @@ const Name& NimbusEngine::staticGetName()
 }
 
 void NimbusEngine::computeXSplit ( GCell* gcell, DbU::Unit* XSplit, unsigned nbSplits )
-// *************************************************************************
+// ************************************************************************************
 {
-    DbU::Unit X = gcell->getXMin();
-    DbU::Unit width = gcell->getWidth();
-    unsigned numColsInf = (unsigned) rint((DbU::getLambda(width) / DbU::getLambda(AllianceFramework::get()->getCellGauge()->getPitch())) / nbSplits);
-    if (numColsInf == 0) throw Error ("no more split allowed", 1);
-    DbU::Unit splitWidth = DbU::lambda(numColsInf * DbU::getLambda(AllianceFramework::get()->getCellGauge()->getPitch()));
+    DbU::Unit     X     = gcell->getXMin();
+    DbU::Unit     width = gcell->getWidth();
+    unsigned int  numColsInf = (unsigned)rint( width / (getPitch() * nbSplits) );
+
+    // cerr << "computeXSplit(): width:" << DbU::getValueString(width)
+    //      << " nbsplits:" << nbSplits
+    //      << " " << (width / getPitch())
+    //      << " numColsInf:" << numColsInf << endl;
+
+    if (numColsInf == 0)
+      throw Error ("NimbusEngine::computeXSplit(): %s too narrow to be splitted."
+                  ,DbU::getValueString(width).c_str());
+
+    DbU::Unit splitWidth = numColsInf * getPitch();
     for ( unsigned i = 0 ; i < (nbSplits - 1) ; i++ ) {
         XSplit[i] = X + (i+1) * splitWidth;
     }
 }
 
 void NimbusEngine::computeYSplit ( GCell* gcell, DbU::Unit* YSplit, unsigned nbSplits )
-// *************************************************************************
+// ************************************************************************************
 {
-    DbU::Unit Y = gcell->getYMin();
-    DbU::Unit height = gcell->getHeight();
-    unsigned numRowsInf = (unsigned) rint((DbU::getLambda(height) / DbU::getLambda(AllianceFramework::get()->getCellGauge()->getSliceHeight())) / nbSplits);
-    if (numRowsInf == 0) throw Error ("no more split allowed", 1);
-    DbU::Unit splitHeight = DbU::lambda(numRowsInf * DbU::getLambda(AllianceFramework::get()->getCellGauge()->getSliceHeight()));
+    DbU::Unit     Y          = gcell->getYMin();
+    DbU::Unit     height     = gcell->getHeight();
+    unsigned int  numRowsInf = (unsigned)rint( height / (getSliceHeight() * nbSplits) );
+
+    if (numRowsInf == 0)
+      throw Error ("NimbusEngine::computeYSplit(): %s too narrow to be splitted."
+                  ,DbU::getValueString(height).c_str());
+
+    DbU::Unit splitHeight = numRowsInf * getSliceHeight();
     for ( unsigned i = 0 ; i < (nbSplits - 1) ; i++ ) {
         YSplit[i] = Y + (i+1) * splitHeight;
     }
@@ -590,7 +606,7 @@ void NimbusEngine::progress(int nbXSplits, int nbYSplits)
     if ( ! (nbXSplits > 1) ) throw Error ( "NimbusEngine.progress error must divide into at least 2 gcells on X coordinate" );
     if ( ! (nbYSplits > 1) ) throw Error ( "NimbusEngine.progress error must divide into at least 2 gcells on Y coordinate" );
 
-    DbU::Unit sliceHeight = AllianceFramework::get()->getCellGauge()->getSliceHeight();
+    DbU::Unit sliceHeight = getConfiguration()->getSliceHeight();
     for_each_gcell (nb, _grid->getGCells(_depth))
     {
         if (nb->getHeight() == sliceHeight)
@@ -660,7 +676,6 @@ void NimbusEngine::destroyLevel(unsigned depth)
 {
     recDestroy (depth, getGrid()->getRoot());
     if (depth > 0) _depth = depth - 1;
-    //throw Error ("no more split allowed");
 }
 
 #if 0

@@ -59,18 +59,25 @@ class NimbusEngine : public ToolEngine {
 // ************
     private: NimbusEngine (Cell* cell, const Box& workzone);
 
-    public: static NimbusEngine* create (Cell* cell, const Library* library, const Box& workZone=Box());
+    public: static void  _preCreate(Cell*);
+    public: static NimbusEngine* create (Cell* cell, const Box& workZone=Box());
             
   // Accessors
   // *********
   public:
-    virtual const Name&   getName         () const;
-    static  const Name&   staticGetName   ();
-    static  NimbusEngine* get             ( Cell* );
-    inline  bool          doPinsPlacement () const;
-    inline  double        getAspectRatio  () const;
-    inline  double        getMargin       () const;
-    inline  const Box&    getWorkZone     () const;
+    virtual const Name&    getName          () const;
+    static  const Name&    staticGetName    ();
+    static  NimbusEngine*  get              ( Cell* );
+    inline  Configuration* getConfiguration ();
+    inline  bool           doPinsPlacement  () const;
+    inline  double         getAspectRatio   () const;
+    inline  double         getMargin        () const;
+    inline  const Box&     getWorkZone      () const;
+    inline  DbU::Unit      getPitch         () const;
+    inline  DbU::Unit      getSliceHeight   () const;
+    inline  DbU::Unit      getSliceStep     () const;
+    inline  const std::vector<RoutingLayerGauge*>&     
+                           getLayerGauges   () const;
 
     public: Grid* getGrid() { return _grid; };
     public: unsigned getDepth() { return _depth; };
@@ -157,10 +164,16 @@ class NimbusEngine : public ToolEngine {
 };
 
 
-  inline  bool          NimbusEngine::doPinsPlacement () const { return _configuration->doPinsPlacement(); }
-  inline  double        NimbusEngine::getAspectRatio  () const { return _configuration->getAspectRatio(); }
-  inline  double        NimbusEngine::getMargin       () const { return _configuration->getMargin(); }
-  inline  const Box&    NimbusEngine::getWorkZone     () const { return _configuration->getWorkZone(); }
+  inline  Configuration* NimbusEngine::getConfiguration () { return _configuration; }
+  inline  bool           NimbusEngine::doPinsPlacement  () const { return _configuration->doPinsPlacement(); }
+  inline  double         NimbusEngine::getAspectRatio   () const { return _configuration->getAspectRatio(); }
+  inline  double         NimbusEngine::getMargin        () const { return _configuration->getMargin(); }
+  inline  const Box&     NimbusEngine::getWorkZone      () const { return _configuration->getWorkZone(); }
+  inline  DbU::Unit      NimbusEngine::getPitch         () const { return _configuration->getPitch(); }
+  inline  DbU::Unit      NimbusEngine::getSliceHeight   () const { return _configuration->getSliceHeight(); }
+  inline  DbU::Unit      NimbusEngine::getSliceStep     () const { return _configuration->getSliceStep(); }
+  inline  const std::vector<RoutingLayerGauge*>&     
+                         NimbusEngine::getLayerGauges   () const { return _configuration->getLayerGauges(); }
 
 
 } // namespace Nimbus

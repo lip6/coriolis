@@ -27,19 +27,30 @@
 #define  __NIMBUS_CONFIGURATION__
 
 #include  <string>
-#include  <hurricane/Box.h>
+#include  <vector>
+#include  "hurricane/Box.h"
+#include  "crlcore/CellGauge.h"
+#include  "crlcore/RoutingGauge.h"
 
 namespace Hurricane {
   class Record;
   class Cell;
 }
 
+namespace CRL {
+  class RoutingLayerGauge;
+}
+
 
 namespace Nimbus {
 
+  using Hurricane::DbU;
   using Hurricane::Box;
   using Hurricane::Cell;
   using Hurricane::Record;
+  using CRL::CellGauge;
+  using CRL::RoutingGauge;
+  using CRL::RoutingLayerGauge;
 
 
 // -------------------------------------------------------------------
@@ -48,40 +59,54 @@ namespace Nimbus {
 
   class Configuration {
     public:
-      static  Configuration* getDefault                    ();
-    public:
-    // Constructor & Destructor.
-                             Configuration                 ();
-                            ~Configuration                 ();
-              Configuration* clone                         () const;
+      static  Configuration*      getDefault                    ();
+    public:                    
+    // Constructor & Destruct  or.
+                                  Configuration                 ( CellGauge*, RoutingGauge* );
+                                 ~Configuration                 ();
+              Configuration*      clone                         () const;
     // Methods.
-      inline  bool           doPinsPlacement               () const;
-      inline  double         getAspectRatio                () const;
-      inline  double         getMargin                     () const;
-      inline  const Box&     getWorkZone                   () const;
-              void           print                         ( Cell* ) const;
-      inline  void           setPinsPlacement              ( bool );
-      inline  void           setAspectRatio                ( double );
-      inline  void           setMargin                     ( double );
-      inline  void           setWorkZone                   ( const Box& );
-      inline  static double  _normPercentage               ( double ratio, double min=0.0, double max=1.0 );
-              Record*        _getRecord                    () const;
-              std::string    _getString                    () const;
-              std::string    _getTypeName                  () const;
-    private:
-    // Attributes.
+      inline  const CellGauge*    getCellGauge                  () const;
+      inline  const RoutingGauge* getRoutingGauge               () const;
+      inline  DbU::Unit           getPitch                      () const;
+      inline  DbU::Unit           getSliceHeight                () const;
+      inline  DbU::Unit           getSliceStep                  () const;
+      inline  const std::vector<RoutingLayerGauge*>&     
+                                  getLayerGauges                () const;
+      inline  bool                doPinsPlacement               () const;
+      inline  double              getAspectRatio                () const;
+      inline  double              getMargin                     () const;
+      inline  const Box&          getWorkZone                   () const;
+              void                print                         ( Cell* ) const;
+      inline  void                setPinsPlacement              ( bool );
+      inline  void                setAspectRatio                ( double );
+      inline  void                setMargin                     ( double );
+      inline  void                setWorkZone                   ( const Box& );
+      inline  static double       _normPercentage               ( double ratio, double min=0.0, double max=1.0 );
+              Record*             _getRecord                    () const;
+              std::string         _getString                    () const;
+              std::string         _getTypeName                  () const;
+    private:                   
+    // Attributes.             
       static Configuration* _default;
+             CellGauge*     _cellGauge;
+             RoutingGauge*  _routingGauge;
              bool           _pinsPlacement;
              double         _aspectRatio;
              double         _margin;
              Box            _workZone;
-    private:
-                             Configuration ( const Configuration& );
-      Configuration& operator=             ( const Configuration& );
+    private:                   
+                     Configuration ( const Configuration& );
+      Configuration& operator=     ( const Configuration& );
   };
 
 
 // Inline Methods.
+  inline  DbU::Unit   Configuration::getPitch         () const { return _cellGauge->getPitch(); }
+  inline  DbU::Unit   Configuration::getSliceHeight   () const { return _cellGauge->getSliceHeight(); }
+  inline  DbU::Unit   Configuration::getSliceStep     () const { return _cellGauge->getSliceStep(); }
+  inline  const std::vector<RoutingLayerGauge*>&     
+                      Configuration::getLayerGauges   () const { return _routingGauge->getLayerGauges(); }
   inline  bool        Configuration::doPinsPlacement  () const { return _pinsPlacement; }
   inline  double      Configuration::getAspectRatio   () const { return _aspectRatio; }
   inline  double      Configuration::getMargin        () const { return _margin; }

@@ -204,7 +204,7 @@ void VFence::_moveTo (DbU::Unit target)
 void VFence::computeCapacity() {
 
     unsigned capa(0);
-    const vector<RoutingLayerGauge*>& gauges = Fence::_routingGauge->getLayerGauges();
+    const vector<RoutingLayerGauge*>& gauges = getNimbus()->getLayerGauges();
     for ( size_t i=0 ; i<gauges.size() ; i++ )
     {
         if (gauges[i]->getType() != Constant::Default)
@@ -214,24 +214,6 @@ void VFence::computeCapacity() {
         capa += gauges[i]->getTrackNumber(getYMin(), getYMax());
     }
     setCapacity(capa);
-
-#if 0
-    unsigned pitch = static_cast<unsigned>(getValue (getCDataBase()->getPitch()));
-    unsigned nlayers = getGrid()->getNimbus()->getNumberOfRoutingLayers();
-    double capa (0);
-    double powerrail (0);
-    for_each_layer (layer, _grid->getNimbus()->getRoutingLayers())
-    {
-        double pitch = getValue(layer->getPitch());
-        if (pitch == 0) pitch = 5;
-        capa += getValue(_size) / pitch / 2;
-        powerrail += ( (12 * (getValue(_size) / pitch) /50) );
-        end_for;
-    }
-    
-    setCapacity(static_cast<unsigned> ((capa - powerrail)/2));
-#endif
-    return;
 }
 
 } // namespace Nimbus

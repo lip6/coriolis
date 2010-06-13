@@ -111,9 +111,6 @@ class Fence_GCells : public Collection<GCell*> {
 };
 
 
-RoutingGauge* Fence::_routingGauge = NULL;
-
-
 /*
  * ********************************************************************
  * Fence implementation
@@ -206,28 +203,6 @@ void Fence::destroy()
 {
     _preDestroy();
     delete this;
-}
-
-void Fence::computeCapacity()
-{
-
-#if 0
-    unsigned pitch = static_cast<unsigned>(getValue (getCDataBase()->getPitch()));
-    unsigned nlayers = getGrid()->getNimbus()->getNumberOfRoutingLayers();
-
-    //Name alu1 ("alu1");
-    double capa (0);
-    for_each_layergauge (routingLayerGauge, _routingGauge)
-    {
-        capa += routingLayerGauge->getTrackNumber(fence->getMin(), fence->getMax());
-        end_for;
-    }
-    
-    
-    setCapacity(static_cast<unsigned>(capa/2));
-
-#endif
-    return;
 }
 
 void Fence::_moveTo (DbU::Unit target)

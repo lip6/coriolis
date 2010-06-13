@@ -16,7 +16,6 @@
 #include "crlcore/ToolBox.h"
 #include "crlcore/CellGauge.h"
 #include "crlcore/LefDefExtension.h"
-#include "crlcore/AllianceFramework.h"
 #include "nimbus/GCell.h"
 #include "nimbus/Fence.h"
 #include "nimbus/VFence.h"
@@ -161,15 +160,14 @@ Grid::Grid (NimbusEngine* nimbus)
   } else if ( _cell->getAbutmentBox().isEmpty() ) {
     if ( isNoInstancePlacedOrFixed(_cell) ) {
       DbU::Unit minWidth = DbU::Max;
-      DbU::Unit sumWidth = 0;
+      double    sumWidth = 0.0;
       forEach ( Instance*, iinstance, _cell->getInstances() ) {
         Cell*     model = iinstance->getMasterCell();
         DbU::Unit width = model->getAbutmentBox().getWidth();
 
         if ( width < minWidth ) minWidth = width;
-        sumWidth += width;
+        sumWidth += DbU::getLambda(width);
       }
-    //rectangularShape(_margin, sumWidth, minWidth, nrows);
       rectangularShape(_nimbus->getMargin(), nimbus->getAspectRatio(), sumWidth, minWidth );
 
       UpdateSession::open();
@@ -229,38 +227,47 @@ void Grid::Clear()
 }
 #endif
 
-  void Grid::rectangularShape(double margin, double aspectRatio, DbU::Unit sumWidth, DbU::Unit minWidth)
-  // ***************************************************************************************************
+  void Grid::rectangularShape(double margin, double aspectRatio, double sumWidth, DbU::Unit minWidth)
+  // ************************************************************************************************
   {
     cmess1 << "  o  Creating abutment box: (margin: " << margin
            << ", aspect ratio:" << aspectRatio << ")" << endl;
 
-    CellGauge* cg          = AllianceFramework::get()->getCellGauge();
-    DbU::Unit  rowHeight   = cg->getSliceHeight();
-    DbU::Unit  pitch       = cg->getPitch();
-    DbU::Unit  marginWidth = (DbU::Unit)( (1.0+margin) * (double)sumWidth );
+    double     dMinWidth   = DbU::getLambda(minWidth);
+    double     rowHeight   = DbU::getLambda(_nimbus->getSliceHeight());
+    DbU::Unit  pitch       = _nimbus->getPitch();
+    double     marginWidth = (1.0+margin) * sumWidth;
+
+    // cerr << "sumWidth:"   << sumWidth
+    //      << " rowHeight:" << rowHeight
+    //      << " pitch:"     << DbU::getValueString(pitch)
+    //      << " minWidth:"  << minWidth
+    //      << endl;
 
   // AR = x/y    S = x*y = marginWidth*SH    x=S/y    AR = S/y^2
   // y = sqrt(S/AR)
 
-    DbU::Unit     y    = (DbU::Unit)sqrt ( ((double)marginWidth*(double)rowHeight) / aspectRatio );
-    unsigned int  rows = y / rowHeight;
+    double       y    = sqrt ( marginWidth*rowHeight ) / aspectRatio;
+    unsigned int rows = (unsigned int)(y / rowHeight);
 
-    if ( (rows == 0) or (rows % rowHeight) ) ++rows;
-    DbU::Unit rowWidth = marginWidth / rows;
+    if ( rows == 0 ) ++rows;
+    double rowWidth = marginWidth / rows;
 
-    if ( rowWidth < minWidth ) {
-      rowWidth = minWidth;
-      rows     = marginWidth / rowWidth;
+  //cerr << "y:" << y << " rows:" << rows << endl;
+
+    if ( rowWidth < dMinWidth ) {
+      rowWidth = dMinWidth;
+      rows     = (unsigned int)(marginWidth / rowWidth);
 
       if ( rows == 0 ) ++rows;
     }
 
-    DbU::Unit adjustWidth = rowWidth % pitch;
+    DbU::Unit unitRowWidth = DbU::lambda(rowWidth);
+    DbU::Unit adjustWidth  = unitRowWidth % pitch;
     if ( adjustWidth != 0 )
-      rowWidth += pitch - adjustWidth;
+      unitRowWidth += pitch - adjustWidth;
 
-    Box ab = Box ( 0, 0, rowWidth, rows * rowHeight );
+    Box ab = Box ( 0, 0, unitRowWidth, rows * _nimbus->getSliceHeight() );
 
 #if DEPRECATED
     if ( nrows == 0 ) {
@@ -279,7 +286,7 @@ void Grid::Clear()
 
     cmess1 << "     - Abutment box: " << ab << endl;
 
-    _rootGCell = GCell::create(_nimbus, (unsigned) 0, ab);
+    _rootGCell = GCell::create ( _nimbus, (unsigned)0, ab );
   }
 
 void Grid::horizontalLongSplit (unsigned step, DbU::Unit& Y) const

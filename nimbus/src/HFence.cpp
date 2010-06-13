@@ -204,7 +204,7 @@ void HFence::_moveTo (DbU::Unit target)
 void HFence::computeCapacity() {
 
     unsigned capa(0);
-    const vector<RoutingLayerGauge*>& gauges = Fence::_routingGauge->getLayerGauges();
+    const vector<RoutingLayerGauge*>& gauges = getNimbus()->getLayerGauges();
     for ( size_t i=0 ; i<gauges.size() ; i++)
     {
         if (gauges[i]->getType() != Constant::Default)
@@ -214,14 +214,6 @@ void HFence::computeCapacity() {
         capa += gauges[i]->getTrackNumber(getXMin(), getXMax());
     }
     setCapacity(capa);
-#if 0
-    unsigned pitch = static_cast<unsigned>(getValue (getCDataBase()->getPitch()));
-    unsigned nlayers = getGrid()->getNimbus()->getNumberOfRoutingLayers();
-    
-    setCapacity(static_cast<unsigned>((nlayers / 2) * getValue (_size) / pitch));
-
-#endif
-    return;
 }
 
 } // namespace Nimbus
