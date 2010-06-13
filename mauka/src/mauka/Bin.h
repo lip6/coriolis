@@ -69,14 +69,14 @@ class Bin : public Container {
 
 // Attributes
 // **********
-    private: static const Name          _goName;
-    private: SubRow*                    _subRow;
-    private: MaukaEngine*               _mauka;
-    private: MaukaEngine::UList         _instanceOccurrenceIds; 
-    private: DbU::Unit                  _size; // sum of the contained instances width
-    private: DbU::Unit                  _capa; // ideal occupation of the bin
-    private: unsigned                   _sourceHits;
-    private: unsigned                   _targetHits;
+    private: static const Name   _goName;
+    private: SubRow*             _subRow;
+    private: MaukaEngine*        _mauka;
+    private: MaukaEngine::UList  _instanceOccurrenceIds; 
+    private: DbU::Unit           _size; // sum of the contained instances width
+    private: DbU::Unit           _capa; // ideal occupation of the bin
+    private: unsigned            _sourceHits;
+    private: unsigned            _targetHits;
 
 // Constructors
 // ************

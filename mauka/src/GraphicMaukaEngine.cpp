@@ -45,6 +45,7 @@
 #include  <crlcore/Utilities.h>
 #include  <crlcore/AllianceFramework.h>
 #include  <nimbus/NimbusEngine.h>
+#include  <metis/MetisEngine.h>
 #include  <mauka/Container.h>
 #include  <mauka/GraphicMaukaEngine.h>
 #include  <mauka/ConfigurationWidget.h>
@@ -66,6 +67,7 @@ namespace Mauka {
   using CRL::Catalog;
   using CRL::AllianceFramework;
   using Nimbus::NimbusEngine;
+  using Metis::MetisEngine;
 
 
   size_t              GraphicMaukaEngine::_references = 0;
@@ -93,14 +95,42 @@ namespace Mauka {
   }
 
 
+  void  GraphicMaukaEngine::refreshViewer ()
+  {
+  //static unsigned int count = 0;
+
+  //if ( not (count++ % 500) ) {
+  //UpdateSession::close ();
+
+    _viewer->getCellWidget()->fitToContents ();
+    _viewer->getCellWidget()->refresh ();
+    QApplication::processEvents ();
+
+  //UpdateSession::open ();
+
+      // if ( _viewer->isToolInterrupted() ) {
+      //   KiteEngine* kite = KiteEngine::get ( getCell() );
+      //   if ( kite ) kite->setInterrupt ( true );
+        
+      //   _viewer->clearToolInterrupt ();
+      // }
+  //}
+  }
+
+
   MaukaEngine* GraphicMaukaEngine::createEngine ()
   {
     Cell* cell = getCell ();
 
     MaukaEngine* mauka = MaukaEngine::get ( cell );
     if ( mauka == NULL ) {
-      NimbusEngine* nimbus = NimbusEngine::create ( cell, AllianceFramework::get()->getLibrary(1) );
+      NimbusEngine* nimbus = NimbusEngine::get ( cell );
+      if ( nimbus == NULL )
+        NimbusEngine::create ( cell );
+
       mauka = MaukaEngine::create ( cell );
+      if ( cmess1.enabled() )
+        mauka->getConfiguration()->print( cell );
     } else
       cerr << Warning("%s already has a Mauka engine.",getString(cell).c_str()) << endl;
 
@@ -122,12 +152,52 @@ namespace Mauka {
   }
 
 
+  void  GraphicMaukaEngine::doQuadriPart ()
+  {
+    Cell* cell = getCell ();
+
+    emit cellPreModificated ();
+
+    NimbusEngine* nimbus = NimbusEngine::get ( cell );
+    if ( nimbus == NULL ) {
+      nimbus = NimbusEngine::create ( cell );
+      if ( cmess1.enabled() )
+        nimbus->getConfiguration()->print( cell );
+    }
+
+    MetisEngine* metis = MetisEngine::get ( cell );
+    if ( metis == NULL ) {
+      metis  = MetisEngine ::create ( cell );
+      if ( cmess1.enabled() )
+        metis->getConfiguration()->print( cell );
+    }
+    metis->setRefreshCb ( boost::bind(&GraphicMaukaEngine::refreshViewer,this) );
+
+    MetisEngine::doQuadriPart ( cell );
+
+    MaukaEngine* mauka = MaukaEngine::get ( cell );
+    if ( mauka != NULL )
+      throw Warning("GraphicMaukaEngine::doQuadriPart(): Placement already done on <%s>"
+                   ,getString(cell->getName()).c_str());
+
+    mauka = createEngine();
+    MaukaEngine::regroupOverloadedGCells ( cell );
+
+    _viewer->clearToolInterrupt ();
+    _viewer->getCellWidget()->fitToContents ();
+
+  //mauka->Run ();
+    emit cellPostModificated ();
+  }
+
+
   void  GraphicMaukaEngine::run ()
   {
     MaukaEngine* mauka = createEngine ();
     if ( mauka == NULL ) {
       throw Error("MaukaEngine not created yet, run the global router first.");
     } 
+    mauka->setRefreshCb ( boost::bind(&GraphicMaukaEngine::refreshViewer,this) );
     emit cellPreModificated ();
 
     _viewer->clearToolInterrupt ();
@@ -150,28 +220,6 @@ namespace Mauka {
 
     mauka->Save ();
     emit cellPostModificated ();
-  }
-
-
-  void  GraphicMaukaEngine::postEvent ()
-  {
-    static unsigned int count = 0;
-
-    if ( not (count++ % 500) ) {
-    //UpdateSession::close ();
-
-    //_viewer->getCellWidget()->refresh ();
-      QApplication::processEvents ();
-
-    //UpdateSession::open ();
-
-      if ( _viewer->isToolInterrupted() ) {
-      //MaukaEngine* mauka = MaukaEngine::get ( getCell() );
-      //if ( mauka ) mauka->setInterrupt ( true );
-        
-        _viewer->clearToolInterrupt ();
-      }
-    }
   }
 
 
@@ -202,13 +250,20 @@ namespace Mauka {
     if ( placeAction != NULL )
       cerr << Warning("GraphicMaukaEngine::addToMenu() - Mauka placer already hooked in.") << endl;
     else {
+      QAction* quadriPartAction = new QAction  ( tr("Mauka - &QuadriPartition"), _viewer );
+      quadriPartAction->setObjectName ( "viewer.menuBar.quadriPartAndRoute.maukaQuadriPartition" );
+      quadriPartAction->setStatusTip  ( tr("Run the <b>hMETIS</b> quadri-partitioner") );
+      quadriPartAction->setVisible    ( true );
+      prMenu->addAction ( quadriPartAction );
+
       QAction* placeAction = new QAction  ( tr("Mauka - &Place"), _viewer );
       placeAction->setObjectName ( "viewer.menuBar.placeAndRoute.maukaPlace" );
       placeAction->setStatusTip  ( tr("Run the <b>Mauka</b> placer") );
       placeAction->setVisible    ( true );
       prMenu->addAction ( placeAction );
 
-      connect ( placeAction, SIGNAL(triggered()), this, SLOT(run()) );
+      connect ( placeAction     , SIGNAL(triggered()), this, SLOT(run()) );
+      connect ( quadriPartAction, SIGNAL(triggered()), this, SLOT(doQuadriPart()) );
     }
 
     connect ( this, SIGNAL(cellPreModificated ()), _viewer->getCellWidget(), SLOT(cellPreModificate ()) );
@@ -221,7 +276,10 @@ namespace Mauka {
     if ( setting == NULL ) {
       setting = new ConfigurationWidget ();
       setting->setObjectName    ( "controller.tabSettings.setting.mauka" );
-      setting->setConfiguration ( Nimbus::Configuration::getDefault(), Configuration::getDefault() );
+      setting->setConfiguration ( Nimbus::Configuration::getDefault()
+                                , Metis::Configuration::getDefault()
+                                , Configuration::getDefault()
+                                );
       controller->addSetting ( setting, "Mauka" );
     }
   }

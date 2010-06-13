@@ -36,8 +36,6 @@
 
 #include "hurricane/Warning.h"
 #include "hurricane/Cell.h"
-#include "crlcore/CellGauge.h"
-#include "crlcore/AllianceFramework.h"
 #include "nimbus/NimbusEngine.h"
 
 #include "mauka/MaukaEngine.h"
@@ -106,7 +104,6 @@ void DisplayNonLeafInstances(Cell* cell, Box area)
 
 namespace Mauka {
 
-using CRL::AllianceFramework;
 using Nimbus::NimbusEngine;
 using Nimbus::GCellLocator;
     
@@ -183,32 +180,24 @@ typedef list<PlacementProblem*> PlacementProblemList;
 
     Inherit::_postCreate();
 
-    NimbusEngine* nimbus = NULL;
+    bool          partitionned = false;
+    NimbusEngine* nimbus       = NULL;
     if (_box.isEmpty()) {
       nimbus = NimbusEngine::get ( getCell() );
       if (nimbus == NULL) {
         throw Error("Can't create Mauka::Surface, no Box and no Nimbus");
       }
       _box = nimbus->getGrid()->getRoot()->getBox();
+      partitionned = (nimbus->getDepth() > 1);
+
+      if ( partitionned )
+        cmess2 << "     - Design is partionned (depth:" << nimbus->getDepth() << ")" << endl;
     }
 
     PlacementVerification ( getCell(), _box );
 
-    DbU::Unit sliceHeight = DbU::lambda(1);
-    DbU::Unit pitch       = DbU::lambda(1);
-
-    AllianceFramework* af = AllianceFramework::get();
-    if (af != NULL) {
-      sliceHeight = af->getCellGauge()->getSliceHeight();
-      pitch       = af->getCellGauge()->getPitch(); 
-    } else {
-    // For the moment very stupid method: take the first instantiated Cell.
-      forEach ( Instance*, iinstance, getCell()->getInstances() ) {
-        Cell* masterCell = iinstance->getMasterCell();
-        sliceHeight = masterCell->getAbutmentBox().getHeight();
-        break;
-      }
-    }
+    DbU::Unit sliceHeight = _mauka->getSliceHeight();
+    DbU::Unit pitch       = _mauka->getPitch(); 
 
     if ( _box.isEmpty() or _box.isPonctual() or _box.isFlat())
       throw Error("Wrong Box for Area: %s",getString(_box).c_str());
@@ -219,11 +208,11 @@ typedef list<PlacementProblem*> PlacementProblemList;
                    ,DbU::getValueString(sliceHeight).c_str());
     
     DbU::Unit instanceToPlaceWidthMax = 0;
-    DbU::Unit instanceToPlaceWidthSum = 0;
+    double    instanceToPlaceWidthSum = 0.0;
     
     for ( unsigned int id = 0; id < _mauka->_instanceWidths.size(); ++id ) {
       DbU::Unit instanceWidth = _mauka->_instanceWidths[id];
-      instanceToPlaceWidthSum += instanceWidth;
+      instanceToPlaceWidthSum += (double)instanceWidth;
 
       if ( instanceWidth % pitch )
         throw Error("Width of %s (%s) is not a multiple of pitch (%s)."
@@ -235,14 +224,19 @@ typedef list<PlacementProblem*> PlacementProblemList;
         instanceToPlaceWidthMax = instanceWidth;
     }
     
-    _binWidthMax = DbU::lambda
-      ((unsigned)( 2.0 * DbU::getLambda(instanceToPlaceWidthMax) / DbU::getLambda(pitch))
-                       * DbU::getLambda(pitch)); 
+    // _binWidthMax = DbU::lambda
+    //   ((unsigned)( 3.0 * DbU::getLambda(instanceToPlaceWidthMax) / DbU::getLambda(pitch))
+    //                    * DbU::getLambda(pitch)); 
+    // _binWidthMin = DbU::lambda
+    //   ((unsigned)(DbU::getLambda(_binWidthMax) / (DbU::getLambda(pitch) * 2)) * DbU::getLambda(pitch));
 
-    _binWidthMin = DbU::lambda
-      ((unsigned)(DbU::getLambda(_binWidthMax) / (DbU::getLambda(pitch) * 2)) * DbU::getLambda(pitch));
+    _binWidthMax = 2 * (instanceToPlaceWidthMax / pitch) * pitch; 
+    _binWidthMin = (_binWidthMax / (pitch * 2)) * pitch;
 
-    DbU::Unit            surfaceTotalWidth = 0;
+    // cerr << "_binWidthMax:" << DbU::getValueString(_binWidthMax) << endl;
+    // cerr << "_binWidthMin:" << DbU::getValueString(_binWidthMin) << endl;
+
+    double               surfaceTotalWidth = 0.0;
     PlacementProblemList placementProblemList;
     OccurrenceSet        verifyInstanceOccurrencesSet;
 
@@ -272,19 +266,22 @@ typedef list<PlacementProblem*> PlacementProblemList;
           }
         }
 
-        forEach(Occurrence, ioccurrence, _mauka->getCell()->getLeafInstanceOccurrences()) {
-          Instance* instance = static_cast<Instance*>((*ioccurrence).getEntity());
-          if ( instance->isFixed() ) continue;
+      // Special case: no Nimbus run, Instances are *not* in the quadtree yet.
+        if ( not partitionned ) {
+          forEach(Occurrence, ioccurrence, _mauka->getCell()->getLeafInstanceOccurrences() ) {
+            Instance* instance = static_cast<Instance*>((*ioccurrence).getEntity());
+            if ( instance->isFixed() ) continue;
 
-          MaukaEngine::InstanceOccurrencesMap::const_iterator iomit
-            = _mauka->_instanceOccurrencesMap.find(*ioccurrence);
+            MaukaEngine::InstanceOccurrencesMap::const_iterator iomit
+              = _mauka->_instanceOccurrencesMap.find(*ioccurrence);
 
-          if (iomit == _mauka->_instanceOccurrencesMap.end())
-            throw Error("Instance occurrence unexpectedly appeared:\n"
-                        "        %s",getString(*ioccurrence).c_str());
+            if (iomit == _mauka->_instanceOccurrencesMap.end())
+              throw Error("Instance occurrence unexpectedly appeared:\n"
+                          "        %s",getString(*ioccurrence).c_str());
 
-          placementProblem->_toPlaceInstanceOccurrencesUVector.push_back(iomit->second);
-          verifyInstanceOccurrencesSet.insert(*ioccurrence);
+            placementProblem->_toPlaceInstanceOccurrencesUVector.push_back(iomit->second);
+            verifyInstanceOccurrencesSet.insert(*ioccurrence);
+          }
         }
 
         DbU::Unit searchWidth = DbU::lambda(_mauka->getSearchRatio() * DbU::getLambda(igcell->getWidth()));
@@ -419,9 +416,10 @@ typedef list<PlacementProblem*> PlacementProblemList;
       _searchHeight = getHeight();
       _searchWidth  = getWidth();
 
-      bool     rowOrientation = false;
-      unsigned nRows          = getHeight() / sliceHeight;
-      surfaceTotalWidth = getWidth() * nRows;
+      bool         rowOrientation = false;
+      unsigned int nRows          = getHeight() / sliceHeight;
+
+      surfaceTotalWidth = ((double)getWidth()) * nRows;
         
       for ( DbU::Unit ymin = getYMin(); ymin <= getYMax() - sliceHeight; ymin += sliceHeight ) {
         SubRow* subRow = SubRow::create ( getCell()
@@ -438,11 +436,17 @@ typedef list<PlacementProblem*> PlacementProblemList;
       throw Error("MaukaEngine needs NimbusEngine");
     }
 
+    _computeCapacity();
+
+    linefill output ("       ",cmess2);
     for (PlacementProblemList::iterator pplit = placementProblemList.begin();
          pplit != placementProblemList.end(); pplit++) {
+    //cmess2 << "     - Initial placement of " << (*pplit)->_gcell->getBox() << endl;
+      output << (*pplit)->_gcell->getBox();
       _DisplayInstances((*pplit)->_toPlaceInstanceOccurrencesUVector, (*pplit)->_subRowList);
       delete *pplit;
     }
+    output << endl;
 
     placementProblemList.clear ();
     
@@ -468,13 +472,13 @@ typedef list<PlacementProblem*> PlacementProblemList;
     }
 
     for ( RowVector::const_iterator rvit = _rowVector.begin(); rvit != _rowVector.end(); rvit++ ) {
-      surfaceTotalWidth += (*rvit)->getSubRowsWidth();
+      surfaceTotalWidth += (double)((*rvit)->getSubRowsWidth());
     }
 
     _computeRowsAndSubRows();
     
-    _margin = 1.0 - DbU::getLambda(instanceToPlaceWidthSum) / DbU::getLambda(surfaceTotalWidth);
-    if ( _margin < 0 ) {
+    _margin = 1.0 - instanceToPlaceWidthSum / surfaceTotalWidth;
+    if ( _margin < 0.0 ) {
       throw Error("There is not enough free space to place the circuit %s < %s"
                  ,DbU::getValueString(surfaceTotalWidth).c_str()
                  ,DbU::getValueString(instanceToPlaceWidthSum).c_str()
@@ -624,34 +628,34 @@ double Surface::getRowCost() const
     return rowCost;
 }
 
-DbU::Unit Surface::getBinsSize() const
+double Surface::getBinsSize() const
 {
-    DbU::Unit totalBinsSize = 0;
+    double totalBinsSize = 0.0;
     for (RowVector::const_iterator rvit = _rowVector.begin();
             rvit != _rowVector.end();
             rvit++)
-        totalBinsSize += (*rvit)->getBinsSize();
+      totalBinsSize += (double)(*rvit)->getBinsSize();
     return totalBinsSize;
 }
 
-DbU::Unit Surface::getBinsCapa() const
+double Surface::getBinsCapa() const
 {
-    DbU::Unit totalBinsCapa = 0;
+    double totalBinsCapa = 0.0;
     for (RowVector::const_iterator rvit = _rowVector.begin();
             rvit != _rowVector.end();
             rvit++)
-        totalBinsCapa += (*rvit)->getBinsCapa();
+      totalBinsCapa += (double)(*rvit)->getBinsCapa();
     return totalBinsCapa;
 }
 
-DbU::Unit Surface::getSubRowsCapa() const
+double Surface::getSubRowsCapa() const
 {
-    DbU::Unit totalSubRowsCapa = 0;
+    double totalSubRowsCapa = 0.0;
     for (RowVector::const_iterator rvit = _rowVector.begin();
             rvit != _rowVector.end();
             rvit++)
     {
-        totalSubRowsCapa += (*rvit)->getSubRowsCapa();
+      totalSubRowsCapa += (double)(*rvit)->getSubRowsCapa();
     }
     return totalSubRowsCapa;
 }
@@ -682,26 +686,35 @@ void Surface::_DisplayInstances(MaukaEngine::UVector& instanceids, SubRowList& s
     SubRowList::iterator srlit = subrowlist.begin();
     MaukaEngine::UVector::const_iterator insIterator = instanceids.begin(); 
     MaukaEngine::UVector::const_iterator lastLoopInsertedInsIterator = insIterator; 
+    size_t nbInstancesPlaced = 0;
 
+  // First instance.
+  // if ( insIterator != instanceids.end() ) {
+  //   Cell* master = (static_cast<Instance*>(_mauka->_instanceOccurrencesVector[*insIterator].getEntity()))->getMasterCell();
+  //   DbU::Unit instanceWidth = _mauka->_instanceWidths[*insIterator];
+  //   cerr << "  Trying to add #0 id:" << *insIterator
+  //        << " w:" << DbU::getValueString(instanceWidth)<< " " << master << endl;
+  // }
 
-    while(true)
+    while (true)
     {
         if (insIterator == instanceids.end())
         {
-          cmess1 << "  o  Initial placement computing ... done. " << endl;
           break;
         // end of insertion
         }
 
         if (srlit == subrowlist.end())
         {
+            cerr << Error("Mauka::_DisplayInstances(): Last row reached, but not last instance.") << endl;
+
             srlit = subrowlist.begin();
             if (lastLoopInsertedInsIterator != insIterator)
                 lastLoopInsertedInsIterator = insIterator;
             else
             {
                 // insertion of instances with respect of Bins margin
-                // did not succed, inserting what's left.
+                // did not succeed, inserting what's left.
                 while (insIterator != instanceids.end()) 
                 {
                     for (SubRow::BinVector::iterator bvit = (*srlit)->_binVector.begin();
@@ -745,9 +758,11 @@ void Surface::_DisplayInstances(MaukaEngine::UVector& instanceids, SubRowList& s
                                 unsigned nbInstancesToPlace = 0;
                                 while (insIterator++ != instanceids.end())
                                     ++nbInstancesToPlace;
-                                throw Error("Not enough free space to place all the instances.\n"
-                                            "Please increase the abutment box: %s (%d instances remains to place)"
+                              //cerr << "Box: " << getBoundingBox() << endl;
+                                throw Error("Not enough free space to place all the instances.<br>\n"
+                                            "Please increase the abutment box: %s %d placeds (%d instances remains to place)"
                                            ,getString(getBoundingBox()).c_str()
+                                           ,nbInstancesPlaced
                                            ,nbInstancesToPlace
                                            );
                             }
@@ -767,16 +782,43 @@ void Surface::_DisplayInstances(MaukaEngine::UVector& instanceids, SubRowList& s
                     bvit++)
             {
                 Bin* bin = *bvit;
-                if (insIterator == instanceids.end())
-                    break;
+                // cerr << "      Bin: " << bin->getBoundingBox()
+                //      << " capa:" << DbU::getValueString(bin->getCapa())
+                //      << " size:" << DbU::getValueString(bin->getSize())
+                //      << " SubRow:" 
+                //      << " capa:" << DbU::getValueString(subRow->getCapa())
+                //      << " size:" << DbU::getValueString(subRow->getSize())
+                //      << endl;
+
+                if (insIterator == instanceids.end()) break;
+
                 unsigned instanceId = *insIterator;
                 DbU::Unit instanceWidth = _mauka->_instanceWidths[instanceId];
-                if (instanceWidth > subRow->getCapaVsSize())
-                    break;
-                if (bin->TryAddInstance(instanceId))
-                        ++insIterator;
+                if (instanceWidth > subRow->getCapaVsSize()) {
+                  // cerr << "    SubRow capacity exceeded" << endl;
+                  break;
+                }
+                if (bin->TryAddInstance(instanceId)) {
+                  srlit = subrowlist.begin();
+                  ++nbInstancesPlaced;
+                  ++insIterator;
+
+                  // if ( insIterator != instanceids.end() ) {
+                  //   Instance* instance = static_cast<Instance*>(_mauka->_instanceOccurrencesVector[instanceId].getEntity());
+                  //   instanceWidth = _mauka->_instanceWidths[instanceId];
+                  //   cerr << "  Trying to add #" << nbInstancesPlaced
+                  //        << " id:" << *insIterator
+                  //        << " w:" << DbU::getValueString(instanceWidth)<< " " << instance << endl;
+                  //   cerr << "    " << _mauka->_instanceOccurrencesVector[instanceId]<< endl;
+                  // }
+
+                  break;
+                }
             }
             ++srlit;
+            // if ( srlit != subrowlist.end() ) {
+            //   cerr << "    SubRow capaVsSize: " << DbU::getValueString((*srlit)->getCapaVsSize()) << endl;
+            // }
         }
     }
 }

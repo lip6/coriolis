@@ -30,8 +30,13 @@
 #include  <QWidget>
 class QLineEdit;
 class QCheckBox;
+class QComboBox;
 
 namespace Nimbus {
+  class Configuration;
+}
+
+namespace Metis {
   class Configuration;
 }
 
@@ -47,27 +52,60 @@ namespace Mauka {
   class ConfigurationWidget : public QWidget {
       Q_OBJECT;
     public:
-            ConfigurationWidget           ( QWidget* parent=NULL );
-    public slots:
-      void  setConfiguration              ( Nimbus::Configuration*, Configuration* );
-      void  _applySettings                ();
-      void  _updateStandardAnnealingState ();
-      void  _updateIgnorePinsState        ();
-      void  _updatePlotBinsState          ();
-      void  _updatePinsPlacementState     ();
-      void  _updateSearchRatio            ();
-      void  _updateAnnealingNetMult       ();
-      void  _updateAnnealingBinMult       ();
-      void  _updateAnnealingRowMult       ();
-      void  _updateAspectRatio            ();
-      void  _updateMargin                 ();
+            ConfigurationWidget                   ( QWidget* parent=NULL );
+    public slots:                                 
+      void  setConfiguration                      ( Nimbus::Configuration*
+                                                  , Metis::Configuration*
+                                                  , Configuration*
+                                                  );
+      void  _applySettings                        ();
+    // Metis relateds.
+      void  _updatePartOrKWayHMetis               ();
+      void  _updateNumberOfInstancesStopCriterion ();
+      void  _updateGlobalConnectionsWeightRatio   ();
+      void  _updateUbFactor                       ();
+      void  _updateHMetisCustomOptions            ();
+      void  _updateHMetisNRuns                    ();
+      void  _updateHMetisCType                    ();
+      void  _updateHMetisRType                    ();
+      void  _updateHMetisVCycle                   ();
+      void  _updateHMetisReconst                  ();
+    // Nimbus/Mauka relateds.
+      void  _updateStandardAnnealingState         ();
+      void  _updateIgnorePinsState                ();
+      void  _updatePlotBinsState                  ();
+      void  _updatePinsPlacementState             ();
+      void  _updateSearchRatio                    ();
+      void  _updateAnnealingNetMult               ();
+      void  _updateAnnealingBinMult               ();
+      void  _updateAnnealingRowMult               ();
+      void  _updateAspectRatio                    ();
+      void  _updateMargin                         ();
+    private slots:
+      void  _enableHMetisOptions                  ( int );
+    private:
+      int   _hmetisCTypeToIndex                   ();
+      int   _hmetisRTypeToIndex                   ();
+      int   _hmetisVCycleToIndex                  ();
+      int   _hmetisReconstToIndex                 ();
     private:
       Nimbus::Configuration* _nimbusConfiguration;
+      Metis::Configuration*  _metisConfiguration;
       Configuration*         _maukaConfiguration;
+      QCheckBox*             _partOrKWayHMetisState;
       QCheckBox*             _standardAnnealingState;
       QCheckBox*             _ignorePinsState;
       QCheckBox*             _plotBinsState;
       QCheckBox*             _pinsPlacementState;
+      QCheckBox*             _hmetisCustomOptionsState;
+      QLineEdit*             _hmetisNRunsEdit;
+      QComboBox*             _hmetisCTypeCombo;
+      QComboBox*             _hmetisRTypeCombo;
+      QComboBox*             _hmetisVCycleCombo;
+      QComboBox*             _hmetisReconstCombo;
+      QLineEdit*             _numberOfInstancesStopCriterionEdit;
+      QLineEdit*             _globalConnectionsWeightRatioEdit;
+      QLineEdit*             _ubFactorEdit;
       QLineEdit*             _searchRatioEdit;
       QLineEdit*             _annealingNetMultEdit;
       QLineEdit*             _annealingBinMultEdit;

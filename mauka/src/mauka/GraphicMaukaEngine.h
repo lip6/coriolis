@@ -75,8 +75,9 @@ namespace Mauka {
               Cell*               getCell            ();
       virtual size_t              release            ();
       virtual void                addToMenu          ( CellViewer* );
-              void                postEvent          ();
+              void                refreshViewer      ();
     public slots:                                  
+               void               doQuadriPart       ();
                void               run                ();
                void               save               ();
                                

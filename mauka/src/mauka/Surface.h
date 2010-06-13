@@ -92,9 +92,9 @@ class Surface: public Container {
     public: Bin* getBinInSurface(Bin* srcbin, double dist);
     public: double getBinCost() const;
     public: double getRowCost() const;
-    public: DbU::Unit getBinsSize() const;
-    public: DbU::Unit getBinsCapa() const;
-    public: DbU::Unit getSubRowsCapa() const;
+    public: double getBinsSize() const;
+    public: double getBinsCapa() const;
+    public: double getSubRowsCapa() const;
     public: double getMargin() const { return _margin; };
     public: MaukaEngine* getMauka() { return _mauka; };
 

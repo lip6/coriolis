@@ -34,12 +34,14 @@
 //
 // Authors-Tag 
 
+#include <queue>
+#include "hurricane/Warning.h"
 #include "hurricane/Cell.h"
 #include "hurricane/HyperNet.h"
 #include "hurricane/Timer.h"
 #include "hurricane/DataBase.h"
-#include "crlcore/CellGauge.h"
-#include "crlcore/AllianceFramework.h"
+#include "nimbus/GCell.h"
+#include "nimbus/NimbusEngine.h"
 
 #include "mauka/Surface.h"
 #include "mauka/Row.h"
@@ -49,6 +51,8 @@
 
 namespace Mauka {
 
+using Hurricane::ForEachIterator;
+using Hurricane::Warning;
 using Hurricane::Plug;
 using Hurricane::Path;
 using Hurricane::OccurrenceLocator;
@@ -56,6 +60,7 @@ using Hurricane::PlugLocator;
 using Hurricane::HyperNet;
 using Hurricane::Timer;
 using namespace CRL;
+using namespace Nimbus;
 
 Name  MaukaEngine::_toolName = "Mauka";
 
@@ -460,9 +465,8 @@ namespace {
 bool TestMaukaConstruction(Cell* cell, GCell* gcell)
 // *************************************************
 {
-    CellGauge* gauge = AllianceFramework::get()->getCellGauge();
-    DbU::Unit pitch       = gauge->getPitch(); 
-    DbU::Unit sliceHeight = gauge->getSliceHeight();
+    DbU::Unit pitch       = Configuration::getDefault()->getPitch(); 
+    DbU::Unit sliceHeight = Configuration::getDefault()->getSliceHeight();
 
     const Box& box = gcell->getBox();
 
@@ -665,5 +669,45 @@ unsigned MaukaEngine::getRandomInstanceId() const {
     unsigned instanceId = (unsigned)((double)_instanceOccurrencesVector.size() * rand() / (RAND_MAX + 1.0));
     return instanceId; 
 }
+
+
+  void  MaukaEngine::regroupOverloadedGCells ( Cell* cell )
+  {
+    NimbusEngine* nimbus = NimbusEngine::get ( cell );
+    if ( nimbus == NULL )
+      throw Error ("Mauka::regroupOverloadedGCells(): Nimbus doesn't exists on <%s>"
+                  ,getString(cell->getName()).c_str());
+
+    queue<GCell*>  toProcess;
+    set  <GCell*>  containers;
+
+    forEach ( GCell*, igcell, nimbus->getPlacementLeaves() ) {
+      toProcess.push ( *igcell );
+    }
+
+    while ( not toProcess.empty() ) {
+      GCell* container = toProcess.front();
+      GCell* parent    = container->getContainer();
+      toProcess.pop ();
+
+      if ( containers.find(parent) != containers.end() ) continue;
+      containers.insert ( container );
+
+      if ( not TestMaukaConstruction(cell,container) ) {
+        cerr << Warning("Not enough margin on %s",getString(container).c_str()) << endl;
+
+        if ( parent == NULL )
+          throw Error("Not enough margin on the whole Cell");
+
+        parent->setAsPlacementLeaf ();
+        toProcess.push ( parent );
+
+        cmess2 << "     - Sets as placement leaf " << parent << endl;
+      }
+    }
+
+    nimbus->regroup ();
+  }
     
-}
+
+}  // End of Mauka namespace.

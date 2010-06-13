@@ -71,8 +71,6 @@
 #include "hurricane/Net.h"
 #include "hurricane/Cell.h"
 #include "crlcore/ToolBox.h"
-#include "crlcore/CellGauge.h"
-#include "crlcore/AllianceFramework.h"
 
 #include "mauka/MaukaEngine.h"
 #include "mauka/Surface.h"
@@ -184,7 +182,7 @@ BBPlacer::BBPlacer(MaukaEngine* mauka)
                     }
                 }
                 
-                DbU::Unit pitch = AllianceFramework::get()->getCellGauge()->getPitch(); 
+                DbU::Unit pitch = _mauka->getPitch(); 
                 DbU::Unit whiteSpace = subRow->getWidth() - totalInstanceSizeInRow;
                 DbU::Unit instanceWhiteSpacePitch = (whiteSpace / _subRowInstances.back().size()) / pitch;
                 DbU::Unit whiteSpaceRemain = whiteSpace

@@ -28,6 +28,7 @@
 
 #include  "hurricane/Cell.h"
 #include  "crlcore/Utilities.h"
+#include  "crlcore/AllianceFramework.h"
 #include  "mauka/Configuration.h"
 
 
@@ -43,6 +44,7 @@ namespace Mauka {
   using  std::string;
   using  Hurricane::tab;
   using  Hurricane::inltrace;
+  using  CRL::AllianceFramework;
 
 
 // -------------------------------------------------------------------
@@ -55,25 +57,31 @@ namespace Mauka {
   Configuration* Configuration::getDefault ()
   {
     if ( _default == NULL ) {
-      _default = new Configuration ();
+      _default = new Configuration ( AllianceFramework::get()->getCellGauge() );
     }
     return _default;
   }
 
 
-  Configuration::Configuration ()
-    : _standardSimulatedAnnealing(false)
+  Configuration::Configuration ( CellGauge* cg )
+    : _cellGauge                 (NULL)
+    , _refreshCb                 ()
+    , _standardSimulatedAnnealing(false)
     , _ignorePins                (false)
     , _plotBins                  (true)
     , _searchRatio               (0.50)
     , _annealingNetMult          (0.90)
     , _annealingBinMult          (0.05)
     , _annealingRowMult          (0.05)
-  { }
+  {
+    _cellGauge = cg->getClone();
+  }
 
 
   Configuration::Configuration ( const Configuration& other )
-    : _standardSimulatedAnnealing(other._standardSimulatedAnnealing)
+    : _cellGauge                 (other._cellGauge->getClone())
+    , _refreshCb                 (other._refreshCb)
+    , _standardSimulatedAnnealing(other._standardSimulatedAnnealing)
     , _ignorePins                (other._ignorePins)
     , _plotBins                  (other._plotBins)
     , _searchRatio               (other._searchRatio)
@@ -94,6 +102,7 @@ namespace Mauka {
   void  Configuration::print ( Cell* cell ) const
   {
     cout << "  o  Configuration of ToolEngine<Mauka> for Cell <" << cell->getName() << ">" << endl;
+    cout << Dots::asIdentifier("     - Cell Gauge"                        ,getString(_cellGauge->getName())) << endl;
     cout << Dots::asBool      ("     - Use standard simulated annealing"  ,_standardSimulatedAnnealing) << endl;
     cout << Dots::asBool      ("     - Ignore Pins"                       ,_ignorePins) << endl;
     cout << Dots::asBool      ("     - Plot Bins"                         ,_plotBins) << endl;
@@ -120,6 +129,7 @@ namespace Mauka {
   Record* Configuration::_getRecord () const
   {
     Record* record = new Record ( _getString() );
+    record->add ( getSlot( "_cellGauge"                 , _cellGauge                 ) );
     record->add ( getSlot( "_standardSimulatedAnnealing", _standardSimulatedAnnealing) );
     record->add ( getSlot( "_ignorePins"                , _ignorePins                ) );
     record->add ( getSlot( "_plotBins"                  , _plotBins                  ) );

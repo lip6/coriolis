@@ -33,9 +33,6 @@
 //
 // Authors-Tag 
 
-#include "crlcore/CellGauge.h"
-#include "crlcore/AllianceFramework.h"
-
 #include "mauka/Bin.h"
 #include "mauka/Row.h"
 #include "mauka/Surface.h"
@@ -46,7 +43,6 @@ namespace Mauka {
 
 using namespace std;
 using Hurricane::Error;
-using CRL::AllianceFramework;
 
 SubRow::SubRow(Cell* cell, Surface* surface, const Box& box)
     :Inherit(cell, box)
@@ -64,57 +60,89 @@ SubRow* SubRow::create(Cell* cell, Surface* surface, const Box& box, bool orient
     return subRow;
 }
 
-void SubRow::_postCreate(bool orientation)
-{
+  void SubRow::_postCreate(bool orientation)
+  {
     _row = _surface->InsertSubRowInRow(this, orientation); 
 
-    unsigned nBins = 0;
-    if (getWidth() % _surface->_binWidthMax)
-        nBins = getWidth() / _surface->_binWidthMax + 1;
-    else
-        nBins = getWidth() / _surface->_binWidthMax;
+#if BINS_WITH_BALANCED_WIDTH
+    unsigned nBins
+      = nBins = getWidth() / _surface->_binWidthMax + ((getWidth() % _surface->_binWidthMax) ? 1 : 0);
 
-    if (nBins == 0)
-    {
-        assert (getWidth() >= _surface->_binWidthMin);
-        nBins = 1;
+    if ( nBins == 0 ) {
+      assert (getWidth() >= _surface->_binWidthMin);
+      nBins = 1;
     }
 
-    DbU::Unit pitch = AllianceFramework::get()->getCellGauge()->getPitch(); 
+    DbU::Unit pitch     = _surface->_mauka->getPitch(); 
     DbU::Unit binsWidth = ((getWidth() / pitch) / nBins) * pitch;
     
-    if (getWidth() % pitch)
-        throw Error("Subrow Width: " + getString(getWidth()) + " is not a multiple of pitch");
-    if (binsWidth % pitch)
-        throw Error("Bins Width not a multiple of pitch");
+    if ( getWidth() % _surface->_mauka->getPitch() )
+      throw Error("Subrow::_postCreate(): SubRow width %s is not a multiple of pitch."
+                 ,DbU::getValueString(getWidth()).c_str());
 
-    DbU::Unit totalBinsWidth = binsWidth * nBins;
+    if ( binsWidth % _surface->_mauka->getPitch() )
+      throw Error("Subrow::_postCreate(): SubRow Bin width %s is not a multiple of pitch."
+                 ,DbU::getValueString(binsWidth).c_str());
+
+    DbU::Unit totalBinsWidth  = binsWidth * nBins;
     DbU::Unit binsWidthRemain = getWidth() - totalBinsWidth;
     
     if (binsWidthRemain % pitch)
-        throw Error("Bins Width not a multiple of pitch");
+      throw Error("Subrow::_postCreate(): SubRow Bin width remainder %s is not a multiple of pitch."
+                 ,DbU::getValueString(binsWidthRemain).c_str());
 
     unsigned binsWidthRemainPitch = binsWidthRemain / pitch; 
 
     DbU::Unit xMin = getXMin();
     DbU::Unit xMax = xMin;
         
-    for (unsigned binId = 0; binId < nBins; binId++)
-    {
-        if (binsWidthRemainPitch > 0)
-        {
-            xMax += binsWidth + pitch;
-            binsWidthRemainPitch--;
-        }
-        else
-            xMax += binsWidth;
-        Bin* bin = Bin::create(getCell(), this, Box(xMin, getYMin(), xMax, getYMax()));
-        _binVector.push_back(bin);
-        unsigned binIdx = _binVector.size() - 1;
-        _binXMax[bin->getXMax()] = binIdx;
-        xMin = xMax;
+    for ( unsigned binId = 0; binId < nBins; ++binId ) {
+      if ( binsWidthRemainPitch > 0 ) {
+        xMax += binsWidth + pitch;
+        --binsWidthRemainPitch;
+      } else
+        xMax += binsWidth;
+
+      Bin* bin = Bin::create(getCell(), this, Box(xMin, getYMin(), xMax, getYMax()));
+      _binVector.push_back(bin);
+      _binXMax[bin->getXMax()] = _binVector.size() - 1;
+
+      xMin = xMax;
     }
+#else  // BINS_WITH_BALANCED_WIDTH
+  // All bins are 2*biggest cell width, the lastest also include the remainder.
+
+    unsigned nBins = getWidth() / _surface->_binWidthMax;
+    if ( nBins == 0 ) {
+      assert ( getWidth() >= _surface->_binWidthMin );
+      nBins = 1;
+    }
+
+    DbU::Unit binsWidth       = _surface->_binWidthMax;
+    DbU::Unit binsWidthRemain = getWidth() - nBins*binsWidth; // Could be negative.
     
+    if ( getWidth() % _surface->_mauka->getPitch() )
+      throw Error("Subrow::_postCreate(): SubRow width %s is not a multiple of pitch."
+                 ,DbU::getValueString(getWidth()).c_str());
+
+    if ( binsWidth % _surface->_mauka->getPitch() )
+        throw Error("Subrow::_postCreate(): SubRow Bin width %s is not a multiple of pitch."
+                   ,DbU::getValueString(binsWidth).c_str());
+
+    DbU::Unit xMin = getXMin();
+    DbU::Unit xMax = xMin;
+        
+    for ( unsigned int binId=0 ; binId < nBins ; ++binId ) {
+      xMax += binsWidth;
+      if ( binId == 0 ) xMax += binsWidthRemain;
+
+      Bin* bin = Bin::create ( getCell(), this, Box(xMin,getYMin(),xMax,getYMax()) );
+      _binVector.push_back(bin);
+      _binXMax[bin->getXMax()] = _binVector.size() - 1;
+
+      xMin = xMax;
+    }
+#endif  // BINS_WITH_BALANCED_WIDTH
 
     Inherit::_postCreate();
 }

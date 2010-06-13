@@ -37,7 +37,10 @@
 
 
            add_library ( mauka         ${cpps} ${mocCpps} )
- target_link_libraries ( mauka         ${CORIOLIS_LIBRARIES}
+ target_link_libraries ( mauka         ${METIS_LIBRARIES}
+                                       ${HMETIS_LIBRARIES}
+                                       ${NIMBUS_LIBRARIES}
+                                       ${CORIOLIS_LIBRARIES}
                                        ${HURRICANE_LIBRARIES}
                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
                                        ${QT_LIBRARIES}

@@ -145,7 +145,7 @@ void SimAnnealingPlacer::init()
 
     cmess1 << "  o  Beginning global placement" << endl;
     cmess2 << Dots::asSizet     ("     - Number of nodes to place",_mauka->_instanceOccurrencesVector.size()) << endl;
-    cmess2 << Dots::asPercentage("     - Margin"        ,100.0 * surface->getMargin()) << endl; 
+    cmess2 << Dots::asPercentage("     - Margin"        ,surface->getMargin()) << endl; 
 
     cmess2 << Dots::asDouble("     - Initial RowCost"   ,_rowCost) << endl;
     cmess2 << Dots::asDouble("     - Initial BinCost"   ,_binCost) << endl;
@@ -287,6 +287,9 @@ bool SimAnnealingPlacer::Iterate()
         cout << "NetCost = " << _netCost << endl << endl;
         //	assert ((netCost - 1.0 <= debug) && (debug <= netCost + 1.0));
     }
+
+    if ( _mauka->getRefreshCb() != NULL ) _mauka->getRefreshCb() ();
+
     return ((_temperature != 0.0)
             && ((sucRatio > 0.15) || (stdDev > (0.0001 / getCost()))));
 }
