@@ -24,7 +24,7 @@ using namespace Hurricane;
 #include "vlsisapd/agds/Library.h"
 #include "vlsisapd/agds/Structure.h"
 #include "vlsisapd/agds/Rectangle.h"
-using namespace AGDS;
+// Cannot use AGDS namespace : conflicts with Hurricane::Library object
 
 #include "Agds.h"
 
@@ -33,7 +33,7 @@ class AgdsQuery : public Query {
     public:
         AgdsQuery ( Cell* );
 
-        inline void setStructure(Structure*);
+        inline void setStructure(AGDS::Structure*);
 
         virtual bool hasGoCallback() const;
         virtual void goCallback ( Go* );
@@ -42,15 +42,15 @@ class AgdsQuery : public Query {
         virtual void masterCellCallback() {};
 
   private:
-        Cell*         _cell;
-        Structure* _str;
+        Cell*            _cell;
+        AGDS::Structure* _str;
 };
 
 AgdsQuery::AgdsQuery(Cell* cell) : Query(), _cell(cell), _str(NULL) {
     Query::setQuery(_cell, _cell->getBoundingBox(), Transformation(), NULL, 0, Query::DoComponents);
 }
 
-inline void AgdsQuery::setStructure(Structure* str) { _str = str; }
+inline void AgdsQuery::setStructure(AGDS::Structure* str) { _str = str; }
 
 bool AgdsQuery::hasGoCallback() const { return true; }
 
@@ -75,11 +75,11 @@ void AgdsQuery::goCallback(Go* go) {
     else {
         return;
     }
-    Rectangle* rect = new Rectangle ( layer->getExtractNumber()
-                                    , DbU::getPhysical(b.getXMin(), DbU::Nano)
-                                    , DbU::getPhysical(b.getYMin(), DbU::Nano)
-                                    , DbU::getPhysical(b.getXMax(), DbU::Nano)
-                                    , DbU::getPhysical(b.getYMax(), DbU::Nano));
+    AGDS::Rectangle* rect = new AGDS::Rectangle ( layer->getExtractNumber()
+                                          , DbU::getPhysical(b.getXMin(), DbU::Nano)
+                                          , DbU::getPhysical(b.getYMin(), DbU::Nano)
+                                          , DbU::getPhysical(b.getXMax(), DbU::Nano)
+                                          , DbU::getPhysical(b.getYMax(), DbU::Nano));
     _str->addElement(rect);
 }
 } // namespace
@@ -97,7 +97,7 @@ void agdsDriver(const string& filePath, Cell* cell, string& name, string& lib, d
     gdsLib->setPhysUnits(pUnits);
     AgdsQuery agdsQuery (cell);
 
-    Structure* str = new Structure(getString(name));
+    AGDS::Structure* str = new AGDS::Structure(getString(name));
     agdsQuery.setStructure(str);
 
     forEach ( BasicLayer*, basicLayer, DataBase::getDB()->getTechnology()->getBasicLayers() ) {
