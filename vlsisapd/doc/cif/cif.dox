@@ -26,12 +26,12 @@
   \image latex transistorCif.pdf CIF example layout width=.25\linewidth
 
   \subsection cifC C++
-  Here is the C++ code (\c mainCif.cpp) used to generate the transistor.cif file. (Source is available in examples directory).
-  \include mainCif.cpp
+  Here is the C++ code (\c driveCif.cpp) used to generate the transistor.cif file. (Source is available in examples directory).
+  \include driveCif.cpp
 
   \subsection cifPython Python
-  Here is the Python code (\c testCif.py) used to generate the transistor.cif file. (Source is available in examples directory).
-  \include testCif.py
+  Here is the Python code (\c driveCif.py) used to generate the transistor.cif file. (Source is available in examples directory).
+  \include driveCif.py
 
-  \note In order to run the \c testCif.py script, user must ensure that $PYTHONPATH variable points to the directory containing pyCIF.so module.
+  \note In order to run the \c driveCif.py script, user must ensure that $PYTHONPATH variable points to the directory containing pyCIF.so module.
 */

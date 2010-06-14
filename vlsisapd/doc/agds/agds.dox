@@ -38,13 +38,13 @@
   \image latex transistorCif.pdf AGDS example layout width=.25\linewidth
 
   \subsection agdsC C++
-  Here is the C++ code (\c mainAgds.cpp) used to generate the transistor.agds file. (Source is available in examples directory).
-  \include mainAgds.cpp
+  Here is the C++ code (\c driveAgds.cpp) used to generate the transistor.agds file. (Source is available in examples directory).
+  \include driveAgds.cpp
 
   \subsection agdsPython Python
-  Here is the Python code (\c testAgds.py) used to generate the transistor.agds file. (Source is available in examples directory).
-  \include testAgds.py
+  Here is the Python code (\c driveAgds.py) used to generate the transistor.agds file. (Source is available in examples directory).
+  \include driveAgds.py
 
-  \note In order to run the \c testAgds.py script, user must ensure that $PYTHONPATH variable points to the directory containing pyAGDS.so module.
+  \note In order to run the \c driveAgds.py script, user must ensure that $PYTHONPATH variable points to the directory containing pyAGDS.so module.
 */
 
