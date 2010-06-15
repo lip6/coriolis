@@ -24,6 +24,11 @@ BOOST_PYTHON_MODULE(pyDTR) {
     // class DTR::Name
     class_<Name>("Name", init<std::string>())
         .def("getString", &Name::getString, return_value_policy<copy_const_reference>()) // return_value_policy because this method return a refenrce on string
+        .def(self == self)
+        .def(self == std::string())
+        .def(self != self)
+        .def(self != std::string())
+        .def(self < self)
     ;
 
     // class DTR::Rule
