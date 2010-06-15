@@ -1,5 +1,4 @@
 from pyDTR import *
-import sys
 
 techno = Techno(Name("myTech"), Name("micro"))
 
