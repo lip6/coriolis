@@ -22,32 +22,22 @@ namespace DTR {
 
 /*! \fn bool Name::operator==(const Name&)
  *   \brief redifines the '==' operator.
- *
- *   \note this method is not yet available in python
  */
  
 /*! \fn bool Name::operator==(const std::string&)
  *   \brief redifines the '==' operator.
- *
- *   \note this method is not yet available in python
  */
  
 /*! \fn bool Name::operator!=(const Name&)
  *   \brief redifines the '!=' operator.
- *
- *   \note this method is not yet available in python
  */
  
 /*! \fn bool Name::operator!=(const std::string&)
  *   \brief redifines the '!=' operator.
- *
- *   \note this method is not yet available in python
  */
 
 /*! \fn bool Name::operator<(const Name) const
  *   \brief redifines the '<' operator.
- *
- *   \note this method is not yet available in python
  */
 
 /*! \fn inline const std::string& Name::getString() const
