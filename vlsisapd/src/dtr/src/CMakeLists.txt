@@ -8,7 +8,7 @@ SET ( hpps vlsisapd/dtr/Techno.h
 SET ( cpps Techno.cpp
            Name.cpp )
 
-SET ( pycpps PyTechno.cpp ${cpps})
+SET ( pycpps PyDtr.cpp ${cpps})
 
           ADD_LIBRARY(dtr ${cpps})
 TARGET_LINK_LIBRARIES(dtr ${LIBXML2_LIBRARIES})
