@@ -10,13 +10,23 @@
 #ifndef __DTR_RULES_H__
 #define __DTR_RULES_H__
 
+#include <string>
+#include <sstream>
+
 #include "vlsisapd/dtr/Name.h"
 
 namespace DTR {
+template <typename T>
+std::string to_string(T const& value) {
+    std::stringstream sstr;
+    sstr << value;
+    return sstr.str();
+}
+
 class Rule {
     public:
-    Rule(Name name, double value, Name valueStr, Name ref, Name layer1, Name layer2)
-        : _name(name), _type(Name("")), _value(value), _valueStr(valueStr), _ref(ref), _layer1(layer1), _layer2(layer2) {};
+    Rule(Name name, double value, Name ref, Name layer1, Name layer2)
+        : _name(name), _type(Name("")), _value(value), _valueStr(to_string(value)), _ref(ref), _layer1(layer1), _layer2(layer2) {};
     
     // accessors
     inline Name   getName();
@@ -43,8 +53,8 @@ class Rule {
 
 class ARule : public Rule {
     public:
-    ARule(Name name, double value, Name valueStr, Name ref, Name layer1, Name layer2)
-        : Rule(name, value, valueStr, ref, layer1, layer2) {};
+    ARule(Name name, double value, Name ref, Name layer1, Name layer2)
+        : Rule(name, value, ref, layer1, layer2) {};
 };
     
 inline Name   Rule::getName()   { return _name;   };

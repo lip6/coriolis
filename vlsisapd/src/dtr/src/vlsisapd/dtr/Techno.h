@@ -28,16 +28,11 @@ class Techno {
     inline Name getUnit();
     inline std::vector<Rule*>&  getRules();
 
-    Rule*  addRule (Name name, double value, Name valueStr, Name ref, Name layer1=Name(""), Name layer2=Name(""));
-    ARule* addARule(Name name, double value, Name valueStr, Name ref, Name layer1         , Name layer2);
+    Rule*  addRule (Name name, double value, Name ref, Name layer1=Name(""), Name layer2=Name(""));
+    ARule* addARule(Name name, double value, Name ref, Name layer1         , Name layer2);
 
-    double getValue(Name name);
-    double getValue(Name name, Name layer);
-    double getValue(Name name, Name layer1, Name layer2);
-    
-    std::string getValueAsString(Name name);
-    std::string getValueAsString(Name name, Name layer);
-    std::string getValueAsString(Name name, Name layer1, Name layer2);
+    double getValue(Name name, Name layer1=Name(""), Name layer2=Name(""));
+    std::string getValueAsString(Name name, Name layer1=Name(""), Name layer2=Name(""));
     
     bool writeToFile(std::string filePath);
     static Techno* readFromFile(const std::string filePath);

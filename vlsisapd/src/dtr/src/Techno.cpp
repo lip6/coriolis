@@ -34,24 +34,16 @@ namespace {
 namespace DTR {
 Techno::Techno(Name name, Name unit) : _name(name), _unit(unit) {}
 
-Rule* Techno::addRule (Name name, double value, Name valueStr, Name ref, Name layer1, Name layer2) {
-    Rule* rule = new Rule(name, value, valueStr, ref, layer1, layer2);
+Rule* Techno::addRule (Name name, double value, Name ref, Name layer1, Name layer2) {
+    Rule* rule = new Rule(name, value, ref, layer1, layer2);
     _rules.push_back(rule);
     return rule;
 }
 
-ARule* Techno::addARule (Name name, double value, Name valueStr, Name ref, Name layer1, Name layer2) {
-    ARule* arule = new ARule(name, value, valueStr, ref, layer1, layer2);
+ARule* Techno::addARule (Name name, double value, Name ref, Name layer1, Name layer2) {
+    ARule* arule = new ARule(name, value, ref, layer1, layer2);
     _rules.push_back(arule);
     return arule;
-}
-
-double Techno::getValue(Name name) {
-    return getValue(name, Name(""), Name(""));
-}
-
-double Techno::getValue(Name name, Name layer) {
-    return getValue(name, layer, Name(""));
 }
 
 double Techno::getValue(Name name, Name layer1, Name layer2) {
@@ -84,14 +76,6 @@ double Techno::getValue(Name name, Name layer1, Name layer2) {
     error += layer2.getString();
     error += ".";
     throw DTRException(error);
-}
-
-string Techno::getValueAsString(Name name) {
-    return getValueAsString(name, Name(""), Name(""));
-}
-
-string Techno::getValueAsString(Name name, Name layer) {
-    return getValueAsString(name, layer, Name(""));
 }
 
 string Techno::getValueAsString(Name name, Name layer1, Name layer2) {
@@ -176,21 +160,18 @@ Techno* Techno::readFromFile(const string filePath) {
                                 Name layer1 ((const char*)layer1C);
                                 Name layer2 ((const char*)layer2C);
                                 double value = ::getValue<double>(valueC);
-                                Name valueStr ((const char*)valueC);
-                                rule = techno->addRule(name, value, valueStr, ref, layer1, layer2);
+                                rule = techno->addRule(name, value, ref, layer1, layer2);
                             } else if (nameC && layerC && valueC && refC) {// rule with only one layer
                                 Name name  ((const char*)nameC);
                                 Name ref   ((const char*)refC);
                                 Name layer ((const char*)layerC);
                                 double value = ::getValue<double>(valueC);
-                                Name valueStr ((const char*)valueC);
-                                rule = techno->addRule(name, value, valueStr, ref, layer);
+                                rule = techno->addRule(name, value, ref, layer);
                             } else if (nameC && valueC && refC) { // rule without layer
                                 Name name ((const char*)nameC);
                                 Name ref  ((const char*)refC);
                                 double value = ::getValue<double>(valueC);
-                                Name valueStr ((const char*)valueC);
-                                rule = techno->addRule(name, value, valueStr, ref);
+                                rule = techno->addRule(name, value, ref);
                             } else { // invalid case
                                 throw DTRException("[ERROR] properties of 'rule' node must be ('name', 'value', 'ref') or ('name', 'layer', 'value', 'ref') or ('name', 'layer1', 'layer2', 'value', 'ref').");
                                 return NULL;
@@ -211,8 +192,7 @@ Techno* Techno::readFromFile(const string filePath) {
                                 Name layer2 ((const char*)layer2C);
                                 Name ref    ((const char*)refC);
                                 double value = ::getValue<double>(valueC);
-                                Name valueStr ((const char*)valueC);
-                                techno->addARule(name, value, valueStr, ref, layer1, layer2);
+                                techno->addARule(name, value, ref, layer1, layer2);
                             } else {
                                 throw DTRException("[ERROR] 'arule' node must have 'name', 'layer1', 'layer2', 'value' and 'ref' properties.");
                                 return NULL;
