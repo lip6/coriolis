@@ -1,0 +1,9 @@
+// -*- C++ -*-
+
+namespace DTR {
+/*! \class DTRException
+ *
+ *  This class describes the exceptions throwed by the DTR library in case of errors.
+ */
+
+}

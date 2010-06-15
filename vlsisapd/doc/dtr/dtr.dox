@@ -15,6 +15,8 @@
   - DTR::Rule & DTR::ARule respectively describe a symmetrical and an asymmetrical rule.
   - DTR::Name provides an automatic management of shared name.
 
+  The library also use the DTR::DTRException class to throw excptions.
+
   \subsection dtrParser Using the parser
   Simply load a technology with static function DTR::Techno::readFromFile() and then get rules (DTR::Techno::getRule()) or directly values (DTR::Techno::getValue()).
 
