@@ -31,6 +31,7 @@ class Techno {
     Rule*  addRule (Name name, double value, Name ref, Name layer1=Name(""), Name layer2=Name(""));
     ARule* addARule(Name name, double value, Name ref, Name layer1         , Name layer2);
 
+    Rule* getRule(Name name, Name layer1=Name(""), Name layer2=Name(""));
     double getValue(Name name, Name layer1=Name(""), Name layer2=Name(""));
     std::string getValueAsString(Name name, Name layer1=Name(""), Name layer2=Name(""));
     

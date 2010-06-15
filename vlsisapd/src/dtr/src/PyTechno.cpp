@@ -13,7 +13,8 @@ void translator(DTRException const& e) {
 }
 
 
-// specify that Techno::getValue & Techno::getValueAsString methods have optional arguments
+// specify that Techno::getRule & Techno::getValue & Techno::getValueAsString methods have optional arguments
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(getRule_overloads         , getRule         , 1, 3);
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(getValue_overloads        , getValue        , 1, 3);
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(getValueAsString_overloads, getValueAsString, 1, 3);
 // specify that Techno::addRule method has optional arguments
@@ -49,7 +50,8 @@ BOOST_PYTHON_MODULE(pyDTR) {
         // accessors
         .def("getName"         , &Techno::getName)
         .def("getUnit"         , &Techno::getUnit)
-        .def("getValue"        , &Techno::getValue, getValue_overloads())
+        .def("getRule"         , &Techno::getRule         , getRule_overloads()[return_value_policy<reference_existing_object>()])
+        .def("getValue"        , &Techno::getValue        , getValue_overloads())
         .def("getValueAsString", &Techno::getValueAsString, getValueAsString_overloads())
         
         // modifiers
