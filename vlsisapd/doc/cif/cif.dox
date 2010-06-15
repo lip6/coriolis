@@ -29,6 +29,13 @@
   Here is the C++ code (\c driveCif.cpp) used to generate the transistor.cif file. (Source is available in examples directory).
   \include driveCif.cpp
 
+  \note In order to compile this code, a CMakeLists.txt file is provided. User must set the $VLSISAPD_TOP variable before running these commands in the directory containing the CMakeLists.txt file:
+  \code
+  %> mkdir build; cd build
+  %> cmake ..
+  %> make
+  \endcode
+
   \subsection cifPython Python
   Here is the Python code (\c driveCif.py) used to generate the transistor.cif file. (Source is available in examples directory).
   \include driveCif.py

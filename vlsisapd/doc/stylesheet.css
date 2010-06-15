@@ -130,8 +130,7 @@
  }
 
  tt          { color:           #3090FF; }
- em          { font-style:      italic;
-               font-weight:     bold;    }
+ em          { font-style:      italic;  }
  strong      { font-weight:     bold;    }
 
  span.textit { font-style:      italic;  }

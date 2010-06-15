@@ -41,6 +41,13 @@
   Here is the C++ code (\c driveAgds.cpp) used to generate the transistor.agds file. (Source is available in examples directory).
   \include driveAgds.cpp
 
+  \note In order to compile this code, a CMakeLists.txt file is provided. User must set the $VLSISAPD_TOP variable before running these commands in the directory containing the CMakeLists.txt file:
+  \code
+  %> mkdir build; cd build
+  %> cmake ..
+  %> make
+  \endcode
+
   \subsection agdsPython Python
   Here is the Python code (\c driveAgds.py) used to generate the transistor.agds file. (Source is available in examples directory).
   \include driveAgds.py

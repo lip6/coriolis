@@ -10,17 +10,17 @@
     <td><center><b>Parser</b></center></td>
     <td><center><b>Driver</b></center></td>
   </tr><tr>
-    <td>CIF</td>
+    <td>AGDS</td>
     <td></td>
     <td><center>x</center></td>
   </tr><tr>
-    <td>AGDS</td>
+    <td>CIF</td>
     <td></td>
     <td><center>x</center></td>
   </tr><tr>
     <td>DTR</td>
     <td><center>x</center></td>
-    <td></td>
+    <td><center>x</center></td>
   </tr><tr>
     <td>OPENCHAMS</td>
     <td><center>x</center></td>
@@ -31,7 +31,8 @@
 
 
   To quickly access to documentation of a format, one can use the following links :
-  - \subpage CIF CIF Format
   - \subpage AGDS AGDS Format
+  - \subpage CIF CIF Format
+  - \subpage DTR DTR Format
 
 */
