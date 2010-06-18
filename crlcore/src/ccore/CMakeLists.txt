@@ -26,6 +26,7 @@
                              ${CRLCORE_SOURCE_DIR}/src/ccore/toolbox
                              ${HURRICANE_INCLUDE_DIR}
                              ${CIF_INCLUDE_DIR}
+                             ${CONFIGURATION_INCLUDE_DIR}
                            )
 
            add_definitions ( -DCORIOLIS_TOP="${CORIOLIS_TOP}"
@@ -249,5 +250,6 @@
                                                      ${OA_LIBRARIES}
                                                      ${AGDS_LIBRARY}
                                                      ${CIF_LIBRARY}
+                                                     ${CONFIGURATION_LIBRARY}
                              )
                      install ( TARGETS               crlcore DESTINATION lib${LIB_SUFFIX} )

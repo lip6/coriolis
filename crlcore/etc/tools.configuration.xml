@@ -1,0 +1,125 @@
+
+<configuration>
+  <!-- Nimbus -->
+  <parameter id="nimbus.cellGauge"     type="string"     value="sxlib"/>
+  <parameter id="nimbus.routingGauge"  type="string"     value="sxlib"/>
+  <parameter id="nimbus.pinsPlacement" type="bool"       value="false"/>
+  <parameter id="nimbus.aspectRatio"   type="percentage" value="98" min="10" max="1000"/>
+  <parameter id="nimbus.spaceMargin"   type="percentage" value="40"/>
+  <!-- Metis -->
+  <parameter id="metis.partOrKWayHMetis"               type="bool" value="true"/>
+  <parameter id="metis.numberOfInstancesStopCriterion" type="int"  value="100" min="45"/>
+  <parameter id="metis.globalConnectionsWeightRatio"   type="int"  value="1"   min="1"/>
+  <parameter id="metis.ubFactor"                       type="int"  value="0"   min="0"/>
+  <parameter id="metis.tuneHMetisParameters"           type="bool" value="false"/>
+  <parameter id="metis.numberOfTriedBisections"        type="int"  value="10"  min="1"/>
+  <parameter id="metis.CType" type="enumerate"   value="1">
+    <item label="Hybrid First Choice"            value="1"/>
+    <item label="First Choice"                   value="2"/>
+    <item label="Greedy First"                   value="3"/>
+    <item label="Hyper Edge"                     value="4"/>
+    <item label="Edge"                           value="5"/>
+  </parameter>
+  <parameter id="metis.RType" type="enumerate"   value="1">
+    <item label="Fiduccia-Mattheyses"            value="1"/>
+    <item label="One Way Fidducia-Mattheyses"    value="2"/>
+    <item label="Early Exit Fidducia-Mattheyses" value="3"/>
+  </parameter>
+  <parameter id="metis.VCycle" type="enumerate"  value="0">
+    <item label="No V-Cycle Refinement"          value="0"/>
+    <item label="On Each Final Bisections"       value="1"/>
+    <item label="On Best Intermediate Solutions" value="2"/>
+    <item label="On All Intermediate Solutions"  value="3"/>
+  </parameter>
+  <parameter id="metis.Reconst" type="enumerate" value="0">
+    <item label="Ignore cuts Hyper Edges"        value="0"/>
+    <item label="Keep parts of cuts Hyper Edges" value="1"/>
+  </parameter>
+  <parameter id="metis.debug" type="enumerate"   value="0">
+    <item label="Disabled"                       value="0"/>
+    <item label="Coarsening Stage"               value="1"/>
+    <item label="Initial Partitioning"           value="2"/>
+    <item label="Refinement"                     value="4"/>
+    <item label="Multiple Runs"                  value="8"/>
+    <item label="More Multiples Runs"            value="16"/>
+  </parameter>
+  <group>
+    <master id="metis.tuneHMetisParameters"/>
+    <slave  id="metis.numberOfTriedBisections"/>
+    <slave  id="metis.CType"/>
+    <slave  id="metis.RType"/>
+    <slave  id="metis.VCycle"/>
+    <slave  id="metis.Reconst"/>
+    <slave  id="metis.debug"/>
+  </group>
+  <!-- Mauka -->
+  <parameter id="mauka.standardAnnealing"         type="bool"       value="false"/>
+  <parameter id="mauka.ignorePins"                type="bool"       value="false"/>
+  <parameter id="mauka.plotBins"                  type="bool"       value="true"/>
+  <parameter id="mauka.searchRatio"               type="percentage" value="50" min="0"/>
+  <parameter id="mauka.annealingNetMult"          type="percentage" value="90" min="0"/>
+  <parameter id="mauka.annealingBinMult"          type="percentage" value="5"  min="0"/>
+  <parameter id="mauka.annealingRowMult"          type="percentage" value="5"  min="0"/>
+  <!-- Katabatic -->
+  <parameter id="katabatic.saturateRatio"         type="percentage" value="80"/>
+  <parameter id="katabatic.globalLengthThreshold" type="int"        value="1450"/>
+  <!-- Kite -->
+  <parameter id="kite.edgeCapacity"               type="percentage" value="65"      min="0" max="100"/>
+  <parameter id="kite.expandStep"                 type="percentage" value="100"     min="0" max="100"/>
+  <parameter id="kite.ripupCost"                  type="int"        value="3"       min="0"/>
+  <parameter id="kite.borderRipupLimit"           type="int"        value="26"      min="1"/>
+  <parameter id="kite.strapRipupLimit"            type="int"        value="16"      min="1"/>
+  <parameter id="kite.localRipupLimit"            type="int"        value="7"       min="1"/>
+  <parameter id="kite.globalRipupLimit"           type="int"        value="5"       min="1"/>
+  <parameter id="kite.longGlobalRipupLimit"       type="int"        value="5"       min="1"/>
+  <parameter id="kite.eventsLimit"                type="int"        value="4000000" min="1"/>
+  <layout>
+    <tab name="Mauka">
+      <!-- hMETIS -->
+      <widget type="title" label="hMETIS - Partitionner"/>
+      <widget id="metis.partOrKWayHMetis"               label="Recursive 2-Parts (vs. K-Way)" column="0"/>
+      <widget id="metis.numberOfInstancesStopCriterion" label="Partition Size Stop"           column="0"/>
+      <widget id="metis.globalConnectionsWeightRatio"   label="Global Connections Weight"     column="0"/>
+      <widget id="metis.ubFactor"                       label="UB Factor"                     column="0"/>
+      <widget id="metis.tuneHMetisParameters"           label="Tune hMETIS Parameters"        column="1"/>
+      <widget id="metis.numberOfTriedBisections"        label="# of tried bisections"         column="1"/>
+      <widget id="metis.CType"                          label="CType"                         column="1"/>
+      <widget id="metis.RType"                          label="RType"                         column="1"/>
+      <widget id="metis.VCycle"                         label="V-Cycle"                       column="1"/>
+      <widget id="metis.Reconst"                        label="Reconst"                       column="1"/>
+      <!-- Nimbus -->
+      <widget type="title" label="Mauka - Placer"/>
+      <widget id="nimbus.pinsPlacement"    label="Pins Placement"        column="0"/>
+      <widget id="nimbus.aspectRatio"      label="Aspect Ratio, X/Y (%)" column="1"/>
+      <widget id="nimbus.spaceMargin"      label="Space Margin"          column="1"/>
+      <widget type="rule"/>
+      <!-- Mauka -->
+      <widget id="mauka.standardAnnealing" label="Standart Annealing"     column="0"/>
+      <widget id="mauka.ignorePins"        label="Ignore Pins"            column="0"/>
+      <widget id="mauka.plotBins"          label="Plot Bins"              column="0"/>
+      <widget id="mauka.searchRatio"       label="Search Ratio (%)"       column="1"/>
+      <widget id="mauka.annealingNetMult"  label="Annealing Net Mult (%)" column="1"/>
+      <widget id="mauka.annealingBinMult"  label="Annealing Bin Mult (%)" column="1"/>
+      <widget id="mauka.annealingRowMult"  label="Annealing Row Mult (%)" column="1"/>
+      <widget type="rule"/>
+    </tab>
+    <tab name="kite">
+      <widget type="title" label="Katabatic - Routing Database"/>
+      <widget id="katabatic.saturateRatio"         label="Saturate Ratio (%)"      column="0"/>
+      <widget id="katabatic.globalLengthThreshold" label="Global Length Threshold" column="0"/>
+      <widget type="rule"/>
+      <widget type="title"                   label="Kite - Detailed Router"/>
+      <widget id="kite.edgeCapacity"         label="Edge Capacity (%)" column="0"/>
+      <widget id="kite.expandStep"           label="Expand Step (%)"   column="0"/>
+      <widget id="kite.eventsLimit"          label="Events Limit"      column="0"/>
+      <widget id="kite.ripupCost"            label="Ripup Cost"        column="1" spinbox="true"/>
+      <widget type="section" label="Ripup Limits" column="1"/>
+      <widget id="kite.borderRipupLimit"     label="Borders"           column="1" spinbox="true"/>
+      <widget id="kite.strapRipupLimit"      label="Straps"            column="1" spinbox="true"/>
+      <widget id="kite.localRipupLimit"      label="Locals"            column="1" spinbox="true"/>
+      <widget id="kite.globalRipupLimit"     label="Globals"           column="1" spinbox="true"/>
+      <widget id="kite.longGlobalRipupLimit" label="Long Globals"      column="1" spinbox="true"/>
+      <widget type="rule"/>
+    </tab>
+  </layout>
+</configuration>

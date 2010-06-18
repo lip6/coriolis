@@ -5,3 +5,4 @@
  install ( FILES   technology.freePDK45.s2r.xml DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
  install ( FILES   technology.fake.s2r.xml      DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
  install ( FILES   display.xml                  DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
+ install ( FILES   tools.configuration.xml      DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
