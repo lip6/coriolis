@@ -26,6 +26,7 @@
 #include  <iostream>
 #include  <iomanip>
 
+#include  "vlsisapd/configuration/Configuration.h"
 #include  "hurricane/Technology.h"
 #include  "hurricane/DataBase.h"
 #include  "hurricane/Cell.h"
@@ -54,18 +55,6 @@ namespace Katabatic {
 // Class  :  "Katabatic::Configuration".
 
 
-  Configuration* Configuration::_default = NULL;
-
-
-  Configuration* Configuration::getDefault ()
-  {
-    if ( _default == NULL ) {
-      _default = new ConfigurationConcrete ( AllianceFramework::get()->getRoutingGauge() );
-    }
-    return _default;
-  }
-
-
   Configuration::Configuration () { }
   Configuration::~Configuration () { }
 
@@ -78,14 +67,14 @@ namespace Katabatic {
     : Configuration()
     , _rg                (NULL)
     , _extensionCap      (DbU::lambda(1.5))
-    , _saturateRatio     (0.80)
-    , _globalThreshold   (29*DbU::lambda(50.0)) // Ugly: direct uses of SxLib gauge.
+    , _saturateRatio     (Cfg::getParamPercentage("katabatic.saturateRatio",80.0)->asDouble())
+    , _globalThreshold   (DbU::lambda(Cfg::getParamDouble("katabatic.globalLengthThreshold",29*50.0)->asDouble())) // Ugly: direct uses of SxLib gauge.
     , _allowedDepth      (0)
   {
-    if ( rg ) {
-      _rg           = rg->getClone();
-      _allowedDepth = rg->getDepth();
-    }
+    if ( rg == NULL ) rg = AllianceFramework::get()->getRoutingGauge();
+
+    _rg           = rg->getClone();
+    _allowedDepth = rg->getDepth();
 
     _gmetalh  = DataBase::getDB()->getTechnology()->getLayer("gmetalh");
     _gmetalv  = DataBase::getDB()->getTechnology()->getLayer("gmetalv");

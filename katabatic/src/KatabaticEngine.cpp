@@ -219,10 +219,12 @@ namespace Katabatic {
     , _destroyBaseSegment(false)
     , _demoMode          (false)
     , _warnGCellOverload (false)
-    , _configuration     (Configuration::getDefault()->clone())
+    , _configuration     (new ConfigurationConcrete())
     , _gcellGrid         (NULL)
     , _routingNets       ()
   {
+    cerr << "KatabaticEngine::_configuration: " << (void*)_configuration << endl;
+
     addMeasure<size_t> ( cell, "Gates"
                        , AllianceFramework::getInstancesCount(cell,AllianceFramework::IgnoreFeeds
                                                                   |AllianceFramework::Recursive) );

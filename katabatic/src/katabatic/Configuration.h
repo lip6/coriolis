@@ -58,8 +58,6 @@ namespace Katabatic {
 
   class Configuration {
     public:
-      static  Configuration*     getDefault         ();
-    public:
     // Constructor & Destructor.
       virtual                   ~Configuration      ();
       virtual Configuration*     clone              () const = 0;
@@ -100,8 +98,9 @@ namespace Katabatic {
       friend class Configuration;
     public:
     // Constructor & Destructor.
-      virtual ConfigurationConcrete* clone                 () const;
+                                     ConfigurationConcrete ( const RoutingGauge* rg=NULL );
       virtual                       ~ConfigurationConcrete ();
+      virtual ConfigurationConcrete* clone                 () const;
     // Methods.
       virtual bool                   isGMetal              ( const Layer* ) const;
       virtual size_t                 getDepth              () const;
@@ -121,8 +120,6 @@ namespace Katabatic {
       virtual Record*                _getRecord            () const;
       virtual string                 _getString            () const;
       virtual string                 _getTypeName          () const;
-    protected:                      
-                                     ConfigurationConcrete ( const RoutingGauge* );
     protected:
     // Attributes.
       const Layer*  _gmetalh;

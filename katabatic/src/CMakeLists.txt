@@ -6,8 +6,9 @@ endif ( CHECK_DETERMINISM )
                include ( ${QT_USE_FILE} )
 
    include_directories ( ${KATABATIC_SOURCE_DIR}/src
-                         ${HURRICANE_INCLUDE_DIR} 
                          ${CORIOLIS_INCLUDE_DIR} 
+                         ${HURRICANE_INCLUDE_DIR} 
+                         ${CONFIGURATION_INCLUDE_DIR} 
                        )
                    set ( includes      katabatic/Configuration.h
                                        katabatic/AutoContact.h     katabatic/AutoContacts.h
