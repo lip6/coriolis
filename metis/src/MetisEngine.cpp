@@ -35,6 +35,7 @@
 #include <cmath>
 using namespace std;
 
+#include "vlsisapd/configuration/Configuration.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Net.h"
 #include "hurricane/Instance.h"
@@ -61,7 +62,7 @@ namespace Metis {
     
   MetisEngine::MetisEngine ( Cell* cell )
     : Inherit       (cell)
-    , _configuration(Configuration::getDefault()->clone())
+    , _configuration(new Configuration())
     , _step         (0)
     , _actualGraphs ()
     , _newGraphs    ()
@@ -273,8 +274,8 @@ namespace Metis {
   {
     size_t gates = getInstancesCount ( cell );
 
-    double partitions = log((double)gates / (double)Configuration::getDefault()
-                           ->getNumberOfInstancesStopCriterion() ) / log(4.0) + 1.0;
+    int    partitionSizeStop = Cfg::getParamInt("metis.numberOfInstancesStopCriterion",45)->asInt();
+    double partitions        = log((double)gates / (double)partitionSizeStop) / log(4.0) + 1.0;
 
     return (unsigned int)(partitions);
   }

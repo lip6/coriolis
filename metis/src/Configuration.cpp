@@ -26,6 +26,7 @@
 #include  <iostream>
 #include  <iomanip>
 
+#include  "vlsisapd/configuration/Configuration.h"
 #include  "hurricane/Cell.h"
 #include  "crlcore/Utilities.h"
 #include  "metis/Configuration.h"
@@ -40,6 +41,7 @@ namespace Metis {
   using  std::setprecision;
   using  std::ostringstream;
   using  std::string;
+  using  Cfg::Parameter;
   using  Hurricane::tab;
   using  Hurricane::inltrace;
   using  Hurricane::Cell;
@@ -49,35 +51,23 @@ namespace Metis {
 // Class  :  "Metis::Configuration".
 
 
-  Configuration* Configuration::_default = NULL;
-
-
-  Configuration* Configuration::getDefault ()
-  {
-    if ( _default == NULL ) {
-      _default = new Configuration ();
-    }
-    return _default;
-  }
-
-
   Configuration::Configuration ()
     : _refreshCb                     ()
-    , _partOrKWayHMetis              (true)
-    , _numberOfInstancesStopCriterion(45)
-    , _globalConnectionsWeightRatio  (1)
-    , _ubFactor                      (0)
+    , _partOrKWayHMetis              (Cfg::getParamBool("metis.partOrKWayHMetis"              ,true)->asBool ())
+    , _numberOfInstancesStopCriterion(Cfg::getParamInt ("metis.numberOfInstancesStopCriterion",45  )->asInt  ())
+    , _globalConnectionsWeightRatio  (Cfg::getParamInt ("metis.globalConnectionsWeightRatio"  ,1   )->asInt  ())
+    , _ubFactor                      (Cfg::getParamInt ("metis.ubFactor"                      ,0   )->asInt  ())
     , _hmetisOptions                 ()
   {
-    _hmetisOptions[CustomOptions   ] = 1;
-    _hmetisOptions[HMetisNRuns     ] = 10;
-    _hmetisOptions[HMetisCType     ] = CTypeHFC;
-    _hmetisOptions[HMetisRType     ] = RTypeFM;
-    _hmetisOptions[HMetisVCycle    ] = VCycleDisable;
-    _hmetisOptions[HMetisReconst   ] = ReconstRemoveCutHE;
-    _hmetisOptions[HMetisPreAssign ] = 1;
+    _hmetisOptions[CustomOptions   ] = Cfg::getParamBool     ("metis.tuneHMetisParameters"   ,true )->asBool() ? 1 : 0;
+    _hmetisOptions[HMetisNRuns     ] = Cfg::getParamInt      ("metis.numberOfTriedBisections",10   )->asInt();
+    _hmetisOptions[HMetisCType     ] = Cfg::getParamEnumerate("metis.CType"  ,CTypeHFC          )->asInt();
+    _hmetisOptions[HMetisRType     ] = Cfg::getParamEnumerate("metis.RType"  ,RTypeFM           )->asInt();
+    _hmetisOptions[HMetisVCycle    ] = Cfg::getParamEnumerate("metis.VCycle" ,VCycleDisable     )->asInt();
+    _hmetisOptions[HMetisReconst   ] = Cfg::getParamEnumerate("metis.Reconst",ReconstRemoveCutHE)->asInt();
+    _hmetisOptions[HMetisPreAssign ] =  1;
     _hmetisOptions[HMetisRandom    ] = -1;
-    _hmetisOptions[HMetisDebugLevel] = DebugDisable;
+    _hmetisOptions[HMetisDebugLevel] = Cfg::getParamEnumerate("metis.debug"  ,DebugDisable      )->asInt();
   }
 
 
@@ -96,10 +86,6 @@ namespace Metis {
 
   Configuration::~Configuration ()
   { }
-
-
-  Configuration* Configuration::clone () const
-  { return new Configuration(*this); }
 
 
   void  Configuration::print ( Cell* cell ) const

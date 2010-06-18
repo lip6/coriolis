@@ -6,8 +6,9 @@ endif ( HMETIS_FOUND )
                include ( ${QT_USE_FILE} )
 
    include_directories ( ${METIS_SOURCE_DIR}/src
-                         ${HURRICANE_INCLUDE_DIR} 
                          ${CORIOLIS_INCLUDE_DIR} 
+                         ${HURRICANE_INCLUDE_DIR} 
+                         ${CONFIGURATION_INCLUDE_DIR} 
                        )
                    set ( includes      metis/hmetis.h
                                        metis/MetisGraph.h

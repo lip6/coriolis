@@ -85,13 +85,10 @@ namespace Metis {
                                , DebugMultRuns       =8  // Debug multiple runs stage.
                                , DebugMoreMultRuns   =16 // More debug of the multiple runs stage.
                                };
-    public:
-      static  Configuration* getDefault                        ();
     public:                                                    
     // Constructor & Destructor.                               
                              Configuration                     ();
                             ~Configuration                     ();
-              Configuration* clone                             () const;
     // Methods.                                                
               void           print                             ( Cell* ) const;
       inline  RefreshCb_t&   getRefreshCb                      ();
@@ -112,7 +109,6 @@ namespace Metis {
               std::string    _getTypeName                      () const;
     private:
     // Attributes.
-      static Configuration* _default;
              RefreshCb_t    _refreshCb;
              bool           _partOrKWayHMetis;               // True for Recursive 2-part, false for KWay.
              unsigned int   _numberOfInstancesStopCriterion; // Minimal number of instances to partition.
