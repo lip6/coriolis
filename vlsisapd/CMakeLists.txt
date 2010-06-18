@@ -7,7 +7,7 @@ LIST(INSERT CMAKE_MODULE_PATH 0 "${VLSISAPD_SOURCE_DIR}/cmake_modules")
 FIND_PACKAGE(LibXml2 REQUIRED)
 FIND_PACKAGE(PythonSitePackages REQUIRED)
 
-FIND_PACKAGE(Boost 1.32.0 COMPONENTS python)
+FIND_PACKAGE(Boost 1.32.0 COMPONENTS program_options filesystem python REQUIRED)
 IF (Boost_FOUND)
   MESSAGE(STATUS "Found Boost.Python libraries in ${Boost_INCLUDE_DIR} as ${Boost_LIBRARIES}")
   FIND_PACKAGE(PythonLibs REQUIRED)
