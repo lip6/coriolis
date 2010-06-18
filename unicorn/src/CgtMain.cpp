@@ -28,13 +28,17 @@
 using namespace std;
 
 #include  <boost/program_options.hpp>
-namespace poptions = boost::program_options;
+namespace boptions = boost::program_options;
+
+#include  <boost/filesystem/operations.hpp>
+namespace bfs = boost::filesystem;
 
 #include  <QtGui>
 #if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and not defined (__APPLE__)
 #  include  <QGtkStyle>
 #endif
 
+#include  "vlsisapd/configuration/Configuration.h"
 #include  "hurricane/DebugSession.h"
 #include  "hurricane/DataBase.h"
 #include  "hurricane/Cell.h"
@@ -109,57 +113,57 @@ int main ( int argc, char *argv[] )
     bool          loadGlobal;
     bool          saveGlobal;
 
-    poptions::options_description options ("Command line arguments & options");
+    boptions::options_description options ("Command line arguments & options");
     options.add_options()
       ( "help,h"             , "Print this help." )
-      ( "trace-level,l"      , poptions::value<unsigned int>(&traceLevel)->default_value(1000)
+      ( "trace-level,l"      , boptions::value<unsigned int>(&traceLevel)->default_value(1000)
                              , "Set the level of trace, trace messages with a level superior to "
                                "<arg> will be printed on <stderr>." )
-      ( "verbose,v"          , poptions::bool_switch(&verbose1)->default_value(false)
+      ( "verbose,v"          , boptions::bool_switch(&verbose1)->default_value(false)
                              , "First level of verbosity.")
-      ( "very-verbose,V"     , poptions::bool_switch(&verbose2)->default_value(false)
+      ( "very-verbose,V"     , boptions::bool_switch(&verbose2)->default_value(false)
                              , "Second level of verbosity.")
-      ( "info,i"             , poptions::bool_switch(&info)->default_value(false)
+      ( "info,i"             , boptions::bool_switch(&info)->default_value(false)
                              , "Lots of informational messages.")
-      ( "show-conf"          , poptions::bool_switch(&showConf)->default_value(false)
+      ( "show-conf"          , boptions::bool_switch(&showConf)->default_value(false)
                              , "Print Kite configuration settings.")
-      ( "core-dump,D"        , poptions::bool_switch(&coreDump)->default_value(false)
+      ( "core-dump,D"        , boptions::bool_switch(&coreDump)->default_value(false)
                              , "Enable core dumping.")
-      ( "log-mode,L"         , poptions::bool_switch(&logMode)->default_value(false)
+      ( "log-mode,L"         , boptions::bool_switch(&logMode)->default_value(false)
                              , "Disable ANSI escape sequences displaying.")
-      ( "text,t"             , poptions::bool_switch(&textMode)->default_value(false)
+      ( "text,t"             , boptions::bool_switch(&textMode)->default_value(false)
                              , "Run in pure text mode.")
-      ( "margin,m"           , poptions::value<double>(&margin)->default_value(0.40)
+      ( "margin,m"           , boptions::value<double>(&margin)->default_value(40.0)
                              , "Percentage of free area to add to the minimal placement area.")
-      ( "quadri-place,p"     , poptions::bool_switch(&quadriPlace)->default_value(false)
+      ( "quadri-place,p"     , boptions::bool_switch(&quadriPlace)->default_value(false)
                              , "Place using quadripartitions then placement legalisation.")
-      ( "annealing-place,P"  , poptions::bool_switch(&annealingPlace)->default_value(false)
+      ( "annealing-place,P"  , boptions::bool_switch(&annealingPlace)->default_value(false)
                              , "Place using simulated annealing (slow).")
-      ( "partition-size-stop", poptions::value<unsigned int>(&partitionSizeStop)->default_value(45)
+      ( "partition-size-stop", boptions::value<unsigned int>(&partitionSizeStop)->default_value(45)
                              , "Sets the size of a leaf partition (quadripartition stage).")
-      ( "global-route,G"     , poptions::bool_switch(&globalRoute)->default_value(false)
+      ( "global-route,G"     , boptions::bool_switch(&globalRoute)->default_value(false)
                              , "Run the global router (Knik).")
-      ( "load-global,g"      , poptions::bool_switch(&loadGlobal)->default_value(false)
+      ( "load-global,g"      , boptions::bool_switch(&loadGlobal)->default_value(false)
                              , "Reload the global routing from disk.")
-      ( "save-global"        , poptions::bool_switch(&saveGlobal)->default_value(false)
+      ( "save-global"        , boptions::bool_switch(&saveGlobal)->default_value(false)
                              , "Save the global routing solution.")
-      ( "edge,e"             , poptions::value<float>(&edgeCapacity)->default_value(0.65)
+      ( "edge,e"             , boptions::value<float>(&edgeCapacity)->default_value(65.0)
                              , "The egde density ratio applied on global router's edges." )
-      ( "expand-step"        , poptions::value<float>(&expandStep)->default_value(0.99)
+      ( "expand-step"        , boptions::value<float>(&expandStep)->default_value(100.0)
                              , "The density delta above which GCells are aggregateds." )
-      ( "events-limit"       , poptions::value<unsigned long>(&eventsLimit)
+      ( "events-limit"       , boptions::value<unsigned long>(&eventsLimit)
                              , "The maximum number of iterations (events) that the router is"
                                "allowed to perform." )
-      ( "detailed-route,R"   , poptions::bool_switch(&detailedRoute)->default_value(false)
+      ( "detailed-route,R"   , boptions::bool_switch(&detailedRoute)->default_value(false)
                              , "Run the detailed router (Kite).")
-      ( "cell,c"             , poptions::value<string>()
+      ( "cell,c"             , boptions::value<string>()
                              , "The name of the cell to load, whithout extension." )
-      ( "save-design,s"      , poptions::value<string>()
+      ( "save-design,s"      , boptions::value<string>()
                              , "Save the routed design.");
 
-    poptions::variables_map arguments;
-    poptions::store  ( poptions::parse_command_line(argc,argv,options), arguments );
-    poptions::notify ( arguments );
+    boptions::variables_map arguments;
+    boptions::store  ( boptions::parse_command_line(argc,argv,options), arguments );
+    boptions::notify ( arguments );
 
     if ( arguments.count("help") ) {
       cout << options << endl;
@@ -179,6 +183,33 @@ int main ( int argc, char *argv[] )
     dbo_ptr<AllianceFramework> af ( AllianceFramework::create() );
     Cell* cell = NULL;
 
+    cmess1 << "  o  Reading Configuration." << endl;
+    bfs::path::default_name_check ( bfs::portable_posix_name );
+
+    Cfg::Configuration* conf = Cfg::Configuration::get ();
+
+    const string strSysConfDir = SYS_CONF_DIR;
+    bfs::path systemConfPath;
+    bfs::path sysConfDir     ( strSysConfDir );
+    if ( sysConfDir.has_root_path() )
+      systemConfPath = sysConfDir / "coriolis2" / "tools.configuration.xml";
+    else
+      systemConfPath = af->getEnvironment()->getCORIOLIS_TOP()
+        / sysConfDir / "coriolis2" / "tools.configuration.xml";
+
+    if ( bfs::exists(systemConfPath) ) {
+      cmess1 << "     - <" << systemConfPath.string() << ">." << endl;
+      conf->readFromFile ( systemConfPath.string() );
+    } else {
+      cmess1 << "[WARNING] System configuration file:\n  <" << systemConfPath.string() << "> not found." << endl;
+    }
+
+    bfs::path dotConfPath ( "./.coriolis2.configuration.xml" );
+    if ( bfs::exists(dotConfPath) ) {
+      cmess1 << "     - <" << dotConfPath.string() << ">." << endl;
+      conf->readFromFile ( dotConfPath.string() );
+    }
+
     if ( arguments.count("cell") ) {
       cell = af->getCell (arguments["cell"].as<string>().c_str(), Catalog::State::Views );
       if (!cell) {
@@ -195,20 +226,21 @@ int main ( int argc, char *argv[] )
       detailedRoute  = false;
     }
 
-    if ( arguments.count("margin") )
-      Nimbus::Configuration::getDefault()->setMargin ( margin );
+    if ( arguments.count("margin") ) {
+      Cfg::getParamPercentage("nimbus.spaceMargin")->setPercentage ( margin );
+    }
 
     if ( arguments.count("partition-size-stop") )
-      Metis::Configuration::getDefault()->setNumberOfInstancesStopCriterion ( partitionSizeStop );
+      Cfg::getParamInt("metis.numberOfInstancesStopCriterion")->setInt ( partitionSizeStop );
 
     if ( arguments.count("edge") )
-      Kite::Configuration::getDefault()->setEdgeCapacityPercent ( edgeCapacity );
+      Cfg::getParamPercentage("kite.edgeCapacity")->setPercentage ( edgeCapacity );
 
     if ( arguments.count("events-limit") )
-      Kite::Configuration::getDefault()->setEventsLimit ( eventsLimit );
+      Cfg::getParamInt("kite.eventsLimit")->setInt ( eventsLimit );
 
     if ( arguments.count("expand-step") )
-      Kite::Configuration::getDefault()->setExpandStep ( expandStep );
+      Cfg::getParamPercentage("kite.expandStep")->setPercentage ( expandStep );
 
     if ( cell ) {
     // addaccu.
@@ -370,7 +402,7 @@ int main ( int argc, char *argv[] )
         if ( showConf ) nimbus->getConfiguration()->print( cell );
 
         if ( annealingPlace ) {
-          Mauka::Configuration::getDefault()->setStandardSimulatedAnnealing ( true );
+          Cfg::getParamPercentage("mauka.standardAnnealing")->setBool ( true );
         }
 
         if ( quadriPlace ) {
@@ -423,7 +455,7 @@ int main ( int argc, char *argv[] )
       }
     }
   }
-  catch ( poptions::error& e ) {
+  catch ( boptions::error& e ) {
     cerr << "[ERROR] " << e.what() << endl;
     exit ( 1 );
   }

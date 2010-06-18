@@ -1,9 +1,13 @@
 
+
+
                include ( ${QT_USE_FILE} )
    include_directories ( ${HURRICANE_INCLUDE_DIR}
                          ${CORIOLIS_INCLUDE_DIR}
+                         ${CONFIGURATION_INCLUDE_DIR}
                          ${Boost_INCLUDE_DIRS}
                        )
+       add_definitions ( -DSYS_CONF_DIR=\\"${SYS_CONF_DIR}\\" )
 
                    set ( mocincludes   unicorn/UnicornGui.h
                                        unicorn/OpenCellDialog.h
@@ -40,6 +44,7 @@
                                        ${HURRICANE_LIBRARIES}
                                        ${AGDS_LIBRARY}
                                        ${CIF_LIBRARY}
+                                       ${CONFIGURATION_LIBRARY}
                                        ${LEFDEF_LIBRARIES}
                                        ${OA_LIBRARIES}
                                        ${QT_LIBRARIES}
@@ -60,6 +65,7 @@
                                        ${CORIOLIS_LIBRARIES}
                                        ${HURRICANE_LIBRARIES}
                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
+                                       ${CONFIGURATION_LIBRARY}
                                        ${OA_LIBRARIES}
                                        ${QT_LIBRARIES}
                                        ${Boost_LIBRARIES}
