@@ -161,7 +161,7 @@ int main ( int argc, char *argv[] )
       }
     }
 
-    Kite::Configuration::getDefault()->setEdgeCapacityPercent ( edgeCapacity );
+  //Kite::Configuration::getDefault()->setEdgeCapacityPercent ( edgeCapacity );
 
     cell->flattenNets ( not arguments.count("global") );
 

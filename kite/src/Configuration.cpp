@@ -25,6 +25,7 @@
 
 #include  <string>
 
+#include  "vlsisapd/configuration/Configuration.h"
 #include  "hurricane/Cell.h"
 #include  "crlcore/Utilities.h"
 #include  "kite/Configuration.h"
@@ -49,33 +50,21 @@ namespace Kite {
 // Class  :  "Kite::Configuration".
 
 
-  Configuration* Configuration::_default = NULL;
-
-
-  Configuration* Configuration::getDefault ()
-  {
-    if ( _default == NULL ) {
-      _default = new Configuration ( Katabatic::Configuration::getDefault() );
-    }
-    return _default;
-  }
-
-
   Configuration::Configuration ( Katabatic::Configuration* base )
     : Katabatic::Configuration()
     , _base               (base)
     , _postEventCb        ()
-    , _edgeCapacityPercent(0.80)
-    , _expandStep         (0.99)
+    , _edgeCapacityPercent(Cfg::getParamPercentage("kite.edgeCapacity", 80.0)->asDouble())
+    , _expandStep         (Cfg::getParamPercentage("kite.expandStep"  ,100.0)->asDouble())
     , _ripupLimits        ()
-    , _ripupCost          (3)
-    , _eventsLimit        (4000000)
+    , _ripupCost          (Cfg::getParamPercentage("kite.ripupCost"   ,      3)->asInt())
+    , _eventsLimit        (Cfg::getParamPercentage("kite.eventsLimit" ,4000000)->asInt())
   {
-    _ripupLimits[BorderRipupLimit]     = 26;
-    _ripupLimits[StrapRipupLimit]      = 16;
-    _ripupLimits[LocalRipupLimit]      =  7;
-    _ripupLimits[GlobalRipupLimit]     =  5;
-    _ripupLimits[LongGlobalRipupLimit] =  5;
+    _ripupLimits[BorderRipupLimit]     = Cfg::getParamPercentage("kite.borderRipupLimit"     ,26)->asInt();
+    _ripupLimits[StrapRipupLimit]      = Cfg::getParamPercentage("kite.strapRipupLimit"      ,16)->asInt();
+    _ripupLimits[LocalRipupLimit]      = Cfg::getParamPercentage("kite.localRipupLimit"      , 7)->asInt();
+    _ripupLimits[GlobalRipupLimit]     = Cfg::getParamPercentage("kite.globalRipupLimit"     , 5)->asInt();
+    _ripupLimits[LongGlobalRipupLimit] = Cfg::getParamPercentage("kite.longGlobalRipupLimit" , 5)->asInt();
   }
 
 

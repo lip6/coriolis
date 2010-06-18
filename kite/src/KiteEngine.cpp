@@ -105,7 +105,7 @@ namespace Kite {
     : KatabaticEngine  (cell)
     , _knik            (NULL)
     , _obstacleNet     (NULL)
-    , _configuration   (Configuration::getDefault()->clone(this))
+    , _configuration   (new Configuration(getKatabaticConfiguration()))
     , _routingPlanes   ()
     , _kiteGrid        (NULL)
     , _negociateWindow (NULL)

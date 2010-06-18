@@ -47,7 +47,7 @@
 #include  <katabatic/GCell.h>
 #include  <knik/KnikEngine.h>
 #include  <kite/GraphicKiteEngine.h>
-#include  <kite/ConfigurationWidget.h>
+//#include  <kite/ConfigurationWidget.h>
 
 
 namespace Kite {
@@ -331,16 +331,16 @@ namespace Kite {
     connect ( this, SIGNAL(cellPreModificated ()), _viewer->getCellWidget(), SLOT(cellPreModificate ()) );
     connect ( this, SIGNAL(cellPostModificated()), _viewer->getCellWidget(), SLOT(cellPostModificate()) );
 
-    ControllerWidget* controller = _viewer->getControllerWidget();
-    ConfigurationWidget* setting = controller->getSettings()
-      ->findChild<ConfigurationWidget*>("controller.tabSettings.setting.kite");
+    // ControllerWidget* controller = _viewer->getControllerWidget();
+    // ConfigurationWidget* setting = controller->getSettings()
+    //   ->findChild<ConfigurationWidget*>("controller.tabSettings.setting.kite");
 
-    if ( setting == NULL ) {
-      setting = new ConfigurationWidget ();
-      setting->setObjectName    ( "controller.tabSettings.setting.kite" );
-      setting->setConfiguration ( Configuration::getDefault() );
-      controller->addSetting ( setting, "Kite" );
-    }
+    // if ( setting == NULL ) {
+    //   setting = new ConfigurationWidget ();
+    //   setting->setObjectName    ( "controller.tabSettings.setting.kite" );
+    //   setting->setConfiguration ( Configuration::getDefault() );
+    //   controller->addSetting ( setting, "Kite" );
+    // }
   }
 
 

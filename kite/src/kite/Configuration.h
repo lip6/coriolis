@@ -60,11 +60,10 @@ namespace Kite {
                        , RipupLimitsTableSize=5
                        };
     public:
-      static  Configuration*             getDefault             ();
-    public:
     // Constructor & Destructor.
       virtual Configuration*             clone                  () const;
       virtual Configuration*             clone                  ( KiteEngine* kite ) const;
+                                         Configuration          ( Katabatic::Configuration* );
                                         ~Configuration          ();
     // Decorateds.                                              
       virtual bool                       isGMetal               ( const Layer* ) const;
@@ -99,12 +98,7 @@ namespace Kite {
       virtual Record*                    _getRecord             () const;
       virtual string                     _getString             () const;
       virtual string                     _getTypeName           () const;
-
-    protected:
-                                         Configuration          ( Katabatic::Configuration* );
     private:
-    // Static Attributes.
-      static Configuration*              _default;
     // Attributes.
              Katabatic::Configuration*   _base;
              PostEventCb_t               _postEventCb;

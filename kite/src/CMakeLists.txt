@@ -2,9 +2,10 @@
                include ( ${QT_USE_FILE} )
 
    include_directories ( ${KITE_SOURCE_DIR}/src
-                         ${Boost_INCLUDE_DIRS}
-                         ${HURRICANE_INCLUDE_DIR} 
                          ${CORIOLIS_INCLUDE_DIR} 
+                         ${HURRICANE_INCLUDE_DIR} 
+                         ${CONFIGURATION_INCLUDE_DIR} 
+                         ${Boost_INCLUDE_DIRS}
                        )
                    set ( includes      kite/TrackSegmentCost.h
                                        kite/TrackCost.h
@@ -30,11 +31,8 @@
                                        kite/Configuration.h
                                        kite/KiteEngine.h
                                        kite/GraphicKiteEngine.h
-                                       kite/ConfigurationWidget.h
                        )
-		   set ( mocIncludes   kite/GraphicKiteEngine.h
-                                       kite/ConfigurationWidget.h
-                       )
+		   set ( mocIncludes   kite/GraphicKiteEngine.h )
                    set ( cpps          TrackSegmentCost.cpp
                                        TrackCost.cpp
                                        DataNegociate.cpp
@@ -63,7 +61,6 @@
                                        Configuration.cpp
                                        KiteEngine.cpp
                                        GraphicKiteEngine.cpp
-                                       ConfigurationWidget.cpp
                        )
                    set ( kitecpps      KiteMain.cpp )
           qt4_wrap_cpp ( mocCpps       ${mocIncludes} )
@@ -90,6 +87,7 @@
                                           ${HURRICANE_GRAPHICAL_LIBRARIES}
                                           ${CIF_LIBRARY}
                                           ${AGDS_LIBRARY}
+                                          ${CONFIGURATION_LIBRARY}
                                           ${QT_LIBRARIES}
                                           ${LEFDEF_LIBRARIES}
                                           ${OA_LIBRARIES}
