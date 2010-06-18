@@ -31,11 +31,16 @@
 class QCheckBox;
 class QComboBox;
 
+namespace Cfg {
+  class ConfigurationWidget;
+}
+
 #include  "hurricane/Occurrence.h"
 
 
 namespace Hurricane {
 
+  using Cfg::ConfigurationWidget;
 
   class Record;
   class Net;
@@ -233,21 +238,34 @@ namespace Hurricane {
 
   class TabSettings : public ControllerTab {
       Q_OBJECT;
-
     public:
-                         TabSettings   ( QWidget* parent=NULL );
-      inline QTabWidget* getSettings   ();
-      inline int         addSetting    ( QWidget* page, const QString& label );
+                                  TabSettings   ( QWidget* parent=NULL );
+      inline ConfigurationWidget* getSettings   ();
     public slots:
-             void        setCellWidget ( CellWidget* );
-
-    protected:
-      QTabWidget* _settings;
+             void                 setCellWidget ( CellWidget* );
+    private:
+      ConfigurationWidget* _configuration;
+      
   };
 
 
-  inline QTabWidget* TabSettings::getSettings () { return _settings; }
-  inline int         TabSettings::addSetting  ( QWidget* page, const QString& label ) { return _settings->addTab(page,label); }
+  // class TabSettings : public ControllerTab {
+  //     Q_OBJECT;
+
+  //   public:
+  //                        TabSettings   ( QWidget* parent=NULL );
+  //     inline QTabWidget* getSettings   ();
+  //     inline int         addSetting    ( QWidget* page, const QString& label );
+  //   public slots:
+  //            void        setCellWidget ( CellWidget* );
+
+  //   protected:
+  //     QTabWidget* _settings;
+  // };
+
+
+  // inline QTabWidget* TabSettings::getSettings () { return _settings; }
+  // inline int         TabSettings::addSetting  ( QWidget* page, const QString& label ) { return _settings->addTab(page,label); }
 
 
 // -------------------------------------------------------------------
@@ -268,7 +286,7 @@ namespace Hurricane {
       inline InspectorWidget*     getInspectorWidget ();
       inline TabSettings*         getSettings        ();
              void                 setCellWidget      ( CellWidget* );
-      inline int                  addSetting         ( QWidget* page, const QString& label );
+    //inline int                  addSetting         ( QWidget* page, const QString& label );
     public slots:                 
              void                 cellPreModificate  ();
              void                 cellPostModificate ();
@@ -296,7 +314,7 @@ namespace Hurricane {
   inline SelectionWidget*     ControllerWidget::getSelection       () { return _tabSelection->getSelection(); }
   inline InspectorWidget*     ControllerWidget::getInspectorWidget () { return _tabInspector->getInspectorWidget(); }
   inline TabSettings*         ControllerWidget::getSettings        () { return _tabSettings; }
-  inline int                  ControllerWidget::addSetting         ( QWidget* page, const QString& label ) { return _tabSettings->addSetting(page,label); }
+//inline int                  ControllerWidget::addSetting         ( QWidget* page, const QString& label ) { return _tabSettings->addSetting(page,label); }
 
 
 }  // End of Hurricane namespace.

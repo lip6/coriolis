@@ -103,9 +103,13 @@ namespace Hurricane {
     // Conversions.
       static inline long                getDb                   ( Unit u );
       static inline double              getGrid                 ( Unit u );
+      static inline double              getGrid                 ( double u );
       static inline double              getLambda               ( Unit u );
+      static inline double              getLambda               ( double u );
       static inline double              getPhysical             ( Unit u, UnitPower p );
+      static inline double              getPhysical             ( double u, UnitPower p );
       static        string              getValueString          ( Unit u, int mode=SmartTruncate );
+      static        string              getValueString          ( double u, int mode=SmartTruncate );
       static        Record*             getValueRecord          ( const Unit* u );
       static        Slot*               getValueSlot            ( const string& name, const Unit* u );
       static        void                setStringMode           ( unsigned int mode, UnitPower p=Nano );
@@ -134,8 +138,11 @@ namespace Hurricane {
   inline DbU::Unit  DbU::lambda                  ( double value )               { return grid(value*_gridsPerLambda); }
   inline long       DbU::getDb                   ( DbU::Unit u )                { return u; }
   inline double     DbU::getGrid                 ( DbU::Unit u )                { return _resolution*(double)u; }
+  inline double     DbU::getGrid                 ( double u )                   { return _resolution*u; }
   inline double     DbU::getLambda               ( DbU::Unit u )                { return getGrid(u)/_gridsPerLambda; }
+  inline double     DbU::getLambda               ( double u )                   { return getGrid(u)/_gridsPerLambda; }
   inline double     DbU::getPhysical             ( DbU::Unit u, UnitPower p )   { return (_physicalsPerGrid*_resolution*(double)u)/getUnitPower(p); }
+  inline double     DbU::getPhysical             ( double u, UnitPower p )      { return (_physicalsPerGrid*_resolution*u)/getUnitPower(p); }
   inline void       DbU::setRealSnapGridStep     ( DbU::Unit step )             { _realSnapGridStep = step; }
   inline void       DbU::setSymbolicSnapGridStep ( DbU::Unit step )             { _symbolicSnapGridStep = step; }
   inline DbU::Unit  DbU::getOnPhysicalGrid       ( DbU::Unit u, SnapMode mode ) { return getOnCustomGrid(u, grid(1), mode); }

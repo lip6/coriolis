@@ -29,6 +29,8 @@
 #include  <QVBoxLayout>
 #include  <QCheckBox>
 #include  <QComboBox>
+#include  <vlsisapd/configuration/Configuration.h>
+#include  <vlsisapd/configuration/ConfigurationWidget.h>
 #include  <hurricane/DataBase.h>
 #include  <hurricane/Cell.h>
 #include  <hurricane/viewer/Graphics.h>
@@ -43,6 +45,8 @@
 
 
 namespace Hurricane {
+
+  using Cfg::Configuration;
 
 
 // -------------------------------------------------------------------
@@ -436,22 +440,37 @@ namespace Hurricane {
 
 
   TabSettings::TabSettings ( QWidget* parent )
-    : ControllerTab(parent)
-    , _settings(new QTabWidget())
+    : ControllerTab (parent)
+    , _configuration(Configuration::get()->buildWidget())
   { 
     setContentsMargins ( 5, 0, 5, 5 );
 
-    _settings->setObjectName ( "controller.tabSettings.settings" );
+    _configuration->setObjectName ( "controller.tabSettings.settings" );
 
     QVBoxLayout* vLayout  = new QVBoxLayout ();
     vLayout->setContentsMargins ( 0, 0, 0, 0 );
-    vLayout->addWidget ( _settings );
+    vLayout->addWidget ( _configuration );
     setLayout ( vLayout );
   }
 
 
   void  TabSettings::setCellWidget ( CellWidget* )
   { }
+
+
+  // TabSettings::TabSettings ( QWidget* parent )
+  //   : ControllerTab(parent)
+  //   , _settings(new QTabWidget())
+  // { 
+  //   setContentsMargins ( 5, 0, 5, 5 );
+
+  //   _settings->setObjectName ( "controller.tabSettings.settings" );
+
+  //   QVBoxLayout* vLayout  = new QVBoxLayout ();
+  //   vLayout->setContentsMargins ( 0, 0, 0, 0 );
+  //   vLayout->addWidget ( _settings );
+  //   setLayout ( vLayout );
+  // }
 
 
 // -------------------------------------------------------------------

@@ -100,8 +100,6 @@ namespace Hurricane {
   }
 
 
-
-
   void  CellViewer::createActions ()
   {
     if ( _openAction ) return;

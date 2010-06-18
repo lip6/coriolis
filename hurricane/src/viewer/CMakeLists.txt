@@ -3,7 +3,9 @@
 
    include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane
                          ${HURRICANE_SOURCE_DIR}/src/viewer
-                         ${Boost_INCLUDE_DIRS} )
+                         ${CONFIGURATION_INCLUDE_DIR}
+                         ${Boost_INCLUDE_DIRS}
+                       )
 
                    set ( mocincludes hurricane/viewer/HApplication.h
                                      hurricane/viewer/PaletteItem.h
@@ -113,7 +115,8 @@
 
            add_library ( viewer          ${cpps} ${MOC_SRCS} ${RCC_SRCS} )
  target_link_libraries ( viewer          hurricane
+                                         ${CONFIGURATION_LIBRARIES}
                                          ${QT_LIBRARIES}
-#                                        ${Boost_LIBRARIES}
+                                         ${Boost_LIBRARIES}
                        )
                install ( TARGETS         viewer        DESTINATION lib${LIB_SUFFIX} )

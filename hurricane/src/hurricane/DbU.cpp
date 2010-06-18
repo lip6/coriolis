@@ -299,6 +299,52 @@ namespace Hurricane {
   }
 
 
+  string  DbU::getValueString ( double u, int mode )
+  {
+    char buffer[1024];
+    char unitPower = 'u';
+    char unitSymbol   = '\0';
+
+    if ( _stringMode == Grid ) {
+      unitPower = 'g';
+      snprintf ( buffer, 1024, "%.1f", getGrid(u) );
+    } else if ( _stringMode == Symbolic ) {
+      unitPower = 'l';
+      snprintf ( buffer, 1024, "%.1f", getLambda(u) );
+    } else if ( _stringMode == Physical ) {
+      unitSymbol = 'm';
+      switch ( _stringModeUnitPower ) {
+        case Pico:  unitPower = 'p'; break;
+        case Nano:  unitPower = 'n'; break;
+        case Micro: unitPower = 'u'; break;
+        case Milli: unitPower = 'm'; break;
+        case Unity: unitPower = 'U'; break;
+        case Kilo:  unitPower = 'k'; break;
+        default:    unitPower = '?'; break;
+      }
+      snprintf ( buffer, 1024, "%.3f", getPhysical(u,_stringModeUnitPower) );
+    } else {
+      if ( _stringMode != Db )
+        cerr << "[ERROR] Unknown Unit representation mode: " << _stringMode << endl;
+
+      snprintf ( buffer, 1024, "%f", u );
+    }
+
+    size_t length = strlen(buffer) - 1;
+    if ( mode & SmartTruncate ) {
+      for ( ; length > 0 ; length-- ) {
+        if ( buffer[length] == '.' ) { length--; break; }
+        if ( buffer[length] != '0' ) break;
+      }
+    }
+    buffer[++length] = unitPower;
+    if ( unitSymbol ) buffer[++length] = unitSymbol;
+    buffer[++length] = '\0';
+
+    return buffer;
+  }
+
+
   Record* DbU::getValueRecord ( const DbU::Unit* u )
   {
     Record* record = new Record(getValueString(*u));
