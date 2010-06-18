@@ -4,6 +4,7 @@
    include_directories ( ${NIMBUS_SOURCE_DIR}/src
                          ${HURRICANE_INCLUDE_DIR} 
                          ${CORIOLIS_INCLUDE_DIR}
+                         ${CONFIGURATION_INCLUDE_DIR}
                        )
                    set ( includes nimbus/Configuration.h
                                   nimbus/SplitterContact.h nimbus/SplitterContacts.h

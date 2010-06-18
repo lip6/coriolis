@@ -26,6 +26,7 @@
 #include  <iostream>
 #include  <iomanip>
 
+#include  "vlsisapd/configuration/Configuration.h"
 #include  "hurricane/Cell.h"
 #include  "crlcore/Utilities.h"
 #include  "crlcore/AllianceFramework.h"
@@ -42,6 +43,7 @@ namespace Nimbus {
   using  std::setprecision;
   using  std::ostringstream;
   using  std::string;
+  using  Cfg::Parameter;
   using  Hurricane::tab;
   using  Hurricane::inltrace;
   using  CRL::AllianceFramework;
@@ -51,30 +53,16 @@ namespace Nimbus {
 // Class  :  "Nimbus::Configuration".
 
 
-  Configuration* Configuration::_default = NULL;
-
-
-  Configuration* Configuration::getDefault ()
-  {
-    if ( _default == NULL ) {
-      _default = new Configuration ( AllianceFramework::get()->getCellGauge()
-                                   , AllianceFramework::get()->getRoutingGauge()
-                                   );
-    }
-    return _default;
-  }
-
-
   Configuration::Configuration ( CellGauge* cg, RoutingGauge* rg )
     : _cellGauge    (NULL)
     , _routingGauge (NULL)
-    , _pinsPlacement(false)
-    , _aspectRatio  (1.00)
-    , _margin       (0.40)
+    , _pinsPlacement(Cfg::getParamBool      ("nimbus.pinsPlacement",false)->asBool  ())
+    , _aspectRatio  (Cfg::getParamPercentage("nimbus.aspectRatio"  ,100.0)->asDouble())
+    , _margin       (Cfg::getParamPercentage("nimbus.spaceMargin"  , 40.0)->asDouble())
     , _workZone     ()
   {
-    _cellGauge    = cg->getClone();
-    _routingGauge = rg->getClone();
+    _cellGauge    = (cg != NULL) ? cg->getClone() : AllianceFramework::get()->getCellGauge();
+    _routingGauge = (rg != NULL) ? rg->getClone() : AllianceFramework::get()->getRoutingGauge();
   }
 
 
@@ -90,10 +78,6 @@ namespace Nimbus {
 
   Configuration::~Configuration ()
   { }
-
-
-  Configuration* Configuration::clone () const
-  { return new Configuration(*this); }
 
 
   void  Configuration::print ( Cell* cell ) const

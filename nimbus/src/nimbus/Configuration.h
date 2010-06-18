@@ -58,13 +58,10 @@ namespace Nimbus {
 
 
   class Configuration {
-    public:
-      static  Configuration*      getDefault                    ();
     public:                    
     // Constructor & Destruct  or.
-                                  Configuration                 ( CellGauge*, RoutingGauge* );
+                                  Configuration                 ( CellGauge* cg=NULL, RoutingGauge* rg=NULL );
                                  ~Configuration                 ();
-              Configuration*      clone                         () const;
     // Methods.
       inline  const CellGauge*    getCellGauge                  () const;
       inline  const RoutingGauge* getRoutingGauge               () const;
@@ -88,7 +85,6 @@ namespace Nimbus {
               std::string         _getTypeName                  () const;
     private:                   
     // Attributes.             
-      static Configuration* _default;
              CellGauge*     _cellGauge;
              RoutingGauge*  _routingGauge;
              bool           _pinsPlacement;

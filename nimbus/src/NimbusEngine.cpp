@@ -363,7 +363,7 @@ const Name  NimbusEngine::_toolName = "Nimbus";
 NimbusEngine::NimbusEngine (Cell* cell, const Box& workZone)
 // *********************************************************
   : Inherit         (cell)
-  , _configuration  (Configuration::getDefault()->clone())
+  , _configuration  (new Configuration())
   , _depth          (0)
   , _placementBoxSet()
   , _routingBoxSet  ()
