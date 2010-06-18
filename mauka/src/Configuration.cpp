@@ -26,6 +26,7 @@
 #include  <iostream>
 #include  <iomanip>
 
+#include  "vlsisapd/configuration/Configuration.h"
 #include  "hurricane/Cell.h"
 #include  "crlcore/Utilities.h"
 #include  "crlcore/AllianceFramework.h"
@@ -51,30 +52,18 @@ namespace Mauka {
 // Class  :  "Mauka::Configuration".
 
 
-  Configuration* Configuration::_default = NULL;
-
-
-  Configuration* Configuration::getDefault ()
-  {
-    if ( _default == NULL ) {
-      _default = new Configuration ( AllianceFramework::get()->getCellGauge() );
-    }
-    return _default;
-  }
-
-
   Configuration::Configuration ( CellGauge* cg )
     : _cellGauge                 (NULL)
     , _refreshCb                 ()
-    , _standardSimulatedAnnealing(false)
-    , _ignorePins                (false)
-    , _plotBins                  (true)
-    , _searchRatio               (0.50)
-    , _annealingNetMult          (0.90)
-    , _annealingBinMult          (0.05)
-    , _annealingRowMult          (0.05)
+    , _standardSimulatedAnnealing(Cfg::getParamBool      ("mauka.standardAnnealing",false)->asBool())
+    , _ignorePins                (Cfg::getParamBool      ("mauka.ignorePins"       ,false)->asBool())
+    , _plotBins                  (Cfg::getParamBool      ("mauka.plotBins"         ,true )->asBool())
+    , _searchRatio               (Cfg::getParamPercentage("mauka.searchRatio"      , 50.0)->asDouble())
+    , _annealingNetMult          (Cfg::getParamPercentage("mauka.annealingNetMult" , 90.0)->asDouble())
+    , _annealingBinMult          (Cfg::getParamPercentage("mauka.annealingBinMult" ,  5.0)->asDouble())
+    , _annealingRowMult          (Cfg::getParamPercentage("mauka.annealingRowMult" ,  5.0)->asDouble())
   {
-    _cellGauge = cg->getClone();
+    _cellGauge = (cg != NULL) ? cg->getClone() : AllianceFramework::get()->getCellGauge();
   }
 
 
@@ -93,10 +82,6 @@ namespace Mauka {
 
   Configuration::~Configuration ()
   { }
-
-
-  Configuration* Configuration::clone () const
-  { return new Configuration(*this); }
 
 
   void  Configuration::print ( Cell* cell ) const

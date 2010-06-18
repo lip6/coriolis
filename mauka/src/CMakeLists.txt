@@ -2,8 +2,9 @@
                include ( ${QT_USE_FILE} )
 
    include_directories ( ${MAUKA_SOURCE_DIR}/src
-                         ${HURRICANE_INCLUDE_DIR} 
                          ${CORIOLIS_INCLUDE_DIR} 
+                         ${HURRICANE_INCLUDE_DIR} 
+                         ${CONFIGURATION_INCLUDE_DIR} 
                        )
                    set ( includes      mauka/Configuration.h
                                        mauka/BBPlacer.h
@@ -17,10 +18,8 @@
                                        mauka/Surface.h
                                        mauka/MaukaEngine.h
                        )
-		   set ( mocIncludes   mauka/ConfigurationWidget.h
-                                       mauka/GraphicMaukaEngine.h )
+		   set ( mocIncludes   mauka/GraphicMaukaEngine.h )
                    set ( cpps          Configuration.cpp
-                                       ConfigurationWidget.cpp
                                        BBPlacer.cpp
                                        Bin.cpp
                                        Container.cpp

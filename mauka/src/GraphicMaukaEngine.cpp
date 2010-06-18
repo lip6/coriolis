@@ -48,7 +48,7 @@
 #include  <metis/MetisEngine.h>
 #include  <mauka/Container.h>
 #include  <mauka/GraphicMaukaEngine.h>
-#include  <mauka/ConfigurationWidget.h>
+//#include  <mauka/ConfigurationWidget.h>
 
 
 namespace Mauka {
@@ -269,19 +269,19 @@ namespace Mauka {
     connect ( this, SIGNAL(cellPreModificated ()), _viewer->getCellWidget(), SLOT(cellPreModificate ()) );
     connect ( this, SIGNAL(cellPostModificated()), _viewer->getCellWidget(), SLOT(cellPostModificate()) );
 
-    ControllerWidget*    controller = _viewer->getControllerWidget();
-    ConfigurationWidget* setting     = controller->getSettings()
-      ->findChild<ConfigurationWidget*>("controller.tabSettings.setting.mauka");
+    // ControllerWidget*    controller = _viewer->getControllerWidget();
+    // ConfigurationWidget* setting     = controller->getSettings()
+    //   ->findChild<ConfigurationWidget*>("controller.tabSettings.setting.mauka");
 
-    if ( setting == NULL ) {
-      setting = new ConfigurationWidget ();
-      setting->setObjectName    ( "controller.tabSettings.setting.mauka" );
-      setting->setConfiguration ( Nimbus::Configuration::getDefault()
-                                , Metis::Configuration::getDefault()
-                                , Configuration::getDefault()
-                                );
-      controller->addSetting ( setting, "Mauka" );
-    }
+    // if ( setting == NULL ) {
+    //   setting = new ConfigurationWidget ();
+    //   setting->setObjectName    ( "controller.tabSettings.setting.mauka" );
+    //   setting->setConfiguration ( Nimbus::Configuration::getDefault()
+    //                             , Metis::Configuration::getDefault()
+    //                             , Configuration::getDefault()
+    //                             );
+    //   controller->addSetting ( setting, "Mauka" );
+    // }
   }
 
 

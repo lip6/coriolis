@@ -52,12 +52,9 @@ namespace Mauka {
     public:
       typedef boost::function< void(void) >  RefreshCb_t;
     public:
-      static  Configuration* getDefault                    ();
-    public:
     // Constructor & Destructor.
-                               Configuration                 ( CellGauge* );
+                               Configuration                 ( CellGauge* cg=NULL );
                               ~Configuration                 ();
-              Configuration*   clone                         () const;
     // Methods.
       inline  const CellGauge* getCellGauge                  () const;
       inline  bool             useStandardSimulatedAnnealing () const;
@@ -86,7 +83,6 @@ namespace Mauka {
               std::string      _getTypeName                  () const;
     private:
     // Attributes.
-      static Configuration* _default;
              CellGauge*     _cellGauge;
              RefreshCb_t    _refreshCb;
              bool           _standardSimulatedAnnealing;

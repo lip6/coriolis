@@ -34,6 +34,7 @@
 //
 // Authors-Tag 
 
+#include <memory>
 #include <queue>
 #include "hurricane/Warning.h"
 #include "hurricane/Cell.h"
@@ -51,6 +52,7 @@
 
 namespace Mauka {
 
+using std::auto_ptr;
 using Hurricane::ForEachIterator;
 using Hurricane::Warning;
 using Hurricane::Plug;
@@ -67,7 +69,7 @@ Name  MaukaEngine::_toolName = "Mauka";
 MaukaEngine::MaukaEngine(Cell* cell)
 // *********************************
     : Inherit(cell)
-    , _configuration(Configuration::getDefault()->clone())
+    , _configuration(new Configuration())
     , _instanceOccurrencesVector()
     , _instanceOccurrencesMap()
     , _instanceWidths()
@@ -465,8 +467,10 @@ namespace {
 bool TestMaukaConstruction(Cell* cell, GCell* gcell)
 // *************************************************
 {
-    DbU::Unit pitch       = Configuration::getDefault()->getPitch(); 
-    DbU::Unit sliceHeight = Configuration::getDefault()->getSliceHeight();
+    auto_ptr<Configuration> configuration ( new Configuration() );
+
+    DbU::Unit pitch       = configuration->getPitch(); 
+    DbU::Unit sliceHeight = configuration->getSliceHeight();
 
     const Box& box = gcell->getBox();
 
