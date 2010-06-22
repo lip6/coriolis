@@ -523,7 +523,7 @@ namespace Kite {
 
   void  NegociateWindow::printStatistics () const
   {
-    cout << "  o  Computing statistics." << endl;
+    cmess1 << "  o  Computing statistics." << endl;
 
     Statistics globalStatistics;
     size_t     biggestEventsCount = 0;
@@ -539,11 +539,11 @@ namespace Kite {
         biggestRSsize = _gcellRoutingSets[i]->getGCells().size();
     }
     
-    cout << Dots::asSizet("     - Processeds Events Total",RoutingEvent::getProcesseds()) << endl;
-    cout << Dots::asSizet("     - Unique Events Total"
-                         ,(RoutingEvent::getProcesseds() - RoutingEvent::getCloneds())) << endl;
-    cout << Dots::asSizet("     - Biggest Events Chunk"   ,biggestEventsCount) << endl;
-    cout << Dots::asSizet("     - Biggest Routing Set"    ,biggestRSsize) << endl;
+    cmess1 << Dots::asSizet("     - Processeds Events Total",RoutingEvent::getProcesseds()) << endl;
+    cmess1 << Dots::asSizet("     - Unique Events Total"
+                           ,(RoutingEvent::getProcesseds() - RoutingEvent::getCloneds())) << endl;
+    cmess1 << Dots::asSizet("     - Biggest Events Chunk"   ,biggestEventsCount) << endl;
+    cmess1 << Dots::asSizet("     - Biggest Routing Set"    ,biggestRSsize) << endl;
   }
 
 

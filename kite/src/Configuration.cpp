@@ -57,14 +57,14 @@ namespace Kite {
     , _edgeCapacityPercent(Cfg::getParamPercentage("kite.edgeCapacity", 80.0)->asDouble())
     , _expandStep         (Cfg::getParamPercentage("kite.expandStep"  ,100.0)->asDouble())
     , _ripupLimits        ()
-    , _ripupCost          (Cfg::getParamPercentage("kite.ripupCost"   ,      3)->asInt())
-    , _eventsLimit        (Cfg::getParamPercentage("kite.eventsLimit" ,4000000)->asInt())
+    , _ripupCost          (Cfg::getParamInt("kite.ripupCost"   ,      3)->asInt())
+    , _eventsLimit        (Cfg::getParamInt("kite.eventsLimit" ,4000000)->asInt())
   {
-    _ripupLimits[BorderRipupLimit]     = Cfg::getParamPercentage("kite.borderRipupLimit"     ,26)->asInt();
-    _ripupLimits[StrapRipupLimit]      = Cfg::getParamPercentage("kite.strapRipupLimit"      ,16)->asInt();
-    _ripupLimits[LocalRipupLimit]      = Cfg::getParamPercentage("kite.localRipupLimit"      , 7)->asInt();
-    _ripupLimits[GlobalRipupLimit]     = Cfg::getParamPercentage("kite.globalRipupLimit"     , 5)->asInt();
-    _ripupLimits[LongGlobalRipupLimit] = Cfg::getParamPercentage("kite.longGlobalRipupLimit" , 5)->asInt();
+    _ripupLimits[BorderRipupLimit]     = Cfg::getParamInt("kite.borderRipupLimit"     ,26)->asInt();
+    _ripupLimits[StrapRipupLimit]      = Cfg::getParamInt("kite.strapRipupLimit"      ,16)->asInt();
+    _ripupLimits[LocalRipupLimit]      = Cfg::getParamInt("kite.localRipupLimit"      , 7)->asInt();
+    _ripupLimits[GlobalRipupLimit]     = Cfg::getParamInt("kite.globalRipupLimit"     , 5)->asInt();
+    _ripupLimits[LongGlobalRipupLimit] = Cfg::getParamInt("kite.longGlobalRipupLimit" , 5)->asInt();
   }
 
 
