@@ -41,7 +41,7 @@
         <drawingstyle name="text.instance"   color="0,0,0"       border="1" threshold="4.0"/>
         <drawingstyle name="text.reference"  color="255,255,255" border="1" threshold="20.0"/>
         <drawingstyle name="undef"           color="238,130,238" border="0" pattern="2244118822441188"/>
-        <drawingstyle name="mauka.container" color="139,0,139"   border="4" pattern="0000000000000000"/>
+        <drawingstyle name="mauka.container" color="139,0,139"   border="4" pattern="0000000000000000" goMatched="false"/>
       </group>
       <group name="Active Layers">
         <drawingstyle name="nWell"    color="210,180,140" pattern="55AA55AA55AA55AA" threshold="1.50"/>

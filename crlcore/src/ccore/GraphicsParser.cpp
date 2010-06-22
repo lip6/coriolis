@@ -68,6 +68,7 @@ namespace CRL {
     int     border           = 0;
     float   threshold        = 1.0;
     Name    drawingStyleName = "unnamed";
+    bool    goMatched        = true;
     QString value;
 
     value = _reader->attributes().value("name").toString();
@@ -100,15 +101,20 @@ namespace CRL {
     if ( !value.isEmpty() )
       threshold = value.toFloat ();
 
+    value = _reader->attributes().value("goMatched").toString().toLower();
+    if      ( value == "true"  ) goMatched = true;
+    else if ( value == "false" ) goMatched = false;
+
     _displayStyle->addDrawingStyle ( _drawingGroupName
-                                    , drawingStyleName
-                                    , pattern
-                                    , red
-                                    , green
-                                    , blue
-                                    , border
-                                    , threshold
-                                    );
+                                   , drawingStyleName
+                                   , pattern
+                                   , red
+                                   , green
+                                   , blue
+                                   , border
+                                   , threshold
+                                   , goMatched
+                                   );
 
     parseNoChilds ();
   }
