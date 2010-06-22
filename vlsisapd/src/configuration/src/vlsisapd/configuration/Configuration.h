@@ -48,7 +48,8 @@ namespace Cfg {
                                       getParameters  () const;
       inline const LayoutDescription& getLayout      () const;
       inline LayoutDescription&       getLayout      ();
-             Parameter*               getParameter   ( const std::string& id ) const;
+             Parameter*               getParameter   ( const std::string& id
+                                                     , Parameter::Type    type=Parameter::Unknown ) const;
              Parameter*               addParameter   ( const std::string& id
                                                      , Parameter::Type    type
                                                      , const std::string& value );
@@ -75,71 +76,65 @@ namespace Cfg {
 
   inline Parameter* getParamString ( const std::string& id, const std::string& value="<undefined>" )
   {
-    Parameter* parameter = Configuration::get()->getParameter(id);
+    Parameter* parameter = Configuration::get()->getParameter(id,Parameter::String);
     if ( parameter == NULL ) {
       parameter = Configuration::get()->addParameter ( id, Parameter::String, value );
     }
-
     return parameter;
   }
 
 
   inline Parameter* getParamBool ( const std::string& id, bool value=false )
   {
-    Parameter* parameter = Configuration::get()->getParameter(id);
+    Parameter* parameter = Configuration::get()->getParameter(id,Parameter::Bool);
     if ( parameter == NULL ) {
       parameter = Configuration::get()->addParameter ( id, Parameter::Bool, "false" );
       parameter->setBool ( value );
     }
-
     return parameter;
   }
 
 
   inline Parameter* getParamInt ( const std::string& id, int value=0 )
   {
-    Parameter* parameter = Configuration::get()->getParameter(id);
+    Parameter* parameter = Configuration::get()->getParameter(id,Parameter::Int);
     if ( parameter == NULL ) {
       parameter = Configuration::get()->addParameter ( id, Parameter::Int, "0" );
       parameter->setInt ( value );
     }
-
     return parameter;
   }
 
 
   inline Parameter* getParamEnumerate ( const std::string& id, int value=0 )
   {
-    Parameter* parameter = Configuration::get()->getParameter(id);
+    Parameter* parameter = Configuration::get()->getParameter(id,Parameter::Enumerate);
     if ( parameter == NULL ) {
       parameter = Configuration::get()->addParameter ( id, Parameter::Enumerate, "0" );
       parameter->setInt ( value );
     }
-
     return parameter;
   }
 
 
   inline Parameter* getParamDouble ( const std::string& id, double value=0.0 )
   {
-    Parameter* parameter = Configuration::get()->getParameter(id);
+    Parameter* parameter = Configuration::get()->getParameter(id,Parameter::Double);
     if ( parameter == NULL ) {
       parameter = Configuration::get()->addParameter ( id, Parameter::Double, "0.0" );
       parameter->setDouble ( value );
     }
-
     return parameter;
   }
 
 
   inline Parameter* getParamPercentage ( const std::string& id, double value=91.0 )
   {
-    Parameter* parameter = Configuration::get()->getParameter(id);
+    Parameter* parameter = Configuration::get()->getParameter(id,Parameter::Percentage);
     if ( parameter == NULL ) {
       parameter = Configuration::get()->addParameter ( id, Parameter::Percentage, "0.91" );
       parameter->setPercentage ( value );
     }
-
     return parameter;
   }
 

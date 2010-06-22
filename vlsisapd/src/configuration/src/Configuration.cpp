@@ -132,15 +132,21 @@ namespace {
     else if ( attrType == "enumerate"  ) type = Parameter::Enumerate;
 
     _parameter = _configuration->getParameter ( attrId );
-
     if ( _parameter == NULL ) {
-      _parameter = _configuration->addParameter ( attrId
+      _parameter = _configuration->addParameter ( attrId 
                                                 , type
                                                 , _getAttributeValue("value")
                                                 );
-
     } else {
-      _parameter->setString ( _getAttributeValue("value") );
+      _parameter->setString ( _getAttributeValue("value"), false );
+    }
+
+    if ( type == Parameter::Percentage ) {
+      istringstream s ( _getAttributeValue("value") );
+      double ratio;
+      s >> ratio;
+
+      _parameter->setPercentage ( ratio );
     }
 
     if (   (type == Parameter::Enumerate)
@@ -345,12 +351,26 @@ namespace Cfg {
   { return _layout.buildWidget(); }
 
 
-  Parameter* Configuration::getParameter ( const string& name ) const
+  Parameter* Configuration::getParameter ( const string& name, Parameter::Type type ) const
   {
     map<const string,Parameter*>::const_iterator iparameter = _parameters.find(name);
-    if ( iparameter != _parameters.end() ) return iparameter->second;
+    if ( iparameter == _parameters.end() ) return NULL;
 
-    return NULL;
+    if ( type != Parameter::Unknown ) {
+      Parameter::Type t1 = (*iparameter).second->getType();
+      Parameter::Type t2 = type;
+
+      if ( t1 > t2 ) swap ( t1, t2 );
+
+      if (         (t1 != t2)
+         and not ( (t1 == Parameter::Double) and (t2 == Parameter::Percentage) )
+         and not ( (t1 == Parameter::Int   ) and (t2 == Parameter::Enumerate ) ) )
+        cerr << "[ERROR] Accessing " << Parameter::typeToString((*iparameter).second->getType())
+             << " parameter <" << (*iparameter).second->getId()
+             << "> as " << Parameter::typeToString(type)<< " (type mismatch)." << endl;
+    }
+
+    return (*iparameter).second;
   }
 
 

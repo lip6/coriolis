@@ -30,6 +30,7 @@
 #include  <string>
 #include  <sstream>
 #include  <iostream>
+#include  <boost/function.hpp>
 
 
 namespace Cfg {
@@ -37,16 +38,18 @@ namespace Cfg {
 
   class Parameter {
     public:
-      enum Type  { String     = 1
-                 , Int        = 2
-                 , Double     = 3
-                 , Bool       = 4
-                 , Percentage = 5
-                 , Enumerate  = 6
+      enum Type  { Unknown    = 0
+                 , String     = 1
+                 , Bool       = 2
+                 , Int        = 3
+                 , Enumerate  = 4
+                 , Double     = 5
+                 , Percentage = 6
                  };
       enum Flags { HasMin     = 0x1
                  , HasMax     = 0x2
                  };
+      typedef boost::function< void(Parameter*) >  ParameterChangedCb_t;
     public:
       class EnumValue {
         public:
@@ -56,55 +59,59 @@ namespace Cfg {
           int          _value;
       };
     public:
-      static std::string        typeToString  ( Type );
-    public:
-                                Parameter     ( const std::string& id
-                                              , Type               type
-                                              , const std::string& value );
-      inline const std::string& getId         () const;
-      inline const Type         getType       () const;
-      inline const std::vector<EnumValue>&
-                                getValues     () const;
-      inline const std::vector<std::string>&
-                                getSlaves     () const;
-      inline int                getFlags      () const;
-      inline bool               hasFlags      ( int mask ) const;
-      inline int                getMinInt     () const;
-      inline int                getMaxInt     () const;
-      inline double             getMinDouble  () const;
-      inline double             getMaxDouble  () const;
-      inline bool               checkValue    ( int ) const;
-      inline bool               checkValue    ( double ) const;
-      inline const std::string& asString      () const;
-      inline bool               asBool        () const;
-      inline int                asInt         () const;
-      inline double             asDouble      () const;
-      inline double             asPercentage  () const;
-      inline void               addValue      ( const std::string&, int );
-      inline void               addSlave      ( const std::string& );
-      inline void               setString     ( const std::string& );
-      inline void               setFlags      ( int mask );
-      inline void               unsetFlags    ( int mask );
-      inline void               setInt        ( int );
-      inline void               setDouble     ( double );
-      inline void               setBool       ( bool );
-      inline void               setPercentage ( double );
-      inline void               setMin        ( int );
-      inline void               setMax        ( int );
-      inline void               setMin        ( double );
-      inline void               setMax        ( double );
+      static std::string        typeToString    ( Type );
+    public:                                     
+                                Parameter       ( const std::string& id
+                                                , Type               type
+                                                , const std::string& value );
+      inline const std::string& getId           () const;
+      inline const Type         getType         () const;
+      inline const std::vector<EnumValue>&      
+                                getValues       () const;
+      inline const std::vector<std::string>&    
+                                getSlaves       () const;
+      inline int                getFlags        () const;
+      inline bool               hasFlags        ( int mask ) const;
+      inline int                getMinInt       () const;
+      inline int                getMaxInt       () const;
+      inline double             getMinDouble    () const;
+      inline double             getMaxDouble    () const;
+      inline bool               checkValue      ( int ) const;
+      inline bool               checkValue      ( double ) const;
+      inline const std::string& asString        () const;
+             bool               asBool          () const;
+             int                asInt           () const;
+             double             asDouble        () const;
+             double             asPercentage    () const;
+      inline void               addValue        ( const std::string&, int );
+      inline void               addSlave        ( const std::string& );
+             void               setString       ( const std::string&, bool check=true );
+      inline void               setFlags        ( int mask );
+      inline void               unsetFlags      ( int mask );
+             void               setBool         ( bool );
+             void               setInt          ( int );
+             void               setDouble       ( double );
+             void               setPercentage   ( double );
+      inline void               setMin          ( int );
+      inline void               setMax          ( int );
+      inline void               setMin          ( double );
+      inline void               setMax          ( double );
+      inline void               registerCb      ( ParameterChangedCb_t );
+    private:
+      inline void               _onValueChanged ();
     private:
     // Attributes.
-      std::string               _id;
-      Type                      _type;
-      std::string               _value;
-      std::vector<EnumValue>    _values;
-      int                       _flags;
-      int                       _minInt;
-      int                       _maxInt;
-      double                    _minDouble;
-      double                    _maxDouble;
-      std::vector<std::string>  _slaves;
+      std::string                        _id;
+      Type                               _type;
+      std::string                        _value;
+      std::vector<EnumValue>             _values;
+      int                                _flags;
+      int                                _minInt;
+      int                                _maxInt;
+      double                             _minDouble;
+      double                             _maxDouble;
+      std::vector<std::string>           _slaves;
+      std::vector<ParameterChangedCb_t>  _callbacks;
   };
 
 
@@ -118,7 +125,6 @@ namespace Cfg {
   inline double                 Parameter::getMinDouble () const { return _minDouble; }
   inline double                 Parameter::getMaxDouble () const { return _maxDouble; }
   inline const std::string&     Parameter::asString     () const { return _value; }
-  inline void                   Parameter::setString    ( const std::string& s ) { _value = s; }
 
   inline bool  Parameter::checkValue ( int value ) const {
     bool ok = not (   ( (_flags&HasMin) and (value < _minInt) )
@@ -148,23 +154,6 @@ namespace Cfg {
     _values.push_back ( EnumValue(label,value) );
   }
 
-
-  inline bool  Parameter::asBool () const
-  { std::istringstream s ( _value ); bool b; s >> std::boolalpha >> b; return b; }
-
-  inline int  Parameter::asInt () const
-  { std::istringstream s ( _value ); int i; s >> i; return i; }
-
-  inline double  Parameter::asDouble () const
-  { std::istringstream s ( _value ); double d; s >> d; return d; }
-
-  inline double  Parameter::asPercentage () const
-  { std::istringstream s ( _value ); double r; s >> r; return r*100.0; }
-
-  inline void  Parameter::setInt        ( int i )      { std::ostringstream s; s << i; _value = s.str(); } 
-  inline void  Parameter::setDouble     ( double d )   { std::ostringstream s; s << d; _value = s.str(); } 
-  inline void  Parameter::setBool       ( bool b )     { std::ostringstream s; s << std::boolalpha << b; _value = s.str(); }
-  inline void  Parameter::setPercentage ( double d )   { std::ostringstream s; s << (d/100.0); _value = s.str(); }
   inline void  Parameter::setFlags      ( int mask )   { _flags |= mask; }
   inline void  Parameter::unsetFlags    ( int mask )   { _flags &= ~mask; }
   inline void  Parameter::setMin        ( int min )    { _minInt = min; setFlags(HasMin); }
@@ -178,6 +167,11 @@ namespace Cfg {
 
   inline Parameter::EnumValue::EnumValue ( const std::string& label, int value )
     : _label(label), _value(value) { }
+
+  inline void  Parameter::registerCb ( ParameterChangedCb_t cb ) { _callbacks.push_back(cb); }
+
+  inline void  Parameter::_onValueChanged ()
+  { for ( size_t icb=0 ; icb<_callbacks.size() ; ++icb ) _callbacks[icb]( this ); }
 
 
 }  // End of Cfg namespace.

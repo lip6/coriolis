@@ -54,6 +54,7 @@ namespace Cfg {
       inline bool       hasFlags        ( int mask ) const;
       inline void       setFlags        ( int mask );
       inline void       unsetFlags      ( int mask );
+             void       updateValueCb   ( Parameter* );
     public slots:
              void       updateValue     ();
              void       enableSlaves    ( int );
