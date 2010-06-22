@@ -285,8 +285,13 @@ namespace Metis {
       ysplits = ((int)(trunc ( (1.0/aspectRatio)+0.5 ) )) * 2;
     }
 
-    int    partitionSizeStop = Cfg::getParamInt("metis.numberOfInstancesStopCriterion",45)->asInt();
-    double quadPartitions    = log((double)gates / (double)(partitionSizeStop*xsplits*ysplits) ) / log(4.0) + 1.0;
+
+    size_t partitionSizeStop = Cfg::getParamInt("metis.numberOfInstancesStopCriterion",45)->asInt();
+    if ( gates / (xsplits*ysplits) < partitionSizeStop )
+      throw Error("Design &lt;%s&gt; is too small to be quadri-partionned, only %d gates."
+                 ,getString(cell->getName()).c_str(),gates);
+
+    double quadPartitions = log((double)gates / (double)(partitionSizeStop*xsplits*ysplits) ) / log(4.0) + 1.0;
 
     return (unsigned int)(quadPartitions);
   }
