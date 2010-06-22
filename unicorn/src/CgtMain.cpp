@@ -97,12 +97,6 @@ int main ( int argc, char *argv[] )
     float         expandStep;
     unsigned long eventsLimit;
     unsigned int  traceLevel;
-    bool          verbose1;
-    bool          verbose2;
-    bool          info;
-    bool          showConf;
-    bool          coreDump;
-    bool          logMode;
     bool          textMode;
     double        margin;
     bool          quadriPlace;
@@ -116,24 +110,26 @@ int main ( int argc, char *argv[] )
     boptions::options_description options ("Command line arguments & options");
     options.add_options()
       ( "help,h"             , "Print this help." )
-      ( "trace-level,l"      , boptions::value<unsigned int>(&traceLevel)->default_value(1000)
+      ( "trace-level,l"      , boptions::value<unsigned int>(&traceLevel)
                              , "Set the level of trace, trace messages with a level superior to "
                                "<arg> will be printed on <stderr>." )
-      ( "verbose,v"          , boptions::bool_switch(&verbose1)->default_value(false)
+      ( "verbose,v"          , boptions::bool_switch()
                              , "First level of verbosity.")
-      ( "very-verbose,V"     , boptions::bool_switch(&verbose2)->default_value(false)
+      ( "very-verbose,V"     , boptions::bool_switch()
                              , "Second level of verbosity.")
-      ( "info,i"             , boptions::bool_switch(&info)->default_value(false)
+      ( "info,i"             , boptions::bool_switch()
                              , "Lots of informational messages.")
-      ( "show-conf"          , boptions::bool_switch(&showConf)->default_value(false)
+      ( "show-conf"          , boptions::bool_switch()
                              , "Print Kite configuration settings.")
-      ( "core-dump,D"        , boptions::bool_switch(&coreDump)->default_value(false)
+      ( "conf"               , boptions::value<string>()
+                             , "An XML configuration file." )
+      ( "core-dump,D"        , boptions::bool_switch()
                              , "Enable core dumping.")
-      ( "log-mode,L"         , boptions::bool_switch(&logMode)->default_value(false)
+      ( "log-mode,L"         , boptions::bool_switch()
                              , "Disable ANSI escape sequences displaying.")
       ( "text,t"             , boptions::bool_switch(&textMode)->default_value(false)
                              , "Run in pure text mode.")
-      ( "margin,m"           , boptions::value<double>(&margin)->default_value(40.0)
+      ( "margin,m"           , boptions::value<double>(&margin)
                              , "Percentage of free area to add to the minimal placement area.")
       ( "quadri-place,p"     , boptions::bool_switch(&quadriPlace)->default_value(false)
                              , "Place using quadripartitions then placement legalisation.")
@@ -170,45 +166,31 @@ int main ( int argc, char *argv[] )
       exit ( 0 );
     }
 
-    System::getSystem()->setCatchCore ( not coreDump ); 
-
-    if ( verbose1 ) mstream::enable ( mstream::VerboseLevel1 );
-    if ( verbose2 ) mstream::enable ( mstream::VerboseLevel2 ); 
-    if ( info     ) mstream::enable ( mstream::Info ); 
-    if ( logMode  ) tty::disable ();
-
-    ltracelevel ( traceLevel );
-
-    dbo_ptr<DataBase>          db ( DataBase::create() );
-    dbo_ptr<AllianceFramework> af ( AllianceFramework::create() );
-    Cell* cell = NULL;
-
-    cmess1 << "  o  Reading Configuration." << endl;
-    bfs::path::default_name_check ( bfs::portable_posix_name );
-
-    Cfg::Configuration* conf = Cfg::Configuration::get ();
-
-    const string strSysConfDir = SYS_CONF_DIR;
-    bfs::path systemConfPath;
-    bfs::path sysConfDir     ( strSysConfDir );
-    if ( sysConfDir.has_root_path() )
-      systemConfPath = sysConfDir / "coriolis2" / "tools.configuration.xml";
-    else
-      systemConfPath = af->getEnvironment()->getCORIOLIS_TOP()
-        / sysConfDir / "coriolis2" / "tools.configuration.xml";
-
-    if ( bfs::exists(systemConfPath) ) {
-      cmess1 << "     - <" << systemConfPath.string() << ">." << endl;
-      conf->readFromFile ( systemConfPath.string() );
-    } else {
-      cmess1 << "[WARNING] System configuration file:\n  <" << systemConfPath.string() << "> not found." << endl;
+    if ( arguments.count("conf") ) {
+      bfs::path userConfFile = arguments["conf"].as<string>();
+      if ( bfs::exists(userConfFile) ) {
+        Cfg::Configuration* conf = Cfg::Configuration::get ();
+        conf->readFromFile ( userConfFile.string() );
+      } else {
+        cerr << Warning("User defined configuration file:\n  <%s> not found."
+                       ,userConfFile.string().c_str()) << endl;
+      }
     }
 
-    bfs::path dotConfPath ( "./.coriolis2.configuration.xml" );
-    if ( bfs::exists(dotConfPath) ) {
-      cmess1 << "     - <" << dotConfPath.string() << ">." << endl;
-      conf->readFromFile ( dotConfPath.string() );
-    }
+    if (arguments["core-dump"   ].as<bool>()) Cfg::getParamBool("misc.catchCore"    )->setBool ( false );
+    if (arguments["verbose"     ].as<bool>()) Cfg::getParamBool("misc.verboseLevel1")->setBool ( true );
+    if (arguments["very-verbose"].as<bool>()) Cfg::getParamBool("misc.verboseLevel2")->setBool ( true );
+    if (arguments["info"        ].as<bool>()) Cfg::getParamBool("misc.info"         )->setBool ( true );
+    if (arguments["log-mode"    ].as<bool>()) Cfg::getParamBool("misc.logMode"      )->setBool ( true );
+    if (arguments["show-conf"   ].as<bool>()) Cfg::getParamBool("misc.showConf"     )->setBool ( true );
+
+    if (arguments.count("trace-level" )) Cfg::getParamInt("misc.traceLevel")->setInt ( traceLevel );
+
+    bool showConf = Cfg::getParamBool("misc.showConf")->asBool();
+
+    dbo_ptr<DataBase>          db   ( DataBase::create() );
+    dbo_ptr<AllianceFramework> af   ( AllianceFramework::create() );
+    Cell*                      cell = NULL;
 
     if ( arguments.count("cell") ) {
       cell = af->getCell (arguments["cell"].as<string>().c_str(), Catalog::State::Views );
@@ -226,9 +208,8 @@ int main ( int argc, char *argv[] )
       detailedRoute  = false;
     }
 
-    if ( arguments.count("margin") ) {
+    if ( arguments.count("margin") )
       Cfg::getParamPercentage("nimbus.spaceMargin")->setPercentage ( margin );
-    }
 
     if ( arguments.count("partition-size-stop") )
       Cfg::getParamInt("metis.numberOfInstancesStopCriterion")->setInt ( partitionSizeStop );
@@ -241,6 +222,31 @@ int main ( int argc, char *argv[] )
 
     if ( arguments.count("expand-step") )
       Cfg::getParamPercentage("kite.expandStep")->setPercentage ( expandStep );
+
+    UnicornGui::getBanner().setName    ( "cgt" );
+    UnicornGui::getBanner().setPurpose ( "Coriolis Graphical Tool" );
+
+    cmess1 << UnicornGui::getBanner() << endl;
+    cmess1 << "        Tool Credits" << endl;
+    cmess1 << "        Hurricane .................... Remy Escassut & Christian Masson" << endl;
+    cmess1 << "        Nimbus - Infrastructure .......................... Hugo Clement" << endl;
+    cmess1 << "        Mauka - Placer ........................... Christophe Alexandre" << endl;
+    cmess1 << "        Knik - Global Router ............................ Damien Dupuis" << endl;
+    cmess1 << "        Kite - Detailed Router ....................... Jean-Paul Chaput" << endl;
+    cmess1 << endl;
+
+    cout   << "        hMETIS software credits" << endl;
+    cout   << "        Author ........................................ Georges Karypis" << endl;
+    cout   << "        Prof. Ident. .......................... University of Minnesota" << endl;
+    cout   << "        URL .......................... http://glaros.dtc.umn.edu/gkhome" << endl;
+    cout   << endl;
+
+    cout   << "        The Knik router makes use of FLUTE software" << endl;
+    cout   << "        Author ........................................ Chris C. N. CHU" << endl;
+    cout   << "        Prof. Ident. ............................ Iowa State University" << endl;
+    cout   << "        URL ........................ http://home.eng.iastate.edu/~cnchu" << endl;
+    cout   << endl;
+    cmess2 << af->getPrint() << endl;
 
     if ( cell ) {
     // addaccu.
@@ -337,31 +343,7 @@ int main ( int argc, char *argv[] )
       Graphics::enable ();
 
       dbo_ptr<UnicornGui> unicorn ( UnicornGui::create() );
-      unicorn->setApplicationName     ( QObject::tr("cgt") );
-      unicorn->getBanner().setName    ( "cgt" );
-      unicorn->getBanner().setPurpose ( "Coriolis Graphical Tool" );
-
-      cmess1 << unicorn->getBanner() << endl;
-      cmess1 << "        Tool Credits" << endl;
-      cmess1 << "        Hurricane .................... Remy Escassut & Christian Masson" << endl;
-      cmess1 << "        Nimbus - Infrastructure .......................... Hugo Clement" << endl;
-      cmess1 << "        Mauka - Placer ........................... Christophe Alexandre" << endl;
-      cmess1 << "        Knik - Global Router ............................ Damien Dupuis" << endl;
-      cmess1 << "        Kite - Detailed Router ....................... Jean-Paul Chaput" << endl;
-      cmess1 << endl;
-
-      cout   << "        hMETIS software credits" << endl;
-      cout   << "        Author ........................................ Georges Karypis" << endl;
-      cout   << "        Prof. Ident. .......................... University of Minnesota" << endl;
-      cout   << "        URL .......................... http://glaros.dtc.umn.edu/gkhome" << endl;
-      cout   << endl;
-
-      cout   << "        The Knik router makes use of FLUTE software" << endl;
-      cout   << "        Author ........................................ Chris C. N. CHU" << endl;
-      cout   << "        Prof. Ident. ............................ Iowa State University" << endl;
-      cout   << "        URL ........................ http://home.eng.iastate.edu/~cnchu" << endl;
-      cout   << endl;
-      cmess2 << af->getPrint() << endl;
+      unicorn->setApplicationName ( QObject::tr("cgt") );
 
       unicorn->registerTool ( Mauka::GraphicMaukaEngine::grab() );
     //unicorn->registerTool ( Knik::GraphicKnikEngine::grab() );
@@ -455,12 +437,16 @@ int main ( int argc, char *argv[] )
       }
     }
   }
+  catch ( Error& e ) {
+    cerr << e.what() << endl;
+    exit ( 1 );
+  }
   catch ( boptions::error& e ) {
     cerr << "[ERROR] " << e.what() << endl;
     exit ( 1 );
   }
-  catch ( Error& e ) {
-    cerr << e.what() << endl;
+  catch ( exception& e ) {
+    cerr << "[ERROR] " << e.what() << endl;
     exit ( 1 );
   }
   catch ( ... ) {

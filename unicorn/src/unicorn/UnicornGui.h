@@ -52,23 +52,22 @@ namespace Unicorn {
 
   class UnicornGui : public CellViewer {
       Q_OBJECT;
-
     public:
-      static  UnicornGui*        create        ( QWidget* parent=NULL );
-              void               destroy       ();
-      inline  Banner&            getBanner     ();
-      virtual Cell*              getCellFromDb ( const char* name );
-              void               registerTool  ( GraphicTool* );
+      static        UnicornGui* create        ( QWidget* parent=NULL );
+                    void        destroy       ();
+      static inline Banner&     getBanner     ();
+      virtual       Cell*       getCellFromDb ( const char* name );
+                    void        registerTool  ( GraphicTool* );
     public slots:
-              void               openCell      ();
-              void               saveCell      ();
+                    void        openCell      ();
+                    void        saveCell      ();
     protected:
-                                 UnicornGui    ( QWidget* parent );
-      virtual                   ~UnicornGui    ();
-      virtual void               _postCreate   ();
-      virtual void               _preDestroy   ();
+                                UnicornGui    ( QWidget* parent );
+      virtual                  ~UnicornGui    ();
+      virtual       void        _postCreate   ();
+      virtual       void        _preDestroy   ();
     protected:
-              Banner             _banner;
+      static  Banner             _banner;
               set<GraphicTool*>  _tools;
   };
 

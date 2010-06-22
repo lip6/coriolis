@@ -50,16 +50,18 @@ namespace Unicorn {
 // Class  :  "UnicornGui".
 
 
+  Banner  UnicornGui::_banner ( "Unicorn"
+                              , "1.0b"
+                              , "Coriolis Main GUI"
+                              , "2008"
+                              , "Jean-Paul Chaput"
+                              , ""
+                              );
+
+
   UnicornGui::UnicornGui ( QWidget* parent )
     : CellViewer(parent)
-    , _banner ( "Unicorn"
-              , "1.0b"
-              , "Coriolis Main GUI"
-              , "2008"
-              , "Jean-Paul Chaput"
-              , ""
-              )
-    , _tools()
+    , _tools    ()
   { }
 
 
