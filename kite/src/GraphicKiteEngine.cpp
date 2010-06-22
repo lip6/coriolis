@@ -45,7 +45,10 @@
 #include  <crlcore/Utilities.h>
 #include  <crlcore/AllianceFramework.h>
 #include  <katabatic/GCell.h>
+#include  <knik/Edge.h>
+#include  <knik/Vertex.h>
 #include  <knik/KnikEngine.h>
+#include  <knik/GraphicKnikEngine.h>
 #include  <kite/GraphicKiteEngine.h>
 //#include  <kite/ConfigurationWidget.h>
 
@@ -59,6 +62,7 @@ namespace Kite {
   using Hurricane::Breakpoint;
   using Hurricane::DebugSession;
   using Hurricane::UpdateSession;
+  using Hurricane::Point;
   using Hurricane::Net;
   using Hurricane::Graphics;
   using Hurricane::ColorScale;
@@ -66,6 +70,7 @@ namespace Kite {
   using CRL::Catalog;
   using CRL::AllianceFramework;
   using Knik::KnikEngine;
+  using Knik::GraphicKnikEngine;
 
 
   size_t             GraphicKiteEngine::_references = 0;
@@ -392,6 +397,8 @@ namespace Kite {
     : GraphicTool()
     , _viewer(NULL)
   {
+    addDrawGo ( "Knik::Edge"      , GraphicKnikEngine::initKnikEdges , GraphicKnikEngine::drawKnikEdges  );
+    addDrawGo ( "Knik::Vertex"    , GraphicKnikEngine::initKnikVertex, GraphicKnikEngine::drawKnikVertex );
     addDrawGo ( "Katabatic::Ac"   , initKatabaticAc   , drawKatabaticAc    );
     addDrawGo ( "Katabatic::GCell", initKatabaticGCell, drawKatabaticGCell );
   }
