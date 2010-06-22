@@ -247,7 +247,7 @@ void Grid::Clear()
   // AR = x/y    S = x*y = marginWidth*SH    x=S/y    AR = S/y^2
   // y = sqrt(S/AR)
 
-    double       y    = sqrt ( marginWidth*rowHeight ) / aspectRatio;
+    double       y    = sqrt ( marginWidth*rowHeight / aspectRatio );
     unsigned int rows = (unsigned int)(y / rowHeight);
 
     if ( rows == 0 ) ++rows;
