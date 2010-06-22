@@ -223,8 +223,6 @@ namespace Katabatic {
     , _gcellGrid         (NULL)
     , _routingNets       ()
   {
-    cerr << "KatabaticEngine::_configuration: " << (void*)_configuration << endl;
-
     addMeasure<size_t> ( cell, "Gates"
                        , AllianceFramework::getInstancesCount(cell,AllianceFramework::IgnoreFeeds
                                                                   |AllianceFramework::Recursive) );
