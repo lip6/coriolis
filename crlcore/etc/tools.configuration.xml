@@ -1,5 +1,12 @@
 
 <configuration>
+  <!-- Miscellaneous -->
+  <parameter id="misc.catchCore"       type="bool"       value="true"/>
+  <parameter id="misc.verboseLevel1"   type="bool"       value="true"/>
+  <parameter id="misc.verboseLevel2"   type="bool"       value="false"/>
+  <parameter id="misc.info"            type="bool"       value="false"/>
+  <parameter id="misc.logMode"         type="bool"       value="true"/>
+  <parameter id="misc.traceLevel"      type="int"        value="1000" min="0"/>
   <!-- Nimbus -->
   <parameter id="nimbus.cellGauge"     type="string"     value="sxlib"/>
   <parameter id="nimbus.routingGauge"  type="string"     value="sxlib"/>
@@ -74,6 +81,16 @@
   <parameter id="kite.longGlobalRipupLimit"       type="int"        value="5"       min="1"/>
   <parameter id="kite.eventsLimit"                type="int"        value="4000000" min="1"/>
   <layout>
+    <!-- Miscellaneous -->
+    <tab name="Misc.">
+      <widget type="title" label="Miscellaneous"/>
+      <widget id="misc.catchCore"     label="Catch Core Dumps" column="1"/>
+      <widget id="misc.verboseLevel1" label="Verbose"             column="0"/>
+      <widget id="misc.verboseLevel2" label="Very Verbose"        column="0"/>
+      <widget id="misc.info"          label="Show Info"           column="0"/>
+      <widget id="misc.logMode"       label="Output is a TTY"     column="0"/>
+      <widget id="misc.traceLevel"    label="Trace Level"         column="1"/>
+    </tab>
     <tab name="Mauka">
       <!-- hMETIS -->
       <widget type="title" label="hMETIS - Partitionner"/>

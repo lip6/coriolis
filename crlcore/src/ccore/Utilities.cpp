@@ -29,7 +29,70 @@
 #include  <cstring>
 #include  <iomanip>
 
+#include  <boost/program_options.hpp>
+namespace boptions = boost::program_options;
+
+#include  "hurricane/Warning.h"
+#include  "vlsisapd/configuration/Configuration.h"
 #include  "crlcore/Utilities.h"
+
+
+namespace {
+
+  using namespace Hurricane;
+  using namespace CRL;
+
+
+  void  verboseLevel1Changed ( Cfg::Parameter* p )
+  {
+    if ( p->asBool() ) mstream::enable  ( mstream::Verbose1 );
+    else               mstream::disable ( mstream::Verbose1 );
+
+  //cerr << "Verbose Level 1: " << boolalpha << p->asBool() << endl;
+  }
+
+
+  void  verboseLevel2Changed ( Cfg::Parameter* p )
+  {
+    if ( p->asBool() ) mstream::enable  ( mstream::Verbose2 );
+    else               mstream::disable ( mstream::Verbose2 );
+  }
+
+
+  void  infoChanged ( Cfg::Parameter* p )
+  {
+    if ( p->asBool() ) mstream::enable  ( mstream::Info );
+    else               mstream::disable ( mstream::Info );
+  }
+
+
+  void  catchCoreChanged ( Cfg::Parameter* p )
+  {
+    System::setCatchCore ( p->asBool() );
+  }
+
+
+  void  logModeChanged ( Cfg::Parameter* p )
+  {
+    if ( p->asBool() ) tty::enable  ();
+    else               tty::disable ();
+  }
+
+
+  void  traceLevelChanged ( Cfg::Parameter* p )
+  {
+    ltracelevel ( p->asInt() );
+  }
+
+
+  std::string  environmentMapper ( std::string environmentName )
+  {
+    if ( environmentName == "CORIOLIS_TOP" ) return "coriolis_top";
+    return "";
+  }
+
+
+}  // End of anonymous namespace.
 
 
 int           tty::_width          = 80;
@@ -132,41 +195,113 @@ namespace CRL {
   const char* BadColorValue      = "%s() :\n\n"
                                         "    Invalid color value for color \"%s\" : \"%s\".\n";
 
-  System*     System::_singleton = System::create ();
-
-
 // -------------------------------------------------------------------
 // Class  :  "CRL::System".
 
 
-  System *System::create ()
-  {
-    if ( _singleton != NULL ) {
-      cerr << "[WARNING] Attempt to re-create System() singleton." << endl;
-      return _singleton;
-    }
+  System* System::_singleton = System::get();
 
-    _singleton = new System ();
+
+  System::System ()
+    : _catchCore(true)
+  {
+  // Immediate setup to avoid some tiresome looping...
+    _singleton = this;
 
   // Set the trap function for the SIGINT signal (CTRL-C).
   //if ( signal(SIGINT,System::TrapSig) == SIG_ERR )
   //  System::TrapSig ( SIGTFLT );
 
   // Set the trap function for SIGFPE, SIGBUS, SIGABRT and SIGSEGV signals.
-    if (   ( signal(SIGFPE , System::trapSig) == SIG_ERR )
-        || ( signal(SIGBUS , System::trapSig) == SIG_ERR )
-        || ( signal(SIGABRT, System::trapSig) == SIG_ERR )
-        || ( signal(SIGPIPE, System::trapSig) == SIG_ERR )
-        || ( signal(SIGSEGV, System::trapSig) == SIG_ERR ) )
-      System::trapSig ( SIGTFLT );
+    if (   ( signal(SIGFPE , System::_trapSig) == SIG_ERR )
+        || ( signal(SIGBUS , System::_trapSig) == SIG_ERR )
+        || ( signal(SIGABRT, System::_trapSig) == SIG_ERR )
+        || ( signal(SIGPIPE, System::_trapSig) == SIG_ERR )
+        || ( signal(SIGSEGV, System::_trapSig) == SIG_ERR ) )
+      System::_trapSig ( SIGTFLT );
+
+  // Environment variables reading.
+    boptions::options_description options ("Environment Variables");
+    options.add_options()
+      ( "coriolis_top", boptions::value<string>()
+                      , "The root directory of the Coriolis installation tree." );
+
+    boptions::variables_map arguments;
+    boptions::store  ( boptions::parse_environment(options,environmentMapper), arguments );
+    boptions::notify ( arguments );
+
+    bfs::path::default_name_check ( bfs::portable_posix_name );
+
+    const string strSysConfDir = SYS_CONF_DIR;
+    bfs::path    sysConfDir     ( strSysConfDir );
+    if ( not sysConfDir.has_root_path() ) {
+      if ( arguments.count("coriolis_top") ) {
+        sysConfDir = arguments["coriolis_top"].as<string>() / sysConfDir;
+      } else {
+        cerr << Error("Environment variable CORIOLIS_TOP not set,"
+                      " may be unable to read configuration...") << endl;
+      }
+    }
+    sysConfDir /= "coriolis2";
+    _pathes.insert ( make_pair("etc",sysConfDir) );
+
+  // Default configuration loading.
+    Cfg::Configuration* conf = Cfg::Configuration::get ();
+
+    Cfg::getParamBool("misc.catchCore"    ,true )->registerCb ( catchCoreChanged );
+    Cfg::getParamBool("misc.verboseLevel1",true )->registerCb ( verboseLevel1Changed );
+    Cfg::getParamBool("misc.verboseLevel2",true )->registerCb ( verboseLevel2Changed );
+    Cfg::getParamBool("misc.info"         ,false)->registerCb ( infoChanged );
+    Cfg::getParamBool("misc.logMode"      ,true )->registerCb ( logModeChanged );
+    Cfg::getParamInt ("misc.traceLevel"   ,1000 )->registerCb ( traceLevelChanged );
+
+  // Immediate update from the configuration.
+    catchCoreChanged     ( Cfg::getParamBool("misc.catchCore"    ) );
+    verboseLevel1Changed ( Cfg::getParamBool("misc.verboseLevel1") );
+    verboseLevel2Changed ( Cfg::getParamBool("misc.verboseLevel2") );
+    infoChanged          ( Cfg::getParamBool("misc.info"         ) );
+    logModeChanged       ( Cfg::getParamBool("misc.logMode"      ) );
+    traceLevelChanged    ( Cfg::getParamInt ("misc.traceLevel"   ) );
+
+    bool      systemConfFound = false;
+    bfs::path systemConfFile  = sysConfDir / "tools.configuration.xml";
+    if ( bfs::exists(systemConfFile) ) {
+      systemConfFound = true;
+      conf->readFromFile ( systemConfFile.string() );
+    } else {
+      cerr << Warning("System configuration file:\n  <%s> not found."
+                     ,systemConfFile.string().c_str()) << endl;
+    }
+
+    bool      dotConfFound = false;
+    bfs::path dotConfFile  = "./.coriolis2.configuration.xml";
+    if ( bfs::exists(dotConfFile) ) {
+      dotConfFound = true;
+      conf->readFromFile ( dotConfFile.string() );
+    }
+
+  // Delayed printing, as we known only now whether VerboseLevel1 is requested.
+    if ( cmess1.enabled() ) {
+      cmess1 << "  o  Reading Configuration. " << endl;
+      if (systemConfFound) cmess1 << "     - <" << systemConfFile.string() << ">." << endl;
+      if (dotConfFound)    cmess1 << "     - <" << dotConfFile.string() << ">." << endl;
+    }
+  }
+
+
+  System *System::get ()
+  {
+    if ( _singleton == NULL ) {
+      _singleton = new System ();
+    }
 
     return _singleton;
   }
 
 
-  void  System::trapSig ( int sig )
+  void  System::_trapSig ( int sig )
   {
-    cerr << "\n\n[CRL ERROR] System::trapSig():\n" << endl;
+    cerr << "\n\n[CRL ERROR] System::_trapSig():\n" << endl;
 
     switch ( sig ) {
       case SIGINT:
@@ -193,7 +328,7 @@ namespace CRL {
         cerr << "\n  Please e-mail to <alliance-users@asim.lip6.fr>.\n"
              << "\n  program terminated ";
 
-        if ( getSystem()->getCatchCore() ) {
+        if ( getCatchCore() ) {
           cerr << "(core not dumped).\n";
           exit ( 1 );
         } else {
@@ -221,7 +356,20 @@ namespace CRL {
   }
 
 
-  System *System::getSystem () { return _singleton; }
+  const bfs::path& System::_getPath ( const string& key )
+  {
+    static bfs::path nullPath ("no_path");
+
+    cerr << "Looking up: " << key << endl;
+
+    map<const string,bfs::path>::const_iterator ipath = _pathes.find ( key );
+    if ( ipath == _pathes.end() ) return nullPath;
+
+    cerr << "Successfull lookup: "; cerr.flush();
+    cerr << (*ipath).second.string() << endl;
+
+    return (*ipath).second;
+  }
 
 
 // -------------------------------------------------------------------
@@ -299,5 +447,5 @@ namespace CRL {
 // Class  :  "mstream".
 
 
-  void  mstream::enable  ( unsigned int mask ) { _activeMask |=  mask; }
-  void  mstream::disable ( unsigned int mask ) { _activeMask &= ~mask; }
+void  mstream::enable  ( unsigned int mask ) { _activeMask |=  mask; }
+void  mstream::disable ( unsigned int mask ) { _activeMask &= ~mask; }

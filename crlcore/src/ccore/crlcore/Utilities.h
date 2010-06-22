@@ -33,6 +33,9 @@
 #include <iostream>
 #include <string>
 
+#include  <boost/filesystem/operations.hpp>
+namespace bfs = boost::filesystem;
+
 #include  "hurricane/Commons.h"
 #include  "hurricane/Error.h"
 #include  "hurricane/Slot.h"
@@ -55,24 +58,28 @@ namespace CRL {
 
   class  System {
     public:
-    // Constructor & Destructor.
-      static System* create       ();
-    // Methods.
-      static System* getSystem    ();
-      static void    trapSig      ( int sig );
-      inline bool    getCatchCore ();
-      inline bool    setCatchCore ( bool catchCore );
-
+      static        System*          get          ();
+      static inline bool             getCatchCore ();
+      static inline const bfs::path& getPath      ( const std::string& );
+      static inline bool             setCatchCore ( bool catchCore );
     private:
-    // Internal: Attributes.
-      static System* _singleton;
-             bool    _catchCore;
-
-    // Constructors & Destructors.
-      inline         System       ();
-                     System       ( const System &other );
-             System& operator=    ( const System &other );
+      static System*                                _singleton;
+             bool                                   _catchCore;
+             std::map<const std::string,bfs::path>  _pathes;
+    private:
+                              System        ();
+                              System        ( const System &other );
+             System&          operator=     ( const System &other );
+      static void             _trapSig      ( int sig );
+      inline bool             _getCatchCore ();
+             const bfs::path& _getPath      ( const std::string& );
+      inline bool             _setCatchCore ( bool catchCore );
   };
+
+
+  inline bool             System::getCatchCore ()                         { return get()->_getCatchCore(); }
+  inline const bfs::path& System::getPath      ( const std::string& key ) { return get()->_getPath(key); }
+  inline bool             System::setCatchCore ( bool catchCore )         { return get()->_setCatchCore(catchCore); }
 
 
 // -------------------------------------------------------------------
@@ -123,21 +130,20 @@ namespace CRL {
 
 
 // Inline Methods.
-  inline         System::System        (): _catchCore(true) { }
-  inline bool    System::getCatchCore  () { return _catchCore; }
-  inline bool    System::setCatchCore  ( bool catchCore ) { return _catchCore = catchCore; }
+  inline bool    System::_getCatchCore  () { return _catchCore; }
+  inline bool    System::_setCatchCore  ( bool catchCore ) { return _catchCore = catchCore; }
 
-  inline         IoFile::IoFile        ( string path ): _file(NULL)
-                                                      , _path(path)
-                                                      , _mode("")
-                                                      , _lineNumber(0)
-                                                      , _eof(false) {}
-  inline bool    IoFile::isOpen        () const { return _file!=NULL; }
-  inline bool    IoFile::eof           () const { return _eof; }
-  inline FILE*   IoFile::getFile       () { return _file; }
-  inline size_t  IoFile::getLineNumber () const { return _lineNumber; }
-  inline void    IoFile::rewind        () { if (_file) std::rewind(_file); _lineNumber=0; }
-  inline string  IoFile::_getTypeName  () const { return _TName("IoFile"); }
+  inline         IoFile::IoFile         ( string path ): _file(NULL)
+                                                       , _path(path)
+                                                       , _mode("")
+                                                       , _lineNumber(0)
+                                                       , _eof(false) {}
+  inline bool    IoFile::isOpen         () const { return _file!=NULL; }
+  inline bool    IoFile::eof            () const { return _eof; }
+  inline FILE*   IoFile::getFile        () { return _file; }
+  inline size_t  IoFile::getLineNumber  () const { return _lineNumber; }
+  inline void    IoFile::rewind         () { if (_file) std::rewind(_file); _lineNumber=0; }
+  inline string  IoFile::_getTypeName   () const { return _TName("IoFile"); }
 
 
 // -------------------------------------------------------------------
@@ -269,11 +275,12 @@ inline std::string  tty::bgcolor ( unsigned int mask )
                        , VerboseLevel2 = Verbose0|Verbose1|Verbose2
                        };
     public:
-      static void          enable       ( unsigned int mask );
-      static void          disable      ( unsigned int mask );
-      inline               mstream      ( unsigned int mask, std::ostream &s );
-      inline unsigned int  getStreamMask() const;
-      inline bool          enabled      () const;
+      static        void          enable       ( unsigned int mask );
+      static        void          disable      ( unsigned int mask );
+      inline                      mstream      ( unsigned int mask, std::ostream &s );
+      inline        unsigned int  getStreamMask() const;
+      static inline unsigned int  getActiveMask();
+      inline        bool          enabled      () const;
     // Overload for formatted outputs.
       template<typename T> inline mstream& operator<< ( T& t );
       template<typename T> inline mstream& operator<< ( T* t );
@@ -292,6 +299,7 @@ inline std::string  tty::bgcolor ( unsigned int mask )
 
   inline               mstream::mstream      ( unsigned int mask, std::ostream& s ): std::ostream(s.rdbuf()) , _streamMask(mask) {}  
   inline unsigned int  mstream::getStreamMask() const { return  _streamMask; }
+  inline unsigned int  mstream::getActiveMask()       { return  _activeMask; }
   inline bool          mstream::enabled      () const { return (_streamMask & _activeMask); }
   inline mstream&      mstream::flush        () { if (enabled()) static_cast<std::ostream*>(this)->flush(); return *this; }  
   inline mstream&      mstream::operator<<   ( std::ostream& (*pf)(std::ostream&) ) { if (enabled()) (*pf)(*this); return *this; }
@@ -377,13 +385,13 @@ class  Dots {
 
 class linefill : public std::ostream {
   public:
-    inline               linefill                        ( const std::string& header, std::ostream &s );
+    inline               linefill                        ( const std::string& header, mstream &s );
   // Overload for formatted outputs.
     template<typename T> inline linefill&     operator<< ( T& t );
     template<typename T> inline linefill&     operator<< ( T* t );
     template<typename T> inline linefill&     operator<< ( const T& t );
     template<typename T> inline linefill&     operator<< ( const T* t );
-                         inline std::ostream& base       ();
+                         inline mstream&      base       ();
                          inline void          _print     ( const std::string& field );
                          inline linefill&     flush      ();
                          inline linefill&     reset      ();
@@ -392,17 +400,19 @@ class linefill : public std::ostream {
 
   // Internal: Attributes.
   private:
-    std::string  _header;
-    size_t       _width;
-    size_t       _lines;
+    mstream&      _base;
+    std::string   _header;
+    size_t        _width;
+    size_t        _lines;
 };
 
 
-inline               linefill::linefill   ( const std::string& header, std::ostream& s ): std::ostream(s.rdbuf()) , _header(header), _width(0), _lines(0) {}  
-inline std::ostream& linefill::base       () { return (*static_cast<std::ostream*>(this)); }  
-inline linefill&     linefill::reset      () { (*this) << std::endl; _width=0; return *this; }  
-inline linefill&     linefill::flush      () { static_cast<std::ostream*>(this)->flush(); return *this; }  
-inline linefill&     linefill::operator<< ( std::ostream& (*pf)(std::ostream&) ) { (*pf)(*this); return *this; }
+inline               linefill::linefill   ( const std::string& header, mstream& s ): std::ostream(s.rdbuf()), _base(s), _header(header), _width(0), _lines(0) {}  
+//inline std::ostream& linefill::base       () { return (*static_cast<std::ostream*>(this)); }  
+inline mstream&      linefill::base       () { return _base; }  
+inline linefill&     linefill::reset      () { _base << std::endl; _width=0; return *this; }  
+inline linefill&     linefill::flush      () { static_cast<mstream&>(_base).flush(); return *this; }  
+inline linefill&     linefill::operator<< ( std::ostream& (*pf)(std::ostream&) ) { (*pf)(static_cast<mstream&>(_base)); return *this; }
 
 inline void  linefill::_print ( const std::string& field ) {
   size_t fieldWidth = field.length();
