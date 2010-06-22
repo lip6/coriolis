@@ -244,12 +244,11 @@ namespace Hurricane {
 
     gridBuffer.addSection ( _createGroupItem(groups[gi]->getName()), Qt::AlignHCenter );
     for ( size_t si=0 ; si<styles.size() ; si++ ) {
+      if ( not styles[si]->isGoMatched() ) continue;
       if ( styles[si]->getName() == DisplayStyle::Foreground    ) continue;
       if ( styles[si]->getName() == DisplayStyle::Background    ) continue;
-      if ( styles[si]->getName() == DisplayStyle::Foreground    ) continue;
       if ( styles[si]->getName() == DisplayStyle::SelectionDraw ) continue;
       if ( styles[si]->getName() == DisplayStyle::SelectionFill ) continue;
-      if ( styles[si]->getName() == DisplayStyle::Foreground    ) continue;
 
       PaletteNamedItem* item = _createNamedItem ( styles[si]->getName() );
       gridBuffer.addWidget ( item );

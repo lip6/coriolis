@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -65,17 +65,20 @@ namespace Hurricane {
                              ,       int     blue
                              ,       int     borderWidth
                              ,       float   threshold
-                             ) : _name(name)
-                               , _red(red)
-                               , _green(green)
-                               , _blue(blue)
-                               , _borderWidth(borderWidth)
-                               , _pattern(pattern)
-                               , _color(NULL)
-                               , _pen(NULL)
-                               , _brush(NULL)
-                               , _threshold(threshold)
-                               , _refcount(1)
+                             ,       bool    goMatched
+                             )
+    : _name       (name)
+    , _red        (red)
+    , _green      (green)
+    , _blue       (blue)
+    , _borderWidth(borderWidth)
+    , _pattern    (pattern)
+    , _color      (NULL)
+    , _pen        (NULL)
+    , _brush      (NULL)
+    , _threshold  (threshold)
+    , _goMatched  (goMatched)
+    , _refcount   (1)
   {
   }
 
@@ -88,9 +91,10 @@ namespace Hurricane {
                                      ,       int     blue
                                      ,       int     borderWidth
                                      ,       float   threshold
+                                     ,       bool    goMatched
                                      )
   {
-    DrawingStyle* style = new DrawingStyle ( name, pattern, red, green, blue, borderWidth, threshold );
+    DrawingStyle* style = new DrawingStyle ( name, pattern, red, green, blue, borderWidth, threshold, goMatched );
   //if ( Graphics::isEnabled() )
   //  style->qtAllocate ();
 
@@ -234,6 +238,7 @@ namespace Hurricane {
                                               ,       int     blue
                                               ,       int     borderWidth
                                               ,       float   threshold
+                                              ,       bool    goMatched
                                               )
   {
     size_t i = findIndex ( key );
@@ -245,7 +250,7 @@ namespace Hurricane {
     }
 
     return _drawingStyles[i] =
-      DrawingStyle::create ( key, pattern, red, green, blue, borderWidth, threshold );
+      DrawingStyle::create ( key, pattern, red, green, blue, borderWidth, threshold, goMatched );
   }
 
 
@@ -398,12 +403,13 @@ namespace Hurricane {
                                        ,       int     blue
                                        ,       int     borderWidth
                                        ,       float   threshold
+                                       ,       bool    goMatched
                                        )
   {
     size_t gi;
     findOrCreate ( groupKey, gi );
 
-    _groups[gi]->addDrawingStyle ( key, pattern, red, green, blue, borderWidth, threshold );
+    _groups[gi]->addDrawingStyle ( key, pattern, red, green, blue, borderWidth, threshold, goMatched );
   }
 
 

@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -54,12 +54,14 @@ namespace Hurricane {
                                         ,       int     blue       =0
                                         ,       int     borderWidth=0
                                         ,       float   threshold  =1.0
+                                        ,       bool    goMatched  =true
                                         );
              DrawingStyle* link         ();
              size_t        unlink       ();
 
     // Accessors.
              void          qtAllocate   ();
+      inline bool          isGoMatched  () const;
       inline const Name&   getName      () const;
       inline const string& getPattern   () const;
              QColor        getColor     ( int darkening ) const;
@@ -79,16 +81,18 @@ namespace Hurricane {
                    QPen   *_pen;
                    QBrush *_brush;
                    float   _threshold;
+                   bool    _goMatched;
                    size_t  _refcount;
 
     // Internal - Constructors & Destructors.
                            DrawingStyle ( const Name&   name
-                                        , const string& pattern    ="FFFFFFFFFFFFFFFF"
-                                        ,       int     red        =0
-                                        ,       int     green      =0
-                                        ,       int     blue       =0
-                                        ,       int     borderWidth=0
-                                        ,       float   threshold  =1.0
+                                        , const string& pattern
+                                        ,       int     red
+                                        ,       int     green
+                                        ,       int     blue
+                                        ,       int     borderWidth
+                                        ,       float   threshold
+                                        ,       bool    goMatched
                                         );
                            DrawingStyle ( const DrawingStyle& );
                           ~DrawingStyle ();
@@ -120,6 +124,7 @@ namespace Hurricane {
                                                            ,       int     blue
                                                            ,       int     borderWidth
                                                            ,       float   threshold
+                                                           ,       bool    goMatched
                                                            );
       
     protected:
@@ -192,6 +197,7 @@ namespace Hurricane {
                                                            ,       int     blue
                                                            ,       int     borderWidth
                                                            ,       float   threshold
+                                                           ,       bool    goMatched  =true
                                                            );
 
     protected:
@@ -215,6 +221,7 @@ namespace Hurricane {
 
 
   // Functions.
+  inline bool                         DrawingStyle::isGoMatched      () const { return _goMatched; }
   inline const Name&                  DrawingStyle::getName          () const { return _name; }
   inline const string&                DrawingStyle::getPattern       () const { return _pattern; }
   inline float                        DrawingStyle::getThreshold     () const { return _threshold; }
