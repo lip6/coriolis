@@ -165,6 +165,7 @@ namespace Metis {
         _globalEdgeCut += graph->part ( output );
       } 
       catch ( MetisGraph::TooLowNVTXSException& e ) {
+        if ( cmess2.enabled() ) cerr << "\n";
         cerr << Warning("Impossible to part graph, only %d nodes",e._nvtxs);
       }
         
@@ -178,7 +179,7 @@ namespace Metis {
       }
     }
 
-    output << endl;
+    output << "\n";
     
     for ( MetisGraphs::iterator mgit=_actualGraphs->begin(); mgit != _actualGraphs->end(); ++mgit )
       delete *mgit;
@@ -270,14 +271,27 @@ namespace Metis {
 }
 
 
-  unsigned int  MetisEngine::computeQuadriPartitions ( Cell* cell )
+  unsigned int  MetisEngine::computeQuadriPartitions ( Cell* cell, int& xsplits, int& ysplits )
   {
-    size_t gates = getInstancesCount ( cell );
+    size_t gates       = getInstancesCount ( cell );
+    Box    ab          = cell->getAbutmentBox();
+    double aspectRatio = (double)(ab.getWidth()) / (double)(ab.getHeight());
+
+    if ( aspectRatio >= 1.0 ) {
+      xsplits = ((int)(trunc (      aspectRatio +0.5 ) )) * 2;
+      ysplits = 2;
+    } else {
+      xsplits = 2;
+      ysplits = ((int)(trunc ( (1.0/aspectRatio)+0.5 ) )) * 2;
+    }
+
+    cerr << "gates:" << gates << endl;
+    cerr << "ar:" << aspectRatio << " xsplits:" << xsplits << " ysplits:" << ysplits << endl;
 
     int    partitionSizeStop = Cfg::getParamInt("metis.numberOfInstancesStopCriterion",45)->asInt();
-    double partitions        = log((double)gates / (double)partitionSizeStop) / log(4.0) + 1.0;
+    double quadPartitions    = log((double)gates / (double)(partitionSizeStop*xsplits*ysplits) ) / log(4.0) + 1.0;
 
-    return (unsigned int)(partitions);
+    return (unsigned int)(quadPartitions);
   }
 
 
@@ -297,9 +311,6 @@ namespace Metis {
     //   throw Error ("Metis::doQuadriPart(): Nimbus already exists on <%s>"
     //               ,getString(cell->getName()).c_str());
 
-    // nimbus = NimbusEngine::create ( cell, AllianceFramework::get()->getLibrary(1) );
-    // metis  = MetisEngine ::create ( cell );
-
     NimbusEngine* nimbus = NimbusEngine::get ( cell );
     if ( nimbus == NULL )
       nimbus = NimbusEngine::create ( cell );
@@ -308,10 +319,16 @@ namespace Metis {
     if ( metis == NULL )
       metis  = MetisEngine ::create ( cell );
 
-    size_t partitions = computeQuadriPartitions ( cell );
+    int    xsplits;
+    int    ysplits;
+    size_t partitions = computeQuadriPartitions ( cell, xsplits, ysplits );
+
     for ( size_t part=0 ; part<partitions ; ++part ) {
-      nimbus->progress ();
+      nimbus->progress ( xsplits, ysplits );
       metis-> run ();
+
+      xsplits = 2;
+      ysplits = 2;
     }
   }
 

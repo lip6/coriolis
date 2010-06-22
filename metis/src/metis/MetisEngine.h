@@ -61,7 +61,7 @@ namespace Metis {
       static MetisEngine*    create                            ( Cell* );
       static MetisEngine*    get                               ( Cell* );
     // Methods.                                                
-      static  unsigned int   computeQuadriPartitions           ( Cell* );
+      static  unsigned int   computeQuadriPartitions           ( Cell*, int& xsplits, int& ysplits );
       static  void           doQuadriPart                      ( Cell* );
       static  bool           isHMetisCapable                   ();
       static  const Name&    staticGetName                     ();
