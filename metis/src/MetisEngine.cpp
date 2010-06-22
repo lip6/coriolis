@@ -285,9 +285,6 @@ namespace Metis {
       ysplits = ((int)(trunc ( (1.0/aspectRatio)+0.5 ) )) * 2;
     }
 
-    cerr << "gates:" << gates << endl;
-    cerr << "ar:" << aspectRatio << " xsplits:" << xsplits << " ysplits:" << ysplits << endl;
-
     int    partitionSizeStop = Cfg::getParamInt("metis.numberOfInstancesStopCriterion",45)->asInt();
     double quadPartitions    = log((double)gates / (double)(partitionSizeStop*xsplits*ysplits) ) / log(4.0) + 1.0;
 
