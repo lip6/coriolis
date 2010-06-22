@@ -706,7 +706,8 @@ void Surface::_DisplayInstances(MaukaEngine::UVector& instanceids, SubRowList& s
 
         if (srlit == subrowlist.end())
         {
-            cerr << Error("Mauka::_DisplayInstances(): Last row reached, but not last instance.") << endl;
+            if ( cmess2.enabled() ) cerr << "\n";
+            cerr << Warning("Mauka::_DisplayInstances(): Cannot honor Bin margin, bypassing.") << endl;
 
             srlit = subrowlist.begin();
             if (lastLoopInsertedInsIterator != insIterator)
@@ -763,7 +764,7 @@ void Surface::_DisplayInstances(MaukaEngine::UVector& instanceids, SubRowList& s
                                             "Please increase the abutment box: %s %d placeds (%d instances remains to place)"
                                            ,getString(getBoundingBox()).c_str()
                                            ,nbInstancesPlaced
-                                           ,nbInstancesToPlace
+                                           ,(nbInstancesToPlace - nbInstancesPlaced)
                                            );
                             }
                         }
