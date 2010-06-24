@@ -1,17 +1,13 @@
 
 if ( UNIX )
 
-  execute_process ( COMMAND python
-                    -c
-"
-import os.path
-import distutils.sysconfig
-
-pathes = distutils.sysconfig.get_python_lib().split('/')
-print os.path.join ( pathes[-2], pathes[-1] )
-"
+  execute_process(COMMAND echo "import os.path,distutils.sysconfig;pathes = distutils.sysconfig.get_python_lib().split('/');print os.path.join ( pathes[-2], pathes[-1] )"
+   		 OUTPUT_FILE /tmp/site.py)
+  execute_process ( COMMAND python /tmp/site.py
                  OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE
                  RESULT_VARIABLE RCODE)
+  execute_process ( COMMAND rm -f /tmp/site.py)
+
   if ( RCODE EQUAL 0 )
     set ( FindPythonSitePackages_FOUND TRUE )
   else ( RCODE EQUAL 0 )
