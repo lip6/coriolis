@@ -203,6 +203,7 @@ class OADriver {
             }
 
      //       libDefList->save();
+            cerr << "ALL SAVED" << endl;
         }
 
 
@@ -220,8 +221,6 @@ class OADriver {
             //cerr << "Creating new Library for Lib name="
             //    << strNameLib << " to filesystem path=" << strPathLib << endl;
             oaScalarName scNameLib(ns, strNameLib);
-            //for the moment absolute path
-            //strPathLib = "/dsk/l1/oatest/test";
             cerr << "Creating new Library for Lib name="
                 << strNameLib << " to filesystem path=" << strPathLib << endl;
             oaLib* lib = oaLib::create(scNameLib, strPathLib.c_str(), oacSharedLibMode, "oaDMFileSys");
@@ -379,11 +378,10 @@ void OpenAccessWrapper::oaDriver(const string& path, Cell* cell, unsigned int& s
 
         const char* strPathLib = pathLib.c_str();
 
-        if (oaLib::exists(strPathLib)) {
-            throw Error("impossible to drive Cell, there is an existing OpenAccess db");
-        }
+//        if (oaLib::exists(strPathLib)) {
+//            throw Error("impossible to drive Cell, there is an existing OpenAccess db");
+//        }
 
-        pathLib = "/dsk/l1/oatest";
         OADriver oaDriver(pathLib);
         oaDesign* design = oaDriver.getOADesignForCell(cell);
 

@@ -39,6 +39,7 @@
                                                crlcore/COptions.h
                                                crlcore/XmlParser.h
                                                crlcore/GdsDriver.h
+                                               crlcore/OADriver.h
                                                crlcore/CifDriver.h
                                                crlcore/SearchPath.h
                                                crlcore/Environment.h
@@ -71,6 +72,7 @@
                                                COptions.cpp
                                                XmlParser.cpp
                                                GdsDriver.cpp
+                                               OADriver.cpp
                                                CifDriver.cpp
                                                SearchPath.cpp
                                                Environment.cpp
