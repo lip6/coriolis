@@ -63,6 +63,7 @@
   <parameter id="mauka.standardAnnealing"         type="bool"       value="false"/>
   <parameter id="mauka.ignorePins"                type="bool"       value="false"/>
   <parameter id="mauka.plotBins"                  type="bool"       value="true"/>
+  <parameter id="mauka.insertFeeds"               type="bool"       value="true"/>
   <parameter id="mauka.searchRatio"               type="percentage" value="50" min="0"/>
   <parameter id="mauka.annealingNetMult"          type="percentage" value="90" min="0"/>
   <parameter id="mauka.annealingBinMult"          type="percentage" value="5"  min="0"/>
@@ -114,6 +115,7 @@
       <widget id="mauka.standardAnnealing" label="Standart Annealing"     column="0"/>
       <widget id="mauka.ignorePins"        label="Ignore Pins"            column="0"/>
       <widget id="mauka.plotBins"          label="Plot Bins"              column="0"/>
+      <widget id="mauka.insertFeeds"       label="Insert Feeds"           column="0"/>
       <widget id="mauka.searchRatio"       label="Search Ratio (%)"       column="1"/>
       <widget id="mauka.annealingNetMult"  label="Annealing Net Mult (%)" column="1"/>
       <widget id="mauka.annealingBinMult"  label="Annealing Bin Mult (%)" column="1"/>
