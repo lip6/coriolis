@@ -12,7 +12,7 @@ extern bool __ripupMode__;
 
 extern float __edge_cost__;
 
-const Name  Edge::_extensionName = "Knik::Edges";
+const Name  Edge::_extensionName = "Knik::Edge";
 
 Edge::Edge ( Vertex* from, Vertex* to )
 // ************************************
