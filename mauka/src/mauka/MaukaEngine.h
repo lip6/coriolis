@@ -32,6 +32,7 @@
 #include "nimbus/GCell.h"
 
 #include "mauka/Configuration.h"
+#include "mauka/FeedCells.h"
 
 
 namespace Mauka {
@@ -84,42 +85,46 @@ namespace Mauka {
              
     public:
     // Constructor.
-      static  void           regroupOverloadedGCells       ( Cell* );
-      static  MaukaEngine*   create                        ( Cell*, Box placementbox = Box() );
-    // Accessors
-      static  MaukaEngine*   get                           ( Cell* );
-      static  const Name&    staticGetName                 ();
-      virtual const Name&    getName                       () const;
-      inline  Configuration* getConfiguration              () const;
-      inline  DbU::Unit      getPitch                      () const;
-      inline  DbU::Unit      getSliceHeight                () const;
-      inline  DbU::Unit      getSliceStep                  () const;
-      inline  bool           useStandardSimulatedAnnealing () const;
-      inline  bool           doIgnorePins                  () const;
-      inline  bool           doPlotBins                    () const;
+      static  void             regroupOverloadedGCells       ( Cell* );
+      static  MaukaEngine*     create                        ( Cell*, Box placementbox = Box() );
+    // Accessors               
+      static  MaukaEngine*     get                           ( Cell* );
+      static  const Name&      staticGetName                 ();
+      virtual const Name&      getName                       () const;
+      inline  Configuration*   getConfiguration              () const;
+      inline  const FeedCells& getFeedCells                  () const;
+      inline  DbU::Unit        getPitch                      () const;
+      inline  DbU::Unit        getSliceHeight                () const;
+      inline  DbU::Unit        getSliceStep                  () const;
+      inline  bool             useStandardSimulatedAnnealing () const;
+      inline  bool             doIgnorePins                  () const;
+      inline  bool             doPlotBins                    () const;
+      inline  bool             doInsertFeeds                 () const;
       inline  Configuration::RefreshCb_t&
-                             getRefreshCb                  ();
-      inline  double         getSearchRatio                () const;
-      inline  double         getAnnealingNetMult           () const;
-      inline  double         getAnnealingBinMult           () const;
-      inline  double         getAnnealingRowMult           () const;
-      inline  void           setRefreshCb                  ( Configuration::RefreshCb_t cb );
-      inline  DbU::Unit      getInstanceIdWidth            ( unsigned id ) const;
-              unsigned       getRandomInstanceId           () const;
-      virtual std::string    _getTypeName                  () const { return "Mauka::MaukaEngine"; }
-      virtual Record*        _getRecord                    () const;
-    // Mutators.
-              bool           Iterate                       ();
-              void           Run                           ();
-              void           Test                          ();
-              void           Save                          () const;
-              void           PlotBinsStats                 () const;
-              void           Plot                          () const;
+                               getRefreshCb                  ();
+      inline  double           getSearchRatio                () const;
+      inline  double           getAnnealingNetMult           () const;
+      inline  double           getAnnealingBinMult           () const;
+      inline  double           getAnnealingRowMult           () const;
+      inline  void             setRefreshCb                  ( Configuration::RefreshCb_t cb );
+      inline  DbU::Unit        getInstanceIdWidth            ( unsigned id ) const;
+              unsigned         getRandomInstanceId           () const;
+      virtual std::string      _getTypeName                  () const { return "Mauka::MaukaEngine"; }
+      virtual Record*          _getRecord                    () const;
+    // Mutators.               
+      inline  void             addFeed                       ( Cell* );
+              bool             Iterate                       ();
+              void             Run                           ();
+              void             Test                          ();
+              void             Save                          () const;
+              void             PlotBinsStats                 () const;
+              void             Plot                          () const;
     
     private:
     // Attributes
       static Name                _toolName;
       Configuration*             _configuration;
+      FeedCells                  _feedCells;
       InstanceOccurrencesVector  _instanceOccurrencesVector;
       InstanceOccurrencesMap     _instanceOccurrencesMap;
       UnitVector                 _instanceWidths;
@@ -146,21 +151,24 @@ namespace Mauka {
 
 
 // Inline Methods.
-  inline  Configuration* MaukaEngine::getConfiguration              () const { return _configuration; }
-  inline  DbU::Unit      MaukaEngine::getPitch                      () const { return _configuration->getPitch(); }
-  inline  DbU::Unit      MaukaEngine::getSliceHeight                () const { return _configuration->getSliceHeight(); }
-  inline  DbU::Unit      MaukaEngine::getSliceStep                  () const { return _configuration->getSliceStep(); }
-  inline  bool           MaukaEngine::useStandardSimulatedAnnealing () const { return _configuration->useStandardSimulatedAnnealing(); }
-  inline  bool           MaukaEngine::doIgnorePins                  () const { return _configuration->doIgnorePins(); }
-  inline  bool           MaukaEngine::doPlotBins                    () const { return _configuration->doPlotBins(); }
+  inline  Configuration*   MaukaEngine::getConfiguration              () const { return _configuration; }
+  inline  const FeedCells& MaukaEngine::getFeedCells                  () const { return _feedCells; }
+  inline  DbU::Unit        MaukaEngine::getPitch                      () const { return _configuration->getPitch(); }
+  inline  DbU::Unit        MaukaEngine::getSliceHeight                () const { return _configuration->getSliceHeight(); }
+  inline  DbU::Unit        MaukaEngine::getSliceStep                  () const { return _configuration->getSliceStep(); }
+  inline  bool             MaukaEngine::useStandardSimulatedAnnealing () const { return _configuration->useStandardSimulatedAnnealing(); }
+  inline  bool             MaukaEngine::doIgnorePins                  () const { return _configuration->doIgnorePins(); }
+  inline  bool             MaukaEngine::doPlotBins                    () const { return _configuration->doPlotBins(); }
+  inline  bool             MaukaEngine::doInsertFeeds                 () const { return _configuration->doInsertFeeds(); }
   inline  Configuration::RefreshCb_t&
-                         MaukaEngine::getRefreshCb                  () { return _configuration->getRefreshCb(); }
-  inline  double         MaukaEngine::getSearchRatio                () const { return _configuration->getSearchRatio(); }
-  inline  double         MaukaEngine::getAnnealingNetMult           () const { return _configuration->getAnnealingNetMult(); } 
-  inline  double         MaukaEngine::getAnnealingBinMult           () const { return _configuration->getAnnealingBinMult(); }
-  inline  double         MaukaEngine::getAnnealingRowMult           () const { return _configuration->getAnnealingRowMult(); }
-  inline  void           MaukaEngine::setRefreshCb                  ( Configuration::RefreshCb_t cb ) { _configuration->setRefreshCb(cb); }
-  inline  DbU::Unit      MaukaEngine::getInstanceIdWidth            ( unsigned id ) const { return _instanceWidths[id]; }
+                           MaukaEngine::getRefreshCb                  () { return _configuration->getRefreshCb(); }
+  inline  double           MaukaEngine::getSearchRatio                () const { return _configuration->getSearchRatio(); }
+  inline  double           MaukaEngine::getAnnealingNetMult           () const { return _configuration->getAnnealingNetMult(); } 
+  inline  double           MaukaEngine::getAnnealingBinMult           () const { return _configuration->getAnnealingBinMult(); }
+  inline  double           MaukaEngine::getAnnealingRowMult           () const { return _configuration->getAnnealingRowMult(); }
+  inline  void             MaukaEngine::setRefreshCb                  ( Configuration::RefreshCb_t cb ) { _configuration->setRefreshCb(cb); }
+  inline  DbU::Unit        MaukaEngine::getInstanceIdWidth            ( unsigned id ) const { return _instanceWidths[id]; }
+  inline  void             MaukaEngine::addFeed                       ( Cell* cell ) { _feedCells.addFeed(cell); }
   
 
   void setPlacementStatusRecursivelyToPlaced(Instance* instance);

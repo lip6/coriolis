@@ -60,6 +60,7 @@ namespace Mauka {
       inline  bool             useStandardSimulatedAnnealing () const;
       inline  bool             doIgnorePins                  () const;
       inline  bool             doPlotBins                    () const;
+      inline  bool             doInsertFeeds                 () const;
       inline  RefreshCb_t&     getRefreshCb                  ();
       inline  double           getSearchRatio                () const;
       inline  double           getAnnealingNetMult           () const;
@@ -88,6 +89,7 @@ namespace Mauka {
              bool           _standardSimulatedAnnealing;
              bool           _ignorePins;
              bool           _plotBins;                   // Plot bins utilisation.
+             bool           _insertFeeds;
              double         _searchRatio;
              double         _annealingNetMult;
              double         _annealingBinMult;
@@ -103,6 +105,7 @@ namespace Mauka {
   inline  bool             Configuration::useStandardSimulatedAnnealing () const { return _standardSimulatedAnnealing; }
   inline  bool             Configuration::doIgnorePins                  () const { return _ignorePins; }
   inline  bool             Configuration::doPlotBins                    () const { return _plotBins; }
+  inline  bool             Configuration::doInsertFeeds                 () const { return _insertFeeds; }
   inline  double           Configuration::getSearchRatio                () const { return _searchRatio; }
   inline  double           Configuration::getAnnealingNetMult           () const { return _annealingNetMult; } 
   inline  double           Configuration::getAnnealingBinMult           () const { return _annealingBinMult; }

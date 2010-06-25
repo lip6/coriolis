@@ -58,6 +58,7 @@ namespace Mauka {
     , _standardSimulatedAnnealing(Cfg::getParamBool      ("mauka.standardAnnealing",false)->asBool())
     , _ignorePins                (Cfg::getParamBool      ("mauka.ignorePins"       ,false)->asBool())
     , _plotBins                  (Cfg::getParamBool      ("mauka.plotBins"         ,true )->asBool())
+    , _insertFeeds               (Cfg::getParamBool      ("mauka.insertFeeds"      ,true )->asBool())
     , _searchRatio               (Cfg::getParamPercentage("mauka.searchRatio"      , 50.0)->asDouble())
     , _annealingNetMult          (Cfg::getParamPercentage("mauka.annealingNetMult" , 90.0)->asDouble())
     , _annealingBinMult          (Cfg::getParamPercentage("mauka.annealingBinMult" ,  5.0)->asDouble())

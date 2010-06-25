@@ -41,6 +41,7 @@
 #include "hurricane/HyperNet.h"
 #include "hurricane/Timer.h"
 #include "hurricane/DataBase.h"
+#include "crlcore/AllianceFramework.h"
 #include "nimbus/GCell.h"
 #include "nimbus/NimbusEngine.h"
 
@@ -70,6 +71,7 @@ MaukaEngine::MaukaEngine(Cell* cell)
 // *********************************
     : Inherit(cell)
     , _configuration(new Configuration())
+    , _feedCells(this)
     , _instanceOccurrencesVector()
     , _instanceOccurrencesMap()
     , _instanceWidths()
@@ -99,6 +101,10 @@ void MaukaEngine::_postCreate(Box& placementbox)
 // *********************************************
 {
     Inherit::_postCreate();
+
+  // Ugly. Direct uses of Alliance Framework.
+    addFeed ( AllianceFramework::get()->getCell("tie_x0"   ,Catalog::State::Views) );
+    addFeed ( AllianceFramework::get()->getCell("rowend_x0",Catalog::State::Views) );
 
     Construct();
 

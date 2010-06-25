@@ -7,6 +7,7 @@
                          ${CONFIGURATION_INCLUDE_DIR} 
                        )
                    set ( includes      mauka/Configuration.h
+                                       mauka/FeedCells.h
                                        mauka/BBPlacer.h
                                        mauka/Bin.h
                                        mauka/Container.h
@@ -21,6 +22,7 @@
 		   set ( mocIncludes   mauka/GraphicMaukaEngine.h )
                    set ( cpps          Configuration.cpp
                                        BBPlacer.cpp
+                                       FeedCells.cpp
                                        Bin.cpp
                                        Container.cpp
                                        MaukaBox.cpp
