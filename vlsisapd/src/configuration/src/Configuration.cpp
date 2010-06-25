@@ -403,6 +403,7 @@ namespace Cfg {
 
       out << " asType:";
       switch ( p->getType() ) {
+        case Parameter::Unknown:    out << "<unknown>"; break;
         case Parameter::String:     out << "<string>"; break;
         case Parameter::Bool:       out << boolalpha << p->asBool(); break;
         case Parameter::Int:        out << p->asInt(); break;

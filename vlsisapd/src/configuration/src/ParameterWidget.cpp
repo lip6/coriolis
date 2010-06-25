@@ -58,6 +58,8 @@ namespace Cfg {
     _labelWidget->setText ( label.c_str() );
 
     switch ( _parameter->getType() ) {
+      case Parameter::Unknown:
+        break;
       case Parameter::String:
         {
           QLineEdit* lineEdit = new QLineEdit();
@@ -301,7 +303,7 @@ namespace Cfg {
     bool enabled = ( state != Qt::Unchecked );
 
     const vector<string>& slaveIds = _parameter->getSlaves();
-    for ( int islave=0 ; islave<slaveIds.size() ; ++islave ) {
+    for ( size_t islave=0 ; islave<slaveIds.size() ; ++islave ) {
       ParameterWidget* slave = cw->find(slaveIds[islave]);
       if ( slave == NULL ) continue;
 
