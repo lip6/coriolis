@@ -378,9 +378,9 @@ void Instance::setPlacementStatus(const PlacementStatus& placementstatus)
   if (placementstatus != _placementStatus) {
     invalidate(true);
 
-    if (_placementStatus == PlacementStatus::UNPLACED)
+    if (_placementStatus == PlacementStatus::UNPLACED) {
       materialize ();
-    else if ( placementstatus == PlacementStatus::UNPLACED )
+    } else if (placementstatus == PlacementStatus::UNPLACED)
       unmaterialize ();
 
     _placementStatus = placementstatus;
@@ -457,7 +457,8 @@ void Instance::_postCreate()
     }
 
     bool autoMaterialization = not autoMaterializationIsDisabled();
-    disableAutoMaterialization();
+    if ( _placementStatus == PlacementStatus::UNPLACED )
+      disableAutoMaterialization();
 
     Inherit::_postCreate();
 
