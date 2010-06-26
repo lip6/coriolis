@@ -849,7 +849,7 @@ int main ( int argc, char *argv[] )
       exit ( 0 );
     }
 
-    System::getSystem()->setCatchCore ( not coreDump ); 
+    System::get()->setCatchCore ( not coreDump ); 
     if ( verbose1 ) mstream::enable ( mstream::VerboseLevel1 );
     if ( verbose2 ) mstream::enable ( mstream::VerboseLevel2 ); 
     ltracelevel ( traceLevel );
