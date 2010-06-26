@@ -520,6 +520,7 @@ if __name__ == "__main__":
                        , tools    =[ "hurricane"
                                    , "crlcore"
                                    , "nimbus"
+                                   , "metis"
                                    , "mauka"
                                    , "knik"
                                    , "katabatic"
