@@ -219,8 +219,8 @@ namespace CRL {
     registerSlot ( "spi", (CellParser_t*)spiceParser    , "spi" );
     registerSlot ( "def", (CellParser_t*)defParser      , "def" );
     registerSlot ( "def", (LibraryParser_t*)lefParser   , "lef" );
-    registerSlot ( "oa",  (CellParser_t*)OpenAccessWrapper::oaDesignLoader , "oa" );
-    registerSlot ( "oa",  (LibraryParser_t*)OpenAccessWrapper::oaLibLoader , "oa" );
+//    registerSlot ( "oa",  (CellParser_t*)OpenAccessWrapper::oaDesignLoader , "oa" );
+//    registerSlot ( "oa",  (LibraryParser_t*)OpenAccessWrapper::oaLibLoader , "oa" );
     registerSlot ( "aux", (CellParser_t*)bookshelfParser, "aux" );
   }
 

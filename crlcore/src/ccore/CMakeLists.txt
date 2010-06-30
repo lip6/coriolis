@@ -123,19 +123,14 @@
                                                lefdef/LefParser.cpp
                                                lefdef/DefParser.cpp
                                                lefdef/DefDriver.cpp
-                           )
-
- if ( OA_FOUND )
-                           include_directories ( ${OA_INCLUDE_DIR} )
-                           set( openaccess_cpps openaccess/COpenAccessBridgeLayer.cpp
-                                                openaccess/OAWrapper.cpp
-                           )
- endif ( OA_FOUND )
+                           ) 
  if ( LEFDEF_FOUND )
                            include_directories ( ${LEFDEF_INCLUDE_DIR} )
  endif ( LEFDEF_FOUND )
-                         set (openaccess_cpps ${openaccess_cpps}
-                                              openaccess/OpenAccessWrapper.cpp )
+ if ( OA_FOUND )
+                           include_directories ( ${OA_INCLUDE_DIR} )
+ endif ( OA_FOUND )
+                         set (openaccess_cpps openaccess/OpenAccessWrapper.cpp )
 
                          set ( VstParserSourceDir  ${CRLCORE_SOURCE_DIR}/src/ccore/alliance/vst )
                          set ( VstParserBinaryDir  ${CRLCORE_BINARY_DIR}/src/ccore/alliance/vst )
