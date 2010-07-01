@@ -15,24 +15,11 @@ endif ( HMETIS_FOUND )
                                        metis/Configuration.h
                                        metis/MetisEngine.h
                        )
-#                  set ( mocIncludes   metis/ConfigurationWidget.h
-#                                      metis/GraphicMaukaEngine.h )
                    set ( cpps          MetisGraph.cpp
                                        Configuration.cpp
                                        MetisEngine.cpp
                        )
-#         qt4_wrap_cpp ( mocCpps       ${mocIncludes} )
-
 
            add_library ( metis         ${cpps} ${mocCpps} )
- target_link_libraries ( metis         ${HMETIS_LIBRARIES}
-                                       ${NIMBUS_LIBRARIES}
-                                       ${CORIOLIS_LIBRARIES}
-                                       ${HURRICANE_LIBRARIES}
-                                       ${HURRICANE_GRAPHICAL_LIBRARIES}
-                                       ${QT_LIBRARIES}
-                                       ${LEFDEF_LIBRARIES}
-                                       ${OA_LIBRARIES}
-                       )
                install ( TARGETS       metis                      DESTINATION lib${LIB_SUFFIX} )
                install ( FILES         ${includes} ${mocIncludes} DESTINATION include/coriolis2/metis ) 
