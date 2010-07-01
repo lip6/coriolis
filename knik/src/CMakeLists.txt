@@ -42,17 +42,7 @@
 
 
            add_library ( knik         ${cpps} ${mocCpps} )
- target_link_libraries ( knik         flute
-                                      ${CORIOLIS_LIBRARIES}
-                                      ${HURRICANE_LIBRARIES}
-                                      ${HURRICANE_GRAPHICAL_LIBRARIES}
-                                      ${QT_LIBRARIES}
-                                      ${LEFDEF_LIBRARIES}
-                                      ${OA_LIBRARIES}
-                       )
            add_library ( flute        ${fluteCpps} )
- target_link_libraries ( flute        ${CORIOLIS_LIBRARIES}
-                                      ${HURRICANE_LIBRARIES} )
                install ( TARGETS      knik flute DESTINATION lib${LIB_SUFFIX} )
 
                install ( FILES ${includes}
