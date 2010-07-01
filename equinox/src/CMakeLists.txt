@@ -36,17 +36,7 @@
           qt4_wrap_cpp ( mocCpps       ${mocIncludes} )
 
            add_library ( equinox        ${cpps} ${mocCpps} )
- target_link_libraries ( equinox        intervalTree
-                                        ${CORIOLIS_LIBRARIES}
-                                        ${HURRICANE_LIBRARIES}
-                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
-                                        ${QT_LIBRARIES}
-                                        ${LEFDEF_LIBRARIES}
-                                        ${OA_LIBRARIES}
-                       )
            add_library (intervalTree    ${intervalTreeCpps} )
- target_link_libraries (intervalTree    ${CORIOLIS_LIBRARIES}
-                                        ${HURRICANE_LIBRARIES} )
                install ( TARGETS        equinox intervalTree DESTINATION lib${LIB_SUFFIX} )
                install ( FILES          ${includes}
                                         ${mocIncludes} 
