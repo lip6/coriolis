@@ -20,13 +20,19 @@
                                      ${KNIK_LIBRARIES}
                                      ${CORIOLIS_LIBRARIES}
                                      ${HURRICANE_GRAPHICAL_LIBRARIES}
+                                     ${HURRICANE_PYTHON_LIBRARIES}
                                      ${HURRICANE_LIBRARIES}
                                      ${CONFIGURATION_LIBRARY}
                                      ${AGDS_LIBRARY}
                                      ${CIF_LIBRARY}
+                                     ${CONFIGURATION_LIBRARY}
                                      ${OA_LIBRARIES}
                                      ${LEFDEF_LIBRARIES}
                                      ${QT_LIBRARIES}
-                                     ${Boost_LIBRARIES} )
+                                     ${Boost_LIBRARIES}
+                                     ${PYTHON_LIBRARIES}
+                                     -lutil
+                                     ${LIBXML2_LIBRARIES}
+                       )
                install ( TARGETS     ispd DESTINATION bin )
 
