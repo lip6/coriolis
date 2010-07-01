@@ -37,12 +37,6 @@
       
 
            add_library ( nimbus ${cpps} )
- target_link_libraries ( nimbus ${HURRICANE_LIBRARIES}
-                                ${HURRICANE_GRAPHICAL_LIBRARIES}
-                                ${LEFDEF_LIBRARIES}
-                                ${OA_LIBRARIES}
-                                ${QT_LIBRARIES}
-                       )
                install ( TARGETS nimbus DESTINATION lib${LIB_SUFFIX} )
                install ( FILES   ${includes} DESTINATION include/coriolis2/nimbus ) 
    
