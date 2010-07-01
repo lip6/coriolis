@@ -33,17 +33,19 @@ namespace boptions = boost::program_options;
 #include  <boost/filesystem/operations.hpp>
 namespace bfs = boost::filesystem;
 
-#include  <QtGui>
-#if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and not defined (__APPLE__)
-#  include  <QGtkStyle>
-#endif
-
 #include  "vlsisapd/configuration/Configuration.h"
 #include  "hurricane/DebugSession.h"
 #include  "hurricane/DataBase.h"
 #include  "hurricane/Cell.h"
 #include  "hurricane/Warning.h"
 #include  "hurricane/UpdateSession.h"
+#include  "hurricane/isobar/Script.h"
+
+#include  <QtGui>
+#if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and not defined (__APPLE__)
+#  include  <QGtkStyle>
+#endif
+
 #include  "hurricane/viewer/HApplication.h"
 #include  "hurricane/viewer/Graphics.h"
 using namespace Hurricane;
@@ -93,6 +95,8 @@ int main ( int argc, char *argv[] )
   bool  kiteSuccess = true;
 
   try {
+    bfs::path::default_name_check ( bfs::portable_posix_name );
+
     float         edgeCapacity;
     float         expandStep;
     unsigned long eventsLimit;
@@ -333,6 +337,23 @@ int main ( int argc, char *argv[] )
     // eFPGA/16x16.
     //DebugSession::addToTrace ( cell, "group_15_6_clb_topside_in1_mux_q01" );
     //DebugSession::addToTrace ( cell, "g_7_14_top_2" );
+
+    // Python Script test.
+
+      Isobar::Script::addPath ( "/dsk/l1/jpc/coriolis-2.x/work/benchs/routing/addaccu" );
+
+      for ( int i=0 ; i<5 ; ++i ) {
+        cerr << "Call:" << i << " ======================================" << endl;
+
+        Isobar::Script* script = Isobar::Script::create ( "getCellName" );
+        script->runFunction ( "runScript", cell );
+      }
+
+      Box box ( DbU::lambda(0.0), DbU::lambda(0.0), DbU::lambda(5.0), DbU::lambda(10.0) );
+      
+      // throw Error ("Tu le vois bien: <b>%s</b><br>"
+      //             "Un retour a la ligne\n<i>Une ligne</i>"
+      //             ,getString(box).c_str() );
     }
 
     if ( not textMode ) {

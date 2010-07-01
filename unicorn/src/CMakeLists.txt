@@ -6,6 +6,7 @@
                          ${CORIOLIS_INCLUDE_DIR}
                          ${CONFIGURATION_INCLUDE_DIR}
                          ${Boost_INCLUDE_DIRS}
+                         ${PYTHON_INCLUDE_PATH}
                        )
        add_definitions ( -DSYS_CONF_DIR=\\"${SYS_CONF_DIR}\\" )
 
@@ -40,6 +41,7 @@
                                        ${NIMBUS_GRAPHICAL_LIBRARIES}
                                        ${NIMBUS_LIBRARIES}
                                        ${CORIOLIS_LIBRARIES}
+                                       ${HURRICANE_PYTHON_LIBRARIES}
                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
                                        ${HURRICANE_LIBRARIES}
                                        ${AGDS_LIBRARY}
@@ -48,7 +50,9 @@
                                        ${LEFDEF_LIBRARIES}
                                        ${OA_LIBRARIES}
                                        ${QT_LIBRARIES}
-                                       ${Boost_LIBRARIES}
+                                       ${PYTHON_LIBRARIES}
+                                       -lutil
+                                       ${LIBXML2_LIBRARIES}
                        )
         add_executable ( cgt           ${cgtcpp} )
  target_link_libraries ( cgt           unicorn
@@ -63,12 +67,15 @@
                                        ${KNIK_GRAPHICAL_LIBRARIES}
                                        ${KNIK_LIBRARIES}
                                        ${CORIOLIS_LIBRARIES}
+                                       ${HURRICANE_PYTHON_LIBRARIES}
                                        ${HURRICANE_LIBRARIES}
                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
                                        ${CONFIGURATION_LIBRARY}
                                        ${OA_LIBRARIES}
                                        ${QT_LIBRARIES}
                                        ${Boost_LIBRARIES}
+                                       ${PYTHON_LIBRARIES}
+                                       -lutil
                        )
                install ( TARGETS       unicorn DESTINATION lib${LIB_SUFFIX} )
                install ( TARGETS       cgt     DESTINATION bin )
