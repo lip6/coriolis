@@ -27,6 +27,7 @@
 #include  <iostream>
 
 #include  "hurricane/Exception.h"
+#include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/ExceptionWidget.h"
 #include  "hurricane/viewer/HApplication.h"
 
@@ -77,7 +78,7 @@ namespace Hurricane {
     }
     catch ( Exception& e ) {
       ExceptionWidget* ew = new ExceptionWidget ();
-      ew->setMessage ( e.what().c_str() );
+      ew->setMessage ( e.htmlWhat().c_str() );
       if ( ew->exec() == QDialog::Rejected )
         kill ( getpid(), SIGSEGV );
     }

@@ -23,7 +23,7 @@
 // x-----------------------------------------------------------------x
 
 
-# include  <assert.h>
+#include  <assert.h>
 
 #include  <Qt>
 #include  <QBrush>
@@ -31,11 +31,10 @@
 #include  <QApplication>
 
 #include  "hurricane/Name.h"
+#include  "hurricane/Exception.h"
 
 #include  "hurricane/viewer/DisplayStyle.h"
 #include  "hurricane/viewer/Graphics.h"
-
-
 
 
 namespace Hurricane {
@@ -45,13 +44,32 @@ namespace Hurricane {
 
 
   Graphics::Graphics ()
-    : _styles()
-    , _active(NULL)
-    , _fireColorScale()
-    , _rainbowColorScale()
+    : _htmlTranslator       ()
+    , _styles               ()
+    , _active               (NULL)
+    , _fireColorScale       ()
+    , _rainbowColorScale    ()
     , _temperatureColorScale()
-    , _qtEnabled(false)
+    , _qtEnabled            (false)
   {
+    _htmlTranslator.addTranslation ( "<br>"     , "<br>"      );
+    _htmlTranslator.addTranslation ( "<em>"     , "<em>"      );
+    _htmlTranslator.addTranslation ( "</em>"    , "</em>"     );
+    _htmlTranslator.addTranslation ( "<strong>" , "<strong>"  );
+    _htmlTranslator.addTranslation ( "</strong>", "</strong>" );
+    _htmlTranslator.addTranslation ( "<tt>"     , "<tt>"      );
+    _htmlTranslator.addTranslation ( "</tt>"    , "</tt>"     );
+    _htmlTranslator.addTranslation ( "<b>"      , "<b>"       );
+    _htmlTranslator.addTranslation ( "</b>"     , "</b>"      );
+    _htmlTranslator.addTranslation ( "<i>"      , "<i>"       );
+    _htmlTranslator.addTranslation ( "</i>"     , "</i>"      );
+    _htmlTranslator.addTranslation ( "<big>"    , "<big>"     );
+    _htmlTranslator.addTranslation ( "</big>"   , "</big>"    );
+    _htmlTranslator.addTranslation ( "<small>"  , "<small>"   );
+    _htmlTranslator.addTranslation ( "</small>" , "</small>"  );
+    _htmlTranslator.addTranslation ( "<"        , "&lt;"      );
+    _htmlTranslator.addTranslation ( ">"        , "&gt;"      );
+    _htmlTranslator.addTranslation ( "\n"       , "<br>"      );
   }
 
 
@@ -68,6 +86,8 @@ namespace Hurricane {
       DisplayStyle* fallback = new DisplayStyle("Fallback");
       fallback->setDescription ( "Builtin fallback style" );
       _singleton->_addStyle ( fallback );
+
+      Exception::setHtmlTranslator ( _singleton->_getHtmlTranslator() );
     }
 
     return _singleton;
@@ -277,23 +297,31 @@ namespace Hurricane {
   }
 
 
+  const TextTranslator& Graphics::getHtmlTranslator ()
+  {
+    return getGraphics()->_getHtmlTranslator();
+  }
+
+
   string  Graphics::toHtml ( const string& s )
   {
-    string protect = s;
+    return getGraphics()->getHtmlTranslator().translate(s);
 
-    if ( !isEnabled() ) return protect;
+    // string protect = s;
 
-    unsigned int  pos     = protect.find ( '<' );
-    while ( pos < protect.size() ) {
-      protect.replace ( pos, 1, "&lt;" );
-      pos = protect.find ( '<', pos );
-    }
-    pos = protect.find ( '>' );
-    while ( pos < protect.size() ) {
-      protect.replace ( pos, 1, "&gt;" );
-      pos = protect.find ( '>', pos );
-    }
-    return protect;
+    // if ( !isEnabled() ) return protect;
+
+    // unsigned int  pos = protect.find ( '<' );
+    // while ( pos < protect.size() ) {
+    //   protect.replace ( pos, 1, "&lt;" );
+    //   pos = protect.find ( '<', pos );
+    // }
+    // pos = protect.find ( '>' );
+    // while ( pos < protect.size() ) {
+    //   protect.replace ( pos, 1, "&gt;" );
+    //   pos = protect.find ( '>', pos );
+    // }
+    // return protect;
   }
 
 

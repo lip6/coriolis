@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -31,6 +31,7 @@
 #include  <vector>
 
 #include  "hurricane/Breakpoint.h"
+#include  "hurricane/TextTranslator.h"
 #include  "hurricane/viewer/DisplayStyle.h"
 #include  "hurricane/viewer/ColorScale.h"
 #include  "hurricane/viewer/BreakpointWidget.h"
@@ -66,6 +67,7 @@ namespace Hurricane {
       static  float                        getThreshold     ( const Name& key );
       static  int                          getDarkening     ();
       static  const ColorScale&            getColorScale    ( ColorScale::ScaleType );
+      static  const TextTranslator&        getHtmlTranslator();
       static  string                       toHtml           ( const string& );
       static  bool                         breakpointStopCb ( const string& message );
 
@@ -81,6 +83,7 @@ namespace Hurricane {
     // Internals - Attributes.
     protected:
       static  Graphics*                    _singleton;
+              TextTranslator               _htmlTranslator;
               vector<DisplayStyle*>        _styles;
               DisplayStyle*                _active;
               FireColorScale               _fireColorScale;
@@ -89,28 +92,29 @@ namespace Hurricane {
               bool                         _qtEnabled;
 
     // Internals - Constructors & Destructors.
-                                           Graphics         ();
-                                           Graphics         ( const Graphics& );
-              Graphics&                    operator=        ( const Graphics& );
-                                          ~Graphics         ();
-                                                            
-    // Internals - Methods.                                 
-              size_t                       _findStyle       ( const Name& key ) const;
-              void                         _addStyle        ( DisplayStyle* displayStyle );
-              void                         _setStyle        ( const Name& key );
-              void                         _setStyle        ( size_t id );
-              DisplayStyle*                _getStyle        ( const Name& key );
-              DisplayStyle*                _getStyle        () const;
-      inline  const vector<DisplayStyle*>& _getStyles       () const;
-      inline  const Name&                  _getGroup        ( const Name& key ) const;
-      inline  QColor                       _getColor        ( const Name& key, int darkening ) const;
-      inline  QPen                         _getPen          ( const Name& key, int darkening ) const;
-      inline  QBrush                       _getBrush        ( const Name& key, int darkening ) const;
-      inline  const string&                _getPattern      ( const Name& key ) const;
-      inline  float                        _getThreshold    ( const Name& key ) const;
-      inline  int                          _getDarkening    () const;
-      inline  const ColorScale&            _getColorScale   ( ColorScale::ScaleType ) const;
-      inline  void                         _enable          ();
+                                           Graphics           ();
+                                           Graphics           ( const Graphics& );
+              Graphics&                    operator=          ( const Graphics& );
+                                          ~Graphics           ();
+                                                              
+    // Internals - Methods.                                   
+              size_t                       _findStyle         ( const Name& key ) const;
+              void                         _addStyle          ( DisplayStyle* displayStyle );
+              void                         _setStyle          ( const Name& key );
+              void                         _setStyle          ( size_t id );
+              DisplayStyle*                _getStyle          ( const Name& key );
+              DisplayStyle*                _getStyle          () const;
+      inline  const vector<DisplayStyle*>& _getStyles         () const;
+      inline  const Name&                  _getGroup          ( const Name& key ) const;
+      inline  QColor                       _getColor          ( const Name& key, int darkening ) const;
+      inline  QPen                         _getPen            ( const Name& key, int darkening ) const;
+      inline  QBrush                       _getBrush          ( const Name& key, int darkening ) const;
+      inline  const string&                _getPattern        ( const Name& key ) const;
+      inline  float                        _getThreshold      ( const Name& key ) const;
+      inline  int                          _getDarkening      () const;
+      inline  const ColorScale&            _getColorScale     ( ColorScale::ScaleType ) const;
+      inline  void                         _enable            ();
+      inline  const TextTranslator&        _getHtmlTranslator () const;
 
   };
 
@@ -158,6 +162,9 @@ namespace Hurricane {
 
   inline const vector<DisplayStyle*>& Graphics::_getStyles () const
   { return _styles; }
+
+  inline const TextTranslator& Graphics::_getHtmlTranslator () const
+  { return _htmlTranslator; }
 
 
 

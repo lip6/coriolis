@@ -21,6 +21,7 @@
 #define HURRICANE_EXCEPTION
 
 #include "hurricane/Commons.h"
+#include "hurricane/TextTranslator.h"
 
 namespace Hurricane {
 
@@ -32,6 +33,12 @@ namespace Hurricane {
 
 class Exception {
 // **************
+
+// Attributes
+// **********
+
+   private: static TextTranslator  _textTranslator;
+   private: static TextTranslator  _htmlTranslator;
 
 // Constructors
 // ************
@@ -53,12 +60,16 @@ class Exception {
 // Accessors
 // *********
 
-   public: string what() const { return _getString(); };
+    public: string what    () const { return textWhat(); };
+    public: string textWhat() const { return _textTranslator.translate(_getString()); };
+    public: string htmlWhat() const { return _htmlTranslator.translate(_getString()); };
 
 // Others
 // ******
 
-    public: virtual string _getString() const = 0;
+    public: static  void   setTextTranslator ( const TextTranslator& translator ) { _textTranslator=translator; }
+    public: static  void   setHtmlTranslator ( const TextTranslator& translator ) { _htmlTranslator=translator; }
+    public: virtual string _getString        () const = 0;
 
 };
 

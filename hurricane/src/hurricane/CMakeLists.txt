@@ -81,6 +81,7 @@
                                 hurricane/Vertical.h              hurricane/Verticals.h
                                 hurricane/Views.h
                                 hurricane/Warning.h
+                                hurricane/TextTranslator.h
                      )
                  set ( cpps     Record.cpp
                                 Slot.cpp
@@ -148,8 +149,9 @@
                                 Query.cpp
                                 Marker.cpp
                                 Timer.cpp
+                                TextTranslator.cpp
                  )
     
-          add_library ( hurricane ${cpps} )
-              install ( TARGETS hurricane DESTINATION lib${LIB_SUFFIX} )
-              install ( FILES ${includes} DESTINATION include/coriolis2/hurricane ) 
+           add_library ( hurricane ${cpps} )
+               install ( TARGETS hurricane DESTINATION lib${LIB_SUFFIX} )
+               install ( FILES ${includes} DESTINATION include/coriolis2/hurricane ) 

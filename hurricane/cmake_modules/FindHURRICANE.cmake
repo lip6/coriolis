@@ -41,14 +41,14 @@ MACRO(HURRICANE_CHECK_LIBRARIES)
 ENDMACRO(HURRICANE_CHECK_LIBRARIES)
 
 MACRO(SET_LIB_LINK_MODE)
+  SET(Boost_USE_STATIC_LIBS ON)
+  MESSAGE(STATUS "Always uses Boost static libraries.")
   IF(NOT BUILD_SHARED_LIBS)
   # check for qmake
     FIND_PROGRAM(QT_QMAKE_EXECUTABLE NAMES qmake-qt4 qmake PATHS
       /opt/qt4-static-4.3.2/bin
       NO_DEFAULT_PATH
       )
-    SET(Boost_USE_STATIC_LIBS ON)
-    MESSAGE(STATUS "Using Boost static libraries.")
     MESSAGE(STATUS "Building static libraries.")
   ELSE(NOT BUILD_SHARED_LIBS)
     MESSAGE(STATUS "Building dynamic libraries.")

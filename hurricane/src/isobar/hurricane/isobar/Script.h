@@ -3,20 +3,20 @@
 //
 // Copyright (c) BULL S.A. 2000-2010, All Rights Reserved
 //
-// This file is part of Hurricane.
+// This file is part of ISOBAR.
 //
-// Hurricane is free software: you can redistribute it  and/or  modify
+// ISOBAR is free software: you can redistribute it  and/or  modify
 // it under the terms of the GNU  Lesser  General  Public  License  as
 // published by the Free Software Foundation, either version 3 of  the
 // License, or (at your option) any later version.
 //
-// Hurricane is distributed in the hope that it will  be  useful,  but
+// ISOBAR is distributed in the hope that it will  be  useful,  but
 // WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-
 // TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See  the  Lesser  GNU
 // General Public License for more details.
 //
 // You should have received a copy of the Lesser  GNU  General  Public
-// License along with Hurricane. If not, see
+// License along with ISOBAR. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
 // ===================================================================
@@ -31,50 +31,54 @@
 // |  Author      :                    Jean-Paul Chaput              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./hurricane/Breakpoint.h"                      |
+// |  C++ Header  :  "./hurricane/isobar/Script.h"                   |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
 
-# ifndef  __HURRICANE_BREAKPOINT__
-# define  __HURRICANE_BREAKPOINT__
+# ifndef  __ISOBAR_SCRIPT__
+# define  __ISOBAR_SCRIPT__
 
-#include "hurricane/Commons.h"
-
-
+#include <vector>
+#include <Python.h>
 namespace Hurricane {
+  class Cell;
+}
 
 
-  class Breakpoint {
+namespace Isobar {
 
+
+  class Script {
     public:
-      typedef bool ( StopCb_t )( const string& );
-
-    public:
-      static  Breakpoint*   get           ();
-      static  void          setStopCb     ( StopCb_t* );
-      static  bool          stop          ( unsigned int, const string );
-      static  void          setStopLevel  ( unsigned int );
-      static  unsigned int  getStopLevel  ();
+      static void      addPath       ( const std::string& path );
+      static Script*   create        ( const std::string& name );
+             void      destroy       ();
+      inline PyObject* getUserModule ();
+             bool      runFunction   ( const std::string& function, Hurricane::Cell* cell );
+    protected:
+      static std::vector<std::string>  _pathes;
+             std::string               _moduleName;
+             PyObject*                 _sysModule;
+             PyObject*                 _userModule;
     protected:                            
-              bool          _stop         ( unsigned int, const string& );
-                                          
-    protected:                            
-      static  Breakpoint*   _singleton;   
-      static  StopCb_t*     _stopCb;      
-      static  unsigned int  _stopLevel;   
-                                          
-    protected:                            
-                            Breakpoint    ();
-                            Breakpoint    ( const Breakpoint& );
-              Breakpoint&   operator=     ( const Breakpoint& );
-                           ~Breakpoint    ();
+                Script            ( const std::string& name );
+               ~Script            ();
+                Script            ( const Script& );
+      Script&   operator=         ( const Script& );
+      void      _importSys        ();
+      PyObject* _importModule     ( const std::string& );
+      void      _destroyModules   ();
   };
 
 
-} // End of Hurricane namespace.
+// Inline Methods.
+  inline PyObject* Script::getUserModule () { return _userModule; }
 
 
-# endif // __HURRICANE_BREAKPOINT__
+} // End of Isobar namespace.
+
+
+# endif // __ISOBAR_SCRIPT__
