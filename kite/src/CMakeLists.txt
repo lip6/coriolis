@@ -67,24 +67,14 @@
 
 
            add_library ( kite             ${cpps} ${mocCpps} )
- target_link_libraries ( kite             ${KATABATIC_LIBRARIES}
-                                          ${KNIK_LIBRARIES}
-                                          ${CORIOLIS_LIBRARIES}
-                                          ${HURRICANE_LIBRARIES}
-                                          ${HURRICANE_GRAPHICAL_LIBRARIES}
-                                          ${CIF_LIBRARY}
-                                          ${AGDS_LIBRARY}
-                                          ${QT_LIBRARIES}
-                                          ${LEFDEF_LIBRARIES}
-                                          ${OA_LIBRARIES}
-                       )		  
         add_executable ( kite-text        ${kitecpps} )
  target_link_libraries ( kite-text        kite
                                           ${KATABATIC_LIBRARIES}
                                           ${KNIK_LIBRARIES}
                                           ${CORIOLIS_LIBRARIES}
-                                          ${HURRICANE_LIBRARIES}
                                           ${HURRICANE_GRAPHICAL_LIBRARIES}
+                                          ${HURRICANE_PYTHON_LIBRARIES}
+                                          ${HURRICANE_LIBRARIES}
                                           ${CIF_LIBRARY}
                                           ${AGDS_LIBRARY}
                                           ${CONFIGURATION_LIBRARY}
@@ -92,6 +82,9 @@
                                           ${LEFDEF_LIBRARIES}
                                           ${OA_LIBRARIES}
                                           ${Boost_LIBRARIES}
+                                          ${PYTHON_LIBRARIES}
+                                          -lutil
+                                          ${LIBXML2_LIBRARIES}
                        )
                install ( TARGETS          kite      DESTINATION lib${LIB_SUFFIX} )
                install ( TARGETS          kite-text DESTINATION bin )
