@@ -28,7 +28,10 @@
 using namespace std;
 
 #include  <boost/program_options.hpp>
-namespace poptions = boost::program_options;
+namespace boptions = boost::program_options;
+
+#include  <boost/filesystem/operations.hpp>
+namespace bfs = boost::filesystem;
 
 #include  <QtGui>
 #if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and not defined (__APPLE__)
@@ -93,35 +96,41 @@ namespace {
 
 int main ( int argc, char *argv[] )
 {
+
   int  returnCode = 0;
 
   try {
+    bfs::path::default_name_check ( bfs::portable_posix_name );
+
     unsigned int  traceLevel;
     bool          verbose1;
     bool          verbose2;
     bool          coreDump;
     bool          textMode;
 
-    poptions::options_description options ("Command line arguments & options");
+    boptions::options_description options ("Command line arguments & options");
     options.add_options()
       ( "help,h"        , "Print this help." )
-      ( "verbose,v"     , poptions::bool_switch(&verbose1)->default_value(false)
+      ( "verbose,v"     , boptions::bool_switch(&verbose1)->default_value(false)
                         , "First level of verbosity.")
-      ( "very-verbose,V", poptions::bool_switch(&verbose2)->default_value(false)
+      ( "very-verbose,V", boptions::bool_switch(&verbose2)->default_value(false)
                         , "Second level of verbosity.")
-      ( "core-dump,D"   , poptions::bool_switch(&coreDump)->default_value(false)
+      ( "core-dump,D"   , boptions::bool_switch(&coreDump)->default_value(false)
                         , "Enable core dumping.")
-      ( "text,t"        , poptions::bool_switch(&textMode)->default_value(false)
+      ( "text,t"        , boptions::bool_switch(&textMode)->default_value(false)
                         , "Run in pure text mode.")
-      ( "trace-level,l" , poptions::value<unsigned int>(&traceLevel)->default_value(1000)
+      ( "trace-level,l" , boptions::value<unsigned int>(&traceLevel)->default_value(1000)
                         , "Set the level of trace, trace messages with a level superior to "
                           "<arg> will be printed on <stderr>." )
-      ( "cell,c"        , poptions::value<string>()
+      ( "cell,c"        , boptions::value<string>()
                         , "The name of the cell to load, whithout extension." );
 
-    poptions::variables_map arguments;
-    poptions::store  ( poptions::parse_command_line(argc,argv,options), arguments );
-    poptions::notify ( arguments );
+    boptions::variables_map arguments;
+    boptions::store  ( boptions::parse_command_line(argc,argv,options), arguments );
+    boptions::notify ( arguments );
+
+    bfs::path userConfFile = "ma/configuration";
+    cerr << "Mark:" << userConfFile.string() << endl;
 
     if ( arguments.count("help") ) {
       cout << options << endl;
@@ -223,12 +232,16 @@ int main ( int argc, char *argv[] )
       returnCode = qa->exec();
     }
   }
-  catch ( poptions::error& e ) {
+  catch ( Error& e ) {
+    cerr << e.what() << endl;
+    exit ( 1 );
+  }
+  catch ( boptions::error& e ) {
     cerr << "[ERROR] " << e.what() << endl;
     exit ( 1 );
   }
-  catch ( Error& e ) {
-    cerr << e.what() << endl;
+  catch ( exception& e ) {
+    cerr << "[ERROR] " << e.what() << endl;
     exit ( 1 );
   }
   catch ( ... ) {

@@ -11,9 +11,18 @@
  
         add_executable ( cx2y        ${cpps} )
  target_link_libraries ( cx2y        crlcore
+                                     ${HURRICANE_PYTHON_LIBRARIES}
                                      ${HURRICANE_GRAPHICAL_LIBRARIES}
                                      ${HURRICANE_LIBRARIES}
+                                     ${CONFIGURATION_LIBRARY}
+                                     ${AGDS_LIBRARY}
+                                     ${CIF_LIBRARY}
                                      ${OA_LIBRARIES}
                                      ${QT_LIBRARIES}
-                                     ${Boost_LIBRARIES} )
+                                     ${LEFDEF_LIBRARIES}
+                                     ${Boost_LIBRARIES}
+                                     ${LIBXML2_LIBRARIES}
+                                     ${PYTHON_LIBRARIES}
+                                     -lutil
+                       )
                install ( TARGETS     cx2y DESTINATION bin )

@@ -32,8 +32,9 @@
 #include  <boost/program_options.hpp>
 namespace boptions = boost::program_options;
 
-#include  "hurricane/Warning.h"
 #include  "vlsisapd/configuration/Configuration.h"
+#include  "hurricane/Warning.h"
+#include  "hurricane/isobar/Script.h"
 #include  "crlcore/Utilities.h"
 
 
@@ -199,12 +200,14 @@ namespace CRL {
 // Class  :  "CRL::System".
 
 
-  System* System::_singleton = System::get();
+  System* System::_singleton = NULL; //System::get();
 
 
   System::System ()
     : _catchCore(true)
   {
+    cerr << "Creating System singleton." << endl;
+
   // Immediate setup to avoid some tiresome looping...
     _singleton = this;
 
@@ -223,17 +226,17 @@ namespace CRL {
   // Environment variables reading.
     boptions::options_description options ("Environment Variables");
     options.add_options()
-      ( "coriolis_top", boptions::value<string>()
+      ( "coriolis_top", boptions::value<string>()->default_value(CORIOLIS_TOP)
                       , "The root directory of the Coriolis installation tree." );
 
     boptions::variables_map arguments;
     boptions::store  ( boptions::parse_environment(options,environmentMapper), arguments );
     boptions::notify ( arguments );
 
-    bfs::path::default_name_check ( bfs::portable_posix_name );
+    if ( bfs::path::default_name_check_writable() )
+      bfs::path::default_name_check ( bfs::portable_posix_name );
 
-    const string strSysConfDir = SYS_CONF_DIR;
-    bfs::path    sysConfDir     ( strSysConfDir );
+    bfs::path sysConfDir ( SYS_CONF_DIR );
     if ( not sysConfDir.has_root_path() ) {
       if ( arguments.count("coriolis_top") ) {
         sysConfDir = arguments["coriolis_top"].as<string>() / sysConfDir;
@@ -279,6 +282,11 @@ namespace CRL {
       dotConfFound = true;
       conf->readFromFile ( dotConfFile.string() );
     }
+
+    bfs::path pythonSitePackages = PYTHON_SITE_PACKAGES;
+    pythonSitePackages = arguments["coriolis_top"].as<string>() / pythonSitePackages;
+
+    Isobar::Script::addPath ( pythonSitePackages.string() );
 
   // Delayed printing, as we known only now whether VerboseLevel1 is requested.
     if ( cmess1.enabled() ) {

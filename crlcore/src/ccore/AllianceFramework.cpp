@@ -63,6 +63,9 @@ namespace CRL {
     , _parentLibrary(NULL)
     , _routingGauges()
   {
+  // Triggers System singleton loading.
+    System::get ();
+
     DataBase* db = DataBase::getDB ();
     if ( !db )
       db = DataBase::create ();

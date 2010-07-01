@@ -27,10 +27,12 @@
                              ${HURRICANE_INCLUDE_DIR}
                              ${CIF_INCLUDE_DIR}
                              ${CONFIGURATION_INCLUDE_DIR}
+                             ${PYTHON_INCLUDE_PATH}
                            )
 
            add_definitions ( -DCORIOLIS_TOP="${CORIOLIS_TOP}"
                              -DSYS_CONF_DIR="${SYS_CONF_DIR}"
+                             -DPYTHON_SITE_PACKAGES="${PYTHON_SITE_PACKAGES}"
                            )
 
                        set ( includes          crlcore/Utilities.h
@@ -238,15 +240,5 @@
                                                      ${spice_cpps}
                                                      ${lefdef_cpps}
                                                      ${openaccess_cpps}
-                             )
-       target_link_libraries ( crlcore               ${HURRICANE_LIBRARIES}
-                                                     ${HURRICANE_GRAPHICAL_LIBRARIES}
-                                                     ${QT_LIBRARIES}
-                                                     ${IO_LIBRARIES}
-                                                     ${LEFDEF_LIBRARIES}
-                                                     ${OA_LIBRARIES}
-                                                     ${AGDS_LIBRARY}
-                                                     ${CIF_LIBRARY}
-                                                     ${CONFIGURATION_LIBRARY}
                              )
                      install ( TARGETS               crlcore DESTINATION lib${LIB_SUFFIX} )
