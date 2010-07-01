@@ -365,19 +365,24 @@ class ProjectBuilder:
         return
 
 
+    def _setEnvironment ( self, systemVariable, userVariable ):
+        if not self._environment.has_key(systemVariable):
+            self._environment[ systemVariable ] = self._installDir
+       #if not self._environment.has_key(userVariable):
+       #    self._environment[ userVariable ] = self._installDir
+        if not self._quiet:
+            print "Setting %s = \"%s\"." % (systemVariable    ,self._environment[systemVariable])
+            if self._environment.has_key(userVariable):
+                print "Transmitting %s = \"%s\"." % (userVariable,self._environment[userVariable])
+        return
+
+
     def _commandTemplate ( self, tools, projects, command ):
        # Set or guess the various projects TOP environment variables.
         for project in self._projects:
             topVariable     = "%s_TOP"      % project.getName().upper()
             topUserVariable = "%s_USER_TOP" % project.getName().upper()
-            if not self._environment.has_key(topVariable):
-                self._environment[ topVariable ] = self._installDir
-           #if not self._environment.has_key(topUserVariable):
-           #    self._environment[ topUserVariable ] = self._installDir
-            if not self._quiet:
-                print "Setting %s = \"%s\"." % (topVariable    ,self._environment[topVariable])
-                if self._environment.has_key(topUserVariable):
-                    print "Transmitting %s = \"%s\"." % (topUserVariable,self._environment[topUserVariable])
+            self._setEnvironment ( topVariable, topUserVariable )
 
         if tools:
            # Checks if the requested tools are in the various projects.
