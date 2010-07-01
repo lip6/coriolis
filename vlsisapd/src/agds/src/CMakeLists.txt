@@ -24,7 +24,6 @@ IF(Boost_FOUND)
                                COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
                                PREFIX        ""
                        )
-  TARGET_LINK_LIBRARIES(pyAGDS agds ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
   INSTALL(TARGETS pyAGDS DESTINATION ${PYTHON_SITE_PACKAGES})
 ENDIF(Boost_FOUND)
 

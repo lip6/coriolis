@@ -27,11 +27,6 @@
           qt4_wrap_cpp ( mocCpps       ${mocIncludes} )
 
            add_library ( configuration ${cpps} ${mocCpps} )
- target_link_libraries ( configuration ${QT_LIBRARIES}
-                                       ${Boost_LIBRARIES}
-                                       ${PYTHON_LIBRARIES}
-                                       ${LIBXML2_LIBRARIES}
-                       )
         add_executable ( vlsisapd-conf-editor ${editorcpp} )
  target_link_libraries ( vlsisapd-conf-editor configuration ${QT_LIBRARIES}
                                                             ${Boost_LIBRARIES}

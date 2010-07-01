@@ -26,8 +26,6 @@ SET ( cpps Circuit.cpp
 
 ADD_LIBRARY(openChams ${cpps})
 
-TARGET_LINK_LIBRARIES(openChams ${LIBXML2_LIBRARIES})
-
 INSTALL(TARGETS openChams DESTINATION lib${LIB_SUFFIX} )
 
 INSTALL(FILES ${includes} DESTINATION include/vlsisapd/openChams)
