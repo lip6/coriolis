@@ -38,15 +38,5 @@
 
 
            add_library ( mauka         ${cpps} ${mocCpps} )
- target_link_libraries ( mauka         ${METIS_LIBRARIES}
-                                       ${HMETIS_LIBRARIES}
-                                       ${NIMBUS_LIBRARIES}
-                                       ${CORIOLIS_LIBRARIES}
-                                       ${HURRICANE_LIBRARIES}
-                                       ${HURRICANE_GRAPHICAL_LIBRARIES}
-                                       ${QT_LIBRARIES}
-                                       ${LEFDEF_LIBRARIES}
-                                       ${OA_LIBRARIES}
-                       )
                install ( TARGETS       mauka                      DESTINATION lib${LIB_SUFFIX} )
                install ( FILES         ${includes} ${mocIncludes} DESTINATION include/coriolis2/mauka ) 
