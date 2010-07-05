@@ -18,6 +18,7 @@ using namespace std;
 using namespace Hurricane;
 
 #include  "crlcore/Catalog.h"
+#include  "crlcore/RealTechnologyParser.h"
 #include  "crlcore/AllianceFramework.h"
 
 #include "hurricaneAMS/environment/AnalogEnv.h"
@@ -35,20 +36,16 @@ void testCell(Cell* dev){
     if(dev)
         cout << "Cell created" << endl;
 
-    cout << "driving GDS" << endl;
-    CRL::GdsDriver(dev).save("/tmp/testGDS");
+//    cout << "driving GDS" << endl;
+//    CRL::GdsDriver(dev).save("/tmp/testGDS");
 
     cout << "driving OA" << endl;
     CRL::OADriver(dev).save("/tmp/testOA");
 }
 
-
-int main(int argc,char** argv) {
-    if(argc != 2)
-        exit(-5);
-
-    AnalogEnv::create(argv[1]);//create Database ...
-    cout << "analog environment loaded and database created" << endl;
+void testAnalog(char* pathToConf){
+    AnalogEnv::create(pathToConf);//create Database ...
+    cout << "analog environment loaded and database created" << endl;    
     DataBase* db = DataBase::getDB();
     assert(db != NULL);
     Library* rootLib = db->getRootLibrary();
@@ -78,10 +75,31 @@ int main(int argc,char** argv) {
     cout << "testing cell myCM" << endl;
 
     testCell(dev);
+    db->destroy();
+}
 
-//    cout << "creating and testing cell from sxlib inv_x1" << endl;
+void testNum(){
+    cout << "creating cell from sxlib inv_x1" << endl;
+    CRL::AllianceFramework::get();
+    DataBase* db = DataBase::getDB();
+    assert(db != NULL);
+    CRL::RealTechnologyParser::load(db, "/asim/coriolis2/etc/coriolis2/technology.freePDK45.s2r.xml");
+    Cell* mySxlibCell = CRL::AllianceFramework::get()->getCell( "inv_x1", CRL::Catalog::State::Views );
+    cout << "testing cell from sxlib inv_x1" << endl;
+    testCell(mySxlibCell);
+    db = DataBase::getDB();
+    assert(db != NULL);
+    db->destroy();    
+}
 
-//    testCell(CRL::AllianceFramework::get()->getCell( "inv_x1", CRL::Catalog::State::Views ));
+
+
+int main(int argc,char** argv) {
+    if(argc != 2)
+        exit(-5);
+
+    testAnalog(argv[1]);
+//    testNum();
 
     cout << "ending normally" << endl;
     return 0;

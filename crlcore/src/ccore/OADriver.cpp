@@ -10,7 +10,6 @@ namespace CRL {
     OADriver::OADriver(Cell* cell) : _cell(cell) {}
 
     void OADriver::save(const string& filePath) {
-        unsigned int saveState;
-        CRL::OpenAccessWrapper::oaDriver(filePath, _cell, saveState);
+        CRL::OpenAccessWrapper::oaDriver(filePath, _cell);
     }
 }// namespace CRL
