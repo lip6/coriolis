@@ -2,9 +2,11 @@
                include ( ${QT_USE_FILE} )
 
    include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane
+                         ${HURRICANE_SOURCE_DIR}/src/isobar
                          ${HURRICANE_SOURCE_DIR}/src/viewer
                          ${CONFIGURATION_INCLUDE_DIR}
                          ${Boost_INCLUDE_DIRS}
+                         ${PYTHON_INCLUDE_PATH}
                        )
 
                    set ( mocincludes hurricane/viewer/HApplication.h
@@ -32,6 +34,7 @@
                                      hurricane/viewer/NetlistWidget.h
                                      hurricane/viewer/DisplayFilterWidget.h
                                      hurricane/viewer/ControllerWidget.h
+                                     hurricane/viewer/ScriptWidget.h
                        )
                    set ( exports     hurricane/viewer/HApplication.h
                                      hurricane/viewer/ScreenUtilities.h
@@ -65,6 +68,7 @@
                                      hurricane/viewer/NetlistWidget.h
                                      hurricane/viewer/DisplayFilterWidget.h
                                      hurricane/viewer/ControllerWidget.h
+                                     hurricane/viewer/ScriptWidget.h
                                      hurricane/viewer/PaletteWidget.h
                        )
                    set ( cpps        HApplication.cpp
@@ -106,6 +110,7 @@
                                      NetlistWidget.cpp
                                      DisplayFilterWidget.cpp
                                      ControllerWidget.cpp
+                                     ScriptWidget.cpp
                        )
 
           qt4_wrap_cpp ( MOC_SRCS    ${mocincludes} )

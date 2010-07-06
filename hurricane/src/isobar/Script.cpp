@@ -1,7 +1,7 @@
 
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2010, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -42,13 +42,22 @@
 #include  "hurricane/Error.h"
 #include  "hurricane/Cell.h"
 #include  "hurricane/isobar/PyCell.h"
+#include  "hurricane/isobar/PyCellViewer.h"
 #include  "hurricane/isobar/Script.h"
+
+
+namespace {
+
+  const char* __editorKw = "__editor";
+
+} // End of anonymous namespace.
 
 
 namespace Isobar {
 
   using std::string;
   using Hurricane::Cell;
+  using Hurricane::CellViewer;
 
 
 // -------------------------------------------------------------------
@@ -62,17 +71,34 @@ namespace Isobar {
   { _pathes.push_back ( path ); }
 
 
-  Script::Script ( const string& name )
-    : _moduleName(name)
-    , _sysModule (NULL)
-    , _userModule(NULL)
+  void  Script::removePath ( const string& path )
   {
+    vector<string>::iterator ipath = _pathes.begin();
+    for ( ; ipath != _pathes.end() ; ++ipath ) {
+      if ( (*ipath) == path ) {
+        _pathes.erase ( ipath );
+        return;
+      }
+    }
   }
+
+
+  Script::Script ( const string& name )
+    : _moduleName     (name)
+    , _sysModule      (NULL)
+    , _hurricaneModule(NULL)
+    , _userModule     (NULL)
+    , _pyFunction     (NULL)
+    , _pyArgs         (NULL)
+    , _pyResult       (NULL)
+    , _cellViewer     (NULL)
+  { }
 
 
   Script::~Script ()
   {
-    _destroyModules();
+    _finalize();
+    Py_Finalize ();
   }
 
 
@@ -89,16 +115,15 @@ namespace Isobar {
   }
 
 
+  void  Script::setEditor ( CellViewer* viewer )
+  { _cellViewer = viewer; }
+
+
   bool  Script::runFunction ( const std::string& function, Cell* cell )
   {
     bool returnCode = true;
 
-    if ( cell == NULL )
-      throw Error("Script::runFunction(): NULL Cell as argument");
-
-    Py_Initialize ();
-    _importSys    ();
-    _importModule ( "Hurricane" );
+    _initialize ();
 
     _userModule = PyImport_ImportModule ( const_cast<char*>(_moduleName.c_str()) );
 
@@ -106,36 +131,35 @@ namespace Isobar {
       if ( PyErr_Occurred() ) {
         PyErr_Print ();
       }
+      _finalize ();
       throw Error("Cannot load python module: <%s>",_moduleName.c_str());
     }
 
-    PyObject* pyFunction = PyObject_GetAttrString(_userModule, const_cast<char*>(function.c_str()));
-    if ( (pyFunction == NULL) or not PyCallable_Check(pyFunction) ) {
-      _destroyModules ();
+    _setEditor ();
+
+    _pyFunction = PyObject_GetAttrString(_userModule, const_cast<char*>(function.c_str()));
+    if ( (_pyFunction == NULL) or not PyCallable_Check(_pyFunction) ) {
+      _finalize ();
       throw Error("Python module <%s> doesn't contains any <%s> function."
                  ,_moduleName.c_str(),function.c_str());
     }
 
-    PyObject* pyArgs  = PyTuple_New(1);
-    PyTuple_SetItem ( pyArgs, 0, (PyObject*)PyCell_Link(cell) );
+    _pyArgs  = PyTuple_New(1);
+    if ( cell != NULL ) PyTuple_SetItem ( _pyArgs, 0, (PyObject*)PyCell_Link(cell) );
+    else                PyTuple_SetItem ( _pyArgs, 0, Py_None );
 
-    PyObject* pyResult = PyEval_CallObject ( pyFunction, pyArgs );
+    _pyResult = PyEval_CallObject ( _pyFunction, _pyArgs );
 
-    if ( pyResult == NULL ) {
+    if ( _pyResult == NULL ) {
       cerr << "Something has gone slightly wrong" << endl;
-    } else
-      Py_DECREF ( pyResult );
+    }
 
     if ( PyErr_Occurred() ) {
       PyErr_Print ();
       returnCode = false;
     }
 
-    Py_DECREF ( pyFunction );
-    Py_DECREF ( pyArgs );
-
-    _destroyModules ();
-    Py_Finalize ();
+    _finalize();
 
     return true;
   }
@@ -143,6 +167,9 @@ namespace Isobar {
 
   void  Script::_importSys ()
   {
+    if ( not Py_IsInitialized() )
+      throw Error ( "Script::_importSys(): Called before Py_Initialize()." );
+
     _sysModule = _importModule ( "sys" );
 
     PyObject* path = PyObject_GetAttrString ( _sysModule, "path" );
@@ -152,15 +179,22 @@ namespace Isobar {
     vector<string>::iterator ipath = _pathes.begin();
 
     for ( ; ipath != _pathes.end() ; ++ipath ) {
-      cerr << "PYTHONPATH:" << (*ipath) << endl;
-
       PyObject* element = PyString_FromString ( const_cast<char*>((*ipath).c_str()) );
       PyList_Insert ( path, 0, element );
     }
+  }
 
-    int size = PySequence_Size(path);
-    for ( int i=0 ; i<size ; ++i )
-      PyObject* element = PySequence_GetItem(path,i);
+
+  void  Script::_importHurricane ()
+  {
+    if ( not Py_IsInitialized() )
+      throw Error ( "Script::_importHurricane(): Called before Py_Initialize()." );
+
+    _hurricaneModule = PyImport_ImportModule ( "Hurricane" );
+    if ( _hurricaneModule == NULL )
+      throw Error("Script::_importModule(): No Hurricane module.");
+
+    PyModule_AddObject ( _hurricaneModule, const_cast<char*>(__editorKw), Py_None );
   }
 
 
@@ -178,15 +212,50 @@ namespace Isobar {
   }
 
 
-  void  Script::_destroyModules ()
+  void  Script::_initialize ()
+  {
+    Py_Initialize    ();
+    _importSys       ();
+    _importHurricane ();
+  }
+
+
+  void  Script::_finalize ()
   {
     if ( not Py_IsInitialized() ) return;
 
-    if ( _userModule != NULL ) Py_DECREF ( _userModule );
-    if ( _sysModule  != NULL ) Py_DECREF ( _sysModule );
+    if ( _pyResult        != NULL ) Py_DECREF ( _pyResult );
+    if ( _pyArgs          != NULL ) Py_DECREF ( _pyArgs );
+    if ( _pyFunction      != NULL ) Py_DECREF ( _pyFunction );
+    if ( _userModule      != NULL ) Py_DECREF ( _userModule );
+    if ( _hurricaneModule != NULL ) Py_DECREF ( _hurricaneModule );
+    if ( _sysModule       != NULL ) Py_DECREF ( _sysModule );
 
-    _userModule = NULL;
-    _sysModule  = NULL;
+    Py_Finalize ();
+
+    _userModule       = NULL;
+    _sysModule        = NULL;
+    _hurricaneModule  = NULL;
+    _pyFunction       = NULL;
+    _pyArgs           = NULL;
+    _pyResult         = NULL;
+  }
+
+
+  void  Script::_setEditor ()
+  {
+    if ( _userModule == NULL ) return;
+
+    PyObject* dictionary = PyModule_GetDict ( _userModule );
+
+    if ( _cellViewer != NULL ) {
+      PyCellViewer* pyCellViewer = PyObject_NEW ( PyCellViewer, &PyTypeCellViewer );
+      pyCellViewer->_object = _cellViewer;
+
+      PyDict_SetItemString ( dictionary, __editorKw, (PyObject*)pyCellViewer );
+    } else {
+      PyDict_SetItemString ( dictionary, __editorKw, Py_None );
+    }
   }
 
 

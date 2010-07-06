@@ -196,7 +196,19 @@ inline std::string  getString<const Hurricane::Instance::PlacementStatus::Code*>
                              ( const Hurricane::Instance::PlacementStatus::Code* object )
                              {
                                switch ( *object ) {
-                                 case Hurricane::Instance::PlacementStatus::UNPLACED: return "PLACED";
+                                 case Hurricane::Instance::PlacementStatus::UNPLACED: return "UNPLACED";
+                                 case Hurricane::Instance::PlacementStatus::PLACED:   return "PLACED";
+                                 case Hurricane::Instance::PlacementStatus::FIXED:    return "FIXED";
+                               }
+                               return "ABNORMAL";
+                             }
+
+template<>
+inline std::string  getString<Hurricane::Instance::PlacementStatus::Code>
+                             ( Hurricane::Instance::PlacementStatus::Code object )
+                             {
+                               switch ( object ) {
+                                 case Hurricane::Instance::PlacementStatus::UNPLACED: return "UNPLACED";
                                  case Hurricane::Instance::PlacementStatus::PLACED:   return "PLACED";
                                  case Hurricane::Instance::PlacementStatus::FIXED:    return "FIXED";
                                }
@@ -212,13 +224,20 @@ inline Hurricane::Record* getRecord<const Hurricane::Instance::PlacementStatus::
                                      return record;
                                    }
 
+template<>
+inline Hurricane::Record* getRecord<const Hurricane::Instance::PlacementStatus::Code>
+                                   ( const Hurricane::Instance::PlacementStatus::Code object )
+                                   {
+                                     Hurricane::Record* record = new Hurricane::Record(getString(object));
+                                     record->add(getSlot("Code", (unsigned int)object));
+                                     return record;
+                                   }
+
 
 INSPECTOR_P_SUPPORT(Hurricane::Instance);
 INSPECTOR_P_SUPPORT(Hurricane::Instance::PlacementStatus);
 INSPECTOR_P_SUPPORT(Hurricane::Instance::PlugMap);
 INSPECTOR_P_SUPPORT(Hurricane::Instance::SharedPathMap);
-IOSTREAM_POINTER_SUPPORT(Hurricane::Instance::PlacementStatus::Code);
-IOSTREAM_VALUE_SUPPORT(Hurricane::Instance::PlacementStatus::Code);
 
 
 #endif // HURRICANE_INSTANCE

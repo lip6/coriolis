@@ -45,6 +45,7 @@
 #include <Python.h>
 namespace Hurricane {
   class Cell;
+  class CellViewer;
 }
 
 
@@ -53,29 +54,43 @@ namespace Isobar {
 
   class Script {
     public:
-      static void      addPath       ( const std::string& path );
-      static Script*   create        ( const std::string& name );
-             void      destroy       ();
-      inline PyObject* getUserModule ();
-             bool      runFunction   ( const std::string& function, Hurricane::Cell* cell );
+      static void      addPath            ( const std::string& path );
+      static void      removePath         ( const std::string& path );
+      static Script*   create             ( const std::string& name );
+             void      destroy            ();
+      inline PyObject* getSysModule       ();
+      inline PyObject* getHurricaneModule ();
+      inline PyObject* getUserModule      ();
+             void      setEditor          ( Hurricane::CellViewer* );
+             bool      runFunction        ( const std::string& function, Hurricane::Cell* cell );
     protected:
       static std::vector<std::string>  _pathes;
              std::string               _moduleName;
              PyObject*                 _sysModule;
+             PyObject*                 _hurricaneModule;
              PyObject*                 _userModule;
+             PyObject*                 _pyFunction;
+             PyObject*                 _pyArgs;
+             PyObject*                 _pyResult;
+             Hurricane::CellViewer*    _cellViewer;
     protected:                            
-                Script            ( const std::string& name );
-               ~Script            ();
-                Script            ( const Script& );
-      Script&   operator=         ( const Script& );
-      void      _importSys        ();
-      PyObject* _importModule     ( const std::string& );
-      void      _destroyModules   ();
+                Script           ( const std::string& name );
+               ~Script           ();
+                Script           ( const Script& );
+      Script&   operator=        ( const Script& );
+      void      _importSys       ();
+      void      _importHurricane ();
+      PyObject* _importModule    ( const std::string& );
+      void      _initialize      ();
+      void      _finalize        ();
+      void      _setEditor       ();
   };
 
 
 // Inline Methods.
-  inline PyObject* Script::getUserModule () { return _userModule; }
+  inline PyObject* Script::getSysModule       () { return _sysModule; }
+  inline PyObject* Script::getHurricaneModule () { return _hurricaneModule; }
+  inline PyObject* Script::getUserModule      () { return _userModule; }
 
 
 } // End of Isobar namespace.

@@ -599,6 +599,33 @@ extern "C" {
     PyObject_DEL ( self );                                               \
   }
 
+// -------------------------------------------------------------------
+// Attribute Method For Singleton Deletion.
+
+// # define  SingletonDeleteMethod(SELF_TYPE)                               
+//   static void Py##SELF_TYPE##_DeAlloc ( Py##SELF_TYPE *self )            
+//   {                                                                      
+//     trace << "PySingletonObject_DeAlloc(" << hex << self << ") "         
+//           << self->ACCESS_OBJECT << endl;                                
+//                                                                          
+//     if ( self->ACCESS_OBJECT != NULL ) {                                 
+//         ostringstream  message;                                          
+//         message << "Never delete singleton "#SELF_TYPE".";               
+//         PyErr_SetString ( ProxyError, message.str().c_str() );           
+//     }                                                                    
+//     PyObject_DEL ( self );                                               
+//   }
+
+// -------------------------------------------------------------------
+// Attribute Method For Singleton Deletion.
+
+# define  SingletonDeleteMethod(SELF_TYPE)                               \
+  static void Py##SELF_TYPE##_DeAlloc ( Py##SELF_TYPE *self )            \
+  {                                                                      \
+    trace << "PySingletonObject_DeAlloc(" << hex << self << ") "         \
+          << self->ACCESS_OBJECT << endl;                                \
+  }
+
 
   
 

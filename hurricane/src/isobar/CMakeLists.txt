@@ -1,5 +1,8 @@
 
+               include ( ${QT_USE_FILE} )
+
    include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane
+                         ${HURRICANE_SOURCE_DIR}/src/viewer
                          ${HURRICANE_SOURCE_DIR}/src/isobar
                          ${PYTHON_INCLUDE_PATH}
                        )
@@ -7,6 +10,7 @@
                                     PyBox.cpp
                                     PyCell.cpp
                                     PyCellCollection.cpp
+                                    PyCellViewer.cpp
                                     PyComponent.cpp
                                     PyComponentCollection.cpp
                                     PyContact.cpp
@@ -44,6 +48,7 @@
                                     hurricane/isobar/PyBox.h
                                     hurricane/isobar/PyCell.h
                                     hurricane/isobar/PyCellCollection.h
+                                    hurricane/isobar/PyCellViewer.h
                                     hurricane/isobar/PyComponent.h
                                     hurricane/isobar/PyComponentCollection.h
                                     hurricane/isobar/PyContact.h

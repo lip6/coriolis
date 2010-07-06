@@ -44,6 +44,7 @@
 #include  "hurricane/viewer/CellViewer.h"
 #include  "hurricane/viewer/MousePositionWidget.h"
 #include  "hurricane/viewer/ControllerWidget.h"
+#include  "hurricane/viewer/ScriptWidget.h"
 #include  "hurricane/viewer/GotoWidget.h"
 
 
@@ -67,6 +68,7 @@ namespace Hurricane {
                                              , _rubberChangeAction     (NULL)
                                              , _clearRulersAction      (NULL)
                                              , _controllerAction       (NULL)
+                                             , _scriptAction           (NULL)
                                              , _fileMenu               (NULL)
                                              , _viewMenu               (NULL)
                                              , _toolsMenu              (NULL)
@@ -74,6 +76,7 @@ namespace Hurricane {
                                            //, _mapView                (NULL)
                                              , _mousePosition          (NULL)
                                              , _controller             (NULL)
+                                             , _script                 (NULL)
                                              , _goto                   (NULL)
                                              , _cellWidget             (NULL)
                                              , _moveCommand            ()
@@ -96,6 +99,7 @@ namespace Hurricane {
   CellViewer::~CellViewer ()
   {
     _controller->deleteLater ();
+  //_script->deleteLater ();
     _goto->deleteLater ();
   }
 
@@ -198,6 +202,12 @@ namespace Hurricane {
     _controllerAction->setStatusTip  ( tr("Fine Tune && Inspect DataBase") );
     _controllerAction->setIcon       ( QIcon(":/images/swiss-knife.png") );
     _controllerAction->setShortcut   ( QKeySequence(tr("CTRL+I")) );
+
+    _scriptAction = new QAction  ( tr("Script"), this );
+    _scriptAction->setObjectName ( "viewer.menuBar.tools.script" );
+    _scriptAction->setStatusTip  ( tr("Run Python Script") );
+    _scriptAction->setIcon       ( QIcon(":/images/python-logo-v3.png") );
+  //_scriptAction->setShortcut   ( QKeySequence(tr("CTRL+I")) );
   }
 
 
@@ -236,6 +246,7 @@ namespace Hurricane {
     _toolsMenu = menuBar()->addMenu ( tr("Tools") );
     _toolsMenu->setObjectName ( "viewer.menuBar.tools" );
     _toolsMenu->addAction ( _controllerAction );
+    _toolsMenu->addAction ( _scriptAction );
   }
 
 
@@ -293,6 +304,7 @@ namespace Hurricane {
     connect ( _rubberChangeAction    , SIGNAL(triggered())        , _cellWidget, SLOT(rubberChange()) );
     connect ( _clearRulersAction     , SIGNAL(triggered())        , _cellWidget, SLOT(clearRulers()) );
     connect ( _controllerAction      , SIGNAL(triggered())        , _controller, SLOT(toggleShow()) );
+    connect ( _scriptAction          , SIGNAL(triggered())        , this       , SLOT(runScript()) );
     connect ( _gotoAction            , SIGNAL(triggered())        , this       , SLOT(doGoto()) );
 
     connect ( _cellWidget            , SIGNAL(dbuModeChanged(unsigned int,DbU::UnitPower))
@@ -528,6 +540,12 @@ namespace Hurricane {
                                                     );
 
     image.save ( filePath, "png" );
+  }
+
+
+  void  CellViewer::runScript ()
+  {
+    ScriptWidget::runScript ( this, getCell() );
   }
 
 

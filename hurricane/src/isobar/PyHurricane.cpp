@@ -63,6 +63,7 @@
 #include "hurricane/isobar/PyEntity.h"
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/isobar/PyCellCollection.h"
+#include "hurricane/isobar/PyCellViewer.h"
 #include "hurricane/isobar/PyLayer.h"
 #include "hurricane/isobar/PyPin.h"
 #include "hurricane/isobar/PyPinCollection.h"
@@ -516,7 +517,7 @@ extern "C" {
     , { "DataBase"              , (PyCFunction)PyDataBase_create                 , METH_NOARGS , "Creates the DataBase." }
     , { "getDataBase"           , (PyCFunction)PyDataBase_getDataBase            , METH_NOARGS , "Gets the current DataBase." }
     , { "Library"               , (PyCFunction)PyLibrary_create                  , METH_VARARGS, "Creates a new Library." }
-//    , { "getLibrary"            , (PyCFunction)PyLibrary_getLibrary              , METH_NOARGS , "Gets the current Library." }
+//  , { "getLibrary"            , (PyCFunction)PyLibrary_getLibrary              , METH_NOARGS , "Gets the current Library." }
     , { "Reference"             , (PyCFunction)PyReference_create                , METH_VARARGS, "Creates a new Reference." }
     , { "Cell"                  , (PyCFunction)PyCell_create                     , METH_VARARGS, "Creates a new Cell." }
     , { "Instance"              , (PyCFunction)PyInstance_create                 , METH_VARARGS, "Creates a new Instance." }
@@ -575,6 +576,7 @@ extern "C" {
     PyContact_LinkPyType ();
     PyPin_LinkPyType ();
     PyPlug_LinkPyType ();
+    PyCellViewer_LinkPyType ();
 
     PYTYPE_READY ( Point                       )
     PYTYPE_READY ( Box                         )
@@ -605,6 +607,7 @@ extern "C" {
     PYTYPE_READY ( ReferenceCollection         )
     PYTYPE_READY ( ReferenceCollectionLocator  )
     PYTYPE_READY ( HyperNet                    )
+    PYTYPE_READY ( CellViewer                  )
 
     PYTYPE_READY_SUB ( Cell      , Entity   )
     PYTYPE_READY_SUB ( Instance  , Entity   )
@@ -620,48 +623,48 @@ extern "C" {
     PYTYPE_READY_SUB ( Plug      , Component)
     PYTYPE_READY_SUB ( Pad       , Component)
 
-   
     // Identifier string can take up to 10 characters !
-    __cs.addType ( "box"        , &PyTypeBox              , "<Box>"              , false );
-    __cs.addType ( "ent"        , &PyTypeEntity           , "<Entity>"           , false );
-    __cs.addType ( "cell"       , &PyTypeCell             , "<Cell>"             , false, "ent" );
-    __cs.addType ( "cellCol"    , &PyTypeCellCollection   , "<CellCollection>"   , false );
-    __cs.addType ( "comp"       , &PyTypeComponent        , "<Component>"        , false, "ent" );
-    __cs.addType ( "compCol"    , &PyTypeComponentCollection, "<ComponentCollection>" , false );
-    __cs.addType ( "contact"    , &PyTypeContact          , "<Contact>"          , false, "comp" );
-    // Do not change the "none" string. It's hardwired to the None object.
-    __cs.addType ( "none"       ,  Py_None->ob_type       , "<None>"             , true  );
-    __cs.addType ( "float"      , &PyFloat_Type           , "<Float>"            , true  );
-    __cs.addType ( "int"        , &PyInt_Type             , "<Int>"              , true  );
-    __cs.addType ( "bool"       , &PyBool_Type            , "<Bool>"             , true  );
-    __cs.addType ( "string"     , &PyString_Type          , "<String>"           , true  );
-    __cs.addType ( "list"       , &PyList_Type            , "<List>"             , true  );
+    __cs.addType ( "box"        , &PyTypeBox                 , "<Box>"                 , false );
+    __cs.addType ( "ent"        , &PyTypeEntity              , "<Entity>"              , false );
+    __cs.addType ( "cell"       , &PyTypeCell                , "<Cell>"                , false, "ent" );
+    __cs.addType ( "cellCol"    , &PyTypeCellCollection      , "<CellCollection>"      , false );
+    __cs.addType ( "cellView"   , &PyTypeCellViewer          , "<CellViewer>"          , false, "view" );
+    __cs.addType ( "comp"       , &PyTypeComponent           , "<Component>"           , false, "ent" );
+    __cs.addType ( "compCol"    , &PyTypeComponentCollection , "<ComponentCollection>" , false );
+    __cs.addType ( "contact"    , &PyTypeContact             , "<Contact>"             , false, "comp" );
+    // Do not change the "none" string. It's hardwired to the None object.             
+    __cs.addType ( "none"       ,  Py_None->ob_type          , "<None>"                , true  );
+    __cs.addType ( "float"      , &PyFloat_Type              , "<Float>"               , true  );
+    __cs.addType ( "int"        , &PyInt_Type                , "<Int>"                 , true  );
+    __cs.addType ( "bool"       , &PyBool_Type               , "<Bool>"                , true  );
+    __cs.addType ( "string"     , &PyString_Type             , "<String>"              , true  );
+    __cs.addType ( "list"       , &PyList_Type               , "<List>"                , true  );
     // Do not change the "function" string. It's hardwired to callable (function) objects.
-    __cs.addType ( "function"   , NULL                    , "<Function>"         , true  );
-    __cs.addType ( "horiz"      , &PyTypeHorizontal       , "<Horizontal>"       , false, "segment" );
-    __cs.addType ( "inst"       , &PyTypeInstance         , "<Instance>"         , false, "ent" );
-    __cs.addType ( "instCol"    , &PyTypeInstanceCollection, "<InstanceCollection>"  , false );
-    __cs.addType ( "layer"      , &PyTypeLayer            , "<Layer>"            , false );
-    __cs.addType ( "library"    , &PyTypeLibrary          , "<Library>"          , false );
-    __cs.addType ( "ref"        , &PyTypeReference        , "<Reference>"        , false, "ent" );
-    __cs.addType ( "refCol"     , &PyTypeReferenceCollection, "<ReferenceCollection>" , false );
-    __cs.addType ( "net"        , &PyTypeNet              , "<Net>"              , false, "ent" );
-    __cs.addType ( "netCol"     , &PyTypeNetCollection    , "<NetCollection>"    , false );
-    __cs.addType ( "hyperNet"   , &PyTypeHyperNet         , "<HyperNet>"         , false );
-    __cs.addType ( "pin"        , &PyTypePin              , "<Pin>"              , false, "contact" );
-    __cs.addType ( "pinCol"     , &PyTypePinCollection    , "<PinCollection>"    , false );
-    __cs.addType ( "plug"       , &PyTypePlug             , "<Plug>"             , false, "comp" );
-    __cs.addType ( "plugCol"    , &PyTypePlugCollection   , "<PlugCollection>"   , false );
-    __cs.addType ( "point"      , &PyTypePoint            , "<Point>"            , false );
-    __cs.addType ( "segment"    , &PyTypeSegment          , "<Segment>"          , false, "comp" );
-    __cs.addType ( "pad    "    , &PyTypePad              , "<Pad>"              , false, "comp" );
-    __cs.addType ( "segmentCol" , &PyTypeSegmentCollection, "<SegmentCollection>", false );
-    __cs.addType ( "db"         , &PyTypeDataBase         , "<DataBase>"         , false );
-    __cs.addType ( "techno"     , &PyTypeTechnology       , "<Technology>"       , false );
-    __cs.addType ( "transfo"    , &PyTypeTransformation   , "<Transformation>"   , false );
-    __cs.addType ( "vert"       , &PyTypeVertical         , "<Vertical>"         , false, "segment" );
-    __cs.addType ( "path"       , &PyTypePath             , "<Path>"             , false );
-    __cs.addType ( "occur"      , &PyTypeOccurrence       , "<Occurrence>"       , false );
+    __cs.addType ( "function"   , NULL                       , "<Function>"            , true  );
+    __cs.addType ( "horiz"      , &PyTypeHorizontal          , "<Horizontal>"          , false, "segment" );
+    __cs.addType ( "inst"       , &PyTypeInstance            , "<Instance>"            , false, "ent" );
+    __cs.addType ( "instCol"    , &PyTypeInstanceCollection  , "<InstanceCollection>"  , false );
+    __cs.addType ( "layer"      , &PyTypeLayer               , "<Layer>"               , false );
+    __cs.addType ( "library"    , &PyTypeLibrary             , "<Library>"             , false );
+    __cs.addType ( "ref"        , &PyTypeReference           , "<Reference>"           , false, "ent" );
+    __cs.addType ( "refCol"     , &PyTypeReferenceCollection , "<ReferenceCollection>" , false );
+    __cs.addType ( "net"        , &PyTypeNet                 , "<Net>"                 , false, "ent" );
+    __cs.addType ( "netCol"     , &PyTypeNetCollection       , "<NetCollection>"       , false );
+    __cs.addType ( "hyperNet"   , &PyTypeHyperNet            , "<HyperNet>"            , false );
+    __cs.addType ( "pin"        , &PyTypePin                 , "<Pin>"                 , false, "contact" );
+    __cs.addType ( "pinCol"     , &PyTypePinCollection       , "<PinCollection>"       , false );
+    __cs.addType ( "plug"       , &PyTypePlug                , "<Plug>"                , false, "comp" );
+    __cs.addType ( "plugCol"    , &PyTypePlugCollection      , "<PlugCollection>"      , false );
+    __cs.addType ( "point"      , &PyTypePoint               , "<Point>"               , false );
+    __cs.addType ( "segment"    , &PyTypeSegment             , "<Segment>"             , false, "comp" );
+    __cs.addType ( "pad    "    , &PyTypePad                 , "<Pad>"                 , false, "comp" );
+    __cs.addType ( "segmentCol" , &PyTypeSegmentCollection   , "<SegmentCollection>"   , false );
+    __cs.addType ( "db"         , &PyTypeDataBase            , "<DataBase>"            , false );
+    __cs.addType ( "techno"     , &PyTypeTechnology          , "<Technology>"          , false );
+    __cs.addType ( "transfo"    , &PyTypeTransformation      , "<Transformation>"      , false );
+    __cs.addType ( "vert"       , &PyTypeVertical            , "<Vertical>"            , false, "segment" );
+    __cs.addType ( "path"       , &PyTypePath                , "<Path>"                , false );
+    __cs.addType ( "occur"      , &PyTypeOccurrence          , "<Occurrence>"          , false );
     __cs.addType ( "occurCol"   , &PyTypeOccurrenceCollection, "<OccurrenceCollection>", false );
 
 

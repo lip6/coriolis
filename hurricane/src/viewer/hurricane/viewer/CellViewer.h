@@ -57,6 +57,7 @@ namespace Hurricane {
   class GotoWidget;
   class MousePositionWidget;
   class ControllerWidget;
+  class ScriptWidget;
 
 
   class CellViewer : public QMainWindow {
@@ -90,6 +91,7 @@ namespace Hurricane {
               void                 imageDisplay              ();
               void                 raiseToolInterrupt        ();
               void                 clearToolInterrupt        ();
+              void                 runScript                 ();
     signals:                       
               void                 showSelectionToggled      ( bool );
               void                 stateChanged              ( shared_ptr<CellWidget::State>& );
@@ -119,6 +121,7 @@ namespace Hurricane {
       QAction*                 _rubberChangeAction;
       QAction*                 _clearRulersAction;
       QAction*                 _controllerAction;
+      QAction*                 _scriptAction;
       QMenu*                   _fileMenu;
       QMenu*                   _viewMenu;
       QMenu*                   _toolsMenu;
@@ -126,6 +129,7 @@ namespace Hurricane {
     //MapView*                 _mapView;
       MousePositionWidget*     _mousePosition;
       ControllerWidget*        _controller;
+      ScriptWidget*            _script;
       GotoWidget*              _goto;
       CellWidget*              _cellWidget;
       MoveCommand              _moveCommand;

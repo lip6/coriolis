@@ -272,6 +272,7 @@ class Cell : public Entity {
     public: Occurrences getTerminalInstanceOccurrencesUnder(const Box& area) const;
     public: Occurrences getLeafInstanceOccurrences() const;
     public: Occurrences getLeafInstanceOccurrencesUnder(const Box& area) const;
+    public: Occurrences getNonLeafInstanceOccurrences() const;
     public: Occurrences getComponentOccurrences(const Layer::Mask& mask = ~0) const;
     public: Occurrences getComponentOccurrencesUnder(const Box& area, const Layer::Mask& mask = ~0) const;
     public: Occurrences getHyperNetRootNetOccurrences() const;

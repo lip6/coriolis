@@ -195,7 +195,8 @@ extern "C" {
     if ( ! PyArg_ParseTuple(args,"|O&:DbU.symbolic",Converter,&arg0) )
       return ( NULL );
     
-    if ( __cs.getObjectIds() == FLOAT_ARG   ) { result = DbU::lambda ( PyFloat_AsDouble ( arg0 ) ); }
+    if      ( __cs.getObjectIds() == FLOAT_ARG ) { result = DbU::lambda ( PyFloat_AsDouble ( arg0 ) ); }
+    else if ( __cs.getObjectIds() == INT_ARG   ) { result = DbU::lambda ( PyLong_AsLong    ( arg0 ) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters or bad type for DbU.symbolic converter." );
       return ( NULL );
