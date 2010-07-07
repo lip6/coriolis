@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-07-01 15:34:45" - OpenAccessWrapper.h
+// Time-stamp: "2010-07-07 13:37:14" - OpenAccessWrapper.h
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -15,7 +15,6 @@
 #define __OPENACCESSWRAPPER_H__
 
 #include <string>
-using namespace std;
 
 namespace Hurricane {
     class Library;
@@ -25,7 +24,7 @@ namespace Hurricane {
 namespace CRL {
     class OpenAccessWrapper {
     public:
-        static void oaDriver(const string& cellPath, Cell* cell);
+        static void oaDriver(const std::string& cellPath, Cell* cell);
     };
 }
 

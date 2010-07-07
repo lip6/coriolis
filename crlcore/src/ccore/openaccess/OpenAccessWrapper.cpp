@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-07-06 17:24:31" - OpenAccessWrapper.cpp
+// Time-stamp: "2010-07-07 16:25:24" - OpenAccessWrapper.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -10,6 +10,11 @@
 // |  Author      :                    Jean-Manuel Caba              |
 // |  E-mail      :       Jean-Manuel.Caba@asim.lip6.fr              |
 // x-----------------------------------------------------------------x
+
+#include <iostream>
+#include <algorithm>
+#include <vector>
+using namespace std;
 
 #ifdef HAVE_OPENACCESS
 #include "oa/oaDesignDB.h"
@@ -28,9 +33,9 @@ using namespace Hurricane;
 
 #include "OpenAccessWrapper.h"
 
-#define assert(cond) if (! (cond) ) throw Error("assertion failed")
-//#define assert(cond) 
-    
+#define assert(cond) if (! (cond) ) throw Error("assertion failed : " + string( #cond ) )
+//#define assert(cond)
+
 
 namespace {
 
@@ -64,7 +69,7 @@ namespace {
     }
 
     /**
-       @todo verify 
+       @todo verify
     */
     oaMaterial getOAMaterial(const BasicLayer::Material&  material) {
         cerr << "getOAMaterial" << endl;
@@ -83,9 +88,9 @@ namespace {
             throw Error("Unrecognized material");
         }
     }
-    
+
     /**
-       @todo verify 
+       @todo verify
     */
     oaTermType getOATermType(const Net::Direction& direction) {
         cerr << "getOATermType" << endl;
@@ -106,7 +111,7 @@ namespace {
     }
 
     /**
-       @todo verify 
+       @todo verify
     */
     oaSigType getOASigType(const Net::Type& type) {
         cerr << "getOASigType" << endl;
@@ -223,7 +228,9 @@ namespace {
         }
 
         ~OADriver() {
-            cerr << "SAVING ALL" << endl;            
+            cerr << "SAVING ALL" << endl;
+            _oaTech->save();
+            _oaTech->close();
             for (Cell2OADesignMap::iterator it = _cell2OADesign4SchematicMap.begin();
                  it != _cell2OADesign4SchematicMap.end();
                  ++it) {
@@ -240,8 +247,7 @@ namespace {
                 design->save();
                 design->close();
             }
-            _oaTech->save();
-            _oaTech->close();
+
             for (Library2OALibMap::iterator it = _library2OALibMap.begin();
                  it != _library2OALibMap.end();
                  ++it) {
@@ -268,48 +274,48 @@ namespace {
             cerr << "Creating new Library for Lib name="
                  << strNameLib << " to filesystem path=" << strPathLib << endl;
 
-            oaLib *lib = oaLib::find(scNameLib);
-            if (!lib) {
-                if (oaLib::exists(strPathLib.c_str())){
-                    lib = oaLib::open(scNameLib, strPathLib.c_str());
-                }
-//            string cmd = "rm -rf "+strPathLib+"; mkdir -p "+strPathLib;
-//            system(cmd.c_str());
+            oaLib *lib = NULL;//oaLib::find(scNameLib);
+//            if (!lib) {
+//                if (oaLib::exists(strPathLib.c_str())){
+//                    lib = oaLib::open(scNameLib, strPathLib.c_str());
+//                }
+            string cmd = "rm -rf "+strPathLib+"; mkdir -p "+strPathLib;
+            system(cmd.c_str());
 //            oaLib* lib = oaLib::create(scNameLib, strPathLib.c_str(), oacSharedLibMode, "oaDMFileSys");
-                if(!lib)
-                    lib = oaLib::create(scNameLib, strPathLib.c_str());
-            }
+//                if(!lib)
+            lib = oaLib::create(scNameLib, strPathLib.c_str());
+//        }
 
-            assert(lib);
-            assert(lib->isValid());
+        assert(lib);
+        assert(lib->isValid());
 
-            if(!_oaTech)
-                _oaTech = createOATechForTechnology(_technology,lib);
-            
-            assert(_oaTech);
+        if(!_oaTech)
+            _oaTech = createOATechForTechnology(_technology,lib);
 
-            _library2OALibMap[library] = lib;
-            return lib;
-        }
+        assert(_oaTech);
 
-        /**
-           @todo complete with technology info for layers
-        */
+        _library2OALibMap[library] = lib;
+        return lib;
+    }
+
+    /**
+       @todo complete with technology info for layers
+    */
         oaTech* createOATechForTechnology(const Technology* technology,oaLib* lib) {
             cerr << "createOATechForTechnology" << endl;
             oaTech* theOATech = oaTech::create(lib);
             theOATech->setDefaultManufacturingGrid(10);
             theOATech->setDBUPerUU(oaViewType::get(oacMaskLayout), 1000);
-            
+
             int layerID=0;
             for_each_layer(layer, technology->getLayers()) {
                 oaString layerName = getString(layer->getName()).c_str();
-                oaPhysicalLayer* aOALayer = NULL;                
+                oaPhysicalLayer* aOALayer = NULL;
                 BasicLayer* bLayer = dynamic_cast<BasicLayer*>(layer);
                 if(bLayer)
                     aOALayer = oaPhysicalLayer::create(theOATech, layerName, layerID++,getOAMaterial(bLayer->getMaterial()));
                 else
-                    aOALayer = oaPhysicalLayer::create(theOATech, layerName, layerID++);                
+                    aOALayer = oaPhysicalLayer::create(theOATech, layerName, layerID++);
                 assert(aOALayer);
 
                 _layer2OAPhysicalLayerMap[layer] = aOALayer;
@@ -318,7 +324,7 @@ namespace {
                 DbU::Unit pitch = layer->getPitch();
                 end_for;
             }
-            
+
             for_each_basic_layer(basicLayer, technology->getBasicLayers()) {
                 Layer2OAPhysicalLayerMap::iterator it = _layer2OAPhysicalLayerMap.find((Layer*)(basicLayer));
                 if (it != _layer2OAPhysicalLayerMap.end()) {
@@ -327,7 +333,7 @@ namespace {
                 }
                 end_for;
             }
-            
+
             assert(theOATech != NULL);
             oaIter<oaLayer> lIter(theOATech->getLayers());
             while(oaLayer* l = lIter.getNext()){
@@ -338,85 +344,110 @@ namespace {
             return theOATech;
         }
 
-        oaDesign* getOADesignForCell(const Cell* cell) {
-            cerr << "getOADesignForCell " << cell << endl;
-            assert(cell);
-            Cell2OADesignMap::iterator it = _cell2OADesign4SchematicMap.find(cell);
-            if (it != _cell2OADesign4SchematicMap.end()) {
-                return it->second;
-            }
+    oaDesign* getOADesignForCell(const Cell* cell) {
+        cerr << "getOADesignForCell " << cell << endl;
+        assert(cell);
+        Cell2OADesignMap::iterator it = _cell2OADesign4SchematicMap.find(cell);
+        if (it != _cell2OADesign4SchematicMap.end()) {
+            return it->second;
+        }
 
-            oaNativeNS ns;
-            oaLib* lib = getOALibForLibrary(cell->getLibrary());
-            assert(lib);
-            assert(_oaTech);
-            oaScalarName scNameDesign(ns, getString(cell->getName()).c_str());
-            oaScalarName scNameViewSchematic(ns, "schematic");
-            oaScalarName scNameViewLayout(ns, "layout");
-            oaScalarName scNameLib;
-            lib->getName(scNameLib);
+        oaNativeNS ns;
+        oaLib* lib = getOALibForLibrary(cell->getLibrary());
+        assert(lib);
+        assert(_oaTech);
+        oaScalarName scNameDesign(ns, getString(cell->getName()).c_str());
+        oaScalarName scNameViewSchematic(ns, "schematic");
+        oaScalarName scNameViewLayout(ns, "layout");
+        oaScalarName scNameLib;
+        lib->getName(scNameLib);
 
-            oaDesign* design4Schematic = oaDesign::open(scNameLib, scNameDesign, scNameViewSchematic, oaViewType::get(oacSchematic), 'w');
-            _cell2OADesign4SchematicMap[cell] = design4Schematic;
-            oaBlock* designBlock4Layout = oaBlock::create(design4Schematic);
+        // create a Schematic CellView of the design
+        oaDesign* schematicView = oaDesign::open(scNameLib, scNameDesign, scNameViewSchematic, oaViewType::get(oacSchematic), 'w');
+        _cell2OADesign4SchematicMap[cell] = schematicView;
+        oaModule::create(schematicView);
+        oaBlock::create(schematicView);
+        // create a Layout CellView of the design
+        oaDesign* layoutView = oaDesign::open(scNameLib, scNameDesign, scNameViewLayout, oaViewType::get(oacMaskLayout), 'w');
+        _cell2OADesign4LayoutMap[cell] = layoutView;
 
-            cerr << "transformation of instances" << endl;
-            for_each_instance(instance, cell->getInstances()) {
-                Cell* masterCell = instance->getMasterCell();
-                oaDesign* masterDesign = getOADesignForCell(masterCell);
-                oaScalarName scMasterName;
-                masterDesign->getCellName(scMasterName);
-                oaString strMasterName;
-                scMasterName.get(strMasterName);
-                oaScalarName scInstName(ns, getString(instance->getName()).c_str());
+        //embed "module" domain in block domain
+        oaModule* topModule = oaModule::embed(layoutView,schematicView);
+        layoutView->setTopModule(topModule);
+        oaBlock* topBlock = layoutView->getTopBlock();
+        assert(topBlock);
 
-                oaTransform transform;
-                getOATransformFromTransformation(transform, instance->getTransformation());
-                oaScalarInst* blockInst = oaScalarInst::create(designBlock4Layout, masterDesign, scInstName, transform);
-                _instance2OAInstMap[instance] = blockInst;
-                end_for;
-            }
-            cerr << "transformation of nets" << endl;
-            for_each_net(net, cell->getNets()) {
-                oaScalarName scNetName(ns, getString(net->getName()).c_str());
-                oaScalarNet* blockNet = oaScalarNet::create(designBlock4Layout, scNetName, getOASigType(net->getType()));
-                if (net->isExternal()) {
-                    oaTerm* term = oaTerm::create(blockNet, scNetName, getOATermType(net->getDirection()));
-                    oaPin* pin = oaPin::create(term);
-                    Components externalComponents = NetExternalComponents::get(net);
-                    for_each_component(component, externalComponents) {
-                        oaBox box;
-                        getOABoxForBox(box, component->getBoundingBox());
-                        oaRect* rect = oaRect::create(designBlock4Layout, 0,
-                                                      oaPurpose::get(_oaTech, oacDrawingPurposeType)->getNumber(),
-                                                      box);
-                        rect->addToPin(pin);
-                        end_for;
+/// fail because the AbutmentBox is empty
+//        oaBox box;
+//        getOABoxForBox(box, cell->getAbutmentBox());
+//        cerr << cell << " " << cell->getAbutmentBox() << endl;
+//        oaRect::create(topBlock, 0, oaPurpose::get(_oaTech, oacDrawingPurposeType)->getNumber(), box);
+
+        cerr << "transformation of instances" << endl;
+        for_each_instance(instance, cell->getInstances()) {
+            Cell* masterCell = instance->getMasterCell();
+            oaDesign* masterDesign = getOADesignForCell(masterCell);
+            oaScalarName scMasterName;
+            masterDesign->getCellName(scMasterName);
+            oaString strMasterName;
+            scMasterName.get(strMasterName);
+            oaScalarName scInstName(ns, getString(instance->getName()).c_str());
+
+            oaTransform transform;
+            getOATransformFromTransformation(transform, instance->getTransformation());
+            oaScalarInst* blockInst = oaScalarInst::create(topBlock, masterDesign, scInstName, transform);
+            _instance2OAInstMap[instance] = blockInst;
+            end_for;
+        }
+        cerr << "transformation of nets" << endl;
+        for_each_net(net, cell->getNets()) {
+            oaScalarName scNetName(ns, getString(net->getName()).c_str());
+            oaScalarNet* blockNet = oaScalarNet::create(topBlock, scNetName, getOASigType(net->getType()));
+            assert(blockNet);
+            oaOccNet* occNet = blockNet->getOccNet();
+            assert(occNet);
+            assert(blockNet == occNet->getNet());
+            oaModNet* moduleNet = occNet->getModNet();
+            assert(moduleNet);
+            if (net->isExternal()) {
+                oaTerm* term = oaTerm::create(blockNet, scNetName, getOATermType(net->getDirection()));
+                oaPin* pin = oaPin::create(term);
+                Components externalComponents = NetExternalComponents::get(net);
+                for_each_component(component, externalComponents) {
+                    oaBox box;
+                    getOABoxForBox(box, component->getBoundingBox());
+                    Layer* layer = (Layer*) component->getLayer();
+                    assert(layer);
+                    oaPhysicalLayer* physLayer = NULL;
+                    Layer2OAPhysicalLayerMap::iterator it = _layer2OAPhysicalLayerMap.find(layer);
+                    if (it != _layer2OAPhysicalLayerMap.end()) {
+                        physLayer = it->second;
                     }
-                }
-                cerr << " o transformation of plugs" << endl;
-                for_each_plug(plug, net->getPlugs()) {
-                    Instance* instance = plug->getInstance();
-                    Instance2OAInstsMap::iterator it = _instance2OAInstMap.find(instance);
-                    assert(it != _instance2OAInstMap.end());
-                    oaInst* blockInst = it->second;
-                    oaInstTerm* instTerm = getInstTerm(blockInst, plug);
-                    assert(instTerm);
-                    instTerm->addToNet(blockNet);
+                    assert(physLayer);
+                    oaLayerNum layerNum = physLayer->getNumber();
+                    oaRect* rect = oaRect::create(topBlock, layerNum,
+                                                  oaPurpose::get(_oaTech, oacDrawingPurposeType)->getNumber(),
+                                                  box);
+                    rect->addToPin(pin);
                     end_for;
                 }
+            }
+            cerr << " o transformation of plugs" << endl;
+            for_each_plug(plug, net->getPlugs()) {
+                Instance* instance = plug->getInstance();
+                Instance2OAInstsMap::iterator it = _instance2OAInstMap.find(instance);
+                assert(it != _instance2OAInstMap.end());
+                oaInst* blockInst = it->second;
+                oaInstTerm* instTerm = getInstTerm(blockInst, plug);
+                assert(instTerm);
+                instTerm->addToNet(blockNet);
                 end_for;
             }
-            // create a Layout View of the design 
-            oaDesign* design4Layout = oaDesign::open(scNameLib, scNameDesign, scNameViewLayout, oaViewType::get(oacMaskLayout), 'w');
-            _cell2OADesign4LayoutMap[cell] = design4Layout;
-            if(design4Layout == design4Schematic)
-                cerr << "design4Layout == design4Schematic" << endl;
-            else
-                cerr << "design4Layout != design4Schematic" << endl;
-            return design4Schematic;
+            end_for;
         }
-    };
+        return layoutView;
+    }
+};
 #endif
 }
 
@@ -427,10 +458,10 @@ namespace CRL {
         //save the Cell and all used Cells
         cerr << "Saving " << cell << " in " << path << endl;
         try {
-            oaDesignInit(
-                oacAPIMajorRevNumber,
-                oacAPIMinorRevNumber,
-                oacDataModelRevNumber);
+            oaDesignInit();
+//            oaDesignInit(oacAPIMajorRevNumber,
+//                oacAPIMinorRevNumber,
+//                oacDataModelRevNumber);
 
             OADriver oaDriver(path);
             oaDesign* design = oaDriver.getOADesignForCell(cell);
