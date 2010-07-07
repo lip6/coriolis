@@ -20,28 +20,39 @@ using namespace std;
 namespace OpenChams {
 Netlist::Netlist(Circuit* circuit) : _circuit(circuit) {}
     
-void Netlist::addInstance(Instance* inst) {
+Instance* Netlist::addInstance(Name name, Name model, Name mosType, bool sourceBulkConnected) {
     for (vector<Instance*>::iterator it = _instances.begin() ; it != _instances.end() ; ++it) {
-        if ((*it)->getName() == inst->getName()) {
+        if ((*it)->getName() == name) {
             string error("[ERROR] Cannot define two instances with the same name in netlist (");
-            error += inst->getName().getString();
+            error += name.getString();
             error += ").";
             throw OpenChamsException(error);
         }
     }
+    Instance* inst = new Instance(name, model, mosType, sourceBulkConnected, this);
+    if (!inst)
+        throw OpenChamsException("[ERROR] Cannot creeate instance.");
     _instances.push_back(inst);
+
+    return inst;
 }
 
-void Netlist::addNet(Net* net) {
+Net* Netlist::addNet(Name name, Name type, bool external) {
 	for (vector<Net*>::iterator it = _nets.begin() ; it != _nets.end() ; ++it ) {
-        if ((*it)->getName() == net->getName()) {
+        if ((*it)->getName() == name) {
             string error("[ERROR] Cannot define two nets with the same name in netlist (");
-            error += net->getName().getString();
+            error += name.getString();
             error += ").";
             throw OpenChamsException(error);
         }
     }
+    Net* net = new Net(name, type, external, this);
+    if (!net)
+        throw OpenChamsException("[ERROR] Cannot create net.");
+
     _nets.push_back(net);
+
+    return net;
 }
  
 Instance* Netlist::getInstance(Name instanceName) {

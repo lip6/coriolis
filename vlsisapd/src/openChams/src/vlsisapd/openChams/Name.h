@@ -18,6 +18,7 @@
 namespace OpenChams {
 class Name {
     public:
+    Name();
     Name(std::string);
 	Name(const char*);
     

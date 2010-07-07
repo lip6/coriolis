@@ -25,7 +25,7 @@ class Schematic {
         
     	inline double getX();
         inline double getY();
-        inline Name   getSymetry();
+        inline Name   getSymmetry();
         
 	    private:
         double _x;
@@ -51,9 +51,9 @@ inline double Schematic::getZoom()        { return _zoom; };
 inline bool   Schematic::hasNoInstances() { return (_instances.size() == 0) ? true : false; };
 inline const std::map<Name, Schematic::Infos*>& Schematic::getInstances() { return _instances; };    
     
-inline double Schematic::Infos::getX()       { return _x; };
-inline double Schematic::Infos::getY()       { return _y; };
-inline Name   Schematic::Infos::getSymetry() { return _sym; };
+inline double Schematic::Infos::getX()        { return _x; };
+inline double Schematic::Infos::getY()        { return _y; };
+inline Name   Schematic::Infos::getSymmetry() { return _sym; };
     
 } // namespace
 #endif

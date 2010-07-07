@@ -26,6 +26,16 @@ double Parameters::getValue(Name name) {
     }
     return (*it).second;
 }
+
+std::string Parameters::getEqValue(Name name) {
+    map<Name, string>::iterator it = _paramsEq.find(name);
+    if (it == _paramsEq.end()) {
+        string error("[ERROR] No parameters named ");
+        error += name.getString();
+        throw OpenChamsException(error);
+    }
+    return (*it).second;
+}
     
 void Parameters::addParameter(Name name, double value) {
 	map<Name, double>::iterator it = _params.find(name);

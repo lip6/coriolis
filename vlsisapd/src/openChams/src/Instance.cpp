@@ -22,13 +22,17 @@ Instance::Instance(Name name, Name model, Name mosType, bool sourceBulkConnected
     , _model(model)
     , _mosType(mosType)
     , _sourceBulkConnected(sourceBulkConnected)
-    , _netlist(netlist) {}
+    , _netlist(netlist)
+    , _params()
+    , _netMap()
+    , _trans() {}
 
 void Instance::addConnector(Name name) {
     // si name n'est pas déjà présent dans la map on ajoute name, NULL (pas de net)
     map<Name, Net*>::iterator it = _netMap.find(name);
-    if (it == _netMap.end())
+    if (it == _netMap.end()) {
         _netMap[name] = NULL;
+    }
     else {
         string error("[ERROR] The same instance cannot have several connectors with same name (");
         error += name.getString();
@@ -59,6 +63,15 @@ void Instance::connect(Name connectorName, Name netName) {
         error += ") does not exist.";
         throw OpenChamsException(error);
     }
+}
+
+Transistor* Instance::addTransistor(Name name) {
+    Transistor* tr = new Transistor(name, this);
+    if (!tr)
+        throw OpenChamsException("[ERROR] Cannot create transistor.");
+
+    _trans.push_back(tr); 
+    return tr;
 }
 }
 

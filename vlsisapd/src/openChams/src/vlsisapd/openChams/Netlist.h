@@ -22,8 +22,8 @@ class Netlist {
 	public:
     Netlist(Circuit*);
         
-    void addInstance(Instance*);
-    void addNet(Net*);
+    Instance* addInstance(Name name, Name model, Name mosType, bool);
+    Net*      addNet     (Name name, Name type , bool);
     
     Instance* getInstance(Name);
     Net* getNet(Name);

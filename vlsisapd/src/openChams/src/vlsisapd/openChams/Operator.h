@@ -34,8 +34,10 @@ class Operator {
 	public:
         Operator(Name operatorName, Name simulModel, unsigned callOrder);
         
-        void addConstraint(Name paramName, Name ref, Name refParam, double factor = 1.0);
-        void addConstraint(Name paramName, Name refEquation, double factor = 1.0);
+        void addConstraint(Name paramName, Name ref, Name refParam               );
+        void addConstraint(Name paramName, Name ref, Name refParam, double factor);
+        void addConstraint(Name paramName, Name refEquation               );
+        void addConstraint(Name paramName, Name refEquation, double factor);
         
         inline Name     getName();
         inline Name     getSimulModel();

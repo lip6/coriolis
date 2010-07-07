@@ -11,12 +11,14 @@
 #define __OPENCHAMS_CIRCUIT_H__
 
 #include <vector>
+#include <map>
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
 #include "vlsisapd/openChams/Name.h"
 #include "vlsisapd/openChams/Parameters.h"
+#include "vlsisapd/openChams/SimulModel.h"
 
 namespace OpenChams {
 class Netlist;
@@ -40,10 +42,14 @@ class Circuit {
     inline void       addParameter(Name, double);
     inline void       addParameter(Name, std::string);
     inline Parameters getParameters();
+
+    void addSimulModel(unsigned, SimulModel::Base, SimulModel::Version, std::string);
     
-    inline void       setNetlist(Netlist*);
-    inline void       setSchematic(Schematic*);
     inline void       setSizing(Sizing*);
+
+    Netlist*   createNetlist();
+    Schematic* createSchematic(double);
+    Sizing*    createSizing();
     
     bool writeToFile(std::string filePath);
     static Circuit* readFromFile(const std::string filePath);
@@ -53,6 +59,7 @@ class Circuit {
     Name      readParameterEq(xmlNode*, std::string&);
     Name      readConnector(xmlNode*);
     void      readCircuitParameters(xmlNode*);
+    void      readSimulModels(xmlNode*);
     void      readNetList(xmlNode*);
     void      readInstances(xmlNode*, Netlist*);
     Instance* readInstance (xmlNode*, Netlist*);
@@ -81,6 +88,7 @@ class Circuit {
     Netlist*   _netlist;
     Schematic* _schematic;
     Sizing*    _sizing;
+    map<unsigned, SimulModel*> _simulModels;
 };
     
 inline Name       Circuit::getName()    	   { return _name; };
@@ -92,9 +100,6 @@ inline Sizing*    Circuit::getSizing()         { return _sizing; };
 inline void       Circuit::addParameter(Name name, double value) { _params.addParameter(name, value); };
 inline void       Circuit::addParameter(Name name, std::string eqStr) { _params.addParameter(name, eqStr); };
 inline Parameters Circuit::getParameters()     { return _params; };
-inline void       Circuit::setNetlist(Netlist* netlist)   { _netlist = netlist; };
-inline void       Circuit::setSchematic(Schematic* schem) { _schematic = schem; };
-inline void       Circuit::setSizing(Sizing* sizing)      { _sizing = sizing; };
     
     
 } // namespace OpenChams

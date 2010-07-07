@@ -19,6 +19,10 @@ Operator::Operator(Name operatorName, Name simulModel, unsigned callOrder)
     , _simulModel(simulModel)
     , _callOrder(callOrder) {}
     
+void Operator::addConstraint(Name paramName, Name ref, Name refParam) {
+    addConstraint(paramName, ref, refParam, 1.0);
+}
+
 void Operator::addConstraint(Name paramName, Name ref, Name refParam, double factor) {
     map<Name, Constraint*>::iterator it = _constraints.find(paramName);
     if (it != _constraints.end()) {
@@ -30,6 +34,10 @@ void Operator::addConstraint(Name paramName, Name ref, Name refParam, double fac
     _constraints[paramName] = new Operator::Constraint(ref, refParam, factor);
 }
     
+void Operator::addConstraint(Name paramName, Name refEquation) {
+    addConstraint(paramName, refEquation, 1.0);
+}
+
 void Operator::addConstraint(Name paramName, Name refEquation, double factor) {
     map<Name, Constraint*>::iterator it = _constraints.find(paramName);
 	if (it != _constraints.end()) {

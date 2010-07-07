@@ -19,6 +19,7 @@ using namespace std;
 #include "vlsisapd/openChams/Instance.h"
 #include "vlsisapd/openChams/Net.h"
 #include "vlsisapd/openChams/Schematic.h"
+#include "vlsisapd/openChams/SimulModel.h"
 #include "vlsisapd/openChams/Sizing.h"
 #include "vlsisapd/openChams/Transistor.h"
 #include "vlsisapd/openChams/Operator.h"
@@ -37,14 +38,16 @@ namespace {
 namespace OpenChams {
     
 static bool readCircuitParametersDone = false;
-static bool readNetListDone = false;
-static bool readInstancesDone = false;
-static bool readNetsDone = false;
-static bool readSchematicDone = false;
-static bool readSizingDone = false;
+static bool readSimulModelsDone       = false;
+static bool readNetListDone           = false;
+static bool readInstancesDone         = false;
+static bool readNetsDone              = false;
+static bool readSchematicDone         = false;
+static bool readSizingDone            = false;
     
 Circuit::Circuit(Name name, Name techno) : _name(name), _techno(techno), _netlist(NULL), _schematic(NULL), _sizing(NULL) {
     readCircuitParametersDone = false;
+    readSimulModelsDone       = false;
     readNetListDone           = false;
     readInstancesDone         = false;
     readNetsDone              = false;
@@ -53,8 +56,8 @@ Circuit::Circuit(Name name, Name techno) : _name(name), _techno(techno), _netlis
 }
 
 // COMPARISON FUNCTION //
-bool ConnectionsSort(const pair<Name, Name>& p1, const pair<Name, Name>& p2) {
-    return p1.first < p2.first;
+bool ConnectionsSort(const Net::Connection* c1, const Net::Connection* c2) {
+    return c1->getInstanceName() < c2->getInstanceName();
 }
 
 bool InstanceNameSort(const Instance* i1, const Instance* i2) {
@@ -92,6 +95,14 @@ void Circuit::check_lowercase(string& str, vector<string>& compares, string mess
     }
 }
     
+void Circuit::addSimulModel(unsigned id, SimulModel::Base base, SimulModel::Version version, std::string filePath) {
+    SimulModel* sim = new SimulModel(id, base, version, filePath);
+    map<unsigned, SimulModel*>::iterator it = _simulModels.find(id);
+    if (it != _simulModels.end())
+        throw OpenChamsException("[ERROR] Cannot define two SimulModels' models with the same ID.");
+    _simulModels[id] = sim;
+}
+
 Name Circuit::readParameter(xmlNode* node, double& value) {
     xmlChar* paramNameC = xmlGetProp(node, (xmlChar*)"name");
     xmlChar* valueC     = xmlGetProp(node, (xmlChar*)"value");
@@ -156,6 +167,69 @@ void Circuit::readCircuitParameters(xmlNode* node) {
     readCircuitParametersDone = true;
 }
 
+void Circuit::readSimulModels(xmlNode* node) {
+    if (readSimulModelsDone) {
+        cerr << "[WARNING] Only one 'simulModels' node is allowed in circuit, others will be ignored." << endl;
+        return;
+    }
+    if (node->type == XML_ELEMENT_NODE && node->children) {
+        for (xmlNode* modelNode = node->children ; modelNode ; modelNode = modelNode->next) {
+            if (modelNode->type == XML_ELEMENT_NODE) {
+                if (xmlStrEqual(modelNode->name, (xmlChar*)"model")) {
+                    xmlChar* mIdC       = xmlGetProp(modelNode, (xmlChar*)"id");
+                    xmlChar* mBaseC     = xmlGetProp(modelNode, (xmlChar*)"base");
+                    xmlChar* mVersionC  = xmlGetProp(modelNode, (xmlChar*)"version");
+                    xmlChar* mFilePathC = xmlGetProp(modelNode, (xmlChar*)"filePath");
+                    if (mIdC && mBaseC && mVersionC && mFilePathC) {
+                        unsigned id = ::getValue<unsigned>(mIdC);
+                        SimulModel::Base base = SimulModel::BSIM3V3;
+                        string mBase((const char*)mBaseC);
+                        string baseComp[3] = { "BSIM3V3", "BSIM4", "PSP" };
+                        vector<string> baseComps(baseComp, baseComp+3);
+                        check_uppercase(mBase, baseComps, "[ERROR] SimulModels models' base property must be \"BSIM3V3\", \"BSIM4\" or \"PSP\".");
+                        if (mBase == "BSIM3V3") {
+                            base = SimulModel::BSIM3V3;
+                        } else if (mBase == "BSIM4") {
+                            base = SimulModel::BSIM4;
+                        } else if (mBase == "PSP") {
+                            base = SimulModel::PSP;
+                        } else {
+                            throw OpenChamsException("[ERROR] SimulModels models' base property must be \"BSIM3V3\", \"BSIM4\" or \"PSP\" (check_uppercase should have filtered that).");
+                            return;
+                        }
+                        SimulModel::Version version = SimulModel::UNDEFINED;
+                        string mVersion((const char*)mVersionC);
+                        string verComp[4] = { "UNDEFINED", "SVT", "HVT", "LVT" };
+                        vector<string> verComps(verComp, verComp+4);
+                        check_uppercase(mVersion, verComps, "[ERROR] SimulModels model's version property must be \"UNDEFINED\", \"SVT\", \"HVT\" or \"LVT\".");
+                        if (mVersion == "UNDEFINED") {
+                            version = SimulModel::UNDEFINED;
+                        } else if (mVersion == "SVT") {
+                            version = SimulModel::SVT;
+                        } else if (mVersion == "HVT") {
+                            version = SimulModel::HVT;
+                        } else if (mVersion == "LVT") {
+                            version = SimulModel::LVT;
+                        } else {
+                            throw OpenChamsException("[ERROR] SimulModels models' version property must be \"UNDEFINED\", \"SVT\", \"HVT\" or \"LVT\" (check_uppercase should have filtered that).");
+                            return;
+                        }
+                        string filePath((const char*)mFilePathC);
+                        addSimulModel(id, base, version, filePath);
+                        // Ce simuModel DOIT être rataché au circuit !!!
+                    } else {
+                        throw OpenChamsException("[ERROR] 'model' node must have 'id', 'base', 'version' and 'filePath' properties.");
+                    }
+                } else {
+                    cerr << "[WARNING] Only 'model' nodes are allowed under 'simulModels' node." << endl;
+                    return;
+                }
+            }
+        }
+    }     
+    readSimulModelsDone = true;
+}
+
 // NETLIST //
 void Circuit::readNetList(xmlNode* node) {
     if (readNetListDone) {
@@ -189,9 +263,7 @@ void Circuit::readInstances(xmlNode* node, Netlist* netlist) {
     for (xmlNode* node = child; node; node = node->next) {
         if (node->type == XML_ELEMENT_NODE) {
             if (xmlStrEqual(node->name, (xmlChar*)"instance")) {
-                Instance* inst =readInstance(node, netlist);
-                if (inst)
-                	netlist->addInstance(inst);
+                readInstance(node, netlist);
             } else {
                 cerr << "[WARNING] Only 'instance' nodes are allowed in 'instances', others will be ignored." << endl;
             }
@@ -218,7 +290,7 @@ Instance* Circuit::readInstance(xmlNode* node, Netlist* netlist) {
         vector<string> sbcComps(sbcComp, sbcComp+4);
         check_lowercase(sourceBulkStr, sbcComps, "[ERROR] In 'instance', 'sourceBulkConnected' must 'true', 'false', 'on' or 'off'.");
         bool sourceBulkConnected = ((sourceBulkStr == "true") || (sourceBulkStr == "on")) ? true : false;
-        inst = new Instance(instanceName, modelName, Name(mosStr), sourceBulkConnected, netlist);
+        inst = netlist->addInstance(instanceName, modelName, Name(mosStr), sourceBulkConnected);
     } else {
         throw OpenChamsException("[ERROR] 'instance' node must have 'name', 'model', 'mostype' and 'sourceBulkConnected' properties.");
         //return inst;
@@ -296,7 +368,7 @@ void Circuit::readTransistor(xmlNode* node, Instance* inst) {
     Transistor* trans = NULL;
     if (tNameC) {
         Name tName((const char*)tNameC);
-        trans = new Transistor(tName, inst);
+        trans = inst->addTransistor(tName);
     } else {
         throw OpenChamsException("[ERROR] 'transistor' node must have 'name' property.");
         //return inst;
@@ -314,7 +386,6 @@ void Circuit::readTransistor(xmlNode* node, Instance* inst) {
             }
         }
     }
-    inst->addTransistor(trans);
 }
 
 void Circuit::readTransistorConnection(xmlNode* node, Transistor* trans) {
@@ -372,8 +443,7 @@ Net* Circuit::readNet(xmlNode* node, Netlist* netlist) {
         vector<string> extComps(extComp, extComp+4);
         check_lowercase(externStr, extComps, "[ERROR] In 'net', 'isExternal' must be 'true', 'false', 'on' or 'off'.");
         bool isExternal = ((externStr == "true") || (externStr == "on")) ? true : false;
-        net = new Net(netName, Name(typeStr), isExternal, netlist);
-        netlist->addNet(net);
+        net = netlist->addNet(netName, Name(typeStr), isExternal);
     } else {
         throw OpenChamsException("[ERROR] 'net' node must have 'name', 'type' and 'isExternal' properties.");
         //return net;
@@ -385,7 +455,7 @@ Net* Circuit::readNet(xmlNode* node, Netlist* netlist) {
             if (xmlStrEqual(node->name, (xmlChar*)"connector")) {
                 readNetConnector(node, net);
             } else {
-                cerr << "[WARNING] Only 'conector' nodes are allowed in 'net', others will be ignored." << endl;
+                cerr << "[WARNING] Only 'connector' nodes are allowed in 'net', others will be ignored." << endl;
                 return NULL;
             }
         }
@@ -602,14 +672,24 @@ Circuit* Circuit::readFromFile(const string filePath) {
                 if (xmlStrEqual(node->name, (xmlChar*)"parameters")) {
                     cir->readCircuitParameters(node);
                 }
-                if (xmlStrEqual(node->name, (xmlChar*)"netlist")) {
+                else if (xmlStrEqual(node->name, (xmlChar*)"simulModels")) {
+                    cir->readSimulModels(node);
+                }
+                else if (xmlStrEqual(node->name, (xmlChar*)"netlist")) {
                     cir->readNetList(node);
                 }
-                if (xmlStrEqual(node->name, (xmlChar*)"schematic")) {
+                else if (xmlStrEqual(node->name, (xmlChar*)"schematic")) {
                     cir->readSchematic(node);
                 }
-                if (xmlStrEqual(node->name, (xmlChar*)"sizing")) {
+                else if (xmlStrEqual(node->name, (xmlChar*)"sizing")) {
                     cir->readSizing(node);
+                }
+                else {
+                    string error("[ERROR] Unknown section ");
+                    error += string((const char*)node->name);
+                    error += " in circuit description.";
+                    throw OpenChamsException(error);
+                    return NULL;
                 }
             }
         }
@@ -620,6 +700,39 @@ Circuit* Circuit::readFromFile(const string filePath) {
     return cir;
 }
     
+Netlist* Circuit::createNetlist() {
+    if (_netlist)
+        throw OpenChamsException("[ERROR] Cannot create two netlists in one circuit.");
+
+    _netlist = new Netlist(this);
+    if (!_netlist)
+        throw OpenChamsException("[ERROR] Cannot create netlist.");
+
+    return _netlist;
+}
+
+Schematic* Circuit::createSchematic(double zoom) {
+    if (_schematic)
+        throw OpenChamsException("[ERROR] Cannot create two scheamtics in one circuit.");
+
+    _schematic = new Schematic(this, zoom);
+    if (!_schematic)
+        throw OpenChamsException("[ERROR] Cannot create schematic.");
+
+    return _schematic;
+}
+
+Sizing* Circuit::createSizing() {
+    if (_sizing)
+        throw OpenChamsException("[ERROR] Cannot create two sizings in one circuit.");
+
+    _sizing = new Sizing(this);
+    if (!_sizing)
+        throw OpenChamsException("[ERROR] Cannot create sizing.");
+
+    return _sizing;
+}
+
 bool Circuit::writeToFile(string filePath) {
     ofstream file;
     file.open(filePath.c_str());
@@ -708,7 +821,7 @@ bool Circuit::writeToFile(string filePath) {
     sort(nets.begin(), nets.end(), NetNameSort); // sort based on nets' names
     for (vector<Net*>::iterator it = nets.begin() ; it != nets.end() ; ++it) {
         Net* net = (*it);
-        if (net->hasNoConnectors()) {
+        if (net->hasNoConnections()) {
             string error("[ERROR] Cannot writeToFile since net (");
             error += net->getName().getString();
             error += ") has no connectors !";
@@ -717,10 +830,10 @@ bool Circuit::writeToFile(string filePath) {
         }
         string externStr = (net->isExternal()) ? "True" : "False";
         file << "      <net name=\"" << net->getName().getString() << "\" type=\"" << net->getType().getString() << "\" isExternal=\"" << externStr << "\">" << endl;
-        vector<pair<Name, Name> > connections = net->getConnections();
+        vector<Net::Connection*> connections = net->getConnections();
         sort(connections.begin(), connections.end(), ConnectionsSort);
-        for (vector<pair<Name, Name> >::iterator it = connections.begin() ; it != connections.end() ; ++it) {
-            file << "        <connector instance=\"" << (*it).first.getString() << "\" name=\"" << (*it).second.getString() << "\"/>" << endl;
+        for (vector<Net::Connection*>::iterator it = connections.begin() ; it != connections.end() ; ++it) {
+            file << "        <connector instance=\"" << (*it)->getInstanceName().getString() << "\" name=\"" << (*it)->getConnectorName().getString() << "\"/>" << endl;
         }
 		file << "      </net>" << endl;
     }
@@ -730,7 +843,7 @@ bool Circuit::writeToFile(string filePath) {
         file << "  <schematic zoom=\"" << _schematic->getZoom() << "\">" << endl;
         for (map<Name, Schematic::Infos*>::const_iterator it = _schematic->getInstances().begin() ; it != _schematic->getInstances().end(); ++it ) {
             Schematic::Infos* infos = (*it).second;
-            file << "    <instance name=\"" << ((*it).first).getString() << "\" x=\"" << infos->getX() << "\" y=\"" << infos->getY() << "\" sym=\"" << infos->getSymetry().getString() << "\"/>" << endl;
+            file << "    <instance name=\"" << ((*it).first).getString() << "\" x=\"" << infos->getX() << "\" y=\"" << infos->getY() << "\" sym=\"" << infos->getSymmetry().getString() << "\"/>" << endl;
         }
         file << "  </schematic>" << endl;
     }

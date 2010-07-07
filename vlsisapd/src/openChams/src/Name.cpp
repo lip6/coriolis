@@ -15,6 +15,18 @@ namespace OpenChams {
 unsigned long Name::_globalId = 0;
 map<string, unsigned long> Name::_dict;
 
+Name::Name() : _str(NULL) {
+    map<string, unsigned long>::iterator it = _dict.find("");
+    if (it != _dict.end()) {
+        _id  = (*it).second;
+        _str = &((*it).first);
+    } else {
+        _id  = _globalId++;
+        it   = _dict.insert(_dict.begin(), make_pair("", _id));
+        _str = &((*it).first);
+    }
+}
+
 Name::Name(string str) : _str(NULL) {
     map<string, unsigned long>::iterator it = _dict.find(str);
     if (it != _dict.end()) {
