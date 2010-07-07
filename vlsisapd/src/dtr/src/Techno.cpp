@@ -82,7 +82,7 @@ double Techno::getValue(Name name, Name layer1, Name layer2) {
     return getRule(name, layer1, layer2)->getValue();
 }
 
-string Techno::getValueAsString(Name name, Name layer1, Name layer2) {
+const string& Techno::getValueAsString(Name name, Name layer1, Name layer2) {
     return getRule(name, layer1, layer2)->getValueAsString();
 }
 

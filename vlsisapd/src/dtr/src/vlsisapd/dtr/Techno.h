@@ -33,7 +33,7 @@ class Techno {
 
     Rule* getRule(Name name, Name layer1=Name(""), Name layer2=Name(""));
     double getValue(Name name, Name layer1=Name(""), Name layer2=Name(""));
-    std::string getValueAsString(Name name, Name layer1=Name(""), Name layer2=Name(""));
+    const std::string& getValueAsString(Name name, Name layer1=Name(""), Name layer2=Name(""));
     
     bool writeToFile(std::string filePath);
     static Techno* readFromFile(const std::string filePath);

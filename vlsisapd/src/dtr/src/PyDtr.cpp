@@ -20,7 +20,7 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(getValueAsString_overloads, getValueAsStr
 // specify that Techno::addRule method has optional arguments
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(addRule_overloads, addRule, 3, 5);
 
-BOOST_PYTHON_MODULE(pyDTR) {
+BOOST_PYTHON_MODULE(DTR) {
     // class DTR::Name
     class_<Name>("Name", init<std::string>())
         .def("getString", &Name::getString, return_value_policy<copy_const_reference>()) // return_value_policy because this method return a refenrce on string
@@ -37,7 +37,7 @@ BOOST_PYTHON_MODULE(pyDTR) {
         .def("getName"         , &Rule::getName         )
         .def("getType"         , &Rule::getType         )
         .def("getValue"        , &Rule::getValue        )
-        .def("getValueAsString", &Rule::getValueAsString)
+        .def("getValueAsString", &Rule::getValueAsString, return_value_policy<copy_const_reference>())
         .def("getRef"          , &Rule::getRef          )
         .def("getLayer1"       , &Rule::getLayer1       )
         .def("getLayer2"       , &Rule::getLayer2       )
@@ -57,7 +57,7 @@ BOOST_PYTHON_MODULE(pyDTR) {
         .def("getUnit"         , &Techno::getUnit)
         .def("getRule"         , &Techno::getRule         , getRule_overloads()[return_value_policy<reference_existing_object>()])
         .def("getValue"        , &Techno::getValue        , getValue_overloads())
-        .def("getValueAsString", &Techno::getValueAsString, getValueAsString_overloads())
+        .def("getValueAsString", &Techno::getValueAsString, getValueAsString_overloads()[return_value_policy<copy_const_reference>()])
         
         // modifiers
         .def("addRule"         , &Techno::addRule , addRule_overloads()[return_value_policy<reference_existing_object>()])

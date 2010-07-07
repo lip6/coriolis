@@ -32,7 +32,7 @@ class Rule {
     inline Name   getName();
     inline Name   getType();
     inline double getValue();
-    inline std::string getValueAsString();
+    inline  const std::string& getValueAsString();
     inline Name   getRef();
     inline Name   getLayer1();
     virtual inline Name   getLayer2(); // add virtual so the Rule object is polymorphic
@@ -63,7 +63,7 @@ inline double Rule::getValue()  { return _value;  };
 inline Name   Rule::getRef()    { return _ref;    };
 inline Name   Rule::getLayer1() { return _layer1; };
 inline Name   Rule::getLayer2() { return _layer2; };
-inline std::string Rule::getValueAsString() { return _valueStr.getString(); };
+inline const std::string& Rule::getValueAsString() { return _valueStr.getString(); };
 
 inline void   Rule::setType(Name type) { _type = type; };
 } // namespace DTR

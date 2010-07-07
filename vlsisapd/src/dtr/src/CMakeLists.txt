@@ -3,24 +3,28 @@ INCLUDE_DIRECTORIES(${VLSISAPD_SOURCE_DIR}/src/dtr/src ${LIBXML2_INCLUDE_DIR} ${
 SET ( hpps vlsisapd/dtr/Techno.h
            vlsisapd/dtr/Rules.h
            vlsisapd/dtr/Name.h
-           vlsisapd/dtr/DTRException.h )
+           vlsisapd/dtr/DTRException.h 
+    )
 
 SET ( cpps Techno.cpp
-           Name.cpp )
+           Name.cpp 
+    )
 
-SET ( pycpps PyDtr.cpp ${cpps})
+SET ( pycpps PyDtr.cpp ${cpps}
+    )
 
 ADD_LIBRARY(dtr ${cpps})
 TARGET_LINK_LIBRARIES(dtr ${LIBXML2_LIBRARIES})
 INSTALL(TARGETS dtr DESTINATION lib${LIB_SUFFIX})
 
 IF (Boost_FOUND)
-          ADD_LIBRARY(pyDTR MODULE ${pycpps})
-SET_TARGET_PROPERTIES(pyDTR PROPERTIES
-                            COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
-                            PREFIX        ""
-                     )
-INSTALL(TARGETS pyDTR   DESTINATION ${PYTHON_SITE_PACKAGES})
+    ADD_LIBRARY(pyDTR MODULE ${pycpps})
+    SET_TARGET_PROPERTIES(pyDTR PROPERTIES
+                          COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
+                          PREFIX        ""
+                          )
+    TARGET_LINK_LIBRARIES(pyDTR dtr ${LIBXML2_LIBRARIES} ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
+    INSTALL(TARGETS pyDTR   DESTINATION ${PYTHON_SITE_PACKAGES})
 ENDIF(Boost_FOUND)
 
 INSTALL(FILES ${hpps} DESTINATION include/vlsisapd/dtr)
