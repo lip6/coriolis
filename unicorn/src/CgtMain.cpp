@@ -340,16 +340,17 @@ int main ( int argc, char *argv[] )
 
     // Python Script test.
 
-      Isobar::Script::addPath ( "/dsk/l1/jpc/coriolis-2.x/work/benchs/routing/addaccu" );
+    //Isobar::Script::addPath ( "/dsk/l1/jpc/coriolis-2.x/work/benchs/routing/addaccu" );
 
-      for ( int i=0 ; i<5 ; ++i ) {
-        cerr << "Call:" << i << " ======================================" << endl;
+      // for ( int i=0 ; i<25 ; ++i ) {
+      //   cerr << "Call:" << i << "/25 ======================================" << endl;
 
-        Isobar::Script* script = Isobar::Script::create ( "getCellName" );
-        script->runFunction ( "runScript", cell );
-      }
+      //   Isobar::Script* script = Isobar::Script::create ( "getCellName" );
+      //   script->runFunction ( "__hurricane_main__", cell );
+      // }
+      // cerr << "DONE" << endl;
 
-      Box box ( DbU::lambda(0.0), DbU::lambda(0.0), DbU::lambda(5.0), DbU::lambda(10.0) );
+      // Box box ( DbU::lambda(0.0), DbU::lambda(0.0), DbU::lambda(5.0), DbU::lambda(10.0) );
       
       // throw Error ("Tu le vois bien: <b>%s</b><br>"
       //             "Un retour a la ligne\n<i>Une ligne</i>"

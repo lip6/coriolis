@@ -40,6 +40,7 @@
                                        ${HMETIS_LIBRARIES}
                                        ${NIMBUS_GRAPHICAL_LIBRARIES}
                                        ${NIMBUS_LIBRARIES}
+                                       ${CORIOLIS_PYTHON_LIBRARIES}
                                        ${CORIOLIS_LIBRARIES}
                                        ${HURRICANE_PYTHON_LIBRARIES}
                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
@@ -50,33 +51,13 @@
                                        ${LEFDEF_LIBRARIES}
                                        ${OA_LIBRARIES}
                                        ${QT_LIBRARIES}
+                                       ${Boost_LIBRARIES}
                                        ${PYTHON_LIBRARIES}
                                        -lutil
                                        ${LIBXML2_LIBRARIES}
                        )
         add_executable ( cgt           ${cgtcpp} )
- target_link_libraries ( cgt           unicorn
-                                       ${SOLSTICE_GRAPHICAL_LIBRARIES}
-                                       ${SOLSTICE_LIBRARIES}
-                                       ${EQUINOX_GRAPHICAL_LIBRARIES}
-                                       ${EQUINOX_LIBRARIES}
-                                       ${KITE_GRAPHICAL_LIBRARIES}
-                                       ${KITE_LIBRARIES}
-                                       ${KATABATIC_GRAPHICAL_LIBRARIES}
-                                       ${KATABATIC_LIBRARIES}
-                                       ${KNIK_GRAPHICAL_LIBRARIES}
-                                       ${KNIK_LIBRARIES}
-                                       ${CORIOLIS_LIBRARIES}
-                                       ${HURRICANE_PYTHON_LIBRARIES}
-                                       ${HURRICANE_LIBRARIES}
-                                       ${HURRICANE_GRAPHICAL_LIBRARIES}
-                                       ${CONFIGURATION_LIBRARY}
-                                       ${OA_LIBRARIES}
-                                       ${QT_LIBRARIES}
-                                       ${Boost_LIBRARIES}
-                                       ${PYTHON_LIBRARIES}
-                                       -lutil
-                       )
+ target_link_libraries ( cgt           unicorn )
                install ( TARGETS       unicorn DESTINATION lib${LIB_SUFFIX} )
                install ( TARGETS       cgt     DESTINATION bin )
                install ( FILES         ${includes}
