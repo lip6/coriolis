@@ -41,10 +41,24 @@
           qt4_wrap_cpp ( mocCpps       ${mocIncludes} )
 
 
-           add_library ( knik         ${cpps} ${mocCpps} )
            add_library ( flute        ${fluteCpps} )
-               install ( TARGETS      knik flute DESTINATION lib${LIB_SUFFIX} )
+           add_library ( knik         ${cpps} ${mocCpps} )
+ target_link_libraries ( knik         flute
+                                      ${HURRICANE_PYTHON_LIBRARIES}
+                                      ${HURRICANE_GRAPHICAL_LIBRARIES}
+                                      ${HURRICANE_LIBRARIES}
+                                      ${CONFIGURATION_LIBRARY}
+                                      ${CIF_LIBRARY}
+                                      ${AGDS_LIBRARY}
+                                      ${LEFDEF_LIBRARIES}
+                                      ${OA_LIBRARIES}
+                                      ${QT_LIBRARIES}
+                                      ${Boost_LIBRARIES}
+                                      ${LIBXML2_LIBRARIES}
+                                      ${PYTHON_LIBRARIES} -lutil
+                       )
 
+               install ( TARGETS      knik flute DESTINATION lib${LIB_SUFFIX} )
                install ( FILES ${includes}
                                ${mocIncludes}
                                ${fluteIncludes} DESTINATION include/coriolis2/knik ) 
