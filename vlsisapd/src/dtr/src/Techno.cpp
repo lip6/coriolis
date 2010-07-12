@@ -67,7 +67,7 @@ Rule* Techno::getRule(Name name, Name layer1, Name layer2) {
     //            return rule;
     //        }
     //    }
-        if ((rule->getName() == name) && (rule->getLayer1() == layer1) && (rule-getLayer2() == layer2))
+        if ((rule->getName() == name) && (rule->getLayer1() == layer1) && (rule->getLayer2() == layer2))
             return rule;
     }
     string error ("[ERROR] Could not find rule: ");
