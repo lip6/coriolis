@@ -37,6 +37,19 @@
       
 
            add_library ( nimbus ${cpps} )
+ target_link_libraries ( nimbus  ${HURRICANE_PYTHON_LIBRARIES}
+                                 ${HURRICANE_GRAPHICAL_LIBRARIES}
+                                 ${HURRICANE_LIBRARIES}
+                                 ${CONFIGURATION_LIBRARY}
+                                 ${CIF_LIBRARY}
+                                 ${AGDS_LIBRARY}
+                                 ${LEFDEF_LIBRARIES}
+                                 ${OA_LIBRARIES}
+                                 ${QT_LIBRARIES}
+                                 ${Boost_LIBRARIES}
+                                 ${LIBXML2_LIBRARIES}
+                                 ${PYTHON_LIBRARIES} -lutil
+                       )
                install ( TARGETS nimbus DESTINATION lib${LIB_SUFFIX} )
                install ( FILES   ${includes} DESTINATION include/coriolis2/nimbus ) 
    
