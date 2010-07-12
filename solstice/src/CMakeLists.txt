@@ -37,6 +37,22 @@
           qt4_wrap_cpp ( mocCpps       ${mocIncludes} )
 
            add_library ( solstice       ${cpps} ${mocCpps} )
+ target_link_libraries ( solstice       ${EQUINOX_LIBRARIES}
+                                        ${CORIOLIS_LIBRARIES}
+                                        ${HURRICANE_PYTHON_LIBRARIES}
+                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
+                                        ${HURRICANE_LIBRARIES}
+                                        ${CONFIGURATION_LIBRARY}
+                                        ${CIF_LIBRARY}
+                                        ${AGDS_LIBRARY}
+                                        ${LEFDEF_LIBRARIES}
+                                        ${OA_LIBRARIES}
+                                        ${QT_LIBRARIES}
+                                        ${Boost_LIBRARIES}
+                                        ${LIBXML2_LIBRARIES}
+                                        ${PYTHON_LIBRARIES} -lutil
+                       )
+
                install ( TARGETS        solstice DESTINATION lib${LIB_SUFFIX} )
                install ( FILES          ${includes}
                                         ${mocIncludes} DESTINATION include/coriolis2/solstice ) 
