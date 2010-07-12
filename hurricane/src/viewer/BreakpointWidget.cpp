@@ -23,6 +23,7 @@
 // x-----------------------------------------------------------------x
 
 
+#include  <QPointer>
 #include  <QApplication>
 #include  <QLabel>
 #include  <QPushButton>
@@ -42,6 +43,7 @@ namespace Hurricane {
     , _message   (new QLabel())
     , _stopLevel (new QSpinBox())
     , _isFinished(false)
+    , _eventLoop (NULL)
   {
     setModal       ( false );
     setWindowTitle ( "Breakpoint" );
@@ -83,8 +85,15 @@ namespace Hurricane {
 
     _isFinished = false;
     show ();
-    while ( !_isFinished )
-      QApplication::processEvents ();
+
+  // Snipet code from Qt's QDialog.
+    _eventLoop = new QEventLoop ();
+    QPointer<QDialog> guard = this;
+    (void)_eventLoop->exec(QEventLoop::DialogExec);
+    _eventLoop = NULL;
+
+    if (guard.isNull()) return QDialog::Rejected;
+
     return result();
   }
 
@@ -92,6 +101,7 @@ namespace Hurricane {
   void  BreakpointWidget::raiseFinished ( int )
   {
     _isFinished = true;
+    if ( _eventLoop ) _eventLoop->exit(0);
   }
 
 

@@ -133,7 +133,7 @@ namespace Hurricane {
 
   bool  Breakpoint::_stop ( unsigned int level, const string& message )
   {
-    if ( _stopCb && ( level <= _stopLevel ) )
+    if ( _stopCb && ( level >= _stopLevel ) )
       return _stopCb ( message );
 
     return false;

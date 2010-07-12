@@ -27,6 +27,7 @@
 #define  __HURRICANE_BREAKPOINT_WIDGET__
 
 
+#include  <QEventLoop>
 #include  <QDialog>
 class QLabel;
 class QSpinBox;
@@ -50,9 +51,10 @@ namespace Hurricane {
       void  raiseFinished    ( int );
 
     private:
-      QLabel*   _message;
-      QSpinBox* _stopLevel;
-      bool      _isFinished;
+      QLabel*     _message;
+      QSpinBox*   _stopLevel;
+      bool        _isFinished;
+      QEventLoop* _eventLoop;
   };
 
 

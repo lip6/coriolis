@@ -53,6 +53,7 @@
 
 
 #include "hurricane/isobar/PyHurricane.h"
+#include "hurricane/isobar/PyBreakpoint.h"
 #include "hurricane/isobar/PyUpdateSession.h"
 #include "hurricane/isobar/PyDbU.h"
 #include "hurricane/isobar/PyPoint.h"
@@ -73,6 +74,7 @@
 #include "hurricane/isobar/PyReferenceCollection.h"
 #include "hurricane/isobar/PyNet.h"
 #include "hurricane/isobar/PyNetCollection.h"
+#include "hurricane/isobar/PyNetExternalComponents.h"
 #include "hurricane/isobar/PyHyperNet.h"
 #include "hurricane/isobar/PyComponent.h"
 #include "hurricane/isobar/PyComponentCollection.h"
@@ -470,31 +472,6 @@ extern "C" {
 
 extern "C" {
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNetExternalComponents_getNetExternalComponents ()"
-
-  PyObject* PyNetExternalComponents_getExternalComponents ( PyObject* module, PyObject* args )
-  {
-    trace << "PyNetExternalComponents_getExternalComponents()" << endl;
-
-    PyObject* arg0;
-    if ( ! ParseOneArg ( "getExternalComponents", args, ":ent", &arg0) ) return ( NULL );
-
-    PyComponentCollection* pyComponentCollection = NULL;
-
-    HTRY
-
-    Components* components = new Components(NetExternalComponents::get(PYNET_O(arg0)));
-
-    pyComponentCollection = PyObject_NEW(PyComponentCollection, &PyTypeComponentCollection);
-    if (pyComponentCollection == NULL) { return NULL; }
-
-    pyComponentCollection->_object = components;
-
-    HCATCH
-
-    return ((PyObject*)pyComponentCollection);
-  }
 
   // x-------------------------------------------------------------x
   // |               "PyHurricane" Module Methods                  |
@@ -512,8 +489,6 @@ extern "C" {
     , { "Point"                 ,              PyPoint_create                    , METH_VARARGS, "Creates a new Point." }
     , { "Box"                   ,              PyBox_create                      , METH_VARARGS, "Creates a new Box." }
     , { "Transformation"        ,              PyTransformation_create           , METH_VARARGS, "Creates a new Transformation." }
-    , { "UpdateSession_open"    , (PyCFunction)PyUpdateSession_open              , METH_NOARGS , "Opens an update session." }
-    , { "UpdateSession_close"   , (PyCFunction)PyUpdateSession_close             , METH_NOARGS , "Closes an update session." }
     , { "DataBase"              , (PyCFunction)PyDataBase_create                 , METH_NOARGS , "Creates the DataBase." }
     , { "getDataBase"           , (PyCFunction)PyDataBase_getDataBase            , METH_NOARGS , "Gets the current DataBase." }
     , { "Library"               , (PyCFunction)PyLibrary_create                  , METH_VARARGS, "Creates a new Library." }
@@ -530,7 +505,6 @@ extern "C" {
     , { "Pad"                   , (PyCFunction)PyPad_create                      , METH_VARARGS, "Creates a new Pad." }
     , { "Path"                  , (PyCFunction)PyPath_create                     , METH_VARARGS, "Creates a new Path." }
     , { "Occurrence"            , (PyCFunction)PyOccurrence_create               , METH_VARARGS, "Creates a new Occurrence." }
-    , { "getExternalComponents" , (PyCFunction)PyNetExternalComponents_getExternalComponents, METH_VARARGS, "Returns the components collection of an external net" }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 
@@ -543,6 +517,7 @@ extern "C" {
   DL_EXPORT(void) initHurricane () {
     trace << "initHurricane()" << endl;
 
+    PyUpdateSession_LinkPyType ();
     PyPoint_LinkPyType ();
     PyBox_LinkPyType ();
     PyTransformation_LinkPyType ();
@@ -556,7 +531,7 @@ extern "C" {
     PyInstanceCollection_LinkPyType ();
     PyPlugCollection_LinkPyType ();
     PyNetCollection_LinkPyType ();
-    PyNetCollection_LinkPyType ();
+    PyNetExternalComponents_LinkPyType ();
     PyCellCollection_LinkPyType ();
     PyPinCollection_LinkPyType ();
     PySegmentCollection_LinkPyType ();
@@ -577,7 +552,9 @@ extern "C" {
     PyPin_LinkPyType ();
     PyPlug_LinkPyType ();
     PyCellViewer_LinkPyType ();
+    PyBreakpoint_LinkPyType ();
 
+    PYTYPE_READY ( UpdateSession               )
     PYTYPE_READY ( Point                       )
     PYTYPE_READY ( Box                         )
     PYTYPE_READY ( Transformation              )
@@ -608,6 +585,8 @@ extern "C" {
     PYTYPE_READY ( ReferenceCollectionLocator  )
     PYTYPE_READY ( HyperNet                    )
     PYTYPE_READY ( CellViewer                  )
+    PYTYPE_READY ( NetExternalComponents       )
+    PYTYPE_READY ( Breakpoint                  )
 
     PYTYPE_READY_SUB ( Cell      , Entity   )
     PYTYPE_READY_SUB ( Instance  , Entity   )
@@ -674,7 +653,14 @@ extern "C" {
            << "  Failed to initialize Hurricane module." << endl;
       return;
     }
-    //PyModule_AddObject(module, "Box", (PyObject*)&PyTypeBox); // To add Hurricane.Box type in module -> the Hurricane.Box() method must be renamed
+
+    Py_INCREF ( &PyTypeNetExternalComponents );
+    PyModule_AddObject ( module, "NetExternalComponents", (PyObject*)&PyTypeNetExternalComponents );
+    Py_INCREF ( &PyTypeUpdateSession );
+    PyModule_AddObject ( module, "UpdateSession", (PyObject*)&PyTypeUpdateSession );
+    Py_INCREF ( &PyTypeBreakpoint );
+    PyModule_AddObject ( module, "Breakpoint", (PyObject*)&PyTypeBreakpoint );
+    
     
     PyObject* dictionnary = PyModule_GetDict ( module );
 

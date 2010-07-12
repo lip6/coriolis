@@ -12,7 +12,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./PyUpdateSession.h"                      |
+// |  C++ Header  :       "./PyBreakpoint.h"                         |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
@@ -22,12 +22,12 @@
 
 
 
-# ifndef  __PY_UPDATE_SESSION__
-#   define  __PY_UPDATE_SESSION__
+# ifndef  __PY_BREAKPOINT__
+#   define  __PY_BREAKPOINT__
 
 
 #include "hurricane/isobar/PyHurricane.h"
-#include "hurricane/UpdateSession.h"
+#include "hurricane/Breakpoint.h"
 
 
 namespace  Isobar {
@@ -36,11 +36,11 @@ namespace  Isobar {
 extern "C" {
 
 // -------------------------------------------------------------------
-// Python Object  :  "PyUpdateSession".
+// Python Object  :  "PyBreakpoint".
 
   typedef struct {
       PyObject_HEAD
-  } PyUpdateSession;
+  } PyBreakpoint;
 
 
 
@@ -48,15 +48,15 @@ extern "C" {
 // -------------------------------------------------------------------
 // Functions & Types exported to "PyHurricane.cpp".
 
-  extern PyTypeObject  PyTypeUpdateSession;
-  extern PyMethodDef   PyUpdateSession_Methods[];
+  extern PyTypeObject  PyTypeBreakpoint;
+  extern PyMethodDef   PyBreakpoint_Methods[];
 
-  extern void  PyUpdateSession_LinkPyType  ();
+  extern void  PyBreakpoint_LinkPyType  ();
 
 
-#define IsPyUpdateSession(v)   ( (v)->ob_type == &PyTypeUpdateSession )
-#define PYUPDATESESSION(v)     ( (PyUpdateSession*)(v) )
-#define PYUPDATESESSION_O(v)   ( PY_UPDATE_SESSION(v)->_object )
+#define IsPyBreakpoint(v)   ( (v)->ob_type == &PyTypeBreakpoint )
+#define PYBREAKPOINT(v)     ( (PyBreakpoint*)(v) )
+#define PYBREAKPOINT_O(v)   ( PY_BREAKPOINT(v)->_object )
 
 
 }  // End of extern "C".

@@ -304,14 +304,13 @@ void Instance::materialize()
 // *************************
 {
   if (not isMaterialized()) {
-    cerr << "materialize: " << this << endl;
-        Box boundingBox = getBoundingBox();
-        if (!boundingBox.isEmpty()) {
-            QuadTree* quadTree = _cell->_getQuadTree();
-            quadTree->insert(this);
-            _cell->_fit(quadTree->getBoundingBox());
-        }
+    Box boundingBox = getBoundingBox();
+    if (!boundingBox.isEmpty()) {
+      QuadTree* quadTree = _cell->_getQuadTree();
+      quadTree->insert(this);
+      _cell->_fit(quadTree->getBoundingBox());
     }
+  }
 }
 
 void Instance::unmaterialize()
@@ -376,18 +375,15 @@ void Instance::setTransformation(const Transformation& transformation)
 void Instance::setPlacementStatus(const PlacementStatus& placementstatus)
 // **********************************************************************
 {
-  cerr << "setPlacementStatus of " << this << " to " << placementstatus << endl;
   if (placementstatus != _placementStatus) {
     invalidate(true);
 
     if (_placementStatus == PlacementStatus::UNPLACED) {
-      cerr << "setPlacementStatus: PLACED/FIXED " << this << endl;
       materialize ();
     } else if (placementstatus == PlacementStatus::UNPLACED)
       unmaterialize ();
 
     _placementStatus = placementstatus;
-
   }
 }
 
@@ -460,12 +456,9 @@ void Instance::_postCreate()
         end_for;
     }
 
-    cerr << "Initial placement status " << this << " " << _placementStatus << endl;
-
     bool autoMaterialization = not autoMaterializationIsDisabled();
     if ( _placementStatus == PlacementStatus::UNPLACED ) {
       disableAutoMaterialization();
-      cerr << "do not materialize: " << this << endl;
     }
 
     Inherit::_postCreate();

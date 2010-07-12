@@ -4,6 +4,10 @@
 // This file is part of the Coriolis Software.
 // Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
 //
+// ===================================================================
+//
+// $Id$
+//
 // x-----------------------------------------------------------------x 
 // |                                                                 |
 // |                   C O R I O L I S                               |
@@ -12,22 +16,18 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./PyUpdateSession.h"                      |
+// |  C++ Header  :       "./PyCellViewer.cpp"                       |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
 
-
-
-
-# ifndef  __PY_UPDATE_SESSION__
-#   define  __PY_UPDATE_SESSION__
-
+#ifndef  __ISOBAR_CELL_VIEWER__
+#define  __ISOBAR_CELL_VIEWER__
 
 #include "hurricane/isobar/PyHurricane.h"
-#include "hurricane/UpdateSession.h"
+#include "hurricane/viewer/CellViewer.h"
 
 
 namespace  Isobar {
@@ -36,36 +36,33 @@ namespace  Isobar {
 extern "C" {
 
 // -------------------------------------------------------------------
-// Python Object  :  "PyUpdateSession".
+// Python Object  :  "PyCellViewer".
 
   typedef struct {
       PyObject_HEAD
-  } PyUpdateSession;
-
-
+      Hurricane::CellViewer* _object;
+  } PyCellViewer;
 
 
 // -------------------------------------------------------------------
 // Functions & Types exported to "PyHurricane.cpp".
 
-  extern PyTypeObject  PyTypeUpdateSession;
-  extern PyMethodDef   PyUpdateSession_Methods[];
+  extern PyTypeObject  PyTypeCellViewer;
+  extern PyMethodDef   PyCellViewer_Methods[];
 
-  extern void  PyUpdateSession_LinkPyType  ();
+  extern PyObject* PyCellViewer_create     ( PyObject* self, PyObject* args );
+  extern void      PyCellViewer_LinkPyType ();
 
 
-#define IsPyUpdateSession(v)   ( (v)->ob_type == &PyTypeUpdateSession )
-#define PYUPDATESESSION(v)     ( (PyUpdateSession*)(v) )
-#define PYUPDATESESSION_O(v)   ( PY_UPDATE_SESSION(v)->_object )
+#define  IsPyCellViewer(v)      ( (v)->ob_type == &PyTypeCellViewer )
+#define  ISOBARCELLVIEWER(v)    ( (PyCellViewer*)(v) )
+#define  ISOBARCELLVIEWER_O(v)  ( ISOBAR_CELL_VIEWER(v)->_object )
 
 
 }  // End of extern "C".
 
 
-
 }  // End of Isobar namespace.
- 
 
 
-
-# endif
+#endif  // __ISOBAR_CELL_VIEWER__

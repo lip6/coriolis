@@ -143,6 +143,7 @@ extern "C" {
 #define NET_LAYER_INTS2_ARG      ":ent:layer:int:int"
 #define NET_LAYER_INTS3_ARG      ":ent:layer:int:int:int"
 #define NET_LAYER_INTS4_ARG      ":ent:layer:int:int:int:int"
+#define COMP_ARG                 ":comp"
 #define COMP_LAYER_INTS2_ARG     ":comp:layer:int:int"
 #define COMP_LAYER_INTS3_ARG     ":comp:layer:int:int:int"
 #define COMP_LAYER_INTS4_ARG     ":comp:layer:int:int:int:int"
@@ -174,6 +175,11 @@ extern "C" {
 #define  LOAD_CONSTANT(CONSTANT_VALUE,CONSTANT_NAME)             \
  constant = PyInt_FromLong ( (long)CONSTANT_VALUE );             \
  PyDict_SetItemString ( dictionnary, CONSTANT_NAME, constant );  \
+ Py_DECREF ( constant );
+
+#define  LoadObjectConstant(DICTIONARY,CONSTANT_VALUE,CONSTANT_NAME)  \
+ constant = PyInt_FromLong ( (long)CONSTANT_VALUE );                  \
+ PyDict_SetItemString ( DICTIONARY, CONSTANT_NAME, constant );        \
  Py_DECREF ( constant );
 
 
@@ -253,20 +259,20 @@ extern "C" {
 // -------------------------------------------------------------------
 // Attribute Method Macro For Booleans.
 
-#define  DirectSetBoolAttribute(PY_FUNC_NAME,FUNC_NAME,PY_FORMAT,PY_SELF_TYPE,SELF_TYPE) \
-  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args ) \
-  {                                                                    \
-    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectSetBoolAttribute()")  \
-                                                                       \
-    PyObject* arg0;                                                    \
-    if ( ! PyArg_ParseTuple ( args, "O:" PY_FORMAT, &arg0 ) )          \
-      return ( NULL );                                                 \
-    if(arg0 == Py_True)                                                \
-      cobject->FUNC_NAME (true);                                       \
-    else                                                               \
-      cobject->FUNC_NAME (false);                                      \
-                                                                       \
-    Py_RETURN_NONE;                                                    \
+#define  DirectSetBoolAttribute(PY_FUNC_NAME,FUNC_NAME,STR_FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
+  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )          \
+  {                                                                             \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,STR_FUNC_NAME "()")                   \
+                                                                                \
+    HTRY                                                                        \
+    PyObject* arg0;                                                             \
+    if ( not PyArg_ParseTuple ( args, "O:" STR_FUNC_NAME, &arg0 ) or PyBool_Check(arg0) ) \
+      return NULL;                                                              \
+                                                                                \
+    (arg0 == Py_True) ? cobject->FUNC_NAME (true) : cobject->FUNC_NAME (false); \
+    HCATCH                                                                      \
+                                                                                \
+    Py_RETURN_NONE;                                                             \
   }
 
 
@@ -278,10 +284,12 @@ extern "C" {
   {                                                                    \
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectSetLongAttribute()")  \
                                                                        \
+    HTRY                                                               \
     PyObject* arg0;                                                    \
     if ( ! PyArg_ParseTuple ( args, "O:" PY_FORMAT, &arg0 ) )          \
       return ( NULL );                                                 \
     cobject->FUNC_NAME ( PyInt_AsLong(arg0) );                         \
+    HCATCH                                                             \
                                                                        \
     Py_RETURN_NONE;                                                    \
   }
@@ -599,31 +607,17 @@ extern "C" {
     PyObject_DEL ( self );                                               \
   }
 
-// -------------------------------------------------------------------
-// Attribute Method For Singleton Deletion.
 
-// # define  SingletonDeleteMethod(SELF_TYPE)                               
-//   static void Py##SELF_TYPE##_DeAlloc ( Py##SELF_TYPE *self )            
-//   {                                                                      
-//     trace << "PySingletonObject_DeAlloc(" << hex << self << ") "         
-//           << self->ACCESS_OBJECT << endl;                                
-//                                                                          
-//     if ( self->ACCESS_OBJECT != NULL ) {                                 
-//         ostringstream  message;                                          
-//         message << "Never delete singleton "#SELF_TYPE".";               
-//         PyErr_SetString ( ProxyError, message.str().c_str() );           
-//     }                                                                    
-//     PyObject_DEL ( self );                                               
-//   }
+
 
 // -------------------------------------------------------------------
-// Attribute Method For Singleton Deletion.
+// Attribute Method For Python Only Object Deletion.
 
-# define  SingletonDeleteMethod(SELF_TYPE)                               \
-  static void Py##SELF_TYPE##_DeAlloc ( Py##SELF_TYPE *self )            \
-  {                                                                      \
-    trace << "PySingletonObject_DeAlloc(" << hex << self << ") "         \
-          << self->ACCESS_OBJECT << endl;                                \
+# define  PythonOnlyDeleteMethod(SELF_TYPE)                      \
+  static void Py##SELF_TYPE##_DeAlloc ( Py##SELF_TYPE *self )    \
+  {                                                              \
+    trace << "PythonOnlyObject_DeAlloc(" << hex << self << ") "  \
+          << self->ACCESS_OBJECT << endl;                        \
   }
 
 
@@ -632,21 +626,60 @@ extern "C" {
 // -------------------------------------------------------------------
 // Initialisation Function for PyTypeObject Runtime Link.
 
-#define PyTypeObjectLinkPyType(SELF_TYPE)                                \
-  DirectReprMethod(Py##SELF_TYPE##_Repr, Py##SELF_TYPE,   SELF_TYPE)     \
-  DirectStrMethod (Py##SELF_TYPE##_Str,  Py##SELF_TYPE,   SELF_TYPE)     \
-  DirectCmpMethod (Py##SELF_TYPE##_Cmp,  IsPy##SELF_TYPE, Py##SELF_TYPE) \
-  DirectHashMethod(Py##SELF_TYPE##_Hash, Py##SELF_TYPE)                  \
-  extern void  Py##SELF_TYPE##_LinkPyType() {                            \
-    trace << "Py" #SELF_TYPE "_LinkType()" << endl;                      \
-                                                                         \
-    PyType##SELF_TYPE.tp_dealloc = (destructor)Py##SELF_TYPE##_DeAlloc;  \
-    PyType##SELF_TYPE.tp_compare = (cmpfunc)   Py##SELF_TYPE##_Cmp;      \
-    PyType##SELF_TYPE.tp_repr    = (reprfunc)  Py##SELF_TYPE##_Repr;     \
-    PyType##SELF_TYPE.tp_str     = (reprfunc)  Py##SELF_TYPE##_Str;      \
-    PyType##SELF_TYPE.tp_hash    = (hashfunc)  Py##SELF_TYPE##_Hash;     \
-    PyType##SELF_TYPE.tp_methods = Py##SELF_TYPE##_Methods;              \
+#define PyTypeObjectLinkPyTypeWithoutObject(PY_SELF_TYPE,SELF_TYPE)               \
+  extern void  Py##PY_SELF_TYPE##_LinkPyType() {                                  \
+    trace << "Py" #PY_SELF_TYPE "_LinkType()" << endl;                            \
+                                                                                  \
+    PyType##PY_SELF_TYPE.tp_dealloc = (destructor) Py##PY_SELF_TYPE##_DeAlloc;    \
+    PyType##PY_SELF_TYPE.tp_methods = Py##PY_SELF_TYPE##_Methods;                 \
   }
+
+
+  
+
+// -------------------------------------------------------------------
+// Initialisation Function for PyTypeObject Runtime Link.
+
+#define PyTypeObjectLinkPyTypeWithClass(PY_SELF_TYPE,SELF_TYPE)                   \
+  DirectReprMethod(Py##PY_SELF_TYPE##_Repr, Py##PY_SELF_TYPE,   SELF_TYPE)        \
+  DirectStrMethod (Py##PY_SELF_TYPE##_Str,  Py##PY_SELF_TYPE,   SELF_TYPE)        \
+  DirectCmpMethod (Py##PY_SELF_TYPE##_Cmp,  IsPy##PY_SELF_TYPE, Py##PY_SELF_TYPE) \
+  DirectHashMethod(Py##PY_SELF_TYPE##_Hash, Py##SELF_TYPE)                        \
+  extern void  Py##PY_SELF_TYPE##_LinkPyType() {                                  \
+    trace << "Py" #PY_SELF_TYPE "_LinkType()" << endl;                            \
+                                                                                  \
+    PyType##PY_SELF_TYPE.tp_dealloc = (destructor) Py##PY_SELF_TYPE##_DeAlloc;    \
+    PyType##PY_SELF_TYPE.tp_compare = (cmpfunc)    Py##PY_SELF_TYPE##_Cmp;        \
+    PyType##PY_SELF_TYPE.tp_repr    = (reprfunc)   Py##PY_SELF_TYPE##_Repr;       \
+    PyType##PY_SELF_TYPE.tp_str     = (reprfunc)   Py##PY_SELF_TYPE##_Str;        \
+    PyType##PY_SELF_TYPE.tp_hash    = (hashfunc)   Py##PY_SELF_TYPE##_Hash;       \
+    PyType##PY_SELF_TYPE.tp_methods = Py##PY_SELF_TYPE##_Methods;                 \
+  }
+
+
+  
+
+// -------------------------------------------------------------------
+// Initialisation Function for PyTypeObject Runtime Link.
+
+#define PyTypeObjectLinkPyType(SELF_TYPE)  \
+  PyTypeObjectLinkPyTypeWithClass(SELF_TYPE,SELF_TYPE)
+
+// #define PyTypeObjectLinkPyType(SELF_TYPE)                                 
+//   DirectReprMethod(Py##SELF_TYPE##_Repr, Py##SELF_TYPE,   SELF_TYPE)      
+//   DirectStrMethod (Py##SELF_TYPE##_Str,  Py##SELF_TYPE,   SELF_TYPE)      
+//   DirectCmpMethod (Py##SELF_TYPE##_Cmp,  IsPy##SELF_TYPE, Py##SELF_TYPE)  
+//   DirectHashMethod(Py##SELF_TYPE##_Hash, Py##SELF_TYPE)                   
+//   extern void  Py##SELF_TYPE##_LinkPyType() {                             
+//     trace << "Py" #SELF_TYPE "_LinkType()" << endl;                       
+//                                                                           
+//     PyType##SELF_TYPE.tp_dealloc = (destructor) Py##SELF_TYPE##_DeAlloc;  
+//     PyType##SELF_TYPE.tp_compare = (cmpfunc)    Py##SELF_TYPE##_Cmp;      
+//     PyType##SELF_TYPE.tp_repr    = (reprfunc)   Py##SELF_TYPE##_Repr;     
+//     PyType##SELF_TYPE.tp_str     = (reprfunc)   Py##SELF_TYPE##_Str;      
+//     PyType##SELF_TYPE.tp_hash    = (hashfunc)   Py##SELF_TYPE##_Hash;     
+//     PyType##SELF_TYPE.tp_methods = Py##SELF_TYPE##_Methods;               
+//   }
 
 
 // Special Initialisation Function for Locator PyTypeObject Runtime Link.

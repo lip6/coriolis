@@ -138,13 +138,16 @@ extern "C" {
                 &PyTypeNet, &pyNet, &PyTypeLayer, &pyLayer,
                 &x, &y, &width, &height)) {
         contact = Contact::create(PYNET_O(pyNet), PYLAYER_O(pyLayer), x, y, width, height);
-    } else if (PyArg_ParseTuple(args, "O!O!ll|ll:Contact.create",
+    } else {
+      PyErr_Clear ();
+      if (PyArg_ParseTuple(args, "O!O!ll|ll:Contact.create",
                 &PyTypeComponent, &pyComponent, &PyTypeLayer, &pyLayer,
                 &x, &y, &width, &height)) {
         contact = Contact::create(PYCOMPONENT_O(pyComponent), PYLAYER_O(pyLayer), x, y, width, height);
-    } else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Contact constructor." );
-      return ( NULL );
+      } else {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Contact constructor." );
+        return NULL;
+      }
     }
 
 

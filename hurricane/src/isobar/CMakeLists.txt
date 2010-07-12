@@ -7,6 +7,7 @@
                          ${PYTHON_INCLUDE_PATH}
                        )
                    set ( sources    ProxyProperty.cpp
+                                    PyBreakpoint.cpp
                                     PyBox.cpp
                                     PyCell.cpp
                                     PyCellCollection.cpp
@@ -25,6 +26,7 @@
                                     PyLibrary.cpp
                                     PyNet.cpp
                                     PyNetCollection.cpp
+                                    PyNetExternalComponents.cpp
                                     PyOccurrence.cpp
                                     PyOccurrenceCollection.cpp
                                     PyPad.cpp
@@ -45,6 +47,7 @@
                                     PyVertical.cpp
                        )	    
                    set ( includes   hurricane/isobar/ProxyProperty.h
+                                    hurricane/isobar/PyBreakpoint.h
                                     hurricane/isobar/PyBox.h
                                     hurricane/isobar/PyCell.h
                                     hurricane/isobar/PyCellCollection.h
@@ -63,6 +66,7 @@
                                     hurricane/isobar/PyLibrary.h
                                     hurricane/isobar/PyNet.h
                                     hurricane/isobar/PyNetCollection.h
+                                    hurricane/isobar/PyNetExternalComponents.h
                                     hurricane/isobar/PyOccurrence.h
                                     hurricane/isobar/PyOccurrenceCollection.h
                                     hurricane/isobar/PyPad.h
@@ -88,13 +92,15 @@
                    set ( includes2  hurricane/isobar/Script.h)
 
 
-               install ( FILES   ${includes}
-                                 ${includes2} DESTINATION include/coriolis2/hurricane/isobar )
-           add_library ( isobar  ${sources} ${sources2} )
-           add_library ( Hurricane MODULE ${sources} ) 
- set_target_properties ( Hurricane PROPERTIES
-                                   COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
-                                   PREFIX        ""
+               install ( FILES      ${includes}
+                                    ${includes2} DESTINATION include/coriolis2/hurricane/isobar )
+           add_library ( isobar     ${sources} ${sources2} )
+ target_link_libraries ( isobar     viewer )
+           add_library ( Hurricane  MODULE ${sources} ) 
+ target_link_libraries ( Hurricane  viewer )
+ set_target_properties ( Hurricane  PROPERTIES
+                                    COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
+                                    PREFIX        ""
                        )
-               install ( TARGETS isobar      DESTINATION lib${LIB_SUFFIX} )
-               install ( TARGETS Hurricane   DESTINATION ${PYTHON_SITE_PACKAGES} )
+               install ( TARGETS    isobar      DESTINATION lib${LIB_SUFFIX} )
+               install ( TARGETS    Hurricane   DESTINATION ${PYTHON_SITE_PACKAGES} )

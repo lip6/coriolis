@@ -12,7 +12,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./PyUpdateSession.h"                      |
+// |  C++ Header  :       "./PyNetExternalComponents.h"              |
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
@@ -22,12 +22,12 @@
 
 
 
-# ifndef  __PY_UPDATE_SESSION__
-#   define  __PY_UPDATE_SESSION__
+# ifndef  __PY_NET_EXTERNAL_COMPONENTS__
+#   define  __PY_NET_EXTERNAL_COMPONENTS__
 
 
 #include "hurricane/isobar/PyHurricane.h"
-#include "hurricane/UpdateSession.h"
+#include "hurricane/NetExternalComponents.h"
 
 
 namespace  Isobar {
@@ -36,11 +36,11 @@ namespace  Isobar {
 extern "C" {
 
 // -------------------------------------------------------------------
-// Python Object  :  "PyUpdateSession".
+// Python Object  :  "PyNetExternalComponents".
 
   typedef struct {
       PyObject_HEAD
-  } PyUpdateSession;
+  } PyNetExternalComponents;
 
 
 
@@ -48,15 +48,15 @@ extern "C" {
 // -------------------------------------------------------------------
 // Functions & Types exported to "PyHurricane.cpp".
 
-  extern PyTypeObject  PyTypeUpdateSession;
-  extern PyMethodDef   PyUpdateSession_Methods[];
+  extern PyTypeObject  PyTypeNetExternalComponents;
+  extern PyMethodDef   PyNetExternalComponents_Methods[];
 
-  extern void  PyUpdateSession_LinkPyType  ();
+  extern void  PyNetExternalComponents_LinkPyType  ();
 
 
-#define IsPyUpdateSession(v)   ( (v)->ob_type == &PyTypeUpdateSession )
-#define PYUPDATESESSION(v)     ( (PyUpdateSession*)(v) )
-#define PYUPDATESESSION_O(v)   ( PY_UPDATE_SESSION(v)->_object )
+#define IsPyNetExternalComponents(v)   ( (v)->ob_type == &PyTypeNetExternalComponents )
+#define PYNETEXTERNALCOMPONENTS(v)     ( (PyNetExternalComponents*)(v) )
+#define PYNETEXTERNALCOMPONENTS_O(v)   ( PY_NET_EXTERNAL_COMPONENTS(v)->_object )
 
 
 }  // End of extern "C".
