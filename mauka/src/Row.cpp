@@ -40,6 +40,8 @@
 
 namespace Mauka {
 
+using std::cerr;
+using std::endl;
 using Hurricane::Error;
 
 Row::Row(Cell* cell, Surface* surface, const Box& box, bool orientation)
@@ -59,6 +61,7 @@ Row* Row::create(Cell* cell, Surface* surface, const Box& box, bool orientation)
         throw Error("Can't create Mauka::Row : empty surface");
     Row* row = new Row(cell, surface, box, orientation);
     row->_postCreate();
+
     return row;
 }
 

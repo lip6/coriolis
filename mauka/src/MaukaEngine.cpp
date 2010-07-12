@@ -41,6 +41,7 @@
 #include "hurricane/HyperNet.h"
 #include "hurricane/Timer.h"
 #include "hurricane/DataBase.h"
+#include "hurricane/UpdateSession.h"
 #include "crlcore/AllianceFramework.h"
 #include "nimbus/GCell.h"
 #include "nimbus/NimbusEngine.h"
@@ -62,6 +63,7 @@ using Hurricane::OccurrenceLocator;
 using Hurricane::PlugLocator;
 using Hurricane::HyperNet;
 using Hurricane::Timer;
+using Hurricane::UpdateSession;
 using namespace CRL;
 using namespace Nimbus;
 
@@ -145,7 +147,6 @@ void MaukaEngine::Run()
 
   //if ( doPlotBins() ) PlotBinsStats();
 
-  //cmess2 << endl << "  o  Simulated Annealing run took " << timer.getUserTime() << " s ..." << endl;
     cmess1 << "  o  Simulated annealing took " << Timer::getStringTime(timer.getCombTime()) 
            << " [+" << Timer::getStringMemory(timer.getIncrease()) << "]." << endl;
     cmess1 << "     (raw measurements : " << timer.getCombTime()
@@ -156,6 +157,7 @@ void MaukaEngine::Run()
     _bbPlacer = new BBPlacer(this);
     _bbPlacer->Run();
     _bbPlacer->Save();
+    if ( doInsertFeeds() ) insertFeeds ();
     //Plot();
 }
 
@@ -179,7 +181,7 @@ void VerifyPathCellBox(const Occurrence& occurrence)
 }
 
 void MaukaEngine::Construct()
-// **********************
+// **************************
 {
     typedef map<Occurrence, unsigned> InstanceOccurrenceMap;
     typedef set<Instance*> InstanceSet;
@@ -191,12 +193,34 @@ void MaukaEngine::Construct()
     
     DbU::DbU::Unit standardCellHeight = 0;
     
-    for_each_occurrence(occurrence, getCell()->getLeafInstanceOccurrences())
+    UpdateSession::open ();
+
+    forEach ( Occurrence, ioccurrence, getCell()->getNonLeafInstanceOccurrences() )
     {
-        Instance* instance = static_cast<Instance*>(occurrence.getEntity());
-        if (!instance->isFixed())
+      Box topLevelAbutmentBox = getCell()->getAbutmentBox();
+
+      Instance* instance = static_cast<Instance*>((*ioccurrence).getEntity());
+      if ( instance->isUnplaced() ) {
+        Cell* masterCell = instance->getMasterCell();
+        if ( masterCell->getAbutmentBox().isEmpty() )
+          masterCell->setAbutmentBox ( topLevelAbutmentBox );
+
+        instance->setTransformation  ( Transformation() );
+        instance->setPlacementStatus ( Instance::PlacementStatus::PLACED );
+      }
+    }
+
+    UpdateSession::close ();
+    
+    forEach ( Occurrence, ioccurrence, getCell()->getLeafInstanceOccurrences() )
+    {
+        Instance* instance = static_cast<Instance*>((*ioccurrence).getEntity());
+      //cerr << (*ioccurrence).getPath() << ":"
+      //     << instance << " " << (int)instance->getPlacementStatus().getCode() << endl;
+
+        if ( not instance->isFixed() and instance->isTerminal() )
         {
-            //cerr << "unplaced " << occurrence << occurrence.getBoundingBox() << endl;
+            //cerr << "unplaced " << (*ioccurrence) << (*ioccurrence).getBoundingBox() << endl;
             Cell* model = instance->getMasterCell();
             DbU::DbU::Unit insWidth = model->getAbutmentBox().getWidth();
             DbU::DbU::Unit insHeight = model->getAbutmentBox().getHeight();
@@ -208,22 +232,21 @@ void MaukaEngine::Construct()
                         + getString(instance->getName())
                         + " must be placed");
             }
-            _instanceOccurrencesVector.push_back(occurrence);
-            //VerifyPathCellBox(occurrence);
+            _instanceOccurrencesVector.push_back(*ioccurrence);
+            //VerifyPathCellBox(*ioccurrence);
             _instanceWidths.push_back(insWidth);
             InstanceSet::iterator isit = instanceSet.find(instance);
             if (isit != instanceSet.end())
             {
                 cerr << "Unplaced Instance : "   << *isit << endl;
-                cerr << "Unplaced Occurrence : " << occurrence << endl;
+                cerr << "Unplaced Occurrence : " << (*ioccurrence) << endl;
                 cerr << (*isit)->getPlacementStatus() << endl;
                 throw Error("Each unplaced instance must have one occurrence only");
             }
-            _instanceOccurrencesMap[occurrence] = instanceId++;
+            _instanceOccurrencesMap[*ioccurrence] = instanceId++;
             instanceSet.insert(instance);
             _instanceNets.push_back(UVector());
         }
-        end_for;
     }
 
     if (_instanceOccurrencesVector.size() == 0)

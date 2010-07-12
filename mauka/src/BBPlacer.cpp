@@ -89,133 +89,6 @@ namespace {
   using namespace CRL;
 
 
-  class RowFeed {
-    public:
-                        RowFeed           ( MaukaEngine*, const Box& bb );
-      inline const Box& getBox            () const;
-             void       mergeInstanceSpan ( DbU::Unit source, DbU::Unit target );
-             void       insertTieChunk    ( DbU::Unit  xmin
-                                          , DbU::Unit  xmax
-                                          , DbU::Unit  y
-                                          , const Transformation::Orientation& );
-             void       insertFeeds       ( Cell*, const Transformation::Orientation& );
-    private:
-      MaukaEngine*   _mauka;
-      Box            _boundingBox;
-      list<Interval> _instanceSpans;
-  };
-
-
-  RowFeed::RowFeed ( MaukaEngine* mauka, const Box& bb )
-    : _mauka        (mauka)
-    , _boundingBox  (bb)
-    , _instanceSpans()
-  { }
-
-
-  inline const Box& RowFeed::getBox () const { return _boundingBox; }
-
-
-  void  RowFeed::mergeInstanceSpan ( DbU::Unit source, DbU::Unit target )
-  {
-    Interval spanMerge ( source, target );
-
-    list<Interval>::iterator imerge = _instanceSpans.end();
-    list<Interval>::iterator ispan  = _instanceSpans.begin();
-
-    while ( ispan != _instanceSpans.end() ) {
-      if ( spanMerge.getVMax() < (*ispan).getVMin() ) break;
-
-      if ( spanMerge.intersect(*ispan) ) {
-        if ( imerge == _instanceSpans.end() ) {
-          imerge = ispan;
-          (*imerge).merge ( spanMerge );
-        } else {
-          (*imerge).merge ( *ispan );
-          ispan = _instanceSpans.erase ( ispan );
-          continue;
-        }
-      }
-      ispan++;
-    }
-
-    if ( imerge == _instanceSpans.end() ) {
-      _instanceSpans.insert ( ispan, spanMerge );
-    }
-  }
-
-
-  void  RowFeed::insertTieChunk ( DbU::Unit xmin
-                                , DbU::Unit xmax
-                                , DbU::Unit y
-                                , const Transformation::Orientation& orientation )
-  {
-    Cell* feed = _mauka->getFeedCells().getBiggestFeed();
-    if ( feed == NULL ) {
-      cerr << Error("No feed has been registered, ignoring.") << endl;
-    }
-
-    DbU::Unit feedWidth = feed->getAbutmentBox().getWidth();
-    DbU::Unit xtie      = xmin;
-
-    while ( true ) {
-      if ( xtie           >= xmax ) break;
-      if ( xtie+feedWidth >  xmax ) {
-      // Feed is too big, try to find a smaller one.
-        int pitch = (int)((xmax-xtie) / _mauka->getPitch());
-        for ( ; pitch > 0 ; --pitch ) {
-          feed      = _mauka->getFeedCells().getFeed ( pitch );
-          feedWidth = feed->getAbutmentBox().getWidth();
-          if ( feed != NULL ) break;
-        }
-        if ( feed == NULL ) break;
-      }
-
-      // cerr << "Inserted " << feed
-      //      << " " << insName.str() << " @" << DbU::getLambda(xtie)
-      //      << "," << DbU::getLambda(y)
-      //      << " in " << _mauka->getCell() << endl;
-
-      Instance::create ( _mauka->getCell()
-                       , _mauka->getFeedCells().getNewFeedName().c_str()
-                       , feed
-                       , getTransformation(feed->getAbutmentBox(),xtie,y,orientation)
-                       , Instance::PlacementStatus::PLACED
-                       );
-
-      xtie += feedWidth;
-    }
-  }
-
-
-  void  RowFeed::insertFeeds ( Cell* cell, const Transformation::Orientation& orientation )
-  {
-    list<Interval>::iterator ispan  = _instanceSpans.begin();
-    
-    DbU::Unit minFeed = _boundingBox.getXMin();
-    DbU::Unit maxFeed;
-    if ( ispan == _instanceSpans.end() ) {
-      maxFeed = _boundingBox.getXMax();
-      insertTieChunk ( minFeed, maxFeed, _boundingBox.getYMin(), orientation );
-      return;
-    }
-
-    maxFeed = (*ispan).getVMin();
-    insertTieChunk ( minFeed, maxFeed, _boundingBox.getYMin(), orientation );
-
-    while ( ispan != _instanceSpans.end() ) {
-      minFeed = (*ispan).getVMax();
-
-      if ( ++ispan != _instanceSpans.end() )
-        maxFeed = (*ispan).getVMin();
-      else
-        maxFeed = _boundingBox.getXMax();
-
-      insertTieChunk ( minFeed, maxFeed, _boundingBox.getYMin(), orientation );
-    }
-  }
-
-
 class CompareInstancePosition
 {
     private: BBPlacer* _bbPlacer;
@@ -358,8 +231,6 @@ BBPlacer::BBPlacer(MaukaEngine* mauka)
 
 void BBPlacer::Save()
 {
-    bool insertFeeds = _mauka->doInsertFeeds();
-
     UpdateSession::open();
     
     bool autoMaterialize = not Go::autoMaterializationIsDisabled();
@@ -368,7 +239,6 @@ void BBPlacer::Save()
     for (unsigned i = 0; i < _subRowInstances.size(); i++)
     {
         SubRow* subRow = _subRowVector[i];
-        RowFeed rowFeed ( _mauka, subRow->getBox() );
 
         Transformation::Orientation orientation
           = (subRow->getRow()->getOrientation()) ? Transformation::Orientation::MY
@@ -381,9 +251,6 @@ void BBPlacer::Save()
             DbU::Unit y = _instanceY[instanceId];
             Occurrence instanceOccurrence = _mauka->_instanceOccurrencesVector[instanceId];
             Instance* instance = static_cast<Instance*>(instanceOccurrence.getEntity());
-
-            if ( insertFeeds )
-              rowFeed.mergeInstanceSpan ( x, x+instance->getAbutmentBox().getWidth() );
 
             Box masterABox = instance->getMasterCell()->getAbutmentBox();
             Transformation instanceTransformation = getTransformation(masterABox, x, y, orientation);
@@ -400,8 +267,6 @@ void BBPlacer::Save()
             instance->setPlacementStatus(Instance::PlacementStatus::PLACED);
             //setPlacementStatusRecursivelyToPlaced(instance);
         }
-        if ( insertFeeds )
-          rowFeed.insertFeeds ( _mauka->getCell(), orientation );
     }
 
     if ( autoMaterialize ) Go::enableAutoMaterialization ();

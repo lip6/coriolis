@@ -117,6 +117,7 @@ namespace Mauka {
               void             Run                           ();
               void             Test                          ();
               void             Save                          () const;
+              void             insertFeeds                   ();
               void             PlotBinsStats                 () const;
               void             Plot                          () const;
     

@@ -327,16 +327,16 @@ typedef list<PlacementProblem*> PlacementProblemList;
             if (  (refInsSliceHeight % 2 == 0)
                or (orientation == Transformation::Orientation::ID)
                or (orientation == Transformation::Orientation::MX))
-              rowZeroOrientation = true;
-            else
               rowZeroOrientation = false;
+            else
+              rowZeroOrientation = true;
           } else {
             if (  (refInsSliceHeight % 2 == 0)
                or (orientation == Transformation::Orientation::ID)
                or (orientation == Transformation::Orientation::MX))
-              rowZeroOrientation = false;
-            else
               rowZeroOrientation = true;
+            else
+              rowZeroOrientation = false;
           }
                         
         // Tests for each Instance.
@@ -522,7 +522,6 @@ namespace {
     
 Row* Surface::InsertSubRowInRow(SubRow* subrow, bool orientation)
 {
-    //cerr << subrow << endl;
     Row* row = NULL;
     if (_rowVector.size() == 0)
     {
@@ -553,7 +552,6 @@ Row* Surface::InsertSubRowInRow(SubRow* subrow, bool orientation)
         }
     }
     row->_InsertSubRow(subrow);
-    //cerr << row << endl;
     return row;
 }
 
