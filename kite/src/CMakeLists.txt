@@ -66,29 +66,30 @@
           qt4_wrap_cpp ( mocCpps       ${mocIncludes} )
 
 
-           add_library ( kite             ${cpps} ${mocCpps} )
-        add_executable ( kite-text        ${kitecpps} )
- target_link_libraries ( kite-text        kite
-                                          ${KATABATIC_LIBRARIES}
-                                          ${KNIK_LIBRARIES}
-                                          ${CORIOLIS_LIBRARIES}
-                                          ${HURRICANE_GRAPHICAL_LIBRARIES}
-                                          ${HURRICANE_PYTHON_LIBRARIES}
-                                          ${HURRICANE_LIBRARIES}
-                                          ${CIF_LIBRARY}
-                                          ${AGDS_LIBRARY}
-                                          ${CONFIGURATION_LIBRARY}
-                                          ${QT_LIBRARIES}
-                                          ${LEFDEF_LIBRARIES}
-                                          ${OA_LIBRARIES}
-                                          ${Boost_LIBRARIES}
-                                          ${PYTHON_LIBRARIES}
-                                          -lutil
-                                          ${LIBXML2_LIBRARIES}
+           add_library ( kite          ${cpps} ${mocCpps} )
+ target_link_libraries ( kite          ${KATABATIC_LIBRARIES}
+                                       ${KNIK_LIBRARIES}
+                                       ${NIMBUS_LIBRARIES}
+                                       ${CORIOLIS_LIBRARIES}
+                                       ${HURRICANE_PYTHON_LIBRARIES}
+                                       ${HURRICANE_GRAPHICAL_LIBRARIES}
+                                       ${HURRICANE_LIBRARIES}
+                                       ${CONFIGURATION_LIBRARY}
+                                       ${CIF_LIBRARY}
+                                       ${AGDS_LIBRARY}
+                                       ${LEFDEF_LIBRARIES}
+                                       ${OA_LIBRARIES}
+                                       ${QT_LIBRARIES}
+                                       ${Boost_LIBRARIES}
+                                       ${LIBXML2_LIBRARIES}
+                                       ${PYTHON_LIBRARIES} -lutil
                        )
-               install ( TARGETS          kite      DESTINATION lib${LIB_SUFFIX} )
-               install ( TARGETS          kite-text DESTINATION bin )
 
-               install ( FILES       ${includes}
-                                     ${mocIncludes} DESTINATION include/coriolis2/kite ) 
+        add_executable ( kite-text     ${kitecpps} )
+ target_link_libraries ( kite-text     kite )
+               install ( TARGETS       kite      DESTINATION lib${LIB_SUFFIX} )
+               install ( TARGETS       kite-text DESTINATION bin )
+
+               install ( FILES         ${includes}
+                                       ${mocIncludes} DESTINATION include/coriolis2/kite ) 
    
