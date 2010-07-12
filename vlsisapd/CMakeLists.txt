@@ -14,7 +14,7 @@ FIND_PACKAGE(PythonSitePackages REQUIRED)
 
 SET(Boost_USE_STATIC_LIBS ON)
 MESSAGE(STATUS "Always uses Boost static libraries.")
-FIND_PACKAGE(Boost 1.32.0 COMPONENTS program_options filesystem python REQUIRED)
+FIND_PACKAGE(Boost 1.32.0 COMPONENTS program_options filesystem system python REQUIRED)
 IF (Boost_FOUND)
   MESSAGE(STATUS "Found Boost.Python libraries in ${Boost_INCLUDE_DIR} as ${Boost_LIBRARIES}")
   FIND_PACKAGE(PythonLibs REQUIRED)
