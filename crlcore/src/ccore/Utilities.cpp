@@ -206,8 +206,6 @@ namespace CRL {
   System::System ()
     : _catchCore(true)
   {
-    cerr << "Creating System singleton." << endl;
-
   // Immediate setup to avoid some tiresome looping...
     _singleton = this;
 
@@ -285,8 +283,12 @@ namespace CRL {
 
     bfs::path pythonSitePackages = PYTHON_SITE_PACKAGES;
     pythonSitePackages = arguments["coriolis_top"].as<string>() / pythonSitePackages;
+    bfs::path stratusDir = pythonSitePackages / "stratus";
+    bfs::path cumulusDir = pythonSitePackages / "cumulus";
 
     Isobar::Script::addPath ( pythonSitePackages.string() );
+    Isobar::Script::addPath ( stratusDir.string() );
+    Isobar::Script::addPath ( cumulusDir.string() );
 
   // Delayed printing, as we known only now whether VerboseLevel1 is requested.
     if ( cmess1.enabled() ) {

@@ -222,23 +222,37 @@
 
 
                 qt4_wrap_cpp ( moc_cpps ${mocincludes} )
-                     install ( FILES ${includes} ${mocincludes} DESTINATION include/coriolis2/crlcore ) 
 
-                 add_library ( crlcore               ${ccore_cpps}
-                                                     ${moc_cpps}
-                                                     ${ap_cpps}
-                                                     ${agds_cpps}
-                                                     ${cif_cpps}
-                                                     ${toolbox_cpps}
-                                                     ${vst_parser_cpps}
-                                                     ${vst_driver_cpps}
-                                                     ${properties_cpps}
-                                                     ${ioc_parser_cpps}
-                                                     ${liberty_cpps}
-                                                     ${liberty_parser_cpps}
-                                                     ${bookshelf_cpps}
-                                                     ${spice_cpps}
-                                                     ${lefdef_cpps}
-                                                     ${openaccess_cpps}
+                 add_library ( crlcore  ${ccore_cpps}
+                                        ${moc_cpps}
+                                        ${ap_cpps}
+                                        ${agds_cpps}
+                                        ${cif_cpps}
+                                        ${toolbox_cpps}
+                                        ${vst_parser_cpps}
+                                        ${vst_driver_cpps}
+                                        ${properties_cpps}
+                                        ${ioc_parser_cpps}
+                                        ${liberty_cpps}
+                                        ${liberty_parser_cpps}
+                                        ${bookshelf_cpps}
+                                        ${spice_cpps}
+                                        ${lefdef_cpps}
+                                        ${openaccess_cpps}
                              )
-                     install ( TARGETS               crlcore DESTINATION lib${LIB_SUFFIX} )
+       target_link_libraries ( crlcore  ${HURRICANE_PYTHON_LIBRARIES}
+                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
+                                        ${HURRICANE_LIBRARIES}
+                                        ${CONFIGURATION_LIBRARY}
+                                        ${CIF_LIBRARY}
+                                        ${AGDS_LIBRARY}
+                                        ${LEFDEF_LIBRARIES}
+                                        ${OA_LIBRARIES}
+                                        ${QT_LIBRARIES}
+                                        ${Boost_LIBRARIES}
+                                        ${LIBXML2_LIBRARIES}
+                                        ${PYTHON_LIBRARIES} -lutil
+                             )
+
+                     install ( TARGETS  crlcore DESTINATION lib${LIB_SUFFIX} )
+                     install ( FILES    ${includes} ${mocincludes} DESTINATION include/coriolis2/crlcore ) 
