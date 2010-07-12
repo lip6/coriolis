@@ -47,26 +47,28 @@ ARule* Techno::addARule (Name name, double value, Name ref, Name layer1, Name la
 }
 
 Rule* Techno::getRule(Name name, Name layer1, Name layer2) {
-    bool testL1   = (layer1 == Name("")) ? false : true;
-    bool testL2   = (layer2 == Name("")) ? false : true;
+    //bool testL1   = (layer1 == Name("")) ? false : true;
+    //bool testL2   = (layer2 == Name("")) ? false : true;
 
     for (size_t i = 0 ; i < _rules.size() ; i++) {
         Rule* rule = _rules[i];
-        if (rule->getName() == name) {
-            if (testL1) {
-                if (rule->getLayer1() == layer1) {
-                    if (testL2) {
-                        if (rule->getLayer2() == layer2) {
-                            return rule;
-                        }
-                    } else {
-                        return rule;
-                    }
-                }
-            } else {
-                return rule;
-            }
-        }
+    //    if (rule->getName() == name) {
+    //        if (testL1) {
+    //            if (rule->getLayer1() == layer1) {
+    //                if (testL2) {
+    //                    if (rule->getLayer2() == layer2) {
+    //                        return rule;
+    //                    }
+    //                } else {
+    //                    return rule;
+    //                }
+    //            }
+    //        } else {
+    //            return rule;
+    //        }
+    //    }
+        if ((rule->getName() == name) && (rule->getLayer1() == layer1) && (rule-getLayer2() == layer2))
+            return rule;
     }
     string error ("[ERROR] Could not find rule: ");
     error += name.getString();
