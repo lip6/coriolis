@@ -534,6 +534,8 @@ if __name__ == "__main__":
                                    , "solstice"
                                    , "unicorn"
                                    , "ispd"
+                                   , "cumulus"
+                                   , "stratus1"
                                    ]
                        , repository="/users/outil/coriolis/svn"
                        )
