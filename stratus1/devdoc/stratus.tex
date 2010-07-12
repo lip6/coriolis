@@ -1,0 +1,90 @@
+\documentclass[12pt]{article}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{palatino}
+\usepackage{fancyheadings}
+\usepackage{float}
+\usepackage{subfigure}
+\usepackage{wrapfig}
+\usepackage[dvips]{graphics}
+\usepackage{graphicx}
+\usepackage[french]{babel}
+\usepackage{epsfig}
+\usepackage{multicol}
+\usepackage{color}
+\usepackage{url}
+\usepackage{html}
+
+\setlength{\topmargin}{0cm}
+\setlength{\headheight}{1cm}
+\setlength{\textheight}{21cm}
+\setlength{\textwidth}{16cm}
+\setlength{\oddsidemargin}{0cm}
+\setlength{\evensidemargin}{0cm}
+\setlength{\columnsep}{0.125in}
+\setlength{\columnseprule}{0.5pt}
+\setlength{\footskip}{1cm}
+%\setlength{\hoffset}{-18pt}  	
+%\setlength{\oddsidemargin}{0pt} 	% Marge gauche sur pages impaires
+%\setlength{\evensidemargin}{9pt} 	% Marge gauche sur pages paires
+%\setlength{\marginparwidth}{54pt} 	% Largeur de note dans la marge
+%\setlength{\textwidth}{481pt}   	% Largeur de la zone de texte (17cm)
+%\setlength{\voffset}{-18pt}         % Bon pour DOS
+%\setlength{\marginparsep}{7pt}   	% Séparation de la marge
+%\setlength{\topmargin}{0pt}         % Pas de marge en haut
+%\setlength{\headheight}{13pt}   	% Haut de page
+%\setlength{\headsep}{10pt} 	        % Entre le haut de page et le texte
+%\setlength{\footskip}{27pt}         % Bas de page + séparation
+%\setlength{\textheight}{708pt}   	% Hauteur de la zone de texte (25cm)
+\sloppy
+
+\newcommand{\image}[4]
+%	   {\begin{figure}[htbp]
+	   {\begin{figure}[h!]
+            \includegraphics[width=#2\textwidth]{#1}
+	    \end{figure}
+	   }
+% \image{fig.eps}{scale}
+
+%--------------------------------- page style --------------------------------
+\pagestyle{fancy}
+\rhead{}
+\lhead{}
+\rfoot{\thepage}
+\lfoot{}
+\cfoot{}
+\setlength{\footrulewidth}{0.6pt}
+%---------------------------------- document ---------------------------------
+\date   {}
+\title  {Stratus Developper's Manual}
+\author {Sophie Belloeil}
+
+\begin{document}
+
+\maketitle
+
+%%\begin{htmlonly}
+%%  \htmlrule
+%%  \noindent La version imprimable de ce document est disponible ici~: \\
+%%  \begin{center}
+%%    \hyperref[hyper]{http://asim.lip6.fr/~jpc/M1-C++/TME/6/TME6.pdf}{}{}
+%%                    {http://asim.lip6.fr/~jpc/M1-C++/TME/6/TME6.pdf}
+%%  \end{center}
+%%\end{htmlonly}
+
+\tableofchildlinks
+\htmlrule
+
+\section{Class Model}
+\label{secmodel}
+\input{man_model}
+
+\section{Nets}
+\label{secnet}
+\input{man_net}
+
+\section{Instances}
+\label{secinst}
+\input{man_inst}
+
+\end{document}

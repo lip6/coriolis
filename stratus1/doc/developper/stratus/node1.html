@@ -1,0 +1,227 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with jLaTeX2HTML 2002-2-1 (1.70) JA patch-2.0
+patched version by:  Kenshi Muto, Debian Project.
+* modified by:  Shige TAKENO
+LaTeX2HTML 2002-2-1 (1.70),
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Class Model</TITLE>
+<META NAME="description" CONTENT="Class Model">
+<META NAME="keywords" CONTENT="stratus">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="jLaTeX2HTML v2002-2-1 JA patch-2.0">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="./ASIM.css">
+
+<LINK REL="next" HREF="node2.html">
+<LINK REL="previous" HREF="stratus.html">
+<LINK REL="up" HREF="stratus.html">
+<LINK REL="next" HREF="node2.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td align="left" width="33%"><B>Previous</B></td>
+<td align="center" width="34%"><B>Up</B></td>
+<td align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td align="left" width="33%"><A HREF="stratus.html">Stratus Developper's Manual</A></td>
+<td align="center" width="34%"><A HREF="stratus.html">Stratus Developper's Manual</A></td>
+<td align="right" width="33%"><A HREF="node2.html">Nets</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Sous-sections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html31"
+  HREF="node1.html#SECTION00011000000000000000">Synopsys</A>
+<LI><A NAME="tex2html32"
+  HREF="node1.html#SECTION00012000000000000000">Description</A>
+<LI><A NAME="tex2html33"
+  HREF="node1.html#SECTION00013000000000000000">Parameters</A>
+<LI><A NAME="tex2html34"
+  HREF="node1.html#SECTION00014000000000000000">Attributes</A>
+<LI><A NAME="tex2html35"
+  HREF="node1.html#SECTION00015000000000000000">Methods</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H1><A NAME="SECTION00010000000000000000"></A>
+<A NAME="secmodel"></A>
+<BR>
+Class Model
+</H1>
+
+<H2><A NAME="SECTION00011000000000000000">
+Synopsys</A>
+</H2>
+
+<P>
+<PRE>
+class myClass ( Model ) :
+    ...
+    
+exemple = myClass ( name, param )
+</PRE>
+
+<P>
+
+<H2><A NAME="SECTION00012000000000000000">
+Description</A>
+</H2>
+
+<P>
+Every cell made is a class herited from class <code>Model</code>.
+<BR>
+Some methods have to be created, like <code>Interface</code>, <code>Netlist</code> ... Some methods are inherited from the class <code>Model</code>.
+
+<P>
+
+<H2><A NAME="SECTION00013000000000000000">
+Parameters</A>
+</H2>
+
+<P>
+
+<UL>
+<LI><code>name</code> : The name of the cell (which is the name of the files which will be created)
+</LI>
+<LI><code>param</code> : A dictionnary which gives all the parameters useful in order to create the cell
+</LI>
+</UL>
+
+<P>
+
+<H2><A NAME="SECTION00014000000000000000">
+Attributes</A>
+</H2>
+
+<P>
+
+<UL>
+<LI><code>_name</code> : Name of the cell
+</LI>
+<LI><code>_st_insts</code> : List of all the instances of the cell
+</LI>
+<LI><code>_st_ports</code> : List of all the external nets of the cell (except for alimentations and clock)
+</LI>
+<LI><code>_st_sigs</code> : List of all the internal nets of the cell
+</LI>
+<LI><code>_st_vdds</code>, <code>_st_vsss</code> : Two tabs of the nets which are instancied as <code>VddIn</code> and <code>VssIn</code>
+</LI>
+<LI><code>_st_cks</code> : List of all the nets which are instancied as <code>CkIn</code>
+</LI>
+<LI><code>_st_merge</code> : List of all the internal nets which have to be merged
+</LI>
+<LI><code>_param</code> : The map given as argument at the creation of the cell
+</LI>
+<LI><code>_underCells</code> : List of all the instances which are cells that have to be created 
+</LI>
+<LI><code>_and</code>, <code>_or</code>, <code>_xor</code>, <code>_not</code>, <code>_buff</code>, <code>_mux</code>, <code>_reg</code>, <code>_shift</code>, <code>_comp</code>, <code>_add</code>, <code>_mult</code>, <code>_div</code> : tells which generator to use when using overloard
+</LI>
+<LI><code>_NB_INST</code> : The number of instances of the cell (useful in order to automatically give a name to the instances)
+</LI>
+<LI><code>_TAB_NETS_OUT</code> and <code>_TAB_NETS_CAT</code> : Lists of all the nets automatically created
+</LI>
+<LI><code>_insref</code> : The reference instance (for placement)
+<BR></LI>
+</UL>
+
+<P>
+And, in connection with Hurricane :
+
+<UL>
+<LI><code>_hur_cell</code> : The hurricane cell (None by default)
+</LI>
+<LI><code>_db</code> : The database
+</LI>
+<LI><code>_lib0</code> : <code>self._db.Get_CATA_LIB ( 0 )</code>
+</LI>
+<LI><code>_nb_alims_verticales</code>, <code>_nb_pins</code>, <code>_nb_vdd_pins</code>, <code>_nb_vss_pins</code>, <code>standard_instances_list</code>, <code>pad_north</code>, <code>pad_south</code>, <code>pad_east</code>, <code>pad_west</code> : all place and route stuffs ...
+
+<P>
+</LI>
+</UL>
+
+<P>
+
+<H2><A NAME="SECTION00015000000000000000">
+Methods</A>
+</H2>
+
+<P>
+Methods of class <code>Model</code> are listed below :
+
+<UL>
+<LI><code>HurricanePlug</code> : Creates the Hurricane cell thanks to the stratus cell.
+<BR>
+Before calling this method, only the stratus cell is created, after this method, both cells are created. This method has to be called before View and Save, and before Layout.
+</LI>
+<LI><code>View</code> : Opens/Refreshes the editor in order to see the created layout
+</LI>
+<LI><code>Quit</code> : Finishes a cell without saving
+</LI>
+<LI><code>Save</code> : Saves the created cell
+<BR>
+If several cells have been created, they are all going to be saved in separated files
+<BR></LI>
+</UL>
+
+<P>
+Some of those methods have to be defined in order to create a new cell :
+
+<UL>
+<LI><code>Interface</code> : Description of the external ports of the cell
+</LI>
+<LI><code>Netlist</code> : Description of the netlist of the cell
+</LI>
+<LI><code>Layout</code> : Description of the layout of the cell
+</LI>
+<LI><code>Vbe</code> : Description of the behavior of the cell
+</LI>
+<LI><code>Pattern</code> : Description of the patterns in order to test the cell
+</LI>
+</UL> 
+
+<P>
+
+<DIV CLASS="navigation">
+<p>
+<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td align="left" width="33%"><B>Previous</B></td>
+<td align="center" width="34%"><B>Up</B></td>
+<td align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td align="left" width="33%"><A HREF="stratus.html">Stratus Developper's Manual</A></td>
+<td align="center" width="34%"><A HREF="stratus.html">Stratus Developper's Manual</A></td>
+<td align="right" width="33%"><A HREF="node2.html">Nets</A></td>
+
+</tr></table>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sophie <small>BELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

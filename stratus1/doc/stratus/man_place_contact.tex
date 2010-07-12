@@ -1,0 +1,56 @@
+\subsubsection{Name}
+
+PlaceContact -- Places a contact
+
+\subsubsection{Synopsys}
+
+\begin{verbatim}
+PlaceContact ( net, layer, point, width, height )
+\end{verbatim}
+
+\subsubsection{Description}
+
+Placement of a contact.\\
+\indent The contact is located at the coodinates of \verb-point-, on the layer \verb-layer- and has a size of 1 per 1. It belongs to the net \verb-net-.\\
+\indent Note that the segment must be horizontal or vertival.
+    
+\subsubsection{Parameters}
+
+\begin{itemize}
+    \item \verb-net- : Net which the contact belongs to
+    \item \verb-layer- : Layer of the segment.\\The \verb-layer- argument is a string wich can take different values, thanks to the technology (file described in HUR\_TECHNO\_NAME)
+    \begin{itemize}
+        \item NWELL, PWELL, ptie, ntie, pdif, ndif, ntrans, ptrans, poly, ALU1, ALU2, ALU3, ALU4, ALU5, ALU6, VIA1, VIA2, VIA3, VIA4, VIA5, TEXT, UNDEF, SPL1, TALU1, TALU2, TALU3, TALU4, TALU5, TALU6, POLY, NTIE, PTIE, NDIF, PDIF, PTRANS, NTRANS, CALU1, CALU2, CALU3, CALU4, CALU5, CALU6, CONT\_POLY, CONT\_DIF\_N, CONT\_DIF\_P, CONT\_BODY\_N, CONT\_BODY\_P, via12, via23, via34, via45, via56, via24, via25, via26, via35, via36, via46, CONT\_TURN1, CONT\_TURN2, CONT\_TURN3, CONT\_TURN4, CONT\_TURN5, CONT\_TURN6
+    \end{itemize}
+    \item \verb-point- : Coodinates of the contact
+    \item \verb-width- : Width of the contact
+    \item \verb-height- : Height of the contact
+\end{itemize}
+    
+\subsubsection{Example}
+
+\begin{verbatim}
+PlaceContact ( myNet, "ALU2", XY (10, 0), 2, 2 )
+\end{verbatim}
+
+\subsubsection{Errors}
+    
+Some errors may occur :
+\begin{itemize}
+    \item \verb-[Stratus ERROR] PlaceContact : Argument layer must be a string.-
+    \item \verb-[Stratus ERROR] PlaceContact : Wrong argument,-\\\verb-the coordinates of the contact must be put in a XY object.-
+\end{itemize}
+
+\begin{htmlonly}
+
+\subsubsection{See Also}
+
+\hyperref[ref]{\emph{Introduction}}{}{Introduction}{secintroduction}
+\hyperref[ref]{\emph{Layout}}{}{Layout}{seclayout}
+\hyperref[ref]{\emph{PlaceSegment}}{}{PlaceSegment}{secsegment}
+\hyperref[ref]{\emph{PlacePin}}{}{PlacePin}{secpin}
+\hyperref[ref]{\emph{PlaceRef}}{}{PlaceRef}{secref}
+\hyperref[ref]{\emph{GetRefXY}}{}{GetRefXY}{secgetref}
+\hyperref[ref]{\emph{CopyUpSegment}}{}{CopyUpSegment}{seccopy}
+
+\end{htmlonly}

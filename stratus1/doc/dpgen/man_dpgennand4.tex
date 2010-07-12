@@ -1,0 +1,75 @@
+\begin{itemize}
+    \item \textbf{Name} : DpgenNand4 -- Nand4 Macro-Generator
+    \item \textbf{Synopsys} :
+\begin{verbatim}
+Generate ( 'DpgenNand4', modelname
+         , param = { 'nbit'       : n
+                   , 'drive'      : d
+                   , 'physical'   : True
+                   , 'behavioral' : True                   
+                   }
+         )
+\end{verbatim}
+    \item \textbf{Description} : Generates a \verb-n- bits four inputs NAND with an output power of \verb-d- named \verb-modelname-.
+    \item \textbf{Terminal Names} :
+    \begin{itemize}
+        \item \textbf{i0} : input (\verb-n- bits)
+        \item \textbf{i1} : input (\verb-n- bits)
+        \item \textbf{i2} : input (\verb-n- bits)
+        \item \textbf{i3} : input (\verb-n- bits)
+        \item \textbf{nq} : output (\verb-n- bits)
+        \item \textbf{vdd} : power
+        \item \textbf{vss} : ground
+    \end{itemize}
+    \item \textbf{Parameters} : Parameters are given in the map \verb-param-.
+    \begin{itemize}
+        \item \textbf{nbit} (mandatory) : Defines the size of the generator
+        \item \textbf{drive} (optional) : Defines the output power of the gates
+        \begin{itemize}
+            \item Valid drive are : 1 or 4
+            \item If this parameter is not defined, it's value is the smallest one permitted
+        \end{itemize}
+        \item \textbf{physical} (optional, default value : False) : In order to generate a layout
+        \item \textbf{behavioral} (optional, default value : False) : In order to generate a behavior        
+    \end{itemize}
+    \item \textbf{Behavior} :
+\begin{verbatim}
+nq <= not ( i0 and i1 and i2 and i3 )
+\end{verbatim}
+    \item \textbf{Example} :
+\begin{verbatim}
+from stratus import *
+
+class inst_nand4 ( Model ) :
+
+  def Interface ( self ) :
+    self.in1 = SignalIn  ( "in1", 9 )
+    self.in2 = SignalIn  ( "in2", 9 )
+    self.in3 = SignalIn  ( "in3", 9 )
+    self.in4 = SignalIn  ( "in4", 9 )
+    self.o   = SignalOut (   "o", 9 )
+
+    self.vdd = VddIn ( "vdd" )
+    self.vss = VssIn ( "vss" )
+    
+  def Netlist ( self ) :
+    Generate ( 'DpgenNand4', 'nand4_9'
+             , param = { 'nbit'     : 9
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'nand4_9', 'inst'
+                  , map = { 'i0'  : self.in1
+                          , 'i1'  : self.in2
+                          , 'i2'  : self.in3
+                          , 'i3'  : self.in4
+                          , 'nq'  : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+    
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+\end{verbatim}
+\end{itemize}

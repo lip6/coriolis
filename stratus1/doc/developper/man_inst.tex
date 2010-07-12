@@ -1,0 +1,50 @@
+\subsection{Synopsys}
+
+\begin{verbatim}
+Inst ( model
+     , name
+     , map = myMap
+     )
+\end{verbatim}
+
+\subsection{Description}
+
+Instantiation of an instance. The type of the instance is given by the \verb-model- parameter. The connexions are made thanks to the \verb-map- parameters.
+
+\subsection{Parameters}
+
+\begin{itemize}
+    \item \verb-model- : Name of the mastercell of the instance to create (mandatory argument)
+    \item \verb-name- : Name of the instance (optional)\\
+When this argument is not defined, the instance has a name created by default. This argument is usefull when one wants to create a layout as well. Indeed, the placement of the instances is much easier when the conceptor has chosen himself the name f the instances.
+    \item \verb-map- : Dictionnary for connexions in order to make the netlist\\
+\end{itemize}
+
+\subsection{Attributes}
+
+\begin{itemize}
+    \item \verb-_name- : Name of the instance (the name given as parameter if there's one, a name created otherwise)
+    \item \verb-_model- : Name of the model given as argument
+    \item \verb-_real_model- : Name of the model created thanks to \verb-_model- and all the parameters
+    \item \verb-_map- : Dictionnary \verb-map- given at the instanciation
+    \item \verb-_param- : Dictionnary \verb-param- given at the instanciation
+    \item \verb-_st_cell- : The stratus cell which the instance is instanciated in
+    \item \verb-_st_masterCell- : The stratus master cell of the instance\\
+\end{itemize}
+\indent For placement :
+\begin{itemize}
+    \item \verb-_plac- : tells if the instance is placed or not (UNPLACED by default)
+    \item \verb-_x-, \verb-_y- : the coordinates of the instance (only for placed instances)
+    \item \verb-_sym- : the symetry of the instance (only for placed instances)\\
+\end{itemize}
+\indent And, in connection with Hurricane :
+\begin{itemize}
+    \item \verb-_hur_instance- : The hurricane instance (None by default)
+    \item \verb-_hur_masterCell- : The Hurricane master cell of the instance (None by default)
+\end{itemize}
+
+\subsection{Methods}
+
+\begin{itemize}
+    \item Delete : Deletion of the Hurricane instance
+\end{itemize}

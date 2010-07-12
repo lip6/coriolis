@@ -1,0 +1,65 @@
+\subsubsection{Description}
+
+Most common boolean operators can be instantiated without the \verb-Inst- constructor.
+
+\subsubsection{List}
+
+Boolean operators are listed below :
+\begin{itemize}
+    \item \verb-And2- : \verb-q <= i0 & i1-
+    \item \verb-Or2-  : \verb-q <= i0 | i1-
+    \item \verb-Xor2- : \verb-q <= i0 ^ i1-
+    \item \verb-Inv-  : \verb-q <= ~i0-
+\end{itemize}
+
+
+\subsubsection{Generators to instantiate}
+
+One can choose the generator to be used. Some methods are applied to the cell and set the generator used when using \verb-&-, \verb-|-, \verb-^- and \verb-~-. The generators used by default are the ones from the virtual library.\\
+        
+\indent Methods are :
+\begin{itemize}
+    \item \verb-SetAnd-
+    \item \verb-SetOr-
+    \item \verb-SetXor-
+    \item \verb-SetNot-
+\end{itemize}
+
+\subsubsection{Example}
+
+\begin{verbatim}
+class essai ( Model ) :
+
+  def Interface ( self ) :
+    self.A = LogicIn  ( "a", 4 )
+    self.B = LogicIn  ( "b", 4 )
+    self.B = LogicIn  ( "c", 4 )
+    
+    self.S = LogicOut ( "s", 4 )
+
+    self.vdd = VddIn  ( "vdd" )
+    self.vss = VssIn  ( "vss" )
+	
+  def Netlist ( self ) :
+
+    self.S <= ( ~self.A & self.B ) | self.C
+\end{verbatim}
+  
+\subsubsection{Errors}
+    
+Some errors may occur :
+\begin{itemize}
+    \item \verb-[Stratus ERROR] & : the nets must have the same lenght.-\\When one uses boolean expressions, one has to check that the sizes of both nets are equivalent.
+    \item \verb-[Stratus ERROR] : there is no alim.-\\The cell being created does not have the alimentation nets. The instanciation is impossible.
+\end{itemize}
+
+\subsubsection{See Also}
+
+\hyperref[ref]{\emph{Introduction}}{}{Introduction}{secintroduction}
+\hyperref[ref]{\emph{Netlist}}{}{Netlist}{secnetlist}
+\hyperref[ref]{\emph{Instanciation of a multiplexor}}{}{Multiplexor}{secmux}
+\hyperref[ref]{\emph{Instanciation of a shifter}}{}{Shifter}{secshift}
+\hyperref[ref]{\emph{Instanciation of a register}}{}{Reg}{secreg}
+\hyperref[ref]{\emph{Instanciation of constants}}{}{Constant}{secconstant}
+\hyperref[ref]{\emph{Arithmetical operations}}{}{Arithmetic}{secarithmetic}
+\hyperref[ref]{\emph{Comparison operations}}{}{Comparison}{seccomp}

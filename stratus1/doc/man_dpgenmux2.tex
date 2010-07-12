@@ -1,0 +1,54 @@
+\begin{itemize}
+    \item Name : DpgenMux2 -- Multiplexer Macro-Generator
+    \item Description : Generates a \verb-n- bits two inputs multiplexer with an output power of \verb-drive- named \verb-modelname-.
+    \begin{itemize}
+        \item Valid drive are : 2 or 4
+    \end{itemize}
+    \item Terminal Names :
+    \begin{itemize}
+        \item cmd : select ( 1 bit )
+        \item i0 : input ( \verb-n- bits )
+        \item i1 : input ( \verb-n- bits )
+        \item q : output ( \verb-n- bits )
+        \item vdd : power
+        \item vss : ground
+    \end{itemize}
+    \item Parameters : Parameters are given with a map called \verb-param-.
+    \begin{itemize}
+        \item nbit : Defines the size of the generator
+        \item nbit\_cmd : Defines the size of the generator
+        \item drive (optional) : Defines the output power of the gates\\If this parameter is not defined, the \verb-drive- is the smallest one permitted.
+    \end{itemize}
+    \item Behavior :
+\begin{verbatim}
+nq <= WITH cmd SELECT i0 WHEN '0',
+                      i1 WHEN '1';
+\end{verbatim}
+    \item Example :
+\begin{verbatim}
+class myClass ( Model ) :
+  def Interface ( self ) :
+    self._in0   = LogicIn  ( "in0", 32 )
+    self._in1   = LogicIn  ( "in1", 32 )
+    
+    self._cmd   = LogicIn  ( "cmd",  1 )
+    
+    self._out   = LogicOut ( "out", 32 )
+
+    self._vdd   = VddIn    ( "vdd" )
+    self._vss   = VssIn    ( "vss" )
+    
+  def Netlist ( self ) :
+      
+    Inst ( 'DpgenMux2'
+         , param = { 'nbit' : 32 }
+         , map  = { 'i0'  : self._in0
+                  , 'i1'  : self._in1
+                  , 'cmd' : self._cmd
+                  , 'nq'  : self._out
+                  , 'vdd' : self._vdd
+                  , 'vss' : self._vss
+                  }
+         )
+\end{verbatim}
+\end{itemize}

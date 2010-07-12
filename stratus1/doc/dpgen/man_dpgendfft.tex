@@ -1,0 +1,77 @@
+\begin{itemize}
+    \item \textbf{Name} : DpgenDfft -- Dynamic Flip-Flop with Scan-Path Macro-Generator
+    \item \textbf{Synopsys} :
+\begin{verbatim}
+Generate ( 'DpgenDfft', modelname
+         , param = { 'nbit'       : n
+                   , 'physical'   : True
+                   , 'behavioral' : True         
+                   }
+         )
+\end{verbatim}
+    \item \textbf{Description} : Generates a n bits dynamic flip-flop with scan-path named \verb-modelname-. The two latches of this flip-flop are dynamic, i.e. the data is stored in a capacitor.
+    \item \textbf{Terminal Names} :
+    \begin{itemize}
+        \item \textbf{scan} : scan-path mode (input, 1 bit)
+        \item \textbf{scin} : scan path in (input, 1 bit)
+        \item \textbf{wen} : write enable (1 bit)
+        \item \textbf{ck} : clock signal (1 bit)
+        \item \textbf{i0} : data input (\verb-n- bits)
+        \item \textbf{q} : output (\verb-n- bits)
+        \item \textbf{vdd} : power
+        \item \textbf{vss} : ground
+    \end{itemize}
+    \item \textbf{Parameters} : Parameters are given in the map \verb-param-.
+    \begin{itemize}
+        \item \textbf{nbit} (mandatory) : Defines the size of the generator
+        \item \textbf{physical} (optional, default value : False) : In order to generate a layout
+        \item \textbf{behavioral} (optional, default value : False) : In order to generate a behavior        
+    \end{itemize}
+    \item \textbf{How it works} : 
+    \begin{itemize}
+        \item When scan is set to \verb-one-, it enables the scan-path mode. Note that in scan-path mode, the wen signal is not effective
+        \item scin is the input of the scan-path. This terminal is different from \verb-i0[0]-. The scout is q[N-1] (in the following example this is \verb-q[31]-)
+        \item When wen is set to \verb-one- enables the writing of the flip-flop
+    \end{itemize}    
+%    \item \textbf{Behavior} :
+%\begin{verbatim}
+%\end{verbatim}
+    \item \textbf{Example} :
+\begin{verbatim}
+from stratus import *
+
+class inst_dfft ( Model ) :
+
+  def Interface ( self ) :
+    self.scan = SignalIn  ( "scin", 1 )
+    self.scin = SignalIn  ( "scan", 1 )
+    self.ck   = SignalIn  (   "ck", 1 )
+    self.wen  = SignalIn  (  "wen", 1 )
+    self.i    = SignalIn  (    "i", 4 )
+    self.o    = SignalOut (    "o", 4 )
+
+    self.vdd = VddIn ( "vdd" )
+    self.vss = VssIn ( "vss" )
+    
+  def Netlist ( self ) :
+    Generate ( 'DpgenDfft', 'dfft_4'
+             , param = { 'nbit' : 4
+                       , 'physical' : True
+                       }
+             )      
+    self.I = Inst ( 'dfft_4', 'inst'
+                  , map = { "wen"  : self.wen
+                          , "ck"   : self.ck
+                          , "scan" : self.scan
+                          , "scin" : self.scin
+                          , "i0"   : self.i
+                          ,  "q"   : self.o
+                          , 'vdd'  : self.vdd
+                          , 'vss'  : self.vss
+                          }
+                  )
+      
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+\end{verbatim}
+\end{itemize}

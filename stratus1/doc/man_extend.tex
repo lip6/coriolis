@@ -1,0 +1,52 @@
+\subsubsection{Name}
+
+Extend -- Extention of nets
+
+\subsubsection{Synopsys}
+
+\begin{verbatim}
+extendA = Signal ( "extend_a", 32 )
+
+extendA <= netA.Extend ( 32, 'zero' ) 
+\end{verbatim}
+
+\subsubsection{Description}
+
+This method creates a net which is an extension of the net which it is applied to. The number given as parameter has to be greater than the arity of the net.
+
+\subsubsection{Parameters}
+
+\begin{itemize}
+    \item \verb-n- : the number which is the arity of the net
+    \item \verb-type- : the type of the extension
+    \begin{itemize}
+        \item 'zero' : the extension nets are set to zero
+        \item 'one' : the extension nets are set to one
+        \item 'signed' : the extension nets are set thanks to the value of the msb bit
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Example}
+
+\begin{verbatim}
+temp    = Signal (     "temp", 5 )
+tempExt = Signal ( "temp_ext", 8 )
+
+tempExt <= temp.Extand ( 8, 'one' )
+\end{verbatim}
+
+\indent The arity of the net \verb-tempExt- is 8 and 3 MSB of the net are "1".
+  
+\subsubsection{Errors}
+    
+Some errors may occur :
+\begin{itemize}
+    \item \verb-[Stratus ERROR] Extend :-\\\verb-the net can not be extended to n bits, it's arity is already m.-\\The number one wants must be greater than the arity of the net. Otherwise, the net can not be extended.
+\end{itemize}
+        
+\subsubsection{See Also}
+
+\hyperref[ref]{\emph{Introduction}}{}{Introduction}{secintroduction}
+\hyperref[ref]{\emph{Nets}}{}{Nets}{secnet}
+\hyperref[ref]{\emph{Alias}}{}{Alias}{secalias}
+\hyperref[ref]{\emph{Cat}}{}{Cat}{seccat}

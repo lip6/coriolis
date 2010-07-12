@@ -1,0 +1,82 @@
+\subsubsection{Name}
+
+Shift -- Easy way to instantiate a shifter
+
+\subsubsection{Synopsys}
+
+\begin{verbatim}
+netOut <= netCmd.Shift ( netIn, direction, type )
+\end{verbatim}
+  
+\subsubsection{Description}
+
+This method is a method of net. The net which this method is applied to is the command of the shifter, it's the one which defines the number of bits to shift. The net given as parameter is the input net. The other arguments set the different patameters. The method returns a net : the output net.\\
+\indent Note that it is possible to change the generator instanciated with the \verb-SetShift- method.
+
+\subsubsection{Parameters}
+
+\begin{itemize}
+    \item \verb-netIn- : the net which is going to be shifted
+    \item \verb-direction- : this string represents the direction of the shift :
+    \begin{itemize}
+        \item "left"
+        \item "right"
+    \end{itemize}
+    \item \verb-type- : this string represents the type of the shift :
+    \begin{itemize}
+        \item "logical" : only "zeros" are put in the net
+        \item "arith" : meaningful for "right" shift, the values put in the nets are an extension of the MSB
+        \item "circular" : the values put in the nets are the ones which have just been taken off
+    \end{itemize}
+\end{itemize}
+          
+\subsubsection{Example}
+
+\begin{verbatim}
+class essai ( Model ) :
+
+  def Interface ( self ) :
+    self.A = LogicIn ( "a", 4 )
+    
+    self.Cmd = LogicIn ( "cmd", 2 )
+    
+    self.S1 = LogicOut ( "s1", 4 )
+    self.S2 = LogicOut ( "s2", 4 )
+    self.S3 = LogicOut ( "s3", 4 )
+
+    self.Vdd = VddIn  ( "vdd" )
+    self.Vss = VssIn  ( "vss" )
+	
+  def Netlist ( self ) :
+
+    self.S1 <= self.Cmd.Shift ( self.A, "right", "logical" ) 
+    self.S2 <= self.Cmd.Shift ( self.A, "right", "arith"   ) 
+    
+    self.S3 <= self.Cmd.Shift ( self.A, "left", "circular" ) 
+\end{verbatim}
+\indent If the value of "a" is "0b1001" and the value of "cmd" is "0b10", we will have :
+\begin{itemize}
+    \item "s1" : "0b0010"
+    \item "s2" : "0b1110"
+    \item "s3" : "0b0110"
+\end{itemize}
+    
+\subsubsection{Errors}
+    
+Some errors may occur :
+\begin{itemize}
+    \item \verb-[Stratus ERROR] Shift : The input net does not have a positive arity.-\\The net which is going to be shifted must have a positive arity.
+    \item \verb-[Stratus ERROR] Shift :-\\\verb-The direction parameter must be "left" or "right".-\\The "direction" argument is not correct.
+    \item \verb-[Stratus ERROR] Shift :-\\\verb-The type parameter must be "logical" or "arith" or "circular".-\\The "type" argument is not correct.
+\end{itemize}
+
+\subsubsection{See Also}
+
+\hyperref[ref]{\emph{Introduction}}{}{Introduction}{secintroduction}
+\hyperref[ref]{\emph{Netlist}}{}{Netlist}{secnetlist}
+\hyperref[ref]{\emph{Instanciation of a multiplexor}}{}{Multiplexor}{secmux}
+\hyperref[ref]{\emph{Instanciation of a register}}{}{Reg}{secreg}
+\hyperref[ref]{\emph{Instanciation of constants}}{}{Constant}{secconstant}
+\hyperref[ref]{\emph{Boolean operations}}{}{Boolean}{secbool}
+\hyperref[ref]{\emph{Arithmetical operations}}{}{Arithmetic}{secarithmetic}
+\hyperref[ref]{\emph{Comparison operations}}{}{Comparison}{seccomp}

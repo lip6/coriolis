@@ -1,0 +1,60 @@
+\subsubsection{Name}
+
+PlacePin -- Places a pin
+
+\subsubsection{Synopsys}
+
+\begin{verbatim}
+PlacePin ( net, layer, direction, point, width, height )
+\end{verbatim}
+
+\subsubsection{Description}
+
+Placement of a pin.\\
+\indent The pin is located at the coodinates of \verb-point-, on the layer \verb-layer-, has a a direction of \verb-direction- and size of 1 per 1. It belongs to the net \verb-net-.
+    
+\subsubsection{Parameters}
+
+\begin{itemize}
+    \item \verb-net- : Net which the pin belongs to
+    \item \verb-layer- : Layer of the segment.\\The \verb-layer- argument is a string wich can take different values, thanks to the technology (file described in HUR\_TECHNO\_NAME)
+    \begin{itemize}
+        \item NWELL, PWELL, ptie, ntie, pdif, ndif, ntrans, ptrans, poly, ALU1, ALU2, ALU3, ALU4, ALU5, ALU6, VIA1, VIA2, VIA3, VIA4, VIA5, TEXT, UNDEF, SPL1, TALU1, TALU2, TALU3, TALU4, TALU5, TALU6, POLY, NTIE, PTIE, NDIF, PDIF, PTRANS, NTRANS, CALU1, CALU2, CALU3, CALU4, CALU5, CALU6, CONT\_POLY, CONT\_DIF\_N, CONT\_DIF\_P, CONT\_BODY\_N, CONT\_BODY\_P, via12, via23, via34, via45, via56, via24, via25, via26, via35, via36, via46, CONT\_TURN1, CONT\_TURN2, CONT\_TURN3, CONT\_TURN4, CONT\_TURN5, CONT\_TURN6
+    \end{itemize}
+    \item \verb-direction- : Direction of the pin
+    \begin{itemize}
+        \item UNDEFINED, NORTH, SOUTH, EAST, WEST
+    \end{itemize}
+    \item \verb-point- : Coodinates of the pin
+    \item \verb-width- : Width of the pin
+    \item \verb-height- : Height of the pin
+\end{itemize}
+    
+\subsubsection{Example}
+
+\begin{verbatim}
+PlacePin ( myNet, "ALU2", NORTH, XY (10, 0), 2, 2 )
+\end{verbatim}
+
+\subsubsection{Errors}
+    
+Some errors may occur :
+\begin{itemize}
+    \item \verb-[Stratus ERROR] PlacePin : Argument layer must be a string.-
+    \item \verb-[Stratus ERROR] PlacePin : Illegal pin access direction.-\\\verb-The values are : UNDEFINED, NORTH, SOUTH, EAST, WEST.-
+    \item \verb-[Stratus ERROR] PlacePin : Wrong argument,-\\\verb-the coordinates of the pin must be put in a XY object.-
+\end{itemize}
+
+\begin{htmlonly}
+        
+\subsubsection{See Also}
+
+\hyperref[ref]{\emph{Introduction}}{}{Introduction}{secintroduction}
+\hyperref[ref]{\emph{Layout}}{}{Layout}{seclayout}
+\hyperref[ref]{\emph{PlaceSegment}}{}{PlaceSegment}{secsegment}
+\hyperref[ref]{\emph{PlaceContact}}{}{PlaceContact}{seccontact}
+\hyperref[ref]{\emph{PlaceRef}}{}{PlaceRef}{secref}
+\hyperref[ref]{\emph{GetRefXY}}{}{GetRefXY}{secgetref}
+\hyperref[ref]{\emph{CopyUpSegment}}{}{CopyUpSegment}{seccopy}
+
+\end{htmlonly}

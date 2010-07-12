@@ -1,0 +1,82 @@
+\begin{itemize}
+    \item \textbf{Name} : DpgenRf1, DpgenRf1r0 -- Register File Macro-Generator
+    \item \textbf{Synopsys} :
+\begin{verbatim}
+Generate ( 'DpgenRf1', modelname
+         , param = { 'nbit'     : n
+                   , 'nword'    : regNumber
+                   , 'physical' : True                   
+                   }
+         )
+\end{verbatim}
+    \item \textbf{Description} : Generates a register file of \verb-regNumber- words of \verb-n- bits without decoder named \verb-modelname-.
+    \item \textbf{Terminal Names} :
+    \begin{itemize}
+        \item \textbf{ckok} : clock signal (input, 1 bit)
+        \item \textbf{sel} : select the write bus (input, 1 bit)
+        \item \textbf{selr} : the decoded read address (input, \verb-regNumber- bits)
+        \item \textbf{selw} : the decoded write address (input, \verb-regNumber- bits)
+        \item \textbf{datain0} : first write bus (input, \verb-n- bits)
+        \item \textbf{datain1} : second write bus (input, \verb-n- bits)
+        \item \textbf{dataout} : read bus (output, \verb-n- bits)
+        \item \textbf{vdd} : power
+        \item \textbf{vss} : ground
+    \end{itemize}
+    \item \textbf{Parameters} : Parameters are given in the map \verb-param-.
+    \begin{itemize}
+        \item \textbf{nbit} (mandatory) : Defines the size of the words  (even, between 2 and 64)
+        \item \textbf{nword} (mandatory) : Defines the number of the words (even, between 4 and 32)
+        \item \textbf{physical} (optional, default value : False) : In order to generate a layout    
+    \end{itemize}
+    \item \textbf{How it works} :
+    \begin{itemize}
+        \item datain0 and datain1 are the two write busses. Only one is used to actually write the register word, it is selected by the sel signal.
+        \item When sel is set to zero datain0 is used to write the register word, otherwise it will be datain1
+        \item selr, selw : this register file have no decoder, so selr have a bus width equal to \verb-regNumber-. One bit for each word
+        \item The DpgenRf1r0 variant differs from the DpgenRf1 in that the register of address zero is stuck to zero. You can write into it, it will not change the value. When read, it will always return zero
+    \end{itemize}    
+%    \item Behavior :
+%\begin{verbatim}
+%\end{verbatim}
+    \item \textbf{Example} :
+\begin{verbatim}
+from stratus import *
+
+class inst_rf1 ( Model ) :
+
+  def Interface ( self ) :
+    self.ck      = SignalIn    (       "ck",  1 )
+    self.sel     = SignalIn    (      "sel",  1 )
+    self.selr    = SignalIn    (     "selr", 16 )
+    self.selw    = SignalIn    (     "selw", 16 ) 
+    self.datain0 = SignalIn    (  "datain0",  4 )
+    self.datain1 = SignalIn    (  "datain1",  4 )
+    self.dataout = SignalOut   (  "dataout",  4 ) 
+    
+    self.vdd = VddIn ( "vdd" )
+    self.vss = VssIn ( "vss" )
+    
+  def Netlist ( self ) :
+    Generate ( 'DpgenRf1', 'rf1_4_16'
+             , param = { 'nbit'     : 4
+                       , 'nword'    : 16
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'rf1_4_16', 'inst'
+                  , map =  { 'ck'      : self.ck
+                           , 'sel'     : self.sel
+                           , 'selr'    : self.selr
+                           , 'selw'    : self.selw
+                           , 'datain0' : self.datain0
+                           , 'datain1' : self.datain1
+                           , 'dataout' : self.dataout
+                           , 'vdd'     : self.vdd
+                           , 'vss'     : self.vss
+                           }
+                  )
+    
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+\end{verbatim}
+\end{itemize}

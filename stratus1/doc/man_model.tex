@@ -1,0 +1,47 @@
+\subsubsection{Name}
+
+Model -- Master class
+
+\subsubsection{Description}
+
+Every cell made is a class herited from class \verb-Model-.\\
+\indent Some methods have to be created, like \verb-Interface-, \verb-Netlist- ... Some methods are inherited from the class \verb-Model-.
+
+\subsubsection{Parameters}
+
+\begin{itemize}
+    \item \verb-name- : The name of the cell (which is the name of the files which will be created)
+    \item \verb-param- : A dictionnary which gives all the parameters usefull in order to create the cell
+\end{itemize}
+  
+\subsubsection{Methods}
+
+Methods of class \verb-Model- are listed below :
+\begin{itemize}
+    \item \verb-View- : Opens/Refreshes the editor in order to see the created layout
+    \item \verb-Quit- : Finishes a cell without saving
+    \item \verb-Save- : Saves the created cell\\If several cells have been created, they are all going to be saved in separated files\\
+\end{itemize}
+
+Some of those methods have to be defined in order to create a new cell :
+\begin{itemize}
+    \item \verb-Interface- : Description of the external ports of the cell
+    \item \verb-Netlist- : Description of the netlist of the cell
+    \item \verb-Layout- : Description of the layout of the cell
+    \item \verb-Vbe- : Description of the behavior of the cell
+    \item \verb-Pattern- : Description of the patterns in order to test the cell
+\end{itemize} 
+    
+\subsubsection{Example}
+
+You can see a concrete example at : \hyperref[ref]{\emph{A concrete example}}{}{Example}{secexample}
+   
+\subsubsection{See Also}
+
+\hyperref[ref]{\emph{Stratus}}{}{Stratus}{secstratus}
+\hyperref[ref]{\emph{Param}}{}{Param}{secparam}
+\hyperref[ref]{\emph{Example}}{}{Example}{secexample}
+\hyperref[ref]{\emph{Netlist}}{}{Netlist}{secnetlist}
+\hyperref[ref]{\emph{Layout}}{}{Layout}{seclayout}
+\hyperref[ref]{\emph{Place and Route}}{}{Place and Route}{secroute}
+\hyperref[ref]{\emph{Facilities}}{}{Facilities}{secfacilities}

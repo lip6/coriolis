@@ -1,0 +1,38 @@
+\begin{itemize}
+    \item Name : DpgenConst -- Constant Macro-Generator
+    \item Description : Generates a \verb-n- bits constant named \verb-modelname-.
+    \item Terminal Names :
+    \begin{itemize}
+        \item q : the constant (output, \verb-n- bit)
+        \item vdd : power
+        \item vss : ground
+    \end{itemize}
+    \item Parameters : Parameters are given with a map called \verb-param-.
+    \begin{itemize}
+        \item const : Defines the constant
+        \item nbit : Defines the size of the generator
+    \end{itemize}
+%    \item Behavior :
+%\begin{verbatim}
+%\end{verbatim}
+    \item Example :
+\begin{verbatim}
+class myClass ( Model ) :
+  def Interface ( self ) :
+    self._out   = LogicOut ( "out", 8 )
+
+    self._vdd   = VddIn    ( "vdd" )
+    self._vss   = VssIn    ( "vss" )
+    
+  def Netlist ( self ) :
+    Inst ( 'DpgenConst'
+         , param = { 'nbit'   : 8
+                   , 'const'  : "0xA1"
+                   }
+         , map   = { 'q'      : self._out
+                   , 'vdd'    : self._vdd
+                   , 'vss'    : self._vss
+                   }
+         )
+\end{verbatim}
+\end{itemize}

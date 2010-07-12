@@ -1,0 +1,56 @@
+\begin{itemize}
+    \item Name : DpgenRom4 -- 4 words ROM Macro-Generator
+    \item Description : Generates a \verb-n- bits 4 words optimized ROM named \verb-modelname-.
+    \item Terminal Names :
+    \begin{itemize}
+        \item sel1 : upper bit of the address of the value (input, 1 bit)
+        \item sel0 : lower bit of the address of the value (input, 1 bit)
+        \item q : the selected word (output, \verb-n- bits)
+        \item vdd : power
+        \item vss : ground
+    \end{itemize}
+    \item Parameters : Parameters are given with a map called \verb-param-.
+    \begin{itemize}
+        \item nbit : Defines the size of the generator
+        \item val0 : Defines the first word
+        \item val1 : Defines the second word
+        \item val0 : Defines the third word
+        \item val1 : Defines the fourth word
+    \end{itemize}
+    \item Behavior :
+\begin{verbatim}
+q <= WITH sel1 & sel0 SELECT contsVal0  WHEN B"00",
+                             contsVal1  WHEN B"01",
+                             contsVal2  WHEN B"10",
+                             constVal3  WHEN B"11";
+\end{verbatim}
+    \item Example :
+\begin{verbatim}
+class myClass ( Model ) :
+  def Interface ( self ) :
+    self._sel0 = LogicIn  (    "sel0", 1 )
+    self._sel1 = LogicIn  (    "sel1", 1 )
+    
+    self._q    = LogicOut ( "dataout", 4 )
+    
+    self._vdd   = VddIn    ( "vdd" )
+    self._vss   = VssIn    ( "vss" )
+    
+  def Netlist ( self ) :
+
+    Inst ( 'DpgenRom4'
+         , param = { 'val0' : "0b1010"
+                   , 'val1' : "0b1100"
+                   , 'val2' : "0b1111"
+                   , 'val3' : "0b0001"
+                   , 'nbit' : 4
+                   }
+         , map   = { 'sel0' : self._sel0
+                   , 'sel1' : self._sel1
+                   , 'q'    : self._q
+                   , 'vdd'  : self._vdd
+                   , 'vss'  : self._vss
+                   }
+         ) 
+\end{verbatim}
+\end{itemize}

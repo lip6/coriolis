@@ -1,0 +1,71 @@
+\subsubsection{Name}
+
+Eq/Ne : Easy way to test the value of the nets
+
+\subsubsection{Synopsys}
+
+\begin{verbatim}
+netOut <= net.Eq ( "n" )
+\end{verbatim}
+  
+\subsubsection{Description}
+
+Comparaison functions are listed below :
+\begin{itemize}
+    \item \verb-Eq- : returns \verb-true- if the value of the net is equal to \verb-n-.
+    \item \verb-Ne- : returns \verb-true- if the value of the net is different from \verb-n-.
+\end{itemize}
+\indent Note that it is possible to change the generator instanciated with the \verb-SetComp- method.
+
+\subsubsection{Parameters}
+
+The constant given as argument must be a string representing :
+\begin{itemize}
+    \item A decimal number
+    \item A binary number : the string must begin with "0b"
+    \item An hexadecimal number : the string must begin with "0x"
+\end{itemize}    
+
+\subsubsection{Example}
+
+\begin{verbatim}
+class essai ( Model ) :
+
+  def Interface ( self ) :
+    self.A = SignalIn  ( "a", 4 )
+    
+    self.S = SignalOut ( "s", 1 )
+    self.T = SignalOut ( "t", 1 )
+
+    self.vdd = VddIn  ( "vdd" )
+    self.vss = VssIn  ( "vss" )
+	
+  def Netlist ( self ) :
+
+    self.S <= self.A.Eq ( "4" )
+
+    self.T <= self.A.Ne ( "1" )
+\end{verbatim}
+    
+\subsubsection{Errors}
+    
+Some errors may occur :
+\begin{itemize}
+    \item \verb-[Stratus ERROR] Eq :-\\\verb-the number does not match with the net's lenght.-\\When one uses comparaison functions on one net, one has to check that the number corresponds to the size of the net.
+    \item \verb-[Stratus ERROR] Eq :-\\\verb-the argument must be a string representing a number in decimal,-\\\verb-binary (0b) or hexa (0x).-\\The string given as argument does not have the right form.
+\end{itemize}
+
+\begin{htmlonly}
+
+\subsubsection{See Also}
+
+\hyperref[ref]{\emph{Introduction}}{}{Introduction}{secintroduction}
+\hyperref[ref]{\emph{Netlist}}{}{Netlist}{secnetlist}
+\hyperref[ref]{\emph{Instanciation of a multiplexor}}{}{Multipliexor}{secmux}
+\hyperref[ref]{\emph{Instanciation of a shifter}}{Shifter}{}{secshift}
+\hyperref[ref]{\emph{Instanciation of a register}}{}{Reg}{secreg}
+\hyperref[ref]{\emph{Instanciation of constants}}{Constant}{}{secconstant}
+\hyperref[ref]{\emph{Boolean operations}}{}{Boolean}{secbool}
+\hyperref[ref]{\emph{Arithmetical operations}}{}{Arithmetic}{secarithmetic}
+
+\end{htmlonly}

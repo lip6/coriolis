@@ -1,0 +1,58 @@
+\begin{itemize}
+    \item Name : DpgenAdsb2f -- Adder/Substractor Macro-Generator
+    \item Description : Generates a \verb-n- bits adder/substractor named \verb-modelname-.
+    \item How it works :
+    \begin{itemize}
+        \item if the \verb-add_sub- signal is set to \verb-zero- an addition is performed, otherwise it's a substraction.
+        \item Operation can be either signed or unsigned. In unsigned mode \verb-c31- is the overflow. in signed mode you have to compute overflow by \emph{XORing} \verb-c31- and \verb-c30-
+    \end{itemize}
+    \item Terminal Names :
+    \begin{itemize}
+        \item add\_sub : select addition or substraction (input, 1 bit)
+        \item c31 : carry out. In unsigned mode, this is the overflow (output, 1 bit)
+        \item c30 : used to compute overflow in signed mode : \verb-overflow = c31 xor c30- (output, 1 bit)
+        \item i0 : first operand (input, \verb-n- bits)
+        \item i1 : second operand (input, \verb-n- bits)
+        \item q : output (\verb-n- bits)
+        \item vdd : power
+        \item vss : ground
+    \end{itemize}
+    \item Parameters : Parameters are given with a map called \verb-param-.
+    \begin{itemize}
+        \item nbit : Defines the size of the generator
+    \end{itemize}
+%    \item Behavior :
+%\begin{verbatim}
+%\end{verbatim}
+    \item Example :
+\begin{verbatim}
+class myClass ( Model ) :
+  def Interface ( self ) :
+    self._in    = LogicIn  (  "in", 8 )
+    self._in2   = LogicIn  ( "in2", 8 )
+    
+    self._out   = LogicOut ( "out", 8 )
+
+    self._as    = LogicIn  (  "as", 1 )
+    self._c0    = LogicOut (  "c0", 1 )
+    self._c1    = LogicOut (  "c1", 1 )
+    
+    self._vdd   = VddIn    ( "vdd" )
+    self._vss   = VssIn    ( "vss" )
+    
+  def Netlist ( self ) :
+      
+    Inst ( 'DpgenAdsb2f'
+         , param = { 'nbit' : 8 }
+         , map  = { 'i0'      : self._in
+                  , 'i1'      : self._in2
+                  , 'add_sub' : self._as
+                  , 'q'       : self._out
+                  , 'c30'     : self._c0
+                  , 'c31'     : self._c1
+                  , 'vdd'     : self._vdd
+                  , 'vss'     : self._vss
+                  }
+         )
+\end{verbatim}
+\end{itemize}

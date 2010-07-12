@@ -1,0 +1,58 @@
+\begin{itemize}
+    \item Name : DpgenDfft -- Dynamic Flip-Flop with Scan-Path Macro-Generator
+    \item Description : Generates a n bits dynamic flip-flop with scan-path named \verb-modelname-. The two latches of this flip-flop are dynamic, i.e. the data is stored in a capacitor.
+    \item How it works : 
+    \begin{itemize}
+        \item scan : when set to \verb-one- enables the scan-path mode. Note that in scan-path mode, the wen signal is not effective
+        \item scin : the input of the scan-path. This terminal is different from \verb-i0[0]-. The scout is q[N-1] (in the following example this is \verb-q[31]-)
+        \item when wen is set to \verb-one- enables the writing of the flip-flop
+    \end{itemize}
+    \item Terminal Names :
+    \begin{itemize}
+        \item scan : scan-path mode (input, 1 bit)
+        \item scin : scan path in (input, 1 bit)
+        \item wen : write enable (1 bit)
+        \item ck : clock signal (1 bit)
+        \item i0 : data input (\verb-n- bits)
+        \item q : output (\verb-n- bits)
+        \item vdd : power
+        \item vss : ground
+    \end{itemize}
+    \item Parameters : Parameters are given with a map called \verb-param-.
+    \begin{itemize}
+        \item nbit : Defines the size of the generator
+    \end{itemize}
+%    \item Behavior :
+%\begin{verbatim}
+%\end{verbatim}
+    \item Example :
+\begin{verbatim}
+class myClass ( Model ) :
+  def Interface ( self ) :
+    self._scan  = LogicIn  ( "scin", 1 )
+    self._scin  = LogicIn  ( "scan", 1 )
+    self._ck    = LogicIn  (  "ck",  1 )
+    self._wen   = LogicIn  ( "wen",  1 )
+    self._in    = LogicIn  (  "in",  4 )
+    
+    self._out   = LogicOut ( "out", 4 )
+
+    self._vdd   = VddIn    ( "vdd" )
+    self._vss   = VssIn    ( "vss" )
+    
+  def Netlist ( self ) :
+      
+    Inst ( 'DpgenDfft'
+         , param = { 'nbit' : 4 }
+         , map  = { "wen"   : self._wen
+                  , "ck"    : self._ck
+                  , "scan"  : self._scan
+                  , "scin"  : self._scin
+                  , "i0"    : self._in
+                  ,  "q"    : self._out
+                  , 'vdd'   : self._vdd
+                  , 'vss'   : self._vss
+                  }
+         )
+\end{verbatim}
+\end{itemize}

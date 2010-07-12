@@ -1,0 +1,49 @@
+\begin{itemize}
+    \item Name : DpgenBuse -- Tristate Macro-Generator
+    \item Description : Generates a \verb-n- bits tristate with an output power of \verb-drive- named \verb-modelname-.
+    \begin{itemize}
+        \item Valid drive are : 4 or 8
+    \end{itemize}
+    \item Terminal Names :
+    \begin{itemize}
+        \item cmd : select ( 1 bit )
+        \item i0 : input ( \verb-n- bits )
+        \item q : output ( \verb-n- bits )
+        \item vdd : power
+        \item vss : ground
+    \end{itemize}
+    \item Parameters : Parameters are given with a map called \verb-param-.
+    \begin{itemize}
+        \item nbit : Defines the size of the generator
+    \end{itemize}
+    \item Behavior :
+\begin{verbatim}
+nts:BLOCK(cmd = '1') BEGIN
+    q <= GUARDED i0;
+END
+\end{verbatim}
+    \item Example :
+\begin{verbatim}
+class myClass ( Model ) :
+  def Interface ( self ) :
+    self._in    = LogicIn  (  "in", 32 )
+    self._cmd   = LogicIn  ( "cmd", 1 )
+    
+    self._out   = TriState ( "out", 32 )
+
+    self._vdd   = VddIn    ( "vdd" )
+    self._vss   = VssIn    ( "vss" )
+    
+  def Netlist ( self ) :
+      
+    Inst ( 'DpgenBuse'
+         , param = { 'nbit' : 32 }
+         , map  = { 'i0'      : self._in
+                  , 'cmd'     : self._cmd
+                  , 'q'       : self._out
+                  , 'vdd'     : self._vdd
+                  , 'vss'     : self._vss
+                  }
+         )
+\end{verbatim}
+\end{itemize}

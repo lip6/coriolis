@@ -1,0 +1,55 @@
+\subsubsection{Name}
+
+PlaceSegment -- Places a segment
+
+\subsubsection{Synopsys}
+
+\begin{verbatim}
+PlaceSegment ( net, layer, point1, point2, width )
+\end{verbatim}
+
+\subsubsection{Description}
+
+Placement of a segment.\\
+\indent The segment is created between \verb-point1- and \verb-point2- on the layer \verb-layer- and with width \verb-width-. It belongs to the net \verb-net-.\\
+\indent Note that the segment must be horizontal or vertival.
+    
+\subsubsection{Parameters}
+
+\begin{itemize}
+    \item \verb-net- : Net which the segment belongs to
+    \item \verb-layer- : Layer of the segment.\\The \verb-layer- argument is a string wich can take different values, thanks to the technology (file described in HUR\_TECHNO\_NAME)
+    \begin{itemize}
+        \item NWELL, PWELL, ptie, ntie, pdif, ndif, ntrans, ptrans, poly, ALU1, ALU2, ALU3, ALU4, ALU5, ALU6, VIA1, VIA2, VIA3, VIA4, VIA5, TEXT, UNDEF, SPL1, TALU1, TALU2, TALU3, TALU4, TALU5, TALU6, POLY, NTIE, PTIE, NDIF, PDIF, PTRANS, NTRANS, CALU1, CALU2, CALU3, CALU4, CALU5, CALU6, CONT\_POLY, CONT\_DIF\_N, CONT\_DIF\_P, CONT\_BODY\_N, CONT\_BODY\_P, via12, via23, via34, via45, via56, via24, via25, via26, via35, via36, via46, CONT\_TURN1, CONT\_TURN2, CONT\_TURN3, CONT\_TURN4, CONT\_TURN5, CONT\_TURN6
+    \end{itemize}
+    \item \verb-point1-, \verb-point2- : The segment is created between those two points
+\end{itemize}
+    
+\subsubsection{Example}
+
+\begin{verbatim}
+PlaceSegment ( myNet, "ALU3", XY (10, 0), XY (10, 100), 2 )
+\end{verbatim}
+
+\subsubsection{Errors}
+    
+Some errors may occur :
+\begin{itemize}
+    \item \verb-[Stratus ERROR] PlaceSegment : Argument layer must be a string.-
+    \item \verb-[Stratus ERROR] PlaceSegment : Wrong argument,-\\\verb-the coordinates of the segment must be put in XY objects.-
+    \item \verb-[Stratus ERROR] PlaceSegment : Segments are vertical or horizontal.-\\The two references given as argument do not describe a vertical or horizontal segment. Wether coordinate x or y of the references must be identical. 
+\end{itemize}
+
+\begin{htmlonly}
+        
+\subsubsection{See Also}
+
+\hyperref[ref]{\emph{Introduction}}{}{Introduction}{secintroduction}
+\hyperref[ref]{\emph{Layout}}{}{Layout}{seclayout}
+\hyperref[ref]{\emph{PlaceContact}}{}{PlaceContact}{seccontact}
+\hyperref[ref]{\emph{PlacePin}}{}{PlacePin}{secpin}
+\hyperref[ref]{\emph{PlaceRef}}{}{PlaceRef}{secref}
+\hyperref[ref]{\emph{GetRefXY}}{}{GetRefXY}{secgetref}
+\hyperref[ref]]{\emph{CopyUpSegment}}{}{CopyUpSegment}{seccopy}
+
+\end{htmlonly}

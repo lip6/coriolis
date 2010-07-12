@@ -1,0 +1,44 @@
+\subsubsection{Name}
+
+Buffer -- Easy way to instantiate a buffer
+
+\subsubsection{Synopsys}
+
+\begin{verbatim}
+netOut <= netIn.Buffer()
+\end{verbatim}
+  
+\subsubsection{Description}
+
+This method is a method of net. The net which this method is applied to is the input net of the buffer. The method returns a net : the output net.\\
+\indent Note that it is possible to change the generator instanciated with the \verb-SetBuff- method.
+
+\subsubsection{Example}
+
+\begin{verbatim}
+class essai ( Model ) :
+
+  def Interface ( self ) :
+    self.A = LogicIn  ( "a", 4 )
+    
+    self.S = LogicOut ( "s", 4 )
+
+    self.Vdd = VddIn  ( "vdd" )
+    self.Vss = VssIn  ( "vss" )
+	
+  def Netlist ( self ) :
+
+    self.S <= self.A.Buffer() 
+\end{verbatim}
+    
+\subsubsection{See Also}
+
+\hyperref[ref]{\emph{Introduction}}{}{Introduction}{secintroduction}
+\hyperref[ref]{\emph{Netlist}}{}{Netlist}{secnetlist}
+\hyperref[ref]{\emph{Instanciation of a multiplexor}}{}{Multiplexor}{secmux}
+\hyperref[ref]{\emph{Instanciation of a shifter}}{}{Shifter}{secshift}
+\hyperref[ref]{\emph{Instanciation of a register}}{}{Reg}{secreg}
+\hyperref[ref]{\emph{Instanciation of constants}}{}{Constant}{secconstant}
+\hyperref[ref]{\emph{Boolean operations}}{}{Boolean}{secbool}
+\hyperref[ref]{\emph{Arithmetical operations}}{}{Arithmetic}{secarithmetic}
+\hyperref[ref]{\emph{Comparison operations}}{}{Comparison}{seccomp}

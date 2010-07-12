@@ -1,0 +1,54 @@
+\subsubsection{Name}
+
+CopyUpSegment -- Copies the segment of an instance in the current cell
+
+\subsubsection{Synopsys}
+
+\begin{verbatim}
+CopyUpSegment ( pathname, netname, newnet  )
+\end{verbatim}
+
+\subsubsection{Description}
+
+Duplication of a segment.\\
+\indent The segment is created with the same cordinates and layer as the segment corresponding to the net \verb-netname- in the instance found thanks to \verb-pathname-. It belongs to the net \verb-newnet-.\\
+\indent Note that if several segments correspond to the net, they are all going to be copied.
+    
+\subsubsection{Parameters}
+
+\begin{itemize}
+    \item \verb-pathname- : The path in order to obtain, from the top cell, the instance the net \verb-netname- belongs to
+    \item \verb-netname- : The name of the net which the segment belongs to
+    \item \verb-net- : The net which the top cell segment os going to belong to
+\end{itemize}
+    
+\subsubsection{Example}
+
+\begin{verbatim}
+CopuUpSegment ( "my_dpgen_and2.cell_1", "i0", myNet )
+\end{verbatim}
+
+\subsubsection{Errors}
+    
+Some errors may occur :
+\begin{itemize}
+    \item \verb-[Stratus ERROR] CopyUpSegment :-\\\verb-The instance's path must be put with a string.-
+    \item \verb-[Stratus ERROR] CopyUpSegment :-\\\verb-The segment must be done with it's name : a string.-
+    \item \verb-[Stratus ERROR] CopyUpSegment :-\\\verb-No net found with name ... in masterCell ...-\\There is no net with name \verb-netname- in the instance found thanks to the path \verb-pathname-.
+    \item \verb-[Stratus ERROR] CopyUpSegment :-\\\verb-No segment found with net ... in masterCell ...-\\The net with name \verb-netname- has no segment. So the copy of segment can not be done.
+    \item \verb-[Stratus ERROR] CopyUpSegment :-\\\verb-the segment of net ... are not of type CALU.-\\In other words, the net is not an external net. The copy can be done only with external nets.
+\end{itemize}
+
+\begin{htmlonly}
+
+\subsubsection{See Also}
+
+\hyperref[ref]{\emph{Introduction}}{}{Introduction}{secintroduction}
+\hyperref[ref]{\emph{Layout}}{}{Layout}{seclayout}
+\hyperref[ref]{\emph{PlaceSegment}}{}{PlaceSegment}{secsegment}
+\hyperref[ref]{\emph{PlaceContact}}{}{PlaceContact}{seccontact}
+\hyperref[ref]{\emph{PlacePin}}{}{PlacePin}{secpin}
+\hyperref[ref]{\emph{PlaceRef}}{}{PlaceRef}{secref}
+\hyperref[ref]{\emph{GetRefXY}}{}{GetRefXY}{secgetref}
+
+\end{htmlonly}

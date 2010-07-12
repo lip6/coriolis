@@ -1,0 +1,72 @@
+\begin{itemize}
+    \item \textbf{Name} : DpgenRam -- RAM Macro-Generator
+    \item \textbf{Synopsys} :
+\begin{verbatim}
+Generate ( 'DpgenRam', modelname
+         , param = { 'nbit'     : n
+                   , 'nword'    : regNumber
+                   , 'physical' : True                   
+                   }
+         )
+\end{verbatim}
+    \item \textbf{Description} : Generates a RAM of \verb-regNumber- words of \verb-n- bits named \verb-modelname-.
+    \item \textbf{Terminal Names} :
+    \begin{itemize}
+        \item \textbf{ck} : clock signal (input, 1 bit)
+        \item \textbf{w} : write requested (input, 1 bit)
+        \item \textbf{selram} : select the write bus (input, 1 bit)
+        \item \textbf{ad} : the address (input, \verb-Y- bits)
+        \item \textbf{datain} : write bus (input, \verb-n- bits)
+        \item \textbf{dataout} : read bus (output, \verb-n- bits)
+        \item \textbf{vdd} : power
+        \item \textbf{vss} : ground
+    \end{itemize}
+    \item \textbf{Parameters} : Parameters are given in the map \verb-param-.
+    \begin{itemize}
+        \item \textbf{nbit} (mandatory) : Defines the size of the generator
+        \item \textbf{nword} (mandatory) : Defines the size of the words
+        \item \textbf{physical} (optional, default value : False) : In order to generate a layout        
+    \end{itemize}
+%    \item Behavior :
+%\begin{verbatim}
+%\end{verbatim}
+    \item \textbf{Example} :
+\begin{verbatim}
+from stratus import *
+
+class inst_ram ( Model ) :
+
+  def Interface ( self ) :
+    self.ck      = SignalIn  (      "ck",  1 )
+    self.w       = SignalIn  (       "w",  1 )
+    self.selram  = SignalIn  (  "selram",  1 )
+    self.ad      = SignalIn  (      "ad",  5 )
+    self.datain  = SignalIn  (  "datain", 32 )
+    self.dataout = TriState ( "dataout", 32 )
+    
+    self.vdd = VddIn ( "vdd" )
+    self.vss = VssIn ( "vss" )
+    
+  def Netlist ( self ) :
+    Generate ( 'DpgenRam', 'ram_32_32'
+             , param = { 'nbit'     : 32
+                       , 'nword'    : 32
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'ram_32_32', 'inst'
+                  , map = { 'ck'      : self.ck
+                          , 'w'       : self.w
+                          , 'selram'  : self.selram
+                          , 'ad'      : self.ad
+                          , 'datain'  : self.datain
+                          , 'dataout' : self.dataout
+                          , 'vdd'     : self.vdd
+                          , 'vss'     : self.vss
+                          }
+                  )     
+    
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+\end{verbatim}
+\end{itemize}

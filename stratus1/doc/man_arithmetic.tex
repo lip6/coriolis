@@ -1,0 +1,73 @@
+ \subsubsection{Description}
+
+Most common arithmetic operators can be instantiated without the \verb-Inst- constructor.
+
+\subsubsection{List}
+
+Arithmetical operators are listed below :
+\begin{itemize}
+    \item \verb-Addition- : \verb-q <= i0 + i1-
+    \item \verb-Substraction- : \verb-q <= i0- - \verb-i1-
+    \item \verb-Multiplication- : \verb-q <= i0 * i1-
+    \item \verb-Division- : \verb-q <= i0 / i1-
+\end{itemize}
+
+\subsubsection{Generators to instantiate}
+
+One can choose the generator to be used. Some methods are applied to the cell and set the generator used when using overloard.
+\indent Methods are :
+\begin{itemize}
+    \item \verb-SetAdd- (for addition and substraction)
+    \item \verb-SetMult-
+    \item \verb-SetDiv-
+\end{itemize}
+
+\indent The generators used by default are :
+\begin{itemize}
+    \item \verb-Addition- : Slansky adder
+    \item \verb-Substraction- : Slansky adder + inversor + cin = '1'
+    \item \verb-Multiplication- : CA2 multiplier (signed, modified booth/Wallace tree)
+    \item \verb-Division- : not available yet
+\end{itemize}
+
+\subsubsection{Example}
+
+\begin{verbatim}
+class essai ( Model ) :
+
+  def Interface ( self ) :
+    self.A = LogicIn  ( "a", 4 )
+    self.B = LogicIn  ( "b", 4 )
+    
+    self.S = LogicOut ( "s", 4 )
+    
+    self.T = LogicOut ( "t", 8 )
+
+    self.vdd = VddIn  ( "vdd" )
+    self.vss = VssIn  ( "vss" )
+	
+  def Netlist ( self ) :
+
+    self.S <= self.A + self.B
+
+    self.T <= self.A * self.B
+\end{verbatim}
+    
+\subsubsection{Errors}
+    
+Some errors may occur :
+\begin{itemize}
+    \item \verb-[Stratus ERROR] + : the nets must have the same lenght.-\\When one uses arithmetic expressions, one has to check that the sizes of both nets are equivalent.
+    \item \verb-[Stratus ERROR] : there is no alim.-\\The cell being created does not have the alimentation nets. The instanciation is impossible.
+\end{itemize}
+
+\subsubsection{See Also}
+
+\hyperref[ref]{\emph{Introduction}}{}{Introduction}{secintroduction}
+\hyperref[ref]{\emph{Netlist}}{}{Netlist}{secnetlist}
+\hyperref[ref]{\emph{Instanciation of a multiplexor}}{}{Multiplexor}{secmux}
+\hyperref[ref]{\emph{Instanciation of a shifter}}{}{Shifter}{secshift}
+\hyperref[ref]{\emph{Instanciation of a register}}{}{Reg}{secreg}
+\hyperref[ref]{\emph{Instanciation of constants}}{}{Constant}{secconstant}
+\hyperref[ref]{\emph{Boolean operations}}{}{Boolean}{secbool}
+\hyperref[ref]{\emph{Comparison operations}}{}{Comparison}{seccomp}

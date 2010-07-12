@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding='us-ascii'?>
+
+<technology name="sxlib">
+    <model name="a2"        realcell="a2_x2"        i0="i0" i1="i1"                     q="q"                      vdd="vdd" vss="vss"></model>
+    <model name="a3"        realcell="a3_x2"        i0="i0" i1="i1" i2="i2"             q="q"                      vdd="vdd" vss="vss"></model>
+    <model name="a4"        realcell="a4_x2"        i0="i0" i1="i1" i2="i2" i3="i3"     q="q"                      vdd="vdd" vss="vss"></model>
+    <model name="na2"       realcell="na2_x1"       i0="i0" i1="i1"                    nq="nq"                     vdd="vdd" vss="vss"></model>
+    <model name="na3"       realcell="na3_x1"       i0="i0" i1="i1" i2="i2"            nq="nq"                     vdd="vdd" vss="vss"></model>
+    <model name="na4"       realcell="na4_x1"       i0="i0" i1="i1" i2="i2" i3="i3"    nq="nq"                     vdd="vdd" vss="vss"></model>
+    <model name="o2"        realcell="o2_x2"        i0="i0" i1="i1"                     q="q"                      vdd="vdd" vss="vss"></model>
+    <model name="o3"        realcell="o3_x2"        i0="i0" i1="i1" i2="i2"             q="q"                      vdd="vdd" vss="vss"></model>
+    <model name="o4"        realcell="o4_x2"        i0="i0" i1="i1" i2="i2" i3="i3"     q="q"                      vdd="vdd" vss="vss"></model>
+    <model name="no2"       realcell="no2_x1"       i0="i0" i1="i1"                    nq="nq"                     vdd="vdd" vss="vss"></model>
+    <model name="no3"       realcell="no3_x1"       i0="i0" i1="i1" i2="i2"            nq="nq"                     vdd="vdd" vss="vss"></model>
+    <model name="no4"       realcell="no4_x1"       i0="i0" i1="i1" i2="i2" i3="i3"    nq="nq"                     vdd="vdd" vss="vss"></model>
+    <model name="xr2"       realcell="xr2_x1"       i0="i0" i1="i1"                     q="q"                      vdd="vdd" vss="vss"></model>
+    <model name="nxr2"      realcell="nxr2_x1"      i0="i0" i1="i1"                    nq="nq"                     vdd="vdd" vss="vss"></model>
+    <model name="inv"       realcell="inv_x1"        i="i"                             nq="nq"                     vdd="vdd" vss="vss"></model>
+    <model name="buf"       realcell="buf_x2"        i="i"                              q="q"                      vdd="vdd" vss="vss"></model>
+    <model name="zero"      realcell="zero_x0"                                         nq="nq"                     vdd="vdd" vss="vss"></model>
+    <model name="one"       realcell="one_x0"                                           q="q"                      vdd="vdd" vss="vss"></model>
+    <model name="mx2"       realcell="mx2_x2"       i0="i0" i1="i1"          cmd="cmd"  q="q"                      vdd="vdd" vss="vss"></model>
+    <model name="nmx2"      realcell="nmx2_x1"      i0="i0" i1="i1"          cmd="cmd" nq="nq"                     vdd="vdd" vss="vss"></model>
+    <model name="halfadder" realcell="halfadder_x2"  a="a"   b="b"                   sout="sout" cout="cout"       vdd="vdd" vss="vss"></model>
+    <!-- Encapsulation of fulladder_x2 in order to modify the interface more than just the names -->               
+    <model name="fulladder" realcell="fulladder"     a="a"   b="b" cin="cin"         sout="sout" cout="cout"       vdd="vdd" vss="vss"></model>
+    <model name="sff1"      realcell="sff1_x4"       i="i"          ck="ck"             q="q"                      vdd="vdd" vss="vss"></model>
+    <model name="sff2"      realcell="sff2_x4"      i0="i0" i1="i1" ck="ck"  cmd="cmd"  q="q"                      vdd="vdd" vss="vss"></model>
+    <model name="sff3"      realcell="sff3_x4"      i0="i0" i1="i1" i2="i2"  ck="ck" cmd0="cmd0" cmd1="cmd1" q="q" vdd="vdd" vss="vss"></model>
+    <model name="ts"        realcell="ts_x4"         i="i"                   cmd="cmd"  q="q"                      vdd="vdd" vss="vss"></model>
+    <model name="nts"       realcell="nts_x1"        i="i"                   cmd="cmd" nq="nq"                     vdd="vdd" vss="vss"></model>
+</technology>

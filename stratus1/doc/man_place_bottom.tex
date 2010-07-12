@@ -1,0 +1,63 @@
+\subsubsection{Name}
+
+PlaceBottom -- Places an instance below the "reference instance"
+
+\subsubsection{Synopsys}
+
+\begin{verbatim}
+PlaceBottom ( ins, sym, offset )
+\end{verbatim}
+
+\subsubsection{Description}
+
+Placement of an instance.\\
+\indent The instance has to be instantiated in the method \verb-Netlist- in order to use the \verb-PlaceTop- function.\\
+    
+\indent The top left corner of the abutment box of the instance is placed, after beeing symetrized and/or rotated, toward the bottom left corner of the abutment box of the "reference instance". The newly placed instance becomes the "reference instance".
+
+\subsubsection{Parameters}
+
+\begin{itemize}
+    \item \verb-ins- : Instance to place.
+    \item \verb-sym- : Geometrical operation to be performed on the instance before beeing placed.\\The \verb-sym- argument can take eight legal values :
+    \begin{itemize}
+        \item \verb-NOSYM- : no geometrical operation is performed
+        \item \verb-SYM_Y- : Y becomes -Y, that means toward X axe symetry
+        \item \verb-SYM_X- : X becomes -X, that means toward Y axe symetry
+        \item \verb-SYMXY- : X becomes -X, Y becomes -Y
+        \item \verb-ROT_P- : a positive 90 degrees rotation takes place
+        \item \verb-ROT_M- : a negative 90 degrees rotation takes place
+        \item \verb-SY_RP- : Y becomes -Y, and then a positive 90 degrees rotation takes place
+        \item \verb-SY_RM- : Y becomes -Y, and then a negative 90 degrees rotation takes place
+    \end{itemize}    
+    \item \verb-offset- (optionnal) : An offset is put between this instance and the reference instance. The value given as argument must be a multiple of PITCH and represents the lenght of the hole between the instances
+\end{itemize}
+
+\subsubsection{Example}
+
+\begin{verbatim}
+Place       ( myInst1, NOSYM, 0, 0 )
+PlaceBottom ( myInst2, SYM_Y       )
+\end{verbatim}
+
+\subsubsection{Errors}
+    
+Some errors may occur :    
+\begin{itemize}
+    \item \verb-[Stratus ERROR] Placement : the instance doesn't exist.-\\The instance must be instanciated in order to be placed.
+    \item \verb-[Stratus ERROR] Placement : the first argument is not an instance.-
+    \item \verb-[Stratus ERROR] Placement : the instance is already placed.-\\One can not place an instance twice    
+    \item \verb-[Stratus ERROR] PlaceBottom : no previous instance.-\\One can use \verb-PlaceTop- only if a reference instance exist. Use a \verb-Place- call before. 
+    \item \verb-[Stratus ERROR] PlaceBottom : wrong argument for placement type.-\\The symetry given as argument is not correct.
+\end{itemize}
+
+\subsubsection{See Also}
+
+\hyperref[ref]{\emph{Introduction}}{}{Introduction}{secintroduction}
+\hyperref[ref]{\emph{Place}}{}{Place}{secplace}
+\hyperref[ref]{\emph{PlaceTop}}{}{PlaceTop}{sectop}
+\hyperref[ref]{\emph{PlaceRight}}{}{PlaceRight}{secright}
+\hyperref[ref]{\emph{PlaceLeft}}{}{PlaceLeft}{secleft}
+\hyperref[ref]{\emph{SetRefIns}}{}{SetRefIns}{secsetrefins}
+\hyperref[ref]{\emph{DefAb}}{}{DefAb}{secdefab}
+\hyperref[ref]{\emph{ResizeAb}}{}{ResizeAb}{secresizeab}

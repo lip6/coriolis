@@ -1,0 +1,60 @@
+\begin{itemize}
+    \item \textbf{Name} : DpgenConst -- Constant Macro-Generator
+    \item \textbf{Synopsys} :
+\begin{verbatim}
+Generate ( 'DpgenConst', modelname
+         , param = { 'nbit'       : n
+                   , 'const'      : constVal
+                   , 'physical'   : True
+                   , 'behavioral' : True                   
+                   }
+         )
+\end{verbatim}
+    \item \textbf{Description} : Generates a \verb-n- bits constant named \verb-modelname-.
+    \item \textbf{Terminal Names} :
+    \begin{itemize}
+        \item \textbf{q} : the constant (output, \verb-n- bit)
+        \item \textbf{vdd} : power
+        \item \textbf{vss} : ground
+    \end{itemize}
+    \item \textbf{Parameters} : Parameters are given in the map \verb-param-.
+    \begin{itemize}
+        \item \textbf{nbit } (mandatory) : Defines the size of the generator
+        \item \textbf{const} (mandatory) : Defines the constant (string beginning with 0b, 0x or 0o functions of the basis)
+        \item \textbf{physical} (optional, default value : False) : In order to generate a layout
+        \item \textbf{behavioral} (optional, default value : False) : In order to generate a behavior
+    \end{itemize}
+    \item \textbf{Behavior} :
+\begin{verbatim}
+q <= constVal
+\end{verbatim}
+    \item \textbf{Example} :
+\begin{verbatim}
+from stratus import *
+
+class inst_const ( Model ) :
+
+  def Interface ( self ) :
+    self.o = SignalOut ( "o", 32 )
+
+    self.vdd = VddIn ( "vdd" )
+    self.vss = VssIn ( "vss" )
+    
+  def Netlist ( self ) :
+    Generate ( 'DpgenConst', 'const_0x0000ffff'
+             , param = { 'nbit'     : 32
+                       , 'const'    : "0x0000FFFF"
+                       , 'physical' : True
+                       }
+             )      
+    self.I = Inst ( 'const_0x0000ffff', 'inst'
+                  , map = { 'q'   : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+      
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+\end{verbatim}
+\end{itemize}

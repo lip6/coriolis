@@ -1,0 +1,91 @@
+\begin{itemize}
+    \item \textbf{Name} : DpgenFifo -- Fifo Macro-Generator
+    \item \textbf{Synopsys} :
+\begin{verbatim}
+Generate ( 'DpgenFifo', modelname
+         , param = { 'nbit'       : n
+                   , 'nword'      : regNumber
+                   , 'physical'   : True                   
+                   }
+         )
+\end{verbatim}
+    \item \textbf{Description} : Generates a FIFO of \verb-regNumber- words of \verb-n- bits named \verb-modelname-.
+    \item \textbf{Terminal Names} :
+    \begin{itemize}
+        \item \textbf{ck} : clock signal (input, 1 bit)
+        \item \textbf{reset} : reset signal (input, 1 bit)
+        \item \textbf{r} : read requested (input, 1 bit)
+        \item \textbf{w} : write requested (input, 1 bit)
+        \item \textbf{rok} : read acknowledge (output, 1 bit)
+        \item \textbf{wok} : write acknowledge (output, 1 bit) 
+        \item \textbf{sel} : select the write bus (input, 1 bit)
+        \item \textbf{datain0} : first write bus (input, \verb-n- bits)
+        \item \textbf{datain1} : second write bus (input, \verb-n- bits)
+        \item \textbf{dataout} : read bus (output, \verb-n- bits)
+        \item \textbf{vdd} : power
+        \item \textbf{vss} : ground
+    \end{itemize}
+    \item \textbf{Parameters} : Parameters are given in the map \verb-param-.
+    \begin{itemize}
+        \item \textbf{nbit} (mandatory) : Defines the size of the words (even, between 2 and 64)
+        \item \textbf{nword} (mandatory) : Defines the number of words (even, between 4 and 32)
+        \item \textbf{physical} (optional, default value : False) : In order to generate a layout
+    \end{itemize}
+    \item \textbf{How it works} :
+    \begin{itemize}
+        \item datain0 and datain1 : the two write busses. Only one is used to actually write the FIFO, it is selected by the sel signal.
+        \item sel : when set to \verb-zero- the datain0 is used to write the register word, otherwise it will be datain1.
+        \item r, rok : set r when a word is requested, rok tells that a word has effectively been popped (rok == not empty).
+        \item w, wok : set w when a word is pushed, wok tells that the word has effectively been pushed (wok == not full).
+    \end{itemize}    
+%    \item \textbf{Behavior} :
+%\begin{verbatim}
+%\end{verbatim}
+    \item \textbf{Example} :
+\begin{verbatim}
+from stratus import *
+
+class inst_fifo ( Model ) :
+
+  def Interface ( self ) :
+    self.ck      = SignalIn    (       "ck", 1 )
+    self.reset   = SignalIn    (    "reset", 1 )
+    self.r       = SignalIn    (        "r", 1 )
+    self.w       = SignalIn    (        "w", 1 )
+    self.rok     = SignalInOut (      "rok", 1 )
+    self.wok     = SignalInOut (      "wok", 1 )
+    self.sel     = SignalIn    (      "sel", 1 )
+    self.datain0 = SignalIn    (  "datain0", 4 )
+    self.datain1 = SignalIn    (  "datain1", 4 )
+    self.dataout = SignalOut   (  "dataout", 4 ) 
+    
+    self.vdd   = VddIn ( "vdd" )
+    self.vss   = VssIn ( "vss" )
+    
+  def Netlist ( self ) :
+    Generate ( 'DpgenFifo', 'fifo_4_16'
+             , param = { 'nbit'     : 4
+                       , 'nword'    : 16
+                       , 'physical' : True
+                       }
+             )      
+    self.I = Inst ( 'fifo_4_16', 'inst'
+                  , map = { 'ck'      : self.ck
+                          , 'reset'   : self.reset
+                          , 'r'       : self.r
+                          , 'w'       : self.w
+                          , 'rok'     : self.rok
+                          , 'wok'     : self.wok
+                          , 'sel'     : self.sel
+                          , 'datain0' : self.datain0
+                          , 'datain1' : self.datain1
+                          , 'dataout' : self.dataout
+                          , 'vdd'     : self.vdd
+                          , 'vss'     : self.vss
+                          }
+                  )
+    
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+\end{verbatim}
+\end{itemize}

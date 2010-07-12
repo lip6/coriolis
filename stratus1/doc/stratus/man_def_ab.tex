@@ -1,0 +1,54 @@
+\subsubsection{Name}
+
+DefAb -- Creates the abutment box of the current cell
+
+\subsubsection{Synopsys}
+      
+\begin{verbatim}
+DefAb ( point1, point2 )
+\end{verbatim}
+    
+\subsubsection{Description}
+
+This function creates the abutment box of the current cell.\\
+         
+\indent Note that one does not have to call this function before saving in order to create the abutment box. The abutment box is created nevertheless (given to placed instances). This function is usefull if one wants to create an abutment before placing the instances.
+
+\subsubsection{Parameters}
+
+\begin{itemize}
+    \item \verb-point1- : coordinates of the bottom left corner of the created abutment box.
+    \item \verb-point2- : coordinates of the top right corner of the created abutment box.
+\end{itemize}
+    
+\subsubsection{Example}
+
+\begin{verbatim}
+DefAb ( XY(0, 0), XY(500, 100) )
+
+Place ( self.inst, NOSYM, XY(0, 0) )
+\end{verbatim}
+
+\subsubsection{Errors}
+    
+Some errors may occur :
+\begin{itemize}
+    \item \verb-[Stratus ERROR] DefAb : an abutment box already exists.-\\\verb- Maybe you should use ResizeAb function.-\\One has called DefAb but the current cell already has an abutment box.\\In order to modify the current abutment box, the function to call is ResizeAb.
+    \item \verb-[Stratus ERROR] DefAb : wrong argument,-\\\verb- the coordinates must be put in a XY object.-\\The type of one of the arguments is not correct. Coordinates must be put in a \verb-XY- object.
+    \item \verb-[Stratus ERROR] DefAb :-\\\verb-Coordinates of an abutment Box in y must be multiple of the slice.-\\\verb-Coordinates of an abutment Box in x must be multiple of the pitch.-\\One has called DefAb with non authorized values.
+\end{itemize}
+
+\begin{htmlonly}
+
+\subsubsection{See Also}
+
+\hyperref[ref]{\emph{Introduction}}{}{Introduction}{secintroduction}
+\hyperref[ref]{\emph{Place}}{}{Place}{secplace}
+\hyperref[ref]{\emph{PlaceTop}}{}{PlaceTop}{sectop}
+\hyperref[ref]{\emph{PlaceBottom}}{}{PlaceBottom}{secbottom}
+\hyperref[ref]{\emph{PlaceRight}}{}{PlaceRight}{secright}
+\hyperref[ref]{\emph{PlaceLeft}}{}{PlaceLeft}{secleft}
+\hyperref[ref]{\emph{SetRefIns}}{}{SetRefIns}{secsetrefins}
+\hyperref[ref]{\emph{ResizeAb}}{}{ResizeAb}{secresizeab}
+
+\end{htmlonly}

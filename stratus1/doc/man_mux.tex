@@ -1,0 +1,131 @@
+\subsubsection{Name}
+
+Mux -- Easy way to instantiate a multiplexor
+
+\subsubsection{Synopsys}
+
+\begin{verbatim}
+netOut <= netCmd.Mux ( arg )
+\end{verbatim}
+  
+\subsubsection{Description}
+
+This method is a method of net. The net which this method is applied to is the command of the multiplexor. The nets given as parameters are all the input nets. This method returns a net : the output net.\\
+There are two ways to describe the multiplexor : the argument \verb-arg- can be a list or a dictionnary.\\
+\indent Note that it is possible to change the generator instanciated with the \verb-SetMux- method.
+
+\subsubsection{Parameters}
+
+\begin{itemize}
+    \item List :\\
+    \indent For each value of the command, the corresponding net is specified. All values must be specified.\\
+    \indent For example :
+    \begin{verbatim}
+out <= cmd.mux ( [in0, in1, in2, in3] )
+    \end{verbatim}
+    \indent The net out is then initialised like this :
+    \begin{verbatim}
+if cmd == 0 : out <= in0
+if cmd == 1 : out <= in1
+if cmd == 2 : out <= in2
+if cmd == 3 : out <= in3
+    \end{verbatim}
+    \item Dictionnary :\\
+    \indent A dictionnary makes the correspondance between a value of the command and the corresponding net.\\
+    \indent For example :
+    \begin{verbatim}
+out <= cmd.mux ( {"0" : in0, "1" : in1, "2" : in2, "3" : in3} )
+    \end{verbatim}
+    \indent This initialisation corresponds to the one before.
+    \indent Thanks to the use of a dictionnary, the connections can be clearer :
+    \begin{itemize}
+        \item \verb-'default'-: This key of the dictionnary corresponds to all the nets that are not specified\\
+        For example :
+        \begin{verbatim}
+out <= cmd.mux ( {"0" : in0, "default" : in1} )
+        \end{verbatim}
+        This notation corresponds to :
+        \begin{verbatim}
+if cmd == 0 : out <= in0
+else        : out <= in1
+        \end{verbatim}
+        Note that if there is no \verb-'default'- key specified and that not all the nets are specified, the non specified nets are set to 0.
+        \item \verb-#- and \verb-?- : When a key of the dictionnary begins with \verb-#-, the number after the \verb-#- has to be binary and each ? in the number means that this bit is not precised\\
+        For example :
+        \begin{verbatim}
+out <= cmd.mux ( {"#01?" : in0, "default" : in1} )
+        \end{verbatim}
+        This notation corresponds to :
+        \begin{verbatim}
+if cmd in ( 2, 3 ) : out <= in0
+else               : out <= in1
+        \end{verbatim}
+        \item \verb-,- and \verb"-" : When keys contains thoses symbols, it permits to enumerate intervals\\
+        For example :
+        \begin{verbatim}
+out <= cmd.mux ( {"0,4" : in0, "1-3,5" : in1} )
+        \end{verbatim}
+        This notation corresponds to :
+        \begin{verbatim}
+if   cmd in ( 0, 4 )      : out <= in0
+elif cmd in ( 1, 2, 3, 5) : out <= in1
+else                      : out <= 0
+        \end{verbatim}
+    \end{itemize}
+\end{itemize}
+          
+\subsubsection{Example}
+
+\begin{verbatim}
+class essai ( Model ) :
+
+  def Interface ( self ) :
+    self.A    = LogicIn  (    "a", 4 )
+    self.B    = LogicIn  (    "b", 4 )
+    self.C    = LogicIn  (    "c", 4 )
+    self.D    = LogicIn  (    "d", 4 )
+    
+    self.Cmd1 = LogicIn  ( "cmd1", 2 )
+    self.Cmd2 = LogicIn  ( "cmd2", 4 )
+    
+    self.S1   = LogicOut (   "s1", 4 )
+    self.S2   = LogicOut (   "s2", 4 )
+
+    self.Vdd = VddIn  ( "vdd" )
+    self.Vss = VssIn  ( "vss" )
+	
+  def Netlist ( self ) :
+
+    self.S1 <= self.Cmd1.Mux ( [sefl.A, self.B, self.C, self.D] ) 
+
+    self.S2 <= self.Cmd2.Mux ( { "0"       : self.A
+                               , "1,5-7"   : self.B
+                               , "#1?1?"   : self.C
+                               , "default" : self.D
+                             } )
+\end{verbatim}
+    
+\subsubsection{Errors}
+    
+Some errors may occur :
+\begin{itemize}
+    \item \verb-[Stratus ERROR] Mux : all the nets must have the same lenght.-\\All the input nets pust have the same lenght.
+    \item \verb-[Stratus ERROR] Mux : there are no input nets.-\\The input nets seem to have been forgotten.
+    \item \verb-[Stratus ERROR] Mux : wrong argument type.-\\The connections of the buses are not described by a list nor a dictionnary.
+    \item \verb-[Stratus ERROR] Mux :-\\\verb-the number of nets does not match with the lenght of the command.-\\When using a list, the number of nets has to correspond to the number of possible values of the command.
+    \item \verb-[Stratus ERROR] Mux : wrong key.-\\One of the key of the dictionnary is not un number, neither a list or an interval.
+    \item \verb-[Stratus ERROR] Mux :-\\\verb-when an interval is specified, the second number of the interval-\\\verb-must be greater than the first one.-\\When creating an interval with "-", the second number has to be greater than the first one.
+    \item \verb-[Stratus ERROR] Mux :-\\\verb-the binary number does not match with the lenght of the command.-\\When using the \verb-#- notation, each digit of the binary number corresponds to a wire of the cmd. The leghts have to correspond.
+    \item \verb-[Stratus ERROR] Mux : after #, the number has to be binary.-\\When using the \verb-#- notation, the number has to be binary : one can use 0, 1 or ?.
+\end{itemize}
+
+\subsubsection{See Also}
+
+\hyperref[ref]{\emph{Introduction}}{}{Introduction}{secintroduction}
+\hyperref[ref]{\emph{Netlist}}{}{Netlist}{secnetlist}
+\hyperref[ref]{\emph{Instanciation of a shifter}}{}{Shifter}{secshift}
+\hyperref[ref]{\emph{Instanciation of a register}}{}{Reg}{secreg}
+\hyperref[ref]{\emph{Instanciation of constants}}{}{Constant}{secconstant}
+\hyperref[ref]{\emph{Boolean operations}}{}{Boolean}{secbool}
+\hyperref[ref]{\emph{Arithmetical operations}}{}{Arithmetic}{secarithmetic}
+\hyperref[ref]{\emph{Comparison operations}}{}{Comparison}{seccomp}

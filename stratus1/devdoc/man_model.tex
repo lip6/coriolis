@@ -1,0 +1,66 @@
+\subsection{Synopsys}
+
+\begin{verbatim}
+class myClass ( Model ) :
+    ...
+    
+exemple = myClass ( name, param )
+\end{verbatim}
+
+\subsection{Description}
+
+Every cell made is a class herited from class \verb-Model-.\\
+\indent Some methods have to be created, like \verb-Interface-, \verb-Netlist- ... Some methods are inherited from the class \verb-Model-.
+
+\subsection{Parameters}
+
+\begin{itemize}
+    \item \verb-name- : The name of the cell (which is the name of the files which will be created)
+    \item \verb-param- : A dictionnary which gives all the parameters useful in order to create the cell
+\end{itemize}
+
+\subsection{Attributes}
+
+\begin{itemize}
+    \item \verb-_name- : Name of the cell
+    \item \verb-_st_insts- : List of all the instances of the cell
+    \item \verb-_st_ports- : List of all the external nets of the cell (except for alimentations and clock)
+    \item \verb-_st_sigs- : List of all the internal nets of the cell
+    \item \verb-_st_vdds-, \verb-_st_vsss- : Two tabs of the nets which are instancied as \verb-VddIn- and \verb-VssIn-
+    \item \verb-_st_cks- : List of all the nets which are instancied as \verb-CkIn-
+    \item \verb-_st_merge- : List of all the internal nets which have to be merged
+    \item \verb-_param- : The map given as argument at the creation of the cell
+    \item \verb-_underCells- : List of all the instances which are cells that have to be created 
+    \item \verb-_and-, \verb-_or-, \verb-_xor-, \verb-_not-, \verb-_buff-, \verb-_mux-, \verb-_reg-, \verb-_shift-, \verb-_comp-, \verb-_add-, \verb-_mult-, \verb-_div- : tells which generator to use when using overloard
+    \item \verb-_NB_INST- : The number of instances of the cell (useful in order to automatically give a name to the instances)
+    \item \verb-_TAB_NETS_OUT- and \verb-_TAB_NETS_CAT- : Lists of all the nets automatically created
+    \item \verb-_insref- : The reference instance (for placement)\\
+\end{itemize}
+
+\indent And, in connection with Hurricane :
+\begin{itemize}
+    \item \verb-_hur_cell- : The hurricane cell (None by default)
+    \item \verb-_db- : The database
+    \item \verb-_lib0- : \verb-self._db.Get_CATA_LIB ( 0 )-
+    \item \verb-_nb_alims_verticales-, \verb-_nb_pins-, \verb-_nb_vdd_pins-, \verb-_nb_vss_pins-, \verb-standard_instances_list-, \verb-pad_north-, \verb-pad_south-, \verb-pad_east-, \verb-pad_west- : all place and route stuffs ...
+
+\end{itemize}
+
+\subsection{Methods}
+
+Methods of class \verb-Model- are listed below :
+\begin{itemize}
+    \item \verb-HurricanePlug- : Creates the Hurricane cell thanks to the stratus cell.\\Before calling this method, only the stratus cell is created, after this method, both cells are created. This method has to be called before View and Save, and before Layout.
+    \item \verb-View- : Opens/Refreshes the editor in order to see the created layout
+    \item \verb-Quit- : Finishes a cell without saving
+    \item \verb-Save- : Saves the created cell\\If several cells have been created, they are all going to be saved in separated files\\
+\end{itemize}
+
+Some of those methods have to be defined in order to create a new cell :
+\begin{itemize}
+    \item \verb-Interface- : Description of the external ports of the cell
+    \item \verb-Netlist- : Description of the netlist of the cell
+    \item \verb-Layout- : Description of the layout of the cell
+    \item \verb-Vbe- : Description of the behavior of the cell
+    \item \verb-Pattern- : Description of the patterns in order to test the cell
+\end{itemize} 

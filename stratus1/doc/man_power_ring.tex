@@ -1,0 +1,45 @@
+\subsubsection{Name}
+
+PowerRing -- Placement of power rings.
+
+\subsubsection{Synopsys}
+
+\begin{verbatim}
+PowerRing ( nb )
+\end{verbatim}
+
+\subsubsection{Description}
+
+This function places power rings around the core and around the plots.
+    
+\subsubsection{Parameters}
+
+\begin{itemize}
+    \item \verb-nb- : Number of pair of rings vdd/vss 
+\end{itemize}
+    
+\subsubsection{Example}
+
+\begin{verbatim}
+PowerRing ( 3 )
+\end{verbatim}
+
+\subsubsection{Errors}
+    
+Some errors may occur :
+\begin{itemize}
+    \item \verb-[Stratus ERROR] PowerRing : Pads in the north haven't been placed.-\\The pads of the 4 sides of the chip must be placed before calling function PowerRing.
+    \item \verb-[Stratus ERROR] PowerRing : too many rings, not enough space.-\\Wether The argument of PowerRing is to big,  or the abutment box of the chip is to small. There's no space to put the rings.
+\end{itemize}
+         
+\subsubsection{See Also}
+
+\hyperref[ref]{\emph{Introduction}}{}{Introduction}{secintroduction}
+\hyperref[ref]{\emph{Layout}}{}{Layout}{seclayout}
+\hyperref[ref]{\emph{PlaceCentric}}{}{PlaceCentric}{seccentric}
+\hyperref[ref]{\emph{PlaceGlu}}{}{PlaceGlu}{secglu}
+\hyperref[ref]{\emph{FillCell}}{}{FillCell}{secfillcell}
+\hyperref[ref]{\emph{Pads}}{}{Pads}{secpads}
+\hyperref[ref]{\emph{Alimentation rails}}{}{Alimentation rails}{secrails}
+\hyperref[ref]{\emph{Alimentation connectors}}{}{Alimentation connectors}{secconnectors}
+\hyperref[ref]{\emph{RouteCk}}{}{RouteCk}{secrouteck}

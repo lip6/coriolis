@@ -1,0 +1,48 @@
+\begin{itemize}
+    \item Name : DpgenOr2 -- Or2 Macro-Generator
+    \item Description : Generates a \verb-n- bits two inputs OR with an output power of \verb-drive- named \verb-modelname-.
+    \begin{itemize}
+        \item Valid drive are : 2 or 4
+    \end{itemize}
+    \item Terminal Names :
+    \begin{itemize}
+        \item i0 : input (\verb-n- bits)
+        \item i1 : input (\verb-n- bits)
+        \item q : output (\verb-n- bits)
+        \item vdd : power
+        \item vss : ground
+    \end{itemize}
+    \item Parameters : Parameters are given with a map called \verb-param-.
+    \begin{itemize}
+        \item nbit : Defines the size of the generator
+        \item drive (optional) : Defines the output power of the gates\\If this parameter is not defined, the \verb-drive- is the smallest one permitted.
+    \end{itemize}
+    \item Behavior :
+\begin{verbatim}
+nq <= i0 or i1
+\end{verbatim}
+    \item Example :
+\begin{verbatim}
+class myClass ( Model ) :
+  def Interface ( self ) :
+    self._in0   = LogicIn  ( "in0", 32 )
+    self._in1   = LogicIn  ( "in1", 32 )
+    
+    self._out   = LogicOut ( "out", 32 )
+
+    self._vdd   = VddIn    ( "vdd" )
+    self._vss   = VssIn    ( "vss" )
+    
+  def Netlist ( self ) :
+      
+    Inst ( 'DpgenOr2'
+         , param = { 'nbit' : 32 }
+         , map  = { 'i0'  : self._in0
+                  , 'i1'  : self._in1
+                  , 'q'   : self._out
+                  , 'vdd' : self._vdd
+                  , 'vss' : self._vss
+                  }
+         )
+\end{verbatim}
+\end{itemize}

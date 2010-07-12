@@ -1,0 +1,62 @@
+\subsubsection{Name}
+    Alias -- A net has an "alias name"
+
+\subsubsection{Synopsys}
+
+\verb-myNet.Alias ( net )-
+
+\subsubsection{Description}
+
+This method is applied to a net. This net has an "alias name".
+
+\subsubsection{Parameters}
+
+\begin{itemize}
+    \item \verb-net- : a net which is going to be an alias for the net which this method is applied to
+\end{itemize}
+
+\subsubsection{Example}
+
+\begin{verbatim}
+class myripple ( Model ) :
+    
+  def Interface ( self ) :
+    self.a    = LogicIn  (    "a", 4 )
+    self.b    = LogicIn  (    "b", 4 )
+
+    self.cin  = LogicIn  (  "cin", 1 )
+
+    self.sout = LogicOut ( "sout", 4 )
+
+    self.cout = LogicOut ( "cout", 1 )
+
+    self.vdd  = VddIn ( "vdd" )
+    self.vss  = VddIn ( "vss" )
+
+  def Netlist ( self ) :
+    c_temp = Signal ( "c_temp", 5 )
+    
+    self.cin.Alias  ( c_temp[0] )
+    self.cout.Alias ( c_temp[4] )
+          
+    for i in range ( 4 ) :
+      Inst ( "Fulladder"
+           , map = { 'a'    : self.a[i]
+                   , 'b'    : self.b[i]
+                   , 'cin'  : c_temp[i]
+                   , 'sout' : self.sout[i]
+                   , 'cout' : c_temp[i+1]
+                   , 'vdd'  : self.vdd
+                   , 'vss'  : self.vss
+                   }
+           )
+\end{verbatim}
+
+\indent The net \verb-cin- has the alias \verb-c_temp[0]- and the net cout has the alias \verb-c_temp[4]-. Thanks to this method, all the instanciations can be done in one unique \verb-for- loop.
+     
+\subsubsection{See Also}
+
+\hyperref[ref]{\emph{Introduction}}{}{Introduction}{secintroduction}
+\hyperref[ref]{\emph{Nets}}{}{Nets}{secnet}
+\hyperref[ref]{\emph{Extend}}{}{Extend}{secextend}
+\hyperref[ref]{\emph{Cat}}{}{Cat}{seccat}

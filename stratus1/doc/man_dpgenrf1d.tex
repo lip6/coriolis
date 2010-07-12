@@ -1,0 +1,81 @@
+\begin{itemize}
+    \item Name : DpgenRf1d, DpgenRf1dr0 -- Register File with Decoder Macro-Generator
+    \item Description : Generates a register file of \verb-regNumber- words of \verb-n- bits with decoder named \verb-modelname-.
+    \item How it works :
+    \begin{itemize}
+        \item datain0 and datain1 are the two write busses. Only one is used to actually write the register word, it is selected by the sel signal.
+        \item when sel is set to zero datain0 is used to write the register word, otherwise it will be datain1
+        \item adr, adw : the width (Y) of those signals is computed from regNumber : \verb-Y = log2(regNumber)-
+        \item wen and ren : write enable and read enable, allows reading and writing when sets to \verb-one-
+        \item The DpgenRf1dr0 variant differs from the DpgenRf1d in that the register of address zero is stuck to zero. You can write into it, it will not change the value. When read, it will always return zero
+    \end{itemize}
+    \item Terminal Names :
+    \begin{itemize}
+        \item ck : clock signal (input, 1 bit)
+        \item sel : select the write bus (input, 1 bit)
+        \item wen : write enable (input, 1 bit)
+        \item ren : read enable (input, 1 bit)
+        \item adr : the read address (input, \verb-Y- bits)
+        \item adw : the write address (input, \verb-Y- bits)
+        \item datain0 : first write bus (input, \verb-n- bits)
+        \item datain1 : second write bus (input, \verb-n- bits)
+        \item dataout : read bus (output, \verb-n- bits)
+        \item vdd : power
+        \item vss : ground
+    \end{itemize}
+    \item Parameters : Parameters are given with a map called \verb-param-.
+    \begin{itemize}
+        \item nbit : Defines the size of the words  (even, between 2 and 64)
+        \item nword : Defines the number of the words (even, between 6 and 32)
+    \end{itemize}
+%    \item Behavior :
+%\begin{verbatim}
+%\end{verbatim}
+    \item Example :
+\begin{verbatim}
+class myClass ( Model ) :
+    
+  def Interface ( self ) :
+    self.nbit  = self._param['nbit']
+    self.nword = self._param['nword']
+      
+    adrange = 2
+    if self.nword > 4  : adrange = 3
+    if self.nword > 8  : adrange = 4
+    if self.nword > 16 : adrange = 5
+    
+    self._ck      = LogicIn  (       "ck", 1 )
+    self._sel     = LogicIn  (      "sel", 1 )
+    self._wen     = LogicIn  (      "wen", 1 )
+    self._ren     = LogicIn  (      "ren", 1 )
+                   
+    self._adr     = LogicIn  (      "adr",   adrange )
+    self._adw     = LogicIn  (      "adw",   adrange )
+    self._datain0 = LogicIn  (  "datain0", self.nbit )
+    self._datain1 = LogicIn  (  "datain1", self.nbit )
+    self._dataout = LogicOut (  "dataout", self.nbit )
+      
+    self._vdd   = VddIn ( "vdd" )
+    self._vss   = VssIn ( "vss" )
+    
+  def Netlist ( self ) :
+      
+    Inst ( 'DpgenRf1d'
+         , param = { 'nword'   : self.nword
+                   , 'nbit'    : self.nbit
+                   }
+         , map   = { 'ck'      : self._ck
+                   , 'sel'     : self._sel
+                   , 'wen'     : self._wen
+                   , 'ren'     : self._ren
+                   , 'adr'     : self._adr
+                   , 'adw'     : self._adw
+                   , 'datain0' : self._datain0
+                   , 'datain1' : self._datain1
+                   , 'dataout' : self._dataout
+                   , 'vdd'     : self._vdd
+                   , 'vss'     : self._vss
+                   }
+         )  
+\end{verbatim}
+\end{itemize}

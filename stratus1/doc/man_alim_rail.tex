@@ -1,0 +1,52 @@
+\subsubsection{Name}
+
+AlimVerticalRail, AlimHorizontalRail -- Placement of a vertical/horizontal alimentation call back
+
+\subsubsection{Synopsys}
+
+\begin{verbatim}
+AlimVerticalRail ( nb )
+\end{verbatim}
+
+\subsubsection{Description}
+
+These functions place a vertical/horizontal alimentation call back. It's position is given by the parameter given.
+    
+\subsubsection{Parameters}
+
+\begin{itemize}
+    \item \verb-nb- : coordinate of the rail
+    \begin{itemize}
+        \item For AlimVerticalRail, \verb-nb- is in pitches i.e. 5 lambdas
+        \item For AlimHorizontalRail, \verb-nb- is in slices i.e. 50 lambdas
+    \end{itemize}
+\end{itemize}
+    
+\subsubsection{Example}
+
+\begin{verbatim}
+AlimVerticalRail   (  50 )
+AlimVerticalRail   ( 150 )
+    
+AlimHorizontalRail (  10 )
+\end{verbatim}
+
+\subsubsection{Errors}
+    
+Some errors may occur :
+\begin{itemize}
+    \item \verb-[Stratus ERROR] AlimHorizontalRail :-\\\verb-Illegal argument y, y must be between ... and ...-\\The argument given is wrong : the call back would not be in the abutment box.
+    \item \verb-[Stratus ERROR] Placement of cells :-\\\verb-please check your file of layout with DRUC.-\\The placement of the cell needs to be correct in order to place a call back. Check the errors of placement.
+\end{itemize} 
+
+\subsubsection{See Also}
+
+\hyperref[ref]{\emph{Introduction}}{}{Introduction}{secintroduction}
+\hyperref[ref]{\emph{Layout}}{}{Layout}{seclayout}
+\hyperref[ref]{\emph{PlaceCentric}}{}{PlaceCentric}{seccentric}
+\hyperref[ref]{\emph{PlaceGlu}}{}{PlaceGlu}{secglu}
+\hyperref[ref]{\emph{FillCell}}{}{FillCell}{secfillcell}
+\hyperref[ref]{\emph{Pads}}{}{Pads}{secpads}
+\hyperref[ref]{\emph{Alimentation connectors}}{}{Alimentation connectors}{secconnectors}
+\hyperref[ref]{\emph{PowerRing}}{}{PowerRing}{secpowerring}
+\hyperref[ref]{\emph{RouteCk}}{}{RouteCk}{secrouteck}

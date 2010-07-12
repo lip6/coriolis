@@ -1,0 +1,70 @@
+\begin{itemize}
+    \item Name : DpgenRf1, DpgenRf1r0 -- Register File Macro-Generator
+    \item Description : Generates a register file of \verb-regNumber- words of \verb-n- bits without decoder named \verb-modelname-.
+    \item How it works :
+    \begin{itemize}
+        \item datain0 and datain1 are the two write busses. Only one is used to actually write the register word, it is selected by the sel signal.
+        \item when sel is set to zero datain0 is used to write the register word, otherwise it will be datain1
+        \item selr, selw : this register file have no decoder, so selr have a bus width equal to \verb-regNumber-. One bit for each word
+        \item The DpgenRf1r0 variant differs from the DpgenRf1 in that the register of address zero is stuck to zero. You can write into it, it will not change the value. When read, it will always return zero
+    \end{itemize}
+    \item Terminal Names :
+    \begin{itemize}
+        \item ckok : clock signal (input, 1 bit)
+        \item sel : select the write bus (input, 1 bit)
+        \item selr : the decoded read address (input, \verb-regNumber- bits)
+        \item selw : the decoded write address (input, \verb-regNumber- bits)
+        \item datain0 : first write bus (input, \verb-n- bits)
+        \item datain1 : second write bus (input, \verb-n- bits)
+        \item dataout : read bus (output, \verb-n- bits)
+        \item vdd : power
+        \item vss : ground
+    \end{itemize}
+    \item Parameters : Parameters are given with a map called \verb-param-.
+    \begin{itemize}
+        \item nbit : Defines the size of the words  (even, between 2 and 64)
+        \item nword : Defines the number of the words (even, between 4 and 32)
+    \end{itemize}
+%    \item Behavior :
+%\begin{verbatim}
+%\end{verbatim}
+    \item Example :
+\begin{verbatim}
+class myClass ( Model ) :
+    
+  def Interface ( self ) :
+      
+    self.nbit  = self._param['nbit']
+    self.nword = self._param['nword']
+      
+    self._ck      = LogicIn  (       "ck", 1 )
+    self._sel     = LogicIn  (      "sel", 1 )
+
+    self._selr    = LogicIn  (     "selr", self.nword )
+    self._selw    = LogicIn  (     "selw", self.nword )
+    self._datain0 = LogicIn  (  "datain0", self.nbit )
+    self._datain1 = LogicIn  (  "datain1", self.nbit )
+    self._dataout = LogicOut (  "dataout", self.nbit ) 
+    
+    self._vdd   = VddIn ( "vdd" )
+    self._vss   = VssIn ( "vss" )
+    
+  def Netlist ( self ) :
+      
+    Inst ( 'DpgenRf1'
+         , param = { 'nword'   : self.nword
+                   , 'nbit'    : self.nbit
+                   }
+         , map   = { 'ck'      : self._ck
+                   , 'sel'     : self._sel
+                   , 'selr'    : self._selr
+                   , 'selw'    : self._selw
+                   , 'datain0' : self._datain0
+                   , 'datain1' : self._datain1
+                   , 'dataout' : self._dataout
+                   , 'vdd'     : self._vdd
+                   , 'vss'     : self._vss
+                   }
+         )       
+\end{verbatim}
+\end{itemize}
