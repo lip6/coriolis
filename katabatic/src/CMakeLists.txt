@@ -47,6 +47,21 @@ endif ( CHECK_DETERMINISM )
 
 
            add_library ( katabatic  ${cpps} ${mocCpps} )
+ target_link_libraries ( katabatic  ${KNIK_LIBRARIES}
+                                    ${HURRICANE_PYTHON_LIBRARIES}
+                                    ${HURRICANE_GRAPHICAL_LIBRARIES}
+                                    ${HURRICANE_LIBRARIES}
+                                    ${CONFIGURATION_LIBRARY}
+                                    ${CIF_LIBRARY}
+                                    ${AGDS_LIBRARY}
+                                    ${LEFDEF_LIBRARIES}
+                                    ${OA_LIBRARIES}
+                                    ${QT_LIBRARIES}
+                                    ${Boost_LIBRARIES}
+                                    ${LIBXML2_LIBRARIES}
+                                    ${PYTHON_LIBRARIES} -lutil
+                       )
+
                install ( TARGETS katabatic DESTINATION lib${LIB_SUFFIX} )
                install ( FILES ${includes}
                                ${mocIncludes} DESTINATION include/coriolis2/katabatic ) 
