@@ -49,6 +49,7 @@
 
 
 from Hurricane  import *
+import Viewer
 import CRL
 
 import re, types, string
