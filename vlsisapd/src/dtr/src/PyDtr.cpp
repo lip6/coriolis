@@ -64,7 +64,7 @@ BOOST_PYTHON_MODULE(pyDTR) {
         .def("addARule"        , &Techno::addARule, return_value_policy<reference_existing_object>())
 
         // others
-        .def("readFromFile", &Techno::readFromFile, return_value_policy<reference_new_object>())
+        .def("readFromFile", &Techno::readFromFile, return_value_policy<reference_existing_object>())
         .staticmethod("readFromFile")
         .def("writeToFile" , &Techno::writeToFile)
     ;
