@@ -24,7 +24,7 @@ LIST(INSERT CMAKE_MODULE_PATH 0 "${VLSISAPD_SOURCE_DIR}/cmake_modules")
 
 find_package(Goodies REQUIRED)
 
-SetupBoost(program_options filesystem python)
+SETUP_BOOST(program_options filesystem python)
 
 FIND_PACKAGE(LibXml2 REQUIRED)
 FIND_PACKAGE(PythonLibs REQUIRED)
