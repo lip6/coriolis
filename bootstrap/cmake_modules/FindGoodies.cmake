@@ -1,6 +1,40 @@
 
 
 #
+# Setup CMake policies.
+#
+ macro(set_cmake_policies)
+   if(COMMAND CMAKE_POLICY)
+     cmake_policy(SET CMP0003 NEW)
+     cmake_policy(SET CMP0005 NEW)
+     if(NOT (CMAKE_VERSION VERSION_LESS 2.8.0))
+       cmake_policy(SET CMP0014 OLD)
+     endif(NOT (CMAKE_VERSION VERSION_LESS 2.8.0))
+   endif(COMMAND CMAKE_POLICY)
+ endmacro(set_cmake_policies)
+
+
+#
+# Specific Apple OSX setup
+#
+ macro(setup_apple)
+   if(APPLE)
+     execute_process(
+       COMMAND sw_vers -productVersion
+       OUTPUT_VARIABLE OSX_VERSION
+       OUTPUT_STRIP_TRAILING_WHITESPACE)
+     message(STATUS "OSX_VERSION='${OSX_VERSION}'")
+     if(${OSX_VERSION} MATCHES "^10\\.[012345]\\.?")
+       message(STATUS "OSX < 10.6")
+     else(${OSX_VERSION} MATCHES "^10\\.[012345]\\.?")
+       set(CMAKE_OSX_ARCHITECTURES "i386;ppc") # for QT4.5 32bits on snow leopard
+     endif(${OSX_VERSION} MATCHES "^10\\.[012345]\\.?")
+   endif(APPLE)
+ endmacro(setup_apple)
+
+
+
+#
 # Adds -Wall to the C/C++ flags.
 #
  set(CMAKE_C_FLAGS_DEBUG     "-g -Wall"           CACHE STRING "Debug options."   FORCE)
@@ -78,7 +112,7 @@
 #
 # Find Boost, checking different versions.
 #
- macro(SetupBoost)
+ macro(setup_boost)
   #set(Boost_USE_STATIC_LIBS ON)
   #message(STATUS "Always uses Boost static libraries.")
    if(ARGC LESS 1)
@@ -91,7 +125,7 @@
    endif(ARGC LESS 1)
    message(STATUS "Found Boost libraries ${Boost_LIB_VERSION} in ${Boost_INCLUDE_DIR}")
    message(STATUS "  ${Boost_LIBRARIES}")
- endmacro(SetupBoost)
+ endmacro(setup_boost)
  
 
 #
