@@ -1,2 +1,1 @@
-install(FILES FindVLSISAPD.cmake
-              FindPythonSitePackages.cmake DESTINATION share/cmake/Modules) 
+install(FILES FindVLSISAPD.cmake DESTINATION share/cmake/Modules) 

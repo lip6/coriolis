@@ -2,24 +2,33 @@ PROJECT(VLSISAPD)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0)
 
+MACRO(SETUP_PROJECT_PATHS project)
+  IF( NOT("$ENV{${project}_TOP}" STREQUAL "") )
+    MESSAGE("-- ${project}_TOP is set to $ENV{${project}_TOP}")
+    SET(PROJECT_MODULE_PATH "${DESTDIR}$ENV{${project}_TOP}/share/cmake/Modules/")
+    LIST(INSERT CMAKE_MODULE_PATH 0 "${PROJECT_MODULE_PATH}")
+  ENDIF( NOT("$ENV{${project}_TOP}" STREQUAL "") )
+
+  IF( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
+    MESSAGE("-- ${project}_USER_TOP is set to $ENV{${project}_USER_TOP}")
+    SET(PROJECT_MODULE_PATH "${DESTDIR}$ENV{${project}_USER_TOP}/share/cmake/Modules/")
+    LIST(INSERT CMAKE_MODULE_PATH 0 "${PROJECT_MODULE_PATH}")
+  ENDIF( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
+
+  LIST(REMOVE_DUPLICATES CMAKE_MODULE_PATH)
+ENDMACRO(SETUP_PROJECT_PATHS project)
+
+SETUP_PROJECT_PATHS(GOODIES)
+
 LIST(INSERT CMAKE_MODULE_PATH 0 "${VLSISAPD_SOURCE_DIR}/cmake_modules")
 
-SET(CMAKE_C_FLAGS_DEBUG     "-g -Wall" CACHE STRING "Debug options." FORCE)
-SET(CMAKE_CXX_FLAGS_DEBUG   "-g -Wall" CACHE STRING "Debug options." FORCE)
-SET(CMAKE_C_FLAGS_RELEASE   "-O3 -DNDEBUG -Wall" CACHE STRING "Release options." FORCE)
-SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -Wall" CACHE STRING "Release options." FORCE)
+find_package(Goodies REQUIRED)
+
+SetupBoost(program_options filesystem python)
 
 FIND_PACKAGE(LibXml2 REQUIRED)
+FIND_PACKAGE(PythonLibs REQUIRED)
 FIND_PACKAGE(PythonSitePackages REQUIRED)
-
-SET(Boost_USE_STATIC_LIBS ON)
-MESSAGE(STATUS "Always uses Boost static libraries.")
-FIND_PACKAGE(Boost 1.35.0 COMPONENTS program_options filesystem python system)
-IF (NOT Boost_FOUND)
-  FIND_PACKAGE(Boost 1.32.0 COMPONENTS program_options filesystem python REQUIRED)
-ENDIF (NOT Boost_FOUND)
-
-MESSAGE(STATUS "Found Boost.Python ${Boost_LIB_VERSION} libraries in ${Boost_INCLUDE_DIR} as ${Boost_LIBRARIES}.")
 FIND_PACKAGE(PythonLibs REQUIRED)
 
 FIND_PACKAGE(Doxygen)
