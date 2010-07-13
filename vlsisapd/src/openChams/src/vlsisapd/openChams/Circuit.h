@@ -88,7 +88,7 @@ class Circuit {
     Netlist*   _netlist;
     Schematic* _schematic;
     Sizing*    _sizing;
-    map<unsigned, SimulModel*> _simulModels;
+    std::map<unsigned, SimulModel*> _simulModels;
 };
     
 inline Name       Circuit::getName()    	   { return _name; };
