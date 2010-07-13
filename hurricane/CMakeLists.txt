@@ -32,7 +32,7 @@ LIST(INSERT CMAKE_MODULE_PATH 0 "${HURRICANE_SOURCE_DIR}/cmake_modules/")
 find_package(Goodies REQUIRED)
 
 set_lib_link_mode()
-SetupBoost(regex)
+setup_boost(regex)
 
 SET(QT_USE_QTXML "true")
 
