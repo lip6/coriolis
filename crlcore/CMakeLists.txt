@@ -2,13 +2,13 @@ PROJECT(CRLCORE)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0)
 
-IF(COMMAND CMAKE_POLICY)
-  CMAKE_POLICY(SET CMP0003 NEW)
-  CMAKE_POLICY(SET CMP0005 NEW)
-  IF(NOT (CMAKE_VERSION VERSION_LESS 2.8.0))
-    CMAKE_POLICY(SET CMP0014 OLD)
-  ENDIF(NOT (CMAKE_VERSION VERSION_LESS 2.8.0))
-ENDIF(COMMAND CMAKE_POLICY)
+#IF(COMMAND CMAKE_POLICY)
+#  CMAKE_POLICY(SET CMP0003 NEW)
+#  CMAKE_POLICY(SET CMP0005 NEW)
+#  IF(NOT (CMAKE_VERSION VERSION_LESS 2.8.0))
+#    CMAKE_POLICY(SET CMP0014 OLD)
+#  ENDIF(NOT (CMAKE_VERSION VERSION_LESS 2.8.0))
+#ENDIF(COMMAND CMAKE_POLICY)
 
 # This macro has to be included in all the tools CMakeLists.txt as it's
 # the sole means of localizing other tools/projects.
@@ -52,9 +52,9 @@ ENDIF(IS_USR OR IS_OPT)
 SET(QT_USE_QTXML "true")
 
 FIND_PACKAGE(Goodies REQUIRED)
-
+set_cmake_policies()
 set_lib_link_mode()
-SetupBoost(program_options filesystem python regex)
+setup_boost(program_options filesystem python regex)
 
 FIND_PACKAGE(LibXml2 REQUIRED)
 FIND_PACKAGE(PythonLibs REQUIRED)
