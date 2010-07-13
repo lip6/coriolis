@@ -14,13 +14,13 @@ FIND_PACKAGE(PythonSitePackages REQUIRED)
 
 SET(Boost_USE_STATIC_LIBS ON)
 MESSAGE(STATUS "Always uses Boost static libraries.")
-FIND_PACKAGE(Boost 1.32.0 COMPONENTS program_options filesystem system python REQUIRED)
-IF (Boost_FOUND)
-  MESSAGE(STATUS "Found Boost.Python libraries in ${Boost_INCLUDE_DIR} as ${Boost_LIBRARIES}")
-  FIND_PACKAGE(PythonLibs REQUIRED)
-ELSE (Boost_FOUND)
-  MESSAGE(STATUS "Boost.Python libraries were not found")
-ENDIF (Boost_FOUND)
+FIND_PACKAGE(Boost 1.35.0 COMPONENTS program_options filesystem python system)
+IF (NOT Boost_FOUND)
+  FIND_PACKAGE(Boost 1.32.0 COMPONENTS program_options filesystem python REQUIRED)
+ENDIF (NOT Boost_FOUND)
+
+MESSAGE(STATUS "Found Boost.Python ${Boost_LIB_VERSION} libraries in ${Boost_INCLUDE_DIR} as ${Boost_LIBRARIES}.")
+FIND_PACKAGE(PythonLibs REQUIRED)
 
 FIND_PACKAGE(Doxygen)
 
