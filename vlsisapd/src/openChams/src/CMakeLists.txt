@@ -36,6 +36,7 @@ IF(Boost_FOUND)
     ADD_LIBRARY(pyOPENCHAMS MODULE ${pycpps})
     SET_TARGET_PROPERTIES(pyOPENCHAMS PROPERTIES
                                       COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
+                                      OUTPUT_NAME   "OPENCHAMS"
                                       PREFIX        ""
                          )
     TARGET_LINK_LIBRARIES(pyOPENCHAMS openChams ${LIBXML2_LIBRARIES} ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})

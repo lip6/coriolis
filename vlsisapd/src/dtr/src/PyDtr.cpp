@@ -20,7 +20,7 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(getValueAsString_overloads, getValueAsStr
 // specify that Techno::addRule method has optional arguments
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(addRule_overloads, addRule, 3, 5);
 
-BOOST_PYTHON_MODULE(pyDTR) {
+BOOST_PYTHON_MODULE(DTR) {
     // class DTR::Name
     class_<Name>("Name", init<std::string>())
         .def("getString", &Name::getString, return_value_policy<copy_const_reference>()) // return_value_policy because this method return a reference on string

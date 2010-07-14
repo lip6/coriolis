@@ -21,6 +21,7 @@ IF(Boost_FOUND)
   ADD_LIBRARY(pyAGDS MODULE ${pycpps})
   SET_TARGET_PROPERTIES(pyAGDS PROPERTIES
                                COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
+                               OUTPUT_NAME   "AGDS"
                                PREFIX        ""
                        )
   TARGET_LINK_LIBRARIES(pyAGDS agds ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})

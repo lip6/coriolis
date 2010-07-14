@@ -9,7 +9,7 @@ using namespace boost::python;
 #include "vlsisapd/agds/Rectangle.h"
 
 namespace AGDS {
-BOOST_PYTHON_MODULE(pyAGDS) {
+BOOST_PYTHON_MODULE(AGDS) {
     // class AGDS::Element
     class_<Element, boost::noncopyable>("Element", no_init) // abstract class : noncopyable + no_init
     ;

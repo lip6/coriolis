@@ -18,6 +18,7 @@ IF(Boost_FOUND)
   ADD_LIBRARY(pyCIF MODULE ${pycpps})
   SET_TARGET_PROPERTIES(pyCIF PROPERTIES
                               COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
+                              OUTPUT_NAME   "CIF"
                               PREFIX        ""
                        )
   TARGET_LINK_LIBRARIES(pyCIF cif ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})

@@ -24,7 +24,7 @@ void translator(OpenChamsException const& e) {
     PyErr_SetString(PyExc_UserWarning, e.what());
 }
 
-BOOST_PYTHON_MODULE(pyOPENCHAMS) {
+BOOST_PYTHON_MODULE(OPENCHAMS) {
     // class OpenChams::Name
     class_<Name>("Name", init<std::string>())
         .def(init<>())

@@ -7,7 +7,7 @@ using namespace boost::python;
 #include "vlsisapd/cif/Circuit.h"
 
 namespace CIF {
-BOOST_PYTHON_MODULE(pyCIF) {
+BOOST_PYTHON_MODULE(CIF) {
     // class CIF::Polygon
     class_<Polygon>("Polygon", init<long>())
         .def("addPoint", &Polygon::addPoint)

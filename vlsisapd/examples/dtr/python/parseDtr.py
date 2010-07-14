@@ -1,4 +1,4 @@
-from pyDTR import *
+from DTR import *
 from decimal import Decimal
 
 techno = Techno.readFromFile("./example.dtr.xml")
