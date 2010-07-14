@@ -24,7 +24,7 @@
 
 
 #include "hurricane/isobar/PyCell.h"
-#include "hurricane/isobar/PyCellViewer.h"
+#include "hurricane/viewer/PyCellViewer.h"
 #include "hurricane/viewer/CellWidget.h"
 
 

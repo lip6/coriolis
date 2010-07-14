@@ -11,7 +11,6 @@
                                     PyBox.cpp
                                     PyCell.cpp
                                     PyCellCollection.cpp
-                                    PyCellViewer.cpp
                                     PyComponent.cpp
                                     PyComponentCollection.cpp
                                     PyContact.cpp
@@ -51,7 +50,6 @@
                                     hurricane/isobar/PyBox.h
                                     hurricane/isobar/PyCell.h
                                     hurricane/isobar/PyCellCollection.h
-                                    hurricane/isobar/PyCellViewer.h
                                     hurricane/isobar/PyComponent.h
                                     hurricane/isobar/PyComponentCollection.h
                                     hurricane/isobar/PyContact.h
@@ -89,15 +87,13 @@
 # source2 & include2 for module that are *not* Python wrappers but true
 # Hurricane modules.
                    set ( sources2   Script.cpp )
-                   set ( includes2  hurricane/isobar/Script.h)
+                   set ( includes2  hurricane/isobar/Script.h )
 
 
                install ( FILES      ${includes}
                                     ${includes2} DESTINATION include/coriolis2/hurricane/isobar )
            add_library ( isobar     ${sources} ${sources2} )
- target_link_libraries ( isobar     viewer )
            add_library ( Hurricane  MODULE ${sources} ) 
- target_link_libraries ( Hurricane  viewer )
  set_target_properties ( Hurricane  PROPERTIES
                                     COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
                                     PREFIX        ""

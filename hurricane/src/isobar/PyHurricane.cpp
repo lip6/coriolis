@@ -64,7 +64,6 @@
 #include "hurricane/isobar/PyEntity.h"
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/isobar/PyCellCollection.h"
-#include "hurricane/isobar/PyCellViewer.h"
 #include "hurricane/isobar/PyLayer.h"
 #include "hurricane/isobar/PyPin.h"
 #include "hurricane/isobar/PyPinCollection.h"
@@ -551,7 +550,6 @@ extern "C" {
     PyContact_LinkPyType ();
     PyPin_LinkPyType ();
     PyPlug_LinkPyType ();
-    PyCellViewer_LinkPyType ();
     PyBreakpoint_LinkPyType ();
 
     PYTYPE_READY ( UpdateSession               )
@@ -584,7 +582,6 @@ extern "C" {
     PYTYPE_READY ( ReferenceCollection         )
     PYTYPE_READY ( ReferenceCollectionLocator  )
     PYTYPE_READY ( HyperNet                    )
-    PYTYPE_READY ( CellViewer                  )
     PYTYPE_READY ( NetExternalComponents       )
     PYTYPE_READY ( Breakpoint                  )
 
@@ -607,7 +604,6 @@ extern "C" {
     __cs.addType ( "ent"        , &PyTypeEntity              , "<Entity>"              , false );
     __cs.addType ( "cell"       , &PyTypeCell                , "<Cell>"                , false, "ent" );
     __cs.addType ( "cellCol"    , &PyTypeCellCollection      , "<CellCollection>"      , false );
-    __cs.addType ( "cellView"   , &PyTypeCellViewer          , "<CellViewer>"          , false, "view" );
     __cs.addType ( "comp"       , &PyTypeComponent           , "<Component>"           , false, "ent" );
     __cs.addType ( "compCol"    , &PyTypeComponentCollection , "<ComponentCollection>" , false );
     __cs.addType ( "contact"    , &PyTypeContact             , "<Contact>"             , false, "comp" );

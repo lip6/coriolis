@@ -23,14 +23,14 @@
 // x-----------------------------------------------------------------x
 
 
-#ifndef  __ISOBAR_CELL_VIEWER__
-#define  __ISOBAR_CELL_VIEWER__
+#ifndef  __PY_HURRICANE_CELL_VIEWER__
+#define  __PY_HURRICANE_CELL_VIEWER__
 
 #include "hurricane/isobar/PyHurricane.h"
 #include "hurricane/viewer/CellViewer.h"
 
 
-namespace  Isobar {
+namespace  Hurricane {
 
 
 extern "C" {
@@ -55,8 +55,8 @@ extern "C" {
 
 
 #define  IsPyCellViewer(v)      ( (v)->ob_type == &PyTypeCellViewer )
-#define  ISOBARCELLVIEWER(v)    ( (PyCellViewer*)(v) )
-#define  ISOBARCELLVIEWER_O(v)  ( ISOBAR_CELL_VIEWER(v)->_object )
+#define  PYCELLVIEWER(v)        ( (PyCellViewer*)(v) )
+#define  PYCELLVIEWER_O(v)      ( ISOBAR_CELL_VIEWER(v)->_object )
 
 
 }  // End of extern "C".
@@ -65,4 +65,4 @@ extern "C" {
 }  // End of Isobar namespace.
 
 
-#endif  // __ISOBAR_CELL_VIEWER__
+#endif  // __PY_HURRICANE_CELL_VIEWER__

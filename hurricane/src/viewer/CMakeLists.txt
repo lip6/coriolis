@@ -36,17 +36,12 @@
                                      hurricane/viewer/ControllerWidget.h
                                      hurricane/viewer/ScriptWidget.h
                        )
-                   set ( exports     hurricane/viewer/HApplication.h
-                                     hurricane/viewer/ScreenUtilities.h
+                   set ( includes    hurricane/viewer/ScreenUtilities.h
                                      hurricane/viewer/DisplayStyle.h
                                      hurricane/viewer/ColorScale.h
                                      hurricane/viewer/Graphics.h
-                                     hurricane/viewer/GraphicsWidget.h
-                                     hurricane/viewer/ExceptionWidget.h
-                                     hurricane/viewer/BreakpointWidget.h
-                                     hurricane/viewer/MousePositionWidget.h
-                                     hurricane/viewer/GotoWidget.h
                                      hurricane/viewer/Selector.h
+                                     hurricane/viewer/Ruler.h
                                      hurricane/viewer/Command.h
                                      hurricane/viewer/AreaCommand.h
                                      hurricane/viewer/MoveCommand.h
@@ -55,21 +50,9 @@
                                      hurricane/viewer/SelectCommand.h
                                      hurricane/viewer/HierarchyCommand.h
                                      hurricane/viewer/SelectorCriterion.h
-                                     hurricane/viewer/CellWidget.h
                                      hurricane/viewer/CellWidgets.h
-                                     hurricane/viewer/CellViewer.h
-                                     hurricane/viewer/InspectorWidget.h
-                                     hurricane/viewer/SelectionPopupModel.h
-                                     hurricane/viewer/SelectionPopup.h
-                                     hurricane/viewer/SelectionModel.h
-                                     hurricane/viewer/SelectionWidget.h
-                                     hurricane/viewer/Ruler.h
-                                     hurricane/viewer/NetInformations.h
-                                     hurricane/viewer/NetlistWidget.h
-                                     hurricane/viewer/DisplayFilterWidget.h
-                                     hurricane/viewer/ControllerWidget.h
-                                     hurricane/viewer/ScriptWidget.h
-                                     hurricane/viewer/PaletteWidget.h
+                       )
+                   set ( pyincludes  hurricane/viewer/PyCellViewer.h
                        )
                    set ( cpps        HApplication.cpp
                                      ScreenUtilities.cpp 
@@ -112,12 +95,25 @@
                                      ControllerWidget.cpp
                                      ScriptWidget.cpp
                        )
+                   set ( pycpps      PyViewer.cpp
+                                     PyCellViewer.cpp
+                       )
 
           qt4_wrap_cpp ( MOC_SRCS    ${mocincludes} )
      qt4_add_resources ( RCC_SRCS    CellViewer.qrc )
 
-           add_library ( viewer      ${cpps} ${MOC_SRCS} ${RCC_SRCS} )
+           add_library ( viewer      ${cpps} ${MOC_SRCS} ${RCC_SRCS} ${pycpps} )
  target_link_libraries ( viewer      hurricane ${QT_LIBRARIES} ${Boost_LIBRARIES} )
+           add_library ( Viewer      MODULE ${pycpps} )
+ target_link_libraries ( Viewer      viewer )
+ set_target_properties ( Viewer      PROPERTIES
+                                     COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
+                                     PREFIX        ""
+                       )
 
-               install ( FILES       ${exports} DESTINATION include/coriolis2/hurricane/viewer ) 
-               install ( TARGETS     viewer     DESTINATION lib${LIB_SUFFIX} )
+
+               install ( FILES       ${includes}
+                                     ${mocincludes}
+                                     ${pyincludes}  DESTINATION include/coriolis2/hurricane/viewer ) 
+               install ( TARGETS     viewer         DESTINATION lib${LIB_SUFFIX} )
+               install ( TARGETS     Viewer         DESTINATION ${PYTHON_SITE_PACKAGES} )
