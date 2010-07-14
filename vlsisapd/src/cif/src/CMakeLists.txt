@@ -7,7 +7,6 @@ SET ( cpps Circuit.cpp
            Polygon.cpp 
     )
 SET ( pycpps PyCif.cpp
-             ${cpps}
     )
 
 ADD_LIBRARY(cif ${cpps})

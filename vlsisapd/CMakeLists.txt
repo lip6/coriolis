@@ -22,7 +22,7 @@ SETUP_PROJECT_PATHS(GOODIES)
 
 LIST(INSERT CMAKE_MODULE_PATH 0 "${VLSISAPD_SOURCE_DIR}/cmake_modules")
 
-find_package(Goodies REQUIRED)
+FIND_PACKAGE(Goodies REQUIRED)
 
 SETUP_BOOST(program_options filesystem python)
 

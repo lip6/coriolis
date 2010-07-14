@@ -10,7 +10,7 @@ SET ( cpps Techno.cpp
            Name.cpp 
     )
 
-SET ( pycpps PyDtr.cpp ${cpps}
+SET ( pycpps PyDtr.cpp
     )
 
 ADD_LIBRARY(dtr ${cpps})

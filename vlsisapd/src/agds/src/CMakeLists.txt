@@ -10,7 +10,6 @@ SET ( cpps Library.cpp
            Rectangle.cpp 
     )
 SET ( pycpps PyAgds.cpp
-             ${cpps}
     )
 
 ADD_LIBRARY(agds ${cpps})

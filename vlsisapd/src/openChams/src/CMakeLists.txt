@@ -25,7 +25,8 @@ SET ( cpps Circuit.cpp
            Sizing.cpp
            Transistor.cpp 
     )
-SET ( pycpps PyOpenChams.cpp ${cpps})
+SET ( pycpps PyOpenChams.cpp 
+    )
 
 ADD_LIBRARY(openChams ${cpps})
 TARGET_LINK_LIBRARIES(openChams ${LIBXML2_LIBRARIES})
