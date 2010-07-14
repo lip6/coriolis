@@ -114,11 +114,11 @@ class ProjectBuilder:
         if self._enableShared == "ON": self._libMode = "Shared"
         else:                          self._libMode = "Static"
 
-        self._specFileIn   = os.path.join ( self._sourceDir, "goodies", "coriolis2.spec.in" )
-        self._specFile     = os.path.join ( self._sourceDir, "goodies", "coriolis2.spec" )
+        self._specFileIn   = os.path.join ( self._sourceDir, "bootstrap", "coriolis2.spec.in" )
+        self._specFile     = os.path.join ( self._sourceDir, "bootstrap", "coriolis2.spec" )
         self._sourceTarBz2 = "coriolis2-1.0.%s.tar.bz2"                  % self._svnTag
         self._binaryTarBz2 = "coriolis2-binary-1.0.%s-1.el5_soc.tar.bz2" % self._svnTag
-        self._distribPatch = os.path.join ( self._sourceDir, "goodies", "coriolis2-for-distribution.patch" )
+        self._distribPatch = os.path.join ( self._sourceDir, "bootstrap", "coriolis2-for-distribution.patch" )
         return
 
 
@@ -516,44 +516,44 @@ class ProjectBuilder:
 
 if __name__ == "__main__":
 
-    goodies  = Project ( name      =  "goodies"
-                       , tools     =[ "goodies" ]
-                       , repository="/users/outil/coriolis/svn"
-                       )
+    bootstrap = Project ( name      =  "bootstrap"
+                        , tools     =[ "bootstrap" ]
+                        , repository="/users/outil/coriolis/svn"
+                        )
 
-    vlsisapd = Project ( name      =  "vlsisapd"
-                       , tools     =[ "vlsisapd" ]
-                       , repository="/users/outil/coriolis/svn"
-                       )
+    vlsisapd  = Project ( name      =  "vlsisapd"
+                        , tools     =[ "vlsisapd" ]
+                        , repository="/users/outil/coriolis/svn"
+                        )
 
-    coriolis = Project ( name     =  "coriolis"
-                       , tools    =[ "hurricane"
-                                   , "crlcore"
-                                   , "nimbus"
-                                   , "metis"
-                                   , "mauka"
-                                   , "knik"
-                                   , "katabatic"
-                                   , "kite"
-                                   , "equinox"
-                                   , "solstice"
-                                   , "unicorn"
-                                   , "ispd"
-                                   , "cumulus"
-                                   , "stratus1"
-                                   ]
-                       , repository="/users/outil/coriolis/svn"
-                       )
-    chams    = Project ( name     = "chams"
-                       , tools    =[ "hurricaneAMS"
-                                   , "amsCore"
-                                   , "opSim"
-                                   , "scribe"
-                                   , "pharos"
-                                   , "schematic"
-                                   ]
-                       , repository="/users/outil/chams/svn"
-                       )
+    coriolis  = Project ( name     =  "coriolis"
+                        , tools    =[ "hurricane"
+                                    , "crlcore"
+                                    , "nimbus"
+                                    , "metis"
+                                    , "mauka"
+                                    , "knik"
+                                    , "katabatic"
+                                    , "kite"
+                                    , "equinox"
+                                    , "solstice"
+                                    , "unicorn"
+                                    , "ispd"
+                                    , "cumulus"
+                                    , "stratus1"
+                                    ]
+                        , repository="/users/outil/coriolis/svn"
+                        )
+    chams     = Project ( name     = "chams"
+                        , tools    =[ "hurricaneAMS"
+                                    , "amsCore"
+                                    , "opSim"
+                                    , "scribe"
+                                    , "pharos"
+                                    , "schematic"
+                                    ]
+                        , repository="/users/outil/chams/svn"
+                        )
 
     parser = optparse.OptionParser ()  
   # Build relateds.
@@ -584,7 +584,7 @@ if __name__ == "__main__":
     ( options, args ) = parser.parse_args ()
 
     builder = ProjectBuilder ()
-    builder.register ( goodies  )
+    builder.register ( bootstrap  )
     builder.register ( vlsisapd )
     builder.register ( coriolis )
     builder.register ( chams    )
