@@ -1,5 +1,7 @@
 PROJECT(CUMULUS)
 
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
+
 # This macro has to be included in all the tools CMakeLists.txt as it's
 # the sole means of localizing other tools/projects.
 MACRO(SETUP_PROJECT_PATHS project)
