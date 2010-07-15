@@ -1,39 +1,22 @@
-PROJECT(SOLSTICE)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0)
+ project(SOLSTICE)
 
-# This macro has to be included in all the tools CMakeLists.txt as it's
-# the sole means of localizing other tools/projects.
-MACRO(SETUP_PROJECT_PATHS project)
-  IF( NOT("$ENV{${project}_TOP}" STREQUAL "") )
-    MESSAGE("-- ${project}_TOP is set to $ENV{${project}_TOP}")
-    SET(PROJECT_MODULE_PATH "${DESTDIR}$ENV{${project}_TOP}/share/cmake/Modules/")
-    LIST(INSERT CMAKE_MODULE_PATH 0 "${PROJECT_MODULE_PATH}")
-  ENDIF( NOT("$ENV{${project}_TOP}" STREQUAL "") )
-
-  IF( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
-    MESSAGE("-- ${project}_USER_TOP is set to $ENV{${project}_USER_TOP}")
-    SET(PROJECT_MODULE_PATH "${DESTDIR}$ENV{${project}_USER_TOP}/share/cmake/Modules/")
-    LIST(INSERT CMAKE_MODULE_PATH 0 "${PROJECT_MODULE_PATH}")
-  ENDIF( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
-
-  LIST(REMOVE_DUPLICATES CMAKE_MODULE_PATH)
-ENDMACRO(SETUP_PROJECT_PATHS project)
-
-SETUP_PROJECT_PATHS(BOOTSTRAP)
-SETUP_PROJECT_PATHS(VLSISAPD)
-SETUP_PROJECT_PATHS(CORIOLIS)
-
-FIND_PACKAGE(Bootstrap REQUIRED)
-SET_CMAKE_POLICIES()
-SET_LIB_LINK_MODE()
-SETUP_BOOST(program_options filesystem python regex)
-
-SET(QT_USE_QTXML "true")
-FIND_PACKAGE(Qt4 REQUIRED) # find and setup Qt4 for this project
-FIND_PACKAGE(HURRICANE REQUIRED)
-FIND_PACKAGE(CORIOLIS REQUIRED)
-FIND_PACKAGE(EQUINOX REQUIRED)
-
-ADD_SUBDIRECTORY(src)
-ADD_SUBDIRECTORY(cmake_modules)
+ cmake_minimum_required(VERSION 2.4.0)
+ 
+ list(INSERT CMAKE_MODULE_PATH 0 "$ENV{BOOTSTRAP_TOP}/share/cmake/Modules/")
+ find_package(Bootstrap REQUIRED)
+ setup_project_paths(VLSISAPD)
+ setup_project_paths(CORIOLIS)
+ 
+ set_cmake_policies()
+ set_lib_link_mode()
+ setup_boost(program_options filesystem python regex)
+ 
+ set(QT_USE_QTXML "true")
+ find_package(Qt4 REQUIRED) # find and setup Qt4 for this project
+ find_package(HURRICANE REQUIRED)
+ find_package(CORIOLIS REQUIRED)
+ find_package(EQUINOX REQUIRED)
+ 
+ add_subdirectory(src)
+ add_subdirectory(cmake_modules)
