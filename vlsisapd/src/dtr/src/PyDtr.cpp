@@ -31,6 +31,8 @@ BOOST_PYTHON_MODULE(DTR) {
         .def(self < self)
     ;
 
+    implicitly_convertible<std::string, Name>();
+
     // class DTR::Rule
     class_<Rule>("Rule", init<Name, double, Name, Name, Name>())
         // accessors
