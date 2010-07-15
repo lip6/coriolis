@@ -26,7 +26,6 @@ find_package(Bootstrap REQUIRED)
 setup_boost(program_options filesystem python)
 
 FIND_PACKAGE(LibXml2 REQUIRED)
-FIND_PACKAGE(PythonLibs REQUIRED)
 FIND_PACKAGE(PythonSitePackages REQUIRED)
 FIND_PACKAGE(PythonLibs REQUIRED)
 

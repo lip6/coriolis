@@ -17,9 +17,8 @@ INSTALL(FILES ${hpps} DESTINATION include/vlsisapd/cif)
 IF(Boost_FOUND)
   ADD_LIBRARY(pyCIF MODULE ${pycpps})
   SET_TARGET_PROPERTIES(pyCIF PROPERTIES
-                              COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
-                              OUTPUT_NAME   "CIF"
-                              PREFIX        ""
+                              OUTPUT_NAME "CIF"
+                              PREFIX      ""
                        )
   TARGET_LINK_LIBRARIES(pyCIF cif ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
   INSTALL(TARGETS pyCIF DESTINATION ${PYTHON_SITE_PACKAGES})

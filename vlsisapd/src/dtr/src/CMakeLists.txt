@@ -20,9 +20,8 @@ INSTALL(TARGETS dtr DESTINATION lib${LIB_SUFFIX})
 IF (Boost_FOUND)
     ADD_LIBRARY(pyDTR MODULE ${pycpps})
     SET_TARGET_PROPERTIES(pyDTR PROPERTIES
-                          COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
-                          OUTPUT_NAME   "DTR"
-                          PREFIX        ""
+                                OUTPUT_NAME "DTR"
+                                PREFIX      ""
                           )
     TARGET_LINK_LIBRARIES(pyDTR dtr ${LIBXML2_LIBRARIES} ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
     INSTALL(TARGETS pyDTR   DESTINATION ${PYTHON_SITE_PACKAGES})
