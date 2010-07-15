@@ -39,7 +39,7 @@ namespace bfs = boost::filesystem;
 #include  "hurricane/Cell.h"
 #include  "hurricane/Warning.h"
 #include  "hurricane/UpdateSession.h"
-#include  "hurricane/isobar/Script.h"
+#include  "hurricane/viewer/Script.h"
 
 #include  <QtGui>
 #if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and not defined (__APPLE__)
