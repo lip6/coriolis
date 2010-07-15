@@ -1,40 +1,23 @@
-PROJECT(VLSISAPD)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0)
+ project(VLSISAPD)
 
-MACRO(SETUP_PROJECT_PATHS project)
-  IF( NOT("$ENV{${project}_TOP}" STREQUAL "") )
-    MESSAGE("-- ${project}_TOP is set to $ENV{${project}_TOP}")
-    SET(PROJECT_MODULE_PATH "${DESTDIR}$ENV{${project}_TOP}/share/cmake/Modules/")
-    LIST(INSERT CMAKE_MODULE_PATH 0 "${PROJECT_MODULE_PATH}")
-  ENDIF( NOT("$ENV{${project}_TOP}" STREQUAL "") )
+ cmake_minimum_required(VERSION 2.4.0)
 
-  IF( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
-    MESSAGE("-- ${project}_USER_TOP is set to $ENV{${project}_USER_TOP}")
-    SET(PROJECT_MODULE_PATH "${DESTDIR}$ENV{${project}_USER_TOP}/share/cmake/Modules/")
-    LIST(INSERT CMAKE_MODULE_PATH 0 "${PROJECT_MODULE_PATH}")
-  ENDIF( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
+ list(INSERT CMAKE_MODULE_PATH 0 "$ENV{BOOTSTRAP_TOP}/share/cmake/Modules/")
+ find_package(Bootstrap REQUIRED)
+ list(INSERT CMAKE_MODULE_PATH 0 "${VLSISAPD_SOURCE_DIR}/cmake_modules/")
 
-  LIST(REMOVE_DUPLICATES CMAKE_MODULE_PATH)
-ENDMACRO(SETUP_PROJECT_PATHS project)
+ setup_boost(program_options filesystem python)
 
-SETUP_PROJECT_PATHS(BOOTSTRAP)
+ find_package(LibXml2 REQUIRED)
+ find_package(PythonSitePackages REQUIRED)
+ find_package(PythonLibs REQUIRED)
+ find_package(Doxygen)
 
-LIST(INSERT CMAKE_MODULE_PATH 0 "${VLSISAPD_SOURCE_DIR}/cmake_modules")
+ add_subdirectory(src)
+ add_subdirectory(cmake_modules)
 
-find_package(Bootstrap REQUIRED)
-setup_boost(program_options filesystem python)
-
-FIND_PACKAGE(LibXml2 REQUIRED)
-FIND_PACKAGE(PythonSitePackages REQUIRED)
-FIND_PACKAGE(PythonLibs REQUIRED)
-
-FIND_PACKAGE(Doxygen)
-
-ADD_SUBDIRECTORY(src)
-ADD_SUBDIRECTORY(cmake_modules)
-
-IF(BUILD_DOC AND DOXYGEN_FOUND)
-  ADD_SUBDIRECTORY(doc)
-  ADD_SUBDIRECTORY(examples)
-ENDIF(BUILD_DOC AND DOXYGEN_FOUND)
+ if(BUILD_DOC AND DOXYGEN_FOUND)
+   add_subdirectory(doc)
+   add_subdirectory(examples)
+ endif(BUILD_DOC AND DOXYGEN_FOUND)
