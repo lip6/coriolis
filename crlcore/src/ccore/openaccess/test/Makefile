@@ -9,5 +9,8 @@ run:
 debug:
 	cd x86_64/usr/local/bin && gdb -args ./testOAWrapper /asim/chams/etc/chams/config.freePDK45.xml
 
+ddd:
+	cd x86_64/usr/local/bin && ddd -args ./testOAWrapper /asim/chams/etc/chams/config.freePDK45.xml
+
 clean:
 	rm -rf x86_64

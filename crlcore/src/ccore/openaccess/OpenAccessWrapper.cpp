@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-07-15 17:35:58" - OpenAccessWrapper.cpp
+// Time-stamp: "2010-07-15 19:28:28" - OpenAccessWrapper.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -333,16 +333,15 @@ namespace {
                 end_for;
             }
 /*
-  cerr << "Overwriting cds.lib file" << endl;
-  oaLibDefList *ldl = oaLibDefList::get( "cds.lib", 'a' );
-  assert(ldl);
-  oaLibDef::create( ldl, scNameLib, strPathLib.c_str() );
-  ldl->save();
-  ldl->destroy();
-  ldl = NULL;
-  cerr << "Overwrited cds.lib file" << endl;
+            cerr << "Overwriting cds.lib file" << endl;
+            oaLibDefList *ldl = oaLibDefList::get( "cds.lib", 'a' );
+            assert(ldl);
+            oaLibDef::create( ldl, scNameLib, strPathLib.c_str() );
+            ldl->save();
+            ldl->destroy();
+            ldl = NULL;
+            cerr << "Overwrited cds.lib file" << endl;
 */
-
             return lib;
         }
 
@@ -350,6 +349,7 @@ namespace {
            convert oaLayer from a Layer ...
         */
         oaLayer* getOALayerFromLayer(Layer* layer,oaTech* theOATech) {
+            cerr << "getOALayerFromLayer" << endl;
             assert(layer);
             oaString layerName = getString(layer->getName()).c_str();
             oaPhysicalLayer* aOALayer = NULL;
@@ -363,25 +363,35 @@ namespace {
             _layer2OAPhysicalLayer[layer] = aOALayer;
 
             //TODO: add oaConstraint and oaConstraintGroup defined by technology
+/*            cerr << " o    get value for constraint" << endl;
             DbU::Unit minSize =  layer->getMinimalSize();
+            DbU::Unit minSpace = layer->getMinimalSpacing();
+            DbU::Unit pitch = layer->getPitch();
+            cerr << " o    create constraint for min size" << endl;
             oaLayerConstraint* cMinSize = oaLayerConstraint::create(aOALayer->getNumber(),
                                                                     oaLayerConstraintDef::get(oacMinSize),
-                                                                    oaIntValue::create(aOALayer,minSize));
-            DbU::Unit minSpace = layer->getMinimalSpacing();
+                                                                    oaIntValue::create(theOATech->getLib(),minSize));
+            assert(cMinSize);
+            cerr << " o    create constraint for min space" << endl;
             oaLayerConstraint* cMinSpace = oaLayerConstraint::create(aOALayer->getNumber(),
                                                                      oaLayerConstraintDef::get(oacMinSpacing),
-                                                                     oaIntValue::create(aOALayer,minSpace));
-            DbU::Unit pitch = layer->getPitch();
+                                                                     oaIntValue::create(theOATech->getLib(),minSpace));
+            assert(cMinSpace);
+            cerr << " o    create constraint for pitchH" << endl;
             oaLayerConstraint* cPitchH = oaLayerConstraint::create(aOALayer->getNumber(),
                                                                    oaLayerConstraintDef::get(oacHorizontalRouteGridPitch),
-                                                                   oaIntValue::create(aOALayer,pitch));
+                                                                   oaIntValue::create(theOATech->getLib(),pitch));
+            assert(cPitchH);
+
+            cerr << " o    create constraint for pitchV" << endl;
             oaLayerConstraint* cPitchV = oaLayerConstraint::create(aOALayer->getNumber(),
                                                                    oaLayerConstraintDef::get(oacVerticalRouteGridPitch),
-                                                                   oaIntValue::create(aOALayer,pitch));
+                                                                   oaIntValue::create(theOATech->getLib(),pitch));
+            assert(cPitchV);
+*/
             if(bLayer){
                 unsigned gdsIInumber = bLayer->getExtractNumber();
             }
-
             return aOALayer;
         }
 
@@ -389,6 +399,7 @@ namespace {
            print the oaLayera in a oaTech ...
         */
         void printOALayers(oaTech* theOATech){
+            cerr << "printOALayers" << endl;
             assert(theOATech);
             oaIter<oaLayer> lIter(theOATech->getLayers());
             while(oaLayer* l = lIter.getNext()){
@@ -424,8 +435,10 @@ namespace {
             cerr << "oaTech::find" << endl;
             oaTech* theOATech = oaTech::find(techOAlib);
             if(!theOATech){
-                cerr << "oaTech::open" << endl;
-                theOATech = oaTech::open(techOAlib,'a');
+                if (oaTech::exists(techOAlib)){
+                    cerr << "oaTech::open" << endl;
+                    theOATech = oaTech::open(techOAlib,'a');
+                }
                 if(!theOATech){
                     cerr << "oaTech::create" << endl;
                     theOATech = oaTech::create(techOAlib);
@@ -437,7 +450,6 @@ namespace {
                 _oaTech = theOATech;
                 return theOATech;
             }
-
             assert(techOAlib);
             theOATech->setDefaultManufacturingGrid(10);
             theOATech->setDBUPerUU(oaViewType::get(oacMaskLayout), 1000);
@@ -447,7 +459,6 @@ namespace {
             //strLayerDev ( "device" );
             //strLayerText( "text"   );
             //strLayerPin ( "pin"    );
-            //strLayerCut1( "cut1"   );
             //strLayerWire( "wire"   );
 
             //create physical layer
@@ -584,6 +595,9 @@ namespace {
            create oaRect for slice ...
         */
         oaRect* getOARectFromSlice(Slice* slice,oaBlock* topBlock){
+            cerr << "getOARectFromSlice" << endl;
+            assert(slice);
+            assert(topBlock);
             for_each_component(component, slice->getComponents()) {
                 oaRect* rect = getOARectFromComponent(component,topBlock);
                 end_for;
@@ -912,6 +926,7 @@ namespace {
             oaDesign* netlistView = createNetlist(cell);
             assert(netlistView);
 
+/*
             oaDesign* symbolicView = addSymbol(cell,netlistView);
             assert(symbolicView);
 
@@ -920,8 +935,8 @@ namespace {
 
             oaDesign* layoutView = addLayout(cell,schematicView);
             assert(layoutView);
-
-            return layoutView;
+*/
+            return netlistView;
         }
     };
 #endif
