@@ -43,6 +43,7 @@
                                         ${PYTHON_LIBRARIES} -lutil
                            )
                add_library ( CRL MODULE ${sources} ) 
+     target_link_libraries ( CRL pycrlcore )
      set_target_properties ( CRL PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
                                             PREFIX        ""
                            )

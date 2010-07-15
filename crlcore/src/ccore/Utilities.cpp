@@ -34,7 +34,7 @@ namespace boptions = boost::program_options;
 
 #include  "vlsisapd/configuration/Configuration.h"
 #include  "hurricane/Warning.h"
-#include  "hurricane/isobar/Script.h"
+#include  "hurricane/viewer/Script.h"
 #include  "crlcore/Utilities.h"
 
 
