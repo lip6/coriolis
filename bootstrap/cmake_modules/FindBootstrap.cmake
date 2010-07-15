@@ -124,7 +124,9 @@
      endif(NOT Boost_FOUND)
    endif(ARGC LESS 1)
    message(STATUS "Found Boost libraries ${Boost_LIB_VERSION} in ${Boost_INCLUDE_DIR}")
-   message(STATUS "  ${Boost_LIBRARIES}")
+   foreach(LIBRARY IN LISTS Boost_LIBRARIES)
+     message(STATUS "  ${LIBRARY}")
+   endforeach(LIBRARY)
  endmacro(setup_boost)
  
 
