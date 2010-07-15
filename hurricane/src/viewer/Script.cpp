@@ -41,9 +41,9 @@
 #include  <sstream>
 #include  "hurricane/Error.h"
 #include  "hurricane/Cell.h"
-#include  "hurricane/viewer/PyCellViewer.h"
 #include  "hurricane/isobar/PyCell.h"
-#include  "hurricane/isobar/Script.h"
+#include  "hurricane/viewer/PyCellViewer.h"
+#include  "hurricane/viewer/Script.h"
 
 
 namespace {

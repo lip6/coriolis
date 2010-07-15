@@ -31,7 +31,6 @@ using namespace std;
 namespace bfs = boost::filesystem;
 
 #include  "hurricane/Warning.h"
-#include  "hurricane/isobar/Script.h"
 
 #include  <QLabel>
 #include  <QLineEdit>
@@ -43,6 +42,7 @@ namespace bfs = boost::filesystem;
 #include  <QVBoxLayout>
 
 #include  "hurricane/viewer/Graphics.h"
+#include  "hurricane/viewer/Script.h"
 #include  "hurricane/viewer/ScriptWidget.h"
 #include  "hurricane/viewer/CellViewer.h"
 

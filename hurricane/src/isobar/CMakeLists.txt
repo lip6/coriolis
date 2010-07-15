@@ -84,19 +84,16 @@
                                     hurricane/isobar/PyUpdateSession.h
                                     hurricane/isobar/PyVertical.h
                        )
-# source2 & include2 for module that are *not* Python wrappers but true
-# Hurricane modules.
-                   set ( sources2   Script.cpp )
-                   set ( includes2  hurricane/isobar/Script.h )
 
 
-               install ( FILES      ${includes}
-                                    ${includes2} DESTINATION include/coriolis2/hurricane/isobar )
-           add_library ( isobar     ${sources} ${sources2} )
+           add_library ( isobar     ${sources} )
+ target_link_libraries ( isobar     hurricane ${PYTHON_LIBRARIES})
            add_library ( Hurricane  MODULE ${sources} ) 
  set_target_properties ( Hurricane  PROPERTIES
                                     COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
                                     PREFIX        ""
                        )
+ target_link_libraries ( Hurricane isobar )
                install ( TARGETS    isobar      DESTINATION lib${LIB_SUFFIX} )
                install ( TARGETS    Hurricane   DESTINATION ${PYTHON_SITE_PACKAGES} )
+               install ( FILES      ${includes} DESTINATION include/coriolis2/hurricane/isobar )

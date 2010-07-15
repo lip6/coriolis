@@ -98,22 +98,28 @@
                    set ( pycpps      PyViewer.cpp
                                      PyCellViewer.cpp
                        )
+# source2 & include2 for module that are *not* Python wrappers but true
+# Hurricane modules.
+                   set ( sources2   Script.cpp )
+                   set ( includes2  hurricane/viewer/Script.h )
 
           qt4_wrap_cpp ( MOC_SRCS    ${mocincludes} )
      qt4_add_resources ( RCC_SRCS    CellViewer.qrc )
 
-           add_library ( viewer      ${cpps} ${MOC_SRCS} ${RCC_SRCS} ${pycpps} )
- target_link_libraries ( viewer      hurricane ${QT_LIBRARIES} ${Boost_LIBRARIES} )
-           add_library ( Viewer      MODULE ${pycpps} )
- target_link_libraries ( Viewer      viewer )
- set_target_properties ( Viewer      PROPERTIES
+           add_library ( viewer      ${cpps} ${MOC_SRCS} ${RCC_SRCS} ${sources2} ${pycpps} )
+ target_link_libraries ( viewer      hurricane isobar ${CONFIGURATION_LIBRARY} ${Boost_LIBRARIES} ${QT_LIBRARIES} )
+           add_library ( pyViewer    MODULE ${pycpps} )
+ target_link_libraries ( pyViewer    viewer )
+ set_target_properties ( pyViewer    PROPERTIES
                                      COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
+                                     OUTPUT_NAME   "Viewer"
                                      PREFIX        ""
                        )
 
 
                install ( FILES       ${includes}
+                                     ${includes2}
                                      ${mocincludes}
                                      ${pyincludes}  DESTINATION include/coriolis2/hurricane/viewer ) 
                install ( TARGETS     viewer         DESTINATION lib${LIB_SUFFIX} )
-               install ( TARGETS     Viewer         DESTINATION ${PYTHON_SITE_PACKAGES} )
+               install ( TARGETS     pyViewer       DESTINATION ${PYTHON_SITE_PACKAGES} )
