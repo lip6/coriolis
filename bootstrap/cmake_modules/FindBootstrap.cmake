@@ -44,6 +44,38 @@
 
 
 #
+# Adds to the CMAKE_MODULE_PATH directories guesseds from project
+# environment variables <PROJECT>_USER_TOP and <PROJECT>_TOP.
+#
+ macro(SETUP_PROJECT_PATHS project)
+   if( NOT("$ENV{${project}_TOP}" STREQUAL "") )
+     message("-- ${project}_TOP is set to $ENV{${project}_TOP}")
+     set(PROJECT_MODULE_PATH "${DESTDIR}$ENV{${project}_TOP}/share/cmake/Modules/")
+     list(INSERT CMAKE_MODULE_PATH 0 "${PROJECT_MODULE_PATH}")
+   endif( NOT("$ENV{${project}_TOP}" STREQUAL "") )
+ 
+   if( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
+     message("-- ${project}_USER_TOP is set to $ENV{${project}_USER_TOP}")
+     set(PROJECT_MODULE_PATH "${DESTDIR}$ENV{${project}_USER_TOP}/share/cmake/Modules/")
+     list(INSERT CMAKE_MODULE_PATH 0 "${PROJECT_MODULE_PATH}")
+   endif( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
+ 
+   list(REMOVE_DUPLICATES CMAKE_MODULE_PATH)
+ endmacro(SETUP_PROJECT_PATHS project)
+
+
+#
+# Displays the contents of CMAKE_MODULE_PATH.
+#
+ macro(print_cmake_module_path)
+   message("-- Components of CMAKE_MODULE_PATH:")
+   foreach(PATH IN LISTS CMAKE_MODULE_PATH)
+     message("--   ${PATH}")
+   endforeach(PATH)
+ endmacro(print_cmake_module_path)
+
+
+#
 # Build <PROJECT>_INCLUDE_DIR & <PROJECT>_LIBRARIES and sets up <PROJECT>_FOUND
 # Usage:  set_library_path(<PROJECT> <library>)
 #
@@ -128,6 +160,24 @@
      message(STATUS "  ${LIBRARY}")
    endforeach(LIBRARY)
  endmacro(setup_boost)
+
+
+#
+# Guess the value of SYS_CONF_DIR according to INSTALLDIR.
+# if INSTALLDIR is either /usr or /opt, we uses the system-wide /etc,
+# otherwise we install under the tool INSTALLDIR/etc.
+#
+ macro(setup_sysconfdir INSTALLDIR)
+   string(REGEX MATCH "^/usr" IS_USR INSTALLDIR)
+   string(REGEX MATCH "^/opt" IS_OPT INSTALLDIR)
+   if(IS_USR OR IS_OPT)
+     message("-- Using system-wide /etc.")
+     set(SYS_CONF_DIR "/etc" CACHE STRING "System configuration directory (/etc)" FORCE)
+   else(IS_USR OR IS_OPT)
+     message("-- Using install tree /etc.")
+     set(SYS_CONF_DIR "etc" CACHE STRING "System configuration directory (/etc)" FORCE)
+   endif(IS_USR OR IS_OPT)
+ endmacro(setup_sysconfdir)
  
 
 #
