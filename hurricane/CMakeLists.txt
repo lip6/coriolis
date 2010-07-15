@@ -28,7 +28,7 @@ LIST(INSERT CMAKE_MODULE_PATH 0 "${HURRICANE_SOURCE_DIR}/cmake_modules/")
 find_package(Bootstrap REQUIRED)
 set_cmake_policies()
 set_lib_link_mode()
-setup_boost(regex)
+setup_boost(regex filesystem)
 
 SET(QT_USE_QTXML "true")
 FIND_PACKAGE(Qt4 REQUIRED) # find and setup Qt4 for this project
