@@ -2,12 +2,19 @@ PROJECT(testOAWrapper)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0)
 
-SET(CMAKE_MODULE_PATH "$ENV{CORIOLIS_USER_TOP}/share/cmake/Modules/"
-                      "$ENV{CORIOLIS_TOP}/share/cmake/Modules/"
-                      "$ENV{IO_USER_TOP}/share/cmake/Modules/"
-                      "$ENV{IO_TOP}/share/cmake/Modules/"
-                      "$ENV{CHAMS_USER_TOP}/share/cmake/Modules/"
-                      "$ENV{CHAMS_TOP}/share/cmake/Modules/")
+LIST(INSERT CMAKE_MODULE_PATH 0 "$ENV{BOOTSTRAP_TOP}/share/cmake/Modules/")
+find_package(Bootstrap REQUIRED)
+setup_project_paths(VLSISAPD)
+setup_project_paths(CORIOLIS)
+
+LIST(INSERT CMAKE_MODULE_PATH 0 "${CRLCORE_SOURCE_DIR}/cmake_modules/")
+
+
+LIST(INSERT CMAKE_MODULE_PATH 0 "${CRLCORE_SOURCE_DIR}/cmake_modules/")
+LIST(INSERT CMAKE_MODULE_PATH 0 
+	                         "$ENV{CHAMS_USER_TOP}/share/cmake/Modules/"
+				 "$ENV{CHAMS_TOP}/share/cmake/Modules/")
+print_cmake_module_path()
 
 FIND_PACKAGE(HURRICANE REQUIRED)
 FIND_PACKAGE(CORIOLIS REQUIRED)

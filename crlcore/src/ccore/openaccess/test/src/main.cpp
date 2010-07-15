@@ -8,6 +8,7 @@
 // x-----------------------------------------------------------------x
 
 #include <iostream>
+#include <assert.h>
 
 using namespace std;
 
@@ -19,6 +20,7 @@ using namespace Hurricane;
 
 #include  "crlcore/Catalog.h"
 #include  "crlcore/RealTechnologyParser.h"
+#include  "crlcore/SymbolicTechnologyParser.h"
 #include  "crlcore/AllianceFramework.h"
 
 #include "hurricaneAMS/environment/AnalogEnv.h"
@@ -33,9 +35,12 @@ namespace {
 };
 
 void testCell(Cell* dev){
-    if(dev)
+    if(dev){
         cout << "Cell created" << endl;
-
+    }else{
+        cout << "Cell not created" << endl;
+        return;
+    }
 //    cout << "driving GDS" << endl;
 //    CRL::GdsDriver(dev).save("/tmp/testGDS");
 
@@ -72,27 +77,21 @@ void testAnalog(char* pathToConf){
                                             TransistorFamily::NMOS,
                                             bulkConnected);
 
-    cout << "testing cell myCM" << endl;
-
+    cout << "testing cell myCM" << endl;    
     testCell(dev);
     db->destroy();
 }
 
 void testNum(){
     cout << "creating cell from sxlib inv_x1" << endl;
-    CRL::AllianceFramework::get();
-    DataBase* db = DataBase::getDB();
-    assert(db != NULL);
-    CRL::RealTechnologyParser::load(db, "/asim/coriolis2/etc/coriolis2/technology.freePDK45.s2r.xml");
+    DataBase* db = NULL;
     Cell* mySxlibCell = CRL::AllianceFramework::get()->getCell( "inv_x1", CRL::Catalog::State::Views );
     cout << "testing cell from sxlib inv_x1" << endl;
     testCell(mySxlibCell);
     db = DataBase::getDB();
     assert(db != NULL);
-    db->destroy();    
+    db->destroy();
 }
-
-
 
 int main(int argc,char** argv) {
     if(argc != 2)
