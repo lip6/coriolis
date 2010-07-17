@@ -21,7 +21,8 @@ endif ( HMETIS_FOUND )
                        )
 
            add_library ( metis         ${cpps} ${mocCpps} )
- target_link_libraries ( metis         ${NIMBUS_LIBRARIES}
+ target_link_libraries ( metis         ${HMETIS_LIBRARIES}
+                                       ${NIMBUS_LIBRARIES}
                                        ${HURRICANE_PYTHON_LIBRARIES}
                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
                                        ${HURRICANE_LIBRARIES}
