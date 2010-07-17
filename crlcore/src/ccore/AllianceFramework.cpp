@@ -63,6 +63,8 @@ namespace CRL {
     , _parentLibrary(NULL)
     , _routingGauges()
   {
+  //cerr << "AllianceFramework::AllianceFramework()" << endl;
+
   // Triggers System singleton loading.
     System::get ();
 

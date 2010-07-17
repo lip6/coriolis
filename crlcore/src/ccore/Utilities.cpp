@@ -237,6 +237,23 @@ namespace CRL {
     bfs::path sysConfDir ( SYS_CONF_DIR );
     if ( not sysConfDir.has_root_path() ) {
       if ( arguments.count("coriolis_top") ) {
+        // const boptions::variable_value& value = arguments["coriolis_top"];
+        // cerr << "value:"
+        //      << " empty:"     << boolalpha << value.empty()
+        //      << " defaulted:" << boolalpha << value.defaulted()
+        //      << endl;
+        // const type_info& info = value.value().type();
+        // cerr << "type_info:" << info.name()
+        //      << " vs. " << typeid(string).name() << endl;
+        // cerr << "Equal:" << boolalpha << (info == typeid(std::string)) << endl;
+
+        // const type_info& info2 = typeid(string);
+        // cerr << (void*)&(typeid(string))
+        //      << " vs. " << (void*)&info2
+        //      << " vs. " << (void*)&info
+        //      << endl;
+        // cerr << "any_cast<string>:" << boost::any_cast<string>(value.value()) << endl;
+
         sysConfDir = arguments["coriolis_top"].as<string>() / sysConfDir;
       } else {
         cerr << Error("Environment variable CORIOLIS_TOP not set,"

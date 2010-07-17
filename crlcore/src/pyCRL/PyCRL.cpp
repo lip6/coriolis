@@ -65,9 +65,7 @@ extern "C" {
 
 
   static PyMethodDef PyCRL_Methods[] =
-    { { "getAllianceFramework", (PyCFunction)PyAllianceFramework_get, METH_NOARGS
-                              , "Gets the Alliance Framework." }
-    , { "createPartRing"      , (PyCFunction)PyToolBox_createPartRing, METH_VARARGS
+    { { "createPartRing"      , (PyCFunction)PyToolBox_createPartRing, METH_VARARGS
                               , "Partial build of a ring" }
     , {NULL, NULL, 0, NULL}     /* sentinel */
     };
@@ -103,12 +101,16 @@ extern "C" {
 
     Py_INCREF ( &PyTypeCatalog );
     PyModule_AddObject ( module, "Catalog", (PyObject*)&PyTypeCatalog );
+    Py_INCREF ( &PyTypeAllianceFramework );
+    PyModule_AddObject ( module, "AllianceFramework", (PyObject*)&PyTypeAllianceFramework );
 
     PyCatalog_postModuleInit ();
     
     PyObject* dictionnary = PyModule_GetDict ( module );
 
   //DbULoadConstants ( dictionnary );
+
+    trace << "CRL.so loaded " << (void*)&typeid(string) << endl;
   }
 
   

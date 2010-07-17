@@ -65,6 +65,26 @@ extern "C" {
 #if defined(__PYTHON_MODULE__)
 
 
+  static PyObject* PyAllianceFramework_get ( PyObject* )
+  {
+    trace << "PyAllianceFramework_get()" << endl;
+
+    AllianceFramework*   af   = NULL;
+    PyAllianceFramework* pyAf = NULL;
+    
+    HTRY
+    af = AllianceFramework::get ();
+
+    pyAf = PyObject_NEW ( PyAllianceFramework, &PyTypeAllianceFramework );
+    if ( pyAf == NULL ) return NULL;
+
+    pyAf->_object = af;
+    HCATCH
+
+    return (PyObject*)pyAf;
+  }
+
+
   extern PyObject* PyAllianceFramework_getLibrary ( PyAllianceFramework* self, PyObject* args )
   {
     trace << "PyAllianceFramework_getLibrary ()" << endl;
@@ -160,12 +180,18 @@ extern "C" {
 
 
   PyMethodDef PyAllianceFramework_Methods[] =
-    { { "getLibrary"   , (PyCFunction)PyAllianceFramework_getLibrary, METH_VARARGS, "Gets a Library, by index." }
-    , { "getCell"      , (PyCFunction)PyAllianceFramework_getCell   , METH_VARARGS, "Gets an Alliance Cell." }
-    , { "saveCell"     , (PyCFunction)PyAllianceFramework_saveCell  , METH_VARARGS, "Saves an Alliance Cell." }
-    , { "createCell"   , (PyCFunction)PyAllianceFramework_createCell, METH_VARARGS, "Create a Cell in the Alliance framework." }
-  //, { "destroy"      , (PyCFunction)PyAllianceFramework_destroy   , METH_NOARGS
-  //                   , "Destroy the associated hurricane object. The python object remains." }
+    { { "get"                 , (PyCFunction)PyAllianceFramework_get       , METH_NOARGS|METH_STATIC
+                              , "Gets the Alliance Framework." }
+    , { "getLibrary"          , (PyCFunction)PyAllianceFramework_getLibrary, METH_VARARGS
+                              , "Gets a Library, by index." }
+    , { "getCell"             , (PyCFunction)PyAllianceFramework_getCell   , METH_VARARGS
+                              , "Gets an Alliance Cell." }
+    , { "saveCell"            , (PyCFunction)PyAllianceFramework_saveCell  , METH_VARARGS
+                              , "Saves an Alliance Cell." }
+    , { "createCell"          , (PyCFunction)PyAllianceFramework_createCell, METH_VARARGS
+                              , "Create a Cell in the Alliance framework." }
+  //, { "destroy"             , (PyCFunction)PyAllianceFramework_destroy   , METH_NOARGS
+  //                          , "Destroy the associated hurricane object. The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 
@@ -180,26 +206,6 @@ extern "C" {
 // x=================================================================x
 // |          "PyAllianceFramework" Shared Library Code Part         |
 // x=================================================================x
-
-
-  PyObject* PyAllianceFramework_get ( PyObject *module )
-  {
-    trace << "PyAllianceFramework_get()" << endl;
-
-    AllianceFramework*   af   = NULL;
-    PyAllianceFramework* pyAf = NULL;
-    
-    HTRY
-    af = AllianceFramework::get ();
-
-    pyAf = PyObject_NEW ( PyAllianceFramework, &PyTypeAllianceFramework );
-    if ( pyAf == NULL ) return NULL;
-
-    pyAf->_object = af;
-    HCATCH
-
-    return (PyObject*)pyAf;
-  }
 
 
 
