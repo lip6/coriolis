@@ -46,6 +46,7 @@
            add_library ( mauka         ${cpps} ${mocCpps} ${pyCpps} )
  target_link_libraries ( mauka         ${METIS_LIBRARIES}
                                        ${NIMBUS_LIBRARIES}
+                                       ${CORIOLIS_LIBRARIES}
                                        ${HURRICANE_PYTHON_LIBRARIES}
                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
                                        ${HURRICANE_LIBRARIES}
@@ -60,13 +61,15 @@
                                        ${PYTHON_LIBRARIES} -lutil
                        )
 
-           add_library ( Mauka         MODULE ${pyCpps} )
- set_target_properties ( Mauka         PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
-                                       PREFIX ""
+           add_library ( pyMauka       MODULE ${pyCpps} )
+ set_target_properties ( pyMauka       PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
+                                                  PREFIX        ""
+                                                  OUTPUT_NAME   "Mauka"
                        )
+ target_link_libraries ( pyMauka       mauka )
 
                install ( TARGETS       mauka           DESTINATION lib${LIB_SUFFIX} )
-               install ( TARGETS       Mauka           DESTINATION ${PYTHON_SITE_PACKAGES} )
+               install ( TARGETS       pyMauka         DESTINATION ${PYTHON_SITE_PACKAGES} )
                install ( FILES         ${includes}
                                        ${mocIncludes}
                                        ${pyIncludes}   DESTINATION include/coriolis2/mauka ) 
