@@ -205,7 +205,7 @@ def pyAlimVerticalRail ( cell, xcoord ) :
 #  print "Placement of vertical rail" 
 #  print "Reference  ", reference
   
-  power_cell = CRL.getAllianceFramework().getCell ( "powmid_x0", CRL.Catalog.State.Views )
+  power_cell = CRL.AllianceFramework.get().getCell ( "powmid_x0", CRL.Catalog.State.Views )
   
   Height_power = power_cell.getAbutmentBox().getHeight()
   Width_power  = power_cell.getAbutmentBox().getWidth()
@@ -363,7 +363,7 @@ def pyAlimHorizontalRail ( cell, ycoord ) :
   # Create horizontal rail 
   rail_horizontal = Horizontal ( pin1 , pin2 , metal4 , pin_y, pin_height, 0 , 0 )
    
-  power_hur_cell  = CRL.getAllianceFramework().getCell ( "powmid_x0", CRL.Catalog.State.Views )
+  power_hur_cell  = CRL.AllianceFramework.get().getCell ( "powmid_x0", CRL.Catalog.State.Views )
   Width_power     = power_hur_cell.getAbutmentBox().getWidth()  
   nb_pitchs       = Width_power / DbU_lambda(PITCH)       # avoir l'interval du cellule power  
   
@@ -1635,7 +1635,7 @@ def create_inst ( model, name, cell ) :
     raise err
     
   # Load model in the database
-  modelmastercell = CRL.getAllianceFramework().getCell ( model, CRL.Catalog.State.Views )
+  modelmastercell = CRL.AllianceFramework.get().getCell ( model, CRL.Catalog.State.Views )
     
   # Error : if the model is not found in the libraries
   if not modelmastercell :
@@ -1832,7 +1832,7 @@ def temporarySave ( cell = None ) :
 
   UpdateSession.open()
 
-  framework = CRL.getAllianceFramework()
+  framework = CRL.AllianceFramework.get()
   
   if cell == None :
     for cell in framework.getLibrary(0).getCells():
