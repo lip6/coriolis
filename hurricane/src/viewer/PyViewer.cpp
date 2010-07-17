@@ -90,6 +90,8 @@ extern "C" {
     PyObject* dictionnary = PyModule_GetDict ( module );
 
   //DbULoadConstants ( dictionnary );
+
+    trace << "Viewer.so loaded " << (void*)&typeid(string) << endl;
   }
 
   
