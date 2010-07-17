@@ -297,7 +297,7 @@ class ClockBuffer :
     self.net = self.cell._hur_cell.getNet ( netname )
     self.ck_b = Signal ( "ck_b%d"%nbCkBuf, 1 )
 
-    modelMasterCell = CRL.getAllianceFramework().getCell ( "buf_x2", CRL.Catalog.State.Views )
+    modelMasterCell = CRL.AllianceFramework.get().getCell ( "buf_x2", CRL.Catalog.State.Views )
     if not modelMasterCell :
       err = "Stratus Error : ClockBuffer : Cannot find model cell : buf_x2 in database !\n"
       raise err

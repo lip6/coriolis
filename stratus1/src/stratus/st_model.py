@@ -142,7 +142,7 @@ class Model :
     # Creation of the database 
     if not FRAMEWORK :
      #Initialize()
-      FRAMEWORK = CRL.getAllianceFramework()
+      FRAMEWORK = CRL.AllianceFramework.get()
     
     self._st_vdds  = []
     self._st_vsss  = []
