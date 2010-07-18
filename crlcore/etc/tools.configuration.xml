@@ -81,6 +81,8 @@
   <parameter id="kite.globalRipupLimit"           type="int"        value="5"       min="1"/>
   <parameter id="kite.longGlobalRipupLimit"       type="int"        value="5"       min="1"/>
   <parameter id="kite.eventsLimit"                type="int"        value="4000000" min="1"/>
+  <!-- Stratus1 -->
+  <parameter id="stratus1.mappingName"            type="string"     value="./stratus2sxlib.xml"/>
   <layout>
     <!-- Miscellaneous -->
     <tab name="Misc.">
@@ -139,6 +141,10 @@
       <widget id="kite.globalRipupLimit"     label="Globals"           column="1" spinbox="true"/>
       <widget id="kite.longGlobalRipupLimit" label="Long Globals"      column="1" spinbox="true"/>
       <widget type="rule"/>
+    </tab>
+    <tab name="Stratus1">
+      <widget type="title" label="Stratus1 - Netlist &amp; Layout Capture"/>
+      <widget id="stratus1.mappingName" label="Virtual Library Translation" column="0"/>
     </tab>
   </layout>
 </configuration>

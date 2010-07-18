@@ -86,9 +86,20 @@ namespace {
   }
 
 
+  void  stratus1MappingNameChanged ( Cfg::Parameter* p )
+  {
+    bfs::path stratusMappingName = p->asString();
+    if ( not stratusMappingName.has_root_directory() ) {
+      stratusMappingName = System::getPath("etc") / stratusMappingName;
+    }
+    setenv ( "STRATUS_MAPPING_NAME", stratusMappingName.string().c_str(), 1 );
+  }
+
+
   std::string  environmentMapper ( std::string environmentName )
   {
-    if ( environmentName == "CORIOLIS_TOP" ) return "coriolis_top";
+    if      ( environmentName == "CORIOLIS_TOP"         ) return "coriolis_top";
+    else if ( environmentName == "STRATUS_MAPPING_NAME" ) return "stratus_mapping_name";
     return "";
   }
 
@@ -224,8 +235,10 @@ namespace CRL {
   // Environment variables reading.
     boptions::options_description options ("Environment Variables");
     options.add_options()
-      ( "coriolis_top", boptions::value<string>()->default_value(CORIOLIS_TOP)
-                      , "The root directory of the Coriolis installation tree." );
+      ( "coriolis_top"        , boptions::value<string>()->default_value(CORIOLIS_TOP)
+                              , "The root directory of the Coriolis installation tree." )
+      ( "stratus_mapping_name", boptions::value<string>()
+                              , "Stratus virtual cells mapping." );
 
     boptions::variables_map arguments;
     boptions::store  ( boptions::parse_environment(options,environmentMapper), arguments );
@@ -266,12 +279,13 @@ namespace CRL {
   // Default configuration loading.
     Cfg::Configuration* conf = Cfg::Configuration::get ();
 
-    Cfg::getParamBool("misc.catchCore"    ,true )->registerCb ( catchCoreChanged );
-    Cfg::getParamBool("misc.verboseLevel1",true )->registerCb ( verboseLevel1Changed );
-    Cfg::getParamBool("misc.verboseLevel2",true )->registerCb ( verboseLevel2Changed );
-    Cfg::getParamBool("misc.info"         ,false)->registerCb ( infoChanged );
-    Cfg::getParamBool("misc.logMode"      ,true )->registerCb ( logModeChanged );
-    Cfg::getParamInt ("misc.traceLevel"   ,1000 )->registerCb ( traceLevelChanged );
+    Cfg::getParamBool  ("misc.catchCore"      ,true )->registerCb ( catchCoreChanged );
+    Cfg::getParamBool  ("misc.verboseLevel1"  ,true )->registerCb ( verboseLevel1Changed );
+    Cfg::getParamBool  ("misc.verboseLevel2"  ,true )->registerCb ( verboseLevel2Changed );
+    Cfg::getParamBool  ("misc.info"           ,false)->registerCb ( infoChanged );
+    Cfg::getParamBool  ("misc.logMode"        ,true )->registerCb ( logModeChanged );
+    Cfg::getParamInt   ("misc.traceLevel"     ,1000 )->registerCb ( traceLevelChanged );
+    Cfg::getParamString("stratus1.mappingName","./stratus2sxlib.xml")->registerCb ( stratus1MappingNameChanged );
 
   // Immediate update from the configuration.
     catchCoreChanged     ( Cfg::getParamBool("misc.catchCore"    ) );
@@ -280,6 +294,11 @@ namespace CRL {
     infoChanged          ( Cfg::getParamBool("misc.info"         ) );
     logModeChanged       ( Cfg::getParamBool("misc.logMode"      ) );
     traceLevelChanged    ( Cfg::getParamInt ("misc.traceLevel"   ) );
+
+    bfs::path stratusMappingName;
+    if ( arguments.count("stratus_mapping_name") ) {
+      Cfg::getParamString( "stratus1.mappingName")->setString ( arguments["stratus_mapping_name"].as<string>() );
+    }
 
     bool      systemConfFound = false;
     bfs::path systemConfFile  = sysConfDir / "tools.configuration.xml";
@@ -387,13 +406,8 @@ namespace CRL {
   {
     static bfs::path nullPath ("no_path");
 
-    cerr << "Looking up: " << key << endl;
-
     map<const string,bfs::path>::const_iterator ipath = _pathes.find ( key );
     if ( ipath == _pathes.end() ) return nullPath;
-
-    cerr << "Successfull lookup: "; cerr.flush();
-    cerr << (*ipath).second.string() << endl;
 
     return (*ipath).second;
   }
