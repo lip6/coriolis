@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <environment>
-  <variable name="CELL_TOP" value="/opt/alliance-5.0"/>
+  <variable name="CELL_TOP" value="/asim/alliance"/>
   <technologies>
     <hurricane>
       <config>${CORIOLIS_TOP}/etc/coriolis2/technology.symbolic.xml</config>
