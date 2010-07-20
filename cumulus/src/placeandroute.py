@@ -104,6 +104,7 @@ def pyPlaceGlue ( cell ) :
 
   mauka = Mauka.create ( cell )
   mauka.run ()
+  temporarySave ()
 
        
 #############
