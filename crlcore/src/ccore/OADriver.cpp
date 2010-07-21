@@ -4,7 +4,7 @@
 using namespace Hurricane;
 
 #include "crlcore/OADriver.h"
-#include "openaccess/OpenAccessWrapper.h"
+#include "openaccess/OpenAccessDriver.h"
 
 namespace CRL {
     OADriver::OADriver(Cell* cell) : _cell(cell) {}

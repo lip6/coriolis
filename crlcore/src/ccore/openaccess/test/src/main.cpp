@@ -23,6 +23,8 @@ using namespace Hurricane;
 #include  "crlcore/SymbolicTechnologyParser.h"
 #include  "crlcore/AllianceFramework.h"
 
+using namespace CRL;
+
 #include "hurricaneAMS/environment/AnalogEnv.h"
 #include "hurricaneAMS/devices/SimpleCurrentMirror.h"
 
@@ -34,23 +36,24 @@ namespace {
     static string libName = "WorkLibrary";
 };
 
-void testCell(Cell* dev){
+void testCell(Cell* dev,char* pathToTest){
     if(dev){
         cout << "Cell created" << endl;
     }else{
         cout << "Cell not created" << endl;
         return;
     }
-//    cout << "driving GDS" << endl;
-//    CRL::GdsDriver(dev).save("/tmp/testGDS");
+    system((string("mkdir -p ") + string(pathToTest)).c_str());
+    cout << "driving GDS" << endl;
+    GdsDriver(dev).save(string(pathToTest) + "/GDSdrive");
 
     cout << "driving OA" << endl;
-    CRL::OADriver(dev).save("/tmp/testOA");
+    OADriver(dev).save(string(pathToTest) + "/OAdrive");
 }
 
-void testAnalog(char* pathToConf){
+void testAnalog(char* pathToConf,char* pathToTest){
     AnalogEnv::create(pathToConf);//create Database ...
-    cout << "analog environment loaded and database created" << endl;    
+    cout << "analog environment loaded and database created" << endl;
     DataBase* db = DataBase::getDB();
     assert(db != NULL);
     Library* rootLib = db->getRootLibrary();
@@ -77,28 +80,27 @@ void testAnalog(char* pathToConf){
                                             TransistorFamily::NMOS,
                                             bulkConnected);
 
-    cout << "testing cell myCM" << endl;    
-    testCell(dev);
+    cout << "testing cell myCM" << endl;
+    testCell(dev,pathToTest);
     db->destroy();
 }
 
-void testNum(){
+void testNum(char* pathToConf,char* pathToTest){
     cout << "creating cell from sxlib inv_x1" << endl;
-    DataBase* db = NULL;
-    Cell* mySxlibCell = CRL::AllianceFramework::get()->getCell( "inv_x1", CRL::Catalog::State::Views );
+    dbo_ptr<DataBase>          db   ( DataBase::create() );    
+    dbo_ptr<AllianceFramework> af   ( AllianceFramework::create() );    
+    Cell*                      cell = NULL;
+    cell = af->getCell("inv_x1", Catalog::State::Views );
     cout << "testing cell from sxlib inv_x1" << endl;
-    testCell(mySxlibCell);
-    db = DataBase::getDB();
-    assert(db != NULL);
-    db->destroy();
+    testCell(cell,pathToTest);
 }
 
 int main(int argc,char** argv) {
-    if(argc != 2)
+    if(argc != 3)
         exit(-5);
 
-    testAnalog(argv[1]);
-//    testNum();
+    //   testAnalog(argv[1],argv[2]);
+    testNum(argv[1],argv[2]);
 
     cout << "ending normally" << endl;
     return 0;

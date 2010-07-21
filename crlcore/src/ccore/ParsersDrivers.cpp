@@ -62,7 +62,7 @@
 # include  "Spice.h"
 # include  "Bookshelf.h"
 # include  "LefDef.h"
-# include  "openaccess/OpenAccessWrapper.h"
+# include  "openaccess/OpenAccessDriver.h"
 
 
 namespace {

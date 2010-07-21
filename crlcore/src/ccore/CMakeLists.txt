@@ -133,7 +133,7 @@
  if ( OA_FOUND )
                            include_directories ( ${OA_INCLUDE_DIR} )
  endif ( OA_FOUND )
-                         set (openaccess_cpps openaccess/OpenAccessWrapper.cpp )
+                         set (openaccess_cpps openaccess/OpenAccessDriver.cpp )
 
                          set ( VstParserSourceDir  ${CRLCORE_SOURCE_DIR}/src/ccore/alliance/vst )
                          set ( VstParserBinaryDir  ${CRLCORE_BINARY_DIR}/src/ccore/alliance/vst )
