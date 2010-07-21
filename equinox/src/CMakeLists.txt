@@ -5,6 +5,7 @@
                          ${EQUINOX_SOURCE_DIR}/src/intervalTree/src
                          ${HURRICANE_INCLUDE_DIR}
                          ${CORIOLIS_INCLUDE_DIR}
+                         ${Boost_INCLUDE_DIRS}
                        )
 
 
@@ -35,8 +36,12 @@
                    set ( intervalTreeCpps     intervalTree/src/IntervalTree.cpp )
           qt4_wrap_cpp ( mocCpps       ${mocIncludes} )
 
+           add_library ( intervalTree   ${intervalTreeCpps} )
+ target_link_libraries ( intervalTree   ${HURRICANE_LIBRARIES} )
+
            add_library ( equinox       ${cpps} ${mocCpps} )
- target_link_libraries ( equinox       ${CORIOLIS_LIBRARIES}
+ target_link_libraries ( equinox       intervalTree
+                                       ${CORIOLIS_LIBRARIES}
                                        ${HURRICANE_PYTHON_LIBRARIES}
                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
                                        ${HURRICANE_LIBRARIES}
@@ -50,7 +55,6 @@
                                        ${LIBXML2_LIBRARIES}
                                        ${PYTHON_LIBRARIES} -lutil
                        )
-           add_library ( intervalTree   ${intervalTreeCpps} )
 
                install ( TARGETS        equinox intervalTree DESTINATION lib${LIB_SUFFIX} )
                install ( FILES          ${includes}
