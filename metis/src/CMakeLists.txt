@@ -9,6 +9,7 @@ endif ( HMETIS_FOUND )
                          ${CORIOLIS_INCLUDE_DIR} 
                          ${HURRICANE_INCLUDE_DIR} 
                          ${CONFIGURATION_INCLUDE_DIR} 
+                         ${Boost_INCLUDE_DIRS}
                        )
                    set ( includes      metis/hmetis.h
                                        metis/MetisGraph.h
@@ -23,6 +24,7 @@ endif ( HMETIS_FOUND )
            add_library ( metis         ${cpps} ${mocCpps} )
  target_link_libraries ( metis         ${HMETIS_LIBRARIES}
                                        ${NIMBUS_LIBRARIES}
+                                       ${CORIOLIS_LIBRARIES}
                                        ${HURRICANE_PYTHON_LIBRARIES}
                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
                                        ${HURRICANE_LIBRARIES}
