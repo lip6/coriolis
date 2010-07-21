@@ -5,6 +5,7 @@
                          ${HURRICANE_INCLUDE_DIR} 
                          ${CORIOLIS_INCLUDE_DIR}
                          ${CONFIGURATION_INCLUDE_DIR}
+                         ${Boost_INCLUDE_DIRS}
                        )
                    set ( includes nimbus/Configuration.h
                                   nimbus/SplitterContact.h nimbus/SplitterContacts.h
@@ -37,7 +38,8 @@
       
 
            add_library ( nimbus ${cpps} )
- target_link_libraries ( nimbus  ${HURRICANE_PYTHON_LIBRARIES}
+ target_link_libraries ( nimbus  ${CORIOLIS_LIBRARIES}  
+                                 ${HURRICANE_PYTHON_LIBRARIES}
                                  ${HURRICANE_GRAPHICAL_LIBRARIES}
                                  ${HURRICANE_LIBRARIES}
                                  ${CONFIGURATION_LIBRARY}
