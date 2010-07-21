@@ -17,20 +17,21 @@
 #
 # Specific Apple OSX setup
 #
- macro(setup_apple)
-   if(APPLE)
-     execute_process(
-       COMMAND sw_vers -productVersion
-       OUTPUT_VARIABLE OSX_VERSION
-       OUTPUT_STRIP_TRAILING_WHITESPACE)
-     message(STATUS "OSX_VERSION='${OSX_VERSION}'")
-     if(${OSX_VERSION} MATCHES "^10\\.[012345]\\.?")
-       message(STATUS "OSX < 10.6")
-     else(${OSX_VERSION} MATCHES "^10\\.[012345]\\.?")
-       set(CMAKE_OSX_ARCHITECTURES "i386;ppc") # for QT4.5 32bits on snow leopard
-     endif(${OSX_VERSION} MATCHES "^10\\.[012345]\\.?")
-   endif(APPLE)
- endmacro(setup_apple)
+#  This is no more needed since QT 4.6 is available for Mac OSX 10.6
+# macro(setup_apple)
+#   if(APPLE)
+#     execute_process(
+#       COMMAND sw_vers -productVersion
+#       OUTPUT_VARIABLE OSX_VERSION
+#       OUTPUT_STRIP_TRAILING_WHITESPACE)
+#     message(STATUS "OSX_VERSION='${OSX_VERSION}'")
+#     if(${OSX_VERSION} MATCHES "^10\\.[012345]\\.?")
+#       message(STATUS "OSX < 10.6")
+#     else(${OSX_VERSION} MATCHES "^10\\.[012345]\\.?")
+#       set(CMAKE_OSX_ARCHITECTURES "i386;ppc") # for QT4.5 32bits on snow leopard
+#     endif(${OSX_VERSION} MATCHES "^10\\.[012345]\\.?")
+#   endif(APPLE)
+# endmacro(setup_apple)
 
 
 
