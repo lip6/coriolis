@@ -9,6 +9,7 @@ endif ( CHECK_DETERMINISM )
                          ${CORIOLIS_INCLUDE_DIR} 
                          ${HURRICANE_INCLUDE_DIR} 
                          ${CONFIGURATION_INCLUDE_DIR} 
+                         ${Boost_INCLUDE_DIRS}
                        )
                    set ( includes      katabatic/Configuration.h
                                        katabatic/AutoContact.h     katabatic/AutoContacts.h
@@ -48,6 +49,7 @@ endif ( CHECK_DETERMINISM )
 
            add_library ( katabatic  ${cpps} ${mocCpps} )
  target_link_libraries ( katabatic  ${KNIK_LIBRARIES}
+                                    ${CORIOLIS_LIBRARIES}
                                     ${HURRICANE_PYTHON_LIBRARIES}
                                     ${HURRICANE_GRAPHICAL_LIBRARIES}
                                     ${HURRICANE_LIBRARIES}
