@@ -5,6 +5,7 @@
                          ${KNIK_SOURCE_DIR}/src/flute-2.4/src
                          ${HURRICANE_INCLUDE_DIR} 
                          ${CORIOLIS_INCLUDE_DIR} 
+                         ${Boost_INCLUDE_DIRS}
                        )
                    set ( includes      knik/Configuration.h
                                        knik/Vertex.h           knik/Vertexes.h
@@ -42,6 +43,9 @@
 
 
            add_library ( flute        ${fluteCpps} )
+ target_link_libraries ( flute        ${HURRICANE_LIBRARIES}
+                                      ${CORIOLIS_LIBRARIES}
+                       )
            add_library ( knik         ${cpps} ${mocCpps} )
  target_link_libraries ( knik         flute
                                       ${HURRICANE_PYTHON_LIBRARIES}
