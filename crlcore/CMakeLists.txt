@@ -26,7 +26,9 @@
  find_package(OPENACCESS)
  find_package(VLSISAPD REQUIRED)
  find_package(HURRICANE REQUIRED)
- include(UseLATEX)
+ if(BUILD_DOC)
+   include(UseLATEX)
+ endif(BUILD_DOC)
  
  add_subdirectory(src)
  add_subdirectory(etc)
