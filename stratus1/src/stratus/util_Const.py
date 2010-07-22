@@ -65,7 +65,7 @@ def btol ( aDigit ) :
   elif aDigit == '1' : digit = 1
   else :
     err = "\n[Stratus ERROR] : Invalid digit \'%c\' in boolean string \"%s\"\n" % ( aDigit, LV_const )
-    raise err
+    raise Exception ( err )
 
   return digit
 
@@ -82,7 +82,7 @@ def otol ( aDigit ) :
 
   if digit < 0 :
     err = "\n[Stratus ERROR] : Invalid digit \'%c\' in octal string \"%s\".\n" % ( aDigit, LV_const )
-    raise err
+    raise Exception ( err )
 
   return digit
 
@@ -105,7 +105,7 @@ def xtol ( aDigit ) :
 
   if digit < 0 :
     err = "\n[Stratus ERROR] : Invalid digit \'%c\' in hexadecimal string \"%s\".\n" % ( aDigit, LV_const )
-    raise err
+    raise Exception ( err )
 
   return digit
 
@@ -126,7 +126,7 @@ def ltox ( aDigit ) :
 
   if digit == '\0' :
     err = "\n[Stratus ERROR] : Invalid number %d in hexadecimal conversion.\n" % aDigit
-    raise err
+    raise Exception ( err )
 
   return digit
 
@@ -151,7 +151,7 @@ class newxl :
   
     LV_const = asConst
 
-    if type ( asConst ) != types.StringType : raise "\n[Stratus ERROR] : the constant must be described in a string.\n"
+    if type ( asConst ) != types.StringType : raise Exception ( "\n[Stratus ERROR] : the constant must be described in a string.\n" )
   
     base   = 1
     offset = 2
@@ -162,10 +162,10 @@ class newxl :
       elif asConst[1] == 'o' or asConst[1] == 'O' : base = 3
       else : 
         err = "\n[Stratus ERROR] : one has to specify the basis of the constant : 0b or 0x or 0o.\n"
-        raise err
+        raise Exception ( err )
     else :
       err = "\n[Stratus ERROR] : one has to specify the basis of the constant : 0b or 0x or 0o.\n"
-      raise err
+      raise Exception ( err )
   
     length = len ( asConst )
   
@@ -234,7 +234,7 @@ class newxl :
 
     if i >= XLONG_SIZE :
       err = "\n[Stratus ERROR] : Requested bit", aBit, "is out of range\n"
-      raise err
+      raise Exception ( err )
   
     if   self._l[i] & mask : return 1L
     else                   : return 0L
@@ -249,7 +249,7 @@ class newxl :
 
     if i >= XLONG_SIZE :
       err = "\n[Stratus ERROR] : Requested hexa %ld is out of range.\n" % aBit
-      raise err
+      raise Exception ( err )
 
     return ( ( self._l[i] ) >> shift ) & 15
 

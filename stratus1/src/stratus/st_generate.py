@@ -66,15 +66,15 @@ def Generate ( model_name, inst_name, param = {} ) :
   # Error : if the model is not a string
   if type ( model_name ) != types.StringType :
     err = "\n[Stratus ERROR] Generate : the model must be described in a string.\n"
-    raise err
+    raise Exception ( err )
   if type (  inst_name ) != types.StringType :
     err = "\n[Stratus ERROR] Generate : the model must be described in a string.\n"
-    raise err
+    raise Exception ( err )
 
   # Error : spaces are forbidden
   if re.search ( " ", inst_name ) :
     err = "\n[Stratus ERROR] Generate : " + inst_name + " the name of the model \"" + model_name + "\" can not contain a space.\n"
-    raise err
+    raise Exception ( err )
   # Warning : the name can not contain capitalized letters
   if re.search ( "[A-Z]", inst_name ) :
     print "[Stratus Warning] Generate : Upper case letters are not supported, the name", inst_name, "is lowered."

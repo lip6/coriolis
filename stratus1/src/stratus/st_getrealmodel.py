@@ -57,7 +57,7 @@ def InitBV () :
     myP.Parse ( os.environ['STRATUS_MAPPING_NAME'] )
   else :
     err = "\n[Stratus ERROR] Virtual library : No file found in order to parse.\nCheck STRATUS_MAPPING_NAME.\n"
-    raise err    
+    raise Exception ( err )    
 
 def GetRealModel ( model ) :
   myP = Parser()
@@ -66,7 +66,7 @@ def GetRealModel ( model ) :
     myP.Parse ( os.environ['STRATUS_MAPPING_NAME'] )
   else :
     err = "\n[Stratus ERROR] Virtual library : No file found in order to parse.\nCheck STRATUS_MAPPING_NAME.\n"
-    raise err
+    raise Exception ( err )
 
   return myP._realCell[model], myP._inOut[model]    
 
@@ -77,7 +77,7 @@ def GetWeightTime ( model ) :
     myP.Parse ( os.environ['STRATUS_MAPPING_NAME'] )
   else :
     err = "\n[Stratus ERROR] Virtual library : No file found in order to parse.\nCheck STRATUS_MAPPING_NAME.\n"
-    raise err        
+    raise Exception ( err )        
     
   return myP._weightTime[model]
 
@@ -88,6 +88,6 @@ def GetWeightArea ( model ) :
     myP.Parse ( os.environ['STRATUS_MAPPING_NAME'] )
   else :
     err = "\n[Stratus ERROR] Virtual library : No file found in order to parse.\nCheck STRATUS_MAPPING_NAME.\n"
-    raise err        
+    raise Exception ( err )        
     
   return myP._weightArea[model]

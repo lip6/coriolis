@@ -116,7 +116,7 @@ class net :
           + self._name + " of arity " + str(self._arity)
       if self._ind != 0 : err += " and LSB " + str(self._ind)
       err += ".\n"
-      raise err
+      raise Exception ( err )
     
     return Sig ( self, indice )
     
@@ -134,13 +134,13 @@ class net :
           + " for net : " + self._name + " of arity " + str(self._arity)
       if self._ind != 0 : err += " and LSB " + str(self._ind)
       err += ".\n"
-      raise err
+      raise Exception ( err )
     if ( indmax >= ( self._ind + self._arity ) ) or ( indmin < self._ind ) :
       err = "\n[Stratus ERROR] [:] : bad indexes " + str(indmax) + ", and " + str(indmin) \
           + " for net : " + self._name + " of arity " + str(self._arity)
       if self._ind != 0 : err += " and LSB " + str(self._ind)
       err += ".\n"
-      raise err
+      raise Exception ( err )
 
     return Sig ( self, ind1, ind2 )
 
@@ -156,7 +156,8 @@ class net :
       from st_const import Constant
       
       if not ( cell._st_vdds ) or not ( cell._st_vsss ) : 
-        raise "\n[Stratus ERROR] : there is no alim.\n"
+        err = "\n[Stratus ERROR] : there is no alim.\n"
+        raise Exception ( err )
     
       constParam = { 'nb' : net }
       string = Constant.getString ( constParam )
@@ -199,7 +200,7 @@ class net :
     if self._arity - net._arity :
       err = "\n[Stratus ERROR] <= : the nets " + self._name + " " + str(self._arity) + " and " + net._name + " " + str(net._arity) \
           + " must have the same lenght\n"
-      raise err
+      raise Exception ( err )
 
     # If the nets are virtual, Let s work with the corresponding real nets
     if self._real_net : netInCell  = self._real_net
@@ -211,7 +212,7 @@ class net :
     # Error if self is an input net
     if ( netInCell._ext ) and ( netInCell._direct == "IN" ) :
       err = "\n[Stratus ERROR] <= : " + self._name + " One can not give a value to an input net.\n"
-      raise err
+      raise Exception ( err )
       
     if netToMerge._ext :
       err = "\n[Stratus ERROR] <= : " + self._name
@@ -219,7 +220,7 @@ class net :
       if   netToMerge._direct == "OUT" : err += " One can not initialise a net with an output net.\n"
       # Error if net is an input net
       elif netToMerge._direct == "IN" :  err += " One can not initialise a net with an input net. The method Buffer() should be used.\n"
-      raise err
+      raise Exception ( err )
 
     # Construction of the tab if needed
     if not ( len ( netToMerge._to_merge ) ) :
@@ -243,8 +244,10 @@ class net :
     
     cell = CELLS[-1]
     
-    if not ( cell._st_vdds ) or not ( cell._st_vsss ) : raise "\n[Stratus ERROR] : there is no alim.\n"
-                                                
+    if not ( cell._st_vdds ) or not ( cell._st_vsss ) :
+      err = "\n[Stratus ERROR] : there is no alim.\n"
+      raise Exception ( err )
+
     # Creation of the output net with the right size
     num_net             = len ( cell._TAB_NETS_OUT )
     cell._TAB_NETS_OUT += [Signal ( "net_outbuf_%d" % num_net, self._arity )]
@@ -288,14 +291,16 @@ class net :
     elif model == self._st_cell._xor : f = "^"
     if self._arity - other_net._arity :
       err = "\n[Stratus ERROR] " + f + " : the nets " + self._name + " and " + other_net._name + " must have the same lenght.\n"
-      raise err
+      raise Exception ( err )
 
     # Creation of the output net with the right size
     num_net             = len ( cell._TAB_NETS_OUT )
     cell._TAB_NETS_OUT += [Signal ( "net_out_%d" % num_net, self._arity )]
 
-    if not ( cell._st_vdds ) or not ( cell._st_vsss ) : raise "\n[Stratus ERROR] : there is no alim.\n"
-   
+    if not ( cell._st_vdds ) or not ( cell._st_vsss ) :
+      err = "\n[Stratus ERROR] : there is no alim.\n"
+      raise Exception ( err )
+
 #    if ( model in ( "A2", "O2", "Xr2" ) ) and ( self._arity == 1 ) and ( other_net._arity == 1 ) :
 #      inst_name = model.lower()
 #        
@@ -325,8 +330,10 @@ class net :
     
     cell = CELLS[-1]
     
-    if not ( cell._st_vdds ) or not ( cell._st_vsss ) : raise "\n[Stratus ERROR] : there is no alim.\n"
-                                                        
+    if not ( cell._st_vdds ) or not ( cell._st_vsss ) :
+      err = "\n[Stratus ERROR] : there is no alim.\n"
+      raise Exception ( err )
+  
     # Creation of the output net with the right size
     num_net             = len ( cell._TAB_NETS_OUT )
     cell._TAB_NETS_OUT += [Signal ( "net_out_%d" % num_net, self._arity )]
@@ -365,9 +372,13 @@ class net :
     
     cell = CELLS[-1]
 
-    if not function : raise "\n[Stratus ERROR] / : to be done.\n"
+    if not function :
+      err = "\n[Stratus ERROR] / : to be done.\n"
+      raise Exception ( err )
 
-    if not ( cell._st_vdds ) or not ( cell._st_vsss ) : raise "\n[Stratus ERROR] there is no alim in cell %s.\n" % str(cell._name)
+    if not ( cell._st_vdds ) or not ( cell._st_vsss ) :
+      err = "\n[Stratus ERROR] there is no alim in cell %s.\n" % str(cell._name)
+      raise Exception ( err )
 
     # Creation of the output net with the right size
     num_net = len ( cell._TAB_NETS_OUT )
@@ -431,12 +442,12 @@ class net :
 
     cell = CELLS[-1]
 
-    if not inputNet._arity : raise "\n[Stratus ERROR] Shift : The input net does not have a positive arity.\n"
-    if not self._arity     : raise "\n[Stratus ERROR] Shift : The command net does not have a positive arity.\n"
-    if not ( cell._st_vdds ) or not ( cell._st_vsss ) : raise "\n[Stratus ERROR] there is no alim.\n"
+    if not inputNet._arity : raise Exception ( "\n[Stratus ERROR] Shift : The input net does not have a positive arity.\n" )
+    if not self._arity     : raise Exception ( "\n[Stratus ERROR] Shift : The command net does not have a positive arity.\n" )
+    if not ( cell._st_vdds ) or not ( cell._st_vsss ) : raise Exception ( "\n[Stratus ERROR] there is no alim.\n" )
     # Wrong parameters :
-    if direction not in ( "left", "right" ) : raise "\n[Stratus ERROR] Shift : The direction parameter must be \"left\" or \"right\".\n"
-    if type not in ( "logical", "arith", "circular" ) : raise "\n[Stratus ERROR] Shift : The type parameter must be \"logical\" or \"arith\" or \"circular\".\n"
+    if direction not in ( "left", "right" ) : raise Exception ( "\n[Stratus ERROR] Shift : The direction parameter must be \"left\" or \"right\".\n" )
+    if type not in ( "logical", "arith", "circular" ) : raise Exception ( "\n[Stratus ERROR] Shift : The type parameter must be \"logical\" or \"arith\" or \"circular\".\n" )
 
     # Creation of the output net with the right size
     num_net             =  len ( cell._TAB_NETS_OUT )
@@ -479,9 +490,9 @@ class net :
 
     cell = CELLS[-1]
 
-    if not inputNet._arity : raise "\n[Stratus ERROR] Reg : The input net does not have a positive arity.\n"
-    if not self._arity     : raise "\n[Stratus ERROR] Reg : The clock does not have a positive arity.\n"
-    if not ( cell._st_vdds ) or not ( cell._st_vsss ) : raise "\n[Stratus ERROR] there is no alim.\n"
+    if not inputNet._arity : raise Exception ( "\n[Stratus ERROR] Reg : The input net does not have a positive arity.\n" )
+    if not self._arity     : raise Exception ( "\n[Stratus ERROR] Reg : The clock does not have a positive arity.\n" )
+    if not ( cell._st_vdds ) or not ( cell._st_vsss ) : raise Exception ( "\n[Stratus ERROR] there is no alim.\n" )
 
     # Creation of the output net with the right size
     num_net             =  len ( cell._TAB_NETS_OUT )
@@ -525,7 +536,7 @@ class net :
     ### List ###
     if   type ( nets ) == types.ListType :
       if len ( nets ) !=  ( maxPossibility + 1 ) :
-        raise "\n[Stratus ERROR] Mux : when using a list, all the nets must be precised. Maybe one should use a dictionnary.\n"
+        raise Exception ( "\n[Stratus ERROR] Mux : when using a list, all the nets must be precised. Maybe one should use a dictionnary.\n" )
     
       return self.muxList ( nets )
 
@@ -551,10 +562,10 @@ class net :
 
               # Error : wrong interval
               if nb1 >= nb2 :
-                raise "\n[Stratus ERROR] Mux : when an interval is specified, the second number of the interval must be the greater one.\n"
+                raise Exception ( "\n[Stratus ERROR] Mux : when an interval is specified, the second number of the interval must be the greater one.\n" )
               # Error : if the interval does not correspond to the lenght of the command
               if ( nb1 > maxPossibility ) or ( nb2 > maxPossibility ) :
-                raise "\n[Stratus ERROR] Mux : One key does not match with the arity of the input nets.\n"
+                raise Exception ( "\n[Stratus ERROR] Mux : One key does not match with the arity of the input nets.\n" )
     
               for i in range ( nb1, nb2+1 ) : nets[i] = nets[net]
       
@@ -566,7 +577,7 @@ class net :
             ##############
             elif chiffre :
               if int ( chiffre.group(0) ) > maxPossibility :
-                raise "\n[Stratus ERROR] Mux : One key does not match with the arity of the input nets.\n"
+                raise Exception ( "\n[Stratus ERROR] Mux : One key does not match with the arity of the input nets.\n" )
 
               nets[int(chiffre.group(0))] = nets[net]
   
@@ -583,13 +594,13 @@ class net :
               if len ( binaire ) != self._arity :
                 err = "\n[Stratus ERROR] Mux : the binary number " + str(binaire) \
                        + " does not match with the lenght of the command. It has to be a " + str(self._arity) + "bits number.\n"
-                raise err
+                raise Exception ( err )
 
               # Error : if the number is not binary
               for n in binaire :
                 if n not in ( "0", "1", "?", "#" ) :
                   err = "\n[Stratus ERROR] Mux : after #, the number has to be binary.\n"
-                  raise err
+                  raise Exception ( err )
                
               nombrebit = self._arity
 
@@ -619,7 +630,7 @@ class net :
     
             else :
               err = "\n[Stratus ERROR] Mux : wrong key.\n"
-              raise err
+              raise Exception ( err )
           
           del nets[net]
 
@@ -630,7 +641,7 @@ class net :
 
           if int ( chiffre ) > maxPossibility :
             err = "\n[Stratus ERROR] Mux : One key does not match with the arity of the input nets.\n"
-            raise err
+            raise Exception ( err )
     
           nets[int(chiffre)] = nets[chiffre]
           del nets[chiffre]
@@ -638,7 +649,7 @@ class net :
         else :
           if net != "default" :
             err = "\n[Stratus ERROR] Mux : wrong key.\n"
-            raise err
+            raise Exception ( err )
       
       clefs =  nets.keys ()
       clefs.sort ()
@@ -674,7 +685,7 @@ class net :
     # Error : wrong argument
     else :
       err = "\n[Stratus ERROR] Mux : wrong argument type.\n"
-      raise err
+      raise Exception ( err )
 
     
   ### List ###
@@ -684,14 +695,14 @@ class net :
     
     cell = CELLS[-1]
     
-    if not ( cell._st_vdds ) or not ( cell._st_vsss ) : raise "\n[Stratus ERROR] : there is no alim.\n"
+    if not ( cell._st_vdds ) or not ( cell._st_vsss ) : raise Exception ( "\n[Stratus ERROR] : there is no alim.\n" )
     
     long = 0
     for i in range ( len ( nets ) ) :
       if nets[i] : long = nets[i]._arity
 
     # Error : if no input net
-    if not ( long ) : raise "\n[Stratus ERROR] Mux : there are no input nets.\n"
+    if not ( long ) : raise Exception ( "\n[Stratus ERROR] Mux : there are no input nets.\n" )
     
     # Instanciation of a zero cell if needed 
     for net in nets :
@@ -747,7 +758,7 @@ class net :
         
     cell = CELLS[-1]
     
-    if not ( cell._st_vdds ) or not ( cell._st_vsss ) : raise "\n[Stratus ERROR] : threre is no alim.\n"
+    if not ( cell._st_vdds ) or not ( cell._st_vsss ) : raise Exception ( "\n[Stratus ERROR] : threre is no alim.\n" )
 
     # Initialisation of the output net
     num_net             = len ( cell._TAB_NETS_OUT )
@@ -780,7 +791,7 @@ class net :
     # Error : if the net already has an alias
     if net._alias :
       err = "\n[Stratus ERROR] Alias : the net " + net._name + " is already an alias.\n"
-      raise err
+      raise Exception ( err )
       
     # Resizement of the net if needed
     if not ( net._arity ) : net.create_net ( net._name, self._arity )
@@ -788,7 +799,7 @@ class net :
     # Error : if the nets don't have the same lenght
     if self._arity != net._arity :
       err = "\n[Stratus ERROR] Alias : the nets " + self._name + " and " + net._name + " must have the same lenght\n"
-      raise err
+      raise Exception ( err )
 
     # If nets are virtual, let's work with the corresponding real nets
     if net._real_net : realNet = net._real_net
@@ -809,7 +820,7 @@ class net :
       # Alias of an alias
       else :
         err = "\n[Stratus ERROR] Alias : 2 Alias in a row are not supported.\n"
-        raise err
+        raise Exception ( err )
         # FIXME bug : for now, Alias of Alias are not permitted       
 #        if realSelf._alias[i + self._ind - net._ind] :
 #          netAlias = realSelf._alias[i + self._ind - net._ind].keys()[0]
@@ -835,7 +846,7 @@ class net :
     if self._arity >= width :
       err = "\n[Stratus ERROR] Extend : the net " + self._name + \
             " can not be extended to " + str(width) + " bits, it's arity is already " + str(self._arity) + ".\n"
-      raise err
+      raise Exception ( err )
     
     num_net             = len ( cell._TAB_NETS_OUT )
     cell._TAB_NETS_OUT += [Signal ( "%s_ext_%d_%d" % ( self._name, width, num_net ), width )]
@@ -870,7 +881,7 @@ class net :
       chaine = re.search ( "st_net\.(.*)", str ( self.__class__ ) )
       classe = chaine.group(1)
       err = "\n[Stratus ERROR] " + classe + " : \"" + nom + "\" the name of the net can not contain a space.\n"
-      raise err
+      raise Exception ( err ) 
       
     self._st_cell  = cell
     self._name     = nom
@@ -887,7 +898,7 @@ class net :
     # Error :
     if ( nbit == 1 ) and indice :
       err = "\n[Stratus ERROR] " + str ( self.__class__ ) + " : " + self._name + " : one can not put an indice for a 1 bit net.\n"
-      raise err
+      raise Exception ( err )
     
     if hType :
       self._h_type = hType
@@ -957,7 +968,7 @@ class net :
 
     if self._to_cat :
       err =  "\n[Stratus ERROR] HurricanePlug <= : net " + self._name + " is a Cat net. Forbidden utilisation of <= and Cat.\n"
-      raise err          
+      raise Exception ( err )          
     
     for i in range ( self._ind, self._arity + self._ind ) :
       if realNet._to_merge[i] :
@@ -971,16 +982,16 @@ class net :
 
         if realNet._hur_net == [] :
           err =  "\n[Stratus ERROR] HurricanePlug <= : net " + realNet._name + " has no hurricane net.\n"
-          raise err          
+          raise Exception ( err )          
         
         if bitToMerge > ( len ( selfToMerge._hur_net ) - 1 ) :
           err = "\n[Stratus ERROR] HurricanePlug <= : net " + selfToMerge._name + " with hur_net : " + str(selfToMerge._hur_net) \
               + " with asked bit : " + str(bitToMerge) + ".\n"
-          raise err
+          raise Exception ( err )
         if i > ( len ( realNet._hur_net ) - 1 ) :
           err = "\n[Stratus ERROR] HurricanePlug <= : net " + realNet._name + " with hur_net : " + str(realNet._hur_net) \
               + " with asked bit : " + str(i) + ".\n"
-          raise err
+          raise Exception ( err )
      
         selfToMerge._hur_net[bitToMerge].merge ( realNet._hur_net[i] )
 #        realNet._hur_net[i] = 0
@@ -1033,7 +1044,7 @@ class net :
 class SignalIn ( net ) :
   def __init__ ( self, nom, nbit, indice = 0 ) :
 
-    if nbit < 1 : raise "\n[Stratus ERROR] SignalIn : the lenght of the net must be a positive value\n"
+    if nbit < 1 : raise Exception ( "\n[Stratus ERROR] SignalIn : the lenght of the net must be a positive value\n" )
 
     self.create_net ( nom, nbit, indice, True, "IN" )
     
@@ -1046,7 +1057,7 @@ class SignalInFromHur ( net ) :
 class SignalOut ( net ) :
   def __init__ ( self, nom, nbit, indice = 0 ) :
     
-    if nbit < 1 : raise "\n[Stratus ERROR] SignalOut : the lenght of the net must be a positive value\n"
+    if nbit < 1 : raise Exception ( "\n[Stratus ERROR] SignalOut : the lenght of the net must be a positive value\n" )
       
     self.create_net ( nom, nbit, indice, True, "OUT" )
     
@@ -1059,7 +1070,7 @@ class SignalOutFromHur ( net ) :
 class SignalInOut ( net ) :
   def __init__ ( self, nom, nbit, indice = 0 ) :
     
-    if nbit < 1 : raise "\n[Stratus ERROR] SignalInOut : the lenght of the net must be a positive value\n"
+    if nbit < 1 : raise Exception ( "\n[Stratus ERROR] SignalInOut : the lenght of the net must be a positive value\n" )
       
     self.create_net ( nom, nbit, indice, True, "INOUT" )
     
@@ -1072,7 +1083,7 @@ class SignalInOutFromHur ( net ) :
 class SignalUnknown ( net ) :
   def __init__ ( self, nom, nbit, indice = 0 ) :
     
-    if nbit < 1 : raise "\n[Stratus ERROR] SignalUnknown : the lenght of the net must be a positive value\n"
+    if nbit < 1 : raise Exception ( "\n[Stratus ERROR] SignalUnknown : the lenght of the net must be a positive value\n" )
       
     self.create_net ( nom, nbit, indice, True, "UNKNOWN" )
     
@@ -1085,8 +1096,8 @@ class SignalUnknownFromHur ( net ) :
 class TriState ( net ) :
   def __init__ ( self, nom, nbit, indice = 0 ) :
     
-    if nbit < 1 : raise "\n[Stratus ERROR] TriState : the lenght of the net must be a positive value\n"
-      
+    if nbit < 1 : raise Exception ( "\n[Stratus ERROR] TriState : the lenght of the net must be a positive value\n" )
+
     self.create_net ( nom, nbit, indice, True, "TRISTATE" )
     
 class SignalTriStateFromHur ( net ) :
@@ -1108,7 +1119,7 @@ class CkInFromHur ( net ) :
 class Signal ( net ) :
   def __init__ ( self, nom, nbit = 0, indice = 0 ) :
 
-    if nbit < 0 : raise "\n[Stratus ERROR] Signal : the lenght of the net must be a positive value\n"
+    if nbit < 0 : raise Exception ( "\n[Stratus ERROR] Signal : the lenght of the net must be a positive value\n" )
       
     self.create_net ( nom, nbit, indice )
     

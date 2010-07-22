@@ -285,7 +285,8 @@ class Model :
           break
 
     if not hurCell and not stCell :
-      raise "\nError : no cell found with model %s.\n" % model
+      err = "\nError : no cell found with model %s.\n" % model
+      raise Exception ( err )
    
     # Hurricane cell found: 
     if hurCell :
@@ -306,9 +307,13 @@ class Model :
           found = True
           if   direction == DirectionOUT : return "output"
           elif direction == DirectionIN  : return "input"
-          else                           : raise "\nError : unable to find direction of port %s in model %s. Direction is %d\n" % ( pin, model, direction )
+          else :
+            err = "\nError : unable to find direction of port %s in model %s. Direction is %d\n" % ( pin, model, direction )
+          raise Exception ( err )
           
-      if not found : raise "\nError : unable to find port %s in model %s.\n" % ( pin, model )
+      if not found :
+        err = "\nError : unable to find port %s in model %s.\n" % ( pin, model )
+        raise Exception ( err )
           
     # Stratus cell found:
     elif stCell :
@@ -335,16 +340,19 @@ class Model :
           found = True
           if   net._direct == "OUT" : return "output"
           elif net._direct == "IN"  : return "input"
-          else                      : raise "\nError : unable to find direction of port %s in model %s.\n" % ( pin, model )
+          else :
+            err = "\nError : unable to find direction of port %s in model %s.\n" % ( pin, model )
+            raise Exception ( err )
    
       if not found :
         ports = ""
         for net in stCell._st_ports : ports += net._name + ","
-        raise "\nError : unable to find port %s in model %s.\nPorts are : %s\n" % ( pin, model, ports )
+        err = "\nError : unable to find port %s in model %s.\nPorts are : %s\n" % ( pin, model, ports )
+        raise Exception ( err )
 
     else :
       err = "\n[ERROR] InitGraph : no model named " + model + " in the database.\n"
-      raise err
+      raise Exception ( err )
 
   #############################
   ##### Print of the cell #####
@@ -366,11 +374,11 @@ class Model :
   def PrintGraph ( self ) :
     if  "_graph" not in self.__dict__ :
       err = "\n[Stratus ERROR] PrintGraph : The graph does not exist. Use initGraph before.\n"
-      raise err
+      raise Exception ( err )
     else :
       if self._graph == False :
         err = "\n[Stratus ERROR] PrintGraph : The graph does not exist. Use initGraph before.\n"
-        raise err
+        raise Exception ( err )
       
     print "################## Cell's Graph features ##################"
     for inst in self._st_insts :
@@ -434,7 +442,7 @@ class Model :
 
     if not self._hur_cell :
       err = "\n[Stratus ERROR] View : Hurricane Cell does not exist.\nCheck CRL_IN_LO/CRL_IN_PH variables.\n"
-      raise err
+      raise Exception ( err )
 
     if EDITOR:
       EDITOR.setCell ( self._hur_cell )
@@ -459,7 +467,7 @@ class Model :
   
       if len ( CELLS ) == 0 :
         err = "\n[Stratus ERROR] Save : CELLS stack is empty.\n"
-        raise err
+        raise Exception ( err )
   
       CELLS.pop()
       
@@ -472,7 +480,7 @@ class Model :
     if not name : name = self._name
 
     if tool == 'asimut' : runpat ( self._name, name, '-l 1 -p 100 -zerodelay -nocheckdriver -nostrict -bdd -nowarning' )
-    else                : raise 'not implemented yet'
+    else                : raise Exception ( 'not implemented yet' )
 
   ##### Create a stratus file given the database #####
   def exportStratus ( self, fileName ) :
@@ -762,7 +770,8 @@ class Model :
     from util_Gen      import F_MSB_FIRST
     
     if type ( dict ) != types.DictType :
-      raise "\n[Stratus ERROR] Inst : instanciation of a user's defined generator. The methods' arguments must be dictionnaries.\n" 
+      err = "\n[Stratus ERROR] Inst : instanciation of a user's defined generator. The methods' arguments must be dictionnaries.\n"
+      raise Exception ( err )
       
     ##### Creation of the instance #####
 #    dict['flags'] = F_MSB_FIRST # When vst driver permits to do F_LSB_FIRST or F_LSB_FIRST TODO
@@ -1118,7 +1127,8 @@ class Model :
       if not isPad ( instance ):
         cores.append ( instance )
 
-    if   len(cores) == 0 : raise "\n[Stratus ERROR] getCore : No core found.\n"
-    elif len(cores)  > 1 : raise "\n[Stratus ERROR] getCore : More than one core found.\n"
+    if   len(cores) == 0 : err = "\n[Stratus ERROR] getCore : No core found.\n"
+    elif len(cores)  > 1 : err = "\n[Stratus ERROR] getCore : More than one core found.\n"
+    if len(cores) != 1 : raise Exception ( err )
 
     return cores[0]

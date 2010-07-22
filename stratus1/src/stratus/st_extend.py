@@ -78,7 +78,8 @@ class Extend ( Model ) :
     elif self.type == 'signed' :
       for i in range ( self.nbit0, self.nbit1 ) : self.o[i] <= self.i[self.nbit0-1].Buffer()
     else :
-      raise "\n[Stratus ERROR] Extend : type must be \'zero\', \'one\' or \'signed\'.\n"
+      err = "\n[Stratus ERROR] Extend : type must be \'zero\', \'one\' or \'signed\'.\n"
+      raise Exception ( err )
 
   def GetParam ( cls ):
 

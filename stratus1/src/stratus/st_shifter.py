@@ -74,9 +74,9 @@ def getConfig ( type ) :
          or (config['type']['arith'] and config['type']['rot']))
    
    if not (config['dir']['left'] or config['dir']['right']):
-      raise 'any of left or right directions are set'
+      raise Exception ( 'any of left or right directions are set' )
    if not (config['type']['log'] or config['type']['arith'] or config['type']['rot']) :
-      raise 'any of log or arith or rot types are set'
+      raise Exception ( 'any of log or arith or rot types are set' )
 
    return config
    
@@ -89,7 +89,7 @@ class Shifter ( Model ) :
     
     self.nbit = param['nbit']
     
-    if self.nbit < 2: raise "\n[Stratus ERROR] Shift : input arity should be greater than 1.\n"
+    if self.nbit < 2: raise Exception ( "\n[Stratus ERROR] Shift : input arity should be greater than 1.\n" )
     
     self.config = getConfig(param['type'])
     

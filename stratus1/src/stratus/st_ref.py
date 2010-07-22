@@ -72,11 +72,11 @@ def GetRefXY ( pathname, refname ) :
   # Check arguments type
   if type ( pathname ) != types.StringType :
     err = "\n[Stratus ERROR] GetRefXY : The instance's path must be put with a string.\n"
-    raise err
+    raise Exception ( err )
     
   if type ( refname ) != types.StringType :
     err = "\n[Stratus ERROR] GetRefXY : The reference must be done with it's name : a string.\n"
-    raise err
+    raise Exception ( err )
 
   ( x, y ) = pyGetXY ( cell._hur_cell, pathname, refname )    
 
@@ -92,11 +92,11 @@ def PlaceRef ( ref, name ) :
   # Check arguments type
   if ( str ( ref.__class__ ) != "st_ref.XY" ) :
     err = "\n[Stratus ERROR] PlaceRef : Wrong argument, the coordinates of the reference must be put in a XY object.\n"
-    raise err
+    raise Exception ( err )
     
   if type ( name ) != types.StringType :
     err = "\n[Stratus ERROR] PlaceRef : Argument layer must be a string.\n"
-    raise err
+    raise Exception ( err )
    
   pyPlaceRef ( cell._hur_cell, name, ref._x, ref._y )
 
@@ -108,7 +108,7 @@ def PlaceContact ( net, layer, ref, width, height ) :
   # Check arguments type
   if type ( layer ) != types.StringType :
     err = "\n[Stratus ERROR] PlaceContact : Argument layer must be a string.\n"
-    raise err
+    raise Exception ( err )
   myLayer = getDataBase().getTechnology().getLayer ( layer )
 #  if not ( myLayer ) :
 #    err = "\n[Stratus ERROR] PlaceContact : Argument layer does not exist.\n"
@@ -116,11 +116,11 @@ def PlaceContact ( net, layer, ref, width, height ) :
 
   if ( str ( ref.__class__ ) != "st_ref.XY" ) :
     err = "\n[Stratus ERROR] PlaceContact : Wrong argument, the coordinates of the contact must be put in a XY object.\n"
-    raise err
+    raise Exception ( err )
 
   if ( net._arity > 1 ) :
     err = "\n[Stratus ERROR] PlaceContact : Wrong argument, the net must be a 1 bit net.\n"
-    raise err
+    raise Exception ( err )
 
   if net._real_net :
     indice = net._ind - net._real_net._ind
@@ -138,12 +138,12 @@ def PlacePin ( net, layer, direction, ref, width, height ) :
   # Check arguments type
   if type ( layer ) != types.StringType :
     err = "\n[Stratus ERROR] PlacePin : Argument layer must be a string.\n"
-    raise err
+    raise Exception ( err )
   # No CALU permitted for Pin
   calu = re.search ( "CALU", layer )
   if calu :
     err = "\n[Stratus ERROR] PlacePin : Illegal layer, CALU not allowed.\n"
-    raise err
+    raise Exception ( err )
   myLayer = getDataBase().getTechnology().getLayer ( layer )
 #  if not ( myLayer ) :
 #    err = "\n[Stratus ERROR] PlacePin : Argument layer does not exist.\n"
@@ -156,15 +156,15 @@ def PlacePin ( net, layer, direction, ref, width, height ) :
   elif direction == WEST      : direct = PinAccessDirectionWEST
   else :
     err = "\n[Stratus ERROR] PlacePin : Illegal pin access direction. The values are : UNDEFINED, NORTH, SOUTH, EAST, WEST.\n"
-    raise err
+    raise Exception ( err )
 
   if ( str ( ref.__class__ ) != "st_ref.XY" ) :
     err = "\n[Stratus ERROR] PlacePin : Wrong argument, the coordinates of the pin must be put in a XY object.\n"
-    raise err
+    raise Exception ( err )
 
   if ( net._arity > 1 ) :
     err = "\n[Stratus ERROR] PlacePin : Wrong argument, the net must be a 1 bit net.\n"
-    raise err
+    raise Exception ( err )
 
   if net._real_net :
     indice = net._ind - net._real_net._ind
@@ -174,7 +174,7 @@ def PlacePin ( net, layer, direction, ref, width, height ) :
 
   if ( net._ext == False ) :
     err = "\n[Stratus ERROR] PlacePin : Wrong argument, the net must be external.\n"
-    raise err
+    raise Exception ( err )
 
   pyPlacePin ( net._hur_net[indice], direct, PinPlacementStatusFIXED, myLayer, ref._x, ref._y, width, height )
 
@@ -186,19 +186,19 @@ def PlaceSegment ( net, layer, ref1, ref2, width ) :
   # Check arguments type
   if type ( layer ) != types.StringType :
     err = "\n[Stratus ERROR] PlaceSegment : Argument layer must be a string.\n"
-    raise err
+    raise Exception ( err )
 
   if ( str ( ref1.__class__ ) != "st_ref.XY" )  or ( str ( ref2.__class__ ) != "st_ref.XY" ) :
     err = "\n[Stratus ERROR] PlaceSegment : Wrong argument, the coordinates of the segment must be put in XY objects.\n"  
-    raise err
+    raise Exception ( err )
 
   if ( ref1._x != ref2._x ) and ( ref1._y != ref2._y ) :
     err = "\n[Stratus ERROR] PlaceSegment : Segments are vertical or horizontal.\n"
-    raise err
+    raise Exception ( err )
 
   if ( net._arity > 1 ) :
     err = "\n[Stratus ERROR] PlaceSegment : Wrong argument, the net must be a 1 bit net.\n"
-    raise err
+    raise Exception ( err )
 
   if net._real_net :
     indice = net._ind - net._real_net._ind
@@ -223,15 +223,15 @@ def CopyUpSegment ( pathname, netname, newnet ) :
   # Check arguments type
   if type ( pathname ) != types.StringType :
     err = "\n[Stratus ERROR] CopyUpSegment : The instance's path must be put with a string.\n"
-    raise err
+    raise Exception ( err )
     
   if type ( netname ) != types.StringType :
     err = "\n[Stratus ERROR] CopyUpSegment : The segment must be done with it's name : a string.\n"
-    raise err
+    raise Exception ( err )
 
   if ( newnet._arity > 1 ) :
     err = "\n[Stratus ERROR] PlacePin : Wrong argument, the net must be a 1 bit net.\n"
-    raise err
+    raise Exception ( err )
 
   if newnet._real_net :
     indice = newnet._ind - newnet._real_net._ind

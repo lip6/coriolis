@@ -10,7 +10,6 @@
  find_package(Bootstrap REQUIRED)
  set_cmake_policies()
  set_lib_link_mode()
- setup_apple()
  setup_sysconfdir("$ENV{CORIOLIS_TOP}")
  
  find_package(PythonLibs REQUIRED)

@@ -58,10 +58,10 @@ def Param ( *tokens ) :
     opts = getopt.getopt ( sys.argv[1:], argum % tokens )[0]
 
   except getopt.GetoptError : 
-    raise "\n[Stratus ERROR] Param.\n"
+    raise Exception ( "\n[Stratus ERROR] Param.\n" )
 
   if opts == [] :
-    raise "\n[Stratus ERROR] Param : there is no parameter.\n"
+    raise Exception ( "\n[Stratus ERROR] Param : there is no parameter.\n" )
 
   n = []
   for option, argument in opts :

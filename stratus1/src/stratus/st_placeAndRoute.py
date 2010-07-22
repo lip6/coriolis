@@ -194,9 +194,9 @@ def PadNorth ( *args ) :
   hur_args = []
   for arg in args :
     if not arg :
-      raise "\n[Stratus ERROR] PadNorth : one instance doesn't exist.\n"
+      raise Exception ( "\n[Stratus ERROR] PadNorth : one instance doesn't exist.\n" )
     if str ( arg.__class__ ) != "st_instance.Inst" :
-      raise "\n[Stratus ERROR] PadNorth : one argument is not an instance.\n"      
+      raise Exception ( "\n[Stratus ERROR] PadNorth : one argument is not an instance.\n" )    
 
     hur_args.append ( arg._hur_instance )
  
@@ -216,9 +216,9 @@ def PadSouth ( *args ) :
   hur_args = []
   for arg in args :
     if not arg :
-      raise "\n[Stratus ERROR] PadSouth : one instance doesn't exist.\n"
+      raise Exception ( "\n[Stratus ERROR] PadSouth : one instance doesn't exist.\n" )
     if str ( arg.__class__ ) != "st_instance.Inst" :
-      raise "\n[Stratus ERROR] PadSouth : one argument is not an instance.\n"      
+      raise Exception ( "\n[Stratus ERROR] PadSouth : one argument is not an instance.\n" )   
 
     hur_args.append ( arg._hur_instance )
  
@@ -238,9 +238,9 @@ def PadEast ( *args ) :
   hur_args = []
   for arg in args :
     if not arg :
-      raise "\n[Stratus ERROR] PadEast : one instance doesn't exist.\n"
+      raise Exception ( "\n[Stratus ERROR] PadEast : one instance doesn't exist.\n" )
     if str ( arg.__class__ ) != "st_instance.Inst" :
-      raise "\n[Stratus ERROR] PadEast : one argument is not an instance.\n"      
+      raise Exception ( "\n[Stratus ERROR] PadEast : one argument is not an instance.\n" )    
 
     hur_args.append ( arg._hur_instance )
  
@@ -260,9 +260,9 @@ def PadWest ( *args ) :
   hur_args = []
   for arg in args :
     if not arg :
-      raise "\n[Stratus ERROR] PadWest : one instance doesn't exist.\n"
+      raise Exception ( "\n[Stratus ERROR] PadWest : one instance doesn't exist.\n" )
     if str ( arg.__class__ ) != "st_instance.Inst" :
-      raise "\n[Stratus ERROR] PadWest : one argument is not an instance.\n"      
+      raise Exception ( "\n[Stratus ERROR] PadWest : one argument is not an instance.\n" ) 
 
     hur_args.append ( arg._hur_instance )
  
@@ -277,7 +277,7 @@ def PowerRing ( n ) :
   
   cell = CELLS[-1]
   
-  if n < 3 : raise "\n[Stratus ERROR] : PowerRing : must have at least 3 pairs of vdd/vss rings\n"
+  if n < 3 : raise Exception ( "\n[Stratus ERROR] : PowerRing : must have at least 3 pairs of vdd/vss rings\n" )
   
   hur_core = cell.getCore()
     
@@ -300,7 +300,7 @@ class ClockBuffer :
     modelMasterCell = CRL.AllianceFramework.get().getCell ( "buf_x2", CRL.Catalog.State.Views )
     if not modelMasterCell :
       err = "Stratus Error : ClockBuffer : Cannot find model cell : buf_x2 in database !\n"
-      raise err
+      raise Exception ( err )
 
     inst = Instance ( self.cell._hur_cell, "ck_buffer%d"%nbCkBuf, modelMasterCell )
     nbCkBuf += 1
@@ -322,7 +322,7 @@ class ClockBuffer :
     net = self.cell._hur_cell.getNet ( netname )
     if not net :
         err = "AddFF Error net : " + netname + " not found"
-        raise err
+        raise Exception ( err )
 
     instDrive = None
     for plug in net.getPlugs():
@@ -332,13 +332,13 @@ class ClockBuffer :
 
     if instDrive == None :
       err = "AddFF Error no drive instance found for net " + netname + ".\n"
-      raise err
+      raise Exception ( err )
     
     masterCell = instDrive.getMasterCell()
     ## ici il vaudrait mieux faire une recherche sur l'ensemble des plugs de l'instDrive et trouver celle accrochee au self.net ##
     netCk = masterCell.getNet ( "ck" )
     if instDrive.getPlug ( netCk ).getNet() != self.net :
       err = "Stratus Error : AddFF : driver Instance of net " + netname + " is not connected to signal " + str ( self.net.getName() ) + ".\n"
-      raise err
+      raise Exception ( err )
 
     instDrive.getPlug ( netCk ).setNet ( self.ck_b._hur_net[0] )

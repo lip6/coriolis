@@ -74,7 +74,7 @@ def Cat ( *nets ) :
 
   if ( "_arity" not in net.__dict__ ) or ( "_real_net" not in net.__dict__ ) or ( "_ind" not in net.__dict__ ) :
     err = "\n[Stratus ERROR] Cat : Problem of parameter.\n"
-    raise err
+    raise Exception ( err )
     
   # Construction of the tab _to_cat if needed
   if not ( len ( netToCat._to_cat ) ) :

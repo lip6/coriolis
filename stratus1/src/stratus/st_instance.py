@@ -66,15 +66,15 @@ ROMLIB  = "rom_"
 DPSXLIB = "dp_.*_x[1-8]"
 
 ## Puts MBK_CATA_LIB at the begining of PYTHONPATH ##
-cata_lib = os.environ['MBK_CATA_LIB']
-chaine = re.search ( "([^:]*):(.*)", cata_lib )
-while chaine :
-  rep      = chaine.group ( 1 )
-  cata_lib = chaine.group ( 2 )
-
-  sys.path.insert ( 0, rep )
-
-  chaine = re.search ( "([^:]*):(.*)", cata_lib )
+#cata_lib = os.environ['MBK_CATA_LIB']
+#chaine = re.search ( "([^:]*):(.*)", cata_lib )
+#while chaine :
+#  rep      = chaine.group ( 1 )
+#  cata_lib = chaine.group ( 2 )
+#
+#  sys.path.insert ( 0, rep )
+#
+#  chaine = re.search ( "([^:]*):(.*)", cata_lib )
 
 ## Class of nets ##
 NET = ( "st_net.SignalIn", "st_net.SignalOut", "st_net.SignalInOut" \
@@ -129,7 +129,9 @@ class Inst :
     
     ##### Errors #####
     # Error : if the model is not a string
-    if type ( model ) != types.StringType : raise "\n[Stratus ERROR] Inst : the model must be described in a string.\n"
+    if type ( model ) != types.StringType :
+      err = "\n[Stratus ERROR] Inst : the model must be described in a string.\n"
+      raise Exception ( err )
     # Warning : the model can not contain capitalized letters
     if re.search ( "[A-Z]", model ) :
       print "[Stratus Warning] Inst : Upper case letters are not supported, the name", model, "is lowered."
@@ -137,11 +139,11 @@ class Inst :
     # Error : spaces are forbidden
     if re.search ( " ", model ) :
       err = "\n[Stratus ERROR] Inst : " + name + " the name of the model \"" + model + "\" can not contain a space.\n"
-      raise err
+      raise Exception ( err )
     if name :
       if re.search ( " ", name ) :
         err = "\n[Stratus ERROR] Inst : \"" + name + "\" the name of the instance can not contain a space.\n"
-        raise err
+        raise Exception ( err )
       # Warning : the name can not contain capitalized letters
       if re.search ( "[A-Z]", name ) :
         print "[Stratus Warning] : Upper case letters are not supported, the name", name, "is lowered."
@@ -156,7 +158,7 @@ class Inst :
           if map[pin] : err += str(map[pin])
           else        : err += "None"
           err += "\n"
-          raise err
+          raise Exception ( err )
 
     ##### MasterCell #####
     self._hur_masterCell = FRAMEWORK.getCell ( self._model, CRL.Catalog.State.Views )
@@ -193,7 +195,7 @@ class Inst :
 
     if not self._hur_masterCell :
       err = "\n[Stratus ERROR] HurricanePlug : Problem of master cell " + model + ".\nCheck model name and/or CRL_IN_LO/CRL_IN_PH variables .\n"
-      raise err
+      raise Exception ( err )
 
     if not self._st_masterCell :
       if MODELMAP.has_key ( str ( self._hur_masterCell ) ) :
@@ -203,7 +205,7 @@ class Inst :
 
     if not self._st_cell._hur_cell :
       err = "\n[Stratus ERROR] HurricanePlug : Problem of hurricane cell.\nTry to contact Coriolis team.\n"
-      raise err
+      raise Exception ( err )
       
     inst = Instance ( self._st_cell._hur_cell
                     , self._name
@@ -222,12 +224,12 @@ class Inst :
       # Error : if there is a space in the name of the pin (usually done at the end of the pin ...)
       if re.search ( " ", pin ) :
         err = "\n[Stratus ERROR] Inst : " + self._name + " the keys of the connection map can not contain a space : \"" + pin + "\".\n"
-        raise err
+        raise Exception ( err )
         
       # Error : if the net to connect does not have it's arity defined
       if not ( mapNet._arity ) :
         err = "\n[Stratus ERROR] Inst : " + self._name + " : the size of " + mapNet._name + " has not been defined properly.\n"
-        raise err
+        raise Exception ( err )
         
       wrong_pin  = 1
       for net in self._hur_masterCell.getExternalNets():
@@ -245,7 +247,7 @@ class Inst :
         sea = re.search ( "(.*),$", err )
         if not sea : err += "No pins found ..."
         else       : err  = sea.group(1)
-        raise err
+        raise Exception ( err )
         
       # Error : if the arities of the nets don't correspond
       tabPins = self._st_masterCell._st_ports + self._st_masterCell._st_cks + self._st_cell._st_vdds + self._st_cell._st_vsss
@@ -254,7 +256,7 @@ class Inst :
           if net._arity != mapNet._arity :
             err = "\n[Stratus ERROR] Inst : " + str(self._name) + " : The arity of the net " + mapNet._name + " " + str(mapNet._arity) \
                 + " does not correspond to the arity of the port of the cell : "+ net._name + " " + str(net._arity) + ".\n"
-            raise err
+            raise Exception ( err )
  
       # If the port of the masterCell doesn't have a LSB which is 0
       lsb = 0
@@ -265,7 +267,7 @@ class Inst :
           lsb += 1
           if lsb > 20 : # value chosen in order to avoid infinite loop in case of a problem (may be higher)
             err = "\n[Stratus ERROR] Inst : " + str(self._name) + " : Probem of map, check the arities of your nets.\n"
-            raise err
+            raise Exception ( err )
         if lsb : lsb -= 1
             
       ### Connection ###
@@ -318,7 +320,7 @@ class Inst :
       
         if not ( tempNet ) :
           err = "\n[Stratus ERROR] Inst : Problem in map. Check that the arities of your nets are correct.\n"
-          raise err
+          raise Exception ( err )
         
         plug = self._hur_instance.getPlug ( tempNet )
         plug.setNet ( hurNet )
@@ -336,7 +338,7 @@ class Inst :
         if chaine : name = chaine.group(1)
     
         err = "\n[Stratus ERROR] Inst : plug " + name + " of instance " + self._name + " must be connected.\n"
-        raise err
+        raise Exception ( err )
 
   ##############
   ### Prints ###
@@ -363,12 +365,12 @@ def SetCurrentModel ( instance ) :
 
   if not instance :
     err = "\n[Stratus ERROR] SetCurrentModel : argument given does not exist.\n"
-    raise err
+    raise Exception ( err )
   cell = instance._st_masterCell
   
   if not cell :
     err = "\n[Stratus ERROR] SetCurrentModel : cannot find model for instance " + str ( getName ( instance ) ) + ".\n"
-    raise err
+    raise Exception ( err )
 
   CELLS.append ( cell )
     

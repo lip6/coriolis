@@ -59,18 +59,18 @@ def Place ( ins, sym, ref, plac = FIXED, cell = None ) :
   # Error if x and y found not permitted :
   if ref._x % MYPITCH :
     err = "\n[Stratus ERROR] Place : " + ins._name + " : coordinate x is not a mutiple of PITCH.\n"
-    raise err
+    raise Exception ( err )
   
   if ref._y % MYSLICE :
     err = "\n[Stratus ERROR] Place : " + ins._name + " : coordinate y is not a mutiple of SLICE.\n"
-    raise err    
+    raise Exception ( err )    
                                             
   # Error message : if ref is not a reference
   if str ( ref.__class__ ) != "st_ref.XY" :
-    raise "\n[Stratus ERROR] Place : wrong argument for placement, the coordinates must be put in a XY object.\n"
+    raise Exception ( "\n[Stratus ERROR] Place : wrong argument for placement, the coordinates must be put in a XY object.\n" )
     
   # Error message if plac is not one of the permitted values
-  if ( plac != PLACED ) and ( plac != FIXED ) : raise "\n[Stratus ERROR] Place : wrong argument for placement type.\n"
+  if ( plac != PLACED ) and ( plac != FIXED ) : raise Exception ( "\n[Stratus ERROR] Place : wrong argument for placement type.\n" )
     
  #placement ( ins, sym, getUnit(ref._x), getUnit(ref._y), plac, cell = cell )
   placement ( ins, sym, DbU_lambda(ref._x), DbU_lambda(ref._y), plac, cell = cell )
@@ -86,19 +86,19 @@ def PlaceTop ( ins, symetry, offsetX = 0, offsetY = 0, plac = FIXED ) :
 
   if offsetX % MYPITCH :
     err = "\n[Stratus ERROR] PlaceTop : " + ins._name + " : offsetX is not a mutiple of PITCH.\n"
-    raise err
+    raise Exception ( err )
   
   if offsetY % MYSLICE :
     err = "\n[Stratus ERROR] PlaceTop : " + ins._name + " : offsetY is not a mutiple of SLICE.\n"
-    raise err
+    raise Exception ( err )
   
   if ( plac != PLACED ) and ( plac != FIXED ) :
     err = "\n[Stratus ERROR] PlaceTop : " + ins._name + " : wrong argument for placement type.\n"
-    raise err
+    raise Exception ( err )
   
   if cell._insref == None :
     err = "\n[Stratus ERROR] PlaceTop : " + ins._name + " : no previous instance.\n"
-    raise err
+    raise Exception ( err )
     
   x = cell._insref._x
   y = cell._insref._y
@@ -124,19 +124,19 @@ def PlaceRight ( ins, symetry, offsetX = 0, offsetY = 0, plac = FIXED ) :
 
   if offsetX % MYPITCH :
     err = "\n[Stratus ERROR] PlaceRight : " + ins._name + " : offsetX is not a mutiple of PITCH.\n"
-    raise err
+    raise Exception ( err )
   
   if offsetY % MYSLICE :
     err = "\n[Stratus ERROR] PlaceRight : " + ins._name + " : offsetY is not a mutiple of SLICE.\n"
-    raise err
+    raise Exception ( err )
   
   if ( plac != PLACED ) and ( plac != FIXED ) :
     err = "\n[Stratus ERROR] PlaceRight : " + ins._name + " : wrong argument for placement type.\n"
-    raise err
+    raise Exception ( err )
   
   if cell._insref == None :
     err = "\n[Stratus ERROR] PlaceRight : " + ins._name + " : no previous instance.\n"
-    raise err
+    raise Exception ( err )
     
   x = cell._insref._x
   y = cell._insref._y
@@ -162,19 +162,19 @@ def PlaceLeft ( ins, symetry, offsetX = 0, offsetY = 0, plac = FIXED ) :
 
   if offsetX % MYPITCH :
     err = "\n[Stratus ERROR] PlaceLeft : " + ins._name + " : offsetX is not a mutiple of PITCH.\n"
-    raise err
+    raise Exception ( err )
   
   if offsetY % MYSLICE :
     err = "\n[Stratus ERROR] PlaceLeft : " + ins._name + " : offsetY is not a mutiple of SLICE.\n"
-    raise err
+    raise Exception ( err )
   
   if ( plac != PLACED ) and ( plac != FIXED ) :
     err = "\n[Stratus ERROR] PlaceLeft : " + ins._name + " : wrong argument for placement type.\n"
-    raise err
+    raise Exception ( err )
   
   if cell._insref == None :
     err = "\n[Stratus ERROR] PlaceLeft : " + ins._name + " : no previous instance.\n"
-    raise err
+    raise Exception ( err )
     
   x = cell._insref._x
   y = cell._insref._y
@@ -202,19 +202,19 @@ def PlaceBottom ( ins, symetry, offsetX = 0, offsetY = 0, plac = FIXED ) :
 
   if offsetX % MYPITCH :
     err = "\n[Stratus ERROR] PlaceBottom : " + ins._name + " : offsetX is not a mutiple of PITCH.\n"
-    raise err
+    raise Exception ( err )
   
   if offsetY % MYSLICE :
     err = "\n[Stratus ERROR] PlaceBottom : " + ins._name + " : offsetY is not a mutiple of SLICE.\n"
-    raise err
+    raise Exception ( err )
   
   if ( plac != PLACED ) and ( plac != FIXED ) :
     err = "\n[Stratus ERROR] PlaceBottom : " + ins._name + " : wrong argument for placement type.\n"
-    raise err
+    raise Exception ( err )
   
   if cell._insref == None :
     err = "\n[Stratus ERROR] PlaceBottom : " + ins._name + " : no previous instance.\n"
-    raise err
+    raise Exception ( err )
     
   x = cell._insref._x
   y = cell._insref._y
@@ -241,12 +241,12 @@ def SetRefIns ( ins ) :
   cell = CELLS[-1]
 
   # Error : SetRefIns on a non existing instance
-  if not ins : raise "\n[Stratus ERROR] SetRefIns : the instance doesn't exist.\n"
+  if not ins : raise Exception ( "\n[Stratus ERROR] SetRefIns : the instance doesn't exist.\n" )
 
   # Error : SetRefIns on a non placed instance
   if ins._plac == UNPLACED :
     err = "\n[Stratus ERROR] SetRefIns : the instance " + ins._name + " is not placed.\n"
-    raise err
+    raise Exception ( err )
 
   cell._insref = ins
 
@@ -264,7 +264,7 @@ def DefAb ( ref1, ref2 ) :
   # Error message : if ref are not references
   if ( str ( ref1.__class__ ) != "st_ref.XY" ) or ( str ( ref2.__class__ ) != "st_ref.XY" ) :
     err = "\n[Stratus ERROR] DefAb : wrong argument, the coordinates must be put in a XY object.\n"
-    raise err
+    raise Exception ( err )
 
   x1 = ref1._x
   y1 = ref1._y
@@ -274,12 +274,12 @@ def DefAb ( ref1, ref2 ) :
   if not cell._hur_cell :
     err = "\n[Stratus ERROR] Layout : The hurricane cell has not been created.\n" \
         + "One has to use HurricanePlug before creating the layout.\n"
-    raise err
+    raise Exception ( err )
 
   if x1 % MYPITCH or y1 % MYSLICE or x2 % MYPITCH or y2 % MYSLICE :
     err = "\nError in DefAb : Coordinates of an abutment Box in y must be multiple of the slice.\n" \
         + "                 : Coordinates of an abutment Box in x must be multiple of the pitch.\n"
-    raise err
+    raise Exception ( err )
     
   boite = cell._hur_cell.getAbutmentBox ()
 
@@ -287,7 +287,7 @@ def DefAb ( ref1, ref2 ) :
     err = "\n[Stratus ERROR] DefAb : an abutment box already exists for cell : " \
           + str ( cell._name ) \
           + ". Maybe you should use ResizeAb function.\n"
-    raise err
+    raise Exception ( err )
 
   cell._hur_cell.setAbutmentBox ( Box ( DbU_lambda ( x1 )
                                       , DbU_lambda ( y1 )
@@ -315,7 +315,7 @@ def ResizeAb ( dx1, dy1, dx2, dy2 ) :
   if dx1 % MYPITCH or dy1 % MYSLICE or dx2 % MYPITCH or dy2 % MYSLICE :
     err = "\n[Stratus ERROR] ResizeAb : Coordinates of an abutment Box in y must be multiple of the slice.\n" \
         + "                           : Coordinates of an abutment Box in x must be multiple of the pitch.\n"
-    raise err
+    raise Exception ( err )
 
   old_xmin =  ab.getXMin()
   old_xmax =  ab.getXMax()
@@ -329,11 +329,11 @@ def ResizeAb ( dx1, dy1, dx2, dy2 ) :
     
   if new_xmin >= new_xmax :
     err = "\n[Stratus ERROR] ResizeAb : one of the values of dx1 or dx2  is incompatible with the size of the abutment box.\n"
-    raise err
+    raise Exception ( err )
     
   if new_ymin >= new_ymax :
     err = "\n[Stratus ERROR] ResizeAb : one of the values of dy1 or dy2  is incompatible with the size of the abutment box.\n"
-    raise err
+    raise Exception ( err )
     
   hurCell.setAbutmentBox ( Box ( new_xmin, new_ymin, new_xmax, new_ymax ) )
   
@@ -348,12 +348,12 @@ def DefInstanceAb ( instance, x1, y1, x2, y2 ) :
 
   if not ( boite.isEmpty() ) :
     err =  "\n[Stratus ERROR] DefInstanceAb : an abutment box already exists. Maybe you should use ResizeAb function.\n"
-    raise err
+    raise Exception ( err )
 
   if x1 % MYPITCH or y1 % MYSLICE or x2 % MYPITCH or y2 % MYSLICE :
     err = "\nError in DefAb : Coordinates of an abutment Box in y must be multiple of the slice.\n" \
         + "                 : Coordinates of an abutment Box in x must be multiple of the pitch.\n"
-    raise err
+    raise Exception ( err )
     
   cell.setAbutmentBox ( Box ( DbU_lambda ( x1 )
                             , DbU_lambda ( y1 )
@@ -373,12 +373,12 @@ def placement ( st_inst, sym, x, y, plac = FIXED, cell = None, fonction = None )
   if not cell : cell = CELLS[-1]
 
   # Error : placement of a non existing instance
-  if not st_inst : raise "\n[Stratus ERROR] Placement : the instance doesn't exist.\n"
+  if not st_inst : raise Exception ( "\n[Stratus ERROR] Placement : the instance doesn't exist.\n" )
 
   # Error : st_inst is not an instance
   if str ( st_inst.__class__ ) != "st_instance.Inst" :
     err = "\n\n[Stratus ERROR] Placement : the first argument " + st_inst + " is not an instance.\n"
-    raise err  
+    raise Exception ( err )  
 
   # Hurricane instance
   hur_inst = st_inst._hur_instance
@@ -387,12 +387,12 @@ def placement ( st_inst, sym, x, y, plac = FIXED, cell = None, fonction = None )
   if not hur_inst :
     err = "\n[Stratus ERROR] Layout : The hurricane instance of " + st_inst._name + " has not been created.\n" \
         + "One has to use HurricanePlug before creating the layout.\n"
-    raise err
+    raise Exception ( err )
  
   # Error : if the instance is already placed
   if hur_inst.getPlacementStatus() == PlacementStatusFIXED :
     err = "\n[Stratus ERROR] Placement : the instance " + st_inst._name + " is already placed.\n"
-    raise err      
+    raise Exception ( err )      
   
   ##### Legalization of the symetry #####
   st_inst._sym = transformation ( sym )
@@ -454,7 +454,7 @@ def placement ( st_inst, sym, x, y, plac = FIXED, cell = None, fonction = None )
     st_inst._y = y + abtemp.getWidth  ()
 
   else :
-    raise "\n[Stratus ERROR] Placement : wrong transformation.\n"
+    raise Exception ( "\n[Stratus ERROR] Placement : wrong transformation.\n" )
 
   # if the abutment box is not at 0 0  FIXME
   if st_inst._sym == OrientationMY :
@@ -477,7 +477,7 @@ def placement ( st_inst, sym, x, y, plac = FIXED, cell = None, fonction = None )
   elif plac == UNPLACED :
     hur_inst.setPlacementStatus   ( PlacementStatusUNPLACED )
   else :
-    raise "\n[Stratus ERROR] Placement : wrong argument for type of placement.\n"
+    raise Exception ( "\n[Stratus ERROR] Placement : wrong argument for type of placement.\n" )
 
   st_inst._plac = plac  
 
@@ -496,7 +496,7 @@ def transformation ( symetry ) :
   elif symetry == SY_RM or symetry == OrientationXR : transf = OrientationXR
   else :
     err = "\n[Stratus ERROR] Placement :Illegal transformation.\n"
-    raise err
+    raise Exception ( err )
     
   return transf
   

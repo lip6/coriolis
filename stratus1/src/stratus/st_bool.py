@@ -67,7 +67,7 @@ class Bool ( Model ) :
     
     if self.nbit < 1 :
       err = "\n[Stratus ERROR] " + self.m + " : the number of bits must be greater than 0.\n"
-      raise err
+      raise Exception ( err )
 
   def Interface ( self ) :    
     if self.m in I :

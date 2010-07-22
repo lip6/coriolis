@@ -69,7 +69,7 @@ class Sub ( Model ) :
       if 'extended' not in param : self._extended = False
       else                     : self._extended = param['extended']
     
-      if (self.nbit < 2): raise "\n[Stratus ERROR] slansky : input arity should be greater than 1.\n"
+      if (self.nbit < 2): raise Exception ( "\n[Stratus ERROR] slansky : input arity should be greater than 1.\n" )
 
    def Interface(self):
       self.i0 = SignalIn("i0", self.nbit0)
@@ -135,7 +135,7 @@ class Slansky ( Model ) :
       if 'cin' not in param  : self._cin = False
       else                   : self._cin = param['cin']
 
-      if (self.nbit < 2): raise "\n[Stratus ERROR] slansky : input arity should be greater than 1.\n"
+      if (self.nbit < 2): raise Exception ( "\n[Stratus ERROR] slansky : input arity should be greater than 1.\n" )
 
    def Interface(self):
       self.i0 = SignalIn("i0", self.nbit0)
@@ -244,7 +244,7 @@ class PiGiBus(Model):
       Model.__init__(self, name, param)
       self.nbit = param['nbit']
       if self.nbit < 1:
-         raise 'PiGiBus : input arity should be greater than 0'
+         raise Exception ( 'PiGiBus : input arity should be greater than 0' )
 
    def Interface(self):
       self.a = SignalIn("a",self.nbit)
@@ -315,10 +315,10 @@ class PGTree(Model):
       Model.__init__(self, name, param)
       self.nbit = param['nbit']
       if self.nbit < 1:
-         raise 'input arity should be greater than 0'
+         raise Exception ( 'input arity should be greater than 0' )
       self.algo = param['algo']
       if self.algo != 'slansky':
-         raise '%s algorithm is not yet implemented' %self.algo
+         raise Exception ( '%s algorithm is not yet implemented' %self.algo )
         
    def Interface(self):
       self.pi = SignalIn("pi",self.nbit)
@@ -406,4 +406,4 @@ def prefixMatrix(algo,size):
                   matrix[i].append(0)
       return matrix
    else:
-      raise '%s algorithm is not yet implemented' %algo
+      raise Exception ( '%s algorithm is not yet implemented' %algo )

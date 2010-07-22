@@ -67,7 +67,7 @@ class Comp ( Model ) :
     # Error : if net is not a string    
     if type ( self.nb ) != types.StringType :
       err = "\n[Stratus ERROR] " + self.func + " : the argument must be a string.\n"
-      raise err
+      raise Exception ( err )
 
   def Interface ( self ) :
     self.netIn  = SignalIn  (  "netin", self.nbit )
@@ -87,7 +87,7 @@ class Comp ( Model ) :
     # Error : if the number is too big for the arity of the net
     if netConst._arity > self.nbit :
       err = "\n[Stratus ERROR] " + self.func + " : the number does not match with the net's lenght.\n"
-      raise err
+      raise Exception ( err )
     # Otherwise, completion of the net
     elif netConst._arity < self.nbit : extendConst <= netConst.Extend ( self.nbit, 'zero' )
     else                             : netConst.Alias ( extendConst )
