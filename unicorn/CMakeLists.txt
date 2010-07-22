@@ -10,7 +10,6 @@
  
  set_cmake_policies()
  set_lib_link_mode()
- setup_apple()
  setup_sysconfdir("$ENV{CORIOLIS_TOP}")
  setup_boost(program_options filesystem python regex)
  
