@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-07-21 19:21:12" - OpenAccessWrapper.cpp
+// Time-stamp: "2010-07-22 15:38:03" - OpenAccessWrapper.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -46,7 +46,6 @@ namespace {
     private:
         typedef map<const Library*, oaLib*> Library2OALibMap;
         typedef map<const Cell*, oaDesign*> Cell2OADesignMap;
-        typedef pair<oaModInst*, oaInst*> OAInstPair;
         typedef map<Instance*, oaInst*> Instance2OAInstsMap;
         typedef map<Layer*, oaPhysicalLayer*> Layer2OAPhysicalLayerMap;
 
@@ -143,18 +142,19 @@ namespace {
             assert(lib->isValid());
             _library2OALib[library] = lib;
 
+#if 0
             // 2) for each cell convert them too : if it's a standard cell library for example
             for_each_cell(c ,library->getCells()){
                 getOADesignForCell(c);
                 end_for;
             }
-            
+
             // 3) also convert each contained library if any
             for_each_library(l ,library->getLibraries()){
                 getOALibForLibrary(l);
                 end_for;
             }
-
+#endif
             // 4) create, update library list file
             try{
                 cerr << "Overwriting cds.lib file begin" << endl;
@@ -162,7 +162,8 @@ namespace {
                 oaLibDefList* ldl = oaLibDefList::get( cdsPath.c_str(), 'a');
                 assert(ldl);
                 assert(ldl->isValid());
-                oaLibDef::create( ldl, scNameLib, strPathLib.c_str() );
+                if(!oaLibDef::find(ldl, scNameLib))
+                    oaLibDef::create(ldl, scNameLib, strPathLib.c_str());
                 ldl->save();
                 ldl->destroy();//claim memory
                 ldl = NULL;
@@ -170,9 +171,6 @@ namespace {
             }catch(oaException& e){
                 cerr << "ERROR cds: " << e.getMsg() << endl;
                 exit(-2);
-            }catch(...){
-                cerr << "ERROR cds: [UNKNOWN]" << endl;
-                exit(-1);
             }
 
             return lib;
@@ -184,9 +182,20 @@ namespace {
         oaLayer* getOALayerFromLayer(Layer* layer,oaTech* theOATech) {
             cerr << "getOALayerFromLayer" << endl;
             assert(layer);
+            Layer2OAPhysicalLayerMap::iterator it = _layer2OAPhysicalLayer.find(layer);
+            if (it != _layer2OAPhysicalLayer.end()) {
+                return it->second;
+            }
             assert(theOATech);
+
+            // 1) get or create layer
             oaString layerName = getString(layer->getName()).c_str();
             oaPhysicalLayer* aOALayer = NULL;
+            aOALayer = oaPhysicalLayer::find(theOATech, layerName, true);
+            if(aOALayer){
+                _layer2OAPhysicalLayer[layer] = aOALayer;
+                return aOALayer;
+            }
             BasicLayer* bLayer = dynamic_cast<BasicLayer*>(layer);
             if(bLayer)
                 aOALayer = oaPhysicalLayer::create(theOATech, layerName, _layerID++,getOAMaterial(bLayer->getMaterial()));
@@ -202,14 +211,14 @@ namespace {
             long minSpace = Hurricane::DbU::getDb(layer->getMinimalSpacing());
             long pitch = Hurricane::DbU::getDb(layer->getPitch());
 
-/*
+#if 0
             cerr << " o    create constraint for min size : " << pitch << endl;
             oaLayerConstraint* cMinSize = NULL;
             try{
                 cMinSize = oaLayerConstraint::create(aOALayer->getNumber(),
                                                      oaLayerConstraintDef::get(oacMinSize),
                                                      oaIntValue::create(theOATech,500))
-            }catch(oaException& e){
+                    }catch(oaException& e){
                 cerr << "ERROR oaLayer: " << e.getMsg() << endl;
                 exit(-2);
             }catch(...){
@@ -217,23 +226,23 @@ namespace {
                 exit(-1);
             }
             assert(cMinSize);
-  cerr << " o    create constraint for min space" << endl;
-  oaLayerConstraint* cMinSpace = oaLayerConstraint::create(aOALayer->getNumber(),
-  oaLayerConstraintDef::get(oacMinSpacing),
-  oaIntValue::create(theOATech->getLib(),minSpace));
-  assert(cMinSpace);
-  cerr << " o    create constraint for pitchH" << endl;
-  oaLayerConstraint* cPitchH = oaLayerConstraint::create(aOALayer->getNumber(),
-  oaLayerConstraintDef::get(oacHorizontalRouteGridPitch),
-  oaIntValue::create(theOATech->getLib(),pitch));
-  assert(cPitchH);
+            cerr << " o    create constraint for min space" << endl;
+            oaLayerConstraint* cMinSpace = oaLayerConstraint::create(aOALayer->getNumber(),
+                                                                     oaLayerConstraintDef::get(oacMinSpacing),
+                                                                     oaIntValue::create(theOATech->getLib(),minSpace));
+            assert(cMinSpace);
+            cerr << " o    create constraint for pitchH" << endl;
+            oaLayerConstraint* cPitchH = oaLayerConstraint::create(aOALayer->getNumber(),
+                                                                   oaLayerConstraintDef::get(oacHorizontalRouteGridPitch),
+                                                                   oaIntValue::create(theOATech->getLib(),pitch));
+            assert(cPitchH);
 
-  cerr << " o    create constraint for pitchV" << endl;
-  oaLayerConstraint* cPitchV = oaLayerConstraint::create(aOALayer->getNumber(),
-  oaLayerConstraintDef::get(oacVerticalRouteGridPitch),
-  oaIntValue::create(theOATech->getLib(),pitch));
-  assert(cPitchV);
-*/
+            cerr << " o    create constraint for pitchV" << endl;
+            oaLayerConstraint* cPitchV = oaLayerConstraint::create(aOALayer->getNumber(),
+                                                                   oaLayerConstraintDef::get(oacVerticalRouteGridPitch),
+                                                                   oaIntValue::create(theOATech->getLib(),pitch));
+            assert(cPitchV);
+#endif
             if(bLayer){
                 unsigned gdsIInumber = bLayer->getExtractNumber();
             }
@@ -247,18 +256,17 @@ namespace {
            @todo complete with technology info for layers
            @see getOALibForLibrary
         */
-        oaTech* getOATechForTechnology(const Technology* technology) {
+        oaTech* getOATechForTechnology(const Technology* technology,const Library* lib) {
             cerr << "createOATechForTechnology" << endl;
             assert(technology);
-            
-            //get or create Library for the techno
-            DataBase* db = technology->getDataBase();
-            assert(db);
-            Library* lib  = db->getRootLibrary();
+
+            // 1) get or create Library for the techno
             assert(lib);
             oaLib* techOAlib = getOALibForLibrary(lib);
             assert(techOAlib);
-            
+
+            // 2) get or create oaTech container
+            bool created = false;
             cerr << "oaTech::find" << endl;
             oaTech* theOATech = oaTech::find(techOAlib);
             if(!theOATech){
@@ -269,35 +277,38 @@ namespace {
                 if(!theOATech){
                     cerr << "oaTech::create" << endl;
                     theOATech = oaTech::create(techOAlib);
-                }else{
-                    return theOATech;
+                    created = true;
                 }
-            }else{
-                return theOATech;
             }
             assert(techOAlib);
-            theOATech->setDefaultManufacturingGrid(10);
-            theOATech->setDBUPerUU(oaViewType::get(oacMaskLayout), 2000);
-            
-            //create and add foundry constraint group for General manufacturing rules
-            //and add oaSimpleConstraintType too
-            oaConstraintGroup *cgFoundry = theOATech->getFoundryRules();
-            
-            //TODO: add this layer
-            //first create "utility" layers
-            //strLayerDev ( "device" );
-            //strLayerText( "text"   );
-            //strLayerPin ( "pin"    );
-            //strLayerWire( "wire"   );
+            if(created){
+                theOATech->setDefaultManufacturingGrid(10);
+                theOATech->setDBUPerUU(oaViewType::get(oacMaskLayout), 2000);
+                
+                //create and add foundry constraint group for General manufacturing rules
+                //and add oaSimpleConstraintType too
+                oaConstraintGroup *cgFoundry = theOATech->getFoundryRules();
 
-            //create physical layer
+                /*
+                  add the constraint group LEFDefaultRouteSpec for oa2lef 
+                */
+
+                //TODO: add this layer
+                //first create "utility" layers
+                //strLayerDev ( "device" );
+                //strLayerText( "text"   );
+                //strLayerPin ( "pin"    );
+                //strLayerWire( "wire"   );
+            }
+            
+            // get or create physical layer
+
             for_each_layer(layer, technology->getLayers()) {
                 getOALayerFromLayer(layer,theOATech);
                 end_for;
             }
-
             printOALayers(theOATech);
-            
+
             return theOATech;
         }
 
@@ -325,7 +336,7 @@ namespace {
             oaString strMasterName;
             scMasterName.get(strMasterName);
             oaScalarName scInstName(ns, getString(instance->getName()).c_str());
-            
+
             oaTransform transform;
             getOATransformFromTransformation(transform, instance->getTransformation());
             oaScalarInst* blockInst = oaScalarInst::create(topBlock, masterDesign, scInstName, transform);
@@ -361,12 +372,13 @@ namespace {
             assert(term);
             oaPin* pin = oaPin::create(term);
             assert(pin);
-/*
-  oaLayerNum   layer;
-  oaPurposeNum purpose;
-  getLayerPurpose(block->getDesign(), "pin", "drawing", layer, purpose);
-  oaPinFig *fig = oaPolygon::create(block, layer, purpose,  points);
-*/
+
+#if 0
+            oaLayerNum   layer;
+            oaPurposeNum purpose;
+            getLayerPurpose(block->getDesign(), "pin", "drawing", layer, purpose);
+            oaPinFig *fig = oaPolygon::create(block, layer, purpose,  points);
+#endif
             return pin;
         }
 
@@ -401,7 +413,12 @@ namespace {
             assert(net);
             oaNativeNS ns;
             oaScalarName scNetName(ns, getString(net->getName()).c_str());
-            oaScalarNet* blockNet = oaScalarNet::create(topBlock, scNetName, getOASigType(net->getType()));
+            oaScalarNet* blockNet = NULL;
+            blockNet = oaScalarNet::find(topBlock, scNetName);
+            if(blockNet)
+                return blockNet;
+            assert(!blockNet);
+            blockNet = oaScalarNet::create(topBlock, scNetName, getOASigType(net->getType()));
             assert(blockNet);
             if (net->isExternal()) {
                 oaPin* pin = getOAPinFromNet(net,blockNet);
@@ -459,8 +476,11 @@ namespace {
             _cell2OADesign4Netlist[cell] = designCellView;
 
             // 3) create oaBlock singleton where we will do all the work
-            cerr << "oaBlock::create for netlist view" << endl;
-            oaBlock* topBlock = oaBlock::create(designCellView);
+            oaBlock* topBlock = designCellView->getTopBlock();
+            if(!topBlock){
+                cerr << "oaBlock::create for netlist view" << endl;
+                topBlock = oaBlock::create(designCellView);
+            }
             assert(topBlock);
 
             // 4) convert each OA object
@@ -507,9 +527,13 @@ namespace {
             oaDesign* designCellView = oaDesign::open(scNameLib, scNameDesign, scNameView, vType, 'a');
             _cell2OADesign4Symbolic[cell] = designCellView;
 
-            // embed previous module
-            oaModule *topMod = oaModule::embed(designCellView, previous);
-            designCellView->setTopModule(topMod);
+            // get module or embed previous module
+            oaModule* topMod = NULL;
+            topMod = designCellView->getTopModule();
+            if(!topMod){
+                topMod = oaModule::embed(designCellView, previous);
+                designCellView->setTopModule(topMod);
+            }
             oaBlock *topBlock = designCellView->getTopBlock();
             assert(topBlock);
 
@@ -517,7 +541,7 @@ namespace {
         }
 
         /**
-           Add schematic view to previous view ...           
+           Add schematic view to previous view ...
         */
         oaDesign* addSchematic(const Cell* cell,oaDesign* previous) {
             cerr << "addSchematic" << cell << endl;
@@ -527,7 +551,7 @@ namespace {
             if (it != _cell2OADesign4Schematic.end()) {
                 return it->second;
             }
-            
+
             oaNativeNS ns;
             oaLib* lib = getOALibForLibrary(cell->getLibrary());
             assert(lib);
@@ -542,9 +566,13 @@ namespace {
             oaDesign* designCellView = oaDesign::open(scNameLib, scNameDesign, scNameView, vType, 'a');
             _cell2OADesign4Schematic[cell] = designCellView;
 
-            // embed previous module
-            oaModule *topMod = oaModule::embed(designCellView, previous);
-            designCellView->setTopModule(topMod);
+            // get module or embed previous module
+            oaModule* topMod = NULL;
+            topMod = designCellView->getTopModule();
+            if(!topMod){
+                topMod = oaModule::embed(designCellView, previous);
+                designCellView->setTopModule(topMod);
+            }
             oaBlock *topBlock = designCellView->getTopBlock();
             assert(topBlock);
 
@@ -562,7 +590,7 @@ namespace {
             if (it != _cell2OADesign4Layout.end()) {
                 return it->second;
             }
-            
+
             oaNativeNS ns;
             oaLib* lib = getOALibForLibrary(cell->getLibrary());
             assert(lib);
@@ -577,9 +605,13 @@ namespace {
             oaDesign* designCellView = oaDesign::open(scNameLib, scNameDesign, scNameView, vType, 'a');
             _cell2OADesign4Layout[cell] = designCellView;
 
-            // embed previous module
-            oaModule *topMod = oaModule::embed(designCellView, previous);
-            designCellView->setTopModule(topMod);
+            // get module or embed previous module
+            oaModule* topMod = NULL;
+            topMod = designCellView->getTopModule();
+            if(!topMod){
+                topMod = oaModule::embed(designCellView, previous);
+                designCellView->setTopModule(topMod);
+            }
             oaBlock *topBlock = designCellView->getTopBlock();
             assert(topBlock);
 
@@ -588,14 +620,14 @@ namespace {
 
         /**
            Convert a Cell to OA designs ...
-         */
+        */
         oaDesign* getOADesignForCell(const Cell* cell) {
             cerr << "getOADesignForCell " << cell << endl;
             assert(cell);
 
             // 1) get technology
             if(!_oaTech)
-                _oaTech = getOATechForTechnology(_technology);
+                _oaTech = getOATechForTechnology(_technology,cell->getLibrary());
 
             // 2) create OA structure ...
             oaDesign* netlistView = createOAasNetlist(cell);
@@ -612,6 +644,7 @@ namespace {
     };
 #endif
 }
+
 
 namespace CRL {
     void OpenAccessWrapper::oaDriver(const string& path, Cell* cell) {
