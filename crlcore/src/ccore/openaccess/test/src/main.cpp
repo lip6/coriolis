@@ -38,22 +38,22 @@ namespace {
 
 void testCell(Cell* dev,char* pathToTest){
     if(dev){
-        cout << "Cell created" << endl;
+        cerr << "Cell created" << endl;
     }else{
-        cout << "Cell not created" << endl;
+        cerr << "Cell not created" << endl;
         return;
     }
     system((string("mkdir -p ") + string(pathToTest)).c_str());
-    cout << "driving GDS" << endl;
-    GdsDriver(dev).save(string(pathToTest) + "/GDSdrive");
-
-    cout << "driving OA" << endl;
+/*    cerr << "driving GDS" << endl;
+      GdsDriver(dev).save(string(pathToTest) + "/GDSdrive");
+*/
+    cerr << "driving OA" << endl;
     OADriver(dev).save(string(pathToTest) + "/OAdrive");
 }
 
 void testAnalog(char* pathToConf,char* pathToTest){
     AnalogEnv::create(pathToConf);//create Database ...
-    cout << "analog environment loaded and database created" << endl;
+    cerr << "analog environment loaded and database created" << endl;
     DataBase* db = DataBase::getDB();
     assert(db != NULL);
     Library* rootLib = db->getRootLibrary();
@@ -73,25 +73,25 @@ void testAnalog(char* pathToConf,char* pathToTest){
         design = Cell::create(workLibrary, designName);
     assert(design != NULL);
 
-    cout << "creating cell myCM" << endl;
+    cerr << "creating cell myCM" << endl;
 
     bool bulkConnected = true;//bulk connected to source
     Cell* dev = SimpleCurrentMirror::create(workLibrary, Name("myCM"),
                                             TransistorFamily::NMOS,
                                             bulkConnected);
 
-    cout << "testing cell myCM" << endl;
+    cerr << "testing cell myCM" << endl;
     testCell(dev,pathToTest);
     db->destroy();
 }
 
-void testNum(char* pathToConf,char* pathToTest){
-    cout << "creating cell from sxlib inv_x1" << endl;
-    dbo_ptr<DataBase>          db   ( DataBase::create() );    
-    dbo_ptr<AllianceFramework> af   ( AllianceFramework::create() );    
-    Cell*                      cell = NULL;
-    cell = af->getCell("inv_x1", Catalog::State::Views );
-    cout << "testing cell from sxlib inv_x1" << endl;
+void testNum(char* pathToConf,char* pathToTest,char* cellName){
+    cerr << "creating cell from sxlib " << cellName << endl;
+    DataBase* db = DataBase::getDB();
+    AllianceFramework* af = AllianceFramework::get();
+    Cell* cell = NULL;
+    cell = af->getCell(cellName, Catalog::State::Views );
+    cerr << "testing cell from sxlib "<< cellName << endl;
     testCell(cell,pathToTest);
 }
 
@@ -99,9 +99,104 @@ int main(int argc,char** argv) {
     if(argc != 3)
         exit(-5);
 
-    //   testAnalog(argv[1],argv[2]);
-    testNum(argv[1],argv[2]);
+    testAnalog(argv[1],argv[2]);
 
-    cout << "ending normally" << endl;
+    testNum(argv[1],argv[2],"a2_x2");
+    testNum(argv[1],argv[2],"a2_x4");
+    testNum(argv[1],argv[2],"a3_x2");
+    testNum(argv[1],argv[2],"a3_x4");
+    testNum(argv[1],argv[2],"a4_x2");
+    testNum(argv[1],argv[2],"a4_x4");
+    testNum(argv[1],argv[2],"an12_x1");
+    testNum(argv[1],argv[2],"an12_x4");
+    testNum(argv[1],argv[2],"ao22_x2");
+    testNum(argv[1],argv[2],"ao22_x4");
+    testNum(argv[1],argv[2],"ao2o22_x2");
+    testNum(argv[1],argv[2],"ao2o22_x4");
+    testNum(argv[1],argv[2],"buf_x2");
+    testNum(argv[1],argv[2],"buf_x4");
+    testNum(argv[1],argv[2],"buf_x8");
+    testNum(argv[1],argv[2],"fulladder_x2");
+    testNum(argv[1],argv[2],"fulladder_x4");
+    testNum(argv[1],argv[2],"halfadder_x2");
+    testNum(argv[1],argv[2],"halfadder_x4");
+    testNum(argv[1],argv[2],"inv_x1");
+    testNum(argv[1],argv[2],"inv_x2");
+    testNum(argv[1],argv[2],"inv_x4");
+    testNum(argv[1],argv[2],"inv_x8");
+    testNum(argv[1],argv[2],"mx2_x2");
+    testNum(argv[1],argv[2],"mx2_x4");
+    testNum(argv[1],argv[2],"mx3_x2");
+    testNum(argv[1],argv[2],"mx3_x4");
+    testNum(argv[1],argv[2],"na2_x1");
+    testNum(argv[1],argv[2],"na2_x4");
+    testNum(argv[1],argv[2],"na3_x1");
+    testNum(argv[1],argv[2],"na3_x4");
+    testNum(argv[1],argv[2],"na4_x1");
+    testNum(argv[1],argv[2],"na4_x4");
+    testNum(argv[1],argv[2],"nao22_x1");
+    testNum(argv[1],argv[2],"nao22_x4");
+    testNum(argv[1],argv[2],"nao2o22_x1");
+    testNum(argv[1],argv[2],"nao2o22_x4");
+    testNum(argv[1],argv[2],"nmx2_x1");
+    testNum(argv[1],argv[2],"nmx2_x4");
+    testNum(argv[1],argv[2],"nmx3_x1");
+    testNum(argv[1],argv[2],"nmx3_x4");
+    testNum(argv[1],argv[2],"no2_x1");
+    testNum(argv[1],argv[2],"no2_x4");
+    testNum(argv[1],argv[2],"no3_x1");
+    testNum(argv[1],argv[2],"no3_x4");
+    testNum(argv[1],argv[2],"no4_x1");
+    testNum(argv[1],argv[2],"no4_x4");
+    testNum(argv[1],argv[2],"noa22_x1");
+    testNum(argv[1],argv[2],"noa22_x4");
+    testNum(argv[1],argv[2],"noa2a22_x1");
+    testNum(argv[1],argv[2],"noa2a22_x4");
+    testNum(argv[1],argv[2],"noa2a2a23_x1");
+    testNum(argv[1],argv[2],"noa2a2a23_x4");
+    testNum(argv[1],argv[2],"noa2a2a2a24_x1");
+    testNum(argv[1],argv[2],"noa2a2a2a24_x4");
+    testNum(argv[1],argv[2],"noa2ao222_x1");
+    testNum(argv[1],argv[2],"noa2ao222_x4");
+    testNum(argv[1],argv[2],"noa3ao322_x1");
+    testNum(argv[1],argv[2],"noa3ao322_x4");
+    testNum(argv[1],argv[2],"nts_x1");
+    testNum(argv[1],argv[2],"nts_x2");
+    testNum(argv[1],argv[2],"nxr2_x1");
+    testNum(argv[1],argv[2],"nxr2_x4");
+    testNum(argv[1],argv[2],"o2_x2");
+    testNum(argv[1],argv[2],"o2_x4");
+    testNum(argv[1],argv[2],"o3_x2");
+    testNum(argv[1],argv[2],"o3_x4");
+    testNum(argv[1],argv[2],"o4_x2");
+    testNum(argv[1],argv[2],"o4_x4");
+    testNum(argv[1],argv[2],"oa22_x2");
+    testNum(argv[1],argv[2],"oa22_x4");
+    testNum(argv[1],argv[2],"oa2a22_x2");
+    testNum(argv[1],argv[2],"oa2a22_x4");
+    testNum(argv[1],argv[2],"oa2a2a23_x2");
+    testNum(argv[1],argv[2],"oa2a2a23_x4");
+    testNum(argv[1],argv[2],"oa2a2a2a24_x2");
+    testNum(argv[1],argv[2],"oa2a2a2a24_x4");
+    testNum(argv[1],argv[2],"oa2ao222_x2");
+    testNum(argv[1],argv[2],"oa2ao222_x4");
+    testNum(argv[1],argv[2],"oa3ao322_x2");
+    testNum(argv[1],argv[2],"oa3ao322_x4");
+    testNum(argv[1],argv[2],"on12_x1");
+    testNum(argv[1],argv[2],"on12_x4");
+    testNum(argv[1],argv[2],"one_x0");
+    testNum(argv[1],argv[2],"powmid_x0");
+    testNum(argv[1],argv[2],"rowend_x0");
+    testNum(argv[1],argv[2],"sff1_x4");
+    testNum(argv[1],argv[2],"sff2_x4");
+    testNum(argv[1],argv[2],"sff3_x4");
+    testNum(argv[1],argv[2],"tie_x0");
+    testNum(argv[1],argv[2],"ts_x4");
+    testNum(argv[1],argv[2],"ts_x8");
+    testNum(argv[1],argv[2],"xr2_x1");
+    testNum(argv[1],argv[2],"xr2_x4");
+    testNum(argv[1],argv[2],"zero_x0");
+
+    cerr << "ending normally" << endl;
     return 0;
 }

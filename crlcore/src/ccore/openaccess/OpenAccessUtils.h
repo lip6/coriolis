@@ -23,7 +23,7 @@ namespace {
        giving a oaDesign pointer that should be not NULL
        return the oaString representing its name
     */
-    oaString getDesignName(oaDesign* design) {
+    inline oaString getDesignName(oaDesign* design) {
         cerr << "getDesignName" << endl;
         assert(design);
         oaNativeNS ns;
@@ -40,7 +40,7 @@ namespace {
        print the connectivity, mainly used for debug purpose ...
        @todo remove when not needed anymore
     */
-    void printBlockTerms(oaBlock* block) {
+    inline void printBlockTerms(oaBlock* block) {
         cerr << "printBlockTerms" << endl;
         assert(block);
         oaNativeNS ns;
@@ -59,7 +59,7 @@ namespace {
        Convert material from Hurricane to OA ...
        @todo verify
     */
-    oaMaterial getOAMaterial(const BasicLayer::Material&  material) {
+    inline oaMaterial getOAMaterial(const BasicLayer::Material&  material) {
         cerr << "getOAMaterial" << endl;
         switch ( material.getCode() ) {
         case BasicLayer::Material::nWell:    return oacNWellMaterial;
@@ -83,7 +83,7 @@ namespace {
        Convertion helper for Net convertion ...
        @todo verify
     */
-    oaTermType getOATermType(const Net::Direction& direction) {
+    inline oaTermType getOATermType(const Net::Direction& direction) {
         cerr << "getOATermType" << endl;
         switch (direction) {
         case Net::Direction::IN:
@@ -105,7 +105,7 @@ namespace {
        Convertion helper for Net convertion ...
        @todo verify
     */
-    oaSigType getOASigType(const Net::Type& type) {
+    inline oaSigType getOASigType(const Net::Type& type) {
         cerr << "getOASigType" << endl;
         switch (type.getCode()) {
         case Net::Type::LOGICAL:
@@ -126,7 +126,7 @@ namespace {
     /**
        Convertion helper ...
      */
-    oaOrient getOAOrientFromOrientation(const Transformation::Orientation& orientation) {
+    inline oaOrient getOAOrientFromOrientation(const Transformation::Orientation& orientation) {
         cerr << "getOAOrientFromOrientation" << endl;
         switch (orientation) {
         case Transformation::Orientation::ID:
@@ -153,7 +153,7 @@ namespace {
     /**
        Convertion helper ...
      */
-    void getOATransformFromTransformation(oaTransform& transform, const Transformation& transformation) {
+    inline void getOATransformFromTransformation(oaTransform& transform, const Transformation& transformation) {
         cerr << "getOATransformFromTransformation" << endl;
         transform.set(transformation.getTx(),
                       transformation.getTy(),
@@ -163,7 +163,7 @@ namespace {
     /**
        Convertion helper ...
      */
-    void getOABoxForBox(oaBox& box, const Box& hbox) {
+    inline void getOABoxForBox(oaBox& box, const Box& hbox) {
         cerr << "getOABoxForBox" << endl;
         box.set(hbox.getXMin(), hbox.getYMin(), hbox.getXMax(), hbox.getYMax());
     }
@@ -172,7 +172,7 @@ namespace {
        Create InstTerm representing connection of nets ...
        always return a non NULL value
     */
-    oaInstTerm* getInstTerm(oaInst* inst, Plug* plug,oaNet* net) {
+    inline oaInstTerm* getInstTerm(oaInst* inst, Plug* plug,oaNet* net) {
         cerr << "getInstTerm" << endl;
         assert(inst);
         assert(plug);
@@ -199,7 +199,7 @@ namespace {
     /**
        save design stored in a map
     */
-    void saveDesignsInMap(map<const Cell*, oaDesign*> cell2OAdesign){
+    inline void saveDesignsInMap(map<const Cell*, oaDesign*> cell2OAdesign){
         for (map<const Cell*, oaDesign*>::iterator it = cell2OAdesign.begin();
              it != cell2OAdesign.end();
              ++it) {
@@ -213,7 +213,7 @@ namespace {
     /**
        print the oaLayera in a oaTech ...
     */
-    void printOALayers(oaTech* theOATech){
+    inline void printOALayers(oaTech* theOATech){
         cerr << "printOALayers" << endl;
         assert(theOATech);
         oaIter<oaLayer> lIter(theOATech->getLayers());
@@ -227,7 +227,7 @@ namespace {
     /**
        @todo complete,verify ...
      */
-    BasicLayer::Material::Code oaMaterialToBasicLayerType(const oaMaterial& material) {
+    inline BasicLayer::Material::Code oaMaterialToBasicLayerType(const oaMaterial& material) {
         switch(material) {
         case oacNWellMaterial:
             return BasicLayer::Material::nWell;
@@ -249,6 +249,70 @@ namespace {
         }
     }
 
+    /**
+       generate info from library name
+     */
+    inline pair<oaScalarName,string> libInfos(const string& path,
+                                              const string& libName){
+        oaNativeNS ns;
+        const char* strNameLib = libName.c_str();
+        oaScalarName scNameLib(ns, strNameLib);
+        string strPathLib = path + '/' + strNameLib;
+        return make_pair<oaScalarName,string>(scNameLib,strPathLib);
+    }
+
+    /**
+       open oaLib with the info gathered by libPath function
+     */
+    inline oaLib* openOALib(const pair<oaScalarName,string>& infos){
+        oaLib *lib = oaLib::find(infos.first);
+        const char* pathLib = infos.second.c_str();
+        if (!lib) {
+            if (oaLib::exists(pathLib)){
+                lib = oaLib::open(infos.first, pathLib);
+            }else{
+                string cmd = "mkdir -p "+ infos.second;
+                system(cmd.c_str());
+            }
+            if(!lib){
+                lib = oaLib::create(infos.first, pathLib);
+            }
+        }
+        return lib;
+    }
+
+    inline void createCDS(const pair<oaScalarName,string>& infos){
+        try{
+            cerr << "Overwriting cds.lib file begin" << endl;
+            string cdsPath  = infos.second + "/cds.lib";
+            oaLibDefList* ldl = oaLibDefList::get( cdsPath.c_str(), 'a');
+            assert(ldl);
+                assert(ldl->isValid());
+                if(!oaLibDef::find(ldl, infos.first))
+                    oaLibDef::create(ldl, infos.first, infos.second.c_str());
+                ldl->save();
+                ldl->destroy();//claim memory
+                ldl = NULL;
+                cerr << "Overwrited cds.lib file end" << endl;
+        }catch(oaException& e){
+            cerr << "ERROR cds: " << e.getMsg() << endl;
+            exit(-2);
+        }
+    }
+
+    inline oaCell* OADesignToOACell(oaDesign* design){
+        assert(design);
+        oaScalarName cellName;
+        design->getCellName(cellName);
+        oaLib* lib = design->getLib();
+        oaBoolean gotAccess = false;
+        gotAccess = lib->getAccess(oacReadLibAccess);
+        oaCell* cell = oaCell::find(lib,cellName);
+        if(gotAccess)
+            lib->releaseAccess();
+        assert(cell);
+        return cell;
+    }
 
 }//end anonymous namespace
 

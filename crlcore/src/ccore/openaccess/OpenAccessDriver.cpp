@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-07-22 15:38:03" - OpenAccessWrapper.cpp
+// Time-stamp: "2010-07-23 16:05:52" - OpenAccessWrapper.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -116,30 +116,9 @@ namespace {
             }
 
             // 1) create or open library
-            oaNativeNS ns;
-            const char* strNameLib = getString(library->getName()).c_str();
-            string strPathLib = _path + '/' + strNameLib;
-            oaScalarName scNameLib(ns, strNameLib);
-            cerr << "Library for Lib name="
-                 << strNameLib << " to filesystem path=" << strPathLib << endl;
-            cerr << "oaLib::find" << endl;
-            oaLib *lib = oaLib::find(scNameLib);
-            if (!lib) {
-                if (oaLib::exists(strPathLib.c_str())){
-                    cerr << "oaLib::open" << endl;
-                    lib = oaLib::open(scNameLib, strPathLib.c_str());
-                }else{
-                    cerr << "create directory for library" << endl;
-                    string cmd = "mkdir -p "+strPathLib;
-                    system(cmd.c_str());
-                }
-                if(!lib){
-                    cerr << "oaLib::create" << endl;
-                    lib = oaLib::create(scNameLib, strPathLib.c_str());
-                }
-            }
-            assert(lib);
-            assert(lib->isValid());
+            pair<oaScalarName,string> infos=libInfos(_path,
+                                              getString(library->getName()));
+            oaLib *lib = openOALib(infos);
             _library2OALib[library] = lib;
 
 #if 0
@@ -156,23 +135,8 @@ namespace {
             }
 #endif
             // 4) create, update library list file
-            try{
-                cerr << "Overwriting cds.lib file begin" << endl;
-                string cdsPath  = strPathLib + "/cds.lib";
-                oaLibDefList* ldl = oaLibDefList::get( cdsPath.c_str(), 'a');
-                assert(ldl);
-                assert(ldl->isValid());
-                if(!oaLibDef::find(ldl, scNameLib))
-                    oaLibDef::create(ldl, scNameLib, strPathLib.c_str());
-                ldl->save();
-                ldl->destroy();//claim memory
-                ldl = NULL;
-                cerr << "Overwrited cds.lib file end" << endl;
-            }catch(oaException& e){
-                cerr << "ERROR cds: " << e.getMsg() << endl;
-                exit(-2);
-            }
-
+            createCDS(infos);
+            
             return lib;
         }
 
@@ -632,14 +596,35 @@ namespace {
             // 2) create OA structure ...
             oaDesign* netlistView = createOAasNetlist(cell);
             assert(netlistView);
+
+            oaCell* c1 = OADesignToOACell(netlistView);
+            assert(c1);
+
             oaDesign* symbolicView = addSymbol(cell,netlistView);
             assert(symbolicView);
+
+            oaCell* c2 = OADesignToOACell(symbolicView);
+            assert(c2);
+
             oaDesign* schematicView = addSchematic(cell,symbolicView);
             assert(schematicView);
+
+            oaCell* c3 = OADesignToOACell(schematicView);
+            assert(c3);
+
             oaDesign* layoutView = addLayout(cell,schematicView);
             assert(layoutView);
 
+            oaCell* c4 = OADesignToOACell(layoutView);
+            assert(c4);
+
+            assert(c1 == c2 && c2 == c3 && c3 == c4);
+
             return netlistView;
+        }
+
+        oaCell* getOACellForCell(const Cell* cell) {
+            return OADesignToOACell( getOADesignForCell(cell) );
         }
     };
 #endif
@@ -658,9 +643,7 @@ namespace CRL {
                          oacDataModelRevNumber);
 
             OADriver oaDriver(path);
-            oaDesign* design = oaDriver.getOADesignForCell(cell);
-            if(design)
-                cerr << "DONE ->" << getDesignName(design) << endl;
+            oaCell* convertedCell = oaDriver.getOACellForCell(cell);
         }catch (oaException  &e) {
             cerr << "OA::ERROR => " << e.getMsg() << endl;
             exit(1);
