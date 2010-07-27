@@ -44,9 +44,9 @@ void testCell(Cell* dev,char* pathToTest){
         return;
     }
     system((string("mkdir -p ") + string(pathToTest)).c_str());
-/*    cerr << "driving GDS" << endl;
-      GdsDriver(dev).save(string(pathToTest) + "/GDSdrive");
-*/
+    cerr << "driving GDS" << endl;
+    GdsDriver(dev).save(string(pathToTest) + "/" + getString(dev->getName()) + ".gds");
+
     cerr << "driving OA" << endl;
     OADriver(dev).save(string(pathToTest) + "/OAdrive");
 }

@@ -11,12 +11,11 @@ namespace Hurricane {
 
 namespace CRL {
     class OADriver {
+    private:
+        Hurricane::Cell* _cell;
     public:
         OADriver(Hurricane::Cell*);
         void save(const std::string& path);
-        
-    private:
-        Hurricane::Cell* _cell;
     };
 } // End of CRL namespace.
 

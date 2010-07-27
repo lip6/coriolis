@@ -42,6 +42,7 @@
                                                crlcore/COptions.h
                                                crlcore/XmlParser.h
                                                crlcore/GdsDriver.h
+                                               crlcore/OAParser.h
                                                crlcore/OADriver.h
                                                crlcore/CifDriver.h
                                                crlcore/SearchPath.h
@@ -75,7 +76,7 @@
                                                COptions.cpp
                                                XmlParser.cpp
                                                GdsDriver.cpp
-                                               OADriver.cpp
+                                               OAParserDriver.cpp
                                                CifDriver.cpp
                                                SearchPath.cpp
                                                Environment.cpp
@@ -133,7 +134,8 @@
  if ( OA_FOUND )
                            include_directories ( ${OA_INCLUDE_DIR} )
  endif ( OA_FOUND )
-                         set (openaccess_cpps openaccess/OpenAccessDriver.cpp )
+                         set (openaccess_cpps openaccess/OpenAccessDriver.cpp 
+			     		      openaccess/OpenAccessParser.cpp )
 
                          set ( VstParserSourceDir  ${CRLCORE_SOURCE_DIR}/src/ccore/alliance/vst )
                          set ( VstParserBinaryDir  ${CRLCORE_BINARY_DIR}/src/ccore/alliance/vst )

@@ -62,7 +62,7 @@
 # include  "Spice.h"
 # include  "Bookshelf.h"
 # include  "LefDef.h"
-# include  "openaccess/OpenAccessDriver.h"
+# include  "openaccess/OpenAccess.h"
 
 
 namespace {
@@ -219,8 +219,8 @@ namespace CRL {
     registerSlot ( "spi", (CellParser_t*)spiceParser    , "spi" );
     registerSlot ( "def", (CellParser_t*)defParser      , "def" );
     registerSlot ( "def", (LibraryParser_t*)lefParser   , "lef" );
-//    registerSlot ( "oa",  (CellParser_t*)OpenAccessWrapper::oaDesignLoader , "oa" );
-//    registerSlot ( "oa",  (LibraryParser_t*)OpenAccessWrapper::oaLibLoader , "oa" );
+    registerSlot ( "oa",  (CellParser_t*)OpenAccess::oaCellParser , "oa" );
+    registerSlot ( "oa",  (LibraryParser_t*)OpenAccess::oaLibParser , "oa" );
     registerSlot ( "aux", (CellParser_t*)bookshelfParser, "aux" );
   }
 
@@ -334,7 +334,7 @@ namespace CRL {
     registerSlot ( "def", (CellDriver_t*)defDriver      , "def"      );
     registerSlot ( "aux", (CellDriver_t*)bookshelfDriver, "test.aux" );
     registerSlot ( "spi", (CellDriver_t*)spiceDriver    , "spi"      );
-    registerSlot ( "oa" , (CellDriver_t*)OpenAccessWrapper::oaDriver, "");
+    registerSlot ( "oa" , (CellDriver_t*)OpenAccess::oaDriver, "oa");
   }
 
 
