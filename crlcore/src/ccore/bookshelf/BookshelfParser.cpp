@@ -1059,7 +1059,7 @@ void  BKParser::LoadFromFile ( const string& cellPath, Cell* cell )
 namespace CRL {
 
 
-void  bookshelfParser ( const string& cellPath, Cell *cell )
+void  bookshelfParser ( const string cellPath, Cell *cell )
 {
   cmess2 << "     " << tab << "+ " << cellPath << endl;
 

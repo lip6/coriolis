@@ -130,7 +130,7 @@ void CSpiceDriver::_DumpEnds(ofstream& outfile)
 }  
 
 
-void CSpiceDriver::Drive(const string& cellpath)
+void CSpiceDriver::Drive(const string cellpath)
 // *********************************************
 {
    ofstream outfile(cellpath.c_str());

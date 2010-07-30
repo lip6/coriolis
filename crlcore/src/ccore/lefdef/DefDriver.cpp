@@ -167,7 +167,7 @@ bool  LessNet::operator () ( Net* net1, Net* net2 ) {
 
 
 
-void  defDriver ( const string& cellPath, Cell *cell, unsigned int &saveState )
+void  defDriver ( const string cellPath, Cell *cell, unsigned int &saveState )
 {
 # if HAVE_LEFDEF && defined(LEF_ENABLED)
     CDataBase* dataBase = GetCDataBase();

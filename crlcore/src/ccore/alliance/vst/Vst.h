@@ -55,8 +55,8 @@ namespace CRL {
 // -------------------------------------------------------------------
 // functions.
 
-  void  vstParser ( const string& cellPath, Cell* cell );
-  void  vstDriver ( const string& cellPath, Cell* cell, unsigned int& saveState);
+  void  vstParser ( const string cellPath, Cell* cell );
+  void  vstDriver ( const string cellPath, Cell* cell, unsigned int& saveState);
 
 }
 

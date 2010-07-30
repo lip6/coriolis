@@ -55,8 +55,8 @@ namespace CRL {
 // -------------------------------------------------------------------
 // functions.
 
-  void  apParser ( const string& cellPath, Cell* cell );
-  void  apDriver ( const string& cellPath, Cell* cell, unsigned int& saveState);
+  void  apParser ( const string cellPath, Cell* cell );
+  void  apDriver ( const string cellPath, Cell* cell, unsigned int& saveState);
 
 }
 

@@ -89,7 +89,7 @@ void CifQuery::goCallback(Go* go) {
 } // namespace
 
 namespace CRL {
-void cifDriver(const string& filePath, Cell* cell, string& name, string& units, double& scale) {
+void cifDriver(const string filePath, Cell* cell, string& name, string& units, double& scale) {
     name = getString(cell->getName());
     replace(name.begin(), name.end(), ' ', '_');
     units = "micro";

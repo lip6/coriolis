@@ -390,7 +390,7 @@ void CSpiceParser::_getEntierLine(string& bigbuf, ifstream& infile)
 // If there isn't any error any more, create really the logical view 
 // of model. 
 // ******************************************************************
-void CSpiceParser::Parse(const string& cellPath, Cell* cell)
+void CSpiceParser::Parse(const string cellPath, Cell* cell)
 // *********************************************************
 {
   CatalogProperty *sprop =

@@ -85,7 +85,7 @@ void AgdsQuery::goCallback(Go* go) {
 } // namespace
 
 namespace CRL {
-void agdsDriver(const string& filePath, Cell* cell, string& name, string& lib, double& uUnits, double& pUnits) {
+void agdsDriver(const string filePath, Cell* cell, string& name, string& lib, double& uUnits, double& pUnits) {
     name = getString(cell->getName());
     replace(name.begin(), name.end(), ' ', '_');
     lib = getString(cell->getLibrary()->getName());

@@ -67,7 +67,7 @@ class CSpiceParser {
 
 // Operations
 // **********
-  public : void Parse(const string& , Cell*);
+  public : void Parse(const string , Cell*);
 
 // Others
 // ******

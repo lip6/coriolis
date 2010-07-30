@@ -59,8 +59,8 @@ namespace CRL {
 // -------------------------------------------------------------------
 // functions.
 
-void  bookshelfParser ( const string& cellPath, Cell* cell );
-void  bookshelfDriver ( const string& cellPath, Cell* cell, unsigned int& saveState);
+void  bookshelfParser ( const string cellPath, Cell* cell );
+void  bookshelfDriver ( const string cellPath, Cell* cell, unsigned int& saveState);
 
 }
 

@@ -643,7 +643,7 @@ namespace {
 namespace CRL {
 
 
-  void  defParser ( const string& cellPath, Cell *cell )
+  void  defParser ( const string cellPath, Cell *cell )
   {
     static unsigned int callNumber = 0;
 

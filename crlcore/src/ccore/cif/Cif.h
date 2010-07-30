@@ -12,6 +12,6 @@ namespace Hurricane {
 }
 
 namespace CRL {
-  void cifDriver(const std::string& file, Hurricane::Cell*, std::string& name, std::string& units, double& scale );
+  void cifDriver(const std::string file, Hurricane::Cell*, std::string& name, std::string& units, double& scale );
 }
 # endif

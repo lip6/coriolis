@@ -1244,7 +1244,7 @@ namespace CRL {
 // -------------------------------------------------------------------
 // Function  :  "vstParser()".
 
-void  vstParser ( const string& cellPath, Cell *cell )
+void  vstParser ( const string cellPath, Cell *cell )
 {
   cmess2 << "     " << tab << "+ " << cellPath << endl; tab++;
 

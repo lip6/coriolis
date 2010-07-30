@@ -59,7 +59,7 @@ class CSpiceDriver {
 
 // Operators
 // *********
-    public : void Drive(const string&);
+    public : void Drive(const string);
 
 
 };

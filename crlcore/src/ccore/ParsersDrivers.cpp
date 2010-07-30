@@ -61,6 +61,7 @@
 # include  "Vst.h"
 # include  "Spice.h"
 # include  "Bookshelf.h"
+# include  "AcmSigda.h"
 # include  "LefDef.h"
 # include  "openaccess/OpenAccess.h"
 
@@ -222,6 +223,7 @@ namespace CRL {
     registerSlot ( "oa",  (CellParser_t*)OpenAccess::oaCellParser , "oa" );
     registerSlot ( "oa",  (LibraryParser_t*)OpenAccess::oaLibParser , "oa" );
     registerSlot ( "aux", (CellParser_t*)bookshelfParser, "aux" );
+    registerSlot ( "bench", (CellParser_t*)acmSigdaParser , "bench" );
   }
 
 

@@ -642,7 +642,7 @@ namespace CRL {
 // -------------------------------------------------------------------
 // Function  :  "lefParser()".
 
-void  lefParser ( const string& libPath, Library* library, Catalog& catalog )
+void  lefParser ( const string libPath, Library* library, Catalog& catalog )
 {
   static int callNumber = 0;
 

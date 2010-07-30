@@ -817,7 +817,7 @@ namespace {
 namespace CRL {
 
 
-void  apParser ( const string& cellPath, Cell *cell )
+void  apParser ( const string cellPath, Cell *cell )
 {
   cmess2 << "     " << tab << "+ " << cellPath << endl;
 

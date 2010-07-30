@@ -259,7 +259,7 @@ void DumpInstances(ofstream &ccell, Cell* cell) {
 
 namespace CRL {
     
-void  bookshelfDriver( const string& cellPath, Cell *cell, unsigned int &saveState)
+void  bookshelfDriver( const string cellPath, Cell *cell, unsigned int &saveState)
 {
     ::std::ofstream auxFile ( cellPath.c_str() );
 

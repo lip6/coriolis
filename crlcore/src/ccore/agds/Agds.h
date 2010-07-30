@@ -12,6 +12,6 @@ namespace Hurricane {
 }
 
 namespace CRL {
-  void agdsDriver(const std::string& filePath, Hurricane::Cell* cell, std::string& name, std::string& lib, double& uUnits, double& pUnits);
+  void agdsDriver(const std::string filePath, Hurricane::Cell* cell, std::string& name, std::string& lib, double& uUnits, double& pUnits);
 }
 # endif

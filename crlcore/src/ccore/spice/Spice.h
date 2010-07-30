@@ -29,9 +29,9 @@ using std::string;
 // That means this function create the logical view of
 // those cells who's syntax is correct in the hierarchy.
 // ******************************************************
-  void  spiceParser ( const string& cellPath, Cell* cell );
+  void  spiceParser ( const string cellPath, Cell* cell );
 
-  void  spiceDriver ( const string& cellPath, Cell* cell, unsigned int& saveState);
+  void  spiceDriver ( const string cellPath, Cell* cell, unsigned int& saveState);
 
 }
 

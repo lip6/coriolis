@@ -704,11 +704,12 @@ namespace CRL {
     }
 
     bool  coherency = false;
-    if      (  ( _IN_LO == "vst" ) && ( _IN_PH == "ap" ) ) coherency = true;
-    else if (  ( _IN_LO == "spi" ) && ( _IN_PH == "ap" ) ) coherency = true;
-    else if (  ( _IN_LO == "def" ) && ( _IN_PH == "def") ) coherency = true;
-    else if (  ( _IN_LO == "aux" ) && ( _IN_PH == "aux") ) coherency = true;
-    else if (  ( _IN_LO == "oa"  ) && ( _IN_PH == "oa" ) ) coherency = true;
+    if      (  ( _IN_LO == "vst"   ) && ( _IN_PH == "ap" ) ) coherency = true;
+    else if (  ( _IN_LO == "spi"   ) && ( _IN_PH == "ap" ) ) coherency = true;
+    else if (  ( _IN_LO == "bench" ) && ( _IN_PH == "ap" ) ) coherency = true;
+    else if (  ( _IN_LO == "def"   ) && ( _IN_PH == "def") ) coherency = true;
+    else if (  ( _IN_LO == "aux"   ) && ( _IN_PH == "aux") ) coherency = true;
+    else if (  ( _IN_LO == "oa"    ) && ( _IN_PH == "oa" ) ) coherency = true;
     if ( !coherency )
       throw Error ( badEnvironment, "Input", _IN_LO.c_str(), _IN_PH.c_str() );
 

@@ -56,10 +56,10 @@ namespace CRL {
 // -------------------------------------------------------------------
 // Typedefs.
 
-  typedef  void (  LibraryParser_t  )( const string& , Library*, Catalog& );
-  typedef  void (  CellParser_t     )( const string& , Cell* );
-  typedef  void (  LibraryDriver_t  )( const string& , Library *, Catalog& );
-  typedef  void (  CellDriver_t     )( const string& , Cell*, unsigned int& );
+  typedef  void (  LibraryParser_t  )( const string , Library*, Catalog& );
+  typedef  void (  CellParser_t     )( const string , Cell* );
+  typedef  void (  LibraryDriver_t  )( const string , Library *, Catalog& );
+  typedef  void (  CellDriver_t     )( const string , Cell*, unsigned int& );
 
 
 // -------------------------------------------------------------------

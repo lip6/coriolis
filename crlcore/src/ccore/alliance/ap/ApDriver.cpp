@@ -423,7 +423,7 @@ void DumpInstances(ofstream &ccell, Cell* cell)
 
 namespace CRL {
     
-void  apDriver( const string& cellPath, Cell *cell, unsigned int &saveState) {
+void  apDriver( const string cellPath, Cell *cell, unsigned int &saveState) {
     ::std::ofstream ccell ( cellPath.c_str() );
 
     ccell << "V ALLIANCE : 6" << endl;

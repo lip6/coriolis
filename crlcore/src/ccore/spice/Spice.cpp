@@ -33,7 +33,7 @@ using namespace Hurricane;
    *  Parse hierarchy spice file. 
    */
 
-void  spiceParser ( const string& cellPath, Cell* cell )
+void  spiceParser ( const string cellPath, Cell* cell )
 // ****************************************************
 {
    //  recursiveDepth++;
@@ -51,7 +51,7 @@ void  spiceParser ( const string& cellPath, Cell* cell )
 }
 
 
-void  spiceDriver ( const string& cellPath, Cell* cell, unsigned int& saveState)
+void  spiceDriver ( const string cellPath, Cell* cell, unsigned int& saveState)
 // ****************************************************************************
 {
   CSpiceDriver driver(cell);

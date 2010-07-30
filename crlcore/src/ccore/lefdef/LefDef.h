@@ -76,9 +76,9 @@ namespace CRL {
 // functions.
 
   extern void  CParsLEFTechno ( string fileTechno );
-  extern void  lefParser ( const string& libPath, Library* lib, Catalog& catal );
-  extern void  defParser ( const string& cellPath, Cell* cell );
-  extern void  defDriver ( const string& cellPath, Cell* cell, unsigned int& saveState );
+  extern void  lefParser ( const string libPath, Library* lib, Catalog& catal );
+  extern void  defParser ( const string cellPath, Cell* cell );
+  extern void  defDriver ( const string cellPath, Cell* cell, unsigned int& saveState );
 
 
 } // End of CRL namespace.

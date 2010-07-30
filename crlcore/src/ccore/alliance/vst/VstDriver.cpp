@@ -614,7 +614,7 @@ void DumpConnectionList(ofstream &ccell, Instance*instance)
 
 namespace CRL {
 
-void  vstDriver ( const string &cellPath, Cell *cell, unsigned int &saveState )
+void  vstDriver ( const string cellPath, Cell *cell, unsigned int &saveState )
 {
     ::std::ofstream  ccell ( cellPath.c_str() );
     ccell << "entity " << cell->getName() << " is" << endl;

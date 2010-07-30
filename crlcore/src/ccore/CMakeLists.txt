@@ -15,6 +15,7 @@
                              ${CRLCORE_SOURCE_DIR}/src/ccore
                              ${CRLCORE_SOURCE_DIR}/src/ccore/properties
                              ${CRLCORE_SOURCE_DIR}/src/ccore/bookshelf
+                             ${CRLCORE_SOURCE_DIR}/src/ccore/acmsigda
                              ${CRLCORE_SOURCE_DIR}/src/ccore/cspice
                              ${CRLCORE_SOURCE_DIR}/src/ccore/lefdef
                              ${CRLCORE_SOURCE_DIR}/src/ccore/alliance/ap
@@ -223,6 +224,34 @@
 #  set_source_files_properties ( ${LibertyParserScannerCpp} GENERATED )
 #  set_source_files_properties ( ${LibertyParserGrammarCpp} GENERATED )
 
+                         set ( AcmSigdaParserSourceDir  ${CRLCORE_SOURCE_DIR}/src/ccore/acmsigda )
+                         set ( AcmSigdaParserBinaryDir  ${CRLCORE_BINARY_DIR}/src/ccore/acmsigda )
+                         set ( AcmSigdaParserScanner    ${AcmSigdaParserSourceDir}/AcmSigdaParserScanner.ll  )
+                         set ( AcmSigdaParserGrammar    ${AcmSigdaParserSourceDir}/AcmSigdaParserGrammar.yy  )
+                         set ( AcmSigdaParserScannerCpp ${AcmSigdaParserBinaryDir}/AcmSigdaParserScanner.cpp )
+                         set ( AcmSigdaParserGrammarCpp ${AcmSigdaParserBinaryDir}/AcmSigdaParserGrammar.cpp )
+            add_subdirectory ( acmsigda )
+           add_custom_target ( AcmSigdaParser echo "Creating ACM/SIGDA parser" )
+          add_custom_command ( SOURCE   ${AcmSigdaParserScanner}
+                               COMMAND  ${FLEX_EXECUTABLE}
+                               ARGS     -PAcmSigda_ -o${AcmSigdaParserScannerCpp} ${AcmSigdaParserScanner}
+                               TARGET   AcmSigdaParser
+                               OUTPUTS  ${AcmSigdaParserScannerCpp}
+                             )
+          add_custom_command ( SOURCE   ${AcmSigdaParserGrammar}
+                               COMMAND  ${BISON_EXECUTABLE} 
+                               ARGS     -d -v -p AcmSigda_ -y ${AcmSigdaParserGrammar} -o ${AcmSigdaParserGrammarCpp}
+                               TARGET   AcmSigdaParser
+                               DEPENDS  ${AcmSigdaParserScannerCpp}
+                               OUTPUTS  ${AcmSigdaParserGrammarCpp}
+                             )
+         include_directories ( ${AcmSigdaParserBinaryDir} )
+                         set ( acmsigda_parser_cpps ${AcmSigdaParserScannerCpp}
+                                                    ${AcmSigdaParserGrammarCpp}
+                             )
+ set_source_files_properties ( ${AcmSigdaParserScannerCpp} GENERATED )
+ set_source_files_properties ( ${AcmSigdaParserGrammarCpp} GENERATED )
+
 
                 qt4_wrap_cpp ( moc_cpps ${mocincludes} )
 
@@ -239,6 +268,7 @@
                                         ${liberty_cpps}
                                         ${liberty_parser_cpps}
                                         ${bookshelf_cpps}
+                                        ${acmsigda_parser_cpps}
                                         ${spice_cpps}
                                         ${lefdef_cpps}
                                         ${openaccess_cpps}
