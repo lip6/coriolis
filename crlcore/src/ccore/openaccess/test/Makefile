@@ -1,16 +1,15 @@
 
-
 all:
 	./compile.sh
 
-run: 
-	cd x86_64/usr/local/bin && ./testOAWrapper /asim/chams/etc/chams/config.freePDK45.xml /tmp/testOA
+run:
+	./x86_64/usr/local/bin/testOAWrapper /asim/chams/etc/chams/config.freePDK45.xml /tmp/testOA 2>&1 | tee err.log
 
-debug: 
-	cd x86_64/usr/local/bin && gdb -args ./testOAWrapper /asim/chams/etc/chams/config.freePDK45.xml /tmp/testOA
+debug:
+	gdb -args ./x86_64/usr/local/bin/testOAWrapper /asim/chams/etc/chams/config.freePDK45.xml /tmp/testOA
 
-ddd: 
-	cd x86_64/usr/local/bin && ddd -args ./testOAWrapper /asim/chams/etc/chams/config.freePDK45.xml /tmp/testOA
+ddd:
+	ddd -args ./x86_64/usr/local/bin/testOAWrapper /asim/chams/etc/chams/config.freePDK45.xml /tmp/testOA
 
 rmtmp:
 	rm -rf /tmp/*

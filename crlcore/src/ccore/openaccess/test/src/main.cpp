@@ -29,6 +29,7 @@ using namespace CRL;
 #include "hurricaneAMS/devices/SimpleCurrentMirror.h"
 
 #include "crlcore/GdsDriver.h"
+#include "crlcore/CifDriver.h"
 #include "crlcore/OADriver.h"
 
 namespace {
@@ -44,8 +45,12 @@ void testCell(Cell* dev,char* pathToTest){
         return;
     }
     system((string("mkdir -p ") + string(pathToTest)).c_str());
+
     cerr << "driving GDS" << endl;
     GdsDriver(dev).save(string(pathToTest) + "/" + getString(dev->getName()) + ".gds");
+
+    cerr << "driving CIF" << endl;
+    CifDriver(dev).save(string(pathToTest) + "/" + getString(dev->getName()) + ".cif");
 
     cerr << "driving OA" << endl;
     OADriver(dev).save(string(pathToTest) + "/OAdrive");

@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-07-26 16:16:18" - OpenAccessParser.cpp
+// Time-stamp: "2010-07-28 15:44:58" - OpenAccessParser.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -344,7 +344,6 @@ namespace {
                 cout << "ERROR: " << excp.getMsg() << endl;
                 exit(1);
             }
-
         }
 
         void getDesigns(set<Cell*>& designCellSet) {

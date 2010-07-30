@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-07-26 16:09:36" - OpenAccessCommon.h
+// Time-stamp: "2010-07-30 16:48:54" - OpenAccessCommon.h
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -28,14 +28,13 @@ using namespace oa;
 #define assert(cond) if (! (cond) ) throw Error("assertion failed : " + string( #cond ) )
 //#define assert(cond)
 
-namespace {    
+namespace {
 
     /**
        giving a oaDesign pointer that should be not NULL
        return the oaString representing its name
     */
     inline oaString getDesignName(oaDesign* design) {
-        cerr << "getDesignName" << endl;
         assert(design);
         oaNativeNS ns;
         oaString libName, cellName, viewName;
@@ -52,7 +51,6 @@ namespace {
        @todo remove when not needed anymore
     */
     inline void printBlockTerms(oaBlock* block) {
-        cerr << "printBlockTerms" << endl;
         assert(block);
         oaNativeNS ns;
         oaDesign* design = block->getDesign();
@@ -71,7 +69,6 @@ namespace {
        @todo verify
     */
     inline oaMaterial getOAMaterial(const BasicLayer::Material&  material) {
-        cerr << "getOAMaterial" << endl;
         switch ( material.getCode() ) {
         case BasicLayer::Material::nWell:    return oacNWellMaterial;
         case BasicLayer::Material::pWell:    return oacPWellMaterial;
@@ -81,7 +78,7 @@ namespace {
         case BasicLayer::Material::poly:     return oacPolyMaterial;
         case BasicLayer::Material::cut:      return oacCutMaterial;
         case BasicLayer::Material::metal:    return oacMetalMaterial;
-        case BasicLayer::Material::blockage: 
+        case BasicLayer::Material::blockage:
             //there is no blockage type but a specific oaLayerBlockage class
             return oacOtherMaterial;
         case BasicLayer::Material::other:    return oacOtherMaterial;
@@ -91,11 +88,35 @@ namespace {
     }
 
     /**
+       @todo complete,verify ...
+    */
+    inline BasicLayer::Material::Code oaMaterialToBasicLayerType(const oaMaterial& material) {
+        switch(material) {
+        case oacNWellMaterial:
+            return BasicLayer::Material::nWell;
+        case oacPWellMaterial:
+            return BasicLayer::Material::pWell;
+        case oacNImplantMaterial:
+            return BasicLayer::Material::nImplant;
+        case oacPImplantMaterial:
+            return BasicLayer::Material::pImplant;
+        case oacPolyMaterial:
+            return BasicLayer::Material::poly;
+        case oacCutMaterial:
+            return BasicLayer::Material::cut;
+        case oacMetalMaterial:
+        case oacContactlessMetalMaterial:
+            return BasicLayer::Material::metal;
+        default:
+            return BasicLayer::Material::other;
+        }
+    }
+
+    /**
        Convertion helper for Net convertion ...
        @todo verify
     */
     inline oaTermType getOATermType(const Net::Direction& direction) {
-        cerr << "getOATermType" << endl;
         switch (direction) {
         case Net::Direction::IN:
             return oacInputTermType;
@@ -117,7 +138,6 @@ namespace {
        @todo verify
     */
     inline oaSigType getOASigType(const Net::Type& type) {
-        cerr << "getOASigType" << endl;
         switch (type.getCode()) {
         case Net::Type::LOGICAL:
             return oacSignalSigType;
@@ -136,9 +156,8 @@ namespace {
 
     /**
        Convertion helper ...
-     */
+    */
     inline oaOrient getOAOrientFromOrientation(const Transformation::Orientation& orientation) {
-        cerr << "getOAOrientFromOrientation" << endl;
         switch (orientation) {
         case Transformation::Orientation::ID:
             return oacR0;
@@ -163,9 +182,8 @@ namespace {
 
     /**
        Convertion helper ...
-     */
+    */
     inline void getOATransformFromTransformation(oaTransform& transform, const Transformation& transformation) {
-        cerr << "getOATransformFromTransformation" << endl;
         transform.set(transformation.getTx(),
                       transformation.getTy(),
                       getOAOrientFromOrientation(transformation.getOrientation()));
@@ -173,18 +191,17 @@ namespace {
 
     /**
        Convertion helper ...
-     */
+    */
     inline void getOABoxForBox(oaBox& box, const Box& hbox) {
         cerr << "getOABoxForBox" << endl;
         box.set(hbox.getXMin(), hbox.getYMin(), hbox.getXMax(), hbox.getYMax());
     }
 
     /**
-       Create InstTerm representing connection of nets ...
+       Create InstTerm representing connection of nets between instance
        always return a non NULL value
     */
     inline oaInstTerm* getInstTerm(oaInst* inst, Plug* plug,oaNet* net) {
-        cerr << "getInstTerm" << endl;
         assert(inst);
         assert(plug);
         oaNativeNS ns;
@@ -225,7 +242,6 @@ namespace {
        print the oaLayera in a oaTech ...
     */
     inline void printOALayers(oaTech* theOATech){
-        cerr << "printOALayers" << endl;
         assert(theOATech);
         oaIter<oaLayer> lIter(theOATech->getLayers());
         while(oaLayer* l = lIter.getNext()){
@@ -236,33 +252,8 @@ namespace {
     }
 
     /**
-       @todo complete,verify ...
-     */
-    inline BasicLayer::Material::Code oaMaterialToBasicLayerType(const oaMaterial& material) {
-        switch(material) {
-        case oacNWellMaterial:
-            return BasicLayer::Material::nWell;
-        case oacPWellMaterial:
-            return BasicLayer::Material::pWell;
-        case oacNImplantMaterial:
-            return BasicLayer::Material::nImplant;
-        case oacPImplantMaterial:
-            return BasicLayer::Material::pImplant;
-        case oacPolyMaterial:
-            return BasicLayer::Material::poly;
-        case oacCutMaterial:
-            return BasicLayer::Material::cut;            
-        case oacMetalMaterial:
-        case oacContactlessMetalMaterial:
-            return BasicLayer::Material::metal;
-        default:
-            return BasicLayer::Material::other;
-        }
-    }
-
-    /**
        generate info from library name
-     */
+    */
     inline pair<oaScalarName,string> libInfos(const string& path,
                                               const string& libName){
         oaNativeNS ns;
@@ -274,7 +265,7 @@ namespace {
 
     /**
        open oaLib with the info gathered by libPath function
-     */
+    */
     inline oaLib* openOALib(const pair<oaScalarName,string>& infos){
         oaLib *lib = oaLib::find(infos.first);
         const char* pathLib = infos.second.c_str();
@@ -292,19 +283,19 @@ namespace {
         return lib;
     }
 
-    inline void createCDS(const pair<oaScalarName,string>& infos){
+    inline void createCDS(const pair<oaScalarName,string>& infos,const string& path){
         try{
-            cerr << "Overwriting cds.lib file begin" << endl;
-            string cdsPath  = infos.second + "/cds.lib";
+            cerr << "Overwriting cds.lib file begin " << endl;
+            string cdsPath  = path + "/cds.lib";
             oaLibDefList* ldl = oaLibDefList::get( cdsPath.c_str(), 'a');
             assert(ldl);
-                assert(ldl->isValid());
-                if(!oaLibDef::find(ldl, infos.first))
-                    oaLibDef::create(ldl, infos.first, infos.second.c_str());
-                ldl->save();
-                ldl->destroy();//claim memory
-                ldl = NULL;
-                cerr << "Overwrited cds.lib file end" << endl;
+            assert(ldl->isValid());
+            if(!oaLibDef::find(ldl, infos.first))
+                oaLibDef::create(ldl, infos.first, infos.second.c_str());
+            ldl->save();
+            ldl->destroy();//claim memory
+            ldl = NULL;
+            cerr << "Overwrited cds.lib file end" << endl;
         }catch(oaException& e){
             cerr << "ERROR cds: " << e.getMsg() << endl;
             exit(-2);
@@ -352,7 +343,7 @@ namespace {
         }
         return findLibraryByNameInLibrary(rootLibrary, libraryName);
     }
-    
+
     inline void getAllCells(Library* rootLibrary, set<Cell*>& cellSet) {
         for_each_cell(cell, rootLibrary->getCells()) {
             cellSet.insert(cell);
@@ -391,7 +382,7 @@ namespace {
 
     /**
        function helper
-     */
+    */
     inline Library* getOACellLibraries() {
         Library* rootLibrary = getRootLibrary();
         if (!rootLibrary) {
@@ -408,7 +399,7 @@ namespace {
 
     /**
        helper function
-     */
+    */
     inline Library* getOADesignLibraries() {
         Library* rootLibrary = getRootLibrary();
         if (!rootLibrary) {
@@ -425,7 +416,7 @@ namespace {
 
     /**
        utility to open a design by name
-     */
+    */
     inline oaView* pickView(oaCell* oa_Cell) {
         //oacMaskLayout Type is first
         oaView* toReturnView = NULL;
@@ -452,7 +443,7 @@ namespace {
 
     /**
        utility to open a design by name
-     */
+    */
     inline oaDesign* openDesign(const oaNameSpace& oaNS, oaCell* oa_Cell) {
         oaView* view = pickView(oa_Cell);
         if (view != NULL) {
@@ -567,25 +558,25 @@ namespace {
                     if (instance) {
                         //cerr << "found " << instance << endl;
                         oaPlacementStatus placementStatus= oa_Inst->getPlacementStatus();
-                        //switch (placementStatus) {
-                        //    case oacNonePlacementStatus :
-                        //        cerr << " none" << endl;
-                        //        break;
-                        //    case oacUnplacedPlacementStatus :
-                        //        cerr << " unplaced" << endl;
-                        //        break;
-                        //    case oacPlacedPlacementStatus :
-                        //        cerr << " placed" << endl;
-                        //        break;
-                        //    case oacFixedPlacementStatus :
-                        //        cerr << " fixed" << endl;
-                        //        break;
-                        //    default :
-                        //        cerr << "other" << endl;
-                        //}
+                        switch (placementStatus) {
+                        case oacNonePlacementStatus :
+                            cerr << " none" << endl;
+                            break;
+                        case oacUnplacedPlacementStatus :
+                            cerr << " unplaced" << endl;
+                            break;
+                        case oacPlacedPlacementStatus :
+                            cerr << " placed" << endl;
+                            break;
+                        case oacFixedPlacementStatus :
+                            cerr << " fixed" << endl;
+                            break;
+                        default :
+                            cerr << "other" << endl;
+                        }
                         oaPoint instOrigin;
                         oa_Inst->getOrigin(instOrigin);
-                        //cerr << instOrigin.x() << " " << instOrigin.y() << endl;
+                        cerr << instOrigin.x() << " " << instOrigin.y() << endl;
                     } else {
                         cerr << "cannot find " << oaInstStr << endl;
                     }
@@ -617,6 +608,188 @@ namespace {
             }
         }//end if (cellDesign != NULL)
     }
+
+    inline oaRect* MakeRect(oaBlock *block,
+                            oaTransform &xform,
+                            oaInt4 xformXoffset,
+                            oaLayer* layerPin){
+        xform.xOffset() += xformXoffset;
+        const oaUInt4 lengthPin(3);
+        const oaUInt4 widthPin(2);
+        const oaBox boxPin(0, -static_cast<oaInt4>(widthPin/2),
+                           lengthPin, static_cast<oaInt4>(widthPin/2));
+        return oaRect::create(block,
+                              layerPin->getNumber(),
+                              oacDrawingPurposeType,
+                              oaBox(boxPin, xform));
+    }
+    
+    inline void MakeStub(oaBlock *block,
+                         oaPointArray &pa,
+                         oaInt4 endPointXoffset,
+                         oaLayer* layerPin){
+        pa[1].x() += endPointXoffset;
+        oaLine::create(block, layerPin->getNumber(), oacDrawingPurposeType, pa);
+    }
+    
+    oaString MakeLabel(oaBlock* block,
+                       oaTransform& xform,
+                       const char* label,
+                       oaLayer* layerText){
+        oaString   str;
+        const oaUInt4 widthPin(2);
+        xform.yOffset() += 1 + widthPin/2;
+        oaText* text = oaText::create(block,
+                                      layerText->getNumber(),
+                                      oacDrawingPurposeType,
+                                      label,
+                                      xform.offset(),
+                                      oacLowerLeftTextAlign,
+                                      oacR0,
+                                      oacFixedFont,
+                                      3);
+        text->getText(str);
+        return str;
+    }
+
+    /**
+       Make a rectangular Pin shape for a Term on a block's symbol.
+       For the purpose of the schematicSymbol, this pin shape will
+       be attached to a line "stub extension" sticking out from the
+       basic symbol shape to represents block's internal Net.
+    */
+    oaPin* MakePinSymbol(oaBlock* block,
+                       oaPoint location,
+                       const char* strNameTerm,
+                       oaInt4 stubLength,
+                       oaOrient rotation,
+                       oaLayer* layerPin,
+                       oaLayer* layerText){
+        const oaUInt4 lengthPin(3);
+        const oaUInt4 widthPin(2);
+        const oaBox boxPin( 0, -static_cast<oaInt4>(widthPin/2),
+                            lengthPin, static_cast<oaInt4>(widthPin/2));
+
+        // boxPin is represented here
+        //   Y-axis
+        //      |
+        //      | lengthPin -->
+        //      |_________
+        //      |         |
+        //  ----|---------|-------- X-axis
+        //      |_________|
+        //      |
+        //      |
+        // Assume the location argument is the point on the main symbol
+        // against which the Pin is to be located, centered vertically (Y-axis)
+        // on that point, left of the point if it is an INPUT pin and right
+        // of that point if an OUTPUT pin, moved orthogonally away from the
+        // edge of the gate symbol by a stub of length stubLength representing
+        // part of the internal net of the gate to which a Term's Pin is attached.
+        //
+        //                  |            |
+        //                  |      OUT   |         Y__
+        //                  |      point o---------|__|
+        //                  |            |     /
+        //                  |            |    /
+        //                  |    GATE    |  stubLength
+        //                  |            |
+        //     A__          |            |
+        //     |__|---------o point      |
+        //           /      |    IN      |
+        //          /       |            |
+        //      stubLength  |            |
+
+
+        // Define oaTransform xform to be the location argument (no rotation)
+        // begin_skel
+        oaTransform xform( location, rotation );
+        // end_skel
+
+        static oaPointArray pa(2);
+
+        // Set both points in pa[] to the value of the location arg.
+        // (HINT: The allocation size and number of points attributes are DIFFERENT.)
+        //
+        // begin_skel
+        pa.setNumElements(2);
+        pa[0] = location;
+        pa[1] = location;
+        // end_skel
+
+        // Find the term by name (the strNameTerm arg) and set to the term variable
+        // for reuse later when the Pin is created for that Term.        
+        oaTerm* term = oaTerm::find(block, oaScalarName(oaNativeNS(),strNameTerm));
+
+        // Create for the Term:
+        //
+        // 1. A "stub" Line from the symbol shape to the Pin shape
+        //    (representing a connection to the Block's internal Net)
+        //
+        //    The pa[] PointArray has already been set up for this Line with the start
+        //    and end Points both set to the proper location on the edge of the symbol
+        //    Shape.  Only the second (endPoint) X value must be moved to the LEFT
+        //    or RIGHT (for Input or Output Pins, respectively). Call MakeStub() passing
+        //    in the block to the right edge of the Pin.
+        //
+        // 2. A rectangular Shape to represent the Pin itself
+        //
+        //    Use the MakeRect() utility function to create the Shape of the Pin
+        //    passing to it the template boxPin from the globals singleton, and the
+        //    Transform declared and initialized above. That Transform will move the
+        //    base boxPin from its 0,0 location to the location point on the edge of the
+        //    symbol shape.  Also pass in an X offset from that location that moves
+        //    the pinBox to the left or right, depending on whether it's an Input or
+        //    Output Pin.
+        //
+        // 3. The Pin itself using the rectangle just created with the same name
+        //    as the Term (arg passed in). Set the access direction for the Pin to
+        //    enable connections from all directions except that on the "stub side".
+        //    The rectangle must be explicitly added to the Pin.
+        //
+        // 4. A Text label for the Pin whose text value is the name of the Term.
+        //    Use the MakeLabel() utility function passing in the strNameTerm and
+        //    Transform (which now represents the left edge of the Pin shape properly located.
+        oaPin* pin = NULL;
+        switch (term->getTermType()) {
+
+            // If the Pin is an Output type, assume it is on the RIGHT side.
+            //
+            // 1. Call MakeStub() with endPointXoffset to the RIGHT by the stubLength.
+            // 2. Call MakeRect() with an X offset that moves RIGHT by stubLength.
+            // 3. Construct the oaPin allowing access from top, bottom and right.
+            // 4. Call MakeLabel().
+            //
+        case oacOutputTermType:
+        case oacInputOutputTermType:
+            MakeStub(block, pa, stubLength,layerPin);
+            pin = oaPin::create(term, oacTop|oacBottom|oacRight);
+            MakeRect(block, xform, stubLength,layerPin)->addToPin(pin);
+            MakeLabel(block, xform, strNameTerm,layerText);
+            break;
+
+            // If the Pin is an Input type, assume it is on the LEFT side.
+            //
+            // 1. Call MakeStub() with endPointXoffset to the LEFT by the stubLength.
+            // 2. Call MakeRect() with an X offset that moves LEFT by
+            //    (stubLength + lengthPin) if the rotation is oacR0.
+            // 3. Construct the oaPin allowing access from top, bottom, and left.
+            // 4. Call MakeLabel().
+        case oacInputTermType:
+        default:
+            MakeStub(block, pa, -stubLength,layerPin);
+            pin = oaPin::create(term, oacTop|oacBottom|oacLeft);
+            MakeRect(block,xform, 
+                     -stubLength - (rotation == oacR0
+                                    ? lengthPin : 0 ),
+                     layerPin)->addToPin(pin);
+            MakeLabel(block, xform, strNameTerm,layerText);
+            break;
+        }
+        return pin;
+    }//MakePinSymbol
+
+
 }//end anonymous namespace
 
 #endif//HAVE_OPENACCESS
