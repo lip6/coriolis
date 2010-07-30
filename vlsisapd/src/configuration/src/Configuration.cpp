@@ -435,11 +435,16 @@ namespace Cfg {
       string id   = "\"" + p->getId() + "\"";
       string type = "\"" + Parameter::typeToString(p->getType()) + "\"";
 
+
       out << "  <parameter"
           << " id="    << setw(40) << left << id
           << " type="  << setw(12) << left << type
-          << " value=\"" << p->asString() << "\"/>"
-          << endl;
+          << " value=\"";
+
+      if ( p->getType() == Parameter::Percentage ) out << p->asPercentage();
+      else out << p->asString();
+
+      out << "\"/>" << endl;
     }
 
     out << "</configuration>" << endl;

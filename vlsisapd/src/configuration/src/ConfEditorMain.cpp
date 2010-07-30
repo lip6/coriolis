@@ -70,13 +70,7 @@ int main ( int argc, char* argv[] )
 
     bfs::path::default_name_check ( bfs::portable_posix_name );
 
-    Configuration* conf        = Configuration::get ();
-    bfs::path      dotConfPath ( "./.coriolis2.configuration.xml" );
-
-    if ( bfs::exists(dotConfPath) ) {
-      cout << "Reading dot configuration: <" << dotConfPath.string() << ">." << endl;
-      conf->readFromFile ( dotConfPath.string() );
-    }
+    Configuration* conf = Configuration::get ();
 
     if ( arguments.count("conf") ) {
       bfs::path confPath = ( arguments["conf"].as<string>() );
@@ -86,6 +80,12 @@ int main ( int argc, char* argv[] )
       } else {
         cout << "Configuration file: <" << confPath.string() << "> doesn't exists." << endl;
       }
+    }
+
+    bfs::path dotConfPath ( "./.coriolis2.configuration.xml" );
+    if ( bfs::exists(dotConfPath) ) {
+      cout << "Reading dot configuration: <" << dotConfPath.string() << ">." << endl;
+      conf->readFromFile ( dotConfPath.string() );
     }
 
     ConfEditorWidget* editor = new ConfEditorWidget ();
