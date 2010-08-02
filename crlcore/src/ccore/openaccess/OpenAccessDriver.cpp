@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-02 14:58:55" - OpenAccessDriver.cpp
+// Time-stamp: "2010-08-02 16:54:01" - OpenAccessDriver.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -64,7 +64,7 @@ namespace {
         Technology* _technology;
     public:
         OADriver(const string& path) :
-            _path(path),
+            _path(realPath(path)),
             _oaTech(NULL),
             _library2OALib(),
             _cell2OADesign4Netlist(),
@@ -96,15 +96,20 @@ namespace {
             _oaTech->save();
             _oaTech->close();
             saveDesignsInMap(_cell2OADesign4Netlist);
+            _cell2OADesign4Netlist.clear();
             saveDesignsInMap(_cell2OADesign4Schematic);
+            _cell2OADesign4Schematic.clear();
             saveDesignsInMap(_cell2OADesign4Symbolic);
+            _cell2OADesign4Symbolic.clear();
             saveDesignsInMap(_cell2OADesign4Layout);
+            _cell2OADesign4Layout.clear();
             for (Library2OALibMap::iterator it = _library2OALib.begin();
                  it != _library2OALib.end();
                  ++it) {
                 oaLib* lib = it->second;
                 lib->close();
             }
+            _path.clear();
             cerr << "ALL SAVED" << endl;
         }
 
@@ -140,6 +145,7 @@ namespace {
 #endif
             // 4) create, update library list file
             createCDS(infos,_path);
+            infos.second.clear();
 
             return lib;
         }

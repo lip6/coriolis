@@ -1,21 +1,30 @@
 
-all:
+TESTDIR= ./testOA
+TECHNOFILE= /asim/chams/etc/chams/config.freePDK45.xml
+
+compile: 
 	./compile.sh
 
-run:
-	./x86_64/usr/local/bin/testOAWrapper /asim/chams/etc/chams/config.freePDK45.xml /tmp/testOA 2>&1 | tee err.log
+run: compile
+	./x86_64/usr/local/bin/testOAWrapper $(TECHNOFILE) $(TESTDIR) 2>&1 | tee $@.log
 
-debug:
-	gdb -args ./x86_64/usr/local/bin/testOAWrapper /asim/chams/etc/chams/config.freePDK45.xml /tmp/testOA
+debug: compile
+	gdb -args ./x86_64/usr/local/bin/testOAWrapper $(TECHNOFILE) $(TESTDIR)
 
-ddd:
-	ddd -args ./x86_64/usr/local/bin/testOAWrapper /asim/chams/etc/chams/config.freePDK45.xml /tmp/testOA
+ddd: compile
+	ddd -args ./x86_64/usr/local/bin/testOAWrapper $(TECHNOFILE) $(TESTDIR)
 
-valgrind:
-	valgrind ./x86_64/usr/local/bin/testOAWrapper /asim/chams/etc/chams/config.freePDK45.xml /tmp/testOA
+valgrind_simple: compile
+	valgrind ./x86_64/usr/local/bin/testOAWrapper $(TECHNOFILE) $(TESTDIR) 2>&1 | tee $@.log
 
-rmtmp:
-	rm -rf /tmp/*
+valgrind_full: compile
+	valgrind -v --leak-check=full --show-reachable=yes ./x86_64/usr/local/bin/testOAWrapper $(TECHNOFILE) $(TESTDIR) 2>&1 | tee $@.log
+
+mrproper: clean
+	rm -rf $(TESTDIR) *.log
 
 clean:
 	rm -rf x86_64
+
+
+.PHONY: clean mrproper valgrind ddd debug run compile

@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-07-30 16:48:54" - OpenAccessCommon.h
+// Time-stamp: "2010-08-02 17:50:42" - OpenAccessCommon.h
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -252,6 +252,17 @@ namespace {
     }
 
     /**
+       handling realpath with string intead of char*
+    */
+    inline string realPath(const string& path){
+        char* buffer = (char*) calloc(PATH_MAX+1,sizeof(char));
+        realpath(path.c_str(), buffer);
+        string res(buffer);
+        free(buffer);
+        return res;
+    }
+
+    /**
        generate info from library name
     */
     inline pair<oaScalarName,string> libInfos(const string& path,
@@ -283,23 +294,28 @@ namespace {
         return lib;
     }
 
-    inline void createCDS(const pair<oaScalarName,string>& infos,const string& path){
-        try{
-            cerr << "Overwriting cds.lib file begin " << endl;
-            string cdsPath  = path + "/cds.lib";
-            oaLibDefList* ldl = oaLibDefList::get( cdsPath.c_str(), 'a');
-            assert(ldl);
-            assert(ldl->isValid());
-            if(!oaLibDef::find(ldl, infos.first))
-                oaLibDef::create(ldl, infos.first, infos.second.c_str());
-            ldl->save();
-            ldl->destroy();//claim memory
-            ldl = NULL;
-            cerr << "Overwrited cds.lib file end" << endl;
-        }catch(oaException& e){
-            cerr << "ERROR cds: " << e.getMsg() << endl;
-            exit(-2);
-        }
+    inline void createCDS(const pair<oaScalarName,string>& infos,const string& path){        
+          try{
+              cerr << "Overwriting cds.lib file begin " << endl;
+              string cdsPath  = path + "/cds.lib";
+              oaString oaCDSPath = oaString(cdsPath.c_str());
+              oaLibDefList* ldl = oaLibDefList::find(oaCDSPath);
+              if(!ldl)
+                  ldl = oaLibDefList::get(oaCDSPath, 'a');
+              assert(ldl);
+              assert(ldl->isValid());
+              oaLibDef* toAdd = oaLibDef::find(ldl, infos.first);
+              if(!toAdd)
+                  toAdd = oaLibDef::create(ldl, infos.first, infos.second.c_str());
+              ldl->save();
+              ldl->destroy();//claim memory
+              ldl = NULL;
+              cdsPath.clear();
+              cerr << "Overwrited cds.lib file end" << endl;
+          }catch(oaException& e){
+              cerr << "ERROR cds: " << e.getMsg() << endl;
+              exit(-2);
+          }          
     }
 
     inline oaCell* OADesignToOACell(oaDesign* design){
@@ -623,7 +639,7 @@ namespace {
                               oacDrawingPurposeType,
                               oaBox(boxPin, xform));
     }
-    
+
     inline void MakeStub(oaBlock *block,
                          oaPointArray &pa,
                          oaInt4 endPointXoffset,
@@ -631,7 +647,7 @@ namespace {
         pa[1].x() += endPointXoffset;
         oaLine::create(block, layerPin->getNumber(), oacDrawingPurposeType, pa);
     }
-    
+
     oaString MakeLabel(oaBlock* block,
                        oaTransform& xform,
                        const char* label,
@@ -659,12 +675,12 @@ namespace {
        basic symbol shape to represents block's internal Net.
     */
     oaPin* MakePinSymbol(oaBlock* block,
-                       oaPoint location,
-                       const char* strNameTerm,
-                       oaInt4 stubLength,
-                       oaOrient rotation,
-                       oaLayer* layerPin,
-                       oaLayer* layerText){
+                         oaPoint location,
+                         const char* strNameTerm,
+                         oaInt4 stubLength,
+                         oaOrient rotation,
+                         oaLayer* layerPin,
+                         oaLayer* layerText){
         const oaUInt4 lengthPin(3);
         const oaUInt4 widthPin(2);
         const oaBox boxPin( 0, -static_cast<oaInt4>(widthPin/2),
@@ -718,7 +734,7 @@ namespace {
         // end_skel
 
         // Find the term by name (the strNameTerm arg) and set to the term variable
-        // for reuse later when the Pin is created for that Term.        
+        // for reuse later when the Pin is created for that Term.
         oaTerm* term = oaTerm::find(block, oaScalarName(oaNativeNS(),strNameTerm));
 
         // Create for the Term:
@@ -779,7 +795,7 @@ namespace {
         default:
             MakeStub(block, pa, -stubLength,layerPin);
             pin = oaPin::create(term, oacTop|oacBottom|oacLeft);
-            MakeRect(block,xform, 
+            MakeRect(block,xform,
                      -stubLength - (rotation == oacR0
                                     ? lengthPin : 0 ),
                      layerPin)->addToPin(pin);

@@ -8,6 +8,7 @@
 // x-----------------------------------------------------------------x
 
 #include <iostream>
+#include <memory>
 #include <assert.h>
 
 using namespace std;
@@ -44,7 +45,6 @@ void testCell(Cell* dev,char* pathToTest){
         cerr << "Cell not created" << endl;
         return;
     }
-    system((string("mkdir -p ") + string(pathToTest)).c_str());
 
     cerr << "driving GDS" << endl;
     GdsDriver(dev).save(string(pathToTest) + "/" + getString(dev->getName()) + ".gds");
@@ -57,7 +57,7 @@ void testCell(Cell* dev,char* pathToTest){
 }
 
 void testAnalog(char* pathToConf,char* pathToTest){
-    AnalogEnv::create(pathToConf);//create Database ...
+    auto_ptr<AnalogEnv> aenv(AnalogEnv::create(pathToConf));//create Database ...
     cerr << "analog environment loaded and database created" << endl;
     DataBase* db = DataBase::getDB();
     assert(db != NULL);
@@ -93,9 +93,8 @@ void testAnalog(char* pathToConf,char* pathToTest){
 void testNum(char* pathToConf,char* pathToTest,char* cellName){
     cerr << "creating cell from sxlib " << cellName << endl;
     DataBase* db = DataBase::getDB();
-    AllianceFramework* af = AllianceFramework::get();
-    Cell* cell = NULL;
-    cell = af->getCell(cellName, Catalog::State::Views );
+    AllianceFramework* af =AllianceFramework::get();
+    Cell* cell = af->getCell(cellName, Catalog::State::Views );
     cerr << "testing cell from sxlib "<< cellName << endl;
     testCell(cell,pathToTest);
 }
@@ -202,6 +201,7 @@ int main(int argc,char** argv) {
     testNum(argv[1],argv[2],"xr2_x4");
     testNum(argv[1],argv[2],"zero_x0");
 
+    DataBase::getDB()->destroy();
     cerr << "ending normally" << endl;
     return 0;
 }
