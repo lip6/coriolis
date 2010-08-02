@@ -11,6 +11,9 @@ debug:
 ddd:
 	ddd -args ./x86_64/usr/local/bin/testOAWrapper /asim/chams/etc/chams/config.freePDK45.xml /tmp/testOA
 
+valgrind:
+	valgrind ./x86_64/usr/local/bin/testOAWrapper /asim/chams/etc/chams/config.freePDK45.xml /tmp/testOA
+
 rmtmp:
 	rm -rf /tmp/*
 

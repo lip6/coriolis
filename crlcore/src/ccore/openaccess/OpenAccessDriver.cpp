@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-07-30 16:44:00" - OpenAccessDriver.cpp
+// Time-stamp: "2010-08-02 14:58:55" - OpenAccessDriver.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -54,15 +54,16 @@ namespace {
         Cell2OADesignMap _cell2OADesign4Layout;
         Instance2OAInstsMap _instance2OAInst;
         Layer2OAPhysicalLayerMap _layer2OAPhysicalLayer;
+        set<int> _layerIDS;
+        int _layerID;
+        oaLayer* _layerDev;
+        oaLayer* _layerPin;
+        oaLayer* _layerText;
+        oaLayer* _layerWire;
         DataBase* _db;
         Technology* _technology;
-        int _layerID;
-        oaLayer* layerDev;
-        oaLayer* layerPin;
-        oaLayer* layerText;
-        oaLayer* layerWire;
     public:
-        OADriver(const string& path):
+        OADriver(const string& path) :
             _path(path),
             _oaTech(NULL),
             _library2OALib(),
@@ -72,9 +73,14 @@ namespace {
             _cell2OADesign4Layout(),
             _instance2OAInst(),
             _layer2OAPhysicalLayer(),
+            _layerIDS(),
+            _layerID(0),
+            _layerDev(NULL),
+            _layerPin(NULL),
+            _layerText(NULL),
+            _layerWire(NULL),
             _db(NULL),
-            _technology(NULL),
-            _layerID(0) {
+            _technology(NULL) {
             _db = DataBase::getDB();
             if (!_db) {
                 throw Error("no database");
@@ -103,9 +109,7 @@ namespace {
         }
 
         /**
-           Create an empty oaLib from a Library
-           no cells are added in this oaLib
-           all sub Library are also converted.
+           create a oaLib from a Library
         */
         oaLib* getOALibForLibrary(const Library* library) {
             cerr << "getOALibForLibrary" << endl;
@@ -141,10 +145,38 @@ namespace {
         }
 
         /**
+           handle layerID i.e: get extractNumber in Hurricane world if
+           possible ...
+        */
+        int generateLayerID(BasicLayer* bLayer){
+            // the layer number is unique to a particular layer
+            cerr << "generateLayerID -> ";
+            int numLayer = _layerID;
+            if(bLayer){
+                numLayer = bLayer->getExtractNumber();
+                if(_layerIDS.find(numLayer) == _layerIDS.end()){
+                    cerr << "getExtractNumber " << numLayer << endl;
+                    _layerIDS.insert(numLayer);
+                    return numLayer;
+                }
+            }
+            
+            cerr << " while(...) ";
+            set<int>::iterator it;
+            while((it = _layerIDS.find(_layerID)) != _layerIDS.end()){
+                numLayer = ++_layerID;
+            }
+            cerr << numLayer << endl;
+            _layerIDS.insert(numLayer);
+            return numLayer;
+        }
+
+        /**
            convert oaLayer from a Layer ...
         */
-        oaLayer* getOALayerFromLayer(Layer* layer,oaTech* theOATech) {
+        oaPhysicalLayer* getOALayerFromLayer(Layer* layer,oaTech* theOATech) {
             assert(layer);
+            cerr << "getOALayerFromLayer " << getString(layer->getName()) << endl;
             Layer2OAPhysicalLayerMap::iterator it = _layer2OAPhysicalLayer.find(layer);
             if (it != _layer2OAPhysicalLayer.end()) {
                 return it->second;
@@ -157,24 +189,25 @@ namespace {
             aOALayer = oaPhysicalLayer::find(theOATech, layerName, true);
             if(aOALayer){
                 _layer2OAPhysicalLayer[layer] = aOALayer;
+                _layerIDS.insert(aOALayer->getNumber());
                 return aOALayer;
             }
             BasicLayer* bLayer = dynamic_cast<BasicLayer*>(layer);
-            if(bLayer)
-                aOALayer = oaPhysicalLayer::create(theOATech, layerName, _layerID++,getOAMaterial(bLayer->getMaterial()));
-            else
-                aOALayer = oaPhysicalLayer::create(theOATech, layerName, _layerID++);
+            aOALayer = oaPhysicalLayer::create(theOATech, layerName, generateLayerID(bLayer),
+                                               bLayer ? getOAMaterial(bLayer->getMaterial())
+                                               : oaMaterial(oacOtherMaterial));
             assert(aOALayer);
 
             _layer2OAPhysicalLayer[layer] = aOALayer;
 
+#if 0
             //create and add layer constraint for Layer specific manufacturing rules
             cerr << " o    get value for constraint" << endl;
             long minSize = Hurricane::DbU::getDb(layer->getMinimalSize());
             long minSpace = Hurricane::DbU::getDb(layer->getMinimalSpacing());
             long pitch = Hurricane::DbU::getDb(layer->getPitch());
 
-#if 0
+
             cerr << " o    create constraint for min size : " << pitch << endl;
             oaLayerConstraint* cMinSize = NULL;
             try{
@@ -206,9 +239,6 @@ namespace {
                                                                    oaIntValue::create(theOATech->getLib(),pitch));
             assert(cPitchV);
 #endif
-            if(bLayer){
-                unsigned gdsIInumber = bLayer->getExtractNumber();
-            }
             return aOALayer;
         }
 
@@ -253,21 +283,54 @@ namespace {
                 oaConstraintGroup *cgFoundry = theOATech->getFoundryRules();
 
                 /*
-                  add the constraint group LEFDefaultRouteSpec for oa2lef
+                  add the constraint group LEFDefaultRouteSpec for oa2lef 
                 */
-                
-                //first create "utility" layers following :
-                layerDev = oaPhysicalLayer::create(theOATech, "device", _layerID++);
-                layerText = oaPhysicalLayer::create(theOATech, "text", _layerID++);
-                layerPin = oaPhysicalLayer::create(theOATech, "pin", _layerID++);
-                layerWire = oaPhysicalLayer::create(theOATech, "wire", _layerID++);
+
             }
 
             // get or create physical layer
-
+            //first convert basicLayers and use the getExtractNumber
+            for_each_basic_layer(layer, technology->getBasicLayers()) {
+                getOALayerFromLayer(layer,theOATech);
+                end_for;
+            }
+            //then convert all other layers unsing a generated ID
             for_each_layer(layer, technology->getLayers()) {
                 getOALayerFromLayer(layer,theOATech);
                 end_for;
+            }
+            cerr << "test" << endl;
+            try{
+                //create or find "utility" layers following :
+                _layerDev = oaLayer::find(theOATech,"device");
+                if(!_layerDev)
+                    _layerDev = oaPhysicalLayer::create(theOATech, "device", generateLayerID(NULL));
+                assert(_layerDev);
+                _layerIDS.insert(_layerDev->getNumber());
+
+                _layerText = oaLayer::find(theOATech,"text");
+                if(!_layerText)
+                    _layerText = oaPhysicalLayer::create(theOATech, "text", generateLayerID(NULL));
+                assert(_layerText);
+                _layerIDS.insert(_layerText->getNumber());
+                
+                _layerPin = oaLayer::find(theOATech,"pin");
+                if(!_layerPin)
+                    _layerPin = oaPhysicalLayer::create(theOATech, "pin", generateLayerID(NULL));
+                assert(_layerPin);
+                _layerIDS.insert(_layerPin->getNumber());
+                
+                _layerWire = oaLayer::find(theOATech,"wire");
+                if(!_layerWire)
+                    _layerWire = oaPhysicalLayer::create(theOATech, "wire", generateLayerID(NULL));
+                assert(_layerWire);
+                _layerIDS.insert(_layerWire->getNumber());
+            }catch(oaException&e ){
+                cerr << "OA:" << e.getMsg() << endl;
+                exit(-2);
+            }catch(std::exception&e ){
+                cerr << "STD:" << e.what() << endl;
+                exit(-1);
             }
             printOALayers(theOATech);
 
@@ -337,9 +400,9 @@ namespace {
             oaScalarName scNetName(ns, getString(net->getName()).c_str());
             oaTerm* term = oaTerm::find(blockNet->getBlock(), scNetName);
             assert(term);
-            
+
             oaPin* pin = oaPin::create(term);
-            
+
             return pin;
         }
 
@@ -351,11 +414,7 @@ namespace {
             getOABoxForBox(box, component->getBoundingBox());
             Layer* layer = (Layer*) component->getLayer();
             assert(layer);
-            oaPhysicalLayer* physLayer = NULL;
-            Layer2OAPhysicalLayerMap::iterator it = _layer2OAPhysicalLayer.find(layer);
-            if (it != _layer2OAPhysicalLayer.end()) {
-                physLayer = it->second;
-            }
+            oaPhysicalLayer* physLayer = getOALayerFromLayer(layer,_oaTech);
             assert(physLayer);
             oaLayerNum layerNum = physLayer->getNumber();
             oaRect* rect = oaRect::create(topBlock,
@@ -494,7 +553,7 @@ namespace {
             }
             oaBlock *topBlock = designCellView->getTopBlock();
             assert(topBlock);
-            
+
 
             return designCellView;
         }
