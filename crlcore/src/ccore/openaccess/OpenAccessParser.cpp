@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-04 15:45:06" - OpenAccessParser.cpp
+// Time-stamp: "2010-08-06 01:40:58" - OpenAccessParser.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -28,7 +28,7 @@ using namespace Hurricane;
 #include "OpenAccessCommon.h"
 
 namespace {
-
+    using namespace CRL_OA;
 #ifdef HAVE_OPENACCESS
     class OAParser{
     private:
@@ -77,7 +77,7 @@ namespace {
                 return NULL;
             }
             Name cellName(cellNameStr);
-            Cell* cell = findCellInLibraries(getOADesignLibraries(), cellName);
+            Cell* cell = oaFuncs::findCellInLibraries(oaFuncs::getOADesignLibraries(), cellName);
             if (!cell) {
                 return NULL;
             }
@@ -96,22 +96,27 @@ namespace {
             return cell;
         }
 
-        void loadOALib(const string& libNameStr, const string& libPathStr, bool asDesignLibrary) {
+        /**
+           heart of the parser algorithm
+        */
+        oaLib* loadOALib(const string& libNameStr, const string& libPathStr, bool asDesignLibrary) {
+            oaNativeNS oaNS;
+            oaString libNameOAStr(libNameStr.c_str());
+            oaScalarName libOAName(oaNS, libNameOAStr);
             Name libName(libNameStr);
             Name2LibMap::const_iterator nit = _name2LibMap.find(libName);
             if (nit != _name2LibMap.end()) {
                 Library* library = nit->second;
                 //verify that it's the same library : name and path
                 cerr << "already loaded" << endl;
-                return;
+                return oaLib::find(libOAName);
             }
 
-            oaNativeNS oaNS;
-            oaString libNameOAStr(libNameStr.c_str());
-            oaScalarName libOAName(oaNS, libNameOAStr);
 
+
+            oaLib* oaLibrary = NULL;
             try {
-                oaLib* oaLibrary = oaLib::open(libOAName, libPathStr.c_str());
+                oaLibrary = oaLib::open(libOAName, libPathStr.c_str());
                 if (oaLibrary->isReadable()) {
                     if (!oaLibrary->getAccess(oacReadLibAccess)) {
                         cout << "\n***Quitting. Cannot get LibAccess\n" ;
@@ -127,16 +132,16 @@ namespace {
                         cerr << "No DataBase" << endl;
                         exit(8);
                     }
-                    if (findLibraryByNameInDB(db, libraryName)) {
+                    if (oaFuncs::findLibraryByNameInDB(db, libraryName)) {
                         cerr << "ERROR" << endl;
                         exit(8);
                     }
 
                     Library* library;
                     if (asDesignLibrary) {
-                        library = Library::create(getOADesignLibraries(), Name(libNameStr));
+                        library = Library::create(oaFuncs::getOADesignLibraries(), Name(libNameStr));
                     } else {
-                        library = Library::create(getOACellLibraries(), Name(libNameStr));
+                        library = Library::create(oaFuncs::getOACellLibraries(), Name(libNameStr));
                     }
                     cerr << library << endl;
 
@@ -151,7 +156,7 @@ namespace {
 
                         cerr << cellNameString << endl;
 
-                        oaDesign* cellDesign = openDesign(oaNS, cell);
+                        oaDesign* cellDesign = oaFuncs::openOADesign(cell);
                         if (cellDesign != NULL) {
                             Cell* hCell = NULL;
                             //logic part
@@ -288,9 +293,12 @@ namespace {
                 cout << "ERROR: " << excp.getMsg() << endl;
                 exit(1);
             }
-
+            return oaLibrary;
         }
 
+        /**
+           heart of the parser algorithm
+        */
         void oaTechnology2Technology(oaLib* oaLibrary) {
             try {
                 oaTech* tech = oaTech::open(oaLibrary);
@@ -338,29 +346,182 @@ namespace {
         }
 
         void getDesigns(set<Cell*>& designCellSet) {
-            getAllCells(getOADesignLibraries(), designCellSet);
+            oaFuncs::getAllCells(oaFuncs::getOADesignLibraries(), designCellSet);
         }
+
+        /**
+           heart of the parser algorithm
+        */
+        static void loadOACellInCell(oaCell* oa_Cell, Cell* cell) {
+            oaNativeNS oaNS;
+            oaDesign* cellDesign = oaFuncs::openOADesign(oa_Cell);
+
+            if (cellDesign != NULL) {
+                oaModule* module = cellDesign->getTopModule();
+                oaCollection<oaModInst, oaModule> oaModInsts = module->getInsts();
+                oaIter<oaModInst> modInstIter(oaModInsts);
+                while (oaModInst* modInst = modInstIter.getNext()) {
+                    oaString oaModInstStr;
+                    modInst->getName(oaNS, oaModInstStr);
+                    //cerr << "inst : " << oaModInstStr << endl;
+                    oaModule* masterModule = modInst->getMasterModule();
+                    if (masterModule) {
+                        oaString oaModuleStr;
+                        masterModule->getName(oaNS, oaModuleStr);
+                        //cerr << "master : " << oaModuleStr << endl;
+                        //find hurricane Cell
+                        Cell* masterCell = oaFuncs::findCellInLibraries(oaFuncs::getRootLibrary(), Name(oaModuleStr));
+                        if (!masterCell) {
+                            cout << "\n***Quitting. Cannot get MasterCell :" ;
+                            cout << oaModuleStr << endl;
+                            exit(8);
+                        }
+                        Instance* instance = Instance::create(cell, Name(oaModInstStr) ,masterCell);
+                        //cerr << instance << endl;
+                    } else {
+                        cerr << "master : NULL" << endl;
+                    }
+                }//end while
+
+                //now treat nets
+                oaCollection<oaModNet, oaModule> oaModNets = module->getNets();
+                oaIter<oaModNet> oaModNetIter(oaModNets);
+                while (oaModNet* oa_ModNet = oaModNetIter.getNext()) {
+                    oaString oaModNetStr;
+                    oa_ModNet->getName(oaNS, oaModNetStr);
+                    //cerr << oaModNetStr << endl;
+                    Net* net = cell->getNet(Name(oaModNetStr));
+                    if (!net) {
+                        net = Net::create(cell, Name(oaModNetStr));
+                    }
+
+                    oaCollection<oaModInstTerm, oaModNet> oaModInstTerms = oa_ModNet->getInstTerms();
+                    oaIter<oaModInstTerm> oaModInstTermIter(oaModInstTerms);
+                    while (oaModInstTerm* oa_ModInstTerm = oaModInstTermIter.getNext()) {
+                        oaModInst* modInst = oa_ModInstTerm->getInst();
+                        oaString oaModInstStr;
+                        modInst->getName(oaNS, oaModInstStr);
+                        //find hurricane instance
+                        Instance* instance = cell->getInstance(Name(oaModInstStr));
+                        if (!instance) {
+                            cout << "\n***Quitting. Cannot get Instance :" ;
+                            cout << oaModInstStr << endl;
+                            exit(8);
+                        }
+                        oaModTerm* oa_ModTerm = oa_ModInstTerm->getTerm();
+                        oaString oaModTermStr;
+                        oa_ModTerm->getName(oaNS, oaModTermStr);
+                        Net* masterNet = instance->getMasterCell()->getNet(Name(oaModTermStr));
+                        if (!masterNet) {
+                            cout << "\n***Quitting. Cannot get Master Net :" ;
+                            cout << oaModTermStr << endl;
+                            exit(8);
+                        }
+                        Plug* plug = instance->getPlug(masterNet);
+                        plug->setNet(net);
+                        //cerr << plug << endl;
+                    }
+                    //cerr << net << endl;
+                }
+
+
+                oaScalarName cellName;
+                oa_Cell->getName(cellName);
+                oaString cellNameString;
+                cellName.get(cellNameString);
+                cell->setName(Name(cellNameString));
+                cell->setTerminal(false);
+
+                //physical part
+                oaBlock* block = cellDesign->getTopBlock();
+                if (block) {
+                    oaBox oa_box;
+                    block->getBBox(oa_box);
+                    Point lowerLeft(DbU::db(oa_box.lowerLeft().x()), DbU::db(oa_box.lowerLeft().y()));
+                    Point upperRight(DbU::db(oa_box.upperRight().x()), DbU::db(oa_box.upperRight().y()));
+                    cell->setAbutmentBox(Box(lowerLeft, upperRight));
+
+                    oaCollection<oaInst, oaBlock> oaInsts = block->getInsts();
+                    oaIter<oaInst> oaInstIter(oaInsts);
+                    while (oaInst* oa_Inst = oaInstIter.getNext()) {
+                        oaString oaInstStr;
+                        oa_Inst->getName(oaNS, oaInstStr);
+                        Instance* instance = cell->getInstance(Name(oaInstStr));
+                        if (instance) {
+                            //cerr << "found " << instance << endl;
+                            oaPlacementStatus placementStatus= oa_Inst->getPlacementStatus();
+                            switch (placementStatus) {
+                            case oacNonePlacementStatus :
+                                cerr << " none" << endl;
+                                break;
+                            case oacUnplacedPlacementStatus :
+                                cerr << " unplaced" << endl;
+                                break;
+                            case oacPlacedPlacementStatus :
+                                cerr << " placed" << endl;
+                                break;
+                            case oacFixedPlacementStatus :
+                                cerr << " fixed" << endl;
+                                break;
+                            default :
+                                cerr << "other" << endl;
+                            }
+                            oaPoint instOrigin;
+                            oa_Inst->getOrigin(instOrigin);
+                            cerr << instOrigin.x() << " " << instOrigin.y() << endl;
+                        } else {
+                            cerr << "cannot find " << oaInstStr << endl;
+                        }
+                    }
+                    oaSitePattern sitePattern;
+                    block->getSitePattern(sitePattern);
+
+                    for (int i = 0; i < sitePattern.getNumElements(); i++) {
+                        const oaSiteRef& siteRef = sitePattern.get(i);
+                        cerr << "site : " << siteRef.siteName() << endl;
+                    }
+
+                    oaCollection<oaRow, oaBlock> oaRows = block->getRows();
+                    oaIter<oaRow> oaRowIter(oaRows);
+                    while (oaRow* oa_Row = oaRowIter.getNext()) {
+                        cerr << "row" << endl;
+                        oaString siteName;
+                        oa_Row->getSiteDefName(siteName);
+                        cerr << siteName << endl;
+                    }
+
+                    oaCollection<oaAreaBoundary, oaBlock> oaAreaBoundaries = block->getBoundaries();
+                    oaIter<oaBoundary> oaBoundaryIter(oaAreaBoundaries);
+                    while (oaBoundary* oa_Boundary = oaBoundaryIter.getNext()) {
+                        cerr << "boundary" << endl;
+                    }
+                } else {
+                    cerr << "no block view " << endl;
+                }
+            }//end if (cellDesign != NULL)
+        }//end loadOACellInCell
     };//OAParser class
 #endif
 }//namespace
 
-using namespace oa;
 namespace CRL {
-    Cell* OpenAccess::oaCellParser(oaCell* cell){
+    Cell* OpenAccess::oaCellParser(const std::string& libPath,
+                                   const std::string& libName, const std::string& cellName) {
         Cell* convertedCell = NULL;
-        if(!cell)
-            return NULL;
 #ifdef HAVE_OPENACCESS
         try {
             oaDesignInit(oacAPIMajorRevNumber,
                          oacAPIMinorRevNumber,
                          oacDataModelRevNumber);
-            
+
             OAParser oaParser;
-            oaScalarName scalarCellName;
-            oaString cellName;
-            cell->getName(scalarCellName);
-            convertedCell = oaParser.getCell(static_cast<const char*>(cellName));
+            oaScalarName scalarCellName(oaNativeNS(),cellName.c_str());
+
+            oaLib* oaLibrary = oaParser.loadOALib(libName, libPath, true);
+            Cell* hcell = oaParser.getCell(cellName);
+            oaCell* cell = oaCell::find(oaLibrary,scalarCellName);
+            oaParser.loadOACellInCell(cell,hcell);
+
         }catch (oaException  &e) {
             cerr << "OA::ERROR => " << e.getMsg() << endl;
             exit(1);
@@ -372,15 +533,6 @@ namespace CRL {
         cerr << "\nDummy OpenAccess driver call for " << endl;
 #endif
         return convertedCell;
-    }
-    
-    Library* OpenAccess::oaLibParser(oaLib* lib){
-#ifdef HAVE_OPENACCESS
-        cerr << "\nto implement ... " << endl;
-#else
-        cerr << "\nDummy OpenAccess driver call for " << path << endl;
-#endif
-        return NULL;
     }
 
 }

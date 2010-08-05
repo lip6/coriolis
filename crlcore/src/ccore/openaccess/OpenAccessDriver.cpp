@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-04 16:57:08" - OpenAccessDriver.cpp
+// Time-stamp: "2010-08-06 01:22:51" - OpenAccessDriver.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -32,7 +32,7 @@ using namespace Hurricane;
 #include "OpenAccessCommon.h"
 
 namespace {
-
+    using namespace CRL_OA;
 #ifdef HAVE_OPENACCESS
 
     /**
@@ -89,7 +89,7 @@ namespace {
             if (!_technology) {
                 throw Error("no technology");
             }
-            realPath(_path);
+            oaFuncs::realPath(_path);
             cerr << "realpath: " << _path << endl;
         }
 
@@ -97,13 +97,13 @@ namespace {
             cerr << "SAVING ALL" << endl;
             _oaTech->save();
             _oaTech->close();
-            saveDesignsInMap(_cell2OADesign4Netlist);
+            oaFuncs::saveOADesignsInMap(_cell2OADesign4Netlist);
             _cell2OADesign4Netlist.clear();
-            saveDesignsInMap(_cell2OADesign4Schematic);
+            oaFuncs::saveOADesignsInMap(_cell2OADesign4Schematic);
             _cell2OADesign4Schematic.clear();
-            saveDesignsInMap(_cell2OADesign4Symbolic);
+            oaFuncs::saveOADesignsInMap(_cell2OADesign4Symbolic);
             _cell2OADesign4Symbolic.clear();
-            saveDesignsInMap(_cell2OADesign4Layout);
+            oaFuncs::saveOADesignsInMap(_cell2OADesign4Layout);
             _cell2OADesign4Layout.clear();
             for (Library2OALibMap::iterator it = _library2OALib.begin();
                  it != _library2OALib.end();
@@ -128,9 +128,9 @@ namespace {
 
             // 1) create or open library
             cerr << "lib path : " << _path << endl;
-            pair<oaScalarName,string> infos=libInfos(_path,
-                                                     getString(library->getName()));
-            oaLib *lib = openOALib(infos);
+            pair<oaScalarName,string> infos = oaFuncs::libInfos(_path,
+                                                                getString(library->getName()));
+            oaLib *lib = oaFuncs::openOALib(infos);
             _library2OALib[library] = lib;
 
 #if 0
@@ -147,7 +147,7 @@ namespace {
             }
 #endif
             // 4) create, update library list file
-            createCDS(infos,_path);
+            oaFuncs::createCDS(infos,_path);
             infos.second.clear();
 
             return lib;
@@ -203,7 +203,7 @@ namespace {
             }
             BasicLayer* bLayer = dynamic_cast<BasicLayer*>(layer);
             aOALayer = oaPhysicalLayer::create(theOATech, layerName, generateLayerID(bLayer),
-                                               bLayer ? getOAMaterial(bLayer->getMaterial())
+                                               bLayer ? oaFuncs::getOAMaterialFromMaterial(bLayer->getMaterial())
                                                : oaMaterial(oacOtherMaterial));
             assert(aOALayer);
 
@@ -345,7 +345,7 @@ namespace {
                 cerr << "STD:" << e.what() << endl;
                 exit(-1);
             }
-            printOALayers(theOATech);
+            oaFuncs::printOALayers(theOATech);
 
             return theOATech;
         }
@@ -379,8 +379,7 @@ namespace {
             oaScalarInst* blockInst = oaScalarInst::find(topBlock,
                                                          scInstName);
             if(!blockInst){
-                oaTransform transform;
-                getOATransformFromTransformation(transform, instance->getTransformation());
+                oaTransform transform = oaFuncs::getOATransformFromTransformation(instance->getTransformation());
                 blockInst = oaScalarInst::create(topBlock, masterDesign, scInstName, transform);
             }
             _instance2OAInst[instance] = blockInst;
@@ -399,7 +398,7 @@ namespace {
             Instance2OAInstsMap::iterator it = _instance2OAInst.find(instance);
             assert(it != _instance2OAInst.end());
             oaInst* blockInst = it->second;
-            oaInstTerm* instTerm = getInstTerm(blockInst, plug,net);
+            oaInstTerm* instTerm = oaFuncs::getOAInstTermFromOAInst(blockInst, plug,net);
             assert(instTerm);
             return instTerm;
         }
@@ -423,8 +422,7 @@ namespace {
             cerr << "getOARectFromComponent" << endl;
             assert(component);
             assert(topBlock);
-            oaBox box;
-            getOABoxForBox(box, component->getBoundingBox());
+            oaBox box = oaFuncs::getOABoxFromBox(component->getBoundingBox());
             Layer* layer = (Layer*) component->getLayer();
             assert(layer);
             oaPhysicalLayer* physLayer = getOALayerFromLayer(layer,_oaTech);
@@ -451,15 +449,15 @@ namespace {
             if(blockNet)
                 return blockNet;
             assert(!blockNet);
-            blockNet = oaScalarNet::create(topBlock, scNetName, getOASigType(net->getType()));
+            blockNet = oaScalarNet::create(topBlock, scNetName, oaFuncs::getOASigTypeFromNetType(net->getType()));
             assert(blockNet);
-            oaScalarTerm::create(blockNet, scNetName, getOATermType(net->getDirection()));
+            oaScalarTerm::create(blockNet, scNetName, oaFuncs::getOATermTypeFromNetDirection(net->getDirection()));
             if (net->isExternal()) {
                 oaPin* pin = getOAPinFromNet(net,blockNet);
                 Components externalComponents = NetExternalComponents::get(net);
                 for_each_component(component, externalComponents) {
                     oaRect* rect = getOARectFromComponent(component,topBlock);
-//                    rect->addToPin(pin);
+                    rect->addToPin(pin);
                     end_for;
                 }
             }
@@ -651,6 +649,9 @@ namespace {
                 getOARectFromSlice(slice,topBlock);
                 end_for;
             }
+            //get and update boundingBox
+            oaBox boundingBox;
+            topBlock->getBBox(boundingBox);
 
             return designCellView;
         }
@@ -670,25 +671,25 @@ namespace {
             oaDesign* netlistView = createOAasNetlist(cell);
             assert(netlistView);
 
-            oaCell* c1 = OADesignToOACell(netlistView);
+            oaCell* c1 = oaFuncs::getOACellFromOADesign(netlistView);
             assert(c1);
 
             oaDesign* symbolicView = addSymbol(cell,netlistView);
             assert(symbolicView);
 
-            oaCell* c2 = OADesignToOACell(symbolicView);
+            oaCell* c2 = oaFuncs::getOACellFromOADesign(symbolicView);
             assert(c2);
 
             oaDesign* schematicView = addSchematic(cell,symbolicView);
             assert(schematicView);
 
-            oaCell* c3 = OADesignToOACell(schematicView);
+            oaCell* c3 = oaFuncs::getOACellFromOADesign(schematicView);
             assert(c3);
 
             oaDesign* layoutView = addLayout(cell,schematicView);
             assert(layoutView);
 
-            oaCell* c4 = OADesignToOACell(layoutView);
+            oaCell* c4 = oaFuncs::getOACellFromOADesign(layoutView);
             assert(c4);
 
             //3) we check it's the same oaCell for all designs
@@ -698,14 +699,14 @@ namespace {
         }
 
         oaCell* getOACellForCell(const Cell* cell) {
-            return OADesignToOACell( getOADesignForCell(cell) );
+            return oaFuncs::getOACellFromOADesign( getOADesignForCell(cell) );
         }
     };//OADriver class
 #endif
-}//namespace
+}//namespace CRL_OA
 
 namespace CRL {
-    oaCell* OpenAccess::oaDriver(const string& path, Cell* cell) {
+    void OpenAccess::oaDriver(const string& path, Cell* cell) {
         oaCell* convertedCell = NULL;
 #ifdef HAVE_OPENACCESS
         //for the moment a driver for hurricaneAMS
@@ -715,7 +716,7 @@ namespace CRL {
             oaDesignInit(oacAPIMajorRevNumber,
                          oacAPIMinorRevNumber,
                          oacDataModelRevNumber);
-
+            
             OADriver oaDriver(path);
             convertedCell = oaDriver.getOACellForCell(cell);
         }catch (oaException  &e) {
@@ -728,6 +729,6 @@ namespace CRL {
 #else
         cerr << "\nDummy OpenAccess driver call for " << path << endl;
 #endif
-        return convertedCell;
+        return;        
     }
 }
