@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-02 17:50:42" - OpenAccessCommon.h
+// Time-stamp: "2010-08-05 18:18:32" - OpenAccessCommon.h
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -14,7 +14,10 @@
 #define __OPENACCESSCOMMON_H__
 
 #include <iostream>
+
 using namespace std;
+#include  <boost/filesystem/operations.hpp>
+namespace bfs = boost::filesystem;
 
 #ifdef HAVE_OPENACCESS
 #include "hurricane/Cell.h"
@@ -252,14 +255,13 @@ namespace {
     }
 
     /**
-       handling realpath with string intead of char*
+       handling realpath
     */
-    inline string realPath(const string& path){
-        char* buffer = (char*) calloc(PATH_MAX+1,sizeof(char));
-        realpath(path.c_str(), buffer);
-        string res(buffer);
-        free(buffer);
-        return res;
+    inline void realPath(string& pathToChange){
+        if(bfs::path::default_name_check_writable())
+            bfs::path::default_name_check(bfs::portable_posix_name);
+        bfs::path resolvedPath = pathToChange;
+        pathToChange = system_complete(resolvedPath).string();
     }
 
     /**
@@ -275,21 +277,76 @@ namespace {
     }
 
     /**
+       suppose the path has been resolved with system_complete
+       before calling this function and path are posix_name
+       then split the path in boos::filesystem::path corresponding of each dir
+       from most root parent to leaf dir
+       @see create_all_dirs
+     */
+    std::vector<bfs::path> split_in_dirs(const bfs::path& p){
+        string pstr(p.string());
+        register size_t len(pstr.length());
+        register char delim('/');
+        register size_t firstDelim=0;
+        register size_t secondDelim=1;
+        vector<bfs::path> dirs;
+        while(firstDelim < len){
+            while(secondDelim < len && pstr[secondDelim]!=delim)
+                secondDelim++;
+            string dir = pstr.substr(0,secondDelim);
+            if(dir.empty())
+                break;
+            dirs.push_back(bfs::path(dir));
+            firstDelim = secondDelim;
+            secondDelim++;
+        }
+        return dirs;
+    }
+
+    /**
+       work around for boost::filesystem::create_directories
+       missing in old boost versions like 1.33.1
+       and equivalent to recursivly creating directories
+       instead this is done iteratively.
+    */
+    inline void create_all_dirs(const bfs::path& p){
+        if(p.empty() || bfs::exists(p))
+            return;
+        std::vector<bfs::path> test;
+        test = split_in_dirs(p);
+        std::vector<bfs::path>::iterator it = test.begin();
+        for(;it != test.end();it++){
+            if(it->empty() || bfs::exists(*it))
+                continue;
+            bfs::create_directory(*it);
+        }
+    }
+    
+    /**
        open oaLib with the info gathered by libPath function
     */
     inline oaLib* openOALib(const pair<oaScalarName,string>& infos){
-        oaLib *lib = oaLib::find(infos.first);
-        const char* pathLib = infos.second.c_str();
-        if (!lib) {
-            if (oaLib::exists(pathLib)){
-                lib = oaLib::open(infos.first, pathLib);
-            }else{
-                string cmd = "mkdir -p "+ infos.second;
-                system(cmd.c_str());
+        oaLib *lib = NULL;
+        try{
+            lib = oaLib::find(infos.first);
+            const char* pathLib = infos.second.c_str();
+            if (!lib) {
+                if (oaLib::exists(pathLib)){
+                    lib = oaLib::open(infos.first, pathLib);
+                }
+                if(!lib){
+                    if(bfs::path::default_name_check_writable())
+                        bfs::path::default_name_check(bfs::portable_posix_name);
+                    bfs::path bfs_pathLib = pathLib;
+                    create_all_dirs(bfs_pathLib);
+                    cerr << "creating lib : " << pathLib << endl;
+                    lib = oaLib::create(infos.first, pathLib);
+                }
             }
-            if(!lib){
-                lib = oaLib::create(infos.first, pathLib);
-            }
+            assert(lib);
+        }catch(std::exception& e){
+            cerr << e.what() << endl;
+            exit(-1);
         }
         return lib;
     }

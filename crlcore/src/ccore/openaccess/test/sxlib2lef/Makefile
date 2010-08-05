@@ -8,7 +8,9 @@ sxlib.lef:
 	cp sxlib.lef sxlib.lef.bak
 
 mrproper: clean
-	rm -rf sxlib cds.lib
+	rm -rf sxlib cds.lib .cadence
 
 clean:
 	rm -rf *.log *.slog *~ encounter* *.lef
+
+.PHONY: all mrproper clean

@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-02 16:54:01" - OpenAccessDriver.cpp
+// Time-stamp: "2010-08-04 16:57:08" - OpenAccessDriver.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -64,7 +64,7 @@ namespace {
         Technology* _technology;
     public:
         OADriver(const string& path) :
-            _path(realPath(path)),
+            _path(path),
             _oaTech(NULL),
             _library2OALib(),
             _cell2OADesign4Netlist(),
@@ -89,6 +89,8 @@ namespace {
             if (!_technology) {
                 throw Error("no technology");
             }
+            realPath(_path);
+            cerr << "realpath: " << _path << endl;
         }
 
         ~OADriver() {
@@ -125,6 +127,7 @@ namespace {
             }
 
             // 1) create or open library
+            cerr << "lib path : " << _path << endl;
             pair<oaScalarName,string> infos=libInfos(_path,
                                                      getString(library->getName()));
             oaLib *lib = openOALib(infos);
@@ -286,7 +289,11 @@ namespace {
 
                 //create and add foundry constraint group for General manufacturing rules
                 //and add oaSimpleConstraintType too
+                assert(theOATech);
+                theOATech->getDefaultConstraintGroup();
                 oaConstraintGroup *cgFoundry = theOATech->getFoundryRules();
+
+
 
                 /*
                   add the constraint group LEFDefaultRouteSpec for oa2lef 
@@ -699,10 +706,10 @@ namespace {
 
 namespace CRL {
     oaCell* OpenAccess::oaDriver(const string& path, Cell* cell) {
+        oaCell* convertedCell = NULL;
 #ifdef HAVE_OPENACCESS
         //for the moment a driver for hurricaneAMS
         //save the Cell only and all used Cell
-        oaCell* convertedCell = NULL;
         cerr << "Saving " << cell << " in " << path << endl;
         try {
             oaDesignInit(oacAPIMajorRevNumber,
@@ -718,10 +725,9 @@ namespace CRL {
             cerr << "STD::ERROR => " << e.what() << endl;
             exit(2);
         }
-        return convertedCell;
 #else
         cerr << "\nDummy OpenAccess driver call for " << path << endl;
-        return NULL;
 #endif
+        return convertedCell;
     }
 }

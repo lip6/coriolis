@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-07-28 15:44:58" - OpenAccessParser.cpp
+// Time-stamp: "2010-08-04 15:45:06" - OpenAccessParser.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -30,7 +30,8 @@ using namespace Hurricane;
 namespace {
 
 #ifdef HAVE_OPENACCESS
-    class OAParser {
+    class OAParser{
+    private:
         typedef map<oaLib*, Library*> OALib2LibMap;
         typedef map<Name, Library*> Name2LibMap;
         typedef map<oaLayerNum, Layer*> OALayerNum2LayerMap;
@@ -42,7 +43,7 @@ namespace {
         Name2LibMap _name2LibMap;
         Cell2OACellMap _cell2OACellMap;
         set<Cell*> _loadedCells;
-
+    public:
         OAParser():
             _oaTechnology(NULL),
             _oaLayerNum2LayerMap(),
@@ -50,16 +51,6 @@ namespace {
             _name2LibMap(),
             _cell2OACellMap(),
             _loadedCells(){
-            try {
-                oaDesignInit(oacAPIMajorRevNumber,
-                             oacAPIMinorRevNumber,
-                             oacDataModelRevNumber);
-            } catch (oaException  &excp) {
-                cout << "ERROR: " << excp.getMsg() << endl;
-                exit(1);
-            }
-
-
             DataBase* db = DataBase::getDB();
             if (!db) {
                 db = DataBase::create();
@@ -353,13 +344,34 @@ namespace {
 #endif
 }//namespace
 
+using namespace oa;
 namespace CRL {
     Cell* OpenAccess::oaCellParser(oaCell* cell){
+        Cell* convertedCell = NULL;
+        if(!cell)
+            return NULL;
 #ifdef HAVE_OPENACCESS
-        cerr << "\nto implement ... " << endl;
+        try {
+            oaDesignInit(oacAPIMajorRevNumber,
+                         oacAPIMinorRevNumber,
+                         oacDataModelRevNumber);
+            
+            OAParser oaParser;
+            oaScalarName scalarCellName;
+            oaString cellName;
+            cell->getName(scalarCellName);
+            convertedCell = oaParser.getCell(static_cast<const char*>(cellName));
+        }catch (oaException  &e) {
+            cerr << "OA::ERROR => " << e.getMsg() << endl;
+            exit(1);
+        }catch(std::exception& e){
+            cerr << "STD::ERROR => " << e.what() << endl;
+            exit(2);
+        }
 #else
         cerr << "\nDummy OpenAccess driver call for " << endl;
 #endif
+        return convertedCell;
     }
     
     Library* OpenAccess::oaLibParser(oaLib* lib){
@@ -368,6 +380,7 @@ namespace CRL {
 #else
         cerr << "\nDummy OpenAccess driver call for " << path << endl;
 #endif
+        return NULL;
     }
 
 }

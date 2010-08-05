@@ -21,7 +21,8 @@ valgrind_full: compile
 	valgrind -v --leak-check=full --show-reachable=yes ./x86_64/usr/local/bin/testOAWrapper $(TECHNOFILE) $(TESTDIR) 2>&1 | tee $@.log
 
 mrproper: clean
-	rm -rf $(TESTDIR) *.log
+	rm -rf $(TESTDIR) *.log .cadence
+	cd sxlib2lef && make mrproper
 
 clean:
 	rm -rf x86_64
