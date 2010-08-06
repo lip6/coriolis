@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-06 01:22:51" - OpenAccessDriver.cpp
+// Time-stamp: "2010-08-06 14:49:15" - OpenAccessDriver.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -460,6 +460,12 @@ namespace {
                     rect->addToPin(pin);
                     end_for;
                 }
+            }else{
+                for_each_component(component, net->getComponents()) {
+                    oaRect* rect = getOARectFromComponent(component,topBlock);
+                    rect->addToNet(blockNet);
+                    end_for;
+                }
             }
             cerr << " o transformation of plugs" << endl;
             for_each_plug(plug, net->getPlugs()) {
@@ -484,11 +490,12 @@ namespace {
         }
 
         /**
-           Create initial oaDesign from the cell and save it as a netlist view
+           Add netlist view to previous view ...
         */
-        oaDesign* createOAasNetlist(const Cell* cell) {
+        oaDesign* addNetlist(const Cell* cell,oaDesign* previous) {
             cerr << "createNetlist " << cell << endl;
             assert(cell);
+            assert(previous);
             Cell2OADesignMap::iterator it = _cell2OADesign4Netlist.find(cell);
             if (it != _cell2OADesign4Netlist.end()) {
                 return it->second;
@@ -508,25 +515,16 @@ namespace {
             oaDesign* designCellView = oaDesign::open(scNameLib, scNameDesign, scNameView, oaViewType::get(oacNetlist), 'a');
             _cell2OADesign4Netlist[cell] = designCellView;
 
-            // 3) create oaBlock singleton where we will do all the work
-            oaBlock* topBlock = designCellView->getTopBlock();
-            if(!topBlock){
-                cerr << "oaBlock::create for netlist view" << endl;
-                topBlock = oaBlock::create(designCellView);
+            // get module or embed previous module
+            oaModule* topMod = NULL;
+            topMod = designCellView->getTopModule();
+            if(!topMod){
+                topMod = oaModule::embed(designCellView, previous);
+                designCellView->setTopModule(topMod);
             }
+            oaBlock *topBlock = designCellView->getTopBlock();
             assert(topBlock);
 
-            // 4) convert each OA object
-            cerr << "transformation of instances" << endl;
-            for_each_instance(instance, cell->getInstances()){
-                getOAInstForInstance(instance,topBlock);
-                end_for;
-            }
-            cerr << "transformation of nets" << endl;
-            for_each_net(net, cell->getNets()){
-                getOANetFromNet(net,topBlock);
-                end_for;
-            }
             return designCellView;
         }
 
@@ -564,7 +562,6 @@ namespace {
             }
             oaBlock *topBlock = designCellView->getTopBlock();
             assert(topBlock);
-
 
             return designCellView;
         }
@@ -609,12 +606,11 @@ namespace {
         }
 
         /**
-           Add layout view to previous view ...
+           Create initial oaDesign from the cell and save it as a layout (abstract) view
         */
-        oaDesign* addLayout(const Cell* cell,oaDesign* previous) {
+        oaDesign* createLayout(const Cell* cell) {
             cerr << "addLayout" << cell << endl;
-            assert(cell);
-            assert(previous);
+            assert(cell);            
             Cell2OADesignMap::iterator it = _cell2OADesign4Layout.find(cell);
             if (it != _cell2OADesign4Layout.end()) {
                 return it->second;
@@ -624,7 +620,7 @@ namespace {
             oaLib* lib = getOALibForLibrary(cell->getLibrary());
             assert(lib);
             oaScalarName scNameDesign(ns, getString(cell->getName()).c_str());
-            oaScalarName scNameView(ns, "layout");
+            oaScalarName scNameView(ns, "abstract");
             oaScalarName scNameLib;
             lib->getName(scNameLib);
 
@@ -634,24 +630,45 @@ namespace {
             oaDesign* designCellView = oaDesign::open(scNameLib, scNameDesign, scNameView, vType, 'a');
             _cell2OADesign4Layout[cell] = designCellView;
 
-            // get module or embed previous module
-            oaModule* topMod = NULL;
-            topMod = designCellView->getTopModule();
-            if(!topMod){
-                topMod = oaModule::embed(designCellView, previous);
-                designCellView->setTopModule(topMod);
+            // create oaBlock singleton where we will do all the work
+            oaBlock* topBlock = designCellView->getTopBlock();
+            if(!topBlock){
+                cerr << "oaBlock::create for netlist view" << endl;
+                topBlock = oaBlock::create(designCellView);
             }
-            oaBlock *topBlock = designCellView->getTopBlock();
             assert(topBlock);
 
+            //get and update boundingBox
+            Box bBox = cell->getBoundingBox();
+//            Box bBox = cell->getAbutmentBox();
+//            assert(!bBox.isEmpty());
+            if(!bBox.isEmpty()){
+                oaBox boundingBox = oaFuncs::getOABoxFromBox(bBox);
+                topBlock->getBBox(boundingBox);
+            }
+
+            // 4) convert each OA object
+            cerr << "transformation of instances" << endl;
+            for_each_instance(instance, cell->getInstances()){
+                getOAInstForInstance(instance,topBlock);
+                end_for;
+            }
+            cerr << "transformation of nets" << endl;
+            for_each_net(net, cell->getNets()){
+                getOANetFromNet(net,topBlock);
+                end_for;
+            }
+
+            cerr << "transformation of components" << endl;
+            for_each_component(component, cell->getComponents()) {
+                oaRect* rect = getOARectFromComponent(component,topBlock);
+                end_for;
+            }
             cerr << "transformation of slices" << endl;
             for_each_slice(slice, cell->getSlices()){
                 getOARectFromSlice(slice,topBlock);
                 end_for;
             }
-            //get and update boundingBox
-            oaBox boundingBox;
-            topBlock->getBBox(boundingBox);
 
             return designCellView;
         }
@@ -668,28 +685,30 @@ namespace {
                 _oaTech = getOATechForTechnology(_technology,cell->getLibrary());
 
             // 2) create OA structure ...
-            oaDesign* netlistView = createOAasNetlist(cell);
+
+
+            oaDesign* layoutView = createLayout(cell);
+            assert(layoutView);
+
+            oaCell* c1 = oaFuncs::getOACellFromOADesign(layoutView);
+            assert(c1);
+
+            oaDesign* netlistView = addNetlist(cell,layoutView);
             assert(netlistView);
 
-            oaCell* c1 = oaFuncs::getOACellFromOADesign(netlistView);
-            assert(c1);
+            oaCell* c2 = oaFuncs::getOACellFromOADesign(netlistView);
+            assert(c2);
 
             oaDesign* symbolicView = addSymbol(cell,netlistView);
             assert(symbolicView);
 
-            oaCell* c2 = oaFuncs::getOACellFromOADesign(symbolicView);
-            assert(c2);
+            oaCell* c3 = oaFuncs::getOACellFromOADesign(symbolicView);
+            assert(c3);
 
             oaDesign* schematicView = addSchematic(cell,symbolicView);
             assert(schematicView);
 
-            oaCell* c3 = oaFuncs::getOACellFromOADesign(schematicView);
-            assert(c3);
-
-            oaDesign* layoutView = addLayout(cell,schematicView);
-            assert(layoutView);
-
-            oaCell* c4 = oaFuncs::getOACellFromOADesign(layoutView);
+            oaCell* c4 = oaFuncs::getOACellFromOADesign(schematicView);
             assert(c4);
 
             //3) we check it's the same oaCell for all designs
@@ -709,6 +728,8 @@ namespace CRL {
     void OpenAccess::oaDriver(const string& path, Cell* cell) {
         oaCell* convertedCell = NULL;
 #ifdef HAVE_OPENACCESS
+        assert(cell);
+        cell->materialize();
         //for the moment a driver for hurricaneAMS
         //save the Cell only and all used Cell
         cerr << "Saving " << cell << " in " << path << endl;
