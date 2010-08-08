@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-06 14:49:15" - OpenAccessDriver.cpp
+// Time-stamp: "2010-08-09 01:46:45" - OpenAccessDriver.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -32,8 +32,8 @@ using namespace Hurricane;
 #include "OpenAccessCommon.h"
 
 namespace {
-    using namespace CRL_OA;
 #ifdef HAVE_OPENACCESS
+     using namespace CRL_OA;
 
     /**
        Class to drive OA to Hurricane
@@ -726,30 +726,30 @@ namespace {
 
 namespace CRL {
     void OpenAccess::oaDriver(const string& path, Cell* cell) {
-        oaCell* convertedCell = NULL;
 #ifdef HAVE_OPENACCESS
-        assert(cell);
-        cell->materialize();
-        //for the moment a driver for hurricaneAMS
-        //save the Cell only and all used Cell
-        cerr << "Saving " << cell << " in " << path << endl;
-        try {
-            oaDesignInit(oacAPIMajorRevNumber,
-                         oacAPIMinorRevNumber,
-                         oacDataModelRevNumber);
-            
-            OADriver oaDriver(path);
-            convertedCell = oaDriver.getOACellForCell(cell);
-        }catch (oaException  &e) {
+         oaCell* convertedCell = NULL;
+         assert(cell);
+         cell->materialize();
+         //for the moment a driver for hurricaneAMS
+         //save the Cell only and all used Cell
+         cerr << "Saving " << cell << " in " << path << endl;
+         try {
+              oaDesignInit(oacAPIMajorRevNumber,
+                           oacAPIMinorRevNumber,
+                           oacDataModelRevNumber);
+              
+              OADriver oaDriver(path);
+              convertedCell = oaDriver.getOACellForCell(cell);
+         }catch (oaException  &e) {
             cerr << "OA::ERROR => " << e.getMsg() << endl;
             exit(1);
-        }catch(std::exception& e){
-            cerr << "STD::ERROR => " << e.what() << endl;
-            exit(2);
-        }
+         }catch(std::exception& e){
+              cerr << "STD::ERROR => " << e.what() << endl;
+              exit(2);
+         }
 #else
-        cerr << "\nDummy OpenAccess driver call for " << path << endl;
+         cerr << "\nDummy OpenAccess driver call for " << path << endl;
 #endif
-        return;        
+         return;        
     }
 }

@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-06 01:40:58" - OpenAccessParser.cpp
+// Time-stamp: "2010-08-09 01:47:18" - OpenAccessParser.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -28,8 +28,8 @@ using namespace Hurricane;
 #include "OpenAccessCommon.h"
 
 namespace {
-    using namespace CRL_OA;
 #ifdef HAVE_OPENACCESS
+     using namespace CRL_OA;
     class OAParser{
     private:
         typedef map<oaLib*, Library*> OALib2LibMap;
