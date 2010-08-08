@@ -221,7 +221,7 @@ namespace CRL {
     registerSlot ( "def", (CellParser_t*)defParser      , "def" );
     registerSlot ( "def", (LibraryParser_t*)lefParser   , "lef" );
     registerSlot ( "oa",  (CellParser_t*)OpenAccess::oaCellParser , "oa" );
-    registerSlot ( "oa",  (LibraryParser_t*)OpenAccess::oaLibParser , "oa" );
+//    registerSlot ( "oa",  (LibraryParser_t*)OpenAccess::oaLibParser , "oa" );
     registerSlot ( "aux", (CellParser_t*)bookshelfParser, "aux" );
     registerSlot ( "bench", (CellParser_t*)acmSigdaParser , "bench" );
   }
