@@ -8,7 +8,7 @@ sxlib.lef:
 	cp sxlib.lef sxlib.lef.bak
 
 mrproper: clean
-	rm -rf sxlib cds.lib .cadence
+	rm -rf sxlib cds.lib .cadence .oalib
 
 clean:
 	rm -rf *.log *.slog *~ encounter* *.lef

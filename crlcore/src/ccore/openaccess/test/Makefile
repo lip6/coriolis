@@ -2,6 +2,11 @@
 TESTDIR= ./testOA
 TECHNOFILE= /asim/chams/etc/chams/config.freePDK45.xml
 
+all: compile lefTest run
+
+lefTest: 
+	cd sxlib2lef && make
+
 compile: 
 	./compile.sh
 
@@ -28,4 +33,4 @@ clean:
 	rm -rf x86_64
 
 
-.PHONY: clean mrproper valgrind ddd debug run compile
+.PHONY: clean mrproper valgrind ddd debug run compile all lefTest
