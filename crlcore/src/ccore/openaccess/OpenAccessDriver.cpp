@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-11 01:57:18" - OpenAccessDriver.cpp
+// Time-stamp: "2010-08-12 15:01:27" - OpenAccessDriver.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -791,7 +791,8 @@ namespace {
 
             // creat abutment in oa
             if(!aBox.isEmpty())
-                oaSnapBoundary::create(topBlock, toOABox(aBox));
+                if(!oaSnapBoundary::find(topBlock))
+                    oaSnapBoundary::create(topBlock, toOABox(aBox));
             
             oaBox boundingBox = toOABox(bBox);
             topBlock->getBBox(boundingBox);
