@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-12 14:07:23" - OpenAccessParser.cpp
+// Time-stamp: "2010-08-13 00:11:06" - OpenAccessParser.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -101,47 +101,43 @@ namespace {
         */
         oaLib* loadOALib(const string& libNameStr, const string& libPathStr, bool asDesignLibrary) {
             oaNativeNS oaNS;
-            oaString libNameOAStr(libNameStr.c_str());
-            oaScalarName libOAName(oaNS, libNameOAStr);
             Name libName(libNameStr);
             Name2LibMap::const_iterator nit = _name2LibMap.find(libName);
-            if (nit != _name2LibMap.end()) {
+            if (nit != _name2LibMap.end())
                 Library* library = nit->second;
-                //verify that it's the same library : name and path
-                cerr << "already loaded" << endl;
-                return oaLib::find(libOAName);
-            }
 
-
+            string libPath = libPathStr;
+            oaFuncs::realPath(libPath);
 
             oaLib* oaLibrary = NULL;
             try {
-                oaLibrary = oaLib::open(libOAName, libPathStr.c_str());
+                pair<oaScalarName,string> libInfos = oaFuncs::libInfos(libPath, libNameStr);
+                oaLibrary = oaFuncs::openOALib(libInfos);
                 if (oaLibrary->isReadable()) {
                     if (!oaLibrary->getAccess(oacReadLibAccess)) {
                         cout << "\n***Quitting. Cannot get LibAccess\n" ;
                         exit(8);
                     }
 
+                    cerr << "TITI" << endl;
                     oaTechnology2Technology(oaLibrary);
 
                     //create Hurricane library
-                    Name libraryName = Name(libNameStr);
                     DataBase* db = DataBase::getDB();
                     if (!db) {
                         cerr << "No DataBase" << endl;
                         exit(8);
                     }
-                    if (oaFuncs::findLibraryByNameInDB(db, libraryName)) {
+                    if (oaFuncs::findLibraryByNameInDB(db, libName)) {
                         cerr << "ERROR_PARSER(1)" << endl;
                         exit(8);
                     }
 
                     Library* library;
                     if (asDesignLibrary) {
-                        library = Library::create(oaFuncs::getOADesignLibraries(), Name(libNameStr));
+                        library = Library::create(oaFuncs::getOADesignLibraries(), libName);
                     } else {
-                        library = Library::create(oaFuncs::getOACellLibraries(), Name(libNameStr));
+                        library = Library::create(oaFuncs::getOACellLibraries(), libName);
                     }
                     cerr << library << endl;
 
@@ -164,13 +160,12 @@ namespace {
                             if (module) {
                                 hCell = Cell::create(library, Name(cellNameString));
                                 hCell->setTerminal(false);
-                                if (!asDesignLibrary) {
+                                if (!asDesignLibrary) 
                                     hCell->setFlattenLeaf(true);
-                                }
                                 cerr << hCell << endl;
-                                if (asDesignLibrary) {
+                                if (asDesignLibrary) 
                                     _cell2OACellMap[hCell] = cell;
-                                }
+                                
                                 oaCollection<oaModTerm, oaModule> oaModTerms = module->getTerms();
                                 oaIter<oaModTerm> oaModTermIter(oaModTerms);
                                 while (oaModTerm* modTerm = oaModTermIter.getNext()) {
@@ -276,7 +271,7 @@ namespace {
                                                 }
                                             }
                                         }
-                                    } else {
+                                    } else {//if not a net
                                         //TODO
                                     }
                                 }
@@ -300,8 +295,10 @@ namespace {
            heart of the parser algorithm
         */
         void oaTechnology2Technology(oaLib* oaLibrary) {
+            assert(oaLibrary);
             try {
                 oaTech* tech = oaTech::open(oaLibrary);
+                    cout << "TOTO:" << endl;
 
                 if (!tech) {
                     cout << "ERROR_PARSER(3):" << endl;
@@ -424,7 +421,6 @@ namespace {
                     //cerr << net << endl;
                 }
 
-
                 oaScalarName cellName;
                 oa_Cell->getName(cellName);
                 oaString cellNameString;
@@ -435,6 +431,7 @@ namespace {
                 //physical part
                 oaBlock* block = cellDesign->getTopBlock();
                 if (block) {
+                    //ici on approxime l'abutment box avec la boundingBox
                     oaBox oa_box;
                     block->getBBox(oa_box);
                     Point lowerLeft(DbU::db(oa_box.lowerLeft().x()), DbU::db(oa_box.lowerLeft().y()));
@@ -505,8 +502,8 @@ namespace {
 }//namespace
 
 namespace CRL {
-    Cell* OpenAccess::oaCellParser(const std::string& libPath,
-                                   const std::string& libName, const std::string& cellName) {
+    Cell* OpenAccess::oaCellParser(const std::string& cellLibPath, const std::string& cellLibName, const std::string& cellName,
+                                   const std::string& techLibPath, const std::string& techLibName) {
         Cell* convertedCell = NULL;
 #ifdef HAVE_OPENACCESS
         try {
@@ -517,7 +514,8 @@ namespace CRL {
             OAParser oaParser;
             oaScalarName scalarCellName(oaNativeNS(),cellName.c_str());
 
-            oaLib* oaLibrary = oaParser.loadOALib(libName, libPath, true);
+            oaLib* oaLibraryTech = oaParser.loadOALib(techLibName, techLibPath, true);
+            oaLib* oaLibrary = oaParser.loadOALib(cellLibName, cellLibPath, true);
             Cell* hcell = oaParser.getCell(cellName);
             oaCell* cell = oaCell::find(oaLibrary,scalarCellName);
             oaParser.loadOACellInCell(cell,hcell);
@@ -534,5 +532,4 @@ namespace CRL {
 #endif
         return convertedCell;
     }
-
 }

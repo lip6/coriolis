@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-12 15:01:27" - OpenAccessDriver.cpp
+// Time-stamp: "2010-08-12 20:20:45" - OpenAccessDriver.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -45,6 +45,8 @@ namespace {
         typedef map<const Cell*, oaCell*> Cell2OACellMap;
         typedef map<Instance*, oaInst*> Instance2OAInstsMap;
         typedef map<Layer*, oaPhysicalLayer*> Layer2OAPhysicalLayerMap;
+        typedef map<Pad*, oaRect*> Pad2OARectMap;
+        typedef map<Component*, oaPathSeg*> Component2OAPathSegMap;
 
         string _path;
         oaTech* _oaTech;
@@ -56,6 +58,8 @@ namespace {
         Cell2OACellMap _cell2OAcell;
         Instance2OAInstsMap _instance2OAInst;
         Layer2OAPhysicalLayerMap _layer2OAPhysicalLayer;
+        Pad2OARectMap _pad2OARect;
+        Component2OAPathSegMap _component2OAPathSeg;
         set<int> _layerIDS;
         int _layerID;
         oaLayer* _layerDev;
@@ -76,6 +80,8 @@ namespace {
             _cell2OAcell(),
             _instance2OAInst(),
             _layer2OAPhysicalLayer(),
+            _pad2OARect(),
+            _component2OAPathSeg(),
             _layerIDS(),
             _layerID(0),
             _layerDev(NULL),
@@ -459,9 +465,7 @@ namespace {
             assert(it != _instance2OAInst.end());
             oaInst* blockInst = it->second;
 
-            oaNativeNS ns;
-            oaScalarName scPlugName(ns, getString(plug->getMasterNet()->getName()).c_str());
-            oaName instTermName(scPlugName);
+            oaName instTermName(toOAName( getString(plug->getMasterNet()->getName()) ));
             oaInstTerm* instTerm = oaInstTerm::find(blockInst, instTermName);
             if (instTerm) 
                 return instTerm;
@@ -481,22 +485,19 @@ namespace {
             return instTerm;
         }
 
-        /**
-           create a Pin for an external net
-           the net is supposed to be external
-         */
-        oaPin* toOAPin(Net* net,oaNet* blockNet){
-            cerr << "toOAPin" << endl;
-            assert(net);
-            assert(net->isExternal());
-            assert(blockNet);
+        static oaName toOAName(const Name& n){
             oaNativeNS ns;
-            oaScalarName scNetName(ns, getString(net->getName()).c_str());
-            oaTerm* term = oaTerm::find(blockNet->getBlock(), scNetName);
-            assert(term);
-            oaPin* pin = oaPin::create(term);
+            oaScalarName scN(ns, getString(n).c_str());
+            return oaName(scN);
+        }
 
-            return pin;
+        /**
+           convert to OAPoint
+        */
+        static oaPoint toOAPoint(const Point& p) {
+            oaPoint point;
+            point.set(p.getX(), p.getY());
+            return point;
         }
 
         /**
@@ -507,11 +508,16 @@ namespace {
             box.set(b.getXMin(), b.getYMin(), b.getXMax(), b.getYMax());
             return box;
         }
-        
-        oaRect* toOARect(Component* component,oaBlock* topBlock){
+
+        oaRect* toOARect(Pad* component,oaBlock* topBlock){
             cerr << "toOARect" << endl;
             assert(component);
             assert(topBlock);
+            
+            Pad2OARectMap::iterator it = _pad2OARect.find(component);
+            if (it != _pad2OARect.end())
+                return it->second;
+
             oaBox box = toOABox(component->getBoundingBox());
             Layer* layer = (Layer*) component->getLayer();
             assert(layer);
@@ -525,6 +531,59 @@ namespace {
             return rect;
         }
 
+        oaPathSeg* toOAPathSeg(Segment* segment,oaNet* blockNet){
+#if 0
+            cerr << "toOAPathSeg" << endl;
+            assert(component);
+            assert(blockNet);
+            
+            Component2OAPathSegMap::iterator it = _component2OAPathSeg.find(component);
+            if (it != _component2OAPathSeg.end())
+                return it->second;
+            
+            oaBox box = toOABox(component->getBoundingBox());
+            Layer* layer = (Layer*) component->getLayer();
+            assert(layer);
+            oaPhysicalLayer* physLayer = toOALayer(layer,_oaTech);
+            assert(physLayer);
+            oaLayerNum layerNum = physLayer->getNumber();
+            oaSegStyle style(, oacTruncateEndStyle, oacTruncateEndStyle);
+            res = oaPathSeg::created(blockNet->getBlock(),
+                                     ,
+                                     oacDrawingPurposeType,
+                                     toOAPoint(),
+                                     toOAPoint(),                
+                );
+            return res;
+#endif
+            return NULL;
+        }
+
+        /**
+           create a Pin from Pin
+        */
+        oaPin* toOAPin(Pin* hpin,oaNet* blockNet){
+            cerr << "toOAPin" << endl;
+            assert(hpin);
+            assert(blockNet);
+            oaName pinName;
+            blockNet->getName(pinName);
+            oaString sPinName;
+            pinName.get(sPinName);
+            oaTerm* term = oaTerm::find(blockNet->getBlock(), pinName);
+            assert(term);
+            oaPin* pin = oaPin::find(term, sPinName);
+            if(!pin)
+                pin = oaPin::create(term);
+            
+            return pin;
+        }
+
+        oaVia* toOAVia(Contact* contact,oaNet* blockNet){
+            //TODO
+            return NULL;
+        }
+        
         /**
            Convertion helper for Net convertion ...
            @todo verify
@@ -584,27 +643,40 @@ namespace {
             blockNet = oaScalarNet::create(topBlock, scNetName, toOASigType(net->getType()));
             assert(blockNet);
             oaScalarTerm::create(blockNet, scNetName, toOATermType(net->getDirection()));
-            if (net->isExternal()) {
-                oaPin* pin = toOAPin(net,blockNet);
-                Components externalComponents = NetExternalComponents::get(net);
-                for_each_component(component, externalComponents) {
-                    oaRect* rect = toOARect(component,topBlock);
-                    rect->addToPin(pin);
-                    end_for;
-                }
-            }else{
-                for_each_component(component, net->getComponents()) {
-                    oaRect* rect = toOARect(component,topBlock);
-                    rect->addToNet(blockNet);
-                    end_for;
-                }
-            }
+            blockNet->setGlobal(net->isGlobal());
+            blockNet->scalarize();//ensure we can add shape ..
+
+#if 0
+            //logical part
             cerr << " o transformation of plugs" << endl;
             for_each_plug(plug, net->getPlugs()) {
-                toOAInstTerm(plug,blockNet);
+                InstTerm* term = toOAInstTerm(plug, blockNet);
+                term->addToNet(blockNet);
                 end_for;
             }
-            blockNet->scalarize();
+            cerr << " o transformation of contacts" << endl;
+            for_each_contact(contact, getContacts()) {
+                Pin* hPin = dynamic_cast<Pin*>(contact);
+                oaPin* pin = NULL;
+                if(hPin)
+                    pin = toOAPin(pin, blockNet);
+                oaVia* via = toOAVia(contact, blockNet);
+                via->addToNet(blockNet);
+                end_for;
+            }
+            cerr << " o transformation of pads" << endl;
+            for_each_pad(pads, getPads()){
+                oaRect* rect = toOARect(contact, blockNet);
+                rect->addToNet(blockNet);
+                end_for;
+            }
+            cerr << " o transformation of segments" << endl;
+            for_each_segments(component, net->getSegments()) {
+                oaShape* shape = toOAPathSeg(component,blockNet);
+                shape->addToNet(blockNet);
+                end_for;
+            }
+#endif
             return blockNet;
         }
 
@@ -693,9 +765,8 @@ namespace {
             assert(cell);
             assert(previous);
             Cell2OADesignMap::iterator it = _cell2OADesign4Schematic.find(cell);
-            if (it != _cell2OADesign4Schematic.end()) {
+            if (it != _cell2OADesign4Schematic.end())
                 return it->second;
-            }
 
             oaNativeNS ns;
             oaLib* lib = toOALib(cell->getLibrary());
@@ -769,27 +840,13 @@ namespace {
                 end_for;
             }
 
-            cerr << "transformation of components" << endl;
-            for_each_component(component, cell->getComponents()) {
-                toOARect(component,topBlock);
-                end_for;
-            }
-            cerr << "transformation of slices" << endl;
-            for_each_slice(slice, cell->getSlices()){
-                for_each_component(component, slice->getComponents()) {
-                    toOARect(component,topBlock);
-                    end_for;
-                }
-                end_for;
-            }
-
             //get and update boundingBox and set abutment box
             Box bBox = cell->getBoundingBox();
             cerr << "Hurricane bounding box" << bBox << " in cell " << cell  << endl;
             Box aBox = cell->getAbutmentBox();
             cerr << "Hurricane abutment box" << aBox << " in cell " << cell  << endl;
 
-            // creat abutment in oa
+            // create abutment in oa
             if(!aBox.isEmpty())
                 if(!oaSnapBoundary::find(topBlock))
                     oaSnapBoundary::create(topBlock, toOABox(aBox));

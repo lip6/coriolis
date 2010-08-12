@@ -33,11 +33,15 @@ using namespace CRL;
 
 int main(int argc,char** argv) {
     int returnCode=0;
+
+    if(argc!=5)
+        return -1;
+
     dbo_ptr<AllianceFramework> af(AllianceFramework::create());
     auto_ptr<DataBase> sys(DataBase::getDB());
 
 //    Cell* cell = af->getCell("inv_x1", Catalog::State::Views );
-    Cell* cell = OAParser("/dsk/l1/misc/caba/coriolis-2.x/src/crlcore/src/ccore/openaccess/testParser/NangateOpenCellFreePDK45","NangateOpenCellLibrary").open("INV_X1");
+    Cell* cell = OAParser(argv[1],argv[2],argv[3],argv[4]).open("INV_X1");
 
     auto_ptr<QApplication> qa(new HApplication(argc,argv));
 #if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and not defined (__APPLE__)
