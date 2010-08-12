@@ -13,10 +13,10 @@ namespace CRL {
     class OAParser {
     private:
         std::string _libPath;
-        std::string _cellName;
+        std::string _libName;
     public:
-        OAParser(const string& libPath,const string& cellName);
-        Hurricane::Cell* open();
+        OAParser(const std::string& libPath,const std::string& libName);
+        Hurricane::Cell* open(const  std::string& cellName);
     };
 } // End of CRL namespace.
 

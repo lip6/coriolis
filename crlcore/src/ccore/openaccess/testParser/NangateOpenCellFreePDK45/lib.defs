@@ -1,0 +1,4 @@
+DEFINE NCSU_FreePDK_45nm NCSU_FreePDK_45nm
+ASSIGN NCSU_FreePDK_45nm libMode shared
+DEFINE NangateOpenCellLibrary NangateOpenCellLibrary
+ASSIGN NangateOpenCellLibrary libMode shared

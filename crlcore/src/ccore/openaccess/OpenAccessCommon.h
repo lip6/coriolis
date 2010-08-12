@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-06 01:21:19" - OpenAccessCommon.h
+// Time-stamp: "2010-08-11 01:22:02" - OpenAccessCommon.h
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -138,29 +138,6 @@ namespace CRL_OA {
         }
 
         /**
-           Convert material from Hurricane to OA ...
-           @todo verify
-        */
-        static oaMaterial getOAMaterialFromMaterial(const BasicLayer::Material&  material) {
-            switch ( material.getCode() ) {
-            case BasicLayer::Material::nWell:    return oacNWellMaterial;
-            case BasicLayer::Material::pWell:    return oacPWellMaterial;
-            case BasicLayer::Material::nImplant: return oacNImplantMaterial;
-            case BasicLayer::Material::pImplant: return oacPImplantMaterial;
-            case BasicLayer::Material::active:   return oacOtherMaterial;//is it OK?
-            case BasicLayer::Material::poly:     return oacPolyMaterial;
-            case BasicLayer::Material::cut:      return oacCutMaterial;
-            case BasicLayer::Material::metal:    return oacMetalMaterial;
-            case BasicLayer::Material::blockage:
-                //there is no blockage type but a specific oaLayerBlockage class
-                return oacOtherMaterial;
-            case BasicLayer::Material::other:    return oacOtherMaterial;
-            default:
-                throw Error("Unrecognized material");
-            }
-        }
-
-        /**
            @todo complete,verify ...
         */
         static BasicLayer::Material::Code getBasicLayerTypeFromOAMaterial(const oaMaterial& material) {
@@ -185,120 +162,6 @@ namespace CRL_OA {
             }
         }
 
-        /**
-           Convertion helper for Net convertion ...
-           @todo verify
-        */
-        static oaTermType getOATermTypeFromNetDirection(const Net::Direction& direction) {
-            switch (direction) {
-            case Net::Direction::IN:
-                return oacInputTermType;
-            case Net::Direction::OUT:
-                return oacOutputTermType;
-            case Net::Direction::INOUT:
-                return oacInputOutputTermType;
-            case Net::Direction::TRISTATE:
-                return oacTristateTermType;
-            case Net::Direction::UNDEFINED:
-                return oacUnusedTermType;// is it OK ?
-            default:
-                throw Error("Unrecognized direction");
-            }
-        }
-
-        /**
-           Convertion helper for Net convertion ...
-           @todo verify
-        */
-        static oaSigType getOASigTypeFromNetType(const Net::Type& type) {
-            switch (type.getCode()) {
-            case Net::Type::LOGICAL:
-                return oacSignalSigType;
-            case Net::Type::CLOCK:
-                return oacClockSigType;
-            case Net::Type::POWER:
-                return oacPowerSigType;
-            case Net::Type::GROUND:
-                return oacGroundSigType;
-            case Net::Type::UNDEFINED:
-                return oacAnalogSigType;// is it OK ?
-            default:
-                throw Error("Unrecognized net type");
-            }
-        }
-
-        /**
-           Convertion helper ...
-        */
-        static oaOrient getOAOrientFromOrientation(const Transformation::Orientation& orientation) {
-            switch (orientation) {
-            case Transformation::Orientation::ID:
-                return oacR0;
-            case Transformation::Orientation::R1:
-                return oacR90;
-            case Transformation::Orientation::R2:
-                return oacR180;
-            case Transformation::Orientation::R3:
-                return oacR270;
-            case Transformation::Orientation::MX:
-                return oacMX;
-            case Transformation::Orientation::XR:
-                return oacMXR90;
-            case Transformation::Orientation::MY:
-                return oacMY;
-            case Transformation::Orientation::YR:
-                return oacMYR90;
-            default:
-                throw Error("Unrecognized orientation");
-            }
-        }
-
-        /**
-           Convertion helper ...
-        */
-        static oaTransform getOATransformFromTransformation(const Transformation& transformation) {
-            oaTransform transform;
-            transform.set(transformation.getTx(),
-                          transformation.getTy(),
-                          getOAOrientFromOrientation(transformation.getOrientation()));
-            return transform;
-        }
-
-        /**
-           Convertion helper ...
-        */
-        static oaBox getOABoxFromBox(const Box& b) {
-            oaBox box;
-            box.set(b.getXMin(), b.getYMin(), b.getXMax(), b.getYMax());
-            return box;
-        }
-
-        /**
-           Create InstTerm representing connection of nets between instance
-           always return a non NULL value
-        */
-        static oaInstTerm* getOAInstTermFromOAInst(oaInst* inst, Plug* plug,oaNet* net) {
-            assert(inst);
-            assert(plug);
-            oaNativeNS ns;
-            oaScalarName scPlugName(ns, getString(plug->getMasterNet()->getName()).c_str());
-            oaName instTermName(scPlugName);
-            oaInstTerm* instTerm = oaInstTerm::find(inst, instTermName);
-            if (instTerm) {
-                return instTerm;
-            }
-            oaDesign* design = inst->getMaster();
-            assert(design);
-            oaBlock* masterBlock = design->getTopBlock();
-            oaTerm* term = oaTerm::find(masterBlock, instTermName);
-            assert(term);
-            cerr << "looking for " << plug->getName() << endl;
-            printOABlockTerms(masterBlock);
-            cerr << "oaInstTerm::create" << endl;
-            instTerm = oaInstTerm::create(net, inst, term);
-            assert(instTerm);
-            return instTerm;
-        }
 
         /**
            save and close design(s) stored in a map
@@ -450,23 +313,6 @@ namespace CRL_OA {
                 cerr << "ERROR cds: " << e.getMsg() << endl;
                 exit(-2);
             }
-        }
-
-        /**
-           given a oaDesign get the oaCell corresponding
-        */
-        static oaCell* getOACellFromOADesign(oaDesign* design){
-            assert(design);
-            oaScalarName cellName;
-            design->getCellName(cellName);
-            oaLib* lib = design->getLib();
-            oaBoolean gotAccess = false;
-            gotAccess = lib->getAccess(oacReadLibAccess);
-            oaCell* cell = oaCell::find(lib,cellName);
-            if(gotAccess)
-                lib->releaseAccess();
-            assert(cell);
-            return cell;
         }
 
         /**

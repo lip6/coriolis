@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-09 01:47:18" - OpenAccessParser.cpp
+// Time-stamp: "2010-08-12 14:07:23" - OpenAccessParser.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -133,7 +133,7 @@ namespace {
                         exit(8);
                     }
                     if (oaFuncs::findLibraryByNameInDB(db, libraryName)) {
-                        cerr << "ERROR" << endl;
+                        cerr << "ERROR_PARSER(1)" << endl;
                         exit(8);
                     }
 
@@ -290,7 +290,7 @@ namespace {
                     //FIXME save opened libraries ??
                 }
             } catch (oaException  &excp) {
-                cout << "ERROR: " << excp.getMsg() << endl;
+                cout << "ERROR_PARSER(2): " << excp.getMsg() << endl;
                 exit(1);
             }
             return oaLibrary;
@@ -304,11 +304,11 @@ namespace {
                 oaTech* tech = oaTech::open(oaLibrary);
 
                 if (!tech) {
-                    cout << "ERROR" << endl;
+                    cout << "ERROR_PARSER(3):" << endl;
                     exit(1);
                 }
                 if (_oaTechnology && tech != _oaTechnology) {
-                    cout << "ERROR" << endl;
+                    cout << "ERROR_PARSER(4):" << endl;
                     exit(1);
                 }
                 if (_oaTechnology) {
@@ -340,7 +340,7 @@ namespace {
                     _oaLayerNum2LayerMap[oaLayer->getNumber()] = layer;
                 }
             } catch (oaException  &excp) {
-                cout << "ERROR: " << excp.getMsg() << endl;
+                cout << "ERROR_PARSER(5): " << excp.getMsg() << endl;
                 exit(1);
             }
         }
