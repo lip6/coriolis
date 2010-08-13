@@ -3,6 +3,8 @@
 
  cmake_minimum_required(VERSION 2.4.0)
 
+ OPTION(BUILD_DOC    "Build the documentation (latex+doxygen)" OFF)
+
  list(INSERT CMAKE_MODULE_PATH 0 "$ENV{BOOTSTRAP_TOP}/share/cmake/Modules/")
  find_package(Bootstrap REQUIRED)
  setup_project_paths(VLSISAPD)
@@ -33,6 +35,11 @@
  add_subdirectory(src)
  add_subdirectory(etc)
  add_subdirectory(cmake_modules)
+
+ if(BUILD_DOC)
+  FIND_PACKAGE(Doxygen)
+ endif(BUILD_DOC)
+
  if(BUILD_DOC)
    add_subdirectory(doc)
  endif(BUILD_DOC)

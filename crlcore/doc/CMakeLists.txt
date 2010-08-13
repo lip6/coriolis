@@ -21,3 +21,7 @@
                                ${output_dir}/README.pdf
                                DESTINATION ${latexInstallDir} )
                install ( DIRECTORY ${output_dir}/README DESTINATION ${htmlInstallDir} )
+
+IF(DOXYGEN_FOUND)
+ add_subdirectory(doxygen)
+ENDIF(DOXYGEN_FOUND)
