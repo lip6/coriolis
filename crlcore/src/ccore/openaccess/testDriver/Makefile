@@ -1,6 +1,6 @@
 
 TESTDIR= ./testOA
-TECHNOFILE= /asim/chams/etc/chams/config.freePDK45.xml
+TECHNOFILE= /dsk/l1/misc/caba/coriolis-2.x/Linux.SLSoC5x/Release.Shared/install/etc/chams/config.freePDK45.xml
 M=$$(uname -m)
 
 all: compile lefTest run
