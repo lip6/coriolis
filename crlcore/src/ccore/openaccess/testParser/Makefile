@@ -1,5 +1,6 @@
 
 TECHNOFILE= /asim/chams/etc/chams/config.freePDK45.xml
+M=$$(uname -m)
 
 all: compile 
 
@@ -7,7 +8,7 @@ compile:
 	./compile.sh
 
 run:
-	./x86_64/usr/local/bin/testOAWrapper \
+	./$(M)/usr/local/bin/testOAWrapper \
 	"/dsk/l1/misc/caba/OA_BENCHMARKS/NangateOpenCellLibrary_PDKv1_3_v2009_07/openaccess" \
 	"NangateOpenCellLibrary" \
 	"/dsk/l1/misc/caba/OA_BENCHMARKS/NangateOpenCellLibrary_PDKv1_3_v2009_07/openaccess" \
@@ -17,7 +18,6 @@ mrproper: clean
 	rm -rf *.log .cadence
 
 clean:
-	rm -rf x86_64
-
+	rm -rf $(M)
 
 .PHONY: clean mrproper compile all run
