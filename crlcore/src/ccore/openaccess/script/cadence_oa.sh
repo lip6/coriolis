@@ -29,11 +29,11 @@ OPENACCESS_TOP=$OPUS_TOP/$OA_VERSION
 case "$ARCH" in
     "x86_64")
 	export OA_LIB_DIR=$OPENACCESS_TOP/lib/linux_rhel40_64/opt
-	export LD_LIBRARY_PATH=$OA_LIB_DIR:$OPUS_TOP/tools.lnx86/lib/64bit:$LD_LIBRARY_PATH
+	export LD_LIBRARY_PATH=/lib64:$LD_LIBRARY_PATH:$OA_LIB_DIR:$OPUS_TOP/tools.lnx86/lib/64bit
 	;;
     *)
 	export OA_LIB_DIR=$OPENACCESS_TOP/lib/linux_rhel40_32/opt
-	export LD_LIBRARY_PATH=$OA_LIB_DIR:$OPUS_TOP/tools.lnx86/lib:$LD_LIBRARY_PATH
+	export LD_LIBRARY_PATH=/lib:$LD_LIBRARY_PATH:$OA_LIB_DIR:$OPUS_TOP/tools.lnx86/lib
 	;;
 esac
 
