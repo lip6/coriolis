@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-13 18:02:10" - OpenAccessDriver.cpp
+// Time-stamp: "2010-08-16 13:05:27" - OpenAccessDriver.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -283,48 +283,25 @@ namespace {
             
             _layer2OALayer[layer] = aOALayer;
 
-#if 0
-        //create and add layer constraint for Layer specific manufacturing rules
-        cerr << " o    get value for constraint" << endl;
-        long minSize = Hurricane::DbU::getDb(layer->getMinimalSize());
-        long minSpace = Hurricane::DbU::getDb(layer->getMinimalSpacing());
-        long pitch = Hurricane::DbU::getDb(layer->getPitch());
-
-
-        cerr << " o    create constraint for min size : " << pitch << endl;
-        oaLayerConstraint* cMinSize = NULL;
-        try{
-            cMinSize = oaLayerConstraint::create(aOALayer->getNumber(),
-                                                 oaLayerConstraintDef::get(oacMinSize),
-                                                 oaIntValue::create(theOATech,500));
-        }catch(oaException& e){
-            cerr << "ERROR oaLayer: " << e.getMsg() << endl;
-            exit(-2);
-        }catch(...){
-            cerr << "ERROR oaLayer: [UNKNOWN]" << endl;
-            exit(-1);
+            //create and add layer constraint for Layer specific manufacturing rules
+            cerr << " o    get value for constraint" << endl;
+            long minSize = Hurricane::DbU::getDb(layer->getMinimalSize());
+            long minSpace = Hurricane::DbU::getDb(layer->getMinimalSpacing());
+            long pitch = Hurricane::DbU::getDb(layer->getPitch());
+            oaLayerConstraint* cMinSize = oaLayerConstraint::create(aOALayer->getNumber(),
+                                                                    oaLayerConstraintDef::get(oacMinWidth),
+                                                                    oaIntValue::create(theOATech,minSize));
+            oaLayerConstraint* cMinSpace = oaLayerConstraint::create(aOALayer->getNumber(),
+                                                                     oaLayerConstraintDef::get(oacMinSpacing),
+                                                                     oaIntValue::create(theOATech,minSpace));
+            oaLayerConstraint* cPitchH = oaLayerConstraint::create(aOALayer->getNumber(),
+                                                                   oaLayerConstraintDef::get(oacHorizontalRouteGridPitch),
+                                                                   oaIntValue::create(theOATech,pitch));
+            oaLayerConstraint* cPitchV = oaLayerConstraint::create(aOALayer->getNumber(),
+                                                                   oaLayerConstraintDef::get(oacVerticalRouteGridPitch),
+                                                                   oaIntValue::create(theOATech,pitch));
+            return aOALayer;
         }
-        assert(cMinSize);
-        cerr << " o    create constraint for min space" << endl;
-        oaLayerConstraint* cMinSpace = oaLayerConstraint::create(aOALayer->getNumber(),
-                                                                 oaLayerConstraintDef::get(oacMinSpacing),
-                                                                 oaIntValue::create(theOATech->getLib(),minSpace));
-        assert(cMinSpace);
-        cerr << " o    create constraint for pitchH" << endl;
-        oaLayerConstraint* cPitchH = oaLayerConstraint::create(aOALayer->getNumber(),
-                                                               oaLayerConstraintDef::get(oacHorizontalRouteGridPitch),
-                                                               oaIntValue::create(theOATech->getLib(),pitch));
-        assert(cPitchH);
-
-        cerr << " o    create constraint for pitchV" << endl;
-        oaLayerConstraint* cPitchV = oaLayerConstraint::create(aOALayer->getNumber(),
-                                                               oaLayerConstraintDef::get(oacVerticalRouteGridPitch),
-                                                               oaIntValue::create(theOATech->getLib(),pitch));
-        assert(cPitchV);
-#endif
-
-        return aOALayer;
-    }
 
     /**
        create a oaTech from a Hurricane::Technology in it's Library
