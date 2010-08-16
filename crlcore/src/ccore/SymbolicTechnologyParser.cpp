@@ -544,6 +544,7 @@ namespace CRL {
     _technology->setWorkingLayer ( "cut4" );
     _technology->setWorkingLayer ( "cut5" );
     _technology->setWorkingLayer ( "gcut" );
+    _technology->setWorkingLayer ( "POLY" );
     _technology->setWorkingLayer ( "METAL1" );
     _technology->setWorkingLayer ( "METAL2" );
     _technology->setWorkingLayer ( "METAL3" );
