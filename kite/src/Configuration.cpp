@@ -56,6 +56,7 @@ namespace Kite {
     , _postEventCb        ()
     , _edgeCapacityPercent(Cfg::getParamPercentage("kite.edgeCapacity", 80.0)->asDouble())
     , _expandStep         (Cfg::getParamPercentage("kite.expandStep"  ,100.0)->asDouble())
+    , _globalMinBreak     (DbU::lambda((double)Cfg::getParamInt("kite.globalMinBreak",29*50)->asInt())) // Ugly: direct uses of SxLib gauge.
     , _ripupLimits        ()
     , _ripupCost          (Cfg::getParamInt("kite.ripupCost"   ,      3)->asInt())
     , _eventsLimit        (Cfg::getParamInt("kite.eventsLimit" ,4000000)->asInt())
@@ -140,6 +141,10 @@ namespace Kite {
   { return _base->getSaturateRatio(); }
 
 
+  size_t  Configuration::getSaturateRp () const
+  { return _base->getSaturateRp(); }
+
+
   DbU::Unit  Configuration::getGlobalThreshold () const
   { return _base->getGlobalThreshold(); }
 
@@ -150,6 +155,10 @@ namespace Kite {
 
   void  Configuration::setSaturateRatio ( float ratio )
   { _base->setSaturateRatio(ratio); }
+
+
+  void  Configuration::setSaturateRp ( size_t threshold )
+  { _base->setSaturateRp(threshold); }
 
 
   void  Configuration::setGlobalThreshold ( DbU::Unit threshold )

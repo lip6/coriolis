@@ -1244,7 +1244,7 @@ namespace {
   //if ( track && (track->getAxis() < constraints.getVMin()) ) track = track->getNext();
   //for ( ; !success && track && (track->getAxis() <= constraints.getVMax()) ; track = track->getNext() ) 
 
-    if ( not success and (segment->getLength() >= Session::getConfiguration()->getGlobalThreshold()) ) {
+    if ( not success and (segment->getLength() >= Session::getConfiguration()->getGlobalMinBreak()) ) {
       ltrace(200) << "Long global wire, break in the middle." << endl;
       Interval span;
       segment->getCanonical ( span );

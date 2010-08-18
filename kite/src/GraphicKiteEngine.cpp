@@ -207,9 +207,9 @@ namespace Kite {
 
   //Breakpoint::stop ( 0, "Point d'arret:<br>&nbsp;&nbsp;<b>runNegociate()</b><br>"
   //                      "Routage par Negociation." );
-    emit cellPreModificated ();
-    kite->runNegociate ();
-    emit cellPostModificated ();
+     emit cellPreModificated ();
+     kite->runNegociate ();
+     emit cellPostModificated ();
   }
 
 

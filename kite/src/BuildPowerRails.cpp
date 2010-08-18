@@ -451,7 +451,7 @@ namespace {
 
   class QueryPowerRails : public Query {
     public:
-                            QueryPowerRails      ( KiteEngine* );
+                            QueryPowerRails     ( KiteEngine* );
       virtual bool          hasGoCallback       () const;
       virtual void          setBasicLayer       ( const BasicLayer* );
       virtual void          goCallback          ( Go*     );

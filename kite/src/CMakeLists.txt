@@ -75,6 +75,7 @@
                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
                                        ${HURRICANE_LIBRARIES}
                                        ${CONFIGURATION_LIBRARY}
+                                       ${BOOKSHELF_LIBRARY}
                                        ${CIF_LIBRARY}
                                        ${AGDS_LIBRARY}
                                        ${LEFDEF_LIBRARIES}
