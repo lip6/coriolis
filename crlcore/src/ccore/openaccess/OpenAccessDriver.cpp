@@ -1,6 +1,5 @@
-
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-18 10:32:07" - OpenAccessDriver.cpp
+// Time-stamp: "2010-08-18 11:21:49" - OpenAccessDriver.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -945,35 +944,36 @@ namespace {
             cerr << "transformation of instances" << endl;
             oaCluster* cellCluster = oaCluster::find(topBlock,
                                                      getString(cell->getName()).c_str());
-            if(!cellCluster)
+            if(!cellCluster){//le cluster existe déja donc la conversion est déja faite ...
                 cellCluster = oaCluster::create(topBlock,
                                                 getString(cell->getName()).c_str(),
                                                 oacClusterTypeSuggested);
-            assert(cellCluster);
-            for_each_instance(instance, cell->getInstances()){
-                oaInst* inst = toOAInst(instance,topBlock);
-                inst->addToCluster(cellCluster);
-                end_for;
+                assert(cellCluster);
+                for_each_instance(instance, cell->getInstances()){
+                    oaInst* inst = toOAInst(instance,topBlock);
+                    inst->addToCluster(cellCluster);
+                    end_for;
+                }
+                cerr << "transformation of nets" << endl;
+                for_each_net(net, cell->getNets()){
+                    oaNet* n =toOANet(net,topBlock);
+                    end_for;
+                }
+
+                //get and update boundingBox and set abutment box
+                Box bBox = cell->getBoundingBox();
+                cerr << "Hurricane bounding box" << bBox << " in cell " << cell  << endl;
+                Box aBox = cell->getAbutmentBox();
+                cerr << "Hurricane abutment box" << aBox << " in cell " << cell  << endl;
+
+                // create abutment in oa
+                if(!aBox.isEmpty())
+                    if(!oaSnapBoundary::find(topBlock))
+                        oaSnapBoundary::create(topBlock, toOABox(aBox));
+
+                oaBox boundingBox = toOABox(bBox);
+                topBlock->getBBox(boundingBox);
             }
-            cerr << "transformation of nets" << endl;
-            for_each_net(net, cell->getNets()){
-                oaNet* n =toOANet(net,topBlock);
-                end_for;
-            }
-
-            //get and update boundingBox and set abutment box
-            Box bBox = cell->getBoundingBox();
-            cerr << "Hurricane bounding box" << bBox << " in cell " << cell  << endl;
-            Box aBox = cell->getAbutmentBox();
-            cerr << "Hurricane abutment box" << aBox << " in cell " << cell  << endl;
-
-            // create abutment in oa
-            if(!aBox.isEmpty())
-                if(!oaSnapBoundary::find(topBlock))
-                    oaSnapBoundary::create(topBlock, toOABox(aBox));
-
-            oaBox boundingBox = toOABox(bBox);
-            topBlock->getBBox(boundingBox);
 
             return designCellView;
         }
