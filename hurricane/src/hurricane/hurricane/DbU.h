@@ -38,13 +38,12 @@
 // x-----------------------------------------------------------------x
 
 
-# ifndef  __HURRICANE_DBU__
-# define  __HURRICANE_DBU__
+#ifndef  __HURRICANE_DBU__
+#define  __HURRICANE_DBU__
 
 
-# include  <cmath>
-
-# include  "hurricane/Commons.h"
+#include  <cmath>
+#include  "hurricane/Commons.h"
 
 
 namespace Hurricane {
@@ -151,4 +150,4 @@ namespace Hurricane {
 } // End of Hurricane namespace.
 
 
-# endif  // __HURRICANE_DBU__
+#endif  // __HURRICANE_DBU__

@@ -182,9 +182,11 @@ namespace Hurricane {
                                   ,name
                                   ,minimalSize
                                   ,minimalSpacing)
-                           ,_material(material)
-                           ,_extractNumber(extractNumber)
-                           ,_realName("<not associated>")
+                           ,_material      (material)
+                           ,_extractNumber (extractNumber)
+                           ,_connectorLayer(NULL)
+                           ,_blockageLayer (NULL)
+                           ,_realName      ("<not associated>")
   { }
 
 

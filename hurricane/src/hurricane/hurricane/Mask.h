@@ -162,7 +162,7 @@ namespace Hurricane {
 
   template<typename IntType>
   inline bool  Mask<IntType>::operator != ( const Mask<IntType> mask ) const
-  { return _mask == mask._mask; } 
+  { return _mask != mask._mask; } 
 
   template<typename IntType>
   inline bool  Mask<IntType>::operator < ( const Mask<IntType> mask ) const
