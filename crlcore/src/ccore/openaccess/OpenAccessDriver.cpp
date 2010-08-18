@@ -1,5 +1,6 @@
+
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-17 13:07:48" - OpenAccessDriver.cpp
+// Time-stamp: "2010-08-18 10:32:07" - OpenAccessDriver.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -48,7 +49,7 @@ namespace {
     using namespace CRL_OA;
 
     /**
-       Class to drive OA to Hurricane
+       Class to drive Hurricane to OA
     */
     class OADriver {
     private:
@@ -57,7 +58,6 @@ namespace {
         typedef map<const Cell*, oaCell*> Cell2OACellMap;
         typedef map<const Instance*, oaInst*> Instance2OAInstsMap;
         typedef map<const Layer*, oaLayer*> Layer2OALayerMap;
-        typedef map<const ViaLayer*, oaStdViaDef*> ViaLayer2OAViaDefMap;
         typedef map<const Component*, oaRect*> Component2OARectMap;
         typedef map<const Segment*, oaPathSeg*> Segment2OAPathSegMap;
 
@@ -71,7 +71,6 @@ namespace {
         Cell2OACellMap _cell2OAcell;
         Instance2OAInstsMap _instance2OAInst;
         Layer2OALayerMap _layer2OALayer;
-        ViaLayer2OAViaDefMap _viaLayer2OAViaDef;
         Component2OARectMap _component2OARect;
         Segment2OAPathSegMap _segment2OAPathSeg;
         set<int> _layerIDS;
@@ -94,7 +93,6 @@ namespace {
             _cell2OAcell(),
             _instance2OAInst(),
             _layer2OALayer(),
-            _viaLayer2OAViaDef(),
             _component2OARect(),
             _segment2OAPathSeg(),
             _layerIDS(),
@@ -251,44 +249,54 @@ namespace {
             // 1) get or create layer
             oaString layerName = getString(layer->getName()).c_str();
             oaLayer* aOALayer = NULL;
-            aOALayer = oaPhysicalLayer::find(theOATech, layerName, true);
-            if(aOALayer){
-                _layer2OALayer[layer] = aOALayer;
-                _layerIDS.insert(aOALayer->getNumber());
-                return aOALayer;
-            }
+
             const BasicLayer* bLayer = dynamic_cast<const BasicLayer*>(layer);
             if(!bLayer){
                 cerr << "NOT A BASICLAYER " << layerName;
                 const ViaLayer* vLayer = dynamic_cast<const ViaLayer*>(layer);
                 if(vLayer){
-                    cerr << " but is a ViaLayer" << endl;
-
-                    const Layer* hBottom=vLayer->getBottom();
-                    const Layer* hTop=vLayer->getTop();
-                    assert(hBottom);
-                    assert(hTop);
-
-                    oaPhysicalLayer* bottom = static_cast<oaPhysicalLayer*>(toOALayer(hBottom,theOATech));
-                    oaPhysicalLayer* top = static_cast<oaPhysicalLayer*>(toOALayer(hTop,theOATech));
-                    oaLayer* cut = NULL;
-                    for_each_basic_layer(l,vLayer->getBasicLayers()){
-                        if(l != vLayer->getTop() && l != vLayer->getBottom()){
-                            cut = toOALayer(l,theOATech);
-                            break;
+                    try{
+                        cerr << " but is a ViaLayer" << endl;
+                        oaString viaDefName = getString(vLayer->getName()).c_str();
+                        cerr << "test0" << endl;
+                        oaViaDef* tmp = oaViaDef::find(theOATech, viaDefName);
+                        cerr << "test0bis" << endl;
+                        oaStdViaDef* vDef = static_cast<oaStdViaDef*>( tmp);
+                        cerr << "test1" << endl;
+                        if(!vDef){
+                            const Layer* hBottom=vLayer->getBottom();
+                            const Layer* hTop=vLayer->getTop();
+                            assert(hBottom);
+                            assert(hTop);
+                            oaPhysicalLayer* bottom = static_cast<oaPhysicalLayer*>(toOALayer(hBottom,theOATech));
+                            oaPhysicalLayer* top = static_cast<oaPhysicalLayer*>(toOALayer(hTop,theOATech));
+                            oaLayer* cut = NULL;
+                            for_each_basic_layer(l,vLayer->getBasicLayers()){
+                                if(l != vLayer->getTop() && l != vLayer->getBottom()){
+                                    cut = toOALayer(l,theOATech);
+                                    break;
+                                }
+                                end_for;
+                            }
+                            assert(cut);
+                            oaViaParam stdViaDefParam;
+                            stdViaDefParam.setCutLayer(cut->getNumber());
+                            long param = Hurricane::DbU::getDb(vLayer->getEnclosure());
+                            //TODO: change and use something not beeing zero !!!
+                            if(param == 0)
+                                param = 1;
+                            stdViaDefParam.setCutWidth(param);
+                            stdViaDefParam.setCutHeight(param);
+                            cerr << "test2" << endl;
+                            vDef = oaStdViaDef::create(theOATech, layerName,
+                                                       bottom,
+                                                       top,
+                                                       stdViaDefParam);
                         }
-                        end_for;
+                    }catch(oaException& e){
+                        cerr << "ERROR(test): " << e.getMsg() << endl;
+                        exit(-1);
                     }
-                    assert(cut);
-                    oaViaParam stdViaDefParam;
-                    stdViaDefParam.setCutLayer(cut->getNumber());
-                    stdViaDefParam.setCutWidth(Hurricane::DbU::getDb(vLayer->getEnclosure()));
-                    stdViaDefParam.setCutHeight(Hurricane::DbU::getDb(vLayer->getEnclosure()));
-                    oaStdViaDef* vDef = oaStdViaDef::create(theOATech, layerName,
-                                                         bottom,
-                                                         top,
-                                                         stdViaDefParam);
-                    _viaLayer2OAViaDef[vLayer] = vDef;
                 }
                 const ContactLayer* cLayer = dynamic_cast<const ContactLayer*>(layer);
                 if(cLayer)
@@ -303,11 +311,16 @@ namespace {
                 if(rLayer)
                     cerr << " but is a RegularLayer" << endl;
             }
+            aOALayer = oaPhysicalLayer::find(theOATech, layerName, true);
+            if(aOALayer){
+                _layer2OALayer[layer] = aOALayer;
+                _layerIDS.insert(aOALayer->getNumber());
+                return aOALayer;
+            }
             aOALayer = oaPhysicalLayer::create(theOATech, layerName, generateLayerID(bLayer),
                                                bLayer ? toOAMaterial(bLayer->getMaterial())
                                                : oaMaterial(oacOtherMaterial));
             assert(aOALayer);
-
             _layer2OALayer[layer] = aOALayer;
 
             //create and add layer constraint for Layer specific manufacturing rules
@@ -550,21 +563,19 @@ namespace {
             return box;
         }
 
-
-
         /**
            Used to convert Pad
         */
-        oaRect* toOARect(Component* component,oaNet* blockNet){
+        oaRect* toOARect(Component* component,oaBlock* block){
             cerr << "toOARect" << endl;
             assert(component);
-            assert(blockNet);
+            assert(block);
 
             Component2OARectMap::iterator it = _component2OARect.find(component);
             if (it != _component2OARect.end())
                 return it->second;
 
-            oaRect* rect = oaRect::create(blockNet->getBlock(),
+            oaRect* rect = oaRect::create(block,
                                           toOALayerNum( component->getLayer() ),
                                           oacDrawingPurposeType,
                                           toOABox(component->getBoundingBox()) );
@@ -583,6 +594,8 @@ namespace {
             if (it != _segment2OAPathSeg.end())
                 return it->second;
             oaPathSeg* res = NULL;
+            oaPoint p1 = toOAPoint(segment->getSourcePosition());
+            oaPoint p2 = toOAPoint(segment->getTargetPosition());
             try{
                 Horizontal* hSeg = dynamic_cast<Horizontal*>(segment);
                 if(hSeg)
@@ -592,15 +605,18 @@ namespace {
                     cerr << "Vertical" << endl;
 
                 oaSegStyle style(segment->getWidth(), oacTruncateEndStyle, oacTruncateEndStyle);
-                oaPathSeg* res = oaPathSeg::create(blockNet->getBlock(),
-                                                   toOALayerNum( segment->getLayer() ),
-                                                   oacDrawingPurposeType,
-                                                   toOAPoint(segment->getSourcePosition()),
-                                                   toOAPoint(segment->getTargetPosition()),
-                                                   style);
+                res = oaPathSeg::create(blockNet->getBlock(),
+                                        toOALayerNum( segment->getLayer() ),
+                                        oacDrawingPurposeType,
+                                        p1,
+                                        p2,
+                                        style);
             }catch (oaException  &e) {
-                cerr << "OA::ERROR => " << e.getMsg() << endl;
-                exit(1);
+                cerr << "OA::ERROR(1) => " << e.getMsg()
+                     << "[(" << p1.x() << "," << p1.y()
+                     << " (" << p2.x() << "," << p2.y() << ")]"
+                     << segment->getCell() << endl;
+                return NULL;
             }
             assert(res);
             return res;
@@ -636,14 +652,18 @@ namespace {
 
             // Create the oaStdVia
             const Layer* layer = contact->getLayer();
-            const ViaLayer* vLayer = dynamic_cast<const ViaLayer*>(layer);
-            assert(vLayer);
-
-            oaStdViaDef* myStdViaDef = NULL;
-            ViaLayer2OAViaDefMap::iterator it = _viaLayer2OAViaDef.find(vLayer);
-            if (it != _viaLayer2OAViaDef.end())
-                myStdViaDef = it->second;
-            assert(myStdViaDef);
+            if(dynamic_cast<const ViaLayer*>(layer)){
+                cerr << "contact: " << contact << " is a Via" << endl;
+            }else{
+                cerr << "contact: " << contact << " is NOT a Via" << endl;
+            }
+            oaString viaDefName = getString(layer->getName()).c_str();
+            oaStdViaDef* myStdViaDef = static_cast<oaStdViaDef*>(
+                oaViaDef::find(_oaTech, viaDefName) );
+            if(!myStdViaDef)
+                return NULL;
+            else
+                cerr << "creating oaStdVia ..." << endl;
 
             oaTransform zeroTrans(oaPoint(0, 0), oacR0);
             oaStdVia* via = oaStdVia::create(blockNet->getBlock(), myStdViaDef, zeroTrans);
@@ -696,13 +716,15 @@ namespace {
         oaPinFig* toOAPinFig(Component* component,oaNet* blockNet){
             Contact* hContact = dynamic_cast<Contact*>(component);
             Segment* hSegment = dynamic_cast<Segment*>(component);
-            if(hContact)
-                return toOAVia(hContact,blockNet);
+            if(hContact){
+                oaPinFig* res = toOAVia(hContact,blockNet);
+                if(res)
+                    return res;
+            }
             if(hSegment)
                 return toOAPathSeg(hSegment,blockNet);
-            return toOARect(component,blockNet);
+            return toOARect(component,blockNet->getBlock());
         }
-
 
         /**
            convert Hurricane::Net to oaNet
@@ -736,6 +758,8 @@ namespace {
                 Components externalComponents = NetExternalComponents::get(net);
                 for_each_component(component, externalComponents) {
                     oaPinFig* pinFig = toOAPinFig(component,blockNet);
+                    if(!pinFig)//for bug : when segment are point
+                        continue;
                     pinFig->addToPin(pin);
                     end_for;
                 }
@@ -746,20 +770,22 @@ namespace {
                     if(via){
                         via->addToNet(blockNet);
                     }else{
-                        oaRect* rect = toOARect(contact,blockNet);
+                        oaRect* rect = toOARect(contact,blockNet->getBlock());
                         rect->addToNet(blockNet);
                     }
                     end_for;
                 }
                 cerr << " o transformation of pads" << endl;
                 for_each_pad(pad, net->getPads()){
-                    oaRect* rect = toOARect(pad, blockNet);
+                    oaRect* rect = toOARect(pad, blockNet->getBlock());
                     rect->addToNet(blockNet);
                     end_for;
                 }
                 cerr << " o transformation of segments" << endl;
                 for_each_segment(component, net->getSegments()) {
                     oaPathSeg* shape = toOAPathSeg(component,blockNet);
+                    if(!shape)//avoid error when the segment is a point
+                        continue;
                     shape->addToNet(blockNet);
                     end_for;
                 }
@@ -917,13 +943,21 @@ namespace {
 
             // 4) convert each instance, net to OA
             cerr << "transformation of instances" << endl;
+            oaCluster* cellCluster = oaCluster::find(topBlock,
+                                                     getString(cell->getName()).c_str());
+            if(!cellCluster)
+                cellCluster = oaCluster::create(topBlock,
+                                                getString(cell->getName()).c_str(),
+                                                oacClusterTypeSuggested);
+            assert(cellCluster);
             for_each_instance(instance, cell->getInstances()){
-                toOAInst(instance,topBlock);
+                oaInst* inst = toOAInst(instance,topBlock);
+                inst->addToCluster(cellCluster);
                 end_for;
             }
             cerr << "transformation of nets" << endl;
             for_each_net(net, cell->getNets()){
-                toOANet(net,topBlock);
+                oaNet* n =toOANet(net,topBlock);
                 end_for;
             }
 

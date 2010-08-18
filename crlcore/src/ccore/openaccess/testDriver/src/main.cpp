@@ -102,7 +102,7 @@ int main(int argc,char** argv) {
     if(argc != 3)
         exit(-5);
 
-
+    testAnalog(argv[1],argv[2]);
 
     testNum(argv[1],argv[2],"a2_x2");
     testNum(argv[1],argv[2],"a2_x4");
@@ -199,8 +199,6 @@ int main(int argc,char** argv) {
     testNum(argv[1],argv[2],"xr2_x1");
     testNum(argv[1],argv[2],"xr2_x4");
     testNum(argv[1],argv[2],"zero_x0");
-
-    testAnalog(argv[1],argv[2]);
 
     DataBase::getDB()->destroy();
     cerr << "ending normally" << endl;
