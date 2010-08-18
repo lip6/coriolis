@@ -45,9 +45,6 @@ namespace Unicorn {
               void           setCellName      ( const QString& );
     protected:
                              SaveCellDialog   ( QWidget* parent=NULL );
-    protected slots:
-              void           formatChanged    ( int );
-
     protected:
               QLineEdit*     _lineEdit;
   };

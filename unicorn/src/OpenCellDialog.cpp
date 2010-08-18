@@ -87,6 +87,7 @@ namespace Unicorn {
     hLayout1->addWidget ( cancelButton );
     hLayout1->addStretch ();
 
+#if DEPRECATED
     QFrame* separator = new QFrame ();
     separator->setFrameShape  ( QFrame::HLine );
     separator->setFrameShadow ( QFrame::Sunken );
@@ -107,6 +108,7 @@ namespace Unicorn {
     formatGroup->setId     ( formatButton, 1 );
     formatGroup->addButton ( formatButton );
     hLayout2->addWidget    ( formatButton  );
+#endif // DEPRECATED
 
     QVBoxLayout* vLayout = new QVBoxLayout ();
     vLayout->setSizeConstraint  ( QLayout::SetFixedSize );
@@ -114,15 +116,15 @@ namespace Unicorn {
     vLayout->addWidget ( _lineEdit );
     vLayout->addWidget ( _viewerCheckBox );
     vLayout->addLayout ( hLayout1 );
-    vLayout->addWidget ( separator );
-    vLayout->addLayout ( hLayout2 );
+  //vLayout->addWidget ( separator );
+  //vLayout->addLayout ( hLayout2 );
 
     setLayout ( vLayout );
   //setModal  ( true );
 
     connect (     okButton, SIGNAL(clicked())         , this, SLOT(accept()) );
     connect ( cancelButton, SIGNAL(clicked())         , this, SLOT(reject()) );
-    connect ( formatGroup , SIGNAL(buttonClicked(int)), this, SLOT(formatChanged(int)) );
+  //connect ( formatGroup , SIGNAL(buttonClicked(int)), this, SLOT(formatChanged(int)) );
   }
 
 
@@ -152,6 +154,7 @@ namespace Unicorn {
   }
 
 
+#if DEPRECATED
   void  OpenCellDialog::formatChanged ( int index )
   {
     Environment* environment = AllianceFramework::get()->getEnvironment();
@@ -168,6 +171,7 @@ namespace Unicorn {
         cerr << Warning("Unknown input format: %d.",index) << endl;
     }
   }
+#endif
 
 
 } // End of Unicorn namespace.

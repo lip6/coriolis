@@ -172,7 +172,7 @@ namespace Unicorn {
 
     if ( SaveCellDialog::runDialog ( this, cellName ) ) {
       renameCell ( cellName.toStdString().c_str() );
-      AllianceFramework::get()->saveCell ( cell, Catalog::State::Physical );
+      AllianceFramework::get()->saveCell ( cell, Catalog::State::Views );
     }
   }
 

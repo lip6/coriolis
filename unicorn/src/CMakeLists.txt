@@ -4,8 +4,10 @@
                include ( ${QT_USE_FILE} )
    include_directories ( ${HURRICANE_INCLUDE_DIR}
                          ${CORIOLIS_INCLUDE_DIR}
+                         ${BOOKSHELF_INCLUDE_DIR}
                          ${CONFIGURATION_INCLUDE_DIR}
                          ${Boost_INCLUDE_DIRS}
+                         ${LEFDEF_INCLUDE_DIR}
                          ${PYTHON_INCLUDE_PATH}
                        )
        add_definitions ( -DSYS_CONF_DIR=\\"${SYS_CONF_DIR}\\" )
@@ -45,6 +47,7 @@
                                        ${HURRICANE_PYTHON_LIBRARIES}
                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
                                        ${HURRICANE_LIBRARIES}
+                                       ${BOOKSHELF_LIBRARY}
                                        ${AGDS_LIBRARY}
                                        ${CIF_LIBRARY}
                                        ${CONFIGURATION_LIBRARY}
@@ -58,8 +61,7 @@
                        )
         add_executable ( cgt           ${cgtcpp} )
  target_link_libraries ( cgt           unicorn )
-               install ( TARGETS       unicorn DESTINATION lib${LIB_SUFFIX} )
-               install ( TARGETS       cgt     DESTINATION bin )
-               install ( FILES         ${includes}
-                                       ${mocIncludes} DESTINATION include/coriolis2/unicorn ) 
+               install ( TARGETS       unicorn        DESTINATION lib${LIB_SUFFIX} )
+               install ( TARGETS       cgt            DESTINATION bin )
+               install ( FILES         ${mocIncludes} DESTINATION include/coriolis2/unicorn ) 
 

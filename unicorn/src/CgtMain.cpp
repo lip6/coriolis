@@ -33,6 +33,7 @@ namespace boptions = boost::program_options;
 #include  <boost/filesystem/operations.hpp>
 namespace bfs = boost::filesystem;
 
+#include  "vlsisapd/bookshelf/Exception.h"
 #include  "vlsisapd/configuration/Configuration.h"
 #include  "hurricane/DebugSession.h"
 #include  "hurricane/DataBase.h"
@@ -54,6 +55,10 @@ using namespace Hurricane;
 #include  "crlcore/AllianceFramework.h"
 #include  "crlcore/Hierarchy.h"
 #include  "crlcore/ToolBox.h"
+#include  "crlcore/Ispd04Bookshelf.h"
+#include  "crlcore/Iccad04Lefdef.h"
+#include  "crlcore/DefImport.h"
+#include  "crlcore/DefExport.h"
 using namespace CRL;
 
 #include  "nimbus/NimbusEngine.h"
@@ -110,6 +115,8 @@ int main ( int argc, char *argv[] )
     bool          detailedRoute;
     bool          loadGlobal;
     bool          saveGlobal;
+    bool          exportDef;
+    bool          saveImport;
 
     boptions::options_description options ("Command line arguments & options");
     options.add_options()
@@ -159,7 +166,17 @@ int main ( int argc, char *argv[] )
       ( "cell,c"             , boptions::value<string>()
                              , "The name of the cell to load, whithout extension." )
       ( "save-design,s"      , boptions::value<string>()
-                             , "Save the routed design.");
+                             , "Save the routed design.")
+      ( "export-def"         , boptions::bool_switch(&exportDef)->default_value(false)
+                             , "Export the design in DEF format.")
+      ( "import-def"         , boptions::value<string>()
+                             , "Import the design in DEF format.")
+      ( "importk-ispd04-bk"  , boptions::value<string>()
+                             , "The name of the ISPD04 benchmark to import (Bookshelf .aux), whithout extension." )
+      ( "import-iccad04-def" , boptions::value<string>()
+                             , "The name of the ICCAD04 benchmark to import (LEF/DEF), whithout extension." )
+      ( "save-import"        , boptions::bool_switch(&saveImport)->default_value(false)
+                             , "Save of the imported design immediatly after loading.");
 
     boptions::variables_map arguments;
     boptions::store  ( boptions::parse_command_line(argc,argv,options), arguments );
@@ -210,6 +227,31 @@ int main ( int argc, char *argv[] )
       saveGlobal     = false;
       globalRoute    = false;
       detailedRoute  = false;
+    }
+
+    if ( (cell == NULL) and arguments.count("import-def") ) {
+      cell = DefImport::load ( arguments["import-def"].as<string>().c_str()
+                             , DefImport::FitAbOnCells
+                             );
+    }
+
+    if ( (cell == NULL) and arguments.count("import-iccad04-def") ) {
+      cell = Iccad04Lefdef::load ( arguments["import-iccad04-def"].as<string>().c_str()
+                                 , 0
+                                 );
+    }
+
+    if ( (cell == NULL) and arguments.count("import-ispd04-bk") ) {
+      cell = Ispd04::load ( arguments["import-ispd04-bk"].as<string>().c_str() );
+    }
+
+    if ( saveImport and (cell != NULL) ) {
+      cmess1 << "  o  Immediate write back of <" << cell->getName() << ">" << endl;
+      af->saveCell ( cell, Catalog::State::Views );
+    }
+
+    if ( (cell != NULL) and exportDef ) {
+      DefExport::drive ( cell, DefExport::WithLEF );
     }
 
     if ( arguments.count("margin") )
@@ -337,6 +379,12 @@ int main ( int argc, char *argv[] )
     // eFPGA/16x16.
     //DebugSession::addToTrace ( cell, "group_15_6_clb_topside_in1_mux_q01" );
     //DebugSession::addToTrace ( cell, "g_7_14_top_2" );
+    // ibm01.
+    //DebugSession::addToTrace ( cell, "NET2648" );
+    //DebugSession::addToTrace ( cell, "NET2881" );
+    //DebugSession::addToTrace ( cell, "NET2530" );
+    //DebugSession::addToTrace ( cell, "NET8464" );
+    //DebugSession::addToTrace ( cell, "NET8242" );
 
     // Python Script test.
 
@@ -465,6 +513,10 @@ int main ( int argc, char *argv[] )
   }
   catch ( boptions::error& e ) {
     cerr << "[ERROR] " << e.what() << endl;
+    exit ( 1 );
+  }
+  catch ( Bookshelf::Exception& e ) {
+    cerr << e.what() << endl;
     exit ( 1 );
   }
   catch ( exception& e ) {

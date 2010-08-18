@@ -44,9 +44,6 @@ namespace Unicorn {
               bool           newViewerRequest () const;
     protected:
                              OpenCellDialog   ( QWidget* parent=NULL );
-    protected slots:
-              void           formatChanged    ( int );
-
     protected:
               QLineEdit*     _lineEdit;
               QCheckBox*     _viewerCheckBox;
