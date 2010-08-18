@@ -8,9 +8,6 @@
     <real>
       <config>${CORIOLIS_TOP}/etc/coriolis2/technology.cmos130.s2r.xml</config>
     </real>
-    <lef>
-      <config>${CORIOLIS_TOP}/etc/coriolis2/cmos.lef</config>
-    </lef>
     <display>
       <config>${CORIOLIS_TOP}/etc/coriolis2/display.xml</config>
     </display>
@@ -46,5 +43,6 @@
     <vdd>vdd</vdd>
     <vss>vss</vss>
     <clock>^do_not_find_ck$</clock>
+    <obstacle>^obstacleNet$</obstacle>
   </signals>
 </environment>

@@ -28,6 +28,7 @@
 
 
 #include  <map>
+#include  <limits>
 
 #include  "crlcore/Environment.h"
 #include  "crlcore/AllianceLibrary.h"
@@ -45,6 +46,7 @@ namespace CRL {
   class AllianceFramework {
     public:
       enum InstancesCountFlags { Recursive=0x1, IgnoreFeeds=0x2 };
+      enum LibraryFlags { CreateLibrary=0x1, InSearchPath=0x2, HasCatalog=0x4 };
     public:
     // Constructors.
       static AllianceFramework* create                   ();
@@ -71,8 +73,13 @@ namespace CRL {
       inline Catalog*           getCatalog               ();
       inline const Name&        getParentLibraryName     () const;
       inline Library*           getParentLibrary         ();
-             Library*           getLibrary               ( unsigned index );
-             AllianceLibrary*   getAllianceLibrary       ( const Name& path, bool& flag );
+             Library*           getLibrary               ( unsigned int index );
+             AllianceLibrary*   getAllianceLibrary       ( unsigned int index );
+             AllianceLibrary*   getAllianceLibrary       ( const Name& path, unsigned int& flags );
+             AllianceLibrary*   getAllianceLibrary       ( Library* );
+             AllianceLibrary*   createLibrary            ( const string& path, unsigned int& flags );
+             void               saveLibrary              ( Library* );
+             void               saveLibrary              ( AllianceLibrary* );
              RoutingGauge*      getRoutingGauge          ( const Name& name="" );
              CellGauge*         getCellGauge             ( const Name& name="" );
       inline const Name         getDefaultCGPinLayerName () const;
@@ -83,11 +90,11 @@ namespace CRL {
              Cell*              getCell                  ( const string& name
                                                          , unsigned int  mode
                                                          , unsigned int  depth=(unsigned int)-1 );
-             Cell*              createCell               ( const string& name );
-             void               saveCell                 ( Cell* cell , unsigned int mode );
-             unsigned int       loadLibraryCells         ( Library* library );
-             unsigned int       loadLibraryCells         ( const Name& name );
-      static size_t             getInstancesCount        ( Cell* cell, unsigned int flags );
+             Cell*              createCell               ( const string& name, AllianceLibrary* library=NULL );
+             void               saveCell                 ( Cell* , unsigned int mode );
+             unsigned int       loadLibraryCells         ( Library* );
+             unsigned int       loadLibraryCells         ( const Name& );
+      static size_t             getInstancesCount        ( Cell*, unsigned int flags );
 
     // Internals - Attributes.
     protected:
@@ -115,6 +122,7 @@ namespace CRL {
     // Internals - Methods.
               bool               _readLocate             ( const string& file, unsigned int mode, bool isLib=false );
               bool               _writeLocate            ( const string& file, unsigned int mode, bool isLib=false );
+              AllianceLibrary*   _createLibrary          ( const string& path, bool& hasCatalog );
 
   };
 

@@ -143,7 +143,7 @@ int main ( int argc, char *argv[] )
 
     dbo_ptr<AllianceFramework> af ( AllianceFramework::create() );
 
-//     Technology* technology = DataBase::getDB()->getTechnology();
+    Technology* technology = DataBase::getDB()->getTechnology();
 //     technology->setWorkingLayer ( "cut0" );
 //     technology->setWorkingLayer ( "cut1" );
 //     technology->setWorkingLayer ( "cut2" );
@@ -161,6 +161,11 @@ int main ( int argc, char *argv[] )
 //     technology->setWorkingLayer ( "VIA34" );
 //     technology->setWorkingLayer ( "VIA45" );
 //     technology->setWorkingLayer ( "VIA56" );
+
+    Layer* contact = technology->getLayer("CONT_POLY");
+    cerr << "CONT_POLY Mask " << contact->getMask() << endl;
+    cerr << contact->getTop() << " is top of CONT_POLY" << endl;
+    cerr << contact->getBottom() << " is bottom of CONT_POLY" << endl;
 
 //     Layer* metal2 = technology->getLayer("METAL2");
 //     Layer* above = technology->getLayer("METAL2")->getMetalAbove();

@@ -16,6 +16,8 @@
                              ${CRLCORE_SOURCE_DIR}/src/ccore/properties
                              ${CRLCORE_SOURCE_DIR}/src/ccore/bookshelf
                              ${CRLCORE_SOURCE_DIR}/src/ccore/acmsigda
+                             ${CRLCORE_SOURCE_DIR}/src/ccore/ispd04
+                             ${CRLCORE_SOURCE_DIR}/src/ccore/iccad04
                              ${CRLCORE_SOURCE_DIR}/src/ccore/cspice
                              ${CRLCORE_SOURCE_DIR}/src/ccore/lefdef
                              ${CRLCORE_SOURCE_DIR}/src/ccore/alliance/ap
@@ -52,6 +54,11 @@
                                                crlcore/AllianceLibrary.h
                                                crlcore/ParsersDrivers.h
                                                crlcore/LefDefExtension.h
+                                               crlcore/DefImport.h
+                                               crlcore/DefExport.h
+                                               crlcore/LefExport.h
+                                               crlcore/Iccad04Lefdef.h
+                                               crlcore/Ispd04Bookshelf.h
                                                crlcore/Ioc.h
                                                crlcore/NetExtension.h
                                                crlcore/Measures.h
@@ -123,20 +130,28 @@
 #                                              liberty/TimingEvent.cpp
 #                                              liberty/LuTable.cpp
 #                          )
-                       set ( lefdef_cpps       lefdef/LefDef.h
+#                      set ( lefdef_cpps       lefdef/LefDef.h
+#                                              lefdef/LefDefExtension.cpp
+#                                              lefdef/LefParser.cpp
+#                                              lefdef/DefParser.cpp
+#                                              lefdef/DefDriver.cpp
+#                          ) 
+                       set ( lefdef_cpps       lefdef/LefExport.cpp
+                                               lefdef/DefExport.cpp
+                                               lefdef/DefImport.cpp
                                                lefdef/LefDefExtension.cpp
-                                               lefdef/LefParser.cpp
-                                               lefdef/DefParser.cpp
-                                               lefdef/DefDriver.cpp
-                           ) 
+                           )
+                       set ( iccad04_cpps      iccad04/Iccad04Lefdef.cpp )
+                       set ( ispd04_cpps       ispd04/Ispd04Bookshelf.cpp )
  if ( LEFDEF_FOUND )
                            include_directories ( ${LEFDEF_INCLUDE_DIR} )
  endif ( LEFDEF_FOUND )
  if ( OA_FOUND )
                            include_directories ( ${OA_INCLUDE_DIR} )
  endif ( OA_FOUND )
-                         set (openaccess_cpps openaccess/OpenAccessDriver.cpp 
-			     		      openaccess/OpenAccessParser.cpp )
+                         set (openaccess_cpps openaccess/OpenAccessParser.cpp
+                                              openaccess/OpenAccessDriver.cpp
+                             )
 
                          set ( VstParserSourceDir  ${CRLCORE_SOURCE_DIR}/src/ccore/alliance/vst )
                          set ( VstParserBinaryDir  ${CRLCORE_BINARY_DIR}/src/ccore/alliance/vst )
@@ -269,6 +284,8 @@
                                         ${liberty_parser_cpps}
                                         ${bookshelf_cpps}
                                         ${acmsigda_parser_cpps}
+                                        ${iccad04_cpps}
+                                        ${ispd04_cpps}
                                         ${spice_cpps}
                                         ${lefdef_cpps}
                                         ${openaccess_cpps}
@@ -276,6 +293,7 @@
        target_link_libraries ( crlcore  ${HURRICANE_PYTHON_LIBRARIES}
                                         ${HURRICANE_GRAPHICAL_LIBRARIES}
                                         ${HURRICANE_LIBRARIES}
+                                        ${BOOKSHELF_LIBRARY}
                                         ${CONFIGURATION_LIBRARY}
                                         ${CIF_LIBRARY}
                                         ${AGDS_LIBRARY}

@@ -50,6 +50,48 @@ namespace {
   using namespace CRL;
 
 
+  class GlobalNetLookup {
+    public:
+      inline void  addLookup ( Net* );
+      inline Net*  lookup    ( const string& );
+      inline bool  isGlobal  ( Net* );
+      inline void  clear     ();
+    private:
+      map<string,Net*>  _globalNets;
+  };
+
+
+  inline void  GlobalNetLookup::addLookup ( Net* globalNet )
+  {
+    if ( globalNet == NULL ) return;
+    _globalNets.insert ( make_pair(getString(globalNet->getName())
+                                  ,globalNet
+                                  ) );
+  }
+
+
+  inline  Net* GlobalNetLookup::lookup ( const string& name )
+  {
+    map<string,Net*>::iterator inet = _globalNets.find(name);
+    if ( inet == _globalNets.end() ) return NULL;
+    return (*inet).second;
+  }
+
+
+  inline bool  GlobalNetLookup::isGlobal ( Net* globalNet )
+  {
+    if ( globalNet == NULL ) return false;
+    return (lookup(getString(globalNet->getName())) != NULL);
+  }
+
+
+  inline void  GlobalNetLookup::clear ()
+  { _globalNets.clear (); }
+
+
+  GlobalNetLookup  __globalNets;
+
+
 void FilterPointsInStrings(string& s) {
     // Problem in VST... : the . which seems to represent hierachy paths
     // in ap is not supported...
@@ -297,18 +339,20 @@ void DumpSignalList(ofstream &ccell, Cell* cell)
 {
     StringPtVector netsString;
     NetSet netSet;
-    for_each_net(net, cell->getInternalNets())
+    forEach(Net*, inet, cell->getNets())
     {
-        string* stringName = new string(net->getName()._getString());
+      if ( not (*inet)->isExternal() ) {
+        string* stringName = new string(inet->getName()._getString());
         FilterPointsInStrings(*stringName);
         netsString.push_back(stringName);
-        NetSet::iterator nsit = netSet.find(net);
+        NetSet::iterator nsit = netSet.find(*inet);
         if (nsit != netSet.end())
-        {
-            throw Error("two times the same name");
-        }
-        netSet.insert(net);
-        end_for;
+          throw Error("two times the same name");
+        netSet.insert(*inet);
+      }
+      if ( (*inet)->isGlobal() ) {
+        __globalNets.addLookup ( *inet );
+      }
     }
     sort(netsString.begin(), netsString.end(), StringSort());
 
@@ -412,7 +456,7 @@ void DumpConnectionList(ofstream &ccell, Instance*instance)
             throw Error("Cannot find net named " + *string1);
         }
         if (string1OpenPar == string::npos)
-        {
+          {
             Plug* plug = spmit->second;
             string connectedNetName;
             if (plug->isConnected()) {
@@ -430,19 +474,21 @@ void DumpConnectionList(ofstream &ccell, Instance*instance)
                 Net* masterNet = plug->getMasterNet();
                 if (masterNet->isGlobal()) // connection by name
                 {
-                    for_each_net(globalnet, instance->getCell()->getGlobalNets())
+                  Net* globalNet = __globalNets.lookup ( getString(masterNet->getName()) );
+                  if ( globalNet != NULL ) connectedNetName = getString(globalNet->getName());
+#if VERY_SLOW
+                  for_each_net(globalnet, instance->getCell()->getGlobalNets())
                     {
-                        if (globalnet->getName() == masterNet->getName())
+                      if (globalnet->getName() == masterNet->getName())
                         {
-                            connectedNetName = string(masterNet->getName()._getString());
-                            break;
+                          connectedNetName = string(masterNet->getName()._getString());
+                          break;
                         }
-                        end_for;
+                      end_for;
                     }
-                    if (connectedNetName == string())
-                    {
-                        throw Error("No global net " + masterNet->getName()._getString() + " in cell " + instance->getCell()->getName()._getString()); 
-                    }
+#endif
+                  if ( connectedNetName.empty() )
+                    throw Error("No global net " + masterNet->getName()._getString() + " in cell " + instance->getCell()->getName()._getString()); 
                  
                 }
                 else
@@ -616,6 +662,8 @@ namespace CRL {
 
 void  vstDriver ( const string cellPath, Cell *cell, unsigned int &saveState )
 {
+    __globalNets.clear ();
+
     ::std::ofstream  ccell ( cellPath.c_str() );
     ccell << "entity " << cell->getName() << " is" << endl;
     DumpPortList(ccell, cell);

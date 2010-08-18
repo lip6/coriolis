@@ -70,10 +70,12 @@
   <parameter id="mauka.annealingRowMult"          type="percentage" value="5"  min="0"/>
   <!-- Katabatic -->
   <parameter id="katabatic.saturateRatio"         type="percentage" value="80"/>
+  <parameter id="katabatic.saturateRp"            type="int"        value="8"/>
   <parameter id="katabatic.globalLengthThreshold" type="int"        value="1450"/>
   <!-- Kite -->
   <parameter id="kite.edgeCapacity"               type="percentage" value="65"      min="0" max="100"/>
   <parameter id="kite.expandStep"                 type="percentage" value="100"     min="0" max="100"/>
+  <parameter id="kite.globalMinBreak"             type="int"        value="1450"/>
   <parameter id="kite.ripupCost"                  type="int"        value="3"       min="0"/>
   <parameter id="kite.borderRipupLimit"           type="int"        value="26"      min="1"/>
   <parameter id="kite.strapRipupLimit"            type="int"        value="16"      min="1"/>
@@ -127,19 +129,21 @@
     <tab name="kite">
       <widget type="title" label="Katabatic - Routing Database"/>
       <widget id="katabatic.saturateRatio"         label="Saturate Ratio (%)"      column="0"/>
+      <widget id="katabatic.saturateRp"            label="Saturate RoutingPad"     column="0"/>
       <widget id="katabatic.globalLengthThreshold" label="Global Length Threshold" column="0"/>
       <widget type="rule"/>
       <widget type="title"                   label="Kite - Detailed Router"/>
-      <widget id="kite.edgeCapacity"         label="Edge Capacity (%)" column="0"/>
-      <widget id="kite.expandStep"           label="Expand Step (%)"   column="0"/>
-      <widget id="kite.eventsLimit"          label="Events Limit"      column="0"/>
-      <widget id="kite.ripupCost"            label="Ripup Cost"        column="1" spinbox="true"/>
+      <widget id="kite.edgeCapacity"         label="Edge Capacity (%)"       column="0"/>
+      <widget id="kite.expandStep"           label="Expand Step (%)"         column="0"/>
+      <widget id="kite.globalMinBreak"       label="Global Length Min Break" column="0"/>
+      <widget id="kite.eventsLimit"          label="Events Limit"            column="0"/>
+      <widget id="kite.ripupCost"            label="Ripup Cost"              column="1" spinbox="true"/>
       <widget type="section" label="Ripup Limits" column="1"/>
-      <widget id="kite.borderRipupLimit"     label="Borders"           column="1" spinbox="true"/>
-      <widget id="kite.strapRipupLimit"      label="Straps"            column="1" spinbox="true"/>
-      <widget id="kite.localRipupLimit"      label="Locals"            column="1" spinbox="true"/>
-      <widget id="kite.globalRipupLimit"     label="Globals"           column="1" spinbox="true"/>
-      <widget id="kite.longGlobalRipupLimit" label="Long Globals"      column="1" spinbox="true"/>
+      <widget id="kite.borderRipupLimit"     label="Borders"                 column="1" spinbox="true"/>
+      <widget id="kite.strapRipupLimit"      label="Straps"                  column="1" spinbox="true"/>
+      <widget id="kite.localRipupLimit"      label="Locals"                  column="1" spinbox="true"/>
+      <widget id="kite.globalRipupLimit"     label="Globals"                 column="1" spinbox="true"/>
+      <widget id="kite.longGlobalRipupLimit" label="Long Globals"            column="1" spinbox="true"/>
       <widget type="rule"/>
     </tab>
     <tab name="Stratus1">

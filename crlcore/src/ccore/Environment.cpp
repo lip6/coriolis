@@ -73,7 +73,6 @@ namespace {
                    , TagsTechnologies
                    , TagsHurricane
                    , TagsReal
-                   , TagsLEF
                    , TagsDisplay
                    , TagsConfig
                    , TagsLibraries
@@ -96,7 +95,6 @@ namespace {
                    };
       enum State   { HurricaneTechnology = 1 
                    , RealTechnology
-                   , LEFTechnology
                    , Display
                    , WorkingLibrary
                    , SystemLibrary
@@ -124,7 +122,6 @@ namespace {
               void                  parseTechnologies    ();
               void                  parseHurricane       ();
               void                  parseReal            ();
-              void                  parseLEF             ();
               void                  parseDisplay         ();
               void                  parseDisplayStyle    ();
               void                  parseConfig          ();
@@ -164,8 +161,6 @@ namespace {
     addTagEntry ( TagsHurricane   , "config"      , (tagParser_t)&XmlEnvironmentParser::parseConfig       );
     addTagEntry ( TagsTechnologies, "real"        , (tagParser_t)&XmlEnvironmentParser::parseReal         );
     addTagEntry ( TagsReal        , "config"      , (tagParser_t)&XmlEnvironmentParser::parseConfig       );
-    addTagEntry ( TagsTechnologies, "lef"         , (tagParser_t)&XmlEnvironmentParser::parseLEF          );
-    addTagEntry ( TagsLEF         , "config"      , (tagParser_t)&XmlEnvironmentParser::parseConfig       );
     addTagEntry ( TagsTechnologies, "display"     , (tagParser_t)&XmlEnvironmentParser::parseDisplay      );
     addTagEntry ( TagsDisplay     , "config"      , (tagParser_t)&XmlEnvironmentParser::parseConfig       );
     addTagEntry ( TagsDisplay     , "displaystyle", (tagParser_t)&XmlEnvironmentParser::parseDisplayStyle );
@@ -323,13 +318,6 @@ namespace {
   }
 
 
-  void  XmlEnvironmentParser::parseLEF ()
-  {
-    _state = LEFTechnology;
-    parseTags ( TagsLEF );
-  }
-
-
   void  XmlEnvironmentParser::parseDisplay ()
   {
     _state = Display;
@@ -357,7 +345,6 @@ namespace {
     expandVariables ( config );
     switch ( _state ) {
       case HurricaneTechnology: _environment.setSYMBOLIC_TECHNOLOGY ( config.c_str() ); break;
-      case LEFTechnology:       _environment.setLEF_TECHNOLOGY      ( config.c_str() ); break;
       case RealTechnology:      _environment.setREAL_TECHNOLOGY     ( config.c_str() ); break;
       case Display:             _environment.setDISPLAY             ( config.c_str() ); break;
     }
@@ -528,7 +515,6 @@ namespace CRL {
     , _displayStyle       ()
     , _SCALE_X            (10)
     , _SYMBOLIC_TECHNOLOGY("")
-    , _LEF_TECHNOLOGY     ("")
     , _DISPLAY            ("")
     , _IN_LO              ("vst")
     , _IN_PH              ("ap")
@@ -644,8 +630,6 @@ namespace CRL {
       << "            \"" << _CORIOLIS_TOP << "\"\n"
       << "        - Symbolic Technology:\n"
       << "            \"" << _SYMBOLIC_TECHNOLOGY << "\"\n"
-      << "        - LEF Technology:\n"
-      << "            \"" << _LEF_TECHNOLOGY << "\"\n"
       << "        - Display configuration:\n"
       << "            \"" << _DISPLAY << "\"\n";
 

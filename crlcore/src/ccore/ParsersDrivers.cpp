@@ -51,19 +51,18 @@
 
 
 
-# include  "hurricane/DBo.h"
+#include  "hurricane/DBo.h"
 
-# include  "crlcore/Utilities.h"
-# include  "crlcore/Environment.h"
-# include  "crlcore/Catalog.h"
-# include  "crlcore/ParsersDrivers.h"
-# include  "Ap.h"
-# include  "Vst.h"
-# include  "Spice.h"
-# include  "Bookshelf.h"
-# include  "AcmSigda.h"
-# include  "LefDef.h"
-# include  "openaccess/OpenAccess.h"
+#include  "crlcore/Utilities.h"
+#include  "crlcore/Environment.h"
+#include  "crlcore/Catalog.h"
+#include  "crlcore/ParsersDrivers.h"
+#include  "Ap.h"
+#include  "Vst.h"
+#include  "Spice.h"
+#include  "Bookshelf.h"
+#include  "AcmSigda.h"
+#include  "openaccess/OpenAccess.h"
 
 
 namespace {
@@ -214,15 +213,13 @@ namespace CRL {
   ParsersMap::ParsersMap (): map<Name,ParserFormatSlot>()
   {
     // Register the Alliance default parsers.
-    registerSlot ( "ap" , (CellParser_t*)apParser       , "ap"  );
-    registerSlot ( "vst", (CellParser_t*)vstParser      , "vst" );
-    registerSlot ( "vst", (CellParser_t*)vstParser      , "vbe" );
-    registerSlot ( "spi", (CellParser_t*)spiceParser    , "spi" );
-    registerSlot ( "def", (CellParser_t*)defParser      , "def" );
-    registerSlot ( "def", (LibraryParser_t*)lefParser   , "lef" );
-    registerSlot ( "oa",  (CellParser_t*)OpenAccess::oaCellParser , "oa" );
-//    registerSlot ( "oa",  (LibraryParser_t*)OpenAccess::oaLibParser , "oa" );
-    registerSlot ( "aux", (CellParser_t*)bookshelfParser, "aux" );
+    registerSlot ( "ap"   , (CellParser_t*)apParser       , "ap"  );
+    registerSlot ( "vst"  , (CellParser_t*)vstParser      , "vst" );
+    registerSlot ( "vst"  , (CellParser_t*)vstParser      , "vbe" );
+    registerSlot ( "spi"  , (CellParser_t*)spiceParser    , "spi" );
+    registerSlot ( "oa"   , (CellParser_t*)OpenAccess::oaCellParser  , "oa" );
+  //registerSlot ( "oa"   , (LibraryParser_t*)OpenAccess::oaLibParser, "oa" );
+    registerSlot ( "aux"  , (CellParser_t*)bookshelfParser, "aux" );
     registerSlot ( "bench", (CellParser_t*)acmSigdaParser , "bench" );
   }
 
@@ -333,10 +330,10 @@ namespace CRL {
   // Register the Alliance default drivers.
     registerSlot ( "ap" , (CellDriver_t*)apDriver       , "ap"       );
     registerSlot ( "vst", (CellDriver_t*)vstDriver      , "vst"      );
-    registerSlot ( "def", (CellDriver_t*)defDriver      , "def"      );
+  //registerSlot ( "def", (CellDriver_t*)defDriver      , "def"      );
     registerSlot ( "aux", (CellDriver_t*)bookshelfDriver, "test.aux" );
     registerSlot ( "spi", (CellDriver_t*)spiceDriver    , "spi"      );
-    registerSlot ( "oa" , (CellDriver_t*)OpenAccess::oaDriver, "oa");
+  //registerSlot ( "oa" , (CellDriver_t*)OpenAccess::oaDriver, "oa");
   }
 
 

@@ -23,6 +23,7 @@
 // x-----------------------------------------------------------------x
 
 
+#include  <unistd.h>
 #include  "hurricane/Warning.h"
 #include  "hurricane/Technology.h"
 #include  "hurricane/DataBase.h"
@@ -78,6 +79,11 @@ namespace CRL {
     string  userEnvironment = Environment::getEnv ( "HOME", "<HomeDirectory>" );
     _environment.loadFromXml ( userEnvironment+"/.environment.alliance.xml", false );
 
+    char cwd[1024];
+    getcwd ( cwd, 1024 );
+    string cwdEnvironment = cwd;
+    _environment.loadFromXml ( cwdEnvironment+"/.environment.alliance.xml", false );
+
     SymbolicTechnologyParser::load ( db, _environment.getSYMBOLIC_TECHNOLOGY() );
     RealTechnologyParser::load     ( db, _environment.getREAL_TECHNOLOGY() );
     GraphicsParser::load           ( _environment.getDISPLAY() );
@@ -85,9 +91,9 @@ namespace CRL {
     if ( !_environment.getDisplayStyle().empty() )
       Graphics::setStyle ( _environment.getDisplayStyle() );
 
-    bool        hasCatalog;
-    SearchPath& LIBRARIES   = _environment.getLIBRARIES ();
-    Library*    rootLibrary = db->getRootLibrary ();
+    unsigned int  flags       = InSearchPath;
+    SearchPath&   LIBRARIES   = _environment.getLIBRARIES ();
+    Library*      rootLibrary = db->getRootLibrary ();
 
     cmess2 << "  o  Creating Alliance Framework root library." << endl;
     if ( !rootLibrary )
@@ -99,15 +105,13 @@ namespace CRL {
 
     cmess2 << "  o  Loading libraries (working first)." << endl;
     for ( unsigned i=0 ; i<LIBRARIES.getSize() ; i++ ) {
-      Name libraryName = LIBRARIES[i];
+      createLibrary ( LIBRARIES[i], flags );
 
-      _libraries.push_back ( getAllianceLibrary(libraryName,hasCatalog) );
-
-      cmess2 << "     - \"" << libraryName._getString() << "\"";
+      cmess2 << "     - \"" << LIBRARIES[i] << "\"";
       cmess2.flush();
 
-      if ( hasCatalog ) cmess2 << " [have CATAL]." << endl;
-      else              cmess2 << " [no CATAL]"    << endl;
+      if ( flags&HasCatalog ) cmess2 << " [have CATAL]." << endl;
+      else                    cmess2 << " [no CATAL]"    << endl;
     }
 
   // Temporary: create the SxLib routing gauge.
@@ -187,6 +191,35 @@ namespace CRL {
                                                           , DbU::lambda(2) // Wire width.
                                                           , DbU::lambda(3) // Via width.
                                                           ) );
+
+        routingLayer = technology->getLayer("METAL6");
+        if ( routingLayer == NULL ) break;
+
+        sxlibRg->addLayerGauge ( RoutingLayerGauge::create( routingLayer
+                                                          , Constant::Horizontal
+                                                          , Constant::Default
+                                                          , 5              // Depth (?).
+                                                          , 0              // Density.
+                                                          , DbU::lambda(0) // Offset.
+                                                          , DbU::lambda(5) // Pitch.
+                                                          , DbU::lambda(2) // Wire width.
+                                                          , DbU::lambda(3) // Via width.
+                                                          ) );
+#if 0
+        routingLayer = technology->getLayer("METAL7");
+        if ( routingLayer == NULL ) break;
+
+        sxlibRg->addLayerGauge ( RoutingLayerGauge::create( routingLayer
+                                                          , Constant::Vertical
+                                                          , Constant::Default
+                                                          , 7              // Depth (?).
+                                                          , 0              // Density.
+                                                          , DbU::lambda(0) // Offset.
+                                                          , DbU::lambda(5) // Pitch.
+                                                          , DbU::lambda(2) // Wire width.
+                                                          , DbU::lambda(3) // Via width.
+                                                          ) );
+#endif
     }
     addRoutingGauge ( sxlibRg );
 
@@ -244,34 +277,37 @@ namespace CRL {
   }
 
 
-  AllianceLibrary* AllianceFramework::getAllianceLibrary ( const Name &path , bool &flag )
+  AllianceLibrary* AllianceFramework::getAllianceLibrary ( unsigned index )
   {
+    if ( index >= _libraries.size() )
+      return NULL;
+
+    return _libraries[index];
+  }
+
+
+  AllianceLibrary* AllianceFramework::getAllianceLibrary ( const Name &path, unsigned int& flags )
+  {
+
     string  spath   = getString ( path );
     size_t  slash   = spath.rfind ( '/' );
     string  sname   = spath.substr ( (slash!=string::npos)?slash+1:0 );
 
-    AllianceLibrary* library = new AllianceLibrary ( path, Library::create(getParentLibrary(),sname) );
-    string           catalog = spath + "/" + _environment.getCATALOG();
+    for ( size_t ilib=0 ; ilib<_libraries.size() ; ++ilib ) {
+      if ( _libraries[ilib]->getLibrary()->getName() == sname )
+        return _libraries[ilib];
+    }
 
-    flag = false;
-    if ( _catalog.loadFromFile(catalog,library->getLibrary()) ) flag = true;
+    return (flags&CreateLibrary) ? createLibrary ( getString(path), flags ) : NULL;
+  }
 
-    ParserFormatSlot& parser = _parsers.getParserSlot ( spath, Catalog::State::Physical, _environment );
 
-    if ( !parser.loadByLib() ) return library;
-
-    size_t  base = spath.find_last_of ( '/' );
-    if ( base == spath.npos ) return library;
-
-    string  file = spath.substr(base+1,spath.size()-base);
-
-  // Load the whole library.
-    if ( ! _readLocate(file,Catalog::State::State::Logical,true) ) return library;
-
-  // Call the parser function.
-    (parser.getParsLib())( _environment.getLIBRARIES().getSelected() , library->getLibrary() , _catalog );
-
-    return library;
+  AllianceLibrary* AllianceFramework::getAllianceLibrary ( Library* library )
+  {
+    for ( size_t ilib=0 ; ilib<_libraries.size() ; ++ilib ) {
+      if ( _libraries[ilib]->getLibrary() == library ) return _libraries[ilib];
+    }
+    return NULL;
   }
 
 
@@ -336,19 +372,97 @@ namespace CRL {
   }
 
 
-  Cell* AllianceFramework::createCell ( const string& name )
+  AllianceLibrary* AllianceFramework::createLibrary ( const string& path, unsigned int& flags )
+  {
+    size_t  slash      = path.rfind ( '/' );
+    string  libName    = path.substr ( (slash!=string::npos)?slash+1:0 );
+
+    flags &= ~HasCatalog;
+
+    AllianceLibrary* library = getAllianceLibrary ( libName, flags );
+    if ( library != NULL ) {
+      cerr << Warning("AllianceFramework::createLibrary(): Attempt to re-create <%s>, using already existing."
+                     ,libName.c_str()) << endl;
+      return library;
+    }
+
+    SearchPath& LIBRARIES = _environment.getLIBRARIES ();
+    if ( not (flags & InSearchPath) ) LIBRARIES.prepend ( path );
+    else                              LIBRARIES.select  ( path );
+
+    library = new AllianceLibrary ( path, Library::create(getParentLibrary(),libName) );
+
+    AllianceLibraries::iterator ilib = _libraries.begin();
+    for ( size_t i=0 ; i<LIBRARIES.getIndex() ; ++i, ++ilib );
+
+    _libraries.insert ( ilib, library );
+
+    string catalog = path + "/" + _environment.getCATALOG();
+
+    if ( _catalog.loadFromFile(catalog,library->getLibrary()) ) flags |= HasCatalog;
+
+    ParserFormatSlot& parser = _parsers.getParserSlot ( path, Catalog::State::Physical, _environment );
+
+    if ( not parser.loadByLib() ) return library;
+
+    if ( slash == path.npos ) return library;
+    string file = path.substr(slash+1,path.size()-slash);
+
+  // Load the whole library.
+    if ( ! _readLocate(file,Catalog::State::State::Logical,true) ) return library;
+
+  // Call the parser function.
+    (parser.getParsLib())( _environment.getLIBRARIES().getSelected() , library->getLibrary() , _catalog );
+
+    return library;
+  }
+  
+
+  void  AllianceFramework::saveLibrary ( Library* library )
+  {
+    if ( library == NULL ) return;
+
+    AllianceLibrary* alibrary = getAllianceLibrary ( library );
+    if ( alibrary == NULL ) {
+      throw Error("AllianceFramework::saveLibrary(): Cannot save non-Alliance library <%s>."
+                 ,getString(library->getName()).c_str());
+    }
+
+    saveLibrary ( alibrary );
+  }
+  
+
+  void  AllianceFramework::saveLibrary ( AllianceLibrary* library )
+  {
+    if ( library == NULL ) return;
+
+    bfs::path libPath ( getString(library->getPath()) );
+    if ( not bfs::exists(libPath) ) {
+      bfs::create_directory(libPath);
+    }
+
+    forEach ( Cell*, icell, library->getLibrary()->getCells() ) {
+      saveCell ( *icell, Catalog::State::Views );
+    }
+  }
+
+
+  Cell* AllianceFramework::createCell ( const string& name, AllianceLibrary* library )
   {
     Catalog::State* state = _catalog.getState ( name );
 
   // The cell is not in the CATAL : add an entry.
     if ( state == NULL ) state = _catalog.getState ( name, true );
 
+    if ( library == NULL )
+      library = _libraries[0];
+
     if ( !state->getCell() ) {
       state->setPhysical ( true );
       state->setLogical  ( true );
       state->setDepth    ( 1 );
 
-      state->setCell ( Cell::create ( _libraries[0]->getLibrary() , name ) );
+      state->setCell ( Cell::create ( library->getLibrary() , name ) );
       state->getCell ()->put ( CatalogProperty::create(state) );
       state->getCell ()->setFlattenLeaf ( false );
     }
@@ -357,14 +471,15 @@ namespace CRL {
   }
 
 
-  void  AllianceFramework::saveCell ( Cell* cell , unsigned int mode )
+  void  AllianceFramework::saveCell ( Cell* cell, unsigned int mode )
   {
-    if ( !cell ) return;
+    if ( cell == NULL ) return;
 
-    string        name   = getString(cell->getName());
-    DriverSlot*   driver;
-    unsigned int  saveMode;
-    unsigned int  savedViews = 0;
+    string           name       = getString(cell->getName());
+    DriverSlot*      driver;
+    unsigned int     saveMode   = 0;
+    unsigned int     savedViews = 0;
+    AllianceLibrary* library    = getAllianceLibrary ( cell->getLibrary() );
 
     for ( int i=0 ; i<2 ; i++ ) {
     // Check is the view is requested for saving or already saved.
@@ -381,6 +496,8 @@ namespace CRL {
       driver = & ( _drivers.getDriverSlot ( name, saveMode, _environment ) );
 
     // Try to open cell file (file extention is supplied by the parser).
+      if ( library != NULL )
+        _environment.getLIBRARIES().select ( getString(library->getPath()) );
       if ( !_writeLocate(name,saveMode,false) ) continue;
 
     // Call the driver function.
@@ -473,7 +590,7 @@ namespace CRL {
     // Try to open using the library driver.
       name = file + "." + getString(format.getExtLib());
 
-      LIBRARIES.locate ( name, ios::out|ios::trunc, 0, 1 );
+      LIBRARIES.locate ( name, ios::out|ios::trunc );
       if ( LIBRARIES.hasSelected() ) return true;
     } else {
       if ( !format.getDrivCell() ) return false;
@@ -481,7 +598,7 @@ namespace CRL {
     // Try to open using the cell driver.
       name = file + "." + getString(format.getExtCell());
 
-      LIBRARIES.locate ( name, ios::out|ios::trunc, 0, 1 );
+      LIBRARIES.locate ( name, ios::out|ios::trunc );
       if ( LIBRARIES.hasSelected() ) return true;
     }
     return false;
