@@ -12,13 +12,7 @@
 OA_VERSION=oa_v22.04.057
 # get OPUS_TOP and tools
 # from virtuoso editor (needed)
-source ~opus/bin/IC613.sh
-
-# get encouter router too if possible
-if test -f ~opus/bin/EDI910.sh
-then
-    source ~opus/bin/EDI910.sh
-fi
+source ~opus/bin/NCSU-CDK16.sh
 
 
 ARCH=$(uname -i)
@@ -37,7 +31,7 @@ case "$ARCH" in
 	;;
 esac
 
-export PATH=$PATH:$OPENACCESS_TOP/bin
+export PATH=$PATH:$OPENACCESS_TOP/bin:~opus/6.1.0/Linux/EDI-9.10/bin
 
 # for plugins .plg files
 export OA_PLUGIN_PATH=$OPENACCESS_TOP/data
