@@ -14,6 +14,7 @@ compile:
 
 run: compile
 	./$(M)/usr/local/bin/testOAWrapper $(TECHNOFILE) $(TESTDIR) 2>&1 | tee $@.log
+	cd $(TESTDIR)/OAdrive && oa2lef -lib sxlib -views layout -lef sxlibFromOA.lef
 
 debug: compile
 	gdb -args ./$(M)/usr/local/bin/testOAWrapper $(TECHNOFILE) $(TESTDIR)

@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-18 11:21:49" - OpenAccessDriver.cpp
+// Time-stamp: "2010-08-18 12:19:15" - OpenAccessDriver.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -655,14 +655,13 @@ namespace {
                 cerr << "contact: " << contact << " is a Via" << endl;
             }else{
                 cerr << "contact: " << contact << " is NOT a Via" << endl;
+                return NULL;
             }
             oaString viaDefName = getString(layer->getName()).c_str();
             oaStdViaDef* myStdViaDef = static_cast<oaStdViaDef*>(
                 oaViaDef::find(_oaTech, viaDefName) );
-            if(!myStdViaDef)
-                return NULL;
-            else
-                cerr << "creating oaStdVia ..." << endl;
+            assert(myStdViaDef);
+            cerr << "creating oaStdVia ..." << endl;
 
             oaTransform zeroTrans(oaPoint(0, 0), oacR0);
             oaStdVia* via = oaStdVia::create(blockNet->getBlock(), myStdViaDef, zeroTrans);
@@ -720,8 +719,11 @@ namespace {
                 if(res)
                     return res;
             }
-            if(hSegment)
-                return toOAPathSeg(hSegment,blockNet);
+            if(hSegment){
+                oaPathSeg* res = toOAPathSeg(hSegment,blockNet);
+                if(res)
+                    return res;
+            }
             return toOARect(component,blockNet->getBlock());
         }
 
@@ -757,8 +759,7 @@ namespace {
                 Components externalComponents = NetExternalComponents::get(net);
                 for_each_component(component, externalComponents) {
                     oaPinFig* pinFig = toOAPinFig(component,blockNet);
-                    if(!pinFig)//for bug : when segment are point
-                        continue;
+                    assert(pinFig);
                     pinFig->addToPin(pin);
                     end_for;
                 }
@@ -782,9 +783,9 @@ namespace {
                 }
                 cerr << " o transformation of segments" << endl;
                 for_each_segment(component, net->getSegments()) {
-                    oaPathSeg* shape = toOAPathSeg(component,blockNet);
-                    if(!shape)//avoid error when the segment is a point
-                        continue;
+                    oaShape* shape = toOAPathSeg(component,blockNet);
+                    if(!shape)
+                        shape = toOARect(static_cast<Component*>(component),blockNet->getBlock());
                     shape->addToNet(blockNet);
                     end_for;
                 }

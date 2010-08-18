@@ -1,6 +1,7 @@
 
 all: sxlib.lef
 	lef2oa -lib sxlib -lef sxlib.lef
+	oa2lef -lib sxlib -lef sxlib_back.lef
 
 sxlib.lef:
 	grep -v "END LIBRARY" cmos.lef.bak > sxlib.lef ; for i in $$(cat cells) ; do sxlib2lef $$i ; cat $$i.lef >> sxlib.lef ; done
