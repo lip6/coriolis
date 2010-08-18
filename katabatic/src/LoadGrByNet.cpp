@@ -2364,12 +2364,14 @@ namespace Katabatic {
     size_t connecteds   = 0;
     ltrace(99) << "Start RoutingPad Ring" << endl;
     forEach ( RoutingPad*, startRp, routingPads ) {
+      bool segmentFound = false;
       forEach ( Hook*, ihook, startRp->getBodyHook()->getHooks() ) {
         ltrace(99) << "Component " << ihook->getComponent() << endl;
         Segment* segment = dynamic_cast<Segment*>(ihook->getComponent());
 
         if ( segment ) {
           ++connecteds;
+          segmentFound = true;
 
           GCellConfiguration  gcellConf ( getGCellGrid(), *ihook, NULL );
           if ( gcellConf.getStateG() == 1 ) {
@@ -2380,10 +2382,9 @@ namespace Katabatic {
             }
             break;
           }
-        } else {
-          ++unconnecteds;
         }
       }
+      unconnecteds += (segmentFound) ? 0 : 1;
       if ( (unconnecteds > 10) and (connecteds == 0) ) {
         cerr << Warning("More than 10 unconnected RoutingPads (%u) on %s, missing global routing?"
                        ,unconnecteds, getString(net->getName()).c_str() ) << endl;

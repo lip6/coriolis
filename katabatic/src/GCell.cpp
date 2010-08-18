@@ -709,14 +709,14 @@ namespace Katabatic {
       rpNets.insert ( (*irp)->getNet() );
     }
 
-    if ( rpNets.size() < 8 ) return;
+    if ( rpNets.size() < Session::getSaturateRp() ) return;
 
-    // cerr << Warning("%s has %ud terminals (h:%ud, v:%ud)"
-    //                ,getString(this).c_str()
-    //                ,rps.size()
-    //                ,_hsegments.size()
-    //                ,_vsegments.size()
-    //                ) << endl;
+    cerr << Warning("%s has %zd terminals (h:%zd, v:%zd)"
+                   ,getString(this).c_str()
+                   ,rps.size()
+                   ,_hsegments.size()
+                   ,_vsegments.size()
+                   ) << endl;
 
     AutoSegment* segment;
     while ( stepDesaturate ( 1, globalNets, segment, true ) ) {
@@ -780,6 +780,7 @@ namespace Katabatic {
 #endif
 
     updateDensity ();
+    float density = getDensity();
 
   //float density   = _densities[depth];
   //float densityUp = _densities[depth+2];
@@ -818,6 +819,13 @@ namespace Katabatic {
       moved = (*isegment);
 
       updateDensity ();
+
+    //cmess2 << "     - GCell [" << getIndex() << "] @" << getColumn() << "x" << getRow()
+    //       << ":" << setprecision(4) << density
+    //       << " [cap:" <<  _densities[depth]
+    //       << " M+2: " << (_densities[depth+2] + (1.0 / capacity))
+    //       << "  displaced:" << (*isegment) << "]."
+    //       << endl;
 
       return true;
     }

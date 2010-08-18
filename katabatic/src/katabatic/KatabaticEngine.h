@@ -138,6 +138,7 @@ namespace Katabatic {
       inline  const NetSet&        getRoutingNets            () const;
       inline  DbU::Unit            getGlobalThreshold        () const;
       inline  float                getSaturateRatio          () const;
+      inline  size_t               getSaturateRp             () const;
       inline  DbU::Unit            getExtensionCap           () const;
               void                 xmlWriteGCellGrid         ( ostream& );
               void                 xmlWriteGCellGrid         ( const string& );
@@ -150,6 +151,7 @@ namespace Katabatic {
       inline  void                 setWarnGCellOverload      ( bool );
       inline  void                 setGlobalThreshold        ( DbU::Unit );
       inline  void                 setSaturateRatio          ( float );
+      inline  void                 setSaturateRp             ( size_t );
               void                 startMeasures             ();
               void                 stopMeasures              ();
               void                 printMeasures             ( const string& ) const;
@@ -238,6 +240,7 @@ namespace Katabatic {
   inline void                           KatabaticEngine::setDemoMode               ( bool  mode ) { _demoMode = mode; }
   inline void                           KatabaticEngine::setWarnGCellOverload      ( bool  mode ) { _warnGCellOverload = mode; }
   inline void                           KatabaticEngine::setSaturateRatio          ( float ratio ) { _configuration->setSaturateRatio(ratio); }
+  inline void                           KatabaticEngine::setSaturateRp             ( size_t threshold ) { _configuration->setSaturateRp(threshold); }
   inline void                           KatabaticEngine::setGlobalThreshold        ( DbU::Unit threshold ) { _configuration->setGlobalThreshold(threshold); }
   inline bool                           KatabaticEngine::getDemoMode               () { return _demoMode; }
   inline bool                           KatabaticEngine::getWarnGCellOverload      () { return _warnGCellOverload; }
@@ -250,6 +253,7 @@ namespace Katabatic {
   inline const KatabaticEngine::NetSet& KatabaticEngine::getRoutingNets            () const { return _routingNets; }
   inline DbU::Unit                      KatabaticEngine::getGlobalThreshold        () const { return _configuration->getGlobalThreshold(); }
   inline float                          KatabaticEngine::getSaturateRatio          () const { return _configuration->getSaturateRatio(); }
+  inline size_t                         KatabaticEngine::getSaturateRp             () const { return _configuration->getSaturateRp(); }
   inline DbU::Unit                      KatabaticEngine::getExtensionCap           () const { return _configuration->getExtensionCap(); }
   inline AutoContactLut&                KatabaticEngine::_getAutoContactLut        () { return _autoContactLut; }
   inline AutoSegmentLut&                KatabaticEngine::_getAutoSegmentLut        () { return _autoSegmentLut; }

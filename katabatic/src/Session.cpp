@@ -374,6 +374,10 @@ namespace Katabatic {
   { return get("getSaturateRatio()")->_katabatic->getSaturateRatio(); }
 
 
+  size_t  Session::getSaturateRp ()
+  { return get("getSaturateRp()")->_katabatic->getSaturateRp(); }
+
+
   bool  Session::getWarnGCellOverload ()
   { return get("getWarnGCellOverload()")->_katabatic->getWarnGCellOverload(); }
 

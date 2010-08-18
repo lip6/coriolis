@@ -101,6 +101,7 @@ namespace Katabatic {
       static inline KatabaticEngine*            getKatabatic          ();
       static        bool                        getDemoMode           ();
       static        float                       getSaturateRatio      ();
+      static        size_t                      getSaturateRp         ();
       static        bool                        getWarnGCellOverload  ();
       static        DbU::Unit                   getExtensionCap       ();
       static        const Layer*                getRoutingLayer       ( size_t );

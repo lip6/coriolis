@@ -72,9 +72,11 @@ namespace Katabatic {
       virtual Layer*             getContactLayer    ( size_t depth ) const = 0;
       virtual DbU::Unit          getExtensionCap    () const = 0;
       virtual float              getSaturateRatio   () const = 0;
+      virtual size_t             getSaturateRp      () const = 0;
       virtual DbU::Unit          getGlobalThreshold () const = 0;
       virtual void               setAllowedDepth    ( size_t ) = 0;
       virtual void               setSaturateRatio   ( float ) = 0;
+      virtual void               setSaturateRp      ( size_t ) = 0;
       virtual void               setGlobalThreshold ( DbU::Unit ) = 0;
       virtual void               print              ( Cell* ) const = 0;
       virtual Record*            _getRecord         () const = 0;
@@ -112,9 +114,11 @@ namespace Katabatic {
       virtual Layer*                 getContactLayer       ( size_t depth ) const;
       virtual DbU::Unit              getExtensionCap       () const;
       virtual float                  getSaturateRatio      () const;
+      virtual size_t                 getSaturateRp         () const;
       virtual DbU::Unit              getGlobalThreshold    () const;
       virtual void                   setAllowedDepth       ( size_t );
       virtual void                   setSaturateRatio      ( float );
+      virtual void                   setSaturateRp         ( size_t );
       virtual void                   setGlobalThreshold    ( DbU::Unit );
       virtual void                   print                 ( Cell* ) const;
       virtual Record*                _getRecord            () const;
@@ -128,6 +132,7 @@ namespace Katabatic {
       RoutingGauge* _rg;
       DbU::Unit     _extensionCap;
       float         _saturateRatio;
+      size_t        _saturateRp;
       DbU::Unit     _globalThreshold;
       size_t        _allowedDepth;
     private:
