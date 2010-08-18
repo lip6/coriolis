@@ -23,6 +23,7 @@
                                      ${HURRICANE_PYTHON_LIBRARIES}
                                      ${HURRICANE_LIBRARIES}
                                      ${CONFIGURATION_LIBRARY}
+                                     ${BOOKSHELF_LIBRARY}
                                      ${AGDS_LIBRARY}
                                      ${CIF_LIBRARY}
                                      ${CONFIGURATION_LIBRARY}
