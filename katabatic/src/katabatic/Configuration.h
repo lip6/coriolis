@@ -74,6 +74,8 @@ namespace Katabatic {
       virtual float              getSaturateRatio   () const = 0;
       virtual size_t             getSaturateRp      () const = 0;
       virtual DbU::Unit          getGlobalThreshold () const = 0;
+      virtual size_t             getHEdgeCapacity   () const = 0;
+      virtual size_t             getVEdgeCapacity   () const = 0;
       virtual void               setAllowedDepth    ( size_t ) = 0;
       virtual void               setSaturateRatio   ( float ) = 0;
       virtual void               setSaturateRp      ( size_t ) = 0;
@@ -116,6 +118,8 @@ namespace Katabatic {
       virtual float                  getSaturateRatio      () const;
       virtual size_t                 getSaturateRp         () const;
       virtual DbU::Unit              getGlobalThreshold    () const;
+      virtual size_t                 getHEdgeCapacity      () const;
+      virtual size_t                 getVEdgeCapacity      () const;
       virtual void                   setAllowedDepth       ( size_t );
       virtual void                   setSaturateRatio      ( float );
       virtual void                   setSaturateRp         ( size_t );
@@ -135,6 +139,8 @@ namespace Katabatic {
       size_t        _saturateRp;
       DbU::Unit     _globalThreshold;
       size_t        _allowedDepth;
+      size_t        _hEdgeCapacity;
+      size_t        _vEdgeCapacity;
     private:
                              ConfigurationConcrete ( const ConfigurationConcrete& );
       ConfigurationConcrete& operator=             ( const ConfigurationConcrete& );

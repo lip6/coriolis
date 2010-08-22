@@ -50,20 +50,25 @@ namespace Katabatic {
   class GCellGrid : public Grid<GCell> {
 
     public:
-              Cell*     getCell             () const;
-              Interval  getUSide            ( unsigned int ) const;
-              void      updateContacts      ( bool openSession=true );
-              size_t    checkDensity        () const;
-              size_t    updateDensity       ();
-              bool      checkEdgeSaturation ( float threshold ) const;
-              void      _xmlWrite           ( ostream& );
-      virtual Record*   _getRecord          () const;
-      virtual string    _getString          () const;
-      virtual string    _getTypeName        () const;
+              Cell*            getCell             () const;
+      inline  KatabaticEngine* getKatabatic        () const;
+      inline  size_t           getHEdgeCapacity    () const;
+      inline  size_t           getVEdgeCapacity    () const;
+              Interval         getUSide            ( unsigned int ) const;
+              void             updateContacts      ( bool openSession=true );
+              size_t           checkDensity        () const;
+              size_t           updateDensity       ();
+              bool             checkEdgeSaturation ( float threshold ) const;
+              void             _xmlWrite           ( ostream& );
+      virtual Record*          _getRecord          () const;
+      virtual string           _getString          () const;
+      virtual string           _getTypeName        () const;
 
     // Attributes.
     protected:
       KatabaticEngine* _katabatic;
+      size_t           _hEdgeCapacity;
+      size_t           _vEdgeCapacity;
 
     // Constructors & Destructors.
     protected:
@@ -79,6 +84,11 @@ namespace Katabatic {
     // Friends.
     friend class KatabaticEngine;
   };
+
+
+  inline  KatabaticEngine* GCellGrid::getKatabatic     () const { return _katabatic; }
+  inline  size_t           GCellGrid::getHEdgeCapacity () const { return _hEdgeCapacity; }
+  inline  size_t           GCellGrid::getVEdgeCapacity () const { return _vEdgeCapacity; }
 
 
 } // End of Katabatic namespace.

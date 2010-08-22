@@ -277,14 +277,24 @@ namespace Katabatic {
 
     Session::revalidate ();
 
-    for ( int i=0 ; i < 3 ; i++ ) {
-      _desaturate ( 1, globalNets, total, global );
-      _desaturate ( 2, globalNets, total, global );
+  // Look for RoutingPad overload.
+    vector<GCell*> gcells = *(_gcellGrid->getGCellVector());
+    for ( size_t i=0 ; i<gcells.size() ; ++i ) {
+      gcells[i]->rpDesaturate ( globalNets );
+    }
 
-      globalNets.clear ();
+    if ( getConfiguration()->getAllowedDepth() > 2) {
+      for ( int i=0 ; i < 3 ; i++ ) {
+        for ( size_t depth=1 ; depth < getConfiguration()->getAllowedDepth()-2; ++depth ) {
+          _desaturate ( depth, globalNets, total, global );
+          if ( (depth > 1) and ((depth-1)%2 == 1) ) Session::revalidate ();
+        }
 
+        globalNets.clear ();
+
+        if ( not _gcellGrid->updateDensity () ) break;
+      }
       Session::revalidate ();
-      if ( !_gcellGrid->updateDensity () ) break;
     }
   //refresh ( false );
 
@@ -296,20 +306,6 @@ namespace Katabatic {
     for ( ; inet != _routingNets.end() ; inet++ )
       _print ( *inet );
 #endif
-
-  // Look for RoutingPad overload.
-    vector<GCell*> gcells = *(_gcellGrid->getGCellVector());
-    for ( size_t i=0 ; i<gcells.size() ; ++i ) {
-      gcells[i]->rpDesaturate ( globalNets );
-      // set<RoutingPad*> rps;
-      // gcells[i]->getRoutingPads ( rps );
-
-      // if ( rps.size() > 7 ) {
-      //   cerr << "[WARNING] " << gcells[i] << "has " << rps.size() << " terminals." << endl;
-      // }
-    }
-
-    Session::revalidate ();
 
     Session::setWarnGCellOverload ( true );
     _gcellGrid->checkDensity ();

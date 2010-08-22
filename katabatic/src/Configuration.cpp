@@ -25,12 +25,14 @@
 
 #include  <iostream>
 #include  <iomanip>
+#include  <vector>
 
 #include  "vlsisapd/configuration/Configuration.h"
 #include  "hurricane/Technology.h"
 #include  "hurricane/DataBase.h"
 #include  "hurricane/Cell.h"
 #include  "crlcore/Utilities.h"
+#include  "crlcore/RoutingLayerGauge.h"
 #include  "crlcore/AllianceFramework.h"
 #include  "katabatic/Configuration.h"
 
@@ -44,11 +46,14 @@ namespace Katabatic {
   using  std::endl;
   using  std::setprecision;
   using  std::ostringstream;
+  using  std::vector;
   using  Hurricane::tab;
   using  Hurricane::inltrace;
   using  Hurricane::Technology;
   using  Hurricane::DataBase;
   using  CRL::AllianceFramework;
+  using  CRL::RoutingGauge;
+  using  CRL::RoutingLayerGauge;
 
 
 // -------------------------------------------------------------------
@@ -71,6 +76,8 @@ namespace Katabatic {
     , _saturateRp        (Cfg::getParamInt       ("katabatic.saturateRp"   ,8   )->asInt())
     , _globalThreshold   (DbU::lambda((double)Cfg::getParamInt("katabatic.globalLengthThreshold",29*50)->asInt())) // Ugly: direct uses of SxLib gauge.
     , _allowedDepth      (0)
+    , _hEdgeCapacity     (0)
+    , _vEdgeCapacity     (0)
   {
     if ( rg == NULL ) rg = AllianceFramework::get()->getRoutingGauge();
 
@@ -80,6 +87,18 @@ namespace Katabatic {
     _gmetalh  = DataBase::getDB()->getTechnology()->getLayer("gmetalh");
     _gmetalv  = DataBase::getDB()->getTechnology()->getLayer("gmetalv");
     _gcontact = DataBase::getDB()->getTechnology()->getLayer("gcontact");
+
+    vector<RoutingLayerGauge*>::const_iterator ilayerGauge = rg->getLayerGauges().begin();
+    for ( ; ilayerGauge != rg->getLayerGauges().end() ; ++ilayerGauge ) {
+      RoutingLayerGauge* layerGauge = (*ilayerGauge);
+      if ( layerGauge->getType() != Constant::Default ) continue;
+
+      if ( layerGauge->getDirection() == Constant::Horizontal ) {
+        _hEdgeCapacity += layerGauge->getTrackNumber ( 0, DbU::lambda(50.0) ) - 1;
+      } else if ( layerGauge->getDirection() == Constant::Vertical ) {
+        _vEdgeCapacity += layerGauge->getTrackNumber ( 0, DbU::lambda(50.0) ) - 1;
+      }
+    }
   }
 
 
@@ -163,6 +182,14 @@ namespace Katabatic {
 
   DbU::Unit  ConfigurationConcrete::getGlobalThreshold () const
   { return _globalThreshold; }
+
+
+  size_t  ConfigurationConcrete::getHEdgeCapacity () const
+  { return _hEdgeCapacity; }
+
+
+  size_t  ConfigurationConcrete::getVEdgeCapacity () const
+  { return _vEdgeCapacity; }
 
 
   void  ConfigurationConcrete::setAllowedDepth ( size_t allowedDepth )

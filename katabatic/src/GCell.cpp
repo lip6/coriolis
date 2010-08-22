@@ -912,7 +912,8 @@ namespace Katabatic {
           edgeUpUsage++;
         }
       }
-      edgeUpSaturation = (float)edgeUpUsage/((float)getVCapacity()*2.0);
+    //edgeUpSaturation = (float)edgeUpUsage/((float)getVCapacity()*2.0);
+      edgeUpSaturation = (float)edgeUpUsage/getGCellGrid()->getVEdgeCapacity();
     }
 
     if ( getRight() ) {
@@ -931,7 +932,8 @@ namespace Katabatic {
           edgeRightUsage++;
         }
       }
-      edgeRightSaturation = (float)edgeRightUsage/((float)getHCapacity()*2.0);
+    //edgeRightSaturation = (float)edgeRightUsage/((float)getHCapacity()*2.0);
+      edgeRightSaturation = (float)edgeRightUsage/getGCellGrid()->getHEdgeCapacity();
     }
 
     bool overload = false;
@@ -943,11 +945,11 @@ namespace Katabatic {
       ostringstream message;
       message << setprecision(3);
       if ( edgeUpSaturation > threshold )
-        message << "up edge: " << edgeUpUsage << "/" << (getVCapacity()*2.0)
+        message << "up edge: " << edgeUpUsage << "/" << getGCellGrid()->getVEdgeCapacity()
                 << " " << edgeUpSaturation;
       if ( edgeRightSaturation > threshold ) {
         if ( message.str().size() ) message << " & ";
-        message << "right edge: " << edgeRightUsage << "/" << (getVCapacity()*2.0)
+        message << "right edge: " << edgeRightUsage << "/" << getGCellGrid()->getHEdgeCapacity()
                 << " " << edgeRightSaturation;
       }
 
