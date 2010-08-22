@@ -192,6 +192,7 @@ namespace CRL {
                                                           , DbU::lambda(3) // Via width.
                                                           ) );
 
+#if 0
         routingLayer = technology->getLayer("METAL6");
         if ( routingLayer == NULL ) break;
 
@@ -205,7 +206,6 @@ namespace CRL {
                                                           , DbU::lambda(2) // Wire width.
                                                           , DbU::lambda(3) // Via width.
                                                           ) );
-#if 0
         routingLayer = technology->getLayer("METAL7");
         if ( routingLayer == NULL ) break;
 

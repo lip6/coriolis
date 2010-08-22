@@ -75,8 +75,8 @@ namespace {
 
   void  logModeChanged ( Cfg::Parameter* p )
   {
-    if ( p->asBool() ) tty::enable  ();
-    else               tty::disable ();
+    if ( not p->asBool() ) tty::enable  ();
+    else                   tty::disable ();
   }
 
 

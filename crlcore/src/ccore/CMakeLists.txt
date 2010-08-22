@@ -57,6 +57,7 @@
                                                crlcore/DefImport.h
                                                crlcore/DefExport.h
                                                crlcore/LefExport.h
+                                               crlcore/AcmSigda.h
                                                crlcore/Iccad04Lefdef.h
                                                crlcore/Ispd04Bookshelf.h
                                                crlcore/Ioc.h
@@ -258,6 +259,7 @@
                                ARGS     -d -v -p AcmSigda_ -y ${AcmSigdaParserGrammar} -o ${AcmSigdaParserGrammarCpp}
                                TARGET   AcmSigdaParser
                                DEPENDS  ${AcmSigdaParserScannerCpp}
+                                        crlcore/AcmSigda.h
                                OUTPUTS  ${AcmSigdaParserGrammarCpp}
                              )
          include_directories ( ${AcmSigdaParserBinaryDir} )

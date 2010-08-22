@@ -20,7 +20,7 @@ using namespace Hurricane;
 #include "crlcore/Catalog.h"
 #include "crlcore/AllianceFramework.h"
 #include "crlcore/NetExtension.h"
-#include "AcmSigda.h"
+#include "crlcore/AcmSigda.h"
 using namespace CRL;
 
 
@@ -97,6 +97,23 @@ namespace {
      }
 
      return net;
+  }
+
+
+  void  addGlobalNets ( Cell* cell )
+  {
+    Net* vss = Net::create ( cell, "vss" );
+    vss->setExternal ( true );
+    vss->setGlobal   ( true );
+    vss->setType     ( Net::Type::GROUND );
+
+    Net* vdd = Net::create ( cell, "vdd" );
+    vdd->setExternal ( true );
+    vdd->setGlobal   ( true );
+    vdd->setType     ( Net::Type::POWER );
+
+    Net* ck = getNet ( __state._cell, "ck", Net::Direction::IN, true );
+    ck->setExternal  ( true );
   }
 
 
@@ -303,9 +320,11 @@ namespace {
 namespace CRL {
 
 
-  void  acmSigdaParser ( const string cellPath, Cell *cell )
+  Cell* AcmSigda::load ( string benchmark )
   {
-    cmess2 << "     " << tab << "+ " << cellPath << endl; tab++;
+    UpdateSession::open ();
+
+    cmess2 << "     " << tab << "+ " << benchmark << endl; tab++;
 
     static bool firstCall = true;
     if ( firstCall ) {
@@ -313,10 +332,10 @@ namespace CRL {
       __framework = AllianceFramework::get ();
 
       // Preload SxLib using <vst> format.
-      __framework->getEnvironment()->setIN_LO ( "vst" );
       __framework->loadLibraryCells ( "sxlib" );
-      __framework->getEnvironment()->setIN_LO ( "bench" );
     }
+
+    Cell* cell = __framework->createCell ( benchmark );
 
     CatalogProperty *sprop =
       (CatalogProperty*)cell->getProperty ( CatalogProperty::getPropertyName() );
@@ -328,30 +347,21 @@ namespace CRL {
     __state._state = sprop->getState();
     __state._state->setLogical ( true );
 
-    Net* net = getNet ( __state._cell, "vdd", Net::Direction::IN, true );
-    net->setExternal  ( true );
-    net->setGlobal    ( true );
-    net->setType      ( Net::Type::POWER );
+    addGlobalNets ( cell );
 
-    net = getNet ( __state._cell, "vss", Net::Direction::IN, true );
-    net->setExternal  ( true );
-    net->setGlobal    ( true );
-    net->setType      ( Net::Type::GROUND );
-
-    net = getNet ( __state._cell, "ck", Net::Direction::IN, true );
-    net->setExternal  ( true );
-
-    IoFile ccell ( cellPath );
+    IoFile ccell ( benchmark+".bench" );
     ccell.open ( "r" );
     yyin = ccell.getFile ();
     if ( not firstCall ) yyrestart ( yyin );
 
-    UpdateSession::open ();
     yyparse ();
-    UpdateSession::close ();
 
     ccell.close ();
     __state.reset ();
+
+    UpdateSession::close ();
+
+    return cell;
   }
 
 

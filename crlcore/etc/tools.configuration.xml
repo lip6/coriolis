@@ -75,7 +75,13 @@
   <!-- Kite -->
   <parameter id="kite.edgeCapacity"               type="percentage" value="65"      min="0" max="100"/>
   <parameter id="kite.expandStep"                 type="percentage" value="100"     min="0" max="100"/>
-  <parameter id="kite.globalMinBreak"             type="int"        value="1450"/>
+  <parameter id="kite.metal1MinBreak"             type="int"        value="100"/>
+  <parameter id="kite.metal2MinBreak"             type="int"        value="100"/>
+  <parameter id="kite.metal3MinBreak"             type="int"        value="100"/>
+  <parameter id="kite.metal4MinBreak"             type="int"        value="1450"/>
+  <parameter id="kite.metal5MinBreak"             type="int"        value="1450"/>
+  <parameter id="kite.metal6MinBreak"             type="int"        value="1450"/>
+  <parameter id="kite.metal7MinBreak"             type="int"        value="1450"/>
   <parameter id="kite.ripupCost"                  type="int"        value="3"       min="0"/>
   <parameter id="kite.borderRipupLimit"           type="int"        value="26"      min="1"/>
   <parameter id="kite.strapRipupLimit"            type="int"        value="16"      min="1"/>
@@ -135,9 +141,15 @@
       <widget type="title"                   label="Kite - Detailed Router"/>
       <widget id="kite.edgeCapacity"         label="Edge Capacity (%)"       column="0"/>
       <widget id="kite.expandStep"           label="Expand Step (%)"         column="0"/>
-      <widget id="kite.globalMinBreak"       label="Global Length Min Break" column="0"/>
       <widget id="kite.eventsLimit"          label="Events Limit"            column="0"/>
       <widget id="kite.ripupCost"            label="Ripup Cost"              column="1" spinbox="true"/>
+      <widget id="kite.metal1MinBreak"       label="METAL1 Length Min Break" column="0"/>
+      <widget id="kite.metal2MinBreak"       label="METAL2 Length Min Break" column="0"/>
+      <widget id="kite.metal3MinBreak"       label="METAL3 Length Min Break" column="0"/>
+      <widget id="kite.metal4MinBreak"       label="METAL4 Length Min Break" column="0"/>
+      <widget id="kite.metal5MinBreak"       label="METAL5 Length Min Break" column="0"/>
+      <widget id="kite.metal6MinBreak"       label="METAL6 Length Min Break" column="0"/>
+      <widget id="kite.metal7MinBreak"       label="METAL7 Length Min Break" column="0"/>
       <widget type="section" label="Ripup Limits" column="1"/>
       <widget id="kite.borderRipupLimit"     label="Borders"                 column="1" spinbox="true"/>
       <widget id="kite.strapRipupLimit"      label="Straps"                  column="1" spinbox="true"/>

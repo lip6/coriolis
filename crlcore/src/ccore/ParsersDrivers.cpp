@@ -60,8 +60,6 @@
 #include  "Ap.h"
 #include  "Vst.h"
 #include  "Spice.h"
-#include  "Bookshelf.h"
-#include  "AcmSigda.h"
 #include  "openaccess/OpenAccess.h"
 
 
@@ -219,8 +217,6 @@ namespace CRL {
     registerSlot ( "spi"  , (CellParser_t*)spiceParser    , "spi" );
     registerSlot ( "oa"   , (CellParser_t*)OpenAccess::oaCellParser  , "oa" );
   //registerSlot ( "oa"   , (LibraryParser_t*)OpenAccess::oaLibParser, "oa" );
-    registerSlot ( "aux"  , (CellParser_t*)bookshelfParser, "aux" );
-    registerSlot ( "bench", (CellParser_t*)acmSigdaParser , "bench" );
   }
 
 
@@ -331,7 +327,6 @@ namespace CRL {
     registerSlot ( "ap" , (CellDriver_t*)apDriver       , "ap"       );
     registerSlot ( "vst", (CellDriver_t*)vstDriver      , "vst"      );
   //registerSlot ( "def", (CellDriver_t*)defDriver      , "def"      );
-    registerSlot ( "aux", (CellDriver_t*)bookshelfDriver, "test.aux" );
     registerSlot ( "spi", (CellDriver_t*)spiceDriver    , "spi"      );
   //registerSlot ( "oa" , (CellDriver_t*)OpenAccess::oaDriver, "oa");
   }
