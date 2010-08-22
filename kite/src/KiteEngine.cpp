@@ -474,8 +474,9 @@ namespace Kite {
          << "% [" << totalWireLength << "] "
          << (totalWireLength - routedWireLength) << " remains." << endl;
 
+    float expandRatio = 1.0;
     if ( _minimumWL != 0.0 ) {
-      float expandRatio = totalWireLength / _minimumWL;
+      expandRatio = totalWireLength / _minimumWL;
       cout << "     - Wire Length Expand Ratio       := "
            << setprecision(4) << expandRatio
            << "% [min:" << setprecision(9) << _minimumWL << "] "
@@ -484,7 +485,10 @@ namespace Kite {
 
     _toolSuccess = (unrouteds == 0);
 
-    addMeasure<size_t> ( getCell(), "Segs", routeds+unrouteds );
+    addMeasure<size_t>             ( getCell(), "Segs"   , routeds+unrouteds );
+    addMeasure<unsigned long long> ( getCell(), "DWL(l)" , totalWireLength                  , 12 );
+    addMeasure<unsigned long long> ( getCell(), "fWL(l)" , totalWireLength-routedWireLength , 12);
+    addMeasure<double>             ( getCell(), "WLER(%)", (expandRatio-1.0)*100.0 );
   }
 
 
@@ -507,6 +511,11 @@ namespace Kite {
     measuresLabels.push_back ( "algoS"   );
     measuresLabels.push_back ( "finT"    );
     measuresLabels.push_back ( "Segs"    );
+    measuresLabels.push_back ( "DWL(l)"  );
+    measuresLabels.push_back ( "fWL(l)"  );
+    measuresLabels.push_back ( "WLER(%)" );
+    measuresLabels.push_back ( "Events"  );
+    measuresLabels.push_back ( "UEvents" );
 
     const MeasuresSet* measures = Measures::get(getCell());
 

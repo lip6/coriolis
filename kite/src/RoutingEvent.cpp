@@ -1161,8 +1161,11 @@ namespace {
       for ( ; (begin < end) ; begin++ ) {
         other = track->getSegment(begin);
 
-        if (  other->getNet() == segment->getNet() ) continue;
-        if ( !other->getCanonicalInterval().intersect(overlap) ) continue;
+        if (     other->getNet() == segment->getNet() ) continue;
+        if ( not other->getCanonicalInterval().intersect(overlap) ) {
+          if ( otherNet == NULL ) candidates.back().setBegin ( begin );
+          continue;
+        }
         ltrace(200) << "  | Conflict: " << begin << " " << other << endl;
         
         if ( otherNet != other->getNet() ) {
@@ -1244,12 +1247,15 @@ namespace {
   //if ( track && (track->getAxis() < constraints.getVMin()) ) track = track->getNext();
   //for ( ; !success && track && (track->getAxis() <= constraints.getVMax()) ; track = track->getNext() ) 
 
-    if ( not success and (segment->getLength() >= Session::getConfiguration()->getGlobalMinBreak()) ) {
-      ltrace(200) << "Long global wire, break in the middle." << endl;
-      Interval span;
-      segment->getCanonical ( span );
+    unsigned int depth = Session::getConfiguration()->getRoutingGauge()->getLayerDepth(segment->getLayer());
+    if ( not success ) {
+      if ( (segment->getLength() >= Session::getConfiguration()->getGlobalMinBreak(depth)) ) {
+        ltrace(200) << "Long global wire, break in the middle." << endl;
+        Interval span;
+        segment->getCanonical ( span );
       
-      success = Manipulator(segment,*this).makeDogLeg ( span.getCenter() );
+        success = Manipulator(segment,*this).makeDogLeg ( span.getCenter() );
+      }
     }
 
     if ( not success and segment->isGlobal() and (_costs.size() <= 1) ) {

@@ -59,6 +59,7 @@ namespace Kite {
                        , LongGlobalRipupLimit=4
                        , RipupLimitsTableSize=5
                        };
+      enum Constants   { MaxMetalDepth=20 };
     public:
     // Constructor & Destructor.
       virtual Configuration*             clone                  () const;
@@ -78,6 +79,8 @@ namespace Kite {
       virtual float                      getSaturateRatio       () const;
       virtual size_t                     getSaturateRp          () const;
       virtual DbU::Unit                  getGlobalThreshold     () const;
+      virtual size_t                     getHEdgeCapacity       () const;
+      virtual size_t                     getVEdgeCapacity       () const;
       virtual void                       setAllowedDepth        ( size_t );
       virtual void                       setSaturateRatio       ( float );
       virtual void                       setSaturateRp          ( size_t );
@@ -88,13 +91,13 @@ namespace Kite {
       inline  PostEventCb_t&             getPostEventCb         ();
       inline  unsigned long              getEventsLimit         () const;
       inline  float                      getExpandStep          () const;
-      inline  DbU::Unit                  getGlobalMinBreak      () const;
+      inline  DbU::Unit                  getGlobalMinBreak      ( unsigned int depth ) const;
       inline  unsigned int               getRipupCost           () const;
               unsigned int               getRipupLimit          ( unsigned int type ) const;
       inline  float                      getEdgeCapacityPercent () const;
       inline  void                       setEventsLimit         ( unsigned long );
       inline  void                       setExpandStep          ( float );
-      inline  void                       setGlobalMinBreak      ( DbU::Unit );
+      inline  void                       setGlobalMinBreak      ( unsigned int depth, DbU::Unit );
       inline  void                       setRipupCost           ( unsigned int );
               void                       setRipupLimit          ( unsigned int limit, unsigned int type );
       inline  void                       setPostEventCb         ( PostEventCb_t );
@@ -108,8 +111,8 @@ namespace Kite {
              PostEventCb_t               _postEventCb;
              float                       _edgeCapacityPercent;
              float                       _expandStep;
-             DbU::Unit                   _globalMinBreak;
-             unsigned int                _ripupLimits[RipupLimitsTableSize];
+             DbU::Unit                   _globalMinBreaks[MaxMetalDepth];
+             unsigned int                _ripupLimits    [RipupLimitsTableSize];
              unsigned int                _ripupCost;
              unsigned long               _eventsLimit;
     private:
@@ -125,12 +128,12 @@ namespace Kite {
   inline unsigned int                  Configuration::getRipupCost           () const { return _ripupCost; }
   inline float                         Configuration::getExpandStep          () const { return _expandStep; }
   inline float                         Configuration::getEdgeCapacityPercent () const { return _edgeCapacityPercent; }
-  inline DbU::Unit                     Configuration::getGlobalMinBreak      () const { return _globalMinBreak; }
+  inline DbU::Unit                     Configuration::getGlobalMinBreak      ( unsigned int depth ) const { return  _globalMinBreaks[ (depth>=MaxMetalDepth) ? MaxMetalDepth-1 : depth ]; }
   inline void                          Configuration::setRipupCost           ( unsigned int cost ) { _ripupCost = cost; }
   inline void                          Configuration::setExpandStep          ( float step ) { _expandStep = step; }
   inline void                          Configuration::setPostEventCb         ( PostEventCb_t cb ) { _postEventCb = cb; }
   inline void                          Configuration::setEventsLimit         ( unsigned long limit ) { _eventsLimit = limit; }
-  inline void                          Configuration::setGlobalMinBreak      ( DbU::Unit threshold ) { _globalMinBreak = threshold; }
+  inline void                          Configuration::setGlobalMinBreak      ( unsigned int depth, DbU::Unit threshold ) { _globalMinBreaks[ (depth>=MaxMetalDepth) ? MaxMetalDepth-1 : depth ] = threshold; }
 
 
 

@@ -92,7 +92,7 @@ namespace Kite {
       inline  unsigned int     getRipupCost               () const;
       inline  float            getExpandStep              () const;
       inline  float            getEdgeCapacityPercent     () const;
-      inline  DbU::Unit        getGlobalMinBreak          () const;
+      inline  DbU::Unit        getGlobalMinBreak          ( unsigned int depth ) const;
       inline  GCellGrid*       getGCellGrid               () const;
       virtual const Name&      getName                    () const;
       inline  Configuration::PostEventCb_t&
@@ -113,7 +113,7 @@ namespace Kite {
       inline  void             setRipupCost               ( unsigned int );
       inline  void             setExpandStep              ( float );
       inline  void             setEdgeCapacityPercent     ( float );
-      inline  void             setGlobalMinBreak          ( DbU::Unit );
+      inline  void             setGlobalMinBreak          ( unsigned int depth, DbU::Unit );
               void             preProcess                 ();
               void             buildBlockages             ();
               void             buildPowerRails            ();
@@ -176,7 +176,7 @@ namespace Kite {
   inline  unsigned int                  KiteEngine::getRipupCost           () const { return _configuration->getRipupCost(); }
   inline  float                         KiteEngine::getExpandStep          () const { return _configuration->getExpandStep(); }
   inline  float                         KiteEngine::getEdgeCapacityPercent () const { return _configuration->getEdgeCapacityPercent(); }
-  inline  DbU::Unit                     KiteEngine::getGlobalMinBreak      () const { return _configuration->getGlobalMinBreak(); }
+  inline  DbU::Unit                     KiteEngine::getGlobalMinBreak      ( unsigned int depth ) const { return _configuration->getGlobalMinBreak(depth); }
   inline  unsigned int                  KiteEngine::getRipupLimit          ( unsigned int type ) const { return _configuration->getRipupLimit(type); }
   inline  GCellGrid*                    KiteEngine::getGCellGrid           () const { return _kiteGrid; }
   inline  NegociateWindow*              KiteEngine::getNegociateWindow     () { return _negociateWindow; }
@@ -186,7 +186,7 @@ namespace Kite {
   inline  void                          KiteEngine::setRipupCost           ( unsigned int cost ) { _configuration->setRipupCost(cost); }
   inline  void                          KiteEngine::setExpandStep          ( float step ) { _configuration->setExpandStep(step); }
   inline  void                          KiteEngine::setEdgeCapacityPercent ( float percent ) { _configuration->setEdgeCapacityPercent(percent); }
-  inline  void                          KiteEngine::setGlobalMinBreak      ( DbU::Unit threshold ) { _configuration->setGlobalMinBreak(threshold); }
+  inline  void                          KiteEngine::setGlobalMinBreak      ( unsigned int depth, DbU::Unit threshold ) { _configuration->setGlobalMinBreak(depth,threshold); }
   inline  void                          KiteEngine::setMinimumWL           ( double minimum ) { _minimumWL = minimum; }
   inline  void                          KiteEngine::setPostEventCb         ( Configuration::PostEventCb_t cb ) { _configuration->setPostEventCb(cb); }
   inline  void                          KiteEngine::printConfiguration     () const { _configuration->print(getCell()); }

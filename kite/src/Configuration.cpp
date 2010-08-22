@@ -56,7 +56,6 @@ namespace Kite {
     , _postEventCb        ()
     , _edgeCapacityPercent(Cfg::getParamPercentage("kite.edgeCapacity", 80.0)->asDouble())
     , _expandStep         (Cfg::getParamPercentage("kite.expandStep"  ,100.0)->asDouble())
-    , _globalMinBreak     (DbU::lambda((double)Cfg::getParamInt("kite.globalMinBreak",29*50)->asInt())) // Ugly: direct uses of SxLib gauge.
     , _ripupLimits        ()
     , _ripupCost          (Cfg::getParamInt("kite.ripupCost"   ,      3)->asInt())
     , _eventsLimit        (Cfg::getParamInt("kite.eventsLimit" ,4000000)->asInt())
@@ -66,6 +65,24 @@ namespace Kite {
     _ripupLimits[LocalRipupLimit]      = Cfg::getParamInt("kite.localRipupLimit"      , 7)->asInt();
     _ripupLimits[GlobalRipupLimit]     = Cfg::getParamInt("kite.globalRipupLimit"     , 5)->asInt();
     _ripupLimits[LongGlobalRipupLimit] = Cfg::getParamInt("kite.longGlobalRipupLimit" , 5)->asInt();
+
+    for ( size_t i=0 ; i<MaxMetalDepth ; ++i ) {
+      ostringstream paramName;
+      paramName << "kite.metal" << (i+1) << "MinBreak";
+
+      int threshold = 29*50;
+      switch ( i ) {
+        case 0:
+        case 1:
+          threshold = 2*50;
+          break;
+        default:
+          threshold = 29*50;
+          break;
+      }
+
+      _globalMinBreaks[i] = DbU::lambda(Cfg::getParamInt(paramName.str(),threshold)->asInt());
+    }
   }
 
 
@@ -147,6 +164,13 @@ namespace Kite {
 
   DbU::Unit  Configuration::getGlobalThreshold () const
   { return _base->getGlobalThreshold(); }
+
+  size_t  Configuration::getHEdgeCapacity () const
+  { return _base->getHEdgeCapacity(); }
+
+
+  size_t  Configuration::getVEdgeCapacity () const
+  { return _base->getVEdgeCapacity(); }
 
 
   void  Configuration::setAllowedDepth ( size_t allowedDepth )

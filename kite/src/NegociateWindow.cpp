@@ -32,6 +32,7 @@
 #include  "hurricane/Cell.h"
 #include  "crlcore/Utilities.h"
 #include  "crlcore/AllianceFramework.h"
+#include  "crlcore/Measures.h"
 
 #include  "kite/DataNegociate.h"
 #include  "kite/TrackElement.h"
@@ -151,6 +152,7 @@ namespace Kite {
   using Hurricane::ltracein;
   using Hurricane::ltraceout;
   using Hurricane::ForEachIterator;
+  using CRL::addMeasure;
 
 
 // -------------------------------------------------------------------
@@ -544,6 +546,9 @@ namespace Kite {
                            ,(RoutingEvent::getProcesseds() - RoutingEvent::getCloneds())) << endl;
     cmess1 << Dots::asSizet("     - Biggest Events Chunk"   ,biggestEventsCount) << endl;
     cmess1 << Dots::asSizet("     - Biggest Routing Set"    ,biggestRSsize) << endl;
+
+    addMeasure<size_t>( getCell(), "Events" , RoutingEvent::getProcesseds(), 12 );
+    addMeasure<size_t>( getCell(), "UEvents", RoutingEvent::getProcesseds()-RoutingEvent::getCloneds(), 12 );
   }
 
 
