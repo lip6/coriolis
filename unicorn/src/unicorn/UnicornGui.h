@@ -49,6 +49,9 @@ namespace Unicorn {
   using CRL::Banner;
   using CRL::GraphicTool;
 
+  class ImportCellDialog;
+  class ExportCellDialog;
+
 
   class UnicornGui : public CellViewer {
       Q_OBJECT;
@@ -61,6 +64,8 @@ namespace Unicorn {
     public slots:
                     void        openCell      ();
                     void        saveCell      ();
+                    void        importCell    ();
+                    void        exportCell    ();
     protected:
                                 UnicornGui    ( QWidget* parent );
       virtual                  ~UnicornGui    ();
@@ -69,6 +74,8 @@ namespace Unicorn {
     protected:
       static  Banner             _banner;
               set<GraphicTool*>  _tools;
+              ImportCellDialog*  _importDialog;
+              ExportCellDialog*  _exportDialog;
   };
 
 

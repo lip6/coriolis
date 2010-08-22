@@ -2,7 +2,8 @@
 
 
                include ( ${QT_USE_FILE} )
-   include_directories ( ${HURRICANE_INCLUDE_DIR}
+   include_directories ( ${UNICORN_SOURCE_DIR}/src
+                         ${HURRICANE_INCLUDE_DIR}
                          ${CORIOLIS_INCLUDE_DIR}
                          ${BOOKSHELF_INCLUDE_DIR}
                          ${CONFIGURATION_INCLUDE_DIR}
@@ -15,9 +16,13 @@
                    set ( mocincludes   unicorn/UnicornGui.h
                                        unicorn/OpenCellDialog.h
                                        unicorn/SaveCellDialog.h
+                                       unicorn/ImportCellDialog.h
+                                       unicorn/ExportCellDialog.h
                        )
 		   set ( cpps          OpenCellDialog.cpp
                                        SaveCellDialog.cpp
+                                       ImportCellDialog.cpp
+                                       ExportCellDialog.cpp
                                        UnicornGui.cpp
                        )
                    set ( cgtcpp        CgtMain.cpp )

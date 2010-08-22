@@ -102,6 +102,7 @@ int main ( int argc, char *argv[] )
   try {
     bfs::path::default_name_check ( bfs::portable_posix_name );
 
+    bool          destroyDatabase;
     float         edgeCapacity;
     float         expandStep;
     unsigned long eventsLimit;
@@ -121,6 +122,8 @@ int main ( int argc, char *argv[] )
     boptions::options_description options ("Command line arguments & options");
     options.add_options()
       ( "help,h"             , "Print this help." )
+      ( "destroy-db"         , boptions::bool_switch(&destroyDatabase)->default_value(false)
+                             , "Perform a complete deletion of the database (may be buggy).")
       ( "trace-level,l"      , boptions::value<unsigned int>(&traceLevel)
                              , "Set the level of trace, trace messages with a level superior to "
                                "<arg> will be printed on <stderr>." )
@@ -385,6 +388,8 @@ int main ( int argc, char *argv[] )
     //DebugSession::addToTrace ( cell, "NET2530" );
     //DebugSession::addToTrace ( cell, "NET8464" );
     //DebugSession::addToTrace ( cell, "NET8242" );
+    // ibm02.
+    //DebugSession::addToTrace ( cell, "net18015" );
 
     // Python Script test.
 
@@ -506,6 +511,9 @@ int main ( int argc, char *argv[] )
         returnCode = (kiteSuccess) ? 0 : 1;
       }
     }
+
+    if ( not destroyDatabase ) exit ( 0 );
+    cmess1 << "  o  Full database deletion (may be buggy)." << endl;
   }
   catch ( Error& e ) {
     cerr << e.what() << endl;

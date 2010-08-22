@@ -32,9 +32,16 @@
 #include  "crlcore/Catalog.h"
 #include  "crlcore/AllianceFramework.h"
 #include  "crlcore/GraphicToolEngine.h"
+#include  "crlcore/AcmSigda.h"
+#include  "crlcore/Ispd04Bookshelf.h"
+#include  "crlcore/Iccad04Lefdef.h"
+#include  "crlcore/DefImport.h"
+#include  "crlcore/DefExport.h"
 
 #include  "unicorn/OpenCellDialog.h"
 #include  "unicorn/SaveCellDialog.h"
+#include  "unicorn/ImportCellDialog.h"
+#include  "unicorn/ExportCellDialog.h"
 #include  "unicorn/UnicornGui.h"
 
 
@@ -44,6 +51,11 @@ namespace Unicorn {
   using Hurricane::Warning;
   using CRL::Catalog;
   using CRL::AllianceFramework;
+  using CRL::AcmSigda;
+  using CRL::Ispd04;
+  using CRL::Iccad04Lefdef;
+  using CRL::DefImport;
+  using CRL::DefExport;
 
 
 // -------------------------------------------------------------------
@@ -60,8 +72,10 @@ namespace Unicorn {
 
 
   UnicornGui::UnicornGui ( QWidget* parent )
-    : CellViewer(parent)
-    , _tools    ()
+    : CellViewer   (parent)
+    , _tools       ()
+    , _importDialog(new ImportCellDialog(this))
+    , _exportDialog(new ExportCellDialog(this))
   { }
 
 
@@ -100,6 +114,16 @@ namespace Unicorn {
     if ( saveAction ) {
       saveAction->setVisible ( true );
       connect ( saveAction, SIGNAL(triggered()), this, SLOT(saveCell()) );
+    }
+
+    QAction* importAction = findChild<QAction*>("viewer.menuBar.file.importCell");
+    if ( importAction ) {
+      connect ( importAction, SIGNAL(triggered()), this, SLOT(importCell()) );
+    }
+
+    QAction* exportAction = findChild<QAction*>("viewer.menuBar.file.exportCell");
+    if ( exportAction ) {
+      connect ( exportAction, SIGNAL(triggered()), this, SLOT(exportCell()) );
     }
   }
 
@@ -159,6 +183,68 @@ namespace Unicorn {
         viewer->setCell ( cell );
       } else
         cerr << "[ERROR] Cell not found: " << cellName.toStdString() << endl;
+    }
+  }
+
+
+  void  UnicornGui::importCell ()
+  {
+    QString cellName;
+    bool    newViewer;
+    int     format;
+
+    if ( _importDialog->runDialog ( cellName, format, newViewer ) ) {
+      Cell* cell = NULL; 
+
+      switch ( format ) {
+        case ImportCellDialog::AcmSigda:
+          cell = AcmSigda::load ( cellName.toStdString() );
+          break;
+        case ImportCellDialog::Ispd04:
+          cell = Ispd04::load ( cellName.toStdString() );
+          break;
+        case ImportCellDialog::Iccad04:
+          cell = Iccad04Lefdef::load ( cellName.toStdString() , 0 );
+          break;
+        case ImportCellDialog::AllianceDef:
+          cell = DefImport::load ( cellName.toStdString().c_str() , DefImport::FitAbOnCells );
+          break;
+      }
+
+      if ( cell ) {
+        UnicornGui* viewer = this;
+        if ( newViewer ) {
+          viewer = UnicornGui::create ();
+          viewer->show ();
+        }
+        viewer->setCell ( cell );
+      } else
+        cerr << "[ERROR] Cell not found: " << cellName.toStdString() << endl;
+    }
+  }
+
+
+  void  UnicornGui::exportCell ()
+  {
+    Cell* cell = getCell();
+    if ( cell == NULL ) return;
+
+    QString cellName= getString(cell->getName()).c_str();
+    int     format;
+
+    if ( _exportDialog->runDialog ( cellName, format ) ) {
+      renameCell ( cellName.toStdString().c_str() );
+      switch ( format ) {
+        // case ImportCellDialog::AcmSigda:
+        //   break;
+        // case ImportCellDialog::Ispd04:
+        //   break;
+        // case ImportCellDialog::Iccad04:
+        //   break;
+        case ExportCellDialog::AllianceDef:
+          DefExport::drive ( cell, DefExport::WithLEF );
+          break;
+      }
     }
   }
 
