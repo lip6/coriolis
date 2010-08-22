@@ -55,10 +55,12 @@ namespace Hurricane {
                                              , _applicationName        (tr("Viewer"))
                                              , _toolInterruptAction    (NULL)
                                              , _openAction             (NULL)
+                                             , _importAction           (NULL)
                                              , _nextAction             (NULL)
                                              , _printAction            (NULL)
                                              , _imageAction            (NULL)
                                              , _saveAction             (NULL)
+                                             , _exportAction           (NULL)
                                              , _closeAction            (NULL)
                                              , _exitAction             (NULL)
                                              , _refreshAction          (NULL)
@@ -122,6 +124,10 @@ namespace Hurricane {
     _openAction->setIcon       ( QIcon(":/images/stock_open.png") );
     _openAction->setStatusTip  ( tr("Open (load) a new Cell") );
 
+    _importAction = new QAction  ( tr("&Import Cell"), this );
+    _importAction->setObjectName ( "viewer.menuBar.file.importCell" );
+    _importAction->setStatusTip  ( tr("Import (convert) a new Cell") );
+
     _nextAction = new QAction  ( tr("&Next Breakpoint"), this );
     _nextAction->setObjectName ( "viewer.menuBar.file.nextBreakpoint" );
     _nextAction->setStatusTip  ( tr("Proceed to the next breakpoint") );
@@ -153,6 +159,10 @@ namespace Hurricane {
     _saveAction->setIcon       ( QIcon(":/images/stock_save.png") );
     _saveAction->setStatusTip  ( tr("Save (write) the current Cell") );
     _saveAction->setVisible    ( false );
+
+    _exportAction = new QAction  ( tr("&Export Cell"), this );
+    _exportAction->setObjectName ( "viewer.menuBar.file.exportCell" );
+    _exportAction->setStatusTip  ( tr("Export (convert) Cell") );
 
     _closeAction = new QAction  ( tr("&Close"), this );
     _closeAction->setObjectName ( "viewer.menuBar.file.close" );
@@ -220,8 +230,9 @@ namespace Hurricane {
 
     _fileMenu = menuBar()->addMenu ( tr("File") );
     _fileMenu->setObjectName ( "viewer.menuBar.file" );
-    _fileMenu->addAction ( _openAction );
-    _fileMenu->addAction ( _nextAction );
+    _fileMenu->addAction ( _openAction   );
+    _fileMenu->addAction ( _importAction );
+    _fileMenu->addAction ( _nextAction   );
     _fileMenu->addSeparator ();
     for ( size_t i=0 ; i<CellHistorySize ; i++ ) {
       _fileMenu->addAction ( _cellHistoryAction[i] );
@@ -230,6 +241,7 @@ namespace Hurricane {
     _fileMenu->addAction ( _printAction );
     _fileMenu->addAction ( _imageAction );
     _fileMenu->addAction ( _saveAction );
+    _fileMenu->addAction ( _exportAction );
     _fileMenu->addSeparator ();
     _fileMenu->addAction ( _closeAction );
     _fileMenu->addAction ( _exitAction );

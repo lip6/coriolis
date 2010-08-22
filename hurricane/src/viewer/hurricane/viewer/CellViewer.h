@@ -107,11 +107,13 @@ namespace Hurricane {
       QString                  _applicationName;
       QAction*                 _toolInterruptAction;
       QAction*                 _openAction;
+      QAction*                 _importAction;
       QAction*                 _nextAction;
       QAction*                 _cellHistoryAction[CellHistorySize];
       QAction*                 _printAction;
       QAction*                 _imageAction;
       QAction*                 _saveAction;
+      QAction*                 _exportAction;
       QAction*                 _closeAction;
       QAction*                 _exitAction;
       QAction*                 _refreshAction;
