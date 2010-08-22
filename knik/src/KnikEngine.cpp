@@ -63,6 +63,9 @@
 #include "crlcore/Utilities.h"
 #include "crlcore/ToolBox.h"
 #include "crlcore/Measures.h"
+#include "crlcore/RoutingGauge.h"
+#include "crlcore/RoutingLayerGauge.h"
+#include "crlcore/AllianceFramework.h"
 
 #include "knik/Configuration.h"
 #include "knik/Edge.h"
@@ -79,6 +82,10 @@ namespace Knik {
 
   using Hurricane::Warning;
   using CRL::addMeasure;
+  using CRL::RoutingGauge;
+  using CRL::RoutingLayerGauge;
+  using CRL::AllianceFramework;
+
 
 //globale variables
 unsigned __congestion__;
@@ -1228,15 +1235,33 @@ void KnikEngine::reroute()
 void  KnikEngine::computeSymbolicWireLength ()
 {
 // Ugly: hardcoded SxLib gauge characteristics.
-  const double       normalize          = (50.0 * 10 * 4) / (50 * 50) ;
-  Name               obstacleNetName    ("obstaclenet");
+
+  size_t hEdgeCapacity = 0;
+  size_t vEdgeCapacity = 0;
+  double gcellSide     = 50.0;
+
+  RoutingGauge* rg = AllianceFramework::get()->getRoutingGauge();
+  vector<RoutingLayerGauge*>::const_iterator ilayerGauge = rg->getLayerGauges().begin();
+  for ( ; ilayerGauge != rg->getLayerGauges().end() ; ++ilayerGauge ) {
+    RoutingLayerGauge* layerGauge = (*ilayerGauge);
+    if ( layerGauge->getType() != Constant::Default ) continue;
+
+    if ( layerGauge->getDirection() == Constant::Horizontal ) {
+      hEdgeCapacity += layerGauge->getTrackNumber ( 0, DbU::lambda(50.0) ) - 1;
+    } else if ( layerGauge->getDirection() == Constant::Vertical ) {
+      vEdgeCapacity += layerGauge->getTrackNumber ( 0, DbU::lambda(50.0) ) - 1;
+    }
+  }
+
+// Complete formula: unitarian Wirelength/Area for one GCell.
+//   (side*(hEdgeCapacity+vEdgeCapacity)) / (side * side).
+  const double       normalize          = ((double)(hEdgeCapacity+vEdgeCapacity)) / gcellSide;
   unsigned long long symbolicWireLength = 0;
 
   forEach ( Net*, net, getCell()->getNets() ) {
     if (   net->isGlobal()
        or  net->isSupply()
-       or  net->isClock()
-       or (net->getName() == obstacleNetName) ) {
+       or  net->isClock() ) {
       continue;
     }
 
