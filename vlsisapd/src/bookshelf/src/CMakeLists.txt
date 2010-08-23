@@ -22,7 +22,7 @@
                        )	        
                    set ( testcpps       BookshelfTkMain.cpp )
            add_library ( bookshelf      ${cpps} )
-#target_link_libraries ( bookshelf      )
+ target_link_libraries ( bookshelf      ${Boost_LIBRARIES} )
         add_executable ( bookshelf-tk   ${testcpps} )
  target_link_libraries ( bookshelf-tk   bookshelf ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} )
 
