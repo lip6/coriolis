@@ -7,7 +7,7 @@
 #include  "AcmSigdaParserGrammar.hpp"
 
 static std::string  nameToken;
-       int          yylineno = 0;
+extern int yylineno;
 
 %}
 

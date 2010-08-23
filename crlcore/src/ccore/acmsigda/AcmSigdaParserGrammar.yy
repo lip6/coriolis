@@ -33,11 +33,11 @@ using namespace CRL;
 
 extern char*  yytext;
 extern FILE*  yyin;
-extern int    yylineno;
 extern int    yylex     ();
 extern int    yywrap    ();
 extern void   yyrestart ( FILE* );
 
+int yylineno = 0;
 
 namespace {
 
