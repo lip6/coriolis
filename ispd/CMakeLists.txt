@@ -10,7 +10,7 @@
  
  set_cmake_policies()
  set_lib_link_mode()
- setup_apple()
+#setup_apple()
  setup_boost(program_options filesystem python regex)
  
  find_package(LibXml2 REQUIRED)
@@ -23,9 +23,9 @@
  find_package(CORIOLIS REQUIRED)
  find_package(KNIK REQUIRED)
  find_package(LEFDEF REQUIRED)
- #find_package(KATABATIC REQUIRED)
- #find_package(KITE REQUIRED)
- #find_package(EQUINOX REQUIRED)
- #find_package(SOLSTICE REQUIRED)
+#find_package(KATABATIC REQUIRED)
+#find_package(KITE REQUIRED)
+#find_package(EQUINOX REQUIRED)
+#find_package(SOLSTICE REQUIRED)
  
  add_subdirectory(src)
