@@ -45,6 +45,7 @@
 #include  "crlcore/RoutingLayerGauge.h"
 #include  "crlcore/RoutingGauge.h"
 #include  "crlcore/CellGauge.h"
+#include  "crlcore/Catalog.h"
 #include  "crlcore/AllianceFramework.h"
 #include  "crlcore/LefExport.h"
 
@@ -237,14 +238,23 @@ namespace {
     _status = lefwStartMacro ( getString(cell->getName()).c_str() );
     CHECK_STATUS(_status);
 
-    Box    abutmentBox ( cell->getAbutmentBox() );
-    double pitchWidth  = toLefUnits ( LefDriver::getPitchWidth () );
-    double sliceHeight = toLefUnits ( LefDriver::getSliceHeight() );
-    int    slices      = (int)floor( abutmentBox.getHeight() / LefDriver::getSliceHeight() );
-    int    pitchs      = (int)floor( abutmentBox.getWidth () / LefDriver::getPitchWidth () );
-    _status = lefwMacroClass ( (slices > 1) ? "BLOCK"    : "CORE"
-                             , (slices > 1) ? "BLACKBOX" : NULL
-                             );
+    Box         abutmentBox   ( cell->getAbutmentBox() );
+    double      pitchWidth    = toLefUnits ( LefDriver::getPitchWidth () );
+    double      sliceHeight   = toLefUnits ( LefDriver::getSliceHeight() );
+    int         slices        = (int)floor( abutmentBox.getHeight() / LefDriver::getSliceHeight() );
+    int         pitchs        = (int)floor( abutmentBox.getWidth () / LefDriver::getPitchWidth () );
+    const char* macroClass    = NULL;
+    const char* macroSubClass = NULL;
+   
+    if ( slices > 1 ) {
+      macroClass    = "BLOCK";
+      macroSubClass = "BLACKBOX";
+    } else {
+      macroClass = "CORE";
+      if ( CatalogExtension::isFeed(cell) ) macroSubClass = "SPACER";
+    }
+
+    _status = lefwMacroClass ( macroClass, macroSubClass );
     CHECK_STATUS(_status);
 
     double originX = toLefUnits ( abutmentBox.getXMin() );
@@ -704,9 +714,17 @@ namespace CRL {
       libraryName = getString(cell->getName()) + "export";
 
       forEach ( Instance*, iinstance, cell->getInstances() ) {
-        if ( cells.find((*iinstance)->getMasterCell()) == cells.end())
-          cells.insert ( (*iinstance)->getMasterCell() );
+        cells.insert ( (*iinstance)->getMasterCell() );
       }
+    }
+
+    if ( flags & WithSpacers ) {
+    // Ugly. Direct uses of Alliance Framework.
+      Cell* spacer = AllianceFramework::get()->getCell("tie_x0",Catalog::State::Views);
+      if ( spacer != NULL ) cells.insert ( spacer );
+
+      spacer = AllianceFramework::get()->getCell("rowend_x0",Catalog::State::Views);
+      if ( spacer != NULL ) cells.insert ( spacer );
     }
 
     LefDriver::drive ( cells, libraryName, flags );

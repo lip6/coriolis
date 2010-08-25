@@ -38,7 +38,7 @@ namespace CRL {
 
   class LefExport {
     public:
-      enum Flag { WithTechnology=0x1 };
+      enum Flag { WithTechnology=0x1, WithSpacers=0x2 };
     public:
       static void  drive ( Hurricane::Cell*   , unsigned int flags );
       static void  drive ( Hurricane::Library*, unsigned int flags );

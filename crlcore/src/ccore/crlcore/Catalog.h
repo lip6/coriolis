@@ -51,6 +51,10 @@ namespace CRL {
   using Hurricane::DBo;
   using Hurricane::Cell;
   using Hurricane::Library;
+  using Hurricane::Property;
+
+
+  extern const char* MissingStateProperty;
 
 
 // -------------------------------------------------------------------
@@ -170,14 +174,6 @@ namespace CRL {
   };
 
 
-
-
-// -------------------------------------------------------------------
-// Error Strings.
-
-  extern const char* MissingStateProperty;
-
-
 // -------------------------------------------------------------------
 // Inline Functions. 
 
@@ -218,6 +214,167 @@ namespace CRL {
   inline                   CatalogProperty::CatalogProperty ( Catalog::State* state ) : PrivateProperty(), _state(state) {}
   inline Catalog::State*   CatalogProperty::getState        () const { return _state; }
   inline void              CatalogProperty::setState        ( Catalog::State* state ) { _state = state; }
+
+
+// -------------------------------------------------------------------
+// Class  :  "CRL::CatalogExtension".
+
+
+  class CatalogExtension {
+    public:
+      static inline bool             isFlattenLeaf  ( const Cell* );
+      static inline bool             isFeed         ( const Cell* );
+      static inline bool             isGds          ( const Cell* );
+      static inline bool             isDelete       ( const Cell* );
+      static inline bool             isPhysical     ( const Cell* );
+      static inline bool             isLogical      ( const Cell* );
+    // Flags management.             
+      static inline unsigned int     getFlags       ( const Cell*, unsigned int mask=(unsigned int)-1 );
+      static inline bool             setFlags       ( const Cell*, unsigned int mask, bool value );
+      static inline bool             setFlattenLeaf ( const Cell*, bool value );
+      static inline bool             setFeed        ( const Cell*, bool value );
+      static inline bool             setGds         ( const Cell*, bool value );
+      static inline bool             setDelete      ( const Cell*, bool value );
+      static inline bool             setPhysical    ( const Cell*, bool value );
+      static inline bool             setLogical     ( const Cell*, bool value );
+    // Accessors.
+      static inline Library*         getLibrary     ( const Cell* );
+      static inline unsigned int     getDepth       ( const Cell* );
+    // Modifiers.                    
+      static inline Library*         setLibrary     ( const Cell*, Library* library );
+      static inline void             setDepth       ( const Cell*, unsigned int depth );
+    private:
+      static        Catalog::State*  _get           ( const Cell* );
+    private:
+      static const Cell*     _owner;
+      static Catalog::State* _cache;
+  };
+
+
+  inline bool  CatalogExtension::isFlattenLeaf ( const Cell* cell )
+  {
+    Catalog::State* state = _get(cell);
+    return (state == NULL) ? false : state->isFlattenLeaf();
+  }
+
+
+  inline bool  CatalogExtension::isFeed ( const Cell* cell )
+  {
+    Catalog::State* state = _get(cell);
+    return (state == NULL) ? false : state->isFeed();
+  }
+
+
+  inline bool  CatalogExtension::isGds ( const Cell* cell )
+  {
+    Catalog::State* state = _get(cell);
+    return (state == NULL) ? false : state->isGds();
+  }
+
+
+  inline bool  CatalogExtension::isDelete ( const Cell* cell )
+  {
+    Catalog::State* state = _get(cell);
+    return (state == NULL) ? false : state->isDelete();
+  }
+
+
+  inline bool  CatalogExtension::isPhysical ( const Cell* cell )
+  {
+    Catalog::State* state = _get(cell);
+    return (state == NULL) ? false : state->isPhysical();
+  }
+
+
+  inline bool  CatalogExtension::isLogical ( const Cell* cell )
+  {
+    Catalog::State* state = _get(cell);
+    return (state == NULL) ? false : state->isLogical();
+  }
+
+
+  inline unsigned int  CatalogExtension::getFlags ( const Cell* cell, unsigned int mask )
+  {
+    Catalog::State* state = _get(cell);
+    return (state == NULL) ? 0 : state->getFlags();
+  }
+
+
+  inline bool  CatalogExtension::setFlags ( const Cell* cell, unsigned int mask, bool value )
+  {
+    Catalog::State* state = _get(cell);
+    return (state == NULL) ? false : state->setFlags(mask,value);
+  }
+
+
+  inline bool  CatalogExtension::setFlattenLeaf ( const Cell* cell, bool value )
+  {
+    Catalog::State* state = _get(cell);
+    return (state == NULL) ? false : state->setFlattenLeaf(value);
+  }
+
+
+  inline bool  CatalogExtension::setFeed ( const Cell* cell, bool value )
+  {
+    Catalog::State* state = _get(cell);
+    return (state == NULL) ? false : state->setFeed(value);
+  }
+
+
+  inline bool  CatalogExtension::setGds ( const Cell* cell, bool value )
+  {
+    Catalog::State* state = _get(cell);
+    return (state == NULL) ? false : state->setGds(value);
+  }
+
+
+  inline bool  CatalogExtension::setDelete ( const Cell* cell, bool value )
+  {
+    Catalog::State* state = _get(cell);
+    return (state == NULL) ? false : state->setDelete(value);
+  }
+
+
+  inline bool  CatalogExtension::setPhysical ( const Cell* cell, bool value )
+  {
+    Catalog::State* state = _get(cell);
+    return (state == NULL) ? false : state->setPhysical(value);
+  }
+
+
+  inline bool  CatalogExtension::setLogical ( const Cell* cell, bool value )
+  {
+    Catalog::State* state = _get(cell);
+    return (state == NULL) ? false : state->setLogical(value);
+  }
+
+
+  inline Library* CatalogExtension::getLibrary ( const Cell* cell )
+  {
+    Catalog::State* state = _get(cell);
+    return (state == NULL) ? NULL : state->getLibrary();
+  }
+
+
+  inline unsigned int  CatalogExtension::getDepth ( const Cell* cell )
+  {
+    Catalog::State* state = _get(cell);
+    return (state == NULL) ? 0 : state->getDepth();
+  }
+
+
+  inline Library* CatalogExtension::setLibrary ( const Cell* cell, Library* library )
+  {
+    Catalog::State* state = _get(cell);
+    return (state == NULL) ? NULL : state->setLibrary(library);
+  }
+
+
+  inline void  CatalogExtension::setDepth ( const Cell* cell, unsigned int depth )
+  {
+    Catalog::State* state = _get(cell);
+    if ( state == NULL ) state->setDepth(depth);
+  }
 
 
 } // End of CRL namespace.

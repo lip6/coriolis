@@ -621,7 +621,7 @@ namespace CRL {
 #if HAVE_LEFDEF
     DefDriver::drive ( cell, flags );
 
-    if ( flags & WithLEF ) LefExport::drive ( cell, LefExport::WithTechnology );
+    if ( flags & WithLEF ) LefExport::drive ( cell, LefExport::WithTechnology|LefExport::WithSpacers );
 #else
     cerr << "[ERROR] CRL::DefExport::drive(): \n"
          << "  Coriolis2 hasn't been compiled with LEF/DEF support. To enable LEF/DEF\n"

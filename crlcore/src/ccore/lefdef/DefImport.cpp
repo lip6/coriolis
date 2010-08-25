@@ -36,6 +36,7 @@
 #include  "hurricane/Technology.h"
 #include  "hurricane/Net.h"
 #include  "hurricane/NetExternalComponents.h"
+#include  "hurricane/Contact.h"
 #include  "hurricane/Horizontal.h"
 #include  "hurricane/Vertical.h"
 #include  "hurricane/Cell.h"
@@ -91,6 +92,7 @@ namespace {
       inline size_t             getPitchs                () const;
       inline size_t             getSlices                () const;
       inline const Box&         getFitOnCellsDieArea     () const;
+      inline Net*               getPrebuildNet             () const;
              Net*               lookupNet                ( const string& );
       inline vector<string>&    getErrors                ();
       inline void               pushError                ( const string& );
@@ -98,6 +100,7 @@ namespace {
       inline void               clearErrors              ();
       inline void               setPitchs                ( size_t );
       inline void               setSlices                ( size_t );
+      inline void               setPrebuildNet             ( Net* );
              void               addNetLookup             ( const string& netName, Net* );
       inline void               mergeToFitOnCellsDieArea ( const Box& );
     private:                                         
@@ -107,6 +110,8 @@ namespace {
       static int                _componentCbk            ( defrCallbackType_e, defiComponent*, defiUserData );
       static int                _componentEndCbk         ( defrCallbackType_e, void*         , defiUserData );
       static int                _netCbk                  ( defrCallbackType_e, defiNet*      , defiUserData );
+      static int                _netEndCbk               ( defrCallbackType_e, void*         , defiUserData );
+      static int                _pathCbk                 ( defrCallbackType_e, defiPath*     , defiUserData );
              Cell*              _createCell              ( const char* name );
     private:
       static double             _defUnits;
@@ -118,6 +123,7 @@ namespace {
              size_t             _pitchs;
              size_t             _slices;
              Box                _fitOnCellsDieArea;
+             Net*               _prebuildNet;
              map<string,Net*>   _netsLookup;
              vector<string>     _errors;
   };
@@ -128,13 +134,14 @@ namespace {
 
 
   DefParser::DefParser ( string& file, AllianceLibrary* library, unsigned int flags )
-    : _file      (file)
-    , _flags     (flags)
+    : _file             (file)
+    , _flags            (flags)
     , _library          (library)
     , _cell             (NULL)
     , _pitchs           (0)
     , _slices           (0)
     , _fitOnCellsDieArea()
+    , _prebuildNet      (NULL)
     , _netsLookup       ()
     , _errors           ()
   {
@@ -145,7 +152,8 @@ namespace {
     defrSetComponentCbk    ( _componentCbk );
     defrSetComponentEndCbk ( _componentEndCbk );
     defrSetNetCbk          ( _netCbk );
-    defrSetNetEndCbk       ( _componentEndCbk );
+    defrSetNetEndCbk       ( _netEndCbk );
+    defrSetPathCbk         ( _pathCbk );
   }
 
 
@@ -164,11 +172,13 @@ namespace {
   inline size_t             DefParser::getPitchs                () const { return _pitchs; }
   inline size_t             DefParser::getSlices                () const { return _slices; }
   inline const Box&         DefParser::getFitOnCellsDieArea     () const { return _fitOnCellsDieArea; }
+  inline Net*               DefParser::getPrebuildNet           () const { return _prebuildNet; }
   inline vector<string>&    DefParser::getErrors                () { return _errors; }
   inline void               DefParser::pushError                ( const string& error ) { _errors.push_back(error); }
   inline void               DefParser::clearErrors              () { return _errors.clear(); }
   inline void               DefParser::setPitchs                ( size_t pitchs ) { _pitchs=pitchs; }
   inline void               DefParser::setSlices                ( size_t slices ) { _slices=slices; }
+  inline void               DefParser::setPrebuildNet           ( Net* net ) { _prebuildNet=net; }
   inline void               DefParser::mergeToFitOnCellsDieArea ( const Box& box ) { _fitOnCellsDieArea.merge(box); }
 
 
@@ -336,6 +346,13 @@ namespace {
   }
 
 
+  int  DefParser::_componentEndCbk ( defrCallbackType_e c, void*, lefiUserData ud )
+  {
+    DefParser* parser = (DefParser*)ud;
+    return parser->flushErrors ();
+  }
+
+
   int  DefParser::_netCbk ( defrCallbackType_e c, defiNet* net, lefiUserData ud )
   {
     static size_t netCount = 0;
@@ -343,10 +360,15 @@ namespace {
     DefParser* parser = (DefParser*)ud;
 
   //cout << "     - Net " << net->name() << endl;
-
+    
     Net* hnet = parser->lookupNet ( net->name() );
     if ( hnet == NULL )
       hnet = Net::create ( parser->getCell(), net->name() );
+
+    if ( parser->getPrebuildNet() != NULL ) {
+      hnet->merge ( parser->getPrebuildNet() );
+      parser->setPrebuildNet ( NULL );
+    }
 
     if (tty::enabled()) {
       cmess2 << "       " << tty::bold << setw(7) << setfill('0') << ++netCount << ":" << setfill(' ')
@@ -386,10 +408,91 @@ namespace {
   }
 
 
-  int  DefParser::_componentEndCbk ( defrCallbackType_e c, void*, lefiUserData ud )
+  int  DefParser::_netEndCbk ( defrCallbackType_e c, void*, lefiUserData ud )
   {
     DefParser* parser = (DefParser*)ud;
     return parser->flushErrors ();
+  }
+
+
+  int  DefParser::_pathCbk ( defrCallbackType_e c, defiPath* path, lefiUserData ud )
+  {
+
+    DefParser*  parser       = (DefParser*)ud;
+    Technology* technology   = DataBase::getDB()->getTechnology();
+    Net*        hnet         = parser->getPrebuildNet();
+
+    if ( hnet == NULL ) {
+      hnet = Net::create ( parser->getCell(), "__prebuild__" );
+      parser->setPrebuildNet ( hnet );
+    }
+
+    Contact*     source      = NULL;
+    Contact*     target      = NULL;
+    const Layer* layer       = NULL;
+    const Layer* viaLayer    = NULL;
+    DbU::Unit    width       = DbU::lambda(2.0);
+    DbU::Unit    x, y;
+    int          defx, defy, defext;
+    int          elementType;
+
+    path->initTraverse ();
+    while ( (elementType = path->next()) != DEFIPATH_DONE ) {
+      bool createSegment = false;
+      bool createVia     = false;
+
+      switch ( elementType ) {
+        case DEFIPATH_LAYER:
+          layer = technology->getLayer ( path->getLayer() );
+          break;
+        case DEFIPATH_WIDTH:
+          width = fromDefUnits(path->getWidth());
+          break;
+        case DEFIPATH_POINT:
+          path->getPoint ( &defx, &defy );
+          x = fromDefUnits ( defx );
+          y = fromDefUnits ( defy );
+          createSegment = true;
+          break;
+        case DEFIPATH_FLUSHPOINT:
+          path->getFlushPoint ( &defx, &defy, &defext );
+          x = fromDefUnits ( defx );
+          y = fromDefUnits ( defy );
+          target = NULL;
+          createSegment = true;
+          break;
+        case DEFIPATH_VIA:
+          viaLayer  = technology->getLayer ( path->getVia() );
+          createVia = true;
+          break;
+      }
+
+      if ( createSegment ) {
+        source = target;
+        target = Contact::create ( hnet, layer, x, y );
+        if ( source != NULL ) {
+          if ( source->getX() == x ) {
+            Vertical::create ( source, target, layer, x, width );
+          } else if ( source->getY() == y ) {
+            Horizontal::create ( source, target, layer, y, width );
+          } else {
+            ostringstream message;
+            message << "Non-manhattan segment in net <" << hnet->getName() << ">.";
+            parser->pushError ( message.str() );
+          }
+        }
+      }
+      
+      if ( createVia ) {
+        if ( target != NULL ) {
+          target = Contact::create ( target, viaLayer, 0, 0 );
+        } else {
+          target = Contact::create ( hnet, viaLayer, x, y, 0, 0 );
+        }
+      }
+    }
+
+    return 0;
   }
 
 

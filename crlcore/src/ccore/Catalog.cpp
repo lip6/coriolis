@@ -304,4 +304,25 @@ namespace CRL {
   }
 
 
+// -------------------------------------------------------------------
+// Class  :  "CatalogExtension"
+
+
+  const Cell*     CatalogExtension::_owner = NULL;
+  Catalog::State* CatalogExtension::_cache = NULL;
+
+
+  Catalog::State* CatalogExtension::_get ( const Cell* cell )
+  {
+    if ( cell == _owner ) return _cache;
+    _owner = cell;
+
+    Property* property = _owner->getProperty ( CatalogProperty::getPropertyName() );
+    if ( property ) _cache = static_cast<CatalogProperty*>(property)->getState();
+    else            _cache = NULL;
+
+    return _cache;
+  }
+
+
 } // End of CRL namespace.
