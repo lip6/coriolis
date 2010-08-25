@@ -86,7 +86,7 @@ if ( UNIX )
 
   find_path ( LEFDEF_LIBRARY_DIR NAMES "libdef.a" "libdef_Debug.a"
                                  PATHS ${LEFDEF_LIBRARY_SEARCH_PATH}
-                                 PATH_SUFFIXES "lib"
+                                 PATH_SUFFIXES "lib${LIB_SUFFIX}"
                                  DOC "The ${LEFDEF_LIBRARY_DIR_DESCRIPTION}" )
 
   if ( LEFDEF_INCLUDE_DIR AND LEFDEF_LIBRARY_DIR )

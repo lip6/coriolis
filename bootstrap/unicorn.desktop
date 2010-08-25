@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Coriolis Main GUI
+Exec=unicorn
+Icon=/usr/share/pixmaps/shadock.png
+Type=Application
+Terminal=false
+GenericName=unicorn
+#Categories=Electronics;Engineering;
+Categories=Application;Graphics;X-Red-Hat-Base;
+Comment=Physical Place Route
+Vendor=LIP6SoC
