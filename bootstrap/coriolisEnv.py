@@ -6,6 +6,7 @@ import os
 import sys
 import string
 import subprocess
+import optparse
 
 
 coriolisPattern = re.compile ( r".*coriolis.*" )
@@ -68,15 +69,29 @@ if __name__ == "__main__":
   buildType       = "Debug"
   linkType        = "Shared"
   coriolisVersion = None
-    
-  for argument in sys.argv:
-    if   argument == "--v1":      coriolisVersion=1
-    elif argument == "--v2":      coriolisVersion=2
-    elif argument == "--debug":   buildType="Debug"
-    elif argument == "--devel":   buildType="Debug"
-    elif argument == "--release": buildType="Release"
-    elif argument == "--shared":  linkType="Shared"
-    elif argument == "--static":  linkType="Static"
+  rootDir         = None
+  sysCoriolisTop  = "/asim/coriolis2"
+
+  parser = optparse.OptionParser ()  
+ # Build relateds.
+  parser.add_option ( "--v1"     , action="store_true" ,                dest="v1"       )
+  parser.add_option ( "--v2"     , action="store_true" ,                dest="v2"       )
+  parser.add_option ( "--release", action="store_true" ,                dest="release"  )
+  parser.add_option ( "--debug"  , action="store_true" ,                dest="debug"    )
+  parser.add_option ( "--devel"  , action="store_true" ,                dest="devel"    )
+  parser.add_option ( "--static" , action="store_true" ,                dest="static"   )
+  parser.add_option ( "--shared" , action="store_true" ,                dest="shared"   )
+  parser.add_option ( "--root"   , action="store"      , type="string", dest="rootDir"  )
+  ( options, args ) = parser.parse_args ()
+
+  if options.v1:       coriolisVersion = 1
+  if options.v2:       coriolisVersion = 2
+  if options.release:  buildType       = "Release"
+  if options.debug:    buildType       = "Debug"
+  if options.devel:    buildType       = "Debug"
+  if options.static:   linkType        = "Static"
+  if options.shared:   linkType        = "Shared"
+  if options.rootDir:  rootDir         = options.rootDir
 
   strippedPath        = stripPath ( "PATH" )
   strippedLibraryPath = stripPath ( "LD_LIBRARY_PATH" )
@@ -84,7 +99,10 @@ if __name__ == "__main__":
 
   if coriolisVersion == 1:
 
-    hurricaneTop = "%s/coriolis-1.x/coriolis/%s/install" % ( os.getenv("HOME"), osDir )
+    if not rootDir:
+      rootDir = os.getenv("HOME") + "/coriolis-1.x"
+
+    hurricaneTop = "%s/coriolis/%s/install" % ( rootDir, osDir )
     buildDir     = None
     shellScript  = \
 """
@@ -103,10 +121,13 @@ fi
 
   elif coriolisVersion == 2:
 
+    if not rootDir:
+      rootDir = os.getenv("HOME") + "/coriolis-2.x"
+
     buildDir            = buildType + "." + linkType
-    hurricaneTop        = "%s/coriolis-2.x/%s/%s/install" % ( os.getenv("HOME"), osDir, buildDir )
-    strippedPath        = "%s/bin:%s" % ( hurricaneTop, strippedPath )
-    strippedLibraryPath = "%s/%s:%s" % ( hurricaneTop, libDir, strippedLibraryPath )
+    coriolisTop         = "%s/%s/%s/install" % ( rootDir, osDir, buildDir )
+    strippedPath        = "%s/bin:%s"        % ( coriolisTop, strippedPath )
+    strippedLibraryPath = "%s/%s:%s"         % ( coriolisTop, libDir, strippedLibraryPath )
 
     shellScript = \
 """
@@ -114,9 +135,9 @@ echo "Switching to Coriolis 2.x (%(buildDir)s)";
 PATH=%(PATH)s;
 LD_LIBRARY_PATH=%(LD_LIBRARY_PATH)s;
 PYTHONPATH=%(PYTHONPATH)s;
-HURRICANE_TOP=%(HURRICANE_TOP)s;
-CORIOLIS_TOP=%(HURRICANE_TOP)s;
-export PATH LD_LIBRARY_PATH PYTHONPATH HURRICANE_TOP CORIOLIS_TOP;
+BOOTSTRAP_TOP=%(BOOTSTRAP_TOP)s;
+CORIOLIS_TOP=%(CORIOLIS_TOP)s;
+export PATH LD_LIBRARY_PATH PYTHONPATH BOOTSTRAP_TOP CORIOLIS_TOP;
 hash -r
 """
 
@@ -124,6 +145,7 @@ hash -r
     print shellScript % { "PATH"            : strippedPath
                         , "LD_LIBRARY_PATH" : strippedLibraryPath
                         , "PYTHONPATH"      : strippedPythonPath
-                        , "HURRICANE_TOP"   : hurricaneTop
+                        , "BOOTSTRAP_TOP"   : coriolisTop
+                        , "CORIOLIS_TOP"    : coriolisTop
                         , "buildDir"        : buildDir
                         }
