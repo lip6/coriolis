@@ -40,9 +40,14 @@ def guessOs ():
     uname = subprocess.Popen ( ["uname", "-srm"], stdout=subprocess.PIPE )
     lines = uname.stdout.readlines()
 
-    if   osSLSoC5x_64.match(lines[0]): osType = "Linux.SLSoC5x_64"
+    libDir="lib"
+    if osSLSoC5x_64.match(lines[0]):
+      osType = "Linux.SLSoC5x_64"
+      libDir = "lib64"
     elif osSLSoC5x   .match(lines[0]): osType = "Linux.SLSoC5x"
-    elif osLinux_64  .match(lines[0]): osType = "Linux.x86_64"
+    elif osLinux_64  .match(lines[0]):
+      osType = "Linux.x86_64"
+      libDir = "lib64"
     elif osLinux     .match(lines[0]): osType = "Linux.i386"
     elif osDarwin    .match(lines[0]): osType = "Darwin"
     else:
@@ -52,14 +57,14 @@ def guessOs ():
        #print "[WARNING] Unrecognized OS: \"%s\"." % lines[0][:-1]
        #print "          (using: \"%s\")" % osType
     
-    return osType
+    return (osType,libDir)
       
 
 
 
 if __name__ == "__main__":
 
-  osDir           = guessOs()
+  (osDir,libDir)  = guessOs()
   buildType       = "Debug"
   linkType        = "Shared"
   coriolisVersion = None
@@ -101,7 +106,7 @@ fi
     buildDir            = buildType + "." + linkType
     hurricaneTop        = "%s/coriolis-2.x/%s/%s/install" % ( os.getenv("HOME"), osDir, buildDir )
     strippedPath        = "%s/bin:%s" % ( hurricaneTop, strippedPath )
-    strippedLibraryPath = "%s/lib:%s" % ( hurricaneTop, strippedLibraryPath )
+    strippedLibraryPath = "%s/%s:%s" % ( hurricaneTop, libDir, strippedLibraryPath )
 
     shellScript = \
 """

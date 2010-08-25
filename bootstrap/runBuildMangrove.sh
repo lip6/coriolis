@@ -10,7 +10,7 @@
  rootDir=${HOME}/mangrove
 
  ${rootDir}/src/bootstrap/buildMangrove.py \
-     --root=${HOME}/checkout \
+     --root=${rootDir}       \
      --project=mangrove      \
      --project=caiman        \
      --make="-j${procs} install"
