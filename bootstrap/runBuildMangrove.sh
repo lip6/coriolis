@@ -7,8 +7,9 @@
 
  export CORIOLIS_TOP=/asim/coriolis2
  export MANGROVE_TOP=/asim/mangrove
+ rootDir=${HOME}/mangrove
 
- ${HOME}/mangrove/src/bootstrap/buildCaiman.py \
+ ${rootDir}/src/bootstrap/buildMangrove.py \
      --root=${HOME}/checkout \
      --project=mangrove      \
      --project=caiman        \
