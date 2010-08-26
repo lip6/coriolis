@@ -191,7 +191,7 @@ namespace Mauka {
   }
 
 
-  void  GraphicMaukaEngine::run ()
+  void  GraphicMaukaEngine::doSimulatedAnnealing ()
   {
     MaukaEngine* mauka = createEngine ();
     if ( mauka == NULL ) {
@@ -205,6 +205,19 @@ namespace Mauka {
 
     mauka->Run ();
     emit cellPostModificated ();
+  }
+
+
+  void  GraphicMaukaEngine::place ()
+  {
+    if ( not MetisEngine::isHMetisCapable() ) doQuadriPart ();
+    else {
+      cerr << Warning("Mauka has not been compiled againts hMETIS.\n"
+                      "          Quadri-partition step is disabled, simulated annealing may be *very* long." ) << endl;
+    }
+
+    doSimulatedAnnealing ();
+    save ();
   }
 
 
@@ -246,24 +259,31 @@ namespace Mauka {
       prMenu->addSeparator ();
     }
 
-    QAction* placeAction = _viewer->findChild<QAction*>("viewer.menuBar.placeAndRoute.maukaPlace");
+    QAction* placeAction = _viewer->findChild<QAction*>("viewer.menuBar.placeAndRoute.place");
     if ( placeAction != NULL )
       cerr << Warning("GraphicMaukaEngine::addToMenu() - Mauka placer already hooked in.") << endl;
     else {
       QAction* quadriPartAction = new QAction  ( tr("Mauka - &QuadriPartition"), _viewer );
-      quadriPartAction->setObjectName ( "viewer.menuBar.quadriPartAndRoute.maukaQuadriPartition" );
+      quadriPartAction->setObjectName ( "viewer.menuBar.placeAndRoute.quadriPartition" );
       quadriPartAction->setStatusTip  ( tr("Run the <b>hMETIS</b> quadri-partitioner") );
       quadriPartAction->setVisible    ( true );
-      prMenu->addAction ( quadriPartAction );
+      stepMenu->addAction ( quadriPartAction );
+
+      QAction* annealingAction = new QAction  ( tr("Mauka - &Place"), _viewer );
+      annealingAction->setObjectName ( "viewer.menuBar.placeAndRoute.maukaPlace" );
+      annealingAction->setStatusTip  ( tr("Run the <b>Mauka</b> placer") );
+      annealingAction->setVisible    ( true );
+      stepMenu->addAction ( annealingAction );
 
       QAction* placeAction = new QAction  ( tr("Mauka - &Place"), _viewer );
-      placeAction->setObjectName ( "viewer.menuBar.placeAndRoute.maukaPlace" );
+      placeAction->setObjectName ( "viewer.menuBar.placeAndRoute.place" );
       placeAction->setStatusTip  ( tr("Run the <b>Mauka</b> placer") );
       placeAction->setVisible    ( true );
       prMenu->addAction ( placeAction );
 
-      connect ( placeAction     , SIGNAL(triggered()), this, SLOT(run()) );
       connect ( quadriPartAction, SIGNAL(triggered()), this, SLOT(doQuadriPart()) );
+      connect ( annealingAction , SIGNAL(triggered()), this, SLOT(doSimulatedAnnealing()) );
+      connect ( placeAction     , SIGNAL(triggered()), this, SLOT(place()) );
     }
 
     connect ( this, SIGNAL(cellPreModificated ()), _viewer->getCellWidget(), SLOT(cellPreModificate ()) );
