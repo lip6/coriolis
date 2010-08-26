@@ -284,13 +284,13 @@ int main ( int argc, char *argv[] )
     cmess1 << "        Kite - Detailed Router ....................... Jean-Paul Chaput" << endl;
     cmess1 << endl;
 
-    cout   << "        hMETIS software credits" << endl;
+    cout   << "        hMETIS software credits (used by Mauka)" << endl;
     cout   << "        Author ........................................ Georges Karypis" << endl;
     cout   << "        Prof. Ident. .......................... University of Minnesota" << endl;
     cout   << "        URL .......................... http://glaros.dtc.umn.edu/gkhome" << endl;
     cout   << endl;
 
-    cout   << "        The Knik router makes use of FLUTE software" << endl;
+    cout   << "        FLUTE software credits (used by Knik)" << endl;
     cout   << "        Author ........................................ Chris C. N. CHU" << endl;
     cout   << "        Prof. Ident. ............................ Iowa State University" << endl;
     cout   << "        URL ........................ http://home.eng.iastate.edu/~cnchu" << endl;
