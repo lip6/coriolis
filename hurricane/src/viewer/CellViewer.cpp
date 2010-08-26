@@ -231,17 +231,19 @@ namespace Hurricane {
     _fileMenu = menuBar()->addMenu ( tr("File") );
     _fileMenu->setObjectName ( "viewer.menuBar.file" );
     _fileMenu->addAction ( _openAction   );
-    _fileMenu->addAction ( _importAction );
-    _fileMenu->addAction ( _nextAction   );
     _fileMenu->addSeparator ();
     for ( size_t i=0 ; i<CellHistorySize ; i++ ) {
       _fileMenu->addAction ( _cellHistoryAction[i] );
     }
     _fileMenu->addSeparator ();
+    _fileMenu->addAction ( _saveAction );
+    _fileMenu->addSeparator ();
+    _fileMenu->addAction ( _importAction );
+    _fileMenu->addAction ( _exportAction );
+    _fileMenu->addSeparator ();
     _fileMenu->addAction ( _printAction );
     _fileMenu->addAction ( _imageAction );
-    _fileMenu->addAction ( _saveAction );
-    _fileMenu->addAction ( _exportAction );
+    _fileMenu->addAction ( _nextAction   );
     _fileMenu->addSeparator ();
     _fileMenu->addAction ( _closeAction );
     _fileMenu->addAction ( _exitAction );
