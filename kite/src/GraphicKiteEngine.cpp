@@ -170,7 +170,7 @@ namespace Kite {
   }
 
 
-  void  GraphicKiteEngine::runGlobal ()
+  void  GraphicKiteEngine::globalRoute ()
   {
 
     KiteEngine* kite = getForFramework ();
@@ -181,7 +181,7 @@ namespace Kite {
   }
 
 
-  void  GraphicKiteEngine::runDetailed ()
+  void  GraphicKiteEngine::detailRoute ()
   {
     static KatabaticEngine::NetSet routingNets;
 
@@ -240,6 +240,14 @@ namespace Kite {
   }
 
 
+  void  GraphicKiteEngine::route ()
+  {
+    globalRoute ();
+    detailRoute ();
+    finalize    ();
+  }
+
+
   void  GraphicKiteEngine::postEvent ()
   {
     static unsigned int count = 0;
@@ -289,6 +297,14 @@ namespace Kite {
     if ( dRouteAction )
       cerr << Warning("GraphicKiteEngine::addToMenu() - Kite detailed router already hooked in.") << endl;
     else {
+      stepMenu->addSeparator ();
+
+      QAction* gRouteAction = new QAction  ( tr("Kite - &Global Route"), _viewer );
+      gRouteAction->setObjectName ( "viewer.menuBar.placeAndRoute.stepBystep.globalRoute" );
+      gRouteAction->setStatusTip  ( tr("Run the <b>Knik</b> global router") );
+      gRouteAction->setVisible    ( true );
+      stepMenu->addAction ( gRouteAction );
+
       QAction* gLoadSolutionAction = new QAction  ( tr("Kite - &Load Global Routing"), _viewer );
       gLoadSolutionAction->setObjectName ( "viewer.menuBar.placeAndRoute.stepByStep.loadGlobalRouting" );
       gLoadSolutionAction->setStatusTip  ( tr("Load a solution for the global routing (.kgr)") );
@@ -301,36 +317,37 @@ namespace Kite {
       gSaveSolutionAction->setVisible    ( true );
       stepMenu->addAction ( gSaveSolutionAction );
 
-      QAction* gRouteAction = new QAction  ( tr("Kite - &Global Route"), _viewer );
-      gRouteAction->setObjectName ( "viewer.menuBar.placeAndRoute.globalRoute" );
-      gRouteAction->setStatusTip  ( tr("Run the <b>Knik</b> global router") );
-      gRouteAction->setVisible    ( true );
-      prMenu->addAction ( gRouteAction );
-
       dRouteAction = new QAction  ( tr("Kite - &Detailed Route"), _viewer );
-      dRouteAction->setObjectName ( "viewer.menuBar.placeAndRoute.detailedRoute" );
+      dRouteAction->setObjectName ( "viewer.menuBar.placeAndRoute.stepBystep.detailedRoute" );
       dRouteAction->setStatusTip  ( tr("Run the <b>Kite</b> detailed router") );
       dRouteAction->setVisible    ( true );
-      prMenu->addAction ( dRouteAction );
+      stepMenu->addAction ( dRouteAction );
 
       QAction* dFinalizeAction = new QAction ( tr("Kite - &Finalize Routing"), _viewer );
-      dFinalizeAction->setObjectName ( "viewer.menuBar.placeAndRoute.finalize" );
+      dFinalizeAction->setObjectName ( "viewer.menuBar.placeAndRoute.stepBystep.finalize" );
       dFinalizeAction->setStatusTip  ( tr("Closing Routing") );
       dFinalizeAction->setVisible    ( true );
-      prMenu->addAction ( dFinalizeAction );
+      stepMenu->addAction ( dFinalizeAction );
 
       QAction* dSaveAction = new QAction ( tr("Kite - &Save Design"), _viewer );
-      dSaveAction->setObjectName ( "viewer.menuBar.placeAndRoute.save" );
+      dSaveAction->setObjectName ( "viewer.menuBar.placeAndRoute.stepBystep.save" );
       dSaveAction->setStatusTip  ( tr("Save routed design (temporary hack)") );
       dSaveAction->setVisible    ( true );
-      prMenu->addAction ( dSaveAction );
+      stepMenu->addAction ( dSaveAction );
+
+      QAction* routeAction = new QAction  ( tr("Kite - &Route"), _viewer );
+      routeAction->setObjectName ( "viewer.menuBar.placeAndRoute.route" );
+      routeAction->setStatusTip  ( tr("Route the design (global & detailed)") );
+      routeAction->setVisible    ( true );
+      prMenu->addAction ( routeAction );
 
       connect ( gLoadSolutionAction, SIGNAL(triggered()), this, SLOT(loadGlobalSolution()) );
       connect ( gSaveSolutionAction, SIGNAL(triggered()), this, SLOT(saveGlobalSolution()) );
-      connect ( gRouteAction       , SIGNAL(triggered()), this, SLOT(runGlobal         ()) );
-      connect ( dRouteAction       , SIGNAL(triggered()), this, SLOT(runDetailed       ()) );
+      connect ( gRouteAction       , SIGNAL(triggered()), this, SLOT(globalRoute       ()) );
+      connect ( dRouteAction       , SIGNAL(triggered()), this, SLOT(detailRoute       ()) );
       connect ( dFinalizeAction    , SIGNAL(triggered()), this, SLOT(finalize          ()) );
       connect ( dSaveAction        , SIGNAL(triggered()), this, SLOT(save              ()) );
+      connect ( routeAction        , SIGNAL(triggered()), this, SLOT(route             ()) );
     }
 
     connect ( this, SIGNAL(cellPreModificated ()), _viewer->getCellWidget(), SLOT(cellPreModificate ()) );

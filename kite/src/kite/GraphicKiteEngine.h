@@ -86,9 +86,10 @@ namespace Kite {
     public slots:                                  
                void              loadGlobalSolution ();
                void              saveGlobalSolution ();
-               void              runGlobal          ();
-               void              runDetailed        ();
+               void              globalRoute        ();
+               void              detailRoute        ();
                void              finalize           ();
+               void              route              ();
                void              save               ();
                                
     protected:                 
