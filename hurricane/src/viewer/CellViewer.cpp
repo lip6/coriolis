@@ -45,6 +45,7 @@
 #include  "hurricane/viewer/MousePositionWidget.h"
 #include  "hurricane/viewer/ControllerWidget.h"
 #include  "hurricane/viewer/ScriptWidget.h"
+#include  "hurricane/viewer/StratusWidget.h"
 #include  "hurricane/viewer/GotoWidget.h"
 
 
@@ -71,6 +72,7 @@ namespace Hurricane {
                                              , _clearRulersAction      (NULL)
                                              , _controllerAction       (NULL)
                                              , _scriptAction           (NULL)
+                                             , _stratusAction          (NULL)
                                              , _fileMenu               (NULL)
                                              , _viewMenu               (NULL)
                                              , _toolsMenu              (NULL)
@@ -218,6 +220,11 @@ namespace Hurricane {
     _scriptAction->setStatusTip  ( tr("Run Python Script") );
     _scriptAction->setIcon       ( QIcon(":/images/python-logo-v3.png") );
   //_scriptAction->setShortcut   ( QKeySequence(tr("CTRL+I")) );
+
+    _stratusAction = new QAction  ( tr("Stratus"), this );
+    _stratusAction->setObjectName ( "viewer.menuBar.tools.stratusScript" );
+    _stratusAction->setStatusTip  ( tr("Run Stratus Script") );
+    _stratusAction->setIcon       ( QIcon(":/images/stratus-cloud.png") );
   }
 
 
@@ -261,6 +268,7 @@ namespace Hurricane {
     _toolsMenu->setObjectName ( "viewer.menuBar.tools" );
     _toolsMenu->addAction ( _controllerAction );
     _toolsMenu->addAction ( _scriptAction );
+    _toolsMenu->addAction ( _stratusAction );
   }
 
 
@@ -319,6 +327,7 @@ namespace Hurricane {
     connect ( _clearRulersAction     , SIGNAL(triggered())        , _cellWidget, SLOT(clearRulers()) );
     connect ( _controllerAction      , SIGNAL(triggered())        , _controller, SLOT(toggleShow()) );
     connect ( _scriptAction          , SIGNAL(triggered())        , this       , SLOT(runScript()) );
+    connect ( _stratusAction         , SIGNAL(triggered())        , this       , SLOT(runStratusScript()) );
     connect ( _gotoAction            , SIGNAL(triggered())        , this       , SLOT(doGoto()) );
 
     connect ( _cellWidget            , SIGNAL(dbuModeChanged(unsigned int,DbU::UnitPower))
@@ -558,9 +567,11 @@ namespace Hurricane {
 
 
   void  CellViewer::runScript ()
-  {
-    ScriptWidget::runScript ( this, getCell() );
-  }
+  { ScriptWidget::runScript ( this, getCell() ); }
+
+
+  void  CellViewer::runStratusScript ()
+  { StratusWidget::runScript ( this ); }
 
 
 } // End of Hurricane namespace.

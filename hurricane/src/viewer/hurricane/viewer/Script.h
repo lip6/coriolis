@@ -54,6 +54,8 @@ namespace Isobar {
 
   class Script {
     public:
+      enum Flags { NoScriptArgs=0x1 };
+    public:
       static void      addPath            ( const std::string& path );
       static void      removePath         ( const std::string& path );
       static Script*   create             ( const std::string& name );
@@ -62,7 +64,7 @@ namespace Isobar {
       inline PyObject* getHurricaneModule ();
       inline PyObject* getUserModule      ();
              void      setEditor          ( Hurricane::CellViewer* );
-             bool      runFunction        ( const std::string& function, Hurricane::Cell* cell );
+             bool      runFunction        ( const std::string& function, Hurricane::Cell* cell, unsigned int flags=0 );
     protected:
       static std::vector<std::string>  _pathes;
              std::string               _moduleName;

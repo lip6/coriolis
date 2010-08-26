@@ -119,7 +119,7 @@ namespace Isobar {
   { _cellViewer = viewer; }
 
 
-  bool  Script::runFunction ( const std::string& function, Cell* cell )
+  bool  Script::runFunction ( const std::string& function, Cell* cell, unsigned int flags )
   {
     bool returnCode = true;
 
@@ -148,7 +148,7 @@ namespace Isobar {
     if ( cell != NULL ) PyTuple_SetItem ( _pyArgs, 0, (PyObject*)PyCell_Link(cell) );
     else                PyTuple_SetItem ( _pyArgs, 0, Py_None );
 
-    _pyResult = PyEval_CallObject ( _pyFunction, _pyArgs );
+    _pyResult = PyEval_CallObject ( _pyFunction, (flags&NoScriptArgs) ? NULL : _pyArgs );
 
     if ( _pyResult == NULL ) {
       cerr << "Something has gone slightly wrong" << endl;

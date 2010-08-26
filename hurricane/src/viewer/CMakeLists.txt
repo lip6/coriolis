@@ -35,6 +35,7 @@
                                      hurricane/viewer/DisplayFilterWidget.h
                                      hurricane/viewer/ControllerWidget.h
                                      hurricane/viewer/ScriptWidget.h
+                                     hurricane/viewer/StratusWidget.h
                        )
                    set ( includes    hurricane/viewer/ScreenUtilities.h
                                      hurricane/viewer/DisplayStyle.h
@@ -94,6 +95,7 @@
                                      DisplayFilterWidget.cpp
                                      ControllerWidget.cpp
                                      ScriptWidget.cpp
+                                     StratusWidget.cpp
                        )
                    set ( pycpps      PyViewer.cpp
                                      PyCellViewer.cpp

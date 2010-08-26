@@ -92,6 +92,7 @@ namespace Hurricane {
               void                 raiseToolInterrupt        ();
               void                 clearToolInterrupt        ();
               void                 runScript                 ();
+              void                 runStratusScript          ();
     signals:                       
               void                 showSelectionToggled      ( bool );
               void                 stateChanged              ( shared_ptr<CellWidget::State>& );
@@ -124,6 +125,7 @@ namespace Hurricane {
       QAction*                 _clearRulersAction;
       QAction*                 _controllerAction;
       QAction*                 _scriptAction;
+      QAction*                 _stratusAction;
       QMenu*                   _fileMenu;
       QMenu*                   _viewMenu;
       QMenu*                   _toolsMenu;
