@@ -1,4 +1,0 @@
-DEFINE WorkLibrary /dsk/l1/misc/caba/coriolis-2.x/src/crlcore/src/ccore/openaccess/test/testOA/OAdrive/WorkLibrary
-DEFINE myCM_Library /dsk/l1/misc/caba/coriolis-2.x/src/crlcore/src/ccore/openaccess/test/testOA/OAdrive/myCM_Library
-DEFINE sxlibFromOA /dsk/l1/misc/caba/coriolis-2.x/src/crlcore/src/ccore/openaccess/test/testOA/OAdrive/sxlib
-DEFINE sxlibFromLef /dsk/l1/misc/caba/coriolis-2.x/src/crlcore/src/ccore/openaccess/test/sxlib2lef/sxlib

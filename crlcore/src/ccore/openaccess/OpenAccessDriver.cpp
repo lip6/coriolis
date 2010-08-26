@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-18 12:19:15" - OpenAccessDriver.cpp
+// Time-stamp: "2010-08-24 13:35:19" - OpenAccessDriver.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -326,7 +326,8 @@ namespace {
             cerr << " o    get value for constraint" << endl;
             long minSize = Hurricane::DbU::getDb(layer->getMinimalSize());
             long minSpace = Hurricane::DbU::getDb(layer->getMinimalSpacing());
-            long pitch = Hurricane::DbU::getDb(layer->getPitch());
+//            long pitch = Hurricane::DbU::getDb(layer->getPitch());
+            long pitch = 1;
             oaLayerConstraint* cMinSize = oaLayerConstraint::create(aOALayer->getNumber(),
                                                                     oaLayerConstraintDef::get(oacMinWidth),
                                                                     oaIntValue::create(theOATech,minSize));
@@ -339,6 +340,15 @@ namespace {
             oaLayerConstraint* cPitchV = oaLayerConstraint::create(aOALayer->getNumber(),
                                                                    oaLayerConstraintDef::get(oacVerticalRouteGridPitch),
                                                                    oaIntValue::create(theOATech,pitch));
+
+            {
+                oaConstraintDef *def = oaLayerConstraintDef::get(oacVerticalRouteGridPitch);
+                oaConstraint    *c = oaLayerConstraint::find(getFoundryRules(),
+                                                             aOALayer->getNumber(),
+                                                             (oaLayerConstraintDef*) def);
+            }
+            
+
             return aOALayer;
         }
 
@@ -381,7 +391,8 @@ namespace {
                 //create and add foundry constraint group for General manufacturing rules
                 //and add oaSimpleConstraintType too
                 assert(theOATech);
-                theOATech->getDefaultConstraintGroup();//add the constraint group for oa2lef
+                //add the constraint group for oa2lef
+                theOATech->getDefaultConstraintGroup();
                 oaConstraintGroup *cgFoundry = theOATech->getFoundryRules();
             }
 
@@ -569,6 +580,7 @@ namespace {
             cerr << "toOARect" << endl;
             assert(component);
             assert(block);
+            assert(_oaTech);
 
             Component2OARectMap::iterator it = _component2OARect.find(component);
             if (it != _component2OARect.end())
@@ -576,7 +588,7 @@ namespace {
 
             oaRect* rect = oaRect::create(block,
                                           toOALayerNum( component->getLayer() ),
-                                          oacDrawingPurposeType,
+                                          oaPurpose::get(_oaTech ,oacDrawingPurposeType)->getNumber(),
                                           toOABox(component->getBoundingBox()) );
             return rect;
         }
@@ -588,6 +600,7 @@ namespace {
             cerr << "toOAPathSeg" << endl;
             assert(segment);
             assert(blockNet);
+            assert(_oaTech);
 
             Segment2OAPathSegMap::iterator it = _segment2OAPathSeg.find(segment);
             if (it != _segment2OAPathSeg.end())
@@ -606,7 +619,7 @@ namespace {
                 oaSegStyle style(segment->getWidth(), oacTruncateEndStyle, oacTruncateEndStyle);
                 res = oaPathSeg::create(blockNet->getBlock(),
                                         toOALayerNum( segment->getLayer() ),
-                                        oacDrawingPurposeType,
+                                        oaPurpose::get(_oaTech ,oacDrawingPurposeType)->getNumber(),
                                         p1,
                                         p2,
                                         style);
@@ -975,6 +988,17 @@ namespace {
                 oaBox boundingBox = toOABox(bBox);
                 topBlock->getBBox(boundingBox);
             }
+            
+            oaUInt4 count = 0;
+            oaIter<oaLPPHeader> headers(designCellView->getTopBlock()->getLPPHeaders());
+            while (oaLPPHeader* lppHeader = headers.getNext()) {
+                cout << "Layer Purpose Pair " << ++count << endl;
+                
+                oaLayerNum layerNum = lppHeader->getLayerNum();
+                oaPurposeNum purpNum = lppHeader->getPurposeNum();
+                cout << "\t Layer   = " << layerNum << endl;
+                cout << "\t Purpose = " << purpNum << endl;
+            }
 
             return designCellView;
         }
@@ -1054,6 +1078,7 @@ namespace {
 
 namespace CRL {
     void OpenAccess::oaDriver(const string& path, Cell* cell) {
+        cerr << "oaDriver" << endl;
 #ifdef HAVE_OPENACCESS
         oaCell* convertedCell = NULL;
         assert(cell);
