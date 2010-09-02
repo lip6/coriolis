@@ -1,0 +1,104 @@
+#include <iostream>
+#include <string>
+#include <map>
+#include <vector>
+using namespace std;
+
+#include "vlsisapd/openChams/Circuit.h"
+#include "vlsisapd/openChams/Name.h"
+#include "vlsisapd/openChams/Parameters.h"
+#include "vlsisapd/openChams/Netlist.h"
+#include "vlsisapd/openChams/Instance.h"
+#include "vlsisapd/openChams/Net.h"
+#include "vlsisapd/openChams/Transistor.h"
+#include "vlsisapd/openChams/Schematic.h"
+#include "vlsisapd/openChams/Sizing.h"
+#include "vlsisapd/openChams/Operator.h"
+#include "vlsisapd/openChams/Layout.h"
+
+int main(int argc, char * argv[]) {
+    OpenChams::Circuit* circuit = OpenChams::Circuit::readFromFile("./inverter.xml");
+
+    cerr << circuit->getName().getString() << endl;
+    cerr << " + parameters" << endl;
+    OpenChams::Parameters params = circuit->getParameters();
+    if (!params.isEmpty()) {
+        for (map<OpenChams::Name, double>::const_iterator it = params.getValues().begin() ; it != params.getValues().end() ; ++it) {
+            cerr << " | | " << ((*it).first).getString() << " : " << (*it).second << endl;
+        }
+        for (map<OpenChams::Name, string>::const_iterator it = params.getEqValues().begin() ; it != params.getEqValues().end() ; ++it) {
+            cerr << " | | " << ((*it).first).getString() << " : " << (*it).second << endl;
+        }
+    }
+    cerr << " + netlist" << endl;
+    cerr << " | + instances" << endl;
+    OpenChams::Netlist* netlist = circuit->getNetlist();
+    if (netlist && !netlist->hasNoInstances()) {
+        for (size_t i = 0 ; i < netlist->getInstances().size() ; i++) {
+            OpenChams::Instance* inst = netlist->getInstances()[i];
+            cerr << " | | + " << inst->getName().getString() << " : " << inst->getModel().getString() << " - " << inst->getMosType().getString() << " - " << (inst->isSourceBulkConnected()?"true":"false") << endl;
+            cerr << " | | | + connectors" << endl;
+            for (map<OpenChams::Name, OpenChams::Net*>::const_iterator cit = inst->getConnectors().begin() ; cit != inst->getConnectors().end() ; ++cit) {
+                cerr << " | | | | " << ((*cit).first).getString() << " : " << ((*cit).second)->getName().getString() << endl;
+            }
+            cerr << " | | | + transistors" << endl;
+            for (size_t j = 0 ; j < inst->getTransistors().size() ; j++) {
+                OpenChams::Transistor* tr = inst->getTransistors()[j];
+                cerr << " | | | | name: " <<  tr->getName().getString() << " - gate: " << tr->getGate().getString() << " - source: " << tr->getSource().getString() << " - drain: " << tr->getDrain().getString() << " - bulk: " << tr->getBulk().getString() << endl;
+            }
+        }
+    }
+    cerr << " | + nets" << endl;
+    if (!netlist->hasNoNets()) {
+        for (size_t i = 0 ; i < netlist->getNets().size() ; i++) {
+            OpenChams::Net* net = netlist->getNets()[i];
+            cerr << " | | + " << net->getName().getString() << " : " << net->getType().getString() << " - " << (net->isExternal()?"true":"false") << endl;
+            cerr << " | | | + connections" << endl;
+            for (size_t j = 0 ; j < net->getConnections().size() ; j++) {
+                OpenChams::Net::Connection* connect = net->getConnections()[j];
+                cerr << " | | | | " << connect->getInstanceName().getString() << "." << connect->getConnectorName().getString() << endl;
+            }
+        }
+    }
+    OpenChams::Schematic* schematic = circuit->getSchematic();
+    if (schematic && !schematic->hasNoInstances()) {
+        cerr << " + schematic - zoom: " << schematic->getZoom() << endl;
+        for (map<OpenChams::Name, OpenChams::Schematic::Infos*>::const_iterator sit = schematic->getInstances().begin() ; sit != schematic->getInstances().end() ; ++sit) {
+            OpenChams::Schematic::Infos* inf = (*sit).second;
+            cerr << " | name: " << ((*sit).first).getString() << " - x: " << inf->getX() << " - y: " << inf->getY() << " - symmetry: " << inf->getSymmetry().getString() << endl;
+        }
+    }
+    OpenChams::Sizing* sizing = circuit->getSizing();
+    if (sizing) {
+        cerr << " + sizing" << endl;
+        if (!sizing->hasNoOperators()) {
+            for (map<OpenChams::Name, OpenChams::Operator*>::const_iterator oit = sizing->getOperators().begin() ; oit != sizing->getOperators().end() ; ++oit) {
+                OpenChams::Operator* op = (*oit).second;
+                cerr << " | + instance name: " << ((*oit).first).getString() << " - operator: " << op->getName().getString() << " - simulModel: " << op->getSimulModel().getString() << " - callOrder: " << op->getCallOrder() << endl;
+                if (!op->hasNoConstraints()) {
+                    for (map<OpenChams::Name, OpenChams::Operator::Constraint*>::const_iterator cit = op->getConstraints().begin() ; cit != op->getConstraints().end() ; ++cit) {
+                        OpenChams::Operator::Constraint* cstr = (*cit).second;
+                        cerr << " | | + param: " << ((*cit).first).getString() << " - ref: " << cstr->getRef().getString() << " - refParam: " << cstr->getRefParam().getString() << " - factor: " << cstr->getFactor() << endl;
+                    }
+                }
+            }
+        }
+        if (!sizing->hasNoEquations()) {
+            cerr << " | + equations" << endl;
+            for (map<OpenChams::Name, string>::const_iterator eit = sizing->getEquations().begin() ; eit != sizing->getEquations().end() ; ++eit) {
+                cerr << " | | " << ((*eit).first).getString() << " : " << (*eit).second << endl;
+            }
+        }
+    }
+    OpenChams::Layout* layout = circuit->getLayout();
+    if (layout && !layout->hasNoInstance()) {
+        cerr << " + layout" << endl;
+        for (map<OpenChams::Name, OpenChams::Name>::const_iterator lit = layout->getInstances().begin() ; lit != layout->getInstances().end() ; ++lit) {
+            cerr << " | | instance name: " << ((*lit).first).getString() << " - style: " << ((*lit).second).getString() << endl;
+        }
+    }
+
+
+    return 0;
+}
+

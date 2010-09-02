@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<circuit name="design" techno="myTech">
+  <parameters>
+    <parameter   name="temp"    value="27.0"/>
+    <parameter   name="Vdd"     value="1.2"/>
+    <parameter   name="Vss"     value="0.0"/>
+    <parameter   name="L"       value="0.10e-6"/>
+    <parameter   name="Ids"     value="30e-6"/>
+    <parameter   name="Veg"     value="0.12"/>
+    <parameterEq name="complex" equation="myEq"/>
+  </parameters>
+  <netlist>
+    <instances>
+      <instance name="nmos1" model="Transistor" mostype="NMOS" sourceBulkConnected="True">
+        <connectors>
+          <connector name="G"/>
+          <connector name="D"/>
+          <connector name="S"/>
+        </connectors>
+        <transistors>
+          <transistor name="m1">
+            <connection gate="G" source="S" drain="D" bulk="S"/>
+          </transistor>
+        </transistors>
+      </instance>
+      <instance name="pmos1" model="Transistor" mostype="PMOS" sourceBulkConnected="True">
+        <connectors>
+          <connector name="G"/>
+          <connector name="D"/>
+          <connector name="S"/>
+        </connectors>
+        <transistors>
+          <transistor name="m1">
+            <connection gate="G" source="S" drain="D" bulk="S"/>
+          </transistor>
+        </transistors>
+      </instance>
+    </instances>
+    <nets>
+      <net name="vdd" type="power" isExternal="True">
+        <connector instance="pmos1" name="S"/>
+      </net>
+      <net name="vss" type="ground" isExternal="True">
+        <connector instance="nmos1" name="S"/>
+      </net>
+      <net name="in" type="logical" isExternal="True">
+        <connector instance="nmos1" name="G"/>
+        <connector instance="pmos1" name="G"/>
+      </net>
+      <net name="out" type="logical" isExternal="True">
+        <connector instance="nmos1" name="D"/>
+        <connector instance="pmos1" name="D"/>
+      </net>
+    </nets>
+  </netlist>
+  <schematic zoom="1.0">
+    <instance name="nmos1" x="2490" y="2600" sym="ID"/>
+    <instance name="pmos1" x="2490" y="2300" sym="ID"/>
+  </schematic>
+  <sizing>
+    <instance name="pmos1" operator="OPVG(Veg)" simulModel="BSIM3V3" callOrder="0">
+      <constraint param="Temp" ref="design" refParam="temp"/>
+      <constraint param="Ids"  ref="design" refParam="Ids"/>
+      <constraint param="L"    ref="design" refParam="L"/>
+      <constraint param="Veg"  ref="design" refParam="Veg"/>
+      <constraint param="Vd"   ref="design" refParam="Vdd" factor="0.5"/>
+      <constraint param="Vs"   ref="design" refParam="Vdd"/>
+    </instance>
+    <instance name="nmos1" operator="OPW(Vg,Vs)" simulModel="BSIM3V3" callOrder="1">
+      <constraint param="Temp" ref="design" refParam="temp"/>
+      <constraint param="Ids"  ref="design" refParam="Ids"/>
+      <constraint param="L"    ref="design" refParam="L"/>
+      <constraint param="Vs"   ref="design" refParam="Vdd"/>
+      <constraint param="Vg"   ref="pmos1"  refParam="Vg"/>
+      <constraint param="Vd"   ref="pmos1"  refParam="Vd"/>
+      <constraint param="another" refEquation="myEq" factor="-2.5"/>
+    </instance>
+    <equations>
+      <eq name="myEq" equation="A/more+complex*equation"/>
+    </equations>
+  </sizing>
+  <layout>
+    <instance name="pmos1" style="Common transistor"/>
+    <instance name="nmos1" style="Rotate transistor"/>
+  </layout>
+</circuit>
