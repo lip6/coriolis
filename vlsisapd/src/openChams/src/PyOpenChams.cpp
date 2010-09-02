@@ -14,6 +14,7 @@ using namespace boost::python;
 #include "vlsisapd/openChams/Operator.h"
 #include "vlsisapd/openChams/SimulModel.h"
 #include "vlsisapd/openChams/Sizing.h"
+#include "vlsisapd/openChams/Layout.h"
 #include "vlsisapd/openChams/Circuit.h"
 #include "vlsisapd/openChams/OpenChamsException.h"
 
@@ -238,6 +239,18 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
         .def("getOperators", &Sizing::getOperators, return_internal_reference<>())
     ;
 
+    // map wrapping for OpenChams::Layout
+    STL_MAP_WRAPPING(Name, Name, "LayoutInstancesMap")
+    // class OpenChams::Layout
+    class_<Layout, Layout*>("Layout", init<Circuit*>())
+        // accessors
+        .def("hasNoInstance", &Layout::hasNoInstance)
+        // modifiers
+        .def("addInstance", &Layout::addInstance)
+        // stl containers
+        .def("getInstances", &Layout::getInstances, return_internal_reference<>())
+    ;
+
     class_<Circuit, Circuit*>("Circuit", init<Name, Name>())
         // properties
         .add_property("name"      , &Circuit::getName      )
@@ -246,12 +259,14 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
         .add_property("netlist"   , make_function(&Circuit::getNetlist  , return_value_policy<reference_existing_object>()))
         .add_property("schematic" , make_function(&Circuit::getSchematic, return_value_policy<reference_existing_object>()))
         .add_property("sizing"    , make_function(&Circuit::getSizing   , return_value_policy<reference_existing_object>()))
+        .add_property("layout"    , make_function(&Circuit::getLayout   , return_value_policy<reference_existing_object>()))
         // accessors
         .def("getValue", &Circuit::getValue)
         // modifiers
         .def("createNetlist"  , &Circuit::createNetlist  , return_value_policy<reference_existing_object>())
         .def("createSchematic", &Circuit::createSchematic, return_value_policy<reference_existing_object>())
         .def("createSizing"   , &Circuit::createSizing   , return_value_policy<reference_existing_object>())
+        .def("createLayout"   , &Circuit::createLayout   , return_value_policy<reference_existing_object>())
         .def("addParameter", static_cast<void(Circuit::*)(Name, double     )>(&Circuit::addParameter))
         .def("addParameter", static_cast<void(Circuit::*)(Name, std::string)>(&Circuit::addParameter))
         // others

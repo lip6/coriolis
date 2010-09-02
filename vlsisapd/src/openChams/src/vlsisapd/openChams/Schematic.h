@@ -1,5 +1,5 @@
 /*
- *  SchematicInfos.h
+ *  Schematic.h
  *  openChams
  *
  *  Created by damien dupuis on 22/01/10.

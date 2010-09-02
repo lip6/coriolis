@@ -28,6 +28,7 @@ class Schematic;
 class Sizing;
 class Transistor;
 class Operator;
+class Layout;
 
 class Circuit {
     public:
@@ -39,6 +40,7 @@ class Circuit {
     inline Netlist*   getNetlist();
     inline Schematic* getSchematic();
     inline Sizing*    getSizing();
+    inline Layout*    getLayout();
     inline void       addParameter(Name, double);
     inline void       addParameter(Name, std::string);
     inline Parameters getParameters();
@@ -46,10 +48,12 @@ class Circuit {
     void addSimulModel(unsigned, SimulModel::Base, SimulModel::Version, std::string);
     
     inline void       setSizing(Sizing*);
+    inline void       setLayout(Layout*);
 
     Netlist*   createNetlist();
     Schematic* createSchematic(double);
     Sizing*    createSizing();
+    Layout*    createLayout();
     
     bool writeToFile(std::string filePath);
     static Circuit* readFromFile(const std::string filePath);
@@ -78,6 +82,8 @@ class Circuit {
     void      readConstraint(xmlNode*, Operator*);
     void      readEquations(xmlNode*, Sizing*);
     void      readEquation(xmlNode*, Sizing*);
+    void      readLayout(xmlNode*);
+    void      readInstanceLayout(xmlNode*, Layout*);
     
     void      check_uppercase(std::string& str, std::vector<std::string>& compares, std::string message);
     void      check_lowercase(std::string& str, std::vector<std::string>& compares, std::string message);
@@ -88,6 +94,7 @@ class Circuit {
     Netlist*   _netlist;
     Schematic* _schematic;
     Sizing*    _sizing;
+    Layout*    _layout;
     std::map<unsigned, SimulModel*> _simulModels;
 };
     
@@ -97,6 +104,7 @@ inline double     Circuit::getValue(Name name) { return _params.getValue(name); 
 inline Netlist*   Circuit::getNetlist()        { return _netlist; };
 inline Schematic* Circuit::getSchematic()      { return _schematic; };
 inline Sizing*    Circuit::getSizing()         { return _sizing; };
+inline Layout*    Circuit::getLayout()         { return _layout; };
 inline void       Circuit::addParameter(Name name, double value) { _params.addParameter(name, value); };
 inline void       Circuit::addParameter(Name name, std::string eqStr) { _params.addParameter(name, eqStr); };
 inline Parameters Circuit::getParameters()     { return _params; };

@@ -3,7 +3,7 @@
  *  openChams
  *
  *  Created by damien dupuis on 18/12/09.
- *  Copyright 2009 UPMC / LIP6. All rights reserved.
+ *  Copyright 2008-2010 UPMC / LIP6. All rights reserved.
  *
  */
 

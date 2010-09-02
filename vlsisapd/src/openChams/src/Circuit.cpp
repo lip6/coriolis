@@ -21,6 +21,7 @@ using namespace std;
 #include "vlsisapd/openChams/Schematic.h"
 #include "vlsisapd/openChams/SimulModel.h"
 #include "vlsisapd/openChams/Sizing.h"
+#include "vlsisapd/openChams/Layout.h"
 #include "vlsisapd/openChams/Transistor.h"
 #include "vlsisapd/openChams/Operator.h"
 #include "vlsisapd/openChams/OpenChamsException.h"
@@ -44,8 +45,9 @@ static bool readInstancesDone         = false;
 static bool readNetsDone              = false;
 static bool readSchematicDone         = false;
 static bool readSizingDone            = false;
+static bool readLayoutDone            = false;
     
-Circuit::Circuit(Name name, Name techno) : _name(name), _techno(techno), _netlist(NULL), _schematic(NULL), _sizing(NULL) {
+Circuit::Circuit(Name name, Name techno) : _name(name), _techno(techno), _netlist(NULL), _schematic(NULL), _sizing(NULL), _layout(NULL) {
     readCircuitParametersDone = false;
     readSimulModelsDone       = false;
     readNetListDone           = false;
@@ -53,6 +55,7 @@ Circuit::Circuit(Name name, Name techno) : _name(name), _techno(techno), _netlis
     readNetsDone              = false;
     readSchematicDone         = false;
     readSizingDone            = false;
+    readLayoutDone            = false;
 }
 
 // COMPARISON FUNCTION //
@@ -641,6 +644,40 @@ void Circuit::readEquation(xmlNode* node, Sizing* sizing) {
     }
 }
     
+// LAYOUT //
+void Circuit::readLayout(xmlNode* node) {
+    if (readLayoutDone) {
+        cerr << "[WARNING] Only one 'layout' node is allowed in circuit, others will be ignored." << endl;
+        return;
+    }
+    
+    Layout* layout = new Layout(this);
+    xmlNode* child = node->children;
+    for (xmlNode* node = child; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE) {
+            if (xmlStrEqual(node->name, (xmlChar*)"instance")) {
+                readInstanceLayout(node, layout);
+            } else {
+                cerr << "[WARNING] Only 'instance' nodes are allowed in 'sizing', others will be ignored." << endl;
+            }
+        }
+    }
+    readLayoutDone = true;
+    _layout = layout;
+}
+    
+void Circuit::readInstanceLayout(xmlNode* node, Layout* layout) {
+    xmlChar* nameC  = xmlGetProp(node, (xmlChar*)"name");
+    xmlChar* styleC = xmlGetProp(node, (xmlChar*)"style");
+    if (nameC && styleC) {
+        Name     iName     ((const char*)nameC);
+        Name     styleName ((const char*)styleC);
+        layout->addInstance(iName, styleName);
+    } else {
+        throw OpenChamsException("[ERROR] 'instance' node in 'layout' must have 'name' and 'style' properties.");
+    }
+}
+    
 Circuit* Circuit::readFromFile(const string filePath) {
     LIBXML_TEST_VERSION;
     Circuit* cir = NULL;
@@ -683,6 +720,9 @@ Circuit* Circuit::readFromFile(const string filePath) {
                 }
                 else if (xmlStrEqual(node->name, (xmlChar*)"sizing")) {
                     cir->readSizing(node);
+                }
+                else if (xmlStrEqual(node->name, (xmlChar*)"layout")) {
+                    cir->readLayout(node);
                 }
                 else {
                     string error("[ERROR] Unknown section ");
@@ -731,6 +771,17 @@ Sizing* Circuit::createSizing() {
         throw OpenChamsException("[ERROR] Cannot create sizing.");
 
     return _sizing;
+}
+
+Layout* Circuit::createLayout() {
+    if (_layout)
+        throw OpenChamsException("[ERROR] Cannot create two layouts in one circuit.");
+
+    _layout = new Layout(this);
+    if (!_layout)
+        throw OpenChamsException("[ERROR] Cannot create layout.");
+
+    return _layout;
 }
 
 bool Circuit::writeToFile(string filePath) {
@@ -873,6 +924,13 @@ bool Circuit::writeToFile(string filePath) {
             file << "    </equations>" << endl;
         }
         file << "  </sizing>" << endl;
+    }
+    if (_layout && !_layout->hasNoInstance()) {
+        file << "  <layout>" << endl;
+        for (map<Name, Name>::const_iterator it = _layout->getInstances().begin() ; it != _layout->getInstances().end() ; ++it) {
+            file << "    <instance name=\"" << ((*it).first).getString() << "\" style=\"" << ((*it).second).getString() << "\"/>" << endl;
+        }
+        file << "  </layout>" << endl;
     }
     file << "</circuit>" << endl;
     file.close();

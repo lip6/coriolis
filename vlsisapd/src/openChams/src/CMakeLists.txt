@@ -10,6 +10,7 @@ SET ( hpps vlsisapd/openChams/Circuit.h
            vlsisapd/openChams/Schematic.h
            vlsisapd/openChams/SimulModel.h
            vlsisapd/openChams/Sizing.h
+           vlsisapd/openChams/Layout.h
            vlsisapd/openChams/Transistor.h
            vlsisapd/openChams/OpenChamsException.h 
     )
@@ -23,6 +24,7 @@ SET ( cpps Circuit.cpp
            Schematic.cpp
            SimulModel.cpp
            Sizing.cpp
+           Layout.cpp
            Transistor.cpp 
     )
 SET ( pycpps PyOpenChams.cpp 
