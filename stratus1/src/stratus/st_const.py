@@ -133,7 +133,7 @@ class Constant ( Model ) :
       else             : self.outPut[i] <= Zero ( 1 )
       i += 1
 
-  def GetModelName ( cls, param ) :
+  def getModelName ( cls, param ) :
     modelName = "constant"
     
     modelName += "_"
@@ -141,9 +141,9 @@ class Constant ( Model ) :
         
     return modelName
     
-  GetModelName = classmethod ( GetModelName )
+  getModelName = classmethod ( getModelName )
 
-  def GetString ( param ) :
+  def getString ( param ) :
     nb = param['nb']
     
     # Error : if nb is not a string
@@ -190,7 +190,7 @@ class Constant ( Model ) :
 
     return string
     
-  GetString = staticmethod ( GetString )
+  getString = staticmethod ( getString )
 
   def GetParam ( cls ):
 
