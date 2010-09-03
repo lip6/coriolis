@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-24 13:35:19" - OpenAccessDriver.cpp
+// Time-stamp: "2010-08-26 17:35:32" - OpenAccessDriver.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -343,7 +343,7 @@ namespace {
 
             {
                 oaConstraintDef *def = oaLayerConstraintDef::get(oacVerticalRouteGridPitch);
-                oaConstraint    *c = oaLayerConstraint::find(getFoundryRules(),
+                oaConstraint    *c = oaLayerConstraint::find(theOATech->getFoundryRules(),
                                                              aOALayer->getNumber(),
                                                              (oaLayerConstraintDef*) def);
             }
