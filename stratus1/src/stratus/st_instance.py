@@ -110,7 +110,6 @@ class Inst :
     if BV == [] : InitBV()
     
     if model in BV : model, self._inout = GetRealModel ( model )
-    print "inout récupéré:", self._inout
 
     ##### Attributes of the instance #####
     self._model        = model.lower()
@@ -169,7 +168,7 @@ class Inst :
       if self._model == c._name :
         self._st_masterCell = c
         break
-    if not( self._hur_masterCell or self._st_masterCell ) : print "\n[Stratus Warning] Inst : no master cell found for instance" + self._name
+    if not( self._hur_masterCell or self._st_masterCell ) : print "\n[Stratus Warning] Inst : no master cell found for instance " + self._name
 
     # Creation of the hurricane instance 
     if CELLS[0]._hur_plug : self.create_hur_inst ( model )

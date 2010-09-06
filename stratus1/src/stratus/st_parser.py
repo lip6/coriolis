@@ -85,7 +85,7 @@ class Parser :
   #########################################
   def start_element ( self, name, attrs ) :
     # Print which the technology is
-    if   name == 'technology' : print "  - Stratus virtual technology targets:", attrs['name']
+#    if   name == 'technology' : print "  - Stratus virtual technology targets:", attrs['name']
 
     # Modification of attributes
     if name == 'model' :

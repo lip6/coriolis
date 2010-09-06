@@ -119,8 +119,16 @@ class Bool ( Model ) :
         boolMap[self.dictInOut['i0']]   = self._i0[i]
         boolMap[self.dictInOut['i1']]   = self._i1[i]
       elif self.m in A :
-        boolMap[self.dictInOut['a']]    = self._a[i]
-        boolMap[self.dictInOut['b']]    = self._b[i]
+        # sxlib fulladder:
+        import types
+        if type ( self.dictInOut['a'] ) == types.ListType :
+          for realpin in self.dictInOut['a'] : boolMap[realpin] = self._a[i]
+        else :
+          boolMap[self.dictInOut['a']]    = self._a[i]
+        if type ( self.dictInOut['b'] ) == types.ListType :
+          for realpin in self.dictInOut['b'] : boolMap[realpin] = self._b[i]
+        else :
+          boolMap[self.dictInOut['b']]    = self._b[i]
 
       if self.m in I2 :
         boolMap[self.dictInOut['i2']]   = self._i2[i]
@@ -128,7 +136,10 @@ class Bool ( Model ) :
         boolMap[self.dictInOut['i3']]   = self._i3[i]
 
       if self.m in CIN :
-        boolMap[self.dictInOut['cin']]  = self._cin[i]
+        if type ( self.dictInOut['cin'] ) == types.ListType :
+          for realpin in self.dictInOut['cin'] : boolMap[realpin] = self._cin[i]
+        else :
+          boolMap[self.dictInOut['cin']]    = self._cin[i]
       if self.m in CMD :
         boolMap[self.dictInOut['cmd']]  = self._cmd
       elif self.m in CMD0 :
