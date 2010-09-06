@@ -22,8 +22,7 @@
     <model name="mx2"       realcell="mx2_x2"       i0="i0" i1="i1"          cmd="cmd"  q="q"                      vdd="vdd" vss="vss"></model>
     <model name="nmx2"      realcell="nmx2_x1"      i0="i0" i1="i1"          cmd="cmd" nq="nq"                     vdd="vdd" vss="vss"></model>
     <model name="halfadder" realcell="halfadder_x2"  a="a"   b="b"                   sout="sout" cout="cout"       vdd="vdd" vss="vss"></model>
-    <!-- Encapsulation of fulladder_x2 in order to modify the interface more than just the names -->               
-    <model name="fulladder" realcell="fulladder"     a="a"   b="b" cin="cin"         sout="sout" cout="cout"       vdd="vdd" vss="vss"></model>
+    <model name="fulladder" realcell="fulladder_x2"  a="a1,a2,a3,a4" b="b1,b2,b3,b4" cin="cin1,cin2,cin3" sout="sout" cout="cout" vdd="vdd" vss="vss"></model>
     <model name="sff1"      realcell="sff1_x4"       i="i"          ck="ck"             q="q"                      vdd="vdd" vss="vss"></model>
     <model name="sff2"      realcell="sff2_x4"      i0="i0" i1="i1" ck="ck"  cmd="cmd"  q="q"                      vdd="vdd" vss="vss"></model>
     <model name="sff3"      realcell="sff3_x4"      i0="i0" i1="i1" i2="i2"  ck="ck" cmd0="cmd0" cmd1="cmd1" q="q" vdd="vdd" vss="vss"></model>

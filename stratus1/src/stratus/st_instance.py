@@ -110,6 +110,7 @@ class Inst :
     if BV == [] : InitBV()
     
     if model in BV : model, self._inout = GetRealModel ( model )
+    print "inout récupéré:", self._inout
 
     ##### Attributes of the instance #####
     self._model        = model.lower()
@@ -215,12 +216,8 @@ class Inst :
     self._hur_instance = inst
     
     ##### Connection #####
-    for pin in self._map :
-      mapNet = self._map[pin]
-
-      ### Virtual library ###
-      if "_inout" in self.__dict__ : pin = self._inout[pin]
-      
+    ##### Function to be applied on each pin 
+    def connectPin ( pin ) : 
       # Error : if there is a space in the name of the pin (usually done at the end of the pin ...)
       if re.search ( " ", pin ) :
         err = "\n[Stratus ERROR] Inst : " + self._name + " the keys of the connection map can not contain a space : \"" + pin + "\".\n"
@@ -328,12 +325,29 @@ class Inst :
         # In order to see the ring
         if str ( realNet.__class__ ) not in ALIM_NET : CRL.createPartRing ( self._st_cell._hur_cell, hurNet.getName() )
 
+    ##### Loop on each pin
+    for pin in self._map :
+      mapNet = self._map[pin]
+
+      ### Virtual library ###
+      if "_inout" in self.__dict__ :
+        import types
+        if type ( self._inout[pin] ) == types.ListType :
+          for realpin in self._inout[pin] :
+            connectPin ( realpin )
+        else :
+          realpin = self._inout[pin]
+          connectPin ( realpin )
+      ### Other ###
+      else :
+        connectPin ( pin )
+    
     # Error message if the connection is not correct (detection before vst driver)
     # Not for vdd/vss in case of utilisation of SetGlobal
     # The detection is done with vst driver in this case ...
     for plug in self._hur_instance.getUnconnectedPlugs():
       if plug.getMasterNet().getType() not in ( TypePOWER, TypeGROUND ) :
-        name = str(plus.getMasterNet().getName())
+        name = str(plug.getMasterNet().getName())
         chaine = re.search ( "(.*)\(", name )
         if chaine : name = chaine.group(1)
     

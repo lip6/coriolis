@@ -85,8 +85,7 @@ class Parser :
   #########################################
   def start_element ( self, name, attrs ) :
     # Print which the technology is
-#    if   name == 'technology' :
-#      print "Technology is :",   attrs['name']
+    if   name == 'technology' : print "  - Stratus virtual technology targets:", attrs['name']
 
     # Modification of attributes
     if name == 'model' :
@@ -97,7 +96,14 @@ class Parser :
       inOutTemp = {}
       for key in attrs :
         if key not in ( 'name', 'realcell' ) :
-          inOutTemp[str(key)] = str(attrs[str(key)])
+          virtualPort = str(key)
+          realPort    = str(attrs[virtualPort])
+          if ',' in realPort :
+            import re
+            tabPort = re.split ( '[,]', realPort )
+            inOutTemp[virtualPort] = tabPort
+          else :
+            inOutTemp[virtualPort] = realPort
 
       self._inOut[str(attrs['name'])] = inOutTemp
       
@@ -161,7 +167,7 @@ class InitParser :
   def Parse ( self, nameFile ) :
     self._p.ParseFile ( open ( nameFile, "r" ) )
 
-    # Givien the tab of the name of the cells, contruction of a tab giving the name of the generators (first letter uppered)
+    # Given the tab of the name of the cells, contruction of a tab giving the name of the generators (first letter uppered)
     for name in BV :
       chaine = re.search ( "([a-z])(.+)", name )
       name_g = chaine.group(1).upper() + chaine.group(2)
