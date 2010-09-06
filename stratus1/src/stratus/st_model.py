@@ -82,6 +82,9 @@ class Model :
   def __init__ ( self, nom, param = {}, hurCell = None, hurricane_plug = True ) :
     global FRAMEWORK, CELLS
 
+    # Look up the editor
+    if globals().has_key ( "__editor" ) : setEditor ( __editor )
+
     self._name         = nom
     self._param        = param
 
@@ -151,12 +154,18 @@ class Model :
       from st_net import VddInFromHur
       from st_net import VssInFromHur
       
-      netVdd = iter(hurCell.getPowerNets()).next()
-      netVss = iter(hurCell.getGroundNets()).next()
+      try:
+        netVdd = iter(hurCell.getPowerNets()).next()
+      except StopIteration:
+        print "[Stratus Warning] : Cell", self._name, "does not have a vdd port."
+        pass
+      try:
+        netVss = iter(hurCell.getGroundNets()).next()
+      except StopIteration:
+        print "[Stratus Warning] : Cell", self._name, "does not have a vss port."
+        pass
       if netVdd != None : self._st_vdds.append ( VddInFromHur ( netVdd ) )
-      else              : print "[Stratus Warning] : Cell", self._name, "does not have a vdd port."
       if netVss != None : self._st_vsss.append ( VssInFromHur ( netVss ) )
-      else              : print "[Stratus Warning] : Cell", self._name, "does not have a vss port."
 
     self._st_cks = []
     
