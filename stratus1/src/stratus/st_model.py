@@ -156,16 +156,16 @@ class Model :
       
       try:
         netVdd = iter(hurCell.getPowerNets()).next()
+        self._st_vdds.append ( VddInFromHur ( netVdd ) )
       except StopIteration:
         print "[Stratus Warning] : Cell", self._name, "does not have a vdd port."
         pass
       try:
         netVss = iter(hurCell.getGroundNets()).next()
+        self._st_vsss.append ( VssInFromHur ( netVss ) )
       except StopIteration:
         print "[Stratus Warning] : Cell", self._name, "does not have a vss port."
         pass
-      if netVdd != None : self._st_vdds.append ( VddInFromHur ( netVdd ) )
-      if netVss != None : self._st_vsss.append ( VssInFromHur ( netVss ) )
 
     self._st_cks = []
     
