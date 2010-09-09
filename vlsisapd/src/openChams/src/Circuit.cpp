@@ -568,7 +568,9 @@ void Circuit::readInstanceSizing(xmlNode* node, Sizing* sizing) {
     xmlChar* orderC    = xmlGetProp(node, (xmlChar*)"callOrder");
     if (nameC && operatorC && simulModC && orderC) {
         Name     iName   ((const char*)nameC);
-        Name     opName  ((const char*)operatorC);
+        string   opStr   ((const char*)operatorC);
+        transform(opStr.begin(), opStr.end(), opStr.begin(), ::toupper);
+        Name     opName  (opStr);
         Name     simulMod((const char*)simulModC);
         unsigned callOrder = ::getValue<unsigned>(orderC);
         Operator* op = sizing->addOperator(iName, opName, simulMod, callOrder);
