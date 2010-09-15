@@ -1,0 +1,43 @@
+Author : Jean-Manuel CABA, september 2010
+this files describe the roadmap, I think should be for the OpenAccess Driver/Parser
+
+- EVERYONE WHO WANT TO CONTINUE THIS WORK SHOULD READ AT LEAST MY REPPORT,
+  concept like EMH are really welcome ...
+
+ON THE DRIVER
+
+- first write the driver as mixed for debug purpose : convert AMS device using freePDK45
+  xml techno file from hurricane, but use existing OpenAccess files for
+  freepdk45 techno, separating technology converting with device
+  converting (working on it)
+
+- then check that, layout is working correctly, all components,
+  metals, poly ... are present and DRC works without errors.
+
+- then concentrate on how to really get the LSW have the layers (colors), and
+  encounter eating converted techno without errors, and add the techno
+  convertion ... don't join the techno convertion with device, the
+  main reason is design kits : a design kits basicly contain libs for
+  techno and libs for cells.
+
+- test with a "small" cpu, like a mips, and some ampli, miller ...
+
+- when and ONLY when the layer is correctly converted totaly, 
+  populate symbolic view, to show a rectangle with input on left, and output
+  on right.
+
+- then populate schematic view, to show shematic "device" will be placed
+  like in layout.
+
+ON THE PARSER
+
+- first use a mixed mode like for the driver
+
+- convert only analogic because we have no numerical hurricane
+  freePDK45 cells.
+
+- see in a pharos, CellViewer like (cf: tests and benchmarks) that 
+  the converted hurricane cells are the same
+
+- deal with the layer convertions, masks ... and complete technology conversion
+
