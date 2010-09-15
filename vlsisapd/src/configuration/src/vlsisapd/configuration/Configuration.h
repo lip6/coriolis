@@ -40,10 +40,12 @@ namespace Cfg {
 
   class Configuration {
     public:
+      enum Flags { DriveValues=0x1, DriveLayout=0x2 };
+    public:
       static Configuration*           get            ();
     public:
     // Methods.
-             ConfigurationWidget*     buildWidget    ();
+             ConfigurationWidget*     buildWidget    ( unsigned int flags );
       inline const std::map<const std::string,Parameter*>&
                                       getParameters  () const;
       inline const LayoutDescription& getLayout      () const;
@@ -54,8 +56,9 @@ namespace Cfg {
                                                      , Parameter::Type    type
                                                      , const std::string& value );
              void                     print          ( std::ostream& ) const;
-             void                     readFromFile   ( const std::string& );
-             void                     writeToStream  ( std::ostream& ) const;
+             bool                     readFromFile   ( const std::string& );
+             bool                     writeToFile    ( const std::string&, unsigned int flags ) const;
+             void                     writeToStream  ( std::ostream&, unsigned int flags ) const;
     private:
     // Attributes.
       static Configuration*                   _singleton;

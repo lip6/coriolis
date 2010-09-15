@@ -29,7 +29,6 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QGridLayout>
-#include <QPushButton>
 #include <QApplication>
 
 #include "vlsisapd/configuration/Configuration.h"
@@ -62,22 +61,10 @@ namespace Cfg {
     setObjectName ( name.c_str() );
 
     QVBoxLayout* vLayout = new QVBoxLayout ();
-    vLayout->addLayout ( _gridLayout );
-
-    QHBoxLayout* hLayout = new QHBoxLayout ();
-    hLayout->addStretch ();
-
-    QPushButton* apply = new QPushButton ();
-    apply->setText ( tr("Apply") );
-    hLayout->addWidget ( apply );
-    hLayout->addStretch ();
-
-    vLayout->addLayout ( hLayout );
+    vLayout->addLayout  ( _gridLayout );
     vLayout->addStretch ();
 
     setLayout ( vLayout );
-
-    connect ( apply, SIGNAL(clicked()), this, SIGNAL(updateParameters()) );
   }
 
 
@@ -157,7 +144,11 @@ namespace Cfg {
   }
 
 
-  ParameterWidget* ConfTabWidget::addParameter ( Parameter* parameter, const std::string& label, int column, int flags )
+  ParameterWidget* ConfTabWidget::addParameter ( Parameter*         parameter
+                                               , const std::string& label
+                                               , int                column
+                                               , int                span
+                                               , int                flags )
   {
     ConfigurationWidget* cw = rparent<ConfigurationWidget*> ( this );
     ParameterWidget*     pw = cw->find(parameter);
@@ -173,14 +164,22 @@ namespace Cfg {
       if ( column < 0 ) column = 0;
       else              column = _columns-1;
     }
+    if ( span < 0 ) span = 1;
+    if ( (column+span > _columns) ) span = _columns - column;
+    if ( span > 1 ) _alignMaxRowCount ();
+
+    int qspan = 2*span-1;
+  //cerr << parameter->getId() << " span:" << span << " " << qspan << endl;
 
     pw = new ParameterWidget ( this, parameter, label, flags );
-    _gridLayout->addWidget ( pw->getLabelWidget(), row,   column*2, Qt::AlignRight );
-    _gridLayout->addWidget ( pw->getValueWidget(), row, 1+column*2, Qt::AlignLeft  );
+    _gridLayout->addWidget ( pw->getLabelWidget(), row, column*2  , Qt::AlignRight );
+    _gridLayout->addWidget ( pw->getValueWidget(), row, column*2+1, 1, qspan, Qt::AlignLeft  );
 
     connect ( this, SIGNAL(updateParameters()), pw, SLOT(updateValue()) );
 
     _rowsCount[column]++;
+
+    if ( span > 1 ) _alignMaxRowCount ();
 
     return pw;
   }

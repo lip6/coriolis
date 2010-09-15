@@ -63,6 +63,8 @@ namespace Cfg {
       case Parameter::String:
         {
           QLineEdit* lineEdit = new QLineEdit();
+          lineEdit->setSizePolicy ( QSizePolicy::Expanding, QSizePolicy::Fixed );
+          lineEdit->setMinimumWidth ( 375 );
           lineEdit->setText ( QString("%1").arg(_parameter->asString().c_str()) );
           _valueWidget = lineEdit;
         }
@@ -151,6 +153,7 @@ namespace Cfg {
           int        currentValue = _parameter->asInt();
           int        currentIndex = 0;
           QComboBox* comboBox     = new QComboBox();
+        //comboBox->setSizePolicy ( QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding );
           const vector<Parameter::EnumValue>& values = _parameter->getValues();
           for ( size_t i=0 ; i != values.size() ; ++i ) {
             comboBox->addItem ( values[i]._label.c_str(), values[i]._value );

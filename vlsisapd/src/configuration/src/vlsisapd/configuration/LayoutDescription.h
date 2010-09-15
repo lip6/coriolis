@@ -29,6 +29,7 @@
 
 #include  <string>
 #include  <vector>
+#include  <iostream>
 
 
 namespace Cfg {
@@ -51,26 +52,29 @@ namespace Cfg {
       inline static WidgetDescription* parameter  ( const std::string& id
                                                   , const std::string& label 
                                                   , int                column
+                                                  , int                span
                                                   , int                flags
                                                   );
       inline        Type               getType    () const;
       inline        const std::string& getId      () const;
       inline        const std::string& getLabel   () const;
-      inline        const std::string& getTitle   () const;
       inline        int                getColumn  () const;
+      inline        int                getSpan    () const;
       inline        int                getFlags   () const;
     private:
       Type         _type;
-      std::string  _id;      // Alternate id, title or section.
+      std::string  _id;                // Note: title, section & rule have no id.
       std::string  _label;
       int          _column;
+      int          _span;
       int          _flags;
     private:
       inline  WidgetDescription ( Type               type
                                 , const std::string& id    ="<none>"
                                 , const std::string& label ="<none>"
                                 , int                column=0
-                                , int                flags=0
+                                , int                span  =1
+                                , int                flags =0
                                 );
   };
 
@@ -80,31 +84,33 @@ namespace Cfg {
                                                , const std::string& id 
                                                , const std::string& label 
                                                , int                column
+                                               , int                span
                                                , int                flags )
-    : _type(type), _id(id), _label(label), _column(column), _flags(flags)
+    : _type(type), _id(id), _label(label), _column(column), _span(span), _flags(flags)
   { }
 
   inline WidgetDescription* WidgetDescription::rule ()
   { return new WidgetDescription(Rule); }
 
   inline WidgetDescription* WidgetDescription::title ( const std::string& title )
-  { return new WidgetDescription(Title,title); }
+  { return new WidgetDescription(Title,"<none>",title); }
 
-  inline WidgetDescription* WidgetDescription::section ( const std::string& title, int column )
-  { return new WidgetDescription(Section,title,"<none>",column); }
+  inline WidgetDescription* WidgetDescription::section ( const std::string& section, int column )
+  { return new WidgetDescription(Section,"<none>",section,column); }
 
   inline WidgetDescription* WidgetDescription::parameter ( const std::string& id
                                                          , const std::string& label 
                                                          , int                column
+                                                         , int                span
                                                          , int                flags
                                                          )
-  { return new WidgetDescription(Parameter,id,label,column,flags); }
+  { return new WidgetDescription(Parameter,id,label,column,span,flags); }
 
   inline WidgetDescription::Type  WidgetDescription::getType    () const { return _type; }
   inline const std::string&       WidgetDescription::getId      () const { return _id; }
   inline const std::string&       WidgetDescription::getLabel   () const { return _label; }
-  inline const std::string&       WidgetDescription::getTitle   () const { return _id; }
   inline int                      WidgetDescription::getColumn  () const { return _column; }
+  inline int                      WidgetDescription::getSpan    () const { return _span; }
   inline int                      WidgetDescription::getFlags   () const { return _flags; }
 
 
@@ -148,8 +154,22 @@ namespace Cfg {
       inline                                     LayoutDescription ( Configuration* );
       inline void                                addTab            ( TabDescription* );
       inline TabDescription*                     getBackTab        ();
+             TabDescription*                     getTab            ( const std::string& tabName );
       inline const std::vector<TabDescription*>& getTabs           () const;
-             ConfigurationWidget*                buildWidget       ();
+             void                                addRule           ( const std::string& tabName );
+             void                                addTitle          ( const std::string& tabName
+                                                                   , const std::string& title );
+             void                                addSection        ( const std::string& tabName
+                                                                   , const std::string& section
+                                                                   , int                column=0 );
+             void                                addParameter      ( const std::string& tabName
+                                                                   , const std::string& id
+                                                                   , const std::string& label
+                                                                   , int                column=0
+                                                                   , int                span  =1
+                                                                   , unsigned int       flags =0 );
+             ConfigurationWidget*                buildWidget       ( unsigned int       flags );
+             void                                writeToStream     ( std::ostream& ) const;
     private:
       Configuration*               _configuration;
       std::vector<TabDescription*> _tabs;

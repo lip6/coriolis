@@ -24,7 +24,9 @@
 
 
 #include  <sstream>
+#include  <fstream>
 #include  <iomanip>
+#include  <vector>
 #include  <libxml/xmlreader.h>
 #include  "vlsisapd/configuration/Configuration.h"
 #include  "vlsisapd/configuration/ConfigurationWidget.h"
@@ -62,14 +64,14 @@ namespace {
   };
 
 
-  XmlParser::XmlParser ( Configuration*       conf
-                       , const string&        fileName )
-    : _configuration      (conf)
-    , _fileName           (fileName)
-    , _reader             (NULL)
-    , _status             (1)
-    , _tool               ("<none>")
-    , _parameter          (NULL)
+  XmlParser::XmlParser ( Configuration* conf
+                       , const string&  fileName )
+    : _configuration(conf)
+    , _fileName     (fileName)
+    , _reader       (NULL)
+    , _status       (1)
+    , _tool         ("<none>")
+    , _parameter    (NULL)
   { }
 
 
@@ -275,6 +277,7 @@ namespace {
     string attrType    = _getAttributeValue("type");
     string attrLabel   = _getAttributeValue("label");
     string attrColumn  = _getAttributeValue("column");
+    string attrSpan    = _getAttributeValue("span");
     string attrSpinBox = _getAttributeValue("spinbox");
 
     if ( attrId.empty() and attrType.empty() ) {
@@ -285,6 +288,11 @@ namespace {
     int column = 0;
     if ( not attrColumn.empty() ) {
       istringstream s ( attrColumn ); s >> column;
+    }
+
+    int span = 1;
+    if ( not attrSpan.empty() ) {
+      istringstream s ( attrSpan ); s >> span;
     }
 
     if ( not attrType.empty() ) {
@@ -303,7 +311,7 @@ namespace {
     int flags = 0;
     if ( attrSpinBox == "true" ) flags |= ParameterWidget::UseSpinBox;
 
-    _configuration->getLayout().getBackTab()->addWidget ( WidgetDescription::parameter(attrId,attrLabel,column,flags) );
+    _configuration->getLayout().getBackTab()->addWidget ( WidgetDescription::parameter(attrId,attrLabel,column,span,flags) );
   }
 
 
@@ -328,7 +336,9 @@ namespace Cfg {
   using std::string;
   using std::map;
   using std::ostream;
+  using std::ofstream;
   using std::setw;
+  using std::vector;
 
 
   Configuration* Configuration::_singleton = NULL;
@@ -347,8 +357,8 @@ namespace Cfg {
   { }
 
 
-  ConfigurationWidget* Configuration::buildWidget ()
-  { return _layout.buildWidget(); }
+  ConfigurationWidget* Configuration::buildWidget ( unsigned int flags )
+  { return _layout.buildWidget(flags); }
 
 
   Parameter* Configuration::getParameter ( const string& name, Parameter::Type type ) const
@@ -424,7 +434,19 @@ namespace Cfg {
   }
 
 
-  void  Configuration::writeToStream ( ostream& out ) const
+  bool  Configuration::writeToFile ( const std::string& fileName, unsigned int flags ) const
+  {
+    ofstream out ( fileName.c_str() );
+    if ( out.fail() ) return false;
+
+    writeToStream ( out, flags );
+
+    out.close ();
+    return true;
+  }
+
+
+  void  Configuration::writeToStream ( ostream& out, unsigned int flags ) const
   {
     out << "<configuration>" << endl;
 
@@ -435,7 +457,6 @@ namespace Cfg {
       string id   = "\"" + p->getId() + "\"";
       string type = "\"" + Parameter::typeToString(p->getType()) + "\"";
 
-
       out << "  <parameter"
           << " id="    << setw(40) << left << id
           << " type="  << setw(12) << left << type
@@ -443,18 +464,59 @@ namespace Cfg {
 
       if ( p->getType() == Parameter::Percentage ) out << p->asPercentage();
       else out << p->asString();
+      out << "\"";
 
-      out << "\"/>" << endl;
+      if ( flags & DriveValues ) {
+        if ( p->getType() == Parameter::Int ) {
+          if ( p->hasFlags(Parameter::HasMin) ) out << " min=\"" << p->getMinInt() << "\"";
+          if ( p->hasFlags(Parameter::HasMax) ) out << " max=\"" << p->getMaxInt() << "\"";
+        } else if ( p->getType() == Parameter::Double ) {
+          if ( p->hasFlags(Parameter::HasMin) ) out << " min=\"" << p->getMinDouble() << "\"";
+          if ( p->hasFlags(Parameter::HasMax) ) out << " max=\"" << p->getMaxDouble() << "\"";
+        }
+      }
+
+      if ( (flags&DriveValues) and (p->getType() == Parameter::Enumerate) ) {
+        out << ">" << endl;
+
+        const std::vector<Parameter::EnumValue>& values = p->getValues();
+        for ( size_t ivalue=0 ; ivalue<values.size() ; ++ivalue ) {
+          out << "    <item label=\"" << values[ivalue]._label << "\" "
+              <<           "value=\"" << values[ivalue]._value << "\"/>" << endl;
+        }
+
+        out << "  </parameter>" << endl;
+      } else
+        out << "/>" << endl;
     }
+
+    if ( flags & DriveValues ) {
+      for ( iparameter = _parameters.begin(); iparameter != _parameters.end(); ++iparameter ) {
+        Parameter* p = iparameter->second;
+
+        const vector<string>& slaves = p->getSlaves();
+        if ( slaves.empty() ) continue;
+
+        out << "  <group>" << endl;
+        out << "    <master id=\"" << p->getId() << "\"/>" << endl;
+
+        for ( size_t islave=0 ; islave<slaves.size() ; ++islave ) {
+          out << "    <slave  id=\"" << slaves[islave] << "\"/>" << endl;
+        }
+        out << "  </group>" << endl;
+      }
+    }
+
+    if ( flags & DriveLayout ) _layout.writeToStream ( out );
 
     out << "</configuration>" << endl;
   }
 
 
-  void  Configuration::readFromFile ( const std::string& fileName )
+  bool  Configuration::readFromFile ( const std::string& fileName )
   {
     XmlParser parser ( this, fileName );
-    parser.parse ();
+    return parser.parse ();
   }
 
 

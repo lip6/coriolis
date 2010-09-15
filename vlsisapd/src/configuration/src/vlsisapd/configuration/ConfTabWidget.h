@@ -52,7 +52,7 @@ namespace Cfg {
       void             addRuler          ();
       void             addTitle          ( const std::string& title );
       void             addSection        ( const std::string& section, int column=0 );
-      ParameterWidget* addParameter      ( Parameter*, const std::string& label, int column=0, int flags=0 );
+      ParameterWidget* addParameter      ( Parameter*, const std::string& label, int column=0, int span=1, int flags=0 );
     signals:
       void             updateParameters  ();
     private:         
@@ -61,6 +61,7 @@ namespace Cfg {
     private:
       QGridLayout*                   _gridLayout;
       int                            _columns;
+      int                            _span;
       int*                           _rowsCount;
       std::vector<ParameterWidget*>  _parameters;
   };

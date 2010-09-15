@@ -23,8 +23,14 @@
 // x-----------------------------------------------------------------x
 
 
+#include <string>
+#include <vector>
 #include <map>
 #include <QApplication>
+#include <QTabWidget>
+#include <QPushButton>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 #include "vlsisapd/configuration/Configuration.h"
 #include "vlsisapd/configuration/ParameterWidget.h"
@@ -39,19 +45,54 @@ namespace Cfg {
   using std::endl;
   using std::string;
   using std::map;
+  using std::pair;
+  using std::make_pair;
+  using std::vector;
 
 
 // -------------------------------------------------------------------
 // Class  :  "Cfg::ConfigurationWidget".
 
 
-  ConfigurationWidget::ConfigurationWidget ( QWidget* parent )
-    : QTabWidget(parent)
+  ConfigurationWidget::ConfigurationWidget ( unsigned int flags, QWidget* parent )
+    : QWidget   (parent)
+    , _flags    (flags)
     , _boldFont (QApplication::font())
+    , _tabWidget(new QTabWidget())
+    , _apply    (new QPushButton())
+    , _save     (NULL)
+    , _cancel   (NULL)
   {
     _boldFont.setBold ( true );
 
     setAttribute ( Qt::WA_QuitOnClose, false );
+
+    QVBoxLayout* vLayout = new QVBoxLayout ();
+    vLayout->addWidget ( _tabWidget );
+
+    QHBoxLayout* hLayout = new QHBoxLayout ();
+    hLayout->addStretch ();
+
+    _apply->setText ( tr( (_flags&Embedded)?"Apply":"OK") );
+    hLayout->addWidget  ( _apply );
+    hLayout->addStretch ();
+
+    if ( _flags & StandAlone ) {
+      _save = new QPushButton ();
+      _save->setText ( tr("Save") );
+      hLayout->addWidget  ( _save );
+      hLayout->addStretch ();
+
+      _cancel = new QPushButton ();
+      _cancel->setText ( tr("Cancel") );
+      hLayout->addWidget  ( _cancel );
+      hLayout->addStretch ();
+    }
+
+    vLayout->addLayout ( hLayout );
+    vLayout->addStretch ();
+
+    setLayout ( vLayout );
   }
 
 
@@ -84,6 +125,7 @@ namespace Cfg {
                                                      , Parameter*         parameter
                                                      , const std::string& label
                                                      , int                column
+                                                     , int                span
                                                      , int                flags )
   {
     ParameterWidget* pw = find(parameter);
@@ -93,7 +135,7 @@ namespace Cfg {
     }
 
     ConfTabWidget* tab = findOrCreate ( tabName );
-    return tab->addParameter ( parameter, label, column, flags );
+    return tab->addParameter ( parameter, label, column, span, flags );
   }
 
 
@@ -114,7 +156,9 @@ namespace Cfg {
     if ( tab != NULL ) return tab;
 
     tab = new ConfTabWidget ( tabName );
-    addTab ( tab, tabName.c_str() );
+    _tabWidget->addTab ( tab, tabName.c_str() );
+
+    connect ( _apply, SIGNAL(clicked()), tab, SIGNAL(updateParameters()) );
 
     return tab;
   }
@@ -133,6 +177,40 @@ namespace Cfg {
 
       pw->enableSlaves ( pw->getParameter()->asBool() );
     }
+  }
+  
+
+  string  toXml ( const string& source )
+  {
+    static vector< pair<string,string> > translations;
+
+    if ( translations.empty() ) {
+      translations.push_back ( make_pair("&","&amp;") );
+      translations.push_back ( make_pair("<","&lt;") );
+      translations.push_back ( make_pair(">","&gt;") );
+    }
+
+    string translated = source;
+
+    for ( size_t pos=0 ; pos<translated.size() ; ) {
+      bool match = false;
+
+      for ( size_t i=0 ; i<translations.size() ; ++i ) {
+        const string& original    = translations[i].first;
+        const string& translation = translations[i].second;
+
+        if ( translated.compare(pos,original.size(),original) == 0 ) {
+          translated.replace(pos,original.size(),translation);
+          pos += translation.size();
+          match = true;
+          break;
+        }
+      }
+
+      pos += (match) ? 0 : 1;
+    }
+
+    return translated;
   }
 
 
