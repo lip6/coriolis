@@ -441,7 +441,7 @@ namespace Hurricane {
 
   TabSettings::TabSettings ( QWidget* parent )
     : ControllerTab (parent)
-    , _configuration(Configuration::get()->buildWidget())
+    , _configuration(Configuration::get()->buildWidget(ConfigurationWidget::Embedded))
   { 
     setContentsMargins ( 5, 0, 5, 5 );
 
