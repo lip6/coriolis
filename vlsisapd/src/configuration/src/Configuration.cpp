@@ -96,7 +96,7 @@ namespace {
       xmlCleanupParser ();
     }
 
-    return (_status != 0);
+    return (_status == 0);
   }
 
 
