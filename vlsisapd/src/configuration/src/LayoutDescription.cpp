@@ -154,6 +154,8 @@ namespace Cfg {
 
             if ( widget->getSpan() != 1 ) out << " span=\"" << widget->getSpan() << "\"";
             if ( widget->getFlags() & ParameterWidget::UseSpinBox ) out << " spinbox=\"true\"";
+            if ( widget->getFlags() & ParameterWidget::IsFileName ) out << " filename=\"true\"";
+            if ( widget->getFlags() & ParameterWidget::IsPathName ) out << " pathname=\"true\"";
             break;
         }
 

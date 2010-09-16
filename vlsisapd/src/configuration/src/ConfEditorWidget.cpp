@@ -39,7 +39,7 @@ namespace Cfg {
 
   ConfEditorWidget::ConfEditorWidget ( QWidget* parent )
     : QMainWindow             (parent)
-    , _configurationWidget    (Configuration::get()->buildWidget(ConfigurationWidget::StandAlone))
+    , _configurationWidget    (Configuration::get()->buildWidget(ConfigurationWidget::Embedded))
     , _fileMenu               (NULL)
     , _saveAction             (NULL)
     , _quitAction             (NULL)
@@ -90,7 +90,8 @@ namespace Cfg {
 
     cout << "Saving configuration file: <" << dotConfigFile << ">."<< endl;
 
-    Configuration::get()->writeToStream ( file, Configuration::DriveValues|Configuration::DriveLayout );
+    Configuration::get()->writeToStream ( file, 0 );
+  //Configuration::get()->writeToStream ( file, Configuration::DriveValues|Configuration::DriveLayout );
     file.close ();
   }
 

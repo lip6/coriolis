@@ -44,7 +44,7 @@ namespace Cfg {
   class ParameterWidget : public QObject {
       Q_OBJECT;
     public:
-      enum Flags { UseSpinBox=0x1 };
+      enum Flags { UseSpinBox=0x1, IsFileName=0x2, IsPathName=0x4 };
     public:
                         ParameterWidget ( QObject* parent, Parameter*, const std::string& label, int flags );
       inline Parameter* getParameter    ();

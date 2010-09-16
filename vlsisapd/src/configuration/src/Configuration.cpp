@@ -273,12 +273,14 @@ namespace {
   {
     if ( xmlTextReaderNodeType(_reader) == XML_READER_TYPE_END_ELEMENT ) return;
 
-    string attrId      = _getAttributeValue("id");
-    string attrType    = _getAttributeValue("type");
-    string attrLabel   = _getAttributeValue("label");
-    string attrColumn  = _getAttributeValue("column");
-    string attrSpan    = _getAttributeValue("span");
-    string attrSpinBox = _getAttributeValue("spinbox");
+    string attrId       = _getAttributeValue("id");
+    string attrType     = _getAttributeValue("type");
+    string attrLabel    = _getAttributeValue("label");
+    string attrColumn   = _getAttributeValue("column");
+    string attrSpan     = _getAttributeValue("span");
+    string attrSpinBox  = _getAttributeValue("spinbox");
+    string attrFileName = _getAttributeValue("filename");
+    string attrPathName = _getAttributeValue("pathname");
 
     if ( attrId.empty() and attrType.empty() ) {
       cerr << "[ERROR] In <widget> tag, neither \"id\" nor \"type\" attribute." << endl;
@@ -309,7 +311,9 @@ namespace {
     }
 
     int flags = 0;
-    if ( attrSpinBox == "true" ) flags |= ParameterWidget::UseSpinBox;
+    if ( attrSpinBox  == "true" ) flags |= ParameterWidget::UseSpinBox;
+    if ( attrFileName == "true" ) flags |= ParameterWidget::IsFileName;
+    if ( attrPathName == "true" ) flags |= ParameterWidget::IsPathName;
 
     _configuration->getLayout().getBackTab()->addWidget ( WidgetDescription::parameter(attrId,attrLabel,column,span,flags) );
   }

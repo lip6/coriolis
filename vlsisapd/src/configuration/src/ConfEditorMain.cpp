@@ -48,11 +48,15 @@ int main ( int argc, char* argv[] )
   int returnCode = 0;
 
   try {
+    bool disableGtkStyle;
+
     boptions::options_description options ("Command line arguments & options");
     options.add_options()
-      ( "help,h", "Print this help." )
-      ( "conf,c", boptions::value<string>()
-                , "The path of the configuration file." );
+      ( "help,h"          , "Print this help." )
+      ( "disable-gtkstyle", boptions::bool_switch(&disableGtkStyle)->default_value(false)
+                          , "Run the detailed router (Kite).")
+      ( "conf,c"          , boptions::value<string>()
+                          , "The path of the configuration file." );
 
     boptions::variables_map arguments;
     boptions::store  ( boptions::parse_command_line(argc,argv,options), arguments );
@@ -65,7 +69,7 @@ int main ( int argc, char* argv[] )
 
     auto_ptr<QApplication> qa ( new QApplication(argc,argv) );
 #if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and not defined (__APPLE__)
-    qa->setStyle ( new QGtkStyle() );
+    if ( not disableGtkStyle ) qa->setStyle ( new QGtkStyle() );
 #endif
 
     bfs::path::default_name_check ( bfs::portable_posix_name );

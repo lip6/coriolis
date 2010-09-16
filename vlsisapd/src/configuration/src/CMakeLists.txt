@@ -6,7 +6,8 @@
                          ${LIBXML2_INCLUDE_DIR}
                        )
 
-                   set ( mocIncludes   vlsisapd/configuration/ConfigurationWidget.h
+                   set ( mocIncludes   vlsisapd/configuration/FilePathEdit.h
+                                       vlsisapd/configuration/ConfigurationWidget.h
                                        vlsisapd/configuration/ParameterWidget.h
                                        vlsisapd/configuration/ConfTabWidget.h
                                        vlsisapd/configuration/ConfEditorWidget.h
@@ -18,6 +19,7 @@
 		   set ( cpps          Parameter.cpp
                                        LayoutDescription.cpp
                                        Configuration.cpp
+                                       FilePathEdit.cpp
                                        ParameterWidget.cpp
                                        ConfTabWidget.cpp
                                        ConfigurationWidget.cpp
@@ -26,8 +28,9 @@
                    set ( editorcpp     ConfEditorMain.cpp )
 
           qt4_wrap_cpp ( mocCpps       ${mocIncludes} )
+     qt4_add_resources ( RCC_SRCS      Configuration.qrc )
 
-           add_library ( configuration ${cpps} ${mocCpps} )
+           add_library ( configuration ${cpps} ${mocCpps} ${RCC_SRCS} )
  target_link_libraries ( configuration ${QT_LIBRARIES}
                                        ${PYTHON_LIBRARIES}
                                        ${LIBXML2_LIBRARIES}

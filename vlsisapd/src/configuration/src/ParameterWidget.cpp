@@ -32,6 +32,7 @@
 #include  <QIntValidator>
 #include  <QDoubleValidator>
 #include  "vlsisapd/configuration/Parameter.h"
+#include  "vlsisapd/configuration/FilePathEdit.h"
 #include  "vlsisapd/configuration/ParameterWidget.h"
 #include  "vlsisapd/configuration/ConfigurationWidget.h"
 
@@ -62,7 +63,11 @@ namespace Cfg {
         break;
       case Parameter::String:
         {
-          QLineEdit* lineEdit = new QLineEdit();
+          QLineEdit* lineEdit = NULL;
+          if      ( hasFlags(IsFileName) ) lineEdit = new FilePathEdit ( FilePathEdit::Filename );
+          else if ( hasFlags(IsPathName) ) lineEdit = new FilePathEdit ( FilePathEdit::Pathname );
+          else                             lineEdit = new QLineEdit();
+
           lineEdit->setSizePolicy ( QSizePolicy::Expanding, QSizePolicy::Fixed );
           lineEdit->setMinimumWidth ( 375 );
           lineEdit->setText ( QString("%1").arg(_parameter->asString().c_str()) );
