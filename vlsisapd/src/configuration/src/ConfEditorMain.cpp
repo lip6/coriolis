@@ -94,6 +94,7 @@ int main ( int argc, char* argv[] )
 
     ConfEditorWidget* editor = new ConfEditorWidget ();
     editor->show ();
+  //QFileDialog::getOpenFileName(NULL, "Choose file", "", "");
 
     returnCode = qa->exec ();
   }

@@ -29,6 +29,7 @@
 #include <string>
 #include <QLineEdit>
 class QToolButton;
+class QFileDialog;
 
 
 namespace Cfg {
@@ -38,15 +39,16 @@ namespace Cfg {
   {
       Q_OBJECT;
     public:
-      enum Type { Filename=0x1, Pathname=0x2 };
+      enum Type { FileName=0x1, PathName=0x2 };
     public:
-           FilePathEdit   ( Type type=Filename, std::string filter="", QWidget* parent=NULL );
+           FilePathEdit   ( Type type=FileName, std::string filter="", QWidget* parent=NULL );
     protected:
       void resizeEvent    ( QResizeEvent* );
     private slots:
       void updateLineEdit ();
     private:
       QToolButton* _chooseButton;
+      QFileDialog* _filePathDialog;
       Type         _type;
       std::string  _filter;
   };

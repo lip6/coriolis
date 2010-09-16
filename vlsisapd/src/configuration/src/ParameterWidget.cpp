@@ -64,8 +64,8 @@ namespace Cfg {
       case Parameter::String:
         {
           QLineEdit* lineEdit = NULL;
-          if      ( hasFlags(IsFileName) ) lineEdit = new FilePathEdit ( FilePathEdit::Filename );
-          else if ( hasFlags(IsPathName) ) lineEdit = new FilePathEdit ( FilePathEdit::Pathname );
+          if      ( hasFlags(IsFileName) ) lineEdit = new FilePathEdit ( FilePathEdit::FileName );
+          else if ( hasFlags(IsPathName) ) lineEdit = new FilePathEdit ( FilePathEdit::PathName );
           else                             lineEdit = new QLineEdit();
 
           lineEdit->setSizePolicy ( QSizePolicy::Expanding, QSizePolicy::Fixed );
