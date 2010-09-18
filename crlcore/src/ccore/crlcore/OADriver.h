@@ -15,7 +15,7 @@ namespace CRL {
         Hurricane::Cell* _cell;
     public:
         OADriver(Hurricane::Cell*);
-        void save(const std::string& path);
+        void save(const std::string& technoFilePath,const std::string& designFilePath);
     };
 } // End of CRL namespace.
 

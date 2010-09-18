@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-12 19:28:37" - OpenAccess.h
+// Time-stamp: "2010-09-17 17:00:35" - OpenAccess.h
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -24,9 +24,9 @@ namespace Hurricane {
 namespace CRL {
     class OpenAccess {
     public:
-        static void oaDriver(const std::string& libPath, Hurricane::Cell* cell);
+        static void oaDriver(const std::string& technoPath, const std::string& designPath, Hurricane::Cell* cell);
         static Hurricane::Cell* oaCellParser(const std::string& cellLibPath, const std::string& cellLibName, const std::string& cellName,
-                                             const std::string& techLibPath, const std::string& techLibName);        
+                                             const std::string& techLibPath, const std::string& techLibName);
     };
 }//namespace CRL
 

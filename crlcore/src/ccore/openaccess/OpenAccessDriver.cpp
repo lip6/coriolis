@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-26 17:35:32" - OpenAccessDriver.cpp
+// Time-stamp: "2010-09-18 13:45:34" - OpenAccessDriver.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -15,6 +15,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <memory>
 using namespace std;
 
 #include "hurricane/DataBase.h"
@@ -43,6 +44,8 @@ using namespace Hurricane;
 #include "OpenAccess.h"
 #include "OpenAccessCommon.h"
 
+#define VERBOSE
+
 namespace {
 #ifdef HAVE_OPENACCESS
     using namespace CRL_OA;
@@ -60,7 +63,8 @@ namespace {
         typedef map<const Component*, oaRect*> Component2OARectMap;
         typedef map<const Segment*, oaPathSeg*> Segment2OAPathSegMap;
 
-        string _path;
+        string _technoPath;
+        string _designPath;
         oaTech* _oaTech;
         Library2OALibMap _library2OALib;
         Cell2OADesignMap _cell2OADesign4Netlist;
@@ -80,9 +84,10 @@ namespace {
         oaLayer* _layerWire;
         DataBase* _db;
         Technology* _technology;
-    public:
-        OADriver(const string& path) :
-            _path(path),
+    protected:
+        OADriver(const string& technoPath, const string& designPath) :
+            _technoPath(technoPath),
+            _designPath(designPath),
             _oaTech(NULL),
             _library2OALib(),
             _cell2OADesign4Netlist(),
@@ -102,20 +107,41 @@ namespace {
             _layerWire(NULL),
             _db(NULL),
             _technology(NULL) {
+            cerr << "OADriver" << endl;
             _db = DataBase::getDB();
-            if (!_db) {
+            if (!_db)
                 throw Error("no database");
-            }
             _technology = _db->getTechnology();
-            if (!_technology) {
+            if (!_technology)
                 throw Error("no technology");
-            }
-            oaFuncs::realPath(_path);
-            cerr << "realpath: " << _path << endl;
+            realPath(_technoPath);
+            realPath(_designPath);
+            cerr << "techno realpath: " << _technoPath << endl;
+            cerr << "design realpath: " << _designPath << endl;
+        }
+
+    public:
+        static OADriver* create(const string& technoPath, const string& designPath) {
+            OADriver* oaDriver = new OADriver(technoPath,designPath);
+
+            // load previously converted or existing tech in OA format
+            
+
+            oaDriver->getOATech();
+
+            return oaDriver;
+        }
+
+        oaTech* getOATech() {
+            assert(_oaTech);
+            return _oaTech;
         }
 
         ~OADriver() {
+            cerr << "~OADriver" << endl;
+#ifdef VERBOSE
             cerr << "SAVING ALL" << endl;
+#endif
             _oaTech->save();
             _oaTech->close();
             oaFuncs::saveOADesignsInMap(_cell2OADesign4Netlist);
@@ -132,42 +158,55 @@ namespace {
                 oaLib* lib = it->second;
                 lib->close();
             }
-            _path.clear();
+            _technoPath.clear();
+            _designPath.clear();
+#ifdef VERBOSE
             cerr << "ALL SAVED" << endl;
+#endif
+        }
+
+        oaTech* loadOATech(const string& path) {
+            oaLib* lib = NULL;
+            oaTech* tech = NULL;
+
+            return tech;
         }
 
         /**
            create a oaLib from a Library
         */
-        oaLib* toOALib(const Library* library, bool recursive=false) {
-            cerr << "toOALib" << endl;
+        oaLib* toOALib(const Library* library, const string& path,bool recursive=false) {
             assert(library);
             Library2OALibMap::iterator it = _library2OALib.find(library);
             if (it != _library2OALib.end())
                 return it->second;
+            cerr << "toOALib" << endl;
 
             // 1) create or open library
-            cerr << "lib path : " << _path << endl;
-            pair<oaScalarName,string> infos = oaFuncs::libInfos(_path,
+#ifdef VERBOSE
+            cerr << "lib path : " << path << endl;
+#endif
+            pair<oaScalarName,string> infos = oaFuncs::libInfos(path,
                                                                 getString(library->getName()));
             oaLib *lib = oaFuncs::openOALib(infos);
             _library2OALib[library] = lib;
 
             if(recursive){
                 // 2) for each cell convert them too : if it's a standard cell library for example
-                for_each_cell(c ,library->getCells()){
-                    toOACell(c);
-                    end_for;
+                if(_oaTech){
+                    for_each_cell(c ,library->getCells()){
+                        toOACell(_oaTech, c);
+                        end_for;
+                    }
                 }
-
                 // 3) also convert each contained library if any
                 for_each_library(l ,library->getLibraries()){
-                    toOALib(l);
+                    toOALib(l,path,recursive);
                     end_for;
                 }
             }
             // 4) create, update library list file
-            oaFuncs::createCDS(infos,_path);
+            oaFuncs::createCDS(infos,path);
             infos.second.clear();
 
             return lib;
@@ -179,23 +218,32 @@ namespace {
         */
         int generateLayerID(const BasicLayer* bLayer){
             // the layer number is unique to a particular layer
-            cerr << "generateLayerID -> ";
+            cerr << "generateLayerID";
+#ifdef VERBOSE
+            cerr << " -> ";
+#endif
             int numLayer = _layerID;
             if(bLayer){
                 numLayer = bLayer->getExtractNumber();
                 if(_layerIDS.find(numLayer) == _layerIDS.end()){
+#ifdef VERBOSE
                     cerr << "getExtractNumber " << numLayer << endl;
+#endif
                     _layerIDS.insert(numLayer);
                     return numLayer;
                 }
             }
 
-            cerr << " while(...) ";
+#ifdef VERBOSE
+            cerr << "while(...) ";
+#endif
             set<int>::iterator it;
             while((it = _layerIDS.find(_layerID)) != _layerIDS.end()){
                 numLayer = ++_layerID;
             }
+#ifdef VERBOSE
             cerr << numLayer << endl;
+#endif
             _layerIDS.insert(numLayer);
             return numLayer;
         }
@@ -347,7 +395,7 @@ namespace {
                                                              aOALayer->getNumber(),
                                                              (oaLayerConstraintDef*) def);
             }
-            
+
 
             return aOALayer;
         }
@@ -359,38 +407,30 @@ namespace {
            @todo complete with technology info for layers
            @see toOALib
         */
-        oaTech* toOATech(const Technology* technology,const Library* lib) {
+        oaTech* toOATech(const Technology* technology,
+                         const Library* lib,
+                         const string& technoPath) {
             cerr << "createOATechForTechnology" << endl;
             assert(technology);
 
             // 1) get or create Library for the techno
             assert(lib);
-            oaLib* techOAlib = toOALib(lib);
+            oaLib* techOAlib = toOALib(lib,technoPath);
             assert(techOAlib);
 
             // 2) get or create oaTech container
-            bool created = false;
-            cerr << "oaTech::find" << endl;
-            oaTech* theOATech = oaTech::find(techOAlib);
-            if(!theOATech){
-                if (oaTech::exists(techOAlib)){
-                    cerr << "oaTech::open" << endl;
-                    theOATech = oaTech::open(techOAlib,'a');
-                }
-                if(!theOATech){
-                    cerr << "oaTech::create" << endl;
-                    theOATech = oaTech::create(techOAlib);
-                    created = true;
-                }
-            }
-            assert(techOAlib);
+            pair<oaTech*,bool> techPair = oaFuncs::openOATech(techOAlib);
+            oaTech* theOATech = techPair.first;
+            bool created = techPair.second;
+
+            assert(theOATech);
             if(created){
                 theOATech->setDefaultManufacturingGrid(10);
                 theOATech->setDBUPerUU(oaViewType::get(oacMaskLayout), 2000);
+                //create and add foundry constraint group 
+                //for General manufacturing rules 
+                //and add oaSimpleConstraintType too 
 
-                //create and add foundry constraint group for General manufacturing rules
-                //and add oaSimpleConstraintType too
-                assert(theOATech);
                 //add the constraint group for oa2lef
                 theOATech->getDefaultConstraintGroup();
                 oaConstraintGroup *cgFoundry = theOATech->getFoundryRules();
@@ -496,7 +536,7 @@ namespace {
             // 1) get the master cell for the instance
             Cell* masterCell = instance->getMasterCell();
             assert(masterCell);
-            oaDesign* masterDesign = toOADesign(masterCell);
+            oaDesign* masterDesign = toOADesign(_oaTech,masterCell);
             assert(masterDesign);
 
             oaNativeNS ns;
@@ -554,6 +594,7 @@ namespace {
             oaScalarName scN(ns, getString(n).c_str());
             return oaName(scN);
         }
+
 
         /**
            convert to OAPoint
@@ -820,7 +861,7 @@ namespace {
 
             // 1) get the lib containing the cell
             oaNativeNS ns;
-            oaLib* lib = toOALib(cell->getLibrary());
+            oaLib* lib = toOALib(cell->getLibrary(),_designPath);
             assert(lib);
 
             // 2) create a netlist CellView of the cell
@@ -857,7 +898,7 @@ namespace {
                 return it->second;
             }
             oaNativeNS ns;
-            oaLib* lib = toOALib(cell->getLibrary());
+            oaLib* lib = toOALib(cell->getLibrary(),_designPath);
             assert(lib);
             oaScalarName scNameDesign(ns, getString(cell->getName()).c_str());
             oaScalarName scNameView(ns, "symbolic");
@@ -895,7 +936,7 @@ namespace {
                 return it->second;
 
             oaNativeNS ns;
-            oaLib* lib = toOALib(cell->getLibrary());
+            oaLib* lib = toOALib(cell->getLibrary(),_designPath);
             assert(lib);
             oaScalarName scNameDesign(ns, getString(cell->getName()).c_str());
             oaScalarName scNameView(ns, "schematic");
@@ -933,7 +974,7 @@ namespace {
             }
 
             oaNativeNS ns;
-            oaLib* lib = toOALib(cell->getLibrary());
+            oaLib* lib = toOALib(cell->getLibrary(), _designPath);
             assert(lib);
             oaScalarName scNameDesign(ns, getString(cell->getName()).c_str());
             oaScalarName scNameView(ns, "layout");
@@ -988,12 +1029,13 @@ namespace {
                 oaBox boundingBox = toOABox(bBox);
                 topBlock->getBBox(boundingBox);
             }
-            
+
+            //tests
             oaUInt4 count = 0;
             oaIter<oaLPPHeader> headers(designCellView->getTopBlock()->getLPPHeaders());
             while (oaLPPHeader* lppHeader = headers.getNext()) {
                 cout << "Layer Purpose Pair " << ++count << endl;
-                
+
                 oaLayerNum layerNum = lppHeader->getLayerNum();
                 oaPurposeNum purpNum = lppHeader->getPurposeNum();
                 cout << "\t Layer   = " << layerNum << endl;
@@ -1006,13 +1048,16 @@ namespace {
         /**
            Convert a Cell to OA designs ...
         */
-        oaDesign* toOADesign(const Cell* cell) {
+        oaDesign* toOADesign(oaTech* tech,const Cell* cell) {
             cerr << "toOADesign " << cell << endl;
             assert(cell);
-
+            assert(tech);
+            _oaTech = tech;
+#if 0
             // 1) get technology
             if(!_oaTech)
                 _oaTech = toOATech(_technology,cell->getLibrary());
+#endif
 
             // 2) create OA structure ...
             oaDesign* layoutView = addLayout(cell);
@@ -1062,12 +1107,12 @@ namespace {
             return cell;
         }
 
-        oaCell* toOACell(const Cell* cell) {
+        oaCell* toOACell(oaTech* tech, const Cell* cell) {
             Cell2OACellMap::iterator it = _cell2OAcell.find(cell);
             if (it != _cell2OAcell.end())
                 return it->second;
 
-            oaCell* c1 = toOACell( toOADesign(cell) );
+            oaCell* c1 = toOACell( toOADesign(tech, cell) );
             _cell2OAcell[cell] = c1;
 
             return c1;
@@ -1077,7 +1122,7 @@ namespace {
 }//namespace CRL_OA
 
 namespace CRL {
-    void OpenAccess::oaDriver(const string& path, Cell* cell) {
+    void OpenAccess::oaDriver(const string& technoPath,const string& designPath, Cell* cell) {
         cerr << "oaDriver" << endl;
 #ifdef HAVE_OPENACCESS
         oaCell* convertedCell = NULL;
@@ -1085,18 +1130,23 @@ namespace CRL {
         cell->materialize();
         //for the moment a driver for hurricaneAMS
         //save the Cell only and all used Cell
-        cerr << "Saving " << cell << " in " << path << endl;
+        cerr << "Saving design " << cell << " in " << designPath << endl;
+        cerr << "Using techno from " << technoPath << endl;
         try {
             oaDesignInit(oacAPIMajorRevNumber,
                          oacAPIMinorRevNumber,
                          oacDataModelRevNumber);
 
-            OADriver oaDriver(path);
-            convertedCell = oaDriver.toOACell(cell);
+            auto_ptr<OADriver> oaDriver(OADriver::create(technoPath, designPath));
+            
+            oaTech* tech = NULL;
+            tech = oaDriver->getOATech();
+            assert(tech);
+            convertedCell = oaDriver->toOACell(tech,cell);
         }catch (oaException  &e) {
             cerr << "OA::ERROR => " << e.getMsg() << endl;
             exit(1);
-        }catch(std::exception& e){
+        }catch(std::exception& e) {
             cerr << "STD::ERROR => " << e.what() << endl;
             exit(2);
         }

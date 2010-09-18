@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-13 00:11:06" - OpenAccessParser.cpp
+// Time-stamp: "2010-09-18 13:28:46" - OpenAccessParser.cpp
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -71,6 +71,31 @@ namespace {
             }
         }
 
+        /**
+           @todo complete,verify ...
+        */
+        static BasicLayer::Material::Code fromOAMaterial(const oaMaterial& material) {
+            switch(material) {
+            case oacNWellMaterial:
+                return BasicLayer::Material::nWell;
+            case oacPWellMaterial:
+                return BasicLayer::Material::pWell;
+            case oacNImplantMaterial:
+                return BasicLayer::Material::nImplant;
+            case oacPImplantMaterial:
+                return BasicLayer::Material::pImplant;
+            case oacPolyMaterial:
+                return BasicLayer::Material::poly;
+            case oacCutMaterial:
+                return BasicLayer::Material::cut;
+            case oacMetalMaterial:
+            case oacContactlessMetalMaterial:
+                return BasicLayer::Material::metal;
+            default:
+                return BasicLayer::Material::other;
+            }
+        }
+
         Cell* getCell(const string& cellNameStr) {
             DataBase* db = DataBase::getDB();
             if (!db || !db->getRootLibrary() ) {
@@ -107,7 +132,7 @@ namespace {
                 Library* library = nit->second;
 
             string libPath = libPathStr;
-            oaFuncs::realPath(libPath);
+            realPath(libPath);
 
             oaLib* oaLibrary = NULL;
             try {
@@ -120,7 +145,7 @@ namespace {
                     }
 
                     cerr << "TITI" << endl;
-                    oaTechnology2Technology(oaLibrary);
+                    fromOATech(oaLibrary);
 
                     //create Hurricane library
                     DataBase* db = DataBase::getDB();
@@ -294,7 +319,7 @@ namespace {
         /**
            heart of the parser algorithm
         */
-        void oaTechnology2Technology(oaLib* oaLibrary) {
+        void fromOATech(oaLib* oaLibrary) {
             assert(oaLibrary);
             try {
                 oaTech* tech = oaTech::open(oaLibrary);

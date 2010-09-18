@@ -1,5 +1,5 @@
 // -*-compile-command:"cd ../../../../.. && make"-*-
-// Time-stamp: "2010-08-24 13:07:42" - OpenAccessCommon.h
+// Time-stamp: "2010-09-18 13:38:28" - OpenAccessCommon.h
 // x-----------------------------------------------------------------x
 // |  This file is part of the hurricaneAMS Software.                |
 // |  Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved         |
@@ -14,12 +14,12 @@
 #define __OPENACCESSCOMMON_H__
 
 #include <iostream>
-
 using namespace std;
-#include  <boost/filesystem/operations.hpp>
-namespace bfs = boost::filesystem;
 
 #ifdef HAVE_OPENACCESS
+
+#include "PathsUtils.h"
+
 #include "hurricane/Cell.h"
 #include "hurricane/BasicLayer.h"
 using namespace Hurricane;
@@ -27,8 +27,8 @@ using namespace Hurricane;
 #include "oa/oaDesignDB.h"
 using namespace oa;
 
-#undef assert
-#define assert(cond) if (! (cond) ) throw Error("assertion failed : " + string( #cond ) )
+#include "MyAssert.h"
+
 //#define assert(cond)
 
 namespace {
@@ -138,32 +138,6 @@ namespace CRL_OA {
         }
 
         /**
-           @todo complete,verify ...
-        */
-        static BasicLayer::Material::Code getBasicLayerTypeFromOAMaterial(const oaMaterial& material) {
-            switch(material) {
-            case oacNWellMaterial:
-                return BasicLayer::Material::nWell;
-            case oacPWellMaterial:
-                return BasicLayer::Material::pWell;
-            case oacNImplantMaterial:
-                return BasicLayer::Material::nImplant;
-            case oacPImplantMaterial:
-                return BasicLayer::Material::pImplant;
-            case oacPolyMaterial:
-                return BasicLayer::Material::poly;
-            case oacCutMaterial:
-                return BasicLayer::Material::cut;
-            case oacMetalMaterial:
-            case oacContactlessMetalMaterial:
-                return BasicLayer::Material::metal;
-            default:
-                return BasicLayer::Material::other;
-            }
-        }
-
-
-        /**
            save and close design(s) stored in a map
         */
         static void saveOADesignsInMap(map<const Cell*, oaDesign*> cell2OAdesign){
@@ -191,13 +165,26 @@ namespace CRL_OA {
         }
 
         /**
-           handling realpath
-        */
-        static void realPath(string& pathToChange){
-            if(bfs::path::default_name_check_writable())
-                bfs::path::default_name_check(bfs::portable_posix_name);
-            bfs::path resolvedPath = pathToChange;
-            pathToChange = system_complete(resolvedPath).string();
+           utility function to open a technology in OA format
+         */
+        static pair<oaTech*,bool> openOATech(oaLib* techOAlib){
+            assert(techOAlib);
+            bool created = false;
+            cerr << "oaTech::find" << endl;
+            oaTech* theOATech = oaTech::find(techOAlib);
+            if(!theOATech){
+                if (oaTech::exists(techOAlib)){
+                    cerr << "oaTech::open" << endl;
+                    theOATech = oaTech::open(techOAlib,'a');
+                }
+                if(!theOATech){
+                    cerr << "oaTech::create" << endl;
+                    theOATech = oaTech::create(techOAlib);
+                    created = true;
+                }
+            }
+            assert(techOAlib);
+            return make_pair<oaTech*,bool>(theOATech,created);
         }
 
         /**
@@ -213,53 +200,7 @@ namespace CRL_OA {
         }
 
         /**
-           suppose the path has been resolved with system_complete
-           before calling this function and path are posix_name
-           then split the path in boos::filesystem::path corresponding of each dir
-           from most root parent to leaf dir
-           @see create_all_dirs
-        */
-        static std::vector<bfs::path> split_in_dirs(const bfs::path& p){
-            string pstr(p.string());
-            register size_t len(pstr.length());
-            register char delim('/');
-            register size_t firstDelim=0;
-            register size_t secondDelim=1;
-            vector<bfs::path> dirs;
-            while(firstDelim < len){
-                while(secondDelim < len && pstr[secondDelim]!=delim)
-                    secondDelim++;
-                string dir = pstr.substr(0,secondDelim);
-                if(dir.empty())
-                    break;
-                dirs.push_back(bfs::path(dir));
-                firstDelim = secondDelim;
-                secondDelim++;
-            }
-            return dirs;
-        }
-
-        /**
-           work around for boost::filesystem::create_directories
-           missing in old boost versions like 1.33.1
-           and equivalent to recursivly creating directories
-           instead this is done iteratively.
-        */
-        static void create_all_dirs(const bfs::path& p){
-            if(p.empty() || bfs::exists(p))
-                return;
-            std::vector<bfs::path> test;
-            test = split_in_dirs(p);
-            std::vector<bfs::path>::iterator it = test.begin();
-            for(;it != test.end();it++){
-                if(it->empty() || bfs::exists(*it))
-                    continue;
-                bfs::create_directory(*it);
-            }
-        }
-
-        /**
-           open oaLib with the info gathered by libPath function
+           open oaLib with the info gathered by libInfos function
         */
         static oaLib* openOALib(const pair<oaScalarName,string>& infos){
             oaLib *lib = NULL;
@@ -288,10 +229,11 @@ namespace CRL_OA {
         }
 
         /**
-           create cds.lib file in the path containong OA libs so Cadence (c) software could
-           open them
+           create cds.lib file in the path containing OA libs 
+           so Cadence (c) software can open them
         */
-        static void createCDS(const pair<oaScalarName,string>& infos,const string& path){
+        static void createCDS(const pair<oaScalarName,string>& infos,
+                              const string& path){
             try{
                 cerr << "Overwriting cds.lib file begin " << endl;
                 string cdsPath  = path + "/cds.lib";
@@ -409,7 +351,7 @@ namespace CRL_OA {
             }
             return NULL;
         }
-    };//struct oaCommon
+    };//struct oaFuncs
 }//end CRL_OA namespace
 
 #endif//HAVE_OPENACCESS

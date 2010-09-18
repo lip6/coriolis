@@ -40,4 +40,4 @@ export OA_PLUGIN_PATH=$OPENACCESS_TOP/data
 # note that $TEMP is /dsk/l1/misc/$(USER) directory
 export OA_INCLUDE_DIR=$TEMP/OA_HEADER
 #si on utilise OA de si2 on aura
-#export OPENACCESS_INCLUDE=$OPENACCESS_TOP/include
+#export OA_INCLUDE_DIR=$OPENACCESS_TOP/include

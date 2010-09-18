@@ -10,8 +10,8 @@ using namespace Hurricane;
 namespace CRL {
     OADriver::OADriver(Cell* cell) : _cell(cell) {}
     
-    void OADriver::save(const std::string& filePath) {
-        CRL::OpenAccess::oaDriver(filePath, _cell);
+    void OADriver::save(const std::string& technoFilePath,const std::string& designFilePath) {
+        CRL::OpenAccess::oaDriver(technoFilePath,designFilePath, _cell);
     }
 
     OAParser::OAParser(const std::string& cellLibPath,const std::string& cellLibName,
