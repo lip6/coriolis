@@ -36,6 +36,7 @@
 namespace Cfg {
 
   class ConfigurationWidget;
+  class ConfigurationDialog;
 
 
   class Configuration {
@@ -46,6 +47,7 @@ namespace Cfg {
     public:
     // Methods.
              ConfigurationWidget*     buildWidget    ( unsigned int flags );
+             ConfigurationDialog*     buildDialog    ();
       inline const std::map<const std::string,Parameter*>&
                                       getParameters  () const;
       inline const LayoutDescription& getLayout      () const;

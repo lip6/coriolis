@@ -30,6 +30,7 @@
 #include  <libxml/xmlreader.h>
 #include  "vlsisapd/configuration/Configuration.h"
 #include  "vlsisapd/configuration/ConfigurationWidget.h"
+#include  "vlsisapd/configuration/ConfigurationDialog.h"
 #include  "vlsisapd/configuration/ParameterWidget.h"
 
 
@@ -363,6 +364,9 @@ namespace Cfg {
 
   ConfigurationWidget* Configuration::buildWidget ( unsigned int flags )
   { return _layout.buildWidget(flags); }
+
+  ConfigurationDialog* Configuration::buildDialog()
+  { return new ConfigurationDialog(); }
 
 
   Parameter* Configuration::getParameter ( const string& name, Parameter::Type type ) const
