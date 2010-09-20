@@ -1151,7 +1151,7 @@ namespace CRL {
             exit(2);
         }
 #else
-        cerr << "\nDummy OpenAccess driver call for " << path << endl;
+        cerr << "\nDummy OpenAccess driver call for " << designPath << endl;
 #endif
         return;
     }
