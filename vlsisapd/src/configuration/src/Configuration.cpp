@@ -94,7 +94,7 @@ namespace {
       if ( _status != 0 ) {
         cerr << "[ERROR] Syntax error in \"" << _fileName << "\" configuration file." << endl;
       }
-      xmlCleanupParser ();
+    //  xmlCleanupParser (); // CF libxml2 documentation if libxml2 parser is use by the application any other time : DO NOT CALL xmlCleanupParser (at least on mac osx)
     }
 
     return (_status == 0);
