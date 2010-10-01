@@ -258,7 +258,7 @@ Net::Net(Cell* cell, const Name& name)
     _isGlobal(false),
     _isExternal(false),
     _isAutomatic(false),
-    _type(),
+    _type(Type::LOGICAL), // default is Type::LOGICAL : no more Type::Undefined - Damien.Dupuis 01/10/2010
     _direction(),
      _position(0,0),
     _componentSet(),
