@@ -38,16 +38,20 @@ namespace Cfg {
 
   class Parameter {
     public:
-      enum Type  { Unknown    = 0
-                 , String     = 1
-                 , Bool       = 2
-                 , Int        = 3
-                 , Enumerate  = 4
-                 , Double     = 5
-                 , Percentage = 6
-                 };
-      enum Flags { HasMin     = 0x1
-                 , HasMax     = 0x2
+      enum Type  { Unknown     = 0
+                 , String      = 1
+                 , Bool        = 2
+                 , Int         = 3
+                 , Enumerate   = 4
+                 , Double      = 5
+                 , Percentage  = 6
+                 };           
+      enum Flags { HasMin      = 0x01
+                 , HasMax      = 0x02
+                 , IsFile      = 0x04
+                 , IsPath      = 0x08
+                 , NeedRestart = 0x10
+                 , MustExist   = 0x20
                  };
       typedef boost::function< void(Parameter*) >  ParameterChangedCb_t;
     public:
@@ -59,46 +63,54 @@ namespace Cfg {
           int          _value;
       };
     public:
-      static std::string        typeToString    ( Type );
-    public:                                     
-                                Parameter       ( const std::string& id
-                                                , Type               type
-                                                , const std::string& value );
-      inline const std::string& getId           () const;
-      inline const Type         getType         () const;
-      inline const std::vector<EnumValue>&      
-                                getValues       () const;
-      inline const std::vector<std::string>&    
-                                getSlaves       () const;
-      inline int                getFlags        () const;
-      inline bool               hasFlags        ( int mask ) const;
-      inline int                getMinInt       () const;
-      inline int                getMaxInt       () const;
-      inline double             getMinDouble    () const;
-      inline double             getMaxDouble    () const;
-      inline bool               checkValue      ( int ) const;
-      inline bool               checkValue      ( double ) const;
-      inline const std::string& asString        () const;
-             bool               asBool          () const;
-             int                asInt           () const;
-             double             asDouble        () const;
-             double             asPercentage    () const;
-      inline void               addValue        ( const std::string&, int );
-      inline void               addSlave        ( const std::string& );
-             void               setString       ( const std::string&, bool check=true );
-      inline void               setFlags        ( int mask );
-      inline void               unsetFlags      ( int mask );
-             void               setBool         ( bool );
-             void               setInt          ( int );
-             void               setDouble       ( double );
-             void               setPercentage   ( double );
-      inline void               setMin          ( int );
-      inline void               setMax          ( int );
-      inline void               setMin          ( double );
-      inline void               setMax          ( double );
-      inline void               registerCb      ( ParameterChangedCb_t );
-    private:
-      inline void               _onValueChanged ();
+      static std::string        typeToString       ( Type );
+    public:                                        
+                                Parameter          ( const std::string& id
+                                                   , Type               type
+                                                   , const std::string& value );
+      inline bool               isFile             () const;
+      inline bool               isPath             () const;
+      inline bool               hasMin             () const;
+      inline bool               hasMax             () const;
+      inline bool               hasNeedRestart     () const;
+      inline bool               hasMustExist       () const;
+      inline bool               hasFlags           ( int mask ) const;
+      inline const std::string& getId              () const;
+      inline const Type         getType            () const;
+      inline const std::vector<EnumValue>&         
+                                getValues          () const;
+      inline const std::vector<std::string>&       
+                                getSlaves          () const;
+      inline int                getFlags           () const;
+      inline int                getMinInt          () const;
+      inline int                getMaxInt          () const;
+      inline double             getMinDouble       () const;
+      inline double             getMaxDouble       () const;
+      inline bool               checkValue         ( int ) const;
+      inline bool               checkValue         ( double ) const;
+      inline const std::string& asString           () const;
+             std::string        asPercentageString () const;
+             bool               asBool             () const;
+             int                asInt              () const;
+             double             asDouble           () const;
+             double             asPercentage       () const;
+      inline void               addValue           ( const std::string&, int );
+      inline void               addSlave           ( const std::string& );
+      inline void               setFlags           ( int mask );
+      inline void               unsetFlags         ( int mask );
+             bool               setString          ( const std::string&, bool check=true );
+             bool               setBool            ( bool );
+             bool               setInt             ( int );
+             bool               setDouble          ( double );
+             bool               setPercentage      ( double );
+      inline void               setMin             ( int );
+      inline void               setMax             ( int );
+      inline void               setMin             ( double );
+      inline void               setMax             ( double );
+      inline void               registerCb         ( ParameterChangedCb_t );
+    private:                                       
+      inline void               _onValueChanged    ();
+             void               _checkRequirements () const;
     private:
     // Attributes.
       std::string                        _id;
@@ -116,15 +128,21 @@ namespace Cfg {
 
 
 // Inline Methods.
-  inline const std::string&     Parameter::getId        () const { return _id; }
-  inline const Parameter::Type  Parameter::getType      () const { return _type; }
-  inline int                    Parameter::getFlags     () const { return _flags; }
-  inline bool                   Parameter::hasFlags      ( int mask ) const { return (_flags & mask); }
-  inline int                    Parameter::getMinInt    () const { return _minInt; }
-  inline int                    Parameter::getMaxInt    () const { return _maxInt; }
-  inline double                 Parameter::getMinDouble () const { return _minDouble; }
-  inline double                 Parameter::getMaxDouble () const { return _maxDouble; }
-  inline const std::string&     Parameter::asString     () const { return _value; }
+  inline bool                   Parameter::isFile         () const { return hasFlags(IsFile); };
+  inline bool                   Parameter::isPath         () const { return hasFlags(IsPath); };
+  inline bool                   Parameter::hasMin         () const { return hasFlags(HasMin); };
+  inline bool                   Parameter::hasMax         () const { return hasFlags(HasMax); };
+  inline bool                   Parameter::hasNeedRestart () const { return hasFlags(NeedRestart); };
+  inline bool                   Parameter::hasMustExist   () const { return hasFlags(MustExist); };
+  inline const std::string&     Parameter::getId          () const { return _id; }
+  inline const Parameter::Type  Parameter::getType        () const { return _type; }
+  inline int                    Parameter::getFlags       () const { return _flags; }
+  inline bool                   Parameter::hasFlags       ( int mask ) const { return (_flags & mask); }
+  inline int                    Parameter::getMinInt      () const { return _minInt; }
+  inline int                    Parameter::getMaxInt      () const { return _maxInt; }
+  inline double                 Parameter::getMinDouble   () const { return _minDouble; }
+  inline double                 Parameter::getMaxDouble   () const { return _maxDouble; }
+  inline const std::string&     Parameter::asString       () const { return _value; }
 
   inline bool  Parameter::checkValue ( int value ) const {
     bool ok = not (   ( (_flags&HasMin) and (value < _minInt) )

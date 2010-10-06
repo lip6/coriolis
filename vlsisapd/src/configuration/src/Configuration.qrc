@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
     <file>images/choose.png</file>
+    <file>images/warning.png</file>
   </qresource>
 </RCC>

@@ -93,6 +93,7 @@ int main ( int argc, char* argv[] )
     }
 
     ConfEditorWidget* editor = new ConfEditorWidget ();
+  //editor->getConfigurationWidget()->selectTab ( "Kite" );
     editor->show ();
   //QFileDialog::getOpenFileName(NULL, "Choose file", "", "");
 

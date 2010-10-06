@@ -39,17 +39,23 @@ namespace Cfg {
   class ConfEditorWidget : public QMainWindow {
       Q_OBJECT;
     public:
-            ConfEditorWidget ( QWidget* parent=NULL );
-      void  createActions    ();
-      void  createMenus      ();
+                                  ConfEditorWidget       ( QWidget* parent=NULL );
+             void                 createActions          ();
+             void                 createMenus            ();
+      inline ConfigurationWidget* getConfigurationWidget ();
     public slots:
-      void  save             ();
+             void                 save                   ();
     private:
       ConfigurationWidget* _configurationWidget;
       QMenu*               _fileMenu;
       QAction*             _saveAction;
       QAction*             _quitAction;
   };
+
+
+// Inline Functions.
+  inline ConfigurationWidget* ConfEditorWidget::getConfigurationWidget ()
+  { return _configurationWidget; }
 
 
 } // End of Cfg namespace.

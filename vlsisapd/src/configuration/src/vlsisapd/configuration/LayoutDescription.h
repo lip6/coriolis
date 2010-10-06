@@ -29,6 +29,7 @@
 
 #include  <string>
 #include  <vector>
+#include  <map>
 #include  <iostream>
 
 
@@ -36,6 +37,7 @@ namespace Cfg {
 
   class Configuration;
   class ConfigurationWidget;
+  class LayoutDescription;
 
 
 // -------------------------------------------------------------------
@@ -120,23 +122,21 @@ namespace Cfg {
 
   class TabDescription {
     public:
-      inline                                        TabDescription ( const std::string& name );
-      inline void                                   addWidget      ( WidgetDescription* );
+      inline                                        TabDescription ( LayoutDescription*, const std::string& name );
+             void                                   addWidget      ( WidgetDescription* );
       inline const std::string&                     getName        () const;
       inline const std::vector<WidgetDescription*>& getWidgets     () const;
     private:
+      LayoutDescription*              _layout;
       std::string                     _name;
       std::vector<WidgetDescription*> _widgets;
   };
 
 
 // Inline Methods.
-  inline TabDescription::TabDescription ( const std::string& name )
-    : _name(name), _widgets()
+  inline TabDescription::TabDescription ( LayoutDescription* layout, const std::string& name )
+    : _layout(layout), _name(name), _widgets()
   { }
-
-  inline void  TabDescription::addWidget ( WidgetDescription* widget )
-  { _widgets.push_back(widget); }
 
   inline const std::string& TabDescription::getName () const
   { return _name; }
@@ -152,7 +152,10 @@ namespace Cfg {
   class LayoutDescription {
     public:
       inline                                     LayoutDescription ( Configuration* );
+             WidgetDescription*                  getWidget         ( const std::string& id );
+             void                                addWidgetLookup   ( WidgetDescription* );
       inline void                                addTab            ( TabDescription* );
+      inline void                                addTab            ( const std::string& tabName );
       inline TabDescription*                     getBackTab        ();
              TabDescription*                     getTab            ( const std::string& tabName );
       inline const std::vector<TabDescription*>& getTabs           () const;
@@ -171,18 +174,22 @@ namespace Cfg {
              ConfigurationWidget*                buildWidget       ( unsigned int       flags );
              void                                writeToStream     ( std::ostream& ) const;
     private:
-      Configuration*               _configuration;
-      std::vector<TabDescription*> _tabs;
+      Configuration*                                 _configuration;
+      std::vector<TabDescription*>                   _tabs;
+      std::map<const std::string,WidgetDescription*> _widgets;
   };
 
 
 // Inline Methods.
   inline  LayoutDescription::LayoutDescription ( Configuration* cfg )
-    : _configuration(cfg), _tabs()
+    : _configuration(cfg), _tabs(), _widgets()
   { }
 
   inline void  LayoutDescription::addTab ( TabDescription* tab )
   { _tabs.push_back(tab); }
+
+  inline void  LayoutDescription::addTab ( const std::string& tabName )
+  { addTab ( new TabDescription(this,tabName) ); }
 
   inline TabDescription* LayoutDescription::getBackTab ()
   { return _tabs.back(); }

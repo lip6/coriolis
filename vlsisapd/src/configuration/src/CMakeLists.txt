@@ -7,10 +7,11 @@
                        )
 
                    set ( mocIncludes   vlsisapd/configuration/FilePathEdit.h
-                                       vlsisapd/configuration/ConfigurationWidget.h
                                        vlsisapd/configuration/ConfigurationDialog.h
                                        vlsisapd/configuration/ParameterWidget.h
                                        vlsisapd/configuration/ConfTabWidget.h
+                                       vlsisapd/configuration/LogWidget.h
+                                       vlsisapd/configuration/ConfigurationWidget.h
                                        vlsisapd/configuration/ConfEditorWidget.h
                        )
 		   set ( includes      vlsisapd/configuration/Parameter.h
@@ -23,6 +24,7 @@
                                        FilePathEdit.cpp
                                        ParameterWidget.cpp
                                        ConfTabWidget.cpp
+                                       LogWidget.cpp
                                        ConfigurationWidget.cpp
                                        ConfigurationDialog.cpp
                                        ConfEditorWidget.cpp

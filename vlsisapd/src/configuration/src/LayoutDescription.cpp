@@ -35,7 +35,31 @@ namespace Cfg {
   using std::endl;
   using std::string;
   using std::vector;
+  using std::map;
+  using std::make_pair;
   using std::ostream;
+
+
+  void  TabDescription::addWidget ( WidgetDescription* widget )
+  {
+    _widgets.push_back(widget);
+    _layout->addWidgetLookup(widget);
+  }
+
+
+  WidgetDescription* LayoutDescription::getWidget ( const string& id )
+  {
+    map<const string,WidgetDescription*>::iterator iwid = _widgets.find(id);
+    if ( iwid != _widgets.end() ) return (*iwid).second;
+
+    return NULL;
+  }
+
+
+  void  LayoutDescription::addWidgetLookup ( WidgetDescription* widget )
+  {
+    _widgets.insert ( make_pair(widget->getId(),widget) );
+  }
 
 
   TabDescription* LayoutDescription::getTab ( const string& tabName )
@@ -44,7 +68,7 @@ namespace Cfg {
       if ( _tabs[itab]->getName() == tabName ) return _tabs[itab];
     }
 
-    addTab ( new TabDescription(tabName) );
+    addTab ( new TabDescription(this,tabName) );
     return getBackTab();
   }
   
@@ -77,8 +101,10 @@ namespace Cfg {
                                         , int           span
                                         , unsigned int  flags )
   {
-    TabDescription* tab = getTab ( tabName );
-    tab->addWidget ( WidgetDescription::parameter(id,label,column,span,flags) );
+    TabDescription*    tab    = getTab ( tabName );
+    WidgetDescription* widget = WidgetDescription::parameter(id,label,column,span,flags);
+
+    tab->addWidget ( widget );
   }
   
 

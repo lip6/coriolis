@@ -26,6 +26,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <map>
 #include <QApplication>
 #include <QTabWidget>
 #include <QPushButton>
@@ -35,6 +36,7 @@
 #include "vlsisapd/configuration/Configuration.h"
 #include "vlsisapd/configuration/ParameterWidget.h"
 #include "vlsisapd/configuration/ConfTabWidget.h"
+#include "vlsisapd/configuration/LogWidget.h"
 #include "vlsisapd/configuration/ConfigurationWidget.h"
 
 
@@ -44,6 +46,7 @@ namespace Cfg {
   using std::cerr;
   using std::endl;
   using std::string;
+  using std::set;
   using std::map;
   using std::pair;
   using std::make_pair;
@@ -62,6 +65,7 @@ namespace Cfg {
     , _apply    (new QPushButton())
     , _save     (NULL)
     , _cancel   (NULL)
+    , _log      (NULL)
   {
     _boldFont.setBold ( true );
 
@@ -93,6 +97,8 @@ namespace Cfg {
     vLayout->addStretch ();
 
     setLayout ( vLayout );
+
+    connect ( _apply, SIGNAL(clicked()), this, SLOT(applyClicked()) );
   }
 
 
@@ -158,7 +164,7 @@ namespace Cfg {
     tab = new ConfTabWidget ( tabName );
     _tabWidget->addTab ( tab, tabName.c_str() );
 
-    connect ( _apply, SIGNAL(clicked()), tab, SIGNAL(updateParameters()) );
+    connect ( this, SIGNAL(updateParameters()), tab, SIGNAL(updateParameters()) );
 
     return tab;
   }
@@ -176,6 +182,37 @@ namespace Cfg {
       if ( pw == NULL ) continue;
 
       pw->enableSlaves ( pw->getParameter()->asBool() );
+    }
+  }
+
+
+  void   ConfigurationWidget::applyClicked ()
+  {
+    emit updateParameters();
+    checkConfiguration ();
+  }
+
+
+  void  ConfigurationWidget::checkConfiguration ()
+  {
+    Configuration* configuration = Configuration::get();
+
+    if ( configuration->hasLogs() ) {
+      if ( _log == NULL ) _log = new LogWidget(this);
+      _log->updateLogs ();
+      _log->exec ();
+    }
+  }
+
+
+  void  ConfigurationWidget::selectTab ( const std::string& tabName )
+  {
+    QString qtabName ( tabName.c_str() );
+    for ( int itab=0 ; itab<_tabWidget->count() ; ++itab ) {
+      if ( _tabWidget->tabText(itab) == qtabName ) {
+        _tabWidget->setCurrentIndex ( itab );
+        return;
+      }
     }
   }
   

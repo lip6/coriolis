@@ -90,6 +90,7 @@ namespace Cfg {
 
     cout << "Saving configuration file: <" << dotConfigFile << ">."<< endl;
 
+  //Configuration::get()->writeToStream ( file, 0, ";misc;kite;;mauka;;" );
     Configuration::get()->writeToStream ( file, 0 );
   //Configuration::get()->writeToStream ( file, Configuration::DriveValues|Configuration::DriveLayout );
     file.close ();

@@ -28,6 +28,7 @@
 
 #include  <string>
 #include  <map>
+#include  <set>
 #include  <iostream>
 #include  "vlsisapd/configuration/Parameter.h"
 #include  "vlsisapd/configuration/LayoutDescription.h"
@@ -41,31 +42,42 @@ namespace Cfg {
 
   class Configuration {
     public:
-      enum Flags { DriveValues=0x1, DriveLayout=0x2 };
+      enum Flags   { DriveValues=0x1, DriveLayout=0x2 };
+      enum LogType { LogRestart=0, LogNeedExist, LogTypeSize };
     public:
-      static Configuration*           get            ();
+      static Configuration*           get                 ();
     public:
     // Methods.
-             ConfigurationWidget*     buildWidget    ( unsigned int flags );
+             ConfigurationWidget*     buildWidget         ( unsigned int flags );
              ConfigurationDialog*     buildDialog    ();
       inline const std::map<const std::string,Parameter*>&
-                                      getParameters  () const;
-      inline const LayoutDescription& getLayout      () const;
-      inline LayoutDescription&       getLayout      ();
-             Parameter*               getParameter   ( const std::string& id
-                                                     , Parameter::Type    type=Parameter::Unknown ) const;
-             Parameter*               addParameter   ( const std::string& id
-                                                     , Parameter::Type    type
-                                                     , const std::string& value );
-             void                     print          ( std::ostream& ) const;
-             bool                     readFromFile   ( const std::string& );
-             bool                     writeToFile    ( const std::string&, unsigned int flags ) const;
-             void                     writeToStream  ( std::ostream&, unsigned int flags ) const;
+                                      getParameters       () const;
+      inline const std::set<std::string>&                 
+                                      getLogs             ( unsigned int type ) const;
+      inline unsigned int             getFlags            () const;
+      inline const LayoutDescription& getLayout           () const;
+      inline LayoutDescription&       getLayout           ();
+             Parameter*               getParameter        ( const std::string& id
+                                                          , Parameter::Type    type=Parameter::Unknown ) const;
+             Parameter*               addParameter        ( const std::string& id
+                                                          , Parameter::Type    type
+                                                          , const std::string& value );
+      inline void                     setFlags            ( unsigned int mask );
+      inline bool                     hasLogs             () const;
+             void                     addLog              ( unsigned int type, const std::string& id );
+             void                     removeLog           ( unsigned int type, const std::string& id );
+      inline void                     clearLogs           ();
+             void                     print               ( std::ostream& ) const;
+             bool                     readFromFile        ( const std::string& );
+             bool                     writeToFile         ( const std::string&, unsigned int flags, const std::string& tabs="" ) const;
+             void                     writeToStream       ( std::ostream&, unsigned int flags, const std::string& tabs="" ) const;
     private:
     // Attributes.
       static Configuration*                   _singleton;
       std::map<const std::string,Parameter*>  _parameters;
       LayoutDescription                       _layout;
+      unsigned int                            _flags;
+      std::vector< std::set<std::string> >    _logSets;
     private:
       Configuration ();
   };
@@ -75,8 +87,26 @@ namespace Cfg {
   inline const std::map<const std::string,Parameter*>& Configuration::getParameters () const
   { return _parameters; }
 
+  inline const std::set<std::string>& Configuration::getLogs ( unsigned int type ) const
+  { return _logSets[(type<LogTypeSize) ? type : 0]; }
+
   inline const LayoutDescription& Configuration::getLayout () const { return _layout; }
   inline       LayoutDescription& Configuration::getLayout ()       { return _layout; }
+  inline       unsigned int       Configuration::getFlags  () const { return _flags; }
+  inline       void               Configuration::setFlags  ( unsigned int mask ) { _flags |= mask; }
+
+  inline bool  Configuration::hasLogs () const
+  {
+    for ( size_t ilog=0 ; ilog<_logSets.size() ; ++ilog )
+      if ( not _logSets[ilog].empty () ) return true;
+    return false;
+  }
+
+  inline void  Configuration::clearLogs ()
+  {
+    for ( size_t ilog=0 ; ilog<_logSets.size() ; ++ilog )
+      _logSets[ilog].clear ();
+  }
 
 
   inline Parameter* getParamString ( const std::string& id, const std::string& value="<undefined>" )
@@ -142,6 +172,8 @@ namespace Cfg {
     }
     return parameter;
   }
+
+
 
 
 } // End of Cfg namespace.

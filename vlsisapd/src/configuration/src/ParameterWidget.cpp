@@ -173,13 +173,118 @@ namespace Cfg {
     string valueId = _parameter->getId() + ".edit";
     _valueWidget->setObjectName ( valueId.c_str() );
 
-  //Parameter::ParameterChangedCb_t cb = boost::bind(&ParameterWidget::updateValueCb,this);
-
-    _parameter->registerCb ( boost::bind(&ParameterWidget::updateValueCb,this,_1) );
+    _parameter->registerCb ( boost::bind(&ParameterWidget::onUpdateValueCb,this,_1) );
   }
 
 
   void  ParameterWidget::updateValue ()
+  {
+    if ( _parameter->getType() == Parameter::String )
+      {
+        QLineEdit* lineEdit = qobject_cast<QLineEdit*>(_valueWidget);
+        _parameter->setString ( lineEdit->displayText().toStdString() );
+      }
+    else if ( _parameter->getType() == Parameter::Bool )
+      {
+        QCheckBox* checkBox = qobject_cast<QCheckBox*>(_valueWidget);
+        _parameter->setBool ( checkBox->isChecked() );
+      }
+    else if ( _parameter->getType() == Parameter::Int )
+      {
+        if ( hasFlags(UseSpinBox) ) {
+          QSpinBox* spinBox = qobject_cast<QSpinBox*>(_valueWidget);
+          int       value   = spinBox->value();
+
+          if ( not _parameter->setInt(value) )
+            spinBox->setValue ( _parameter->asInt() );
+        } else {
+          bool       success;
+          QLineEdit* lineEdit = qobject_cast<QLineEdit*>(_valueWidget);
+          int        value    = lineEdit->displayText().toInt ( &success );
+
+          if ( not success or not _parameter->setInt(value) )
+            lineEdit->setText ( _parameter->asString().c_str() );
+        }
+      }
+    else if ( _parameter->getType() == Parameter::Double )
+      {
+        bool       success;
+        QLineEdit* lineEdit = qobject_cast<QLineEdit*>(_valueWidget);
+        double     value    = lineEdit->displayText().toFloat ( &success );
+
+        if ( not success or not _parameter->setDouble(value) )
+          lineEdit->setText ( _parameter->asString().c_str() );
+      }
+    else if ( _parameter->getType() == Parameter::Percentage )
+      {
+        bool       success;
+        QLineEdit* lineEdit = qobject_cast<QLineEdit*>(_valueWidget);
+        double     value    = lineEdit->displayText().toFloat ( &success );
+
+        if ( not success or not _parameter->setPercentage(value) ) {
+          lineEdit->setText ( _parameter->asPercentageString().c_str() );
+        }
+      }
+    else if ( _parameter->getType() == Parameter::Enumerate )
+      {
+        QComboBox* comboBox = qobject_cast<QComboBox*>(_valueWidget);
+
+        const vector<Parameter::EnumValue>& values = _parameter->getValues();
+        _parameter->setInt ( values[comboBox->currentIndex()]._value );
+      }
+  }
+
+
+  void  ParameterWidget::onUpdateValueCb ( Parameter* )
+  {
+    if ( _parameter->getType() == Parameter::String )
+      {
+        QLineEdit* lineEdit = qobject_cast<QLineEdit*>(_valueWidget);
+        lineEdit->setText ( _parameter->asString().c_str() );
+      }
+    else if ( _parameter->getType() == Parameter::Bool )
+      {
+        QCheckBox* checkBox = qobject_cast<QCheckBox*>(_valueWidget);
+        checkBox->setChecked ( _parameter->asBool() );
+      }
+    else if ( _parameter->getType() == Parameter::Int )
+      {
+        if ( hasFlags(UseSpinBox) ) {
+          QSpinBox* spinBox = qobject_cast<QSpinBox*>(_valueWidget);
+          spinBox->setValue ( _parameter->asInt() );
+        } else {
+          QLineEdit* lineEdit = qobject_cast<QLineEdit*>(_valueWidget);
+          lineEdit->setText ( _parameter->asString().c_str() );
+        }
+      }
+    else if ( _parameter->getType() == Parameter::Double )
+      {
+        QLineEdit* lineEdit = qobject_cast<QLineEdit*>(_valueWidget);
+        lineEdit->setText ( _parameter->asString().c_str() );
+      }
+    else if ( _parameter->getType() == Parameter::Percentage )
+      {
+        QLineEdit* lineEdit = qobject_cast<QLineEdit*>(_valueWidget);
+        lineEdit->setText ( _parameter->asPercentageString().c_str() );
+      }
+    else if ( _parameter->getType() == Parameter::Enumerate )
+      {
+        QComboBox* comboBox = qobject_cast<QComboBox*>(_valueWidget);
+
+        int   value = _parameter->asInt();
+        const vector<Parameter::EnumValue>& values = _parameter->getValues();
+        for ( size_t ival=0 ; ival < values.size() ; ++ival ) {
+          if ( values[ival]._value == value ) {
+            comboBox->setCurrentIndex ( ival );
+            break;
+          }
+        }
+      }
+  }
+
+
+#if BACKUP
+  void  ParameterWidget::onUpdateValueCb ( Parameter* )
   {
     if ( _parameter->getType() == Parameter::String )
       {
@@ -237,67 +342,7 @@ namespace Cfg {
         _parameter->setInt ( values[comboBox->currentIndex()]._value );
       }
   }
-
-
-  void  ParameterWidget::updateValueCb ( Parameter* p )
-  {
-    if ( _parameter->getType() == Parameter::String )
-      {
-        QLineEdit* lineEdit = qobject_cast<QLineEdit*>(_valueWidget);
-        if ( _parameter->asString() != lineEdit->displayText().toStdString() ) return;
-
-        lineEdit->setText ( _parameter->asString().c_str() );
-      }
-    else if ( _parameter->getType() == Parameter::Bool )
-      {
-        QCheckBox* checkBox = qobject_cast<QCheckBox*>(_valueWidget);
-        if ( _parameter->asBool() == checkBox->isChecked() ) return;
-
-        checkBox->setCheckState ( Qt::Checked );
-      }
-    else if ( _parameter->getType() == Parameter::Int )
-      {
-        if ( hasFlags(UseSpinBox) ) {
-          QSpinBox* spinBox = qobject_cast<QSpinBox*>(_valueWidget);
-          if ( spinBox->value() == _parameter->asInt() ) return;
-
-          spinBox->setValue ( _parameter->asInt() );
-        } else {
-          QLineEdit* lineEdit = qobject_cast<QLineEdit*>(_valueWidget);
-          if ( _parameter->asString() == lineEdit->displayText().toStdString() ) return;
-
-          lineEdit->setText ( _parameter->asString().c_str() );
-        }
-      }
-    else if ( _parameter->getType() == Parameter::Double )
-      {
-        bool       success;
-        QLineEdit* lineEdit = qobject_cast<QLineEdit*>(_valueWidget);
-        if ( _parameter->asDouble() == lineEdit->displayText().toFloat(&success) ) return;
-
-        lineEdit->setText ( _parameter->asString().c_str() );
-      }
-    else if ( _parameter->getType() == Parameter::Percentage )
-      {
-        bool       success;
-        QLineEdit* lineEdit = qobject_cast<QLineEdit*>(_valueWidget);
-        double     value    = lineEdit->displayText().toFloat ( &success );
-
-        if ( value == _parameter->asPercentage() ) return;
-        lineEdit->setText ( QString("%1").arg(_parameter->asPercentage()) );
-      }
-    else if ( _parameter->getType() == Parameter::Enumerate )
-      {
-        QComboBox* comboBox = qobject_cast<QComboBox*>(_valueWidget);
-        const vector<Parameter::EnumValue>& values = _parameter->getValues();
-
-        if ( values[comboBox->currentIndex()]._value == _parameter->asInt() ) return;
-        for ( size_t ivalue=0 ; ivalue<values.size() ; ++ivalue ) {
-          if ( values[ivalue]._value == _parameter->asInt() )
-            comboBox->setCurrentIndex ( ivalue );
-        }
-      }
-  }
+#endif
 
 
   void  ParameterWidget::enableSlaves ( int state )

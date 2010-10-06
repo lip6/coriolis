@@ -23,6 +23,7 @@
 // x-----------------------------------------------------------------x
 
 
+#include  <cstring>
 #include  <sstream>
 #include  <fstream>
 #include  <iomanip>
@@ -38,6 +39,24 @@ namespace {
 
   using namespace std;
   using namespace Cfg;
+    
+
+  void  tokenize ( set<string>& tokens, const string& line )
+  {
+    static std::string separators = " ;";
+           size_t      iBegin     = 0;
+           size_t      iEnd       = 0;
+
+    for ( ; iEnd < line.size() ; ++iEnd ) {
+      if ( separators.find(line[iEnd]) != std::string::npos ) {
+        if ( iBegin < iEnd )
+          tokens.insert ( line.substr(iBegin,iEnd-iBegin) );
+        iBegin = iEnd+1;
+      }
+    }
+    if ( iBegin < iEnd )
+      tokens.insert ( line.substr(iBegin,iEnd-iBegin) );
+  }
 
 
   class XmlParser {
@@ -123,8 +142,12 @@ namespace {
   {
     if ( xmlTextReaderNodeType(_reader) == XML_READER_TYPE_END_ELEMENT ) return;
 
-    string attrId   = _getAttributeValue("id");
-    string attrType = _getAttributeValue("type");
+    string attrId        = _getAttributeValue("id");
+    string attrType      = _getAttributeValue("type");
+    string attrRestart   = _getAttributeValue("needRestart");
+    string attrMustExist = _getAttributeValue("mustExist");
+    string attrIsFile    = _getAttributeValue("isFile");
+    string attrIsPath    = _getAttributeValue("isPath");
 
     Parameter::Type type = Parameter::String;
     if      ( attrType == "string"     ) type = Parameter::String;
@@ -143,6 +166,11 @@ namespace {
     } else {
       _parameter->setString ( _getAttributeValue("value"), false );
     }
+
+    if ( not attrRestart.empty()   ) _parameter->setFlags ( Parameter::NeedRestart );
+    if ( not attrMustExist.empty() ) _parameter->setFlags ( Parameter::MustExist );
+    if ( not attrIsFile.empty()    ) _parameter->setFlags ( Parameter::IsFile );
+    if ( not attrIsPath.empty()    ) _parameter->setFlags ( Parameter::IsPath );
 
     if ( type == Parameter::Percentage ) {
       istringstream s ( _getAttributeValue("value") );
@@ -257,7 +285,7 @@ namespace {
   {
     string attrName = _getAttributeValue("name");
 
-    _configuration->getLayout().addTab ( new TabDescription(attrName) );
+    _configuration->getLayout().addTab ( attrName );
 
     _status = xmlTextReaderRead ( _reader );
     while ( _status == 1 ) {
@@ -359,7 +387,13 @@ namespace Cfg {
   Configuration::Configuration ()
     : _parameters()
     , _layout    (this)
-  { }
+    , _flags     (0)
+    , _logSets   ()
+  {
+    _logSets.reserve ( LogTypeSize );
+    for ( size_t ilog=0 ; ilog<LogTypeSize ; ++ilog )
+      _logSets.push_back ( set<string>() );
+  }
 
 
   ConfigurationWidget* Configuration::buildWidget ( unsigned int flags )
@@ -409,6 +443,18 @@ namespace Cfg {
   }
 
 
+  void  Configuration::addLog ( unsigned int type, const string& id )
+  {
+    _logSets[ (type<LogTypeSize) ? type : 0 ].insert ( id );
+  }
+
+
+  void  Configuration::removeLog ( unsigned int type, const string& id )
+  {
+    _logSets[ (type<LogTypeSize) ? type : 0 ].erase ( id );
+  }
+
+
   void  Configuration::print ( ostream& out ) const
   {
     map<const string,Parameter*>::const_iterator iparameter = _parameters.begin();
@@ -442,20 +488,23 @@ namespace Cfg {
   }
 
 
-  bool  Configuration::writeToFile ( const std::string& fileName, unsigned int flags ) const
+  bool  Configuration::writeToFile ( const std::string& fileName, unsigned int flags, const string& tabs ) const
   {
     ofstream out ( fileName.c_str() );
     if ( out.fail() ) return false;
 
-    writeToStream ( out, flags );
+    writeToStream ( out, flags, tabs );
 
     out.close ();
     return true;
   }
 
 
-  void  Configuration::writeToStream ( ostream& out, unsigned int flags ) const
+  void  Configuration::writeToStream ( ostream& out, unsigned int flags, const string& tabs ) const
   {
+    set<string> tabset;
+    tokenize ( tabset, tabs );
+
     out << "<configuration>" << endl;
 
     map<const string,Parameter*>::const_iterator iparameter = _parameters.begin();
@@ -465,23 +514,37 @@ namespace Cfg {
       string id   = "\"" + p->getId() + "\"";
       string type = "\"" + Parameter::typeToString(p->getType()) + "\"";
 
+      if ( not tabset.empty() ) {
+        set<string>::iterator itab = tabset.begin();
+        for ( ; itab != tabset.end() ; ++itab ) {
+          if ( id.compare(1,(*itab).size(),*itab) == 0 ) {
+            break;
+          }
+        }
+        if ( itab == tabset.end() ) continue;
+      }
+
       out << "  <parameter"
           << " id="    << setw(40) << left << id
           << " type="  << setw(12) << left << type
           << " value=\"";
 
-      if ( p->getType() == Parameter::Percentage ) out << p->asPercentage();
+      if ( p->getType() == Parameter::Percentage ) out << p->asPercentageString();
       else out << p->asString();
       out << "\"";
 
       if ( flags & DriveValues ) {
         if ( p->getType() == Parameter::Int ) {
-          if ( p->hasFlags(Parameter::HasMin) ) out << " min=\"" << p->getMinInt() << "\"";
-          if ( p->hasFlags(Parameter::HasMax) ) out << " max=\"" << p->getMaxInt() << "\"";
+          if ( p->hasMin() ) out << " min=\"" << p->getMinInt() << "\"";
+          if ( p->hasMax() ) out << " max=\"" << p->getMaxInt() << "\"";
         } else if ( p->getType() == Parameter::Double ) {
-          if ( p->hasFlags(Parameter::HasMin) ) out << " min=\"" << p->getMinDouble() << "\"";
-          if ( p->hasFlags(Parameter::HasMax) ) out << " max=\"" << p->getMaxDouble() << "\"";
+          if ( p->hasMin() ) out << " min=\"" << p->getMinDouble() << "\"";
+          if ( p->hasMax() ) out << " max=\"" << p->getMaxDouble() << "\"";
         }
+        if ( p->hasMustExist()   ) out << " mustExist=\"true\"";
+        if ( p->hasNeedRestart() ) out << " needRestart=\"true\"";
+        if ( p->isFile()         ) out << " isFile=\"true\"";
+        if ( p->isPath()         ) out << " isPath=\"true\"";
       }
 
       if ( (flags&DriveValues) and (p->getType() == Parameter::Enumerate) ) {

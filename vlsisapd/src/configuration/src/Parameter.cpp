@@ -24,7 +24,11 @@
 
 
 #include  <iostream>
+#include  <boost/filesystem/operations.hpp>
+namespace bfs = boost::filesystem;
+
 #include  "vlsisapd/configuration/Parameter.h"
+#include  "vlsisapd/configuration/Configuration.h"
 
 
 namespace Cfg {
@@ -66,6 +70,20 @@ namespace Cfg {
     }
 
   //cerr << "New " << typeToString(_type) << " parameter " << _id << " value:" << _value << endl;
+  }
+
+
+  string  Parameter::asPercentageString () const
+  {
+    if ( (_type != Double) and (_type != Percentage) )
+      cerr << "[ERROR] Accessing " << Parameter::typeToString(_type)
+           << " parameter <" << _id
+           << "> as " << Parameter::typeToString(Percentage)<< " (type mismatch)." << endl;
+
+    std::istringstream is ( _value ); double r; is >> r;
+    std::ostringstream os; os << (r*100.0);
+
+    return os.str();
   }
   
 
@@ -113,64 +131,121 @@ namespace Cfg {
   }
 
 
-  void  Parameter::setString ( const std::string& s, bool check )
+  bool  Parameter::setString ( const std::string& s, bool check )
   {
     if ( check and (_type != String) )
       cerr << "[ERROR] Parameter::setString(): Setting " << Parameter::typeToString(_type)
            << " parameter <" << _id
            << "> as " << Parameter::typeToString(String)<< " (type mismatch)." << endl;
 
+    if ( _value == s ) return true;
+
     _value = s;
     _onValueChanged();
+    _checkRequirements();
+
+    return true;
   }
 
 
-  void  Parameter::setBool ( bool b )
+  bool  Parameter::setBool ( bool b )
   {
     if ( _type != Bool )
       cerr << "[ERROR] Parameter::setBool(): Setting " << Parameter::typeToString(_type)
            << " parameter <" << _id
            << "> as " << Parameter::typeToString(Bool)<< " (type mismatch)." << endl;
 
-    std::ostringstream s; s << std::boolalpha << b; _value = s.str();
+    std::ostringstream s; s << std::boolalpha << b;
+    if ( _value == s.str() ) return true;
 
+    _value = s.str();
     _onValueChanged();
+    _checkRequirements();
+
+    return true;
   }
 
 
-  void  Parameter::setInt ( int i )
+  bool  Parameter::setInt ( int i )
   {
     if ( (_type != Int) and (_type != Enumerate)  )
       cerr << "[ERROR] Parameter::setInt(): Setting " << Parameter::typeToString(_type)
            << " parameter <" << _id
            << "> as " << Parameter::typeToString(Int)<< " (type mismatch)." << endl;
 
-    std::ostringstream s; s << i; _value = s.str();
-    _onValueChanged();
+    bool success = checkValue(i);
+    if ( success ) {
+      std::ostringstream s; s << i;
+      if ( _value == s.str() ) return true;
+
+      _value = s.str();
+      _onValueChanged();
+      _checkRequirements();
+    }
+
+    return success;
   } 
 
 
-  void  Parameter::setDouble ( double d )
+  bool  Parameter::setDouble ( double d )
   {
     if ( (_type != Double) and (_type != Percentage)  )
       cerr << "[ERROR] Parameter::setDouble(): Setting " << Parameter::typeToString(_type)
            << " parameter <" << _id
            << "> as " << Parameter::typeToString(Double)<< " (type mismatch)." << endl;
 
-    std::ostringstream s; s << d; _value = s.str();
-    _onValueChanged();
+    bool success = checkValue(d);
+    if ( success ) {
+      std::ostringstream s; s << d;
+      if ( _value == s.str() ) return true;
+
+      _value = s.str();
+      _onValueChanged();
+      _checkRequirements();
+    }
+
+    return success;
   } 
 
 
-  void  Parameter::setPercentage ( double d )
+  bool  Parameter::setPercentage ( double d )
   {
     if ( (_type != Double) and (_type != Percentage)  )
       cerr << "[ERROR] Parameter::setPercentage(): Setting " << Parameter::typeToString(_type)
            << " parameter <" << _id
            << "> as " << Parameter::typeToString(Double)<< " (type mismatch)." << endl;
 
-    std::ostringstream s; s << (d/100.0); _value = s.str();
-    _onValueChanged();
+    bool success = checkValue(d/100.0);
+    if ( success ) {
+      std::ostringstream s; s << (d/100.0);
+      if ( _value == s.str() ) return true;
+
+      _value = s.str();
+      _onValueChanged();
+      _checkRequirements();
+    }
+
+    return success;
+  }
+
+
+  void  Parameter::_checkRequirements () const
+  {
+    Configuration* configuration = Configuration::get();
+
+    if ( hasFlags(NeedRestart) ) {
+      configuration->addLog ( Configuration::LogRestart, _id );
+    }
+
+    if ( hasFlags(MustExist) ) {
+      if ( _type == String ) {
+        bfs::path filePath = ( asString() );
+        if ( not bfs::exists(filePath) )
+          configuration->addLog ( Configuration::LogNeedExist, _id );
+        else
+          configuration->removeLog ( Configuration::LogNeedExist, _id );
+      }
+    }
   }
 
 

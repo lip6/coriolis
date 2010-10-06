@@ -39,6 +39,7 @@ namespace Cfg {
   class Parameter;
   class ParameterWidget;
   class ConfTabWidget;
+  class LogWidget;
 
 
 // -------------------------------------------------------------------
@@ -72,6 +73,12 @@ namespace Cfg {
                                                   , int                span  =1
                                                   , int                flags =0 );
              void             syncSlaves          ();
+             void             checkConfiguration  ();
+             void             selectTab           ( const std::string& );
+    public slots:
+             void             applyClicked        ();
+    signals:
+             void             updateParameters    ();
     private:
       unsigned int  _flags;
       QFont         _boldFont;
@@ -79,6 +86,7 @@ namespace Cfg {
       QPushButton*  _apply;
       QPushButton*  _save;
       QPushButton*  _cancel;
+      LogWidget*    _log;
   };
 
 
