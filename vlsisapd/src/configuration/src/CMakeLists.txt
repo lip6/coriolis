@@ -38,6 +38,7 @@
  target_link_libraries ( configuration ${QT_LIBRARIES}
                                        ${PYTHON_LIBRARIES}
                                        ${LIBXML2_LIBRARIES}
+                                       ${Boost_LIBRARIES}
                        )
         add_executable ( vlsisapd-conf-editor ${editorcpp} )
  target_link_libraries ( vlsisapd-conf-editor configuration ${Boost_LIBRARIES} )
