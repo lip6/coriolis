@@ -79,6 +79,7 @@ namespace Cfg {
              void             applyClicked        ();
     signals:
              void             updateParameters    ();
+             void             checkOk             ();
     private:
       unsigned int  _flags;
       QFont         _boldFont;

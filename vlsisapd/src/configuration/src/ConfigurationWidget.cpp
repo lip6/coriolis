@@ -206,6 +206,8 @@ namespace Cfg {
       if ( _log == NULL ) _log = new LogWidget(this);
       _log->updateLogs ();
       _log->exec ();
+    } else {
+      emit checkOk();
     }
   }
 
