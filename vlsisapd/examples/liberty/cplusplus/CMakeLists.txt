@@ -1,0 +1,7 @@
+INCLUDE_DIRECTORIES ( ${VLSISAPD_SOURCE_DIR}/src/liberty/src )
+ADD_EXECUTABLE ( driveLiberty driveLiberty.cpp )
+ADD_EXECUTABLE ( parseLiberty parseLiberty.cpp )
+TARGET_LINK_LIBRARIES ( driveLiberty liberty  )
+TARGET_LINK_LIBRARIES ( parseLiberty liberty )
+INSTALL ( TARGETS driveLiberty     DESTINATION share/doc/coriolis2/examples/vlsisapd/liberty )
+INSTALL ( TARGETS parseLiberty     DESTINATION share/doc/coriolis2/examples/vlsisapd/liberty )

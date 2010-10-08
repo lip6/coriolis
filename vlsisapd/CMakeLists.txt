@@ -7,11 +7,13 @@
  find_package(Bootstrap REQUIRED)
  list(INSERT CMAKE_MODULE_PATH 0 "${VLSISAPD_SOURCE_DIR}/cmake_modules/")
 
- setup_boost(program_options filesystem python)
+ setup_boost(program_options filesystem python regex)
 
  find_package(LibXml2 REQUIRED)
  find_package(PythonSitePackages REQUIRED)
  find_package(PythonLibs REQUIRED)
+ find_package(BISON REQUIRED)
+ find_package(FLEX REQUIRED)
  find_package(Doxygen)
 
  add_subdirectory(src)
