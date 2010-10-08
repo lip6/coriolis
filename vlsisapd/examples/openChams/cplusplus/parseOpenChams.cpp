@@ -17,7 +17,17 @@ using namespace std;
 #include "vlsisapd/openChams/Layout.h"
 
 int main(int argc, char * argv[]) {
-    OpenChams::Circuit* circuit = OpenChams::Circuit::readFromFile("./inverter.xml");
+    string file = "";
+    if (argc == 1)
+        file = "./inverter.xml";
+    else if (argc == 2)
+        file = argv[1];
+    else {
+        cerr << "Usage: openChamsParser [filename]" << endl;
+        exit(1);
+    }
+
+    OpenChams::Circuit* circuit = OpenChams::Circuit::readFromFile(file);
 
     cerr << circuit->getName().getString() << endl;
     cerr << " + parameters" << endl;
@@ -39,7 +49,10 @@ int main(int argc, char * argv[]) {
             cerr << " | | + " << inst->getName().getString() << " : " << inst->getModel().getString() << " - " << inst->getMosType().getString() << " - " << (inst->isSourceBulkConnected()?"true":"false") << endl;
             cerr << " | | | + connectors" << endl;
             for (map<OpenChams::Name, OpenChams::Net*>::const_iterator cit = inst->getConnectors().begin() ; cit != inst->getConnectors().end() ; ++cit) {
-                cerr << " | | | | " << ((*cit).first).getString() << " : " << ((*cit).second)->getName().getString() << endl;
+                if ((*cit).second)
+                    cerr << " | | | | " << ((*cit).first).getString() << " : " << ((*cit).second)->getName().getString() << endl;
+                else
+                    cerr << " | | | | " << ((*cit).first).getString() << endl; // no net connected !
             }
             cerr << " | | | + transistors" << endl;
             for (size_t j = 0 ; j < inst->getTransistors().size() ; j++) {
