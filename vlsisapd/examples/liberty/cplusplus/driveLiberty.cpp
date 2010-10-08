@@ -61,7 +61,7 @@ int main ( int argc, char * argv[] ) {
 
 
     // Write
-    valeur="test.lib"; library->writeToFile(valeur);
+    valeur="testDrive.lib"; library->writeToFile(valeur);
 
     return 0;
 }

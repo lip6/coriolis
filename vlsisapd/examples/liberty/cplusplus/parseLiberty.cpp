@@ -6,15 +6,13 @@ using namespace std;
 #include "vlsisapd/liberty/Library.h"
 
 int main ( int argc, char * argv[] ) {
-    LIB::Library* library = LIB::Library::readFromFile("./sxlib.lib");
+    LIB::Library* library = LIB::Library::readFromFile("./testParse.lib");
 
     if ( library ) {
         library->print();
     } else {
         cerr << "library is NULL" << endl;
     }
-
-//    library->writeToFile("./mySxlib.lib");
 
     return 0;
 }
