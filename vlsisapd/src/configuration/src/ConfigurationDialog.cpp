@@ -46,6 +46,6 @@ ConfigurationDialog::ConfigurationDialog(QWidget* parent): QDialog(parent) {
     vLayout->addWidget(confWidget);
 
     setLayout ( vLayout );
-  }
+}
 
 }  // End of Cfg namespace.

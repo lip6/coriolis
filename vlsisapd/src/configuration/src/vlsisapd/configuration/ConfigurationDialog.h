@@ -28,6 +28,7 @@
 #define  __CFG_CONFIGURATION_DIALOG__
 
 #include  <QDialog>
+class QPushButton;
 
 namespace Cfg {
 class ConfigurationDialog : public QDialog {
@@ -37,7 +38,7 @@ class ConfigurationDialog : public QDialog {
 
     signals:
       void saveToFile();
-    
+
 };
 
 } // End of Cfg namespace.

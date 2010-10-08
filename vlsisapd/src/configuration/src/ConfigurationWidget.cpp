@@ -78,17 +78,20 @@ namespace Cfg {
     hLayout->addStretch ();
 
     _apply->setText ( tr( (_flags&Embedded)?"Apply":"OK") );
+    _apply->setStatusTip(tr("apply changes in memory"));
     hLayout->addWidget  ( _apply );
     hLayout->addStretch ();
 
     if ( _flags & StandAlone ) {
       _save = new QPushButton ();
       _save->setText ( tr("Save") );
+      _save->setStatusTip(tr("save changes to file"));
       hLayout->addWidget  ( _save );
       hLayout->addStretch ();
 
       _cancel = new QPushButton ();
       _cancel->setText ( tr("Cancel") );
+      _cancel->setStatusTip(tr("cancel changes"));
       hLayout->addWidget  ( _cancel );
       hLayout->addStretch ();
     }
@@ -165,6 +168,8 @@ namespace Cfg {
     _tabWidget->addTab ( tab, tabName.c_str() );
 
     connect ( this, SIGNAL(updateParameters()), tab, SIGNAL(updateParameters()) );
+    if (_save)
+      connect ( _save , SIGNAL(clicked()), tab, SIGNAL(updateParameters()) );
 
     return tab;
   }
