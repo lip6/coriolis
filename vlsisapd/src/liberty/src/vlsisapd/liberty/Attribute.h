@@ -26,12 +26,12 @@ class Attribute {
 
     inline const std::string& valueAsString() const;
     inline const std::string& secondValueAsString() const;
-    bool   valueAsBool() const;
-    int    valueAsInt() const;
+    bool valueAsBool() const;
+    int valueAsInt() const;
     double valueAsDouble() const;
     double secondValueAsDouble() const;
-    std::string typeToString(Type type);
-    bool   write(std::ofstream &file);
+    std::string typeToString();
+    bool write(std::ofstream &file);
 
     private:
     Name _name;

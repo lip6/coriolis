@@ -11,6 +11,9 @@ namespace LIB {
 class Timing {
     public:
     Timing();
+
+    inline std::map<Name, Attribute*> getAttributes();
+    Attribute* getAttribute(Name attrName);
     
     void addAttribute(Name attrName, Attribute::Type attrType, std::string& attrValue);
 
@@ -20,6 +23,8 @@ class Timing {
     private:
     std::map<Name, Attribute*> _attributes;
 };
+    
+inline std::map<Name, Attribute*> Timing::getAttributes() { return _attributes; };
     
 } // namespace LIB
 #endif

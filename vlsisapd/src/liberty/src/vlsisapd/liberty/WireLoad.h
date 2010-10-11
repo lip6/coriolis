@@ -11,6 +11,8 @@ class WireLoad {
     WireLoad(Name name);
     
     inline Name getName();
+    inline std::map<Name, Attribute*> getAttributes();
+    Attribute* getAttribute(Name attrName);
 
     void addAttribute(Name attrName, Attribute::Type attrType, std::string& attrValue, const std::string& attrValue2 = "");
 
@@ -23,6 +25,7 @@ class WireLoad {
 };
     
 inline Name WireLoad::getName() { return _name; };
+inline std::map<Name, Attribute*> WireLoad::getAttributes() { return _attributes; };
     
 } // namespace LIB
 #endif

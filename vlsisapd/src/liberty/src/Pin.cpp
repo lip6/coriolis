@@ -9,6 +9,27 @@ using namespace std;
 namespace LIB {
 Pin::Pin(Name name): _name(name), _attributes(), _timings() {};
 
+Attribute* Pin::getAttribute(Name attrName) {
+    Attribute* attr = NULL;
+    map<Name, Attribute*>::iterator it = _attributes.find(attrName);
+    if (it == _attributes.end()) {
+        cerr << "[ERROR] Pin " << _name.getString() << " has no attribute named " << attrName.getString() << endl;
+        exit(1);
+    }
+    attr= (*it).second;
+    return attr;
+}
+
+Timing* Pin::getTiming(Name pinName) {
+    for (size_t i = 0 ; i < _timings.size() ; i++) {
+        if (pinName.getString() == _timings[i]->getAttribute(Name("related_pin"))->valueAsString()) {
+            return _timings[i];
+        }
+    }
+    cerr << "[ERROR] Pin " << _name.getString() << " has no timing related to pin named " << pinName.getString() << endl;
+    exit(1);
+}
+
 void Pin::addAttribute(Name attrName, Attribute::Type attrType, string& attrValue) {
     Attribute* attr = new Attribute(attrName, attrType, attrValue);
     map<Name, Attribute*>::iterator it = _attributes.find(attrName);
@@ -31,7 +52,7 @@ void Pin::print() {
     cout << "|         Attributes :" << endl;
     for(map<Name, Attribute*>::const_iterator it=_attributes.begin() ; it!=_attributes.end() ; ++it) {
         cout << "|           name= " << (*it).first.getString()
-             << ", type= " << (*it).second->typeToString((*it).second->getType())
+             << ", type= " << (*it).second->typeToString()
              << ", value= " << (*it).second->valueAsString() << endl;
     }
     // Timing

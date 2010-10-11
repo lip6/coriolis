@@ -15,7 +15,10 @@ class Pin {
     Pin(Name name);
     
     inline Name getName();
-    inline std::vector<Timing*> getTiming();
+    inline std::map<Name, Attribute*> getAttributes();
+    inline std::vector<Timing*> getTimings();
+    Attribute* getAttribute(Name attrName);
+    Timing* getTiming(Name pinName);
 
     void addAttribute(Name attrName, Attribute::Type attrType, std::string& attrValue);
     void addTiming();
@@ -30,7 +33,8 @@ class Pin {
 };
     
 inline Name Pin::getName() { return _name; };
-inline std::vector<Timing*> Pin::getTiming() { return _timings; };
+inline std::map<Name, Attribute*> Pin::getAttributes() { return _attributes; };
+inline std::vector<Timing*> Pin::getTimings() { return _timings; };
     
 } // namespace LIB
 #endif

@@ -13,6 +13,9 @@ class WireLoadSelection {
     public:
     WireLoadSelection(Name name);
 
+    inline Name getName();
+    inline std::vector<WireLoadArea*> getWiresLoadArea();
+
     void addWireLoadArea(double min, double max, Name name);
     void print();
     bool write(std::ofstream& file);
@@ -21,6 +24,9 @@ class WireLoadSelection {
     Name _name;
     std::vector<WireLoadArea*> _wires_load_area;
 };
+    
+inline Name WireLoadSelection::getName() { return _name; };
+inline std::vector<WireLoadArea*> WireLoadSelection::getWiresLoadArea() { return _wires_load_area; };
 
 } // namespace
 #endif

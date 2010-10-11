@@ -9,6 +9,17 @@ using namespace std;
 namespace LIB {
 WireLoad::WireLoad(Name name): _name(name), _attributes() {};
 
+Attribute* WireLoad::getAttribute(Name attrName) {
+    Attribute* attr = NULL;
+    map<Name, Attribute*>::iterator it = _attributes.find(attrName);
+    if (it == _attributes.end()) {
+        cerr << "[ERROR] WireLoad " << _name.getString() << " has no attribute named " << attrName.getString() << endl;
+        exit(1);
+    }
+    attr= (*it).second;
+    return attr;
+}
+
 void WireLoad::addAttribute(Name attrName, Attribute::Type attrType, string& attrValue, const string& attrValue2) {
     Attribute* attr = new Attribute(attrName, attrType, attrValue, "", attrValue2);
     map<Name, Attribute*>::iterator it = _attributes.find(attrName);
@@ -25,7 +36,7 @@ void WireLoad::print() {
     cout << "|       Attributes :" << endl;
     for(map<Name, Attribute*>::const_iterator it=_attributes.begin() ; it!=_attributes.end() ; ++it) {
         cout << "|         name= " << (*it).first.getString()
-             << ", type= " << (*it).second->typeToString((*it).second->getType())
+             << ", type= " << (*it).second->typeToString()
              << ", value= " << (*it).second->valueAsString();
         string value2=(*it).second->secondValueAsString();
         if(!value2.empty())

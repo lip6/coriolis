@@ -1,12 +1,3 @@
-/*
- *  Name.h
- *  openChams
- *
- *  Created by damien dupuis on 18/12/09.
- *  Copyright 2009 UPMC / LIP6. All rights reserved.
- *
- */
-
 #ifndef __LIB_NAME_H__
 #define __LIB_NAME_H__
 

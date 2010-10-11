@@ -53,8 +53,8 @@ double Attribute::secondValueAsDouble() const {
     return d;
 }
 
-string Attribute::typeToString(Attribute::Type type) {
-    switch(type) {
+string Attribute::typeToString() {
+    switch(_type) {
       case Unknown: return "unknown";
       case String:  return "string";
       case Bool:    return "bool";

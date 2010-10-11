@@ -408,7 +408,7 @@ timing_header
     : TIMING '(' ')' 
     {
         library->getCell(currentCell)->getPin(listPins.back())->addTiming();
-        currentTiming=library->getCell(currentCell)->getPin(listPins.back())->getTiming().back();
+        currentTiming=library->getCell(currentCell)->getPin(listPins.back())->getTimings().back();
         // only for 1 pin, not available for pins' list
         if(listPins.size()>1)
             cerr << "[Warning] timing information for a list of pins, not available." << endl;

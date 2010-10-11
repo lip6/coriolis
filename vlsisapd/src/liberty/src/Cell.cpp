@@ -9,7 +9,18 @@ using namespace std;
 #include "vlsisapd/liberty/FlipFlop.h"
 
 namespace LIB {
-Cell::Cell(Name name): _name(name), _attributes(), _pins(), _ff(NULL), _test_cell(NULL) {};
+Cell::Cell(Name name): _name(name), _attributes(), _pins(), _ff(NULL), _testCell(NULL) {};
+
+Attribute* Cell::getAttribute(Name attrName) {
+    Attribute* attr = NULL;
+    map<Name, Attribute*>::iterator it = _attributes.find(attrName);
+    if (it == _attributes.end()) {
+        cerr << "[ERROR] Cell " << _name.getString() << " has no attribute named " << attrName.getString() << endl;
+        exit(1);
+    }
+    attr= (*it).second;
+    return attr;
+}
 
 Pin* Cell::getPin(Name pinName) {
     Pin* pin = NULL;
@@ -48,7 +59,7 @@ void Cell::addFF(Name noninverting, Name inverting) {
 }
 
 void Cell::setTestCell(Cell *cell) {
-    _test_cell = cell;
+    _testCell = cell;
 }
 
 void Cell::print() {
@@ -58,7 +69,7 @@ void Cell::print() {
     cout << "|       Attributes :" << endl;
     for(map<Name, Attribute*>::const_iterator it=_attributes.begin() ; it!=_attributes.end() ; ++it) {
         cout << "|         name= " << (*it).first.getString()
-             << ", type= " << (*it).second->typeToString((*it).second->getType())
+             << ", type= " << (*it).second->typeToString()
              << ", value= " << (*it).second->valueAsString() << endl;
     }
     // Cell's pins
@@ -69,8 +80,8 @@ void Cell::print() {
     if(_ff)
         _ff->print();
     // test_cell
-    if(_test_cell)
-        _test_cell->print();
+    if(_testCell)
+        _testCell->print();
 }
 
 bool Cell::write(ofstream &file, bool test) {
@@ -95,8 +106,8 @@ bool Cell::write(ofstream &file, bool test) {
     if(_ff)
         _ff->write(file);
     // test_cell
-    if(_test_cell)
-        _test_cell->write(file, true);
+    if(_testCell)
+        _testCell->write(file, true);
     file << "    }" << endl;
     return true;
 }

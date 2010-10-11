@@ -54,7 +54,7 @@ int main ( int argc, char * argv[] ) {
     // Timing
     LIB::Timing * timing;
     pin->addTiming();
-    timing = pin->getTiming().back();
+    timing = pin->getTimings().back();
     valeur="negative_unate"; timing->addAttribute(LIB::Name("timing_sense"), LIB::Attribute::String, valeur);
     valeur="e"; timing->addAttribute(LIB::Name("related_pin"), LIB::Attribute::String, valeur);
     valeur="0.101"; timing->addAttribute(LIB::Name("intrinsic_rise"), LIB::Attribute::Double, valeur);

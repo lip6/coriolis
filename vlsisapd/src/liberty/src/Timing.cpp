@@ -9,6 +9,17 @@ using namespace std;
 namespace LIB {
 Timing::Timing(): _attributes() {};
 
+Attribute* Timing::getAttribute(Name attrName) {
+    Attribute* attr = NULL;
+    map<Name, Attribute*>::iterator it = _attributes.find(attrName);
+    if (it == _attributes.end()) {
+        cerr << "[ERROR] Timing has no attribute named " << attrName.getString() << endl;
+        exit(1);
+    }
+    attr= (*it).second;
+    return attr;
+}
+
 void Timing::addAttribute(Name attrName, Attribute::Type attrType, string& attrValue) {
     Attribute* attr = new Attribute(attrName, attrType, attrValue);
     map<Name, Attribute*>::iterator it = _attributes.find(attrName);
@@ -24,7 +35,7 @@ void Timing::print() {
     cout << "|         Timing's attributes :" << endl;
     for(map<Name, Attribute*>::const_iterator it=_attributes.begin() ; it!=_attributes.end() ; ++it) {
         cout << "|           name= " << (*it).first.getString()
-             << ", type= " << (*it).second->typeToString((*it).second->getType())
+             << ", type= " << (*it).second->typeToString()
              << ", value= " << (*it).second->valueAsString() << endl;
     }
 }
