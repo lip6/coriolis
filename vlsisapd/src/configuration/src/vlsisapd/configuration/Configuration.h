@@ -43,41 +43,53 @@ namespace Cfg {
   class Configuration {
     public:
       enum Flags   { DriveValues=0x1, DriveLayout=0x2 };
-      enum LogType { LogRestart=0, LogNeedExist, LogTypeSize };
+      enum LogType { LogRestart=0x1, LogNeedExist=0x2, AllLogs=0xFFFF };
     public:
-      static Configuration*           get                 ();
+      class LogEntry {
+        public:
+          inline                     LogEntry ( const std::string& id );
+          inline  const std::string& getId    () const;
+          inline  const std::string& getValid () const;
+          inline  void               restore  () const;
+        private:
+          std::string  _id;
+          std::string  _valid;
+      };
+
+    public:
+      static Configuration*            get                 ();
     public:
     // Methods.
-             ConfigurationWidget*     buildWidget         ( unsigned int flags );
-             ConfigurationDialog*     buildDialog    ();
+             ConfigurationWidget*      buildWidget         ( unsigned int flags );
+             ConfigurationDialog*      buildDialog         ();
       inline const std::map<const std::string,Parameter*>&
-                                      getParameters       () const;
-      inline const std::set<std::string>&                 
-                                      getLogs             ( unsigned int type ) const;
-      inline unsigned int             getFlags            () const;
-      inline const LayoutDescription& getLayout           () const;
-      inline LayoutDescription&       getLayout           ();
-             Parameter*               getParameter        ( const std::string& id
-                                                          , Parameter::Type    type=Parameter::Unknown ) const;
-             Parameter*               addParameter        ( const std::string& id
-                                                          , Parameter::Type    type
-                                                          , const std::string& value );
-      inline void                     setFlags            ( unsigned int mask );
-      inline bool                     hasLogs             () const;
-             void                     addLog              ( unsigned int type, const std::string& id );
-             void                     removeLog           ( unsigned int type, const std::string& id );
-      inline void                     clearLogs           ();
-             void                     print               ( std::ostream& ) const;
-             bool                     readFromFile        ( const std::string& );
-             bool                     writeToFile         ( const std::string&, unsigned int flags, const std::string& tabs="" ) const;
-             void                     writeToStream       ( std::ostream&, unsigned int flags, const std::string& tabs="" ) const;
+                                       getParameters       () const;
+             const std::set<LogEntry>& getLogs             ( unsigned int ilog ) const;
+      inline unsigned int              getFlags            () const;
+      inline const LayoutDescription&  getLayout           () const;
+      inline LayoutDescription&        getLayout           ();
+             Parameter*                getParameter        ( const std::string& id
+                                                           , Parameter::Type    type=Parameter::Unknown ) const;
+             Parameter*                addParameter        ( const std::string& id
+                                                           , Parameter::Type    type
+                                                           , const std::string& value );
+      inline void                      setFlags            ( unsigned int mask );
+      inline bool                      hasLogs             ( unsigned int mask ) const;
+             void                      addLog              ( unsigned int mask, const std::string& id );
+             void                      removeLog           ( unsigned int mask, const std::string& id );
+      inline void                      restoreFromLogs     ( unsigned int mask );
+      inline void                      clearLogs           ( unsigned int mask );
+             void                      print               ( std::ostream& ) const;
+             bool                      readFromFile        ( const std::string& );
+             bool                      writeToFile         ( const std::string&, unsigned int flags, const std::string& tabs="" ) const;
+             void                      writeToStream       ( std::ostream&, unsigned int flags, const std::string& tabs="" ) const;
     private:
     // Attributes.
-      static Configuration*                   _singleton;
-      std::map<const std::string,Parameter*>  _parameters;
-      LayoutDescription                       _layout;
-      unsigned int                            _flags;
-      std::vector< std::set<std::string> >    _logSets;
+      static Configuration*                         _singleton;
+      std::map<const std::string,Parameter*>        _parameters;
+      LayoutDescription                             _layout;
+      unsigned int                                  _flags;
+      std::map< unsigned int, std::set<LogEntry> >  _logSets;
     private:
       Configuration ();
   };
@@ -87,25 +99,42 @@ namespace Cfg {
   inline const std::map<const std::string,Parameter*>& Configuration::getParameters () const
   { return _parameters; }
 
-  inline const std::set<std::string>& Configuration::getLogs ( unsigned int type ) const
-  { return _logSets[(type<LogTypeSize) ? type : 0]; }
-
   inline const LayoutDescription& Configuration::getLayout () const { return _layout; }
   inline       LayoutDescription& Configuration::getLayout ()       { return _layout; }
   inline       unsigned int       Configuration::getFlags  () const { return _flags; }
   inline       void               Configuration::setFlags  ( unsigned int mask ) { _flags |= mask; }
 
-  inline bool  Configuration::hasLogs () const
+
+  inline bool  Configuration::hasLogs ( unsigned int mask ) const
   {
-    for ( size_t ilog=0 ; ilog<_logSets.size() ; ++ilog )
-      if ( not _logSets[ilog].empty () ) return true;
+    std::map< unsigned int, std::set<LogEntry> >::const_iterator ilog = _logSets.begin();
+    for ( ; ilog != _logSets.end() ; ++ilog )
+      if ( (mask & (*ilog).first) and not (*ilog).second.empty () ) return true;
     return false;
   }
 
-  inline void  Configuration::clearLogs ()
+
+  inline void  Configuration::restoreFromLogs ( unsigned int mask )
   {
-    for ( size_t ilog=0 ; ilog<_logSets.size() ; ++ilog )
-      _logSets[ilog].clear ();
+    std::map< unsigned int, std::set<LogEntry> >::iterator ilog = _logSets.begin();
+    for ( ; ilog != _logSets.end() ; ++ilog ) {
+      if ( mask & (*ilog).first ) {
+        std::set<LogEntry>::iterator ientry = (*ilog).second.begin();
+        for ( ; ientry != (*ilog).second.end() ; ++ientry ) {
+        //std::cerr << "Restoring " << (*ientry).getId() << " -> " << (*ientry).getValid() << std::endl;
+          (*ientry).restore ();
+        }
+      }
+    }
+  }
+
+
+  inline void  Configuration::clearLogs ( unsigned int mask )
+  {
+    std::map< unsigned int, std::set<LogEntry> >::iterator ilog = _logSets.begin();
+    for ( ; ilog != _logSets.end() ; ++ilog ) {
+      if ( mask & (*ilog).first ) (*ilog).second.clear();
+    }
   }
 
 
@@ -172,6 +201,29 @@ namespace Cfg {
     }
     return parameter;
   }
+
+
+  inline Configuration::LogEntry::LogEntry ( const std::string& id )
+    : _id   (id)
+    , _valid("")
+  {
+    Parameter* parameter = Configuration::get()->getParameter(id);
+    if ( parameter != NULL ) _valid = parameter->asString();
+  }
+
+
+  inline const std::string& Configuration::LogEntry::getId     () const { return _id; }
+  inline const std::string& Configuration::LogEntry::getValid  () const { return _valid; }
+
+
+  inline void  Configuration::LogEntry::restore () const
+  {
+    Parameter* parameter = Configuration::get()->getParameter(_id);
+    if ( parameter != NULL ) parameter->setString(_valid,false);
+  }
+
+  inline bool  operator< ( const Configuration::LogEntry& lhs, const Configuration::LogEntry& rhs )
+  { return lhs.getId() < rhs.getId(); }
 
 
 

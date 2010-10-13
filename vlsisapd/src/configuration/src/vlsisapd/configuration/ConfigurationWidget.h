@@ -73,13 +73,13 @@ namespace Cfg {
                                                   , int                span  =1
                                                   , int                flags =0 );
              void             syncSlaves          ();
-             void             checkConfiguration  ();
+             int              checkConfiguration  ( unsigned int mask );
              void             selectTab           ( const std::string& );
     public slots:
              void             applyClicked        ();
     signals:
              void             updateParameters    ();
-             void             checkOk             ();
+             void             confOk              ();
     private:
       unsigned int  _flags;
       QFont         _boldFont;

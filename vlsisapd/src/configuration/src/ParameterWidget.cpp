@@ -237,6 +237,8 @@ namespace Cfg {
 
   void  ParameterWidget::onUpdateValueCb ( Parameter* )
   {
+  //cerr << "onUpdateValue: " << _parameter->getId() << " -> " << _parameter->asString() << endl;
+
     if ( _parameter->getType() == Parameter::String )
       {
         QLineEdit* lineEdit = qobject_cast<QLineEdit*>(_valueWidget);

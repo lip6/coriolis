@@ -164,7 +164,10 @@ namespace {
                                                 , _getAttributeValue("value")
                                                 );
     } else {
-      _parameter->setString ( _getAttributeValue("value"), false );
+      _parameter->setString ( _getAttributeValue("value")
+                            , (Parameter::AllRequirements | Parameter::FromString)
+                            & ~Parameter::TypeCheck
+                            );
     }
 
     if ( not attrRestart.empty()   ) _parameter->setFlags ( Parameter::NeedRestart );
@@ -389,11 +392,7 @@ namespace Cfg {
     , _layout    (this)
     , _flags     (0)
     , _logSets   ()
-  {
-    _logSets.reserve ( LogTypeSize );
-    for ( size_t ilog=0 ; ilog<LogTypeSize ; ++ilog )
-      _logSets.push_back ( set<string>() );
-  }
+  { }
 
 
   ConfigurationWidget* Configuration::buildWidget ( unsigned int flags )
@@ -443,15 +442,31 @@ namespace Cfg {
   }
 
 
-  void  Configuration::addLog ( unsigned int type, const string& id )
+  const set<Configuration::LogEntry>& Configuration::getLogs ( unsigned int mask ) const
   {
-    _logSets[ (type<LogTypeSize) ? type : 0 ].insert ( id );
+    static set<LogEntry> _failsafe;
+
+    map< unsigned int, set<LogEntry> >::const_iterator ilog = _logSets.find(mask);
+    if ( ilog != _logSets.end() ) return (*ilog).second;
+
+    return _failsafe;
+  }
+
+  void  Configuration::addLog ( unsigned int mask, const string& id )
+  {
+    map< unsigned int, set<LogEntry> >::iterator ilog = _logSets.find(mask);
+    if ( ilog == _logSets.end() ) {
+      _logSets.insert ( make_pair(mask,set<LogEntry>()) );
+      ilog = _logSets.find(mask);
+    }
+    (*ilog).second.insert ( LogEntry(id) );
   }
 
 
-  void  Configuration::removeLog ( unsigned int type, const string& id )
+  void  Configuration::removeLog ( unsigned int mask, const string& id )
   {
-    _logSets[ (type<LogTypeSize) ? type : 0 ].erase ( id );
+    map< unsigned int, set<LogEntry> >::iterator ilog = _logSets.find(mask);
+    if ( ilog != _logSets.end() ) (*ilog).second.erase ( id );
   }
 
 

@@ -38,20 +38,23 @@ namespace Cfg {
 
   class Parameter {
     public:
-      enum Type  { Unknown     = 0
-                 , String      = 1
-                 , Bool        = 2
-                 , Int         = 3
-                 , Enumerate   = 4
-                 , Double      = 5
-                 , Percentage  = 6
+      enum Type  { Unknown         = 0
+                 , String          = 1
+                 , Bool            = 2
+                 , Int             = 3
+                 , Enumerate       = 4
+                 , Double          = 5
+                 , Percentage      = 6
                  };           
-      enum Flags { HasMin      = 0x01
-                 , HasMax      = 0x02
-                 , IsFile      = 0x04
-                 , IsPath      = 0x08
-                 , NeedRestart = 0x10
-                 , MustExist   = 0x20
+      enum Flags { HasMin          = 0x01
+                 , HasMax          = 0x02
+                 , IsFile          = 0x04
+                 , IsPath          = 0x08
+                 , NeedRestart     = 0x10
+                 , MustExist       = 0x20
+                 , TypeCheck       = 0x40
+                 , FromString      = 0x80
+                 , AllRequirements = HasMin|HasMax|IsFile|IsPath|NeedRestart|MustExist|TypeCheck
                  };
       typedef boost::function< void(Parameter*) >  ParameterChangedCb_t;
     public:
@@ -98,7 +101,7 @@ namespace Cfg {
       inline void               addSlave           ( const std::string& );
       inline void               setFlags           ( int mask );
       inline void               unsetFlags         ( int mask );
-             bool               setString          ( const std::string&, bool check=true );
+             bool               setString          ( const std::string&, unsigned int flags=AllRequirements );
              bool               setBool            ( bool );
              bool               setInt             ( int );
              bool               setDouble          ( double );
@@ -110,7 +113,7 @@ namespace Cfg {
       inline void               registerCb         ( ParameterChangedCb_t );
     private:                                       
       inline void               _onValueChanged    ();
-             void               _checkRequirements () const;
+             bool               _doChange          ( unsigned int flags, const std::string&, bool, int, double );
     private:
     // Attributes.
       std::string                        _id;
@@ -150,12 +153,15 @@ namespace Cfg {
     // std::cerr << "flags:" << _flags << " "
     //           << _minInt << " < " << value << " < " << _maxInt
     //           << " : " << std::boolalpha << ok << std::endl;
+    // std::cerr << " " << std::boolalpha << ok;
     return ok;
   }
 
   inline bool  Parameter::checkValue ( double value ) const {
+    // std::cerr << " (double) " << _minDouble << "<" << value << "<" << _maxDouble;
     bool ok = not (   ( (_flags&HasMin) and (value < _minDouble) )
                    or ( (_flags&HasMax) and (value > _maxDouble) ) );
+    // std::cerr << " " << std::boolalpha << ok;
     return ok;
   }
 

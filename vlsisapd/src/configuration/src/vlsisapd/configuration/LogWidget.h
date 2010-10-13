@@ -29,6 +29,7 @@
 
 #include  <QDialog>
 class QLabel;
+class QPushButton;
 
 
 namespace Cfg {
@@ -38,12 +39,13 @@ namespace Cfg {
       Q_OBJECT;
     public:
                       LogWidget  ( QWidget* parent=NULL);
-              void    updateLogs ();
+              void    updateLogs ( unsigned int mask );
     private:
-              QLabel* _restartMessage;
-              QLabel* _needExistMessage;
-    protected:
       virtual void    closeEvent ( QCloseEvent* );
+    private:
+              QLabel*      _message;
+              QPushButton* _contButton;
+              QPushButton* _cancelButton;
   };
 
 

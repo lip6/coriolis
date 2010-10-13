@@ -36,6 +36,9 @@ namespace Cfg {
   using std::cerr;
   using std::endl;
   using std::string;
+  using std::ostringstream;
+  using std::boolalpha;
+  using std::hex;
 
 
   string  Parameter::typeToString  ( Parameter::Type type )
@@ -131,20 +134,14 @@ namespace Cfg {
   }
 
 
-  bool  Parameter::setString ( const std::string& s, bool check )
+  bool  Parameter::setString ( const std::string& s, unsigned int flags )
   {
-    if ( check and (_type != String) )
+    if ( (flags & TypeCheck) and (_type != String) )
       cerr << "[ERROR] Parameter::setString(): Setting " << Parameter::typeToString(_type)
            << " parameter <" << _id
            << "> as " << Parameter::typeToString(String)<< " (type mismatch)." << endl;
 
-    if ( _value == s ) return true;
-
-    _value = s;
-    _onValueChanged();
-    _checkRequirements();
-
-    return true;
+    return _doChange ( flags, s, false, 0, 0.0 );
   }
 
 
@@ -155,14 +152,7 @@ namespace Cfg {
            << " parameter <" << _id
            << "> as " << Parameter::typeToString(Bool)<< " (type mismatch)." << endl;
 
-    std::ostringstream s; s << std::boolalpha << b;
-    if ( _value == s.str() ) return true;
-
-    _value = s.str();
-    _onValueChanged();
-    _checkRequirements();
-
-    return true;
+    return _doChange ( AllRequirements, "", b, 0, 0.0 );
   }
 
 
@@ -173,17 +163,7 @@ namespace Cfg {
            << " parameter <" << _id
            << "> as " << Parameter::typeToString(Int)<< " (type mismatch)." << endl;
 
-    bool success = checkValue(i);
-    if ( success ) {
-      std::ostringstream s; s << i;
-      if ( _value == s.str() ) return true;
-
-      _value = s.str();
-      _onValueChanged();
-      _checkRequirements();
-    }
-
-    return success;
+    return _doChange ( AllRequirements, "", false, i, 0.0 );
   } 
 
 
@@ -194,17 +174,7 @@ namespace Cfg {
            << " parameter <" << _id
            << "> as " << Parameter::typeToString(Double)<< " (type mismatch)." << endl;
 
-    bool success = checkValue(d);
-    if ( success ) {
-      std::ostringstream s; s << d;
-      if ( _value == s.str() ) return true;
-
-      _value = s.str();
-      _onValueChanged();
-      _checkRequirements();
-    }
-
-    return success;
+    return _doChange ( AllRequirements, "", false, 0, d );
   } 
 
 
@@ -215,37 +185,72 @@ namespace Cfg {
            << " parameter <" << _id
            << "> as " << Parameter::typeToString(Double)<< " (type mismatch)." << endl;
 
-    bool success = checkValue(d/100.0);
-    if ( success ) {
-      std::ostringstream s; s << (d/100.0);
-      if ( _value == s.str() ) return true;
-
-      _value = s.str();
-      _onValueChanged();
-      _checkRequirements();
-    }
-
-    return success;
+    return _doChange ( AllRequirements, "", false, 0, d );
   }
 
 
-  void  Parameter::_checkRequirements () const
+  bool  Parameter::_doChange ( unsigned int flags, const string& s, bool b, int i, double d )
   {
-    Configuration* configuration = Configuration::get();
+  //cerr << "_doChange: " << _id << ":" << _value << " -> \"" << s << "\"|" << b << "|" << i << "|" << d;
 
-    if ( hasFlags(NeedRestart) ) {
+    Configuration* configuration = Configuration::get();
+    ostringstream  svalue;
+    bool           success = true;
+    unsigned int   type    = (flags & FromString) ? String : _type;
+
+    switch ( type ) {
+      case Unknown:
+        break;
+      case String:
+        svalue << s;
+        break;
+      case Bool:
+        svalue << boolalpha << b;
+        break;
+      case Enumerate:  
+      case Int:
+        svalue << i;
+        if ( flags & TypeCheck ) success = checkValue(i);
+        break;
+      case Double:
+        svalue << d;
+        if ( flags & TypeCheck ) success = checkValue(d);
+        break;
+      case Percentage:
+        svalue << (d/100.0);
+        if ( flags & TypeCheck ) success = checkValue(d/100.0);
+        break;
+    }
+
+    if ( not success ) {
+    //cerr << " (" << _flags << "," << _minInt << ") check failed." << endl;
+      return false;
+    }
+    if ( svalue.str() == _value ) {
+    //cerr << " no change." << endl;
+      return true;
+    }
+
+    if ( (flags & NeedRestart) and hasFlags(NeedRestart) ) {
       configuration->addLog ( Configuration::LogRestart, _id );
     }
 
-    if ( hasFlags(MustExist) ) {
+    if ( (flags & MustExist) and hasFlags(MustExist) ) {
       if ( _type == String ) {
-        bfs::path filePath = ( asString() );
+        bfs::path filePath = ( svalue.str() );
         if ( not bfs::exists(filePath) )
           configuration->addLog ( Configuration::LogNeedExist, _id );
         else
           configuration->removeLog ( Configuration::LogNeedExist, _id );
       }
     }
+
+  //cerr << " updated" << endl;
+
+    _value = svalue.str();
+    _onValueChanged();
+
+    return true;
   }
 
 
