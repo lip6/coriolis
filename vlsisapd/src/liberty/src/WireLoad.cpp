@@ -2,8 +2,6 @@
 #include<fstream>
 using namespace std;
 
-#include "vlsisapd/liberty/Name.h"
-#include "vlsisapd/liberty/Attribute.h"
 #include "vlsisapd/liberty/WireLoad.h"
 
 namespace LIB {
@@ -20,7 +18,7 @@ Attribute* WireLoad::getAttribute(Name attrName) {
     return attr;
 }
 
-void WireLoad::addAttribute(Name attrName, Attribute::Type attrType, string& attrValue, const string& attrValue2) {
+void WireLoad::addAttribute(Name attrName, Attribute::Type attrType, const string& attrValue, const string& attrValue2) {
     Attribute* attr = new Attribute(attrName, attrType, attrValue, "", attrValue2);
     map<Name, Attribute*>::iterator it = _attributes.find(attrName);
     if (it != _attributes.end()) {

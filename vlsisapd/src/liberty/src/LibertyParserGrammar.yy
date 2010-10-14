@@ -6,10 +6,13 @@ using namespace std;
 #include<vector>
 #include<boost/regex.hpp>
 
-#include "vlsisapd/liberty/Name.h"
-#include "vlsisapd/liberty/Library.h"
-#include "vlsisapd/liberty/Attribute.h"
+#include "vlsisapd/liberty/WireLoad.h"
+#include "vlsisapd/liberty/WireLoadSelection.h"
+#include "vlsisapd/liberty/Cell.h"
+#include "vlsisapd/liberty/Pin.h"
 #include "vlsisapd/liberty/Timing.h"
+#include "vlsisapd/liberty/FlipFlop.h"
+#include "vlsisapd/liberty/Library.h"
 using namespace LIB;
 
 int          Liberty_error ( const char* message );

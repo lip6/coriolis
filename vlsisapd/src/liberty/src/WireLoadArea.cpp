@@ -1,6 +1,5 @@
 #include<fstream>
 
-#include "vlsisapd/liberty/Name.h"
 #include "vlsisapd/liberty/WireLoadArea.h"
 
 namespace LIB {

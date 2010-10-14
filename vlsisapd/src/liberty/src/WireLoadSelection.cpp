@@ -2,7 +2,7 @@
 #include<fstream>
 using namespace std;
 
-#include "vlsisapd/liberty/Name.h"
+#include "vlsisapd/liberty/WireLoadArea.h"
 #include "vlsisapd/liberty/WireLoadSelection.h"
 
 namespace LIB {

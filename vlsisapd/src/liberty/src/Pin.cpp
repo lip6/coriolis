@@ -2,8 +2,7 @@
 #include<fstream>
 using namespace std;
 
-#include "vlsisapd/liberty/Name.h"
-#include "vlsisapd/liberty/Attribute.h"
+#include "vlsisapd/liberty/Timing.h"
 #include "vlsisapd/liberty/Pin.h"
 
 namespace LIB {
@@ -30,7 +29,7 @@ Timing* Pin::getTiming(Name pinName) {
     exit(1);
 }
 
-void Pin::addAttribute(Name attrName, Attribute::Type attrType, string& attrValue) {
+void Pin::addAttribute(Name attrName, Attribute::Type attrType, const string& attrValue) {
     Attribute* attr = new Attribute(attrName, attrType, attrValue);
     map<Name, Attribute*>::iterator it = _attributes.find(attrName);
     if (it != _attributes.end()) {

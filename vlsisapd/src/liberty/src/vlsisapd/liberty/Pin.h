@@ -4,23 +4,22 @@
 #include<fstream>
 #include<vector>
 
-#include "vlsisapd/liberty/Name.h"
 #include "vlsisapd/liberty/Attribute.h"
-#include "vlsisapd/liberty/Timing.h"
 
 namespace LIB {
+class Timing;
 
 class Pin {
     public:
     Pin(Name name);
     
     inline Name getName();
-    inline std::map<Name, Attribute*> getAttributes();
-    inline std::vector<Timing*> getTimings();
+    inline std::map<Name, Attribute*>& getAttributes();
+    inline std::vector<Timing*>& getTimings();
     Attribute* getAttribute(Name attrName);
     Timing* getTiming(Name pinName);
 
-    void addAttribute(Name attrName, Attribute::Type attrType, std::string& attrValue);
+    void addAttribute(Name attrName, Attribute::Type attrType, const std::string& attrValue);
     void addTiming();
 
     void print();
@@ -32,9 +31,9 @@ class Pin {
     std::vector<Timing*> _timings;
 };
     
-inline Name Pin::getName() { return _name; };
-inline std::map<Name, Attribute*> Pin::getAttributes() { return _attributes; };
-inline std::vector<Timing*> Pin::getTimings() { return _timings; };
+inline Name                         Pin::getName()       { return _name; };
+inline std::map<Name, Attribute*>&  Pin::getAttributes() { return _attributes; };
+inline std::vector<Timing*>&        Pin::getTimings()    { return _timings; };
     
 } // namespace LIB
 #endif

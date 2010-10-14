@@ -3,26 +3,25 @@
 
 #include<fstream>
 
-#include "vlsisapd/liberty/Name.h"
 #include "vlsisapd/liberty/Attribute.h"
-#include "vlsisapd/liberty/Pin.h"
-#include "vlsisapd/liberty/FlipFlop.h"
 
 namespace LIB {
+class Pin;
+class FlipFlop;
 
 class Cell {
     public:
     Cell(Name name);
     
     inline Name getName();
-    inline std::map<Name, Attribute*> getAttributes();
-    inline std::map<Name, Pin*> getPins();
+    inline std::map<Name, Attribute*>& getAttributes();
+    inline std::map<Name, Pin*>& getPins();
     inline FlipFlop* getFF();
     inline Cell* getTestCell();
     Attribute* getAttribute(Name attrName);
     Pin* getPin(Name pinName);
 
-    void addAttribute(Name attrName, Attribute::Type attrType, std::string& attrValue);
+    void addAttribute(Name attrName, Attribute::Type attrType, const std::string& attrValue);
     void addPin(Name pinName);
     void addFF(Name noninverting, Name inverting);
     void setTestCell(Cell *cell);
@@ -39,8 +38,8 @@ class Cell {
 };
     
 inline Name Cell::getName() { return _name; };
-inline std::map<Name, Pin*> Cell::getPins() { return _pins; };
-inline std::map<Name, Attribute*> Cell::getAttributes() { return _attributes; };
+inline std::map<Name, Pin*>& Cell::getPins() { return _pins; };
+inline std::map<Name, Attribute*>& Cell::getAttributes() { return _attributes; };
 inline FlipFlop* Cell::getFF() { return _ff; };
 inline Cell* Cell::getTestCell() { return _testCell; };
     

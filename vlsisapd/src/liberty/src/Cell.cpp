@@ -2,8 +2,6 @@
 #include<fstream>
 using namespace std;
 
-#include "vlsisapd/liberty/Name.h"
-#include "vlsisapd/liberty/Attribute.h"
 #include "vlsisapd/liberty/Cell.h"
 #include "vlsisapd/liberty/Pin.h"
 #include "vlsisapd/liberty/FlipFlop.h"
@@ -33,7 +31,7 @@ Pin* Cell::getPin(Name pinName) {
     return pin;
 }
 
-void Cell::addAttribute(Name attrName, Attribute::Type attrType, string& attrValue) {
+void Cell::addAttribute(Name attrName, Attribute::Type attrType, const string& attrValue) {
     Attribute* attr = new Attribute(attrName, attrType, attrValue);
     map<Name, Attribute*>::iterator it = _attributes.find(attrName);
     if (it != _attributes.end()) {

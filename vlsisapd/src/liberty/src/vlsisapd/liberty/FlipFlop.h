@@ -3,7 +3,6 @@
 
 #include<fstream>
 
-#include "vlsisapd/liberty/Name.h"
 #include "vlsisapd/liberty/Attribute.h"
 
 namespace LIB {
@@ -14,10 +13,10 @@ class FlipFlop {
 
     inline Name getNonInverting();
     inline Name getInverting();
-    inline std::map<Name, Attribute*> getAttributes();
+    inline std::map<Name, Attribute*>& getAttributes();
     Attribute* getAttribute(Name attrName);
     
-    void addAttribute(Name attrName, Attribute::Type attrType, std::string& attrValue);
+    void addAttribute(Name attrName, Attribute::Type attrType, const std::string& attrValue);
 
     void print();
     bool write(std::ofstream &file);
@@ -30,7 +29,7 @@ class FlipFlop {
     
 inline Name FlipFlop::getNonInverting() { return _noninverting; };
 inline Name FlipFlop::getInverting() { return _inverting; };
-inline std::map<Name, Attribute*> FlipFlop::getAttributes() { return _attributes; };
+inline std::map<Name, Attribute*>& FlipFlop::getAttributes() { return _attributes; };
 
 } // namespace LIB
 #endif

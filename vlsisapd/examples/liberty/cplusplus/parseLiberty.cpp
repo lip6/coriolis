@@ -4,6 +4,9 @@ using namespace std;
 
 #include "vlsisapd/liberty/Name.h"
 #include "vlsisapd/liberty/Library.h"
+#include "vlsisapd/liberty/Cell.h"
+#include "vlsisapd/liberty/Pin.h"
+#include "vlsisapd/liberty/Timing.h"
 
 int main ( int argc, char * argv[] ) {
     LIB::Library* library = LIB::Library::readFromFile("./testParse.lib");

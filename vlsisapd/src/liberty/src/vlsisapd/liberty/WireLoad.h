@@ -1,7 +1,6 @@
 #ifndef __LIB_WIRE_LOAD_H__
 #define __LIB_WIRE_LOAD_H__
 
-#include "vlsisapd/liberty/Name.h"
 #include "vlsisapd/liberty/Attribute.h"
 
 namespace LIB {
@@ -11,10 +10,10 @@ class WireLoad {
     WireLoad(Name name);
     
     inline Name getName();
-    inline std::map<Name, Attribute*> getAttributes();
+    inline std::map<Name, Attribute*>& getAttributes();
     Attribute* getAttribute(Name attrName);
 
-    void addAttribute(Name attrName, Attribute::Type attrType, std::string& attrValue, const std::string& attrValue2 = "");
+    void addAttribute(Name attrName, Attribute::Type attrType, const std::string& attrValue, const std::string& attrValue2 = "");
 
     void print();
     bool write(std::ofstream &file);
@@ -24,8 +23,8 @@ class WireLoad {
     std::map<Name, Attribute*> _attributes;
 };
     
-inline Name WireLoad::getName() { return _name; };
-inline std::map<Name, Attribute*> WireLoad::getAttributes() { return _attributes; };
+inline Name                        WireLoad::getName()       { return _name; };
+inline std::map<Name, Attribute*>& WireLoad::getAttributes() { return _attributes; };
     
 } // namespace LIB
 #endif

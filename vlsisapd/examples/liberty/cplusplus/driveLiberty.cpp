@@ -35,7 +35,7 @@ int main ( int argc, char * argv[] ) {
     // Cells
     library->addCell(LIB::Name("inv"));
     LIB::Cell* cell = library->getCell(LIB::Name("inv"));
-    valeur="1"; cell->addAttribute(LIB::Name("area"), LIB::Attribute::Double, valeur);
+    valeur="1";   cell->addAttribute(LIB::Name("area"),           LIB::Attribute::Double, valeur);
     valeur="inv"; cell->addAttribute(LIB::Name("cell_footprint"), LIB::Attribute::String, valeur);
 
     LIB::Pin* pin;
@@ -44,21 +44,20 @@ int main ( int argc, char * argv[] ) {
     cell->addPin(LIB::Name("e"));
     pin = cell->getPin(LIB::Name("e"));
     valeur="0.008"; pin->addAttribute(LIB::Name("capacitance"), LIB::Attribute::Double, valeur);
-    valeur="input"; pin->addAttribute(LIB::Name("direction"), LIB::Attribute::String, valeur);
+    valeur="input"; pin->addAttribute(LIB::Name("direction"),   LIB::Attribute::String, valeur);
 
     cell->addPin(LIB::Name("s"));
     pin = cell->getPin(LIB::Name("s"));
-    valeur="i'"; pin->addAttribute(LIB::Name("function"), LIB::Attribute::String, valeur);
+    valeur="i'";     pin->addAttribute(LIB::Name("function"),  LIB::Attribute::String, valeur);
     valeur="output"; pin->addAttribute(LIB::Name("direction"), LIB::Attribute::String, valeur);
 
     // Timing
     LIB::Timing * timing;
     pin->addTiming();
     timing = pin->getTimings().back();
-    valeur="negative_unate"; timing->addAttribute(LIB::Name("timing_sense"), LIB::Attribute::String, valeur);
-    valeur="e"; timing->addAttribute(LIB::Name("related_pin"), LIB::Attribute::String, valeur);
-    valeur="0.101"; timing->addAttribute(LIB::Name("intrinsic_rise"), LIB::Attribute::Double, valeur);
-
+    valeur="negative_unate"; timing->addAttribute(LIB::Name("timing_sense"),   LIB::Attribute::String, valeur);
+    valeur="e";              timing->addAttribute(LIB::Name("related_pin"),    LIB::Attribute::String, valeur);
+    valeur="0.101";          timing->addAttribute(LIB::Name("intrinsic_rise"), LIB::Attribute::Double, valeur);
 
     // Write
     valeur="testDrive.lib"; library->writeToFile(valeur);
