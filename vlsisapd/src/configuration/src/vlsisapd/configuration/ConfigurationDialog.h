@@ -38,6 +38,7 @@ class ConfigurationDialog : public QDialog {
 
     signals:
       void saveToFile();
+      void needRestart();
 
 };
 

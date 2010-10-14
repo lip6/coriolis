@@ -38,9 +38,10 @@ ConfigurationDialog::ConfigurationDialog(QWidget* parent): QDialog(parent) {
     setWindowTitle("Configure window");
 
     ConfigurationWidget* confWidget = Configuration::get()->buildWidget(ConfigurationWidget::StandAlone);
-    connect(confWidget                   , SIGNAL(checkOk()), this, SLOT(close()));
-    connect(confWidget->getCancelButton(), SIGNAL(clicked()), this, SLOT(close()));
-    connect(confWidget->getSaveButton()  , SIGNAL(clicked()), this, SIGNAL(saveToFile()));
+    connect(confWidget                   , SIGNAL(confOk())     , this, SLOT(close()));
+    connect(confWidget->getCancelButton(), SIGNAL(clicked())    , this, SLOT(close()));
+    connect(confWidget->getSaveButton()  , SIGNAL(clicked())    , this, SIGNAL(saveToFile()));
+    connect(confWidget                   , SIGNAL(needRestart()), this, SIGNAL(needRestart()));
 
     QVBoxLayout* vLayout = new QVBoxLayout ();
     vLayout->addWidget(confWidget);
