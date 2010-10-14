@@ -191,7 +191,7 @@ namespace Cfg {
 
   bool  Parameter::_doChange ( unsigned int flags, const string& s, bool b, int i, double d )
   {
-  //cerr << "_doChange: " << _id << ":" << _value << " -> \"" << s << "\"|" << b << "|" << i << "|" << d;
+    cerr << "_doChange: " << _id << ":" << _value << " -> \"" << s << "\"|" << b << "|" << i << "|" << d;
 
     Configuration* configuration = Configuration::get();
     ostringstream  svalue;
@@ -223,11 +223,11 @@ namespace Cfg {
     }
 
     if ( not success ) {
-    //cerr << " (" << _flags << "," << _minInt << ") check failed." << endl;
+      cerr << " (" << _flags << "," << _minInt << ") check failed." << endl;
       return false;
     }
     if ( svalue.str() == _value ) {
-    //cerr << " no change." << endl;
+      cerr << " no change." << endl;
       return true;
     }
 
@@ -245,7 +245,7 @@ namespace Cfg {
       }
     }
 
-  //cerr << " updated" << endl;
+    cerr << " updated" << endl;
 
     _value = svalue.str();
     _onValueChanged();

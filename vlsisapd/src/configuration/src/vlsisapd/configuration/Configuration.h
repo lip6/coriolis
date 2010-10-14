@@ -219,7 +219,10 @@ namespace Cfg {
   inline void  Configuration::LogEntry::restore () const
   {
     Parameter* parameter = Configuration::get()->getParameter(_id);
-    if ( parameter != NULL ) parameter->setString(_valid,false);
+    if ( parameter != NULL ) parameter->setString ( _valid
+                                                  , (Parameter::AllRequirements | Parameter::FromString)
+                                                  & ~Parameter::TypeCheck
+                                                  );
   }
 
   inline bool  operator< ( const Configuration::LogEntry& lhs, const Configuration::LogEntry& rhs )

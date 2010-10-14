@@ -194,29 +194,28 @@ namespace Cfg {
   void   ConfigurationWidget::applyClicked ()
   {
     emit updateParameters();
-    if ( checkConfiguration(Configuration::LogNeedExist) == QDialog::Accepted ) {
-      if ( checkConfiguration(Configuration::LogRestart) == QDialog::Accepted ) {
-        emit confOk();
+
+    Configuration* configuration = Configuration::get();
+    if ( _log == NULL ) _log = new LogWidget(this);
+
+    if ( configuration->hasLogs(Configuration::LogNeedExist) ) {
+      _log->updateLogs(Configuration::LogNeedExist);
+      _log->exec();
+      return;
+    }
+
+    if ( configuration->hasLogs(Configuration::LogRestart) ) {
+      _log->updateLogs(Configuration::LogRestart);
+      if ( _log->exec() == QDialog::Accepted ) {
+        emit needRestart();
       } else {
-        Configuration* configuration = Configuration::get();
         configuration->restoreFromLogs(Configuration::LogRestart);
         configuration->clearLogs      (Configuration::LogRestart);
+        return;
       }
     }
-  }
 
-
-  int  ConfigurationWidget::checkConfiguration ( unsigned int mask )
-  {
-    Configuration* configuration = Configuration::get();
-
-    if ( configuration->hasLogs(mask) ) {
-      if ( _log == NULL ) _log = new LogWidget(this);
-      _log->updateLogs (mask);
-      return _log->exec ();
-    }
-
-    return QDialog::Accepted;
+    emit confOk();
   }
 
 
