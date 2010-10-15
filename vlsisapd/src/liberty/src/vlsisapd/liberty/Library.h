@@ -26,6 +26,7 @@ class Library {
     void addWireLoadSelection(Name wireLoadSelectionName);
     void addCell(Name cellName);
 
+    const std::string getString()const;
     void print();
 
     static Library* readFromFile(std::string);

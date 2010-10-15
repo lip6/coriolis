@@ -17,6 +17,8 @@ class WireLoadSelection {
     inline std::vector<WireLoadArea*>& getWiresLoadArea();
 
     void addWireLoadArea(double min, double max, Name name);
+
+    const std::string getString()const;
     void print();
     bool write(std::ofstream& file);
 

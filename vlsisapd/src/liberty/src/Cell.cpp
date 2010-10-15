@@ -1,5 +1,6 @@
 #include<iostream>
 #include<fstream>
+#include<sstream>
 using namespace std;
 
 #include "vlsisapd/liberty/Cell.h"
@@ -60,26 +61,42 @@ void Cell::setTestCell(Cell *cell) {
     _testCell = cell;
 }
 
-void Cell::print() {
-    cout << "|     Cell name= " << _name.getString() << endl;
+const string Cell::getString() const{
+    ostringstream chaine;
+    chaine << "|     Cell name= " << _name.getString() << endl;
 
     // Cell's attributes
-    cout << "|       Attributes :" << endl;
+    chaine << "|       Attributes :" << endl;
     for(map<Name, Attribute*>::const_iterator it=_attributes.begin() ; it!=_attributes.end() ; ++it) {
-        cout << "|         name= " << (*it).first.getString()
-             << ", type= " << (*it).second->typeToString()
-             << ", value= " << (*it).second->valueAsString() << endl;
+        chaine << "|         name= " << (*it).first.getString()
+               << ", type= " << (*it).second->typeToString()
+               << ", value= " << (*it).second->valueAsString() << endl;
     }
     // Cell's pins
     for(map<Name, Pin*>::const_iterator it=_pins.begin() ; it!=_pins.end() ; ++it) {
         (*it).second->print();
     }
     // FF
-    if(_ff)
-        _ff->print();
+    if(_ff) {
+        chaine << "|       FF noninverting= " << _ff->getNonInverting().getString() << ", inverting= " << _ff->getInverting().getString() << endl;
+
+        // FlipFlop's attributes
+        chaine << "|         Attributes :" << endl;
+        for(map<Name, Attribute*>::const_iterator it=_ff->getAttributes().begin() ; it!=_ff->getAttributes().end() ; ++it) {
+            chaine << "|           name= " << (*it).first.getString()
+                   << ", type= " << (*it).second->typeToString()
+                   << ", value= " << (*it).second->valueAsString() << endl;
+        }
+    }
     // test_cell
     if(_testCell)
-        _testCell->print();
+        chaine << _testCell->getString();
+
+    return chaine.str();
+}
+
+void Cell::print() {
+    cout << Cell::getString();
 }
 
 bool Cell::write(ofstream &file, bool test) {

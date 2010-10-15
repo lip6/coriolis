@@ -1,5 +1,6 @@
 #include<iostream>
 #include<fstream>
+#include<sstream>
 using namespace std;
 
 #include "vlsisapd/liberty/FlipFlop.h"
@@ -28,16 +29,22 @@ void FlipFlop::addAttribute(Name attrName, Attribute::Type attrType, const strin
     _attributes[attrName] = attr;
 }
 
-void FlipFlop::print() {
-    cout << "|       FF noninverting= " << _noninverting.getString() << ", inverting= " << _inverting.getString() << endl;
+const string FlipFlop::getString() const{
+    ostringstream chaine;
+    chaine << "|       FF noninverting= " << _noninverting.getString() << ", inverting= " << _inverting.getString() << endl;
 
     // FlipFlop's attributes
-    cout << "|         Attributes :" << endl;
+    chaine << "|         Attributes :" << endl;
     for(map<Name, Attribute*>::const_iterator it=_attributes.begin() ; it!=_attributes.end() ; ++it) {
-        cout << "|           name= " << (*it).first.getString()
-             << ", type= " << (*it).second->typeToString()
-             << ", value= " << (*it).second->valueAsString() << endl;
+        chaine << "|           name= " << (*it).first.getString()
+               << ", type= " << (*it).second->typeToString()
+               << ", value= " << (*it).second->valueAsString() << endl;
     }
+    return chaine.str();
+}
+
+void FlipFlop::print() {
+    cout << FlipFlop::getString();
 }
 
 bool FlipFlop::write(ofstream &file) {

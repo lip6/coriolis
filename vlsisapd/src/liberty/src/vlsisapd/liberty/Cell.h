@@ -26,6 +26,7 @@ class Cell {
     void addFF(Name noninverting, Name inverting);
     void setTestCell(Cell *cell);
 
+    const std::string getString()const;
     void print();
     bool write(std::ofstream &file, bool test=false);
 

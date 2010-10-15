@@ -22,6 +22,7 @@ class Pin {
     void addAttribute(Name attrName, Attribute::Type attrType, const std::string& attrValue);
     void addTiming();
 
+    const std::string getString()const;
     void print();
     bool write(std::ofstream &file);
 

@@ -1,5 +1,6 @@
 #include<iostream>
 #include<fstream>
+#include<sstream>
 using namespace std;
 
 #include "vlsisapd/liberty/WireLoad.h"
@@ -28,19 +29,25 @@ void WireLoad::addAttribute(Name attrName, Attribute::Type attrType, const strin
     _attributes[attrName] = attr;
 }
 
-void WireLoad::print() {
+const string WireLoad::getString() const{
+    ostringstream chaine;
     // WireLoad's attributes
-    cout << "|     Wireload : " << _name.getString() << endl;
-    cout << "|       Attributes :" << endl;
+    chaine << "|     Wireload : " << _name.getString() << endl
+           << "|       Attributes :" << endl;
     for(map<Name, Attribute*>::const_iterator it=_attributes.begin() ; it!=_attributes.end() ; ++it) {
-        cout << "|         name= " << (*it).first.getString()
-             << ", type= " << (*it).second->typeToString()
-             << ", value= " << (*it).second->valueAsString();
+        chaine << "|         name= " << (*it).first.getString()
+               << ", type= " << (*it).second->typeToString()
+               << ", value= " << (*it).second->valueAsString();
         string value2=(*it).second->secondValueAsString();
         if(!value2.empty())
-            cout << ", value2= " << value2;
-        cout << endl;
+            chaine << ", value2= " << value2;
+        chaine << endl;
     }
+    return chaine.str();
+}
+
+void WireLoad::print() {
+    cout << WireLoad::getString();
 }
 
 bool WireLoad::write(ofstream &file) {

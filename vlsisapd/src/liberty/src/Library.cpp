@@ -1,5 +1,6 @@
 #include<iostream>
 #include<fstream>
+#include<sstream>
 #include<ctime>
 using namespace std;
 
@@ -84,84 +85,85 @@ void Library::addCell(Name cellName) {
     _cells[cellName] = cell;
 }
 
-void Library::print() {
-    cout << "+-----------------------------+" << endl
-         << "| Library : " << _name.getString() << endl;
+const string Library::getString() const{
+    ostringstream chaine;
+    chaine << "+-----------------------------+" << endl
+           << "| Library : " << _name.getString() << endl;
     // Library's attributes
-    cout << "|   Attributes :" << endl;
+    chaine << "|   Attributes :" << endl;
     for(map<Name, Attribute*>::const_iterator it=_attributes.begin() ; it!=_attributes.end() ; ++it) {
-        cout << "|     name=" << (*it).first.getString()
-             << ", type=" << (*it).second->typeToString()
-             << ", value=" << (*it).second->valueAsString();
+        chaine << "|     name=" << (*it).first.getString()
+               << ", type=" << (*it).second->typeToString()
+               << ", value=" << (*it).second->valueAsString();
         string unit = (*it).second->getUnit();
         if(!unit.empty())
-            cout << ", unit=" << unit;
-        cout << endl;
+            chaine << ", unit=" << unit;
+        chaine << endl;
     }
 
     // WireLoad
     for(map<Name, WireLoad*>::const_iterator it=_wires_load.begin() ; it!=_wires_load.end() ; ++it) {
 //        (*it).second->print();
-        cout << "|     Wireload : " << (*it).first.getString() << endl;
+        chaine << "|     Wireload : " << (*it).first.getString() << endl;
         // Wireload's attributes
-        cout << "|       Attributes :" << endl;
+        chaine << "|       Attributes :" << endl;
         for(map<Name, Attribute*>::const_iterator it2=(*it).second->getAttributes().begin() ; it2 != (*it).second->getAttributes().end() ; ++it2) {
             if ((*it2).second == NULL) {
                 cerr << "NULL attribute !" << endl;
                 exit(12);
             }
-            cout << "|         name=" << (*it2).first.getString()
+            chaine << "|         name=" << (*it2).first.getString()
                  << ", type=" << (*it2).second->typeToString()
                  << ", value=" << (*it2).second->valueAsString();
             string value2=(*it2).second->secondValueAsString();
             if(!value2.empty())
-                cout << ", value2=" << value2;
-            cout << endl;            
+                chaine << ", value2=" << value2;
+            chaine << endl;            
         }
     }
 
     // WireLoadSelection
 //    _wire_load_selection->print();
-    cout << "|     WireLoadSection name= " << _wire_load_selection->getName().getString() << endl;
+    chaine << "|     WireLoadSection name= " << _wire_load_selection->getName().getString() << endl;
     vector<WireLoadArea*> wires_load_area = _wire_load_selection->getWiresLoadArea();
     for(size_t i = 0 ; i < wires_load_area.size() ; i++) {
-        cout << "|       wire_load_from_area name= " << wires_load_area[i]->getName().getString()
-             << ", min= "  << wires_load_area[i]->getMin()
-             << ", max= "  << wires_load_area[i]->getMax()
-             << endl;
+        chaine << "|       wire_load_from_area name= " << wires_load_area[i]->getName().getString()
+               << ", min= "  << wires_load_area[i]->getMin()
+               << ", max= "  << wires_load_area[i]->getMax()
+               << endl;
     }
 
     // Cell
     for(map<Name, Cell*>::const_iterator it=_cells.begin() ; it!=_cells.end() ; ++it) {
 //        (*it).second->print();
-        cout << "|     Cell name= " << (*it).first.getString() << endl;
+        chaine << "|     Cell name= " << (*it).first.getString() << endl;
 
         // Cell's attributes
-        cout << "|       Attributes :" << endl;
+        chaine << "|       Attributes :" << endl;
         for(map<Name, Attribute*>::const_iterator it2=(*it).second->getAttributes().begin() ; it2!=(*it).second->getAttributes().end() ; ++it2) {
-            cout << "|         name= " << (*it2).first.getString()
-                 << ", type= " << (*it2).second->typeToString()
-                 << ", value= " << (*it2).second->valueAsString() << endl;
+            chaine << "|         name= " << (*it2).first.getString()
+                   << ", type= " << (*it2).second->typeToString()
+                   << ", value= " << (*it2).second->valueAsString() << endl;
         }
         // Cell's pins
         for(map<Name, Pin*>::const_iterator it2=(*it).second->getPins().begin() ; it2!=(*it).second->getPins().end() ; ++it2) {
 //            (*it2).second->print();
-            cout << "|       Pin name= " << (*it2).first.getString() << endl;
+            chaine << "|       Pin name= " << (*it2).first.getString() << endl;
             // Pin's attributes
-            cout << "|         Attributes :" << endl;
+            chaine << "|         Attributes :" << endl;
             for(map<Name, Attribute*>::const_iterator it3=(*it2).second->getAttributes().begin() ; it3!=(*it2).second->getAttributes().end() ; ++it3) {
-                cout << "|           name= " << (*it3).first.getString()
-                     << ", type= " << (*it3).second->typeToString()
-                     << ", value= " << (*it3).second->valueAsString() << endl;
+                chaine << "|           name= " << (*it3).first.getString()
+                       << ", type= " << (*it3).second->typeToString()
+                       << ", value= " << (*it3).second->valueAsString() << endl;
             }
             // Timing
             for (size_t i = 0 ; i < (*it2).second->getTimings().size() ; i++) {
                 // Timing's attributes
-                cout << "|         Timing's attributes :" << endl;
+                chaine << "|         Timing's attributes :" << endl;
                 for(map<Name, Attribute*>::const_iterator it3=(*it2).second->getTimings()[i]->getAttributes().begin() ; it3!=(*it2).second->getTimings()[i]->getAttributes().end() ; ++it3) {
-                    cout << "|           name= " << (*it3).first.getString()
-                         << ", type= " << (*it3).second->typeToString()
-                         << ", value= " << (*it3).second->valueAsString() << endl;
+                    chaine << "|           name= " << (*it3).first.getString()
+                           << ", type= " << (*it3).second->typeToString()
+                           << ", value= " << (*it3).second->valueAsString() << endl;
                 }
             }
         }
@@ -169,12 +171,12 @@ void Library::print() {
 //        if(_ff)
 //            _ff->print();
         if((*it).second->getFF()) {
-            cout << "|       FF noninverting= " << (*it).second->getFF()->getNonInverting().getString() << ", inverting= " << (*it).second->getFF()->getInverting().getString() << endl;
-            cout << "|         Attributes :" << endl;
+            chaine << "|       FF noninverting= " << (*it).second->getFF()->getNonInverting().getString() << ", inverting= " << (*it).second->getFF()->getInverting().getString() << endl;
+            chaine << "|         Attributes :" << endl;
             for(map<Name, Attribute*>::const_iterator it2=(*it).second->getFF()->getAttributes().begin() ; it2!=(*it).second->getFF()->getAttributes().end() ; ++it2) {
-                cout << "|           name= " << (*it2).first.getString()
-                     << ", type= " << (*it2).second->typeToString()
-                    << ", value= " << (*it2).second->valueAsString() << endl;
+                chaine << "|           name= " << (*it2).first.getString()
+                       << ", type= " << (*it2).second->typeToString()
+                       << ", value= " << (*it2).second->valueAsString() << endl;
             }
         }
         // test_cell
@@ -182,34 +184,34 @@ void Library::print() {
 //            _testCell->print();
         Cell* testCell = (*it).second->getTestCell();
         if(testCell) {
-            cout << "|     Test Cell" << endl;
+            chaine << "|     Test Cell" << endl;
 
             // Cell's attributes
-            cout << "|       Attributes :" << endl;
+            chaine << "|       Attributes :" << endl;
             for(map<Name, Attribute*>::const_iterator it2=testCell->getAttributes().begin() ; it2!=testCell->getAttributes().end() ; ++it2) {
-                cout << "|         name= " << (*it2).first.getString()
-                     << ", type= " << (*it2).second->typeToString()
-                     << ", value= " << (*it2).second->valueAsString() << endl;
+                chaine << "|         name= " << (*it2).first.getString()
+                       << ", type= " << (*it2).second->typeToString()
+                       << ", value= " << (*it2).second->valueAsString() << endl;
             }
             // Cell's pins
             for(map<Name, Pin*>::const_iterator it2=(*it).second->getPins().begin() ; it2!=(*it).second->getPins().end() ; ++it2) {
 //                (*it2).second->print();
-                cout << "|       Pin name= " << (*it2).first.getString() << endl;
+                chaine << "|       Pin name= " << (*it2).first.getString() << endl;
                 // Pin's attributes
-                cout << "|         Attributes :" << endl;
+                chaine << "|         Attributes :" << endl;
                 for(map<Name, Attribute*>::const_iterator it3=(*it2).second->getAttributes().begin() ; it3!=(*it2).second->getAttributes().end() ; ++it3) {
-                    cout << "|           name= " << (*it3).first.getString()
-                         << ", type= " << (*it3).second->typeToString()
-                         << ", value= " << (*it3).second->valueAsString() << endl;
+                    chaine << "|           name= " << (*it3).first.getString()
+                           << ", type= " << (*it3).second->typeToString()
+                           << ", value= " << (*it3).second->valueAsString() << endl;
                 }
                 // Timing
                 for (size_t i = 0 ; i < (*it2).second->getTimings().size() ; i++) {
                     // Timing's attributes
-                    cout << "|         Timing's attributes :" << endl;
+                    chaine << "|         Timing's attributes :" << endl;
                     for(map<Name, Attribute*>::const_iterator it3=(*it2).second->getTimings()[i]->getAttributes().begin() ; it3!=(*it2).second->getTimings()[i]->getAttributes().end() ; ++it3) {
-                        cout << "|           name= " << (*it3).first.getString()
-                             << ", type= " << (*it3).second->typeToString()
-                             << ", value= " << (*it3).second->valueAsString() << endl;
+                        chaine << "|           name= " << (*it3).first.getString()
+                               << ", type= " << (*it3).second->typeToString()
+                               << ", value= " << (*it3).second->valueAsString() << endl;
                     }
                 }
             }
@@ -217,18 +219,23 @@ void Library::print() {
 //            if(_ff)
 //                _ff->print();
             if((*it).second->getFF()) {
-                cout << "|       FF noninverting= " << (*it).second->getFF()->getNonInverting().getString() << ", inverting= " << (*it).second->getFF()->getInverting().getString() << endl;
-                cout << "|         Attributes :" << endl;
+                chaine << "|       FF noninverting= " << (*it).second->getFF()->getNonInverting().getString() << ", inverting= " << (*it).second->getFF()->getInverting().getString() << endl;
+                chaine << "|         Attributes :" << endl;
                 for(map<Name, Attribute*>::const_iterator it2=(*it).second->getFF()->getAttributes().begin() ; it2!=(*it).second->getFF()->getAttributes().end() ; ++it2) {
-                    cout << "|           name= " << (*it2).first.getString()
-                         << ", type= " << (*it2).second->typeToString()
-                        << ", value= " << (*it2).second->valueAsString() << endl;
+                    chaine << "|           name= " << (*it2).first.getString()
+                           << ", type= " << (*it2).second->typeToString()
+                           << ", value= " << (*it2).second->valueAsString() << endl;
                 }
             }
         }
     }
-    cout << "+-----------------------------+" << endl;
-};
+    chaine << "+-----------------------------+" << endl;
+    return chaine.str();
+}
+
+void Library::print() {
+    cout << Library::getString();
+}
 
 bool Library::writeToFile(string filename) {
     time_t curtime = time(0);

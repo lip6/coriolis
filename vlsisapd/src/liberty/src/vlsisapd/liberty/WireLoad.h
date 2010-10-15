@@ -15,6 +15,7 @@ class WireLoad {
 
     void addAttribute(Name attrName, Attribute::Type attrType, const std::string& attrValue, const std::string& attrValue2 = "");
 
+    const std::string getString()const;
     void print();
     bool write(std::ofstream &file);
 

@@ -1,5 +1,6 @@
 #include<iostream>
 #include<fstream>
+#include<sstream>
 using namespace std;
 
 #include "vlsisapd/liberty/Timing.h"
@@ -28,14 +29,20 @@ void Timing::addAttribute(Name attrName, Attribute::Type attrType, const string&
     _attributes[attrName] = attr;
 }
 
-void Timing::print() {
+const string Timing::getString() const{
     // Timing's attributes
-    cout << "|         Timing's attributes :" << endl;
+    ostringstream chaine;
+    chaine << "|         Timing's attributes :" << endl;
     for(map<Name, Attribute*>::const_iterator it=_attributes.begin() ; it!=_attributes.end() ; ++it) {
-        cout << "|           name= " << (*it).first.getString()
-             << ", type= " << (*it).second->typeToString()
-             << ", value= " << (*it).second->valueAsString() << endl;
+        chaine << "|           name= " + (*it).first.getString()
+               << ", type= " + (*it).second->typeToString()
+               << ", value= " + (*it).second->valueAsString() << endl;
     }
+    return chaine.str();
+}
+
+void Timing::print() {
+    cout << Timing::getString();
 }
 
 bool Timing::write(ofstream &file) {

@@ -1,5 +1,6 @@
 #include<iostream>
 #include<fstream>
+#include<sstream>
 using namespace std;
 
 #include "vlsisapd/liberty/WireLoadArea.h"
@@ -13,14 +14,20 @@ void WireLoadSelection::addWireLoadArea(double min, double max, Name name) {
     _wires_load_area.push_back(area);
 }
 
-void WireLoadSelection::print() {
-    cout << "|     WireLoadSection name= " << _name.getString() << endl;
+const string WireLoadSelection::getString() const{
+    ostringstream chaine;
+    chaine << "|     WireLoadSection name= " << _name.getString() << endl;
     for(size_t i = 0 ; i < _wires_load_area.size() ; i++) {
-        cout << "|       wire_load_from_area name= " << _wires_load_area[i]->getName().getString()
-             << ", min= "  << _wires_load_area[i]->getMin()
-             << ", max= "  << _wires_load_area[i]->getMax()
-             << endl;
+        chaine << "|       wire_load_from_area name= " << _wires_load_area[i]->getName().getString()
+               << ", min= "  << _wires_load_area[i]->getMin()
+               << ", max= "  << _wires_load_area[i]->getMax()
+               << endl;
     }
+    return chaine.str();
+}
+
+void WireLoadSelection::print() {
+    cout << WireLoadSelection::getString();
 }
 
 bool WireLoadSelection::write(ofstream& file) {

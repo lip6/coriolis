@@ -88,7 +88,7 @@ BOOST_PYTHON_MODULE(LIBERTY) {
 
     // class Liberty::WireLoad
     //////////////////////////
-    class_<WireLoad>("WireLoad", init<Name>())
+    class_<WireLoad, WireLoad*>("WireLoad", init<Name>())
         // properties
         .add_property("name", &WireLoad::getName) // no setter => readonly
         // accessors
@@ -97,13 +97,13 @@ BOOST_PYTHON_MODULE(LIBERTY) {
         // modifiers
         .def("addAttribute",  &WireLoad::addAttribute, addAttribute_overloads())
         // miscellaneous
-        .def("pprint",        &WireLoad::print)
+        .def("__repr__",      &WireLoad::getString)
         .def("write",         &WireLoad::write)
     ;
 
     // class Liberty::WireLoadArea
     //////////////////////////////
-    class_<WireLoadArea>("WireLoadArea", init<double, double, Name>())
+    class_<WireLoadArea, WireLoadArea*>("WireLoadArea", init<double, double, Name>())
         // properties
         .add_property("min",  &WireLoadArea::getMin) // no setter => readonly
         .add_property("max",  &WireLoadArea::getMax) // no setter => readonly
@@ -114,7 +114,7 @@ BOOST_PYTHON_MODULE(LIBERTY) {
 
     // class Liberty::WireLoadSelection
     ///////////////////////////////////
-    class_<WireLoadSelection>("WireLoadSelection", init<Name>())
+    class_<WireLoadSelection, WireLoadSelection*>("WireLoadSelection", init<Name>())
         // properties
         .add_property("name",    &WireLoadSelection::getName) // no setter => readonly
         // accessors
@@ -122,13 +122,13 @@ BOOST_PYTHON_MODULE(LIBERTY) {
         // modifiers
         .def("addWireLoadArea",  &WireLoadSelection::addWireLoadArea)
         // miscellaneous
-        .def("pprint",            &WireLoadSelection::print)
+        .def("__repr__",         &WireLoadSelection::getString)
         .def("write",            &WireLoadSelection::write)
     ;
 
     // class Liberty::Cell
     //////////////////////
-    class_<Cell>("Cell", init<Name>())
+    class_<Cell, Cell*>("Cell", init<Name>())
         // properties
         .add_property("name", &Cell::getName) // no setter => readonly
         // accessors
@@ -144,13 +144,13 @@ BOOST_PYTHON_MODULE(LIBERTY) {
         .def("addFF",         &Cell::addFF)
         .def("setTestCell",   &Cell::setTestCell)
         // miscellaneous
-        .def("pprint",         &Cell::print)
+        .def("__repr__",      &Cell::getString)
         .def("write",         &Cell::write)
     ;
 
     // class Liberty::Pin
     /////////////////////
-    class_<Pin>("Pin", init<Name>())
+    class_<Pin, Pin*>("Pin", init<Name>())
         // properties
         .add_property("name", &Pin::getName) // no setter => readonly
         // accessors
@@ -162,26 +162,26 @@ BOOST_PYTHON_MODULE(LIBERTY) {
         .def("addAttribute",  &Pin::addAttribute)
         .def("addTiming",     &Pin::addTiming)
         // miscellaneous
-        .def("pprint",         &Pin::print)
+        .def("__repr__",      &Pin::getString)
         .def("write",         &Pin::write)
     ;
 
     // class Liberty::Timing
     ////////////////////////
-    class_<Timing>("Timing", init<>())
+    class_<Timing, Timing*>("Timing", init<>())
         // accessors
         .def("getAttributes", &Timing::getAttributes, return_internal_reference<>())
         .def("getAttribute",  &Timing::getAttribute,  return_value_policy<reference_existing_object>())
         // modifiers
         .def("addAttribute",  &Timing::addAttribute)
         // miscellaneous
-        .def("pprint",         &Timing::print)
+        .def("__repr__",      &Timing::getString)
         .def("write",         &Timing::write)
     ;
 
     // class Liberty::FlipFlop
     //////////////////////////
-    class_<FlipFlop>("FlipFlop", init<Name, Name>())
+    class_<FlipFlop, FlipFlop*>("FlipFlop", init<Name, Name>())
         // properties
         .add_property("noninverting", &FlipFlop::getNonInverting) // no setter => readonly
         .add_property("inverting",    &FlipFlop::getInverting) // no setter => readonly
@@ -191,13 +191,13 @@ BOOST_PYTHON_MODULE(LIBERTY) {
         // modifiers
         .def("addAttribute",          &FlipFlop::addAttribute)
         // miscellaneous
-        .def("pprint",                 &FlipFlop::print)
+        .def("__repr__",              &FlipFlop::getString)
         .def("write",                 &FlipFlop::write)
     ;
 
     // class Liberty::Library
     /////////////////////////
-    class_<Library>("Library", init<Name>())
+    class_<Library, Library*>("Library", init<Name>())
         // properties
         .add_property("name",        &Library::getName) // no setter => readonly
         // accessors                 
@@ -214,7 +214,7 @@ BOOST_PYTHON_MODULE(LIBERTY) {
         .def("addWireLoadSelection", &Library::addWireLoadSelection)
         .def("addCell",              &Library::addCell)
         // miscellaneous
-        .def("pprint",                &Library::print ) // "print" does not work in Python
+        .def("__repr__",             &Library::getString)
         .def("readFromFile",         &Library::readFromFile, return_value_policy<reference_existing_object>())
         .staticmethod("readFromFile")
         .def("writeToFile",          &Library::writeToFile)
