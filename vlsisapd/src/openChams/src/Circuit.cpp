@@ -904,7 +904,9 @@ bool Circuit::writeToFile(string filePath) {
         file << "  <sizing>" << endl;
         for (map<Name, Operator*>::const_iterator it = _sizing->getOperators().begin() ; it != _sizing->getOperators().end() ; ++it) {
             Operator* op = (*it).second;
-            file << "    <instance name=\"" << ((*it).first).getString() << "\" operator=\"" << op->getName().getString() << "\" simulModel=\"" << op->getSimulModel().getString() << "\" callOrder=\"" << op->getCallOrder() << "\">" << endl;
+            string opName = op->getName().getString();
+            transform(opName.begin(), opName.end(), opName.begin(), ::toupper);
+            file << "    <instance name=\"" << ((*it).first).getString() << "\" operator=\"" << opName << "\" simulModel=\"" << op->getSimulModel().getString() << "\" callOrder=\"" << op->getCallOrder() << "\">" << endl;
             if (!op->hasNoConstraints()) {
                 for (map<Name, Operator::Constraint*>::const_iterator cit = op->getConstraints().begin() ; cit != op->getConstraints().end() ; ++cit) {
                     Operator::Constraint* cn = (*cit).second;
