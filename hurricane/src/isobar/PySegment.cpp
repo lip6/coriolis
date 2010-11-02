@@ -55,7 +55,8 @@ extern "C" {
   // Standard Accessors (Attributes).
   DirectGetLongAttribute(PySegment_getSourceX,getSourceX,PySegment,Segment)
   DirectGetLongAttribute(PySegment_getSourceY,getSourceY,PySegment,Segment)
-  DirectGetLongAttribute(PySegment_getWidth  ,getWidth,  PySegment,Segment)
+  DirectGetLongAttribute(PySegment_getWidth  ,getWidth  ,PySegment,Segment)
+  DirectSetLongAttribute(PySegment_setWidth  ,setWidth  ,"Segment.setWidth",PySegment,Segment)
 
   // Standard Destroy (Attribute).
   DBoDestroyAttribute(PySegment_destroy, PySegment)
@@ -112,6 +113,7 @@ extern "C" {
     , { "getSourcePosition"    , (PyCFunction)PySegment_getSourcePosition, METH_NOARGS , "Return the Segment source point value." }
     , { "getTargetPosition"    , (PyCFunction)PySegment_getTargetPosition, METH_NOARGS , "Return the Segment target point value." }
     , { "getWidth"             , (PyCFunction)PySegment_getWidth         , METH_NOARGS , "Return the segment width." }
+    , { "setWidth"             , (PyCFunction)PySegment_setWidth         , METH_VARARGS, "Modify the Segment width." }
     , { "destroy"              , (PyCFunction)PySegment_destroy          , METH_NOARGS
                                , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */

@@ -43,6 +43,7 @@ namespace bfs = boost::filesystem;
 #include  <QVBoxLayout>
 
 #include  "hurricane/viewer/Graphics.h"
+#include  "hurricane/viewer/StratusScript.h"
 #include  "hurricane/viewer/StratusWidget.h"
 #include  "hurricane/viewer/CellViewer.h"
 
@@ -95,8 +96,8 @@ namespace Hurricane {
     setLayout ( vLayout );
   //setModal  ( true );
 
-    connect (     okButton, SIGNAL(clicked())         , this, SLOT(accept()) );
-    connect ( cancelButton, SIGNAL(clicked())         , this, SLOT(reject()) );
+    connect (     okButton, SIGNAL(clicked()), this, SLOT(accept()) );
+    connect ( cancelButton, SIGNAL(clicked()), this, SLOT(reject()) );
   }
 
 
@@ -115,6 +116,12 @@ namespace Hurricane {
     delete dialog;
     if ( not doRunStratus ) return false;
 
+    dbo_ptr<StratusScript> script
+      = StratusScript::create ( scriptName.toStdString(), qobject_cast<CellViewer*>(parent) );
+    
+    bool returnCode = script->run ();
+
+#if DEPRECATED
     if ( scriptName.endsWith(".py",Qt::CaseInsensitive) )
       scriptName.truncate ( scriptName.size()-3 );
 
@@ -133,6 +140,7 @@ namespace Hurricane {
     bool returnCode = script->runFunction ( "StratusScript", NULL, Isobar::Script::NoScriptArgs );
 
     Isobar::Script::removePath ( userDirectory.string() );
+#endif
 
     return returnCode;
   }

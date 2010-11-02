@@ -45,6 +45,13 @@ extern "C" {
   // x-------------------------------------------------------------x
 
 
+  DirectGetLongAttribute(PyVertical_getX       ,getX       ,PyVertical,Vertical)
+  DirectGetLongAttribute(PyVertical_getDySource,getDySource,PyVertical,Vertical)
+  DirectGetLongAttribute(PyVertical_getDyTarget,getDyTarget,PyVertical,Vertical)
+  DirectSetLongAttribute(PyVertical_setX,setX,"Vertical.setX",PyVertical,Vertical)
+  DirectSetLongAttribute(PyVertical_setDySource,setDySource,"Vertical.setDySource",PyVertical,Vertical)
+  DirectSetLongAttribute(PyVertical_setDyTarget,setDyTarget,"Vertical.setDyTarget",PyVertical,Vertical)
+
   // Standard destroy (Attribute).
   DBoDestroyAttribute(PyVertical_destroy, PyVertical)
 
@@ -74,9 +81,15 @@ extern "C" {
   // PyVertical Attribute Method table.
 
   PyMethodDef PyVertical_Methods[] =
-    { { "destroy"              , (PyCFunction)PyVertical_destroy   , METH_NOARGS
-                               , "Destroy associated hurricane object, the python object remains." }
-    , { "translate"            , (PyCFunction)PyVertical_translate , METH_VARARGS, "Translates the Vertical segment of dx and dy." }
+    { { "getX"       , (PyCFunction)PyVertical_getX       , METH_NOARGS , "Get the segment X position." }
+    , { "getDySource", (PyCFunction)PyVertical_getDySource, METH_NOARGS , "Get the segment source Y offset." }
+    , { "getDyTarget", (PyCFunction)PyVertical_getDyTarget, METH_NOARGS , "Get the segment target Y offset." }
+    , { "setX"       , (PyCFunction)PyVertical_setX       , METH_VARARGS, "Modify the segment X position." }
+    , { "setDySource", (PyCFunction)PyVertical_setDySource, METH_VARARGS, "Modify the segment source Y offset." }
+    , { "setDyTarget", (PyCFunction)PyVertical_setDyTarget, METH_VARARGS, "Modify the segment target Y offset." }
+    , { "translate"  , (PyCFunction)PyVertical_translate  , METH_VARARGS, "Translates the Vertical segment of dx and dy." }
+    , { "destroy"    , (PyCFunction)PyVertical_destroy    , METH_NOARGS
+                     , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

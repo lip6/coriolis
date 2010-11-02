@@ -908,7 +908,7 @@ namespace Hurricane {
     , _queryFilter        (~Query::DoTerminalCells)
     , _startLevel         (0)
     , _stopLevel          (99)
-    , _rubberShape        (CellWidget::Steiner)
+    , _rubberShape        (CellWidget::Barycentric)
     , _cumulativeSelection(false)
     , _scaleHistory       ()
     , _ihistory           (0)

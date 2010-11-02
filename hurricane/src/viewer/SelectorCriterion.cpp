@@ -66,8 +66,8 @@ namespace Hurricane {
 
   bool  NetSelectorCriterion::isValid ( CellWidget* cw ) const
   {
-    if ( !cw->getCell() ) return false;
-    if ( !cw->getCell()->getNet(_name) ) return false;
+    if ( cw->getCell() == NULL ) return false;
+    if ( not cw->getCell()->getNet(_name) ) return false;
     return true;
   }
 

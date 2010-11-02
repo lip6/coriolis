@@ -48,6 +48,13 @@ extern "C" {
   // x-------------------------------------------------------------x
 
 
+  DirectGetLongAttribute(PyHorizontal_getY       ,getY       ,PyHorizontal,Horizontal)
+  DirectGetLongAttribute(PyHorizontal_getDxSource,getDxSource,PyHorizontal,Horizontal)
+  DirectGetLongAttribute(PyHorizontal_getDxTarget,getDxTarget,PyHorizontal,Horizontal)
+  DirectSetLongAttribute(PyHorizontal_setY       ,setY       ,"Horizontal.setY",PyHorizontal,Horizontal)
+  DirectSetLongAttribute(PyHorizontal_setDxSource,setDxSource,"Horizontal.setDxSource",PyHorizontal,Horizontal)
+  DirectSetLongAttribute(PyHorizontal_setDxTarget,setDxTarget,"Horizontal.setDxTarget",PyHorizontal,Horizontal)
+
   // Standart destroy (Attribute).
   DBoDestroyAttribute(PyHorizontal_destroy, PyHorizontal)
 
@@ -56,8 +63,14 @@ extern "C" {
   // PyHorizontal Attribute Method table.
 
   PyMethodDef PyHorizontal_Methods[] =
-    { { "destroy"              , (PyCFunction)PyHorizontal_destroy                     , METH_NOARGS
-                               , "destroy associated hurricane object, the python object remains." }
+    { { "getY"       , (PyCFunction)PyHorizontal_getY       , METH_NOARGS , "Get the segment Y position." }
+    , { "getDxSource", (PyCFunction)PyHorizontal_getDxSource, METH_NOARGS , "Get the segment source X offset." }
+    , { "getDxTarget", (PyCFunction)PyHorizontal_getDxTarget, METH_NOARGS , "Get the segment target X offset." }
+    , { "setY"       , (PyCFunction)PyHorizontal_setY       , METH_VARARGS, "Modify the segment Y position." }
+    , { "setDxSource", (PyCFunction)PyHorizontal_setDxSource, METH_VARARGS, "Modify the segment source X offset." }
+    , { "setDxTarget", (PyCFunction)PyHorizontal_setDxTarget, METH_VARARGS, "Modify the segment target X offset." }
+    , { "destroy"    , (PyCFunction)PyHorizontal_destroy    , METH_NOARGS
+                     , "destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

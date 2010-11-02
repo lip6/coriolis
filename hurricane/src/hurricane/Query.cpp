@@ -38,7 +38,7 @@
 // x-----------------------------------------------------------------x
 
 
-#include <climits>
+#include <limits>
 
 #include "hurricane/BasicLayer.h"
 #include "hurricane/Slice.h"
@@ -60,12 +60,12 @@ namespace Hurricane {
 
   QueryStack::QueryStack ()
     : vector<QueryState*>()
-  //, _tab("  ")
-    , _topCell(NULL)
-    , _topArea()
-    , _topTransformation()
-    , _startLevel(0)
-    , _stopLevel(UINT_MAX)
+  //, _tab               ("  ")
+    , _topCell           (NULL)
+    , _topArea           ()
+    , _topTransformation ()
+    , _startLevel        (0)
+    , _stopLevel         (std::numeric_limits<unsigned int>::max())
   { }
 
 

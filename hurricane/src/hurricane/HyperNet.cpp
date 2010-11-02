@@ -356,6 +356,7 @@ bool isHyperNetRootNetOccurrence(Occurrence netoccurrence)
 {
     Net* net=dynamic_cast<Net*>(netoccurrence.getEntity());
     if (!net) return false;
+    if (net->isAutomatic() )               return false;
     if (!net->isExternal())                return true;
     if (netoccurrence.getPath().isEmpty()) return true;
     if (net->isGlobal())                   return false;

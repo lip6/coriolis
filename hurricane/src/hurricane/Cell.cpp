@@ -189,20 +189,21 @@ void Cell::setAbutmentBox(const Box& abutmentBox)
 void Cell::flattenNets(bool buildRings)
 // ************************************
 {
-    UpdateSession::open();
+  UpdateSession::open();
 
-  for_each_occurrence ( occurrence, getHyperNetRootNetOccurrences() ) {
-    HyperNet  hyperNet ( occurrence );
-    if ( !occurrence.getPath().isEmpty() ) {
+  forEach ( Occurrence, ioccurrence, getHyperNetRootNetOccurrences() ) {
+    Net* net = static_cast<Net*>((*ioccurrence).getEntity());
+
+    HyperNet  hyperNet ( *ioccurrence );
+    if ( not (*ioccurrence).getPath().isEmpty() ) {
       DeepNet* deepNet = DeepNet::create ( hyperNet );
       if (deepNet) deepNet->_createRoutingPads ( buildRings );
     } else {
       RoutingPad* previousRP = NULL;
       RoutingPad* currentRP  = NULL;
-      Net* net = static_cast<Net*>(occurrence.getEntity());
 
-      for_each_component ( component, net->getComponents() ) {
-        Plug* primaryPlug = dynamic_cast<Plug*>( component );
+      forEach ( Component*, icomponent, net->getComponents() ) {
+        Plug* primaryPlug = dynamic_cast<Plug*>( *icomponent );
         if ( primaryPlug ) {
           if ( !primaryPlug->getBodyHook()->getSlaveHooks().isEmpty() ) {
             cerr << "[ERROR] " << primaryPlug << "\n"
@@ -211,29 +212,26 @@ void Cell::flattenNets(bool buildRings)
             primaryPlug->getBodyHook()->detach ();
           }
         }
-        end_for
       }
 
-      for_each_occurrence ( plugOccurrence, hyperNet.getLeafPlugOccurrences() ) {
-        currentRP = createRoutingPad ( net, plugOccurrence );
+      forEach ( Occurrence, iplugOccurrence, hyperNet.getLeafPlugOccurrences() ) {
+        currentRP = createRoutingPad ( net, *iplugOccurrence );
         currentRP->materialize ();
         if ( buildRings ) {
           if ( previousRP ) {
             currentRP->getBodyHook()->attach ( previousRP->getBodyHook() );
           }
-          Plug* plug = static_cast<Plug*>( plugOccurrence.getEntity() );
-          if ( plugOccurrence.getPath().isEmpty() ) {
+          Plug* plug = static_cast<Plug*>( (*iplugOccurrence).getEntity() );
+          if ( (*iplugOccurrence).getPath().isEmpty() ) {
             plug->getBodyHook()->attach ( currentRP->getBodyHook() );
             plug->getBodyHook()->detach ();
           }
           previousRP = currentRP;
         }
-
-        end_for
       }
 
-      for_each_component ( component, net->getComponents() ) {
-        Pin* pin = dynamic_cast<Pin*>( component );
+      forEach ( Component*, icomponent, net->getComponents() ) {
+        Pin* pin = dynamic_cast<Pin*>( *icomponent );
         if ( pin ) {
           currentRP = createRoutingPad ( pin );
           if ( buildRings ) {
@@ -245,11 +243,8 @@ void Cell::flattenNets(bool buildRings)
           }
           previousRP = currentRP;
         }
-        
-        end_for
       }
     }
-    end_for
   }
 
   UpdateSession::close();

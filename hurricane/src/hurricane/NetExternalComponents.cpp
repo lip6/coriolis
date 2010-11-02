@@ -94,7 +94,7 @@ namespace Hurricane {
     Net* net = component->getNet();
     if (!net->isExternal()) return false;
 
-    return getRelation(net) != NULL;
+    return component->getProperty(_name) != NULL;
   }
 
 

@@ -1015,8 +1015,8 @@ namespace Hurricane {
 
   bool  CellWidget::SelectorCriterions::add ( const Net* net )
   {
-    if ( !_cellWidget ) return false;
-    if ( !_cellWidget->isSelected(Occurrence(net)) ) {
+    if ( _cellWidget == NULL ) return false;
+    if ( not _cellWidget->isSelected(Occurrence(net)) ) {
       _criterions.push_back ( new NetSelectorCriterion(net) );
       _criterions.back()->doSelection ( _cellWidget );
       return true;
@@ -1027,7 +1027,7 @@ namespace Hurricane {
 
   bool  CellWidget::SelectorCriterions::add ( Box area )
   {
-    if ( !_cellWidget ) return false;
+    if ( _cellWidget == NULL ) return false;
     _criterions.push_back ( new AreaSelectorCriterion(area) );
     _criterions.back()->doSelection ( _cellWidget );
     return true;
@@ -1036,8 +1036,8 @@ namespace Hurricane {
 
   bool  CellWidget::SelectorCriterions::remove (  const Net* net )
   {
-    if ( !_cellWidget ) return false;
-    if ( !_cellWidget->isSelected(Occurrence(net)) ) return false;
+    if ( _cellWidget == NULL ) return false;
+    if ( not _cellWidget->isSelected(Occurrence(net)) ) return false;
 
     size_t i=0;
     for ( ; i<_criterions.size() ; i++ )
@@ -1065,7 +1065,7 @@ namespace Hurricane {
 
   void  CellWidget::SelectorCriterions::revalidate ()
   {
-    if ( !_cellWidget ) return;
+    if ( _cellWidget == NULL ) return;
 
     size_t i    = 0;
     size_t last = _criterions.size ();
@@ -1524,9 +1524,9 @@ namespace Hurricane {
           Occurrence occurrence = (*iselector)->getOccurrence();
           Component* component  = dynamic_cast<Component*>(occurrence.getEntity());
 
-          if ( !component ) break;
-          if ( !component->getLayer() ) continue;
-          if ( !component->getLayer()->contains(*basicLayer) ) continue;
+          if ( component == NULL ) continue;
+          if ( not component->getLayer() ) continue;
+          if ( not component->getLayer()->contains(*basicLayer) ) continue;
 
           Transformation  transformation = occurrence.getPath().getTransformation();
           _drawingQuery.drawGo ( dynamic_cast<Go*>(occurrence.getEntity())
@@ -1540,6 +1540,7 @@ namespace Hurricane {
       _drawingPlanes.setPen   ( Graphics::getPen  ("boundaries") );
       _drawingPlanes.setBrush ( Graphics::getBrush("boundaries") );
 
+      iselector = _selectors.begin();
       for ( ; iselector != _selectors.end() ; iselector++ ) {
         Occurrence  occurrence = (*iselector)->getOccurrence();
         Instance*   instance   = dynamic_cast<Instance*>(occurrence.getEntity());
@@ -1553,22 +1554,25 @@ namespace Hurricane {
       _drawingPlanes.setPen   ( Graphics::getPen  ("rubber") );
       _drawingPlanes.setBrush ( Graphics::getBrush("rubber") );
 
+      iselector = _selectors.begin();
       for ( ; iselector != _selectors.end() ; iselector++ ) {
         Occurrence occurrence = (*iselector)->getOccurrence();
         Rubber*    rubber     = dynamic_cast<Rubber*>(occurrence.getEntity());
 
-        if ( !rubber ) break;
+        if ( rubber == NULL ) continue;
 
         Transformation  transformation = occurrence.getPath().getTransformation();
         _drawingQuery.drawRubber ( rubber, redrawBox, transformation );
       }
 
       Name extensionName = "";
+
+      iselector = _selectors.begin();
       for ( ; iselector != _selectors.end() ; iselector++ ) {
         Occurrence   occurrence = (*iselector)->getOccurrence();
         ExtensionGo* eGo        = dynamic_cast<ExtensionGo*>(occurrence.getEntity());
 
-        if ( !eGo ) break;
+        if ( eGo == NULL ) continue;
 
         Transformation transformation = occurrence.getPath().getTransformation();
         if ( eGo->getName() != extensionName ) {
@@ -2802,8 +2806,8 @@ namespace Hurricane {
       Occurrence occurrence ( *component );
       select ( occurrence );
     }
-    forEach ( Rubber*, rubber, net->getRubbers() ) {
-      Occurrence occurrence ( *rubber );
+    forEach ( Rubber*, irubber, net->getRubbers() ) {
+      Occurrence occurrence ( *irubber );
       select ( occurrence );
     }
     if ( _state->showSelection() ) _redrawManager.refresh ();

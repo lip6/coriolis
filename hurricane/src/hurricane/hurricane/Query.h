@@ -69,6 +69,7 @@ namespace Hurricane {
       inline                        QueryState ( Locator<Instance*>*   locator
                                                , const Box&            area
                                                , const Transformation& transformation
+                                               , const Path&           path
                                                );
                                     QueryState ( const QueryState& );
               QueryState&           operator=  ( const QueryState& );
@@ -77,6 +78,7 @@ namespace Hurricane {
               Locator<Instance*>*   _locator;
               Box                   _area;
               Transformation        _transformation;
+              Path                  _path;
 
       friend  class QueryStack;
   };
@@ -86,19 +88,22 @@ namespace Hurricane {
 
 
   inline QueryState::QueryState ( Locator<Instance*>* locator )
-    : _locator(locator)
-    , _area()
+    : _locator       (locator)
+    , _area          ()
     , _transformation()
+    , _path          ()
   { }
 
 
   inline QueryState::QueryState ( Locator<Instance*>*   locator
                                 , const Box&            area
                                 , const Transformation& transformation
+                                , const Path&           path
                                 )
-    : _locator(locator)
-    , _area(area)
+    : _locator       (locator)
+    , _area          (area)
     , _transformation(transformation)
+    , _path          (path)
   { }
 
 
@@ -127,6 +132,7 @@ namespace Hurricane {
       inline  Instance*             getInstance          ();
       inline  const Box&            getArea              () const;
       inline  const Transformation& getTransformation    () const;
+      inline  const Path&           getPath              () const;
     //inline  const Tabulation&     getTab               () const;
     // Modifiers.
       inline  void                  setTopCell           ( Cell*                 cell );
@@ -168,6 +174,7 @@ namespace Hurricane {
   inline  unsigned int          QueryStack::getStopLevel         () const { return _stopLevel; }
   inline  const Box&            QueryStack::getArea              () const { return back()->_area; }
   inline  const Transformation& QueryStack::getTransformation    () const { return back()->_transformation; }
+  inline  const Path&           QueryStack::getPath              () const { return back()->_path; }
 //inline  const Tabulation&     QueryStack::getTab               () const { return _tab; }
 
 
@@ -197,7 +204,7 @@ namespace Hurricane {
   {
     while ( !empty() ) levelUp();
 
-    push_back ( new QueryState(NULL,_topArea,_topTransformation) );
+    push_back ( new QueryState(NULL,_topArea,_topTransformation,Path()) );
   //_tab++;
 
     progress ( true );
@@ -215,6 +222,8 @@ namespace Hurricane {
 
     instance->getTransformation().getInvert().applyOn ( child->_area );
     parent->_transformation.applyOn ( child->_transformation );
+
+    child->_path = Path ( parent->_path, instance );
   }
 
 
@@ -321,6 +330,7 @@ namespace Hurricane {
       inline  const BasicLayer*     getBasicLayer          () const;
       inline  Cell*                 getMasterCell          ();
       inline  Instance*             getInstance            ();
+      inline  Path                  getPath                () const;
     //inline  const Tabulation&     getTab                 () const;
       virtual bool                  hasGoCallback          () const;
       virtual bool                  hasMarkerCallback      () const;
@@ -374,6 +384,7 @@ namespace Hurricane {
   inline  size_t                Query::getDepth           () const { return _stack.size(); }
   inline  const Box&            Query::getArea            () const { return _stack.getArea(); }
   inline  const Transformation& Query::getTransformation  () const { return _stack.getTransformation(); }
+  inline  Path                  Query::getPath            () const { return _stack.getPath(); }
   inline  const BasicLayer*     Query::getBasicLayer      () const { return _basicLayer; }
   inline  Cell*                 Query::getMasterCell      () { return _stack.getMasterCell(); }
   inline  Instance*             Query::getInstance        () { return _stack.getInstance(); }
