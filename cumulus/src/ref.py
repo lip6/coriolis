@@ -1,6 +1,6 @@
-from Hurricane import *
-import Hurricane
+
 import CRL
+from Hurricane import *
 
 import re
 
