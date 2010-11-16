@@ -1132,7 +1132,7 @@ namespace {
     Interval              constraints;
     vector<Cs1Candidate>  candidates;
     TrackElement*         segment    = _event->getSegment();
-    bool                  canMoveUp  = (segment->isLocal()) ? segment->canPivotUp(0.5) : segment->canMoveUp(0.5);
+    bool                  canMoveUp  = (segment->isLocal()) ? segment->canPivotUp(0.5) : segment->canMoveUp(1.0);
     unsigned int          relaxFlags
       = (_data and (_data->getStateCount() < 2)) ? Manipulator::AllowExpand : Manipulator::NoExpand;
 
@@ -1145,7 +1145,6 @@ namespace {
     Track*        track      = plane->getTrackByPosition(constraints.getVMin(),Constant::Superior);
 
     for ( ; track->getAxis() <= constraints.getVMax() ; track = track->getNext() ) {
-      ltrace(200) << "* " << track << endl;
       candidates.push_back ( Cs1Candidate(track) );
 
       size_t        begin;
@@ -1158,12 +1157,18 @@ namespace {
       candidates.back().setBegin ( begin );
       candidates.back().setEnd   ( end );
 
+      ltrace(200) << "* " << track << " [" << begin << ":" << end << "]" << endl;
+
       for ( ; (begin < end) ; begin++ ) {
         other = track->getSegment(begin);
 
-        if (     other->getNet() == segment->getNet() ) continue;
+        if ( other->getNet() == segment->getNet() ) {
+          ltrace(200) << "  | Same net: " << begin << " " << other << endl;
+          continue;
+        }
         if ( not other->getCanonicalInterval().intersect(overlap) ) {
-          if ( otherNet == NULL ) candidates.back().setBegin ( begin );
+          ltrace(200) << "  | No Conflict: " << begin << " " << other << endl;
+          if ( otherNet == NULL ) candidates.back().setBegin ( begin+1 );
           continue;
         }
         ltrace(200) << "  | Conflict: " << begin << " " << other << endl;
@@ -1197,8 +1202,9 @@ namespace {
 
         if (    other->isGlobal()
            and (other->getDataNegociate()->getGCellOrder() == Session::getOrder())
-           and  other->canMoveUp(0.5) ) {
-          ltrace(200) << "conflictSolve1() - One conflict, other move up" << endl;
+           and  other->canMoveUp(1.0) ) {
+          ltrace(200) << "conflictSolve1() - One conflict, other move up ["
+                      << candidates[icandidate].getBegin() << "]" << endl;
           if ( (success = other->moveUp()) ) break;
         }
 
@@ -2738,7 +2744,7 @@ namespace {
     ltrace(200) << "Manipulator::pivotUp() " << _segment << endl; 
 
     if (     _segment->isFixed  ()    ) return false;
-    if ( not _segment->canMoveUp(0.0) ) return false;
+    if ( not _segment->canMoveUp(0.5) ) return false;
 
     _segment->moveUp ();
     return true;
@@ -2750,8 +2756,8 @@ namespace {
     ltrace(200) << "Manipulator::moveUp() " << _segment << endl; 
 
     if ( _segment->isFixed  () ) return false;
-    if ( _segment->isLocal() and not _segment->canPivotUp(0.0) ) return false;
-    if ( not _segment->canMoveUp(0.5) ) return false;
+    if ( _segment->isLocal() and not _segment->canPivotUp(0.5) ) return false;
+    if ( not _segment->canMoveUp(1.0) ) return false;
 
 #if DISABLED
     ltrace(200) << "| Repack Tracks: " << endl;

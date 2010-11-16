@@ -296,8 +296,11 @@ namespace Kite {
   {
     TrackCost  cost ( const_cast<Track*>(this), interval, begin, end );
 
-    ltrace(148) << "getOverlapCost() @" << DbU::getValueString(_axis)
-                << " [" << interval.getVMin() << " " << interval.getVMax() << "]" << endl;
+    ltrace(190) << "getOverlapCost() @" << DbU::getValueString(_axis)
+                << " [" << DbU::getValueString(interval.getVMin())
+                << ":"  << DbU::getValueString(interval.getVMax()) << "]"
+                << "<-> [" << begin << ":"  << end << "]"
+                << endl;
 
     ltracein(148);
 
@@ -723,7 +726,8 @@ namespace Kite {
       if ( _segments[i]->getNet() == _segments[i+1]->getNet() ) {
         if ( _segments[i]->getSourceU() == _segments[i+1]->getSourceU() ) {
           if ( _segments[i]->getTargetU() < _segments[i+1]->getTargetU() ) {
-            cerr << Warning(" Invalid sorting length order:\n%s  \n%s  "
+            cerr << Warning(" Invalid sorting length order in %s:\n%s  \n%s  "
+                           ,getString(this).c_str()
                            ,getString(_segments[i  ]).c_str()
                            ,getString(_segments[i+1]).c_str()) << endl;
           }
@@ -735,7 +739,8 @@ namespace Kite {
 
       if (   (j<_segments.size())
           && (_segments[i]->getTargetU() > _segments[j]->getSourceU()) ) {
-        cerr << Warning("Overlap between:\n  %s\n  %s"
+        cerr << Warning("Overlap in %s between:\n  %s\n  %s"
+                       ,getString(this).c_str()
                        ,getString(_segments[i]).c_str()
                        ,getString(_segments[j]).c_str()) << endl;
         overlaps++;

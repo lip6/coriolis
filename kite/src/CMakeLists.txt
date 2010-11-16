@@ -56,6 +56,7 @@
                                        RoutingPlane.cpp
                                        BuildBlockages.cpp
                                        BuildPowerRails.cpp
+                                       ProtectRoutingPads.cpp
                                        PreProcess.cpp
                                        NegociateWindow.cpp
                                        Configuration.cpp

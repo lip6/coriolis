@@ -413,6 +413,10 @@ namespace Kite {
       // Overlap between fixed & blockage.
         ltrace(200) << "* Blockage overlap: " << autoSegment << endl;
         Session::destroyRequest ( autoSegment );
+
+        cinfo << Warning("Overlap between fixed %s and blockage at %s."
+                        ,getString(autoSegment).c_str(),getString(blockageSpan).c_str()) << endl;
+
         return NULL;
       }
     }

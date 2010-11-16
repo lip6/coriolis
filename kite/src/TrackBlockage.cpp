@@ -46,6 +46,8 @@
 #include  "kite/Session.h"
 #include  "kite/RoutingEvent.h"
 #include  "kite/NegociateWindow.h"
+#include  "kite/GCellGrid.h"
+#include  "kite/KiteEngine.h"
 
 
 namespace Kite {
@@ -78,33 +80,97 @@ namespace Kite {
   {
     if ( track ) {
       Technology*   technology = DataBase::getDB()->getTechnology();
+      unsigned int  depth      = track->getDepth();
       const Layer*  layer1     = track->getLayer()->getBlockageLayer();
       RegularLayer* layer2     = dynamic_cast<RegularLayer*>(technology->getLayer(layer1->getMask()));
       ltrace(190) << "Blockage layer: " << layer2 << endl;
       if ( layer2 ) {
         DbU::Unit extention = layer2->getExtentionCap();
         if ( track->getDirection() == Constant::Horizontal ) {
-          _sourceU = boundingBox.getXMin();
-          _targetU = boundingBox.getXMax();
+          Interval uside = track->getKiteEngine()->getGCellGrid()->getUSide ( Constant::Horizontal );
+
+          _sourceU = max ( boundingBox.getXMin()+extention, uside.getVMin());
+          _targetU = min ( boundingBox.getXMax()-extention, uside.getVMax());
 
           _segment = Horizontal::create ( Session::getBlockageNet()
                                         , layer2
                                         , track->getAxis()
                                         , layer2->getMinimalSize()
-                                        , _sourceU + extention
-                                        , _targetU - extention
+                                        , _sourceU
+                                        , _targetU
                                         );
+
+          GCell*   gcell   = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(_sourceU,track->getAxis()) );
+          GCell*   end     = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(_targetU,track->getAxis()) );
+          GCell*   right   = NULL;
+          Interval guside  = gcell->getUSide ( Constant::Horizontal, true );
+          Interval segside ( boundingBox.getXMin(), boundingBox.getXMax() );
+
+          
+          ltrace(190) << "Depth: " << depth << " " << track->getLayer() << endl;
+          ltrace(190) << "Begin: " << gcell << endl;
+          ltrace(190) << "End:   " << end << endl;
+
+          if ( gcell ) {
+            while ( gcell and (gcell != end) ) {
+              right = gcell->getRight();
+              if ( right == NULL ) break;
+
+              guside = gcell->getUSide ( Constant::Horizontal, true );
+              Interval usedLength = guside.getIntersection ( segside );
+
+              gcell->addBlockage ( depth, (float)usedLength.getSize()/(float)guside.getSize() );
+              gcell = right;
+            }
+            if ( end ) {
+              guside = gcell->getUSide ( Constant::Horizontal, true );
+              Interval usedLength = guside.getIntersection ( segside );
+
+              end->addBlockage ( depth, (float)usedLength.getSize()/(float)guside.getSize() );
+            }
+          }
         } else {
-          _sourceU = boundingBox.getYMin();
-          _targetU = boundingBox.getYMax();
+          Interval uside = track->getKiteEngine()->getGCellGrid()->getUSide ( Constant::Vertical );
+
+          _sourceU = max ( boundingBox.getYMin()+extention, uside.getVMin());
+          _targetU = min ( boundingBox.getYMax()-extention, uside.getVMax());
 
           _segment = Vertical::create ( Session::getBlockageNet()
                                       , layer2
                                       , track->getAxis()
                                       , layer2->getMinimalSize()
-                                      , _sourceU + extention
-                                      , _targetU - extention
+                                      , _sourceU
+                                      , _targetU
                                       );
+
+          GCell*   gcell      = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(track->getAxis(),_sourceU) );
+          GCell*   end        = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(track->getAxis(),_targetU) );
+          GCell*   up         = NULL;
+          Interval guside     = gcell->getUSide ( Constant::Vertical, true );
+          Interval segside    ( boundingBox.getYMin(), boundingBox.getYMax() );
+
+          ltrace(190) << "Depth: " << depth << " " << track->getLayer() << endl;
+          ltrace(190) << "Begin: " << gcell << endl;
+          ltrace(190) << "End:   " << end << endl;
+
+          if ( gcell ) {
+            while ( gcell and (gcell != end) ) {
+              up = gcell->getUp();
+              if ( up == NULL ) break;
+
+              guside = gcell->getUSide ( Constant::Vertical, true );
+              Interval usedLength = guside.getIntersection ( segside );
+
+              gcell->addBlockage ( depth, (float)usedLength.getSize()/(float)guside.getSize() );
+              gcell = up;
+            }
+            if ( end ) {
+              guside = gcell->getUSide ( Constant::Vertical, true );
+              Interval usedLength = guside.getIntersection ( segside );
+
+              end->addBlockage ( depth, (float)usedLength.getSize()/(float)guside.getSize() );
+            }
+          }
         }
       }
     }

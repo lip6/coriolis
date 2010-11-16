@@ -27,9 +27,11 @@
 #include  <fstream>
 #include  <iomanip>
 
+#include  "hurricane/DebugSession.h"
 #include  "hurricane/Bug.h"
 #include  "hurricane/Error.h"
 #include  "hurricane/Warning.h"
+#include  "hurricane/Breakpoint.h"
 #include  "hurricane/Layer.h"
 #include  "hurricane/Net.h"
 #include  "hurricane/Pad.h"
@@ -41,6 +43,7 @@
 #include  "hurricane/UpdateSession.h"
 
 #include  "crlcore/Measures.h"
+#include  "knik/Edge.h"
 #include  "knik/KnikEngine.h"
 #include  "katabatic/AutoContact.h"
 #include  "kite/DataNegociate.h"
@@ -63,6 +66,7 @@ namespace Kite {
   using std::ofstream;
   using std::ostringstream;
   using std::setprecision;
+  using Hurricane::DebugSession;
   using Hurricane::tab;
   using Hurricane::inltrace;
   using Hurricane::ltracein;
@@ -71,6 +75,7 @@ namespace Kite {
   using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::Warning;
+  using Hurricane::Breakpoint;
   using Hurricane::Layer;
   using Hurricane::Cell;
   using CRL::addMeasure;
@@ -243,8 +248,14 @@ namespace Kite {
   {
     Cell* cell = getCell();
     if ( not _knik ) {
-      if ( cell->getRubbers().getFirst() == NULL )
-        cell->flattenNets ( (mode==BuildGlobalSolution) );
+    //if ( cell->getRubbers().getFirst() == NULL )
+      cell->flattenNets ( (mode==BuildGlobalSolution) );
+      
+    //Breakpoint::stop ( 0, "Point d'arret:<br>&nbsp;&nbsp;<b>createGlobalGraph()</b>&nbsp;"
+    //                      "after net virtual flattening." );
+
+      cerr << "Setting edge capacity to " << getEdgeCapacityPercent() << "" << endl;
+
       KnikEngine::setEdgeCapacityPercent ( getEdgeCapacityPercent() );
       _knik = KnikEngine::create ( cell
                                  , 1     // _congestion
@@ -296,16 +307,24 @@ namespace Kite {
       size_t tracksSize = rp->getTracksSize();
       for ( size_t itrack=0 ; itrack<tracksSize ; ++itrack ) {
         Track*        track   = rp->getTrackByIndex ( itrack );
-        TrackElement* element = track->getSegment ( (size_t)0 );
+        Knik::Edge*   edge    = NULL;
 
-        if ( element == NULL ) continue;
-        if ( element->getNet() == NULL ) continue;
-        if ( not element->getNet()->isSupply() ) continue;
-
-        cinfo << "Capacity from: " << element << endl;
+        cinfo << "Capacity from: " << track << endl;
 
         if ( track->getDirection() == Constant::Horizontal ) {
-          for ( ; element != NULL ; element = element->getNext() ) {
+          for ( size_t ielement=0 ; ielement<track->getSize() ; ++ielement ) {
+            TrackElement* element = track->getSegment ( ielement );
+            
+            if ( element->getNet() == NULL ) {
+              cinfo << "Reject capacity from (not Net): " << (void*)element << ":" << element << endl;
+              continue;
+            }
+            if ( not element->isFixed() or not element->isBlockage() ) {
+              cinfo << "Reject capacity from (neither fixed or blockage): " << (void*)element << ":" << element << endl;
+              continue;
+            }
+            cinfo << "Capacity from: " << (void*)element << ":" << element << endl;
+
             GCell* gcell = _kiteGrid->getGCell ( Point(element->getSourceU(),track->getAxis()) );
             GCell* end   = _kiteGrid->getGCell ( Point(element->getTargetU(),track->getAxis()) );
             GCell* right = NULL;
@@ -317,16 +336,51 @@ namespace Kite {
               right = gcell->getRight();
               if ( right == NULL ) break;
 
-              _knik->increaseEdgeCapacity ( gcell->getColumn()
-                                          , gcell->getRow()
-                                          , right->getColumn()
-                                          , right->getRow()
-                                          , -1 );
+              // size_t satDepth = 0;
+              // for ( ; satDepth < _routingPlanes.size() ; satDepth+=2 ) {
+              //   if ( gcell->getBlockage(satDepth) >= 9.0 ) break;
+              // }
+
+              // if ( satDepth < _routingPlanes.size() ) {
+              //   _knik->updateEdgeCapacity ( gcell->getColumn()
+              //                             , gcell->getRow()
+              //                             , right->getColumn()
+              //                             , right->getRow()
+              //                             , 0 );
+              // } else {
+                _knik->increaseEdgeCapacity ( gcell->getColumn()
+                                            , gcell->getRow()
+                                            , right->getColumn()
+                                            , right->getRow()
+                                            , -1 );
+                edge = _knik->getEdge ( gcell->getColumn()
+                                      , gcell->getRow()
+                                      , right->getColumn()
+                                      , right->getRow()
+                                      );
+              // }
+              // if ( edge != NULL ) {
+              //   if ( satDepth < _routingPlanes.size() )
+              //     cerr << "Nullify capacity of " << edge << endl;
+              //   cerr << edge << ":" << edge->getCapacity() << endl;
+              // }
               gcell = right;
             }
           }
         } else {
-          for ( ; element != NULL ; element = element->getNext() ) {
+          for ( size_t ielement=0 ; ielement<track->getSize() ; ++ielement ) {
+            TrackElement* element = track->getSegment ( ielement );
+
+            if ( element->getNet() == NULL ) {
+              cinfo << "Reject capacity from (not Net): " << (void*)element << ":" << element << endl;
+              continue;
+            }
+            if ( not element->isFixed() or not element->isBlockage() ) {
+              cinfo << "Reject capacity from (neither fixed or blockage): " << (void*)element << ":" << element << endl;
+              continue;
+            }
+            cinfo << "Capacity from: " << (void*)element << ":" << element << endl;
+
             GCell* gcell = _kiteGrid->getGCell ( Point(track->getAxis(),element->getSourceU()) );
             GCell* end   = _kiteGrid->getGCell ( Point(track->getAxis(),element->getTargetU()) );
             GCell* up    = NULL;
@@ -338,12 +392,35 @@ namespace Kite {
               up = gcell->getUp();
               if ( up == NULL ) break;
 
-              _knik->increaseEdgeCapacity ( gcell->getColumn()
-                                          , gcell->getRow()
-                                          , up->getColumn()
-                                          , up->getRow()
-                                          , -1 );
+              // size_t satDepth = 1;
+              // for ( ; satDepth < _routingPlanes.size() ; satDepth+=2 ) {
+              //   if ( gcell->getBlockage(satDepth) >= 9.0 ) break;
+              // }
 
+              // if ( satDepth < _routingPlanes.size() ) {
+              //   _knik->updateEdgeCapacity ( gcell->getColumn()
+              //                             , gcell->getRow()
+              //                             , up->getColumn()
+              //                             , up->getRow()
+              //                             , 0 );
+              // } else {
+                _knik->increaseEdgeCapacity ( gcell->getColumn()
+                                            , gcell->getRow()
+                                            , up->getColumn()
+                                            , up->getRow()
+                                            , -1 );
+                edge = _knik->getEdge ( gcell->getColumn()
+                                      , gcell->getRow()
+                                      , up->getColumn()
+                                      , up->getRow()
+                                      );
+              // }
+
+              // if ( edge != NULL ) {
+              //   if ( satDepth < _routingPlanes.size() )
+              //     cerr << "Nullify capacity of " << edge << endl;
+              //   cerr << edge << ":" << edge->getCapacity() << endl;
+              // }
               gcell = up;
             }
           }
@@ -361,9 +438,13 @@ namespace Kite {
     Session::open ( this );
 
     createGlobalGraph ( mode );
+
+    DebugSession::addToTrace ( getCell(), "mips_r3000_1m_dp_res_re(21)" );
+
     createDetailedGrid ();
     buildBlockages ();
     buildPowerRails ();
+    protectRoutingPads ();
 
     if ( mode == LoadGlobalSolution ) {
       _knik->loadSolution ();
@@ -383,6 +464,7 @@ namespace Kite {
     KatabaticEngine::loadGlobalRouting ( method, nets );
 
     Session::open ( this );
+    KatabaticEngine::chipPrep ();
     getGCellGrid()->checkEdgeSaturation ( getEdgeCapacityPercent() );
     Session::close ();
   }
@@ -437,8 +519,8 @@ namespace Kite {
 
   void  KiteEngine::printCompletion () const
   {
-    cout << "  o  Computing Completion ratios." << endl;
-    cout << "     - Unrouted segments :" << endl;
+    cmess1 << "  o  Computing Completion ratios." << endl;
+    cmess1 << "     - Unrouted segments :" << endl;
 
     size_t             routeds          = 0;
     size_t             unrouteds        = 0;
@@ -465,22 +547,22 @@ namespace Kite {
     float segmentRatio    = (float)(routeds) / (float)(_trackSegmentLut.size())  * 100.0;
     float wireLengthRatio = (float)(routedWireLength) / (float)(totalWireLength) * 100.0;
 
-    cout << "     - Track Segment Completion Ratio := "
-         << setprecision(4) << segmentRatio
-         << "% [" << routeds << "/" << _trackSegmentLut.size() << "] "
-         << (_trackSegmentLut.size() - routeds) << " remains." << endl;
-    cout << "     - Wire Length Completion Ratio   := "
-         << setprecision(4) << wireLengthRatio
-         << "% [" << totalWireLength << "] "
-         << (totalWireLength - routedWireLength) << " remains." << endl;
+    cmess1 << "     - Track Segment Completion Ratio := "
+           << setprecision(4) << segmentRatio
+           << "% [" << routeds << "/" << _trackSegmentLut.size() << "] "
+           << (_trackSegmentLut.size() - routeds) << " remains." << endl;
+    cmess1 << "     - Wire Length Completion Ratio   := "
+           << setprecision(4) << wireLengthRatio
+           << "% [" << totalWireLength << "] "
+           << (totalWireLength - routedWireLength) << " remains." << endl;
 
     float expandRatio = 1.0;
     if ( _minimumWL != 0.0 ) {
       expandRatio = totalWireLength / _minimumWL;
-      cout << "     - Wire Length Expand Ratio       := "
-           << setprecision(4) << expandRatio
-           << "% [min:" << setprecision(9) << _minimumWL << "] "
-           << endl;
+      cmess1 << "     - Wire Length Expand Ratio       := "
+             << setprecision(4) << expandRatio
+             << "% [min:" << setprecision(9) << _minimumWL << "] "
+             << endl;
     }
 
     _toolSuccess = (unrouteds == 0);

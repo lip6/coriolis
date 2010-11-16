@@ -75,6 +75,9 @@ namespace Kite {
 // Class  :  "TrackFixedSegment".
 
 
+  Net* TrackFixedSegment::_blockageNet = NULL;
+
+
   TrackFixedSegment::TrackFixedSegment ( Track* track, Segment* segment )
     : TrackElement  (NULL)
     , _segment      (segment)
@@ -94,18 +97,29 @@ namespace Kite {
           _sourceU = max ( boundingBox.getXMin()-extention, uside.getVMin());
           _targetU = min ( boundingBox.getXMax()+extention, uside.getVMax());
 
-          GCell* gcell = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(_sourceU,track->getAxis()) );
-          GCell* end   = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(_targetU,track->getAxis()) );
-          GCell* right = NULL;
+          GCell*   gcell   = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(_sourceU,track->getAxis()) );
+          GCell*   end     = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(_targetU,track->getAxis()) );
+          GCell*   right   = NULL;
+          Interval guside  = gcell->getUSide ( Constant::Horizontal, true );
+          Interval segside ( boundingBox.getXMin(), boundingBox.getXMax() );
 
           if ( gcell ) {
             while ( gcell and (gcell != end) ) {
               right = gcell->getRight();
               if ( right == NULL ) break;
-              gcell->addBlockage ( depth, 1.0 );
+
+              guside = gcell->getUSide ( Constant::Horizontal, true );
+              Interval usedLength = guside.getIntersection ( segside );
+
+              gcell->addBlockage ( depth, (float)usedLength.getSize()/(float)guside.getSize() );
               gcell = right;
             }
-            if ( end ) end->addBlockage ( depth, 1.0 );
+            if ( end ) {
+              guside = gcell->getUSide ( Constant::Horizontal, true );
+              Interval usedLength = guside.getIntersection ( segside );
+
+              end->addBlockage ( depth, (float)usedLength.getSize()/(float)guside.getSize() );
+            }
           } else
             cerr << Warning("TrackFixedSegment(): TrackFixedElement outside GCell grid.") << endl;
         } else {
@@ -114,17 +128,28 @@ namespace Kite {
           _sourceU = max ( boundingBox.getYMin()-extention, uside.getVMin());
           _targetU = min ( boundingBox.getYMax()+extention, uside.getVMax());
 
-          GCell* gcell = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(track->getAxis(),_sourceU) );
-          GCell* end   = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(track->getAxis(),_targetU) );
-          GCell* up    = NULL;
+          GCell*   gcell      = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(track->getAxis(),_sourceU) );
+          GCell*   end        = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(track->getAxis(),_targetU) );
+          GCell*   up         = NULL;
+          Interval guside     = gcell->getUSide ( Constant::Vertical, true );
+          Interval segside    ( boundingBox.getYMin(), boundingBox.getYMax() );
           if ( gcell ) {
             while ( gcell and (gcell != end) ) {
               up = gcell->getUp();
               if ( up == NULL ) break;
-              gcell->addBlockage ( depth, 1.0 );
+
+              guside = gcell->getUSide ( Constant::Vertical, true );
+              Interval usedLength = guside.getIntersection ( segside );
+
+              gcell->addBlockage ( depth, (float)usedLength.getSize()/(float)guside.getSize() );
               gcell = up;
             }
-            if ( end ) end->addBlockage ( depth, 1.0 );
+            if ( end ) {
+              guside = gcell->getUSide ( Constant::Vertical, true );
+              Interval usedLength = guside.getIntersection ( segside );
+
+              end->addBlockage ( depth, (float)usedLength.getSize()/(float)guside.getSize() );
+            }
           } else
             cerr << Warning("TrackFixedSegment(): TrackFixedElement outside GCell grid.") << endl;
         }
@@ -150,6 +175,8 @@ namespace Kite {
 
   TrackElement* TrackFixedSegment::create ( Track* track, Segment* segment )
   {
+    if ( not _blockageNet ) _blockageNet = Session::getBlockageNet();
+
     TrackFixedSegment* trackFixedSegment = NULL;
     if ( track ) { 
       trackFixedSegment = new TrackFixedSegment ( track, segment );
@@ -170,7 +197,6 @@ namespace Kite {
   bool           TrackFixedSegment::isHorizontal    () const { return getTrack()->isHorizontal(); }
   bool           TrackFixedSegment::isVertical      () const { return getTrack()->isVertical(); }
   unsigned int   TrackFixedSegment::getDirection    () const { return getTrack()->getDirection(); }
-  Net*           TrackFixedSegment::getNet          () const { return _segment->getNet(); }
   const Layer*   TrackFixedSegment::getLayer        () const { return _segment->getLayer(); }
   Interval       TrackFixedSegment::getFreeInterval ( bool useOrder ) const { return Interval(); }
 
@@ -179,6 +205,15 @@ namespace Kite {
   {
     cerr << Error("::getId() called on %s.",_getString().c_str()) << endl;
     return 0;
+  }
+
+
+  Net* TrackFixedSegment::getNet () const
+  {
+    Net* realNet = _segment->getNet();
+    if ( realNet->isSupply() or realNet->isClock() )
+      return _blockageNet;
+    return _segment->getNet();
   }
 
 

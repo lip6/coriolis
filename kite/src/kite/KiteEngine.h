@@ -117,6 +117,7 @@ namespace Kite {
               void             preProcess                 ();
               void             buildBlockages             ();
               void             buildPowerRails            ();
+              void             protectRoutingPads         ();
               void             createGlobalGraph          ( unsigned int mode );
       virtual void             createDetailedGrid         ();
               void             saveGlobalSolution         ();

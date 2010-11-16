@@ -201,9 +201,9 @@ namespace Kite {
     set<AutoSegment*>::const_iterator idestroyed = destroyeds.begin();
     for ( ; idestroyed != destroyeds.end() ; idestroyed++ ) {
       if ( lookup(*idestroyed) ) {
-        cerr << Error("Destroyed AutoSegment is associated with a TrackSegment\n"
-                      "        (%s)"
-                     ,getString(*idestroyed).c_str()) << endl;
+        throw Error("Destroyed AutoSegment is associated with a TrackSegment\n"
+                    "        (%s)"
+                   ,getString(*idestroyed).c_str());
       }
     }
     

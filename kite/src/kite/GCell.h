@@ -129,6 +129,7 @@ namespace Kite {
       inline  unsigned int                 getRoutedCount     () const;
       inline  void                         incSegmentCount    ( int count );
       inline  void                         incRoutedCount     ( int count );
+      inline  float                        getBlockage        ( unsigned int depth ) const;
       inline  void                         addBlockage        ( unsigned int depth, float );
               void                         anticipateRouting  ( unsigned int );
       inline  size_t                       checkDensity       () const;
@@ -189,6 +190,7 @@ namespace Kite {
   inline  unsigned int                 GCell::getRoutedCount     () const { return _base->getRoutedCount(); }
   inline  void                         GCell::incSegmentCount    ( int count ) { _base->incSegmentCount(count); }
   inline  void                         GCell::incRoutedCount     ( int count ) { _base->incRoutedCount(count); }
+  inline  float                        GCell::getBlockage        ( unsigned int depth ) const { return _base->getBlockage(depth); }
   inline  void                         GCell::addBlockage        ( unsigned int depth, float length ) { _base->addBlockage(depth,length); }
   inline  size_t                       GCell::checkDensity       () const { return _base->checkDensity(); }
   inline  size_t                       GCell::updateDensity      () { return _base->updateDensity(); }

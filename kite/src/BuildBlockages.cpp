@@ -80,7 +80,7 @@ namespace {
           inline unsigned int  getDirection     () const;
           inline const Layer*  getLayer         () const;
           inline DbU::Unit     getHalfWireWidth () const;
-          inline DbU::Unit     getPitch         () const;
+          inline DbU::Unit     getHalfPitch     () const;
                  void          dump             ();
         private:
           RoutingPlane*  _routingPlane;
@@ -190,14 +190,14 @@ namespace {
   inline unsigned int  BlockagesPlanes::Plane::getDirection     () const { return _routingPlane->getDirection(); }
   inline const Layer*  BlockagesPlanes::Plane::getLayer         () const { return _routingPlane->getLayer(); }
   inline DbU::Unit     BlockagesPlanes::Plane::getHalfWireWidth () const { return _routingPlane->getLayerGauge()->getHalfWireWidth(); }
-  inline DbU::Unit     BlockagesPlanes::Plane::getPitch         () const { return _routingPlane->getLayerGauge()->getPitch(); }
+  inline DbU::Unit     BlockagesPlanes::Plane::getHalfPitch     () const { return _routingPlane->getLayerGauge()->getHalfPitch(); }
 
 
   void  BlockagesPlanes::Plane::merge ( Box boundingBox )
   {
     ltrace(190) << "| Add on plane " << _routingPlane->getLayer() << " " << boundingBox << endl;
 
-    DbU::Unit delta = getPitch() - getHalfWireWidth() - 1;
+    DbU::Unit delta = getHalfPitch() - getHalfWireWidth() - DbU::lambda(0.1);
 
     if ( getDirection() == Constant::Horizontal ) {
       boundingBox.inflate ( 0, delta, 0, delta );
@@ -302,6 +302,7 @@ namespace {
     public:
                             QueryBlockages      ( KiteEngine* );
       virtual bool          hasGoCallback       () const;
+      virtual bool          hasPlane            ( const BasicLayer* );
       virtual void          setBasicLayer       ( const BasicLayer* );
       virtual void          goCallback          ( Go*     );
       virtual void          rubberCallback      ( Rubber* );
@@ -341,6 +342,10 @@ namespace {
 
   inline  void  QueryBlockages::dump ()
   { return _blockagesPlanes.dump(); }
+
+
+  bool  QueryBlockages::hasPlane ( const BasicLayer* basicLayer )
+  { return _blockagesPlanes.hasPlane(basicLayer); }
 
 
   void  QueryBlockages::setBasicLayer ( const BasicLayer* basicLayer )
@@ -423,6 +428,7 @@ namespace Kite {
 
     forEach ( BasicLayer*, iLayer, technology->getBasicLayers() ) {
       if ( iLayer->getMaterial() != BasicLayer::Material::blockage ) continue;
+      if ( not query.hasPlane(*iLayer) ) continue;
 
       cmess1 << "     - Blockages in " << iLayer->getName() << " ..." << endl;
 

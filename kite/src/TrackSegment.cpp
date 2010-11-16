@@ -645,12 +645,14 @@ namespace Kite {
     if ( not invalidateds.empty() ) {
       vector<TrackElement*> segments;
       for ( size_t i=0 ; i<invalidateds.size() ; i++ ) {
-        ltrace(200) << "moved: " << invalidateds[i] << endl;
         TrackElement* segment = GCell::addTrackSegment(NULL,invalidateds[i],false);
-        segments.push_back ( segment );
+        if ( segment != NULL ) {
+          ltrace(200) << "moved: " << invalidateds[i] << endl;
+          segments.push_back ( segment );
         // if (  (segment->getTrack() == NULL)
         //    or (segment->getLayer() != segment->getTrack()->getLayer()) )
-        segment->reschedule ( 0 );
+          segment->reschedule ( 0 );
+        }
       }
 
       for ( size_t i=0 ; i<segments.size() ; i++ ) {
@@ -1113,7 +1115,8 @@ namespace Kite {
       for ( size_t i=0 ; i<invalidateds.size() ; i++ ) {
         ltrace(200) << "invalidated: " << invalidateds[i] << endl;
         TrackElement* segment = GCell::addTrackSegment(NULL,invalidateds[i],false);
-        segments.push_back ( segment );
+        if ( segment != NULL )
+          segments.push_back ( segment );
       }
     }      
 

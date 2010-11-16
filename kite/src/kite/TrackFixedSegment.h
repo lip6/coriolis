@@ -74,7 +74,8 @@ namespace Kite {
 
     protected:
     // Attributes.
-      Segment*   _segment;
+      static Net*     _blockageNet;
+             Segment* _segment;
 
     protected:
     // Constructors & Destructors.
