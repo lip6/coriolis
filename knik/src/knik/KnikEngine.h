@@ -60,6 +60,7 @@ using Hurricane::Cell;
 
 
 class Vertex;
+class Edge;
 class Graph;
 class RoutingGrid;
 
@@ -188,6 +189,7 @@ typedef vector<NetRecord> NetVector;
         void     addRoutingPadToGraph ( Hurricane::RoutingPad* routingPad );
         Vertex*  getVertex ( Point );
         Vertex*  getVertex ( DbU::Unit x, DbU::Unit y );
+        Edge*    getEdge   ( unsigned col1, unsigned row1, unsigned col2, unsigned row2 );
             
 // Others
 // ******

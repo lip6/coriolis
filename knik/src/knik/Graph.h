@@ -101,6 +101,7 @@ namespace Knik {
             Net*     getWorkingNet()  { return _working_net; };
             Vertex*  getPredecessor   ( const Vertex* vertex );
             Edge*    getEdgeBetween   ( Vertex* vertex1, Vertex* vertex2 );
+            Edge*    getEdge          ( unsigned col1, unsigned row1, unsigned col2, unsigned row2 );
             Vertex*  getCentralVertex ();
             Vertex*  getVertex        ( Point );
             Vertex*  getVertex        ( DbU::Unit x, DbU::Unit y );

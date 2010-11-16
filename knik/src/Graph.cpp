@@ -8,6 +8,7 @@
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Component.h"
 #include "hurricane/Net.h"
+#include "hurricane/DeepNet.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Technology.h"
 #include "hurricane/DataBase.h"
@@ -727,15 +728,17 @@ void Graph::PopMinFromPriorityQueue()
 void Graph::addVTupleToPriorityQueue ( VTuple* vtuple )
 // *************************************************
 {
-    assert ( vtuple );
-    assert ( vtuple->getVertex()->getVTuple() == vtuple );
-    assert ( _vtuplePriorityQueue.find ( vtuple ) == _vtuplePriorityQueue.end() );
-    //if (debugging)
-    //    cerr << "    ADDING vtuple to priority queue : " << vtuple->_getString() << endl;
-    _vtuplePriorityQueue.insert ( vtuple );
-    //pair<VTuplePQIter,bool> p = _vtuplePriorityQueue.insert ( vtuple );
-    //assert ( p.second );
+//cerr << "addVTupleToPriorityQueue: "
+//     << (void*)vtuple << " " << (void*)vtuple->getVertex() << ":" << vtuple->getVertex() << endl;
 
+  assert ( vtuple );
+  assert ( vtuple->getVertex()->getVTuple() == vtuple );
+  assert ( _vtuplePriorityQueue.find ( vtuple ) == _vtuplePriorityQueue.end() );
+  if (debugging)
+    cerr << "    ADDING vtuple to priority queue : " << vtuple->_getString() << endl;
+  _vtuplePriorityQueue.insert ( vtuple );
+//pair<VTuplePQIter,bool> p = _vtuplePriorityQueue.insert ( vtuple );
+//assert ( p.second );
 }
 
 void Graph::increaseVTuplePriority ( VTuple* vtuple, float distance )
@@ -916,7 +919,6 @@ int Graph::countVertexes ( Net* net )
     _working_net = net;
     forEach ( Component*, component, net->getComponents() ) {
         if ( RoutingPad* routingPad = dynamic_cast<RoutingPad*>(*component) ) {
-            //cerr << routingPad << endl << routingPad->getCenter()<< endl;
             //if ( routingPad->getCenter().getY() < 0 ) {
 
             //    CEditor* editor = getCEditor ( getCell() );
@@ -1101,14 +1103,15 @@ void Graph::Dijkstra()
         UpdateEstimateCongestion();
     //#endif
 
-    debugging = (_working_net->getName() == debugName );
-    //bool debugging = false;
+    //debugging = (dynamic_cast<DeepNet*>(_working_net) != NULL);
+    //debugging = (_working_net->getName() == debugName );
+    bool debugging = false;
 
     if (debugging) {
         cerr << "Dijkstra for net " << _working_net << " : " << _netStamp << endl;
         cerr << "    central vertex : " << centralVertex << endl;
         cerr << "    _vertexes_to_route.size : " << _vertexes_to_route.size() << endl;
-        Breakpoint::stop(1, "<center><b>Dijkstra</b><br>initialized</center>");
+      //Breakpoint::stop(1, "<center><b>Dijkstra</b><br>initialized</center>");
     }
 
     while ( _vertexes_to_route.size() > 1 ) {
@@ -1193,27 +1196,27 @@ void Graph::Dijkstra()
                     oppositeVertex->setDistance ( newDistance );
                     oppositeVertex->setNetStamp ( _netStamp );
                     if ( VTuple* oppositeVTuple = oppositeVertex->getVTuple() ) {
-                        //if (debugging) {
-                        //    cerr << "   increasing Priority for vertex : " << oppositeVertex
-                        //         << " and corresponding vtuple : " << oppositeVTuple->_getString() << endl;
-                        //}
+                        if (debugging) {
+                           cerr << "   increasing Priority for vertex : " << oppositeVertex
+                                << " and corresponding vtuple : " << oppositeVTuple->_getString() << endl;
+                        }
                         increaseVTuplePriority ( oppositeVTuple, newDistance );   // XXX du fait de la reinit ce n'est plus seulement un increase !
                                                                                 // Non c'est bon si on garde le CleanRoutingState (avec clearPriorityQueue)
                     }
                     else {
                         VTuple* newOppositeVTuple = VTuple::create ( oppositeVertex, newDistance );
-                        //if (debugging)
-                        //    cerr << "   Creating new vtuple for vertex: " << oppositeVertex << "," << newDistance
-                        //         << " --> " << newOppositeVTuple->_getString() << endl;
+                        if (debugging)
+                           cerr << "   Creating new vtuple for vertex: " << oppositeVertex << "," << newDistance
+                                << " --> " << newOppositeVTuple->_getString() << endl;
                         addVTupleToPriorityQueue ( newOppositeVTuple );
                     }
-                    //if ( debugging ) {
-                    //    cerr << "    distance has been updated : " << edge << endl;
-                    //    //cerr << "    current reachedDistance: " << reachedDistance << " for: " << (*(reachedVertexes.begin())) << endl;
-                    //    cerr << "    current reachedDistance: " << reachedDistance << endl;
-                    //    printVTuplePriorityQueue();
-                    //    Breakpoint::stop(1, "<center><b>Dijkstra</b><br>distance has been updated</center>");
-                    //}
+                    if ( debugging ) {
+                       cerr << "    distance has been updated : " << edge << endl;
+                       //cerr << "    current reachedDistance: " << reachedDistance << " for: " << (*(reachedVertexes.begin())) << endl;
+                       cerr << "    current reachedDistance: " << reachedDistance << endl;
+                       printVTuplePriorityQueue();
+                       Breakpoint::stop(1, "<center><b>Dijkstra</b><br>distance has been updated</center>");
+                    }
                     //if ( debugging && (editor->getStopLevel() >= 2) ) {
                     //    editor->Refresh();
                     //    string stopMessage = "distance has been updated: ";
@@ -1711,101 +1714,65 @@ void Graph::UpdateMaxEstimateCongestion()
     }
 }
 
+
+Edge* Graph::getEdge ( unsigned col1, unsigned row1, unsigned col2, unsigned row2 )
+// ********************************************************************************
+{
+  Edge* edge = NULL;
+
+  if ( col1 == col2 ) {
+    if ( row1 == row2 ) 
+      throw Error ( "Graph::UpdateEdgeCapacity(): the two specified vertices must be different." );
+
+    Vertex* bottomVertex = NULL;
+    Vertex* topVertex    = NULL;
+
+    if ( ( row1 < row2 ) && ( row2 == row1 + 1 ) ) {
+      bottomVertex = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col1, row1) );
+      topVertex    = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col1, row2) );
+    } else if ( row1 == row2 + 1 ) {
+      bottomVertex = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col1, row2) );
+      topVertex    = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col1, row1) );
+    } else
+      throw Error ( "Graph::UpdateEdgeCapacity(): the two specified vertices must be contiguous." );
+
+    edge = bottomVertex->getVEdgeOut();
+    assert ( edge->getOpposite(bottomVertex) == topVertex );
+  } else if ( row1 == row2 ) {
+    Vertex* leftVertex  = NULL;
+    Vertex* rightVertex = NULL;
+
+    if ( ( col1 < col2 ) && ( col2 == col1 + 1 ) ) {
+      leftVertex  = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col1, row1) );
+      rightVertex = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col2, row1) );
+    } else if ( col1 == col2 + 1 ) {
+      leftVertex  = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col2, row1) );
+      rightVertex = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col1, row1) );
+    } else
+      throw Error ( "Graph::UpdateEdgeCapacity(): the two specified vertices must be contiguous." );
+
+    edge = leftVertex->getHEdgeOut();
+    assert ( edge->getOpposite(leftVertex) == rightVertex );
+  } else
+    throw Error ( "Graph::UpdateEdgeCapacity(): the two specified vertices must be vertically or horizontally aligned." );
+
+  return edge;
+}
+
+
 void Graph::UpdateEdgeCapacity ( unsigned col1, unsigned row1, unsigned col2, unsigned row2, unsigned cap )
 // ********************************************************************************************************
 {
-    if ( col1 == col2 ) {
-        if ( row1 == row2 )
-            throw Error ( "Graph::UpdateEdgeCapacity(): the two specified vertices must be different." );
-
-        Vertex* bottomVertex = NULL;
-        Vertex* topVertex    = NULL;
-        if ( ( row1 < row2 ) && ( row2 == row1 + 1 ) ) {
-            bottomVertex = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col1, row1) );
-            topVertex    = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col1, row2) );
-        }
-        else if ( row1 == row2 + 1 ) {
-            bottomVertex = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col1, row2) );
-            topVertex    = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col1, row1) );
-        }
-        else
-            throw Error ( "Graph::UpdateEdgeCapacity(): the two specified vertices must be contiguous." );
-
-        Edge* edge = bottomVertex->getVEdgeOut();
-        assert ( edge->getOpposite(bottomVertex) == topVertex );
-
-        edge->setCapacity ( cap );
-    }
-    else if ( row1 == row2 ) {
-        Vertex* leftVertex  = NULL;
-        Vertex* rightVertex = NULL;
-        if ( ( col1 < col2 ) && ( col2 == col1 + 1 ) ) {
-            leftVertex  = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col1, row1) );
-            rightVertex = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col2, row1) );
-        }
-        else if ( col1 == col2 + 1 ) {
-            leftVertex  = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col2, row1) );
-            rightVertex = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col1, row1) );
-        }
-        else
-            throw Error ( "Graph::UpdateEdgeCapacity(): the two specified vertices must be contiguous." );
-
-        Edge* edge = leftVertex->getHEdgeOut();
-        assert ( edge->getOpposite(leftVertex) == rightVertex );
-
-        edge->setCapacity ( cap );
-    }
-    else
-        throw Error ( "Graph::UpdateEdgeCapacity(): the two specified vertices must be vertically or horizontally aligned." );
+  getEdge ( col1, row1, col2, row2 )->setCapacity ( cap );
 }
+
 
 void Graph::increaseEdgeCapacity ( unsigned col1, unsigned row1, unsigned col2, unsigned row2, int cap )
 // *****************************************************************************************************
 {
-    if ( col1 == col2 ) {
-        if ( row1 == row2 )
-            throw Error ( "Graph::UpdateEdgeCapacity(): the two specified vertices must be different." );
-
-        Vertex* bottomVertex = NULL;
-        Vertex* topVertex    = NULL;
-        if ( ( row1 < row2 ) && ( row2 == row1 + 1 ) ) {
-            bottomVertex = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col1, row1) );
-            topVertex    = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col1, row2) );
-        }
-        else if ( row1 == row2 + 1 ) {
-            bottomVertex = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col1, row2) );
-            topVertex    = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col1, row1) );
-        }
-        else
-            throw Error ( "Graph::UpdateEdgeCapacity(): the two specified vertices must be contiguous." );
-
-        Edge* edge = bottomVertex->getVEdgeOut();
-        assert ( edge->getOpposite(bottomVertex) == topVertex );
-
-        edge->increaseCapacity ( cap );
-    }
-    else if ( row1 == row2 ) {
-        Vertex* leftVertex  = NULL;
-        Vertex* rightVertex = NULL;
-        if ( ( col1 < col2 ) && ( col2 == col1 + 1 ) ) {
-            leftVertex  = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col1, row1) );
-            rightVertex = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col2, row1) );
-        }
-        else if ( col1 == col2 + 1 ) {
-            leftVertex  = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col2, row1) );
-            rightVertex = _matrixVertex->getVertex ( pair<unsigned int, unsigned int>(col1, row1) );
-        }
-        else
-            throw Error ( "Graph::UpdateEdgeCapacity(): the two specified vertices must be contiguous." );
-
-        Edge* edge = leftVertex->getHEdgeOut();
-        assert ( edge->getOpposite(leftVertex) == rightVertex );
-
-        edge->increaseCapacity ( cap );
-    }
-    else
-        throw Error ( "Graph::UpdateEdgeCapacity(): the two specified vertices must be vertically or horizontally aligned." );
+  getEdge ( col1, row1, col2, row2 )->increaseCapacity ( cap );
 }
+
 
 void Graph::updateEdgesOccupancy ( Segment* segment, bool add )
 // ************************************************************

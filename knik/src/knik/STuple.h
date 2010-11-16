@@ -28,7 +28,11 @@ namespace Knik {
                             // nous avons deux segemnts de meme cout exactement superposés
                             // il n'est pas possible qu'ils aient le meme net !
                             if (getString(segment1->getNet()->getName()) <  getString(segment2->getNet()->getName()) ) return true;
-                            if (getString(segment1->getNet()->getName()) == getString(segment2->getNet()->getName()) ) assert(false);
+                            if (getString(segment1->getNet()->getName()) == getString(segment2->getNet()->getName()) ) {
+                              cerr << segment1 << endl;
+                              cerr << segment2 << endl;
+                              assert(false);
+                            }
                         }
                     }
                 }

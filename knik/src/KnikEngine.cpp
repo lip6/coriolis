@@ -309,6 +309,9 @@ void KnikEngine::createRoutingGraph()
 {
     Cell* cell = getCell();
     _routingGraph = Graph::create ( cell, _routingGrid, _benchMode, _useSegments );
+      
+  //Breakpoint::stop ( 0, "Point d'arret:<br>&nbsp;&nbsp;<b>createGlobalGraph()</b>&nbsp;"
+  //                      "after Knik createGlobalGraph()." );
 }
 
 void KnikEngine::addRoutingPadToGraph ( RoutingPad* routingPad )
@@ -326,6 +329,12 @@ void KnikEngine::addRoutingPadToGraph ( RoutingPad* routingPad )
                                            );
         rpVertex->setContact ( contact );
     }
+}
+
+Edge* KnikEngine::getEdge ( unsigned col1, unsigned row1, unsigned col2, unsigned row2 )
+// *************************************************************************************
+{
+    return _routingGraph->getEdge ( col1, row1, col2, row2 );
 }
 
 void KnikEngine::updateEdgeCapacity ( unsigned col1, unsigned row1, unsigned col2, unsigned row2, unsigned capacity )
@@ -411,46 +420,64 @@ void KnikEngine::saveSolution ( const string& fileName )
     if ( !saveFile )
        throw Error ("Cannot open solution file to write !");
 
-    //Layer* layerContact = DataBase::getDB()->getTechnology()->getLayer(Name("gcontact"));
-    //Layer* layerGMetalV = DataBase::getDB()->getTechnology()->getLayer(Name("gmetalv"));
-    const Layer* layerContact = Configuration::getGContact();
-    const Layer* layerGMetalV = Configuration::getGMetalV();
-    for ( unsigned i = 0 ; i < all_nets.size() ; i++ ) {
+    const Layer* gcontact = Configuration::getGContact();
+    const Layer* gmetalh  = Configuration::getGMetalH();
+    const Layer* gmetalv  = Configuration::getGMetalV();
+
+    for ( size_t i=0 ; i<all_nets.size() ; ++i ) {
         Net*  net   = all_nets[i];
         long  netId = NetExtension::getId ( net );
       //assert ( netId >= 0 );
+
         vector<Contact*> viaContacts;
-        for_each_contact ( contact, net->getContacts() ) {
-            if ( (contact->getLayer() == layerContact) || (contact->getLayer() == layerGMetalV) ) 
-                viaContacts.push_back ( contact );
-            end_for; 
+        forEach ( Contact*, icontact, net->getContacts() ) {
+          if ( (icontact->getLayer() == gcontact) or (icontact->getLayer() == gmetalv) ) 
+            viaContacts.push_back ( *icontact );
         }
-        unsigned nbEntries = net->getSegments().getSize() + viaContacts.size();
+
+        vector<Segment*> grSegments;
+        forEach ( Segment*, isegment, net->getSegments() ) {
+          if ( (isegment->getLayer() == gmetalh) or (isegment->getLayer() == gmetalv) ) {
+            grSegments.push_back ( *isegment );
+          }
+        }
+
+        unsigned nbEntries = grSegments.size() + viaContacts.size();
         fprintf ( saveFile, "%s %ld %d\n", getString(net->getName()).c_str(), netId, nbEntries );
-        for_each_segment ( segment, net->getSegments() ) {
-            unsigned layer = (dynamic_cast<Horizontal*>(segment))? 1 : 2;
-            fprintf ( saveFile, "(%d,%d,%d)-(%d,%d,%d)\n"
-                    , (unsigned)DbU::getLambda(segment->getSourceX()), (unsigned)DbU::getLambda(segment->getSourceY()), layer
-                    , (unsigned)DbU::getLambda(segment->getTargetX()), (unsigned)DbU::getLambda(segment->getTargetY()), layer );
-            //if ( layer == 2 ) { // pour rajouter les vias de descentes aux connecteurs
-            //    if ( segment->getSource()->getLayer() == layerGMetalV ) {
-            //        unsigned x = (unsigned)DbU::getLambda(segment->getSourceX());
-            //        unsigned y = (unsigned)DbU::getLambda(segment->getSourceY());
-            //        fprintf(saveFile, "(%d,%d,1)-(%d,%d,2)\n", x, y, x, y);
-            //    }
-            //    if ( segment->getTarget()->getLayer() == layerGMetalV ) {
-            //        unsigned x = (unsigned)DbU::getLambda(segment->getTargetX());
-            //        unsigned y = (unsigned)DbU::getLambda(segment->getTargetY());
-            //        fprintf(saveFile, "(%d,%d,1)-(%d,%d,2)\n", x, y ,x, y);
-            //    }
-            //}
-            end_for;
+
+        for ( size_t j=0 ; j<grSegments.size() ; ++j ) {
+          unsigned layer = (dynamic_cast<Horizontal*>(grSegments[j]))? 1 : 2;
+          fprintf ( saveFile, "(%d,%d,%d)-(%d,%d,%d)\n"
+                  , (unsigned)DbU::getLambda(grSegments[j]->getSourceX())
+                  , (unsigned)DbU::getLambda(grSegments[j]->getSourceY())
+                  , layer
+                  , (unsigned)DbU::getLambda(grSegments[j]->getTargetX())
+                  , (unsigned)DbU::getLambda(grSegments[j]->getTargetY())
+                  , layer
+                  );
+
+        //if ( layer == 2 ) { // pour rajouter les vias de descentes aux connecteurs
+        //    if ( segment->getSource()->getLayer() == layerGMetalV ) {
+        //        unsigned x = (unsigned)DbU::getLambda(segment->getSourceX());
+        //        unsigned y = (unsigned)DbU::getLambda(segment->getSourceY());
+        //        fprintf(saveFile, "(%d,%d,1)-(%d,%d,2)\n", x, y, x, y);
+        //    }
+        //    if ( segment->getTarget()->getLayer() == layerGMetalV ) {
+        //        unsigned x = (unsigned)DbU::getLambda(segment->getTargetX());
+        //        unsigned y = (unsigned)DbU::getLambda(segment->getTargetY());
+        //        fprintf(saveFile, "(%d,%d,1)-(%d,%d,2)\n", x, y ,x, y);
+        //    }
+        //}
         }
-        for ( unsigned j = 0 ; j < viaContacts.size() ; j++ ) {
-            Contact* contact = viaContacts[j];
-            fprintf ( saveFile, "(%d,%d,1)-(%d,%d,2)\n"
-                    , (unsigned)DbU::getLambda(contact->getX()), (unsigned)DbU::getLambda(contact->getY())
-                    , (unsigned)DbU::getLambda(contact->getX()), (unsigned)DbU::getLambda(contact->getY()) );
+
+        for ( size_t i=0 ; i<viaContacts.size() ; i++ ) {
+          Contact* contact = viaContacts[i];
+          fprintf ( saveFile, "(%d,%d,1)-(%d,%d,2)\n"
+                  , (unsigned)DbU::getLambda(contact->getX())
+                  , (unsigned)DbU::getLambda(contact->getY())
+                  , (unsigned)DbU::getLambda(contact->getX())
+                  , (unsigned)DbU::getLambda(contact->getY())
+                  );
         }
         fprintf ( saveFile, "!\n" );
     }
@@ -1072,6 +1099,7 @@ void KnikEngine::Route()
     for ( unsigned i = 0 ; i < size ; i++ ) {
         Net* net = _nets_to_route[i]._net;
         assert ( net );
+
         //_routingGraph->checkGraphConsistency();
         switch ( _routingGraph->initRouting ( net ) ) {
             case 0:

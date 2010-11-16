@@ -1,4 +1,7 @@
+
+#include "crlcore/Utilities.h"
 #include "hurricane/Breakpoint.h"
+#include "hurricane/Warning.h"
 
 #include "knik/Edge.h"
 #include "knik/Vertex.h"
@@ -49,7 +52,7 @@ Edge::Edge ( Vertex* from, Vertex* to, unsigned capacity )
     , _isCongested (false)
     , _segments()
 {
-//cerr << "    Edge capacity:" << _capacity << endl;
+//cerr << "    Edge::Edge() capacity:" << _capacity << endl;
 }
 
 void Edge::_postCreate ( bool capacity )
@@ -84,6 +87,11 @@ void Edge::increaseCapacity ( int capacity )
   if ( (int)_capacity + capacity < 0 ) _capacity = 0;
   else
     _capacity += capacity;
+
+  if ( _capacity < 2 ) _capacity = 0;
+
+  if ( _capacity == 0 )
+    cinfo << Warning("%s has reached NULL capacity.",getString(this).c_str()) << endl;
 
 //cerr << "Edge " << _from->getPosition()
 //     << " to " << _to->getPosition() << ":" << _capacity << endl;
@@ -180,6 +188,10 @@ Cell* Edge::getCell() const
 float Edge::getCost ( Edge* arrivalEdge )
 // **************************************
 {
+// 20/10/2010: Check for null capacity, which may occurs after back-annotation
+// by Kite.
+  if ( _capacity == 0.0 ) return (float)(HUGE);
+
 //#ifdef __USE_CONGESTION__
     if ( __congestion__ ) {
         // definition de la fonction de cout :
