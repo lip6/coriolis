@@ -39,6 +39,8 @@ class Rule {
 
     // modifiers
     inline void setType(Name);
+    inline void setValue(double);
+    inline void setRef(Name);
 
     // members
     private:
@@ -65,7 +67,9 @@ inline Name   Rule::getLayer1() { return _layer1; };
 inline Name   Rule::getLayer2() { return _layer2; };
 inline const std::string& Rule::getValueAsString() { return _valueStr.getString(); };
 
-inline void   Rule::setType(Name type) { _type = type; };
+inline void   Rule::setType(Name type)     { _type = type; };
+inline void   Rule::setValue(double value) { _value = value; _valueStr = to_string(value); };
+inline void   Rule::setRef(Name ref)       { _ref = ref; };
 } // namespace DTR
 #endif
 

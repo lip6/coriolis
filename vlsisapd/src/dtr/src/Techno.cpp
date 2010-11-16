@@ -8,10 +8,12 @@
  */
 
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <algorithm>
+#include <limits>
 using namespace std;
 
 #include <libxml/parser.h>
@@ -23,10 +25,12 @@ using namespace std;
 
 namespace {
 	template<class T> T getValue(xmlChar* str) {
-	    std::istringstream iss;
-    	iss.str((const char*) str);
-	    T res;
-    	iss >> res;
+        if (string((const char*)str).empty()) 
+            return numeric_limits<T>::quiet_NaN();
+        std::istringstream iss;
+        iss.str((const char*) str);
+        T res;
+        iss >> res;
     	return res;
 	}
 }
@@ -199,28 +203,39 @@ bool Techno::writeToFile(string filePath) {
     if (_rules.size() == 0) {
         throw DTRException("[ERROR] Cannot writeToFile since no rule is defined!");
     }    
-    
+
     file << "<technology name=\"" << _name.getString() << "\" unit=\"" << _unit.getString() << "\">" << endl
          << "  <physical_rules>" << endl;
 
+    file.setf(ios::left, ios::adjustfield);
     for (size_t i = 0 ; i < _rules.size() ; i++) {
         Rule* rule = _rules[i];
+        string name = "\""+rule->getName().getString()+"\"";
         if (dynamic_cast<ARule*>(rule)) {
-            file << "    <arule name=\"" << rule->getName().getString() << "\" ";
+            file << "    <arule name=" << setw(20) << name  << " ";
         } else {
-            file << "    <rule name=\"" << rule->getName().getString() << "\" ";
+            file << "    <rule  name=" << setw(20) << name << " ";
         }
+        int spacing = 18;
         if (rule->getType() != Name("")) {
-            file << "type=\"" << rule->getType().getString() << "\" ";
+            string type = "\""+rule->getType().getString()+"\"";
+            file << "type=" << setw(12) << type << " ";
+            spacing = 0;
         }
         if (rule->getLayer1() != Name("")) {
+            string l1 = "\""+rule->getLayer1().getString()+"\"";
             if (rule->getLayer2() != Name("")) {
-                file << "layer1=\"" << rule->getLayer1().getString() << "\" layer2=\"" << rule->getLayer2().getString() << "\" ";
+                string l2 = "\""+rule->getLayer2().getString()+"\"";
+                file << "layer1=" << setw(10) << l1 << " layer2=" << setw(10) << l2 << " ";
             } else {
-                file << "layer=\"" << rule->getLayer1().getString() << "\" ";
+                file << "layer=" << setw(11+spacing) << l1 << " ";
             }
+        } else {
+            file << setw(36) << " ";
         }
-        file << "value=\"" << rule->getValue() << "\" ref=\"" << rule->getRef().getString() << "\"/>" << endl;
+        ostringstream oss;
+        oss << "\"" << rule->getValue() <<"\"";
+        file << "value=" << setw(7) << oss.str() << " ref=\"" << rule->getRef().getString() << "\"/>" << endl;
     }
     file << "  </physical_rules>" << endl
          << "</technology>" << endl;
