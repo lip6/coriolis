@@ -74,22 +74,33 @@ Rule* Techno::getRule(Name name, Name layer1, Name layer2) {
         if ((rule->getName() == name) && (rule->getLayer1() == layer1) && (rule->getLayer2() == layer2))
             return rule;
     }
-    string error ("[ERROR] Could not find rule: ");
-    error += name.getString();
-    error += ".";
-    error += layer1.getString();
-    error += ".";
-    error += layer2.getString();
-    error += ".";
-    throw DTRException(error);
+    //string error ("[ERROR] Could not find rule: ");
+    //error += name.getString();
+    //error += ".";
+    //error += layer1.getString();
+    //error += ".";
+    //error += layer2.getString();
+    //error += ".";
+    //throw DTRException(error);
+    return NULL;
 }
 
 double Techno::getValue(Name name, Name layer1, Name layer2) {
-    return getRule(name, layer1, layer2)->getValue();
+    Rule* r =  getRule(name, layer1, layer2);
+    if(!r) {
+        string error = "[ERROR] Could not find rule: " + name.getString() + "." + layer1.getString() + "." + layer2.getString() + ".";
+        throw DTRException(error);
+    }
+    return r->getValue();
 }
 
 const string& Techno::getValueAsString(Name name, Name layer1, Name layer2) {
-    return getRule(name, layer1, layer2)->getValueAsString();
+    Rule* r =  getRule(name, layer1, layer2);
+    if(!r) {
+        string error = "[ERROR] Could not find rule: " + name.getString() + "." + layer1.getString() + "." + layer2.getString() + ".";
+        throw DTRException(error);
+    }
+    return r->getValueAsString();
 }
 
 Techno* Techno::readFromFile(const string filePath) {

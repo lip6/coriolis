@@ -28,6 +28,9 @@ class Techno {
     inline Name getUnit();
     inline std::vector<Rule*>&  getRules();
 
+    inline void setName(Name);
+    inline void setUnit(Name);
+
     Rule*  addRule (Name name, double value, Name ref, Name layer1=Name(""), Name layer2=Name(""));
     ARule* addARule(Name name, double value, Name ref, Name layer1         , Name layer2);
 
@@ -46,6 +49,9 @@ class Techno {
 inline Name Techno::getName() { return _name; };
 inline Name Techno::getUnit() { return _unit; };
 inline std::vector<Rule*>&  Techno::getRules()  { return _rules;  };
+
+inline void Techno::setName(Name name) { _name = name; };
+inline void Techno::setUnit(Name unit) { _unit = unit; };
     
 } // namespace DTR
 #endif
