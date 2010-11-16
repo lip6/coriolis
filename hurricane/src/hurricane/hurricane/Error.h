@@ -38,41 +38,43 @@
 // x-----------------------------------------------------------------x
 
 
-# ifndef  __HURRICANE_ERROR__
-# define  __HURRICANE_ERROR__
+#ifndef  __HURRICANE_ERROR__
+#define  __HURRICANE_ERROR__
 
-# include  "hurricane/Exception.h"
+#include  "hurricane/Exception.h"
+#include  "hurricane/Backtrace.h"
 
 
 namespace Hurricane {
 
 
   class Error : public Exception {
-
     public:
-    // Constructors.
-                      Error        ( const string& reason );
-                      Error        ( const char*   format, ... );
-                      Error        ( int code, const string& reason );
-                      Error        ( int code, const char*   format, ... );
-                      Error        ( const Error& error );
-    // Methods.
-      inline  string  getReason    () const;
-      inline  int     getCode      () const;
-    // Hurricane Managment.
-      virtual string  _getTypeName () const;
-      virtual string  _getString   () const;
-
+                                    Error         ( const string& reason );
+                                    Error         ( const char*   format, ... );
+                                    Error         ( int code, const string& reason );
+                                    Error         ( int code, const char*   format, ... );
+                                    Error         ( const Error& error );
+      inline  string                getReason     () const;
+      inline  int                   getCode       () const;
+      inline  string                where         () const;
+      inline  string                textWhere     () const;
+      inline  string                htmlWhere     () const;
+      virtual string                _getTypeName  () const;
+      virtual string                _getString    () const;
     private:
-    // Internal: Attributes.
-              string  _reason;
-              int     _code;
+      string               _reason;
+      int                  _code;
+      Backtrace            _backtrace;
   };
 
 
 // Inline Functions.
-  inline  string  Error::getReason () const { return _reason; }
-  inline  int     Error::getCode   () const { return _code; }
+  inline  string                Error::getReason () const { return _reason; }
+  inline  int                   Error::getCode   () const { return _code; }
+  inline  string                Error::where     () const { return _backtrace.where(); }
+  inline  string                Error::textWhere () const { return _backtrace.textWhere(); }
+  inline  string                Error::htmlWhere () const { return _backtrace.htmlWhere(); }
 
 
 } // End of Hurricane namespace.
@@ -84,4 +86,4 @@ IOSTREAM_POINTER_SUPPORT(Hurricane::Error);
 IOSTREAM_VALUE_SUPPORT(Hurricane::Error);
 
 
-# endif // __HURRICANE_ERROR__
+#endif // __HURRICANE_ERROR__

@@ -2,6 +2,7 @@
  include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane )
                  set ( includes hurricane/Mask.h
                                 hurricane/DebugSession.h
+                                hurricane/Backtrace.h
                                 hurricane/BasicLayer.h            hurricane/BasicLayers.h
                                 hurricane/RegularLayer.h          hurricane/RegularLayers.h
                                 hurricane/ViaLayer.h              hurricane/ViaLayers.h
@@ -86,6 +87,7 @@
                  set ( cpps     Record.cpp
                                 Slot.cpp
                                 Commons.cpp
+                                Backtrace.cpp
                                 Exception.cpp
                                 Bug.cpp
                                 Error.cpp
@@ -152,6 +154,6 @@
                                 TextTranslator.cpp
                  )
     
-           add_library ( hurricane ${cpps} )
+           add_library ( hurricane ${cpps} ${Boost_LIBRARIES} )
                install ( TARGETS hurricane DESTINATION lib${LIB_SUFFIX} )
                install ( FILES ${includes} DESTINATION include/coriolis2/hurricane ) 

@@ -20,41 +20,6 @@
 #include "hurricane/Exception.h"
 
 
-namespace {
-
-  using namespace Hurricane;
-
-
-  TextTranslator  getDefaultTextTranslator ()
-  {
-    TextTranslator translator;
-
-    translator.addTranslation ( "<br>"     , "\n" );
-    translator.addTranslation ( "<em>"     , ""   );
-    translator.addTranslation ( "</em>"    , ""   );
-    translator.addTranslation ( "<strong>" , ""   );
-    translator.addTranslation ( "</strong>", ""   );
-    translator.addTranslation ( "<tt>"     , ""   );
-    translator.addTranslation ( "</tt>"    , ""   );
-    translator.addTranslation ( "<b>"      , ""   );
-    translator.addTranslation ( "</b>"     , ""   );
-    translator.addTranslation ( "<i>"      , ""   );
-    translator.addTranslation ( "</i>"     , ""   );
-    translator.addTranslation ( "<big>"    , ""   );
-    translator.addTranslation ( "</big>"   , ""   );
-    translator.addTranslation ( "<small>"  , ""   );
-    translator.addTranslation ( "</small>" , ""   );
-    translator.addTranslation ( "&lt;"     , "<"  );
-    translator.addTranslation ( "&gt;"     , ">"  );
-
-    return translator;
-  }
-
-
-} // End of anonymous namespace.
-
-
-
 namespace Hurricane {
 
 
@@ -63,7 +28,7 @@ namespace Hurricane {
 // Exception implementation
 // ****************************************************************************************************
 
-TextTranslator  Exception::_textTranslator = getDefaultTextTranslator();
+TextTranslator  Exception::_textTranslator = TextTranslator::toTextTranslator();
 TextTranslator  Exception::_htmlTranslator;
 
 

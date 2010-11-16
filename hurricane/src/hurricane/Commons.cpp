@@ -111,7 +111,8 @@ string  demangle ( const char* symbol )
   char         demangled[length];
 
   abi::__cxa_demangle ( symbol, demangled, &length, &status );
-  return demangled;
+
+  return (status == 0) ? demangled : "";
 }
 
 #else

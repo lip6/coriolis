@@ -26,6 +26,7 @@
 #include  <QCloseEvent>
 #include  <QLabel>
 #include  <QPushButton>
+#include  <QCheckBox>
 #include  <QHBoxLayout>
 #include  <QVBoxLayout>
 #include  <QFrame>
@@ -41,6 +42,7 @@ namespace Hurricane {
     : QDialog (parent)
     , _header (new QLabel())
     , _message(new QLabel())
+    , _trace  (new QLabel())
   {
     setAttribute  ( Qt::WA_DeleteOnClose );
     setModal      ( true );
@@ -53,6 +55,14 @@ namespace Hurricane {
 
     _message->setTextFormat ( Qt::RichText );
     _message->setText       ( "<b>Oups! I did it again!</b>" );
+
+    _trace->setTextFormat ( Qt::RichText );
+    _trace->setText       ( "<b>No program trace sets yet.</b>" );
+    _trace->hide          ();
+
+    QCheckBox* showTrace = new QCheckBox ();
+    showTrace->setText    ( "Show Program Trace" );
+    showTrace->setChecked ( false );
 
     QLabel* ok = new QLabel ();
     ok->setSizePolicy ( QSizePolicy::Preferred, QSizePolicy::MinimumExpanding );
@@ -68,6 +78,10 @@ namespace Hurricane {
     contButton->setSizePolicy ( QSizePolicy::Fixed, QSizePolicy::Fixed );
     contButton->setText       ( tr("Try to Continue") );
 
+    QFrame* separator = new QFrame ();
+    separator->setFrameShape  ( QFrame::HLine );
+    separator->setFrameShadow ( QFrame::Sunken );
+
     QHBoxLayout* hLayout2 = new QHBoxLayout ();
     hLayout2->addStretch ( 1 );
     hLayout2->addWidget  ( contButton, Qt::AlignCenter );
@@ -78,10 +92,13 @@ namespace Hurricane {
     QVBoxLayout* vLayout1 = new QVBoxLayout ();
     vLayout1->setContentsMargins ( 10, 10, 10, 10 );
     vLayout1->setSpacing ( 0 );
-    vLayout1->addWidget  ( _header , Qt::AlignCenter );
-    vLayout1->addWidget  ( _message, Qt::AlignCenter );
+    vLayout1->addWidget  ( _header   , Qt::AlignCenter );
+    vLayout1->addWidget  ( _message  , Qt::AlignCenter );
+    vLayout1->addWidget  ( separator );
+    vLayout1->addWidget  ( showTrace , Qt::AlignLeft   );
+    vLayout1->addWidget  ( _trace    , Qt::AlignCenter );
     vLayout1->addSpacing ( 10 );
-    vLayout1->addLayout  ( hLayout2, Qt::AlignCenter );
+    vLayout1->addLayout  ( hLayout2  , Qt::AlignCenter );
 
     QHBoxLayout* hLayout1 = new QHBoxLayout ();
     hLayout1->setSizeConstraint  ( QLayout::SetFixedSize );
@@ -91,8 +108,9 @@ namespace Hurricane {
 
     setLayout ( hLayout1 );
 
-    connect ( contButton , SIGNAL(clicked()), this, SLOT(accept()) );
-    connect ( abortButton, SIGNAL(clicked()), this, SLOT(reject()) );
+    connect ( contButton , SIGNAL(clicked())        , this, SLOT(accept()) );
+    connect ( abortButton, SIGNAL(clicked())        , this, SLOT(reject()) );
+    connect ( showTrace  , SIGNAL(stateChanged(int)), this, SLOT(_showTrace(int)) );
   }
 
 
@@ -116,6 +134,19 @@ namespace Hurricane {
       _header->setText ("<b>[UNKNOW]</b>");
 
     _message->setText ( contents );
+  }
+
+
+  void  ExceptionWidget::setTrace ( const QString& where )
+  {
+    _trace->setText ( where );
+  }
+
+
+  void  ExceptionWidget::_showTrace ( int state )
+  {
+    if ( state == Qt::Checked ) _trace->show ();
+    else                        _trace->hide ();
   }
 
 

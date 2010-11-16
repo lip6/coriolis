@@ -39,11 +39,15 @@ namespace Hurricane {
     public:
                       ExceptionWidget ( QWidget* parent=NULL);
               void    setMessage      ( const QString& );
+              void    setTrace        ( const QString& );
     private:
               QLabel* _header;
               QLabel* _message;
+              QLabel* _trace;
     protected:
       virtual void    closeEvent ( QCloseEvent* );
+    private slots:
+              void    _showTrace ( int state );
   };
 
 

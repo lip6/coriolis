@@ -34,9 +34,10 @@ namespace Hurricane {
 
   class TextTranslator {
     public:
-      inline              TextTranslator ();
-      inline void         addTranslation ( const std::string& original, const std::string& translation );
-             std::string  translate      ( const std::string& source ) const;
+      static const TextTranslator& toTextTranslator ();
+      inline                       TextTranslator   ();
+      inline void                  addTranslation   ( const std::string& original, const std::string& translation );
+             std::string           translate        ( const std::string& source ) const;
     private:
       class Translation {
         public:
@@ -46,6 +47,7 @@ namespace Hurricane {
           std::string  _translation;
       };
     private:
+      static TextTranslator     _toTextTranslator;
       std::vector<Translation>  _translations;
   };
 

@@ -87,7 +87,7 @@
 
 
            add_library ( isobar     ${sources} )
- target_link_libraries ( isobar     hurricane ${PYTHON_LIBRARIES})
+ target_link_libraries ( isobar     hurricane ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
            add_library ( Hurricane  MODULE ${sources} ) 
  set_target_properties ( Hurricane  PROPERTIES
                                     COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"

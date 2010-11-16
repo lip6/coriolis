@@ -1,7 +1,7 @@
 
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2010, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -39,88 +39,82 @@
 
 
 #include  <execinfo.h>
-#include  <cstdarg>
+#include  <sstream>
 #include  <iomanip>
 #include  <boost/regex.hpp>
-#include  "hurricane/Error.h"
+#include  "hurricane/Backtrace.h"
 
 
 namespace Hurricane {
 
+  using std::string;
+  using std::vector;
+  using std::setw;
+  using std::setfill;
+  using std::ostringstream;
+
 
 // -------------------------------------------------------------------
-// Class  :  "Hurricane::Error".
+// Class  :  "Hurricane::Backtrace".
 
 
-  Error::Error ( const string& reason )
-    : Exception ()
-    , _reason   (reason)
-    , _code     (0)
-    , _backtrace()
-  { }
+  TextTranslator  Backtrace::_textTranslator = TextTranslator::toTextTranslator();
+  const size_t    Backtrace::_stackSize      = 50;
 
 
-  Error::Error ( int code, const string& reason )
-    : Exception ()
-    , _reason   (reason)
-    , _code     (code)
-    , _backtrace()
-  { }
+// Examples of stack symbol string:
+// * Linux:
+//     nwidget(_ZN18SchematicException4initEb+0x47) [0x4515e1]
+// * OSX:
+//     3 libstdc++.6.dylib 0x9142514b _ZSt9terminatev + 29
 
 
-  Error::Error ( const char* format, ... )
-    : Exception ()
-    , _reason   ()
-    , _code     (0)
-    , _backtrace()
+  Backtrace::Backtrace ()
+    : _stack()
   {
-    static char     formatted [ 8192 ];
-           va_list  args;
+    void*  rawStack [ _stackSize ];
+    size_t depth    = backtrace ( rawStack, _stackSize );
+    char** symbols  = backtrace_symbols ( rawStack, depth );
 
-    va_start ( args, format );
-    vsnprintf ( formatted, 8191, format, args );
-    va_end ( args );
+#ifdef __linux__
+    boost::regex  re ( "([^/]+)\\(([^+]+)\\+" ); 
+    boost::cmatch match;
 
-    _reason = formatted;
+    for ( size_t i=0 ; i<depth ; ++i ) {
+      if ( boost::regex_search(symbols[i],match,re) ) {
+        string function  ( match[2].first, match[2].second );
+        string demangled ( demangle(function.c_str()) );
+        if ( demangled.empty() )
+          _stack.push_back ( (demangled.empty()) ? function : demangled );
+        else {
+          string reformated ( match[1].first, match[1].second );
+          reformated += "( <b>" + demangled + "</b> )";
+          _stack.push_back ( reformated );
+        }
+      } else {
+        _stack.push_back ( symbols[i] );
+      }
+    }
+#else
+#  ifdef  __APPLE__
+    boost::regex re ( "(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S)\\s+\\+\\s+(\\d+)" ); 
+
+#  else
+    _stack.push_back ( "Backtrace only supported under Linux & OSX." );
+#  endif
+#endif
   }
 
 
-  Error::Error ( int code, const char* format, ... )
-    : Exception ()
-    , _reason   ()
-    , _code     (code)
-    , _backtrace()
+  string  Backtrace::htmlWhere () const
   {
-    static char     formatted [ 8192 ];
-           va_list  args;
+    ostringstream where;
 
-    va_start ( args, format );
-    vsnprintf ( formatted, 8191, format, args );
-    va_end ( args );
+    for ( size_t depth=0 ; depth<_stack.size() ; ++depth )
+      where << "<tt>[" << setw(2) << setfill('0') << depth << "] " << _stack[depth] << "</tt><br>";
 
-    _reason = formatted;
+    return where.str();
   }
 
 
-  Error::Error ( const Error& error )
-    : Exception ()
-    , _reason   (error._reason)
-    , _code     (error._code)
-    , _backtrace(error._backtrace)
-  { }
-
-
-  string  Error::_getTypeName () const
-  { return _TName("Error"); }
-
-
-  string Error::_getString () const
-  {
-    if ( !_code )
-      return "[ERROR] " + _reason;
-    
-    return "[ERROR:" + getString(_code) + "] " + _reason;
-  }
-
-
-} // End of Hurricane namespace.
+}  // End of Hurricane namespace.

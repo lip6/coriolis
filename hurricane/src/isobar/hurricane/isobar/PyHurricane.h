@@ -848,11 +848,13 @@ extern "C" {
 # define   HCATCH  \
     }                                                            \
     catch ( Error& e ) {                                         \
-      PyErr_SetString ( HurricaneError, getString(e).c_str() );  \
+      std::string message = "\n" + getString(e);                 \
+      PyErr_SetString ( HurricaneError, message.c_str() );       \
       return ( NULL );                                           \
     }                                                            \
     catch ( Warning& w ) {                                       \
-      PyErr_Warn ( HurricaneWarning, const_cast<char*>(getString(w).c_str()) );  \
+      std::string message = "\n" + getString(w);                 \
+      PyErr_Warn ( HurricaneWarning, const_cast<char*>(message.c_str()) ); \
     }
 
 }  // End of extern "C".

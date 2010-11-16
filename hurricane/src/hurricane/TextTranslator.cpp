@@ -33,6 +33,9 @@ namespace Hurricane {
   using std::vector;
   using std::cerr;
   using std::endl;
+
+
+  TextTranslator  TextTranslator::_toTextTranslator;
   
 
   string  TextTranslator::translate ( const string& source ) const
@@ -58,6 +61,32 @@ namespace Hurricane {
     }
 
     return translated;
+  }
+
+
+  const TextTranslator& TextTranslator::toTextTranslator ()
+  {
+    if ( _toTextTranslator._translations.empty() ) {
+      _toTextTranslator.addTranslation ( "<br>"     , "\n" );
+      _toTextTranslator.addTranslation ( "<em>"     , ""   );
+      _toTextTranslator.addTranslation ( "</em>"    , ""   );
+      _toTextTranslator.addTranslation ( "<strong>" , ""   );
+      _toTextTranslator.addTranslation ( "</strong>", ""   );
+      _toTextTranslator.addTranslation ( "<tt>"     , ""   );
+      _toTextTranslator.addTranslation ( "</tt>"    , ""   );
+      _toTextTranslator.addTranslation ( "<b>"      , ""   );
+      _toTextTranslator.addTranslation ( "</b>"     , ""   );
+      _toTextTranslator.addTranslation ( "<i>"      , ""   );
+      _toTextTranslator.addTranslation ( "</i>"     , ""   );
+      _toTextTranslator.addTranslation ( "<big>"    , ""   );
+      _toTextTranslator.addTranslation ( "</big>"   , ""   );
+      _toTextTranslator.addTranslation ( "<small>"  , ""   );
+      _toTextTranslator.addTranslation ( "</small>" , ""   );
+      _toTextTranslator.addTranslation ( "&lt;"     , "<"  );
+      _toTextTranslator.addTranslation ( "&gt;"     , ">"  );
+    }
+
+    return _toTextTranslator;
   }
 
 

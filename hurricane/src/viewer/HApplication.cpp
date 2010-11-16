@@ -25,8 +25,9 @@
 
 #include  <csignal>
 #include  <iostream>
+#include  <iomanip>
 
-#include  "hurricane/Exception.h"
+#include  "hurricane/Error.h"
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/ExceptionWidget.h"
 #include  "hurricane/viewer/HApplication.h"
@@ -37,6 +38,8 @@ namespace Hurricane {
 
   using std::cerr;
   using std::endl;
+  using std::setw;
+  using std::setfill;
   using std::exception;
 
 
@@ -75,6 +78,13 @@ namespace Hurricane {
   {
     try {
       return QApplication::notify ( object, event );
+    }
+    catch ( Error& e ) {
+      ExceptionWidget* ew = new ExceptionWidget ();
+      ew->setMessage ( e.htmlWhat ().c_str() );
+      ew->setTrace   ( e.htmlWhere().c_str() );
+      if ( ew->exec() == QDialog::Rejected )
+        kill ( getpid(), SIGSEGV );
     }
     catch ( Exception& e ) {
       ExceptionWidget* ew = new ExceptionWidget ();
