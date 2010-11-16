@@ -58,14 +58,15 @@ namespace Cfg {
 
 
   ConfigurationWidget::ConfigurationWidget ( unsigned int flags, QWidget* parent )
-    : QWidget   (parent)
-    , _flags    (flags)
-    , _boldFont (QApplication::font())
-    , _tabWidget(new QTabWidget())
-    , _apply    (new QPushButton())
-    , _save     (NULL)
-    , _cancel   (NULL)
-    , _log      (NULL)
+    : QWidget    (parent)
+    , _flags     (flags)
+    , _boldFont  (QApplication::font())
+    , _tabWidget (new QTabWidget())
+    , _apply     (new QPushButton())
+    , _save      (NULL)
+    , _cancel    (NULL)
+    , _tabWidgets()
+    , _log       (NULL)
   {
     _boldFont.setBold ( true );
 
@@ -111,21 +112,21 @@ namespace Cfg {
 
   void  ConfigurationWidget::addRuler ( const string& tabName )
   {
-    ConfTabWidget* tab = findOrCreate ( tabName );
+    ConfTabWidget* tab = findOrCreateTab ( tabName );
     tab->addRuler ();
   }
 
 
   void  ConfigurationWidget::addTitle (  const string& tabName, const string& title )
   {
-    ConfTabWidget* tab = findOrCreate ( tabName );
+    ConfTabWidget* tab = findOrCreateTab ( tabName );
     tab->addTitle ( title );
   }
 
 
   void  ConfigurationWidget::addSection (  const string& tabName, const string& section, int column )
   {
-    ConfTabWidget* tab = findOrCreate ( tabName );
+    ConfTabWidget* tab = findOrCreateTab ( tabName );
     tab->addSection ( section, column );
   }
 
@@ -143,7 +144,7 @@ namespace Cfg {
       return pw;
     }
 
-    ConfTabWidget* tab = findOrCreate ( tabName );
+    ConfTabWidget* tab = findOrCreateTab ( tabName );
     return tab->addParameter ( parameter, label, column, span, flags );
   }
 
@@ -159,13 +160,16 @@ namespace Cfg {
   { return findChild<ParameterWidget*>(id.c_str()); }
 
 
-  ConfTabWidget* ConfigurationWidget::findOrCreate ( const string& tabName )
+  ConfTabWidget* ConfigurationWidget::findOrCreateTab ( const string& tabName )
   {
-    ConfTabWidget* tab = findChild<ConfTabWidget*>(tabName.c_str());
+  //ConfTabWidget* tab = findChild<ConfTabWidget*>(tabName.c_str());
+    ConfTabWidget* tab = findTab(tabName,AllTabs);
+
     if ( tab != NULL ) return tab;
 
-    tab = new ConfTabWidget ( tabName );
+    tab = new ConfTabWidget ( this, tabName );
     _tabWidget->addTab ( tab, tabName.c_str() );
+    _tabWidgets.push_back ( tab );
 
     connect ( this, SIGNAL(updateParameters()), tab, SIGNAL(updateParameters()) );
     if (_save)
@@ -219,15 +223,79 @@ namespace Cfg {
   }
 
 
-  void  ConfigurationWidget::selectTab ( const std::string& tabName )
+  ConfTabWidget* ConfigurationWidget::findTab ( const std::string& tabName, int mode )
   {
     QString qtabName ( tabName.c_str() );
-    for ( int itab=0 ; itab<_tabWidget->count() ; ++itab ) {
-      if ( _tabWidget->tabText(itab) == qtabName ) {
-        _tabWidget->setCurrentIndex ( itab );
-        return;
+
+    if ( mode & ShownTabs ) {
+      for ( int itab=0 ; itab<_tabWidgets.size() ; ++itab ) {
+        if ( _tabWidgets[itab]->objectName() == qtabName ) return _tabWidgets[itab];
       }
+    } else {
+    // AllTabs.
+      for ( int itab=0 ; itab<_tabWidget->count() ; ++itab ) {
+        if ( _tabWidget->tabText(itab) == qtabName ) {
+          return qobject_cast<ConfTabWidget*>(_tabWidget->widget(itab));
+        }
     }
+    }
+
+    return NULL;
+  }
+
+
+  void  ConfigurationWidget::selectTab ( const std::string& tabName )
+  {
+    ConfTabWidget* tab = findTab ( tabName, ShownTabs );
+    if ( tab ) _tabWidget->setCurrentWidget ( tab );
+  }
+
+
+  void  ConfigurationWidget::showTabs ( const std::string& tabNames, int mode )
+  {
+    _tabWidget->setUpdatesEnabled ( false );
+
+    QString     qtabNames ( tabNames.c_str() );
+    QStringList qtabList  = qtabNames.split ( ";" );
+
+    if ( mode & ExactSet ) _tabWidget->clear ();
+
+    int insertIndex = 0;
+    for ( int itab=0 ; itab<_tabWidgets.size() ; ++itab ) {
+      ConfTabWidget* tab      = _tabWidgets[itab];
+      int            tabIndex = _tabWidget->indexOf ( tab );
+
+      if ( (tabIndex < 0) and qtabList.contains(tab->objectName()) ) {
+        tabIndex = _tabWidget->insertTab ( insertIndex, tab, tab->objectName() );
+      }
+      if ( tabIndex >= 0 ) insertIndex = tabIndex+1;
+    }
+
+    _tabWidget->setUpdatesEnabled ( true );
+  }
+
+
+  void  ConfigurationWidget::hideTabs ( const std::string& tabNames, int mode )
+  {
+    _tabWidget->setUpdatesEnabled ( false );
+
+    QString     qtabNames ( tabNames.c_str() );
+    QStringList qtabList  = qtabNames.split ( ";" );
+
+    if ( mode & ExactSet ) _tabWidget->clear ();
+
+    for ( int itab=0 ; itab<_tabWidgets.size() ; ++itab ) {
+      ConfTabWidget* tab      = _tabWidgets[itab];
+      int            tabIndex = _tabWidget->indexOf ( tab );
+
+      if ( (tabIndex >= 0) and qtabList.contains(tab->objectName()) ) 
+        _tabWidget->removeTab ( tabIndex );
+
+      if ( (mode & ExactSet) and not qtabList.contains(tab->objectName()) ) 
+        _tabWidget->addTab ( tab, tab->objectName() );
+    }
+
+    _tabWidget->setUpdatesEnabled ( true );
   }
   
 

@@ -38,24 +38,29 @@ namespace Cfg {
 
   class Parameter {
     public:
-      enum Type  { Unknown         = 0
-                 , String          = 1
-                 , Bool            = 2
-                 , Int             = 3
-                 , Enumerate       = 4
-                 , Double          = 5
-                 , Percentage      = 6
-                 };           
-      enum Flags { HasMin          = 0x01
-                 , HasMax          = 0x02
-                 , IsFile          = 0x04
-                 , IsPath          = 0x08
-                 , NeedRestart     = 0x10
-                 , MustExist       = 0x20
-                 , TypeCheck       = 0x40
-                 , FromString      = 0x80
-                 , AllRequirements = HasMin|HasMax|IsFile|IsPath|NeedRestart|MustExist|TypeCheck
-                 };
+      enum Type     { Unknown         = 0
+                    , String          = 1
+                    , Bool            = 2
+                    , Int             = 3
+                    , Enumerate       = 4
+                    , Double          = 5
+                    , Percentage      = 6
+                    };           
+      enum Flags    { HasMin          = 0x01
+                    , HasMax          = 0x02
+                    , IsFile          = 0x04
+                    , IsPath          = 0x08
+                    , NeedRestart     = 0x10
+                    , MustExist       = 0x20
+                    , TypeCheck       = 0x40
+                    , FromString      = 0x80
+                    , AllRequirements = HasMin|HasMax|IsFile|IsPath|NeedRestart|MustExist|TypeCheck
+                    };
+      enum Priority { ApplicationBuiltin = 1
+                    , ConfigurationFile  = 2
+                    , CommandLine        = 3
+                    , Interactive        = 4
+                    };
       typedef boost::function< void(Parameter*) >  ParameterChangedCb_t;
     public:
       class EnumValue {
@@ -70,7 +75,8 @@ namespace Cfg {
     public:                                        
                                 Parameter          ( const std::string& id
                                                    , Type               type
-                                                   , const std::string& value );
+                                                   , const std::string& value
+                                                   , int                priority=0 );
       inline bool               isFile             () const;
       inline bool               isPath             () const;
       inline bool               hasMin             () const;
@@ -99,17 +105,21 @@ namespace Cfg {
              double             asPercentage       () const;
       inline void               addValue           ( const std::string&, int );
       inline void               addSlave           ( const std::string& );
+      inline void               setPriority        ( int );
       inline void               setFlags           ( int mask );
       inline void               unsetFlags         ( int mask );
-             bool               setString          ( const std::string&, unsigned int flags=AllRequirements );
-             bool               setBool            ( bool );
-             bool               setInt             ( int );
-             bool               setDouble          ( double );
-             bool               setPercentage      ( double );
-      inline void               setMin             ( int );
-      inline void               setMax             ( int );
-      inline void               setMin             ( double );
-      inline void               setMax             ( double );
+             bool               setString          ( const std::string&
+                                                   , unsigned int flags=AllRequirements
+                                                   , int priority=ApplicationBuiltin
+                                                   );
+             bool               setBool            ( bool  , int priority=ApplicationBuiltin );
+             bool               setInt             ( int   , int priority=ApplicationBuiltin );
+             bool               setDouble          ( double, int priority=ApplicationBuiltin );
+             bool               setPercentage      ( double, int priority=ApplicationBuiltin );
+      inline void               setMin             ( int   , int priority=ApplicationBuiltin );
+      inline void               setMax             ( int   , int priority=ApplicationBuiltin );
+      inline void               setMin             ( double, int priority=ApplicationBuiltin );
+      inline void               setMax             ( double, int priority=ApplicationBuiltin );
       inline void               registerCb         ( ParameterChangedCb_t );
     private:                                       
       inline void               _onValueChanged    ();
@@ -120,6 +130,7 @@ namespace Cfg {
       Type                               _type;
       std::string                        _value;
       std::vector<EnumValue>             _values;
+      int                                _priority;
       int                                _flags;
       int                                _minInt;
       int                                _maxInt;
@@ -146,6 +157,9 @@ namespace Cfg {
   inline double                 Parameter::getMinDouble   () const { return _minDouble; }
   inline double                 Parameter::getMaxDouble   () const { return _maxDouble; }
   inline const std::string&     Parameter::asString       () const { return _value; }
+  inline void                   Parameter::setFlags       ( int mask ) { _flags |= mask; }
+  inline void                   Parameter::unsetFlags     ( int mask ) { _flags &= ~mask; }
+  inline void                   Parameter::setPriority    ( int priority ) { _priority = priority; }
 
   inline bool  Parameter::checkValue ( int value ) const {
     bool ok = not (   ( (_flags&HasMin) and (value < _minInt) )
@@ -178,16 +192,29 @@ namespace Cfg {
     _values.push_back ( EnumValue(label,value) );
   }
 
-  inline void  Parameter::setFlags      ( int mask )   { _flags |= mask; }
-  inline void  Parameter::unsetFlags    ( int mask )   { _flags &= ~mask; }
-  inline void  Parameter::setMin        ( int min )    { _minInt = min; setFlags(HasMin); }
-  inline void  Parameter::setMax        ( int max )    { _maxInt = max; setFlags(HasMax); }
+  inline void  Parameter::setMin ( int min, int priority )
+  { if (priority >= _priority) { _priority=priority; _minInt = min; setFlags(HasMin); } }
+  
+  inline void  Parameter::setMax ( int max, int priority )
+  { if (priority >= _priority) { _priority=priority; _maxInt = max; setFlags(HasMax); } }
 
-  inline void  Parameter::setMin ( double min )
-  { _minDouble = min; setFlags(HasMin); if (_type==Percentage) _minDouble/=100.0; }
+  inline void  Parameter::setMin ( double min, int priority )
+  { if (priority >= _priority) {
+      _priority  = priority;
+      _minDouble = min;
+      setFlags ( HasMin );
+      if (_type==Percentage) _minDouble/=100.0;
+    }
+  }
 
-  inline void  Parameter::setMax ( double max )
-  { _maxDouble = max; setFlags(HasMax); if (_type==Percentage) _maxDouble/=100.0; }
+  inline void  Parameter::setMax ( double max, int priority )
+  { if (priority >= _priority) {
+      _priority  = priority;
+      _maxDouble = max;
+      setFlags ( HasMax );
+      if (_type==Percentage) _maxDouble/=100.0;
+    }
+  }
 
   inline Parameter::EnumValue::EnumValue ( const std::string& label, int value )
     : _label(label), _value(value) { }

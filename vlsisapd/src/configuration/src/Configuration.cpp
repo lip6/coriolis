@@ -162,6 +162,7 @@ namespace {
       _parameter = _configuration->addParameter ( attrId 
                                                 , type
                                                 , _getAttributeValue("value")
+                                                , Parameter::ConfigurationFile
                                                 );
     } else {
       _parameter->setString ( _getAttributeValue("value")
@@ -427,7 +428,8 @@ namespace Cfg {
 
   Parameter* Configuration::addParameter ( const string&   id
                                          , Parameter::Type type
-                                         , const string&   value )
+                                         , const string&   value
+                                         , int             priority )
   {
     Parameter* p = getParameter ( id );
     if ( p != NULL ) {
@@ -435,7 +437,7 @@ namespace Cfg {
       return p;
     }
 
-    p = new Parameter ( id, type, value );
+    p = new Parameter ( id, type, value, priority );
     _parameters.insert ( make_pair(id,p) );
 
     return p;

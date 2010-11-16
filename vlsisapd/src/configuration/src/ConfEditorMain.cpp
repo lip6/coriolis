@@ -54,7 +54,7 @@ int main ( int argc, char* argv[] )
     options.add_options()
       ( "help,h"          , "Print this help." )
       ( "disable-gtkstyle", boptions::bool_switch(&disableGtkStyle)->default_value(false)
-                          , "Run the detailed router (Kite).")
+                          , "Do not uses GtkStyle (due to the File/Open native dialog bug).")
       ( "conf,c"          , boptions::value<string>()
                           , "The path of the configuration file." );
 
@@ -93,9 +93,9 @@ int main ( int argc, char* argv[] )
     }
 
     ConfEditorWidget* editor = new ConfEditorWidget ();
-  //editor->getConfigurationWidget()->selectTab ( "Kite" );
     editor->show ();
-  //QFileDialog::getOpenFileName(NULL, "Choose file", "", "");
+  //editor->getConfigurationWidget()->selectTab ( "Kite" );
+  //editor->getConfigurationWidget()->hideTabs ( "Kite;Mauka" );
 
     returnCode = qa->exec ();
   }

@@ -72,7 +72,8 @@ namespace Cfg {
                                                            , Parameter::Type    type=Parameter::Unknown ) const;
              Parameter*                addParameter        ( const std::string& id
                                                            , Parameter::Type    type
-                                                           , const std::string& value );
+                                                           , const std::string& value
+                                                           , int                priority=0 );
       inline void                      setFlags            ( unsigned int mask );
       inline bool                      hasLogs             ( unsigned int mask ) const;
              void                      addLog              ( unsigned int mask, const std::string& id );

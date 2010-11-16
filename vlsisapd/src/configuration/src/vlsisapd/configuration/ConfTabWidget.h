@@ -45,24 +45,26 @@ namespace Cfg {
   class ConfTabWidget : public QWidget {
       Q_OBJECT;
     public:
-                       ConfTabWidget     ( const std::string& name="<noname>", QWidget* parent=NULL );
-      virtual         ~ConfTabWidget     ();
-    public:          
-      QFont&           getParentBoldFont ();
-      void             addRuler          ();
-      void             addTitle          ( const std::string& title );
-      void             addSection        ( const std::string& section, int column=0 );
-      ParameterWidget* addParameter      ( Parameter*, const std::string& label, int column=0, int span=1, int flags=0 );
-    signals:
-      void             updateParameters  ();
-    private:         
-      int              _getMaxRowCount   ();
-      int              _alignMaxRowCount ();
+                           ConfTabWidget          ( ConfigurationWidget* parent, const std::string& name="<noname>" );
+      virtual             ~ConfTabWidget          ();
+    public:
+      ConfigurationWidget* getConfigurationWidget ();
+      QFont&               getParentBoldFont      ();
+      void                 addRuler               ();
+      void                 addTitle               ( const std::string& title );
+      void                 addSection             ( const std::string& section, int column=0 );
+      ParameterWidget*     addParameter           ( Parameter*, const std::string& label, int column=0, int span=1, int flags=0 );
+    signals:                                     
+      void                 updateParameters       ();
+    private:                                     
+      int                  _getMaxRowCount        ();
+      int                  _alignMaxRowCount      ();
     private:
       QGridLayout*                   _gridLayout;
       int                            _columns;
       int                            _span;
       int*                           _rowsCount;
+      ConfigurationWidget*           _confWidget;
       std::vector<ParameterWidget*>  _parameters;
   };
 

@@ -34,6 +34,7 @@
 #include  "vlsisapd/configuration/Parameter.h"
 #include  "vlsisapd/configuration/FilePathEdit.h"
 #include  "vlsisapd/configuration/ParameterWidget.h"
+#include  "vlsisapd/configuration/ConfTabWidget.h"
 #include  "vlsisapd/configuration/ConfigurationWidget.h"
 
 
@@ -47,12 +48,13 @@ namespace Cfg {
   using std::ostringstream;
 
 
-  ParameterWidget::ParameterWidget ( QObject* parent, Parameter* parameter, const std::string& label, int flags )
-    : QObject     (parent)
-    , _parameter  (parameter)
-    , _labelWidget(new QLabel())
-    , _valueWidget(NULL)
-    , _flags      (flags)
+  ParameterWidget::ParameterWidget ( ConfTabWidget* parent, Parameter* parameter, const std::string& label, int flags )
+    : QObject       (parent)
+    , _confTabWidget(parent)
+    , _parameter    (parameter)
+    , _labelWidget  (new QLabel())
+    , _valueWidget  (NULL)
+    , _flags        (flags)
   {
     setObjectName ( _parameter->getId().c_str() );
 
@@ -182,12 +184,12 @@ namespace Cfg {
     if ( _parameter->getType() == Parameter::String )
       {
         QLineEdit* lineEdit = qobject_cast<QLineEdit*>(_valueWidget);
-        _parameter->setString ( lineEdit->displayText().toStdString() );
+        _parameter->setString ( lineEdit->displayText().toStdString(), Parameter::Interactive );
       }
     else if ( _parameter->getType() == Parameter::Bool )
       {
         QCheckBox* checkBox = qobject_cast<QCheckBox*>(_valueWidget);
-        _parameter->setBool ( checkBox->isChecked() );
+        _parameter->setBool ( checkBox->isChecked(), Parameter::Interactive );
       }
     else if ( _parameter->getType() == Parameter::Int )
       {
@@ -195,14 +197,14 @@ namespace Cfg {
           QSpinBox* spinBox = qobject_cast<QSpinBox*>(_valueWidget);
           int       value   = spinBox->value();
 
-          if ( not _parameter->setInt(value) )
+          if ( not _parameter->setInt(value,Parameter::Interactive) )
             spinBox->setValue ( _parameter->asInt() );
         } else {
           bool       success;
           QLineEdit* lineEdit = qobject_cast<QLineEdit*>(_valueWidget);
           int        value    = lineEdit->displayText().toInt ( &success );
 
-          if ( not success or not _parameter->setInt(value) )
+          if ( not success or not _parameter->setInt(value,Parameter::Interactive) )
             lineEdit->setText ( _parameter->asString().c_str() );
         }
       }
@@ -212,7 +214,7 @@ namespace Cfg {
         QLineEdit* lineEdit = qobject_cast<QLineEdit*>(_valueWidget);
         double     value    = lineEdit->displayText().toFloat ( &success );
 
-        if ( not success or not _parameter->setDouble(value) )
+        if ( not success or not _parameter->setDouble(value,Parameter::Interactive) )
           lineEdit->setText ( _parameter->asString().c_str() );
       }
     else if ( _parameter->getType() == Parameter::Percentage )
@@ -221,7 +223,7 @@ namespace Cfg {
         QLineEdit* lineEdit = qobject_cast<QLineEdit*>(_valueWidget);
         double     value    = lineEdit->displayText().toFloat ( &success );
 
-        if ( not success or not _parameter->setPercentage(value) ) {
+        if ( not success or not _parameter->setPercentage(value,Parameter::Interactive) ) {
           lineEdit->setText ( _parameter->asPercentageString().c_str() );
         }
       }
@@ -230,7 +232,7 @@ namespace Cfg {
         QComboBox* comboBox = qobject_cast<QComboBox*>(_valueWidget);
 
         const vector<Parameter::EnumValue>& values = _parameter->getValues();
-        _parameter->setInt ( values[comboBox->currentIndex()]._value );
+        _parameter->setInt ( values[comboBox->currentIndex()]._value, Parameter::Interactive );
       }
   }
 
@@ -349,23 +351,21 @@ namespace Cfg {
 
   void  ParameterWidget::enableSlaves ( int state )
   {
-    ConfigurationWidget* cw = rparent<ConfigurationWidget*> ( this );
-    if ( cw == NULL ) {
-      cerr << "[ERROR] ParameterWidget::enableSlaves(): Cannot find parent ConfigurationWidget." << endl;
-      return;
-    }
-
     bool enabled = ( state != Qt::Unchecked );
 
     const vector<string>& slaveIds = _parameter->getSlaves();
     for ( size_t islave=0 ; islave<slaveIds.size() ; ++islave ) {
-      ParameterWidget* slave = cw->find(slaveIds[islave]);
+      ParameterWidget* slave = getConfigurationWidget()->find(slaveIds[islave]);
       if ( slave == NULL ) continue;
 
       slave->getLabelWidget()->setEnabled ( enabled );
       slave->getValueWidget()->setEnabled ( enabled );
     }
   }
+
+
+  ConfigurationWidget* ParameterWidget::getConfigurationWidget ()
+  { return (_confTabWidget) ? _confTabWidget->getConfigurationWidget() : NULL; }
 
 
 }  // End of Cfg namespace.

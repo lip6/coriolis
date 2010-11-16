@@ -49,11 +49,12 @@ namespace Cfg {
 // Class  :  "Cfg::ConfTabWidget".
 
 
-  ConfTabWidget::ConfTabWidget ( const string& name, QWidget* parent )
+  ConfTabWidget::ConfTabWidget ( ConfigurationWidget* parent, const string& name )
     : QWidget    (parent)
     , _gridLayout(new QGridLayout())
     , _columns   (2)
     , _rowsCount (new int[_columns])
+    , _confWidget(parent)
     , _parameters()
   {
     for ( int i=0 ; i<_columns ; ++i ) _rowsCount[i] = 0;
@@ -108,10 +109,13 @@ namespace Cfg {
   }
 
 
+  ConfigurationWidget* ConfTabWidget::getConfigurationWidget ()
+  { return _confWidget; }
+
+
   QFont& ConfTabWidget::getParentBoldFont ()
   {
-    ConfigurationWidget* cw = rparent<ConfigurationWidget*> ( this );
-    return cw->getBoldFont();
+    return _confWidget->getBoldFont();
   }
 
 
@@ -150,8 +154,7 @@ namespace Cfg {
                                                , int                span
                                                , int                flags )
   {
-    ConfigurationWidget* cw = rparent<ConfigurationWidget*> ( this );
-    ParameterWidget*     pw = cw->find(parameter);
+    ParameterWidget* pw = _confWidget->find(parameter);
 
     if ( pw != NULL ) {
       cerr << "[ERROR] Parameter <" << parameter->getId() << "> already added." << endl;

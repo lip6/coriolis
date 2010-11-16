@@ -58,15 +58,21 @@ namespace Cfg {
 
   Parameter::Parameter ( const std::string& id
                        , Type               type
-                       , const std::string& value )
+                       , const std::string& value
+                       , int                priority
+                       )
     : _id       (id)
     , _type     (type)
     , _value    (value)
+    , _values   ()
+    , _priority (priority)
     , _flags    (0)
     , _minInt   (0)
     , _maxInt   (0)
     , _minDouble(0.0)
     , _maxDouble(0.0)
+    , _slaves   ()
+    , _callbacks()
   {
     if ( type == Percentage ) {
       setPercentage ( asDouble() );
@@ -134,8 +140,11 @@ namespace Cfg {
   }
 
 
-  bool  Parameter::setString ( const std::string& s, unsigned int flags )
+  bool  Parameter::setString ( const std::string& s, unsigned int flags, int priority )
   {
+    if ( priority < _priority ) return false;
+    _priority = priority;
+
     if ( (flags & TypeCheck) and (_type != String) )
       cerr << "[ERROR] Parameter::setString(): Setting " << Parameter::typeToString(_type)
            << " parameter <" << _id
@@ -145,8 +154,11 @@ namespace Cfg {
   }
 
 
-  bool  Parameter::setBool ( bool b )
+  bool  Parameter::setBool ( bool b, int priority )
   {
+    if ( priority < _priority ) return false;
+    _priority = priority;
+
     if ( _type != Bool )
       cerr << "[ERROR] Parameter::setBool(): Setting " << Parameter::typeToString(_type)
            << " parameter <" << _id
@@ -156,8 +168,11 @@ namespace Cfg {
   }
 
 
-  bool  Parameter::setInt ( int i )
+  bool  Parameter::setInt ( int i, int priority )
   {
+    if ( priority < _priority ) return false;
+    _priority = priority;
+
     if ( (_type != Int) and (_type != Enumerate)  )
       cerr << "[ERROR] Parameter::setInt(): Setting " << Parameter::typeToString(_type)
            << " parameter <" << _id
@@ -167,8 +182,11 @@ namespace Cfg {
   } 
 
 
-  bool  Parameter::setDouble ( double d )
+  bool  Parameter::setDouble ( double d, int priority )
   {
+    if ( priority < _priority ) return false;
+    _priority = priority;
+
     if ( (_type != Double) and (_type != Percentage)  )
       cerr << "[ERROR] Parameter::setDouble(): Setting " << Parameter::typeToString(_type)
            << " parameter <" << _id
@@ -178,7 +196,7 @@ namespace Cfg {
   } 
 
 
-  bool  Parameter::setPercentage ( double d )
+  bool  Parameter::setPercentage ( double d, int priority )
   {
     if ( (_type != Double) and (_type != Percentage)  )
       cerr << "[ERROR] Parameter::setPercentage(): Setting " << Parameter::typeToString(_type)

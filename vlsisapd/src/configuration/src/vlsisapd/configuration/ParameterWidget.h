@@ -35,6 +35,8 @@ class QLabel;
 namespace Cfg {
 
   class Parameter;
+  class ConfTabWidget;
+  class ConfigurationWidget;
 
 
 // -------------------------------------------------------------------
@@ -46,34 +48,38 @@ namespace Cfg {
     public:
       enum Flags { UseSpinBox=0x1, IsFileName=0x2, IsPathName=0x4 };
     public:
-                        ParameterWidget ( QObject* parent, Parameter*, const std::string& label, int flags );
-      inline Parameter* getParameter    ();
-      inline QLabel*    getLabelWidget  ();
-      inline QWidget*   getValueWidget  ();
-      inline int        getFlags        () const;
-      inline bool       hasFlags        ( int mask ) const;
-      inline void       setFlags        ( int mask );
-      inline void       unsetFlags      ( int mask );
-             void       onUpdateValueCb ( Parameter* );
-    public slots:
-             void       updateValue     ();
-             void       enableSlaves    ( int );
+                                  ParameterWidget        ( ConfTabWidget* parent, Parameter*, const std::string& label, int flags );
+      inline Parameter*           getParameter           ();
+      inline QLabel*              getLabelWidget         ();
+      inline QWidget*             getValueWidget         ();
+      inline ConfTabWidget*       getConfTabWidget       ();
+             ConfigurationWidget* getConfigurationWidget ();
+      inline int                  getFlags               () const;
+      inline bool                 hasFlags               ( int mask ) const;
+      inline void                 setFlags               ( int mask );
+      inline void                 unsetFlags             ( int mask );
+             void                 onUpdateValueCb        ( Parameter* );
+    public slots:                                        
+             void                 updateValue            ();
+             void                 enableSlaves           ( int );
     public:
-      Parameter* _parameter;
-      QLabel*    _labelWidget;
-      QWidget*   _valueWidget;
-      int        _flags;
+      ConfTabWidget* _confTabWidget;
+      Parameter*     _parameter;
+      QLabel*        _labelWidget;
+      QWidget*       _valueWidget;
+      int            _flags;
   };
 
 
 // Inline Methods.
-  inline Parameter* ParameterWidget::getParameter   () { return _parameter; }
-  inline QLabel*    ParameterWidget::getLabelWidget () { return _labelWidget; }
-  inline QWidget*   ParameterWidget::getValueWidget () { return _valueWidget; }
-  inline int        ParameterWidget::getFlags       () const { return _flags; }
-  inline bool       ParameterWidget::hasFlags       ( int mask ) const { return (_flags & mask); }
-  inline void       ParameterWidget::setFlags       ( int mask )   { _flags |= mask; }
-  inline void       ParameterWidget::unsetFlags     ( int mask )   { _flags &= ~mask; }
+  inline Parameter*     ParameterWidget::getParameter     () { return _parameter; }
+  inline QLabel*        ParameterWidget::getLabelWidget   () { return _labelWidget; }
+  inline QWidget*       ParameterWidget::getValueWidget   () { return _valueWidget; }
+  inline ConfTabWidget* ParameterWidget::getConfTabWidget () { return _confTabWidget; }
+  inline int            ParameterWidget::getFlags         () const { return _flags; }
+  inline bool           ParameterWidget::hasFlags         ( int mask ) const { return (_flags & mask); }
+  inline void           ParameterWidget::setFlags         ( int mask )   { _flags |= mask; }
+  inline void           ParameterWidget::unsetFlags       ( int mask )   { _flags &= ~mask; }
 
 
 }   // End of Cfg namespace.
