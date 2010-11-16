@@ -48,10 +48,16 @@ namespace Katabatic {
 
  
   class GCellGrid : public Grid<GCell> {
+    public:
+      enum Flags { AverageDensity  = 1
+                 , MaxHVDensity    = 2
+                 , MaxLayerDensity = 3
+                 };
 
     public:
               Cell*            getCell             () const;
       inline  KatabaticEngine* getKatabatic        () const;
+      inline  int              getDensityMode      () const;
       inline  size_t           getHEdgeCapacity    () const;
       inline  size_t           getVEdgeCapacity    () const;
               Interval         getUSide            ( unsigned int ) const;
@@ -59,6 +65,7 @@ namespace Katabatic {
               size_t           checkDensity        () const;
               size_t           updateDensity       ();
               bool             checkEdgeSaturation ( float threshold ) const;
+      inline  void             setDensityMode      ( int );
               void             _xmlWrite           ( ostream& );
       virtual Record*          _getRecord          () const;
       virtual string           _getString          () const;
@@ -67,6 +74,7 @@ namespace Katabatic {
     // Attributes.
     protected:
       KatabaticEngine* _katabatic;
+      int              _densityMode;
       size_t           _hEdgeCapacity;
       size_t           _vEdgeCapacity;
 
@@ -87,8 +95,10 @@ namespace Katabatic {
 
 
   inline  KatabaticEngine* GCellGrid::getKatabatic     () const { return _katabatic; }
+  inline  int              GCellGrid::getDensityMode   () const { return _densityMode; }
   inline  size_t           GCellGrid::getHEdgeCapacity () const { return _hEdgeCapacity; }
   inline  size_t           GCellGrid::getVEdgeCapacity () const { return _vEdgeCapacity; }
+  inline  void             GCellGrid::setDensityMode   ( int mode ) { _densityMode=mode; }
 
 
 } // End of Katabatic namespace.

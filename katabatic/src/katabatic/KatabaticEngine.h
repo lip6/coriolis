@@ -33,12 +33,13 @@
 
 #include  "hurricane/Timer.h"
 #include  "hurricane/DbU.h"
+#include  "hurricane/Layer.h"
 #include  "hurricane/Net.h"
 
 namespace Hurricane {
   class Name;
-  class Layer;
   class Cell;
+  class Instance;
 }
 
 #include  "crlcore/ToolEngine.h"
@@ -66,6 +67,7 @@ namespace Katabatic {
   using Hurricane::Net;
   using Hurricane::Nets;
   using Hurricane::Cell;
+  using Hurricane::Instance;
   using CRL::RoutingGauge;
   using CRL::RoutingLayerGauge;
   using CRL::ToolEngine;
@@ -160,6 +162,9 @@ namespace Katabatic {
       virtual void                 createDetailedGrid        ();
       virtual void                 loadGlobalRouting         ( unsigned int method, NetSet& );
               void                 layerAssign               ( unsigned int method );
+              void                 slackenBorder             ( Box bb, Layer::Mask, unsigned int flags );
+              void                 slackenBlockIos           ( Instance* core );
+              void                 chipPrep                  ();
     //        void                 computeNetConstraints     ();
     //        void                 computeNetOptimals        ();
       virtual void                 finalizeLayout            ();

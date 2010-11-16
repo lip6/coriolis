@@ -135,6 +135,7 @@ namespace Katabatic {
       inline  float                 getDensity          ( size_t depth, bool update=true  ) const;
               float                 getDensity          ( bool update=true ) const;
               float                 getMaxHVDensity     ( bool update=true ) const;
+      inline  float                 getBlockage         ( unsigned int depth ) const;
               float                 getStiffness        () const;
       inline  unsigned int          getSegmentCount     () const;
       inline  unsigned int          getRoutedCount      () const;
@@ -251,6 +252,9 @@ namespace Katabatic {
 
   inline  float  GCell::getDensity ( size_t depth, bool update  ) const
   { if (_invalid and update) const_cast<GCell*>(this)->updateDensity(); return _densities[depth]; }
+
+  inline  float  GCell::getBlockage ( unsigned int depth ) const
+  { return (depth<_depth) ? _blockages[depth] : 0.0; }
 
   inline  void  GCell::addVSegment ( AutoSegment* segment )
   { invalidate(); _vsegments.push_back(segment); }

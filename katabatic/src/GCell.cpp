@@ -191,7 +191,7 @@ namespace Katabatic {
     
   //int difference = floatDifference(getDensity(),threshold,10000);
     ltrace(190) << "GCell:isAboveDensity() " << threshold << " diff:" << difference << endl;
-    return (difference > 0.0);
+    return (difference >= 0.0);
   }
 
 
@@ -360,20 +360,36 @@ namespace Katabatic {
   {
     if (_invalid and update) const_cast<GCell*>(this)->updateDensity();
 
-    size_t hplanes  = 0;
-    size_t vplanes  = 0;
-    float  hdensity = 0.0;
-    float  vdensity = 0.0;
+    if ( getGCellGrid()->getDensityMode() == GCellGrid::MaxHVDensity ) {
+      size_t hplanes  = 0;
+      size_t vplanes  = 0;
+      float  hdensity = 0.0;
+      float  vdensity = 0.0;
 
-    for ( size_t i=0 ; i<_depth ; i++ ) {
-      if ( i%2 ) { hdensity += _densities[i]; ++hplanes; }
-      else       { vdensity += _densities[i]; ++vplanes; }
+      for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
+        if ( i%2 ) { hdensity += _densities[i]; ++hplanes; }
+        else       { vdensity += _densities[i]; ++vplanes; }
+      }
+
+      if (hplanes) hdensity /= hplanes;
+      if (vplanes) vdensity /= vplanes;
+
+      return roundfp ( (hdensity > vdensity) ? hdensity : vdensity );
     }
 
-    if (hplanes) hdensity /= hplanes;
-    if (vplanes) vdensity /= vplanes;
+    if ( getGCellGrid()->getDensityMode() == GCellGrid::MaxLayerDensity ) {
+      float density = 0.0;
+      for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
+        if ( _densities[i] > density ) density = _densities[i];
+      }
+      return roundfp(density);
+    }
 
-    return (hdensity > vdensity) ? hdensity : vdensity;
+    float density = 0.0;
+    for ( size_t i=_pinDepth ; i<_depth ; i++ )
+      density += _densities[i];
+
+    return roundfp ( density/((float)(_depth-_pinDepth)) );
   }
 
 
@@ -409,8 +425,22 @@ namespace Katabatic {
     _blockages[depth] += length;
     _invalid = true;
 
-  //cerr << "GCell:addBlockage() <id:" << getIndex() << "> "
-  //     << depth << ":" << _blockages[depth] << endl;
+    // if ( _blockages[depth] >= 8.0 ) {
+    //   cinfo << Warning("%s is under power ring.",getString(this).c_str()) << endl;
+
+    //   unsigned int modulo = depth % 2;
+
+    //   for ( unsigned int parallel=0 ; parallel < _depth ; ++parallel ) {
+    //     if ( parallel%2 == modulo ) {
+    //       _blockages[parallel] = 10.0;
+    //       cinfo << "  Blocking [" << parallel << "]:"
+    //             << Session::getRoutingLayer(parallel)->getName() << endl;
+    //     }
+    //   }
+    // }
+
+    ltrace(300) << "GCell:addBlockage() " << this << " "
+                << depth << ":" << _blockages[depth] << endl;
   }
 
 
@@ -678,13 +708,14 @@ namespace Katabatic {
     if ( !Session::getDemoMode() && Session::getWarnGCellOverload() ) {
       for ( size_t i=0 ; i<_depth ; i++ ) {
         if ( _densities[i] > 1.0 ) {
-          cerr << Warning("%s @%dx%d overloaded in %s (M2:%.2f M3:%.2f M4:%.2f M5:%.2f)"
+          cerr << Warning("%s @%dx%d overloaded in %s (M2:%.2f M3:%.2f,%.2f M4:%.2f M5:%.2f)"
                          ,_getString().c_str()
                          ,getColumn()
                          ,getRow()
                          ,getString(Session::getRoutingGauge()->getRoutingLayer(i)->getName()).c_str()
                          ,_densities[1]
                          ,_densities[2]
+                         ,_blockages[2]
                          ,_densities[3]
                          ,_densities[4]
                          )

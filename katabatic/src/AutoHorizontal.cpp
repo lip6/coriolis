@@ -119,9 +119,17 @@ namespace {
 
     if ( slacken(contact) ) return;
 
-    size_t       depth        = Session::getRoutingGauge()->getLayerDepth   ( segment->getLayer() );
-    Layer*       contactLayer = Session::getRoutingGauge()->getContactLayer ( depth );
-    const Layer* slackLayer   = Session::getRoutingGauge()->getRoutingLayer ( depth + 1 );
+    size_t       depth = Session::getRoutingGauge()->getLayerDepth   ( segment->getLayer() );
+    Layer*       contactLayer = NULL;
+    const Layer* slackLayer   = NULL;
+
+    if ( depth+1 < Session::getRoutingGauge()->getDepth() ) {
+      contactLayer = Session::getRoutingGauge()->getContactLayer ( depth );
+      slackLayer   = Session::getRoutingGauge()->getRoutingLayer ( depth + 1 );
+    } else {
+      contactLayer = Session::getRoutingGauge()->getContactLayer ( depth-1 );
+      slackLayer   = Session::getRoutingGauge()->getRoutingLayer ( depth );
+    }
 
     if ( fromSource ) segment->getSourceHook()->detach ();
     else              segment->getTargetHook()->detach ();

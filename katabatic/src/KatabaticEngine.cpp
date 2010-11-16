@@ -65,7 +65,7 @@ namespace {
 
     layers.clear ();
 
-    if ( source ) {
+    if ( source != NULL ) {
       forEach ( Hook*, ihook, source->getBodyHook()->getSlaveHooks() ) {
         ltrace(88) << "* Slave: " << (*ihook)->getComponent() << endl;
         if ( (*ihook)->getComponent() == segment ) continue;
@@ -73,7 +73,7 @@ namespace {
       }
     }
 
-    if ( target ) {
+    if ( target != NULL ) {
       forEach ( Hook*, ihook, target->getBodyHook()->getSlaveHooks() ) {
         ltrace(88) << "* Slave: " << (*ihook)->getComponent() << endl;
         if ( (*ihook)->getComponent() == segment ) continue;
@@ -82,7 +82,7 @@ namespace {
     }
 
     size_t supplemental = (layers.find(segment->getLayer()) == layers.end()) ? 1 : 0;
-    if ( source->getAnchor() || target->getAnchor() ) supplemental++;
+    if ( (source->getAnchor() != NULL) or (target->getAnchor() != NULL) ) supplemental++;
 
 #if 0
     bool  bottomConnect = false;
@@ -508,20 +508,29 @@ namespace Katabatic {
     AllianceFramework* af = AllianceFramework::get ();
     if ( nets.empty() ) {
       forEach ( Net*, net, _cell->getNets() ) {
-        if ( net->getType() == Net::Type::POWER  ) continue;
-        if ( net->getType() == Net::Type::GROUND ) continue;
-        if ( net->getType() == Net::Type::CLOCK  ) continue;
+        const char* excludedType = NULL;
+        if ( net->getType() == Net::Type::POWER  ) excludedType = "POWER";
+        if ( net->getType() == Net::Type::GROUND ) excludedType = "GROUND";
+        if ( net->getType() == Net::Type::CLOCK  ) excludedType = "CLOCK";
+        if ( excludedType ) {
+          cerr << Warning("%s is not a routable net (%s,excluded)."
+                         ,getString(*net).c_str(),excludedType) << endl;
+          continue;
+        }
         if ( af->isOBSTACLE(net->getName()) ) continue;
         _routingNets.insert ( *net );
       }
     } else {
       NetSet::iterator  it = nets.begin();
       for ( ; it != nets.end() ; it++ ) {
-        if (   ( (*it)->getType() == Net::Type::POWER  )
-            || ( (*it)->getType() == Net::Type::GROUND )
-            || ( (*it)->getType() == Net::Type::CLOCK  )
-            || ( af->isOBSTACLE((*it)->getName()) ) ) {
-          cerr << Warning("%s is not a routable net, removed from set.",getString(*it).c_str()) << endl;
+        const char* excludedType = NULL;
+        if ( (*it)->getType() == Net::Type::POWER  ) excludedType = "POWER";
+        if ( (*it)->getType() == Net::Type::GROUND ) excludedType = "GROUND";
+        if ( (*it)->getType() == Net::Type::CLOCK  ) excludedType = "CLOCK";
+        if ( af->isOBSTACLE((*it)->getName()) )      excludedType = "BLOCKAGE";
+        if ( excludedType ) {
+          cerr << Warning("%s is not a routable net (%s), removed from set."
+                         ,getString(*it).c_str(),excludedType) << endl;
         } else
           _routingNets.insert ( *it );
       }
@@ -745,6 +754,11 @@ namespace Katabatic {
         continue;
       }
     
+      if ( Session::lookup(*segment) == NULL ) {
+        ltrace(90) << "* Not associated to an AutoSegment: " << *segment << endl;
+        continue;
+      }
+
       if ( not isTopAndBottomConnected(*segment,connectedLayers) ) {
         nullSegments.push_back ( *segment );
         ltrace(90) << "* Null Length: " << *segment << endl;
@@ -755,6 +769,11 @@ namespace Katabatic {
     for ( size_t i = 0 ; i < nullSegments.size() ; i++ ) {
       Contact* source = dynamic_cast<Contact*>(nullSegments[i]->getSource());
       Contact* target = dynamic_cast<Contact*>(nullSegments[i]->getTarget());
+
+      if ( (source == NULL) or (target == NULL) ) {
+        cerr << Error("Unconnected source/target on %s.",getString(nullSegments[i]).c_str()) << endl;
+        continue;
+      }
 
       if ( source->getAnchor() ) {
         if ( target->getAnchor() ) {

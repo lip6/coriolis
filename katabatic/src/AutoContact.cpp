@@ -1447,6 +1447,12 @@ namespace {
 
     _contact->invalidate ();
 
+    if ( zMax == zMin ) {
+      ltrace(200) << "NULL Z span, no layer change." << endl;
+      ltraceout(200);
+      return;
+    }
+
     if ( zMax-zMin < 2 ) {
       const Layer* contactLayer = _routingGauge->getContactLayer(zMin);
       _contact->setLayer ( contactLayer );

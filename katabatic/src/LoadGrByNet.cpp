@@ -44,6 +44,7 @@
 #include  "hurricane/Vertical.h"
 #include  "hurricane/Horizontal.h"
 
+#include  "crlcore/AllianceFramework.h"
 #include  "crlcore/RoutingGauge.h"
 #include  "crlcore/Measures.h"
 
@@ -1142,6 +1143,7 @@ namespace {
              void          _GCell_GlobalContacts  ( bool          split
                                                   , AutoContact*  southWestContact=NULL
                                                   , AutoContact*  northEastContact=NULL );
+             void          _GCell_xG_1Pad         ();
              void          _GCell_1G_1L1          ();
              void          _GCell_1G_xL1          ();
              void          _GCell_xG_xL1_xL3      ();
@@ -1198,6 +1200,8 @@ namespace {
                     , GCELL_4G_3L1     = 4+(3<<3)
                     , GCELL_4G_4L1     = 4+(4<<3)
                     , GCELL_4G_1L3     = 4+(1<<9)
+                    , GCELL_1G_1Pad    = 1+(1<<12)
+                    , GCELL_2G_1Pad    = 2+(1<<12)
                     };
 
     protected:
@@ -1221,6 +1225,7 @@ namespace {
           unsigned int L1      : 3;
           unsigned int L2      : 3;
           unsigned int L3      : 3;
+          unsigned int Pad     : 3;
         } fields;
       };
 
@@ -1249,18 +1254,18 @@ namespace {
   GCellConfiguration::GCellConfiguration ( GCellGrid*   gcellGrid
                                          , Hook*        fromHook
                                          , AutoContact* sourceContact )
-    : _state()
-    , _topology(0)
-    , _gcell(NULL)
-    , _sourceContact(sourceContact)
+    : _state           ()
+    , _topology        (0)
+    , _gcell           (NULL)
+    , _sourceContact   (sourceContact)
     , _southWestContact(NULL)
     , _northEastContact(NULL)
-    , _fromHook(fromHook)
-    , _east(NULL)
-    , _west(NULL)
-    , _north(NULL)
-    , _south(NULL)
-    , _routingPads()
+    , _fromHook        (fromHook)
+    , _east            (NULL)
+    , _west            (NULL)
+    , _north           (NULL)
+    , _south           (NULL)
+    , _routingPads     ()
   {
     ltrace(99) << "GCellConfiguration::GCellConfiguration ()" << endl;
     ltracein(99);
@@ -1286,18 +1291,22 @@ namespace {
         RoutingPad* rp = dynamic_cast<RoutingPad*>(hook->getComponent());
 
         if ( rp ) {
-          const Layer* layer = rp->getLayer();
-          if      ( layer == Session::getRoutingLayer(0) ) _state.fields.L1++; // M1 V
-          else if ( layer == Session::getRoutingLayer(1) ) _state.fields.L2++; // M2 H
-          else if ( layer == Session::getRoutingLayer(2) ) _state.fields.L3++; // M3 V
-          else if ( layer == Session::getRoutingLayer(3) ) _state.fields.L2++; // M4 H
-          else if ( layer == Session::getRoutingLayer(4) ) _state.fields.L3++; // M5 V
-          else {
-            cerr << Warning ( "Terminal layer %s of %s is not managed yet (ignored)."
-                            , getString(layer->getName()).c_str()
-                            , getString(rp).c_str() )
-                 << endl;
-            continue;
+          if ( AllianceFramework::get()->isPad(rp->_getEntityAsComponent()->getCell()) ) {
+            _state.fields.Pad++;
+          } else {
+            const Layer* layer = rp->getLayer();
+            if      ( layer == Session::getRoutingLayer(0) ) _state.fields.L1++; // M1 V
+            else if ( layer == Session::getRoutingLayer(1) ) _state.fields.L2++; // M2 H
+            else if ( layer == Session::getRoutingLayer(2) ) _state.fields.L3++; // M3 V
+            else if ( layer == Session::getRoutingLayer(3) ) _state.fields.L2++; // M4 H
+            else if ( layer == Session::getRoutingLayer(4) ) _state.fields.L3++; // M5 V
+            else {
+              cerr << Warning ( "Terminal layer %s of %s is not managed yet (ignored)."
+                              , getString(layer->getName()).c_str()
+                              , getString(rp).c_str() )
+                   << endl;
+              continue;
+            }
           }
 
           ltrace(99) << "RoutingPad " << rp << endl;
@@ -1343,20 +1352,22 @@ namespace {
     bool straightLine = false;
 
     switch ( _state.state ) {
-      case GCELL_1G_1L1:     _GCell_1G_1L1 (); break;
+      case GCELL_1G_1Pad:
+      case GCELL_2G_1Pad:    _GCell_xG_1Pad (); break;
+      case GCELL_1G_1L1:     _GCell_1G_1L1  (); break;
       case GCELL_1G_2L1:
       case GCELL_1G_3L1:
-      case GCELL_1G_4L1:     _GCell_1G_xL1 (); break;
+      case GCELL_1G_4L1:     _GCell_1G_xL1  (); break;
       case GCELL_1G_1L2:
       case GCELL_1G_2L2:
       case GCELL_1G_3L2:
-      case GCELL_1G_4L2:     _GCell_xG_xL2 (); break;
-      case GCELL_1G_1L3:     _GCell_1G_1L3 (); break;
+      case GCELL_1G_4L2:     _GCell_xG_xL2  (); break;
+      case GCELL_1G_1L3:     _GCell_1G_1L3  (); break;
       case GCELL_1G_2L3:
       case GCELL_1G_3L3:
-      case GCELL_1G_4L3:     _GCell_xG_xL3 (); break;
+      case GCELL_1G_4L3:     _GCell_xG_xL3  (); break;
       case GCELL_1G_1L1_1L2: _GCell_xG_1L1_1L2 (); break;
-      case GCELL_1G_1L1_1L3: _GCell_1G_xL1 (); break;
+      case GCELL_1G_1L1_1L3: _GCell_1G_xL1  (); break;
       case GCELL_2G_1L1:
       case GCELL_2G_2L1:
       case GCELL_2G_3L1:
@@ -1402,13 +1413,15 @@ namespace {
                             );
         break;
       default:
-        cerr << Bug("Unmanaged Configuration [%d] = [%d+%d+%d+%d] %s"
+        cerr << Bug("Unmanaged Configuration [%d] = [%d+%d+%d+%d,%d] %s in %s"
                    ,_state.state
                    ,_state.fields.globals
                    ,_state.fields.L1     
                    ,_state.fields.L2     
                    ,_state.fields.L3
+                   ,_state.fields.Pad
                    ,_net->_getString().c_str()
+                   ,getString(_gcell).c_str()
                    ) << endl;
         _GCell_GlobalContacts ( false );
     }
@@ -1558,33 +1571,33 @@ namespace {
         __routingPadAutoSegments.insert ( make_pair(rp,segment) );
 
       // Associate a M2 fixed protection to punctual M3 terminals.
-        if (   ( rp->getLayer() == Session::getRoutingLayer(2) )
-           and ( sourcePosition == targetPosition ) ) {
-          AutoContact* sourceM2 = AutoContact::fromRp ( sourceGCell
-                                                      , rp
-                                                      , Session::getContactLayer(1)
-                                                      , sourcePosition
-                                                      , DbU::lambda(1.0), DbU::lambda(1.0)
-                                                      , true
-                                                      );
+        // if (   ( rp->getLayer() == Session::getRoutingLayer(2) )
+        //    and ( sourcePosition == targetPosition ) ) {
+        //   AutoContact* sourceM2 = AutoContact::fromRp ( sourceGCell
+        //                                               , rp
+        //                                               , Session::getContactLayer(1)
+        //                                               , sourcePosition
+        //                                               , DbU::lambda(1.0), DbU::lambda(1.0)
+        //                                               , true
+        //                                               );
 
-          AutoContact* targetM2 = AutoContact::fromRp ( sourceGCell
-                                                      , rp
-                                                      , Session::getContactLayer(1)
-                                                      , targetPosition
-                                                      , DbU::lambda(1.0), DbU::lambda(1.0)
-                                                      , true
-                                                      );
+        //   AutoContact* targetM2 = AutoContact::fromRp ( sourceGCell
+        //                                               , rp
+        //                                               , Session::getContactLayer(1)
+        //                                               , targetPosition
+        //                                               , DbU::lambda(1.0), DbU::lambda(1.0)
+        //                                               , true
+        //                                               );
 
-          AutoSegment* segmentM2 = AutoSegment::create ( sourceM2
-                                                       , targetM2
-                                                       , Constant::Horizontal
-                                                       , AutoSegment::Local
-                                                       , true
-                                                       , false
-                                                       );
-          segmentM2->setFixed ( true );
-        }
+        //   AutoSegment* segmentM2 = AutoSegment::create ( sourceM2
+        //                                                , targetM2
+        //                                                , Constant::Horizontal
+        //                                                , AutoSegment::Local
+        //                                                , true
+        //                                                , false
+        //                                                );
+        //   segmentM2->setFixed ( true );
+        // }
       }
 
       if ( not (haccess xor (direction == Constant::Horizontal)) ) {
@@ -1642,7 +1655,10 @@ namespace {
   }
 
 
-  AutoContact* GCellConfiguration::_GCell_rp_Access ( GCell* gcell, RoutingPad* rp, bool haccess, bool forceVSmall )
+  AutoContact* GCellConfiguration::_GCell_rp_Access ( GCell*      gcell
+                                                    , RoutingPad* rp
+                                                    , bool        haccess
+                                                    , bool        forceVSmall )
   {
     ltrace(99) << "_GCell_rp_Access()" << endl;
     ltracein(99);
@@ -1839,6 +1855,79 @@ namespace {
     AutoSegment::create ( subContact, target, Constant::Vertical, AutoSegment::Local, terminal, vcollapse );
 
     return target;
+  }
+
+
+  void  GCellConfiguration::_GCell_xG_1Pad ()
+  {
+    ltrace(99) << "_GCell_1G_1Pad() [Managed Configuration - Optimized] " << _topology << endl;
+    ltracein(99);
+
+    Point        position     = _routingPads[0]->getCenter();
+    AutoContact* source       = NULL;
+    AutoContact* target       = NULL;
+    AutoContact* swContact    = NULL;
+    AutoContact* neContact    = NULL;
+    GCell*       gcell        = Session::getKatabatic()->getGCellGrid()->getGCell(position);
+
+    source = AutoContact::fromRp ( gcell
+                                 , _routingPads[0]
+                                 , Session::getContactLayer(3)
+                                 , position
+                                 , DbU::lambda(1.0), DbU::lambda(1.0)
+                                 , true
+                                 );
+    target = AutoContact::create ( gcell, _routingPads[0]->getNet(), Session::getContactLayer(2) );
+
+    AutoSegment* segment = AutoSegment::create ( source
+                                               , target
+                                               , Constant::Horizontal
+                                               , AutoSegment::Local
+                                               , true                 // Terminal.
+                                               , false                // Collapsed.
+                                               );
+    segment->setLayer ( Session::getRoutingLayer(3) );
+
+    if ( _topology & (GLOBAL_HORIZONTAL_END|GLOBAL_BEND|GLOBAL_HORIZONTAL) ) {
+      source = target;
+      target = AutoContact::create ( gcell, _routingPads[0]->getNet(), Session::getContactLayer(1) );
+
+      segment = AutoSegment::create ( source
+                                    , target
+                                    , Constant::Vertical
+                                    , AutoSegment::Local
+                                    , false    // Terminal.
+                                    , false    // Collapsed.
+                                    );
+    }
+
+    swContact = target;
+    neContact = swContact;
+
+    if ( _topology & (GLOBAL_HORIZONTAL|GLOBAL_VERTICAL) ) {
+      neContact = AutoContact::create ( gcell, _routingPads[0]->getNet(), Session::getContactLayer(1) );
+
+      int direction;
+      if ( _topology & GLOBAL_HORIZONTAL ) {
+        direction = Constant::Vertical;
+        swContact->setVAlignate ( true );
+      } else {
+        direction = Constant::Horizontal;
+        swContact->setHAlignate ( true );
+      }
+
+      segment = AutoSegment::create ( swContact
+                                    , neContact
+                                    , direction
+                                    , AutoSegment::Local
+                                    , false                // Terminal.
+                                    , false                // Collapsed.
+                                    );
+    }
+
+    _GCell_GlobalContacts ( (_topology & (GLOBAL_HORIZONTAL|GLOBAL_VERTICAL)), swContact, neContact );
+
+    ltraceout(99);
   }
 
 
@@ -2296,8 +2385,7 @@ namespace Katabatic {
   void  KatabaticEngine::_loadGrByNet ()
   {
     cmess1 << "  o  Loading Nets global routing from Knik." << endl;
-
-    cout << Dots::asDouble("     - Saturation",getMeasure<double>(getCell(),"Sat.")->getData()) << endl;
+    cmess1 << Dots::asDouble("     - Saturation",getMeasure<double>(getCell(),"Sat.")->getData()) << endl;
 
     startMeasures ();
     Session::open ( this );

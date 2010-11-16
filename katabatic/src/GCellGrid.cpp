@@ -56,6 +56,7 @@ namespace Katabatic {
   GCellGrid::GCellGrid ( KatabaticEngine* ktbt )
     : Grid<GCell>   (ktbt->getCell()->getAbutmentBox())
     , _katabatic    (ktbt)
+    , _densityMode  (MaxLayerDensity)
     , _hEdgeCapacity(ktbt->getConfiguration()->getHEdgeCapacity())
     , _vEdgeCapacity(ktbt->getConfiguration()->getVEdgeCapacity())
   { }

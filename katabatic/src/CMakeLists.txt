@@ -41,6 +41,7 @@ endif ( CHECK_DETERMINISM )
                                        LoadGrByNet.cpp
                                        NetConstraints.cpp
                                        NetOptimals.cpp
+				       ChipTools.cpp
                                        KatabaticEngine.cpp
                                        GraphicKatabaticEngine.cpp
                        )

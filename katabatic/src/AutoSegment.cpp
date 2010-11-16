@@ -617,8 +617,11 @@ namespace Katabatic {
     if ( processeds and (processeds->find(this) != processeds->end()) ) return;
 
     if ( ( axis != getAxis() ) and isFixed() ) {
-      cerr << Error("AutoSegment::setAxis(): Cannot move a fixed segment.\n"
-                    "        (on: %s)",_getString().c_str()) << endl;
+      cerr << Error("AutoSegment::setAxis(): Cannot move fixed segment to %s.\n"
+                    "        (on: %s)"
+                   ,DbU::getValueString(axis).c_str()
+                   ,_getString().c_str()
+                   ) << endl;
     }
 
     if ( _isUnsetAxis and (flags & AxisSet) ) {
@@ -1292,7 +1295,7 @@ namespace Katabatic {
   {
     ltrace(200) << "AutoSegment::canMoveUp()" << endl;
 
-    if ( isLayerChange() ) return false;
+    if ( isLayerChange() or isFixed() ) return false;
     if ( isTerminal() and isLocal() ) return false;
 
     size_t depth = Session::getRoutingGauge()->getLayerDepth(getLayer()) + 2;
@@ -1311,10 +1314,9 @@ namespace Katabatic {
     }
 
     bool   hasGlobalSegment = false;
-    size_t collapseds       = 0;
     if ( propagate ) {
       forEach ( AutoSegment*, isegment, getCollapseds() ) {
-        collapseds++;
+        if ( isegment->isFixed () ) return false;
         if ( isegment->isGlobal() ) hasGlobalSegment = true;
 
         isegment->getGCells ( gcells );
