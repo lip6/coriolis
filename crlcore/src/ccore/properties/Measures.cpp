@@ -54,7 +54,7 @@ namespace CRL {
 
 
   template<>
-  Name  StandardPrivateProperty<MeasuresDatas>::_name = "CRL::Measures";
+  Name  StandardPrivateProperty<MeasuresDatas*>::_name = "CRL::Measures";
 
   
 // -------------------------------------------------------------------
@@ -120,7 +120,7 @@ namespace CRL {
   {
     Extension* extension = Extension::get ( object );
     if ( extension != NULL )
-      return &extension->getValue()._measures;
+      return &extension->getValue()->_measures;
 
     return NULL;
   }
@@ -130,7 +130,7 @@ namespace CRL {
   {
     Extension* extension = Extension::get ( object );
     if ( extension == NULL ) {
-      extension = Extension::create ();
+      extension = Extension::create ( new MeasuresDatas() );
       object->put ( extension );
     }
     return extension;

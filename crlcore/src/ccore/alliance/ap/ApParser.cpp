@@ -59,6 +59,7 @@
 #include  <cstdarg>
 
 #include  "hurricane/DataBase.h"
+#include  "hurricane/RegularLayer.h"
 #include  "hurricane/Technology.h"
 #include  "hurricane/Pin.h"
 #include  "hurricane/Contact.h"
@@ -172,23 +173,30 @@ namespace {
 
   class ApParser {
     public:
-    // Methods.
                    ApParser     ( AllianceFramework* af );
              void  loadFromFile ( const string& cellPath, Cell* cell );
 
     private:
-    // Internal: enum.
-             enum ParserState { StateVersion
-                              , StateHeader
-                              , StateBody
-                              , StateEOF
-                              };
-    // Internal: static Attributes.
+      enum ParserState      { StateVersion
+                            , StateHeader
+                            , StateBody
+                            , StateEOF
+                            };
+      enum SegmentDirection { DirectionHorizontal=0x1
+                            , DirectionVertical  =0x2
+                            , DirectionIncrease  =0x4
+                            , DirectionDecrease  =0x8
+                            , DirectionUndefined =0
+                            , DirectionUp        =DirectionVertical  |DirectionIncrease
+                            , DirectionDown      =DirectionVertical  |DirectionDecrease
+                            , DirectionLeft      =DirectionHorizontal|DirectionDecrease
+                            , DirectionRight     =DirectionHorizontal|DirectionIncrease
+                            };
       static LayerInformations  _layerInformations;
-    // Internal: Attributes.
              AllianceFramework* _framework;
              string             _cellPath;
              Cell*              _cell;
+             Catalog::State*    _state;
              double             _scaleRatio;
              unsigned int       _anonymousId;
              int                _parserState;
@@ -204,6 +212,7 @@ namespace {
              Net*               _getNet              ( const char* apName );
              Net*               _getAnonymousNet     ();
              Net*               _safeGetNet          ( const char* apName );
+             SegmentDirection   _getApSegDirection   ( const char* segDir );
              void               _parseVersion        ();
              void               _parseHeader         ();
              void               _parseAbutmentBox    ();
@@ -222,13 +231,14 @@ namespace {
 
 
   ApParser::ApParser ( AllianceFramework* framework )
-    : _framework(framework)
-    , _cellPath()
-    , _cell(NULL)
-    , _scaleRatio(100.0)
+    : _framework  (framework)
+    , _cellPath   ()
+    , _cell       (NULL)
+    , _state      (NULL)
+    , _scaleRatio (100.0)
     , _anonymousId(0)
     , _parserState(StateVersion)
-    , _lineNumber(0)
+    , _lineNumber (0)
   {
     if ( _layerInformations.empty() ) {
       _layerInformations.setTechnology ( DataBase::getDB()->getTechnology() );
@@ -330,6 +340,19 @@ namespace {
                   );
 
     return _getUnit ( convert );
+  }
+
+
+  inline ApParser::SegmentDirection  ApParser::_getApSegDirection ( const char* value )
+  {
+    if ( *value == '\0' ) return DirectionUndefined;
+
+    if ( string("UP"   ).compare(value) == 0 ) return DirectionUp;
+    if ( string("DOWN" ).compare(value) == 0 ) return DirectionDown;
+    if ( string("LEFT" ).compare(value) == 0 ) return DirectionLeft;
+    if ( string("RIGHT").compare(value) == 0 ) return DirectionRight;
+
+    return DirectionUndefined;
   }
 
 
@@ -559,9 +582,14 @@ namespace {
       net       = _safeGetNet          ( fields[5] );
       layerInfo = _getLayerInformation ( fields[4] );
 
-      if ( layerInfo )
-        Contact::create ( net, layerInfo->getLayer(), XVIA, YVIA, WIDTH, HEIGHT );
-      else
+
+      if ( layerInfo ) {
+        DbU::Unit shrink = 0;
+        if ( not dynamic_cast<const RegularLayer*>(layerInfo->getLayer()) )
+          shrink = DbU::lambda(1.0);
+
+        Contact::create ( net, layerInfo->getLayer(), XVIA, YVIA, WIDTH-shrink, HEIGHT-shrink );
+      } else
         _printError ( false, "Unknown layer name %s.", fields[4] );
     }
   }
@@ -572,6 +600,7 @@ namespace {
     static DbU::Unit         X1, Y1, X2, Y2, WIDTH;
     static Net*              net;
     static LayerInformation* layerInfo;
+    static SegmentDirection  segDir;
 
     vector<char*>  fields = _splitString ( _rawLine+2, ',' );
     if ( fields.size() < 8 )
@@ -583,20 +612,33 @@ namespace {
       Y2        = _getUnit    ( fields[3] );
       WIDTH     = _getUnit    ( fields[4] );
       net       = _safeGetNet ( fields[5] );
+      segDir    = _getApSegDirection   ( fields[6] );
       layerInfo = _getLayerInformation ( fields[7] );
 
       if ( layerInfo ) {
         Segment* segment = NULL;
-        if ( X1 == X2 ) {
-          segment =  Vertical::create ( net, layerInfo->getLayer(), X1, WIDTH, Y1, Y2 );
-        } else if ( Y1 == Y2 ) {
-          segment = Horizontal::create ( net, layerInfo->getLayer(), Y1, WIDTH, X1, X2 );
-        } else { 
-          _printError ( false, "Segment neither horizontal nor vertical." );
+        if ( (X1 == X2) and (Y1 == Y2) ) {
+          if ( segDir & DirectionVertical )
+            segment =  Vertical::create ( net, layerInfo->getLayer(), X1, WIDTH, Y1, Y2 );
+          else
+            segment = Horizontal::create ( net, layerInfo->getLayer(), Y1, WIDTH, X1, X2 );
+        } else {
+          if ( X1 == X2 ) {
+            segment =  Vertical::create ( net, layerInfo->getLayer(), X1, WIDTH, Y1, Y2 );
+            if ( segDir & DirectionHorizontal )
+              _printWarning ( "Inconsistent direction on Horizontal segment (neither UP nor DOWN)." );
+          } else if ( Y1 == Y2 ) {
+            segment = Horizontal::create ( net, layerInfo->getLayer(), Y1, WIDTH, X1, X2 );
+            if ( segDir & DirectionVertical )
+              _printWarning ( "Inconsistent direction on Horizontal segment (neither LEFT nor RIGHT)." );
+          } else { 
+            _printError ( false, "Segment neither horizontal nor vertical." );
+          }
         }
         if ( layerInfo->isConnector()) {
           if ( not net->isExternal() ) {
-            _printWarning ( "External component on non-external net %s", getString(net->getName()).c_str() );
+            if ( _state->isLogical() )
+              _printWarning ( "External component on non-external net %s", getString(net->getName()).c_str() );
             net->setExternal ( true );
           }
           NetExternalComponents::setExternal(segment);
@@ -624,6 +666,7 @@ namespace {
     static Name  ROT_M          = "ROT_M";
     static Name  SY_RM          = "SY_RM";
     static Name  SY_RP          = "SY_RP";
+    static Name  padreal        = "padreal";
 
     vector<char*>  fields = _splitString ( _rawLine+2, ',' );
     if ( fields.size() < 5 )
@@ -658,7 +701,7 @@ namespace {
         instance->setPlacementStatus ( Instance::PlacementStatus::FIXED );
       } else {
         Catalog::State* instanceState  = _framework->getCatalog()->getState ( masterCellName );
-        if ( !instanceState || (!instanceState->isFeed()) ) {
+        if ( (masterCellName != padreal) and ( not instanceState or (not instanceState->isFeed()) ) ) {
           _printError ( false
                       , "No logical instance associated to physical instance %s."
                       , getString(instanceName).c_str()
@@ -740,10 +783,9 @@ namespace {
     if ( catalogProperty == NULL )
       throw Error ( "Missing CatalogProperty in cell %s.\n" , getString(cell->getName()).c_str() );
 
-    Catalog::State *state = catalogProperty->getState ();
-
-    state->setPhysical ( true );
-    if ( state->isFlattenLeaf() ) _cell->setFlattenLeaf ( true );
+    _state = catalogProperty->getState ();
+    _state->setPhysical ( true );
+    if ( _state->isFlattenLeaf() ) _cell->setFlattenLeaf ( true );
 
     IoFile fileStream ( cellPath );
     fileStream.open ( "r" );

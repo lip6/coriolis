@@ -44,6 +44,7 @@ namespace CRL {
   using Hurricane::Name;
   using Hurricane::StandardPrivateProperty;
   using Hurricane::DBo;
+  using Hurricane::Record;
 
 
 // -------------------------------------------------------------------
@@ -110,11 +111,21 @@ namespace CRL {
 
   class MeasuresDatas {
     public:
-                   MeasuresDatas ();
+                          MeasuresDatas ();
+      inline std::string  _getTypeName  () const;
+      inline std::string  _getString    () const;
+      inline Record*      _getRecord    () const;
     public:
       MeasuresSet  _measures;
+    private:
+                          MeasuresDatas ( const MeasuresDatas& );
   };
 
+
+  inline std::string  MeasuresDatas::_getTypeName  () const { return "MeasuresDatas"; }
+  inline std::string  MeasuresDatas::_getString    () const { return "<MeasuresDatas>"; }
+  inline Record*      MeasuresDatas::_getRecord    () const { return NULL; }
+  
 
 // -------------------------------------------------------------------
 // Class  :  "CRL::Measures".
@@ -122,7 +133,7 @@ namespace CRL {
 
   class Measures {
     public:
-      typedef StandardPrivateProperty<MeasuresDatas> Extension;
+      typedef StandardPrivateProperty<MeasuresDatas*> Extension;
     public:
       template<typename Data> friend inline void                 addMeasure   ( DBo*, const Name&, const Data&, unsigned int width=8 );
       template<typename Data> friend inline const Measure<Data>* getMeasure   ( DBo*, const Name& );
@@ -136,7 +147,7 @@ namespace CRL {
   inline void  addMeasure ( DBo* object, const Name& name, const Data& data, unsigned int width )
   {
     Measures::Extension* extension = Measures::_getOrCreate ( object );
-    extension->getValue()._measures.insert ( std::make_pair(name,new Measure<Data>(name,data,width)) );
+    extension->getValue()->_measures.insert ( std::make_pair(name,new Measure<Data>(name,data,width)) );
   }
 
 
@@ -144,9 +155,9 @@ namespace CRL {
   inline const Measure<Data>* getMeasure ( DBo* object, const Name& name )
   {
     Measures::Extension*   extension = Measures::_getOrCreate ( object );
-    MeasuresSet::iterator  imeasure  = extension->getValue()._measures.find(name);
+    MeasuresSet::iterator  imeasure  = extension->getValue()->_measures.find(name);
 
-    if ( imeasure != extension->getValue()._measures.end() )
+    if ( imeasure != extension->getValue()->_measures.end() )
       return static_cast< Measure<Data>* >( (*imeasure).second );
 
     return NULL;
@@ -154,6 +165,9 @@ namespace CRL {
 
 
 } // End of CRL namespace.
+
+
+INSPECTOR_P_SUPPORT(CRL::MeasuresDatas);
 
 
 #endif  // __STATISTICS_PROPERTY__

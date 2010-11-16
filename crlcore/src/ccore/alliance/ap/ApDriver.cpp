@@ -36,6 +36,7 @@ using namespace std;
 #include  "hurricane/RoutingPad.h"
 #include  "hurricane/Cell.h"
 #include  "hurricane/Layer.h"
+#include  "hurricane/RegularLayer.h"
 #include  "hurricane/Warning.h"
 
 #include  "Ap.h"
@@ -209,12 +210,16 @@ void DumpContacts(ofstream& ccell, Cell *cell)
                     }
                     else
                     {
+                      DbU::Unit expand = 0;
+                      if ( not dynamic_cast<const RegularLayer*>(contact->getLayer()) )
+                        expand = DbU::lambda(1.0);
+
                       if (toMBKLayer(mbkLayer,contact->getLayer()->getName(),true))
                         ccell << "B "
                               << toMBKlambda(contact->getX()) << ","
                               << toMBKlambda(contact->getY()) << ","
-                              << toMBKlambda(contact->getWidth()) << ","
-                              << toMBKlambda(contact->getHeight()) << ","
+                              << toMBKlambda(contact->getWidth () + expand) << ","
+                              << toMBKlambda(contact->getHeight() + expand) << ","
                               << mbkLayer << ","
                               << toMBKName(contact->getNet()->getName())
                               << endl;
@@ -260,6 +265,9 @@ void DumpContacts(ofstream& ccell, Cell *cell)
         } else
           continue;
 
+        const char* direction = "RIGHT";
+        if ( (x1 == x2) and (y1 != y2) ) direction = "UP";
+
         if ( x1 > x2 ) swap ( x1, x2 );
         if ( y1 > y2 ) swap ( y1, y2 );
 
@@ -270,8 +278,8 @@ void DumpContacts(ofstream& ccell, Cell *cell)
                 << toMBKlambda(x2) << ","
                 << toMBKlambda(y2) << ","
                 << toMBKlambda(width) << ","
-                << toMBKName(component->getNet()->getName())
-                << ",RIGHT," 
+                << toMBKName(component->getNet()->getName()) << ","
+                << direction << "," 
                 << mbkLayer
                 << endl;
       }

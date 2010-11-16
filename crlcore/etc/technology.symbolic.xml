@@ -183,7 +183,7 @@
     <layer name="blockage5"/>
   </regularlayer>
   <regularlayer name="BLOCKAGE6" type="UNDEFINED">
-    <layer name="metal6"/>
+    <layer name="blockage6"/>
   </regularlayer>
 
   <!-- Special BasicLayers for Knik/Kite routers -->
@@ -257,11 +257,11 @@
       <rule name="METAL1.minimum.width"            value="1.0"/>
       <rule name="METAL1.metal1.extention.cap"     value="0.5"/>
       <rule name="METAL2.minimum.width"            value="1.0"/>
-      <rule name="METAL2.metal2.extention.cap"     value="0.5"/>
+      <rule name="METAL2.metal2.extention.cap"     value="1.0"/>
       <rule name="METAL3.minimum.width"            value="1.0"/>
-      <rule name="METAL3.metal3.extention.cap"     value="0.5"/>
+      <rule name="METAL3.metal3.extention.cap"     value="1.0"/>
       <rule name="METAL4.minimum.width"            value="1.0"/>
-      <rule name="METAL4.metal4.extention.cap"     value="0.5"/>
+      <rule name="METAL4.metal4.extention.cap"     value="1.0"/>
       <rule name="METAL5.minimum.width"            value="2.0"/>
       <rule name="METAL5.metal5.extention.cap"     value="1.0"/>
       <rule name="METAL6.minimum.width"            value="2.0"/>

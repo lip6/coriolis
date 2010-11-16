@@ -33,6 +33,7 @@
 namespace boptions = boost::program_options;
 
 #include  "vlsisapd/configuration/Configuration.h"
+#include  "hurricane/Backtrace.h"
 #include  "hurricane/Warning.h"
 #include  "hurricane/viewer/Script.h"
 #include  "crlcore/Utilities.h"
@@ -247,10 +248,19 @@ namespace CRL {
     if ( bfs::path::default_name_check_writable() )
       bfs::path::default_name_check ( bfs::portable_posix_name );
 
+  // Check for duplicated type_info initialization.
+    const boptions::variable_value& value = arguments["coriolis_top"];
+    if ( value.value().type() != typeid(string) ) {
+      throw Error("type_info RTTI tree has been initialized twice.\n\n"
+                  "        This may be due to incorrect import of Python modules, please ensure\n"
+                  "        that the CRL module is always imported first."
+                 );
+    }
+
     bfs::path sysConfDir ( SYS_CONF_DIR );
     if ( not sysConfDir.has_root_path() ) {
       if ( arguments.count("coriolis_top") ) {
-        // const boptions::variable_value& value = arguments["coriolis_top"];
+        const boptions::variable_value& value = arguments["coriolis_top"];
         // cerr << "value:"
         //      << " empty:"     << boolalpha << value.empty()
         //      << " defaulted:" << boolalpha << value.defaulted()
@@ -283,7 +293,7 @@ namespace CRL {
     Cfg::getParamBool  ("misc.verboseLevel1"  ,true )->registerCb ( verboseLevel1Changed );
     Cfg::getParamBool  ("misc.verboseLevel2"  ,true )->registerCb ( verboseLevel2Changed );
     Cfg::getParamBool  ("misc.info"           ,false)->registerCb ( infoChanged );
-    Cfg::getParamBool  ("misc.logMode"        ,true )->registerCb ( logModeChanged );
+    Cfg::getParamBool  ("misc.logMode"        ,false)->registerCb ( logModeChanged );
     Cfg::getParamInt   ("misc.traceLevel"     ,1000 )->registerCb ( traceLevelChanged );
     Cfg::getParamString("stratus1.mappingName","./stratus2sxlib.xml")->registerCb ( stratus1MappingNameChanged );
 
@@ -348,6 +358,7 @@ namespace CRL {
   void  System::_trapSig ( int sig )
   {
     cerr << "\n\n[CRL ERROR] System::_trapSig():\n" << endl;
+    cerr << "Program stack:\n" << Backtrace().textWhere() << endl;
 
     switch ( sig ) {
       case SIGINT:

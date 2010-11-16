@@ -2,10 +2,10 @@
 <configuration>
   <!-- Miscellaneous -->
   <parameter id="misc.catchCore"       type="bool"       value="true"/>
-  <parameter id="misc.verboseLevel1"   type="bool"       value="true"/>
+  <parameter id="misc.verboseLevel1"   type="bool"       value="false"/>
   <parameter id="misc.verboseLevel2"   type="bool"       value="false"/>
   <parameter id="misc.info"            type="bool"       value="false"/>
-  <parameter id="misc.logMode"         type="bool"       value="true"/>
+  <parameter id="misc.logMode"         type="bool"       value="false"/>
   <parameter id="misc.traceLevel"      type="int"        value="1000" min="0"/>
   <!-- Nimbus -->
   <parameter id="nimbus.cellGauge"     type="string"     value="sxlib"/>
@@ -132,7 +132,7 @@
       <widget id="mauka.annealingRowMult"  label="Annealing Row Mult (%)" column="1"/>
       <widget type="rule"/>
     </tab>
-    <tab name="kite">
+    <tab name="Kite">
       <widget type="title" label="Katabatic - Routing Database"/>
       <widget id="katabatic.saturateRatio"         label="Saturate Ratio (%)"      column="0"/>
       <widget id="katabatic.saturateRp"            label="Saturate RoutingPad"     column="0"/>

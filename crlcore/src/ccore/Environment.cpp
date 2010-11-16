@@ -535,6 +535,7 @@ namespace CRL {
     setGROUND   ( "vss" );
     setCLOCK    ( "^ck$" );
     setOBSTACLE ( "^obs$" );
+    setPad      ( "^.*_px$" );
 
     _LIBRARIES.append ( "." );
 
@@ -548,6 +549,7 @@ namespace CRL {
     regfree ( &_GroundRegex   );
     regfree ( &_ClockRegex    );
     regfree ( &_ObstacleRegex );
+    regfree ( &_padRegex      );
   }
 
 
@@ -591,6 +593,12 @@ namespace CRL {
   }
 
 
+  bool  Environment::isPad ( const char* name ) const
+  {
+    return regexec ( &_padRegex, name, 0, NULL, 0 ) == 0;
+  }
+
+
   void  Environment::setPOWER ( const char* value )
   {
     _POWER = value;
@@ -616,6 +624,13 @@ namespace CRL {
   {
     _OBSTACLE = value;
     _setRegex ( &_ObstacleRegex , _OBSTACLE , "Obstacle" );
+  }
+
+
+  void  Environment::setPad ( const char* value )
+  {
+    _pad = value;
+    _setRegex ( &_padRegex , _pad , "Pad" );
   }
 
 
@@ -657,7 +672,9 @@ namespace CRL {
       << "        - Power Signal     := \"" << _POWER    << "\"\n"
       << "        - Ground Signal    := \"" << _GROUND   << "\"\n"
       << "        - Clock Signal     := \"" << _CLOCK    << "\"\n"
-      << "        - Obstacles        := \"" << _OBSTACLE << "\"\n\n";
+      << "        - Obstacles        := \"" << _OBSTACLE << "\"\n"
+      << "     o  Special Cells.\n"
+      << "        - Pads             := \"" << _pad      << "\"\n\n";
 
     return s.str();
   }

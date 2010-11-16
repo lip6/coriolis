@@ -29,7 +29,7 @@
 
 #include  <map>
 #include  <limits>
-
+#include  "hurricane/Cell.h"
 #include  "crlcore/Environment.h"
 #include  "crlcore/AllianceLibrary.h"
 #include  "crlcore/Catalog.h"
@@ -38,7 +38,7 @@
 
 namespace CRL {
 
-
+  using Hurricane::Cell;
   class RoutingGauge;
   class CellGauge;
 
@@ -68,6 +68,10 @@ namespace CRL {
       inline bool               isOBSTACLE               ( const char*   name );
       inline bool               isOBSTACLE               ( const string& name );
       inline bool               isOBSTACLE               ( const Name&   name );
+      inline bool               isPad                    ( const char*   name );
+      inline bool               isPad                    ( const string& name );
+      inline bool               isPad                    ( const Name&   name );
+      inline bool               isPad                    ( const Cell* );
     // Accessors.
       inline Environment*       getEnvironment           ();
       inline Catalog*           getCatalog               ();
@@ -138,6 +142,10 @@ namespace CRL {
   inline bool         AllianceFramework::isOBSTACLE       ( const char*   name ) { return _environment.isOBSTACLE(name); }
   inline bool         AllianceFramework::isOBSTACLE       ( const string& name ) { return isOBSTACLE(name.c_str()); }
   inline bool         AllianceFramework::isOBSTACLE       ( const Name&   name ) { return isOBSTACLE(getString(name)); }
+  inline bool         AllianceFramework::isPad            ( const char*   name ) { return _environment.isPad(name); }
+  inline bool         AllianceFramework::isPad            ( const string& name ) { return isPad(name.c_str()); }
+  inline bool         AllianceFramework::isPad            ( const Name&   name ) { return isPad(getString(name)); }
+  inline bool         AllianceFramework::isPad            ( const Cell*   cell ) { return isPad(cell->getName()); }
   inline Environment* AllianceFramework::getEnvironment   () { return &_environment; }
   inline Catalog*     AllianceFramework::getCatalog       () { return &_catalog; }
   inline const Name&  AllianceFramework::getParentLibraryName

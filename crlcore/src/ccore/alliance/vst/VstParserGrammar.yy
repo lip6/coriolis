@@ -905,7 +905,8 @@ association_element
                         );
 
           for ( unsigned int i=0 ; i < __ys->_masterNets.size() ; i++ )
-            if ( !__ys->_masterNets[i]->isGlobal() )
+            if (  not __ys->_masterNets[i]->isGlobal()
+               or (__ys->_masterNets[i]->getName() != __ys->_instanceNets[i]->getName()) )
               __ys->_instance->getPlug ( __ys->_masterNets[i] )->setNet ( __ys->_instanceNets[i] );
 
           __ys->_masterPort = true;

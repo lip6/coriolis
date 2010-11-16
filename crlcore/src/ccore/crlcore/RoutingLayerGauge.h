@@ -207,6 +207,18 @@ inline std::string  getString<const Constant::Direction*>
 }
 
 
+template<>
+inline std::string  getString<Constant::Direction>
+                            ( Constant::Direction direction )
+{
+  switch ( direction ) {
+    case Constant::Horizontal: return "Horizontal";
+    case Constant::Vertical:   return "Vertical";
+  }
+  return ( "Unknown Constant::Direction" );
+}
+
+
 IOSTREAM_POINTER_SUPPORT(Constant::Direction);
 
 
