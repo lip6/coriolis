@@ -47,8 +47,8 @@
 # x-----------------------------------------------------------------x
 
 
-from Hurricane   import *
 import CRL
+from Hurricane   import *
 
 from st_model    import Model
 from st_instance import Inst
@@ -1112,6 +1112,16 @@ class CkIn ( net ) :
     
 class CkInFromHur ( net ) :
   def __init__ ( self, hur_net ) : self.create_from_hur ( hur_net )
+    
+#########################
+# Internal Clock Signal #
+#########################
+class SignalCk ( net ) :
+  def __init__ ( self, nom ) :
+    self.create_net ( nom, 1, direction = "IN", hType = "CLOCK" )
+    
+class SignalCkFromHur ( net ) :
+  def __init__ ( self, hur_net ) : self.create_from_hur ( hur_net )
         
 ###################
 # Internal Signal #
@@ -1137,6 +1147,16 @@ class VssIn ( net ) :
 class VddInFromHur ( net ) :
   def __init__ ( self, hur_net ) : self.create_from_hur ( hur_net )
 class VssInFromHur ( net ) :
+  def __init__ ( self, hur_net ) : self.create_from_hur ( hur_net )
+
+class SignalVdd ( net ) :
+  def __init__ ( self, nom ) : self.create_net ( nom, 1, direction = "IN", hType = "POWER" )
+class SignalVss ( net ) :
+  def __init__ ( self, nom ) : self.create_net ( nom, 1, direction = "IN", hType = "GROUND" )
+
+class SignalVddFromHur ( net ) :
+  def __init__ ( self, hur_net ) : self.create_from_hur ( hur_net )
+class SignalVssFromHur ( net ) :
   def __init__ ( self, hur_net ) : self.create_from_hur ( hur_net )
       
 ##################

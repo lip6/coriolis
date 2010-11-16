@@ -48,8 +48,8 @@
 
 
 
-from Hurricane        import *
 import CRL
+from Hurricane        import *
 
 from st_model         import Model, MODELMAP
 from st_getrealmodel  import GetRealModel, InitBV
@@ -79,10 +79,11 @@ DPSXLIB = "dp_.*_x[1-8]"
 ## Class of nets ##
 NET = ( "st_net.SignalIn", "st_net.SignalOut", "st_net.SignalInOut" \
       , "st_net.SignalUnknown", "st_net.TriState" \
-      , "st_net.CkIn" \
+      , "st_net.CkIn", "st_net.SignalCk" \
       , "st_net.Signal", "st_net.Sig" \
       , "st_net.VddIn", "st_net.VssIn" \
-      , "st_net.VddInFromHur", "st_net.VssInFromHur"
+      , "st_net.VddInFromHur", "st_net.VssInFromHur" \
+      , "st_net.SignalVdd" , "st_net.SignalVss" \
       )
 ALIM_NET = ( "st_net.VddIn", "st_net.VssIn" \
            , "st_net.VddInFromHur", "st_net.VssInFromHur"

@@ -48,9 +48,9 @@
 
 
 
-from Hurricane  import *
-import Viewer
 import CRL
+import Viewer
+from Hurricane  import *
 
 import re, types, string
 
@@ -378,6 +378,15 @@ class Model :
           if net._to_merge :
             net = inst._map[pin]._to_merge[0][0]
             print "       net merged with :", net._name, "with arity :", net._arity
+
+  #############################
+  ##### Find An Instance  #####
+  #############################
+  def getInstance ( self, name ):
+    for instance in self._st_insts:
+      if instance._name == name:
+        return instance
+    return None
 
   #########################
   def PrintGraph ( self ) :
