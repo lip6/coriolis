@@ -49,6 +49,7 @@ namespace bfs = boost::filesystem;
 
 #include  "hurricane/viewer/HApplication.h"
 #include  "hurricane/viewer/Graphics.h"
+#include  "hurricane/viewer/StratusScript.h"
 using namespace Hurricane;
 
 #include  "crlcore/Utilities.h"
@@ -143,13 +144,15 @@ int main ( int argc, char *argv[] )
                              , "Disable ANSI escape sequences displaying.")
       ( "text,t"             , boptions::bool_switch(&textMode)->default_value(false)
                              , "Run in pure text mode.")
+      ( "stratus-script"     , boptions::value<string>()
+                             , "Status script to run." )
       ( "margin,m"           , boptions::value<double>(&margin)
                              , "Percentage of free area to add to the minimal placement area.")
       ( "quadri-place,p"     , boptions::bool_switch(&quadriPlace)->default_value(false)
                              , "Place using quadripartitions then placement legalisation.")
       ( "annealing-place,P"  , boptions::bool_switch(&annealingPlace)->default_value(false)
                              , "Place using simulated annealing (slow).")
-      ( "partition-size-stop", boptions::value<unsigned int>(&partitionSizeStop)->default_value(45)
+      ( "partition-size-stop", boptions::value<unsigned int>(&partitionSizeStop)
                              , "Sets the size of a leaf partition (quadripartition stage).")
       ( "global-route,G"     , boptions::bool_switch(&globalRoute)->default_value(false)
                              , "Run the global router (Knik).")
@@ -157,9 +160,9 @@ int main ( int argc, char *argv[] )
                              , "Reload the global routing from disk.")
       ( "save-global"        , boptions::bool_switch(&saveGlobal)->default_value(false)
                              , "Save the global routing solution.")
-      ( "edge,e"             , boptions::value<float>(&edgeCapacity)->default_value(65.0)
+      ( "edge,e"             , boptions::value<float>(&edgeCapacity)
                              , "The egde density ratio applied on global router's edges." )
-      ( "expand-step"        , boptions::value<float>(&expandStep)->default_value(100.0)
+      ( "expand-step"        , boptions::value<float>(&expandStep)
                              , "The density delta above which GCells are aggregateds." )
       ( "events-limit"       , boptions::value<unsigned long>(&eventsLimit)
                              , "The maximum number of iterations (events) that the router is"
@@ -201,14 +204,14 @@ int main ( int argc, char *argv[] )
       }
     }
 
-    if (arguments["core-dump"   ].as<bool>()) Cfg::getParamBool("misc.catchCore"    )->setBool ( false );
-    if (arguments["verbose"     ].as<bool>()) Cfg::getParamBool("misc.verboseLevel1")->setBool ( true );
-    if (arguments["very-verbose"].as<bool>()) Cfg::getParamBool("misc.verboseLevel2")->setBool ( true );
-    if (arguments["info"        ].as<bool>()) Cfg::getParamBool("misc.info"         )->setBool ( true );
-    if (arguments["log-mode"    ].as<bool>()) Cfg::getParamBool("misc.logMode"      )->setBool ( true );
-    if (arguments["show-conf"   ].as<bool>()) Cfg::getParamBool("misc.showConf"     )->setBool ( true );
+    if (arguments["core-dump"   ].as<bool>()) Cfg::getParamBool("misc.catchCore"    )->setBool ( false, Cfg::Parameter::CommandLine );
+    if (arguments["verbose"     ].as<bool>()) Cfg::getParamBool("misc.verboseLevel1")->setBool ( true , Cfg::Parameter::CommandLine );
+    if (arguments["very-verbose"].as<bool>()) Cfg::getParamBool("misc.verboseLevel2")->setBool ( true , Cfg::Parameter::CommandLine );
+    if (arguments["info"        ].as<bool>()) Cfg::getParamBool("misc.info"         )->setBool ( true , Cfg::Parameter::CommandLine );
+    if (arguments["log-mode"    ].as<bool>()) Cfg::getParamBool("misc.logMode"      )->setBool ( true , Cfg::Parameter::CommandLine );
+    if (arguments["show-conf"   ].as<bool>()) Cfg::getParamBool("misc.showConf"     )->setBool ( true , Cfg::Parameter::CommandLine );
 
-    if (arguments.count("trace-level" )) Cfg::getParamInt("misc.traceLevel")->setInt ( traceLevel );
+    if (arguments.count("trace-level" )) Cfg::getParamInt("misc.traceLevel")->setInt ( traceLevel, Cfg::Parameter::CommandLine );
 
     bool showConf = Cfg::getParamBool("misc.showConf")->asBool();
 
@@ -296,6 +299,15 @@ int main ( int argc, char *argv[] )
     cout   << "        URL ........................ http://home.eng.iastate.edu/~cnchu" << endl;
     cout   << endl;
     cmess2 << af->getPrint() << endl;
+
+    if ( arguments.count("stratus-script") ) {
+      string scriptName = arguments["stratus-script"].as<string>();
+      cmess1 << "  o  Running stratus script:" << endl;
+      cmess1 << "     - <" << scriptName << ">" << endl;
+
+      dbo_ptr<StratusScript> script = StratusScript::create ( scriptName, NULL );
+      script->run ();
+    }
 
     if ( cell ) {
     // addaccu.
@@ -517,6 +529,7 @@ int main ( int argc, char *argv[] )
   }
   catch ( Error& e ) {
     cerr << e.what() << endl;
+    cerr << "\nProgram stack:\n" << e.where() << endl;
     exit ( 1 );
   }
   catch ( boptions::error& e ) {
