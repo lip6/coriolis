@@ -99,7 +99,8 @@ namespace {
 
   std::string  environmentMapper ( std::string environmentName )
   {
-    if      ( environmentName == "CORIOLIS_TOP"         ) return "coriolis_top";
+    if      ( environmentName == "HOME"                 ) return "home";
+    else if ( environmentName == "CORIOLIS_TOP"         ) return "coriolis_top";
     else if ( environmentName == "STRATUS_MAPPING_NAME" ) return "stratus_mapping_name";
     return "";
   }
@@ -236,6 +237,8 @@ namespace CRL {
   // Environment variables reading.
     boptions::options_description options ("Environment Variables");
     options.add_options()
+      ( "home"                , boptions::value<string>()
+                              , "User's home directory." )
       ( "coriolis_top"        , boptions::value<string>()->default_value(CORIOLIS_TOP)
                               , "The root directory of the Coriolis installation tree." )
       ( "stratus_mapping_name", boptions::value<string>()
@@ -260,7 +263,7 @@ namespace CRL {
     bfs::path sysConfDir ( SYS_CONF_DIR );
     if ( not sysConfDir.has_root_path() ) {
       if ( arguments.count("coriolis_top") ) {
-        const boptions::variable_value& value = arguments["coriolis_top"];
+        // const boptions::variable_value& value = arguments["coriolis_top"];
         // cerr << "value:"
         //      << " empty:"     << boolalpha << value.empty()
         //      << " defaulted:" << boolalpha << value.defaulted()
@@ -320,6 +323,14 @@ namespace CRL {
                      ,systemConfFile.string().c_str()) << endl;
     }
 
+    bool      homeConfFound = false;
+    bfs::path homeConfFile  = arguments["home"].as<string>();
+    homeConfFile /= ".coriolis2.configuration.xml";
+    if ( bfs::exists(homeConfFile) ) {
+      homeConfFound = true;
+      conf->readFromFile ( homeConfFile.string() );
+    }
+
     bool      dotConfFound = false;
     bfs::path dotConfFile  = "./.coriolis2.configuration.xml";
     if ( bfs::exists(dotConfFile) ) {
@@ -340,6 +351,7 @@ namespace CRL {
     if ( cmess1.enabled() ) {
       cmess1 << "  o  Reading Configuration. " << endl;
       if (systemConfFound) cmess1 << "     - <" << systemConfFile.string() << ">." << endl;
+      if (homeConfFound)   cmess1 << "     - <" << homeConfFile.string() << ">." << endl;
       if (dotConfFound)    cmess1 << "     - <" << dotConfFile.string() << ">." << endl;
     }
   }

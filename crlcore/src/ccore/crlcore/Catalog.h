@@ -123,8 +123,8 @@ namespace CRL {
           inline void          setDepth       ( unsigned int depth );
         // Hurricane Management.
           inline string        _getTypeName   () const;
-          inline string        _getString     () const;
-          inline Record*       _getRecord     () const;
+                 string        _getString     () const;
+                 Record*       _getRecord     () const;
 
         private:
         // Internal - Attributes.
@@ -388,6 +388,9 @@ namespace CRL {
 
   
 inline std::string  getPrint ( const CRL::Catalog &CATAL ) { return CATAL._getPrint(); }
+
+INSPECTOR_P_SUPPORT(CRL::Catalog);
+INSPECTOR_P_SUPPORT(CRL::Catalog::State);
 
 
 #endif

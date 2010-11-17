@@ -210,6 +210,8 @@ namespace {
         envPath = env.getCORIOLIS_TOP() + "/" + sysConfDir + "/coriolis2/environment.alliance.xml" ;
     }
 
+    cmess1 << "     - <" << envPath << ">." << endl;
+
     return ep._load ( envPath, warnNotFound );
   }
 
@@ -391,6 +393,7 @@ namespace {
   {
     unsigned int mode          = Environment::Append;
     QString      modeAttribute = _reader->attributes().value("mode").toString();
+    QString      nameAttribute = _reader->attributes().value("name").toString();
 
     if ( not modeAttribute.isEmpty() ) {
       if      ( modeAttribute == "append"  ) mode = Environment::Append;
@@ -403,9 +406,13 @@ namespace {
 
     string library   = readTextAsString().toStdString();
     expandVariables ( library );
+
+    string libName = nameAttribute.toStdString();
+    if ( libName.empty() )  libName = SearchPath::extractLibName ( library );
+
     switch ( _state ) {
       case WorkingLibrary: _environment.setWORKING_LIBRARY ( library.c_str() ); break;
-      case SystemLibrary:  _environment.addSYSTEM_LIBRARY  ( library.c_str(), mode ); break;
+      case SystemLibrary:  _environment.addSYSTEM_LIBRARY  ( library.c_str(), libName.c_str(), mode ); break;
     }
   }
 
@@ -651,14 +658,14 @@ namespace CRL {
     s << "     o  Libraries.\n"
       << "        - Catalog          := \"" << _CATALOG << "\"\n"
       << "        - Working Library:\n"
-      << "             0:\"" << _LIBRARIES[0] << "\"\n"
+      << "             0:\"" << _LIBRARIES[0].getPath() << "\"\n"
       << "        - System Libraries:\n";
 
     if ( _LIBRARIES.getSize() <= 1 ) {
       s << "          <not set or empty>.\n";
     } else {
       for ( size_t i = 1; i < _LIBRARIES.getSize() ; i++ ) {
-        s << "            " << setw(2) << i << ":\"" << _LIBRARIES[i] << "\"\n";
+        s << "            " << setw(2) << i << ":\"" << _LIBRARIES[i].getPath() << "\"\n";
       }
     }
 
@@ -737,26 +744,44 @@ namespace CRL {
   }
 
 
-  void  Environment::addSYSTEM_LIBRARY ( const char* value, unsigned int mode )
+  void  Environment::addSYSTEM_LIBRARY ( const char* value, const char* libName, unsigned int mode )
   {
-    if ( mode == Prepend ) { _LIBRARIES.prepend(value); return; }
-    if ( mode == Append  ) { _LIBRARIES.append (value); return; }
+    if ( mode == Prepend ) { _LIBRARIES.prepend(value,libName); return; }
+    if ( mode == Append  ) { _LIBRARIES.append (value,libName); return; }
 
-    string newLibName = _getLibraryName ( value );
+    string newLibName = libName;
     for ( size_t i=0 ; i < _LIBRARIES.getSize() ; ++i ) {
-      if ( newLibName == _getLibraryName(_LIBRARIES[i]) ) {
-        _LIBRARIES.replace ( value, i );
+      if ( newLibName == _LIBRARIES[i].getName() ) {
+        _LIBRARIES.replace ( value, newLibName, i );
         return;
       }
     }
-    _LIBRARIES.append (value);
+    _LIBRARIES.append (value,libName);
   }
 
 
-  string  Environment::_getLibraryName ( const std::string& path )
+  string  Environment::_getString () const
+  { return "<Environment>"; }
+
+
+  Record *Environment::_getRecord () const
   {
-    size_t slash = path.rfind ( '/' );
-    return path.substr ( (slash!=string::npos)?slash+1:0 );
+    Record* record = new Record ( "<Environment>" );
+    record->add ( getSlot ( "_CORIOLIS_TOP"       , &_CORIOLIS_TOP        ) );
+    record->add ( getSlot ( "_displayStyle"       , &_displayStyle        ) );
+    record->add ( getSlot ( "_SCALE_X"            , &_SCALE_X             ) );
+    record->add ( getSlot ( "_SYMBOLIC_TECHNOLOGY", &_SYMBOLIC_TECHNOLOGY ) );
+    record->add ( getSlot ( "_REAL_TECHNOLOGY"    , &_REAL_TECHNOLOGY     ) );
+    record->add ( getSlot ( "_DISPLAY"            , &_DISPLAY             ) );
+    record->add ( getSlot ( "_IN_LO"              , &_IN_LO               ) );
+    record->add ( getSlot ( "_IN_PH"              , &_IN_PH               ) );
+    record->add ( getSlot ( "_POWER"              , &_POWER               ) );
+    record->add ( getSlot ( "_GROUND"             , &_GROUND              ) );
+    record->add ( getSlot ( "_CLOCK"              , &_CLOCK               ) );
+    record->add ( getSlot ( "_OBSTACLE"           , &_OBSTACLE            ) );
+    record->add ( getSlot ( "_pad"                , &_pad                 ) );
+    record->add ( getSlot ( "_LIBRARIES"          , &_LIBRARIES           ) );
+    return record;
   }
 
 

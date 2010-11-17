@@ -25,7 +25,6 @@
       <library>${CELL_TOP}/cells/rflib</library>
       <library>${CELL_TOP}/cells/rf2lib</library>
       <library>${CELL_TOP}/cells/pxlib</library>
-      <library>${CORIOLIS_TOP}/share/cells/stratus2sxlib</library>
     </system>
   </libraries>
   <formats>

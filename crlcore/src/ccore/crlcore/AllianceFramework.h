@@ -79,9 +79,9 @@ namespace CRL {
       inline Library*           getParentLibrary         ();
              Library*           getLibrary               ( unsigned int index );
              AllianceLibrary*   getAllianceLibrary       ( unsigned int index );
-             AllianceLibrary*   getAllianceLibrary       ( const Name& path, unsigned int& flags );
+             AllianceLibrary*   getAllianceLibrary       ( const Name& libName, unsigned int& flags );
              AllianceLibrary*   getAllianceLibrary       ( Library* );
-             AllianceLibrary*   createLibrary            ( const string& path, unsigned int& flags );
+             AllianceLibrary*   createLibrary            ( const string& path, unsigned int& flags, string libName="" );
              void               saveLibrary              ( Library* );
              void               saveLibrary              ( AllianceLibrary* );
              RoutingGauge*      getRoutingGauge          ( const Name& name="" );
@@ -99,6 +99,10 @@ namespace CRL {
              unsigned int       loadLibraryCells         ( Library* );
              unsigned int       loadLibraryCells         ( const Name& );
       static size_t             getInstancesCount        ( Cell*, unsigned int flags );
+    // Hurricane Managment.
+      inline string             _getTypeName             () const;
+             string             _getString               () const;
+             Record*            _getRecord               () const;
 
     // Internals - Attributes.
     protected:
@@ -154,9 +158,13 @@ namespace CRL {
 // TEMPORARY.
   inline const Name   AllianceFramework::getDefaultCGPinLayerName
                                                           () const { return "CALU1"; }
+  inline string       AllianceFramework::_getTypeName     () const { return "AllianceFramework"; }
 
 
 } // End of CRL namespace.
+
+
+INSPECTOR_P_SUPPORT(CRL::AllianceFramework);
 
 
 #endif // __CRL_ALLIANCE_FRAMEWORK__

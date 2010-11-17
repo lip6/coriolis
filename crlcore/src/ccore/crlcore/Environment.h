@@ -29,7 +29,6 @@
 #include  <regex.h>
 
 #include  <string>
-
 #include  <crlcore/SearchPath.h>
 
 
@@ -92,10 +91,13 @@ namespace CRL {
              void               setPad                 ( const char* value );
       inline void               setCATALOG             ( const char* value );
       inline void               setWORKING_LIBRARY     ( const char* value );
-             void               addSYSTEM_LIBRARY      ( const char* value, unsigned int mode=Append );
+             void               addSYSTEM_LIBRARY      ( const char* value, const char* libName, unsigned int mode=Append );
 
     // Methods.
              std::string        getPrint               () const;
+      inline std::string        _getTypeName           () const;
+             std::string        _getString             () const;
+             Record*            _getRecord             () const;
 
     protected:
     // Internal: Attributes.
@@ -126,7 +128,6 @@ namespace CRL {
     private:
              void         _setRegex       ( regex_t* regex, const std::string& pattern, const char* name );
              void         _check          () const;
-      static std::string  _getLibraryName ( const std::string& path );
   };
 
 
@@ -159,10 +160,14 @@ namespace CRL {
   inline void                   Environment::setOUT_LO              ( const char* value ) { _OUT_LO = value; }
   inline void                   Environment::setOUT_PH              ( const char* value ) { _OUT_PH = value; }
   inline void                   Environment::setCATALOG             ( const char* value ) { _CATALOG = value; }
-  inline void                   Environment::setWORKING_LIBRARY     ( const char* value ) { _LIBRARIES.replace(value,0); }
+  inline void                   Environment::setWORKING_LIBRARY     ( const char* value ) { _LIBRARIES.replace(value,"working",0); }
+  inline std::string            Environment::_getTypeName           () const { return "Environment"; }
 
 
 } // End of CRL namespace.
+
+
+INSPECTOR_P_SUPPORT(CRL::Environment);
 
 
 # endif

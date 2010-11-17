@@ -1282,7 +1282,7 @@ void  vstParser ( const string cellPath, Cell *cell )
                         , Catalog::State::Views
                         , __ys->_state->getDepth()-1) ) {
       throw Error ( "CParsVst():\n"
-                    "  Unable to find cell \"%s\", please check your CRL_CATA_LIB.\n"
+                    "  Unable to find cell \"%s\", please check your <.environment.alliance.xml>.\n"
                   , getString(__ys->_cellQueue.front()).c_str()
                   );
     }

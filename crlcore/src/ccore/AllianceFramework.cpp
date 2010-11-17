@@ -50,10 +50,80 @@ namespace CRL {
   using Hurricane::Graphics;
   using Hurricane::ForEachIterator;
   using Hurricane::Instance;
+  using Hurricane::PrivateProperty;
+
+
+// -------------------------------------------------------------------
+// Class  :  "CRL::AllianceFrameworkProperty".
+
+
+  class AllianceFrameworkProperty : public PrivateProperty {
+    public:
+      static  AllianceFrameworkProperty* create          ( AllianceFramework* );
+      static  Name                       getPropertyName ();
+      virtual Name                       getName         () const;
+      inline  AllianceFramework*         getFramework    () const;
+      virtual string                     _getTypeName    () const;
+      virtual Record*                    _getRecord      () const;
+    private:
+      static  Name       _name;
+      AllianceFramework* _framework;
+    private:
+      inline  AllianceFrameworkProperty ( AllianceFramework* );
+  };
+
+
+  Name  AllianceFrameworkProperty::_name = "AllianceFramework";
+
+
+  inline AllianceFrameworkProperty::AllianceFrameworkProperty ( AllianceFramework* af )
+    : PrivateProperty(), _framework(af)
+  { }
+
+
+  inline AllianceFramework* AllianceFrameworkProperty::getFramework () const
+  { return _framework; }
+
+
+  AllianceFrameworkProperty* AllianceFrameworkProperty::create ( AllianceFramework* af )
+  {
+    AllianceFrameworkProperty *property = new AllianceFrameworkProperty ( af );
+
+    property->_postCreate ();
+    return property;
+  }
+
+
+  Name  AllianceFrameworkProperty::getPropertyName ()
+  { return _name; }
+
+
+  Name  AllianceFrameworkProperty::getName () const
+  { return getPropertyName(); }
+
+
+  string  AllianceFrameworkProperty::_getTypeName () const
+  { return _TName ( "AllianceFrameworkProperty" ); }
+
+
+  Record* AllianceFrameworkProperty::_getRecord () const
+  {
+    Record* record = PrivateProperty::_getRecord();
+    if ( record ) {
+      record->add( getSlot("_name"     ,_name     ) );
+      record->add( getSlot("_framework",_framework) );
+    }
+    return record;
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "CRL::AllianceFramework".
 
 
   AllianceFramework* AllianceFramework::_singleton         = NULL;
   const Name         AllianceFramework::_parentLibraryName = "AllianceFramework";
+
 
 
   AllianceFramework::AllianceFramework ()
@@ -70,8 +140,12 @@ namespace CRL {
     System::get ();
 
     DataBase* db = DataBase::getDB ();
-    if ( !db )
+    if ( not db )
       db = DataBase::create ();
+
+    db->put ( AllianceFrameworkProperty::create(this) );
+
+    cmess1 << "  o  Reading Alliance Environment." << endl;
 
     _environment.loadFromShell ();
     _environment.loadFromXml   ();
@@ -105,9 +179,9 @@ namespace CRL {
 
     cmess2 << "  o  Loading libraries (working first)." << endl;
     for ( unsigned i=0 ; i<LIBRARIES.getSize() ; i++ ) {
-      createLibrary ( LIBRARIES[i], flags );
+      createLibrary ( LIBRARIES[i].getPath(), flags, LIBRARIES[i].getName() );
 
-      cmess2 << "     - \"" << LIBRARIES[i] << "\"";
+      cmess2 << "     - \"" << LIBRARIES[i].getPath() << "\"";
       cmess2.flush();
 
       if ( flags&HasCatalog ) cmess2 << " [have CATAL]." << endl;
@@ -286,19 +360,14 @@ namespace CRL {
   }
 
 
-  AllianceLibrary* AllianceFramework::getAllianceLibrary ( const Name &path, unsigned int& flags )
+  AllianceLibrary* AllianceFramework::getAllianceLibrary ( const Name &libName, unsigned int& flags )
   {
-
-    string  spath   = getString ( path );
-    size_t  slash   = spath.rfind ( '/' );
-    string  sname   = spath.substr ( (slash!=string::npos)?slash+1:0 );
-
     for ( size_t ilib=0 ; ilib<_libraries.size() ; ++ilib ) {
-      if ( _libraries[ilib]->getLibrary()->getName() == sname )
+      if ( _libraries[ilib]->getLibrary()->getName() == libName )
         return _libraries[ilib];
     }
 
-    return (flags&CreateLibrary) ? createLibrary ( getString(path), flags ) : NULL;
+    return (flags&CreateLibrary) ? createLibrary ( getString(libName), flags ) : NULL;
   }
 
 
@@ -338,7 +407,6 @@ namespace CRL {
 
     // Transmit all flags except thoses related to views.
       loadMode |= (mode & (!Catalog::State::Views));
-
       parser    = & ( _parsers.getParserSlot ( name, loadMode, _environment ) );
 
     // Try to open cell file (file extention is supplied by the parser).
@@ -372,10 +440,9 @@ namespace CRL {
   }
 
 
-  AllianceLibrary* AllianceFramework::createLibrary ( const string& path, unsigned int& flags )
+  AllianceLibrary* AllianceFramework::createLibrary ( const string& path, unsigned int& flags, string libName )
   {
-    size_t  slash      = path.rfind ( '/' );
-    string  libName    = path.substr ( (slash!=string::npos)?slash+1:0 );
+    if ( libName.empty() ) libName = SearchPath::extractLibName(path);
 
     flags &= ~HasCatalog;
 
@@ -387,7 +454,7 @@ namespace CRL {
     }
 
     SearchPath& LIBRARIES = _environment.getLIBRARIES ();
-    if ( not (flags & InSearchPath) ) LIBRARIES.prepend ( path );
+    if ( not (flags & InSearchPath) ) LIBRARIES.prepend ( path, libName );
     else                              LIBRARIES.select  ( path );
 
     library = new AllianceLibrary ( path, Library::create(getParentLibrary(),libName) );
@@ -405,11 +472,8 @@ namespace CRL {
 
     if ( not parser.loadByLib() ) return library;
 
-    if ( slash == path.npos ) return library;
-    string file = path.substr(slash+1,path.size()-slash);
-
   // Load the whole library.
-    if ( ! _readLocate(file,Catalog::State::State::Logical,true) ) return library;
+    if ( ! _readLocate(libName,Catalog::State::State::Logical,true) ) return library;
 
   // Call the parser function.
     (parser.getParsLib())( _environment.getLIBRARIES().getSelected() , library->getLibrary() , _catalog );
@@ -687,6 +751,20 @@ namespace CRL {
     }
 
     return gates;
+  }
+
+
+  string  AllianceFramework::_getString () const
+  { return "<AllianceFramework>"; }
+
+
+  Record *AllianceFramework::_getRecord () const
+  {
+    Record* record = new Record ( "<AllianceFramework>" );
+    record->add ( getSlot ( "_environment", &_environment) );
+    record->add ( getSlot ( "_libraries"  , &_libraries  ) );
+    record->add ( getSlot ( "_catalog"    , &_catalog    ) );
+    return record;
   }
 
 

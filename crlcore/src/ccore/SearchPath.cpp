@@ -38,6 +38,24 @@ namespace CRL {
 
   using namespace std;
 
+
+  string  SearchPath::Element::_getString () const
+  {
+    ostringstream s;
+
+    s << "<SearchPath::Element " << _name << ":" << _path << ">";
+    return s.str();
+  }
+
+
+  Record *SearchPath::Element::_getRecord () const
+  {
+    Record* record = new Record ( "<SearchPath::Element>" );
+    record->add ( getSlot ( "_path", &_path ) );
+    record->add ( getSlot ( "_name", &_name ) );
+    return record;
+  }
+
   const size_t  SearchPath::npos          = (size_t)-1;
   const string  SearchPath::_selectFailed = "<File or directory not found>";
 
@@ -49,9 +67,16 @@ namespace CRL {
   { }
 
 
-  bool SearchPath::_canOpen ( const string& directory, const string& file, ios::openmode mode )
+  string  SearchPath::extractLibName ( const string& path )
   {
-    _selected = directory + "/" + file;
+    size_t slash = path.rfind ( '/' );
+    return path.substr ( (slash!=string::npos) ? slash+1 : 0 );
+  }
+
+
+  bool SearchPath::_canOpen ( const SearchPath::Element& directory, const string& file, ios::openmode mode )
+  {
+    _selected = directory.getPath() + "/" + file;
     fstream filestream ( _selected.c_str(), mode );
     if ( filestream.is_open() ) {
       filestream.close ();
@@ -62,30 +87,30 @@ namespace CRL {
   }
 
 
-  void  SearchPath::prepend ( const std::string& path )
+  void  SearchPath::prepend ( const std::string& path, const std::string& name )
   {
-    vector<string>::iterator ipath = _paths.begin();
+    vector<Element>::iterator ipath = _paths.begin();
 
     _index = 0;
     if ( ipath != _paths.end() ) { ++ipath; ++_index; }
 
-    _paths.insert ( ipath, path );
+    _paths.insert ( ipath, Element(path,name) );
   }
 
 
-  void  SearchPath::replace ( const string& path, size_t index )
+  void  SearchPath::replace ( const string& path, const std::string& name, size_t index )
   {
     _index = index;
     if ( index < _paths.size() )
-      _paths[index] = path;
+      _paths[index] = Element(path,name);
   }
 
 
   void  SearchPath::select ( const string& path )
   {
     for ( size_t ipath=0 ; ipath < _paths.size() ; ++ipath ) {
-      if ( _paths[ipath] == path ) {
-        _selected = _paths[ipath];
+      if ( _paths[ipath].getPath() == path ) {
+        _selected = _paths[ipath].getPath();
         _index    = ipath;
         return;
       }
@@ -113,17 +138,17 @@ namespace CRL {
   size_t  SearchPath::hasPath ( const string& path ) const
   {
     for ( size_t i=0 ; i < _paths.size() ; i++ )
-      if ( _paths[i] == path ) return i;
+      if ( _paths[i].getPath() == path ) return i;
     return npos;
   }
 
 
-  const string& SearchPath::operator[] ( size_t index ) const
+  const SearchPath::Element& SearchPath::operator[] ( size_t index ) const
   {
-    static const string  OutOfBound = "<index out of bound>";
+    static Element nullElement;
 
     if ( index < _paths.size() ) return _paths[index];
-    return OutOfBound;
+    return nullElement;
   }
 
 

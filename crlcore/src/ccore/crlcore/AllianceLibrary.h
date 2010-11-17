@@ -118,4 +118,7 @@ namespace CRL {
 } // End of CRL namespace.
 
 
+INSPECTOR_P_SUPPORT(CRL::AllianceLibrary);
+
+
 #endif
