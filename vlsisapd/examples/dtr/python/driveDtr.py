@@ -1,6 +1,6 @@
 from DTR import *
 
-techno = Techno(Name("myTech"), Name("micro"))
+techno = Techno(Name("myTech"), Name("micro"), Name("rev.A"))
 
 techno.addRule (Name("transistorMinL"), 0.1 , Name("ref1"))
 techno.addRule (Name("transistorMinW"), 0.2 , Name("ref2"))

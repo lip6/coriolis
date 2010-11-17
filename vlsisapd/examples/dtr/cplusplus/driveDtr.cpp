@@ -6,7 +6,7 @@ using namespace std;
 #include "vlsisapd/dtr/Name.h"
 
 int main(int argc, char * argv[]) {
-    DTR::Techno* techno = new DTR::Techno(DTR::Name("MyTech"), DTR::Name("micro"));
+    DTR::Techno* techno = new DTR::Techno(DTR::Name("MyTech"), DTR::Name("micro"), DTR::Name("rev.A"));
 
     techno->addRule (DTR::Name("transistorMinL"), 0.1 , DTR::Name("ref1"));
     techno->addRule (DTR::Name("transistorMinW"), 0.2 , DTR::Name("ref2"));

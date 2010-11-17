@@ -1,4 +1,4 @@
-<technology name="example" unit="micro">
+<technology name="example" unit="micro" version="rev.A">
    <physical_rules>
      <!-- transistor -->
      <rule  name="transistorMinL"                                         value="0.10"   ref="ref1"/> 

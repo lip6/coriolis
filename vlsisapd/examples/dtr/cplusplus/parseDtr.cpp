@@ -11,6 +11,7 @@ int main(int argc, char * argv[]) {
     cerr << "+-----------------------------+" << endl
          << "| technology:      " << techno->getName().getString() << "    |"   << endl
          << "| units:           " << techno->getUnit().getString() << "      |" << endl
+         << "| version:         " << techno->getVersion().getString() << "      |" << endl
          << "+-----------------------------+" << endl << endl;
 
     cerr << "transistorMinL                = " << techno->getValue(DTR::Name("transistorMinL")) << endl

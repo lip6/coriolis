@@ -6,6 +6,7 @@ techno = Techno.readFromFile("./example.dtr.xml")
 print "+-----------------------------+"
 print "| technology:      "+techno.getName().getString()+"    |"
 print "| units:           "+techno.getUnit().getString()+"      |"
+print "| version:         "+techno.getVersion().getString()+"      |"
 print "+-----------------------------+\n\n"
 
 print "transistorMinL                = %s"%techno.getValue(Name("transistorMinL"))
