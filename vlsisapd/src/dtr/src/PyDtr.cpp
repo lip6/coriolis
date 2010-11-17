@@ -46,6 +46,8 @@ BOOST_PYTHON_MODULE(DTR) {
 
         // modifiers
         .def("setType"         , &Rule::setType         )
+        .def("setValue"        , &Rule::setValue        )
+        .def("setRef"          , &Rule::setRef          )
     ; 
 
     // class DTR::ARule derived from DTR::Rule
@@ -53,15 +55,19 @@ BOOST_PYTHON_MODULE(DTR) {
     ;
 
     // class DTR::Techno
-    class_<Techno>("Techno", init<Name, Name>())
+    class_<Techno>("Techno", init<Name, Name, Name>())
         // accessors
         .def("getName"         , &Techno::getName)
         .def("getUnit"         , &Techno::getUnit)
+        .def("getVersion"      , &Techno::getVersion)
         .def("getRule"         , &Techno::getRule         , getRule_overloads()[return_value_policy<reference_existing_object>()])
         .def("getValue"        , &Techno::getValue        , getValue_overloads())
         .def("getValueAsString", &Techno::getValueAsString, getValueAsString_overloads()[return_value_policy<copy_const_reference>()])
         
         // modifiers
+        .def("setName"         , &Techno::setName)
+        .def("setUnit"         , &Techno::setUnit)
+        .def("setVersion"      , &Techno::setVersion)
         .def("addRule"         , &Techno::addRule , addRule_overloads()[return_value_policy<reference_existing_object>()])
         .def("addARule"        , &Techno::addARule, return_value_policy<reference_existing_object>())
 

@@ -36,7 +36,7 @@ namespace {
 }
 
 namespace DTR {
-Techno::Techno(Name name, Name unit) : _name(name), _unit(unit) {}
+Techno::Techno(Name name, Name unit, Name version) : _name(name), _unit(unit), _version(version) {}
 
 Rule* Techno::addRule (Name name, double value, Name ref, Name layer1, Name layer2) {
     Rule* rule = new Rule(name, value, ref, layer1, layer2);
@@ -51,37 +51,11 @@ ARule* Techno::addARule (Name name, double value, Name ref, Name layer1, Name la
 }
 
 Rule* Techno::getRule(Name name, Name layer1, Name layer2) {
-    //bool testL1   = (layer1 == Name("")) ? false : true;
-    //bool testL2   = (layer2 == Name("")) ? false : true;
-
     for (size_t i = 0 ; i < _rules.size() ; i++) {
         Rule* rule = _rules[i];
-    //    if (rule->getName() == name) {
-    //        if (testL1) {
-    //            if (rule->getLayer1() == layer1) {
-    //                if (testL2) {
-    //                    if (rule->getLayer2() == layer2) {
-    //                        return rule;
-    //                    }
-    //                } else {
-    //                    return rule;
-    //                }
-    //            }
-    //        } else {
-    //            return rule;
-    //        }
-    //    }
         if ((rule->getName() == name) && (rule->getLayer1() == layer1) && (rule->getLayer2() == layer2))
             return rule;
     }
-    //string error ("[ERROR] Could not find rule: ");
-    //error += name.getString();
-    //error += ".";
-    //error += layer1.getString();
-    //error += ".";
-    //error += layer2.getString();
-    //error += ".";
-    //throw DTRException(error);
     return NULL;
 }
 
@@ -111,19 +85,20 @@ Techno* Techno::readFromFile(const string filePath) {
         string error ("[ERROR] Failed to parse: ");
         error += filePath;
         throw DTRException(error);
-        //return NULL;
     }
     xmlNode* rootElement = xmlDocGetRootElement(doc);
     if (rootElement->type == XML_ELEMENT_NODE && xmlStrEqual(rootElement->name, (xmlChar*)"technology")) {
         xmlChar* technoNameC = xmlGetProp(rootElement, (xmlChar*)"name");
         xmlChar* technoUnitC = xmlGetProp(rootElement, (xmlChar*)"unit");
+        xmlChar* technoVersC = xmlGetProp(rootElement, (xmlChar*)"version");
         
-        if (technoNameC && technoUnitC) {
+        if (technoNameC && technoUnitC && technoVersC) {
             Name name ((const char*)technoNameC);
             Name unit ((const char*)technoUnitC);
-            techno = new Techno(name, unit);
+            Name vers ((const char*)technoVersC);
+            techno = new Techno(name, unit, vers);
         } else {
-            throw DTRException("[ERROR] 'technology' node must have 'name' and 'unit' properties.");
+            throw DTRException("[ERROR] 'technology' node must have 'name', 'unit' and 'version' properties.");
             return NULL;
         }
 
@@ -215,7 +190,7 @@ bool Techno::writeToFile(string filePath) {
         throw DTRException("[ERROR] Cannot writeToFile since no rule is defined!");
     }    
 
-    file << "<technology name=\"" << _name.getString() << "\" unit=\"" << _unit.getString() << "\">" << endl
+    file << "<technology name=\"" << _name.getString() << "\" unit=\"" << _unit.getString() << "\" version=\"" << _version.getString() << "\">" << endl
          << "  <physical_rules>" << endl;
 
     file.setf(ios::left, ios::adjustfield);
