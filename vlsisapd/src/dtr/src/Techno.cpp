@@ -92,13 +92,15 @@ Techno* Techno::readFromFile(const string filePath) {
         xmlChar* technoUnitC = xmlGetProp(rootElement, (xmlChar*)"unit");
         xmlChar* technoVersC = xmlGetProp(rootElement, (xmlChar*)"version");
         
-        if (technoNameC && technoUnitC && technoVersC) {
+        if (technoNameC && technoUnitC) {
             Name name ((const char*)technoNameC);
             Name unit ((const char*)technoUnitC);
-            Name vers ((const char*)technoVersC);
+            Name vers = Name("");
+            if (technoVersC)
+                vers = Name((const char*)technoVersC);
             techno = new Techno(name, unit, vers);
         } else {
-            throw DTRException("[ERROR] 'technology' node must have 'name', 'unit' and 'version' properties.");
+            throw DTRException("[ERROR] 'technology' node must have 'name' and 'unit' properties.");
             return NULL;
         }
 
