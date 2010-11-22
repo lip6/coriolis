@@ -102,26 +102,26 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
         .def(vector_indexing_suite<std::vector<Transistor*>, true>())
     ;
     // class OpenChams::Instance
-    class_<Instance, Instance*>("Instance", init<Name, Name, Name, bool, Netlist*>())
+    class_<Instance, Instance*>("Instance", init<Name, Name, Netlist*>())
         // properties
         .add_property("name"               , &Instance::getName              )
         .add_property("model"              , &Instance::getModel             )
-        .add_property("mosType"            , &Instance::getMosType           )
-        .add_property("sourceBulkConnected", &Instance::isSourceBulkConnected)
+//        .add_property("mosType"            , &Instance::getMosType           )
+//        .add_property("sourceBulkConnected", &Instance::isSourceBulkConnected)
         .add_property("parameters"         , &Instance::getParameters        )
         .add_property("netlist"            , make_function(&Instance::getNetlist ,return_value_policy<reference_existing_object>())) //make_function since we need to specify a return value policy
         // accessors
         .def("hasNoConnectors" , &Instance::hasNoConnectors )
-        .def("hasNoTransistors", &Instance::hasNoTransistors)
+//        .def("hasNoTransistors", &Instance::hasNoTransistors)
         // modifiers
         .def("addConnector" , &Instance::addConnector )
         .def("connect"      , &Instance::connect      )
-        .def("addTransistor", &Instance::addTransistor, return_value_policy<reference_existing_object>())
+//        .def("addTransistor", &Instance::addTransistor, return_value_policy<reference_existing_object>())
         .def("addParameter" , static_cast<void(Transistor::*)(Name, double     )>(&Transistor::addParameter))
         .def("addParameter" , static_cast<void(Transistor::*)(Name, std::string)>(&Transistor::addParameter))
         // stl containers
         .def("getConnectors" , &Instance::getConnectors , return_internal_reference<>())
-        .def("getTransistors", &Instance::getTransistors, return_internal_reference<>())
+//        .def("getTransistors", &Instance::getTransistors, return_internal_reference<>())
     ;
 
     // vector_indexing for OpenChams::Net

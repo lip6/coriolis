@@ -23,6 +23,7 @@
 namespace OpenChams {
 class Netlist;
 class Instance;
+class Device;
 class Net;
 class Schematic;
 class Sizing;
@@ -62,6 +63,7 @@ class Circuit {
     Name      readParameter(xmlNode*, double&);
     Name      readParameterEq(xmlNode*, std::string&);
     Name      readConnector(xmlNode*);
+    void      readSubCircuitsPathes(xmlNode*);
     void      readCircuitParameters(xmlNode*);
     void      readSimulModels(xmlNode*);
     void      readNetList(xmlNode*);
@@ -69,8 +71,8 @@ class Circuit {
     Instance* readInstance (xmlNode*, Netlist*);
     void      readInstanceParameters(xmlNode*, Instance*);
     void      readInstanceConnectors(xmlNode*, Instance*);
-    void      readInstanceTransistors(xmlNode*, Instance*);
-    void      readTransistor(xmlNode*, Instance*);
+    void      readInstanceTransistors(xmlNode*, Device*);
+    void      readTransistor(xmlNode*, Device*);
     void      readTransistorConnection(xmlNode*, Transistor*);
     void      readNets(xmlNode*, Netlist*);
     Net*      readNet (xmlNode*, Netlist*);
@@ -95,6 +97,7 @@ class Circuit {
     Schematic* _schematic;
     Sizing*    _sizing;
     Layout*    _layout;
+    std::vector<std::string> _subCircuitsPathes;
     std::map<unsigned, SimulModel*> _simulModels;
 };
     

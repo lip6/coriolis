@@ -19,10 +19,11 @@
 namespace OpenChams {
 class Netlist;
 class Net;
-class Transistor;
 class Instance {
 	public:
-    Instance(Name name, Name model, Name mosType, bool, Netlist*);
+    Instance(Name name, Name model, Netlist*);
+
+    virtual ~Instance() {};
     
     void addConnector(Name);
     void connect(Name connectorName, Name netName);
@@ -31,42 +32,28 @@ class Instance {
     inline void addParameter(Name, std::string);
     inline Name getName() const;
     inline Name getModel();
-    inline Name getMosType();
-    inline bool isSourceBulkConnected();
     inline Netlist* getNetlist();
     inline Parameters getParameters();
     // pour parcourir les connecteurs
     inline bool hasNoConnectors();
     inline const std::map<Name, Net*>& getConnectors();
-    // pour parcourir les transistors
-    inline bool hasNoTransistors();
-    inline const std::vector<Transistor*>& getTransistors();
-
-    Transistor* addTransistor(Name);
 
 	private:
 	Name 	   		_name;
     Name 	   		_model;
-    Name 	   		_mosType;
-    bool            _sourceBulkConnected;
     Netlist*   		_netlist;
     Parameters 		_params;
     std::map<Name, Net*>     _netMap; //map associant nom de connecteur a un net
-    std::vector<Transistor*> _trans;
 };
 
 inline void Instance::addParameter(Name name, double value) { _params.addParameter(name, value); };
 inline void Instance::addParameter(Name name, std::string eqStr) { _params.addParameter(name, eqStr); };
 inline Name Instance::getName() const { return _name; };
 inline Name Instance::getModel() { return _model; };
-inline Name Instance::getMosType() { return _mosType; };
-inline bool Instance::isSourceBulkConnected() { return _sourceBulkConnected; };
 inline Netlist* Instance::getNetlist() { return _netlist; };
 inline Parameters Instance::getParameters() { return _params; };
 inline bool Instance::hasNoConnectors() { return (_netMap.size() == 0)? true : false; };
 inline const std::map<Name, Net*>& Instance::getConnectors() { return _netMap; };
-inline bool Instance::hasNoTransistors() { return (_trans.size() == 0)? true : false; };
-inline const std::vector<Transistor*>& Instance::getTransistors() { return _trans; };
     
 } // namespace
 #endif

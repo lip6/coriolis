@@ -15,6 +15,7 @@
 namespace OpenChams {
 class Name;
 class Instance;
+class Device;
 class Net;
 class Circuit;
 
@@ -22,7 +23,8 @@ class Netlist {
 	public:
     Netlist(Circuit*);
         
-    Instance* addInstance(Name name, Name model, Name mosType, bool);
+    Instance* addInstance(Name name, Name model);
+    Device*   addDevice  (Name name, Name model, Name mosType, bool);
     Net*      addNet     (Name name, Name type , bool);
     
     Instance* getInstance(Name);
@@ -34,7 +36,7 @@ class Netlist {
     inline const std::vector<Net*>& getNets();
     
     private:
-    Circuit*          _circuit;
+    Circuit*               _circuit;
     std::vector<Instance*> _instances;
     std::vector<Net*>      _nets;
 };

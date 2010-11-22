@@ -17,6 +17,7 @@ using namespace std;
 #include "vlsisapd/openChams/Circuit.h"
 #include "vlsisapd/openChams/Netlist.h"
 #include "vlsisapd/openChams/Instance.h"
+#include "vlsisapd/openChams/Device.h"
 #include "vlsisapd/openChams/Net.h"
 #include "vlsisapd/openChams/Schematic.h"
 #include "vlsisapd/openChams/SimulModel.h"
@@ -38,6 +39,7 @@ namespace {
 
 namespace OpenChams {
     
+static bool readSubCircuitsPathesDone = false;
 static bool readCircuitParametersDone = false;
 static bool readSimulModelsDone       = false;
 static bool readNetListDone           = false;
@@ -48,6 +50,7 @@ static bool readSizingDone            = false;
 static bool readLayoutDone            = false;
     
 Circuit::Circuit(Name name, Name techno) : _name(name), _techno(techno), _netlist(NULL), _schematic(NULL), _sizing(NULL), _layout(NULL) {
+    readSubCircuitsPathesDone = false;
     readCircuitParametersDone = false;
     readSimulModelsDone       = false;
     readNetListDone           = false;
@@ -142,6 +145,32 @@ Name Circuit::readConnector(xmlNode* node) {
 }
 
 // CIRCUIT //
+void Circuit::readSubCircuitsPathes(xmlNode* node) {
+    if (readSubCircuitsPathesDone) {
+        cerr << "[WARNING] Only one 'subCircuitsPathes' node is allowed in circuit, others will be ignored." << endl;
+        return;
+    }
+    if (node->type == XML_ELEMENT_NODE && node->children) {
+        for (xmlNode* pathNode = node->children ; pathNode ; pathNode = pathNode->next) {
+            if (pathNode->type == XML_ELEMENT_NODE) {
+                if (xmlStrEqual(pathNode->name, (xmlChar*)"path")) {
+                    xmlChar* pathC = xmlGetProp(pathNode, (xmlChar*)"path");
+                    if (pathC) {
+                        string path((const char*)pathC);
+                        _subCircuitsPathes.push_back(path);
+                    } else {
+                        throw OpenChamsException("[ERROR] 'path' node must have 'path' property.");
+                    }
+                } else {
+                    cerr << "[WARNING] Only 'path' nodes are allowed under 'subCircuitsPathes' node." << endl;
+                    return;
+                }
+            }
+        }
+    }
+    readSubCircuitsPathesDone = true;
+}
+
 void Circuit::readCircuitParameters(xmlNode* node) {
     if (readCircuitParametersDone) {
         cerr << "[WARNING] Only one 'parameters' node is allowed in circuit, others will be ignored." << endl;
@@ -281,7 +310,7 @@ Instance* Circuit::readInstance(xmlNode* node, Netlist* netlist) {
     xmlChar* iMOSC   = xmlGetProp(node, (xmlChar*)"mostype");
     xmlChar* iSBCC   = xmlGetProp(node, (xmlChar*)"sourceBulkConnected");
     Instance* inst = NULL;
-    if (iNameC && iModelC && iMOSC && iSBCC) {
+    if (iNameC && iModelC && iMOSC && iSBCC) { // this is a device
         Name instanceName((const char*)iNameC);
         Name modelName((const char*)iModelC);
         string mosStr((const char*)iMOSC);
@@ -293,9 +322,13 @@ Instance* Circuit::readInstance(xmlNode* node, Netlist* netlist) {
         vector<string> sbcComps(sbcComp, sbcComp+4);
         check_lowercase(sourceBulkStr, sbcComps, "[ERROR] In 'instance', 'sourceBulkConnected' must 'true', 'false', 'on' or 'off'.");
         bool sourceBulkConnected = ((sourceBulkStr == "true") || (sourceBulkStr == "on")) ? true : false;
-        inst = netlist->addInstance(instanceName, modelName, Name(mosStr), sourceBulkConnected);
+        inst = (Instance*)netlist->addDevice(instanceName, modelName, Name(mosStr), sourceBulkConnected);
+    } else if (iNameC && iModelC && !iMOSC && !iSBCC) { // this is a subcircuit
+        Name instanceName((const char*)iNameC);
+        Name modelName((const char*)iModelC);
+        inst = netlist->addInstance(instanceName, modelName);
     } else {
-        throw OpenChamsException("[ERROR] 'instance' node must have 'name', 'model', 'mostype' and 'sourceBulkConnected' properties.");
+        throw OpenChamsException("[ERROR] 'instance' node must have ('name' and 'model') or ('name', 'model', 'mostype' and 'sourceBulkConnected') properties.");
         //return inst;
     }
 
@@ -307,7 +340,9 @@ Instance* Circuit::readInstance(xmlNode* node, Netlist* netlist) {
             } else if (xmlStrEqual(node->name, (xmlChar*)"parameters")) {
                 readInstanceParameters(node, inst);
             } else if (xmlStrEqual(node->name, (xmlChar*)"transistors")) {
-                readInstanceTransistors(node, inst);
+                if (!dynamic_cast<Device*>(inst))
+                    throw OpenChamsException("[ERROR] Only device 'instance' (with 'mostype' and 'sourceBulkConnected' properties) can have 'transistors' section.");
+                readInstanceTransistors(node, static_cast<Device*>(inst));
             } else {
                 //cerr << "[WARNING] Only 'parameters' node is allowed in 'instance', others will be ignored." << endl;
                 cerr << "[WARNING] Only 'conectors', 'transistors' and 'parameters' nodes are allowed in 'instance', others will be ignored." << endl;
@@ -352,12 +387,12 @@ void Circuit::readInstanceParameters(xmlNode* node, Instance* inst) {
     }
 }
 
-void Circuit::readInstanceTransistors(xmlNode* node, Instance* inst) {
+void Circuit::readInstanceTransistors(xmlNode* node, Device* dev) {
     xmlNode* child = node->children;
     for (xmlNode* node = child; node; node = node->next) {
         if (node->type == XML_ELEMENT_NODE) {
             if (xmlStrEqual(node->name, (xmlChar*)"transistor")) {
-                readTransistor(node, inst);
+                readTransistor(node, dev);
             } else {
                 cerr << "[WARNING] Only 'transistor' nodes are allowed in 'transistors', others will be ignored." << endl;
             }
@@ -366,12 +401,12 @@ void Circuit::readInstanceTransistors(xmlNode* node, Instance* inst) {
     }
 }
     
-void Circuit::readTransistor(xmlNode* node, Instance* inst) {
+void Circuit::readTransistor(xmlNode* node, Device* dev) {
     xmlChar* tNameC  = xmlGetProp(node, (xmlChar*)"name");
     Transistor* trans = NULL;
     if (tNameC) {
         Name tName((const char*)tNameC);
-        trans = inst->addTransistor(tName);
+        trans = dev->addTransistor(tName);
     } else {
         throw OpenChamsException("[ERROR] 'transistor' node must have 'name' property.");
         //return inst;
@@ -708,7 +743,10 @@ Circuit* Circuit::readFromFile(const string filePath) {
         xmlNode* child = rootElement->children;
         for (xmlNode* node = child; node; node = node->next) {
             if (node->type == XML_ELEMENT_NODE) {
-                if (xmlStrEqual(node->name, (xmlChar*)"parameters")) {
+                if (xmlStrEqual(node->name, (xmlChar*)"subCircuitsPathes")) {
+                    cir->readSubCircuitsPathes(node);
+                }
+                else if (xmlStrEqual(node->name, (xmlChar*)"parameters")) {
                     cir->readCircuitParameters(node);
                 }
                 else if (xmlStrEqual(node->name, (xmlChar*)"simulModels")) {
@@ -830,6 +868,7 @@ bool Circuit::writeToFile(string filePath) {
     sort(instances.begin(), instances.end(), InstanceNameSort); // sort based on instances' names
     for (vector<Instance*>::iterator it = instances.begin() ; it != instances.end() ; ++it) {
         Instance* inst = (*it);
+        Device*   dev  = dynamic_cast<Device*>(inst);
         if (inst->hasNoConnectors()) {
             string error("[ERROR] Cannot writeToFile since instance (");
             error += inst->getName().getString();
@@ -837,27 +876,33 @@ bool Circuit::writeToFile(string filePath) {
             throw OpenChamsException(error);
             //return false;
         }
-        if (inst->hasNoTransistors()) {
-            string error("[ERROR] Cannot writeToFile since instance (");
-            error += inst->getName().getString();
+        if (dev && dev->hasNoTransistors()) {
+            string error("[ERROR] Cannot writeToFile since device instance (");
+            error += dev->getName().getString();
             error += ") has no transistors !";
             throw OpenChamsException(error);
         }
-        string sourceBulkStr = (inst->isSourceBulkConnected()) ? "True" : "False";
-        file << "      <instance name=\"" << inst->getName().getString() << "\" model=\"" << inst->getModel().getString() << "\" mostype=\"" << inst->getMosType().getString() << "\" sourceBulkConnected=\"" << sourceBulkStr << "\">" << endl;
+        if (dev) {
+            string sourceBulkStr = (dev->isSourceBulkConnected()) ? "True" : "False";
+            file << "      <instance name=\"" << dev->getName().getString() << "\" model=\"" << dev->getModel().getString() << "\" mostype=\"" << dev->getMosType().getString() << "\" sourceBulkConnected=\"" << sourceBulkStr << "\">" << endl;
+        } else {
+            file << "      <instance name=\"" << inst->getName().getString() << "\" model=\"" << inst->getModel().getString() << "\">" << endl;
+        }
         file << "        <connectors>" << endl;
         for (map<Name, Net*>::const_iterator it = inst->getConnectors().begin() ; it != inst->getConnectors().end() ; ++it) {
             file << "          <connector name=\"" << (*it).first.getString() << "\"/>" << endl;
         }
-        file << "        </connectors>" << endl
-             << "        <transistors>" << endl;
-        for (vector<Transistor*>::const_iterator it = inst->getTransistors().begin() ; it != inst->getTransistors().end() ; ++it ) {
-            Transistor* tr = (*it);
-            file << "          <transistor name=\"" << tr->getName().getString() << "\">" << endl
-                 << "            <connection gate=\"" << tr->getGate().getString() << "\" source=\"" << tr->getSource().getString() << "\" drain=\"" << tr->getDrain().getString() << "\" bulk=\"" << tr->getBulk().getString() << "\"/>" << endl
-                 << "          </transistor>" << endl;
+        file << "        </connectors>" << endl;
+        if (dev) {
+            file << "        <transistors>" << endl;
+            for (vector<Transistor*>::const_iterator it = dev->getTransistors().begin() ; it != dev->getTransistors().end() ; ++it ) {
+                Transistor* tr = (*it);
+                file << "          <transistor name=\"" << tr->getName().getString() << "\">" << endl
+                     << "            <connection gate=\"" << tr->getGate().getString() << "\" source=\"" << tr->getSource().getString() << "\" drain=\"" << tr->getDrain().getString() << "\" bulk=\"" << tr->getBulk().getString() << "\"/>" << endl
+                     << "          </transistor>" << endl;
+            }
+            file << "        </transistors>" << endl;
         }
-        file << "        </transistors>" << endl;
         if (!inst->getParameters().isEmpty()) {
             Parameters params = inst->getParameters();
             file << "        <parameters>" << endl;

@@ -13,6 +13,7 @@ using namespace std;
 
 #include "vlsisapd/openChams/Netlist.h"
 #include "vlsisapd/openChams/Instance.h"
+#include "vlsisapd/openChams/Device.h"
 #include "vlsisapd/openChams/Net.h"
 #include "vlsisapd/openChams/Circuit.h"
 #include "vlsisapd/openChams/OpenChamsException.h"
@@ -20,7 +21,7 @@ using namespace std;
 namespace OpenChams {
 Netlist::Netlist(Circuit* circuit) : _circuit(circuit) {}
     
-Instance* Netlist::addInstance(Name name, Name model, Name mosType, bool sourceBulkConnected) {
+Instance* Netlist::addInstance(Name name, Name model) {
     for (vector<Instance*>::iterator it = _instances.begin() ; it != _instances.end() ; ++it) {
         if ((*it)->getName() == name) {
             string error("[ERROR] Cannot define two instances with the same name in netlist (");
@@ -29,12 +30,29 @@ Instance* Netlist::addInstance(Name name, Name model, Name mosType, bool sourceB
             throw OpenChamsException(error);
         }
     }
-    Instance* inst = new Instance(name, model, mosType, sourceBulkConnected, this);
+    Instance* inst = new Instance(name, model, this);
     if (!inst)
         throw OpenChamsException("[ERROR] Cannot creeate instance.");
     _instances.push_back(inst);
 
     return inst;
+}
+
+Device* Netlist::addDevice(Name name, Name model, Name mosType, bool sourceBulkConnected) {
+    for (vector<Instance*>::iterator it = _instances.begin() ; it != _instances.end() ; ++it) {
+        if ((*it)->getName() == name) {
+            string error("[ERROR] Cannot define two instances with the same name in netlist (");
+            error += name.getString();
+            error += ").";
+            throw OpenChamsException(error);
+        }
+    }
+    Device* dev = new Device(name, model, mosType, sourceBulkConnected, this);
+    if (!dev)
+        throw OpenChamsException("[ERROR] Cannot creeate device.");
+    _instances.push_back(dev);
+
+    return dev;
 }
 
 Net* Netlist::addNet(Name name, Name type, bool external) {

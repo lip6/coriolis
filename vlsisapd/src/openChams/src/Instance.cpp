@@ -13,19 +13,15 @@ using namespace std;
 #include "vlsisapd/openChams/Instance.h"
 #include "vlsisapd/openChams/Netlist.h"
 #include "vlsisapd/openChams/Net.h"
-#include "vlsisapd/openChams/Transistor.h"
 #include "vlsisapd/openChams/OpenChamsException.h"
 
 namespace OpenChams {
-Instance::Instance(Name name, Name model, Name mosType, bool sourceBulkConnected, Netlist* netlist)
+Instance::Instance(Name name, Name model, Netlist* netlist)
     : _name(name)
     , _model(model)
-    , _mosType(mosType)
-    , _sourceBulkConnected(sourceBulkConnected)
     , _netlist(netlist)
     , _params()
-    , _netMap()
-    , _trans() {}
+    , _netMap() {}
 
 void Instance::addConnector(Name name) {
     // si name n'est pas déjà présent dans la map on ajoute name, NULL (pas de net)
@@ -63,15 +59,6 @@ void Instance::connect(Name connectorName, Name netName) {
         error += ") does not exist.";
         throw OpenChamsException(error);
     }
-}
-
-Transistor* Instance::addTransistor(Name name) {
-    Transistor* tr = new Transistor(name, this);
-    if (!tr)
-        throw OpenChamsException("[ERROR] Cannot create transistor.");
-
-    _trans.push_back(tr); 
-    return tr;
 }
 }
 

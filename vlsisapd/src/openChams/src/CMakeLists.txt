@@ -3,6 +3,7 @@ INCLUDE_DIRECTORIES(${VLSISAPD_SOURCE_DIR}/src/openChams/src ${LIBXML2_INCLUDE_D
 SET ( hpps vlsisapd/openChams/Circuit.h
            vlsisapd/openChams/Netlist.h
            vlsisapd/openChams/Instance.h
+           vlsisapd/openChams/Device.h
            vlsisapd/openChams/Net.h
            vlsisapd/openChams/Name.h
            vlsisapd/openChams/Operator.h
@@ -17,6 +18,7 @@ SET ( hpps vlsisapd/openChams/Circuit.h
 SET ( cpps Circuit.cpp
            Netlist.cpp
            Instance.cpp
+           Device.cpp
            Net.cpp
            Name.cpp
            Operator.cpp
