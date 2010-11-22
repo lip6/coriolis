@@ -9,12 +9,14 @@ using namespace std;
 #include "vlsisapd/openChams/Parameters.h"
 #include "vlsisapd/openChams/Netlist.h"
 #include "vlsisapd/openChams/Instance.h"
+#include "vlsisapd/openChams/Device.h"
 #include "vlsisapd/openChams/Net.h"
 #include "vlsisapd/openChams/Transistor.h"
 #include "vlsisapd/openChams/Schematic.h"
 #include "vlsisapd/openChams/Sizing.h"
 #include "vlsisapd/openChams/Operator.h"
 #include "vlsisapd/openChams/Layout.h"
+#include "vlsisapd/openChams/OpenChamsException.h"
 
 int main(int argc, char * argv[]) {
     string file = "";
@@ -27,7 +29,13 @@ int main(int argc, char * argv[]) {
         exit(1);
     }
 
-    OpenChams::Circuit* circuit = OpenChams::Circuit::readFromFile(file);
+    OpenChams::Circuit* circuit = NULL;
+    try {
+        circuit = OpenChams::Circuit::readFromFile(file);
+    } catch (OpenChams::OpenChamsException& e) {
+        cerr << e.what() << endl;
+        exit(48);
+    }
 
     cerr << circuit->getName().getString() << endl;
     cerr << " + parameters" << endl;
@@ -46,7 +54,13 @@ int main(int argc, char * argv[]) {
     if (netlist && !netlist->hasNoInstances()) {
         for (size_t i = 0 ; i < netlist->getInstances().size() ; i++) {
             OpenChams::Instance* inst = netlist->getInstances()[i];
-            cerr << " | | + " << inst->getName().getString() << " : " << inst->getModel().getString() << " - " << inst->getMosType().getString() << " - " << (inst->isSourceBulkConnected()?"true":"false") << endl;
+            OpenChams::Device*   dev  = NULL;
+            if (dynamic_cast<OpenChams::Device*>(inst)) {
+                dev = static_cast<OpenChams::Device*>(inst);
+                cerr << " | | + " << dev->getName().getString() << " : " << dev->getModel().getString() << " - " << dev->getMosType().getString() << " - " << (dev->isSourceBulkConnected()?"true":"false") << endl;
+            } else {
+                cerr << " | | + " << inst->getName().getString() << " : " << inst->getModel().getString() << endl;
+            }
             cerr << " | | | + connectors" << endl;
             for (map<OpenChams::Name, OpenChams::Net*>::const_iterator cit = inst->getConnectors().begin() ; cit != inst->getConnectors().end() ; ++cit) {
                 if ((*cit).second)
@@ -54,10 +68,12 @@ int main(int argc, char * argv[]) {
                 else
                     cerr << " | | | | " << ((*cit).first).getString() << endl; // no net connected !
             }
-            cerr << " | | | + transistors" << endl;
-            for (size_t j = 0 ; j < inst->getTransistors().size() ; j++) {
-                OpenChams::Transistor* tr = inst->getTransistors()[j];
-                cerr << " | | | | name: " <<  tr->getName().getString() << " - gate: " << tr->getGate().getString() << " - source: " << tr->getSource().getString() << " - drain: " << tr->getDrain().getString() << " - bulk: " << tr->getBulk().getString() << endl;
+            if (dev) {
+                cerr << " | | | + transistors" << endl;
+                for (size_t j = 0 ; j < dev->getTransistors().size() ; j++) {
+                    OpenChams::Transistor* tr = dev->getTransistors()[j];
+                    cerr << " | | | | name: " <<  tr->getName().getString() << " - gate: " << tr->getGate().getString() << " - source: " << tr->getSource().getString() << " - drain: " << tr->getDrain().getString() << " - bulk: " << tr->getBulk().getString() << endl;
+                }
             }
         }
     }

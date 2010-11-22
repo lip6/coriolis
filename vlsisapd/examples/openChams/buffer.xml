@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<circuit name="buffer" techno="myTech">
+  <subCircuitsPathes>
+    <path   path="."/>
+  </subCircuitsPathes>
+  <netlist>
+    <instances>
+      <instance name="inv1" model="inverter">
+        <connectors>
+          <connector name="vdd"/>
+          <connector name="vss"/>
+          <connector name="in" />
+          <connector name="out"/>
+        </connectors>
+      </instance>
+      <instance name="inv2" model="inverter">
+        <connectors>
+          <connector name="vdd"/>
+          <connector name="vss"/>
+          <connector name="in" />
+          <connector name="out"/>
+        </connectors>
+      </instance>
+    </instances>
+    <nets>
+      <net name="vdd" type="power" isExternal="True">
+        <connector instance="inv1" name="vdd"/>
+        <connector instance="inv2" name="vdd"/>
+      </net>
+      <net name="vss" type="ground" isExternal="True">
+        <connector instance="inv1" name="vss"/>
+        <connector instance="inv2" name="vss"/>
+      </net>
+      <net name="in" type="logical" isExternal="True">
+        <connector instance="inv1" name="in"/>
+      </net>
+      <net name="out" type="logical" isExternal="True">
+        <connector instance="inv2" name="out"/>
+      </net>
+      <net name="internal" type="logical" isExternal="False">
+        <connector instance="inv1" name="out"/>
+        <connector instance="inv2" name="in"/>
+      </net>
+    </nets>
+  </netlist>
+</circuit>

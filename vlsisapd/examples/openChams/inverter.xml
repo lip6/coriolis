@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<circuit name="design" techno="myTech">
+<circuit name="inverter" techno="myTech">
   <parameters>
     <parameter   name="temp"    value="27.0"/>
     <parameter   name="Vdd"     value="1.2"/>

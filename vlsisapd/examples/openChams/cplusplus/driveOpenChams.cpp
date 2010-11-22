@@ -4,6 +4,7 @@ using namespace std;
 #include "vlsisapd/openChams/Circuit.h"
 #include "vlsisapd/openChams/Netlist.h"
 #include "vlsisapd/openChams/Instance.h"
+#include "vlsisapd/openChams/Device.h"
 #include "vlsisapd/openChams/Transistor.h"
 #include "vlsisapd/openChams/Net.h"
 #include "vlsisapd/openChams/Schematic.h"
@@ -27,7 +28,7 @@ int main(int argc, char * argv[]) {
     OpenChams::Netlist* netlist = circuit->createNetlist();
     //  instances
     //   nmos1
-    OpenChams::Instance* inst_nmos1 = netlist->addInstance(OpenChams::Name("nmos1"), OpenChams::Name("Transistor"), OpenChams::Name("NMOS"), true);
+    OpenChams::Device* inst_nmos1 = netlist->addDevice(OpenChams::Name("nmos1"), OpenChams::Name("Transistor"), OpenChams::Name("NMOS"), true);
     inst_nmos1->addConnector(OpenChams::Name("G"));
     inst_nmos1->addConnector(OpenChams::Name("S"));
     inst_nmos1->addConnector(OpenChams::Name("D"));
@@ -37,7 +38,7 @@ int main(int argc, char * argv[]) {
     tr_nmos1->setDrain (OpenChams::Name("D"));
     tr_nmos1->setBulk  (OpenChams::Name("S"));
     //   pmos1
-    OpenChams::Instance* inst_pmos1 = netlist->addInstance(OpenChams::Name("pmos1"), OpenChams::Name("Transistor"), OpenChams::Name("PMOS"), true);
+    OpenChams::Device* inst_pmos1 = netlist->addDevice(OpenChams::Name("pmos1"), OpenChams::Name("Transistor"), OpenChams::Name("PMOS"), true);
     inst_pmos1->addConnector(OpenChams::Name("G"));
     inst_pmos1->addConnector(OpenChams::Name("S"));
     inst_pmos1->addConnector(OpenChams::Name("D"));
