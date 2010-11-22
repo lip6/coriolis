@@ -8,6 +8,7 @@ using namespace boost::python;
 #include "vlsisapd/openChams/Parameters.h"
 #include "vlsisapd/openChams/Transistor.h"
 #include "vlsisapd/openChams/Instance.h"
+#include "vlsisapd/openChams/Device.h"
 #include "vlsisapd/openChams/Net.h"
 #include "vlsisapd/openChams/Netlist.h"
 #include "vlsisapd/openChams/Schematic.h"
@@ -97,32 +98,41 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
 
     // map wrapping and vector_indexing for OpenChams::Instance
     STL_MAP_WRAPPING_PTR(Name, Net*, "ConnectorsMap")
-
-    class_<std::vector<Transistor*> >("TransistorsVector")
-        .def(vector_indexing_suite<std::vector<Transistor*>, true>())
-    ;
     // class OpenChams::Instance
     class_<Instance, Instance*>("Instance", init<Name, Name, Netlist*>())
         // properties
         .add_property("name"               , &Instance::getName              )
         .add_property("model"              , &Instance::getModel             )
-//        .add_property("mosType"            , &Instance::getMosType           )
-//        .add_property("sourceBulkConnected", &Instance::isSourceBulkConnected)
         .add_property("parameters"         , &Instance::getParameters        )
         .add_property("netlist"            , make_function(&Instance::getNetlist ,return_value_policy<reference_existing_object>())) //make_function since we need to specify a return value policy
         // accessors
         .def("hasNoConnectors" , &Instance::hasNoConnectors )
-//        .def("hasNoTransistors", &Instance::hasNoTransistors)
         // modifiers
         .def("addConnector" , &Instance::addConnector )
         .def("connect"      , &Instance::connect      )
-//        .def("addTransistor", &Instance::addTransistor, return_value_policy<reference_existing_object>())
         .def("addParameter" , static_cast<void(Transistor::*)(Name, double     )>(&Transistor::addParameter))
         .def("addParameter" , static_cast<void(Transistor::*)(Name, std::string)>(&Transistor::addParameter))
         // stl containers
         .def("getConnectors" , &Instance::getConnectors , return_internal_reference<>())
-//        .def("getTransistors", &Instance::getTransistors, return_internal_reference<>())
     ;
+
+    // vector_indexing for OpenChams::Device
+    class_<std::vector<Transistor*> >("TransistorsVector")
+        .def(vector_indexing_suite<std::vector<Transistor*>, true>())
+    ;
+    // class OpenChams::Device
+    class_<Device, bases<Instance> >("Device", init<Name, Name, Name, bool, Netlist*>())
+        // properties
+        .add_property("mosType"            , &Device::getMosType           )
+        .add_property("sourceBulkConnected", &Device::isSourceBulkConnected)
+        // accessors
+        .def("hasNoTransistors", &Device::hasNoTransistors)
+        // modifiers
+        .def("addTransistor", &Device::addTransistor, return_value_policy<reference_existing_object>())
+        // stl containers
+        .def("getTransistors", &Device::getTransistors, return_internal_reference<>())
+    ;
+
 
     // vector_indexing for OpenChams::Net
     class_<std::vector<Net::Connection*> >("ConnectionsVector")
@@ -166,11 +176,12 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
         .def("getInstance"   , make_function(&Netlist::getInstance , return_value_policy<reference_existing_object>()))
         .def("getNet"        , make_function(&Netlist::getNet      , return_value_policy<reference_existing_object>()))
         // modifiers
-        .def("addInstance", &Netlist::addInstance, return_value_policy<reference_existing_object>())
-        .def("addNet"     , &Netlist::addNet     , return_value_policy<reference_existing_object>())
+        .def("addInstance"   , &Netlist::addInstance, return_value_policy<reference_existing_object>())
+        .def("addDevice"     , &Netlist::addDevice  , return_value_policy<reference_existing_object>())
+        .def("addNet"        , &Netlist::addNet     , return_value_policy<reference_existing_object>())
         // stl containers
-        .def("getInstances", &Netlist::getInstances, return_internal_reference<>())
-        .def("getNets"     , &Netlist::getNets     , return_internal_reference<>())
+        .def("getInstances"  , &Netlist::getInstances, return_internal_reference<>())
+        .def("getNets"       , &Netlist::getNets     , return_internal_reference<>())
     ;
 
     // map wrapping for OpenChams::Schematic
@@ -179,13 +190,13 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
     // class OpenChams::Schematic
     scope schematicScope = class_<Schematic, Schematic*>("Schematic", init<Circuit*, double>())
         // properties
-        .add_property("zoom", &Schematic::getZoom)
+        .add_property("zoom" , &Schematic::getZoom)
         // accessors
         .def("hasNoInstances", &Schematic::hasNoInstances)
         // modifiers
-        .def("addInstance", &Schematic::addInstance)
+        .def("addInstance"   , &Schematic::addInstance)
         // stl containers
-        .def("getInstances", &Schematic::getInstances, return_internal_reference<>())
+        .def("getInstances"  , &Schematic::getInstances, return_internal_reference<>())
     ;
 
     // class OpenChams::Schematic::Infos
