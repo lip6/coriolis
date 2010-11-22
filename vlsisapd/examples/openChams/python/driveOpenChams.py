@@ -15,7 +15,7 @@ circuit.addParameter(Name("complex"), "myEq")
 netlist = circuit.createNetlist()
 #  instances
 #   nmos1
-inst_nmos1 = netlist.addInstance("nmos1", "Transistor", "NMOS", True)
+inst_nmos1 = netlist.addDevice("nmos1", "Transistor", "NMOS", True)
 inst_nmos1.addConnector("G")
 inst_nmos1.addConnector("S")
 inst_nmos1.addConnector("D")
@@ -25,7 +25,7 @@ tr_nmos1.source = "S"
 tr_nmos1.drain  = "D"
 tr_nmos1.bulk   = "S"
 #   pmos1
-inst_pmos1 = netlist.addInstance("pmos1", "Transistor", "PMOS", True)
+inst_pmos1 = netlist.addDevice("pmos1", "Transistor", "PMOS", True)
 inst_pmos1.addConnector("G")
 inst_pmos1.addConnector("S")
 inst_pmos1.addConnector("D")
