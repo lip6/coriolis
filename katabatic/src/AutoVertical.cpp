@@ -459,7 +459,13 @@ namespace Katabatic {
 
 
   void  AutoVertical::_computeTerminal ()
-  { _computeTerminal(_vertical); }
+  {
+    _computeTerminal(_vertical);
+
+    ltrace(99) << "_computeTerminal() S:" << getAutoSource()->isTerminal()
+               << " T:" << getAutoTarget()->isTerminal()
+               << " " << this << endl;
+  }
 
 
   void  AutoVertical::moveULeft ()

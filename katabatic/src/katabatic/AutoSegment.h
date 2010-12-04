@@ -86,6 +86,7 @@ namespace Katabatic {
                               , ParallelOrExpanded     = (1<<2)
                               , ParallelAndLayerChange = (1<<3)
                               };
+      enum Flags              { Propagate=0x1, AllowLocal=0x2 };
 
 
     public:
@@ -196,7 +197,7 @@ namespace Katabatic {
       inline  bool                allowOutsideGCell          () const;
               bool                canDesalignate             ();
       virtual bool                canDesalignate             ( AutoContact* ) const = 0;
-              bool                canMoveUp                  ( bool propagate=false, float reserve=0.0 );
+              bool                canMoveUp                  ( float reserve=0.0, unsigned int flags=0 );
               bool                canPivotUp                 ( bool propagate=false, float reserve=0.0 );
               bool                canSlacken                 ( bool propagate=false );
       virtual bool                _canSlacken                () const = 0;
@@ -283,7 +284,7 @@ namespace Katabatic {
                                                              , bool         standAlone=true
                                                              );
               void                _changeDepth               ( unsigned int depth, bool withNeighbors );
-              bool                moveUp                     ( bool propagate=false );
+              bool                moveUp                     ( unsigned int flags=0 );
       virtual void                moveULeft                  () = 0;
       virtual void                moveURight                 () = 0;
               void                slacken                    ( bool propagate=false );

@@ -33,6 +33,7 @@
 
 #include  "hurricane/Timer.h"
 #include  "hurricane/DbU.h"
+#include  "hurricane/Torus.h"
 #include  "hurricane/Layer.h"
 #include  "hurricane/Net.h"
 
@@ -52,6 +53,7 @@ namespace CRL {
 #include  "katabatic/Configuration.h"
 #include  "katabatic/AutoContacts.h"
 #include  "katabatic/AutoSegments.h"
+#include  "katabatic/ChipTools.h"
 
 
 namespace Katabatic {
@@ -64,6 +66,7 @@ namespace Katabatic {
   using Hurricane::Timer;
   using Hurricane::Name;
   using Hurricane::Layer;
+  using Hurricane::Torus;
   using Hurricane::Net;
   using Hurricane::Nets;
   using Hurricane::Cell;
@@ -145,6 +148,8 @@ namespace Katabatic {
               void                 xmlWriteGCellGrid         ( ostream& );
               void                 xmlWriteGCellGrid         ( const string& );
       inline  bool                 isGMetal                  ( const Layer* ) const;
+      inline  bool                 isChip                    () const;
+      inline  const ChipTools&     getChipTools              () const;
     // Modifiers.                                            
       inline  void                 setState                  ( EngineState state );
       inline  void                 setDemoMode               ( bool );
@@ -218,6 +223,7 @@ namespace Katabatic {
               bool            _warnGCellOverload;
               Configuration*  _configuration;
               GCellGrid*      _gcellGrid;
+              ChipTools       _chipTools;
               NetSet          _routingNets;
               AutoSegmentLut  _autoSegmentLut;
               AutoContactLut  _autoContactLut;
@@ -263,6 +269,8 @@ namespace Katabatic {
   inline AutoContactLut&                KatabaticEngine::_getAutoContactLut        () { return _autoContactLut; }
   inline AutoSegmentLut&                KatabaticEngine::_getAutoSegmentLut        () { return _autoSegmentLut; }
   inline void                           KatabaticEngine::setState                  ( EngineState state ) { _state = state; }
+  inline bool                           KatabaticEngine::isChip                    () const { return _chipTools.isChip(); }
+  inline const ChipTools&               KatabaticEngine::getChipTools              () const { return _chipTools; }
 
 
 // -------------------------------------------------------------------

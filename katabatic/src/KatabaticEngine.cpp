@@ -221,6 +221,7 @@ namespace Katabatic {
     , _warnGCellOverload (false)
     , _configuration     (new ConfigurationConcrete())
     , _gcellGrid         (NULL)
+    , _chipTools         (cell)
     , _routingNets       ()
   {
     addMeasure<size_t> ( cell, "Gates"
@@ -517,7 +518,7 @@ namespace Katabatic {
                          ,getString(*net).c_str(),excludedType) << endl;
           continue;
         }
-        if ( af->isOBSTACLE(net->getName()) ) continue;
+        if ( af->isBLOCKAGE(net->getName()) ) continue;
         _routingNets.insert ( *net );
       }
     } else {
@@ -527,7 +528,7 @@ namespace Katabatic {
         if ( (*it)->getType() == Net::Type::POWER  ) excludedType = "POWER";
         if ( (*it)->getType() == Net::Type::GROUND ) excludedType = "GROUND";
         if ( (*it)->getType() == Net::Type::CLOCK  ) excludedType = "CLOCK";
-        if ( af->isOBSTACLE((*it)->getName()) )      excludedType = "BLOCKAGE";
+        if ( af->isBLOCKAGE((*it)->getName()) )      excludedType = "BLOCKAGE";
         if ( excludedType ) {
           cerr << Warning("%s is not a routable net (%s), removed from set."
                          ,getString(*it).c_str(),excludedType) << endl;
@@ -931,6 +932,7 @@ namespace Katabatic {
     record->add ( getSlot ( "_state"           ,  _state           ) );
     record->add ( getSlot ( "_configuration"   ,  _configuration   ) );
     record->add ( getSlot ( "_gcellGrid"       ,  _gcellGrid       ) );
+    record->add ( getSlot ( "_chipTools"       ,  _chipTools       ) );
     record->add ( getSlot ( "_routingNets"     , &_routingNets     ) );
     record->add ( getSlot ( "_autoContactLut"  , &_autoContactLut  ) );
     record->add ( getSlot ( "_autoSegmentLut"  , &_autoSegmentLut  ) );

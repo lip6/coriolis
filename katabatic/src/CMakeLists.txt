@@ -12,6 +12,7 @@ endif ( CHECK_DETERMINISM )
                          ${Boost_INCLUDE_DIRS}
                        )
                    set ( includes      katabatic/Configuration.h
+                                       katabatic/ChipTools.h
                                        katabatic/AutoContact.h     katabatic/AutoContacts.h
                                        katabatic/AutoSegment.h     katabatic/AutoSegments.h
                                        katabatic/AutoHorizontal.h
@@ -26,6 +27,7 @@ endif ( CHECK_DETERMINISM )
                        )
 		   set ( mocIncludes   katabatic/GraphicKatabaticEngine.h )
                    set ( cpps          Configuration.cpp
+                                       ChipTools.cpp
                                        AutoContact.cpp
                                        AutoContacts.cpp
                                        AutoSegment.cpp

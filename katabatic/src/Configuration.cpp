@@ -71,7 +71,7 @@ namespace Katabatic {
   ConfigurationConcrete::ConfigurationConcrete ( const RoutingGauge* rg )
     : Configuration()
     , _rg                (NULL)
-    , _extensionCap      (DbU::lambda(1.5))
+    , _extensionCap      (DbU::lambda(0.5))
     , _saturateRatio     (Cfg::getParamPercentage("katabatic.saturateRatio",80.0)->asDouble())
     , _saturateRp        (Cfg::getParamInt       ("katabatic.saturateRp"   ,8   )->asInt())
     , _globalThreshold   (DbU::lambda((double)Cfg::getParamInt("katabatic.globalLengthThreshold",29*50)->asInt())) // Ugly: direct uses of SxLib gauge.

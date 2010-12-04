@@ -923,7 +923,7 @@ namespace Katabatic {
     AutoContact* source = Session::lookup(dynamic_cast<Contact*>(segment->getSource()));
     AutoContact* target = Session::lookup(dynamic_cast<Contact*>(segment->getTarget()));
 
-    if ( source->isTerminal() or target->isTerminal() ) _isTerminal = true;
+    _isTerminal = source->isTerminal() or target->isTerminal();
   }
 
 
@@ -1121,6 +1121,11 @@ namespace Katabatic {
     //if ( icontact->second & 0x12) desalignate ( icontact->first );
     }
 
+    // for ( size_t i=0 ; i<segments.size() ; ++i ) {
+    //   segments[i]->_computeTerminal ( segments[i]->base() );
+    //   ltrace(99) << "_computeTerminals() - " << segments[i] << endl;
+    // }
+
     Session::invalidate         ( getNet() );
     Session::revalidateTopology ();
   }
@@ -1250,6 +1255,9 @@ namespace Katabatic {
   {
     ltrace(200) << "AutoSegment::canPivotUp()" << endl;
 
+    if ( isLayerChange() or isFixed() ) return false;
+    if ( isTerminal() or isLocal() ) return false;
+
   //if ( isTerminal() ) return false;
 
     size_t depth = Session::getRoutingGauge()->getLayerDepth(getLayer());
@@ -1291,12 +1299,12 @@ namespace Katabatic {
   }
 
 
-  bool  AutoSegment::canMoveUp ( bool propagate, float reserve )
+  bool  AutoSegment::canMoveUp ( float reserve, unsigned int flags )
   {
-    ltrace(200) << "AutoSegment::canMoveUp()" << endl;
+    ltrace(200) << "AutoSegment::canMoveUp() " << flags << endl;
 
-    if ( isLayerChange() or isFixed() ) return false;
-    if ( isTerminal() and isLocal() ) return false;
+    if ( isLayerChange() or isFixed() or isTerminal() ) return false;
+    if ( isLocal() and (not (flags & AllowLocal)) ) return false;
 
     size_t depth = Session::getRoutingGauge()->getLayerDepth(getLayer()) + 2;
     if ( depth >= Session::getConfiguration()->getAllowedDepth() ) return false;
@@ -1304,17 +1312,22 @@ namespace Katabatic {
     vector<GCell*> gcells;
     getGCells ( gcells );
     for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-      if ( not gcells[i]->hasFreeTrack(depth,reserve) ) return false;
+      if ( not gcells[i]->hasFreeTrack(depth,reserve) ) {
+        ltrace(200) << "Not enough free track in " << gcells[i] << endl;
+        return false;
+      }
     }
 
-    if ( isLocal() and not propagate ) {
+    ltrace(200) << "Enough free track under canonical segment." << endl;
+
+    if ( isLocal() and not (flags & Propagate) ) {
       if ( not getAutoSource()->canMoveUp(this) ) return false;
       if ( not getAutoTarget()->canMoveUp(this) ) return false;
       return true;
     }
 
-    bool   hasGlobalSegment = false;
-    if ( propagate ) {
+    bool hasGlobalSegment = false;
+    if ( flags & Propagate ) {
       forEach ( AutoSegment*, isegment, getCollapseds() ) {
         if ( isegment->isFixed () ) return false;
         if ( isegment->isGlobal() ) hasGlobalSegment = true;
@@ -1333,11 +1346,10 @@ namespace Katabatic {
   }
 
 
-  bool  AutoSegment::moveUp ( bool propagate )
+  bool  AutoSegment::moveUp ( unsigned int flags )
   {
-    if ( !canMoveUp(propagate) ) return false;
-
-    changeDepth ( Session::getRoutingGauge()->getLayerDepth(getLayer()) + 2, propagate );
+    if ( not canMoveUp(0.0,flags) ) return false;
+    changeDepth ( Session::getRoutingGauge()->getLayerDepth(getLayer()) + 2, flags&Propagate );
 
     return true;
   }

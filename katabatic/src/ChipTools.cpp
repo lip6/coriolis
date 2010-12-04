@@ -23,6 +23,8 @@
 // x-----------------------------------------------------------------x
 
 
+#include  <string>
+#include  <sstream>
 #include  "hurricane/Warning.h"
 #include  "hurricane/Bug.h"
 #include  "hurricane/DataBase.h"
@@ -165,22 +167,81 @@ namespace Katabatic {
 
   void  KatabaticEngine::chipPrep ()
   {
-    Instance* core = NULL;
-    if ( isChip(getCell(),core) ) {
-      slackenBlockIos ( core );
+    if ( isChip() ) {
+    // slackenBlockIos ( _core );
 
-      // cmess1 << "  o  Slackening Pads-connected segments." << endl;
-      // slackenBorder ( getCell()->getBoundingBox().inflate(DbU::lambda(-425.0))
-      //               , Session::getRoutingLayer(3)->getMask()
-      //               , GlobalSegments|LocalSegments|Constant::Horizontal
-      //               );
-      // slackenBorder ( getCell()->getBoundingBox().inflate(DbU::lambda(-425.0))
-      //               , Session::getRoutingLayer(1)->getMask()
-      //               , GlobalSegments|Constant::Horizontal
-      //               );
+    // cmess1 << "  o  Slackening Pads-connected segments." << endl;
+    // slackenBorder ( _cell->getBoundingBox().inflate(DbU::lambda(-425.0))
+    //               , Session::getRoutingLayer(3)->getMask()
+    //               , GlobalSegments|LocalSegments|Constant::Horizontal
+    //               );
+    // slackenBorder ( _cell->getBoundingBox().inflate(DbU::lambda(-425.0))
+    //               , Session::getRoutingLayer(1)->getMask()
+    //               , GlobalSegments|Constant::Horizontal
+    //               );
     }
   }
 
+
+  ChipTools::ChipTools ( Cell* cell )
+    : _cell        (cell)
+    , _core        (NULL)
+    , _isChip      (false)
+    , _chipBb      (cell->getBoundingBox())
+    , _leftPadsBb  ()
+    , _rightPadsBb ()
+    , _topPadsBb   ()
+    , _bottomPadsBb()
+    , _chipCorona  ()
+  {
+    _isChip = ::isChip ( _cell, _core );
+
+    if ( _isChip ) {
+    // Ugly: hard-coded pads height.
+      const DbU::Unit padHeight = DbU::lambda(400.0);
+
+      Box outer = _cell->getBoundingBox().inflate ( -padHeight );
+      _chipCorona   = Torus ( outer, _core->getBoundingBox() );
+      _leftPadsBb   = Box   ( _chipBb.getXMin()                  , _chipBb.getYMin(), _chipCorona.getOuterBox().getXMin(), _chipBb.getYMax() );
+      _rightPadsBb  = Box   ( _chipCorona.getOuterBox().getXMax(), _chipBb.getYMin(), _chipBb.getXMax(),                   _chipBb.getYMax() );
+      _bottomPadsBb = Box   ( _chipBb.getXMin()                  , _chipBb.getYMin(), _chipBb.getXMax(), _chipCorona.getOuterBox().getYMin() );
+      _topPadsBb    = Box   ( _chipBb.getXMin(), _chipCorona.getOuterBox().getYMax(), _chipBb.getXMax(),                   _chipBb.getYMax() );
+
+      cmess1 << "  o  Design is a full chip." << endl;
+      cmess1 << "     - Core: <" << _core->getName() << ">/<"
+             << _core->getMasterCell()->getName() << ">." << endl;
+      cmess1 << "     - Corona: " << _chipCorona << "." << endl;
+    } else {
+      _chipCorona = Torus ( _cell->getBoundingBox(), _cell->getBoundingBox() );
+    }
+  }
+
+
+  string  ChipTools::_getString () const
+  {
+    ostringstream s;
+    s << "<" << _getTypeName() << " " << _cell->getName()
+      << " core:" << getString(((_core) ? _core->getName() : "NULL"))
+      << ">";
+    return s.str();
+  }
+
+
+  Record* ChipTools::_getRecord () const
+  {
+    Record* record = new Record ( _getString() );
+                                     
+    record->add ( getSlot ( "_cell"        ,  _cell         ) );
+    record->add ( getSlot ( "_core"        ,  _core         ) );
+    record->add ( getSlot ( "_isChip"      , &_isChip       ) );
+    record->add ( getSlot ( "_chipBb"      , &_chipBb       ) );
+    record->add ( getSlot ( "_leftPadsBb"  , &_leftPadsBb   ) );
+    record->add ( getSlot ( "_rightPadsBb" , &_rightPadsBb  ) );
+    record->add ( getSlot ( "_topPadsBb"   , &_topPadsBb    ) );
+    record->add ( getSlot ( "_bottomPadsBb", &_bottomPadsBb ) );
+    record->add ( getSlot ( "_chipCorona"  , &_chipCorona   ) );
+    return record;
+  }
 
 
 }  // End of Katabatic namespace.

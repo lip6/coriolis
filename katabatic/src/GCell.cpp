@@ -41,6 +41,7 @@
 #include  "katabatic/GCell.h"
 #include  "katabatic/GCellGrid.h"
 #include  "katabatic/Session.h"
+#include  "katabatic/KatabaticEngine.h"
 
 
 namespace Katabatic {
@@ -695,6 +696,7 @@ namespace Katabatic {
          << " " << setprecision(9) << gdensity << endl;
 #endif
 
+  //cerr << "updateDensity() " << this << getVectorString(_densities,_depth) << endl;
   //_segmentCount = _hsegments.size() + _vsegments.size() + processeds.size();
 
     return ( _saturated ) ? 1 : 0 ;
@@ -846,6 +848,11 @@ namespace Katabatic {
       cerr << "Order: Move up " << (*isegment) << endl;
 #endif
     //cerr << "Move up " << (*isegment) << endl;
+      if ( not (*isegment)->canMoveUp(0.5,AutoSegment::Propagate) ) {
+        cinfo << Warning("Shear effect on: %s.",getString(*isegment).c_str()) << endl;
+        return false;
+      }
+
       (*isegment)->changeDepth ( depth+2, false, false );
       moved = (*isegment);
 
@@ -1038,16 +1045,27 @@ namespace Katabatic {
     record->add ( getSlot ( "_routedSegmentCount",  _routedSegmentCount ) );
     record->add ( getSlot ( "_invalid"           ,  _invalid            ) );
 
+    RoutingGauge* rg = getGCellGrid()->getKatabatic()->getRoutingGauge();
+
     for ( size_t depth=0 ; depth<_depth ; ++depth ) {
-      record->add ( getSlot ( "_blockages[]",  &_blockages[depth] ) );
+      ostringstream s;
+      const Layer* layer = rg->getRoutingLayer(depth)->getBlockageLayer();
+      s << "_blockages[" << depth << ":" << ((layer) ? layer->getName() : "None") << "]";
+      record->add ( getSlot ( s.str(),  &_blockages[depth] ) );
     }
 
     for ( size_t depth=0 ; depth<_depth ; ++depth ) {
-      record->add ( getSlot ( "_densities[]",  &_densities[depth] ) );
+      ostringstream s;
+      const Layer* layer = rg->getRoutingLayer(depth);
+      s << "_densities[" << depth << ":" << ((layer) ? layer->getName() : "None") << "]";
+      record->add ( getSlot ( s.str(),  &_densities[depth] ) );
     }
 
     for ( size_t depth=0 ; depth<_depth ; ++depth ) {
-      record->add ( getSlot ( "_saturateDensities[]",  &_saturateDensities[depth] ) );
+      ostringstream s;
+      const Layer* layer = rg->getRoutingLayer(depth);
+      s << "_saturateDensities[" << depth << ":" << ((layer) ? layer->getName() : "None") << "]";
+      record->add ( getSlot ( s.str(),  &_saturateDensities[depth] ) );
     }
                                      
     return record;

@@ -202,6 +202,7 @@ namespace Katabatic {
     : AutoSegment(horizontal,true,type,terminal,collapsed)
     , _horizontal(horizontal)
   {
+    ltrace(99) << "Creating (before post-create): " << this << endl;
   }
 
 
@@ -546,7 +547,13 @@ namespace Katabatic {
 
 
   void  AutoHorizontal::_computeTerminal ()
-  { _computeTerminal(_horizontal); }
+  {
+    _computeTerminal(_horizontal);
+
+    ltrace(99) << "_computeTerminal() S:" << getAutoSource()->isTerminal()
+               << " T:" << getAutoTarget()->isTerminal()
+               << " " << this << endl;
+  }
 
 
   void  AutoHorizontal::moveULeft ()

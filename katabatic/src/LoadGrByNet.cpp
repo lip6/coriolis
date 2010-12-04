@@ -1100,6 +1100,7 @@ namespace {
              void          construct              ( ForkStack& forks );
       inline unsigned int  getStateG              () const;
       inline GCell*        getGCell               () const;
+      static void          fixSegments            ();
       static bool          _GCell_rp_AutoContacts ( GCell*        gcell
                                                   , RoutingPad*   rp
                                                   , AutoContact*& source
@@ -1212,6 +1213,7 @@ namespace {
                     , GLOBAL_VERTICAL       = (1<<3)
                     , GLOBAL_BEND           = (1<<4)
                     , GLOBAL_FORK           = (1<<5)
+                    , GLOBAL_FIXED          = (1<<6)
                     , GLOBAL_END            = GLOBAL_VERTICAL_END | GLOBAL_HORIZONTAL_END
                     , GLOBAL_SPLIT          = GLOBAL_HORIZONTAL | GLOBAL_VERTICAL | GLOBAL_FORK
                     };
@@ -1230,25 +1232,37 @@ namespace {
       };
 
     // Attributes.
-    protected:
-      UState               _state;
-      unsigned int         _topology;
-      Net*                 _net;
-      GCell*               _gcell;
-      AutoContact*         _sourceContact;
-      AutoContact*         _southWestContact;
-      AutoContact*         _northEastContact;
-      Hook*                _fromHook;
-      Hook*                _east;
-      Hook*                _west;
-      Hook*                _north;
-      Hook*                _south;
-      vector<RoutingPad*>  _routingPads;
+    private:
+      static vector<AutoSegment*>  _toFixSegments;
+             UState                _state;
+             unsigned int          _topology;
+             Net*                  _net;
+             GCell*                _gcell;
+             AutoContact*          _sourceContact;
+             AutoContact*          _southWestContact;
+             AutoContact*          _northEastContact;
+             Hook*                 _fromHook;
+             Hook*                 _east;
+             Hook*                 _west;
+             Hook*                 _north;
+             Hook*                 _south;
+             vector<RoutingPad*>   _routingPads;
   };
 
 
   inline unsigned int  GCellConfiguration::getStateG () const { return _state.fields.globals; }
   inline GCell*        GCellConfiguration::getGCell  () const { return _gcell; }
+
+
+  vector<AutoSegment*>  GCellConfiguration::_toFixSegments;
+
+
+  void  GCellConfiguration::fixSegments ()
+  {
+    for ( size_t i=0 ; i<_toFixSegments.size() ; ++i )
+      _toFixSegments[i]->setFixed ( true );
+    _toFixSegments.clear ();
+  }
 
 
   GCellConfiguration::GCellConfiguration ( GCellGrid*   gcellGrid
@@ -1440,6 +1454,7 @@ namespace {
                                                        , targetContact
                                                        , static_cast<Segment*>( _fromHook->getComponent() )
                                                        );
+      ltrace(99) << "Create global segment: " << globalSegment << endl;
 
       if ( globalSegment->isHorizontal()
          and (  (Session::getRoutingGauge()->getLayerDepth(_sourceContact->getLayer()->getBottom()) > 1)
@@ -1449,6 +1464,8 @@ namespace {
         ltrace(99) << "Target:" << targetContact << endl;
         ltrace(99) << "Moving up global:" << globalSegment << endl;
       }
+      if ( (_topology & GLOBAL_FIXED) and (globalSegment->getLength() < DbU::lambda(100.0)) )
+         _toFixSegments.push_back ( globalSegment );
         
       if ( _state.fields.globals < 2 ) {
         ltraceout(99);
@@ -1863,6 +1880,24 @@ namespace {
     ltrace(99) << "_GCell_1G_1Pad() [Managed Configuration - Optimized] " << _topology << endl;
     ltracein(99);
 
+    bool      topRightPad = false;
+    Instance* padInstance = _routingPads[0]->getOccurrence().getPath().getHeadInstance();
+
+    switch ( padInstance->getTransformation().getOrientation() ) {
+      case Transformation::Orientation::ID: // North side.
+      case Transformation::Orientation::YR: // Right side.
+        topRightPad = true;
+        break;
+      case Transformation::Orientation::MY: // South side.
+      case Transformation::Orientation::R1: // Left side.
+        break;
+      default:
+        cerr << Warning("Unmanaged orientation %s for pad <%s>."
+                       ,getString(padInstance->getTransformation().getOrientation()).c_str()
+                       ,getString(padInstance).c_str()) << endl;
+        break;
+    }
+
     Point        position     = _routingPads[0]->getCenter();
     AutoContact* source       = NULL;
     AutoContact* target       = NULL;
@@ -1877,6 +1912,13 @@ namespace {
                                  , DbU::lambda(1.0), DbU::lambda(1.0)
                                  , true
                                  );
+
+    if ( topRightPad ) {
+      _GCell_GlobalContacts ( false, source, NULL );
+      ltraceout(99);
+      return;
+    }
+
     target = AutoContact::create ( gcell, _routingPads[0]->getNet(), Session::getContactLayer(2) );
 
     AutoSegment* segment = AutoSegment::create ( source
@@ -1899,6 +1941,7 @@ namespace {
                                     , false    // Terminal.
                                     , false    // Collapsed.
                                     );
+    //_toFixSegments.push_back ( segment );
     }
 
     swContact = target;
@@ -2253,6 +2296,9 @@ namespace {
       _GCell_rp_StairCaseV ( _gcell, _routingPads[i-1], _routingPads[i] );
     }
 
+    if ( (_routingPads.size() == 1) and (_state.fields.globals == 2) )
+      _topology |= GLOBAL_FIXED;
+
     if ( _west or _south ) {
       _GCell_rp_AutoContacts ( _gcell, _routingPads[0], _southWestContact, unusedContact, false );
       // _southWestContact = AutoContact::fromRp ( _gcell
@@ -2520,6 +2566,8 @@ namespace Katabatic {
     }
 
     Session::revalidate ();
+
+    GCellConfiguration::fixSegments ();
 
     ltraceout(99);
 
