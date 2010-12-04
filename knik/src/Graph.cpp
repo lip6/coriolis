@@ -1,5 +1,6 @@
 
 #include <algorithm>
+#include <memory>
 
 #include "hurricane/Warning.h"
 #include "hurricane/Name.h"
@@ -1505,14 +1506,14 @@ void Graph::Monotonic()
     //#endif
 }
 
-FTree Graph::createFluteTree()
-// ***************************
+FTree* Graph::createFluteTree()
+// ****************************
 { 
     int  accuracy = 3;                         // accuracy for flute (by default 3)
     int  d        = _vertexes_to_route.size(); // degre du net, ie nombre de routingPads
     int *x = new int [d];                      // x coordinates of the vertexes
     int *y = new int [d];                      // y coordinates of the vertexes
-    FTree flutetree;                           // the flute Steiner Tree
+    FTree* flutetree = new FTree;              // the flute Steiner Tree
 
     //cout << "Net : " << _working_net << endl;
     // scans _working_net to find x,y coordinates and fill x, y and d
@@ -1529,7 +1530,7 @@ FTree Graph::createFluteTree()
 
     assert ( d == cpt );
 
-    flutetree = flute ( d, x, y, accuracy );
+    *flutetree = flute ( d, x, y, accuracy );
     //printtree ( flutetree );
     //plottree ( flutetree );
     //cout << endl;
@@ -1548,16 +1549,16 @@ void Graph::UpdateEstimateCongestion ( bool create )
        return;
     }
     //cerr << "Running FLUTE for net : " << _working_net << endl;
-    FTree flutetree = createFluteTree();
+    auto_ptr<FTree> flutetree ( createFluteTree() );
 
     //parcours des branches du FTree pour créer la congestion estimée
-    for ( int i = 0 ; i < 2*flutetree.deg-2 ; i++ ) {
-//        int sourceX = flutetree.branch[i].x;
-//        int sourceY = flutetree.branch[i].y;
-//        int targetX = flutetree.branch[flutetree.branch[i].n].x;
-//        int targetY = flutetree.branch[flutetree.branch[i].n].y;
-        Vertex* source = getVertex ( flutetree.branch[i].x                    , flutetree.branch[i].y );
-        Vertex* target = getVertex ( flutetree.branch[flutetree.branch[i].n].x, flutetree.branch[flutetree.branch[i].n].y );
+    for ( int i = 0 ; i < 2*flutetree->deg-2 ; i++ ) {
+//        int sourceX = flutetree->branch[i].x;
+//        int sourceY = flutetree->branch[i].y;
+//        int targetX = flutetree->branch[flutetree->branch[i].n].x;
+//        int targetY = flutetree->branch[flutetree->branch[i].n].y;
+        Vertex* source = getVertex ( flutetree->branch[i].x                     , flutetree->branch[i].y );
+        Vertex* target = getVertex ( flutetree->branch[flutetree->branch[i].n].x, flutetree->branch[flutetree->branch[i].n].y );
         assert ( source );
         assert ( target );
         //Si source et target alignée -> ajoute 1 a toutes les edges sur le chemin

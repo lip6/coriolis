@@ -187,6 +187,7 @@ typedef vector<NetRecord> NetVector;
         // for ispd07 reload
         void     createRoutingGraph();
         void     addRoutingPadToGraph ( Hurricane::RoutingPad* routingPad );
+        inline Graph* getRoutingGraph() { return _routingGraph; }
         Vertex*  getVertex ( Point );
         Vertex*  getVertex ( DbU::Unit x, DbU::Unit y );
         Edge*    getEdge   ( unsigned col1, unsigned row1, unsigned col2, unsigned row2 );

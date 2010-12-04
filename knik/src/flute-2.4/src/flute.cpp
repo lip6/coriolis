@@ -17,6 +17,11 @@ using CRL::AllianceFramework;
 #include <math.h>
 #include "knik/flute.h"
 
+#define max(x,y) ((x)>(y)?(x):(y))
+#define min(x,y) ((x)<(y)?(x):(y))
+#define abs(x) ((x)<0?(-x):(x))
+#define ADIFF(x,y) ((x)>(y)?(x-y):(y-x))  // Absolute difference
+
 #if D<=7
 #define MGROUP 5040/4  // Max. # of groups, 7! = 5040
 #define MPOWV 15  // Max. # of POWVs per group

@@ -16,7 +16,8 @@
 #include "knik/SlicingTree.h"
 #include "knik/RoutingGrid.h"
 
-#include "knik/flute.h"
+//#include "knik/flute.h"
+struct FTree;
 
 namespace Knik {
 
@@ -137,7 +138,7 @@ namespace Knik {
             int    initRouting       ( Net* net );
             void   Dijkstra          ();
             void   Monotonic         ();
-            FTree  createFluteTree   ();
+            FTree* createFluteTree   ();
             void   CleanRoutingState ();
             void   UpdateEstimateCongestion ( bool create = false );
             void   UpdateMaxEstimateCongestion ();
@@ -208,8 +209,6 @@ namespace Knik {
 
 } // namespace Knik
 
+INSPECTOR_P_SUPPORT(Knik::Graph);
+
 #endif
-
-
-
-

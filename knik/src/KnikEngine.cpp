@@ -74,6 +74,7 @@
 #include "knik/RoutingGrid.h"
 #include "knik/NetExtension.h"
 #include "knik/KnikEngine.h"
+#include "knik/flute.h"
 
 #define MAX_RUNTIME 86400
 #define MAX_ITERATION UINT_MAX
@@ -207,7 +208,7 @@ void KnikEngine::initGlobalRouting()
     if ( !_routingGraph ) {
         _timer.resetIncrease();
         _timer.start();
-        cmess2 << "        o  create routing graph" << endl;
+        cmess2 << "        o  Create routing graph." << endl;
         Cell* cell = getCell();
         _routingGraph = Graph::create ( cell, _routingGrid, _benchMode, _useSegments );
         cmess2 << "           - Graph size: " << _routingGraph->getXSize()
@@ -216,7 +217,7 @@ void KnikEngine::initGlobalRouting()
         printTime();
     }
     else {
-        cmess2 << "routingGraph already exists !" << endl;
+        cmess2 << "        - Reusing pre-existing graph." << endl;
     }
 
     // 20/02/09 tout ce qui suit dans la fonction etait inclu dans le if(!_routingGraph) on le sépare pour pouvoir

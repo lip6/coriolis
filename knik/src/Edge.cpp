@@ -88,13 +88,13 @@ void Edge::increaseCapacity ( int capacity )
   else
     _capacity += capacity;
 
-  if ( _capacity < 2 ) _capacity = 0;
+//if ( _capacity < 2 ) _capacity = 0;
+
+  // cerr << "Increase Edge Capacity " << _from->getPosition()
+  //      << " to " << _to->getPosition() << ":" << _capacity << endl;
 
   if ( _capacity == 0 )
-    cinfo << Warning("%s has reached NULL capacity.",getString(this).c_str()) << endl;
-
-//cerr << "Edge " << _from->getPosition()
-//     << " to " << _to->getPosition() << ":" << _capacity << endl;
+    ltrace(300) << Warning("%s has reached NULL capacity.",getString(this).c_str()) << endl;
 }
 
 void Edge::incOccupancy ()

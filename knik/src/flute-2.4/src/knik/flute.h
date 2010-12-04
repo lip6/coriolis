@@ -20,12 +20,12 @@ typedef struct
     int n;   // index of neighbor
 } Branch;
 
-typedef struct
+struct FTree
 {
     int deg;   // degree
     DTYPE length;   // total wirelength
     Branch *branch;   // array of tree branches
-} FTree;
+};
 
 // Major functions
 extern void readLUT();
@@ -62,10 +62,5 @@ extern FTree flutes_RDP(int d, DTYPE xs[], DTYPE ys[], int s[], int acc);
     (d<=D ? flutes_wl_LD(d, xs, ys, s) : flutes_wl_MD(d, xs, ys, s, acc))
 #define flutes_LMD(d, xs, ys, s, acc) \
     (d<=D ? flutes_LD(d, xs, ys, s) : flutes_MD(d, xs, ys, s, acc))
-
-#define max(x,y) ((x)>(y)?(x):(y))
-#define min(x,y) ((x)<(y)?(x):(y))
-#define abs(x) ((x)<0?(-x):(x))
-#define ADIFF(x,y) ((x)>(y)?(x-y):(y-x))  // Absolute difference
 
 #endif
