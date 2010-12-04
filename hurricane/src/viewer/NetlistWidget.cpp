@@ -166,10 +166,10 @@ namespace Hurricane {
       switch ( isel->getAccesses() ) {
         case 1:  break;
         case 64:
-          emit netSelected ( isel->getNet() );
+          emit netSelected ( Occurrence(isel->getNet()) );
           break;
         case 0:
-          emit netUnselected ( isel->getNet() );
+          emit netUnselected ( Occurrence(isel->getNet()) );
           remove = isel;
           ++isel;
           _selecteds.erase ( remove );

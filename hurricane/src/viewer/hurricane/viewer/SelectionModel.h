@@ -47,6 +47,7 @@ namespace Hurricane {
       enum Flags { Selected=1 };
     public:
       inline                OccurrenceItem ( Occurrence occurrence, unsigned int flags=Selected );
+      inline  void          setFlags       ( unsigned int );
       inline  void          toggle         ();
       inline  bool          operator==     ( const OccurrenceItem& other ) const;
     public:
@@ -59,6 +60,10 @@ namespace Hurricane {
     : _flags(flags)
     , _occurrence(occurrence)
   { }
+
+
+  inline  void  OccurrenceItem::setFlags ( unsigned int flags )
+  { _flags |= flags; }
 
 
   inline void  OccurrenceItem::toggle ()
@@ -80,7 +85,9 @@ namespace Hurricane {
     public:
                                      SelectionModel  ( QObject* parent=NULL );
                                     ~SelectionModel  ();
+             Occurrence              getOccurrence   ( const QModelIndex& index );
              void                    setSelection    ( const SelectorSet& selection );
+             void                    setSelection    ( Occurrence occurrence );
              void                    toggleSelection ( Occurrence occurrence );
              Occurrence              toggleSelection ( const QModelIndex& index );
              int                     rowCount        ( const QModelIndex& parent=QModelIndex() ) const;

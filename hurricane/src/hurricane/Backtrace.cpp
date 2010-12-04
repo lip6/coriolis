@@ -98,7 +98,23 @@ namespace Hurricane {
 #else
 #  ifdef  __APPLE__
     boost::regex re ( "(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S)\\s+\\+\\s+(\\d+)" ); 
+    boost::cmatch match;
 
+    for ( size_t i=0 ; i<depth ; ++i ) {
+      if ( boost::regex_search(symbols[i],match,re) ) {
+        string function  ( match[4].first, match[4].second );
+        string demangled ( demangle(function.c_str()) );
+        if ( demangled.empty() )
+          _stack.push_back ( (demangled.empty()) ? function : demangled );
+        else {
+          string reformated ( match[1].first, match[1].second );
+          reformated += "( <b>" + demangled + "</b> )";
+          _stack.push_back ( reformated );
+        }
+      } else {
+        _stack.push_back ( symbols[i] );
+      }
+    }
 #  else
     _stack.push_back ( "Backtrace only supported under Linux & OSX." );
 #  endif

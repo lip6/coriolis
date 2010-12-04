@@ -233,8 +233,8 @@ namespace Hurricane {
         getCellWidget()->closeRefreshSession ();
       }
       getCellWidget()->setShowSelection ( true );
-      connect ( _netlistBrowser, SIGNAL(netSelected  (const Net*)), getCellWidget(), SLOT(select  (const Net*)) );
-      connect ( _netlistBrowser, SIGNAL(netUnselected(const Net*)), getCellWidget(), SLOT(unselect(const Net*)) );
+      connect ( _netlistBrowser, SIGNAL(netSelected  (Occurrence)), getCellWidget(), SLOT(select  (Occurrence)) );
+      connect ( _netlistBrowser, SIGNAL(netUnselected(Occurrence)), getCellWidget(), SLOT(unselect(Occurrence)) );
       _netlistBrowser->updateSelecteds ();
     } else {
       getCellWidget()->setShowSelection ( false );

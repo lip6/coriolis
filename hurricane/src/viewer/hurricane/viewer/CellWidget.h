@@ -266,19 +266,19 @@ namespace Hurricane {
       inline  void                    closeRefreshSession        ();
       inline  DrawingPlanes&          getDrawingPlanes           ();
       inline  QPoint&                 getOffsetVA                ();
-              void                    select                     ( const Net* );
+           // void                    select                     ( const Net* );
               void                    select                     ( Occurrence );
               bool                    isSelected                 ( Occurrence );
               void                    selectOccurrencesUnder     ( Box selectArea );
-              void                    unselect                   ( const Net* );
+           // void                    unselect                   ( const Net* );
               void                    unselect                   ( Occurrence );
               void                    unselectAll                ();
               void                    toggleSelection            ( Occurrence );
               void                    setShowSelection           ( bool state );
               void                    setCumulativeSelection     ( bool state );
-              void                    _select                    ( const Net* );
-              void                    _unselect                  ( const Net* );
-              void                    _selectOccurrencesUnder    ( Box selectArea );
+           // void                    _select                    ( const Net* );
+           // void                    _unselect                  ( const Net* );
+           // void                    _selectOccurrencesUnder    ( Box selectArea );
               void                    _unselectAll               ();
       inline  void                    addRuler                   ( const Point&, const Point& );
       inline  void                    addRuler                   ( shared_ptr<Ruler> );
@@ -536,15 +536,16 @@ namespace Hurricane {
     private:
       class SelectorCriterions {
         public:
-                         SelectorCriterions ();
-                        ~SelectorCriterions ();
-          inline void    setCellWidget      ( CellWidget* );
-                 bool    add                ( const Net* net );
-                 bool    add                ( Box area );
-                 bool    remove             (  const Net* net );
-                 void    clear              ();
-                 void    revalidate         ();
-          inline size_t  size               () const;
+                                    SelectorCriterions ();
+                                   ~SelectorCriterions ();
+          inline void               setCellWidget      ( CellWidget* );
+                 SelectorCriterion* add                ( const Net* net );
+                 SelectorCriterion* add                ( Box area );
+                 bool               remove             ( const Net* net );
+                 void               clear              ();
+                 void               invalidate         ();
+                 void               revalidate         ();
+          inline size_t             size               () const;
         private:
           CellWidget*                 _cellWidget;
           vector<SelectorCriterion*>  _criterions;

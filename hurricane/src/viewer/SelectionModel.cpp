@@ -54,21 +54,21 @@ namespace Hurricane {
     SelectionWidget* widget = qobject_cast<SelectionWidget*>(QObject::parent());
     if ( widget )
       return widget->cumulativeSelection();
-
-    return true;
+    return false;
   }
 
 
   void  SelectionModel::clear ()
   {
     _selection.clear ();
-    emit layoutChanged ();
+    reset ();
   }
 
 
   void  SelectionModel::setSelection ( const SelectorSet& selection )
   {
-    if ( !isCumulative() ) _selection.clear ();
+    bool modificated = true;
+    if ( not isCumulative() ) _selection.clear ();
 
     SelectorSet::const_iterator       iselector = selection.begin();
     vector<OccurrenceItem>::iterator  iitem;
@@ -76,23 +76,54 @@ namespace Hurricane {
       if ( isCumulative() ) {
         iitem = find( _selection.begin(), _selection.end(), (*iselector)->getOccurrence() );
         if ( iitem != _selection.end() ) {
-          (*iitem)._flags |= OccurrenceItem::Selected;
+          (*iitem).setFlags ( OccurrenceItem::Selected );
           continue;
         }
       }
+      modificated = true;
       _selection.push_back ( OccurrenceItem((*iselector)->getOccurrence()) );
     }
 
-    emit layoutChanged ();
+    if ( modificated ) reset ();
   }
 
 
-  Occurrence  SelectionModel::toggleSelection ( const QModelIndex& index )
+  void  SelectionModel::setSelection ( Occurrence occurrence )
+  {
+    bool modificated = false;
+    if ( not isCumulative() ) _selection.clear ();
+
+    size_t i = 0;
+    for ( ; i<_selection.size() ; i++ ) {
+      if ( _selection[i]._occurrence == occurrence ) break;
+    }
+
+    if ( i >= _selection.size() ) {
+      modificated = true;
+      _selection.push_back ( OccurrenceItem(occurrence) );
+    }
+    else _selection[i].setFlags ( OccurrenceItem::Selected );
+    
+    if ( modificated ) reset ();
+  }
+
+
+  Occurrence  SelectionModel::toggleSelection ( const QModelIndex& oindex )
+  {
+    if ( oindex.isValid() && ( oindex.row() < (int)_selection.size() ) ) {
+      _selection[oindex.row()].toggle();
+      emit dataChanged ( index(oindex.row(),0), index(oindex.row(),1) );
+
+      return _selection[oindex.row()]._occurrence;
+    }
+
+    return Occurrence ();
+  }
+
+
+  Occurrence  SelectionModel::getOccurrence ( const QModelIndex& index )
   {
     if ( index.isValid() && ( index.row() < (int)_selection.size() ) ) {
-      _selection[index.row()].toggle();
-      emit layoutChanged ();
-
       return _selection[index.row()]._occurrence;
     }
 
@@ -105,30 +136,52 @@ namespace Hurricane {
     bool   found = false;
     size_t i     = 0;
     for ( ; i<_selection.size() ; i++ ) {
-      if ( !found && (_selection[i]._occurrence == occurrence) ) {
+      if ( (not found) and (_selection[i]._occurrence == occurrence) ) {
         found = true;
-        if ( isCumulative() ) break;
+        break;
       }
-      if (  found && ( i < _selection.size()-1 ) )
-        _selection[i] = _selection[i+1];
     }
 
-    if ( !found )
+    if ( not found ) {
       _selection.push_back ( OccurrenceItem(occurrence) );
-    else {
-      if ( isCumulative() ) _selection[i].toggle ();
-      else                  _selection.pop_back ();
     }
+    _selection[i].toggle ();
     
-    emit layoutChanged ();
+  //emit dataChanged ( index(i,0), index(i,1) );
   }
+
+
+  // void  SelectionModel::toggleSelection ( Occurrence occurrence )
+  // {
+  //   bool   found = false;
+  //   size_t i     = 0;
+  //   for ( ; i<_selection.size() ; i++ ) {
+  //     if ( (not found) and (_selection[i]._occurrence == occurrence) ) {
+  //       found = true;
+  //       if ( isCumulative() ) break;
+  //     }
+  //     if (  found and ( i < _selection.size()-1 ) )
+  //       _selection[i] = _selection[i+1];
+  //   }
+
+  //   if ( not found ) {
+  //     _selection.push_back ( OccurrenceItem(occurrence) );
+  //   } else {
+  //     if ( isCumulative() ) _selection[i].toggle ();
+  //     else                  _selection.pop_back ();
+  //   }
+    
+  //   reset ();
+  // }
 
 
   QVariant  SelectionModel::data ( const QModelIndex& index, int role ) const
   {
-    static QFont        occurrenceFont = Graphics::getFixedFont ( QFont::Normal );
-    static QFont        entityFont     = Graphics::getFixedFont ( QFont::Bold, false );
-    static QFontMetrics entityMetrics  = QFontMetrics(entityFont);
+    static QBrush       unselectForeground = QBrush ( QColor(255,0,0) );
+    static QFont        occurrenceFont     = Graphics::getFixedFont ( QFont::Normal );
+    static QFont        unselectFont       = Graphics::getFixedFont ( QFont::Normal, true );
+    static QFont        selectFont         = Graphics::getFixedFont ( QFont::Bold, false );
+    static QFontMetrics entityMetrics      = QFontMetrics(selectFont);
 
     if ( !index.isValid() ) return QVariant ();
 
@@ -150,10 +203,15 @@ namespace Hurricane {
         case 0:  return occurrenceFont;
         case 1:
           if ( _selection[row]._flags & OccurrenceItem::Selected )
-            return entityFont;
+            return selectFont;
         default:
-          return occurrenceFont;
+          return unselectFont;
       }
+    }
+
+    if ( role == Qt::ForegroundRole ) {
+      if ( _selection[row]._flags & OccurrenceItem::Selected ) return QVariant();
+      return unselectForeground;
     }
 
     if ( role == Qt::DisplayRole ) {
@@ -166,7 +224,7 @@ namespace Hurricane {
   }
 
 
-  QVariant  SelectionModel::headerData ( int             section
+  QVariant  SelectionModel::headerData ( int              section
                                         , Qt::Orientation orientation
                                         , int             role ) const
   {

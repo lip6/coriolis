@@ -338,8 +338,10 @@ namespace Hurricane {
 
     connect ( _cellWidget            , SIGNAL(selectionModeChanged())
             , this                   , SLOT  (changeSelectionMode ()) );
+    // connect ( &_selectCommand        , SIGNAL(selectionToggled (Occurrence))
+    //         ,  _cellWidget           , SLOT  (toggleSelection  (Occurrence)) );
     connect ( &_selectCommand        , SIGNAL(selectionToggled (Occurrence))
-            ,  _cellWidget           , SLOT  (toggleSelection  (Occurrence)) );
+            ,  _cellWidget           , SLOT  (select           (Occurrence)) );
 
     connect ( _cellWidget            , SIGNAL(stateChanged(shared_ptr<CellWidget::State>&))
             , this                   , SLOT  (setState    (shared_ptr<CellWidget::State>&)) );

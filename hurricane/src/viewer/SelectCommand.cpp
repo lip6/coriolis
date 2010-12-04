@@ -281,7 +281,7 @@ namespace Hurricane {
       
   //_cellWidget->unselectAll ();
     _cellWidget->selectOccurrencesUnder ( _cellWidget->screenToDbuBox(selectArea) );
-    bool somethingSelected = !_cellWidget->getSelectorSet().empty();
+    bool somethingSelected = not _cellWidget->getSelectorSet().empty();
 
     if ( _cellWidget->showSelection() != somethingSelected )
       _cellWidget->setShowSelection ( somethingSelected );

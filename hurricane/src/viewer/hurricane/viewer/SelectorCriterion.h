@@ -41,15 +41,28 @@ namespace Hurricane {
 
   class SelectorCriterion {
     public: 
+      inline             SelectorCriterion ();
       virtual           ~SelectorCriterion ();
       virtual bool       isValid           ( CellWidget* ) const = 0;
+      inline  bool       isEnabled         () const;
       virtual const Net* getNet            () const;
+      virtual const Box& getArea           () const;
+      inline  void       enable            ();
+      inline  void       disable           ();
       virtual void       doSelection       ( CellWidget* ) = 0;
       virtual void       undoSelection     ( CellWidget* );
       virtual Record*    _getRecord        () const = 0;
       virtual string     _getString        () const = 0;
       virtual string     _getTypeName      () const = 0;
+    private:
+      bool  _isEnabled;
   };
+
+
+  inline        SelectorCriterion::SelectorCriterion () : _isEnabled(false) { }
+  inline  bool  SelectorCriterion::isEnabled         () const { return _isEnabled; }
+  inline  void  SelectorCriterion::enable            () { _isEnabled=true; }
+  inline  void  SelectorCriterion::disable           () { _isEnabled=false; }
 
 
   class NetSelectorCriterion : public SelectorCriterion {
@@ -73,7 +86,7 @@ namespace Hurricane {
     public:
                          AreaSelectorCriterion ( const Box& );
       virtual           ~AreaSelectorCriterion ();
-              const Box& getArea               () const;
+      virtual const Box& getArea               () const;
       virtual bool       isValid               ( CellWidget* ) const;
       virtual void       doSelection           ( CellWidget* );
       virtual Record*    _getRecord            () const;

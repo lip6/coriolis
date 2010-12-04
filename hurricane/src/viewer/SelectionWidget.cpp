@@ -133,6 +133,8 @@ namespace Hurricane {
 
     connect ( _view->selectionModel(), SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&))
             , this                   , SLOT  (selectCurrent (const QModelIndex&,const QModelIndex&)) );
+  //connect ( _baseModel             , SIGNAL(dataChanged   (const QModelIndex&,const QModelIndex&))
+  //        , this                   , SLOT  (dataChanged   (const QModelIndex&,const QModelIndex&)) );
 
     QAction* toggleAction = new QAction  ( tr("&Toggle Selection"), this );
     toggleAction->setShortcut   ( QKeySequence(tr("T")) );
@@ -229,6 +231,11 @@ namespace Hurricane {
   }
 
 
+  // void  SelectionWidget::dataChanged  ( const QModelIndex&, const QModelIndex& )
+  // {
+  // }
+
+
   void  SelectionWidget::toggleSelection ()
   {
     toggleSelection ( _view->currentIndex() );
@@ -250,9 +257,7 @@ namespace Hurricane {
   void  SelectionWidget::toggleSelection ( Occurrence occurrence )
   {
     if ( _updateState != InternalEmit ) {
-      blockAllSignals ( true );
       _baseModel->toggleSelection ( occurrence );
-      blockAllSignals ( false );
     }
     _updateState = ExternalEmit;
   }
@@ -271,6 +276,10 @@ namespace Hurricane {
     _view->selectRow ( 0 );
     _view->resizeColumnToContents ( 0 );
   }
+
+
+  void  SelectionWidget::setSelection ( Occurrence occurrence )
+  { _baseModel->setSelection ( occurrence ); }
 
 
   void  SelectionWidget::clear ()

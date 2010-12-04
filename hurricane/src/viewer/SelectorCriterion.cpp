@@ -42,6 +42,10 @@ namespace Hurricane {
   { return NULL; }
 
 
+  const Box& SelectorCriterion::getArea () const
+  { static const Box empty; return empty; }
+
+
   void  SelectorCriterion::undoSelection ( CellWidget* cw )
   { }
 
@@ -51,7 +55,7 @@ namespace Hurricane {
 
 
   NetSelectorCriterion::NetSelectorCriterion ( const Net* net )
-    : _net(net)
+    : _net (net)
     , _name(_net->getName())
   { }
 
@@ -73,15 +77,11 @@ namespace Hurricane {
 
 
   void  NetSelectorCriterion::doSelection ( CellWidget* cw )
-  {
-    cw->_select ( _net );
-  }
+  { cw->select ( Occurrence(_net) ); }
 
 
   void  NetSelectorCriterion::undoSelection ( CellWidget* cw )
-  {
-    cw->_unselect ( _net );
-  }
+  { cw->unselect ( Occurrence(_net) ); }
 
 
   string  NetSelectorCriterion::_getTypeName () const
@@ -125,9 +125,7 @@ namespace Hurricane {
 
 
   void  AreaSelectorCriterion::doSelection ( CellWidget* cw )
-  {
-    cw->_selectOccurrencesUnder ( _area );
-  }
+  { cw->selectOccurrencesUnder ( _area ); }
 
 
   string  AreaSelectorCriterion::_getTypeName () const

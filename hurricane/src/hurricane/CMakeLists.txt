@@ -9,7 +9,8 @@
                                 hurricane/ContactLayer.h
                                 hurricane/DiffusionLayer.h
                                 hurricane/TransistorLayer.h       hurricane/TransistorLayers.h
-                                hurricane/Boxes.h                 hurricane/Box.h
+                                hurricane/Box.h                   hurricane/Boxes.h
+				hurricane/Torus.h
                                 hurricane/Cell.h                  hurricane/Cells.h
                                 hurricane/Collection.h
                                 hurricane/Commons.h
@@ -100,6 +101,7 @@
                                 DbU.cpp
                                 Point.cpp
                                 Box.cpp
+                                Torus.cpp
                                 Interval.cpp
                                 Transformation.cpp
                                 Name.cpp

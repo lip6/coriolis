@@ -149,8 +149,8 @@ namespace Hurricane {
               void                   goTo                 ( int );
               void                   updateSelecteds      ();
     signals:
-              void                   netSelected          ( const Net* );
-              void                   netUnselected        ( const Net* );
+              void                   netSelected          ( Occurrence );
+              void                   netUnselected        ( Occurrence );
               void                   netFitted            ( const Net* );
     private slots:                                        
               void                   textFilterChanged    ();
