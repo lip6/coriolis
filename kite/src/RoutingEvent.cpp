@@ -29,6 +29,7 @@
 
 #include  "hurricane/Bug.h"
 #include  "hurricane/DebugSession.h"
+#include  "hurricane/Breakpoint.h"
 #include  "hurricane/Net.h"
 #include  "hurricane/Layer.h"
 
@@ -216,7 +217,6 @@ namespace {
   }
 
 
-
 // -------------------------------------------------------------------
 // Class  :  "Cs1Candidate".
 
@@ -235,10 +235,10 @@ namespace {
     public:
       friend inline bool  operator< ( const Cs1Candidate&, const Cs1Candidate& );
     private:
-      Track*            _track;
-      size_t            _begin;
-      size_t            _end;
-      vector<Interval>  _conflicts;
+      Track*             _track;
+      size_t             _begin;
+      size_t             _end;
+      vector<Interval>   _conflicts;
   };
 
 
@@ -268,110 +268,196 @@ namespace {
 
 
 // -------------------------------------------------------------------
-// Class  :  "ShearAnalyze".
+// Class  :  "FindPath".
 
 
-  class ShearAnalyze {
+  class PathElement {
     public:
-             ShearAnalyze     ( TrackElement* );
-      void   addPerpandicular ( DbU::Unit axis, Interval constraint );
-      GCell* getShearGCell    ();
+      class UniqCompare {
+        public:
+          inline bool operator () ( const PathElement*, const PathElement* );
+      };
+    public:
+      class QueueCompare {
+        public:
+          inline bool operator() ( const PathElement*, const PathElement* );
+      };
+    public:
+                             PathElement ( PathElement*, Track*, const Interval& span );
+      inline PathElement*    getBack     () const;
+      inline Track*          getTrack    () const;
+      inline const Interval& getSpan     () const;
     private:
-      GCell* _compute         ();
-    private:
-      TrackElement*    _segment;
-      vector<GCell*>   _gcells;
-      vector<Interval> _constraints;
-      GCell*           _shearGCell;
-      bool             _computed;
+      PathElement* _back;
+      Track*       _track;
+      Interval     _span;
   };
 
 
-  ShearAnalyze::ShearAnalyze ( TrackElement* segment )
-    : _segment    (segment)
-    , _gcells     ()
-    , _constraints()
-    , _shearGCell (NULL)
-    , _computed   (false)
+  typedef  priority_queue< PathElement*, vector<PathElement*>, PathElement::QueueCompare >  PathElementQueue;
+  typedef  set< PathElement*, PathElement::UniqCompare >  UniqPathElement;
+
+
+  PathElement::PathElement ( PathElement* back, Track* track, const Interval& span )
+    : _back (back)
+    , _track(track)
+    , _span (span)
+  { }
+
+
+  inline PathElement*    PathElement::getBack     () const { return _back; }
+  inline Track*          PathElement::getTrack    () const { return _track; }
+  inline const Interval& PathElement::getSpan     () const { return _span; }
+
+
+  bool  PathElement::QueueCompare::operator() ( const PathElement* lhs, const PathElement* rhs )
   {
-    segment->getGCells ( _gcells );
-    for ( size_t igcell=0 ; igcell<_gcells.size() ; igcell++ ) {
-      _constraints.push_back ( Interval() );
-    }
+    DbU::Unit delta = lhs->getSpan().getSize() - rhs->getSpan().getSize();
+    if ( delta < 0 ) return true;
+    if ( delta > 0 ) return false;
+
+    delta = lhs->getSpan().getVMax() - rhs->getSpan().getVMax();
+    if ( delta < 0 ) return true;
+
+    delta = lhs->getTrack()->getAxis() - rhs->getTrack()->getAxis();
+    if ( delta > 0 ) return true;
+
+    return false;
   }
 
 
-  GCell* ShearAnalyze::getShearGCell ()
+  inline bool PathElement::UniqCompare::operator () ( const PathElement* lhs, const PathElement* rhs )
   {
-    if ( not _computed ) _compute ();
-    return _shearGCell;
+    DbU::Unit delta = lhs->getTrack()->getAxis() - rhs->getTrack()->getAxis();
+    if ( delta < 0 ) return true;
+    if ( delta > 0 ) return false;
+
+    delta = lhs->getSpan().getVMin() - rhs->getSpan().getVMin();
+    if ( delta < 0 ) return true;
+
+    return false;
   }
 
 
-  void  ShearAnalyze::addPerpandicular ( DbU::Unit axis, Interval constraint )
+  class FindPath {
+    public:
+                                      FindPath             ( const vector<Track*>&
+                                                            , Net*
+                                                            , DbU::Unit from
+                                                            , DbU::Unit to
+                                                            );
+      inline Net*                     getNet                () const;
+      inline DbU::Unit                getFrom               () const;
+      inline DbU::Unit                getTo                 () const;
+      inline const vector<Track*>&    getTracks             () const;
+             const vector<DbU::Unit>& computeDoglegPos      ( DbU::Unit allowedGap );
+    private:
+      Net*               _net;
+      vector<Track*>     _tracks;
+      DbU::Unit          _from;
+      DbU::Unit          _to;
+      vector<DbU::Unit>  _doglegPos;
+  };
+
+
+  FindPath::FindPath ( const vector<Track*>& tracks, Net* net, DbU::Unit from, DbU::Unit to )
+    : _net      (net)
+    , _tracks   (tracks)
+    , _from     (from)
+    , _to       (to)
+    , _doglegPos()
+  { }
+
+
+  inline Net*                  FindPath::getNet    () const { return _net; }
+  inline DbU::Unit             FindPath::getFrom   () const { return _from; }
+  inline DbU::Unit             FindPath::getTo     () const { return _to; }
+  inline const vector<Track*>& FindPath::getTracks () const { return _tracks; }
+
+  const vector<DbU::Unit>& FindPath::computeDoglegPos ( DbU::Unit allowedGap )
   {
-    Interval uside;
-    for ( size_t igcell=0 ; igcell<_gcells.size() ; igcell++ ) {
-      uside = _gcells[igcell]->getUSide(_segment->getDirection(),true);
-      if ( uside.contains(axis) ) {
-        _constraints[igcell].merge ( constraint );
-      }
+    PathElementQueue  peQueue;
+    UniqPathElement   peUniq;
+
+    ltrace(200) << "FindPath::computeDoglegPos()" << endl;
+    ltracein(200);
+
+    allowedGap /= 2;
+
+  // Initial loading of the queue.
+    for ( size_t itrack=0; itrack < _tracks.size() ; ++itrack ) {
+      Interval span ( _tracks[itrack]->getFreeInterval(_from,_net));
+      span.inflate ( allowedGap );
+
+      if ( not span.contains(_from) ) continue;
+      if (     span.contains(_to)   ) continue;
+      
+      PathElement* pe = new PathElement(NULL,_tracks[itrack],span);
+      if ( peUniq.find(pe) != peUniq.end() ) { delete pe; continue; }
+
+      ltrace(200) << "| Start Push: " << pe->getSpan() << " " << pe->getTrack() << endl;
+
+      peUniq.insert ( pe );
+      peQueue.push ( pe );
     }
-  }
 
+  // Queue exploration.
+    while ( not peQueue.empty() ) {
+      PathElement* pe = peQueue.top ();
+      peQueue.pop ();
 
-  GCell* ShearAnalyze::_compute ()
-  {
-    _shearGCell = NULL;
+      ltrace(200) << "| Pop: " << pe->getSpan() << " " << pe->getTrack() << endl;
 
-    Interval trunk ( false );
-    for ( size_t igcell=0 ; igcell<_gcells.size() ; igcell++ ) {
-      if ( not _constraints[igcell].isEmpty() ) {
-        trunk.intersection ( _constraints[igcell] );
-      }
-    }
-  // Ugly: explicit pitch.
-    trunk.inflate ( DbU::lambda(5.0) );
+    // Ugly: hard-coded pitch.
+      DbU::Unit fromPos = pe->getSpan().getVMax() - DbU::lambda(5.0);
 
-  // 0: intialisation, 1: left constrained, 2: right constrained.
-    unsigned int  previousConstraint = 0;
-    size_t        ishearBegin        = 0;
-    size_t        ishearEnd          = 0;
-    for ( size_t igcell=0 ; igcell<_gcells.size() ; igcell++ ) {
-      if ( _constraints[igcell].isEmpty() ) continue;
+      for ( size_t itrack=0; itrack < _tracks.size() ; ++itrack ) {
+        ltrace(200) << "| Looking: " << _tracks[itrack] << endl;
 
-      bool  leftConstrained = (_constraints[igcell].getVMin() >= trunk.getVMin());
-      bool rightConstrained = (_constraints[igcell].getVMax() <= trunk.getVMax());
+        Interval toSpan ( _tracks[itrack]->getFreeInterval(fromPos,_net) );
+        toSpan.inflate ( allowedGap );
+        if ( not toSpan.contains(fromPos) or (pe->getSpan().getVMax() >= toSpan.getVMax()) )
+          continue;
 
-      if ( not leftConstrained and not rightConstrained ) continue;
-      if (     leftConstrained and     rightConstrained ) {
-        ishearBegin = ishearEnd = 0;
-        break;
-      }
+      // <_to> position reached, backtrack.
+        if ( toSpan.contains(_to) ) {
+          ltrace(200) << "| NoPush: " << toSpan << " " << _tracks[itrack] << endl;
 
-      if ( not previousConstraint ) {
-        previousConstraint = (leftConstrained) ? 1 : 2;
-        continue;
-      }
+          vector<DbU::Unit> doglegPos;
 
-      if ( leftConstrained xor (previousConstraint == 1) ) {
-        if ( not ishearBegin ) {
-          ishearBegin = igcell;
+          PathElement* fromPe = pe;
+          while ( fromPe ) {
+            doglegPos.insert ( doglegPos.begin(), fromPe->getSpan().getVMax()-DbU::lambda(5.0) );
+            fromPe = fromPe->getBack();
+          }
+          ltrace(200) << "| Path found (" << doglegPos.size() << " doglegs)" << endl;
+          for ( size_t ipos=0 ; ipos<doglegPos.size() ; ++ipos ) {
+            ltrace(200) << "| " << DbU::getValueString(doglegPos[ipos]) << endl;
+          }
+
+        // Keep the path with the less bends.
+          if ( not doglegPos.empty() and (_doglegPos.empty() or (doglegPos.size() < _doglegPos.size())) ) {
+            ltrace(200) << "| Accept new path." << endl;
+            _doglegPos = doglegPos;
+          }
           continue;
         }
 
-        ishearBegin = ishearEnd = 0;
-        break;
+        PathElement* toPe = new PathElement ( pe, _tracks[itrack], toSpan );
+        if ( peUniq.find(toPe) != peUniq.end() ) { delete toPe; continue; }
+
+        peUniq.insert ( toPe );
+        peQueue.push ( toPe );
+
+        ltrace(200) << "| Push: " << toPe->getSpan() << " " << toPe->getTrack() << endl;
       }
     }
 
-    if ( ishearBegin ) {
-      if ( _constraints[ishearBegin-1].isEmpty() ) {
-        _shearGCell = _gcells[ishearBegin-1];
-      }
-    }
+    UniqPathElement::iterator ipe = peUniq.begin();
+    for ( ; ipe != peUniq.end() ; ++ipe ) delete (*ipe);
 
-    return _shearGCell;
+    ltraceout(200);
+    return _doglegPos;
   }
 
 
@@ -798,9 +884,16 @@ namespace {
 
   class Manipulator {
     public:
-      enum { ToRipupLimit=1, AllowExpand  =2, NoExpand=4, PerpandicularsFirst=8, ToMoveUp=16 };
+      enum { ToRipupLimit        = 0x01
+           , AllowExpand         = 0x02
+           , NoExpand            = 0x04
+           , PerpandicularsFirst = 0x08
+           , ToMoveUp            = 0x10
+           , AllowLocalMoveUp    = 0x20
+           , NoDoglegReuse       = 0x40
+           };
       enum { LeftAxisHint=1, RightAxisHint=2 };
-      enum { NoRingLimit=1 };
+      enum { NoRingLimit=0x1, HasNextRipup=0x2 };
     public:
                                   Manipulator             ( TrackElement*, State& );
                                  ~Manipulator             ();
@@ -825,7 +918,7 @@ namespace {
              bool                 desalignate             ();
              bool                 slacken                 ();
              bool                 pivotUp                 ();
-             bool                 moveUp                  ();
+             bool                 moveUp                  ( unsigned int flags=0 );
              bool                 makeDogLeg              ();
              bool                 makeDogLeg              ( DbU::Unit );
              bool                 makeDogLeg              ( Interval );
@@ -1128,13 +1221,105 @@ namespace {
 
   bool  State::conflictSolve1 ()
   {
+#define  OLD_conflictSolve1  1
+
+#ifdef  NEW_conflictSolve1
+    ltrace(200) << "State::conflictSolve1()" << endl;
+    ltracein(200);
+
+  //bool            success    = false;
+    Interval        constraints;
+    vector<Track*>  candidates;
+    TrackElement*   segment    = _event->getSegment();
+  //bool            canMoveUp  = (segment->isLocal()) ? segment->canPivotUp(0.5) : segment->canMoveUp(1.0);
+  //unsigned int    relaxFlags = Manipulator::NoDoglegReuse
+  //                           | ((_data and (_data->getStateCount() < 2)) ? Manipulator::AllowExpand
+  //                                                                       : Manipulator::NoExpand);
+
+    segment->base()->getConstraints ( constraints );
+    Interval      overlap    = segment->getCanonicalInterval();
+    RoutingPlane* plane      = Session::getKiteEngine()->getRoutingPlaneByLayer(segment->getLayer());
+    Track*        track      = plane->getTrackByPosition(constraints.getVMin(),Constant::Superior);
+
+    for ( ; track->getAxis() <= constraints.getVMax() ; track = track->getNext() ) {
+      candidates.push_back ( track );
+    }
+
+    FindPath findPath ( candidates, segment->getNet(), overlap.getVMin(), overlap.getVMax() );
+    vector<DbU::Unit> doglegs = findPath.computeDoglegPos( 0 );
+
+    if ( doglegs.empty() ) {
+      ltrace(200) << "Cannot find a path." << endl;
+
+      DbU::Unit gap      = DbU::lambda(50.0);
+      FindPath  findPath ( candidates, segment->getNet(), overlap.getVMin(), overlap.getVMax() );
+      doglegs = findPath.computeDoglegPos(gap);
+
+      if ( doglegs.empty() ) {
+        ltrace(200) << "Cannot find a path with gap " << DbU::getValueString(gap) << "." << endl;
+        return false;
+      }
+      return false;
+    }
+
+
+    ltrace(200) << "Dogleg positions:" << endl;
+    for ( size_t ipos=0 ; ipos<doglegs.size() ; ++ipos ) {
+      ltrace(200) << "| " << ipos << ":" << DbU::getValueString(doglegs[ipos]) << endl;
+    }
+
+    vector<GCell*> gcells;
+    vector<GCell*> doglegGCells;
+    segment->getGCells ( gcells );
+
+  //unsigned int  depth = Session::getRoutingGauge()->getLayerDepth(segment->getLayer());
+    Interval      uside;
+
+    size_t idogleg = 0;
+    for ( size_t igcell=0 ; igcell<gcells.size() ; igcell++ ) {
+      uside = gcells[igcell]->getUSide(segment->getDirection(),true);
+      ltrace(200) << "| " << gcells[igcell] << " uside: " << uside << endl;
+
+      if ( uside.contains(doglegs[idogleg]) ) {
+        ltrace(200) << "> Dogleg: " << idogleg << endl;
+        doglegGCells.push_back ( gcells[igcell] );
+
+        idogleg++;
+      }
+    }
+
+    for ( size_t igcell=0 ; igcell<doglegGCells.size() ; igcell++ ) {
+      if ( not segment->canDogLegAt(doglegGCells[igcell]) ) {
+        ltrace(200) << "Cannot create dogleg " << igcell << "." << endl;
+        ltraceout(200);
+        return false;
+      }
+    }
+
+    TrackElement* remainder = segment;
+    remainder->getDataNegociate()->setState ( DataNegociate::RipupPerpandiculars, true );
+
+    for ( size_t igcell=0 ; igcell<doglegGCells.size() ; igcell++ ) {
+      TrackElement* dogleg = remainder->makeDogLeg ( doglegGCells[igcell] );
+      dogleg->setAxis ( doglegs[igcell] );
+
+      remainder = Session::lookup ( Session::getDogLegs()[2] );
+      remainder->getDataNegociate()->setState ( DataNegociate::RipupPerpandiculars, true );
+    }
+
+    ltraceout(200);
+    return true;
+#endif  // NEW_conflictSolve1
+
+#ifdef OLD_conflictSolve1
     bool                  success    = false;
     Interval              constraints;
     vector<Cs1Candidate>  candidates;
     TrackElement*         segment    = _event->getSegment();
     bool                  canMoveUp  = (segment->isLocal()) ? segment->canPivotUp(0.5) : segment->canMoveUp(1.0);
-    unsigned int          relaxFlags
-      = (_data and (_data->getStateCount() < 2)) ? Manipulator::AllowExpand : Manipulator::NoExpand;
+    unsigned int          relaxFlags = Manipulator::NoDoglegReuse
+                                     | ((_data and (_data->getStateCount() < 2)) ? Manipulator::AllowExpand
+                                                                                 : Manipulator::NoExpand);
 
     ltrace(200) << "State::conflictSolve1()" << endl;
     ltrace(200) << "| Candidates Tracks: " << endl;
@@ -1163,19 +1348,20 @@ namespace {
         other = track->getSegment(begin);
 
         if ( other->getNet() == segment->getNet() ) {
-          ltrace(200) << "  | Same net: " << begin << " " << other << endl;
+          ltrace(200) << "  | " << begin << " Same net: " << " " << other << endl;
           continue;
         }
         if ( not other->getCanonicalInterval().intersect(overlap) ) {
-          ltrace(200) << "  | No Conflict: " << begin << " " << other << endl;
+          ltrace(200) << "  | " << begin << " No Conflict: " << " " << other << endl;
           if ( otherNet == NULL ) candidates.back().setBegin ( begin+1 );
           continue;
         }
-        ltrace(200) << "  | Conflict: " << begin << " " << other << endl;
+        ltrace(200) << "  | " << begin << " Conflict: " << " " << other << endl;
         
         if ( otherNet != other->getNet() ) {
           if ( otherNet != NULL ) {
             candidates.back().addConflict ( otherOverlap );
+            ltrace(200) << "  | Other overlap: " << otherOverlap << endl;
           }
           otherNet     = other->getNet();
           otherOverlap = other->getCanonicalInterval();
@@ -1183,8 +1369,10 @@ namespace {
           otherOverlap.merge(other->getCanonicalInterval());
         }
       }
-      if ( not otherOverlap.isEmpty() )
+      if ( not otherOverlap.isEmpty() ) {
         candidates.back().addConflict ( otherOverlap );
+        ltrace(200) << "  | Other overlap: " << otherOverlap << endl;
+      }
     }
 
     sort ( candidates.begin(), candidates.end() );
@@ -1196,6 +1384,8 @@ namespace {
       if ( candidates[icandidate].getLength() > 2 ) break;
 
       Interval overlap0 = candidates[icandidate].getConflict(0);
+      ltrace(200) << "overlap0: " << overlap0 << endl;
+
       if ( candidates[icandidate].getLength() == 1 ) {
         Track*        track = candidates[icandidate].getTrack();
         TrackElement* other = track->getSegment(candidates[icandidate].getBegin());
@@ -1216,7 +1406,7 @@ namespace {
         } else {
           if ( not canMoveUp
              and (relaxFlags != Manipulator::NoExpand)
-             and Manipulator(segment,*this).relax(overlap0,Manipulator::NoExpand) ) {
+             and Manipulator(segment,*this).relax(overlap0,Manipulator::NoExpand|Manipulator::NoDoglegReuse) ) {
             ltrace(200) << "Cannot move up but successful narrow breaking." << endl;
             success = true;
             break;
@@ -1272,6 +1462,7 @@ namespace {
     }
 
     return success;
+#endif  // OLD_conflictSolve1
   }
 
 
@@ -1561,6 +1752,10 @@ namespace {
           //  blocked = true;
             success = Manipulator(segment,*this).pivotUp();
             if ( not success ) {
+              cerr << "BLOCKAGE MOVE UP " << segment << endl;
+              success = Manipulator(segment,*this).moveUp(Manipulator::AllowLocalMoveUp);
+            }
+            if ( not success ) {
               cerr << "[ERROR] Tighly constrained segment overlapping a blockage." << endl;
               ltrace(200) << "Segment is hard blocked, bypass to Unimplemented." << endl;
               nextState = DataNegociate::Unimplemented;
@@ -1694,13 +1889,14 @@ namespace {
       if ( not _event or _event->isUnimplemented() ) return false;
 
       unsigned int limit = Session::getKiteEngine()->getRipupLimit(_segment);
+      unsigned int count = _data->getRipupCount() + ((flags & HasNextRipup) ? 1 : 0);
 
       if (   not ( flags & NoRingLimit )
          and (_data->isRing() or _data->isBorder())
-         and not (_data->getRipupCount() < limit) )
+         and not (count < limit) )
         return false;
 
-      return (_data->getRipupCount() < limit);
+      return (count < limit);
     }
 
     return false;
@@ -1792,9 +1988,12 @@ namespace {
       track = perpandiculars[i]->getTrack();
       if ( not track ) continue;
 
+      bool dislodgeCaged = false;
       if ( Manipulator(perpandiculars[i],_S).isCaged(_event->getSegment()->getAxis()) ) {
         cagedPerpandiculars = true;
-        break;
+        dislodgeCaged       = true;
+      //break;
+      //continue;
       }
 
       placedPerpandiculars++;
@@ -1810,6 +2009,10 @@ namespace {
         
         if ( Manipulator(perpandiculars[i],_S).ripup(_event->getSegment()->getAxis()
                                                     ,perpandicularActionFlags) )
+          if ( dislodgeCaged ) {
+          // Ugly: hard-coded uses of pitch.
+            _event->setAxisHint ( _event->getSegment()->getAxis() + DbU::lambda(5.0) );
+          }
           continue;
       }
 
@@ -1845,7 +2048,7 @@ namespace {
       }
     }
 
-    if ( cagedPerpandiculars ) {
+    if ( cagedPerpandiculars and not placedPerpandiculars ) {
       ltrace(200) << "Aborted ripup of perpandiculars, constraints are due to fixed/blockage." << endl;
       _S.addAction ( _segment, SegmentAction::SelfRipup );
       return true;
@@ -2282,6 +2485,8 @@ namespace {
             else
               segment1->getDataNegociate()->setState ( DataNegociate::RipupPerpandiculars, true );
           }
+          if ( (flags & NoDoglegReuse) and (doglegReuse1 or doglegReuse2 ) )
+            success = false;
           break;
         case 2:
           if ( not doglegReuse1 )
@@ -2298,7 +2503,7 @@ namespace {
     } else {
     // The TrackElement has an order equal to the Session, it's in the
     // RoutingSet.
-      if ( !Manipulator(_segment,_S).makeDogLeg(interval) ) success = false;
+      if ( not Manipulator(_segment,_S).makeDogLeg(interval) ) success = false;
     }
 
     ltraceout(200);
@@ -2331,11 +2536,11 @@ namespace {
 
       if ( segment2->getNet() == ownerNet  ) continue;
       if ( not toFree.intersect(segment2->getCanonicalInterval()) ) continue;
-      if ( segment2->getId() >= maxId ) continue;
-      if ( segment2->isBlockage() or segment2->base()->isFixed() ) {
+      if ( segment2->isBlockage() or segment2->isFixed() ) {
         success = false;
         continue;
       }
+      if ( segment2->getId() >= maxId ) continue;
     //if ( (segment2->getNet() != ripupNet )
     //   && !toFree.intersect(segment2->getCanonicalInterval()) ) continue;
       ripupNet = segment2->getNet();
@@ -2495,7 +2700,7 @@ namespace {
 
       if (  segment2->getNet() == ownerNet  ) continue;
       if ( !toFree.intersect(segment2->getCanonicalInterval()) ) continue;
-      if (  segment2->base()->isFixed() ) {
+      if (  segment2->isFixed() ) {
         success = false;
         continue;
       }
@@ -2630,8 +2835,8 @@ namespace {
   {
     ltrace(200) << "Manipulator::slacken() " << _segment << endl; 
 
-    if (  _segment->isFixed   () ) return false;
-    if ( !_segment->canSlacken() ) return false;
+    if (     _segment->isFixed   () ) return false;
+    if ( not _segment->canSlacken() ) return false;
 
     _segment->slacken ();
     return true;
@@ -2751,13 +2956,19 @@ namespace {
   }
 
 
-  bool  Manipulator::moveUp ()
+  bool  Manipulator::moveUp ( unsigned int flags )
   {
     ltrace(200) << "Manipulator::moveUp() " << _segment << endl; 
 
-    if ( _segment->isFixed  () ) return false;
-    if ( _segment->isLocal() and not _segment->canPivotUp(0.5) ) return false;
-    if ( not _segment->canMoveUp(1.0) ) return false;
+    unsigned int kflags = Katabatic::AutoSegment::Propagate;
+    kflags |= (flags & AllowLocalMoveUp) ? Katabatic::AutoSegment::AllowLocal : 0;
+
+    if ( _segment->isFixed () ) return false;
+    if ( not (flags & AllowLocalMoveUp) ) {
+      if ( _segment->isLocal() and not _segment->canPivotUp(0.5) ) return false;
+      if ( not _segment->canMoveUp(1.0,kflags) ) return false;
+    } else
+      if ( not _segment->canMoveUp(1.0,kflags) ) return false;
 
 #if DISABLED
     ltrace(200) << "| Repack Tracks: " << endl;
@@ -2784,8 +2995,7 @@ namespace {
       }
     }
 #endif
-
-    _segment->moveUp ();
+    _segment->moveUp ( kflags );
     return true;
   }
 
@@ -3435,7 +3645,7 @@ namespace Kite {
 
   void  RoutingEvent::process ( RoutingEventQueue& queue, RoutingEventHistory& history )
   {
-    DebugSession::open ( _segment->getNet(), 200 );
+    DebugSession::open ( _segment->getNet(), 190 );
 
 #if defined(CHECK_DETERMINISM)
     cerr << "Order: "
@@ -3533,7 +3743,7 @@ namespace Kite {
           break;
         }
       }
-      if ( !hintFound ) itrack = 0;
+      if ( not hintFound ) itrack = 0;
       ltrace(200) << "Forcing to hint Track: " << itrack << endl;
     }
 
@@ -3553,10 +3763,12 @@ namespace Kite {
         if ( S.getState() == State::EmptyTrackList ) {
           Manipulator(_segment,S).ripupPerpandiculars ();
         } else {
-          for ( itrack=0 ; itrack<S.getCosts().size() ; itrack++ ) {
-            if ( S.getCost(itrack).isInfinite() ) break;
-            if ( S.insertInTrack(itrack) ) break;
-            resetInsertState ();
+          if ( Manipulator(_segment,S).canRipup(Manipulator::HasNextRipup)) {
+            for ( itrack=0 ; itrack<S.getCosts().size() ; itrack++ ) {
+              if ( S.getCost(itrack).isInfinite() ) break;
+              if ( S.insertInTrack(itrack) ) break;
+              resetInsertState ();
+            } // Next ripup is possible.
           }
 
         //if ( S.getCosts().size() and not S.getCost(itrack).isInfinite() )

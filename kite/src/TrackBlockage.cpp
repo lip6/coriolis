@@ -106,7 +106,6 @@ namespace Kite {
           Interval guside  = gcell->getUSide ( Constant::Horizontal, true );
           Interval segside ( boundingBox.getXMin(), boundingBox.getXMax() );
 
-          
           ltrace(190) << "Depth: " << depth << " " << track->getLayer() << endl;
           ltrace(190) << "Begin: " << gcell << endl;
           ltrace(190) << "End:   " << end << endl;

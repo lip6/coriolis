@@ -417,10 +417,10 @@ namespace Kite {
   {
     cmess1 << "  o  Building blockages." << endl;
 
-    if ( not _obstacleNet ) {
-      _obstacleNet = getCell()->getNet("obstaclenet");
-      if ( not _obstacleNet )
-        _obstacleNet = Net::create ( getCell(), "obstaclenet" );
+    if ( not _blockageNet ) {
+      _blockageNet = getCell()->getNet("blockagenet");
+      if ( not _blockageNet )
+        _blockageNet = Net::create ( getCell(), "blockagenet" );
     }
 
     QueryBlockages query ( this );

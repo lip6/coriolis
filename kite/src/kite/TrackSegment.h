@@ -79,7 +79,7 @@ namespace Kite {
       virtual bool                  canGoOutsideGCell          () const;
       virtual bool                  canSlacken                 () const;
       virtual bool                  canPivotUp                 ( float reserve ) const;
-      virtual bool                  canMoveUp                  ( float reserve ) const;
+      virtual bool                  canMoveUp                  ( float reserve, unsigned int flags=Katabatic::AutoSegment::Propagate ) const;
       virtual bool                  canRipple                  () const;
       virtual bool                  hasSourceDogLeg            () const;
       virtual bool                  hasTargetDogLeg            () const;
@@ -130,7 +130,7 @@ namespace Kite {
       virtual void                  invalidate                 ();
       virtual void                  setAxis                    ( DbU::Unit, unsigned int flags=Katabatic::AxisSet );
       virtual void                  slacken                    ();
-      virtual bool                  moveUp                     ();
+      virtual bool                  moveUp                     ( unsigned int flags=Katabatic::AutoSegment::Propagate );
       virtual bool                  moveAside                  ( bool onLeft );
       virtual TrackElement*         makeDogLeg                 ();
       virtual TrackElement*         makeDogLeg                 ( Interval, bool& leftDogleg );

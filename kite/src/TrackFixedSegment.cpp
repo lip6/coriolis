@@ -81,6 +81,7 @@ namespace Kite {
   TrackFixedSegment::TrackFixedSegment ( Track* track, Segment* segment )
     : TrackElement  (NULL)
     , _segment      (segment)
+    , _isBlockage   (segment->getNet() == _blockageNet)
   {
     Box boundingBox = segment->getBoundingBox();
 
@@ -90,12 +91,12 @@ namespace Kite {
       const Layer*  layer1     = track->getLayer()->getBlockageLayer();
       RegularLayer* layer2     = dynamic_cast<RegularLayer*>(technology->getLayer(layer1->getMask()));
       if ( layer2 ) {
-        DbU::Unit extention = layer2->getExtentionCap();
+      //DbU::Unit extention = layer2->getExtentionCap();
         if ( track->getDirection() == Constant::Horizontal ) {
           Interval uside = track->getKiteEngine()->getGCellGrid()->getUSide ( Constant::Horizontal );
 
-          _sourceU = max ( boundingBox.getXMin()-extention, uside.getVMin());
-          _targetU = min ( boundingBox.getXMax()+extention, uside.getVMax());
+          _sourceU = max ( boundingBox.getXMin(), uside.getVMin());
+          _targetU = min ( boundingBox.getXMax(), uside.getVMax());
 
           GCell*   gcell   = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(_sourceU,track->getAxis()) );
           GCell*   end     = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(_targetU,track->getAxis()) );
@@ -125,8 +126,8 @@ namespace Kite {
         } else {
           Interval uside = track->getKiteEngine()->getGCellGrid()->getUSide ( Constant::Vertical );
 
-          _sourceU = max ( boundingBox.getYMin()-extention, uside.getVMin());
-          _targetU = min ( boundingBox.getYMax()+extention, uside.getVMax());
+          _sourceU = max ( boundingBox.getYMin(), uside.getVMin());
+          _targetU = min ( boundingBox.getYMax(), uside.getVMax());
 
           GCell*   gcell      = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(track->getAxis(),_sourceU) );
           GCell*   end        = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(track->getAxis(),_targetU) );
@@ -192,7 +193,7 @@ namespace Kite {
 
   AutoSegment*   TrackFixedSegment::base            () const { return NULL; }
   bool           TrackFixedSegment::isFixed         () const { return true; }
-  bool           TrackFixedSegment::isBlockage      () const { return true; }
+  bool           TrackFixedSegment::isBlockage      () const { return _isBlockage; }
   DbU::Unit      TrackFixedSegment::getAxis         () const { return getTrack()->getAxis(); }
   bool           TrackFixedSegment::isHorizontal    () const { return getTrack()->isHorizontal(); }
   bool           TrackFixedSegment::isVertical      () const { return getTrack()->isVertical(); }
@@ -213,7 +214,7 @@ namespace Kite {
     Net* realNet = _segment->getNet();
     if ( realNet->isSupply() or realNet->isClock() )
       return _blockageNet;
-    return _segment->getNet();
+    return realNet;
   }
 
 
@@ -241,7 +242,9 @@ namespace Kite {
     string s2 = " ["   + DbU::getValueString(_sourceU)
               +  ":"   + DbU::getValueString(_targetU) + "]"
               +  " "   + DbU::getValueString(_targetU-_sourceU)
-              + " ["   + ((_track) ? getString(_index) : "npos") + "]";
+              + " ["   + ((_track) ? getString(_index) : "npos") + "] "
+              + "F"
+              + ((_isBlockage) ? "B" : "-");
     s1.insert ( s1.size()-1, s2 );
 
     return s1;

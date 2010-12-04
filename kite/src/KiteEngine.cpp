@@ -43,7 +43,9 @@
 #include  "hurricane/UpdateSession.h"
 
 #include  "crlcore/Measures.h"
+#include  "knik/Vertex.h"
 #include  "knik/Edge.h"
+#include  "knik/Graph.h"
 #include  "knik/KnikEngine.h"
 #include  "katabatic/AutoContact.h"
 #include  "kite/DataNegociate.h"
@@ -76,12 +78,14 @@ namespace Kite {
   using Hurricane::Error;
   using Hurricane::Warning;
   using Hurricane::Breakpoint;
+  using Hurricane::Torus;
   using Hurricane::Layer;
   using Hurricane::Cell;
   using CRL::addMeasure;
   using CRL::Measures;
   using CRL::MeasuresSet;
   using Knik::KnikEngine;
+  using Katabatic::ChipTools;
 
 
   const char* missingRW =
@@ -109,7 +113,7 @@ namespace Kite {
   KiteEngine::KiteEngine ( Cell* cell )
     : KatabaticEngine  (cell)
     , _knik            (NULL)
-    , _obstacleNet     (NULL)
+    , _blockageNet     (NULL)
     , _configuration   (new Configuration(getKatabaticConfiguration()))
     , _routingPlanes   ()
     , _kiteGrid        (NULL)
@@ -246,7 +250,8 @@ namespace Kite {
 
   void  KiteEngine::createGlobalGraph ( unsigned int mode )
   {
-    Cell* cell = getCell();
+    Cell* cell   = getCell();
+    Box   cellBb = cell->getBoundingBox();
     if ( not _knik ) {
     //if ( cell->getRubbers().getFirst() == NULL )
       cell->flattenNets ( (mode==BuildGlobalSolution) );
@@ -254,9 +259,9 @@ namespace Kite {
     //Breakpoint::stop ( 0, "Point d'arret:<br>&nbsp;&nbsp;<b>createGlobalGraph()</b>&nbsp;"
     //                      "after net virtual flattening." );
 
-      cerr << "Setting edge capacity to " << getEdgeCapacityPercent() << "" << endl;
+      KatabaticEngine::chipPrep ();
 
-      KnikEngine::setEdgeCapacityPercent ( getEdgeCapacityPercent() );
+      KnikEngine::setEdgeCapacityPercent ( 1.0 );
       _knik = KnikEngine::create ( cell
                                  , 1     // _congestion
                                  , 2     // _preCongestion
@@ -266,6 +271,43 @@ namespace Kite {
                                  );
     //if ( mode == LoadGlobalSolution )
       _knik->createRoutingGraph ();
+      KnikEngine::setEdgeCapacityPercent ( getEdgeCapacityPercent() );
+
+    // Decrease the edge's capacity only under the core area.
+      const ChipTools& chipTools     = getChipTools();
+      float            corePercent   = getEdgeCapacityPercent();
+      float            coronaPercent = 0.85;
+
+      forEach ( Knik::Vertex*, ivertex, _knik->getRoutingGraph()->getVertexes() ) {
+        for ( int i=0 ; i<2 ; ++i ) {
+          Knik::Edge* edge = NULL;
+
+          if ( i==0 ) {
+            edge = ivertex->getHEdgeOut();
+            if ( not edge ) continue;
+
+            if ( chipTools.intersectHPads(edge->getBoundingBox()) ) {
+              edge->setCapacity ( 0 );
+              continue;
+            }
+          } else {
+            edge = ivertex->getVEdgeOut();
+            if ( not edge ) continue;
+
+            if ( chipTools.intersectVPads(edge->getBoundingBox()) ) {
+              edge->setCapacity ( 0 );
+              continue;
+            }
+          }
+
+          float edgePercent = 1.00;
+          if      ( chipTools.getCorona().getInnerBox().contains(edge->getBoundingBox()) ) edgePercent = corePercent;
+          else if ( chipTools.getCorona().getOuterBox().contains(edge->getBoundingBox()) ) edgePercent = coronaPercent;
+
+          unsigned int capacity = (unsigned int)(edge->getCapacity() * edgePercent );
+          edge->setCapacity ( capacity );
+        }
+      }
     }
   }
 
@@ -300,6 +342,18 @@ namespace Kite {
   {
     cmess1 << "  o  Back annotate global routing graph." << endl;
 
+    const Torus& chipCorona = getChipTools().getCorona();
+
+    int hEdgeCapacity = 0;
+    int vEdgeCapacity = 0;
+    for ( size_t depth=0 ; depth<_routingPlanes.size() ; ++depth ) {
+      RoutingPlane* rp = _routingPlanes[depth];
+      if ( rp->getLayerGauge()->getType() == Constant::PinOnly ) continue;
+
+      if ( rp->getDirection() == Constant::Horizontal ) ++hEdgeCapacity;
+      else ++vEdgeCapacity;
+    }
+
     for ( size_t depth=0 ; depth<_routingPlanes.size() ; ++depth ) {
       RoutingPlane* rp = _routingPlanes[depth];
       if ( rp->getLayerGauge()->getType() == Constant::PinOnly ) continue;
@@ -309,21 +363,26 @@ namespace Kite {
         Track*        track   = rp->getTrackByIndex ( itrack );
         Knik::Edge*   edge    = NULL;
 
-        cinfo << "Capacity from: " << track << endl;
+        ltrace(300) << "Capacity from: " << track << endl;
 
         if ( track->getDirection() == Constant::Horizontal ) {
           for ( size_t ielement=0 ; ielement<track->getSize() ; ++ielement ) {
             TrackElement* element = track->getSegment ( ielement );
             
             if ( element->getNet() == NULL ) {
-              cinfo << "Reject capacity from (not Net): " << (void*)element << ":" << element << endl;
+              ltrace(300) << "Reject capacity from (not Net): " << (void*)element << ":" << element << endl;
               continue;
             }
-            if ( not element->isFixed() or not element->isBlockage() ) {
-              cinfo << "Reject capacity from (neither fixed or blockage): " << (void*)element << ":" << element << endl;
+            if ( (not element->isFixed()) and (not element->isBlockage()) ) {
+              ltrace(300) << "Reject capacity from (neither fixed nor blockage): " << (void*)element << ":" << element << endl;
               continue;
             }
-            cinfo << "Capacity from: " << (void*)element << ":" << element << endl;
+
+            Box elementBb       = element->getBoundingBox();
+            int elementCapacity = (chipCorona.contains(elementBb)) ? -hEdgeCapacity : -1;
+
+            ltrace(300) << "Capacity from: " << (void*)element << ":" << element
+                        << ":" << elementCapacity << endl;
 
             GCell* gcell = _kiteGrid->getGCell ( Point(element->getSourceU(),track->getAxis()) );
             GCell* end   = _kiteGrid->getGCell ( Point(element->getTargetU(),track->getAxis()) );
@@ -332,38 +391,20 @@ namespace Kite {
               cerr << Warning("annotageGlobalGraph(): TrackElement outside GCell grid.") << endl;
               continue;
             }
+
             while ( gcell and (gcell != end) ) {
               right = gcell->getRight();
               if ( right == NULL ) break;
-
-              // size_t satDepth = 0;
-              // for ( ; satDepth < _routingPlanes.size() ; satDepth+=2 ) {
-              //   if ( gcell->getBlockage(satDepth) >= 9.0 ) break;
-              // }
-
-              // if ( satDepth < _routingPlanes.size() ) {
-              //   _knik->updateEdgeCapacity ( gcell->getColumn()
-              //                             , gcell->getRow()
-              //                             , right->getColumn()
-              //                             , right->getRow()
-              //                             , 0 );
-              // } else {
-                _knik->increaseEdgeCapacity ( gcell->getColumn()
-                                            , gcell->getRow()
-                                            , right->getColumn()
-                                            , right->getRow()
-                                            , -1 );
-                edge = _knik->getEdge ( gcell->getColumn()
-                                      , gcell->getRow()
-                                      , right->getColumn()
-                                      , right->getRow()
-                                      );
-              // }
-              // if ( edge != NULL ) {
-              //   if ( satDepth < _routingPlanes.size() )
-              //     cerr << "Nullify capacity of " << edge << endl;
-              //   cerr << edge << ":" << edge->getCapacity() << endl;
-              // }
+              _knik->increaseEdgeCapacity ( gcell->getColumn()
+                                          , gcell->getRow()
+                                          , right->getColumn()
+                                          , right->getRow()
+                                          , elementCapacity );
+            // edge = _knik->getEdge ( gcell->getColumn()
+            //                       , gcell->getRow()
+            //                       , right->getColumn()
+            //                       , right->getRow()
+            //                       );
               gcell = right;
             }
           }
@@ -372,14 +413,19 @@ namespace Kite {
             TrackElement* element = track->getSegment ( ielement );
 
             if ( element->getNet() == NULL ) {
-              cinfo << "Reject capacity from (not Net): " << (void*)element << ":" << element << endl;
+              ltrace(300) << "Reject capacity from (not Net): " << (void*)element << ":" << element << endl;
               continue;
             }
-            if ( not element->isFixed() or not element->isBlockage() ) {
-              cinfo << "Reject capacity from (neither fixed or blockage): " << (void*)element << ":" << element << endl;
+            if ( (not element->isFixed()) and not (element->isBlockage()) ) {
+              ltrace(300) << "Reject capacity from (neither fixed nor blockage): " << (void*)element << ":" << element << endl;
               continue;
             }
-            cinfo << "Capacity from: " << (void*)element << ":" << element << endl;
+
+            Box elementBb       = element->getBoundingBox();
+            int elementCapacity = (chipCorona.contains(elementBb)) ? -vEdgeCapacity : -1;
+
+            ltrace(300) << "Capacity from: " << (void*)element << ":" << element
+                        << ":" << elementCapacity << endl;
 
             GCell* gcell = _kiteGrid->getGCell ( Point(track->getAxis(),element->getSourceU()) );
             GCell* end   = _kiteGrid->getGCell ( Point(track->getAxis(),element->getTargetU()) );
@@ -391,36 +437,16 @@ namespace Kite {
             while ( gcell and (gcell != end) ) {
               up = gcell->getUp();
               if ( up == NULL ) break;
-
-              // size_t satDepth = 1;
-              // for ( ; satDepth < _routingPlanes.size() ; satDepth+=2 ) {
-              //   if ( gcell->getBlockage(satDepth) >= 9.0 ) break;
-              // }
-
-              // if ( satDepth < _routingPlanes.size() ) {
-              //   _knik->updateEdgeCapacity ( gcell->getColumn()
-              //                             , gcell->getRow()
-              //                             , up->getColumn()
-              //                             , up->getRow()
-              //                             , 0 );
-              // } else {
-                _knik->increaseEdgeCapacity ( gcell->getColumn()
-                                            , gcell->getRow()
-                                            , up->getColumn()
-                                            , up->getRow()
-                                            , -1 );
-                edge = _knik->getEdge ( gcell->getColumn()
-                                      , gcell->getRow()
-                                      , up->getColumn()
-                                      , up->getRow()
-                                      );
-              // }
-
-              // if ( edge != NULL ) {
-              //   if ( satDepth < _routingPlanes.size() )
-              //     cerr << "Nullify capacity of " << edge << endl;
-              //   cerr << edge << ":" << edge->getCapacity() << endl;
-              // }
+              _knik->increaseEdgeCapacity ( gcell->getColumn()
+                                          , gcell->getRow()
+                                          , up->getColumn()
+                                          , up->getRow()
+                                          , elementCapacity );
+            // edge = _knik->getEdge ( gcell->getColumn()
+            //                       , gcell->getRow()
+            //                       , up->getColumn()
+            //                       , up->getRow()
+            //                       );
               gcell = up;
             }
           }
@@ -439,10 +465,29 @@ namespace Kite {
 
     createGlobalGraph ( mode );
 
-    DebugSession::addToTrace ( getCell(), "mips_r3000_1m_dp_res_re(21)" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_1m_dp_res_re(21)" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_1m_dp_res_re(20)" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.etat32_otheri_sd_2.enx" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.yoper_se(26)" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.toper_se(5)" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.res_re(12)" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.res_re(20)" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.nextpc_rd(21)" );
+  //DebugSession::addToTrace ( getCell(), "addr_i(1)" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.opcod_rd(1)" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.otheri_sd(29)" );
+  //DebugSession::addToTrace ( getCell(), "d_in_i(11)" );
+  //DebugSession::addToTrace ( getCell(), "ng_i" );
+  //DebugSession::addToTrace ( getCell(), "d_out_i(14)" );
+  //DebugSession::addToTrace ( getCell(), "d_out_i(19)" );
+  //DebugSession::addToTrace ( getCell(), "dout_e_i(1)" );
+  //DebugSession::addToTrace ( getCell(), "dout_e_i(2)" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.aux44" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.na4_x1_11_sig" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.rsdnbr_sd(14)" );
+  //DebugSession::addToTrace ( getCell(), "d_out_i(27)" );
 
     createDetailedGrid ();
-    buildBlockages ();
     buildPowerRails ();
     protectRoutingPads ();
 
@@ -464,7 +509,7 @@ namespace Kite {
     KatabaticEngine::loadGlobalRouting ( method, nets );
 
     Session::open ( this );
-    KatabaticEngine::chipPrep ();
+  //KatabaticEngine::chipPrep ();
     getGCellGrid()->checkEdgeSaturation ( getEdgeCapacityPercent() );
     Session::close ();
   }
@@ -502,7 +547,7 @@ namespace Kite {
     Session::open ( this );
     unsigned int overlaps     = 0;
     float        edgeCapacity = 1.0;
-    KnikEngine* knik          = KnikEngine::get ( getCell() );
+    KnikEngine*  knik         = KnikEngine::get ( getCell() );
 
     if ( knik )
       edgeCapacity = knik->getEdgeCapacityPercent();

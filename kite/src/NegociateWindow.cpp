@@ -63,7 +63,7 @@ namespace {
 
     if ( not intersect.intersect ( cost.getInterval() ) ) return;
 
-    if ( segment->isBlockage() ) {
+    if ( segment->isBlockage() or segment->isFixed() ) {
     //ltrace(200) << "Infinite cost from: " << segment << endl;
       cost.setInfinite    ();
       cost.setOverlap     ();
@@ -91,8 +91,8 @@ namespace {
       }
     }
 
-    if ( /*(data->getGCellOrder() < Session::getOrder()) ||*/ segment->isFixed()
-       or ((data->isRing() or data->isBorder()) and (data->getRipupCount() > 3)) ) {
+    if ( /*(data->getGCellOrder() < Session::getOrder()) or*/
+        ((data->isRing() or data->isBorder()) and (data->getRipupCount() > 3)) ) {
       ltrace(200) << "Infinite cost from: " << segment << endl;
       cost.setFixed       ();
       cost.setInfinite    ();
@@ -121,7 +121,7 @@ namespace {
       if ( inet->getType() == Net::Type::POWER  ) continue;
       if ( inet->getType() == Net::Type::GROUND ) continue;
       if ( inet->getType() == Net::Type::CLOCK  ) continue;
-      if ( af->isOBSTACLE(inet->getName()) ) continue;
+      if ( af->isBLOCKAGE(inet->getName()) ) continue;
 
       forEach ( RoutingPad*, irp, inet->getRoutingPads() ) {
         size_t depth = rg->getLayerDepth(irp->getLayer());

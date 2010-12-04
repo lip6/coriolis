@@ -177,7 +177,7 @@ namespace Kite {
 
   bool           TrackElement::canDesalignate             () const { return false; }
   bool           TrackElement::canPivotUp                 ( float ) const { return false; };
-  bool           TrackElement::canMoveUp                  ( float ) const { return false; };
+  bool           TrackElement::canMoveUp                  ( float, unsigned int ) const { return false; };
   bool           TrackElement::canDogLeg                  () { return false; };
   bool           TrackElement::canDogLeg                  ( Interval ) { return false; };
   bool           TrackElement::canDogLegAt                ( GCell*, bool allowReuse ) { return false; };
@@ -198,7 +198,7 @@ namespace Kite {
   void           TrackElement::revalidate                 ( bool invalidEvent ) { }
   void           TrackElement::setAxis                    ( DbU::Unit, unsigned int flags ) { }
   void           TrackElement::slacken                    () { }
-  bool           TrackElement::moveUp                     () { return false; }
+  bool           TrackElement::moveUp                     ( unsigned int  ) { return false; }
   bool           TrackElement::moveAside                  ( bool onLeft ) { return false; }
   TrackElement*  TrackElement::makeDogLeg                 () { return NULL; }
   TrackElement*  TrackElement::makeDogLeg                 ( Interval, bool& leftDogleg ) { return NULL; }

@@ -601,7 +601,8 @@ namespace Kite {
     switch ( state & MaxMask ) {
       case MaxTrackMax:       return _max;
       case MaxSegmentMin:     return _segments[index  ]->getSourceU ();
-      case MaxNextSegmentMin: return _segments[index+1]->getSourceU ();
+      case MaxNextSegmentMin: if ( index+1 >= getSize() ) return _max;
+                              return _segments[index+1]->getSourceU ();
       case MaxSegmentMax:     return _segments[index  ]->getTargetU ();
     }
 

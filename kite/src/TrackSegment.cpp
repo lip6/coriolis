@@ -616,27 +616,27 @@ namespace Kite {
   }
 
 
-  bool  TrackSegment::canMoveUp ( float reserve ) const
+  bool  TrackSegment::canMoveUp ( float reserve, unsigned int flags ) const
   {
     // if ( isLocal() /*and (hasSourceDogLeg() or hasTargetDogLeg())*/ ) {
     //   return _base->canPivotUp();
     // }
 
-    return _base->canMoveUp ( true, reserve );
+    return _base->canMoveUp ( reserve, flags );
   }
 
 
-  bool  TrackSegment::moveUp ()
+  bool  TrackSegment::moveUp ( unsigned int flags )
   {
     bool success = false;
 
-    ltrace(160) << "TrackSegment::moveUp()" << endl;
+    ltrace(200) << "TrackSegment::moveUp() " << flags << endl;
     ltracein(200);
 
 #if ENABLE_STIFFNESS
     updateGCellsStiffness ( TrackElement::RemoveFromGCells );
 #endif
-    success = base()->moveUp ( true );
+    success = base()->moveUp ( flags );
 #if ENABLE_STIFFNESS
     updateGCellsStiffness ( TrackElement::AddToGCells );
 #endif

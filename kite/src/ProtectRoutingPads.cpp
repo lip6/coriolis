@@ -36,6 +36,7 @@
 #include  "hurricane/Occurrence.h"
 #include  "hurricane/Cell.h"
 #include  "hurricane/NetExternalComponents.h"
+#include  "crlcore/Catalog.h"
 #include  "katabatic/AutoContact.h"
 #include  "katabatic/AutoSegment.h"
 #include  "katabatic/GCell.h"
@@ -68,6 +69,7 @@ namespace {
   using Hurricane::Occurrence;
   using Hurricane::Path;
   using Hurricane::NetExternalComponents;
+  using CRL::CatalogExtension;
   using Katabatic::GCellGrid;
   using Katabatic::AutoContact;
   using Katabatic::AutoSegment;
@@ -76,11 +78,12 @@ namespace {
 
   void  protectRoutingPad ( RoutingPad* rp )
   {
-
     Component*      usedComponent  = rp->_getEntityAsComponent();
     Path            path           = rp->getOccurrence().getPath();
     Net*            masterNet      = usedComponent->getNet();
     Transformation  transformation = path.getTransformation();
+
+    if ( CatalogExtension::isPad(masterNet->getCell()) ) return;
 
     forEach ( Segment*, isegment, masterNet->getSegments() ) {
       RoutingPlane* plane = Session::getKiteEngine()->getRoutingPlaneByLayer(isegment->getLayer());
@@ -118,7 +121,8 @@ namespace {
                                                    , bb.getXMin()+extension
                                                    , bb.getXMax()-extension
                                                    );
-          TrackElement* element = TrackFixedSegment::create ( track, segment );
+        // TrackElement* element =
+            TrackFixedSegment::create ( track, segment );
         //cinfo << "  Rp Protect:" << track << "+" << element << endl;
         }
 
@@ -179,7 +183,8 @@ namespace {
                                                , bb.getYMin()+extension
                                                , bb.getYMax()-extension
                                                );
-          TrackElement* element = TrackFixedSegment::create ( track, segment );
+        // TrackElement* element =
+            TrackFixedSegment::create ( track, segment );
         //cinfo << "  Rp Protect:" << track << "+" << element << endl;
         }
 

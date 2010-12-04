@@ -53,6 +53,7 @@ namespace Kite {
   using Hurricane::Record;
   using Hurricane::Interval;
   using Hurricane::DbU;
+  using Hurricane::Box;
   using Hurricane::Net;
   using Hurricane::Layer;
   using Katabatic::AutoSegment;
@@ -116,7 +117,7 @@ namespace Kite {
       virtual bool                  canGoOutsideGCell          () const;
       virtual bool                  canSlacken                 () const;
       virtual bool                  canPivotUp                 ( float reserve ) const;
-      virtual bool                  canMoveUp                  ( float reserve ) const;
+      virtual bool                  canMoveUp                  ( float reserve, unsigned int flags=/*Katabatic::AutoSegment::Propagate*/0 ) const;
       virtual bool                  canRipple                  () const;
       virtual bool                  hasSourceDogLeg            () const;
       virtual bool                  hasTargetDogLeg            () const;
@@ -130,6 +131,7 @@ namespace Kite {
       inline  Track*                getTrack                   () const;
       inline  size_t                getIndex                   () const;
       virtual unsigned long         getArea                    () const;
+      inline  Box                   getBoundingBox             () const;
       virtual unsigned int          getDogLegLevel             () const;
       virtual unsigned int          getDogLegOrder             () const;
       virtual TrackElement*         getNext                    () const;
@@ -154,6 +156,7 @@ namespace Kite {
       virtual void                  incOverlapCost             ( Net*, TrackCost& ) const;
       virtual void                  dataInvalidate             ();
       virtual void                  eventInvalidate            ();
+      inline  void                  setSlackened               ( bool );
       virtual void                  setAllowOutsideGCell       ( bool );
       virtual void                  setRevalidated             ( bool );
       virtual void                  setCanRipple               ( bool );
@@ -175,7 +178,7 @@ namespace Kite {
       virtual void                  invalidate                 ();
       virtual void                  setAxis                    ( DbU::Unit, unsigned int flags=Katabatic::AxisSet );
       virtual void                  slacken                    ();
-      virtual bool                  moveUp                     ();
+      virtual bool                  moveUp                     ( unsigned int flags=/*Katabatic::AutoSegment::Propagate*/0 );
       virtual bool                  moveAside                  ( bool onLeft );
       virtual TrackElement*         makeDogLeg                 ();
       virtual TrackElement*         makeDogLeg                 ( Interval, bool& leftDogleg );
@@ -218,6 +221,15 @@ namespace Kite {
   inline DbU::Unit  TrackElement::getTargetU           () const { return _targetU; }
   inline Interval   TrackElement::getCanonicalInterval () const { return Interval(getSourceU(),getTargetU()); }
   inline void       TrackElement::setIndex             ( size_t index ) { _index = index; }
+  inline void       TrackElement::setSlackened         ( bool state ) { if (base()) base()->setSlackened(state); };
+
+  inline Box  TrackElement::getBoundingBox () const
+  {
+    if ( getDirection() == Constant::Horizontal )
+      return Box ( getSourceU(), getAxis()-DbU::lambda(1.0), getTargetU(), getAxis()+DbU::lambda(1.0) );
+
+    return Box ( getAxis()-DbU::lambda(1.0), getSourceU(), getAxis()+DbU::lambda(1.0), getTargetU() );
+  }
 
 
 } // End of Kite namespace.

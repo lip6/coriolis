@@ -82,15 +82,17 @@ namespace {
 
   class GlobalNetTable {
     public:
-                  GlobalNetTable ( Cell* );
-             Net* getRootNet     ( const Net*, Path ) const;
-      inline Net* getVdde        () const;
-      inline Net* getVddi        () const;
-      inline Net* getVsse        () const;
-      inline Net* getVssi        () const;
-      inline Net* getCk          () const;
-      inline Net* getCki         () const;
-      inline Net* getCkc         () const;
+                   GlobalNetTable ( Cell* );
+             Net*  getRootNet     ( const Net*, Path ) const;
+      inline Net*  getVdde        () const;
+      inline Net*  getVddi        () const;
+      inline Net*  getVsse        () const;
+      inline Net*  getVssi        () const;
+      inline Net*  getCk          () const;
+      inline Net*  getCki         () const;
+      inline Net*  getCkc         () const;
+      inline Net*  getBlockage    () const;
+      inline void  setBlockage    ( Net* );
     private:
       Name  _vddeName;
       Name  _vddiName;
@@ -106,16 +108,19 @@ namespace {
       Net*  _ck;    // Clock net on the (external) pad.
       Net*  _cki;   // Clock net in the pad ring.
       Net*  _ckc;   // Clock net of the core (design).
+      Net*  _blockage;
   };
 
 
-  inline Net* GlobalNetTable::getVdde () const { return _vdde; }
-  inline Net* GlobalNetTable::getVddi () const { return _vddi; }
-  inline Net* GlobalNetTable::getVsse () const { return _vsse; }
-  inline Net* GlobalNetTable::getVssi () const { return _vssi; }
-  inline Net* GlobalNetTable::getCk   () const { return _ck; }
-  inline Net* GlobalNetTable::getCki  () const { return _cki; }
-  inline Net* GlobalNetTable::getCkc  () const { return _ckc; }
+  inline Net*  GlobalNetTable::getVdde     () const { return _vdde; }
+  inline Net*  GlobalNetTable::getVddi     () const { return _vddi; }
+  inline Net*  GlobalNetTable::getVsse     () const { return _vsse; }
+  inline Net*  GlobalNetTable::getVssi     () const { return _vssi; }
+  inline Net*  GlobalNetTable::getCk       () const { return _ck; }
+  inline Net*  GlobalNetTable::getCki      () const { return _cki; }
+  inline Net*  GlobalNetTable::getCkc      () const { return _ckc; }
+  inline Net*  GlobalNetTable::getBlockage () const { return _blockage; }
+  inline void  GlobalNetTable::setBlockage ( Net* net ) { _blockage=net; }
 
   GlobalNetTable::GlobalNetTable ( Cell* topCell )
     : _vddeName("vdde")
@@ -132,6 +137,7 @@ namespace {
     , _ck      (NULL)
     , _cki     (NULL)
     , _ckc     (NULL)
+    , _blockage(NULL)
   {
     if ( topCell == NULL ) return;
 
@@ -216,6 +222,7 @@ namespace {
   Net* GlobalNetTable::getRootNet ( const Net* net, Path path ) const
   {
   //ltrace(300) << "getRootNet:" << path << ":" << net << endl;
+    if ( net == _blockage ) return _blockage;
 
     if ( net->getName() == _vddeName ) return _vdde;
     if ( net->getName() == _vsseName ) return _vsse;
@@ -306,7 +313,7 @@ namespace {
           inline RoutingPlane*        getRoutingPlane ();
           inline Constant::Direction  getDirection    () const;
           inline Net*                 getNet          () const;
-                 void                 merge           ( Point& source, Point& target, DbU::Unit width );
+                 void                 merge           ( const Box& );
                  void                 doLayout        ( const Layer* );
         private:
           Plane*               _plane;
@@ -318,16 +325,17 @@ namespace {
     private:
       class Plane {
         public:
-                               Plane           ( const RegularLayer*, RoutingPlane* );
-                              ~Plane           ();
-          inline RoutingPlane* getRoutingPlane ();
-                 void          merge           ( Point& source, Point& target, DbU::Unit width, Net* );
-                 void          doLayout        ();
+                                      Plane           ( const Layer*, RoutingPlane* );
+                                     ~Plane           ();
+          inline RoutingPlane*        getRoutingPlane ();
+          inline Constant::Direction  getDirection    () const;
+                 void                 merge           ( const Box&, Net* );
+                 void                 doLayout        ();
         private:
-          const RegularLayer* _layer;
-          RoutingPlane*       _routingPlane;
-          map<Net*,Rails*>    _horizontalRails;
-          map<Net*,Rails*>    _verticalRails;
+          const Layer*         _layer;
+          RoutingPlane*        _routingPlane;
+          map<Net*,Rails*>     _horizontalRails;
+          map<Net*,Rails*>     _verticalRails;
       };
 
     public:
@@ -337,7 +345,7 @@ namespace {
              bool   hasPlane            ( const BasicLayer* );
              bool   setActivePlane      ( const BasicLayer* );
       inline Plane* getActivePlane      () const;
-             void   merge               ( Point& source, Point& target, DbU::Unit width, Net* );
+             void   merge               ( const Box&, Net* );
              void   doLayout            ();
     private:
       KiteEngine*                    _kite;
@@ -411,6 +419,7 @@ namespace {
                               - plane->getLayerGauge()->getHalfWireWidth()
                               - DbU::lambda(0.1);
     DbU::Unit     extension = layer->getExtentionCap();
+  //DbU::Unit     extension = Session::getExtentionCap();
     unsigned int  type      = plane->getLayerGauge()->getType();
     DbU::Unit     axisMin   = 0;
     DbU::Unit     axisMax   = 0;
@@ -423,14 +432,6 @@ namespace {
         ltrace(300) << "  chunk: [" << DbU::getValueString((*ichunk).getVMin())
                     << ":" << DbU::getValueString((*ichunk).getVMax()) << "]" << endl;
 
-        if ( plane->getDirection() == Constant::Horizontal ) {
-          axisMin = _axis - _width/2 - delta;
-          axisMax = _axis + _width/2 + delta;
-        } else {
-          axisMin = (*ichunk).getVMin() - delta;
-          axisMax = (*ichunk).getVMax() + delta;
-        }
-
         segment = Horizontal::create ( net
                                      , layer
                                      , _axis
@@ -440,6 +441,9 @@ namespace {
                                      );
         if ( segment and net->isExternal() )
           NetExternalComponents::setExternal ( segment );
+
+        axisMin = _axis - _width/2 - delta;
+        axisMax = _axis + _width/2 + delta;
 
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNext() ) {
@@ -455,14 +459,6 @@ namespace {
         ltrace(300) << "  chunk: [" << DbU::getValueString((*ichunk).getVMin())
                     << ":" << DbU::getValueString((*ichunk).getVMax()) << "]" << endl;
 
-        if ( plane->getDirection() == Constant::Vertical ) {
-          axisMin = _axis - _width/2 - delta;
-          axisMax = _axis + _width/2 + delta;
-        } else {
-          axisMin = (*ichunk).getVMin() - delta;
-          axisMax = (*ichunk).getVMax() + delta;
-        }
-
         segment = Vertical::create ( net
                                    , layer
                                    , _axis
@@ -472,6 +468,9 @@ namespace {
                                    );
         if ( segment and net->isExternal() )
           NetExternalComponents::setExternal ( segment );
+
+        axisMin = _axis - _width/2 - delta;
+        axisMax = _axis + _width/2 + delta;
 
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNext() ) {
@@ -529,9 +528,25 @@ namespace {
   inline Net*                     PowerRailsPlanes::Rails::getNet          () const { return _net; }
 
 
-  void   PowerRailsPlanes::Rails::merge ( Point& source, Point& target, DbU::Unit width )
+  void   PowerRailsPlanes::Rails::merge ( const Box& bb )
   {
-    DbU::Unit axis = (_direction == Constant::Horizontal) ? source.getY() : source.getX();
+    DbU::Unit  axis;
+    DbU::Unit  width;
+    DbU::Unit  sourceU;
+    DbU::Unit  targetU;
+
+    if ( getDirection() == Constant::Horizontal ) {
+      axis    = bb.getYCenter();
+      width   = bb.getHeight();
+      sourceU = bb.getXMin();
+      targetU = bb.getXMax();
+    } else {
+      axis    = bb.getXCenter();
+      width   = bb.getWidth();
+      sourceU = bb.getYMin();
+      targetU = bb.getYMax();
+    }
+
     vector<Rail*>::iterator irail = find_if ( _rails.begin(), _rails.end(), RailMatch(axis,width) );
 
     Rail* rail = NULL;
@@ -543,10 +558,7 @@ namespace {
       rail = *irail;
     }
 
-    if ( _direction == Constant::Horizontal )
-      rail->merge ( source.getX(), target.getX() );
-    else
-      rail->merge ( source.getY(), target.getY() );
+    rail->merge ( sourceU, targetU );
   }
 
 
@@ -561,7 +573,7 @@ namespace {
   }
 
 
-  PowerRailsPlanes::Plane::Plane ( const RegularLayer* layer, RoutingPlane* routingPlane )
+  PowerRailsPlanes::Plane::Plane ( const Layer* layer, RoutingPlane* routingPlane )
     : _layer                (layer)
     , _routingPlane         (routingPlane)
     , _horizontalRails      ()
@@ -584,16 +596,17 @@ namespace {
   }
 
 
-  inline RoutingPlane* PowerRailsPlanes::Plane::getRoutingPlane () { return _routingPlane; }
+  inline RoutingPlane*        PowerRailsPlanes::Plane::getRoutingPlane () { return _routingPlane; }
+  inline Constant::Direction  PowerRailsPlanes::Plane::getDirection    () const { return (Constant::Direction)_routingPlane->getDirection(); }
 
 
-  void  PowerRailsPlanes::Plane::merge ( Point& source, Point& target, DbU::Unit width, Net* net )
+  void  PowerRailsPlanes::Plane::merge ( const Box& bb, Net* net )
   {
     Rails* rails = NULL;
 
     ltrace(300) << "    " << net->getName() << " " << (void*)net << endl;
 
-    if ( source.getY() == target.getY() ) {
+    if ( getDirection() == Constant::Horizontal ) {
       map<Net*,Rails*>::iterator irails = _horizontalRails.find(net);
       if ( irails == _horizontalRails.end() ) {
         rails = new Rails(this,Constant::Horizontal,net);
@@ -601,7 +614,7 @@ namespace {
       } else
         rails = (*irails).second;
 
-      rails->merge ( source, target, width );
+      rails->merge ( bb );
     } else {
       map<Net*,Rails*>::iterator irails = _verticalRails.find(net);
       if ( irails == _verticalRails.end() ) {
@@ -610,7 +623,7 @@ namespace {
       } else
         rails = (*irails).second;
 
-      rails->merge ( source, target, width );
+      rails->merge ( bb );
     }
   }
 
@@ -636,6 +649,8 @@ namespace {
     , _planes     ()
     , _activePlane(NULL)
   {
+    _globalNets.setBlockage ( kite->getBlockageNet() );
+
     Technology*   technology = DataBase::getDB()->getTechnology();
     RoutingGauge* rg         = _kite->getConfiguration()->getRoutingGauge();
 
@@ -653,6 +668,13 @@ namespace {
       ltrace(300) << "Plane:"  << rp << endl;
 
       _planes.insert ( make_pair(regular->getBasicLayer(),new Plane(regular,rp)) );
+
+      const BasicLayer* blockageLayer = regular->getBasicLayer()->getBlockageLayer();
+      if ( not blockageLayer ) continue;
+
+      _planes.insert ( make_pair(blockageLayer,new Plane(blockageLayer,rp)) );
+
+      ltrace(300) << "OK" << endl;
     }
   }
 
@@ -688,14 +710,14 @@ namespace {
   { return _activePlane; }
 
 
-  void  PowerRailsPlanes::merge ( Point& source, Point& target, DbU::Unit width, Net* net )
+  void  PowerRailsPlanes::merge ( const Box& bb, Net* net )
   {
     if ( not _activePlane ) return;
 
     Net* topGlobalNet = _globalNets.getRootNet ( net, Path() );
     if ( topGlobalNet == NULL ) return;
 
-    _activePlane->merge ( source, target, width, topGlobalNet );
+    _activePlane->merge ( bb, topGlobalNet );
   }
 
 
@@ -735,6 +757,7 @@ namespace {
       KiteEngine*        _kite;
       RoutingGauge*      _routingGauge;
       PowerRailsPlanes   _powerRailsPlanes;
+      bool               _isBlockagePlane;
       unsigned int       _goMatchCount;
   };
 
@@ -745,6 +768,7 @@ namespace {
     , _kite            (kite)
     , _routingGauge    (kite->getConfiguration()->getRoutingGauge())
     , _powerRailsPlanes(kite)
+    , _isBlockagePlane (false)
     , _goMatchCount    (0)
   {
     setCell       ( kite->getCell() );
@@ -768,6 +792,7 @@ namespace {
 
   void  QueryPowerRails::setBasicLayer ( const BasicLayer* basicLayer )
   {
+    _isBlockagePlane = (basicLayer) and (basicLayer->getMaterial() == BasicLayer::Material::blockage);
     _powerRailsPlanes.setActivePlane ( basicLayer );
     Query::setBasicLayer ( basicLayer );
   }
@@ -806,25 +831,22 @@ namespace {
          and (_routingGauge->getLayerDepth(component->getLayer()) < 2) )
         return;
 
-    //Net::Type netType = component->getNet()->getType();
-    //if ( (netType != Net::Type::POWER) and (netType != Net::Type::GROUND) ) return;
-      if ( _powerRailsPlanes.getRootNet(component->getNet(),getPath()) == NULL ) return;
+      Net* rootNet = NULL;
+      if ( not _isBlockagePlane )
+        rootNet = _powerRailsPlanes.getRootNet(component->getNet(),getPath());
+      else
+        rootNet = _kite->getBlockageNet();
+      if ( rootNet == NULL ) return;
 
       const Segment* segment = dynamic_cast<const Segment*>(component);
       if ( segment != NULL ) {
         _goMatchCount++;
         ltrace(300) << "  Merging PowerRail element: " << segment << endl;
 
-        Point source = segment->getSourcePosition();
-        Point target = segment->getTargetPosition();
+        Box bb = segment->getBoundingBox ( basicLayer );
+        transformation.applyOn ( bb );
 
-        transformation.applyOn ( source );
-        transformation.applyOn ( target );
-
-        if ( (source.getX() > target.getX()) or (source.getY() > target.getY()) )
-          swap ( source, target );
-
-        _powerRailsPlanes.merge ( source, target, segment->getWidth(), component->getNet() );
+        _powerRailsPlanes.merge ( bb, rootNet );
       } else {
         const Contact* contact = dynamic_cast<const Contact*>(component);
         if ( contact != NULL ) {
@@ -834,11 +856,8 @@ namespace {
           transformation.applyOn ( bb );
 
           ltrace(300) << "  Merging PowerRail element: " << contact << " bb:" << bb << endl;
-
-          Point source ( bb.getXMin(), bb.getYCenter() );
-          Point target ( bb.getXMax(), bb.getYCenter() );
           
-          _powerRailsPlanes.merge ( source, target, bb.getHeight(), component->getNet() );
+          _powerRailsPlanes.merge ( bb, rootNet );
         }
       }
     }
@@ -869,11 +888,19 @@ namespace Kite {
   {
     cmess1 << "  o  Building power rails." << endl;
 
+    if ( not _blockageNet ) {
+      _blockageNet = getCell()->getNet("blockagenet");
+      if ( not _blockageNet )
+        _blockageNet = Net::create ( getCell(), "blockagenet" );
+    }
+
     QueryPowerRails query ( this );
     Technology*     technology = DataBase::getDB()->getTechnology();
 
     forEach ( BasicLayer*, iLayer, technology->getBasicLayers() ) {
-      if ( iLayer->getMaterial() != BasicLayer::Material::metal ) continue;
+      if (   (iLayer->getMaterial() != BasicLayer::Material::metal)
+         and (iLayer->getMaterial() != BasicLayer::Material::blockage) )
+        continue;
       if ( _configuration->isGMetal(*iLayer) ) continue;
 
       cmess1 << "     - PowerRails in " << iLayer->getName() << " ..." << endl;

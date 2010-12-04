@@ -146,7 +146,7 @@ namespace Kite {
       static Name                   _toolName;
     protected:
              Knik::KnikEngine*      _knik;
-             Net*                   _obstacleNet;
+             Net*                   _blockageNet;
              Configuration*         _configuration;
              vector<RoutingPlane*>  _routingPlanes;
              GCellGrid*             _kiteGrid;
@@ -170,7 +170,7 @@ namespace Kite {
 // Inline Functions.
   inline  KatabaticEngine*              KiteEngine::base                   () { return static_cast<KatabaticEngine*>(this); }
   inline  Configuration*                KiteEngine::getKiteConfiguration   () { return _configuration; }
-  inline  Net*                          KiteEngine::getBlockageNet         () { return _obstacleNet; }
+  inline  Net*                          KiteEngine::getBlockageNet         () { return _blockageNet; }
   inline  Configuration::PostEventCb_t& KiteEngine::getPostEventCb         () { return _configuration->getPostEventCb(); }
   inline  bool                          KiteEngine::getToolSuccess         () const { return _toolSuccess; }
   inline  unsigned long                 KiteEngine::getEventsLimit         () const { return _configuration->getEventsLimit(); }
