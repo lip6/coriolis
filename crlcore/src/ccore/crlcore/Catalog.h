@@ -86,11 +86,12 @@ namespace CRL {
         // Flags Constants.
           enum Flags { FlattenLeaf = 1 << 0
                      , Feed        = 1 << 1
-                     , GDS         = 1 << 2
-                     , Delete      = 1 << 3
-                     , Logical     = 1 << 4
-                     , Physical    = 1 << 5
-                     , InMemory    = 1 << 6
+                     , Pad         = 1 << 2
+                     , GDS         = 1 << 3
+                     , Delete      = 1 << 4
+                     , Logical     = 1 << 5
+                     , Physical    = 1 << 6
+                     , InMemory    = 1 << 7
                      , Views       = Physical|Logical
                      };
         // Constructors.
@@ -99,6 +100,7 @@ namespace CRL {
         // Predicates.
           inline bool          isFlattenLeaf  () const;
           inline bool          isFeed         () const;
+          inline bool          isPad          () const;
           inline bool          isGds          () const;
           inline bool          isDelete       () const;
           inline bool          isPhysical     () const;
@@ -108,6 +110,7 @@ namespace CRL {
           inline bool          setFlags       ( unsigned int mask, bool value );
           inline bool          setFlattenLeaf ( bool value );
           inline bool          setFeed        ( bool value );
+          inline bool          setPad         ( bool value );
           inline bool          setGds         ( bool value );
           inline bool          setDelete      ( bool value );
           inline bool          setPhysical    ( bool value );
@@ -180,6 +183,7 @@ namespace CRL {
   inline                   Catalog::State::State            () : _flags(0), _depth(1), _cell(NULL), _library(NULL) { }
   inline bool              Catalog::State::isFlattenLeaf    () const { return (_flags&FlattenLeaf)?1:0; }
   inline bool              Catalog::State::isFeed           () const { return (_flags&Feed       )?1:0; }
+  inline bool              Catalog::State::isPad            () const { return (_flags&Pad        )?1:0; }
   inline bool              Catalog::State::isGds            () const { return (_flags&GDS        )?1:0; }
   inline bool              Catalog::State::isDelete         () const { return (_flags&Delete     )?1:0; }
   inline bool              Catalog::State::isPhysical       () const { return (_flags&Physical   )?1:0; }
@@ -194,6 +198,7 @@ namespace CRL {
                                                             }
   inline bool              Catalog::State::setFlattenLeaf   ( bool value ) { return setFlags(FlattenLeaf,value); }
   inline bool              Catalog::State::setFeed          ( bool value ) { return setFlags(Feed       ,value); }
+  inline bool              Catalog::State::setPad           ( bool value ) { return setFlags(Pad        ,value); }
   inline bool              Catalog::State::setGds           ( bool value ) { return setFlags(GDS        ,value); }
   inline bool              Catalog::State::setDelete        ( bool value ) { return setFlags(Delete     ,value); }
   inline bool              Catalog::State::setPhysical      ( bool value ) { return setFlags(Physical   ,value); }
@@ -224,6 +229,7 @@ namespace CRL {
     public:
       static inline bool             isFlattenLeaf  ( const Cell* );
       static inline bool             isFeed         ( const Cell* );
+      static inline bool             isPad          ( const Cell* );
       static inline bool             isGds          ( const Cell* );
       static inline bool             isDelete       ( const Cell* );
       static inline bool             isPhysical     ( const Cell* );
@@ -233,6 +239,7 @@ namespace CRL {
       static inline bool             setFlags       ( const Cell*, unsigned int mask, bool value );
       static inline bool             setFlattenLeaf ( const Cell*, bool value );
       static inline bool             setFeed        ( const Cell*, bool value );
+      static inline bool             setPad         ( const Cell*, bool value );
       static inline bool             setGds         ( const Cell*, bool value );
       static inline bool             setDelete      ( const Cell*, bool value );
       static inline bool             setPhysical    ( const Cell*, bool value );
@@ -269,6 +276,13 @@ namespace CRL {
   {
     Catalog::State* state = _get(cell);
     return (state == NULL) ? false : state->isGds();
+  }
+
+
+  inline bool  CatalogExtension::isPad ( const Cell* cell )
+  {
+    Catalog::State* state = _get(cell);
+    return (state == NULL) ? false : state->isPad();
   }
 
 
@@ -318,6 +332,13 @@ namespace CRL {
   {
     Catalog::State* state = _get(cell);
     return (state == NULL) ? false : state->setFeed(value);
+  }
+
+
+  inline bool  CatalogExtension::setPad ( const Cell* cell, bool value )
+  {
+    Catalog::State* state = _get(cell);
+    return (state == NULL) ? false : state->setPad(value);
   }
 
 

@@ -67,6 +67,7 @@ namespace CRL {
 
     if ( isFlattenLeaf() ) s += 'C';
     if ( isFeed()        ) s += 'F';
+    if ( isPad()         ) s += 'P';
     if ( isGds()         ) s += 'G';
     if ( isDelete()      ) s += 'D';
 

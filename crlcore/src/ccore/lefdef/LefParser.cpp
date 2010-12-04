@@ -105,15 +105,15 @@ namespace {
 
   void  Obstruction ( Cell* cell, Layer* layer, const Box& bb )
   {
-    Net* obsNet = cell->getNet ( "obstaclenet" );
+    Net* blockageNet = cell->getNet ( "blockagenet" );
 
     if (!layer)
-      throw Error("No layer for obstacle");
+      throw Error("No layer for blockage");
 
-    if ( obsNet == NULL )
-      obsNet = Net::create ( cell, "obstaclenet" );
+    if ( blockageNet == NULL )
+      blockageNet = Net::create ( cell, "blockagenet" );
 
-    Pad::create ( obsNet, layer, bb );
+    Pad::create ( blockageNet, layer, bb );
   }
   
 
@@ -292,12 +292,12 @@ namespace CRL {
             if (!layer)
               throw Error("Unknown Layer: " + string(geom->getLayer(i)));
             BasicLayer* basicLayer = dynamic_cast<BasicLayer*>(layer);
-            const Name* obstacleLayerName = getObstacleLayerName(basicLayer);
-            if (obstacleLayerName)
-              layer = technology->getLayer(*obstacleLayerName);
+            const Name* blockageLayerName = getBlockageLayerName(basicLayer);
+            if (blockageLayerName)
+              layer = technology->getLayer(*blockageLayerName);
             if (!layer)
-              if (obstacleLayerName)
-                throw Error("Unknown layer: " + obstacleLayerName->_getString());
+              if (blockageLayerName)
+                throw Error("Unknown layer: " + blockageLayerName->_getString());
               else
                 throw Error("Unknow Layer: (null) Name");
             break;

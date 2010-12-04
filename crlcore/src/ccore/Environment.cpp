@@ -90,7 +90,7 @@ namespace {
                    , TagsPOWER
                    , TagsGROUND
                    , TagsClock
-                   , TagsObstacle
+                   , TagsBlockage
                    , TagsTableSize
                    };
       enum State   { HurricaneTechnology = 1 
@@ -140,7 +140,7 @@ namespace {
               void                  parsePOWER           ();
               void                  parseGROUND          ();
               void                  parseClock           ();
-              void                  parseObstacle        ();
+              void                  parseBlockage        ();
       virtual void                  _postLoad            ();
       virtual const char*           _getMessage          ( MessageId id );
 
@@ -185,7 +185,7 @@ namespace {
     addTagEntry ( TagsSignals     , "vdd"         , (tagParser_t)&XmlEnvironmentParser::parsePOWER        );
     addTagEntry ( TagsSignals     , "vss"         , (tagParser_t)&XmlEnvironmentParser::parseGROUND       );
     addTagEntry ( TagsSignals     , "clock"       , (tagParser_t)&XmlEnvironmentParser::parseClock        );
-    addTagEntry ( TagsSignals     , "obstacle"    , (tagParser_t)&XmlEnvironmentParser::parseObstacle     );
+    addTagEntry ( TagsSignals     , "blockage"    , (tagParser_t)&XmlEnvironmentParser::parseBlockage     );
 
     setVariable ( "CORIOLIS_TOP", _environment.getCORIOLIS_TOP() );
   }
@@ -487,9 +487,9 @@ namespace {
   }
 
 
-  void  XmlEnvironmentParser::parseObstacle ()
+  void  XmlEnvironmentParser::parseBlockage ()
   {
-    _environment.setOBSTACLE ( readTextAsString().toStdString().c_str() );
+    _environment.setBLOCKAGE ( readTextAsString().toStdString().c_str() );
   }
 
 
@@ -541,7 +541,7 @@ namespace CRL {
     setPOWER    ( "vdd" );
     setGROUND   ( "vss" );
     setCLOCK    ( "^ck$" );
-    setOBSTACLE ( "^obs$" );
+    setBLOCKAGE ( "^obs$" );
     setPad      ( "^.*_px$" );
 
     _LIBRARIES.append ( "." );
@@ -555,7 +555,7 @@ namespace CRL {
     regfree ( &_PowerRegex    );
     regfree ( &_GroundRegex   );
     regfree ( &_ClockRegex    );
-    regfree ( &_ObstacleRegex );
+    regfree ( &_BlockageRegex );
     regfree ( &_padRegex      );
   }
 
@@ -594,9 +594,9 @@ namespace CRL {
   }
 
 
-  bool  Environment::isOBSTACLE ( const char* name ) const
+  bool  Environment::isBLOCKAGE ( const char* name ) const
   {
-    return regexec ( &_ObstacleRegex, name, 0, NULL, 0 ) == 0;
+    return regexec ( &_BlockageRegex, name, 0, NULL, 0 ) == 0;
   }
 
 
@@ -627,10 +627,10 @@ namespace CRL {
   }
 
 
-  void  Environment::setOBSTACLE ( const char* value )
+  void  Environment::setBLOCKAGE ( const char* value )
   {
-    _OBSTACLE = value;
-    _setRegex ( &_ObstacleRegex , _OBSTACLE , "Obstacle" );
+    _BLOCKAGE = value;
+    _setRegex ( &_BlockageRegex , _BLOCKAGE , "Blockage" );
   }
 
 
@@ -679,7 +679,7 @@ namespace CRL {
       << "        - Power Signal     := \"" << _POWER    << "\"\n"
       << "        - Ground Signal    := \"" << _GROUND   << "\"\n"
       << "        - Clock Signal     := \"" << _CLOCK    << "\"\n"
-      << "        - Obstacles        := \"" << _OBSTACLE << "\"\n"
+      << "        - Blockages        := \"" << _BLOCKAGE << "\"\n"
       << "     o  Special Cells.\n"
       << "        - Pads             := \"" << _pad      << "\"\n\n";
 
@@ -778,7 +778,7 @@ namespace CRL {
     record->add ( getSlot ( "_POWER"              , &_POWER               ) );
     record->add ( getSlot ( "_GROUND"             , &_GROUND              ) );
     record->add ( getSlot ( "_CLOCK"              , &_CLOCK               ) );
-    record->add ( getSlot ( "_OBSTACLE"           , &_OBSTACLE            ) );
+    record->add ( getSlot ( "_BLOCKAGE"           , &_BLOCKAGE            ) );
     record->add ( getSlot ( "_pad"                , &_pad                 ) );
     record->add ( getSlot ( "_LIBRARIES"          , &_LIBRARIES           ) );
     return record;

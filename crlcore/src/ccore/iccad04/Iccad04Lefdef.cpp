@@ -428,7 +428,7 @@ namespace {
     DbU::Unit axis  = (sliceHeight * (slices-2)) / 2 + sliceHeight;
     DbU::Unit width =  sliceHeight * (slices-2);
 
-    Net* net = Net::create ( cell, "obstacleNet" );
+    Net* net = Net::create ( cell, "blockageNet" );
 
     Horizontal::create ( net
                        , BLOCKAGE2

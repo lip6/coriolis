@@ -60,7 +60,7 @@ namespace CRL {
       inline const std::string& getPOWER               () const;
       inline const std::string& getGROUND              () const;
       inline const std::string& getCLOCK               () const;
-      inline const std::string& getOBSTACLE            () const;
+      inline const std::string& getBLOCKAGE            () const;
       inline const std::string& getPad                 () const;
       inline const std::string& getCATALOG             () const;
       inline SearchPath&        getLIBRARIES           ();
@@ -69,7 +69,7 @@ namespace CRL {
              bool               isPOWER                ( const char* name ) const;
              bool               isGROUND               ( const char* name ) const;
              bool               isCLOCK                ( const char* name ) const;
-             bool               isOBSTACLE             ( const char* name ) const;
+             bool               isBLOCKAGE             ( const char* name ) const;
              bool               isPad                  ( const char* name ) const;
 
     // Modifiers.
@@ -87,7 +87,7 @@ namespace CRL {
              void               setPOWER               ( const char* value );
              void               setGROUND              ( const char* value );
              void               setCLOCK               ( const char* value );
-             void               setOBSTACLE            ( const char* value );
+             void               setBLOCKAGE            ( const char* value );
              void               setPad                 ( const char* value );
       inline void               setCATALOG             ( const char* value );
       inline void               setWORKING_LIBRARY     ( const char* value );
@@ -114,14 +114,14 @@ namespace CRL {
              std::string        _POWER;
              std::string        _GROUND;
              std::string        _CLOCK;
-             std::string        _OBSTACLE;
+             std::string        _BLOCKAGE;
              std::string        _pad;
              std::string        _CATALOG;
              SearchPath         _LIBRARIES;
              regex_t            _PowerRegex;
              regex_t            _GroundRegex;
              regex_t            _ClockRegex;
-             regex_t            _ObstacleRegex;
+             regex_t            _BlockageRegex;
              regex_t            _padRegex;
              bool               _inConstructor;
 
@@ -145,7 +145,7 @@ namespace CRL {
   inline const std::string&     Environment::getPOWER               () const { return _POWER; }
   inline const std::string&     Environment::getGROUND              () const { return _GROUND; }
   inline const std::string&     Environment::getCLOCK               () const { return _CLOCK; }
-  inline const std::string&     Environment::getOBSTACLE            () const { return _OBSTACLE; }
+  inline const std::string&     Environment::getBLOCKAGE            () const { return _BLOCKAGE; }
   inline const std::string&     Environment::getPad                 () const { return _pad; }
   inline const std::string&     Environment::getCATALOG             () const { return _CATALOG; }
   inline       SearchPath&      Environment::getLIBRARIES           () { return _LIBRARIES; }

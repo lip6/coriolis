@@ -294,12 +294,12 @@ namespace {
       }
     }
 
-    Net* obstacleNet = NULL;
+    Net* blockageNet = NULL;
 
     forEach ( Net*, inet, cell->getNets() ) {
       Net* net = *inet;
-      if ( (obstacleNet == NULL) and _framework->isOBSTACLE(net->getName()) )
-        obstacleNet = net;
+      if ( (blockageNet == NULL) and _framework->isBLOCKAGE(net->getName()) )
+        blockageNet = net;
 
       if ( not net->isExternal() ) continue;
 
@@ -380,12 +380,12 @@ namespace {
     CHECK_STATUS(_status);
 #endif
 
-    if ( obstacleNet != 0 ) {
+    if ( blockageNet != 0 ) {
       _status = lefwStartMacroObs ();
       CHECK_STATUS(_status);
 
       const Layer* blockageLayer = NULL;
-      forEach ( Component*, icomponent, obstacleNet->getComponents() ) {
+      forEach ( Component*, icomponent, blockageNet->getComponents() ) {
         if ( dynamic_cast<Segment*>(*icomponent) == NULL ) continue;
 
         if ( blockageLayer != (*icomponent)->getLayer() ) {

@@ -39,6 +39,7 @@
 namespace CRL {
 
   using Hurricane::Cell;
+  using Hurricane::Net;
   class RoutingGauge;
   class CellGauge;
 
@@ -65,9 +66,10 @@ namespace CRL {
       inline bool               isCLOCK                  ( const char*   name );
       inline bool               isCLOCK                  ( const string& name );
       inline bool               isCLOCK                  ( const Name&   name );
-      inline bool               isOBSTACLE               ( const char*   name );
-      inline bool               isOBSTACLE               ( const string& name );
-      inline bool               isOBSTACLE               ( const Name&   name );
+      inline bool               isBLOCKAGE               ( const char*   name );
+      inline bool               isBLOCKAGE               ( const string& name );
+      inline bool               isBLOCKAGE               ( const Name&   name );
+      inline bool               isBLOCKAGE               ( const Net*    net );
       inline bool               isPad                    ( const char*   name );
       inline bool               isPad                    ( const string& name );
       inline bool               isPad                    ( const Name&   name );
@@ -143,9 +145,10 @@ namespace CRL {
   inline bool         AllianceFramework::isCLOCK          ( const char*   name ) { return _environment.isCLOCK(name); }
   inline bool         AllianceFramework::isCLOCK          ( const string& name ) { return isCLOCK(name.c_str()); }
   inline bool         AllianceFramework::isCLOCK          ( const Name&   name ) { return isCLOCK(getString(name)); }
-  inline bool         AllianceFramework::isOBSTACLE       ( const char*   name ) { return _environment.isOBSTACLE(name); }
-  inline bool         AllianceFramework::isOBSTACLE       ( const string& name ) { return isOBSTACLE(name.c_str()); }
-  inline bool         AllianceFramework::isOBSTACLE       ( const Name&   name ) { return isOBSTACLE(getString(name)); }
+  inline bool         AllianceFramework::isBLOCKAGE       ( const char*   name ) { return _environment.isBLOCKAGE(name); }
+  inline bool         AllianceFramework::isBLOCKAGE       ( const string& name ) { return isBLOCKAGE(name.c_str()); }
+  inline bool         AllianceFramework::isBLOCKAGE       ( const Name&   name ) { return isBLOCKAGE(getString(name)); }
+  inline bool         AllianceFramework::isBLOCKAGE       ( const Net*    net  ) { return isBLOCKAGE(net->getName()); }
   inline bool         AllianceFramework::isPad            ( const char*   name ) { return _environment.isPad(name); }
   inline bool         AllianceFramework::isPad            ( const string& name ) { return isPad(name.c_str()); }
   inline bool         AllianceFramework::isPad            ( const Name&   name ) { return isPad(getString(name)); }

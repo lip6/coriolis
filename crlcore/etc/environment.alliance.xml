@@ -42,6 +42,6 @@
     <vdd>vdd</vdd>
     <vss>vss</vss>
     <clock>^do_not_find_ck$</clock>
-    <obstacle>^obstacleNet$</obstacle>
+    <blockage>^blockageNet$</blockage>
   </signals>
 </environment>

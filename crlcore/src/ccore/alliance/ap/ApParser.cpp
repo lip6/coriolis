@@ -478,7 +478,7 @@ namespace {
 
   void  ApParser::_parseConnector ()
   {
-    static DbU::Unit                  XCON, YCON, WIDTH;
+    static DbU::Unit             XCON, YCON, WIDTH;
     static unsigned int          index;
     static char                  pinName[1024];
     static Net*                  net;
@@ -700,8 +700,9 @@ namespace {
           );
         instance->setPlacementStatus ( Instance::PlacementStatus::FIXED );
       } else {
+        bool            ignoreInstance = (masterCellName == padreal);
         Catalog::State* instanceState  = _framework->getCatalog()->getState ( masterCellName );
-        if ( (masterCellName != padreal) and ( not instanceState or (not instanceState->isFeed()) ) ) {
+        if ( not ignoreInstance and ( not instanceState or (not instanceState->isFeed()) ) ) {
           _printError ( false
                       , "No logical instance associated to physical instance %s."
                       , getString(instanceName).c_str()
@@ -722,6 +723,8 @@ namespace {
           return;
         }
 
+        ignoreInstance = ignoreInstance and _cell->isTerminal();
+
         instance = Instance::create ( _cell
                                     , instanceName
                                     , masterCell
@@ -733,7 +736,7 @@ namespace {
                                     , Instance::PlacementStatus::FIXED
                                     , true  // Checking of recursive calls
                                     );
-        _cell->setTerminal ( false );
+        _cell->setTerminal ( ignoreInstance );
       }
     }
   }
@@ -786,6 +789,7 @@ namespace {
     _state = catalogProperty->getState ();
     _state->setPhysical ( true );
     if ( _state->isFlattenLeaf() ) _cell->setFlattenLeaf ( true );
+    if ( _framework->isPad(_cell) ) _state->setPad ( true );
 
     IoFile fileStream ( cellPath );
     fileStream.open ( "r" );
