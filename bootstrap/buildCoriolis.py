@@ -551,6 +551,7 @@ if __name__ == "__main__":
                                     , "scribe"
                                     , "pharos"
                                     , "schematic"
+                                    , "autoDTR"
                                     ]
                         , repository="/users/outil/chams/svn"
                         )
