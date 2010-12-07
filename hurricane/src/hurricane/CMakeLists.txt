@@ -1,5 +1,7 @@
 
- include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane )
+ include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane 
+                       ${Boost_INCLUDE_DIRS}
+                     )
                  set ( includes hurricane/Mask.h
                                 hurricane/DebugSession.h
                                 hurricane/Backtrace.h
@@ -156,6 +158,7 @@
                                 TextTranslator.cpp
                  )
     
-           add_library ( hurricane ${cpps} ${Boost_LIBRARIES} )
+           add_library ( hurricane ${cpps} )
+ target_link_libraries ( hurricane ${Boost_LIBRARIES} )
                install ( TARGETS hurricane DESTINATION lib${LIB_SUFFIX} )
                install ( FILES ${includes} DESTINATION include/coriolis2/hurricane ) 
