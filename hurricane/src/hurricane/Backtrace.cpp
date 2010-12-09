@@ -97,7 +97,7 @@ namespace Hurricane {
     }
 #else
 #  ifdef  __APPLE__
-    boost::regex re ( "(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S)\\s+\\+\\s+(\\d+)" ); 
+    boost::regex re ( "(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+\\+\\s+(\\d+)" ); 
     boost::cmatch match;
 
     for ( size_t i=0 ; i<depth ; ++i ) {
@@ -108,7 +108,7 @@ namespace Hurricane {
           _stack.push_back ( (demangled.empty()) ? function : demangled );
         else {
           string reformated ( match[1].first, match[1].second );
-          reformated += "( <b>" + demangled + "</b> )";
+          reformated += " <b>" + demangled + "</b>";
           _stack.push_back ( reformated );
         }
       } else {
