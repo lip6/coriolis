@@ -76,10 +76,10 @@ namespace Katabatic {
     public:
       class CompareByDensity : public binary_function<GCell*,GCell*,bool> {
         public:
-               CompareByDensity ( size_t depth );
+               CompareByDensity ( unsigned int depth );
           bool operator()       ( GCell* lhs, GCell* rhs );
         private:
-          size_t  _depth;
+          unsigned int  _depth;
       };
       class CompareByKey {
         public:
@@ -107,7 +107,7 @@ namespace Katabatic {
       virtual const Name&           getName             () const;
     // Accessors.                                       
       inline  bool                  isSaturated         () const;
-              bool                  isSaturated         ( size_t depth ) const;
+              bool                  isSaturated         ( unsigned int depth ) const;
       inline  bool                  isValid             () const;
               bool                  isAboveDensity      ( float threshold ) const;
               bool                  hasFreeTrack        ( size_t depth, float reserve ) const;
@@ -132,7 +132,7 @@ namespace Katabatic {
               float                 getHCapacity        () const;
               float                 getVCapacity        () const;
       inline  float                 getCDensity         ( bool update=true ) const;
-      inline  float                 getDensity          ( size_t depth, bool update=true  ) const;
+      inline  float                 getDensity          ( unsigned int depth, bool update=true  ) const;
               float                 getDensity          ( bool update=true ) const;
       inline  float                 getBlockage         ( unsigned int depth ) const;
               float                 getStiffness        () const;
@@ -241,7 +241,7 @@ namespace Katabatic {
   inline  float  GCell::getCDensity ( bool update ) const
   { if (_invalid and update) const_cast<GCell*>(this)->updateDensity(); return _cDensity; }
 
-  inline  float  GCell::getDensity ( size_t depth, bool update  ) const
+  inline  float  GCell::getDensity ( unsigned int depth, bool update  ) const
   { if (_invalid and update) const_cast<GCell*>(this)->updateDensity(); return _densities[depth]; }
 
   inline  float  GCell::getBlockage ( unsigned int depth ) const
@@ -262,7 +262,7 @@ namespace Katabatic {
   inline float         GCell::Key::getDensity () const { return _density; }
   inline unsigned int  GCell::Key::getIndex   () const { return _index; }
   inline void          GCell::Key::update     ( GCell* gcell, unsigned int depth )
-                       { _density=gcell->getDensity((size_t)depth); _index=gcell->getIndex(); }
+                       { _density=gcell->getDensity(depth); _index=gcell->getIndex(); }
 
   inline bool  operator< ( const GCell::Key& lhs, const GCell::Key& rhs )
   {
