@@ -28,6 +28,7 @@
 #ifndef  __KITE_TRACK_MARKER__
 #define  __KITE_TRACK_MARKER__
 
+#include  "hurricane/DbU.h"
 namespace Hurricane {
   class RoutingPad;
   class Net;
@@ -36,6 +37,8 @@ namespace Hurricane {
 
 namespace Kite {
 
+  using Hurricane::Record;
+  using Hurricane::DbU;
   using Hurricane::RoutingPad;
   using Hurricane::Net;
 
@@ -59,8 +62,8 @@ namespace Kite {
       inline  unsigned int getWeight    ( const Track* ) const;
       inline  void         setTrack     ( Track* );
               Record*      _getRecord   () const;
-              string       _getString   () const;
-              string       _getTypeName () const;
+              std::string  _getString   () const;
+              std::string  _getTypeName () const;
     public:
       class Compare {
         public:

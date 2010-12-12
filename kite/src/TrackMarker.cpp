@@ -34,7 +34,7 @@
 #include  "hurricane/Net.h"
 #include  "hurricane/Name.h"
 #include  "crlcore/RoutingGauge.h"
-#include  "kite/GCell.h"
+#include  "katabatic/GCell.h"
 #include  "kite/TrackMarker.h"
 #include  "kite/Track.h"
 #include  "kite/RoutingPlane.h"

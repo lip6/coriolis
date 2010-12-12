@@ -37,6 +37,7 @@
 #include  "hurricane/Horizontal.h"
 #include  "hurricane/Vertical.h"
 #include  "katabatic/AutoContact.h"
+#include  "katabatic/GCellGrid.h"
 #include  "crlcore/RoutingGauge.h"
 #include  "kite/DataNegociate.h"
 #include  "kite/TrackFixedSegment.h"
@@ -45,7 +46,6 @@
 #include  "kite/Session.h"
 #include  "kite/RoutingEvent.h"
 #include  "kite/NegociateWindow.h"
-#include  "kite/GCellGrid.h"
 #include  "kite/KiteEngine.h"
 
 
