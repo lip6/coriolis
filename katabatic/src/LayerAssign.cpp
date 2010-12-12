@@ -109,6 +109,7 @@ namespace Katabatic {
 
     bool optimized = true;
     while ( optimized ) {
+      Session::revalidate ();
       optimized = false;
     //sort ( gcells.begin(), gcells.end(), GCell::CompareByDensity(depth) );
       queue.revalidate ();

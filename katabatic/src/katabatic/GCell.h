@@ -134,11 +134,8 @@ namespace Katabatic {
       inline  float                 getCDensity         ( bool update=true ) const;
       inline  float                 getDensity          ( size_t depth, bool update=true  ) const;
               float                 getDensity          ( bool update=true ) const;
-              float                 getMaxHVDensity     ( bool update=true ) const;
       inline  float                 getBlockage         ( unsigned int depth ) const;
               float                 getStiffness        () const;
-      inline  unsigned int          getSegmentCount     () const;
-      inline  unsigned int          getRoutedCount      () const;
       inline  vector<AutoSegment*>* getVSegments        ();
       inline  vector<AutoSegment*>* getHSegments        ();
       inline  vector<AutoContact*>* getContacts         ();
@@ -153,8 +150,6 @@ namespace Katabatic {
               size_t                checkDensity        () const;
               bool                  checkEdgeSaturation ( float threshold ) const;
     // Modifiers.
-              void                  incSegmentCount     ( int count );
-              void                  incRoutedCount      ( int count );
               void                  addBlockage         ( unsigned int depth, float );
       inline  void                  addVSegment         ( AutoSegment* );
       inline  void                  addHSegment         ( AutoSegment* );
@@ -193,8 +188,6 @@ namespace Katabatic {
               float                 _cDensity;
               float*                _densities;
               float*                _saturateDensities;
-              unsigned int          _segmentCount;
-              unsigned int          _routedSegmentCount;
               bool                  _saturated;
               bool                  _invalid;
               Key                   _key;
@@ -234,8 +227,6 @@ namespace Katabatic {
   inline  vector<AutoSegment*>* GCell::getVSegments      ()       { return &_vsegments; }
   inline  vector<AutoSegment*>* GCell::getHSegments      ()       { return &_hsegments; }
   inline  vector<AutoContact*>* GCell::getContacts       ()       { return &_contacts; }
-  inline  unsigned int          GCell::getSegmentCount   () const { return _segmentCount; }
-  inline  unsigned int          GCell::getRoutedCount    () const { return _routedSegmentCount; }
   inline  string                GCell::_getTypeName      () const { return _TName("GCell"); }
   inline  void                  GCell::invalidate        () { _invalid = true; }
   inline  const GCell::Key&     GCell::getKey            () const { return _key; }
@@ -308,6 +299,9 @@ namespace Katabatic {
 
 
   string  getVectorString ( float*, size_t );
+
+
+  typedef std::vector<GCell*>  GCellVector;
 
 
 } // End of Katabatic namespace.

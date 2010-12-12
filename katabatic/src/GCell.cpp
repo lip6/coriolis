@@ -117,8 +117,6 @@ namespace Katabatic {
     , _cDensity          (0.0)
     , _densities         (new float [_depth])
     , _saturateDensities (new float [_depth])
-    , _segmentCount      (0)
-    , _routedSegmentCount(0)
     , _saturated         (false)
     , _invalid           (true)
     , _key               (0.0,_index)
@@ -335,33 +333,15 @@ namespace Katabatic {
     if (_invalid and update) const_cast<GCell*>(this)->updateDensity();
 
     float density = 0.0;
-    for ( size_t i=0 ; i<_depth ; i++ )
-      density += _densities[i];
 
-#if defined(CHECK_DETERMINISM)
-    cerr << "Order: Sum density " << setprecision(9) << density << endl;
+    if ( getGCellGrid()->getDensityMode() == GCellGrid::AverageHVDensity ) {
+    // Average density of all layers mixeds together.
+      for ( size_t i=0 ; i<_depth ; i++ )
+        density += _densities[i];
 
-    density /= (float)(_depth-_pinDepth);
-    cerr << "Order: density " << setprecision(9) << density << endl;
-
-    int intdensity  = (int)roundfp(density);
-    cerr << "Order: rounded density *100 " << setprecision(9) << intdensity << endl;
-
-    density  = ((float)(intdensity)) / 100.0;
-    cerr << "Order: rounded density /100 " << setprecision(9) << density << endl;
-
-    return density;
-#else
-    return roundfp ( density/((float)(_depth-_pinDepth)) );
-#endif
-  }
-
-
-  float  GCell::getMaxHVDensity ( bool update ) const
-  {
-    if (_invalid and update) const_cast<GCell*>(this)->updateDensity();
-
-    if ( getGCellGrid()->getDensityMode() == GCellGrid::MaxHVDensity ) {
+      density = roundfp ( density/((float)(_depth-_pinDepth)) );
+    } else if ( getGCellGrid()->getDensityMode() == GCellGrid::MaxHVDensity ) {
+    // Maximum density between all horizontal vs. all vertical layers.
       size_t hplanes  = 0;
       size_t vplanes  = 0;
       float  hdensity = 0.0;
@@ -375,47 +355,54 @@ namespace Katabatic {
       if (hplanes) hdensity /= hplanes;
       if (vplanes) vdensity /= vplanes;
 
-      return roundfp ( (hdensity > vdensity) ? hdensity : vdensity );
-    }
+      density = roundfp ( (hdensity > vdensity) ? hdensity : vdensity );
+    } else if ( getGCellGrid()->getDensityMode() == GCellGrid::AverageHDensity ) {
+    // Average density between all horizontal layers.
+      size_t hplanes  = 0;
+      float  hdensity = 0.0;
 
-    if ( getGCellGrid()->getDensityMode() == GCellGrid::MaxLayerDensity ) {
-      float density = 0.0;
+      for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
+        if ( i%2 ) { hdensity += _densities[i]; ++hplanes; }
+      }
+      if (hplanes) hdensity /= hplanes;
+
+      density = roundfp ( hdensity );
+    } else if ( getGCellGrid()->getDensityMode() == GCellGrid::AverageVDensity ) {
+    // Average density between all vertical layers.
+      size_t vplanes  = 0;
+      float  vdensity = 0.0;
+
+      for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
+        if ( i%2 == 0 ) { vdensity += _densities[i]; ++vplanes; }
+      }
+
+      if (vplanes) vdensity /= vplanes;
+
+      density = roundfp ( vdensity );
+    } else if ( getGCellGrid()->getDensityMode() == GCellGrid::MaxDensity ) {
+    // Density of the most saturated layer.
       for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
         if ( _densities[i] > density ) density = _densities[i];
       }
-      return roundfp(density);
+      density = roundfp(density);
+    } else if ( getGCellGrid()->getDensityMode() == GCellGrid::MaxHDensity ) {
+    // Density of the most saturated horizontal layer.
+      for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
+        if ( (i%2) and (_densities[i] > density) ) density = _densities[i];
+      }
+      density = roundfp(density);
+    } else if ( getGCellGrid()->getDensityMode() == GCellGrid::MaxVDensity ) {
+    // Density of the most saturated vertical layer.
+      for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
+        if ( (i%2 == 0) and (_densities[i] > density) ) density = _densities[i];
+      }
+      density = roundfp(density);
     }
 
-    float density = 0.0;
-    for ( size_t i=_pinDepth ; i<_depth ; i++ )
-      density += _densities[i];
-
-    return roundfp ( density/((float)(_depth-_pinDepth)) );
-  }
-
-
-  float  GCell::getStiffness () const
-  {
-    if ( _segmentCount == 0 ) return 0.0;
-    return roundfp ( (float)_routedSegmentCount / (float)_segmentCount );
-  }
-
-
-  void  GCell::incSegmentCount ( int count )
-  {
-    if ( (count < 0) and ((unsigned int)abs(count) > _segmentCount) )
-      _segmentCount = 0;
-    else
-      _segmentCount += count;
-  }
-
-
-  void  GCell::incRoutedCount ( int count )
-  {
-    if ( (count < 0) and ((unsigned int)abs(count) > _routedSegmentCount) )
-      _routedSegmentCount = 0;
-    else
-      _routedSegmentCount += count;
+#if defined(CHECK_DETERMINISM)
+    cerr << "Order: density " << setprecision(9) << density << endl;
+#endif
+    return density;
   }
 
 
@@ -697,7 +684,6 @@ namespace Katabatic {
 #endif
 
   //cerr << "updateDensity() " << this << getVectorString(_densities,_depth) << endl;
-  //_segmentCount = _hsegments.size() + _vsegments.size() + processeds.size();
 
     return ( _saturated ) ? 1 : 0 ;
   }
@@ -813,7 +799,8 @@ namespace Katabatic {
 #endif
 
     updateDensity ();
-    float density = getDensity();
+  //float density = getDensity();
+    moved = NULL;
 
   //float density   = _densities[depth];
   //float densityUp = _densities[depth+2];
@@ -847,15 +834,16 @@ namespace Katabatic {
 #if defined(CHECK_DETERMINISM)
       cerr << "Order: Move up " << (*isegment) << endl;
 #endif
-    //cerr << "Move up " << (*isegment) << endl;
-      if ( not (*isegment)->canMoveUp(0.5,AutoSegment::Propagate) ) {
-        cinfo << Warning("Shear effect on: %s.",getString(*isegment).c_str()) << endl;
-        return false;
-      }
+      // cerr << "Move up " << (*isegment) << endl;
+      // if ( not (*isegment)->canMoveUp(0.5/*,AutoSegment::Propagate*/) ) {
+      //   cinfo << Warning("Shear effect on: %s.",getString(*isegment).c_str()) << endl;
+      //   return false;
+      // }
 
-      (*isegment)->changeDepth ( depth+2, false, false );
-      moved = (*isegment);
+      // (*isegment)->changeDepth ( depth+2, false, false );
+      // moved = (*isegment);
 
+      (*isegment)->shearUp ( this, moved, 0.5, AutoSegment::AllowTerminal );
       updateDensity ();
 
     //cmess2 << "     - GCell [" << getIndex() << "] @" << getColumn() << "x" << getRow()
@@ -865,7 +853,7 @@ namespace Katabatic {
     //       << "  displaced:" << (*isegment) << "]."
     //       << endl;
 
-      return true;
+      if ( moved ) return true;
     }
 
     return false;
@@ -1019,11 +1007,11 @@ namespace Katabatic {
     s << "<" << _getTypeName() << " [" << _index << "] "
       << DbU::getValueString(box.getXMin()) << ":" << DbU::getValueString(box.getYMin()) << " "
       << DbU::getValueString(box.getXMax()) << ":" << DbU::getValueString(box.getYMax()) << " "
-      << setprecision(9)
+      << setprecision(3)
 #if not defined(CHECK_DETERMINISM)
-      << getDensity(false)
+      << getDensity(false) << " "
 #endif
-      << " S:" << _routedSegmentCount << "/" << _segmentCount
+      << getVectorString(_densities,_depth)
       << ">";
 
     return s.str();
@@ -1041,8 +1029,6 @@ namespace Katabatic {
     record->add ( getSlot ( "_box"               , &_box                ) );
     record->add ( getSlot ( "_depth"             , &_depth              ) );
     record->add ( getSlot ( "_saturated"         ,  _saturated          ) );
-    record->add ( getSlot ( "_segmentCount"      ,  _segmentCount       ) );
-    record->add ( getSlot ( "_routedSegmentCount",  _routedSegmentCount ) );
     record->add ( getSlot ( "_invalid"           ,  _invalid            ) );
 
     RoutingGauge* rg = getGCellGrid()->getKatabatic()->getRoutingGauge();
@@ -1168,7 +1154,7 @@ namespace Katabatic {
   {
     ostringstream s;
 
-    s << setprecision(9);
+    s << setprecision(3);
     for ( size_t i=0 ; i<size ; i++ ) {
       if ( !i ) s << "[";
       else      s << " ";

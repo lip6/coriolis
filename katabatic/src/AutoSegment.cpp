@@ -1303,8 +1303,9 @@ namespace Katabatic {
   {
     ltrace(200) << "AutoSegment::canMoveUp() " << flags << endl;
 
-    if ( isLayerChange() or isFixed() or isTerminal() ) return false;
-    if ( isLocal() and (not (flags & AllowLocal)) ) return false;
+    if ( isLayerChange() or isFixed() ) return false;
+    if ( isTerminal() and (not (flags & AllowTerminal)) ) return false;
+    if ( isLocal()    and (not (flags & AllowLocal   )) ) return false;
 
     size_t depth = Session::getRoutingGauge()->getLayerDepth(getLayer()) + 2;
     if ( depth >= Session::getConfiguration()->getAllowedDepth() ) return false;
@@ -1352,6 +1353,76 @@ namespace Katabatic {
     changeDepth ( Session::getRoutingGauge()->getLayerDepth(getLayer()) + 2, flags&Propagate );
 
     return true;
+  }
+
+
+  bool  AutoSegment::shearUp ( GCell* upGCell, AutoSegment*& movedUp, float reserve, unsigned int flags )
+  {
+    ltrace(200) << "AutoSegment::shearUp() " << this << endl;
+
+    movedUp = NULL;
+
+    if ( isLayerChange() or isFixed() /*or isTerminal()*/ or isLocal() ) return false;
+
+    size_t upDepth = Session::getRoutingGauge()->getLayerDepth(getLayer()) + 2;
+    if ( upDepth >= Session::getConfiguration()->getAllowedDepth() ) return false;
+
+    vector<GCell*> gcells;
+    getGCells ( gcells );
+
+    size_t iupGCell = 0;
+    for ( ; iupGCell<gcells.size() ; ++iupGCell ) {
+      if ( gcells[iupGCell] == upGCell ) break;
+    }
+    if ( iupGCell == gcells.size() ) {
+      cerr << Warning("Shear start %s not under %s."
+                     ,getString(upGCell).c_str()
+                     ,getString(this).c_str()
+                     ) << endl;
+      return false;
+    }
+
+    GCell* rightShear = NULL;
+    for ( size_t i=iupGCell ; i<gcells.size() ; i++ ) {
+      if ( not gcells[i]->hasFreeTrack(upDepth,reserve) ) {
+        ltrace(200) << "Right shearing @ " << gcells[i] << endl;
+        rightShear = gcells[i];
+      }
+    }
+
+    GCell* leftShear = NULL;
+    if ( iupGCell > 0 ) {
+      size_t i = iupGCell;
+      do {
+        --i;
+        if ( not gcells[i]->hasFreeTrack(upDepth,reserve) ) {
+          ltrace(200) << "Left shearing @ " << gcells[i] << endl;
+          leftShear = gcells[i];
+        }
+      } while (i > 0);
+    }
+
+    AutoSegment* before = this;
+    const vector<AutoSegment*>& doglegs = Session::getDogLegs();
+
+    if ( leftShear  ) {
+      makeDogLeg ( leftShear, true );
+      movedUp = doglegs[2];
+    } else {
+      before  = NULL;
+      movedUp = this;
+    }
+
+    if ( rightShear ) makeDogLeg(rightShear,true);
+
+    if ( movedUp->moveUp(flags) ) {
+      if ( rightShear or leftShear )
+        cinfo << "Shearing Up " << this << "." << endl;
+      return true;
+    }
+
+    movedUp = NULL;
+    return false;
   }
 
 

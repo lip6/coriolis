@@ -303,11 +303,18 @@ namespace Katabatic {
     _autoContacts.clear ();
 
     ltrace(110) << "AutoSegments Revalidate (after canonize)." << endl;
-    for ( size_t i=0 ; i < _autoSegments.size() ; i++, count++ )
-      _autoSegments[i]->revalidate ();
-    _revalidateds.clear ();
-    _autoSegments.swap  ( _revalidateds );
+
     _dogLegs.clear ();
+    _revalidateds.clear ();
+    for ( size_t i=0 ; i < _autoSegments.size() ; i++, count++ ) {
+      _autoSegments[i]->revalidate ();
+      if ( not _destroyedSegments.empty()
+         and (_destroyedSegments.find(_autoSegments[i]) != _destroyedSegments.end()) )
+        continue;
+
+      _revalidateds.push_back ( _autoSegments[i] );
+    }
+    _autoSegments.clear ();
 
     ltrace(110) << "AutoSegments/AutoContacts queued deletion." << endl;
     bool destroySegment = _katabatic->setDestroyBaseSegment ( true );

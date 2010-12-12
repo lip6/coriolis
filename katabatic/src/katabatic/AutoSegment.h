@@ -86,7 +86,7 @@ namespace Katabatic {
                               , ParallelOrExpanded     = (1<<2)
                               , ParallelAndLayerChange = (1<<3)
                               };
-      enum Flags              { Propagate=0x1, AllowLocal=0x2 };
+      enum Flags              { Propagate=0x1, AllowLocal=0x2, AllowTerminal=0x4 };
 
 
     public:
@@ -295,6 +295,10 @@ namespace Katabatic {
       virtual void                _makeDogLeg                ( GCell*, bool upLayer ) = 0;
       virtual void                desalignate                ( AutoContact* ) = 0;
               void                desalignate                ();
+              bool                shearUp                    ( GCell*
+                                                             , AutoSegment*& movedUp
+                                                             , float         reserve
+                                                             , unsigned int  flags );
               bool                _check                     () const;
     // Inspector Management.                                 
       virtual Record*             _getRecord                 () const = 0;

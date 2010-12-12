@@ -49,9 +49,13 @@ namespace Katabatic {
  
   class GCellGrid : public Grid<GCell> {
     public:
-      enum Flags { AverageDensity  = 1
-                 , MaxHVDensity    = 2
-                 , MaxLayerDensity = 3
+      enum Flags { AverageHVDensity=1  // Average between all densities.
+                 , AverageHDensity =2  // Average between all H densities.
+                 , AverageVDensity =3  // Average between all V densities.
+                 , MaxHVDensity    =4  // Maximum between average H and average V.
+                 , MaxVDensity     =5  // Maximum of V densities.
+                 , MaxHDensity     =6  // Maximum of H densities.
+                 , MaxDensity      =7  // Maximum of H & V densities.
                  };
 
     public:

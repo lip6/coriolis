@@ -91,7 +91,7 @@ namespace Katabatic {
 
     QPainter& painter = widget->getPainter();
     painter.setBrush 
-      ( Graphics::getColorScale(ColorScale::Fire).getBrush((size_t)(gcell->getMaxHVDensity()*255.0)
+      ( Graphics::getColorScale(ColorScale::Fire).getBrush((size_t)(gcell->getDensity()*255.0)
                                                           ,widget->getDarkening()) );
     painter.drawRect ( widget->dbuToDisplayRect(gcell->getBoundingBox()) );
   }

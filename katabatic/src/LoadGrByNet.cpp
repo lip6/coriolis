@@ -2127,7 +2127,7 @@ namespace {
       AutoContact* localContact = (_south) ? _southWestContact : _northEastContact;
     //localContact->setHAlignate ( true );
 
-      bool doTurn = (_topology & GLOBAL_SPLIT) and (_routingPads.size() == 1);
+      bool doTurn = (_topology & GLOBAL_SPLIT) and (_state.fields.Pad == 1);
       for ( unsigned int i = 0 ; i < _routingPads.size() ; i++ ) {
         AutoContact* rpContact = _GCell_rp_Access ( _gcell, _routingPads[i], true, false );
         AutoContact* turn1
