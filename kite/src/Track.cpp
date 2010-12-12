@@ -168,14 +168,10 @@ namespace Kite {
   }
 
 
-  TrackElement* Track::getNext ( size_t& index, Net* net, bool useOrder ) const
+  TrackElement* Track::getNext ( size_t& index, Net* net ) const
   {
     for ( index++ ; index < _segments.size() ; index++ ) {
       if ( _segments[index]->getNet() == net ) continue;
-      if ( useOrder
-         and  _segments[index]->getDataNegociate()
-         and (_segments[index]->getDataNegociate()->getGCellOrder() >= Session::getOrder()) )
-        continue;
       return _segments[index];
     }
     index = NPOS;
@@ -184,7 +180,7 @@ namespace Kite {
   }
 
 
-  TrackElement* Track::getPrevious ( size_t& index, Net* net, bool useOrder ) const
+  TrackElement* Track::getPrevious ( size_t& index, Net* net ) const
   {
     for ( index-- ; index != NPOS ; index-- ) {
       if ( inltrace(148) ) {
@@ -192,10 +188,6 @@ namespace Kite {
         cerr << _segments[index] << endl;
       }
       if ( _segments[index]->getNet() == net ) continue;
-      if ( useOrder
-         and  _segments[index]->getDataNegociate()
-         and (_segments[index]->getDataNegociate()->getGCellOrder() >= Session::getOrder()) )
-        continue;
       return _segments[index];
     }
     index = NPOS;
@@ -433,23 +425,23 @@ namespace Kite {
   }
 
 
-  Interval  Track::expandFreeInterval ( size_t& begin, size_t& end, unsigned int state, Net* net, bool useOrder ) const
+  Interval  Track::expandFreeInterval ( size_t& begin, size_t& end, unsigned int state, Net* net ) const
   {
     DbU::Unit minFree = _min;
 
     if ( !(state & MinTrackMin) ) {
       if ( _segments[begin]->getNet() == net )
-        getPrevious ( begin, net, useOrder );
+        getPrevious ( begin, net );
 
       if ( begin != NPOS ) {
         size_t usedEnd;
-        minFree = expandUsedInterval ( begin, usedEnd, useOrder ).getVMax();
+        minFree = expandUsedInterval ( begin, usedEnd ).getVMax();
       }
     }
 
     if ( !(state & MaxTrackMax) ) {
       if ( _segments[end]->getNet() == net ) {
-        getNext ( end, net, useOrder );
+        getNext ( end, net );
 
         if ( end == NPOS ) {
           end  = _segments.size() - 1;
@@ -613,7 +605,7 @@ namespace Kite {
   }
 
 
-  Interval  Track::expandUsedInterval ( size_t& begin, size_t& end, bool useOrder ) const
+  Interval  Track::expandUsedInterval ( size_t& begin, size_t& end ) const
   {
     if ( begin == NPOS ) return Interval();
 
@@ -627,10 +619,6 @@ namespace Kite {
     size_t i = seed;
     while ( --i != NPOS ) {
       if ( _segments[i]->getNet() != owner ) break;
-      if ( useOrder
-         and  _segments[i]->getDataNegociate()
-         and (_segments[i]->getDataNegociate()->getGCellOrder() >= Session::getOrder()) )
-        continue;
 
       _segments[i]->getCanonical ( expandInterval );
       if ( expandInterval.getVMax() >= ownerInterval.getVMin() ) {
@@ -642,10 +630,6 @@ namespace Kite {
     end = i = seed;
     while ( ++i < _segments.size() ) {
       if ( _segments[i]->getNet() != owner ) break;
-      if ( useOrder
-         and  _segments[i]->getDataNegociate()
-         and (_segments[i]->getDataNegociate()->getGCellOrder() >= Session::getOrder()) )
-        continue;
 
       _segments[i]->getCanonical ( expandInterval );
       if ( expandInterval.getVMin() > ownerInterval.getVMax() ) break;

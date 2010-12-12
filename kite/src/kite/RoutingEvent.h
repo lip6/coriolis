@@ -40,13 +40,10 @@ namespace Hurricane {
 
 namespace Kite {
 
-
   using std::vector;
-
   using Hurricane::DbU;
   using Hurricane::Interval;
   using Hurricane::Net;
-
   class TrackElement;
   class Track;
   class RoutingEventHistory;
@@ -122,7 +119,7 @@ namespace Kite {
       inline  const Interval&              getConstraints           () const;
       inline  const Interval&              getOptimal               () const;
       inline  const Interval&              getPerpandicular         () const;
-      inline  GCell*                       getShearGCell            () const;
+      inline  Katabatic::GCell*            getShearGCell            () const;
       inline  float                        getPriority              () const;
       inline  unsigned int                 getTracksNb              () const;
       inline  unsigned int                 getTracksFree            () const;
@@ -176,7 +173,7 @@ namespace Kite {
       Interval              _constraints;
       Interval              _optimal;
       Interval              _perpandicular;
-      GCell*                _shearGCell;
+      Katabatic::GCell*     _shearGCell;
       unsigned int          _tracksNb        : 6;
       unsigned int          _tracksFree      : 4;
       unsigned int          _insertState     : 6;
@@ -212,7 +209,7 @@ namespace Kite {
   inline unsigned int                  RoutingEvent::getTracksNb             () const { return _tracksNb; }
   inline unsigned int                  RoutingEvent::getTracksFree           () const { return _tracksFree; }
   inline unsigned int                  RoutingEvent::getInsertState          () const { return _insertState; }
-  inline GCell*                        RoutingEvent::getShearGCell           () const { return _shearGCell; }
+  inline Katabatic::GCell*             RoutingEvent::getShearGCell           () const { return _shearGCell; }
   inline void                          RoutingEvent::setMode                 ( unsigned int mode ) { _mode = mode; }
   inline void                          RoutingEvent::setProcessed            ( bool state ) { _processed  = state; }
   inline void                          RoutingEvent::setDisabled             ( bool state ) { _disabled = state; }

@@ -72,19 +72,17 @@ namespace Kite {
   void  RoutingEventQueue::load ( const vector<TrackElement*>& segments )
   {
     for ( size_t i=0 ; i<segments.size() ; i++ ) {
-      if ( segments[i]->getDataNegociate()->getGCellOrder() >= Session::getOrder() ) {
-        if ( segments[i]->getDataNegociate()->getRoutingEvent() ) {
-          cinfo << "[INFO] Already have a RoutingEvent - " << segments[i] << endl;
-          continue;
-        }
-        if ( segments[i]->getTrack() ) {
-          cinfo << "[INFO] Already in Track - " << segments[i] << endl;
-          continue;
-        }
-        RoutingEvent* event = RoutingEvent::create(segments[i]);
-        event->updateKey ();
-        _events.insert ( event );
+      if ( segments[i]->getDataNegociate()->getRoutingEvent() ) {
+        cinfo << "[INFO] Already have a RoutingEvent - " << segments[i] << endl;
+        continue;
       }
+      if ( segments[i]->getTrack() ) {
+        cinfo << "[INFO] Already in Track - " << segments[i] << endl;
+        continue;
+      }
+      RoutingEvent* event = RoutingEvent::create(segments[i]);
+      event->updateKey ();
+      _events.insert ( event );
     }
   }
 

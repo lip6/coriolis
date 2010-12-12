@@ -38,7 +38,6 @@
 #include  "hurricane/Vertical.h"
 #include  "katabatic/AutoContact.h"
 #include  "crlcore/RoutingGauge.h"
-#include  "kite/GCell.h"
 #include  "kite/DataNegociate.h"
 #include  "kite/TrackFixedSegment.h"
 #include  "kite/TrackCost.h"
@@ -98,25 +97,25 @@ namespace Kite {
           _sourceU = max ( boundingBox.getXMin(), uside.getVMin());
           _targetU = min ( boundingBox.getXMax(), uside.getVMax());
 
-          GCell*   gcell   = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(_sourceU,track->getAxis()) );
-          GCell*   end     = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(_targetU,track->getAxis()) );
-          GCell*   right   = NULL;
-          Interval guside  = gcell->getUSide ( Constant::Horizontal, true );
-          Interval segside ( boundingBox.getXMin(), boundingBox.getXMax() );
+          Katabatic::GCell* gcell   = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(_sourceU,track->getAxis()) );
+          Katabatic::GCell* end     = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(_targetU,track->getAxis()) );
+          Katabatic::GCell* right   = NULL;
+          Interval          guside  = gcell->getUSide ( Constant::Horizontal /*, true*/ );
+          Interval          segside ( boundingBox.getXMin(), boundingBox.getXMax() );
 
           if ( gcell ) {
             while ( gcell and (gcell != end) ) {
               right = gcell->getRight();
               if ( right == NULL ) break;
 
-              guside = gcell->getUSide ( Constant::Horizontal, true );
+              guside = gcell->getUSide ( Constant::Horizontal /*, true*/ );
               Interval usedLength = guside.getIntersection ( segside );
 
               gcell->addBlockage ( depth, (float)usedLength.getSize()/(float)guside.getSize() );
               gcell = right;
             }
             if ( end ) {
-              guside = gcell->getUSide ( Constant::Horizontal, true );
+              guside = gcell->getUSide ( Constant::Horizontal /*, true*/ );
               Interval usedLength = guside.getIntersection ( segside );
 
               end->addBlockage ( depth, (float)usedLength.getSize()/(float)guside.getSize() );
@@ -129,24 +128,24 @@ namespace Kite {
           _sourceU = max ( boundingBox.getYMin(), uside.getVMin());
           _targetU = min ( boundingBox.getYMax(), uside.getVMax());
 
-          GCell*   gcell      = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(track->getAxis(),_sourceU) );
-          GCell*   end        = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(track->getAxis(),_targetU) );
-          GCell*   up         = NULL;
-          Interval guside     = gcell->getUSide ( Constant::Vertical, true );
-          Interval segside    ( boundingBox.getYMin(), boundingBox.getYMax() );
+          Katabatic::GCell* gcell   = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(track->getAxis(),_sourceU) );
+          Katabatic::GCell* end     = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(track->getAxis(),_targetU) );
+          Katabatic::GCell* up      = NULL;
+          Interval          guside  = gcell->getUSide ( Constant::Vertical /*, true*/ );
+          Interval          segside ( boundingBox.getYMin(), boundingBox.getYMax() );
           if ( gcell ) {
             while ( gcell and (gcell != end) ) {
               up = gcell->getUp();
               if ( up == NULL ) break;
 
-              guside = gcell->getUSide ( Constant::Vertical, true );
+              guside = gcell->getUSide ( Constant::Vertical /*, true*/ );
               Interval usedLength = guside.getIntersection ( segside );
 
               gcell->addBlockage ( depth, (float)usedLength.getSize()/(float)guside.getSize() );
               gcell = up;
             }
             if ( end ) {
-              guside = gcell->getUSide ( Constant::Vertical, true );
+              guside = gcell->getUSide ( Constant::Vertical /*, true*/ );
               Interval usedLength = guside.getIntersection ( segside );
 
               end->addBlockage ( depth, (float)usedLength.getSize()/(float)guside.getSize() );

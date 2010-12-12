@@ -23,9 +23,15 @@
 // x-----------------------------------------------------------------x
 
 
+#include  <vector>
 #include  <algorithm>
 #include  <iomanip>
 
+#include  <boost/filesystem/operations.hpp>
+#include  <boost/filesystem/fstream.hpp>
+namespace bfs = boost::filesystem;
+
+#include  "hurricane/Warning.h"
 #include  "hurricane/Bug.h"
 #include  "hurricane/RoutingPad.h"
 #include  "hurricane/Net.h"
@@ -33,15 +39,16 @@
 #include  "crlcore/Utilities.h"
 #include  "crlcore/AllianceFramework.h"
 #include  "crlcore/Measures.h"
+#include  "katabatic/AutoContact.h"
+#include  "katabatic/GCellGrid.h"
 
 #include  "kite/DataNegociate.h"
 #include  "kite/TrackElement.h"
 #include  "kite/TrackMarker.h"
 #include  "kite/TrackCost.h"
 #include  "kite/Track.h"
+#include  "kite/TrackSegment.h"
 #include  "kite/RoutingPlane.h"
-#include  "kite/GCellGrid.h"
-#include  "kite/GCellRoutingSet.h"
 #include  "kite/RoutingEventQueue.h"
 #include  "kite/RoutingEventHistory.h"
 #include  "kite/NegociateWindow.h"
@@ -50,11 +57,113 @@
 
 namespace {
 
-
   using namespace std;
   using namespace Hurricane;
   using namespace CRL;
   using namespace Kite;
+
+
+  class Histogram {
+    public:
+            Histogram ( double range, double step, size_t nbSets );
+           ~Histogram ();
+      void  addSample ( double, size_t iset );
+      void  toStream  ( ostream& );
+      void  toFile    ( bfs::path& );
+      void  toGnuplot ( string design );
+      void  normalize ( double totalSamples, size_t iset );
+    private:
+      double                   _range;
+      double                   _step;
+      vector< vector<float> >  _sets;
+  };
+
+
+  Histogram::Histogram ( double range, double step, size_t nbSets )
+    : _range  (range)
+    , _step   (step)
+    , _sets   ()
+  {
+    size_t binSize = (size_t)rint ( _range / _step );
+    for ( size_t iset=0 ; iset<nbSets ; ++iset ) {
+      _sets.push_back ( vector<float>() );
+      for ( size_t i=0 ; i<binSize ; ++i ) _sets.back().push_back(0);
+    }
+  }
+
+
+  Histogram::~Histogram ()
+  { }
+
+
+  void  Histogram::addSample ( double sample, size_t iset )
+  {
+    size_t binIndex = (size_t)rint ( sample / _step );
+    if ( binIndex > _sets.front().size() ) binIndex = _sets.front().size() - 1;
+
+    _sets[iset][binIndex] += 1.0;
+  }
+
+
+  void  Histogram::normalize ( double totalSamples, size_t iset )
+  {
+    for ( size_t i=0 ; i<_sets[iset].size() ; ++i ) _sets[iset][i] /= totalSamples;
+  }
+
+
+  void  Histogram::toStream ( ostream& o )
+  {
+    o << setprecision(3);
+
+    for ( size_t i=0 ; i<_sets.front().size() ; ++i ) {
+      for ( size_t iset=0 ; iset<_sets.size() ; ++iset ) {
+        o << _sets[iset][i] << " ";
+      }
+      o << "\n";
+    }
+  }
+
+
+  void  Histogram::toFile ( bfs::path& path )
+  {
+    bfs::ofstream fd ( path );
+    toStream ( fd );
+    fd.close ();
+  }
+
+
+  void  Histogram::toGnuplot ( string design )
+  {
+    bfs::path datFile = design + ".densityHist.dat";
+    toFile ( datFile );
+
+    bfs::path pltFile = design + ".densityHist.plt";
+    bfs::ofstream fd ( pltFile );
+
+    fd << "set grid\n";
+    fd << "set grid noxtics\n";
+    fd << "set xrange [-0.5:9.5]\n";
+    fd << "set xtics ( ";
+    for ( size_t i=0 ; i<10 ; ++i ) {
+      fd << ((i) ? " ," : "") << "\"<" << ((i+1)*10) << "%%\" " << i;
+    }
+    fd << " )\n";
+
+    fd << "set yrange [0:.4]\n";
+    fd << "set ytics ( ";
+    for ( float i=0.0 ; i<=40.0 ; i+=10.0 ) {
+      fd << ((i != 0.0) ? " ," : "") << "\"" << i << "%%\" " << (i/100.0);
+    }
+    fd << " )\n";
+
+    fd << "set style histogram cluster gap 1\n";
+    fd << "set style fill solid noborder\n";
+    fd << "set boxwidth 1\n";
+    fd << "plot \"" << design << ".densityHist.dat\" using 1 title \"Avg. density\" with histogram linecolor rgb \"green\", \\\n";
+    fd << "     \"" << design << ".densityHist.dat\" using 2 title \"Peak. density\" with histogram linecolor rgb \"red\"\n";
+
+    fd.close ();
+  }
 
 
   void  NegociateOverlapCost ( const TrackElement* segment, TrackCost& cost )
@@ -64,7 +173,7 @@ namespace {
     if ( not intersect.intersect ( cost.getInterval() ) ) return;
 
     if ( segment->isBlockage() or segment->isFixed() ) {
-    //ltrace(200) << "Infinite cost from: " << segment << endl;
+      ltrace(200) << "Infinite cost from: " << segment << endl;
       cost.setInfinite    ();
       cost.setOverlap     ();
       cost.setHardOverlap ();
@@ -81,30 +190,22 @@ namespace {
     DataNegociate* data = segment->getDataNegociate ();
     if ( not data ) return;
 
-    if ( data->getGCellOrder() >= Session::getOrder() ) {
-      cost.mergeRipupCount ( data->getRipupCount() );
-      if ( segment->isLocal() ) {
-        cost.mergeDataState ( data->getState() );
-        if ( data->getState() >=  DataNegociate::LocalVsGlobal ) {
-          ltrace(200) << "MaximumSlack/LocalVsGlobal for " << segment << endl;
-        }
+    cost.mergeRipupCount ( data->getRipupCount() );
+    if ( segment->isLocal() ) {
+      cost.mergeDataState ( data->getState() );
+      if ( data->getState() >=  DataNegociate::LocalVsGlobal ) {
+        ltrace(200) << "MaximumSlack/LocalVsGlobal for " << segment << endl;
       }
     }
 
-    if ( /*(data->getGCellOrder() < Session::getOrder()) or*/
-        ((data->isRing() or data->isBorder()) and (data->getRipupCount() > 3)) ) {
-      ltrace(200) << "Infinite cost from: " << segment << endl;
-      cost.setFixed       ();
-      cost.setInfinite    ();
-      cost.setOverlap     ();
-      cost.setHardOverlap ();
-      return;
-    }
-
-    if (  ( data->getGCellOrder() < Session::getOrder() )
-       or (   ( data->getCost().getRightMinExtend() >= cost.getInterval().getVMin() )
-          and ( data->getCost().getLeftMinExtend () <= cost.getInterval().getVMax() ) ) )
-      cost.setHardOverlap ();
+    // if ( data->getRipupCount() > 3 ) {
+    //   ltrace(200) << "Infinite cost from: " << segment << endl;
+    //   cost.setFixed       ();
+    //   cost.setInfinite    ();
+    //   cost.setOverlap     ();
+    //   cost.setHardOverlap ();
+    //   return;
+    // }
 
     cost.setOverlap   ();
     cost.incTerminals ( data->getCost().getTerminals()*100 );
@@ -139,13 +240,13 @@ namespace {
 
 namespace Kite {
 
-
   using std::cerr;
   using std::endl;
   using std::setw;
   using std::left;
   using std::right;
   using std::setprecision;
+  using Hurricane::Warning;
   using Hurricane::Bug;
   using Hurricane::tab;
   using Hurricane::inltrace;
@@ -153,81 +254,33 @@ namespace Kite {
   using Hurricane::ltraceout;
   using Hurricane::ForEachIterator;
   using CRL::addMeasure;
-
-
-// -------------------------------------------------------------------
-// Class  :  "NegociateWindow::RingSegment".
-
-
-  bool  NegociateWindow::RingSegment::orderReached ( const NegociateWindow::RingSegment& segment )
-  {
-    return ( segment.getOrder() <= Session::getOrder() );
-  }
-  
-
-
-  NegociateWindow::RingSegment::RingSegment ( TrackElement* segment )
-    : _segment(segment), _order(0)
-  {
-    DataNegociate* data = segment->getDataNegociate ();
-    if ( data ) _order = data->getGCellOrder ();
-  }
+  using Katabatic::AutoContact;
 
 
 // -------------------------------------------------------------------
 // Class  :  "NegociateWindow".
 
 
-  NegociateWindow::NegociateWindow ( KiteEngine*   kite
-                                   , unsigned int  columnMin
-                                   , unsigned int  rowMin
-                                   , unsigned int  columnMax
-                                   , unsigned int  rowMax
-                                   )
-    : _slowMotion      (0)
-    , _interrupt       (false)
-    , _kite            (kite)
-    , _gridBox         (NULL)
-    , _criticalGCells  ()
-    , _gcellOrder      (0)
-    , _gcellRoutingSets()
-    , _eventQueue      ()
-    , _eventHistory    ()
-    , _ring            ()
-  {
-    _gridBox = GridBox<GCell>::create ( _kite->getGCellGrid()
-                                      , columnMin
-                                      , rowMin
-                                      , columnMax
-                                      , rowMax
-                                      );
-  }
+  NegociateWindow::NegociateWindow ( KiteEngine* kite )
+    : _slowMotion  (0)
+    , _interrupt   (false)
+    , _kite        (kite)
+    , _gcells      ()
+    , _segments    ()
+    , _eventQueue  ()
+    , _eventHistory()
+  { }
 
 
-  NegociateWindow* NegociateWindow::create ( KiteEngine*   kite
-                                           , unsigned int  columnMin
-                                           , unsigned int  rowMin
-                                           , unsigned int  columnMax
-                                           , unsigned int  rowMax
-                                           )
+  NegociateWindow* NegociateWindow::create ( KiteEngine* kite )
   {
-    NegociateWindow* negociateWindow = new NegociateWindow ( kite
-                                                           , columnMin
-                                                           , rowMin
-                                                           , columnMax
-                                                           , rowMax
-                                                           );
+    NegociateWindow* negociateWindow = new NegociateWindow ( kite );
     return negociateWindow;
   }
 
 
   NegociateWindow::~NegociateWindow ()
-  {
-    for ( size_t i=0 ; i<_gcellRoutingSets.size() ; i++ )
-      _gcellRoutingSets[i]->destroy ();
-
-    if ( _gridBox ) delete _gridBox;
-  }
+  { }
 
 
   void  NegociateWindow::destroy ()
@@ -238,53 +291,10 @@ namespace Kite {
   { return _kite->getCell(); }
 
 
-  void  NegociateWindow::addToRing ( TrackElement* segment )
+  void  NegociateWindow::setGCells ( const Katabatic::GCellVector& gcells )
   {
-    ltrace(200) << "addToRing: " << segment << endl;
-
-    _ring.push_back ( RingSegment(segment) );
-
-    DataNegociate* data = segment->getDataNegociate ();
-    data->setRing ( true );
-    data->setGCellOrder ( Session::getOrder() );
-
-    _eventQueue.add ( segment, 0 );
-  }
-
-
-  void  NegociateWindow::loadRouting ()
-  {
-    vector<GCell*> gcells;
-    GCellGrid*     grid = getKiteEngine()->getGCellGrid();
-
-    forEach ( GCell*, igcell, grid->getGCells() ) {
-      gcells.push_back ( *igcell );
-      igcell->updateDensity ();
-    }
-
-    sort ( gcells.begin(), gcells.end(), GCell::CompareByDensity() );
-
-#if defined(CHECK_DETERMINISM)
-    cerr << "Order: After sort<>" << endl;
-    for ( size_t i=0 ; i < gcells.size() ; i++ ) {
-      cerr << "Order: "
-           << setw(9) << left  << setprecision(6) << gcells[i]->base()->getDensity()
-           << setw(5) << right << gcells[i]->getIndex()
-           << " " << gcells[i] << endl;
-    }
-#endif
-
-    unsigned int order = 0;
-    for ( size_t i=0 ; i < gcells.size() ; i++ ) {
-      if ( not gcells[i]->isInRoutingSet() ) {
-        Session::setOrder ( order );
-        GCellRoutingSet* rs = GCellRoutingSet::create ( gcells[i], _kite->getExpandStep() );
-        rs->expand      ( grid  );
-        rs->loadRouting ( order );
-
-        _gcellRoutingSets.push_back ( rs );
-      }
-    }
+    _gcells = gcells;
+  //sort ( _gcells.begin(), _gcells.end(), Katabatic::GCell::CompareGCellById() );
 
     loadRoutingPads ( this );
     Session::revalidate ();
@@ -297,12 +307,7 @@ namespace Kite {
       segment->getDataNegociate()->update();
     }
 
-    getKiteEngine()->setMinimumWL ( grid->getTotalWireLength() );
-
-#if defined(CHECK_DATABASE)
-    unsigned int overlaps = 0;
-    Session::getKiteEngine()->_check(overlaps,"after LoadRouting");
-#endif 
+    _statistics.setGCellsCount ( _gcells.size() );
   }
 
 
@@ -320,49 +325,159 @@ namespace Kite {
   }
 
 
-  void  NegociateWindow::_unloadRing ()
+  TrackElement* NegociateWindow::addTrackSegment ( AutoSegment* autoSegment, bool loading )
   {
-    _ring.erase ( remove_if(_ring.begin(),_ring.end(),RingSegment::orderReached), _ring.end() );
-    for ( size_t i=0 ; i<_ring.size() ; ++i ) {
-      if ( _ring[i].getSegment()->getTrack() != NULL )
-        Session::addRemoveEvent ( _ring[i].getSegment() );
+    ltrace(200) << "NegociateWindow::addTrackSegment() - " << autoSegment << endl;
+    ltracein(159);
+
+  // Special case: fixed AutoSegments must not interfere with blockages.
+  // Ugly: uses of getExtensionCap().
+    if ( autoSegment->isFixed() ) {
+      RoutingPlane* plane = Session::getKiteEngine()->getRoutingPlaneByLayer(autoSegment->getLayer());
+      Track*        track = plane->getTrackByPosition ( autoSegment->getAxis() );
+      size_t        begin;
+      size_t        end;
+      Interval      fixedSpan;
+      Interval      blockageSpan;
+
+      autoSegment->getCanonical ( fixedSpan );
+      fixedSpan.inflate ( Session::getExtensionCap()-1 );
+
+      track->getOverlapBounds ( fixedSpan, begin, end );
+      for ( ; (begin < end) ; begin++ ) {
+
+        TrackElement* other = track->getSegment(begin);
+        ltrace(200) << "| overlap: " << other << endl;
+
+        if ( not other->isBlockage() ) continue;
+
+        other->getCanonical ( blockageSpan );
+        blockageSpan.inflate(Session::getExtensionCap());
+
+        ltrace(200) << "  fixed:" << fixedSpan << " vs. blockage:" << blockageSpan << endl;
+
+        if ( not fixedSpan.intersect(blockageSpan) ) continue;
+
+      // Overlap between fixed & blockage.
+        ltrace(200) << "* Blockage overlap: " << autoSegment << endl;
+        Session::destroyRequest ( autoSegment );
+
+        cerr << Warning("Overlap between fixed %s and blockage at %s."
+                       ,getString(autoSegment).c_str(),getString(blockageSpan).c_str()) << endl;
+
+        return NULL;
+      }
     }
 
-    Session::revalidate ();
+    Interval span;
+    autoSegment = autoSegment->getCanonical ( span );
+
+    bool           created;
+    TrackElement*  trackSegment  = TrackSegment::create ( autoSegment, NULL, created );
+
+    if ( not loading )
+      ltrace(159) << "* lookup: " << autoSegment << endl;
+
+    if ( created ) {
+      ltrace(159) << "* " << trackSegment << endl;
+
+      RoutingPlane* plane = Session::getKiteEngine()->getRoutingPlaneByLayer(autoSegment->getLayer());
+      Track*        track = plane->getTrackByPosition ( autoSegment->getAxis() );
+      Interval      uside = autoSegment->getAutoSource()->getGCell()->getUSide ( Constant::perpandicular(autoSegment->getDirection())/*, false */);
+
+      if ( track->getAxis() > uside.getVMax() ) track = track->getPrevious();
+      if ( track->getAxis() < uside.getVMin() ) track = track->getNext();
+
+      trackSegment->setAxis ( track->getAxis(), Katabatic::Realignate|Katabatic::AxisSet );
+      trackSegment->invalidate ();
+
+      if ( trackSegment->isFixed() ) {
+        Session::addInsertEvent ( trackSegment, track );
+      } else {
+        _segments.push_back ( trackSegment );
+      }
+    }
+
+    if ( not created and not loading ) {
+      ltrace(200) << "TrackSegment already exists (and not in loading stage)." << endl;
+    }
+
+    ltraceout(159);
+
+    return trackSegment;
   }
 
 
-  void  NegociateWindow::_loadRing ()
+  double  NegociateWindow::computeWirelength ()
   {
-    unsigned int  order = Session::getOrder ();
-    for ( size_t i=0 ; i<_ring.size() ; i++ ) {
-      TrackElement*  segment = _ring[i].getSegment();
-      DataNegociate* data    = segment->getDataNegociate ();
+    set<TrackElement*> accounteds;
+    double totalWL = 0.0;
 
-      data->resetRipupCount ();
-      data->resetStateCount ();
-      data->setGCellOrder ( order );
-      if ( _ring[i].getOrder() == order ) {
-        ltrace(200) << "Removing from ring: " << segment << endl;
-        data->setRing ( false );
+    for ( size_t igcell=0 ; igcell<_gcells.size() ; ++igcell ) {
+      double        gcellWL = 0.0;
+      Segment*      segment;
+      TrackElement* trackSegment;
+
+      vector<AutoContact*>* contacts = _gcells[igcell]->getContacts();
+      for ( size_t i=0 ; i<contacts->size() ; i++ ) {
+        forEach ( Hook*, ihook, (*contacts)[i]->getBodyHook()->getSlaveHooks() ) {
+          Hook* sourceHook = dynamic_cast<Segment::SourceHook*>(*ihook);
+          if ( not sourceHook ) continue;
+          
+          segment       = dynamic_cast<Segment*>(sourceHook->getComponent());
+          trackSegment  = Session::lookup ( segment );
+          if ( trackSegment ) {
+            if ( accounteds.find(trackSegment) != accounteds.end() ) continue;
+
+            accounteds.insert ( trackSegment );
+            gcellWL += DbU::getLambda ( trackSegment->getLength() );
+          }
+        }
       }
 
-      _eventQueue.add ( segment, 0 );
+    // Partial sum to limit rounding errors.
+      totalWL += gcellWL;
     }
-    _eventQueue.commit ();
+
+    return totalWL;
   }
 
 
-  size_t  NegociateWindow::_negociate ( const vector<TrackElement*>& segments )
+  void  NegociateWindow::_createRouting  ( Katabatic::GCell* gcell )
   {
-    ltrace(150) << "NegociateWindow::_negociate() - " << segments.size() << endl;
+    ltrace(200) << "NegociateWindow::_createRouting() - " << gcell << endl;
+    ltracein(200);
+
+    Segment*     segment;
+    AutoSegment* autoSegment;
+
+    ltrace(149) << "AutoSegments from AutoContacts" << endl;
+    vector<AutoContact*>* contacts = gcell->getContacts();
+    for ( size_t i=0 ; i<contacts->size() ; i++ ) {
+      forEach ( Component*, component, (*contacts)[i]->getSlaveComponents() ) {
+        segment      = dynamic_cast<Segment*>(*component);
+        autoSegment  = Session::base()->lookup ( segment );
+        ltrace(149) << autoSegment << endl;
+        if ( autoSegment and autoSegment->isCanonical() ) {
+          addTrackSegment ( autoSegment, true );
+        }
+      }
+    }
+
+    ltrace(149) << "_segments.size():" << _segments.size() << endl;
+    ltraceout(200);
+  }
+
+
+  size_t  NegociateWindow::_negociate ()
+  {
+    ltrace(150) << "NegociateWindow::_negociate() - " << _segments.size() << endl;
     ltracein(149);
 
     unsigned long limit = _kite->getEventsLimit();
 
     _eventHistory.clear();
-    _eventQueue.load ( segments );
-    _loadRing ();
+    _eventQueue.load ( _segments );
 
     size_t count = 0;
     while ( not _eventQueue.empty() and not isInterrupted() ) {
@@ -370,11 +485,11 @@ namespace Kite {
 
       event->process ( _eventQueue, _eventHistory );
       if (tty::enabled()) {
-        cmess1 << "       <FirstPass:Negociation - event:" << tty::bold << setw(7) << setfill('0')
+        cmess1 << "       <event:" << tty::bold << setw(7) << setfill('0')
                << RoutingEvent::getProcesseds() << setfill(' ') << tty::reset << ">" << tty::cr;
         cmess1.flush ();
       } else {
-        cmess2 << "       <FirstPass:Negociation - event:" << setw(7) << setfill('0')
+        cmess2 << "       <event:" << setw(7) << setfill('0')
                << RoutingEvent::getProcesseds() << setfill(' ') << "> id:"
                << event->getSegment()->getId() << " "
                << event->getSegment()->getNet()->getName()
@@ -384,23 +499,6 @@ namespace Kite {
 
       if ( RoutingEvent::getProcesseds() >= limit ) setInterrupt ( true );
       count++;
-
-#if ENABLE_STIFFNESS
-      if ( not (RoutingEvent::getProcesseds() % 1000) ) {
-        sort ( _criticalGCells.begin(), _criticalGCells.end(), GCell::CompareByStiffness() );
-        for ( size_t igcell=0 ; igcell<_criticalGCells.size() ; ++igcell ) {
-          if ( _criticalGCells[igcell]->getStiffness   () <  0.7 ) break;
-          if ( _criticalGCells[igcell]->getSegmentCount() < 20   ) continue;
-
-          cerr << "       - Anticipate: " << _criticalGCells[igcell]
-               << ":" << _criticalGCells[igcell]->getStiffness() << endl;
-
-          _criticalGCells[igcell]->anticipateRouting (  Session::getOrder() );
-          _eventQueue.load ( _criticalGCells[igcell]->getOwnedSegments() );
-          _criticalGCells[igcell]->setRouted ( true );
-        }
-      }
-#endif
     }
     if (count and tty::enabled()) cmess1 << endl;
     count = 0;
@@ -420,12 +518,12 @@ namespace Kite {
         event->process ( _eventQueue, _eventHistory );
 
         if (tty::enabled()) {
-          cmess1 << "       <SecondPass:Packing - event:"
+          cmess1 << "       <event:"
                  << tty::bold << tty::fgcolor(tty::Red) << setw(7) << setfill('0')
                  << RoutingEvent::getProcesseds() << setfill(' ') << tty::reset << ">" << tty::cr;
           cmess1.flush ();
         } else {
-          cmess1 << "       <SecondPass:Packing - event:" << setw(7) << setfill('0')
+          cmess1 << "       <event:" << setw(7) << setfill('0')
                  << RoutingEvent::getProcesseds() << setfill(' ') << ">" << endl;
         }
       }
@@ -434,7 +532,6 @@ namespace Kite {
 
     size_t eventsCount = _eventHistory.size();
 
-    _unloadRing ();
     _eventHistory.clear();
     _eventQueue.clear();
 
@@ -448,41 +545,10 @@ namespace Kite {
   //     Session::open ( _kiteEngine );
   //   }
 
+    _statistics.setEventsCount ( eventsCount );
     ltraceout(149);
 
     return eventsCount;
-  }
-
-
-  void  NegociateWindow::_runOnGCellRoutingSet ( GCellRoutingSet* rs )
-  {
-#if defined(CHECK_DETERMINISM)
-    cerr << "Order: Routing set: " << rs << endl;
-#endif
-
-    ltrace(200) << "Routing " << rs << endl;
-    ltracein(200);
-
-    cmess1 << "     - Routing " << rs << endl;
-
-    vector<GCell*>  gcells = rs->getGCells ();
-    for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-      ltrace(200) << gcells[i] << endl;
-#if defined(CHECK_DETERMINISM)
-      cerr << "Order:   GCell: " << gcells[i] << endl;
-#endif
-    }
-
-    Session::setOrder ( rs->getOrder() );
-
-    vector<TrackElement*>  segments;
-    rs->loadBorder       ( getKiteEngine()->getGCellGrid() );
-    rs->getOwnedSegments ( segments );
-    rs->setRouted        ( true );
-    rs->getStatistics    ().setEventsCount ( _negociate(segments) );
-    rs->freeBorder       ();
-
-    ltraceout(200);
   }
 
 
@@ -491,31 +557,27 @@ namespace Kite {
     ltrace(150) << "NegociateWindow::run()" << endl;
     ltracein(149);
 
-    _criticalGCells = *(getKiteEngine()->getGCellGrid()->getGCellVector());
-
     TrackElement::setOverlapCostCB ( NegociateOverlapCost );
     RoutingEvent::resetProcesseds ();
 
-    // sort ( gcells.begin(), gcells.end(), GCell::CompareByStiffness() );
-    // for ( size_t j=0 ; j<gcells.size() ; ++j ) {
-    //   cerr << "     INITIAL stiff: " << gcells[j] << ":" << gcells[j]->getStiffness() << endl;
-    // }
+    for ( size_t igcell=0 ; igcell<_gcells.size() ; ++igcell ) {
+      _createRouting ( _gcells[igcell] );
+    }
+    Session::revalidate ();
+
+    getKiteEngine()->setMinimumWL ( computeWirelength() );
+
+#if defined(CHECK_DATABASE)
+    unsigned int overlaps = 0;
+    Session::getKiteEngine()->_check(overlaps,"after _createRouting(GCell*)");
+#endif 
 
     _slowMotion = slowMotion;
-    _gcellOrder = 0;
-    for ( size_t i=0 ; (i<_gcellRoutingSets.size()) && !isInterrupted() ; i++ ) {
-      _runOnGCellRoutingSet ( _gcellRoutingSets[i] );
-
-      // sort ( gcells.begin(), gcells.end(), GCell::CompareByStiffness() );
-      // for ( size_t j=0 ; j<gcells.size() ; ++j ) {
-      //   cerr << "     stiff: " << gcells[j] << ":" << gcells[j]->getStiffness() << endl;
-      // }
-    }
+    _negociate ();
 
     Session::get()->isEmpty();
 
 # if defined(CHECK_DATABASE)
-    unsigned int overlaps = 0;
     _kite->_check ( overlaps, "after negociation" );
 # endif
 
@@ -526,29 +588,31 @@ namespace Kite {
   void  NegociateWindow::printStatistics () const
   {
     cmess1 << "  o  Computing statistics." << endl;
-
-    Statistics globalStatistics;
-    size_t     biggestEventsCount = 0;
-    size_t     biggestRSsize      = 0;
-    for ( size_t i=0; i<_gcellRoutingSets.size() ; i++ ) {
-      Statistics& statistics = _gcellRoutingSets[i]->getStatistics();
-      globalStatistics += statistics;
-
-      if ( statistics.getEventsCount() > biggestEventsCount )
-        biggestEventsCount = statistics.getEventsCount();
-
-      if ( _gcellRoutingSets[i]->getGCells().size() > biggestRSsize )
-        biggestRSsize = _gcellRoutingSets[i]->getGCells().size();
-    }
-    
     cmess1 << Dots::asSizet("     - Processeds Events Total",RoutingEvent::getProcesseds()) << endl;
     cmess1 << Dots::asSizet("     - Unique Events Total"
                            ,(RoutingEvent::getProcesseds() - RoutingEvent::getCloneds())) << endl;
-    cmess1 << Dots::asSizet("     - Biggest Events Chunk"   ,biggestEventsCount) << endl;
-    cmess1 << Dots::asSizet("     - Biggest Routing Set"    ,biggestRSsize) << endl;
+    cmess1 << Dots::asSizet("     - # of GCells",_statistics.getGCellsCount()) << endl;
 
     addMeasure<size_t>( getCell(), "Events" , RoutingEvent::getProcesseds(), 12 );
     addMeasure<size_t>( getCell(), "UEvents", RoutingEvent::getProcesseds()-RoutingEvent::getCloneds(), 12 );
+
+    Histogram densityHistogram ( 1.0, 0.1, 2 );
+
+    const Katabatic::GCellVector* gcells = getKiteEngine()->getGCellGrid()->getGCellVector();
+
+    getKiteEngine()->getGCellGrid()->setDensityMode ( Katabatic::GCellGrid::AverageHVDensity );
+    for ( size_t igcell=0 ; igcell<(*gcells).size() ; ++igcell ) {
+      densityHistogram.addSample ( (*gcells)[igcell]->getDensity(), 0 );
+    }
+
+    getKiteEngine()->getGCellGrid()->setDensityMode ( Katabatic::GCellGrid::MaxDensity );
+    for ( size_t igcell=0 ; igcell<(*gcells).size() ; ++igcell ) {
+      densityHistogram.addSample ( (*gcells)[igcell]->getDensity(), 1 );
+    }
+
+    densityHistogram.normalize ( (*gcells).size(), 0 );
+    densityHistogram.normalize ( (*gcells).size(), 1 );
+    densityHistogram.toGnuplot ( getString(getCell()->getName()) );
   }
 
 
@@ -556,7 +620,7 @@ namespace Kite {
   {
     ostringstream  os;
 
-    os << "<" << _getTypeName() << _gridBox << ">";
+    os << "<" << _getTypeName() << ">";
     return ( os.str() );
   }
 
@@ -565,7 +629,7 @@ namespace Kite {
   {
     Record* record = new Record ( _getString() );
                                      
-    record->add ( getSlot ( "_gridBox" ,  _gridBox  ) );
+    record->add ( getSlot ( "_gcells", _gcells ) );
     return ( record );
   }
 

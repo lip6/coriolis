@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -34,8 +34,8 @@
 #include  "hurricane/Name.h"
 #include  "hurricane/RoutingPad.h"
 #include  "katabatic/AutoContact.h"
+#include  "katabatic/GCell.h"
 #include  "crlcore/RoutingGauge.h"
-#include  "kite/GCell.h"
 #include  "kite/DataNegociate.h"
 #include  "kite/TrackSegment.h"
 #include  "kite/TrackCost.h"
@@ -69,7 +69,6 @@ namespace Kite {
   TrackSegment::TrackSegment ( AutoSegment* segment, Track* track )
     : TrackElement  (track)
     , _base         (segment)
-    , _gcell        (NULL)
     , _created      (true)
     , _lock         (true)
     , _revalidated  (false)
@@ -80,7 +79,6 @@ namespace Kite {
     , _area         (0)
     , _data         (NULL)
     , _dogLegLevel  (0)
-    , _dogLegOrder  (0)
   {
     if (segment) {
       _data = new DataNegociate ( this );
@@ -95,20 +93,11 @@ namespace Kite {
   {
     TrackElement::_postCreate ();
     Session::link ( this );
-
-    vector<GCell*> gcells;
-    getGCells ( gcells );
-
-#if ENABLE_STIFFNESS
-    updateGCellsStiffness ( TrackElement::AddToGCells );
-#endif
   }
 
 
   TrackSegment::~TrackSegment ()
-  {
-    if ( _data ) delete _data;
-  }
+  { if ( _data ) delete _data; }
 
 
   void  TrackSegment::_preDestroy ()
@@ -128,7 +117,7 @@ namespace Kite {
     created = false;
 
     TrackElement* trackElement = Session::lookup ( segment->base() );
-    if ( !trackElement ) { 
+    if ( not trackElement ) { 
       TrackSegment* trackSegment = new TrackSegment ( segment, track );
       trackSegment->_postCreate ();
       created = true;
@@ -163,11 +152,9 @@ namespace Kite {
   bool           TrackSegment::canGoOutsideGCell          () const { return _base->canGoOutsideGCell(); }
   bool           TrackSegment::canRipple                  () const { return _canRipple; }
   unsigned long  TrackSegment::getId                      () const { return _base->getId(); }
-  GCell*         TrackSegment::getGCell                   () const { return _gcell; }
   DbU::Unit      TrackSegment::getAxis                    () const { return _base->getAxis(); }
   unsigned long  TrackSegment::getArea                    () const { return _area; }
   unsigned int   TrackSegment::getDogLegLevel             () const { return _dogLegLevel; }
-  unsigned int   TrackSegment::getDogLegOrder             () const { return _dogLegOrder; }
   Interval       TrackSegment::getSourceConstraints       () const { return _base->getSourceConstraints(); }
   Interval       TrackSegment::getTargetConstraints       () const { return _base->getTargetConstraints(); }
   DataNegociate* TrackSegment::getDataNegociate           () const { return _data; }
@@ -220,7 +207,6 @@ namespace Kite {
   TrackElement* TrackSegment::getNext () const
   {
     size_t dummy = _index;
-
     return _track->getNext ( dummy, getNet() );
   }
 
@@ -228,40 +214,39 @@ namespace Kite {
   TrackElement* TrackSegment::getPrevious () const
   {
     size_t dummy = _index;
-
     return _track->getPrevious ( dummy, getNet() );
   }
 
 
-  Interval  TrackSegment::getFreeInterval ( bool useOrder ) const
+  Interval  TrackSegment::getFreeInterval () const
   {
-    if ( !_track ) return Interval(false);
+    if ( not _track ) return Interval(false);
 
     size_t  begin = _index;
     size_t  end   = _index;
 
-    return _track->expandFreeInterval ( begin, end, Track::Inside, getNet(), useOrder );
+    return _track->expandFreeInterval ( begin, end, Track::Inside, getNet() );
   }
 
 
-  size_t  TrackSegment::getGCells ( vector<GCell*>& gcells ) const
+  size_t  TrackSegment::getGCells ( vector<Katabatic::GCell*>& gcells ) const
   {
-    vector<GCell*>().swap ( gcells );
+    vector<Katabatic::GCell*>().swap ( gcells );
 
-    GCell* sourceGCell = Session::lookup(base()->getAutoSource()->getGCell());
-    GCell* targetGCell = Session::lookup(base()->getAutoTarget()->getGCell());
+    Katabatic::GCell* sourceGCell = base()->getAutoSource()->getGCell();
+    Katabatic::GCell* targetGCell = base()->getAutoTarget()->getGCell();
 
     ltrace(148) << "getGCells(): sourceGCell: " << sourceGCell << endl;
     ltrace(148) << "getGCells(): targetGCell: " << targetGCell << endl;
 
     forEach ( AutoSegment*, isegment, base()->getCollapseds() ) {
-      GCell* gcell = Session::lookup(isegment->getAutoSource()->getGCell());
+      Katabatic::GCell* gcell = isegment->getAutoSource()->getGCell();
       if ( gcell->getIndex() < sourceGCell->getIndex() ) {
         sourceGCell = gcell;
         ltrace(148) << "getGCells(): new sourceGCell: " << sourceGCell << endl;
       }
 
-      gcell = Session::lookup(isegment->getAutoTarget()->getGCell());
+      gcell = isegment->getAutoTarget()->getGCell();
       if ( gcell->getIndex() > targetGCell->getIndex() ) {
         targetGCell = gcell;
         ltrace(148) << "getGCells(): new targetGCell: " << targetGCell << endl;
@@ -295,14 +280,6 @@ namespace Kite {
   }
 
 
-  void  TrackSegment::setGCell ( GCell* gcell )
-  {
-    _gcell = gcell;
-    if (_data and not (_data->isBorder() or _data->isRing()))
-      _data->setGCellOrder( (_gcell) ? _gcell->getOrder() : (unsigned int)-1 );
-  }
-
-
   size_t  TrackSegment::getPerpandicularsBound ( set<TrackElement*>& bounds )
   {
     bounds.clear ();
@@ -321,13 +298,6 @@ namespace Kite {
   }
 
 
-  unsigned int  TrackSegment::getOrder () const
-  {
-    if ( _data == NULL ) return numeric_limits<unsigned int>::max();
-    return _data->getGCellOrder ();
-  }
-
-
   void  TrackSegment::setDogLegLevel ( unsigned int level )
   {
     if ( level > 15 ) {
@@ -337,20 +307,6 @@ namespace Kite {
     }
 
     _dogLegLevel = level;
-  }
-
-
-  void  TrackSegment::setDogLegOrder ( unsigned int order )
-  {
-    ltrace(200) << "setDogLegOrder(): " << order << " " << this << endl;
-
-    if ( order > 32768 ) {
-      cerr << Bug("%s has reached maximum dog leg order (32768)."
-                 ,_getString().c_str()) << endl;
-      order = 32768;
-    }
-
-    _dogLegOrder = order;
   }
 
 
@@ -381,12 +337,7 @@ namespace Kite {
 
 
   void  TrackSegment::setTrack ( Track* track )
-  {
-    TrackElement::setTrack ( track );
-#if ENABLE_STIFFNESS
-    updateGCellsStiffness ( ((track != NULL) ? TrackElement::Routed : TrackElement::UnRouted ) );
-#endif
-  }
+  { TrackElement::setTrack ( track ); }
 
 
   void  TrackSegment::detach ()
@@ -396,7 +347,6 @@ namespace Kite {
     setTrack ( NULL );
     setIndex ( (size_t)-1 );
     setLock  ( true );
-  //updateGCellsStiffness ( TrackElement::UnRouted );
   }
 
 
@@ -411,7 +361,6 @@ namespace Kite {
       _data->invalidate ( true, true );
 
     if ( _track ) Session::addSortEvent ( _track );
-
     _revalidated = true;
   }
 
@@ -423,48 +372,9 @@ namespace Kite {
   }
 
 
-  void  TrackSegment::updateGCellsStiffness ( unsigned int flags )
-  {
-    if ( Session::getKiteEngine()->getState() > Katabatic::StateDriving ) return;
-
-    vector<GCell*> gcells;
-    getGCells ( gcells );
-
-    int count = 0;
-    if ( flags & TrackElement::AddToGCells ) {
-      if ( getTrack() ) { flags |= TrackSegment::Routed; _routed = false; }
-    //cerr << "INC:";
-      count = +1;
-    }
-    if ( flags & TrackElement::RemoveFromGCells ) {
-      if ( getTrack() ) { flags |= TrackSegment::UnRouted; _routed = true; }
-    //cerr << "DEC:";
-      count = -1;
-    }
-    if ( count ) {
-    //cerr << count << " SegmentCount() for " << this << endl;
-      for ( size_t i=0 ; i<gcells.size() ; ++i ) {
-        gcells[i]->incSegmentCount ( count );
-      //cerr << "| " << gcells[i] << endl;
-      }
-    }
-
-    count = 0;
-    if ( not _routed and (flags & TrackElement::Routed  ) ) { count = +1; _routed = true; }
-    if (     _routed and (flags & TrackElement::UnRouted) ) { count = -1; _routed = false; }
-
-    if ( count ) {
-      for ( size_t i=0 ; i<gcells.size() ; ++i ) {
-        gcells[i]->incRoutedCount ( count );
-      //cerr << "Update (" << count << ") " << gcells[i] << " for: " << this << endl;
-      }
-    }
-  }
-
-
   void   TrackSegment::swapTrack ( TrackElement* other )
   {
-    if ( !other ) return;
+    if ( not other ) return;
 
     ltrace(200) << "TrackSegment::swapTrack()" << endl;
 
@@ -484,8 +394,6 @@ namespace Kite {
 
     setTrack ( NULL );
     other->setTrack ( NULL );
-    // if ( _track     )        updateGCellsStiffness ( TrackElement::UnRouted );
-    // if ( otherTrack ) other->updateGCellsStiffness ( TrackElement::UnRouted );
 
   //other->setRouted ( thisRouted );
     other->setTrack  ( thisTrack );
@@ -519,28 +427,15 @@ namespace Kite {
   {
     ltrace(200) << "TrackSegment::reschedule() - " << this << endl;
     ltracein(200);
-    ltrace(200) << "GCell: " << _gcell << endl;
-    ltrace(200) << "GCell::order:" << _gcell->getOrder()
-                << " Data::order:" << getOrder()
-                << " Session::order:" << Session::getOrder() << endl;
 
-    if ( getOrder() == Session::getOrder() ) {
-      if ( not _data or not _data->hasRoutingEvent() )
-        Session::getNegociateWindow()->addInsertEvent ( this, level );
-      else {
-        if ( _track != NULL )
-          Session::addRemoveEvent ( this );
-        Session::getNegociateWindow()->rescheduleEvent ( _data->getRoutingEvent(), level );
-      }
-    } else {
-      if ( _data and _data->hasRoutingEvent() )
-        _data->getRoutingEvent()->setDisabled();
-
-      if ( getOrder() > Session::getOrder() ) {
-        if ( _track != NULL )
-          Session::addRemoveEvent ( this );
-      }
+    if ( not _data or not _data->hasRoutingEvent() )
+      Session::getNegociateWindow()->addInsertEvent ( this, level );
+    else {
+      if ( _track != NULL )
+        Session::addRemoveEvent ( this );
+      Session::getNegociateWindow()->rescheduleEvent ( _data->getRoutingEvent(), level );
     }
+
     ltraceout(200);
   }
 
@@ -551,58 +446,8 @@ namespace Kite {
       ltrace(200) << "TrackSegment::slacken()" << endl;
       ltracein(200);
 
-      // set<AutoSegment*> collapseds;
-
-      // collapseds.insert ( _base );
-      // forEach ( AutoSegment*, isegment, _base->getCollapseds() ) {
-      //   collapseds.insert ( *isegment );
-      // }
-
-    //unsigned int direction   = Constant::perpandicular ( getDirection() );
-    //unsigned int doglegLevel = getDogLegLevel() + 1;
-
-    //setSlackened ( true );
-#if ENABLE_STIFFNESS
-      updateGCellsStiffness ( TrackElement::RemoveFromGCells );
-#endif
       base()->slacken ( true );
-#if ENABLE_STIFFNESS
-      updateGCellsStiffness ( TrackElement::AddToGCells );
-#endif
-
       _postModify ();
-
-      // const vector<AutoSegment*>& invalidateds = Session::getInvalidateds();
-      // if ( not invalidateds.empty() ) {
-      //   vector<TrackElement*> segments;
-      //   for ( size_t i=0 ; i<invalidateds.size() ; i++ ) {
-      //     ltrace(200) << "slacken: " << invalidateds[i] << endl;
-      //     TrackElement* segment = GCell::addTrackSegment(NULL,invalidateds[i],false);
-      //     segments.push_back ( segment );
-
-      //   //if ( segment->base()->isTerminal() or (collapseds.find(segment->base()) != collapseds.end()) )
-      //   //  segment->setSlackened ( true );
-
-      //     if ( segment->isCreated() ) {
-      //     //segment->setSlackened ( true );
-      //       if ( segment->getDirection() == direction ) {
-      //         ltrace(200) << "Increasing dogleg level to: " << doglegLevel << endl;
-      //         segment->setDogLegLevel ( doglegLevel );
-
-      //         if ( segment->getOrder() > Session::getOrder() ) {
-      //           ltrace(200) << "Adding to ring: " << segment << endl;
-      //           Session::getNegociateWindow()->addToRing ( segment );
-      //         }
-      //       }
-      //     }
-
-      //     segment->reschedule ( 0 );
-      //   }
-
-      //   for ( size_t i=0 ; i<segments.size() ; i++ ) {
-      //     ltrace(200) << "slacken: " << segments[i] << endl;
-      //   }
-      // }
       
       ltraceout(200);
     } else
@@ -611,19 +456,11 @@ namespace Kite {
 
 
   bool  TrackSegment::canPivotUp ( float reserve ) const
-  {
-    return _base->canPivotUp(reserve);
-  }
+  { return _base->canPivotUp(reserve); }
 
 
   bool  TrackSegment::canMoveUp ( float reserve, unsigned int flags ) const
-  {
-    // if ( isLocal() /*and (hasSourceDogLeg() or hasTargetDogLeg())*/ ) {
-    //   return _base->canPivotUp();
-    // }
-
-    return _base->canMoveUp ( reserve, flags );
-  }
+  { return _base->canMoveUp ( reserve, flags ); }
 
 
   bool  TrackSegment::moveUp ( unsigned int flags )
@@ -633,19 +470,13 @@ namespace Kite {
     ltrace(200) << "TrackSegment::moveUp() " << flags << endl;
     ltracein(200);
 
-#if ENABLE_STIFFNESS
-    updateGCellsStiffness ( TrackElement::RemoveFromGCells );
-#endif
     success = base()->moveUp ( flags );
-#if ENABLE_STIFFNESS
-    updateGCellsStiffness ( TrackElement::AddToGCells );
-#endif
 
     const vector<AutoSegment*>& invalidateds = Session::getInvalidateds();
     if ( not invalidateds.empty() ) {
       vector<TrackElement*> segments;
       for ( size_t i=0 ; i<invalidateds.size() ; i++ ) {
-        TrackElement* segment = GCell::addTrackSegment(NULL,invalidateds[i],false);
+        TrackElement* segment = Session::getNegociateWindow()->addTrackSegment(invalidateds[i],false);
         if ( segment != NULL ) {
           ltrace(200) << "moved: " << invalidateds[i] << endl;
           segments.push_back ( segment );
@@ -654,16 +485,15 @@ namespace Kite {
           segment->reschedule ( 0 );
         }
       }
-
       for ( size_t i=0 ; i<segments.size() ; i++ ) {
         ltrace(200) << "moved: " << segments[i] << endl;
       }
     }
 
-    if ( _data ) {
-      _data->setState ( DataNegociate::ConflictSolve1, true );
-      _data->resetRipupCount ();
-    }
+    // if ( _data and success ) {
+    //   _data->setState ( DataNegociate::ConflictSolve1, true );
+    //   _data->resetRipupCount ();
+    // }
       
     ltraceout(200);
 
@@ -678,30 +508,16 @@ namespace Kite {
     ltrace(200) << "TrackSegment::moveAside() - " << (onLeft?"left":"right") << endl;
     ltracein(200);
 
-    unsigned int order = _data->getGCellOrder();
-
-#if ENABLE_STIFFNESS
-    updateGCellsStiffness ( TrackElement::RemoveFromGCells );
-#endif
     if ( onLeft ) base()->moveULeft  ();
     else          base()->moveURight ();
-#if ENABLE_STIFFNESS
-    updateGCellsStiffness ( TrackElement::AddToGCells );
-#endif
 
     const vector<AutoSegment*>& invalidateds = Session::getInvalidateds();
     if ( not invalidateds.empty() ) {
       vector<TrackElement*> segments;
       for ( size_t i=0 ; i<invalidateds.size() ; i++ ) {
         ltrace(200) << "moved: " << invalidateds[i] << endl;
-        segments.push_back ( GCell::addTrackSegment(NULL,invalidateds[i],false) );
+        segments.push_back ( Session::getNegociateWindow()->addTrackSegment(invalidateds[i],false) );
         segments.back()->reschedule ( 0 );
-      }
-
-      if ( _data->getGCellOrder() < order ) {
-        cinfo << "[INFO] Putting TrackSegment of order " << order
-              << " into GCell " << getGCell() << endl;
-        _data->setGCellOrder ( order );
       }
 
       for ( size_t i=0 ; i<segments.size() ; i++ ) {
@@ -717,7 +533,7 @@ namespace Kite {
 
   TrackElement* TrackSegment::getSourceDogLeg ()
   {
-    if ( !hasSourceDogLeg() ) return NULL;
+    if ( not hasSourceDogLeg() ) return NULL;
    
     unsigned int  direction = Constant::perpandicular ( getDirection() );
     TrackElement* dogleg    = NULL;
@@ -734,7 +550,7 @@ namespace Kite {
 
   TrackElement* TrackSegment::getTargetDogLeg ()
   {
-    if ( !hasSourceDogLeg() ) return NULL;
+    if ( not hasSourceDogLeg() ) return NULL;
    
     unsigned int  direction = Constant::perpandicular ( getDirection() );
     TrackElement* dogleg    = NULL;
@@ -763,13 +579,6 @@ namespace Kite {
       return false;
     }
 
-    if ( getDogLegOrder() < Session::getOrder() ) {
-      ltrace(200) << "No dogleg in current order " << Session::getOrder()
-                  << " yet, allowing (previous:" << _dogLegOrder << ")" << endl;
-      setDogLegOrder ( Session::getOrder() );
-      setSourceDogLeg ( false );
-      setTargetDogLeg ( false );
-    }
     if ( hasSourceDogLeg() or hasTargetDogLeg() or isSlackened() ) {
       ltrace(200) << "Failed: already has source and/or target dogleg or slackened." << endl;
       return false;
@@ -785,17 +594,9 @@ namespace Kite {
 
     bool upLayer = (Session::getRoutingGauge()->getLayerDepth(getLayer()) < 2);
 
-    GCell* originalGCell = getGCell ();
-
-#if ENABLE_STIFFNESS
-    updateGCellsStiffness ( TrackElement::RemoveFromGCells );
-#endif
     base()->makeDogLeg ( interval, upLayer, leftDogleg );
-#if ENABLE_STIFFNESS
-    updateGCellsStiffness ( TrackElement::AddToGCells );
-#endif
 
-    return _postDogLeg ( originalGCell );
+    return _postDogLeg ();
   }
 
 
@@ -818,13 +619,6 @@ namespace Kite {
       return false;
     }
 
-    if ( getDogLegOrder() < Session::getOrder() ) {
-      ltrace(200) << "No dogleg in current order " << Session::getOrder()
-                  << " yet, allowing (previous:" << _dogLegOrder << ")" << endl;
-      setDogLegOrder ( Session::getOrder() );
-      setSourceDogLeg ( false );
-      setTargetDogLeg ( false );
-    }
     if ( hasSourceDogLeg() || hasTargetDogLeg() ) return false;
 
     return true;
@@ -833,17 +627,11 @@ namespace Kite {
 
   TrackElement* TrackSegment::makeDogLeg ()
   {
-    AutoContact* source = _base->getAutoSource();
-    AutoContact* target = _base->getAutoTarget();
-    GCell*       gcell  = Session::lookup ( _base->getAutoSource()->getGCell() );
+    Katabatic::AutoContact* source = _base->getAutoSource();
+    Katabatic::AutoContact* target = _base->getAutoTarget();
+    Katabatic::GCell*       gcell  = _base->getAutoSource()->getGCell();
 
-#if ENABLE_STIFFNESS
-    updateGCellsStiffness ( TrackElement::RemoveFromGCells );
-#endif
     TrackElement* dogleg = makeDogLeg ( gcell );
-#if ENABLE_STIFFNESS
-    updateGCellsStiffness ( TrackElement::AddToGCells );
-#endif
 
     if ( dogleg ) {
       if ( source->isTerminal() xor target->isTerminal() ) {
@@ -855,24 +643,16 @@ namespace Kite {
         ltrace(200) << "Setting dogleg axis @" << DbU::getValueString(axis) << endl;
         dogleg->setAxis ( axis );
       }
-      return _postDogLeg(gcell);
+      return _postDogLeg();
     }
 
     return NULL;
   }
 
 
-  bool  TrackSegment::canDogLegAt ( GCell* dogLegGCell, bool allowReuse )
+  bool  TrackSegment::canDogLegAt ( Katabatic::GCell* dogLegGCell, bool allowReuse )
   {
     ltrace(200) << "TrackSegment::canDogLegAt(GCell*) " << dogLegGCell << endl;
-
-    if ( getDogLegOrder() < Session::getOrder() ) {
-      ltrace(200) << "No dogleg in current order " << Session::getOrder()
-                  << " yet, allowing (previous:" << _dogLegOrder << ")" << endl;
-      setDogLegOrder ( Session::getOrder() );
-      setSourceDogLeg ( false );
-      setTargetDogLeg ( false );
-    }
 
     if ( isFixed() ) {
       ltrace(200) << "Cannot dogleg a fixed segment." << endl;
@@ -889,12 +669,8 @@ namespace Kite {
         return false;
       }
     }
-//     if ( Session::getRoutingGauge()->getLayerDepth(getLayer()) > 3 ) {
-//       ltrace(200) << "Cannot dogleg on the last top layer." << endl;
-//       return false;
-//     }
 
-    vector<GCell*> gcells;
+    vector<Katabatic::GCell*> gcells;
     getGCells ( gcells );
 
     ltrace(190) << "Source: " << *gcells.begin () << endl;
@@ -921,11 +697,6 @@ namespace Kite {
         return false;
       }
 
-    //if ( dogLegGCell->getUSide(getDirection(),false).intersect(getCanonicalInterval()) ) {
-    //  ltrace(200) << "Segment is almost outside the breaking GCell." << endl;
-    // return false;
-    //}
-
       break;
     }
 
@@ -938,28 +709,20 @@ namespace Kite {
   }
 
 
-  TrackElement* TrackSegment::makeDogLeg ( GCell* dogLegGCell )
+  TrackElement* TrackSegment::makeDogLeg ( Katabatic::GCell* dogLegGCell )
   {
     ltrace(200) << "TrackSegment::makeDogLeg(GCell*)" << endl;
     ltrace(200) << "Break in: " << dogLegGCell << endl;
 
     bool upLayer = (Session::getRoutingGauge()->getLayerDepth(getLayer()) < 2);
 
-    GCell* originalGCell = getGCell ();
+    base()->makeDogLeg ( dogLegGCell, upLayer );
 
-#if ENABLE_STIFFNESS
-    updateGCellsStiffness ( TrackElement::RemoveFromGCells );
-#endif
-    base()->makeDogLeg ( dogLegGCell->base(), upLayer );
-#if ENABLE_STIFFNESS
-    updateGCellsStiffness ( TrackElement::AddToGCells );
-#endif
-
-    return _postDogLeg ( originalGCell );
+    return _postDogLeg ();
   }
 
 
-  TrackElement* TrackSegment::_postDogLeg ( GCell* originalGCell )
+  TrackElement* TrackSegment::_postDogLeg ()
   {
     ltracein(200);
 
@@ -971,12 +734,7 @@ namespace Kite {
       for ( size_t i=0 ; i<dogLegs.size() ; i++ ) {
         ltrace(200) << "Looking up: " << dogLegs[i] << endl;
 
-        segments.push_back ( GCell::addTrackSegment(NULL,dogLegs[i]) );
-
-      //if ( isSlackened() /*&& (segments[i]->base() == dogLegs[i])*/ )
-      //  segments[i]->setSlackened (true);
-
-        segments[i]->setDogLegOrder ( Session::getOrder() );
+        segments.push_back ( Session::getNegociateWindow()->addTrackSegment(dogLegs[i],false) );
 
         switch ( i ) {
           case 0:
@@ -1001,37 +759,13 @@ namespace Kite {
         }
       }
 
-      ltrace(200) << "Before break: " << originalGCell << endl;
-      ltrace(200) << "After break:  " << getGCell() << endl;
-      if ( getGCell() != originalGCell ) swapTrack ( segments[2] );
+    // TO CHECK
+    // If the original TrackElement was inserted in a Track, must check
+    // if the new bit takes it's place or not.
+    //if ( getGCell() != originalGCell ) swapTrack ( segments[2] );
 
       for ( size_t i=0 ; i<dogLegs.size() ; i++ ) {
         segments[i]->reschedule ( ((i==1) ? 0 : 1) );
-        if ( i == 1 ) {
-          ltrace(200) << "Set canDogleg: dogleg:" << segments[1]->getDataNegociate()->getGCellOrder()
-                      << " vs. session:" << Session::getOrder() << endl;
-
-          if ( segments[1]->getOrder() > Session::getOrder()) {
-            segments[i]->setCanRipple ( true );
-            ltrace(200) << "Adding to ring: " << segments[i] << endl;
-            Session::getNegociateWindow()->addToRing ( segments[i] );
-          }
-        } else {
-          if ( segments[i]->getOrder() > Session::getOrder()) {
-            AutoContact* source = segments[i]->base()->getAutoSource();
-            AutoContact* target = segments[i]->base()->getAutoTarget();
-            if (  (source and dynamic_cast<RoutingPad*>(source->getAnchor()))
-               or (target and dynamic_cast<RoutingPad*>(target->getAnchor()))) {
-              ltrace(200) << "Adding to ring: " << segments[i] << endl;
-              Session::getNegociateWindow()->addToRing ( segments[i] );
-            }
-          }
-        }
-      //if ( i == 1 ) {
-      //  RoutingEvent* event = segments[i]->getDataNegociate()->getRoutingEvent();
-      //  if ( event )
-      //    event->setCanGoOutsideGCell ( true );
-      //}
       }
 
       ltrace(200) << "original:  " << segments[0] << endl;
@@ -1050,12 +784,6 @@ namespace Kite {
     ltrace(200) << "TrackSegment::canDesalignate()" << endl;
 
     return _base->canDesalignate();
-
-//     Interval baseSpan = _base->getSpanU ();
-//     if ( baseSpan.getVMin() - Session::getExtensionCap() > _sourceCanonical ) return _base->canDesalignate();   
-//     if ( baseSpan.getVMax() + Session::getExtensionCap() < _targetCanonical ) return _base->canDesalignate();   
-
-//     return false;
   }
 
 
@@ -1064,36 +792,8 @@ namespace Kite {
     ltrace(200) << "TrackSegment::desalignate()" << endl;
     ltracein(200);
 
-#if ENABLE_STIFFNESS
-    updateGCellsStiffness ( TrackElement::RemoveFromGCells );
-#endif
-
     _base->desalignate ();
-
-#if ENABLE_STIFFNESS
-    updateGCellsStiffness ( TrackElement::AddToGCells );
-#endif
-
     _postModify ();
-
-    // const vector<AutoSegment*>& invalidateds = Session::getInvalidateds();
-    // if ( not invalidateds.empty() ) {
-    //   vector<TrackElement*> segments;
-    //   for ( size_t i=0 ; i<invalidateds.size() ; i++ ) {
-    //     ltrace(200) << "desaligned: " << invalidateds[i] << endl;
-    //     segments.push_back ( GCell::addTrackSegment(NULL,invalidateds[i],false) );
-    //     segments[i]->reschedule ( 0 );
-
-    //     if ( segments[i]->getDataNegociate()->getGCellOrder() > Session::getOrder() ) {
-    //       ltrace(200) << "Adding to ring: " << segments[i] << endl;
-    //       Session::getNegociateWindow()->addToRing ( segments[i] );
-    //     }
-    //   }
-
-    //   for ( size_t i=0 ; i<segments.size() ; i++ ) {
-    //     ltrace(200) << "desaligned: " << segments[i] << endl;
-    //   }
-    // }      
 
     ltraceout(200);
   }
@@ -1114,7 +814,7 @@ namespace Kite {
     if ( not invalidateds.empty() ) {
       for ( size_t i=0 ; i<invalidateds.size() ; i++ ) {
         ltrace(200) << "invalidated: " << invalidateds[i] << endl;
-        TrackElement* segment = GCell::addTrackSegment(NULL,invalidateds[i],false);
+        TrackElement* segment = Session::getNegociateWindow()->addTrackSegment(invalidateds[i],false);
         if ( segment != NULL )
           segments.push_back ( segment );
       }
@@ -1129,30 +829,12 @@ namespace Kite {
         segment->setDogLegLevel ( doglegLevel );
       }
 
-      if ( segment->getDataNegociate()->getGCellOrder() == Session::getOrder() ) {
-        if ( segment->getDirection() == parallelDir ) {
-          forEach ( TrackElement*, iperpandicular, segment->getCollapsedPerpandiculars() ) {
-            ltrace(200) << "| pp: " << *iperpandicular << endl;
-
-            if ( iperpandicular->getDataNegociate()->getGCellOrder() == Session::getOrder() ) {
-              iperpandicular->reschedule ( 0 );
-            } else if ( iperpandicular->getDataNegociate()->getGCellOrder() > Session::getOrder() ) {
-              ltrace(200) << "Adding to ring: " << *iperpandicular << endl;
-              Session::getNegociateWindow()->addToRing ( *iperpandicular );
-            }
-          }
-          segment->reschedule ( 0 );
+      if ( segment->getDirection() == parallelDir ) {
+        forEach ( TrackElement*, iperpandicular, segment->getCollapsedPerpandiculars() ) {
+          ltrace(200) << "| pp: " << *iperpandicular << endl;
+          iperpandicular->reschedule ( 0 );
         }
-      } else if ( segment->getDataNegociate()->getGCellOrder() > Session::getOrder()) {
-        if ( segment->getDirection() == parallelDir ) {
-          AutoContact* source = segment->base()->getAutoSource();
-          AutoContact* target = segment->base()->getAutoTarget();
-          if (  (source and dynamic_cast<RoutingPad*>(source->getAnchor()))
-             or (target and dynamic_cast<RoutingPad*>(target->getAnchor()))) {
-            ltrace(200) << "Adding to ring: " << segment << endl;
-            Session::getNegociateWindow()->addToRing ( segment );
-          }
-        }
+        segment->reschedule ( 0 );
       }
     }
 
@@ -1162,7 +844,7 @@ namespace Kite {
 
   bool  TrackSegment::_check () const
   {
-    if ( !base() ) return true;
+    if ( not base() ) return true;
 
     bool coherency = true;
 
@@ -1182,11 +864,6 @@ namespace Kite {
       cerr << "[CHECK] " << this << " has bad target position " << DbU::getValueString(max) << "." << endl;
       coherency = false;
     }
-#if ENABLE_STIFFNESS
-    if ( _routed xor (_track != NULL) ) {
-      cerr << "[CHECK] " << this << " incoherency between routed/track flags." << endl;
-    }
-#endif
 
     return coherency;
   }
@@ -1203,13 +880,10 @@ namespace Kite {
               +  ":"   + DbU::getValueString(_targetU) + "]"
               +  " "   + DbU::getValueString(_targetU-_sourceU)
               +  " "   + getString(_dogLegLevel)
-              +  " o:" + getString(_data->getGCellOrder())
               + " ["   + ((_track) ? getString(_index) : "npos") + "] "
               + ((isSlackened()    ) ? "S" : "-")
               + ((_track           ) ? "T" : "-")
               + ((_canRipple       ) ? "r" : "-")
-              + ((_data->isBorder()) ? "B" : "-")
-              + ((_data->isRing  ()) ? "R" : "-")
               + ((_sourceDogLeg    ) ? "s" : "-")
               + ((_targetDogLeg    ) ? "t" : "-");
 

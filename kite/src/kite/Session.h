@@ -45,7 +45,6 @@ namespace Katabatic {
 
 namespace Kite {
 
-
   using std::set;
   using std::vector;
   using std::string;
@@ -58,7 +57,6 @@ namespace Kite {
   class Track;
   class TrackElement;
   class TrackMarker;
-  class GCell;
   class NegociateWindow;
   class Configuration;
   class KiteEngine;
@@ -79,9 +77,7 @@ namespace Kite {
       inline static Net*                getBlockageNet      ();
       inline static NegociateWindow*    getNegociateWindow  ();
       inline static unsigned int        getRipupCost        ();
-      inline static GCell*              getGCellUnder       ( DbU::Unit, DbU::Unit );
-      inline static unsigned int        getOrder            ();
-      inline static void                setOrder            ( unsigned int );
+      inline static Katabatic::GCell*   getGCellUnder       ( DbU::Unit, DbU::Unit );
       inline static void                addInsertEvent      ( TrackMarker*  , Track* );
       inline static void                addInsertEvent      ( TrackElement* , Track* );
       inline static void                addRemoveEvent      ( TrackElement* );
@@ -94,16 +90,14 @@ namespace Kite {
              static void                unlink              ( TrackElement* );
              static TrackElement*       lookup              ( Segment* );
              static TrackElement*       lookup              ( AutoSegment* );
-             static GCell*              lookup              ( Katabatic::GCell* );
+             static Katabatic::GCell*   lookup              ( Katabatic::GCell* );
     private:                                                
                     KiteEngine*         _getKiteEngine      ();
                     Net*                _getBlockageNet     ();
                     NegociateWindow*    _getNegociateWindow ();
                     unsigned int        _getRipupCost       ();
-                    GCell*              _getGCellUnder      ( DbU::Unit, DbU::Unit );
-                    unsigned int        _getOrder           () const;
-                    void                _setOrder           ( unsigned int );
-                    GCell*              _lookup             ( Katabatic::GCell* );
+                    Katabatic::GCell*   _getGCellUnder      ( DbU::Unit, DbU::Unit );
+                    Katabatic::GCell*   _lookup             ( Katabatic::GCell* );
                     void                _addInsertEvent     ( TrackMarker*  , Track* );
                     void                _addInsertEvent     ( TrackElement* , Track* );
                     void                _addRemoveEvent     ( TrackElement* );
@@ -128,7 +122,6 @@ namespace Kite {
 
     protected:
     // Attributes.
-      unsigned int   _order;
       vector<Event>  _insertEvents;
       vector<Event>  _removeEvents;
       set<Track*>    _sortEvents;
@@ -175,14 +168,8 @@ namespace Kite {
   inline unsigned int  Session::getRipupCost ()
   { return get("getRipupCost()")->_getRipupCost(); }
 
-  inline GCell* Session::getGCellUnder ( DbU::Unit x, DbU::Unit y )
+  inline Katabatic::GCell* Session::getGCellUnder ( DbU::Unit x, DbU::Unit y )
   { return get("getGCellUnder()")->_getGCellUnder(x,y); }
-
-  inline unsigned int  Session::getOrder ()
-  { return get("getOrder()")->_getOrder(); }
-
-  inline void  Session::setOrder ( unsigned int order )
-  { get("setOrder()")->_setOrder(order); }
 
   inline void  Session::addInsertEvent ( TrackMarker* marker, Track* track )
   { get("addInsertEvent(TrackMarker*)")->_addInsertEvent(marker,track); }

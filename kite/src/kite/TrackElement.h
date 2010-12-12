@@ -61,7 +61,6 @@ namespace Kite {
   class DataNegociate;
   class Track;
   class TrackCost;
-  class GCell;
 
 
   typedef  map<Segment*,TrackElement*>  TrackElementLut;
@@ -123,7 +122,7 @@ namespace Kite {
       virtual bool                  hasTargetDogLeg            () const;
       virtual bool                  canDogLeg                  ();
       virtual bool                  canDogLeg                  ( Interval );
-      virtual bool                  canDogLegAt                ( GCell*, bool allowReuse=false );
+      virtual bool                  canDogLegAt                ( Katabatic::GCell*, bool allowReuse=false );
       virtual unsigned long         getId                      () const;
       virtual unsigned int          getDirection               () const = 0;
       virtual Net*                  getNet                     () const = 0;
@@ -140,14 +139,13 @@ namespace Kite {
       inline  DbU::Unit             getSourceU                 () const;
       inline  DbU::Unit             getTargetU                 () const;
       inline  DbU::Unit             getLength                  () const;
-      virtual Interval              getFreeInterval            ( bool useOrder=false ) const;
+      virtual Interval              getFreeInterval            () const;
       inline  Interval              getCanonicalInterval       () const;
       virtual Interval              getSourceConstraints       () const;
       virtual Interval              getTargetConstraints       () const;
       virtual DataNegociate*        getDataNegociate           () const;
       virtual TrackElement*         getCanonical               ( Interval& );
-      virtual GCell*                getGCell                   () const;
-      virtual size_t                getGCells                  ( vector<GCell*>& ) const;
+      virtual size_t                getGCells                  ( Katabatic::GCellVector& ) const;
       virtual TrackElement*         getSourceDogLeg            ();
       virtual TrackElement*         getTargetDogLeg            ();
       virtual TrackElements         getCollapsedPerpandiculars ();
@@ -166,11 +164,9 @@ namespace Kite {
       virtual void                  setRouted                  ( bool );
       virtual void                  setTrack                   ( Track* );
       inline  void                  setIndex                   ( size_t );
-      virtual void                  setGCell                   ( GCell* );
       virtual void                  setArea                    ();
       virtual void                  setDogLegLevel             ( unsigned int );
       virtual void                  setDogLegOrder             ( unsigned int );
-      virtual void                  updateGCellsStiffness      ( unsigned int );
       virtual void                  swapTrack                  ( TrackElement* );
       virtual void                  reschedule                 ( unsigned int level );
       virtual void                  detach                     ();
@@ -182,8 +178,8 @@ namespace Kite {
       virtual bool                  moveAside                  ( bool onLeft );
       virtual TrackElement*         makeDogLeg                 ();
       virtual TrackElement*         makeDogLeg                 ( Interval, bool& leftDogleg );
-      virtual TrackElement*         makeDogLeg                 ( GCell* );
-      virtual TrackElement*         _postDogLeg                ( GCell* );
+      virtual TrackElement*         makeDogLeg                 ( Katabatic::GCell* );
+      virtual TrackElement*         _postDogLeg                ( Katabatic::GCell* );
       virtual void                  _postModify                ();
       virtual void                  desalignate                ();
       virtual bool                  _check                     () const;

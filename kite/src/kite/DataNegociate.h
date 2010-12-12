@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -45,7 +45,6 @@ namespace Katabatic {
 
 namespace Kite {
 
-
   using std::string;
   using std::cerr;
   using std::endl;
@@ -64,43 +63,33 @@ namespace Kite {
   class DataNegociate {
 
     public:
-      enum SlackState { RipupPerpandiculars=1
-                      , Minimize
-                      , DogLeg
-                      , Desalignate
-                      , Slacken
-                      , ConflictSolve1
-                      , ConflictSolve2
-                      , LocalVsGlobal
-                      , MoveUp
-                      , MaximumSlack
-                      , Unimplemented
+      enum SlackState { RipupPerpandiculars= 1
+                      , Minimize           = 2
+                      , DogLeg             = 3
+                      , Desalignate        = 4
+                      , Slacken            = 5
+                      , ConflictSolve1     = 6
+                      , ConflictSolve2     = 7
+                      , LocalVsGlobal      = 8
+                      , MoveUp             = 9
+                      , MaximumSlack       =10
+                      , Unimplemented      =11
                       };
 
     public:
                                DataNegociate         ( TrackElement* );
                               ~DataNegociate         ();
-      inline bool              isRing                () const;
-      inline bool              isBorder              () const;
-      inline bool              isLeftBorder          () const;
-      inline bool              isRightBorder         () const;
       inline bool              hasRoutingEvent       () const;
       inline RoutingEvent*     getRoutingEvent       () const;
       inline TrackElement*     getTrackSegment       () const;
       inline Track*            getTrack              () const;
       inline TrackSegmentCost& getCost               ();
-      inline unsigned int      getGCellOrder         () const;
     //inline unsigned int      getZ                  () const;
       inline unsigned int      getState              () const;
       inline unsigned int      getStateCount         () const;
       inline unsigned int      getRipupCount         () const;
       inline unsigned int      getStateAndRipupCount () const;
-      inline void              setGCellOrder         ( unsigned int );
       inline void              setState              ( unsigned int, bool reset=false );
-      inline void              setRing               ( bool );
-      inline void              setLeftBorder         ( bool );
-      inline void              setRightBorder        ( bool );
-      inline void              resetBorder           ();
       inline void              setRoutingEvent       ( RoutingEvent* );
       inline void              setRipupCount         ( unsigned int );
       inline void              incRipupCount         ();
@@ -119,12 +108,8 @@ namespace Kite {
       RoutingEvent*     _routingEvent;
       TrackElement*     _trackSegment;
       TrackSegmentCost  _cost;
-      unsigned int      _gcellOrder;      
       unsigned int      _state     :5;
       unsigned int      _stateCount:5;
-      bool              _leftBorder;
-      bool              _rightBorder;
-      bool              _ring;
     //unsigned int      _z : 5;
 
     private:
@@ -134,25 +119,15 @@ namespace Kite {
 
 
 // Inline Functions.
-  inline bool              DataNegociate::isRing            () const { return _ring; }
-  inline bool              DataNegociate::isBorder          () const { return _leftBorder or _rightBorder; }
-  inline bool              DataNegociate::isLeftBorder      () const { return _leftBorder; }
-  inline bool              DataNegociate::isRightBorder     () const { return _rightBorder; }
   inline bool              DataNegociate::hasRoutingEvent   () const { return _routingEvent != NULL; }
   inline RoutingEvent*     DataNegociate::getRoutingEvent   () const { return _routingEvent; }
   inline TrackElement*     DataNegociate::getTrackSegment   () const { return _trackSegment; }
   inline Track*            DataNegociate::getTrack          () const { return _trackSegment->getTrack(); }
   inline TrackSegmentCost& DataNegociate::getCost           ()       { return _cost; }
-  inline unsigned int      DataNegociate::getGCellOrder     () const { return _gcellOrder; }
   inline unsigned int      DataNegociate::getState          () const { return _state; }
   inline unsigned int      DataNegociate::getStateCount     () const { return _stateCount; }
 //inline unsigned int      DataNegociate::getZ              () const { return _z; }
   inline unsigned int      DataNegociate::getRipupCount     () const { return _cost.getRipupCount(); }
-  inline void              DataNegociate::setGCellOrder     ( unsigned int  order ) { _gcellOrder = order; }
-  inline void              DataNegociate::setRing           ( bool state ) { _ring = state; }
-  inline void              DataNegociate::setLeftBorder     ( bool state ) { _leftBorder=state; }
-  inline void              DataNegociate::setRightBorder    ( bool state ) { _rightBorder=state; }
-  inline void              DataNegociate::resetBorder       () { _leftBorder=_rightBorder=false; }
   inline void              DataNegociate::setRoutingEvent   ( RoutingEvent* event ) { _routingEvent = event; }
   inline void              DataNegociate::setRipupCount     ( unsigned int count ) { _cost.setRipupCount(count); }
   inline void              DataNegociate::incRipupCount     () { _cost.incRipupCount(); }
@@ -167,6 +142,7 @@ namespace Kite {
   inline void  DataNegociate::setState ( unsigned int state, bool reset )
   {
     if ( (_state != state) or reset ) {
+    //std::cerr << "Changing state to:" << state << std::endl;
       _state      = state;
       _stateCount = 1;
     } else

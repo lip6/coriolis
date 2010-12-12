@@ -41,18 +41,16 @@
 #include  "hurricane/Vertical.h"
 #include  "hurricane/Horizontal.h"
 #include  "hurricane/UpdateSession.h"
-
 #include  "crlcore/Measures.h"
 #include  "knik/Vertex.h"
 #include  "knik/Edge.h"
 #include  "knik/Graph.h"
 #include  "knik/KnikEngine.h"
 #include  "katabatic/AutoContact.h"
+#include  "katabatic/GCellGrid.h"
 #include  "kite/DataNegociate.h"
-#include  "kite/GCellGrid.h"
 #include  "kite/RoutingPlane.h"
 #include  "kite/Session.h"
-#include  "kite/GCellRoutingSet.h"
 #include  "kite/NegociateWindow.h"
 #include  "kite/KiteEngine.h"
 
@@ -85,6 +83,7 @@ namespace Kite {
   using CRL::Measures;
   using CRL::MeasuresSet;
   using Knik::KnikEngine;
+  using Katabatic::AutoContact;
   using Katabatic::ChipTools;
 
 
@@ -116,7 +115,6 @@ namespace Kite {
     , _blockageNet     (NULL)
     , _configuration   (new Configuration(getKatabaticConfiguration()))
     , _routingPlanes   ()
-    , _kiteGrid        (NULL)
     , _negociateWindow (NULL)
     , _trackSegmentLut ()
     , _minimumWL       (0.0)
@@ -132,8 +130,6 @@ namespace Kite {
 
 #ifdef KNIK_NOT_EMBEDDED
     size_t maxDepth = getRoutingGauge()->getDepth();
-
-    _kiteGrid  = GCellGrid::create ( this );
 
     _routingPlanes.reserve ( maxDepth );
     for ( size_t depth=0 ; depth < maxDepth ; depth++ ) {
@@ -192,17 +188,9 @@ namespace Kite {
   {
     if ( segment->isBlockage() ) return 0;
 
-    if ( segment->getDataNegociate() ) {
-      if ( segment->getDataNegociate()->isBorder() )
-        return _configuration->getRipupLimit(Configuration::BorderRipupLimit);
-
-      if ( segment->getDataNegociate()->isRing() )
-        return _configuration->getRipupLimit(Configuration::GlobalRipupLimit);
-    }
-
     if ( segment->isStrap () ) return _configuration->getRipupLimit(Configuration::StrapRipupLimit);
     if ( segment->isGlobal() ) {
-      vector<GCell*> gcells;
+      Katabatic::GCellVector gcells;
       segment->getGCells(gcells);
       if ( gcells.size() > 2 )
         return _configuration->getRipupLimit(Configuration::LongGlobalRipupLimit);
@@ -276,7 +264,7 @@ namespace Kite {
     // Decrease the edge's capacity only under the core area.
       const ChipTools& chipTools     = getChipTools();
       float            corePercent   = getEdgeCapacityPercent();
-      float            coronaPercent = 0.85;
+      float            coronaPercent = 0.80;
 
       forEach ( Knik::Vertex*, ivertex, _knik->getRoutingGraph()->getVertexes() ) {
         for ( int i=0 ; i<2 ; ++i ) {
@@ -315,7 +303,6 @@ namespace Kite {
   void  KiteEngine::createDetailedGrid ()
   {
     KatabaticEngine::createDetailedGrid ();
-    _kiteGrid  = GCellGrid::create ( this );
 
     size_t maxDepth = getRoutingGauge()->getDepth();
 
@@ -384,9 +371,9 @@ namespace Kite {
             ltrace(300) << "Capacity from: " << (void*)element << ":" << element
                         << ":" << elementCapacity << endl;
 
-            GCell* gcell = _kiteGrid->getGCell ( Point(element->getSourceU(),track->getAxis()) );
-            GCell* end   = _kiteGrid->getGCell ( Point(element->getTargetU(),track->getAxis()) );
-            GCell* right = NULL;
+            Katabatic::GCell* gcell = getGCellGrid()->getGCell ( Point(element->getSourceU(),track->getAxis()) );
+            Katabatic::GCell* end   = getGCellGrid()->getGCell ( Point(element->getTargetU(),track->getAxis()) );
+            Katabatic::GCell* right = NULL;
             if ( not gcell ) {
               cerr << Warning("annotageGlobalGraph(): TrackElement outside GCell grid.") << endl;
               continue;
@@ -427,9 +414,9 @@ namespace Kite {
             ltrace(300) << "Capacity from: " << (void*)element << ":" << element
                         << ":" << elementCapacity << endl;
 
-            GCell* gcell = _kiteGrid->getGCell ( Point(track->getAxis(),element->getSourceU()) );
-            GCell* end   = _kiteGrid->getGCell ( Point(track->getAxis(),element->getTargetU()) );
-            GCell* up    = NULL;
+            Katabatic::GCell* gcell = getGCellGrid()->getGCell ( Point(track->getAxis(),element->getSourceU()) );
+            Katabatic::GCell* end   = getGCellGrid()->getGCell ( Point(track->getAxis(),element->getTargetU()) );
+            Katabatic::GCell* up    = NULL;
             if ( not gcell ) {
               cerr << Warning("annotageGlobalGraph(): TrackElement outside GCell grid.") << endl;
               continue;
@@ -465,8 +452,16 @@ namespace Kite {
 
     createGlobalGraph ( mode );
 
+  //DebugSession::addToTrace ( getCell(), "nb(0)" );
+  //DebugSession::addToTrace ( getCell(), "ram_adri(0)" );
+  //DebugSession::addToTrace ( getCell(), "rsdnbr_sd(9)" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_1m_dp_res_re(21)" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_1m_dp_soper_se(20)" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_1m_dp_res_re(20)" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_1m_dp_addsub32_carith_se_gi_1_29" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_1m_dp_instaddbracry_sd_gi_1_21" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_1m_dp_addsub32_carith_se_pi_3_29" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_1m_dp_res_se(28)" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.etat32_otheri_sd_2.enx" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.yoper_se(26)" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.toper_se(5)" );
@@ -519,17 +514,14 @@ namespace Kite {
   {
     if ( _negociateWindow ) return;
 
-    unsigned int  rows    = _kiteGrid->getRows();
-    unsigned int  columns = _kiteGrid->getColumns();
-
     startMeasures ();
 
     Session::open ( this );
 
     cmess1 << "  o  Running Negociate Algorithm" << endl;
 
-    _negociateWindow = NegociateWindow::create ( this, 0, 0, columns, rows );
-    _negociateWindow->loadRouting ();
+    _negociateWindow = NegociateWindow::create ( this );
+    _negociateWindow->setGCells ( *(getGCellGrid()->getGCellVector()) );
     preProcess ();
     _computeCagedConstraints ();
     _negociateWindow->run ( slowMotion );
@@ -554,7 +546,7 @@ namespace Kite {
 
     cmess2 << "  o  Post-checking Knik capacity overload " << (edgeCapacity*100.0) << "%." << endl;
 
-    _kiteGrid->base()->checkEdgeSaturation ( edgeCapacity );
+    getGCellGrid()->checkEdgeSaturation ( edgeCapacity );
     _check ( overlaps );
     Session::close ();
 
@@ -677,13 +669,13 @@ namespace Kite {
     forEach ( Net*, inet, getCell()->getNets() ) {
       forEach ( Segment*, isegment, inet->getComponents().getSubSet<Segment*>() ) {
         AutoSegment* autoSegment = ktbtSession->lookup ( *isegment );
-        if ( !autoSegment ) continue;
-        if ( !autoSegment->isCanonical() ) continue;
+        if ( not autoSegment ) continue;
+        if ( not autoSegment->isCanonical() ) continue;
 
         TrackElement* trackSegment = Session::lookup ( *isegment );
-        if ( !trackSegment ) {
+        if ( not trackSegment ) {
           coherency = false;
-          cerr << Bug("%p %s whithout Track Segment"
+          cerr << Bug("%p %s without Track Segment"
                      ,autoSegment
                      ,getString(autoSegment).c_str()
                      ) << endl;
@@ -731,8 +723,6 @@ namespace Kite {
         _routingPlanes[depth]->destroy ();
       }
 
-      _kiteGrid->destroy ();
-      _kiteGrid = NULL;
       Session::close ();
     }
 

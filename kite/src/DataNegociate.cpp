@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
 // ===================================================================
 //
@@ -44,12 +44,8 @@ namespace Kite {
     : _routingEvent(NULL)
     , _trackSegment(trackSegment)
     , _cost        (trackSegment)
-    , _gcellOrder  ((unsigned int)-1)
     , _state       (RipupPerpandiculars)
     , _stateCount  (1)
-    , _leftBorder  (false)
-    , _rightBorder (false)
-    , _ring        (false)
   //, _z           (RoutingGauge::getLayerDepth(trackSegment->getLayer()))
   { }
 
@@ -59,9 +55,7 @@ namespace Kite {
 
 
   void  DataNegociate::update ()
-  {
-    _cost.update ( _trackSegment );
-  }
+  { _cost.update ( _trackSegment ); }
 
 
   string  DataNegociate::_getString () const
@@ -78,7 +72,6 @@ namespace Kite {
     record->add ( getSlot ( "_routingEvent",  _routingEvent ) );
     record->add ( getSlot ( "_trackSegment",  _trackSegment ) );
     record->add ( getSlot ( "_cost"        , &_cost         ) );
-    record->add ( getSlot ( "_gcellOrder"  ,  _gcellOrder   ) );
   //record->add ( getSlot ( "_z"           ,  _z            ) );
                                      
     return record;

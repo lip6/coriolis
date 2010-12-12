@@ -25,10 +25,10 @@
 
 #include  "hurricane/Bug.h"
 #include  "hurricane/Error.h"
+#include  "katabatic/GCellGrid.h"
 #include  "kite/Session.h"
 #include  "kite/Track.h"
 #include  "kite/TrackElement.h"
-#include  "kite/GCellGrid.h"
 #include  "kite/KiteEngine.h"
 
 
@@ -65,7 +65,6 @@ namespace Kite {
 
   Session::Session ( KiteEngine* kite )
     : Katabatic::Session(kite)
-    , _order       (0)
     , _insertEvents()
     , _removeEvents()
     , _sortEvents  ()
@@ -137,7 +136,7 @@ namespace Kite {
   { return Session::get("lookup(AutoSegment*)")->_getKiteEngine()->_lookup ( segment ); }
 
 
-  GCell* Session::lookup ( Katabatic::GCell* gcell )
+  Katabatic::GCell* Session::lookup ( Katabatic::GCell* gcell )
   { return Session::get("lookup(Katabatic::GCell*)")->_getKiteEngine()->getGCellGrid()->getGCell(gcell->getIndex()); }
 
 
@@ -161,16 +160,8 @@ namespace Kite {
   { return _getKiteEngine()->getRipupCost(); };
 
 
-  GCell* Session::_getGCellUnder ( DbU::Unit x, DbU::Unit y )
+  Katabatic::GCell* Session::_getGCellUnder ( DbU::Unit x, DbU::Unit y )
   { return _getKiteEngine()->getGCellGrid()->getGCell(Point(x,y)); };
-
-
-  unsigned int  Session::_getOrder () const
-  { return _order; }
-
-
-  void  Session::_setOrder ( unsigned int order )
-  { _order = order; }
 
 
   size_t  Session::_revalidate ()
@@ -266,7 +257,7 @@ namespace Kite {
 
     if ( not faileds.empty() ) {
       set<TrackElement*>::iterator ifailed = faileds.begin();
-      vector<GCell*> gcells;
+      Katabatic::GCellVector gcells;
       for ( ; ifailed != faileds.end() ; ++ifailed ) {
         (*ifailed)->getGCells ( gcells );
         (*ifailed)->makeDogLeg ( gcells[0] );
@@ -307,7 +298,8 @@ namespace Kite {
     cerr << "Order: Insert in @" << DbU::getValueString(track->getAxis()) 
          << " " << segment << endl;
 #endif
-    ltrace(200) << "addInsertEvent() " << segment << endl;
+    ltrace(200) <<  "addInsertEvent() " << segment
+                << "\n               @" << track << endl;
 
     if ( segment->getTrack() != NULL ) {
       cerr << Bug("Session::addInsertEvent(): Segment already in Track."

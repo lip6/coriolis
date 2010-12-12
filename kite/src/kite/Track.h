@@ -97,8 +97,8 @@ namespace Kite {
               Track*         getNext             () const;
               Track*         getPrevious         () const;
       inline  size_t         getSize             () const;
-              TrackElement*  getNext             ( size_t& index, Net*, bool useOrder=false ) const;
-              TrackElement*  getPrevious         ( size_t& index, Net*, bool useOrder=false ) const;
+              TrackElement*  getNext             ( size_t& index, Net* ) const;
+              TrackElement*  getPrevious         ( size_t& index, Net* ) const;
               TrackElement*  getNextFixed        ( size_t& index ) const;
               TrackElement*  getSegment          ( size_t  index ) const;
               TrackElement*  getSegment          ( DbU::Unit position ) const;
@@ -115,8 +115,8 @@ namespace Kite {
       virtual Point          getPosition         ( DbU::Unit coordinate ) const = 0;
               size_t         find                ( const TrackElement* ) const;
               Interval       getFreeInterval     ( DbU::Unit position, Net* net=NULL ) const;
-              Interval       expandUsedInterval  ( size_t& begin, size_t& end, bool useOrder=false ) const;
-              Interval       expandFreeInterval  ( size_t& begin, size_t& end, unsigned int state, Net*, bool useOrder=false ) const;
+              Interval       expandUsedInterval  ( size_t& begin, size_t& end ) const;
+              Interval       expandFreeInterval  ( size_t& begin, size_t& end, unsigned int state, Net* ) const;
               unsigned int   checkOverlap        ( unsigned int& overlaps ) const;
               void           forceSort           ();
               void           insert              ( TrackElement* );

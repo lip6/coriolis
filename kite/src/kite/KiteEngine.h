@@ -56,7 +56,6 @@ namespace Kite {
   using CRL::RoutingGauge;
   using Katabatic::KatabaticEngine;
 
-  class GCellGrid;
   class Track;
   class RoutingPlane;
   class NegociateWindow;
@@ -93,7 +92,6 @@ namespace Kite {
       inline  float            getExpandStep              () const;
       inline  float            getEdgeCapacityPercent     () const;
       inline  DbU::Unit        getGlobalMinBreak          ( unsigned int depth ) const;
-      inline  GCellGrid*       getGCellGrid               () const;
       virtual const Name&      getName                    () const;
       inline  Configuration::PostEventCb_t&
                                getPostEventCb             ();
@@ -149,7 +147,6 @@ namespace Kite {
              Net*                   _blockageNet;
              Configuration*         _configuration;
              vector<RoutingPlane*>  _routingPlanes;
-             GCellGrid*             _kiteGrid;
              NegociateWindow*       _negociateWindow;
              TrackElementLut        _trackSegmentLut;
              double                 _minimumWL;
@@ -179,7 +176,6 @@ namespace Kite {
   inline  float                         KiteEngine::getEdgeCapacityPercent () const { return _configuration->getEdgeCapacityPercent(); }
   inline  DbU::Unit                     KiteEngine::getGlobalMinBreak      ( unsigned int depth ) const { return _configuration->getGlobalMinBreak(depth); }
   inline  unsigned int                  KiteEngine::getRipupLimit          ( unsigned int type ) const { return _configuration->getRipupLimit(type); }
-  inline  GCellGrid*                    KiteEngine::getGCellGrid           () const { return _kiteGrid; }
   inline  NegociateWindow*              KiteEngine::getNegociateWindow     () { return _negociateWindow; }
   inline  size_t                        KiteEngine::getRoutingPlanesSize   () const { return _routingPlanes.size(); }
   inline  void                          KiteEngine::setEventLimit          ( unsigned long limit ) { _configuration->setEventsLimit(limit); }

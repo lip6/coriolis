@@ -126,7 +126,7 @@ int main ( int argc, char *argv[] )
       ( "edge,e"        , poptions::value<float>(&edgeCapacity)->default_value(65.0)
                         , "The egde density ratio applied on global router's edges." )
       ( "cell,c"        , poptions::value<string>()
-                        , "The name of the cell to load, whithout extension." )
+                        , "The name of the cell to load, without extension." )
       ( "save,s"        , poptions::bool_switch(&saveDesign)->default_value(false)
                         , "Save the routed design.");
 

@@ -45,6 +45,7 @@
 #include  <crlcore/Utilities.h>
 #include  <crlcore/AllianceFramework.h>
 #include  <katabatic/GCell.h>
+#include  <katabatic/GCellGrid.h>
 #include  <knik/Edge.h>
 #include  <knik/Vertex.h>
 #include  <knik/KnikEngine.h>
@@ -95,6 +96,11 @@ namespace Kite {
   void  GraphicKiteEngine::initKatabaticGCell ( CellWidget* widget )
   {
     widget->getDrawingPlanes().setPen ( Qt::NoPen );
+
+    KiteEngine* kite = KiteEngine::get ( widget->getCell() );
+    if ( kite ) {
+      kite->getGCellGrid()->setDensityMode ( Katabatic::GCellGrid::MaxDensity );
+    }
   }
 
 
@@ -108,7 +114,7 @@ namespace Kite {
     const Katabatic::GCell* gcell = static_cast<const Katabatic::GCell*>(go);
 
     QPainter& painter = widget->getPainter();
-    size_t    density = (size_t)( gcell->getMaxHVDensity() * 255.0 );
+    size_t    density = (size_t)( gcell->getDensity() * 255.0 );
     if ( density > 255 ) density = 255;
 
     painter.setBrush

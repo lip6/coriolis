@@ -12,7 +12,6 @@
                                        kite/DataNegociate.h
                                        kite/TrackElement.h       kite/TrackElements.h
                                        kite/TrackSegment.h
-                                       kite/TrackBlockage.h
                                        kite/TrackFixedSegment.h
                                        kite/TrackMarker.h
                                        kite/Track.h
@@ -23,9 +22,6 @@
                                        kite/RoutingEvent.h
                                        kite/RoutingEventQueue.h
                                        kite/RoutingEventHistory.h
-                                       kite/GCell.h
-                                       kite/GCellGrid.h
-                                       kite/GCellRoutingSet.h
                                        kite/RoutingPlane.h
                                        kite/NegociateWindow.h
                                        kite/Configuration.h
@@ -39,7 +35,6 @@
                                        TrackElement.cpp
                                        TrackElements.cpp
                                        TrackSegment.cpp
-                                       TrackBlockage.cpp
                                        TrackFixedSegment.cpp
                                        TrackMarker.cpp
                                        Track.cpp
@@ -50,11 +45,7 @@
                                        RoutingEvent.cpp
                                        RoutingEventQueue.cpp
                                        RoutingEventHistory.cpp
-                                       GCell.cpp
-                                       GCellGrid.cpp
-                                       GCellRoutingSet.cpp
                                        RoutingPlane.cpp
-                                       BuildBlockages.cpp
                                        BuildPowerRails.cpp
                                        ProtectRoutingPads.cpp
                                        PreProcess.cpp

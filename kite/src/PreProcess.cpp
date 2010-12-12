@@ -33,11 +33,11 @@
 #include  "hurricane/Name.h"
 #include  "hurricane/RoutingPad.h"
 #include  "katabatic/AutoContact.h"
-#include  "kite/GCell.h"
 #include  "kite/DataNegociate.h"
 #include  "kite/TrackElement.h"
 #include  "kite/Track.h"
 #include  "kite/RoutingPlane.h"
+#include  "kite/NegociateWindow.h"
 #include  "kite/Session.h"
 #include  "kite/KiteEngine.h"
 
@@ -52,10 +52,10 @@ namespace {
   using namespace Kite;
 
 
-  void  getPerpandiculars ( TrackElement*          segment
-                          , AutoContact*           from
-                          , unsigned int           direction
-                          , vector<TrackElement*>& perpandiculars
+  void  getPerpandiculars ( TrackElement*           segment
+                          , Katabatic::AutoContact* from
+                          , unsigned int            direction
+                          , vector<TrackElement*>&  perpandiculars
                           )
   {
   //AutoContact* to = segment->base()->getAutoSource();
@@ -94,7 +94,7 @@ namespace {
       if ( parallel->isFixed () ) continue;
       if ( parallel->getDirection() != direction ) continue;
 
-      AutoContact* contact = parallel->base()->getAutoSource();
+      Katabatic::AutoContact* contact = parallel->base()->getAutoSource();
       if ( contact->base()->getAnchor() != rp ) contact = NULL;
 
       if ( contact == NULL ) contact = parallel->base()->getAutoTarget();
@@ -112,14 +112,14 @@ namespace {
 
     ltrace(200) << "Propagate caging: " << segment << endl;
 
-    Track*                 track         = segment->getTrack();
-    unsigned int           direction     = Session::getRoutingGauge()->getLayerDirection(segment->getLayer());
-    AutoContact*           source        = segment->base()->getAutoSource();
-    RoutingPad*            rp            = NULL;
-    Interval               uside         = source->getGCell()->getUSide(direction);
-    DbU::Unit              minConstraint = DbU::Min;
-    DbU::Unit              maxConstraint = DbU::Max;
-    vector<TrackElement*>  perpandiculars;
+    Track*                  track         = segment->getTrack();
+    unsigned int            direction     = Session::getRoutingGauge()->getLayerDirection(segment->getLayer());
+    Katabatic::AutoContact* source        = segment->base()->getAutoSource();
+    RoutingPad*             rp            = NULL;
+    Interval                uside         = source->getGCell()->getUSide(direction);
+    DbU::Unit               minConstraint = DbU::Min;
+    DbU::Unit               maxConstraint = DbU::Max;
+    vector<TrackElement*>   perpandiculars;
 
     if ( not track ) {
       cerr << Bug("%s is not inserted in a <Track>",getString(segment).c_str()) << endl;
@@ -222,25 +222,26 @@ namespace {
           if ( segment->getLayer() != metal2 ) continue;
           if ( segment->getLength() >= DbU::lambda(5.0) ) continue;
 
-          AutoContact* support = segment->base()->getAutoSource();
-          RoutingPad*  rp      = dynamic_cast<RoutingPad*>(support->getAnchor());
-          GCell*       gcell   = Session::lookup ( support->getGCell() );
+          Katabatic::AutoContact* support = segment->base()->getAutoSource();
+          RoutingPad*             rp      = dynamic_cast<RoutingPad*>(support->getAnchor());
 
-          AutoContact* source = AutoContact::fromRp ( gcell->base()
-                                                    , rp
-                                                    , metal3
-                                                    , rp->getSourcePosition()
-                                                    , DbU::lambda(1.0), DbU::lambda(1.0)
-                                                    , true
-                                                    );
+          Katabatic::AutoContact* source
+            = Katabatic::AutoContact::fromRp ( support->getGCell()
+                                             , rp
+                                             , metal3
+                                             , rp->getSourcePosition()
+                                             , DbU::lambda(1.0), DbU::lambda(1.0)
+                                             , true
+                                             );
 
-          AutoContact* target = AutoContact::fromRp ( gcell->base()
-                                                    , rp
-                                                    , metal3
-                                                    , rp->getSourcePosition()
-                                                    , DbU::lambda(1.0), DbU::lambda(1.0)
-                                                    , true
-                                                    );
+          Katabatic::AutoContact* target =
+            Katabatic::AutoContact::fromRp ( support->getGCell()
+                                           , rp
+                                           , metal3
+                                           , rp->getSourcePosition()
+                                           , DbU::lambda(1.0), DbU::lambda(1.0)
+                                           , true
+                                           );
 
           AutoSegment* segment = AutoSegment::create ( source
                                                      , target
@@ -250,7 +251,7 @@ namespace {
                                                      , false
                                                      );
           segment->setFixed ( true );
-          GCell::addTrackSegment ( gcell, segment, true );
+          Session::getNegociateWindow()->addTrackSegment ( segment, true );
 
 #if DISABLED
         // Force slackening.

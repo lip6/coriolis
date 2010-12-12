@@ -33,8 +33,8 @@
 #include  "hurricane/Net.h"
 #include  "hurricane/Name.h"
 #include  "katabatic/AutoContact.h"
+#include  "katabatic/GCell.h"
 #include  "crlcore/RoutingGauge.h"
-#include  "kite/GCell.h"
 #include  "kite/DataNegociate.h"
 #include  "kite/TrackElement.h"
 #include  "kite/TrackCost.h"
@@ -74,6 +74,7 @@ namespace Kite {
   using Hurricane::Bug;
   using Hurricane::Net;
   using Hurricane::Name;
+  using Katabatic::GCell;
 
 
 // -------------------------------------------------------------------
@@ -156,7 +157,6 @@ namespace Kite {
   bool           TrackElement::canGoOutsideGCell          () const { return false; }
   bool           TrackElement::canRipple                  () const { return false; }
   unsigned long  TrackElement::getId                      () const { return 0; }
-  GCell*         TrackElement::getGCell                   () const { return NULL; }
   unsigned long  TrackElement::getArea                    () const { return 0; }
   unsigned int   TrackElement::getDogLegLevel             () const { return 0; }
   unsigned int   TrackElement::getDogLegOrder             () const { return 0; }
@@ -180,18 +180,16 @@ namespace Kite {
   bool           TrackElement::canMoveUp                  ( float, unsigned int ) const { return false; };
   bool           TrackElement::canDogLeg                  () { return false; };
   bool           TrackElement::canDogLeg                  ( Interval ) { return false; };
-  bool           TrackElement::canDogLegAt                ( GCell*, bool allowReuse ) { return false; };
+  bool           TrackElement::canDogLegAt                ( Katabatic::GCell*, bool allowReuse ) { return false; };
   TrackElement*  TrackElement::getSourceDogLeg            () { return NULL; }
   TrackElement*  TrackElement::getTargetDogLeg            () { return NULL; }
   void           TrackElement::dataInvalidate             () { }
   void           TrackElement::eventInvalidate            () { }
-  void           TrackElement::setGCell                   ( GCell* ) { }
   void           TrackElement::setArea                    () { }
   void           TrackElement::setRouted                  ( bool ) { }
   void           TrackElement::setTrack                   ( Track* track ) { _track = track; }
   void           TrackElement::setDogLegLevel             ( unsigned int ) { }
   void           TrackElement::setDogLegOrder             ( unsigned int ) { }
-  void           TrackElement::updateGCellsStiffness      ( unsigned int ) { }
   void           TrackElement::swapTrack                  ( TrackElement* ) { }
   void           TrackElement::reschedule                 ( unsigned int ) { }
   void           TrackElement::detach                     () { }
@@ -202,8 +200,8 @@ namespace Kite {
   bool           TrackElement::moveAside                  ( bool onLeft ) { return false; }
   TrackElement*  TrackElement::makeDogLeg                 () { return NULL; }
   TrackElement*  TrackElement::makeDogLeg                 ( Interval, bool& leftDogleg ) { return NULL; }
-  TrackElement*  TrackElement::makeDogLeg                 ( GCell* ) { return NULL; }
-  TrackElement*  TrackElement::_postDogLeg                ( GCell* ) { return NULL; }
+  TrackElement*  TrackElement::makeDogLeg                 ( Katabatic::GCell* ) { return NULL; }
+  TrackElement*  TrackElement::_postDogLeg                ( Katabatic::GCell* ) { return NULL; }
   void           TrackElement::_postModify                () { }
   void           TrackElement::desalignate                () { }
   bool           TrackElement::_check                     () const { return true; }
@@ -248,13 +246,13 @@ namespace Kite {
   }
 
 
-  Interval  TrackElement::getFreeInterval ( bool useOrder ) const
+  Interval  TrackElement::getFreeInterval () const
   {
     if ( !_track ) return Interval(false);
 
     size_t  begin = _index;
     size_t  end   = _index;
-    return _track->expandFreeInterval ( begin, end, Track::Inside, getNet(), useOrder );
+    return _track->expandFreeInterval ( begin, end, Track::Inside, getNet() );
   }
 
 
