@@ -595,7 +595,7 @@ if __name__ == "__main__":
     if options.debug:            builder.buildMode         = "Debug"
     if options.static:           builder.enableShared      = "OFF"
     if options.doc:              builder.enableDoc         = "ON"
-    if options.checkDb:          builder.enableDatabase    = "ON"
+    if options.checkDb:          builder.checkDatabase     = "ON"
     if options.checkDeterminism: builder.enableDeterminism = "ON"
     if options.verboseMakefile:  builder.verboseMakefile   = "ON"
     if options.rootDir:          builder.rootDir           = options.rootDir

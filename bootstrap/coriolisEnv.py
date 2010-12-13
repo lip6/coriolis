@@ -70,7 +70,6 @@ if __name__ == "__main__":
   linkType        = "Shared"
   coriolisVersion = None
   rootDir         = None
-  sysCoriolisTop  = "/asim/coriolis2"
 
   parser = optparse.OptionParser ()  
  # Build relateds.
@@ -81,6 +80,7 @@ if __name__ == "__main__":
   parser.add_option ( "--devel"  , action="store_true" ,                dest="devel"    )
   parser.add_option ( "--static" , action="store_true" ,                dest="static"   )
   parser.add_option ( "--shared" , action="store_true" ,                dest="shared"   )
+  parser.add_option ( "--python" , action="store_true" ,                dest="python"   )
   parser.add_option ( "--root"   , action="store"      , type="string", dest="rootDir"  )
   ( options, args ) = parser.parse_args ()
 
@@ -126,8 +126,17 @@ fi
 
     buildDir            = buildType + "." + linkType
     coriolisTop         = "%s/%s/%s/install" % ( rootDir, osDir, buildDir )
+    absLibDir           = "%s/%s"            % ( coriolisTop, libDir )
     strippedPath        = "%s/bin:%s"        % ( coriolisTop, strippedPath )
-    strippedLibraryPath = "%s/%s:%s"         % ( coriolisTop, libDir, strippedLibraryPath )
+    strippedLibraryPath = "%s:%s"            % ( absLibDir, strippedLibraryPath )
+
+    if options.python:
+      pyVersion          = sys.version_info
+      version            = "%d.%d"                     % (pyVersion[0],pyVersion[1])
+      sitePackagesDir    = "%s/python%s/site-packages" % (absLibDir,version)
+      strippedPythonPath = "%s:"         % (sitePackagesDir) + strippedPythonPath
+      strippedPythonPath = "%s/cumulus:" % (sitePackagesDir) + strippedPythonPath
+      strippedPythonPath = "%s/stratus:" % (sitePackagesDir) + strippedPythonPath
 
     shellScript = \
 """
