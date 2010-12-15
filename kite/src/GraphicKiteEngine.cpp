@@ -167,7 +167,6 @@ namespace Kite {
 
   void  GraphicKiteEngine::loadGlobalSolution ()
   {
-
     KiteEngine* kite = getForFramework ();
 
     emit cellPreModificated ();
@@ -178,7 +177,6 @@ namespace Kite {
 
   void  GraphicKiteEngine::globalRoute ()
   {
-
     KiteEngine* kite = getForFramework ();
 
     emit cellPreModificated ();
@@ -251,6 +249,13 @@ namespace Kite {
     globalRoute ();
     detailRoute ();
     finalize    ();
+  }
+
+
+  void  GraphicKiteEngine::dumpMeasures ()
+  {
+    KiteEngine* kite = getForFramework ();
+    if ( kite ) kite->dumpMeasures ();
   }
 
 
@@ -335,6 +340,12 @@ namespace Kite {
       dFinalizeAction->setVisible    ( true );
       stepMenu->addAction ( dFinalizeAction );
 
+      QAction* dDumpMeasuresAction = new QAction ( tr("Kite - Dump &Measures"), _viewer );
+      dDumpMeasuresAction->setObjectName ( "viewer.menuBar.placeAndRoute.stepBystep.dumpMeasures" );
+      dDumpMeasuresAction->setStatusTip  ( tr("Dumping Measurements on the disk") );
+      dDumpMeasuresAction->setVisible    ( true );
+      stepMenu->addAction ( dDumpMeasuresAction );
+
       QAction* dSaveAction = new QAction ( tr("Kite - &Save Design"), _viewer );
       dSaveAction->setObjectName ( "viewer.menuBar.placeAndRoute.stepBystep.save" );
       dSaveAction->setStatusTip  ( tr("Save routed design (temporary hack)") );
@@ -353,6 +364,7 @@ namespace Kite {
       connect ( dRouteAction       , SIGNAL(triggered()), this, SLOT(detailRoute       ()) );
       connect ( dFinalizeAction    , SIGNAL(triggered()), this, SLOT(finalize          ()) );
       connect ( dSaveAction        , SIGNAL(triggered()), this, SLOT(save              ()) );
+      connect ( dDumpMeasuresAction, SIGNAL(triggered()), this, SLOT(dumpMeasures      ()) );
       connect ( routeAction        , SIGNAL(triggered()), this, SLOT(route             ()) );
     }
 

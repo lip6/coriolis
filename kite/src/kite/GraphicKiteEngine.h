@@ -91,6 +91,7 @@ namespace Kite {
                void              finalize           ();
                void              route              ();
                void              save               ();
+               void              dumpMeasures       ();
                                
     protected:                 
       static  size_t             _references;

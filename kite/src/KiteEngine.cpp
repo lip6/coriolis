@@ -642,6 +642,8 @@ namespace Kite {
     out << "# " << getCell()->getName() << endl;
     out << measures->toStringHeaders(measuresLabels) << endl;
     out << measures->toStringDatas  (measuresLabels) << endl;
+
+    measures->toGnuplot ( "GCells Density Histogram", getString(getCell()->getName()) );
   }
 
 

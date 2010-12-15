@@ -27,10 +27,6 @@
 #include  <algorithm>
 #include  <iomanip>
 
-#include  <boost/filesystem/operations.hpp>
-#include  <boost/filesystem/fstream.hpp>
-namespace bfs = boost::filesystem;
-
 #include  "hurricane/Warning.h"
 #include  "hurricane/Bug.h"
 #include  "hurricane/RoutingPad.h"
@@ -39,6 +35,7 @@ namespace bfs = boost::filesystem;
 #include  "crlcore/Utilities.h"
 #include  "crlcore/AllianceFramework.h"
 #include  "crlcore/Measures.h"
+#include  "crlcore/Histogram.h"
 #include  "katabatic/AutoContact.h"
 #include  "katabatic/GCellGrid.h"
 
@@ -61,109 +58,6 @@ namespace {
   using namespace Hurricane;
   using namespace CRL;
   using namespace Kite;
-
-
-  class Histogram {
-    public:
-            Histogram ( double range, double step, size_t nbSets );
-           ~Histogram ();
-      void  addSample ( double, size_t iset );
-      void  toStream  ( ostream& );
-      void  toFile    ( bfs::path& );
-      void  toGnuplot ( string design );
-      void  normalize ( double totalSamples, size_t iset );
-    private:
-      double                   _range;
-      double                   _step;
-      vector< vector<float> >  _sets;
-  };
-
-
-  Histogram::Histogram ( double range, double step, size_t nbSets )
-    : _range  (range)
-    , _step   (step)
-    , _sets   ()
-  {
-    size_t binSize = (size_t)rint ( _range / _step );
-    for ( size_t iset=0 ; iset<nbSets ; ++iset ) {
-      _sets.push_back ( vector<float>() );
-      for ( size_t i=0 ; i<binSize ; ++i ) _sets.back().push_back(0);
-    }
-  }
-
-
-  Histogram::~Histogram ()
-  { }
-
-
-  void  Histogram::addSample ( double sample, size_t iset )
-  {
-    size_t binIndex = (size_t)rint ( sample / _step );
-    if ( binIndex > _sets.front().size() ) binIndex = _sets.front().size() - 1;
-
-    _sets[iset][binIndex] += 1.0;
-  }
-
-
-  void  Histogram::normalize ( double totalSamples, size_t iset )
-  {
-    for ( size_t i=0 ; i<_sets[iset].size() ; ++i ) _sets[iset][i] /= totalSamples;
-  }
-
-
-  void  Histogram::toStream ( ostream& o )
-  {
-    o << setprecision(3);
-
-    for ( size_t i=0 ; i<_sets.front().size() ; ++i ) {
-      for ( size_t iset=0 ; iset<_sets.size() ; ++iset ) {
-        o << _sets[iset][i] << " ";
-      }
-      o << "\n";
-    }
-  }
-
-
-  void  Histogram::toFile ( bfs::path& path )
-  {
-    bfs::ofstream fd ( path );
-    toStream ( fd );
-    fd.close ();
-  }
-
-
-  void  Histogram::toGnuplot ( string design )
-  {
-    bfs::path datFile = design + ".densityHist.dat";
-    toFile ( datFile );
-
-    bfs::path pltFile = design + ".densityHist.plt";
-    bfs::ofstream fd ( pltFile );
-
-    fd << "set grid\n";
-    fd << "set grid noxtics\n";
-    fd << "set xrange [-0.5:9.5]\n";
-    fd << "set xtics ( ";
-    for ( size_t i=0 ; i<10 ; ++i ) {
-      fd << ((i) ? " ," : "") << "\"<" << ((i+1)*10) << "%%\" " << i;
-    }
-    fd << " )\n";
-
-    fd << "set yrange [0:.4]\n";
-    fd << "set ytics ( ";
-    for ( float i=0.0 ; i<=40.0 ; i+=10.0 ) {
-      fd << ((i != 0.0) ? " ," : "") << "\"" << i << "%%\" " << (i/100.0);
-    }
-    fd << " )\n";
-
-    fd << "set style histogram cluster gap 1\n";
-    fd << "set style fill solid noborder\n";
-    fd << "set boxwidth 1\n";
-    fd << "plot \"" << design << ".densityHist.dat\" using 1 title \"Avg. density\" with histogram linecolor rgb \"green\", \\\n";
-    fd << "     \"" << design << ".densityHist.dat\" using 2 title \"Peak. density\" with histogram linecolor rgb \"red\"\n";
-
-    fd.close ();
-  }
 
 
   void  NegociateOverlapCost ( const TrackElement* segment, TrackCost& cost )
@@ -253,6 +147,7 @@ namespace Kite {
   using Hurricane::ltracein;
   using Hurricane::ltraceout;
   using Hurricane::ForEachIterator;
+  using CRL::Histogram;
   using CRL::addMeasure;
   using Katabatic::AutoContact;
 
@@ -497,6 +392,9 @@ namespace Kite {
         cmess2.flush();
       }
 
+      if ( RoutingEvent::getProcesseds() >= 10 )
+        throw Error ( "Stopped after 10 events." );
+
       if ( RoutingEvent::getProcesseds() >= limit ) setInterrupt ( true );
       count++;
     }
@@ -596,23 +494,30 @@ namespace Kite {
     addMeasure<size_t>( getCell(), "Events" , RoutingEvent::getProcesseds(), 12 );
     addMeasure<size_t>( getCell(), "UEvents", RoutingEvent::getProcesseds()-RoutingEvent::getCloneds(), 12 );
 
-    Histogram densityHistogram ( 1.0, 0.1, 2 );
+    Histogram* densityHistogram = new Histogram ( 1.0, 0.1, 2 );
+    addMeasure<Histogram>( getCell(), "GCells Density Histogram", densityHistogram );
+
+    densityHistogram->setFileExtension ( ".density.histogram" );
+    densityHistogram->setMainTitle     ( "GCell Densities" );
+    densityHistogram->setTitle         ( "Avg. Density", 0 );
+    densityHistogram->setTitle         ( "Peak Density", 1 );
+    densityHistogram->setColor         ( "green", 0 );
+    densityHistogram->setColor         ( "red"  , 1 );
 
     const Katabatic::GCellVector* gcells = getKiteEngine()->getGCellGrid()->getGCellVector();
 
     getKiteEngine()->getGCellGrid()->setDensityMode ( Katabatic::GCellGrid::AverageHVDensity );
     for ( size_t igcell=0 ; igcell<(*gcells).size() ; ++igcell ) {
-      densityHistogram.addSample ( (*gcells)[igcell]->getDensity(), 0 );
+      densityHistogram->addSample ( (*gcells)[igcell]->getDensity(), 0 );
     }
 
     getKiteEngine()->getGCellGrid()->setDensityMode ( Katabatic::GCellGrid::MaxDensity );
     for ( size_t igcell=0 ; igcell<(*gcells).size() ; ++igcell ) {
-      densityHistogram.addSample ( (*gcells)[igcell]->getDensity(), 1 );
+      densityHistogram->addSample ( (*gcells)[igcell]->getDensity(), 1 );
     }
 
-    densityHistogram.normalize ( (*gcells).size(), 0 );
-    densityHistogram.normalize ( (*gcells).size(), 1 );
-    densityHistogram.toGnuplot ( getString(getCell()->getName()) );
+    densityHistogram->normalize ( 0 );
+    densityHistogram->normalize ( 1 );
   }
 
 
