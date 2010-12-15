@@ -455,7 +455,7 @@ class Model :
     self._vbe = True
     
   ##### View : in order to see the in the editor #####
-  def View ( self, stopLevel=1, message="Status stop point" ) :
+  def View ( self ) :
     global EDITOR
 
     if not self._hur_cell :
@@ -465,6 +465,10 @@ class Model :
     if EDITOR:
       EDITOR.setCell ( self._hur_cell )
       EDITOR.fit     ()
+    
+  ##### Breakpoint : stop point with a level. Also load in the Viewer #####
+  def Breakpoint ( self, stopLevel=1, message="Status stop point" ) :
+      self.View ()
       Breakpoint.stop ( stopLevel, message )
     
   ##### Save : in order to create the output files #####
