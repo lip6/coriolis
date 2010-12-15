@@ -219,12 +219,13 @@ namespace Hurricane {
     _scriptAction->setObjectName ( "viewer.menuBar.tools.script" );
     _scriptAction->setStatusTip  ( tr("Run Python Script") );
     _scriptAction->setIcon       ( QIcon(":/images/python-logo-v3.png") );
-  //_scriptAction->setShortcut   ( QKeySequence(tr("CTRL+I")) );
+    _scriptAction->setShortcut   ( QKeySequence(tr("SHIFT+P,SHIFT+P")) );
 
     _stratusAction = new QAction  ( tr("Stratus"), this );
     _stratusAction->setObjectName ( "viewer.menuBar.tools.stratusScript" );
     _stratusAction->setStatusTip  ( tr("Run Stratus Script") );
     _stratusAction->setIcon       ( QIcon(":/images/stratus-cloud.png") );
+    _stratusAction->setShortcut   ( QKeySequence(tr("SHIFT+P,SHIFT+S")) );
   }
 
 

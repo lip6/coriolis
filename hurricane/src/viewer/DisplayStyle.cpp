@@ -23,13 +23,28 @@
 // x-----------------------------------------------------------------x
 
 
-# include  <cassert>
+#include  <cassert>
 
-# include  "hurricane/Error.h"
-# include  "hurricane/viewer/DisplayStyle.h"
-# include  "hurricane/viewer/Graphics.h"
+#include  "hurricane/Error.h"
+#include  "hurricane/viewer/DisplayStyle.h"
+#include  "hurricane/viewer/Graphics.h"
 
 
+namespace {
+
+  QColor  modifySaturation ( const QColor& color, int darkening )
+  {
+    QColor hsvColor = color.toHsv();
+    if ( darkening != 100 ) {
+      qreal darkSat   = color.saturationF();
+      qreal darkValue = color.valueF();
+      hsvColor.setHsvF ( color.hueF(), darkSat/3.0, darkValue/2.5 );
+    }
+    return hsvColor;
+  }
+
+
+} // End of anonymous namespace.
 
 
 namespace Hurricane {
@@ -124,7 +139,8 @@ namespace Hurricane {
   {
     assert ( _color != NULL );
 
-    return _color->darker ( darkening );
+  //return _color->darker ( darkening );
+    return modifySaturation(*_color,darkening);
   }
 
 
@@ -133,7 +149,9 @@ namespace Hurricane {
     assert ( _pen != NULL );
 
     QPen pen ( *_pen );
-    pen.setColor ( _color->darker(darkening) );
+  //pen.setColor ( _color->darker(darkening) );
+    pen.setColor ( modifySaturation(*_color,darkening) );
+
     return pen;
   }
 
@@ -143,7 +161,8 @@ namespace Hurricane {
     assert ( _brush != NULL );
 
     QBrush brush ( *_brush );
-    brush.setColor ( _color->darker(darkening) );
+  //brush.setColor ( _color->darker(darkening) );
+    brush.setColor ( modifySaturation(*_color,darkening) );
     return brush;
   }
 
