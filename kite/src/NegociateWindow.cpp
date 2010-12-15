@@ -392,9 +392,6 @@ namespace Kite {
         cmess2.flush();
       }
 
-      if ( RoutingEvent::getProcesseds() >= 10 )
-        throw Error ( "Stopped after 10 events." );
-
       if ( RoutingEvent::getProcesseds() >= limit ) setInterrupt ( true );
       count++;
     }
