@@ -171,7 +171,7 @@
         <drawingstyle name="AutoLayer" color="255,0,255"/>
         <drawingstyle name="gmetalh"   color="128,255,200" pattern="8822882288228822" border="1"/>
         <drawingstyle name="gmetalv"   color="200,200,255" pattern="4411441144114411" border="1"/>
-        <drawingstyle name="gcontact"  color="255,255,190" border="1"/>
+        <drawingstyle name="gcut"      color="255,255,190" border="1"/>
       </group>
     </displaystyle>
     <displaystyle name="Alliance.Classic [white]">

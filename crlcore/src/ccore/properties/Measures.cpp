@@ -37,6 +37,8 @@ namespace CRL {
   using std::string;
   using std::vector;
   using std::ostringstream;
+  using std::cerr;
+  using std::endl;
   using std::setw;
   using std::right;
   using Hurricane::Error;
@@ -44,21 +46,22 @@ namespace CRL {
 
   
 // -------------------------------------------------------------------
-// Class  :  "CRL::MeasuresSet".
+// Class  :  "CRL::BaseMeasure".
 
 
-  BaseMeasure::~BaseMeasure () {}
-
-
-  const char* MissingMeasures = "Measures::%s(): %s missing the Measures extension.";
-
-
-  template<>
-  Name  StandardPrivateProperty<MeasuresDatas*>::_name = "CRL::Measures";
+          BaseMeasure::~BaseMeasure () {}
+  bool    BaseMeasure::isSimpleData () const { return true; }
+  void    BaseMeasure::toGnuplot    ( const string& ) const {}
+  string  BaseMeasure::_getString   () const { return "<Undefined Measure>"; }
+  Record* BaseMeasure::_getRecord   () const { return NULL; }
 
   
 // -------------------------------------------------------------------
 // Class  :  "CRL::MeasuresSet".
+
+
+  template<>
+  Name  StandardPrivateProperty<MeasuresDatas>::_name = "CRL::Measures";
 
 
   MeasuresSet::~MeasuresSet ()
@@ -79,7 +82,8 @@ namespace CRL {
       if ( imeasure == end() ) continue;
 
       const BaseMeasure* measure = (*imeasure).second;
-      out << setw(measure->getFieldWidth()) << right << measure->getName();
+      if ( measure->isSimpleData() )
+        out << setw(measure->getFieldWidth()) << right << measure->getName();
     }
 
     return out.str();
@@ -96,10 +100,44 @@ namespace CRL {
       if ( imeasure == end() ) continue;
 
       const BaseMeasure* measure = (*imeasure).second;
-      out << setw(measure->getFieldWidth()) << right << measure->toString();
+      if ( measure->isSimpleData() )
+        out << setw(measure->getFieldWidth()) << right << measure->toString();
     }
 
     return out.str();
+  }
+
+
+  void  MeasuresSet::toGnuplot ( Name name, const string& basename ) const
+  {
+    const_iterator imeasure = find ( name );
+    if ( imeasure == end() ) return;
+
+    const BaseMeasure* measure = (*imeasure).second;
+    if ( measure->isSimpleData() ) return;
+
+    measure->toGnuplot ( basename );
+  }
+
+
+  string  MeasuresSet::_getString () const
+  {
+    ostringstream s;
+    s << "<MeasuresSet " << size() << ">";
+    return s.str();
+  }
+
+
+  Record* MeasuresSet::_getRecord () const
+  {
+    Record* record = new Record ( _getString() );
+    if ( record ) {
+      const_iterator imeasure = begin();
+      for ( ; imeasure != end() ; ++imeasure ) {
+        record->add ( getSlot ( getString((*imeasure).first), ((*imeasure).second) ) );
+      }
+    }
+    return record;
   }
 
   
@@ -112,15 +150,28 @@ namespace CRL {
   { }
 
   
+  MeasuresDatas::MeasuresDatas ( const MeasuresDatas& other )
+    : _measures()
+  {
+    // if ( not other._measures.empty() ) {
+    //   cerr << Error("MeasuresDatas copy constructor called on non-empty MeasuresDatas is forbidden.\n"
+    //                 "(source has %u elements)", other._measures.size() ) << endl;
+    // }
+  }
+
+  
 // -------------------------------------------------------------------
 // Class  :  "CRL::Measures".
+
+
+  const char* MissingMeasures = "Measures::%s(): %s missing the Measures extension.";
 
 
   const MeasuresSet* Measures::get ( const DBo* object )
   {
     Extension* extension = Extension::get ( object );
     if ( extension != NULL )
-      return &extension->getValue()->_measures;
+      return &extension->getValue()._measures;
 
     return NULL;
   }
@@ -130,7 +181,7 @@ namespace CRL {
   {
     Extension* extension = Extension::get ( object );
     if ( extension == NULL ) {
-      extension = Extension::create ( new MeasuresDatas() );
+      extension = Extension::create ( MeasuresDatas() );
       object->put ( extension );
     }
     return extension;

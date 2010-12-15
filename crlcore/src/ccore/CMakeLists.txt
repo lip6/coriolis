@@ -42,6 +42,7 @@
                        set ( includes          crlcore/Utilities.h
                                                crlcore/Memory.h
                                                crlcore/Banner.h
+                                               crlcore/Histogram.h
                                                crlcore/COptions.h
                                                crlcore/XmlParser.h
                                                crlcore/GdsDriver.h
@@ -83,6 +84,7 @@
                                                Memory.cpp
                                                Banner.cpp
                                                COptions.cpp
+                                               Histogram.cpp
                                                XmlParser.cpp
                                                GdsDriver.cpp
                                                OAParserDriver.cpp
