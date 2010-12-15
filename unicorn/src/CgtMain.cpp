@@ -105,7 +105,6 @@ int main ( int argc, char *argv[] )
 
     bool          destroyDatabase;
     float         edgeCapacity;
-    float         expandStep;
     unsigned long eventsLimit;
     unsigned int  traceLevel;
     bool          textMode;
@@ -117,6 +116,7 @@ int main ( int argc, char *argv[] )
     bool          detailedRoute;
     bool          loadGlobal;
     bool          saveGlobal;
+    bool          dumpMeasures;
     bool          exportDef;
     bool          saveImport;
 
@@ -162,13 +162,13 @@ int main ( int argc, char *argv[] )
                              , "Save the global routing solution.")
       ( "edge,e"             , boptions::value<float>(&edgeCapacity)
                              , "The egde density ratio applied on global router's edges." )
-      ( "expand-step"        , boptions::value<float>(&expandStep)
-                             , "The density delta above which GCells are aggregateds." )
       ( "events-limit"       , boptions::value<unsigned long>(&eventsLimit)
                              , "The maximum number of iterations (events) that the router is"
                                "allowed to perform." )
       ( "detailed-route,R"   , boptions::bool_switch(&detailedRoute)->default_value(false)
                              , "Run the detailed router (Kite).")
+      ( "dump-measures,M"    , boptions::bool_switch(&dumpMeasures)->default_value(false)
+                             , "Dump statistical measurements on the disk.")
       ( "cell,c"             , boptions::value<string>()
                              , "The name of the cell to load, whithout extension." )
       ( "save-design,s"      , boptions::value<string>()
@@ -271,9 +271,6 @@ int main ( int argc, char *argv[] )
 
     if ( arguments.count("events-limit") )
       Cfg::getParamInt("kite.eventsLimit")->setInt ( eventsLimit );
-
-    if ( arguments.count("expand-step") )
-      Cfg::getParamPercentage("kite.expandStep")->setPercentage ( expandStep );
 
     UnicornGui::getBanner().setName    ( "cgt" );
     UnicornGui::getBanner().setPurpose ( "Coriolis Graphical Tool" );
@@ -506,13 +503,14 @@ int main ( int argc, char *argv[] )
         if ( saveGlobal ) kite->saveGlobalSolution ();
 
         if ( detailedRoute ) {
-          kite->loadGlobalRouting     ( Katabatic::LoadGrByNet, routingNets );
-          kite->layerAssign           ( Katabatic::NoNetLayerAssign );
-          kite->runNegociate          ();
+          kite->loadGlobalRouting ( Katabatic::LoadGrByNet, routingNets );
+          kite->layerAssign       ( Katabatic::NoNetLayerAssign );
+          kite->runNegociate      ();
           kiteSuccess = kite->getToolSuccess ();
-          kite->finalizeLayout        ();
-          kite->dumpMeasures          ();
-          kite->destroy               ();
+          kite->finalizeLayout ();
+          if ( dumpMeasures )
+            kite->dumpMeasures ();
+          kite->destroy ();
 
           if ( arguments.count("save-design") ) {
             cell->setName ( arguments["save-design"].as<string>().c_str() );
