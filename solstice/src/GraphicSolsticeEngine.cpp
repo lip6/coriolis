@@ -96,7 +96,7 @@ namespace Solstice {
     QPainter& painter = widget->getPainter();
     QColor c = QColor(Qt::red);
     c.setAlpha(100);
-    c = c.darker(widget->getDarkening());
+    c = DisplayStyle::darken(c,widget->getDarkening());
     painter.setPen  (QPen(c,15));
     painter.setBrush(c);
     painter.drawRect ( widget->dbuToDisplayRect(error->getBoundingBox()) );
