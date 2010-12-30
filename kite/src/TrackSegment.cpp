@@ -38,7 +38,6 @@
 #include  "crlcore/RoutingGauge.h"
 #include  "kite/DataNegociate.h"
 #include  "kite/TrackSegment.h"
-#include  "kite/TrackCost.h"
 #include  "kite/Track.h"
 #include  "kite/Session.h"
 #include  "kite/RoutingEvent.h"
@@ -157,7 +156,6 @@ namespace Kite {
   unsigned int   TrackSegment::getDogLegLevel             () const { return _dogLegLevel; }
   Interval       TrackSegment::getSourceConstraints       () const { return _base->getSourceConstraints(); }
   Interval       TrackSegment::getTargetConstraints       () const { return _base->getTargetConstraints(); }
-  DataNegociate* TrackSegment::getDataNegociate           () const { return _data; }
   TrackElements  TrackSegment::getCollapsedPerpandiculars () { return new TrackElements_CollapsedPerpandicular(this); }
   void           TrackSegment::setAllowOutsideGCell       ( bool   state ) { _base->setAllowOutsideGCell(state,true); }
   void           TrackSegment::setLock                    ( bool   state ) { _lock  = state; }
@@ -196,12 +194,13 @@ namespace Kite {
   { return _base->getLayer(); }
 
 
-  // DbU::Unit  TrackSegment::getSourceU () const
-  // { return _base->getSourceU(); }
+  DataNegociate* TrackSegment::getDataNegociate ( unsigned int flags ) const
+  {
+    if ( flags & TrackElement::DataSelf ) return _data;
 
-
-  // DbU::Unit  TrackSegment::getTargetU () const
-  // { return _base->getTargetU(); }
+    TrackElement* parent = getParent();
+    return (parent) ? parent->getDataNegociate() : NULL;
+  }
 
 
   TrackElement* TrackSegment::getNext () const
@@ -215,6 +214,16 @@ namespace Kite {
   {
     size_t dummy = _index;
     return _track->getPrevious ( dummy, getNet() );
+  }
+
+
+  TrackElement* TrackSegment::getParent () const
+  {
+    AutoSegment* baseParent = base()->getParent();
+    if ( not baseParent ) return NULL;
+
+    TrackElement* element = Session::lookup ( baseParent );
+    return element;
   }
 
 
@@ -412,7 +421,7 @@ namespace Kite {
       other->getTrack()->_check();
 #endif
 
-    RoutingEvent* thisEvent  = getDataNegociate()->getRoutingEvent();
+    RoutingEvent* thisEvent  = getDataNegociate(TrackElement::DataSelf)->getRoutingEvent();
     RoutingEvent* otherEvent = other->getDataNegociate()->getRoutingEvent();
 
     if ( thisEvent  ) thisEvent ->setSegment ( other );
@@ -459,6 +468,10 @@ namespace Kite {
   { return _base->canPivotUp(reserve); }
 
 
+  bool  TrackSegment::canPivotDown ( float reserve ) const
+  { return _base->canPivotDown(reserve); }
+
+
   bool  TrackSegment::canMoveUp ( float reserve, unsigned int flags ) const
   { return _base->canMoveUp ( reserve, flags ); }
 
@@ -478,7 +491,7 @@ namespace Kite {
       for ( size_t i=0 ; i<invalidateds.size() ; i++ ) {
         TrackElement* segment = Session::getNegociateWindow()->addTrackSegment(invalidateds[i],false);
         if ( segment != NULL ) {
-          ltrace(200) << "moved: " << invalidateds[i] << endl;
+          ltrace(200) << "moved up: " << invalidateds[i] << endl;
           segments.push_back ( segment );
         // if (  (segment->getTrack() == NULL)
         //    or (segment->getLayer() != segment->getTrack()->getLayer()) )
@@ -486,7 +499,45 @@ namespace Kite {
         }
       }
       for ( size_t i=0 ; i<segments.size() ; i++ ) {
-        ltrace(200) << "moved: " << segments[i] << endl;
+        ltrace(200) << "moved up: " << segments[i] << endl;
+      }
+    }
+
+    // if ( _data and success ) {
+    //   _data->setState ( DataNegociate::ConflictSolve1, true );
+    //   _data->resetRipupCount ();
+    // }
+      
+    ltraceout(200);
+
+    return success;
+  }
+
+
+  bool  TrackSegment::moveDown ( unsigned int flags )
+  {
+    bool success = false;
+
+    ltrace(200) << "TrackSegment::moveDown() " << flags << endl;
+    ltracein(200);
+
+    success = base()->moveDown ( flags );
+
+    const vector<AutoSegment*>& invalidateds = Session::getInvalidateds();
+    if ( not invalidateds.empty() ) {
+      vector<TrackElement*> segments;
+      for ( size_t i=0 ; i<invalidateds.size() ; i++ ) {
+        TrackElement* segment = Session::getNegociateWindow()->addTrackSegment(invalidateds[i],false);
+        if ( segment != NULL ) {
+          ltrace(200) << "moved down: " << invalidateds[i] << endl;
+          segments.push_back ( segment );
+        // if (  (segment->getTrack() == NULL)
+        //    or (segment->getLayer() != segment->getTrack()->getLayer()) )
+          segment->reschedule ( 0 );
+        }
+      }
+      for ( size_t i=0 ; i<segments.size() ; i++ ) {
+        ltrace(200) << "moved down: " << segments[i] << endl;
       }
     }
 
@@ -650,7 +701,7 @@ namespace Kite {
   }
 
 
-  bool  TrackSegment::canDogLegAt ( Katabatic::GCell* dogLegGCell, bool allowReuse )
+  bool  TrackSegment::canDogLegAt ( Katabatic::GCell* dogLegGCell, unsigned int flags )
   {
     ltrace(200) << "TrackSegment::canDogLegAt(GCell*) " << dogLegGCell << endl;
 
@@ -683,7 +734,7 @@ namespace Kite {
       isGCellInside = true;
       if ( igcell == 0 ) {
         if ( hasSourceDogLeg() ) {
-          if ( allowReuse ) return true;
+          if ( flags & TrackElement::AllowDoglegReuse ) return true;
 
           ltrace(200) << "Cannot dogleg again in source GCell." << endl;
           return false;
@@ -691,7 +742,7 @@ namespace Kite {
       }
 
       if ( hasTargetDogLeg() && (igcell == gcells.size()-1) ) {
-        if ( allowReuse ) return true;
+        if ( flags & TrackElement::AllowDoglegReuse ) return true;
 
         ltrace(200) << "Cannot dogleg again in target GCell." << endl;
         return false;
@@ -848,7 +899,7 @@ namespace Kite {
 
     bool coherency = true;
 
-    if ( !base()->isCanonical() ) {
+    if ( not base()->isCanonical() ) {
       cerr << "[CHECK] " << this << " supporting AutoSegment is not canonical." << endl;
       coherency = false;
     }

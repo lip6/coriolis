@@ -160,7 +160,7 @@ namespace Kite {
     bool coherency = true;
 
     for ( size_t i=0 ; i<_tracks.size() ; i++ ) {
-      coherency = _tracks[i]->_check(overlaps) && coherency;
+      coherency = _tracks[i]->_check(overlaps) and coherency;
     }
 
     return coherency;

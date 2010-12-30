@@ -22,6 +22,7 @@
                                        kite/RoutingEvent.h
                                        kite/RoutingEventQueue.h
                                        kite/RoutingEventHistory.h
+                                       kite/RoutingEventLoop.h
                                        kite/RoutingPlane.h
                                        kite/NegociateWindow.h
                                        kite/Configuration.h
@@ -45,6 +46,7 @@
                                        RoutingEvent.cpp
                                        RoutingEventQueue.cpp
                                        RoutingEventHistory.cpp
+                                       RoutingEventLoop.cpp
                                        RoutingPlane.cpp
                                        BuildPowerRails.cpp
                                        ProtectRoutingPads.cpp

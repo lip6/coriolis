@@ -77,11 +77,12 @@ namespace Kite {
           threshold = 2*50;
           break;
         default:
-          threshold = 29*50;
+          threshold = 30*50;
           break;
       }
 
-      _globalMinBreaks[i] = DbU::lambda(Cfg::getParamInt(paramName.str(),threshold)->asInt());
+      Cfg::getParamDouble(paramName.str())->setDouble(threshold);
+      _globalMinBreaks[i] = DbU::lambda (Cfg::getParamDouble(paramName.str())->asDouble());
     }
   }
 
@@ -239,9 +240,7 @@ namespace Kite {
 
 
   string  Configuration::_getTypeName () const
-  {
-    return "Configuration";
-  }
+  { return "Configuration"; }
 
 
   string  Configuration::_getString () const
@@ -258,6 +257,24 @@ namespace Kite {
   {
     Record* record = _base->_getRecord();
   //record->add ( getSlot ( "_rg"       ,  _rg      ) );
+    if ( record ) {
+      record->add ( getSlot("_edgeCapacityPercent",_edgeCapacityPercent) );
+      record->add ( getSlot("_ripupCost"          ,_ripupCost          ) );
+      record->add ( getSlot("_eventsLimit"        ,_eventsLimit        ) );
+      record->add ( getSlot("_edgeCapacityPercent",_edgeCapacityPercent) );
+
+      record->add ( getSlot("_ripupLimits[StrapRipupLimit]"     ,_ripupLimits[StrapRipupLimit]     ) );
+      record->add ( getSlot("_ripupLimits[LocalRipupLimit]"     ,_ripupLimits[LocalRipupLimit]     ) );
+      record->add ( getSlot("_ripupLimits[GlobalRipupLimit]"    ,_ripupLimits[GlobalRipupLimit]    ) );
+      record->add ( getSlot("_ripupLimits[LongGlobalRipupLimit]",_ripupLimits[LongGlobalRipupLimit]) );
+
+      for ( size_t i=0 ; i<MaxMetalDepth ; ++i ) {
+        ostringstream paramName;
+        paramName << "metal" << (i+1) << "MinBreak";
+
+        record->add ( DbU::getValueSlot(paramName.str(),&_globalMinBreaks[i]) );
+      }
+    }
                                      
     return record;
   }

@@ -111,14 +111,14 @@ namespace Kite {
               guside = gcell->getUSide ( Constant::Horizontal /*, true*/ );
               Interval usedLength = guside.getIntersection ( segside );
 
-              gcell->addBlockage ( depth, (float)usedLength.getSize()/(float)guside.getSize() );
+              gcell->addBlockage ( depth, usedLength.getSize() );
               gcell = right;
             }
             if ( end ) {
               guside = gcell->getUSide ( Constant::Horizontal /*, true*/ );
               Interval usedLength = guside.getIntersection ( segside );
 
-              end->addBlockage ( depth, (float)usedLength.getSize()/(float)guside.getSize() );
+              end->addBlockage ( depth, usedLength.getSize() );
             }
           } else
             cerr << Warning("TrackFixedSegment(): TrackFixedElement outside GCell grid.") << endl;
@@ -141,14 +141,14 @@ namespace Kite {
               guside = gcell->getUSide ( Constant::Vertical /*, true*/ );
               Interval usedLength = guside.getIntersection ( segside );
 
-              gcell->addBlockage ( depth, (float)usedLength.getSize()/(float)guside.getSize() );
+              gcell->addBlockage ( depth, usedLength.getSize() );
               gcell = up;
             }
             if ( end ) {
               guside = gcell->getUSide ( Constant::Vertical /*, true*/ );
               Interval usedLength = guside.getIntersection ( segside );
 
-              end->addBlockage ( depth, (float)usedLength.getSize()/(float)guside.getSize() );
+              end->addBlockage ( depth, usedLength.getSize() );
             }
           } else
             cerr << Warning("TrackFixedSegment(): TrackFixedElement outside GCell grid.") << endl;

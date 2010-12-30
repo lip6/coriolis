@@ -162,7 +162,7 @@ namespace Kite {
   unsigned int   TrackElement::getDogLegOrder             () const { return 0; }
   Interval       TrackElement::getSourceConstraints       () const { return Interval(); }
   Interval       TrackElement::getTargetConstraints       () const { return Interval(); }
-  DataNegociate* TrackElement::getDataNegociate           () const { return NULL; }
+  DataNegociate* TrackElement::getDataNegociate           ( unsigned int ) const { return NULL; }
   TrackElements  TrackElement::getCollapsedPerpandiculars () { return new TrackElements_CollapsedPerpandicular(NULL); }
   void           TrackElement::setAllowOutsideGCell       ( bool ) { }
   void           TrackElement::setLock                    ( bool ) { }
@@ -177,12 +177,14 @@ namespace Kite {
 
   bool           TrackElement::canDesalignate             () const { return false; }
   bool           TrackElement::canPivotUp                 ( float ) const { return false; };
+  bool           TrackElement::canPivotDown               ( float ) const { return false; };
   bool           TrackElement::canMoveUp                  ( float, unsigned int ) const { return false; };
   bool           TrackElement::canDogLeg                  () { return false; };
   bool           TrackElement::canDogLeg                  ( Interval ) { return false; };
-  bool           TrackElement::canDogLegAt                ( Katabatic::GCell*, bool allowReuse ) { return false; };
+  bool           TrackElement::canDogLegAt                ( Katabatic::GCell*, unsigned int ) { return false; };
   TrackElement*  TrackElement::getSourceDogLeg            () { return NULL; }
   TrackElement*  TrackElement::getTargetDogLeg            () { return NULL; }
+  TrackElement*  TrackElement::getParent                  () const { return NULL; }
   void           TrackElement::dataInvalidate             () { }
   void           TrackElement::eventInvalidate            () { }
   void           TrackElement::setArea                    () { }
@@ -197,6 +199,7 @@ namespace Kite {
   void           TrackElement::setAxis                    ( DbU::Unit, unsigned int flags ) { }
   void           TrackElement::slacken                    () { }
   bool           TrackElement::moveUp                     ( unsigned int  ) { return false; }
+  bool           TrackElement::moveDown                   ( unsigned int  ) { return false; }
   bool           TrackElement::moveAside                  ( bool onLeft ) { return false; }
   TrackElement*  TrackElement::makeDogLeg                 () { return NULL; }
   TrackElement*  TrackElement::makeDogLeg                 ( Interval, bool& leftDogleg ) { return NULL; }

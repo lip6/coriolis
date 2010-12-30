@@ -85,28 +85,34 @@ namespace {
 
     if ( CatalogExtension::isPad(masterNet->getCell()) ) return;
 
+    vector<Segment*> segments;
+
     forEach ( Segment*, isegment, masterNet->getSegments() ) {
       RoutingPlane* plane = Session::getKiteEngine()->getRoutingPlaneByLayer(isegment->getLayer());
-      if ( plane == NULL ) {
-        continue;
-      }
-
-      unsigned int direction = plane->getDirection();
-      DbU::Unit    wireWidth = plane->getLayerGauge()->getWireWidth();
-      DbU::Unit    delta     =   plane->getLayerGauge()->getHalfPitch()
-                               + wireWidth/2
-                               - DbU::lambda(0.1);
-      DbU::Unit    extension = isegment->getLayer()->getExtentionCap();
+      if ( plane == NULL ) continue;
 
       if ( usedComponent == dynamic_cast<Component*>(*isegment) ) continue;
       if ( not NetExternalComponents::isExternal(*isegment) ) continue;
 
-    //cinfo << "Protecting " << *isegment << endl;
+    //cerr << "Looking " << (void*)*isegment << ":" << *isegment << endl;
 
-      Box bb ( (*isegment)->getBoundingBox() );
+      segments.push_back ( *isegment );
+    }
+
+    for ( size_t i=0 ; i<segments.size() ; ++i ) {
+    //cerr << "Protecting " << segments[i] << endl;
+
+      RoutingPlane* plane     = Session::getKiteEngine()->getRoutingPlaneByLayer(segments[i]->getLayer());
+      unsigned int  direction = plane->getDirection();
+      DbU::Unit     wireWidth = plane->getLayerGauge()->getWireWidth();
+      DbU::Unit     delta     =   plane->getLayerGauge()->getHalfPitch()
+                                + wireWidth/2
+                                - DbU::lambda(0.1);
+      DbU::Unit     extension = segments[i]->getLayer()->getExtentionCap();
+      Box           bb        ( segments[i]->getBoundingBox() );
+
       transformation.applyOn ( bb );
-
-    //cinfo << "bb: " << bb << endl;
+      cinfo << "bb: " << bb << endl;
 
       if ( direction == Constant::Horizontal ) {
         DbU::Unit axisMin = bb.getYMin() - delta;
@@ -115,61 +121,14 @@ namespace {
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNext() ) {
           Horizontal* segment = Horizontal::create ( rp->getNet()
-                                                   , isegment->getLayer()
+                                                   , segments[i]->getLayer()
                                                    , track->getAxis()
                                                    , wireWidth
                                                    , bb.getXMin()+extension
                                                    , bb.getXMax()-extension
                                                    );
-        // TrackElement* element =
-            TrackFixedSegment::create ( track, segment );
-        //cinfo << "  Rp Protect:" << track << "+" << element << endl;
+          TrackFixedSegment::create ( track, segment );
         }
-
-        // Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
-        // for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNext() ) {
-        //   Point sourcePosition (bb.getXMin()+extension,track->getAxis());
-        //   Point targetPosition (bb.getXMax()-extension,track->getAxis());
-
-        //   Katabatic::GCell* sourceGCell = Session::getKatabatic()->getGCellGrid()->getGCell ( sourcePosition );
-        //   Katabatic::GCell* targetGCell = Session::getKatabatic()->getGCellGrid()->getGCell ( targetPosition );
-
-        //   cinfo << "    S: " << sourceGCell << " from " << sourcePosition << endl;
-        //   cinfo << "    T: " << targetGCell << " from " << targetPosition << endl;
-
-        //   unsigned int segmentType
-        //     = (sourceGCell == targetGCell) ? AutoSegment::Local : AutoSegment::Global;
-
-        //   AutoContact* source = AutoContact::fromRp ( sourceGCell
-        //                                             , rp
-        //                                             , rp->getLayer()
-        //                                             , sourcePosition
-        //                                             , DbU::lambda(1.0), DbU::lambda(1.0)
-        //                                             , true
-        //                                             );
-
-        //   AutoContact* target = AutoContact::fromRp ( targetGCell
-        //                                             , rp
-        //                                             , rp->getLayer()
-        //                                             , targetPosition
-        //                                             , DbU::lambda(1.0), DbU::lambda(1.0)
-        //                                             , true
-        //                                             );
-
-        //   AutoSegment* segment = AutoSegment::create ( source
-        //                                              , target
-        //                                              , Constant::Horizontal
-        //                                              , segmentType
-        //                                              , true
-        //                                              , false
-        //                                              );
-        //   segment->setLayer ( isegment->getLayer() );
-        //   segment->setFixed ( true );
-
-        //   bool          created = true;
-        //   TrackElement* element = TrackSegment::create ( segment, track, created );
-        //   cinfo << "    Rp Protect " << track << "+" << element << endl;
-        // }
       } else {
         DbU::Unit axisMin = bb.getXMin() - delta;
         DbU::Unit axisMax = bb.getXMax() + delta;
@@ -177,63 +136,14 @@ namespace {
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNext() ) {
           Vertical* segment = Vertical::create ( rp->getNet()
-                                               , isegment->getLayer()
+                                               , segments[i]->getLayer()
                                                , track->getAxis()
                                                , wireWidth
                                                , bb.getYMin()+extension
                                                , bb.getYMax()-extension
                                                );
-        // TrackElement* element =
-            TrackFixedSegment::create ( track, segment );
-        //cinfo << "  Rp Protect:" << track << "+" << element << endl;
+          TrackFixedSegment::create ( track, segment );
         }
-
-        // Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
-        // for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNext() ) {
-        //   cinfo << "    Track Axis: " << DbU::getValueString(track->getAxis()) << endl;
-
-        //   Point sourcePosition (track->getAxis(),bb.getYMin()+extension);
-        //   Point targetPosition (track->getAxis(),bb.getYMax()-extension);
-
-        //   Katabatic::GCell* sourceGCell = Session::getKatabatic()->getGCellGrid()->getGCell ( sourcePosition );
-        //   Katabatic::GCell* targetGCell = Session::getKatabatic()->getGCellGrid()->getGCell ( targetPosition );
-
-        //   cinfo << "    S: " << sourceGCell << " from " << sourcePosition << endl;
-        //   cinfo << "    T: " << targetGCell << " from " << targetPosition << endl;
-
-        //   unsigned int segmentType
-        //     = (sourceGCell == targetGCell) ? AutoSegment::Local : AutoSegment::Global;
-
-        //   AutoContact* source = AutoContact::fromRp ( sourceGCell
-        //                                             , rp
-        //                                             , rp->getLayer()
-        //                                             , sourcePosition
-        //                                             , DbU::lambda(1.0), DbU::lambda(1.0)
-        //                                             , true
-        //                                             );
-
-        //   AutoContact* target = AutoContact::fromRp ( targetGCell
-        //                                             , rp
-        //                                             , rp->getLayer()
-        //                                             , targetPosition
-        //                                             , DbU::lambda(1.0), DbU::lambda(1.0)
-        //                                             , true
-        //                                             );
-
-        //   AutoSegment* segment = AutoSegment::create ( source
-        //                                              , target
-        //                                              , Constant::Vertical
-        //                                              , segmentType
-        //                                              , true
-        //                                              , false
-        //                                              );
-        //   segment->setLayer ( isegment->getLayer() );
-        //   segment->setFixed ( true );
-
-        //   bool          created = true;
-        //   TrackElement* element = TrackSegment::create ( segment, track, created );
-        //   cinfo << "    Rp Protect: " << track << "+" << element << endl;
-        // }
       }
     }
   }
@@ -257,11 +167,18 @@ namespace Kite {
     cmess1 << "  o  Protect external components not useds as RoutingPads." << endl;
 
     forEach ( Net*, inet, getCell()->getNets() ) {
+      // cerr << *inet << " isSupply():" << (*inet)->isSupply()
+      //      << " " << (*inet)->getType()
+      //      << endl;
       if ( (*inet)->isSupply() ) continue;
 
+      vector<RoutingPad*> rps;
       forEach ( RoutingPad*, irp, (*inet)->getRoutingPads() ) {
-        protectRoutingPad ( *irp );
+        rps.push_back ( *irp );
       }
+
+      for ( size_t i=0 ; i<rps.size() ; ++i )
+        protectRoutingPad ( rps[i] );
     }
 
     Session::revalidate ();

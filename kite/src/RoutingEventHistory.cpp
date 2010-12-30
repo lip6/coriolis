@@ -46,7 +46,6 @@ namespace Kite {
 
   RoutingEventHistory::RoutingEventHistory ()
     : _events    ()
-    , _identicals(0)
   { }
 
 
@@ -83,19 +82,7 @@ namespace Kite {
 
 
   void  RoutingEventHistory::push ( RoutingEvent* event )
-  {
-    if ( _events.size() && (event->getSegment() == _events.back()->getSegment()) )
-      _identicals++;
-    else
-      _identicals = 0;
-         
-    _events.push_back(event);
-
-//     if ( _identicals > 30 ) {
-//       dump ( cerr, 40 );
-//       throw Error("RoutingEventHistory::push(): More than 30 identicals events, we are looping.");
-//     }
-  }
+  { _events.push_back(event); }
 
 
   void  RoutingEventHistory::clear ()
@@ -103,7 +90,6 @@ namespace Kite {
     for ( size_t i=0 ; i < _events.size() ; i++ )
       _events[i]->destroy();
     _events.clear ();
-    _identicals = 0;
   }
 
 

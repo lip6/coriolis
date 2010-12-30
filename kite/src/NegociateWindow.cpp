@@ -48,6 +48,7 @@
 #include  "kite/RoutingPlane.h"
 #include  "kite/RoutingEventQueue.h"
 #include  "kite/RoutingEventHistory.h"
+#include  "kite/RoutingEventLoop.h"
 #include  "kite/NegociateWindow.h"
 #include  "kite/KiteEngine.h"
 
@@ -75,6 +76,7 @@ namespace {
       return;
     }
 
+
     if ( cost.getInterval().getVMax() > intersect.getVMax() ) cost.setLeftOverlap();
     if ( cost.getInterval().getVMin() < intersect.getVMin() ) cost.setRightOverlap();
 
@@ -90,6 +92,12 @@ namespace {
       if ( data->getState() >=  DataNegociate::LocalVsGlobal ) {
         ltrace(200) << "MaximumSlack/LocalVsGlobal for " << segment << endl;
       }
+    }
+
+    if ( segment->isGlobal() ) {
+    //if ( data->getState() >=  DataNegociate::ConflictSolve1 ) {
+        cost.setOverlapGlobal();
+    //}
     }
 
     // if ( data->getRipupCount() > 3 ) {
@@ -164,6 +172,7 @@ namespace Kite {
     , _segments    ()
     , _eventQueue  ()
     , _eventHistory()
+    , _eventLoop   (10,50)
   { }
 
 
@@ -378,14 +387,15 @@ namespace Kite {
     while ( not _eventQueue.empty() and not isInterrupted() ) {
       RoutingEvent* event = _eventQueue.pop ();
 
-      event->process ( _eventQueue, _eventHistory );
+      event->process ( _eventQueue, _eventHistory, _eventLoop );
       if (tty::enabled()) {
-        cmess1 << "       <event:" << tty::bold << setw(7) << setfill('0')
+        cmess2 << "       <event:" << tty::bold << setw(7) << setfill('0')
                << RoutingEvent::getProcesseds() << setfill(' ') << tty::reset << ">" << tty::cr;
-        cmess1.flush ();
+        cmess2.flush ();
       } else {
         cmess2 << "       <event:" << setw(7) << setfill('0')
-               << RoutingEvent::getProcesseds() << setfill(' ') << "> id:"
+               << RoutingEvent::getProcesseds() << setfill(' ') << "> @"
+               << DbU::getValueString(event->getSegment()->getAxis()) << " id:"
                << event->getSegment()->getId() << " "
                << event->getSegment()->getNet()->getName()
                << endl;
@@ -410,7 +420,7 @@ namespace Kite {
         count++;
         event->setProcessed ( false );
         event->setMode ( RoutingEvent::PostPack );
-        event->process ( _eventQueue, _eventHistory );
+        event->process ( _eventQueue, _eventHistory, _eventLoop );
 
         if (tty::enabled()) {
           cmess1 << "       <event:"
@@ -503,7 +513,7 @@ namespace Kite {
 
     const Katabatic::GCellVector* gcells = getKiteEngine()->getGCellGrid()->getGCellVector();
 
-    getKiteEngine()->getGCellGrid()->setDensityMode ( Katabatic::GCellGrid::AverageHVDensity );
+    getKiteEngine()->getGCellGrid()->setDensityMode ( Katabatic::GCellGrid::MaxHVDensity );
     for ( size_t igcell=0 ; igcell<(*gcells).size() ; ++igcell ) {
       densityHistogram->addSample ( (*gcells)[igcell]->getDensity(), 0 );
     }

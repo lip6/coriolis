@@ -74,7 +74,14 @@ namespace Kite {
   class TrackElement {
 
     public:
-      enum Flags { AddToGCells=0x1, RemoveFromGCells=0x2, UnRouted=0x4, Routed=0x8 };
+      enum Flags { AddToGCells     =0x01
+                 , RemoveFromGCells=0x02
+                 , UnRouted        =0x04
+                 , Routed          =0x08
+                 , AllowDoglegReuse=0x10
+                 , DataSelf        =0x01
+                 , DataParent      =0x02
+                 };
 
     public:
     // Sub-Class:  "Compare()".
@@ -116,13 +123,14 @@ namespace Kite {
       virtual bool                  canGoOutsideGCell          () const;
       virtual bool                  canSlacken                 () const;
       virtual bool                  canPivotUp                 ( float reserve ) const;
-      virtual bool                  canMoveUp                  ( float reserve, unsigned int flags=/*Katabatic::AutoSegment::Propagate*/0 ) const;
+      virtual bool                  canPivotDown               ( float reserve ) const;
+      virtual bool                  canMoveUp                  ( float reserve, unsigned int flags=AutoSegment::Propagate ) const;
       virtual bool                  canRipple                  () const;
       virtual bool                  hasSourceDogLeg            () const;
       virtual bool                  hasTargetDogLeg            () const;
       virtual bool                  canDogLeg                  ();
       virtual bool                  canDogLeg                  ( Interval );
-      virtual bool                  canDogLegAt                ( Katabatic::GCell*, bool allowReuse=false );
+      virtual bool                  canDogLegAt                ( Katabatic::GCell*, unsigned int flags=0 );
       virtual unsigned long         getId                      () const;
       virtual unsigned int          getDirection               () const = 0;
       virtual Net*                  getNet                     () const = 0;
@@ -135,6 +143,7 @@ namespace Kite {
       virtual unsigned int          getDogLegOrder             () const;
       virtual TrackElement*         getNext                    () const;
       virtual TrackElement*         getPrevious                () const;
+      virtual TrackElement*         getParent                  () const;
       virtual DbU::Unit             getAxis                    () const = 0;
       inline  DbU::Unit             getSourceU                 () const;
       inline  DbU::Unit             getTargetU                 () const;
@@ -143,7 +152,7 @@ namespace Kite {
       inline  Interval              getCanonicalInterval       () const;
       virtual Interval              getSourceConstraints       () const;
       virtual Interval              getTargetConstraints       () const;
-      virtual DataNegociate*        getDataNegociate           () const;
+      virtual DataNegociate*        getDataNegociate           ( unsigned int flags=DataSelf ) const;
       virtual TrackElement*         getCanonical               ( Interval& );
       virtual size_t                getGCells                  ( Katabatic::GCellVector& ) const;
       virtual TrackElement*         getSourceDogLeg            ();
@@ -174,7 +183,8 @@ namespace Kite {
       virtual void                  invalidate                 ();
       virtual void                  setAxis                    ( DbU::Unit, unsigned int flags=Katabatic::AxisSet );
       virtual void                  slacken                    ();
-      virtual bool                  moveUp                     ( unsigned int flags=/*Katabatic::AutoSegment::Propagate*/0 );
+      virtual bool                  moveUp                     ( unsigned int flags=AutoSegment::Propagate );
+      virtual bool                  moveDown                   ( unsigned int flags=AutoSegment::Propagate );
       virtual bool                  moveAside                  ( bool onLeft );
       virtual TrackElement*         makeDogLeg                 ();
       virtual TrackElement*         makeDogLeg                 ( Interval, bool& leftDogleg );

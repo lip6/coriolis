@@ -73,6 +73,7 @@ namespace {
   using Hurricane::Technology;
   using Hurricane::DataBase;
   using CRL::AllianceFramework;
+  using Katabatic::ChipTools;
   using namespace Kite;
 
 
@@ -327,6 +328,7 @@ namespace {
         public:
                                       Plane           ( const Layer*, RoutingPlane* );
                                      ~Plane           ();
+          inline const Layer*         getLayer        () const;
           inline RoutingPlane*        getRoutingPlane ();
           inline Constant::Direction  getDirection    () const;
                  void                 merge           ( const Box&, Net* );
@@ -596,6 +598,7 @@ namespace {
   }
 
 
+  inline const Layer*         PowerRailsPlanes::Plane::getLayer        () const { return _layer; }
   inline RoutingPlane*        PowerRailsPlanes::Plane::getRoutingPlane () { return _routingPlane; }
   inline Constant::Direction  PowerRailsPlanes::Plane::getDirection    () const { return (Constant::Direction)_routingPlane->getDirection(); }
 
@@ -749,16 +752,20 @@ namespace {
                                                 , const Box&             area
                                                 , const Transformation&  transformation
                                                 );
+              void          ringAddToPowerRails ();
       virtual void          doQuery             ();
       inline  void          doLayout            ();
       inline  unsigned int  getGoMatchCount     () const;
     private:
-      AllianceFramework* _framework;
-      KiteEngine*        _kite;
-      RoutingGauge*      _routingGauge;
-      PowerRailsPlanes   _powerRailsPlanes;
-      bool               _isBlockagePlane;
-      unsigned int       _goMatchCount;
+      AllianceFramework*      _framework;
+      KiteEngine*             _kite;
+      RoutingGauge*           _routingGauge;
+      const ChipTools&        _chipTools;
+      PowerRailsPlanes        _powerRailsPlanes;
+      bool                    _isBlockagePlane;
+      vector<const Segment*>  _hRingSegments;
+      vector<const Segment*>  _vRingSegments;
+      unsigned int            _goMatchCount;
   };
 
 
@@ -767,8 +774,11 @@ namespace {
     , _framework       (AllianceFramework::get())
     , _kite            (kite)
     , _routingGauge    (kite->getConfiguration()->getRoutingGauge())
+    , _chipTools       (kite->getChipTools())
     , _powerRailsPlanes(kite)
     , _isBlockagePlane (false)
+    , _hRingSegments   ()
+    , _vRingSegments   ()
     , _goMatchCount    (0)
   {
     setCell       ( kite->getCell() );
@@ -802,6 +812,7 @@ namespace {
   {
     if ( not _powerRailsPlanes.getActivePlane() ) return;
     Query::doQuery ();
+
   }
 
 
@@ -844,6 +855,21 @@ namespace {
         ltrace(300) << "  Merging PowerRail element: " << segment << endl;
 
         Box bb = segment->getBoundingBox ( basicLayer );
+
+        unsigned int depth = _routingGauge->getLayerDepth ( segment->getLayer() );
+
+        if (    _chipTools.isChip()
+            and ((depth == 2) or (depth == 3))
+            and (segment->getWidth () == DbU::lambda( 12.0))
+            and (segment->getLength() >  DbU::lambda(200.0))
+            and (_kite->getChipTools().getCorona().contains(bb)) ) {
+          switch ( depth ) {
+            case 2: _vRingSegments.push_back ( segment ); break; // M3 V.
+            case 3: _hRingSegments.push_back ( segment ); break; // M4 H.
+          }
+          return;
+        }
+
         transformation.applyOn ( bb );
 
         _powerRailsPlanes.merge ( bb, rootNet );
@@ -859,6 +885,51 @@ namespace {
           
           _powerRailsPlanes.merge ( bb, rootNet );
         }
+      }
+    }
+  }
+
+
+  void  QueryPowerRails::ringAddToPowerRails ()
+  {
+
+    if ( not _hRingSegments.empty() ) {
+      const RegularLayer* layer = dynamic_cast<const RegularLayer*>(_routingGauge->getRoutingLayer(3));
+      setBasicLayer ( layer->getBasicLayer() );
+
+      DbU::Unit   xmin = DbU::Max;
+      DbU::Unit   xmax = DbU::Min;
+      vector<Box> boxes;
+
+      for ( size_t i=0 ; i<_hRingSegments.size() ; ++i ) {
+        boxes.push_back ( _hRingSegments[i]->getBoundingBox() );
+        xmin = std::min ( xmin, boxes.back().getXMin() );
+        xmax = std::max ( xmax, boxes.back().getXMax() );
+      }
+
+      for ( size_t i=0 ; i<_hRingSegments.size() ; ++i ) {
+        _powerRailsPlanes.merge ( Box(xmin,boxes[i].getYMin(),xmax,boxes[i].getYMax())
+                                , _powerRailsPlanes.getRootNet(_hRingSegments[i]->getNet(),Path()) );
+      }
+    }
+
+    if ( not _vRingSegments.empty() ) {
+      const RegularLayer* layer = dynamic_cast<const RegularLayer*>(_routingGauge->getRoutingLayer(2));
+      setBasicLayer ( layer->getBasicLayer() );
+
+      DbU::Unit   ymin = DbU::Max;
+      DbU::Unit   ymax = DbU::Min;
+      vector<Box> boxes;
+
+      for ( size_t i=0 ; i<_vRingSegments.size() ; ++i ) {
+        boxes.push_back ( _vRingSegments[i]->getBoundingBox() );
+        ymin = std::min ( ymin, boxes.back().getYMin() );
+        ymax = std::max ( ymax, boxes.back().getYMax() );
+      }
+
+      for ( size_t i=0 ; i<_vRingSegments.size() ; ++i ) {
+        _powerRailsPlanes.merge ( Box(boxes[i].getXMin(),ymin,boxes[i].getXMax(),ymax)
+                                , _powerRailsPlanes.getRootNet(_vRingSegments[i]->getNet(),Path()) );
       }
     }
   }
@@ -910,6 +981,7 @@ namespace Kite {
       query.setBasicLayer ( *iLayer );
       query.doQuery       ();
     }
+    query.ringAddToPowerRails ();
     query.doLayout ();
     cmess1 << "     - " << query.getGoMatchCount() << " power rails elements found." << endl;
 

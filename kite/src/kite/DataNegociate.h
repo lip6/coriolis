@@ -64,9 +64,9 @@ namespace Kite {
 
     public:
       enum SlackState { RipupPerpandiculars= 1
-                      , Minimize           = 2
-                      , DogLeg             = 3
-                      , Desalignate        = 4
+                      , Desalignate        = 2
+                      , Minimize           = 3
+                      , DogLeg             = 4
                       , Slacken            = 5
                       , ConflictSolve1     = 6
                       , ConflictSolve2     = 7

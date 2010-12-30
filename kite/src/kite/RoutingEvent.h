@@ -27,6 +27,7 @@
 #define  __KITE_ROUTING_EVENT__
 
 #include  <vector>
+#include  <cstdlib>
 
 #include "hurricane/Interval.h"
 namespace Hurricane {
@@ -48,6 +49,7 @@ namespace Kite {
   class Track;
   class RoutingEventHistory;
   class RoutingEventQueue;
+  class RoutingEventLoop;
 
 
 // -------------------------------------------------------------------
@@ -91,66 +93,72 @@ namespace Kite {
       enum Mode { Negociate=1, Pack=2, PostPack=3 };
 
     public:
-      static  size_t                       getAllocateds            ();
-      static  size_t                       getProcesseds            ();
-      static  size_t                       getCloneds               ();
-      static  void                         resetProcesseds          ();
-    public:                                                         
-      static  RoutingEvent*                create                   ( TrackElement*, unsigned int mode=Negociate );
-              RoutingEvent*                clone                    () const;
-              void                         destroy                  ();
-      inline  bool                         isCloned                 () const;
-      inline  bool                         isValid                  () const;
-              bool                         isUnimplemented          () const;
-      inline  bool                         isProcessed              () const;
-      inline  bool                         isDisabled               () const;
-      inline  bool                         isForcedToHint           () const;
-      inline  bool                         isSheared                () const;
-      inline  bool                         getMode                  () const;
-      inline  bool                         canMinimize              () const;
-              unsigned int                 getState                 () const;
-      inline  const Key&                   getKey                   () const;
-      inline  TrackElement*                getSegment               () const;
-      inline  const vector<TrackElement*>& getPerpandiculars        () const;
-      inline  DbU::Unit                    getAxisHint              () const;
-      inline  DbU::Unit                    getAxisHistory           () const;
-              long                         getAxisWeight            ( DbU::Unit ) const;
-      inline  const Interval&              getOptimalAxis           () const;
-      inline  const Interval&              getConstraints           () const;
-      inline  const Interval&              getOptimal               () const;
-      inline  const Interval&              getPerpandicular         () const;
-      inline  Katabatic::GCell*            getShearGCell            () const;
-      inline  float                        getPriority              () const;
-      inline  unsigned int                 getTracksNb              () const;
-      inline  unsigned int                 getTracksFree            () const;
-      inline  unsigned int                 getInsertState           () const;
-      inline  unsigned int                 getEventLevel            () const;
-      inline  void                         invalidate               ( bool withPerpandiculars=false, bool withConstraints=false );
-              void                         revalidate               ( bool force=false );
-      inline  void                         updateKey                ();
-              void                         process                  ( RoutingEventQueue&, RoutingEventHistory& );
-              void                         setSegment               ( TrackElement* );
-              RoutingEvent*                reschedule               ( RoutingEventQueue&, unsigned int eventLevel );
-      inline  void                         setMode                  ( unsigned int );
-              void                         setState                 ( unsigned int );
-      inline  void                         setProcessed             ( bool state=true );
-      inline  void                         setDisabled              ( bool state=true );
-      inline  void                         setMinimized             ( bool state=true );
-              void                         setEventLevel            ( unsigned int );
-      inline  void                         setTracksFree            ( unsigned int );
-      inline  void                         setForcedToHint          ( bool state = true );
-              void                         setAxisHint              ( DbU::Unit );
-      inline  void                         setOptimalAxis           ( Interval );
-      inline  void                         incInsertState           ();
-      inline  void                         resetInsertState         ();
-              void                         _processNegociate        ( RoutingEventQueue&, RoutingEventHistory& );
-              void                         _processPacking          ( RoutingEventQueue&, RoutingEventHistory& );
-              Record*                      _getRecord               () const;
-              string                       _getString               () const;
-              string                       _getTypeName             () const;
-    private:                                                        
-                                           RoutingEvent             ( TrackElement*, unsigned int mode );
-                                          ~RoutingEvent             ();
+      static  size_t                       getAllocateds     ();
+      static  size_t                       getProcesseds     ();
+      static  size_t                       getCloneds        ();
+      static  void                         resetProcesseds   ();
+    public:                                                  
+      static  RoutingEvent*                create            ( TrackElement*, unsigned int mode=Negociate );
+              RoutingEvent*                clone             () const;
+              void                         destroy           ();
+      inline  bool                         isCloned          () const;
+      inline  bool                         isValid           () const;
+              bool                         isUnimplemented   () const;
+      inline  bool                         isProcessed       () const;
+      inline  bool                         isDisabled        () const;
+      inline  bool                         isForcedToHint    () const;
+      inline  bool                         isSheared         () const;
+      inline  bool                         isRipedByLocal    () const;
+      inline  bool                         getMode           () const;
+      inline  bool                         canMinimize       () const;
+              unsigned int                 getState          () const;
+      inline  const Key&                   getKey            () const;
+      inline  TrackElement*                getSegment        () const;
+      inline  const vector<TrackElement*>& getPerpandiculars () const;
+      inline  DbU::Unit                    getAxisHint       () const;
+      inline  DbU::Unit                    getAxisHistory    () const;
+      inline  long                         getAxisWeight     ( DbU::Unit ) const;
+      inline  const Interval&              getOptimalAxis    () const;
+      inline  const Interval&              getConstraints    () const;
+      inline  const Interval&              getOptimal        () const;
+      inline  const Interval&              getPerpandicular  () const;
+      inline  Katabatic::GCell*            getShearGCell     () const;
+      inline  float                        getPriority       () const;
+      inline  unsigned int                 getTracksNb       () const;
+      inline  unsigned int                 getTracksFree     () const;
+      inline  unsigned int                 getInsertState    () const;
+      inline  unsigned int                 getEventLevel     () const;
+      inline  void                         invalidate        ( bool withPerpandiculars=false, bool withConstraints=false );
+              void                         revalidate        ( bool force=false );
+      inline  void                         updateKey         ();
+              void                         process           ( RoutingEventQueue&
+                                                             , RoutingEventHistory&
+                                                             , RoutingEventLoop&
+                                                             );
+              void                         setSegment        ( TrackElement* );
+              RoutingEvent*                reschedule        ( RoutingEventQueue&, unsigned int eventLevel );
+      inline  void                         setMode           ( unsigned int );
+              void                         setState          ( unsigned int );
+      inline  void                         setProcessed      ( bool state=true );
+      inline  void                         setDisabled       ( bool state=true );
+      inline  void                         setMinimized      ( bool state=true );
+      inline  void                         setRipedByLocal   ( bool state=true );
+              void                         setEventLevel     ( unsigned int );
+      inline  void                         setTracksFree     ( unsigned int );
+      inline  void                         setForcedToHint   ( bool state = true );
+              void                         setAxisHint       ( DbU::Unit );
+              void                         cacheAxisHint     ();
+      inline  void                         setOptimalAxis    ( Interval );
+      inline  void                         incInsertState    ();
+      inline  void                         resetInsertState  ();
+              void                         _processNegociate ( RoutingEventQueue&, RoutingEventHistory& );
+              void                         _processPacking   ( RoutingEventQueue&, RoutingEventHistory& );
+              Record*                      _getRecord        () const;
+              string                       _getString        () const;
+              string                       _getTypeName      () const;
+    private:                                                 
+                                           RoutingEvent      ( TrackElement*, unsigned int mode );
+                                          ~RoutingEvent      ();
 
     protected:
     // Attributes.
@@ -166,6 +174,7 @@ namespace Kite {
       bool                  _canHandleConstraints;
       bool                  _minimized;
       bool                  _forceToHint;
+      bool                  _ripedByLocal;
       TrackElement*         _segment;
       DbU::Unit             _axisHistory;
       DbU::Unit             _axisHint;
@@ -193,13 +202,15 @@ namespace Kite {
   inline bool                          RoutingEvent::isDisabled              () const { return _disabled; }
   inline bool                          RoutingEvent::isForcedToHint          () const { return _forceToHint; }
   inline bool                          RoutingEvent::isSheared               () const { return (_shearGCell != NULL); }
+  inline bool                          RoutingEvent::isRipedByLocal          () const { return _ripedByLocal; }
   inline bool                          RoutingEvent::getMode                 () const { return _mode; }
   inline bool                          RoutingEvent::canMinimize             () const { return !_minimized; }
   inline const RoutingEvent::Key&      RoutingEvent::getKey                  () const { return _key; }
   inline TrackElement*                 RoutingEvent::getSegment              () const { return _segment; }
   inline const vector<TrackElement*>&  RoutingEvent::getPerpandiculars       () const { return _perpandiculars; }
-  inline DbU::Unit                     RoutingEvent::getAxisHint             () const { return _axisHint; }
   inline DbU::Unit                     RoutingEvent::getAxisHistory          () const { return _axisHistory; }
+  inline DbU::Unit                     RoutingEvent::getAxisHint             () const { return _axisHint; }
+  inline long                          RoutingEvent::getAxisWeight           ( DbU::Unit axis ) const { return abs(axis - getAxisHint()); }
   inline const Interval&               RoutingEvent::getOptimalAxis          () const { return _optimalAxis; }
   inline const Interval&               RoutingEvent::getConstraints          () const { return _constraints; }
   inline const Interval&               RoutingEvent::getOptimal              () const { return _optimal; }
@@ -214,6 +225,7 @@ namespace Kite {
   inline void                          RoutingEvent::setProcessed            ( bool state ) { _processed  = state; }
   inline void                          RoutingEvent::setDisabled             ( bool state ) { _disabled = state; }
   inline void                          RoutingEvent::setMinimized            ( bool state ) { _minimized = state; }
+  inline void                          RoutingEvent::setRipedByLocal         ( bool state ) { _ripedByLocal = state; }
   inline void                          RoutingEvent::setTracksFree           ( unsigned int nb ) { _tracksFree = nb; }
   inline void                          RoutingEvent::setForcedToHint         ( bool state ) { _forceToHint = state; }
   inline void                          RoutingEvent::setOptimalAxis          ( Interval i ) { _optimalAxis = i; }

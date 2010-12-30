@@ -49,7 +49,6 @@ namespace Kite {
     public:
                             RoutingEventHistory ();
                            ~RoutingEventHistory ();
-      inline  bool          looping             () const;
       inline  bool          empty               () const;
       inline  size_t        size                () const;
               RoutingEvent* getNth              ( size_t ) const;
@@ -64,7 +63,6 @@ namespace Kite {
     protected:
     // Attributes.
       vector<RoutingEvent*>  _events;
-      size_t                 _identicals;
 
     private:
       RoutingEventHistory& operator=           ( const RoutingEventHistory& );
@@ -74,7 +72,6 @@ namespace Kite {
 
 
 // Inline Functions.
-  inline bool    RoutingEventHistory::looping      () const { return _identicals > 30; }
   inline bool    RoutingEventHistory::empty        () const { return _events.empty(); }
   inline size_t  RoutingEventHistory::size         () const { return _events.size(); }
   inline string  RoutingEventHistory::_getTypeName () const { return "RoutingEventHistory"; }

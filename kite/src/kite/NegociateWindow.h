@@ -37,6 +37,7 @@ namespace Hurricane {
 #include "katabatic/Grid.h"
 #include "kite/RoutingEventQueue.h"
 #include "kite/RoutingEventHistory.h"
+#include "kite/RoutingEventLoop.h"
 
 
 namespace Kite {
@@ -114,6 +115,7 @@ namespace Kite {
       inline const Katabatic::GCellVector& getGCells         () const;
       inline RoutingEventQueue&            getEventQueue     ();
       inline RoutingEventHistory&          getEventHistory   ();
+      inline RoutingEventLoop&             getEventLoop      ();
       inline Stage                         getStage          () const;
              void                          setGCells         ( const Katabatic::GCellVector& );
       inline void                          setInterrupt      ( bool );
@@ -139,6 +141,7 @@ namespace Kite {
       std::vector<TrackElement*>  _segments;
       RoutingEventQueue           _eventQueue;
       RoutingEventHistory         _eventHistory;
+      RoutingEventLoop            _eventLoop;
       Statistics                  _statistics;
 
     // Constructors.

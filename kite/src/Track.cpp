@@ -286,7 +286,7 @@ namespace Kite {
 
   TrackCost  Track::getOverlapCost ( Interval interval, Net* net, size_t begin, size_t end ) const
   {
-    TrackCost  cost ( const_cast<Track*>(this), interval, begin, end );
+    TrackCost  cost ( const_cast<Track*>(this), interval, begin, end, net );
 
     ltrace(190) << "getOverlapCost() @" << DbU::getValueString(_axis)
                 << " [" << DbU::getValueString(interval.getVMin())
@@ -538,7 +538,7 @@ namespace Kite {
           coherency = false;
         } 
         
-        coherency = coherency && _segments[i]->_check ();
+        coherency = _segments[i]->_check () and coherency;
       } else {
         cerr << "[CHECK] Hole at position " << i << "." << endl;
         holes     = true;
@@ -547,7 +547,7 @@ namespace Kite {
     }
 
     if ( !holes )
-      coherency = coherency && (checkOverlap(overlaps) == 0);
+      coherency = (checkOverlap(overlaps) == 0) and coherency;
 
     return coherency;
   }

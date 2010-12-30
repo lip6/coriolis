@@ -51,6 +51,7 @@ namespace Kite {
                        , const Interval& interval
                        ,       size_t    begin
                        ,       size_t    end
+                       ,       Net*      net
                        )
     : _track          (track)
     , _begin          (begin)
@@ -63,29 +64,41 @@ namespace Kite {
     , _overlap        (false)
     , _leftOverlap    (false)
     , _rightOverlap   (false)
+    , _overlapGlobal  (false)
     , _terminals      (0)
     , _delta          (-interval.getSize())
     , _deltaShared    (0)
     , _deltaPerpand   (0)
     , _axisWeight     (0)
-    , _distanceToFixed(DbU::Max)
+    , _distanceToFixed(DbU::lambda(100.0))
     , _dataState      (0)
     , _ripupCount     (0)
   {
     TrackElement* neighbor;
     if ( _begin != Track::NPOS ) {
       neighbor = _track->getSegment(_begin);
-      if ( neighbor && neighbor->isFixed() ) {
-        if ( _distanceToFixed == DbU::Max ) _distanceToFixed = 0;
-        _distanceToFixed += interval.getVMin() - neighbor->getTargetU();
+      if ( neighbor and (neighbor->getNet() != net) ) {
+        DbU::Unit distance = interval.getVMin() - neighbor->getTargetU();
+        if ( distance < DbU::lambda(50.0) )
+          _distanceToFixed = distance;
       }
+      // if ( neighbor and neighbor->isFixed() ) {
+      //   if ( _distanceToFixed == DbU::Max ) _distanceToFixed = 0;
+      //   _distanceToFixed += interval.getVMin() - neighbor->getTargetU();
+      // }
     }
     if ( _end != Track::NPOS ) {
       neighbor = _track->getSegment(_end);
-      if ( neighbor && neighbor->isFixed() ) {
-        if ( _distanceToFixed == DbU::Max ) _distanceToFixed = 0;
-        _distanceToFixed += neighbor->getSourceU() - interval.getVMax();
+      if ( neighbor and (neighbor->getNet() != net) ) {
+        DbU::Unit distance = neighbor->getSourceU() - interval.getVMax();
+        if ( _distanceToFixed == DbU::lambda(100.0) ) _distanceToFixed = 0;
+        if ( distance < DbU::lambda(50.0) )
+          _distanceToFixed += distance;
       }
+      // if ( neighbor and neighbor->isFixed() ) {
+      //   if ( _distanceToFixed == DbU::Max ) _distanceToFixed = 0;
+      //   _distanceToFixed += neighbor->getSourceU() - interval.getVMax();
+      // }
     }
   }
 
@@ -100,27 +113,25 @@ namespace Kite {
   }
 
 
-  bool  operator< ( const TrackCost& lhs, const TrackCost& rhs )
+  bool  TrackCost::Compare::operator() ( const TrackCost& lhs, const TrackCost& rhs )
   {
     if ( lhs._infinite xor rhs._infinite ) return rhs._infinite;
+
+    if (   (_flags & TrackCost::DiscardGlobals)
+       and (lhs._overlapGlobal xor rhs._overlapGlobal) )
+      return rhs._overlapGlobal;
+
     if ( lhs._hardOverlap xor rhs._hardOverlap ) return rhs._hardOverlap;
 
-    int lhsRipupCost = (lhs._dataState<<2) + lhs._ripupCount;
-    int rhsRipupCost = (rhs._dataState<<2) + rhs._ripupCount;
+    if ( lhs._ripupCount + (int)Session::getRipupCost() < rhs._ripupCount ) return true;
+    if ( lhs._ripupCount > (int)Session::getRipupCost() + rhs._ripupCount ) return false;
 
-    // if ( lhs._ripupCount + (int)Session::getRipupCost() < rhs._ripupCount ) return true;
-    // if ( lhs._ripupCount > rhs._ripupCount + (int)Session::getRipupCost() ) return false;
-
-    if ( lhsRipupCost + (int)Session::getRipupCost() < rhsRipupCost ) return true;
-    if ( lhsRipupCost > (int)Session::getRipupCost() + rhsRipupCost ) return false;
+  //int lhsRipupCost = (lhs._dataState<<2) + lhs._ripupCount;
+  //int rhsRipupCost = (rhs._dataState<<2) + rhs._ripupCount;
+  //if ( lhsRipupCost + (int)Session::getRipupCost() < rhsRipupCost ) return true;
+  //if ( lhsRipupCost > (int)Session::getRipupCost() + rhsRipupCost ) return false;
 
     if ( lhs._overlap xor rhs._overlap ) return rhs._overlap;
-
-  //std::cerr << "lhs:" << lhs._ripupCount
-  //          << " rhs:" << rhs._ripupCount
-  //          << " " <<  rhs._ripupCount - lhs._ripupCount << " > " <<  Session::getRipupCost()
-  //          << std::endl;
-  //if ( lhs._ripupCount - rhs._ripupCount > (int)Session::getRipupCost() ) return false;
 
     if ( lhs._terminals < rhs._terminals ) return true;
     if ( lhs._terminals > rhs._terminals ) return false;
@@ -128,8 +139,10 @@ namespace Kite {
     if ( lhs._delta < rhs._delta ) return true;
     if ( lhs._delta > rhs._delta ) return false;
 
-    if ( lhs._axisWeight < rhs._axisWeight ) return true;
-    if ( lhs._axisWeight > rhs._axisWeight ) return false;
+    if ( not (_flags & TrackCost::IgnoreAxisWeight) ) {
+      if ( lhs._axisWeight < rhs._axisWeight ) return true;
+      if ( lhs._axisWeight > rhs._axisWeight ) return false;
+    }
 
     if ( lhs._deltaPerpand < rhs._deltaPerpand ) return true;
     if ( lhs._deltaPerpand > rhs._deltaPerpand ) return false;
@@ -161,10 +174,13 @@ namespace Kite {
     string s = "<" + _getTypeName();
 
     s += " " + getString(_track);
-    s += " " + getString(_ripupCount);
-    s += " " + string ( (_blockage   )?"b":"-" );
-    s +=       string ( (_hardOverlap)?"h":"-" );
-    s +=       string ( (_overlap    )?"o":"-" );
+    s += " " + getString(_dataState);
+    s += "+" + getString(_ripupCount);
+    s += ":" + getString((_dataState<<2)+_ripupCount);
+    s += " " + string ( (_blockage     )?"b":"-" );
+    s +=       string ( (_hardOverlap  )?"h":"-" );
+    s +=       string ( (_overlap      )?"o":"-" );
+    s +=       string ( (_overlapGlobal)?"g":"-" );
     s += " " + getString(_terminals);
     s += "/" + DbU::getValueString(_delta);
     s += "/" + DbU::getValueString(_axisWeight);
