@@ -134,7 +134,7 @@ namespace Katabatic {
       inline  float                 getCDensity         ( bool update=true ) const;
       inline  float                 getDensity          ( unsigned int depth, bool update=true  ) const;
               float                 getDensity          ( bool update=true ) const;
-      inline  float                 getBlockage         ( unsigned int depth ) const;
+      inline  DbU::Unit             getBlockage         ( unsigned int depth ) const;
               float                 getStiffness        () const;
       inline  vector<AutoSegment*>* getVSegments        ();
       inline  vector<AutoSegment*>* getHSegments        ();
@@ -150,7 +150,7 @@ namespace Katabatic {
               size_t                checkDensity        () const;
               bool                  checkEdgeSaturation ( float threshold ) const;
     // Modifiers.
-              void                  addBlockage         ( unsigned int depth, float );
+              void                  addBlockage         ( unsigned int depth, DbU::Unit );
       inline  void                  addVSegment         ( AutoSegment* );
       inline  void                  addHSegment         ( AutoSegment* );
       inline  void                  addContact          ( AutoContact* );
@@ -162,6 +162,7 @@ namespace Katabatic {
       inline  void                  updateKey           ( unsigned int depth );
               void                  desaturate          ( unsigned int depth, set<Net*>& );
               bool                  stepDesaturate      ( unsigned int depth, set<Net*>&, AutoSegment*& moved, bool force=false );
+              bool                  stepNetDesaturate   ( unsigned int depth, set<Net*>&, set<GCell*>& invalidateds );
               void                  rpDesaturate        ( set<Net*>& );
       inline  void                  invalidate          ();
     // Inspector Management.                            
@@ -184,10 +185,10 @@ namespace Katabatic {
               Box                   _box;
               size_t                _depth;
               size_t                _pinDepth;
-              float*                _blockages;
+              DbU::Unit*            _blockages;
               float                 _cDensity;
               float*                _densities;
-              float*                _saturateDensities;
+            //float*                _saturateDensities;
               bool                  _saturated;
               bool                  _invalid;
               Key                   _key;
@@ -244,8 +245,8 @@ namespace Katabatic {
   inline  float  GCell::getDensity ( unsigned int depth, bool update  ) const
   { if (_invalid and update) const_cast<GCell*>(this)->updateDensity(); return _densities[depth]; }
 
-  inline  float  GCell::getBlockage ( unsigned int depth ) const
-  { return (depth<_depth) ? _blockages[depth] : 0.0; }
+  inline  DbU::Unit  GCell::getBlockage ( unsigned int depth ) const
+  { return (depth<_depth) ? _blockages[depth] : 0; }
 
   inline  void  GCell::addVSegment ( AutoSegment* segment )
   { invalidate(); _vsegments.push_back(segment); }

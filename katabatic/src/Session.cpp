@@ -188,7 +188,7 @@ namespace Katabatic {
     set<Segment*>        exploredSegments;
     vector<AutoSegment*> aligneds;
 
-    sort ( _autoSegments.begin(), _autoSegments.end(), AutoSegment::CompareCanonical() );
+    sort ( _autoSegments.begin(), _autoSegments.end(), AutoSegment::CompareId() );
 
     for ( size_t i=0 ; i<_autoSegments.size() ; i++ ) {
       AutoSegment* seedSegment = _autoSegments[i];
@@ -207,10 +207,10 @@ namespace Katabatic {
         }
 
         ltracein(110);
-        sort ( aligneds.begin(), aligneds.end(), AutoSegment::CompareCanonical() );
+        sort ( aligneds.begin(), aligneds.end(), AutoSegment::CompareId() );
 
         if ( aligneds.size() > 1 ) {
-          if ( not AutoSegment::CompareCanonical() ( aligneds[0], aligneds[1] ) ) {
+          if ( not AutoSegment::CompareId() ( aligneds[0], aligneds[1] ) ) {
             cerr << "Ambiguous canonization: " << aligneds[0]->base() << endl;
             cerr << "Ambiguous canonization: " << aligneds[1]->base() << endl;
           }
@@ -221,6 +221,11 @@ namespace Katabatic {
         ltrace(110) << "Canonical: " << aligneds[0] << endl;
 
         for ( size_t j=1 ; j<aligneds.size() ; j++ ) {
+          if ( aligneds[j]->isCanonical() ) {
+            cerr << Error("Session::_canonize(): On %s\n"
+                          "        Segment is no longer the canonical one, this must not happens."
+                         ,getString(aligneds[j]).c_str()) << endl;
+          }
           aligneds[j]->setCanonical ( false );
           ltrace(110) << "Secondary: " << aligneds[j] << endl;
         }

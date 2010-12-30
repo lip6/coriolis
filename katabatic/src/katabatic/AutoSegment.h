@@ -86,16 +86,16 @@ namespace Katabatic {
                               , ParallelOrExpanded     = (1<<2)
                               , ParallelAndLayerChange = (1<<3)
                               };
-      enum Flags              { Propagate=0x1, AllowLocal=0x2, AllowTerminal=0x4 };
+      enum Flags              { Propagate    =0x1
+                              , AllowLocal   =0x2
+                              , AllowTerminal=0x4
+                              , IgnoreContact=0x8
+                              };
 
 
     public:
       struct CompareId : public binary_function<AutoSegment*,AutoSegment*,bool> {
           inline bool  operator() ( const AutoSegment* lhs, const AutoSegment* rhs ) const;
-      };
-    public:
-      struct CompareCanonical : public binary_function<AutoSegment*,AutoSegment*,bool> {
-          bool  operator() ( const AutoSegment* lhs, const AutoSegment* rhs ) const;
       };
     public:
       struct CompareByDepthLength : public binary_function<AutoSegment*,AutoSegment*,bool> {
@@ -198,7 +198,9 @@ namespace Katabatic {
               bool                canDesalignate             ();
       virtual bool                canDesalignate             ( AutoContact* ) const = 0;
               bool                canMoveUp                  ( float reserve=0.0, unsigned int flags=0 );
-              bool                canPivotUp                 ( bool propagate=false, float reserve=0.0 );
+            //bool                canPivotUp                 ( bool propagate=false, float reserve=0.0 );
+              bool                canPivotUp                 ( float reserve=0.0, unsigned int flags=0 );
+              bool                canPivotDown               ( bool propagate=false, float reserve=0.0 );
               bool                canSlacken                 ( bool propagate=false );
       virtual bool                _canSlacken                () const = 0;
               bool                canGoOutsideGCell          () const;
@@ -212,6 +214,7 @@ namespace Katabatic {
               AutoContact*        getOppositeAnchor          ( AutoContact* ) const;
               size_t              getAlignedContacts         ( map<AutoContact*,int>& );
               size_t              getPerpandicularsBound     ( set<AutoSegment*>& );
+      inline  AutoSegment*        getParent                  () const;
       inline  DbU::Unit           getAxis                    () const;
       virtual DbU::Unit           getSourceU                 () const = 0;
       virtual DbU::Unit           getTargetU                 () const = 0;
@@ -278,6 +281,7 @@ namespace Katabatic {
               void                _computeTerminal           ( Segment* );
       virtual void                _computeTerminal           () = 0;
       virtual bool                checkInvalidated           () const;
+      inline  void                setParent                  ( AutoSegment* );
               AutoSegment*        canonize                   ();
               void                changeDepth                ( unsigned int depth
                                                              , bool         propagate =false
@@ -285,6 +289,7 @@ namespace Katabatic {
                                                              );
               void                _changeDepth               ( unsigned int depth, bool withNeighbors );
               bool                moveUp                     ( unsigned int flags=0 );
+              bool                moveDown                   ( unsigned int flags=0 );
       virtual void                moveULeft                  () = 0;
       virtual void                moveURight                 () = 0;
               void                slacken                    ( bool propagate=false );
@@ -334,6 +339,7 @@ namespace Katabatic {
              DbU::Unit            _sourcePosition;
              DbU::Unit            _targetPosition;
              Interval             _userConstraints;
+             AutoSegment*         _parent;
                                   
     // Internal: Constructors & Destructors.
     protected:                    
@@ -369,6 +375,7 @@ namespace Katabatic {
   inline  Contact*        AutoSegment::getSource            () const { return static_cast<Contact*>(getSegment()->getSource()); }
   inline  Contact*        AutoSegment::getTarget            () const { return static_cast<Contact*>(getSegment()->getTarget()); }
   inline  Component*      AutoSegment::getOppositeAnchor    ( Component* anchor ) const { return getSegment()->getOppositeAnchor(anchor); };
+  inline  AutoSegment*    AutoSegment::getParent            () const { return _parent; }
   inline  DbU::Unit       AutoSegment::getSourcePosition    () const { return _sourcePosition; }
   inline  DbU::Unit       AutoSegment::getTargetPosition    () const { return _targetPosition; }
   inline  DbU::Unit       AutoSegment::getSourceX           () const { return getSegment()->getSourceX(); }
@@ -422,6 +429,14 @@ namespace Katabatic {
   inline  void            AutoSegment::setOptimalMax        ( DbU::Unit max ) { _optimalMax = (unsigned int)DbU::getLambda(max-getOrigin()); }
   inline  void            AutoSegment::mergeUserConstraints ( const Interval& constraints ) { _userConstraints.intersection(constraints); }
   inline  void            AutoSegment::resetUserConstraints () { _userConstraints = Interval(false); }
+
+  inline  void  AutoSegment::setParent ( AutoSegment* parent )
+  {
+    if ( parent == this ) {
+      cerr << "Parentage Looping: " << parent->_getString() << endl;
+    }
+    _parent = parent;
+  }
 
 
   inline bool  AutoSegment::CompareId::operator() ( const AutoSegment* lhs, const AutoSegment* rhs ) const

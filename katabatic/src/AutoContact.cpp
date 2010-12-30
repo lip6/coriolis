@@ -331,7 +331,7 @@ namespace {
   inline string               SegmentEnd::_getTypeName   () const { return "Katabatic::SegmentEnd"; }
 
   inline bool  SegmentEnd::Compare::operator() ( const SegmentEnd* lhs, const SegmentEnd* rhs ) const
-  { return AutoSegment::CompareCanonical() ( lhs->getSegment(), rhs->getSegment() ); }
+  { return AutoSegment::CompareId() ( lhs->getSegment(), rhs->getSegment() ); }
 
   inline  SegmentEnd::SegmentEnd ( AutoSegment* segment, bool isSourceHook )
     : _autoSegment(segment)
@@ -1535,15 +1535,32 @@ namespace {
                                                , _routingGauge->getLayerDirection(zMin+1)
                                                , AutoSegment::Local
                                                );
-    DbU::Unit axis = (segment->isHorizontal()) ? position.getY() : position.getX();
+    DbU::Unit axis;
+    if ( segment->isHorizontal() ) {
+      axis = position.getY();
+      if      ( not hBottom.empty() ) segment->setParent ( hBottom[0]->getSegment() );
+      else if ( not hTop   .empty() ) segment->setParent ( hTop   [0]->getSegment() );
+    } else {
+      axis = position.getX();
+      if      ( not vBottom.empty() ) segment->setParent ( vBottom[0]->getSegment() );
+      else if ( not vTop   .empty() ) segment->setParent ( vTop   [0]->getSegment() );
+    }
+
     segment->setLayer       ( _routingGauge->getRoutingLayer(zMin+1) );
     segment->setAxis        ( axis );
     segment->setSlackened   ( true );
     segment->setLayerChange ( true );
     ltrace(200) << "Corner @" << DbU::getValueString(axis) << " " << segment << endl;
 
-    if ( vExtended ) _contact->setVAlignate ( true );
-    if ( hExtended ) _contact->setHAlignate ( true );
+  //if ( vExtended ) _contact->setVAlignate ( true );
+  //if ( hExtended ) _contact->setHAlignate ( true );
+    // if ( _routingGauge->getLayerDirection(zMin) == Constant::Horizontal ) {
+    //   _contact->setVAlignate ( true );
+    // } else {
+    //   _contact->setHAlignate ( true );
+    // }
+  //_contact->setHAlignate ( true );
+  //_contact->setVAlignate ( true );
 
     AutoContact* secondary = NULL;
     if ( zMax-zMin == 3 ) {
@@ -1558,33 +1575,88 @@ namespace {
                                     , _routingGauge->getLayerDirection(zMin+2)
                                     , AutoSegment::Local
                                     );
+
+      if ( segment->isHorizontal() ) {
+        axis = position.getY();
+        if      ( not hTop   .empty() ) segment->setParent ( hTop   [0]->getSegment() );
+        else if ( not hBottom.empty() ) segment->setParent ( hBottom[0]->getSegment() );
+      } else {
+        axis = position.getX();
+        if      ( not vTop   .empty() ) segment->setParent ( vTop   [0]->getSegment() );
+        else if ( not vBottom.empty() ) segment->setParent ( vBottom[0]->getSegment() );
+      }
+
       axis = (segment->isHorizontal()) ? position.getY() : position.getX();
       segment->setLayer       ( _routingGauge->getRoutingLayer(zMin+2) );
       segment->setAxis        ( axis );
-      segment->setCanonical   ( true );
+    //segment->setCanonical   ( true );
       segment->setSlackened   ( true );
       segment->setLayerChange ( true );
       ltrace(200) << "Secondary @" << DbU::getValueString(axis) << " " << segment << endl;
+
     } else
       secondary = corner;
+
+    // if ( _routingGauge->getLayerDirection(zMin) == Constant::Horizontal ) {
+    //   secondary->setHAlignate ( true );
+    // } else {
+    //   secondary->setVAlignate ( true );
+    // }
+  //secondary->setVAlignate(true);
+  //secondary->setHAlignate(true);
 
     for ( size_t i=0 ; i<hTop.size() ; i++ ) hTop[i]->getHook()->attach ( secondary->getBodyHook() );
     for ( size_t i=0 ; i<vTop.size() ; i++ ) vTop[i]->getHook()->attach ( secondary->getBodyHook() );
 
-    if ( _contact->isVAlignate() ) secondary->setVAlignate(true);
-    if ( _contact->isHAlignate() ) secondary->setHAlignate(true);
+    if ( _contact->isHAlignate() ) secondary->setHAlignate ( true );
+    if ( _contact->isVAlignate() ) secondary->setVAlignate ( true );
 
-    if ( hExtended ) {
-      ltrace(200) << "Original was H extended: restore V connexity." << endl;
-      _contact ->restoreVConnexity ( position.getY(), true );
-      secondary->restoreVConnexity ( position.getY(), true );
+    if ( _globalStem ) {
+      AutoContact* withoutStem = (_routingGauge->getLayerDepth(_globalStem->getLayer()) < zMin+2)
+        ? secondary : _contact;
+
+      if ( _globalStem->isHorizontal() ) {
+        withoutStem->setHAlignate ( true );
+        withoutStem->restoreVConnexity ( position.getY(), true );
+      } else {
+        withoutStem->setVAlignate ( true );
+        withoutStem->restoreHConnexity ( position.getX(), true );
+      }
+    } else {
+      if ( _routingGauge->getLayerDirection(zMin) == Constant::Horizontal ) {
+        _contact ->setVAlignate ( true );
+        secondary->setHAlignate ( true );
+      } else {
+        _contact ->setHAlignate ( true );
+        secondary->setVAlignate ( true );
+      }
     }
 
-    if ( vExtended ) {
-      ltrace(200) << "Original was V extended: restore H connexity." << endl;
-      _contact ->restoreHConnexity ( position.getX(), true );
-      secondary->restoreHConnexity ( position.getX(), true );
-    }
+    // if ( _routingGauge->getLayerDirection(zMin) == Constant::Horizontal ) {
+    //   _contact ->restoreHConnexity ( position.getX(), true );
+    //   secondary->restoreVConnexity ( position.getY(), true );
+    // } else {
+    //   _contact ->restoreVConnexity ( position.getY(), true );
+    //   secondary->restoreHConnexity ( position.getX(), true );
+    // }
+
+    // if ( _contact->isVAlignate() ) secondary->setVAlignate(true);
+    // if ( _contact->isHAlignate() ) secondary->setHAlignate(true);
+
+
+    // if ( (not hExtended) and (not vExtended) ) hExtended = true;
+
+    // if ( hExtended ) {
+    //   ltrace(200) << "Original was H extended: restore V connexity." << endl;
+    //   _contact ->restoreVConnexity ( position.getY(), true );
+    //   secondary->restoreVConnexity ( position.getY(), true );
+    // }
+
+    // if ( vExtended ) {
+    //   ltrace(200) << "Original was V extended: restore H connexity." << endl;
+    //   _contact ->restoreHConnexity ( position.getX(), true );
+    //   secondary->restoreHConnexity ( position.getX(), true );
+    // }
 
     ltraceout(200);
   }
@@ -1599,7 +1671,7 @@ namespace {
     _contact->getAnchorHook()->detach ();
 
     RoutingPad* routingPad = dynamic_cast<RoutingPad*> ( _anchor );
-    if ( !routingPad ) {
+    if ( not routingPad ) {
       cerr << Bug("JunctionBox::splitTerminal(): %s is not anchored on a <RoutingPad>."
                  ,getString(_contact).c_str()) << endl;
       ltraceout(200);
@@ -2256,6 +2328,24 @@ namespace Katabatic {
     }
 
     return (unsigned int)minDepth;
+  }
+
+
+  unsigned int  AutoContact::getMaxDepth () const
+  {
+    size_t maxDepth = 0;
+    Component* anchor = getAnchor ();
+    if ( anchor ) {
+      maxDepth = max ( maxDepth, Session::getRoutingGauge()->getLayerDepth(anchor->getLayer()) );
+    //ltrace(200) << "Anchor:" << anchor << endl;
+    }
+
+    forEach ( Component*, icomponent, getSlaveComponents() ) {
+      maxDepth = max ( maxDepth, Session::getRoutingGauge()->getLayerDepth(icomponent->getLayer()) );
+    //ltrace(200) << "Slave:" << *icomponent << endl;
+    }
+
+    return (unsigned int)maxDepth;
   }
 
 

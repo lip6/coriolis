@@ -31,6 +31,7 @@
 #include  "hurricane/Technology.h"
 #include  "hurricane/Horizontal.h"
 #include  "hurricane/Vertical.h"
+#include  "hurricane/RoutingPad.h"
 #include  "crlcore/RoutingGauge.h"
 #include  "crlcore/AllianceFramework.h"
 #include  "katabatic/Session.h"
@@ -131,6 +132,27 @@ namespace {
   }
 
 
+  void  reselectPadRp ( Cell* cell )
+  {
+    AllianceFramework* af = AllianceFramework::get();
+
+    forEach ( Net*, inet, cell->getNets() ) {
+      if ( inet->getType() == Net::Type::GROUND ) continue;
+      if ( inet->getType() == Net::Type::POWER  ) continue;
+      if ( inet->getType() == Net::Type::CLOCK  ) continue;
+
+      forEach ( RoutingPad*, irp, inet->getRoutingPads() ) {
+        Instance* instance = irp->getOccurrence().getPath().getTailInstance();
+        if ( instance ) {
+          Cell* masterCell = instance->getMasterCell();
+          if ( af->isPad(masterCell) )
+            irp->setOnBestComponent(RoutingPad::LowestLayer);
+        }
+      } // RoutingPad*.
+    } // Net*.
+  }
+
+
 }  // End of anonymous namespace.
 
 
@@ -168,6 +190,7 @@ namespace Katabatic {
   void  KatabaticEngine::chipPrep ()
   {
     if ( isChip() ) {
+      reselectPadRp ( getCell() );
     // slackenBlockIos ( _core );
 
     // cmess1 << "  o  Slackening Pads-connected segments." << endl;

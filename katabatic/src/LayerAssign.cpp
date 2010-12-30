@@ -104,8 +104,9 @@ namespace Katabatic {
            << Session::getRoutingGauge()->getRoutingLayer(depth)->getName() << endl;
 
   //vector<GCell*> gcells  = *(_gcellGrid->getGCellVector());
+  //vector<GCell*> invalidateds;
     DyKeyQueue     queue   ( depth, *(_gcellGrid->getGCellVector()) );
-    vector<GCell*> invalidateds;
+    set<GCell*>    invalidateds;
 
     bool optimized = true;
     while ( optimized ) {
@@ -128,20 +129,27 @@ namespace Katabatic {
           break;
         }
 
-        ltrace(190) << "step desaturate: @ " << i << " " << *igcell << endl;
+      //ltrace(190) << "step desaturate: @ " << i << " " << *igcell << endl;
 
-        AutoSegment* segment = NULL;
-        optimized = (*igcell)->stepDesaturate ( depth, globalNets, segment );
+        // AutoSegment* segment = NULL;
+        // optimized = (*igcell)->stepDesaturate ( depth, globalNets, segment );
 
-        if ( segment ) {
-          ++total; ++globals;
-          segment->getGCells ( invalidateds );
-          for ( size_t j=0 ; j<invalidateds.size() ; j++ ) {
-            queue.invalidate ( invalidateds[j] );
+        // if ( segment ) {
+        //   ++total; ++globals;
+        //   segment->getGCells ( invalidateds );
+        //   for ( size_t j=0 ; j<invalidateds.size() ; j++ ) {
+        //     queue.invalidate ( invalidateds[j] );
+        //   }
+        // }
+        // if ( optimized ) break;
+
+        optimized = (*igcell)->stepNetDesaturate ( depth, globalNets, invalidateds );
+        if ( optimized ) {
+          for ( set<GCell*>::iterator igcell=invalidateds.begin() ; igcell!=invalidateds.end() ; ++igcell ) {
+            queue.invalidate ( *igcell );
           }
+          break;
         }
-
-        if ( optimized ) break;
       }
     }
   }
@@ -188,7 +196,7 @@ namespace Katabatic {
   }
 
 
-  void  KatabaticEngine::_layerAssignByTrunk ( Net* net, unsigned long& total, unsigned long& global, set<Net*>& globalNets )
+  void  KatabaticEngine::_layerAssignByTrunk ( Net* net, set<Net*>& globalNets, unsigned long& total, unsigned long& global )
   {
     DebugSession::open ( net, 90 );
 
@@ -243,7 +251,88 @@ namespace Katabatic {
 
     NetSet::iterator inet = _routingNets.begin();
     for ( ; inet != _routingNets.end() ; ++inet )
-      _layerAssignByTrunk ( *inet, total, global, globalNets );
+      _layerAssignByTrunk ( *inet, globalNets, total, global );
+  }
+
+
+  bool  KatabaticEngine::_moveUpNetTrunk ( AutoSegment* seed, set<Net*>& globalNets, set<GCell*>& invalidateds )
+  {
+    Net* net = seed->getNet();
+    DebugSession::open ( net, 90 );
+
+    ltrace(100) << "_moveUpNetTrunk() - " << seed << endl;
+
+    if ( not seed->canMoveUp(2.0,AutoSegment::Propagate|AutoSegment::AllowTerminal) ) {
+      DebugSession::close ();
+      return false;
+    }
+    ltracein(100);
+
+    globalNets.insert ( net );
+
+    vector<AutoSegment*> globals;
+    vector<AutoSegment*> locals;
+
+    forEach ( Segment*, isegment, net->getSegments() ) {
+      AutoSegment* autoSegment = Session::lookup ( *isegment );
+
+      if ( not autoSegment ) continue;
+      if ( autoSegment->isLocal() ) {
+        if ( autoSegment->isTerminal() ) continue;
+        locals.push_back ( autoSegment );
+      } else {
+      // Ugly: Hard-coded GCell side.
+        if ( (autoSegment->getLength() < DbU::lambda(150.0)) and (autoSegment != seed) )
+          locals.push_back ( autoSegment );
+        else
+          globals.push_back ( autoSegment );
+      }
+    }
+
+    sort ( globals.begin(), globals.end(), AutoSegment::CompareId() );
+    sort (  locals.begin(),  locals.end(), AutoSegment::CompareId() );
+
+    for ( size_t i=0 ; i<globals.size() ; ++i ) {
+      ltrace(100) << "  | Looking up G:" << globals[i] << endl;
+
+      if ( globals[i]->canMoveUp(2.0,AutoSegment::Propagate|AutoSegment::AllowTerminal) ) {
+        unsigned int depth = Session::getRoutingGauge()->getLayerDepth(globals[i]->getLayer());
+        globals[i]->changeDepth ( depth+2, true, false );
+
+        ltrace(100) << "  | Trunk move up G:" << globals[i] << endl;
+
+        vector<GCell*> gcells;
+        globals[i]->getGCells ( gcells );
+        for ( size_t j=0 ; j<gcells.size() ; j++ ) {
+          invalidateds.insert ( gcells[j] );
+        }
+      } else {
+        ltrace(100) << "  | Reject Trunk move up G:" << globals[i] << endl;
+      }
+    }
+
+    for ( size_t i=0 ; i<locals.size() ; ++i ) {
+      ltrace(100) << "  | Looking up L:" << locals[i] << endl;
+
+    //if ( locals[i]->canPivotUp(2.0,AutoSegment::Propagate|AutoSegment::IgnoreContact) ) {
+      if ( locals[i]->canPivotUp(2.0,AutoSegment::Propagate) ) {
+        unsigned int depth = Session::getRoutingGauge()->getLayerDepth(locals[i]->getLayer());
+        locals[i]->changeDepth ( depth+2, true, false );
+
+        ltrace(100) << "  | Trunk move up L:" << locals[i] << endl;
+
+        vector<GCell*> gcells;
+        locals[i]->getGCells ( gcells );
+        for ( size_t j=0 ; j<gcells.size() ; j++ ) {
+          invalidateds.insert ( gcells[j] );
+        }
+      }
+    }
+
+    ltraceout(100);
+    DebugSession::close ();
+
+    return true;
   }
 
 

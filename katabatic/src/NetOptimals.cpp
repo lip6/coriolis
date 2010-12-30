@@ -63,7 +63,7 @@ namespace Katabatic {
       if ( !autoSegment ) continue;
       segments.push_back ( autoSegment );
     }
-    sort ( segments.begin(), segments.end(), AutoSegment::CompareCanonical() );
+    sort ( segments.begin(), segments.end(), AutoSegment::CompareId() );
 
     set<AutoSegment*> processeds;
     for ( size_t i=0 ; i<segments.size() ; i++ )
@@ -90,7 +90,7 @@ namespace Katabatic {
       if ( not autoSegment ) continue;
       segments.push_back ( autoSegment );
     }
-    sort ( segments.begin(), segments.end(), AutoSegment::CompareCanonical() );
+    sort ( segments.begin(), segments.end(), AutoSegment::CompareId() );
 
     set<AutoSegment*> processeds;
     for ( size_t i=0 ; i<segments.size() ; i++ )

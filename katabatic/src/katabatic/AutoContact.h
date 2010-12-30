@@ -178,6 +178,7 @@ namespace Katabatic {
       virtual Box              getBoundingBox             () const;
       inline  GCell*           getGCell                   () const;
               unsigned int     getMinDepth                () const;
+              unsigned int     getMaxDepth                () const;
               bool             canDestroy                 ( bool error=false ) const;
       inline  bool             isInvalidated              () const;
       inline  bool             isCorner                   () const;

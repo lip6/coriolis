@@ -191,12 +191,12 @@ namespace Katabatic {
               void                 _loadGrByNet              ();
               void                 _loadNetGlobalRouting     ( Net* );
               void                 _alignate                 ( Net* );
-              void                 _canonize                 ( Net* );
               void                 _desaturate               ( unsigned int depth, set<Net*>&, unsigned long& total, unsigned long& globals );
               void                 _layerAssignByLength      ( unsigned long& total, unsigned long& global, set<Net*>& );
-              void                 _layerAssignByLength      ( Net* , unsigned long& total, unsigned long& global, set<Net*>& );
+              void                 _layerAssignByLength      ( Net*, unsigned long& total, unsigned long& global, set<Net*>& );
               void                 _layerAssignByTrunk       ( unsigned long& total, unsigned long& global, set<Net*>& );
-              void                 _layerAssignByTrunk       ( Net* , unsigned long& total, unsigned long& global, set<Net*>& );
+              void                 _layerAssignByTrunk       ( Net*, set<Net*>&, unsigned long& total, unsigned long& global );
+              bool                 _moveUpNetTrunk           ( AutoSegment*, set<Net*>& globalNets, set<GCell*>& invalidateds );
               void                 _splitContactsOfNet       ( Net* );
               void                 _collapseNet              ( const Name& , unsigned int depth=1 );
               void                 _collapseNet              ( Net* , unsigned int depth=1 );

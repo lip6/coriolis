@@ -588,7 +588,7 @@ namespace Katabatic {
         if ( seedSegment ) unexploreds.push_back ( seedSegment );
       }
     }
-    sort ( unexploreds.begin(), unexploreds.end(), AutoSegment::CompareCanonical() );
+    sort ( unexploreds.begin(), unexploreds.end(), AutoSegment::CompareId() );
 
     for ( size_t i=0 ; i<unexploreds.size() ; i++ ) {
       AutoSegment* seedSegment = unexploreds[i];
@@ -604,7 +604,7 @@ namespace Katabatic {
         }
 
         ltracein(99);
-        sort ( aligneds.begin(), aligneds.end(), AutoSegment::CompareCanonical() );
+        sort ( aligneds.begin(), aligneds.end(), AutoSegment::CompareId() );
 
         ltrace(99) << "Seed: " << (void*)aligneds[0]->base() << " " << aligneds[0] << endl;
         for ( size_t j=1 ; j<aligneds.size() ; j++ ) {
@@ -616,71 +616,6 @@ namespace Katabatic {
         aligneds[0]->setAxis ( aligneds[0]->getAxis(), Realignate|AxisSet );
         aligneds.clear ();
 
-        ltraceout(99);
-      }
-    }
-
-    ltraceout(99);
-
-    DebugSession::close ();
-  }
-
-
-  void  KatabaticEngine::_canonize ( Net* net )
-  {
-    DebugSession::open ( net, 99 );
-
-    ltrace(100) << "Katabatic::_canonize ( " << net << " )" << endl;
-    ltracein(99);
-
-  //cmess2 << "     - " << getString(net) << endl;
-
-    set<Segment*>        exploredSegments;
-    vector<AutoSegment*> unexploreds;
-    vector<AutoSegment*> aligneds;
-
-    forEach ( Component*, icomponent, net->getComponents() ) {
-      Segment* segment = dynamic_cast<Segment*>(*icomponent);
-      if ( segment ) {
-        AutoSegment* seedSegment = Session::lookup ( segment );
-        if ( seedSegment )
-          unexploreds.push_back ( seedSegment );
-      }
-    }
-    sort ( unexploreds.begin(), unexploreds.end(), AutoSegment::CompareCanonical() );
-
-    for ( size_t i=0 ; i<unexploreds.size() ; i++ ) {
-      AutoSegment* seedSegment = unexploreds[i];
-
-      if ( exploredSegments.find(seedSegment->getSegment()) == exploredSegments.end() ) {
-        ltrace(99) << "New chunk from: " << (void*)seedSegment->base() << ":" << seedSegment << endl;
-        aligneds.push_back ( seedSegment );
-
-        bool isCanonicalLocal = seedSegment->isLocal();
-        forEach ( AutoSegment*, collapsed, seedSegment->getCollapseds() ) {
-          ltrace(99) << "Aligned: " << (void*)collapsed->base() << ":" << *collapsed << endl;
-          aligneds.push_back ( *collapsed );
-          exploredSegments.insert ( collapsed->getSegment() );
-
-          if ( collapsed->isGlobal() ) isCanonicalLocal = false;
-        }
-
-        ltracein(99);
-        sort ( aligneds.begin(), aligneds.end(), AutoSegment::CompareCanonical() );
-
-        aligneds[0]->setCanonical      ( true );
-        aligneds[0]->setCanonicalLocal ( isCanonicalLocal );
-        ltrace(99) << "Canonical: " << (void*)aligneds[0]->base() << ":" << aligneds[0] << endl;
-
-        for ( size_t j=1 ; j<aligneds.size() ; j++ ) {
-          aligneds[j]->setCanonical ( false );
-          ltrace(99) << "Secondary: " << (void*)(aligneds[j]->base()) << ":" << aligneds[j] << endl;
-        }
-
-        ltrace(159) << "Align on " << aligneds[0]
-                    << " " << DbU::getLambda(aligneds[0]->getAxis()) << endl;
-        aligneds[0]->setAxis ( aligneds[0]->getAxis(), Realignate|AxisSet );
-        aligneds.clear ();
         ltraceout(99);
       }
     }
@@ -866,7 +801,7 @@ namespace Katabatic {
         segments.push_back ( autoSegment );
     }
 
-    sort ( segments.begin(), segments.end(), AutoSegment::CompareCanonical() );
+    sort ( segments.begin(), segments.end(), AutoSegment::CompareId() );
 
     Interval constraints;
     for ( size_t i=0 ; i<segments.size() ; i++ ) {

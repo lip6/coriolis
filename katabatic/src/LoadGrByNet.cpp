@@ -2161,6 +2161,11 @@ namespace {
         }
       }
 
+      if ( _topology & GLOBAL_BEND ) {
+        ltrace(99) << "Global Bend " << _southWestContact << endl;
+        _southWestContact->setVAlignate ( true );
+      }
+
       if ( _topology & (GLOBAL_VERTICAL|GLOBAL_FORK) ) {
         ltrace(99) << "Global Vertical/Global fork " << _south << endl;
 
@@ -2173,11 +2178,8 @@ namespace {
                                       , false
                                       );
         segment->setStrap ( true );
-
-        if ( direction == Constant::Vertical ) {
-          if ( !_south ) _northEastContact->setVAlignate ( true );
-          else           _southWestContact->setVAlignate ( true );
-        }
+        _northEastContact->setVAlignate ( true );
+        _southWestContact->setVAlignate ( true );
       }
     }
 

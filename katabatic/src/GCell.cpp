@@ -113,18 +113,18 @@ namespace Katabatic {
     , _box               (box)
     , _depth             (Session::getRoutingGauge()->getDepth())
     , _pinDepth          (0)
-    , _blockages         (new float [_depth])
+    , _blockages         (new DbU::Unit [_depth])
     , _cDensity          (0.0)
     , _densities         (new float [_depth])
-    , _saturateDensities (new float [_depth])
+ // , _saturateDensities (new float [_depth])
     , _saturated         (false)
     , _invalid           (true)
     , _key               (0.0,_index)
   {
     for ( size_t i=0 ; i<_depth ; i++ ) {
-      _blockages        [i] = 0.0;
+      _blockages        [i] = 0;
       _densities        [i] = 0.0;
-      _saturateDensities[i] = 0.0;
+    //_saturateDensities[i] = 0.0;
 
       if ( Session::getRoutingGauge()->getLayerGauge(i)->getType() == Constant::PinOnly )
         ++_pinDepth;
@@ -165,8 +165,9 @@ namespace Katabatic {
   {
     ltrace(90) << "GCell::~GCell()" << endl;
 
+    delete [] _blockages;
     delete [] _densities;
-    delete [] _saturateDensities;
+  //delete [] _saturateDensities;
 
     _allocateds--;
   }
@@ -406,7 +407,7 @@ namespace Katabatic {
   }
 
 
-  void  GCell::addBlockage ( unsigned int depth, float length )
+  void  GCell::addBlockage ( unsigned int depth, DbU::Unit length )
   {
     if ( depth >= _depth ) return;
 
@@ -428,7 +429,7 @@ namespace Katabatic {
     // }
 
     ltrace(300) << "GCell:addBlockage() " << this << " "
-                << depth << ":" << _blockages[depth] << endl;
+                << depth << ":" << DbU::getValueString(_blockages[depth]) << endl;
   }
 
 
@@ -556,13 +557,9 @@ namespace Katabatic {
     DbU::Unit hpenalty     = 0 /*_box.getWidth () / 3*/;
     DbU::Unit vpenalty     = 0 /*_box.getHeight() / 3*/;
     DbU::Unit uLengths1 [ _depth ];
-    float     fLengths1 [ _depth ];
-    float     fLengths2 [ _depth ];
+    DbU::Unit uLengths2 [ _depth ];
 
-    for ( size_t i=0 ; i<_depth ; i++ ) {
-      fLengths1[i] = 0.0;
-      fLengths2[i] = 0.0;
-    }
+  for ( size_t i=0 ; i<_depth ; i++ ) uLengths2[i] = 0;
 
   // Compute wirelength associated to contacts (in DbU::Unit converted to float).
     set<AutoSegment*> processeds;
@@ -572,26 +569,10 @@ namespace Katabatic {
       for ( size_t i=0 ; i<_depth ; i++ ) uLengths1[i] = 0;
       (*it)->getLengths ( uLengths1, processeds );
       for ( size_t i=0 ; i<_depth ; i++ ) {
-        fLengths1[i] += (float)uLengths1[i];
         switch ( Session::getRoutingGauge()->getLayerDirection(i) ) {
-          case Constant::Horizontal: fLengths2[i] += (float)(uLengths1[i]+hpenalty); break;
-          case Constant::Vertical:   fLengths2[i] += (float)(uLengths1[i]+vpenalty); break;
+          case Constant::Horizontal: uLengths2[i] += uLengths1[i]+hpenalty; break;
+          case Constant::Vertical:   uLengths2[i] += uLengths1[i]+vpenalty; break;
         }
-      }
-    }
-
-  // Transform the wirelength in density (divide by track length, one
-  // occupied track count for "one").
-    for ( size_t i=0 ; i<_depth ; i++ ) {
-      switch ( Session::getRoutingGauge()->getLayerDirection(i) ) {
-        case Constant::Horizontal:
-          fLengths1[i] /= (float)_box.getWidth ();
-          fLengths2[i] /= (float)_box.getWidth ();
-          break;
-        case Constant::Vertical:
-          fLengths1[i] /= (float)_box.getHeight();
-          fLengths2[i] /= (float)_box.getHeight();
-          break;
       }
     }
 
@@ -602,8 +583,7 @@ namespace Katabatic {
       size_t       count = 0;
       for ( size_t i=0 ; i<_hsegments.size() ; i++ ) {
         if ( layer != _hsegments[i]->getLayer() ) {
-          fLengths1[depth] += (float)count;
-          fLengths2[depth] += (float)count;
+          uLengths2[depth] += count * _box.getWidth();
 
           count = 0;
           layer = _hsegments[i]->getLayer();
@@ -612,8 +592,7 @@ namespace Katabatic {
         count++;
       }
       if ( count ) {
-        fLengths1[depth] += (float)count;
-        fLengths2[depth] += (float)count;
+        uLengths2[depth] += count * _box.getWidth();
       }
     }
 
@@ -624,8 +603,7 @@ namespace Katabatic {
       size_t       count = 0;
       for ( size_t i=0 ; i<_vsegments.size() ; i++ ) {
         if ( layer != _vsegments[i]->getLayer() ) {
-          fLengths1[depth] += (float)count;
-          fLengths2[depth] += (float)count;
+          uLengths2[depth] += count * _box.getHeight();
 
           count = 0;
           layer = _vsegments[i]->getLayer();
@@ -634,45 +612,37 @@ namespace Katabatic {
         count++;
       }
       if ( count ) {
-        fLengths1[depth] += (float)count;
-        fLengths2[depth] += (float)count;
+        uLengths2[depth] += count * _box.getHeight();
       }
     }
 
   // Add the blockages.
     for ( size_t i=0 ; i<_depth ; i++ ) {
-      fLengths1[i] += _blockages[i];
-      fLengths2[i] += _blockages[i];
+      uLengths2[i] += _blockages[i];
     }
 
   // Normalize: 0 < d < 1.0 (divide by H/V capacity).
     for ( size_t i=0 ; i<_depth ; i++ ) {
       switch ( Session::getRoutingGauge()->getLayerDirection(i) ) {
         case Constant::Horizontal:
-          fLengths1[i] /= hcapacity;
-          fLengths2[i] /= hcapacity;
+          _densities[i] = ((float)uLengths2[i]) / ( hcapacity * (float)_box.getWidth() );
           break;
         case Constant::Vertical:
-          fLengths1[i] /= vcapacity;
-          fLengths2[i] /= vcapacity;
+          _densities[i] = ((float)uLengths2[i]) / ( vcapacity * (float)_box.getHeight() );
           break;
       }
-      if ( fLengths1[i] > 1.0 ) {
-        _saturated = true;
-      //fLengths[i] = 1.0;
-      }
-      _densities        [i] = fLengths1[i];
-      _saturateDensities[i] = fLengths2[i];
+       if ( _densities[i] >= 1.0 ) _saturated = true;
     }
 
     _cDensity = ( (float)_contacts.size() ) / ccapacity;
     _invalid  = false;
 
     for ( size_t i=0 ; i<_depth ; i++ ) {
-      _densities        [i] = roundfp ( _densities        [i] );
-      _saturateDensities[i] = roundfp ( _saturateDensities[i] );
+      _densities[i] = roundfp ( _densities        [i] );
     }
     _cDensity = roundfp (_cDensity );
+
+    ltrace(200) << "updateDensity: " << this << endl;
 
     checkDensity ();
 
@@ -683,8 +653,6 @@ namespace Katabatic {
          << " " << setprecision(9) << gdensity << endl;
 #endif
 
-  //cerr << "updateDensity() " << this << getVectorString(_densities,_depth) << endl;
-
     return ( _saturated ) ? 1 : 0 ;
   }
 
@@ -693,19 +661,38 @@ namespace Katabatic {
   {
     if ( _invalid ) const_cast<GCell*>(this)->updateDensity ();
 
-    if ( !Session::getDemoMode() && Session::getWarnGCellOverload() ) {
+    if ( not Session::getDemoMode() and Session::getWarnGCellOverload() ) {
       for ( size_t i=0 ; i<_depth ; i++ ) {
         if ( _densities[i] > 1.0 ) {
-          cerr << Warning("%s @%dx%d overloaded in %s (M2:%.2f M3:%.2f,%.2f M4:%.2f M5:%.2f)"
+          cerr << Warning("%s @%dx%d overloaded in %s (M2:%.2f M3:%.2f M4:%.2f M5:%.2f)"
                          ,_getString().c_str()
                          ,getColumn()
                          ,getRow()
                          ,getString(Session::getRoutingGauge()->getRoutingLayer(i)->getName()).c_str()
-                         ,_densities[1]
-                         ,_densities[2]
-                         ,_blockages[2]
-                         ,_densities[3]
-                         ,_densities[4]
+                         ,_densities[1]  // M2
+                         ,_densities[2]  // M3
+                       //,_blockages[2]  // M4
+                         ,_densities[3]  // M5
+                         ,_densities[4]  // M6
+                         )
+             << endl;
+        }
+      }
+      for ( size_t i=3 ; i<_depth ; i+=2 ) {
+        if ( (_densities[i] < 0.3) and (_densities[i-2] < 0.3) ) continue;
+
+        float balance = _densities[i] / (_densities[i-2]+0.001 );
+        if ( (balance > 3) or (balance < .33) ) {
+          cerr << Warning("%s @%dx%d unbalanced in %s (M2:%.2f M3:%.2f M4:%.2f M5:%.2f)"
+                         ,_getString().c_str()
+                         ,getColumn()
+                         ,getRow()
+                         ,getString(Session::getRoutingGauge()->getRoutingLayer(i)->getName()).c_str()
+                         ,_densities[1]  // M2
+                         ,_densities[2]  // M3
+                       //,_blockages[2]  // M4
+                         ,_densities[3]  // M5
+                         ,_densities[4]  // M6
                          )
              << endl;
         }
@@ -738,7 +725,7 @@ namespace Katabatic {
                    ) << endl;
 
     AutoSegment* segment;
-    while ( stepDesaturate ( 1, globalNets, segment, true ) ) {
+    while ( (_densities[1] > 0.5) and stepDesaturate(1,globalNets,segment,true) ) {
       ltrace(200) << "Moved up: " << segment << endl;
     }
   }
@@ -783,12 +770,12 @@ namespace Katabatic {
       case Constant::Vertical:   capacity = getVCapacity(); break;
     }
 
-    ltrace(200) << "| hasFreeTrack [" << getIndex() << "] depth:" << depth << " "
+    ltrace(200) << "  | hasFreeTrack [" << getIndex() << "] depth:" << depth << " "
                 << Session::getRoutingGauge()->getRoutingLayer(depth)->getName()
-                << " " << (_saturateDensities[depth]*capacity) << " vs. " << capacity
-                << endl;
-
-    return (_saturateDensities[depth]*capacity + 1.0 + reserve <= capacity);
+                << " " << (_densities[depth]*capacity) << " vs. " << capacity
+                << " " << this << endl;
+    
+    return (_densities[depth]*capacity + 1.0 + reserve <= capacity);
   }
 
 
@@ -840,11 +827,11 @@ namespace Katabatic {
       //   return false;
       // }
 
-      // (*isegment)->changeDepth ( depth+2, false, false );
-      // moved = (*isegment);
+      (*isegment)->changeDepth ( depth+2, false, false );
+      moved = (*isegment);
 
-      (*isegment)->shearUp ( this, moved, 0.5, AutoSegment::AllowTerminal );
-      updateDensity ();
+    //(*isegment)->shearUp ( this, moved, 0.5, AutoSegment::AllowTerminal );
+    //updateDensity ();
 
     //cmess2 << "     - GCell [" << getIndex() << "] @" << getColumn() << "x" << getRow()
     //       << ":" << setprecision(4) << density
@@ -853,7 +840,60 @@ namespace Katabatic {
     //       << "  displaced:" << (*isegment) << "]."
     //       << endl;
 
-      if ( moved ) return true;
+      if ( moved ) {
+        // cerr << "Desaturating: " << _densities[depth] << " > " << Session::getSaturateRatio() << " "
+        //      << Session::getRoutingGauge()->getRoutingLayer(depth)->getName() << " "
+        //      << this << endl;
+        // cerr << "Moved up: " << moved << endl;
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+
+  bool  GCell::stepNetDesaturate ( unsigned int depth, set<Net*>& globalNets, set<GCell*>& invalidateds )
+  {
+#if defined(CHECK_DETERMINISM)
+    cerr << "Order: stepDesaturate [" << getIndex() << "] depth:" << depth << endl;
+#endif
+    ltrace(200) << "stepNetDesaturate() - " << this << endl;
+
+    updateDensity ();
+
+  //if ( not force and not isSaturated(depth) ) return false;
+
+    float capacity;
+    vector<AutoSegment*>::iterator isegment;
+    vector<AutoSegment*>::iterator iend;
+
+    switch ( Session::getRoutingGauge()->getLayerDirection(depth) ) {
+      case Constant::Horizontal:
+        iend     = _hsegments.end   ();
+        isegment = _hsegments.begin ();
+        capacity = getHCapacity ();
+        break;
+      case Constant::Vertical:
+        iend     = _vsegments.end   ();
+        isegment = _vsegments.begin ();
+        capacity = getVCapacity ();
+        break;
+    }
+
+    for ( ; (isegment != iend) ; isegment++ ) {
+      unsigned int segmentDepth = Session::getRoutingGauge()->getLayerDepth((*isegment)->getLayer());
+
+      if ( segmentDepth < depth ) continue;
+      if ( segmentDepth > depth ) break;
+
+#if defined(CHECK_DETERMINISM)
+      cerr << "Order: Move up " << (*isegment) << endl;
+#endif
+
+    //cerr << "  Seed segment: " << *isegment << endl;
+      if ( getGCellGrid()->getKatabatic()->_moveUpNetTrunk(*isegment,globalNets,invalidateds) )
+        return true;
     }
 
     return false;
@@ -1047,12 +1087,12 @@ namespace Katabatic {
       record->add ( getSlot ( s.str(),  &_densities[depth] ) );
     }
 
-    for ( size_t depth=0 ; depth<_depth ; ++depth ) {
-      ostringstream s;
-      const Layer* layer = rg->getRoutingLayer(depth);
-      s << "_saturateDensities[" << depth << ":" << ((layer) ? layer->getName() : "None") << "]";
-      record->add ( getSlot ( s.str(),  &_saturateDensities[depth] ) );
-    }
+    // for ( size_t depth=0 ; depth<_depth ; ++depth ) {
+    //   ostringstream s;
+    //   const Layer* layer = rg->getRoutingLayer(depth);
+    //   s << "_saturateDensities[" << depth << ":" << ((layer) ? layer->getName() : "None") << "]";
+    //   record->add ( getSlot ( s.str(),  &_saturateDensities[depth] ) );
+    // }
                                      
     return record;
   }

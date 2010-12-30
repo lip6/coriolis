@@ -250,49 +250,39 @@ namespace Katabatic {
 
 
 // -------------------------------------------------------------------
-// Class  :  "Katabatic::AutoSegment::CompareCanonical".
-
-
-  bool  AutoSegment::CompareCanonical::operator() ( const AutoSegment* lhs, const AutoSegment* rhs ) const
-  {
-    if ( lhs->isCanonical   () xor rhs->isCanonical   () ) return lhs->isCanonical();
-    if ( lhs->isCollapsed   () xor rhs->isCollapsed   () ) return rhs->isCollapsed();
-    if ( lhs->isSlackenStrap() xor rhs->isSlackenStrap() ) return lhs->isSlackenStrap();
-
-    if ( lhs->getSourceU() < rhs->getSourceU() ) return true;
-    if ( lhs->getSourceU() > rhs->getSourceU() ) return false;
-
-    if ( lhs->getLength() > rhs->getLength() ) return true;
-    if ( lhs->getLength() < rhs->getLength() ) return false;
-
-    if ( lhs->isGlobal    () xor rhs->isGlobal    () ) return lhs->isGlobal();
-    if ( lhs->isTerminal  () xor rhs->isTerminal  () ) return rhs->isTerminal();
-    if ( lhs->isHorizontal() xor rhs->isHorizontal() ) return lhs->isHorizontal();
-
-    if ( lhs->getAxis() < rhs->getAxis() ) return true;
-    if ( lhs->getAxis() > rhs->getAxis() ) return false;
-
-    if ( lhs->isFixed() xor rhs->isFixed() ) return lhs->isFixed();
-
-    return lhs->getId() < rhs->getId();
-  }
-
-
-// -------------------------------------------------------------------
 // Class  :  "Katabatic::AutoSegment::CompareByDepthLength".
 
 
   bool  AutoSegment::CompareByDepthLength::operator() ( AutoSegment* lhs, AutoSegment* rhs ) const
   {
-    if ( Session::getRoutingGauge()->getLayerDepth(lhs->getLayer())
-       < Session::getRoutingGauge()->getLayerDepth(rhs->getLayer()) )
-      return true;
+    int deltaDepth = (int)(Session::getRoutingGauge()->getLayerDepth(lhs->getLayer()))
+                   - (int)(Session::getRoutingGauge()->getLayerDepth(rhs->getLayer()));
+    if ( deltaDepth < 0 ) return true;  // Lowest layer first.
+    if ( deltaDepth > 0 ) return false;
 
-    if ( Session::getRoutingGauge()->getLayerDepth(lhs->getLayer())
-       > Session::getRoutingGauge()->getLayerDepth(rhs->getLayer()) )
-      return false;
+    DbU::Unit deltaUnit = lhs->getSourceU() - rhs->getSourceU();
+    if ( deltaUnit < 0 ) return true;  // Smallest source first.
+    if ( deltaUnit > 0 ) return false;
 
-    return AutoSegment::CompareCanonical() ( lhs, rhs );
+    deltaUnit = lhs->getLength() - rhs->getLength();
+    if ( deltaUnit > 0 ) return true;  // Longest first.
+    if ( deltaUnit < 0 ) return true;
+
+    deltaUnit = lhs->getAxis() - rhs->getAxis();
+    if ( deltaUnit < 0 ) return true;  // Smallest axis first.
+    if ( deltaUnit > 0 ) return false;
+
+    // if ( lhs->isCanonical   () xor rhs->isCanonical   () ) return lhs->isCanonical();
+    // if ( lhs->isCollapsed   () xor rhs->isCollapsed   () ) return rhs->isCollapsed();
+    // if ( lhs->isSlackenStrap() xor rhs->isSlackenStrap() ) return lhs->isSlackenStrap();
+
+    // if ( lhs->isGlobal    () xor rhs->isGlobal    () ) return lhs->isGlobal();
+    // if ( lhs->isTerminal  () xor rhs->isTerminal  () ) return rhs->isTerminal();
+    // if ( lhs->isHorizontal() xor rhs->isHorizontal() ) return lhs->isHorizontal();
+
+    // if ( lhs->isFixed() xor rhs->isFixed() ) return lhs->isFixed();
+
+    return lhs->getId() < rhs->getId();
   }
 
 
@@ -790,8 +780,8 @@ namespace Katabatic {
         break;
       }
 
-      if ( !hasCanonical ) {
-        if ( CompareCanonical()(*isegment,canonical) )
+      if ( not hasCanonical ) {
+        if ( CompareId()(*isegment,canonical) )
           canonical = *isegment;
       }
     }
@@ -833,6 +823,7 @@ namespace Katabatic {
     , _id               (_maxId++)
     , _optimalMin       (0)
     , _userConstraints  (false)
+    , _parent           (NULL)
   {
   //cerr << "AutoSegment::AutoSegment() - <id:" << _id << ">" << endl;
 #if defined(CHECK_DETERMINISM)
@@ -1251,12 +1242,12 @@ namespace Katabatic {
   }
 
 
-  bool  AutoSegment::canPivotUp ( bool propagate, float reserve )
+  bool  AutoSegment::canPivotUp ( float reserve, unsigned int flags )
   {
-    ltrace(200) << "AutoSegment::canPivotUp()" << endl;
+    ltrace(200) << "AutoSegment::canPivotUp() - " << flags << endl;
 
     if ( isLayerChange() or isFixed() ) return false;
-    if ( isTerminal() or isLocal() ) return false;
+    if ( isTerminal   () or isLocal() ) return false;
 
   //if ( isTerminal() ) return false;
 
@@ -1266,19 +1257,67 @@ namespace Katabatic {
     vector<GCell*> gcells;
     getGCells ( gcells );
     for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-      if ( !gcells[i]->hasFreeTrack(depth,reserve) ) return false;
+      if ( not gcells[i]->hasFreeTrack(depth+2,reserve) ) return false;
+    }
+
+    if ( not (flags&IgnoreContact) ) {
+      ltrace(200) << getAutoSource() << endl;
+      ltrace(200) << getAutoTarget() << endl;
+      ltrace(200) << "min depths, Segment:" << depth
+                  <<            " S:" << getAutoSource()->getMinDepth()
+                  <<            " T:" << getAutoTarget()->getMinDepth() << endl;
+
+      if ( getAutoSource()->getMinDepth() < depth ) return false;
+      if ( getAutoTarget()->getMinDepth() < depth ) return false;
+    }
+
+    if ( flags & Propagate ) {
+      forEach ( AutoSegment*, isegment, getCollapseds() ) {
+        isegment->getGCells ( gcells );
+        for ( size_t i=0 ; i<gcells.size() ; i++ ) {
+          if ( not gcells[i]->hasFreeTrack(depth+2,reserve) ) return false;
+        }
+        if ( isegment->getAutoSource()->getMinDepth() < depth ) return false;
+        if ( isegment->getAutoTarget()->getMinDepth() < depth ) return false;
+      }
+    } else {
+      ltrace(200) << "AutoSegment::canPivotUp() - true [no propagate]" << endl;
+      return true;
+    }
+
+    ltrace(200) << "AutoSegment::canPivotUp() - true [propagate]" << endl;
+
+    return true;
+  }
+
+
+  bool  AutoSegment::canPivotDown ( bool propagate, float reserve )
+  {
+    ltrace(200) << "AutoSegment::canPivotDown()" << endl;
+
+    if ( isLayerChange() or isFixed() ) return false;
+    if ( isTerminal   () or isLocal() ) return false;
+  //if ( isTerminal   () ) return false;
+
+    size_t depth = Session::getRoutingGauge()->getLayerDepth(getLayer());
+    if ( depth < 3 ) return false;
+
+    vector<GCell*> gcells;
+    getGCells ( gcells );
+    for ( size_t i=0 ; i<gcells.size() ; i++ ) {
+      if ( not gcells[i]->hasFreeTrack(depth-2,reserve) ) return false;
     }
 
     ltrace(200) << getAutoSource() << endl;
     ltrace(200) << getAutoTarget() << endl;
-    ltrace(200) << "min depths, Segment:" << depth
-                <<            " S:" << getAutoSource()->getMinDepth()
-                <<            " T:" << getAutoTarget()->getMinDepth() << endl;
+    ltrace(200) << "max depths, Segment:" << depth
+                <<            " S:" << getAutoSource()->getMaxDepth()
+                <<            " T:" << getAutoTarget()->getMaxDepth() << endl;
 
-    if ( getAutoSource()->getMinDepth() < depth ) return false;
-    if ( getAutoTarget()->getMinDepth() < depth ) return false;
+    if ( getAutoSource()->getMaxDepth() > depth ) return false;
+    if ( getAutoTarget()->getMaxDepth() > depth ) return false;
     if ( not propagate ) {
-      ltrace(200) << "AutoSegment::canPivotUp() - true [no propagate]" << endl;
+      ltrace(200) << "AutoSegment::canPivotDown() - true [no propagate]" << endl;
       return true;
     }
 
@@ -1286,10 +1325,10 @@ namespace Katabatic {
       forEach ( AutoSegment*, isegment, getCollapseds() ) {
         isegment->getGCells ( gcells );
         for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-          if ( !gcells[i]->hasFreeTrack(depth,reserve) ) return false;
+          if ( not gcells[i]->hasFreeTrack(depth-2,reserve) ) return false;
         }
-        if ( isegment->getAutoSource()->getMinDepth() < depth ) return false;
-        if ( isegment->getAutoTarget()->getMinDepth() < depth ) return false;
+        if ( isegment->getAutoSource()->getMaxDepth() < depth ) return false;
+        if ( isegment->getAutoTarget()->getMaxDepth() < depth ) return false;
       }
     }
 
@@ -1351,6 +1390,15 @@ namespace Katabatic {
   {
     if ( not canMoveUp(0.0,flags) ) return false;
     changeDepth ( Session::getRoutingGauge()->getLayerDepth(getLayer()) + 2, flags&Propagate );
+
+    return true;
+  }
+
+
+  bool  AutoSegment::moveDown ( unsigned int flags )
+  {
+    if ( not canPivotDown(0.0,flags) ) return false;
+    changeDepth ( Session::getRoutingGauge()->getLayerDepth(getLayer()) - 2, flags&Propagate );
 
     return true;
   }
