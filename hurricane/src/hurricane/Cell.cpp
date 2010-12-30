@@ -215,7 +215,7 @@ void Cell::flattenNets(bool buildRings)
       }
 
       forEach ( Occurrence, iplugOccurrence, hyperNet.getLeafPlugOccurrences() ) {
-        currentRP = createRoutingPad ( net, *iplugOccurrence );
+        currentRP = RoutingPad::create ( net, *iplugOccurrence, RoutingPad::BiggestArea );
         currentRP->materialize ();
         if ( buildRings ) {
           if ( previousRP ) {
@@ -233,7 +233,7 @@ void Cell::flattenNets(bool buildRings)
       forEach ( Component*, icomponent, net->getComponents() ) {
         Pin* pin = dynamic_cast<Pin*>( *icomponent );
         if ( pin ) {
-          currentRP = createRoutingPad ( pin );
+          currentRP = RoutingPad::create ( pin );
           if ( buildRings ) {
             if ( previousRP ) {
               currentRP->getBodyHook()->attach ( previousRP->getBodyHook() );

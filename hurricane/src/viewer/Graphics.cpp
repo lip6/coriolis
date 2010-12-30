@@ -255,19 +255,19 @@ namespace Hurricane {
   }
 
 
-  QColor  Graphics::getColor ( const Name& key, int darkening )
+  QColor  Graphics::getColor ( const Name& key, const DisplayStyle::HSVr& darkening )
   {
     return getGraphics()->_getColor ( key, darkening );
   }
 
 
-  QPen  Graphics::getPen ( const Name& key, int darkening )
+  QPen  Graphics::getPen ( const Name& key, const DisplayStyle::HSVr& darkening )
   {
     return getGraphics()->_getPen ( key, darkening );
   }
 
 
-  QBrush  Graphics::getBrush ( const Name& key, int darkening )
+  QBrush  Graphics::getBrush ( const Name& key, const DisplayStyle::HSVr& darkening )
   {
     return getGraphics()->_getBrush ( key, darkening );
   }
@@ -285,7 +285,7 @@ namespace Hurricane {
   }
 
 
-  int  Graphics::getDarkening ()
+  const DisplayStyle::HSVr& Graphics::getDarkening ()
   {
     return getGraphics()->_getDarkening ();
   }
@@ -294,6 +294,12 @@ namespace Hurricane {
   const ColorScale& Graphics::getColorScale ( ColorScale::ScaleType id )
   {
     return getGraphics()->_getColorScale ( id );
+  }
+
+
+  QColor  Graphics::darken ( const QColor& color )
+  {
+    return DisplayStyle::darken ( color, getDarkening() );
   }
 
 

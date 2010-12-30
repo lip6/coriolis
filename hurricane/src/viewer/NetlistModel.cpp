@@ -55,13 +55,6 @@ namespace Hurricane {
     static QFont nameFont  = Graphics::getFixedFont ( QFont::Bold );
     static QFont valueFont = Graphics::getFixedFont ( QFont::Normal, true );
 
-    if ( role == Qt::SizeHintRole ) {
-      switch (index.column()) {
-        case 0:  return 200;
-        default: return -1;
-      }
-    }
-
     if ( role == Qt::FontRole ) {
       if ( index.row() == 0 ) return QVariant();
       switch (index.column()) {
@@ -71,7 +64,7 @@ namespace Hurricane {
       return QVariant();
     }
 
-    if ( !index.isValid() ) return QVariant ();
+    if ( not index.isValid() ) return QVariant ();
 
     if ( role == Qt::DisplayRole ) {
       int row = index.row ();

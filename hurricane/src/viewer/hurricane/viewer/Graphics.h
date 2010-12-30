@@ -60,13 +60,14 @@ namespace Hurricane {
       static  const QFont                  getFixedFont     ( int weight=QFont::Normal, bool italic=false, bool underline=false, int scale=0 );
       static  const QFont                  getNormalFont    ( bool bold=false, bool italic=false, bool underline=false );
       static  const Name&                  getGroup         ( const Name& key );
-      static  QColor                       getColor         ( const Name& key, int darkening=100 );
-      static  QPen                         getPen           ( const Name& key, int darkening=100 );
-      static  QBrush                       getBrush         ( const Name& key, int darkening=100 );
+      static  QColor                       getColor         ( const Name& key, const DisplayStyle::HSVr& darkening=DisplayStyle::HSVr() );
+      static  QPen                         getPen           ( const Name& key, const DisplayStyle::HSVr& darkening=DisplayStyle::HSVr() );
+      static  QBrush                       getBrush         ( const Name& key, const DisplayStyle::HSVr& darkening=DisplayStyle::HSVr() );
       static  const string&                getPattern       ( const Name& key );
       static  float                        getThreshold     ( const Name& key );
-      static  int                          getDarkening     ();
+      static  const DisplayStyle::HSVr&    getDarkening     ();
       static  const ColorScale&            getColorScale    ( ColorScale::ScaleType );
+      static  QColor                       darken           ( const QColor& );
       static  const TextTranslator&        getHtmlTranslator();
       static  string                       toHtml           ( const string& );
       static  bool                         breakpointStopCb ( const string& message );
@@ -106,12 +107,12 @@ namespace Hurricane {
               DisplayStyle*                _getStyle          () const;
       inline  const vector<DisplayStyle*>& _getStyles         () const;
       inline  const Name&                  _getGroup          ( const Name& key ) const;
-      inline  QColor                       _getColor          ( const Name& key, int darkening ) const;
-      inline  QPen                         _getPen            ( const Name& key, int darkening ) const;
-      inline  QBrush                       _getBrush          ( const Name& key, int darkening ) const;
+      inline  QColor                       _getColor          ( const Name& key, const DisplayStyle::HSVr& darkening ) const;
+      inline  QPen                         _getPen            ( const Name& key, const DisplayStyle::HSVr& darkening ) const;
+      inline  QBrush                       _getBrush          ( const Name& key, const DisplayStyle::HSVr& darkening ) const;
       inline  const string&                _getPattern        ( const Name& key ) const;
       inline  float                        _getThreshold      ( const Name& key ) const;
-      inline  int                          _getDarkening      () const;
+      inline  const DisplayStyle::HSVr&    _getDarkening      () const;
       inline  const ColorScale&            _getColorScale     ( ColorScale::ScaleType ) const;
       inline  void                         _enable            ();
       inline  const TextTranslator&        _getHtmlTranslator () const;
@@ -122,13 +123,13 @@ namespace Hurricane {
   inline const Name& Graphics::_getGroup ( const Name& name ) const
   { return _active->getGroup(name); }
 
-  inline QColor  Graphics::_getColor ( const Name& name, int darkening ) const
+  inline QColor  Graphics::_getColor ( const Name& name, const DisplayStyle::HSVr& darkening ) const
   { return _active->getColor(name,darkening); }
 
-  inline QPen  Graphics::_getPen ( const Name& name, int darkening ) const
+  inline QPen  Graphics::_getPen ( const Name& name, const DisplayStyle::HSVr& darkening ) const
   { return _active->getPen(name,darkening); }
 
-  inline QBrush  Graphics::_getBrush ( const Name& name, int darkening ) const
+  inline QBrush  Graphics::_getBrush ( const Name& name, const DisplayStyle::HSVr& darkening ) const
   { return _active->getBrush(name,darkening); }
 
   inline const string& Graphics::_getPattern ( const Name& name ) const
@@ -137,7 +138,7 @@ namespace Hurricane {
   inline float  Graphics::_getThreshold ( const Name& name ) const
   { return _active->getThreshold(name); }
 
-  inline int  Graphics::_getDarkening () const
+  inline const DisplayStyle::HSVr& Graphics::_getDarkening () const
   { return _active->getDarkening(); }
 
   inline const ColorScale& Graphics::_getColorScale ( ColorScale::ScaleType id ) const

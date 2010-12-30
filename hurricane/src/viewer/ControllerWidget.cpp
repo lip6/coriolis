@@ -215,7 +215,7 @@ namespace Hurricane {
 
   void  TabNetlist::setSyncNetlist ( bool state )
   {
-    if ( state && getCellWidget() ) {
+    if ( state and getCellWidget() ) {
       _netlistBrowser->setCell<SimpleNetInformations> ( getCellWidget()->getCell() );
     } else {
       _netlistBrowser->setCell<SimpleNetInformations> ( NULL );
@@ -225,9 +225,9 @@ namespace Hurricane {
 
   void  TabNetlist::setSyncSelection ( bool state )
   {
-    if ( state && getCellWidget() && _syncNetlist->isChecked() ) {
+    if ( state and getCellWidget() and _syncNetlist->isChecked() ) {
       _cwCumulativeSelection = getCellWidget()->cumulativeSelection();
-      if ( !_cwCumulativeSelection ) {
+      if ( not _cwCumulativeSelection ) {
         getCellWidget()->openRefreshSession ();
         getCellWidget()->unselectAll ();
         getCellWidget()->closeRefreshSession ();

@@ -80,7 +80,6 @@ namespace Hurricane {
 
     QHeaderView* horizontalHeader = _view->horizontalHeader ();
     horizontalHeader->setStretchLastSection ( true );
-    horizontalHeader->setMinimumSectionSize ( 200 );
 
     QHeaderView* verticalHeader = _view->verticalHeader ();
     verticalHeader->setVisible ( false );

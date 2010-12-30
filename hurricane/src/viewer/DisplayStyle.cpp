@@ -32,16 +32,7 @@
 
 namespace {
 
-  QColor  modifySaturation ( const QColor& color, int darkening )
-  {
-    QColor hsvColor = color.toHsv();
-    if ( darkening != 100 ) {
-      qreal darkSat   = color.saturationF();
-      qreal darkValue = color.valueF();
-      hsvColor.setHsvF ( color.hueF(), darkSat/3.0, darkValue/2.5 );
-    }
-    return hsvColor;
-  }
+  using namespace Hurricane;
 
 
 } // End of anonymous namespace.
@@ -135,34 +126,34 @@ namespace Hurricane {
   }
 
 
-  QColor  DrawingStyle::getColor ( int darkening ) const
+  QColor  DrawingStyle::getColor ( const DisplayStyle::HSVr& darkening ) const
   {
     assert ( _color != NULL );
 
   //return _color->darker ( darkening );
-    return modifySaturation(*_color,darkening);
+    return DisplayStyle::darken(*_color,darkening);
   }
 
 
-  QPen  DrawingStyle::getPen ( int darkening ) const
+  QPen  DrawingStyle::getPen ( const DisplayStyle::HSVr& darkening ) const
   {
     assert ( _pen != NULL );
 
     QPen pen ( *_pen );
   //pen.setColor ( _color->darker(darkening) );
-    pen.setColor ( modifySaturation(*_color,darkening) );
+    pen.setColor ( DisplayStyle::darken(*_color,darkening) );
 
     return pen;
   }
 
 
-  QBrush  DrawingStyle::getBrush ( int darkening ) const
+  QBrush  DrawingStyle::getBrush ( const DisplayStyle::HSVr& darkening ) const
   {
     assert ( _brush != NULL );
 
     QBrush brush ( *_brush );
   //brush.setColor ( _color->darker(darkening) );
-    brush.setColor ( modifySaturation(*_color,darkening) );
+    brush.setColor ( DisplayStyle::darken(*_color,darkening) );
     return brush;
   }
 
@@ -273,11 +264,29 @@ namespace Hurricane {
   }
 
 
+  QColor  DisplayStyle::darken ( const QColor& color, const DisplayStyle::HSVr& darkening )
+  {
+    QColor hsvColor = color.toHsv();
+    if ( not darkening.isId() ) {
+      qreal darkHue   = color.hueF();
+      qreal darkSat   = color.saturationF();
+      qreal darkValue = color.valueF();
+
+    //hsvColor.setHsvF ( darkHue/darkening.getHue(), darkSat/3.0, darkValue/2.5 );
+      hsvColor.setHsvF ( darkHue  /darkening.getHue()
+                       , darkSat  /darkening.getSaturation()
+                       , darkValue/darkening.getValue()
+                       );
+    }
+    return hsvColor;
+  }
+
+
    DisplayStyle::DisplayStyle ( const Name& name )
      : _name(name)
      , _description("<No Description>")
      , _groups()
-     , _darkening(200)
+     , _darkening(1.0,3.0,2.5)
   {
     addDrawingStyle ( Viewer, Fallback     , "FFFFFFFFFFFFFFFF",   0,   0,   0, 1, 1.0 );
     addDrawingStyle ( Viewer, Background   , "FFFFFFFFFFFFFFFF",  50,  50,  50, 1, 1.0 );
@@ -333,19 +342,19 @@ namespace Hurricane {
   }
 
 
-  QColor  DisplayStyle::getColor ( const Name& key, int darkening ) const
+  QColor  DisplayStyle::getColor ( const Name& key, const DisplayStyle::HSVr& darkening ) const
   {
     return find(key)->getColor(darkening);
   }
 
 
-  QPen  DisplayStyle::getPen ( const Name& key, int darkening ) const
+  QPen  DisplayStyle::getPen ( const Name& key, const DisplayStyle::HSVr& darkening ) const
   {
     return find(key)->getPen(darkening);
   }
 
 
-  QBrush  DisplayStyle::getBrush ( const Name& key, int darkening ) const
+  QBrush  DisplayStyle::getBrush ( const Name& key, const DisplayStyle::HSVr& darkening ) const
   {
     return find(key)->getBrush(darkening);
   }
@@ -403,10 +412,18 @@ namespace Hurricane {
   }
 
 
-  void  DisplayStyle::setDarkening ( int darkening )
+  void  DisplayStyle::setDarkening ( const DisplayStyle::HSVr& darkening )
   {
-    if ( darkening <= 0 ) {
-      cerr << "[ERROR] Invalid darkening factor: " << darkening << "." << endl;
+    if ( darkening.getHue() < 0.1 ) {
+      cerr << "[ERROR] Invalid hue darkening factor: " << darkening.getHue() << "." << endl;
+      return;
+    }
+    if ( darkening.getSaturation() < 0.1 ) {
+      cerr << "[ERROR] Invalid saturation darkening factor: " << darkening.getSaturation() << "." << endl;
+      return;
+    }
+    if ( darkening.getValue() < 0.1 ) {
+      cerr << "[ERROR] Invalid value darkening factor: " << darkening.getValue() << "." << endl;
       return;
     }
 

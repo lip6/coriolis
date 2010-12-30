@@ -30,6 +30,7 @@
 #include  <QColor>
 #include  <QBrush>
 #include  "hurricane/Name.h"
+#include  "hurricane/viewer/DisplayStyle.h"
 
 
 namespace Hurricane {
@@ -53,7 +54,7 @@ namespace Hurricane {
     // Accessors.
              void          qtAllocate   ();
       inline const Name&   getName      () const;
-             QBrush        getBrush     ( size_t , int darkening ) const;
+             QBrush        getBrush     ( size_t, const DisplayStyle::HSVr& darkening ) const;
 
     protected:
     // Internal - Attributes.

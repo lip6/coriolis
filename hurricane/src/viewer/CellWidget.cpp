@@ -1160,7 +1160,7 @@ namespace Hurricane {
     , _drawingPlanes        (QSize(_initialSide+2*_stripWidth,_initialSide+2*_stripWidth),this)
     , _drawingQuery         (this)
     , _textDrawingQuery     (this)
-    , _darkening            (100)
+    , _darkening            (DisplayStyle::HSVr())
     , _mousePosition        (0,0)
     , _spot                 (this)
     , _state                (new State(NULL))
@@ -1384,7 +1384,7 @@ namespace Hurricane {
       _drawingPlanes.painter().setClipRect   ( redrawArea );
       _drawingPlanes.painter().eraseRect     ( redrawArea );
 
-      setDarkening ( (_state->showSelection()) ? Graphics::getDarkening() : 100 );
+      setDarkening ( (_state->showSelection()) ? Graphics::getDarkening() : DisplayStyle::HSVr() );
 
       if ( getCell() ) {
 

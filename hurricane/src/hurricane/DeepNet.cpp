@@ -145,7 +145,7 @@ size_t  DeepNet::_createRoutingPads ( bool buildRings )
   for_each_occurrence ( plugOccurrence, hyperNet.getLeafPlugOccurrences() ) {
     nbRoutingPads++;
 
-    currentRP = createRoutingPad ( this, plugOccurrence );
+    currentRP = RoutingPad::create ( this, plugOccurrence, RoutingPad::BiggestArea );
     if ( buildRings ) {
       if ( previousRP ) {
         currentRP->getBodyHook()->attach ( previousRP->getBodyHook() );

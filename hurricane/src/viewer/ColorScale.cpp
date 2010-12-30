@@ -68,12 +68,12 @@ namespace Hurricane {
   }
 
 
-  QBrush  ColorScale::getBrush ( size_t i, int darkening ) const
+  QBrush  ColorScale::getBrush ( size_t i, const DisplayStyle::HSVr& darkening ) const
   {
     assert ( _brush[i] != NULL );
 
     QBrush brush ( *_brush[i] );
-    brush.setColor ( _color[i]->darker(darkening) );
+    brush.setColor ( DisplayStyle::darken(*_color[i],darkening) );
     return brush;
   }
 
