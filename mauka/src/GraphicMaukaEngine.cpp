@@ -154,6 +154,11 @@ namespace Mauka {
 
   void  GraphicMaukaEngine::doQuadriPart ()
   {
+    if ( not MetisEngine::isHMetisCapable() ) {
+      cerr << Warning("Mauka has not been compiled againts hMETIS.\n"
+                      "          Quadri-partition step is disabled, simulated annealing may be *very* long." ) << endl;
+      return;
+    }
     Cell* cell = getCell ();
 
     emit cellPreModificated ();
@@ -210,7 +215,7 @@ namespace Mauka {
 
   void  GraphicMaukaEngine::place ()
   {
-    if ( not MetisEngine::isHMetisCapable() ) doQuadriPart ();
+    if ( MetisEngine::isHMetisCapable() ) doQuadriPart ();
     else {
       cerr << Warning("Mauka has not been compiled againts hMETIS.\n"
                       "          Quadri-partition step is disabled, simulated annealing may be *very* long." ) << endl;
