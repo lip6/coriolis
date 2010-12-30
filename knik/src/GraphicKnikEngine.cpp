@@ -78,7 +78,7 @@ namespace Knik {
       QPainter& painter = widget->getPainter();
       if ( edge->getRealOccupancy() > edge->getCapacity() ) {
         QColor color (Qt::cyan);
-        painter.setPen (color.darker(widget->getDarkening()));
+        painter.setPen (DisplayStyle::darken(color,widget->getDarkening()));
       }
       painter.setBrush ( Graphics::getColorScale(ColorScale::Fire).getBrush(occupancy,widget->getDarkening()) );
       painter.drawRect ( widget->dbuToDisplayRect(edge->getBoundingBox(), false) );
@@ -87,7 +87,7 @@ namespace Knik {
     // affichage des infos de l'arete
       if ( edge->hasInfo() ) {
         QColor color (Qt::blue);
-        painter.setPen (color.darker(widget->getDarkening()));
+        painter.setPen (DisplayStyle::darken(color,widget->getDarkening()));
         QFont font;
         font.setBold(true);
         font.setPointSize(10);
@@ -132,14 +132,14 @@ namespace Knik {
     if ( vertex ) {
       QPainter& painter = widget->getPainter();
       QColor color = Qt::darkRed;
-      QPen pen (color.darker(widget->getDarkening()));
+      QPen pen (DisplayStyle::darken(color,widget->getDarkening()));
       pen.setWidth(2);
       widget->setPen(pen);
       painter.drawEllipse ( widget->dbuToDisplayRect ( vertex->getBoundingBox(), false ) );
 
       if ( vertex->hasInfo() ) {
         QColor color (Qt::blue);
-        painter.setPen (color.darker(widget->getDarkening()));
+        painter.setPen (DisplayStyle::darken(color,widget->getDarkening()));
         QFont font;
         font.setBold(true);
         font.setPointSize(10);

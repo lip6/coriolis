@@ -208,7 +208,7 @@ void KnikEngine::initGlobalRouting()
     if ( !_routingGraph ) {
         _timer.resetIncrease();
         _timer.start();
-        cmess2 << "        o  Create routing graph." << endl;
+        cmess2 << "        o  CLOSE sessionCreate routing graph." << endl;
         Cell* cell = getCell();
         _routingGraph = Graph::create ( cell, _routingGrid, _benchMode, _useSegments );
         cmess2 << "           - Graph size: " << _routingGraph->getXSize()
