@@ -4,19 +4,13 @@
 
 # include  <cassert>
 # include  <string>
-
 # include  <QXmlStreamReader>
-
 # include  "hurricane/viewer/DisplayStyle.h"
 # include  "hurricane/viewer/Graphics.h"
-
 # include  "crlcore/GraphicsParser.h"
 
 
-
-
 namespace CRL {
-
 
   using Hurricane::Graphics;
 
@@ -53,9 +47,26 @@ namespace CRL {
 
   void  GraphicsParser::parseDarkening ()
   {
-    int darkening = (int)( readTextAsDouble() * 100 );
+    QString attribute;
+    float   hue        = 1.0;
+    float   saturation = 1.0;
+    float   value      = 1.0;
 
-    _displayStyle->setDarkening ( darkening );
+    attribute = _reader->attributes().value("hue").toString();
+    if ( not attribute.isEmpty() )
+      hue = attribute.toFloat ();
+
+    attribute = _reader->attributes().value("saturation").toString();
+    if ( not attribute.isEmpty() )
+      saturation = attribute.toFloat ();
+
+    attribute = _reader->attributes().value("value").toString();
+    if ( not attribute.isEmpty() )
+      value = attribute.toFloat ();
+
+    _displayStyle->setDarkening ( DisplayStyle::HSVr(hue,saturation,value) );
+
+    parseNoChilds ();
   }
 
 

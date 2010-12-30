@@ -4,7 +4,7 @@
     <displaystyle name="Alliance.Coriolis [black]">
       <default>true</default>
       <description>Alliance Coriolis Look - black background</description>
-      <darkening>3.0</darkening>
+      <darkening hue="1.0" saturation="3.0" value="2.5"/>
       <!-- Patterns:
            Poids    01010101    aa55aa55aa55aa55    nImplant
                     10101010                        pImplant
@@ -92,7 +92,8 @@
     <displaystyle name="Alliance.Coriolis [white]">
       <inherit>Alliance.Coriolis [black]</inherit>
       <description>Alliance Coriolis Look - white background</description>
-      <darkening>0.8</darkening>
+      <!-- <darkening>0.8</darkening> -->
+      <darkening hue="1.0" saturation="3.0" value="2.5"/>
       <group name="Viewer">
         <drawingstyle name="fallback"      color="0,0,0"       border="1" pattern="55AA55AA55AA55AA"/>
         <drawingstyle name="background"    color="255,255,255" border="1"/>
@@ -109,7 +110,7 @@
     </displaystyle>
     <displaystyle name="Alliance.Classic [black]">
       <description>Alliance Standard Look - black background</description>
-      <darkening>3.0</darkening>
+      <darkening hue="1.0" saturation="3.0" value="2.5"/>
       <group name="Viewer">
         <drawingstyle name="fallback"       color="238,238,238" border="1" pattern="55AA55AA55AA55AA"/>
         <drawingstyle name="background"     color="50,50,50"    border="1"/>
@@ -177,7 +178,7 @@
     <displaystyle name="Alliance.Classic [white]">
       <inherit>Alliance.Classic [black]</inherit>
       <description>Alliance Standard Look - white background</description>
-      <darkening>3.0</darkening>
+      <darkening hue="1.0" saturation="3.0" value="2.5"/>
       <group name="Viewer">
         <drawingstyle name="fallback"       color="0,0,0"       border="1" pattern="55AA55AA55AA55AA"/>
         <drawingstyle name="background"     color="255,255,255" border="1"/>
@@ -196,7 +197,7 @@
     <displaystyle name="Ispd Global Route">
       <inherit>Alliance.Coriolis [black]</inherit>
       <description>Ispd Global Route Look - black background</description>
-      <darkening>3.0</darkening>
+      <darkening hue="1.0" saturation="3.0" value="2.5"/>
       <group name="Viewer">
         <drawingstyle name="background"    color="0,0,0" border="1"/>
         <drawingstyle name="rubber"        color="192,0,192"   border="1" threshold="0"/>
@@ -210,7 +211,7 @@
     <displaystyle name="Layout Design">
       <inherit>Alliance.Coriolis [black]</inherit>
       <description>Useful for debugging layout - black background</description>
-      <darkening>3.0</darkening>
+      <darkening hue="1.0" saturation="3.0" value="2.5"/>
       <group name="Active Layers">
         <drawingstyle name="nWell"    color="210,180,140" pattern="0000000000000000" threshold="1.50" border="2"/>
         <drawingstyle name="pWell"    color="255,255,224" pattern="0000000000000000" threshold="1.50" border="2"/>
@@ -239,7 +240,7 @@
     <displaystyle name="Layout Design White">
       <inherit>Layout Design</inherit>
       <description>Useful for debugging layout - white background</description>
-      <darkening>3.0</darkening>
+      <darkening hue="1.0" saturation="3.0" value="2.5"/>
       <group name="Viewer">
         <drawingstyle name="background"     color="255,255,255" border="1"/>
         <drawingstyle name="grid"           color="0,0,0"       border="1" threshold="2.0"/>
@@ -253,7 +254,7 @@
     </displaystyle>
     <displaystyle name="Printer.Coriolis">
       <description>Coriolis Look for Printers</description>
-      <darkening>3.0</darkening>
+      <darkening hue="1.0" saturation="3.0" value="2.5"/>
       <group name="Viewer">
         <drawingstyle name="fallback"        color="238,238,238" border="1" pattern="55AA55AA55AA55AA"/>
         <drawingstyle name="background"      color="255,255,255" border="1"/>

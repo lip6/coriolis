@@ -75,13 +75,13 @@
   <!-- Kite -->
   <parameter id="kite.edgeCapacity"               type="percentage" value="65"      min="0" max="100"/>
   <parameter id="kite.expandStep"                 type="percentage" value="100"     min="0" max="100"/>
-  <parameter id="kite.metal1MinBreak"             type="int"        value="100"/>
-  <parameter id="kite.metal2MinBreak"             type="int"        value="100"/>
-  <parameter id="kite.metal3MinBreak"             type="int"        value="100"/>
-  <parameter id="kite.metal4MinBreak"             type="int"        value="1450"/>
-  <parameter id="kite.metal5MinBreak"             type="int"        value="1450"/>
-  <parameter id="kite.metal6MinBreak"             type="int"        value="1450"/>
-  <parameter id="kite.metal7MinBreak"             type="int"        value="1450"/>
+  <parameter id="kite.metal1MinBreak"             type="double"     value="100"/>
+  <parameter id="kite.metal2MinBreak"             type="double"     value="100"/>
+  <parameter id="kite.metal3MinBreak"             type="double"     value="100"/>
+  <parameter id="kite.metal4MinBreak"             type="double"     value="500"/>
+  <parameter id="kite.metal5MinBreak"             type="double"     value="1450"/>
+  <parameter id="kite.metal6MinBreak"             type="double"     value="1450"/>
+  <parameter id="kite.metal7MinBreak"             type="double"     value="1450"/>
   <parameter id="kite.ripupCost"                  type="int"        value="3"       min="0"/>
   <parameter id="kite.borderRipupLimit"           type="int"        value="26"      min="1"/>
   <parameter id="kite.strapRipupLimit"            type="int"        value="16"      min="1"/>
