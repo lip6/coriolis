@@ -1268,6 +1268,15 @@ namespace Hurricane {
   }
 
 
+  Command* CellWidget::getCommand ( const string& name ) const
+  {
+    for ( size_t i=0 ; i<_commands.size() ; ++i ) {
+      if ( _commands[i]->getName() == name ) return _commands[i];
+    }
+    return NULL;
+  }
+
+
   void  CellWidget::pushCursor ( Qt::CursorShape cursor )
   {
     setCursor ( cursor );

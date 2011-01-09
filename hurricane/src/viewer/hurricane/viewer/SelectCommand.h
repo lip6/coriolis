@@ -54,6 +54,7 @@ namespace Hurricane {
     public:
       enum SelectMode { AllMode=0, NetMode=1, NoAnonNetMode=2 };
     public:
+      static  const string&  getStaticName     ();
                              SelectCommand     ();
       virtual               ~SelectCommand     ();
       virtual const string&  getName           () const;

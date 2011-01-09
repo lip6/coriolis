@@ -146,6 +146,7 @@ namespace Hurricane {
               void                      unbindCommand              ( Command* );
       inline  void                      setActiveCommand           ( Command* );
       inline  Command*                  getActiveCommand           () const;
+              Command*                  getCommand                 ( const std::string& ) const;
       inline  void                      resetActiveCommand         ();
       inline  void                      setCursorStep              ( DbU::Unit );
       inline  void                      setRealSnapGridStep        ( DbU::Unit step );

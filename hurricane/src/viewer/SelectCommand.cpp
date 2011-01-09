@@ -199,6 +199,10 @@ namespace Hurricane {
   string SelectCommand::_name = "SelectCommand";
 
 
+  const string& SelectCommand::getStaticName ()
+  { return _name; }
+
+
   SelectCommand::SelectCommand ()
     : AreaCommand    ()
     , _selectionPopup(NULL)
