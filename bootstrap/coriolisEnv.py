@@ -66,22 +66,24 @@ def guessOs ():
 if __name__ == "__main__":
 
   (osDir,libDir)  = guessOs()
-  buildType       = "Debug"
+  buildType       = "Release"
   linkType        = "Shared"
   coriolisVersion = None
   rootDir         = None
+  installDir      = None
 
   parser = optparse.OptionParser ()  
  # Build relateds.
-  parser.add_option ( "--v1"     , action="store_true" ,                dest="v1"       )
-  parser.add_option ( "--v2"     , action="store_true" ,                dest="v2"       )
-  parser.add_option ( "--release", action="store_true" ,                dest="release"  )
-  parser.add_option ( "--debug"  , action="store_true" ,                dest="debug"    )
-  parser.add_option ( "--devel"  , action="store_true" ,                dest="devel"    )
-  parser.add_option ( "--static" , action="store_true" ,                dest="static"   )
-  parser.add_option ( "--shared" , action="store_true" ,                dest="shared"   )
-  parser.add_option ( "--python" , action="store_true" ,                dest="python"   )
-  parser.add_option ( "--root"   , action="store"      , type="string", dest="rootDir"  )
+  parser.add_option ( "--v1"     , action="store_true" ,                dest="v1"         )
+  parser.add_option ( "--v2"     , action="store_true" ,                dest="v2"         )
+  parser.add_option ( "--release", action="store_true" ,                dest="release"    )
+  parser.add_option ( "--debug"  , action="store_true" ,                dest="debug"      )
+  parser.add_option ( "--devel"  , action="store_true" ,                dest="devel"      )
+  parser.add_option ( "--static" , action="store_true" ,                dest="static"     )
+  parser.add_option ( "--shared" , action="store_true" ,                dest="shared"     )
+  parser.add_option ( "--python" , action="store_true" ,                dest="python"     )
+  parser.add_option ( "--root"   , action="store"      , type="string", dest="rootDir"    )
+  parser.add_option ( "--install", action="store"      , type="string", dest="installDir" )
   ( options, args ) = parser.parse_args ()
 
   if options.v1:       coriolisVersion = 1
@@ -124,11 +126,16 @@ fi
     if not rootDir:
       rootDir = os.getenv("HOME") + "/coriolis-2.x"
 
-    buildDir            = buildType + "." + linkType
-    coriolisTop         = "%s/%s/%s/install" % ( rootDir, osDir, buildDir )
-    absLibDir           = "%s/%s"            % ( coriolisTop, libDir )
-    strippedPath        = "%s/bin:%s"        % ( coriolisTop, strippedPath )
-    strippedLibraryPath = "%s:%s"            % ( absLibDir, strippedLibraryPath )
+    if installDir:
+      buildDir    = "SYSTEM"
+      coriolisTop = installDir
+    else:
+      buildDir    = buildType + "." + linkType
+      coriolisTop = "%s/%s/%s/install" % ( rootDir, osDir, buildDir )
+
+    absLibDir           = "%s/%s"     % ( coriolisTop, libDir )
+    strippedPath        = "%s/bin:%s" % ( coriolisTop, strippedPath )
+    strippedLibraryPath = "%s:%s"     % ( absLibDir, strippedLibraryPath )
 
     if options.python:
       pyVersion          = sys.version_info
@@ -146,7 +153,8 @@ LD_LIBRARY_PATH=%(LD_LIBRARY_PATH)s;
 PYTHONPATH=%(PYTHONPATH)s;
 BOOTSTRAP_TOP=%(BOOTSTRAP_TOP)s;
 CORIOLIS_TOP=%(CORIOLIS_TOP)s;
-export PATH LD_LIBRARY_PATH PYTHONPATH BOOTSTRAP_TOP CORIOLIS_TOP;
+STRATUS_MAPPING_NAME=%(CORIOLIS_TOP)s/etc/coriolis2/stratus2sxlib.xml;
+export PATH LD_LIBRARY_PATH PYTHONPATH BOOTSTRAP_TOP CORIOLIS_TOP STRATUS_MAPPING_NAME;
 hash -r
 """
 
