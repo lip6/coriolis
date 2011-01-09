@@ -291,7 +291,7 @@ sub bot_navigation_panel {
 }
 
 
-#$EXTERNAL_STYLESHEET = "../ASIM.css";
+#$EXTERNAL_STYLESHEET = "../SoC.css";
 
 $ADDRESS = "Sophie <small>BELLOEIL</small><br>20051116.1";
 

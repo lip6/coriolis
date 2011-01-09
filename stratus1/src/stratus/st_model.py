@@ -501,7 +501,8 @@ class Model :
       
     if not name : name = self._name
 
-    if tool == 'asimut' : runpat ( self._name, name, '-l 1 -p 100 -zerodelay -nocheckdriver -nostrict -bdd -nowarning' )
+   # Removed unknown asimut options: -nocheckdriver -nostrict -nowarning
+    if tool == 'asimut' : runpat ( self._name, name, '-l 1 -p 100 -zerodelay -bdd' )
     else                : raise Exception ( 'not implemented yet' )
 
   ##### Create a stratus file given the database #####
