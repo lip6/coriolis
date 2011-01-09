@@ -161,13 +161,23 @@ Grid::Grid (NimbusEngine* nimbus)
     if ( isNoInstancePlacedOrFixed(_cell) ) {
       DbU::Unit minWidth = DbU::Max;
       double    sumWidth = 0.0;
-      forEach ( Instance*, iinstance, _cell->getInstances() ) {
-        Cell*     model = iinstance->getMasterCell();
-        DbU::Unit width = model->getAbutmentBox().getWidth();
+    
+      forEach ( Occurrence, ioccurrence, _cell->getLeafInstanceOccurrences() ) {
+        Instance* instance = static_cast<Instance*>((*ioccurrence).getEntity());
 
-        if ( width < minWidth ) minWidth = width;
-        sumWidth += DbU::getLambda(width);
+        if ( not instance->isFixed() and instance->isTerminal() ) {
+          Cell* model = instance->getMasterCell();
+          sumWidth += DbU::getLambda(model->getAbutmentBox().getWidth());
+        }
       }
+
+      // forEach ( Instance*, iinstance, _cell->getInstances() ) {
+      //   Cell*     model = iinstance->getMasterCell();
+      //   DbU::Unit width = model->getAbutmentBox().getWidth();
+
+      //   if ( width < minWidth ) minWidth = width;
+      //   sumWidth += DbU::getLambda(width);
+      // }
       rectangularShape(_nimbus->getMargin(), nimbus->getAspectRatio(), sumWidth, minWidth );
 
       UpdateSession::open();
@@ -230,18 +240,19 @@ void Grid::Clear()
   void Grid::rectangularShape(double margin, double aspectRatio, double sumWidth, DbU::Unit minWidth)
   // ************************************************************************************************
   {
-    cmess1 << "  o  Creating abutment box: (margin: " << margin
-           << ", aspect ratio:" << aspectRatio << ")" << endl;
+    cmess1 << "  o  Creating abutment box: (margin:" << (margin*100.0)
+           << "%, aspect ratio:" << (aspectRatio*100.0)
+           << "%, sumWidth:"     << sumWidth << ")" << endl;
 
     double     dMinWidth   = DbU::getLambda(minWidth);
     double     rowHeight   = DbU::getLambda(_nimbus->getSliceHeight());
     DbU::Unit  pitch       = _nimbus->getPitch();
     double     marginWidth = (1.0+margin) * sumWidth;
 
-    // cerr << "sumWidth:"   << sumWidth
-    //      << " rowHeight:" << rowHeight
-    //      << " pitch:"     << DbU::getValueString(pitch)
-    //      << " minWidth:"  << minWidth
+    // cerr << "sumWidth:"     << sumWidth
+    //      << " rowHeight:"   << rowHeight
+    //      << " pitch:"       << DbU::getValueString(pitch)
+    //      << " marginWidth:" << marginWidth
     //      << endl;
 
   // AR = x/y    S = x*y = marginWidth*SH    x=S/y    AR = S/y^2
@@ -253,14 +264,18 @@ void Grid::Clear()
     if ( rows == 0 ) ++rows;
     double rowWidth = marginWidth / rows;
 
-  //cerr << "y:" << y << " rows:" << rows << endl;
+    // cerr << "y:" << y << " rows:" << rows << endl;
+    // cerr << "rowWidth:" << rowWidth << endl;
+    // cerr << "dMinWidth:" << dMinWidth << endl;
 
-    if ( rowWidth < dMinWidth ) {
+    if ( (minWidth != DbU::Max) and (rowWidth < dMinWidth) ) {
       rowWidth = dMinWidth;
       rows     = (unsigned int)(marginWidth / rowWidth);
 
       if ( rows == 0 ) ++rows;
     }
+
+    // cerr << "rowWidth:" << rowWidth << endl;
 
     DbU::Unit unitRowWidth = DbU::lambda(rowWidth);
     DbU::Unit adjustWidth  = unitRowWidth % pitch;
