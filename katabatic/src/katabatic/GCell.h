@@ -74,6 +74,10 @@ namespace Katabatic {
   class GCell : public ExtensionGo {
 
     public:
+      class CompareId : public binary_function<const GCell*,const GCell*,bool> {
+        public:
+          bool operator() ( const GCell* lhs, const GCell* rhs );
+      };
       class CompareByDensity : public binary_function<GCell*,GCell*,bool> {
         public:
                CompareByDensity ( unsigned int depth );
@@ -96,6 +100,8 @@ namespace Katabatic {
           inline void          update     ( GCell*, unsigned int );
           friend bool          operator<  ( const Key&, const Key& );
       };
+    public:
+      typedef set<GCell*,CompareId>  SetId;
 
     public:
     // Static Utilities.
@@ -135,6 +141,8 @@ namespace Katabatic {
       inline  float                 getDensity          ( unsigned int depth, bool update=true  ) const;
               float                 getDensity          ( bool update=true ) const;
       inline  DbU::Unit             getBlockage         ( unsigned int depth ) const;
+      inline  float                 getFragmentation    ( unsigned int depth ) const;
+      inline  float                 getGlobalsCount     ( unsigned int depth ) const;
               float                 getStiffness        () const;
       inline  vector<AutoSegment*>* getVSegments        ();
       inline  vector<AutoSegment*>* getHSegments        ();
@@ -151,6 +159,7 @@ namespace Katabatic {
               bool                  checkEdgeSaturation ( float threshold ) const;
     // Modifiers.
               void                  addBlockage         ( unsigned int depth, DbU::Unit );
+    //        void                  addBlockedAxis      ( unsigned int depth, DbU::Unit );
       inline  void                  addVSegment         ( AutoSegment* );
       inline  void                  addHSegment         ( AutoSegment* );
       inline  void                  addContact          ( AutoContact* );
@@ -162,7 +171,7 @@ namespace Katabatic {
       inline  void                  updateKey           ( unsigned int depth );
               void                  desaturate          ( unsigned int depth, set<Net*>& );
               bool                  stepDesaturate      ( unsigned int depth, set<Net*>&, AutoSegment*& moved, bool force=false );
-              bool                  stepNetDesaturate   ( unsigned int depth, set<Net*>&, set<GCell*>& invalidateds );
+              bool                  stepNetDesaturate   ( unsigned int depth, set<Net*>&, SetId& invalidateds );
               void                  rpDesaturate        ( set<Net*>& );
       inline  void                  invalidate          ();
     // Inspector Management.                            
@@ -170,6 +179,17 @@ namespace Katabatic {
               string                _getString          () const;
       inline  string                _getTypeName        () const;
               void                  _xmlWrite           ( ostream& o ) const;
+
+    private:
+      class BlockedAxis {
+        public:
+                                BlockedAxis ( GCell* );
+          const set<DbU::Unit>& getAxisSet  ( size_t depth ) const;
+          void                  addAxis     ( size_t depth, DbU::Unit );
+        private:
+          GCell*           _gcell;
+          set<DbU::Unit>** _axisSets;
+      };
 
     private:
     // Static Attributes.
@@ -188,6 +208,10 @@ namespace Katabatic {
               DbU::Unit*            _blockages;
               float                 _cDensity;
               float*                _densities;
+              float*                _feedthroughs;
+              float*                _fragmentations;
+              float*                _globalsCount;
+            //BlockedAxis           _blockedAxis; 
             //float*                _saturateDensities;
               bool                  _saturated;
               bool                  _invalid;
@@ -245,6 +269,12 @@ namespace Katabatic {
   inline  float  GCell::getDensity ( unsigned int depth, bool update  ) const
   { if (_invalid and update) const_cast<GCell*>(this)->updateDensity(); return _densities[depth]; }
 
+  inline  float  GCell::getFragmentation ( unsigned int depth ) const
+  { if (_invalid) const_cast<GCell*>(this)->updateDensity(); return _fragmentations[depth]; }
+
+  inline  float  GCell::getGlobalsCount ( unsigned int depth ) const
+  { if (_invalid) const_cast<GCell*>(this)->updateDensity(); return _globalsCount[depth]; }
+
   inline  DbU::Unit  GCell::getBlockage ( unsigned int depth ) const
   { return (depth<_depth) ? _blockages[depth] : 0; }
 
@@ -256,6 +286,11 @@ namespace Katabatic {
 
   inline  void  GCell::addContact ( AutoContact* contact )
   { invalidate(); _contacts.push_back(contact); }
+
+
+// GCell::CompareId Inline Functions.
+  inline bool  GCell::CompareId::operator() ( const GCell* lhs, const GCell* rhs )
+  { return ( lhs->getIndex() < rhs->getIndex() ); }
 
 
 // GCell::Key Inline Functions.
@@ -291,7 +326,7 @@ namespace Katabatic {
     private:
       unsigned int                          _depth;
       std::set<GCell*,GCell::CompareByKey>  _map;
-      std::set<GCell*>                      _requests;
+      GCell::SetId                          _requests;
   };
 
 

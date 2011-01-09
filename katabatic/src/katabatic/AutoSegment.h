@@ -86,10 +86,11 @@ namespace Katabatic {
                               , ParallelOrExpanded     = (1<<2)
                               , ParallelAndLayerChange = (1<<3)
                               };
-      enum Flags              { Propagate    =0x1
-                              , AllowLocal   =0x2
-                              , AllowTerminal=0x4
-                              , IgnoreContact=0x8
+      enum Flags              { Propagate         = (1<<0)
+                              , AllowLocal        = (1<<1)
+                              , AllowTerminal     = (1<<2)
+                              , IgnoreContact     = (1<<3)
+                              , PerpandicularFrag = (1<<4)
                               };
 
 
@@ -101,6 +102,12 @@ namespace Katabatic {
       struct CompareByDepthLength : public binary_function<AutoSegment*,AutoSegment*,bool> {
           bool operator() ( AutoSegment* lhs, AutoSegment* rhs ) const;
       };
+    public:
+      struct CompareByDepthAxis : public binary_function<AutoSegment*,AutoSegment*,bool> {
+          bool operator() ( AutoSegment* lhs, AutoSegment* rhs ) const;
+      };
+    public:
+      typedef std::set<AutoSegment*,CompareByDepthLength>  DepthLengthSet;
 
     public:
     // Utilities.

@@ -247,6 +247,7 @@ namespace {
       inline  DbU::Unit            getDuTarget    () const;
       inline  DbU::Unit            getAxis        () const;
       inline  DbU::Unit            getWidth       () const;
+      inline  void                 setSlackened   ( bool );
       inline  void                 setDuSource    ( DbU::Unit );
       inline  void                 setDuTarget    ( DbU::Unit );
       inline  void                 invert         ();
@@ -313,6 +314,7 @@ namespace {
   inline DbU::Unit            SegmentEnd::getDuTarget    () const { return _autoSegment->getDuTarget(); }
   inline DbU::Unit            SegmentEnd::getAxis        () const { return _autoSegment->getAxis(); }
   inline DbU::Unit            SegmentEnd::getWidth       () const { return _autoSegment->getWidth(); }
+  inline void                 SegmentEnd::setSlackened   ( bool state ) { _autoSegment->setSlackened(state); }
   inline void                 SegmentEnd::setDuSource    ( DbU::Unit du ) { _autoSegment->setDuSource(du); }
   inline void                 SegmentEnd::setDuTarget    ( DbU::Unit du ) { _autoSegment->setDuTarget(du); }
   inline void                 SegmentEnd::invert         () { _autoSegment->invert(); }
@@ -1462,8 +1464,8 @@ namespace {
     }
 
   // The complete case.
-    bool                hExtended = isHExtended();
-    bool                vExtended = isVExtended();
+  //bool                hExtended = isHExtended();
+  //bool                vExtended = isVExtended();
     bool                xFound    = false;
     bool                yFound    = false;
     vector<SegmentEnd*> hBottom;
@@ -1497,6 +1499,8 @@ namespace {
 
     for ( size_t i=0; i < _localEnds.size() ; i++ ) {
       ltrace(200) << "| L: " << _localEnds[i] << endl;
+      _localEnds[i]->setSlackened ( true );
+
       if ( _localEnds[i]->isHorizontal() ) {
         if ( not yFound ) {
           yFound = true;
@@ -1696,8 +1700,9 @@ namespace {
                                                , true  // terminal.
                                                , false // Temporary: *not* collapsed.
                                                );
-    segment->setLayer ( _routingGauge->getRoutingLayer(1) );
-    segment->setAxis  ( position.getY() );
+    segment->setLayer     ( _routingGauge->getRoutingLayer(1) );
+    segment->setAxis      ( position.getY() );
+    segment->setSlackened ( true );
     ltrace(200) << "@" << DbU::getValueString(position.getY()) << segment << endl;
 
     segment = AutoSegment::create ( via23
@@ -1707,8 +1712,9 @@ namespace {
                                   , false // terminal.
                                   , false //true  // collapsed.
                                   );
-    segment->setAxis   ( position.getX() );
-    segment->setLayer  ( _routingGauge->getRoutingLayer(2) );
+    segment->setAxis      ( position.getX() );
+    segment->setLayer     ( _routingGauge->getRoutingLayer(2) );
+    segment->setSlackened ( true );
     _contact->setLayer ( _routingGauge->getContactLayer(1) );
     ltrace(200) << "@" << DbU::getValueString(position.getX()) << segment << endl;
 
@@ -2349,7 +2355,7 @@ namespace Katabatic {
   }
 
 
-  void  AutoContact::getLengths ( DbU::Unit* lengths, set<AutoSegment*>& processeds )
+  void  AutoContact::getLengths ( DbU::Unit* lengths, AutoSegment::DepthLengthSet& processeds )
   {
     forEach ( Hook*, ihook, getBodyHook()->getSlaveHooks() ) {
       bool isSourceHook = (dynamic_cast<Segment::SourceHook*>(*ihook));

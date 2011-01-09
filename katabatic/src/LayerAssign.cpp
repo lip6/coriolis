@@ -105,8 +105,8 @@ namespace Katabatic {
 
   //vector<GCell*> gcells  = *(_gcellGrid->getGCellVector());
   //vector<GCell*> invalidateds;
-    DyKeyQueue     queue   ( depth, *(_gcellGrid->getGCellVector()) );
-    set<GCell*>    invalidateds;
+    DyKeyQueue    queue   ( depth, *(_gcellGrid->getGCellVector()) );
+    GCell::SetId  invalidateds;
 
     bool optimized = true;
     while ( optimized ) {
@@ -118,8 +118,11 @@ namespace Katabatic {
       std::set<GCell*,GCell::CompareByKey>::const_iterator igcell = queue.getGCells().begin();
       size_t i = 0;
       for ( ; igcell!=queue.getGCells().end() ; ++igcell, ++i ) {
+        ltrace(400) << "_desaturate: [" << depth << "]:"
+                    << (*igcell)->getDensity(depth) << " " << *igcell << endl;
+
         if ( not (*igcell)->isSaturated ( depth ) ) {
-          ltrace(190) << "STOP desaturated: @" << i << " " << *igcell << endl;
+          ltrace(400) << "STOP desaturated: @" << i << " " << *igcell << endl;
           for ( ; igcell!=queue.getGCells().end() ; ++igcell ) {
             if ( (*igcell)->isSaturated ( depth ) ) {
               cerr << "[ERROR] Still saturated: @" << i << " " << *igcell << endl;
@@ -145,7 +148,7 @@ namespace Katabatic {
 
         optimized = (*igcell)->stepNetDesaturate ( depth, globalNets, invalidateds );
         if ( optimized ) {
-          for ( set<GCell*>::iterator igcell=invalidateds.begin() ; igcell!=invalidateds.end() ; ++igcell ) {
+          for ( GCell::SetId::iterator igcell=invalidateds.begin() ; igcell!=invalidateds.end() ; ++igcell ) {
             queue.invalidate ( *igcell );
           }
           break;
@@ -255,18 +258,18 @@ namespace Katabatic {
   }
 
 
-  bool  KatabaticEngine::_moveUpNetTrunk ( AutoSegment* seed, set<Net*>& globalNets, set<GCell*>& invalidateds )
+  bool  KatabaticEngine::_moveUpNetTrunk ( AutoSegment* seed, set<Net*>& globalNets, GCell::SetId& invalidateds )
   {
     Net* net = seed->getNet();
     DebugSession::open ( net, 90 );
 
-    ltrace(100) << "_moveUpNetTrunk() - " << seed << endl;
+    ltrace(400) << "_moveUpNetTrunk() - " << seed << endl;
 
-    if ( not seed->canMoveUp(2.0,AutoSegment::Propagate|AutoSegment::AllowTerminal) ) {
+    if ( not seed->canMoveUp(1.0,AutoSegment::Propagate|AutoSegment::AllowTerminal) ) {
       DebugSession::close ();
       return false;
     }
-    ltracein(100);
+    ltracein(400);
 
     globalNets.insert ( net );
 
@@ -293,13 +296,13 @@ namespace Katabatic {
     sort (  locals.begin(),  locals.end(), AutoSegment::CompareId() );
 
     for ( size_t i=0 ; i<globals.size() ; ++i ) {
-      ltrace(100) << "  | Looking up G:" << globals[i] << endl;
+      ltrace(400) << "  | Looking up G:" << globals[i] << endl;
 
-      if ( globals[i]->canMoveUp(2.0,AutoSegment::Propagate|AutoSegment::AllowTerminal) ) {
+      if ( globals[i]->canMoveUp(1.0,AutoSegment::Propagate|AutoSegment::AllowTerminal) ) {
         unsigned int depth = Session::getRoutingGauge()->getLayerDepth(globals[i]->getLayer());
         globals[i]->changeDepth ( depth+2, true, false );
 
-        ltrace(100) << "  | Trunk move up G:" << globals[i] << endl;
+        ltrace(400) << "  | Trunk move up G:" << globals[i] << endl;
 
         vector<GCell*> gcells;
         globals[i]->getGCells ( gcells );
@@ -307,19 +310,19 @@ namespace Katabatic {
           invalidateds.insert ( gcells[j] );
         }
       } else {
-        ltrace(100) << "  | Reject Trunk move up G:" << globals[i] << endl;
+        ltrace(400) << "  | Reject Trunk move up G:" << globals[i] << endl;
       }
     }
 
     for ( size_t i=0 ; i<locals.size() ; ++i ) {
-      ltrace(100) << "  | Looking up L:" << locals[i] << endl;
+      ltrace(400) << "  | Looking up L:" << locals[i] << endl;
 
     //if ( locals[i]->canPivotUp(2.0,AutoSegment::Propagate|AutoSegment::IgnoreContact) ) {
       if ( locals[i]->canPivotUp(2.0,AutoSegment::Propagate) ) {
         unsigned int depth = Session::getRoutingGauge()->getLayerDepth(locals[i]->getLayer());
         locals[i]->changeDepth ( depth+2, true, false );
 
-        ltrace(100) << "  | Trunk move up L:" << locals[i] << endl;
+        ltrace(400) << "  | Trunk move up L:" << locals[i] << endl;
 
         vector<GCell*> gcells;
         locals[i]->getGCells ( gcells );
@@ -329,7 +332,7 @@ namespace Katabatic {
       }
     }
 
-    ltraceout(100);
+    ltraceout(400);
     DebugSession::close ();
 
     return true;
@@ -368,10 +371,10 @@ namespace Katabatic {
     Session::revalidate ();
 
   // Look for RoutingPad overload.
-    vector<GCell*> gcells = *(_gcellGrid->getGCellVector());
-    for ( size_t i=0 ; i<gcells.size() ; ++i ) {
-      gcells[i]->rpDesaturate ( globalNets );
-    }
+    // vector<GCell*> gcells = *(_gcellGrid->getGCellVector());
+    // for ( size_t i=0 ; i<gcells.size() ; ++i ) {
+    //   gcells[i]->rpDesaturate ( globalNets );
+    // }
 
     if ( getConfiguration()->getAllowedDepth() > 2) {
       for ( int i=0 ; i < 3 ; i++ ) {

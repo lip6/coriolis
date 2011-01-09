@@ -51,6 +51,7 @@ namespace CRL {
 }
 
 #include  "katabatic/Configuration.h"
+#include  "katabatic/GCell.h"
 #include  "katabatic/AutoContacts.h"
 #include  "katabatic/AutoSegments.h"
 #include  "katabatic/ChipTools.h"
@@ -196,7 +197,7 @@ namespace Katabatic {
               void                 _layerAssignByLength      ( Net*, unsigned long& total, unsigned long& global, set<Net*>& );
               void                 _layerAssignByTrunk       ( unsigned long& total, unsigned long& global, set<Net*>& );
               void                 _layerAssignByTrunk       ( Net*, set<Net*>&, unsigned long& total, unsigned long& global );
-              bool                 _moveUpNetTrunk           ( AutoSegment*, set<Net*>& globalNets, set<GCell*>& invalidateds );
+              bool                 _moveUpNetTrunk           ( AutoSegment*, set<Net*>& globalNets, GCell::SetId& invalidateds );
               void                 _splitContactsOfNet       ( Net* );
               void                 _collapseNet              ( const Name& , unsigned int depth=1 );
               void                 _collapseNet              ( Net* , unsigned int depth=1 );

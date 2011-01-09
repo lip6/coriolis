@@ -44,6 +44,204 @@
 #include  "katabatic/KatabaticEngine.h"
 
 
+namespace {
+
+  using namespace std;
+  using namespace Hurricane;
+  using namespace Katabatic;
+
+
+// -------------------------------------------------------------------
+// Class  :  "::UsedFragments".
+
+
+  class UsedFragments {
+    private:
+      class Axiss;
+
+      class Axis {
+        public:
+                                Axis             ( UsedFragments*, DbU::Unit axis );
+          inline DbU::Unit      getAxis          () const;
+          inline UsedFragments* getUsedFragments () const;
+                 void           merge            ( const Interval& mergeChunk );
+                 Interval       getMaxFree       () const;
+        private:
+          UsedFragments* _ufragments;
+          DbU::Unit      _axis;
+          list<Interval> _chunks;
+      };
+
+    private:
+      class AxisCompare {
+        public:
+          bool operator() ( const Axis* lhs, const Axis* rhs );
+      };
+
+      class AxisMatch : public unary_function<Axis*,bool> {
+        public:
+          inline      AxisMatch  ( DbU::Unit axis );
+          inline bool operator() ( const Axis* );
+        private:
+          DbU::Unit  _axis;
+      };
+
+    public:
+                        UsedFragments ();
+                       ~UsedFragments ();
+      inline DbU::Unit  getMin        () const;
+      inline DbU::Unit  getMax        () const;
+             Interval   getMaxFree    () const;
+      inline void       setSpan       ( DbU::Unit min, DbU::Unit max );
+      inline void       setCapacity   ( size_t );
+      inline void       incGlobals    ( size_t count=1 );
+             void       merge         ( DbU::Unit axis, const Interval& );
+    private:
+      vector<Axis*>  _axiss;
+      DbU::Unit      _min;
+      DbU::Unit      _max;
+      size_t         _capacity;
+      size_t         _globals;
+  };
+
+
+  UsedFragments::Axis::Axis ( UsedFragments* ufragments, DbU::Unit axis )
+    : _ufragments(ufragments)
+    , _axis      (axis)
+    , _chunks    ()
+  {
+    merge ( Interval ( ufragments->getMin()-DbU::lambda(5.0), ufragments->getMin() ) );
+    merge ( Interval ( ufragments->getMax(), ufragments->getMax()+DbU::lambda(5.0) ) );
+  }
+
+  inline DbU::Unit      UsedFragments::Axis::getAxis          () const { return _axis; }
+  inline UsedFragments* UsedFragments::Axis::getUsedFragments () const { return _ufragments; }
+
+
+  void  UsedFragments::Axis::merge ( const Interval& chunkMerge )
+  {
+    list<Interval>::iterator imerge = _chunks.end();
+    list<Interval>::iterator ichunk = _chunks.begin();
+
+    while ( ichunk != _chunks.end() ) {
+      if ( chunkMerge.getVMax() < (*ichunk).getVMin() ) break;
+
+      if ( chunkMerge.intersect(*ichunk) ) {
+        if ( imerge == _chunks.end() ) {
+          imerge = ichunk;
+          (*imerge).merge ( chunkMerge );
+        } else {
+          (*imerge).merge ( *ichunk );
+          ichunk = _chunks.erase ( ichunk );
+          continue;
+        }
+      }
+      ichunk++;
+    }
+
+    if ( imerge == _chunks.end() ) {
+      _chunks.insert ( ichunk, chunkMerge );
+    }
+  }
+
+
+  Interval  UsedFragments::Axis::getMaxFree () const
+  {
+    list<Interval>::const_iterator ichunk =   _chunks.begin();
+    list<Interval>::const_iterator iend   = --_chunks.end();
+
+    Interval maxFree;
+    for ( ; ichunk != iend ; ++ichunk ) {
+      list<Interval>::const_iterator inext = ichunk;
+      ++inext;
+
+      Interval currentFree ( (*ichunk).getVMax(), (*inext).getVMin() );
+      if ( currentFree.getSize() > maxFree.getSize() )
+        maxFree = currentFree;
+    }
+
+    return maxFree;
+  }
+
+
+  inline bool  UsedFragments::AxisCompare::operator() ( const Axis* lhs, const Axis* rhs )
+  {
+    if ( lhs->getAxis () < rhs->getAxis () ) return true;
+    return false;
+  }
+
+
+  inline  UsedFragments::AxisMatch::AxisMatch ( DbU::Unit axis )
+    : _axis(axis)
+  { }
+
+
+  inline bool  UsedFragments::AxisMatch::operator() ( const Axis* axis )
+  { return (axis->getAxis() == _axis); }
+
+
+  UsedFragments::UsedFragments ()
+    : _axiss   ()
+    , _min     (DbU::Min)
+    , _max     (DbU::Max)
+    , _capacity(0)
+    , _globals (0)
+  { }
+
+
+  UsedFragments::~UsedFragments ()
+  {
+    while ( not _axiss.empty() ) {
+      delete (*_axiss.begin());
+      _axiss.erase ( _axiss.begin() );
+    }
+  }
+
+
+  inline DbU::Unit  UsedFragments::getMin      () const { return _min; }
+  inline DbU::Unit  UsedFragments::getMax      () const { return _max; }
+  inline void       UsedFragments::setSpan     ( DbU::Unit min, DbU::Unit max ) { _min=min; _max=max; }
+  inline void       UsedFragments::setCapacity ( size_t capacity ) { _capacity=capacity; }
+  inline void       UsedFragments::incGlobals  ( size_t count ) { _globals+=count; }
+
+
+  void  UsedFragments::merge ( DbU::Unit axis, const Interval& chunkMerge )
+  {
+    vector<Axis*>::iterator iaxis = find_if ( _axiss.begin(), _axiss.end(), AxisMatch(axis) );
+
+    Axis* paxis = NULL;
+    if ( iaxis == _axiss.end() ) {
+      paxis = new Axis(this,axis);
+      _axiss.push_back ( paxis );
+      stable_sort ( _axiss.begin(), _axiss.end(), AxisCompare() );
+    } else {
+      paxis = *iaxis;
+    }
+
+    paxis->merge ( chunkMerge );
+  }
+
+
+  Interval  UsedFragments::getMaxFree () const
+  {
+    if ( _capacity > _globals + _axiss.size() )
+      return Interval(_min,_max);
+
+    Interval maxFree;
+    vector<Axis*>::const_iterator iaxis = _axiss.begin();
+    for ( ; iaxis != _axiss.end() ; ++iaxis ) {
+      Interval axisMaxFree = (*iaxis)->getMaxFree();
+      if ( axisMaxFree.getSize() > maxFree.getSize() )
+        maxFree = axisMaxFree;
+    }
+
+    return maxFree;
+  }
+
+
+} // End of anonymous namespace.
+
+
 namespace Katabatic {
 
 
@@ -58,6 +256,39 @@ namespace Katabatic {
   using Hurricane::Bug;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
+
+
+// -------------------------------------------------------------------
+// Class  :  "Katabatic::GCell::BlockedAxis".
+
+
+  GCell::BlockedAxis::BlockedAxis ( GCell* gcell )
+    : _gcell   (gcell)
+    , _axisSets(new set<DbU::Unit>* [_gcell->getDepth()])
+  {
+    for ( size_t i=0 ; i<_gcell->getDepth() ; ++i ) _axisSets[i] = NULL;
+  }
+
+
+  const set<DbU::Unit>& GCell::BlockedAxis::getAxisSet ( size_t depth ) const
+  {
+    static const set<DbU::Unit> _emptySet;
+
+    if ( (depth >= _gcell->getDepth()) or (not _axisSets[depth]) )
+      return _emptySet;
+
+    return *(_axisSets[depth]);
+  }
+
+
+  void  GCell::BlockedAxis::addAxis ( size_t depth, DbU::Unit axis )
+  {
+    if ( depth >= _gcell->getDepth() ) return;
+    if ( not _axisSets[depth] ) _axisSets[depth] = new set<DbU::Unit>();
+    
+    _axisSets[depth]->insert ( axis );
+  }
+  
 
 
 // -------------------------------------------------------------------
@@ -116,7 +347,11 @@ namespace Katabatic {
     , _blockages         (new DbU::Unit [_depth])
     , _cDensity          (0.0)
     , _densities         (new float [_depth])
- // , _saturateDensities (new float [_depth])
+    , _feedthroughs      (new float [_depth])
+    , _fragmentations    (new float [_depth])
+    , _globalsCount      (new float [_depth])
+  //, _blockedAxis       (this)
+  //, _saturateDensities (new float [_depth])
     , _saturated         (false)
     , _invalid           (true)
     , _key               (0.0,_index)
@@ -124,6 +359,9 @@ namespace Katabatic {
     for ( size_t i=0 ; i<_depth ; i++ ) {
       _blockages        [i] = 0;
       _densities        [i] = 0.0;
+      _feedthroughs     [i] = 0.0;
+      _fragmentations   [i] = 0.0;
+      _globalsCount     [i] = 0.0;
     //_saturateDensities[i] = 0.0;
 
       if ( Session::getRoutingGauge()->getLayerGauge(i)->getType() == Constant::PinOnly )
@@ -167,6 +405,7 @@ namespace Katabatic {
 
     delete [] _blockages;
     delete [] _densities;
+    delete [] _feedthroughs;
   //delete [] _saturateDensities;
 
     _allocateds--;
@@ -433,6 +672,13 @@ namespace Katabatic {
   }
 
 
+  // void  GCell::addBlockedAxis ( unsigned int depth, DbU::Unit axis )
+  // {
+  //   _invalid = true;
+  //   _blockedAxis.addAxis ( depth, axis );
+  // }
+
+
   void  GCell::removeContact ( AutoContact* ac )
   {
     size_t begin = 0;
@@ -533,7 +779,7 @@ namespace Katabatic {
 
   size_t  GCell::updateDensity ()
   {
-    if ( !_invalid ) return (_saturated) ? 1 : 0;
+    if ( not _invalid ) return (_saturated) ? 1 : 0;
 
     _saturated = false;
 
@@ -551,18 +797,39 @@ namespace Katabatic {
     for ( size_t i=0 ; i<_vsegments.size() ; i++ ) cerr << "Order: " << _vsegments[i] << endl;
 #endif
 
-    float     hcapacity    = getHCapacity ();
-    float     vcapacity    = getVCapacity ();
-    float     ccapacity    = hcapacity * vcapacity * 4; 
-    DbU::Unit hpenalty     = 0 /*_box.getWidth () / 3*/;
-    DbU::Unit vpenalty     = 0 /*_box.getHeight() / 3*/;
-    DbU::Unit uLengths1 [ _depth ];
-    DbU::Unit uLengths2 [ _depth ];
+    float          hcapacity    = getHCapacity ();
+    float          vcapacity    = getVCapacity ();
+    float          ccapacity    = hcapacity * vcapacity * 4; 
+    DbU::Unit      hpenalty     = 0 /*_box.getWidth () / 3*/;
+    DbU::Unit      vpenalty     = 0 /*_box.getHeight() / 3*/;
+    DbU::Unit      uLengths1    [ _depth ];
+    DbU::Unit      uLengths2    [ _depth ];
+    float          localCounts  [ _depth ];
+    UsedFragments  ufragments   [ _depth ];
+  //set<DbU::Unit> usedAxis     [ _depth ];
 
-  for ( size_t i=0 ; i<_depth ; i++ ) uLengths2[i] = 0;
+    for ( size_t i=0 ; i<_depth ; i++ ) {
+      _feedthroughs[i] = 0.0;
+      uLengths2    [i] = 0;
+      localCounts  [i] = 0.0;
+      _globalsCount[i] = 0.0;
+
+      switch ( Session::getRoutingGauge()->getLayerDirection(i) ) {
+        case Constant::Horizontal:
+          ufragments[i].setSpan     ( _box.getXMin(), _box.getXMax() );
+          ufragments[i].setCapacity ( (size_t)hcapacity );
+          break;
+        case Constant::Vertical:
+          ufragments[i].setSpan     ( _box.getYMin(), _box.getYMax() );
+          ufragments[i].setCapacity ( (size_t)vcapacity );
+          break;
+      }
+      
+    //usedAxis     [i] = _blockedAxis.getAxisSet ( i );
+    }
 
   // Compute wirelength associated to contacts (in DbU::Unit converted to float).
-    set<AutoSegment*> processeds;
+    AutoSegment::DepthLengthSet  processeds;
     vector<AutoContact*>::iterator  it = _contacts.begin();
     vector<AutoContact*>::iterator end = _contacts.end  ();
     for ( ; it != end ; it++ ) {
@@ -582,6 +849,9 @@ namespace Katabatic {
       size_t       depth = Session::getRoutingGauge()->getLayerDepth(layer);
       size_t       count = 0;
       for ( size_t i=0 ; i<_hsegments.size() ; i++ ) {
+        _globalsCount[depth] += 1.0;
+        ufragments   [depth].incGlobals();
+
         if ( layer != _hsegments[i]->getLayer() ) {
           uLengths2[depth] += count * _box.getWidth();
 
@@ -590,6 +860,8 @@ namespace Katabatic {
           depth = Session::getRoutingGauge()->getLayerDepth(layer);
         }
         count++;
+        _feedthroughs[depth] += 1.0;
+      //usedAxis[depth].insert ( _hsegments[i]->getAxis() );
       }
       if ( count ) {
         uLengths2[depth] += count * _box.getWidth();
@@ -602,6 +874,9 @@ namespace Katabatic {
       size_t       depth = Session::getRoutingGauge()->getLayerDepth(layer);
       size_t       count = 0;
       for ( size_t i=0 ; i<_vsegments.size() ; i++ ) {
+        _globalsCount[depth] += 1.0;
+        ufragments   [depth].incGlobals();
+
         if ( layer != _vsegments[i]->getLayer() ) {
           uLengths2[depth] += count * _box.getHeight();
 
@@ -610,6 +885,8 @@ namespace Katabatic {
           depth = Session::getRoutingGauge()->getLayerDepth(layer);
         }
         count++;
+        _feedthroughs[depth] += 1.0;
+      //usedAxis[depth].insert ( _vsegments[i]->getAxis() );
       }
       if ( count ) {
         uLengths2[depth] += count * _box.getHeight();
@@ -621,25 +898,61 @@ namespace Katabatic {
       uLengths2[i] += _blockages[i];
     }
 
+  // Compute the number of non pass-through tracks.
+    if ( processeds.size() ) {
+      AutoSegment::DepthLengthSet::iterator isegment = processeds.begin();
+      const Layer* layer = (*isegment)->getLayer();
+      DbU::Unit    axis  = (*isegment)->getAxis();
+      size_t       depth = Session::getRoutingGauge()->getLayerDepth(layer);
+      size_t       count = 0;
+      for ( ; isegment != processeds.end(); ++isegment ) {
+        _feedthroughs[depth] += ((*isegment)->isGlobal()) ? 0.50 : 0.33;
+        localCounts  [depth] += 1.0;
+        if ( (*isegment)->isGlobal() ) _globalsCount[depth] += 1.0;
+        ufragments[depth].merge ( (*isegment)->getAxis(), (*isegment)->getSpanU() );
+
+        if ( (axis != (*isegment)->getAxis()) or (layer != (*isegment)->getLayer()) ) {
+        //_feedthroughs[depth] += 1;
+        //usedAxis[depth].insert ( axis );
+
+          count = 0;
+          axis  = (*isegment)->getAxis();
+          layer = (*isegment)->getLayer();
+          depth = Session::getRoutingGauge()->getLayerDepth(layer);
+        }
+        ++count;
+      }
+      if ( count ) {
+      //_feedthroughs[depth] += 1;
+      //usedAxis[depth].insert ( axis );
+      }
+    }
+
   // Normalize: 0 < d < 1.0 (divide by H/V capacity).
     for ( size_t i=0 ; i<_depth ; i++ ) {
       switch ( Session::getRoutingGauge()->getLayerDirection(i) ) {
         case Constant::Horizontal:
-          _densities[i] = ((float)uLengths2[i]) / ( hcapacity * (float)_box.getWidth() );
+          _densities     [i]  = ((float)uLengths2[i]) / ( hcapacity * (float)_box.getWidth() );
+          _feedthroughs  [i] += (float)(_blockages[i] / _box.getWidth());
+        //_fragmentations[i]  = (hcapacity - _feedthroughs[i]) / (localCounts[i] + 1.0);
+          _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)_box.getWidth();
           break;
         case Constant::Vertical:
-          _densities[i] = ((float)uLengths2[i]) / ( vcapacity * (float)_box.getHeight() );
+          _densities     [i]  = ((float)uLengths2[i]) / ( vcapacity * (float)_box.getHeight() );
+          _feedthroughs  [i] += (float)(_blockages[i] / _box.getHeight());
+        //_fragmentations[i]  = (vcapacity - _feedthroughs[i]) / (localCounts[i] + 1.0);
+          _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)_box.getHeight();
           break;
       }
-       if ( _densities[i] >= 1.0 ) _saturated = true;
+
+      if ( _densities[i] >= 1.0 ) _saturated = true;
+    //if ( usedAxis[i].size() > _feedthroughs[i] ) _feedthroughs[i] = usedAxis[i].size();
     }
 
     _cDensity = ( (float)_contacts.size() ) / ccapacity;
     _invalid  = false;
 
-    for ( size_t i=0 ; i<_depth ; i++ ) {
-      _densities[i] = roundfp ( _densities        [i] );
-    }
+    for ( size_t i=0 ; i<_depth ; i++ ) { _densities[i] = roundfp ( _densities[i] ); }
     _cDensity = roundfp (_cDensity );
 
     ltrace(200) << "updateDensity: " << this << endl;
@@ -679,7 +992,7 @@ namespace Katabatic {
         }
       }
       for ( size_t i=3 ; i<_depth ; i+=2 ) {
-        if ( (_densities[i] < 0.3) and (_densities[i-2] < 0.3) ) continue;
+        if ( (_densities[i] < 0.5) and (_densities[i-2] < 0.5) ) continue;
 
         float balance = _densities[i] / (_densities[i-2]+0.001 );
         if ( (balance > 3) or (balance < .33) ) {
@@ -772,10 +1085,12 @@ namespace Katabatic {
 
     ltrace(200) << "  | hasFreeTrack [" << getIndex() << "] depth:" << depth << " "
                 << Session::getRoutingGauge()->getRoutingLayer(depth)->getName()
-                << " " << (_densities[depth]*capacity) << " vs. " << capacity
+              //<< " " << (_densities[depth]*capacity) << " vs. " << capacity
+                << " " << _feedthroughs[depth] << " vs. " << capacity
                 << " " << this << endl;
     
-    return (_densities[depth]*capacity + 1.0 + reserve <= capacity);
+  //return (_densities[depth]*capacity + 1.0 + reserve <= capacity);
+    return (_feedthroughs[depth] + 0.99 + reserve <= capacity);
   }
 
 
@@ -853,7 +1168,7 @@ namespace Katabatic {
   }
 
 
-  bool  GCell::stepNetDesaturate ( unsigned int depth, set<Net*>& globalNets, set<GCell*>& invalidateds )
+  bool  GCell::stepNetDesaturate ( unsigned int depth, set<Net*>& globalNets, GCell::SetId& invalidateds )
   {
 #if defined(CHECK_DETERMINISM)
     cerr << "Order: stepDesaturate [" << getIndex() << "] depth:" << depth << endl;
@@ -1051,7 +1366,9 @@ namespace Katabatic {
 #if not defined(CHECK_DETERMINISM)
       << getDensity(false) << " "
 #endif
-      << getVectorString(_densities,_depth)
+      << "d:" << _depth << " "
+      << getVectorString(_densities   ,_depth) << " "
+      << getVectorString(_feedthroughs,_depth)
       << ">";
 
     return s.str();
@@ -1163,15 +1480,22 @@ namespace Katabatic {
     ltrace(190) << "DyKeyQueue::revalidate()" << endl;
 
     std::set<GCell*,GCell::CompareByKey>::iterator iinserted;
-    std::set<GCell*>::iterator                     igcell    = _requests.begin();
+    GCell::SetId::iterator                         igcell    = _requests.begin();
+
+  // Remove invalidateds GCell from the queue.
     for ( ; igcell != _requests.end() ; ++igcell ) {
       iinserted = _map.find(*igcell);
       if ( iinserted != _map.end() ) {
         _map.erase ( iinserted );
       }
+    }
+
+  // Re-insert invalidateds GCell in the queue *after* updating the key.
+    for ( igcell = _requests.begin() ; igcell != _requests.end() ; ++igcell ) {
       (*igcell)->updateKey (_depth);
       _map.insert ( *igcell );
     }
+
     _requests.clear ();
   }
 

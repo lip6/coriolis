@@ -35,6 +35,7 @@ namespace Hurricane {
   class RoutingPad;
 }
 
+#include  "katabatic/AutoSegment.h"
 #include  "katabatic/AutoContacts.h"
 #include  "katabatic/GCell.h"
 
@@ -193,7 +194,7 @@ namespace Katabatic {
               bool             canHDesalignate            ();
               bool             canVDesalignate            ();
               bool             canMoveUp                  ( AutoSegment* moved ) const;
-              void             getLengths                 ( DbU::Unit* lengths, set<AutoSegment*>& );
+              void             getLengths                 ( DbU::Unit* lengths, AutoSegment::DepthLengthSet& );
               Box              getNativeConstraintBox     () const;
               Interval         getUConstraints            ( unsigned int direction ) const;
       inline  DbU::Unit        getCBXMin                  () const;

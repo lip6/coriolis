@@ -287,6 +287,29 @@ namespace Katabatic {
 
 
 // -------------------------------------------------------------------
+// Class  :  "Katabatic::AutoSegment::CompareByDepthAxis".
+
+
+  bool  AutoSegment::CompareByDepthAxis::operator() ( AutoSegment* lhs, AutoSegment* rhs ) const
+  {
+    int deltaDepth = (int)(Session::getRoutingGauge()->getLayerDepth(lhs->getLayer()))
+                   - (int)(Session::getRoutingGauge()->getLayerDepth(rhs->getLayer()));
+    if ( deltaDepth < 0 ) return true;  // Lowest layer first.
+    if ( deltaDepth > 0 ) return false;
+
+    DbU::Unit deltaUnit = lhs->getAxis() - rhs->getAxis();
+    if ( deltaUnit < 0 ) return true;  // Smallest axis first.
+    if ( deltaUnit > 0 ) return false;
+
+    deltaUnit = lhs->getSourceU() - rhs->getSourceU();
+    if ( deltaUnit < 0 ) return true;  // Smallest source first.
+    if ( deltaUnit > 0 ) return false;
+
+    return lhs->getId() < rhs->getId(); // Smallest Id first.
+  }
+
+
+// -------------------------------------------------------------------
 // Class  :  "Katabatic::AutoSegment".
 
 
@@ -1244,7 +1267,8 @@ namespace Katabatic {
 
   bool  AutoSegment::canPivotUp ( float reserve, unsigned int flags )
   {
-    ltrace(200) << "AutoSegment::canPivotUp() - " << flags << endl;
+    ltrace(200) << "AutoSegment::canPivotUp() - " << flags
+                << " (reserve:" << reserve << ")" << endl;
 
     if ( isLayerChange() or isFixed() ) return false;
     if ( isTerminal   () or isLocal() ) return false;
@@ -1293,7 +1317,8 @@ namespace Katabatic {
 
   bool  AutoSegment::canPivotDown ( bool propagate, float reserve )
   {
-    ltrace(200) << "AutoSegment::canPivotDown()" << endl;
+    ltrace(200) << "AutoSegment::canPivotDown()"
+                << " (reserve:" << reserve << ")" << endl;
 
     if ( isLayerChange() or isFixed() ) return false;
     if ( isTerminal   () or isLocal() ) return false;
@@ -1332,7 +1357,7 @@ namespace Katabatic {
       }
     }
 
-    ltrace(200) << "AutoSegment::canPivotUp() - true [propagate]" << endl;
+    ltrace(200) << "AutoSegment::canPivotDown() - true [propagate]" << endl;
 
     return true;
   }
@@ -1340,7 +1365,11 @@ namespace Katabatic {
 
   bool  AutoSegment::canMoveUp ( float reserve, unsigned int flags )
   {
-    ltrace(200) << "AutoSegment::canMoveUp() " << flags << endl;
+    ltrace(200) << "AutoSegment::canMoveUp() " << flags
+                << " (reserve:" << reserve << ")" << endl;
+
+    GCell* begin = NULL;
+    GCell* end   = NULL;
 
     if ( isLayerChange() or isFixed() ) return false;
     if ( isTerminal() and (not (flags & AllowTerminal)) ) return false;
@@ -1351,6 +1380,9 @@ namespace Katabatic {
 
     vector<GCell*> gcells;
     getGCells ( gcells );
+    begin = *gcells.begin ();
+    end   = *gcells.rbegin();
+
     for ( size_t i=0 ; i<gcells.size() ; i++ ) {
       if ( not gcells[i]->hasFreeTrack(depth,reserve) ) {
         ltrace(200) << "Not enough free track in " << gcells[i] << endl;
@@ -1373,12 +1405,37 @@ namespace Katabatic {
         if ( isegment->isGlobal() ) hasGlobalSegment = true;
 
         isegment->getGCells ( gcells );
+        if ( (*gcells.begin ())->getIndex() < begin->getIndex() ) begin = *gcells.begin (); 
+        if ( (*gcells.rbegin())->getIndex() > end  ->getIndex() ) end   = *gcells.rbegin(); 
+
         for ( size_t i=0 ; i<gcells.size() ; i++ ) {
           if ( not gcells[i]->hasFreeTrack(depth,reserve) ) {
             ltrace(200) << "Not enough free track in " << gcells[i] << endl;
             return false;
           }
         }
+      }
+    }
+
+    if ( (depth >= 4) and (flags & PerpandicularFrag) ) {
+      float fragmentation = begin->getFragmentation(depth-1);
+      ltrace(200) << "Check begin GCell perpandicular fragmentation: " << fragmentation << endl;
+
+      if ( fragmentation < 0.5 ) {
+        ltrace(200) << "Not enough free track for perpandicular in begin GCell "
+                    << "(frag:" << fragmentation << ")."
+                    << endl;
+        return false;
+      }
+
+      fragmentation = end->getFragmentation(depth-1);
+      ltrace(200) << "Check end GCell perpandicular fragmentation: " << fragmentation << endl;
+
+      if ( fragmentation < 0.5 ) {
+        ltrace(200) << "Not enough free track for perpandicular in end GCell "
+                    << "(frag:" << fragmentation << ")."
+                    << endl;
+        return false;
       }
     }
 
@@ -1942,7 +1999,7 @@ namespace Katabatic {
     stack.push ( seed->getAutoSource(), seed );
     stack.push ( seed->getAutoTarget(), seed );
 
-    while ( !stack.isEmpty() ) {
+    while ( not stack.isEmpty() ) {
       AutoContact* sourceContact = stack.getAutoContact ();
       AutoSegment* sourceSegment = stack.getAutoSegment ();
 
@@ -1960,10 +2017,10 @@ namespace Katabatic {
 
       forEach ( Component*, component, sourceContact->getSlaveComponents() ) {
         Segment* segment = dynamic_cast<Segment*>(*component);
-        if ( ( !segment ) || ( segment == sourceSegment->getSegment() ) ) continue;
+        if ( ( not segment ) || ( segment == sourceSegment->getSegment() ) ) continue;
 
         AutoSegment* currentSegment = Session::lookup ( segment );
-        if ( !currentSegment ) {
+        if ( not currentSegment ) {
           cerr << Error("Can't lookup <AutoSegment> for %s.",getString(segment).c_str()) << endl;
           continue;
         }
@@ -1983,7 +2040,7 @@ namespace Katabatic {
           continue;
         }
 
-        if ( !areAligneds(currentSegment,seed) ) {
+        if ( not areAligneds(currentSegment,seed) ) {
           collapseds.push_back ( currentSegment );
           ltrace(79) << "collapsed: " << currentSegment << endl;
         }
