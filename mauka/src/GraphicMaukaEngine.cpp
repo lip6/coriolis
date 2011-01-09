@@ -43,6 +43,7 @@
 #include  <hurricane/viewer/CellViewer.h>
 #include  <hurricane/viewer/ControllerWidget.h>
 #include  <crlcore/Utilities.h>
+#include  <crlcore/ToolBox.h>
 #include  <crlcore/AllianceFramework.h>
 #include  <nimbus/NimbusEngine.h>
 #include  <metis/MetisEngine.h>
@@ -65,6 +66,7 @@ namespace Mauka {
   using Hurricane::ColorScale;
   using Hurricane::ControllerWidget;
   using CRL::Catalog;
+  using CRL::getInstancesCount;
   using CRL::AllianceFramework;
   using Nimbus::NimbusEngine;
   using Metis::MetisEngine;
@@ -173,6 +175,9 @@ namespace Mauka {
     MetisEngine* metis = MetisEngine::get ( cell );
     if ( metis == NULL ) {
       metis  = MetisEngine ::create ( cell );
+      if ( getInstancesCount(cell) < metis->getNumberOfInstancesStopCriterion()*4 )
+        return;
+
       if ( cmess1.enabled() )
         metis->getConfiguration()->print( cell );
     }
@@ -215,8 +220,9 @@ namespace Mauka {
 
   void  GraphicMaukaEngine::place ()
   {
-    if ( MetisEngine::isHMetisCapable() ) doQuadriPart ();
-    else {
+    if ( MetisEngine::isHMetisCapable() ) {
+        doQuadriPart ();
+    } else {
       cerr << Warning("Mauka has not been compiled againts hMETIS.\n"
                       "          Quadri-partition step is disabled, simulated annealing may be *very* long." ) << endl;
     }
