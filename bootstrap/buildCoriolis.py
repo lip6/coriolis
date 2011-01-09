@@ -103,7 +103,7 @@ class ProjectBuilder:
         self._rpmbuildDir = os.path.join ( self._rootDir, "rpmbuild" )
         self._tmppathDir  = os.path.join ( self._rpmbuildDir, "tmp" )
         self._tarballDir  = os.path.join ( self._rootDir, "tarball" )
-        self._archiveDir  = os.path.join ( self._tarballDir, "coriolis2-1.0.%s" % self._svnTag )
+        self._archiveDir  = os.path.join ( self._tarballDir, "coriolis2-1.1.%s" % self._svnTag )
         self._sourceDir   = os.path.join ( self._rootDir, "src" )
         self._osDir       = os.path.join ( self._rootDir
                                         , self._osType
@@ -252,8 +252,9 @@ class ProjectBuilder:
         if self._doBuild:
             command  = [ "make" ]
            #command += [ "DESTDIR=%s" % self._installDir ]
-            if tool == "crlcore" and self._enableDoc == "ON":
-                command += [ "dvi", "safepdf" ]
+            if self._enableDoc == "ON":
+                if tool == "crlcore" or tool == "stratus1":
+                    command += [ "dvi", "safepdf", "html" ]
             command += self._makeArguments
             print "Make command:", command
             sys.stdout.flush ()
@@ -455,20 +456,25 @@ class ProjectBuilder:
         os.makedirs ( self._tarballDir )
         self.svnExport ( tools, projects )
 
-        removeds = [ os.path.join("vlsisapd","openChams")
-                   , os.path.join("vlsisapd","dtr")
+        removeds = [ os.path.join("vlsisapd","src","openChams")
+                   , os.path.join("vlsisapd","src","dtr")
                    ]
 
        # Remove unpublisheds (yet) tools/files.
         for item in removeds:
             command = [ "/bin/rm", "-r", os.path.join(self._archiveDir,item) ]
             self._execute ( command, "rm of %s failed" % item)
+
+       # Adds files neededs only for packaging purpose.
+        command = [ "/bin/cp", "-r", os.path.join(self._sourceDir ,"bootstrap","Makefile.package")
+                                   , os.path.join(self._archiveDir,"Makefile") ]
+        self._execute ( command, "copy of %s failed" % "boostrap/Makefile.package")
  
         os.chdir ( self._archiveDir )
-        command = [ "/usr/bin/patch", "--remove-empty-files"
-                                    , "--no-backup-if-mismatch"
-                                    , "-p0", "-i", self._distribPatch ]
-        self._execute ( command, "patch for distribution command failed" )
+       #command = [ "/usr/bin/patch", "--remove-empty-files"
+       #                            , "--no-backup-if-mismatch"
+       #                            , "-p0", "-i", self._distribPatch ]
+       #self._execute ( command, "patch for distribution command failed" )
 
         os.chdir ( self._tarballDir )
         command = [ "/bin/tar", "jcvf", self._sourceTarBz2, os.path.basename(self._archiveDir) ]
@@ -496,7 +502,7 @@ class ProjectBuilder:
 
         if os.path.isfile ( rpmSpecFile ):
             os.unlink ( rpmSpecFile )
-        os.symlink ( self._specFile  , rpmSpecFile   )
+        os.symlink ( self._specFile, rpmSpecFile   )
 
         if not os.path.islink ( rpmSourceFile ):
             os.symlink ( sourceFile, rpmSourceFile )
