@@ -109,7 +109,7 @@ namespace Kite {
 
   bool  TrackCost::isFree () const
   {
-    return /*(_terminals == 0) &&*/ (!_overlap) && (!_infinite);
+    return /*(not _terminals) and*/ (not _overlap) and (not _infinite);
   }
 
 

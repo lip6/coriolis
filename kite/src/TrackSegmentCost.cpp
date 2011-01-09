@@ -118,7 +118,7 @@ namespace Kite {
         perpandicular = Session::lookup ( perpandiculars[i]->getCanonical(interval)->base() );
       }
 
-      if ( !perpandicular ) {
+      if ( not perpandicular ) {
         cerr << Bug("Not a TrackSegment: %s:%s\n      (perpandicular: %s:%s)"
                    ,getString((void*)perpandiculars[i]->getCanonical(interval)->base()).c_str()
                    ,getString(perpandiculars[i]->getCanonical(interval)).c_str()
@@ -141,11 +141,11 @@ namespace Kite {
         continue;
       }
 
-      if (   ( interval.getVMin() != trackSegment->getAxis() )
-          || AutoSegment::isTopologicalBound(perpandiculars[i]
-                                            ,false
-                                            ,perpandicular->isHorizontal()
-                                            ) ) {
+      if (  ( interval.getVMin() != trackSegment->getAxis() )
+         or AutoSegment::isTopologicalBound(perpandiculars[i]
+                                           ,false
+                                           ,perpandicular->isHorizontal()
+                                           ) ) {
         map<DbU::Unit,int>::iterator iattractor = attractorSpins.find ( interval.getVMin() );
         if ( iattractor == attractorSpins.end() ) {
           attractorSpins.insert ( make_pair(interval.getVMin(),-1) );
@@ -155,11 +155,11 @@ namespace Kite {
         ltrace(148) << "Left attractor @" << DbU::getValueString(interval.getVMin()) << endl;
       }
 
-      if (   ( interval.getVMax() != trackSegment->getAxis() )
-          || AutoSegment::isTopologicalBound(perpandiculars[i]
-                                            ,true
-                                            ,perpandicular->isHorizontal()
-                                            ) ) {
+      if (  ( interval.getVMax() != trackSegment->getAxis() )
+         or AutoSegment::isTopologicalBound(perpandiculars[i]
+                                           ,true
+                                           ,perpandicular->isHorizontal()
+                                           ) ) {
         map<DbU::Unit,int>::iterator iattractor = attractorSpins.find ( interval.getVMax() );
         if ( iattractor == attractorSpins.end() ) {
           attractorSpins.insert ( make_pair(interval.getVMax(),1) );

@@ -86,6 +86,7 @@ namespace Kite {
               KiteEngine*    getKiteEngine       () const;
       virtual bool           isHorizontal        () const = 0;
       virtual bool           isVertical          () const = 0;
+      inline  bool           isLocalAssigned     () const;
       virtual unsigned int   getDirection        () const = 0;
       inline  size_t         getIndex            () const;
               unsigned int   getDepth            () const;
@@ -118,6 +119,7 @@ namespace Kite {
               Interval       expandUsedInterval  ( size_t& begin, size_t& end ) const;
               Interval       expandFreeInterval  ( size_t& begin, size_t& end, unsigned int state, Net* ) const;
               unsigned int   checkOverlap        ( unsigned int& overlaps ) const;
+     inline   void           setLocalAssigned    ( bool );
               void           forceSort           ();
               void           insert              ( TrackElement* );
               void           insert              ( TrackMarker* );
@@ -138,6 +140,7 @@ namespace Kite {
       DbU::Unit              _max;
       vector<TrackElement*>  _segments;
       vector<TrackMarker*>   _markers;
+      bool                   _localAssigned;
       bool                   _segmentsValid;
       bool                   _markersValid;
 
@@ -201,12 +204,14 @@ namespace Kite {
   }
 
 
-  inline RoutingPlane* Track::getRoutingPlane () const { return _routingPlane; }
-  inline size_t        Track::getIndex        () const { return _index; }
-  inline DbU::Unit     Track::getAxis         () const { return _axis; }
-  inline DbU::Unit     Track::getMin          () const { return _min; }
-  inline DbU::Unit     Track::getMax          () const { return _max; }
-  inline size_t        Track::getSize         () const { return _segments.size(); }
+  inline bool          Track::isLocalAssigned  () const { return _localAssigned; }
+  inline RoutingPlane* Track::getRoutingPlane  () const { return _routingPlane; }
+  inline size_t        Track::getIndex         () const { return _index; }
+  inline DbU::Unit     Track::getAxis          () const { return _axis; }
+  inline DbU::Unit     Track::getMin           () const { return _min; }
+  inline DbU::Unit     Track::getMax           () const { return _max; }
+  inline size_t        Track::getSize          () const { return _segments.size(); }
+  inline void          Track::setLocalAssigned ( bool state ) { _localAssigned=state; }
 
   inline unsigned int  Track::setMinimalFlags ( unsigned int& state, unsigned int flags ) const
   {

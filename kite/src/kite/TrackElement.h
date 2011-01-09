@@ -124,7 +124,7 @@ namespace Kite {
       virtual bool                  canSlacken                 () const;
       virtual bool                  canPivotUp                 ( float reserve ) const;
       virtual bool                  canPivotDown               ( float reserve ) const;
-      virtual bool                  canMoveUp                  ( float reserve, unsigned int flags=AutoSegment::Propagate ) const;
+      virtual bool                  canMoveUp                  ( float reserve, unsigned int flags=AutoSegment::Propagate|AutoSegment::PerpandicularFrag ) const;
       virtual bool                  canRipple                  () const;
       virtual bool                  hasSourceDogLeg            () const;
       virtual bool                  hasTargetDogLeg            () const;

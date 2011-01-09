@@ -118,6 +118,15 @@ namespace Kite {
     for ( size_t index = 0 ; index < trackNumber ; index++ ) {
       if ( plane->getLayerGauge()->getDirection() & Constant::Horizontal ) {
         plane->_tracks.push_back ( HorizontalTrack::create ( plane, index ) );
+      // Ugly: Direct uses of CellGauge (middle tracks 4 & 5 for local use).
+        if ( depth == 1 ) {
+          switch ( index % 10 ) {
+            case 4:
+            case 5:
+              plane->_tracks.back()->setLocalAssigned ( true );
+              break;
+          }
+        }
       } else {
         plane->_tracks.push_back ( VerticalTrack::create ( plane, index ) );
       }

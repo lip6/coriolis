@@ -869,6 +869,7 @@ namespace {
                                                        , RoutingEventQueue&
                                                        , RoutingEventHistory&
                                                        );
+      inline bool                   isFullBlocked      () const;
       inline RoutingEvent*          getEvent           ();
       inline RoutingEventQueue&     getQueue           ();
       inline RoutingEventHistory&   getHistory         ();
@@ -895,6 +896,7 @@ namespace {
              bool                   conflictSolve1_v1b ();
              bool                   conflictSolve1_v2  ();
              bool                   conflictSolve2     ();
+             bool                   desaturate         ();
              bool                   slackenTopology    ( unsigned int flags=0 );
              bool                   solveFullBlockages ();
 
@@ -908,6 +910,7 @@ namespace {
       Interval               _optimal;
       vector<TrackCost>      _costs;
       vector<SegmentAction>  _actions;
+      bool                   _fullBlocked;
   };
 
 
@@ -990,8 +993,10 @@ namespace {
     , _optimal            ()
     , _costs              ()
     , _actions            ()
+    , _fullBlocked        (true)
   {
     TrackElement* segment = _event->getSegment();
+    unsigned int  depth   = Session::getRoutingGauge()->getLayerDepth(segment->getLayer());
     _event->setTracksFree ( 0 );
 
     _data = segment->getDataNegociate();
@@ -1034,7 +1039,12 @@ namespace {
     ltrace(148) << "* Constraints: "      << _constraint << endl;
     ltracein(148);
 
-    bool inLocalDepth = (Session::getRoutingGauge()->getLayerDepth(segment->getLayer()) < 3);
+    // if ( segment->isLocal() and (_data->getState() >= DataNegociate::MaximumSlack) )
+    //   _constraint.inflate ( 0, DbU::lambda(1.0) );
+
+    bool inLocalDepth    = (depth < 3);
+    bool isOneLocalTrack = (segment->isLocal())
+      and (segment->base()->getAutoSource()->getGCell()->getGlobalsCount(depth) >= 9.0);
 
     RoutingPlane* plane = Session::getKiteEngine()->getRoutingPlaneByLayer(segment->getLayer());
     forEach ( Track*, itrack, Tracks_Range::get(plane,_constraint)) {
@@ -1045,7 +1055,15 @@ namespace {
       if ( inLocalDepth and (_costs.back().getDataState() == DataNegociate::MaximumSlack) )
         _costs.back().setInfinite ();
 
+      if ( isOneLocalTrack
+         and  _costs.back().isOverlapGlobal()
+         and (_costs.back().getDataState() >= DataNegociate::ConflictSolve1) )
+        _costs.back().setInfinite ();
+
       _costs.back().consolidate ();
+      if ( _fullBlocked and (not _costs.back().isBlockage() and not _costs.back().isFixed()) ) 
+        _fullBlocked = false;
+
       ltrace(149) << "| " << (*itrack) << " - " << _costs.back() << endl;
     }
     ltraceout(148);
@@ -1080,6 +1098,7 @@ namespace {
   }
 
 
+  inline bool                   State::isFullBlocked          () const { return _fullBlocked and _costs.size(); }
   inline RoutingEvent*          State::getEvent               () { return _event; }
   inline RoutingEventQueue&     State::getQueue               () { return _queue; }
   inline RoutingEventHistory&   State::getHistory             () { return _history; }
@@ -1612,58 +1631,96 @@ namespace {
   bool  State::solveFullBlockages ()
   {
     bool          success = false;
-    bool          blocked = (getCosts().size() > 0);
     TrackElement* segment = getEvent()->getSegment();
 
     ltrace(200) << "State::solveFullBlockages: " << " " << segment << endl;
     ltracein(200);
 
-    for ( size_t itrack=0 ; itrack<getCosts().size() ; ++itrack ) {
-      if ( (not getCost(itrack).isBlockage() and not getCost(itrack).isFixed()) ) {
-        blocked = false;
-        break;
-      }
-    }
-
-    if ( blocked ) {
-      if ( segment->isLocal() ) {
-        success = Manipulator(segment,*this).pivotUp();
-        if ( not success ) {
-          ltrace(200) << "Tightly constrained local segment overlapping a blockage, move up." << endl;
-          ltrace(200) << segment << endl;
-          success = Manipulator(segment,*this).moveUp
-            (Manipulator::AllowLocalMoveUp|Manipulator::AllowTerminalMoveUp);
-        }
-      } else {
-        Interval overlap = segment->getCanonicalInterval();
-        size_t   begin;
-        size_t   end;
-
-        getCost(0).getTrack()->getOverlapBounds ( overlap, begin, end );
-        for ( ; begin<end ; ++begin ) {
-          TrackElement* other        = getCost(0).getTrack()->getSegment(begin);
-          Interval      otherOverlap = other->getCanonicalInterval();
-
-          if ( other->getNet() == segment->getNet() ) continue;
-          if ( not otherOverlap.intersect(overlap) ) continue;
-
-          ltrace(200) << "| " << begin << " Blockage conflict: " << " " << other << endl;
-          if ( (success = Manipulator(segment,*this).relax
-               (otherOverlap,Manipulator::NoDoglegReuse|Manipulator::NoExpand)) ) {
-            break;
-          }
-        }
-      }
+    if ( segment->isLocal() ) {
+      success = Manipulator(segment,*this).pivotUp();
       if ( not success ) {
-        cerr << "[ERROR] Tighly constrained segment overlapping a blockage." << endl;
-        ltrace(200) << "Segment is hard blocked, bypass to Unimplemented." << endl;
+        ltrace(200) << "Tightly constrained local segment overlapping a blockage, move up." << endl;
+        ltrace(200) << segment << endl;
+        success = Manipulator(segment,*this).moveUp
+          (Manipulator::AllowLocalMoveUp|Manipulator::AllowTerminalMoveUp);
+      }
+    } else {
+      Interval overlap = segment->getCanonicalInterval();
+      size_t   begin;
+      size_t   end;
+
+      getCost(0).getTrack()->getOverlapBounds ( overlap, begin, end );
+      for ( ; begin<end ; ++begin ) {
+        TrackElement* other        = getCost(0).getTrack()->getSegment(begin);
+        Interval      otherOverlap = other->getCanonicalInterval();
+        
+        if ( other->getNet() == segment->getNet() ) continue;
+        if ( not otherOverlap.intersect(overlap) ) continue;
+        
+        ltrace(200) << "| " << begin << " Blockage conflict: " << " " << other << endl;
+        if ( (success = Manipulator(segment,*this).relax
+             (otherOverlap,Manipulator::NoDoglegReuse|Manipulator::NoExpand)) ) {
+          break;
+          }
       }
     }
-
+    if ( not success ) {
+      cerr << "[ERROR] Tighly constrained segment overlapping a blockage." << endl;
+      ltrace(200) << "Segment is hard blocked, bypass to Unimplemented." << endl;
+    }
+    
     ltraceout(200);
     return success;
   }
 
+
+  bool  State::desaturate ()
+  {
+    TrackElement* segment = _event->getSegment();
+    unsigned int  depth   = Session::getRoutingGauge()->getLayerDepth(segment->getLayer());
+
+    ltrace(200) << "State::desaturate()" << segment << endl;
+    ltracein(200);
+
+    if ( segment->getLength() > DbU::lambda(75.0) ) {
+      ltraceout(200);
+      return false;
+    }
+
+    GCell* gcell = segment->base()->getAutoSource()->getGCell();
+    const vector<AutoSegment*>* globals = (segment->isHorizontal())
+                                        ? gcell->getHSegments() : gcell->getVSegments();
+
+    ltrace(200) << gcell << endl;
+
+    if ( (*globals).empty() ) {
+      ltraceout(200);
+      return false;
+    }
+
+    for ( size_t i=0 ; i<(*globals).size() ; ++i ) {
+      size_t gdepth = Session::getRoutingGauge()->getLayerDepth((*globals)[i]->getLayer());
+      if ( gdepth != depth ) continue;
+ 
+      ltrace(200) << "| " << (*globals)[i] << endl;
+
+      TrackElement* gsegment = Session::lookup ( (*globals)[i] );
+      ltrace(200) << "|*" << (*globals)[i] << endl;
+
+      if ( (*globals)[i] == segment->base() ) continue;
+
+      if ( gsegment ) {
+        if ( Manipulator(gsegment,*this).moveUp() ) {
+          ltrace(200) << "Successful desaturation of " << gcell << endl;
+          ltraceout(200);
+          return true;
+        }
+      }
+    }
+
+    ltraceout(200);
+    return false;
+  }
 
   bool  State::slackenTopology ( unsigned int flags )
   {
@@ -1747,6 +1804,7 @@ namespace {
               break;
             }
           case DataNegociate::MoveUp:
+          //if ( (success = desaturate()) ) break;
             nextState = DataNegociate::MaximumSlack;
             success = Manipulator(segment,*this).moveUp();
             if ( success ) break;
@@ -1770,7 +1828,8 @@ namespace {
 
         if ( not success
            and (nextState == DataNegociate::Unimplemented)
-           and segment->isSlackened() ) {
+           and segment->isSlackened()
+           and isFullBlocked() ) {
           solveFullBlockages ();
         }
       } else {
@@ -1779,6 +1838,11 @@ namespace {
           ltrace(200) << "Global segment FSM." << endl;
           case DataNegociate::RipupPerpandiculars:
             ltrace(200) << "Global, State: RipupPerpandiculars." << endl;
+            // if ( isFullBlocked() ) {
+            //   actionFlags &= ~SegmentAction::EventLevel5;
+            //   success = Manipulator(segment,*this).ripupPerpandiculars(Manipulator::PerpandicularsFirst);
+            //   if ( success ) break;
+            // }
             nextState = DataNegociate::Desalignate;
             break;
           case DataNegociate::Minimize:
@@ -1797,6 +1861,7 @@ namespace {
             }
           case DataNegociate::MoveUp:
             ltrace(200) << "Global, State: MoveUp." << endl;
+          //if ( (success = desaturate()) ) break;
             if ( (success = Manipulator(segment,*this).moveUp(Manipulator::AllowShortPivotUp)) ) {
               break;
             }
@@ -1985,7 +2050,12 @@ namespace {
 
     for ( size_t i=0 ; i < perpandiculars.size() ; i++ ) {
       track = perpandiculars[i]->getTrack();
-      if ( not track ) continue;
+      if ( not track ) {
+        if ( flags & Manipulator::PerpandicularsFirst ) {
+          _S.addAction ( perpandiculars[i], perpandicularActionFlags );
+        }
+        continue;
+      }
 
       bool dislodgeCaged = false;
       if ( Manipulator(perpandiculars[i],_S).isCaged(_event->getSegment()->getAxis()) ) {
@@ -2497,6 +2567,14 @@ namespace {
         }
       }
 
+      if ( _segment->isLocal() and segment2->isLocal() ) {
+        if ( shrinkLeft and shrinkRight ) {
+          Interval interval1 = segment2->getCanonicalInterval();
+          if ( toFree.getCenter() < interval1.getCenter() ) shrinkRight = false;
+          else shrinkLeft = false;
+        }
+      }
+
       if ( not (shrinkLeft xor shrinkRight) ) {
         ltrace(200) << "- Hard overlap/enclosure/shrink " << segment2 << endl;
         if ( _segment->isStrap() and segment2->isGlobal() ) continue;
@@ -2846,7 +2924,9 @@ namespace {
 
     if (     _segment->isFixed  ()    ) return false;
     if (     _segment->isStrap  ()    ) return false;
-    if ( not _segment->canMoveUp(0.5) ) return false;
+
+    float reserve = (_segment->isLocal()) ? 0.5 : 1.0;
+    if ( not _segment->canMoveUp(reserve) ) return false;
 
     _segment->moveUp ();
     return true;
@@ -2870,7 +2950,7 @@ namespace {
   {
     ltrace(200) << "Manipulator::moveUp() " << _segment << endl; 
 
-    unsigned int kflags = Katabatic::AutoSegment::Propagate;
+    unsigned int kflags = Katabatic::AutoSegment::Propagate|Katabatic::AutoSegment::PerpandicularFrag;
     kflags |= (flags & AllowLocalMoveUp   ) ? Katabatic::AutoSegment::AllowLocal    : 0;
     kflags |= (flags & AllowTerminalMoveUp) ? Katabatic::AutoSegment::AllowTerminal : 0;
 
@@ -2881,12 +2961,12 @@ namespace {
       } else {
         if ( _segment->getLength() < DbU::lambda(100.0) ) {
           if ( not (flags & AllowShortPivotUp) ) return false;
-          if ( not _segment->canPivotUp(2.0) ) return false;
+          if ( not _segment->canPivotUp(0.5) ) return false;
         }
-        if ( not _segment->canMoveUp(1.0,kflags) ) return false; // MARK 1
+        if ( not _segment->canMoveUp(0.5,kflags) ) return false; // MARK 1
       }
     } else {
-      if ( not _segment->canMoveUp(1.0,kflags) ) return false; // MARK 1
+      if ( not _segment->canMoveUp(0.5,kflags) ) return false; // MARK 1
     }
 
 #if DISABLED
@@ -3296,21 +3376,21 @@ namespace Kite {
   {
   //if ( lhs._ring xor rhs._ring ) return lhs._ring;
 
-    if ( lhs._eventLevel < rhs._eventLevel ) return true;
     if ( lhs._eventLevel > rhs._eventLevel ) return false;
+    if ( lhs._eventLevel < rhs._eventLevel ) return true;
 
     if ( lhs._canRipple    xor rhs._canRipple    ) return rhs._canRipple;
   //if ( lhs._slackenStrap xor rhs._slackenStrap ) return lhs._slackenStrap;
 
   // Uses static ordering.
-  //if ( lhs._tracksNb < rhs._tracksNb ) return false;
   //if ( lhs._tracksNb > rhs._tracksNb ) return true;
+  //if ( lhs._tracksNb < rhs._tracksNb ) return false;
 
-    if ( lhs._priority < rhs._priority ) return false;
-    if ( lhs._priority > rhs._priority ) return true;
+    if ( lhs._priority > rhs._priority ) return false;
+    if ( lhs._priority < rhs._priority ) return true;
 
-    if ( lhs._length < rhs._length ) return true;
     if ( lhs._length > rhs._length ) return false;
+    if ( lhs._length < rhs._length ) return true;
 
     if ( lhs._isHorizontal xor rhs._isHorizontal ) return rhs._isHorizontal;
 
@@ -3519,7 +3599,11 @@ namespace Kite {
       _axisHint = parent->getAxis();
       return;
     }
-    _axisHint = (parentEvent) ? parentEvent->getAxisHint() : parent->getAxis ();
+  //_axisHint = (parentEvent) ? parentEvent->getAxisHint() : parent->getAxis ();
+    _axisHint = parent->getAxis ();
+
+    ltrace(200) << "cacheAxisHint() - hint:" << DbU::getValueString(_axisHint)
+                << " axis:" << DbU::getValueString(parent->getAxis()) << " parent:" << parent << endl;
     return;
   }
 
@@ -3829,7 +3913,7 @@ namespace Kite {
     ltrace(200) << "RoutingEvent::revalidate() - " << (void*)this << ":" << this << endl;
     ltracein(200);
 
-  //cacheAxisHint ();
+    cacheAxisHint ();
     ltrace(200) << "axisHint:" << DbU::getValueString(getAxisHint()) << endl;
 
     _canHandleConstraints = true;

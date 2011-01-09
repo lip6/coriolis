@@ -8,7 +8,7 @@
 //
 // $Id$
 //
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 // |                                                                 |
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
@@ -20,7 +20,7 @@
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <vector>
@@ -110,7 +110,8 @@ namespace {
     // }
 
     cost.setOverlap   ();
-    cost.incTerminals ( data->getCost().getTerminals()*100 );
+    if ( segment->isLocal() or (Session::getRoutingGauge()->getLayerDepth(segment->getLayer()) < 3) )
+      cost.incTerminals ( data->getCost().getTerminals()*100 );
     cost.incDelta     ( intersect.getSize() );
   }
 
@@ -387,20 +388,23 @@ namespace Kite {
     while ( not _eventQueue.empty() and not isInterrupted() ) {
       RoutingEvent* event = _eventQueue.pop ();
 
-      event->process ( _eventQueue, _eventHistory, _eventLoop );
       if (tty::enabled()) {
         cmess2 << "       <event:" << tty::bold << setw(7) << setfill('0')
                << RoutingEvent::getProcesseds() << setfill(' ') << tty::reset << ">" << tty::cr;
         cmess2.flush ();
       } else {
         cmess2 << "       <event:" << setw(7) << setfill('0')
-               << RoutingEvent::getProcesseds() << setfill(' ') << "> @"
-               << DbU::getValueString(event->getSegment()->getAxis()) << " id:"
-               << event->getSegment()->getId() << " "
-               << event->getSegment()->getNet()->getName()
+               << RoutingEvent::getProcesseds() << setfill(' ') << " "
+               << event->getEventLevel() << ":" << event->getPriority() << "> "
+               << event->getSegment()
+             //<< "> @" << DbU::getValueString(event->getSegment()->getAxis())
+             //<< " id:" << event->getSegment()->getId()
+             //<< " " << event->getSegment()->getNet()->getName()
                << endl;
         cmess2.flush();
       }
+
+      event->process ( _eventQueue, _eventHistory, _eventLoop );
 
       if ( RoutingEvent::getProcesseds() >= limit ) setInterrupt ( true );
       count++;

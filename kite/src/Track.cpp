@@ -92,6 +92,7 @@ namespace Kite {
     , _max          (routingPlane->getTrackMax())
     , _segments     ()
     , _markers      ()
+    , _localAssigned(false)
     , _segmentsValid(false)
     , _markersValid (false)
   { }
@@ -290,8 +291,8 @@ namespace Kite {
 
     ltrace(190) << "getOverlapCost() @" << DbU::getValueString(_axis)
                 << " [" << DbU::getValueString(interval.getVMin())
-                << ":"  << DbU::getValueString(interval.getVMax()) << "]"
-                << "<-> [" << begin << ":"  << end << "]"
+                << ":"  << DbU::getValueString(interval.getVMax())
+                << "] <-> [" << begin << ":"  << end << "]"
                 << endl;
 
     ltracein(148);
