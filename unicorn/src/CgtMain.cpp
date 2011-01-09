@@ -50,6 +50,7 @@ namespace bfs = boost::filesystem;
 #include  "hurricane/viewer/HApplication.h"
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/StratusScript.h"
+#include  "hurricane/viewer/SelectCommand.h"
 using namespace Hurricane;
 
 #include  "crlcore/Utilities.h"
@@ -436,7 +437,12 @@ int main ( int argc, char *argv[] )
     //unicorn->registerTool ( Equinox::GraphicEquinoxEngine::grab() );
     //unicorn->registerTool ( Solstice::GraphicSolsticeEngine::grab() );
 
-      unicorn->getCellWidget()->setLayerVisible ( "grid", false );
+      SelectCommand* command = static_cast<SelectCommand*>( unicorn->getCellWidget()->getCommand(SelectCommand::getStaticName()) );
+      if ( command ) command->setSelectMode ( SelectCommand::NoAnonNetMode );
+
+      unicorn->getCellWidget()->setLayerVisible ( "grid"          , false );
+      unicorn->getCellWidget()->setLayerVisible ( "text.instance" , false );
+      unicorn->getCellWidget()->setLayerVisible ( "text.component", false );
       unicorn->setCell ( cell );
       unicorn->show    ();
 
