@@ -86,14 +86,15 @@ if __name__ == "__main__":
   parser.add_option ( "--install", action="store"      , type="string", dest="installDir" )
   ( options, args ) = parser.parse_args ()
 
-  if options.v1:       coriolisVersion = 1
-  if options.v2:       coriolisVersion = 2
-  if options.release:  buildType       = "Release"
-  if options.debug:    buildType       = "Debug"
-  if options.devel:    buildType       = "Debug"
-  if options.static:   linkType        = "Static"
-  if options.shared:   linkType        = "Shared"
-  if options.rootDir:  rootDir         = options.rootDir
+  if options.v1:         coriolisVersion = 1
+  if options.v2:         coriolisVersion = 2
+  if options.release:    buildType       = "Release"
+  if options.debug:      buildType       = "Debug"
+  if options.devel:      buildType       = "Debug"
+  if options.static:     linkType        = "Static"
+  if options.shared:     linkType        = "Shared"
+  if options.rootDir:    rootDir         = options.rootDir
+  if options.installDir: installDir      = options.installDir
 
   strippedPath        = stripPath ( "PATH" )
   strippedLibraryPath = stripPath ( "LD_LIBRARY_PATH" )
@@ -123,13 +124,12 @@ fi
 
   elif coriolisVersion == 2:
 
-    if not rootDir:
-      rootDir = os.getenv("HOME") + "/coriolis-2.x"
-
     if installDir:
       buildDir    = "SYSTEM"
       coriolisTop = installDir
     else:
+      if not rootDir:
+        rootDir = os.getenv("HOME") + "/coriolis-2.x"
       buildDir    = buildType + "." + linkType
       coriolisTop = "%s/%s/%s/install" % ( rootDir, osDir, buildDir )
 
