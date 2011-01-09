@@ -1,17 +1,12 @@
 
 // -*- C++ -*-
 
-
-# include  <cassert>
-# include  <string>
-
-# include  <QFile>
-
-# include  <QXmlStreamReader>
-
-# include  "crlcore/XmlParser.h"
-
-
+#include  <cassert>
+#include  <string>
+#include  <QFile>
+#include  <QXmlStreamReader>
+#include  "crlcore/Utilities.h"
+#include  "crlcore/XmlParser.h"
 
 
 namespace CRL {
@@ -39,6 +34,8 @@ namespace CRL {
       }
       return false;
     }
+
+    cmess1 << "     - <" << path << ">." << endl;
 
     QXmlStreamReader  reader ( &file );
     _reader = &reader;

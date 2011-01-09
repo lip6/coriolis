@@ -210,8 +210,6 @@ namespace {
         envPath = env.getCORIOLIS_TOP() + "/" + sysConfDir + "/coriolis2/environment.alliance.xml" ;
     }
 
-    cmess1 << "     - <" << envPath << ">." << endl;
-
     return ep._load ( envPath, warnNotFound );
   }
 
