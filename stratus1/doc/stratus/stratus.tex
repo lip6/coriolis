@@ -1,32 +1,36 @@
-\documentclass[12pt]{article}
-\usepackage[latin1]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{palatino}
-\usepackage{fancyhdr}
-\usepackage{float}
-\usepackage{subfigure}
-\usepackage{wrapfig}
-\usepackage[dvips]{graphics}
-\usepackage{graphicx}
-%\usepackage{epsfig}
-\usepackage[dvips]{hyperref}
-\usepackage{multicol}
-\usepackage{url}
-\usepackage{html}
-\usepackage{color}
 
- \definecolor{violet}{rgb}{0.5,0,0.5}
+ \documentclass[11pt]{article}
+
+   \usepackage[latin1]{inputenc}
+   \usepackage[T1]{fontenc}
+   \usepackage{palatino}
+   \usepackage{fancyhdr}
+   \usepackage{float}
+  %\usepackage{subfigure}
+  %\usepackage{wrapfig}
+   \usepackage[dvips]{graphicx}
+  %\usepackage{epsfig}
+   \usepackage[dvips]{hyperref}
+  %\usepackage{multicol}
+   \usepackage{url}
+   \usepackage{html}
+   \usepackage{color}
+   \usepackage[paper=a4paper
+              ,headheight=30pt
+              ]{geometry}
+
+   \definecolor{violet}{rgb}{0.5,0,0.5}
  
-\setlength{\topmargin}{0cm}
-\setlength{\headheight}{1cm}
-\setlength{\textheight}{21cm}
-\setlength{\textwidth}{16cm}
-\setlength{\oddsidemargin}{0cm}
-\setlength{\evensidemargin}{0cm}
-\setlength{\columnsep}{0.125in}
-\setlength{\columnseprule}{0.5pt}
-\setlength{\footskip}{1cm}
-\sloppy
+  %\setlength{\topmargin}{0cm}
+  %\setlength{\headheight}{1cm}
+  %\setlength{\textheight}{21cm}
+  %\setlength{\textwidth}{16cm}
+  %\setlength{\oddsidemargin}{0cm}
+  %\setlength{\evensidemargin}{0cm}
+  %\setlength{\columnsep}{0.125in}
+  %\setlength{\columnseprule}{0.5pt}
+  %\setlength{\footskip}{1cm}
+   \sloppy
 
 %--------------------------------- page style --------------------------------
 \pagestyle{fancy}
@@ -42,7 +46,7 @@
 
 \begin{document}
 
-\setlength{\footrulewidth}{0.6pt}
+%\setlength{\footrulewidth}{0.6pt}
 \maketitle
 
 %%\begin{htmlonly}
@@ -208,15 +212,10 @@
 
 \section{Useful links}
 
-    \subsection{Patterns module}
-    
-You can find the documentation of the patterns module :\\
-\url{file:///asim/coriolis/share/doc/en/html/patterns/index.html}
-
-    \subsection{DPGEN generators}
+    \subsection{DpGen generators}
     
 You can find the documentation of the DPGEN library at :\\
-\url{file:///asim/coriolis/share/doc/en/html/dpgen/index.html}
+\url{file:../dpgen/index.html}
 
     \subsection{Arithmetic package of stratus}
 
@@ -227,6 +226,11 @@ You can find the documentation of the arithmetic stratus's package at :\\
 
 You can find the documentation of the arithmetic library at :\\
 \url{file:////users/outil/arith/latest/doc/index.html}
+
+    \subsection{Patterns module}
+    
+You can find the documentation of the patterns module :\\
+\url{file:../patterns/index.html}
 
 \end{htmlonly}
 

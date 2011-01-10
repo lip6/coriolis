@@ -11,6 +11,8 @@
  
  find_package(Bootstrap REQUIRED)
  set_cmake_policies()
+# The flaw is in UseLATEX.cmake.
+ cmake_policy(SET CMP0002 OLD)
  set_lib_link_mode()
  setup_sysconfdir("$ENV{CORIOLIS_TOP}")
  

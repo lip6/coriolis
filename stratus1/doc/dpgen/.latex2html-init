@@ -21,7 +21,7 @@ $PS_IMAGES = 0;
 
 #$TITLE = "Titre";      # The default is "No Title" 
 
-$DESTDIR = '';          # Put the result in this directory 
+$DESTDIR = '';         # Put the result in this directory 
 
 # When this is set, the generated HTML files will be placed in the 
 # current directory. If set to 0 the default behaviour is to create (or reuse)
@@ -34,23 +34,23 @@ $ADDRESS = "<I>$address_data[0] <BR>\n$address_data[1]</I>";
 
 $NO_NAVIGATION = 0;	# 1 = do not put a navigation panel at the top of each page
 
-# Put navigation links at the top of each  page.
-# If  the page exceeds $WORDS_IN_PAGE number of words then put one at the bottom of the page.
+# Put navigation links at the top of each  page.  If  the page  exceeds
+# $WORDS_IN_PAGE  number of words then put one at the bottom of the page.
 $AUTO_NAVIGATION = 1;
 
-# Put a link to the index page in the navigation panel
+# Put a link to the index page in  the  navigation  panel
 $INDEX_IN_NAVIGATION = 1;
 
-# Put a link to the table of contents in the navigation panel
+# Put a link to the table of contents  in  the  navigation  panel
 $CONTENTS_IN_NAVIGATION = 1;
 
-# Put a link to the next logical page in the navigation panel
+# Put a link to the next logical page  in  the  navigation  panel
 $NEXT_PAGE_IN_NAVIGATION = 1;
 
-# Put a link to the previous logical page in the navigation panel
+# Put a link to the previous logical page  in  the  navigation  panel
 $PREVIOUS_PAGE_IN_NAVIGATION = 1;
 
-$INFO = 0;              # 0 = do not make a "About this document..." section 
+$INFO = 1;              # 0 = do not make a "About this document..." section 
 
 # Reuse images generated during previous runs
 $REUSE = 2;
@@ -72,8 +72,7 @@ $CHILDLINE = "<BR> <HR>\n";
 $LINE_WIDTH = 500;		
 
 # Used in conjunction with AUTO_NAVIGATION
-#$WORDS_IN_PAGE = 300; !!!	
-$WORDS_IN_PAGE = 50;	
+$WORDS_IN_PAGE = 300;	
 
 # Affects ONLY the way accents are processed 
 $default_language = 'english';	
@@ -199,34 +198,34 @@ sub use_my_icon($) {
 }
 
 
-sub make_top_nav_panel() {
+sub make_top_nav_panel {
     my $s;
     $s = ('<table align="center" width="100%" cellpadding="0" cellspacing="2">'
           #. "\n<tr><th colspan=\"3\" align=\"center\"> $t_title </th></tr>"
           . "\n<tr>"
           # ... and the ``previous'' title
-          . "<td align=\"left\" width=\"33%\">"
+          . "<td class=\"navigation\" align=\"left\" width=\"33%\">"
           . ($PREVIOUS_TITLE ? "<B>Previous</B>" : "&nbsp;")
           . "</td>\n"
           # Similarly with the ``up'' title ...
-          . "<td align=\"center\" width=\"34%\">"
+          . "<td class=\"navigation\" align=\"center\" width=\"34%\">"
           . ($UP_TITLE ? "<B>Up</B>" : "&nbsp;")
           . "</td>\n"
           # If ``next'' section exists, add its title to the navigation panel
-          . "<td align=\"right\" width=\"33%\">"
+          . "<td class=\"navigation\" align=\"right\" width=\"33%\">"
           . ($NEXT_TITLE ? "<B>Next</B>" : "&nbsp;")
           . "</td>\n"
           . "\n</tr><tr>\n"
           # ... and the ``previous'' title
-          . "<td align=\"left\" width=\"33%\">"
+          . "<td class=\"navigation\" align=\"left\" width=\"33%\">"
           . ($PREVIOUS_TITLE ? "$PREVIOUS_TITLE" : "&nbsp;")
           . "</td>\n"
           # Similarly with the ``up'' title ...
-          . "<td align=\"center\" width=\"34%\">"
+          . "<td class=\"navigation\" align=\"center\" width=\"34%\">"
           . ($UP_TITLE ? "$UP_TITLE" : "&nbsp;")
           . "</td>\n"
           # If ``next'' section exists, add its title to the navigation panel
-          . "<td align=\"right\" width=\"33%\">"
+          . "<td class=\"navigation\" align=\"right\" width=\"33%\">"
           . ($NEXT_TITLE ? "$NEXT_TITLE" : "&nbsp;")
           . "</td>\n"
           . "\n</tr></table>\n"
@@ -238,34 +237,34 @@ sub make_top_nav_panel() {
 }
 
 
-sub make_bot_nav_panel() {
+sub make_bot_nav_panel {
     my $s;
     $s = ('<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">'
           #. "\n<tr><th colspan=\"3\" align=\"center\"> $t_title </th></tr>"
           . "\n<tr>"
           # ... and the ``previous'' title
-          . "<td align=\"left\" width=\"33%\">"
+          . "<td class=\"navigation\" align=\"left\" width=\"33%\">"
           . ($PREVIOUS_TITLE ? "<B>Previous</B>" : "&nbsp;")
           . "</td>\n"
           # Similarly with the ``up'' title ...
-          . "<td align=\"center\" width=\"34%\">"
+          . "<td class=\"navigation\" align=\"center\" width=\"34%\">"
           . ($UP_TITLE ? "<B>Up</B>" : "&nbsp;")
           . "</td>\n"
           # If ``next'' section exists, add its title to the navigation panel
-          . "<td align=\"right\" width=\"33%\">"
+          . "<td class=\"navigation\" align=\"right\" width=\"33%\">"
           . ($NEXT_TITLE ? "<B>Next</B>" : "&nbsp;")
           . "</td>\n"
           . "\n</tr><tr>\n"
           # ... and the ``previous'' title
-          . "<td align=\"left\" width=\"33%\">"
+          . "<td class=\"navigation\" align=\"left\" width=\"33%\">"
           . ($PREVIOUS_TITLE ? "$PREVIOUS_TITLE" : "&nbsp;")
           . "</td>\n"
           # Similarly with the ``up'' title ...
-          . "<td align=\"center\" width=\"34%\">"
+          . "<td class=\"navigation\" align=\"center\" width=\"34%\">"
           . ($UP_TITLE ? "$UP_TITLE" : "&nbsp;")
           . "</td>\n"
           # If ``next'' section exists, add its title to the navigation panel
-          . "<td align=\"right\" width=\"33%\">"
+          . "<td class=\"navigation\" align=\"right\" width=\"33%\">"
           . ($NEXT_TITLE ? "$NEXT_TITLE" : "&nbsp;")
           . "</td>\n"
           . "\n</tr></table>\n"
@@ -293,15 +292,15 @@ sub bot_navigation_panel {
 
 #$EXTERNAL_STYLESHEET = "../ASIM.css";
 
-$ADDRESS = "Sophie <small>BELLOEIL</small><br>20051116.1";
+$ADDRESS = "Sophie B<small>ELLOEIL</small><br>20051116.1";
 
 $LOCAL_ICONS = 0;
 
 $USING_STYLES = 1;
 
-$TRANSPARENT_FIGURES = 1;
+$TRANSPARENT_FIGURES = 0;
 
-$WHITE_BACKGROUND = 0;
+$WHITE_BACKGROUND = 1;
 
 $used_icons{"home." . $IMAGE_TYPE} = 1;
 
