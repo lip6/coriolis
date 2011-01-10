@@ -23,17 +23,20 @@
 // x-----------------------------------------------------------------x
 
 
+#include  <csignal>
+#include  <memory>
 #include  <QCloseEvent>
 #include  <QLabel>
 #include  <QPushButton>
 #include  <QCheckBox>
+#include  <QTextEdit>
 #include  <QScrollArea>
 #include  <QHBoxLayout>
 #include  <QVBoxLayout>
 #include  <QFrame>
 #include  <QFont>
 #include  <QFontMetrics>
-
+#include  "hurricane/Error.h"
 #include  "hurricane/Exception.h"
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/ExceptionWidget.h"
@@ -41,13 +44,39 @@
 
 namespace Hurricane {
 
+  using std::auto_ptr;
+
+
+  void  ExceptionWidget::run ( Error& e )
+  { run ( e.htmlWhat().c_str(), e.htmlWhere().c_str() ); }
+
+
+  void  ExceptionWidget::run ( Exception& e )
+  { run ( e.htmlWhat().c_str(), "" ); }
+
+
+  void  ExceptionWidget::run ( exception& e )
+  { run ( e.what() ); }
+
+
+  void  ExceptionWidget::run ( const QString& what, const QString& where )
+  {
+    ExceptionWidget* ew = new ExceptionWidget();
+
+    ew->setMessage ( what );
+    if ( not where.isEmpty() )
+      ew->setTrace ( where );
+
+    if ( ew->exec() == QDialog::Rejected )
+      kill ( getpid(), SIGSEGV );
+  }
+
 
   ExceptionWidget::ExceptionWidget ( QWidget* parent )
     : QDialog   (parent)
     , _header   (new QLabel())
     , _message  (new QLabel())
-    , _trace    (new QLabel())
-    , _traceArea(new QScrollArea())
+    , _trace    (new QTextEdit())
   {
     setAttribute  ( Qt::WA_DeleteOnClose );
     setModal      ( true );
@@ -61,15 +90,13 @@ namespace Hurricane {
     _message->setTextFormat ( Qt::RichText );
     _message->setText       ( "<b>Oups! I did it again!</b>" );
 
-    _trace->setTextFormat  ( Qt::RichText );
-    _trace->setText        ( "<b>No program trace sets yet.</b>" );
-    _trace->setSizePolicy  ( QSizePolicy::Ignored, QSizePolicy::Ignored );
-
-
-    _traceArea->setWidget      ( _trace );
-    _traceArea->hide           ();
-  //_traceArea->setSizePolicy  ( QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding) );
-    _traceArea->setMinimumSize ( QSize(700,500) );
+    _trace->setTextInteractionFlags ( Qt::TextBrowserInteraction );
+    _trace->setAcceptRichText       ( true );
+    _trace->setHtml                 ( "<b>No program trace sets yet.</b>" );
+    _trace->setMinimumSize          ( QSize(800,500) );
+    _trace->setLineWrapMode         ( QTextEdit::NoWrap );
+  //_trace->setSizePolicy           ( QSizePolicy::Ignored, QSizePolicy::Ignored );
+    _trace->hide                    ();
 
     QCheckBox* showTrace = new QCheckBox ();
     showTrace->setText    ( "Show Program Trace" );
@@ -107,7 +134,7 @@ namespace Hurricane {
     vLayout1->addWidget  ( _message  , 0, Qt::AlignLeft );
     vLayout1->addWidget  ( separator );
     vLayout1->addWidget  ( showTrace , 0, Qt::AlignLeft );
-    vLayout1->addWidget  ( _traceArea, 0, Qt::AlignLeft );
+    vLayout1->addWidget  ( _trace    , 0, Qt::AlignLeft );
     vLayout1->addSpacing ( 10 );
     vLayout1->addLayout  ( hLayout2  , Qt::AlignCenter );
 
@@ -128,9 +155,7 @@ namespace Hurricane {
 
 
   void  ExceptionWidget::closeEvent ( QCloseEvent* event )
-  {
-    event->ignore ();
-  }
+  { event->ignore (); }
 
 
   void  ExceptionWidget::setMessage ( const QString& message )
@@ -151,23 +176,15 @@ namespace Hurricane {
 
 
   void  ExceptionWidget::setTrace ( const QString& where )
-  {
-    QFont        font     = Graphics::getFixedFont(QFont::Bold);
-    QFontMetrics metrics  = QFontMetrics ( font );
-    QSize        textSize = metrics.size ( 0, where );
-
-  //textSize.setWidth  ( textSize.width () / 2  );
-    textSize.setHeight ( textSize.height() + 70 );
-
-    _trace->setText ( where );
-    _trace->resize  ( textSize );
-  }
+  { _trace->setHtml ( where ); }
 
 
   void  ExceptionWidget::_showTrace ( int state )
   {
-    if ( state == Qt::Checked ) _traceArea->show ();
-    else                        _traceArea->hide ();
+    if ( state == Qt::Checked ) _trace->show ();
+    else                        _trace->hide ();
+
+    adjustPosition ( NULL );
   }
 
 

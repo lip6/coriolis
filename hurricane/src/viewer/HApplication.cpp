@@ -23,10 +23,8 @@
 // x-----------------------------------------------------------------x
 
 
-#include  <csignal>
 #include  <iostream>
 #include  <iomanip>
-
 #include  "hurricane/Error.h"
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/ExceptionWidget.h"
@@ -34,7 +32,6 @@
 
 
 namespace Hurricane {
-
 
   using std::cerr;
   using std::endl;
@@ -80,33 +77,19 @@ namespace Hurricane {
       return QApplication::notify ( object, event );
     }
     catch ( Error& e ) {
-      ExceptionWidget* ew = new ExceptionWidget ();
-      ew->setMessage ( e.htmlWhat ().c_str() );
-      ew->setTrace   ( e.htmlWhere().c_str() );
-      if ( ew->exec() == QDialog::Rejected )
-        kill ( getpid(), SIGSEGV );
+      ExceptionWidget::run ( e );
     }
     catch ( Exception& e ) {
-      ExceptionWidget* ew = new ExceptionWidget ();
-      ew->setMessage ( e.htmlWhat().c_str() );
-      if ( ew->exec() == QDialog::Rejected )
-        kill ( getpid(), SIGSEGV );
+      ExceptionWidget::run ( e );
     }
     catch ( exception& e ) {
-      ExceptionWidget* ew = new ExceptionWidget ();
-      ew->setMessage ( e.what() );
-      if ( ew->exec() == QDialog::Rejected )
-        kill ( getpid(), SIGSEGV );
     }
     catch ( ... ) {
       static const char* message =
         "&nbsp;&nbsp;Unmanaged exception, neither a <b>Hurricane::Error</b><br>"
         "nor a <b>std::exception</b>."; 
 
-      ExceptionWidget* ew = new ExceptionWidget ();
-      ew->setMessage ( message );
-      if ( ew->exec() == QDialog::Rejected )
-        kill ( getpid(), SIGSEGV );
+      ExceptionWidget::run ( message );
     }
     return true;
   }

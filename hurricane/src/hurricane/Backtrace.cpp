@@ -127,7 +127,7 @@ namespace Hurricane {
     ostringstream where;
 
     for ( size_t depth=0 ; depth<_stack.size() ; ++depth )
-      where << "<tt>[" << setw(2) << setfill('0') << depth << "] " << _stack[depth] << "</tt><br>\n";
+      where << "<tt>[" << setw(2) << setfill('0') << depth << "] " << _stack[depth] << "</tt><br>";
 
     return where.str();
   }

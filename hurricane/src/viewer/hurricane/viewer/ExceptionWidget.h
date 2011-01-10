@@ -26,17 +26,25 @@
 #ifndef  __HURRICANE_EXCEPTION_WIDGET__
 #define  __HURRICANE_EXCEPTION_WIDGET__
 
-
+#include  <exception>
 #include  <QDialog>
 class QLabel;
-class QScrollArea;
+class QTextEdit;
 
 
 namespace Hurricane {
 
+  class Error;
+  class Exception;
+
 
   class ExceptionWidget : public QDialog {
       Q_OBJECT;
+    public:
+      static  void    run             ( Error& );
+      static  void    run             ( Exception& );
+      static  void    run             ( std::exception& );
+      static  void    run             ( const QString&, const QString& where="" );
     public:
                       ExceptionWidget ( QWidget* parent=NULL);
               void    setMessage      ( const QString& );
@@ -48,8 +56,7 @@ namespace Hurricane {
     private:
               QLabel*      _header;
               QLabel*      _message;
-              QLabel*      _trace;
-              QScrollArea* _traceArea;
+              QTextEdit*   _trace;
   };
 
 
