@@ -98,8 +98,7 @@ namespace {
              void       merge         ( DbU::Unit axis, const Interval& );
     private:
       vector<Axis*>  _axiss;
-      DbU::Unit      _min;
-      DbU::Unit      _max;
+      Interval       _span;
       size_t         _capacity;
       size_t         _globals;
   };
@@ -120,6 +119,9 @@ namespace {
 
   void  UsedFragments::Axis::merge ( const Interval& chunkMerge )
   {
+    // cerr << "    Merge @" << DbU::getValueString(_axis)
+    //      << " " << chunkMerge << endl;
+
     list<Interval>::iterator imerge = _chunks.end();
     list<Interval>::iterator ichunk = _chunks.begin();
 
@@ -155,9 +157,15 @@ namespace {
       list<Interval>::const_iterator inext = ichunk;
       ++inext;
 
+      if ( inext == iend ) break;
+
       Interval currentFree ( (*ichunk).getVMax(), (*inext).getVMin() );
       if ( currentFree.getSize() > maxFree.getSize() )
         maxFree = currentFree;
+
+      // cerr << "    @" << DbU::getValueString(_axis)
+      //      << " before:" << *ichunk << " after:" << *inext
+      //      << " size:" << DbU::getValueString(currentFree.getSize()) << endl;
     }
 
     return maxFree;
@@ -182,8 +190,7 @@ namespace {
 
   UsedFragments::UsedFragments ()
     : _axiss   ()
-    , _min     (DbU::Min)
-    , _max     (DbU::Max)
+    , _span    (false)
     , _capacity(0)
     , _globals (0)
   { }
@@ -198,15 +205,18 @@ namespace {
   }
 
 
-  inline DbU::Unit  UsedFragments::getMin      () const { return _min; }
-  inline DbU::Unit  UsedFragments::getMax      () const { return _max; }
-  inline void       UsedFragments::setSpan     ( DbU::Unit min, DbU::Unit max ) { _min=min; _max=max; }
+  inline DbU::Unit  UsedFragments::getMin      () const { return _span.getVMin(); }
+  inline DbU::Unit  UsedFragments::getMax      () const { return _span.getVMax(); }
+  inline void       UsedFragments::setSpan     ( DbU::Unit min, DbU::Unit max ) { _span=Interval(min,max); }
   inline void       UsedFragments::setCapacity ( size_t capacity ) { _capacity=capacity; }
   inline void       UsedFragments::incGlobals  ( size_t count ) { _globals+=count; }
 
 
   void  UsedFragments::merge ( DbU::Unit axis, const Interval& chunkMerge )
   {
+    Interval restrict = chunkMerge.getIntersection(_span);
+    if ( restrict.isEmpty() ) return;
+
     vector<Axis*>::iterator iaxis = find_if ( _axiss.begin(), _axiss.end(), AxisMatch(axis) );
 
     Axis* paxis = NULL;
@@ -218,14 +228,15 @@ namespace {
       paxis = *iaxis;
     }
 
-    paxis->merge ( chunkMerge );
+    paxis->merge ( restrict );
   }
 
 
   Interval  UsedFragments::getMaxFree () const
   {
-    if ( _capacity > _globals + _axiss.size() )
-      return Interval(_min,_max);
+  //cerr << "capacity:" << _capacity << " _globals:" << _globals << " _axiss:" << _axiss.size() << endl;
+    if ( _capacity > _globals + _axiss.size() + 1 )
+      return _span;
 
     Interval maxFree;
     vector<Axis*>::const_iterator iaxis = _axiss.begin();
@@ -909,8 +920,8 @@ namespace Katabatic {
         _feedthroughs[depth] += ((*isegment)->isGlobal()) ? 0.50 : 0.33;
         localCounts  [depth] += 1.0;
         if ( (*isegment)->isGlobal() ) _globalsCount[depth] += 1.0;
-        ufragments[depth].merge ( (*isegment)->getAxis(), (*isegment)->getSpanU() );
 
+        ufragments[depth].merge ( (*isegment)->getAxis(), (*isegment)->getSpanU() );
         if ( (axis != (*isegment)->getAxis()) or (layer != (*isegment)->getLayer()) ) {
         //_feedthroughs[depth] += 1;
         //usedAxis[depth].insert ( axis );
@@ -936,12 +947,34 @@ namespace Katabatic {
           _feedthroughs  [i] += (float)(_blockages[i] / _box.getWidth());
         //_fragmentations[i]  = (hcapacity - _feedthroughs[i]) / (localCounts[i] + 1.0);
           _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)_box.getWidth();
+
+          // if ( ((float)ufragments[i].getMaxFree().getSize() + (float)uLengths2[i])
+          //    > ( hcapacity * (float)_box.getWidth() ) ) {
+          //   cerr << "INCOHERENCY: " << this << "\n  "
+          //        << "on d:" << i
+          //        << " frag:" << DbU::getValueString(ufragments[i].getMaxFree().getSize())
+          //        << " ulength2:" << DbU::getValueString(uLengths2[i])
+          //        << " capacity:" << DbU::getValueString(hcapacity * _box.getWidth())
+          //        << " " << getVectorString(_fragmentations,_depth) << endl;
+            
+          // }
           break;
         case Constant::Vertical:
           _densities     [i]  = ((float)uLengths2[i]) / ( vcapacity * (float)_box.getHeight() );
           _feedthroughs  [i] += (float)(_blockages[i] / _box.getHeight());
         //_fragmentations[i]  = (vcapacity - _feedthroughs[i]) / (localCounts[i] + 1.0);
           _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)_box.getHeight();
+
+          // if ( ((float)ufragments[i].getMaxFree().getSize() + (float)uLengths2[i])
+          //    > ( vcapacity * (float)_box.getHeight() ) ) {
+          //   cerr << "INCOHERENCY: " << this << "\n  "
+          //        << " on d:" << i
+          //        << " frag:" << DbU::getValueString(ufragments[i].getMaxFree().getSize())
+          //        << " ulength2:" << DbU::getValueString(uLengths2[i])
+          //        << " capacity:" << DbU::getValueString(vcapacity * _box.getHeight())
+          //        << " " << getVectorString(_fragmentations,_depth) << endl;
+            
+          // }
           break;
       }
 
@@ -955,7 +988,7 @@ namespace Katabatic {
     for ( size_t i=0 ; i<_depth ; i++ ) { _densities[i] = roundfp ( _densities[i] ); }
     _cDensity = roundfp (_cDensity );
 
-    ltrace(200) << "updateDensity: " << this << endl;
+    ltrace(190) << "updateDensity: " << this << endl;
 
     checkDensity ();
 
@@ -991,25 +1024,25 @@ namespace Katabatic {
              << endl;
         }
       }
-      for ( size_t i=3 ; i<_depth ; i+=2 ) {
-        if ( (_densities[i] < 0.5) and (_densities[i-2] < 0.5) ) continue;
+      // for ( size_t i=3 ; i<_depth ; i+=2 ) {
+      //   if ( (_densities[i] < 0.5) and (_densities[i-2] < 0.5) ) continue;
 
-        float balance = _densities[i] / (_densities[i-2]+0.001 );
-        if ( (balance > 3) or (balance < .33) ) {
-          cerr << Warning("%s @%dx%d unbalanced in %s (M2:%.2f M3:%.2f M4:%.2f M5:%.2f)"
-                         ,_getString().c_str()
-                         ,getColumn()
-                         ,getRow()
-                         ,getString(Session::getRoutingGauge()->getRoutingLayer(i)->getName()).c_str()
-                         ,_densities[1]  // M2
-                         ,_densities[2]  // M3
-                       //,_blockages[2]  // M4
-                         ,_densities[3]  // M5
-                         ,_densities[4]  // M6
-                         )
-             << endl;
-        }
-      }
+      //   float balance = _densities[i] / (_densities[i-2]+0.001 );
+      //   if ( (balance > 3) or (balance < .33) ) {
+      //     cerr << Warning("%s @%dx%d unbalanced in %s (M2:%.2f M3:%.2f M4:%.2f M5:%.2f)"
+      //                    ,_getString().c_str()
+      //                    ,getColumn()
+      //                    ,getRow()
+      //                    ,getString(Session::getRoutingGauge()->getRoutingLayer(i)->getName()).c_str()
+      //                    ,_densities[1]  // M2
+      //                    ,_densities[2]  // M3
+      //                  //,_blockages[2]  // M4
+      //                    ,_densities[3]  // M5
+      //                    ,_densities[4]  // M6
+      //                    )
+      //        << endl;
+      //   }
+      // }
     }
 
     return ( _saturated ) ? 1 : 0 ;

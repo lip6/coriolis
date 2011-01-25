@@ -142,6 +142,7 @@ namespace Katabatic {
               float                 getDensity          ( bool update=true ) const;
       inline  DbU::Unit             getBlockage         ( unsigned int depth ) const;
       inline  float                 getFragmentation    ( unsigned int depth ) const;
+      inline  float                 getFeedthroughs     ( unsigned int depth ) const;
       inline  float                 getGlobalsCount     ( unsigned int depth ) const;
               float                 getStiffness        () const;
       inline  vector<AutoSegment*>* getVSegments        ();
@@ -271,6 +272,9 @@ namespace Katabatic {
 
   inline  float  GCell::getFragmentation ( unsigned int depth ) const
   { if (_invalid) const_cast<GCell*>(this)->updateDensity(); return _fragmentations[depth]; }
+
+  inline  float  GCell::getFeedthroughs ( unsigned int depth ) const
+  { if (_invalid) const_cast<GCell*>(this)->updateDensity(); return _feedthroughs[depth]; }
 
   inline  float  GCell::getGlobalsCount ( unsigned int depth ) const
   { if (_invalid) const_cast<GCell*>(this)->updateDensity(); return _globalsCount[depth]; }

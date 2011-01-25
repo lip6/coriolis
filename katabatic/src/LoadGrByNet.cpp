@@ -2,13 +2,13 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
 //
 // ===================================================================
 //
 // $Id$
 //
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 // |                                                                 |
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
@@ -20,7 +20,7 @@
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <cstdlib>
@@ -1094,13 +1094,14 @@ namespace {
 
     public:
     // Methods.
+      static void          init                   ( unsigned int degree );
+      static void          fixSegments            ();
                            GCellConfiguration     ( GCellGrid*   gcellGrid
                                                   , Hook*        fromHook
                                                   , AutoContact* sourceContact=NULL );
              void          construct              ( ForkStack& forks );
       inline unsigned int  getStateG              () const;
       inline GCell*        getGCell               () const;
-      static void          fixSegments            ();
       static bool          _GCell_rp_AutoContacts ( GCell*        gcell
                                                   , RoutingPad*   rp
                                                   , AutoContact*& source
@@ -1234,6 +1235,8 @@ namespace {
     // Attributes.
     private:
       static vector<AutoSegment*>  _toFixSegments;
+      static bool                  _onTopologicEnd;
+      static unsigned int          _degree;
              UState                _state;
              unsigned int          _topology;
              Net*                  _net;
@@ -1255,12 +1258,22 @@ namespace {
 
 
   vector<AutoSegment*>  GCellConfiguration::_toFixSegments;
+  bool                  GCellConfiguration::_onTopologicEnd = false;
+  unsigned int          GCellConfiguration::_degree         = 0;
 
 
   void  GCellConfiguration::fixSegments ()
   {
     for ( size_t i=0 ; i<_toFixSegments.size() ; ++i )
       _toFixSegments[i]->setFixed ( true );
+    _toFixSegments.clear ();
+  }
+
+
+  void  GCellConfiguration::init ( unsigned int degree )
+  {
+    _degree         = degree;
+    _onTopologicEnd = false;
     _toFixSegments.clear ();
   }
 
@@ -1344,6 +1357,7 @@ namespace {
     if (_state.fields.globals == 1) {
       if ( _north || _south ) _topology |= GLOBAL_VERTICAL_END;
       else                    _topology |= GLOBAL_HORIZONTAL_END;
+      _onTopologicEnd = true;
     } else if (_state.fields.globals == 2) {
       if      ( _east  && _west  ) _topology |= GLOBAL_HORIZONTAL;
       else if ( _north && _south ) _topology |= GLOBAL_VERTICAL;
@@ -1454,6 +1468,10 @@ namespace {
                                                        , targetContact
                                                        , static_cast<Segment*>( _fromHook->getComponent() )
                                                        );
+      globalSegment->setTopologicEnd ( _onTopologicEnd );
+      _onTopologicEnd = false;
+      globalSegment->setBipoint ( (_degree == 2) );
+
       ltrace(99) << "Create global segment: " << globalSegment << endl;
 
       if ( globalSegment->isHorizontal()
@@ -2482,8 +2500,9 @@ namespace Katabatic {
 
     lookupClear ();
 
-    RoutingPads  routingPads = net->getRoutingPads ();
-    if ( routingPads.getSize() < 2 ) {
+    RoutingPads routingPads = net->getRoutingPads ();
+    size_t      degree      = routingPads.getSize();
+    if ( degree < 2 ) {
 #if 0
       if ( !getDemoMode() )
         cmess2 << Warning("Net \"%s\" have less than 2 plugs/pins (ignored)."
@@ -2498,6 +2517,9 @@ namespace Katabatic {
     GCell* lowestGCell  = NULL;
     size_t unconnecteds = 0;
     size_t connecteds   = 0;
+
+    GCellConfiguration::init ( degree );
+
     ltrace(99) << "Start RoutingPad Ring" << endl;
     forEach ( RoutingPad*, startRp, routingPads ) {
       bool segmentFound = false;

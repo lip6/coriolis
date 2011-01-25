@@ -551,10 +551,10 @@ namespace Katabatic {
   // Empty constraint interval: ignore.
     if ( constraintMin > constraintMax ) return false;
 
-    if ( allowOutsideGCell() ) {
+    if ( isDogleg() ) {
     // Ugly: hard-wired value of the track spacing.
-      constraintMin -= DbU::lambda(5.0) * 8;
-      constraintMax += DbU::lambda(5.0) * 8;
+      constraintMin -= DbU::lambda(25.0);
+      constraintMax += DbU::lambda(25.0);
     }
 
     if ( getAxis() < constraintMin ) {
@@ -834,7 +834,9 @@ namespace Katabatic {
     : _isUnsetAxis      (true)
     , _invalidated      (false)
     , _isHorizontal     (isHorizontal)
+    , _isTopologicEnd   (false)
     , _isTerminal       (terminal)
+    , _isDogleg         (false)
     , _isCollapsed      (collapsed)
     , _isCanonical      (false)
     , _isFixed          (false)
@@ -1265,6 +1267,42 @@ namespace Katabatic {
   }
 
 
+  float  AutoSegment::getMaxUnderDensity ( unsigned int flags )
+  {
+    ltrace(200) << "AutoSegment::getMaxUnderDensity() " << endl;
+
+    GCell* begin = NULL;
+    GCell* end   = NULL;
+
+    size_t depth = Session::getRoutingGauge()->getLayerDepth(getLayer());
+
+    vector<GCell*> gcells;
+    getGCells ( gcells );
+    begin = *gcells.begin ();
+    end   = *gcells.rbegin();
+
+    float maxDensity = 0.0;
+
+    for ( size_t i=0 ; i<gcells.size() ; i++ ) {
+      maxDensity = std::max ( maxDensity, gcells[i]->getFeedthroughs(depth) );
+    }
+
+    if ( flags & Propagate ) {
+      forEach ( AutoSegment*, isegment, getCollapseds() ) {
+        isegment->getGCells ( gcells );
+        if ( (*gcells.begin ())->getIndex() < begin->getIndex() ) begin = *gcells.begin (); 
+        if ( (*gcells.rbegin())->getIndex() > end  ->getIndex() ) end   = *gcells.rbegin(); 
+
+        for ( size_t i=0 ; i<gcells.size() ; i++ ) {
+          maxDensity = std::max ( maxDensity, gcells[i]->getFeedthroughs(depth) );
+        }
+      }
+    }
+
+    return maxDensity;
+  }
+
+
   bool  AutoSegment::canPivotUp ( float reserve, unsigned int flags )
   {
     ltrace(200) << "AutoSegment::canPivotUp() - " << flags
@@ -1445,7 +1483,7 @@ namespace Katabatic {
 
   bool  AutoSegment::moveUp ( unsigned int flags )
   {
-    if ( not canMoveUp(0.0,flags) ) return false;
+  //if ( not canMoveUp(0.0,flags) ) return false;
     changeDepth ( Session::getRoutingGauge()->getLayerDepth(getLayer()) + 2, flags&Propagate );
 
     return true;
@@ -1454,7 +1492,7 @@ namespace Katabatic {
 
   bool  AutoSegment::moveDown ( unsigned int flags )
   {
-    if ( not canPivotDown(0.0,flags) ) return false;
+  //if ( not canPivotDown(0.0,flags) ) return false;
     changeDepth ( Session::getRoutingGauge()->getLayerDepth(getLayer()) - 2, flags&Propagate );
 
     return true;
@@ -1672,14 +1710,15 @@ namespace Katabatic {
     string  s = getSegment()->_getString();
     s.insert ( 1, "id: " );
     s.insert ( 4, getString(_id) );
-    s.insert ( s.size()-1, (_isFixed    )?" F":" -" );
-    s.insert ( s.size()-1, (_strap      )? "S": "-" );
-    s.insert ( s.size()-1, (_isCanonical)? "C": "-" );
-    s.insert ( s.size()-1, (_isCollapsed)? "c": "-" );
-    s.insert ( s.size()-1, (_isGlobal)   ? "g": "-" );
-    s.insert ( s.size()-1, (_isTerminal) ? "t": "-" );
-    s.insert ( s.size()-1, (_slackened)  ? "S": "-" );
-    s.insert ( s.size()-1, (_invalidated)? "i": "-" );
+    s.insert ( s.size()-1, (_isFixed       )?" F":" -" );
+    s.insert ( s.size()-1, (_strap         )? "S": "-" );
+    s.insert ( s.size()-1, (_isCanonical   )? "C": "-" );
+    s.insert ( s.size()-1, (_isCollapsed   )? "c": "-" );
+    s.insert ( s.size()-1, (_isGlobal      )? "g": "-" );
+    s.insert ( s.size()-1, (_isTopologicEnd)? "e": "-" );
+    s.insert ( s.size()-1, (_isTerminal    )? "t": "-" );
+    s.insert ( s.size()-1, (_slackened     )? "S": "-" );
+    s.insert ( s.size()-1, (_invalidated   )? "i": "-" );
     return s;
   }
 

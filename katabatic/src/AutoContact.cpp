@@ -2384,7 +2384,7 @@ namespace Katabatic {
         length = segment->getLength();
         lengths[depth] += length;
         if ( abs(length) >= DbU::lambda(50.0) )
-          cerr << Error("Supicious length:%.2f of %s."
+          cerr << Error("Suspicious length:%.2f of %s."
                        ,DbU::getLambda(length),getString(autoSegment).c_str()) << endl;
       } else {
         if ( isHorizontal ) {

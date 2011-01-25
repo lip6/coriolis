@@ -186,11 +186,14 @@ namespace Katabatic {
     // Predicates.                                           
       inline  bool                isHorizontal               () const;
       inline  bool                isVertical                 () const;
+      inline  bool                isBipoint                  () const;
+      inline  bool                isTopologicEnd             () const;
       inline  bool                isInvalidated              () const;
       inline  bool                isGlobal                   () const;
       inline  bool                isLocal                    () const;
       inline  bool                isCanonicalLocal           () const;
       inline  bool                isTerminal                 () const;
+      inline  bool                isDogleg                   () const;
       inline  bool                isCollapsed                () const;
       inline  bool                isCanonical                () const;
       inline  bool                isFixed                    () const;
@@ -211,6 +214,7 @@ namespace Katabatic {
               bool                canSlacken                 ( bool propagate=false );
       virtual bool                _canSlacken                () const = 0;
               bool                canGoOutsideGCell          () const;
+              float               getMaxUnderDensity         ( unsigned int flags );
     // Accessors.                                            
       inline  unsigned long       getId                      () const;
       virtual unsigned int        getDirection               () const = 0;
@@ -252,10 +256,13 @@ namespace Katabatic {
     // Static Modifiers.                                     
       static  void                setDestroyMode             ( bool );
     // Modifiers.                                            
+      inline  void                setBipoint                 ( bool );
+      inline  void                setTopologicEnd            ( bool );
       inline  void                setGlobal                  ( bool );
       inline  void                setCanonicalLocal          ( bool );
       inline  void                setCanonical               ( bool );
       inline  void                setTerminal                ( bool );
+      inline  void                setDogleg                  ( bool );
       inline  void                setFixed                   ( bool );
       inline  void                setStrap                   ( bool );
       inline  void                setLayerChange             ( bool );
@@ -329,9 +336,12 @@ namespace Katabatic {
              bool                 _isUnsetAxis;
              bool                 _invalidated;
              bool                 _isHorizontal;
+             bool                 _isBipoint;
+             bool                 _isTopologicEnd;
              bool                 _isGlobal;
              bool                 _isCanonicalLocal;
              bool                 _isTerminal;
+             bool                 _isDogleg;
              bool                 _isCollapsed;
              bool                 _isCanonical;
              bool                 _isFixed;
@@ -406,11 +416,14 @@ namespace Katabatic {
                                                            
   inline  bool            AutoSegment::isInvalidated        () const { return  _invalidated; }
   inline  bool            AutoSegment::isHorizontal         () const { return  _isHorizontal; }
+  inline  bool            AutoSegment::isBipoint            () const { return  _isBipoint; }
+  inline  bool            AutoSegment::isTopologicEnd       () const { return  _isTopologicEnd; }
   inline  bool            AutoSegment::isVertical           () const { return !_isHorizontal; }
   inline  bool            AutoSegment::isGlobal             () const { return  _isGlobal; }
   inline  bool            AutoSegment::isCanonicalLocal     () const { return  _isCanonicalLocal; }
   inline  bool            AutoSegment::isLocal              () const { return !_isGlobal; }
   inline  bool            AutoSegment::isTerminal           () const { return  _isTerminal; }
+  inline  bool            AutoSegment::isDogleg             () const { return  _isDogleg  ; }
   inline  bool            AutoSegment::isCollapsed          () const { return  _isCollapsed; }
   inline  bool            AutoSegment::isCanonical          () const { return  _isCanonical; }
   inline  bool            AutoSegment::isFixed              () const { return  _isFixed; }
@@ -424,9 +437,12 @@ namespace Katabatic {
                                                             
   inline  void            AutoSegment::setLayer             ( const Layer* layer ) { invalidate(); getSegment()->setLayer(layer); }
   inline  void            AutoSegment::setInvalidated       ( bool state ) { _invalidated = state; }
+  inline  void            AutoSegment::setBipoint           ( bool state ) { _isBipoint = state; }
+  inline  void            AutoSegment::setTopologicEnd      ( bool state ) { _isTopologicEnd = state; }
   inline  void            AutoSegment::setGlobal            ( bool state ) { _isGlobal = state; }
   inline  void            AutoSegment::setCanonicalLocal    ( bool state ) { _isCanonicalLocal = state; }
   inline  void            AutoSegment::setTerminal          ( bool state ) { _isTerminal = state; }
+  inline  void            AutoSegment::setDogleg            ( bool state ) { _isDogleg = state; }
   inline  void            AutoSegment::setFixed             ( bool state ) { _isFixed = state; }
   inline  void            AutoSegment::setStrap             ( bool state ) { _strap = state; }
   inline  void            AutoSegment::setLayerChange       ( bool state ) { _layerChange = state; }

@@ -298,6 +298,8 @@ namespace Katabatic {
     for ( size_t i=0 ; i<globals.size() ; ++i ) {
       ltrace(400) << "  | Looking up G:" << globals[i] << endl;
 
+      if ( globals[i]->isVertical() and (globals[i] != seed) ) continue;
+
       if ( globals[i]->canMoveUp(1.0,AutoSegment::Propagate|AutoSegment::AllowTerminal) ) {
         unsigned int depth = Session::getRoutingGauge()->getLayerDepth(globals[i]->getLayer());
         globals[i]->changeDepth ( depth+2, true, false );
@@ -319,6 +321,10 @@ namespace Katabatic {
 
     //if ( locals[i]->canPivotUp(2.0,AutoSegment::Propagate|AutoSegment::IgnoreContact) ) {
       if ( locals[i]->canPivotUp(2.0,AutoSegment::Propagate) ) {
+      //if ( locals[i]->isGlobal() and locals[i]->isTopologicEnd() ) continue;
+        // if (   (locals[i]->isGlobal())
+        //    and (locals[i]->getMaxUnderDensity(AutoSegment::Propagate) < 5.0) ) continue;
+
         unsigned int depth = Session::getRoutingGauge()->getLayerDepth(locals[i]->getLayer());
         locals[i]->changeDepth ( depth+2, true, false );
 

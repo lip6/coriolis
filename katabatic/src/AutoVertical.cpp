@@ -668,6 +668,7 @@ namespace Katabatic {
                                                      , false
                                                      , false
                                                      );
+    segment1->setDogleg ( true );
     ltrace(200) << "New " << (void*)dlContact1->getContact() << ":" << dlContact1->getContact() << "." << endl;
     ltrace(200) << "New " << (void*)dlContact2->getContact() << ":" << dlContact2->getContact() << "." << endl;
     ltrace(200) << "Session::dogLeg() perpand:   " << segment1 << endl;
