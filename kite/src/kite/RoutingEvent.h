@@ -90,13 +90,15 @@ namespace Kite {
     friend class Compare;
 
     public:
-      enum Mode { Negociate=1, Pack=2, PostPack=3 };
+      enum Mode { Negociate=1, Pack=2, Repair=3 };
 
     public:
+      static  unsigned int                 getStage          ();
       static  size_t                       getAllocateds     ();
       static  size_t                       getProcesseds     ();
       static  size_t                       getCloneds        ();
       static  void                         resetProcesseds   ();
+      static  void                         setStage          ( unsigned int );
     public:                                                  
       static  RoutingEvent*                create            ( TrackElement*, unsigned int mode=Negociate );
               RoutingEvent*                clone             () const;
@@ -137,7 +139,7 @@ namespace Kite {
                                                              );
               void                         setSegment        ( TrackElement* );
               RoutingEvent*                reschedule        ( RoutingEventQueue&, unsigned int eventLevel );
-      inline  void                         setMode           ( unsigned int );
+              void                         setMode           ( unsigned int );
               void                         setState          ( unsigned int );
       inline  void                         setProcessed      ( bool state=true );
       inline  void                         setDisabled       ( bool state=true );
@@ -152,7 +154,8 @@ namespace Kite {
       inline  void                         incInsertState    ();
       inline  void                         resetInsertState  ();
               void                         _processNegociate ( RoutingEventQueue&, RoutingEventHistory& );
-              void                         _processPacking   ( RoutingEventQueue&, RoutingEventHistory& );
+              void                         _processPack      ( RoutingEventQueue&, RoutingEventHistory& );
+              void                         _processRepair    ( RoutingEventQueue&, RoutingEventHistory& );
               Record*                      _getRecord        () const;
               string                       _getString        () const;
               string                       _getTypeName      () const;
@@ -162,6 +165,7 @@ namespace Kite {
 
     protected:
     // Attributes.
+      static unsigned int   _stage;
       static size_t         _allocateds;
       static size_t         _processeds;
       static size_t         _cloneds;
@@ -221,7 +225,6 @@ namespace Kite {
   inline unsigned int                  RoutingEvent::getTracksFree           () const { return _tracksFree; }
   inline unsigned int                  RoutingEvent::getInsertState          () const { return _insertState; }
   inline Katabatic::GCell*             RoutingEvent::getShearGCell           () const { return _shearGCell; }
-  inline void                          RoutingEvent::setMode                 ( unsigned int mode ) { _mode = mode; }
   inline void                          RoutingEvent::setProcessed            ( bool state ) { _processed  = state; }
   inline void                          RoutingEvent::setDisabled             ( bool state ) { _disabled = state; }
   inline void                          RoutingEvent::setMinimized            ( bool state ) { _minimized = state; }

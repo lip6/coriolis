@@ -268,7 +268,8 @@ namespace Kite {
 
       forEach ( Knik::Vertex*, ivertex, _knik->getRoutingGraph()->getVertexes() ) {
         for ( int i=0 ; i<2 ; ++i ) {
-          Knik::Edge* edge = NULL;
+          Knik::Edge* edge    = NULL;
+          bool        isVEdge = false;
 
           if ( i==0 ) {
             edge = ivertex->getHEdgeOut();
@@ -278,6 +279,7 @@ namespace Kite {
               edge->setCapacity ( 0 );
               continue;
             }
+            isVEdge = false;
           } else {
             edge = ivertex->getVEdgeOut();
             if ( not edge ) continue;
@@ -286,13 +288,18 @@ namespace Kite {
               edge->setCapacity ( 0 );
               continue;
             }
+            isVEdge = true;
           }
 
           float edgePercent = 1.00;
-          if      ( chipTools.getCorona().getInnerBox().contains(edge->getBoundingBox()) ) edgePercent = corePercent;
-          else if ( chipTools.getCorona().getOuterBox().contains(edge->getBoundingBox()) ) edgePercent = coronaPercent;
+          if ( chipTools.getCorona().getInnerBox().contains(edge->getBoundingBox()) ) {
+            edgePercent = corePercent;
+          } else if ( chipTools.getCorona().getOuterBox().contains(edge->getBoundingBox()) ) {
+            edgePercent = coronaPercent;
+            isVEdge = false;
+          }
 
-          unsigned int capacity = (unsigned int)(edge->getCapacity() * edgePercent );
+          unsigned int capacity = (unsigned int)(edge->getCapacity() * edgePercent ) - ((isVEdge) ? 1 : 0);
           edge->setCapacity ( capacity );
         }
       }
@@ -460,13 +467,18 @@ namespace Kite {
   //DebugSession::addToTrace ( getCell(), "mips_r3000_1m_dp_res_re(20)" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_1m_dp_addsub32_carith_se_gi_1_29" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.instaddbracry_sd.gi_1_29" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.instseqadr_sd.pi_2_26" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.instseqadr_sd.pi_2_18" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.instseqadr_sd.gi_0_18" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.instseqadr_sd.gi_2_18" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.instseqadr_sd.gi_1_17" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_1m_dp_res_se(28)" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.etat32_otheri_sd_2.enx" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.yoper_se(31)" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.toper_se(5)" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.toper_rd(24)" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.soper_se(20)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.shift32_rshift_se.muxoutput(68)" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.shift32_rshift_se.muxoutput(67)" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.shift32_rshift_se.muxoutput(71)" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.imdsgn_sd0" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.res_re(12)" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.res_re(20)" );
@@ -479,40 +491,53 @@ namespace Kite {
   //DebugSession::addToTrace ( getCell(), "d_out_i(19)" );
   //DebugSession::addToTrace ( getCell(), "dout_e_i(1)" );
   //DebugSession::addToTrace ( getCell(), "dout_e_i(2)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.aux178" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.aux78" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.nxr2_x1_2_sig" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.na4_x1_23_sig" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.ao22_x2_38_sig" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.rsdnbr_sd(14)" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.ao22_x2_sig" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.rsdnbr_sd(25)" );
   //DebugSession::addToTrace ( getCell(), "d_out_i(28)" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_1m_ct_mbk_buf_opcod_sd_0" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.break_re" );
   //DebugSession::addToTrace ( getCell(), "d_atype_i(0)" );
   //DebugSession::addToTrace ( getCell(), "addr_i(7)" );
   //DebugSession::addToTrace ( getCell(), "addr_i(8)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.opcod_sd_5" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.break_re" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.opcod_sd_2" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_opcod_sd_1" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.opcod_rd(1)" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.i_write_sm" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_i_ri(29)" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_opcod_rd(0)" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_opcod_sd_3" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.opcod_sd_5" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.no4_x1_7_sig" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.on12_x1_15_sig" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.na3_x1_46_sig" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.o2_x2_11_sig" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.nextsr_rx(27)" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_wsr_sm" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.i_ri(5)" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_aux144" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_aux143" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.aux71" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_aux61" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.aux4" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_hold_si" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_i_ri(30)" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.data_rm(0)" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.toper_se(0)" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.res_se(17)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.pi_0_20" );
+  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.pi_2_22" );
   //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.pi_2_23" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.gi_2_23" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.gi_1_21" );
+  //   DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.pi_4_24" );
+  //   DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.pi_4_28" );
+  //   DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.gi_1_25" );
+  // //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.gi_2_23" );
+  // //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.gi_0_28" );
+  // // NO MOVE UP FOR IT...
+  //   DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.gi_3_23" );
+  //   DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.gi_3_28" );
 
     createDetailedGrid ();
     buildPowerRails ();
@@ -551,8 +576,6 @@ namespace Kite {
     startMeasures ();
 
     Session::open ( this );
-
-    cmess1 << "  o  Running Negociate Algorithm" << endl;
 
     _negociateWindow = NegociateWindow::create ( this );
     _negociateWindow->setGCells ( *(getGCellGrid()->getGCellVector()) );
@@ -629,9 +652,9 @@ namespace Kite {
 
     float expandRatio = 1.0;
     if ( _minimumWL != 0.0 ) {
-      expandRatio = totalWireLength / _minimumWL;
+      expandRatio = ((totalWireLength-_minimumWL) / _minimumWL) * 100.0;
       cmess1 << "     - Wire Length Expand Ratio       := "
-             << setprecision(4) << expandRatio
+             << setprecision(3) << expandRatio
              << "% [min:" << setprecision(9) << _minimumWL << "] "
              << endl;
     }

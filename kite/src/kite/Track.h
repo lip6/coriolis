@@ -105,9 +105,9 @@ namespace Kite {
               TrackElement*  getSegment          ( DbU::Unit position ) const;
               void           getIBounds          ( DbU::Unit position, size_t& begin, size_t& end, unsigned int& state ) const;
               void           getOverlapBounds    ( Interval, size_t& begin, size_t& end ) const;
-              TrackCost      getOverlapCost      ( Interval, Net*, size_t begin, size_t end ) const;
-              TrackCost      getOverlapCost      ( Interval, Net* ) const;
-              TrackCost      getOverlapCost      ( TrackElement* ) const;
+              TrackCost      getOverlapCost      ( Interval, Net*, size_t begin, size_t end, unsigned int flags ) const;
+              TrackCost      getOverlapCost      ( Interval, Net*, unsigned int flags ) const;
+              TrackCost      getOverlapCost      ( TrackElement*, unsigned int flags ) const;
               void           getTerminalWeight   ( Interval, Net*, size_t& count, unsigned int& weight ) const;
               DbU::Unit      getSourcePosition   ( size_t index ) const;
               DbU::Unit      getSourcePosition   ( vector<TrackElement*>::iterator ) const;

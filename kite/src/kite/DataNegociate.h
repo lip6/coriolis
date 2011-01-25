@@ -74,6 +74,7 @@ namespace Kite {
                       , MoveUp             = 9
                       , MaximumSlack       =10
                       , Unimplemented      =11
+                      , Repair             =12
                       };
 
     public:

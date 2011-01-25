@@ -112,12 +112,14 @@ namespace Kite {
       virtual bool                  isGlobal                   () const;
       virtual bool                  isLocked                   () const;
       virtual bool                  isTerminal                 () const;
+      virtual bool                  isDogleg                   () const;
       virtual bool                  isRevalidated              () const;
       virtual bool                  isRouted                   () const;
       virtual bool                  isSlackened                () const;
       virtual bool                  isSlackenDogLeg            () const;
       virtual bool                  isHorizontal               () const = 0;
       virtual bool                  isVertical                 () const = 0;
+      virtual bool                  isBipoint                  () const;
       virtual bool                  allowOutsideGCell          () const;
       virtual bool                  canDesalignate             () const;
       virtual bool                  canGoOutsideGCell          () const;
@@ -125,6 +127,7 @@ namespace Kite {
       virtual bool                  canPivotUp                 ( float reserve ) const;
       virtual bool                  canPivotDown               ( float reserve ) const;
       virtual bool                  canMoveUp                  ( float reserve, unsigned int flags=AutoSegment::Propagate|AutoSegment::PerpandicularFrag ) const;
+      virtual float                 getMaxUnderDensity         ( unsigned int flags=AutoSegment::Propagate ) const;
       virtual bool                  canRipple                  () const;
       virtual bool                  hasSourceDogLeg            () const;
       virtual bool                  hasTargetDogLeg            () const;

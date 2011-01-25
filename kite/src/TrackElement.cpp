@@ -138,6 +138,7 @@ namespace Kite {
 
 // Former inline functions.
   AutoSegment*   TrackElement::base                       () const { return NULL; }
+  bool           TrackElement::isBipoint                  () const { return false; }
   bool           TrackElement::isCreated                  () const { return false; }
   bool           TrackElement::isFixed                    () const { return false; }
   bool           TrackElement::isBlockage                 () const { return false; }
@@ -147,6 +148,7 @@ namespace Kite {
   bool           TrackElement::isGlobal                   () const { return not isLocal(); }
   bool           TrackElement::isLocked                   () const { return false; }
   bool           TrackElement::isTerminal                 () const { return false; }
+  bool           TrackElement::isDogleg                   () const { return false; }
   bool           TrackElement::isRevalidated              () const { return false; }
   bool           TrackElement::isRouted                   () const { return true; }
   bool           TrackElement::isSlackened                () const { return false; }
@@ -179,6 +181,7 @@ namespace Kite {
   bool           TrackElement::canPivotUp                 ( float ) const { return false; };
   bool           TrackElement::canPivotDown               ( float ) const { return false; };
   bool           TrackElement::canMoveUp                  ( float, unsigned int ) const { return false; };
+  float          TrackElement::getMaxUnderDensity         ( unsigned int ) const { return 0.0; };
   bool           TrackElement::canDogLeg                  () { return false; };
   bool           TrackElement::canDogLeg                  ( Interval ) { return false; };
   bool           TrackElement::canDogLegAt                ( Katabatic::GCell*, unsigned int ) { return false; };

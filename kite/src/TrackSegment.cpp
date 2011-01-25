@@ -133,6 +133,7 @@ namespace Kite {
 
 // Formerly Inline Functions.
   AutoSegment*   TrackSegment::base                       () const { return _base; }
+  bool           TrackSegment::isBipoint                  () const { return _base->isBipoint(); }
   bool           TrackSegment::isCreated                  () const { return _created; }
   bool           TrackSegment::isFixed                    () const { return _base->isFixed(); }
   bool           TrackSegment::isStrap                    () const { return _base->isCanonicalStrap(); }
@@ -141,6 +142,7 @@ namespace Kite {
   bool           TrackSegment::isGlobal                   () const { return !isLocal(); }
   bool           TrackSegment::isLocked                   () const { return _lock; }
   bool           TrackSegment::isTerminal                 () const { return _base->isTerminal(); }
+  bool           TrackSegment::isDogleg                   () const { return _base->isDogleg(); }
   bool           TrackSegment::isRevalidated              () const { return _revalidated; }
   bool           TrackSegment::isRouted                   () const { return _routed; }
   bool           TrackSegment::isSlackened                () const { return _base->isSlackened(); }
@@ -462,6 +464,10 @@ namespace Kite {
     } else
       throw Bug("TrackSegment::slacken(): NULL base or already slackened.");
   }
+
+
+  float  TrackSegment::getMaxUnderDensity ( unsigned int flags ) const
+  { return _base->getMaxUnderDensity ( flags ); }
 
 
   bool  TrackSegment::canPivotUp ( float reserve ) const

@@ -285,9 +285,13 @@ namespace Kite {
   }
 
 
-  TrackCost  Track::getOverlapCost ( Interval interval, Net* net, size_t begin, size_t end ) const
+  TrackCost  Track::getOverlapCost ( Interval     interval
+                                   , Net*         net
+                                   , size_t       begin
+                                   , size_t       end
+                                   , unsigned int flags ) const
   {
-    TrackCost  cost ( const_cast<Track*>(this), interval, begin, end, net );
+    TrackCost  cost ( const_cast<Track*>(this), interval, begin, end, net, flags );
 
     ltrace(190) << "getOverlapCost() @" << DbU::getValueString(_axis)
                 << " [" << DbU::getValueString(interval.getVMin())
@@ -317,12 +321,15 @@ namespace Kite {
     }
 
     for ( ; begin < end ; begin++ ) {
-      if ( _segments[begin]->getNet() == net ) {
-        cost.incDeltaShared ( _segments[begin]->getCanonicalInterval().intersection(interval).getSize() );
-      }
-      ltrace(190) << "| overlap: " << _segments[begin] << endl;
-      _segments[begin]->incOverlapCost ( net, cost );
-      if ( cost.isInfinite() ) break;
+      Interval overlap = interval.getIntersection ( _segments[begin]->getCanonicalInterval() );
+    //if ( not overlap.isEmpty() ) {
+        if ( _segments[begin]->getNet() == net ) {
+          cost.incDeltaShared ( overlap.getSize() );
+        }
+        ltrace(190) << "| overlap: " << _segments[begin] << endl;
+        _segments[begin]->incOverlapCost ( net, cost );
+        if ( cost.isInfinite() ) break;
+    //}
     }
 
     ltraceout(148);
@@ -331,20 +338,20 @@ namespace Kite {
   }
 
 
-  TrackCost  Track::getOverlapCost ( Interval interval, Net* net ) const
+  TrackCost  Track::getOverlapCost ( Interval interval, Net* net, unsigned int flags ) const
   {
     size_t begin;
     size_t end;
 
     getOverlapBounds ( interval, begin, end );
 
-    return getOverlapCost ( interval, net, begin, end );
+    return getOverlapCost ( interval, net, begin, end, flags );
   }
 
 
-  TrackCost  Track::getOverlapCost ( TrackElement* segment ) const
+  TrackCost  Track::getOverlapCost ( TrackElement* segment, unsigned int flags ) const
   {
-    return getOverlapCost ( segment->getCanonicalInterval(), segment->getNet() );
+    return getOverlapCost ( segment->getCanonicalInterval(), segment->getNet(), flags );
   }
 
 

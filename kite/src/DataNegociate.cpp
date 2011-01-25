@@ -93,6 +93,7 @@ namespace Kite {
       case MoveUp:              s << "MoveUp";              break;
       case MaximumSlack:        s << "MaximumSlack";        break;
       case Unimplemented:       s << "Unimplemented";       break;
+      case Repair:              s << "REPAIR";              break;
       default:
         s << "Unknown(" << data->_state << ")"; break;
     }

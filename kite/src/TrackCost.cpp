@@ -47,13 +47,15 @@ namespace Kite {
 // Class  :  "TrackCost".
 
 
-  TrackCost::TrackCost (       Track*    track
-                       , const Interval& interval
-                       ,       size_t    begin
-                       ,       size_t    end
-                       ,       Net*      net
+  TrackCost::TrackCost (       Track*        track
+                       , const Interval&     interval
+                       ,       size_t        begin
+                       ,       size_t        end
+                       ,       Net*          net
+                       ,       unsigned int  flags
                        )
-    : _track          (track)
+    : _flags          (flags)
+    , _track          (track)
     , _begin          (begin)
     , _end            (end)
     , _interval       (interval)
@@ -65,12 +67,14 @@ namespace Kite {
     , _leftOverlap    (false)
     , _rightOverlap   (false)
     , _overlapGlobal  (false)
+    , _globalEnclosed (false)
     , _terminals      (0)
     , _delta          (-interval.getSize())
     , _deltaShared    (0)
     , _deltaPerpand   (0)
     , _axisWeight     (0)
     , _distanceToFixed(DbU::lambda(100.0))
+    , _longuestOverlap(0)
     , _dataState      (0)
     , _ripupCount     (0)
   {
@@ -131,13 +135,21 @@ namespace Kite {
   //if ( lhsRipupCost + (int)Session::getRipupCost() < rhsRipupCost ) return true;
   //if ( lhsRipupCost > (int)Session::getRipupCost() + rhsRipupCost ) return false;
 
+  //if ( _flags & TrackCost::DiscardGlobals ) {
+  //  if ( lhs._longuestOverlap < rhs._longuestOverlap ) return true;
+  //  if ( lhs._longuestOverlap > rhs._longuestOverlap ) return false;
+  //}
+
     if ( lhs._overlap xor rhs._overlap ) return rhs._overlap;
 
     if ( lhs._terminals < rhs._terminals ) return true;
     if ( lhs._terminals > rhs._terminals ) return false;
 
-    if ( lhs._delta < rhs._delta ) return true;
-    if ( lhs._delta > rhs._delta ) return false;
+    if ( not (_flags & TrackCost::IgnoreSharedLength)
+       or (lhs._delta > 0) or (rhs._delta > 0) ) {
+      if ( lhs._delta < rhs._delta ) return true;
+      if ( lhs._delta > rhs._delta ) return false;
+    }
 
     if ( not (_flags & TrackCost::IgnoreAxisWeight) ) {
       if ( lhs._axisWeight < rhs._axisWeight ) return true;
@@ -162,7 +174,7 @@ namespace Kite {
 
   void  TrackCost::consolidate ()
   {
-    if ( !_infinite && !_hardOverlap ) {
+    if ( not _infinite and not _hardOverlap ) {
     //_deltaPerpand += - (_deltaShared << 1);
       _delta += - _deltaShared;
     }
@@ -177,15 +189,17 @@ namespace Kite {
     s += " " + getString(_dataState);
     s += "+" + getString(_ripupCount);
     s += ":" + getString((_dataState<<2)+_ripupCount);
-    s += " " + string ( (_blockage     )?"b":"-" );
-    s +=       string ( (_hardOverlap  )?"h":"-" );
-    s +=       string ( (_overlap      )?"o":"-" );
-    s +=       string ( (_overlapGlobal)?"g":"-" );
+    s += " " + string ( (_blockage      )?"b":"-" );
+    s +=       string ( (_hardOverlap   )?"h":"-" );
+    s +=       string ( (_overlap       )?"o":"-" );
+    s +=       string ( (_overlapGlobal )?"g":"-" );
+    s +=       string ( (_globalEnclosed)?"e":"-" );
     s += " " + getString(_terminals);
     s += "/" + DbU::getValueString(_delta);
     s += "/" + DbU::getValueString(_axisWeight);
     s += "/" + DbU::getValueString(_deltaPerpand);
     s += "/" + DbU::getValueString(_distanceToFixed);
+    s += "/" + DbU::getValueString(_longuestOverlap);
     s += " " + getString(_dataState);
     s += ">";
 

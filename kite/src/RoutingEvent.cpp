@@ -2,13 +2,13 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
 //
 // ===================================================================
 //
 // $Id$
 //
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 // |                                                                 |
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
@@ -20,7 +20,7 @@
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <cstdlib>
@@ -784,16 +784,18 @@ namespace {
   //   "_immediate" ripup flags was associated with "perpandicular", as they
   //   must be re-inserted *before* any parallel. Must look to solve the redundancy.
 
+    DebugSession::open ( _segment->getNet(), 200 );
+
     if ( _type & Perpandicular ) {
       ltrace(200) << "* Riping Pp " << _segment << endl;
     } else {
       ltrace(200) << "* Riping // " << _segment << endl;
     }
 
-    if ( _segment->isFixed() ) return true;
+    if ( _segment->isFixed() ) { DebugSession::close(); return true; }
 
     DataNegociate* data = _segment->getDataNegociate();
-    if ( data == NULL ) return true;
+    if ( data == NULL ) { DebugSession::close(); return true; }
 
     if ( _type & ResetRipup ) data->resetRipupCount ();
 
@@ -808,6 +810,7 @@ namespace {
     if ( event == NULL ) {
       cerr << Bug("Missing Event on %p:%s"
                  ,_segment->base()->base(),getString(_segment).c_str()) << endl;
+      DebugSession::close();
       return true;
     }
 
@@ -832,9 +835,14 @@ namespace {
 
     RoutingEvent* fork = event->reschedule ( queue, eventLevel );
 
-    if ( fork )
-      fork->setMode ( (_type&PackingMode) ? RoutingEvent::Pack : RoutingEvent::Negociate );
+    if ( fork ) {
+      unsigned int mode = RoutingEvent::Repair;
+      if ( RoutingEvent::getStage() < RoutingEvent::Repair )
+        mode = (_type&PackingMode) ? RoutingEvent::Pack : RoutingEvent::Negociate;
+      fork->setMode ( mode );
+    }
 
+    DebugSession::close ();
     return true;
   }
 
@@ -950,6 +958,7 @@ namespace {
                                                           , DbU::Unit    axisHint=0
                                                           );
              bool                 ripupPerpandiculars     ( unsigned int flags=0 );
+             void                 repackPerpandiculars    ();
              bool                 ripple                  ();
              bool                 goOutsideGCell          ();
              bool                 minimize                ();
@@ -970,6 +979,7 @@ namespace {
                                                           , DbU::Unit    rightAxisHint=0
                                                           );
              bool                 forceToTrack            ( size_t );
+             bool                 forceOverLocals         ();
              void                 reprocessPerpandiculars ();
     private:
       TrackElement*  _segment;
@@ -1048,7 +1058,10 @@ namespace {
 
     RoutingPlane* plane = Session::getKiteEngine()->getRoutingPlaneByLayer(segment->getLayer());
     forEach ( Track*, itrack, Tracks_Range::get(plane,_constraint)) {
-      _costs.push_back ( itrack->getOverlapCost(segment) );
+      unsigned int costflags = 0;
+      costflags |= (segment->isLocal() and (depth >= 3)) ? TrackCost::LocalAndTopDepth : 0;
+
+      _costs.push_back ( itrack->getOverlapCost(segment,costflags) );
       _costs.back().setAxisWeight   ( _event->getAxisWeight(itrack->getAxis()) );
       _costs.back().incDeltaPerpand ( _data->getCost().getWiringDelta(itrack->getAxis()) );
 
@@ -1071,8 +1084,8 @@ namespace {
     if ( _costs.empty() ) {
       Track* nearest = plane->getTrackByPosition(_constraint.getCenter());
 
-      if (   (nearest->getAxis() < _constraint.getVMin())
-          || (nearest->getAxis() > _constraint.getVMax()) ) {
+      if (  (nearest->getAxis() < _constraint.getVMin())
+         or (nearest->getAxis() > _constraint.getVMax()) ) {
       //setUnimplemented ();
       //cerr << "[UNIMPLEMENTED] " << segment << " no Track in constraint interval "
       //     << _constraint << " " <<  "." << endl;
@@ -1087,8 +1100,15 @@ namespace {
 
     unsigned int flags = 0;
     flags |= (segment->isStrap()) ? TrackCost::IgnoreAxisWeight : 0;
-    flags |= (segment->isLocal() and (_data->getState() < DataNegociate::Minimize))
+    flags |= (segment->isLocal()
+             and (_data->getState() < DataNegociate::Minimize)
+             and (_data->getRipupCount() < 5))
              ? TrackCost::DiscardGlobals : 0;
+    flags |= (RoutingEvent::getStage() == RoutingEvent::Repair) ? TrackCost::IgnoreSharedLength : 0;
+
+    if ( flags & TrackCost::DiscardGlobals ) {
+      ltrace(200) << "TrackCost::Compare() - DiscardGlobals" << endl;
+    }
 
     sort ( _costs.begin(), _costs.end(), TrackCost::Compare(flags) );
 
@@ -1146,9 +1166,11 @@ namespace {
       if ( (_actions[i].getType() & SegmentAction::SelfInsert) and ripupOthersParallel )
         _actions[i].setFlag ( SegmentAction::EventLevel3 );
 
+      DebugSession::open ( _actions[i].getSegment()->getNet(), 200 );
       if ( not _actions[i].doAction(_queue) ) {
         cinfo << "[INFO] Failed action on " << _actions[i].getSegment() << endl;
       }
+      DebugSession::close ();
     }
 
     _actions.clear ();
@@ -1562,7 +1584,7 @@ namespace {
           }
           otherNet      = other->getNet();
           otherOverlap  = other->getCanonicalInterval();
-          otherIsGlobal = otherIsGlobal or other->isGlobal();
+          otherIsGlobal = other->isGlobal();
         } else {
           otherOverlap.merge(other->getCanonicalInterval());
           otherIsGlobal = otherIsGlobal or other->isGlobal();
@@ -1588,6 +1610,11 @@ namespace {
 
       Interval overlap0 = candidates[icandidate].getLongestConflict();
       ltrace(200) << "overlap0: " << overlap0 << endl;
+
+      if ( overlap0.isEmpty() ) {
+        ltrace(200) << "overlap0 is empty, no conflict, ignoring Track candidate." << endl;
+        continue;
+      }
 
       Track*        track = candidates[icandidate].getTrack();
       TrackElement* other = track->getSegment(overlap.getCenter());
@@ -1676,50 +1703,102 @@ namespace {
 
   bool  State::desaturate ()
   {
+    ltrace(200) << "State::desaturate()" << endl;
+    ltracein(200);
+
+    TrackElement* segment = _event->getSegment();
+    size_t        itrack  = 0;
+
+    for ( ; itrack<getCosts().size() ; ++itrack ) {
+      ltrace(200) << "Trying track:" << itrack << endl;
+
+      if ( getCost(itrack).isGlobalEnclosed() ) {
+        Track*    track      = getTrack(itrack);
+        size_t    begin      = getBegin(itrack);
+        size_t    end        = getEnd  (itrack);
+        Net*      ownerNet   = segment->getNet();
+        Interval  toFree      (segment->getCanonicalInterval());
+        bool      success    = true;
+      
+        for ( size_t i = begin ; success and (i < end) ; i++ ) {
+          TrackElement* segment2 = track->getSegment(i);
+
+          ltrace(200) << "* Looking // " << segment2 << endl;
+
+          if ( segment2->getNet() == ownerNet  ) continue;
+          if ( not toFree.intersect(segment2->getCanonicalInterval()) ) continue;
+          if ( segment2->isFixed() or not segment2->isBipoint() ) {
+            success = false;
+            continue;
+          }
+
+          DataNegociate* data2 = segment2->getDataNegociate();
+          if ( not data2 ) {
+            ltrace(200) << "No DataNegociate, ignoring." << endl;
+            success = false;
+            continue;
+          }
+
+          ltrace(200) << "- Forced moveUp " << segment2 << endl;
+          if ( not (success=Manipulator(segment2,*this).moveUp(Manipulator::AllowTerminalMoveUp)) ) {
+            continue;
+          }
+        }
+
+        if ( success ) {
+          setState  ( State::OtherRipup );
+          addAction ( segment, SegmentAction::SelfInsert );
+          segment->setAxis ( getCost(itrack).getTrack()->getAxis() );
+          break;
+        }
+      }
+    }
+
+    ltraceout(200);
+    return (itrack < _costs.size());
+
+#if DESATURATE_V1
     TrackElement* segment = _event->getSegment();
     unsigned int  depth   = Session::getRoutingGauge()->getLayerDepth(segment->getLayer());
 
     ltrace(200) << "State::desaturate()" << segment << endl;
     ltracein(200);
 
-    if ( segment->getLength() > DbU::lambda(75.0) ) {
-      ltraceout(200);
-      return false;
+    // if ( segment->getLength() > DbU::lambda(75.0) ) {
+    //   ltraceout(200);
+    //   return false;
+    // }
+
+    vector<GCell*> gcells;
+    segment->getGCells ( gcells );
+
+    AutoSegment::DepthLengthSet globals;
+    for ( size_t i=0 ; i<gcells.size() ; ++i ) {
+      const vector<AutoSegment*>* gcellGlobals = (segment->isHorizontal())
+                                               ? gcells[i]->getHSegments() : gcells[i]->getVSegments();
+      for ( size_t i=0 ; i<(*gcellGlobals).size() ; ++i ) {
+        size_t gdepth = Session::getRoutingGauge()->getLayerDepth((*gcellGlobals)[i]->getLayer());
+        if ( gdepth != depth ) continue;
+        if ( (*gcellGlobals)[i] == segment->base() ) continue;
+
+        globals.insert ( (*gcellGlobals)[i] );
+      }
     }
 
-    GCell* gcell = segment->base()->getAutoSource()->getGCell();
-    const vector<AutoSegment*>* globals = (segment->isHorizontal())
-                                        ? gcell->getHSegments() : gcell->getVSegments();
+    AutoSegment::DepthLengthSet::iterator iglobal = globals.begin();
+    for ( ; iglobal != globals.end() ; ++iglobal ) {
+      TrackElement* gsegment = Session::lookup ( *iglobal );
+      ltrace(200) << "| " << gsegment << endl;
 
-    ltrace(200) << gcell << endl;
-
-    if ( (*globals).empty() ) {
-      ltraceout(200);
-      return false;
-    }
-
-    for ( size_t i=0 ; i<(*globals).size() ; ++i ) {
-      size_t gdepth = Session::getRoutingGauge()->getLayerDepth((*globals)[i]->getLayer());
-      if ( gdepth != depth ) continue;
- 
-      ltrace(200) << "| " << (*globals)[i] << endl;
-
-      TrackElement* gsegment = Session::lookup ( (*globals)[i] );
-      ltrace(200) << "|*" << (*globals)[i] << endl;
-
-      if ( (*globals)[i] == segment->base() ) continue;
-
-      if ( gsegment ) {
-        if ( Manipulator(gsegment,*this).moveUp() ) {
-          ltrace(200) << "Successful desaturation of " << gcell << endl;
-          ltraceout(200);
-          return true;
-        }
+      if ( Manipulator(gsegment,*this).moveUp() ) {
+        ltraceout(200);
+        return true;
       }
     }
 
     ltraceout(200);
     return false;
+#endif // DESTURATE_V1
   }
 
   bool  State::slackenTopology ( unsigned int flags )
@@ -1785,6 +1864,10 @@ namespace {
             success = Manipulator(segment,*this).desalignate();
             break;
           case DataNegociate::Minimize:
+            if ( isFullBlocked() ) {
+              nextState = DataNegociate::Unimplemented;
+              break;
+            }
             nextState = DataNegociate::DogLeg;
             success = Manipulator(segment,*this).minimize();
             if ( success ) break;
@@ -1830,7 +1913,7 @@ namespace {
            and (nextState == DataNegociate::Unimplemented)
            and segment->isSlackened()
            and isFullBlocked() ) {
-          solveFullBlockages ();
+          if ( solveFullBlockages () ) nextState = DataNegociate::MoveUp;
         }
       } else {
       // Global TrackElement State Machine.
@@ -1850,15 +1933,15 @@ namespace {
           case DataNegociate::Desalignate:
             ltrace(200) << "Global, State: Minimize, DogLeg or Desalignate." << endl;
             if ( (success = Manipulator(segment,*this).desalignate()) ) {
-              nextState = DataNegociate::Slacken;
               break;
             }
+            nextState = DataNegociate::Slacken;
           case DataNegociate::Slacken:
             ltrace(200) << "Global, State: Slacken."  << endl;
             if ( (success = Manipulator(segment,*this).slacken()) ) {
-              nextState = DataNegociate::MoveUp;
               break;
             }
+            nextState = DataNegociate::MoveUp;
           case DataNegociate::MoveUp:
             ltrace(200) << "Global, State: MoveUp." << endl;
           //if ( (success = desaturate()) ) break;
@@ -1884,6 +1967,9 @@ namespace {
               }
             }
           case DataNegociate::MaximumSlack:
+            if ( (success=Manipulator(segment,*this).forceOverLocals()) ) {
+              break;
+            }
           case DataNegociate::Unimplemented:
             ltrace(200) << "Global, State: MaximumSlack or Unimplemented." << endl;
             nextState = DataNegociate::Unimplemented;
@@ -1899,7 +1985,7 @@ namespace {
         if ( not success
            and (nextState == DataNegociate::Unimplemented)
            and segment->isSlackened() ) {
-          solveFullBlockages ();
+          if ( solveFullBlockages() ) nextState = DataNegociate::MoveUp;
         }
       }
     }
@@ -2575,12 +2661,12 @@ namespace {
         }
       }
 
-      if ( not (shrinkLeft xor shrinkRight) ) {
+    //if ( not (shrinkLeft xor shrinkRight) ) {
         ltrace(200) << "- Hard overlap/enclosure/shrink " << segment2 << endl;
         if ( _segment->isStrap() and segment2->isGlobal() ) continue;
         if ( not (success = Manipulator(segment2,_S).ripup(toFree,SegmentAction::OtherRipup)) )
           continue;
-      }
+      //}
 
       canonicals.clear ();
       forEach ( TrackElement*, isegment3
@@ -2603,7 +2689,7 @@ namespace {
             if ( not (success=Manipulator(*isegment3,_S).ripup ( track->getAxis()
                                                                , SegmentAction::OtherPushAside
                                                                | SegmentAction::AxisHint
-                                                               , toFree.getVMin() - DbU::lambda(1.0)
+                                                               , toFree.getVMin() - DbU::lambda(2.5)
                                                                )) )
               break;
 
@@ -2619,7 +2705,7 @@ namespace {
             if ( not (success=Manipulator(*isegment3,_S).ripup ( track->getAxis()
                                                                , SegmentAction::OtherPushAside
                                                                | SegmentAction::AxisHint
-                                                               , toFree.getVMax() + DbU::lambda(1.0)
+                                                               , toFree.getVMax() + DbU::lambda(2.5)
                                                                )) )
               break;
             if ( event3->getTracksFree() == 1 ) {
@@ -2646,8 +2732,10 @@ namespace {
     }
 
     if ( success ) {
+      ltrace(200) << "Manipulator::insertInTrack() success" << endl;
+
       _S.setState  ( State::OtherRipup );
-      _S.addAction ( _segment, SegmentAction::SelfInsert /*| SegmentAction::EventLevel3*/ );
+      _S.addAction ( _segment, SegmentAction::SelfInsert|SegmentAction::EventLevel4 );
       _segment->setAxis ( _S.getCost(itrack).getTrack()->getAxis() );
 
       unsigned int flags = 0;
@@ -2792,6 +2880,67 @@ namespace {
     }
 
     return false;
+  }
+
+
+  bool  Manipulator::forceOverLocals ()
+  {
+    ltrace(200) << "Manipulator::forceOverLocals()" << endl;
+    ltracein(200);
+
+    vector<TrackCost>& costs = _S.getCosts();
+    size_t itrack = 0;
+    for ( ; itrack<costs.size() ; ++itrack ) {
+      ltrace(200) << "Trying itrack:" << itrack << endl;
+
+      if (  costs[itrack].isFixed()
+         or costs[itrack].isBlockage()
+         or costs[itrack].isInfinite()
+         or costs[itrack].isOverlapGlobal() )
+        continue;
+
+      bool      success    = true;
+      Track*    track      = _S.getTrack(itrack);
+      size_t    begin      = _S.getBegin(itrack);
+      size_t    end        = _S.getEnd  (itrack);
+      Net*      ownerNet   = _segment->getNet();
+      Interval  toFree      (_segment->getCanonicalInterval());
+      
+      for ( size_t i = begin ; success and (i < end) ; i++ ) {
+        TrackElement* segment2 = track->getSegment(i);
+
+        ltrace(200) << "* Looking // " << segment2 << endl;
+
+        if ( segment2->getNet() == ownerNet  ) continue;
+        if ( not toFree.intersect(segment2->getCanonicalInterval()) ) continue;
+        if ( segment2->isFixed() ) {
+          success = false;
+          continue;
+        }
+
+        DataNegociate* data2 = segment2->getDataNegociate();
+        if ( not data2 ) {
+          ltrace(200) << "No DataNegociate, ignoring." << endl;
+          success = false;
+          continue;
+        }
+
+        ltrace(200) << "- Forced ripup " << segment2 << endl;
+        if ( not (success=Manipulator(segment2,_S).ripup(toFree,SegmentAction::OtherRipup)) ) {
+          continue;
+        }
+      }
+
+      if ( success ) {
+        _S.setState  ( State::OtherRipup );
+        _S.addAction ( _segment, SegmentAction::SelfInsert );
+        _segment->setAxis ( _S.getCost(itrack).getTrack()->getAxis() );
+        break;
+      }
+    }
+
+    ltraceout(200);
+    return (itrack < costs.size());
   }
 
 
@@ -2954,14 +3103,14 @@ namespace {
     kflags |= (flags & AllowLocalMoveUp   ) ? Katabatic::AutoSegment::AllowLocal    : 0;
     kflags |= (flags & AllowTerminalMoveUp) ? Katabatic::AutoSegment::AllowTerminal : 0;
 
-    if ( _segment->isFixed () ) return false;
+    if ( _segment->isFixed() ) return false;
     if ( not (flags & AllowLocalMoveUp) ) {
       if ( _segment->isLocal() ) {
         if ( not _segment->canPivotUp(0.5) ) return false;
       } else {
         if ( _segment->getLength() < DbU::lambda(100.0) ) {
           if ( not (flags & AllowShortPivotUp) ) return false;
-          if ( not _segment->canPivotUp(0.5) ) return false;
+          if ( not _segment->canPivotUp(1.0) ) return false;
         }
         if ( not _segment->canMoveUp(0.5,kflags) ) return false; // MARK 1
       }
@@ -3096,7 +3245,7 @@ namespace {
     ltrace(200) << "Manipulator::minimize() " << _segment << endl; 
 
     if ( _segment->isFixed() ) return false;
-    if ( !_event->canMinimize() ) return false;
+    if ( not _event->canMinimize() ) return false;
 
     DbU::Unit  minSpan = DbU::Max;
     DbU::Unit  maxSpan = DbU::Min;
@@ -3127,12 +3276,12 @@ namespace {
     const vector<TrackElement*>& perpandiculars = _event->getPerpandiculars();
     for ( size_t i=0 ; i<perpandiculars.size() ; i++ ) {
       DataNegociate* data2 = perpandiculars[i]->getDataNegociate();
-      if ( !data2 ) continue;
+      if ( not data2 ) continue;
 
       ltrace(200) << "  | " << perpandiculars[i] << endl;
 
       RoutingEvent* event2 = data2->getRoutingEvent();
-      if ( !event2 ) continue;
+      if ( not event2 ) continue;
 
       ltrace(200) << "  | Constraints: " << event2->getConstraints() << endl;
 
@@ -3144,9 +3293,11 @@ namespace {
 
     ltrace(200) << "punctualSpan: " << punctualSpan
                 << " min/max span: [" << DbU::getValueString(minSpan)
-                <<                ":" << DbU::getValueString(minSpan) << "]" << endl;
+                <<                ":" << DbU::getValueString(maxSpan) << "]"
+                << " long: ["         << minSpan
+                <<                ":" << maxSpan << "]" << endl;
 
-    vector<Interval>   holes;
+    vector<Interval> holes;
     for ( size_t itrack=0 ; itrack<_S.getCosts().size() ; itrack++ ) {
       size_t  begin = _S.getBegin(itrack);
       size_t  end   = _S.getEnd  (itrack);
@@ -3156,7 +3307,7 @@ namespace {
 
       ltrace(200) << "Looking for holes in " << _S.getCost(itrack) << endl;
 
-      TrackElement*    otherPrevious = NULL;
+      TrackElement* otherPrevious = NULL;
     // ToDo: Manage disjoint but subsequent segment of a Net.
     //       (currently, that hole will not be found).
       for ( ; begin < end ; begin++ ) {
@@ -3191,24 +3342,27 @@ namespace {
         biggestHole = holes[i];
     }
 
-    if ( !punctualSpan.isEmpty() ) {
+    DbU::Unit axisHint = 0;
+    if ( not punctualSpan.isEmpty() ) {
       bool success = false;
 
       if ( biggestHole.intersect(punctualSpan) ) {
         ltrace(200) << "Go as punctual into biggest hole: " << biggestHole << endl;
+        axisHint = biggestHole.intersection(punctualSpan).getCenter();
         success = true;
       } else {
         for ( size_t i=0 ; i<holes.size() ; i++ ) {
           ltrace(200) << "Trying secondary hole: " << holes[i] << endl;
           if ( holes[i].intersect(punctualSpan) ) {
             biggestHole = holes[i];
+            axisHint = biggestHole.intersection(punctualSpan).getCenter();
             ltrace(200) << "Go as punctual into secondary hole: " << biggestHole << endl;
             success = true;
           }
         }
       }
 
-      if ( !success ) {
+      if ( not success ) {
         ltrace(200) << "No suitable hole found." << endl;
         return false;
       }
@@ -3221,10 +3375,10 @@ namespace {
         return false;
       } else {
         ltrace(200) << "Go into biggest hole: " << biggestHole << endl;
+        axisHint = biggestHole.getCenter();
       }
     }
 
-    DbU::Unit axisHint = biggestHole.intersection(punctualSpan).getCenter();
     ltrace(200) << "Axis Hint: " << DbU::getValueString(axisHint) << endl;
 
     for ( size_t i=0 ; i<perpandiculars.size() ; i++ ) {
@@ -3301,6 +3455,27 @@ namespace {
           _S.addAction ( perpandicular, SegmentAction::OtherPacking );
       }
     }
+  }
+
+
+  void  Manipulator::repackPerpandiculars ()
+  {
+    ltrace(200) << "Manipulator::repackPerpandiculars()" << endl;
+
+    const vector<TrackElement*>& perpandiculars = _event->getPerpandiculars();
+    for ( size_t iperpand=0 ; iperpand<perpandiculars.size() ; iperpand++ ) {
+      TrackElement*  perpandicular = perpandiculars[iperpand];
+      DataNegociate* data          = perpandicular->getDataNegociate();
+
+      if ( perpandicular->isFixed () ) continue;
+      if ( perpandicular->isGlobal() ) continue;
+      if ( not data ) continue;
+
+      if ( RoutingEvent::getStage() == RoutingEvent::Repair )
+        data->setState ( DataNegociate::Repair );
+      _S.addAction ( perpandicular, SegmentAction::SelfRipupPerpand );
+    }
+    _S.addAction ( _segment, SegmentAction::SelfRipup|SegmentAction::EventLevel4 );
   }
   
 
@@ -3442,15 +3617,18 @@ namespace Kite {
 // Class  :  "RoutingEvent".
 
 
-  size_t  RoutingEvent::_allocateds = 0;
-  size_t  RoutingEvent::_processeds = 0;
-  size_t  RoutingEvent::_cloneds    = 0;
+  unsigned int  RoutingEvent::_stage      = RoutingEvent::Negociate;
+  size_t        RoutingEvent::_allocateds = 0;
+  size_t        RoutingEvent::_processeds = 0;
+  size_t        RoutingEvent::_cloneds    = 0;
 
 
-  size_t  RoutingEvent::getAllocateds   () { return _allocateds; }
-  size_t  RoutingEvent::getProcesseds   () { return _processeds; }
-  size_t  RoutingEvent::getCloneds      () { return _cloneds; }
-  void    RoutingEvent::resetProcesseds () { _processeds = 0; }
+  unsigned int  RoutingEvent::getStage        () { return _stage; }
+  size_t        RoutingEvent::getAllocateds   () { return _allocateds; }
+  size_t        RoutingEvent::getProcesseds   () { return _processeds; }
+  size_t        RoutingEvent::getCloneds      () { return _cloneds; }
+  void          RoutingEvent::setStage        ( unsigned int stage ) { _stage = stage; }
+  void          RoutingEvent::resetProcesseds () { _processeds = 0; }
 
 
   RoutingEvent::RoutingEvent ( TrackElement* segment, unsigned int mode )
@@ -3555,6 +3733,16 @@ namespace Kite {
   { return getState() == DataNegociate::Unimplemented; }
 
 
+  void  RoutingEvent::setMode ( unsigned int mode )
+  {
+    _mode = mode;
+    // if ( _mode == Repair ) {
+    //   DataNegociate* data = _segment->getDataNegociate();
+    //   if ( data ) data->setState ( DataNegociate::Repair, true );
+    // }
+  }
+
+
   unsigned int  RoutingEvent::getState () const
   {
     DataNegociate* data = _segment->getDataNegociate();
@@ -3586,6 +3774,8 @@ namespace Kite {
 
   void  RoutingEvent::cacheAxisHint ()
   {
+    if ( getStage() == Repair ) return;
+
     TrackElement* parent = _segment->getParent();
     if ( not parent ) return;
 
@@ -3616,7 +3806,7 @@ namespace Kite {
 
     RoutingEvent* fork = NULL;
 
-    if ( isUnimplemented() ) {
+    if ( (getStage() != Repair) and isUnimplemented() ) {
       ltrace(200) << "Reschedule: cancelled (Unimplemented) "
                   << (void*)this << " -> " << (void*)fork << ":" << fork << endl;
       return NULL;
@@ -3636,8 +3826,15 @@ namespace Kite {
       ltrace(200) << "Reschedule/Fork: "
                   << (void*)this << " -> " << (void*)fork << ":" << fork << endl;
     }
+
     if ( fork->_eventLevel < eventLevel )
       fork->_eventLevel = eventLevel;
+
+    if ( getStage() == Repair ) {
+      fork->setMode ( RoutingEvent::Repair );
+      _segment->getDataNegociate()->setState ( DataNegociate::Repair );
+    }
+
     queue.repush ( fork );
 
     return fork;
@@ -3669,11 +3866,11 @@ namespace Kite {
       //ltracelevel ( 200 );
       //Cfg::getParamInt("misc.traceLevel")->setInt ( 200, Cfg::Parameter::CommandLine );
 
-        const vector<RoutingEventLoop::Element>& elements = loop.getElements();
-        for ( size_t i=0 ; i<elements.size() ; ++i ) {
-          cerr << "        " << setw(2) << elements[i]._count << "| id:" << elements[i]._id << "\n";
-        }
-        cerr << endl;
+      //const vector<RoutingEventLoop::Element>& elements = loop.getElements();
+      //for ( size_t i=0 ; i<elements.size() ; ++i ) {
+      //  cerr << "        " << setw(2) << elements[i]._count << "| id:" << elements[i]._id << "\n";
+      //}
+      //cerr << endl;
       }
 
 #if LOOP_DEBUG
@@ -3702,16 +3899,13 @@ namespace Kite {
       setState ( DataNegociate::Unimplemented );
 
       ostringstream message;
-      message << "Kite has detected a loop between the following Segments:\n<tt>";
+      message << "[BUG] Kite has detected a loop between the following Segments:";
 
       const vector<RoutingEventLoop::Element>& elements = loop.getElements();
       for ( size_t i=0 ; i<elements.size() ; ++i ) {
-        message << setw(2) << elements[i]._count << "| id:"
-                << elements[i]._id << "\n";
+        message << "\n" << setw(10) << elements[i]._count << "| id:" << elements[i]._id;
       }
-      message << "</tt>";
-
-      cerr << message << endl;
+      cerr << message.str() << endl;
 #endif
     }
 
@@ -3742,17 +3936,17 @@ namespace Kite {
     _preCheck(_segment);
     _eventLevel = 0;
 
-    if ( _mode < PostPack ) history.push ( this );
+    history.push ( this );
 
-    if ( isProcessed() || isDisabled() ) {
+    if ( isProcessed() or isDisabled() ) {
       ltrace(200) << "Already processed or disabled." << endl;
     } else {
       setProcessed ();
 
       switch ( _mode ) {
         case Negociate: _processNegociate ( queue, history ); break;
-        case Pack:
-        case PostPack:  _processPacking   ( queue, history ); break;
+        case Pack:      _processPack      ( queue, history ); break;
+        case Repair:    _processRepair    ( queue, history ); break;
         default:
           cerr << Bug("RoutingEvent::process() - Unknown mode value:%d.",_mode) << endl;
           break;
@@ -3818,15 +4012,15 @@ namespace Kite {
         _axisHistory = _segment->getAxis();
         _eventLevel  = 0;
         Session::addInsertEvent ( _segment, S.getCost(itrack).getTrack() );
-        Manipulator(_segment,S).reprocessPerpandiculars ();
+      //Manipulator(_segment,S).reprocessPerpandiculars ();
         S.setState ( State::SelfInserted );
 
-        if (   _segment->isLocal()
-           and _segment->isTerminal()
-           and ( S.getData()->getState() >= DataNegociate::MoveUp ) ) {
-          ltrace(200) << "Last chance: fixing " << _segment << endl;
-          _segment->base()->setFixed ( true );
-        }
+        // if (   _segment->isLocal()
+        //    and _segment->isTerminal()
+        //    and ( S.getData()->getState() >= DataNegociate::MoveUp ) ) {
+        //   ltrace(200) << "Last chance: fixing " << _segment << endl;
+        //   _segment->base()->setFixed ( true );
+        // }
       } else {
       // Do ripup.
         if ( S.getState() == State::EmptyTrackList ) {
@@ -3867,9 +4061,9 @@ namespace Kite {
   }
 
 
-  void  RoutingEvent::_processPacking ( RoutingEventQueue& queue, RoutingEventHistory& history )
+  void  RoutingEvent::_processPack ( RoutingEventQueue& queue, RoutingEventHistory& history )
   {
-    ltrace(200) << "* Mode:Packing." << endl;
+    ltrace(200) << "* Mode:Pack." << endl;
 
     if ( _segment->getTrack() != NULL ) {
       ltrace(200) << "* Cancel: already in Track." << endl;
@@ -3894,11 +4088,61 @@ namespace Kite {
       Session::addInsertEvent ( _segment, S.getCost(0).getTrack() );
       S.setState ( State::SelfInserted );
     } else {
-      ltrace(200) << "Packing failed." << endl;
-      if ( _mode == Pack ) {
-        _mode = Negociate;
-        S.addAction ( _segment, SegmentAction::SelfInsert );
-        S.doActions ();
+      ltrace(200) << "Pack failed." << endl;
+      _mode = Negociate;
+      S.addAction ( _segment, SegmentAction::SelfInsert );
+      S.doActions ();
+    }
+  }
+
+
+  void  RoutingEvent::_processRepair ( RoutingEventQueue& queue, RoutingEventHistory& history )
+  {
+    ltrace(200) << "* Mode:Repair." << endl;
+
+    if ( _segment->getTrack() != NULL ) {
+      ltrace(200) << "* Cancel: already in Track." << endl;
+      return;
+    }
+    // if ( !_canHandleConstraints ) {
+    //   ltrace(200) << "* Cancel: cannot handle constraints." << endl;
+    //   return;
+    // }
+
+    State S ( this, queue, history );
+    if ( S.getState() == State::MissingData    ) return;
+    if ( S.getState() == State::EmptyTrackList ) return;
+
+    ltracein(200);
+    for ( size_t i = 0 ; i < S.getCosts().size() ; i++ )
+      ltrace(200) << "| " << S.getCost(i) << endl;
+    ltraceout(200);
+
+    if ( S.getCosts().size() and S.getCost(0).isFree() ) {
+      ltrace(200) << "Insert in free space." << endl;
+      Session::addInsertEvent ( _segment, S.getCost(0).getTrack() );
+      S.setState ( State::SelfInserted );
+    } else {
+      switch ( S.getData()->getStateCount() ) {
+        case 1:
+        // First try: minimize.
+        //S.getData()->setState ( DataNegociate::Repair );
+          Manipulator(_segment,S).minimize ();
+          S.addAction ( _segment, SegmentAction::SelfInsert );
+          S.doActions ();
+          queue.commit ();
+          break;
+        case 2:
+        // Second try: failed re-inserted first.
+        //S.getData()->setState ( DataNegociate::Repair );
+          Manipulator(_segment,S).repackPerpandiculars ();
+          S.addAction ( _segment, SegmentAction::SelfInsert );
+          S.doActions ();
+          queue.commit ();
+          break;
+        default:
+          ltrace(200) << "Repair failed." << endl;
+          break;
       }
     }
   }
@@ -3921,12 +4165,24 @@ namespace Kite {
       _segment->base()->getConstraints ( _constraints );
       _segment->base()->getOptimal     ( _optimal );
 
+      ltrace(200) << "Stage:" << RoutingEvent::getStage() << endl;
+      if ( RoutingEvent::getStage() == RoutingEvent::Repair ) {
+        ltrace(200) << "Expanding:" << _constraints << endl;
+      // Ugly: direct uses of Cell Gauge.
+        _constraints.inflate ( DbU::lambda(50.0) );
+        ltrace(200) << "Expanding (after):" << _constraints << endl;
+      }
+      // else if ( _segment->isDogleg()
+      //           and (_segment->getDataNegociate()->getState() >= DataNegociate::MaximumSlack) ) {
+      //   _constraints.inflate ( DbU::lambda(25.0) );
+      // }
+
       ltrace(200) << "| Raw Track Constraint: " << _constraints << endl;
 
       _validConstraints = true;
     }
 
-    if ( !_validPerpandiculars ) {
+    if ( not _validPerpandiculars ) {
       TrackElement* perpandicular;
       Interval      canonical;
 
@@ -3969,12 +4225,12 @@ namespace Kite {
     _tracksNb = 0;
 
     ltrace(200) << "| Perpandicular Free: " << _perpandicular << endl;
-    if ( !_perpandicular.isEmpty() ) {
+    if ( not _perpandicular.isEmpty() ) {
       RoutingPlane* plane   = Session::getKiteEngine()->getRoutingPlaneByLayer(_segment->getLayer());
       Track*        track   = plane->getTrackByPosition(_perpandicular.getVMin());
 
-      if ( track && (track->getAxis() < _perpandicular.getVMin()) ) track = track->getNext();
-      for ( ; track && (track->getAxis() <= _perpandicular.getVMax())
+      if ( track and (track->getAxis() < _perpandicular.getVMin()) ) track = track->getNext();
+      for ( ; track and (track->getAxis() <= _perpandicular.getVMax())
             ; track = track->getNext(), _tracksNb++ );
     }
     if ( not _tracksNb ) {

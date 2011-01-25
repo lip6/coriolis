@@ -59,6 +59,7 @@ namespace Kite {
       static  TrackElement*         create                     ( AutoSegment*, Track*, bool& created );
     public:                                                    
       virtual AutoSegment*          base                       () const;
+      virtual bool                  isBipoint                  () const;
       virtual bool                  isCreated                  () const;
       virtual bool                  isFixed                    () const;
       virtual bool                  isStrap                    () const;
@@ -67,6 +68,7 @@ namespace Kite {
       virtual bool                  isGlobal                   () const;
       virtual bool                  isLocked                   () const;
       virtual bool                  isTerminal                 () const;
+      virtual bool                  isDogleg                   () const;
       virtual bool                  isRevalidated              () const;
       virtual bool                  isSlackened                () const;
       virtual bool                  isSlackenDogLeg            () const;
@@ -80,6 +82,7 @@ namespace Kite {
       virtual bool                  canPivotUp                 ( float reserve ) const;
       virtual bool                  canPivotDown               ( float reserve ) const;
       virtual bool                  canMoveUp                  ( float reserve, unsigned int flags ) const;
+      virtual float                 getMaxUnderDensity         ( unsigned int flags ) const;
       virtual bool                  canRipple                  () const;
       virtual bool                  hasSourceDogLeg            () const;
       virtual bool                  hasTargetDogLeg            () const;

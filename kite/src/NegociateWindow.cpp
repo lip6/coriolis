@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
 //
 // ===================================================================
 //
@@ -65,7 +65,7 @@ namespace {
   {
     Interval intersect = segment->getCanonicalInterval();
 
-    if ( not intersect.intersect ( cost.getInterval() ) ) return;
+    if ( not intersect.intersect(cost.getInterval()) ) return;
 
     if ( segment->isBlockage() or segment->isFixed() ) {
       ltrace(200) << "Infinite cost from: " << segment << endl;
@@ -76,12 +76,18 @@ namespace {
       return;
     }
 
-
     if ( cost.getInterval().getVMax() > intersect.getVMax() ) cost.setLeftOverlap();
     if ( cost.getInterval().getVMin() < intersect.getVMin() ) cost.setRightOverlap();
 
+  //cost.setLonguestOverlap ( intersect.getSize() );
+  //intersect.intersection ( cost.getInterval() );
+
     if ( not intersect.contains(cost.getInterval()) )
       intersect.intersection ( cost.getInterval() );
+    else {
+      cost.setLonguestOverlap ( intersect.getSize() );
+      cost.setGlobalEnclosed ();
+    }
 
     DataNegociate* data = segment->getDataNegociate ();
     if ( not data ) return;
@@ -98,6 +104,13 @@ namespace {
     //if ( data->getState() >=  DataNegociate::ConflictSolve1 ) {
         cost.setOverlapGlobal();
     //}
+        if (   (cost.getFlags() & TrackCost::LocalAndTopDepth)
+           and (data->getState() >= DataNegociate::MoveUp) ) {
+          cost.setInfinite    ();
+          cost.setOverlap     ();
+          cost.setHardOverlap ();
+          return;
+        }
     }
 
     // if ( data->getRipupCount() > 3 ) {
@@ -112,7 +125,9 @@ namespace {
     cost.setOverlap   ();
     if ( segment->isLocal() or (Session::getRoutingGauge()->getLayerDepth(segment->getLayer()) < 3) )
       cost.incTerminals ( data->getCost().getTerminals()*100 );
-    cost.incDelta     ( intersect.getSize() );
+
+    ltrace(200) << "| Increment Delta: " << DbU::getValueString(intersect.getSize()) << endl;
+    cost.incDelta ( intersect.getSize() );
   }
 
 
@@ -132,6 +147,7 @@ namespace {
         if ( depth >  0 ) continue;
         if ( depth == 0 ) {
           TrackMarker::create ( *irp, 1 );
+        //TrackMarker::create ( *irp, 2 );
         }
       }
     }
@@ -379,21 +395,25 @@ namespace Kite {
     ltrace(150) << "NegociateWindow::_negociate() - " << _segments.size() << endl;
     ltracein(149);
 
+    cmess1 << "     o  Negociation Stage." << endl;
+
     unsigned long limit = _kite->getEventsLimit();
+  //unsigned long limit = 25586;
 
     _eventHistory.clear();
     _eventQueue.load ( _segments );
 
     size_t count = 0;
+    RoutingEvent::setStage ( RoutingEvent::Negociate );
     while ( not _eventQueue.empty() and not isInterrupted() ) {
       RoutingEvent* event = _eventQueue.pop ();
 
       if (tty::enabled()) {
-        cmess2 << "       <event:" << tty::bold << setw(7) << setfill('0')
+        cmess2 << "        <event:" << tty::bold << setw(7) << setfill('0')
                << RoutingEvent::getProcesseds() << setfill(' ') << tty::reset << ">" << tty::cr;
         cmess2.flush ();
       } else {
-        cmess2 << "       <event:" << setw(7) << setfill('0')
+        cmess2 << "        <event:" << setw(7) << setfill('0')
                << RoutingEvent::getProcesseds() << setfill(' ') << " "
                << event->getEventLevel() << ":" << event->getPriority() << "> "
                << event->getSegment()
@@ -406,37 +426,73 @@ namespace Kite {
 
       event->process ( _eventQueue, _eventHistory, _eventLoop );
 
-      if ( RoutingEvent::getProcesseds() >= limit ) setInterrupt ( true );
       count++;
+      if ( RoutingEvent::getProcesseds() >= limit ) setInterrupt ( true );
     }
     if (count and tty::enabled()) cmess1 << endl;
-    count = 0;
 
-    ltrace(200) << "Dumping history." << endl;
+    cmess1 << "     o  Repair Stage." << endl;
+
+    ltrace(200) << "Loadind Repair queue." << endl;
+    RoutingEvent::setStage ( RoutingEvent::Repair );
     for ( size_t i=0 ; (i<_eventHistory.size()) and not isInterrupted() ; i++ ) {
       RoutingEvent* event = _eventHistory.getNth(i);
-      ltrace(200) << (void*)event << " ["
-                  << (event->isCloned       ()?"C":"-")
-                  << (event->isDisabled     ()?"d":"-")
-                  << (event->isUnimplemented()?"u":"-") << "] "
-                  << event->getSegment() << endl;
-      if ( !event->isCloned() and event->isUnimplemented() ) {
-        count++;
-        event->setProcessed ( false );
-        event->setMode ( RoutingEvent::PostPack );
-        event->process ( _eventQueue, _eventHistory, _eventLoop );
 
-        if (tty::enabled()) {
-          cmess1 << "       <event:"
-                 << tty::bold << tty::fgcolor(tty::Red) << setw(7) << setfill('0')
-                 << RoutingEvent::getProcesseds() << setfill(' ') << tty::reset << ">" << tty::cr;
-          cmess1.flush ();
-        } else {
-          cmess1 << "       <event:" << setw(7) << setfill('0')
-                 << RoutingEvent::getProcesseds() << setfill(' ') << ">" << endl;
-        }
+      if ( not event->isCloned() and event->isUnimplemented() ) {
+        event->reschedule ( _eventQueue, 0 );
       }
     }
+    _eventQueue.commit ();
+
+    count = 0;
+    while ( not _eventQueue.empty() and not isInterrupted() ) {
+      RoutingEvent* event = _eventQueue.pop ();
+
+      if (tty::enabled()) {
+        cmess2 << "        <repair.event:" << tty::bold << setw(7) << setfill('0')
+               << RoutingEvent::getProcesseds() << setfill(' ') << tty::reset << ">" << tty::cr;
+        cmess2.flush ();
+      } else {
+        cmess2 << "        <repair.event:" << setw(7) << setfill('0')
+               << RoutingEvent::getProcesseds() << setfill(' ') << " "
+               << event->getEventLevel() << ":" << event->getPriority() << "> "
+               << event->getSegment()
+             //<< "> @" << DbU::getValueString(event->getSegment()->getAxis())
+             //<< " id:" << event->getSegment()->getId()
+             //<< " " << event->getSegment()->getNet()->getName()
+               << endl;
+        cmess2.flush();
+      }
+
+      event->process ( _eventQueue, _eventHistory, _eventLoop );
+
+      count++;
+      if ( RoutingEvent::getProcesseds() >= limit ) setInterrupt ( true );
+    }
+
+    // {
+    //   ltrace(200) << (void*)event << " ["
+    //               << (event->isCloned       ()?"C":"-")
+    //               << (event->isDisabled     ()?"d":"-")
+    //               << (event->isUnimplemented()?"u":"-") << "] "
+    //               << event->getSegment() << endl;
+    //   if ( not event->isCloned() and event->isUnimplemented() ) {
+    //     count++;
+    //     event->setProcessed ( false );
+    //     event->setMode ( RoutingEvent::Repair );
+    //     event->process ( _eventQueue, _eventHistory, _eventLoop );
+
+    //     if (tty::enabled()) {
+    //       cmess1 << "       <event:"
+    //              << tty::bold << tty::fgcolor(tty::Red) << setw(7) << setfill('0')
+    //              << RoutingEvent::getProcesseds() << setfill(' ') << tty::reset << ">" << tty::cr;
+    //       cmess1.flush ();
+    //     } else {
+    //       cmess1 << "       <event:" << setw(7) << setfill('0')
+    //              << RoutingEvent::getProcesseds() << setfill(' ') << ">" << endl;
+    //     }
+    //   }
+    // }
     if (count and tty::enabled()) cmess1 << endl;
 
     size_t eventsCount = _eventHistory.size();
@@ -465,6 +521,8 @@ namespace Kite {
   {
     ltrace(150) << "NegociateWindow::run()" << endl;
     ltracein(149);
+
+    cmess1 << "  o  Running Negociate Algorithm" << endl;
 
     TrackElement::setOverlapCostCB ( NegociateOverlapCost );
     RoutingEvent::resetProcesseds ();
