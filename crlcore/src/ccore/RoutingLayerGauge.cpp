@@ -223,15 +223,19 @@ namespace CRL {
 
     trace << "depth := " << depth << endl;
 
-    if ( depth < 0 )
-      throw Error ( negativeIndex
-                  , getString(this).c_str()
-                  , DbU::getValueString(position).c_str()
-                  , DbU::getValueString(start).c_str()
-                  , DbU::getValueString(stop).c_str()
-                  );
+    if ( depth < 0 ) {
+      trace_out ();
+      return 0;
 
-    if ( ( mode & Constant::Exact ) && ( modulo != 0 ) )
+      // throw Error ( negativeIndex
+      //             , getString(this).c_str()
+      //             , DbU::getValueString(position).c_str()
+      //             , DbU::getValueString(start).c_str()
+      //             , DbU::getValueString(stop).c_str()
+      //             );
+    }
+
+    if ( ( mode & Constant::Exact ) and ( modulo != 0 ) )
       throw Error ( badExactPosition, getString(this).c_str(), DbU::getValueString(position).c_str() );
 
     if ( mode & Constant::Superior ) {
@@ -240,13 +244,17 @@ namespace CRL {
       if ( modulo > _pitch / 2 ) depth++;
     }
 
-    if ( (unsigned)depth >= getTrackNumber(start,stop) )
-      throw Error ( overflowIndex
-                  , getString(this).c_str()
-                  , DbU::getValueString(position).c_str()
-                  , DbU::getValueString(start).c_str()
-                  , DbU::getValueString(stop).c_str()
-                  );
+    unsigned int tracksNumber = getTrackNumber(start,stop);
+    if ( (unsigned)depth >= tracksNumber ) {
+      trace_out ();
+      return (tracksNumber > 0) ? tracksNumber-1 : 0;
+      // throw Error ( overflowIndex
+      //             , getString(this).c_str()
+      //             , DbU::getValueString(position).c_str()
+      //             , DbU::getValueString(start).c_str()
+      //             , DbU::getValueString(stop).c_str()
+      //             );
+    }
 
     trace_out ();
 
