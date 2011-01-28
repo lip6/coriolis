@@ -103,7 +103,7 @@ class ProjectBuilder:
         self._rpmbuildDir = os.path.join ( self._rootDir, "rpmbuild" )
         self._tmppathDir  = os.path.join ( self._rpmbuildDir, "tmp" )
         self._tarballDir  = os.path.join ( self._rootDir, "tarball" )
-        self._archiveDir  = os.path.join ( self._tarballDir, "coriolis2-1.1.%s" % self._svnTag )
+        self._archiveDir  = os.path.join ( self._tarballDir, "coriolis2-1.0.%s" % self._svnTag )
         self._sourceDir   = os.path.join ( self._rootDir, "src" )
         self._osDir       = os.path.join ( self._rootDir
                                         , self._osType
