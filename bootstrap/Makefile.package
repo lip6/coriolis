@@ -1,0 +1,51 @@
+
+# Mimicking the behavior of a top-level autotool generated Makefile.
+
+         tools = "vlsisapd hurricane crlcore knik katabatic kite equinox solstice unicorn"
+        prefix = "/usr"
+       DESTDIR =
+  VLSISAPD_TOP = $(prefix)
+  CORIOLIS_TOP = $(prefix)
+
+   environment = VLSISAPD_TOP=$(VLSISAPD_TOP); export VLSISAPD_TOP; \
+                 CORIOLIS_TOP=$(CORIOLIS_TOP); export CORIOLIS_TOP
+
+all: build
+
+build:
+	$(environment); \
+	for tool in $(tools); do                               \
+	  mkdir -p build/$$tool;                               \
+	  pushd build/$$tool;                                  \
+	  cmake -D CMAKE_BUILD_TYPE:STRING=RELEASE             \
+	        -D BUILD_SHARED_LIBS:STRING=ON                 \
+	        -D BUILD_DOC:STRING=OFF                        \
+	        -D CMAKE_INSTALL_prefix:STRING=$(CORIOLIS_TOP) \
+	        -D DESTDIR:STRING=$(DESTDIR)                   \
+	        ../../$tool;                                   \
+	  make DESTDIR=$(DESTDIR) install;                     \
+	  popd;                                                \
+	done
+
+install:
+	$(environment); \
+	for tool in $(tools); do                               \
+	  pushd build/$$tool;                                  \
+	  makeArgs="";                                         \
+	  cmakeArgs="";                                        \
+	  if [ "$$tool" = "crlcore" ]; then                    \
+	    makeArgs="dvi safepdf html";                       \
+	    cmakeArgs="-D BUILD_DOC:STRING=ON";                \
+	  else                                                 \
+	    cmakeArgs="-D BUILD_DOC:STRING=OFF";               \
+	  fi;                                                  \
+	  cmake -D CMAKE_BUILD_TYPE:STRING=RELEASE             \
+	        -D BUILD_SHARED_LIBS:STRING=ON                 \
+	        -D CMAKE_INSTALL_prefix:STRING=${CORIOLIS_TOP} \
+	        -D DESTDIR:STRING=$(DESTDIR)                   \
+	        $${cmakeArgs}                                  \
+	        ../../$tool;                                   \
+	  make DESTDIR=${DESTDIR} -j1 $${makeArgs} install;    \
+	  popd;                                                \
+	done;                                                  \
+	rm -f $(DESTDIR)$(CORIOLIS_TOP)/bin/{cx2y,kite-text}
