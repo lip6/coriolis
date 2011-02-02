@@ -115,12 +115,14 @@ class ProjectBuilder:
         if self._enableShared == "ON": self._libMode = "Shared"
         else:                          self._libMode = "Static"
 
-        self._specFileIn   = os.path.join ( self._sourceDir, "bootstrap", "coriolis2.spec.in" )
-        self._specFile     = os.path.join ( self._sourceDir, "bootstrap", "coriolis2.spec" )
-        self._debianDir    = os.path.join ( self._sourceDir, "bootstrap", "debian" )
-        self._sourceTarBz2 = "coriolis2-1.0.%s.tar.bz2"                  % self._svnTag
-        self._binaryTarBz2 = "coriolis2-binary-1.0.%s-1.el5_soc.tar.bz2" % self._svnTag
-        self._distribPatch = os.path.join ( self._sourceDir, "bootstrap", "coriolis2-for-distribution.patch" )
+        self._specFileIn     = os.path.join ( self._sourceDir, "bootstrap", "coriolis2.spec.in" )
+        self._specFile       = os.path.join ( self._sourceDir, "bootstrap", "coriolis2.spec" )
+        self._debianDir      = os.path.join ( self._sourceDir, "bootstrap", "debian" )
+        self._debChangelogIn = os.path.join ( self._debianDir, "changelog.in" )
+        self._debChangelog   = os.path.join ( self._debianDir, "changelog" )
+        self._sourceTarBz2   = "coriolis2-1.0.%s.tar.bz2"                  % self._svnTag
+        self._binaryTarBz2   = "coriolis2-binary-1.0.%s-1.el5_soc.tar.bz2" % self._svnTag
+        self._distribPatch   = os.path.join ( self._sourceDir, "bootstrap", "coriolis2-for-distribution.patch" )
         return
 
 
@@ -174,11 +176,11 @@ class ProjectBuilder:
         return
 
 
-    def _doSpec ( self ):
-        fdSpecFileIn = open ( self._specFileIn, "r" )
-        fdSpecFile   = open ( self._specFile  , "w" )
+    def _configure ( self, fileIn, file ):
+        fdfFileIn = open ( fileIn, "r" )
+        fdfFile   = open ( file  , "w" )
 
-        for line in fdSpecFileIn.readlines():
+        for line in fdFileIn.readlines():
             stable       = False
             substituted0 = line
 
@@ -188,10 +190,20 @@ class ProjectBuilder:
                 if substituted0 == substituted1: stable = True
                 else: substituted0 = substituted1
 
-            fdSpecFile.write ( substituted0 )
+            fdFile.write ( substituted0 )
 
-        fdSpecFileIn.close ()
-        fdSpecFile.close ()
+        fdFileIn.close ()
+        fdFile.close ()
+        return
+
+
+    def _doSpec ( self ):
+        self._configure ( self._specFileIn, self._specFile )
+        return
+
+
+    def _doDebChangelog ( self ):
+        self._configure ( self._debChangelogIn, self._debChangelog )
         return
 
 
@@ -448,6 +460,7 @@ class ProjectBuilder:
             self._guessSvnTag ( self.getProject(projects[0]) )
 
         self._doSpec ()
+        self._doDebChangelog ()
         
         if os.path.isdir(self._tarballDir):
             print "Removing previous tarball directory: \"%s\"." % self._tarballDir
@@ -537,8 +550,8 @@ class ProjectBuilder:
             os.makedirs ( self._debbuildDir )
 
         os.chdir ( self._debbuildDir )
-        sourceFile  = os.path.join ( self._tarballDir, self._sourceTarBz2 )
-        debOrigFile = os.path.join ( self._tarballDir, "coriolis2_1.0.%s.orig.tar.bz2" % self._svnTag )
+        sourceFile  = os.path.join ( self._tarballDir , self._sourceTarBz2 )
+        debOrigFile = os.path.join ( self._debbuildDir, "coriolis2_1.0.%s.orig.tar.bz2" % self._svnTag )
         if not os.path.islink(debOrigFile):
           os.link ( sourceFile, debOrigFile )
 
@@ -603,31 +616,32 @@ if __name__ == "__main__":
 
     parser = optparse.OptionParser ()  
   # Build relateds.
-    parser.add_option ( "-q", "--quiet"      , action="store_true" ,                dest="quiet"    )
-    parser.add_option ( "-r", "--release"    , action="store_true" ,                dest="release"  )
-    parser.add_option ( "-d", "--debug"      , action="store_true" ,                dest="debug"    )
-    parser.add_option ( "-s", "--static"     , action="store_true" ,                dest="static"   )
-    parser.add_option (       "--doc"        , action="store_true" ,                dest="doc"      )
-    parser.add_option ( "-D", "--check-db"   , action="store_true" ,                dest="checkDb"  )
-    parser.add_option ( "-u", "--check-deter", action="store_true" ,                dest="checkDeterminism" )
-    parser.add_option ( "-v", "--verbose"    , action="store_true" ,                dest="verboseMakefile" )
-    parser.add_option (       "--root"       , action="store"      , type="string", dest="rootDir"  )
-    parser.add_option (       "--no-build"   , action="store_true" ,                dest="noBuild"  )
-    parser.add_option (       "--no-cache"   , action="store_true" ,                dest="noCache"  )
-    parser.add_option (       "--rm-build"   , action="store_true" ,                dest="rmBuild"  )
-    parser.add_option (       "--svn-tag"    , action="store"      , type="string", dest="svnTag"   )
-    parser.add_option (       "--svn-method" , action="store"      , type="string", dest="svnMethod")
-    parser.add_option (       "--make"       , action="store"      , type="string", dest="makeArguments")
-    parser.add_option (       "--project"    , action="append"     , type="string", dest="projects" )
-    parser.add_option ( "-t", "--tool"       , action="append"     , type="string", dest="tools"    )
+    parser.add_option ( "-q", "--quiet"      , action="store_true" ,                dest="quiet"      , help="Do not print all the informative messages." )
+    parser.add_option ( "-r", "--release"    , action="store_true" ,                dest="release"    , help="Build a <Release> aka optimized version." )
+    parser.add_option ( "-d", "--debug"      , action="store_true" ,                dest="debug"      , help="Build a <Debug> aka (-g) version." )
+    parser.add_option ( "-s", "--static"     , action="store_true" ,                dest="static"     , help="Try to link statically, as much as possible." )
+    parser.add_option (       "--doc"        , action="store_true" ,                dest="doc"        , help="Enable the documentation building (uses with -j1)." )
+    parser.add_option ( "-v", "--verbose"    , action="store_true" ,                dest="verboseMakefile" , help="Tells CMake to print all compilation commands." )
+    parser.add_option (       "--root"       , action="store"      , type="string", dest="rootDir"    , help="The root directory (default: <~/coriolis-2.x/>)." )
+    parser.add_option (       "--no-build"   , action="store_true" ,                dest="noBuild"    , help="Do *not* build anything (by default: build)." )
+    parser.add_option (       "--no-cache"   , action="store_true" ,                dest="noCache"    , help="Remove previous CMake cache before building." )
+    parser.add_option (       "--rm-build"   , action="store_true" ,                dest="rmBuild"    , help="Remove previous build directoty before building." )
+    parser.add_option (       "--make"       , action="store"      , type="string", dest="makeArguments", help="Arguments to pass to make (ex: \"-j4 install\")." )
+    parser.add_option (       "--project"    , action="append"     , type="string", dest="projects"   , help="The name of a project to build (may appears any number of time)." )
+    parser.add_option ( "-t", "--tool"       , action="append"     , type="string", dest="tools"      , help="The name of a tool to build (may appears any number of time)." )
    # SVN repository relateds.
-    parser.add_option ( "--svn-status"   , action="store_true", dest="svnStatus"   )
-    parser.add_option ( "--svn-update"   , action="store_true", dest="svnUpdate"   )
-    parser.add_option ( "--svn-checkout" , action="store_true", dest="svnCheckout" )
-   # Miscellaneous.
-    parser.add_option ( "--tarball"      , action="store_true", dest="tarball" )
-    parser.add_option ( "--do-rpm"       , action="store_true", dest="doRpm"   )
-    parser.add_option ( "--do-deb"       , action="store_true", dest="doDeb"   )
+    parser.add_option ( "--svn-tag"          , action="store"      , type="string", dest="svnTag"     , help="Explicitly select a SVN tag (for SVN related commands)." )
+    parser.add_option ( "--svn-method"       , action="store"      , type="string", dest="svnMethod"  , help="Allows to sets the svn checkout method (svn+ssh://coriolis.soc.lip6.fr)." )
+    parser.add_option ( "--svn-status"       , action="store_true"                , dest="svnStatus"  , help="Check status against the SVN repository." )
+    parser.add_option ( "--svn-update"       , action="store_true"                , dest="svnUpdate"  , help="Update to the latest SVN version *or* the one given by svn-tag." )
+    parser.add_option ( "--svn-checkout"     , action="store_true"                , dest="svnCheckout", help="Checkout the latest SVN version *or* the one given by svn-tag." )
+   # Miscellaneous.                                                
+    parser.add_option ( "--tarball"          , action="store_true"                , dest="tarball"    , help="Regenerate a tarball (in <root>/tarball/." )
+    parser.add_option ( "--rpm"              , action="store_true"                , dest="doRpm"      , help="Regenerate RPM packages." )
+    parser.add_option ( "--deb"              , action="store_true"                , dest="doDeb"      , help="Regenerate Debian/Ubuntu packages." )
+   # Katabatic/Kite specific options.
+    parser.add_option ( "-D", "--check-db"   , action="store_true" ,                dest="checkDb"    , help="Enable Katabatic/Kite data-base checking (*very* slow)." )
+    parser.add_option ( "-u", "--check-deter", action="store_true" ,                dest="checkDeterminism", help="Enable Katabatic/Kite determinism checking (*very* slow)." )
     ( options, args ) = parser.parse_args ()
 
     builder = ProjectBuilder ()
