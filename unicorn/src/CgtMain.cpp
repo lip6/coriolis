@@ -2,13 +2,13 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
 //
 // ===================================================================
 //
 // $Id$
 //
-// x-----------------------------------------------------------------x 
+// +-----------------------------------------------------------------+ 
 // |                                                                 |
 // |                   C O R I O L I S                               |
 // |          U n i c o r n  -  M a i n   G U I                      |
@@ -20,7 +20,7 @@
 // | *************************************************************** |
 // |  U p d a t e s                                                  |
 // |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <csignal>
@@ -308,99 +308,6 @@ int main ( int argc, char *argv[] )
     }
 
     if ( cell ) {
-    // addaccu.
-    //DebugSession::addToTrace ( cell, "sel" );
-    //DebugSession::addToTrace ( cell, "auxreg3" );
-    //DebugSession::addToTrace ( cell, "auxsc21" );
-    //DebugSession::addToTrace ( cell, "ram_nwen" );
-    //DebugSession::addToTrace ( cell, "acc_o_down" );
-    // model_shift.
-    //DebugSession::addToTrace ( cell, "c1_2" );
-    //DebugSession::addToTrace ( cell, "muxoutput_96" );
-    //DebugSession::addToTrace ( cell, "msb" );
-    //DebugSession::addToTrace ( cell, "op(0)" );
-    //DebugSession::addToTrace ( cell, "i(1)" );
-    // rf2r0_32x32.
-    //DebugSession::addToTrace ( cell, "busa(0)" );
-    // amd2901.
-    //DebugSession::addToTrace ( cell, "acc_q(1)" );
-    //DebugSession::addToTrace ( cell, "ram_adra(11)" );
-    //DebugSession::addToTrace ( cell, "ram_adri(5)" );
-    //DebugSession::addToTrace ( cell, "ram_q2(0)" );
-    //DebugSession::addToTrace ( cell, "ram_reg5_nckx" );
-    //DebugSession::addToTrace ( cell, "acc_reg_nscanx" );
-    //DebugSession::addToTrace ( cell, "acc_o_down" );
-    //DebugSession::addToTrace ( cell, "nb(3)" );
-    // MIPS microprogrammed.
-    //DebugSession::addToTrace ( cell, "crsrout_0" );
-    //DebugSession::addToTrace ( cell, "dpt_dt_s_30" );
-    //DebugSession::addToTrace ( cell, "dpt_wm_rf_dinx_0" );
-    //DebugSession::addToTrace ( cell, "dpt_adder_sub_pi_0_10" );
-    //DebugSession::addToTrace ( cell, "dpt_ishifter_c0_3" );
-    //DebugSession::addToTrace ( cell, "dpt_adder_sub_r_16" );
-    //DebugSession::addToTrace ( cell, "dpt_adder_sub_gi_0_24" );
-    //DebugSession::addToTrace ( cell, "dpt_ishifter_muxoutput_117" );
-    // MIPS pipeline.
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_shift32_rshift_se_muxoutput(98)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_shift32_rshift_se_msb" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_rarith_se(31)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_ct_nxr2_x1_7_sig" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_banc_busa(17)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_instaddbracry_sd_pi_1_17" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_yoper_se(16)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_toper_se(22)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_soper_se(22)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_jadr_sd(14)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_effto_sd(1)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_ioper_rd(30)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_nextpc_rd(1)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_ct_not_kill_se" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_ct_not_opcod_sd_2" );
-    //DebugSession::addToTrace ( cell, "rsdnbr_sd(14)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_otheri_sd(25)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_soper_se(31)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_braadr_sd(3)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_seqadr_sd(30)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_data_rm(8)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_ct_not_i_ri(11)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_ct_noa22_x1_61_sig" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_ct_not_opcod_rd(6)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_ct_not_aux190" );
-    //DebugSession::addToTrace ( cell, "s_eq_t_sd" );
-    //DebugSession::addToTrace ( cell, "i(22)" );
-    //DebugSession::addToTrace ( cell, "mips_r3000_1m_dp_mux32_data_o_sm_sel0" );
-    // DCT/lvl3
-    //DebugSession::addToTrace ( cell, "instance139_fixed_multiplier_mixed_direct_nbit0_16_nbit1_16_specified_report_5_18_0" );
-    //DebugSession::addToTrace ( cell, "instance129_fixed_multiplier_mixed_direct_nbit0_16_nbit1_16_cin_i0_true_specified_colout_1_11_2" );
-    //DebugSession::addToTrace ( cell, "coef0(7)" );
-    //DebugSession::addToTrace ( cell, "c1_0(3)" );
-    // DCT/dct_lvl2
-    //DebugSession::addToTrace ( cell, "instance156_fixed_multiplier_mixed_direct_nbit0_8_nbit1_14_specified_report_3_13_1" );
-    //DebugSession::addToTrace ( cell, "created_net11_0(19)" );
-    //DebugSession::addToTrace ( cell, "c11(5)" );
-    //DebugSession::addToTrace ( cell, "instance151_fixed_multiplier_mixed_direct_nbit0_8_nbit1_14_cin_i0_true_specified_colout_3_19_1" );
-    // idct
-    // ieee_division
-    //DebugSession::addToTrace ( cell, "ieee_norm_i_norm_shift_i_muxoutput_259" );
-    //DebugSession::addToTrace ( cell, "ieee_norm_i_norm_shift_i_muxoutput_113" );
-    // eFPGA/04x04.
-    //DebugSession::addToTrace ( cell, "group_2_4_nq_mem_45" );
-    //DebugSession::addToTrace ( cell, "g_2_1_rig_7" );
-    // eFPGA/08x08.
-    //DebugSession::addToTrace ( cell, "group_1_7_lut_mux_q01" );
-    //DebugSession::addToTrace ( cell, "group_0_5_decoder_vertical_track_0_not_cmd(1)" );
-    // eFPGA/16x16.
-    //DebugSession::addToTrace ( cell, "group_15_6_clb_topside_in1_mux_q01" );
-    //DebugSession::addToTrace ( cell, "g_7_14_top_2" );
-    // ibm01.
-    //DebugSession::addToTrace ( cell, "NET2648" );
-    //DebugSession::addToTrace ( cell, "NET2881" );
-    //DebugSession::addToTrace ( cell, "NET2530" );
-    //DebugSession::addToTrace ( cell, "NET8464" );
-    //DebugSession::addToTrace ( cell, "NET8242" );
-    // ibm02.
-    //DebugSession::addToTrace ( cell, "net18015" );
-
     // Python Script test.
 
     //Isobar::Script::addPath ( "/dsk/l1/jpc/coriolis-2.x/work/benchs/routing/addaccu" );

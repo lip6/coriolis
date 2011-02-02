@@ -68,5 +68,5 @@
  target_link_libraries ( cgt           unicorn )
                install ( TARGETS       unicorn        DESTINATION lib${LIB_SUFFIX} )
                install ( TARGETS       cgt            DESTINATION bin )
-               install ( FILES         ${mocIncludes} DESTINATION include/coriolis2/unicorn ) 
+               install ( FILES         ${mocincludes} DESTINATION include/coriolis2/unicorn ) 
 
