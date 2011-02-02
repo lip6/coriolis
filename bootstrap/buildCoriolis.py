@@ -666,12 +666,14 @@ if __name__ == "__main__":
     if options.svnMethod:        builder.svnMethod         = options.svnMethod
     if options.svnTag:           builder.svnTag            = options.svnTag
 
+    packagedProjects = [ "bootstrap", "vlsisapd", "coriolis" ]
+
     if   options.svnStatus:   builder.svnStatus   ( tools=options.tools, projects=options.projects )
     elif options.svnUpdate:   builder.svnUpdate   ( tools=options.tools, projects=options.projects )
     elif options.svnCheckout: builder.svnCheckout ( tools=options.tools, projects=options.projects )
     elif options.tarball:     builder.tarball     ( tools=options.tools, projects=options.projects )
-    elif options.doRpm:       builder.doRpm       ( tools=options.tools, projects=options.projects )
-    elif options.doDeb:       builder.doDeb       ( tools=options.tools, projects=options.projects )
+    elif options.doRpm:       builder.doRpm       ( tools=[]           , projects=packagedProjects )
+    elif options.doDeb:       builder.doDeb       ( tools=[]           , projects=packagedProjects )
     else:                     builder.build       ( tools=options.tools, projects=options.projects )
 
     sys.exit ( 0 )

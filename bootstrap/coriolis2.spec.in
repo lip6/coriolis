@@ -186,5 +186,9 @@ Development files for the Coriolis 2 package.
 
 
 %changelog
+* Wed Feb  2 2011  Jean-Paul.Chaput <Jean-Paul.Chaput@lip6.fr>
+- Second release, all tools from Coriolis 1 have been ported.
+  (nimbus, mauka, metis, cumulus, stratus1)
+
 * Sun May 16 2010  Jean-Paul.Chaput <Jean-Paul.Chaput@lip6.fr>
 - Initial packaging for svn release 1322 (alpha stage).
