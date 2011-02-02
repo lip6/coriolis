@@ -177,8 +177,8 @@ class ProjectBuilder:
 
 
     def _configure ( self, fileIn, file ):
-        fdfFileIn = open ( fileIn, "r" )
-        fdfFile   = open ( file  , "w" )
+        fdFileIn = open ( fileIn, "r" )
+        fdFile   = open ( file  , "w" )
 
         for line in fdFileIn.readlines():
             stable       = False
