@@ -148,30 +148,30 @@ class dpgen_ROM ( Model ) :
 #  
 #   dpgen_ROM_code ( LV_name, nbit, nword, 0, 0, data ) # !!!
 
-  for i in range ( nbit ) :
-    if   i % 4 == 0 :	
-      cellin  = "rom_data_invss"
-      cellmid = "rom_data_midvss"
-      
-      cellout = "rom_data_outvss"
-      
-    elif i % 4 == 1 :
-      cellin  = "rom_data_insel"
-      cellmid = "rom_data_midsel"
-
-      cellout = "rom_data_outsel"
-      
-    elif i % 4 == 2:	
-      cellin  = "rom_data_insel"
-      cellmid = "rom_data_midsel"
-      
-      cellout = "rom_data_outsel"
-
-    elif i % 4 == 3 :	
-      cellin  = "rom_data_invss"
-      cellmid = "rom_data_midvss"
-      
-      cellout = "rom_data_outvss"
+    for i in range ( nbit ) :
+      if   i % 4 == 0 :	
+        cellin  = "rom_data_invss"
+        cellmid = "rom_data_midvss"
+        
+        cellout = "rom_data_outvss"
+        
+      elif i % 4 == 1 :
+        cellin  = "rom_data_insel"
+        cellmid = "rom_data_midsel"
+  
+        cellout = "rom_data_outsel"
+        
+      elif i % 4 == 2:	
+        cellin  = "rom_data_insel"
+        cellmid = "rom_data_midsel"
+        
+        cellout = "rom_data_outsel"
+  
+      elif i % 4 == 3 :	
+        cellin  = "rom_data_invss"
+        cellmid = "rom_data_midvss"
+        
+        cellout = "rom_data_outvss"
     
     instanciate ( cellin
                 , "in%d" % i

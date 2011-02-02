@@ -416,12 +416,12 @@ class TopRom ( Model ) :
                 , 'vdd'   : self.vdd
                 , 'vss'   : self.vss
                 }
-    	if self.nword != 64 : thisMap['col'] = col[j]
-    	else                : thisMap['col'] = One ( 1 )
-    	And23[j] = Inst ( "rom_dec_line23"
-                        , "and23_%d" % j
-                        , map = thisMap
-                        )
+      if self.nword != 64 : thisMap['col'] = col[j]
+      else                : thisMap['col'] = One ( 1 )
+      And23[j] = Inst ( "rom_dec_line23"
+                      , "and23_%d" % j
+                      , map = thisMap
+                      )
         
     if type == 0 : model = "rom_dec_selmux23"
     else         : model = "rom_dec_selmux23_rs"
