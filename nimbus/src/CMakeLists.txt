@@ -37,7 +37,8 @@
                        )
       
 
-           add_library ( nimbus ${cpps} )
+           add_library ( nimbus  ${cpps} )
+ set_target_properties ( nimbus  PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries ( nimbus  ${CORIOLIS_LIBRARIES}  
                                  ${HURRICANE_PYTHON_LIBRARIES}
                                  ${HURRICANE_GRAPHICAL_LIBRARIES}
