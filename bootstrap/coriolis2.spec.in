@@ -84,7 +84,6 @@ Development files for the Coriolis 2 package.
 
 # Removing undistributed binaries.
 #%__rm -f %{buildroot}%{coriolisTop}/bin/{cx2y,kite-text}
- find %{buildroot}%{coriolisTop} -name '*.py[co]' | xargs rm
 
 # %{__mkdir} -p %{buildroot}%{_sysconfdir}/ld.so.conf.d/
 # cat > %{buildroot}%{_sysconfdir}/ld.so.conf.d/%{name}.conf << EOF
