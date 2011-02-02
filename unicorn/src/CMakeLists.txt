@@ -31,6 +31,7 @@
      qt4_add_resources ( RCC_SRCS      Unicorn.qrc )
 
            add_library ( unicorn       ${cpps} ${MOCcpps} )
+ set_target_properties ( unicorn       PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries ( unicorn       ${SOLSTICE_GRAPHICAL_LIBRARIES}
                                        ${SOLSTICE_LIBRARIES}
                                        ${EQUINOX_GRAPHICAL_LIBRARIES}
