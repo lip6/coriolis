@@ -539,7 +539,7 @@ class ProjectBuilder:
         os.chdir ( self._debbuildDir )
         sourceFile  = os.path.join ( self._tarballDir, self._sourceTarBz2 )
         debOrigFile = os.path.join ( self._tarballDir, "coriolis2_1.0.%s.orig.tar.bz2" % self._svnTag )
-        if not os.paths.islink(debOrigFile):
+        if not os.path.islink(debOrigFile):
           os.link ( sourceFile, debOrigFile )
 
         command = [ "/bin/tar", "jxf", debOrigFile ]
