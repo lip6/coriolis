@@ -126,12 +126,12 @@ Development files for the Coriolis 2 package.
 %{coriolisTop}/%{_lib}/*.so
 %endif
 %{coriolisTop}/%{python_sitedir}/*.so
-%{coriolisTop}/%{python_sitedir}/cumulus/*.py
-%{coriolisTop}/%{python_sitedir}/stratus/*.py
+%{coriolisTop}/%{python_sitedir}/cumulus/*.py*
+%{coriolisTop}/%{python_sitedir}/stratus/*.py*
 #%config(noreplace) %{_sysconfdir}/ld.so.conf.d/*
 %config(noreplace) %{_sysconfdir}/coriolis2/*.xml
 %config(noreplace) %{_sysconfdir}/coriolis2/*.sh
-%config(noreplace) %{_sysconfdir}/coriolis2/*.py
+%config(noreplace) %{_sysconfdir}/coriolis2/*.py*
 %config(noreplace) %{_sysconfdir}/coriolis2/stratus.vim
 %config(noreplace) %{coriolisTop}/share/coriolis2/flute-2.4/*.dat
 
