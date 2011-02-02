@@ -45,6 +45,7 @@
 
 
            add_library ( mauka         ${cpps} ${mocCpps} ${pyCpps} )
+ set_target_properties ( mauka         PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries ( mauka         ${METIS_LIBRARIES}
                                        ${NIMBUS_LIBRARIES}
                                        ${CORIOLIS_LIBRARIES}
