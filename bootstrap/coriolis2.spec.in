@@ -122,7 +122,7 @@ Development files for the Coriolis 2 package.
 %if %{with_staticlink}
 %{coriolisTop}/%{_lib}/*.a
 %else
-%{coriolisTop}/%{_lib}/*.so
+%{coriolisTop}/%{_lib}/*.so*
 %endif
 %{coriolisTop}/%{python_sitedir}/*.so
 %{coriolisTop}/%{python_sitedir}/cumulus/*.py*
