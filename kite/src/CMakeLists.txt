@@ -61,6 +61,7 @@
 
 
            add_library ( kite          ${cpps} ${mocCpps} )
+ set_target_properties ( kite          PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries ( kite          ${KATABATIC_LIBRARIES}
                                        ${KNIK_LIBRARIES}
                                        ${NIMBUS_LIBRARIES}
