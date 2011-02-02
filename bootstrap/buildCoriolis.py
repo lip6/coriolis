@@ -537,9 +537,12 @@ class ProjectBuilder:
             os.makedirs ( self._debbuildDir )
 
         os.chdir ( self._debbuildDir )
-        sourceFile    = os.path.join ( self._tarballDir, self._sourceTarBz2 )
+        sourceFile  = os.path.join ( self._tarballDir, self._sourceTarBz2 )
+        debOrigFile = os.path.join ( self._tarballDir, "coriolis2_1.0.%s.orig.tar.bz2" % self._svnTag )
+        if not os.paths.islink(debOrigFile):
+          os.link ( sourceFile, debOrigFile )
 
-        command = [ "/bin/tar", "jxf", sourceFile ]
+        command = [ "/bin/tar", "jxf", debOrigFile ]
         self._execute ( command, "Unpacking pristine sources" )
 
        #command = [ "/bin/cp", "-r", self._debianDir, "." ]
