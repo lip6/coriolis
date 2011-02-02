@@ -111,6 +111,7 @@
      qt4_add_resources ( RCC_SRCS    CellViewer.qrc )
 
            add_library ( viewer      ${cpps} ${MOC_SRCS} ${RCC_SRCS} ${sources2} ${pycpps} )
+ set_target_properties ( viewer      PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries ( viewer      hurricane isobar ${CONFIGURATION_LIBRARY} ${Boost_LIBRARIES} ${QT_LIBRARIES} )
            add_library ( pyViewer    MODULE ${pycpps} )
  target_link_libraries ( pyViewer    viewer )
