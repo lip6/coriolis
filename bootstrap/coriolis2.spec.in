@@ -80,7 +80,7 @@ Development files for the Coriolis 2 package.
 # Install & build documentation, in -j1.
  make DESTDIR=%{buildroot} BUILD_DESTDIR=%{_builddir}/%{buildsubdir}/install.dir -j1 install
 
- %__rm -rf %{buildroot}%{coriolisTop}/share/doc/coriolis2
+#%__rm -rf %{buildroot}%{coriolisTop}/share/doc/coriolis2
 
 # Removing undistributed binaries.
 #%__rm -f %{buildroot}%{coriolisTop}/bin/{cx2y,kite-text}
@@ -110,7 +110,7 @@ Development files for the Coriolis 2 package.
 
 %files
 %defattr(-,root,root,-)
-%doc install.dir/share/doc/coriolis2 
+%doc %{_datadir}/doc/coriolis2 
 %dir %{_sysconfdir}/coriolis2
 %dir %{coriolisTop}/share/coriolis2/flute-2.4
 %dir %{coriolisTop}/bin
