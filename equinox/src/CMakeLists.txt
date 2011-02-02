@@ -37,9 +37,11 @@
           qt4_wrap_cpp ( mocCpps       ${mocIncludes} )
 
            add_library ( intervalTree   ${intervalTreeCpps} )
+ set_target_properties ( intervalTree   PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries ( intervalTree   ${HURRICANE_LIBRARIES} )
 
            add_library ( equinox       ${cpps} ${mocCpps} )
+ set_target_properties ( equinox       PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries ( equinox       intervalTree
                                        ${CORIOLIS_LIBRARIES}
                                        ${HURRICANE_PYTHON_LIBRARIES}
