@@ -101,6 +101,7 @@ class ProjectBuilder:
 
     def _updateSecondary ( self ):
         self._rpmbuildDir = os.path.join ( self._rootDir, "rpmbuild" )
+        self._debbuildDir = os.path.join ( self._rootDir, "debbuild" )
         self._tmppathDir  = os.path.join ( self._rpmbuildDir, "tmp" )
         self._tarballDir  = os.path.join ( self._rootDir, "tarball" )
         self._archiveDir  = os.path.join ( self._tarballDir, "coriolis2-1.0.%s" % self._svnTag )
@@ -116,6 +117,7 @@ class ProjectBuilder:
 
         self._specFileIn   = os.path.join ( self._sourceDir, "bootstrap", "coriolis2.spec.in" )
         self._specFile     = os.path.join ( self._sourceDir, "bootstrap", "coriolis2.spec" )
+        self._debianDir    = os.path.join ( self._sourceDir, "bootstrap", "debian" )
         self._sourceTarBz2 = "coriolis2-1.0.%s.tar.bz2"                  % self._svnTag
         self._binaryTarBz2 = "coriolis2-binary-1.0.%s-1.el5_soc.tar.bz2" % self._svnTag
         self._distribPatch = os.path.join ( self._sourceDir, "bootstrap", "coriolis2-for-distribution.patch" )
@@ -469,6 +471,12 @@ class ProjectBuilder:
         command = [ "/bin/cp", "-r", os.path.join(self._sourceDir ,"bootstrap","Makefile.package")
                                    , os.path.join(self._archiveDir,"Makefile") ]
         self._execute ( command, "copy of %s failed" % "boostrap/Makefile.package")
+
+        command = [ "/bin/cp", self._specFile, self._archiveDir ]
+        self._execute ( command, "Copying RPM spec file" )
+
+        command = [ "/bin/cp", "-r", self._debianDir, self._archiveDir ]
+        self._execute ( command, "Copying Debian/Ubuntu package control files" )
  
         os.chdir ( self._archiveDir )
        #command = [ "/usr/bin/patch", "--remove-empty-files"
@@ -496,13 +504,13 @@ class ProjectBuilder:
             if not os.path.isdir(rpmFullDir):
                 os.makedirs ( rpmFullDir )
 
-        rpmSpecFile   = os.path.join ( self._rpmbuildDir, "SPECS"  , "coriolis2.spec" )
+       #rpmSpecFile   = os.path.join ( self._rpmbuildDir, "SPECS"  , "coriolis2.spec" )
         rpmSourceFile = os.path.join ( self._rpmbuildDir, "SOURCES", self._sourceTarBz2 )
         sourceFile    = os.path.join ( self._tarballDir, self._sourceTarBz2 )
 
-        if os.path.isfile ( rpmSpecFile ):
-            os.unlink ( rpmSpecFile )
-        os.symlink ( self._specFile, rpmSpecFile   )
+       #if os.path.isfile ( rpmSpecFile ):
+       #    os.unlink ( rpmSpecFile )
+       #os.symlink ( self._specFile, rpmSpecFile   )
 
         if not os.path.islink ( rpmSourceFile ):
             os.symlink ( sourceFile, rpmSourceFile )
@@ -513,9 +521,35 @@ class ProjectBuilder:
                   , "--define", "_topdir                 %s" % self._rpmbuildDir
                   , "--define", "_tmppath                %s" % self._tmppathDir
                   , "--define", "_enable_debug_packages  0"
-                  , "-ba", "--with", "binarytar", rpmSpecFile ]
+                  , "-ta", "--with", "binarytar", rpmSourceFile ]
 
         self._execute ( command, "Rebuild rpm packages" )
+
+        return
+
+
+    def doDeb ( self, tools, projects ):
+        self.tarball ( tools, projects )
+
+        if not os.path.isdir(self._debbuildDir):
+            os.makedirs ( self._debbuildDir )
+
+        os.chdir ( self._debbuildDir )
+        sourceFile    = os.path.join ( self._tarballDir, self._sourceTarBz2 )
+
+        command = [ "/bin/tar", "jxf", sourceFile ]
+        self._execute ( command, "Unpacking pristine sources" )
+
+       #command = [ "/bin/cp", "-r", self._debianDir, "." ]
+       #self._execute ( command, "Copying Debian/Ubuntu package control files" )
+
+        packageDir = os.path.join ( self._debbuildDir, "coriolis2-1.0.%s" % self._svnTag )
+        os.chdir ( packageDir )
+
+        self._environment["CFLAGS"  ] = "-O2"
+        self._environment["CXXFLAGS"] = "-O2"
+        command = [ "/usr/bin/debuild", "-us", "-uc" ]
+        self._execute ( command, "Rebuild Debian packages" )
 
         return
 
@@ -588,6 +622,7 @@ if __name__ == "__main__":
    # Miscellaneous.
     parser.add_option ( "--tarball"      , action="store_true", dest="tarball" )
     parser.add_option ( "--do-rpm"       , action="store_true", dest="doRpm"   )
+    parser.add_option ( "--do-deb"       , action="store_true", dest="doDeb"   )
     ( options, args ) = parser.parse_args ()
 
     builder = ProjectBuilder ()
@@ -617,6 +652,7 @@ if __name__ == "__main__":
     elif options.svnCheckout: builder.svnCheckout ( tools=options.tools, projects=options.projects )
     elif options.tarball:     builder.tarball     ( tools=options.tools, projects=options.projects )
     elif options.doRpm:       builder.doRpm       ( tools=options.tools, projects=options.projects )
+    elif options.doDeb:       builder.doDeb       ( tools=options.tools, projects=options.projects )
     else:                     builder.build       ( tools=options.tools, projects=options.projects )
 
     sys.exit ( 0 )

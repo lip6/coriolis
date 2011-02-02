@@ -15,6 +15,28 @@
 
 
 #
+# Check for the Distribution: RedHat/Scientific/Ubuntu/OSX.
+# Currently OSX is assimilated to RedHat.
+#
+ macro(check_distribution)
+   if(NOT APPLE)
+     execute_process(COMMAND "lsb_release" "-d" OUTPUT_VARIABLE LSB_RELEASE)
+     if(LSB_RELEASE MATCHES "[Uu]buntu|[Dd]ebian")
+       set(DISTRIBUTION "Debian" CACHE STRING "Distribution Type/Vendor" FORCE)
+       add_definitions(-DDEBIAN)
+     endif(LSB_RELEASE MATCHES "[Uu]buntu|[Dd]ebian")
+     if(LSB_RELEASE MATCHES "Scientific|RedHat")
+       set(DISTRIBUTION "RedHat" CACHE STRING "Distribution Type/Vendor" FORCE)
+       add_definitions(-DREDHAT)
+     endif(LSB_RELEASE MATCHES "Scientific|RedHat")
+   else(NOT APPLE)
+     set(DISTRIBUTION "RedHat" CACHE STRING "Distribution Type/Vendor" FORCE)
+     add_definitions(-DREDHAT)
+   endif(NOT APPLE)
+   message("-- Distribution is ${DISTRIBUTION}")
+ endmacro(check_distribution)
+
+#
 # Specific Apple OSX setup
 #
 #  This is no more needed since QT 4.6 is available for Mac OSX 10.6
@@ -169,13 +191,14 @@
 # otherwise we install under the tool INSTALLDIR/etc.
 #
  macro(setup_sysconfdir INSTALLDIR)
-   string(REGEX MATCH "^/usr" IS_USR INSTALLDIR)
-   string(REGEX MATCH "^/opt" IS_OPT INSTALLDIR)
+   message("-- Checking installation directory <${INSTALLDIR}>")
+   string(REGEX MATCH "^/usr" IS_USR ${INSTALLDIR})
+   string(REGEX MATCH "^/opt" IS_OPT ${INSTALLDIR})
    if(IS_USR OR IS_OPT)
      message("-- Using system-wide /etc.")
      set(SYS_CONF_DIR "/etc" CACHE STRING "System configuration directory (/etc)" FORCE)
    else(IS_USR OR IS_OPT)
-     message("-- Using install tree /etc.")
+     message("-- Using install tree <prefix>/etc.")
      set(SYS_CONF_DIR "etc" CACHE STRING "System configuration directory (/etc)" FORCE)
    endif(IS_USR OR IS_OPT)
  endmacro(setup_sysconfdir)

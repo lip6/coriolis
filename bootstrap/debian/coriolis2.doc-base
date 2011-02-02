@@ -1,0 +1,34 @@
+Document: coriolis2
+Title: Coriolis2 Documentation
+Abstract: VLSI Place & Route CAD Tools Documentation
+Section: electronics
+
+Format: text
+Files: /usr/share/doc/coriolis2/README.tex.gz
+       /usr/share/doc/coriolis2/en/latex/hurricane/*
+       /usr/share/doc/coriolis2/en/latex/stratus/stratus.tex.gz
+       /usr/share/doc/coriolis2/en/latex/dpgen/dpgen.tex
+       /usr/share/doc/coriolis2/en/latex/patterns/patterns.tex.gz
+       /usr/share/doc/coriolis2/en/latex/stratus_developper/stratus_developper.tex
+
+Format: DVI
+Files: /usr/share/doc/coriolis2/README.dvi.gz
+       /usr/share/doc/coriolis2/en/latex/stratus/stratus.dvi.gz
+       /usr/share/doc/coriolis2/en/latex/dpgen/dpgen.dvi.gz
+       /usr/share/doc/coriolis2/en/latex/patterns/patterns.dvi.gz
+       /usr/share/doc/coriolis2/en/latex/stratus_developper/stratus_developper.dvi.gz
+
+Format: PDF
+Files: /usr/share/doc/coriolis2/README.pdf.gz
+       /usr/share/doc/coriolis2/en/latex/stratus/stratus.pdf.gz
+       /usr/share/doc/coriolis2/en/latex/dpgen/dpgen.pdf.gz
+       /usr/share/doc/coriolis2/en/latex/patterns/patterns.pdf.gz
+       /usr/share/doc/coriolis2/en/latex/stratus_developper/stratus_developper.pdf.gz
+
+Format: HTML
+Index: /usr/share/doc/coriolis2/en/index.html
+Files: /usr/share/doc/coriolis2/en/html/hurricane/*.html
+       /usr/share/doc/coriolis2/en/html/stratus/*.html
+       /usr/share/doc/coriolis2/en/html/dpgen/*.html
+       /usr/share/doc/coriolis2/en/html/patterns/*.html
+       /usr/share/doc/coriolis2/en/html/stratus_developper/*.html

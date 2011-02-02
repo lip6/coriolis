@@ -32,11 +32,13 @@ def stripPath ( pathName ):
 
 
 def guessOs ():
-    osSLSoC5x_64     = re.compile (".*Linux.*el5.*x86_64.*")
-    osSLSoC5x        = re.compile (".*Linux.*(el5|2.6.23.13.*SoC).*")
-    osLinux_64       = re.compile (".*Linux.*x86_64.*")
-    osLinux          = re.compile (".*Linux.*")
-    osDarwin         = re.compile (".*Darwin.*")
+    osSLSoC5x_64    = re.compile (".*Linux.*el5.*x86_64.*")
+    osSLSoC5x       = re.compile (".*Linux.*(el5|2.6.23.13.*SoC).*")
+    osLinux_64      = re.compile (".*Linux.*x86_64.*")
+    osLinux         = re.compile (".*Linux.*")
+    osDarwin        = re.compile (".*Darwin.*")
+    osUbuntu1004    = re.compile (".*Linux.*ubuntu.*")
+    osUbuntu1004_64 = re.compile (".*Linux.*ubuntu.*x86_64.*")
 
     uname = subprocess.Popen ( ["uname", "-srm"], stdout=subprocess.PIPE )
     lines = uname.stdout.readlines()
@@ -49,8 +51,13 @@ def guessOs ():
     elif osLinux_64  .match(lines[0]):
       osType = "Linux.x86_64"
       libDir = "lib64"
-    elif osLinux     .match(lines[0]): osType = "Linux.i386"
-    elif osDarwin    .match(lines[0]): osType = "Darwin"
+    elif osLinux .match(lines[0]): osType = "Linux.i386"
+    elif osDarwin.match(lines[0]): osType = "Darwin"
+    elif osUbuntu1004_64.match(lines[0]):
+      osType = "Linux.Ubuntu1004"
+      libDir = "lib64"
+    elif osUbuntu1004.match(lines[0]):
+      osType = "Linux.Ubuntu1004"
     else:
         uname = subprocess.Popen ( ["uname", "-sr"], stdout=subprocess.PIPE )
         osType = uname.stdout.readlines()[0][:-1]
@@ -138,9 +145,13 @@ fi
     strippedLibraryPath = "%s:%s"     % ( absLibDir, strippedLibraryPath )
 
     if options.python:
-      pyVersion          = sys.version_info
-      version            = "%d.%d"                     % (pyVersion[0],pyVersion[1])
-      sitePackagesDir    = "%s/python%s/site-packages" % (absLibDir,version)
+      pyVersion = sys.version_info
+      version   = "%d.%d" % (pyVersion[0],pyVersion[1])
+      if osType[8] == "Linux.SL":
+        sitePackagesDir = "%s/python%s/site-packages" % (absLibDir,version)
+      else:
+        sitePackagesDir = "%s/python%s/dist-packages" % (absLibDir,version)
+
       strippedPythonPath = "%s:"         % (sitePackagesDir) + strippedPythonPath
       strippedPythonPath = "%s/cumulus:" % (sitePackagesDir) + strippedPythonPath
       strippedPythonPath = "%s/stratus:" % (sitePackagesDir) + strippedPythonPath

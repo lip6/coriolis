@@ -1,51 +1,83 @@
 
 # Mimicking the behavior of a top-level autotool generated Makefile.
 
-         tools = "vlsisapd hurricane crlcore knik katabatic kite equinox solstice unicorn"
-        prefix = "/usr"
+         tools = bootstrap vlsisapd hurricane crlcore nimbus metis mauka knik katabatic kite \
+                 equinox solstice cumulus stratus1 unicorn
+        prefix = /usr
        DESTDIR =
+ BUILD_DESTDIR = $(shell pwd)/install.dir
+ BOOTSTRAP_TOP = $(prefix)
   VLSISAPD_TOP = $(prefix)
   CORIOLIS_TOP = $(prefix)
 
-   environment = VLSISAPD_TOP=$(VLSISAPD_TOP); export VLSISAPD_TOP; \
-                 CORIOLIS_TOP=$(CORIOLIS_TOP); export CORIOLIS_TOP
+   environment = BOOTSTRAP_TOP=$(BOOTSTRAP_TOP); export BOOTSTRAP_TOP; \
+                  VLSISAPD_TOP=$(VLSISAPD_TOP);  export  VLSISAPD_TOP; \
+                  CORIOLIS_TOP=$(CORIOLIS_TOP);  export  CORIOLIS_TOP
+
+.PHONY: build install FORCE
 
 all: build
 
-build:
+clean:
+	rm -rf build.dir install.dir \
+	   crlcore/doc/doxygen/html \
+	   hurricane/doc/hurricane/html \
+	   hurricane/doc/hurricane/latex \
+	   hurricane/doc/viewer/html \
+	   hurricane/doc/viewer/latex
+
+build: FORCE
 	$(environment); \
-	for tool in $(tools); do                               \
-	  mkdir -p build/$$tool;                               \
-	  pushd build/$$tool;                                  \
-	  cmake -D CMAKE_BUILD_TYPE:STRING=RELEASE             \
-	        -D BUILD_SHARED_LIBS:STRING=ON                 \
-	        -D BUILD_DOC:STRING=OFF                        \
-	        -D CMAKE_INSTALL_prefix:STRING=$(CORIOLIS_TOP) \
-	        -D DESTDIR:STRING=$(DESTDIR)                   \
-	        ../../$tool;                                   \
-	  make DESTDIR=$(DESTDIR) install;                     \
-	  popd;                                                \
+	case "`uname -m`" in                                     \
+	  "x86_64") cmakeArgs="-D LIB_SUFFIX:STRING=64";;        \
+	  *)        cmakeArgs="";;                               \
+	esac;                                                    \
+	for tool in $(tools); do                                 \
+	  mkdir -p build.dir/$$tool;                             \
+	  cd build.dir/$$tool;                                   \
+	  cmake -D CMAKE_BUILD_TYPE:STRING=RELEASE               \
+	        -D BUILD_SHARED_LIBS:STRING=ON                   \
+	        -D BUILD_DOC:STRING=OFF                          \
+	        -D CMAKE_INSTALL_PREFIX:STRING=$(CORIOLIS_TOP)   \
+	        -D DESTDIR:STRING=$(BUILD_DESTDIR)               \
+	        $${cmakeArgs}                                    \
+	        ../../$$tool                                     \
+	        || exit 1;                                       \
+	  make DESTDIR=$(BUILD_DESTDIR) install                  \
+	        || exit 1;                                       \
+	  cd ../..;                                              \
 	done
 
-install:
+install: FORCE
 	$(environment); \
-	for tool in $(tools); do                               \
-	  pushd build/$$tool;                                  \
-	  makeArgs="";                                         \
-	  cmakeArgs="";                                        \
-	  if [ "$$tool" = "crlcore" ]; then                    \
-	    makeArgs="dvi safepdf html";                       \
-	    cmakeArgs="-D BUILD_DOC:STRING=ON";                \
-	  else                                                 \
-	    cmakeArgs="-D BUILD_DOC:STRING=OFF";               \
-	  fi;                                                  \
-	  cmake -D CMAKE_BUILD_TYPE:STRING=RELEASE             \
-	        -D BUILD_SHARED_LIBS:STRING=ON                 \
-	        -D CMAKE_INSTALL_prefix:STRING=${CORIOLIS_TOP} \
-	        -D DESTDIR:STRING=$(DESTDIR)                   \
-	        $${cmakeArgs}                                  \
-	        ../../$tool;                                   \
-	  make DESTDIR=${DESTDIR} -j1 $${makeArgs} install;    \
-	  popd;                                                \
-	done;                                                  \
-	rm -f $(DESTDIR)$(CORIOLIS_TOP)/bin/{cx2y,kite-text}
+	case "`uname -m`" in                                      \
+	  "x86_64") commonCMakeArgs="-D LIB_SUFFIX:STRING=64";;   \
+	  *)        commonCMakeArgs="";;                          \
+	esac;                                                     \
+	for tool in $(tools); do                                  \
+	  cd build.dir/$$tool;                                    \
+	  makeArgs="";                                            \
+	  cmakeArgs="$$commonCMakeArgs -D BUILD_DOC:STRING=OFF";  \
+	  if [  "$$tool" = "crlcore"                              \
+	     -o "$$tool" = "stratus1" ]; then                     \
+	    makeArgs="dvi safepdf html";                          \
+	    cmakeArgs="$$commonCMakeArgs -D BUILD_DOC:STRING=ON"; \
+	  fi;                                                     \
+	  if [  "$$tool" = "hurricane" ]; then                    \
+	    cmakeArgs="$$commonCMakeArgs -D BUILD_DOC:STRING=ON"; \
+	  fi;                                                     \
+	  cmake -D CMAKE_BUILD_TYPE:STRING=RELEASE                \
+	        -D BUILD_SHARED_LIBS:STRING=ON                    \
+	        -D CMAKE_INSTALL_PREFIX:STRING=${CORIOLIS_TOP}    \
+	        -D DESTDIR:STRING=$(DESTDIR)                      \
+	        $${cmakeArgs}                                     \
+	        ../../$$tool                                      \
+	        || exit 1;                                        \
+	  make DESTDIR=$(DESTDIR) -j1 $${makeArgs} install        \
+	        || exit 1;                                        \
+	  cd ../..;                                               \
+	done;                                                     \
+	rm -f $(DESTDIR)$(CORIOLIS_TOP)/bin/cx2y                  \
+	      $(DESTDIR)$(CORIOLIS_TOP)/bin/kite-text
+
+FORCE:

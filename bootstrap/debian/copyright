@@ -1,0 +1,25 @@
+This work was packaged for Debian by:
+
+    Jean-Paul Chaput <Jean-Paul.Chaput@lip6.fr> on Mon, 20 Dec 2010 16:53:46 +0100
+
+It was downloaded from <http://www-soc.lip6.fr/recherche/cian/coriolis-2>
+
+Upstream Author(s):
+
+    The Coriolis Team <coriolis-cvs@soc.lip6.fr>
+
+Copyright:
+
+    Copyright (C) 2000-2010 Bull S.A. All rigths reserved
+    Copyright (C) 2000-2010 Universite Pierre & Marie Curie (UPMC)
+
+License:
+
+    GPL version 2
+
+The Debian packaging is:
+
+    Copyright (C) 2010 Universite Pierre & Marie Curie (UPMC)
+
+and is licensed under the GPL version 2, 
+see `/usr/share/common-licenses/GPL-2'.
