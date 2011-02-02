@@ -56,7 +56,8 @@ set_source_files_properties ( ${LibertyParserGrammarCpp} GENERATED )
 add_library ( liberty  ${cpps}
                        ${liberty_parser_cpps}
             )
-target_link_libraries ( liberty  ${Boost_LIBRARIES}
+set_target_properties ( liberty PROPERTIES VERSION 1.0 SOVERSION 1)
+target_link_libraries ( liberty ${Boost_LIBRARIES}
                       )
 
 install ( TARGETS  liberty DESTINATION lib${LIB_SUFFIX} )

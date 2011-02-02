@@ -13,6 +13,7 @@ SET ( pycpps PyAgds.cpp
     )
 
 ADD_LIBRARY(agds ${cpps})
+SET_TARGET_PROPERTIES(agds PROPERTIES VERSION 1.0 SOVERSION 1)
 INSTALL(TARGETS agds DESTINATION lib${LIB_SUFFIX})
 
 INSTALL(FILES ${hpps} DESTINATION include/vlsisapd/agds)
