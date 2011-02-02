@@ -22,6 +22,7 @@ endif ( HMETIS_FOUND )
                        )
 
            add_library ( metis         ${cpps} ${mocCpps} )
+ set_target_properties ( metis         PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries ( metis         ${HMETIS_LIBRARIES}
                                        ${NIMBUS_LIBRARIES}
                                        ${CORIOLIS_LIBRARIES}
