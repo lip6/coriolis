@@ -100,12 +100,12 @@ class ProjectBuilder:
 
 
     def _updateSecondary ( self ):
-        self._rpmbuildDir = os.path.join ( self._rootDir, "rpmbuild" )
-        self._debbuildDir = os.path.join ( self._rootDir, "debbuild" )
+        self._rpmbuildDir = os.path.join ( self._rootDir    , "rpmbuild" )
+        self._debbuildDir = os.path.join ( self._rootDir    , "debbuild" )
         self._tmppathDir  = os.path.join ( self._rpmbuildDir, "tmp" )
-        self._tarballDir  = os.path.join ( self._rootDir, "tarball" )
-        self._archiveDir  = os.path.join ( self._tarballDir, "coriolis2-1.0.%s" % self._svnTag )
-        self._sourceDir   = os.path.join ( self._rootDir, "src" )
+        self._tarballDir  = os.path.join ( self._rootDir    , "tarball" )
+        self._archiveDir  = os.path.join ( self._tarballDir , "coriolis2-1.0.%s" % self._svnTag )
+        self._sourceDir   = os.path.join ( self._rootDir    , "src" )
         self._osDir       = os.path.join ( self._rootDir
                                         , self._osType
                                         , "%s.%s" % (self._buildMode,self._libMode) )
@@ -451,7 +451,7 @@ class ProjectBuilder:
         
         if os.path.isdir(self._tarballDir):
             print "Removing previous tarball directory: \"%s\"." % self._tarballDir
-            command = [ "/bin/rm", "-r", self._tarballDir ]
+            command = [ "/bin/rm", "-rf", self._tarballDir ]
             self._execute ( command, "Removing top export (tarball) directory" )
  
         print "Creating tarball directory: \"%s\"." % self._tarballDir
@@ -485,11 +485,13 @@ class ProjectBuilder:
        #self._execute ( command, "patch for distribution command failed" )
 
         os.chdir ( self._tarballDir )
-        command = [ "/bin/tar", "jcvf", self._sourceTarBz2, os.path.basename(self._archiveDir) ]
+        command = [ "/bin/tar"
+                  , "--exclude", "\\.svn"
+                  , "-jcvf", self._sourceTarBz2, os.path.basename(self._archiveDir) ]
         self._execute ( command, "tar command failed" )
  
         print "Cleanup SVN export tarball archive directory: \"%s\"." % self._archiveDir
-        command = [ "/bin/rm", "-r", self._archiveDir ]
+        command = [ "/bin/rm", "-rf", self._archiveDir ]
         self._execute ( command, "Removing archive export (tarball) directory" )
 
         return
