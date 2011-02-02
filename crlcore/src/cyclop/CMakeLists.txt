@@ -20,6 +20,20 @@
 
         add_executable ( cyclop        ${cpps} ${MOCcpps} )
  target_link_libraries ( cyclop        crlcore
+                                       ${HURRICANE_PYTHON_LIBRARIES}
+                                       ${HURRICANE_GRAPHICAL_LIBRARIES}
+                                       ${HURRICANE_LIBRARIES}
+                                       ${BOOKSHELF_LIBRARY}
+                                       ${AGDS_LIBRARY}
+                                       ${CIF_LIBRARY}
+                                       ${CONFIGURATION_LIBRARY}
+                                       ${LEFDEF_LIBRARIES}
+                                       ${OA_LIBRARIES}
+                                       ${QT_LIBRARIES}
+                                       ${Boost_LIBRARIES}
+                                       ${PYTHON_LIBRARIES}
+                                       -lutil
+                                       ${LIBXML2_LIBRARIES}
                        )
                install ( TARGETS       cyclop        DESTINATION bin )
 

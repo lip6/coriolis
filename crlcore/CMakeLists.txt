@@ -3,18 +3,19 @@
 
  cmake_minimum_required(VERSION 2.4.0)
 
- OPTION(BUILD_DOC    "Build the documentation (latex+doxygen)" OFF)
+ OPTION(BUILD_DOC "Build the documentation (latex+doxygen)" OFF)
 
- list(INSERT CMAKE_MODULE_PATH 0 "$ENV{BOOTSTRAP_TOP}/share/cmake/Modules/")
+ list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}/$ENV{BOOTSTRAP_TOP}/share/cmake/Modules/")
  find_package(Bootstrap REQUIRED)
  setup_project_paths(VLSISAPD)
  setup_project_paths(CORIOLIS)
  list(INSERT CMAKE_MODULE_PATH 0 "${CRLCORE_SOURCE_DIR}/cmake_modules/")
  print_cmake_module_path()
 
- setup_sysconfdir("$ENV{CORIOLIS_TOP}")
  set_cmake_policies()
+ check_distribution()
  set_lib_link_mode()
+ setup_sysconfdir("$ENV{CORIOLIS_TOP}")
  setup_boost(program_options filesystem python regex)
 
  find_package(LibXml2 REQUIRED)

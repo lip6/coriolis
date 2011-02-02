@@ -11,7 +11,6 @@
 
  latex_get_output_path ( output_dir )
 
-
                  #file ( COPY "${CMAKE_CURRENT_SOURCE_DIR}/SoC.css" DESTINATION "${output_dir}/README" )
         make_directory ( "${output_dir}/README" )
        execute_process ( COMMAND cp -r "${CMAKE_CURRENT_SOURCE_DIR}/SoC.css" "${output_dir}/README" )
@@ -21,7 +20,8 @@
                                ${output_dir}/README.pdf
                                DESTINATION ${latexInstallDir} )
                install ( DIRECTORY ${output_dir}/README DESTINATION ${htmlInstallDir} )
+               install ( FILES general-index.html DESTINATION ${htmlInstallDir}/en RENAME index.html )
 
-IF(DOXYGEN_FOUND)
- add_subdirectory(doxygen)
-ENDIF(DOXYGEN_FOUND)
+#IF(DOXYGEN_FOUND)
+# add_subdirectory(doxygen)
+#ENDIF(DOXYGEN_FOUND)
