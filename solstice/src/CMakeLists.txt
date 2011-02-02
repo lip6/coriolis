@@ -38,6 +38,7 @@
           qt4_wrap_cpp ( mocCpps       ${mocIncludes} )
 
            add_library ( solstice       ${cpps} ${mocCpps} )
+ set_target_properties ( solstice       PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries ( solstice       ${EQUINOX_LIBRARIES}
                                         ${CORIOLIS_LIBRARIES}
                                         ${HURRICANE_PYTHON_LIBRARIES}
