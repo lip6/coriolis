@@ -69,7 +69,7 @@ Development files for the Coriolis 2 package.
   CORIOLIS_TOP=%{coriolisTop}; export CORIOLIS_TOP
 
 # Do build & install in one step, except for documentation.
- make DESTDIR=%{buildroot} BUILD_DESTDIR=install.dir %{_smp_mflags} install
+ make DESTDIR=%{buildroot} BUILD_DESTDIR=install.dir %{_smp_mflags} build
 
 
 %install
