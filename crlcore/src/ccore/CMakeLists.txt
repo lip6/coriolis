@@ -294,6 +294,7 @@
                                         ${lefdef_cpps}
                                         ${openaccess_cpps}
                              )
+       set_target_properties ( crlcore  PROPERTIES VERSION 1.0 SOVERSION 1 )
        target_link_libraries ( crlcore  ${HURRICANE_PYTHON_LIBRARIES}
                                         ${HURRICANE_GRAPHICAL_LIBRARIES}
                                         ${HURRICANE_LIBRARIES}
