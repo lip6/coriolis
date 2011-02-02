@@ -47,6 +47,7 @@
                                       ${CORIOLIS_LIBRARIES}
                        )
            add_library ( knik         ${cpps} ${mocCpps} )
+ set_target_properties ( knik         PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries ( knik         flute
                                       ${HURRICANE_PYTHON_LIBRARIES}
                                       ${HURRICANE_GRAPHICAL_LIBRARIES}
