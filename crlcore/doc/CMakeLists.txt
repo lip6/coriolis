@@ -20,7 +20,7 @@
                                ${output_dir}/README.pdf
                                DESTINATION ${latexInstallDir} )
                install ( DIRECTORY ${output_dir}/README DESTINATION ${htmlInstallDir} )
-               install ( FILES general-index.html DESTINATION ${htmlInstallDir}/en RENAME index.html )
+               install ( FILES general-index.html DESTINATION ${htmlInstallDir} RENAME index.html )
 
 #IF(DOXYGEN_FOUND)
 # add_subdirectory(doxygen)
