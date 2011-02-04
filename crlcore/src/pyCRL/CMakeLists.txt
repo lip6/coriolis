@@ -38,6 +38,7 @@
 
 
                add_library ( pycrlcore  ${sources} )
+     set_target_properties ( pycrlcore  PROPERTIES VERSION 1.0 SOVERSION 1 )
      target_link_libraries ( pycrlcore  crlcore
                                         ${HURRICANE_PYTHON_LIBRARIES}
                                         ${PYTHON_LIBRARIES} -lutil
