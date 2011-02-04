@@ -125,7 +125,7 @@ Development files for the Coriolis 2 package.
 %if %{with_staticlink}
 %{coriolisTop}/%{_lib}/*.a
 %else
-%{coriolisTop}/%{_lib}/*.so*
+%{coriolisTop}/%{_lib}/*.so.*
 %endif
 %{coriolisTop}/%{python_sitedir}/*.so
 %{coriolisTop}/%{python_sitedir}/cumulus/*.py*
@@ -140,6 +140,7 @@ Development files for the Coriolis 2 package.
 
 %files devel
 %defattr(-,root,root,-)
+%dir %{coriolisTop}/%{_lib}
 %dir %{coriolisTop}/share/cmake/Modules
 %dir %{coriolisTop}/include
 %dir %{coriolisTop}/include/vlsisapd
@@ -164,6 +165,7 @@ Development files for the Coriolis 2 package.
 %dir %{coriolisTop}/include/coriolis2/equinox
 %dir %{coriolisTop}/include/coriolis2/solstice
 %dir %{coriolisTop}/include/coriolis2/unicorn
+%{coriolisTop}/%{_lib}/*.so
 %{coriolisTop}/share/cmake/Modules/*.cmake
 %{coriolisTop}/include/vlsisapd/agds/*.h
 %{coriolisTop}/include/vlsisapd/cif/*.h

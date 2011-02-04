@@ -1,7 +1,7 @@
 Document: coriolis2
-Title: Coriolis2 Documentation
+Title:    Coriolis2 Documentation
 Abstract: VLSI Place & Route CAD Tools Documentation
-Section: electronics
+Section:  Science/Electronics
 
 Format: text
 Files: /usr/share/doc/coriolis2/README.tex.gz
@@ -26,7 +26,7 @@ Files: /usr/share/doc/coriolis2/README.pdf.gz
        /usr/share/doc/coriolis2/en/latex/stratus_developper/stratus_developper.pdf.gz
 
 Format: HTML
-Index: /usr/share/doc/coriolis2/en/index.html
+Index: /usr/share/doc/coriolis2/index.html
 Files: /usr/share/doc/coriolis2/en/html/hurricane/*.html
        /usr/share/doc/coriolis2/en/html/stratus/*.html
        /usr/share/doc/coriolis2/en/html/dpgen/*.html

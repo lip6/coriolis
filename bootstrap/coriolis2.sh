@@ -1,3 +1,4 @@
+#!/bin/bash
 
  CORIOLIS_TOP="/asim/coriolis2"
  if [ ! -d "$CORIOLIS_TOP" ]; then
