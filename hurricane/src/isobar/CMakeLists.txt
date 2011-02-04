@@ -87,13 +87,14 @@
 
 
            add_library ( isobar     ${sources} )
+ set_target_properties ( isobar     PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries ( isobar     hurricane ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
            add_library ( Hurricane  MODULE ${sources} ) 
  set_target_properties ( Hurricane  PROPERTIES
                                     COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
                                     PREFIX        ""
                        )
- target_link_libraries ( Hurricane isobar )
+ target_link_libraries ( Hurricane  isobar )
                install ( TARGETS    isobar      DESTINATION lib${LIB_SUFFIX} )
                install ( TARGETS    Hurricane   DESTINATION ${PYTHON_SITE_PACKAGES} )
                install ( FILES      ${includes} DESTINATION include/coriolis2/hurricane/isobar )
