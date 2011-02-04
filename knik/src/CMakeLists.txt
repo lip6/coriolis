@@ -42,30 +42,31 @@
           qt4_wrap_cpp ( mocCpps       ${mocIncludes} )
 
 
-           add_library ( flute        ${fluteCpps} )
- target_link_libraries ( flute        ${HURRICANE_LIBRARIES}
-                                      ${CORIOLIS_LIBRARIES}
-                       )
-           add_library ( knik         ${cpps} ${mocCpps} )
- set_target_properties ( knik         PROPERTIES VERSION 1.0 SOVERSION 1 )
- target_link_libraries ( knik         flute
-                                      ${HURRICANE_PYTHON_LIBRARIES}
-                                      ${HURRICANE_GRAPHICAL_LIBRARIES}
-                                      ${HURRICANE_LIBRARIES}
-                                      ${CONFIGURATION_LIBRARY}
-                                      ${CIF_LIBRARY}
-                                      ${AGDS_LIBRARY}
-                                      ${LEFDEF_LIBRARIES}
-                                      ${OA_LIBRARIES}
-                                      ${QT_LIBRARIES}
-                                      ${Boost_LIBRARIES}
-                                      ${LIBXML2_LIBRARIES}
-                                      ${PYTHON_LIBRARIES} -lutil
-                       )
-
-               install ( TARGETS      knik flute DESTINATION lib${LIB_SUFFIX} )
-               install ( FILES ${includes}
-                               ${mocIncludes}
-                               ${fluteIncludes} DESTINATION include/coriolis2/knik ) 
-               install ( FILES flute-2.4/etc/POST9.dat
-                               flute-2.4/etc/POWV9.dat DESTINATION share/coriolis2/flute-2.4 ) 
+           add_library ( flute         ${fluteCpps} )
+ set_target_properties ( flute         PROPERTIES VERSION 2.4 SOVERSION 2 )
+ target_link_libraries ( flute         ${HURRICANE_LIBRARIES}
+                                       ${CORIOLIS_LIBRARIES}
+                       )	    
+           add_library ( knik          ${cpps} ${mocCpps} )
+ set_target_properties ( knik          PROPERTIES VERSION 1.0 SOVERSION 1 )
+ target_link_libraries ( knik          flute
+                                       ${HURRICANE_PYTHON_LIBRARIES}
+                                       ${HURRICANE_GRAPHICAL_LIBRARIES}
+                                       ${HURRICANE_LIBRARIES}
+                                       ${CONFIGURATION_LIBRARY}
+                                       ${CIF_LIBRARY}
+                                       ${AGDS_LIBRARY}
+                                       ${LEFDEF_LIBRARIES}
+                                       ${OA_LIBRARIES}
+                                       ${QT_LIBRARIES}
+                                       ${Boost_LIBRARIES}
+                                       ${LIBXML2_LIBRARIES}
+                                       ${PYTHON_LIBRARIES} -lutil
+                       )	    
+				    
+               install ( TARGETS       knik flute DESTINATION lib${LIB_SUFFIX} )
+               install ( FILES         ${includes}
+                                       ${mocIncludes}
+                                       ${fluteIncludes} DESTINATION include/coriolis2/knik ) 
+               install ( FILES         flute-2.4/etc/POST9.dat
+                                       flute-2.4/etc/POWV9.dat DESTINATION share/coriolis2/flute-2.4 ) 
