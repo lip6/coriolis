@@ -47,17 +47,20 @@ def guessOs ():
     if osSLSoC5x_64.match(lines[0]):
       osType = "Linux.SLSoC5x_64"
       libDir = "lib64"
-    elif osSLSoC5x   .match(lines[0]): osType = "Linux.SLSoC5x"
-    elif osLinux_64  .match(lines[0]):
-      osType = "Linux.x86_64"
-      libDir = "lib64"
-    elif osLinux .match(lines[0]): osType = "Linux.i386"
-    elif osDarwin.match(lines[0]): osType = "Darwin"
-    elif osUbuntu1004_64.match(lines[0]):
-      osType = "Linux.Ubuntu1004"
-      libDir = "lib64"
+    elif osSLSoC5x.match(lines[0]):
+      osType = "Linux.SLSoC5x"
     elif osUbuntu1004.match(lines[0]):
       osType = "Linux.Ubuntu1004"
+    elif osUbuntu1004_64.match(lines[0]):
+      osType = "Linux.Ubuntu1004_64"
+      libDir = "lib64"
+    elif osLinux_64.match(lines[0]):
+      osType = "Linux.x86_64"
+      libDir = "lib64"
+    elif osLinux.match(lines[0]):
+      osType = "Linux.i386"
+    elif osDarwin.match(lines[0]):
+      osType = "Darwin"
     else:
         uname = subprocess.Popen ( ["uname", "-sr"], stdout=subprocess.PIPE )
         osType = uname.stdout.readlines()[0][:-1]
@@ -72,12 +75,11 @@ def guessOs ():
 
 if __name__ == "__main__":
 
-  (osDir,libDir)  = guessOs()
+  (osType,libDir) = guessOs()
   buildType       = "Release"
   linkType        = "Shared"
   coriolisVersion = None
   rootDir         = None
-  installDir      = None
 
   parser = optparse.OptionParser ()  
  # Build relateds.
@@ -90,7 +92,6 @@ if __name__ == "__main__":
   parser.add_option ( "--shared" , action="store_true" ,                dest="shared"     )
   parser.add_option ( "--python" , action="store_true" ,                dest="python"     )
   parser.add_option ( "--root"   , action="store"      , type="string", dest="rootDir"    )
-  parser.add_option ( "--install", action="store"      , type="string", dest="installDir" )
   ( options, args ) = parser.parse_args ()
 
   if options.v1:         coriolisVersion = 1
@@ -101,7 +102,6 @@ if __name__ == "__main__":
   if options.static:     linkType        = "Static"
   if options.shared:     linkType        = "Shared"
   if options.rootDir:    rootDir         = options.rootDir
-  if options.installDir: installDir      = options.installDir
 
   strippedPath        = stripPath ( "PATH" )
   strippedLibraryPath = stripPath ( "LD_LIBRARY_PATH" )
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     if not rootDir:
       rootDir = os.getenv("HOME") + "/coriolis-1.x"
 
-    hurricaneTop = "%s/coriolis/%s/install" % ( rootDir, osDir )
+    hurricaneTop = "%s/coriolis/%s/install" % ( rootDir, osType )
     buildDir     = None
     shellScript  = \
 """
@@ -131,18 +131,26 @@ fi
 
   elif coriolisVersion == 2:
 
-    if installDir:
-      buildDir    = "SYSTEM"
-      coriolisTop = installDir
+    scriptDir = os.path.dirname ( os.path.abspath(__file__) )
+    if scriptDir == "/etc/coriolis2":
+      coriolisTop  = "/usr"
+      sysconfDir   = scriptDir
+      shellMessage = "Using system-wide Coriolis 2 (/usr)"
+    elif scriptDir == "/asim/coriolis2":
+      coriolisTop  = scriptDir
+      sysconfDir   = scriptDir + "/etc/coriolis2"
+      shellMessage = "Using SoC network-wide Coriolis 2 (/asim/coriolis2)"
     else:
       if not rootDir:
         rootDir = os.getenv("HOME") + "/coriolis-2.x"
-      buildDir    = buildType + "." + linkType
-      coriolisTop = "%s/%s/%s/install" % ( rootDir, osDir, buildDir )
+      buildDir     = buildType + "." + linkType
+      coriolisTop  = "%s/%s/%s/install" % ( rootDir, osType, buildDir )
+      sysconfDir   = coriolisTop + "/etc/coriolis2"
+      shellMessage = "Using user-selected Coriolis 2 (%s)" % rootDir
 
     absLibDir           = "%s/%s"     % ( coriolisTop, libDir )
     strippedPath        = "%s/bin:%s" % ( coriolisTop, strippedPath )
-    strippedLibraryPath = "%s:%s"     % ( absLibDir, strippedLibraryPath )
+    strippedLibraryPath = "%s:%s"     % ( absLibDir  , strippedLibraryPath )
 
     if options.python:
       pyVersion = sys.version_info
@@ -158,13 +166,14 @@ fi
 
     shellScript = \
 """
+echo "%(MESSAGE)s";
 echo "Switching to Coriolis 2.x (%(buildDir)s)";
 PATH=%(PATH)s;
 LD_LIBRARY_PATH=%(LD_LIBRARY_PATH)s;
 PYTHONPATH=%(PYTHONPATH)s;
 BOOTSTRAP_TOP=%(BOOTSTRAP_TOP)s;
 CORIOLIS_TOP=%(CORIOLIS_TOP)s;
-STRATUS_MAPPING_NAME=%(CORIOLIS_TOP)s/etc/coriolis2/stratus2sxlib.xml;
+STRATUS_MAPPING_NAME=%(SYSCONF_DIR)s/stratus2sxlib.xml;
 export PATH LD_LIBRARY_PATH PYTHONPATH BOOTSTRAP_TOP CORIOLIS_TOP STRATUS_MAPPING_NAME;
 hash -r
 """
@@ -175,5 +184,7 @@ hash -r
                         , "PYTHONPATH"      : strippedPythonPath
                         , "BOOTSTRAP_TOP"   : coriolisTop
                         , "CORIOLIS_TOP"    : coriolisTop
+                        , "SYSCONF_DIR"     : sysconfDir
+                        , "MESSAGE"         : shellMessage
                         , "buildDir"        : buildDir
                         }

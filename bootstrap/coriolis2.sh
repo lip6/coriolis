@@ -1,8 +1,20 @@
 #!/bin/bash
 
- CORIOLIS_TOP="/asim/coriolis2"
- if [ ! -d "$CORIOLIS_TOP" ]; then
-   echo "[ERROR] Coriolis 2 root directory <$CORIOLIS_TOP> not found."
+ scriptPath="${BASH_SOURCE[0]}";
+ 
+ if [ -h "${scriptPath}" ] then
+   while [ -h "${scriptPath}" ];  do scriptPath=`readlink "${scriptPath}"`; done
+ fi
+ 
+ pushd . > /dev/null
+ cd `dirname ${scriptPath}` > /dev/null
+ sysconfDir=`pwd`;
+ popd  > /dev/null
+ 
+ coriolisEnvPy="${sysconfDir}/coriolisEnv.py"
+
+ if [ -e ${coriolisEnvPy} ]; then
+   eval "`${coriolisEnvPy} --v2 --release --shared --python`"
  else
-   eval "`$CORIOLIS_TOP/etc/coriolis2/coriolisEnv.py --root=/users/outil/coriolis/coriolis-2.x --v2 --release --shared --python`"
+   echo "[ERROR] Missing ${coriolisEnvPy} script."
  fi
