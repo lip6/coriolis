@@ -138,7 +138,7 @@ fi
       coriolisTop  = "/usr"
       sysconfDir   = scriptDir
       shellMessage = "Using system-wide Coriolis 2 (/usr)"
-    elif scriptDir == "/asim/coriolis2/etc/coriolis2":
+    elif scriptDir[:35] == "/users/outil/coriolis/coriolis-2.x/":
       coriolisTop  = "/asim/coriolis2"
       sysconfDir   = scriptDir
       shellMessage = "Using SoC network-wide Coriolis 2 (/asim/coriolis2)"
