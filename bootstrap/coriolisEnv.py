@@ -131,19 +131,20 @@ fi
 
   elif coriolisVersion == 2:
 
+    buildDir  = buildType + "." + linkType
     scriptDir = os.path.dirname ( os.path.abspath(__file__) )
+    print "echo %s;" % scriptDir
     if scriptDir == "/etc/coriolis2":
       coriolisTop  = "/usr"
       sysconfDir   = scriptDir
       shellMessage = "Using system-wide Coriolis 2 (/usr)"
-    elif scriptDir == "/asim/coriolis2":
-      coriolisTop  = scriptDir
-      sysconfDir   = scriptDir + "/etc/coriolis2"
+    elif scriptDir == "/asim/coriolis2/etc/coriolis2":
+      coriolisTop  = "/asim/coriolis2"
+      sysconfDir   = scriptDir
       shellMessage = "Using SoC network-wide Coriolis 2 (/asim/coriolis2)"
     else:
       if not rootDir:
         rootDir = os.getenv("HOME") + "/coriolis-2.x"
-      buildDir     = buildType + "." + linkType
       coriolisTop  = "%s/%s/%s/install" % ( rootDir, osType, buildDir )
       sysconfDir   = coriolisTop + "/etc/coriolis2"
       shellMessage = "Using user-selected Coriolis 2 (%s)" % rootDir

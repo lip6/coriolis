@@ -1,8 +1,8 @@
 #!/bin/bash
 
- scriptPath="${BASH_SOURCE[0]}";
+ scriptPath="$0"
  
- if [ -h "${scriptPath}" ] then
+ if [ -h "${scriptPath}" ]; then
    while [ -h "${scriptPath}" ];  do scriptPath=`readlink "${scriptPath}"`; done
  fi
  
@@ -12,6 +12,7 @@
  popd  > /dev/null
  
  coriolisEnvPy="${sysconfDir}/coriolisEnv.py"
+ echo $coriolisEnvPy
 
  if [ -e ${coriolisEnvPy} ]; then
    eval "`${coriolisEnvPy} --v2 --release --shared --python`"
