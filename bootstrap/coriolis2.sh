@@ -19,3 +19,5 @@
  else
    echo "[ERROR] Missing ${coriolisEnvPy} script."
  fi
+
+ unset scriptPath sysconfDir coriolisEnvPy
