@@ -9,7 +9,13 @@
 static double       floatToken;
 static std::string  nameToken;
 
-extern int          yylineno;
+#ifndef FLEX_BETA 
+       int  Liberty_lineno = 1;
+#else
+extern int  Liberty_lineno;
+#endif
+
+
 
 %}
 
@@ -58,14 +64,14 @@ STRING_FF           [\"]?{UPPER_CASE_LETTER}+[\"]?,[\"]?{UPPER_CASE_LETTER}+[\"]
 %%
 
 {SPACE}                         { /* spaces : skip them */ }
-\n                              { yylineno++; /* end of line */ }
+\n                              { Liberty_lineno++; /* end of line */ }
 
 <INITIAL>[ \t]+
 <INITIAL>"/*"                   { BEGIN(COMM); }
 <COMM>.                         
 <COMM>"*/"                      { BEGIN(INITIAL); }
-<INITIAL,COMM>\n                { yylineno++; }
-<INITIAL,COMM>\\\n              { yylineno++; }
+<INITIAL,COMM>\n                { Liberty_lineno++; }
+<INITIAL,COMM>\\\n              { Liberty_lineno++; }
 
 library                         { return LIBRARY; }
 
