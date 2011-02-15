@@ -14,7 +14,7 @@
 # The flaw is in UseLATEX.cmake.
  cmake_policy(SET CMP0002 OLD)
  set_lib_link_mode()
- setup_sysconfdir("$ENV{CORIOLIS_TOP}")
+ setup_sysconfdir("${CMAKE_INSTALL_PREFIX}")
  
  find_package(PythonLibs REQUIRED)
  find_package(PythonSitePackages REQUIRED)
