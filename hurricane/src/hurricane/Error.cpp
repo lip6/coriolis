@@ -122,5 +122,4 @@ namespace Hurricane {
     return "[ERROR:" + getString(_code) + "] " + _reason;
   }
 
-
 } // End of Hurricane namespace.

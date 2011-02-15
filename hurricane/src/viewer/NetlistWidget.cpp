@@ -30,6 +30,7 @@
 #include  <QGroupBox>
 #include  <QVBoxLayout>
 #include  <QAction>
+#include  <QModelIndex>
 
 #include "hurricane/Commons.h"
 #include "hurricane/Net.h"
