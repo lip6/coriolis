@@ -32,7 +32,7 @@ Instance* Netlist::addInstance(Name name, Name model) {
     }
     Instance* inst = new Instance(name, model, this);
     if (!inst)
-        throw OpenChamsException("[ERROR] Cannot creeate instance.");
+        throw OpenChamsException("[ERROR] Cannot create instance.");
     _instances.push_back(inst);
 
     return inst;
@@ -49,7 +49,7 @@ Device* Netlist::addDevice(Name name, Name model, Name mosType, bool sourceBulkC
     }
     Device* dev = new Device(name, model, mosType, sourceBulkConnected, this);
     if (!dev)
-        throw OpenChamsException("[ERROR] Cannot creeate device.");
+        throw OpenChamsException("[ERROR] Cannot create device.");
     _instances.push_back(dev);
 
     return dev;

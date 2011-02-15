@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <circuit name="buffer" techno="myTech">
-  <subCircuitsPathes>
+  <subCircuitsPaths>
     <path   path="."/>
-  </subCircuitsPathes>
+  </subCircuitsPaths>
   <netlist>
     <instances>
       <instance name="inv1" model="inverter">
@@ -43,4 +43,50 @@
       </net>
     </nets>
   </netlist>
+  <schematic>
+    <instance name="inv1" x="2490" y="2600" sym="ID"/>
+    <instance name="inv2" x="2490" y="2300" sym="ID"/>
+    <net name="in">
+      <port type="inV" idx="0" x="2415" y="2700" sym="MY"/>
+      <wire>
+        <connector name="inv1" plug="in"/>
+        <connector idx="0"/>
+      </wire>
+    </net>
+    <net name="internal">
+      <wire>
+        <connector name="inv1" plug="out"/>
+        <connector name="inv2" plug="in"/>
+      </wire>
+    </net>
+    <net name="out">
+      <port type="outV" idx="0" x="2415" y="2200" sym="MY"/>
+      <wire>
+        <connector name="inv2" plug="out"/>
+        <connector idx="0"/>
+      </wire>
+    </net>
+    <net name="vdd">
+      <port type="inH" idx="0" x="2200" y="2500" sym="ID"/>
+      <wire>
+        <connector idx="0"/>
+        <connector name="inv2" plug="vdd"/>
+      </wire>
+      <wire>
+        <connector name="inv1" plug="vdd"/>
+        <connector name="inv2" plug="vdd"/>
+      </wire>
+    </net>
+    <net name="vss">
+      <port type="inH" idx="0" x="2700" y="2500" sym="MX"/>
+      <wire>
+        <connector idx="0"/>
+        <connector name="inv2" plug="vss"/>
+      </wire>
+      <wire>
+        <connector name="inv1" plug="vss"/>
+        <connector name="inv2" plug="vss"/>
+      </wire>
+    </net>
+  </schematic>
 </circuit>

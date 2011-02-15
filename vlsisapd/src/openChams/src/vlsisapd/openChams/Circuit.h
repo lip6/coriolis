@@ -45,6 +45,8 @@ class Circuit {
     inline void       addParameter(Name, double);
     inline void       addParameter(Name, std::string);
     inline Parameters getParameters();
+    inline void       addSubCircuitPath(std::string);
+    inline std::vector<std::string>& getSubCircuitPaths();
 
     void addSimulModel(unsigned, SimulModel::Base, SimulModel::Version, std::string);
     
@@ -52,7 +54,7 @@ class Circuit {
     inline void       setLayout(Layout*);
 
     Netlist*   createNetlist();
-    Schematic* createSchematic(double);
+    Schematic* createSchematic();
     Sizing*    createSizing();
     Layout*    createLayout();
     
@@ -63,7 +65,7 @@ class Circuit {
     Name      readParameter(xmlNode*, double&);
     Name      readParameterEq(xmlNode*, std::string&);
     Name      readConnector(xmlNode*);
-    void      readSubCircuitsPathes(xmlNode*);
+    void      readSubCircuitsPaths(xmlNode*);
     void      readCircuitParameters(xmlNode*);
     void      readSimulModels(xmlNode*);
     void      readNetList(xmlNode*);
@@ -79,6 +81,9 @@ class Circuit {
     void      readNetConnector(xmlNode*, Net*);
     void      readSchematic(xmlNode*);
     void      readInstanceSchematic(xmlNode*, Schematic*);
+    void      readNetSchematic(xmlNode*, Circuit*);
+    void      readPortSchematic(xmlNode*, Net*);
+    void      readWireSchematic(xmlNode*, Net*);
     void      readSizing(xmlNode*);
     void      readInstanceSizing(xmlNode*, Sizing*);
     void      readConstraint(xmlNode*, Operator*);
@@ -86,31 +91,35 @@ class Circuit {
     void      readEquation(xmlNode*, Sizing*);
     void      readLayout(xmlNode*);
     void      readInstanceLayout(xmlNode*, Layout*);
+    void      setAbsolutePath(const std::string filePath);
     
     void      check_uppercase(std::string& str, std::vector<std::string>& compares, std::string message);
     void      check_lowercase(std::string& str, std::vector<std::string>& compares, std::string message);
     
-    Name 	   _name;
-    Name 	   _techno;
-    Parameters _params;
-    Netlist*   _netlist;
-    Schematic* _schematic;
-    Sizing*    _sizing;
-    Layout*    _layout;
-    std::vector<std::string> _subCircuitsPathes;
+    Name 	    _name;
+    std::string _absolutePath;
+    Name 	    _techno;
+    Parameters  _params;
+    Netlist*    _netlist;
+    Schematic*  _schematic;
+    Sizing*     _sizing;
+    Layout*     _layout;
+    std::vector<std::string> _subCircuitsPaths;
     std::map<unsigned, SimulModel*> _simulModels;
 };
     
-inline Name       Circuit::getName()    	   { return _name; };
-inline Name       Circuit::getTechno()         { return _techno; };
-inline double     Circuit::getValue(Name name) { return _params.getValue(name); };
-inline Netlist*   Circuit::getNetlist()        { return _netlist; };
-inline Schematic* Circuit::getSchematic()      { return _schematic; };
-inline Sizing*    Circuit::getSizing()         { return _sizing; };
-inline Layout*    Circuit::getLayout()         { return _layout; };
-inline void       Circuit::addParameter(Name name, double value) { _params.addParameter(name, value); };
-inline void       Circuit::addParameter(Name name, std::string eqStr) { _params.addParameter(name, eqStr); };
-inline Parameters Circuit::getParameters()     { return _params; };
+inline Name       Circuit::getName()    	   { return _name; }
+inline Name       Circuit::getTechno()         { return _techno; }
+inline double     Circuit::getValue(Name name) { return _params.getValue(name); }
+inline Netlist*   Circuit::getNetlist()        { return _netlist; }
+inline Schematic* Circuit::getSchematic()      { return _schematic; }
+inline Sizing*    Circuit::getSizing()         { return _sizing; }
+inline Layout*    Circuit::getLayout()         { return _layout; }
+inline void       Circuit::addParameter(Name name, double value) { _params.addParameter(name, value); }
+inline void       Circuit::addParameter(Name name, std::string eqStr) { _params.addParameter(name, eqStr); }
+inline Parameters Circuit::getParameters()     { return _params; }
+inline void       Circuit::addSubCircuitPath(std::string path) { _subCircuitsPaths.push_back(path); }
+inline std::vector<std::string>& Circuit::getSubCircuitPaths() { return _subCircuitsPaths; }
     
     
 } // namespace OpenChams

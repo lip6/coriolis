@@ -13,9 +13,7 @@ using namespace std;
 #include "vlsisapd/openChams/OpenChamsException.h"
 
 namespace OpenChams {
-Schematic::Schematic(Circuit* circuit, double zoom) 
-    : _circuit(circuit)
-    , _zoom(zoom) {}
+Schematic::Schematic(Circuit* circuit): _circuit(circuit) {}
     
 void Schematic::addInstance(Name instanceName, double x, double y, Name sym) {
     map<Name, Schematic::Infos*>::iterator it = _instances.find(instanceName);

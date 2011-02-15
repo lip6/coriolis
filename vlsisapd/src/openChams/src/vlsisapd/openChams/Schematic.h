@@ -33,21 +33,18 @@ class Schematic {
         Name   _sym;
     };
 	public:
-    Schematic(Circuit*, double);
+    Schematic(Circuit*);
         
     void addInstance(Name instanceName, double x, double y, Name sym );
         
-    inline double getZoom();
     inline bool   hasNoInstances();
     inline const std::map<Name, Infos*>& getInstances();
         
     private:
     Circuit* _circuit;
-    double   _zoom;
     std::map<Name, Infos*> _instances;
 };
 
-inline double Schematic::getZoom()        { return _zoom; };
 inline bool   Schematic::hasNoInstances() { return (_instances.size() == 0) ? true : false; };
 inline const std::map<Name, Schematic::Infos*>& Schematic::getInstances() { return _instances; };    
     

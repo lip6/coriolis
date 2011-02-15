@@ -34,6 +34,7 @@ class Netlist {
     inline bool hasNoNets();
     inline const std::vector<Instance*>& getInstances();
     inline const std::vector<Net*>& getNets();
+    inline Circuit* getCircuit();
     
     private:
     Circuit*               _circuit;
@@ -43,8 +44,9 @@ class Netlist {
     
 inline bool Netlist::hasNoInstances() { return (_instances.size() == 0)? true : false; }
 inline bool Netlist::hasNoNets()      { return (_nets.size() == 0)? true : false; }
-inline const std::vector<Instance*>& Netlist::getInstances()   { return _instances; };
-inline const std::vector<Net*>&      Netlist::getNets()        { return _nets; };
+inline const std::vector<Instance*>& Netlist::getInstances()   { return _instances; }
+inline const std::vector<Net*>&      Netlist::getNets()        { return _nets; }
+inline Circuit* Netlist::getCircuit() { return _circuit; }
     
 } // namespace
 #endif

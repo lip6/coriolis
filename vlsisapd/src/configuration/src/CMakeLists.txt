@@ -14,11 +14,11 @@
                                        vlsisapd/configuration/ConfigurationWidget.h
                                        vlsisapd/configuration/ConfEditorWidget.h
                        )
-		   set ( includes      vlsisapd/configuration/Parameter.h
+                   set ( includes      vlsisapd/configuration/Parameter.h
                                        vlsisapd/configuration/LayoutDescription.h
                                        vlsisapd/configuration/Configuration.h
                        )
-		   set ( cpps          Parameter.cpp
+                   set ( cpps          Parameter.cpp
                                        LayoutDescription.cpp
                                        Configuration.cpp
                                        FilePathEdit.cpp

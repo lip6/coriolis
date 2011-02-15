@@ -28,16 +28,41 @@ def printContents(circuit):
         print " | | | | name:", tr.name, "- gate:", tr.gate, "- source:", tr.source, "- drain:", tr.drain, "- bulk:", tr.bulk
   #  nets
   print " | + nets"
+  schematicNet = False
   for net in circuit.netlist.getNets():
     print " | | +", net.name, ":", net.type, net.external
     print " | | | + connections"
     for conn in net.getConnections():
       print " | | | | %s.%s"%(conn.instanceName, conn.connectorName)
+    if not net.hasNoPorts() or not net.hasNoWires():
+      schematicNet = True
   # schematic
   if (circuit.schematic):
-    print " + schematic - zoom:", circuit.schematic.zoom
+    print " + schematic"
     for instance in circuit.schematic.getInstances():
-      print " | name:", instance.key, "- x:", instance.value.x, "- y:", instance.value.y, "- symmetry:", instance.value.symmetry 
+      print " | + instance name:", instance.key, "- x:", instance.value.x, "- y:", instance.value.y, "- symmetry:", instance.value.symmetry 
+    if schematicNet:
+      for net in circuit.netlist.getNets():
+          if net.hasNoPorts() and net.hasNoWires():
+              continue
+          print " | + net name:", net.name
+          for port in net.getPorts():
+              print " | | + port type:", port.type, "- idx:", port.index, "- x:", port.x, "- y:", port.y, "- sym:", port.symmetry
+          for wire in net.getWires():
+              if isinstance(wire.startPoint, InstancePoint):
+                  print " | | + wire <" + wire.startPoint.name.getString() + "," + wire.startPoint.plug.getString() +">"
+              elif isinstance(wire.startPoint, PortPoint):
+                  print " | | + wire <" + str(wire.startPoint.index) + ">"
+              else:
+                  print " - - UNKNOWN START POINT"
+              for point in wire.getIntermediatePoints():
+                  print " | |        <" + str(point.x) + "," + str(point.y) + ">"
+              if isinstance(wire.endPoint, InstancePoint):
+                  print " | |        <" + wire.endPoint.name.getString() + "," + wire.endPoint.plug.getString() +">"
+              elif isinstance(wire.endPoint, PortPoint):
+                  print " | |        <" + str(wire.endPoint.index) + ">"
+              else:
+                  print " - - UNKNOWN END POINT"
   # sizing
   if (circuit.sizing):
     print " + sizing"

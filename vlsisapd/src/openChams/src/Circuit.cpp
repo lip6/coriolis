@@ -25,6 +25,8 @@ using namespace std;
 #include "vlsisapd/openChams/Layout.h"
 #include "vlsisapd/openChams/Transistor.h"
 #include "vlsisapd/openChams/Operator.h"
+#include "vlsisapd/openChams/Port.h"
+#include "vlsisapd/openChams/Wire.h"
 #include "vlsisapd/openChams/OpenChamsException.h"
 
 namespace {
@@ -39,7 +41,7 @@ namespace {
 
 namespace OpenChams {
     
-static bool readSubCircuitsPathesDone = false;
+static bool readSubCircuitsPathsDone  = false;
 static bool readCircuitParametersDone = false;
 static bool readSimulModelsDone       = false;
 static bool readNetListDone           = false;
@@ -49,8 +51,15 @@ static bool readSchematicDone         = false;
 static bool readSizingDone            = false;
 static bool readLayoutDone            = false;
     
-Circuit::Circuit(Name name, Name techno) : _name(name), _techno(techno), _netlist(NULL), _schematic(NULL), _sizing(NULL), _layout(NULL) {
-    readSubCircuitsPathesDone = false;
+Circuit::Circuit(Name name, Name techno) : _name(name)
+                                         , _absolutePath("")
+                                         , _techno(techno)
+                                         , _netlist(NULL)
+                                         , _schematic(NULL)
+                                         , _sizing(NULL)
+                                         , _layout(NULL)
+{
+    readSubCircuitsPathsDone  = false;
     readCircuitParametersDone = false;
     readSimulModelsDone       = false;
     readNetListDone           = false;
@@ -145,9 +154,9 @@ Name Circuit::readConnector(xmlNode* node) {
 }
 
 // CIRCUIT //
-void Circuit::readSubCircuitsPathes(xmlNode* node) {
-    if (readSubCircuitsPathesDone) {
-        cerr << "[WARNING] Only one 'subCircuitsPathes' node is allowed in circuit, others will be ignored." << endl;
+void Circuit::readSubCircuitsPaths(xmlNode* node) {
+    if (readSubCircuitsPathsDone) {
+        cerr << "[WARNING] Only one 'subCircuitsPaths' node is allowed in circuit, others will be ignored." << endl;
         return;
     }
     if (node->type == XML_ELEMENT_NODE && node->children) {
@@ -157,18 +166,21 @@ void Circuit::readSubCircuitsPathes(xmlNode* node) {
                     xmlChar* pathC = xmlGetProp(pathNode, (xmlChar*)"path");
                     if (pathC) {
                         string path((const char*)pathC);
-                        _subCircuitsPathes.push_back(path);
+                        if (path[0] != '/') { // this is not an absolute path
+                            path = _absolutePath+"/"+path;
+                        }
+                        _subCircuitsPaths.push_back(path);
                     } else {
                         throw OpenChamsException("[ERROR] 'path' node must have 'path' property.");
                     }
                 } else {
-                    cerr << "[WARNING] Only 'path' nodes are allowed under 'subCircuitsPathes' node." << endl;
+                    cerr << "[WARNING] Only 'path' nodes are allowed under 'subCircuitsPaths' node." << endl;
                     return;
                 }
             }
         }
     }
-    readSubCircuitsPathesDone = true;
+    readSubCircuitsPathsDone = true;
 }
 
 void Circuit::readCircuitParameters(xmlNode* node) {
@@ -530,22 +542,17 @@ void Circuit::readSchematic(xmlNode* node) {
         cerr << "[WARNING] Only one 'schematic' node is allowed in circuit, others will be ignored." << endl;
         return;
     }
-    xmlChar* zoomC = xmlGetProp(node, (xmlChar*)"zoom");
-    double zoom = 1.0;
-    if (zoomC) {
-        zoom = ::getValue<double>(zoomC);
-    } else {
-        throw OpenChamsException("[ERROR] 'schematic' node must have 'zoom' property.");
-    }
 
-    Schematic* schematic = new Schematic(this, zoom);
+    Schematic* schematic = new Schematic(this);
     xmlNode* child = node->children;
     for (xmlNode* node = child; node; node = node->next) {
         if (node->type == XML_ELEMENT_NODE) {
             if (xmlStrEqual(node->name, (xmlChar*)"instance")) {
                 readInstanceSchematic(node, schematic);
+            } else if (xmlStrEqual(node->name, (xmlChar*)"net")) {
+                readNetSchematic(node, this);
             } else {
-                cerr << "[WARNING] Only 'instance' nodes are allowed in 'schematic', others will be ignored." << endl;
+                cerr << "[WARNING] Only 'instance' and 'nets' nodes are allowed in 'schematic', others will be ignored." << endl;
             }
         }
     }
@@ -565,10 +572,108 @@ void Circuit::readInstanceSchematic(xmlNode* node, Schematic* schematic) {
         string symStr((const char*)symC);
         string symComp[8] = {"ID", "R1", "R2", "R3", "MX", "XR", "MY", "YR"};
     	vector<string> symComps (symComp, symComp+8);
-        check_uppercase(symStr, symComps, "[ERROR] In 'schematic/instance', 'sym' must be 'ID', 'R1', 'R2', 'R3', 'MX', 'XR', 'MY' or 'YR'.");
+        check_uppercase(symStr, symComps, "[ERROR] In 'schematic'.'instance', 'sym' must be 'ID', 'R1', 'R2', 'R3', 'MX', 'XR', 'MY' or 'YR'.");
         schematic->addInstance(iName, x, y, Name(symStr));
     } else {
         throw OpenChamsException("[ERROR] 'instance' node in 'schematic' must have 'name', 'x', 'y' and 'sym' properties.");
+    }
+}
+
+void Circuit::readNetSchematic(xmlNode* node, Circuit* circuit) {
+    xmlChar* nameC = xmlGetProp(node, (xmlChar*)"name");
+    if (nameC) {
+        Name nName((const char*)nameC);
+        Net* net = circuit->getNetlist()->getNet(nName);
+        if (!net) {
+            string error ("[ERROR] In 'schematic' section cannot specify wires for net ");
+            error += nName.getString();
+            error += " since it has not been defined in netlist section.";
+            throw OpenChamsException(error);
+        }
+        xmlNode* child = node->children;
+        for (xmlNode* node = child; node; node = node->next) {
+            if (node->type == XML_ELEMENT_NODE) {
+                if (xmlStrEqual(node->name, (xmlChar*)"port")) {
+                    readPortSchematic(node, net);
+                } else if (xmlStrEqual(node->name, (xmlChar*)"wire")) {
+                    readWireSchematic(node, net);
+                } else {
+                    cerr << "[WARNING] Only 'port' and 'wire' nodes are allowed in 'schematic'.'net', others will be ignored." << endl;
+                }
+            }
+        }
+    } else {
+        throw OpenChamsException("[ERROR] 'net' node in schematic must have 'name' property.");
+    }
+}
+
+void Circuit::readPortSchematic(xmlNode* node, Net* net) {
+    xmlChar* typeC = xmlGetProp(node, (xmlChar*)"type");
+    xmlChar* idxC  = xmlGetProp(node, (xmlChar*)"idx");
+    xmlChar* xC    = xmlGetProp(node, (xmlChar*)"x");
+    xmlChar* yC    = xmlGetProp(node, (xmlChar*)"y");
+    xmlChar* symC  = xmlGetProp(node, (xmlChar*)"sym");
+    if (typeC && idxC && xC && yC && symC) {
+        Name pType((const char*)typeC);
+        unsigned idx = ::getValue<unsigned>(idxC);
+        double   x   = ::getValue<double>(xC);
+        double   y   = ::getValue<double>(yC);
+        string symStr((const char*)symC);
+        string symComp[8] = {"ID", "R1", "R2", "R3", "MX", "XR", "MY", "YR"};
+    	vector<string> symComps (symComp, symComp+8);
+        check_uppercase(symStr, symComps, "[ERROR] In 'schematic'.'port', 'sym' must be 'ID', 'R1', 'R2', 'R3', 'MX', 'XR', 'MY' or 'YR'.");
+        net->addPort(pType, idx, x, y, Name(symStr));
+    } else {
+        throw OpenChamsException("[ERROR] 'schematic'.'port' must have 'type', 'idx', 'x', 'y' and 'sym properties.");
+    }
+}
+
+void Circuit::readWireSchematic(xmlNode* node, Net* net) {
+    Wire* wire = net->addWire();
+    xmlNode* child = node->children;
+    for (xmlNode* node = child; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE) {
+            if (xmlStrEqual(node->name, (xmlChar*)"connector")) {
+                xmlChar* nameC = xmlGetProp(node, (xmlChar*)"name");
+                xmlChar* plugC = xmlGetProp(node, (xmlChar*)"plug");
+                xmlChar* idxC  = xmlGetProp(node, (xmlChar*)"idx");
+                if (nameC && plugC) {
+                    Name name((const char*)nameC);
+                    Name plug((const char*)plugC);
+                    if (!wire->getStartPoint()) {
+                        wire->setStartPoint(name, plug);
+                    } else if (!wire->getEndPoint()) {
+                        wire->setEndPoint(name, plug);
+                    } else {
+                        throw OpenChamsException("[ERROR] In 'schematic' a 'wire' must have exactly 2 connectors (not more).");
+                    }
+                } else if (idxC) {
+                    unsigned idx = ::getValue<unsigned>(idxC);
+                    if (!wire->getStartPoint()) {
+                        wire->setStartPoint(idx);
+                    } else if (!wire->getEndPoint()) {
+                        wire->setEndPoint(idx);
+                    } else {
+                        throw OpenChamsException("[ERROR] In 'schematic' a 'wire' must have exactly 2 connectors (not more).");
+                    }
+
+                } else {
+                    throw OpenChamsException("[ERROR] 'schematic'.'net'.'connector' node must have 'name' & 'plug' OR 'idx' properties. ");
+                }
+            } else if (xmlStrEqual(node->name, (xmlChar*)"point")) {
+                xmlChar* xC = xmlGetProp(node, (xmlChar*)"x");
+                xmlChar* yC = xmlGetProp(node, (xmlChar*)"y");
+                if (xC && yC) {
+                    double x = ::getValue<double>(xC);
+                    double y = ::getValue<double>(yC);
+                    wire->addIntermediatePoint(x, y); // check is done inside the method (start/end points)
+                } else {
+                    throw OpenChamsException("[ERROR] 'schematic'.'net'.'point' node must have 'x' and 'y' properties.");
+                }
+            } else {
+                cerr << "[WARNING] Only 'connector' and 'points' nodes are allowed in 'schematic'.'net'.'wire', others will be ignored." << endl;
+            }
+        }
     }
 }
 
@@ -714,10 +819,21 @@ void Circuit::readInstanceLayout(xmlNode* node, Layout* layout) {
         throw OpenChamsException("[ERROR] 'instance' node in 'layout' must have 'name' and 'style' properties.");
     }
 }
+
+void Circuit::setAbsolutePath(const string filePath) {
+    if (filePath[0] == '/')
+        _absolutePath = filePath;
+    else {
+        _absolutePath = string(getenv("PWD"))+"/"+filePath;
+    }
+    size_t found = _absolutePath.find_last_of("/");
+    _absolutePath = _absolutePath.substr(0, found);
+}
     
 Circuit* Circuit::readFromFile(const string filePath) {
     LIBXML_TEST_VERSION;
     Circuit* cir = NULL;
+
     xmlDoc* doc = xmlReadFile(filePath.c_str(), NULL, 0);
     if (doc == NULL) {
         string error ("[ERROR] Failed to parse: ");
@@ -738,13 +854,13 @@ Circuit* Circuit::readFromFile(const string filePath) {
             throw OpenChamsException("[ERROR] 'circuit' node must have 'name' and 'techno' properties.");
             return NULL;
         }
-
+        cir->setAbsolutePath(filePath);
         
         xmlNode* child = rootElement->children;
         for (xmlNode* node = child; node; node = node->next) {
             if (node->type == XML_ELEMENT_NODE) {
-                if (xmlStrEqual(node->name, (xmlChar*)"subCircuitsPathes")) {
-                    cir->readSubCircuitsPathes(node);
+                if (xmlStrEqual(node->name, (xmlChar*)"subCircuitsPaths")) {
+                    cir->readSubCircuitsPaths(node);
                 }
                 else if (xmlStrEqual(node->name, (xmlChar*)"parameters")) {
                     cir->readCircuitParameters(node);
@@ -791,11 +907,11 @@ Netlist* Circuit::createNetlist() {
     return _netlist;
 }
 
-Schematic* Circuit::createSchematic(double zoom) {
+Schematic* Circuit::createSchematic() {
     if (_schematic)
         throw OpenChamsException("[ERROR] Cannot create two scheamtics in one circuit.");
 
-    _schematic = new Schematic(this, zoom);
+    _schematic = new Schematic(this);
     if (!_schematic)
         throw OpenChamsException("[ERROR] Cannot create schematic.");
 
@@ -852,6 +968,13 @@ bool Circuit::writeToFile(string filePath) {
     
     file << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << endl
          << "<circuit name=\"" << _name.getString() << "\" techno=\"" << _techno.getString() << "\">" << endl;
+    if (_subCircuitsPaths.size() != 0) {
+        file << "  <subCircuitsPaths>"  << endl;
+        for (size_t i = 0 ; i < _subCircuitsPaths.size() ; i++ ) {
+            file << "    <path path=\"" << _subCircuitsPaths[i] << "\"/>" << endl;
+        }
+        file << "  </subCircuitsPaths>" << endl;
+    }
     if (!_params.isEmpty()) {
         file << "  <parameters>" << endl;
     	for (map<Name, double>::const_iterator it = _params.getValues().begin() ; it != _params.getValues().end() ; ++it) {
@@ -915,6 +1038,7 @@ bool Circuit::writeToFile(string filePath) {
     }
     file << "    </instances>" << endl
          << "    <nets>" << endl;
+    bool schematicNets = false; // to know if net sections in schematic are needed
     vector<Net*> nets = _netlist->getNets();
     sort(nets.begin(), nets.end(), NetNameSort); // sort based on nets' names
     for (vector<Net*>::iterator it = nets.begin() ; it != nets.end() ; ++it) {
@@ -926,6 +1050,8 @@ bool Circuit::writeToFile(string filePath) {
             throw OpenChamsException(error);
             //return false;
         }
+        if (!net->hasNoPorts() || !net->hasNoWires())
+            schematicNets = true;
         string externStr = (net->isExternal()) ? "True" : "False";
         file << "      <net name=\"" << net->getName().getString() << "\" type=\"" << net->getType().getString() << "\" isExternal=\"" << externStr << "\">" << endl;
         vector<Net::Connection*> connections = net->getConnections();
@@ -938,10 +1064,57 @@ bool Circuit::writeToFile(string filePath) {
     file << "    </nets>" << endl;
     file << "  </netlist>" << endl;
     if (_schematic && !_schematic->hasNoInstances()) {
-        file << "  <schematic zoom=\"" << _schematic->getZoom() << "\">" << endl;
+        file << "  <schematic>" << endl;
         for (map<Name, Schematic::Infos*>::const_iterator it = _schematic->getInstances().begin() ; it != _schematic->getInstances().end(); ++it ) {
             Schematic::Infos* infos = (*it).second;
             file << "    <instance name=\"" << ((*it).first).getString() << "\" x=\"" << infos->getX() << "\" y=\"" << infos->getY() << "\" sym=\"" << infos->getSymmetry().getString() << "\"/>" << endl;
+        }
+        if (schematicNets) {
+            for (size_t i = 0 ; i < nets.size() ; i++) {
+                Net* net = nets[i];
+                if (net->hasNoPorts() && net->hasNoWires())
+                    continue;
+                file << "    <net name=\"" << net->getName().getString() << "\">" << endl;
+                for (size_t j = 0 ; j < net->getPorts().size() ; j++) {
+                    Port* port = net->getPorts()[j];
+                    if (!port)
+                        continue;
+                    file << "      <port type=\"" << port->getType().getString() << "\" idx=\"" << port->getIndex() << "\" x=\"" << port->getX() << "\" y=\"" << port->getY() << "\" sym=\"" << port->getSymmetry().getString() << "\"/>" << endl;
+                }
+                for (size_t j = 0 ; j < net->getWires().size() ; j++) {
+                    Wire* wire = net->getWires()[j];
+                    file << "      <wire>" << endl;
+                    WirePoint* start = wire->getStartPoint();
+                    WirePoint* end   = wire->getEndPoint();
+                    // start point
+                    if (dynamic_cast<InstancePoint*>(start)) {
+                        InstancePoint* iP = static_cast<InstancePoint*>(start);
+                        file << "        <connector name=\"" << iP->getName().getString() << "\" plug=\"" << iP->getPlug().getString() << "\"/>" << endl;
+                    } else if (dynamic_cast<PortPoint*>(start)) {
+                        PortPoint* pP = static_cast<PortPoint*>(start);
+                        file << "        <connector idx=\"" << pP->getIndex() << "\"/>" << endl;
+                    } else {
+                        throw OpenChamsException("[ERROR] Wire start point is nor an InstancePoint nor a PortPoint.");
+                    }
+                    // intermediate points
+                    for (size_t k = 0 ; k < wire->getIntermediatePoints().size() ; k++) {
+                        IntermediatePoint* iP = wire->getIntermediatePoints()[k];
+                        file << "        <point x=\"" << iP->getX() << "\" y=\"" << iP->getY() << "\"/>" << endl;
+                    }
+                    // end point
+                    if (dynamic_cast<InstancePoint*>(end)) {
+                        InstancePoint* iP = static_cast<InstancePoint*>(end);
+                        file << "        <connector name=\"" << iP->getName().getString() << "\" plug=\"" << iP->getPlug().getString() << "\"/>" << endl;
+                    } else if (dynamic_cast<PortPoint*>(end)) {
+                        PortPoint* pP = static_cast<PortPoint*>(end);
+                        file << "        <connector idx=\"" << pP->getIndex() << "\"/>" << endl;
+                    } else {
+                        throw OpenChamsException("[ERROR] Wire end point is nor an InstancePoint nor a PortPoint.");
+                    }
+                    file << "      </wire>" << endl;
+                }
+                file << "    </net>" << endl;
+            }
         }
         file << "  </schematic>" << endl;
     }

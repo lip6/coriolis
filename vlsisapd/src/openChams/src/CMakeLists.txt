@@ -13,6 +13,8 @@ SET ( hpps vlsisapd/openChams/Circuit.h
            vlsisapd/openChams/Sizing.h
            vlsisapd/openChams/Layout.h
            vlsisapd/openChams/Transistor.h
+           vlsisapd/openChams/Port.h
+           vlsisapd/openChams/Wire.h
            vlsisapd/openChams/OpenChamsException.h 
     )
 SET ( cpps Circuit.cpp
@@ -28,6 +30,7 @@ SET ( cpps Circuit.cpp
            Sizing.cpp
            Layout.cpp
            Transistor.cpp 
+           Wire.cpp
     )
 SET ( pycpps PyOpenChams.cpp 
     )

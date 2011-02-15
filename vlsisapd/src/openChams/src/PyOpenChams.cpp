@@ -17,6 +17,8 @@ using namespace boost::python;
 #include "vlsisapd/openChams/Sizing.h"
 #include "vlsisapd/openChams/Layout.h"
 #include "vlsisapd/openChams/Circuit.h"
+#include "vlsisapd/openChams/Port.h"
+#include "vlsisapd/openChams/Wire.h"
 #include "vlsisapd/openChams/OpenChamsException.h"
 
 #include "vlsisapd/openChams/PySTLMapWrapper.h"
@@ -133,10 +135,67 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
         .def("getTransistors", &Device::getTransistors, return_internal_reference<>())
     ;
 
+    // class OpenChams::Port
+    class_<Port, Port*>("Port", init<Name, unsigned, double, double, Name>())
+        // properties
+        .add_property("type"    , &Port::getType    )
+        .add_property("index"   , &Port::getIndex   )
+        .add_property("x"       , &Port::getX       )
+        .add_property("y"       , &Port::getY       )
+        .add_property("symmetry", &Port::getSymmetry)
+    ;
+
+    // class OpenChams::WirePoint
+    class_<WirePoint, WirePoint*>("WirePoint", init<>())
+    ;
+    // class OpenChams::InstancePoint
+    class_<InstancePoint, bases<WirePoint> >("InstancePoint", init<Name, Name>())
+        // properties
+        .add_property("name", &InstancePoint::getName)
+        .add_property("plug", &InstancePoint::getPlug)
+    ;
+    // class OpenChams::PortPoint
+    class_<PortPoint, bases<WirePoint> >("PortPoint", init<unsigned>())
+        // properties
+        .add_property("index", &PortPoint::getIndex)
+    ;
+    // class OpenChams::IntermediatePoint
+    class_<IntermediatePoint, bases<WirePoint> >("IntermediatePoint", init<double, double>())
+        // properties
+        .add_property("x", &IntermediatePoint::getX)
+        .add_property("y", &IntermediatePoint::getY)
+    ;
+
+    // vector_indexing for OpenChams::Wire
+    class_<std::vector<IntermediatePoint*> >("IntermediatePointsVector")
+        .def(vector_indexing_suite<std::vector<IntermediatePoint*>, true>())
+    ;
+    // class OpenChams::Wire
+    class_<Wire, Wire*>("Wire", init<>())
+        // properties
+        .add_property("startPoint", make_function(&Wire::getStartPoint, return_value_policy<reference_existing_object>()))
+        .add_property("endPoint"  , make_function(&Wire::getEndPoint  , return_value_policy<reference_existing_object>()))
+        // accessors
+        .def("hasNoIntermediatePoints", &Wire::hasNoIntermediatePoints)
+        // modifiers
+        .def("setStartPoint"       , static_cast<void(Wire::*)(Name, Name)>(&Wire::setStartPoint))
+        .def("setStartPoint"       , static_cast<void(Wire::*)(unsigned  )>(&Wire::setStartPoint))
+        .def("setEndPoint"         , static_cast<void(Wire::*)(Name, Name)>(&Wire::setEndPoint))
+        .def("setEndPoint"         , static_cast<void(Wire::*)(unsigned  )>(&Wire::setEndPoint))
+        .def("addIntermediatePoint", &Wire::addIntermediatePoint)
+        // stl containers
+        .def("getIntermediatePoints"  , &Wire::getIntermediatePoints, return_internal_reference<>())
+    ;
 
     // vector_indexing for OpenChams::Net
     class_<std::vector<Net::Connection*> >("ConnectionsVector")
         .def(vector_indexing_suite<std::vector<Net::Connection*>, true>())
+    ;
+    class_<std::vector<Port*> >("PortsVector")
+        .def(vector_indexing_suite<std::vector<Port*>, true>())
+    ;
+    class_<std::vector<Wire*> >("WiresVector")
+        .def(vector_indexing_suite<std::vector<Wire*>, true>())
     ;
     { //this scope is used to define Connection as a subclass of Net
     // class OpenChams::Net
@@ -148,10 +207,16 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
         .add_property("netlist" , make_function(&Net::getNetlist, return_value_policy<reference_existing_object>())) 
         // accessors
         .def("hasNoConnections", &Net::hasNoConnections)
+        .def("hasNoPorts"      , &Net::hasNoPorts      )
+        .def("hasNoWires"      , &Net::hasNoWires      )
         // modifiers
         .def("connectTo"       , &Net::connectTo )
+        .def("addPort"         , &Net::addPort, return_value_policy<reference_existing_object>())
+        .def("addWire"         , &Net::addWire, return_value_policy<reference_existing_object>())
         // stl containers
         .def("getConnections", &Net::getConnections, return_internal_reference<>())
+        .def("getPorts"      , &Net::getPorts      , return_internal_reference<>())
+        .def("getWires"      , &Net::getWires      , return_internal_reference<>())
     ;
 
     // class OpenChams::Net::Connection
@@ -188,9 +253,7 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
     STL_MAP_WRAPPING_PTR(Name, Schematic::Infos*, "SchematicInstancesMap")
     { // this scope is used to define Infos as a subclass of Schematic
     // class OpenChams::Schematic
-    scope schematicScope = class_<Schematic, Schematic*>("Schematic", init<Circuit*, double>())
-        // properties
-        .add_property("zoom" , &Schematic::getZoom)
+    scope schematicScope = class_<Schematic, Schematic*>("Schematic", init<Circuit*>())
         // accessors
         .def("hasNoInstances", &Schematic::hasNoInstances)
         // modifiers
@@ -264,13 +327,13 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
 
     class_<Circuit, Circuit*>("Circuit", init<Name, Name>())
         // properties
-        .add_property("name"      , &Circuit::getName      )
-        .add_property("techno"    , &Circuit::getTechno    )
-        .add_property("parameters", &Circuit::getParameters)
-        .add_property("netlist"   , make_function(&Circuit::getNetlist  , return_value_policy<reference_existing_object>()))
-        .add_property("schematic" , make_function(&Circuit::getSchematic, return_value_policy<reference_existing_object>()))
-        .add_property("sizing"    , make_function(&Circuit::getSizing   , return_value_policy<reference_existing_object>()))
-        .add_property("layout"    , make_function(&Circuit::getLayout   , return_value_policy<reference_existing_object>()))
+        .add_property("name"        , &Circuit::getName        )
+        .add_property("techno"      , &Circuit::getTechno      )
+        .add_property("parameters"  , &Circuit::getParameters  )
+        .add_property("netlist"     , make_function(&Circuit::getNetlist  , return_value_policy<reference_existing_object>()))
+        .add_property("schematic"   , make_function(&Circuit::getSchematic, return_value_policy<reference_existing_object>()))
+        .add_property("sizing"      , make_function(&Circuit::getSizing   , return_value_policy<reference_existing_object>()))
+        .add_property("layout"      , make_function(&Circuit::getLayout   , return_value_policy<reference_existing_object>()))
         // accessors
         .def("getValue", &Circuit::getValue)
         // modifiers

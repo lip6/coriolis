@@ -11,6 +11,8 @@ using namespace std;
 #include "vlsisapd/openChams/Sizing.h"
 #include "vlsisapd/openChams/Operator.h"
 #include "vlsisapd/openChams/Layout.h"
+#include "vlsisapd/openChams/Port.h"
+#include "vlsisapd/openChams/Wire.h"
 
 int main(int argc, char * argv[]) {
     OpenChams::Circuit* circuit = new OpenChams::Circuit(OpenChams::Name("design"), OpenChams::Name("myTech"));
@@ -60,9 +62,32 @@ int main(int argc, char * argv[]) {
     _out->connectTo(OpenChams::Name("pmos1"), OpenChams::Name("D"));
 
     // schematic
-    OpenChams::Schematic* schematic = circuit->createSchematic(1.0);
+    OpenChams::Schematic* schematic = circuit->createSchematic();
     schematic->addInstance(OpenChams::Name("nmos1"), 2490, 2600, OpenChams::Name("ID"));
     schematic->addInstance(OpenChams::Name("pmos1"), 2490, 2300, OpenChams::Name("ID"));
+    _vdd->addPort(OpenChams::Name("inV"), 0, 2490, 2100, OpenChams::Name("ID"));
+    OpenChams::Wire* wVdd = _vdd->addWire();
+    wVdd->setStartPoint(OpenChams::Name("pmos1"), OpenChams::Name("S"));
+    wVdd->setEndPoint  (0);
+    _vss->addPort(OpenChams::Name("inV"), 0, 2490, 2800, OpenChams::Name("MY"));
+    OpenChams::Wire* wVss = _vss->addWire();
+    wVss->setStartPoint(OpenChams::Name("nmos1"), OpenChams::Name("S"));
+    wVss->setEndPoint  (0);
+    _in->addPort(OpenChams::Name("inH"), 0, 2190, 2500, OpenChams::Name("ID"));
+    OpenChams::Wire* wIn = _in->addWire();
+    wIn->setStartPoint(OpenChams::Name("pmos1"), OpenChams::Name("G"));
+    wIn->setEndPoint  (OpenChams::Name("nmos1"), OpenChams::Name("G"));
+    OpenChams::Wire* wIn1 = _in->addWire();
+    wIn1->setStartPoint(0);
+    wIn1->setEndPoint (OpenChams::Name("pmos1"), OpenChams::Name("G"));
+    _out->addPort(OpenChams::Name("outH"), 0, 2600, 2500, OpenChams::Name("ID"));
+    OpenChams::Wire* wOut = _out->addWire();
+    wOut->setStartPoint(OpenChams::Name("pmos1"), OpenChams::Name("D"));
+    wOut->setEndPoint  (OpenChams::Name("nmos1"), OpenChams::Name("D"));
+    OpenChams::Wire* wOut1 = _out->addWire();
+    wOut1->setStartPoint(OpenChams::Name("nmos1"), OpenChams::Name("D"));
+    wOut1->setEndPoint  (0);
+
     // sizing
     OpenChams::Sizing* sizing = circuit->createSizing();
     OpenChams::Operator* op_pmos1 = sizing->addOperator(OpenChams::Name("pmos1"), OpenChams::Name("OPVG(Veg)"), OpenChams::Name("BSIM3V3"), 0);

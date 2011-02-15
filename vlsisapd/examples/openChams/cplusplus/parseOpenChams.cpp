@@ -16,6 +16,8 @@ using namespace std;
 #include "vlsisapd/openChams/Sizing.h"
 #include "vlsisapd/openChams/Operator.h"
 #include "vlsisapd/openChams/Layout.h"
+#include "vlsisapd/openChams/Port.h"
+#include "vlsisapd/openChams/Wire.h"
 #include "vlsisapd/openChams/OpenChamsException.h"
 
 int main(int argc, char * argv[]) {
@@ -78,6 +80,7 @@ int main(int argc, char * argv[]) {
         }
     }
     cerr << " | + nets" << endl;
+    bool schematicNet = false; // define wether net sections are needed in schematic section
     if (!netlist->hasNoNets()) {
         for (size_t i = 0 ; i < netlist->getNets().size() ; i++) {
             OpenChams::Net* net = netlist->getNets()[i];
@@ -87,15 +90,58 @@ int main(int argc, char * argv[]) {
                 OpenChams::Net::Connection* connect = net->getConnections()[j];
                 cerr << " | | | | " << connect->getInstanceName().getString() << "." << connect->getConnectorName().getString() << endl;
             }
+            if (!net->hasNoPorts() || !net->hasNoWires())
+                schematicNet = true;
         }
     }
     OpenChams::Schematic* schematic = circuit->getSchematic();
     if (schematic && !schematic->hasNoInstances()) {
-        cerr << " + schematic - zoom: " << schematic->getZoom() << endl;
+        cerr << " + schematic" << endl;
         for (map<OpenChams::Name, OpenChams::Schematic::Infos*>::const_iterator sit = schematic->getInstances().begin() ; sit != schematic->getInstances().end() ; ++sit) {
             OpenChams::Schematic::Infos* inf = (*sit).second;
-            cerr << " | name: " << ((*sit).first).getString() << " - x: " << inf->getX() << " - y: " << inf->getY() << " - symmetry: " << inf->getSymmetry().getString() << endl;
+            cerr << " | + instance:  name: " << ((*sit).first).getString() << " - x: " << inf->getX() << " - y: " << inf->getY() << " - symmetry: " << inf->getSymmetry().getString() << endl;
         }
+        if (schematicNet) {
+            for (size_t i = 0 ; i < netlist->getNets().size() ; i++) {
+                OpenChams::Net* net = netlist->getNets()[i];
+                cerr << " | + net  name: " << net->getName().getString() << endl;
+                if (!net->hasNoPorts()) {
+                    for (size_t j = 0 ; j < net->getPorts().size() ; j++) {
+                        OpenChams::Port* port = net->getPorts()[j];
+                        cerr << " | | + port  type: " << port->getType().getString() << " - idx: " << port->getIndex() << " - x: " << port->getX() << " - y: " << port->getY() << " - sym: " << port->getSymmetry().getString() << endl;
+                    }
+                }
+                if (!net->hasNoWires()) {
+                    for (size_t j = 0 ; j < net->getWires().size() ; j++) {
+                        OpenChams::Wire* wire = net->getWires()[j];
+                        cerr << " | | + wire  ";
+                        OpenChams::WirePoint* start = wire->getStartPoint();
+                        if (dynamic_cast<OpenChams::InstancePoint*>(start)) {
+                            OpenChams::InstancePoint* iP = static_cast<OpenChams::InstancePoint*>(start);
+                            cerr << "<" << iP->getName().getString() << "," << iP->getPlug().getString() << "> ";
+                        } else if (dynamic_cast<OpenChams::PortPoint*>(start)) {
+                            OpenChams::PortPoint* pP = static_cast<OpenChams::PortPoint*>(start);
+                            cerr << "<" << pP->getIndex() << "> ";
+                        }
+                        for (size_t k = 0 ; k < wire->getIntermediatePoints().size() ; k++) {
+                            OpenChams::IntermediatePoint* iP = wire->getIntermediatePoints()[k];
+                            cerr << "<" << iP->getX() << "," << iP->getY() << "> ";
+                        }
+                        OpenChams::WirePoint* end = wire->getEndPoint();
+                        if (dynamic_cast<OpenChams::InstancePoint*>(end)) {
+                            OpenChams::InstancePoint* iP = static_cast<OpenChams::InstancePoint*>(end);
+                            cerr << "<" << iP->getName().getString() << "," << iP->getPlug().getString() << "> ";
+                        } else if (dynamic_cast<OpenChams::PortPoint*>(end)) {
+                            OpenChams::PortPoint* pP = static_cast<OpenChams::PortPoint*>(end);
+                            cerr << "<" << pP->getIndex() << "> ";
+                        }
+                        cerr << endl;
+                    }
+                }
+
+            }
+        }
+
     }
     OpenChams::Sizing* sizing = circuit->getSizing();
     if (sizing) {
