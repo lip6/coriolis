@@ -381,14 +381,19 @@ class ProjectBuilder:
 
 
     def _setEnvironment ( self, systemVariable, userVariable ):
-        if not self._environment.has_key(systemVariable):
-            self._environment[ systemVariable ] = self._installDir
-       #if not self._environment.has_key(userVariable):
-       #    self._environment[ userVariable ] = self._installDir
+        if not self._environment.has_key(systemVariable) or self._environment[systemVariable] == "":
+            if not self._environment.has_key(userVariable) or self._environment[userVariable] == "" :
+                self._environment[ systemVariable ] = self._installDir
+                print "[WARNING] Neither <%s> nor <%s> environment variables are sets." \
+                      % (systemVariable,userVariable)
+                print "          Setting <%s> to <%s>." % (systemVariable,self._installDir)
+            else:
+                self._environment[ systemVariable ] = self._environment[ userVariable ]
+                
         if not self._quiet:
-            print "Setting %s = \"%s\"." % (systemVariable    ,self._environment[systemVariable])
+            print "Setting <%s> to <%s>." % (systemVariable,self._environment[systemVariable])
             if self._environment.has_key(userVariable):
-                print "Transmitting %s = \"%s\"." % (userVariable,self._environment[userVariable])
+                print "Transmitting <%s> as <%s>." % (userVariable,self._environment[userVariable])
         return
 
 

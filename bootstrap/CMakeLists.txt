@@ -9,7 +9,7 @@
  find_package(Bootstrap REQUIRED)
  print_cmake_module_path()
 
- setup_sysconfdir("$ENV{BOOTSTRAP_TOP}")
+ setup_sysconfdir("${CMAKE_INSTALL_PREFIX}")
 
  install(FILES       coriolisEnv.py coriolis2.sh
          DESTINATION ${SYS_CONF_DIR}/coriolis2
