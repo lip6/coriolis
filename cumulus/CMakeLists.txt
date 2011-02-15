@@ -9,7 +9,7 @@
  
  set_cmake_policies()
  set_lib_link_mode()
- setup_sysconfdir("$ENV{CORIOLIS_TOP}")
+ setup_sysconfdir("${CMAKE_INSTALL_PREFIX}")
  
  find_package(PythonLibs REQUIRED)
  find_package(PythonSitePackages REQUIRED)
