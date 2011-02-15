@@ -15,7 +15,7 @@
  set_cmake_policies()
  check_distribution()
  set_lib_link_mode()
- setup_sysconfdir("$ENV{CORIOLIS_TOP}")
+ setup_sysconfdir("${CMAKE_INSTALL_PREFIX}")
  setup_boost(program_options filesystem python regex)
 
  find_package(LibXml2 REQUIRED)
