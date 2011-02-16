@@ -300,8 +300,7 @@ class Model :
     # Hurricane cell found: 
     if hurCell :
       found = False
-      for netLoc in hurCell.getExternalNets():
-        net       = netLoc.getElement()
+      for net in hurCell.getExternalNets():
         direction = net.getDirection()
         name      = str(net.getName())
 
@@ -455,7 +454,7 @@ class Model :
     self._vbe = True
     
   ##### View : in order to see the in the editor #####
-  def View ( self ) :
+  def View ( self, stopLevel=1, message="Status stop point" ) :
     global EDITOR
 
     if not self._hur_cell :
@@ -465,10 +464,6 @@ class Model :
     if EDITOR:
       EDITOR.setCell ( self._hur_cell )
       EDITOR.fit     ()
-    
-  ##### Breakpoint : stop point with a level. Also load in the Viewer #####
-  def Breakpoint ( self, stopLevel=1, message="Status stop point" ) :
-      self.View ()
       Breakpoint.stop ( stopLevel, message )
     
   ##### Save : in order to create the output files #####
@@ -501,8 +496,7 @@ class Model :
       
     if not name : name = self._name
 
-   # Removed unknown asimut options: -nocheckdriver -nostrict -nowarning
-    if tool == 'asimut' : runpat ( self._name, name, '-l 1 -p 100 -zerodelay -bdd' )
+    if tool == 'asimut' : runpat ( self._name, name, '-l 1 -p 100 -zerodelay -nocheckdriver -nostrict -bdd -nowarning' )
     else                : raise Exception ( 'not implemented yet' )
 
   ##### Create a stratus file given the database #####

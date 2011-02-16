@@ -91,3 +91,14 @@ def GetWeightArea ( model ) :
     raise Exception ( err )        
     
   return myP._weightArea[model]
+
+def GetWeightPower ( model ) :
+  myP = WeightParser()
+    
+  if 'STRATUS_MAPPING_NAME' in os.environ :
+    myP.Parse ( os.environ['STRATUS_MAPPING_NAME'] )
+  else :
+    err = "\n[Stratus ERROR] Virtual library : No file found in order to parse.\nCheck STRATUS_MAPPING_NAME.\n"
+    raise Exception ( err )        
+    
+  return myP._weightPower[model]

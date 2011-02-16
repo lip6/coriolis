@@ -183,8 +183,9 @@ class WeightParser :
     self._p.EndElementHandler    = self.end_element
     self._p.CharacterDataHandler = self.char_data
 
-    self._weightTime = {}
-    self._weightArea = {}
+    self._weightTime  = {}
+    self._weightArea  = {}
+    self._weightPower = {}
     
   # Handler functions
 
@@ -208,6 +209,14 @@ class WeightParser :
           temp = 1
       
         self._weightArea[virtName] = temp
+        
+        if 'power' in attrs :
+          temp = float(attrs['power'])
+        else :
+#          print 'Warning: no weight done in the file, weight put to 1.'
+          temp = 1
+      
+        self._weightPower[virtName] = temp
       
   ################################
   def end_element ( self, name ) : pass
