@@ -58,7 +58,7 @@ from st_generate      import *
 from st_const         import *
 from st_cat           import *
 from st_param         import *
-from st_getrealmodel  import GetWeightTime, GetWeightArea
+from st_getrealmodel  import GetWeightTime, GetWeightArea, GetWeightPower
 
 from util_Const       import *
 from util_Defs        import *
