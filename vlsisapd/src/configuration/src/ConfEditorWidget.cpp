@@ -2,14 +2,13 @@
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2010-2011, All Rights Reserved
 //
 // ===================================================================
 //
 // $Id$
 //
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |    C o n f i g u r a t i o n   D a t a - B a s e                |
 // |                                                                 |
@@ -17,10 +16,7 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./ConfEditorWidget.cpp"                   |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <QAction>
@@ -91,7 +87,8 @@ namespace Cfg {
     cout << "Saving configuration file: <" << dotConfigFile << ">."<< endl;
 
   //Configuration::get()->writeToStream ( file, 0, ";misc;kite;;mauka;;" );
-    Configuration::get()->writeToStream ( file, 0 );
+    Configuration::get()->writeToStream ( file, Configuration::DriveValues|Configuration::DriveLayout, "misc" );
+  //Configuration::get()->writeToStream ( file, 0 );
   //Configuration::get()->writeToStream ( file, Configuration::DriveValues|Configuration::DriveLayout );
     file.close ();
   }

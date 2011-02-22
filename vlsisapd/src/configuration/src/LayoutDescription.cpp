@@ -2,14 +2,13 @@
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2010-2011, All Rights Reserved
 //
 // ===================================================================
 //
 // $Id$
 //
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |    C o n f i g u r a t i o n   D a t a - B a s e                |
 // |                                                                 |
@@ -17,10 +16,7 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./LayoutDescription.cpp"                  |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  "vlsisapd/configuration/LayoutDescription.h"
@@ -35,6 +31,7 @@ namespace Cfg {
   using std::endl;
   using std::string;
   using std::vector;
+  using std::set;
   using std::map;
   using std::make_pair;
   using std::ostream;
@@ -62,13 +59,13 @@ namespace Cfg {
   }
 
 
-  TabDescription* LayoutDescription::getTab ( const string& tabName )
+  TabDescription* LayoutDescription::getTab ( const string& tabName, const string& id )
   {
     for ( size_t itab=0 ; itab<_tabs.size() ; ++itab ) {
       if ( _tabs[itab]->getName() == tabName ) return _tabs[itab];
     }
 
-    addTab ( new TabDescription(this,tabName) );
+    addTab ( new TabDescription(this,tabName,id) );
     return getBackTab();
   }
   
@@ -131,12 +128,17 @@ namespace Cfg {
             break;
           case WidgetDescription::Parameter:
             Parameter* parameter = _configuration->getParameter ( widgets[iwidget]->getId() );
-            cw->addParameter ( _tabs[itab]->getName()
-                             , parameter
-                             , widgets[iwidget]->getLabel()
-                             , widgets[iwidget]->getColumn()
-                             , widgets[iwidget]->getSpan()
-                             , widgets[iwidget]->getFlags() );
+            if ( parameter ) {
+              cw->addParameter ( _tabs[itab]->getName()
+                               , parameter
+                               , widgets[iwidget]->getLabel()
+                               , widgets[iwidget]->getColumn()
+                               , widgets[iwidget]->getSpan()
+                               , widgets[iwidget]->getFlags() );
+            } else {
+              cerr << "[ERROR] LayoutDescription::buildWidget(): reference to non-existent parameter id=\""
+                   << widgets[iwidget]->getId() << "\"." << endl;
+            }
             break;
         }
       }
@@ -148,12 +150,27 @@ namespace Cfg {
   }
 
 
-  void  LayoutDescription::writeToStream ( ostream& out ) const
+  void  LayoutDescription::writeToStream ( ostream& out, const string& tabs ) const
   {
+    set<string> tabset;
+    Configuration::_tokenize ( tabset, tabs );
+
     out << "  <layout>" << endl;
 
     for ( size_t itab=0 ; itab<_tabs.size() ; ++itab ) {
-      out << "    <tab name=\"" << _tabs[itab]->getName() << "\">" << endl;
+      if ( not tabset.empty() ) {
+        set<string>::iterator isavetab = tabset.begin();
+        for ( ; isavetab != tabset.end() ; ++isavetab ) {
+          if ( _tabs[itab]->getId().compare(0,(*isavetab).size(),*isavetab) == 0 ) {
+            break;
+          }
+        }
+        if ( isavetab == tabset.end() ) continue;
+      }
+
+      out << "    <tab name=\"" << _tabs[itab]->getName()
+          <<         "\" id=\"" << _tabs[itab]->getId()
+          <<         "\">" << endl;
 
       const vector<WidgetDescription*>& widgets = _tabs[itab]->getWidgets();
       for ( size_t iwidget=0 ; iwidget<widgets.size() ; ++iwidget ) {

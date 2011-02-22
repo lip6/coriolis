@@ -2,24 +2,20 @@
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
 //
 // ===================================================================
 //
 // $Id$
 //
 // x-----------------------------------------------------------------x
-// |                                                                 |
 // |                   C O R I O L I S                               |
 // |    C o n f i g u r a t i o n   D a t a - B a s e                |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./Configuration.h"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
 // x-----------------------------------------------------------------x
 
 
@@ -58,6 +54,10 @@ namespace Cfg {
 
     public:
       static Configuration*            get                 ();
+      static Parameter::Priority       pushDefaultPriority ( Parameter::Priority );
+      static Parameter::Priority       popDefaultPriority  ();
+      static Parameter::Priority       getDefaultPriority  ();
+      static void                      _tokenize           ( std::set<std::string>& tokens, const std::string& line );
     public:
     // Methods.
              ConfigurationWidget*      buildWidget         ( unsigned int flags );
@@ -68,12 +68,12 @@ namespace Cfg {
       inline unsigned int              getFlags            () const;
       inline const LayoutDescription&  getLayout           () const;
       inline LayoutDescription&        getLayout           ();
-             Parameter*                getParameter        ( const std::string& id
-                                                           , Parameter::Type    type=Parameter::Unknown ) const;
-             Parameter*                addParameter        ( const std::string& id
-                                                           , Parameter::Type    type
-                                                           , const std::string& value
-                                                           , int                priority=0 );
+             Parameter*                getParameter        ( const std::string&  id
+                                                           , Parameter::Type     type=Parameter::Unknown ) const;
+             Parameter*                addParameter        ( const std::string&  id
+                                                           , Parameter::Type     type
+                                                           , const std::string&  value
+                                                           , Parameter::Priority priority=Parameter::UseDefault );
       inline void                      setFlags            ( unsigned int mask );
       inline bool                      hasLogs             ( unsigned int mask ) const;
              void                      addLog              ( unsigned int mask, const std::string& id );

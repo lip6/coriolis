@@ -2,26 +2,26 @@
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
 //
 // ===================================================================
 //
 // $Id$
 //
 // x-----------------------------------------------------------------x
-// |                                                                 |
 // |                   C O R I O L I S                               |
 // |    C o n f i g u r a t i o n   D a t a - B a s e                |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./ConfEditorMain.cpp"                     |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
 // x-----------------------------------------------------------------x
 
+
+#include  <cstdio>
+#include  <libxml/xmlreader.h>
+#include  <Python.h>
 
 #include  <boost/program_options.hpp>
 namespace boptions = boost::program_options;
@@ -29,7 +29,6 @@ namespace boptions = boost::program_options;
 #include  <boost/filesystem/operations.hpp>
 namespace bfs = boost::filesystem;
 
-#include  <libxml/xmlreader.h>
 #include  <QtGui>
 #if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and not defined (__APPLE__)
 #  include  <QGtkStyle>
@@ -90,6 +89,23 @@ int main ( int argc, char* argv[] )
     if ( bfs::exists(dotConfPath) ) {
       cout << "Reading dot configuration: <" << dotConfPath.string() << ">." << endl;
       conf->readFromFile ( dotConfPath.string() );
+    }
+
+    cout << "misc.catchCore:   " << conf->getParameter("misc.catchCore"  )->asBool() << endl;
+    cout << "kite.eventsLimit: " << conf->getParameter("kite.eventsLimit")->asInt () << endl;
+
+    bfs::path pyDotConfPath ( "./.coriolis2.init.py" );
+    if ( bfs::exists(pyDotConfPath) ) {
+      cout << "Reading python dot configuration: <" << pyDotConfPath.string() << ">." << endl;
+      Py_Initialize ();
+      FILE* fd = fopen ( pyDotConfPath.string().c_str(), "r" );
+      if ( fd ) {
+        PyRun_SimpleFile ( fd, pyDotConfPath.string().c_str() );
+        fclose ( fd );
+      } else {
+        cout << "Cannot open Python configuration file: <" << pyDotConfPath.string() << ">." << endl;
+      }
+      Py_Finalize ();
     }
 
     ConfEditorWidget* editor = new ConfEditorWidget ();

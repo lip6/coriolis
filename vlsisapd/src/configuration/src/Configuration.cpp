@@ -2,25 +2,21 @@
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
 //
 // ===================================================================
 //
 // $Id$
 //
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |    C o n f i g u r a t i o n   D a t a - B a s e                |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./Configuration.cpp"                      |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <cstring>
@@ -39,24 +35,6 @@ namespace {
 
   using namespace std;
   using namespace Cfg;
-    
-
-  void  tokenize ( set<string>& tokens, const string& line )
-  {
-    static std::string separators = " ;";
-           size_t      iBegin     = 0;
-           size_t      iEnd       = 0;
-
-    for ( ; iEnd < line.size() ; ++iEnd ) {
-      if ( separators.find(line[iEnd]) != std::string::npos ) {
-        if ( iBegin < iEnd )
-          tokens.insert ( line.substr(iBegin,iEnd-iBegin) );
-        iBegin = iEnd+1;
-      }
-    }
-    if ( iBegin < iEnd )
-      tokens.insert ( line.substr(iBegin,iEnd-iBegin) );
-  }
 
 
   class XmlParser {
@@ -99,6 +77,8 @@ namespace {
   {
     LIBXML_TEST_VERSION;
 
+    Configuration::pushDefaultPriority ( Parameter::ConfigurationFile );
+
     _reader = xmlReaderForFile ( _fileName.c_str(), NULL, 0 );
     if ( _reader != NULL ) {
       _status = xmlTextReaderRead ( _reader );
@@ -115,6 +95,8 @@ namespace {
       }
     //  xmlCleanupParser (); // CF libxml2 documentation if libxml2 parser is use by the application any other time : DO NOT CALL xmlCleanupParser (at least on mac osx)
     }
+
+    Configuration::popDefaultPriority ();
 
     return (_status == 0);
   }
@@ -162,7 +144,6 @@ namespace {
       _parameter = _configuration->addParameter ( attrId 
                                                 , type
                                                 , _getAttributeValue("value")
-                                                , Parameter::ConfigurationFile
                                                 );
     } else {
       _parameter->setString ( _getAttributeValue("value")
@@ -288,8 +269,9 @@ namespace {
   void  XmlParser::_tabNode ()
   {
     string attrName = _getAttributeValue("name");
+    string attrId   = _getAttributeValue("id");
 
-    _configuration->getLayout().addTab ( attrName );
+    _configuration->getLayout().addTab ( attrName, attrId );
 
     _status = xmlTextReaderRead ( _reader );
     while ( _status == 1 ) {
@@ -376,6 +358,24 @@ namespace Cfg {
   using std::ofstream;
   using std::setw;
   using std::vector;
+    
+
+  void  Configuration::_tokenize ( set<string>& tokens, const string& line )
+  {
+    static std::string separators = " ;";
+           size_t      iBegin     = 0;
+           size_t      iEnd       = 0;
+
+    for ( ; iEnd < line.size() ; ++iEnd ) {
+      if ( separators.find(line[iEnd]) != std::string::npos ) {
+        if ( iBegin < iEnd )
+          tokens.insert ( line.substr(iBegin,iEnd-iBegin) );
+        iBegin = iEnd+1;
+      }
+    }
+    if ( iBegin < iEnd )
+      tokens.insert ( line.substr(iBegin,iEnd-iBegin) );
+  }
 
 
   Configuration* Configuration::_singleton = NULL;
@@ -386,6 +386,18 @@ namespace Cfg {
     if ( _singleton == NULL ) _singleton = new Configuration ();
     return _singleton;
   }
+
+
+  Parameter::Priority  Configuration::pushDefaultPriority ( Parameter::Priority priority )
+  { return Parameter::pushDefaultPriority(priority); }
+
+
+  Parameter::Priority  Configuration::popDefaultPriority ()
+  { return Parameter::popDefaultPriority(); }
+
+
+  Parameter::Priority  Configuration::getDefaultPriority ()
+  { return Parameter::getDefaultPriority(); }
 
 
   Configuration::Configuration ()
@@ -426,10 +438,10 @@ namespace Cfg {
   }
 
 
-  Parameter* Configuration::addParameter ( const string&   id
-                                         , Parameter::Type type
-                                         , const string&   value
-                                         , int             priority )
+  Parameter* Configuration::addParameter ( const string&       id
+                                         , Parameter::Type     type
+                                         , const string&       value
+                                         , Parameter::Priority priority )
   {
     Parameter* p = getParameter ( id );
     if ( p != NULL ) {
@@ -520,7 +532,7 @@ namespace Cfg {
   void  Configuration::writeToStream ( ostream& out, unsigned int flags, const string& tabs ) const
   {
     set<string> tabset;
-    tokenize ( tabset, tabs );
+    _tokenize ( tabset, tabs );
 
     out << "<configuration>" << endl;
 
@@ -585,6 +597,16 @@ namespace Cfg {
         const vector<string>& slaves = p->getSlaves();
         if ( slaves.empty() ) continue;
 
+        if ( not tabset.empty() ) {
+          set<string>::iterator itab = tabset.begin();
+          for ( ; itab != tabset.end() ; ++itab ) {
+            if ( p->getId().compare(0,(*itab).size(),*itab) == 0 ) {
+              break;
+            }
+          }
+          if ( itab == tabset.end() ) continue;
+        }
+
         out << "  <group>" << endl;
         out << "    <master id=\"" << p->getId() << "\"/>" << endl;
 
@@ -595,7 +617,7 @@ namespace Cfg {
       }
     }
 
-    if ( flags & DriveLayout ) _layout.writeToStream ( out );
+    if ( flags & DriveLayout ) _layout.writeToStream ( out, tabs );
 
     out << "</configuration>" << endl;
   }

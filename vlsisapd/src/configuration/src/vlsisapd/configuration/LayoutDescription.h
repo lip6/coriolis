@@ -2,14 +2,13 @@
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2010-2011, All Rights Reserved
 //
 // ===================================================================
 //
 // $Id$
 //
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |    C o n f i g u r a t i o n   D a t a - B a s e                |
 // |                                                                 |
@@ -17,10 +16,7 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./LayoutDescription.h"                    |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 
@@ -122,24 +118,29 @@ namespace Cfg {
 
   class TabDescription {
     public:
-      inline                                        TabDescription ( LayoutDescription*, const std::string& name );
+      inline                                        TabDescription ( LayoutDescription*, const std::string& name, const std::string& id );
              void                                   addWidget      ( WidgetDescription* );
       inline const std::string&                     getName        () const;
+      inline const std::string&                     getId          () const;
       inline const std::vector<WidgetDescription*>& getWidgets     () const;
     private:
       LayoutDescription*              _layout;
       std::string                     _name;
+      std::string                     _id;
       std::vector<WidgetDescription*> _widgets;
   };
 
 
 // Inline Methods.
-  inline TabDescription::TabDescription ( LayoutDescription* layout, const std::string& name )
-    : _layout(layout), _name(name), _widgets()
+  inline TabDescription::TabDescription ( LayoutDescription* layout, const std::string& name, const std::string& id )
+    : _layout(layout), _name(name), _id(id), _widgets()
   { }
 
   inline const std::string& TabDescription::getName () const
   { return _name; }
+
+  inline const std::string& TabDescription::getId () const
+  { return _id; }
 
   inline const std::vector<WidgetDescription*>& TabDescription::getWidgets () const
   { return _widgets; }
@@ -155,9 +156,9 @@ namespace Cfg {
              WidgetDescription*                  getWidget         ( const std::string& id );
              void                                addWidgetLookup   ( WidgetDescription* );
       inline void                                addTab            ( TabDescription* );
-      inline void                                addTab            ( const std::string& tabName );
+      inline void                                addTab            ( const std::string& tabName, const std::string& id );
       inline TabDescription*                     getBackTab        ();
-             TabDescription*                     getTab            ( const std::string& tabName );
+             TabDescription*                     getTab            ( const std::string& tabName, const std::string& id="no_id" );
       inline const std::vector<TabDescription*>& getTabs           () const;
              void                                addRule           ( const std::string& tabName );
              void                                addTitle          ( const std::string& tabName
@@ -172,7 +173,7 @@ namespace Cfg {
                                                                    , int                span  =1
                                                                    , unsigned int       flags =0 );
              ConfigurationWidget*                buildWidget       ( unsigned int       flags );
-             void                                writeToStream     ( std::ostream& ) const;
+             void                                writeToStream     ( std::ostream&, const std::string& ) const;
     private:
       Configuration*                                 _configuration;
       std::vector<TabDescription*>                   _tabs;
@@ -188,8 +189,8 @@ namespace Cfg {
   inline void  LayoutDescription::addTab ( TabDescription* tab )
   { _tabs.push_back(tab); }
 
-  inline void  LayoutDescription::addTab ( const std::string& tabName )
-  { addTab ( new TabDescription(this,tabName) ); }
+  inline void  LayoutDescription::addTab ( const std::string& tabName, const std::string& id )
+  { addTab ( new TabDescription(this,tabName,id) ); }
 
   inline TabDescription* LayoutDescription::getBackTab ()
   { return _tabs.back(); }

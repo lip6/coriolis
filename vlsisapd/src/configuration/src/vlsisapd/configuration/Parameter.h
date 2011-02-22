@@ -2,25 +2,21 @@
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
 //
 // ===================================================================
 //
 // $Id$
 //
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |    C o n f i g u r a t i o n   D a t a - B a s e                |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./Parameter.h"                            |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./vlsisapd/configuration/Parameter.h"          |
+// +-----------------------------------------------------------------+
 
 
 #ifndef  __CFG_CONFIGURATION_PARAMETER__
@@ -56,7 +52,8 @@ namespace Cfg {
                     , FromString      = 0x80
                     , AllRequirements = HasMin|HasMax|IsFile|IsPath|NeedRestart|MustExist|TypeCheck
                     };
-      enum Priority { ApplicationBuiltin = 1
+      enum Priority { UseDefault         = 0
+                    , ApplicationBuiltin = 1
                     , ConfigurationFile  = 2
                     , CommandLine        = 3
                     , Interactive        = 4
@@ -71,61 +68,66 @@ namespace Cfg {
           int          _value;
       };
     public:
-      static std::string        typeToString       ( Type );
+      static std::string        typeToString        ( Type );
+      static Priority           pushDefaultPriority ( Priority );
+      static Priority           popDefaultPriority  ();
+      static Priority           getDefaultPriority  ();
     public:                                        
-                                Parameter          ( const std::string& id
-                                                   , Type               type
-                                                   , const std::string& value
-                                                   , int                priority=0 );
-      inline bool               isFile             () const;
-      inline bool               isPath             () const;
-      inline bool               hasMin             () const;
-      inline bool               hasMax             () const;
-      inline bool               hasNeedRestart     () const;
-      inline bool               hasMustExist       () const;
-      inline bool               hasFlags           ( int mask ) const;
-      inline const std::string& getId              () const;
-      inline const Type         getType            () const;
-      inline const std::vector<EnumValue>&         
-                                getValues          () const;
-      inline const std::vector<std::string>&       
-                                getSlaves          () const;
-      inline int                getFlags           () const;
-      inline int                getMinInt          () const;
-      inline int                getMaxInt          () const;
-      inline double             getMinDouble       () const;
-      inline double             getMaxDouble       () const;
-      inline bool               checkValue         ( int ) const;
-      inline bool               checkValue         ( double ) const;
-      inline const std::string& asString           () const;
-             std::string        asPercentageString () const;
-             bool               asBool             () const;
-             int                asInt              () const;
-             double             asDouble           () const;
-             double             asPercentage       () const;
-      inline void               addValue           ( const std::string&, int );
-      inline void               addSlave           ( const std::string& );
-      inline void               setPriority        ( int );
-      inline void               setFlags           ( int mask );
-      inline void               unsetFlags         ( int mask );
-             bool               setString          ( const std::string&
-                                                   , unsigned int flags=AllRequirements
-                                                   , int priority=ApplicationBuiltin
-                                                   );
-             bool               setBool            ( bool  , int priority=ApplicationBuiltin );
-             bool               setInt             ( int   , int priority=ApplicationBuiltin );
-             bool               setDouble          ( double, int priority=ApplicationBuiltin );
-             bool               setPercentage      ( double, int priority=ApplicationBuiltin );
-      inline void               setMin             ( int   , int priority=ApplicationBuiltin );
-      inline void               setMax             ( int   , int priority=ApplicationBuiltin );
-      inline void               setMin             ( double, int priority=ApplicationBuiltin );
-      inline void               setMax             ( double, int priority=ApplicationBuiltin );
-      inline void               registerCb         ( ParameterChangedCb_t );
-    private:                                       
-      inline void               _onValueChanged    ();
-             bool               _doChange          ( unsigned int flags, const std::string&, bool, int, double );
+                                Parameter           ( const std::string& id
+                                                    , Type               type
+                                                    , const std::string& value
+                                                    , Priority           priority=UseDefault );
+      inline bool               isFile              () const;
+      inline bool               isPath              () const;
+      inline bool               hasMin              () const;
+      inline bool               hasMax              () const;
+      inline bool               hasNeedRestart      () const;
+      inline bool               hasMustExist        () const;
+      inline bool               hasFlags            ( int mask ) const;
+      inline const std::string& getId               () const;
+      inline const Type         getType             () const;
+      inline const std::vector<EnumValue>&          
+                                getValues           () const;
+      inline const std::vector<std::string>&        
+                                getSlaves           () const;
+      inline int                getFlags            () const;
+      inline int                getMinInt           () const;
+      inline int                getMaxInt           () const;
+      inline double             getMinDouble        () const;
+      inline double             getMaxDouble        () const;
+      inline bool               checkValue          ( int ) const;
+      inline bool               checkValue          ( double ) const;
+      inline const std::string& asString            () const;
+             std::string        asPercentageString  () const;
+             bool               asBool              () const;
+             int                asInt               () const;
+             double             asDouble            () const;
+             double             asPercentage        () const;
+      inline void               addValue            ( const std::string&, int );
+      inline void               addSlave            ( const std::string& );
+      inline void               setPriority         ( Priority );
+      inline void               setFlags            ( int mask );
+      inline void               unsetFlags          ( int mask );
+             bool               setString           ( const std::string&
+                                                    , unsigned int flags   =AllRequirements
+                                                    , Priority     priority=UseDefault
+                                                    );
+             bool               setBool             ( bool  , Priority priority=UseDefault );
+             bool               setInt              ( int   , Priority priority=UseDefault );
+             bool               setDouble           ( double, Priority priority=UseDefault );
+             bool               setPercentage       ( double, Priority priority=UseDefault );
+             void               setMin              ( int   , Priority priority=UseDefault );
+             void               setMax              ( int   , Priority priority=UseDefault );
+             void               setMin              ( double, Priority priority=UseDefault );
+             void               setMax              ( double, Priority priority=UseDefault );
+      inline void               registerCb          ( ParameterChangedCb_t );
+    private:                                        
+      inline void               _onValueChanged     ();
+      inline bool               _updatePriority     ( Priority );
+             bool               _doChange           ( unsigned int flags, const std::string&, bool, int, double );
     private:
     // Attributes.
+      static std::vector<Priority>       _defaultPriorities;
       std::string                        _id;
       Type                               _type;
       std::string                        _value;
@@ -159,7 +161,7 @@ namespace Cfg {
   inline const std::string&     Parameter::asString       () const { return _value; }
   inline void                   Parameter::setFlags       ( int mask ) { _flags |= mask; }
   inline void                   Parameter::unsetFlags     ( int mask ) { _flags &= ~mask; }
-  inline void                   Parameter::setPriority    ( int priority ) { _priority = priority; }
+  inline void                   Parameter::setPriority    ( Priority priority ) { _priority = priority; }
 
   inline bool  Parameter::checkValue ( int value ) const {
     bool ok = not (   ( (_flags&HasMin) and (value < _minInt) )
@@ -192,34 +194,19 @@ namespace Cfg {
     _values.push_back ( EnumValue(label,value) );
   }
 
-  inline void  Parameter::setMin ( int min, int priority )
-  { if (priority >= _priority) { _priority=priority; _minInt = min; setFlags(HasMin); } }
-  
-  inline void  Parameter::setMax ( int max, int priority )
-  { if (priority >= _priority) { _priority=priority; _maxInt = max; setFlags(HasMax); } }
-
-  inline void  Parameter::setMin ( double min, int priority )
-  { if (priority >= _priority) {
-      _priority  = priority;
-      _minDouble = min;
-      setFlags ( HasMin );
-      if (_type==Percentage) _minDouble/=100.0;
-    }
-  }
-
-  inline void  Parameter::setMax ( double max, int priority )
-  { if (priority >= _priority) {
-      _priority  = priority;
-      _maxDouble = max;
-      setFlags ( HasMax );
-      if (_type==Percentage) _maxDouble/=100.0;
-    }
-  }
-
   inline Parameter::EnumValue::EnumValue ( const std::string& label, int value )
     : _label(label), _value(value) { }
 
   inline void  Parameter::registerCb ( ParameterChangedCb_t cb ) { _callbacks.push_back(cb); }
+
+
+  inline bool  Parameter::_updatePriority ( Priority priority )
+  {
+    if ( priority == UseDefault ) priority = getDefaultPriority();
+    if ( priority < _priority   ) return false;
+    _priority = priority;
+    return true;
+  }
 
   inline void  Parameter::_onValueChanged ()
   { for ( size_t icb=0 ; icb<_callbacks.size() ; ++icb ) _callbacks[icb]( this ); }

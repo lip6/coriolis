@@ -2,25 +2,21 @@
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
 //
 // ===================================================================
 //
 // $Id$
 //
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |    C o n f i g u r a t i o n   D a t a - B a s e                |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./Parameter.cpp"                          |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <iostream>
@@ -39,6 +35,31 @@ namespace Cfg {
   using std::ostringstream;
   using std::boolalpha;
   using std::hex;
+  using std::vector;
+
+
+  vector<Parameter::Priority>  Parameter::_defaultPriorities (1,Parameter::ApplicationBuiltin);
+
+
+  Parameter::Priority  Parameter::pushDefaultPriority ( Parameter::Priority priority )
+  {
+    Priority previous = _defaultPriorities.back ();
+    _defaultPriorities.push_back ( priority );
+    return previous;
+  }
+
+
+  Parameter::Priority  Parameter::popDefaultPriority ()
+  {
+    Priority previous = _defaultPriorities.back ();
+    if ( _defaultPriorities.size() > 1 )
+      _defaultPriorities.pop_back ();
+    return previous;
+  }
+
+
+  Parameter::Priority  Parameter::getDefaultPriority ()
+  { return _defaultPriorities.back(); }
 
 
   string  Parameter::typeToString  ( Parameter::Type type )
@@ -59,7 +80,7 @@ namespace Cfg {
   Parameter::Parameter ( const std::string& id
                        , Type               type
                        , const std::string& value
-                       , int                priority
+                       , Priority           priority
                        )
     : _id       (id)
     , _type     (type)
@@ -77,6 +98,7 @@ namespace Cfg {
     if ( type == Percentage ) {
       setPercentage ( asDouble() );
     }
+    if ( priority == UseDefault ) _priority = getDefaultPriority();
 
   //cerr << "New " << typeToString(_type) << " parameter " << _id << " value:" << _value << endl;
   }
@@ -140,10 +162,9 @@ namespace Cfg {
   }
 
 
-  bool  Parameter::setString ( const std::string& s, unsigned int flags, int priority )
+  bool  Parameter::setString ( const std::string& s, unsigned int flags, Priority priority )
   {
-    if ( priority < _priority ) return false;
-    _priority = priority;
+    if ( not _updatePriority(priority) ) return false;
 
     if ( (flags & TypeCheck) and (_type != String) )
       cerr << "[ERROR] Parameter::setString(): Setting " << Parameter::typeToString(_type)
@@ -154,10 +175,9 @@ namespace Cfg {
   }
 
 
-  bool  Parameter::setBool ( bool b, int priority )
+  bool  Parameter::setBool ( bool b, Priority priority )
   {
-    if ( priority < _priority ) return false;
-    _priority = priority;
+    if ( not _updatePriority(priority) ) return false;
 
     if ( _type != Bool )
       cerr << "[ERROR] Parameter::setBool(): Setting " << Parameter::typeToString(_type)
@@ -168,10 +188,9 @@ namespace Cfg {
   }
 
 
-  bool  Parameter::setInt ( int i, int priority )
+  bool  Parameter::setInt ( int i, Priority priority )
   {
-    if ( priority < _priority ) return false;
-    _priority = priority;
+    if ( not _updatePriority(priority) ) return false;
 
     if ( (_type != Int) and (_type != Enumerate)  )
       cerr << "[ERROR] Parameter::setInt(): Setting " << Parameter::typeToString(_type)
@@ -182,10 +201,9 @@ namespace Cfg {
   } 
 
 
-  bool  Parameter::setDouble ( double d, int priority )
+  bool  Parameter::setDouble ( double d, Priority priority )
   {
-    if ( priority < _priority ) return false;
-    _priority = priority;
+    if ( not _updatePriority(priority) ) return false;
 
     if ( (_type != Double) and (_type != Percentage)  )
       cerr << "[ERROR] Parameter::setDouble(): Setting " << Parameter::typeToString(_type)
@@ -196,14 +214,42 @@ namespace Cfg {
   } 
 
 
-  bool  Parameter::setPercentage ( double d, int priority )
+  bool  Parameter::setPercentage ( double d, Priority priority )
   {
+    if ( not _updatePriority(priority) ) return false;
+
     if ( (_type != Double) and (_type != Percentage)  )
       cerr << "[ERROR] Parameter::setPercentage(): Setting " << Parameter::typeToString(_type)
            << " parameter <" << _id
            << "> as " << Parameter::typeToString(Double)<< " (type mismatch)." << endl;
 
     return _doChange ( AllRequirements, "", false, 0, d );
+  }
+
+
+  void  Parameter::setMin ( int min, Parameter::Priority priority )
+  { if (_updatePriority(priority)) { _minInt = min; setFlags(HasMin); } }
+  
+
+  void  Parameter::setMax ( int max, Parameter::Priority priority )
+  { if (_updatePriority(priority)) { _maxInt = max; setFlags(HasMax); } }
+
+
+  void  Parameter::setMin ( double min, Parameter::Priority priority )
+  { if (_updatePriority(priority)) {
+      _minDouble = min;
+      setFlags ( HasMin );
+      if (_type==Percentage) _minDouble/=100.0;
+    }
+  }
+
+
+  void  Parameter::setMax ( double max, Parameter::Priority priority )
+  { if (_updatePriority(priority)) {
+      _maxDouble = max;
+      setFlags ( HasMax );
+      if (_type==Percentage) _maxDouble/=100.0;
+    }
   }
 
 
