@@ -109,8 +109,8 @@ namespace Cfg {
       inline void               setFlags            ( int mask );
       inline void               unsetFlags          ( int mask );
              bool               setString           ( const std::string&
-                                                    , unsigned int flags   =AllRequirements
                                                     , Priority     priority=UseDefault
+                                                    , unsigned int flags   =AllRequirements
                                                     );
              bool               setBool             ( bool  , Priority priority=UseDefault );
              bool               setInt              ( int   , Priority priority=UseDefault );

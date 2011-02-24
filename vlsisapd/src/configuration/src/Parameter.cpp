@@ -100,7 +100,7 @@ namespace Cfg {
     }
     if ( priority == UseDefault ) _priority = getDefaultPriority();
 
-  //cerr << "New " << typeToString(_type) << " parameter " << _id << " value:" << _value << endl;
+  //cerr << "New " << (void*)this << " " << typeToString(_type) << " parameter " << _id << " value:" << _value << endl;
   }
 
 
@@ -162,10 +162,11 @@ namespace Cfg {
   }
 
 
-  bool  Parameter::setString ( const std::string& s, unsigned int flags, Priority priority )
+  bool  Parameter::setString ( const std::string& s, Priority priority, unsigned int flags )
   {
     if ( not _updatePriority(priority) ) return false;
 
+    flags |= _flags;
     if ( (flags & TypeCheck) and (_type != String) )
       cerr << "[ERROR] Parameter::setString(): Setting " << Parameter::typeToString(_type)
            << " parameter <" << _id
@@ -184,7 +185,7 @@ namespace Cfg {
            << " parameter <" << _id
            << "> as " << Parameter::typeToString(Bool)<< " (type mismatch)." << endl;
 
-    return _doChange ( AllRequirements, "", b, 0, 0.0 );
+    return _doChange ( _flags, "", b, 0, 0.0 );
   }
 
 
@@ -197,7 +198,7 @@ namespace Cfg {
            << " parameter <" << _id
            << "> as " << Parameter::typeToString(Int)<< " (type mismatch)." << endl;
 
-    return _doChange ( AllRequirements, "", false, i, 0.0 );
+    return _doChange ( _flags, "", false, i, 0.0 );
   } 
 
 
@@ -210,7 +211,7 @@ namespace Cfg {
            << " parameter <" << _id
            << "> as " << Parameter::typeToString(Double)<< " (type mismatch)." << endl;
 
-    return _doChange ( AllRequirements, "", false, 0, d );
+    return _doChange ( _flags, "", false, 0, d );
   } 
 
 
@@ -223,7 +224,7 @@ namespace Cfg {
            << " parameter <" << _id
            << "> as " << Parameter::typeToString(Double)<< " (type mismatch)." << endl;
 
-    return _doChange ( AllRequirements, "", false, 0, d );
+    return _doChange ( _flags, "", false, 0, d );
   }
 
 
@@ -255,7 +256,8 @@ namespace Cfg {
 
   bool  Parameter::_doChange ( unsigned int flags, const string& s, bool b, int i, double d )
   {
-  //cerr << "_doChange: " << _id << ":" << _value << " -> \"" << s << "\"|" << b << "|" << i << "|" << d;
+  //cerr << "_doChange: " << _id << ":" << _value << " -> \"" << s << "\"|" << b << "|" << i << "|" << d
+  //     << " [" << _flags << "]";
 
     Configuration* configuration = Configuration::get();
     ostringstream  svalue;
@@ -296,15 +298,17 @@ namespace Cfg {
     }
 
     if ( (flags & NeedRestart) and hasFlags(NeedRestart) ) {
+    //cerr << " needrestart";
       configuration->addLog ( Configuration::LogRestart, _id );
     }
 
     if ( (flags & MustExist) and hasFlags(MustExist) ) {
       if ( _type == String ) {
         bfs::path filePath = ( svalue.str() );
-        if ( not bfs::exists(filePath) )
+        if ( not bfs::exists(filePath) ) {
+        //cerr << " needrestart" << _id << endl;
           configuration->addLog ( Configuration::LogNeedExist, _id );
-        else
+        } else
           configuration->removeLog ( Configuration::LogNeedExist, _id );
       }
     }

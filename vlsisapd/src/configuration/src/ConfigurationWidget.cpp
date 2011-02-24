@@ -140,7 +140,7 @@ namespace Cfg {
   {
     ParameterWidget* pw = find(parameter);
     if ( pw != NULL ) {
-      cerr << "[ERROR] Parameter <" << parameter->getId() << "> already added." << endl;
+      cerr << "[ERROR] ParameterWidget for <" << parameter->getId() << "> already added." << endl;
       return pw;
     }
 

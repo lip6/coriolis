@@ -129,6 +129,9 @@ namespace Cfg {
           case WidgetDescription::Parameter:
             Parameter* parameter = _configuration->getParameter ( widgets[iwidget]->getId() );
             if ( parameter ) {
+              // cerr << "WidgetDescription::Parameter: " << (void*)widgets[iwidget]
+              //      << " " << widgets[iwidget]->getId()
+              //      << " " << (void*)parameter << endl;
               cw->addParameter ( _tabs[itab]->getName()
                                , parameter
                                , widgets[iwidget]->getLabel()

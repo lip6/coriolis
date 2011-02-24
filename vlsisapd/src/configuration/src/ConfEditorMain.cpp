@@ -91,10 +91,10 @@ int main ( int argc, char* argv[] )
       conf->readFromFile ( dotConfPath.string() );
     }
 
-    cout << "misc.catchCore:   " << conf->getParameter("misc.catchCore"  )->asBool() << endl;
-    cout << "kite.eventsLimit: " << conf->getParameter("kite.eventsLimit")->asInt () << endl;
+  //cout << "misc.catchCore:   " << conf->getParameter("misc.catchCore"  )->asBool() << endl;
+  //cout << "kite.eventsLimit: " << conf->getParameter("kite.eventsLimit")->asInt () << endl;
 
-    bfs::path pyDotConfPath ( "./.coriolis2.init.py" );
+    bfs::path pyDotConfPath ( "./.coriolis2.configuration.py" );
     if ( bfs::exists(pyDotConfPath) ) {
       cout << "Reading python dot configuration: <" << pyDotConfPath.string() << ">." << endl;
       Py_Initialize ();

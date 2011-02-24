@@ -162,6 +162,8 @@ namespace Cfg {
 
   inline Parameter* getParamInt ( const std::string& id, int value=0 )
   {
+  //std::cerr << "getParamInt() " << id << " value:" << value << std::endl;
+
     Parameter* parameter = Configuration::get()->getParameter(id,Parameter::Int);
     if ( parameter == NULL ) {
       parameter = Configuration::get()->addParameter ( id, Parameter::Int, "0" );
@@ -221,6 +223,7 @@ namespace Cfg {
   {
     Parameter* parameter = Configuration::get()->getParameter(_id);
     if ( parameter != NULL ) parameter->setString ( _valid
+                                                  , Configuration::getDefaultPriority()
                                                   , (Parameter::AllRequirements | Parameter::FromString)
                                                   & ~Parameter::TypeCheck
                                                   );

@@ -19,14 +19,11 @@
 // +-----------------------------------------------------------------+
 
 
-#include <boost/python.hpp>
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include  <sstream>
+#include  "vlsisapd/configuration/BoostPythonStlWrappers.h"
+#include  "vlsisapd/configuration/Configuration.h"
+#include  "vlsisapd/configuration/ParameterWidget.h"
 using namespace boost::python;
-
-#include "vlsisapd/openChams/PySTLMapWrapper.h"
-using OpenChams::map_item;
-
-#include "vlsisapd/configuration/Configuration.h"
 
 
 namespace {
@@ -34,88 +31,131 @@ namespace {
   using namespace Cfg;
 
 
-  template<typename EnumType>
-  struct EnumToInt {
-      static PyObject* convert ( EnumType& type )
-      { return incref ( object((int)type).ptr() ); }
-  };
-
-
 // Thin wrappers for function members overloads.
-  void  parameterSetMinInt1    ( Parameter& self, int    min ) { self.setMin(min); }
-  void  parameterSetMinDouble1 ( Parameter& self, double min ) { self.setMin(min); }
-  void  parameterSetMaxInt1    ( Parameter& self, int    max ) { self.setMax(max); }
-  void  parameterSetMaxDouble1 ( Parameter& self, double max ) { self.setMax(max); }
+  bool  paramSetString1 ( Parameter& self, const std::string& value )
+  { return self.setString(value); }
 
-// STL map wrapper for boost::python.
-  template<typename Map>
-  class MapWrapper {
-    public:
-      typedef typename Map::key_type    Key;
-      typedef typename Map::mapped_type Value;
-    public:
-      static Value& get    ( Map&, const Key& );
-      static void   set    ( Map&, const Key&, const Value& );
-      static void   del    ( Map&, const Key& );
-      static bool   in     ( Map&, const Key& );
-      static list   keys   ( Map& );
-      static list   values ( Map& );
-      static list   items  ( Map& );
-  };
+  bool  paramSetString2 ( Parameter& self, const std::string& value, unsigned int flags )
+  { return self.setString(value,Configuration::getDefaultPriority(),flags); }
 
+  bool  paramSetString3 ( Parameter& self, const std::string& value, unsigned int flags, Parameter::Priority pri )
+  { return self.setString(value,pri,flags); }
 
-  inline void  KeyError () { PyErr_SetString(PyExc_KeyError, "Key not found"); }
+  bool  paramSetBool1       ( Parameter& self, bool   value ) { return self.setBool(value); }
+  bool  paramSetInt1        ( Parameter& self, int    value ) { return self.setInt(value); }
+  bool  paramSetDouble1     ( Parameter& self, double value ) { return self.setDouble(value); }
+  bool  paramSetPercentage1 ( Parameter& self, double value ) { return self.setPercentage(value); }
 
-  
-  template<typename Map>
-  typename MapWrapper<Map>::Value& MapWrapper<Map>::get ( Map& m, const typename MapWrapper<Map>::Key& k )
+  bool  paramSetBool2       ( Parameter& self, bool   value, Parameter::Priority pri ) { return self.setBool(value,pri); }
+  bool  paramSetInt2        ( Parameter& self, int    value, Parameter::Priority pri ) { return self.setInt(value,pri); }
+  bool  paramSetDouble2     ( Parameter& self, double value, Parameter::Priority pri ) { return self.setDouble(value,pri); }
+  bool  paramSetPercentage2 ( Parameter& self, double value, Parameter::Priority pri ) { return self.setPercentage(value,pri); }
+
+  void  paramSetMinInt1     ( Parameter& self, int    min ) { self.setMin(min); }
+  void  paramSetMinDouble1  ( Parameter& self, double min ) { self.setMin(min); }
+  void  paramSetMaxInt1     ( Parameter& self, int    max ) { self.setMax(max); }
+  void  paramSetMaxDouble1  ( Parameter& self, double max ) { self.setMax(max); }
+
+  std::string  reprParameter ( const Parameter* p )
   {
-    static Value notFound;
-    if( m.find(k) != m.end() ) return m[k];
-    KeyError ();
-    return notFound;
+    std::ostringstream repr;
+    repr << "<Parameter id=\"" << p->getId()
+         <<       "\" type=\"" << Parameter::typeToString(p->getType())
+         <<      "\" value=\"";
+
+    if ( p->getType() == Parameter::Percentage ) repr << p->asPercentageString();
+    else repr << p->asString();
+
+    repr << "\">";
+
+    return repr.str();
   }
 
-  template<typename Map>
-  void  MapWrapper<Map>::set ( Map& m, const MapWrapper<Map>::Key& k, const typename MapWrapper<Map>::Value& v )
-  { m[k] = v; }
 
-  template<typename Map>
-  void  MapWrapper<Map>::del ( Map& m, const typename MapWrapper<Map>::Key& k)
-  {
-    if( m.find(k) != m.end() ) m.erase(k);
-    else KeyError ();
-  }
+  void  layoutAddTab ( LayoutDescription& self
+                     , const std::string& tabName
+                     , const std::string& id
+                     )
+  { self.addTab(tabName,id); }
 
-  template<typename Map>
-  bool  MapWrapper<Map>::in ( Map& m, const typename MapWrapper<Map>::Key& k )
-  { return m.find(k) != m.end(); }
 
-  template<typename Map>
-  list  MapWrapper<Map>::keys ( Map& m )
-  {
-    list l;
-    for(typename Map::iterator it = m.begin() ; it != m.end() ; ++it )
-      l.append ( it->first );
-    return l;
-  }
+  void  layoutAddSection2 ( LayoutDescription& self
+                          , const std::string& tabName
+                          , const std::string& section
+                          )
+  { self.addSection(tabName,section); };
 
-  template<typename Map>
-  list  MapWrapper<Map>::values ( Map& m)
-  {
-    list l;
-    for( typename Map::iterator it=m.begin(); it != m.end() ; ++it )
-      l.append ( it->second );
-    return l;
-  }
 
-  template<typename Map>
-  list  MapWrapper<Map>::items ( Map& m ) {
-    list l;
-    for( typename Map::iterator it=m.begin(); it!=m.end(); ++it )
-      l.append( make_tuple(it->first,it->second) );
-    return l;
-  }
+  void  layoutAddSection3 ( LayoutDescription& self
+                          , const std::string& tabName
+                          , const std::string& section
+                          , int                column
+                          )
+  { self.addSection(tabName,section,column); };
+
+
+  void  layoutAddParameter3 ( LayoutDescription& self
+                            , const std::string& tabName
+                            , const std::string& id
+                            , const std::string& label
+                            )
+  { self.addParameter(tabName,id,label); };
+
+
+  void  layoutAddParameter4 ( LayoutDescription& self
+                            , const std::string& tabName
+                            , const std::string& id
+                            , const std::string& label
+                            , int                column
+                            )
+  { self.addParameter(tabName,id,label,column); };
+
+
+  void  layoutAddParameter5 ( LayoutDescription& self
+                            , const std::string& tabName
+                            , const std::string& id
+                            , const std::string& label
+                            , int                column
+                            , int                span
+                            )
+  { self.addParameter(tabName,id,label,column,span); };
+
+
+  void  layoutAddParameter6 ( LayoutDescription& self
+                            , const std::string& tabName
+                            , const std::string& id
+                            , const std::string& label
+                            , int                column
+                            , int                span
+                            , unsigned int       flags
+                            )
+  { self.addParameter(tabName,id,label,column,span,flags); };
+
+  Parameter* cfgGetParameter1 ( const Configuration& self, const std::string& id )
+  { return self.getParameter(id); }
+
+  Parameter* cfgGetParameter2 ( const Configuration& self, const std::string& id, Parameter::Type type )
+  { return self.getParameter(id,type); }
+
+  Parameter* cfgAddParameter2 ( Configuration& self, const std::string& id, Parameter::Type type, const std::string& value )
+  { return self.addParameter(id,type,value); }
+
+  Parameter* cfgAddParameter3 ( Configuration& self, const std::string& id, Parameter::Type type, const std::string& value, Parameter::Priority pri )
+  { return self.addParameter(id,type,value,pri); }
+
+  Parameter* getParamString1     ( const std::string& id ) { return getParamString(id); }
+  Parameter* getParamBool1       ( const std::string& id ) { return getParamBool(id); }
+  Parameter* getParamInt1        ( const std::string& id ) { return getParamInt(id); }
+  Parameter* getParamEnumerate1  ( const std::string& id ) { return getParamEnumerate(id); }
+  Parameter* getParamDouble1     ( const std::string& id ) { return getParamDouble(id); }
+  Parameter* getParamPercentage1 ( const std::string& id ) { return getParamPercentage(id); }
+
+  Parameter* getParamString2     ( const std::string& id, const std::string& value ) { return getParamString(id,value); }
+  Parameter* getParamInt2        ( const std::string& id, int                value ) { return getParamInt(id,value); }
+  Parameter* getParamEnumerate2  ( const std::string& id, int                value ) { return getParamEnumerate(id,value); }
+  Parameter* getParamBool2       ( const std::string& id, bool               value ) { return getParamBool(id,value); }
+  Parameter* getParamDouble2     ( const std::string& id, double             value ) { return getParamDouble(id,value); }
+  Parameter* getParamPercentage2 ( const std::string& id, double             value ) { return getParamPercentage(id,value); }
 
 
 } // End of anonymous namespace.
@@ -125,6 +165,9 @@ namespace Cfg {
 
 
   BOOST_PYTHON_MODULE(Cfg) {
+
+    VectorWrapper< std::vector<std::string>          >::wrap ( "StringVector" );
+    VectorWrapper< std::vector<Parameter::EnumValue> >::wrap ( "EnumValueVector" );
 
     typedef  void (Parameter::* VoidIntPrioritySign    )(int   ,Parameter::Priority)  ;
     typedef  void (Parameter::* VoidDoublePrioritySign )(double,Parameter::Priority)  ;
@@ -141,73 +184,74 @@ namespace Cfg {
   // Parameter overloaded function members.
     BoolIntConstSign     paramCheckValueInt    = (BoolIntConstSign)   &Parameter::checkValue;
     BoolDoubleConstSign  paramCheckValueDouble = (BoolDoubleConstSign)&Parameter::checkValue;
-    BoolStringSign       paramSetString1       = (BoolStringSign)     &Parameter::setString;
-    BoolStringFlagsSign  paramSetString2       = (BoolStringFlagsSign)&Parameter::setString;
-    BoolBoolSign         paramSetBool1         = (BoolBoolSign)       &Parameter::setBool;
-    BoolIntSign          paramSetInt1          = (BoolIntSign)        &Parameter::setInt;
-    BoolDoubleSign       paramSetDouble1       = (BoolDoubleSign)     &Parameter::setDouble;
-    BoolDoubleSign       paramSetPercentage1   = (BoolDoubleSign)     &Parameter::setPercentage;
 
     implicitly_convertible<Parameter::Type    ,int>();
     implicitly_convertible<Parameter::Flags   ,int>();
     implicitly_convertible<Parameter::Priority,int>();
 
-  //to_python_converter<const Parameter::Type    ,EnumToInt<const Parameter::Type>     >();
+  //to_python_converter<const Parameter::Type,EnumToInt<const Parameter::Type> >();
 
     {
       scope  paramScope
         ( class_<Parameter>("Parameter", init<const std::string&, Parameter::Type, const std::string&
                                              ,optional<Parameter::Priority> >())
-                           .def("isFile"            , &Parameter::isFile)
-                           .def("isPath"            , &Parameter::isPath)
-                           .def("hasMin"            , &Parameter::hasMin)
-                           .def("hasMax"            , &Parameter::hasMax)
-                           .def("hasNeedRestart"    , &Parameter::hasNeedRestart)
-                           .def("hasMustExist"      , &Parameter::hasMustExist)
-                         //.def("hasFlags"          , &Parameter::hasFlags)
-                           .def("getId"             , &Parameter::getId, return_value_policy<reference_existing_object>())
-                           .def("getMinInt"         , &Parameter::getMinInt)
-                           .def("getMaxInt"         , &Parameter::getMaxInt)
-                           .def("getMinDouble"      , &Parameter::getMinDouble)
-                           .def("getMaxDouble"      , &Parameter::getMaxDouble)
-                           .def("checkValue"        , paramCheckValueInt)
-                           .def("checkValue"        , paramCheckValueDouble)
-                           .def("asString"          , &Parameter::asString, return_value_policy<reference_existing_object>())
-                           .def("asPercentageString", &Parameter::asPercentageString)
-                           .def("asBool"            , &Parameter::asBool)
-                           .def("asInt"             , &Parameter::asInt)
-                           .def("asPercentage"      , &Parameter::asPercentage)
-                           .def("addValue"          , &Parameter::addValue)
-                           .def("addSlave"          , &Parameter::addSlave)
-                           .def("setPriority"       , &Parameter::setPriority)
-                           .def("setString"         , &Parameter::setString)
-                           .def("setString"         , paramSetString1)
-                           .def("setString"         , paramSetString2)
-                           .def("setBool"           , &Parameter::setBool)
-                           .def("setBool"           , paramSetBool1)
-                           .def("setInt"            , &Parameter::setInt)
-                           .def("setInt"            , paramSetInt1)
-                           .def("setDouble"         , &Parameter::setDouble)
-                           .def("setDouble"         , paramSetDouble1)
-                           .def("setPercentage"     , &Parameter::setPercentage)
-                           .def("setPercentage"     , paramSetPercentage1)
-                           .def("setMin"            , &parameterSetMinInt1)
-                           .def("setMin"            , &parameterSetMinDouble1)
-                           .def("setMax"            , &parameterSetMaxInt1)
-                           .def("setMax"            , &parameterSetMaxDouble1)
+        .def("__repr__"          , reprParameter)
+        .def("isFile"            , &Parameter::isFile)
+        .def("isPath"            , &Parameter::isPath)
+        .def("hasMin"            , &Parameter::hasMin)
+        .def("hasMax"            , &Parameter::hasMax)
+        .def("hasNeedRestart"    , &Parameter::hasNeedRestart)
+        .def("hasMustExist"      , &Parameter::hasMustExist)
+        .def("hasFlags"          , &Parameter::hasFlags)
+        .def("getId"             , &Parameter::getId, return_value_policy<copy_const_reference>())
+        .def("getMinInt"         , &Parameter::getMinInt)
+        .def("getMaxInt"         , &Parameter::getMaxInt)
+        .def("getMinDouble"      , &Parameter::getMinDouble)
+        .def("getMaxDouble"      , &Parameter::getMaxDouble)
+        .def("checkValue"        , paramCheckValueInt)
+        .def("checkValue"        , paramCheckValueDouble)
+        .def("asString"          , &Parameter::asString, return_value_policy<copy_const_reference>())
+        .def("asPercentageString", &Parameter::asPercentageString)
+        .def("asBool"            , &Parameter::asBool)
+        .def("asInt"             , &Parameter::asInt)
+        .def("asPercentage"      , &Parameter::asPercentage)
+        .def("getSlaves"         , &Parameter::getSlaves, return_value_policy<reference_existing_object>())
+        .def("getValues"         , &Parameter::getValues, return_value_policy<reference_existing_object>())
+        .def("addValue"          , &Parameter::addValue)
+        .def("addSlave"          , &Parameter::addSlave)
+        .def("setPriority"       , &Parameter::setPriority)
+        .def("setString"         , paramSetString1)
+        .def("setString"         , paramSetString2)
+        .def("setString"         , paramSetString3)
+        .def("setBool"           , paramSetBool1)
+        .def("setBool"           , paramSetBool2)
+        .def("setInt"            , paramSetInt1)
+        .def("setInt"            , paramSetInt2)
+        .def("setDouble"         , paramSetDouble1)
+        .def("setDouble"         , paramSetDouble2)
+        .def("setPercentage"     , paramSetPercentage1)
+        .def("setPercentage"     , paramSetPercentage2)
+        .def("setMin"            , paramSetMinInt1)
+        .def("setMin"            , paramSetMinDouble1)
+        .def("setMax"            , paramSetMaxInt1)
+        .def("setMax"            , paramSetMaxDouble1)
+        .add_property("flags", &Parameter::getFlags, &Parameter::setFlags)
+        .add_property("type" , &Parameter::getType)
+        );
 
-                         //.add_property("flags", &Parameter::getFlags, &Parameter::setFlags)
-                           .add_property("type" , &Parameter::getType)
-                         );
+      class_<Parameter::EnumValue>("Parameter::EnumValue",init<std::string,int>())
+        .def_readonly("label",&Parameter::EnumValue::_label)
+        .def_readonly("value",&Parameter::EnumValue::_value)
+        ;
 
       enum_<Parameter::Type>("Type")
-      .value("Unknown"   ,Parameter::Unknown)
-      .value("String"    ,Parameter::String)
-      .value("Bool"      ,Parameter::Bool)
-      .value("Int"       ,Parameter::Int)
-      .value("Enumerate" ,Parameter::Enumerate)
-      .value("Double"    ,Parameter::Double)
-      .value("Percentage",Parameter::Percentage)
+        .value("Unknown"   ,Parameter::Unknown)
+        .value("String"    ,Parameter::String)
+        .value("Bool"      ,Parameter::Bool)
+        .value("Int"       ,Parameter::Int)
+        .value("Enumerate" ,Parameter::Enumerate)
+        .value("Double"    ,Parameter::Double)
+        .value("Percentage",Parameter::Percentage)
       ;
       
       enum_<Parameter::Priority>("Priority")
@@ -231,40 +275,45 @@ namespace Cfg {
       ;
     }
 
+    {
+      scope  layoutScope
+        ( class_<LayoutDescription>("LayoutDescription", no_init)
+        .def("addTab"      , layoutAddTab)
+        .def("addRule"     , &LayoutDescription::addRule)
+        .def("addTitle"    , &LayoutDescription::addTitle)
+        .def("addSection"  , layoutAddSection2)
+        .def("addSection"  , layoutAddSection3)
+        .def("addParameter", layoutAddParameter3)
+        .def("addParameter", layoutAddParameter4)
+        .def("addParameter", layoutAddParameter5)
+        .def("addParameter", layoutAddParameter6)
+        );
+    }
+
     typedef  std::map <const std::string,Parameter*>  ParametersMap;
     typedef  std::pair<const std::string,Parameter*>  ParametersPair;
 
-    class_<ParametersPair>("ParametersPair")
-      .def_readonly ("key"  , &ParametersPair::first )
-      .def_readwrite("value", &ParametersPair::second)
-      ;
-    class_<ParametersMap>("ParametersMap")
-      .def("__len__"      , &ParametersMap::size)
-      .def("clear"        , &ParametersMap::clear)
-      .def("__getitem__"  , &MapWrapper<ParametersMap>::get, return_value_policy<reference_existing_object>())
-      .def("__setitem__"  , &MapWrapper<ParametersMap>::set, return_value_policy<reference_existing_object>())
-      .def("__delitem__"  , &MapWrapper<ParametersMap>::del)
-      .def("__contains__" , &MapWrapper<ParametersMap>::in )
-      .def("has_key"      , &MapWrapper<ParametersMap>::in )
-      .def("keys"         , &MapWrapper<ParametersMap>::keys )
-      .def("values"       , &MapWrapper<ParametersMap>::values )
-      .def("items"        , &MapWrapper<ParametersMap>::items )
-      ;
+    PairWrapper<ParametersPair>::wrap ( "ParametersPair", "key", "value" );
+    MapWrapper <ParametersMap >::wrap ( "ParametersMap" );
 
   // Configuration overloaded function members.
-    Parameter* (Configuration::*CfgGetParameter1) ( const std::string& ) const                  = (Parameter* (Configuration:: *)(const std::string&) const)                &Configuration::getParameter;
-    Parameter* (Configuration::*CfgGetParameter2) ( const std::string&, Parameter::Type ) const = (Parameter* (Configuration:: *)(const std::string&,Parameter::Type) const)&Configuration::getParameter;
+    typedef  LayoutDescription& (Configuration::* LayoutVoidSign )();
+
+    LayoutVoidSign  CfgGetLayout0 = (LayoutVoidSign)&Configuration::getLayout;
 
     {
       scope  confScope
         ( class_<Configuration>("Configuration", no_init)
         .def("get"                , &Configuration::get                , return_value_policy<reference_existing_object>())
-        .def("getParameter"       , CfgGetParameter1                   , return_value_policy<reference_existing_object>())
-        .def("getParameter"       , CfgGetParameter2                   , return_value_policy<reference_existing_object>())
+        .def("getParameter"       , cfgGetParameter1                   , return_value_policy<reference_existing_object>())
+        .def("getParameter"       , cfgGetParameter2                   , return_value_policy<reference_existing_object>())
+        .def("addParameter"       , cfgAddParameter2                   , return_value_policy<reference_existing_object>())
+        .def("addParameter"       , cfgAddParameter3                   , return_value_policy<reference_existing_object>())
         .def("pushDefaultPriority", &Configuration::pushDefaultPriority)
         .def("popDefaultPriority" , &Configuration::popDefaultPriority )
         .def("getDefaultPriority" , &Configuration::getDefaultPriority )
         .def("getParameters"      , &Configuration::getParameters      , return_value_policy<reference_existing_object>())
+        .def("getLayout"          , CfgGetLayout0                      , return_value_policy<reference_existing_object>())
         .staticmethod("get")
         .staticmethod("pushDefaultPriority")
         .staticmethod("popDefaultPriority")
@@ -280,27 +329,6 @@ namespace Cfg {
         ;
     }
 
-
-  // Configuration overloaded functions.
-    typedef  Parameter* (*ParamStringSign      )(const std::string&);
-    typedef  Parameter* (*ParamStringBoolSign  )(const std::string&, bool);
-    typedef  Parameter* (*ParamStringIntSign   )(const std::string&, int);
-    typedef  Parameter* (*ParamStringDoubleSign)(const std::string&, double);
-    typedef  Parameter* (*ParamStringStringSign)(const std::string&, const std::string&);
-
-    ParamStringSign        getParamString1     = (ParamStringSign      )getParamString;
-    ParamStringStringSign  getParamString2     = (ParamStringStringSign)getParamString;
-    ParamStringSign        getParamBool1       = (ParamStringSign      )getParamBool;
-    ParamStringBoolSign    getParamBool2       = (ParamStringBoolSign  )getParamBool;
-    ParamStringSign        getParamInt1        = (ParamStringSign      )getParamInt;
-    ParamStringIntSign     getParamInt2        = (ParamStringIntSign   )getParamInt;
-    ParamStringSign        getParamEnumerate1  = (ParamStringSign      )getParamEnumerate;
-    ParamStringIntSign     getParamEnumerate2  = (ParamStringIntSign   )getParamEnumerate;
-    ParamStringSign        getParamDouble1     = (ParamStringSign      )getParamDouble;
-    ParamStringDoubleSign  getParamDouble2     = (ParamStringDoubleSign)getParamDouble;
-    ParamStringSign        getParamPercentage1 = (ParamStringSign      )getParamPercentage;
-    ParamStringDoubleSign  getParamPercentage2 = (ParamStringDoubleSign)getParamPercentage;
-
     def("getParamString"    , getParamString1    , return_value_policy<reference_existing_object>());
     def("getParamString"    , getParamString2    , return_value_policy<reference_existing_object>());
     def("getParamBool"      , getParamBool1      , return_value_policy<reference_existing_object>());
@@ -313,6 +341,30 @@ namespace Cfg {
     def("getParamDouble"    , getParamDouble2    , return_value_policy<reference_existing_object>());
     def("getParamPercentage", getParamPercentage1, return_value_policy<reference_existing_object>());
     def("getParamPercentage", getParamPercentage2, return_value_policy<reference_existing_object>());
+
+    enum_<ParameterWidget::Flags>("ParameterWidgetFlags")
+      .value("UseSpinBox",ParameterWidget::UseSpinBox)
+      .value("IsFileName",ParameterWidget::IsFileName)
+      .value("IsPathName",ParameterWidget::IsPathName)
+      ;
+
+    // {
+    //   scope  parameterWidgetScope
+    //     ( class_<ParameterWidget>("ParameterWidget", no_init)
+    //     .def("getParameter", &ParameterWidget::getParameter, return_value_policy<reference_existing_object>())
+    //     .def("hasFlags"    , &ParameterWidget::hasFlags    )
+    //     .def("unsetFlags"  , &ParameterWidget::unsetFlags    )
+    //     .add_property("flags", &ParameterWidget::getFlags, &ParameterWidget::setFlags)
+    //     );
+
+    //   implicitly_convertible<ParameterWidget::Flags,int>();
+
+    //   enum_<ParameterWidget::Flags>("Flags")
+    //     .value("UseSpinBox",ParameterWidget::UseSpinBox)
+    //     .value("IsFileName",ParameterWidget::IsFileName)
+    //     .value("IsPathName",ParameterWidget::IsPathName)
+    //     ;
+    // }
 
   } // End of Configuration BOOST_PYTHON_MODULE.
 

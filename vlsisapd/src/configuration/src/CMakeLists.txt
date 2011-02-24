@@ -19,6 +19,7 @@
 		   set ( includes        vlsisapd/configuration/Parameter.h
                                          vlsisapd/configuration/LayoutDescription.h
                                          vlsisapd/configuration/Configuration.h
+                                         vlsisapd/configuration/BoostPythonStlWrappers.h
                        )	         
 		   set ( cpps            Parameter.cpp
                                          LayoutDescription.cpp

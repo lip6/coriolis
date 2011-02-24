@@ -147,6 +147,7 @@ namespace {
                                                 );
     } else {
       _parameter->setString ( _getAttributeValue("value")
+                            , Configuration::getDefaultPriority()
                             , (Parameter::AllRequirements | Parameter::FromString)
                             & ~Parameter::TypeCheck
                             );
