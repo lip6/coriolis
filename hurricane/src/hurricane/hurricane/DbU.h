@@ -77,6 +77,7 @@ namespace Hurricane {
       static inline Unit                db                      ( long value );
       static inline Unit                grid                    ( double value );
       static inline Unit                lambda                  ( double value );
+      static inline Unit                physicalToDbu           ( double value, UnitPower p );
     // Precision & Resolution Managment.                        
       static        unsigned int        getPrecision            ();
       static        unsigned int        getMaximalPrecision     ();
@@ -135,6 +136,7 @@ namespace Hurricane {
   inline DbU::Unit  DbU::db                      ( long value )                 { return value; }
   inline DbU::Unit  DbU::grid                    ( double value )               { return (long)rint( value/_resolution ); }
   inline DbU::Unit  DbU::lambda                  ( double value )               { return grid(value*_gridsPerLambda); }
+  inline DbU::Unit  DbU::physicalToDbu           ( double value, UnitPower p )  { return (long)rint((value*getUnitPower(p))/_physicalsPerGrid); }
   inline long       DbU::getDb                   ( DbU::Unit u )                { return u; }
   inline double     DbU::getGrid                 ( DbU::Unit u )                { return _resolution*(double)u; }
   inline double     DbU::getGrid                 ( double u )                   { return _resolution*u; }
