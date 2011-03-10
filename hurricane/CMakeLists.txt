@@ -16,6 +16,7 @@
  setup_boost(regex filesystem)
 
  set(QT_USE_QTXML "true")
+ find_package(LibXml2 REQUIRED)
  find_package(Qt4 REQUIRED)
  find_package(BISON REQUIRED)
  find_package(FLEX REQUIRED)
