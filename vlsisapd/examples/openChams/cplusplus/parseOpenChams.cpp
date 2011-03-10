@@ -99,7 +99,7 @@ int main(int argc, char * argv[]) {
         cerr << " + schematic" << endl;
         for (map<OpenChams::Name, OpenChams::Schematic::Infos*>::const_iterator sit = schematic->getInstances().begin() ; sit != schematic->getInstances().end() ; ++sit) {
             OpenChams::Schematic::Infos* inf = (*sit).second;
-            cerr << " | + instance:  name: " << ((*sit).first).getString() << " - x: " << inf->getX() << " - y: " << inf->getY() << " - symmetry: " << inf->getSymmetry().getString() << endl;
+            cerr << " | + instance:  name: " << ((*sit).first).getString() << " - x: " << inf->getX() << " - y: " << inf->getY() << " - orientation: " << inf->getOrientation().getString() << endl;
         }
         if (schematicNet) {
             for (size_t i = 0 ; i < netlist->getNets().size() ; i++) {
@@ -108,7 +108,7 @@ int main(int argc, char * argv[]) {
                 if (!net->hasNoPorts()) {
                     for (size_t j = 0 ; j < net->getPorts().size() ; j++) {
                         OpenChams::Port* port = net->getPorts()[j];
-                        cerr << " | | + port  type: " << port->getType().getString() << " - idx: " << port->getIndex() << " - x: " << port->getX() << " - y: " << port->getY() << " - sym: " << port->getSymmetry().getString() << endl;
+                        cerr << " | | + port  type: " << port->getType().getString() << " - idx: " << port->getIndex() << " - x: " << port->getX() << " - y: " << port->getY() << " - orientation: " << port->getOrientation().getString() << endl;
                     }
                 }
                 if (!net->hasNoWires()) {

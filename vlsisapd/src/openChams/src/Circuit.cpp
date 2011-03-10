@@ -561,21 +561,21 @@ void Circuit::readSchematic(xmlNode* node) {
 }
     
 void Circuit::readInstanceSchematic(xmlNode* node, Schematic* schematic) {
-    xmlChar* nameC = xmlGetProp(node, (xmlChar*)"name");
-    xmlChar* xC    = xmlGetProp(node, (xmlChar*)"x");
-    xmlChar* yC    = xmlGetProp(node, (xmlChar*)"y");
-    xmlChar* symC  = xmlGetProp(node, (xmlChar*)"sym");
-    if (nameC && xC && yC && symC) {
+    xmlChar* nameC   = xmlGetProp(node, (xmlChar*)"name");
+    xmlChar* xC      = xmlGetProp(node, (xmlChar*)"x");
+    xmlChar* yC      = xmlGetProp(node, (xmlChar*)"y");
+    xmlChar* orientC = xmlGetProp(node, (xmlChar*)"orient");
+    if (nameC && xC && yC && orientC) {
         Name   iName((const char*)nameC);
         double x = ::getValue<double>(xC);
         double y = ::getValue<double>(yC);
-        string symStr((const char*)symC);
-        string symComp[8] = {"ID", "R1", "R2", "R3", "MX", "XR", "MY", "YR"};
-    	vector<string> symComps (symComp, symComp+8);
-        check_uppercase(symStr, symComps, "[ERROR] In 'schematic'.'instance', 'sym' must be 'ID', 'R1', 'R2', 'R3', 'MX', 'XR', 'MY' or 'YR'.");
-        schematic->addInstance(iName, x, y, Name(symStr));
+        string orientStr((const char*)orientC);
+        string orientComp[8] = {"ID", "R1", "R2", "R3", "MX", "XR", "MY", "YR"};
+    	vector<string> orientComps (orientComp, orientComp+8);
+        check_uppercase(orientStr, orientComps, "[ERROR] In 'schematic'.'instance', 'orient' must be 'ID', 'R1', 'R2', 'R3', 'MX', 'XR', 'MY' or 'YR'.");
+        schematic->addInstance(iName, x, y, Name(orientStr));
     } else {
-        throw OpenChamsException("[ERROR] 'instance' node in 'schematic' must have 'name', 'x', 'y' and 'sym' properties.");
+        throw OpenChamsException("[ERROR] 'instance' node in 'schematic' must have 'name', 'x', 'y' and 'orient' properties.");
     }
 }
 
@@ -608,23 +608,23 @@ void Circuit::readNetSchematic(xmlNode* node, Circuit* circuit) {
 }
 
 void Circuit::readPortSchematic(xmlNode* node, Net* net) {
-    xmlChar* typeC = xmlGetProp(node, (xmlChar*)"type");
-    xmlChar* idxC  = xmlGetProp(node, (xmlChar*)"idx");
-    xmlChar* xC    = xmlGetProp(node, (xmlChar*)"x");
-    xmlChar* yC    = xmlGetProp(node, (xmlChar*)"y");
-    xmlChar* symC  = xmlGetProp(node, (xmlChar*)"sym");
-    if (typeC && idxC && xC && yC && symC) {
+    xmlChar* typeC   = xmlGetProp(node, (xmlChar*)"type");
+    xmlChar* idxC    = xmlGetProp(node, (xmlChar*)"idx");
+    xmlChar* xC      = xmlGetProp(node, (xmlChar*)"x");
+    xmlChar* yC      = xmlGetProp(node, (xmlChar*)"y");
+    xmlChar* orientC = xmlGetProp(node, (xmlChar*)"orient");
+    if (typeC && idxC && xC && yC && orientC) {
         Name pType((const char*)typeC);
         unsigned idx = ::getValue<unsigned>(idxC);
         double   x   = ::getValue<double>(xC);
         double   y   = ::getValue<double>(yC);
-        string symStr((const char*)symC);
-        string symComp[8] = {"ID", "R1", "R2", "R3", "MX", "XR", "MY", "YR"};
-    	vector<string> symComps (symComp, symComp+8);
-        check_uppercase(symStr, symComps, "[ERROR] In 'schematic'.'port', 'sym' must be 'ID', 'R1', 'R2', 'R3', 'MX', 'XR', 'MY' or 'YR'.");
-        net->addPort(pType, idx, x, y, Name(symStr));
+        string orientStr((const char*)orientC);
+        string orientComp[8] = {"ID", "R1", "R2", "R3", "MX", "XR", "MY", "YR"};
+    	vector<string> orientComps (orientComp, orientComp+8);
+        check_uppercase(orientStr, orientComps, "[ERROR] In 'schematic'.'port', 'orient' must be 'ID', 'R1', 'R2', 'R3', 'MX', 'XR', 'MY' or 'YR'.");
+        net->addPort(pType, idx, x, y, Name(orientStr));
     } else {
-        throw OpenChamsException("[ERROR] 'schematic'.'port' must have 'type', 'idx', 'x', 'y' and 'sym properties.");
+        throw OpenChamsException("[ERROR] 'schematic'.'port' must have 'type', 'idx', 'x', 'y' and 'orient' properties.");
     }
 }
 
@@ -1067,7 +1067,7 @@ bool Circuit::writeToFile(string filePath) {
         file << "  <schematic>" << endl;
         for (map<Name, Schematic::Infos*>::const_iterator it = _schematic->getInstances().begin() ; it != _schematic->getInstances().end(); ++it ) {
             Schematic::Infos* infos = (*it).second;
-            file << "    <instance name=\"" << ((*it).first).getString() << "\" x=\"" << infos->getX() << "\" y=\"" << infos->getY() << "\" sym=\"" << infos->getSymmetry().getString() << "\"/>" << endl;
+            file << "    <instance name=\"" << ((*it).first).getString() << "\" x=\"" << infos->getX() << "\" y=\"" << infos->getY() << "\" orient=\"" << infos->getOrientation().getString() << "\"/>" << endl;
         }
         if (schematicNets) {
             for (size_t i = 0 ; i < nets.size() ; i++) {
@@ -1079,7 +1079,7 @@ bool Circuit::writeToFile(string filePath) {
                     Port* port = net->getPorts()[j];
                     if (!port)
                         continue;
-                    file << "      <port type=\"" << port->getType().getString() << "\" idx=\"" << port->getIndex() << "\" x=\"" << port->getX() << "\" y=\"" << port->getY() << "\" sym=\"" << port->getSymmetry().getString() << "\"/>" << endl;
+                    file << "      <port type=\"" << port->getType().getString() << "\" idx=\"" << port->getIndex() << "\" x=\"" << port->getX() << "\" y=\"" << port->getY() << "\" orient=\"" << port->getOrientation().getString() << "\"/>" << endl;
                 }
                 for (size_t j = 0 ; j < net->getWires().size() ; j++) {
                     Wire* wire = net->getWires()[j];

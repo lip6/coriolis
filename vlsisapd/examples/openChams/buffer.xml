@@ -44,10 +44,10 @@
     </nets>
   </netlist>
   <schematic>
-    <instance name="inv1" x="2490" y="2600" sym="ID"/>
-    <instance name="inv2" x="2490" y="2300" sym="ID"/>
+    <instance name="inv1" x="2490" y="2600" orient="ID"/>
+    <instance name="inv2" x="2490" y="2300" orient="ID"/>
     <net name="in">
-      <port type="inV" idx="0" x="2415" y="2700" sym="MY"/>
+      <port type="inV" idx="0" x="2415" y="2700" orient="MY"/>
       <wire>
         <connector name="inv1" plug="in"/>
         <connector idx="0"/>
@@ -60,14 +60,14 @@
       </wire>
     </net>
     <net name="out">
-      <port type="outV" idx="0" x="2415" y="2200" sym="MY"/>
+      <port type="outV" idx="0" x="2415" y="2200" orient="MY"/>
       <wire>
         <connector name="inv2" plug="out"/>
         <connector idx="0"/>
       </wire>
     </net>
     <net name="vdd">
-      <port type="inH" idx="0" x="2200" y="2500" sym="ID"/>
+      <port type="inH" idx="0" x="2200" y="2500" orient="ID"/>
       <wire>
         <connector idx="0"/>
         <connector name="inv2" plug="vdd"/>
@@ -78,7 +78,7 @@
       </wire>
     </net>
     <net name="vss">
-      <port type="inH" idx="0" x="2700" y="2500" sym="MX"/>
+      <port type="inH" idx="0" x="2700" y="2500" orient="MX"/>
       <wire>
         <connector idx="0"/>
         <connector name="inv2" plug="vss"/>

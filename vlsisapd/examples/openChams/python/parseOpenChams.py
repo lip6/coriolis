@@ -40,14 +40,14 @@ def printContents(circuit):
   if (circuit.schematic):
     print " + schematic"
     for instance in circuit.schematic.getInstances():
-      print " | + instance name:", instance.key, "- x:", instance.value.x, "- y:", instance.value.y, "- symmetry:", instance.value.symmetry 
+      print " | + instance name:", instance.key, "- x:", instance.value.x, "- y:", instance.value.y, "- orientation:", instance.value.orientation 
     if schematicNet:
       for net in circuit.netlist.getNets():
           if net.hasNoPorts() and net.hasNoWires():
               continue
           print " | + net name:", net.name
           for port in net.getPorts():
-              print " | | + port type:", port.type, "- idx:", port.index, "- x:", port.x, "- y:", port.y, "- sym:", port.symmetry
+              print " | | + port type:", port.type, "- idx:", port.index, "- x:", port.x, "- y:", port.y, "- orientation:", port.orientation
           for wire in net.getWires():
               if isinstance(wire.startPoint, InstancePoint):
                   print " | | + wire <" + wire.startPoint.name.getString() + "," + wire.startPoint.plug.getString() +">"

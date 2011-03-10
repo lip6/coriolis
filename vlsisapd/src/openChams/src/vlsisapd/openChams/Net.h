@@ -47,7 +47,7 @@ class Net {
     inline const std::vector<Net::Connection*>& getConnections();
 
     // schematic relative methods
-    Port* addPort(Name type, unsigned idx, double x, double y, Name sym);
+    Port* addPort(Name type, unsigned idx, double x, double y, Name orient);
     Wire* addWire();
     inline bool hasNoPorts();
     inline const std::vector<Port*>& getPorts();

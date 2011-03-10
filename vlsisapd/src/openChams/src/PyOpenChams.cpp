@@ -138,11 +138,11 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
     // class OpenChams::Port
     class_<Port, Port*>("Port", init<Name, unsigned, double, double, Name>())
         // properties
-        .add_property("type"    , &Port::getType    )
-        .add_property("index"   , &Port::getIndex   )
-        .add_property("x"       , &Port::getX       )
-        .add_property("y"       , &Port::getY       )
-        .add_property("symmetry", &Port::getSymmetry)
+        .add_property("type"       , &Port::getType       )
+        .add_property("index"      , &Port::getIndex      )
+        .add_property("x"          , &Port::getX          )
+        .add_property("y"          , &Port::getY          )
+        .add_property("orientation", &Port::getOrientation)
     ;
 
     // class OpenChams::WirePoint
@@ -264,9 +264,9 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
 
     // class OpenChams::Schematic::Infos
     class_<Schematic::Infos, Schematic::Infos*>("Infos", init<double, double, Name>())
-        .add_property("x"       , &Schematic::Infos::getX       )
-        .add_property("y"       , &Schematic::Infos::getY       ) 
-        .add_property("symmetry", &Schematic::Infos::getSymmetry)
+        .add_property("x"          , &Schematic::Infos::getX          )
+        .add_property("y"          , &Schematic::Infos::getY          ) 
+        .add_property("orientation", &Schematic::Infos::getOrientation)
     ;
     } // end schematicScope
 

@@ -42,12 +42,12 @@ void Net::connectTo(Name instanceName, Name connectorName) {
     }
 }
 
-Port* Net::addPort(Name type, unsigned idx, double x, double y, Name sym) {
+Port* Net::addPort(Name type, unsigned idx, double x, double y, Name orient) {
     while (_ports.size() <= idx)
         _ports.push_back(NULL);
     if (_ports[idx])
         throw OpenChamsException("[ERROR] Net::addPort: cannot add port since another one with the same id already exists.");
-    _ports[idx] = new Port(type, idx, x, y, sym);
+    _ports[idx] = new Port(type, idx, x, y, orient);
 
     return _ports[idx];
 }

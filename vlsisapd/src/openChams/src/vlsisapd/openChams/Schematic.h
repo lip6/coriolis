@@ -21,21 +21,21 @@ class Schematic {
 	public:
     class Infos {
     	public:
-        Infos(double x, double y, Name sym);
+        Infos(double x, double y, Name orient);
         
     	inline double getX();
         inline double getY();
-        inline Name   getSymmetry();
+        inline Name   getOrientation();
         
 	    private:
         double _x;
         double _y;
-        Name   _sym;
+        Name   _orient;
     };
 	public:
     Schematic(Circuit*);
         
-    void addInstance(Name instanceName, double x, double y, Name sym );
+    void addInstance(Name instanceName, double x, double y, Name orient );
         
     inline bool   hasNoInstances();
     inline const std::map<Name, Infos*>& getInstances();
@@ -48,9 +48,9 @@ class Schematic {
 inline bool   Schematic::hasNoInstances() { return (_instances.size() == 0) ? true : false; };
 inline const std::map<Name, Schematic::Infos*>& Schematic::getInstances() { return _instances; };    
     
-inline double Schematic::Infos::getX()        { return _x; };
-inline double Schematic::Infos::getY()        { return _y; };
-inline Name   Schematic::Infos::getSymmetry() { return _sym; };
+inline double Schematic::Infos::getX()           { return _x; };
+inline double Schematic::Infos::getY()           { return _y; };
+inline Name   Schematic::Infos::getOrientation() { return _orient; };
     
 } // namespace
 #endif

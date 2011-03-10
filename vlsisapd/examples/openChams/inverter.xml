@@ -54,10 +54,10 @@
     </nets>
   </netlist>
   <schematic>
-    <instance name="nmos1" x="2490" y="2600" sym="ID"/>
-    <instance name="pmos1" x="2490" y="2490" sym="ID"/>
+    <instance name="nmos1" x="2490" y="2600" orient="ID"/>
+    <instance name="pmos1" x="2490" y="2490" orient="ID"/>
     <net name="vdd">
-      <port type="inV" idx="0" x="2525" y="2430" sym="ID"/>
+      <port type="inV" idx="0" x="2525" y="2430" orient="ID"/>
       <wire>
         <connector name="pmos1" plug="S"/>
         <!--point x="" y=""/-->
@@ -65,14 +65,14 @@
       </wire>
     </net>
     <net name="vss">
-      <port type="inV" idx="0" x="2525" y="2740" sym="MY"/>
+      <port type="inV" idx="0" x="2525" y="2740" orient="MY"/>
       <wire>
         <connector name="nmos1" plug="S"/>
         <connector idx="0"/>
       </wire>
     </net>
     <net name="in">
-      <port type="inH" idx="0" x="2415" y="2520" sym="ID"/>
+      <port type="inH" idx="0" x="2415" y="2520" orient="ID"/>
       <wire>
         <connector name="pmos1" plug="G"/>
         <connector name="nmos1" plug="G"/>
@@ -83,7 +83,7 @@
       </wire>
     </net>
     <net name="out">
-      <port type="outH" idx="0" x="2570" y="2590" sym="ID"/>
+      <port type="outH" idx="0" x="2570" y="2590" orient="ID"/>
       <wire>
         <connector name="pmos1" plug="D"/>
         <connector name="nmos1" plug="D"/>
