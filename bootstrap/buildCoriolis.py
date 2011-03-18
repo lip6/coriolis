@@ -128,6 +128,8 @@ class ProjectBuilder:
 
     def _guessOs ( self ):
         self._libSuffix        = None
+        self._osSlsoc6x_64     = re.compile (".*Linux.*el6.*x86_64.*")
+        self._osSlsoc6x        = re.compile (".*Linux.*el6.*")
         self._osSLSoC5x_64     = re.compile (".*Linux.*el5.*x86_64.*")
         self._osSLSoC5x        = re.compile (".*Linux.*(el5|2.6.23.13.*SoC).*")
         self._osLinux_64       = re.compile (".*Linux.*x86_64.*")
@@ -137,7 +139,11 @@ class ProjectBuilder:
         uname = subprocess.Popen ( ["uname", "-srm"], stdout=subprocess.PIPE )
         lines = uname.stdout.readlines()
 
-        if   self._osSLSoC5x_64.match(lines[0]):
+        if self._osSlsoc6x_64.match(lines[0]):
+            self._osType    = "Linux.slsoc6x_64"
+            self._libSuffix = "64"
+        elif self._osSlsoc6x   .match(lines[0]): self._osType = "Linux.slsoc6x"
+        elif self._osSLSoC5x_64.match(lines[0]):
             self._osType    = "Linux.SLSoC5x_64"
             self._libSuffix = "64"
         elif self._osSLSoC5x   .match(lines[0]): self._osType = "Linux.SLSoC5x"

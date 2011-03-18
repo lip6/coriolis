@@ -156,7 +156,7 @@ fi
     if options.python:
       pyVersion = sys.version_info
       version   = "%d.%d" % (pyVersion[0],pyVersion[1])
-      if osType[8] == "Linux.SL":
+      if osType[:8] == "Linux.SL":
         sitePackagesDir = "%s/python%s/site-packages" % (absLibDir,version)
       else:
         sitePackagesDir = "%s/python%s/dist-packages" % (absLibDir,version)
