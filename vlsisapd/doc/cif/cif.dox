@@ -40,5 +40,5 @@
   Here is the Python code (\c driveCif.py) used to generate the transistor.cif file. (Source is available in examples directory).
   \include driveCif.py
 
-  \note In order to run the \c driveCif.py script, user must ensure that $PYTHONPATH variable points to the directory containing pyCIF.so module.
+  \note In order to run the \c driveCif.py script, user must ensure that $PYTHONPATH variable points to the directory containing CIF.so module.
 */

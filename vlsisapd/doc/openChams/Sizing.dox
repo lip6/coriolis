@@ -1,0 +1,53 @@
+// -*- C++ -*-
+
+namespace OpenChams {
+/*! \class Sizing
+ *
+ *  This class describes a sizing procedure.
+ *
+ *  The Sizing object is used to store all informations relative to sizing procedure as we defined it in \b CHAMS.
+ *
+ *   \note The Sizing object is optionnal in Circuit.
+ */
+
+/*! \fn Sizing::Sizing(Circuit* circuit)
+ *   \brief creates a new sizing procedure.
+ *
+ *   \param circuit the circuit to which the sizing belongs.
+ */
+
+/*! \fn Operator* Sizing::addOperator(Name instanceName, Name operatorName, Name simulModel, unsigned callOrder)
+ *   \brief adds an Operator to the sizing.
+ *
+ *   \param instanceName the instance's name to which the operator is associated.
+ *   \param operatorName the name of the operator.
+ *   \param simulModel   the simulation model associated to the operator.
+ *   \param callOrder    the call order of the operator in sizing procedue.
+ *
+ *   \return the newly created Operator.
+ */
+
+/*! \fn void Sizing::addEquation(Name name, std::string equation)
+ *   \brief adds an equation to the sizing.
+ *
+ *   \param name     the name of the equation.
+ *   \param equation the equation string.
+ */
+
+/*! \fn inline bool Sizing::hasNoOperators()
+ *   \brief returns true if the sizing has no Operator.
+ */
+
+/*! \fn inline bool Sizing::hasNoEquations()
+ *   \brief returns true if the sizing has no equation.
+ */
+
+/*! \fn inline const std::map<Name, Operator*>& Sizing::getOperators()
+ *   \brief returns the map of sizing's Operator.
+ */
+
+/*! \fn inline const std::map<Name, std::string>& Sizing::getEquations()
+ *   \brief returns the map of sizing's equations.
+ */
+
+}

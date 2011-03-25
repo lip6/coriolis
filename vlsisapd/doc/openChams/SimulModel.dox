@@ -1,0 +1,53 @@
+// -*- C++ -*-
+
+namespace OpenChams {
+/*! \enum SimulModel::Base
+ * 
+ *  This enum describes the base of a simulation model.
+ *  Available values are:
+ *  - BSIM3V3 = 0
+ *  - BSIM4   = 1
+ *  - PSP     = 2
+ */
+
+/*! \enum SimulModel::Version
+ *
+ *  This enum describes the transistor version of a simulation model.
+ *  Available values are:
+ *  - UNDEFINED = 0
+ *  - SVT       = 1
+ *  - HVT       = 2
+ *  - LVT       = 3
+ */
+
+/*! \class SimulModel
+ * 
+ *  This class describes a simulation model used by Operator in Sizing procedure.
+ */
+
+/*! \fn SimulModel::SimulModel(unsigned id, Base base, Version version, std::string filePath)
+ *   \brief creates a new simulation model.
+ *
+ *   \param id       the id of the simulation model.
+ *   \param base     the base of the simulation model.
+ *   \param version  the version of the simulation model.
+ *   \param filePath the file path to the spice netlist used by simulation model.
+ */
+
+/*! \fn inline unsigned SimulModel::getId() const
+ *   \brief returns the id of the simulation model.
+ */
+
+/*! \fn inline Base SimulModel::getBase()
+ *   \brief returns the base of the simulation model.
+ */
+
+/*! \fn inline Version SimulModel::getVersion()
+ *   \brief returns the version of the simulation model.
+ */
+
+/*! \fn inline std::string SimulModel::getFilePath()
+ *   \brief returns the file path of the spice netlist used by the simulation model.
+ */
+
+}

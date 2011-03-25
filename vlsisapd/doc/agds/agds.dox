@@ -52,6 +52,6 @@
   Here is the Python code (\c driveAgds.py) used to generate the transistor.agds file. (Source is available in examples directory).
   \include driveAgds.py
 
-  \note In order to run the \c driveAgds.py script, user must ensure that $PYTHONPATH variable points to the directory containing pyAGDS.so module.
+  \note In order to run the \c driveAgds.py script, user must ensure that $PYTHONPATH variable points to the directory containing AGDS.so module.
 */
 

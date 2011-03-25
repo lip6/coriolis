@@ -1,0 +1,80 @@
+/*! \page OPENCHAMS OPENCHAMS Format
+
+  \section openChamsPres Presentation
+  The <b>OpenCHAMS</b> format was developped as a part of the Chams Project (http://www-soc.lip6.fr/recherche/cian/chams/).
+  It aims at offering a convenient way to describe analogic circuits' netlists and is based on XML.
+  Some CHAMS specific informations, such as schematic properties, layout properties or sizing procedure, can be described in this format.\n
+
+  \subsection openChamsAutrhos Author
+  Damien Dupuis: damien.dupuis(at)lip6(.)fr
+
+  \section openChamsDB Stand alone database structure
+  The database has many objects that can be arranged in five categories:
+  - General
+    - OpenChams::Circuit
+    - OpenChams::Name
+    - OpenChams::OpenChamsException
+  - Netlist
+    - OpenChams::Netlist
+    - OpenChams::Instance
+    - OpenChams::Device
+    - OpenChams::Transistor
+    - OpenChams::Parameters
+    - OpenChams::Net
+  - Sizing
+    - OpenChams::Sizing
+    - OpenChams::Operator
+    - OpenChams::SimulModel
+  - Schematic
+    - OpenChams::Schematic
+    - OpenChams::Port
+    - OpenChams::Wire
+    - OpenChams::WirePoint
+    - OpenChams::InstancePoint
+    - OpenChams::PortPoint
+    - OpenChams::IntermediatePoint
+  - Layout
+    - OpenChams::Layout
+
+  \subsection openChamsParser Using the parser
+  Simply load an OPENCHAMS file using the static function OpenChams::Circuit::readFromFile() and then get the netlist object (OpenChams::Circuit::getNetlist()) or the sizing procedure (OpenChams::Circuit::getSizing(), might be NULL) or any other useful information (see OpenChams::Circuit).
+
+  \subsection openChamsDriver Using the driver
+  Using the driver is very simple, user has to create a DTR::Techno object and simply add DTR::Rule or DTR::ARule to it.
+  The adding methods return the newly created Rule so user can set the rule type (DTR::Rule::setType()) if necessary. Finally use the DTR::Techno::writeToFile() method to dump the database to file.
+
+  \section openChamsExamples Examples
+  As said is the global presentation, VLSI SAPD project provides C++ libraries and Python modules for each supported format. In this section we present simple code examples to parse and drive a OPENCHAMS file using C++ or Python. The OPENCHAMS files considered are the same for all examples: \c inverter.xml and \c buffer.xml
+  \include inverter.xml
+  \include buffer.xml
+
+  All source codes are available in the \c examples directory.
+
+  \subsection openChamsC C++
+  \subsubsection openChamsParseC Parser
+  The following code (\c parseOpenChams.cpp) is an example of how to parse a OPENCHAMS file using C++ library.
+  \include parseOpenChams.cpp
+
+  \subsubsection openChamsDriveC Driver
+  This C++ code (\c driveOpenChams.cpp) generates an inverter.xml file equivalent to the included one.
+  \include driveOpenChams.cpp
+
+  \note In order to compile these codes, a CMakeLists.txt file is provided. User must set the $VLSISAPD_TOP variable before running these commands in the directory containing the CMakeLists.txt file:
+  \code
+  %> mkdir build; cd build
+  %> cmake ..
+  %> make
+  \endcode
+
+  \subsection openChamsPython Python
+  \subsubsection openChamsParsePython Parser
+  The following python script (\c parseOpenChams.py) is an example of how to parse a OPENCHAMS file using python module.
+  \include parseOpenChams.py
+
+  \subsubsection openChamsDrivePython Driver
+  This python script (\c driveOpenChams.py) generates an inverter.xml file equivalent to the included one.
+  \include driveOpenChams.py
+
+  \note In order to run these two scripts (\c parseOpenChams.py & driveOpenChams.py), user must ensure that $PYTHONPATH variable points to the directory containing OPENCHAMS.so module.
+*/
+

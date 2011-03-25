@@ -55,6 +55,6 @@
   This python script (\c driveDtr.py) generates a out.dtr.xml file equivalent to the previous example.dtr.xml.
   \include driveDtr.py
 
-  \note In order to run these two scripts (\c parseDtr.py & driveDtr.py), user must ensure that $PYTHONPATH variable points to the directory containing pyDTR.so module.
+  \note In order to run these two scripts (\c parseDtr.py & driveDtr.py), user must ensure that $PYTHONPATH variable points to the directory containing DTR.so module.
 */
 

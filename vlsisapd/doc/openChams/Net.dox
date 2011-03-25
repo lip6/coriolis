@@ -1,0 +1,103 @@
+// -*- C++ -*-
+
+namespace OpenChams {
+/*! \class Net::Connection
+ *
+ *  This class describe a Connection in a Net.
+ *  A connection is a couple (instanceName, connectorName) used to represent all the connectors linked to a net.
+ */
+
+/*! \fn Net::Connection::Connection(Name instanceName, Name connectorName)
+ *   \brief creates a new connection.
+ *
+ *   \param instanceName  the name of the instance.
+ *   \param connectorName the name of the instance's connector.
+ */
+
+/*! \fn inline Name Net::Connection::getInstanceName() const
+ *   \brief returns the name of the instance.
+ */
+
+/*! \fn inline Name Net::Connection::getConnectorName() const 
+ *   \brief returns the name of the connector.
+ */
+
+/*! \class Net
+ *
+ *  This class describes a Net.
+ */
+
+/*! \fn Net::Net(Name name, Name type, bool external, Netlist* netlist)
+ *   \brief creates a new net.
+ *
+ *   \param name     the name of the net.
+ *   \param type     the type of the net (LOGICAL, POWER, GROUND, ...).
+ *   \param external if true, then the net is set as external.
+ *   \param netlist  the netlist to which the transistor belongs.
+ */
+
+/*! \fn void Net::connectTo(Name instanceName, Name connectorName)
+ *   \brief adds a connection to the net.
+ *
+ *   \param instanceName  the instance's name of the Net::Connection.
+ *   \param connectorName the connector's name ot the Net::Connection.
+ */
+
+/*! \fn inline Name Net::getName() const
+ *   \brief returns the name of the net.
+ */
+
+/*! \fn inline Name Net::getType()
+ *   \brief returns the type of the net.
+ */
+
+/*! \fn inline bool Net::isExternal()
+ *   \brief returns true if the net is external.
+ */
+
+/*! \fn inline Netlist* Net::getNetlist()
+ *   \brief returns the Netlist to which the net belongs.
+ */
+
+/*! \fn inline bool Net::hasNoConnections()
+ *   \brief returns true if the net has no Net::Connection.
+ */
+
+/*! \fn inline const std::vector<Net::Connection*>& Net::getConnections()
+ *   \brief returns the list of net's connections.
+ */
+
+/*! \fn Port* Net::addPort(Name type, unsigned idx, double x, double y, Name orient)
+ *   \brief adds a Port to the net.
+ *
+ *   \param type   the type of the port.
+ *   \param idx    the index of the port.
+ *   \param x      the x coordinate of the port.
+ *   \param y      the y coordinate of the port.
+ *   \param orient the orientation of the port.
+ *
+ *   \return the newly created Port.
+ */
+
+/*! \fn Wire* Net::addWire()
+ *   \brief adds a Wire to the net.
+ *
+ *   \return the newly create Wire.
+ */
+
+/*! \fn inline bool Net::hasNoPorts()
+ *   \brief returns true if net has no Port.
+ */
+
+/*! \fn inline const std::vector<Port*>& Net::getPorts()
+ *   \brief returns the list of net's Port.
+ */
+
+/*! \fn inline bool Net::hasNoWires()
+ *   \brief returns true if net has no Wire.
+ */
+
+/*! \fn inline const std::vector<Wire*>& Net::getWires()
+ *   \brief returns the list of net's Wire.
+ */
+}

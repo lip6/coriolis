@@ -1,0 +1,48 @@
+// -*- C++ -*-
+
+namespace OpenChams {
+/*! \class Device
+ *
+ *  This class describes a Device.
+ *
+ *  A device is a leaf instance which means its model is not defined in a external file but is described inside the device.
+ *  As an instance, the Device inherits all Instance methods and adds specific properties: mos type, bulk connection and list of internal transistors.
+ *
+ * \note Althought today Device object only consider TransistorFamily devices, it will have to consider other devices, such as Capacitor when CHAMS project will.
+ */
+
+/*! \fn Device::Device(Name name, Name model, Name mosType, Netlist* netlist)
+ *   \brief creates a new device.
+ *
+ *   \param name    the name of the instance.
+ *   \param model   the model of the instance.
+ *   \param mosType the mos type (NMOS or PMOS).
+ *   \param netlist the netlist to which the instance belongs.
+ */
+
+/*! \fn inline Name Device::getMosType()
+ *   \brief returns the mos type of the device.
+ */
+
+/*! \fn inline bool Device::isSourceBulkConnected()
+ *   \brief returns true if the device's bulk is source connected.
+ */
+
+/*! \fn Transistor* Device::addTransistor(Name name)
+ *   \brief adds a Transistor to the device.
+ *   
+ *   \param name the name of the transistor.
+ *
+ *   \return the newly created Transistor.
+ */
+
+/*! \fn inline bool Device::hasNoTransistors()
+ *   \brief returns true if the device has no transistors.
+ */
+
+/*! \fn inline const std::vector<Transistor*>& Device::getTransistors()
+ *   \brief returns the list of device's transistors.
+ */
+
+}
+
