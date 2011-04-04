@@ -1,4 +1,4 @@
-/*! \page DTR DTR Format
+/*! \page dtr DTR Format
 
   \section dtrPres Presentation
   The <b>Design Technology Rules (DTR)</b> format was developped as a part of the Chams Project (http://www-soc.lip6.fr/recherche/cian/chams/). It aims at offering a generic description of layout design rules for CMOS technologies.\n

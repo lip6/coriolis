@@ -1,4 +1,4 @@
-/*! \page CIF CIF Format
+/*! \page cif CIF Format
 
   \section cifPres Presentation
   The <b>Caltech Intermediate Format (CIF)</b> consists in a limited set of graphic primitives used to describe the shapes on each layer of an integrated circuit (see http://en.wikipedia.org/wiki/Caltech_Intermediate_Form for more informations). \n

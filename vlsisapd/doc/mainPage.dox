@@ -31,9 +31,9 @@
 
 
   To quickly access to documentation of a format, one can use the following links :
-  - \subpage AGDS
-  - \subpage CIF
-  - \subpage DTR
-  - \subpage OPENCHAMS 
+  - \subpage agds
+  - \subpage cif
+  - \subpage dtr
+  - \subpage openchams 
 
 */

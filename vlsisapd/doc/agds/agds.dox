@@ -1,4 +1,4 @@
-/*! \page AGDS AGDS Format
+/*! \page agds AGDS Format
 
   \section agdsPres Presentation
   The <b>Ascii Graphic Database System (AGDS)</b> format is an ascii (text) version of the wellknown and industry standard GDS II binary format. This format hierarchicaly represents geometric shapes, labels and other layout informations (see http://en.wikipedia.org/wiki/GDSII for more informations). \n
