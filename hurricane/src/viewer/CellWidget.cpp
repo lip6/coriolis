@@ -2,14 +2,13 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
 //
 // ===================================================================
 //
 // $Id$
 //
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -17,10 +16,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./CellWidget.cpp"                         |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include <sys/resource.h>
@@ -1367,14 +1363,14 @@ namespace Hurricane {
 
   void  CellWidget::_redraw ( QRect redrawArea )
   {
-//     cerr << "CellWidget::redraw() - start "
-//          << _selectionHasChanged << " filter:"
-//          << _state->getQueryFilter() << endl;
+    // cerr << "CellWidget::redraw() - start "
+    //      << _selectionHasChanged << " filter:"
+    //      << _state->getQueryFilter() << endl;
 
 //     static bool  timedout;
 //     static Timer timer;
 
-    if ( !isVisible() ) return;
+    if ( not isVisible() ) return;
 
 //     timer.start ();
 //     timedout         = false;
@@ -1383,7 +1379,7 @@ namespace Hurricane {
 
     pushCursor ( Qt::BusyCursor );
 
-    if ( ! ( _selectionHasChanged && _state->showSelection() ) || _cellModificated ) {
+    if ( not ( _selectionHasChanged and _state->showSelection() ) or _cellModificated ) {
       _spot.setRestore ( false );
     //_drawingPlanes.copyToSelect ( redrawArea );
       _drawingPlanes.select ( PlaneId::Normal );
@@ -1396,7 +1392,6 @@ namespace Hurricane {
       setDarkening ( (_state->showSelection()) ? Graphics::getDarkening() : DisplayStyle::HSVr() );
 
       if ( getCell() ) {
-
         Box redrawBox = displayToDbuBox ( redrawArea );
 
         _drawingQuery.resetGoCount      ();
@@ -1423,7 +1418,7 @@ namespace Hurricane {
         //if ( timeout("redraw [layer]",timer,10.0,timedout) ) break;
         }
 
-        if ( /*!timeout("redraw [boundaries]",timer,10.0,timedout) &&*/ (!_redrawManager.interrupted()) ) {
+        if ( /*not timeout("redraw [boundaries]",timer,10.0,timedout) and*/ (not _redrawManager.interrupted()) ) {
           if ( isDrawable("boundaries") ) {
              _drawingPlanes.setPen   ( Graphics::getPen  ("boundaries",getDarkening()) );
              _drawingPlanes.setBrush ( Graphics::getBrush("boundaries",getDarkening()) );
@@ -1434,7 +1429,7 @@ namespace Hurricane {
           }
         }
 
-        if ( /*!timeout("redraw [markers]",timer,10.0,timedout) &&*/ (!_redrawManager.interrupted()) ) {
+        if ( /*not timeout("redraw [markers]",timer,10.0,timedout) and*/ (not _redrawManager.interrupted()) ) {
           if ( isDrawable("text.reference") ) {
              _drawingPlanes.setPen   ( Graphics::getPen  ("text.reference",getDarkening()) );
              _drawingPlanes.setBrush ( Graphics::getBrush("text.reference",getDarkening()) );
@@ -1445,7 +1440,7 @@ namespace Hurricane {
           }
         }
 
-        if ( /*!timeout("redraw [rubbers]",timer,10.0,timedout) &&*/ (!_redrawManager.interrupted()) ) {
+        if ( /*not timeout("redraw [rubbers]",timer,10.0,timedout) and*/ (not _redrawManager.interrupted()) ) {
           if ( isDrawable("rubber") ) {
              _drawingPlanes.setPen   ( Graphics::getPen  ("rubber",getDarkening()) );
              _drawingPlanes.setBrush ( Graphics::getBrush("rubber",getDarkening()) );
@@ -1457,7 +1452,7 @@ namespace Hurricane {
         }
 
         if ( _enableRedrawInterrupt ) QApplication::processEvents();
-        if ( /*!timeout("redraw [text.instances]",timer,10.0,timedout) &&*/ (!_redrawManager.interrupted()) ) {
+        if ( /*not timeout("redraw [text.instances]",timer,10.0,timedout) and*/ (not _redrawManager.interrupted()) ) {
           if ( isDrawable("text.instance") ) {
             _drawingPlanes.setPen               ( Graphics::getPen  ("text.instance",getDarkening()) );
             _drawingPlanes.setBrush             ( Graphics::getBrush("text.instance",getDarkening()) );
@@ -1471,7 +1466,7 @@ namespace Hurricane {
       //_drawingQuery.setFilter ( getQueryFilter() & ~Query::DoMasterCells );
         forEach ( ExtensionSlice*, islice, getCell()->getExtensionSlices() ) {
           if ( _enableRedrawInterrupt ) QApplication::processEvents();
-          if ( /*timeout("redraw [extension]",timer,10.0,timedout) ||*/ (_redrawManager.interrupted()) ) break;
+          if ( /*timeout("redraw [extension]",timer,10.0,timedout) or*/ (_redrawManager.interrupted()) ) break;
 
           if ( isDrawableExtension((*islice)->getName()) ) {
             _drawingQuery.setExtensionMask   ( (*islice)->getMask() );
