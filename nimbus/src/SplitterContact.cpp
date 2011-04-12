@@ -8,6 +8,7 @@
 
 #include <limits>
 
+#include <limits>
 #include "hurricane/Net.h"
 #include "hurricane/ContactLayer.h"
 #include "hurricane/BasicLayer.h"
