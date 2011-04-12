@@ -32,6 +32,8 @@ def stripPath ( pathName ):
 
 
 def guessOs ():
+    osSlsoc6x_64    = re.compile (".*Linux.*el6.*x86_64.*")
+    osSlsoc6x       = re.compile (".*Linux.*el6.*")
     osSLSoC5x_64    = re.compile (".*Linux.*el5.*x86_64.*")
     osSLSoC5x       = re.compile (".*Linux.*(el5|2.6.23.13.*SoC).*")
     osLinux_64      = re.compile (".*Linux.*x86_64.*")
@@ -44,7 +46,11 @@ def guessOs ():
     lines = uname.stdout.readlines()
 
     libDir="lib"
-    if osSLSoC5x_64.match(lines[0]):
+    if osSlsoc6x_64.match(lines[0]):
+      osType    = "Linux.slsoc6x_64"
+      libSuffix = "64"
+    elif osSlsoc6x.match(lines[0]): osType = "Linux.slsoc6x"
+    elif osSLSoC5x_64.match(lines[0]):
       osType = "Linux.SLSoC5x_64"
       libDir = "lib64"
     elif osSLSoC5x.match(lines[0]):
@@ -156,7 +162,7 @@ fi
     if options.python:
       pyVersion = sys.version_info
       version   = "%d.%d" % (pyVersion[0],pyVersion[1])
-      if osType[:8] == "Linux.SL":
+      if osType.startswith("Linux.SL") or osType.startswith("Linux.sl"):
         sitePackagesDir = "%s/python%s/site-packages" % (absLibDir,version)
       else:
         sitePackagesDir = "%s/python%s/dist-packages" % (absLibDir,version)
