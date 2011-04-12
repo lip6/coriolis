@@ -340,7 +340,7 @@ int main ( int argc, char *argv[] )
       unicorn->registerTool ( Mauka::GraphicMaukaEngine::grab() );
     //unicorn->registerTool ( Knik::GraphicKnikEngine::grab() );
       unicorn->registerTool ( Kite::GraphicKiteEngine::grab() );
-      unicorn->setEnableRedrawInterrupt ( true );
+    //unicorn->setEnableRedrawInterrupt ( true );
     //unicorn->registerTool ( Equinox::GraphicEquinoxEngine::grab() );
     //unicorn->registerTool ( Solstice::GraphicSolsticeEngine::grab() );
 
