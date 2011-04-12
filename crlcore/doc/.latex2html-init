@@ -292,7 +292,7 @@ sub bot_navigation_panel {
 
 #$EXTERNAL_STYLESHEET = "../ASIM.css";
 
-$ADDRESS = "Jean-Paul <small>CHAPUT</small><br>20100526.1";
+$ADDRESS = "Jean-Paul <small>CHAPUT</small><br>20110412.1";
 
 $LOCAL_ICONS = 0;
 
