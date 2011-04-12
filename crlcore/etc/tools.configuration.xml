@@ -69,16 +69,16 @@
   <parameter id="mauka.annealingBinMult"          type="percentage" value="5"  min="0"/>
   <parameter id="mauka.annealingRowMult"          type="percentage" value="5"  min="0"/>
   <!-- Katabatic -->
-  <parameter id="katabatic.saturateRatio"         type="percentage" value="80"/>
-  <parameter id="katabatic.saturateRp"            type="int"        value="8"/>
+  <parameter id="katabatic.saturateRatio"         type="percentage" value="85"/>
+  <parameter id="katabatic.saturateRp"            type="int"        value="10"/>
   <parameter id="katabatic.globalLengthThreshold" type="int"        value="1450"/>
   <!-- Kite -->
-  <parameter id="kite.edgeCapacity"               type="percentage" value="65"      min="0" max="100"/>
+  <parameter id="kite.edgeCapacity"               type="percentage" value="70"      min="0" max="100"/>
   <parameter id="kite.expandStep"                 type="percentage" value="100"     min="0" max="100"/>
   <parameter id="kite.metal1MinBreak"             type="double"     value="100"/>
   <parameter id="kite.metal2MinBreak"             type="double"     value="100"/>
   <parameter id="kite.metal3MinBreak"             type="double"     value="100"/>
-  <parameter id="kite.metal4MinBreak"             type="double"     value="500"/>
+  <parameter id="kite.metal4MinBreak"             type="double"     value="1450"/>
   <parameter id="kite.metal5MinBreak"             type="double"     value="1450"/>
   <parameter id="kite.metal6MinBreak"             type="double"     value="1450"/>
   <parameter id="kite.metal7MinBreak"             type="double"     value="1450"/>
@@ -93,16 +93,16 @@
   <parameter id="stratus1.mappingName"            type="string"     value="./stratus2sxlib.xml"/>
   <layout>
     <!-- Miscellaneous -->
-    <tab name="Misc.">
+    <tab name="Misc." id="misc">
       <widget type="title" label="Miscellaneous"/>
       <widget id="misc.catchCore"     label="Catch Core Dumps" column="1"/>
-      <widget id="misc.verboseLevel1" label="Verbose"             column="0"/>
-      <widget id="misc.verboseLevel2" label="Very Verbose"        column="0"/>
-      <widget id="misc.info"          label="Show Info"           column="0"/>
-      <widget id="misc.logMode"       label="Output is a TTY"     column="0"/>
-      <widget id="misc.traceLevel"    label="Trace Level"         column="1"/>
+      <widget id="misc.verboseLevel1" label="Verbose"          column="0"/>
+      <widget id="misc.verboseLevel2" label="Very Verbose"     column="0"/>
+      <widget id="misc.info"          label="Show Info"        column="0"/>
+      <widget id="misc.logMode"       label="Output is a TTY"  column="0"/>
+      <widget id="misc.traceLevel"    label="Trace Level"      column="1"/>
     </tab>
-    <tab name="Mauka">
+    <tab name="Mauka" id="mauka">
       <!-- hMETIS -->
       <widget type="title" label="hMETIS - Partitionner"/>
       <widget id="metis.partOrKWayHMetis"               label="Recursive 2-Parts (vs. K-Way)" column="0"/>
@@ -132,7 +132,7 @@
       <widget id="mauka.annealingRowMult"  label="Annealing Row Mult (%)" column="1"/>
       <widget type="rule"/>
     </tab>
-    <tab name="Kite">
+    <tab name="Kite" id="kite">
       <widget type="title" label="Katabatic - Routing Database"/>
       <widget id="katabatic.saturateRatio"         label="Saturate Ratio (%)"      column="0"/>
       <widget id="katabatic.saturateRp"            label="Saturate RoutingPad"     column="0"/>
@@ -158,7 +158,7 @@
       <widget id="kite.longGlobalRipupLimit" label="Long Globals"            column="1" spinbox="true"/>
       <widget type="rule"/>
     </tab>
-    <tab name="Stratus1">
+    <tab name="Stratus1" id="stratus1">
       <widget type="title" label="Stratus1 - Netlist &amp; Layout Capture"/>
       <widget id="stratus1.mappingName" label="Virtual Library Translation" column="0"/>
     </tab>
