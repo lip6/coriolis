@@ -27,6 +27,8 @@ class Rule {
     public:
     Rule(Name name, double value, Name ref, Name layer1, Name layer2)
         : _name(name), _type(Name("")), _value(value), _valueStr(to_string(value)), _ref(ref), _layer1(layer1), _layer2(layer2) {};
+
+    virtual ~Rule() {}
     
     // accessors
     inline Name   getName();
@@ -57,6 +59,8 @@ class ARule : public Rule {
     public:
     ARule(Name name, double value, Name ref, Name layer1, Name layer2)
         : Rule(name, value, ref, layer1, layer2) {};
+
+    virtual ~ARule() {}
 };
     
 inline Name   Rule::getName()   { return _name;   };

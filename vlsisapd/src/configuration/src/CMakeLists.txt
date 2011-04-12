@@ -1,7 +1,4 @@
 
-  # to work on sl5 64 bits : need to suppress boost_python in Boost_LIBRARIES
-          set(Boost_LIBRARIES "")
-  setup_boost(program_options filesystem regex)
 
                include ( ${QT_USE_FILE} )
    include_directories ( ${VLSISAPD_SOURCE_DIR}/src/configuration/src
