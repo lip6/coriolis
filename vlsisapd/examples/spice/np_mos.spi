@@ -1,0 +1,77 @@
+* NMOS-PMOS netlist for CHAMS sizing & biasing
+
+.param MOSLL_DEV=0
+.param PARAMCHK=1
+
+.LIB ~techno/dev/grenoble/hcmos9/modeles_mars03/common_poly.lib PRO_stat
+.LIB ~techno/dev/grenoble/hcmos9/modeles_mars03/common_active.lib PRO_stat
+.LIB ~techno/dev/grenoble/hcmos9/modeles_mars03/common_go1.lib PRO_stat
+.LIB ~techno/dev/grenoble/hcmos9/modeles_mars03/mos_bsim3_LL.lib mosLL_stat
+*.LIB ~/stage_Ngspice/ngspice_chams_test_US/ST130nm/design_kit/mos_bsim3_LL.lib mosll_stat
+
+.option numdgt = 15
+.option noqtrunc
+*.option numdgt = 15 post_double
+*.option printlg = 15
+*.option numdgt = 6 eps=1.0e-9
+
+*-----------------------------------------------------------
+* NMOS
+
+.param VDSN_VAL = 0.8
+.param VGSN_VAL = 0.8
+.param VBSN_VAL = 0.425
+.param NFINGN_VAL = 1
+.param WN_VAL = 2.0e-6
+.param LN_VAL = 1.5e-6
+
+.param AD_N_VAL = 5.2125e-13
+.param AS_N_VAL = 5.2125e-13
+.param PD_N_VAL = 2.195e-06
+.param PS_N_VAL = 2.195e-06
+.param PO2ACT_N_VAL = -1
+
+XMN dn gn sn bn ENLLGP_BS3JU w=WN_VAL l=LN_VAL nfing=NFINGN_VAL
++ ad=AD_N_VAL as=AS_N_VAL pd=PD_N_VAL ps=PS_N_VAL
++ po2act=PO2ACT_N_VAL
+
+vdsn dn sn VDSN_VAL
+vgsn gn sn VGSN_VAL
+vbsn bn sn VBSN_VAL
+vsn  sn 0  0.0
+
+*-----------------------------------------------------------
+* PMOS
+
+.param VDSP_VAL = -0.8
+.param VGSP_VAL = -0.8
+.param VBSP_VAL = 0.698
+.param NFINGP_VAL = 1
+.param WP_VAL = 2.0e-6
+.param LP_VAL = 1.5e-6
+
+.param AD_P_VAL = 6.95e-13
+.param AS_P_VAL = 6.95e-13
+.param PD_P_VAL = 2.695e-06
+.param PS_P_VAL = 2.695e-06
+.param PO2ACT_P_VAL = -1
+
+XMP dp gp sp bp EPLLGP_BS3JU w=WP_VAL l=LP_VAL nfing=NFINGP_VAL
++ ad=AD_P_VAL as=AS_P_VAL pd=PD_P_VAL ps=PS_P_VAL
++ po2act=PO2ACT_P_VAL
+
+vdsp dp sp VDSP_VAL
+vgsp gp sp VGSP_VAL
+vbsp bp sp VBSP_VAL
+vsp  sp 0 0.0
+
+*-----------------------------------------------------------
+
+* temperature
+.param TEMP_VAL = 27.0
+.temp TEMP_VAL
+
+* analysis
+.op
+
+.end

@@ -1,0 +1,28 @@
+* Single-ended two-stage amplifier
+
+.INCLUDE paramsFile.spi
+
+.INCLUDE ota2et_cm_m3_m4.spi
+.INCLUDE ota2et_dp_m1_m2.spi
+.INCLUDE ota2et_tr_m7.spi
+.INCLUDE ota2et_tr_m6.spi
+.INCLUDE ota2et_tr_m5.spi
+.INCLUDE ota2et_tr_m8.spi
+
+.subckt ota2et 4 8 9 5 6 7
+
+xota2et_cm_m3_m4  5 5 2 1     ota2et_cm_m3_m4  l_val=L_CM	w_val=W_CM	nf_val=1	tr_name="psvtlp_TT"   temp_val=27   aeq_val=100e-6
+xota2et_dp_m1_m2  9 3 7 6 2 1 ota2et_dp_m1_m2  l_val=L_DP	w_val=W_DP	nf_val=1	tr_name="nsvtlp_TT"   temp_val=27   aeq_val=100e-6
+xota2et_tr_m7     9 4 8       ota2et_tr_m7     l_val=L_M7	w_val=W_M7	nf_val=1	tr_name="nsvtlp_TT"   temp_val=27   aeq_val=100e-6
+xota2et_tr_m6     5 2 8       ota2et_tr_m6     l_val=L_M6	w_val=W_M6	nf_val=1	tr_name="psvtlp_TT"   temp_val=27   aeq_val=100e-6
+xota2et_tr_m5     9 4 3       ota2et_tr_m5     l_val=L_M5	w_val=W_M5	nf_val=1	tr_name="nsvtlp_TT"   temp_val=27   aeq_val=100e-6
+xota2et_tr_m8     9 4 4       ota2et_tr_m8     l_val=L_M8	w_val=W_M8	nf_val=1	tr_name="nsvtlp_TT"   temp_val=27   aeq_val=100e-6
+
+* Initial values for CC and RC :
+*CC   8     285   1.9pF
+*RC   285   2     673
+
+CC   8     285   0.9pF
+RC   285   2     673
+
+.ends ota2et
