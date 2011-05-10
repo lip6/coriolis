@@ -1,0 +1,25 @@
+* Single-ended two-stage amplifier
+
+.PARAM CC_VALUE=2.8794pF
+.PARAM L_VALUE=0.340e-6
+
+.SUBCKT currentMirrorPMOS d1 d2 s1 s2 param: l_val=0.0 w_val=0.0 nf_val=1 aeq_val=100e-6 temp_val=27
+MP3 d1 d1 s1 s1 psvt l=l_val wf={w_val/nf_val}  nf=nf_val  aeq=aeq_val tempsimu=temp_val
+MP4 d2 d1 s2 s2 psvt l=l_val wf={w_val/nf_val}  nf=nf_val  aeq=aeq_val tempsimu=temp_val
+.ENDS currentMirrorPMOS
+
+.SUBCKT diffPairNMOS d1 d2 g1 g2 s b param: l_val=0.0 w_val=0.0 nf_val=1 aeq_val=100e-6 temp_val=27
+MN1 d1 g1 s b nsvt l=l_val wf={w_val/nf_val}  nf=nf_val  aeq=aeq_val tempsimu=temp_val
+MN2 d2 g2 s b nsvt l=l_val wf={w_val/nf_val}  nf=nf_val  aeq=aeq_val tempsimu=temp_val
+.ENDS diffPairNMOS
+
+XCM   1    2   vdd vdd         currentMirrorPMOS  l_val=L_VALUE  w_val=3.889618e-06  nf_val=2
+XDP   1    2   vim vip 3   vss diffPairNMOS       l_val=L_VALUE  w_val=7.683346e-07  nf_val=4
+MP6   vout 2   vdd vdd         psvt               l_val=L_VALUE  w_val=3.558995e-05  nf_val=20
+MN5   3    4   vss vss         nsvt               l_val=L_VALUE  w_val=2.536703e-06  nf_val=4 
+MN7   vout 4   vss vss         nsvt               l_val=L_VALUE  w_val=1.069083e-05  nf_val=16
+MN8   4    4   vss vss         nsvt               l_val=L_VALUE  w_val=2.536703e-06  nf_val=4 
+
+CC1   vout 2   CC_VALUE
+
+.END
