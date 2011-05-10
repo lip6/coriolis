@@ -13,7 +13,7 @@ using namespace std;
 #include "vlsisapd/spice/SpiceException.h"
 
 namespace SPICE {
-#define DEBUG 
+//#define DEBUG 
 void Circuit::addOption(string name, string value) {
     map<string, string>::iterator it = _options.find(name);
     if (it != _options.end()) {
@@ -120,8 +120,17 @@ Circuit* Circuit::readFromFile(const string& filename) {
             if (inSubckt)   throw SpiceException("SPICE::Circuit::readFromFile: Found hierarchic .subckt !");
             inSubckt = true;
             sub = circuit->addSubckt(tokens[1]);
-            for (size_t i = 2 ; i < tokens.size() ; i++) 
+            size_t paramTok = tokens.size();
+            for (size_t i = 2 ; i < tokens.size() ; i++)
+                if ((tokens[i] == "param:") || (tokens[i] == "PARAM:"))
+                    paramTok = i;
+            for (size_t i = 2 ; i < paramTok ; i++)    
                 sub->addInterface(tokens[i]);
+            for (size_t i = paramTok+1 ; i < tokens.size() ; i++) {
+                string name, value;
+                parametrize(tokens[i], name, value);
+                sub->addParameter(name, value);
+            }
             break;
             }
         case Circuit::ENDSUB:
@@ -148,7 +157,7 @@ Circuit* Circuit::readFromFile(const string& filename) {
                     break;
                 }
             }
-            Instance* inst = new Instance(tokens[0], tokens[modelIdx]);
+            Instance* inst = new Instance(tokens[0].erase(0,1), tokens[modelIdx]);
             for (size_t i = 1 ; i < modelIdx ; i++)
                 inst->addConnector(tokens[i]);
             for (size_t i = modelIdx+1 ; i < tokens.size() ; i++) {
@@ -181,6 +190,18 @@ Circuit* Circuit::readFromFile(const string& filename) {
             #ifdef DEBUG
             cerr  << "MOSFET   | " << line << endl;
             #endif
+            //                       name                  drain     grid        source     bulk       model
+            Mosfet* mos = new Mosfet(tokens[0].erase(0,1), tokens[1], tokens[2], tokens[3], tokens[4], tokens[5]);
+            for (size_t i = 6 ; i < tokens.size() ; i++) {
+                string name, value;
+                parametrize(tokens[i], name, value);
+                mos->addParameter(name, value);
+            }
+            if (inSubckt) { // must add mosfet to current subckt
+                sub->addInstance(mos);
+            } else {        // instance is mosfet to top-level circuit
+                circuit->addInstance(mos);
+            }
             break;
             }
         case Circuit::CAPACITOR:
@@ -188,7 +209,7 @@ Circuit* Circuit::readFromFile(const string& filename) {
             #ifdef DEBUG
             cerr  << "CAPACITOR| " << line << endl;
             #endif
-            Instance* inst = new Capacitor(tokens[0], tokens[1], tokens[2], tokens[3]);
+            Instance* inst = new Capacitor(tokens[0].erase(0,1), tokens[1], tokens[2], tokens[3]);
             if (inSubckt) { // must add instance to current subckt
                 sub->addInstance(inst);
             } else {        // instance is added to top-level circuit
@@ -201,7 +222,7 @@ Circuit* Circuit::readFromFile(const string& filename) {
             #ifdef DEBUG
             cerr  << "RESISTOR | " << line << endl;
             #endif
-            Instance* inst = new Resistor(tokens[0], tokens[1], tokens[2], tokens[3]);
+            Instance* inst = new Resistor(tokens[0].erase(0,1), tokens[1], tokens[2], tokens[3]);
             if (inSubckt) { // must add instance to current subckt
                 sub->addInstance(inst);
             } else {        // instance is added to top-level circuit
@@ -289,6 +310,11 @@ void Circuit::writeToFile(const string& filename) {
             spfile << ".SUBCKT " << sub->getName();
             for (size_t j = 0 ; j < sub->getInterfaces().size() ; j++)
                 spfile << " " << sub->getInterfaces()[j];
+            if (sub->getParameters().size()) {
+                spfile << " PARAM:";
+                for(map<string, string>::const_iterator it = sub->getParameters().begin() ; it != sub->getParameters().end() ; ++it)
+                    spfile << " " << (*it).first << "=" << (*it).second;
+            }
             spfile << endl;
             for (size_t j = 0 ; j < sub->getInstances().size() ; j++) {
                 Instance* inst = sub->getInstances()[j];
@@ -406,19 +432,29 @@ void Circuit::parametrize(string param, string& name, string& value) {
         name  = param.substr(0, it);
         value = param.substr(it+1, param.size()-it);
     }
+    #ifdef DEBUG
     cerr << "parametrize: " << name << "=" << value << endl;
+    #endif
 }
 
 void Circuit::writeInstance(std::ofstream& file, Instance* inst) {
     if (dynamic_cast<Mosfet*>(inst)) {
+        Mosfet* mos = static_cast<Mosfet*>(inst);
+        file << "M" << mos->getName() << " " << mos->getDrain() << " " << mos->getGrid() << " " << mos->getSource() << " " << mos->getBulk() << " " << mos->getModel();
+        int j = 0;
+        for (map<string, string>::const_iterator it =mos->getParameters().begin() ; it != mos->getParameters().end(); ++it, j++) {
+            if (j%6 == 0)
+                file << endl << "+";
+            file << " " << (*it).first << "=" << (*it).second;
+        }
     } else if (dynamic_cast<Capacitor*>(inst)) {
         Capacitor* capa = static_cast<Capacitor*>(inst);
-        file << capa->getName() << " " << capa->getPositive() << " " << capa->getNegative() << " " << capa->getValue();
+        file << "C" << capa->getName() << " " << capa->getPositive() << " " << capa->getNegative() << " " << capa->getValue();
     } else if (dynamic_cast<Resistor*>(inst)) {
         Resistor* res = static_cast<Resistor*>(inst);
-        file << res->getName() << " " << res->getFirst() << " " << res->getSecond() << " " << res->getValue();
+        file << "R" << res->getName() << " " << res->getFirst() << " " << res->getSecond() << " " << res->getValue();
     } else {
-        file << inst->getName();
+        file << "X" << inst->getName();
         for (vector<string>::const_iterator it = inst->getConnectors().begin() ; it != inst->getConnectors().end() ; ++it) {
             file << " " << (*it);
         }
@@ -430,6 +466,6 @@ void Circuit::writeInstance(std::ofstream& file, Instance* inst) {
             file << " " << (*it).first << "=" << (*it).second;
         }
     }
-    file << endl << endl; // to separate to consecutive instances
+    file << endl;
 }
 }

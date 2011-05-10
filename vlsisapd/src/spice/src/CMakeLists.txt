@@ -10,6 +10,7 @@ SET ( hpps vlsisapd/spice/Circuit.h
     )
 SET ( cpps Circuit.cpp
            Instance.cpp
+           Subckt.cpp
            Value.cpp
     )
 #SET ( pycpps PySpice.cpp 
