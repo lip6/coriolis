@@ -1,5 +1,5 @@
 ADD_SUBDIRECTORY(cplusplus)
-#ADD_SUBDIRECTORY(python)
+ADD_SUBDIRECTORY(python)
 
 SET ( SP_FILES OTA_miller.spi
     )
