@@ -13,22 +13,22 @@ SET ( cpps Circuit.cpp
            Subckt.cpp
            Value.cpp
     )
-#SET ( pycpps PySpice.cpp 
-#    )
+SET ( pycpps PySpice.cpp 
+    )
 
 ADD_LIBRARY(spice ${cpps})
 TARGET_LINK_LIBRARIES(spice)
 SET_TARGET_PROPERTIES(spice PROPERTIES VERSION 1.0 SOVERSION 1)
 INSTALL(TARGETS spice DESTINATION lib${LIB_SUFFIX} )
 
-#IF(Boost_FOUND)
-#    ADD_LIBRARY(pySPICE MODULE ${pycpps})
-#    SET_TARGET_PROPERTIES(pySPICE PROPERTIES
-#                                  OUTPUT_NAME "SPICE"
-#                                  PREFIX      ""
-#                         )
-#    TARGET_LINK_LIBRARIES(pySPICE spice ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
-#    INSTALL(TARGETS pySPICE DESTINATION ${PYTHON_SITE_PACKAGES})
-#ENDIF(Boost_FOUND)
+IF(Boost_FOUND)
+    ADD_LIBRARY(pySPICE MODULE ${pycpps})
+    SET_TARGET_PROPERTIES(pySPICE PROPERTIES
+                                  OUTPUT_NAME "SPICE"
+                                  PREFIX      ""
+                         )
+    TARGET_LINK_LIBRARIES(pySPICE spice ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
+    INSTALL(TARGETS pySPICE DESTINATION ${PYTHON_SITE_PACKAGES})
+ENDIF(Boost_FOUND)
 
 INSTALL(FILES ${hpps} DESTINATION include/vlsisapd/spice)
