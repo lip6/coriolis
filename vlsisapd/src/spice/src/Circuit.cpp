@@ -316,6 +316,8 @@ void Circuit::writeToFile(const string& filename) {
                     spfile << " " << (*it).first << "=" << (*it).second;
             }
             spfile << endl;
+            for (size_t j = 0 ; j < sub->getComments().size() ; j++)
+                spfile << "* " << sub->getComments()[j] << endl;
             for (size_t j = 0 ; j < sub->getInstances().size() ; j++) {
                 Instance* inst = sub->getInstances()[j];
                 writeInstance(spfile, inst);
