@@ -37,6 +37,17 @@
  endmacro(check_distribution)
 
 #
+# Get the svn revision version and configure a svn.h.in file based on this version
+# The include directory name is passed as argument
+#
+ macro(SETUP_SVNH includedir)
+   find_package(Subversion REQUIRED)
+   Subversion_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} SVNREV)
+   set(SUBVERSION_REVISION ${SVNREV_WC_REVISION})
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/svn.h.in ${CMAKE_CURRENT_SOURCE_DIR}/${includedir}/svn.h)
+ endmacro(SETUP_SVNH)
+
+#
 # Specific Apple OSX setup
 #
 #  This is no more needed since QT 4.6 is available for Mac OSX 10.6
