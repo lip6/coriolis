@@ -40,8 +40,8 @@
   Simply load an OPENCHAMS file using the static function OpenChams::Circuit::readFromFile() and then get the netlist object (OpenChams::Circuit::getNetlist()) or the sizing procedure (OpenChams::Circuit::getSizing(), might be NULL) or any other useful information (see OpenChams::Circuit).
 
   \subsection openChamsDriver Using the driver
-  Using the driver is very simple, user has to create a DTR::Techno object and simply add DTR::Rule or DTR::ARule to it.
-  The adding methods return the newly created Rule so user can set the rule type (DTR::Rule::setType()) if necessary. Finally use the DTR::Techno::writeToFile() method to dump the database to file.
+  Using the driver is very simple, user has to create an OpenChams::Circuit object and simply add OpenChams::Netlist (mandatory) and OpenChams::Sizing (optionnal) or OpenChams::Schematic (optionnal) or OpenChams::Layout (optinnal) to it.
+  Finally use the OpenChams::Circuit::writeToFile() method to dump the database to file.
 
   \section openChamsExamples Examples
   As said is the global presentation, VLSI SAPD project provides C++ libraries and Python modules for each supported format. In this section we present simple code examples to parse and drive a OPENCHAMS file using C++ or Python. The OPENCHAMS files considered are the same for all examples: \c inverter.xml and \c buffer.xml

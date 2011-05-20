@@ -1,0 +1,63 @@
+/*! \page spice SPICE Format
+
+  \section spicePres Presentation
+  The <b>Spice</b> format was developped at the University of California, Berkeley.
+  This parser/driver consists in a subset of SPICE3 netlist format. (see http://en.wikipedia.org/wiki/SPICE for more informations).\n
+
+  \subsection spiceAutrhos Author
+  Damien Dupuis: damien.dupuis(at)lip6(.)fr
+
+  \section spiceDB Stand alone database structure
+  The database consists in several objects:
+  - SPICE::Circuit
+  - SPICE::SpiceException
+  - SPICE::Subckt
+  - SPICE::Instance
+  - SPICE::Mosfet
+  - SPICE::Capacitor
+  - SPICE::Resistor
+  - SPICE::Source
+  - SPICE::Voltage
+  - SPICE::Current
+
+  \subsection spiceParser Using the parser
+  Simply load an Spice netlist file using the static function SPICE::Circuit::readFromFile().
+
+  \subsection spiceDriver Using the driver
+  Using the driver is very simple, user has to create a SPICE::Circuit object and simply add others Spice objects like SPICE::Subckt or SPICE::Instance to it.
+  Includes, libraries and parameters can also be added to SPICE::Circuit. Finally use the SPICE::Circuit::writeToFile() method to dump the database to file.
+
+  \section spiceExamples Examples
+  As said is the global presentation, VLSI SAPD project provides C++ libraries and Python modules for each supported format. In this section we present simple code examples to parse and drive a SPICE file using C++ or Python. The SPICE file considered describes a simple Miller OTA: \c OTA_miller.spi
+  \include OTA_miller.spi
+
+  All source codes are available in the \c examples directory.
+
+  \subsection spiceC C++
+  \subsubsection spiceParseC Parser
+  The following code (\c parseSpice.cpp) is an example of how to parse a SPICE file using C++ library.
+  \include parseSpice.cpp
+
+  \subsubsection spiceDriveC Driver
+  This C++ code (\c driveSpice.cpp) generates an myOTA.spi file equivalent to the included one.
+  \include driveSpice.cpp
+
+  \note In order to compile these codes, a CMakeLists.txt file is provided. User must set the $VLSISAPD_TOP variable before running these commands in the directory containing the CMakeLists.txt file:
+  \code
+  %> mkdir build; cd build
+  %> cmake ..
+  %> make
+  \endcode
+
+  \subsection spicePython Python
+  \subsubsection spiceParsePython Parser
+  The following python script (\c parseSpice.py) is an example of how to parse a SPICE file using python module.
+  \include parseSpice.py
+
+  \subsubsection spiceDrivePython Driver
+  This python script (\c driveSpice.py) generates an myOTA.spi file equivalent to the included one.
+  \include driveSpice.py
+
+  \note In order to run these two scripts (\c parseSpice.py & driveSpice.py), user must ensure that $PYTHONPATH variable points to the directory containing SPICE.so module.
+*/
+
