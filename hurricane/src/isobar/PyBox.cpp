@@ -259,13 +259,13 @@ extern "C" {
 
     PyObject* arg0;
     PyObject* arg1;
-    PyObject* arg2 = NULL;
-    PyObject* arg3 = NULL;
+    PyObject* arg2;
+    PyObject* arg3;
 
     HTRY
 
     __cs.init ("Box.inflate");
-    if ( ! PyArg_ParseTuple(args,"|O&O&O&O&:Box.inflate",Converter,&arg0,Converter,&arg1) )
+    if ( ! PyArg_ParseTuple(args,"|O&O&O&O&:Box.inflate",Converter,&arg0,Converter,&arg1,Converter,&arg2,Converter,&arg3) )
       return ( NULL );
 
     if      ( __cs.getObjectIds() == INT_ARG   ) { box->inflate ( PyInt_AsLong(arg0) ); }
