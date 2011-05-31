@@ -1,0 +1,64 @@
+// -*- C++ -*-
+
+namespace SPICE {
+/*! \class Source
+ *
+ *  This abstract class is a base class for SPICE::Current and SPICE::Voltage sources.
+ */
+
+/*! \fn Source::Source(std::string name, std::string pos, std::string neg, std::string value)
+ *   \brief creates a new source.
+ *
+ *   \param name  the name of the source.
+ *   \param pos   the positive connector of the source.
+ *   \param neg   the negative connector of the source.
+ *   \param value the value of the source.
+ */
+
+/*! \fn inline std::string Source::getName()
+ *   \brief returns the name of the source.
+ */
+
+/*! \fn inline std::string Source::getPositive()
+ *   \brief returns the positive connector of the source.
+ */
+
+/*! \fn inline std::string Source::getNegative()
+ *   \brief returns the negative connector of the source.
+ */
+
+/*! \fn inline std::string Source::getValue()
+ *   \brief returns the value of the source.
+ */
+
+
+/*! \class Current
+ *
+ *  This class describes a current source.
+ */
+
+/*! \fn Current::Current(std::string name, std::string pos, std::string neg, std::string value)
+ *   \brief creates a new current source.
+ *
+ *   \param name  the name of the source.
+ *   \param pos   the positive connector of the source.
+ *   \param neg   the negative connector of the source.
+ *   \param value the value of the source.
+ */
+
+
+/*! \class Voltage
+ *
+ *  This class describes a voltage source.
+ */
+
+/*! \fn Voltage::Voltage(std::string name, std::string pos, std::string neg, std::string value)
+ *   \brief creates a new voltage source.
+ *
+ *   \param name  the name of the source.
+ *   \param pos   the positive connector of the source.
+ *   \param neg   the negative connector of the source.
+ *   \param value the value of the source.
+ */
+}
+

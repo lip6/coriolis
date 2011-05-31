@@ -1,0 +1,116 @@
+// -*- C++ -*-
+
+namespace SPICE {
+/*! \class Circuit
+ *
+ *  This class is the root class which means that having this object in hand allows to get/set any information contained in the Spice file parsed/drived.
+ */
+
+/*! \fn Circuit::Circuit()
+ *   \brief creates a new circuit
+ */
+
+/*! \fn inline std::string Circuit::getTitle()
+ *   \brief returns the title of the circuit.
+ */
+
+/*! \fn inline const std::vector<std::string>& Circuit::getIncludes()
+ *   \brief returns the includes of the circuit.
+ */
+
+/*! \fn inline const std::vector<std::pair<std::string, std::string> >& Circuit::getLibraries()
+ *   \brief returns the libraries of the circuit.
+ */
+
+/*! \fn inline const std::map<std::string, std::string>& Circuit::getOptions()
+ *   \brief returns the options of the circuit.
+ */
+
+/*! \fn inline const std::map<std::string, std::string>& Circuit::getParameters()
+ *   \brief returns the parameters of the circuit.
+ */
+
+/*! \fn inline const std::vector<Subckt*>& Circuit::getSubckts()
+ *   \brief returns the subckts of the circuit.
+ */
+
+/*! \fn inline const std::vector<Instance*>& Circuit::getInstances()
+ *   \brief returns the instances of the circuit.
+ */
+
+/*! \fn inline const std::vector<Source*>& Circuit::getSources()
+ *   \brief returns the sources of the circuit.
+ */
+
+/*! \fn inline void Circuit::setTitle(std::string title)
+ *   \brief sets the title of the circuit.
+ *
+ *   \param title the title of the circuit
+ */
+
+/*! \fn inline void Circuit::addInclude(std::string include)
+ *   \brief adds an include to the circuit.
+ *
+ *   \param include the include to add.
+ */
+
+/*! \fn inline void Circuit::addLibrary(std::string file, std::string type = "")
+ *   \brief adds a library to the circuit.
+ *
+ *   \param file the file describing the library to add.
+ *   \param type the type if several exist in the same file (this argument is optionnal)
+ */
+
+/*! \fn inline void Circuit::addInstance(Instance* instance)
+ *   \brief adds an instance to the circuit.
+ *
+ *   \param instance the instance to add.
+ */
+
+/*! \fn inline void Circuit::addSource(Source* source)
+ *   \brief adds a source to the circuit.
+ *
+ *   \param source the source to add.
+ */
+
+/*! \fn void Circuit::addOption(std::string name, std::string value)
+ *   \brief adds an option to the circuit.
+ *
+ *   \param name  the name of the option.
+ *   \param value the value of the option.
+ *
+ *   \note The value is represented as a std::string to keep the optionnal unity.
+ */
+
+/*! \fn void Circuit::addParameter(std::string name, std::string value)
+ *   \brief adds a parameter to the circuit.
+ *
+ *   \param name  the name of the parameter.
+ *   \param value the value of the parameter.
+ *
+ *   \note The value is represented as a std::string to keep the optionnal unity.
+ */
+
+/*! \fn Subckt* Circuit::addSubckt(std::string name)
+ *   \brief adds a subcircuit to the circuit.
+ *
+ *   \param name the name of the subckt.
+ *
+ *   \return the newly created Subckt.
+ */
+
+/*! \fn void Circuit::writeToFile(const std::string filePath)
+ *   \brief writes the database to file.
+ *
+ *   \param filePath the destination file.
+ */
+
+/*! \fn static Circuit* Circuit::readFromFile(const std::string filePath)
+ *   \brief creates and returns a Circuit object based on a database source file.
+ *
+ *   \param filePath the source file name.
+ *
+ *   \return the newly created Circuit.
+ */
+ 
+}

@@ -1,0 +1,99 @@
+// -*- C++ -*-
+
+namespace SPICE {
+/*! \class Capacitor
+ *
+ *  This class describes a capacitor which is a specialized instance which has a positive and a negative connector and a value.
+ */
+
+/*! \fn Capacitor::Capacitor(std::string name, std::string pos, std::string neg, std::string value)
+ *   \brief creates a new capacitor.
+ *
+ *   \param name  the name of the capacitor.
+ *   \param pos   the positive connector of the capacitor.
+ *   \param neg   the negative connector of the capacitor.
+ *   \param value the value of the capacitor.
+ */
+
+/*! \fn inline std::string Capacitor::getPositive()
+ *   \brief returns the positive connector of the capacitor.
+ */
+
+/*! \fn inline std::string Capacitor::getNegative()
+ *   \brief returns the negative connector of the capacitor.
+ */
+
+/*! \fn inline std::string Capacitor::getValue()
+ *   \brief returns the value of the capacitor.
+ */
+
+
+/*! \class Resistor
+ *
+ *  This class describes a resistor which is a specialized instance which has two connectors and a value.
+ */
+
+/*! \fn Resistor::Resistor(std::string name, std::string first, std::string second, std::string value)
+ *   \brief creates a new resistor.
+ *
+ *   \param name   the name of the resistor.
+ *   \param first  the first connector of the resistor.
+ *   \param second the second connector of the resistor.
+ *   \param value  the value of the resistor.
+ */
+
+/*! \fn inline std::string Resistor::getFirst()
+ *   \brief returns the first connector of the resistor.
+ */
+
+/*! \fn inline std::string Resistor::getSecond()
+ *   \brief returns the second connector of the resistor.
+ */
+
+/*! \fn inline std::string Resistor::getValue()
+ *   \brief returns the value of the resistor.
+ */
+
+
+/*! \class Mosfet
+ *
+ *  This class describes a mosfet transistor which is a specialized instance which has four connectors (grid, drain, source and bulk).
+ */
+
+/*! \fn Mosfet::Mosfet(std::string name, std::string drain, std::string grid, std::string source, std::string bulk, std::string model)
+ *   \brief creates a new mosfet transistor.
+ *
+ *   \param name   the name of the transistor.
+ *   \param drain  the drain connector of the transistor.
+ *   \param grid   the grid connector of the transistor.
+ *   \param source the source connector of the transistor.
+ *   \param bulk   the bulk connector of the transistor.
+ *   \param model  the model of the transistor.
+ */
+
+/*! \fn inline std::string Mosfet::getName()
+ *   \brief returns the name of the transistor.
+ */
+
+/*! \fn inline std::string Mosfet::getDrain()
+ *   \brief returns the drain connector of the transistor.
+ */
+
+/*! \fn inline std::string Mosfet::getGrid()
+ *   \brief returns the grid connector of the transistor.
+ */
+
+/*! \fn inline std::string Mosfet::getSource()
+ *   \brief returns the source connector of the transistor.
+ */
+
+/*! \fn inline std::string Mosfet::getBulk()
+ *   \brief returns the bulk connector of the transistor.
+ */
+
+/*! \fn inline std::string Mosfet::getModel()
+ *   \brief returns the model of the transistor.
+ */
+
+}
+

@@ -1,0 +1,9 @@
+// -*- C++ -*-
+
+namespace SPICE {
+/*! \class SpiceException
+ *
+ *  This class describes the exceptions throwed by the Spice library in case of errors.
+ */
+
+}
