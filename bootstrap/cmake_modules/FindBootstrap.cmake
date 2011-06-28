@@ -103,7 +103,7 @@
 #
  macro(print_cmake_module_path)
    message("-- Components of CMAKE_MODULE_PATH:")
-   foreach(PATH IN LISTS CMAKE_MODULE_PATH)
+   foreach(PATH IN LISTS ${CMAKE_MODULE_PATH})
      message("--   ${PATH}")
    endforeach(PATH)
  endmacro(print_cmake_module_path)
@@ -190,7 +190,7 @@
      endif(NOT Boost_FOUND)
    endif(ARGC LESS 1)
    message(STATUS "Found Boost libraries ${Boost_LIB_VERSION} in ${Boost_INCLUDE_DIR}")
-   foreach(LIBRARY IN LISTS Boost_LIBRARIES)
+   foreach(LIBRARY IN LISTS ${Boost_LIBRARIES})
      message(STATUS "  ${LIBRARY}")
    endforeach(LIBRARY)
  endmacro(setup_boost)

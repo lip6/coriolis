@@ -89,6 +89,7 @@ if __name__ == "__main__":
 
   parser = optparse.OptionParser ()  
  # Build relateds.
+  parser.add_option ( "--csh"    , action="store_true" ,                dest="csh"        )
   parser.add_option ( "--v1"     , action="store_true" ,                dest="v1"         )
   parser.add_option ( "--v2"     , action="store_true" ,                dest="v2"         )
   parser.add_option ( "--release", action="store_true" ,                dest="release"    )
@@ -139,15 +140,15 @@ fi
 
     buildDir  = buildType + "." + linkType
     scriptDir = os.path.dirname ( os.path.abspath(__file__) )
-    print "echo %s;" % scriptDir
+   #print "echo %s;" % scriptDir
     if scriptDir == "/etc/coriolis2":
       coriolisTop  = "/usr"
       sysconfDir   = scriptDir
       shellMessage = "Using system-wide Coriolis 2 (/usr)"
-    elif scriptDir[:35] == "/users/outil/coriolis/coriolis-2.x/":
-      coriolisTop  = "/asim/coriolis2"
-      sysconfDir   = scriptDir
-      shellMessage = "Using SoC network-wide Coriolis 2 (/asim/coriolis2)"
+    elif scriptDir.startswith("/users/outil/coriolis/coriolis-2.x/"):
+      coriolisTop  = "/soc/coriolis2"
+      sysconfDir   = coriolisTop + "/etc/coriolis2"
+      shellMessage = "Using SoC network-wide Coriolis 2 (/soc/coriolis2)"
     else:
       if not rootDir:
         rootDir = os.getenv("HOME") + "/coriolis-2.x"
@@ -171,21 +172,37 @@ fi
       strippedPythonPath = "%s/cumulus:" % (sitePackagesDir) + strippedPythonPath
       strippedPythonPath = "%s/stratus:" % (sitePackagesDir) + strippedPythonPath
 
-    shellScript = \
+    shellScriptSh = \
 """
 echo "%(MESSAGE)s";
 echo "Switching to Coriolis 2.x (%(buildDir)s)";
-PATH=%(PATH)s;
-LD_LIBRARY_PATH=%(LD_LIBRARY_PATH)s;
-PYTHONPATH=%(PYTHONPATH)s;
-BOOTSTRAP_TOP=%(BOOTSTRAP_TOP)s;
-CORIOLIS_TOP=%(CORIOLIS_TOP)s;
-STRATUS_MAPPING_NAME=%(SYSCONF_DIR)s/stratus2sxlib.xml;
+PATH="%(PATH)s";
+LD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";
+PYTHONPATH="%(PYTHONPATH)s";
+BOOTSTRAP_TOP="%(BOOTSTRAP_TOP)s";
+CORIOLIS_TOP="%(CORIOLIS_TOP)s";
+STRATUS_MAPPING_NAME="%(SYSCONF_DIR)s/stratus2sxlib.xml";
 export PATH LD_LIBRARY_PATH PYTHONPATH BOOTSTRAP_TOP CORIOLIS_TOP STRATUS_MAPPING_NAME;
 hash -r
 """
 
+    shellScriptCsh = \
+"""
+echo "%(MESSAGE)s";
+echo "Switching to Coriolis 2.x (%(buildDir)s)";
+setenv PATH "%(PATH)s";
+setenv LD_LIBRARY_PATH "%(LD_LIBRARY_PATH)s";
+setenv PYTHONPATH "%(PYTHONPATH)s";
+setenv BOOTSTRAP_TOP "%(BOOTSTRAP_TOP)s";
+setenv CORIOLIS_TOP "%(CORIOLIS_TOP)s";
+setenv STRATUS_MAPPING_NAME "%(SYSCONF_DIR)s/stratus2sxlib.xml";
+rehash
+"""
+
   if coriolisVersion:
+    if options.csh: shellScript = shellScriptCsh
+    else:           shellScript = shellScriptSh
+
     print shellScript % { "PATH"            : strippedPath
                         , "LD_LIBRARY_PATH" : strippedLibraryPath
                         , "PYTHONPATH"      : strippedPythonPath

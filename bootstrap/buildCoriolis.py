@@ -618,6 +618,7 @@ if __name__ == "__main__":
                                     , "amsCore"
                                     , "opSim"
                                     , "scribe"
+                                    , "graph"
                                     , "pharos"
                                     , "schematic"
                                     , "autoDTR"
