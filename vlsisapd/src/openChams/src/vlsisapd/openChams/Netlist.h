@@ -23,8 +23,8 @@ class Netlist {
 	public:
     Netlist(Circuit*);
         
-    Instance* addInstance(Name name, Name model);
-    Device*   addDevice  (Name name, Name model, Name mosType, bool);
+    Instance* addInstance(Name name, Name model, unsigned);
+    Device*   addDevice  (Name name, Name model, unsigned, Name mosType, bool);
     Net*      addNet     (Name name, Name type , bool);
     
     Instance* getInstance(Name);

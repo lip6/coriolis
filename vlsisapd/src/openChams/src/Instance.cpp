@@ -16,9 +16,10 @@ using namespace std;
 #include "vlsisapd/openChams/OpenChamsException.h"
 
 namespace OpenChams {
-Instance::Instance(Name name, Name model, Netlist* netlist)
+Instance::Instance(Name name, Name model, unsigned order, Netlist* netlist)
     : _name(name)
     , _model(model)
+    , _order(order)
     , _netlist(netlist)
     , _params()
     , _netMap() {}

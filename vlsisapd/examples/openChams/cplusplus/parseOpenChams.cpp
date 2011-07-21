@@ -59,9 +59,9 @@ int main(int argc, char * argv[]) {
             OpenChams::Device*   dev  = NULL;
             if (dynamic_cast<OpenChams::Device*>(inst)) {
                 dev = static_cast<OpenChams::Device*>(inst);
-                cerr << " | | + " << dev->getName().getString() << " : " << dev->getModel().getString() << " - " << dev->getMosType().getString() << " - " << (dev->isSourceBulkConnected()?"true":"false") << endl;
+                cerr << " | | + " << dev->getName().getString() << " : " << dev->getModel().getString() << " - " << dev->getOrder() << " - " << dev->getMosType().getString() << " - " << (dev->isSourceBulkConnected()?"true":"false") << endl;
             } else {
-                cerr << " | | + " << inst->getName().getString() << " : " << inst->getModel().getString() << endl;
+                cerr << " | | + " << inst->getName().getString() << " : " << inst->getModel().getString() << " - " << inst->getOrder() << endl;
             }
             cerr << " | | | + connectors" << endl;
             for (map<OpenChams::Name, OpenChams::Net*>::const_iterator cit = inst->getConnectors().begin() ; cit != inst->getConnectors().end() ; ++cit) {
@@ -149,7 +149,7 @@ int main(int argc, char * argv[]) {
         if (!sizing->hasNoOperators()) {
             for (map<OpenChams::Name, OpenChams::Operator*>::const_iterator oit = sizing->getOperators().begin() ; oit != sizing->getOperators().end() ; ++oit) {
                 OpenChams::Operator* op = (*oit).second;
-                cerr << " | + instance name: " << ((*oit).first).getString() << " - operator: " << op->getName().getString() << " - simulModel: " << op->getSimulModel().getString() << " - callOrder: " << op->getCallOrder() << endl;
+                cerr << " | + instance name: " << ((*oit).first).getString() << " - operator: " << op->getName().getString() << " - simulModel: " << op->getSimulModel().getString() << endl;
                 if (!op->hasNoConstraints()) {
                     for (map<OpenChams::Name, OpenChams::Operator::Constraint*>::const_iterator cit = op->getConstraints().begin() ; cit != op->getConstraints().end() ; ++cit) {
                         OpenChams::Operator::Constraint* cstr = (*cit).second;

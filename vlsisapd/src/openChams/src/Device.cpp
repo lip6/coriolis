@@ -16,8 +16,8 @@ using namespace std;
 #include "vlsisapd/openChams/OpenChamsException.h"
 
 namespace OpenChams {
-Device::Device(Name name, Name model, Name mosType, bool sourceBulkConnected, Netlist* netlist)
-    : Instance(name, model, netlist)
+Device::Device(Name name, Name model, unsigned order, Name mosType, bool sourceBulkConnected, Netlist* netlist)
+    : Instance(name, model, order, netlist)
     , _mosType(mosType)
     , _sourceBulkConnected(sourceBulkConnected)
     , _trans() {}

@@ -319,28 +319,31 @@ void Circuit::readInstances(xmlNode* node, Netlist* netlist) {
 Instance* Circuit::readInstance(xmlNode* node, Netlist* netlist) {
     xmlChar* iNameC  = xmlGetProp(node, (xmlChar*)"name");
     xmlChar* iModelC = xmlGetProp(node, (xmlChar*)"model");
+    xmlChar* iOrderC = xmlGetProp(node, (xmlChar*)"order");
     xmlChar* iMOSC   = xmlGetProp(node, (xmlChar*)"mostype");
     xmlChar* iSBCC   = xmlGetProp(node, (xmlChar*)"sourceBulkConnected");
     Instance* inst = NULL;
-    if (iNameC && iModelC && iMOSC && iSBCC) { // this is a device
+    if (iNameC && iModelC && iOrderC && iMOSC && iSBCC) { // this is a device
         Name instanceName((const char*)iNameC);
         Name modelName((const char*)iModelC);
+        unsigned order = ::getValue<unsigned>(iOrderC);
         string mosStr((const char*)iMOSC);
         string mosComp[2] = {"NMOS", "PMOS"};
         vector<string> mosComps (mosComp, mosComp+2);
-        check_uppercase(mosStr, mosComps, "[ERROR] In 'instance', 'mostype' must be 'NMOS' or 'PMOS'.");
+        check_uppercase(mosStr, mosComps, "[ERROR] In 'instance', 'mostype' property must be 'NMOS' or 'PMOS'.");
         string sourceBulkStr((const char*)iSBCC);
         string sbcComp[4] = {"true", "false", "on", "off"};
         vector<string> sbcComps(sbcComp, sbcComp+4);
-        check_lowercase(sourceBulkStr, sbcComps, "[ERROR] In 'instance', 'sourceBulkConnected' must 'true', 'false', 'on' or 'off'.");
+        check_lowercase(sourceBulkStr, sbcComps, "[ERROR] In 'instance', 'sourceBulkConnected' property must be 'true', 'false', 'on' or 'off'.");
         bool sourceBulkConnected = ((sourceBulkStr == "true") || (sourceBulkStr == "on")) ? true : false;
-        inst = (Instance*)netlist->addDevice(instanceName, modelName, Name(mosStr), sourceBulkConnected);
-    } else if (iNameC && iModelC && !iMOSC && !iSBCC) { // this is a subcircuit
+        inst = (Instance*)netlist->addDevice(instanceName, modelName, order, Name(mosStr), sourceBulkConnected);
+    } else if (iNameC && iModelC && iOrderC && !iMOSC && !iSBCC) { // this is a subcircuit
         Name instanceName((const char*)iNameC);
         Name modelName((const char*)iModelC);
-        inst = netlist->addInstance(instanceName, modelName);
+        unsigned order = ::getValue<unsigned>(iOrderC);
+        inst = netlist->addInstance(instanceName, modelName, order);
     } else {
-        throw OpenChamsException("[ERROR] 'instance' node must have ('name' and 'model') or ('name', 'model', 'mostype' and 'sourceBulkConnected') properties.");
+        throw OpenChamsException("[ERROR] 'instance' node must have ('name', 'model' and 'order') or ('name', 'model', 'order', 'mostype' and 'sourceBulkConnected') properties.");
         //return inst;
     }
 
@@ -705,15 +708,13 @@ void Circuit::readInstanceSizing(xmlNode* node, Sizing* sizing) {
     xmlChar* nameC     = xmlGetProp(node, (xmlChar*)"name");
     xmlChar* operatorC = xmlGetProp(node, (xmlChar*)"operator");
     xmlChar* simulModC = xmlGetProp(node, (xmlChar*)"simulModel");
-    xmlChar* orderC    = xmlGetProp(node, (xmlChar*)"callOrder");
-    if (nameC && operatorC && simulModC && orderC) {
+    if (nameC && operatorC && simulModC) {
         Name     iName   ((const char*)nameC);
         string   opStr   ((const char*)operatorC);
         transform(opStr.begin(), opStr.end(), opStr.begin(), ::toupper);
         Name     opName  (opStr);
         Name     simulMod((const char*)simulModC);
-        unsigned callOrder = ::getValue<unsigned>(orderC);
-        Operator* op = sizing->addOperator(iName, opName, simulMod, callOrder);
+        Operator* op = sizing->addOperator(iName, opName, simulMod);
         xmlNode* child = node->children;
         for (xmlNode* node = child; node; node = node->next) {
             if (node->type == XML_ELEMENT_NODE) {
@@ -726,7 +727,7 @@ void Circuit::readInstanceSizing(xmlNode* node, Sizing* sizing) {
         }
         
     } else {
-        throw OpenChamsException("[ERROR] 'instance' node in 'sizing' must have 'name', 'operator', 'simulModel' and 'callOrder' properties.");
+        throw OpenChamsException("[ERROR] 'instance' node in 'sizing' must have 'name', 'operator' and 'simulModel' properties.");
     }
 }
     
@@ -1007,9 +1008,9 @@ bool Circuit::writeToFile(string filePath) {
         }
         if (dev) {
             string sourceBulkStr = (dev->isSourceBulkConnected()) ? "True" : "False";
-            file << "      <instance name=\"" << dev->getName().getString() << "\" model=\"" << dev->getModel().getString() << "\" mostype=\"" << dev->getMosType().getString() << "\" sourceBulkConnected=\"" << sourceBulkStr << "\">" << endl;
+            file << "      <instance name=\"" << dev->getName().getString() << "\" model=\"" << dev->getModel().getString() << "\" mostype=\"" << dev->getMosType().getString() << "\" sourceBulkConnected=\"" << sourceBulkStr << "\" order=\"" << dev->getOrder() << "\">" << endl;
         } else {
-            file << "      <instance name=\"" << inst->getName().getString() << "\" model=\"" << inst->getModel().getString() << "\">" << endl;
+            file << "      <instance name=\"" << inst->getName().getString() << "\" model=\"" << inst->getModel().getString() << "\" order=\"" << inst->getOrder() << "\">" << endl;
         }
         file << "        <connectors>" << endl;
         for (map<Name, Net*>::const_iterator it = inst->getConnectors().begin() ; it != inst->getConnectors().end() ; ++it) {
@@ -1124,7 +1125,7 @@ bool Circuit::writeToFile(string filePath) {
             Operator* op = (*it).second;
             string opName = op->getName().getString();
             transform(opName.begin(), opName.end(), opName.begin(), ::toupper);
-            file << "    <instance name=\"" << ((*it).first).getString() << "\" operator=\"" << opName << "\" simulModel=\"" << op->getSimulModel().getString() << "\" callOrder=\"" << op->getCallOrder() << "\">" << endl;
+            file << "    <instance name=\"" << ((*it).first).getString() << "\" operator=\"" << opName << "\" simulModel=\"" << op->getSimulModel().getString() << "\">" << endl;
             if (!op->hasNoConstraints()) {
                 for (map<Name, Operator::Constraint*>::const_iterator cit = op->getConstraints().begin() ; cit != op->getConstraints().end() ; ++cit) {
                     Operator::Constraint* cn = (*cit).second;

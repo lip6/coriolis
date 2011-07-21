@@ -21,7 +21,7 @@ class Sizing {
 	public:
         Sizing(Circuit*);
         
-        Operator* addOperator(Name instanceName, Name operatorName, Name simulModel, unsigned callOrder);
+        Operator* addOperator(Name instanceName, Name operatorName, Name simulModel);
         void      addEquation(Name equationName, std::string equation);
         
         inline bool  hasNoOperators();

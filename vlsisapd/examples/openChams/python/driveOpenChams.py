@@ -15,7 +15,7 @@ circuit.addParameter(Name("complex"), "myEq")
 netlist = circuit.createNetlist()
 #  instances
 #   nmos1
-inst_nmos1 = netlist.addDevice("nmos1", "Transistor", "NMOS", True)
+inst_nmos1 = netlist.addDevice("nmos1", "Transistor", 1, "NMOS", True)
 inst_nmos1.addConnector("G")
 inst_nmos1.addConnector("S")
 inst_nmos1.addConnector("D")
@@ -25,7 +25,7 @@ tr_nmos1.source = "S"
 tr_nmos1.drain  = "D"
 tr_nmos1.bulk   = "S"
 #   pmos1
-inst_pmos1 = netlist.addDevice("pmos1", "Transistor", "PMOS", True)
+inst_pmos1 = netlist.addDevice("pmos1", "Transistor", 2, "PMOS", True)
 inst_pmos1.addConnector("G")
 inst_pmos1.addConnector("S")
 inst_pmos1.addConnector("D")
@@ -73,14 +73,14 @@ wireOut1.setStartPoint("nmos1", "D")
 wireOut1.setEndPoint  (0)
 # sizing
 sizing = circuit.createSizing()
-op_pmos1 = sizing.addOperator("pmos1", "OPVG(Veg)" , "BSIM3V3", 0)
+op_pmos1 = sizing.addOperator("pmos1", "OPVG(Veg)" , "BSIM3V3")
 op_pmos1.addConstraint("Temp", "design", "temp")
 op_pmos1.addConstraint("Ids" , "design", "Ids" )
 op_pmos1.addConstraint("L"   , "design", "L"   )
 op_pmos1.addConstraint("Veg" , "design", "Veg" )
 op_pmos1.addConstraint("Vd"  , "design", "Vdd", 0.5)
 op_pmos1.addConstraint("Vs"  , "design", "Vdd" )
-op_nmos1 = sizing.addOperator("nmos1", "OPW(Vg,Vs)", "BSIM3V3", 1)
+op_nmos1 = sizing.addOperator("nmos1", "OPW(Vg,Vs)", "BSIM3V3")
 op_nmos1.addConstraint("Temp", "design", "temp")
 op_nmos1.addConstraint("Ids" , "design", "Ids" )
 op_nmos1.addConstraint("L"   , "design", "L"   )

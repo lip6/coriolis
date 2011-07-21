@@ -14,10 +14,9 @@ using namespace std;
 #include "vlsisapd/openChams/OpenChamsException.h"
 
 namespace OpenChams {
-Operator::Operator(Name operatorName, Name simulModel, unsigned callOrder) 
+Operator::Operator(Name operatorName, Name simulModel) 
     : _name(operatorName)
-    , _simulModel(simulModel)
-    , _callOrder(callOrder) {}
+    , _simulModel(simulModel) {}
     
 void Operator::addConstraint(Name paramName, Name ref, Name refParam) {
     addConstraint(paramName, ref, refParam, 1.0);

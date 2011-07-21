@@ -18,7 +18,7 @@ using namespace std;
 namespace OpenChams {
 Sizing::Sizing(Circuit* circuit): _circuit(circuit) {}
     
-Operator* Sizing::addOperator(Name instanceName, Name operatorName, Name simulModel, unsigned callOrder) {
+Operator* Sizing::addOperator(Name instanceName, Name operatorName, Name simulModel) {
     map<Name, Operator*>::iterator it = _operators.find(instanceName);
     if (it != _operators.end()) {
         string error("[ERROR] Cannot set same instance twice in 'sizing' (");
@@ -26,7 +26,7 @@ Operator* Sizing::addOperator(Name instanceName, Name operatorName, Name simulMo
         error += ").";
         throw OpenChamsException(error);
     }
-    Operator* op = new Operator(operatorName, simulModel, callOrder);
+    Operator* op = new Operator(operatorName, simulModel);
     _operators[instanceName] = op;
     return op;
 }

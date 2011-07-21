@@ -11,7 +11,7 @@
   </parameters>
   <netlist>
     <instances>
-      <instance name="nmos1" model="Transistor" mostype="NMOS" sourceBulkConnected="True">
+      <instance name="nmos1" model="Transistor" order="1" mostype="NMOS" sourceBulkConnected="True">
         <connectors>
           <connector name="G"/>
           <connector name="D"/>
@@ -23,7 +23,7 @@
           </transistor>
         </transistors>
       </instance>
-      <instance name="pmos1" model="Transistor" mostype="PMOS" sourceBulkConnected="True">
+      <instance name="pmos1" model="Transistor" order="2" mostype="PMOS" sourceBulkConnected="True">
         <connectors>
           <connector name="G"/>
           <connector name="D"/>
@@ -95,7 +95,7 @@
     </net>
   </schematic>
   <sizing>
-    <instance name="pmos1" operator="OPVG(Veg)" simulModel="BSIM3V3" callOrder="0">
+    <instance name="pmos1" operator="OPVG(Veg)" simulModel="BSIM3V3">
       <constraint param="Temp" ref="design" refParam="temp"/>
       <constraint param="Ids"  ref="design" refParam="Ids"/>
       <constraint param="L"    ref="design" refParam="L"/>
@@ -103,7 +103,7 @@
       <constraint param="Vd"   ref="design" refParam="Vdd" factor="0.5"/>
       <constraint param="Vs"   ref="design" refParam="Vdd"/>
     </instance>
-    <instance name="nmos1" operator="OPW(Vg,Vs)" simulModel="BSIM3V3" callOrder="1">
+    <instance name="nmos1" operator="OPW(Vg,Vs)" simulModel="BSIM3V3">
       <constraint param="Temp" ref="design" refParam="temp"/>
       <constraint param="Ids"  ref="design" refParam="Ids"/>
       <constraint param="L"    ref="design" refParam="L"/>

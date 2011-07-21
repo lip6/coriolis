@@ -30,7 +30,7 @@ int main(int argc, char * argv[]) {
     OpenChams::Netlist* netlist = circuit->createNetlist();
     //  instances
     //   nmos1
-    OpenChams::Device* inst_nmos1 = netlist->addDevice(OpenChams::Name("nmos1"), OpenChams::Name("Transistor"), OpenChams::Name("NMOS"), true);
+    OpenChams::Device* inst_nmos1 = netlist->addDevice(OpenChams::Name("nmos1"), OpenChams::Name("Transistor"), 1, OpenChams::Name("NMOS"), true);
     inst_nmos1->addConnector(OpenChams::Name("G"));
     inst_nmos1->addConnector(OpenChams::Name("S"));
     inst_nmos1->addConnector(OpenChams::Name("D"));
@@ -40,7 +40,7 @@ int main(int argc, char * argv[]) {
     tr_nmos1->setDrain (OpenChams::Name("D"));
     tr_nmos1->setBulk  (OpenChams::Name("S"));
     //   pmos1
-    OpenChams::Device* inst_pmos1 = netlist->addDevice(OpenChams::Name("pmos1"), OpenChams::Name("Transistor"), OpenChams::Name("PMOS"), true);
+    OpenChams::Device* inst_pmos1 = netlist->addDevice(OpenChams::Name("pmos1"), OpenChams::Name("Transistor"), 2, OpenChams::Name("PMOS"), true);
     inst_pmos1->addConnector(OpenChams::Name("G"));
     inst_pmos1->addConnector(OpenChams::Name("S"));
     inst_pmos1->addConnector(OpenChams::Name("D"));
@@ -90,14 +90,14 @@ int main(int argc, char * argv[]) {
 
     // sizing
     OpenChams::Sizing* sizing = circuit->createSizing();
-    OpenChams::Operator* op_pmos1 = sizing->addOperator(OpenChams::Name("pmos1"), OpenChams::Name("OPVG(Veg)"), OpenChams::Name("BSIM3V3"), 0);
+    OpenChams::Operator* op_pmos1 = sizing->addOperator(OpenChams::Name("pmos1"), OpenChams::Name("OPVG(Veg)"), OpenChams::Name("BSIM3V3"));
     op_pmos1->addConstraint(OpenChams::Name("Temp"), OpenChams::Name("design"), OpenChams::Name("temp"));
     op_pmos1->addConstraint(OpenChams::Name("Ids") , OpenChams::Name("design"), OpenChams::Name("Ids") );
     op_pmos1->addConstraint(OpenChams::Name("L")   , OpenChams::Name("design"), OpenChams::Name("L")   );
     op_pmos1->addConstraint(OpenChams::Name("Veg") , OpenChams::Name("design"), OpenChams::Name("Veg") );
     op_pmos1->addConstraint(OpenChams::Name("Vd")  , OpenChams::Name("design"), OpenChams::Name("Vdd") , 0.5);
     op_pmos1->addConstraint(OpenChams::Name("Vs")  , OpenChams::Name("design"), OpenChams::Name("Vdd") );
-    OpenChams::Operator* op_nmos1 = sizing->addOperator(OpenChams::Name("nmos1"), OpenChams::Name("OPW(Vg,Vs)"), OpenChams::Name("BSIM3V3"), 1);
+    OpenChams::Operator* op_nmos1 = sizing->addOperator(OpenChams::Name("nmos1"), OpenChams::Name("OPW(Vg,Vs)"), OpenChams::Name("BSIM3V3"));
     op_nmos1->addConstraint(OpenChams::Name("Temp"), OpenChams::Name("design"), OpenChams::Name("temp"));
     op_nmos1->addConstraint(OpenChams::Name("Ids") , OpenChams::Name("design"), OpenChams::Name("Ids" ));
     op_nmos1->addConstraint(OpenChams::Name("L")   , OpenChams::Name("design"), OpenChams::Name("L"   ));

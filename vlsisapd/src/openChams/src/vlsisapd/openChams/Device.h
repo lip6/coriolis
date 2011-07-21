@@ -22,7 +22,7 @@ class Netlist;
 class Transistor;
 class Device : public Instance {
 	public:
-    Device(Name name, Name model, Name mosType, bool, Netlist*);
+    Device(Name name, Name model, unsigned, Name mosType, bool, Netlist*);
 
     virtual ~Device() {};
     

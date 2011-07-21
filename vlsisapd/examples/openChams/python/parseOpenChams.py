@@ -16,9 +16,9 @@ def printContents(circuit):
   print " | + instances"
   for instance in circuit.netlist.getInstances():
     if isinstance(instance, Device): 
-      print " | | +", instance.name, ":", instance.model, instance.mosType, instance.sourceBulkConnected
+      print " | | +", instance.name, ":", instance.model, instance.order, instance.mosType, instance.sourceBulkConnected
     else:
-      print " | | +", instance.name, ":", instance.model
+      print " | | +", instance.name, ":", instance.model, instance.order
     print " | | | + connectors"
     for conn in instance.getConnectors():
       print " | | | |", conn.key, ":", conn.value.name
@@ -67,7 +67,7 @@ def printContents(circuit):
   if (circuit.sizing):
     print " + sizing"
     for op in circuit.sizing.getOperators():
-      print " | + instance name:", op.key, "- operator:", op.value.name, "- simulModel:", op.value.simulModel, "- callOrder:", op.value.callOrder
+      print " | + instance name:", op.key, "- operator:", op.value.name, "- simulModel:", op.value.simulModel
       for constraint in op.value.getConstraints():
         print " | | + param:", constraint.key, "- ref:", constraint.value.ref, "- refParam:", constraint.value.refParam, "- factor:", constraint.value.factor
     print " | + equations"

@@ -101,10 +101,11 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
     // map wrapping and vector_indexing for OpenChams::Instance
     STL_MAP_WRAPPING_PTR(Name, Net*, "ConnectorsMap")
     // class OpenChams::Instance
-    class_<Instance, Instance*>("Instance", init<Name, Name, Netlist*>())
+    class_<Instance, Instance*>("Instance", init<Name, Name, unsigned, Netlist*>())
         // properties
         .add_property("name"               , &Instance::getName              )
         .add_property("model"              , &Instance::getModel             )
+        .add_property("order"              , &Instance::getOrder             )
         .add_property("parameters"         , &Instance::getParameters        )
         .add_property("netlist"            , make_function(&Instance::getNetlist ,return_value_policy<reference_existing_object>())) //make_function since we need to specify a return value policy
         // accessors
@@ -123,7 +124,7 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
         .def(vector_indexing_suite<std::vector<Transistor*>, true>())
     ;
     // class OpenChams::Device
-    class_<Device, bases<Instance> >("Device", init<Name, Name, Name, bool, Netlist*>())
+    class_<Device, bases<Instance> >("Device", init<Name, Name, unsigned, Name, bool, Netlist*>())
         // properties
         .add_property("mosType"            , &Device::getMosType           )
         .add_property("sourceBulkConnected", &Device::isSourceBulkConnected)
@@ -274,11 +275,10 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
     STL_MAP_WRAPPING_PTR(Name, Operator::Constraint*, "ConstraintsMap")
     { // this scope is used to define Constraint as a subclass of Operator
     // class OpenChams::Operator
-    scope operatorScope = class_<Operator, Operator*>("Operator", init<Name, Name, unsigned>())
+    scope operatorScope = class_<Operator, Operator*>("Operator", init<Name, Name>())
         // properties
         .add_property("name"      , &Operator::getName      )
         .add_property("simulModel", &Operator::getSimulModel)
-        .add_property("callOrder" , &Operator::getCallOrder )
         // accessors
         .def("hasNoConstraints", &Operator::hasNoConstraints)
         // modifiers

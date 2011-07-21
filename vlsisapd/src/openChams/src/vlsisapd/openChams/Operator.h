@@ -32,7 +32,7 @@ class Operator {
         };
         
 	public:
-        Operator(Name operatorName, Name simulModel, unsigned callOrder);
+        Operator(Name operatorName, Name simulModel);
         
         void addConstraint(Name paramName, Name ref, Name refParam               );
         void addConstraint(Name paramName, Name ref, Name refParam, double factor);
@@ -41,20 +41,17 @@ class Operator {
         
         inline Name     getName();
         inline Name     getSimulModel();
-        inline unsigned getCallOrder();
         inline bool     hasNoConstraints();
         inline const std::map<Name, Constraint*>& getConstraints();
         
     private:
 	    Name _name;
 	    Name _simulModel;
-	    unsigned _callOrder;
         std::map<Name, Constraint*> _constraints;
 };
     
     inline Name     Operator::getName() { return _name; };
     inline Name     Operator::getSimulModel() { return _simulModel; };
-    inline unsigned Operator::getCallOrder() { return _callOrder; };
     inline bool     Operator::hasNoConstraints() { return (_constraints.size() == 0) ? true : false; };
     inline const std::map<Name, Operator::Constraint*>& Operator::getConstraints() { return _constraints; };        
 

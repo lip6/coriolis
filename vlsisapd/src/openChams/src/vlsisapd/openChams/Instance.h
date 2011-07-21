@@ -21,7 +21,7 @@ class Netlist;
 class Net;
 class Instance {
 	public:
-    Instance(Name name, Name model, Netlist*);
+    Instance(Name name, Name model, unsigned, Netlist*);
 
     virtual ~Instance() {};
     
@@ -32,6 +32,7 @@ class Instance {
     inline void addParameter(Name, std::string);
     inline Name getName() const;
     inline Name getModel();
+    inline unsigned getOrder();
     inline Netlist* getNetlist();
     inline Parameters getParameters();
     // pour parcourir les connecteurs
@@ -41,6 +42,7 @@ class Instance {
 	private:
 	Name 	   		_name;
     Name 	   		_model;
+    unsigned        _order;
     Netlist*   		_netlist;
     Parameters 		_params;
     std::map<Name, Net*>     _netMap; //map associant nom de connecteur a un net
@@ -50,6 +52,7 @@ inline void Instance::addParameter(Name name, double value) { _params.addParamet
 inline void Instance::addParameter(Name name, std::string eqStr) { _params.addParameter(name, eqStr); };
 inline Name Instance::getName() const { return _name; };
 inline Name Instance::getModel() { return _model; };
+inline unsigned Instance::getOrder() { return _order; };
 inline Netlist* Instance::getNetlist() { return _netlist; };
 inline Parameters Instance::getParameters() { return _params; };
 inline bool Instance::hasNoConnectors() { return (_netMap.size() == 0)? true : false; };

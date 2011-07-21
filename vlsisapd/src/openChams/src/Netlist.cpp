@@ -21,7 +21,7 @@ using namespace std;
 namespace OpenChams {
 Netlist::Netlist(Circuit* circuit) : _circuit(circuit) {}
     
-Instance* Netlist::addInstance(Name name, Name model) {
+Instance* Netlist::addInstance(Name name, Name model, unsigned order) {
     for (vector<Instance*>::iterator it = _instances.begin() ; it != _instances.end() ; ++it) {
         if ((*it)->getName() == name) {
             string error("[ERROR] Cannot define two instances with the same name in netlist (");
@@ -30,7 +30,7 @@ Instance* Netlist::addInstance(Name name, Name model) {
             throw OpenChamsException(error);
         }
     }
-    Instance* inst = new Instance(name, model, this);
+    Instance* inst = new Instance(name, model, order, this);
     if (!inst)
         throw OpenChamsException("[ERROR] Cannot create instance.");
     _instances.push_back(inst);
@@ -38,7 +38,7 @@ Instance* Netlist::addInstance(Name name, Name model) {
     return inst;
 }
 
-Device* Netlist::addDevice(Name name, Name model, Name mosType, bool sourceBulkConnected) {
+Device* Netlist::addDevice(Name name, Name model, unsigned order, Name mosType, bool sourceBulkConnected) {
     for (vector<Instance*>::iterator it = _instances.begin() ; it != _instances.end() ; ++it) {
         if ((*it)->getName() == name) {
             string error("[ERROR] Cannot define two instances with the same name in netlist (");
@@ -47,7 +47,7 @@ Device* Netlist::addDevice(Name name, Name model, Name mosType, bool sourceBulkC
             throw OpenChamsException(error);
         }
     }
-    Device* dev = new Device(name, model, mosType, sourceBulkConnected, this);
+    Device* dev = new Device(name, model, order, mosType, sourceBulkConnected, this);
     if (!dev)
         throw OpenChamsException("[ERROR] Cannot create device.");
     _instances.push_back(dev);
