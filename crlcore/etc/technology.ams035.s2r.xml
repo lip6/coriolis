@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<technology>
+  <real>
+    <name>ams035</name>
+    <grid value="0.025" unit="micron"/>
+    <gridsperlambda value="24"/>
+    <layers>
+      <!-- Non routing layers -->
+      <processlayer symbolic="nWell"    real="NTUB"  gdsII="5" />
+      <processlayer symbolic="nImplant" real="NPLUS" gdsII="23"/>
+      <processlayer symbolic="pImplant" real="PPLUS" gdsII="24"/>
+      <processlayer symbolic="active"   real="DIFF"  gdsII="10" />
+      <processlayer symbolic="poly"     real="POLY1" gdsII="20"/>
+      <!-- Routing layers -->
+      <processlayer symbolic="cut0"     real="CONT"  gdsII="34"/>
+      <processlayer symbolic="metal1"   real="MET1"  gdsII="35"/>
+      <processlayer symbolic="cut1"     real="VIA1"  gdsII="36"/>
+      <processlayer symbolic="metal2"   real="MET2"  gdsII="37"/>
+      <processlayer symbolic="cut2"     real="VIA2"  gdsII="38"/>
+      <processlayer symbolic="metal3"   real="MET3"  gdsII="39"/>
+      <processlayer symbolic="cut3"     real="VIA3"  gdsII="41"/>
+      <processlayer symbolic="metal4"   real="MET4"  gdsII="42"/>
+    </layers>
+  </real>
+</technology>
