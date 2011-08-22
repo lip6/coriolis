@@ -193,6 +193,7 @@
    foreach(LIBRARY IN LISTS ${Boost_LIBRARIES})
      message(STATUS "  ${LIBRARY}")
    endforeach(LIBRARY)
+   add_definitions(-DBOOST_FILESYSTEM_VERSION=2) # for boost 1.46 and more we need to specify to use filesystem v2 and not v3
  endmacro(setup_boost)
 
 
