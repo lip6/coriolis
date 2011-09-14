@@ -30,5 +30,16 @@ namespace OpenChams {
 /*! \fn inline const std::map<Name, Infos*>& Layout::getInstances()
  *   \brief returns the map of Instances.
  */
+
+/*! \fn inline Node* Layout::getHBTreeRoot()
+ *   \brief returns the root of the placement tree associated to the layout.
+ */
+
+/*! \fn inline void  Layout::setHBTreeRoot(Node* root)
+ *   \brief sets the root of the placement tree associated to the layout.
+ *
+ *   \param root the root of the palcement tree.
+ */
+
 }
 

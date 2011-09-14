@@ -35,6 +35,9 @@
     - OpenChams::IntermediatePoint
   - Layout
     - OpenChams::Layout
+    - OpenChams::Node
+    - OpenChams::Bloc
+    - OpenChams::Group
 
   \subsection openChamsParser Using the parser
   Simply load an OPENCHAMS file using the static function OpenChams::Circuit::readFromFile() and then get the netlist object (OpenChams::Circuit::getNetlist()) or the sizing procedure (OpenChams::Circuit::getSizing(), might be NULL) or any other useful information (see OpenChams::Circuit).

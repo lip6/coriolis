@@ -1,0 +1,107 @@
+// -*- C++ -*-
+
+namespace OpenChams {
+/*! \class Node
+ *
+ *  This class describes a node of the placement tree.
+ *
+ *  This is an abstract class used to easily managed blocs and groups of the placement tree.
+ */
+
+/*! \fn inline Name Node::getName()
+ *   \brief returns the name of the node.
+ */
+
+/*! \fn inline Position Node::getPosition()
+ *   \brief returns the position of the node.
+ */
+
+/*! \fn inline Node* Node::getParent()
+ *   \brief returns the parent node of the current node.
+ */
+
+/*! \fn inline Node* Node::getRight()
+ *   \brief returns the child node at the right of the current node.
+ */
+
+/*! \fn inline Node* Node::getTop()
+ *   \brief returns the child node at the top of the current node.
+ */
+
+/*! \fn inline bool Node::isRoot()
+ *   \brief returns tru if the node is the root of the tree (has no parent).
+ */
+
+/*! \fn inline void Node::setRight(Node* node)
+ *   \brief sets the child node at the right of the current node.
+ *
+ *   \param node the node at the right of the current node.
+ */
+
+/*! \fn inline void Node::setTop(Node* node)
+ *   \brief sets the node at the top of the current node.
+ *
+ *   \param node the node at the top of the current node.
+ */
+
+
+/*! \class Bloc
+ *
+ *  This class describes a bloc of the placement tree.
+ */
+
+/*! \fn Bloc::Bloc(Name blocName, Position position, Node* parent)
+ *   \brief creates a new bloc.
+ *
+ *   \param blocName the name of the bloc
+ *   \param position the position of the bloc (default value: NONE)
+ *   \param parent   the parent node of the node (default value: NULL)
+ */
+
+
+/*! \class Group
+ *
+ *  This class describes a group of the placement tree.
+ */
+
+/*! \fn inline void Group::setRootNode(Node* node)
+ *   \brief sets the root node of the group.
+ *
+ *   \param node the root node of the group
+ */
+
+/*! \fn inline void Group::setIsolated(bool isolated)
+ *   \brief sets whether the group has an isolation constraint or not.
+ *
+ *   \param isolated if true the group has an isolation constraint.
+ */
+
+/*! \fn inline void Group::setPaired(bool paired)
+ *   \brief sets whether the group has a pairing constraint or not.
+ *
+ *   \param paired if true the group has a pairing constraint.
+ */
+
+/*! \fn inline void Group::setAlign(Align align)
+ *   \brief sets an alignment constraint on the group.
+ *
+ *   \param align the value of the alignment constraint can be NONE, VERTICAL or HORIZONTAL.
+ */
+
+/*! \fn inline Node* group::getRootNode()
+ *   \brief returns the root node of the group.
+ */
+
+/*! \fn inline bool Group::isIsolated()
+ *   \brief returns true if the group has an isolation constraint.
+ */
+
+/*! \fn inline bool Group::isPaired()
+ *   \brief returns true if the group has a pairing constraint.
+ */
+
+/*! \fn inline Align Group::getAlign()
+ *   \brief returns the alignment constraint of the group.
+ */
+
+}
