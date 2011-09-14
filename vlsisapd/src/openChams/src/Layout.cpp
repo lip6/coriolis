@@ -3,7 +3,7 @@
  *  openChams
  *
  *  Created by damien dupuis on 31/08/10.
- *  Copyright 2008-2010 UPMC / LIP6. All rights reserved.
+ *  Copyright 2008-2011 UPMC / LIP6. All rights reserved.
  *
  */
 
@@ -15,7 +15,7 @@ using namespace std;
 #include "vlsisapd/openChams/OpenChamsException.h"
 
 namespace OpenChams {
-Layout::Layout(Circuit* circuit): _circuit(circuit) {}
+Layout::Layout(Circuit* circuit): _circuit(circuit), _hbTreeRoot(NULL), _instances() {}
     
 void Layout::addInstance(Name name, Name style) {
     map<Name, Name>::iterator it = _instances.find(name);

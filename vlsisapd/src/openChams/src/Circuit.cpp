@@ -23,6 +23,7 @@ using namespace std;
 #include "vlsisapd/openChams/SimulModel.h"
 #include "vlsisapd/openChams/Sizing.h"
 #include "vlsisapd/openChams/Layout.h"
+#include "vlsisapd/openChams/Node.h"
 #include "vlsisapd/openChams/Transistor.h"
 #include "vlsisapd/openChams/Operator.h"
 #include "vlsisapd/openChams/Port.h"
@@ -688,6 +689,7 @@ void Circuit::readSizing(xmlNode* node) {
     }
     
     Sizing* sizing = new Sizing(this);
+    cerr << "** S ** " << node->name << ": " << node->type << endl;
     xmlNode* child = node->children;
     for (xmlNode* node = child; node; node = node->next) {
         if (node->type == XML_ELEMENT_NODE) {
@@ -796,12 +798,15 @@ void Circuit::readLayout(xmlNode* node) {
     
     Layout* layout = new Layout(this);
     xmlNode* child = node->children;
+    cerr << "** L ** " << node->name << ": " << node->type << endl;
     for (xmlNode* node = child; node; node = node->next) {
         if (node->type == XML_ELEMENT_NODE) {
             if (xmlStrEqual(node->name, (xmlChar*)"instance")) {
                 readInstanceLayout(node, layout);
+            } else if (xmlStrEqual(node->name, (xmlChar*)"hbtree")) {
+                readHBTree(node, layout);
             } else {
-                cerr << "[WARNING] Only 'instance' nodes are allowed in 'sizing', others will be ignored." << endl;
+                cerr << "[WARNING] Only 'instance' and 'hbtree' nodes are allowed in 'layout' section, others will be ignored." << endl;
             }
         }
     }
@@ -821,6 +826,90 @@ void Circuit::readInstanceLayout(xmlNode* node, Layout* layout) {
     }
 }
 
+void Circuit::readHBTree(xmlNode* node, Layout* layout) {
+    // HBTree node can have only one child (group or bloc)
+    xmlNode* child = node->children;
+    if (child->type == XML_ELEMENT_NODE) {
+        // create root node
+        //  thanks to readNodeOrBloc
+        Node* root = readNodeOrBloc(child);
+        // save root node in layout
+        layout->setHBTreeRoot(root);
+    }
+}
+
+Node* Circuit::readNodeOrBloc(xmlNode* node, Node* parent) {
+    // 1 - create Node based on xmlNode* passed as argument
+    if (node->type == XML_ELEMENT_NODE) {
+        bool isAGroup = xmlStrEqual(node->name, (xmlChar*)"group");
+        xmlChar* nameC = xmlGetProp(node, (xmlChar*)"name");
+        xmlChar* posiC = xmlGetProp(node, (xmlChar*)"position");
+        if (!nameC) 
+            throw OpenChamsException("[ERROR] 'bloc' and 'group' nodes in 'hbtree' must have at least a 'name' property.");
+        Node* nodeOC = NULL;
+        Name name ((const char*)nameC);
+        Node::Position pos = Node::NONE;
+        if (posiC) {
+            string posStr ((const char*)posiC);
+            if      (posStr == "right")   pos = Node::RIGHT;
+            else if (posStr == "top")     pos = Node::TOP;
+            else throw OpenChamsException("[ERROR] 'position' property of 'bloc' and 'group' nodes must be 'right' or 'top'.");
+        }
+        if (isAGroup) {
+            Group* groupOC = new Group(name, pos, parent);
+            xmlChar* isolatC = xmlGetProp(node, (xmlChar*)"isolation");
+            xmlChar* alignC  = xmlGetProp(node, (xmlChar*)"align");
+            xmlChar* pairedC = xmlGetProp(node, (xmlChar*)"paired");
+            if (isolatC) {
+                string isolation ((const char*)isolatC);
+                if      (isolation == "true")   groupOC->setIsolated(true);
+                else if (isolation == "false")  groupOC->setIsolated(false);
+                else throw OpenChamsException("[ERROR] 'isolation' property of 'group' node must be 'true' or 'false'.");
+            }
+            if (alignC) {
+                string align ((const char*)alignC);
+                Group::Align galign = Group::NONE;
+                if      (align == "vertical")    galign = Group::VERTICAL;
+                else if (align == "horizontal")  galign = Group::HORIZONTAL;
+                else throw OpenChamsException("[ERROR] 'align' property of 'group' node must be 'vertical' or 'horizontal'.");
+                groupOC->setAlign(galign);
+            }
+            if (pairedC) {
+                string paired ((const char*)pairedC);
+                if      (paired == "true")   groupOC->setPaired(true);
+                else if (paired == "false")  groupOC->setPaired(false);
+                else throw OpenChamsException("[ERROR] 'paired' property of 'group' node must be 'true' or 'false'.");
+            }
+            nodeOC = groupOC;
+        } else {
+            nodeOC = new Bloc(name, pos, parent);
+        }
+        // 2 - for each children (up to 2) readNodeOrBloc
+        for (xmlNode* child = node->children; child; child = child->next) {
+            if (child->type == XML_ELEMENT_NODE) {
+                Node* childOC = readNodeOrBloc(child, nodeOC);
+                // 3 - add to returned Node* to current Node* as right or top children (based on its position)
+                switch(childOC->getPosition()) {
+                    case Node::RIGHT:
+                        nodeOC->setRight(childOC);
+                        break;
+                    case Node::TOP:
+                        nodeOC->setTop(childOC);
+                        break;
+                    case Node::NONE:
+                        if (!isAGroup)
+                            throw OpenChamsException("[ERROR] a 'bloc' or 'group' without position is only allowed directly under a 'group'.");
+                        Group* groupOC = dynamic_cast<Group*>(nodeOC);
+                        groupOC->setRootNode(childOC);
+                }
+            }
+        }
+        // 4 - return current Node
+        return nodeOC;
+    }
+    return NULL;
+}
+
 void Circuit::setAbsolutePath(const string filePath) {
     if (filePath[0] == '/')
         _absolutePath = filePath;
@@ -835,7 +924,7 @@ Circuit* Circuit::readFromFile(const string filePath) {
     LIBXML_TEST_VERSION;
     Circuit* cir = NULL;
 
-    xmlDoc* doc = xmlReadFile(filePath.c_str(), NULL, 0);
+    xmlDoc* doc = xmlReadFile(filePath.c_str(), NULL, XML_PARSE_NOBLANKS);
     if (doc == NULL) {
         string error ("[ERROR] Failed to parse: ");
         error += filePath;
@@ -941,13 +1030,75 @@ Layout* Circuit::createLayout() {
     return _layout;
 }
 
+void Circuit::driveHBTree(ofstream& file, Node* node, unsigned indent) {
+    if (!node) return;
+    for (unsigned i = 0 ; i < indent ; i++)
+        file << "  ";
+    string pos = "";
+    switch(node->getPosition()) {
+        case OpenChams::Node::TOP:
+            pos = "top";
+            break;
+        case OpenChams::Node::RIGHT:
+            pos = "right";
+            break;
+        default:
+            break;
+    }
+    
+    Bloc* bloc = dynamic_cast<Bloc*>(node);
+    if (bloc) {
+        file << "<bloc name=\"" << bloc->getName().getString() << "\"";
+        if (pos != "")
+            file << " position=\"" << pos << "\"";
+        if (bloc->getTop() == NULL && bloc->getRight() == NULL)
+            file << "/>" << endl;
+        else {
+            file << ">" << endl;
+            driveHBTree(file, bloc->getTop() , indent+1);
+            driveHBTree(file, bloc->getRight(), indent+1);
+            for (unsigned i = 0 ; i < indent ; i++)
+                file << "  ";
+            file << "</bloc>" << endl;
+        }
+        return;
+    }
+    Group* group = dynamic_cast<Group*>(node);
+    if (group) {
+        string align = "";
+        switch(group->getAlign()) {
+            case OpenChams::Group::VERTICAL:
+                align = "vertical";
+                break;
+            case OpenChams::Group::HORIZONTAL:
+                align = "horizontal";
+                break;
+            default:
+                break;
+        }
+        file << "<group name=\"" << group->getName().getString() << "\"";
+        if (pos != "")            file << " position=\"" << pos << "\"";
+        if (align != "")          file << " align=\"" << align << "\"";
+        if (group->isIsolated())  file << " isolated=\"true\"";
+        if (group->isPaired())    file << " paired=\"true\"";
+        file << ">" << endl;
+        driveHBTree(file, group->getRootNode(), indent+1);
+        driveHBTree(file, group->getTop()     , indent+1);
+        driveHBTree(file, group->getRight()   , indent+1);
+        for (unsigned i = 0 ; i < indent ; i++)
+            file << "  ";
+        file << "</group>" << endl;
+                return;
+    }
+}
+
 bool Circuit::writeToFile(string filePath) {
     ofstream file;
     file.open(filePath.c_str());
     if (!file.is_open()) {
         string error("[ERROR] Cannot open file ");
         error += filePath;
-        error += " for writting.";
+        error += " for writing.";
         throw OpenChamsException(error);
     }
     // checks before do anything
@@ -1148,10 +1299,17 @@ bool Circuit::writeToFile(string filePath) {
         }
         file << "  </sizing>" << endl;
     }
-    if (_layout && !_layout->hasNoInstance()) {
+    if (_layout) {
         file << "  <layout>" << endl;
-        for (map<Name, Name>::const_iterator it = _layout->getInstances().begin() ; it != _layout->getInstances().end() ; ++it) {
-            file << "    <instance name=\"" << ((*it).first).getString() << "\" style=\"" << ((*it).second).getString() << "\"/>" << endl;
+        if (!_layout->hasNoInstance()) {
+            for (map<Name, Name>::const_iterator it = _layout->getInstances().begin() ; it != _layout->getInstances().end() ; ++it) {
+                file << "    <instance name=\"" << ((*it).first).getString() << "\" style=\"" << ((*it).second).getString() << "\"/>" << endl;
+            }
+        }
+        if (Node* root = _layout->getHBTreeRoot()) {
+            file << "    <hbtree>" << endl;
+            driveHBTree(file, root, 3);
+            file << "    </hbtree>" << endl;
         }
         file << "  </layout>" << endl;
     }

@@ -12,6 +12,7 @@ SET ( hpps vlsisapd/openChams/Circuit.h
            vlsisapd/openChams/SimulModel.h
            vlsisapd/openChams/Sizing.h
            vlsisapd/openChams/Layout.h
+           vlsisapd/openChams/Node.h
            vlsisapd/openChams/Transistor.h
            vlsisapd/openChams/Port.h
            vlsisapd/openChams/Wire.h
@@ -29,6 +30,7 @@ SET ( cpps Circuit.cpp
            SimulModel.cpp
            Sizing.cpp
            Layout.cpp
+           Node.cpp
            Transistor.cpp 
            Wire.cpp
     )

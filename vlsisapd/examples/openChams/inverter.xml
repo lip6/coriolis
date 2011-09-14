@@ -119,5 +119,12 @@
   <layout>
     <instance name="pmos1" style="Common transistor"/>
     <instance name="nmos1" style="Rotate transistor"/>
+    <hbtree>
+      <group name="g1" align="vertical">
+        <bloc name="nmos1">
+          <bloc name="pmos1" position="top"/>
+        </bloc>
+      </group>
+    </hbtree>
   </layout>
 </circuit>

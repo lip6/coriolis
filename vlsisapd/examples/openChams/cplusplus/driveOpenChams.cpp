@@ -11,6 +11,7 @@ using namespace std;
 #include "vlsisapd/openChams/Sizing.h"
 #include "vlsisapd/openChams/Operator.h"
 #include "vlsisapd/openChams/Layout.h"
+#include "vlsisapd/openChams/Node.h"
 #include "vlsisapd/openChams/Port.h"
 #include "vlsisapd/openChams/Wire.h"
 
@@ -109,6 +110,14 @@ int main(int argc, char * argv[]) {
     OpenChams::Layout* layout = circuit->createLayout();
     layout->addInstance(OpenChams::Name("pmos1"), OpenChams::Name("Common transistor"));
     layout->addInstance(OpenChams::Name("nmos1"), OpenChams::Name("Rotate transistor"));
+    // create hbtree
+    OpenChams::Group* g1 = new OpenChams::Group("g1"); // default position is NONE and default parent is NULL
+    g1->setAlign(OpenChams::Group::VERTICAL);
+    OpenChams::Bloc* b1 = new OpenChams::Bloc("nmos1", OpenChams::Node::NONE, g1);
+    g1->setRootNode(b1); // b1 is root node of group g1
+    OpenChams::Bloc* b2 = new OpenChams::Bloc("pmos1", OpenChams::Node::TOP, b1);
+    b1->setTop(b2); // b2 is on top of b1
+    layout->setHBTreeRoot(g1); // g1 is the root of the tree
 
     circuit->writeToFile("./myInverter.xml");
     return 0;

@@ -2,6 +2,23 @@ import sys
 
 from OPENCHAMS import *
 
+def printHBTree(node, indent):
+    if node == None:
+        return
+    for i in range(indent):
+        print " |",
+    if isinstance(node, Bloc):
+        print " bloc:", node.getName(), "-", node.getPosition()
+        printHBTree(node.top  , indent+1)
+        printHBTree(node.right, indent+1)
+        return
+    if isinstance(node, Group):
+        print " group:", node.getName(), "-", node.getPosition(), "-", node.align, "-", node.isolated, "-", node.paired
+        printHBTree(node.rootNode, indent+1)
+        printHBTree(node.top     , indent+1)
+        printHBTree(node.right   , indent+1)
+        return
+
 def printContents(circuit):
   print circuit.name
   # circuit parameters
@@ -78,6 +95,9 @@ def printContents(circuit):
     print " + layout"
     for inst in circuit.layout.getInstances():
       print " | | instance name:", inst.key, "- style:", inst.value
+    if circuit.layout.hbTreeRoot != None:
+      print " | + hbtree"
+      printHBTree(circuit.layout.hbTreeRoot, 2)
 
 def usage():
     print "usage:", sys.argv[0], "[filename]"

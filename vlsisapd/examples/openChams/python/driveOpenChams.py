@@ -92,5 +92,13 @@ op_nmos1.addConstraint("another", "myEq", -2.5 )
 layout = circuit.createLayout()
 layout.addInstance("pmos1", "Common transistor")
 layout.addInstance("nmos1", "Rotate transistor")
+# create hbtree
+g1 = Group("g1")
+g1.align = Group.Align.VERTICAL
+b1 = Bloc("nmos1", Node.Position.NONE, g1)
+g1.rootNode = b1 
+b2 = Bloc("pmos1", Node.Position.TOP, b1)
+b1.top = b2
+layout.hbTreeRoot = g1
 
 circuit.writeToFile("./myInverter.xml")

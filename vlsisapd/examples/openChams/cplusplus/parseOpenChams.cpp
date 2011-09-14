@@ -16,9 +16,56 @@ using namespace std;
 #include "vlsisapd/openChams/Sizing.h"
 #include "vlsisapd/openChams/Operator.h"
 #include "vlsisapd/openChams/Layout.h"
+#include "vlsisapd/openChams/Node.h"
 #include "vlsisapd/openChams/Port.h"
 #include "vlsisapd/openChams/Wire.h"
 #include "vlsisapd/openChams/OpenChamsException.h"
+
+void printHBTree(OpenChams::Node* node, unsigned indent) {
+    if (!node) return; // since we pass nnode->getRight and node-getTop without checking for NULL
+    for (unsigned i = 0 ; i < indent ; i++) {
+        cerr << " |";
+    }
+    string pos = "";
+    switch(node->getPosition()) {
+        case OpenChams::Node::TOP:
+            pos = "top";
+            break;
+        case OpenChams::Node::RIGHT:
+            pos = "right";
+            break;
+        default:
+            break;
+    }
+    OpenChams::Bloc* bloc = dynamic_cast<OpenChams::Bloc*>(node);
+    if (bloc) {
+        cerr << " bloc: " << bloc->getName().getString() << " - " << pos << endl;
+        printHBTree(bloc->getTop()  , indent+1);
+        printHBTree(bloc->getRight(), indent+1);
+        return;
+    }
+    OpenChams::Group* group = dynamic_cast<OpenChams::Group*>(node);
+    if (group) {
+        string align = "none";
+        switch(group->getAlign()) {
+            case OpenChams::Group::VERTICAL:
+                align = "vertical";
+                break;
+            case OpenChams::Group::HORIZONTAL:
+                align = "horizontal";
+                break;
+            default:
+                break;
+        }
+        cerr << " group: " << group->getName().getString() << " - " << pos << " - align: " << align << " - isolated: " << group->isIsolated() << " - paired: " << group->isPaired() << endl; 
+        printHBTree(group->getRootNode(), indent+1);
+        printHBTree(group->getTop()     , indent+1);
+        printHBTree(group->getRight()   , indent+1);
+        return;
+    }
+    cerr << "[ERROR] printHBTree: node is nor a bloc nor a group !" << endl;
+    return;
+}
 
 int main(int argc, char * argv[]) {
     string file = "";
@@ -166,11 +213,18 @@ int main(int argc, char * argv[]) {
         }
     }
     OpenChams::Layout* layout = circuit->getLayout();
-    if (layout && !layout->hasNoInstance()) {
-        cerr << " + layout" << endl;
-        for (map<OpenChams::Name, OpenChams::Name>::const_iterator lit = layout->getInstances().begin() ; lit != layout->getInstances().end() ; ++lit) {
-            cerr << " | | instance name: " << ((*lit).first).getString() << " - style: " << ((*lit).second).getString() << endl;
-        }
+    if (layout) {
+       if (!layout->hasNoInstance()) {
+          cerr << " + layout" << endl;
+          for (map<OpenChams::Name, OpenChams::Name>::const_iterator lit = layout->getInstances().begin() ; lit != layout->getInstances().end() ; ++lit) {
+             cerr << " | | instance name: " << ((*lit).first).getString() << " - style: " << ((*lit).second).getString() << endl;
+          }
+       }
+       OpenChams::Node* root = layout->getHBTreeRoot();
+       if (root) {
+           cerr << " | + hbtree" << endl;
+           printHBTree(root, 2);
+       }
     }
 
 

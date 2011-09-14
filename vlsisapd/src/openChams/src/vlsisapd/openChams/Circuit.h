@@ -30,6 +30,7 @@ class Sizing;
 class Transistor;
 class Operator;
 class Layout;
+class Node;
 
 class Circuit {
     public:
@@ -57,6 +58,8 @@ class Circuit {
     Schematic* createSchematic();
     Sizing*    createSizing();
     Layout*    createLayout();
+
+    void driveHBTree(ofstream&, Node*, unsigned);
     
     bool writeToFile(std::string filePath);
     static Circuit* readFromFile(const std::string filePath);
@@ -91,6 +94,8 @@ class Circuit {
     void      readEquation(xmlNode*, Sizing*);
     void      readLayout(xmlNode*);
     void      readInstanceLayout(xmlNode*, Layout*);
+    void      readHBTree(xmlNode*, Layout*);
+    Node*     readNodeOrBloc(xmlNode*, Node* parent = NULL);
     void      setAbsolutePath(const std::string filePath);
     
     void      check_uppercase(std::string& str, std::vector<std::string>& compares, std::string message);

@@ -16,6 +16,7 @@ using namespace boost::python;
 #include "vlsisapd/openChams/SimulModel.h"
 #include "vlsisapd/openChams/Sizing.h"
 #include "vlsisapd/openChams/Layout.h"
+#include "vlsisapd/openChams/Node.h"
 #include "vlsisapd/openChams/Circuit.h"
 #include "vlsisapd/openChams/Port.h"
 #include "vlsisapd/openChams/Wire.h"
@@ -317,6 +318,8 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
     STL_MAP_WRAPPING(Name, Name, "LayoutInstancesMap")
     // class OpenChams::Layout
     class_<Layout, Layout*>("Layout", init<Circuit*>())
+        // properties
+        .add_property("hbTreeRoot", make_function(&Layout::getHBTreeRoot, return_value_policy<reference_existing_object>()), &Layout::setHBTreeRoot)
         // accessors
         .def("hasNoInstance", &Layout::hasNoInstance)
         // modifiers
@@ -348,6 +351,47 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
         .staticmethod("readFromFile")
         .def("writeToFile" , &Circuit::writeToFile)
     ;
+
+    { //this scope is used to define Position as a subenum of Node
+    // class OpenChams::Node
+    scope nod = class_<Node, Node*, boost::noncopyable>("Node", no_init)
+        // properties
+        .add_property("top"  , make_function(&Node::getTop  , return_value_policy<reference_existing_object>()), &Node::setTop  )
+        .add_property("right", make_function(&Node::getRight, return_value_policy<reference_existing_object>()), &Node::setRight)
+        // accessors
+        .def("getName"    , &Node::getName    )
+        .def("getPosition", &Node::getPosition)
+        .def("getParent"  , &Node::getParent  , return_value_policy<reference_existing_object>())
+        .def("isRoot"     , &Node::isRoot     )
+    ;
+
+    enum_<Node::Position>("Position")
+        .value("NONE" , Node::NONE )
+        .value("RIGHT", Node::RIGHT)
+        .value("TOP"  , Node::TOP  )
+        .export_values()
+    ;
+    } // end of node scope
+
+    // class OpenChams::Bloc
+    class_<Bloc, bases<Node> >("Bloc", init<Name, optional<Node::Position, Node*> >())
+    ;
+
+    { // this scope is used to define Align as a subenum of Group
+    // class OpenChams::Group
+    scope grou = class_<Group, bases<Node> >("Group", init<Name, optional<Node::Position, Node*> >())
+        .add_property("rootNode", make_function(&Group::getRootNode, return_value_policy<reference_existing_object>()), &Group::setRootNode)
+        .add_property("isolated", &Group::isIsolated, &Group::setIsolated)
+        .add_property("paired"  , &Group::isPaired  , &Group::setPaired  )
+        .add_property("align"   , &Group::getAlign  , &Group::setAlign   )
+    ;
+
+    enum_<Group::Align>("Align")
+        .value("NONE"      , Group::NONE      )
+        .value("VERTICAL"  , Group::VERTICAL  )
+        .value("HORIZONTAL", Group::HORIZONTAL)
+    ;
+    } // end of group scope
 
     // OpenChamsException translator
     register_exception_translator<OpenChamsException>(translator)
