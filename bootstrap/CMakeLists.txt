@@ -18,4 +18,7 @@
                      OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE) 
 
  install(FILES       buildCoriolis.py
-         DESTINATION bin)
+         DESTINATION bin
+         PERMISSIONS OWNER_WRITE
+                     OWNER_READ    GROUP_READ    WORLD_READ
+                     OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE) 
