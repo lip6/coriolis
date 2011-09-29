@@ -60,7 +60,7 @@ class Circuit {
     Sizing*    createSizing();
     Layout*    createLayout();
 
-    void driveHBTree(ofstream&, Node*, unsigned);
+    void driveHBTree(std::ofstream&, Node*, unsigned);
     
     bool writeToFile(std::string filePath);
     static Circuit* readFromFile(const std::string filePath);
