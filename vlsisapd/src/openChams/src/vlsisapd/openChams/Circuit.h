@@ -12,6 +12,7 @@
 
 #include <vector>
 #include <map>
+#include <fstream>
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
