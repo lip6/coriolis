@@ -169,7 +169,7 @@ class Inst :
       if self._model == c._name :
         self._st_masterCell = c
         break
-    if not( self._hur_masterCell or self._st_masterCell ) : print "\n[Stratus Warning] Inst : no master cell found for instance " + self._name
+#    if not( self._hur_masterCell or self._st_masterCell ) : print "\n[Stratus Warning] Inst : no master cell found for instance " + self._name
 
     # Creation of the hurricane instance 
     if CELLS[0]._hur_plug : self.create_hur_inst ( model )
@@ -195,7 +195,7 @@ class Inst :
       self._hur_masterCell = FRAMEWORK.getCell ( model, CRL.Catalog.State.Views )
 
     if not self._hur_masterCell :
-      err = "\n[Stratus ERROR] HurricanePlug : Problem of master cell " + model + ".\nCheck model name and/or CRL_IN_LO/CRL_IN_PH variables .\n"
+      err = "\n[Stratus ERROR] HurricanePlug : Problem of master cell " + model + ".\nCheck model name and/or .environment.alliance.xml configuration file.\n"
       raise Exception ( err )
 
     if not self._st_masterCell :
