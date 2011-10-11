@@ -140,12 +140,13 @@ fi
 
     buildDir  = buildType + "." + linkType
     scriptDir = os.path.dirname ( os.path.abspath(__file__) )
-   #print "echo %s;" % scriptDir
-    if scriptDir == "/etc/coriolis2":
+   #print "echo \"Script Location: %s\";" % scriptDir,
+    if scriptDir.startswith("/etc/coriolis2"):
       coriolisTop  = "/usr"
       sysconfDir   = scriptDir
       shellMessage = "Using system-wide Coriolis 2 (/usr)"
-    elif scriptDir.startswith("/users/outil/coriolis/coriolis-2.x/"):
+    elif     scriptDir.startswith("/users/outil/coriolis/coriolis-2.x/") \
+          or scriptDir.startswith("/soc/coriolis/"):
       coriolisTop  = "/soc/coriolis2"
       sysconfDir   = coriolisTop + "/etc/coriolis2"
       shellMessage = "Using SoC network-wide Coriolis 2 (/soc/coriolis2)"
