@@ -1,4 +1,5 @@
 
+# -*- Makefile -*-
 # Mimicking the behavior of a top-level autotool generated Makefile.
 
          tools = bootstrap vlsisapd hurricane crlcore nimbus metis mauka knik katabatic kite \

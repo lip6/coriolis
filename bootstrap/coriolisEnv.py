@@ -146,7 +146,7 @@ fi
       sysconfDir   = scriptDir
       shellMessage = "Using system-wide Coriolis 2 (/usr)"
     elif     scriptDir.startswith("/users/outil/coriolis/coriolis-2.x/") \
-          or scriptDir.startswith("/soc/coriolis/"):
+          or scriptDir.startswith("/soc/coriolis2/"):
       coriolisTop  = "/soc/coriolis2"
       sysconfDir   = coriolisTop + "/etc/coriolis2"
       shellMessage = "Using SoC network-wide Coriolis 2 (/soc/coriolis2)"
