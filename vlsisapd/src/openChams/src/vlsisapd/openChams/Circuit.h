@@ -91,8 +91,13 @@ class Circuit {
     void      readSizing(xmlNode*);
     void      readInstanceSizing(xmlNode*, Sizing*);
     void      readConstraint(xmlNode*, Operator*);
+
     void      readEquations(xmlNode*, Sizing*);
-    void      readEquation(xmlNode*, Sizing*);
+    void      readEquation_CircuitLevel(xmlNode*, Sizing*);
+    void      readEquation_NRC(xmlNode*, Sizing*);
+    void      readEquation_DDPs(xmlNode*, Sizing*);
+    void      readEquation_DesignerCstr(xmlNode*, Sizing*);
+
     void      readLayout(xmlNode*);
     void      readInstanceLayout(xmlNode*, Layout*);
     void      readHBTree(xmlNode*, Layout*);

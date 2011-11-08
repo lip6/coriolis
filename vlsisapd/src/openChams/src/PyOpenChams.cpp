@@ -299,6 +299,7 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
     ;
     } // end operatorScope
 
+    /*
     // map wrapping for OpenChams::Sizing
     STL_MAP_WRAPPING_PTR(Name, Operator*, "OperatorsMap")
     // class OpenChams::Sizing
@@ -313,6 +314,7 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
         .def("getEquations", &Sizing::getEquations, return_internal_reference<>())
         .def("getOperators", &Sizing::getOperators, return_internal_reference<>())
     ;
+    */
 
     // map wrapping for OpenChams::Layout
     STL_MAP_WRAPPING(Name, Name, "LayoutInstancesMap")

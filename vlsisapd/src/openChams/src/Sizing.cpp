@@ -13,6 +13,7 @@ using namespace std;
 #include "vlsisapd/openChams/Sizing.h"
 #include "vlsisapd/openChams/Circuit.h"
 #include "vlsisapd/openChams/Operator.h"
+#include "vlsisapd/openChams/Equation.h"
 #include "vlsisapd/openChams/OpenChamsException.h"
 
 namespace OpenChams {
@@ -31,8 +32,8 @@ Operator* Sizing::addOperator(Name instanceName, Name operatorName, Name simulMo
     return op;
 }
     
-void Sizing::addEquation(Name equationName, string equation) {
-    map<Name, string>::iterator it = _equations.find(equationName);
+void Sizing::addEquation(Name equationName, Equation* equation) {
+    map<Name, Equation*>::iterator it = _equations.find(equationName);
     if (it != _equations.end()) {
         string error("[ERROR] Cannot set several equations with the same name in 'sizing' (");
         error += equationName.getString();

@@ -17,6 +17,11 @@ SET ( hpps vlsisapd/openChams/Circuit.h
            vlsisapd/openChams/Port.h
            vlsisapd/openChams/Wire.h
            vlsisapd/openChams/OpenChamsException.h 
+	   vlsisapd/openChams/Equation.h
+	   vlsisapd/openChams/HighLevelCstr.h
+	   vlsisapd/openChams/NRCCstr.h
+	   vlsisapd/openChams/DDP.h
+	   vlsisapd/openChams/DesignerCstrOC.h
     )
 SET ( cpps Circuit.cpp
            Netlist.cpp
@@ -33,6 +38,11 @@ SET ( cpps Circuit.cpp
            Node.cpp
            Transistor.cpp 
            Wire.cpp
+	   Equation.cpp
+	   HighLevelCstr.cpp
+	   NRCCstr.cpp
+	   DDP.cpp
+	   DesignerCstrOC.cpp
     )
 SET ( pycpps PyOpenChams.cpp 
     )

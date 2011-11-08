@@ -59,6 +59,7 @@ void Parameters::addParameter(Name name, string eqStr) {
         throw OpenChamsException(error);
     }
     _paramsEq[name] = eqStr;
+    cerr << "987* _paramsEq.size() = " << _paramsEq.size() << endl;
 }
 } // namespace
 
