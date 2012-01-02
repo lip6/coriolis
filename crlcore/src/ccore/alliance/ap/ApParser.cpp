@@ -377,6 +377,10 @@ namespace {
         net->setType   ( Net::Type::GROUND );
         net->setGlobal ( true );
       }
+      if ( _framework->isCLOCK(hName) ) {
+        net->setType   ( Net::Type::CLOCK );
+        net->setGlobal ( true );
+      }
     }
 
     return net;
@@ -513,7 +517,7 @@ namespace {
         strncpy ( pinName+length+1, fields[4], 1022-length );
       }
 
-      net       = _getNet              ( fields[5] );
+      net       = _getNet              ( fields[3] );
       layerInfo = _getLayerInformation ( fields[6] );
 
       if      ( orientation == NORTH ) accessDirection = Pin::AccessDirection::NORTH;
@@ -536,8 +540,8 @@ namespace {
                           );
       //setExternal ( pin );
       }
-      if ( !layerInfo )
-        _printError ( false, "Unknown layer name %s.", fields[6] );
+      if ( !net )       _printError ( false, "Unknown net name %s."  , fields[5] );
+      if ( !layerInfo ) _printError ( false, "Unknown layer name %s.", fields[6] );
     }
   }
 
@@ -836,6 +840,7 @@ namespace {
             case 'R': _parseReference   (); break;
             case 'V': _parseVia         (); break;
             case 'B': _parseBigVia      (); break;
+            case 'C': _parseConnector   (); break;
             case 'S': _parseSegment     (); break;
             case 'I': _parseInstance    (); break;
           }
