@@ -387,7 +387,7 @@ def pyAlimHorizontalRail ( cell, ycoord ) :
 ## AlimConnectors ##
 ####################
 def pyAlimConnectors ( cell ) :
-  '''This function creates the connectors in Alu 1 at the periphery of the core''' 
+  '''Creates the METAL1 connectors on the east & west sides of the core''' 
 
   global nb_lignes, nb_vdd_pins, nb_vss_pins
 
@@ -410,7 +410,7 @@ def pyAlimConnectors ( cell ) :
         + "Please place some instances before the placement of alim connectors.\n"
     raise err
     
-  metal1   = getDataBase().getTechnology().getLayer ( "METAL1" )
+  metal1 = getDataBase().getTechnology().getLayer("METAL1")
   string = getVddVss ( cell, 0 )
      
   if re.search ( "vdd", string ) :
@@ -431,26 +431,24 @@ def pyAlimConnectors ( cell ) :
   if not netImpair:
     err = "\n[Stratus ERROR] AlimConnectors : can't get net " + inv_string + ".\n"
     raise err
-      
     
   for i in range ( nb_lignes + 1 ) :
     pin_width  = DbU_lambda(12)
     pin_height = DbU_lambda(12)
     pin_y      = i * DbU_lambda(SLICE)
-    pin_x1     = 0 + ( pin_width / 4 )
-    pin_x2     = cell.getAbutmentBox().getWidth() - ( pin_width / 4 )
+
     if i == 0 :
       pin_height = pin_height / 2
       pin_width  = pin_width / 2
       pin_y      = pin_y + ( pin_height / 2 )
-      pin_x1     = 0
-      pin_x2     = cell.getAbutmentBox().getWidth()
     elif i == nb_lignes :
       pin_height = pin_height / 2
       pin_width  = pin_width / 2
       pin_y      = pin_y - ( pin_height / 2 )
-      pin_x1     = 0
-      pin_x2     = cell.getAbutmentBox().getWidth()
+
+    pin_x1     = 0 + ( pin_width / 2 )
+    pin_x2     = cell.getAbutmentBox().getWidth() - ( pin_width / 2 )
+
     # Ligne impaire
     if i % 2 :                              
       pin_name       = str(netImpair.getName()) + "." + str(nb_inv_pins)
@@ -2029,8 +2027,8 @@ def createGrid ( my_tuple ) :
   def CreateZ ( contact1, contact2 ) :
     centerX   = (contact1.getX() + contact2.getX() ) / 2
     centerX   = centerX - (centerX % DbU_lambda(5))
-    zContact1 = Contact ( net, via5, centerX, contact1.getY(), DbU_lambda(12), DbU_lambda(12) )
-    zContact2 = Contact ( net, via5, centerX, contact2.getY(), DbU_lambda(12), DbU_lambda(12) )
+    zContact1 = Contact ( net, via5, centerX, contact1.getY(), DbU_lambda(11), DbU_lambda(11) )
+    zContact2 = Contact ( net, via5, centerX, contact2.getY(), DbU_lambda(11), DbU_lambda(11) )
     
     Horizontal ( contact1,  zContact1, metal6, contact1.getY(),  DbU_lambda(12) )
     Vertical   ( zContact1, zContact2, metal5, zContact1.getX(), DbU_lambda(12) )
@@ -2039,8 +2037,8 @@ def createGrid ( my_tuple ) :
   def CreateN ( contact1, contact2 ) :
     centerY   = ( contact1.getY() + contact2.getY() ) / 2
     centerY   = centerY - ( centerY % DbU_lambda(5) )
-    nContact1 = Contact ( net, via5, contact1.getX(), centerY, DbU_lambda(12), DbU_lambda(12) )
-    nContact2 = Contact ( net, via5, contact2.getX(), centerY, DbU_lambda(12), DbU_lambda(12) )
+    nContact1 = Contact ( net, via5, contact1.getX(), centerY, DbU_lambda(11), DbU_lambda(11) )
+    nContact2 = Contact ( net, via5, contact2.getX(), centerY, DbU_lambda(11), DbU_lambda(11) )
     
     Vertical   ( contact1,  nContact1, metal5, contact1.getX(),  DbU_lambda(12) )
     Horizontal ( nContact1, nContact2, metal6, nContact1.getY(), DbU_lambda(12) )
@@ -2102,10 +2100,10 @@ def createGrid ( my_tuple ) :
   gridBoundingBox.inflate ( DbU_lambda(15) )
   
   #Create the Bounding Box grid
-  NEContact    = Contact ( net, via5, gridBoundingBox.getXMin(), gridBoundingBox.getYMax() , DbU_lambda(12), DbU_lambda(12) )
-  NWContact    = Contact ( net, via5, gridBoundingBox.getXMax(), gridBoundingBox.getYMax() , DbU_lambda(12), DbU_lambda(12) )
-  SEContact    = Contact ( net, via5, gridBoundingBox.getXMin(), gridBoundingBox.getYMin() , DbU_lambda(12), DbU_lambda(12) )
-  SWContact    = Contact ( net, via5, gridBoundingBox.getXMax(), gridBoundingBox.getYMin() , DbU_lambda(12), DbU_lambda(12) )
+  NEContact    = Contact ( net, via5, gridBoundingBox.getXMin(), gridBoundingBox.getYMax() , DbU_lambda(11), DbU_lambda(11) )
+  NWContact    = Contact ( net, via5, gridBoundingBox.getXMax(), gridBoundingBox.getYMax() , DbU_lambda(11), DbU_lambda(11) )
+  SEContact    = Contact ( net, via5, gridBoundingBox.getXMin(), gridBoundingBox.getYMin() , DbU_lambda(11), DbU_lambda(11) )
+  SWContact    = Contact ( net, via5, gridBoundingBox.getXMax(), gridBoundingBox.getYMin() , DbU_lambda(11), DbU_lambda(11) )
   northSegment = Segment ( NEContact, NWContact, metal6, DbU_lambda(12) )
   southSegment = Segment ( SEContact, SWContact, metal6, DbU_lambda(12) )
   eastSegment  = Segment ( NEContact, SEContact, metal5, DbU_lambda(12) )
@@ -2144,7 +2142,7 @@ def createGrid ( my_tuple ) :
             elif x == gridBoundingBox.getXMax() :
               gridContact = NEContact
             else :
-              gridContact = Contact(southSegment, via5, x, 0, DbU_lambda(12), DbU_lambda(12))
+              gridContact = Contact(southSegment, via5, x, 0, DbU_lambda(11), DbU_lambda(11))
               southContacts.append(x)
               
           elif y > gridBoundingBox.getYMax() :
@@ -2153,7 +2151,7 @@ def createGrid ( my_tuple ) :
             elif x == gridBoundingBox.getXMax() :
               gridBoundingBox = SEContact
             else :
-              gridContact = Contact(northSegment, via5, x, 0, DbU_lambda(12), DbU_lambda(12))
+              gridContact = Contact(northSegment, via5, x, 0, DbU_lambda(11), DbU_lambda(11))
               northContacts.append(x)
           else : 
             raise "\n[Stratus ERROR] RouteCK : bad pad placement.\n" 
@@ -2166,7 +2164,7 @@ def createGrid ( my_tuple ) :
             elif y == gridBoundingBox.getYMax() :
               gridContact = NWContact
             else :
-              gridContact = Contact(eastSegment, via5, 0, y, DbU_lambda(12), DbU_lambda(12))
+              gridContact = Contact(eastSegment, via5, 0, y, DbU_lambda(11), DbU_lambda(11))
               eastContacts.append(y)
           elif x > gridBoundingBox.getXMax() :
             if y == gridBoundingBox.getYMin() :
@@ -2174,7 +2172,7 @@ def createGrid ( my_tuple ) :
             elif y == gridBoundingBox.getYMax() :
               gridContact = SWContact
             else :
-              gridContact = Contact(westSegment, via5, 0, y, DbU_lambda(12), DbU_lambda(12))
+              gridContact = Contact(westSegment, via5, 0, y, DbU_lambda(11), DbU_lambda(11))
               westContacts.append(y)
           else : 
             raise "\n[Stratus ERROR] RouteCK : bad pad placement.\n" 
@@ -2188,7 +2186,7 @@ def createGrid ( my_tuple ) :
                  + str(DbU_getLambda(gridBoundingBox.getYMax())) + ".\n"
           raise err
 
-        compContact = Contact ( net, via5, x, y, DbU_lambda(12), DbU_lambda(12) )
+        compContact = Contact ( net, via5, x, y, DbU_lambda(11), DbU_lambda(11) )
     
         Segment ( compContact, gridContact, layer , DbU_lambda(12) )
     
@@ -2208,8 +2206,8 @@ def createGrid ( my_tuple ) :
     x = x - (x % DbU_lambda(5))
     x = FindPositionForContact(x, northContacts, southContacts)
     
-    contact1 = Contact ( southSegment, via5, x, 0, DbU_lambda(12), DbU_lambda(12))
-    contact2 = Contact ( northSegment, via5, x, 0, DbU_lambda(12), DbU_lambda(12))
+    contact1 = Contact ( southSegment, via5, x, 0, DbU_lambda(11), DbU_lambda(11))
+    contact2 = Contact ( northSegment, via5, x, 0, DbU_lambda(11), DbU_lambda(11))
     
     Segment ( contact1, contact2, metal5, DbU_lambda(12) )
     
@@ -2220,14 +2218,14 @@ def createGrid ( my_tuple ) :
     y = y - ( y % DbU_lambda(5) )
     y = FindPositionForContact ( y, eastContacts, westContacts )
     
-    contact1 = Contact ( westSegment, via5, 0, y, DbU_lambda(12), DbU_lambda(12) )
-    contact2 = Contact ( eastSegment, via5, 0, y, DbU_lambda(12), DbU_lambda(12) )
+    contact1 = Contact ( westSegment, via5, 0, y, DbU_lambda(11), DbU_lambda(11) )
+    contact2 = Contact ( eastSegment, via5, 0, y, DbU_lambda(11), DbU_lambda(11) )
     
     horizontal = Segment ( contact1, contact2, metal6, DbU_lambda(12) )
     
     yList.append ( y )
 
-    for x in xList : Contact ( horizontal, via5, x, 0, DbU_lambda(12), DbU_lambda(12) )
+    for x in xList : Contact ( horizontal, via5, x, 0, DbU_lambda(11), DbU_lambda(11) )
           
   # Connection to the grid
   # Cette liste contient les contacts qui sont deja crees 
@@ -2257,7 +2255,7 @@ def createGrid ( my_tuple ) :
     if xDistance != 0 or yDistance != 0 :
       if ( xDistance <= yDistance + DbU_lambda(10) ):  # test pour faire un horizontal
         if xDistance != 0 :
-          if xDistance <= DbU_lambda(15) :
+          if abs(xDistance) <= DbU_lambda(3) :
             gridContact = Contact ( net, metal5, xTarget, yContact, DbU_lambda(2), DbU_lambda(2) ) 
             layer = metal5
           else :
@@ -2269,7 +2267,7 @@ def createGrid ( my_tuple ) :
           gridContact = Contact ( net, via5, xTarget, yContact, DbU_lambda(2), DbU_lambda(2) ) 
       else:
         if yDistance != 0 :
-          if yDistance <= DbU_lambda(15) :
+          if abs(yDistance) <= DbU_lambda(3) :
             layer = metal6
             gridContact = Contact ( net, metal6, xContact, yTarget, DbU_lambda(2), DbU_lambda(2) ) 
             Contact ( net, via5, xContact, yContact, DbU_lambda(2), DbU_lambda(2) ) 
