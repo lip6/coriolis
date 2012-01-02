@@ -155,6 +155,11 @@ class Pin : public Contact {
 } // End of Hurricane namespace.
 
 
+INSPECTOR_P_SUPPORT(Hurricane::Pin);
+INSPECTOR_PV_SUPPORT(Hurricane::Pin::AccessDirection);
+INSPECTOR_PV_SUPPORT(Hurricane::Pin::PlacementStatus);
+
+
 #endif // HURRICANE_PIN
 
 // ****************************************************************************************************
