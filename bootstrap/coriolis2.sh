@@ -1,6 +1,7 @@
 #!/bin/bash
 
- scriptPath="$0"
+#scriptPath="$BASH_ARGV[0]"
+ scriptPath="/soc/coriolis2/etc/coriolis2/coriolis2.sh"
  
  if [ -h "${scriptPath}" ]; then
    while [ -h "${scriptPath}" ];  do scriptPath=`readlink "${scriptPath}"`; done

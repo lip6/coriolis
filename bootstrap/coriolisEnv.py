@@ -33,7 +33,7 @@ def stripPath ( pathName ):
 
 def guessOs ():
     osSlsoc6x_64    = re.compile (".*Linux.*el6.*x86_64.*")
-    osSlsoc6x       = re.compile (".*Linux.*el6.*")
+    osSlsoc6x       = re.compile (".*Linux.*(el|slsoc)6.*")
     osSLSoC5x_64    = re.compile (".*Linux.*el5.*x86_64.*")
     osSLSoC5x       = re.compile (".*Linux.*(el5|2.6.23.13.*SoC).*")
     osLinux_64      = re.compile (".*Linux.*x86_64.*")
