@@ -381,12 +381,16 @@ namespace {
   void  PowerRailsPlanes::Rail::merge ( DbU::Unit source, DbU::Unit target )
   {
     Interval chunkMerge ( source, target );
+    ltrace(300) << "    Rail::merge() " << chunkMerge << endl;
 
     list<Interval>::iterator imerge = _chunks.end();
     list<Interval>::iterator ichunk = _chunks.begin();
 
     while ( ichunk != _chunks.end() ) {
-      if ( chunkMerge.getVMax() < (*ichunk).getVMin() ) break;
+      if ( chunkMerge.getVMax() < (*ichunk).getVMin() ) {
+        _chunks.insert ( ichunk, chunkMerge );
+        break;
+      }
 
       if ( chunkMerge.intersect(*ichunk) ) {
         if ( imerge == _chunks.end() ) {
@@ -403,7 +407,7 @@ namespace {
 
     if ( imerge == _chunks.end() ) {
       _chunks.insert ( ichunk, chunkMerge );
-      ltrace(190) << "| Add on " << DbU::getValueString(_axis) << " " << chunkMerge << endl;
+      ltrace(300) << "    | Add on " << DbU::getValueString(_axis) << " " << chunkMerge << endl;
     }
   }
 
@@ -426,11 +430,14 @@ namespace {
     DbU::Unit     axisMin   = 0;
     DbU::Unit     axisMax   = 0;
 
+    if ( type == Constant::PinOnly ) {
+      ltrace(300) << "  Layer is PinOnly." << endl;
+      return;
+    }
+
     if ( getDirection() == Constant::Horizontal ) {
       list<Interval>::iterator ichunk = _chunks.begin();
       for ( ; ichunk != _chunks.end() ; ichunk++ ) {
-        if ( type == Constant::PinOnly ) continue;
-
         ltrace(300) << "  chunk: [" << DbU::getValueString((*ichunk).getVMin())
                     << ":" << DbU::getValueString((*ichunk).getVMax()) << "]" << endl;
 
@@ -456,8 +463,6 @@ namespace {
     } else {
       list<Interval>::iterator ichunk = _chunks.begin();
       for ( ; ichunk != _chunks.end() ; ichunk++ ) {
-        if ( type == Constant::PinOnly ) continue;
-
         ltrace(300) << "  chunk: [" << DbU::getValueString((*ichunk).getVMin())
                     << ":" << DbU::getValueString((*ichunk).getVMax()) << "]" << endl;
 
@@ -607,7 +612,7 @@ namespace {
   {
     Rails* rails = NULL;
 
-    ltrace(300) << "    " << net->getName() << " " << (void*)net << endl;
+    ltrace(300) << "    Plane::merge() " << net->getName() << " " << (void*)net << endl;
 
     if ( getDirection() == Constant::Horizontal ) {
       map<Net*,Rails*>::iterator irails = _horizontalRails.find(net);
@@ -626,6 +631,7 @@ namespace {
       } else
         rails = (*irails).second;
 
+      ltrace(300) << "    Vertical Merging" << endl; 
       rails->merge ( bb );
     }
   }
@@ -718,7 +724,10 @@ namespace {
     if ( not _activePlane ) return;
 
     Net* topGlobalNet = _globalNets.getRootNet ( net, Path() );
-    if ( topGlobalNet == NULL ) return;
+    if ( topGlobalNet == NULL ) {
+      ltrace(300) << "Not a global net: " << net << endl;
+      return;
+    }
 
     _activePlane->merge ( bb, topGlobalNet );
   }
@@ -881,7 +890,8 @@ namespace {
           Box bb = contact->getBoundingBox ( basicLayer );
           transformation.applyOn ( bb );
 
-          ltrace(300) << "  Merging PowerRail element: " << contact << " bb:" << bb << endl;
+          ltrace(300) << "  Merging PowerRail element: " << contact << " bb:" << bb
+                      << " " << basicLayer << endl;
           
           _powerRailsPlanes.merge ( bb, rootNet );
         }

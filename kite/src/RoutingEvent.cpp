@@ -1584,10 +1584,10 @@ namespace {
           }
           otherNet      = other->getNet();
           otherOverlap  = other->getCanonicalInterval();
-          otherIsGlobal = other->isGlobal();
+          otherIsGlobal = other->isGlobal() or other->isBlockage();
         } else {
           otherOverlap.merge(other->getCanonicalInterval());
-          otherIsGlobal = otherIsGlobal or other->isGlobal();
+          otherIsGlobal = otherIsGlobal or other->isGlobal() or other->isBlockage();
         }
       }
       if ( not otherOverlap.isEmpty() ) {

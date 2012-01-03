@@ -538,6 +538,7 @@ namespace Kite {
   // // NO MOVE UP FOR IT...
   //   DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.gi_3_23" );
   //   DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.gi_3_28" );
+  //DebugSession::addToTrace ( getCell(), "cout_to_pads" );
 
     createDetailedGrid ();
     buildPowerRails ();

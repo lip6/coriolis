@@ -112,7 +112,7 @@ namespace {
       Box           bb        ( segments[i]->getBoundingBox() );
 
       transformation.applyOn ( bb );
-      cinfo << "bb: " << bb << endl;
+    //cinfo << "bb: " << bb << endl;
 
       if ( direction == Constant::Horizontal ) {
         DbU::Unit axisMin = bb.getYMin() - delta;
