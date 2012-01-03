@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <environment>
-  <variable name="CELL_TOP" value="/asim/alliance"/>
+  <variable name="CELL_TOP" value="/soc/alliance"/>
   <technologies>
     <hurricane>
       <config>${CORIOLIS_TOP}/etc/coriolis2/technology.symbolic.xml</config>
@@ -41,7 +41,7 @@
   <signals>
     <vdd>vdd</vdd>
     <vss>vss</vss>
-    <clock>^do_not_find_ck$</clock>
+    <clock>^ck.*</clock>
     <blockage>^blockageNet$</blockage>
   </signals>
 </environment>
