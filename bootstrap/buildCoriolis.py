@@ -620,6 +620,7 @@ if __name__ == "__main__":
                                     , "scribe"
                                     , "graph"
                                     , "pharos"
+                                    , "isis"
                                     , "schematic"
                                     , "autoDTR"
                                     ]

@@ -47,8 +47,8 @@ def guessOs ():
 
     libDir="lib"
     if osSlsoc6x_64.match(lines[0]):
-      osType    = "Linux.slsoc6x_64"
-      libSuffix = "64"
+      osType = "Linux.slsoc6x_64"
+      libDir = "64"
     elif osSlsoc6x.match(lines[0]): osType = "Linux.slsoc6x"
     elif osSLSoC5x_64.match(lines[0]):
       osType = "Linux.SLSoC5x_64"
