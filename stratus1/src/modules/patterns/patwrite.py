@@ -305,12 +305,12 @@ class PatWrite:
     # list is used to store the connectors order. It's used later when
     # we'll write the patterns.
     #
-    # @remark Declarare in the following order: clock, input, output,
+    # @remark Declarare in the following order: clock, input, output, inout
     # vdd, vss. The fixed connector order is a constraint for Synopsys
     # testbench generation.
     # 
     # @remark The only supported connectors are instance of SignalIn,
-    # SignalOut, VddIn, VssIn and CkIn.
+    # SignalOut, SignalInOut, VddIn, VssIn and CkIn.
     #
     # @remark If the connector arity is greater than 1 it will always
     # be written in the form <code>N downto 0</code>.
@@ -352,17 +352,22 @@ class PatWrite:
             if isinstance(port, SignalOut):
                 self.declar(port, format)
 
-        # 4. VDDs
+        # 4. InOuts
+        for port in cell._st_ports:
+            if isinstance(port, SignalInOut):
+                self.declar(port, format)
+
+        # 5. VDDs
         for port in cell._st_vdds:
             if isinstance(port, VddIn):
                 self.declar(port, format)
 
-        # 5. VSSs
+        # 6. VSSs
         for port in cell._st_vsss:
             if isinstance(port, VssIn):                
                 self.declar(port, format)
 
-        # 6. TriState
+        # 7. TriState
         for port in cell._st_ports:
             if isinstance(port, TriState):
                 self.declar(port, format)
@@ -427,13 +432,19 @@ class PatWrite:
                 port._format = self.connectors_format[port._name]
                 l.append(port)
 
-        # 4. VDDs
+        # 4. InOuts
+        for port in cell._st_ports:
+            if isinstance(port, SignalInOut):
+                port._format = self.connectors_format[port._name]
+                l.append(port)
+
+        # 5. VDDs
         for port in cell._st_vdds:
             if isinstance(port, VddIn):
                 port._format = self.connectors_format[port._name]
                 l.append(port)
 
-        # 5. VSSs
+        # 6. VSSs
         for port in cell._st_vsss:
             if isinstance(port, VssIn):
                 port._format = self.connectors_format[port._name]
