@@ -103,7 +103,7 @@
 #
  macro(print_cmake_module_path)
    message("-- Components of CMAKE_MODULE_PATH:")
-   foreach(PATH IN LISTS ${CMAKE_MODULE_PATH})
+   foreach(PATH ${CMAKE_MODULE_PATH})
      message("--   ${PATH}")
    endforeach(PATH)
  endmacro(print_cmake_module_path)
@@ -190,7 +190,7 @@
      endif(NOT Boost_FOUND)
    endif(ARGC LESS 1)
    message(STATUS "Found Boost libraries ${Boost_LIB_VERSION} in ${Boost_INCLUDE_DIR}")
-   foreach(LIBRARY IN LISTS ${Boost_LIBRARIES})
+   foreach(LIBRARY ${Boost_LIBRARIES})
      message(STATUS "  ${LIBRARY}")
    endforeach(LIBRARY)
    add_definitions(-DBOOST_FILESYSTEM_VERSION=2) # for boost 1.46 and more we need to specify to use filesystem v2 and not v3
@@ -234,7 +234,7 @@
    LIST(REMOVE_DUPLICATES ${project}_DIR_SEARCH)
   
    MESSAGE("-- Components of ${project}_DIR_SEARCH:")
-   FOREACH(PATH IN LISTS ${project}_DIR_SEARCH)
+   FOREACH(PATH ${${project}_DIR_SEARCH})
      MESSAGE("--   ${PATH}")
    ENDFOREACH(PATH)
  ENDMACRO(SETUP_SEARCH_DIR project)
