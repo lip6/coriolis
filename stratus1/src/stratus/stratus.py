@@ -47,6 +47,28 @@
 # x-----------------------------------------------------------------x
 
 
+# Get configuration of Stratus
+def getConfigFile():
+   import os
+
+   config_file = os.path.join(os.getcwd(),".st_config.py")
+   if os.path.exists(config_file):
+      return config_file
+   else:
+      config_file = os.path.join(os.getenv('HOME'),".st_config.py")
+      if os.path.exists(config_file):
+         return config_file
+      else:
+         return None
+
+configFile = getConfigFile()
+if configFile:
+   import imp
+   imp.load_source('st_config',configFile)
+else:
+   print "No configuration file found, using default configuration"
+   import st_config
+
 
 from st_model         import *
 from st_net           import *
@@ -69,3 +91,6 @@ from util_uRom        import *
 from util             import *
 
 from patterns         import *
+
+
+

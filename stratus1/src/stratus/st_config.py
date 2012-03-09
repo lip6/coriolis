@@ -1,0 +1,2 @@
+format = 'vst'
+simulator = 'asimut'
