@@ -2,6 +2,7 @@
               set ( pysources ${CMAKE_CURRENT_SOURCE_DIR}/st_bool.py
                               ${CMAKE_CURRENT_SOURCE_DIR}/st_cat.py
                               ${CMAKE_CURRENT_SOURCE_DIR}/st_comp.py
+                              ${CMAKE_CURRENT_SOURCE_DIR}/st_config.py
                               ${CMAKE_CURRENT_SOURCE_DIR}/st_const.py
                               ${CMAKE_CURRENT_SOURCE_DIR}/st_extend.py
                               ${CMAKE_CURRENT_SOURCE_DIR}/st_func_gen_wallace.py
