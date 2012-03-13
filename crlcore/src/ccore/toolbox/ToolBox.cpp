@@ -2,14 +2,13 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
 // ===================================================================
 //
 // $Id$
 //
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |           Alliance / Hurricane  Interface                       |
 // |                                                                 |
@@ -17,10 +16,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./ToolBox.cpp"                            |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  "hurricane/Plug.h"
@@ -73,61 +69,73 @@ Component* getBestExternalComponent ( Net* net )
 {
   Component* bestComponent = NULL;
 
-  for_each_component ( component, NetExternalComponents::get(net) ) {
-    if ( !bestComponent ) { bestComponent = component; continue; }
+  forEach ( Component*, icomponent, NetExternalComponents::get(net) ) {
+    if ( !bestComponent ) { bestComponent = *icomponent; continue; }
     if (      /*IsOnTop(component->getLayer(),bestComponent->getLayer())
-                || */ ( getArea(component) > getArea(bestComponent) ) ) {
-      bestComponent = component;
+                || */ ( getArea(*icomponent) > getArea(bestComponent) ) ) {
+      bestComponent = *icomponent;
     }
-    end_for
   }
-
   return bestComponent;
 }
 
 
-void  PlaceNet ( Net* net )
+bool  placeNet ( Net* net )
 {
-  assert ( net );
+  assert(net);
 
-  Component* bestComponent = getBestExternalComponent ( net );
+  if ( not net->isExternal() ) return false;
+  Component* bestComponent = getBestExternalComponent(net);
 
-  if ( bestComponent )
-    net->setPosition ( bestComponent->getCenter() );
-}
-
-
-void  PlaceNets ( Cell* cell )
-{
-  assert ( cell );
-
-  for_each_net ( net, cell->getExternalNets() ) {
-    PlaceNet ( net );
-    end_for
+  if ( bestComponent ) {
+    net->setPosition(bestComponent->getCenter());
+    return true;
   }
+  return false;
 }
 
 
-void  PlaceMasterNets ( const Library* library )
+void  placeNets ( Cell* cell )
+{
+  assert(cell);
+
+  UpdateSession::open();
+
+  vector<Net*> unplaceds;
+
+  forEach ( Net*, inet, cell->getExternalNets() ) {
+    if ( !placeNet(*inet) ) unplaceds.push_back(*inet);
+  }
+
+  Point abCenter = cell->getAbutmentBox().getCenter();
+  for ( size_t i=0 ; i<unplaceds.size() ; ++i ) {
+    unplaceds[i]->setPosition(abCenter);
+  }
+
+  UpdateSession::close();
+}
+
+
+void  placeMasterNets ( const Library* library )
 {
   assert ( library );
 
   for_each_cell ( cell, library->getCells() ) {
-    PlaceNets ( cell );
+    placeNets ( cell );
     end_for
   }
 }
 
 
-void PlacePlug (Plug* plug)
+void placePlug (Plug* plug)
 {
   assert ( plug );
 
-  PlaceNet ( plug->getMasterNet() );
+  placeNet ( plug->getMasterNet() );
 }
 
 
-void  PlacePlugs ( Cell* cell )
+void  placePlugs ( Cell* cell )
 {
   assert ( cell );
 
@@ -135,7 +143,7 @@ void  PlacePlugs ( Cell* cell )
 
   for_each_net ( net, cell->getNets() ) {
     for_each_plug ( plug, net->getPlugs() ) {
-      PlacePlug ( plug );
+      placePlug ( plug );
       end_for;
     }
     end_for

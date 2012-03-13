@@ -3,25 +3,21 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
 // ===================================================================
 //
 // $Id$
 //
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
-// |      K i t e  -  D e t a i l e d   R o u t e r                  |
+// |           Alliance / Hurricane  Interface                       |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./ToolBox.h"                              |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :       "./crlcore/ToolBox.h"                      |
+// +-----------------------------------------------------------------+
 
 
 #ifndef  __CRL_TOOLBOX_H__
@@ -46,11 +42,11 @@ namespace CRL {
   using Hurricane::Occurrence;
 
   Component*      getBestExternalComponent    ( Net* );
-  void            PlaceNet                    ( Net* );
-  void            PlaceNets                   ( Cell* );
-  void            PlaceMasterNets             ( const Library* );
-  void            PlacePlug                   ( Plug* );
-  void            PlacePlugs                  ( Cell* );
+  bool            placeNet                    ( Net* );
+  void            placeNets                   ( Cell* );
+  void            placeMasterNets             ( const Library* );
+  void            placePlug                   ( Plug* );
+  void            placePlugs                  ( Cell* );
   void            createPartRing2             ( Net& );
   void            createPartRing              ( Cell*, Name nom );
   void            createPlugsRing             ( Net& );
@@ -61,8 +57,9 @@ namespace CRL {
   Transformation  getTransformation           ( const Box& abox, const DbU::Unit& x, const DbU::Unit& y, const Transformation::Orientation& orientation );
   bool            isNoInstancePlacedOrFixed   ( Cell* );
   Occurrence      getRootNetOccurrence        ( const Occurrence& netoccurrence );
-  void            ConnectPlugHooks            ( Cell* );
+  void            connectPlugHooks            ( Cell* );
   size_t          getInstancesCount           ( const Cell* cell );
+  void            setNetsPosition             ( Cell* );
 
 } // End of CRL namespace.
 
