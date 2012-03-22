@@ -85,8 +85,11 @@ namespace OpenChams {
 
   bool  stringAsBool ( const string& s )
   {
-    if ( headCompare("true" ,s) or headCompare("1",s) ) return true;
-    if ( headCompare("false",s) or headCompare("0",s) ) return false;
+    string lower(s);
+    boost::algorithm::to_lower(lower);
+
+    if ( headCompare("true" ,lower) or headCompare("1",lower) ) return true;
+    if ( headCompare("false",lower) or headCompare("0",lower) ) return false;
     cerr << "[WARNING] Unknown booleean value <" << s << "> (treated as false)."<< endl;
     return false;
   }
