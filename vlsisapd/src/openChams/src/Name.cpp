@@ -52,11 +52,11 @@ Name::Name(const char* c) : _str(NULL) {
     }
 }
     
-bool Name::operator==(const Name& n) {
+bool Name::operator==(const Name& n) const {
     return (_id == n._id);
 }
     
-bool Name::operator==(const string& str) {
+bool Name::operator==(const string& str) const {
     Name n(str);
     return (_id == n._id);
 }

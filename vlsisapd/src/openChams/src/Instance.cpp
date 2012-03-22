@@ -24,6 +24,11 @@ Instance::Instance(Name name, Name model, unsigned order, Netlist* netlist)
     , _params()
     , _netMap() {}
 
+
+  Instance::~Instance ()
+  { }
+
+
 void Instance::addConnector(Name name) {
     // si name n'est pas déjà présent dans la map on ajoute name, NULL (pas de net)
     map<Name, Net*>::iterator it = _netMap.find(name);

@@ -22,8 +22,8 @@ class Name {
     Name(std::string);
 	Name(const char*);
     
-	bool operator==(const Name&);
-	bool operator==(const std::string&);
+	bool operator==(const Name&) const;
+	bool operator==(const std::string&) const;
 	bool operator<(const Name&) const;
     
 	inline const std::string& getString() const;

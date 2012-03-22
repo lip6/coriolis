@@ -205,12 +205,13 @@ int main(int argc, char * argv[]) {
                 }
             }
         }
-        if (!sizing->hasNoEquations()) {
-            cerr << " | + equations" << endl;
-            for (map<OpenChams::Name, string>::const_iterator eit = sizing->getEquations().begin() ; eit != sizing->getEquations().end() ; ++eit) {
-                cerr << " | | " << ((*eit).first).getString() << " : " << (*eit).second << endl;
-            }
-        }
+        // To update to the new equations.
+        // if (!sizing->hasNoEquations()) {
+        //     cerr << " | + equations" << endl;
+        //     for (map<OpenChams::Name, string>::const_iterator eit = sizing->getEquations().begin() ; eit != sizing->getEquations().end() ; ++eit) {
+        //         cerr << " | | " << ((*eit).first).getString() << " : " << (*eit).second << endl;
+        //     }
+        // }
     }
     OpenChams::Layout* layout = circuit->getLayout();
     if (layout) {

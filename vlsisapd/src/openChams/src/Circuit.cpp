@@ -14,6 +14,8 @@
 #include <algorithm>
 using namespace std;
 
+#include <boost/algorithm/string.hpp>
+
 #include "vlsisapd/openChams/Circuit.h"
 #include "vlsisapd/openChams/Netlist.h"
 #include "vlsisapd/openChams/Instance.h"
@@ -35,17 +37,100 @@ using namespace std;
 #include "vlsisapd/openChams/DDP.h"
 #include "vlsisapd/openChams/DesignerCstrOC.h"
 
-namespace {
-  template<class T> T getValue(xmlChar* str) {
-    std::istringstream iss;
-    iss.str((const char*) str);
-    T res;
-    iss >> res;
-    return res;
-  }
-}
-
 namespace OpenChams {
+
+
+  void  tokenize ( const string& value, vector<string>& tokens )
+  {
+    string work;
+
+  // First: remove all white spaces.
+    for ( size_t i=0 ; i<value.size() ; ++i ) {
+      switch ( value[i] ) {
+        case ' ':
+        case '\n':
+        case '\t':
+          continue;
+      }
+      work += value[i];
+    }
+
+    boost::algorithm::to_lower(work);
+
+  // Second: tokenize, special characters being ",".
+    size_t tokenStart  = 0;
+    size_t tokenLength = 1;
+    for ( size_t i=0 ; i<work.size() ; ++i, ++tokenLength ) {
+      switch ( work[i] ) {
+        case ',':
+        // The previous token.
+          if ( tokenLength > 1 )
+            tokens.push_back ( work.substr(tokenStart,tokenLength-1) );
+          tokenStart  = i+1;
+          tokenLength = 0;
+      }
+    }
+    if ( tokenLength > 1 )
+      tokens.push_back ( work.substr(tokenStart,tokenLength-1) );
+  }
+
+
+  bool  headCompare ( const char* keyword, const string& token )
+  {
+    const string skeyword (keyword);
+    if ( skeyword.empty() or token.empty() ) return false;
+    return (skeyword.compare(0,token.size(),token) == 0);
+  }
+
+
+  bool  stringAsBool ( const string& s )
+  {
+    if ( headCompare("true" ,s) or headCompare("1",s) ) return true;
+    if ( headCompare("false",s) or headCompare("0",s) ) return false;
+    cerr << "[WARNING] Unknown booleean value <" << s << "> (treated as false)."<< endl;
+    return false;
+  }
+
+
+  long  stringAsDirection ( const string& s )
+  {
+    vector<string> tokens;
+    tokenize(s,tokens);
+
+    long directions = 0;
+    for ( size_t i=0 ; i<tokens.size() ; ++i ) {
+      if      ( headCompare("west" ,tokens[i]) ) directions |= (1<<0); 
+      else if ( headCompare("east" ,tokens[i]) ) directions |= (1<<1); 
+      else if ( headCompare("south",tokens[i]) ) directions |= (1<<2); 
+      else if ( headCompare("north",tokens[i]) ) directions |= (1<<3); 
+      else
+        cerr << "[WARNING] Unknown direction value <" << tokens[i] << "> (ignored)."<< endl;
+    }
+
+    return directions;
+  }
+
+
+  string  asStringBool ( bool b )
+  {
+    return (b) ? "true" : "false";
+  }
+
+
+  string  asStringDirection ( long l )
+  {
+    const char* directionNames[4] = { "west", "east", "south", "north" };
+
+    string directions;
+    for ( size_t i=0 ; i<4 ; ++i ) {
+      if ( l & (1<<i) ) {
+        if (not directions.empty() ) directions += ",";
+        directions += directionNames[i];
+      }
+    }
+    return directions;
+  }
+
     
   static bool readSubCircuitsPathsDone  = false;
   static bool readCircuitParametersDone = false;
@@ -124,27 +209,14 @@ namespace OpenChams {
     _simulModels[id] = sim;
   }
 
-  Name Circuit::readParameter(xmlNode* node, double& value) {
+  Name Circuit::readParameter(xmlNode* node, const xmlChar*& value) {
     xmlChar* paramNameC = xmlGetProp(node, (xmlChar*)"name");
-    xmlChar* valueC     = xmlGetProp(node, (xmlChar*)"value");
-    if (paramNameC && valueC) {
+    value               = xmlGetProp(node, (xmlChar*)"value");
+    if (paramNameC and value) {
       Name name((const char*)paramNameC);
-      value = ::getValue<double>(valueC);
       return name;
     } else {
       throw OpenChamsException("[ERROR] 'parameter' node must have 'name' and 'value' properties.");
-    }
-  }
-    
-  Name Circuit::readParameterEq(xmlNode* node, string& eqStr) {
-    xmlChar* paramNameC = xmlGetProp(node, (xmlChar*)"name");
-    xmlChar* equationC  = xmlGetProp(node, (xmlChar*)"equation");
-    if (paramNameC && equationC) {
-      Name name((const char*)paramNameC);
-      eqStr = string ((const char*)equationC);
-      return name;
-    } else {
-      throw OpenChamsException("[ERROR] 'parameterEq' node must have 'name' and 'equation' properties.");
     }
   }
     
@@ -196,22 +268,17 @@ namespace OpenChams {
     }
     if (node->type == XML_ELEMENT_NODE && node->children) {
       for (xmlNode* paramNode = node->children ; paramNode ; paramNode = paramNode->next) {
-	if (paramNode->type == XML_ELEMENT_NODE) {
-	  if (xmlStrEqual(paramNode->name, (xmlChar*)"parameter")) {
-	    double value = 0.0;
-	    Name paramName = readParameter(paramNode, value);
-	    if (paramName == Name("")) return; // error
-	    addParameter(paramName, value);
-	  } else if (xmlStrEqual(paramNode->name, (xmlChar*)"parameterEq")) {
-	    string eqStr = "";
-	    Name paramName = readParameterEq(paramNode, eqStr);
-	    if (paramName == Name("")) return; // error
-	    addParameter(paramName, eqStr);
-	  } else {
-	    cerr << "[WARNING] Only 'parameter' and 'parameterEq' nodes are allowed under 'parameters' node." << endl;
-	    return;
-	  }
-	}
+        if (paramNode->type == XML_ELEMENT_NODE) {
+          if (xmlStrEqual(paramNode->name, (xmlChar*)"parameter")) {
+            const xmlChar* value = NULL;
+            Name paramName = readParameter(paramNode, value);
+            if (paramName == Name("")) return; // error
+            addParameter(paramName, (const char*)value);
+          } else {
+            cerr << "[WARNING] Only 'parameter' and 'parameterEq' nodes are allowed under 'parameters' node." << endl;
+            return;
+          }
+        }
       }
     }
     readCircuitParametersDone = true;
@@ -226,12 +293,12 @@ namespace OpenChams {
       for (xmlNode* modelNode = node->children ; modelNode ; modelNode = modelNode->next) {
 	if (modelNode->type == XML_ELEMENT_NODE) {
 	  if (xmlStrEqual(modelNode->name, (xmlChar*)"model")) {
-	    xmlChar* mIdC       = xmlGetProp(modelNode, (xmlChar*)"id");
-	    xmlChar* mBaseC     = xmlGetProp(modelNode, (xmlChar*)"base");
-	    xmlChar* mVersionC  = xmlGetProp(modelNode, (xmlChar*)"version");
-	    xmlChar* mFilePathC = xmlGetProp(modelNode, (xmlChar*)"filePath");
+	    const xmlChar* mIdC       = xmlGetProp(modelNode, (xmlChar*)"id");
+	    const xmlChar* mBaseC     = xmlGetProp(modelNode, (xmlChar*)"base");
+	    const xmlChar* mVersionC  = xmlGetProp(modelNode, (xmlChar*)"version");
+	    const xmlChar* mFilePathC = xmlGetProp(modelNode, (xmlChar*)"filePath");
 	    if (mIdC && mBaseC && mVersionC && mFilePathC) {
-	      unsigned id = ::getValue<unsigned>(mIdC);
+	      unsigned id = stringAs<unsigned>(mIdC);
 	      SimulModel::Base base = SimulModel::BSIM3V3;
 	      string mBase((const char*)mBaseC);
 	      string baseComp[3] = { "BSIM3V3", "BSIM4", "PSP" };
@@ -332,7 +399,7 @@ namespace OpenChams {
     if (iNameC && iModelC && iOrderC && iMOSC && iSBCC) { // this is a device
       Name instanceName((const char*)iNameC);
       Name modelName((const char*)iModelC);
-      unsigned order = ::getValue<unsigned>(iOrderC);
+      unsigned order = stringAs<unsigned>(iOrderC);
       string mosStr((const char*)iMOSC);
       string mosComp[2] = {"NMOS", "PMOS"};
       vector<string> mosComps (mosComp, mosComp+2);
@@ -346,7 +413,7 @@ namespace OpenChams {
     } else if (iNameC && iModelC && iOrderC && !iMOSC && !iSBCC) { // this is a subcircuit
       Name instanceName((const char*)iNameC);
       Name modelName((const char*)iModelC);
-      unsigned order = ::getValue<unsigned>(iOrderC);
+      unsigned order = stringAs<unsigned>(iOrderC);
       inst = netlist->addInstance(instanceName, modelName, order);
     } else {
       throw OpenChamsException("[ERROR] 'instance' node must have ('name', 'model' and 'order') or ('name', 'model', 'order', 'mostype' and 'sourceBulkConnected') properties.");
@@ -391,15 +458,10 @@ namespace OpenChams {
     for (xmlNode* node = child; node; node = node->next) {
       if (node->type == XML_ELEMENT_NODE) {
 	if (xmlStrEqual(node->name, (xmlChar*)"parameter")) {
-	  double value = 0.0;
+	  const xmlChar* value = NULL;
 	  Name paramName = readParameter(node, value);
 	  if (paramName == Name("")) return; // error
-	  inst->addParameter(paramName, value);
-	} else if (xmlStrEqual(node->name, (xmlChar*)"parameterEq")) {
-	  string eqStr = "";
-	  Name paramName = readParameterEq(node, eqStr);
-	  if (paramName == Name("")) return; // error
-	  inst->addParameter(paramName, eqStr);
+	  inst->addParameter(paramName, (const char*)value);
 	} else {
 	  cerr << "[WARNING] Only 'parameter' and 'parameterEq' nodes are allowed under 'instance' node." << endl;
 	  return;
@@ -576,8 +638,8 @@ namespace OpenChams {
     xmlChar* orientC = xmlGetProp(node, (xmlChar*)"orient");
     if (nameC && xC && yC && orientC) {
       Name   iName((const char*)nameC);
-      double x = ::getValue<double>(xC);
-      double y = ::getValue<double>(yC);
+      double x = stringAs<double>((const char*)xC);
+      double y = stringAs<double>((const char*)yC);
       string orientStr((const char*)orientC);
       string orientComp[8] = {"ID", "R1", "R2", "R3", "MX", "XR", "MY", "YR"};
       vector<string> orientComps (orientComp, orientComp+8);
@@ -624,9 +686,9 @@ namespace OpenChams {
     xmlChar* orientC = xmlGetProp(node, (xmlChar*)"orient");
     if (typeC && idxC && xC && yC && orientC) {
       Name pType((const char*)typeC);
-      unsigned idx = ::getValue<unsigned>(idxC);
-      double   x   = ::getValue<double>(xC);
-      double   y   = ::getValue<double>(yC);
+      unsigned idx = stringAs<unsigned>(idxC);
+      double   x   = stringAs<double>(xC);
+      double   y   = stringAs<double>(yC);
       string orientStr((const char*)orientC);
       string orientComp[8] = {"ID", "R1", "R2", "R3", "MX", "XR", "MY", "YR"};
       vector<string> orientComps (orientComp, orientComp+8);
@@ -657,7 +719,7 @@ namespace OpenChams {
 	      throw OpenChamsException("[ERROR] In 'schematic' a 'wire' must have exactly 2 connectors (not more).");
 	    }
 	  } else if (idxC) {
-	    unsigned idx = ::getValue<unsigned>(idxC);
+	    unsigned idx = stringAs<unsigned>(idxC);
 	    if (!wire->getStartPoint()) {
 	      wire->setStartPoint(idx);
 	    } else if (!wire->getEndPoint()) {
@@ -673,8 +735,8 @@ namespace OpenChams {
 	  xmlChar* xC = xmlGetProp(node, (xmlChar*)"x");
 	  xmlChar* yC = xmlGetProp(node, (xmlChar*)"y");
 	  if (xC && yC) {
-	    double x = ::getValue<double>(xC);
-	    double y = ::getValue<double>(yC);
+	    double x = stringAs<double>(xC);
+	    double y = stringAs<double>(yC);
 	    wire->addIntermediatePoint(x, y); // check is done inside the method (start/end points)
 	  } else {
 	    throw OpenChamsException("[ERROR] 'schematic'.'net'.'point' node must have 'x' and 'y' properties.");
@@ -753,7 +815,7 @@ namespace OpenChams {
       Name refParam ((const char*)refParamC);
       double factor = 1.0;
       if (factorC) {
-	factor = ::getValue<double>(factorC);
+	factor = stringAs<double>(factorC);
       }
       op->addConstraint(param, ref, refParam, factor);
     } else if (paramC && refEqC) {
@@ -761,7 +823,7 @@ namespace OpenChams {
       Name refEq ((const char*)refEqC);
       double factor = 1.0;
       if (factorC) {
-	factor = ::getValue<double>(factorC);
+	factor = stringAs<double>(factorC);
       }
       op->addConstraint(param, refEq, factor);
     } else {
@@ -1224,14 +1286,10 @@ namespace OpenChams {
     }
     if (!_params.isEmpty()) {
       file << "  <parameters>" << endl;
-      for (map<Name, double>::const_iterator it = _params.getValues().begin() ; it != _params.getValues().end() ; ++it) {
-	file << "    <parameter name=\"" << (*it).first.getString() << "\" value=\"" << (*it).second << "\"/>" << endl;
+      for (map<Name,string>::const_iterator it = _params.getValues().begin() ; it != _params.getValues().end() ; ++it) {
+        file << "    <parameter name=\"" << (*it).first.getString() << "\" value=\"" << (*it).second << "\"/>" << endl;
       }
       cerr << "_params.getValues().size() = " << _params.getValues().size() << endl;
-      cerr << "_params.getEqValues().size() = " << _params.getEqValues().size() << endl;
-      for (map<Name, string>::const_iterator it2 = _params.getEqValues().begin() ; it2 != _params.getEqValues().end() ; ++it2) {
-	file << "    <parameterEq name=\"" << (*it2).first.getString() << "\" equation=\"" << (*it2).second << "\"/>" << endl;
-      }
       file << "  </parameters>" << endl;
     }
     file << "  <netlist>" << endl
@@ -1278,11 +1336,8 @@ namespace OpenChams {
       if (!inst->getParameters().isEmpty()) {
 	Parameters params = inst->getParameters();
 	file << "        <parameters>" << endl;
-	for (map<Name, double>::const_iterator it = params.getValues().begin() ; it != params.getValues().end() ; ++it) {
+	for (map<Name,string>::const_iterator it = params.getValues().begin() ; it != params.getValues().end() ; ++it) {
 	  file << "          <parameter name=\"" << (*it).first.getString() << "\" value=\"" << (*it).second << "\"/>" << endl;
-	}
-	for(map<Name, string>::const_iterator it = params.getEqValues().begin() ; it != params.getEqValues().end() ; ++it) {
-	  file << "          <parameterEq name=\"" << (*it).first.getString() << "\" equation=\"" << (*it).second << "\"/>" << endl;
 	}
 	file << "        </parameters>" << endl;
       }

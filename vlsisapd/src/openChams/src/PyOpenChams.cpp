@@ -25,6 +25,7 @@ using namespace boost::python;
 #include "vlsisapd/openChams/PySTLMapWrapper.h"
 
 namespace OpenChams {
+
 void translator(OpenChamsException const& e) {
     PyErr_SetString(PyExc_UserWarning, e.what());
 }
@@ -45,20 +46,17 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
     implicitly_convertible<std::string, Name>();
 
     // map wrapping for OpenChams::Parameters
-    STL_MAP_WRAPPING(Name, double     , "ValuesMap"   )
-    STL_MAP_WRAPPING(Name, std::string, "EquationsMap")
+    STL_MAP_WRAPPING(Name, std::string, "ValuesMap")
     // class OpenChams::Parameters
     class_<Parameters>("Parameters", init<>())
         // accessors
-        .def("getValue"    , &Parameters::getValue  )
-        .def("getEqValue"  , &Parameters::getEqValue)
+        .def("getValue"    , &Parameters::getValue, return_value_policy<copy_const_reference>())
         .def("isEmpty"     , &Parameters::isEmpty   )
         // modifiers
-        .def("addParameter", static_cast<void(Parameters::*)(Name, double     )>(&Parameters::addParameter))
-        .def("addParameter", static_cast<void(Parameters::*)(Name, std::string)>(&Parameters::addParameter))
+        .def("addParameter", static_cast<void(Parameters::*)(Name, const char*)>(&Parameters::addParameter))
+        .def("addParameter", static_cast<void(Parameters::*)(Name, const std::string&)>(&Parameters::addParameter))
         // stl containers
         .def("getValues"   , &Parameters::getValues  , return_value_policy<copy_const_reference>())
-        .def("getEqValues" , &Parameters::getEqValues, return_value_policy<copy_const_reference>()) 
     ;
 
     { //this scope is used to define Base as a subenum of SimulModel
@@ -95,8 +93,8 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
         .add_property("bulk"      , &Transistor::getBulk      , &Transistor::setBulk  )
         .add_property("parameters", &Transistor::getParameters                        ) // no setter => params will be readonly
         // modifiers
-        .def("addParameter", static_cast<void(Transistor::*)(Name, double     )>(&Transistor::addParameter))
-        .def("addParameter", static_cast<void(Transistor::*)(Name, std::string)>(&Transistor::addParameter))
+        .def("addParameter", static_cast<void(Transistor::*)(Name, const char*)>(&Transistor::addParameter))
+        .def("addParameter", static_cast<void(Transistor::*)(Name, const std::string&)>(&Transistor::addParameter))
     ;
 
     // map wrapping and vector_indexing for OpenChams::Instance
@@ -114,8 +112,8 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
         // modifiers
         .def("addConnector" , &Instance::addConnector )
         .def("connect"      , &Instance::connect      )
-        .def("addParameter" , static_cast<void(Transistor::*)(Name, double     )>(&Transistor::addParameter))
-        .def("addParameter" , static_cast<void(Transistor::*)(Name, std::string)>(&Transistor::addParameter))
+        .def("addParameter" , static_cast<void(Transistor::*)(Name, const char*)>(&Transistor::addParameter))
+        .def("addParameter" , static_cast<void(Transistor::*)(Name, const std::string&)>(&Transistor::addParameter))
         // stl containers
         .def("getConnectors" , &Instance::getConnectors , return_internal_reference<>())
     ;
@@ -340,14 +338,14 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
         .add_property("sizing"      , make_function(&Circuit::getSizing   , return_value_policy<reference_existing_object>()))
         .add_property("layout"      , make_function(&Circuit::getLayout   , return_value_policy<reference_existing_object>()))
         // accessors
-        .def("getValue", &Circuit::getValue)
+        .def("getValue", &Circuit::getValue, return_value_policy<copy_const_reference>() )
         // modifiers
         .def("createNetlist"  , &Circuit::createNetlist  , return_value_policy<reference_existing_object>())
         .def("createSchematic", &Circuit::createSchematic, return_value_policy<reference_existing_object>())
         .def("createSizing"   , &Circuit::createSizing   , return_value_policy<reference_existing_object>())
         .def("createLayout"   , &Circuit::createLayout   , return_value_policy<reference_existing_object>())
-        .def("addParameter", static_cast<void(Circuit::*)(Name, double     )>(&Circuit::addParameter))
-        .def("addParameter", static_cast<void(Circuit::*)(Name, std::string)>(&Circuit::addParameter))
+        .def("addParameter", static_cast<void(Circuit::*)(Name, const char*)>(&Circuit::addParameter))
+        .def("addParameter", static_cast<void(Circuit::*)(Name, const std::string&)>(&Circuit::addParameter))
         // others
         .def("readFromFile", &Circuit::readFromFile, return_value_policy<manage_new_object>())
         .staticmethod("readFromFile")
@@ -399,4 +397,6 @@ BOOST_PYTHON_MODULE(OPENCHAMS) {
     register_exception_translator<OpenChamsException>(translator)
     ;
 }
-}
+
+
+}  // OpenChams namespace.
