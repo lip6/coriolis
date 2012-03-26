@@ -90,10 +90,7 @@ int main(int argc, char * argv[]) {
     cerr << " + parameters" << endl;
     OpenChams::Parameters params = circuit->getParameters();
     if (!params.isEmpty()) {
-        for (map<OpenChams::Name, double>::const_iterator it = params.getValues().begin() ; it != params.getValues().end() ; ++it) {
-            cerr << " | | " << ((*it).first).getString() << " : " << (*it).second << endl;
-        }
-        for (map<OpenChams::Name, string>::const_iterator it = params.getEqValues().begin() ; it != params.getEqValues().end() ; ++it) {
+        for (map<OpenChams::Name, string>::const_iterator it = params.getValues().begin() ; it != params.getValues().end() ; ++it) {
             cerr << " | | " << ((*it).first).getString() << " : " << (*it).second << endl;
         }
     }

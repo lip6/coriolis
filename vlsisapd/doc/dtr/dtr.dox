@@ -13,7 +13,6 @@
   The database contains four object :
   - DTR::Techno contains generic informations such as the name of the technology and the unit used, and the list of all technologic rules.
   - DTR::Rule & DTR::ARule respectively describe a symmetrical and an asymmetrical rule.
-  - DTR::Name provides an automatic management of shared name.
 
   The library also use the DTR::DTRException class to throw excptions.
 

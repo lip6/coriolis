@@ -2,12 +2,10 @@ INCLUDE_DIRECTORIES(${VLSISAPD_SOURCE_DIR}/src/dtr/src ${LIBXML2_INCLUDE_DIR} ${
 
 SET ( hpps vlsisapd/dtr/Techno.h
            vlsisapd/dtr/Rules.h
-           vlsisapd/dtr/Name.h
            vlsisapd/dtr/DTRException.h 
     )
 
 SET ( cpps Techno.cpp
-           Name.cpp 
     )
 
 SET ( pycpps PyDtr.cpp

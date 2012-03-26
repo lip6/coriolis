@@ -18,12 +18,12 @@ using namespace std;
 int main(int argc, char * argv[]) {
     OpenChams::Circuit* circuit = new OpenChams::Circuit(OpenChams::Name("design"), OpenChams::Name("myTech"));
     // value parameters
-    circuit->addParameter(OpenChams::Name("temp"), 27.0  );
-    circuit->addParameter(OpenChams::Name("Vdd") , 1.2   );
-    circuit->addParameter(OpenChams::Name("Vss") , 0.0   );
-    circuit->addParameter(OpenChams::Name("L")   , 0.1e-6);
-    circuit->addParameter(OpenChams::Name("Ids") , 30e-6 );
-    circuit->addParameter(OpenChams::Name("Veg") , 0.12  );
+    circuit->addParameter(OpenChams::Name("temp"), "27.0"  );
+    circuit->addParameter(OpenChams::Name("Vdd") , "1.2"   );
+    circuit->addParameter(OpenChams::Name("Vss") , "0.0"   );
+    circuit->addParameter(OpenChams::Name("L")   , "0.1e-6");
+    circuit->addParameter(OpenChams::Name("Ids") , "30e-6" );
+    circuit->addParameter(OpenChams::Name("Veg") , "0.12"  );
     // equation parameters
     circuit->addParameter(OpenChams::Name("complex"), "myEq");
 

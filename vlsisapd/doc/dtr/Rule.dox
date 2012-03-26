@@ -22,7 +22,7 @@ namespace DTR {
  *
  */
 
-/*! \fn Rule::Rule(Name name, double value, Name ref, Name layer1, Name layer2)
+/*! \fn Rule::Rule(const char* name, double value, const char* ref, const char* layer1, const char* layer2)
  *   \brief creates a new rule.
  *
  *   \param name   the name of the rule.
@@ -32,11 +32,11 @@ namespace DTR {
  *   \param layer2 the second layer.
  */
 
-/*! \fn inline Name Rule::getName()
+/*! \fn inline const std::string& Rule::getName()
  *   \brief returns the name of the rule.
  */
 
-/*! \fn inline Name Rule::getType()
+/*! \fn inline const std::string& Rule::getType()
  *   \brief returns the type of the rule.
  *
  *   Rule's type allows to set a specific type for a rule especially the 'area' type to take into account that the value of the rule is to be considered in unit^2.
@@ -50,24 +50,24 @@ namespace DTR {
  *   \brief returns the string corresponding to the value of the rule.
  */
 
-/*! \fn inline Name Rule::getRef()
+/*! \fn inline const std::string& Rule::getRef()
  *   \brief returns the reference of the rule.
  */
 
-/*! \fn inline Name Rule::getLayer1()
+/*! \fn inline const std::string& Rule::getLayer1()
  *   \brief returns the first layer of the rule.
  */
 
-/*! \fn inline Name Rule::getLayer2()
+/*! \fn inline const std::string& Rule::getLayer2()
  *   \brief returns the second layer of the rule.
  */
 
-/*! \fn inline void Rule::setType(Name type)
+/*! \fn inline void Rule::setType(const char* type)
  *   \brief sets the type of a rule.
  *
  *   \param type   the type of the rule.
  *
- *   \note By default the type of a rule is Name("").
+ *   \note By default the type of a rule is "".
  */
 
  /*! \class ARule

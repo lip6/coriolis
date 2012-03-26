@@ -1,15 +1,15 @@
 from DTR import *
 
-techno = Techno(Name("myTech"), Name("micro"), Name("rev.A"))
+techno = Techno("myTech", "micro", "rev.A")
 
-techno.addRule (Name("transistorMinL"), 0.1 , Name("ref1"))
-techno.addRule (Name("transistorMinW"), 0.2 , Name("ref2"))
-techno.addRule (Name("minWidth")      , 0.15, Name("ref3"), Name("metal1"))
-techno.addRule (Name("minSpacing")    , 0.2 , Name("ref4"), Name("metal1"))
-techno.addRule (Name("minSpacing")    , 0.1 , Name("ref5"), Name("active"), Name("poly"))
-techno.addARule(Name("minExtension")  , 0.2 , Name("ref6"), Name("poly"), Name("active"))
+techno.addRule ("transistorMinL", 0.1 , "ref1")
+techno.addRule ("transistorMinW", 0.2 , "ref2")
+techno.addRule ("minWidth"      , 0.15, "ref3", "metal1")
+techno.addRule ("minSpacing"    , 0.2 , "ref4", "metal1")
+techno.addRule ("minSpacing"    , 0.1 , "ref5", "active", "poly")
+techno.addARule("minExtension"  , 0.2 , "ref6", "poly", "active")
 
-rule = techno.addRule(Name("minArea"), 0.1, Name("ref7"), Name("metal1"))
-rule.setType(Name("area"))
+rule = techno.addRule("minArea", 0.1, "ref7", "metal1")
+rule.setType("area")
 
 techno.writeToFile("./out.dtr.xml")

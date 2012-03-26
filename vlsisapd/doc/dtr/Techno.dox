@@ -6,18 +6,19 @@ namespace DTR {
  *  This class contains generic informations such as the name of the technology and the unit used, and the list of all technologic rules.
  */
 
-/*! \fn Techno::Techno(Name name, Name unit)
+/*! \fn Techno::Techno(const char* name, const char* unit, const char* version)
  *   \brief creates a new technology
  *
  *   \param  name the name of the technology.
  *   \param  unit the unit used for all values.
+ *   \param  version the technology version/revision.
  */
 
-/*! \fn inline Name Techno::getName()
+/*! \fn inline const std::string& Techno::getName() const
  *   \brief returns the name of the technology.
  */
 
-/*! \fn inline Name Techno::getUnit()
+/*! \fn inline const std::string& Techno::getUnit() const
  *   \brief returns the unit.
  */
 
@@ -27,19 +28,19 @@ namespace DTR {
  *   \note this method is not yet available in python
  */
 
-/*! \fn Rule* Techno::addRule(Name name, double value, Name ref, Name layer1, Name layer2)
+/*! \fn Rule* Techno::addRule(const char* name, double value, const char* ref, const char* layer1, const char* layer2)
  *   \brief creates a new Rule and adds it the to Techno object.
  *
  *   \param name   the name of the rule.
  *   \param value  the value of the rule.
  *   \param ref    the reference of the rule (helpful to find the rule in design kit).
- *   \param layer1 the first layer. This is an optionnal argument, default value is Name("").
- *   \param layer2 the second layer. This is an optionnal argument, default value is Name("").
+ *   \param layer1 the first layer. This is an optionnal argument, default value is "".
+ *   \param layer2 the second layer. This is an optionnal argument, default value is "".
  *   
  *   \return the newly created Rule object.
  */
 
-/*! \fn Arule* Techno::addARule(Name name, double value, Name ref, Name layer1, Name layer2)
+/*! \fn Arule* Techno::addARule(const char* name, double value, const char* ref, const char* layer1, const char* layer2)
  *   \brief creates a new ARule and adds it to the Techno object.
  *
  *   \param name   the name of the rule.
@@ -51,45 +52,45 @@ namespace DTR {
  *   \return the newly created ARule object.
  */
 
-/*! \fn Rule* Techno::getRule(Name name, Name layer1, Name layer2)
+/*! \fn Rule* Techno::getRule(const char* name, const char* layer1, const char* layer2)
  *   \brief returns the rule uniquely identified by its name and layers.
  *
  *   \param name   the name of the rule.
- *   \param layer1 the first layer. This is an optionnal argument, default value is Name("").
- *   \param layer2 the second layer. This is an optionnal argument, default value is Name("").
+ *   \param layer1 the first layer. This is an optionnal argument, default value is "".
+ *   \param layer2 the second layer. This is an optionnal argument, default value is "".
  *
  *   \return the rule.
  */
 
-/*! \fn double Techno::getValue(Name name, Name layer1, Name layer2)
+/*! \fn double Techno::getValue(const char* name, const char* layer1, const char* layer2)
  *   \brief returns the value of a rule uniquely identified by its name and layers.
  *
  *   \param name   the name of the rule.
- *   \param layer1 the first layer. This is an optionnal argument, default value is Name("").
- *   \param layer2 the second layer. This is an optionnal argument, default value is Name("").
+ *   \param layer1 the first layer. This is an optionnal argument, default value is "".
+ *   \param layer2 the second layer. This is an optionnal argument, default value is "".
  *
  *   \return the value of the rule.
  */
 
-/*! \fn std::string Techno::getValueAsString(Name name, Name layer1, Name layer2)
+/*! \fn std::string Techno::getValueAsString(const char* name, const char* layer1, const char* layer2)
  *   \brief returns a string corresponding to the value of a rule uniquely identified by its name and layers.
  * 
  *   \param name   the name of the rule.
- *   \param layer1 the first layer. This is an optionnal argument, default value is Name("").
- *   \param layer2 the second layer. This is an optionnal argument, default value is Name("").
+ *   \param layer1 the first layer. This is an optionnal argument, default value is "".
+ *   \param layer2 the second layer. This is an optionnal argument, default value is "".
  *
  *   \return the string corresponding to the value of the rule.
  *
  *   \note this method is important for python module since to avoid rounding problems it is necessary to use Decimal object which is build based on a string.
  */
 
-/*! \fn bool Techno::writeToFile(std::string filename)
+/*! \fn bool Techno::writeToFile(const char* filename)
  *   \brief writes the database to file.
  *
  *   \param filename the destination file name.
  */
 
-/*! \fn static Techno* Techno::readFromFile(const std::string filename)
+/*! \fn static Techno* Techno::readFromFile(const char* filename)
  *   \brief creates and returns a Techno object based on a database source file.
  *
  *   \param filename the source file name.
