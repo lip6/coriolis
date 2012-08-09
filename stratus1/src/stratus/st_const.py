@@ -52,6 +52,7 @@ from Hurricane   import *
 from st_net      import *
 from st_instance import Inst
 from st_generate import Generate
+from util_Misc   import ilog2, iexp2
 
 import types
 
@@ -137,7 +138,10 @@ class Constant ( Model ) :
     modelName = "constant"
     
     modelName += "_"
-    modelName += param['nb']
+    if param['nb'][0] == '-':
+       modelName = modelName + 'm' + param['nb'][1:]
+    else:
+      modelName += param['nb']
         
     return modelName
     
@@ -150,14 +154,14 @@ class Constant ( Model ) :
     if type ( nb ) != types.StringType : raise "\n[Stratus ERROR] Constant : the argument must be a string.\n"
       
     ### String representing a binary number ( from the LSB to the MSB ) ###
-    bin  = re.search (     "0[bB]([0-1]+)", nb )
+    bina = re.search (     "0[bB]([0-1]+)", nb )
     hexa = re.search ( "0[xX]([0-9,A-F]+)", nb )
     oct  = re.search (     "0[oO]([0-7]+)", nb )
     dec  = re.search (          "([0-9]+)", nb )
     
     # The parameter is a binary number
-    if bin :
-      result = bin.group(1)
+    if bina :
+      result = bina.group(1)
       string = ""
       for i in range ( len (result)-1, -1, -1 ) : string += result[i]
     # The parameter is an hexadecimal number
@@ -174,15 +178,21 @@ class Constant ( Model ) :
     elif dec :
       num = int ( nb )
       string = ""
-      
+
       if not num :
         string = "0"
       else :
-        while num :
-          num2 = num
-          num /= 2
-          if ( num * 2 ) != num2 : string += "1"
-          else                   : string += "0"
+        if num < 0 :
+          width = ilog2(-num)
+          mask = iexp2(width) - 1
+          string = bin(num & mask)
+          string = string[2:]
+        else:
+          while num :
+            num2 = num
+            num /= 2
+            if ( num * 2 ) != num2 : string += "1"
+            else                   : string += "0"
           
     # Error if the string does not belong to the previous categories
     else :
