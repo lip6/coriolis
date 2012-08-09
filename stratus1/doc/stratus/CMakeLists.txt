@@ -40,6 +40,7 @@
                                             man_route_ck.tex
                                             man_set_ref_ins.tex
                                             man_shift.tex
+                                            man_stimuli.tex
                                             man_stratus.tex
                                             see_also.tex
                                  IMAGE_DIRS images )

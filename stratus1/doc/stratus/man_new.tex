@@ -1,15 +1,10 @@
-    \subsection{march 2007}
-    
-A modification has been done to the virtual library. The name of the cells have been changed in order to be synchronised with the sxlib cells.\\
-\indent Two utilizations can be done with the cells of the virtual library : wether direct instanciation of 1 bit cells, wether use of a generator (same model name with the first letter uppered) in order to have several bits cells.
-
-    \subsection{mai 2006}
-
-First of all, the modifications made to stratus make all files created for version 2.0 deprecated, and unusable with this version 3.0.\\
-\indent All following releases will be improvements, and not major changements.\\
+    \subsection{march 2012}
 
 \begin{itemize}
-    \item The main modification is the new funtion \verb-Generate- : this function is used to generate generators before their instanciation.\\
-    \item One other modification is the type of arguments of function \verb-Place- : it no longer takes x and y coordinates but a \verb-XY- object (which is a point (x, y) ).\\
-    \item Some improvements are also added for layout : the creation of segments, contacts, and references.
-\end{itemize}
+   \item{A configuration file can be used to direct Stratus.}
+   \item{A Stratus's description can now be exported either in Alliance VST format or standard VHDL using the \verb-Save- method and the configuration file.}
+   \item{A \verb-Stimuli- method permits to generate stimuli for simulation.}
+   \item{Thanks to the \verb-Stimuli- method, a testbench can now automatically be generated either in Alliance PAT format or standard VHDL.}
+   \item{The \verb-Simul- method of the class \verb-Model- permits to simulate either with the Alliance's simulator \verb-asimut- or a standard VHDL simulator (\verb-ghdl-).}
+\begin{end}
+
