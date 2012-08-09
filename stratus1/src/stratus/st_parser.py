@@ -200,8 +200,18 @@ class WeightParser :
 #          print 'Warning: no weight done in the file, weight put to 1.'
           temp = 1
       
-        self._weightTime[virtName] = temp
-        
+        #self._weightTime[virtName][0] = temp
+
+        # multi output cells as halfadder and fulladder
+        if 'time2' in attrs :
+          self._weightTime[virtName] = {}
+          self._weightTime[virtName]['time'] = temp
+          temp = float(attrs['time2'])
+          self._weightTime[virtName]['time2'] = temp
+        else :
+          self._weightTime[virtName] = temp
+      
+
         if 'area' in attrs :
           temp = float(attrs['area'])
         else :
