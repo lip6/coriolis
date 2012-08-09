@@ -70,7 +70,7 @@ def GetRealModel ( model ) :
 
   return myP._realCell[model], myP._inOut[model]    
 
-def GetWeightTime ( model ) :
+def GetWeightTime ( model, value=None ) :
   myP = WeightParser()
     
   if 'STRATUS_MAPPING_NAME' in os.environ :
@@ -78,8 +78,14 @@ def GetWeightTime ( model ) :
   else :
     err = "\n[Stratus ERROR] Virtual library : No file found in order to parse.\nCheck STRATUS_MAPPING_NAME.\n"
     raise Exception ( err )        
-    
-  return myP._weightTime[model]
+
+  if value == None :  
+    if type(myP._weightTime[model]) == dict:
+      return myP._weightTime[model]['time']
+    else :
+      return myP._weightTime[model]
+  else:
+    return myP._weightTime[model][value]
 
 def GetWeightArea ( model ) :
   myP = WeightParser()
