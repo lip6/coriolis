@@ -876,7 +876,7 @@ class net :
     # Error :
     if re.search ( "[A-Z]", nom ) :
       print "[Stratus Warning] : Upper case letters are not supported, the name", nom, "is lowered."
-      nom.lower ()
+      nom = nom.lower ()
     if re.search ( " ", nom ) :
       chaine = re.search ( "st_net\.(.*)", str ( self.__class__ ) )
       classe = chaine.group(1)
