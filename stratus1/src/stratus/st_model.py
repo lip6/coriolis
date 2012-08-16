@@ -1025,16 +1025,16 @@ class Model :
   
       ficName   = chaine.group(1)
       className = chaine.group(2)
-      
+
       # Roselyne : pour prendre en compte les modeles recursifs
-      import sys
-      #moduleClass = __import__ ( ficName, globals(), locals(), [className] )
-      #modeleClass =   getattr  ( moduleClass, className )
-      try :
-         modeleClass =   getattr  ( sys.modules['__main__'], className )
-      except AttributeError :
-         moduleClass = __import__ ( ficName, globals(), locals(), [className] )
-         modeleClass =   getattr  ( moduleClass, className )
+      #import sys
+      moduleClass = __import__ ( ficName, globals(), locals(), [className] )
+      modeleClass =   getattr  ( moduleClass, className )
+      #try :
+      #   modeleClass =   getattr  ( sys.modules['__main__'], className )
+      #except AttributeError :
+      #   moduleClass = __import__ ( ficName, globals(), locals(), [className] )
+      #   modeleClass =   getattr  ( moduleClass, className )
       # fin Roselyne
       
       instCell = modeleClass ( modele2, dict )
