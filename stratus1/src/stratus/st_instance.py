@@ -136,7 +136,7 @@ class Inst :
     # Warning : the model can not contain capitalized letters
     if re.search ( "[A-Z]", model ) :
       print "[Stratus Warning] Inst : Upper case letters are not supported, the name", model, "is lowered."
-#      model = model.lower()
+      model = model.lower()
     # Error : spaces are forbidden
     if re.search ( " ", model ) :
       err = "\n[Stratus ERROR] Inst : " + name + " the name of the model \"" + model + "\" can not contain a space.\n"
@@ -310,8 +310,7 @@ class Inst :
         else :
           hurNet = realNet._hur_net[i]
 
-        #if mapNet._arity == 1 : tempNet = self._hur_masterCell.getNet ( pin.lower() )
-        if mapNet._arity == 1 : tempNet = self._hur_masterCell.getNet ( pin )
+        if mapNet._arity == 1 : tempNet = self._hur_masterCell.getNet ( pin.lower() )
         else                  : tempNet = self._hur_masterCell.getNet ( pin.lower() + "(" + str(j+lsb) + ")" )
         j += 1
       
