@@ -68,6 +68,7 @@ if configFile:
 else:
    print "No configuration file found, using default configuration"
    import st_config
+print "Output format : %s\nSimulator : %s" %(st_config.format,st_config.simulator)
 
 
 from st_model         import *

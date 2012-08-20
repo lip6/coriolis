@@ -512,12 +512,12 @@ class Model :
     if not name : name = self._name
 
     if st_config.simulator == 'asimut' :
-      runpat ( self._name, name, '-l 1 -p 100 -zerodelay -nocheckdriver -nostrict -bdd -nowarning' )
+      runpat ( self._name, name, '-l 1 -p 100 -zerodelay -bdd' )
     elif st_config.simulator == 'ghdl' :
       import os
       cmd_str = ('ghdl -c -g -Psxlib --ieee=synopsys *.vhd -r %s_run --vcd=%s.vcd' %(name,name))
       os.system(cmd_str)
-    elif tool == 'asimut' : runpat ( self._name, name, '-l 1 -p 100 -zerodelay -nocheckdriver -nostrict -bdd -nowarning' )
+    elif tool == 'asimut' : runpat ( self._name, name, '-l 1 -p 100 -zerodelay -bdd' )
     else                : raise Exception ( 'not implemented yet' )
 
   ##### TestBench : in order to create testbench #####
