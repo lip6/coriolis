@@ -66,11 +66,15 @@ def Cat ( *nets ) :
 
   netToCat = cell._TAB_NETS_CAT[nb]
 
-  if type ( nets[0] ) == types.ListType : nets = nets[0]
+  #if type ( nets[0] ) == types.ListType : nets = nets[0]
     
   # Creation of the inversed tab
   netstries = []
-  for net in nets : netstries.insert ( 0, net )
+  for net in nets :
+     if type(net) == types.ListType :
+        for netin in net : netstries.insert(0, netin)
+     else:
+        netstries.insert ( 0, net )
 
   if ( "_arity" not in net.__dict__ ) or ( "_real_net" not in net.__dict__ ) or ( "_ind" not in net.__dict__ ) :
     err = "\n[Stratus ERROR] Cat : Problem of parameter.\n"
