@@ -76,9 +76,6 @@ def Cat ( *nets ) :
      else:
         netstries.insert ( 0, net )
 
-  if ( "_arity" not in net.__dict__ ) or ( "_real_net" not in net.__dict__ ) or ( "_ind" not in net.__dict__ ) :
-    err = "\n[Stratus ERROR] Cat : Problem of parameter.\n"
-    raise Exception ( err )
     
   # Construction of the tab _to_cat if needed
   if not ( len ( netToCat._to_cat ) ) :
@@ -87,6 +84,9 @@ def Cat ( *nets ) :
 
   # Initialisation of _to_cat
   for net in netstries :
+    if ( "_arity" not in net.__dict__ ) or ( "_real_net" not in net.__dict__ ) or ( "_ind" not in net.__dict__ ) :
+      err = "\n[Stratus ERROR] Cat : Problem of parameter.\n"
+      raise Exception ( err )
     if net._real_net : realNet = net._real_net
     else             : realNet = net
     
