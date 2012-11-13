@@ -90,8 +90,8 @@ class Smux ( Model ) :
 
       for i in range ( nbit_cmd - 1, -1, -1 ) :
         for j in range ( int(pow ( 2, i )) ) :
-          Generate ( "Mx2", "mux_%dbits" % nbit, param = { 'nbit' : nbit } )
-          Inst ( "mux_%dbits" % nbit
+          Generate ( "Mx2", "mux_%d" % nbit, param = { 'nbit' : nbit } )
+          Inst ( "mux_%d" % nbit
                , map = { 'i0'  : temp[2*j+bit_entree]
                        , 'i1'  : temp[2*j+1+bit_entree]
                        , 'cmd' : self._cmd[bit_cmd]
@@ -110,8 +110,8 @@ class Smux ( Model ) :
     # If the command is a 1 bit net
     ###############################
     else :
-      Generate ( "Mx2", "mux_%dbits" % nbit, param = { 'nbit' : nbit } )
-      Inst ( "mux_%dbits" % nbit
+      Generate ( "Mx2", "mux_%d" % nbit, param = { 'nbit' : nbit } )
+      Inst ( "mux_%d" % nbit
            , map = { 'i0'  : self._in_tab[0]
                    , 'i1'  : self._in_tab[1]
                    , 'cmd' : self._cmd
@@ -127,11 +127,9 @@ class Smux ( Model ) :
     
     modelName += "_"
     modelName += str(param['nbit'])
-    modelName += "bits"
     
     modelName += "_"
     modelName += str(param['nbit_cmd'])
-    modelName += "cmdbits"
 
     return modelName
     

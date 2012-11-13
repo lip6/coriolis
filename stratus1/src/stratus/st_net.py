@@ -163,7 +163,7 @@ class net :
       string = Constant.getString ( constParam )
       
       num_net             = len ( cell._TAB_NETS_OUT )
-      cell._TAB_NETS_OUT += [Signal ( "constant_%d" % num_net, len ( string ) )]
+      cell._TAB_NETS_OUT += [Signal ( "cst_o%d" % num_net, len ( string ) )]
 
       # 3 possible constant operator output name (nq,q,output) => 3 differents map
       if string == "0" :
@@ -250,7 +250,7 @@ class net :
 
     # Creation of the output net with the right size
     num_net             = len ( cell._TAB_NETS_OUT )
-    cell._TAB_NETS_OUT += [Signal ( "net_outbuf_%d" % num_net, self._arity )]
+    cell._TAB_NETS_OUT += [Signal ( "buf_o%d" % num_net, self._arity )]
  
     buffMap = { 'q'   : cell._TAB_NETS_OUT[num_net]
               , 'vdd' : cell._st_vdds[0]
@@ -267,7 +267,6 @@ class net :
     inst_name = re.sub ( "\.", "_", inst_name )
     inst_name += "_"
     inst_name += str(self._arity)
-    inst_name += "bits"
  
     Generate ( self._st_cell._buff, inst_name, param = { 'nbit' : self._arity } )
 
@@ -295,7 +294,7 @@ class net :
 
     # Creation of the output net with the right size
     num_net             = len ( cell._TAB_NETS_OUT )
-    cell._TAB_NETS_OUT += [Signal ( "net_out_%d" % num_net, self._arity )]
+    cell._TAB_NETS_OUT += [Signal ( "bool_o%d" % num_net, self._arity )]
 
     if not ( cell._st_vdds ) or not ( cell._st_vsss ) :
       err = "\n[Stratus ERROR] : there is no alim.\n"
@@ -309,7 +308,6 @@ class net :
     inst_name = re.sub ( "\.", "_", inst_name )
     inst_name += "_"
     inst_name += str(self._arity)
-    inst_name += "bits"
     
     Generate ( model, inst_name, param = { 'nbit' : self._arity } )
     
@@ -336,7 +334,7 @@ class net :
   
     # Creation of the output net with the right size
     num_net             = len ( cell._TAB_NETS_OUT )
-    cell._TAB_NETS_OUT += [Signal ( "net_out_%d" % num_net, self._arity )]
+    cell._TAB_NETS_OUT += [Signal ( "inv_o%d" % num_net, self._arity )]
     
     invMap = { 'nq'  : cell._TAB_NETS_OUT[num_net]
              , 'vdd' : cell._st_vdds[0]
@@ -352,7 +350,6 @@ class net :
     inst_name = re.sub ( "\.", "_", inst_name )
     inst_name += "_"
     inst_name += str(self._arity)
-    inst_name += "bits"
   
     Generate ( self._st_cell._not, inst_name, param = { 'nbit' : self._arity } )
 
@@ -385,15 +382,15 @@ class net :
 
     if   function == self._st_cell._add  : 
       if self._st_cell._extended :
-        cell._TAB_NETS_OUT += [Signal ( "net_out_%d" % num_net, max ( self._arity, other_net._arity )+1 )]
+        cell._TAB_NETS_OUT += [Signal ( "add_o%d" % num_net, max ( self._arity, other_net._arity )+1 )]
       else:
-        cell._TAB_NETS_OUT += [Signal ( "net_out_%d" % num_net, max ( self._arity, other_net._arity ) )]
+        cell._TAB_NETS_OUT += [Signal ( "add_o%d" % num_net, max ( self._arity, other_net._arity ) )]
     elif function == self._st_cell._sub  : 
       if self._st_cell._extended :
-        cell._TAB_NETS_OUT += [Signal ( "net_out_%d" % num_net, max ( self._arity, other_net._arity )+1 )]
+        cell._TAB_NETS_OUT += [Signal ( "sub_o%d" % num_net, max ( self._arity, other_net._arity )+1 )]
       else:
-        cell._TAB_NETS_OUT += [Signal ( "net_out_%d" % num_net, max ( self._arity, other_net._arity ) )]
-    elif function == self._st_cell._mult : cell._TAB_NETS_OUT += [Signal ( "net_out_%d" % num_net, self._arity+other_net._arity )]    
+        cell._TAB_NETS_OUT += [Signal ( "sub_o%d" % num_net, max ( self._arity, other_net._arity ) )]
+    elif function == self._st_cell._mult : cell._TAB_NETS_OUT += [Signal ( "mul_o%d" % num_net, self._arity+other_net._arity )]    
     
     arithParam = parameter
     if not self._st_cell._signed and function == self._st_cell._mult :
@@ -451,7 +448,7 @@ class net :
 
     # Creation of the output net with the right size
     num_net             =  len ( cell._TAB_NETS_OUT )
-    cell._TAB_NETS_OUT += [Signal ( "net_out_%d" % num_net, inputNet._arity )]
+    cell._TAB_NETS_OUT += [Signal ( "sh_o%d" % num_net, inputNet._arity )]
 
     # Initialisation of shiftType
     if direction is "left" :
@@ -469,7 +466,6 @@ class net :
     inst_name += type
     inst_name += "_"
     inst_name += str(inputNet._arity)
-    inst_name += "bits"
 
     Generate ( self._st_cell._shift, inst_name, param = { 'nbit' : inputNet._arity, 'type' : shiftType } )
     Inst ( inst_name
@@ -496,7 +492,7 @@ class net :
 
     # Creation of the output net with the right size
     num_net             =  len ( cell._TAB_NETS_OUT )
-    cell._TAB_NETS_OUT += [Signal ( "net_out_%d" % num_net, inputNet._arity )]
+    cell._TAB_NETS_OUT += [Signal ( "reg_o%d" % num_net, inputNet._arity )]
 
 #    if ( self._st_cell._reg == "Sff1" ) and ( inputNet._arity == 1 ) :
 #      inst_name = "sff1"
@@ -505,7 +501,6 @@ class net :
 #      inst_name = re.sub ( "\.", "_", inst_name )
 #      inst_name += "_"
 #      inst_name += str(inputNet._arity)
-#      inst_name += "bits"
 #  
 #      Generate ( self._st_cell._reg, inst_name, param = { 'nbit' : inputNet._arity } )
 
@@ -513,7 +508,6 @@ class net :
     inst_name = re.sub ( "\.", "_", inst_name )
     inst_name += "_"
     inst_name += str(inputNet._arity)
-    inst_name += "bits"
 
     Generate ( self._st_cell._reg, inst_name, param = { 'nbit' : inputNet._arity } )
 
@@ -736,10 +730,8 @@ class net :
     inst_name = re.sub ( "\.", "_", inst_name )
     inst_name += "_"
     inst_name += str(long)
-    inst_name += "bits"
     inst_name += "_"
     inst_name += str(self._arity)
-    inst_name += "cmd"
 
     Generate ( self._st_cell._mux, inst_name, param = { 'nbit' : long, 'nbit_cmd' : self._arity } )
     Inst     ( inst_name, map = map_mux )
@@ -768,10 +760,9 @@ class net :
     inst_name = re.sub ( "\.", "_", inst_name )
     inst_name += "_"
     inst_name += str(self._arity)
-    inst_name += "bits"
     inst_name += "_"
     inst_name += str(nb)
-    if egal : inst_name += "egal"
+    if egal : inst_name += "eq"
 
     Generate ( self._st_cell._comp, inst_name, param = { 'nbit' : self._arity, 'nb' : nb, 'egal' : egal } )
     Inst ( inst_name

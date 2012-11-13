@@ -199,14 +199,13 @@ class Shifter ( Model ) :
     
     modelName += "_"
     modelName += str(param['nbit'])
-    modelName += "bits"
 
-    if   param['type'] == 0x12 : modelName += "_logical_left"
-    elif param['type'] == 0xa  : modelName += "_arith_left"
-    elif param['type'] == 0x6  : modelName += "_circular_left"
-    elif param['type'] == 0x11 : modelName += "_logical_right"
-    elif param['type'] == 0x9  : modelName += "_arith_right"
-    elif param['type'] == 0x5  : modelName += "_circular_right"
+    if   param['type'] == 0x12 : modelName += "_ll"
+    elif param['type'] == 0xa  : modelName += "_al"
+    elif param['type'] == 0x6  : modelName += "_cl"
+    elif param['type'] == 0x11 : modelName += "_lr"
+    elif param['type'] == 0x9  : modelName += "_ar"
+    elif param['type'] == 0x5  : modelName += "_cr"
 
     return modelName
     

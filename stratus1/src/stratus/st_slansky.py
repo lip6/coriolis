@@ -204,8 +204,6 @@ class Slansky ( Model ) :
        if param['nbit0'] != param['nbit1'] : name += '_%dx%d' % (param['nbit0'], param['nbit1'])
        else                                : name += '_%d'    % (param['nbit0'])
 
-     name += "bits"
-
      if ('cin' in param) and (param['cin']) : name += '_cin'
      
      return name

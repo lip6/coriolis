@@ -97,8 +97,8 @@ class Comp ( Model ) :
    
     if self.nbit > 1 :
       if self.egal :
-        Generate ( "st_comp.BoolToOne", "bool_to_one_%s_%dbits" % ( "nor", tempXor._arity ), param = { 'nbit' : tempXor._arity, 'func' : "Nor" } )
-        Inst ( "bool_to_one_%s_%dbits" % ( "nor", tempXor._arity )
+        Generate ( "st_comp.BoolToOne", "bto1_%s_%d" % ( "nor", tempXor._arity ), param = { 'nbit' : tempXor._arity, 'func' : "Nor" } )
+        Inst ( "bto1_%s_%d" % ( "nor", tempXor._arity )
              , map   = { 'i'   : tempXor
                        , 'q'   : self.netOut
                        , 'vdd' : self.vdd
@@ -106,8 +106,8 @@ class Comp ( Model ) :
                        }
              )
       else :
-        Generate ( "st_comp.BoolToOne", "bool_to_one_%s_%dbits" % ( "or", tempXor._arity ), param = { 'nbit' : tempXor._arity, 'func' : "Or" } )
-        Inst ( "bool_to_one_%s_%dbits" % ( "or", tempXor._arity )
+        Generate ( "st_comp.BoolToOne", "bto1_%s_%d" % ( "or", tempXor._arity ), param = { 'nbit' : tempXor._arity, 'func' : "Or" } )
+        Inst ( "bto1_%s_%d" % ( "or", tempXor._arity )
              , map   = { 'i'   : tempXor
                        , 'q'   : self.netOut
                        , 'vdd' : self.vdd
@@ -184,7 +184,7 @@ class BoolToOne ( Model ) :
     
     modelName += "_"
     modelName += str(param['nbit'])
-    modelName += "bits_to one"
+    modelName += "bto1"
 
     return modelName
     

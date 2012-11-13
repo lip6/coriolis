@@ -121,7 +121,7 @@ class Inst :
 
     ##### Name of the instance ######
     if not name :
-      name = "instance%d_%s" % ( cell._NB_INST, self._model )
+      name = "%s_i%d" % ( self._model, cell._NB_INST )
       cell._NB_INST += 1
     self._name = name
     

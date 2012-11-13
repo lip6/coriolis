@@ -66,14 +66,14 @@ def One ( nbit ) :
   if not ( cell._st_vdds ) or not ( cell._st_vsss ) : raise "\n[Stratus ERROR] : there is no alim.\n"
   
   num_net             = len ( cell._TAB_NETS_OUT )
-  cell._TAB_NETS_OUT += [Signal ( "one_%d" % num_net, nbit )]
+  cell._TAB_NETS_OUT += [Signal ( "one_s%d" % num_net, nbit )]
 
   #   "1 bit constant" => directly instanciate the virtual cell "One" cell
   # "> 1 bit constant" => generate a model
 #  if nbit == 1:
 #    inst_name = "one"    
 #  else:
-  inst_name = "one_%dbits" % nbit
+  inst_name = "one_%d" % nbit
   Generate ( "One", inst_name, param = { 'nbit' : nbit } )  
   Inst ( inst_name
          , map = { 'q'   : cell._TAB_NETS_OUT[num_net]
@@ -94,14 +94,14 @@ def Zero ( nbit ) :
   if not ( cell._st_vdds ) or not ( cell._st_vsss ) : raise "\n[Stratus ERROR] : there is no alim.\n"
   
   num_net             = len ( cell._TAB_NETS_OUT )
-  cell._TAB_NETS_OUT += [Signal ( "zero_%d" % num_net, nbit )]
+  cell._TAB_NETS_OUT += [Signal ( "zero_s%d" % num_net, nbit )]
 
   #   "1 bit constant" => directly instanciate the virtual cell "Zero" cell
   # "> 1 bit constant" => generate a model
 #  if nbit == 1:
 #    inst_name = "zero"    
 #  else:
-  inst_name = "zero_%dbits" % nbit
+  inst_name = "zero_%d" % nbit
   Generate ( "Zero", inst_name, param = { 'nbit' : nbit } )  
   Inst ( inst_name
          , map = { 'nq'   : cell._TAB_NETS_OUT[num_net]
