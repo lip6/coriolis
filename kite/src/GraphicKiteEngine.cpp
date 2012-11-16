@@ -223,7 +223,7 @@ namespace Kite {
     KiteEngine* kite = KiteEngine::get ( getCell() );
     if ( kite ) {
       kite->finalizeLayout ();
-      kite->dumpMeasures ();
+    //kite->dumpMeasures ();
       kite->destroy ();
     }
     emit cellPostModificated ();

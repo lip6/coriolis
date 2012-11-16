@@ -39,6 +39,6 @@
  
  add_subdirectory(src)
  add_subdirectory(cmake_modules)
- if(BUILD_DOC AND DOXYGEN_FOUND)
+ if(BUILD_DOC AND DOXYGEN_FOUND AND IS_DIRECTORY doc)
    add_subdirectory(doc)
- endif(BUILD_DOC AND DOXYGEN_FOUND)
+ endif(BUILD_DOC AND DOXYGEN_FOUND AND IS_DIRECTORY doc)

@@ -6,6 +6,7 @@
                          ${HURRICANE_INCLUDE_DIR} 
                          ${CONFIGURATION_INCLUDE_DIR} 
                          ${Boost_INCLUDE_DIRS}
+                         ${PYTHON_INCLUDE_PATH}
                        )
                    set ( includes      kite/TrackSegmentCost.h
                                        kite/TrackCost.h
@@ -28,6 +29,9 @@
                                        kite/Configuration.h
                                        kite/KiteEngine.h
                                        kite/GraphicKiteEngine.h
+                       )
+                   set ( pyIncludes    kite/PyKiteEngine.h
+                                       kite/PyGraphicKiteEngine.h
                        )
 		   set ( mocIncludes   kite/GraphicKiteEngine.h )
                    set ( cpps          TrackSegmentCost.cpp
@@ -56,11 +60,15 @@
                                        KiteEngine.cpp
                                        GraphicKiteEngine.cpp
                        )
+                   set ( pyCpps        PyKite.cpp
+                                       PyKiteEngine.cpp
+                                       PyGraphicKiteEngine.cpp
+                       )
                    set ( kitecpps      KiteMain.cpp )
           qt4_wrap_cpp ( mocCpps       ${mocIncludes} )
 
 
-           add_library ( kite          ${cpps} ${mocCpps} )
+           add_library ( kite          ${cpps} ${mocCpps} ${pyCpps} )
  set_target_properties ( kite          PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries ( kite          ${KATABATIC_LIBRARIES}
                                        ${KNIK_LIBRARIES}
@@ -81,11 +89,22 @@
                                        ${PYTHON_LIBRARIES} -lutil
                        )
 
+           add_library ( pyKite        MODULE ${pyCpps} )
+ set_target_properties ( pyKite        PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
+                                                  PREFIX        ""
+                                                  OUTPUT_NAME   "Kite"
+                       )
+
         add_executable ( kite-text     ${kitecpps} )
  target_link_libraries ( kite-text     kite )
-               install ( TARGETS       kite      DESTINATION lib${LIB_SUFFIX} )
-               install ( TARGETS       kite-text DESTINATION bin )
+ target_link_libraries ( pyKite        kite 
+                                       ${CORIOLIS_PYTHON_LIBRARIES}
+                       )
+               install ( TARGETS       kite            DESTINATION lib${LIB_SUFFIX} )
+               install ( TARGETS       kite-text       DESTINATION bin )
+               install ( TARGETS       pyKite          DESTINATION ${PYTHON_SITE_PACKAGES} )
 
                install ( FILES         ${includes}
-                                       ${mocIncludes} DESTINATION include/coriolis2/kite ) 
+                                       ${mocIncludes}
+                                       ${pyIncludes}   DESTINATION include/coriolis2/kite ) 
    
