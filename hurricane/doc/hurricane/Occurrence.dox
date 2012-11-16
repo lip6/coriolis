@@ -53,11 +53,6 @@
   */
 
 
-
- /*! \name         Constructors
-  */
- //  \{
-
  /*! \function     Occurrence::Occurrence(const Entity* entity = NULL);
   *                Builds an occurrence refering to an entity through a void 
   *                path, in some way it is equivalent to the entity itself. 
@@ -80,23 +75,11 @@
   *                Copy constructor. 
   */
 
- //  \}
-
-
- /*! \name         Destructors
-  */
- //  \{
 
  /*  \function     Occurrence::~Occurrence();
   *                No description.
   */
 
- //  \}
-
-
- /*! \name         Operators
-  */
- //  \{
 
  /*! \function     Occurrence& Occurrence::operator=(const Occurrence& occurrence);
   *                Assignment operator. 
@@ -119,13 +102,6 @@
   *                a comparator. 
   */
 
- //  \}
-
-
-
- /*! \name         Accessors
-  */
- //  \{
 
  /*! \function     Entity* Occurrence::getEntity() const;
   *  \Return       the referenced entity or NULL if the occurrence is invalid. 
@@ -163,12 +139,6 @@
   *                box. 
   */
 
- //  \}
-
-
- /*! \name         Predicates
-  */
- //  \{
 
  /*! \function     bool Occurrence::isValid() const;
   *  \Return       \true if the occurrence is valid, else \false (the occurrence 
@@ -179,12 +149,6 @@
   *  \Return       \true if the occurrence owns some property else \false. 
   */
 
- //  \}
-
-
- /*! \name         Modifiers
-  */
- //  \{
 
  /*! \function     void Occurrence::put(Property* property);
   *                Adds the property \c \<property\> to the occurrence property 
@@ -223,13 +187,8 @@
   *  \caution      If the occurrence is invalid an exception is thrown. 
   */
 
- //  \}
 
-
-
-
- /*! \name         Occurrence Collection
-  */
+ //! \name         Occurrence Collection
  //  \{
 
  /*! \typedef      Occurrences

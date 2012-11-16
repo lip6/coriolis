@@ -26,10 +26,6 @@
 
 
 
- /*! \name         Constructors
-  */
- //  \{
-
  /*! \function     Interval::Interval(bool makeEmpty=true);
   *                Default constructor : the returned interval is empty if 
   *                <b>makeEmpy</b> is set to <b>true</b> (default) or full span 
@@ -50,12 +46,6 @@
   *                Copy constructor. 
   */
 
- //  \}
-
-
- /*! \name         Operators
-  */
- //  \{
 
  /*! \function     Interval& Interval::operator=(const Interval& interval);
   *                Assignment operator. 
@@ -71,12 +61,6 @@
   *                Difference operator. 
   */
 
- //  \}
-
-
- /*! \name         Accessors
-  */
- //  \{
 
  /*! \function     const DbU::Unit& Interval::getVMin() const;
   *  \Return       the VMin value : meaningful only for a non empty interval. 
@@ -112,12 +96,6 @@
   *                they are disjoint. 
   */
 
- //  \}
-
-
- /*! \name         Predicates
-  */
- //  \{
 
  /*! \function     bool Interval::isEmpty() const;
   *  \Return       \true if the interval is empty, else \false. 
@@ -143,12 +121,6 @@
   *                else \false. 
   */
 
- //  \}
-
-
- /*! \name         Modifiers
-  */
- //  \{
 
  /*! \function     Interval& Interval::makeEmpty();
   *                Transforms the interval into an empty one. 
@@ -203,9 +175,5 @@ assert(interval1.translate(10) == interval2.inflate(-10, 10));
   *
   *                
   */
-
- //  \}
-
-
 
  }

@@ -253,6 +253,13 @@ namespace Hurricane {
   }
 
 
+  void  DbU::getStringMode ( unsigned int& mode, UnitPower& p )
+  {
+    mode = _stringMode;
+    p    = _stringModeUnitPower;
+  }
+
+
   string  DbU::getValueString ( DbU::Unit u, int mode )
   {
     char buffer[1024];

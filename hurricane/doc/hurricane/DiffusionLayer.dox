@@ -1,0 +1,41 @@
+
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        DiffusionLayer
+  *  \brief        DiffusionLayer description (\b API)
+  *
+  *                For a more complete description of the Layers objects, please refer
+  *                to \ref secLayerIntro "Layer Introduction".
+  *
+  *                DiffusionLayer is a symbolic layer that contains two or three layers,
+  *                an active layer, a diffusion layer and an optional WELL layer.
+  *
+  *                The accessors functions:
+  *                <ul>
+  *                  <li>DiffusionLayer::getTop()
+  *                  <li>DiffusionLayer::getBottom()
+  *                  <li>DiffusionLayer::getOpposite()
+  *                </ul>
+  *                Have no meaning here.
+  *
+  *                Only extention cap & extention width are used here. Enclosure is not
+  *                used.
+  */
+
+
+ /*! \function     DiffusionLayer* DiffusionLayer::create(Technology* technology,const Name& name, BasicLayer* activeLayer, BasicLayer* diffusionLayer, BasicLayer* wellLayer);
+  *                creates and returns a new diffusion layer named \c \<name\>,
+  *                composed of active & diffusion BasicLayer and an optional WELL
+  *                BasicLayer. A NULL value indicates that no NWELL is used.
+  *
+  *  \caution      Throws an exception if the technology is null, if the name is 
+  *                empty, if a layer of same name already exists or if we 
+  *                overflow the capacity of the bit field associated to the 
+  *                layer mask. 
+  */
+
+ }

@@ -254,8 +254,8 @@ Record* Interval::_getRecord() const
 // ***************************
 {
     Record* record = new Record(getString(this));
-    record->add(getSlot("VMin", &_vMin));
-    record->add(getSlot("VMin", &_vMax));
+    record->add(DbU::getValueSlot("VMin", &_vMin));
+    record->add(DbU::getValueSlot("VMin", &_vMax));
     return record;
 }
 

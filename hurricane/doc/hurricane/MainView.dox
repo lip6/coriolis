@@ -25,10 +25,6 @@
 
 
 
- /*! \name         Accessors
-  */
- //  \{
-
  /*! \function     MapView* MainView::GetMapView() const;
   *  \Return       the associated map (never null). 
   *
@@ -36,12 +32,6 @@
   *                associated to the main view. 
   */
 
- //  \}
-
-
- /*! \name         MainView Collection
-  */
- //  \{
 
  /*! \typedef      MainViews
   *                Generic collection representing a set of main views. 
@@ -61,12 +51,6 @@
   *                views. 
   */
 
- //  \}
-
-
- /*  \name         Constructors
-  */
- //  \{
 
  /*! \function     MainView* MainView::Create();
   *                The default constructor (no cell is yet associated to the 
@@ -78,7 +62,5 @@
   *                the display is not effective (it is therefore possible to 
   *                activate only the display of the main view). 
   */
-
- //  \}
 
  }

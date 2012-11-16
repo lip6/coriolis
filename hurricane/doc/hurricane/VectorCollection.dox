@@ -70,11 +70,6 @@ if (cell) {
   */
 
 
-
- /*  \name         Accessors
-  */
- //  \{
-
  /*! \function     GenericCollection<Element> VectorCollection::GetCollection(const vector<Element>& elementVector);
   *                See below.
   */
@@ -88,7 +83,5 @@ if (cell) {
   *                <b>VectorCollection</b> the content of the STL vector given 
   *                in argument. 
   */
-
- //  \}
 
  }

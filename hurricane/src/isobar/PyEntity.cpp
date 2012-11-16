@@ -15,7 +15,6 @@
 // |                                                                 |
 // x-----------------------------------------------------------------x
 
-#include "hurricane/Cell.h"
 #include "hurricane/isobar/PyNet.h"
 #include "hurricane/isobar/PyLayer.h"
 #include "hurricane/isobar/PyPoint.h"
@@ -30,6 +29,7 @@
 #include "hurricane/isobar/PyContact.h"
 #include "hurricane/isobar/PyPad.h"
 #include "hurricane/isobar/PyPin.h"
+#include "hurricane/Cell.h"
 
 namespace Isobar {
 

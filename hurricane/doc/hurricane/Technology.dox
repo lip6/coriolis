@@ -20,10 +20,6 @@
   */
 
 
- /*! \name         Constructors
-  */
- // \{
-
  /*! \function     Technology* Technology::create ( DataBase* dataBase, const Name& name );
   *  \Return       a newly created technology named \c \<name\> for the data base \c \<dataBase\>.
   *
@@ -31,12 +27,10 @@
   *                the \c dataBase has already a technology.
   */
 
- // \}
 
-
- /*! \name         Accessors
+ /*! \function     bool Technology::isMetal (const Layer* layer) const;
+  *  \Return       \true if the \c layer is indeed of type BasicLayer::Material::metal.
   */
- // \{
 
  /*! \function     DataBase* Technology::getDataBase () const;
   *  \Return       the DataBase owning the technology.
@@ -54,8 +48,16 @@
   *  \Return       the Layer named \c \<name\> if it exists and is a BasicLayer, else \NULL.
   */
 
+ /*! \function     BasicLayer* Technology::getRegularLayer ( const Name& name ) const;
+  *  \Return       the Layer named \c \<name\> if it exists and is a RegularLayer, else \NULL.
+  */
+
+ /*! \function     BasicLayer* Technology::getViaLayer ( const Name& name ) const;
+  *  \Return       the Layer named \c \<name\> if it exists and is a ViaLayer, else \NULL.
+  */
+
  /*! \function     Layers  Technology::getLayers () const;
-  *  \Return       Returns the collection of layers of the technology.
+  *  \Return       the collection of layers of the technology.
   *
   *  \remark       The layers are traversed according to their
   *                creation order. This order is very important,
@@ -66,26 +68,73 @@
   */
 
  /*! \function     BasicLayers  Technology::getBasicLayers () const;
-  *  \Return       Returns the collection of basic layers of the technology
+  *  \Return       the collection of basic layers of the technology
   *                (uses the same order).
   */
 
  /*! \function     BasicLayers  Technology::getBasicLayers ( const Layer::Mask& mask ) const;
-  *  \Return       Returns the collection of basic layers of the technology
+  *  \Return       the collection of basic layers of the technology
   *                which matches the Layer mask \c \<mask\> (uses the same order).
   */
 
- // \}
-
-
- /*! \name         Modifiers
+ /*! \function     RegularLayers  Technology::getRegularLayers () const;
+  *  \Return       the collection of regular layers of the technology
+  *                (uses the same order).
   */
- // \{
+
+ /*! \function     ViaLayers  Technology::getViaLayers () const;
+  *  \Return       the collection of via layers of the technology
+  *                (uses the same order).
+  */
+
+ /*! \function     Layer* Technology::getLayer ( const Layer::Mask& mask, bool useWorking=true) const;
+  *  \Return       the layer whose mask equal \c mask and is flagged as working layer.
+  *                if there is no working layer, returns the first layer that matches.
+  */
+
+ /*! \function     Layer* Technology::getMetalAbove ( const Layer* layer, bool useWorking=true) const;
+  *  \Return       the first layer of metal type whose mask is above the current one. 
+  *                if there is no working layer, returns the first layer that matches.
+  */
+
+ /*! \function     Layer* Technology::getMetalBelow ( const Layer* layer, bool useWorking=true) const;
+  *  \Return       the first layer of metal type whose mask is below the current one. 
+  *                if there is no working layer, returns the first layer that matches.
+  */
+
+ /*! \function     Layer* Technology::getCutAbove ( const Layer* layer, bool useWorking=true) const;
+  *  \Return       the first layer of cut type whose mask is above the current one. 
+  *                if there is no working layer, returns the first layer that matches.
+  */
+
+ /*! \function     Layer* Technology::getCutBelow ( const Layer* layer, bool useWorking=true) const;
+  *  \Return       the first layer of cut type whose mask is below the current one. 
+  *                if there is no working layer, returns the first layer that matches.
+  */
+
+ /*! \function     Layer* Technology::getViaBetween ( const Layer* layer1, const Layer* layer2) const;
+  *  \Return       the cut layer between \c layer1 and \c layer2. They must be both of
+  *                metal kind and contiguous.
+  */
+
+ /*! \function     Layer* Technology::getNthMetal ( int depth ) const;
+  *  \Return       the \c Nth metal layer from the substrate. So a \c depth of zero should
+  *                mean \c metal1.
+  */
+
 
  /*! \function     void  Technology::setName ( const Name& name );
   *                Allows to change the technology name (if empty name, throws an exception).
   */
 
- // \}
+ /*! \function     bool  Technology::setWorkingLayer ( const Name& name );
+  *                Sets the layer \c name as the working layer for it's mask.
+  *                Returns \true on success (the layer exists).
+  */
+
+ /*! \function     bool  Technology::setWorkingLayer ( const Layer* layer );
+  *                Sets the \c layer as the working layer for it's mask.
+  *                Returns \true on success (the layer exists).
+  */
 
  }

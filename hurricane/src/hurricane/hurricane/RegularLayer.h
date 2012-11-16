@@ -101,4 +101,7 @@ namespace Hurricane {
 } // End of Hurricane namespace.
 
 
+INSPECTOR_P_SUPPORT(Hurricane::RegularLayer);
+
+
 # endif

@@ -34,11 +34,6 @@
   */
 
 
-
- /*! \name         Constructors
-  */
- //  \{
-
  /*! \function     Path::Path(SharedPath* sharedPath=NULL);
   *                Default constructor : the path is then void. 
   *
@@ -97,23 +92,11 @@
   *                Copy constructor. 
   */
 
- //  \}
-
-
- /*! \name         Destructors
-  */
- //  \{
 
  /*! \function     Path::~Path();
   *                No description.
   */
 
- //  \}
-
-
- /*! \name         Operators
-  */
- //  \{
 
  /*! \function     Path& Path::operator=(const Path& path);
   *                Assignment operator. 
@@ -135,13 +118,6 @@
   *                comparator. 
   */
 
- //  \}
-
-
-
- /*! \name         Accessors
-  */
- //  \{
 
  /*! \function     Instance* Path::getHeadInstance() const;
   *  \Return       the head instance or NULL if the path is void. 
@@ -189,23 +165,11 @@
   *                to the given \c \<transformation\>. 
   */
 
- //  \}
-
-
- /*! \name         Predicates
-  */
- //  \{
 
  /*! \function     bool Path::isEmpty() const;
   *  \Return       \true if the path is void and else \false. 
   */
 
- //  \}
-
-
- /*! \name         Path Functions
-  */
- //  \{
 
  /*! \function     char Path::getNameSeparator();
   *  \Return       the special character used as a separator between the 
@@ -218,11 +182,8 @@
   *                it must not appear in any instance name). 
   */
 
- //  \}
 
-
- /*! \name         Path Collection
-  */
+ //! \name         Path Collection
  //  \{
 
  /*! \typedef      Pathes

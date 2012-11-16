@@ -1,0 +1,117 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        CellPrinter
+  *  \brief        Widget to generate PDF file.
+  *
+  *
+  *  \section      secPrinterBasicUsage  Basic Usage
+  *
+  *                CellPrinter is a simple Qt Widget to write the contents of a CellWidget
+  *                into a QPrinter. As it may uses lots of memory (due to the high-res bitmaps)
+  *                it is advisable to delete it immediatly after usage. The same rendering engine
+  *                is used to both display on screen and onto the printer so it is a "What You
+  *                See Is What You Get" mode (except for the higher resolution). It optionaly
+  *                adds a frame and a cartouche (on by default).
+  *
+  * \see           CellImage.
+  *
+  *                It's use is straigtforward, as shown in the example below. It consist
+  *                of four steps:
+  *                <ol>
+  *                  <li>Widget allocation.
+  *                  <li>Bind to a screen CellWidget (CellPrinter::setScreenCellWidget()).
+  *                  <li>Draw into a QPrinter (CellPrinter::toPdf()).
+  *                  <li>Delete the widget.
+  *                </ol>
+  *
+  *                Code example (took from CellViewer):
+\code
+  void  CellViewer::printDisplay ()
+  {
+    if (_cellWidget == NULL) return;
+    if (_cellWidget->getCell() == NULL) {
+      cerr << Warning("Unable to print, no cell loaded yet.") << endl;
+      return;
+    }
+
+    QPrinter printer( QPrinter::ScreenResolution );
+    printer.setPaperSize
+      ( (QPrinter::PaperSize)Cfg::getParamEnumerate("viewer.printer.paper",0)->asInt() );
+    printer.setOutputFileName ( "unicorn-snapshot.pdf" );
+
+    QPrintDialog  dialog ( &printer );
+    if ( dialog.exec() == QDialog::Accepted ) {
+      CellPrinter* cellPrinter = new CellPrinter();
+
+      cellPrinter->setScreenCellWidget( _cellWidget );
+      cellPrinter->toPdf              ( &printer, false );
+
+      delete cellPrinter;
+    }
+  }
+\endcode
+  *
+  *  \remark       The generated PDF file are bitmaps, so they can grew very large if
+  *                you uses paper above A2...
+  *
+  *
+  *  \section      secPrinterConfiguration  Configuration Variables
+  *
+  *                The CellPrinter reads the following configuration variables for
+  *                it's defaults settings (they are located in \c misc.conf, for
+  *                the system-wide settings).
+  *                <ul>
+  *                  <li>\c "viewer.printer.mode", select between the two resolution
+  *                      modes (Cell or Design).
+  *                  <li>\c "viewer.printer.paper", the output paper size, should be
+  *                      one value from the QPrinter::PaperSize enumeration.
+  *                </ul>
+  *
+  *
+  *  \section      secPrinterImplDetails  Implementation details
+  *
+  *                This widget is build as a QMainWindow (top-level) one
+  *                encapsulating only a CellWidget. It is configured to never been
+  *                shown thanks to the \c Qt::WA_DontShowOnScreen attribute, but
+  *                all the display computations still takes place as if it actually
+  *                was.
+  *
+  *                To obtain a sufficent resolution the CellPrinter/CellWidget are
+  *                resized to the resolution of the printed page. For a better look
+  *                select a display style with patterns of 32x32 pixels, such as
+  *                \c "Printer.Coriolis".
+  */
+
+
+ /*! \function     CellPrinter::CellPrinter(QWidget* parent=NULL);
+  *                Construct a CellPrinter window no screen CellWidget is actually bound.
+  */
+ /*! \function     CellPrinter::~CellPrinter();
+  *                Destructor.
+  */
+ /*! \function     void  CellPrinter::setScreenCellWidget(CellWidget* screenCellWidget);
+  *                Bind the CellPrinter to the screen CellWidget \c screenCellWidget.
+  *                It is those contents that will be printed.
+  */
+ /*! \function     void  CellPrinter::setMode(int mode);
+  *                Sets the display mode, that is the resolution that will be used.
+  *                Two modes are availables:
+  *                <ul>
+  *                  <li>CellWidget::Res_CellMode: (approx. 150 dpi), best suited for
+  *                      displaying lone Cell or very small scale designs.
+  *                  <li>CellWidget::Res_DesignMode: (approx. 300 dpi), for full
+  *                      fledged designs.
+  *                </ul>
+  */
+ /*! \function     void  CellPrinter::toPdf(QPrinter* printer, bool imageOnly=false);
+  *  \param        printer    The QPrinter to draw into.
+  *  \param        imageOnly  Whether to add the frame & cartouche or not.
+  *
+  *                Perform the drawing operation on the QPrinter.                
+  */
+
+ }

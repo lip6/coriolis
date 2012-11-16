@@ -1,9 +1,9 @@
 
 
 /*
- * x-----------------------------------------------------------------x
+ * +-----------------------------------------------------------------+
  * |                       HTML Standart Tags                        |
- * x-----------------------------------------------------------------x
+ * +-----------------------------------------------------------------+
  */
 
  html, body, th, td, tr, p, li, h1, h2, h3, h4, h5, h6 {
@@ -32,25 +32,25 @@
 
 
  h1, h2, h3, h4, h5, h6 {
-   font-family:                 verdana, sans-serif;
+   font-family:                 "Liberation Serif", sans-serif;
  }
 
  h1                 { text-align:  center; }
  h2, h3, h4, h5, h6 { text-align:  left;
                       padding-top: 2em;
                     }
- h1, h2, h3         { font-family: "Trebuchet MS", sans-serif;
-                      color:       #09550B;
+ h1, h2, h3         { font-family: "Liberation Serif", sans-serif;
+                    /*color:       #09550B;*/
                     }
- h1                 { font-weight:  bold;       font-size: 170%; }
- h2                 { font-weight:  bold;       font-size: 140%; }
- h3                 { font-weight:  bold;       font-size: 118%; }
+ h1                 { font-weight:normal;       font-size: 170%; letter-spacing:0.2em; word-spacing:0.4em; }
+ h2                 { font-weight:normal;       font-size: 140%; letter-spacing:0.2em; word-spacing:0.4em; }
+ h3                 { font-weight:  bold;       font-size: 118%; letter-spacing:0.2em; word-spacing:0.4em; }
  h4                 { font-weight:  bold;       font-size: 100%; }
  h5                 { font-style:   italic;     font-size: 100%; }
  h6                 { font-variant: small-caps; font-size: 100%; }
 
  h2.classHierarchy {
-   /*border:                      1px none #008500;*/
+ /*border:                      1px none #008500;*/
    border:                      1px none #000000;
    border-top-width:            2px;
    border-top-style:            solid;
@@ -164,9 +164,9 @@
 
 
 /*
- * x-----------------------------------------------------------------x
+ * +-----------------------------------------------------------------+
  * |                    Doxygen Specific Classes                     |
- * x-----------------------------------------------------------------x
+ * +-----------------------------------------------------------------+
  */
 
 
@@ -257,9 +257,9 @@
 
  div.qindex, div.nav {
    width:                       100%-4px;
-   /*background-color:            #DADAEF;*/
-   /*background-color:            #eeeeff;*/
-   /*background-color:            #EEEEEE;*/
+ /*background-color:            #DADAEF;*/
+ /*background-color:            #eeeeff;*/
+ /*background-color:            #EEEEEE;*/
    background-color:            #CCE6CA;
    border:                      0px solid #003300;
    text-align:                  center;
@@ -350,6 +350,44 @@
  h3 a[name="index_7"],
  h3 a[name="index_8"],
  h3 a[name="index_9"]
+ h3 a[id="index__"],
+ h3 a#index_a,
+ h3 a#index_b,
+ h3 a#index_c,
+ h3 a#index_d,
+ h3 a#index_e,
+ h3 a#index_f,
+ h3 a#index_g,
+ h3 a#index_h,
+ h3 a#index_i,
+ h3 a#index_j,
+ h3 a#index_k,
+ h3 a#index_l,
+ h3 a#index_m,
+ h3 a#index_n,
+ h3 a#index_o,
+ h3 a#index_p,
+ h3 a#index_q,
+ h3 a#index_r,
+ h3 a#index_s,
+ h3 a#index_t,
+ h3 a#index_u,
+ h3 a#index_v,
+ h3 a#index_w,
+ h3 a#index_x,
+ h3 a#index_y,
+ h3 a#index_z,
+ h3 a#index_0,
+ h3 a#index_1,
+ h3 a#index_2,
+ h3 a#index_3,
+ h3 a#index_4,
+ h3 a#index_5,
+ h3 a#index_6,
+ h3 a#index_7,
+ h3 a#index_8,
+ h3 a#index_9,
+ h3 a#index_0x7e
  {
    font-family:                 time;
    font-size:                   250%;
@@ -376,14 +414,14 @@
  */
 
  .mdTable {
-   /*border:                      1px solid #868686;*/
-   /*background-color:            #DADAEF;*/
-   /*background-color:            #F4F4FB;*/
+ /*border:                      1px solid #868686;*/
+ /*background-color:            #DADAEF;*/
+ /*background-color:            #F4F4FB;*/
    border:                      1px none #008500;
    border-left-width:           1px;
    border-left-style:           solid;
-   /*background-color:            #B8E6B8;*/
-   /*background-color:            #CCE6CA;*/
+ /*background-color:            #B8E6B8;*/
+ /*background-color:            #CCE6CA;*/
    margin-top:                  25px;
    font-size:                   105%;
  }
@@ -402,7 +440,7 @@
    padding:                     0px 8px 4px 8px;
    font-size:                   11px;
    font-style:                  italic;
-   /*background-color:            #FAFAFA;*/
+ /*background-color:            #FAFAFA;*/
    border-top:                  1px none #E0E0E0;
    border-right:                1px none #E0E0E0;
    border-bottom:               1px none #E0E0E0;
@@ -431,31 +469,38 @@
 
  .memdoc{
    padding-left:                5px;
-   /*margin-top:                  -8px;*/
+ /*margin-top:                  -8px;*/
    border-left-width:           1px;
    border-left-style:           solid;
    border-color:                #008500;
  }
 
+ div.contents * table tr {
+   padding:                     3px 3px 3px 8px;
+ }
+
  .memItemLeft, .memItemRight, .memTemplItemLeft, .memTemplItemRight {
-   padding:                     1px 0px 0px 8px;
+ /*padding:                     1px 0px 0px 8px;*/
+   padding:                     3px 3px 3px 8px;
    margin:                      4px;
    border-top-width:            1px;
    border-right-width:          1px;
    border-bottom-width:         1px;
    border-left-width:           1px;
+ /*
    border-top-color:            #0c0c0c;
    border-right-color:          #0c0c0c;
    border-bottom-color:         #0c0c0c;
    border-left-color:           #0c0c0c;
-   border-top-style:            solid;
+  */
+   border-top-style:            none;
    border-right-style:          none;
-   border-bottom-style:         none;
+   border-bottom-style:         dotted;
    border-left-style:           none;
-   /*background-color:            #DADAEF;*/
-   /*background-color:            #eeeeff;*/
-   /*background-color:            #EEEEEE;*/
-   background-color:            #CCE6CA;
+ /*background-color:            #DADAEF;*/
+ /*background-color:            #eeeeff;*/
+ /*background-color:            #EEEEEE;*/
+ /*background-color:            #CCE6CA;*/
  }
 
  .memTemplItemLeft, .memTemplItemRight {
@@ -478,8 +523,12 @@
 
  .groupText, .groupHeader       {
    color:                       #09550B;
-   margin-top:                  15px;
    font-size:                   130%;
    font-weight:                 bold;
+   margin-top:                  15px;
+ }
+
+ .groupHeader       {
+   margin-bottom:              -30pt;
  }
 

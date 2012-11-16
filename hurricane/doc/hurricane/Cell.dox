@@ -9,10 +9,6 @@
   */
 
 
- /*! \name         Constructors & Destructors
-  */
- // \{
-
  /*! \function     Cell* Cell::create ( Library* library, const Name& name );
   *                creates and returns a new Cell named \e name for the Library
   *                \e library.
@@ -22,12 +18,6 @@
   *                Library.
   */
 
- // \}
-
-
- /*! \name         Accessors
-  */
- // \{
 
  /*! \function     Library* Cell::getLibrary () const;
   *                Returns the Library owning the Cell.
@@ -160,12 +150,6 @@
   *                Returns the symbol associated to the cell.
   */
 
- // \}
-
-
- /*! \name         Predicates
-  */
- // \{
 
  /*! \function     bool  Cell::isCalledBy ( Cell* cell ) const;
   *                Returns \true if the cell \this is directly or indirectly called by
@@ -180,12 +164,6 @@
   *                \false.
   */
 
- // \}
-
-
- /*! \name         Modifiers
-  */
- // \{
 
  /*! \function     void  Cell::setName ( const Name& name );
   *                Allows to change the Cell Name.
@@ -220,12 +198,6 @@
   *                De-materializes all components of all the nets of the Cell.
   */
 
- // \}
-
-
- /*! \name         Cell Collection
-  */
- // \{
 
  /*! \typedef      typedef GenericCollection<Cell*> Cells;
   *                Generic collection representing a set of cell objects.
@@ -242,7 +214,5 @@
  /*! \def          for_each_entity(entity,entities)
   *                Macro for visiting all objects of a cell objects collection.
   */
-
- // \}
 
  }

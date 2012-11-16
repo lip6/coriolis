@@ -322,7 +322,7 @@ Record* Segment::_getRecord() const
         record->add(getSlot("TargetHook", &_targetHook));
         record->add(getSlot("Target", getTarget()));
         record->add(getSlot("Layer", _layer));
-        record->add(getSlot("Width", &_width));
+        record->add(DbU::getValueSlot("Width", &_width));
     }
     return record;
 }

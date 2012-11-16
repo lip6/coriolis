@@ -52,10 +52,6 @@
 
 
 
- /*! \name         Constructors
-  */
- //  \{
-
  /*! \function     Occurrence(Entity* entity = NULL);
   *                Builds an occurrence refering to an entity through a void 
   *                path, in some way it is equivalent to the entity itself. 
@@ -78,23 +74,11 @@
   *                Copy constructor. 
   */
 
- //  \}
-
-
- /*! \name         Destructors
-  */
- //  \{
 
  /*! \function     Occurrence::~Occurrence();
   *                No description.
   */
 
- //  \}
-
-
- /*! \name         Operators
-  */
- //  \{
 
  /*! \function     Occurrence& Occurrence::operator=(const Occurrence& occurrence);
   *                Assignment operator. 
@@ -117,8 +101,6 @@
   *                a comparator. 
   */
 
- //  \}
-
 
  /*! \section      secOccurrenceRemarks  Remarks
   *
@@ -126,11 +108,6 @@
   *                are very efficient. 
   */
 
-
-
- /*! \name         Accessors
-  */
- //  \{
 
  /*! \function     Entity* Occurrence::GetEntity() const;
   *  \Return       the referenced entity or NULL if the occurrence is invalid. 
@@ -168,12 +145,6 @@
   *                box. 
   */
 
- //  \}
-
-
- /*! \name         Predicates
-  */
- //  \{
 
  /*! \function     bool Occurrence::IsValid() const;
   *  \Return       \true if the occurrence is valid, else \false (the occurrence 
@@ -184,12 +155,6 @@
   *  \Return       \true if the occurrence owns some property else \false. 
   */
 
- //  \}
-
-
- /*! \name         Modifiers
-  */
- //  \{
 
  /*! \function     void Occurrence::Put(Property* property);
   *                Adds the property \c \<property\> to the occurrence property 
@@ -228,8 +193,6 @@
   *  \caution      If the occurrence is invalid an exception is thrown. 
   */
 
- //  \}
-
 
  /*! \section      secOccurrenceNouveauxTypesGlobaux  Nouveaux types globaux
   *
@@ -247,8 +210,7 @@
 
 
 
- /*! \name         Occurrence Collection
-  */
+ //! \name         Occurrence Collection
  //  \{
 
  /*! \def          for_each_occurrence(occurrence, occurrences)

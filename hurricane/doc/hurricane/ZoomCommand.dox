@@ -57,16 +57,8 @@ void ZoomCommand::_OnButtonRelease(View* view, const Point& position)
   */
 
 
-
- /*  \name         ZoomCommand Functions
-  */
- //  \{
-
  /*  \function     ZoomCommand* ZoomCommand::GetZoomCommand();
   *  \Return       the zoom command. 
   */
-
- //  \}
-
 
  }

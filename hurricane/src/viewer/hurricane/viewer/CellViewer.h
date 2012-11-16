@@ -1,25 +1,18 @@
+
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./CellViewer.h"                           |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./hurricane/viewer/CellViewer.h"               |
+// +-----------------------------------------------------------------+
 
 
 #ifndef  __HURRICANE_CELL_VIEWER__
@@ -36,6 +29,7 @@ class QEvent;
 class QKeyEvent;
 class QAction;
 class QMenu;
+class QPrinter;
 
 #include  "hurricane/Commons.h"
 #include  "hurricane/Name.h"
@@ -72,15 +66,19 @@ namespace Hurricane {
               QMenu*               createDebugMenu           ();
       inline  void                 setEnableRedrawInterrupt  ( bool );
       inline  void                 setApplicationName        ( const QString& );
-              Cell*                getCell                   ();
+              Cell*                getCell                   () const;
               void                 setCell                   ( Cell* );
               void                 renameCell                ( const char* );
       virtual Cell*                getCellFromDb             ( const char* );
       inline  CellWidget*          getCellWidget             ();
+      inline  const CellWidget*    getCellWidget             () const;
       inline  ControllerWidget*    getControllerWidget       ();
+              void                 setAnonNetSelectable      ( bool );
               void                 select                    ( Occurrence& );
               void                 unselect                  ( Occurrence& );
               void                 unselectAll               ();
+      inline  void                 setLayerVisible           ( const Name& layer, bool visible );
+      virtual std::string          _getString                () const;
     public slots:                  
               void                 doGoto                    ();
               void                 changeSelectionMode       ();
@@ -88,6 +86,7 @@ namespace Hurricane {
               void                 setState                  ( shared_ptr<CellWidget::State>& );
               void                 openHistoryCell           ();
               void                 printDisplay              ();
+              void                 print                     ( QPrinter* );
               void                 imageDisplay              ();
               void                 raiseToolInterrupt        ();
               void                 clearToolInterrupt        ();
@@ -151,16 +150,22 @@ namespace Hurricane {
 
 
 // Inline Functions.
-  inline void        CellViewer::setEnableRedrawInterrupt  ( bool state )
-  { _cellWidget->setEnableRedrawInterrupt(state); }
-
   inline bool              CellViewer::isToolInterrupted   () const { return _toolInterrupt; }
   inline CellWidget*       CellViewer::getCellWidget       () { return _cellWidget; }
+  inline const CellWidget* CellViewer::getCellWidget       () const { return _cellWidget; }
   inline ControllerWidget* CellViewer::getControllerWidget () { return _controller; }
   inline void              CellViewer::setApplicationName  ( const QString& name ) { _applicationName = name; }
+  inline void              CellViewer::setLayerVisible     ( const Name& layer, bool visible ) { _cellWidget->setLayerVisible(layer,visible); }
+
+  inline void  CellViewer::setEnableRedrawInterrupt  ( bool state )
+  { _cellWidget->setEnableRedrawInterrupt(state); }
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
+
+
+GETSTRING_POINTER_SUPPORT(Hurricane::CellViewer)
+IOSTREAM_POINTER_SUPPORT(Hurricane::CellViewer)
 
 
 #endif

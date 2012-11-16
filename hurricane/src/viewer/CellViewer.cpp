@@ -2,29 +2,22 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./CellViewer.cpp"                         |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Module  :  "./CellViewer.cpp"                              |
+// +-----------------------------------------------------------------+
 
 
 #include  <unistd.h>
 #include  <algorithm>
+#include  <sstream>
 
 #include  <QAction>
 #include  <QMenu>
@@ -36,17 +29,21 @@
 #include  <QPrintDialog>
 #include  <QFileDialog>
 
+#include  "vlsisapd/configuration/Configuration.h"
 #include  "hurricane/DataBase.h"
 #include  "hurricane/Cell.h"
 
 //#include  "MapView.h"
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/CellViewer.h"
+#include  "hurricane/viewer/CellPrinter.h"
+#include  "hurricane/viewer/CellImage.h"
 #include  "hurricane/viewer/MousePositionWidget.h"
 #include  "hurricane/viewer/ControllerWidget.h"
 #include  "hurricane/viewer/ScriptWidget.h"
 #include  "hurricane/viewer/StratusWidget.h"
 #include  "hurricane/viewer/GotoWidget.h"
+#include  "hurricane/viewer/SelectCommand.h"
 
 
 namespace Hurricane {
@@ -426,7 +423,7 @@ namespace Hurricane {
   }
 
 
-  Cell* CellViewer::getCell ()
+  Cell* CellViewer::getCell () const
   { return getCellWidget()->getCell(); }
 
 
@@ -472,6 +469,15 @@ namespace Hurricane {
       gotoArea.inflate ( width, height );
       _cellWidget->reframe ( gotoArea );
     }
+  }
+
+
+  void  CellViewer::setAnonNetSelectable ( bool state )
+  {
+    SelectCommand* command = static_cast<SelectCommand*>( getCellWidget()->getCommand(SelectCommand::getStaticName()) );
+    unsigned int   mode    = (state) ? SelectCommand::NetMode : SelectCommand::NoAnonNetMode;
+
+    if (command) command->setSelectMode( mode );
   }
 
 
@@ -537,11 +543,23 @@ namespace Hurricane {
     }
 
     QPrinter printer ( QPrinter::ScreenResolution );
+    printer.setPaperSize      ( (QPrinter::PaperSize)Cfg::getParamEnumerate("viewer.printer.paper",0)->asInt() );
     printer.setOutputFileName ( "unicorn-snapshot.pdf" );
 
     QPrintDialog  dialog ( &printer );
     if ( dialog.exec() == QDialog::Accepted )
-      _cellWidget->copyToPrinter ( &printer );
+      print ( &printer );
+  }
+ 
+
+  void  CellViewer::print ( QPrinter* printer )
+  {
+    CellPrinter* cellPrinter        = new CellPrinter();
+
+    cellPrinter->setScreenCellWidget( _cellWidget );
+    cellPrinter->toPdf              ( printer, false );
+
+    delete cellPrinter;
   }
 
 
@@ -553,8 +571,10 @@ namespace Hurricane {
       return;
     }
 
-    QImage image ( _cellWidget->width(), _cellWidget->height(), QImage::Format_RGB32 );
-    _cellWidget->copyToImage ( &image, true ); //true for no scale (use for map congestion)
+    CellImage* cellImage = new CellImage();
+    cellImage->setScreenCellWidget( _cellWidget );
+    QImage* image = cellImage->toImage(0);
+    delete cellImage;
 
     char workingDirectory [1024];
     getcwd ( workingDirectory, 1024 );
@@ -565,7 +585,8 @@ namespace Hurricane {
                                                     , tr("Image (*.png)")
                                                     );
 
-    image.save ( filePath, "png" );
+    image->save ( filePath, "png" );
+    delete image;
   }
 
 
@@ -575,6 +596,18 @@ namespace Hurricane {
 
   void  CellViewer::runStratusScript ()
   { StratusWidget::runScript ( this ); }
+
+
+  string  CellViewer::_getString () const
+  {
+    ostringstream s;
+    s << "<CellViewer ";
+    Cell* cell = getCell();
+    if (cell) s << getString(cell->getName());
+    else      s << "No_Cell_Loaded";
+    s << ">";
+    return s.str();
+  }
 
 
 } // End of Hurricane namespace.

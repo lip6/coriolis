@@ -7,11 +7,12 @@
  /*! \class        BasicLayer
   *  \brief        BasicLayer description (\b API)
   *
+  *                For a more complete description of the Layers object, please refer
+  *                to \ref secLayerIntro "Layer Introduction".
+  *
+  *                For purpose of BasicLayers, also see BasicLayer::Material.
   */
 
- /*! \name         Constructors
-  */
- //  \{
 
  /*! \function     BasicLayer* BasicLayer::create(Technology* technology,const Name& name,const BasicLayer::Material& material,unsigned extractNumber,const DbU::Unit& minimalSize = 0,const DbU::Unit& minimalSpacing = 0);
   *                creates and returns a new basic layer named \c \<name\>, of 
@@ -32,12 +33,6 @@
   *                extraction should ignore this layer. 
   */
 
- //  \}
-
-
- /*! \name         Accessors
-  */
- //  \{
 
  /*! \function     const BasicLayer::Type& BasicLayer::getMaterial() const;
   *  \Return       the basic layer material. 
@@ -94,12 +89,10 @@
   *                and closer to the basic components 
   */
 
- //  \}
-
-
- /*! \name         Modifiers
+ /*! \function     const Name& BasicLayer::getRealName() const;
+  *  \Return       the real (process) layer name, for GDS.
   */
- //  \{
+
 
  /*  \function     void BasicLayer::SetColor(unsigned short redValue, unsigned short greenValue, unsigned short blueValue);
   *                Sets the color of a basic layer. 
@@ -116,7 +109,18 @@
   *                Sets the display threshold of a basic layer. 
   */
 
- //  \}
+ /*! \function     void BasicLayer::setBlockageLayer(BasicLayer* layer);
+  *                Associate a blockage layer to this one. This is only meaningful
+  *                for routing layers (RegularLayer).
+  */
+
+ /*! \function     void BasicLayer::setExtractNumber(unsigned int);
+  *                Set the extract number, for GDS.
+  */
+
+ /*! \function     void BasicLayer::setRealName(const char*);
+  *                Set the real (process) layer name, for GDS.
+  */
 
 
  /*! \name         BasicLayer Collection
@@ -142,6 +146,45 @@
   */
 
  //  \}
+
+ /*! \class        BasicLayer::Material
+  *                Encapsulate the BasicLayer::Material::Code enumeration that defines the
+  *                BasicLayer purpose.
+  */
+
+ /*! \enum         BasicLayer::Material::Code
+  *                This enumeration defines the layer purpose inside the BasicLayer::Material.
+  */
+ /*! \var          BasicLayer::Material::Code BasicLayer::Material::nWell
+  *                This is a NWELL layer.
+  */
+ /*! \var          BasicLayer::Material::Code BasicLayer::Material::pWell
+  *                This is a PWELL layer.
+  */
+ /*! \var          BasicLayer::Material::Code BasicLayer::Material::nImplant
+  *                This is a N implant layer, for transistor source & drain.
+  */
+ /*! \var          BasicLayer::Material::Code BasicLayer::Material::pImplant
+  *                This is a P implant layer, for transistor source & drain.
+  */
+ /*! \var          BasicLayer::Material::Code BasicLayer::Material::active
+  *                For active area, for transistor gates.
+  */
+ /*! \var          BasicLayer::Material::Code BasicLayer::Material::poly
+  *                Polysilicium, for short connections & transistor gates. 
+  */
+ /*! \var          BasicLayer::Material::Code BasicLayer::Material::cut
+  *                For the \e hole part of VIAs.
+  */
+ /*! \var          BasicLayer::Material::Code BasicLayer::Material::metal
+  *                For routing layers.
+  */
+ /*! \var          BasicLayer::Material::Code BasicLayer::Material::blockage
+  *                For blockages, associated to metals.
+  */
+ /*! \var          BasicLayer::Material::Code BasicLayer::Material::other
+  *                Fallback for any other purposes.
+  */
 
 
  }

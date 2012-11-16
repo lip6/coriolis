@@ -1,0 +1,41 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        TransistorLayer
+  *  \brief        TransistorLayer description (\b API)
+  *
+  *                For a more complete description of the Layers objects, please refer
+  *                to \ref secLayerIntro "Layer Introduction".
+  *
+  *                TransistorLayer is a symbolic layer that contains three layers
+  *                (gate, active, diffusion) plus an optional well layer. As you may
+  *                guess, it is used to represent digital transistors.
+  *
+  *                The accessors functions:
+  *                <ul>
+  *                  <li>TransistorLayer::getTop()
+  *                  <li>TransistorLayer::getBottom()
+  *                  <li>TransistorLayer::getOpposite()
+  *                </ul>
+  *                Have no meaning here.
+  *
+  *                Only extention cap & extention width are used here. Enclosure is not
+  *                used.
+  */
+
+
+ /*! \function     TransistorLayer* TransistorLayer::create(Technology* technology,const Name& name, BasicLayer* gateLayer, BasicLayer* activeLayer, BasicLayer* diffusionLayer, BasicLayer* wellLayer);
+  *                creates and returns a new transistor layer named \c \<name\>,
+  *                composed of gate, active & diffusion BasicLayer and an optional WELL
+  *                BasicLayer. A NULL value indicates that no NWELL is used.
+  *
+  *  \caution      Throws an exception if the technology is null, if the name is 
+  *                empty, if a layer of same name already exists or if we 
+  *                overflow the capacity of the bit field associated to the 
+  *                layer mask. 
+  */
+
+ }

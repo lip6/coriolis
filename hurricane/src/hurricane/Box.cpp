@@ -346,10 +346,10 @@ Record* Box::_getRecord() const
     if (isEmpty()) return NULL;
 
     Record* record = new Record(getString(this));
-    record->add(getSlot("XMin", &_xMin));
-    record->add(getSlot("YMin", &_yMin));
-    record->add(getSlot("XMax", &_xMax));
-    record->add(getSlot("YMax", &_yMax));
+    record->add(DbU::getValueSlot("XMin", &_xMin));
+    record->add(DbU::getValueSlot("YMin", &_yMin));
+    record->add(DbU::getValueSlot("XMax", &_xMax));
+    record->add(DbU::getValueSlot("YMax", &_yMax));
     return record;
 }
 

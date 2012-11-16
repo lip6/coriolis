@@ -2,11 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
-//
-// ===================================================================
-//
-// $Id$
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -15,7 +11,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./CellWidget.h"                           |
+// |  C++ Header  :  "./hurricane/viewer/CellWidget.h"               |
 // +-----------------------------------------------------------------+
 
 
@@ -27,6 +23,7 @@
 #include  <vector>
 #include  <functional>
 #include  <tr1/memory>
+#include  <boost/function.hpp>
 
 #include  <QWidget>
 #include  <QPixmap>
@@ -107,17 +104,20 @@ namespace Hurricane {
                                         , const Transformation&
                                         );
       typedef void ( InitExtensionGo_t )( CellWidget* );
-      enum    RubberShape { Centric=1, Barycentric, Steiner };
-      enum    TextFlag    { Bold    =0x001
-                          , BigFont =0x002
-                          , Reverse =0x004
-                          , Frame   =0x008
-                          , Rounded =0x010
-                          , Center  =0x020
-                          , Left    =0x040
-                          , Right   =0x080
-                          , Top     =0x100
-                          };
+      typedef boost::function< void(QPainter&) >  PainterCb_t;
+      enum    RubberShape    { Centric=1, Barycentric, Steiner };
+      enum    TextFlag       { Bold    =0x001
+                             , BigFont =0x002
+                             , Reverse =0x004
+                             , Frame   =0x008
+                             , Rounded =0x010
+                             , Center  =0x020
+                             , Left    =0x040
+                             , Right   =0x080
+                             , Top     =0x100
+                             };
+    public:
+      enum    ResolutionMode { Res_CellMode=1, Res_DesignMode=2 };
     public:
     // Constructor & Destructor.
                                         CellWidget                 ( QWidget* parent=NULL );
@@ -127,6 +127,7 @@ namespace Hurricane {
               void                      setCell                    ( Cell* );
       inline  Cell*                     getCell                    () const;
       inline  shared_ptr<State>&        getState                   ();
+      inline  shared_ptr<State>         getStateClone              ();
       inline  PaletteWidget*            getPalette                 ();
       inline  Occurrences               getOccurrencesUnder        ( const QRect& ) const;
               Occurrences               getOccurrencesUnder        ( const Box& ) const;
@@ -165,13 +166,14 @@ namespace Hurricane {
       inline  void                      setEnableRedrawInterrupt   ( bool );
       inline  void                      addDrawExtensionGo         ( const Name&, InitExtensionGo_t*, DrawExtensionGo_t* );
       inline  QPainter&                 getPainter                 ( size_t plane=PlaneId::Working );
-      inline  const DisplayStyle::HSVr& getDarkening            () const;
-      inline  void                      copyToPrinter              ( QPrinter*, bool imageOnly = false );
-      inline  void                      copyToImage                ( QImage*, bool noScale = false );
+      inline  const DisplayStyle::HSVr& getDarkening               () const;
+      inline  void                      copyToPrinter              ( int xpaper, int ypaper, QPrinter*, PainterCb_t& );
+      inline  void                      copyToImage                ( QImage*, PainterCb_t& );
       inline  const float&              getScale                   () const;
       inline  const QPoint&             getMousePosition           () const;
       inline  void                      updateMousePosition        ();
               void                      setLayerVisible            ( const Name& layer, bool visible );
+              bool                      isLayerVisible             ( const Name& );
               bool                      isDrawable                 ( const Name& );
               bool                      isDrawableLayer            ( const Name& );
               bool                      isDrawableExtension        ( const Name& );
@@ -413,20 +415,15 @@ namespace Hurricane {
                  void           shiftRight          ( int dx );
                  void           shiftUp             ( int dy );
                  void           shiftDown           ( int dy );
-                 void           drawCartouche       ( int right
-                                                    , int bottom
-                                                    , const string& title
-                                                    , const string& area
-                                                    );
           inline void           copyToSelect        ();
           inline void           copyToSelect        ( const QRect& );
                  void           copyToSelect        ( int sx, int sy, int h, int w );
           inline void           copyToScreen        ();
                  void           copyToScreen        ( int sx, int sy, int h, int w );
-          inline void           copyToPrinter       ( QPrinter*, bool imageOnly );
-                 void           copyToPrinter       ( int sx, int sy, int h, int w, QPrinter*, bool imageOnly );
-          inline void           copyToImage         ( QImage*, bool noScale );
-                 void           copyToImage         ( int sx, int sy, int h, int w, QImage*, bool noScale );
+          inline void           copyToPrinter       ( int xpaper, int ypaper, QPrinter*, CellWidget::PainterCb_t& );
+                 void           copyToPrinter       ( int xpaper, int ypaper, int sx, int sy, int h, int w, QPrinter*, CellWidget::PainterCb_t& );
+          inline void           copyToImage         ( QImage*, CellWidget::PainterCb_t& );
+                 void           copyToImage         ( int sx, int sy, int h, int w, QImage*, CellWidget::PainterCb_t& );
         private:
           static const int      _cartoucheWidth;
           static const int      _cartoucheHeight;
@@ -552,6 +549,7 @@ namespace Hurricane {
       class State {
         public:
           inline                     State                  ( Cell* cell=NULL );
+                 State*              clone                  () const;
           inline void                setCell                ( Cell* );
           inline void                setCellWidget          ( CellWidget* );
           inline void                setCursorStep          ( DbU::Unit );
@@ -856,26 +854,28 @@ namespace Hurricane {
   { copyToScreen ( 0, 0, width(), height() ); }
 
 
-  inline void  CellWidget::DrawingPlanes::copyToPrinter ( QPrinter* printer, bool imageOnly )
+  inline void  CellWidget::DrawingPlanes::copyToPrinter ( int xpaper, int ypaper, QPrinter* printer, CellWidget::PainterCb_t& cb )
   {
-    copyToPrinter ( 0
+    copyToPrinter ( xpaper
+                  , ypaper
+                  , 0
                   , 0
                   , _cellWidget->geometry().width()
                   , _cellWidget->geometry().height()
                   , printer
-                  , imageOnly
+                  , cb
                   );
   }
 
 
-  inline void  CellWidget::DrawingPlanes::copyToImage ( QImage* image, bool noScale )
+  inline void  CellWidget::DrawingPlanes::copyToImage ( QImage* image, CellWidget::PainterCb_t& cb )
   {
     copyToImage ( 0
                 , 0
                 , _cellWidget->geometry().width()
                 , _cellWidget->geometry().height()
                 , image
-                , noScale
+                , cb
                 );
   }
 
@@ -1107,6 +1107,13 @@ namespace Hurricane {
     _state->setTopLeft ( getTopLeft() );
     return _state;
   }
+
+
+  inline shared_ptr<CellWidget::State>  CellWidget::getStateClone ()
+  {
+    _state->setTopLeft ( getTopLeft() );
+    return shared_ptr<State>( _state->clone() );
+  }
   
 
   inline void  CellWidget::addDrawExtensionGo ( const Name&        name
@@ -1182,12 +1189,12 @@ namespace Hurricane {
   { redrawSelection ( QRect(QPoint(0,0),_drawingPlanes.size()) ); }
 
 
-  inline void  CellWidget::copyToPrinter ( QPrinter* printer, bool imageOnly )
-  { _drawingPlanes.copyToPrinter ( printer, imageOnly ); }
+  inline void  CellWidget::copyToPrinter ( int xpaper, int ypaper, QPrinter* printer, CellWidget::PainterCb_t& cb )
+  { _drawingPlanes.copyToPrinter( xpaper, ypaper, printer, cb ); }
 
 
-  inline void  CellWidget::copyToImage ( QImage* image, bool noScale )
-  { _drawingPlanes.copyToImage ( image, noScale ); }
+  inline void  CellWidget::copyToImage ( QImage* image, PainterCb_t& cb )
+  { _drawingPlanes.copyToImage ( image, cb ); }
 
 
   inline DbU::Unit  CellWidget::toDbu ( float d ) const

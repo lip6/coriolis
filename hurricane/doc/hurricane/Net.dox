@@ -77,9 +77,6 @@
   *                Type assigned to logical tri-states signals.
   */
 
- /*! \name         Constructors
-  */
- //  \{
 
  /*! \function     Net* Net::create(Cell* cell, const Name& name);
   *                Creates and returns a new net named \c \<name\> for the cell 
@@ -89,12 +86,6 @@
   *                if a net with same name already exists. 
   */
 
- //  \}
-
-
- /*! \name         Accessors
-  */
- //  \{
 
  /*! \function     const Name& Net::getName() const;
   *  \Return       the net name. 
@@ -180,12 +171,6 @@
   *  \remark       Meaningfull only for external nets. 
   */
 
- //  \}
-
-
- /*! \name         Predicates
-  */
- //  \{
 
  /*! \function     bool Net::isGlobal() const;
   *  \Return       \true if the net is global else \false. 
@@ -211,12 +196,6 @@
   *  \Return       \true if the net is a supply else \false. 
   */
 
- //  \}
-
-
- /*! \name         Modifiers
-  */
- //  \{
 
  /*! \function     void Net::setName(const Name& name);
   *                Allows to change net name. 
@@ -285,11 +264,8 @@
   *                their occurences). 
   */
 
- //  \}
 
-
- /*! \name         Net Collection
-  */
+ //! \name         Net Collection
  //  \{
 
  /*! \typedef      Nets
@@ -312,10 +288,6 @@
  //  \}
 
 
- /*  \name         Accessors
-  */
- //  \{
-
  /*! \function     NetFilter Net::getIsGlobalFilter();
   *  \Return       the filter selecting global nets. 
   */
@@ -335,7 +307,5 @@
  /*! \function     NetFilter Net::getIsSupplyFilter();
   *  \Return       the filter selecting supply nets. 
   */
-
- //  \}
 
  }

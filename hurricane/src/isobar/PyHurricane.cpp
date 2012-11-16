@@ -31,23 +31,16 @@
 //
 // License-Tag
 // Authors-Tag
-// ===================================================================
 //
-// $Id: PyHurricane.cpp,v 1.58 2008/02/07 19:09:58 xtof Exp $
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./PyHurricane.cpp"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Module  :  "./PyHurricane.cpp"                             |
+// +-----------------------------------------------------------------+
 
 
 
@@ -65,6 +58,18 @@
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/isobar/PyCellCollection.h"
 #include "hurricane/isobar/PyLayer.h"
+#include "hurricane/isobar/PyLayerMask.h"
+#include "hurricane/isobar/PyMaterial.h"
+#include "hurricane/isobar/PyBasicLayer.h"
+#include "hurricane/isobar/PyRegularLayer.h"
+#include "hurricane/isobar/PyContactLayer.h"
+#include "hurricane/isobar/PyDiffusionLayer.h"
+#include "hurricane/isobar/PyTransistorLayer.h"
+#include "hurricane/isobar/PyViaLayer.h"
+#include "hurricane/isobar/PyLayerCollection.h"
+#include "hurricane/isobar/PyBasicLayerCollection.h"
+#include "hurricane/isobar/PyRegularLayerCollection.h"
+#include "hurricane/isobar/PyViaLayerCollection.h"
 #include "hurricane/isobar/PyPin.h"
 #include "hurricane/isobar/PyPinCollection.h"
 #include "hurricane/isobar/PyInstance.h"
@@ -97,18 +102,17 @@ namespace  Isobar {
 
 #if !defined(__PYTHON_MODULE__)
 
-// x=================================================================x
+// +=================================================================+
 // |             "PyHurricane" Shared Library Code Part              |
-// x=================================================================x
+// +=================================================================+
 
 
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 // |               "PyHurricane" C++ Local Variables                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 namespace {
-
 
   using namespace std;
 
@@ -120,17 +124,15 @@ namespace {
     "    Attempt to add twice a type with identifier \n";
 
 
-} // End of local namespace.
+} // Anonymous namespace.
 
 
 using namespace Hurricane;
 
 
-
-
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 // |              "PyHurricane" C++ Global Variables                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
   const char*            ConverterState::ObjectType::_inheritStop
@@ -138,9 +140,10 @@ using namespace Hurricane;
   ConverterState         __cs           = ConverterState ();
   int                    __objectOffset = offsetof ( PyPoint, _object );
 
-// x-----------------------------------------------------------------x
+
+// +-----------------------------------------------------------------+
 // |                 "PyHurricane" C++ Functions                     |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 // -------------------------------------------------------------------
@@ -151,8 +154,6 @@ using namespace Hurricane;
     if ( _idBase[0] == '\0'   ) return false;
     return ( __cs.getObject(_idBase)->PyEqual(pyType) );
   }
-
-
 
 
 // -------------------------------------------------------------------
@@ -173,8 +174,6 @@ using namespace Hurricane;
   }
 
 
-
-
 // -------------------------------------------------------------------
 // Method  : "::ConverterState::ObjectType::PyBaseId ()"
 
@@ -186,8 +185,6 @@ using namespace Hurricane;
   }
 
 
-
-
 // -------------------------------------------------------------------
 // Destructor  : "::ConverterState::~ConverterState ()"
 
@@ -195,8 +192,6 @@ using namespace Hurricane;
     for ( unsigned i=0 ; i < _types.size() ; i++ )
       delete _types [ i ];
   }
-
-
 
 
 // -------------------------------------------------------------------
@@ -229,8 +224,6 @@ using namespace Hurricane;
   }
 
 
-
-
 // -------------------------------------------------------------------
 // Method  : "::ConverterState::getObjectType ()"
 
@@ -259,8 +252,6 @@ using namespace Hurricane;
   }
 
 
-
-
 // -------------------------------------------------------------------
 // Method  : "::ConverterState::getObjectId ()"
 
@@ -277,8 +268,6 @@ using namespace Hurricane;
 
     return ( "unknown" ); // return 'X'
   }
-
-
   
 
 // -------------------------------------------------------------------
@@ -292,6 +281,7 @@ using namespace Hurricane;
     return ( NULL );
   }
 
+
 // -------------------------------------------------------------------
 // Method  : "::ConverterState::getObjectName ()"
 
@@ -301,8 +291,6 @@ using namespace Hurricane;
     }
     return ( "<Unknown>" );
   }
-
-
   
 
 // -------------------------------------------------------------------
@@ -314,9 +302,9 @@ using namespace Hurricane;
      ObjectType::_inheritStop = inheritStop;
    };
 
+
 // -------------------------------------------------------------------
 // Function  : "Converter ()"
-
 
   int  Converter ( PyObject* object, void** pArg ) {
     ostringstream               message;
@@ -358,7 +346,6 @@ using namespace Hurricane;
     PyErr_SetString ( ProxyError, message.str().c_str() );
     return ( 0 );
   }
-  
 
 
 // -------------------------------------------------------------------
@@ -368,18 +355,26 @@ using namespace Hurricane;
     ostringstream  message;
 
     __cs.init ( function );
-    if ( ! PyArg_ParseTuple(args,"O&",Converter,arg) ) return ( false );
+    if (not PyArg_ParseTuple(args,"O&",Converter,arg)) {
+      ostringstream m;
+      m << function << ": Take exactly one argument.";
+      PyErr_SetString(ConstructorError, m.str().c_str());
+      return false;
+    }
 
     string firstArgType    = ConverterState::getObjectType ( __cs.getObjectIds(), 0 );
     string firstArgTypeExp = ConverterState::getObjectType ( format             , 0 );
+
     if ( firstArgType != firstArgTypeExp ) {
-      return ( false );
+      ostringstream m;
+      m << function << ": Argument type mismatch, should be:<" << firstArgTypeExp
+        << "> not <" << firstArgType << ">";
+      PyErr_SetString(ConstructorError, m.str().c_str());
+      return false;
     }
 
-    return ( true );
+    return true;
   }
-
-
 
 
 // -------------------------------------------------------------------
@@ -388,24 +383,37 @@ using namespace Hurricane;
   bool  ParseTwoArg  ( const char* function, PyObject* args, string format, PyObject** arg0, PyObject** arg1 ) {
     ostringstream  message;
     __cs.init ( function );
-    if ( ! PyArg_ParseTuple(args,"O&O&",Converter,arg0,Converter,arg1) ) return ( false );
+    if (not PyArg_ParseTuple(args,"O&O&",Converter,arg0,Converter,arg1)) {
+      ostringstream m;
+      m << function << ": Take exactly two argument.";
+      PyErr_SetString(ConstructorError, m.str().c_str());
+      return false;
+    }
 
     string firstArgType    = ConverterState::getObjectType ( __cs.getObjectIds(), 0 );
     string firstArgTypeExp = ConverterState::getObjectType ( format             , 0 );
+
     if ( firstArgType != firstArgTypeExp ) {
-      return ( false );
+      ostringstream m;
+      m << function << ": First argument type mismatch, should be:<" << firstArgTypeExp
+        << "> not <" << firstArgType << ">";
+      PyErr_SetString(ConstructorError, m.str().c_str());
+      return false;
     }
+
     string secondArgType    = ConverterState::getObjectType ( __cs.getObjectIds(), 1 );
     string secondArgTypeExp = ConverterState::getObjectType ( format             , 1 );
+
     if ( secondArgType != secondArgTypeExp ) {
-      return ( false );
+      ostringstream m;
+      m << function << ": Second argument type mismatch, should be:<" << secondArgTypeExp
+        << "> not <" << secondArgType << ">";
+      PyErr_SetString(ConstructorError, m.str().c_str());
+      return false;
     }
 
-
-    return ( true );
+    return true;
   }
-
-
 
 
 // -------------------------------------------------------------------
@@ -437,16 +445,13 @@ using namespace Hurricane;
       return ( false );
     }
 
-
     return ( true );
   }
 
 
-
-
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 // |                "PyHurricane" C Global Variables                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 extern "C" {
@@ -461,29 +466,44 @@ extern "C" {
 
 }
 
-
 # else // End of PyHurricane Shared Library Code Part.
 
-// x=================================================================x
+// +=================================================================+
 // |              "PyHurricane" Python Module Code Part              |
-// x=================================================================x
+// +=================================================================+
 
 
 extern "C" {
 
-
-  // x-------------------------------------------------------------x
+  // +-------------------------------------------------------------+
   // |               "PyHurricane" Module Methods                  |
-  // x-------------------------------------------------------------x
+  // +-------------------------------------------------------------+
+
+  static PyObject* PyCommons_trace ( PyObject* self, PyObject* args )
+  {
+    HTRY
+    PyObject* state = NULL;
+    if (PyArg_ParseTuple(args , "O:Hurricane.trace()", &state)) {
+      if (PyObject_IsTrue(state)) trace_on ();
+      else                  trace_off();
+    } else {
+      PyErr_SetString ( ConstructorError, "Bad parameters given to BasicLayer.create()." );
+      return NULL;
+    }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
 
   static PyMethodDef PyHurricane_Methods[] =
-    { { "DbU_db"                ,              PyDbU_db                          , METH_VARARGS, "Converts an integer to DbU::Unit (no scale factor)." }
-    , { "DbU_grid"              ,              PyDbU_grid                        , METH_VARARGS, "Converts a founder grid to DbU::Unit." }
-    , { "DbU_lambda"            ,              PyDbU_lambda                      , METH_VARARGS, "Converts a symbolic (lambda) to DbU::Unit." }
-    , { "DbU_getDb"             ,              PyDbU_getDb                       , METH_VARARGS, "Converts a DbU::Unit to an integer value (no scale factor)." }
-    , { "DbU_getGrid"           ,              PyDbU_getGrid                     , METH_VARARGS, "Converts a DbU::Unit to a to grid founder." }
-    , { "DbU_getLambda"         ,              PyDbU_getLambda                   , METH_VARARGS, "Converts a DbU::Unit to a symbolic value (to lambda)." }
-    , { "DbU_getPhysical"       ,              PyDbU_getPhysical                 , METH_VARARGS, "Converts a DbU::Unit to a physical value." }
+    { { "trace"                 ,              PyCommons_trace                   , METH_VARARGS, "Switch on/off the trace mode (for debugging)." }
+    , { "DbU_db"                ,              PyDbU_fromDb                      , METH_VARARGS, "Converts an integer to DbU::Unit (no scale factor)." }
+    , { "DbU_grid"              ,              PyDbU_fromGrid                    , METH_VARARGS, "Converts a founder grid to DbU::Unit." }
+    , { "DbU_lambda"            ,              PyDbU_fromLambda                  , METH_VARARGS, "Converts a symbolic (lambda) to DbU::Unit." }
+    , { "DbU_getDb"             ,              PyDbU_toDb                        , METH_VARARGS, "Converts a DbU::Unit to an integer value (no scale factor)." }
+    , { "DbU_getGrid"           ,              PyDbU_toGrid                      , METH_VARARGS, "Converts a DbU::Unit to a to grid founder." }
+    , { "DbU_getLambda"         ,              PyDbU_toLambda                    , METH_VARARGS, "Converts a DbU::Unit to a symbolic value (to lambda)." }
+    , { "DbU_getPhysical"       ,              PyDbU_toPhysical                  , METH_VARARGS, "Converts a DbU::Unit to a physical value." }
     , { "DbU_getOnPhysicalGrid" ,              PyDbU_getOnPhysicalGrid           , METH_VARARGS, "Adjusts a DbU::Unit to physical grid." }
     , { "Point"                 ,              PyPoint_create                    , METH_VARARGS, "Creates a new Point." }
     , { "Box"                   ,              PyBox_create                      , METH_VARARGS, "Creates a new Box." }
@@ -504,10 +524,8 @@ extern "C" {
     , { "Pad"                   , (PyCFunction)PyPad_create                      , METH_VARARGS, "Creates a new Pad." }
     , { "Path"                  , (PyCFunction)PyPath_create                     , METH_VARARGS, "Creates a new Path." }
     , { "Occurrence"            , (PyCFunction)PyOccurrence_create               , METH_VARARGS, "Creates a new Occurrence." }
-    , {NULL, NULL, 0, NULL}           /* sentinel */
+    , {NULL, NULL, 0, NULL}     /* sentinel */
     };
-
-
 
 
   // ---------------------------------------------------------------
@@ -517,6 +535,7 @@ extern "C" {
     trace << "initHurricane()" << endl;
 
     PyUpdateSession_LinkPyType ();
+    PyDbU_LinkPyType ();
     PyPoint_LinkPyType ();
     PyBox_LinkPyType ();
     PyTransformation_LinkPyType ();
@@ -525,6 +544,18 @@ extern "C" {
     PyLibrary_LinkPyType ();
     PyEntity_LinkPyType ();
     PyLayer_LinkPyType ();
+    PyLayerMask_LinkPyType ();
+    PyBasicLayer_LinkPyType ();
+    PyRegularLayer_LinkPyType ();
+    PyDiffusionLayer_LinkPyType ();
+    PyTransistorLayer_LinkPyType ();
+    PyContactLayer_LinkPyType ();
+    PyViaLayer_LinkPyType ();
+    PyLayerCollection_LinkPyType ();
+    PyBasicLayerCollection_LinkPyType ();
+    PyRegularLayerCollection_LinkPyType ();
+    PyViaLayerCollection_LinkPyType ();
+    PyMaterial_LinkPyType ();
     PyPath_LinkPyType ();
     PyOccurrence_LinkPyType ();
     PyInstanceCollection_LinkPyType ();
@@ -552,95 +583,124 @@ extern "C" {
     PyPlug_LinkPyType ();
     PyBreakpoint_LinkPyType ();
 
-    PYTYPE_READY ( UpdateSession               )
-    PYTYPE_READY ( Point                       )
-    PYTYPE_READY ( Box                         )
-    PYTYPE_READY ( Transformation              )
-    PYTYPE_READY ( DataBase                    )
-    PYTYPE_READY ( Technology                  )
-    PYTYPE_READY ( Library                     )
-    PYTYPE_READY ( Entity                      )
-    PYTYPE_READY ( Layer                       )
-    PYTYPE_READY ( Path                        )
-    PYTYPE_READY ( Occurrence                  )
-    PYTYPE_READY ( InstanceCollection          )
-    PYTYPE_READY ( InstanceCollectionLocator   )
-    PYTYPE_READY ( PlugCollection              )
-    PYTYPE_READY ( PlugCollectionLocator       )
-    PYTYPE_READY ( NetCollection               )
-    PYTYPE_READY ( NetCollectionLocator        )
-    PYTYPE_READY ( CellCollection              )
-    PYTYPE_READY ( CellCollectionLocator       )
-    PYTYPE_READY ( PinCollection               )
-    PYTYPE_READY ( PinCollectionLocator        )
-    PYTYPE_READY ( SegmentCollection           )
-    PYTYPE_READY ( SegmentCollectionLocator    )
-    PYTYPE_READY ( ComponentCollection         ) 
-    PYTYPE_READY ( ComponentCollectionLocator  )
-    PYTYPE_READY ( OccurrenceCollection        )
-    PYTYPE_READY ( OccurrenceCollectionLocator )
-    PYTYPE_READY ( ReferenceCollection         )
-    PYTYPE_READY ( ReferenceCollectionLocator  )
-    PYTYPE_READY ( HyperNet                    )
-    PYTYPE_READY ( NetExternalComponents       )
-    PYTYPE_READY ( Breakpoint                  )
+    PYTYPE_READY ( UpdateSession                 )
+    PYTYPE_READY ( Point                         )
+    PYTYPE_READY ( DbU                           )
+    PYTYPE_READY ( Box                           )
+    PYTYPE_READY ( Transformation                )
+    PYTYPE_READY ( DataBase                      )
+    PYTYPE_READY ( Technology                    )
+    PYTYPE_READY ( Library                       )
+    PYTYPE_READY ( Entity                        )
+    PYTYPE_READY ( Material                      )
+    PYTYPE_READY ( Layer                         )
+    PYTYPE_READY ( LayerMask                     )
+    PYTYPE_READY ( BasicLayerCollection          )
+    PYTYPE_READY ( BasicLayerCollectionLocator   )
+    PYTYPE_READY ( LayerCollection               )
+    PYTYPE_READY ( LayerCollectionLocator        )
+    PYTYPE_READY ( RegularLayerCollection        )
+    PYTYPE_READY ( RegularLayerCollectionLocator )
+    PYTYPE_READY ( ViaLayerCollection            )
+    PYTYPE_READY ( ViaLayerCollectionLocator     )
+    PYTYPE_READY ( Path                          )
+    PYTYPE_READY ( Occurrence                    )
+    PYTYPE_READY ( InstanceCollection            )
+    PYTYPE_READY ( InstanceCollectionLocator     )
+    PYTYPE_READY ( PlugCollection                )
+    PYTYPE_READY ( PlugCollectionLocator         )
+    PYTYPE_READY ( NetCollection                 )
+    PYTYPE_READY ( NetCollectionLocator          )
+    PYTYPE_READY ( CellCollection                )
+    PYTYPE_READY ( CellCollectionLocator         )
+    PYTYPE_READY ( PinCollection                 )
+    PYTYPE_READY ( PinCollectionLocator          )
+    PYTYPE_READY ( SegmentCollection             )
+    PYTYPE_READY ( SegmentCollectionLocator      )
+    PYTYPE_READY ( ComponentCollection           ) 
+    PYTYPE_READY ( ComponentCollectionLocator    )
+    PYTYPE_READY ( OccurrenceCollection          )
+    PYTYPE_READY ( OccurrenceCollectionLocator   )
+    PYTYPE_READY ( ReferenceCollection           )
+    PYTYPE_READY ( ReferenceCollectionLocator    )
+    PYTYPE_READY ( HyperNet                      )
+    PYTYPE_READY ( NetExternalComponents         )
+    PYTYPE_READY ( Breakpoint                    )
 
-    PYTYPE_READY_SUB ( Cell      , Entity   )
-    PYTYPE_READY_SUB ( Instance  , Entity   )
-    PYTYPE_READY_SUB ( Reference , Entity   )
-    PYTYPE_READY_SUB ( Net       , Entity   )
-    PYTYPE_READY_SUB ( Component , Entity   )
-    PYTYPE_READY_SUB ( Segment   , Component)
-    PYTYPE_READY_SUB ( Horizontal, Segment  )
-    PYTYPE_READY_SUB ( Vertical  , Segment  )
+    PYTYPE_READY_SUB ( BasicLayer     , Layer    )
+    PYTYPE_READY_SUB ( RegularLayer   , Layer    )
+    PYTYPE_READY_SUB ( ContactLayer   , Layer    )
+    PYTYPE_READY_SUB ( DiffusionLayer , Layer    )
+    PYTYPE_READY_SUB ( TransistorLayer, Layer    )
+    PYTYPE_READY_SUB ( ViaLayer       , Layer    )
+    PYTYPE_READY_SUB ( Cell           , Entity   )
+    PYTYPE_READY_SUB ( Instance       , Entity   )
+    PYTYPE_READY_SUB ( Reference      , Entity   )
+    PYTYPE_READY_SUB ( Net            , Entity   )
+    PYTYPE_READY_SUB ( Component      , Entity   )
+    PYTYPE_READY_SUB ( Segment        , Component)
+    PYTYPE_READY_SUB ( Horizontal     , Segment  )
+    PYTYPE_READY_SUB ( Vertical       , Segment  )
 
-    PYTYPE_READY_SUB ( Contact   , Component)
-    PYTYPE_READY_SUB ( Pin       , Contact  )
-    PYTYPE_READY_SUB ( Plug      , Component)
-    PYTYPE_READY_SUB ( Pad       , Component)
+    PYTYPE_READY_SUB ( Contact        , Component)
+    PYTYPE_READY_SUB ( Pin            , Contact  )
+    PYTYPE_READY_SUB ( Plug           , Component)
+    PYTYPE_READY_SUB ( Pad            , Component)
 
     // Identifier string can take up to 10 characters !
-    __cs.addType ( "box"        , &PyTypeBox                 , "<Box>"                 , false );
-    __cs.addType ( "ent"        , &PyTypeEntity              , "<Entity>"              , false );
-    __cs.addType ( "cell"       , &PyTypeCell                , "<Cell>"                , false, "ent" );
-    __cs.addType ( "cellCol"    , &PyTypeCellCollection      , "<CellCollection>"      , false );
-    __cs.addType ( "comp"       , &PyTypeComponent           , "<Component>"           , false, "ent" );
-    __cs.addType ( "compCol"    , &PyTypeComponentCollection , "<ComponentCollection>" , false );
-    __cs.addType ( "contact"    , &PyTypeContact             , "<Contact>"             , false, "comp" );
+    __cs.addType ( "box"        , &PyTypeBox                   , "<Box>"                   , false );
+    __cs.addType ( "ent"        , &PyTypeEntity                , "<Entity>"                , false );
+    __cs.addType ( "cell"       , &PyTypeCell                  , "<Cell>"                  , false, "ent" );
+    __cs.addType ( "cellCol"    , &PyTypeCellCollection        , "<CellCollection>"        , false );
+    __cs.addType ( "comp"       , &PyTypeComponent             , "<Component>"             , false, "ent" );
+    __cs.addType ( "compCol"    , &PyTypeComponentCollection   , "<ComponentCollection>"   , false );
+    __cs.addType ( "contact"    , &PyTypeContact               , "<Contact>"               , false, "comp" );
     // Do not change the "none" string. It's hardwired to the None object.             
-    __cs.addType ( "none"       ,  Py_None->ob_type          , "<None>"                , true  );
-    __cs.addType ( "float"      , &PyFloat_Type              , "<Float>"               , true  );
-    __cs.addType ( "int"        , &PyInt_Type                , "<Int>"                 , true  );
-    __cs.addType ( "bool"       , &PyBool_Type               , "<Bool>"                , true  );
-    __cs.addType ( "string"     , &PyString_Type             , "<String>"              , true  );
-    __cs.addType ( "list"       , &PyList_Type               , "<List>"                , true  );
+    __cs.addType ( "none"       ,  Py_None->ob_type            , "<None>"                  , true  );
+    __cs.addType ( "float"      , &PyFloat_Type                , "<Float>"                 , true  );
+    __cs.addType ( "int"        , &PyInt_Type                  , "<Int>"                   , true  );
+    __cs.addType ( "bool"       , &PyBool_Type                 , "<Bool>"                  , true  );
+    __cs.addType ( "string"     , &PyString_Type               , "<String>"                , true  );
+    __cs.addType ( "list"       , &PyList_Type                 , "<List>"                  , true  );
     // Do not change the "function" string. It's hardwired to callable (function) objects.
-    __cs.addType ( "function"   , NULL                       , "<Function>"            , true  );
-    __cs.addType ( "horiz"      , &PyTypeHorizontal          , "<Horizontal>"          , false, "segment" );
-    __cs.addType ( "inst"       , &PyTypeInstance            , "<Instance>"            , false, "ent" );
-    __cs.addType ( "instCol"    , &PyTypeInstanceCollection  , "<InstanceCollection>"  , false );
-    __cs.addType ( "layer"      , &PyTypeLayer               , "<Layer>"               , false );
-    __cs.addType ( "library"    , &PyTypeLibrary             , "<Library>"             , false );
-    __cs.addType ( "ref"        , &PyTypeReference           , "<Reference>"           , false, "ent" );
-    __cs.addType ( "refCol"     , &PyTypeReferenceCollection , "<ReferenceCollection>" , false );
-    __cs.addType ( "net"        , &PyTypeNet                 , "<Net>"                 , false, "ent" );
-    __cs.addType ( "netCol"     , &PyTypeNetCollection       , "<NetCollection>"       , false );
-    __cs.addType ( "hyperNet"   , &PyTypeHyperNet            , "<HyperNet>"            , false );
-    __cs.addType ( "pin"        , &PyTypePin                 , "<Pin>"                 , false, "contact" );
-    __cs.addType ( "pinCol"     , &PyTypePinCollection       , "<PinCollection>"       , false );
-    __cs.addType ( "plug"       , &PyTypePlug                , "<Plug>"                , false, "comp" );
-    __cs.addType ( "plugCol"    , &PyTypePlugCollection      , "<PlugCollection>"      , false );
-    __cs.addType ( "point"      , &PyTypePoint               , "<Point>"               , false );
-    __cs.addType ( "segment"    , &PyTypeSegment             , "<Segment>"             , false, "comp" );
-    __cs.addType ( "pad    "    , &PyTypePad                 , "<Pad>"                 , false, "comp" );
-    __cs.addType ( "segmentCol" , &PyTypeSegmentCollection   , "<SegmentCollection>"   , false );
-    __cs.addType ( "db"         , &PyTypeDataBase            , "<DataBase>"            , false );
-    __cs.addType ( "techno"     , &PyTypeTechnology          , "<Technology>"          , false );
-    __cs.addType ( "transfo"    , &PyTypeTransformation      , "<Transformation>"      , false );
-    __cs.addType ( "vert"       , &PyTypeVertical            , "<Vertical>"            , false, "segment" );
-    __cs.addType ( "path"       , &PyTypePath                , "<Path>"                , false );
-    __cs.addType ( "occur"      , &PyTypeOccurrence          , "<Occurrence>"          , false );
-    __cs.addType ( "occurCol"   , &PyTypeOccurrenceCollection, "<OccurrenceCollection>", false );
+    __cs.addType ( "function"   , NULL                         , "<Function>"              , true  );
+    __cs.addType ( "horiz"      , &PyTypeHorizontal            , "<Horizontal>"            , false, "segment" );
+    __cs.addType ( "inst"       , &PyTypeInstance              , "<Instance>"              , false, "ent" );
+    __cs.addType ( "instCol"    , &PyTypeInstanceCollection    , "<InstanceCollection>"    , false );
+    __cs.addType ( "mat"        , &PyTypeMaterial              , "<Material>"              , false );
+    __cs.addType ( "basicLayer" , &PyTypeBasicLayer            , "<BasicLayer>"            , false, "layer" );
+    __cs.addType ( "regLayer"   , &PyTypeRegularLayer          , "<RegularLayer>"          , false, "layer" );
+    __cs.addType ( "contLayer"  , &PyTypeContactLayer          , "<ContactLayer>"          , false, "layer" );
+    __cs.addType ( "diffLayer"  , &PyTypeDiffusionLayer        , "<DiffusionLayer>"        , false, "layer" );
+    __cs.addType ( "tranLayer"  , &PyTypeTransistorLayer       , "<TransistorLayer>"       , false, "layer" );
+    __cs.addType ( "viaLayer"   , &PyTypeViaLayer              , "<ViaLayer>"              , false, "layer" );
+    __cs.addType ( "layerColl"  , &PyTypeLayerCollection       , "<LayerCollection>"       , false );
+    __cs.addType ( "blayerColl" , &PyTypeBasicLayerCollection  , "<BasicLayerCollection>"  , false );
+    __cs.addType ( "rlayerColl" , &PyTypeRegularLayerCollection, "<RegularLayerCollection>", false );
+    __cs.addType ( "vlayerColl" , &PyTypeViaLayerCollection    , "<ViaLayerCollection>"    , false );
+    __cs.addType ( "layer"      , &PyTypeLayer                 , "<Layer>"                 , false );
+    __cs.addType ( "lmask"      , &PyTypeLayerMask             , "<Layer::Mask>"           , false );
+    __cs.addType ( "library"    , &PyTypeLibrary               , "<Library>"               , false );
+    __cs.addType ( "ref"        , &PyTypeReference             , "<Reference>"             , false, "ent" );
+    __cs.addType ( "refCol"     , &PyTypeReferenceCollection   , "<ReferenceCollection>"   , false );
+    __cs.addType ( "net"        , &PyTypeNet                   , "<Net>"                   , false, "ent" );
+    __cs.addType ( "netCol"     , &PyTypeNetCollection         , "<NetCollection>"         , false );
+    __cs.addType ( "hyperNet"   , &PyTypeHyperNet              , "<HyperNet>"              , false );
+    __cs.addType ( "pin"        , &PyTypePin                   , "<Pin>"                   , false, "contact" );
+    __cs.addType ( "pinCol"     , &PyTypePinCollection         , "<PinCollection>"         , false );
+    __cs.addType ( "plug"       , &PyTypePlug                  , "<Plug>"                  , false, "comp" );
+    __cs.addType ( "plugCol"    , &PyTypePlugCollection        , "<PlugCollection>"        , false );
+    __cs.addType ( "point"      , &PyTypePoint                 , "<Point>"                 , false );
+    __cs.addType ( "segment"    , &PyTypeSegment               , "<Segment>"               , false, "comp" );
+    __cs.addType ( "pad    "    , &PyTypePad                   , "<Pad>"                   , false, "comp" );
+    __cs.addType ( "segmentCol" , &PyTypeSegmentCollection     , "<SegmentCollection>"     , false );
+    __cs.addType ( "db"         , &PyTypeDataBase              , "<DataBase>"              , false );
+    __cs.addType ( "techno"     , &PyTypeTechnology            , "<Technology>"            , false );
+    __cs.addType ( "transfo"    , &PyTypeTransformation        , "<Transformation>"        , false );
+    __cs.addType ( "vert"       , &PyTypeVertical              , "<Vertical>"              , false, "segment" );
+    __cs.addType ( "path"       , &PyTypePath                  , "<Path>"                  , false );
+    __cs.addType ( "occur"      , &PyTypeOccurrence            , "<Occurrence>"            , false );
+    __cs.addType ( "occurCol"   , &PyTypeOccurrenceCollection  , "<OccurrenceCollection>"  , false );
 
 
     PyObject* module = Py_InitModule ( "Hurricane", PyHurricane_Methods );
@@ -650,12 +710,30 @@ extern "C" {
       return;
     }
 
+    Py_INCREF ( &PyTypeDbU );
+    PyModule_AddObject ( module, "DbU"                  , (PyObject*)&PyTypeDbU );
+    Py_INCREF ( &PyTypeTechnology );
+    PyModule_AddObject ( module, "Technology"           , (PyObject*)&PyTypeTechnology );
+    Py_INCREF ( &PyTypeLayer );
+    PyModule_AddObject ( module, "Layer"                , (PyObject*)&PyTypeLayer );
+    Py_INCREF ( &PyTypeBasicLayer );
+    PyModule_AddObject ( module, "BasicLayer"           , (PyObject*)&PyTypeBasicLayer );
+    Py_INCREF ( &PyTypeRegularLayer );
+    PyModule_AddObject ( module, "RegularLayer"         , (PyObject*)&PyTypeRegularLayer );
+    Py_INCREF ( &PyTypeContactLayer );
+    PyModule_AddObject ( module, "ContactLayer"         , (PyObject*)&PyTypeContactLayer );
+    Py_INCREF ( &PyTypeDiffusionLayer );
+    PyModule_AddObject ( module, "DiffusionLayer"       , (PyObject*)&PyTypeDiffusionLayer );
+    Py_INCREF ( &PyTypeTransistorLayer );
+    PyModule_AddObject ( module, "TransistorLayer"      , (PyObject*)&PyTypeTransistorLayer );
+    Py_INCREF ( &PyTypeContactLayer );
+    PyModule_AddObject ( module, "ViaLayer"             , (PyObject*)&PyTypeViaLayer );
     Py_INCREF ( &PyTypeNetExternalComponents );
     PyModule_AddObject ( module, "NetExternalComponents", (PyObject*)&PyTypeNetExternalComponents );
     Py_INCREF ( &PyTypeUpdateSession );
-    PyModule_AddObject ( module, "UpdateSession", (PyObject*)&PyTypeUpdateSession );
+    PyModule_AddObject ( module, "UpdateSession"        , (PyObject*)&PyTypeUpdateSession );
     Py_INCREF ( &PyTypeBreakpoint );
-    PyModule_AddObject ( module, "Breakpoint", (PyObject*)&PyTypeBreakpoint );
+    PyModule_AddObject ( module, "Breakpoint"           , (PyObject*)&PyTypeBreakpoint );
     
     
     PyObject* dictionnary = PyModule_GetDict ( module );
@@ -675,16 +753,16 @@ extern "C" {
     InstanceLoadConstants       ( dictionnary );
     PinLoadConstants            ( dictionnary );
 
+    PyDbU_postModuleInit ();
+    PyLayer_postModuleInit ();
+    PyBasicLayer_postModuleInit ();
+
     trace << "Hurricane.so loaded " << (void*)&typeid(string) << endl;
   }
 
   
-} // End of extern "C".
-
+} // extern "C".
 
 #endif // End of Python Module Code Part.
 
-
-
-
-}  // End of Isobar namespace.
+}  // Isobar namespace.

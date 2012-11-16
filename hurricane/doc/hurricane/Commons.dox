@@ -4,10 +4,16 @@
 
  namespace Hurricane {
 
-
- /*! \addtogroup   Generalities
-  *  \{
+ /*! \namespace    Hurricane
+  *
+  *  \brief        Contains Almost Everything.
+  *
+  *                Almost everything is inside the Hurricane namespace.
   */
+
+
+ //! \addtogroup   Generalities
+ //  \{
 
  /*! \function     string  demangle ( const char* symbol );
   *                Translate (demangle) a symbol from C++ (\c gnu-v3) internal format

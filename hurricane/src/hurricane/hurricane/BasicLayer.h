@@ -19,12 +19,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,10 +27,7 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/BasicLayer.h"                      |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 # ifndef  __HURRICANE_BASIC_LAYER__
@@ -96,11 +88,9 @@ namespace Hurricane {
       inline  const Material& getMaterial            () const;
       inline  unsigned        getExtractNumber       () const;
       virtual BasicLayers     getBasicLayers         () const;
-      virtual BasicLayer*     getConnectorLayer      () const;
       virtual BasicLayer*     getBlockageLayer       () const;
       inline  const Name&     getRealName            () const;
     // Updators                                      
-      inline  void            setConnectorLayer      ( BasicLayer* layer);
       inline  void            setBlockageLayer       ( BasicLayer* layer);
       inline  void            setExtractNumber       ( unsigned int );
       inline  void            setRealName            ( const char* realName);
@@ -114,7 +104,6 @@ namespace Hurricane {
     // Internal: Attributes
               Material        _material;
               unsigned        _extractNumber;
-              BasicLayer*     _connectorLayer;
               BasicLayer*     _blockageLayer;
               Name            _realName;
 
@@ -141,7 +130,6 @@ namespace Hurricane {
                          BasicLayer::getMaterial                    () const { return _material; }
   inline unsigned        BasicLayer::getExtractNumber               () const { return _extractNumber; }
   inline const Name&     BasicLayer::getRealName                    () const { return _realName; }
-  inline void            BasicLayer::setConnectorLayer              ( BasicLayer* layer) { _connectorLayer = layer; }
   inline void            BasicLayer::setBlockageLayer               ( BasicLayer* layer) { _blockageLayer = layer; }
   inline void            BasicLayer::setExtractNumber               ( unsigned int number ) { _extractNumber=number; }
   inline void            BasicLayer::setRealName                    ( const char* realName) { _realName = realName; }

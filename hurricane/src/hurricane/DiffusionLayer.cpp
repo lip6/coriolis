@@ -70,7 +70,7 @@ namespace Hurricane {
                                  ) : Layer(technology
                                           ,name
                                           ,0  // minimalSize.
-                                          ,0) // minmalSpacing.
+                                          ,0) // minimalSpacing.
                                    ,_basicLayers()
                                    ,_extentionCaps()
                                    ,_extentionWidths()

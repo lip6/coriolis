@@ -26,22 +26,12 @@
   */
 
 
- /*! \name         Constructors & Destructors
-  */
- // \{
-
  /*! \function     DataBase* DataBase::create ();
   *                creates and returns a pointer to a new DataBase.
   *
   *  \caution      An exception is thrown if a Database already exists.
   */
 
- // \}
-
-
- /*! \name         Accessors
-  */
- // \{
 
  /*! \function     DataBase* DataBase::getDB ();
   *                This static function returns the current
@@ -56,7 +46,5 @@
  /*! \function     Technology* DataBase::getRootLibrary () const;
   *  \return       the root Library if it exists, else \NULL.
   */
-
- // \}
 
  }

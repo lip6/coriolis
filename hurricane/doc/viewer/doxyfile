@@ -245,7 +245,7 @@ OPTIMIZE_OUTPUT_VHDL   = NO
 # func(std::string) {}). This also make the inheritance and collaboration 
 # diagrams that involve STL classes more complete and accurate.
 
-BUILTIN_STL_SUPPORT    = NO
+BUILTIN_STL_SUPPORT    = YES
 
 # If you use Microsoft's C++/CLI language, you should set this option to YES to
 # enable parsing support.
@@ -588,6 +588,11 @@ INPUT                  = ../../src/viewer/hurricane/viewer/Graphics.h \
                          ../../src/viewer/hurricane/viewer/DisplayStyle.h \
                          DisplayStyle.dox \
                          ../../src/viewer/hurricane/viewer/CellWidget.h \
+                         CellWidget.dox \
+                         ../../src/viewer/hurricane/viewer/CellPrinter.h \
+                         CellPrinter.dox \
+                         ../../src/viewer/hurricane/viewer/CellImage.h \
+                         CellImage.dox \
                          ../../src/viewer/hurricane/viewer/CellViewer.h \
                          CellViewer.dox \
                          ../../src/viewer/hurricane/viewer/InspectorWidget.h \

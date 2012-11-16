@@ -118,8 +118,8 @@ Record* Point::_getRecord() const
 // ******************************
 {
     Record* record = new Record(getString(this));
-    record->add(getSlot("X", &_x));
-    record->add(getSlot("Y", &_y));
+    record->add(DbU::getValueSlot("X", &_x));
+    record->add(DbU::getValueSlot("Y", &_y));
     return record;
 }
 

@@ -1,0 +1,24 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        CellWidget
+  *  \brief        The Widget to display a Cell.
+  *
+  *                This is the workhorse of the viewer. This Widget provides the
+  *                comprehensive paraphernalia to display a Cell.
+  */
+
+ /*! \enum         CellWidget::ResolutionMode
+  *                Defines the resolutions mode for both CellPrinter & CellImage.
+  */
+ /*! \var          CellWidget::ResolutionMode  CellWidget::Res_CellMode;
+  *                Suited for displaying Cell or very small designs.
+  */
+ /*! \var          CellWidget::ResolutionMode  CellWidget::Res_DesignMode;
+  *                Suited for displaying full fledged designs.
+  */
+
+ }

@@ -33,16 +33,9 @@
   */
 
 
-
- /*! \name         Accessors
-  */
- //  \{
-
  /*! \function     MainView* MapView::GetMainView() const;
   *  \Return       the main view associated to the map (never null). 
   */
-
- //  \}
 
 
  /*! \section      secMapViewRemark  Remark
@@ -56,7 +49,5 @@
   *                within the main view which will automatically update the map 
   *                by localizing the new visible area. 
   */
-
-
 
  }

@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -17,10 +12,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./DisplayStyle.cpp"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <cassert>
@@ -30,15 +22,9 @@
 #include  "hurricane/viewer/Graphics.h"
 
 
-namespace {
-
-  using namespace Hurricane;
-
-
-} // End of anonymous namespace.
-
-
 namespace Hurricane {
+
+  using namespace std;
 
 
   const Name  DisplayStyle::UnmatchedGroup;
@@ -64,15 +50,15 @@ namespace Hurricane {
 
 
 
-  DrawingStyle::DrawingStyle ( const Name&   name
-                             , const string& pattern
-                             ,       int     red
-                             ,       int     green
-                             ,       int     blue
-                             ,       int     borderWidth
-                             ,       float   threshold
-                             ,       bool    goMatched
-                             )
+  RawDrawingStyle::RawDrawingStyle ( const Name&   name
+                                   , const string& pattern
+                                   ,       int     red
+                                   ,       int     green
+                                   ,       int     blue
+                                   ,       int     borderWidth
+                                   ,       float   threshold
+                                   ,       bool    goMatched
+                                   )
     : _name       (name)
     , _red        (red)
     , _green      (green)
@@ -84,23 +70,28 @@ namespace Hurricane {
     , _brush      (NULL)
     , _threshold  (threshold)
     , _goMatched  (goMatched)
-    , _refcount   (1)
+  { }
+
+
+
+  DrawingStyle  RawDrawingStyle::create ( const Name&   name
+                                        , const string& pattern
+                                        ,       int     red
+                                        ,       int     green
+                                        ,       int     blue
+                                        ,       int     borderWidth
+                                        ,       float   threshold
+                                        ,       bool    goMatched
+                                        )
   {
-  }
-
-
-
-  DrawingStyle* DrawingStyle::create ( const Name&   name
-                                     , const string& pattern
-                                     ,       int     red
-                                     ,       int     green
-                                     ,       int     blue
-                                     ,       int     borderWidth
-                                     ,       float   threshold
-                                     ,       bool    goMatched
-                                     )
-  {
-    DrawingStyle* style = new DrawingStyle ( name, pattern, red, green, blue, borderWidth, threshold, goMatched );
+    DrawingStyle  style = DrawingStyle( new RawDrawingStyle ( name
+                                                            , pattern
+                                                            , red
+                                                            , green
+                                                            , blue
+                                                            , borderWidth
+                                                            , threshold
+                                                            , goMatched ) );
   //if ( Graphics::isEnabled() )
   //  style->qtAllocate ();
 
@@ -108,7 +99,7 @@ namespace Hurricane {
   }
 
 
-  void  DrawingStyle::qtAllocate ()
+  void  RawDrawingStyle::qtAllocate ()
   {
     if ( !_color ) {
       _color = new QColor ( _red, _green, _blue );
@@ -126,7 +117,7 @@ namespace Hurricane {
   }
 
 
-  QColor  DrawingStyle::getColor ( const DisplayStyle::HSVr& darkening ) const
+  QColor  RawDrawingStyle::getColor ( const DisplayStyle::HSVr& darkening ) const
   {
     assert ( _color != NULL );
 
@@ -135,7 +126,7 @@ namespace Hurricane {
   }
 
 
-  QPen  DrawingStyle::getPen ( const DisplayStyle::HSVr& darkening ) const
+  QPen  RawDrawingStyle::getPen ( const DisplayStyle::HSVr& darkening ) const
   {
     assert ( _pen != NULL );
 
@@ -147,7 +138,7 @@ namespace Hurricane {
   }
 
 
-  QBrush  DrawingStyle::getBrush ( const DisplayStyle::HSVr& darkening ) const
+  QBrush  RawDrawingStyle::getBrush ( const DisplayStyle::HSVr& darkening ) const
   {
     assert ( _brush != NULL );
 
@@ -158,9 +149,8 @@ namespace Hurricane {
   }
 
 
-  DrawingStyle::~DrawingStyle ()
+  RawDrawingStyle::~RawDrawingStyle ()
   {
-    assert ( _refcount == 0 );
     if ( _color ) {
       delete _color;
       delete _pen;
@@ -169,29 +159,9 @@ namespace Hurricane {
   }
 
 
-  size_t  DrawingStyle::unlink ()
-  {
-    _refcount--;
-
-    if ( !_refcount ) {
-      delete this;
-      return 0;
-    }
-
-    return _refcount;
-  }
-
-
-  DrawingStyle*  DrawingStyle::link ()
-  {
-    _refcount++;
-
-    return this;
-  }
-
-
   DrawingGroup::DrawingGroup ( const Name& name )
-    : _name(name), _drawingStyles()
+    : _name         (name)
+    , _drawingStyles()
   { }
 
 
@@ -207,17 +177,14 @@ namespace Hurricane {
     DrawingGroup* clone = new DrawingGroup ( getName() );
 
     for ( size_t i=0 ; i < _drawingStyles.size() ; i++ )
-      clone->_drawingStyles.push_back ( _drawingStyles[i]->link() );
+      clone->_drawingStyles.push_back ( _drawingStyles[i] );
 
     return clone;
   }
 
 
   DrawingGroup::~DrawingGroup ()
-  {
-    for ( size_t i=0 ; i < _drawingStyles.size() ; i++ )
-      _drawingStyles[i]->unlink ();
-  }
+  { }
 
 
   size_t  DrawingGroup::findIndex ( const Name& key ) const
@@ -231,17 +198,17 @@ namespace Hurricane {
   }
 
 
-  DrawingStyle* DrawingGroup::find ( const Name& key ) const
+  DrawingStyle  DrawingGroup::find ( const Name& key ) const
   {
     size_t i = findIndex ( key );
     if ( i != InvalidIndex )
       return _drawingStyles[i];
 
-    return NULL;
+    return DrawingStyle();
   }
 
 
-  DrawingStyle* DrawingGroup::addDrawingStyle ( const Name&   key
+  DrawingStyle  DrawingGroup::addDrawingStyle ( const Name&   key
                                               , const string& pattern
                                               ,       int     red
                                               ,       int     green
@@ -251,16 +218,15 @@ namespace Hurricane {
                                               ,       bool    goMatched
                                               )
   {
+    DrawingStyle ds = RawDrawingStyle::create ( key, pattern, red, green, blue, borderWidth, threshold, goMatched );
+
     size_t i = findIndex ( key );
     if ( i != InvalidIndex ) {
-      _drawingStyles[i]->unlink ();
+      _drawingStyles[i] = ds;
     } else {
-      i = _drawingStyles.size ();
-      _drawingStyles.push_back ( NULL );
+      _drawingStyles.push_back ( ds );
     }
-
-    return _drawingStyles[i] =
-      DrawingStyle::create ( key, pattern, red, green, blue, borderWidth, threshold, goMatched );
+    return ds;
   }
 
 
@@ -327,7 +293,7 @@ namespace Hurricane {
   const Name& DisplayStyle::getGroup ( const Name& key ) const
   {
     for ( size_t gi=0 ; gi < _groups.size() ; gi++ ) {
-      DrawingStyle* style = _groups[gi]->find ( key );
+      DrawingStyle style = _groups[gi]->find ( key );
       if ( style )
         return _groups[gi]->getName();
     }
@@ -396,10 +362,10 @@ namespace Hurricane {
   }
 
 
-  DrawingStyle* DisplayStyle::find ( const Name& key ) const
+  DrawingStyle  DisplayStyle::find ( const Name& key ) const
   {
     for ( size_t gi=0 ; gi < _groups.size() ; gi++ ) {
-      DrawingStyle* style = _groups[gi]->find ( key );
+      DrawingStyle style = _groups[gi]->find ( key );
       if ( style )
         return style;
     }

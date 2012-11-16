@@ -22,21 +22,11 @@
 
 
 
- /*! \name         Constructors
-  */
- //  \{
-
  /*! \function     QuadTree::QuadTree();
   *                Default constructor : the quadtree is initially empty 
   *                (objects will be inserted or removed on demand). 
   */
 
- //  \}
-
-
- /*! \name         Destructors
-  */
- //  \{
 
  /*! \function     QuadTree::~QuadTree();
   *                Destroys the quadtree and its sub-quadtrees but doesn't touch 
@@ -44,12 +34,6 @@
   *                their respective quadtree nodes. 
   */
 
- //  \}
-
-
- /*! \name         Accessors
-  */
- //  \{
 
  /*! \function     Box QuadTree::getBoundingBox() const;
   *  \Return       the quadtree bounding box, that is the minimal bounding box 
@@ -68,24 +52,12 @@
   *                defined by \c \<area\>. 
   */
 
- //  \}
-
-
- /*! \name         Predicates
-  */
- //  \{
 
  /*! \function     bool QuadTree::isEmpty() const;
   *  \Return       <b>true</b> if the quadtree doesn't contain any object, else 
   *                <b>false</b>. 
   */
 
- //  \}
-
-
- /*! \name         Modifiers
-  */
- //  \{
 
  /*! \function     void QuadTree::insert(Go* go);
   *                inserts the graphic object within the quadtree (if not yet 
@@ -111,8 +83,6 @@
   *                in charge by this quadtree node (and memory is released to 
   *                the system). 
   */
-
- //  \}
 
 
  /*! \section      secQuadTreeRemark  Remark
@@ -178,7 +148,5 @@ void Component::Unmaterialize()
   *                // if the slice becomes empty, it is destroyed if 
   *                (slice-\>isEmpty()) slice-\>_Delete(); } } 
   */
-
-
 
  }

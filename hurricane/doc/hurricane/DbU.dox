@@ -71,11 +71,19 @@
   * 
   *  \section      secDbUGrid  Grid
   *
+  *                Thoses function are closely related to editors. They allow to
+  *                restrict to positions on a grid. We support three kind of grid,
+  *                real, symbolic and user defined.
+  *
   *                <ul>
-  *                  <li><b>DbU::getGridStep</b>
-  *                  <li><b>DbU::setGridStep</b>
-  *                  <li><b>DbU::isOnGrid</b>
-  *                  <li><b>DbU::getOnGridUnit</b>
+  *                  <li><b>DbU::getRealSnapGridStep</b>
+  *                  <li><b>DbU::getOnRealSnapGrid</b>
+  *                  <li><b>DbU::setRealSnapGridStep</b>
+  *                  <li><b>DbU::getSymbolicSnapGridStep</b>
+  *                  <li><b>DbU::getOnSymbolicSnapGrid</b>
+  *                  <li><b>DbU::setSymbolicSnapGridStep</b>
+  *                  <li><b>DbU::getOnCustomGrid</b>
+  *                  <li><b>DbU::getOnPhysicalGrid</b>
   *                </ul>
   * 
   * 
@@ -83,16 +91,18 @@
   *
   *                Translate a DbU::Unit into grid or lambda length :
   *                <ul>
-  *                  <li><b>long   DbU::getDb    (DbU::Unit u)</b>
-  *                  <li><b>double DbU::getGrid  (DbU::Unit u)</b>
-  *                  <li><b>double DbU::getLambda(DbU::Unit u)</b>
+  *                  <li><b>long   DbU::toDb       (DbU::Unit u)</b>
+  *                  <li><b>double DbU::toGrid     (DbU::Unit u)</b>
+  *                  <li><b>double DbU::toLambda   (DbU::Unit u)</b>
+  *                  <li><b>double DbU::toPhysical (DbU::Unit u, UnitPower p)</b>
   *                </ul>
   *
   *                Translate a lambda length into a DbU::Unit :
   *                <ul>
-  *                  <li><b>DbU::Unit DbU::db(long u)</b>
-  *                  <li><b>DbU::Unit DbU::grid(double u)</b>
-  *                  <li><b>DbU::Unit DbU::lambda(double u)</b>
+  *                  <li><b>DbU::Unit DbU::fromDb       (long v)</b>
+  *                  <li><b>DbU::Unit DbU::fromGrid     (double v)</b>
+  *                  <li><b>DbU::Unit DbU::fromLambda   (double v)</b>
+  *                  <li><b>DbU::Unit DbU::fromPhysical (double v, UnitPower p)</b>
   *                </ul>
   */
 
@@ -134,6 +144,49 @@
   *                Units are printed as symbolic (lambdas).
   */
 
+ /*! \function     DbU::Unit DbU::fromDb(long u);
+  *  \Return       the unit corresponding to the value \c \<value\> according to 
+  *                the current precision. This function do nothing apart from a
+  *                cast.
+  */
+
+ /*! \function     DbU::Unit DbU::fromGrid(double value);
+  *  \Return       the unit corresponding to the <i>grid</i> value \c \<value\>
+  *                according to the current precision.
+  */
+
+ /*! \function     DbU::Unit DbU::fromLambda(double value);
+  *  \Return       the unit corresponding to the <i>symbolic</i> value \c \<value\>
+  *                according to the current precision.
+  */
+
+ /*! \function     DbU::Unit DbU::fromPhysical(double value, UnitPower p);
+  *  \Return       the unit corresponding to the <i>physical</i> value \c \<value\>
+  *                with power \c p, according to the current precision.
+  */
+
+ /*! \function     long DbU::toDb(Unit unit);
+  *  \Return       the external value associated to the unit \c \<unit\> 
+  *                according to the current precision. This function do
+  *                nothing apart from a type cast.
+  */
+
+ /*! \function     double DbU::toGrid(Unit unit);
+  *  \Return       the value expressed as a number of founder grid steps
+  *                associated to the unit \c \<unit\> according to the current
+  *                precision.
+  */
+
+ /*! \function     double DbU::toLambda(Unit unit);
+  *  \Return       the symbolic value (expressed as a number lambdas)
+  *                associated to the unit \c \<unit\> according to the current
+  *                precision.
+  */
+
+ /*! \function     double DbU::toPhysical(Unit unit, UnitPower p);
+  *  \Return       the physical value of \c u, expressed in the power \c p.
+  */
+
  /*! \function     unsigned DbU::getPrecision();
   *  \Return       the current precision (whose default is fixed to 1). 
   */
@@ -167,6 +220,73 @@
  /*! \function     double  DbU::getGridsPerLambda();
   *  \Return       How many founder grid steps makes one <i>lambda</i>.
   */
+
+ /*! \function     void DbU::setStringMode(unsigned int mode);
+  *                Sets in which length the units are to be displayed by
+  *                getValueString(). Avalaibles modes are :
+  */
+
+ /*! \function     string DbU::getValueString(Unit  unit, int mode=SmartTruncate);
+  *  \return       A character string representing the external value of 
+  *                \c \<unit\>. The value is converted in the length according
+  *                to setStringMode(): database, grid or symbolic.
+  *
+  *  \remark       This string is shorter than the one we could print from the 
+  *                external value because non needed decimals are not drawn (nor 
+  *                the point if value is integer). 
+  */
+
+ /*! \function     void DbU::setPrecision(unsigned int precision);
+  *                Allows to set the precision at a requested value. This must 
+  *                be done at the begining of the program (before the creation 
+  *                of the first unit) and not changed for the following (unless 
+  *                mandatory and for a temporary period because all existing 
+  *                units would be misinterpreted). 
+  *
+  *  \remark       This function throws an exception if the requested precision 
+  *                is greater than the maximal one.
+  */
+
+ /*! \function     void DbU::setRealSnapGridStep(const DbU::Unit gridStep);
+  *                Set the real (founder) grid step.
+  */
+
+ /*! \function     DbU::Unit DbU::getRealSnapGridStep();
+  *                Get the real (founder) grid step.
+  */
+
+ /*! \function     DbU::Unit DbU::getOnRealSnapGrid(DbU::Unit u, DbU::SnapMode mode=DbU::Nearest);
+  *                Get the snap point from the unit \c u, using the rounding mode \c mode.
+  */
+
+ /*! \function     void DbU::setSymbolicSnapGridStep(const DbU::Unit gridStep);
+  *                Set the symbolic grid step.
+  */
+
+ /*! \function     DbU::Unit DbU::getSymbolicSnapGridStep();
+  *                Get the symbolic grid step.
+  */
+
+ /*! \function     DbU::Unit DbU::getOnSymbolicSnapGrid(DbU::Unit u, DbU::SnapMode mode=DbU::Nearest);
+  *                Get the snap point from the unit \c u, using the rounding mode \c mode.
+  */
+
+ /*! \function     DbU::Unit DbU::getOnCustomGrid(DbU::Unit u, DbU::Unit step, DbU::SnapMode mode=DbU::Nearest);
+  *                Get the snap point from the unit \c u, with grid step \c step
+  *                using the rounding mode \c mode.
+  */
+
+ /*! \function     DbU::Unit DbU::getOnPhysicalGrid(DbU::Unit u, DbU::SnapMode mode=DbU::Superior);
+  *                Get the physical grid unit nearest to \c u, with \c mode rounding.
+  *                using the rounding mode \c mode.
+  */
+
+ /*! \name         Obsoleteds
+  *
+  *                Due to their somewhat unclear naming convention, those functions
+  *                have been renamed by the \e to / \e from variants.
+  */
+ //  \{
 
  /*! \function     DbU::Unit DbU::db(long u);
   *  \Return       the unit corresponding to the value \c \<value\> according to 
@@ -202,34 +322,43 @@
   *                precision.
   */
 
- /*! \function     void DbU::setStringMode(unsigned int mode);
-  *                Sets in which length the units are to be displayed by
-  *                getValueString(). Avalaibles modes are :
+ //  \}
+
+ /*! \enum         DbU::UnitPower
+  *                This enumeration defines the power applicable to physical units.
+  */
+ /*! \var          DbU::UnitPower DbU::Pico
+  *                10e-12
+  */
+ /*! \var          DbU::UnitPower DbU::Nano
+  *                10e-9
+  */
+ /*! \var          DbU::UnitPower DbU::Micro
+  *                10e-6
+  */
+ /*! \var          DbU::UnitPower DbU::Milli
+  *                10e-3
+  */
+ /*! \var          DbU::UnitPower DbU::Unity
+  *                1
+  */
+ /*! \var          DbU::UnitPower DbU::Kilo
+  *                10e+3
   */
 
- /*! \function     string DbU::getValueString(Unit  unit, int mode=SmartTruncate);
-  *  \return       A character string representing the external value of 
-  *                \c \<unit\>. The value is converted in the length according
-  *                to setStringMode(): database, grid or symbolic.
-  *
-  *  \remark       This string is shorter than the one we could print from the 
-  *                external value because non needed decimals are not drawn (nor 
-  *                the point if value is integer). 
+ /*! \enum         DbU::SnapMode
+  *                This enumeration defines the rounding applicable to the grid management
+  *                functions.
   */
-
- /*! \function     void DbU::setPrecision(unsigned int precision);
-  *                Allows to set the precision at a requested value. This must 
-  *                be done at the begining of the program (before the creation 
-  *                of the first unit) and not changed for the following (unless 
-  *                mandatory and for a temporary period because all existing 
-  *                units would be misinterpreted). 
-  *
-  *  \remark       This function throws an exception if the requested precision 
-  *                is greater than the maximal one. 
+ /*! \var          DbU::SnapMode DbU::Inferior
+  *                Round to the inferior grid point.
   */
-
- /*  \function     void DbU::setGridStep(const Unit& gridStep);
-  *                Allows to change the grid step. 
+ /*! \var          DbU::SnapMode DbU::Superior
+  *                Round to the superior grid point.
+  */
+ /*! \var          DbU::SnapMode DbU::Nearest
+  *                Round nearest grid point, inferior or superior depending on the
+  *                distance.
   */
 
  //  \}

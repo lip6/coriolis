@@ -16,10 +16,6 @@
   */
 
 
- /*! \name         Constructors & Destructors
-  */
- //  \{
-   
  /*! \function     DisplayStyle::DisplayStyle(const Name& name);
   *                Construct a DisplayStyle named \e name. The DisplayStyle
   *                is populated with a minimal sets of DrawingStyles which
@@ -31,35 +27,37 @@
   *                The standart destructor.
   */
 
- //  \}
-
-
- /*! \name         Accessors
-  */
- //  \{
 
  /*! \function     const Name& DisplayStyle::getName() const;
   *  \Return       The name of this DisplayStyle.
+  */
+
+ /*! \function     const std::string& DisplayStyle::getDescription() const;
+  *  \Return       The long description of this DisplayStyle.
+  */
+
+ /*! \function     const DisplayStyle::HSVr& DisplayStyle::getDarkening() const;
+  *  \Return       The darkening factor.
   */
 
  /*! \function     const Name& DisplayStyle::getGroup(const Name& key) const;
   *  \Return       The group owning the DrawingStyle of which key is \e key.
   */
 
- /*! \function     const QColor& DisplayStyle::getColor(const Name& key, int darkening) const;
+ /*! \function     const string& DisplayStyle::getPattern(const Name& key) const;
+  *  \Return       The pattern associated to the DrawingStyle \e key.
+  */
+
+ /*! \function     const QColor& DisplayStyle::getColor(const Name& key, const DisplayStyle::HSVr& darkening) const;
   *  \Return       The QColor associated to the DrawingStyle \e key darkened by a factor \e darkening.
   */
 
- /*! \function     const QPen& DisplayStyle::getColor(const Name& key, int darkening) const;
+ /*! \function     const QPen& DisplayStyle::getPen(const Name& key, const DisplayStyle::HSVr& darkening) const;
   *  \Return       The QPen associated to the DrawingStyle \e key darkened by a factor \e darkening.
   */
 
- /*! \function     const QBrush& DisplayStyle::getBrush(const Name& key, int darkening) const;
+ /*! \function     const QBrush& DisplayStyle::getBrush(const Name& key, const DisplayStyle::HSVr& darkening) const;
   *  \Return       The QBrush associated to the DrawingStyle \e key darkened by a factor \e darkening.
-  */
-
- /*! \function     const string& DisplayStyle::getPattern(const Name& key) const;
-  *  \Return       The pattern associated to the DrawingStyle \e key.
   */
 
  /*! \function     const float DisplayStyle::getThreshold(const Name& key) const;
@@ -75,20 +73,33 @@
   *                matches \e key, the \e default DrawingStyle is returned.
   */
 
- //  \}
 
-
- /*! \name         Modifiers
-  */
- //  \{
-
- /*! \function     void  DisplayStyle::inheritFrom(const DisplayStyle* base);
-  *                Clone the \e base DisplayStyle into the current one. Any
-  *                previous settings are eraseds.
+ /*! \function     QColor  DisplayStyle::darken( const QColor& color, const DisplayStyle::HSVr& darkening );
+  *  \Return       The \e color with the darkening factor \c darkening applied.
   *                
   */
 
- /*! \function     void DisplayStyle::addDrawingStyle(const Name& groupKey, const Name& key, const string& pattern, int red, int green, int blue, int borderWidth, float threshold);
+ /*! \function     void  DisplayStyle::qtAllocate();
+  *                Triggers the allocation of Qt pens & brushes. Should not be used
+  *                directly but only through Graphics::enable().
+  */
+
+ /*! \function     void  DisplayStyle::setDescription(const std::string& description);
+  *                Sets the Display style informative text.
+  */
+
+ /*! \function     void  DisplayStyle::inheritFrom(const DisplayStyle* base);
+  *                Clone the \e base DisplayStyle into the current one. Any
+  *                previous settings are eraseds. The base style is \e duplicated
+  *                into this one. Further modification of \e base after this point
+  *                will have no effect on the current style.
+  */
+
+ /*! \function     void  DisplayStyle::setDarkening(const HSVr&);
+  *                Sets the darkening factor.
+  */
+
+ /*! \function     void DisplayStyle::addDrawingStyle(const Name& groupKey, const Name& key, const std::string& pattern, int red, int green, int blue, int borderWidth, float threshold, bool goMatched=true);
   *  \param        groupKey     in which group to insert this DrawinStyle.
   *  \param        key          the DrawingStyle's name.
   *  \param        pattern      the stipple pattern (for the brush).
@@ -97,12 +108,10 @@
   *  \param        blue         the blue color component (for Brush & Pen).
   *  \param        borderWidth  the width of the drawing (for Pen).
   *  \param        threshold    the display threshold.
+  *  \param        goMatched    tells if this style is used to draw a Go.
   *
   *                Adds a new DrawingStyle. If any previous DrawingStyle of the same
   *                name was existing it is erased.
   */
-
- //  \}
-
 
  }

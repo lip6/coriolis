@@ -66,20 +66,22 @@
   *                styles used to draw all the objects from the CellWidget.
   */
 
- // !}
+ //! \}
 
 
- //! \name         Accessors
- //  \{
-   
  /*! \function     Graphics* Graphics::getGraphics();
   *  \Return       The Graphics singleton.
   */
+   
+ /*! \function     bool  Graphics::isEnabled();
+  *  \Return       \true if Qt has been activated.
+  */
 
- /*! \function     const QFont Graphics::getFixedFont(int weight=-1, bool italic=false, bool underline=false);
+ /*! \function     const QFont Graphics::getFixedFont(int weight=QFont::Normal, bool italic=false, bool underline=false, int scale=0);
   *  \param        weight     the font's weight (see Qt::Weight).
   *  \param        italic     select the italic variant of the font.
   *  \param        underline  the font will be underlined.
+  *  \param        scale      added to the font's default point size.
   *  \return       A QFont, the size of the font is guessed from the system's default.
   */
 
@@ -87,15 +89,15 @@
   *  \Return       The group owning the DrawingStyle of which key is \e key.
   */
 
- /*! \function     const QColor& Graphics::getColor(const Name& key, int darkening=100);
+ /*! \function     const QColor& Graphics::getColor(const Name& key, const DisplayStyle::HSVr& darkening=DisplayStyle::HSVr());
   *  \Return       The QColor associated to the DrawingStyle \e key darkened by a factor \e darkening.
   */
 
- /*! \function     const QPen& Graphics::getPen(const Name& key, int darkening=100);
+ /*! \function     const QPen& Graphics::getPen(const Name& key, const DisplayStyle::HSVr& darkening=DisplayStyle::HSVr());
   *  \Return       The QPen associated to the DrawingStyle \e key darkened by a factor \e darkening.
   */
 
- /*! \function     const QBrush& Graphics::getBrush(const Name& key, int darkening=100);
+ /*! \function     const QBrush& Graphics::getBrush(const Name& key, const DisplayStyle::HSVr& darkening=DisplayStyle::HSVr());
   *  \Return       The QBrush associated to the DrawingStyle \e key by a factor \e darkening.
   */
 
@@ -107,11 +109,33 @@
   *  \Return       The display threshold associated to the DrawingStyle \e key.
   */
 
- //  \}
+ /*! \function     const DisplayStyle::HSVr& Graphics::getDarkening();
+  *  \Return       The darkening factor applied to non-selected objects.
+  */
 
+ /*! \function     const ColorScale& Graphics::getColorScale( ColorScale::ScaleType );
+  *  \Return       The darkening factor applied to non-selected objects.
+  */
 
- //! \name         Modifiers
- //  \{
+ /*! \function     const QColor Graphics::darken( const QColor& color );
+  *  \Return       The QColor with the darkening factor applied.
+  */
+
+ /*! \function     const QColor Graphics::darken( const QColor& color );
+  *  \Return       The QColor with the darkening factor applied.
+  */
+
+ /*! \function     const TextTranslator& Graphics::getHtmlTranslator();
+  *  \Return       The translator applied to generate html text.
+  *  \see          toHtml()
+  */
+
+ /*! \function     const string Graphics::toHtml( const string& );
+  *  \Return       A string suitable for HTML enabled devices, such as most of the
+  *                Qt widgets. Special characters like \c '&' are replaced by their
+  *                HTML counterpart (\c \&amp;)
+  */
+
 
  /*! \function     const void Graphics::addStyle(DisplayStyle* displayStyle);
   *                Adds a new DisplayStyle to the Graphics environment.
@@ -133,7 +157,8 @@
   *  \Return       The DisplayStyle which is currently in use.
   */
 
- //  \}
-
+ /*! \function     void  Graphics::enable();
+  *                Effectively calls Qt, allocated Pens & Brushes and so on.
+  */
 
  }

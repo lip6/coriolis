@@ -14,10 +14,6 @@
   */
 
 
- /*! \name         Accessors
-  */
- // \{
-
  /*! \function     Cell* Entity::getCell () const;
   *  \return       Returns the cell owning this entity (when the Entity is a Cell,
   *                the Cell itself is returned)
@@ -34,11 +30,8 @@
   *                Instance of the Plug.
   */
 
- // \}
 
-
- /*! \name         Entity Collection
-  */
+ //! \name         Entity Collection
  // \{
 
  /*! \typedef      typedef GenericCollection<Entity*> Entities;

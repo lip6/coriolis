@@ -35,9 +35,6 @@
   *                knowing it. 
   */
 
- /*! \name         Constructors
-  */
- //  \{
 
  /*! \function     Vertical* Vertical::create(Component* source, Component* target, const Layer* layer,const DbU::Unit& x,const DbU::Unit& width = 0,const DbU::Unit& dySource = 0, const DbU::Unit& dyTarget = 0);
   *                creates and returns a vertical segment whose origin lies 
@@ -62,12 +59,6 @@
   *                null. 
   */
 
- //  \}
-
-
- /*! \name         Accessors
-  */
- //  \{
 
  /*! \function     const DbU::Unit& Vertical::getDySource() const;
   *  \Return       the relative source ordinate of the segment (may be absolute 
@@ -85,12 +76,6 @@
   *                getTargetX() defined at the Segment level. 
   */
 
- //  \}
-
-
- /*! \name         Modifiers
-  */
- //  \{
 
  /*! \function     void Vertical::setX(const DbU::Unit& x);
   *                sets the abscissa of the segment. 
@@ -101,11 +86,8 @@
   *                \c \<dx\>. 
   */
 
- //  \}
 
-
- /*! \name         Vertical Collection
-  */
+ //! \name         Vertical Collection
  //  \{
 
  /*! \typedef      Verticals

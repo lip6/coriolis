@@ -24,10 +24,10 @@
   *                You can also use this object to print messages without 
   *                throwing an exception as shown below : 
 \code
-Cell* cell = libraryGetCell("adder"); // we get the cell
+Cell* cell = library->getCell("adder"); // we get the cell
  
 if (!cell)
-   cerr << Warning("Unknown cell adder") << endl;
+   cerr << Warning("Unknown cell adder").what() << endl;
 else {
    // we know what to do here
 }
@@ -36,48 +36,42 @@ else {
   */
 
 
-
- /*! \name         Constructors
+ /*! \function     Warning::Warning(const Warning& warning);
+  *                Copy constructor.
   */
- //  \{
 
- /*! \function     Warning::Warning(const string& reason, int code = 0);
+ /*! \function     Warning::Warning(const string& reason);
+  *                Builds a warning characterized by a reason (code defaults to zero).
+  */
+
+ /*! \function     Warning::Warning(const char* format, ...);
+  *                Builds a warning characterized by a reason, using the \c vararg protocol
+  *                and \c printf format (code defaults to zero).
+  */
+
+ /*! \function     Warning::Warning(int code, const string& reason);
   *                Builds a warning characterized by a reason and a code useful 
   *                within a switch. 
   */
 
- /*! \function     Warning::Warning(const Warning& warning);
-  *                Copy constructor. 
+ /*! \function     Warning::Warning(int code, const char* format, ...);
+  *                Builds a warning characterized by a reason and a code useful 
+  *                within a switch. The reason is supplied in a \c printf
+  *                like  fashion.
   */
 
- //  \}
-
-
- /*! \name         Operators
-  */
- //  \{
 
  /*! \function     Warning& Warning::operator=(const Warning& warning);
   *                Assignment operator. 
   */
 
- //  \}
 
-
- /*! \name         Accessors
-  */
- //  \{
-
- /*! \function     const string& Warning::GetReason() const;
+ /*! \function     string  Warning::getReason() const;
   *  \Return       the reason for which the warning was thrown. 
   */
 
- /*! \function     int Warning::GetCode() const;
+ /*! \function     int Warning::getCode() const;
   *  \Return       the warning code number. 
   */
-
- //  \}
-
-
 
  }

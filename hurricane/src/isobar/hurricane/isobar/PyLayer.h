@@ -31,23 +31,17 @@
 //
 // License-Tag
 // Authors-Tag
-// ===================================================================
 //
-// $Id: PyLayer.h,v 1.4 2006/05/03 14:00:03 jpc Exp $
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
 // |  Author      :                       Damien DUPUIS              |
-// |  E-mail      :          Damien.Dupuis@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./PyLayer.h"                              |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./hurricane/isobar/PyLayer.h"                  |
+// +-----------------------------------------------------------------+
+
 
 # ifndef  __PYLAYER__
 # define  __PYLAYER__
@@ -76,16 +70,17 @@ extern "C" {
   extern  PyTypeObject  PyTypeLayer;
   extern  PyMethodDef   PyLayer_Methods[];
 
-  extern  PyObject* PyLayer_Link       ( Hurricane::Layer* object );
-  extern  void      PyLayer_LinkPyType ();
+  extern  PyObject* PyLayer_Link           ( Hurricane::Layer* object );
+  extern  void      PyLayer_LinkPyType     ();
+  extern  void      PyLayer_postModuleInit ();
 
 # define IsPyLayer(v)    ( (v)->ob_type == &PyTypeLayer )
 # define PYLAYER(v)      ( (PyLayer*)(v) )
 # define PYLAYER_O(v)    ( PYLAYER(v)->_object )
 
 
-}  // End of extern "C".
+}  // extern "C".
 
-}  // End of Isobar namespace.
+}  // Isobar namespace.
  
 # endif

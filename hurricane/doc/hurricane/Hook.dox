@@ -95,10 +95,6 @@
   */
 
 
- /*! \name         Accessors
-  */
- //  \{
-
  /*! \function     Component* Hook::getComponent() const;
   *  \Return       the component whose hook represents a part. 
   *
@@ -172,12 +168,6 @@
   *                The master is not included in this collection. 
   */
 
- //  \}
-
-
- /*! \name         Predicates
-  */
- //  \{
 
  /*! \function     bool Hook::isMaster() const;
   *  \Return       \true if the hook must be considered as a master, else 
@@ -203,12 +193,6 @@
   *  \caution      The meaning here is very different than for a slave hook! 
   */
 
- //  \}
-
-
- /*! \name         Modifiers
-  */
- //  \{
 
  /*! \function     Hook* Hook::detach();
   *                If the hook is a slave : 
@@ -265,11 +249,8 @@
   *                corresponding hyper-hooks. 
   */
 
- //  \}
 
-
- /*! \name         Hook Collection
-  */
+ //! \name         Hook Collection
  //  \{
 
  /*! \typedef      Hooks
@@ -290,6 +271,5 @@
   */
 
  //  \}
-
 
  }

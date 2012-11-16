@@ -34,10 +34,6 @@ if (box1.inflate(3).merge(box2.translate(10, 10).inflate(-1, 1)).contains(20, 20
   */
 
 
- /*! \name         Constructors
-  */
- //  \{
-
  /*! \function     Box::Box();
   *                Default constructor : the returned box is empty. 
   */
@@ -65,12 +61,6 @@ if (box1.inflate(3).merge(box2.translate(10, 10).inflate(-1, 1)).contains(20, 20
   *                Copy constructor. 
   */
 
- //  \}
-
-
- /*! \name         Operators
-  */
- //  \{
 
  /*! \function     Box& Box::operator=(const Box& box);
   *                Assignment operator. 
@@ -86,12 +76,6 @@ if (box1.inflate(3).merge(box2.translate(10, 10).inflate(-1, 1)).contains(20, 20
   *                Difference operator. 
   */
 
- //  \}
-
-
- /*! \name         Accessors
-  */
- //  \{
 
  /*! \function     const DbU::Unit& Box::getXMin() const;
   *  \Return       the XMin value : meaningful only for a non empty box. 
@@ -149,12 +133,6 @@ if (box1.inflate(3).merge(box2.translate(10, 10).inflate(-1, 1)).contains(20, 20
   *                either one of the two boxes is empty or if they are disjoint. 
   */
 
- //  \}
-
-
- /*! \name         Predicates
-  */
- //  \{
 
  /*! \function     bool Box::isEmpty() const;
   *  \Return       \true if the box is empty, else \false. 
@@ -196,12 +174,6 @@ if (box1.inflate(3).merge(box2.translate(10, 10).inflate(-1, 1)).contains(20, 20
   *                least a common border side, else \false. 
   */
 
- //  \}
-
-
- /*! \name         Modifiers
-  */
- //  \{
 
  /*! \function     Box& Box::makeEmpty();
   *                Transforms the box into an empty one. 
@@ -255,8 +227,5 @@ if (box1.inflate(3).merge(box2.translate(10, 10).inflate(-1, 1)).contains(20, 20
   *                translates the box, if not empty, of the quantities \c \<dx\> 
   *                and \c \<dy\>. 
   */
-
- //  \}
-
 
  }

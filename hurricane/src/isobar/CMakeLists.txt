@@ -21,7 +21,19 @@
                                     PyHyperNet.cpp
                                     PyInstance.cpp
                                     PyInstanceCollection.cpp
+                                    PyMaterial.cpp
                                     PyLayer.cpp
+                                    PyLayerMask.cpp
+                                    PyBasicLayer.cpp
+                                    PyRegularLayer.cpp
+                                    PyContactLayer.cpp
+                                    PyDiffusionLayer.cpp
+                                    PyTransistorLayer.cpp
+                                    PyViaLayer.cpp
+                                    PyLayerCollection.cpp
+                                    PyBasicLayerCollection.cpp
+                                    PyRegularLayerCollection.cpp
+                                    PyViaLayerCollection.cpp
                                     PyLibrary.cpp
                                     PyNet.cpp
                                     PyNetCollection.cpp
@@ -60,7 +72,19 @@
                                     hurricane/isobar/PyHyperNet.h
                                     hurricane/isobar/PyInstance.h
                                     hurricane/isobar/PyInstanceCollection.h
+                                    hurricane/isobar/PyMaterial.h
+                                    hurricane/isobar/PyLayerMask.h
                                     hurricane/isobar/PyLayer.h
+                                    hurricane/isobar/PyBasicLayer.h
+                                    hurricane/isobar/PyRegularLayer.h
+                                    hurricane/isobar/PyContactLayer.h
+                                    hurricane/isobar/PyDiffusionLayer.h
+                                    hurricane/isobar/PyTransistorLayer.h
+                                    hurricane/isobar/PyLayerCollection.h
+                                    hurricane/isobar/PyBasicLayerCollection.h
+                                    hurricane/isobar/PyRegularLayerCollection.h
+                                    hurricane/isobar/PyViaLayerCollection.h
+                                    hurricane/isobar/PyViaLayer.h
                                     hurricane/isobar/PyLibrary.h
                                     hurricane/isobar/PyNet.h
                                     hurricane/isobar/PyNetCollection.h

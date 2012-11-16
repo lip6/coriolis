@@ -64,10 +64,6 @@ if (cell) {
 
 
 
- /*  \name         Accessors
-  */
- //  \{
-
  /*! \function     GenericCollection<Element> MapCollection::GetCollection(const map<Key, Element, Compare>& elementMap);
   *  \see          below.
   */
@@ -77,7 +73,5 @@ if (cell) {
   *                <b>MapCollection</b> the content of the STL map given in 
   *                argument. 
   */
-
- //  \}
 
  }

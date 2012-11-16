@@ -569,7 +569,7 @@ extern "C" {
     if (!PyArg_ParseTuple(args,"O:Cell.setTerminal", &arg0) && PyBool_Check(arg0)) {
       return NULL;
     }
-    (arg0 == Py_True)?cell->setTerminal(true):cell->setTerminal(false);
+    PyObject_IsTrue(arg0)?cell->setTerminal(true):cell->setTerminal(false);
     HCATCH
     Py_RETURN_NONE;
   }

@@ -74,6 +74,11 @@ namespace Hurricane {
 
     public:
     // User to DB Converters.
+      static inline Unit                fromDb                  ( long value );
+      static inline Unit                fromGrid                ( double value );
+      static inline Unit                fromLambda              ( double value );
+      static inline Unit                fromPhysical            ( double value, UnitPower p );
+    // Old naming scheme (was not very clear).
       static inline Unit                db                      ( long value );
       static inline Unit                grid                    ( double value );
       static inline Unit                lambda                  ( double value );
@@ -101,6 +106,14 @@ namespace Hurricane {
       static        DbU::Unit           getOnCustomGrid         ( DbU::Unit u, DbU::Unit step, SnapMode mode=Nearest );
       static inline DbU::Unit           getOnPhysicalGrid       ( DbU::Unit u, SnapMode mode=Superior );
     // Conversions.
+      static inline long                toDb                    ( Unit u );
+      static inline double              toGrid                  ( Unit u );
+      static inline double              toGrid                  ( double u );
+      static inline double              toLambda                ( Unit u );
+      static inline double              toLambda                ( double u );
+      static inline double              toPhysical              ( Unit u, UnitPower p );
+      static inline double              toPhysical              ( double u, UnitPower p );
+    // Old naming scheme (not very clear).
       static inline long                getDb                   ( Unit u );
       static inline double              getGrid                 ( Unit u );
       static inline double              getGrid                 ( double u );
@@ -113,6 +126,7 @@ namespace Hurricane {
       static        Record*             getValueRecord          ( const Unit* u );
       static        Slot*               getValueSlot            ( const string& name, const Unit* u );
       static        void                setStringMode           ( unsigned int mode, UnitPower p=Nano );
+      static        void                getStringMode           ( unsigned int& mode, UnitPower& p );
 
     public:
     // Static Attributes: constants.
@@ -133,17 +147,32 @@ namespace Hurricane {
 
 
 // Inline Functions.
-  inline DbU::Unit  DbU::db                      ( long value )                 { return value; }
-  inline DbU::Unit  DbU::grid                    ( double value )               { return (long)rint( value/_resolution ); }
-  inline DbU::Unit  DbU::lambda                  ( double value )               { return grid(value*_gridsPerLambda); }
-  inline DbU::Unit  DbU::physicalToDbu           ( double value, UnitPower p )  { return grid((value*getUnitPower(p))/_physicalsPerGrid); }
-  inline long       DbU::getDb                   ( DbU::Unit u )                { return u; }
-  inline double     DbU::getGrid                 ( DbU::Unit u )                { return _resolution*(double)u; }
-  inline double     DbU::getGrid                 ( double u )                   { return _resolution*u; }
-  inline double     DbU::getLambda               ( DbU::Unit u )                { return getGrid(u)/_gridsPerLambda; }
-  inline double     DbU::getLambda               ( double u )                   { return getGrid(u)/_gridsPerLambda; }
-  inline double     DbU::getPhysical             ( DbU::Unit u, UnitPower p )   { return (_physicalsPerGrid*_resolution*(double)u)/getUnitPower(p); }
-  inline double     DbU::getPhysical             ( double u, UnitPower p )      { return (_physicalsPerGrid*_resolution*u)/getUnitPower(p); }
+// New converter naming scheme.
+  inline DbU::Unit  DbU::fromDb                  ( long value )                 { return value; }
+  inline DbU::Unit  DbU::fromGrid                ( double value )               { return (long)rint( value/_resolution ); }
+  inline DbU::Unit  DbU::fromLambda              ( double value )               { return grid(value*_gridsPerLambda); }
+  inline DbU::Unit  DbU::fromPhysical            ( double value, UnitPower p )  { return grid((value*getUnitPower(p))/_physicalsPerGrid); }
+  inline long       DbU::toDb                    ( DbU::Unit u )                { return u; }
+  inline double     DbU::toGrid                  ( DbU::Unit u )                { return _resolution*(double)u; }
+  inline double     DbU::toGrid                  ( double u )                   { return _resolution*u; }
+  inline double     DbU::toLambda                ( DbU::Unit u )                { return getGrid(u)/_gridsPerLambda; }
+  inline double     DbU::toLambda                ( double u )                   { return getGrid(u)/_gridsPerLambda; }
+  inline double     DbU::toPhysical              ( DbU::Unit u, UnitPower p )   { return (_physicalsPerGrid*_resolution*(double)u)/getUnitPower(p); }
+  inline double     DbU::toPhysical              ( double u, UnitPower p )      { return (_physicalsPerGrid*_resolution*u)/getUnitPower(p); }
+
+// Old converter naming scheme.
+  inline DbU::Unit  DbU::db                      ( long value )                 { return fromDb(value); }
+  inline DbU::Unit  DbU::grid                    ( double value )               { return fromGrid(value); }
+  inline DbU::Unit  DbU::lambda                  ( double value )               { return fromLambda(value); }
+  inline DbU::Unit  DbU::physicalToDbu           ( double value, UnitPower p )  { return fromPhysical(value,p); }
+  inline long       DbU::getDb                   ( DbU::Unit u )                { return toDb(u); }
+  inline double     DbU::getGrid                 ( DbU::Unit u )                { return toGrid(u); }
+  inline double     DbU::getGrid                 ( double u )                   { return toGrid(u); }
+  inline double     DbU::getLambda               ( DbU::Unit u )                { return toLambda(u); }
+  inline double     DbU::getLambda               ( double u )                   { return toLambda(u); }
+  inline double     DbU::getPhysical             ( DbU::Unit u, UnitPower p )   { return toPhysical(u,p); }
+  inline double     DbU::getPhysical             ( double u, UnitPower p )      { return toPhysical(u,p); }
+
   inline void       DbU::setRealSnapGridStep     ( DbU::Unit step )             { _realSnapGridStep = step; }
   inline void       DbU::setSymbolicSnapGridStep ( DbU::Unit step )             { _symbolicSnapGridStep = step; }
   inline DbU::Unit  DbU::getOnPhysicalGrid       ( DbU::Unit u, SnapMode mode ) { return getOnCustomGrid(u, grid(1), mode); }

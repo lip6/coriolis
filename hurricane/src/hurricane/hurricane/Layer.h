@@ -19,12 +19,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,10 +27,7 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/Layer.h"                           |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #ifndef __HURRICANE_LAYER__
@@ -66,9 +58,7 @@ namespace Hurricane {
       inline  const Mask&       getExtractMask               () const;
       inline  const DbU::Unit&  getMinimalSize               () const;
       inline  const DbU::Unit&  getMinimalSpacing            () const;
-      inline  DbU::Unit         getPitch                     () const;
       virtual BasicLayers       getBasicLayers               () const = 0;
-      virtual Layer*            getConnectorLayer            () const;
       virtual const Layer*      getBlockageLayer             () const;
       virtual const Layer*      getTop                       () const;
       virtual const Layer*      getBottom                    () const;
@@ -94,7 +84,6 @@ namespace Hurricane {
       inline  void              setWorking                   ( bool );
               void              setMinimalSize               ( const DbU::Unit& minimalSize );
               void              setMinimalSpacing            ( const DbU::Unit& minimalSpacing );
-              void              setPitch                     ( const DbU::Unit& pitch );
       virtual void              setEnclosure                 ( const BasicLayer* layer, DbU::Unit );
       virtual void              setExtentionCap              ( const BasicLayer* layer, DbU::Unit );
       virtual void              setExtentionWidth            ( const BasicLayer* layer, DbU::Unit );
@@ -119,7 +108,6 @@ namespace Hurricane {
               Mask              _extractMask;
               DbU::Unit         _minimalSize;
               DbU::Unit         _minimalSpacing;
-              DbU::Unit         _pitch;
               Layer*            _nextOfTechnologyLayerMap;
               bool              _working;
 
@@ -146,7 +134,6 @@ namespace Hurricane {
   inline  const Layer::Mask&  Layer::getExtractMask               () const { return _extractMask; }
   inline  const DbU::Unit&    Layer::getMinimalSize               () const { return _minimalSize; }
   inline  const DbU::Unit&    Layer::getMinimalSpacing            () const { return _minimalSpacing; }
-  inline  DbU::Unit           Layer::getPitch                     () const { return (!_pitch?(_minimalSize + _minimalSpacing):_pitch); }
   inline  void                Layer::setWorking                   ( bool state ) { _working = state; }
   inline  Layer*              Layer::_getNextOfTechnologyLayerMap () const { return _nextOfTechnologyLayerMap; }
   inline  void                Layer::_setMask                     ( const Mask& mask ) { _mask = mask; }

@@ -17,7 +17,7 @@ try {
    throw Error("Something strange");
 }
 catch {Exception& exception) {
-   cerr << exception << endl;
+   cerr << exception.what() << endl;
 }
 \endcode
   *                Will produce the message : 
@@ -27,10 +27,10 @@ catch {Exception& exception) {
   *                while the following code : 
 \code
 try {
-   throw Error("Can't create Net : null cell", 3);
+   throw Error(3, "Can't create Net : null cell");
 }
 catch {Exception& exception) {
-   cerr << exception << endl;
+   cerr << exception.what() << endl;
 }
 \endcode
   *                Will produce the message : 
@@ -41,13 +41,13 @@ catch {Exception& exception) {
   *                the following code : 
 \code
 try {
-   throw Error("Can't create Net : null cell", 3);
+   throw Error(3, "Can't create Net : null cell");
 }
 catch {Error& error) {
-   cerr << error.GetReason() << " (code " << error.GetCode() << ")" << endl;
+   cerr << error.getReason() << " (code " << error.getCode() << ")" << endl;
 }
 catch {Exception& exception) {
-   cerr << exception << endl;
+   cerr << exception.what() << endl;
 }
 \endcode
   *                Which will produce the message : 
@@ -62,47 +62,51 @@ Can't create Net : null cell (code 3)
   *                this class. 
   */
 
- /*! \name         Constructors
-  */
- //  \{
-
- /*! \function     Error::Error(const string& reason, int code = 0);
-  *                Builds an error characterized by a reason and an error code 
-  *                useful within a switch. 
-  */
 
  /*! \function     Error::Error(const Error& error);
   *                Copy constructor. 
   */
 
- //  \}
-
-
- /*! \name         Operators
+ /*! \function     Error::Error(const string& reason);
+  *                Builds a error characterized by a reason (code defaults to zero).
   */
- //  \{
+
+ /*! \function     Error::Error(const char* format, ...);
+  *                Builds a error characterized by a reason, using the \c vararg protocol
+  *                and \c printf format (code defaults to zero).
+  */
+
+ /*! \function     Error::Error(int code, const string& reason);
+  *                Builds a error characterized by a reason and a code useful 
+  *                within a switch. 
+  */
+
+ /*! \function     Error::Error(int code, const char* format, ...);
+  *                Builds a error characterized by a reason and a code useful 
+  *                within a switch. The reason is supplied in a \c printf
+  *                like  fashion.
+  */
+
 
  /*! \function     Error& Error::operator=(const Error& error);
   *                Assignment operator. 
   */
 
- //  \}
 
-
- /*! \name         Accessors
-  */
- //  \{
-
- /*! \function     const string& Error::GetReason() const;
+ /*! \function     string  Error::getReason() const;
   *  \Return       the reason for which the error was thrown. 
   */
 
- /*! \function     int Error::GetCode() const;
+ /*! \function     int Error::getCode() const;
   *  \Return       the error code number. 
   */
 
- //  \}
+ /*! \function     string  Error::textWhere() const;
+  *  \Return       A stack trace, suitable for tty.
+  */
 
-
+ /*! \function     string  Error::htmlWhere() const;
+  *  \Return       A stack trace, suitable for HTML.
+  */
 
  }

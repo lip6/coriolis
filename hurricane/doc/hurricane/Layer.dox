@@ -9,29 +9,92 @@
   *
   *  \section      secLayerIntro  Introduction
   *
-  *                There are two layer types : Basic layers which are indeed the 
-  *                real process layers (GDS ones) and composite layers on which 
-  *                are located components of the layout. A composite layer 
-  *                groups a set of basic layers. For example, the contact layer 
-  *                VIA12 is built of the basic layers CM1 (metal1), CM2 (metal2) 
-  *                and C12 (contact cuts between CM1 and CM2). 
+  *                Layers are divideds in three categories:
+  *                <ul>
+  *                  <li>Layer : the base class, it supplies a generic interface
+  *                      sufficent for most manipulations. However, there are cases
+  *                      when a specific derived class may be needed. Mostly when
+  *                      assembling the symbolic layers.
+  *                  <li>BasicLayer : they represents the real process layers (GDS ones).
+  *                      They possesses the following characteristics:
+  *                      <ul>
+  *                        <li>Each BasicLayer is associated with an unique bit in the
+  *                            Layer::Mask. This bit is used to find if a symbolic layer
+  *                            contains that particular BasicLayer.
+  *                        <li>No dimension extentions. Database objects drawn with those
+  *                            layers have rectangles the exact size specified by the
+  *                            user. This is mandatory if you want to create a real layout
+  *                            (by opposition to a symbolic one).
+  *                        <li>They have a \b material field hinting the purpose of the
+  *                            layer (is a routing metal, a cut, a diffusion and so on). 
+  *                        <li>They may have an associated blockage layer (for routing
+  *                            layers).
+  *                      </ul>
+  *                  <li><b>Symbolic Layers</b> : used to draw the various components of
+  *                      a symbolic layout. They are made of a list of BasicLayers and
+  *                      how to extend their dimensions from the user specified sizes.
+  *                      <ul>
+  *                        <li>RegularLayer : contains one BasicLayer, use for wires.
+  *                        <li>ViaLayer : contains three BasicLayer, for contact between
+  *                            metal layers. The BasicLayers must be of \c (metal,cut,metal)
+  *                            materials.
+  *                        <li>ContactLayer : contains four or five BasicLayers, for contact
+  *                            towards active layers or transistor gates. The fifth optional
+  *                            parameter is the well. Materials of the components must be of
+  *                            type \c (metal,cut,active,diffusion[,well])
+  *                        <li>DiffusionLayer : contains three BasicLayer, for diffusion area.
+  *                            Materials of the components must be of type
+  *                            \c (active,diffusion,well).
+  *                        <li>TransistorLayer : contains three to four layers, for representing
+  *                            digital transistors. Materials are of type :
+  *                            \c (gate,active,diffusion,well).
+  *                      </ul>
+  *                </ul>
   *
   *                Like for the Technology object, a layer must not be deleted, 
   *                else all components located on it will have a dangling 
   *                pointer to an deleted object ... 
+  *
+  *
+  *   \subsection  secBasicLayerOrder  BasicLayer Creation Ordering
+  *
+  *                The creation order is significant regarding the metal connectivity.
+  *                The metal & cut layers must be created in alternately fashion,
+  *                for example:
+  *                <center>
+  *                  <table>
+  *                    <tr><th>BasicLayer<th>Material<th>Layer::Mask
+  *                    <tr><td>\c cut0   <th>\c cut  <th>\c 0x00000010
+  *                    <tr><td>\c metal1 <th>\c metal<th>\c 0x00000020
+  *                    <tr><td>\c cut1   <th>\c cut  <th>\c 0x00000040
+  *                    <tr><td>\c metal2 <th>\c metal<th>\c 0x00000080
+  *                    <tr><td>\c cut2   <th>\c cut  <th>\c 0x00000100
+  *                    <tr><td>\c metal3 <th>\c metal<th>\c 0x00000200
+  *                  </table>
+  *                </center>
+  *
+  *
+  *   \subsection  secLayerLookup  Looking Up a Layer from a Mask
+  *
+  *                A BasicLayer is uniquely associated to a bit in the
+  *                Layer::Mask. But, multiple symbolic layers could be built
+  *                over that BasicLayer. In that case all those layers will
+  *                have the same mask. For the mask lookup functions not
+  *                to be confused, we introduce the concept of <b>working layer</b>
+  *                in all the symbolic layers with the same mask, this is the
+  *                one that will be returned.
   */
 
  /*! \typedef      Layer::Mask
   *                This type represents a mask bit field characterising 
   *                efficiently the constituents of any kind of layer. It 
-  *                associates to each basic layer a bit and to each composite 
+  *                associates to each basic layer a bit and to each symbolic 
   *                layer the union of the bits corresponding to its basic 
   *                layers. 
   */
 
- /*! \name         Accessors
-  */
- //  \{
+
+ //                Accessors
 
  /*! \function     Technology* Layer::getTechnology() const;
   *  \Return       the technolgy owning the layer. 
@@ -62,18 +125,93 @@
   *  \Return       the minimal spacing between two pads on this layer. 
   */
 
+ /*! \function     const DbU::Unit& Layer::getPitch() const;
+  *  \Return       the pitch between two routing wires on this layer.
+  *                Only significant for metal.
+  */
+
  /*! \function     BasicLayers Layer::getBasicLayers() const;
   *  \Return       the collection of basic layers within this layer. 
   *
   *  \remark       For a basic layer the collection contains this one only. 
   */
 
- //  \}
-
-
- /*! \name         Predicates
+ /*! \function     const Layer* Layer::getTop() const;
+  *  \Return       The uppermost layer of that layer. On BasicLayer, it is always
+  *                the layer itself. In symbolic layers the meaning depends on the
+  *                object structure.
+  *
+  *  \remark       In symbolic layers, top & bottom are not related to the Layer::Mask
+  *                but to the \e structuration of the layer. It is advisable that
+  *                the designer create layers and symbolic layers in way that ensure
+  *                the top layer is indeed the one with the greater mask.
   */
- //  \{
+
+ /*! \function     const Layer* Layer::getBottom() const;
+  *  \Return       The lowermost layer of that layer. On BasicLayer, it is always
+  *                the layer itself. In symbolic layers the meaning depends on the
+  *                object structure.
+  */
+
+ /*! \function     const Layer* Layer::getOpposite( const Layer* source ) const;
+  *  \Return       This method is only meaningful for ViaLayer. It returns the metal
+  *                Layer opposite to the one given in arguments.
+  */
+
+ /*! \function     Layer* Layer::getMetalAbove() const;
+  *  \Return       The metal <em>working layer</em> whose mask is immediatly above
+  *                this one.
+  */
+
+ /*! \function     Layer* Layer::getMetalBelow() const;
+  *  \Return       The metal <em>working layer</em> whose mask is immediatly below
+  *                this one.
+  */
+
+ /*! \function     Layer* Layer::getCutAbove() const;
+  *  \Return       The cut <em>working layer</em> whose mask is immediatly above
+  *                this one.
+  */
+
+ /*! \function     Layer* Layer::getCutBelow() const;
+  *  \Return       The cut <em>working layer</em> whose mask is immediatly below
+  *                this one.
+  */
+
+ /*! \function     DbU::Unit  Layer::getEnclosure() const;
+  *  \Return       The maximal enclosure, of all layers.
+  */
+
+ /*! \function     DbU::Unit  Layer::getExtensionCap() const;
+  *  \Return       The maximal extension cap, of all layers.
+  */
+
+ /*! \function     DbU::Unit  Layer::getExtensionWidth() const;
+  *  \Return       The maximal extension width, of all layers.
+  */
+
+ /*! \function     DbU::Unit  Layer::getEnclosure(const BasicLayer* layer) const;
+  *  \Return       The enclosure, for the given layer.
+  */
+
+ /*! \function     DbU::Unit  Layer::getExtensionCap(const BasicLayer* layer) const;
+  *  \Return       The extension cap, for the given layer.
+  */
+
+ /*! \function     DbU::Unit  Layer::getExtensionWidth(const BasicLayer* layer) const;
+  *  \Return       The extension width, for the given layer.
+  */
+
+
+ //                Predicates
+
+ /*! \function     bool  Layer::above(const Layer* layer) const;
+  *  \Return       \true, if \c layer is above this one.
+  */
+
+ /*! \function     bool  Layer::below(const Layer* layer) const;
+  *  \Return       \true, if \c layer is below this one.
+  */
 
  /*! \function     bool Layer::contains(const Layer* layer) const;
   *  \Return       \true if the \c \<layer\> is completely included in the layer 
@@ -86,12 +224,13 @@
   *                least a common basic layer, else \false. 
   */
 
- //  \}
-
-
- /*! \name         Modifiers
+ /*! \function     bool  Layer::isWorking() const;
+  *  \Return       \true, if this layer is the <em>working one</em>, that is, the
+  *                one that will be returned for any layer with it's Layer::Mask.
   */
- //  \{
+
+
+ //                Mutators
 
  /*! \function     void Layer::setName(const Name& name);
   *                sets or changes the layer name. 
@@ -101,18 +240,27 @@
   */
 
  /*! \function     void Layer::setMinimalSize(const DbU::Unit& minimalSize);
-  *                sets the minimal size of a pad on this layer. 
+  *                Sets the minimal size of a pad on this layer. 
   */
 
  /*! \function     void Layer::setMinimalSpacing(const DbU::Unit& minimalSpacing);
-  *                sets the minimal spacing between two pads on this layer. 
+  *                Sets the minimal spacing between two pads on this layer. 
   */
 
- //  \}
-
-
- /*! \name         Layer Collection
+ /*! \function     void Layer::setEnclosure(const BasicLayer* layer, DbU::Unit& enclosure);
+  *                Sets the enclosure for the given BasicLayer.
   */
+
+ /*! \function     void Layer::setExtentionCap(const BasicLayer* layer, DbU::Unit ecap);
+  *                Sets the extention cap for the given BasicLayer.
+  */
+
+ /*! \function     void Layer::setExtentionWidth(const BasicLayer* layer, DbU::Unit ewidth);
+  *                Sets the extention width for the given BasicLayer.
+  */
+
+
+ //! \name         Layer Collection
  //  \{
 
  /*! \typedef      Layers

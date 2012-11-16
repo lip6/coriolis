@@ -71,9 +71,7 @@ namespace Hurricane {
 
       gLayout->addWidget ( button, istyle-hideFallback, 0 );
       gLayout->addWidget ( label , istyle-hideFallback, 1 );
-
-      group->setId       ( button, istyle );
-      group->addButton   ( button );
+      group->addButton   ( button, istyle );
     }
 
     groupBox->setLayout ( gLayout );

@@ -34,9 +34,6 @@
   *                knowing it. 
   */
 
- /*! \name         Constructors
-  */
- //  \{
 
  /*! \function     Horizontal* Horizontal::create(Component* source, Component* target, const Layer* layer,const DbU::Unit& y, const DbU::Unit& width = 0,const DbU::Unit& dxSource = 0, const DbU::Unit& dxTarget = 0);
   *                No description.
@@ -52,12 +49,6 @@
   *                null. 
   */
 
- //  \}
-
-
- /*! \name         Accessors
-  */
- //  \{
 
  /*! \function     const DbU::Unit& Horizontal::getDxSource() const;
   *  \Return       the relative source abscissa of the segment (may be absolute 
@@ -75,12 +66,6 @@
   *                getTargetY() defined at the Segment level. 
   */
 
- //  \}
-
-
- /*! \name         Modifiers
-  */
- //  \{
 
  /*! \function     void Horizontal::setY(const DbU::Unit& x);
   *                sets the ordinate of the segment. 
@@ -91,11 +76,8 @@
   *                \c \<dy\>. 
   */
 
- //  \}
 
-
- /*! \name         Horizontal Collection
-  */
+ //! \name         Horizontal Collection
  //  \{
 
  /*! \typedef      Horizontals

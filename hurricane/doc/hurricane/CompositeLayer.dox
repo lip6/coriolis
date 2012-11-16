@@ -36,9 +36,6 @@
   *                slots: VIA 5 Contact layer 
   */
 
- /*! \name         Constructors
-  */
- //  \{
 
  /*! \function     CompositeLayer* CompositeLayer::create(Technology* technology,const Name& name,const CompositeLayer::Type& type,const Unit& minimalSize = 0,const Unit& minimalSpacing = 0);
   *                creates and returns a new composite layer named \c \<name\>, 
@@ -49,12 +46,6 @@
   *                empty or if a layer of same name already exists. 
   */
 
- //  \}
-
-
- /*! \name         Accessors
-  */
- //  \{
 
  /*! \function     const CompositeLayer::Type& CompositeLayer::getType() const;
   *  \Return       the composite layer type. 
@@ -103,12 +94,6 @@
   *                composite layer. 
   */
 
- //  \}
-
-
- /*! \name         Modifiers
-  */
- //  \{
 
  /*! \function     void CompositeLayer::add(BasicLayer* basicLayer,const Unit& contactSize,const Unit& segmentSize,const Unit& segmentExtention,const Unit& padSize);
   *                adds the basic layer with associated characteristics 
@@ -150,11 +135,8 @@ assert(metal2GetPadSize(CM2) == padSize);
   *                pertain to the composite layer. 
   */
 
- //  \}
 
-
- /*! \name         CompositeLayer Collection
-  */
+ //! \name         CompositeLayer Collection
  //  \{
 
  /*! \typedef      CompositeLayers

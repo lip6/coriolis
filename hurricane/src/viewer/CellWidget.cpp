@@ -2,11 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
-//
-// ===================================================================
-//
-// $Id$
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -15,7 +11,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./CellWidget.cpp"                         |
+// |  C++ Module  :  "./CellWidget.cpp"                              |
 // +-----------------------------------------------------------------+
 
 
@@ -53,27 +49,6 @@
 // #include "MapView.h"
 #include "hurricane/viewer/Command.h"
 #include "hurricane/viewer/CellWidget.h"
-
-
-namespace {
-
-
-  using namespace std;
-
-
-  string  getTime ( const char* format )
-  {
-    time_t     t  = time(NULL);
-    struct tm* bt = localtime(&t);
-    char       formatted[1024];
-    
-    strftime ( formatted, 1024, format, bt );
-
-    return formatted;
-  }
-
-
-}  // End of anonymous namespace.
 
 
 namespace Hurricane {
@@ -510,165 +485,50 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::DrawingPlanes::drawCartouche ( int right
-                                                 , int bottom
-                                                 , const string& title
-                                                 , const string& area
-                                                 )
+  void  CellWidget::DrawingPlanes::copyToPrinter ( int                      xpaper
+                                                 , int                      ypaper
+                                                 , int                      sx
+                                                 , int                      sy
+                                                 , int                      w
+                                                 , int                      h
+                                                 , QPrinter*                printer
+                                                 , CellWidget::PainterCb_t& cb )
   {
-    QFont font ( "Bitstream Vera Sans", 18 );
-    font.setWeight ( QFont::Bold );
+    if (printer == NULL) return;
 
-    string user = getenv ( "USER" );
-    if ( user.empty() ) user = "unkown";
-    else {
-      size_t equal = user.find('=');
-      if ( equal != string::npos )
-        user.erase ( 0, equal );
-    }
+    cerr << "offsetVA:" << _cellWidget->getOffsetVA().rx() << "," << _cellWidget->getOffsetVA().ry() << endl;
 
-    string date = getTime ( "%d %b %Y" );
-
-    QPen cartouchePen = QPen ( QBrush(QColor("black")), 1.0 );
-    _painters[PlaneId::Printer].setPen ( cartouchePen );
-
-    QRect cartoucheRect = QRect ( right  - _cartoucheWidth
-                                , bottom - _cartoucheHeight
-                                , _cartoucheWidth
-                                , _cartoucheHeight
-                                );
-    QRect titleRect = cartoucheRect;
-    titleRect.adjust ( 0, 0, 0,  _titleHeight - _cartoucheHeight );
-
-    cartouchePen.setWidth ( 2 );
-    _painters[PlaneId::Printer].setPen   ( cartouchePen );
-    _painters[PlaneId::Printer].drawRect ( cartoucheRect );
-    cartouchePen.setWidth ( 1 );
-    _painters[PlaneId::Printer].setPen   ( cartouchePen );
-    _painters[PlaneId::Printer].drawLine ( titleRect.bottomLeft(), titleRect.bottomRight() );
-    _painters[PlaneId::Printer].setFont  ( font );
-    _painters[PlaneId::Printer].drawText ( titleRect, Qt::AlignVCenter|Qt::AlignHCenter, title.c_str() );
-
-    QRect fieldRect = QRect ( cartoucheRect.x()
-                            , cartoucheRect.y() + _titleHeight
-                            , 100
-                            , _cartoucheHeight - _titleHeight
-                            );
-    font.setPointSize ( 11 );
-    _painters[PlaneId::Printer].setFont  ( font );
-    _painters[PlaneId::Printer].drawLine ( fieldRect.topRight(), fieldRect.bottomRight() );
-    _painters[PlaneId::Printer].drawText ( fieldRect, Qt::AlignVCenter|Qt::AlignHCenter, user.c_str() );
-
-    fieldRect = QRect ( cartoucheRect.x() + 100
-                      , cartoucheRect.y() + _titleHeight
-                      , 120
-                      , _cartoucheHeight - _titleHeight
-                      );
-    font.setWeight ( QFont::Normal );
-    _painters[PlaneId::Printer].setFont  ( font );
-    _painters[PlaneId::Printer].drawLine ( fieldRect.topRight(), fieldRect.bottomRight() );
-    _painters[PlaneId::Printer].drawText ( fieldRect, Qt::AlignVCenter|Qt::AlignHCenter, date.c_str() );
-
-    fieldRect = QRect ( cartoucheRect.x() + 220
-                      , cartoucheRect.y() + _titleHeight
-                      , 300
-                      , _cartoucheHeight - _titleHeight
-                      );
-    _painters[PlaneId::Printer].setFont  ( font );
-    _painters[PlaneId::Printer].drawLine ( fieldRect.topRight(), fieldRect.bottomRight() );
-    _painters[PlaneId::Printer].drawText ( fieldRect, Qt::AlignVCenter|Qt::AlignHCenter, area.c_str() );
-  }
-
-
-  void  CellWidget::DrawingPlanes::copyToPrinter ( int sx, int sy, int w, int h, QPrinter* printer, bool imageOnly )
-  {
-    if ( !printer ) return;
     _printer = printer;
-    _printer->setPageMargins ( 0.0, 0.0, 0.0, 0.0, QPrinter::DevicePixel );
-
-    int paperWidth    = _printer->width ();
-    int paperHeight   = _printer->height ();
-    int frameMargin   = 25;
-    int drawingWidth  = paperWidth  - (frameMargin<<1);
-    int drawingHeight = paperHeight - (frameMargin<<1);
-    int ximage        = 0;
-    int yimage        = 0;
-
-  // Substract the cartouche size only for A4 format.
-    if ( _printer->paperSize  () == QPrinter::A4 ) {
-      if ( _printer->orientation() == QPrinter::Landscape ) {
-        drawingWidth -= _cartoucheHeight;
-      } else {
-        drawingHeight -= _cartoucheHeight;
-      }
-    }
-
-    if ( imageOnly ) {
-      _printer->setPaperSize ( QSizeF(w,h), QPrinter::DevicePixel );
-    } else {
-      ximage = frameMargin + ((drawingWidth  > w) ? (drawingWidth -w)/2 : 0);
-      yimage = frameMargin + ((drawingHeight > h) ? (drawingHeight-h)/2 : 0);
-    }
-
-    begin ( PlaneId::Printer );
+    begin( PlaneId::Printer );
 
     if ( _cellWidget->showSelection() )
       _painters[PlaneId::Printer].drawPixmap
-        ( ximage, yimage
+        ( xpaper, ypaper
         , *_planes[PlaneId::Selection]
         , _cellWidget->getOffsetVA().rx()+sx, _cellWidget->getOffsetVA().ry()+sy
         , w, h
         );
     else
       _painters[PlaneId::Printer].drawPixmap
-        ( ximage, yimage
+        ( xpaper, ypaper
         , *_planes[PlaneId::Normal]
         , _cellWidget->getOffsetVA().rx()+sx, _cellWidget->getOffsetVA().ry()+sy
         , w, h
         );
 
-    if ( !imageOnly ) {
-      DbU::Unit x1 = _cellWidget->displayToDbuX ( sx );
-      DbU::Unit x2 = _cellWidget->displayToDbuX ( sx+w );
-      DbU::Unit y1 = _cellWidget->displayToDbuY ( sy );
-      DbU::Unit y2 = _cellWidget->displayToDbuY ( sy+h );
+    if ( cb ) cb( _painters[PlaneId::Printer] );
 
-      string title = getString(_cellWidget->getCell()->getName());
-      string area  = "Area: [" + DbU::getValueString(x1)
-                   + " "       + DbU::getValueString(y1)
-                   + "] ["     + DbU::getValueString(x2)
-                   + " "       + DbU::getValueString(y2)
-                   + "]";
-
-      QPen framePen = QPen ( QBrush(QColor("black")), 1.0 );
-      _painters[PlaneId::Printer].setPen ( framePen );
-      _painters[PlaneId::Printer].drawRect ( frameMargin
-                                           , frameMargin
-                                           , paperWidth  - (frameMargin<<1)
-                                           , paperHeight - (frameMargin<<1)
-                                           );
-
-      if (    (_printer->paperSize  () == QPrinter::A4)
-           && (_printer->orientation() == QPrinter::Landscape) ) {
-        _painters[PlaneId::Printer].translate ( paperWidth - frameMargin, frameMargin );
-        _painters[PlaneId::Printer].rotate ( -90 );
-      } else
-        _painters[PlaneId::Printer].translate ( paperWidth - frameMargin, paperHeight - frameMargin );
-
-      drawCartouche ( 0, 0, title , area );
-    }
-
-    end ( PlaneId::Printer );
+    end( PlaneId::Printer );
     _printer = NULL;
   }
 
 
-  void  CellWidget::DrawingPlanes::copyToImage ( int sx, int sy, int w, int h, QImage* image, bool noScale )
+  void  CellWidget::DrawingPlanes::copyToImage ( int sx, int sy, int w, int h, QImage* image, CellWidget::PainterCb_t& cb )
   {
-    int   ximage    = 0;
-    int   yimage    = 0;
+    int   ximage = 0;
+    int   yimage = 0;
 
-    if ( !image ) return;
+    if (image == NULL) return;
     _image = image;
 
     begin ( PlaneId::Image );
@@ -691,25 +551,7 @@ namespace Hurricane {
           );
     }
 
-    if ( !noScale ) {
-        int xGradient = (w-510)/2;
-        _painters[PlaneId::Image].setPen(Qt::white);
-        _painters[PlaneId::Image].drawRect(xGradient-1, h+9, 512, 31);
-        _painters[PlaneId::Image].setPen(Qt::NoPen);
-        for ( unsigned i = 0 ; i < 256 ; i++ ) {
-            _painters[PlaneId::Image].setBrush(Graphics::getColorScale(ColorScale::Fire).getBrush(i,100) );
-            _painters[PlaneId::Image].drawRect(xGradient+(i*2), h+10, 2, 30);
-            if ( i==0 || i==51 || i==102 || i==153 || i==204 || i==255 ) {
-                QRect tArea (xGradient+(i*2)-15, h+44, 30, 12);
-                std::ostringstream oss;
-                oss << (float)(i)/255;
-                _painters[PlaneId::Image].setPen(Qt::white);
-                _painters[PlaneId::Image].drawLine(xGradient+(i*2), h+38, xGradient+(i*2), h+42);
-                _painters[PlaneId::Image].drawText(tArea, Qt::AlignCenter, oss.str().c_str());
-                _painters[PlaneId::Image].setPen(Qt::NoPen);
-            }
-        }
-    }
+    if ( cb ) cb( _painters[PlaneId::Image] );
 
     end ( PlaneId::Image );
     _image = NULL;
@@ -1093,6 +935,29 @@ namespace Hurricane {
 
 // -------------------------------------------------------------------
 // Class :  "Hurricane::CellWidget::State".
+
+
+  CellWidget::State* CellWidget::State::clone () const
+  {
+    State* clone = new State();
+
+    clone->setCell               ( getCell() );
+    clone->setCursorStep         ( getCursorStep() );
+    clone->setUnitPower          ( getUnitPower() );
+    clone->setDbuMode            ( getDbuMode() );
+    clone->setShowBoundaries     ( showBoundaries() );
+    clone->setShowSelection      ( showSelection() );
+    clone->setCumulativeSelection( cumulativeSelection() );
+    clone->setScale              ( getScale() );
+    clone->setTopLeft            ( getTopLeft() );
+    clone->setQueryFilter        ( getQueryFilter() );
+    clone->setStartLevel         ( getStartLevel() );
+    clone->setStopLevel          ( getStopLevel() );
+    clone->setRubberShape        ( getRubberShape() );
+    clone->setTopLeft            ( getTopLeft() );
+
+    return clone;
+  }
 
 
   void  CellWidget::State::setScale ( float scale )
@@ -1481,7 +1346,7 @@ namespace Hurricane {
       _cellModificated = false;
     }
 
-    if ( isDrawable("grid")       ) drawGrid   ( redrawArea );
+    if ( isDrawable("grid") )       drawGrid   ( redrawArea );
     if ( isDrawable("text.ruler") ) drawRulers ( redrawArea );
 
     setDarkening ( 100 );
@@ -1613,6 +1478,13 @@ namespace Hurricane {
   {
     if ( !_palette ) return;
     _palette->setItemVisible ( layer, visible ); 
+  }
+
+
+  bool  CellWidget::isLayerVisible ( const Name& name )
+  {
+    PaletteItem* item  = (_palette) ? _palette->find(name) : NULL;
+    return (item == NULL) ? false : item->isItemVisible();
   }
 
 
@@ -2101,6 +1973,8 @@ namespace Hurricane {
   Box  CellWidget::computeVisibleArea ( float scale ) const
   {
     Point center = _visibleArea.getCenter();
+
+    cerr << "center: " << center << " + scale:" << scale << endl;
 
     return Box ( (DbU::Unit)( center.getX() - width () / (scale*2) ) 
                , (DbU::Unit)( center.getY() - height() / (scale*2) ) 

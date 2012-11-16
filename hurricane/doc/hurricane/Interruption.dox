@@ -22,9 +22,6 @@
   *                this class. 
   */
 
- /*! \name         Constructors
-  */
- //  \{
 
  /*! \function     Interruption::Interruption(const string& reason, int code = 0);
   *                Builds an interruption characterized by a reason and a code 
@@ -35,23 +32,11 @@
   *                Copy constructor. 
   */
 
- //  \}
-
-
- /*! \name         Operators
-  */
- //  \{
 
  /*! \function     Interruption& Interruption::operator=(const Interruption& interruption);
   *                Assignment operator. 
   */
 
- //  \}
-
-
- /*! \name         Accessors
-  */
- //  \{
 
  /*! \function     const string& Interruption::GetReason() const;
   *  \Return       the reason for which the interruption was thrown. 
@@ -60,8 +45,5 @@
  /*! \function     int Interruption::GetCode() const;
   *  \Return       the interruption code number. 
   */
-
- //  \}
-
 
  }

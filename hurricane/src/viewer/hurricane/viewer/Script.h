@@ -2,11 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
-//
-// ===================================================================
-//
-// $Id$
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
@@ -23,7 +19,7 @@
 # define  __ISOBAR_SCRIPT__
 
 #include <vector>
-#include <Python.h>
+
 namespace Hurricane {
   class Cell;
   class CellViewer;
@@ -35,7 +31,7 @@ namespace Isobar {
 
   class Script {
     public:
-      enum Flags { NoScriptArgs=0x1 };
+      enum   Flags     { NoScriptArgs=0x1, Initialized=0x10 };
     public:
       static void      addPath            ( const std::string& path );
       static void      removePath         ( const std::string& path );
@@ -56,6 +52,9 @@ namespace Isobar {
              PyObject*                 _pyArgs;
              PyObject*                 _pyResult;
              Hurricane::CellViewer*    _cellViewer;
+             PyThreadState*            _globalState;
+             PyThreadState*            _subInterpreter;
+             long                      _flags;
     protected:                            
                 Script           ( const std::string& name );
                ~Script           ();

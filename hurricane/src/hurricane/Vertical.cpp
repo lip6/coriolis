@@ -187,9 +187,9 @@ Record* Vertical::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->add(getSlot("X", &_x));
-        record->add(getSlot("DySource", &_dySource));
-        record->add(getSlot("DyTarget", &_dyTarget));
+        record->add(DbU::getValueSlot("X", &_x));
+        record->add(DbU::getValueSlot("DySource", &_dySource));
+        record->add(DbU::getValueSlot("DyTarget", &_dyTarget));
     }
     return record;
 }

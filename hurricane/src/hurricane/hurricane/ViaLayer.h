@@ -95,4 +95,7 @@ namespace Hurricane {
 } // End of Hurricane namespace.
 
 
+INSPECTOR_P_SUPPORT(Hurricane::ViaLayer);
+
+
 # endif

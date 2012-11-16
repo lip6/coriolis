@@ -39,15 +39,8 @@
 
 
 
- /*  \name         SelectNetCommand Functions
-  */
- //  \{
-
  /*  \function     SelectNetCommand* SelectNetCommand::GetSelectNetCommand();
   *  \Return       the select net command object. 
   */
-
- //  \}
-
 
  }

@@ -1,36 +1,32 @@
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+
+// -*- C++ -*-
+//
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+//
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
-// |  Author      :                    Jean-Paul CHAPUT              |
+// |  Authors     :                    Jean-Paul CHAPUT              |
+// |                                      Damien DUPUIS              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./PyHurricane.h"                          |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |     Damien DUPUIS                                26/04/2005     |
-// |                                                                 |
-// x-----------------------------------------------------------------x
-
-
+// |  C++ Header  :  "./hurricane/isobar/PyHurricane.h"              |
+// +-----------------------------------------------------------------+
 
 
 #ifndef __PYHURRICANE__
 #define __PYHURRICANE__
 
-
 #include "Python.h"
-
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
 #include <map>
-
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
-
 #include "hurricane/isobar/ProxyProperty.h"
 
 namespace Isobar {
@@ -215,6 +211,36 @@ extern "C" {
   }
 
 
+# define  predicateFromLayer(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)                          \
+  static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )    \
+  {                                                                                     \
+    trace << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                                 \
+                                                                                        \
+    HTRY                                                                                \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")                  \
+                                                                                        \
+    PyObject* arg0   = NULL;                                                            \
+    bool      rvalue = false;                                                           \
+                                                                                        \
+    __cs.init (#SELF_TYPE"."#FUNC_NAME"()");                                            \
+    if (PyArg_ParseTuple( args, "O&:"#SELF_TYPE"."#FUNC_NAME"()", Converter, &arg0)) {  \
+      if ( __cs.getObjectIds() == ":layer" )                                            \
+        rvalue = cobject->FUNC_NAME( PYLAYER_O(arg0) );                                 \
+      else {                                                                            \
+        PyErr_SetString ( ConstructorError                                              \
+                        , "invalid parameter type for "#SELF_TYPE"."#FUNC_NAME"()." );  \
+        return NULL;                                                                    \
+      }                                                                                 \
+    } else {                                                                            \
+      PyErr_SetString ( ConstructorError                                                \
+                      , "Invalid number of parameters passed to "#SELF_TYPE"."#FUNC_NAME"()." ); \
+      return NULL;                                                                      \
+    }                                                                                   \
+    if (rvalue) Py_RETURN_TRUE;                                                         \
+    HCATCH                                                                              \
+                                                                                        \
+    Py_RETURN_FALSE;                                                                    \
+  }
 
 
 // -------------------------------------------------------------------
@@ -224,11 +250,29 @@ extern "C" {
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )          \
   {                                                                             \
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectGetBoolAttribute()")           \
-    if (cobject->FUNC_NAME()) {                                                 \
-        Py_RETURN_TRUE;                                                         \
-    } else {                                                                    \
-        Py_RETURN_FALSE;                                                        \
-    }                                                                           \
+    if (cobject->FUNC_NAME())                                                   \
+      Py_RETURN_TRUE;                                                           \
+    Py_RETURN_FALSE;                                                            \
+  }
+
+
+
+
+// -------------------------------------------------------------------
+// Attribute Method Macro For Predicates.
+
+# define  DirectIsAFromCStringAttribute(PY_FUNC_NAME,FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
+  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )          \
+  {                                                                             \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectIsAFromCStringAttribute()")    \
+    HTRY                                                                        \
+    char* value = NULL;                                                         \
+    if ( !PyArg_ParseTuple(args, "s:", &value) )                                \
+      return NULL;                                                              \
+    if (cobject->FUNC_NAME(value))                                              \
+      Py_RETURN_TRUE;                                                           \
+    HCATCH                                                                      \
+    Py_RETURN_FALSE;                                                            \
   }
 
 
@@ -246,13 +290,183 @@ extern "C" {
 
 
 // -------------------------------------------------------------------
+// Attribute Method Macro For Unsigned Int.
+
+# define  DirectGetUIntAttribute(PY_FUNC_NAME,FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
+  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )          \
+  {                                                                             \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectGetUIntAttribute()")           \
+    return ( Py_BuildValue ("I",cobject->FUNC_NAME()) );                        \
+  }
+
+
+// -------------------------------------------------------------------
 // Attribute Method Macro For Double.
 
 # define  DirectGetDoubleAttribute(PY_FUNC_NAME,FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
-  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )          \
-  {                                                                             \
-    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectGetDoubleAttribute()")         \
-    return ( Py_BuildValue ("d",cobject->FUNC_NAME()) );                        \
+  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )            \
+  {                                                                               \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectGetDoubleAttribute()")           \
+    return ( Py_BuildValue ("d",cobject->FUNC_NAME()) );                          \
+  }
+
+
+// -------------------------------------------------------------------
+// Attribute Method Macro For String.
+
+# define  DirectGetStringAttribute(PY_FUNC_NAME,FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
+  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self )                            \
+  {                                                                               \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectGetStringAttribute()")           \
+      return ( Py_BuildValue ("s",cobject->FUNC_NAME().c_str()) );                \
+  }
+
+
+# define  accessorAnyLayerFromName(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE,LAYER_TYPE)         \
+  static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )    \
+  {                                                                                     \
+    trace << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                                 \
+                                                                                        \
+    LAYER_TYPE * rlayer = NULL;                                                         \
+                                                                                        \
+    HTRY                                                                                \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")                  \
+                                                                                        \
+    char* name = NULL;                                                                  \
+                                                                                        \
+    if (PyArg_ParseTuple( args, "s:"#SELF_TYPE"."#FUNC_NAME"()", &name)) {              \
+      rlayer = const_cast< LAYER_TYPE *>( cobject->FUNC_NAME(Name(name)) );             \
+    } else {                                                                            \
+      PyErr_SetString ( ConstructorError                                                \
+                      , "Invalid number of parameters passed to "#SELF_TYPE"."#FUNC_NAME"()." );  \
+      return NULL;                                                                      \
+    }                                                                                   \
+    HCATCH                                                                              \
+                                                                                        \
+    if (rlayer == NULL) Py_RETURN_NONE;                                                 \
+    return Py##LAYER_TYPE##_Link(rlayer);                                               \
+  }
+
+
+# define  accessorLayerFromLayerOptBool(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)               \
+  static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )    \
+  {                                                                                     \
+    trace << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                                 \
+                                                                                        \
+    Layer* rlayer = NULL;                                                               \
+                                                                                        \
+    HTRY                                                                                \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")                  \
+                                                                                        \
+    PyObject* arg0       = NULL;                                                        \
+    PyObject* arg1       = NULL;                                                        \
+    bool      useWorking = true;                                                        \
+                                                                                        \
+    if (PyArg_ParseTuple( args, "O|O:"#SELF_TYPE"."#FUNC_NAME"()", &arg0, &arg1)) {     \
+      if (not IsPyLayer(arg0)) {                                                        \
+        PyErr_SetString ( ConstructorError                                              \
+                        , #SELF_TYPE"."#FUNC_NAME"(): First argument is not of Layer type." );  \
+        return NULL;                                                                    \
+      }                                                                                 \
+      if (arg1 != NULL) {                                                               \
+        useWorking = PyObject_IsTrue(arg1);                                             \
+      }                                                                                 \
+    } else {                                                                            \
+      PyErr_SetString ( ConstructorError                                                \
+                      , "Invalid number of parameters passed to "#SELF_TYPE"."#FUNC_NAME"()." );  \
+      return NULL;                                                                      \
+    }                                                                                   \
+    rlayer = const_cast<Layer*>(cobject->FUNC_NAME( PYLAYER_O(arg0), useWorking) );     \
+    HCATCH                                                                              \
+                                                                                        \
+    if (rlayer == NULL) Py_RETURN_NONE;                                                 \
+    return PyLayer_Link(rlayer);                                                        \
+  }
+
+
+# define  accessorLayerFromLayerLayer(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)                  \
+  static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )     \
+  {                                                                                      \
+    trace << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                                  \
+                                                                                         \
+    Layer* rlayer = NULL;                                                                \
+                                                                                         \
+    HTRY                                                                                 \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")                   \
+                                                                                         \
+    PyObject* arg0       = NULL;                                                         \
+    PyObject* arg1       = NULL;                                                         \
+                                                                                         \
+    if (PyArg_ParseTuple( args, "OO:"#SELF_TYPE"."#FUNC_NAME"()", &arg0, &arg1)) {       \
+      if (not IsPyLayer(arg0) or not IsPyLayer(arg1)) {                                  \
+        PyErr_SetString ( ConstructorError                                               \
+                        , #SELF_TYPE"."#FUNC_NAME"(): First or second argument is not of Layer type." );  \
+        return NULL;                                                                     \
+      }                                                                                  \
+    } else {                                                                             \
+      PyErr_SetString ( ConstructorError                                                 \
+                      , "Invalid number of parameters passed to "#SELF_TYPE"."#FUNC_NAME"()." );  \
+      return NULL;                                                                       \
+    }                                                                                    \
+    rlayer = const_cast<Layer*>(cobject->FUNC_NAME( PYLAYER_O(arg0), PYLAYER_O(arg1)) ); \
+    HCATCH                                                                               \
+                                                                                         \
+    if (rlayer == NULL) Py_RETURN_NONE;                                                  \
+    return PyLayer_Link(rlayer);                                                         \
+  }
+
+
+# define  accessorLayerFromInt(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)                         \
+  static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )     \
+  {                                                                                      \
+    trace << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                                  \
+                                                                                         \
+    Layer* rlayer = NULL;                                                                \
+    int    value  = 0;                                                                   \
+                                                                                         \
+    HTRY                                                                                 \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")                   \
+                                                                                         \
+    if (PyArg_ParseTuple( args, "i:"#SELF_TYPE"."#FUNC_NAME"()", &value)) {              \
+      rlayer = const_cast<Layer*>(cobject->FUNC_NAME(value) );                           \
+    } else {                                                                             \
+      PyErr_SetString ( ConstructorError                                                 \
+                      , "Invalid number of parameters passed to "#SELF_TYPE"."#FUNC_NAME"()." );  \
+      return NULL;                                                                       \
+    }                                                                                    \
+    HCATCH                                                                               \
+                                                                                         \
+    if (rlayer == NULL) Py_RETURN_NONE;                                                  \
+    return PyLayer_Link(rlayer);                                                         \
+  }
+
+
+# define  updatorFromBasicLayer(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)                        \
+  static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )     \
+  {                                                                                      \
+    trace << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                                  \
+                                                                                         \
+    HTRY                                                                                 \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")                   \
+                                                                                         \
+    PyObject* pyBasicLayer = NULL;                                                       \
+                                                                                         \
+    if (PyArg_ParseTuple( args, "O:"#SELF_TYPE"."#FUNC_NAME"()", &pyBasicLayer)) {       \
+      BasicLayer* layer = PYBASICLAYER_O(pyBasicLayer);                                  \
+      if (layer == NULL) {                                                               \
+        PyErr_SetString ( ConstructorError                                               \
+                        , #SELF_TYPE"."#FUNC_NAME"(): First parameter is not of BasicLayer type" ); \
+        return NULL;                                                                     \
+      }                                                                                  \
+      cobject->FUNC_NAME( layer );                                                       \
+    } else {                                                                             \
+      PyErr_SetString ( ConstructorError                                                 \
+                      , #SELF_TYPE"."#FUNC_NAME"(): Bad parameters types or numbers." ); \
+      return NULL;                                                                       \
+    }                                                                                    \
+    HCATCH                                                                               \
+                                                                                         \
+    Py_RETURN_NONE;                                                                      \
   }
 
 
@@ -269,7 +483,7 @@ extern "C" {
     if ( not PyArg_ParseTuple ( args, "O:" STR_FUNC_NAME, &arg0 ) or PyBool_Check(arg0) ) \
       return NULL;                                                              \
                                                                                 \
-    (arg0 == Py_True) ? cobject->FUNC_NAME (true) : cobject->FUNC_NAME (false); \
+    (PyObject_IsTrue(arg0)) ? cobject->FUNC_NAME (true) : cobject->FUNC_NAME (false); \
     HCATCH                                                                      \
                                                                                 \
     Py_RETURN_NONE;                                                             \
@@ -292,6 +506,44 @@ extern "C" {
     HCATCH                                                             \
                                                                        \
     Py_RETURN_NONE;                                                    \
+  }
+
+
+// -------------------------------------------------------------------
+// Attribute Method Macro For Double.
+
+#define  DirectSetDoubleAttribute(PY_FUNC_NAME,FUNC_NAME,PY_FORMAT,PY_SELF_TYPE,SELF_TYPE) \
+  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )   \
+  {                                                                      \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectSetDoubleAttribute()")  \
+                                                                         \
+    HTRY                                                                 \
+    PyObject* arg0;                                                      \
+    if ( ! PyArg_ParseTuple ( args, "O:" PY_FORMAT, &arg0 ) )            \
+      return ( NULL );                                                   \
+    cobject->FUNC_NAME ( PyFloat_AsDouble(arg0) );                       \
+    HCATCH                                                               \
+                                                                         \
+    Py_RETURN_NONE;                                                      \
+  }
+
+
+// -------------------------------------------------------------------
+// Attribute Method Macro For C String (char*).
+
+#define  DirectSetCStringAttribute(PY_FUNC_NAME,FUNC_NAME,PY_FORMAT,PY_SELF_TYPE,SELF_TYPE) \
+  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )    \
+  {                                                                       \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectSetCStringAttribute()")  \
+                                                                          \
+    HTRY                                                                  \
+    char* value = NULL;                                                   \
+    if ( !PyArg_ParseTuple(args, "s:" PY_FORMAT, &value) )                \
+      return NULL;                                                        \
+    cobject->FUNC_NAME ( value );                                         \
+    HCATCH                                                                \
+                                                                          \
+    Py_RETURN_NONE;                                                       \
   }
 
 
@@ -344,18 +596,18 @@ extern "C" {
 // -------------------------------------------------------------------
 // Attribute Method For Deletion.
 
-#define  DirectDeleteMethod(PY_FUNC_NAME, PY_SELF_TYPE)     \
-  static void PY_FUNC_NAME ( PY_SELF_TYPE *self )           \
-  {                                                         \
-    trace << #PY_SELF_TYPE"_DeAlloc(" << hex << self << ") "    \
-          << self->ACCESS_OBJECT << endl;                   \
-                                                            \
-    if ( self->ACCESS_OBJECT ) {                            \
-        trace << "C++ object := " << hex                    \
-              << &(self->ACCESS_OBJECT) << endl;                \
-        delete self->ACCESS_OBJECT;                         \
-    }                                                       \
-    PyObject_DEL ( self );                                  \
+#define  DirectDeleteMethod(PY_FUNC_NAME, PY_SELF_TYPE)      \
+  static void PY_FUNC_NAME ( PY_SELF_TYPE *self )            \
+  {                                                          \
+    trace << #PY_SELF_TYPE"_DeAlloc(" << hex << self << ") " \
+          << self->ACCESS_OBJECT << endl;                    \
+                                                             \
+    if ( self->ACCESS_OBJECT ) {                             \
+        trace << "C++ object := " << hex                     \
+              << &(self->ACCESS_OBJECT) << endl;             \
+        delete self->ACCESS_OBJECT;                          \
+    }                                                        \
+    PyObject_DEL ( self );                                   \
   }
 
 
@@ -387,6 +639,7 @@ extern "C" {
 
 // -------------------------------------------------------------------
 // Attribute Method For void methods.
+
 #define DirectVoidMethod(SELF_TYPE, SELF_OBJECT, FUNC_NAME)             \
   static PyObject* Py##SELF_TYPE##_##FUNC_NAME(Py##SELF_TYPE* self)     \
   {                                                                     \
@@ -402,48 +655,48 @@ extern "C" {
 // -------------------------------------------------------------------
 // Collection and Locator macros
 
-
-#define CollectionMethods(TYPE)                                                        \
-  static PyObject* GetLocator(Py##TYPE##Collection* collection) {                      \
-      Py##TYPE##CollectionLocator* cl =                                                \
-          PyObject_New(Py##TYPE##CollectionLocator, &PyType##TYPE##CollectionLocator); \
-      if (cl == NULL) {                                                                \
-          return NULL;                                                                 \
-      }                                                                                \
-      cl->_collection = collection;                                                    \
-      cl->_object = collection->_object->getLocator();                                 \
-      Py_INCREF(collection);                                                           \
-      return (PyObject *)cl;                                                           \
-  }                                                                                    \
-                                                                                       \
-  static void Py##TYPE##CollectionLocatorDeAlloc(Py##TYPE##CollectionLocator* locator) {         \
-      Py_XDECREF(locator->_collection);                                                \
-      if (locator->_object) {                                                          \
-          delete locator->_object;                                                     \
-      }                                                                                \
-      PyObject_Del(locator);                                                           \
-  }                                                                                    \
-                                                                                       \
-  extern void Py##TYPE##Collection_LinkPyType () {                                     \
-    trace << "Py"#TYPE"Collection_LinkType()" << endl;                                 \
-    PyType##TYPE##Collection.tp_iter = (getiterfunc)GetLocator;      /* tp_iter */     \
-    PyType##TYPE##Collection.tp_dealloc = (destructor)Py##TYPE##Collection_DeAlloc;    \
-    PyType##TYPE##CollectionLocator.tp_dealloc = (destructor)Py##TYPE##CollectionLocatorDeAlloc; \
-    PyType##TYPE##CollectionLocator.tp_iter = PyObject_SelfIter;                       \
-    PyType##TYPE##CollectionLocator.tp_iternext = (iternextfunc)Py##TYPE##LocatorNext; \
+#define CollectionMethods(TYPE)                                                          \
+  static PyObject* GetLocator(Py##TYPE##Collection* pyCollection)                        \
+  {                                                                                      \
+      Py##TYPE##CollectionLocator* pyLocator =                                           \
+          PyObject_New(Py##TYPE##CollectionLocator, &PyType##TYPE##CollectionLocator);   \
+      if (pyLocator == NULL) return NULL;                                                \
+                                                                                         \
+      pyLocator->_collection = pyCollection;                                             \
+      pyLocator->_object     = pyCollection->_object->getLocator();                      \
+      Py_INCREF(pyCollection);                                                           \
+      return (PyObject*)pyLocator;                                                       \
+  }                                                                                      \
+                                                                                         \
+  static void Py##TYPE##CollectionLocatorDeAlloc(Py##TYPE##CollectionLocator* pyLocator) \
+  {                                                                                      \
+      Py_XDECREF(pyLocator->_collection);                                                \
+      if (pyLocator->_object) delete pyLocator->_object;                                 \
+      PyObject_Del(pyLocator);                                                           \
+  }                                                                                      \
+                                                                                         \
+  extern void Py##TYPE##Collection_LinkPyType ()                                         \
+  {                                                                                      \
+    trace << "Py"#TYPE"Collection_LinkType()" << endl;                                   \
+    PyType##TYPE##Collection.tp_iter            = (getiterfunc)GetLocator;               \
+    PyType##TYPE##Collection.tp_dealloc         = (destructor)Py##TYPE##Collection_DeAlloc;       \
+    PyType##TYPE##CollectionLocator.tp_dealloc  = (destructor)Py##TYPE##CollectionLocatorDeAlloc; \
+    PyType##TYPE##CollectionLocator.tp_iter     = PyObject_SelfIter;                     \
+    PyType##TYPE##CollectionLocator.tp_iternext = (iternextfunc)Py##TYPE##LocatorNext;   \
   }
 
-#define LocatorNextMethod(TYPE)                                         \
-  static PyObject* Py##TYPE##LocatorNext(Py##TYPE##CollectionLocator* pyLocator) {  \
-      Locator<TYPE*>* locator = pyLocator->_object;                     \
-      HTRY                                                              \
-      if (locator->isValid()) {                                         \
-          TYPE* object = locator->getElement();                         \
-          locator->progress();                                          \
-          return Py##TYPE##_Link(object);                               \
-      }                                                                 \
-      HCATCH                                                            \
-      return NULL;                                                      \
+#define LocatorNextMethod(TYPE)                                                  \
+  static PyObject* Py##TYPE##LocatorNext(Py##TYPE##CollectionLocator* pyLocator) \
+  {                                                                              \
+      Locator<TYPE*>* locator = pyLocator->_object;                              \
+      HTRY                                                                       \
+      if (locator->isValid()) {                                                  \
+          TYPE* object = locator->getElement();                                  \
+          locator->progress();                                                   \
+          return Py##TYPE##_Link(object);                                        \
+      }                                                                          \
+      HCATCH                                                                     \
+      return NULL;                                                               \
   }
 
 
@@ -458,6 +711,147 @@ extern "C" {
       }                                                                 \
       HCATCH                                                            \
       return NULL;                                                      \
+  }
+
+
+# define  accessorCollectionFromVoid(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE,COLL_TYPE) \
+  static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self )             \
+  {                                                                              \
+    trace << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                          \
+                                                                                 \
+    Py##COLL_TYPE##Collection* pyObjects = NULL;                                 \
+                                                                                 \
+    HTRY                                                                         \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")           \
+    COLL_TYPE##s* objects = new COLL_TYPE##s(cobject->FUNC_NAME());              \
+    pyObjects = PyObject_NEW(Py##COLL_TYPE##Collection,&PyType##COLL_TYPE##Collection); \
+    if (pyObjects == NULL) return NULL;                                          \
+    pyObjects->_object = objects;                                                \
+    HCATCH                                                                       \
+                                                                                 \
+    return (PyObject*)pyObjects;                                                 \
+  }
+  
+
+// -------------------------------------------------------------------
+// Vector<Data*> macros
+
+#define declareVectorObject(TYPE)  \
+  typedef struct {                                      \
+      PyObject_HEAD                                     \
+      const std::vector<TYPE*>* _container;             \
+  } Py##TYPE##Vector;                                   \
+                                                        \
+  typedef struct {                                      \
+      PyObject_HEAD                                     \
+      Py##TYPE##Vector*                   _pyContainer; \
+      std::vector<TYPE*>::const_iterator  _iterator;    \
+  } Py##TYPE##VectorIterator;                           \
+                                                        \
+  extern PyTypeObject PyType##TYPE##Vector;             \
+  extern PyTypeObject PyType##TYPE##VectorIterator;     \
+                                                        \
+  extern void Py##TYPE##Vector_LinkPyType();
+
+
+#define VectorMethods(TYPE)  \
+  static PyObject* Py##TYPE##Vector_GetIterator(Py##TYPE##Vector* pyVector)            \
+  {                                                                                    \
+      Py##TYPE##VectorIterator* pyIterator =                                           \
+          PyObject_New(Py##TYPE##VectorIterator, &PyType##TYPE##VectorIterator);       \
+      if (pyIterator == NULL) return NULL;                                             \
+                                                                                       \
+      pyIterator->_pyContainer = pyVector;                                             \
+      pyIterator->_iterator    = pyVector->_container->begin();                        \
+      Py_INCREF(pyVector);                                                             \
+      return (PyObject*)pyIterator;                                                    \
+  }                                                                                    \
+                                                                                       \
+  static void Py##TYPE##Vector_DeAlloc(Py##TYPE##Vector* pyVector)                     \
+  {                                                                                    \
+      PyObject_Del(pyVector);                                                          \
+  }                                                                                    \
+                                                                                       \
+  static void Py##TYPE##VectorIterator_DeAlloc(Py##TYPE##VectorIterator* pyIterator)   \
+  {                                                                                    \
+      Py_XDECREF(pyIterator->_pyContainer);                                            \
+      PyObject_Del(pyIterator);                                                        \
+  }                                                                                    \
+                                                                                       \
+  extern void Py##TYPE##Vector_LinkPyType ()                                           \
+  {                                                                                    \
+    trace << "Py"#TYPE"Vector_LinkType()" << endl;                                     \
+                                                                                       \
+    PyType##TYPE##Vector.tp_iter             = (getiterfunc)Py##TYPE##Vector_GetIterator;    \
+    PyType##TYPE##Vector.tp_dealloc          = (destructor)Py##TYPE##Vector_DeAlloc;         \
+    PyType##TYPE##VectorIterator.tp_dealloc  = (destructor)Py##TYPE##VectorIterator_DeAlloc; \
+    PyType##TYPE##VectorIterator.tp_iter     = PyObject_SelfIter;                      \
+    PyType##TYPE##VectorIterator.tp_iternext = (iternextfunc)Py##TYPE##IteratorNext;   \
+  }
+
+#define IteratorNextMethod(TYPE)  \
+  static PyObject* Py##TYPE##IteratorNext(Py##TYPE##VectorIterator* pyIterator)     \
+  {                                                                                 \
+      HTRY                                                                          \
+        if (pyIterator->_iterator != pyIterator->_pyContainer->_container->end()) { \
+          TYPE* object = *(pyIterator->_iterator);                                  \
+          ++(pyIterator->_iterator);                                                \
+          return Py##TYPE##_Link(object);                                           \
+        }                                                                           \
+      HCATCH                                                                        \
+      return NULL;                                                                  \
+  }
+
+
+# define  accessorVectorFromVoid(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE,TYPE)  \
+  static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self )   \
+  {                                                                    \
+    trace << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                \
+                                                                       \
+    Py##TYPE##Vector* pyVector = NULL;                                 \
+                                                                       \
+    HTRY                                                               \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()") \
+    pyVector = PyObject_NEW(Py##TYPE##Vector,&PyType##TYPE##Vector);   \
+    if (pyVector == NULL) return NULL;                                 \
+    pyVector->_container = &cobject->FUNC_NAME();                      \
+    HCATCH                                                             \
+                                                                       \
+    return (PyObject*)pyVector;                                        \
+  }
+  
+
+// -------------------------------------------------------------------
+// Vector<Data> macros (partials redefinition only)
+
+#define declareVectorValObject(TYPE)  \
+  typedef struct {                                      \
+      PyObject_HEAD                                     \
+      const std::vector<TYPE>* _container;              \
+  } Py##TYPE##Vector;                                   \
+                                                        \
+  typedef struct {                                      \
+      PyObject_HEAD                                     \
+      Py##TYPE##Vector*                  _pyContainer;  \
+      std::vector<TYPE>::const_iterator  _iterator;     \
+  } Py##TYPE##VectorIterator;                           \
+                                                        \
+  extern PyTypeObject PyType##TYPE##Vector;             \
+  extern PyTypeObject PyType##TYPE##VectorIterator;     \
+                                                        \
+  extern void Py##TYPE##Vector_LinkPyType();
+
+#define IteratorValNextMethod(TYPE)  \
+  static PyObject* Py##TYPE##IteratorNext(Py##TYPE##VectorIterator* pyIterator)     \
+  {                                                                                 \
+      HTRY                                                                          \
+        if (pyIterator->_iterator != pyIterator->_pyContainer->_container->end()) { \
+          TYPE  object = *(pyIterator->_iterator);                                  \
+          ++(pyIterator->_iterator);                                                \
+          return Py##TYPE##_Link(object);                                           \
+        }                                                                           \
+      HCATCH                                                                        \
+      return NULL;                                                                  \
   }
 
 
@@ -528,31 +922,51 @@ extern "C" {
   }
 
 
+// -------------------------------------------------------------------
+// Attribute Macro For Simple Link/Creation.
+
+#define LinkCreateMethod(SELF_TYPE)                                            \
+  PyObject* Py##SELF_TYPE##_Link ( SELF_TYPE* object ) {                       \
+    if ( object == NULL ) {                                                    \
+      Py_RETURN_NONE;                                                          \
+    }                                                                          \
+    Py##SELF_TYPE* pyObject = NULL;                                            \
+    HTRY                                                                       \
+    pyObject = PyObject_NEW(Py##SELF_TYPE, &PyType##SELF_TYPE);                \
+    if (pyObject == NULL) { return NULL; }                                     \
+                                                                               \
+    pyObject->ACCESS_OBJECT = object;                                          \
+    HCATCH                                                                     \
+                                                                               \
+    return ( (PyObject*)pyObject );                                            \
+  }
+
+
 
 // -------------------------------------------------------------------
 // Attribute Macro For DBo Deletion.
 
-# define  DBoDestroyAttribute(PY_FUNC_NAME,PY_SELF_TYPE)                                  \
-  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self )                                   \
-  {                                                                                      \
-    HTRY                                                                                 \
-    if ( self->ACCESS_OBJECT == NULL ) {                                                 \
-      ostringstream  message;                                                            \
+# define  DBoDestroyAttribute(PY_FUNC_NAME,PY_SELF_TYPE)                                   \
+  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self )                                     \
+  {                                                                                        \
+    HTRY                                                                                   \
+    if ( self->ACCESS_OBJECT == NULL ) {                                                   \
+      ostringstream  message;                                                              \
       message << "applying a Delete to a Python object with no HURRICANE object attached"; \
-        PyErr_SetString ( ProxyError, message.str().c_str() );                           \
-      return ( NULL );                                                                   \
-    }                                                                                    \
-    ProxyProperty* proxy = static_cast<ProxyProperty*>                                   \
+        PyErr_SetString ( ProxyError, message.str().c_str() );                             \
+      return ( NULL );                                                                     \
+    }                                                                                      \
+    ProxyProperty* proxy = static_cast<ProxyProperty*>                                     \
                            ( self->ACCESS_OBJECT->getProperty ( ProxyProperty::getPropertyName() ) ); \
-    if (proxy == NULL) {                                                                 \
-      ostringstream  message;                                                            \
-      message << "Trying to Delete a Hurricane object of with no Proxy attached ";       \
-      PyErr_SetString ( ProxyError, message.str().c_str() );                             \
-      return ( NULL );                                                                   \
-    }                                                                                    \
-    self->ACCESS_OBJECT->destroy();                                                      \
-    HCATCH                                                                               \
-    Py_RETURN_NONE;                                                                      \
+    if (proxy == NULL) {                                                                   \
+      ostringstream  message;                                                              \
+      message << "Trying to Delete a Hurricane object of with no Proxy attached ";         \
+      PyErr_SetString ( ProxyError, message.str().c_str() );                               \
+      return ( NULL );                                                                     \
+    }                                                                                      \
+    self->ACCESS_OBJECT->destroy();                                                        \
+    HCATCH                                                                                 \
+    Py_RETURN_NONE;                                                                        \
   }
 
 // -------------------------------------------------------------------
@@ -572,7 +986,7 @@ extern "C" {
       if (pyObject == NULL) { return NULL; }                                   \
                                                                                \
       proxy = ProxyProperty::create ( (void*)pyObject );                       \
-      CHECK_OFFSET ( pyObject )                                                \
+      CHECK_OFFSET ( pyObject, SELF_TYPE )                                     \
                                                                                \
       pyObject->ACCESS_OBJECT = object;                                        \
       object->put ( proxy );                                                   \
@@ -618,6 +1032,21 @@ extern "C" {
   {                                                              \
     trace << "PythonOnlyObject_DeAlloc(" << hex << self << ") "  \
           << self->ACCESS_OBJECT << endl;                        \
+    PyObject_DEL ( self );                                       \
+  }
+
+
+
+
+// -------------------------------------------------------------------
+// Attribute Method For Python Only Object Deletion.
+
+# define  NoObjectDeleteMethod(SELF_TYPE)                        \
+  static void Py##SELF_TYPE##_DeAlloc ( Py##SELF_TYPE *self )    \
+  {                                                              \
+    trace << "PythonOnlyObject_DeAlloc(" << hex << self << ") "  \
+          << "[no object]" << endl;                              \
+    PyObject_DEL ( self );                                       \
   }
 
 
@@ -665,22 +1094,6 @@ extern "C" {
 #define PyTypeObjectLinkPyType(SELF_TYPE)  \
   PyTypeObjectLinkPyTypeWithClass(SELF_TYPE,SELF_TYPE)
 
-// #define PyTypeObjectLinkPyType(SELF_TYPE)                                 
-//   DirectReprMethod(Py##SELF_TYPE##_Repr, Py##SELF_TYPE,   SELF_TYPE)      
-//   DirectStrMethod (Py##SELF_TYPE##_Str,  Py##SELF_TYPE,   SELF_TYPE)      
-//   DirectCmpMethod (Py##SELF_TYPE##_Cmp,  IsPy##SELF_TYPE, Py##SELF_TYPE)  
-//   DirectHashMethod(Py##SELF_TYPE##_Hash, Py##SELF_TYPE)                   
-//   extern void  Py##SELF_TYPE##_LinkPyType() {                             
-//     trace << "Py" #SELF_TYPE "_LinkType()" << endl;                       
-//                                                                           
-//     PyType##SELF_TYPE.tp_dealloc = (destructor) Py##SELF_TYPE##_DeAlloc;  
-//     PyType##SELF_TYPE.tp_compare = (cmpfunc)    Py##SELF_TYPE##_Cmp;      
-//     PyType##SELF_TYPE.tp_repr    = (reprfunc)   Py##SELF_TYPE##_Repr;     
-//     PyType##SELF_TYPE.tp_str     = (reprfunc)   Py##SELF_TYPE##_Str;      
-//     PyType##SELF_TYPE.tp_hash    = (hashfunc)   Py##SELF_TYPE##_Hash;     
-//     PyType##SELF_TYPE.tp_methods = Py##SELF_TYPE##_Methods;               
-//   }
-
 
 // Special Initialisation Function for Locator PyTypeObject Runtime Link.
 #define LocatorPyTypeObjectLinkPyType(PY_SELF_TYPE, SELF_TYPE)                                             \
@@ -725,7 +1138,34 @@ extern "C" {
     , "#SELF_TYPE objects"            /* tp_doc.           */           \
   };
 
-# define PyTypeRootObjectDefinitions(SELF_TYPE)                         \
+#define PyTypeObjectDefinitionsOfModule(MODULE,SELF_TYPE)               \
+  PyTypeObject  PyType##SELF_TYPE =                                     \
+    { PyObject_HEAD_INIT(NULL)                                          \
+      0                               /* ob_size.          */           \
+    , #MODULE "." #SELF_TYPE          /* tp_name.          */           \
+    , sizeof(Py##SELF_TYPE)           /* tp_basicsize.     */           \
+    , 0                               /* tp_itemsize.      */           \
+    /* methods. */                                                      \
+    , 0                               /* tp_dealloc.       */           \
+    , 0                               /* tp_print.         */           \
+    , 0                               /* tp_getattr.       */           \
+    , 0                               /* tp_setattr.       */           \
+    , 0                               /* tp_compare.       */           \
+    , 0                               /* tp_repr.          */           \
+    , 0                               /* tp_as_number.     */           \
+    , 0                               /* tp_as_sequence.   */           \
+    , 0                               /* tp_as_mapping.    */           \
+    , 0                               /* tp_hash.          */           \
+    , 0                               /* tp_call.          */           \
+    , 0                               /* tp_str            */           \
+    , 0                               /* tp_getattro.      */           \
+    , 0                               /* tp_setattro.      */           \
+    , 0                               /* tp_as_buffer.     */           \
+    , Py_TPFLAGS_DEFAULT              /* tp_flags          */           \
+    , "#SELF_TYPE objects"            /* tp_doc.           */           \
+  };
+
+#define PyTypeRootObjectDefinitions(SELF_TYPE)                          \
   PyTypeObject  PyType##SELF_TYPE =                                     \
     { PyObject_HEAD_INIT(&PyType_Type)                                  \
        0                              /* ob_size.          */           \
@@ -753,7 +1193,7 @@ extern "C" {
     , "#SELF_TYPE objects"            /* tp_doc.           */           \
   };
 
-# define PyTypeInheritedObjectDefinitions(SELF_TYPE, INHERITED_TYPE) \
+#define PyTypeInheritedObjectDefinitions(SELF_TYPE, INHERITED_TYPE)     \
   PyTypeObject  PyType##SELF_TYPE =                                     \
     { PyObject_HEAD_INIT(DEFERRED_ADDRESS(&PyType##INHERITED_TYPE))     \
        0                              /* ob_size.          */           \
@@ -797,7 +1237,7 @@ extern "C" {
     { PyObject_HEAD_INIT(NULL)                                          \
       0                               /* ob_size.          */           \
     , "Hurricane."#SELF_TYPE          /* tp_name.          */           \
-    , sizeof(Py ##SELF_TYPE)           /* tp_basicsize.     */           \
+    , sizeof(Py ##SELF_TYPE)          /* tp_basicsize.     */           \
     , 0                               /* tp_itemsize.      */           \
     /* methods. */                                                      \
     , 0                               /* tp_dealloc.       */           \
@@ -819,23 +1259,52 @@ extern "C" {
     , "#SELF_TYPE objects"            /* tp_doc.           */           \
   };
 
+
+#define PyTypeVectorObjectDefinitions(SELF_TYPE)  \
+  PyTypeObject  PyType##SELF_TYPE =                                     \
+    { PyObject_HEAD_INIT(NULL)                                          \
+      0                               /* ob_size.          */           \
+    , "Hurricane."#SELF_TYPE          /* tp_name.          */           \
+    , sizeof(Py ##SELF_TYPE)          /* tp_basicsize.     */           \
+    , 0                               /* tp_itemsize.      */           \
+    /* methods. */                                                      \
+    , 0                               /* tp_dealloc.       */           \
+    , 0                               /* tp_print.         */           \
+    , 0                               /* tp_getattr.       */           \
+    , 0                               /* tp_setattr.       */           \
+    , 0                               /* tp_compare.       */           \
+    , 0                               /* tp_repr.          */           \
+    , 0                               /* tp_as_number.     */           \
+    , 0                               /* tp_as_sequence.   */           \
+    , 0                               /* tp_as_mapping.    */           \
+    , 0                               /* tp_hash.          */           \
+    , 0                               /* tp_call.          */           \
+    , 0                               /* tp_str            */           \
+    , PyObject_GenericGetAttr         /* tp_getattro.      */           \
+    , 0                               /* tp_setattro.      */           \
+    , 0                               /* tp_as_buffer.     */           \
+    , Py_TPFLAGS_DEFAULT              /* tp_flags.         */           \
+    , "#SELF_TYPE objects"            /* tp_doc.           */           \
+  };
+
+
 // -------------------------------------------------------------------
 //PyType_Ready Methods
 
-#define  PYTYPE_READY(TYPE)                       \
-  if ( PyType_Ready( &PyType##TYPE ) < 0 ) {      \
-    cerr << "[ERROR]\n"                           \
+#define  PYTYPE_READY(TYPE)                                  \
+  if ( PyType_Ready( &PyType##TYPE ) < 0 ) {                 \
+    cerr << "[ERROR]\n"                                      \
          << "  Failed to initialize <Py" #TYPE ">." << endl; \
-    return;                                       \
+    return;                                                  \
   }
 
 
-#define  PYTYPE_READY_SUB(TYPE, TYPE_BASE)        \
-  PyType##TYPE.tp_base = &PyType##TYPE_BASE;      \
-  if ( PyType_Ready( &PyType##TYPE ) < 0 ) {      \
-    cerr << "[ERROR]\n"                           \
+#define  PYTYPE_READY_SUB(TYPE, TYPE_BASE)                   \
+  PyType##TYPE.tp_base = &PyType##TYPE_BASE;                 \
+  if ( PyType_Ready( &PyType##TYPE ) < 0 ) {                 \
+    cerr << "[ERROR]\n"                                      \
          << "  Failed to initialize <Py" #TYPE ">." << endl; \
-    return;                                       \
+    return;                                                  \
   }
 
 

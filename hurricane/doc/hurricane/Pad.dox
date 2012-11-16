@@ -19,19 +19,13 @@
   *                knowing it. 
   */
 
- /*! \name         Constructors
-  */
- //  \{
 
  /*! \function     Pad* Pad::create(Net* net, const Layer* layer, const Box& boundingBox);
   *                No description.
   */
 
- //  \}
 
-
- /*! \name         Pad Collection
-  */
+ //! \name         Pad Collection
  //  \{
 
  /*! \typedef      Pads

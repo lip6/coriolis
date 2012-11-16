@@ -39,25 +39,18 @@ BasicLayer* basicLayer = ...; // we get the basic layer
  
 Box area = ...; // we define the rectangular area
  
-for_each_slice(slice, cell->getSlices()) {
-   if (slice->getLayer()->Contains(basicLayer)) {
-      for_each_componant(component, slice->getComponentsUnder(area)) {
-         ...
-         // here we visit all requested components
-         ...
-         end_for;
-      }
-   }
-   end_for;
+forEach(Slice*, islice, cell->getSlices()) {
+  if (islice->getLayer()->contains(basicLayer)) {
+    forEach(Component*, icomponent, slice->getComponentsUnder(area)) {
+      // ...
+      // here we visit all requested components
+      // ...
+    }
+  }
 }
 \endcode
   */
 
-
-
- /*! \name         Accessors
-  */
- //  \{
 
  /*! \function     Cell* Slice::getCell() const;
   *  \Return       the cell owning the slice. 
@@ -86,12 +79,8 @@ for_each_slice(slice, cell->getSlices()) {
   *                intersects the rectangular region defined by \c \<area\>. 
   */
 
- //  \}
 
-
-
- /*! \name         Slice Collection
-  */
+ //! \name         Slice Collection
  //  \{
 
  /*! \typedef      Slices
@@ -112,6 +101,5 @@ for_each_slice(slice, cell->getSlices()) {
   */
 
  //  \}
-
 
  }

@@ -2,11 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
-//
-// ===================================================================
-//
-// $Id$
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -15,10 +11,11 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./hurricane/viewer/Script.cpp"            |
+// |  C++ Module  :  "./hurricane/viewer/Script.cpp"                 |
 // +-----------------------------------------------------------------+
 
 
+#include  <Python.h>
 #include  <sstream>
 #include  "hurricane/Error.h"
 #include  "hurricane/Cell.h"
@@ -73,13 +70,16 @@ namespace Isobar {
     , _pyArgs         (NULL)
     , _pyResult       (NULL)
     , _cellViewer     (NULL)
+    , _globalState    (NULL)
+    , _subInterpreter (NULL)
+    , _flags          (0)
   { }
 
 
   Script::~Script ()
   {
     _finalize();
-    Py_Finalize ();
+  //Py_Finalize ();
   }
 
 
@@ -195,31 +195,46 @@ namespace Isobar {
 
   void  Script::_initialize ()
   {
-    Py_Initialize    ();
-    _importSys       ();
-    _importHurricane ();
+    if (Py_IsInitialized()) {
+    // Python is already running. Launch a sub-interpreter.
+      _globalState    = PyThreadState_Get();
+      _subInterpreter = Py_NewInterpreter();
+    } else 
+      Py_Initialize();
+
+    _flags |= Initialized;
+    _importSys      ();
+    _importHurricane();
   }
 
 
   void  Script::_finalize ()
   {
-    if ( not Py_IsInitialized() ) return;
+    if (not Py_IsInitialized())     return;
+    if (not (_flags & Initialized)) return;
+    _flags &= ~Initialized;
 
-    if ( _pyResult        != NULL ) Py_DECREF ( _pyResult );
-    if ( _pyArgs          != NULL ) Py_DECREF ( _pyArgs );
-    if ( _pyFunction      != NULL ) Py_DECREF ( _pyFunction );
-    if ( _userModule      != NULL ) Py_DECREF ( _userModule );
-    if ( _hurricaneModule != NULL ) Py_DECREF ( _hurricaneModule );
-    if ( _sysModule       != NULL ) Py_DECREF ( _sysModule );
-
-    Py_Finalize ();
-
-    _userModule       = NULL;
-    _sysModule        = NULL;
-    _hurricaneModule  = NULL;
-    _pyFunction       = NULL;
-    _pyArgs           = NULL;
-    _pyResult         = NULL;
+    if (_subInterpreter != NULL) {
+      Py_EndInterpreter(_subInterpreter);
+      PyThreadState_Swap(_globalState);
+      _subInterpreter = NULL;
+    } else {
+      if ( _userModule      != NULL ) { Py_DECREF ( _userModule ); }
+      if ( _hurricaneModule != NULL ) { Py_DECREF ( _hurricaneModule ); }
+      if ( _sysModule       != NULL ) { Py_DECREF ( _sysModule ); }
+      if ( _pyResult        != NULL ) { Py_DECREF ( _pyResult ); }
+      if ( _pyArgs          != NULL ) { Py_DECREF ( _pyArgs ); }
+      if ( _pyFunction      != NULL ) { Py_DECREF ( _pyFunction ); }
+      
+      Py_Finalize ();
+      
+      _userModule       = NULL;
+      _sysModule        = NULL;
+      _hurricaneModule  = NULL;
+      _pyFunction       = NULL;
+      _pyArgs           = NULL;
+      _pyResult         = NULL;
+    }
   }
 
 

@@ -37,9 +37,6 @@
   *                "anchored". The TargetHook is always a slave hook. 
   */
 
- /*! \name         Accessors
-  */
- //  \{
 
  /*! \function     Segment::SourceHook* Segment::getSourceHook();
   *  \Return       the hook through which the segment origin can be anchored on 
@@ -132,12 +129,6 @@
   *  \Return       the segment length. 
   */
 
- //  \}
-
-
- /*! \name         Modifiers
-  */
- //  \{
 
  /*! \function     void Segment::setLayer(const Layer* layer);
   *                sets the segment layer. 
@@ -152,11 +143,8 @@
   *                permutted. 
   */
 
- //  \}
 
-
- /*! \name         Segment Collection
-  */
+ //! \name         Segment Collection
  //  \{
 
  /*! \typedef      Segments
@@ -178,6 +166,5 @@
   */
 
  //  \}
-
 
  }

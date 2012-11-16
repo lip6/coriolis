@@ -26,9 +26,6 @@
 
  // \}
 
- /*! \name         Accessors
-  */
- // \{
 
  /*! \function     string* RecordHandles::_GetString () const;
   *  \Return       a string representing the object name and characteristics

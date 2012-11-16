@@ -102,10 +102,6 @@ cell : ...
 
 
 
- /*! \name         Constructors
-  */
- //  \{
-
  /*! \function     Tabulation::Tabulation(const string& s = "&nbsp;&nbsp;&nbsp;");
   *                Default constructor : The string \c \<s\> represents the 
   *                elementary tabulation (fixed by default to 3 space 
@@ -116,23 +112,11 @@ cell : ...
   *                Copy constructor. 
   */
 
- //  \}
-
-
- /*! \name         Destructors
-  */
- //  \{
 
  /*! \function     Tabulation::~Tabulation();
   *                No description.
   */
 
- //  \}
-
-
- /*! \name         Operators
-  */
- //  \{
 
  /*! \function     Tabulation& Tabulation::operator=(const Tabulation& tabulation);
   *                Assignment operator. 
@@ -159,9 +143,5 @@ cell : ...
   *                tabulation is reduced of an elementary tabulation, but 
   *                returns the previous tabulation. 
   */
-
- //  \}
-
-
 
  }

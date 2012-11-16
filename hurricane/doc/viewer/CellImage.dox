@@ -1,0 +1,132 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        CellImage
+  *  \brief        Widget to generate Image files.
+  *
+  *
+  *  \section      secImageBasicUsage  Basic Usage
+  *
+  *                CellImage is a simple Qt Widget to write the contents of a CellWidget
+  *                into a QImage. As it may uses lots of memory (due to the high-res bitmaps)
+  *                it is advisable to delete it immediatly after usage. The same rendering engine
+  *                is used to both display on screen and onto the image so it is a "What You
+  *                See Is What You Get" mode (except for the higher resolution).
+  *
+  * \see           CellPrinter.
+  *
+  *                It's use is straigtforward, as shown in the example below. It consist
+  *                of six steps:
+  *                <ol>
+  *                  <li>Widget allocation.
+  *                  <li>Bind to a screen CellWidget (CellImage::setScreenCellWidget()).
+  *                  <li>Draw into a QImage (CellImage::toImage()).
+  *                  <li>Delete the widget.
+  *                  <li>Save the QImage or do whatever you want with it.
+  *                  <li>Delete the QImage.
+  *                </ol>
+  *
+  *                Code example (took from CellViewer):
+\code
+  void  CellViewer::imageDisplay ()
+  {
+    if (_cellWidget == NULL) return;
+    if (_cellWidget->getCell() == NULL) {
+      cerr << Warning("Unable to save to image, no cell loaded yet.") << endl;
+      return;
+    }
+
+    CellImage* cellImage = new CellImage();
+    cellImage->setScreenCellWidget( _cellWidget );
+    QImage* image = cellImage->toImage(0);
+    delete cellImage;
+
+    char workingDirectory [1024];
+    getcwd ( workingDirectory, 1024 );
+
+    QString filePath = QFileDialog::getSaveFileName ( this
+                                                    , tr("Save Image as ...")
+                                                    , workingDirectory
+                                                    , tr("Image (*.png)")
+                                                    );
+
+    image->save ( filePath, "png" );
+    delete image;
+  }
+\endcode
+  *
+  *
+  *  \section      secImageConfiguration  Configuration Variables
+  *
+  *                The CellImage reads the following configuration variables for
+  *                it's defaults settings (they are located in \c misc.conf, for
+  *                the system-wide settings).
+  *                <ul>
+  *                  <li>\c "viewer.printer.mode", select between the two resolution
+  *                      modes (Cell or Design).
+  *                </ul>
+  *
+  *
+  *  \section      secImageImplDetails  Implementation details
+  *
+  *                This widget is build as a QMainWindow (top-level) one
+  *                encapsulating only a CellWidget. It is configured to never been
+  *                shown thanks to the \c Qt::WA_DontShowOnScreen attribute, but
+  *                all the display computations still takes place as if it actually
+  *                was.
+  *
+  *                The CellImage returns a newly allocated QImage, it is the responsability
+  *                of the caller to delete it after usage.
+  *
+  *                To obtain a sufficent resolution the CellImage/CellWidget are
+  *                resized to the resolution of the printed page. For a better look
+  *                select a display style with patterns of 32x32 pixels, such as
+  *                \c "Image.Coriolis".
+  */
+
+
+ /*! \function     CellImage::CellImage(QWidget* parent=NULL);
+  *                Construct a CellImage window no screen CellWidget is actually bound.
+  */
+ /*! \function     CellImage::~CellImage();
+  *                Destructor.
+  */
+ /*! \function     void  CellImage::setScreenCellWidget(CellWidget* screenCellWidget);
+  *                Bind the CellImage to the screen CellWidget \c screenCellWidget.
+  *                It is those contents that will be printed.
+  */
+ /*! \function     void  CellImage::setMode(int mode);
+  *                Sets the display mode, that is the resolution that will be used.
+  *                Two modes are availables:
+  *                <ul>
+  *                  <li>CellWidget::Res_CellMode: (approx. 150 dpi), best suited for
+  *                      displaying lone Cell or very small scale designs.
+  *                  <li>CellWidget::Res_DesignMode: (approx. 300 dpi), for full
+  *                      fledged designs.
+  *                </ul>
+  */
+ /*! \function     QImage* CellImage::toImage(unsigned int flags=0);
+  *  \param        flags  Control some tweaks.
+  *
+  *  \return       A newly allocated QImage displaying the contents of the bound
+  *                \c screenCellWidget. The deletion of the QImage is left to caller.
+  *
+  *                Availables flags:
+  *                <ul>
+  *                  <li>ShowScale: display a false color scale at the bottom of the
+  *                      image. Useful if you draw a density map for instance.
+  *                </ul>
+  */
+
+ /*! \enum         CellImage::Flags
+  *                Some flags to tweak the image display.
+  */
+ /*! \var          CellImage::Flags  CellImage::ShowScale;
+  *                Adds a false color scale at the bottom of the image.
+  *                Useful if you draw a density map for instance.
+  */
+
+ }

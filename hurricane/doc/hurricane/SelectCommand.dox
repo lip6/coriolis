@@ -49,16 +49,8 @@
   */
 
 
-
- /*  \name         SelectCommand Functions
-  */
- //  \{
-
  /*  \function     SelectCommand* SelectCommand::GetSelectCommand();
   *  \Return       the selection command. 
   */
-
- //  \}
-
 
  }

@@ -67,10 +67,6 @@
   *                hook). 
   */
 
- /*! \name         Accessors
-  */
- //  \{
-
  /*! \function     Net* Component::getNet() const;
   *  \Return       the net owning the component. 
   */
@@ -109,31 +105,27 @@
   *                done in both methods, it is wise to redefine the method as 
   *                shown below for the Contact : 
 \code
-Unit Contact::getX() const
-// ***********************
+DbU::Unit Contact::getX() const
 {
-   Component* anchor = getAnchor();
-   return (!anchor) ? _dx : anchorGetX() + _dx;
+  Component* anchor = getAnchor();
+  return (not anchor) ? _dx : anchor->getX() + _dx;
 }
  
-Unit Contact::getY() const
-// ***********************
+
+DbU::Unit Contact::getY() const
 {
-   Component* anchor = getAnchor();
-   return (!anchor) ? _dy : anchorGetY() + _dy;
+  Component* anchor = getAnchor();
+  return (not anchor) ? _dy : anchor->getY() + _dy;
 }
  
+
 Point Contact::getPosition() const
-// *******************************
 {
-   Component* anchor = getAnchor();
-   return (!anchor) ?
-          Point(_dx, _dy) :
-          anchorGetPosition().Translate(_dx, _dy);
+  Component* anchor = getAnchor();
+  return (not anchor) ? Point(_dx, _dy)
+                      : anchor->getPosition().Translate(_dx, _dy);
 }
 \endcode
-  *
-  *                
   *
   *                Indeed, contacts can possibly bear on other components 
   *                through an offset defined by two attributes _dx and _dy. In 
@@ -199,12 +191,8 @@ Point Contact::getPosition() const
   *                the rectangular \c \<area\>. 
   */
 
- //  \}
 
-
-
- /*! \name         Component Collection
-  */
+ //! \name         Component Collection
  //  \{
 
  /*! \typedef      Components
@@ -220,11 +208,10 @@ Point Contact::getPosition() const
   *                some criteria. 
   */
 
- /*! \def          for_each_component(component, components)
+ /*! \def          forEach(Component*, icomponent, components)
   *                Macro for visiting all components of a components collection. 
   */
 
  //  \}
-
 
  }

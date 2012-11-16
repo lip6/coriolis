@@ -72,11 +72,6 @@
   */
 
 
-
- /*! \name         Accessors
-  */
- //  \{
-
  /*! \function     GtkWidget* View::GetFrame() const;
   *  \Return       the widget containing the drawing area associated to the 
   *                view. 
@@ -245,12 +240,6 @@ Unit clientAperture = view->GetSize(screenAperture);
   *  \Return       the collection of selectors associated to the view. 
   */
 
- //  \}
-
-
- /*! \name         Predicates
-  */
- //  \{
 
  /*! \function     bool View::GridIsVisible() const;
   *  \Return       \true if the grid is visible else \false. 
@@ -304,12 +293,6 @@ Unit clientAperture = view->GetSize(screenAperture);
   *  \Return       \false if the selection is empty, else \true. 
   */
 
- //  \}
-
-
- /*! \name         Modifiers
-  */
- //  \{
 
  /*! \function     void View::SetCell(Cell* cell);
   *                Allows to change the cell displayed within the view. 
@@ -463,12 +446,6 @@ viewUpdate();
   *                Unselects all the selected occurrences. 
   */
 
- //  \}
-
-
- /*! \name         Managers
-  */
- //  \{
 
  /*! \function     void View::Invalidate();
   *                Invalidates the whole view, therefore at the next call upon 
@@ -628,12 +605,6 @@ viewUpdate(); // to get an immediate effect
   *                context. 
   */
 
- //  \}
-
-
- /*! \name         Drawing Primitives
-  */
- //  \{
 
  /*! \function     void View::DrawLine(const Unit& xo, const Unit& yo, const Unit& xe, const Unit& ye);
   *                No description.
@@ -669,11 +640,8 @@ viewUpdate(); // to get an immediate effect
   *                stipple when this flag is off (default behaviour). 
   */
 
- //  \}
 
-
- /*! \name         View Collection
-  */
+ //! \name         View Collection
  //  \{
 
  /*! \typedef      Views

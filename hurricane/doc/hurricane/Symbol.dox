@@ -15,9 +15,6 @@
   *                knowing it. 
   */
 
- /*! \name         Constructors
-  */
- //  \{
 
  /*! \function     Symbol* Symbol::Create(Library* library, const Name& name);
   *                Creates and returns a new symbol named \c \<name\> for the 
@@ -42,12 +39,6 @@
   *                the directions and names of the external nets of the cell. 
   */
 
- //  \}
-
-
- /*! \name         Accessors
-  */
- //  \{
 
  /*! \function     Library* Symbol::GetLibrary() const;
   *  \Return       the library owning the symbol. 
@@ -74,12 +65,6 @@
   *  \Return       the pin of name \c \<name\> if it exists, else NULL. 
   */
 
- //  \}
-
-
- /*! \name         Modifiers
-  */
- //  \{
 
  /*! \function     void Symbol::SetName(const Name& name);;
   *                Allows to change the symbol name. 
@@ -89,11 +74,8 @@
   *                name. 
   */
 
- //  \}
 
-
- /*! \name         Symbol Collection
-  */
+ //! \name         Symbol Collection
  //  \{
 
  /*! \typedef      Symbols

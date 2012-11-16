@@ -328,8 +328,8 @@ namespace Hurricane {
     if (record) {
       record->add(getSlot("_basicLayer"    ,  _basicLayer    ));
       record->add(getSlot("_enclosure"     , &_enclosure     ));
-      record->add(getSlot("_extentionCap"  , &_extentionCap  ));
-      record->add(getSlot("_extentionWidth", &_extentionWidth));
+      record->add(DbU::getValueSlot("_extentionCap"  , &_extentionCap  ));
+      record->add(DbU::getValueSlot("_extentionWidth", &_extentionWidth));
     }
     return record;
   }

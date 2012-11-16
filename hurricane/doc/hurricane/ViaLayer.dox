@@ -1,0 +1,41 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        ViaLayer
+  *  \brief        ViaLayer description (\b API)
+  *
+  *                For a more complete description of the Layers objects, please refer
+  *                to \ref secLayerIntro "Layer Introduction".
+  *
+  *                ViaLayer is a symbolic layer that contains three layers, a bottom
+  *                metal, a cut and a top metal.
+  *
+  *                The accessors functions:
+  *                <ul>
+  *                  <li>ViaLayer::getTop()
+  *                  <li>ViaLayer::getBottom()
+  *                  <li>ViaLayer::getOpposite()
+  *                </ul>
+  *                Works on the top/bottom layers. They do not rely on the Layer::Mask,
+  *                but on what has been passed as argument to the ViaLayer::create()
+  *                constructor.
+  *
+  *                Only enclosure have meaning on this class. Extension cap and extention
+  *                width are not used.
+  */
+
+
+ /*! \function     ViaLayer* ViaLayer::create(Technology* technology,const Name& name, BasicLayer* bottomLayer, BasicLayer* cutLayer, BasicLayer* topLayer);
+  *                creates and returns a new VIA layer named \c \<name\>, made of
+  *                the two metals and a cut.
+  *
+  *  \caution      Throws an exception if the technology is null, if the name is 
+  *                empty, if a layer of same name already exists or if we 
+  *                overflow the capacity of the bit field associated to the 
+  *                layer mask. 
+  */
+
+ }

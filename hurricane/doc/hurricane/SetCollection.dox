@@ -59,11 +59,6 @@ if (cell) {
   */
 
 
-
- /*  \name         Accessors
-  */
- //  \{
-
  /*! \function     GenericCollection<Element> SetCollection::GetCollection(const set<Element,Compare>& elementSet);
   *                See below.
   */
@@ -73,7 +68,5 @@ if (cell) {
   *                <b>SetCollection</b> the content of the STL set given in 
   *                argument. 
   */
-
- //  \}
 
  }

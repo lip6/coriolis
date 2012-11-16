@@ -38,9 +38,6 @@
   *                which means they are absolute. 
   */
 
- /*! \name         Constructors
-  */
- //  \{
 
  /*! \function     Contact* Contact::create(Net* net, const Layer* layer, const DbU::Unit& x, const DbU::Unit& y,const DbU::Unit& width = 0, const DbU::Unit& height = 0);
   *                creates and returns a new contact belonging to the net 
@@ -63,12 +60,6 @@
   *  \remark       The new contact belongs to the anchor's net. 
   */
 
- //  \}
-
-
- /*! \name         Accessors
-  */
- //  \{
 
  /*! \function     Contact::AnchorHook* Contact::getAnchorHook();
   *  \Return       the hook through which the contact can be attached upon an 
@@ -115,12 +106,6 @@
   *  \Return       the contact half height. 
   */
 
- //  \}
-
-
- /*! \name         Modifiers
-  */
- //  \{
 
  /*! \function     void Contact::setLayer(const Layer* layer);
   *                sets the contact layer. 
@@ -181,11 +166,8 @@
   *                absolute location. 
   */
 
- //  \}
 
-
- /*! \name         Contact Collection
-  */
+ //! \name         Contact Collection
  //  \{
 
  /*! \typedef      Contacts

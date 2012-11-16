@@ -1,82 +1,35 @@
 
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
-// ===================================================================
-//
-// $Id: ProxyProperty.cpp,v 1.13 2007/07/30 16:02:51 jpc Exp $
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
-// |  Author      :                    Jean-Paul CHAPUT              |
+// |  Authors     :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./ProxyProperty.cpp"                      |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Module  :  "./ProxyProperty.cpp"                           |
+// +-----------------------------------------------------------------+
 
 
-
+#if not defined(__PYTHON_MODULE__)
 
 #include <iostream>
 #include <sstream>
-
 #include "hurricane/isobar/ProxyProperty.h"
-
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 
 using namespace Hurricane;
 
-
-
 namespace Isobar {
 
 namespace {
 
-
   using namespace std;
-
-
-
-  // ---------------------------------------------------------------
-  // Miscellaneous.
-
-
 
 
   // ---------------------------------------------------------------
@@ -84,13 +37,11 @@ namespace {
 
 
   const char* twiceSetOffset =
-    "FragmentProperty::SetOffest () :\n\n"
+    "ProxyProperty::setOffset () :\n\n"
     "    Attempt to sets the _shadow member offset twice.\n";
 
 
 }
-
-
 
 
 // x-----------------------------------------------------------------x
@@ -109,20 +60,12 @@ namespace {
 // x-----------------------------------------------------------------x
 
 
-// -------------------------------------------------------------------
-// Constructor  :  "ProxyProperty::ProxyProperty ()".
-
 ProxyProperty::ProxyProperty ( void* shadow )
-                             : Property()
-                             , _owner(NULL)
-                             , _shadow(shadow)
+  : Property()
+  , _owner  (NULL)
+  , _shadow (shadow)
 { }
 
-
-
-
-// -------------------------------------------------------------------
-// Constructor  :  "ProxyProperty::create ()".
 
 ProxyProperty* ProxyProperty::create ( void* shadow ) {
   ProxyProperty* property = new ProxyProperty ( shadow );
@@ -130,14 +73,9 @@ ProxyProperty* ProxyProperty::create ( void* shadow ) {
   if ( property == NULL )
     throw Error ( "ProxyProperty::create()" );
 
-  return ( property );
+  return property;
 }
 
-
-
-
-// -------------------------------------------------------------------
-// Destructor  :  "ProxyProperty::_preDestroy ()".
 
 void  ProxyProperty::_preDestroy () {
   if ( _owner ) _owner->_onDestroyed ( this );
@@ -154,11 +92,6 @@ void  ProxyProperty::_preDestroy () {
 }
 
 
-
-
-// -------------------------------------------------------------------
-// Method  :  "ProxyProperty::onCapturedBy ()".
-
 void  ProxyProperty::onCapturedBy ( DBo* owner ) {
   if ( ( _owner != NULL ) && ( _owner != owner ) )
     throw Error ( getString(this).c_str() );
@@ -167,42 +100,22 @@ void  ProxyProperty::onCapturedBy ( DBo* owner ) {
 }
 
 
-
-
-// -------------------------------------------------------------------
-// Method  :  "ProxyProperty::onReleasedBy ()".
-
 void  ProxyProperty::onReleasedBy ( DBo* owner ) {
   if ( _owner == owner ) onNotOwned ();
 }
 
-
-
-
-// -------------------------------------------------------------------
-// Method  :  "ProxyProperty::onNotOwned ()".
 
 void  ProxyProperty::onNotOwned () {
   destroy ();
 }
 
 
-
-
-// -------------------------------------------------------------------
-// Method  :  "ProxyProperty::SetOffset ()".
-
-void  ProxyProperty::SetOffset ( int offset ) {
-  if ( _offset >= 0 ) throw Error ( twiceSetOffset );
+void  ProxyProperty::setOffset ( int offset ) {
+  if ( _offset >= 0 ) throw Error(twiceSetOffset);
 
   _offset = offset;
 }
 
-
-
-
-// -------------------------------------------------------------------
-// Method  :  "ProxyProperty::_getString()".
 
 string  ProxyProperty::_getString () const {
   ostringstream  os;
@@ -215,11 +128,6 @@ string  ProxyProperty::_getString () const {
   return ( os.str() );
 }
 
-
-
-
-// -------------------------------------------------------------------
-// Method  :  "ProxyProperty::_getRecord()".
 
 Record* ProxyProperty::_getRecord () const
 {
@@ -234,6 +142,6 @@ Record* ProxyProperty::_getRecord () const
 }
 
 
+} // Isobar namespace.
 
-
-} // End of Isobar namespace.
+#endif

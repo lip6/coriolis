@@ -141,9 +141,6 @@ if (cell) {
   *                it. 
   */
 
- /*! \name         Constructors
-  */
- //  \{
 
  /*! \function     GenericCollection<Type>::GenericCollection();
   *                Default constructor : The generic collection is unbound and 
@@ -175,13 +172,6 @@ if (cell) {
   *                empty). 
   */
 
- //  \}
-
-
-
- /*! \name         Operators
-  */
- //  \{
 
  /*! \function     GenericCollection<Type>& GenericCollection::operator=(const Collection<Type>& collection);
   *                Assignment operator : if the generic collection was bound to 
@@ -202,9 +192,5 @@ if (cell) {
   *
   *  \remark       Here, again, you can do that only once ... 
   */
-
- //  \}
-
-
 
  }

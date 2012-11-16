@@ -23,6 +23,7 @@
 // x-----------------------------------------------------------------x
 
 
+#include  <Python.h>
 #include  <iostream>
 #include  <memory>
 using namespace std;

@@ -292,7 +292,7 @@ extern "C" {
     METHOD_HEAD ( "Net.setGlobal()" )
     PyObject* arg0;
     if (PyArg_ParseTuple(args,"O:Net.setGlobal", &arg0) && PyBool_Check(arg0)) {
-      (arg0 == Py_True)?net->setGlobal(true):net->setGlobal(false);
+      PyObject_IsTrue(arg0)?net->setGlobal(true):net->setGlobal(false);
     } else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Net.setGlobal." );
       return NULL;
@@ -314,7 +314,7 @@ extern "C" {
     METHOD_HEAD ( "Net.setExternal()" )
     PyObject* arg0;
     if (PyArg_ParseTuple(args,"O:Net.setExternal", &arg0) && PyBool_Check(arg0)) {
-      (arg0 == Py_True)?net->setExternal(true):net->setExternal(false);
+      PyObject_IsTrue(arg0)?net->setExternal(true):net->setExternal(false);
     } else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Net.setExternal." );
       return NULL;

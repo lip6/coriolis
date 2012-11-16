@@ -59,7 +59,6 @@ namespace Hurricane {
       inline bool    isSet            ( const Mask mask ) const;
       inline bool    contains         ( const Mask mask ) const;
       inline bool    intersect        ( const Mask mask ) const;
-      inline Mask&   merge            ( const Mask mask ) const;
       inline Mask    nthbit           ( unsigned int ) const;
       inline Mask    operator compl   () const;
       inline Mask    operator bitand  ( const Mask mask ) const;

@@ -19,7 +19,6 @@
   */
 
 
-
  /*! \class        Transformation::Orientation
   * This enumeration defines the orientation associated to a 
   * transformation object.
@@ -103,9 +102,6 @@
   *
   */
 
- /*! \name         Constructors
-  */
- //  \{
 
  /*! \function     Transformation::Transformation();
   *                Default constructor : The translation is null and the 
@@ -134,12 +130,6 @@
   *                Copy constructor. 
   */
 
- //  \}
-
-
- /*! \name         Operators
-  */
- //  \{
 
  /*! \function     Transformation& Transformation::operator=(const Transformation& transformation);
   *                Assignment operator. 
@@ -155,12 +145,6 @@
   *                translations or orientation differ. 
   */
 
- //  \}
-
-
- /*! \name         Accessors
-  */
- //  \{
 
  /*! \function     const DbU::Unit& Transformation::getTx() const;
   *  \Return       the horizontal component of the translation. 
@@ -247,19 +231,11 @@
   *  \Return       the inverse transformation. 
   */
 
- //  \}
-
-
- /*! \name         Modifiers
-  */
- //  \{
 
  /*! \function     Transformation& Transformation::invert();
   *                inverts the transformation \c \<this\> and returns a 
   *                reference to it in order to apply in sequence a new function. 
   */
-
- //  \}
 
 
  /*! \section      secTransformationTransformers  Transformers
@@ -274,11 +250,6 @@
   *                <b>Transformation::applyOn</b>
   */
 
-
-
- /*  \name         Others
-  */
- //  \{
 
  /*! \function     void Transformation::applyOn(DbU::Unit& x, DbU::Unit& y) const;
   *                Applies the transformation on the coordinates given in 
@@ -298,7 +269,5 @@
   *                argument. This last one becomes then the transformation 
   *                resulting of the product of those two. 
   */
-
- //  \}
 
  }

@@ -64,15 +64,15 @@
   *                type: Let us examine the following piece of code which 
   *                illustrates that 
 \code
-OpenUpdateSession();
+UpdateSession::open();
  
-contact->SetLayer(...);
-contact->SetSizes(...);
-contact->SetPosition(...);
+contact->setLayer(...);
+contact->setSize(...);
+contact->setPosition(...);
  
-CloseUpdateSession();
+UpdateSession::close();
 \endcode
-  *                The call to the generic function <b>OpenUpdateSession()</b> 
+  *                The call to the generic function <b>UpdateSession::open()</b> 
   *                allows to open a new update_session. 
   *
   *                The three following lines call upon functions which modify 
@@ -80,7 +80,7 @@ CloseUpdateSession();
   *                directly or indirectly bear on it. 
   *
   *                At last the call to the generic function 
-  *                <b>CloseUpdateSession()</b> allows to close the last update 
+  *                <b>UpdateSession::close()</b> allows to close the last update 
   *                session currently open. 
   *
   *                type: What does really happen ? 
@@ -90,7 +90,7 @@ CloseUpdateSession();
   *                placed on the top of this stack represents the current 
   *                session. 
   *
-  *                When the object is modified : the method <b>Invalidate</b> 
+  *                When the object is modified : the method <b>Go::invalidate()</b> 
   *                which we will detail later is called upon. The purpose of 
   *                this method is to de-materialize all materialized objects 
   *                affected directly or indirectly by this modification and 
@@ -121,25 +121,15 @@ CloseUpdateSession();
   */
 
 
-
- /*! \name         Predicates
-  */
- //  \{
-
  /*! \function     bool Go::autoMaterializationIsDisabled();
-  *                No description.
+  *  \Return       \true if the automatic materialization is disabled.
   */
 
  /*! \function     bool Go::isMaterialized() const;
-  *                No description.
+  *  \Return       \true if the Go is materialized, that is, inserted in the
+  *                QuadTree.
   */
 
- //  \}
-
-
- /*! \name         Modifiers
-  */
- //  \{
 
  /*! \function     void Go::enableAutoMaterialization();
   *  \see          Go::DisableAutoMaterialization().
@@ -158,21 +148,19 @@ CloseUpdateSession();
   *                
   *                The following sample code shows how to proceed :
 \code
-Cell* LoadCellFromFile(...)
-// ************************
+Cell* LoadCellFromFile ( ... )
 {
-   Cell* cell = Cell::Create(...);
+   Cell* cell = Cell::create( ... );
  
-   bool enabledFlag = ! AutoMaterializationIsDisabled();
- 
-   DisableAutoMaterialization(); // we force the mode
+   bool enabledFlag = not Go::autoMaterializationIsDisabled();
+   Go::disableAutoMaterialization(); // we force the mode
  
    ... // we open the file and load the cell 
  
    if (enabledFlag) // we restore the initial state if needed
-      EnableAutoMaterialization();
+     Go::enableAutoMaterialization();
  
-   cell->Materialize(); // delayed materialization of cell content
+   cell->materialize(); // delayed materialization of cell content
  
    return cell;
 }
@@ -180,11 +168,12 @@ Cell* LoadCellFromFile(...)
   */
 
  /*! \function     void Go::materialize();
-  *                No description.
+  *                Triggers the materialization, that is, insert into the relevant
+  *                QuadTree.
   */
 
  /*! \function     void Go::unmaterialize();
-  *                No description.
+  *                Withdrawn the Go from it's QuadTree.
   */
 
  /*! \function     void Go::invalidate(bool propagateFlag = true);
@@ -211,62 +200,51 @@ Cell* LoadCellFromFile(...)
   *
   * \sample        We give as an example the implementation for the instances :
 \code
-void Instance::Invalidate(bool propagateFlag)
-// ******************************************
+void Instance::invalidate ( bool propagateFlag )
 {
-   Inherit::Invalidate(false);
+  Inherit::invalidate(false);
  
-   if (propagateFlag) {
-      for_each_plug(plug, GetConnectedPlugs()) {
-         plugInvalidate(true);
-         end_for;
-      }
-   }
+  if (propagateFlag) {
+    forEach(Plug*, iplug, GetConnectedPlugs()) {
+      iplug->invalidate(true);
+    }
+  }
 }
 \endcode
 \code
-void Component::Invalidate(bool propagateFlag)
-// *******************************************
+void Component::invalidate ( bool propagateFlag )
 {
-   Inherit::Invalidate(false);
+  Inherit::invalidate(false);
  
-   if (propagateFlag) {
-      for_each_component(component, GetSlaveComponents()) {
-         componentInvalidate(false);
-         end_for;
-      }
-   }
+  if (propagateFlag) {
+    forEach(Component*, icomponent, GetSlaveComponents()) {
+      icomponent->invalidate(false);
+    }
+  }
 }
 \endcode
 \code
-void Contact::SetLayer(Layer* layer)
-// *********************************
+void Contact::setLayer ( Layer* layer )
 {
-   if (!layer)
-      throw Error("Can't set layer : null layer");
+  if (!layer) throw Error("Can't set layer : null layer");
  
-   if (layer != _layer) {
+  if (layer != _layer) {
+    // we do the change only if necessary
+    invalidate(false); // done before the modification
  
-      // we do the change only if necessary
- 
-      Invalidate(false); // done before the modification
- 
-      _layer = layer;
-   }
+    _layer = layer;
+  }
 }
 \endcode
 \code
-void Instance::SetTransformation(const Transformation& transformation)
-// *******************************************************************
+void Instance::setTransformation(const Transformation& transformation)
 {
-   if (transformation != _transformation) {
- 
-      // we do the change only if necessary
- 
-      Invalidate(true); // done before the modification
- 
-      _transformation = transformation;
-   }
+  if (transformation != _transformation) {
+    // we do the change only if necessary
+    invalidate(true); // done before the modification
+
+    _transformation = transformation;
+  }
 }
 \endcode
   */
@@ -279,11 +257,8 @@ void Instance::SetTransformation(const Transformation& transformation)
   *                graphic object. 
   */
 
- //  \}
 
-
- /*! \name         Go Collection
-  */
+ //! \name         Go Collection
  //  \{
 
  /*! \typedef      Gos
@@ -299,12 +274,11 @@ void Instance::SetTransformation(const Transformation& transformation)
   *                criteria. 
   */
 
- /*! \def          for_each_go(go, gos)
+ /*! \def          forEach(Go*, igo, gos)
   *                Macro for visiting all graphic objects of a graphic objects 
   *                collection. 
   */
 
  //  \}
-
 
  }

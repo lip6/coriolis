@@ -31,11 +31,8 @@
 //
 // License-Tag
 // Authors-Tag
-// ===================================================================
 //
-// $Id$
-//
-// x-----------------------------------------------------------------x 
+// +-----------------------------------------------------------------+ 
 // |                                                                 |
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
@@ -43,14 +40,8 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./PyDbU.h"                                |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
-
-
-
+// |  C++ Header  :  "./hurricane/isobar/PyDbU.h"                    |
+// +-----------------------------------------------------------------+
 
 
 #ifndef  __PYUNIT__
@@ -58,46 +49,50 @@
 
 
 #include "hurricane/isobar/PyHurricane.h"
-
 #include "hurricane/DbU.h"
 
 
 namespace  Isobar {
-
 
 extern "C" {
 
 
 // -------------------------------------------------------------------
 // Python Object  :  "PyDbU".
+//
+// This is nothing but a hollow shell to provide a "DbU" name space
+// at Python level. DbU are just treaded as long long.
 
+  typedef struct {
+      PyObject_HEAD
+  } PyDbU;
 
 
 
 // -------------------------------------------------------------------
 // Functions & Types exported to "PyHurricane.ccp".
 
-  extern  PyObject* PyDbU_db                ( PyObject* module, PyObject* args );
-  extern  PyObject* PyDbU_grid              ( PyObject* module, PyObject* args );
-  extern  PyObject* PyDbU_lambda            ( PyObject* module, PyObject* args );
-  extern  PyObject* PyDbU_getDb             ( PyObject* module, PyObject* args );
-  extern  PyObject* PyDbU_getGrid           ( PyObject* module, PyObject* args );
-  extern  PyObject* PyDbU_getLambda         ( PyObject* module, PyObject* args );
-  extern  PyObject* PyDbU_getPhysical       ( PyObject* module, PyObject* args );
-  extern  PyObject* PyDbU_getResolution     ( PyObject* module );
-  extern  PyObject* PyDbU_getOnPhysicalGrid ( PyObject* module, PyObject* args );
+  extern  PyTypeObject  PyTypeDbU;
+  extern  PyMethodDef   PyDbU_Methods[];
 
-  extern  void DbULoadConstants ( PyObject* dictionnary );
+  extern  void          PyDbU_LinkPyType    ();
+  extern  PyObject*     PyDbU_fromDb            ( PyObject* module, PyObject* args );
+  extern  PyObject*     PyDbU_fromGrid          ( PyObject* module, PyObject* args );
+  extern  PyObject*     PyDbU_fromLambda        ( PyObject* module, PyObject* args );
+  extern  PyObject*     PyDbU_toDb              ( PyObject* module, PyObject* args );
+  extern  PyObject*     PyDbU_toGrid            ( PyObject* module, PyObject* args );
+  extern  PyObject*     PyDbU_toLambda          ( PyObject* module, PyObject* args );
+  extern  PyObject*     PyDbU_toPhysical        ( PyObject* module, PyObject* args );
+  extern  PyObject*     PyDbU_getResolution     ( PyObject* module );
+  extern  PyObject*     PyDbU_getOnPhysicalGrid ( PyObject* module, PyObject* args );
 
-
-}  // End of extern "C".
-
-
-
-
-}  // End of Isobar namespace.
- 
+  extern  void          DbULoadConstants        ( PyObject* dictionnary );
+  extern  void          PyDbU_postModuleInit    ();
 
 
+}  // extern "C".
+
+
+}  // Isobar namespace.
 
 #endif

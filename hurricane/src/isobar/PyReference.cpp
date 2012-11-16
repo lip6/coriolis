@@ -13,14 +13,14 @@
 // x-----------------------------------------------------------------x
 
 
-#include "hurricane/Cell.h"
-using namespace Hurricane;
 
 #include "hurricane/isobar/PyReference.h"
 #include "hurricane/isobar/PyPoint.h"
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/isobar/PyNet.h"
 #include "hurricane/isobar/PyBox.h"
+#include "hurricane/Cell.h"
+using namespace Hurricane;
 
 namespace  Isobar {
 

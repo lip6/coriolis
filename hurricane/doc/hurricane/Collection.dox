@@ -19,6 +19,55 @@
   *                pointer to the cell and a second attribute the rectangular 
   *                area. 
   *
+  *                Main characteristics of Collections:
+  *                <ul>
+  *                  <li>Collections <b>do not own</b> their elements (they
+  *                      remains when the Collection is deleted).
+  *                  <li>They can only be iterated \e forward. Once an
+  *                      element is consumed you cannot go back to it.
+  *                      You must restart the collection walktrough instead.
+  *                  <li>Collections are very light objects which are built,
+  *                      copied or destroyed very rapidly. 
+  *                </ul>
+  *
+  *
+  *  \section      secForEachMacro  The forEach Macro
+  *
+  *                Collections are to be used in conjunction with the \c forEach macro
+  *                which allows to easily iterate over the elements. Iteration is done
+  *                through a simplistic iterator which have overload for the
+  *                <code>operator*()</code> and <code>operator->()</code> 
+  *
+  *                The \c forEach macro takes three arguments:
+  *                <center>
+  *                <table>
+  *                  <tr><th colspan="2"> <code>forEach(type,iterator,collection)</code>
+  *                  <tr><td> \c type        <td>Element's type of the collection.
+  *                  <tr><td> \c iterator    <td>Name of the iterator's variable.
+  *                  <tr><td> \c collection  <td>An appropriate collection to iterate over, that is,
+  *                                              built over \c type elements.
+  *                </table>
+  *                </center>
+  *
+  *                To use the forEach macro outside the Hurricane namespace, the
+  *                following statement is necessary:
+\code
+  using Hurricane::ForEachIterator
+\endcode
+  *                Here is a small example of a loop:
+\code
+  using Hurricane::ForEachIterator;
+
+  Cell* cell = ...; // Get a Cell from somewhere.
+
+  forEach( Net*, inet, cell->getNets() ) {
+    cout << "This is " << (*inet);
+    if (inet->isExternal())
+      cout << " [external net].";
+    cout << endl;
+  }
+\endcode
+  *
   *
   *  \section      secGenericgetCollection  The Generic getCollection
   *
@@ -34,14 +83,11 @@ set<Instance*> instanceSet;
  
 // here we fill the set with the desired instances...	
  
-for_each_instance(instance, getCollection(instanceSet)) {
+forEach(Instance*, iinstance, getCollection(instanceSet)) {
    // process here each instance of the set
    // (the elements are visited according to the set ordering)
-   end_for;
 }
 \endcode
-  *
-  *                
   *
   *  \remark       This approach is a little bit less efficient than the use of 
   *                STL iterators, not much indeed, but has the advantage to be 
@@ -53,7 +99,6 @@ for_each_instance(instance, getCollection(instanceSet)) {
   *                is valid. Then you should not do the following: 
 \code
 GenericCollection<Instance*> getInstances(...)
-// *******************************************
 {
    set<Instance*> instanceSet;
  
@@ -67,26 +112,19 @@ GenericCollection<Instance*> getInstances(...)
   *
   *                The same will occur anyway if you do: 
 \code
-Cell* cell = ... // we get the cell
+Cell* cell = ...; // we get the cell
  
-Nets nets = cellgetNets();
+Nets nets = cell->getNets();
  
-cellDelete();
+cell->destroy();
  
-for_each_net(net, nets) {
+forEach(Net*, inet, nets) {
    ...
-   end_for;
 }
 \endcode
   *
-  *                
   *
-  * \section      secCollectionImportant  Important
-  *
-  *                Collections are very light objects which are built, copied or 
-  *                destroyed very rapidly. 
-  *
-  * \section      secCollectionLocators  Locators
+  * \section       secCollectionLocators  Locators
   *
   *                Each type of collection provides an associated Locator for 
   *                tracing through the corresponding set of elements. 
@@ -110,22 +148,11 @@ for_each_net(net, nets) {
   */
 
 
-
- /*! \name         Destructors
-  */
- //  \{
-
  /*! \function     Collection::~Collection<Type>();
   *                Destroys the collection but doesn't acts on elements refered 
   *                by this collection. 
   */
 
- //  \}
-
-
- /*! \name         Accessors
-  */
- //  \{
 
  /*! \function     Collection<Type>* Collection::getClone() const;
   *                Allocates and returns a clone (copy) of the collection 
@@ -171,7 +198,6 @@ for_each_net(net, nets) {
   *
 \code
 Contacts Net::getContacts() const
-// ******************************
 {
    return getComponents().getSubSet<Contact*>();
 }
@@ -183,7 +209,6 @@ Contacts Net::getContacts() const
   *                by the filter. 
 \code
 Nets Cell::getExternalNets() const
-// *******************************
 {
    return getNets().getSubSet(Net::getIsExternalFilter());
 }
@@ -201,23 +226,18 @@ Nets Cell::getExternalNets() const
   *  \sample       Filter Hurricane::Segment according to their Layer.
 \code
 class IsOnLayer : public Filter<Segment*> {
-// **************************************
- 
    public:
- 
       Layer* _layer;
- 
+   public:
       IsOnLayer(Layer* layer)
-      : _layer(layer)
+        : _layer(layer)
       {
-         if (!_layer)
-            throw Error("Can't create IsOnLayer filter : null layer");
+         if (!_layer) throw Error("Can't create IsOnLayer filter : null layer");
       };
  
       IsOnLayer(const IsOnLayer& isOnLayer)
-      : _layer(isOnLayer._layer)
-      {
-      };
+        : _layer(isOnLayer._layer)
+      { };
  
       IsOnLayer& operator=(const IsOnLayer& isOnLayer)
       {
@@ -234,15 +254,14 @@ class IsOnLayer : public Filter<Segment*> {
       {
          return (segmentgetLayer() == _layer);
       };
- 
 };
 \endcode
   *
   *                And somewher later: 
 \code
-Layer* metal = getDataBase()getTechnology()getLayer("metal");
+Layer* metal = getDataBase()->getTechnology()->getLayer("metal");
  
-Segments segments = netgetComponents()->getSubSet<Segment*>(IsOnLayer(metal));
+Segments segments = net->getComponents()->getSubSet<Segment*>(IsOnLayer(metal));
  
 // segments represents here the subset of net components
 // which are of type Segment and located on layer metal
@@ -251,23 +270,14 @@ Segments segments = netgetComponents()->getSubSet<Segment*>(IsOnLayer(metal));
   *                
   */
 
- //  \}
-
-
- /*! \name         Predicates
-  */
- //  \{
 
  /*  \function     bool Collection::isEmpty() const;
   *                This function returns \true if the collection designates no 
   *                element and else \false. 
   */
 
- //  \}
-
 
  /*! \section      secCollectionUtilitarians  Utilitarians
-  *
   *
   *                <b>Collection::Fill</b>
   *                <b>Collection::Fill</b>
@@ -280,8 +290,7 @@ Segments segments = netgetComponents()->getSubSet<Segment*>(IsOnLayer(metal));
 
 
 
- /*! \name         Collection Collection
-  */
+ //! \name         Collection Collection
  //  \{
 
  /*! \def          for_each_object(Type, element, collection)
@@ -299,10 +308,9 @@ Segments segments = netgetComponents()->getSubSet<Segment*>(IsOnLayer(metal));
 Cell* cell = ...; // we get the cell
  
 if (cell) {
-   for_each(Net*, net, cellgetExternalNets()) {
-      assert(netIsExternal());
-      assert(netgetCell() == cell);
-      end_for;
+   forEach(Net*, inet, cellgetExternalNets()) {
+      assert(inet->isExternal());
+      assert(inet->getCell() == cell);
    }
 }
 \endcode
@@ -316,10 +324,9 @@ if (cell) {
 Cell* cell = ...; // we get the cell
  
 if (cell) {
-   for_each_net(net, cellgetExternalNets()) {
-      assert(netIsExternal());
-      assert(netgetCell() == cell);
-      end_for;
+   forEach(Net*, inet, cellgetExternalNets()) {
+      assert(inet->isExternal());
+      assert(inet->getCell() == cell);
    }
 }
 \endcode
@@ -327,17 +334,6 @@ if (cell) {
 
  //  \}
 
-
- /*! \name         Collection Functions
-  */
- //  \{
-
- //  \}
-
-
- /*  \name         Others
-  */
- //  \{
 
  /*  \function     void Collection::Fill(list<Type>& list) const;
   *                No description.
@@ -352,6 +348,121 @@ if (cell) {
   *                identified elements of a collection. 
   */
 
- //  \}
+
+ /*! \class        GenericCollection
+  *  \brief        Generic Collection auto-pointer.
+  *
+  *                This class is an auto-pointer like wrapped around the raw collection.
+  *                The database systematically returns collections wrapped inside
+  *                GenericCollection.
+  *
+  *  \remark       The destruction of a GenericCollection triggers the destruction of
+  *                the raw collection.
+  */
+
+ /*! \function     GenericCollection::GenericCollection(Collection<Type>* collection);
+  *                Constructor from a raw Collection.
+  *
+  *  \remark       This constructor do not build a copy of the raw collection. So the original
+  *                raw collection must not be deleted. It's deletion will occurs with the one
+  *                of the GenericCollection.
+  */
+
+ /*! \function     GenericCollection::GenericCollection(const Collection<Type>& collection);
+  *                Constructor from a raw Collection.
+  *
+  *  \remark       This constructor build a \e copy of the raw collection. So the originating
+  *                collection can be safely deleted.
+  */
+
+ /*! \function     GenericCollection::GenericCollection(const GenericCollection<Type>& collection);
+  *                Constructor from a raw Collection.
+  *
+  *  \remark       This constructor build a \e copy of the raw collection. So the originating
+  *                collection can be safely deleted.
+  */
+
+ /*! \class        SubSetCollection
+  *  \brief        Applies a Filter to a Collection
+  *
+  *                Build a sub-Collection of all the elements of the primary that
+  *                match the Filter criterion.
+  */
+
+ /*! \function     SubSetCollection::SubSetCollection(const Collection<Type>& collection, const Filter<Type>& filter);
+  *                Constructor from a primary Collection and a Filter.
+  */
+
+ /*! \function     SubSetCollection::SubSetCollection(const SubSetCollection& subSetCollection);
+  *                Copy constructor.
+  */
+
+ /*! \class        SubTypeCollection
+  *  \brief        Applies a Type Filter to a Collection
+  *
+  *                Build a sub-Collection of all the elements of the primary that
+  *                are of a certain sub-type. The filtering mechanism relies on a
+  *                \c dynamic_cast<> so there must be an inheritance path between
+  *                the Collection type and the sub-type.
+  */
+
+ /*! \function     SubTypeCollection::SubTypeCollection(const Collection<Type>* collection);
+  *                Constructor from a primary Collection and a Filter.
+  */
+
+ /*! \function     SubTypeCollection::SubTypeCollection(const GenericCollection<Type>& collection);
+  *                Constructor from a primary Collection and a Filter.
+  */
+
+ /*! \function     SubTypeCollection::SubTypeCollection(const SubTypeCollection& subTypeCollection);
+  *                Copy Constructor.
+  */
+
+/*! \typedef       typedef list<Element>  ElementList;
+ *                 A simple typedef for Collection encapsulated lists.
+ */
+
+ /*! \class        ListCollection
+  *  \brief        Hurricane Collection wrapper around a std::list.
+  *
+  *                Automatically wrap a Hurricane Collection around a stl::list.
+  */
+
+ /*! \function     ListCollection::ListCollection(const ElementList* elementList = NULL);
+  *                Constructor from a STL list, the list must not be de-allocated.
+  */
+
+ /*! \class        VectorCollection
+  *  \brief        Hurricane Collection wrapper around a std::vector.
+  *
+  *                Automatically wrap a Hurricane Collection around a stl::vector.
+  */
+
+ /*! \function     VectorCollection::VectorCollection(const ElementVector* elementVector = NULL);
+  *                Constructor from a STL vector, the vector must not be de-allocated.
+  *               
+  */
+
+ /*! \class        MapCollection
+  *  \brief        Hurricane Collection wrapper around a std::map.
+  *
+  *                Automatically wrap a Hurricane Collection around a stl::map.
+  */
+
+ /*! \function     MapCollection::MapCollection(const ElementMap* elementMap = NULL);
+  *                Constructor from a STL map, the map must not be de-allocated.
+  *               
+  */
+
+ /*! \class        SetCollection
+  *  \brief        Hurricane Collection wrapper around a std::set.
+  *
+  *                Automatically wrap a Hurricane Collection around a stl::set.
+  */
+
+ /*! \function     SetCollection::SetCollection(const ElementSet* elementSet = NULL);
+  *                Constructor from a STL set, the set must not be de-allocated.
+  *               
+  */
 
  }

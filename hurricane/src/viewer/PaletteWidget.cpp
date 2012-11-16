@@ -240,7 +240,7 @@ namespace Hurricane {
 
     size_t                       gi     = 0;
     const vector<DrawingGroup*>& groups = Graphics::getStyle()->getDrawingGroups();
-    const vector<DrawingStyle*>& styles = groups[gi]->getDrawingStyles();
+    const DrawingStyles&         styles = groups[gi]->getDrawingStyles();
 
     gridBuffer.addSection ( _createGroupItem(groups[gi]->getName()), Qt::AlignHCenter );
     for ( size_t si=0 ; si<styles.size() ; si++ ) {
@@ -266,7 +266,7 @@ namespace Hurricane {
         for ( gi=1 ; gi<groups.size() ; gi++ ) {
           gridBuffer.addSection ( _createGroupItem(groups[gi]->getName()), Qt::AlignHCenter ); 
 
-          const vector<DrawingStyle*>& styles = groups[gi]->getDrawingStyles();
+          const DrawingStyles& styles = groups[gi]->getDrawingStyles();
           for ( size_t si=0 ; si<styles.size() ; si++ ) {
             BasicLayer* basicLayer = technology->getBasicLayer ( styles[si]->getName() );
 

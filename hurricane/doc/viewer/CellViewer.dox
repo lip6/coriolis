@@ -1,5 +1,4 @@
 
-
  // -*- C++ -*-
 
 
@@ -7,18 +6,76 @@
 
  /*! \class        CellViewer
   *  \brief        A simple top level window embedding the CellWidget.
+  *
+  *                This classe group together a CellWidget to view layout and
+  *                a ControllerWidget that enables to control it. It should
+  *                be used as the base for complete viewer.
   */
 
 
- /*! \name         Constructors & Destructors
-  */
- //  \{
-   
  /*! \function     CellViewer::CellViewer(QWidget* parent=NULL);
   *                Construct a CellView window no Cell is actually loaded.
   */
-
- //  \}
-
+ /*! \function     CellViewer::~CellViewer();
+  *                Destructor.
+  */
+ /*! \function     bool  CellViewer::isToolInterrupted() const;
+  *  \Return       \true if the viewer has received an interruption request,
+  *                in that case it will abort it's current redrawing pass
+  *                (if any) and process the next drawing request.
+  */
+ /*! \function     void  CellViewer::setEnableRedrawInterrupt(bool state);
+  *                Allows/disallow the redrawing interruptions. If disabled,
+  *                the viewer will not abort it's drawing passes.  
+  */
+ /*! \function     void  CellViewer::setApplicationName(const QString& name);
+  *                Sets the Qt application name. The name under which the application
+  *                will appears for window managers.
+  */
+ /*! \function     Cell* CellViewer::getCell() const;
+  *  \Return       The Cell currently viewer (may be \c NULL if there is none).
+  */
+ /*! \function     void  CellViewer::setCell(Cell* cell);
+  *                Load \c cell into the viewer.
+  */
+ /*! \function     void  CellViewer::renameCell(const char* name);
+  *                Change the name of the currently loaded Cell.
+  */
+ /*! \function     Cell* CellViewer::getCellFromDb(const char* name);
+  *  \Return       Load through a framework the Cell \c name.
+  *
+  *  \important    This function is virtual and actually empty. It is a placeholder
+  *                for derived classes. It has not be made pure virtual as not
+  *                every derived classes needs it. Instead it display a warning
+  *                message.              
+  */
+ /*! \function     CellWidget* CellViewer::getCellWidget();
+  *  \Return       The associated CellWidget (the actual widget that do the display).
+  */
+ /*! \function     const CellWidget* CellViewer::getCellWidget() const;
+  *  \Return       The associated CellWidget (the actual widget that do the display).
+  *                This is the \e const flavor.
+  */
+ /*! \function     ControllerWidget* CellViewer::getControllerWidget();
+  *  \Return       The associated ControllerWidget.
+  */
+ /*! \function     void  CellViewer::setAnonNetSelectable(bool state);
+  *                Allows/disallow the selection of anonymous nets whith the
+  *                selection menu.
+  */
+ /*! \function     void  CellViewer::select(Occurrence& occurrence);
+  *                Add \c occurrence the set of selected occurrences. Also
+  *                switch the viewer in selection mode (if not already on).
+  */
+ /*! \function     void  CellViewer::unselect(Occurrence& occurrence);
+  *                Whidraw \c occurrence from the set of selected occurrences.
+  */
+ /*! \function     void  CellViewer::unselectAll();
+  *                Clear the whole set of selected occurrences.
+  */
+ /*! \function     void  CellViewer::setLayerVisible(const Name& layer, bool visible);
+  *                Sets the visibility state of \c layer. This is the programatic
+  *                equivalent of the ControllerWidget.
+  */
 
  }

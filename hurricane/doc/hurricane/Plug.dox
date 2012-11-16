@@ -12,8 +12,8 @@
   *                A plug can be assimilated to a "logical port instance" : it 
   *                designates both the concerned instance and the net of the 
   *                model cell instanciated to which it is connected. This net, 
-  *                which must be an external net, will be named "<b>master 
-  *                net</b>" because it is a net of the instance master cell 
+  *                which must be an external net, will be named <b>"master 
+  *                net"</b> because it is a net of the instance master cell 
   *                (notice that this net can be asimilated to a "logical port"). 
   *
   *                A plug is unique, that is, for a given instance there is one 
@@ -49,10 +49,6 @@
   */
 
 
- /*! \name         Accessors
-  */
- //  \{
-
  /*! \function     Instance* Plug::getInstance() const;
   *  \Return       the instance to which belongs the plug. 
   */
@@ -65,12 +61,6 @@
   *                plug (or NULL if is unconnected). 
   */
 
- //  \}
-
-
- /*! \name         Predicates
-  */
- //  \{
 
  /*! \function     bool Plug::isConnected() const;
   *  \Return       \true if the plug is connected, else \false. 
@@ -79,12 +69,6 @@
   *                return NULL. 
   */
 
- //  \}
-
-
- /*! \name         Modifiers
-  */
- //  \{
 
  /*! \function     void Plug::setNet(Net* net);
   *                This method allows to connect or change the net of a plug. 
@@ -97,12 +81,8 @@
   *                left unchanged. 
   */
 
- //  \}
 
-
-
- /*! \name         Plug Collection
-  */
+ //! \name         Plug Collection
  //  \{
 
  /*! \typedef      Plugs
@@ -125,10 +105,6 @@
  //  \}
 
 
- /*  \name         Accessors
-  */
- //  \{
-
  /*! \function     PlugFilter Plug::getIsConnectedFilter();
   *  \Return       a filter for selecting only connected plugs. 
   */
@@ -136,7 +112,5 @@
  /*! \function     PlugFilter Plug::getIsUnconnectedFilter();
   *  \Return       a filter for selecting only unconnected plugs. 
   */
-
- //  \}
 
  }

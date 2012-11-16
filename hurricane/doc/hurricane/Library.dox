@@ -24,9 +24,6 @@
   *                knowing it. 
   */
 
- /*! \name         Constructors
-  */
- //  \{
 
  /*! \function     Library* Library::create(DataBase* dataBase, const Name& name);
   *                creates and returns a new root library named \c \<name\> for 
@@ -45,12 +42,6 @@
   *                the library. 
   */
 
- //  \}
-
-
- /*! \name         Accessors
-  */
- //  \{
 
  /*! \function     DataBase* Library::getDataBase() const;
   *  \Return       the data base owning directly or indirectly the library. 
@@ -88,12 +79,6 @@
   *  \Return       the collection of all symbols of the library. 
   */
 
- //  \}
-
-
- /*! \name         Modifiers
-  */
- //  \{
 
  /*! \function     void Library::setName(const Name& name);
   *                Allows to change the library name. 
@@ -103,11 +88,8 @@
   *                with the same name. 
   */
 
- //  \}
 
-
- /*! \name         Library Collection
-  */
+ //! \name         Library Collection
  //  \{
 
  /*! \typedef      Libraries
@@ -129,6 +111,5 @@
   */
 
  //  \}
-
 
  }

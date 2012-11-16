@@ -31,25 +31,16 @@
 //
 // License-Tag
 // Authors-Tag
-// ===================================================================
 //
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./PyDbU.cpp"                              |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
-
-
+// |  C++ Module  :  "./PyDbU.cpp"                                   |
+// +-----------------------------------------------------------------+
 
 
 #include "hurricane/isobar/PyDbU.h"
@@ -61,20 +52,13 @@ using namespace Hurricane;
 
 extern "C" {
 
-#define  LOAD_CONSTANT(CONSTANT_VALUE,CONSTANT_NAME)             \
- constant = PyInt_FromLong ( (long)CONSTANT_VALUE );             \
- PyDict_SetItemString ( dictionnary, CONSTANT_NAME, constant );  \
- Py_DECREF ( constant );
 
-// x=================================================================x
+// +=================================================================+
 // |                 "PyDbU" Python Module Code Part                 |
-// x=================================================================x
+// +=================================================================+
 
 #if defined(__PYTHON_MODULE__)
 
-  // x-------------------------------------------------------------x
-  // |                  "PyDbU" Local Functions                    |
-  // x-------------------------------------------------------------x
 
   static DbU::SnapMode PyInt_AsSnapMode ( PyObject* object ) {
     switch ( PyInt_AsLong(object) ) {
@@ -99,209 +83,518 @@ extern "C" {
     return ( DbU::Micro );
   }
 
-  // x-------------------------------------------------------------x
+
+  // +-------------------------------------------------------------+
   // |                  Global Constants Loading                   |
-  // x-------------------------------------------------------------x
+  // +-------------------------------------------------------------+
+
+
+  // +-------------------------------------------------------------+
+  // |                  "PyDbU" General Methods                    |
+  // +-------------------------------------------------------------+
+
+
+  extern PyObject* PyDbU_fromDb ( PyObject* , PyObject* args )
+  {
+    PyObject*  arg0;
+    DbU::Unit  result = 0;
+
+    HTRY
+    __cs.init ( "DbU.fromDb" );
+    if ( ! PyArg_ParseTuple(args,"|O&:DbU.fromDb",Converter,&arg0) )
+      return ( NULL );
+    
+    if ( __cs.getObjectIds() == INT_ARG   ) { result = DbU::fromDb ( PyInt_AsLong ( arg0 ) ); }
+    else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters or bad type for DbU.fromDb converter." );
+      return ( NULL );
+    }
+    HCATCH
+    
+    return Py_BuildValue("i",result);
+  }
+
+
+  extern PyObject* PyDbU_fromGrid ( PyObject* , PyObject* args )
+  {
+    PyObject*  arg0;
+    DbU::Unit  result = 0;
+
+    HTRY
+    __cs.init ( "DbU.grid" );
+    if ( ! PyArg_ParseTuple(args,"|O&:DbU.fromGrid",Converter,&arg0) )
+      return ( NULL );
+    
+    if      ( __cs.getObjectIds() == FLOAT_ARG )  { result = DbU::fromGrid ( PyFloat_AsDouble ( arg0 ) ); }
+    else if ( __cs.getObjectIds() == INT_ARG   )  { result = DbU::fromGrid (     PyInt_AsLong ( arg0 ) ); }
+    else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters or bad type for DbU.fromGrid converter." );
+      return ( NULL );
+    }
+    HCATCH
+    
+    return Py_BuildValue("i",result);
+  }
+
+
+  extern PyObject* PyDbU_fromLambda ( PyObject* , PyObject* args )
+  {
+    PyObject*  arg0;
+    DbU::Unit  result = 0;
+
+    HTRY
+    __cs.init ( "DbU.fromLambda" );
+    if ( ! PyArg_ParseTuple(args,"|O&:DbU.fromLambda",Converter,&arg0) )
+      return ( NULL );
+    
+    if      ( __cs.getObjectIds() == FLOAT_ARG ) { result = DbU::fromLambda ( PyFloat_AsDouble ( arg0 ) ); }
+    else if ( __cs.getObjectIds() == INT_ARG   ) { result = DbU::fromLambda ( PyLong_AsLong    ( arg0 ) ); }
+    else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters or bad type for DbU.fromLambda converter." );
+      return ( NULL );
+    }
+    HCATCH
+    
+    return Py_BuildValue ("i",result);
+  }
+
+
+  extern PyObject* PyDbU_fromPhysical ( PyObject* , PyObject* args )
+  {
+    double     value   = 0.0;
+    int        power   = DbU::Micro;
+    DbU::Unit  result  = 0;
+
+    HTRY
+    if (not PyArg_ParseTuple(args,"di:DbU.fromPhysical", &value, &power) ) {
+      PyErr_SetString ( ConstructorError, "DbU.fromPhysical(): Invalid/bad type parameters ." );
+      return NULL;
+    }
+    result = DbU::fromPhysical(value,(DbU::UnitPower)power);
+    HCATCH
+
+    return Py_BuildValue("l",result);
+  }
+
+
+  extern PyObject* PyDbU_getPrecision ( PyObject* )
+  { return Py_BuildValue("I",DbU::getPrecision()); }
+
+
+  extern PyObject* PyDbU_getMaximalPrecision ( PyObject* )
+  { return Py_BuildValue("I",DbU::getMaximalPrecision()); }
+
+
+  extern PyObject* PyDbU_getResolution ( PyObject* )
+  { return Py_BuildValue("d",DbU::getResolution()); }
+
+
+  extern PyObject* PyDbU_setPrecision ( PyObject* , PyObject* args )
+  {
+    unsigned int  precision = 0;
+
+    HTRY
+    if (not PyArg_ParseTuple(args,"I:DbU.setPrecision", &precision) ) {
+      PyErr_SetString ( ConstructorError, "DbU.setPrecision(): Invalid/bad type parameters ." );
+      return NULL;
+    }
+    DbU::setPrecision(precision);
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
+  extern PyObject* PyDbU_getUnitPower ( PyObject* , PyObject* args )
+  {
+    double        value = 0.0;
+    unsigned int  power = 0;
+
+    HTRY
+    if (not PyArg_ParseTuple(args,"i:DbU.getUnitPower", &power) ) {
+      PyErr_SetString ( ConstructorError, "DbU.getUnitPower(): Invalid/bad type parameters ." );
+      return NULL;
+    }
+    value = DbU::getUnitPower((DbU::UnitPower)power);
+    HCATCH
+
+    return Py_BuildValue("d",value);
+  }
+
+
+  extern PyObject* PyDbU_setPhysicalsPerGrid ( PyObject* , PyObject* args )
+  {
+    double        gridsPerLambda = 0.0;
+    unsigned int  power          = 0;
+
+    HTRY
+    if (not PyArg_ParseTuple(args,"di:DbU.setPhysicalsPerGrid", &gridsPerLambda, &power) ) {
+      PyErr_SetString ( ConstructorError, "DbU.setPhysicalsPerGrid(): Invalid/bad type parameters ." );
+      return NULL;
+    }
+    DbU::setPhysicalsPerGrid(gridsPerLambda,(DbU::UnitPower)power);
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
+  extern PyObject* PyDbU_getPhysicalsPerGrid ( PyObject* )
+  { return Py_BuildValue("d",DbU::getPhysicalsPerGrid()); }
+
+
+  extern PyObject* PyDbU_physicalToGrid ( PyObject* , PyObject* args )
+  {
+    double  value   = 0.0;
+    int     power   = DbU::Micro;
+    double  result  = 0;
+
+    HTRY
+    if (not PyArg_ParseTuple(args,"di:DbU.physicalToGrid", &value, &power) ) {
+      PyErr_SetString ( ConstructorError, "DbU.physicalToGrid(): Invalid/bad type parameters ." );
+      return NULL;
+    }
+    result = DbU::physicalToGrid(value,(DbU::UnitPower)power);
+    HCATCH
+
+    return Py_BuildValue("d",result);
+  }
+
+
+  extern PyObject* PyDbU_setGridsPerLambda ( PyObject* , PyObject* args )
+  {
+    double  gridsPerLambda = 0.0;
+
+    HTRY
+    if (not PyArg_ParseTuple(args,"d:DbU.setGridsPerLambda", &gridsPerLambda) ) {
+      PyErr_SetString ( ConstructorError, "DbU.setGridsPerLambda(): Invalid/bad type parameters ." );
+      return NULL;
+    }
+    DbU::setGridsPerLambda(gridsPerLambda);
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
+  extern PyObject* PyDbU_getGridsPerLambda ( PyObject* )
+  { return Py_BuildValue("d",DbU::getGridsPerLambda()); }
+
+
+  extern PyObject* PyDbU_getRealSnapGridStep ( PyObject* )
+  { return Py_BuildValue("l",DbU::getRealSnapGridStep()); }
+
+
+  extern PyObject* PyDbU_getOnRealSnapGrid ( PyObject* , PyObject* args )
+  {
+    long       value   = 0;
+    int        snap    = DbU::Nearest;
+    DbU::Unit  result  = 0;
+
+    HTRY
+    if (not PyArg_ParseTuple(args,"l|i:DbU.getOnRealSnapGrid", &value, &snap) ) {
+      PyErr_SetString ( ConstructorError, "DbU.getOnRealSnapGrid(): Invalid/bad type parameters ." );
+      return NULL;
+    }
+    result = DbU::getOnRealSnapGrid(DbU::db(value),(DbU::SnapMode)snap);
+    HCATCH
+
+    return Py_BuildValue("l",result);
+  }
+
+
+  extern PyObject* PyDbU_setRealSnapGridStep ( PyObject* , PyObject* args )
+  {
+    long  step = 0;
+
+    HTRY
+    if (not PyArg_ParseTuple(args,"l:DbU.setRealSnapGridStep", &step) ) {
+      PyErr_SetString ( ConstructorError, "DbU.setRealSnapGridStep(): Invalid/bad type parameters ." );
+      return NULL;
+    }
+    DbU::setRealSnapGridStep(DbU::db(step));
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
+  extern PyObject* PyDbU_getSymbolicSnapGridStep ( PyObject* )
+  { return Py_BuildValue("l",DbU::getSymbolicSnapGridStep()); }
+
+
+  extern PyObject* PyDbU_getOnSymbolicSnapGrid ( PyObject* , PyObject* args )
+  {
+    long       value   = 0;
+    int        snap    = DbU::Nearest;
+    DbU::Unit  result  = 0;
+
+    HTRY
+    if (not PyArg_ParseTuple(args,"l|i:DbU.getOnSymbolicSnapGrid", &value, &snap) ) {
+      PyErr_SetString ( ConstructorError, "DbU.getOnSymbolicSnapGrid(): Invalid/bad type parameters ." );
+      return NULL;
+    }
+    result = DbU::getOnSymbolicSnapGrid(DbU::db(value),(DbU::SnapMode)snap);
+    HCATCH
+
+    return Py_BuildValue("l",result);
+  }
+
+
+  extern PyObject* PyDbU_setSymbolicSnapGridStep ( PyObject* , PyObject* args )
+  {
+    long  step = 0;
+
+    HTRY
+    if (not PyArg_ParseTuple(args,"l:DbU.setSymbolicSnapGridStep", &step) ) {
+      PyErr_SetString ( ConstructorError, "DbU.setSymbolicSnapGridStep(): Invalid/bad type parameters ." );
+      return NULL;
+    }
+    DbU::setSymbolicSnapGridStep(DbU::db(step));
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
+  extern PyObject* PyDbU_getOnCustomGrid ( PyObject* , PyObject* args )
+  {
+    long       value   = 0;
+    long       step    = 1;
+    int        snap    = DbU::Nearest;
+    DbU::Unit  result  = 0;
+
+    HTRY
+    if (not PyArg_ParseTuple(args,"ll|i:DbU.getOnCustomGrid", &value, &step, &snap) ) {
+      PyErr_SetString ( ConstructorError, "DbU.getOnCustomGrid(): Invalid/bad type parameters ." );
+      return NULL;
+    }
+    result = DbU::getOnCustomGrid(DbU::db(value),DbU::db(step),(DbU::SnapMode)snap);
+    HCATCH
+
+    return Py_BuildValue("l",result);
+  }
+
+
+  extern PyObject* PyDbU_getOnPhysicalGrid ( PyObject* , PyObject* args )
+  {
+    long       value   = 0;
+    int        snap    = DbU::Superior;
+    DbU::Unit  result  = 0;
+
+    HTRY
+    if (not PyArg_ParseTuple(args,"l|i:DbU.getOnPhysicalGrid", &value, &snap) ) {
+      PyErr_SetString ( ConstructorError, "DbU.getOnPhysicalGrid(): Invalid/bad type parameters ." );
+      return NULL;
+    }
+    result = DbU::getOnPhysicalGrid(DbU::db(value),(DbU::SnapMode)snap);
+    HCATCH
+
+    return Py_BuildValue("l",result);
+  }
+
+
+  extern PyObject* PyDbU_toDb ( PyObject* , PyObject* args )
+  {
+    PyObject* arg0;
+    if ( not ParseOneArg( "Dbu.toDb", args,INT_ARG, &arg0 ) ) return NULL;
+    return Py_BuildValue("i",DbU::toDb(PyInt_AsLong(arg0)));
+  }
+
+
+  extern PyObject* PyDbU_toGrid ( PyObject* , PyObject* args )
+  {
+    PyObject* arg0;
+    if ( not ParseOneArg( "Dbu.toGrid", args,INT_ARG, &arg0 ) ) return NULL;
+    return Py_BuildValue("d",DbU::toGrid(PyInt_AsLong(arg0)));
+  }
+
+
+  extern PyObject* PyDbU_toLambda ( PyObject* , PyObject* args )
+  {
+    PyObject* arg0;
+    if ( not ParseOneArg( "Dbu.toLambda", args,INT_ARG, &arg0 ) ) return NULL;
+    return Py_BuildValue("d",DbU::toLambda(PyInt_AsLong(arg0)));
+  }
+
+
+  extern PyObject* PyDbU_toPhysical ( PyObject* , PyObject* args )
+  {
+    PyObject* arg0;
+    PyObject* arg1;
+    if ( not ParseTwoArg( "Dbu.toPhysical", args,INTS2_ARG, &arg0, &arg1 ) ) return NULL;
+    return Py_BuildValue("d",DbU::toPhysical(PyInt_AsLong(arg0), PyInt_AsUnitPower(arg1)));
+  }
+
+
+  extern PyObject* PyDbU_getValueString ( PyObject* , PyObject* args )
+  {
+    long    value   = 0;
+    int     mode    = DbU::SmartTruncate;
+    string  result  = "";
+
+    HTRY
+    if (not PyArg_ParseTuple(args,"l|i:DbU.getValueString", &value, &mode) ) {
+      PyErr_SetString ( ConstructorError, "DbU.getValueString(): Invalid/bad type parameters ." );
+      return NULL;
+    }
+    result = DbU::getValueString(DbU::db(value),mode);
+    HCATCH
+
+    return Py_BuildValue("s",result.c_str());
+  }
+
+
+  extern PyObject* PyDbU_setStringMode ( PyObject* , PyObject* args )
+  {
+    unsigned int  mode  = 0;
+    unsigned int  power = DbU::Nano;
+
+    HTRY
+    if (not PyArg_ParseTuple(args,"I|i:DbU.setStringMode", &mode, &power) ) {
+      PyErr_SetString ( ConstructorError, "DbU.setStringMode(): Invalid/bad type parameters ." );
+      return NULL;
+    }
+    DbU::setStringMode(mode,(DbU::UnitPower)power);
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
+  PyMethodDef PyDbU_Methods[] =
+    // Translate from user length to DbU. 
+    { { "fromDb"                 , (PyCFunction)PyDbU_fromDb                 , METH_VARARGS|METH_STATIC
+                                 , "Convert a raw unit into a DbU (C++ DbU::fromDb())." }
+    , { "fromGrid"               , (PyCFunction)PyDbU_fromGrid               , METH_VARARGS|METH_STATIC
+                                 , "Convert a length in grid step into a DbU (C++ DbU::fromGrid())." }
+    , { "fromLambda"             , (PyCFunction)PyDbU_fromLambda             , METH_VARARGS|METH_STATIC
+                                 , "Convert a length in lambda into a DbU (C++ DbU::fromLambda())." }
+    , { "fromPhysical"           , (PyCFunction)PyDbU_fromPhysical           , METH_VARARGS|METH_STATIC
+                                 , "Convert a physical length into a DbU (C++ DbU::fromPhysical())." }
+    // Precision & Resolution Managment.
+    , { "getPrecision"           , (PyCFunction)PyDbU_getPrecision           , METH_NOARGS|METH_STATIC
+                                 , "Sets the precision, the fixed point for rounding computations." }
+    , { "getMaximalPrecision"    , (PyCFunction)PyDbU_getMaximalPrecision    , METH_NOARGS|METH_STATIC
+                                 , "Returns the maximum allowed precision." }
+    , { "getResolution"          , (PyCFunction)PyDbU_getResolution          , METH_NOARGS|METH_STATIC
+                                 , "Get the smallest manageable unit." }
+    , { "setPrecision"           , (PyCFunction)PyDbU_setPrecision           , METH_VARARGS|METH_STATIC
+                                 , "Sets the precision, the fixed point for rounding computations." }
+    // Founder Grid Managment.
+    , { "getUnitPower"           , (PyCFunction)PyDbU_getUnitPower           , METH_VARARGS|METH_STATIC
+                                 , "Returns the numerical value associated to the symbolic power." }
+    , { "setPhysicalsPerGrid"    , (PyCFunction)PyDbU_setPhysicalsPerGrid    , METH_VARARGS|METH_STATIC
+                                 , "Set the physical length represented by exactly one unit." }
+    , { "getPhysicalsPerGrid"    , (PyCFunction)PyDbU_getPhysicalsPerGrid    , METH_NOARGS|METH_STATIC
+                                 , "Returns the physical length represented by exactly one unit." }
+    , { "physicalToGrid"         , (PyCFunction)PyDbU_physicalToGrid         , METH_VARARGS|METH_STATIC
+                                 , "Compute the number of grid units representing that physical length." }
+    // Lambda Managment.
+    , { "setGridsPerLambda"      , (PyCFunction)PyDbU_setGridsPerLambda      , METH_VARARGS|METH_STATIC
+                                 , "Set the numbers of grid units in one lambda." }
+    , { "getGridsPerLambda"      , (PyCFunction)PyDbU_getGridsPerLambda      , METH_NOARGS|METH_STATIC
+                                 , "Returns the physical length represented by exactly one unit." }
+    // Snap Grid Managment.
+    , { "getRealSnapGridStep"    , (PyCFunction)PyDbU_getRealSnapGridStep    , METH_NOARGS|METH_STATIC
+                                 , "Returns the step of the real snap grid." }
+    , { "getOnRealSnapGrid"      , (PyCFunction)PyDbU_getOnRealSnapGrid      , METH_VARARGS|METH_STATIC
+                                 , "Get a real snap grid position from this one." }
+    , { "setRealSnapGridStep"    , (PyCFunction)PyDbU_setRealSnapGridStep    , METH_VARARGS|METH_STATIC
+                                 , "Sets the real snap grid step." }
+    , { "getSymbolicSnapGridStep", (PyCFunction)PyDbU_getSymbolicSnapGridStep, METH_NOARGS|METH_STATIC
+                                 , "Returns the step of the symbolic snap grid." }
+    , { "getOnSymbolicSnapGrid"  , (PyCFunction)PyDbU_getOnSymbolicSnapGrid  , METH_VARARGS|METH_STATIC
+                                 , "Get a symbolic snap grid position from this one." }
+    , { "setSymbolicSnapGridStep", (PyCFunction)PyDbU_setSymbolicSnapGridStep, METH_VARARGS|METH_STATIC
+                                 , "Sets the symbolic snap grid step." }
+    , { "getOnCustomGrid"        , (PyCFunction)PyDbU_getOnCustomGrid        , METH_VARARGS|METH_STATIC
+                                 , "Get a custom snap grid position from this one." }
+    , { "getOnPhysicalGrid"      , (PyCFunction)PyDbU_getOnPhysicalGrid      , METH_VARARGS|METH_STATIC
+                                 , "Get a physical grid position from this one." }
+    // Convert from DbU to various units (grid,lambda,physical).
+    , { "toDb"                   , (PyCFunction)PyDbU_toDb                   , METH_VARARGS|METH_STATIC
+                                 , "Convert a DbU into raw unit (C++ DbU::getDb())." }
+    , { "toGrid"                 , (PyCFunction)PyDbU_toGrid                 , METH_VARARGS|METH_STATIC
+                                 , "Convert a DbU into grid length (C++ DbU::getGrid())." }
+    , { "toLambda"               , (PyCFunction)PyDbU_toLambda               , METH_VARARGS|METH_STATIC
+                                 , "Convert a DbU into lambda length (C++ DbU::getLambda())." }
+    , { "toPhysical"             , (PyCFunction)PyDbU_toPhysical             , METH_VARARGS|METH_STATIC
+                                 , "Convert a DbU into a physcal length (metric system, C++ DbU::getPhysical())." }
+    , { "getValueString"         , (PyCFunction)PyDbU_getValueString         , METH_VARARGS|METH_STATIC
+                                 , "Convert a DbU into a human readable string." }
+    , { "setStringMode"          , (PyCFunction)PyDbU_setStringMode          , METH_VARARGS|METH_STATIC
+                                 , "Tells what unit to use when converting a DbU into a string." }
+    , {NULL, NULL, 0, NULL}      /* sentinel */
+    };
+
+
+  extern void  PyDbU_LinkPyType()
+  {
+    trace << "PyDbU_LinkType()" << endl;
+
+    PyTypeDbU.tp_methods   =  PyDbU_Methods;
+  }
+
+
+#else  // End of Python Module Code Part.
+
+
+// +=================================================================+
+// |               "PyDbU" Shared Library Code Part                  |
+// +=================================================================+
+
+
+  PyTypeObject  PyTypeDbU =
+    { PyObject_HEAD_INIT(NULL)
+      0                                       /* ob_size.          */
+    , "Hurricane.DbU"                         /* tp_name.          */
+    , sizeof(PyDbU)                           /* tp_basicsize.     */
+    , 0                                       /* tp_itemsize.      */
+    /* methods. */                            
+    , 0                                       /* tp_dealloc.       */
+    , 0                                       /* tp_print.         */
+    , 0                                       /* tp_getattr.       */
+    , 0                                       /* tp_setattr.       */
+    , 0                                       /* tp_compare.       */
+    , 0                                       /* tp_repr.          */
+    , 0                                       /* tp_as_number.     */
+    , 0                                       /* tp_as_sequence.   */
+    , 0                                       /* tp_as_mapping.    */
+    , 0                                       /* tp_hash.          */
+    , 0                                       /* tp_call.          */
+    , 0                                       /* tp_str            */
+    , 0                                       /* tp_getattro.      */
+    , 0                                       /* tp_setattro.      */
+    , 0                                       /* tp_as_buffer.     */
+    , Py_TPFLAGS_DEFAULT                      /* tp_flags          */
+    , "Hurricane.DbU (do not uses as object)" /* tp_doc.           */
+  };
+
 
   extern void  DbULoadConstants ( PyObject* dictionnary ) {
     PyObject* constant;
 
-    LOAD_CONSTANT ( DbU::Inferior, "SnapModeInferior" )
-    LOAD_CONSTANT ( DbU::Superior, "SnapModeSuperior" )
-    LOAD_CONSTANT ( DbU::Nearest , "SnapModeNearest" )
-    LOAD_CONSTANT ( DbU::Pico    , "UnitPowerPico" )
-    LOAD_CONSTANT ( DbU::Nano    , "UnitPowerNano" )
-    LOAD_CONSTANT ( DbU::Micro   , "UnitPowerMicro" )
-    LOAD_CONSTANT ( DbU::Milli   , "UnitPowerMilli" )
-    LOAD_CONSTANT ( DbU::Unity   , "UnitPowerUnity" )
-    LOAD_CONSTANT ( DbU::Kilo    , "UnitPowerKilo" )
-  }
-
-  // x-------------------------------------------------------------x
-  // |                  "PyDbU" General Methods                    |
-  // x-------------------------------------------------------------x
-
-
-  // ---------------------------------------------------------------
-  // Module Method  :  "PyDbU_db ()"
-
-  extern PyObject* PyDbU_db ( PyObject* module, PyObject* args )
-  {
-    trace << "PyDbU_db ()" << endl;
-    
-    PyObject*  arg0;
-    DbU::Unit  result = 0;
-
-    HTRY
-    
-    __cs.init ( "DbU.db" );
-    if ( ! PyArg_ParseTuple(args,"|O&:DbU.db",Converter,&arg0) )
-      return ( NULL );
-    
-    if ( __cs.getObjectIds() == INT_ARG   ) { result = DbU::db ( PyInt_AsLong ( arg0 ) ); }
-    else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters or bad type for DbU.db converter." );
-      return ( NULL );
-    }
-    
-    HCATCH
-    
-    return ( Py_BuildValue ( "i", result ) );
+    LoadObjectConstant ( dictionnary, DbU::Inferior     , "SnapModeInferior" )
+    LoadObjectConstant ( dictionnary, DbU::Superior     , "SnapModeSuperior" )
+    LoadObjectConstant ( dictionnary, DbU::Nearest      , "SnapModeNearest" )
+    LoadObjectConstant ( dictionnary, DbU::Pico         , "UnitPowerPico" )
+    LoadObjectConstant ( dictionnary, DbU::Nano         , "UnitPowerNano" )
+    LoadObjectConstant ( dictionnary, DbU::Micro        , "UnitPowerMicro" )
+    LoadObjectConstant ( dictionnary, DbU::Milli        , "UnitPowerMilli" )
+    LoadObjectConstant ( dictionnary, DbU::Unity        , "UnitPowerUnity" )
+    LoadObjectConstant ( dictionnary, DbU::Kilo         , "UnitPowerKilo" )
+    LoadObjectConstant ( dictionnary, DbU::Db           , "StringModeDb" )
+    LoadObjectConstant ( dictionnary, DbU::Grid         , "StringModeGrid" )
+    LoadObjectConstant ( dictionnary, DbU::Symbolic     , "StringModeSymbolic" )
+    LoadObjectConstant ( dictionnary, DbU::Physical     , "StringModePhysical" )
+    LoadObjectConstant ( dictionnary, DbU::SmartTruncate, "StringModeSmartTruncate" )
   }
 
 
-  // ---------------------------------------------------------------
-  // Module Method  :  "PyDbU_grid ()"
-
-  extern PyObject* PyDbU_grid ( PyObject* module, PyObject* args )
+  extern  void  PyDbU_postModuleInit ()
   {
-    trace << "PyDbU_grid ()" << endl;
-    
-    PyObject*  arg0;
-    DbU::Unit  result = 0;
-
-    HTRY
-    
-    __cs.init ( "DbU.grid" );
-    if ( ! PyArg_ParseTuple(args,"|O&:DbU.grid",Converter,&arg0) )
-      return ( NULL );
-    
-    if      ( __cs.getObjectIds() == FLOAT_ARG )  { result = DbU::grid ( PyFloat_AsDouble ( arg0 ) ); }
-    else if ( __cs.getObjectIds() == INT_ARG   )  { result = DbU::grid (     PyInt_AsLong ( arg0 ) ); }
-    else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters or bad type for DbU.grid converter." );
-      return ( NULL );
-    }
-    
-    HCATCH
-    
-    return ( Py_BuildValue ( "i", result ) );
-  }
-
-
-  // ---------------------------------------------------------------
-  // Module Method  :  "PyDbU_lambda ()"
-
-  extern PyObject* PyDbU_lambda ( PyObject* module, PyObject* args )
-  {
-    trace << "PyDbU_symbolic ()" << endl;
-    
-    PyObject*  arg0;
-    DbU::Unit  result = 0;
-
-    HTRY
-    
-    __cs.init ( "DbU.symbolic" );
-    if ( ! PyArg_ParseTuple(args,"|O&:DbU.symbolic",Converter,&arg0) )
-      return ( NULL );
-    
-    if      ( __cs.getObjectIds() == FLOAT_ARG ) { result = DbU::lambda ( PyFloat_AsDouble ( arg0 ) ); }
-    else if ( __cs.getObjectIds() == INT_ARG   ) { result = DbU::lambda ( PyLong_AsLong    ( arg0 ) ); }
-    else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters or bad type for DbU.symbolic converter." );
-      return ( NULL );
-    }
-    
-    HCATCH
-    
-    return ( Py_BuildValue ( "i", result ) );
-  }
-
-
-  // ---------------------------------------------------------------
-  // Module Method  :  "PyDbU_getDb ()"
-
-  extern PyObject* PyDbU_getDb ( PyObject* module, PyObject* args )
-  {
-    trace << "PyDbU_getDb ()" << endl;
-    
-    PyObject* arg0;
-    if ( ! ParseOneArg ( "Dbu.getDb", args,INT_ARG, &arg0 ) ) return ( NULL );
-
-    return ( Py_BuildValue("i",DbU::getDb(PyInt_AsLong(arg0))) );
-  }
-
-
-  // ---------------------------------------------------------------
-  // Module Method  :  "PyDbU_getGrid ()"
-
-  extern PyObject* PyDbU_getGrid ( PyObject* module, PyObject* args )
-  {
-    trace << "PyDbU_getGrid ()" << endl;
-    
-    PyObject* arg0;
-    if ( ! ParseOneArg ( "Dbu.getGrid", args,INT_ARG, &arg0 ) ) return ( NULL );
-
-    return ( Py_BuildValue("d",DbU::getGrid(PyInt_AsLong(arg0))) );
-  }
-
-
-  // ---------------------------------------------------------------
-  // Module Method  :  "PyDbU_getLambda ()"
-
-  extern PyObject* PyDbU_getLambda ( PyObject* module, PyObject* args )
-  {
-    trace << "PyDbU_getLambda ()" << endl;
-    
-    PyObject* arg0;
-    if ( ! ParseOneArg ( "Dbu.getLambda", args,INT_ARG, &arg0 ) ) return ( NULL );
-
-    return ( Py_BuildValue("d",DbU::getLambda(PyInt_AsLong(arg0))) );
-  }
-
-
-  // ---------------------------------------------------------------
-  // Module Method  :  "PyDbU_getPhysical ()"
-
-  extern PyObject* PyDbU_getPhysical ( PyObject* module, PyObject* args )
-  {
-    trace << "PyDbU_getPhysical ()" << endl;
-
-    PyObject* arg0;
-    PyObject* arg1;
-    if ( ! ParseTwoArg ( "Dbu.getPhysical", args,INTS2_ARG, &arg0, &arg1 ) ) return ( NULL );
-
-    return ( Py_BuildValue("d",DbU::getPhysical(PyInt_AsLong(arg0), PyInt_AsUnitPower(arg1))) );
-  }
-
-  // ---------------------------------------------------------------
-  // Module Method  :  "PyDbU_getResolution ()"
-
-  extern PyObject* PyDbU_getResolution ( PyObject* module )
-  {
-    trace << "PyDbU_getResolution ()" << endl;
-    
-    return ( Py_BuildValue("d",DbU::getResolution()) );
-  }
-
-
-  // ---------------------------------------------------------------
-  // Module Method  :  "PyDbu_getOnPhysicalGrid ()"
-
-  extern PyObject* PyDbU_getOnPhysicalGrid ( PyObject* module, PyObject* args )
-  {
-    trace << "PyDbU_getOnPhysicalGrid ()" << endl;
-
-    PyObject* arg0;
-    PyObject* arg1;
-    DbU::Unit result = 0;
-
-    HTRY
-    __cs.init ( "DbU.getOnPhysicalGrid" );
-    if (!PyArg_ParseTuple(args, "O&|O&O&:DbU.getOnPhysicalGrid", Converter, &arg0, Converter, &arg1)) {
-        return NULL;
-    }
-
-    if ( __cs.getObjectIds() == INTS2_ARG ) {
-        result = DbU::getOnPhysicalGrid ( PyInt_AsLong(arg0), PyInt_AsSnapMode(arg1) );
-    } else if ( __cs.getObjectIds() == INT_ARG ) {
-        result = DbU::getOnPhysicalGrid ( PyInt_AsLong(arg0) );
-    } else {
-        return NULL;
-    }
-    HCATCH
-
-    return ( Py_BuildValue ( "i", result ) );
+    DbULoadConstants(PyTypeDbU.tp_dict);
   }
 
 

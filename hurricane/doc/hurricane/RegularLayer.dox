@@ -1,0 +1,93 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        RegularLayer
+  *  \brief        RegularLayer description (\b API)
+  *
+  *                For a more complete description of the Layers objects, please refer
+  *                to \ref secLayerIntro "Layer Introduction".
+  *
+  *                RegularLayer is a symbolic layer that contains exactly one BasicLayer.
+  *                The accessors functions:
+  *                <ul>
+  *                  <li>RegularLayer::getTop()
+  *                  <li>RegularLayer::getBottom()
+  *                  <li>RegularLayer::getOpposite()
+  *                </ul>
+  *                All returns that BasicLayer.
+  *
+  *                It have one enclose, extention cap & extension width.
+  */
+
+
+ /*! \function     RegularLayer* RegularLayer::create(Technology* technology,const Name& name);
+  *                creates and returns a new regular layer named \c \<name\>.
+  *
+  *  \caution      Throws an exception if the technology is null, if the name is 
+  *                empty, if a layer of same name already exists or if we 
+  *                overflow the capacity of the bit field associated to the 
+  *                layer mask. 
+  */
+
+
+ /*! \function     BasicLayer* RegularLayer::getBasicLayer() const;
+  *  \Return       the one associated BasicLayer.
+  */
+
+
+ /*  \function     void RegularLayer::SetColor(unsigned short redValue, unsigned short greenValue, unsigned short blueValue);
+  *                Sets the color of a basic layer. 
+  */
+
+ /*  \function     void RegularLayer::SetFillPattern(const string& fillPattern);
+  *                Sets the filling pattern of a basic layer. 
+  *
+  *  \caution      Throws an exception if the string does't obey to the rules 
+  *                described above. 
+  */
+
+ /*  \function     void RegularLayer::SetDisplayThreshold(double threshold);
+  *                Sets the display threshold of a basic layer. 
+  */
+
+ /*! \function     void RegularLayer::setBlockageLayer(RegularLayer* layer);
+  *                Associate a blockage layer to this one. This is only meaningful
+  *                for routing layers (RegularLayer).
+  */
+
+ /*! \function     void RegularLayer::setExtractNumber(unsigned int);
+  *                Set the extract number, for GDS.
+  */
+
+ /*! \function     void RegularLayer::setRealName(const char*);
+  *                Set the real (process) layer name, for GDS.
+  */
+
+
+ //! \name         RegularLayer Collection
+ //  \{
+
+ /*! \typedef      RegularLayers
+  *                Generic collection representing a set of basic layers. 
+  */
+
+ /*! \typedef      RegularLayerLocator
+  *                Generic locator for traversing a collection of basic layers. 
+  */
+
+ /*! \typedef      RegularLayerFilter
+  *                Generic filter allowing to select a subset of basic layers 
+  *                matching some criteria. 
+  */
+
+ /*! \def          for_each_basic_layer(basicLayer, basicLayers)
+  *                Macro for visiting all the layers of a collection of basic 
+  *                layers. 
+  */
+
+ //  \}
+
+ }

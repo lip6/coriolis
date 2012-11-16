@@ -68,17 +68,9 @@
   */
 
 
-
- /*! \name         Accessors
-  */
- //  \{
-
  /*! \function     DBos SharedProperty::GetOwners() const;
   *  \Return       the collection of objects owning the property (might be empty 
   *                if the property has never been attached). 
   */
-
- //  \}
-
 
  } // End of Hurricane namespace.

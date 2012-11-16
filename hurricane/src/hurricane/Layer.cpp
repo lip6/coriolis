@@ -63,7 +63,6 @@ namespace Hurricane {
                  , _extractMask(0)
                  , _minimalSize(minimalSize)
                  , _minimalSpacing(minimalSpacing)
-                 , _pitch(pitch)
                  , _nextOfTechnologyLayerMap(NULL)
                  , _working(false)
   {
@@ -76,10 +75,6 @@ namespace Hurricane {
     if ( _technology->getLayer(_name) )
       throw Error ( "Can't create " + _TName("Layer") + " " + getString(_name) + " : already exists" );
   }
-
-
-  Layer* Layer::getConnectorLayer () const
-  { return NULL; }
 
 
   const Layer* Layer::getBlockageLayer () const
@@ -178,12 +173,6 @@ namespace Hurricane {
   }
 
 
-  void Layer::setPitch ( const DbU::Unit& pitch )
-  {
-    _pitch = pitch;
-  }
-
-
   void  Layer::setEnclosure ( const BasicLayer* layer, DbU::Unit )
   {
     cerr << "[WARNING] Layer::setEnclosure() musn't be called on "
@@ -227,7 +216,6 @@ namespace Hurricane {
   {
     _minimalSize    = (DbU::Unit)( (float)_minimalSize    * scale );
     _minimalSpacing = (DbU::Unit)( (float)_minimalSpacing * scale );
-    _pitch          = (DbU::Unit)( (float)_pitch          * scale );
   }
 
 
@@ -247,9 +235,8 @@ namespace Hurricane {
       record->add(getSlot("Name"          , &_name          ));
       record->add(getSlot("Mask"          , &_mask          ));
       record->add(getSlot("ExtractMask"   , &_extractMask   ));
-      record->add(getSlot("MinimalSize"   , &_minimalSize   ));
-      record->add(getSlot("MinimalSpacing", &_minimalSpacing));
-      record->add(getSlot("Pitch"         , &_pitch         ));
+      record->add(DbU::getValueSlot("MinimalSize"   , &_minimalSize   ));
+      record->add(DbU::getValueSlot("MinimalSpacing", &_minimalSpacing));
     }
     return record;
   }

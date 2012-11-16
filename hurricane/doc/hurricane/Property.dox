@@ -128,7 +128,7 @@ void DBo::put(Property* property);
   *                Adds the property \c \<property\> to the set of properties of 
   *                the object. 
 \code
-void Occurence::put(Property* property);
+void Occurrence::put(Property* property);
 \endcode
   *                This function searches the quark representing the occurence. 
   *
@@ -164,12 +164,12 @@ void Occurence::put(Property* property);
   *
   *                <b>Removing a property</b> 
 \code
-void DBo::Remove(Property* property);
+void DBo::remove(Property* property);
 \endcode
   *                Removes the property \c \<property\> from the set of 
   *                properties of the object. 
 \code
-void Occurence::Remove(Property* property);
+void Occurrence::remove(Property* property);
 \endcode
   *                The function searches for the quark associated to the 
   *                occurence. 
@@ -192,7 +192,7 @@ void DBo::clearProperties();
 \endcode
   *                Removes all properties attached to the object. 
 \code
-void Occurence::clearProperties();
+void Occurrence::clearProperties();
 \endcode
   *                First searches for the quark associated to the occurence. 
   *
@@ -251,8 +251,8 @@ void Occurence::clearProperties();
 Property* property = occurence.getProperty("Hurricane::Selector");
  
 if (property && is_a<Selector*>(property)) {
-   Selector* selector = (Selector*)property;
-   ...
+  Selector* selector = (Selector*)property;
+  // ...
 }
 \endcode
   *                Which could become : 
@@ -260,7 +260,7 @@ if (property && is_a<Selector*>(property)) {
 Selector* selector = (Selector*)occurence.getProperty("Hurricane::Selector");
  
 if (selector) {
-   ...
+  // ...
 }
 \endcode
   * 
@@ -291,11 +291,10 @@ Property* property = occurence.getProperty("Hurricane::Selector");
   *                on the other hand if the following static member function is 
   *                provided : 
 \code
-const Name& Selector::getPropertyName()
-// ************************************
+const Name& Selector::getPropertyName ()
 {
-   static Name NAME = "Hurricane::Selector";
-   return NAME;
+  static Name NAME = "Hurricane::Selector";
+  return NAME;
 }
 \endcode
   *                You could write later : 
@@ -324,11 +323,10 @@ Property* property = occurence.getProperty(Selector::getPropertyName());
   *                That way, by defining (i.e. for the property ObjectId) the 
   *                function : 
 \code
-const Name& getObjectIdPropertyName()
-// **********************************
+const Name& getObjectIdPropertyName ()
 {
-   static Name NAME = "Hurricane::ObjectId";
-   return NAME;
+  static Name NAME = "Hurricane::ObjectId";
+  return NAME;
 }
 \endcode
   *                You can write later : 
@@ -337,10 +335,6 @@ Property* property = occurence.getProperty(getObjectIdPropertyName());
 \endcode
   */
 
-
- /*! \name        Accessors
-  */
- //  \{
 
  /*! \function     Name Property::getName() const;
   *  \Return       the name of the property : this method must absolutely be 
@@ -351,12 +345,6 @@ Property* property = occurence.getProperty(getObjectIdPropertyName());
   *                slot). 
   */
 
- //  \}
-
-
- /*! \name         Messages
-  */
- //  \{
 
  /*! \function     void Property::onCapturedBy(DBo* dbo);
   *                This message is called upon when the property is added to the 
@@ -387,12 +375,8 @@ Property* property = occurence.getProperty(getObjectIdPropertyName());
   *                specializing any of those two classes. 
   */
 
- //  \}
 
-
-
- /*! \name         Property Collection
-  */
+ //! \name         Property Collection
  //  \{
 
  /*! \typedef      Properties
@@ -408,14 +392,13 @@ Property* property = occurence.getProperty(getObjectIdPropertyName());
   *                criteria. 
   */
 
- /*! \def          for_each_property(property, properties)
+ /*! \def          forEach(Property*, iproperty, properties)
   *                Macro for visiting all properties of a property collection. 
 \code
-Occurence occurence = ...; // we get an occurence
+Occurrence occurence = ...; // we get an occurence
  
-for_each_property(property, occurence.getProperties()) {
-   cerr << property << endl;
-   end_for;
+forEach(Property*, iproperty, occurence.getProperties()) {
+  cerr << *iproperty << endl;
 }
 \endcode
   */
@@ -423,16 +406,10 @@ for_each_property(property, occurence.getProperties()) {
  //  \}
 
 
- /*  \name         Destructors
-  */
- //  \{
-
  /*! \function     void Property::destroy();
   *                Like the data base objects, properties can be destroyed by 
   *                calling upon this function and not the standard C++ 
   *                destructor (which is not available). 
   */
-
- //  \}
 
  }

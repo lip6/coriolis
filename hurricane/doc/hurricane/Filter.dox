@@ -19,46 +19,9 @@
   *                You will have also to define the default constructor, the 
   *                copy constructor, the assignment operator and overload the 
   *                two following member functions : 
-  */
-
-
-
- /*! \name         Accessors
-  */
- //  \{
-
- /*! \function     Filter<Type>* Filter::getClone() const;
-  *  \Return       a filter copy. 
-  */
-
- //  \}
-
-
- /*! \name         Predicates
-  */
- //  \{
-
- /*! \function     bool Filter::accept(Type element) const;
-  *                This member function returns \true if the filter accepts the 
-  *                element else \false. 
-  */
-
- //  \}
-
-
- /*! \name         Operators
-  */
- //  \{
-
- /*! \function     GenericFilter<Type> Filter::operator ! () const;
-  *  \Return       the inverse filter of the filter \c \<this\> (accepted 
-  *                elements are those rejected and conversely). 
-  */
-
- //  \}
-
-
- /*! \section      secFilterSimpleExample  Simple example
+  *
+  *
+  *  \section      secFilterSimpleExample  Simple Example
   *
   *                Definition of the filter selecting external nets of a cell : 
 \code
@@ -75,7 +38,7 @@ class IsExternal : public Filter<Net*> {
  
       virtual Filter<Net*>* getClone() const {return new IsExternal(*this);};
  
-      virtual bool accept(Net* net) const {return netIsExternal();};
+      virtual bool accept(Net* net) const {return net->isExternal();};
  
 };
 \endcode
@@ -97,11 +60,9 @@ Nets Cell::getInternalNets() const
    return getNets().getSubSet(!IsExternal());
 }
 \endcode
-  */
-
-
-
- /*! \section      secFilterComplexExample  Complex example
+  * 
+  *
+  *  \section      secFilterComplexExample  Complex Example
   *
   *                In order to implement previous examples we could have used 
   *                filter with a simpler interface. Now the filters as they are 
@@ -140,18 +101,17 @@ class MyFilter : public Filter<Net*> {
  
       virtual bool accept(Net* net) const
       {
-         return netIsExternal() && (netGetName()[0] == _c);
+         return net->isExternal() && (net->getName()[0] == _c);
       };
  
 };
 \endcode
   *                Afterwards do 
 \code
-for_each_net(net, cellGetNets().getSubSet(MyFilter('k'))) {
-   assert(net->IsExternal());
-   assert(net->getName()[0] == 'k');
-   cerr << "net: " << net << endl;
-   end_for;
+forEach(Net*, inet, cell->getNets().getSubSet(MyFilter('k'))) {
+   assert(inet->isExternal());
+   assert(inet->getName()[0] == 'k');
+   cerr << "net: " << (*inet) << endl;
 }
 \endcode
   *                Although this example is not of great interest, it 
@@ -168,18 +128,16 @@ for_each_net(net, cellGetNets().getSubSet(MyFilter('k'))) {
   *                Indeed, for the previous example, preferably write it like 
   *                this : 
 \code
-for_each_net(net, cellGetNets()) {
-   if (netIsExternal() && (net->getName()[0] == 'k'))
-      cerr << "net: " << net << endl;
-   end_for;
+forEach(Net*, inet, cell->getNets()) {
+   if (inet->isExternal() && (inet->getName()[0] == 'k'))
+      cerr << "net: " << *net << endl;
 }
 \endcode
   *                or more simply : 
 \code
-for_each_net(net, cellGetExternalNets()) {
-   if (net->getName()[0] == 'k')
-      cerr << "net: " << net << endl;
-   end_for;
+forEach(Net*, net, cell->getExternalNets()) {
+   if (inet->getName()[0] == 'k')
+      cerr << "net: " << *inet << endl;
 }
 \endcode
   *                Filters are objects like any other : they can be passed as 
@@ -204,5 +162,78 @@ Nets Cell::getNets(const NetFilter& filter) const
   */
 
 
+ /*! \function     Filter<Type>* Filter::getClone() const;
+  *  \Return       a filter copy. 
+  */
+
+
+ /*! \function     bool Filter::accept(Type element) const;
+  *                This member function returns \true if the filter accepts the 
+  *                element else \false. 
+  */
+
+
+ /*! \function     GenericFilter<Type> Filter::operator ! () const;
+  *  \Return       the inverse filter of the filter \c \<this\> (accepted 
+  *                elements are those rejected and conversely). 
+  */
+
+
+ /*! \class        GenericFilter
+  *  \brief        Generic Filter auto-pointer.
+  *
+  *                This class is an auto-pointer like wrapped around the raw filter.
+  *                The database systematically returns filters wrapped inside
+  *                GenericFilter.
+  *
+  *  \remark       The destruction of a GenericFilter triggers the destruction of
+  *                the raw filter.
+  */
+
+ /*! \function     GenericFilter::GenericFilter(Filter<Type>* filter);
+  *                Constructor from a raw Filter.
+  *
+  *  \remark       This constructor do not build a copy of the raw filter. So the original
+  *                raw filter must not be deleted. It's deletion will occurs with the one
+  *                of the GenericFilter.
+  */
+
+ /*! \function     GenericFilter::GenericFilter(const Filter<Type>& filter);
+  *                Constructor from a raw Filter.
+  *
+  *  \remark       This constructor build a \e copy of the raw filter. So the originating
+  *                filter can be safely deleted.
+  */
+
+ /*! \function     GenericFilter::GenericFilter(const GenericFilter<Type>& filter);
+  *                Constructor from a raw Filter.
+  *
+  *  \remark       This constructor build a \e copy of the raw filter. So the originating
+  *                filter can be safely deleted.
+  */
+
+
+ /*! \class        NotFilter
+  *  \brief        Filter negation.
+  *
+  *                This filter invert the matching criterion of any other filter.
+  *
+  *  \remark       This is a raw Filter.
+  *                
+  */
+
+ /*! \function     NotFilter::NotFilter(const Filter<Type>& filter);
+  *                Constructor from a raw Filter.
+  *
+  *  \remark       This constructor build a \e copy of the raw filter. So the originating
+  *                filter can be safely deleted.
+  */
+
+ /*! \function     NotFilter::NotFilter(const NotFilter<Type>& filter);
+  *                Copy constructor.
+  *
+  *  \remark       This constructor build a \e copy of the raw filter. So the originating
+  *                filter can be safely deleted.
+  */
 
  }

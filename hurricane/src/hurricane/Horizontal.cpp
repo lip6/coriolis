@@ -184,9 +184,9 @@ Record* Horizontal::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->add(getSlot("Y", &_y));
-        record->add(getSlot("DxSource", &_dxSource));
-        record->add(getSlot("DxTarget", &_dxTarget));
+        record->add(DbU::getValueSlot("Y", &_y));
+        record->add(DbU::getValueSlot("DxSource", &_dxSource));
+        record->add(DbU::getValueSlot("DxTarget", &_dxTarget));
     }
     return record;
 }

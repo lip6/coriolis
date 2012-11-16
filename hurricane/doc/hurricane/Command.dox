@@ -260,10 +260,6 @@ assert(GetZoomCommand()IsInstalledOn(view));
   */
 
 
- /*! \name         Accessors
-  */
- //  \{
-
  /*! \function     const Name& Command::GetName() const;
   *  \Return       the command name. 
   */
@@ -276,25 +272,12 @@ assert(GetZoomCommand()IsInstalledOn(view));
   *  \Return       the collection of views where this command is installed. 
   */
 
- //  \}
-
-
- /*! \name         Predicates
-  */
- //  \{
 
  /*! \function     bool Command::IsInstalledOn(View* view) const;
   *  \Return       \true if the command is installed within the view, else 
   *                \false. 
   */
 
- //  \}
-
-
-
- /*! \name         Messages
-  */
- //  \{
 
  /*! \function     void Command::_OnInstalledOn(View* view);
   *                Message called upon to inform the command that it has been 
@@ -358,12 +341,8 @@ assert(GetZoomCommand()IsInstalledOn(view));
   *                been released. 
   */
 
- //  \}
 
-
-
- /*! \name         Command Collection
-  */
+ //! \name         Command Collection
  //  \{
 
  /*! \typedef      Commands
@@ -385,10 +364,6 @@ assert(GetZoomCommand()IsInstalledOn(view));
 
  //  \}
 
-
- /*  \name         Installation/Uninstallation
-  */
- //  \{
 
  /*! \function     void Command::InstallOn(View* view);
   *                Allows to install the command in the view. 
@@ -415,7 +390,5 @@ assert(GetZoomCommand()IsInstalledOn(view));
   *                it handle possible additional processing, a message 
   *                <b>_OnUnInstalledFrom()</b> is issued by the view. 
   */
-
- //  \}
 
  }

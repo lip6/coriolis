@@ -20,10 +20,6 @@
 
 
 
- /*! \name         Constructors
-  */
- //  \{
-
  /*! \function     Name::Name();
   *                Default constructor (initialized with an empty string). 
   */
@@ -40,24 +36,12 @@
   *                Copy constructor. 
   */
 
- //  \}
-
-
- /*! \name         Destructors
-  */
- //  \{
 
  /*! \function     Name::~Name();
   *                The destructor releases the shared string if it no longer 
   *                referenced. 
   */
 
- //  \}
-
-
- /*! \name         Operators
-  */
- //  \{
 
  /*! \function     Name& Name::operator=(const Name& name);
   *                Assignment operator. Very fast because there is only an 
@@ -145,18 +129,9 @@ for_each_net(net, cellGetNets()) {
   *                modified]). 
   */
 
- //  \}
-
-
- /*! \name         Predicates
-  */
- //  \{
 
  /*! \function     bool Name::isEmpty () const;
   *  \Return       \true if the shared string is empty, else \false. 
   */
-
- //  \}
-
 
  }

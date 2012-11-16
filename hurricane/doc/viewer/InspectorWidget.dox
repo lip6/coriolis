@@ -5,7 +5,7 @@
 
  namespace Hurricane {
 
- /*! \class        HInspectorWidget
+ /*! \class        InspectorWidget
   *  \brief        A Widget to browse through the Hurricane objetcs.
   *
   *  \section      secInspectorMM  Inspector Memory Management
@@ -39,27 +39,24 @@
   */
 
 
- //! \name         Constructors & Destructors
- //  \{
-   
  /*! \function     InspectorWidget::InspectorWidget(QWidget* parent=NULL);
-  *                Construct a HInspectorWidget. The root Record to browse must
+  *                Construct a InspectorWidget. The root Record to browse must
   *                be sets immediatly afterwards with the setRootRecord()
   *                method.
   */
 
- //  \}
 
-
- //! \name         Modifiers
- //  \{
-   
  /*! \function     void InspectorWidget::setRootRecord(Record* record);
-  *                Sets the root record of the Inspector. Note that the
-  *                previous root record is freed.
+  *                Sets the root record of the Inspector.
+  *
+  *  \remark       The previous root record is freed.
   */
 
- //  \}
-
+   
+ /*! \function     void InspectorWidget::setRootOccurrence(Occurrence& occurrence);
+  *                Build a Record from the Occurrence and set it as the root Record.                
+  *
+  *  \remark       The previous root record is freed.
+  */
 
  }

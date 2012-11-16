@@ -184,7 +184,6 @@ namespace Hurricane {
                                   ,minimalSpacing)
                            ,_material      (material)
                            ,_extractNumber (extractNumber)
-                           ,_connectorLayer(NULL)
                            ,_blockageLayer (NULL)
                            ,_realName      ("<not associated>")
   { }
@@ -205,10 +204,6 @@ namespace Hurricane {
 
     return basicLayer;
   }
-
-
-  BasicLayer* BasicLayer::getConnectorLayer () const
-  { return _connectorLayer; } 
 
 
   BasicLayer* BasicLayer::getBlockageLayer () const

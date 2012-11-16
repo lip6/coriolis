@@ -27,10 +27,6 @@
   */
 
 
- /*! \name         Accessors
-  */
- //  \{
-
  /*! \function     Net* Rubber::getNet() const;
   *  \Return       the net owning the rubber. 
   */
@@ -57,11 +53,8 @@
   *                connect. 
   */
 
- //  \}
 
-
- /*! \name         Rubber Collection
-  */
+ //! \name         Rubber Collection
  //  \{
 
  /*! \typedef      Rubbers

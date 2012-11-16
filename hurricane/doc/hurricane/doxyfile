@@ -590,6 +590,9 @@ INPUT                  = ../../src/hurricane/hurricane/Commons.h \
                          ../../src/hurricane/hurricane/Warning.h \
                          ../../src/hurricane/hurricane/Interruption.h \
                          Exception.dox \
+                         Error.dox \
+                         Warning.dox \
+                         Interruption.dox \
                          ../../src/hurricane/hurricane/Collection.h \
                          ../../src/hurricane/hurricane/ListCollection.h \
                          ../../src/hurricane/hurricane/MapCollection.h \
@@ -632,9 +635,18 @@ INPUT                  = ../../src/hurricane/hurricane/Commons.h \
                          ../../src/hurricane/hurricane/Layers.h \
                          ../../src/hurricane/hurricane/Layer.h \
                          Layer.dox \
-                         ../../src/hurricane/hurricane/BasicLayers.h \
                          ../../src/hurricane/hurricane/BasicLayer.h \
                          BasicLayer.dox \
+                         ../../src/hurricane/hurricane/RegularLayer.h \
+                         RegularLayer.dox \
+                         ../../src/hurricane/hurricane/ViaLayer.h \
+                         ViaLayer.dox \
+                         ../../src/hurricane/hurricane/ContactLayer.h \
+                         ContactLayer.dox \
+                         ../../src/hurricane/hurricane/DiffusionLayer.h \
+                         DiffusionLayer.dox \
+                         ../../src/hurricane/hurricane/TransistorLayer.h \
+                         TransistorLayer.dox \
                          ../../src/hurricane/hurricane/Libraries.h \
                          ../../src/hurricane/hurricane/Library.h \
                          Library.dox \

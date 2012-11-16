@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2010-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
@@ -17,10 +12,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./PyCellViewer.cpp"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include "hurricane/isobar/PyCell.h"
@@ -38,9 +30,9 @@ extern "C" {
 #define  METHOD_HEAD(function)  GENERIC_METHOD_HEAD(CellViewer,cw,function)
 
 
-// x=================================================================x
+// +=================================================================+
 // |             "PyCellViewer" Python Module Code Part              |
-// x=================================================================x
+// +=================================================================+
 
 #if defined(__PYTHON_MODULE__)
 
@@ -75,9 +67,73 @@ extern "C" {
     METHOD_HEAD("CellViewer.setCell()")
 
     PyCell* cell;
-    if ( not ParseOneArg("CellViewer.setCell()",args,CELL_ARG,(PyObject**)&cell) ) return NULL;
+    if ( not ParseOneArg("CellViewer.setCell()",args,CELL_ARG,(PyObject**)&cell) ) {
+      return NULL;
+    }
 
     cw->setCell ( PYCELL_O(cell) );
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
+  static PyObject* PyCellViewer_setApplicationName ( PyCellViewer* self, PyObject* args )
+  {
+    trace << "PyCellViewer_setApplicationName ()" << endl;
+
+    HTRY
+    METHOD_HEAD("CellViewer.setApplicationName()")
+
+    char* name = NULL;
+    if (not PyArg_ParseTuple(args,"s:CellViewer.setApplicationName()", &name)) {
+      PyErr_SetString ( ConstructorError, "CellViewer.setApplicationName(): Takes exactly one argument." );
+      return NULL;
+    }
+
+    cw->setApplicationName ( name );
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
+  static PyObject* PyCellViewer_setLayerVisible ( PyCellViewer* self, PyObject* args )
+  {
+    trace << "PyCellViewer_setLayerVisible ()" << endl;
+
+    HTRY
+    METHOD_HEAD("CellViewer.setLayerVisible()")
+
+    char*     layerName = NULL;
+    PyObject* visible   = NULL;
+    if (not PyArg_ParseTuple(args,"sO:CellViewer.setLayerVisible()", &layerName, &visible)) {
+      PyErr_SetString ( ConstructorError, "CellViewer.setLayerVisible(): Takes exactly two argument." );
+      return NULL;
+    }
+
+    cw->setLayerVisible ( layerName, (PyObject_IsTrue(visible) != 0) );
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
+  static PyObject* PyCellViewer_setAnonNetSelectable ( PyCellViewer* self, PyObject* args )
+  {
+    trace << "PyCellViewer_setAnonNetSelectable ()" << endl;
+
+    HTRY
+    METHOD_HEAD("CellViewer.setAnonNetSelectable()")
+
+    PyObject* pyState = NULL;
+    if (not PyArg_ParseTuple(args,"O:CellViewer.setAnonNetSelectable()", &pyState)) {
+      PyErr_SetString ( ConstructorError, "CellViewer.setAnonNetSelectable(): Takes exactly one argument." );
+      return NULL;
+    }
+
+    bool state = (PyObject_IsTrue(pyState) != 0);
+    cw->setAnonNetSelectable( state );
     HCATCH
 
     Py_RETURN_NONE;
@@ -101,15 +157,21 @@ extern "C" {
   // PyCellViewer Attribute Method table.
 
   PyMethodDef PyCellViewer_Methods[] =
-    { { "getCell"        , (PyCFunction)PyCellViewer_getCell        , METH_NOARGS
-                         , "Return the currently edited Cell." }
-    , { "setCell"        , (PyCFunction)PyCellViewer_setCell        , METH_VARARGS
-                         , "Load a Cell into the viewer." }
-    , { "fit"            , (PyCFunction)PyCellViewer_fit            , METH_NOARGS
-                         , "Fit the contents to the viewer's visible area." }
-    , { "destroy"        , (PyCFunction)PyCellViewer_destroy        , METH_NOARGS
-                         , "Destroy the associated hurricane object. The python object remains." }
-    , {NULL, NULL, 0, NULL}           /* sentinel */
+    { { "getCell"             , (PyCFunction)PyCellViewer_getCell             , METH_NOARGS
+                              , "Return the currently edited Cell." }
+    , { "setCell"             , (PyCFunction)PyCellViewer_setCell             , METH_VARARGS
+                              , "Load a Cell into the viewer." }
+    , { "setApplicationName"  , (PyCFunction)PyCellViewer_setApplicationName  , METH_VARARGS
+                              , "Sets the application (binary) name." }
+    , { "setAnonNetSelectable", (PyCFunction)PyCellViewer_setAnonNetSelectable, METH_VARARGS
+                              , "Allow/disallow anonymous nets to be selectables." }
+    , { "setLayerVisible"     , (PyCFunction)PyCellViewer_setLayerVisible     , METH_VARARGS
+                              , "Sets the visibility state of the layer <name>." }
+    , { "fit"                 , (PyCFunction)PyCellViewer_fit                 , METH_NOARGS
+                              , "Fit the contents to the viewer's visible area." }
+    , { "destroy"             , (PyCFunction)PyCellViewer_destroy             , METH_NOARGS
+                              , "Destroy the associated hurricane object. The python object remains." }
+    , {NULL, NULL, 0, NULL}   /* sentinel */
     };
 
 
@@ -120,12 +182,12 @@ extern "C" {
 #else  // End of Python Module Code Part.
 
 
-// x=================================================================x
+// +=================================================================+
 // |            "PyCellViewer" Shared Library Code Part              |
-// x=================================================================x
+// +=================================================================+
 
 
-  PyTypeObjectDefinitions(CellViewer)
+  PyTypeRootObjectDefinitions(CellViewer)
 
 
 # endif  // End of Shared Library Code Part.

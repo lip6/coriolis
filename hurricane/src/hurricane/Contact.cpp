@@ -354,10 +354,10 @@ Record* Contact::_getRecord() const
         record->add(getSlot("AnchorHook", &_anchorHook));
         record->add(getSlot("Anchor", getAnchor()));
         record->add(getSlot("Layer", _layer));
-        record->add(getSlot("Dx", &_dx));
-        record->add(getSlot("Dy", &_dy));
-        record->add(getSlot("Width", &_width));
-        record->add(getSlot("Height", &_height));
+        record->add(DbU::getValueSlot("Dx", &_dx));
+        record->add(DbU::getValueSlot("Dy", &_dy));
+        record->add(DbU::getValueSlot("Width", &_width));
+        record->add(DbU::getValueSlot("Height", &_height));
     }
     return record;
 }

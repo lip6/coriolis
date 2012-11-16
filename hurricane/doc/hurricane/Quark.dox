@@ -52,7 +52,7 @@
   *                equivalent to destroying the properties associated to the 
   *                occurences whom it is the unique representative. 
   *                Conceptually, it is wiser to use the call : 
-  *                <b>occurence.ClearProperties()</b> which does the same. 
+  *                <b>occurence.clearProperties()</b> which does the same. 
   * 
   * 
   *  \section      secQuarkExample  Example
@@ -63,29 +63,19 @@
 Property* property = ...; // we get a property
  
 if (is_a<SharedPropery*>(property)) {
-   for_each_dbo(dbo, ((SharedProperty*)property)getOwners()) {
-      if (!is_a<Quark*>(dbo))
-         cerr << dbo << endl;
-      else
-         cerr << ((Quark*)dbo)getOccurence() << endl;
-      end_for;
-   }
+  forEach(DBo*, idbo, ((SharedProperty*)property)getOwners()) {
+    if (not is_a<Quark*>(*idbo))
+      cerr << *idbo << endl;
+    else
+      cerr << ((Quark*)*idbo)->getOccurence() << endl;
+  }
 }
 \endcode
   */
 
 
-
- /*! \name         Accessors
-  */
- //  \{
-
  /*! \function     const Occurrence& Quark::getOccurrence() const;
   *  \Return       an occurence of which this quark is a representative. 
   */
-
- //  \}
-
-
 
  }

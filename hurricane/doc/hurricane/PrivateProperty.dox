@@ -13,8 +13,8 @@
   *
   *                When a new property is created, it is not yet assigned to any 
   *                particular object. It becomes effectively the property of an 
-  *                object after the call <b>dbo-\>Put(property)</b>. The 
-  *                property then receives a message <b>OnCapturedBy</b> whose 
+  *                object after the call <b>dbo-\>put(property)</b>. The 
+  *                property then receives a message <b>onCapturedBy</b> whose 
   *                argument is the additional owner. From that time onwards, 
   *                this object becomes partially responsible of the future of 
   *                the property. 
@@ -29,7 +29,7 @@
   *
   *                If a property of same name already exist : Two properties 
   *                with the same name can't cohabit, the older one is released 
-  *                by the object which receives the message <b>OnReleasedBy</b> 
+  *                by the object which receives the message <b>onReleasedBy</b> 
   *                from that old property and proceeds as required according to 
   *                the type of property. 
   *
@@ -41,7 +41,7 @@
   *                If the property owner is destroyed : All properties owned by 
   *                the object are then released. The future of each of those 
   *                properties is fully driven by their respective messages 
-  *                <b>OnReleasedBy</b>. 
+  *                <b>onReleasedBy</b>. 
   */
 
 
@@ -66,16 +66,9 @@
   */
 
 
-
- /*! \name         Accessors
-  */
- //  \{
-
  /*! \function     DBo* PrivateProperty::getOwner() const;
   *  \Return       the current owner of the property (or NULL if at not been 
   *                assigned yet). 
   */
-
- //  \}
 
  } // End of Hurricane namespace.

@@ -24,6 +24,8 @@
                                      hurricane/viewer/SelectCommand.h
                                      hurricane/viewer/CellWidget.h
                                      hurricane/viewer/CellViewer.h
+                                     hurricane/viewer/CellPrinter.h
+                                     hurricane/viewer/CellImage.h
                                      hurricane/viewer/RecordModel.h
                                      hurricane/viewer/InspectorWidget.h
                                      hurricane/viewer/SelectionPopupModel.h
@@ -54,7 +56,13 @@
                                      hurricane/viewer/CellWidgets.h
                                      hurricane/viewer/StratusScript.h
                        )
-                   set ( pyincludes  hurricane/viewer/PyCellViewer.h
+                   set ( pyincludes  hurricane/viewer/PyHSVr.h
+                                     hurricane/viewer/PyDrawingStyle.h
+                                     hurricane/viewer/PyDrawingGroup.h
+                                     hurricane/viewer/PyDisplayStyle.h
+                                     hurricane/viewer/PyHApplication.h
+                                     hurricane/viewer/PyGraphics.h
+                                     hurricane/viewer/PyCellViewer.h
                        )
                    set ( cpps        HApplication.cpp
                                      ScreenUtilities.cpp 
@@ -83,6 +91,8 @@
                                      SelectorCriterion.cpp
                                      CellWidget.cpp
                                      CellViewer.cpp
+                                     CellPrinter.cpp
+                                     CellImage.cpp
                                      RecordModel.cpp
                                      InspectorWidget.cpp
                                      SelectionPopupModel.cpp
@@ -99,7 +109,13 @@
                                      StratusScript.cpp
                                      StratusWidget.cpp
                        )
-                   set ( pycpps      PyViewer.cpp
+                   set ( pycpps      PyHSVr.cpp
+                                     PyDrawingStyle.cpp
+                                     PyDrawingGroup.cpp
+                                     PyDisplayStyle.cpp
+                                     PyHApplication.cpp
+                                     PyGraphics.cpp
+                                     PyViewer.cpp
                                      PyCellViewer.cpp
                        )
 # source2 & include2 for module that are *not* Python wrappers but true

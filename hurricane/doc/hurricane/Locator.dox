@@ -10,7 +10,14 @@
   *  \section      secLocatorIntro  Introduction
   *
   *                Locators are objects which allow to walk efficiently through 
-  *                the data structure. 
+  *                the data structure.
+  *
+  *                Locators are indeed algorithms. They do not hold a list of
+  *                elements but the way to go from one element to the next.
+  *                As such, they are very light in memory, contrary to containers.
+  *                Locators are the workhorse of Collection, and while they can
+  *                be used directly, this is not the recommended way.
+  *
   *
   *  \section      secLocatorGeneralConcepts  General concepts
   *
@@ -43,16 +50,16 @@ Cell* cell = ...; // we get the cell
  
 if (cell) {
  
-   // CellGetNets()
+   // cell->getNets()
    //    returns the nets collection of the cell
    // and getLocator()
    //    allocates and returns a locator for traversing those nets
-   Locator<Net*>* locator = CellGetNets().getLocator();
+   Locator<Net*>* locator = cell->getNets().getLocator();
  
-   while (locatorIsValid()) {
-      Net* net = locatorGetElement();
-      assert(netGetCell() == cell);
-      locatorProgress();
+   while (locator->isValid()) {
+      Net* net = locator->getElement();
+      assert(net->getCell() == cell);
+      locator->progress();
    }
  
    // don't forget to release the allocated locator
@@ -64,19 +71,19 @@ if (cell) {
 Cell* cell = ...; // we get a cell
  
 if (cell) {
-   Locator<Net*>* locator1 = CellGetNets().getLocator();
-   while (locator1IsValid()) {
-      Net* net1 = locator1GetElement();
+   Locator<Net*>* locator1 = cell->GetNets().getLocator();
+   while (locator1->isValid()) {
+      Net* net1 = locator1->getElement();
  
-      Locator<Net*>* locator2 = locator1GetClone();
-      while (locator2IsValid()) {
-         Net* net2 = locator2GetElement();
+      Locator<Net*>* locator2 = locator1->getClone();
+      while (locator2->isValid()) {
+         Net* net2 = locator2->getElement();
          cerr << net1 << " " << net2 << endl;
-         locator2Progress();
+         locator2->progress();
       }
       delete locator2;
  
-      locator1Progress();
+      locator1->progress();
    }
    delete locator1;
 }
@@ -84,14 +91,9 @@ if (cell) {
   *  \remark       Those examples are given in order to explain how locators 
   *                work. We will see in the following how to do that more simply 
   *                by using generic locators, or even simpler by using the 
-  *                for_each macros. 
+  *                forEach macros. 
   */
 
-
-
- /*! \name         Accessors
-  */
- //  \{
 
  /*! \function     Type Locator::getElement() const;
   *  \Return       the current element (or the value <b>Type()</b> when the 
@@ -109,30 +111,47 @@ if (cell) {
   *                for you (to be explained later). 
   */
 
- //  \}
-
-
- /*! \name         Predicates
-  */
- //  \{
 
  /*! \function     bool Locator::isValid() const;
   *  \Return       \true while the walk has not exhausted the set of elements, 
   *                else \false. 
   */
 
- //  \}
-
-
- /*! \name         Modifiers
-  */
- //  \{
 
  /*! \function     void Locator::progress();
   *                Moves forward the locator to the following element. 
   */
 
- //  \}
 
+ /*! \class        GenericLocator
+  *  \brief        Generic Locator auto-pointer.
+  *
+  *                This class is an auto-pointer like wrapped around the raw locator.
+  *
+  *  \remark       The destruction of a GenericLocator triggers the destruction of
+  *                the raw locator.
+  */
+
+ /*! \function     GenericLocator::GenericLocator(Locator<Type>* locator);
+  *                Constructor from a raw Locator.
+  *
+  *  \remark       This constructor do not build a copy of the raw locator. So the original
+  *                raw locator must not be deleted. It's deletion will occurs with the one
+  *                of the GenericLocator.
+  */
+
+ /*! \function     GenericLocator::GenericLocator(const Locator<Type>& locator);
+  *                Constructor from a primary Locator.
+  *
+  *  \remark       This constructor build a \e copy of the raw locator. So the originating
+  *                locator can be safely deleted.
+  */
+
+ /*! \function     GenericLocator::GenericLocator(const GenericLocator<Type>& locator);
+  *                Constructor from a primary Locator and a Filter.
+  *
+  *  \remark       This constructor build a \e copy of the raw locator. So the originating
+  *                locator can be safely deleted.
+  */
 
  }

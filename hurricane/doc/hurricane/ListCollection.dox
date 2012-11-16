@@ -60,10 +60,6 @@ if (cell) {
 
 
 
- /*  \name         Accessors
-  */
- //  \{
-
  /*! \function     GenericCollection<Element> ListCollection::GetCollection(const list<Element>& elementList);
   *  \see          below.              
   */
@@ -73,7 +69,5 @@ if (cell) {
   *                <b>ListCollection</b> the content of the STL list given in 
   *                argument. 
   */
-
- //  \}
 
  }

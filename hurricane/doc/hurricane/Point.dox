@@ -10,10 +10,6 @@
   */
 
 
- /*! \name         Constructors
-  */
- //  \{
-
  /*! \function     Point::Point();
   *                Default constructor. 
   */
@@ -26,12 +22,6 @@
   *                Copy constructor. 
   */
 
- //  \}
-
-
- /*! \name         Operators
-  */
- //  \{
 
  /*! \function     Point& Point::operator=(const Point& point);
   *                Assignment operator. 
@@ -45,12 +35,6 @@
   *                Difference operator. 
   */
 
- //  \}
-
-
- /*! \name         Modifiers
-  */
- //  \{
 
  /*! \function     void Point::setX(const DbU::Unit& x);
   *                Modifies point abscissa. 
@@ -63,8 +47,5 @@
  /*! \function     Point& Point::translate(const DbU::Unit& dx, const DbU::Unit& dy);
   *                Translates the point of dx and dy. 
   */
-
- //  \}
-
 
  }

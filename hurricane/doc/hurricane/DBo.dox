@@ -61,7 +61,7 @@
   *                but a posteriori, that is once the object has been fully
   *                built. In order to realize such an operation it must, once
   *                all derived classes constructors have been called, call upon
-  *                a function <b>_PostCreate</b> which realizes the additional
+  *                a function <b>_postCreate</b> which realizes the additional
   *                work and then return the pointer on the new objects (let us
   *                recall that all member functions which must not be called
   *                directly are prefixed by an underscore).
@@ -71,15 +71,14 @@
   *                object. The following example shows its implementation for a
   *                net :
   *  \code
- Net* Net::Create(Cell* cell, const Name&amp; name)
- // *******************************************
+ Net* Net::Create(Cell* cell, const Name& name)
  {
     Net* net = new Net(cell, name);
   
     if (!net)
        throw Error("Can't create Net : allocation failed");
   
-    net->_PostCreate();
+    net->_postCreate();
   
     return net;
  }
@@ -87,51 +86,51 @@
   *
   *                Within this function, the net is created in a first time
   *                thanks to the constructor spawn by the new operator. If
-  *                everything goes right the function <b>_PostCreate</b> is
+  *                everything goes right the function <b>_postCreate</b> is
   *                called upon the net. This one realizes the additional
   *                operations that the constructor couldn't realize and then
-  *                calls the functions <b>_PostCreate</b> upon the base
+  *                calls the functions <b>_postCreate</b> upon the base
   *                classe. If everything goes right the net is returned, else an
   *                exception is thrown if something abnormal or illegal occurs
   *                (i.e. a net with the same name already exists). For the
   *                example of a <b>Line</b> : the different called constructors
-  *                will fully characterize the line, then the <b>_PostCreate</b>
+  *                will fully characterize the line, then the <b>_postCreate</b>
   *                method on a line will do nothing else than call upon the
-  *                <b>_PostCreate</b> method of the <b>go</b> which will insert
+  *                <b>_postCreate</b> method of the <b>go</b> which will insert
   *                the line within the <b>QuadTree</b> (this is now feasible,
   *                the line geometry being fully characterized).
   *
-  *  \section      sDBoDelete  Deletion process
+  *  \section      sDBodestroy  Deletion process
   *
-  *                <b>The Delete() member function :</b>
+  *                <b>The destroy() member function :</b>
   *
   *                Data base ojects can be destroyed only by calling upon this
   *                function and not by calling the C++ standard destructor
   *                (which indeed is not provided).
   *
   *                A process similar but opposite to the creation process is
-  *                required. A function <b>_PreDelete</b> must be called upon
+  *                required. A function <b>_preDestroy</b> must be called upon
   *                before the effective object destruction. As a matter of fact,
   *                if we take again the case of the <b>Line</b> for example, the
   *                line must be removed from the <b>QuadTree</b> before the
   *                destruction of its geometric characteristics (inverse of the
-  *                previous phenomenon). Therefore the Delete function is
+  *                previous phenomenon). Therefore the destroy function is
   *                implemented that way :
   *  \code
- void DBo::Delete()
+ void DBo::destroy()
  // ***************
  {
-   _PreDelete();
+   _preDestroy();
                  
-   delete *this;
+   delete this;
  }
   *  \endcode
   *
   *  \section      sDBoExtentions  Extentions
   *
   *                For any new sub-type of DBo you must adhere to the same
-  *                protocol. That is provide the methods _PostCreate and
-  *                _PreDelete calling the methods _PostCreate and _PreDelete of
+  *                protocol. That is provide the methods _postCreate and
+  *                _preDestroy calling the methods _postCreate and _preDestroy of
   *                their base class. Furthermore you must provide when this
   *                class is instantiable a creation function (caution : only the
   *                creation function, if any, must be \public (and \static) the
@@ -140,74 +139,56 @@
   *                Extracted from the .h of a new type of cell.
   *  \code
  class MyCell : public Cell {
- // ***********************
-  
- // Types
- // *****
-  
-    public: typedef Cell Inherit;
-  
- // Construction
- // ************
-  
-    protected: MyCell(Library* library, const Name&amp; name);
-  
-    public: static MyCell* Create(Library* library, const Name&amp; name);
-  
- // Others
- // ******
-  
-    protected: virtual void _PostCreate();
-  
-    protected: virtual void _PreDelete();
-  
+   public:  
+     typedef  Cell  Inherit;
+   public:
+     // User-accessible creation method.
+     static  MyCell* Create      (Library* library, const Name& name);
+   protected:
+     // Internally used constructors & destructors. 
+                     MyCell      (Library* library, const Name& name);
+     virtual void    _postCreate ();
+     virtual void    _preDestroy ();
  };
   *  \endcode
   *                Extracted from the .cpp for this new type of cell.
   *  \code
  MyCell::MyCell(Library* library, const Name&amp; name)
- // ***********************************************
-  :  Inherit(library, name)
+   : Inherit(library, name)
+ { }
+  
+
+ MyCell* MyCell::Create(Library* library, const Name& name)
  {
+   MyCell* myCell = new MyCell(library, name);
+  
+   if (!myCell) throw Error("Can't create MyCell : allocation failed");
+  
+   myCell->_postCreate(); // must not be forgotten!
+  
+   return myCell;
  }
   
- MyCell* MyCell::Create(Library* library, const Name&amp; name)
- // *******************************************************
+
+ void  MyCell::_postCreate()
  {
-    MyCell* myCell = new MyCell(library, name);
+    Inherit::_postCreate(); // must not be forgotten!
   
-    if (!myCell)
-       throw Error("Can't create MyCell : allocation failed");
-  
-    myCell->_PostCreate(); // must not be forgotten!
-  
-    return myCell;
- }
-  
- void MyCell::_PostCreate()
- // ***********************
- {
     // complete here the post creation
-    
-    Inherit::_PostCreate(); // must not be forgotten!
-  
-    // posibly do something here
  }
   
- void MyCell::_PreDelete()
- // **********************
+
+ void  MyCell::_preDestroy()
  {
-    // posibly do something here
+    Inherit::_preDestroy(); // must not be forgotten!
   
-    Inherit::_PreDelete(); // must not be forgotten!
-  
-    // complete here the pre deletion
+    // complete here the pre-deletion.
  }
   *  \endcode
   *
   *  \remark       The destructor, strictly speaking, is not defined because
   *                necessary operations are done within the method
-  *                <b>_PreDelete</b>.
+  *                <b>_preDestroy</b>.
   *                In the implementation of the class <b>MyCell</b> we have only
   *                used the type <b>Inherit</b> (and never <b>Cell</b>). This opens
   *                the door to hierarchy changes without affecting the code already
@@ -224,12 +205,9 @@
 
  /*! \function     void  DBo::destroy ();
   *
-  *                The legal method to delete any DBo object (see \ref sDBoDelete).
+  *                The legal method to delete any DBo object (see \ref sDBodestroy).
   */
 
- /*! \name         Accessors
-  */
- // \{
 
  /*! \function     Property* DBo::getProperty ( const Name& name ) const;
   *  \param        name  Name of the Property to return.
@@ -237,12 +215,11 @@
   *
   *  \remark       When writting what follows :
   *  \code
- for_each_dbo(dbo, dbos) {
-     Property* property = dbo->getProperty("width");
-     if (property) {
-        // do something
-     }
-     end_for;
+ forEach(DBo*, idbo, dbos) {
+   Property* property = idbo->getProperty("width");
+   if (property) {
+     // do something
+   }
  }
   *  \endcode
   *
@@ -251,23 +228,21 @@
   *                efficient to write :
   *  \code
  Name width = "width";
- for_each_dbo(dbo, dbos) {
-     Property* property = dbo->getProperty(width);
-     if (property) {
-         // do something
-     }
-     end_for;
+ forEach(DBo*, idbo, dbos) {
+   Property* property = idbo->getProperty(width);
+   if (property) {
+     // do something
+   }
  }
   *  \endcode
   *                Or still better :
   *  \code
  static Name WIDTH = "width";
- for_each_dbo(dbo, dbos) {
-     Property* property = dbo->getProperty(WIDTH);
-     if (property) {
-         // do something
-     }
-     end_for;
+ forEach(DBo*, idbo, dbos) {
+   Property* property = idbo->getProperty(WIDTH);
+   if (property) {
+     // do something
+   }
  }
   *  \endcode
   *                This remark applies each time you handle names.
@@ -277,23 +252,11 @@
   *  \return       The property Collection associated to the object (possibly empty).
   */
 
- // \}
-
-
- /*! \name         Predicates
-  */
- // \{
 
  /*! \function     bool  DBo::hasProperty () const;
   *  \return       \true if the object has at least a property, else \false.
   */
 
- // \}
-
-
- /*! \name         Modifiers
-  */
- // \{
 
  /*! \function     void  DBo::put ( Property* property );
   *
@@ -324,11 +287,8 @@
   *                removes all properties attached to this object.
   */
 
- // \}
 
-
- /*! \name         DBo Collection
-  */
+ //! \name         DBo Collection
  // \{
 
  /*! \typedef      typedef GenericCollection<DBo*> DBos;
