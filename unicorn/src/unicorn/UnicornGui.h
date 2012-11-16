@@ -2,25 +2,17 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          U n i c o r n  -  M a i n   G U I                      |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./UnicornGui.h"                           |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./unicorn/UnicornGui.h"                        |
+// +-----------------------------------------------------------------+
 
 
 
@@ -61,6 +53,7 @@ namespace Unicorn {
       static inline Banner&     getBanner     ();
       virtual       Cell*       getCellFromDb ( const char* name );
                     void        registerTool  ( GraphicTool* );
+      virtual       std::string _getString    () const;
     public slots:
                     void        openCell      ();
                     void        saveCell      ();
@@ -83,6 +76,10 @@ namespace Unicorn {
 
 
 } // End of Unicorn namespace.
+
+
+GETSTRING_POINTER_SUPPORT(Unicorn::UnicornGui)
+IOSTREAM_POINTER_SUPPORT(Unicorn::UnicornGui)
 
 
 #endif  // __UNICORN_UNICORN__

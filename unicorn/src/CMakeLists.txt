@@ -11,7 +11,7 @@
                          ${LEFDEF_INCLUDE_DIR}
                          ${PYTHON_INCLUDE_PATH}
                        )
-       add_definitions ( -DSYS_CONF_DIR=\\"${SYS_CONF_DIR}\\" )
+       add_definitions ( -DSYS_CONF_DIR="${SYS_CONF_DIR}" )
 
                    set ( mocincludes   unicorn/UnicornGui.h
                                        unicorn/OpenCellDialog.h
@@ -19,18 +19,23 @@
                                        unicorn/ImportCellDialog.h
                                        unicorn/ExportCellDialog.h
                        )
+                   set ( pyIncludes    unicorn/PyUnicornGui.h
+                       )
 		   set ( cpps          OpenCellDialog.cpp
                                        SaveCellDialog.cpp
                                        ImportCellDialog.cpp
                                        ExportCellDialog.cpp
                                        UnicornGui.cpp
                        )
+                   set ( pyCpps        PyUnicorn.cpp
+                                       PyUnicornGui.cpp
+                       )
                    set ( cgtcpp        CgtMain.cpp )
  
           qt4_wrap_cpp ( MOCcpps       ${mocincludes} )
      qt4_add_resources ( RCC_SRCS      Unicorn.qrc )
 
-           add_library ( unicorn       ${cpps} ${MOCcpps} )
+           add_library ( unicorn       ${cpps} ${MOCcpps} ${pyCpps} )
  set_target_properties ( unicorn       PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries ( unicorn       ${SOLSTICE_GRAPHICAL_LIBRARIES}
                                        ${SOLSTICE_LIBRARIES}
@@ -65,9 +70,21 @@
                                        -lutil
                                        ${LIBXML2_LIBRARIES}
                        )
+           add_library ( pyUnicorn     MODULE ${pyCpps} )
+ target_link_libraries ( pyUnicorn     unicorn )
+ set_target_properties ( pyUnicorn     PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
+                                                  PREFIX        ""
+                                                  OUTPUT_NAME   "Unicorn"
+                       )
+
         add_executable ( cgt           ${cgtcpp} )
  target_link_libraries ( cgt           unicorn )
+ set_target_properties ( cgt           PROPERTIES OUTPUT_NAME   "cgt-cpp" )
+
                install ( TARGETS       unicorn        DESTINATION lib${LIB_SUFFIX} )
+               install ( TARGETS       pyUnicorn      DESTINATION ${PYTHON_SITE_PACKAGES} )
                install ( TARGETS       cgt            DESTINATION bin )
-               install ( FILES         ${mocincludes} DESTINATION include/coriolis2/unicorn ) 
+               install ( PROGRAMS      cgt.py         DESTINATION bin RENAME cgt )
+               install ( FILES         ${mocincludes}
+                                       ${pyIncludes}  DESTINATION include/coriolis2/unicorn ) 
 

@@ -23,6 +23,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include  <Python.h>
 #include  <csignal>
 #include  <memory>
 using namespace std;
@@ -296,7 +297,7 @@ int main ( int argc, char *argv[] )
     cout   << "        Prof. Ident. ............................ Iowa State University" << endl;
     cout   << "        URL ........................ http://home.eng.iastate.edu/~cnchu" << endl;
     cout   << endl;
-    cmess2 << af->getPrint() << endl;
+  //cmess2 << af->getPrint() << endl;
 
     if ( arguments.count("stratus-script") ) {
       string scriptName = arguments["stratus-script"].as<string>();
@@ -378,22 +379,22 @@ int main ( int argc, char *argv[] )
         MaukaEngine*  mauka  = NULL;
 
         nimbus = NimbusEngine::create ( cell );
-        if ( showConf ) nimbus->getConfiguration()->print( cell );
+        if ( showConf ) nimbus->printConfiguration();
 
         if ( annealingPlace ) {
           Cfg::getParamPercentage("mauka.standardAnnealing")->setBool ( true );
         }
 
         if ( quadriPlace ) {
-          metis  = MetisEngine ::create ( cell );
-          if ( showConf ) metis->getConfiguration()->print( cell );
+          metis  = MetisEngine::create ( cell );
+          if ( showConf ) metis->printConfiguration();
 
           MetisEngine::doQuadriPart ( cell );
           MaukaEngine::regroupOverloadedGCells ( cell );
         }
 
         mauka = MaukaEngine::create ( cell );
-        if ( showConf ) mauka->getConfiguration()->print( cell );
+        if ( showConf ) mauka->printConfiguration();
 
         mauka->Run ();
       }

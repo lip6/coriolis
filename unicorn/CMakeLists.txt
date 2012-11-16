@@ -17,6 +17,7 @@
  set(QT_USE_QTXML "true")
  find_package(Qt4 REQUIRED)
  find_package(PythonLibs REQUIRED)
+ find_package(PythonSitePackages REQUIRED)
  find_package(LEFDEF REQUIRED)
  find_package(VLSISAPD REQUIRED)
  find_package(HURRICANE REQUIRED)
@@ -27,7 +28,12 @@
  find_package(KNIK REQUIRED)
  find_package(KATABATIC REQUIRED)
  find_package(KITE REQUIRED)
- #find_package(EQUINOX REQUIRED)
- #find_package(SOLSTICE REQUIRED)
+#find_package(EQUINOX REQUIRED)
+#find_package(SOLSTICE REQUIRED)
  
  add_subdirectory(src)
+
+ if(BUILD_DOC)
+   find_package(Doxygen REQUIRED)
+   add_subdirectory(doc)
+ endif(BUILD_DOC)
