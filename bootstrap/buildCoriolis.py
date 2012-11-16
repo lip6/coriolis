@@ -170,7 +170,7 @@ class ProjectBuilder:
 
 
     def _updateSecondary ( self ):
-        self._rootDir     = os.path.join ( os.environ["HOME"], self._projectDir )
+       #self._rootDir     = os.path.join ( os.environ["HOME"], self._projectDir )
         self._rpmbuildDir = os.path.join ( self._rootDir    , "rpmbuild" )
         self._debbuildDir = os.path.join ( self._rootDir    , "debbuild" )
         self._tmppathDir  = os.path.join ( self._rpmbuildDir, "tmp" )
