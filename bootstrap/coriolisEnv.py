@@ -32,15 +32,18 @@ def stripPath ( pathName ):
 
 
 def guessOs ():
-    osSlsoc6x_64    = re.compile (".*Linux.*el6.*x86_64.*")
-    osSlsoc6x       = re.compile (".*Linux.*(el|slsoc)6.*")
-    osSLSoC5x_64    = re.compile (".*Linux.*el5.*x86_64.*")
-    osSLSoC5x       = re.compile (".*Linux.*(el5|2.6.23.13.*SoC).*")
-    osLinux_64      = re.compile (".*Linux.*x86_64.*")
-    osLinux         = re.compile (".*Linux.*")
-    osDarwin        = re.compile (".*Darwin.*")
-    osUbuntu1004    = re.compile (".*Linux.*ubuntu.*")
-    osUbuntu1004_64 = re.compile (".*Linux.*ubuntu.*x86_64.*")
+    osSlsoc6x_64      = re.compile (".*Linux.*el6.*x86_64.*")
+    osSlsoc6x         = re.compile (".*Linux.*(el|slsoc)6.*")
+    osSLSoC5x_64      = re.compile (".*Linux.*el5.*x86_64.*")
+    osSLSoC5x         = re.compile (".*Linux.*(el5|2.6.23.13.*SoC).*")
+    osLinux_64        = re.compile (".*Linux.*x86_64.*")
+    osLinux           = re.compile (".*Linux.*")
+    osDarwin          = re.compile (".*Darwin.*")
+    osUbuntu1004      = re.compile (".*Linux.*ubuntu.*")
+    osUbuntu1004_64   = re.compile (".*Linux.*ubuntu.*x86_64.*")
+    osFreeBSD8x_amd64 = re.compile (".*FreeBSD 8.*amd64.*")
+    osFreeBSD8x_64    = re.compile (".*FreeBSD 8.*x86_64.*")
+    osFreeBSD8x       = re.compile (".*FreeBSD 8.*")
 
     uname = subprocess.Popen ( ["uname", "-srm"], stdout=subprocess.PIPE )
     lines = uname.stdout.readlines()
@@ -48,7 +51,7 @@ def guessOs ():
     libDir="lib"
     if osSlsoc6x_64.match(lines[0]):
       osType = "Linux.slsoc6x_64"
-      libDir = "64"
+      libDir = "lib64"
     elif osSlsoc6x.match(lines[0]): osType = "Linux.slsoc6x"
     elif osSLSoC5x_64.match(lines[0]):
       osType = "Linux.SLSoC5x_64"
@@ -65,6 +68,14 @@ def guessOs ():
       libDir = "lib64"
     elif osLinux.match(lines[0]):
       osType = "Linux.i386"
+    elif osFreeBSD8x_64.match(lines[0]):
+      osType = "FreeBSD.8x.x86_64"
+      libDir = "lib64"
+    elif osFreeBSD8x_amd64.match(lines[0]):
+      osType = "FreeBSD.8x.amd64"
+      libDir = "lib64"
+    elif osFreeBSD8x.match(lines[0]):
+      osType = "FreeBSD.8x.i386"
     elif osDarwin.match(lines[0]):
       osType = "Darwin"
     else:
@@ -84,25 +95,20 @@ if __name__ == "__main__":
   (osType,libDir) = guessOs()
   buildType       = "Release"
   linkType        = "Shared"
-  coriolisVersion = None
   rootDir         = None
 
   parser = optparse.OptionParser ()  
  # Build relateds.
-  parser.add_option ( "--csh"    , action="store_true" ,                dest="csh"        )
-  parser.add_option ( "--v1"     , action="store_true" ,                dest="v1"         )
-  parser.add_option ( "--v2"     , action="store_true" ,                dest="v2"         )
-  parser.add_option ( "--release", action="store_true" ,                dest="release"    )
-  parser.add_option ( "--debug"  , action="store_true" ,                dest="debug"      )
-  parser.add_option ( "--devel"  , action="store_true" ,                dest="devel"      )
-  parser.add_option ( "--static" , action="store_true" ,                dest="static"     )
-  parser.add_option ( "--shared" , action="store_true" ,                dest="shared"     )
-  parser.add_option ( "--python" , action="store_true" ,                dest="python"     )
-  parser.add_option ( "--root"   , action="store"      , type="string", dest="rootDir"    )
+  parser.add_option ( "--csh"      , action="store_true" ,                dest="csh"      )
+  parser.add_option ( "--release"  , action="store_true" ,                dest="release"  )
+  parser.add_option ( "--debug"    , action="store_true" ,                dest="debug"    )
+  parser.add_option ( "--devel"    , action="store_true" ,                dest="devel"    )
+  parser.add_option ( "--static"   , action="store_true" ,                dest="static"   )
+  parser.add_option ( "--shared"   , action="store_true" ,                dest="shared"   )
+  parser.add_option ( "--no-python", action="store_true" ,                dest="nopython" )
+  parser.add_option ( "--root"     , action="store"      , type="string", dest="rootDir"  )
   ( options, args ) = parser.parse_args ()
 
-  if options.v1:         coriolisVersion = 1
-  if options.v2:         coriolisVersion = 2
   if options.release:    buildType       = "Release"
   if options.debug:      buildType       = "Debug"
   if options.devel:      buildType       = "Debug"
@@ -114,102 +120,75 @@ if __name__ == "__main__":
   strippedLibraryPath = stripPath ( "LD_LIBRARY_PATH" )
   strippedPythonPath  = stripPath ( "PYTHONPATH" )
 
-  if coriolisVersion == 1:
+  shellScriptSh = \
+    """echo "%(MESSAGE)s";\n"""                                       \
+    """echo "Switching to Coriolis 2.x (%(buildDir)s)";\n"""          \
+    """PATH="%(PATH)s";\n"""                                          \
+    """LD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";\n"""                    \
+    """BOOTSTRAP_TOP="%(BOOTSTRAP_TOP)s";\n"""                        \
+    """CORIOLIS_TOP="%(CORIOLIS_TOP)s";\n"""                          \
+    """STRATUS_MAPPING_NAME="%(SYSCONF_DIR)s/stratus2sxlib.xml";\n""" \
+    """export PATH LD_LIBRARY_PATH BOOTSTRAP_TOP CORIOLIS_TOP STRATUS_MAPPING_NAME;\n""" \
+    """hash -r;\n"""
 
+  shellScriptCsh = \
+    """echo "%(MESSAGE)s";\n"""                              \
+    """echo "Switching to Coriolis 2.x (%(buildDir)s)";\n""" \
+    """setenv PATH "%(PATH)s";\n"""                          \
+    """setenv LD_LIBRARY_PATH "%(LD_LIBRARY_PATH)s";\n"""    \
+    """setenv BOOTSTRAP_TOP "%(BOOTSTRAP_TOP)s";\n"""        \
+    """setenv CORIOLIS_TOP "%(CORIOLIS_TOP)s";\n"""          \
+    """setenv STRATUS_MAPPING_NAME "%(SYSCONF_DIR)s/stratus2sxlib.xml";\n""" \
+    """rehash\n;"""
+
+  buildDir  = buildType + "." + linkType
+  scriptDir = os.path.dirname ( os.path.abspath(__file__) )
+ #print "echo \"Script Location: %s\";" % scriptDir,
+  if scriptDir.startswith("/etc/coriolis2"):
+    coriolisTop  = "/usr"
+    sysconfDir   = scriptDir
+    shellMessage = "Using system-wide Coriolis 2 (/usr)"
+  elif     scriptDir.startswith("/users/outil/coriolis/coriolis-2.x/") \
+        or scriptDir.startswith("/soc/coriolis2/"):
+    coriolisTop  = "/soc/coriolis2"
+    sysconfDir   = coriolisTop + "/etc/coriolis2"
+    shellMessage = "Using SoC network-wide Coriolis 2 (/soc/coriolis2)"
+  else:
     if not rootDir:
-      rootDir = os.getenv("HOME") + "/coriolis-1.x"
+      rootDir = os.getenv("HOME") + "/coriolis-2.x"
+    coriolisTop  = "%s/%s/%s/install" % ( rootDir, osType, buildDir )
+    sysconfDir   = coriolisTop + "/etc/coriolis2"
+    shellMessage = "Using user-selected Coriolis 2 (%s)" % rootDir
 
-    hurricaneTop = "%s/coriolis/%s/install" % ( rootDir, osType )
-    buildDir     = None
-    shellScript  = \
-"""
-echo "Switching to Coriolis 1.x";
-PATH=%(PATH)s;
-LD_LIBRARY_PATH=%(LD_LIBRARY_PATH)s;
-PYTHONPATH=%(PYTHONPATH)s;
-HURRICANE_TOP=%(HURRICANE_TOP)s;
-CORIOLIS_TOP=%(HURRICANE_TOP)s;
-export PATH LD_LIBRARY_PATH PYTHONPATH HURRICANE_TOP CORIOLIS_TOP;
-hash -r;
-if [ -f "%(HURRICANE_TOP)s/share/etc/coriolis.sh" ]; then
-  . "%(HURRICANE_TOP)s/share/etc/coriolis.sh"
-fi
-    """
+  absLibDir           = "%s/%s"     % ( coriolisTop, libDir )
+  strippedPath        = "%s/bin:%s" % ( coriolisTop, strippedPath )
+  strippedLibraryPath = "%s:%s"     % ( absLibDir  , strippedLibraryPath )
 
-  elif coriolisVersion == 2:
-
-    buildDir  = buildType + "." + linkType
-    scriptDir = os.path.dirname ( os.path.abspath(__file__) )
-   #print "echo \"Script Location: %s\";" % scriptDir,
-    if scriptDir.startswith("/etc/coriolis2"):
-      coriolisTop  = "/usr"
-      sysconfDir   = scriptDir
-      shellMessage = "Using system-wide Coriolis 2 (/usr)"
-    elif     scriptDir.startswith("/users/outil/coriolis/coriolis-2.x/") \
-          or scriptDir.startswith("/soc/coriolis2/"):
-      coriolisTop  = "/soc/coriolis2"
-      sysconfDir   = coriolisTop + "/etc/coriolis2"
-      shellMessage = "Using SoC network-wide Coriolis 2 (/soc/coriolis2)"
+  if not options.nopython:
+    pyVersion = sys.version_info
+    version   = "%d.%d" % (pyVersion[0],pyVersion[1])
+    if osType.startswith("Linux.SL") or osType.startswith("Linux.sl"):
+      sitePackagesDir = "%s/python%s/site-packages" % (absLibDir,version)
     else:
-      if not rootDir:
-        rootDir = os.getenv("HOME") + "/coriolis-2.x"
-      coriolisTop  = "%s/%s/%s/install" % ( rootDir, osType, buildDir )
-      sysconfDir   = coriolisTop + "/etc/coriolis2"
-      shellMessage = "Using user-selected Coriolis 2 (%s)" % rootDir
+      sitePackagesDir = "%s/python%s/dist-packages" % (absLibDir,version)
 
-    absLibDir           = "%s/%s"     % ( coriolisTop, libDir )
-    strippedPath        = "%s/bin:%s" % ( coriolisTop, strippedPath )
-    strippedLibraryPath = "%s:%s"     % ( absLibDir  , strippedLibraryPath )
+    strippedPythonPath = "%s:"         % (sitePackagesDir) + strippedPythonPath
+    strippedPythonPath = "%s/cumulus:" % (sitePackagesDir) + strippedPythonPath
+    strippedPythonPath = "%s/stratus:" % (sitePackagesDir) + strippedPythonPath
 
-    if options.python:
-      pyVersion = sys.version_info
-      version   = "%d.%d" % (pyVersion[0],pyVersion[1])
-      if osType.startswith("Linux.SL") or osType.startswith("Linux.sl"):
-        sitePackagesDir = "%s/python%s/site-packages" % (absLibDir,version)
-      else:
-        sitePackagesDir = "%s/python%s/dist-packages" % (absLibDir,version)
+    shellScriptSh  += """PYTHONPATH="%(PYTHONPATH)s";\n""" \
+                      """export PYTHONPATH"""
+    shellScriptCsh += """setenv PYTHONPATH "%(PYTHONPATH)s";"""
 
-      strippedPythonPath = "%s:"         % (sitePackagesDir) + strippedPythonPath
-      strippedPythonPath = "%s/cumulus:" % (sitePackagesDir) + strippedPythonPath
-      strippedPythonPath = "%s/stratus:" % (sitePackagesDir) + strippedPythonPath
+  if options.csh: shellScript = shellScriptCsh
+  else:           shellScript = shellScriptSh
 
-    shellScriptSh = \
-"""
-echo "%(MESSAGE)s";
-echo "Switching to Coriolis 2.x (%(buildDir)s)";
-PATH="%(PATH)s";
-LD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";
-PYTHONPATH="%(PYTHONPATH)s";
-BOOTSTRAP_TOP="%(BOOTSTRAP_TOP)s";
-CORIOLIS_TOP="%(CORIOLIS_TOP)s";
-STRATUS_MAPPING_NAME="%(SYSCONF_DIR)s/stratus2sxlib.xml";
-export PATH LD_LIBRARY_PATH PYTHONPATH BOOTSTRAP_TOP CORIOLIS_TOP STRATUS_MAPPING_NAME;
-hash -r
-"""
-
-    shellScriptCsh = \
-"""
-echo "%(MESSAGE)s";
-echo "Switching to Coriolis 2.x (%(buildDir)s)";
-setenv PATH "%(PATH)s";
-setenv LD_LIBRARY_PATH "%(LD_LIBRARY_PATH)s";
-setenv PYTHONPATH "%(PYTHONPATH)s";
-setenv BOOTSTRAP_TOP "%(BOOTSTRAP_TOP)s";
-setenv CORIOLIS_TOP "%(CORIOLIS_TOP)s";
-setenv STRATUS_MAPPING_NAME "%(SYSCONF_DIR)s/stratus2sxlib.xml";
-rehash
-"""
-
-  if coriolisVersion:
-    if options.csh: shellScript = shellScriptCsh
-    else:           shellScript = shellScriptSh
-
-    print shellScript % { "PATH"            : strippedPath
-                        , "LD_LIBRARY_PATH" : strippedLibraryPath
-                        , "PYTHONPATH"      : strippedPythonPath
-                        , "BOOTSTRAP_TOP"   : coriolisTop
-                        , "CORIOLIS_TOP"    : coriolisTop
-                        , "SYSCONF_DIR"     : sysconfDir
-                        , "MESSAGE"         : shellMessage
-                        , "buildDir"        : buildDir
-                        }
+  print shellScript % { "PATH"            : strippedPath
+                      , "LD_LIBRARY_PATH" : strippedLibraryPath
+                      , "PYTHONPATH"      : strippedPythonPath
+                      , "BOOTSTRAP_TOP"   : coriolisTop
+                      , "CORIOLIS_TOP"    : coriolisTop
+                      , "SYSCONF_DIR"     : sysconfDir
+                      , "MESSAGE"         : shellMessage
+                      , "buildDir"        : buildDir
+                      }

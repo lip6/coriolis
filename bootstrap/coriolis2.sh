@@ -16,7 +16,7 @@
  echo $coriolisEnvPy
 
  if [ -e ${coriolisEnvPy} ]; then
-   eval "`${coriolisEnvPy} --v2 --release --shared --python`"
+   eval "`${coriolisEnvPy} --release --shared`"
  else
    echo "[ERROR] Missing ${coriolisEnvPy} script."
  fi
