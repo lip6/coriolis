@@ -467,7 +467,8 @@ class Model :
     if EDITOR:
       EDITOR.setCell ( self._hur_cell )
       EDITOR.fit     ()
-      Breakpoint.stop ( stopLevel, message )
+      if stopLevel > 0:
+        Breakpoint.stop ( stopLevel, message )
     
   ##### Save : in order to create the output files #####
   def Save ( self, views = 0, fileName = None ) :

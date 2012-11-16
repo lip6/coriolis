@@ -919,7 +919,8 @@ class net :
     if self._arity == 1 :
       self.hur_net ( self._name, 0 )
     else :
-      for i in range ( self._ind, self._arity+self._ind ) : self.hur_net ( self._name + "(" + str(i) + ")", i )
+      for i in range ( self._ind+self._arity, self._ind, -1 ):
+        self.hur_net ( '%s(%d)' % (self._name,i), i )
 
   ##### hur_net one by one #####
   def hur_net ( self, name, ind ) :
