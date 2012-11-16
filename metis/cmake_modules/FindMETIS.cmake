@@ -35,7 +35,7 @@ IF(UNIX)
 
   FIND_LIBRARY(HMETIS_LIBRARY_PATH
     NAMES hmetis
-    PATHS ${CORIOLIS_DIR_SEARCH} /opt/coriolis
+    PATHS ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES lib${LIB_SUFFIX}
     # Help the user find it if we cannot.
     DOC "The ${METIS_INCLUDE_PATH_DESCRIPTION}"

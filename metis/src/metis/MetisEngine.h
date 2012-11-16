@@ -68,6 +68,7 @@ namespace Metis {
       virtual const Name&    getName                           () const;
                     int      getGlobalEdgeCut                  () const; 
       inline  Configuration* getConfiguration                  ();
+      inline  void           printConfiguration                () const;
       inline  Configuration::RefreshCb_t&                      
                              getRefreshCb                      ();
       inline  bool           getPartOrKWayHMetis               () const;
@@ -102,6 +103,7 @@ namespace Metis {
 
 // Inline Methods.
   inline  Configuration*              MetisEngine::getConfiguration                  () { return _configuration; }
+  inline  void                        MetisEngine::printConfiguration                () const { _configuration->print(getCell()); }
   inline  Configuration::RefreshCb_t& MetisEngine::getRefreshCb                      () { return _configuration->getRefreshCb(); }
   inline  bool                        MetisEngine::getPartOrKWayHMetis               () const { return _configuration->getPartOrKWayHMetis(); }
   inline  unsigned int                MetisEngine::getNumberOfInstancesStopCriterion () const { return _configuration->getNumberOfInstancesStopCriterion(); }

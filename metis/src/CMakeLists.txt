@@ -10,18 +10,24 @@ endif ( HMETIS_FOUND )
                          ${HURRICANE_INCLUDE_DIR} 
                          ${CONFIGURATION_INCLUDE_DIR} 
                          ${Boost_INCLUDE_DIRS}
+                         ${PYTHON_INCLUDE_PATH}
                        )
                    set ( includes      metis/hmetis.h
                                        metis/MetisGraph.h
                                        metis/Configuration.h
                                        metis/MetisEngine.h
                        )
+                   set ( pyIncludes    metis/PyMetisEngine.h
+                       )
                    set ( cpps          MetisGraph.cpp
                                        Configuration.cpp
                                        MetisEngine.cpp
                        )
+                   set ( pyCpps        PyMetis.cpp
+                                       PyMetisEngine.cpp
+                       )
 
-           add_library ( metis         ${cpps} ${mocCpps} )
+           add_library ( metis         ${cpps} ${mocCpps} ${pyCpps} )
  set_target_properties ( metis         PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries ( metis         ${HMETIS_LIBRARIES}
                                        ${NIMBUS_LIBRARIES}
@@ -39,5 +45,18 @@ endif ( HMETIS_FOUND )
                                        ${LIBXML2_LIBRARIES}
                                        ${PYTHON_LIBRARIES} -lutil
                        )
-               install ( TARGETS       metis                      DESTINATION lib${LIB_SUFFIX} )
-               install ( FILES         ${includes} ${mocIncludes} DESTINATION include/coriolis2/metis ) 
+
+           add_library ( pyMetis       MODULE ${pyCpps} )
+ set_target_properties ( pyMetis       PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
+                                                  PREFIX        ""
+                                                  OUTPUT_NAME   "Metis"
+                       )
+ target_link_libraries ( pyMetis       metis 
+                                       ${CORIOLIS_PYTHON_LIBRARIES}
+                       )
+
+               install ( TARGETS       metis           DESTINATION lib${LIB_SUFFIX} )
+               install ( TARGETS       pyMetis         DESTINATION ${PYTHON_SITE_PACKAGES} )
+               install ( FILES         ${includes}
+                                       ${mocIncludes} 
+                                       ${pyIncludes}   DESTINATION include/coriolis2/metis ) 
