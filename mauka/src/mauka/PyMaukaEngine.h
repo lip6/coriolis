@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2010-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |              M a u k a  -  P l a c e r                          |
 // |                                                                 |
@@ -17,16 +12,14 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./PyMaukaEngine.cpp"                      |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #ifndef __PY_MAUKA_ENGINE__
 #define __PY_MAUKA_ENGINE__
 
 #include "hurricane/isobar/PyHurricane.h"
+#include "crlcore/PyToolEngine.h"
 #include "mauka/MaukaEngine.h"
 
 
@@ -40,8 +33,7 @@ extern "C" {
 // Python Object  :  "PyMaukaEngine".
 
   typedef struct {
-      PyObject_HEAD
-      Mauka::MaukaEngine* _object;
+      CRL::PyToolEngine  _baseObject;
   } PyMaukaEngine;
 
 
@@ -51,15 +43,13 @@ extern "C" {
   extern  PyTypeObject  PyTypeMaukaEngine;
   extern  PyMethodDef   PyMaukaEngine_Methods[];
 
-  extern  PyObject* PyMaukaEngine_get        ( PyObject* module, PyObject* args );
-  extern  PyObject* PyMaukaEngine_create     ( PyObject* module, PyObject* args );
-  extern  PyObject* PyMaukaEngine_Link       ( Mauka::MaukaEngine* );
-  extern  void      PyMaukaEngine_LinkPyType ();
+  extern  PyObject*     PyMaukaEngine_Link       ( Mauka::MaukaEngine* );
+  extern  void          PyMaukaEngine_LinkPyType ();
 
 
 #define IsPyMaukaEngine(v)  ( (v)->ob_type == &PyTypeMaukaEngine )
 #define PYMAUKAENGINE(v)    ( (PyMaukaEngine*)(v) )
-#define PYMAUKAENGINE_O(v)  ( PYALLIANCEFRAMEWORK(v)->_object )
+#define PYMAUKAENGINE_O(v)  ( PYMAUKAENGINE(v)->_baseObject._object )
 
 
 }  // End of extern "C".

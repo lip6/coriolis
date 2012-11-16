@@ -2,26 +2,17 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |              M a u k a  -  P l a c e r                          |
 // |                                                                 |
 // |  Author      :                    Jean-Paul Chaput              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./GraphicMaukaEngine.h"                   |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
-
+// |  C++ Header  :  "./mauka/GraphicMaukaEngine.h"                  |
+// +-----------------------------------------------------------------+
 
 
 #ifndef  __MAUKA_GRAPHIC_MAUKA_ENGINE__
@@ -38,7 +29,6 @@ namespace Hurricane {
 }
 
 #include  "crlcore/GraphicToolEngine.h"
-
 #include  "mauka/MaukaEngine.h"
 
 

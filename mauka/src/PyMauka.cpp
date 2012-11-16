@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2010-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |              M a u k a  -  P l a c e r                          |
 // |                                                                 |
@@ -17,15 +12,13 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./PyMauka.cpp"                            |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include "hurricane/isobar/PyHurricane.h"
 #include "hurricane/isobar/PyCell.h"
 #include "mauka/PyMaukaEngine.h"
+#include "mauka/PyGraphicMaukaEngine.h"
 
 
 namespace Mauka {
@@ -35,6 +28,8 @@ namespace Mauka {
   using Hurricane::tab;
   using Hurricane::in_trace;
   using Isobar::__cs;
+  using CRL::PyTypeToolEngine;
+  using CRL::PyTypeGraphicTool;
 
 
 #if !defined(__PYTHON_MODULE__)
@@ -61,11 +56,7 @@ extern "C" {
 
 
   static PyMethodDef PyMauka_Methods[] =
-    { { "get"                 , (PyCFunction)PyMaukaEngine_get   , METH_VARARGS
-                              , "Gets MaukaEngine from a Cell." }
-    , { "create"              , (PyCFunction)PyMaukaEngine_create, METH_VARARGS
-                              , "Create MaukaEngine on a Cell." }
-    , {NULL, NULL, 0, NULL}     /* sentinel */
+    { {NULL, NULL, 0, NULL}     /* sentinel */
     };
 
 
@@ -78,8 +69,10 @@ extern "C" {
     trace << "initMauka()" << endl;
 
     PyMaukaEngine_LinkPyType ();
+    PyGraphicMaukaEngine_LinkPyType ();
 
-    PYTYPE_READY ( MaukaEngine );
+    PYTYPE_READY_SUB ( MaukaEngine       , ToolEngine );
+    PYTYPE_READY_SUB ( GraphicMaukaEngine, GraphicTool );
    
     // Identifier string can take up to 10 characters.
     __cs.addType ( "mauka", &PyTypeMaukaEngine, "<MaukaEngine>", false );
@@ -91,9 +84,11 @@ extern "C" {
            << "  Failed to initialize Mauka module." << endl;
       return;
     }
-    
-    PyObject* dictionnary = PyModule_GetDict ( module );
-  //DbULoadConstants ( dictionnary );
+
+    Py_INCREF ( &PyTypeMaukaEngine );
+    PyModule_AddObject ( module, "MaukaEngine", (PyObject*)&PyTypeMaukaEngine );
+    Py_INCREF ( &PyTypeGraphicMaukaEngine );
+    PyModule_AddObject ( module, "GraphicMaukaEngine", (PyObject*)&PyTypeGraphicMaukaEngine );
   }
 
   

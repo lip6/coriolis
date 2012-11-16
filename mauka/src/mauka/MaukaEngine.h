@@ -2,25 +2,16 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
-//
-// ===================================================================
-//
-// $Id$
+// Copyright (c) UPMC/LIP6 2006-2012, All Rights Reserved
 //
 // x-----------------------------------------------------------------x
-// |                                                                 |
 // |                   C O R I O L I S                               |
 // |              M a u k a  -  P l a c e r                          |
 // |                                                                 |
 // |  Author      :                Christophe Alexandre              |
-// |  E-mail      :        Christophe.Alexandre@lip6.fr              |
-// |  Date        :                          19/07/2006              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./MaukaEngine.h"                               |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
+// |  C++ Header  :  "./mauka/MaukaEngine.h"                         |
 // x-----------------------------------------------------------------x
 
 
@@ -92,6 +83,7 @@ namespace Mauka {
       static  const Name&      staticGetName                 ();
       virtual const Name&      getName                       () const;
       inline  Configuration*   getConfiguration              () const;
+      inline  void             printConfiguration            () const;
       inline  const FeedCells& getFeedCells                  () const;
       inline  DbU::Unit        getPitch                      () const;
       inline  DbU::Unit        getSliceHeight                () const;
@@ -153,6 +145,7 @@ namespace Mauka {
 
 // Inline Methods.
   inline  Configuration*   MaukaEngine::getConfiguration              () const { return _configuration; }
+  inline  void             MaukaEngine::printConfiguration            () const { _configuration->print(getCell()); }
   inline  const FeedCells& MaukaEngine::getFeedCells                  () const { return _feedCells; }
   inline  DbU::Unit        MaukaEngine::getPitch                      () const { return _configuration->getPitch(); }
   inline  DbU::Unit        MaukaEngine::getSliceHeight                () const { return _configuration->getSliceHeight(); }

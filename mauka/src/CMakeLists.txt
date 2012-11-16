@@ -22,7 +22,9 @@
                                        mauka/MaukaEngine.h
                        )
 		   set ( mocIncludes   mauka/GraphicMaukaEngine.h )
-                   set ( pyIncludes    mauka/PyMaukaEngine.h )
+                   set ( pyIncludes    mauka/PyMaukaEngine.h
+                                       mauka/PyGraphicMaukaEngine.h
+                       )
                    set ( cpps          Configuration.cpp
                                        BBPlacer.cpp
                                        FeedCells.cpp
@@ -40,6 +42,7 @@
                        )
                    set ( pyCpps        PyMauka.cpp
                                        PyMaukaEngine.cpp
+                                       PyGraphicMaukaEngine.cpp
                        )
           qt4_wrap_cpp ( mocCpps       ${mocIncludes} )
 
@@ -68,7 +71,9 @@
                                                   PREFIX        ""
                                                   OUTPUT_NAME   "Mauka"
                        )
- target_link_libraries ( pyMauka       mauka )
+ target_link_libraries ( pyMauka       mauka
+                                       ${CORIOLIS_PYTHON_LIBRARIES}
+                       )
 
                install ( TARGETS       mauka           DESTINATION lib${LIB_SUFFIX} )
                install ( TARGETS       pyMauka         DESTINATION ${PYTHON_SITE_PACKAGES} )

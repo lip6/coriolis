@@ -222,15 +222,19 @@ void MaukaEngine::Construct()
         {
             //cerr << "unplaced " << (*ioccurrence) << (*ioccurrence).getBoundingBox() << endl;
             Cell* model = instance->getMasterCell();
-            DbU::DbU::Unit insWidth = model->getAbutmentBox().getWidth();
-            DbU::DbU::Unit insHeight = model->getAbutmentBox().getHeight();
-            if (standardCellHeight == 0)
-                standardCellHeight = insHeight;
+            DbU::Unit insWidth = model->getAbutmentBox().getWidth();
+            DbU::Unit insHeight = model->getAbutmentBox().getHeight();
+            if (standardCellHeight == 0) {
+              cmess1 << "     - Slice height deduced from: <" << model << ">." << endl;
+              standardCellHeight = insHeight;
+            }
             else if (insHeight != standardCellHeight)
             {
                 throw Error("All non-standard instances : "
                         + getString(instance->getName())
-                        + " must be placed");
+                        + " must be placed "
+                        + getString(standardCellHeight) + " "
+                        + DbU::getValueString(standardCellHeight) );
             }
             _instanceOccurrencesVector.push_back(*ioccurrence);
             //VerifyPathCellBox(*ioccurrence);
