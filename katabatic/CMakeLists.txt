@@ -17,6 +17,8 @@
  
  set(QT_USE_QTXML "true")
  find_package(Qt4 REQUIRED)
+ find_package(PythonLibs REQUIRED)
+ find_package(PythonSitePackages REQUIRED)
  find_package(VLSISAPD REQUIRED)
  find_package(HURRICANE REQUIRED)
  find_package(CORIOLIS REQUIRED)
@@ -27,9 +29,9 @@
  
  add_subdirectory(src)
  add_subdirectory(cmake_modules)
- if(BUILD_DOC AND DOXYGEN_FOUND)
+ if(BUILD_DOC AND DOXYGEN_FOUND AND IS_DIRECTORY doc)
    add_subdirectory(doc)
- endif(BUILD_DOC AND DOXYGEN_FOUND)
+ endif(BUILD_DOC AND DOXYGEN_FOUND AND IS_DIRECTORY doc)
  
  if(CHECK_DATABASE)
    add_definitions(-DCHECK_DATABASE)
