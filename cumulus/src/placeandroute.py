@@ -102,7 +102,7 @@ def pyPlaceGlue ( cell ) :
        - if core is None, the placement region will be the cell abox.
        - if core is a cell sub-instance, the placement region will be the sub-instance abox.'''    
 
-  mauka = Mauka.create ( cell )
+  mauka = Mauka.MaukaEngine.create ( cell )
   mauka.run ()
   temporarySave ()
 
