@@ -13,6 +13,8 @@
  setup_boost(program_options filesystem python regex)
  
  find_package(Qt4 REQUIRED)
+ find_package(PythonLibs REQUIRED)
+ find_package(PythonSitePackages REQUIRED)
  find_package(VLSISAPD REQUIRED)
  find_package(HURRICANE REQUIRED)
  find_package(CORIOLIS REQUIRED)

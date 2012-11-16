@@ -57,27 +57,29 @@ class NimbusEngine : public ToolEngine {
 
 // Constructors
 // ************
-    private: NimbusEngine (Cell* cell, const Box& workzone);
-
-    public: static void  _preCreate(Cell*);
-    public: static NimbusEngine* create (Cell* cell, const Box& workZone=Box());
+  private:
+                           NimbusEngine       (Cell* cell, const Box& workzone);
+  public:
+    static  NimbusEngine*  create             (Cell* cell, const Box& workZone=Box());
+    static  void           _preCreate         (Cell*);
             
   // Accessors
   // *********
   public:
-    virtual const Name&    getName          () const;
-    static  const Name&    staticGetName    ();
-    static  NimbusEngine*  get              ( Cell* );
-    inline  Configuration* getConfiguration ();
-    inline  bool           doPinsPlacement  () const;
-    inline  double         getAspectRatio   () const;
-    inline  double         getMargin        () const;
-    inline  const Box&     getWorkZone      () const;
-    inline  DbU::Unit      getPitch         () const;
-    inline  DbU::Unit      getSliceHeight   () const;
-    inline  DbU::Unit      getSliceStep     () const;
+    virtual const Name&    getName            () const;
+    static  const Name&    staticGetName      ();
+    static  NimbusEngine*  get                ( Cell* );
+    inline  Configuration* getConfiguration   ();
+    inline  void           printConfiguration () const;
+    inline  bool           doPinsPlacement    () const;
+    inline  double         getAspectRatio     () const;
+    inline  double         getMargin          () const;
+    inline  const Box&     getWorkZone        () const;
+    inline  DbU::Unit      getPitch           () const;
+    inline  DbU::Unit      getSliceHeight     () const;
+    inline  DbU::Unit      getSliceStep       () const;
     inline  const std::vector<RoutingLayerGauge*>&     
-                           getLayerGauges   () const;
+                           getLayerGauges     () const;
 
     public: Grid* getGrid() { return _grid; };
     public: unsigned getDepth() { return _depth; };
@@ -164,16 +166,17 @@ class NimbusEngine : public ToolEngine {
 };
 
 
-  inline  Configuration* NimbusEngine::getConfiguration () { return _configuration; }
-  inline  bool           NimbusEngine::doPinsPlacement  () const { return _configuration->doPinsPlacement(); }
-  inline  double         NimbusEngine::getAspectRatio   () const { return _configuration->getAspectRatio(); }
-  inline  double         NimbusEngine::getMargin        () const { return _configuration->getMargin(); }
-  inline  const Box&     NimbusEngine::getWorkZone      () const { return _configuration->getWorkZone(); }
-  inline  DbU::Unit      NimbusEngine::getPitch         () const { return _configuration->getPitch(); }
-  inline  DbU::Unit      NimbusEngine::getSliceHeight   () const { return _configuration->getSliceHeight(); }
-  inline  DbU::Unit      NimbusEngine::getSliceStep     () const { return _configuration->getSliceStep(); }
-  inline  const std::vector<RoutingLayerGauge*>&     
-                         NimbusEngine::getLayerGauges   () const { return _configuration->getLayerGauges(); }
+  inline  Configuration* NimbusEngine::getConfiguration   () { return _configuration; }
+  inline  void           NimbusEngine::printConfiguration () const { _configuration->print(getCell()); }
+  inline  bool           NimbusEngine::doPinsPlacement    () const { return _configuration->doPinsPlacement(); }
+  inline  double         NimbusEngine::getAspectRatio     () const { return _configuration->getAspectRatio(); }
+  inline  double         NimbusEngine::getMargin          () const { return _configuration->getMargin(); }
+  inline  const Box&     NimbusEngine::getWorkZone        () const { return _configuration->getWorkZone(); }
+  inline  DbU::Unit      NimbusEngine::getPitch           () const { return _configuration->getPitch(); }
+  inline  DbU::Unit      NimbusEngine::getSliceHeight     () const { return _configuration->getSliceHeight(); }
+  inline  DbU::Unit      NimbusEngine::getSliceStep       () const { return _configuration->getSliceStep(); }
+  inline  const std::vector<RoutingLayerGauge*>&          
+                         NimbusEngine::getLayerGauges     () const { return _configuration->getLayerGauges(); }
 
 
 } // namespace Nimbus
