@@ -1,0 +1,33 @@
+
+// -*- C++ -*-
+
+namespace Unicorn {
+
+ /*! \class        UnicornGui
+  *  \brief        The Full Fledged GUI of Coriolis
+  *
+  *                UnicornGui is a derived class of Hurricane::CellViewer, it adds
+  *                support for CRL::ToolEngine and their graphical extentions, as
+  *                well as CRL::AllianceFramework interaction.
+  */
+
+
+ /*! \function     UnicornGui* UnicornGui::create(QWidget* parent=NULL);
+  *                Construct a new UnicornGui.
+  */
+ /*! \function     void  UnicornGui::destroy();
+  *                UnicornGui destructor.
+  */
+ /*! \function     CRL::Banner&  UnicornGui::getBanner();
+  *  \Return       The GUI banner, for customization.
+  */
+ /*! \function     Hurricane::Cell* UnicornGui::getCellFromDb(const char* name);
+  *                The Hurricane::Cell loader. Allows to load Cell through the
+  *                CRL::AllianceFramework or various VLSI/CAD benchmarks.
+  */
+ /*! \function     void  UnicornGui::registerTool(GraphicTool* tool);
+  *                Adds to the GUI a new tool. Run the configuration hooks
+  *                of the \c tool to customize the menus of the GUI.
+  */
+
+}
