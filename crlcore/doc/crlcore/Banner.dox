@@ -1,0 +1,91 @@
+
+ // -*- C++ -*-
+
+
+ namespace CRL {
+
+
+ /*! \class        Banner
+  *  \brief        Print Formatted Banners (on ttys).
+  *
+  *                Display a traditionnal UNIX like banner for tty:
+\verbatim
+                                               @     
+                                              @@     
+                             @@@     @@@@@@   @@    
+                           @@   @@  @@  @@  @@@@@@@@ 
+                          @@     @  @   @@    @@     
+                          @@        @   @     @@     
+                          @@         @@@      @@     
+                          @@     @  @@        @@     
+                           @@   @@  @@@@@@    @@   @ 
+                             @@@   @@   @@@    @@@@  
+                                    @     @          
+                                     @@@@@           
+
+                            Coriolis Graphical Tool
+
+        Coriolis CAD System 1.0,                               cgt 1.0b
+        Copyright (c) 2008-2012,                          SoC/LIP6/UPMC
+        Author(s):                                     Jean-Paul Chaput
+        E-mail:                             alliance-users@asim.lip6.fr
+\endverbatim
+  */
+
+ /*! \function     Banner::Banner(std::string name="", std::string version="", std::string purpose="", std::string date="", std::string authors="", std::string contributors="" );
+  *  \param        name          The tool name.
+  *  \param        version       The tool version.
+  *  \param        purpose       A short description of what it does.
+  *  \param        date          The date of the first release.
+  *  \param        authors       The list of authors.
+  *  \param        contributors  A list of contributors.
+  *
+  *                Create a banner object.
+  */
+ /*! \function     const std::string& Banner::getName() const;
+  *  \Return       The tool's name.
+  */
+ /*! \function     const std::string& Banner::getVersion() const;
+  *  \Return       The tool's version.
+  */
+ /*! \function     const std::string& Banner::getPurpose() const;
+  *  \Return       The tool short description.
+  */
+ /*! \function     const std::string& Banner::getDate() const;
+  *  \Return       The tool fisrt release date (year).
+  */
+ /*! \function     const std::string& Banner::getAuthors() const;
+  *  \Return       The list of main author's names.
+  */
+ /*! \function     const std::string& Banner::getContributors() const;
+  *  \Return       The list of contributor's names.
+  */
+ /*! \function     const unsigned int  Banner::getScreenWidth() const;
+  *  \Return       The with of the screen (tty) into which the banner will
+  *                be displayed.
+  */
+
+ /*! \function     void Banner::setName(std::string name);
+  *                Sets the tool's name.
+  */
+ /*! \function     void Banner::setVersion(std::string version);
+  *                Sets the tool's version.
+  */
+ /*! \function     void Banner::setPurpose(std::string purpose);
+  *                Sets the tool short description.
+  */
+ /*! \function     void Banner::setDate(std::string date);
+  *                Sets the tool fisrt release date (year).
+  */
+ /*! \function     void Banner::setAuthors(std::string authors);
+  *                Sets the list of main author's names.
+  */
+ /*! \function     void Banner::setContributors(std::string contributors);
+  *                Sets the list of contributor's names.
+  */
+ /*! \function     void  Banner::setScreenWidth(unsigned screenWidth);
+  *                Sets the with of the screen (tty) into which the banner will
+  *                be displayed.
+  */
+
+ }

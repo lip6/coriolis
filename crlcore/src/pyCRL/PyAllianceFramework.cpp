@@ -4,29 +4,27 @@
 // This file is part of the Coriolis Software.
 // Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./PyAllianceFramework.cpp"                |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Module  :  "./PyAllianceFramework.cpp"                     |
+// +-----------------------------------------------------------------+
 
 
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/isobar/PyLibrary.h"
-#include "crlcore/Catalog.h"  // TEMPORARY
+#include "hurricane/DataBase.h"
+#include "crlcore/PyEnvironment.h"
+#include "crlcore/PyCellGauge.h"
+#include "crlcore/PyRoutingGauge.h"
 #include "crlcore/PyAllianceFramework.h"
+#include "crlcore/GraphicsParser.h"
+#include "crlcore/SymbolicTechnologyParser.h"
+#include "crlcore/RealTechnologyParser.h"
 
 
 namespace  CRL {
@@ -39,6 +37,7 @@ namespace  CRL {
   using Hurricane::in_trace;
   using Hurricane::Error;
   using Hurricane::Warning;
+  using Hurricane::DataBase;
   using Isobar::ProxyProperty;
   using Isobar::ProxyError;
   using Isobar::ConstructorError;
@@ -82,6 +81,95 @@ extern "C" {
     HCATCH
 
     return (PyObject*)pyAf;
+  }
+
+
+  extern PyObject* PyAllianceFramework_getEnvironment ( PyAllianceFramework* self )
+  {
+    trace << "PyAllianceFramework_getEnvironment ()" << endl;
+
+    Environment* env = NULL;
+
+    HTRY
+    METHOD_HEAD("AllianceFramework.getEnvironment()")
+
+    env = af->getEnvironment();
+    if (env == NULL) return NULL;
+    
+    HCATCH
+
+    return PyEnvironment_Link(env);
+  }
+
+
+  extern PyObject* PyAllianceFramework_loadGraphicsFromXml ( PyAllianceFramework* self, PyObject* args )
+  {
+    trace << "PyAllianceFramework_loadGraphicsFromXml ()" << endl;
+
+    HTRY
+    METHOD_HEAD("AllianceFramework.loadGraphicsFromXml()")
+
+    bool  status = false;
+    char* name   = NULL;
+    if (PyArg_ParseTuple(args,"s:AllianceFramework.loadGraphicsFromXml", &name)) {
+      status = GraphicsParser::load( af->getEnvironment()->getDISPLAY() );
+    } else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for loadGraphicsFromXml." );
+      return NULL;
+    }
+    if ( status ) Py_RETURN_TRUE;
+    
+    HCATCH
+
+    Py_RETURN_FALSE;
+  }
+
+
+  extern PyObject* PyAllianceFramework_loadSymbTechnoFromXml ( PyAllianceFramework* self, PyObject* args )
+  {
+    trace << "PyAllianceFramework_loadSymbTechnoFromXml ()" << endl;
+
+    HTRY
+    METHOD_HEAD("AllianceFramework.loadSymbTechnoFromXml()")
+
+    bool  status = false;
+    char* name   = NULL;
+    if (PyArg_ParseTuple(args,"s:AllianceFramework.loadSymbTechnoFromXml", &name)) {
+      status = SymbolicTechnologyParser::load( DataBase::getDB()
+                                             , af->getEnvironment()->getSYMBOLIC_TECHNOLOGY() );
+    } else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for loadSymbTechnoFromXml." );
+      return NULL;
+    }
+    if ( status ) Py_RETURN_TRUE;
+    
+    HCATCH
+
+    Py_RETURN_FALSE;
+  }
+
+
+  extern PyObject* PyAllianceFramework_loadRealTechnoFromXml ( PyAllianceFramework* self, PyObject* args )
+  {
+    trace << "PyAllianceFramework_loadRealTechnoFromXml ()" << endl;
+
+    HTRY
+    METHOD_HEAD("AllianceFramework.loadRealTechnoFromXml()")
+
+    bool  status = false;
+    char* name   = NULL;
+    if (PyArg_ParseTuple(args,"s:AllianceFramework.loadRealTechnoFromXml", &name)) {
+      status = RealTechnologyParser::load( DataBase::getDB()
+                                         , af->getEnvironment()->getREAL_TECHNOLOGY() );
+    } else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for loadRealTechnoFromXml." );
+      return NULL;
+    }
+    if ( status ) Py_RETURN_TRUE;
+    
+    HCATCH
+
+    Py_RETURN_FALSE;
   }
 
 
@@ -171,6 +259,86 @@ extern "C" {
     return PyCell_Link(cell);
   }
 
+
+  extern PyObject* PyAllianceFramework_addRoutingGauge ( PyAllianceFramework* self, PyObject* args )
+  {
+    trace << "PyAllianceFramework_addRoutingGauge ()" << endl;
+
+    HTRY
+    METHOD_HEAD("AllianceFramework.addRoutingGauge()")
+    PyObject* arg0;
+    if ( not ParseOneArg("AllianceFramework.addRoutingGauge", args, ":routGauge", &arg0) )
+      return NULL;
+    af->addRoutingGauge ( PYROUTINGGAUGE_O(arg0) );
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
+  extern PyObject* PyAllianceFramework_getRoutingGauge ( PyAllianceFramework* self, PyObject* args )
+  {
+    trace << "PyAllianceFramework_getRoutingGauge ()" << endl;
+
+    RoutingGauge* rg = NULL;
+
+    HTRY
+    METHOD_HEAD("AllianceFramework.getRoutingGauge()")
+    char* name  = NULL;
+    Name  hName = "";
+    if (PyArg_ParseTuple( args, "|s:RoutingGauge.getRoutingGauge", &name)) {
+      if ( name != NULL ) hName = Name(name);
+      rg = af->getRoutingGauge(hName);
+    } else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for AllianceFramework.getRoutingGauge()." );
+      return NULL;
+    }
+    HCATCH
+
+    if ( rg == NULL ) Py_RETURN_NONE;
+    return PyRoutingGauge_Link(rg);
+  }
+
+
+  extern PyObject* PyAllianceFramework_addCellGauge ( PyAllianceFramework* self, PyObject* args )
+  {
+    trace << "PyAllianceFramework_addCellGauge ()" << endl;
+
+    HTRY
+    METHOD_HEAD("AllianceFramework.addCellGauge()")
+    PyObject* arg0;
+    if ( not ParseOneArg("AllianceFramework.addCellGauge", args, ":cellGauge", &arg0) )
+      return NULL;
+    af->addCellGauge ( PYCELLGAUGE_O(arg0) );
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
+  extern PyObject* PyAllianceFramework_getCellGauge ( PyAllianceFramework* self, PyObject* args )
+  {
+    trace << "PyAllianceFramework_getCellGauge ()" << endl;
+
+    CellGauge* rg = NULL;
+
+    HTRY
+    METHOD_HEAD("AllianceFramework.getCellGauge()")
+    char* name  = NULL;
+    Name  hName = "";
+    if (PyArg_ParseTuple( args, "|s:CellGauge.getCellGauge", &name)) {
+      if ( name != NULL ) hName = Name(name);
+      rg = af->getCellGauge(hName);
+    } else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for AllianceFramework.getCellGauge()." );
+      return NULL;
+    }
+    HCATCH
+
+    if ( rg == NULL ) Py_RETURN_NONE;
+    return PyCellGauge_Link(rg);
+  }
+
   
   // Standart Accessors (Attributes).
 
@@ -180,19 +348,35 @@ extern "C" {
 
 
   PyMethodDef PyAllianceFramework_Methods[] =
-    { { "get"                 , (PyCFunction)PyAllianceFramework_get       , METH_NOARGS|METH_STATIC
-                              , "Gets the Alliance Framework." }
-    , { "getLibrary"          , (PyCFunction)PyAllianceFramework_getLibrary, METH_VARARGS
-                              , "Gets a Library, by index." }
-    , { "getCell"             , (PyCFunction)PyAllianceFramework_getCell   , METH_VARARGS
-                              , "Gets an Alliance Cell." }
-    , { "saveCell"            , (PyCFunction)PyAllianceFramework_saveCell  , METH_VARARGS
-                              , "Saves an Alliance Cell." }
-    , { "createCell"          , (PyCFunction)PyAllianceFramework_createCell, METH_VARARGS
-                              , "Create a Cell in the Alliance framework." }
-  //, { "destroy"             , (PyCFunction)PyAllianceFramework_destroy   , METH_NOARGS
-  //                          , "Destroy the associated hurricane object. The python object remains." }
-    , {NULL, NULL, 0, NULL}           /* sentinel */
+    { { "get"                  , (PyCFunction)PyAllianceFramework_get                  , METH_NOARGS|METH_STATIC
+                               , "Gets the Alliance Framework." }                      
+    , { "getEnvironment"       , (PyCFunction)PyAllianceFramework_getEnvironment       , METH_NOARGS
+                               , "Gets the Alliance Environment." }
+    , { "loadGraphicsFromXml"  , (PyCFunction)PyAllianceFramework_loadGraphicsFromXml  , METH_VARARGS
+                               , "Load the legacy display XML configuration file." }
+    , { "loadSymbTechnoFromXml", (PyCFunction)PyAllianceFramework_loadSymbTechnoFromXml, METH_VARARGS
+                               , "Load the legacy symbolic technology XML configuration file." }
+    , { "loadRealTechnoFromXml", (PyCFunction)PyAllianceFramework_loadRealTechnoFromXml, METH_VARARGS
+                               , "Load the legacy real technology XML configuration file." }
+    , { "getLibrary"           , (PyCFunction)PyAllianceFramework_getLibrary           , METH_VARARGS
+                               , "Gets a Library, by index." }                         
+    , { "getCell"              , (PyCFunction)PyAllianceFramework_getCell              , METH_VARARGS
+                               , "Gets an Alliance Cell." }                            
+    , { "saveCell"             , (PyCFunction)PyAllianceFramework_saveCell             , METH_VARARGS
+                               , "Saves an Alliance Cell." }                           
+    , { "createCell"           , (PyCFunction)PyAllianceFramework_createCell           , METH_VARARGS
+                               , "Create a Cell in the Alliance framework." }
+    , { "addCellGauge"         , (PyCFunction)PyAllianceFramework_addCellGauge         , METH_VARARGS
+                               , "Add a new cell gauge." }
+    , { "getCellGauge"         , (PyCFunction)PyAllianceFramework_getCellGauge         , METH_VARARGS
+                               , "Get a cell gauge (whithout a name, return the default)." }          
+    , { "addRoutingGauge"      , (PyCFunction)PyAllianceFramework_addRoutingGauge      , METH_VARARGS
+                               , "Add a new routing gauge." }
+    , { "getRoutingGauge"      , (PyCFunction)PyAllianceFramework_getRoutingGauge      , METH_VARARGS
+                               , "Get a routing gauge (whithout a name, return the default)." }          
+  //, { "destroy"              , (PyCFunction)PyAllianceFramework_destroy              , METH_NOARGS
+  //                           , "Destroy the associated hurricane object. The python object remains." }
+    , {NULL, NULL, 0, NULL}    /* sentinel */
     };
 
 

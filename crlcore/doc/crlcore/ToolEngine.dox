@@ -1,0 +1,65 @@
+
+ // -*- C++ -*-
+
+
+ namespace CRL {
+
+ /*! \class        ToolEngine
+  *  \brief        Base Class of all Coriolis Tools
+  *
+  *                ToolEngine is the base class of all tools for coriolis,
+  *                used for Mauka, Knik, Kite, ...
+  *
+  *                Provides the basic mechanism for finding a tool and
+  *                hooking it through a relation on a Cell.
+  */
+
+ /*! \function     ToolEngines ToolEngine::get(const Hurricane::Cell* cell);
+  *  \Return       The Collection of all ToolEngines hooked \c cell.
+  */
+ /*! \function     ToolEngine* ToolEngine::get(const Hurricane::Cell* cell, const Hurricane::Name& name);
+  *  \Return       The ToolEngine of type \c name hooked \c cell (\c NULL if
+  *                not present).
+  */
+ /*! \function     void  ToolEngine::destroyAll();
+  *                Destroy all the ToolEngines that have been created.
+  *                Should be called only in prelude to database destruction.
+  */
+
+ /*! \function     const Hurricane::Name& ToolEngine::getName() const;
+  *  \Return       The name of the ToolEngine. This is pure virtual function
+  *                to be overloaded in concrete tools. Each ToolEngine must
+  *                return an unique identifier.
+  */
+
+
+ /*! \name         ToolEngine Collection
+  */
+ //  \{
+
+ /*! \typedef      ToolEngines
+  *                Generic collection representing a set of ToolEngines. 
+  *
+  *                To iterate over a Collection of ToolEngines, uses the generaic
+  *                \c forEach macro:
+\code
+    forEach(ToolEngine*, iengine, ToolEngine::get(cell)) {
+      cout << iengine->getName() << endl;
+      // Do someting on the ToolEngine in the iengine iterator.
+      // ...
+    }
+\endcode
+  */
+
+ /*! \typedef      ToolEngineLocator
+  *                Generic locator for traversing a collection of ToolEngines. 
+  */
+
+ /*! \typedef      ToolEngineFilter
+  *                Generic filter allowing to select a subset of ToolEngines matching 
+  *                some criteria. 
+  */
+
+ //  \}
+
+ }

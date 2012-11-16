@@ -46,15 +46,15 @@ namespace {
   //   "%s :\n\n"
   //   "    %s is not a CONDUCTING <BasicLayer>.\n";
 
-  const char* negativeIndex =
-    "RoutingLayerGauge::getTrackIndex() :\n\n"
-    "    In gauge %s :\n"
-    "      Track position %s leads to a negative index [%s,%s].\n";
-
-  const char* overflowIndex =
-    "RoutingLayerGauge::getTrackIndex() :\n\n"
-    "    In gauge %s :\n"
-    "      Track position %s leads to an index out of bounds [%s,%s].\n";
+  // const char* negativeIndex =
+  //   "RoutingLayerGauge::getTrackIndex() :\n\n"
+  //   "    In gauge %s :\n"
+  //   "      Track position %s leads to a negative index [%s,%s].\n";
+  // 
+  // const char* overflowIndex =
+  //   "RoutingLayerGauge::getTrackIndex() :\n\n"
+  //   "    In gauge %s :\n"
+  //   "      Track position %s leads to an index out of bounds [%s,%s].\n";
 
   const char* badExactPosition =
     "RoutingLayerGauge::getTrackIndex() :\n\n"

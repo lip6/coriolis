@@ -958,7 +958,7 @@ void  BKParser::LoadFromFile ( const string& cellPath, Cell* cell )
                     case PL:
                         {
                         Name name;
-                        DbU::Unit x, y;
+                        DbU::Unit x=0, y=0;
                         Transformation::Orientation orient;
                         bool isFixed = false;
                         scanOk = ScanPl ( name, x, y, orient, isFixed );

@@ -1,0 +1,36 @@
+
+
+ // -*- C++ -*-
+
+
+ namespace CRL {
+
+ /*! \class        AcmSigda
+  *  \brief        A Parser of ACM/Sigda 89' benchmarks.
+  *
+  *                Thoses benches are also known as the MCNC or ISCAS98.
+  *
+  *                The generic cells have been mapped into the sxlib Alliance
+  *                library in a straighforward way.
+  *                <center>
+  *                  <table>
+  *                    <tr><th>Boolean Function<th>SxLib mapping
+  *                    <tr><td>\c NOT  <th>\c inv_x1
+  *                    <tr><td>\c BUFF <th>\c buff_x2
+  *                    <tr><td>\c AND  <th>\c a2_x2, \c a3_x2, \c a4_x4
+  *                    <tr><td>\c NAND <th>\c na2_x1, \c na3_x1, \c na4_x1
+  *                    <tr><td>\c OR   <th>\c o2_x2, \c o3_x3, \c o4_x4
+  *                    <tr><td>\c NOR  <th>\c no2_x1, \c no3_x1, \c no4_x1
+  *                    <tr><td>\c XOR  <th>\c xr2_x1
+  *                    <tr><td>\c XNOR <th>\c nxr2_x1
+  *                    <tr><td>\c DFF  <th>\c sff1_x4
+  *                  </table>
+  *                </center>
+  */
+
+
+ /*! \function     Cell* AcmSigda::load(std::string benchname);
+  *                Load the bench \c name into Coriolis.
+  */
+
+ }

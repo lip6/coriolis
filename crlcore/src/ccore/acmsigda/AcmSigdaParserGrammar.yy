@@ -41,7 +41,7 @@ int yylineno = 0;
 
 namespace {
 
-  int  AcmSigda_error ( char* message );
+  int  AcmSigda_error ( const char* message );
 
 
   class ParserState {
@@ -307,7 +307,7 @@ namespace {
   }
 
 
-  int  AcmSigda_error ( char* message )
+  int  AcmSigda_error ( const char* message )
   {
     throw Error ( "AcmSigdaParser(): Syntax error at line %d.\n", yylineno );
     return 0;

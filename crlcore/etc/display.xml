@@ -2,7 +2,6 @@
 <graphics>
   <displaystyles>
     <displaystyle name="Alliance.Coriolis [black]">
-      <default>true</default>
       <description>Alliance Coriolis Look - black background</description>
       <darkening hue="1.0" saturation="3.0" value="2.5"/>
       <!-- Patterns:
@@ -90,6 +89,7 @@
       </group>
     </displaystyle>
     <displaystyle name="Alliance.Coriolis [white]">
+      <default>true</default>
       <inherit>Alliance.Coriolis [black]</inherit>
       <description>Alliance Coriolis Look - white background</description>
       <!-- <darkening>0.8</darkening> -->

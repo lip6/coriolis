@@ -2,28 +2,20 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
-//
-// ===================================================================
-//
-// $Id$
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
-// |                                                                 |
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./Utilities.cpp"                          |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
+// |  C++ Module  :   "./Utilities.cpp"                              |
 // +-----------------------------------------------------------------+
 
 
-
+#include  <Python.h>
 #include  <csignal>
 #include  <cstdlib>
 #include  <cstring>
@@ -37,6 +29,7 @@ namespace boptions = boost::program_options;
 #include  "hurricane/Warning.h"
 #include  "hurricane/viewer/Script.h"
 #include  "crlcore/Utilities.h"
+#include  "crlcore/AllianceFramework.h"
 
 
 namespace {
@@ -47,8 +40,8 @@ namespace {
 
   void  verboseLevel1Changed ( Cfg::Parameter* p )
   {
-    if ( p->asBool() ) mstream::enable  ( mstream::Verbose1 );
-    else               mstream::disable ( mstream::Verbose1 );
+    if ( p->asBool() ) mstream::enable  ( mstream::VerboseLevel1 );
+    else               mstream::disable ( mstream::VerboseLevel1 );
 
   //cerr << "Verbose Level 1: " << boolalpha << p->asBool() << endl;
   }
@@ -56,8 +49,8 @@ namespace {
 
   void  verboseLevel2Changed ( Cfg::Parameter* p )
   {
-    if ( p->asBool() ) mstream::enable  ( mstream::Verbose2 );
-    else               mstream::disable ( mstream::Verbose2 );
+    if ( p->asBool() ) mstream::enable  ( mstream::VerboseLevel2 );
+    else               mstream::disable ( mstream::VerboseLevel2 );
   }
 
 
@@ -251,6 +244,11 @@ namespace CRL {
     if ( bfs::path::default_name_check_writable() )
       bfs::path::default_name_check ( bfs::portable_posix_name );
 
+  // Force creation of singleton at this stage.
+  // cerr << "In System singleton creation." << endl;
+  // AllianceFramework::get();
+  // cerr << "AllianceFramework has been allocated." << endl;
+
   // Check for duplicated type_info initialization.
     const boptions::variable_value& value = arguments["coriolis_top"];
     if ( value.value().type() != typeid(string) ) {
@@ -287,10 +285,22 @@ namespace CRL {
       }
     }
     sysConfDir /= "coriolis2";
-    _pathes.insert ( make_pair("etc",sysConfDir) );
+    _pathes.insert ( make_pair("etc" ,sysConfDir                    ) );
+    _pathes.insert ( make_pair("home",arguments["home"].as<string>()) );
 
-  // Default configuration loading.
-    Cfg::Configuration* conf = Cfg::Configuration::get ();
+  // Early setting of python pathes to be able to execute configuration scripts.
+    bfs::path pythonSitePackages = PYTHON_SITE_PACKAGES;
+    pythonSitePackages = arguments["coriolis_top"].as<string>() / pythonSitePackages;
+    bfs::path stratusDir = pythonSitePackages / "stratus";
+    bfs::path cumulusDir = pythonSitePackages / "cumulus";
+
+    Isobar::Script::addPath ( sysConfDir.string() );
+    Isobar::Script::addPath ( pythonSitePackages.string() );
+    Isobar::Script::addPath ( stratusDir.string() );
+    Isobar::Script::addPath ( cumulusDir.string() );
+
+  // Triggers Configuration singleton creation.
+    Cfg::Configuration::get ();
 
     Cfg::getParamBool  ("misc.catchCore"      ,true )->registerCb ( catchCoreChanged );
     Cfg::getParamBool  ("misc.verboseLevel1"  ,true )->registerCb ( verboseLevel1Changed );
@@ -311,48 +321,6 @@ namespace CRL {
     bfs::path stratusMappingName;
     if ( arguments.count("stratus_mapping_name") ) {
       Cfg::getParamString( "stratus1.mappingName")->setString ( arguments["stratus_mapping_name"].as<string>() );
-    }
-
-    bool      systemConfFound = false;
-    bfs::path systemConfFile  = sysConfDir / "tools.configuration.xml";
-    if ( bfs::exists(systemConfFile) ) {
-      systemConfFound = true;
-      conf->readFromFile ( systemConfFile.string() );
-    } else {
-      cerr << Warning("System configuration file:\n  <%s> not found."
-                     ,systemConfFile.string().c_str()) << endl;
-    }
-
-    bool      homeConfFound = false;
-    bfs::path homeConfFile  = arguments["home"].as<string>();
-    homeConfFile /= ".coriolis2.configuration.xml";
-    if ( bfs::exists(homeConfFile) ) {
-      homeConfFound = true;
-      conf->readFromFile ( homeConfFile.string() );
-    }
-
-    bool      dotConfFound = false;
-    bfs::path dotConfFile  = "./.coriolis2.configuration.xml";
-    if ( bfs::exists(dotConfFile) ) {
-      dotConfFound = true;
-      conf->readFromFile ( dotConfFile.string() );
-    }
-
-    bfs::path pythonSitePackages = PYTHON_SITE_PACKAGES;
-    pythonSitePackages = arguments["coriolis_top"].as<string>() / pythonSitePackages;
-    bfs::path stratusDir = pythonSitePackages / "stratus";
-    bfs::path cumulusDir = pythonSitePackages / "cumulus";
-
-    Isobar::Script::addPath ( pythonSitePackages.string() );
-    Isobar::Script::addPath ( stratusDir.string() );
-    Isobar::Script::addPath ( cumulusDir.string() );
-
-  // Delayed printing, as we known only now whether VerboseLevel1 is requested.
-    if ( cmess1.enabled() ) {
-      cmess1 << "  o  Reading Configuration. " << endl;
-      if (systemConfFound) cmess1 << "     - <" << systemConfFile.string() << ">." << endl;
-      if (homeConfFound)   cmess1 << "     - <" << homeConfFile.string() << ">." << endl;
-      if (dotConfFound)    cmess1 << "     - <" << dotConfFile.string() << ">." << endl;
     }
   }
 
@@ -433,6 +401,63 @@ namespace CRL {
     if ( ipath == _pathes.end() ) return nullPath;
 
     return (*ipath).second;
+  }
+
+
+  void  System::_runPythonInit ()
+  {
+    Cfg::Configuration* conf       = Cfg::Configuration::get ();
+    bfs::path           sysConfDir = getPath("etc");
+
+#if XML_NOT_DISABLED
+    bool      systemConfFound = false;
+    bfs::path systemConfFile  = sysConfDir / "tools.configuration.xml";
+    if ( bfs::exists(systemConfFile) ) {
+      systemConfFound = true;
+      conf->readFromFile ( systemConfFile.string() );
+    } else {
+      cerr << Warning("System configuration file:\n  <%s> not found."
+                     ,systemConfFile.string().c_str()) << endl;
+    }
+#endif
+
+    bool      systemConfFound = false;
+    bfs::path systemConfFile  = sysConfDir / "coriolisInit.py";
+    if ( bfs::exists(systemConfFile) ) {
+      systemConfFound = true;
+      cout << "  o  Reading python dot configuration:" << endl;
+      cout << "     - <" << systemConfFile.string() << ">." << endl;
+
+      Isobar::Script* systemScript = Isobar::Script::create(systemConfFile.stem());
+      systemScript->runFunction("coriolisConfigure",NULL,Isobar::Script::NoScriptArgs);
+      systemScript->destroy();
+    } else {
+      cerr << Warning("System configuration file:\n  <%s> not found."
+                     ,systemConfFile.string().c_str()) << endl;
+    }
+
+    bool      homeConfFound = false;
+    bfs::path homeConfFile  = getPath("home");
+    homeConfFile /= ".coriolis2.configuration.xml";
+    if ( bfs::exists(homeConfFile) ) {
+      homeConfFound = true;
+      conf->readFromFile ( homeConfFile.string() );
+    }
+
+    bool      dotConfFound = false;
+    bfs::path dotConfFile  = "./.coriolis2.configuration.xml";
+    if ( bfs::exists(dotConfFile) ) {
+      dotConfFound = true;
+      conf->readFromFile ( dotConfFile.string() );
+    }
+
+  // Delayed printing, as we known only now whether VerboseLevel1 is requested.
+    if ( cmess1.enabled() ) {
+      cmess1 << "  o  Reading Configuration. " << endl;
+      if (systemConfFound) cmess1 << "     - <" << systemConfFile.string() << ">." << endl;
+      if (homeConfFound)   cmess1 << "     - <" << homeConfFile.string() << ">." << endl;
+      if (dotConfFound)    cmess1 << "     - <" << dotConfFile.string() << ">." << endl;
+    }
   }
 
 

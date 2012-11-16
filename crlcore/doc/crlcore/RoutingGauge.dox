@@ -1,0 +1,70 @@
+
+ // -*- C++ -*-
+
+
+ namespace CRL {
+
+ /*! \class        RoutingGauge
+  *  \brief        Gauge for the detailed routing
+  */
+
+   
+ /*! \function     RoutingGauge* RoutingGauge::create(const char* name);
+  *  \Return       A new, empty, gauge named \c name.
+  */
+ /*! \function     void  RoutingGauge::destroy();
+  *  \Return       destroy the routing gauge.
+  */
+
+
+ /*! \function     RoutingGauge* RoutingGauge::getClone() const;
+  *  \Return       a deep copy of the gauge.
+  */
+ /*! \function     const Name  RoutingGauge::getName() const;
+  *  \Return       the name of the gauge.
+  */
+ /*! \function     Hurricane::Technology* RoutingGauge::getTechnology() const;
+  *  \Return       the technology the gauge is built upon.
+  */
+ /*! \function     size_t  RoutingGauge::getDepth() const;
+  *  \Return       the number of routing layers.
+  */
+ /*! \function     size_t  RoutingGauge::getLayerDepth(const Layer* layer) const;
+  *  \Return       the depth of the \c layer. If \c layer is not managed by the
+  *                gauge, return UINT_MAX.
+  */
+ /*! \function     RoutingLayerGauge* RoutingGauge::getLayerGauge(const Layer* layer) const;
+  *  \Return       the RoutingLayerGauge associated with \c layer. NULL if \c layer
+  *                is not managed by the gauge.
+  */
+ /*! \function     unsigned int  RoutingGauge::getLayerDirection(const Layer* layer) const;
+  *  \Return       the preferred routing direction for \c layer.
+  */
+ /*! \function     RoutingLayerGauge* RoutingGauge::getLayerGauge(size_t depth) const;
+  *  \Return       the RoutingLayerGauge at position \c depth.
+  */
+ /*! \function     unsigned int  RoutingGauge::getLayerDirection(size_t depth) const;
+  *  \Return       the preferred routing direction at position \c depth.
+  */
+ /*! \function     const Layer*  RoutingGauge::getRoutingLayer(size_t depth) const;
+  *  \Return       the Layer at position \c depth.
+  */
+ /*! \function     Layer*  RoutingGauge::getContactLayer(size_t depth) const;
+  *  \Return       the Contact Layer at position \c depth.
+  */
+ /*! \function     const std::vector<RoutingLayerGauge*>&  RoutingGauge::getLayerGauges() const;
+  *  \Return       the stack of RoutingLayerGauge.
+  */
+   
+
+ /*! \function     void  RoutingGauge::addLayerGauge(RoutingLayerGauge* layerGauge);
+  *  \Return       add a new \c layerGauge, on top of the others. The order of
+  *                addition is meaningful (it's a stack). The closer to the substrate
+  *                must be added first.
+  */
+ /*! \function     void  RoutingGauge::checkConnexity() const;
+  *  \Return       Verify that the stacked layers are connex and that contacts
+  *                between them exists.
+  */
+
+ }

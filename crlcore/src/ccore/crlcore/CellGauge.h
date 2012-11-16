@@ -2,27 +2,17 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
-//
-// ===================================================================
-//
-// $Id$
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
 // x-----------------------------------------------------------------x 
-// |                                                                 |
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./CellGauge.h"                            |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
+// |  C++ Header  :  "./crlcore/CellGauge.h"                         |
 // x-----------------------------------------------------------------x
-
-
 
 
 #ifndef  __CRL_CELL_GAUGE_H__

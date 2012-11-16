@@ -1,0 +1,88 @@
+
+ // -*- C++ -*-
+
+
+ namespace CRL {
+
+ /*! \class        SearchPath
+  *  \brief        An ordered list of search pathes.
+  *
+  *                The SearchPath is an AllianceFramework owned object, and as such
+  *                it's constructors & destructors are made inaccessible by the
+  *                outside world.
+  */
+
+   
+ /*! \function     std::string  SearchPath::extractLibName(const std::string&);
+  *  \return       the library name guessed from a directory path. This is the
+  *                last component of the, stripped of any extention.
+  */
+ /*! \function     size_t  SearchPath::getSize() const;
+  *  \return       the number of search path elements (directories).
+  */
+ /*! \function     const std::string& SearchPath::getSelected() const;
+  *  \return       the search path element selected through the last locate request.
+  */
+ /*! \function     size_t  SearchPath::getIndex() const;
+  *  \return       the index of search path element selected through the last locate request.
+  */
+ /*! \function     bool  SearchPath::hasSelected() const;
+  *  \return       \true if an element is currently selected (a locate has been performed).
+  */
+ /*! \function     bool  SearchPath::hasPath(const std::string& path) const;
+  *  \return       \true if the path is present in the search path (at any position).
+  */
+ /*! \function     const Element& SearchPath::operator[](size_t index) const;
+  *  \return       The search path element at position \c index. If \c index is out of
+  *                bounds, an empty Element is returned.
+  */
+
+   
+ /*! \function     void  SearchPath::reset();
+  *                Clear all the search path. Only the first, corresponding to the
+  *                working library is kept.
+  */
+ /*! \function     void  SearchPath::append(const std::string& path, const std::string& name="");
+  *                Append a search path. The \c name gives the library name.
+  */
+ /*! \function     void  SearchPath::prepend(const std::string& path, const std::string& name="");
+  *                Prepend a search path. The \c name gives the library name.
+  */
+ /*! \function     void  SearchPath::replace(const std::string& path, const std::string& name, size_t index);
+  *                Replace the search path element at index \c index.
+  */
+ /*! \function     size_t  SearchPath::locate(const std::string& file, std::ios::openmode mode =std::ios::in, int first=0, int last =64);
+  *  \param        file      the requested file.
+  *  \param        mode      the wanted opening mode.
+  *  \param        first     the lower bound in the search path elements.
+  *  \param        last      the upper bound in the search path elements.
+  *  \Return       the index of the search path element in which the file has been found.
+  *
+  *                Try to locate a file named \c file (without leading path, but with extention)
+  *                and check if it can be opened in the desired \c mode. The file is not left
+  *                opened, but the memory of the search is kept for further operations. 
+  */
+
+
+ /*! \class        SearchPath::Element
+  *  \brief        An element of the search path (mapping a directory).
+  *
+  */
+
+   
+ /*! \function     SearchPath::Element::Element(const std::string& path="", const std::string& name="");
+  *                A new element bound to \c path, with library \c name.
+  */
+
+   
+ /*! \function     size_t  SearchPath::Element::empty() const;
+  *  \return       \true if the element is empty (no path).
+  */
+ /*! \function     const std::string& SearchPath::Element::getPath() const;
+  *  \return       the \c path (directory) of the element.
+  */
+ /*! \function     const std::string& SearchPath::Element::getName() const;
+  *  \return       the \c name (of the library) of the element.
+  */
+
+ }

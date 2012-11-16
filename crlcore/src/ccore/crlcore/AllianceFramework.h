@@ -4,23 +4,15 @@
 // This file is part of the Coriolis Software.
 // Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./AllianceFramework.h"                    |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./crlcore/AllianceFramework.h"                 |
+// +-----------------------------------------------------------------+
 
 
 #ifndef  __CRL_ALLIANCE_FRAMEWORK__
@@ -133,7 +125,7 @@ namespace CRL {
               bool               _readLocate             ( const string& file, unsigned int mode, bool isLib=false );
               bool               _writeLocate            ( const string& file, unsigned int mode, bool isLib=false );
               AllianceLibrary*   _createLibrary          ( const string& path, bool& hasCatalog );
-
+              void               _bindLibraries          ();
   };
 
   inline bool         AllianceFramework::isPOWER          ( const char*   name ) { return _environment.isPOWER(name); }

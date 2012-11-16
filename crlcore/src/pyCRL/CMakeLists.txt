@@ -1,4 +1,5 @@
 
+                   include ( ${QT_USE_FILE} )
        include_directories ( ${CRLCORE_SOURCE_DIR}/src/fonts
                              ${CRLCORE_SOURCE_DIR}/src/ccore
                              ${CRLCORE_SOURCE_DIR}/src/ccore/properties
@@ -25,15 +26,33 @@
                            )
 
                        set ( sources   PyCRL.cpp
+                                       PyBanner.cpp
                                        PyCatalog.cpp
                                        PyCatalogState.cpp
+                                       PyEnvironment.cpp
+                                       PyCellGauge.cpp
+                                       PyRoutingGauge.cpp
+                                       PyRoutingLayerGauge.cpp
                                        PyAllianceFramework.cpp
                                        PyToolBox.cpp
+                                       PyToolEngine.cpp
+                                       PyToolEngineCollection.cpp
+                                       PyGraphicToolEngine.cpp
+                                       PyAcmSigda.cpp
                            )	    
-                       set ( includes  crlcore/PyCatalog.h
+                       set ( includes  crlcore/PyBanner.h
+                                       crlcore/PyCatalog.h
                                        crlcore/PyCatalogState.h
+                                       crlcore/PyEnvironment.h
+                                       crlcore/PyCellGauge.h
+                                       crlcore/PyRoutingGauge.h
+                                       crlcore/PyRoutingLayerGauge.h
                                        crlcore/PyAllianceFramework.h
                                        crlcore/PyToolBox.h
+                                       crlcore/PyToolEngine.h
+                                       crlcore/PyToolEngineCollection.h
+                                       crlcore/PyGraphicToolEngine.h
+                                       crlcore/PyAcmSigda.h
                            )
 
 

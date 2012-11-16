@@ -1,7 +1,7 @@
 
 <configuration>
   <!-- Miscellaneous -->
-  <parameter id="misc.catchCore"       type="bool"       value="true"/>
+  <parameter id="misc.catchCore"       type="bool"       value="false"/>
   <parameter id="misc.verboseLevel1"   type="bool"       value="false"/>
   <parameter id="misc.verboseLevel2"   type="bool"       value="false"/>
   <parameter id="misc.info"            type="bool"       value="false"/>

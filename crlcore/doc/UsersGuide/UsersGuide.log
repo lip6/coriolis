@@ -1,0 +1,1106 @@
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.12.23)  8 AUG 2012 00:21
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**UsersGuide.tex
+(./UsersGuide.tex
+LaTeX2e <2011/06/27>
+Babel <v3.8m> and hyphenation patterns for english, dumylang, nohyphenation, ge
+rman-x-2011-07-01, ngerman-x-2011-07-01, afrikaans, ancientgreek, ibycus, arabi
+c, armenian, basque, bulgarian, catalan, pinyin, coptic, croatian, czech, danis
+h, dutch, ukenglish, usenglishmax, esperanto, estonian, ethiopic, farsi, finnis
+h, french, galician, german, ngerman, swissgerman, monogreek, greek, hungarian,
+ icelandic, assamese, bengali, gujarati, hindi, kannada, malayalam, marathi, or
+iya, panjabi, tamil, telugu, indonesian, interlingua, irish, italian, kurmanji,
+ lao, latin, latvian, lithuanian, mongolian, mongolianlmc, bokmal, nynorsk, pol
+ish, portuguese, romanian, russian, sanskrit, serbian, serbianc, slovak, sloven
+ian, spanish, swedish, turkish, turkmen, ukrainian, uppersorbian, welsh, polish
+, ukrainian, russian, monogreek, greek, icelandic, bokmal, nynorsk, bulgarian, 
+coptic, indonesian, estonian, german-x-2011-07-01, ngerman-x-2011-07-01, finnis
+h, romanian, ukenglish, usenglishmax, welsh, armenian, serbian, serbianc, dutch
+, interlingua, esperanto, uppersorbian, slovenian, basque, german, ngerman, swi
+ssgerman, hungarian, lao, croatian, catalan, irish, danish, spanish, mongolian,
+ mongolianlmc, galician, italian, latin, pinyin, swedish, kurmanji, slovak, anc
+ientgreek, ibycus, portuguese, czech, afrikaans, french, turkish, loaded.
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/usr/share/texlive/texmf-dist/tex/latex/base/fixltx2e.sty
+Package: fixltx2e 2006/09/13 v1.1m fixes to LaTeX
+LaTeX Info: Redefining \em on input line 420.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/cmap/cmap.sty
+Package: cmap 2008/03/06 v1.0h CMap support: searchable PDF
+)
+(/usr/share/texlive/texmf-dist/tex/generic/babel/babel.sty
+Package: babel 2008/07/08 v3.8m The Babel package
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel/english.ldf
+Language: english 2005/03/30 v3.3o English support from the babel system
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel/babel.def
+File: babel.def 2008/07/08 v3.8m Babel common definitions
+\babel@savecnt=\count87
+\U@D=\dimen103
+)
+\l@canadian = a dialect from \language\l@american 
+\l@australian = a dialect from \language\l@british 
+\l@newzealand = a dialect from \language\l@british 
+))
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2005/09/27 v1.99g Standard LaTeX package
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/t1enc.def
+File: t1enc.def 2005/09/27 v1.99g Standard LaTeX file
+LaTeX Font Info:    Redeclaring font encoding T1 on input line 43.
+)<<t1.cmap>>)
+(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2008/03/30 v1.1d Input encoding file
+\inpenc@prehook=\toks14
+\inpenc@posthook=\toks15
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/latin1.def
+File: latin1.def 2008/03/30 v1.1d Input encoding file
+))
+(/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks16
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/graphics.cfg
+File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
+)
+Package graphics Info: Driver file: pdftex.def on input line 91.
+
+(/usr/share/texlive/texmf-dist/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/message (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2011/04/18 v1.20 LaTeX kernel commands for general use (HO)
+)
+\Gread@gobject=\count88
+))
+\Gin@req@height=\dimen104
+\Gin@req@width=\dimen105
+)
+(/usr/share/texlive/texmf-dist/tex/latex/multirow/multirow.sty
+\bigstrutjot=\dimen106
+)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty
+Package: longtable 2004/02/01 v4.11 Multi-page Table package (DPC)
+\LTleft=\skip43
+\LTright=\skip44
+\LTpre=\skip45
+\LTpost=\skip46
+\LTchunksize=\count89
+\LTcapwidth=\dimen107
+\LT@head=\box26
+\LT@firsthead=\box27
+\LT@foot=\box28
+\LT@lastfoot=\box29
+\LT@cols=\count90
+\LT@rows=\count91
+\c@LT@tables=\count92
+\c@LT@chunks=\count93
+\LT@p@ftn=\toks17
+)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty
+Package: array 2008/09/09 v2.4c Tabular extension package (FMi)
+\col@sep=\dimen108
+\extrarowheight=\dimen109
+\NC@list=\toks18
+\extratabsurround=\skip47
+\backup@length=\skip48
+)
+\DUtablewidth=\skip49
+ (./socstyle.tex
+(/usr/share/texlive/texmf-dist/tex/latex/opensans/opensans.sty
+Package: opensans 2011/11/11 Opensans
+
+(/usr/share/texlive/texmf-dist/tex/latex/slantsc/slantsc.sty
+Package: slantsc 2003/11/09 v2.10 Provide Slanted an Italic Small Caps
+LaTeX Info: Redefining \upshape on input line 35.
+LaTeX Info: Redefining \slshape on input line 45.
+LaTeX Info: Redefining \itshape on input line 55.
+LaTeX Info: Redefining \scshape on input line 65.
+))
+(/usr/share/texlive/texmf-dist/tex/latex/tools/xspace.sty
+Package: xspace 2009/10/20 v1.13 Space after command names (DPC,MH)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+\fancy@headwidth=\skip50
+\f@ncyO@elh=\skip51
+\f@ncyO@erh=\skip52
+\f@ncyO@olh=\skip53
+\f@ncyO@orh=\skip54
+\f@ncyO@elf=\skip55
+\f@ncyO@erf=\skip56
+\f@ncyO@olf=\skip57
+\f@ncyO@orf=\skip58
+)
+(/usr/share/texlive/texmf-dist/tex/latex/enumitem/enumitem.sty
+Package: enumitem 2011/09/28 v3.5.2 Customized lists
+\labelindent=\skip59
+\enit@outerparindent=\dimen110
+\enit@toks=\toks19
+\enit@inbox=\box30
+\enitdp@description=\count94
+)
+(/usr/share/texlive/texmf-dist/tex/latex/titlesec/titlesec.sty
+Package: titlesec 2011/11/11 v2.9.2 Sectioning titles
+\ttl@box=\box31
+\beforetitleunit=\skip60
+\aftertitleunit=\skip61
+\ttl@plus=\dimen111
+\ttl@minus=\dimen112
+\ttl@toksa=\toks20
+\titlewidth=\dimen113
+\titlewidthlast=\dimen114
+\titlewidthfirst=\dimen115
+)
+(/usr/share/texlive/texmf-dist/tex/latex/titlesec/titletoc.sty
+Package: titletoc 2011/11/11 v1.6 TOC entries
+\ttl@leftsep=\dimen116
+)
+(/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2010/09/12 v5.6 Page Geometry
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in PDF mode is detected.
+)
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ifvtex.sty
+Package: ifvtex 2010/03/01 v1.5 Switches for detecting VTeX and its modes (HO)
+Package ifvtex Info: VTeX not detected.
+)
+(/usr/share/texlive/texmf-dist/tex/generic/ifxetex/ifxetex.sty
+Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
+)
+\Gm@cnth=\count95
+\Gm@cntv=\count96
+\c@Gm@tempcnt=\count97
+\Gm@bindingoffset=\dimen117
+\Gm@wd@mp=\dimen118
+\Gm@odd@mp=\dimen119
+\Gm@even@mp=\dimen120
+\Gm@layoutwidth=\dimen121
+\Gm@layoutheight=\dimen122
+\Gm@layouthoffset=\dimen123
+\Gm@layoutvoffset=\dimen124
+\Gm@dimlist=\toks21
+))
+\DUlineblockindent=\skip62
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2011/10/01 v6.82j Hypertext links for LaTeX
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
+Package: hobsub-hyperref 2011/04/23 v1.4 Bundle oberdiek, subset hyperref (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/hobsub-generic.sty
+Package: hobsub-generic 2011/04/23 v1.4 Bundle oberdiek, subset generic (HO)
+Package: hobsub 2011/04/23 v1.4 Subsetting bundle oberdiek (HO)
+Package hobsub Info: Skipping package `infwarerr' (already loaded).
+Package hobsub Info: Skipping package `ltxcmds' (already loaded).
+Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+Package hobsub Info: Skipping package `ifvtex' (already loaded).
+Package: intcalc 2007/09/27 v1.1 Expandable integer calculations (HO)
+Package hobsub Info: Skipping package `ifpdf' (already loaded).
+Package: etexcmds 2011/02/16 v1.5 Prefix for e-TeX command names (HO)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+Package: kvsetkeys 2011/04/07 v1.13 Key value parser (HO)
+Package: kvdefinekeys 2011/04/07 v1.3 Defining keys (HO)
+Package: pdftexcmds 2011/04/22 v0.16 Utilities of pdfTeX for LuaTeX (HO)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+Package: pdfescape 2011/04/04 v1.12 Provides string conversions (HO)
+Package: bigintcalc 2011/01/30 v1.2 Expandable big integer calculations (HO)
+Package: bitset 2011/01/30 v1.1 Data type bit set (HO)
+Package: uniquecounter 2011/01/30 v1.2 Provides unlimited unique counter (HO)
+)
+Package hobsub Info: Skipping package `hobsub' (already loaded).
+Package: letltxmacro 2010/09/02 v1.4 Let assignment for LaTeX macros (HO)
+Package: hopatch 2011/01/30 v1.0 Wrapper for package hooks (HO)
+Package: xcolor-patch 2011/01/30 xcolor patch
+Package: atveryend 2011/04/23 v1.7 Hooks at very end of document (HO)
+Package: atbegshi 2011/01/30 v1.15 At begin shipout hook (HO)
+Package: refcount 2010/12/01 v3.2 Data extraction from references (HO)
+Package: hycolor 2011/01/30 v1.7 Color options of hyperref/bookmark (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2010/12/23 v3.10 Keyval support for LaTeX options (HO)
+)
+\@linkdim=\dimen125
+\Hy@linkcounter=\count98
+\Hy@pagecounter=\count99
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2011/10/01 v6.82j Hyperref: PDFDocEncoding definition (HO)
+)
+\Hy@SavedSpaceFactor=\count100
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/hyperref.cfg
+File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
+)
+Package hyperref Info: Option `colorlinks' set `true' on input line 3925.
+Package hyperref Info: Hyper figures OFF on input line 4046.
+Package hyperref Info: Link nesting OFF on input line 4051.
+Package hyperref Info: Hyper index ON on input line 4054.
+Package hyperref Info: Plain pages OFF on input line 4061.
+Package hyperref Info: Backreferencing OFF on input line 4066.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4284.
+\c@Hy@tempcnt=\count101
+
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip10
+Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 4637.
+\Fld@menulength=\count102
+\Field@Width=\dimen126
+\Fld@charsize=\dimen127
+Package hyperref Info: Hyper figures OFF on input line 5723.
+Package hyperref Info: Link nesting OFF on input line 5728.
+Package hyperref Info: Hyper index ON on input line 5731.
+Package hyperref Info: backreferencing OFF on input line 5738.
+Package hyperref Info: Link coloring ON on input line 5741.
+Package hyperref Info: Link coloring with OCG OFF on input line 5748.
+Package hyperref Info: PDF/A mode OFF on input line 5753.
+LaTeX Info: Redefining \ref on input line 5793.
+LaTeX Info: Redefining \pageref on input line 5797.
+\Hy@abspage=\count103
+\c@Item=\count104
+\c@Hfootnote=\count105
+)
+
+Package hyperref Message: Driver (autodetected): hpdftex.
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hpdftex.def
+File: hpdftex.def 2011/10/01 v6.82j Hyperref driver for pdfTeX
+\Fld@listcount=\count106
+\c@bookmark@seq@number=\count107
+
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty
+Package: rerunfilecheck 2011/04/15 v1.7 Rerun checks for auxiliary files (HO)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+82.
+)
+\Hy@SectionHShift=\skip63
+)
+(./UsersGuide.aux)
+\openout1 = `UsersGuide.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 89.
+LaTeX Font Info:    ... okay on input line 89.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 89.
+LaTeX Font Info:    ... okay on input line 89.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 89.
+LaTeX Font Info:    ... okay on input line 89.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 89.
+LaTeX Font Info:    ... okay on input line 89.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 89.
+LaTeX Font Info:    ... okay on input line 89.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 89.
+LaTeX Font Info:    ... okay on input line 89.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 89.
+LaTeX Font Info:    ... okay on input line 89.
+LaTeX Font Info:    Try loading font information for T1+fosj on input line 89.
+ (/usr/share/texlive/texmf-dist/tex/latex/opensans/t1fosj.fd
+File: t1fosj.fd 2011/11/11 Fontinst v1.927 font definitions for T1/fosj.
+)
+LaTeX Font Info:    Font shape `T1/fosj/m/n' will be
+(Font)              scaled to size 9.49997pt on input line 89.
+(/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count108
+\scratchdimen=\dimen128
+\scratchbox=\box32
+\nofMPsegments=\count109
+\nofMParguments=\count110
+\everyMPshowfont=\toks22
+\MPscratchCnt=\count111
+\MPscratchDim=\dimen129
+\MPnumerator=\count112
+\makeMPintoPDFobject=\count113
+\everyMPtoPDFconversion=\toks23
+) (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
+
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2010/08/19 v1.1 Managing graphics extensions (HO)
+)
+Package grfext Info: Graphics extension search list:
+(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 452.
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: a4paper
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(89.62709pt, 418.25368pt, 89.6271pt)
+* v-part:(T,H,B)=(108.405pt, 664.37186pt, 72.26999pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=418.25368pt
+* \textheight=664.37186pt
+* \oddsidemargin=17.3571pt
+* \evensidemargin=17.3571pt
+* \topmargin=-18.86499pt
+* \headheight=30.0pt
+* \headsep=25.0pt
+* \topskip=10.0pt
+* \footskip=30.0pt
+* \marginparwidth=57.0pt
+* \marginparsep=11.0pt
+* \columnsep=10.0pt
+* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+\AtBeginShipoutBox=\box33
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/color.cfg
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package color Info: Driver file: pdftex.def on input line 130.
+)
+Package hyperref Info: Link coloring ON on input line 89.
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2010/04/30 v2.40 Cross-referencing by name of section
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
+Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
+)
+\c@section@level=\count114
+)
+LaTeX Info: Redefining \ref on input line 89.
+LaTeX Info: Redefining \pageref on input line 89.
+LaTeX Info: Redefining \nameref on input line 89.
+
+(./UsersGuide.out) (./UsersGuide.out)
+\@outlinefile=\write3
+\openout3 = `UsersGuide.out'.
+
+LaTeX Font Info:    Font shape `T1/fosj/m/n' will be
+(Font)              scaled to size 16.41594pt on input line 98.
+LaTeX Font Info:    Font shape `T1/fosj/m/n' will be
+(Font)              scaled to size 11.39996pt on input line 98.
+<<ot1.cmap>>
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 98.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 98.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 98.
+LaTeX Font Info:    Font shape `T1/fosj/bx/n' in size <10> not available
+(Font)              Font shape `T1/fosj/b/n' tried instead on input line 123.
+LaTeX Font Info:    Font shape `T1/fosj/b/n' will be
+(Font)              scaled to size 9.49997pt on input line 123.
+LaTeX Font Info:    Font shape `T1/fosj/bx/n' in size <14.4> not available
+(Font)              Font shape `T1/fosj/b/n' tried instead on input line 123.
+LaTeX Font Info:    Font shape `T1/fosj/b/n' will be
+(Font)              scaled to size 13.67995pt on input line 123.
+ (./UsersGuide.toc
+LaTeX Font Info:    Font shape `T1/fosj/bx/sc' in size <10> not available
+(Font)              Font shape `T1/fosj/b/sc' tried instead on input line 2.
+LaTeX Font Info:    Font shape `T1/fosj/b/sc' will be
+(Font)              scaled to size 9.49997pt on input line 2.
+LaTeX Font Info:    Font shape `T1/fosj/m/sc' will be
+(Font)              scaled to size 9.49997pt on input line 4.
+)
+\tf@toc=\write4
+\openout4 = `UsersGuide.toc'.
+
+ [1
+
+{/usr/share/texlive/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+Underfull \hbox (badness 10000) in paragraph at lines 137--144
+
+ []
+
+LaTeX Font Info:    Try loading font information for OMS+fosj on input line 147
+.
+LaTeX Font Info:    No file OMSfosj.fd. on input line 147.
+
+LaTeX Font Warning: Font shape `OMS/fosj/m/n' undefined
+(Font)              using `OMS/cmsy/m/n' instead on input line 147.
+
+[2]
+LaTeX Font Info:    Font shape `T1/fosj/bx/n' in size <12> not available
+(Font)              Font shape `T1/fosj/b/n' tried instead on input line 174.
+LaTeX Font Info:    Font shape `T1/fosj/b/n' will be
+(Font)              scaled to size 11.39996pt on input line 174.
+\c@listcnt0=\count115
+LaTeX Font Info:    Try loading font information for T1+cmtt on input line 204.
+
+ (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
+File: t1cmtt.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10> not available
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 204.
+LaTeX Font Info:    Font shape `T1/fosj/m/sl' in size <10> not available
+(Font)              Font shape `T1/fosj/m/it' tried instead on input line 257.
+LaTeX Font Info:    Font shape `T1/fosj/m/it' will be
+(Font)              scaled to size 9.49997pt on input line 257.
+ [3] [4]
+Overfull \hbox (15.01389pt too wide) in alignment at lines 375--385
+ [] [] [] 
+ []
+
+
+Overfull \hbox (15.01389pt too wide) in alignment at lines 385--395
+ [] [] [] 
+ []
+
+
+Overfull \hbox (15.01389pt too wide) in alignment at lines 395--397
+ [] [] [] 
+ []
+
+
+Overfull \hbox (15.01389pt too wide) in alignment at lines 397--398
+ [] [] [] 
+ []
+
+
+Overfull \hbox (15.01389pt too wide) in alignment at lines 398--423
+ [] [] [] 
+ []
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 434.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 434.
+Package epstopdf Info: Source file: <./images/clipboard.eps>
+(epstopdf)                    date: 2012-07-26 17:53:58
+(epstopdf)                    size: 19741 bytes
+(epstopdf)             Output file: <./images/clipboard-eps-converted-to.pdf>
+(epstopdf)                    date: 2012-07-26 18:00:44
+(epstopdf)                    size: 4504 bytes
+(epstopdf)             Command: <repstopdf --outfile=./images/clipboard-eps-con
+verted-to.pdf ./images/clipboard.eps>
+(epstopdf)             \includegraphics on input line 434.
+Package epstopdf Info: Output file is already uptodate.
+<./images/clipboard-eps-converted-to.pdf, id=243, 48.18pt x 48.18pt>
+File: ./images/clipboard-eps-converted-to.pdf Graphic file (type pdf)
+
+<use ./images/clipboard-eps-converted-to.pdf>
+Package pdftex.def Info: ./images/clipboard-eps-converted-to.pdf used on input 
+line 434.
+(pdftex.def)             Requested size: 24.08992pt x 24.08992pt.
+
+Overfull \hbox (51.64384pt too wide) in paragraph at lines 465--465
+[]    \T1/cmtt/m/n/10 ( ( 'SYMBOLIC_TECHNOLOGY', helpers.sysConfDir+'/technolog
+y.symbolic.xml'   )  
+ []
+
+
+Overfull \hbox (51.64384pt too wide) in paragraph at lines 466--466
+[]    \T1/cmtt/m/n/10 , ( 'REAL_TECHNOLOGY'    , helpers.sysConfDir+'/technolog
+y.cmos130.s2r.xml')  
+ []
+
+
+Overfull \hbox (51.64384pt too wide) in paragraph at lines 467--467
+[]    \T1/cmtt/m/n/10 , ( 'DISPLAY'            , helpers.sysConfDir+'/display.x
+ml'               )  
+ []
+
+
+Overfull \hbox (20.15154pt too wide) in paragraph at lines 470--470
+[]    \T1/cmtt/m/n/10 , ( 'SYSTEM_LIBRARY'     , ( (cellsTop+'sxlib'   , Enviro
+nment.Append)  
+ []
+
+
+Overfull \hbox (20.15154pt too wide) in paragraph at lines 471--471
+[]                               \T1/cmtt/m/n/10 , (cellsTop+'dp_sxlib', Enviro
+nment.Append)  
+ []
+
+
+Overfull \hbox (20.15154pt too wide) in paragraph at lines 472--472
+[]                               \T1/cmtt/m/n/10 , (cellsTop+'ramlib'  , Enviro
+nment.Append)  
+ []
+
+
+Overfull \hbox (20.15154pt too wide) in paragraph at lines 473--473
+[]                               \T1/cmtt/m/n/10 , (cellsTop+'romlib'  , Enviro
+nment.Append)  
+ []
+
+
+Overfull \hbox (20.15154pt too wide) in paragraph at lines 474--474
+[]                               \T1/cmtt/m/n/10 , (cellsTop+'rflib'   , Enviro
+nment.Append)  
+ []
+
+
+Overfull \hbox (20.15154pt too wide) in paragraph at lines 475--475
+[]                               \T1/cmtt/m/n/10 , (cellsTop+'rf2lib'  , Enviro
+nment.Append)  
+ []
+
+
+Overfull \hbox (41.14641pt too wide) in paragraph at lines 476--476
+[]                               \T1/cmtt/m/n/10 , (cellsTop+'pxlib'   , Enviro
+nment.Append) ) )  
+ []
+
+[5 <./images/clipboard-eps-converted-to.pdf>]
+Overfull \hbox (4.8268pt too wide) in paragraph at lines 529--540
+[]\T1/fosj/m/n/10 Trick and nam-ing con-ven-tion about \T1/cmtt/m/n/10 SYMBOLIC
+_TECHNOLOGY\T1/fosj/m/n/10 , \T1/cmtt/m/n/10 REAL_TECHNOLOGY \T1/fosj/m/n/10 an
+d \T1/cmtt/m/n/10 DISPLAY\T1/fosj/m/n/10 .
+ []
+
+
+Overfull \hbox (20.15154pt too wide) in paragraph at lines 567--567
+[]    \T1/cmtt/m/n/10 , ('SYSTEM_LIBRARY'     , ( (homeDir+'/mylib', Environmen
+t.Append) ) )  
+ []
+
+[6]
+Overfull \hbox (25.40025pt too wide) in paragraph at lines 621--621
+[]    \T1/cmtt/m/n/10 , (TypeOption, "mauka.standardAnnealing", "Standart Annea
+ling"    , 0 )  
+ []
+
+
+Overfull \hbox (25.40025pt too wide) in paragraph at lines 622--622
+[]    \T1/cmtt/m/n/10 , (TypeOption, "mauka.ignorePins"       , "Ignore Pins"  
+         , 0 )  
+ []
+
+
+Overfull \hbox (25.40025pt too wide) in paragraph at lines 623--623
+[]    \T1/cmtt/m/n/10 , (TypeOption, "mauka.plotBins"         , "Plot Bins"    
+         , 0 )  
+ []
+
+
+Overfull \hbox (25.40025pt too wide) in paragraph at lines 624--624
+[]    \T1/cmtt/m/n/10 , (TypeOption, "mauka.insertFeeds"      , "Insert Feeds" 
+         , 0 )  
+ []
+
+
+Overfull \hbox (25.40025pt too wide) in paragraph at lines 625--625
+[]    \T1/cmtt/m/n/10 , (TypeOption, "mauka.searchRatio"      , "Search Ratio (
+%)"      , 1 )  
+ []
+
+
+Overfull \hbox (25.40025pt too wide) in paragraph at lines 626--626
+[]    \T1/cmtt/m/n/10 , (TypeOption, "mauka.annealingNetMult" , "Annealing Net 
+Mult (%)", 1 )  
+ []
+
+
+Overfull \hbox (25.40025pt too wide) in paragraph at lines 627--627
+[]    \T1/cmtt/m/n/10 , (TypeOption, "mauka.annealingBinMult" , "Annealing Bin 
+Mult (%)", 1 )  
+ []
+
+
+Overfull \hbox (25.40025pt too wide) in paragraph at lines 628--628
+[]    \T1/cmtt/m/n/10 , (TypeOption, "mauka.annealingRowMult" , "Annealing Row 
+Mult (%)", 1 )  
+ []
+
+[7]
+Package epstopdf Info: Source file: <./images/Viewer-1.eps>
+(epstopdf)                    date: 2012-08-07 16:54:54
+(epstopdf)                    size: 1149045 bytes
+(epstopdf)             Output file: <./images/Viewer-1-eps-converted-to.pdf>
+(epstopdf)                    date: 2012-08-07 17:11:05
+(epstopdf)                    size: 16074 bytes
+(epstopdf)             Command: <repstopdf --outfile=./images/Viewer-1-eps-conv
+erted-to.pdf ./images/Viewer-1.eps>
+(epstopdf)             \includegraphics on input line 719.
+Package epstopdf Info: Output file is already uptodate.
+
+<./images/Viewer-1-eps-converted-to.pdf, id=267, 302.12875pt x 352.31625pt>
+File: ./images/Viewer-1-eps-converted-to.pdf Graphic file (type pdf)
+
+<use ./images/Viewer-1-eps-converted-to.pdf>
+Package pdftex.def Info: ./images/Viewer-1-eps-converted-to.pdf used on input l
+ine 719.
+(pdftex.def)             Requested size: 292.77629pt x 341.41304pt.
+ [8 <./images/Viewer-1-eps-converted-to.pdf>]
+Package epstopdf Info: Source file: <./images/Controller-1.eps>
+(epstopdf)                    date: 2012-08-07 17:12:10
+(epstopdf)                    size: 2123922 bytes
+(epstopdf)             Output file: <./images/Controller-1-eps-converted-to.pdf
+>
+(epstopdf)                    date: 2012-08-07 17:12:50
+(epstopdf)                    size: 133304 bytes
+(epstopdf)             Command: <repstopdf --outfile=./images/Controller-1-eps-
+converted-to.pdf ./images/Controller-1.eps>
+(epstopdf)             \includegraphics on input line 744.
+Package epstopdf Info: Output file is already uptodate.
+
+<./images/Controller-1-eps-converted-to.pdf, id=277, 452.69125pt x 435.6275pt>
+File: ./images/Controller-1-eps-converted-to.pdf Graphic file (type pdf)
+
+<use ./images/Controller-1-eps-converted-to.pdf>
+Package pdftex.def Info: ./images/Controller-1-eps-converted-to.pdf used on inp
+ut line 744.
+(pdftex.def)             Requested size: 292.77629pt x 281.73868pt.
+LaTeX Font Info:    Font shape `T1/fosj/bx/sc' in size <12> not available
+(Font)              Font shape `T1/fosj/b/sc' tried instead on input line 763.
+LaTeX Font Info:    Font shape `T1/fosj/b/sc' will be
+(Font)              scaled to size 11.39996pt on input line 763.
+ [9 <./images/Controller-1-eps-converted-to.pdf>]
+Package epstopdf Info: Source file: <./images/clipboard.eps>
+(epstopdf)                    date: 2012-07-26 17:53:58
+(epstopdf)                    size: 19741 bytes
+(epstopdf)             Output file: <./images/clipboard-eps-converted-to.pdf>
+(epstopdf)                    date: 2012-07-26 18:00:44
+(epstopdf)                    size: 4504 bytes
+(epstopdf)             Command: <repstopdf --outfile=./images/clipboard-eps-con
+verted-to.pdf ./images/clipboard.eps>
+(epstopdf)             \includegraphics on input line 816.
+Package epstopdf Info: Output file is already uptodate.
+File: ./images/clipboard-eps-converted-to.pdf Graphic file (type pdf)
+ <use ./images/clipboard-eps-converted-to.pdf>
+Package pdftex.def Info: ./images/clipboard-eps-converted-to.pdf used on input 
+line 816.
+(pdftex.def)             Requested size: 24.08992pt x 24.08992pt.
+ [10]
+Package epstopdf Info: Source file: <./images/clipboard.eps>
+(epstopdf)                    date: 2012-07-26 17:53:58
+(epstopdf)                    size: 19741 bytes
+(epstopdf)             Output file: <./images/clipboard-eps-converted-to.pdf>
+(epstopdf)                    date: 2012-07-26 18:00:44
+(epstopdf)                    size: 4504 bytes
+(epstopdf)             Command: <repstopdf --outfile=./images/clipboard-eps-con
+verted-to.pdf ./images/clipboard.eps>
+(epstopdf)             \includegraphics on input line 928.
+Package epstopdf Info: Output file is already uptodate.
+File: ./images/clipboard-eps-converted-to.pdf Graphic file (type pdf)
+
+<use ./images/clipboard-eps-converted-to.pdf>
+Package pdftex.def Info: ./images/clipboard-eps-converted-to.pdf used on input 
+line 928.
+(pdftex.def)             Requested size: 24.08992pt x 24.08992pt.
+ [11]
+Overfull \hbox (14.59906pt too wide) in alignment at lines 983--1011
+ [] [] [] 
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 1011
+ []
+
+Package epstopdf Info: Source file: <./images/clipboard.eps>
+(epstopdf)                    date: 2012-07-26 17:53:58
+(epstopdf)                    size: 19741 bytes
+(epstopdf)             Output file: <./images/clipboard-eps-converted-to.pdf>
+(epstopdf)                    date: 2012-07-26 18:00:44
+(epstopdf)                    size: 4504 bytes
+(epstopdf)             Command: <repstopdf --outfile=./images/clipboard-eps-con
+verted-to.pdf ./images/clipboard.eps>
+(epstopdf)             \includegraphics on input line 1020.
+Package epstopdf Info: Output file is already uptodate.
+File: ./images/clipboard-eps-converted-to.pdf Graphic file (type pdf)
+<use ./images/clipboard-eps-converted-to.pdf>
+Package pdftex.def Info: ./images/clipboard-eps-converted-to.pdf used on input 
+line 1020.
+(pdftex.def)             Requested size: 24.08992pt x 24.08992pt.
+
+Overfull \hbox (14.59908pt too wide) in alignment at lines 1038--1048
+ [] [] [] 
+ []
+
+
+Overfull \hbox (14.59908pt too wide) in alignment at lines 1048--1058
+ [] [] [] 
+ []
+
+
+Overfull \hbox (14.59908pt too wide) in alignment at lines 1058--1060
+ [] [] [] 
+ []
+
+
+Overfull \hbox (14.59908pt too wide) in alignment at lines 1060--1061
+ [] [] [] 
+ []
+
+<./images/ComputerMouse.png, id=302, 135.50626pt x 135.50626pt>
+File: ./images/ComputerMouse.png Graphic file (type png)
+
+<use ./images/ComputerMouse.png>
+Package pdftex.def Info: ./images/ComputerMouse.png used on input line 1115.
+(pdftex.def)             Requested size: 33.87646pt x 33.87646pt.
+File: ./images/ComputerMouse.png Graphic file (type png)
+ <use ./images/ComputerMouse.png>
+Package pdftex.def Info: ./images/ComputerMouse.png used on input line 1128.
+(pdftex.def)             Requested size: 33.87646pt x 33.87646pt.
+File: ./images/ComputerMouse.png Graphic file (type png)
+
+<use ./images/ComputerMouse.png>
+Package pdftex.def Info: ./images/ComputerMouse.png used on input line 1140.
+(pdftex.def)             Requested size: 33.87646pt x 33.87646pt.
+
+Overfull \hbox (14.59908pt too wide) in alignment at lines 1061--1256
+ [] [] [] 
+ []
+
+[12 <./images/ComputerMouse.png (PNG copy)>] [13]
+Overfull \hbox (7.6592pt too wide) in paragraph at lines 1389--1392
+[]\T1/cmtt/m/n/10 > cgt -v -t --load-global -R --cell=design --save-design=desi
+gn_kite 
+ []
+
+Package epstopdf Info: Source file: <./images/Controller-Look-1.eps>
+(epstopdf)                    date: 2012-08-07 19:46:14
+(epstopdf)                    size: 2123920 bytes
+(epstopdf)             Output file: <./images/Controller-Look-1-eps-converted-t
+o.pdf>
+(epstopdf)                    date: 2012-08-07 20:07:37
+(epstopdf)                    size: 85781 bytes
+(epstopdf)             Command: <repstopdf --outfile=./images/Controller-Look-1
+-eps-converted-to.pdf ./images/Controller-Look-1.eps>
+(epstopdf)             \includegraphics on input line 1453.
+Package epstopdf Info: Output file is already uptodate.
+
+<./images/Controller-Look-1-eps-converted-to.pdf, id=325, 452.69125pt x 435.627
+5pt>
+File: ./images/Controller-Look-1-eps-converted-to.pdf Graphic file (type pdf)
+ <use ./images/Controller-Look-1-eps-converted-to.pdf>
+Package pdftex.def Info: ./images/Controller-Look-1-eps-converted-to.pdf used o
+n input line 1453.
+(pdftex.def)             Requested size: 292.77629pt x 281.73868pt.
+ [14]
+Package epstopdf Info: Source file: <./images/clipboard.eps>
+(epstopdf)                    date: 2012-07-26 17:53:58
+(epstopdf)                    size: 19741 bytes
+(epstopdf)             Output file: <./images/clipboard-eps-converted-to.pdf>
+(epstopdf)                    date: 2012-07-26 18:00:44
+(epstopdf)                    size: 4504 bytes
+(epstopdf)             Command: <repstopdf --outfile=./images/clipboard-eps-con
+verted-to.pdf ./images/clipboard.eps>
+(epstopdf)             \includegraphics on input line 1488.
+Package epstopdf Info: Output file is already uptodate.
+File: ./images/clipboard-eps-converted-to.pdf Graphic file (type pdf)
+
+<use ./images/clipboard-eps-converted-to.pdf>
+Package pdftex.def Info: ./images/clipboard-eps-converted-to.pdf used on input 
+line 1488.
+(pdftex.def)             Requested size: 24.08992pt x 24.08992pt.
+Package epstopdf Info: Source file: <./images/Controller-Filter-1.eps>
+(epstopdf)                    date: 2012-08-07 19:46:23
+(epstopdf)                    size: 2123922 bytes
+(epstopdf)             Output file: <./images/Controller-Filter-1-eps-converted
+-to.pdf>
+(epstopdf)                    date: 2012-08-07 20:07:39
+(epstopdf)                    size: 62351 bytes
+(epstopdf)             Command: <repstopdf --outfile=./images/Controller-Filter
+-1-eps-converted-to.pdf ./images/Controller-Filter-1.eps>
+(epstopdf)             \includegraphics on input line 1490.
+Package epstopdf Info: Output file is already uptodate.
+
+<./images/Controller-Filter-1-eps-converted-to.pdf, id=338, 452.69125pt x 435.6
+275pt>
+File: ./images/Controller-Filter-1-eps-converted-to.pdf Graphic file (type pdf)
+
+ <use ./images/Controller-Filter-1-eps-converted-to.pdf>
+Package pdftex.def Info: ./images/Controller-Filter-1-eps-converted-to.pdf used
+ on input line 1490.
+(pdftex.def)             Requested size: 292.77629pt x 281.73868pt.
+ [15 <./images/Controller-Look-1-eps-converted-to.pdf>]
+Package epstopdf Info: Source file: <./images/Controller-LayersGos-1.eps>
+(epstopdf)                    date: 2012-08-07 19:46:31
+(epstopdf)                    size: 2123925 bytes
+(epstopdf)             Output file: <./images/Controller-LayersGos-1-eps-conver
+ted-to.pdf>
+(epstopdf)                    date: 2012-08-07 20:07:40
+(epstopdf)                    size: 131840 bytes
+(epstopdf)             Command: <repstopdf --outfile=./images/Controller-Layers
+Gos-1-eps-converted-to.pdf ./images/Controller-LayersGos-1.eps>
+(epstopdf)             \includegraphics on input line 1526.
+Package epstopdf Info: Output file is already uptodate.
+
+<./images/Controller-LayersGos-1-eps-converted-to.pdf, id=346, 452.69125pt x 43
+5.6275pt>
+File: ./images/Controller-LayersGos-1-eps-converted-to.pdf Graphic file (type p
+df)
+ <use ./images/Controller-LayersGos-1-eps-converted-to.pdf>
+Package pdftex.def Info: ./images/Controller-LayersGos-1-eps-converted-to.pdf u
+sed on input line 1526.
+(pdftex.def)             Requested size: 292.77629pt x 281.73868pt.
+ [16 <./images/Controller-Filter-1-eps-converted-to.pdf>]
+Package epstopdf Info: Source file: <./images/Controller-Netlist-1.eps>
+(epstopdf)                    date: 2012-08-07 19:46:39
+(epstopdf)                    size: 2123923 bytes
+(epstopdf)             Output file: <./images/Controller-Netlist-1-eps-converte
+d-to.pdf>
+(epstopdf)                    date: 2012-08-07 20:07:42
+(epstopdf)                    size: 82881 bytes
+(epstopdf)             Command: <repstopdf --outfile=./images/Controller-Netlis
+t-1-eps-converted-to.pdf ./images/Controller-Netlist-1.eps>
+(epstopdf)             \includegraphics on input line 1548.
+Package epstopdf Info: Output file is already uptodate.
+
+<./images/Controller-Netlist-1-eps-converted-to.pdf, id=354, 452.69125pt x 435.
+6275pt>
+File: ./images/Controller-Netlist-1-eps-converted-to.pdf Graphic file (type pdf
+)
+ <use ./images/Controller-Netlist-1-eps-converted-to.pdf>
+Package pdftex.def Info: ./images/Controller-Netlist-1-eps-converted-to.pdf use
+d on input line 1548.
+(pdftex.def)             Requested size: 292.77629pt x 281.73868pt.
+ [17 <./images/Controller-LayersGos-1-eps-converted-to.pdf>]
+Package epstopdf Info: Source file: <./images/Viewer-Netlist-1.eps>
+(epstopdf)                    date: 2012-08-07 19:46:46
+(epstopdf)                    size: 3641047 bytes
+(epstopdf)             Output file: <./images/Viewer-Netlist-1-eps-converted-to
+.pdf>
+(epstopdf)                    date: 2012-08-07 20:09:35
+(epstopdf)                    size: 26732 bytes
+(epstopdf)             Command: <repstopdf --outfile=./images/Viewer-Netlist-1-
+eps-converted-to.pdf ./images/Viewer-Netlist-1.eps>
+(epstopdf)             \includegraphics on input line 1549.
+Package epstopdf Info: Output file is already uptodate.
+
+<./images/Viewer-Netlist-1-eps-converted-to.pdf, id=362, 589.20125pt x 575.1487
+4pt>
+File: ./images/Viewer-Netlist-1-eps-converted-to.pdf Graphic file (type pdf)
+ <use ./images/Viewer-Netlist-1-eps-converted-to.pdf>
+Package pdftex.def Info: ./images/Viewer-Netlist-1-eps-converted-to.pdf used on
+ input line 1549.
+(pdftex.def)             Requested size: 292.77629pt x 285.79213pt.
+ [18 <./images/Controller-Netlist-1-eps-converted-to.pdf> <./images/Viewer-Netl
+ist-1-eps-converted-to.pdf>]
+Package epstopdf Info: Source file: <./images/Controller-Selection-1.eps>
+(epstopdf)                    date: 2012-08-07 19:46:59
+(epstopdf)                    size: 2123925 bytes
+(epstopdf)             Output file: <./images/Controller-Selection-1-eps-conver
+ted-to.pdf>
+(epstopdf)                    date: 2012-08-07 20:07:44
+(epstopdf)                    size: 144006 bytes
+(epstopdf)             Command: <repstopdf --outfile=./images/Controller-Select
+ion-1-eps-converted-to.pdf ./images/Controller-Selection-1.eps>
+(epstopdf)             \includegraphics on input line 1573.
+Package epstopdf Info: Output file is already uptodate.
+
+<./images/Controller-Selection-1-eps-converted-to.pdf, id=373, 452.69125pt x 43
+5.6275pt>
+File: ./images/Controller-Selection-1-eps-converted-to.pdf Graphic file (type p
+df)
+ <use ./images/Controller-Selection-1-eps-converted-to.pdf>
+Package pdftex.def Info: ./images/Controller-Selection-1-eps-converted-to.pdf u
+sed on input line 1573.
+(pdftex.def)             Requested size: 292.77629pt x 281.73868pt.
+Package epstopdf Info: Source file: <./images/clipboard.eps>
+(epstopdf)                    date: 2012-07-26 17:53:58
+(epstopdf)                    size: 19741 bytes
+(epstopdf)             Output file: <./images/clipboard-eps-converted-to.pdf>
+(epstopdf)                    date: 2012-07-26 18:00:44
+(epstopdf)                    size: 4504 bytes
+(epstopdf)             Command: <repstopdf --outfile=./images/clipboard-eps-con
+verted-to.pdf ./images/clipboard.eps>
+(epstopdf)             \includegraphics on input line 1607.
+Package epstopdf Info: Output file is already uptodate.
+File: ./images/clipboard-eps-converted-to.pdf Graphic file (type pdf)
+
+<use ./images/clipboard-eps-converted-to.pdf>
+Package pdftex.def Info: ./images/clipboard-eps-converted-to.pdf used on input 
+line 1607.
+(pdftex.def)             Requested size: 24.08992pt x 24.08992pt.
+Package epstopdf Info: Source file: <./images/clipboard.eps>
+(epstopdf)                    date: 2012-07-26 17:53:58
+(epstopdf)                    size: 19741 bytes
+(epstopdf)             Output file: <./images/clipboard-eps-converted-to.pdf>
+(epstopdf)                    date: 2012-07-26 18:00:44
+(epstopdf)                    size: 4504 bytes
+(epstopdf)             Command: <repstopdf --outfile=./images/clipboard-eps-con
+verted-to.pdf ./images/clipboard.eps>
+(epstopdf)             \includegraphics on input line 1614.
+Package epstopdf Info: Output file is already uptodate.
+File: ./images/clipboard-eps-converted-to.pdf Graphic file (type pdf)
+
+<use ./images/clipboard-eps-converted-to.pdf>
+Package pdftex.def Info: ./images/clipboard-eps-converted-to.pdf used on input 
+line 1614.
+(pdftex.def)             Requested size: 24.08992pt x 24.08992pt.
+Package epstopdf Info: Source file: <./images/Controller-Inspector-1.eps>
+(epstopdf)                    date: 2012-08-07 19:47:09
+(epstopdf)                    size: 2123925 bytes
+(epstopdf)             Output file: <./images/Controller-Inspector-1-eps-conver
+ted-to.pdf>
+(epstopdf)                    date: 2012-08-07 20:07:46
+(epstopdf)                    size: 64005 bytes
+(epstopdf)             Command: <repstopdf --outfile=./images/Controller-Inspec
+tor-1-eps-converted-to.pdf ./images/Controller-Inspector-1.eps>
+(epstopdf)             \includegraphics on input line 1616.
+Package epstopdf Info: Output file is already uptodate.
+
+<./images/Controller-Inspector-1-eps-converted-to.pdf, id=374, 452.69125pt x 43
+5.6275pt>
+File: ./images/Controller-Inspector-1-eps-converted-to.pdf Graphic file (type p
+df)
+ <use ./images/Controller-Inspector-1-eps-converted-to.pdf>
+Package pdftex.def Info: ./images/Controller-Inspector-1-eps-converted-to.pdf u
+sed on input line 1616.
+(pdftex.def)             Requested size: 292.77629pt x 281.73868pt.
+ [19 <./images/Controller-Selection-1-eps-converted-to.pdf>]
+Package epstopdf Info: Source file: <./images/Controller-Inspector-2.eps>
+(epstopdf)                    date: 2012-08-07 19:47:17
+(epstopdf)                    size: 2123925 bytes
+(epstopdf)             Output file: <./images/Controller-Inspector-2-eps-conver
+ted-to.pdf>
+(epstopdf)                    date: 2012-08-07 20:07:47
+(epstopdf)                    size: 99434 bytes
+(epstopdf)             Command: <repstopdf --outfile=./images/Controller-Inspec
+tor-2-eps-converted-to.pdf ./images/Controller-Inspector-2.eps>
+(epstopdf)             \includegraphics on input line 1617.
+Package epstopdf Info: Output file is already uptodate.
+
+<./images/Controller-Inspector-2-eps-converted-to.pdf, id=383, 452.69125pt x 43
+5.6275pt>
+File: ./images/Controller-Inspector-2-eps-converted-to.pdf Graphic file (type p
+df)
+ <use ./images/Controller-Inspector-2-eps-converted-to.pdf>
+Package pdftex.def Info: ./images/Controller-Inspector-2-eps-converted-to.pdf u
+sed on input line 1617.
+(pdftex.def)             Requested size: 292.77629pt x 281.73868pt.
+Package epstopdf Info: Source file: <./images/Controller-Inspector-3.eps>
+(epstopdf)                    date: 2012-08-07 19:47:24
+(epstopdf)                    size: 2149047 bytes
+(epstopdf)             Output file: <./images/Controller-Inspector-3-eps-conver
+ted-to.pdf>
+(epstopdf)                    date: 2012-08-07 20:07:49
+(epstopdf)                    size: 67085 bytes
+(epstopdf)             Command: <repstopdf --outfile=./images/Controller-Inspec
+tor-3-eps-converted-to.pdf ./images/Controller-Inspector-3.eps>
+(epstopdf)             \includegraphics on input line 1618.
+Package epstopdf Info: Output file is already uptodate.
+
+<./images/Controller-Inspector-3-eps-converted-to.pdf, id=384, 455.7025pt x 437
+.635pt>
+File: ./images/Controller-Inspector-3-eps-converted-to.pdf Graphic file (type p
+df)
+ <use ./images/Controller-Inspector-3-eps-converted-to.pdf>
+Package pdftex.def Info: ./images/Controller-Inspector-3-eps-converted-to.pdf u
+sed on input line 1618.
+(pdftex.def)             Requested size: 292.77629pt x 281.17392pt.
+ [20 <./images/Controller-Inspector-1-eps-converted-to.pdf> <./images/Controlle
+r-Inspector-2-eps-converted-to.pdf>]
+Package epstopdf Info: Source file: <./images/Controller-Settings-1.eps>
+(epstopdf)                    date: 2012-08-07 19:47:33
+(epstopdf)                    size: 2123924 bytes
+(epstopdf)             Output file: <./images/Controller-Settings-1-eps-convert
+ed-to.pdf>
+(epstopdf)                    date: 2012-08-07 20:07:51
+(epstopdf)                    size: 59018 bytes
+(epstopdf)             Command: <repstopdf --outfile=./images/Controller-Settin
+gs-1-eps-converted-to.pdf ./images/Controller-Settings-1.eps>
+(epstopdf)             \includegraphics on input line 1632.
+Package epstopdf Info: Output file is already uptodate.
+
+<./images/Controller-Settings-1-eps-converted-to.pdf, id=395, 452.69125pt x 435
+.6275pt>
+File: ./images/Controller-Settings-1-eps-converted-to.pdf Graphic file (type pd
+f)
+ <use ./images/Controller-Settings-1-eps-converted-to.pdf>
+Package pdftex.def Info: ./images/Controller-Settings-1-eps-converted-to.pdf us
+ed on input line 1632.
+(pdftex.def)             Requested size: 292.77629pt x 281.73868pt.
+ [21 <./images/Controller-Inspector-3-eps-converted-to.pdf> <./images/Controlle
+r-Settings-1-eps-converted-to.pdf>]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1765.
+ [22]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1765.
+ (./UsersGuide.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1765.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1765.
+
+Package rerunfilecheck Info: File `UsersGuide.out' has not changed.
+(rerunfilecheck)             Checksum: A73D5472EEC2160E15C70E3AF7CC8F6C;2030.
+
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 7419 strings out of 492508
+ 110245 string characters out of 3115492
+ 233491 words of memory out of 3000000
+ 10447 multiletter control sequences out of 15000+200000
+ 61392 words of font info for 68 fonts, out of 3000000 for 9000
+ 1648 hyphenation exceptions out of 8191
+ 29i,12n,43p,373b,646s stack positions out of 5000i,500n,10000p,200000b,50000s
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/opensans/opensans-04.enc}{/usr
+/share/texlive/texmf-dist/fonts/enc/dvips/opensans/opensans-03.enc}{/usr/share/
+texlive/texmf-dist/fonts/enc/dvips/opensans/opensans-01.enc}{/usr/share/texlive
+/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr/share/texlive/texmf-
+dist/fonts/type1/public/opensans/OpenSans-Bold.pfb></usr/share/texlive/texmf-di
+st/fonts/type1/public/opensans/OpenSans-Italic.pfb></usr/share/texlive/texmf-di
+st/fonts/type1/public/opensans/OpenSans-Regular.pfb></usr/share/texlive/texmf-d
+ist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/typ
+e1/public/cm-super/sftt1000.pfb>
+Output written on UsersGuide.pdf (22 pages, 1121230 bytes).
+PDF statistics:
+ 465 PDF objects out of 1000 (max. 8388607)
+ 372 compressed objects within 4 object streams
+ 92 named destinations out of 1000 (max. 500000)
+ 327 words of extra memory for PDF output out of 10000 (max. 10000000)
+

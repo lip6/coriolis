@@ -2,25 +2,17 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./RoutingGauge.h"                         |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./crlcore/RoutingGauge.h"                      |
+// +-----------------------------------------------------------------+
 
 
 #ifndef __CRL_ROUTING_GAUGE_H__
@@ -107,6 +99,9 @@ namespace CRL {
 
 
 } // End of CRL namespace.
+
+
+INSPECTOR_P_SUPPORT(CRL::RoutingGauge);
 
 
 #endif

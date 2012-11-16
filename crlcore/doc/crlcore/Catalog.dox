@@ -1,0 +1,267 @@
+
+ // -*- C++ -*-
+
+
+ namespace CRL {
+
+ /*! \class        Catalog
+  *  \brief        A Registry to store Alliance Cell metadatas.
+  *
+  *                The Catalog is built from the various CATAL files from
+  *                the library directories and enriched with the current
+  *                state of Cell in the database.
+  */
+
+   
+ /*! \function     Catalog::Catalog();
+  *                A new, empty, Catalog. Normally, there should only be one
+  *                Catalog, attribute of AllianceFramework.
+  */
+ /*! \function     Catalog::~Catalog();
+  *                Free a Catalog object.
+  */
+
+   
+ /*! \function     State* Catalog::getState(const Name& name, bool add=false);
+  *  \Return       the State of the Cell named \c name. If \c add is set to \true
+  *                and the cell doesn't exist, an entry is created for it.
+  *                Otherwise, NULL is returned.              
+  */
+
+
+ /*! \function     void  Catalog::mergeState(const Name& name, const State& other);
+  *                Merge the State \c other with the current one. It only fills the
+  *                holes. If the State's Cell or Library is already sets, the ones
+  *                from \c other are discarteds. Related to the Alliance search path
+  *                policy where the first Cell found shadows any other one found
+  *                later.
+  */
+ /*! \function     bool  Catalog::deleteState(const Name& name);
+  *  \Return       \true if an entry has been indeed deleted.
+  *
+  *                Delete the State associated with Cell \c name.
+  */
+ /*! \function     void  Catalog::clear();
+  *                Completly empty the Catalog.
+  */
+ /*! \function     bool  Catalog::loadFromFile(const string& path, Library* library);
+  *  \param        path     The path to the library catalog file.
+  *  \param        library  The library for which we are loading a catalog.
+  *  \Return       \true if the catalog file has been found and successfully loaded.
+  */
+ /*! \function     std::map<Hurricane::Name,State*>* Catalog::getStates();
+  *  \return       the internal std::map<> of States.             
+  */
+
+
+ /*! \class        Catalog::State
+  *  \brief        An entry to store the Cell State in the Catalog.
+  *
+  *                Catalog::State can be accessed through the AllianceFramework
+  *                global Catalog, or on a Cell basis, usign the CatalogExtension
+  *                helper.
+  */
+
+   
+ /*! \function     Catalog::State::State();
+  *                A new, empty, State entry.
+  */
+ /*! \function     Catalog::State::~State();
+  *                Free a Catalog::State object.
+  */
+
+
+ /*! \function     bool  Catalog::State::isFlattenLeaf() const;
+  *  \Return       \true if the Cell has no more instances (leaf cell).
+  */
+ /*! \function     bool  Catalog::State::isFeed() const;
+  *  \Return       \true if the Cell is a feed-through.
+  */
+ /*! \function     bool  Catalog::State::isPad() const;
+  *  \Return       \true if the Cell is a pad.
+  */
+ /*! \function     bool  Catalog::State::isGds() const;
+  *  \Return       \true if the Cell is drawn in real layer (i.e. not a symbolic
+  *                layout, but a GDS).
+  */
+ /*! \function     bool  Catalog::State::isDelete() const;
+  *  \Return       \true if the Cell has been deleted from memory.
+  */
+ /*! \function     bool  Catalog::State::isPhysical() const;
+  *  \Return       \true if the Cell posseses a physical view (layout).
+  */
+ /*! \function     bool  Catalog::State::isLogical() const;
+  *  \Return       \true if the Cell posseses a logical view (netlist).
+  */
+
+
+ /*! \function     unsigned int  Catalog::State::getFlags(unsigned int mask=(unsigned int)-1) const;
+  *  \Return       the requested flags states (selected by \c mask, all of them by default).
+  */
+ /*! \function     Hurricane::Cell* Catalog::State::getCell() const;
+  *  \Return       the associated Hurricane::Cell. May be NULL if it has not been loaded yet
+  *                (loading is done on demand at AllianceFramework level).
+  */
+ /*! \function     Hurricane::Library* Catalog::State::getLibrary() const;
+  *  \Return       the associated Hurricane::Library.
+  */
+ /*! \function     unsigned int  Catalog::State::getDepth() const;
+  *  \Return       the hierarchical depth of the Cell.
+  */
+
+
+ /*! \function     bool  Catalog::State::setFlags(unsigned int mask, bool value);
+  *  \Return       \true if at least one flag of the indicated by mask is set.
+  *                (dubious usefulness).
+  *
+  *                \c mask is used to designate the bits of the flags on which we
+  *                are going to operate. If \c value is \true, then the bits are
+  *                sets and if \c value is \false they are reset.
+  */
+ /*! \function     bool  Catalog::State::setFlattenLeaf(bool value);
+  *                Sets the FlattenLeaf flag to \c value. Returns \true if it is set.
+  */
+ /*! \function     bool  Catalog::State::setFeed(bool value);
+  *                Sets the Feed flag to \c value. Returns \true if it is set.
+  */
+ /*! \function     bool  Catalog::State::setPad(bool value);
+  *                Sets the Pad flag to \c value. Returns \true if it is set.
+  */
+ /*! \function     bool  Catalog::State::setGds(bool value);
+  *                Sets the Gds flag to \c value. Returns \true if it is set.
+  */
+ /*! \function     bool  Catalog::State::setDelete(bool value);
+  *                Sets the Delete flag to \c value. Returns \true if it is set.
+  */
+ /*! \function     bool  Catalog::State::setPhysical(bool value);
+  *                Sets the Physical flag to \c value. Returns \true if it is set.
+  */
+ /*! \function     bool  Catalog::State::setLogical(bool value);
+  *                Sets the Logical flag to \c value. Returns \true if it is set.
+  */
+ /*! \function     void  Catalog::State::merge(const State& other);
+  *                Fill in the void fields of the current State by those from
+  *                \c other. The non-void are not overriden. Flags are merged
+  *                unconditionnaly.
+  */
+ /*! \function     Hurricane::Cell* Catalog::State::setCell( Hurricane::Cell* cell );
+  *                Sets the Cell field. Returns the newly affected Cell.
+  */
+ /*! \function     Hurricane::Library* Catalog::State::setLibrary( Hurricane::Library* library );
+  *                Sets the Library field. Returns the newly affected Library.
+  */
+
+
+ /*! \enum         Catalog::State::Flags
+  *                Flags to indicates Cell State (Alliance metadatas).
+  */
+ /*! \var          Catalog::State::Flags  Catalog::State::FlattenLeaf;
+  *                The Hurricane::Cell has no instances (leaf cell of the hierarchy).
+  */
+ /*! \var          Catalog::State::Flags  Catalog::State::Feed;
+  *                The Hurricane::Cell is a feed cell.
+  */
+ /*! \var          Catalog::State::Flags  Catalog::State::Pad;
+  *                The Hurricane::Cell is a pad cell.
+  */
+ /*! \var          Catalog::State::Flags  Catalog::State::GDS;
+  *                The Hurricane::Cell has a real layout (i.e. not symbolic).
+  */
+ /*! \var          Catalog::State::Flags  Catalog::State::Delete;
+  *                The Hurricane::Cell has been deleted from memory.
+  */
+ /*! \var          Catalog::State::Flags  Catalog::State::Logical;
+  *                The Hurricane::Cell have a logical (netlist) view.
+  */
+ /*! \var          Catalog::State::Flags  Catalog::State::Physical;
+  *                The Hurricane::Cell have a physical (layout) view.
+  */
+ /*! \var          Catalog::State::Flags  Catalog::State::InMemory;
+  *                The Hurricane::Cell has been loaded, at least partially, in
+  *                memory.
+  */
+ /*! \var          Catalog::State::Flags  Catalog::State::Views;
+  *                A composite flag to mask all the avalaible kinds of views.
+  *                Currently, physical & logical.
+  */
+
+
+ /*! \class        CatalogExtension
+  *  \brief        Wrapper to access a Hurricane::Cell Catalog::State.
+  *
+  *                Catalog::State are stored inside the AllianceFramework Catalog
+  *                but also linked in a Property on the Hurricane::Cell for easier
+  *                access. The CatalogExtension is a small wrapper around the
+  *                Property mechanism to allow a simpler access.
+  */
+
+
+ /*! \function     bool  CatalogExtension::isFlattenLeaf(const Cell*);
+  *  \Return       \true if the Cell has no more instances (leaf cell).
+  */
+ /*! \function     bool  CatalogExtension::isFeed(const Cell*);
+  *  \Return       \true if the Cell is a feed-through.
+  */
+ /*! \function     bool  CatalogExtension::isPad(const Cell*);
+  *  \Return       \true if the Cell is a pad.
+  */
+ /*! \function     bool  CatalogExtension::isGds(const Cell*);
+  *  \Return       \true if the Cell is drawn in real layer (i.e. not a symbolic
+  *                layout, but a GDS).
+  */
+ /*! \function     bool  CatalogExtension::isDelete(const Cell*);
+  *  \Return       \true if the Cell has been deleted from memory.
+  */
+ /*! \function     bool  CatalogExtension::isPhysical(const Cell*);
+  *  \Return       \true if the Cell posseses a physical view (layout).
+  */
+ /*! \function     bool  CatalogExtension::isLogical(const Cell*);
+  *  \Return       \true if the Cell posseses a logical view (netlist).
+  */
+
+
+ /*! \function     unsigned int  CatalogExtension::getFlags(const Cell*, unsigned int mask=(unsigned int)-1);
+  *  \Return       the requested flags states (selected by \c mask, all of them by default).
+  */
+ /*! \function     Hurricane::Library* CatalogExtension::getLibrary(const Cell*, );
+  *  \Return       the associated Hurricane::Library.
+  */
+ /*! \function     unsigned int  CatalogExtension::getDepth(const Cell*, );
+  *  \Return       the hierarchical depth of the Cell.
+  */
+
+
+ /*! \function     bool  CatalogExtension::setFlags(const Cell*, unsigned int mask, bool value);
+  *  \Return       \true if at least one flag of the indicated by mask is set.
+  *                (dubious usefulness).
+  *
+  *                \c mask is used to designate the bits of the flags on which we
+  *                are going to operate. If \c value is \true, then the bits are
+  *                sets and if \c value is \false they are reset.
+  */
+ /*! \function     bool  CatalogExtension::setFlattenLeaf(const Cell*, bool value);
+  *                Sets the FlattenLeaf flag to \c value. Returns \true if it is set.
+  */
+ /*! \function     bool  CatalogExtension::setFeed(const Cell*, bool value);
+  *                Sets the Feed flag to \c value. Returns \true if it is set.
+  */
+ /*! \function     bool  CatalogExtension::setPad(const Cell*, bool value);
+  *                Sets the Pad flag to \c value. Returns \true if it is set.
+  */
+ /*! \function     bool  CatalogExtension::setGds(const Cell*, bool value);
+  *                Sets the Gds flag to \c value. Returns \true if it is set.
+  */
+ /*! \function     bool  CatalogExtension::setDelete(const Cell*, bool value);
+  *                Sets the Delete flag to \c value. Returns \true if it is set.
+  */
+ /*! \function     bool  CatalogExtension::setPhysical(const Cell*, bool value);
+  *                Sets the Physical flag to \c value. Returns \true if it is set.
+  */
+ /*! \function     bool  CatalogExtension::setLogical(const Cell*, bool value);
+  *                Sets the Logical flag to \c value. Returns \true if it is set.
+  */
+ /*! \function     Hurricane::Library* CatalogExtension::setLibrary(const Cell*, Hurricane::Library* library );
+  *                Sets the Library field. Returns the newly affected Library.
+  */
+
+ }

@@ -2,25 +2,17 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./AllianceFramework.cpp"                  |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Module  :  "./AllianceFramework.cpp"                       |
+// +-----------------------------------------------------------------+
 
 
 #include  <unistd.h>
@@ -136,174 +128,31 @@ namespace CRL {
   {
   //cerr << "AllianceFramework::AllianceFramework()" << endl;
 
-  // Triggers System singleton loading.
-    System::get ();
-
     DataBase* db = DataBase::getDB ();
     if ( not db )
       db = DataBase::create ();
 
     db->put ( AllianceFrameworkProperty::create(this) );
 
-    cmess1 << "  o  Reading Alliance Environment." << endl;
+  //cmess1 << "  o  Reading Alliance Environment." << endl;
 
-    _environment.loadFromShell ();
-    _environment.loadFromXml   ();
+  //_environment.loadFromShell ();
+  //_environment.loadFromXml   ();
 
     string  userEnvironment = Environment::getEnv ( "HOME", "<HomeDirectory>" );
-    _environment.loadFromXml ( userEnvironment+"/.environment.alliance.xml", false );
+  //_environment.loadFromXml ( userEnvironment+"/.environment.alliance.xml", false );
 
     char cwd[1024];
     getcwd ( cwd, 1024 );
     string cwdEnvironment = cwd;
-    _environment.loadFromXml ( cwdEnvironment+"/.environment.alliance.xml", false );
+  //_environment.loadFromXml ( cwdEnvironment+"/.environment.alliance.xml", false );
 
-    SymbolicTechnologyParser::load ( db, _environment.getSYMBOLIC_TECHNOLOGY() );
-    RealTechnologyParser::load     ( db, _environment.getREAL_TECHNOLOGY() );
-    GraphicsParser::load           ( _environment.getDISPLAY() );
+  //SymbolicTechnologyParser::load ( db, _environment.getSYMBOLIC_TECHNOLOGY() );
+  //RealTechnologyParser::load     ( db, _environment.getREAL_TECHNOLOGY() );
+  //GraphicsParser::load           ( _environment.getDISPLAY() );
 
-    if ( !_environment.getDisplayStyle().empty() )
-      Graphics::setStyle ( _environment.getDisplayStyle() );
-
-    unsigned int  flags       = InSearchPath;
-    SearchPath&   LIBRARIES   = _environment.getLIBRARIES ();
-    Library*      rootLibrary = db->getRootLibrary ();
-
-    cmess2 << "  o  Creating Alliance Framework root library." << endl;
-    if ( !rootLibrary )
-      rootLibrary = Library::create ( db, "RootLibrary" );
-
-    _parentLibrary = rootLibrary->getLibrary ( _parentLibraryName );
-    if ( !_parentLibrary )
-      _parentLibrary = Library::create ( rootLibrary, _parentLibraryName );
-
-    cmess2 << "  o  Loading libraries (working first)." << endl;
-    for ( unsigned i=0 ; i<LIBRARIES.getSize() ; i++ ) {
-      createLibrary ( LIBRARIES[i].getPath(), flags, LIBRARIES[i].getName() );
-
-      cmess2 << "     - \"" << LIBRARIES[i].getPath() << "\"";
-      cmess2.flush();
-
-      if ( flags&HasCatalog ) cmess2 << " [have CATAL]." << endl;
-      else                    cmess2 << " [no CATAL]"    << endl;
-    }
-
-  // Temporary: create the SxLib routing gauge.
-    Technology* technology = db->getTechnology();
-
-    RoutingGauge* sxlibRg      = RoutingGauge::create ( "sxlib" );
-    const Layer*  routingLayer = NULL;
-
-    switch ( 1 ) {
-      default:
-        routingLayer = technology->getLayer("METAL1");
-        if ( routingLayer == NULL ) break;
-
-        sxlibRg->addLayerGauge ( RoutingLayerGauge::create( routingLayer
-                                                          , Constant::Vertical
-                                                          , Constant::PinOnly
-                                                          , 0              // Depth (?).
-                                                          , 0              // Density.
-                                                          , DbU::lambda(0) // Offset.
-                                                          , DbU::lambda(5) // Pitch.
-                                                          , DbU::lambda(2) // Wire width.
-                                                          , DbU::lambda(3) // Via width.
-                                                          ) );
-
-        routingLayer = technology->getLayer("METAL2");
-        if ( routingLayer == NULL ) break;
-
-        sxlibRg->addLayerGauge ( RoutingLayerGauge::create( routingLayer
-                                                          , Constant::Horizontal
-                                                          , Constant::Default
-                                                          , 1              // Depth (?).
-                                                          , 7.7            // Density.
-                                                          , DbU::lambda(0) // Offset.
-                                                          , DbU::lambda(5) // Pitch.
-                                                          , DbU::lambda(2) // Wire width.
-                                                          , DbU::lambda(3) // Via width.
-                                                          ) );
-
-        routingLayer = technology->getLayer("METAL3");
-        if ( routingLayer == NULL ) break;
-
-        sxlibRg->addLayerGauge ( RoutingLayerGauge::create( routingLayer
-                                                          , Constant::Vertical
-                                                          , Constant::Default
-                                                          , 2              // Depth (?).
-                                                          , 0              // Density.
-                                                          , DbU::lambda(0) // Offset.
-                                                          , DbU::lambda(5) // Pitch.
-                                                          , DbU::lambda(2) // Wire width.
-                                                          , DbU::lambda(3) // Via width.
-                                                          ) );
-
-        routingLayer = technology->getLayer("METAL4");
-        if ( routingLayer == NULL ) break;
-
-        sxlibRg->addLayerGauge ( RoutingLayerGauge::create( routingLayer
-                                                          , Constant::Horizontal
-                                                          , Constant::Default
-                                                          , 3              // Depth (?).
-                                                          , 0              // Density.
-                                                          , DbU::lambda(0) // Offset.
-                                                          , DbU::lambda(5) // Pitch.
-                                                          , DbU::lambda(2) // Wire width.
-                                                          , DbU::lambda(3) // Via width.
-                                                          ) );
-
-        routingLayer = technology->getLayer("METAL5");
-        if ( routingLayer == NULL ) break;
-
-        sxlibRg->addLayerGauge ( RoutingLayerGauge::create( routingLayer
-                                                          , Constant::Vertical
-                                                          , Constant::Default
-                                                          , 4              // Depth (?).
-                                                          , 0              // Density.
-                                                          , DbU::lambda(0) // Offset.
-                                                          , DbU::lambda(5) // Pitch.
-                                                          , DbU::lambda(2) // Wire width.
-                                                          , DbU::lambda(3) // Via width.
-                                                          ) );
-
-#if 0
-        routingLayer = technology->getLayer("METAL6");
-        if ( routingLayer == NULL ) break;
-
-        sxlibRg->addLayerGauge ( RoutingLayerGauge::create( routingLayer
-                                                          , Constant::Horizontal
-                                                          , Constant::Default
-                                                          , 5              // Depth (?).
-                                                          , 0              // Density.
-                                                          , DbU::lambda(0) // Offset.
-                                                          , DbU::lambda(5) // Pitch.
-                                                          , DbU::lambda(2) // Wire width.
-                                                          , DbU::lambda(3) // Via width.
-                                                          ) );
-        routingLayer = technology->getLayer("METAL7");
-        if ( routingLayer == NULL ) break;
-
-        sxlibRg->addLayerGauge ( RoutingLayerGauge::create( routingLayer
-                                                          , Constant::Vertical
-                                                          , Constant::Default
-                                                          , 7              // Depth (?).
-                                                          , 0              // Density.
-                                                          , DbU::lambda(0) // Offset.
-                                                          , DbU::lambda(5) // Pitch.
-                                                          , DbU::lambda(2) // Wire width.
-                                                          , DbU::lambda(3) // Via width.
-                                                          ) );
-#endif
-    }
-    addRoutingGauge ( sxlibRg );
-
-    CellGauge* sxlibCg = CellGauge::create ( "sxlib"
-                                           , "metal2"          // pinLayerName.
-                                           , DbU::lambda( 5.0) // pitch.
-                                           , DbU::lambda(50.0) // sliceHeight.
-                                           , DbU::lambda( 5.0) // sliceStep.
-                                           );
-    addCellGauge ( sxlibCg );
+  //if ( !_environment.getDisplayStyle().empty() )
+  //  Graphics::setStyle ( _environment.getDisplayStyle() );
   }
 
 
@@ -324,10 +173,43 @@ namespace CRL {
   }
 
 
+  void  AllianceFramework::_bindLibraries ()
+  {
+    DataBase*     db          = DataBase::getDB ();
+    unsigned int  flags       = InSearchPath;
+    SearchPath&   LIBRARIES   = _environment.getLIBRARIES ();
+    Library*      rootLibrary = db->getRootLibrary ();
+
+  //cmess2 << "  o  Creating Alliance Framework root library." << endl;
+    if ( !rootLibrary )
+      rootLibrary = Library::create ( db, "RootLibrary" );
+
+    _parentLibrary = rootLibrary->getLibrary ( _parentLibraryName );
+    if ( !_parentLibrary )
+      _parentLibrary = Library::create ( rootLibrary, _parentLibraryName );
+
+  //cmess2 << "  o  Loading libraries (working first)." << endl;
+    for ( unsigned i=0 ; i<LIBRARIES.getSize() ; i++ ) {
+      createLibrary ( LIBRARIES[i].getPath(), flags, LIBRARIES[i].getName() );
+
+    //cmess2 << "     - \"" << LIBRARIES[i].getPath() << "\"";
+    //cmess2.flush();
+
+    //if ( flags&HasCatalog ) cmess2 << " [have CATAL]." << endl;
+    //else                    cmess2 << " [no CATAL]"    << endl;
+    }
+  }
+
+
   AllianceFramework* AllianceFramework::create ()
   {
-    if ( !_singleton )
+    if ( !_singleton ) {
+    // Triggers System singleton creation.
+      System::get ();
       _singleton = new AllianceFramework ();
+      System::runPythonInit();
+      _singleton->_bindLibraries();
+    }
 
     return _singleton;
   }
@@ -761,9 +643,13 @@ namespace CRL {
   Record *AllianceFramework::_getRecord () const
   {
     Record* record = new Record ( "<AllianceFramework>" );
-    record->add ( getSlot ( "_environment", &_environment) );
-    record->add ( getSlot ( "_libraries"  , &_libraries  ) );
-    record->add ( getSlot ( "_catalog"    , &_catalog    ) );
+    record->add ( getSlot ( "_environment"         , &_environment         ) );
+    record->add ( getSlot ( "_libraries"           , &_libraries           ) );
+    record->add ( getSlot ( "_catalog"             , &_catalog             ) );
+    record->add ( getSlot ( "_defaultRroutingGauge",  _defaultRoutingGauge ) );
+    record->add ( getSlot ( "_routingGauges"       ,  _routingGauges       ) );
+    record->add ( getSlot ( "_defaultCellGauge"    ,  _defaultCellGauge    ) );
+    record->add ( getSlot ( "_cellGauges"          ,  _cellGauges          ) );
     return record;
   }
 

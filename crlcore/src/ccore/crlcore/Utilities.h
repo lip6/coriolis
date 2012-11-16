@@ -2,25 +2,17 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./Utilities.h"                            |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :   "./crlcore/Utilities.h"                        |
+// +-----------------------------------------------------------------+
 
 
 #ifndef __CRL_UTILITIES_H__
@@ -58,28 +50,31 @@ namespace CRL {
 
   class  System {
     public:
-      static        System*          get          ();
-      static inline bool             getCatchCore ();
-      static inline const bfs::path& getPath      ( const std::string& );
-      static inline bool             setCatchCore ( bool catchCore );
+      static        System*          get           ();
+      static inline bool             getCatchCore  ();
+      static inline const bfs::path& getPath       ( const std::string& );
+      static inline bool             setCatchCore  ( bool catchCore );
+      static inline void             runPythonInit ();
     private:
       static System*                                _singleton;
              bool                                   _catchCore;
              std::map<const std::string,bfs::path>  _pathes;
     private:
-                              System        ();
-                              System        ( const System &other );
-             System&          operator=     ( const System &other );
-      static void             _trapSig      ( int sig );
-      inline bool             _getCatchCore ();
-             const bfs::path& _getPath      ( const std::string& );
-      inline bool             _setCatchCore ( bool catchCore );
+                              System         ();
+                              System         ( const System &other );
+             System&          operator=      ( const System &other );
+      static void             _trapSig       ( int sig );
+      inline bool             _getCatchCore  ();
+             const bfs::path& _getPath       ( const std::string& );
+      inline bool             _setCatchCore  ( bool catchCore );
+             void             _runPythonInit ();
   };
 
 
-  inline bool             System::getCatchCore ()                         { return get()->_getCatchCore(); }
-  inline const bfs::path& System::getPath      ( const std::string& key ) { return get()->_getPath(key); }
-  inline bool             System::setCatchCore ( bool catchCore )         { return get()->_setCatchCore(catchCore); }
+  inline bool             System::getCatchCore  ()                         { return get()->_getCatchCore(); }
+  inline const bfs::path& System::getPath       ( const std::string& key ) { return get()->_getPath(key); }
+  inline bool             System::setCatchCore  ( bool catchCore )         { return get()->_setCatchCore(catchCore); }
+  inline void             System::runPythonInit ()                         { return get()->_runPythonInit(); }
 
 
 // -------------------------------------------------------------------

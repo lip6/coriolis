@@ -1,0 +1,165 @@
+
+ // -*- C++ -*-
+
+
+ namespace CRL {
+
+ /*! \namespace    CRL
+  *  \brief        The namespace of Coriolis Core.
+  */
+
+
+ /*! \class        AllianceFramework
+  *  \brief        A Framework to work with Alliance formats.
+  *
+  *                The AllianceFramework is also registered as Hurricane::Property on the
+  *                Hurricane::DataBase.
+  */
+
+ /*! \function     AllianceFramework* AllianceFramework::create();
+  *  \Return       The AllianceFramework singleton. This function has no effect if
+  *                the singleton has already been created. It is indeed an alias
+  *                over AllianceFramework::get().
+  */
+ /*! \function     void  AllianceFramework::destroy();
+  *  \Return       Destroy the singleton, the libraries and the various gauges.
+  */
+ /*! \function     void  AllianceFramework::get();
+  *  \Return       the singleton, create it if need be.
+  */
+   
+
+ /*! \function     bool  AllianceFramework::isPOWER(const string& name);
+  *  \Return       \true if \c name is recognized as a power net name.
+  */
+ /*! \function     bool  AllianceFramework::isGROUND(const string& name);
+  *  \Return       \true if \c name is recognized as a ground net name.
+  */
+ /*! \function     bool  AllianceFramework::isCLOCK(const string& name);
+  *  \Return       \true if \c name is recognized as a clock net name.
+  */
+ /*! \function     bool  AllianceFramework::isBLOCKAGE(const string& name);
+  *  \Return       \true if \c name is recognized as a blockage net name.
+  */
+ /*! \function     bool  AllianceFramework::isPad(const string& name);
+  *  \Return       \true if \c name is recognized as a pad cell name.
+  */
+
+   
+ /*! \function     string  AllianceFramework::getPrint() const;
+  *  \Return       A nicely formatted string displaying the configuration of the
+  *                AllianceFramework, for ttys.
+  */
+ /*! \function     Environment* AllianceFramework::getEnvironment();
+  *  \Return       the Environement.
+  */
+ /*! \function     Catalog* AllianceFramework::getCatalog();
+  *  \Return       the composite catalog build from all the library metadatas.
+  */
+ /*! \function     const Name& AllianceFramework::getParentLibraryName() const;
+  *  \Return       the name of the framework parent library, actually hard coded
+  *                to "RootLibrary".
+  */
+ /*! \function     Library* AllianceFramework::getParentLibrary();
+  *  \Return       the library under which the Alliance ones are rooted.
+  */
+ /*! \function     Library* AllianceFramework::getLibrary(unsigned int index);
+  *  \Return       the Hurricane::Library at \c index in the search path.
+  */
+ /*! \function     AllianceLibrary* AllianceFramework::getAllianceLibrary(unsigned int index);
+  *  \Return       the AllianceLibrary at \c index in the search path.
+  */
+ /*! \function     AllianceLibrary* AllianceFramework::getAllianceLibrary(const Name& linName, unsigned int& flags);
+  *  \Return       the AllianceLibrary named \c libName. Create it if \c flags contains
+  *                AllianceFramework::CreateLibrary.
+  */
+ /*! \function     AllianceLibrary* AllianceFramework::getAllianceLibrary(Library* library);
+  *  \Return       the AllianceLibrary which is associated to the Hurricane::Library \c library.
+  */
+ /*! \function     RoutingGauge* AllianceFramework::getRoutingGauge(const Name& name="");
+  *  \Return       get the RoutingGauge \c name. If \c name is empty, the default one.
+  */
+ /*! \function     CellGauge* AllianceFramework::getRoutingGauge(const Name& name="");
+  *  \Return       get the CellGauge \c name. If \c name is empty, the default one.
+  */
+ /*! \function     const Name  AllianceFramework::getDefaultCGPinLayerName() const;
+  *  \Return       argh. Forget for what it is.
+  */
+
+
+ /*! \function     AllianceLibrary* AllianceFramework::createLibrary(const string& path, unsigned int& flags, string libName="");
+  *  \param        path     path to the library directory.
+  *  \param        flags    control the creation behavior.
+  *  \param        libName  the name of the library.
+  *  \Return       the created Alliance library.
+  *
+  *                Create a new AllianceLibrary. If the library is not already in the search
+  *                it's prepended, otherwise the one already in place is used. If the
+  *                library is in <i>load by lib</i> mode, the library parser is called and
+  *                all the Cells are loaded.
+  */
+ /*! \function     void  AllianceFramework::saveLibrary(Library* library);
+  *  \Return       save to disk all Cells of that library.
+  */
+ /*! \function     void  AllianceFramework::saveLibrary(AllianceLibrary* library);
+  *  \Return       save to disk all Cells of that library.
+  */
+ /*! \function     void  AllianceFramework::addRoutingGauge(RoutingGauge* gauge);
+  *  \Return       Add a new RoutingGauge. The last added becomes the default one.
+  */
+ /*! \function     void  AllianceFramework::addCellGauge(CellGauge* gauge);
+  *  \Return       Add a new CellGauge. The last added becomes the default one.
+  */
+ /*! \function     Cell*  AllianceFramework::getCell(const string& name, unsigned int mode, unsigned int depth=(unsigned int)-1);
+  *  \param        name     the name of the Cell.
+  *  \param        mode     control the loader behavior.
+  *  \param        depth    the number of hierarchical levels under this cell. 
+  *  \Return       the requested Cell.
+  *
+  *                Find the first cell that match in the library search path, then
+  *                call the parsers to load the requested views. If the cell is already
+  *                in memory, it is directly returned. Thus a Cell never gets loaded
+  *                twice from disk.
+  */
+ /*! \function     void  AllianceFramework::saveCell(Cell* cell, unsigned int mode);
+  *                Save on disk the requested Cell (in the revelant library directory).
+  */
+ /*! \function     unsigned int  AllianceFramework::loadLibraryCells(Library* library);
+  *  \Return       the number of loaded cell.
+  *                Load the whole library.
+  */
+ /*! \function     unsigned int  AllianceFramework::loadLibraryCells(const Name&);
+  *  \Return       the number of loaded cell.
+  *                Load the whole library.
+  */
+ /*! \function     size_t  AllianceFramework::getInstancesCount(Cell* cell, unsigned int flags);
+  *  \Return       the number of instances of that cell. Depending on \c flags, may be
+  *                recursive or exclude feed cells.
+  */
+
+
+ /*! \enum         AllianceFramework::InstancesCountFlags
+  *                Flags to control the way AllianceFramework::getInstancesCount() work.
+  */
+ /*! \var          AllianceFramework::InstancesCountFlags  AllianceFramework::Recursive;
+  *                Account the instances down to the leaf cells.
+  */
+ /*! \var          AllianceFramework::InstancesCountFlags  AllianceFramework::IgnoreFeeds;
+  *                Don't count feed cells.
+  */
+
+ /*! \enum         AllianceFramework::LibraryFlags
+  *                Flags to control Library creation.
+  */
+ /*! \var          AllianceFramework::LibraryFlags  AllianceFramework::CreateLibrary;
+  *                Ask to create a library if it doesn't exists.
+  */
+ /*! \var          AllianceFramework::LibraryFlags  AllianceFramework::InSearchPath;
+  *                This flag is set whenever the library is already in the search path.
+  */
+ /*! \var          AllianceFramework::LibraryFlags  AllianceFramework::HasCatalog;
+  *                This flag is set if the CATALOG file metadata is present in the
+  *                library directory.
+  */
+
+ }

@@ -2,25 +2,17 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./Environment.h"                          |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./crlcore/Environment.h"                       |
+// +-----------------------------------------------------------------+
 
 
 #ifndef  __CRL_ENVIRONMENT__
@@ -73,6 +65,7 @@ namespace CRL {
              bool               isPad                  ( const char* name ) const;
 
     // Modifiers.
+             void               validate               () const;
              void               loadFromXml            ( const std::string& path="", bool warnNotFound=true );
              void               loadFromShell          ();
       inline void               setDisplayStyle        ( const char* );
@@ -127,7 +120,6 @@ namespace CRL {
 
     private:
              void         _setRegex       ( regex_t* regex, const std::string& pattern, const char* name );
-             void         _check          () const;
   };
 
 

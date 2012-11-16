@@ -1,0 +1,11 @@
+
+ // -*- C++ -*-
+
+
+ namespace CRL {
+
+ /*! \namespace    CRL
+  *  \brief        Namespace of Coriolis Core
+  */
+
+ }

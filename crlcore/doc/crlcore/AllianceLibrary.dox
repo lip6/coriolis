@@ -1,0 +1,30 @@
+
+ // -*- C++ -*-
+
+
+ namespace CRL {
+
+ /*! \class        AllianceLibrary
+  *  \brief        A small wrapper around Hurricane::Library.
+  *
+  *                The AllianceLibrary simply adds the path from which the
+  *                Hurricane::Library has been loaded.
+  */
+
+   
+ /*! \function     AllianceLibrary::AllianceLibrary();
+  *                A new, empty, AllianceLibrary.
+  */
+ /*! \function     AllianceLibrary::AllianceLibrary(const Name& path, Library* library=NULL);
+  *                A new AllianceLibrary, with \c path positionned and possibly \c library.
+  */
+
+   
+ /*! \function     const Name& AllianceLibrary::getPath() const;
+  *  \return       the associated path.
+  */
+ /*! \function     Hurricane::Library* AllianceLibrary::getLibrary() const;
+  *  \return       the associated library.
+  */
+
+ }

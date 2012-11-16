@@ -22,7 +22,7 @@ using namespace CRL;
 
 extern char    *yytext;
 
-extern int yyerror(char *str);
+extern int yyerror(const char *str);
 extern int yylex();
 
 enum Orientation {T=0, B=1, R=2, L=3, I=4};
@@ -164,7 +164,7 @@ iopin1 :   IOCID1{
 	;
 %%
 
-int yyerror (char *str)
+int yyerror (const char *str)
 {
     fflush(stdout);
     fprintf(stderr, "error parsing the ioc file: %s before %s\n", str, yytext);

@@ -1,0 +1,29 @@
+
+ // -*- C++ -*-
+
+
+ namespace CRL {
+
+ /*! \class        GraphicTool
+  *  \brief        Base Class to Hook ToolEngines into the CellViewer
+  *
+  *                This class implement the graphical conterpart of a ToolEngine. 
+  *                It is designed to work with the Unicorn GUI, to insert new
+  *                menus and possibly define new graphical overlays (that are
+  *                \e not associated to Hurricane::BasicLayer).
+  *
+  *                Derived classes should provide a method that returns a new
+  *                GraphicTool to be passed to the Unicorn::UnicornGui::registerTool()
+  *                method. For our tools, we choose to systematically implement
+  *                a \c static method which we name \e grab().
+  */
+
+ /*! \function     void  GraphicTool::addToMenu( CellViewer* viewer);
+  *                Callback function that should insert the menus related to the
+  *                tool in the CellViewer hierarchy.
+  */
+ /*! \function     virtual const Hurricane::Name& GraphicTool::getName() const = 0;
+  *  \Return       An unique identifier for the tool.
+  */
+
+ }

@@ -189,7 +189,7 @@ namespace {
   
 
 
-  int   yyerror    ( char* message );
+  int   yyerror    ( const char* message );
   void  VstError   ( int code, const string& name );
   Net*  getNet     ( Cell* cell, const string& name ); 
   void  SetNetType ( Net* net );
@@ -1130,7 +1130,7 @@ namespace {
   //
   // The Bison standard parser error (yyerror).
 
-  int  yyerror ( char* message )
+  int  yyerror ( const char* message )
   {
      throw Error ( "CParsVst():\n  %s before %s at line %d.\n"
                  , message, yytext, vhdLineNumber );

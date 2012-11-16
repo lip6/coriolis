@@ -2,26 +2,17 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
-//
-// ===================================================================
-//
-// $Id$
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
 // x-----------------------------------------------------------------x
-// |                                                                 |
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul Chaput              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./GraphicTool.h"                          |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
+// |  C++ Header  :  "./crlcore/GraphicTool.h"                       |
 // x-----------------------------------------------------------------x
-
 
 
 #ifndef __CRL_GRAPHIC_TOOL__

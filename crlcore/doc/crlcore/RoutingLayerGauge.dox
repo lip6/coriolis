@@ -1,0 +1,131 @@
+
+ // -*- C++ -*-
+
+
+ namespace CRL {
+
+ /*! \class        RoutingLayerGauge
+  *  \brief        Gauge of a Layer for the detailed routing
+  */
+
+   
+ /*! \function     RoutingLayerGauge* RoutingLayerGauge::create(const Layer* layer, unsigned int direction, unsigned int type, unsigned int depth, double density, DbU::Unit offset, DbU::Unit pitch, DbU::Unit wireWidth, DbU::Unit viaWidth);
+  *  \param        layer       the layer of the gauge (has to be of metal type).
+  *  \param        direction   the preferred routing direction.
+  *  \param        type        is it a pin only layer.
+  *  \param        depth       the depth (position) of the gauge.
+  *  \param        density     the track density (0.0 < d < 1.0).
+  *  \param        offset      position of the first track.
+  *  \param        pitch       distance, center-to-center between tracks.
+  *  \param        wireWidth   width to use to draw routing wire.
+  *  \param        viaWidth    side length to use for VIAs.
+  *  \Return       The new layer gauge.
+  */
+ /*! \function     void  RoutingLayerGauge::destroy();
+  *  \Return       destroy the routing gauge.
+  */
+
+
+ /*! \function     const Layer* RoutingLayerGauge::getLayer() const;
+  *  \Return       the routing layer.
+  */
+ /*! \function     const Layer* RoutingLayerGauge::getBlockageLayer() const;
+  *  \Return       the associated blockage layer.
+  */
+ /*! \function     unsigned int  RoutingLayerGauge::getDepth() const;
+  *  \Return       the depth (position) of the gauge inside the complete RoutingGauge.
+  */
+ /*! \function     unsigned int  RoutingLayerGauge::getDirection() const;
+  *  \Return       the preferred routing direction.
+  */
+ /*! \function     unsigned int  RoutingLayerGauge::getType() const;
+  *  \Return       the gauge type.
+  */
+ /*! \function     double  RoutingLayerGauge::getDensity() const;
+  *  \Return       the density of routing tracks (ratio).
+  */
+ /*! \function     DbU::Unit  RoutingLayerGauge::getOffset() const;
+  *  \Return       the position of the first track.
+  */
+ /*! \function     DbU::Unit  RoutingLayerGauge::getPitch() const;
+  *  \Return       the distance center-to-center between tracks.
+  */
+ /*! \function     DbU::Unit  RoutingLayerGauge::getHalfPitch() const;
+  *  \Return       the half distance center-to-center between tracks.
+  */
+ /*! \function     DbU::Unit  RoutingLayerGauge::getWireWidth() const;
+  *  \Return       the width of the routing wires.
+  */
+ /*! \function     DbU::Unit  RoutingLayerGauge::getHalfWireWidth() const;
+  *  \Return       the half width of the routing wires.
+  */
+ /*! \function     DbU::Unit  RoutingLayerGauge::getViaWidth() const;
+  *  \Return       the side of the routing VIAs.
+  */
+ /*! \function     DbU::Unit  RoutingLayerGauge::getHalfViaWidth() const;
+  *  \Return       the half side of the routing VIAs.
+  */
+ /*! \function     void  RoutingLayerGauge::divide(DbU::Unit dividend, long& quotient, long& modulo) const;
+  *  \param        dividend    the length into witch put tracks.
+  *  \param        quotient    the number of tracks that fits the interval.
+  *  \param        modulo      the remainder.
+  */
+ /*! \function     unsigned int  RoutingLayerGauge::getTrackNumber(DbU::Unit start, DbU::Unit stop) const;
+  *  \Return       the number of tracks that can tool place in the interval <code>[start:stop]</code>.
+  */
+ /*! \function     unsigned int  RoutingLayerGauge::getTrackIndex(DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode) const;
+  *  \Return       the index of the track nearest position \c position in interval
+  *                <code>[start:stop]</code>, according the rounding \c mode.
+  */
+ /*! \function     DbU::Unit  RoutingLayerGauge::getTrackPosition(DbU::Unit start, unsigned depth) const;
+  *  \Return       the position of the track number \c depth (with first track at \c start).
+  */
+
+ }
+
+
+ namespace Constant {
+
+ /*! \namespace    Constant
+  *  \brief        Store various constants.
+  */
+
+
+ /*! \enum         Direction
+  *                Routing directions.
+  */
+ /*! \var          Direction  Direction::Horizontal;
+  *                Preferred routing direction is horizontal.
+  */
+ /*! \var          Direction  Direction::Vertical;
+  *                Preferred routing direction is vertical.
+  */
+
+ /*! \enum         LayerGaugeType
+  *                Routing directions.
+  */
+ /*! \var          LayerGaugeType  LayerGaugeType::Default;
+  *                This is layer is a normal routing one.
+  */
+ /*! \var          LayerGaugeType  LayerGaugeType::PinOnly;
+  *                This layer is only used to connect to pin.
+  *                No routing wire will be drawn with it.
+  */
+
+ /*! \enum         Round
+  *                Routing directions.
+  */
+ /*! \var          Round  Superior;
+  *                Round to the superior bound.
+  */
+ /*! \var          Round  Inferior;
+  *                Round to the inferior bound.
+  */
+ /*! \var          Round  Nearest;
+  *                Round to the nearest bound.
+  */
+ /*! \var          Round  Exact;
+  *                Accept only exact match (no rounding errors).
+  */
+
+ }

@@ -35,7 +35,7 @@ namespace CRL {
       return false;
     }
 
-    cmess1 << "     - <" << path << ">." << endl;
+  //cmess1 << "     - <" << path << ">." << endl;
 
     QXmlStreamReader  reader ( &file );
     _reader = &reader;

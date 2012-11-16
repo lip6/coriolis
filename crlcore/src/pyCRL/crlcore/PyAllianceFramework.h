@@ -2,29 +2,21 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2010-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./PyAllianceFramework.cpp"                |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./crlcore/PyAllianceFramework.h"               |
+// +-----------------------------------------------------------------+
 
 
-#ifndef __PY_ALLIANCE_FRAMEWORK__
-#define __PY_ALLIANCE_FRAMEWORK__
+#ifndef __CRL_PY_ALLIANCE_FRAMEWORK__
+#define __CRL_PY_ALLIANCE_FRAMEWORK__
 
 #include "hurricane/isobar/PyHurricane.h"
 #include "crlcore/AllianceFramework.h"
@@ -60,10 +52,10 @@ extern "C" {
 #define PYALLIANCEFRAMEWORK_O(v)  ( PYALLIANCEFRAMEWORK(v)->_object )
 
 
-}  // End of extern "C".
+}  // extern "C".
 
 
-}  // End of CRL namespace.
+}  // CRL namespace.
 
 
-#endif  // __PY_ALLIANCE_FRAMEWORK__
+#endif  // __CRL_PY_ALLIANCE_FRAMEWORK__

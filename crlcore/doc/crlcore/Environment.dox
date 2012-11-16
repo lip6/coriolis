@@ -1,0 +1,204 @@
+
+ // -*- C++ -*-
+
+
+ namespace CRL {
+
+ /*! \class        Environment
+  *  \brief        Holds all the Alliance environment variables.
+  *
+  *                This object is not to be used alone, but only as an attribute
+  *                of AllianceFramework.
+  *
+  *                Although we constantly refer of the contents of this object
+  *                as <em>environement variables</em>, they may (and should) be
+  *                initialized through the Coriolis Python environement loader
+  *                or legacy XML parsers.
+  */
+
+
+ /*! \function     Environment::Environment()
+  *                Default constructor. All variables are initialized to their
+  *                reasonable defaults.
+  */
+   
+ /*! \function     Environment::~Environment()
+  *                Destructor.
+  */
+
+
+ /*! \function     bool  Environment::isPOWER(const char* name) const;
+  *  \Return       \true if \c name is recognized as a power net name.
+  */
+ /*! \function     bool  Environment::isGROUND(const char* name) const;
+  *  \Return       \true if \c name is recognized as a ground net name.
+  */
+ /*! \function     bool  Environment::isCLOCK(const char* name) const;
+  *  \Return       \true if \c name is recognized as a clock net name.
+  */
+ /*! \function     bool  Environment::isBLOCKAGE(const char* name) const;
+  *  \Return       \true if \c name is recognized as a blockage net name.
+  */
+ /*! \function     bool  Environment::isPad(const char* name) const;
+  *  \Return       \true if \c name is recognized as a pad cell name.
+  */
+
+   
+ /*! \function     const std::string& Environment::getCORIOLIS_TOP() const;
+  *  \Return       The Coriolis top installation directory.
+  */
+ /*! \function     const std::string& Environment::getDisplayStyle() const;
+  *  \Return       The current display style name.
+  */
+ /*! \function     long Environment::getSCALE_X() const;
+  *  \Return       The default scaling factor used if omitted in an AP file.
+  */
+ /*! \function     const std::string& Environment::getSYMBOLIC_TECHNOLOGY() const;
+  *  \Return       The path toward the file holding the symbolic technology datas.
+  */
+ /*! \function     const std::string& Environment::getREAL_TECHNOLOGY() const;
+  *  \Return       The path toward the file holding the real technology datas (GDS).
+  */
+ /*! \function     const std::string& Environment::getDISPLAY() const;
+  *  \Return       The path toward the file holding the display datas.
+  *                Data to initialize the various Hurricane::DrawingStyle.
+  */
+ /*! \function     const std::string& Environment::getIN_LO() const;
+  *  \Return       The input format for logical (netlist) files.
+  */
+ /*! \function     const std::string& Environment::getIN_PH() const;
+  *  \Return       The input format for physical (layout) files.
+  */
+ /*! \function     const std::string& Environment::getOUT_LO() const;
+  *  \Return       The output format for logical (netlist) files.
+  */
+ /*! \function     const std::string& Environment::getOUT_PH() const;
+  *  \Return       The output format for physical (layout) files.
+  */
+ /*! \function     const std::string& Environment::getPOWER() const;
+  *  \Return       The pattern (regular expression) used to match for power nets names.
+  */
+ /*! \function     const std::string& Environment::getGROUND() const;
+  *  \Return       The pattern (regular expression) used to match for ground nets names.
+  */
+ /*! \function     const std::string& Environment::getCLOCK() const;
+  *  \Return       The pattern (regular expression) used to match for clock nets names.
+  */
+ /*! \function     const std::string& Environment::getBLOCKAGE() const;
+  *  \Return       With the Hurricane database you cannot create physical components
+  *                whithout a net. All segments used for signaling blockage area are
+  *                grouped inside a unique net, which name is given by this variable.
+  *
+  *  \remark       Be sure to use a significant name which is not likely to collide
+  *                with true nets.
+  */
+ /*! \function     const std::string& Environment::getPad() const;
+  *  \Return       The pattern (regular expression) used to match for pad cell names.
+  */
+ /*! \function     const std::string& Environment::getCATALOG() const;
+  *  \Return       The name of the auxiliary file in library directories holding the
+  *                meta-informations about the cells.
+  */
+ /*! \function     SearchPath& Environment::getLIBRARIES();
+  *  \Return       The ordered list of libraries, under the form of a serch path.
+  */
+ /*! \function     std::string  Environment::getPrint() const;
+  *  \Return       A nicely formatted string to resume the current environements
+  *                settings. Mainly for verbose outputs on ttys.
+  */
+
+
+ /*! \function     void  Environment::validate() const;
+  *                Check for the coherency of the various environement variables.
+  *                Throw an exception if something incoherent is found.
+  */
+ /*! \function     void  Environment::loadFromXml(const std::string& path="", bool warnNotFound=true);
+  *                Load the environment from the XML file \c path. Fails silently if
+  *                \c warnNotFound is set to \true.
+  *
+  *  \remark       This method is kept for backward compatibility. Initialisation
+  *                is now done through Python helpers.
+  */
+ /*! \function     void  Environment::loadFromShell();
+  *                Load the environment from UNIX environement.
+  */
+ /*! \function     void  Environment::setDisplayStyle(const char* name);
+  *                Sets the current display style to \c name.
+  */
+ /*! \function     void Environment::setSCALE_X(long value);
+  *                Sets the default scaling factor used if omitted in an AP file.
+  */
+ /*! \function     void Environment::setSYMBOLIC_TECHNOLOGY(const char* value);
+  *                Sets the path toward the file holding the symbolic technology datas.
+  */
+ /*! \function     void Environment::setREAL_TECHNOLOGY(const char* value);
+  *                Sets the path toward the file holding the real technology datas (GDS).
+  */
+ /*! \function     void Environment::setDISPLAY(const char* value);
+  *                Sets the path toward the file holding the display datas.
+  *                Data to initialize the various Hurricane::DrawingStyle.
+  */
+ /*! \function     void Environment::setIN_LO(const char* value);
+  *                Sets the input format for logical (netlist) files.
+  */
+ /*! \function     void Environment::setIN_PH(const char* value);
+  *                Sets the input format for physical (layout) files.
+  */
+ /*! \function     void Environment::setOUT_LO(const char* value);
+  *                Sets the output format for logical (netlist) files.
+  */
+ /*! \function     void Environment::setOUT_PH(const char* value);
+  *                Sets the output format for physical (layout) files.
+  */
+ /*! \function     void Environment::setPOWER(const char* value);
+  *                Sets the pattern (regular expression) used to match for power nets names.
+  */
+ /*! \function     void Environment::setGROUND(const char* value);
+  *                Sets the pattern (regular expression) used to match for ground nets names.
+  */
+ /*! \function     void Environment::setCLOCK(const char* value);
+  *                Sets the pattern (regular expression) used to match for clock nets names.
+  */
+ /*! \function     void Environment::setBLOCKAGE(const char* value);
+  *                With the Hurricane database you cannot create physical components
+  *                whithout a net. All segments used for signaling blockage area are
+  *                grouped inside a unique net, which name is given by this variable.
+  *
+  *  \remark       Be sure to use a significant name which is not likely to collide
+  *                with true nets.
+  */
+ /*! \function     void Environment::setPad(const char* value);
+  *                Sets the pattern (regular expression) used to match for pad cell names.
+  */
+ /*! \function     void Environment::setCATALOG(const char* value);
+  *                Sets the name of the auxiliary file in library directories holding the
+  *                meta-informations about the cells.
+  */
+ /*! \function     void Environment::setWORKING_LIBRARY(const char* value);
+  *                Sets the directory in which create cells will be saved.
+  */
+ /*! \function     void Environment::addSYSTEM_LIBRARY(const char* value, const char* libName, unsigned int mode=Append);
+  *  \param        value    the path (directory) in which the library is located.
+  *  \param        libName  the name under which to register the library.
+  *  \param        mode     the insertion mode.
+  *                Adds a Cell library to the search path.
+  */
+
+
+ /*! \enum         Environment::AddMode
+  *                This enumeration defines the way libraries are added to the
+  *                already existing table.
+  */
+ /*! \var          Environment::AddMode  Environment::Append;
+  *                The library is appended to the search list.
+  */
+ /*! \var          Environment::AddMode  Environment::Prepend;
+  *                The library is prepended to the search list.
+  */
+ /*! \var          Environment::AddMode  Environment::Replace;
+  *                If a library of same name already exists, it's discarted
+  *                and this one is put in it's place in the search order.
+  *                Otherwise it is appended.
+  */
+
+ }

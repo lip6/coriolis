@@ -2,25 +2,17 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./Environnment.cpp"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Module  :  "./Environnment.cpp"                            |
+// +-----------------------------------------------------------------+
 
 
 #include  <cctype>
@@ -562,7 +554,7 @@ namespace CRL {
   {
     XmlEnvironmentParser::load ( *this, path, warnNotFound );
 
-    _check ();
+    validate ();
   }
 
 
@@ -570,7 +562,7 @@ namespace CRL {
   {
     _CORIOLIS_TOP = getEnv ( "CORIOLIS_TOP", CORIOLIS_TOP );
 
-    _check ();
+    validate ();
   }
 
 
@@ -699,7 +691,7 @@ namespace CRL {
   }
 
 
-  void  Environment::_check () const
+  void  Environment::validate () const
   {
     switch ( _SCALE_X ) {
       case 1:   break;
@@ -773,6 +765,8 @@ namespace CRL {
     record->add ( getSlot ( "_DISPLAY"            , &_DISPLAY             ) );
     record->add ( getSlot ( "_IN_LO"              , &_IN_LO               ) );
     record->add ( getSlot ( "_IN_PH"              , &_IN_PH               ) );
+    record->add ( getSlot ( "_OUT_LO"             , &_OUT_LO              ) );
+    record->add ( getSlot ( "_OUT_PH"             , &_OUT_PH              ) );
     record->add ( getSlot ( "_POWER"              , &_POWER               ) );
     record->add ( getSlot ( "_GROUND"             , &_GROUND              ) );
     record->add ( getSlot ( "_CLOCK"              , &_CLOCK               ) );
