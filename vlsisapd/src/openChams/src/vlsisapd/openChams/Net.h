@@ -1,85 +1,88 @@
-/*
- *  Net.h
- *  openChams
- *
- *  Created by damien dupuis on 12/01/10.
- *  Copyright 2010 UPMC / LIP6. All rights reserved.
- *
- */
+
+// -*- C++ -*-
+//
+// This file is part of the VLSI SAPD Software.
+// Copyright (c) UPMC/LIP6 2010-2012, All Rights Reserved
+//
+// +-----------------------------------------------------------------+ 
+// |                  V L S I   S A P D                              |
+// |             OpenChams Circuit Data Base                         |
+// |                                                                 |
+// |  Author      :                       Damien Dupuis              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
+// | =============================================================== |
+// |  C++ Header  :  "./vlsisapd/openChams/Net.h"                    |
+// +-----------------------------------------------------------------+
+
 
 #ifndef __OPENCHAMS_NET_H__
 #define __OPENCHAMS_NET_H__
 
 #include <vector>
+#include <string>
 
-#include "vlsisapd/openChams/Name.h"
 
 namespace OpenChams {
-class Netlist;
-class Port;
-class Wire;
-class Net {
+
+  class Netlist;
+  class Port;
+  class Wire;
+
+  class Net {
     public:
-    class Connection {
+      class Connection {
         public:
-        Connection(Name instanceName, Name connectorName);
-
-        inline Name getInstanceName() const;
-        inline Name getConnectorName() const;
-
+                                    Connection      (const std::string& instanceName, const std::string& connectorName);
+          inline const std::string& getInstanceName () const;
+          inline const std::string& getConnectorName() const;
         private:
-        Name _instanceName;
-        Name _connectorName;
-    };
+          const std::string& _instanceName;
+          const std::string& _connectorName;
+      };
 
 	public:
-    Net(Name netName, Name typeName, bool, Netlist*);
-        
-    void connectTo(Name instanceName, Name connectorName);
-    
-    inline Name     getName() const;
-    inline Name     getType();
-    inline bool     isExternal();
-    inline Netlist* getNetlist();
-    inline bool     hasNoConnections();
-    //inline vector<pair<Name, Name> >::iterator getFirstConnectionIt();
-    //inline vector<pair<Name, Name> >::iterator getLastConnectionIt();
-    inline const std::vector<Net::Connection*>& getConnections();
-
+                                       Net              (const std::string& netName, const std::string& typeName, bool, Netlist*);
+             void                      connectTo        (const std::string& instanceName, const std::string& connectorName);
+      inline const std::string&        getName          () const;
+      inline const std::string&        getType          ();
+      inline bool                      isExternal       ();
+      inline Netlist*                  getNetlist       ();
+      inline bool                      hasNoConnections ();
+      inline const std::vector<Net::Connection*>& getConnections();
     // schematic relative methods
-    Port* addPort(Name type, unsigned idx, double x, double y, Name orient);
-    Wire* addWire();
-    inline bool hasNoPorts();
-    inline const std::vector<Port*>& getPorts();
-    inline bool hasNoWires();
-    inline const std::vector<Wire*>& getWires();
+             Port*                     addPort          (const std::string& type, unsigned idx, double x, double y, const std::string& orient);
+             Wire*                     addWire          ();
+      inline bool                      hasNoPorts       ();
+      inline const std::vector<Port*>& getPorts         ();
+      inline bool                      hasNoWires       ();
+      inline const std::vector<Wire*>& getWires         ();
 
     private:
-    Name     _name;
-    Name     _typeName;
-    bool     _isExternal;
-    Netlist* _netlist;
-    std::vector<Net::Connection*> _connections; // <instanceName, connectorName>
-    // schematic relative members
-    std::vector<Port*> _ports;
-    std::vector<Wire*> _wires;
-};
-    
-inline Name Net::getName() const { return _name; }
-inline Name Net::getType() { return _typeName; }
-inline bool Net::isExternal() { return _isExternal; }
-inline Netlist* Net::getNetlist() { return _netlist; }
-inline bool Net::hasNoConnections() { return (_connections.size() == 0)? true : false; }
-//inline vector<pair<Name, Name> >::iterator Net::getFirstConnectionIt() { return _connections.begin();};
-//inline vector<pair<Name, Name> >::iterator Net::getLastConnectionIt() { return _connections.end();};
-inline const std::vector<Net::Connection*>& Net::getConnections() { return _connections; }
-inline bool Net::hasNoPorts() { return (_ports.size() == 0)? true : false; }
-inline const std::vector<Port*>& Net::getPorts() { return _ports; }
-inline bool Net::hasNoWires() { return (_wires.size() == 0)? true : false; }
-inline const std::vector<Wire*>& Net::getWires() { return _wires; }
+      const std::string&             _name;
+      const std::string&             _typeName;
+      bool                           _isExternal;
+      Netlist*                       _netlist;
+      std::vector<Net::Connection*>  _connections;  // <instanceName, connectorName>
+    // schematic relative members    
+      std::vector<Port*>             _ports;
+      std::vector<Wire*>             _wires;
+  };
 
-inline Name Net::Connection::getInstanceName() const { return _instanceName; };
-inline Name Net::Connection::getConnectorName() const { return _connectorName; };
+    
+inline const std::string&        Net::getName         () const { return _name; }
+inline const std::string&        Net::getType         () { return _typeName; }
+inline bool                      Net::isExternal      () { return _isExternal; }
+inline Netlist*                  Net::getNetlist      () { return _netlist; }
+inline bool                      Net::hasNoConnections() { return (_connections.size() == 0)? true : false; }
+inline const std::vector<Net::Connection*>& Net::getConnections() { return _connections; }
+inline bool                      Net::hasNoPorts      () { return (_ports.size() == 0)? true : false; }
+inline const std::vector<Port*>& Net::getPorts        () { return _ports; }
+inline bool                      Net::hasNoWires      () { return (_wires.size() == 0)? true : false; }
+inline const std::vector<Wire*>& Net::getWires        () { return _wires; }
+
+
+inline const std::string& Net::Connection::getInstanceName () const { return _instanceName; };
+inline const std::string& Net::Connection::getConnectorName() const { return _connectorName; };
 
 } // namespace
 #endif

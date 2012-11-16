@@ -5,7 +5,6 @@ SET ( hpps vlsisapd/openChams/Circuit.h
            vlsisapd/openChams/Instance.h
            vlsisapd/openChams/Device.h
            vlsisapd/openChams/Net.h
-           vlsisapd/openChams/Name.h
            vlsisapd/openChams/Operator.h
            vlsisapd/openChams/Parameters.h
            vlsisapd/openChams/Schematic.h
@@ -28,7 +27,6 @@ SET ( cpps Circuit.cpp
            Instance.cpp
            Device.cpp
            Net.cpp
-           Name.cpp
            Operator.cpp
            Parameters.cpp
            Schematic.cpp

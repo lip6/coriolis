@@ -10,7 +10,8 @@
 #ifndef __OPENCHAMS_SIMULMODEL_H__
 #define __OPENCHAMS_SIMULMODEL_H__
 
-#include "vlsisapd/openChams/Name.h"
+#include <string>
+
 
 namespace OpenChams {
 class SimulModel {

@@ -1,57 +1,67 @@
-/*
- *  Schematic.h
- *  openChams
- *
- *  Created by damien dupuis on 22/01/10.
- *  Copyright 2010 UPMC / LIP6. All rights reserved.
- *
- */
+
+// -*- C++ -*-
+//
+// This file is part of the VLSI SAPD Software.
+// Copyright (c) UPMC/LIP6 2010-2012, All Rights Reserved
+//
+// +-----------------------------------------------------------------+ 
+// |                  V L S I   S A P D                              |
+// |             OpenChams Circuit Data Base                         |
+// |                                                                 |
+// |  Author      :                       Damien Dupuis              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
+// | =============================================================== |
+// |  C++ Header  :  "./vlsisapd/openChams/Schematic.h"              |
+// +-----------------------------------------------------------------+
+
 
 #ifndef __OPENCHAMS_SCHEMATIC_H__
 #define __OPENCHAMS_SCHEMATIC_H__
 
 #include <map>
-
-#include "vlsisapd/openChams/Name.h"
+#include <string>
 
 namespace OpenChams {
-class Circuit;
 
-class Schematic {
+  class Circuit;
+
+
+  class Schematic {
+
 	public:
-    class Infos {
+      class Infos {
     	public:
-        Infos(double x, double y, Name orient);
-        
-    	inline double getX();
-        inline double getY();
-        inline Name   getOrientation();
-        
+                                    Infos         (double x, double y, const std::string& orient);
+          inline double             getX          ();
+          inline double             getY          ();
+          inline const std::string& getOrientation();
 	    private:
-        double _x;
-        double _y;
-        Name   _orient;
-    };
+          double       _x;
+          double       _y;
+          std::string  _orient;
+      };
+
 	public:
-    Schematic(Circuit*);
-        
-    void addInstance(Name instanceName, double x, double y, Name orient );
-        
-    inline bool   hasNoInstances();
-    inline const std::map<Name, Infos*>& getInstances();
-        
+                                                  Schematic      ( Circuit* );
+             void                                 addInstance    ( const std::string& instanceName
+                                                                 , double x
+                                                                 , double y
+                                                                 , const std::string& orient );
+      inline bool                                 hasNoInstances ();
+      inline const std::map<std::string, Infos*>& getInstances();
     private:
-    Circuit* _circuit;
-    std::map<Name, Infos*> _instances;
+      Circuit*                       _circuit;
+      std::map<std::string, Infos*>  _instances;
 };
 
-inline bool   Schematic::hasNoInstances() { return (_instances.size() == 0) ? true : false; };
-inline const std::map<Name, Schematic::Infos*>& Schematic::getInstances() { return _instances; };    
+inline bool                                            Schematic::hasNoInstances() { return _instances.empty(); };
+inline const std::map<std::string, Schematic::Infos*>& Schematic::getInstances  () { return _instances; };    
     
-inline double Schematic::Infos::getX()           { return _x; };
-inline double Schematic::Infos::getY()           { return _y; };
-inline Name   Schematic::Infos::getOrientation() { return _orient; };
+inline double             Schematic::Infos::getX          () { return _x; };
+inline double             Schematic::Infos::getY          () { return _y; };
+inline const std::string& Schematic::Infos::getOrientation() { return _orient; };
     
-} // namespace
-#endif
 
+} // OpenChams namespace.
+
+#endif

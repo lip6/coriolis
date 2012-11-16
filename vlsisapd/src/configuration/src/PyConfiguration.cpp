@@ -2,20 +2,16 @@
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
-//
-// ===================================================================
-//
-// $Id$
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
-// |                   C O R I O L I S                               |
+// |      V L S I  Stand - Alone  Parsers / Drivers                  |
 // |    C o n f i g u r a t i o n   D a t a - B a s e                |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./PyConfiguration.cpp"                    |
+// |  C++ Module  :  "./PyConfiguration.cpp"                         |
 // +-----------------------------------------------------------------+
 
 
@@ -309,6 +305,7 @@ namespace Cfg {
         .def("getParameter"       , cfgGetParameter2                   , return_value_policy<reference_existing_object>())
         .def("addParameter"       , cfgAddParameter2                   , return_value_policy<reference_existing_object>())
         .def("addParameter"       , cfgAddParameter3                   , return_value_policy<reference_existing_object>())
+        .def("readFromFile"       , &Configuration::readFromFile       )
         .def("pushDefaultPriority", &Configuration::pushDefaultPriority)
         .def("popDefaultPriority" , &Configuration::popDefaultPriority )
         .def("getDefaultPriority" , &Configuration::getDefaultPriority )

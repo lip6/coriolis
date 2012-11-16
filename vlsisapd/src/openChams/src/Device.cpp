@@ -1,11 +1,19 @@
-/*
- *  Device.cpp
- *  openChams
- *
- *  Created by damien dupuis on 22/11/10.
- *  Copyright 2010 UPMC / LIP6. All rights reserved.
- *
- */
+
+// -*- C++ -*-
+//
+// This file is part of the VLSI SAPD Software.
+// Copyright (c) UPMC/LIP6 2010-2012, All Rights Reserved
+//
+// +-----------------------------------------------------------------+ 
+// |                  V L S I   S A P D                              |
+// |             OpenChams Circuit Data Base                         |
+// |                                                                 |
+// |  Author      :                       Damien Dupuis              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
+// | =============================================================== |
+// |  C++ Module  :  "./Device.cpp"                                  |
+// +-----------------------------------------------------------------+
+
 
 #include <iostream>
 using namespace std;
@@ -16,19 +24,35 @@ using namespace std;
 #include "vlsisapd/openChams/OpenChamsException.h"
 
 namespace OpenChams {
-Device::Device(Name name, Name model, unsigned order, Name mosType, bool sourceBulkConnected, Netlist* netlist)
-    : Instance(name, model, order, netlist)
-    , _mosType(mosType)
-    , _sourceBulkConnected(sourceBulkConnected)
-    , _trans() {}
 
-Transistor* Device::addTransistor(Name name) {
+
+  Device::Device ( const string& name
+                 , const string& model
+                 , unsigned      order
+                 , const string& mosType
+                 , bool          sourceBulkConnected
+                 , Netlist*      netlist )
+    : Instance            (name,model,order,netlist)
+    , _mosType            (mosType)
+    , _sourceBulkConnected(sourceBulkConnected)
+    , _trans              ()
+  { }
+
+
+  Device::~Device ()
+  { }
+
+
+  Transistor* Device::addTransistor ( const string& name )
+  {
     Transistor* tr = new Transistor(name, this);
     if (!tr)
-        throw OpenChamsException("[ERROR] Cannot create transistor.");
+      throw OpenChamsException("[ERROR] Cannot create transistor.");
 
     _trans.push_back(tr); 
     return tr;
-}
-}
+  }
+
+
+}  // OpenChams namespace
 

@@ -18,19 +18,18 @@
 #include <iostream>
 using namespace std;
 
-#include "vlsisapd/openChams/Name.h"
 #include "vlsisapd/openChams/Parameters.h"
 #include "vlsisapd/openChams/OpenChamsException.h"
 
 namespace OpenChams {
     
 
-  void  Parameters::addParameter ( Name name, const char* value )
+  void  Parameters::addParameter ( const string& name, const string& value )
   {
-	map<Name,string>::iterator it = _params.find(name);
+	map<string,string>::iterator it = _params.find(name);
     if ( it != _params.end() ) {
       string error("[ERROR] Cannot addParameter ");
-      error += name.getString();
+      error += name;
       error += " because it already exists !";
       throw OpenChamsException(error);
     }
@@ -38,12 +37,12 @@ namespace OpenChams {
   }
 
 
-  const string& Parameters::getValue ( Name name )
+  const string& Parameters::getValue ( const string& name )
   {
-    map<Name,string>::iterator it = _params.find(name);
+    map<string,string>::iterator it = _params.find(name);
     if (it == _params.end()) {
       string error("[ERROR] No parameters named ");
-      error += name.getString();
+      error += name;
       throw OpenChamsException(error);
     }
     return (*it).second;

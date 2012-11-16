@@ -22,7 +22,6 @@
 #include <vector>
 #include <string>
 
-#include "vlsisapd/openChams/Name.h"
 #include "vlsisapd/openChams/Parameters.h"
 
 
@@ -33,41 +32,42 @@ namespace OpenChams {
 
   class Instance {
     public:
-                                          Instance        (Name name, Name model, unsigned, Netlist*);
+                                          Instance        (const std::string& name, const std::string& model, unsigned, Netlist*);
       virtual                            ~Instance        ();
                                          
-              void                        addConnector    (Name);
-              void                        connect         (Name connectorName, Name netName);
+              void                        addConnector    (const std::string&);
+              void                        connect         (const std::string& connectorName, const std::string& netName);
                                          
-      inline  void                        addParameter    (Name, const char* );
-      inline  void                        addParameter    (Name, const std::string& );
-      inline  Name                        getName         () const;
-      inline  Name                        getModel        ();
+      inline  void                        addParameter    (const std::string&, const char* );
+      inline  void                        addParameter    (const std::string&, const std::string& );
+      inline  const std::string&          getName         () const;
+      inline  const std::string&          getModel        () const;
       inline  unsigned                    getOrder        ();
       inline  Netlist*                    getNetlist      ();
       inline  Parameters                  getParameters   ();
       inline  bool                        hasNoConnectors ();
-      inline  const std::map<Name, Net*>& getConnectors   ();
+      inline  const std::map<std::string, Net*>&
+                                          getConnectors   ();
 
     private:
-      Name                  _name;
-      Name                  _model;
-      unsigned              _order;
-      Netlist*              _netlist;
-      Parameters            _params;
-      std::map<Name, Net*>  _netMap;
+      std::string                  _name;
+      std::string                  _model;
+      unsigned                     _order;
+      Netlist*                     _netlist;
+      Parameters                   _params;
+      std::map<std::string, Net*>  _netMap;
   };
 
 
-  inline void                        Instance::addParameter    (Name name, const char* value)        { _params.addParameter(name,value); };
-  inline void                        Instance::addParameter    (Name name, const std::string& value) { _params.addParameter(name,value); };
-  inline Name                        Instance::getName         () const { return _name; };
-  inline Name                        Instance::getModel        () { return _model; };
-  inline unsigned                    Instance::getOrder        () { return _order; };
-  inline Netlist*                    Instance::getNetlist      () { return _netlist; };
-  inline Parameters                  Instance::getParameters   () { return _params; };
-  inline bool                        Instance::hasNoConnectors () { return _netMap.empty(); };
-  inline const std::map<Name, Net*>& Instance::getConnectors   () { return _netMap; };
+  inline void                               Instance::addParameter    (const std::string& name, const char* value)        { _params.addParameter(name,value); };
+  inline void                               Instance::addParameter    (const std::string& name, const std::string& value) { _params.addParameter(name,value); };
+  inline const std::string&                 Instance::getName         () const { return _name; };
+  inline const std::string&                 Instance::getModel        () const { return _model; };
+  inline unsigned                           Instance::getOrder        () { return _order; };
+  inline Netlist*                           Instance::getNetlist      () { return _netlist; };
+  inline Parameters                         Instance::getParameters   () { return _params; };
+  inline bool                               Instance::hasNoConnectors () { return _netMap.empty(); };
+  inline const std::map<std::string, Net*>& Instance::getConnectors   () { return _netMap; };
     
 
 }  // OpenChams namespace.

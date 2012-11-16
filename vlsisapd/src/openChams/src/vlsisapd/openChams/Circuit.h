@@ -25,7 +25,6 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#include "vlsisapd/openChams/Name.h"
 #include "vlsisapd/openChams/Parameters.h"
 #include "vlsisapd/openChams/SimulModel.h"
 
@@ -45,17 +44,17 @@ namespace OpenChams {
 
   class Circuit {
     public:
-                                       Circuit                   ( Name, Name techno );
+                                       Circuit                   ( const std::string&, const std::string& techno );
     // Accessors.                                                
-      inline Name                      getName                   ();
-      inline Name                      getTechno                 ();
-      inline const std::string&        getValue                  ( Name );
+      inline const std::string&        getName                   ();
+      inline const std::string&        getTechno                 ();
+      inline const std::string&        getValue                  ( const std::string& );
       inline Netlist*                  getNetlist                ();
       inline Schematic*                getSchematic              ();
       inline Sizing*                   getSizing                 ();
       inline Layout*                   getLayout                 ();
-      inline void                      addParameter              ( Name, const char* );
-      inline void                      addParameter              ( Name, const std::string& );
+      inline void                      addParameter              ( const std::string&, const char* );
+      inline void                      addParameter              ( const std::string&, const std::string& );
       inline Parameters                getParameters             ();
       inline void                      addSubCircuitPath         ( std::string );
       inline std::vector<std::string>& getSubCircuitPaths        ();
@@ -76,9 +75,9 @@ namespace OpenChams {
     
 	private:
     // Internal methods (XML parser).
-             Name                      readParameter             ( xmlNode*, const xmlChar*& );
-             Name                      readParameterEq           ( xmlNode*, std::string& );
-             Name                      readConnector             ( xmlNode* );
+             std::string               readParameter             ( xmlNode*, const xmlChar*& );
+             std::string               readParameterEq           ( xmlNode*, std::string& );
+             std::string               readConnector             ( xmlNode* );
              void                      readSubCircuitsPaths      ( xmlNode* );
              void                      readCircuitParameters     ( xmlNode* );
              void                      readSimulModels           ( xmlNode* );
@@ -118,9 +117,9 @@ namespace OpenChams {
              void                      check_lowercase           ( std::string& str, std::vector<std::string>& compares, std::string message );
     
 	private:
-      Name 	                           _name;
+      const std::string& 	           _name;
       std::string                      _absolutePath;
-      Name 	                           _techno;
+      const std::string& 	           _techno;
       Parameters                       _params;
       Netlist*                         _netlist;
       Schematic*                       _schematic;
@@ -131,15 +130,15 @@ namespace OpenChams {
   };
     
 
-  inline Name                      Circuit::getName            () { return _name; }
-  inline Name                      Circuit::getTechno          () { return _techno; }
-  inline const std::string&        Circuit::getValue           (Name name) { return _params.getValue(name); }
+  inline const std::string&        Circuit::getName            () { return _name; }
+  inline const std::string&        Circuit::getTechno          () { return _techno; }
+  inline const std::string&        Circuit::getValue           (const std::string& name) { return _params.getValue(name); }
   inline Netlist*                  Circuit::getNetlist         () { return _netlist; }
   inline Schematic*                Circuit::getSchematic       () { return _schematic; }
   inline Sizing*                   Circuit::getSizing          () { return _sizing; }
   inline Layout*                   Circuit::getLayout          () { return _layout; }
-  inline void                      Circuit::addParameter       (Name name, const char* value)        { _params.addParameter(name, value); }
-  inline void                      Circuit::addParameter       (Name name, const std::string& value) { _params.addParameter(name, value); }
+  inline void                      Circuit::addParameter       (const std::string& name, const char* value)        { _params.addParameter(name, value); }
+  inline void                      Circuit::addParameter       (const std::string& name, const std::string& value) { _params.addParameter(name, value); }
   inline Parameters                Circuit::getParameters      () { return _params; }
   inline void                      Circuit::addSubCircuitPath  (std::string path) { _subCircuitsPaths.push_back(path); }
   inline std::vector<std::string>& Circuit::getSubCircuitPaths () { return _subCircuitsPaths; }

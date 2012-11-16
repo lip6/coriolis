@@ -11,7 +11,7 @@
 // |  Author      :                       Damien Dupuis              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./vlsisapd/openChams/Instance.h"               |
+// |  C++ Header  :  "./vlsisapd/openChams/Transistor.h"             |
 // +-----------------------------------------------------------------+
 
 
@@ -20,7 +20,6 @@
 
 #include <map>
 
-#include "vlsisapd/openChams/Name.h"
 #include "vlsisapd/openChams/Parameters.h"
 
 
@@ -32,42 +31,42 @@ namespace OpenChams {
 
   class Transistor {
     public:
-                         Transistor     (Name, Instance*);
-      inline void        addParameter   (Name, const char*);
-      inline void        addParameter   (Name, const std::string&);
-      inline Parameters  getParameters  ();
-      inline void        setName        (Name);
-      inline Name        getName        ();
-      inline Name        getGate        ();
-      inline Name        getSource      ();
-      inline Name        getDrain       ();
-      inline Name        getBulk        ();
-             void        setGate        (Name);
-             void        setSource      (Name);
-             void        setDrain       (Name);
-             void        setBulk        (Name);
+                                Transistor     (const std::string&, Instance*);
+      inline void               addParameter   (const std::string&, const char*);
+      inline void               addParameter   (const std::string&, const std::string&);
+      inline Parameters         getParameters  ();
+      inline void               setName        (const std::string&);
+      inline const std::string& getName        ();
+      inline const std::string& getGate        ();
+      inline const std::string& getSource      ();
+      inline const std::string& getDrain       ();
+      inline const std::string& getBulk        ();
+             void               setGate        (const std::string&);
+             void               setSource      (const std::string&);
+             void               setDrain       (const std::string&);
+             void               setBulk        (const std::string&);
+    private:                    
+             bool               checkConnector (const std::string&);
     private:
-             bool        checkConnector (Name);
-    private:
-      Name        _name;
-      Name        _gate;     // le nom du connecteur de _instance auquel la gate est reliée
-      Name        _source;   // le nom du connecteur de _instance auquel la source est reliée
-      Name        _drain;    // le nom du connecteur de _instance auquel le drain est relié
-      Name        _bulk;     // le nom du connecteur de _instance auquel le bulk est relié
-      Instance*   _instance;
-      Parameters  _params;
+      std::string  _name;
+      std::string  _gate;     // le nom du connecteur de _instance auquel la gate est reliée
+      std::string  _source;   // le nom du connecteur de _instance auquel la source est reliée
+      std::string  _drain;    // le nom du connecteur de _instance auquel le drain est relié
+      std::string  _bulk;     // le nom du connecteur de _instance auquel le bulk est relié
+      Instance*    _instance;
+      Parameters   _params;
   };
   
 
-  inline void        Transistor::addParameter  (Name name, const char* value)        { _params.addParameter(name,value); };
-  inline void        Transistor::addParameter  (Name name, const std::string& value) { _params.addParameter(name,value); };
-  inline Parameters  Transistor::getParameters () { return _params; };
-  inline void        Transistor::setName       (Name name) { _name = name; };
-  inline Name        Transistor::getName       () { return _name; };
-  inline Name        Transistor::getGate       () { return _gate; };
-  inline Name        Transistor::getSource     () { return _source; };
-  inline Name        Transistor::getDrain      () { return _drain; };
-  inline Name        Transistor::getBulk       () { return _bulk; };  
+  inline void               Transistor::addParameter  (const std::string& name, const char* value)        { _params.addParameter(name,value); };
+  inline void               Transistor::addParameter  (const std::string& name, const std::string& value) { _params.addParameter(name,value); };
+  inline Parameters         Transistor::getParameters () { return _params; };
+  inline void               Transistor::setName       (const std::string& name) { _name = name; };
+  inline const std::string& Transistor::getName       () { return _name; };
+  inline const std::string& Transistor::getGate       () { return _gate; };
+  inline const std::string& Transistor::getSource     () { return _source; };
+  inline const std::string& Transistor::getDrain      () { return _drain; };
+  inline const std::string& Transistor::getBulk       () { return _bulk; };  
 
 
 }  // OpenChams namespace.

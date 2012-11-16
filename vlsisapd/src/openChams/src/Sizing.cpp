@@ -1,47 +1,66 @@
-/*
- *  Sizing.cpp
- *  openChams
- *
- *  Created by damien dupuis on 08/02/10.
- *  Copyright 2010 UPMC / LIP6. All rights reserved.
- *
- */
 
-#include <string>
-using namespace std;
+// -*- C++ -*-
+//
+// This file is part of the VLSI SAPD Software.
+// Copyright (c) UPMC/LIP6 2010-2012, All Rights Reserved
+//
+// +-----------------------------------------------------------------+ 
+// |                  V L S I   S A P D                              |
+// |             OpenChams Circuit Data Base                         |
+// |                                                                 |
+// |  Author      :                       Damien Dupuis              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
+// | =============================================================== |
+// |  C++ Module  :  "./Sizing.cpp"                                  |
+// +-----------------------------------------------------------------+
+
+
 
 #include "vlsisapd/openChams/Sizing.h"
 #include "vlsisapd/openChams/Circuit.h"
 #include "vlsisapd/openChams/Operator.h"
 #include "vlsisapd/openChams/Equation.h"
 #include "vlsisapd/openChams/OpenChamsException.h"
+using namespace std;
+
 
 namespace OpenChams {
-Sizing::Sizing(Circuit* circuit): _circuit(circuit) {}
+
+
+  Sizing::Sizing ( Circuit* circuit )
+    : _circuit(circuit)
+  { }
     
-Operator* Sizing::addOperator(Name instanceName, Name operatorName, Name simulModel) {
-    map<Name, Operator*>::iterator it = _operators.find(instanceName);
+
+  Operator* Sizing::addOperator ( const string& instanceName
+                                , const string& operatorName
+                                , const string& simulModel )
+  {
+    map<string, Operator*>::iterator it = _operators.find(instanceName);
     if (it != _operators.end()) {
-        string error("[ERROR] Cannot set same instance twice in 'sizing' (");
-        error += instanceName.getString();
-        error += ").";
-        throw OpenChamsException(error);
+      string error("[ERROR] Cannot set same instance twice in 'sizing' (");
+      error += instanceName;
+      error += ").";
+      throw OpenChamsException(error);
     }
     Operator* op = new Operator(operatorName, simulModel);
     _operators[instanceName] = op;
     return op;
-}
+  }
     
-void Sizing::addEquation(Name equationName, Equation* equation) {
-    map<Name, Equation*>::iterator it = _equations.find(equationName);
+
+  void Sizing::addEquation ( const string& equationName, Equation* equation)
+  {
+    map<string, Equation*>::iterator it = _equations.find(equationName);
     if (it != _equations.end()) {
-        string error("[ERROR] Cannot set several equations with the same name in 'sizing' (");
-        error += equationName.getString();
-        error += ").";
-        throw OpenChamsException(error);
+      string error("[ERROR] Cannot set several equations with the same name in 'sizing' (");
+      error += equationName;
+      error += ").";
+      throw OpenChamsException(error);
     }
     _equations[equationName] = equation;
-}
+  }
     
-} // namespace
+  
+} // OpenChams namespace
 

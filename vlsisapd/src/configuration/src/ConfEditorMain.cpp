@@ -2,26 +2,22 @@
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                   C O R I O L I S                               |
+// +-----------------------------------------------------------------+
+// |      V L S I  Stand - Alone  Parsers / Drivers                  |
 // |    C o n f i g u r a t i o n   D a t a - B a s e                |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./ConfEditorMain.cpp"                     |
-// x-----------------------------------------------------------------x
+// |  C++ Module  :  "./ConfEditorMain.cpp"                          |
+// +-----------------------------------------------------------------+
 
 
+#include  <Python.h>
 #include  <cstdio>
 #include  <libxml/xmlreader.h>
-#include  <Python.h>
 
 #include  <boost/program_options.hpp>
 namespace boptions = boost::program_options;

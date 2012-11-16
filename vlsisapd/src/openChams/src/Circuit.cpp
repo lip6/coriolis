@@ -1,11 +1,18 @@
-/*
- *  Circuit.cpp
- *  openChams
- *
- *  Created by damien dupuis on 18/12/09.
- *  Copyright 2009 UPMC / LIP6. All rights reserved.
- *
- */
+
+// -*- C++ -*-
+//
+// This file is part of the VLSI SAPD Software.
+// Copyright (c) UPMC/LIP6 2009-2012, All Rights Reserved
+//
+// +-----------------------------------------------------------------+ 
+// |                  V L S I   S A P D                              |
+// |             OpenChams Circuit Data Base                         |
+// |                                                                 |
+// |  Author      :                       Damien Dupuis              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
+// | =============================================================== |
+// |  C++ Module  :  "./Circuit.cpp"                                 |
+// +-----------------------------------------------------------------+
 
 #include <iostream>
 #include <fstream>
@@ -36,6 +43,7 @@ using namespace std;
 #include "vlsisapd/openChams/NRCCstr.h"
 #include "vlsisapd/openChams/DDP.h"
 #include "vlsisapd/openChams/DesignerCstrOC.h"
+
 
 namespace OpenChams {
 
@@ -145,13 +153,14 @@ namespace OpenChams {
   static bool readSizingDone            = false;
   static bool readLayoutDone            = false;
     
-  Circuit::Circuit(Name name, Name techno) : _name(name)
-					   , _absolutePath("")
-					   , _techno(techno)
-					   , _netlist(NULL)
-					   , _schematic(NULL)
-					   , _sizing(NULL)
-					   , _layout(NULL)
+  Circuit::Circuit(const std::string& name, const std::string& techno)
+    : _name        (name)
+    , _absolutePath("")
+    , _techno      (techno)
+    , _netlist     (NULL)
+    , _schematic   (NULL)
+    , _sizing      (NULL)
+    , _layout      (NULL)
   {
     readSubCircuitsPathsDone  = false;
     readCircuitParametersDone = false;
@@ -164,47 +173,53 @@ namespace OpenChams {
     readLayoutDone            = false;
   }
 
+
   // COMPARISON FUNCTION //
-  bool ConnectionsSort(const Net::Connection* c1, const Net::Connection* c2) {
-    return c1->getInstanceName() < c2->getInstanceName();
-  }
+  bool ConnectionsSort(const Net::Connection* c1, const Net::Connection* c2)
+  { return c1->getInstanceName() < c2->getInstanceName(); }
 
-  bool InstanceNameSort(const Instance* i1, const Instance* i2) {
-    return i1->getName() < i2->getName();
-  }
 
-  bool NetNameSort(const Net* n1, const Net* n2) {
-    return n1->getName() < n2->getName();
-  }
+  bool InstanceNameSort(const Instance* i1, const Instance* i2)
+  { return i1->getName() < i2->getName(); }
+
+
+  bool NetNameSort(const Net* n1, const Net* n2)
+  { return n1->getName() < n2->getName(); }
+
 
   // USEFUL //
-  void Circuit::check_uppercase(string& str, vector<string>& compares, string message) {
+  void Circuit::check_uppercase(string& str, vector<string>& compares, string message)
+  {
     transform(str.begin(), str.end(), str.begin(), ::toupper);
     bool equal = false;
     for (size_t i = 0 ; i < compares.size() ; i++) {
       if (str == compares[i]) {
-	equal = true;
+        equal = true;
       }
     }
     if (!equal) {
       throw OpenChamsException(message);
     }
   }
-    
-  void Circuit::check_lowercase(string& str, vector<string>& compares, string message) {
+
+
+  void Circuit::check_lowercase(string& str, vector<string>& compares, string message)
+  {
     transform(str.begin(), str.end(), str.begin(), ::tolower);
     bool equal = false;
     for (size_t i = 0 ; i < compares.size() ; i++) {
       if (str == compares[i]) {
-	equal = true;
+        equal = true;
       }
     }
     if (!equal) {
       throw OpenChamsException(message);
     }
   }
+
     
-  void Circuit::addSimulModel(unsigned id, SimulModel::Base base, SimulModel::Version version, std::string filePath) {
+  void Circuit::addSimulModel(unsigned id, SimulModel::Base base, SimulModel::Version version, std::string filePath)
+  {
     SimulModel* sim = new SimulModel(id, base, version, filePath);
     map<unsigned, SimulModel*>::iterator it = _simulModels.find(id);
     if (it != _simulModels.end())
@@ -212,30 +227,30 @@ namespace OpenChams {
     _simulModels[id] = sim;
   }
 
-  Name Circuit::readParameter(xmlNode* node, const xmlChar*& value) {
+
+  string  Circuit::readParameter(xmlNode* node, const xmlChar*& value) {
     xmlChar* paramNameC = xmlGetProp(node, (xmlChar*)"name");
     value               = xmlGetProp(node, (xmlChar*)"value");
-    if (paramNameC and value) {
-      Name name((const char*)paramNameC);
-      return name;
-    } else {
+    if (!paramNameC or !value) 
       throw OpenChamsException("[ERROR] 'parameter' node must have 'name' and 'value' properties.");
-    }
-  }
-    
-  Name Circuit::readConnector(xmlNode* node) {
-    xmlChar* connectorNameC = xmlGetProp(node, (xmlChar*)"name");
-    if (connectorNameC) {
-      Name name((const char*)connectorNameC);
-      return name;
-    } else {
-      throw OpenChamsException("[ERROR] 'connector' node must have 'name' property.");
-      //return Name("");
-    }
+
+    return string((const char*)paramNameC);
   }
 
+
+  string  Circuit::readConnector(xmlNode* node)
+  {
+    xmlChar* connectorNameC = xmlGetProp(node, (xmlChar*)"name");
+    if (!connectorNameC)
+      throw OpenChamsException("[ERROR] 'connector' node must have 'name' property.");
+
+    return string((const char*)connectorNameC);
+  }
+
+
   // CIRCUIT //
-  void Circuit::readSubCircuitsPaths(xmlNode* node) {
+  void Circuit::readSubCircuitsPaths(xmlNode* node)
+  {
     if (readSubCircuitsPathsDone) {
       cerr << "[WARNING] Only one 'subCircuitsPaths' node is allowed in circuit, others will be ignored." << endl;
       return;
@@ -274,8 +289,8 @@ namespace OpenChams {
         if (paramNode->type == XML_ELEMENT_NODE) {
           if (xmlStrEqual(paramNode->name, (xmlChar*)"parameter")) {
             const xmlChar* value = NULL;
-            Name paramName = readParameter(paramNode, value);
-            if (paramName == Name("")) return; // error
+            string  paramName = readParameter(paramNode, value);
+            if (paramName.empty()) return; // error
             addParameter(paramName, (const char*)value);
           } else {
             cerr << "[WARNING] Only 'parameter' and 'parameterEq' nodes are allowed under 'parameters' node." << endl;
@@ -400,8 +415,8 @@ namespace OpenChams {
     xmlChar* iSBCC   = xmlGetProp(node, (xmlChar*)"sourceBulkConnected");
     Instance* inst = NULL;
     if (iNameC && iModelC && iOrderC && iMOSC && iSBCC) { // this is a device
-      Name instanceName((const char*)iNameC);
-      Name modelName((const char*)iModelC);
+      const std::string& instanceName((const char*)iNameC);
+      const std::string& modelName((const char*)iModelC);
       unsigned order = stringAs<unsigned>(iOrderC);
       string mosStr((const char*)iMOSC);
       string mosComp[2] = {"NMOS", "PMOS"};
@@ -412,10 +427,10 @@ namespace OpenChams {
       vector<string> sbcComps(sbcComp, sbcComp+4);
       check_lowercase(sourceBulkStr, sbcComps, "[ERROR] In 'instance', 'sourceBulkConnected' property must be 'true', 'false', 'on' or 'off'.");
       bool sourceBulkConnected = ((sourceBulkStr == "true") || (sourceBulkStr == "on")) ? true : false;
-      inst = (Instance*)netlist->addDevice(instanceName, modelName, order, Name(mosStr), sourceBulkConnected);
+      inst = (Instance*)netlist->addDevice(instanceName, modelName, order, mosStr, sourceBulkConnected);
     } else if (iNameC && iModelC && iOrderC && !iMOSC && !iSBCC) { // this is a subcircuit
-      Name instanceName((const char*)iNameC);
-      Name modelName((const char*)iModelC);
+      const std::string& instanceName((const char*)iNameC);
+      const std::string& modelName((const char*)iModelC);
       unsigned order = stringAs<unsigned>(iOrderC);
       inst = netlist->addInstance(instanceName, modelName, order);
     } else {
@@ -448,8 +463,8 @@ namespace OpenChams {
     for (xmlNode* node = child; node; node = node->next) {
       if (node->type == XML_ELEMENT_NODE) {
 	if (xmlStrEqual(node->name, (xmlChar*)"connector")) {
-	  Name connectorName = readConnector(node);
-	  if (connectorName == Name("")) return; // error
+	  string connectorName = readConnector(node);
+	  if (connectorName.empty()) return; // error
 	  inst->addConnector(connectorName);
 	}
       }
@@ -462,8 +477,8 @@ namespace OpenChams {
       if (node->type == XML_ELEMENT_NODE) {
 	if (xmlStrEqual(node->name, (xmlChar*)"parameter")) {
 	  const xmlChar* value = NULL;
-	  Name paramName = readParameter(node, value);
-	  if (paramName == Name("")) return; // error
+	  string paramName = readParameter(node, value);
+	  if (paramName.empty()) return; // error
 	  inst->addParameter(paramName, (const char*)value);
 	} else {
 	  cerr << "[WARNING] Only 'parameter' and 'parameterEq' nodes are allowed under 'instance' node." << endl;
@@ -491,7 +506,7 @@ namespace OpenChams {
     xmlChar* tNameC  = xmlGetProp(node, (xmlChar*)"name");
     Transistor* trans = NULL;
     if (tNameC) {
-      Name tName((const char*)tNameC);
+      const std::string& tName((const char*)tNameC);
       trans = dev->addTransistor(tName);
     } else {
       throw OpenChamsException("[ERROR] 'transistor' node must have 'name' property.");
@@ -518,10 +533,10 @@ namespace OpenChams {
     xmlChar* drainC  = xmlGetProp(node, (xmlChar*)"drain");
     xmlChar* bulkC   = xmlGetProp(node, (xmlChar*)"bulk");
     if (gateC && sourceC && drainC && bulkC) {
-      Name gateN  ((const char*)gateC);
-      Name sourceN((const char*)sourceC);
-      Name drainN ((const char*)drainC);
-      Name bulkN  ((const char*)bulkC);
+      const std::string& gateN  ((const char*)gateC);
+      const std::string& sourceN((const char*)sourceC);
+      const std::string& drainN ((const char*)drainC);
+      const std::string& bulkN  ((const char*)bulkC);
       trans->setGate(gateN);
       trans->setSource(sourceN);
       trans->setDrain(drainN);
@@ -557,7 +572,7 @@ namespace OpenChams {
     xmlChar* nExternC = xmlGetProp(node, (xmlChar*)"isExternal");
     Net* net = NULL;
     if (nNameC && nTypeC && nExternC) {
-      Name netName((const char*)nNameC);
+      const std::string& netName((const char*)nNameC);
       string typeStr((const char*)nTypeC);
       string typeComp[3] = {"power", "ground", "logical"};
       vector<string> typeComps(typeComp, typeComp+3);
@@ -567,7 +582,7 @@ namespace OpenChams {
       vector<string> extComps(extComp, extComp+4);
       check_lowercase(externStr, extComps, "[ERROR] In 'net', 'isExternal' must be 'true', 'false', 'on' or 'off'.");
       bool isExternal = ((externStr == "true") || (externStr == "on")) ? true : false;
-      net = netlist->addNet(netName, Name(typeStr), isExternal);
+      net = netlist->addNet(netName, typeStr, isExternal);
     } else {
       throw OpenChamsException("[ERROR] 'net' node must have 'name', 'type' and 'isExternal' properties.");
       //return net;
@@ -591,14 +606,14 @@ namespace OpenChams {
     xmlChar* instanceNameC  = xmlGetProp(node, (xmlChar*)"instance");
     xmlChar* connectorNameC = xmlGetProp(node, (xmlChar*)"name");
     if (instanceNameC && connectorNameC) {
-      Name iName((const char*)instanceNameC);
-      Name cName((const char*)connectorNameC);
+      const std::string& iName((const char*)instanceNameC);
+      const std::string& cName((const char*)connectorNameC);
       Instance* inst = net->getNetlist()->getInstance(iName);
       if (!inst) {
 	string error("[ERROR] no instance named \"");
-	error += iName.getString();
+	error += iName;
 	error += "\" in connector of net \"";
-	error += net->getName().getString();
+	error += net->getName();
 	error += "\".";
 	throw OpenChamsException(error);
 	//return;
@@ -640,14 +655,14 @@ namespace OpenChams {
     xmlChar* yC      = xmlGetProp(node, (xmlChar*)"y");
     xmlChar* orientC = xmlGetProp(node, (xmlChar*)"orient");
     if (nameC && xC && yC && orientC) {
-      Name   iName((const char*)nameC);
+      const std::string&   iName((const char*)nameC);
       double x = stringAs<double>((const char*)xC);
       double y = stringAs<double>((const char*)yC);
       string orientStr((const char*)orientC);
       string orientComp[8] = {"ID", "R1", "R2", "R3", "MX", "XR", "MY", "YR"};
       vector<string> orientComps (orientComp, orientComp+8);
       check_uppercase(orientStr, orientComps, "[ERROR] In 'schematic'.'instance', 'orient' must be 'ID', 'R1', 'R2', 'R3', 'MX', 'XR', 'MY' or 'YR'.");
-      schematic->addInstance(iName, x, y, Name(orientStr));
+      schematic->addInstance(iName, x, y, orientStr);
     } else {
       throw OpenChamsException("[ERROR] 'instance' node in 'schematic' must have 'name', 'x', 'y' and 'orient' properties.");
     }
@@ -656,11 +671,11 @@ namespace OpenChams {
   void Circuit::readNetSchematic(xmlNode* node, Circuit* circuit) {
     xmlChar* nameC = xmlGetProp(node, (xmlChar*)"name");
     if (nameC) {
-      Name nName((const char*)nameC);
+      const std::string& nName((const char*)nameC);
       Net* net = circuit->getNetlist()->getNet(nName);
       if (!net) {
 	string error ("[ERROR] In 'schematic' section cannot specify wires for net ");
-	error += nName.getString();
+	error += nName;
 	error += " since it has not been defined in netlist section.";
 	throw OpenChamsException(error);
       }
@@ -688,7 +703,7 @@ namespace OpenChams {
     xmlChar* yC      = xmlGetProp(node, (xmlChar*)"y");
     xmlChar* orientC = xmlGetProp(node, (xmlChar*)"orient");
     if (typeC && idxC && xC && yC && orientC) {
-      Name pType((const char*)typeC);
+      const std::string& pType((const char*)typeC);
       unsigned idx = stringAs<unsigned>(idxC);
       double   x   = stringAs<double>(xC);
       double   y   = stringAs<double>(yC);
@@ -696,7 +711,7 @@ namespace OpenChams {
       string orientComp[8] = {"ID", "R1", "R2", "R3", "MX", "XR", "MY", "YR"};
       vector<string> orientComps (orientComp, orientComp+8);
       check_uppercase(orientStr, orientComps, "[ERROR] In 'schematic'.'port', 'orient' must be 'ID', 'R1', 'R2', 'R3', 'MX', 'XR', 'MY' or 'YR'.");
-      net->addPort(pType, idx, x, y, Name(orientStr));
+      net->addPort(pType, idx, x, y, orientStr);
     } else {
       throw OpenChamsException("[ERROR] 'schematic'.'port' must have 'type', 'idx', 'x', 'y' and 'orient' properties.");
     }
@@ -712,8 +727,8 @@ namespace OpenChams {
 	  xmlChar* plugC = xmlGetProp(node, (xmlChar*)"plug");
 	  xmlChar* idxC  = xmlGetProp(node, (xmlChar*)"idx");
 	  if (nameC && plugC) {
-	    Name name((const char*)nameC);
-	    Name plug((const char*)plugC);
+	    const std::string& name((const char*)nameC);
+	    const std::string& plug((const char*)plugC);
 	    if (!wire->getStartPoint()) {
 	      wire->setStartPoint(name, plug);
 	    } else if (!wire->getEndPoint()) {
@@ -781,11 +796,11 @@ namespace OpenChams {
     xmlChar* operatorC = xmlGetProp(node, (xmlChar*)"operator");
     xmlChar* simulModC = xmlGetProp(node, (xmlChar*)"simulModel");
     if (nameC && operatorC && simulModC) {
-      Name     iName   ((const char*)nameC);
+      const std::string&     iName   ((const char*)nameC);
       string   opStr   ((const char*)operatorC);
       transform(opStr.begin(), opStr.end(), opStr.begin(), ::toupper);
-      Name     opName  (opStr);
-      Name     simulMod((const char*)simulModC);
+      const std::string&     opName  (opStr);
+      const std::string&     simulMod((const char*)simulModC);
       Operator* op = sizing->addOperator(iName, opName, simulMod);
       xmlNode* child = node->children;
       for (xmlNode* node = child; node; node = node->next) {
@@ -813,17 +828,17 @@ namespace OpenChams {
     xmlChar* refEqC    = xmlGetProp(node, (xmlChar*)"refEquation");
     xmlChar* factorC   = xmlGetProp(node, (xmlChar*)"factor");
     if (paramC && refC && refParamC) {
-      Name param    ((const char*)paramC);
-      Name ref      ((const char*)refC);
-      Name refParam ((const char*)refParamC);
+      const std::string& param    ((const char*)paramC);
+      const std::string& ref      ((const char*)refC);
+      const std::string& refParam ((const char*)refParamC);
       double factor = 1.0;
       if (factorC) {
 	factor = stringAs<double>(factorC);
       }
       op->addConstraint(param, ref, refParam, factor);
     } else if (paramC && refEqC) {
-      Name param ((const char*)paramC);
-      Name refEq ((const char*)refEqC);
+      const std::string& param ((const char*)paramC);
+      const std::string& refEq ((const char*)refEqC);
       double factor = 1.0;
       if (factorC) {
 	factor = stringAs<double>(factorC);
@@ -860,7 +875,7 @@ namespace OpenChams {
 	  xmlChar* nameC     = xmlGetProp(eqNode, (xmlChar*)"name");
 	  xmlChar* equationC = xmlGetProp(eqNode, (xmlChar*)"equation");
 	  if (nameC && equationC) {
-	    Name   eName ((const char*)nameC);
+	    const std::string&   eName ((const char*)nameC);
 	    string eqStr ((const char*)equationC);
 	    HighLevelCstr* equation = new HighLevelCstr();
 	    equation->addEquation(eqStr);
@@ -880,7 +895,7 @@ namespace OpenChams {
 	  xmlChar* nameC     = xmlGetProp(eqNode, (xmlChar*)"name");
 	  xmlChar* equationC = xmlGetProp(eqNode, (xmlChar*)"equation");
 	  if (nameC && equationC) {
-	    Name   eName ((const char*)nameC);
+	    const std::string&   eName ((const char*)nameC);
 	    string eqStr ((const char*)equationC);
 	    DesignerCstrOC* equation = new DesignerCstrOC();
 	    equation->addEquation(eqStr);
@@ -903,7 +918,7 @@ namespace OpenChams {
 	  xmlChar* paramC    = xmlGetProp(eqNode, (xmlChar*)"param");
 	  xmlChar* equationC = xmlGetProp(eqNode, (xmlChar*)"equation");
 	  if (nameC && equationC && paramC) {
-	    Name   eName ((const char*)nameC);
+	    const std::string&   eName ((const char*)nameC);
 	    string eqStr ((const char*)equationC);
 	    string paramStr ((const char*)paramC);
 	    NRCCstr* equation = new NRCCstr(paramStr);
@@ -926,7 +941,7 @@ namespace OpenChams {
 	if (eqNode->type == XML_ELEMENT_NODE && xmlStrEqual(eqNode->name, (xmlChar*)"ddp_i")) {
 	  xmlChar* nameC = xmlGetProp(eqNode, (xmlChar*)"name");
 	  if (nameC) {
-	    Name eName ((const char*)nameC);
+	    const std::string& eName ((const char*)nameC);
 	    DDP* equation = new DDP();
 	    for(xmlNode* eqNode2 = eqNode->children ; eqNode2 ; eqNode2 = eqNode2->next) {
 	      if (eqNode2->type == XML_ELEMENT_NODE && xmlStrEqual(eqNode2->name, (xmlChar*)"ddp_eq")) {
@@ -978,8 +993,8 @@ namespace OpenChams {
     xmlChar* nameC  = xmlGetProp(node, (xmlChar*)"name");
     xmlChar* styleC = xmlGetProp(node, (xmlChar*)"style");
     if (nameC && styleC) {
-      Name     iName     ((const char*)nameC);
-      Name     styleName ((const char*)styleC);
+      const std::string&     iName     ((const char*)nameC);
+      const std::string&     styleName ((const char*)styleC);
       layout->addInstance(iName, styleName);
     } else {
       throw OpenChamsException("[ERROR] 'instance' node in 'layout' must have 'name' and 'style' properties.");
@@ -1007,7 +1022,7 @@ namespace OpenChams {
       if (!nameC) 
 	throw OpenChamsException("[ERROR] 'bloc' and 'group' nodes in 'hbtree' must have at least a 'name' property.");
       Node* nodeOC = NULL;
-      Name name ((const char*)nameC);
+      const std::string& name ((const char*)nameC);
       Node::Position pos = Node::NONE;
       if (posiC) {
 	string posStr ((const char*)posiC);
@@ -1097,8 +1112,8 @@ namespace OpenChams {
       xmlChar* technoNameC  = xmlGetProp(rootElement, (xmlChar*)"techno");
         
       if (circuitNameC && technoNameC) {
-	Name circuitName ((const char*)circuitNameC);
-	Name technoName  ((const char*)technoNameC);
+	const std::string& circuitName ((const char*)circuitNameC);
+	const std::string& technoName  ((const char*)technoNameC);
 	cir = new Circuit(circuitName, technoName);
       } else {
 	throw OpenChamsException("[ERROR] 'circuit' node must have 'name' and 'techno' properties.");
@@ -1208,7 +1223,7 @@ namespace OpenChams {
     
     Bloc* bloc = dynamic_cast<Bloc*>(node);
     if (bloc) {
-      file << "<bloc name=\"" << bloc->getName().getString() << "\"";
+      file << "<bloc name=\"" << bloc->getName() << "\"";
       if (pos != "")
 	file << " position=\"" << pos << "\"";
       if (bloc->getTop() == NULL && bloc->getRight() == NULL)
@@ -1236,7 +1251,7 @@ namespace OpenChams {
       default:
 	break;
       }
-      file << "<group name=\"" << group->getName().getString() << "\"";
+      file << "<group name=\"" << group->getName() << "\"";
       if (pos != "")            file << " position=\"" << pos << "\"";
       if (align != "")          file << " align=\"" << align << "\"";
       if (group->isIsolated())  file << " isolated=\"true\"";
@@ -1279,7 +1294,7 @@ namespace OpenChams {
     }
     
     file << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << endl
-         << "<circuit name=\"" << _name.getString() << "\" techno=\"" << _techno.getString() << "\">" << endl;
+         << "<circuit name=\"" << _name << "\" techno=\"" << _techno << "\">" << endl;
     if (_subCircuitsPaths.size() != 0) {
       file << "  <subCircuitsPaths>"  << endl;
       for (size_t i = 0 ; i < _subCircuitsPaths.size() ; i++ ) {
@@ -1289,8 +1304,8 @@ namespace OpenChams {
     }
     if (!_params.isEmpty()) {
       file << "  <parameters>" << endl;
-      for (map<Name,string>::const_iterator it = _params.getValues().begin() ; it != _params.getValues().end() ; ++it) {
-        file << "    <parameter name=\"" << (*it).first.getString() << "\" value=\"" << (*it).second << "\"/>" << endl;
+      for (map<string,string>::const_iterator it = _params.getValues().begin() ; it != _params.getValues().end() ; ++it) {
+        file << "    <parameter name=\"" << (*it).first << "\" value=\"" << (*it).second << "\"/>" << endl;
       }
       cerr << "_params.getValues().size() = " << _params.getValues().size() << endl;
       file << "  </parameters>" << endl;
@@ -1304,34 +1319,34 @@ namespace OpenChams {
       Device*   dev  = dynamic_cast<Device*>(inst);
       if (inst->hasNoConnectors()) {
 	string error("[ERROR] Cannot writeToFile since instance (");
-	error += inst->getName().getString();
+	error += inst->getName();
 	error += ") has no connectors !";
 	throw OpenChamsException(error);
 	//return false;
       }
       if (dev && dev->hasNoTransistors()) {
 	string error("[ERROR] Cannot writeToFile since device instance (");
-	error += dev->getName().getString();
+	error += dev->getName();
 	error += ") has no transistors !";
 	throw OpenChamsException(error);
       }
       if (dev) {
 	string sourceBulkStr = (dev->isSourceBulkConnected()) ? "True" : "False";
-	file << "      <instance name=\"" << dev->getName().getString() << "\" model=\"" << dev->getModel().getString() << "\" mostype=\"" << dev->getMosType().getString() << "\" sourceBulkConnected=\"" << sourceBulkStr << "\" order=\"" << dev->getOrder() << "\">" << endl;
+	file << "      <instance name=\"" << dev->getName() << "\" model=\"" << dev->getModel() << "\" mostype=\"" << dev->getMosType() << "\" sourceBulkConnected=\"" << sourceBulkStr << "\" order=\"" << dev->getOrder() << "\">" << endl;
       } else {
-	file << "      <instance name=\"" << inst->getName().getString() << "\" model=\"" << inst->getModel().getString() << "\" order=\"" << inst->getOrder() << "\">" << endl;
+	file << "      <instance name=\"" << inst->getName() << "\" model=\"" << inst->getModel() << "\" order=\"" << inst->getOrder() << "\">" << endl;
       }
       file << "        <connectors>" << endl;
-      for (map<Name, Net*>::const_iterator it = inst->getConnectors().begin() ; it != inst->getConnectors().end() ; ++it) {
-	file << "          <connector name=\"" << (*it).first.getString() << "\"/>" << endl;
+      for (map<string, Net*>::const_iterator it = inst->getConnectors().begin() ; it != inst->getConnectors().end() ; ++it) {
+	file << "          <connector name=\"" << (*it).first << "\"/>" << endl;
       }
       file << "        </connectors>" << endl;
       if (dev) {
 	file << "        <transistors>" << endl;
 	for (vector<Transistor*>::const_iterator it = dev->getTransistors().begin() ; it != dev->getTransistors().end() ; ++it ) {
 	  Transistor* tr = (*it);
-	  file << "          <transistor name=\"" << tr->getName().getString() << "\">" << endl
-	       << "            <connection gate=\"" << tr->getGate().getString() << "\" source=\"" << tr->getSource().getString() << "\" drain=\"" << tr->getDrain().getString() << "\" bulk=\"" << tr->getBulk().getString() << "\"/>" << endl
+	  file << "          <transistor name=\"" << tr->getName() << "\">" << endl
+	       << "            <connection gate=\"" << tr->getGate() << "\" source=\"" << tr->getSource() << "\" drain=\"" << tr->getDrain() << "\" bulk=\"" << tr->getBulk() << "\"/>" << endl
 	       << "          </transistor>" << endl;
 	}
 	file << "        </transistors>" << endl;
@@ -1339,8 +1354,8 @@ namespace OpenChams {
       if (!inst->getParameters().isEmpty()) {
 	Parameters params = inst->getParameters();
 	file << "        <parameters>" << endl;
-	for (map<Name,string>::const_iterator it = params.getValues().begin() ; it != params.getValues().end() ; ++it) {
-	  file << "          <parameter name=\"" << (*it).first.getString() << "\" value=\"" << (*it).second << "\"/>" << endl;
+	for (map<string,string>::const_iterator it = params.getValues().begin() ; it != params.getValues().end() ; ++it) {
+	  file << "          <parameter name=\"" << (*it).first << "\" value=\"" << (*it).second << "\"/>" << endl;
 	}
 	file << "        </parameters>" << endl;
       }
@@ -1355,7 +1370,7 @@ namespace OpenChams {
       Net* net = (*it);
       if (net->hasNoConnections()) {
 	string error("[ERROR] Cannot writeToFile since net (");
-	error += net->getName().getString();
+	error += net->getName();
 	error += ") has no connectors !";
 	throw OpenChamsException(error);
 	//return false;
@@ -1363,11 +1378,11 @@ namespace OpenChams {
       if (!net->hasNoPorts() || !net->hasNoWires())
 	schematicNets = true;
       string externStr = (net->isExternal()) ? "True" : "False";
-      file << "      <net name=\"" << net->getName().getString() << "\" type=\"" << net->getType().getString() << "\" isExternal=\"" << externStr << "\">" << endl;
+      file << "      <net name=\"" << net->getName() << "\" type=\"" << net->getType() << "\" isExternal=\"" << externStr << "\">" << endl;
       vector<Net::Connection*> connections = net->getConnections();
       sort(connections.begin(), connections.end(), ConnectionsSort);
       for (vector<Net::Connection*>::iterator it = connections.begin() ; it != connections.end() ; ++it) {
-	file << "        <connector instance=\"" << (*it)->getInstanceName().getString() << "\" name=\"" << (*it)->getConnectorName().getString() << "\"/>" << endl;
+	file << "        <connector instance=\"" << (*it)->getInstanceName() << "\" name=\"" << (*it)->getConnectorName() << "\"/>" << endl;
       }
       file << "      </net>" << endl;
     }
@@ -1375,21 +1390,21 @@ namespace OpenChams {
     file << "  </netlist>" << endl;
     if (_schematic && !_schematic->hasNoInstances()) {
       file << "  <schematic>" << endl;
-      for (map<Name, Schematic::Infos*>::const_iterator it = _schematic->getInstances().begin() ; it != _schematic->getInstances().end(); ++it ) {
+      for (map<string, Schematic::Infos*>::const_iterator it = _schematic->getInstances().begin() ; it != _schematic->getInstances().end(); ++it ) {
 	Schematic::Infos* infos = (*it).second;
-	file << "    <instance name=\"" << ((*it).first).getString() << "\" x=\"" << infos->getX() << "\" y=\"" << infos->getY() << "\" orient=\"" << infos->getOrientation().getString() << "\"/>" << endl;
+	file << "    <instance name=\"" << ((*it).first) << "\" x=\"" << infos->getX() << "\" y=\"" << infos->getY() << "\" orient=\"" << infos->getOrientation() << "\"/>" << endl;
       }
       if (schematicNets) {
 	for (size_t i = 0 ; i < nets.size() ; i++) {
 	  Net* net = nets[i];
 	  if (net->hasNoPorts() && net->hasNoWires())
 	    continue;
-	  file << "    <net name=\"" << net->getName().getString() << "\">" << endl;
+	  file << "    <net name=\"" << net->getName() << "\">" << endl;
 	  for (size_t j = 0 ; j < net->getPorts().size() ; j++) {
 	    Port* port = net->getPorts()[j];
 	    if (!port)
 	      continue;
-	    file << "      <port type=\"" << port->getType().getString() << "\" idx=\"" << port->getIndex() << "\" x=\"" << port->getX() << "\" y=\"" << port->getY() << "\" orient=\"" << port->getOrientation().getString() << "\"/>" << endl;
+	    file << "      <port type=\"" << port->getType() << "\" idx=\"" << port->getIndex() << "\" x=\"" << port->getX() << "\" y=\"" << port->getY() << "\" orient=\"" << port->getOrientation() << "\"/>" << endl;
 	  }
 	  for (size_t j = 0 ; j < net->getWires().size() ; j++) {
 	    Wire* wire = net->getWires()[j];
@@ -1399,7 +1414,7 @@ namespace OpenChams {
 	    // start point
 	    if (dynamic_cast<InstancePoint*>(start)) {
 	      InstancePoint* iP = static_cast<InstancePoint*>(start);
-	      file << "        <connector name=\"" << iP->getName().getString() << "\" plug=\"" << iP->getPlug().getString() << "\"/>" << endl;
+	      file << "        <connector name=\"" << iP->getName() << "\" plug=\"" << iP->getPlug() << "\"/>" << endl;
 	    } else if (dynamic_cast<PortPoint*>(start)) {
 	      PortPoint* pP = static_cast<PortPoint*>(start);
 	      file << "        <connector idx=\"" << pP->getIndex() << "\"/>" << endl;
@@ -1414,7 +1429,7 @@ namespace OpenChams {
 	    // end point
 	    if (dynamic_cast<InstancePoint*>(end)) {
 	      InstancePoint* iP = static_cast<InstancePoint*>(end);
-	      file << "        <connector name=\"" << iP->getName().getString() << "\" plug=\"" << iP->getPlug().getString() << "\"/>" << endl;
+	      file << "        <connector name=\"" << iP->getName() << "\" plug=\"" << iP->getPlug() << "\"/>" << endl;
 	    } else if (dynamic_cast<PortPoint*>(end)) {
 	      PortPoint* pP = static_cast<PortPoint*>(end);
 	      file << "        <connector idx=\"" << pP->getIndex() << "\"/>" << endl;
@@ -1434,19 +1449,19 @@ namespace OpenChams {
       file << "  <sizing>" << endl;
     if (_sizing && !_sizing->hasNoOperators()) {
       //    file << "  <sizing>" << endl;
-      for (map<Name, Operator*>::const_iterator it = _sizing->getOperators().begin() ; it != _sizing->getOperators().end() ; ++it) {
+      for (map<string, Operator*>::const_iterator it = _sizing->getOperators().begin() ; it != _sizing->getOperators().end() ; ++it) {
 	Operator* op = (*it).second;
-	string opName = op->getName().getString();
+	string opName = op->getName();
 	transform(opName.begin(), opName.end(), opName.begin(), ::toupper);
-	file << "    <instance name=\"" << ((*it).first).getString() << "\" operator=\"" << opName << "\" simulModel=\"" << op->getSimulModel().getString() << "\">" << endl;
+	file << "    <instance name=\"" << ((*it).first) << "\" operator=\"" << opName << "\" simulModel=\"" << op->getSimulModel() << "\">" << endl;
 	if (!op->hasNoConstraints()) {
-	  for (map<Name, Operator::Constraint*>::const_iterator cit = op->getConstraints().begin() ; cit != op->getConstraints().end() ; ++cit) {
+	  for (map<string, Operator::Constraint*>::const_iterator cit = op->getConstraints().begin() ; cit != op->getConstraints().end() ; ++cit) {
 	    Operator::Constraint* cn = (*cit).second;
-	    Name ref = cn->getRef();
-	    if (ref == Name("")) {
-	      file << "      <constraint param=\"" << ((*cit).first).getString() << "\" refEquation=\"" << cn->getRefParam().getString() << "\" factor=\"" << cn->getFactor() << "\"/>" << endl;
+	    const std::string& ref = cn->getRef();
+	    if (ref.empty()) {
+	      file << "      <constraint param=\"" << ((*cit).first) << "\" refEquation=\"" << cn->getRefParam() << "\" factor=\"" << cn->getFactor() << "\"/>" << endl;
 	    } else {
-	      file << "      <constraint param=\"" << ((*cit).first).getString() << "\" ref=\"" << cn->getRef().getString() << "\" refParam=\"" << cn->getRefParam().getString() << "\" factor=\"" << cn->getFactor() << "\"/>" << endl;
+	      file << "      <constraint param=\"" << ((*cit).first) << "\" ref=\"" << cn->getRef() << "\" refParam=\"" << cn->getRefParam() << "\" factor=\"" << cn->getFactor() << "\"/>" << endl;
 	    }
 	  }
 	}
@@ -1456,35 +1471,35 @@ namespace OpenChams {
     // EQUATIONS
     if (_sizing && !_sizing->hasNoEquations()) {
       file << "    <equations>" << endl;      
-      //	for (map<Name, string>::const_iterator it = _sizing->getEquations().begin() ; it != _sizing->getEquations().end() ; ++it)
-      //	  file << "      <eq name=\"" << ((*it).first).getString() << "\" equation=\"" << (*it).second << "\"/>" << endl;
+      //	for (map<string, string>::const_iterator it = _sizing->getEquations().begin() ; it != _sizing->getEquations().end() ; ++it)
+      //	  file << "      <eq name=\"" << ((*it).first) << "\" equation=\"" << (*it).second << "\"/>" << endl;
       file << "      <cstr_designer>" << endl;
-      for(map<Name, Equation*>::const_iterator it = _sizing->getEquations().begin() ; it != _sizing->getEquations().end() ; ++it) {
+      for(map<string, Equation*>::const_iterator it = _sizing->getEquations().begin() ; it != _sizing->getEquations().end() ; ++it) {
 	if(dynamic_cast<DesignerCstrOC*>((*it).second))
-	  file << "        <cstr_dsg name=\"" << ((*it).first).getString() << "\" equation=\"" << (*it).second->getEquationStr()[0] << "\"/>" << endl;
+	  file << "        <cstr_dsg name=\"" << ((*it).first) << "\" equation=\"" << (*it).second->getEquationStr()[0] << "\"/>" << endl;
       }
       file << "      </cstr_designer>" << endl;
       
       file << "      <cstr_circuit_level>" << endl;
-      for(map<Name, Equation*>::const_iterator it = _sizing->getEquations().begin() ; it != _sizing->getEquations().end() ; ++it) {
+      for(map<string, Equation*>::const_iterator it = _sizing->getEquations().begin() ; it != _sizing->getEquations().end() ; ++it) {
 	if(dynamic_cast<HighLevelCstr*>((*it).second))
-	  file << "        <cstr_cl name=\"" << ((*it).first).getString() << "\" equation=\"" << (*it).second->getEquationStr()[0] << "\"/>" << endl;
+	  file << "        <cstr_cl name=\"" << ((*it).first) << "\" equation=\"" << (*it).second->getEquationStr()[0] << "\"/>" << endl;
       }
       file << "      </cstr_circuit_level>" << endl;
       
       file << "      <nrc_cstr>" << endl;
-      for(map<Name, Equation*>::const_iterator it = _sizing->getEquations().begin() ; it != _sizing->getEquations().end() ; ++it) {
+      for(map<string, Equation*>::const_iterator it = _sizing->getEquations().begin() ; it != _sizing->getEquations().end() ; ++it) {
 	if(dynamic_cast<NRCCstr*>((*it).second)) {
 	  NRCCstr* nrcCstr = (NRCCstr*)((*it).second);
-	  file << "        <nrc name=\"" << ((*it).first).getString() << "\" param=\"" << nrcCstr->getVoltage() << "\" equation=\"" << (*it).second->getEquationStr()[0] << "\"/>" << endl;
+	  file << "        <nrc name=\"" << ((*it).first) << "\" param=\"" << nrcCstr->getVoltage() << "\" equation=\"" << (*it).second->getEquationStr()[0] << "\"/>" << endl;
 	}
       }
       file << "      </nrc_cstr>" << endl;
       
       file << "      <ddps>" << endl;
-      for(map<Name, Equation*>::const_iterator it = _sizing->getEquations().begin() ; it != _sizing->getEquations().end() ; ++it) {
+      for(map<string, Equation*>::const_iterator it = _sizing->getEquations().begin() ; it != _sizing->getEquations().end() ; ++it) {
 	if(dynamic_cast<DDP*>((*it).second)) {
-	  file << "        <ddp_i name=\"" << ((*it).first).getString() << "\">" << endl;
+	  file << "        <ddp_i name=\"" << ((*it).first) << "\">" << endl;
 	  for(map<int, string>::const_iterator it2 = (*it).second->getEquationStr().begin(); it2!=(*it).second->getEquationStr().end(); ++it2)
 	    file << "          <ddp_eq equation=\"" << (*it2).second << "\"/>" << endl;
 	  file << "        </ddp_i>" << endl;
@@ -1502,8 +1517,8 @@ namespace OpenChams {
     if (_layout) {
       file << "  <layout>" << endl;
       if (!_layout->hasNoInstance()) {
-	for (map<Name, Name>::const_iterator it = _layout->getInstances().begin() ; it != _layout->getInstances().end() ; ++it) {
-	  file << "    <instance name=\"" << ((*it).first).getString() << "\" style=\"" << ((*it).second).getString() << "\"/>" << endl;
+	for (map<string, string>::const_iterator it = _layout->getInstances().begin() ; it != _layout->getInstances().end() ; ++it) {
+	  file << "    <instance name=\"" << ((*it).first) << "\" style=\"" << ((*it).second) << "\"/>" << endl;
 	}
       }
       if (Node* root = _layout->getHBTreeRoot()) {
