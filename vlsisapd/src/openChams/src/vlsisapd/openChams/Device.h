@@ -32,7 +32,7 @@ namespace OpenChams {
 
 
   class Device : public Instance {
-	public:
+    public:
                                              Device                ( const std::string& name
                                                                    , const std::string& model
                                                                    , unsigned           order
@@ -47,8 +47,8 @@ namespace OpenChams {
       inline const std::vector<Transistor*>& getTransistors        ();
              Transistor*                     addTransistor         (const std::string&);
 
-	private:
-      const std::string  	   	_mosType;
+    private:
+      std::string               _mosType;
       bool                      _sourceBulkConnected;
       std::vector<Transistor*>  _trans;
   };

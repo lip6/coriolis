@@ -36,8 +36,8 @@ namespace OpenChams {
           inline const std::string& getInstanceName () const;
           inline const std::string& getConnectorName() const;
         private:
-          const std::string& _instanceName;
-          const std::string& _connectorName;
+          std::string  _instanceName;
+          std::string  _connectorName;
       };
 
 	public:
@@ -58,8 +58,8 @@ namespace OpenChams {
       inline const std::vector<Wire*>& getWires         ();
 
     private:
-      const std::string&             _name;
-      const std::string&             _typeName;
+      std::string                    _name;
+      std::string                    _typeName;
       bool                           _isExternal;
       Netlist*                       _netlist;
       std::vector<Net::Connection*>  _connections;  // <instanceName, connectorName>

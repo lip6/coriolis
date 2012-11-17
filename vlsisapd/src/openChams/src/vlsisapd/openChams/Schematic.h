@@ -28,20 +28,20 @@ namespace OpenChams {
 
   class Schematic {
 
-	public:
+    public:
       class Infos {
-    	public:
+        public:
                                     Infos         (double x, double y, const std::string& orient);
           inline double             getX          ();
           inline double             getY          ();
           inline const std::string& getOrientation();
-	    private:
+        private:
           double       _x;
           double       _y;
           std::string  _orient;
       };
 
-	public:
+    public:
                                                   Schematic      ( Circuit* );
              void                                 addInstance    ( const std::string& instanceName
                                                                  , double x

@@ -117,9 +117,9 @@ namespace OpenChams {
              void                      check_lowercase           ( std::string& str, std::vector<std::string>& compares, std::string message );
     
 	private:
-      const std::string& 	           _name;
+      std::string                      _name;
       std::string                      _absolutePath;
-      const std::string& 	           _techno;
+      std::string                      _techno;
       Parameters                       _params;
       Netlist*                         _netlist;
       Schematic*                       _schematic;

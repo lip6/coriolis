@@ -23,7 +23,7 @@ namespace OpenChams {
 
 
   class Port {
-	public:
+    public:
       inline                    Port          ( const std::string& type
                                               , unsigned           idx
                                               , double             x
@@ -35,7 +35,7 @@ namespace OpenChams {
       inline double             getX          () const;
       inline double             getY          () const;
       inline const std::string& getOrientation() const;
-	private:
+    private:
       std::string  _type;
       unsigned     _idx;
       double       _x;
