@@ -706,11 +706,30 @@ class ProjectBuilder:
     def loadConfiguration ( self, confFile ):
         moduleGlobals = globals()
 
+        if not confFile:
+            print 'Making an educated guess to locate the configuration file:'
+            locations = [ os.path.abspath(os.path.dirname(sys.argv[0]))
+                        , os.environ['HOME']+'/coriolis-2.x/src/bootstrap'
+                        , os.environ['HOME']+'/coriolis/src/bootstrap'
+                        , os.environ['HOME']+'/chams-2.x/src/bootstrap'
+                        , os.environ['HOME']+'/chams/src/bootstrap'
+                        , '/users/outil/coriolis/coriolis-2.x/src/bootstrap'
+                        , self._rootDir+'/src/bootstrap'
+                        ]
+
+            for location in locations:
+                confFile = location + '/build.conf'
+                print '  <%s>' % confFile
+
+                if os.path.isfile(confFile): break
+            if not confFile:
+                ErrorMessage( 1, 'Cannot locate any configuration file.' ).terminate()
+        else:
+            if not os.path.isfile(confFile):
+                ErrorMessage( 1, 'Missing configuration file:', '<%s>'%confFile ).terminate()
+
         print 'Reading configuration from:'
         print '  <%s>' % options.conf
-
-        if not os.path.isfile(confFile):
-            ErrorMessage( 1, 'Missing configuration file:', '<%s>'%confFile ).terminate()
         
         try:
             execfile( confFile, moduleGlobals )
@@ -790,8 +809,7 @@ if __name__ == "__main__":
 
         parser = optparse.OptionParser ()  
       # Build relateds.
-        parser.add_option ( "-c", "--conf", type="string", dest="conf", default=os.path.join(scriptPath,'build.conf')
-                          , help="Fichier de configuration." )
+        parser.add_option ( "-c", "--conf", type="string", dest="conf" ,                                    help="Fichier de configuration." )
         parser.add_option (       "--show-conf"  , action="store_true" ,                dest="showConf"   , help="Display the Project/Tools configuration, then exit." )
         parser.add_option ( "-q", "--quiet"      , action="store_true" ,                dest="quiet"      , help="Do not print all the informative messages." )
         parser.add_option ( "-r", "--release"    , action="store_true" ,                dest="release"    , help="Build a <Release> aka optimized version." )
@@ -844,8 +862,6 @@ if __name__ == "__main__":
         if options.makeArguments:    builder.makeArguments     = options.makeArguments
         if options.svnMethod:        builder.svnMethod         = options.svnMethod
         if options.svnTag:           builder.svnTag            = options.svnTag
-    
-        packagedProjects = [ "bootstrap", "vlsisapd", "coriolis" ]
     
         if   options.svnStatus:   builder.svnStatus   ( tools=options.tools, projects=options.projects )
         elif options.svnUpdate:   builder.svnUpdate   ( tools=options.tools, projects=options.projects )
