@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
-//
-// ===================================================================
-//
-// $Id$
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
-// |                                                                 |
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
@@ -17,9 +12,6 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./LoadGrByNet.cpp"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
 // +-----------------------------------------------------------------+
 
 
@@ -1904,6 +1896,7 @@ namespace {
     switch ( padInstance->getTransformation().getOrientation() ) {
       case Transformation::Orientation::ID: // North side.
       case Transformation::Orientation::YR: // Right side.
+      case Transformation::Orientation::R3: // Right side (alterate).
         topRightPad = true;
         break;
       case Transformation::Orientation::MY: // South side.
@@ -2245,8 +2238,9 @@ namespace {
 
     AutoContact* subContact;
     if ( leftRP == rightRP ) {
-      _GCell_rp_AutoContacts ( _gcell, leftRP, _southWestContact, _northEastContact, (_south == NULL) && (_north == NULL) );
-    //_northEastContact = _southWestContact;
+      _southWestContact = _GCell_rp_Access ( _gcell, leftRP, (_south == NULL) && (_north == NULL), false );
+      _northEastContact = _southWestContact;
+    //_GCell_rp_AutoContacts ( _gcell, leftRP, _southWestContact, _northEastContact, (_south == NULL) && (_north == NULL) );
     } else {
       ltrace(99) << "Using separate global contacts" << endl;
       _GCell_rp_AutoContacts ( _gcell, leftRP , _southWestContact, subContact, (_south == NULL) );

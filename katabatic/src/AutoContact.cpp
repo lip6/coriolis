@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
@@ -17,10 +12,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./AutoContact.cpp"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <cstdlib>
@@ -1364,7 +1356,7 @@ namespace {
 
     Box constraint = _contact->getConstraintBox()/*.inflate(DbU::lambda(0.5))*/;
     if ( !constraint.contains(center) )
-      cerr << Bug("%s [%s %s] outside constraint %s."
+      cbug << Bug("%s [%s %s] outside constraint %s."
                  ,getString(_contact).c_str()
                  ,DbU::getValueString(center.getX()).c_str()
                  ,DbU::getValueString(center.getY()).c_str()

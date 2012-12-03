@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
@@ -17,10 +12,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./GCell.cpp"                              |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <cmath>
@@ -1010,17 +1002,17 @@ namespace Katabatic {
     if ( not Session::getDemoMode() and Session::getWarnGCellOverload() ) {
       for ( size_t i=0 ; i<_depth ; i++ ) {
         if ( _densities[i] > 1.0 ) {
-          cerr << Warning("%s @%dx%d overloaded in %s (M2:%.2f M3:%.2f M4:%.2f M5:%.2f)"
-                         ,_getString().c_str()
-                         ,getColumn()
-                         ,getRow()
-                         ,getString(Session::getRoutingGauge()->getRoutingLayer(i)->getName()).c_str()
-                         ,_densities[1]  // M2
-                         ,_densities[2]  // M3
-                       //,_blockages[2]  // M4
-                         ,_densities[3]  // M5
-                         ,_densities[4]  // M6
-                         )
+          cinfo << Warning("%s @%dx%d overloaded in %s (M2:%.2f M3:%.2f M4:%.2f M5:%.2f)"
+                          ,_getString().c_str()
+                          ,getColumn()
+                          ,getRow()
+                          ,getString(Session::getRoutingGauge()->getRoutingLayer(i)->getName()).c_str()
+                          ,_densities[1]  // M2
+                          ,_densities[2]  // M3
+                        //,_blockages[2]  // M4
+                          ,_densities[3]  // M5
+                          ,_densities[4]  // M6
+                          )
              << endl;
         }
       }
@@ -1063,12 +1055,12 @@ namespace Katabatic {
 
     if ( rpNets.size() < Session::getSaturateRp() ) return;
 
-    cerr << Warning("%s has %zd terminals (h:%zd, v:%zd)"
-                   ,getString(this).c_str()
-                   ,rps.size()
-                   ,_hsegments.size()
-                   ,_vsegments.size()
-                   ) << endl;
+    cinfo << Warning("%s has %zd terminals (h:%zd, v:%zd)"
+                    ,getString(this).c_str()
+                    ,rps.size()
+                    ,_hsegments.size()
+                    ,_vsegments.size()
+                    ) << endl;
 
     AutoSegment* segment;
     while ( (_densities[1] > 0.5) and stepDesaturate(1,globalNets,segment,true) ) {
@@ -1354,7 +1346,7 @@ namespace Katabatic {
     if ( (edgeUpSaturation > threshold) or (edgeRightSaturation > threshold) ) {
       overload = true;
 
-      cerr << Warning("In %s, (over %.2f) ", _getString().c_str(), threshold);
+      cinfo << Warning("In %s, (over %.2f) ", _getString().c_str(), threshold);
 
       ostringstream message;
       message << setprecision(3);
@@ -1367,7 +1359,7 @@ namespace Katabatic {
                 << " " << edgeRightSaturation;
       }
 
-      cerr << message.str() << "." << endl;
+      cinfo << message.str() << "." << endl;
     }
 
     return overload;
@@ -1382,8 +1374,8 @@ namespace Katabatic {
 
   void  GCell::translate ( const DbU::Unit&, const DbU::Unit& )
   {
-    cerr << Warning("Calling GCell::translate() on %s is likely a bug."
-                   ,_getString().c_str()) << endl;
+    cinfo << Warning("Calling GCell::translate() on %s is likely a bug."
+                    ,_getString().c_str()) << endl;
   }
 
 
@@ -1490,7 +1482,7 @@ namespace Katabatic {
   DyKeyQueue::~DyKeyQueue ()
   {
     if ( not _requests.empty() ) {
-      cerr << Warning("~DyKeyQueue(): Still contains %d requests (and %d elements)."
+      cbug << Warning("~DyKeyQueue(): Still contains %d requests (and %d elements)."
                      ,_requests.size(),_map.size()) << endl;
     }
   }
