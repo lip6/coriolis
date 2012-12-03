@@ -1,13 +1,4 @@
 
- install ( FILES   coriolisInit.py                   DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
- install ( FILES   helpers/__init__.py               DESTINATION ${SYS_CONF_DIR}/coriolis2/helpers ) 
- install ( FILES   helpers/Configuration.py          DESTINATION ${SYS_CONF_DIR}/coriolis2/helpers ) 
- install ( FILES   helpers/Alliance.py               DESTINATION ${SYS_CONF_DIR}/coriolis2/helpers ) 
- install ( FILES   helpers/Display.py                DESTINATION ${SYS_CONF_DIR}/coriolis2/helpers ) 
- install ( FILES   helpers/Patterns.py               DESTINATION ${SYS_CONF_DIR}/coriolis2/helpers ) 
- install ( FILES   helpers/SymbolicTechnology.py     DESTINATION ${SYS_CONF_DIR}/coriolis2/helpers ) 
- install ( FILES   helpers/RealTechnology.py         DESTINATION ${SYS_CONF_DIR}/coriolis2/helpers ) 
- install ( FILES   helpers/Debug.py                  DESTINATION ${SYS_CONF_DIR}/coriolis2/helpers ) 
  install ( FILES   technology_symbolic.conf          DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
  install ( FILES   technology_cmos130_s2r.conf       DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
  install ( FILES   misc.conf                         DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 

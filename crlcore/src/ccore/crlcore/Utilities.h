@@ -265,6 +265,7 @@ inline std::string  tty::bgcolor ( unsigned int mask )
                        , Verbose1      = (1<<1)
                        , Verbose2      = (1<<2)
                        , Info          = (1<<3)
+                       , Bug           = (1<<4)
                        , VerboseLevel0 = Verbose0
                        , VerboseLevel1 = Verbose0|Verbose1
                        , VerboseLevel2 = Verbose0|Verbose1|Verbose2
@@ -343,6 +344,7 @@ extern mstream  cmess0;
 extern mstream  cmess1;
 extern mstream  cmess2;
 extern mstream  cinfo;
+extern mstream  cbug;
 
 
 // -------------------------------------------------------------------

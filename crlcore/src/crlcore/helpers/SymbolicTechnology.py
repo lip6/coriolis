@@ -86,7 +86,7 @@ class LayersLUT ( object ):
             layer = self._symbolicLayers[name]
 
         if not layer and flags&LayersLUT.MissingError:
-            raise ErrorMessage(['Layer <%s> is not defined (yet?).'%name])
+            raise ErrorMessage(1,['Layer <%s> is not defined (yet?).'%name])
 
         return layer
 
@@ -101,22 +101,22 @@ def loadRealLayers ( technology, basicLayersData ):
 
         try:
             if len(entry) < 2:
-                raise ErrorMessage(['Malformed entry in <realLayersTable>.'
-                                   ,'Less than two fields: missing name and/or material.'
-                                   ,str(entry)
-                                   ])
+                raise ErrorMessage(1,['Malformed entry in <realLayersTable>.'
+                                     ,'Less than two fields: missing name and/or material.'
+                                     ,str(entry)
+                                     ])
             if len(entry) > 2:
                 if entry[1] != BasicLayer.Material.blockage:
-                    raise ErrorMessage(['Invalid entry in <realLayersTable>.'
-                                       ,'Only blockage material can have a third field.'
-                                       ,str(entry)
-                                       ])
+                    raise ErrorMessage(1,['Invalid entry in <realLayersTable>.'
+                                         ,'Only blockage material can have a third field.'
+                                         ,str(entry)
+                                         ])
                 routingLayer = technology.getBasicLayer(entry[2])
                 if not routingLayer:
-                    raise ErrorMessage(['Incoherency in <realLayersTable> entry at.'
-                                       ,'The metal <%s> associated to the blockage doesn\'t exist (yet?).' % entry[2]
-                                       ,str(entry)
-                                       ])
+                    raise ErrorMessage(1,['Incoherency in <realLayersTable> entry at.'
+                                         ,'The metal <%s> associated to the blockage doesn\'t exist (yet?).' % entry[2]
+                                         ,str(entry)
+                                         ])
 
             basicLayer = BasicLayer.create( technology
                                           , entry[0]
@@ -137,28 +137,28 @@ def loadSymbolicLayers ( technology, symbolicLayersData ):
 
         try:
             if len(entry) != 3:
-                raise ErrorMessage(['Malformed entry in <symbolicLayersTable>.'
-                                   ,'Must contains exactly three fields: ( name, type, (real_layers,) ).'
-                                   ,str(entry)
-                                   ])
+                raise ErrorMessage(1,['Malformed entry in <symbolicLayersTable>.'
+                                     ,'Must contains exactly three fields: ( name, type, (real_layers,) ).'
+                                     ,str(entry)
+                                     ])
             name, layerType, realLayers = entry
 
             if not isinstance(layerType,SymbolicLayerType):
-                raise ErrorMessage(['Invalid entry in <symbolicLayersTable>.'
-                                   ,'The layer type code is not valid, should be any of:'
-                                   ,'    * TypeRegular'
-                                   ,'    * TypeDiffusion'
-                                   ,'    * TypeTransistor'
-                                   ,'    * TypeContact'
-                                   ,'    * TypeVia'
-                                   ,str(entry)
-                                   ])
+                raise ErrorMessage(1,['Invalid entry in <symbolicLayersTable>.'
+                                     ,'The layer type code is not valid, should be any of:'
+                                     ,'    * TypeRegular'
+                                     ,'    * TypeDiffusion'
+                                     ,'    * TypeTransistor'
+                                     ,'    * TypeContact'
+                                     ,'    * TypeVia'
+                                     ,str(entry)
+                                     ])
             if layerType.realLayerLength() != len(realLayers):
-                raise ErrorMessage(['Invalid entry in <symbolicLayersTable>.'
-                                   ,'Layer of type <%s> contains %d real layers instead of %d.' \
-                                        % (layerType,len(realLayers),layerType.realLayerLength())
-                                   ,str(entry)
-                                   ])
+                raise ErrorMessage(1,['Invalid entry in <symbolicLayersTable>.'
+                                     ,'Layer of type <%s> contains %d real layers instead of %d.' \
+                                          % (layerType,len(realLayers),layerType.realLayerLength())
+                                     ,str(entry)
+                                     ])
 
             realLayersArgs = []
             for layerName in realLayers:
@@ -198,23 +198,23 @@ def loadSymbolicRules ( technology, symbolicRulesTable ):
 
         try:
             if len(rule) != 2:
-                raise ErrorMessage(['Malformed entry in <symbolicRulesTable>.'
-                                   ,'Must contains exactly two fields: ( rule_path, value ).'
-                                   ,str(rule)
-                                   ])
+                raise ErrorMessage(1,['Malformed entry in <symbolicRulesTable>.'
+                                     ,'Must contains exactly two fields: ( rule_path, value ).'
+                                     ,str(rule)
+                                     ])
             if not isinstance(rule[1],int) and not isinstance(rule[1],float):
-                raise ErrorMessage(['Invalid entry in <symbolicRulesTable>.'
-                                   ,'Rule value must be of integer or float type.'
-                                   ,str(rule)
-                                   ])
+                raise ErrorMessage(1,['Invalid entry in <symbolicRulesTable>.'
+                                     ,'Rule value must be of integer or float type.'
+                                     ,str(rule)
+                                     ])
 
             value    = DbU.fromLambda(rule[1])
             elements = rule[0].split('.')
             if len(elements) < 3:
-                raise ErrorMessage(['Invalid entry in <symbolicRulesTable>.'
-                                   ,'Rule name must contains at least three components: \"LAYER.category.dimension\".'
-                                   ,str(rule)
-                                   ])
+                raise ErrorMessage(1,['Invalid entry in <symbolicRulesTable>.'
+                                     ,'Rule name must contains at least three components: \"LAYER.category.dimension\".'
+                                     ,str(rule)
+                                     ])
 
             ruleLayer = layersLUT.lookup( elements[0], LayersLUT.Symbolic|LayersLUT.MissingError  )
             subLayer  = layersLUT.lookup( elements[1], LayersLUT.Real )
@@ -228,15 +228,15 @@ def loadSymbolicRules ( technology, symbolicRulesTable ):
             elif ruleTag == 'minimum.width':   ruleLayer.setMinimalSize   ( value )
             elif ruleTag == 'minimum.side':    ruleLayer.setMinimalSize   ( value )
             else: 
-                raise ErrorMessage(['Invalid entry in <symbolicRulesTable>.'
-                                   ,'Unknown rule kind: \".%s\", should be any of:' % ruleTag
-                                   ,'    * "RULE_HEAD.extention.cap"'
-                                   ,'    * "RULE_HEAD.extention.width"'
-                                   ,'    * "RULE_HEAD.enclosure"'
-                                   ,'    * "RULE_HEAD.minimum.width"'
-                                   ,'    * "RULE_HEAD.minimum.side"'
-                                   ,str(rule)
-                                   ])
+                raise ErrorMessage(1,['Invalid entry in <symbolicRulesTable>.'
+                                     ,'Unknown rule kind: \".%s\", should be any of:' % ruleTag
+                                     ,'    * "RULE_HEAD.extention.cap"'
+                                     ,'    * "RULE_HEAD.extention.width"'
+                                     ,'    * "RULE_HEAD.enclosure"'
+                                     ,'    * "RULE_HEAD.minimum.width"'
+                                     ,'    * "RULE_HEAD.minimum.side"'
+                                     ,str(rule)
+                                     ])
 
         except Exception, e:
             ErrorMessage.wrapPrint(e,'In %s:<symbolicRulesTable> at index %d.' % (symbolicFile,entryNo))

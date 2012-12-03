@@ -312,9 +312,9 @@ void DumpPortList(ofstream &ccell, Cell* cell)
                 + ":  "
                 + getNetDirection(net1)
                 + vectorType
-                + index1StringStream.str()
-                + " to "
                 + index2StringStream.str()
+                + " downto "
+                + index1StringStream.str()
                 + ")"
                 + busType); 
     }
@@ -400,9 +400,9 @@ void DumpSignalList(ofstream &ccell, Cell* cell)
             << name
             << string(biggestName - name.size() + 1, ' ')
             << ": bit_vector("
-                << index1StringStream.str()
-                << " to "
                 << index2StringStream.str()
+                << " downto "
+                << index1StringStream.str()
                 << ");"
                 << endl;
     }
@@ -552,7 +552,7 @@ void DumpConnectionList(ofstream &ccell, Instance*instance)
 
         if (vectorFound)
         {
-            if (index2 < index1)
+            if (index2 > index1)
                 reverse(plugConnectedVector.begin(), plugConnectedVector.end());
             string connections;
             PlugVector::const_iterator pvit = plugConnectedVector.begin();

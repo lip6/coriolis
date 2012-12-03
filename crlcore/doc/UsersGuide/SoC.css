@@ -4,13 +4,25 @@ html, body, th, td, tr, p, li, h1, h2, h3, h4, h5, h6 {
   font-family:                 verdana, sans-serif;
 }
 
-p, li {
-  text-align:                  justify;
+body {
+  color:                       black;
+  background:                  white;
+  /*
+  background:                  #09550B;
+  background-color:            white;
+  */
+  background-position:         top left;
+  background-attachment:       fixed;
+  background-repeat:           no-repeat;
+  margin:                      0 0 0 0;
+  padding:                     0 0 0 0;
+  margin-right:                10%;
+  margin-left:                 30%;
 }
 
-.sc {
-  font-variant:                small-caps;
-  font-size:                   110%;
+body.gsummary {
+  margin-right:                10%;
+  margin-left:                 10%;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -28,21 +40,7 @@ h4                 { font-weight:  bold;       font-size: 100%; }
 h5                 { font-style:   italic;     font-size: 100%; }
 h6                 { font-variant: small-caps; font-size: 100%; }
 
-body {
-  color:                       black;
-  background:                  white;
-  /*
-  background:                  #09550B;
-  background-color:            white;
-  */
-  background-position:         top left;
-  background-attachment:       fixed;
-  background-repeat:           no-repeat;
-  margin:                      0 0 0 0;
-  padding:                     0 0 0 0;
-  margin-right:                10%;
-  margin-left:                 30%;
-}
+body.gsummary h1   { text-align: center;       font-size: 220%; }
 
 hr {
   color:                       #09550b;
@@ -56,6 +54,15 @@ div#centered {
   margin-left:                 auto;
   margin-right:                auto;
   text-align:                  center;
+}
+
+p, li {
+  text-align:                  justify;
+}
+
+.sc {
+  font-variant:                small-caps;
+  font-size:                   110%;
 }
 
 pre, tt, code {
@@ -96,6 +103,32 @@ a:hover, a:focus, a:visited {
   */
   color:                       #09550b;
   border-bottom:               1px dotted #09550b; 
+}
+
+body.gsummary a:link, a:active {
+  font-size:                   140%;
+  font-weight:                 bold;
+  text-decoration:             none;
+  color:                       #09550b;
+  border-bottom:               none;
+  /*
+  border-bottom:               1px dotted #09550b; 
+  */
+}
+
+body.gsummary a:hover, a:focus, a:visited {
+  font-size:                   120%;
+  font-weight:                 bold;
+  font-style:                  italic;
+  text-decoration:             none;
+  /*
+  color:                       #A40010;
+  border-bottom:               1px dotted #A40010; 
+  */
+  color:                       #09550b;
+  /*
+  border-bottom:               1px dotted #09550b; 
+  */
 }
 
 p.credit {
@@ -542,6 +575,47 @@ div.topic {
 
 div.topic p.first {
   font-weight:        bold;
+}
+
+body.gsummary table {
+  border-collapse: collapse;
+  border-color:    transparent;
+  width:           60%;
+  margin-left:     auto;
+  margin-right:    auto;
+}
+
+/*
+body.gsummary table th {
+}
+*/
+
+body.gsummary table td {
+  border: none;
+}
+
+/*
+body.gsummary table tr td ul {
+  margin:          0pt;
+  border-left:     1px solid black;
+}
+*/
+
+/*
+body.gsummary table tr td ul li {
+  border-bottom:   2px dotted black;
+}
+*/
+
+body.gsummary li {
+  padding:           0%;
+  list-style-type:   none;
+}
+
+body.gsummary ul {
+  padding:         0px 0px 10px 0px;
+  margin:          0%;
+  border-bottom:   1px dotted black;
 }
 
 table.wiki th, table th {

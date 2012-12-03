@@ -43,10 +43,10 @@ def _loadAllianceConfig ( af, allianceConfig ):
 
         try:
             if len(entry) != 2:
-                raise ErrorMessage(['Malformed entry in <allianceConfig>.'
-                                   ,'Must have exactly two fields ("key", <value>).'
-                                   ,str(entry)
-                                   ])
+                raise ErrorMessage(1,['Malformed entry in <allianceConfig>.'
+                                     ,'Must have exactly two fields ("key", <value>).'
+                                     ,str(entry)
+                                     ])
 
             key, value = entry
             if key == 'SYMBOLIC_TECHNOLOGY': env.setSYMBOLIC_TECHNOLOGY(value)
@@ -66,10 +66,10 @@ def _loadAllianceConfig ( af, allianceConfig ):
             if key == 'SYSTEM_LIBRARY':
                 for libraryEntry in value:
                     if len(libraryEntry) != 2:
-                        raise ErrorMessage(['Malformed system library entry in <allianceConfig>.'
-                                            ,'Must have exactly two fields ("path", <mode>).'
-                                            ,str(libraryEntry)
-                                            ])
+                        raise ErrorMessage(1,['Malformed system library entry in <allianceConfig>.'
+                                             ,'Must have exactly two fields ("path", <mode>).'
+                                             ,str(libraryEntry)
+                                             ])
                     libPath, mode = libraryEntry
                     env.addSYSTEM_LIBRARY(library=libPath,mode=mode)
 
@@ -101,16 +101,16 @@ def loadRoutingGaugesTable ( routingGaugesTable, fromFile ):
 
             try:
                 if len(entry) != 2:
-                    raise ErrorMessage(['Malformed entry in <routingGaugesTable[%s]>.' % gaugeName
-                                        ,'Must have exactly two fields ("METAL_LAYER", (parameters_list)).'
-                                        ,str(entry)
-                                        ])
+                    raise ErrorMessage(1,['Malformed entry in <routingGaugesTable[%s]>.' % gaugeName
+                                         ,'Must have exactly two fields ("METAL_LAYER", (parameters_list)).'
+                                         ,str(entry)
+                                         ])
                 if len(entry[1]) != 8:
-                    raise ErrorMessage(['Malformed entry in <routingGaugesTable[%s]>.' % gaugeName
-                                        ,'Parameters list must have exactly eight fields:'
-                                        ,'  (direction, type, depth, density, offset, pitch, wire_width, via_width)'
-                                        ,str(entry)
-                                        ])
+                    raise ErrorMessage(1,['Malformed entry in <routingGaugesTable[%s]>.' % gaugeName
+                                         ,'Parameters list must have exactly eight fields:'
+                                         ,'  (direction, type, depth, density, offset, pitch, wire_width, via_width)'
+                                         ,str(entry)
+                                         ])
 
                 gauge.addLayerGauge( RoutingLayerGauge.create( technology.getLayer(entry[0])
                                                              , entry[1][0]                 # Direction. 
@@ -142,7 +142,7 @@ def loadCellGaugesTable ( cellGaugesTable, fromFile ):
 
         try:
             if len(gaugeDatas) != 4:
-                raise ErrorMessage(['Malformed gaugeDatas in <cellGaugesTable[%s]>.' % gaugeName
+                raise ErrorMessage(1,['Malformed gaugeDatas in <cellGaugesTable[%s]>.' % gaugeName
                                     ,'Parameters list must have exactly four fields:'
                                     ,'  (terminal_metal, xy_common_pitch, slice_height, slice_step)'
                                     ,str(gaugeDatas)

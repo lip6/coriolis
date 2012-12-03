@@ -29,6 +29,8 @@
  find_package(OPENACCESS)
  find_package(VLSISAPD REQUIRED)
  find_package(HURRICANE REQUIRED)
+ find_package(Boost REQUIRED)
+ find_package(Libexecinfo REQUIRED)
  if(BUILD_DOC)
    include(UseLATEX)
  endif(BUILD_DOC)

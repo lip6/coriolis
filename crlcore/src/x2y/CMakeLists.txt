@@ -10,5 +10,7 @@
       link_directories ( ${CRLCORE_BINARY_DIR}/src/ccore )
  
         add_executable ( cx2y        ${cpps} )
- target_link_libraries ( cx2y        crlcore )
+ target_link_libraries ( cx2y        crlcore
+ 							${LIBEXECINFO_LIBRARIES} 
+ 						)
                install ( TARGETS     cx2y DESTINATION bin )

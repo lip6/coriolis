@@ -21,25 +21,25 @@ def loadRealLayers ( technology, basicLayersData ):
 
         try:
             if len(entry) != 3:
-                raise ErrorMessage(['Malformed entry in <realLayersTable>.'
-                                   ,'Must have exactly three fields: (symb_name,real_name,GDSII_extnb).'
-                                   ,str(entry)
-                                   ])
+                raise ErrorMessage(1,['Malformed entry in <realLayersTable>.'
+                                     ,'Must have exactly three fields: (symb_name,real_name,GDSII_extnb).'
+                                     ,str(entry)
+                                     ])
             symbName, realName, gdsiiExtractNumber = entry
             if not isinstance(gdsiiExtractNumber,int):
-                raise ErrorMessage(['Incoherency in <realLayersTable> entry.'
-                                   ,'GDSII exctract number is not of int type (%s).' \
-                                        % helpers.stype(gdsiiExtractNumber)
-                                   ,str(entry)
-                                   ])
+                raise ErrorMessage(1,['Incoherency in <realLayersTable> entry.'
+                                     ,'GDSII exctract number is not of int type (%s).' \
+                                          % helpers.stype(gdsiiExtractNumber)
+                                     ,str(entry)
+                                     ])
 
             basicLayer = technology.getBasicLayer(symbName)
             if not basicLayer:
-                raise ErrorMessage(['Incoherency in <realLayersTable> entry.'
-                                   ,'The real layer "%s" associated to the GDSII "%s" do not exists.' \
-                                        % (symbName,realName)
-                                   ,str(entry)
-                                   ])
+                raise ErrorMessage(1,['Incoherency in <realLayersTable> entry.'
+                                     ,'The real layer "%s" associated to the GDSII "%s" do not exists.' \
+                                          % (symbName,realName)
+                                     ,str(entry)
+                                     ])
             basicLayer.setRealName     ( realName )
             basicLayer.setExtractNumber( gdsiiExtractNumber )
 
@@ -62,26 +62,26 @@ def loadTechnoConfig ( technology, technoConfig ):
                        gridUnit != DbU.UnitPowerMilli and \
                        gridUnit != DbU.UnitPowerUnity and \
                        gridUnit != DbU.UnitPowerKilo:
-                        raise ErrorMessage('In <technoConfig>, invalid DbU unit power for gridUnit, reseting to Micro.')
+                        raise ErrorMessage(1,'In <technoConfig>, invalid DbU unit power for gridUnit, reseting to Micro.')
                 else:
-                    raise ErrorMessage('<technoConfig> has no <gridUnit> defined, assuming Micro.')
+                    raise ErrorMessage(1,'<technoConfig> has no <gridUnit> defined, assuming Micro.')
 
             elif key == 'gridValue':
                 if technoConfig.has_key('gridValue'):
                     gridValue = technoConfig['gridValue']
                     if not isinstance(gridUnit,float) and not isinstance(gridUnit,int):
-                        raise ErrorMessage(['In <technoConfig>, <gridValue> must be of type float (and not: %s).'
-                                            % helpers.stype(gridValue)
-                                           ])
+                        raise ErrorMessage(1,['In <technoConfig>, <gridValue> must be of type float (and not: %s).'
+                                              % helpers.stype(gridValue)
+                                             ])
                     DbU.setPhysicalsPerGrid(gridValue,gridUnit)
                 else:
-                    raise ErrorMessage('<technoConfig> has no <gridValue> defined.')
+                    raise ErrorMessage(1,'<technoConfig> has no <gridValue> defined.')
     
             elif key == 'gridsPerLambda':
                 if technoConfig.has_key('gridsPerLambda'):
                     gridsPerLambda = technoConfig['gridsPerLambda']
                     if not isinstance(gridsPerLambda,int):
-                        raise ErrorMessage(['In <technoConfig>, <gridsPerLambda> must be of type int (and not: %s).'
+                        raise ErrorMessage(1,['In <technoConfig>, <gridsPerLambda> must be of type int (and not: %s).'
                                             % helpers.stype(gridsPerLambda)
                                            ])
                     DbU.setGridsPerLambda(gridsPerLambda)

@@ -4,10 +4,6 @@
 // This file is part of the Coriolis Software.
 // Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |           Alliance / Hurricane  Interface                       |

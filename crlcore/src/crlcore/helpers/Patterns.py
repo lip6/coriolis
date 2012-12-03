@@ -95,8 +95,8 @@ class Pattern ( object ):
         self._side = math.sqrt(4*len(self._hexa))
 
         if pow(self._side,2) != 4*len(self._hexa):
-            raise ErrorMessage( 'The pattern is not square (%d bits).'
-                                % (4*len(self._hexa)) )
+            raise ErrorMessage( 1, 'The pattern is not square (%d bits).'
+                                   % (4*len(self._hexa)) )
             return
 
         self._fromHexa()
@@ -108,8 +108,8 @@ class Pattern ( object ):
 
         for line in bits:
             if self._side != len(line):
-                raise ErrorMessage( 'The pattern is not square (%dx%d bits).'
-                                    % (len(line),len(self._bits)) )
+                raise ErrorMessage( 1, 'The pattern is not square (%dx%d bits).'
+                                       % (len(line),len(self._bits)) )
 
         self._toHexa()
         return
@@ -149,16 +149,16 @@ def loadPatterns ( patternsData, fromFile ):
 
         try:
             if not isinstance(entry,dict):
-                raise ErrorMessage(['Malformed entry in <patternsTable>.'
-                                   ,'Not a dictionary {\'key1\':\'value1\', ...}.'
-                                   ,str(entry)
-                                   ])
+                raise ErrorMessage(1,['Malformed entry in <patternsTable>.'
+                                     ,'Not a dictionary {\'key1\':\'value1\', ...}.'
+                                     ,str(entry)
+                                     ])
 
             if not entry.has_key('name'):
-                raise ErrorMessage(['Malformed entry in <patternsTable>.'
-                                   ,'Pattern has no \'name\' key.'
-                                   ,str(entry)
-                                   ])
+                raise ErrorMessage(1,['Malformed entry in <patternsTable>.'
+                                     ,'Pattern has no \'name\' key.'
+                                     ,str(entry)
+                                     ])
             arguments = { 'name':entry['name'] }
 
             if entry.has_key('bits'):

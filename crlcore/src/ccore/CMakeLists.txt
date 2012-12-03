@@ -31,7 +31,7 @@
                              ${CIF_INCLUDE_DIR}
                              ${CONFIGURATION_INCLUDE_DIR}
                              ${PYTHON_INCLUDE_PATH}
-                             ${Boost_INCLUDE_DIRS}
+                             ${Boost_INCLUDE_DIR}
                            )
 
            add_definitions ( -DCORIOLIS_TOP="${CORIOLIS_TOP}"

@@ -75,20 +75,20 @@ def loadParameters ( parametersData, fromFile ):
 
         try:
             if len(entry) < 3:
-                raise ErrorMessage(['Malformed entry in <parametersTable>.'
-                                   ,'Less than three fields: (path_name, Type, default_value [,options]).'
-                                   ,str(entry)
-                                   ])
+                raise ErrorMessage(1,['Malformed entry in <parametersTable>.'
+                                     ,'Less than three fields: (path_name, Type, default_value [,options]).'
+                                     ,str(entry)
+                                     ])
             if len(entry) == 3:
                 pathName, paramType, value = entry
                 options = None
             elif len(entry) == 4:
                 pathName, paramType, value, options = entry
             else:
-                raise ErrorMessage(['Malformed entry in <parametersTable>.'
-                                   ,'More than four fields: (path_name, Type, default_value [,options]).'
-                                   ,str(entry)
-                                   ])
+                raise ErrorMessage(1,['Malformed entry in <parametersTable>.'
+                                     ,'More than four fields: (path_name, Type, default_value [,options]).'
+                                     ,str(entry)
+                                     ])
 
             if paramType == TypeBool:
                 param = Cfg.getParamBool(pathName)
@@ -140,53 +140,53 @@ def loadLayout ( layoutData, fromFile ):
 
         try:
             if not isinstance(entry,tuple):
-                raise ErrorMessage(['Malformed entry in <layoutTable>.'
-                                   ,'Not a tuple (a, b, c, ...) or (a,).'
-                                   ,str(entry)
-                                   ])
+                raise ErrorMessage(1,['Malformed entry in <layoutTable>.'
+                                     ,'Not a tuple (a, b, c, ...) or (a,).'
+                                     ,str(entry)
+                                     ])
             if entry[0] == TypeTab:
                 if len(entry) != 3:
-                    raise ErrorMessage(['Malformed entry in <layoutTable>.'
-                                       ,'Tab must have exactly three fields: (TypeTab, tab_name, tag).'
-                                       ,str(entry)
-                                       ])
+                    raise ErrorMessage(1,['Malformed entry in <layoutTable>.'
+                                         ,'Tab must have exactly three fields: (TypeTab, tab_name, tag).'
+                                         ,str(entry)
+                                         ])
                 layoutType, tabName, tagName = entry
                 layout.addTab  ( tabName, tagName )
 
             if not tabName:
-                raise ErrorMessage(['Bad entry order in <layoutTable>.'
-                                   ,'First entry must be of Tab type.'
-                                   ])
+                raise ErrorMessage(1,['Bad entry order in <layoutTable>.'
+                                     ,'First entry must be of Tab type.'
+                                     ])
 
             if entry[0] == TypeTitle:
                 if len(entry) != 2:
-                    raise ErrorMessage(['Malformed entry in <layoutTable>.'
-                                       ,'Title must have exactly two fields: (TypeTitle, title).'
-                                       ,str(entry)
-                                       ])
+                    raise ErrorMessage(1,['Malformed entry in <layoutTable>.'
+                                         ,'Title must have exactly two fields: (TypeTitle, title).'
+                                         ,str(entry)
+                                         ])
                 layoutType, title = entry
                 layout.addTitle ( tabName, title )
             elif entry[0] == TypeSection:
                 if len(entry) != 3:
-                    raise ErrorMessage(['Malformed entry in <layoutTable>.'
-                                       ,'Section must have exactly three fields: (TypeSection, section, column).'
-                                       ,str(entry)
-                                       ])
+                    raise ErrorMessage(1,['Malformed entry in <layoutTable>.'
+                                         ,'Section must have exactly three fields: (TypeSection, section, column).'
+                                         ,str(entry)
+                                         ])
                 layoutType, section, column = entry
                 layout.addSection ( tabName, section, column )
             elif entry[0] == TypeRule:
                 if len(entry) != 1:
-                    raise ErrorMessage(['Malformed entry in <layoutTable>.'
-                                       ,'Rule must have exactly one fields: (TypeRule,).'
-                                       ,str(entry)
-                                       ])
+                    raise ErrorMessage(1,['Malformed entry in <layoutTable>.'
+                                         ,'Rule must have exactly one fields: (TypeRule,).'
+                                         ,str(entry)
+                                         ])
                 layout.addRule ( tabName )
             elif entry[0] == TypeOption:
                 if len(entry) < 4:
-                    raise ErrorMessage(['Malformed entry in <layoutTable>.'
-                                       ,'Option must have at least four fields: (TypeOption,path_name,text,column[,span,flags]).'
-                                       ,str(entry)
-                                       ])
+                    raise ErrorMessage(1,['Malformed entry in <layoutTable>.'
+                                         ,'Option must have at least four fields: (TypeOption,path_name,text,column[,span,flags]).'
+                                         ,str(entry)
+                                         ])
                 if len(entry) == 4:
                     layoutType, pathName, text, column = entry
                     layout.addParameter ( tabName, pathName, text, column )

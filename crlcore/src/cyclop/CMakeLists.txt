@@ -2,7 +2,7 @@
                include ( ${QT_USE_FILE} )
    include_directories ( ${CRLCORE_SOURCE_DIR}/src/ccore
                          ${HURRICANE_INCLUDE_DIR}
-                         ${Boost_INCLUDE_DIRS}
+                         ${Boost_INCLUDE_DIR}
                        )
 
                    set ( mocincludes   Cyclop.h
@@ -34,6 +34,7 @@
                                        ${PYTHON_LIBRARIES}
                                        -lutil
                                        ${LIBXML2_LIBRARIES}
+                                       ${LIBEXECINFO_LIBRARIES}
                        )
                install ( TARGETS       cyclop        DESTINATION bin )
 

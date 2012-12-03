@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
@@ -17,10 +12,7 @@
 // |  E-mail      :   Christophe.Alexandre@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./ParsersDrivers.h"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include <time.h>
@@ -40,6 +32,7 @@ using namespace std;
 #include  "hurricane/Warning.h"
 
 #include  "Ap.h"
+#include  "crlcore/Catalog.h"
 
 
 namespace {
@@ -452,6 +445,7 @@ void  apDriver( const string cellPath, Cell *cell, unsigned int &saveState) {
     DumpReference(ccell, cell);
     ccell << "EOF" << endl;
     ccell.close ();
+    CRL::CatalogExtension::setPhysical(cell, true);
 }
 
 }

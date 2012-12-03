@@ -61,6 +61,13 @@ namespace {
   }
 
 
+  void  bugChanged ( Cfg::Parameter* p )
+  {
+    if ( p->asBool() ) mstream::enable  ( mstream::Bug );
+    else               mstream::disable ( mstream::Bug );
+  }
+
+
   void  catchCoreChanged ( Cfg::Parameter* p )
   {
     System::setCatchCore ( p->asBool() );
@@ -110,6 +117,7 @@ mstream  cmess0 ( mstream::Verbose0, std::cout );
 mstream  cmess1 ( mstream::Verbose1, std::cout );
 mstream  cmess2 ( mstream::Verbose2, std::cout );
 mstream  cinfo  ( mstream::Info    , std::cout );
+mstream  cbug   ( mstream::Bug     , std::cout );
 
 
 // -------------------------------------------------------------------
@@ -291,11 +299,14 @@ namespace CRL {
   // Early setting of python pathes to be able to execute configuration scripts.
     bfs::path pythonSitePackages = PYTHON_SITE_PACKAGES;
     pythonSitePackages = arguments["coriolis_top"].as<string>() / pythonSitePackages;
+    _pathes.insert ( make_pair("pythonSitePackages",pythonSitePackages.string()) );
+    bfs::path crlcoreDir = pythonSitePackages / "crlcore";
     bfs::path stratusDir = pythonSitePackages / "stratus";
     bfs::path cumulusDir = pythonSitePackages / "cumulus";
 
     Isobar::Script::addPath ( sysConfDir.string() );
     Isobar::Script::addPath ( pythonSitePackages.string() );
+    Isobar::Script::addPath ( crlcoreDir.string() );
     Isobar::Script::addPath ( stratusDir.string() );
     Isobar::Script::addPath ( cumulusDir.string() );
 
@@ -306,6 +317,7 @@ namespace CRL {
     Cfg::getParamBool  ("misc.verboseLevel1"  ,true )->registerCb ( verboseLevel1Changed );
     Cfg::getParamBool  ("misc.verboseLevel2"  ,true )->registerCb ( verboseLevel2Changed );
     Cfg::getParamBool  ("misc.info"           ,false)->registerCb ( infoChanged );
+    Cfg::getParamBool  ("misc.bug"            ,false)->registerCb ( bugChanged );
     Cfg::getParamBool  ("misc.logMode"        ,false)->registerCb ( logModeChanged );
     Cfg::getParamInt   ("misc.traceLevel"     ,1000 )->registerCb ( traceLevelChanged );
     Cfg::getParamString("stratus1.mappingName","./stratus2sxlib.xml")->registerCb ( stratus1MappingNameChanged );
@@ -315,6 +327,7 @@ namespace CRL {
     verboseLevel1Changed ( Cfg::getParamBool("misc.verboseLevel1") );
     verboseLevel2Changed ( Cfg::getParamBool("misc.verboseLevel2") );
     infoChanged          ( Cfg::getParamBool("misc.info"         ) );
+    bugChanged           ( Cfg::getParamBool("misc.bug"          ) );
     logModeChanged       ( Cfg::getParamBool("misc.logMode"      ) );
     traceLevelChanged    ( Cfg::getParamInt ("misc.traceLevel"   ) );
 
@@ -406,8 +419,9 @@ namespace CRL {
 
   void  System::_runPythonInit ()
   {
-    Cfg::Configuration* conf       = Cfg::Configuration::get ();
-    bfs::path           sysConfDir = getPath("etc");
+    Cfg::Configuration* conf               = Cfg::Configuration::get ();
+    bfs::path           sysConfDir         = getPath("etc");
+    bfs::path           pythonSitePackages = getPath("pythonSitePackages");
 
 #if XML_NOT_DISABLED
     bool      systemConfFound = false;
@@ -422,11 +436,11 @@ namespace CRL {
 #endif
 
     bool      systemConfFound = false;
-    bfs::path systemConfFile  = sysConfDir / "coriolisInit.py";
+    bfs::path systemConfFile  = pythonSitePackages / "crlcore" / "coriolisInit.py";
     if ( bfs::exists(systemConfFile) ) {
       systemConfFound = true;
-      cout << "  o  Reading python dot configuration:" << endl;
-      cout << "     - <" << systemConfFile.string() << ">." << endl;
+    //cout << "  o  Reading python dot configuration:" << endl;
+    //cout << "     - <" << systemConfFile.string() << ">." << endl;
 
       Isobar::Script* systemScript = Isobar::Script::create(systemConfFile.stem());
       systemScript->runFunction("coriolisConfigure",NULL,Isobar::Script::NoScriptArgs);

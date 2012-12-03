@@ -41,7 +41,7 @@ def checkAttribute ( options, attribute, goodType ):
     if goodType == float and isinstance(options[attribute],int): return True
 
     if not isinstance(options[attribute],goodType):
-        raise ErrorMessage(
+        raise ErrorMessage( 1,
             ['The <%s> attribute of Drawing must be %s, not %s.' \
                  % (attribute,str(goodType).split("'")[1],helpers.stype(options[attribute]))
              ,str(options[attribute])])
@@ -50,7 +50,7 @@ def checkAttribute ( options, attribute, goodType ):
 
 def checkColor ( color ):
     if not isinstance(color,str):
-        raise ErrorMessage(
+        raise ErrorMessage( 1,
             ['The <color> attribute of Drawing must be str, not %s.' % (helpers.stype(color))
             ,str(options[attribute])])
 
@@ -61,11 +61,11 @@ def checkColor ( color ):
     if color[0] == '#':
         for digit in color[1:]:
             if not digit in string.hexdigits:
-                raise ErrorMessage(
+                raise ErrorMessage( 1,
                     ['Non-hexadecimal digit \'%c\' in <color> attribute of Drawing.' % digit
                     ,color])
         if len(color) != 7:
-            raise ErrorMessage(
+            raise ErrorMessage( 1,
                 ['<color> attribute of Drawing do not have exactly six digits.' % digit
                 ,color])
         return color
@@ -73,19 +73,19 @@ def checkColor ( color ):
     # Try a RGB tuple (R,G,B).
     rgb = color.split(',')
     if len(rgb) != 3:
-        raise ErrorMessage(
+        raise ErrorMessage( 1,
             ['<color> attribute of Drawing is neither hexa nor RGB nor predefined.'
             ,color])
 
     for component in rgb:
         for digit in component:
             if not digit in string.digits:
-                raise ErrorMessage(
+                raise ErrorMessage( 1,
                     ['Bad RGB <color> component \'%s\' of Drawing, not an integer.' % component
                     ,color])
         value = int(component)
         if value < 0 or value > 255:
-            raise ErrorMessage(
+            raise ErrorMessage( 1,
                 ['Bad RGB <color> component \'%s\' of Drawing, not between 0 and 255.' % component
                 ,color])
     return color
@@ -136,74 +136,74 @@ def loadStyleTuple ( styleTuple ):
         try:
             if styleEntry[0] == Style:
                 if len(styleEntry) != 3:
-                    raise ErrorMessage(['Malformed entry in <styleTable>.'
-                                       ,'Style must have exactly three fields: (Style,id,description).'
-                                       ,str(styleEntry)
-                                       ])
+                    raise ErrorMessage(1,['Malformed entry in <styleTable>.'
+                                         ,'Style must have exactly three fields: (Style,id,description).'
+                                         ,str(styleEntry)
+                                         ])
                 styleType, styleId, description = styleEntry
 
                 if not isinstance(styleId,str):
-                    raise ErrorMessage(['The second Style field, <id> must be a string, not a %s.' % helpers.stype(styleId)
-                                       ,str(styleEntry)])
+                    raise ErrorMessage(1,['The second Style field, <id> must be a string, not a %s.' % helpers.stype(styleId)
+                                         ,str(styleEntry)])
                 if not isinstance(description,str):
-                    raise ErrorMessage(['The third Style field, <description> must be a string, not a %s.' % helpers.stype(styleId)
-                                       ,str(styleEntry)])
+                    raise ErrorMessage(1,['The third Style field, <description> must be a string, not a %s.' % helpers.stype(styleId)
+                                         ,str(styleEntry)])
 
                 style = Viewer.DisplayStyle(styleId)
                 style.setDescription(description)
     
             if not style:
-                raise ErrorMessage(['Bad entry order in <styleTable>.'
-                                   ,'First entry must be of Style type.'
-                                   ])
+                raise ErrorMessage(1,['Bad entry order in <styleTable>.'
+                                     ,'First entry must be of Style type.'
+                                     ])
     
             if styleEntry[0] == Inherit:
                 if len(styleEntry) != 2:
-                    raise ErrorMessage(['Malformed entry in <didplayTable>.'
-                                       ,'Inherit must have exactly two fields: (Inherit,id).'
-                                       ,str(styleEntry)
-                                       ])
+                    raise ErrorMessage(1,['Malformed entry in <didplayTable>.'
+                                         ,'Inherit must have exactly two fields: (Inherit,id).'
+                                         ,str(styleEntry)
+                                         ])
                 styleType, styleId = styleEntry
                 if not isinstance(styleId,str):
-                    raise ErrorMessage(['The second Inherit field, <id> must be a string, not a %s.' % helpers.stype(styleId)
-                                       ,str(styleEntry)])
+                    raise ErrorMessage(1,['The second Inherit field, <id> must be a string, not a %s.' % helpers.stype(styleId)
+                                         ,str(styleEntry)])
                 style.inheritFrom(styleId)
     
             if styleEntry[0] == Darkening:
                 if len(styleEntry) != 4:
-                    raise ErrorMessage(['Malformed entry in <didplayTable>.'
-                                       ,'Darkening (HSV color) must have exactly four fields: (Darkening,hue,value,saturation).'
-                                       ,str(styleEntry)
-                                       ])
+                    raise ErrorMessage(1,['Malformed entry in <didplayTable>.'
+                                         ,'Darkening (HSV color) must have exactly four fields: (Darkening,hue,value,saturation).'
+                                         ,str(styleEntry)
+                                         ])
                 styleType, hue, value, saturation = styleEntry
                 if not isinstance(hue       ,float) or \
                    not isinstance(value     ,float) or \
                    not isinstance(saturation,float) :
-                    raise ErrorMessage(['<hue>, <val> & <sat> fields of Darkening must be floats.'
-                                       ,'%s is (Type, %s, %s, %s)' % (str(styleEntry)
-                                                                     ,helpers.stype(hue)
-                                                                     ,helpers.stype(value)
-                                                                     ,helpers.stype(saturation))
-                                       ])
+                    raise ErrorMessage(1,['<hue>, <val> & <sat> fields of Darkening must be floats.'
+                                         ,'%s is (Type, %s, %s, %s)' % (str(styleEntry)
+                                                                       ,helpers.stype(hue)
+                                                                       ,helpers.stype(value)
+                                                                       ,helpers.stype(saturation))
+                                         ])
                 style.setDarkening(Viewer.DisplayStyle.HSVr( hue, value, saturation ))
     
             elif styleEntry[0] == Group:
                 if len(styleEntry) != 2:
-                    raise ErrorMessage(['Malformed entry in <styleTable>.'
-                                       ,'Group must have exactly two fields: (Group,group).'
-                                       ,str(styleEntry)
-                                       ])
+                    raise ErrorMessage(1,['Malformed entry in <styleTable>.'
+                                         ,'Group must have exactly two fields: (Group,group).'
+                                         ,str(styleEntry)
+                                         ])
                 styleType, group = styleEntry
                 if not isinstance(group,str):
-                    raise ErrorMessage(['The second Group field, <group> must be a string, not a %s.' % helpers.stype(group)
-                                       ,str(styleEntry)])
+                    raise ErrorMessage(1,['The second Group field, <group> must be a string, not a %s.' % helpers.stype(group)
+                                         ,str(styleEntry)])
     
             elif styleEntry[0] == Drawing:
                 if len(styleEntry) != 3:
-                    raise ErrorMessage(['Malformed entry in <styleTable>.'
-                                       ,'Rule must have exactly three fields: (Drawing,dname,{dict}).'
-                                       ,str(styleEntry)
-                                       ])
+                    raise ErrorMessage(1,['Malformed entry in <styleTable>.'
+                                         ,'Rule must have exactly three fields: (Drawing,dname,{dict}).'
+                                         ,str(styleEntry)
+                                         ])
                 styleType, name, options = styleEntry
                 arguments = { 'group':group, 'name':name }
                 for key in options.keys():
@@ -247,9 +247,9 @@ def loadStyles ( stylesTable, fromFile ):
     try:
         # Check for three levels of tuple for a correct <styleTable>.
         if not isinstance(stylesTable,tuple):
-            raise ErrorMessage(['Malformed <styleTable>, not even a one level deep tuple.'])
+            raise ErrorMessage(1,['Malformed <styleTable>, not even a one level deep tuple.'])
         if not isinstance(stylesTable[0],tuple):
-            raise ErrorMessage(['Malformed <styleTable>, only two level deep tuple.'])
+            raise ErrorMessage(1,['Malformed <styleTable>, only two level deep tuple.'])
 
         for styleTuple in stylesTable:
             loadStyleTuple( styleTuple )

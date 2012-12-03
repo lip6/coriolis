@@ -8,11 +8,11 @@
 import sys
 import os
 import os.path
+import re
 import traceback
 import Hurricane
 
-
-sysConfDir    = os.sep.join(os.path.abspath(__file__).split(os.sep)[:-2])
+sysConfDir    = None
 xmlCompatMode = False
 
 
@@ -26,12 +26,21 @@ def truncPath ( path ):
 
 class ErrorMessage ( Exception ):
 
-    def __init__ ( self, message ):
-        self._errors = []
+    def __init__ ( self, code, *arguments ):
+        self._code   = code
+        self._errors = [ 'Malformed call to ErrorMessage()'
+                       , '%s' % str(arguments) ]
 
-        if isinstance(message,Exception):
-            text = str(message).split('\n')
+        text = None
+        if len(arguments) == 1:
+            if isinstance(arguments[0],Exception): text = str(arguments[0]).split('\n')
+            else:
+                self._errors = arguments[0]
+        elif len(arguments) > 1:
+            text = list(arguments)
 
+        if text:
+            self._errors = []
             while len(text[0]) == 0: del text[0]
 
             lstrip = 0
@@ -43,8 +52,6 @@ class ErrorMessage ( Exception ):
                     self._errors += [ line[lstrip:] ]
                 else:
                     self._errors += [ line.lstrip() ]
-        else:
-            self._errors = message
         return
 
     def __str__ ( self ):
@@ -68,15 +75,23 @@ class ErrorMessage ( Exception ):
             self._errors += [ message ]
         return
 
+    def terminate ( self ):
+        print self
+        sys.exit(self._code)
+
+    def _getCode ( self ): return self._code
+
+    code = property(_getCode)
+
     @staticmethod
     def wrapPrint ( e, footer=None ):
         showTrace = False
         if not isinstance(e,ErrorMessage):
             if isinstance(e,Hurricane.ConstructorError) or \
                isinstance(e,Hurricane.HurricaneError):
-                ewrap = ErrorMessage(e)
+                ewrap = ErrorMessage(1,e)
             else:
-                ewrap = ErrorMessage('An unmanaged Python exception occurred:')
+                ewrap = ErrorMessage(3,'An unmanaged Python exception occurred:')
                 ewrap.addMessage(str(e))
                 showTrace = True
         else:
@@ -103,3 +118,27 @@ class WarningMessage ( Exception ):
             else:      formatted += "          %s" % self._warnings[i]
             if i+1 < len(self._warnings): formatted += "\n"
         return formatted
+
+
+for (modulePath,moduleLine,contextType,lineContent) in traceback.extract_stack():
+  if modulePath.endswith('/coriolisInit.py'):
+
+    reSysConfDir = re.compile(r'.*etc\/coriolis2')
+    print '  o  Locating configuration directory:'
+
+    for path in sys.path:
+      if reSysConfDir.match(path):
+        sysConfDir = path
+        print '     - <%s>' % sysConfDir
+        break
+    
+    if not sysConfDir:
+      coriolisTop = os.getenv('CORIOLIS_TOP')
+      if coriolisTop == '/usr':
+        sysConfDir = '/etc/coriolis2'
+      elif coriolisTop:
+        sysConfDir = os.path.join(coriolisTop,'/etc/coriolis2')
+      else:
+        raise ErrorMessage( 1, [ 'Cannot locate the directoty holding the configuration files.'
+                               , 'The path is something ending by <.../etc/coriolis2>.'] )
+    break
