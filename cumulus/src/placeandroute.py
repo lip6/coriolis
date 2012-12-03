@@ -2,8 +2,9 @@
 import os
 import re
 
-import CRL
 from   Hurricane import *
+from   helpers   import ErrorMessage
+import CRL
 import Mauka
 
 #import Knik
@@ -19,6 +20,7 @@ import Mauka
 #from Nimbus     import *
 
 from math import *
+
 
 missingCORIOLIS_TOP = "Missing environment variable CORIOLIS_TOP"
 
@@ -58,6 +60,18 @@ nb_vss_pins = 0
 global ck_contact_list_to_create
 ck_contact_list_to_create = []
 
+
+def getNetFromPlug ( plug ):
+  net = plug.getNet()
+  if net: return net
+
+  masterNet = plug.getMasterNet()
+  if masterNet.getName() in [ 'vddi', 'vssi', 'vdde', 'vsse' ]:
+    cell = plug.getCell()
+    net  = cell.getNet(masterNet.getName())
+
+  return net
+
 ##################
 ## PlaceCentric ##
 ##################
@@ -67,13 +81,13 @@ def pyPlaceCentric ( cell, instance ) :
   UpdateSession.open()
   
   if not instance :
-    raise "\n[Coriolis ERROR] PlaceCentric: the instance does not exist.\n"
+    raise ErrorMessage(2,"PlaceCentric: the instance does not exist.")
 
   w = cell.getAbutmentBox().getWidth()
   h = cell.getAbutmentBox().getHeight()
   
   if ( w < instance.getAbutmentBox().getWidth() ) or ( h < instance.getAbutmentBox().getHeight() ) : 
-    raise "\n[Coriolis ERROR] PlaceCentric : the instance's size is greater than this model.\n"
+    raise ErrorMessage(2,"PlaceCentric : the instance's size is greater than this model.")
 
   XCenter  = cell.getAbutmentBox().getXCenter()
   YCenter  = cell.getAbutmentBox().getYCenter()
@@ -118,10 +132,10 @@ def pyRouteCk ( cell, netCk ) :
   UpdateSession.open()
    
   # Error if Pads have not already been placed
-  if pad_north == [] : raise "\n[Coriolis ERROR] RouteCk : Pads in the north haven't been placed.\n" 
-  if pad_south == [] : raise "\n[Coriolis ERROR] RouteCk : Pads in the south haven't been placed.\n" 
-  if pad_east  == [] : raise "\n[Coriolis ERROR] RouteCk : Pads in the east haven't been placed.\n" 
-  if pad_west  == [] : raise "\n[Coriolis ERROR] RouteCk : Pads in the west haven't been placed.\n" 
+  if pad_north == [] : raise ErrorMessage(2,"RouteCk : Pads in the north haven't been placed.")
+  if pad_south == [] : raise ErrorMessage(2,"RouteCk : Pads in the south haven't been placed.")
+  if pad_east  == [] : raise ErrorMessage(2,"RouteCk : Pads in the east haven't been placed.")
+  if pad_west  == [] : raise ErrorMessage(2,"RouteCk : Pads in the west haven't been placed.")
  
   # pad_list contains all pads
   pad_list = []
@@ -153,6 +167,8 @@ def pyRouteCk ( cell, netCk ) :
 def pyAlimVerticalRail ( cell, xcoord ) :
   '''x is in pitch, it is where the vertical alimentation call back are placed'''
 
+  print 'pyAlimVerticalRail'
+
   global PITCH, SLICE
   global standard_instances_list, nb_alims_verticales, nb_lignes, standard_instances_masque
   global nb_vdd_pins, nb_vss_pins
@@ -163,24 +179,25 @@ def pyAlimVerticalRail ( cell, xcoord ) :
    
   # Error message if wrong abutment box 
   if ( box.getXMin() == box.getXMax() ) or ( box.getYMin() == box.getYMax() ) :
-    err = "\n[Stratus ERROR] AlimVerticalRail : Can't place the rail vertical in the abutment box of model %s." %str(cell.getName()) \
-        + "\n     The abutment box doesn't exist !" \
-        + "\n     Maybe you should use DefAb function or ResizeAb function to define un box before the placement of Rail Vertical.\n"
-    raise err
+    message = "AlimVerticalRail : Can't place the rail vertical in the abutment box of model %s." %str(cell.getName()) \
+        + "     The abutment box doesn't exist !" \
+        + "     Maybe you should use DefAb function or ResizeAb function to define un box before the placement of Rail Vertical."
+    raise ErrorMessage(2,message)
 
   # Check the value of x
   nb_col = cell.getAbutmentBox().getWidth() / DbU_lambda(PITCH)
   if ( xcoord >=  nb_col ) or ( xcoord < 0 ) : 
-    err = "\n[Stratus ERROR] AlimVerticalRail : Illegal argument x , x must be between %d and %d\n" % ( 0, nb_col )  
-    raise err
+    print 'This is it'
+    message = "AlimVerticalRail : Illegal argument x , x must be between %d and %d\n" % ( 0, nb_col )  
+    raise ErrorMessage(2,message)
 
   # To get the informations about the placement
   reference = getStandardInstancesMasque ( cell )
   
   if not reference : 
-    err = "\n[Stratus ERROR] AlimVerticalRail : No instance is placed in the model " + str(cell.getName()) + ".\n" \
+    message = "AlimVerticalRail : No instance is placed in the model " + str(cell.getName()) + ".\n" \
         + "Please place some instances before the placement of Rail Vertical.\n"
-    raise err
+    raise ErrorMessage(2,message)
   
   # Placement verification
   #verifyPlacement ( cell )  # NON !!
@@ -201,7 +218,7 @@ def pyAlimVerticalRail ( cell, xcoord ) :
     inv_orientation = OrientationID     
     orientation     = OrientationMY
   else :
-    raise "\n[Stratus ERROR] AlimVerticalRail : Strawberry.\n"
+    raise ErrorMessage(2,"AlimVerticalRail : Strawberry.")
     
 #  print "Placement of vertical rail" 
 #  print "Reference  ", reference
@@ -245,18 +262,18 @@ def pyAlimVerticalRail ( cell, xcoord ) :
   powerNet = None
   for net in cell.getPowerNets():
     if powerNet:
-      raise "\n[Coriolis ERROR] AlimVerticalRail : more than 1 Power Net found !\n"
+      raise ErrorMessage(2,"AlimVerticalRail : more than 1 Power Net found !")
     powerNet = net
   if not powerNet:
-    raise "\n[Coriolis ERROR] AlimVerticalRail : no Power Net found !\n"
+    raise ErrorMessage(2,"AlimVerticalRail : no Power Net found !")
 
   groundNet = None
   for net in cell.getGroundNets():
     if groundNet:
-      raise "\n[Coriolis ERROR] AlimVerticalRail : more than 1 Ground Net found !\n"
+      raise ErrorMessage(2,"AlimVerticalRail : more than 1 Ground Net found !")
     groundNet = net
   if not groundNet:
-    raise "\n[Coriolis ERROR] AlimVerticalRail : no Ground Net found !\n"
+    raise ErrorMessage(2,"AlimVerticalRail : no Ground Net found !")
   
   pin_height = 10
   pin_width  = 10
@@ -306,22 +323,22 @@ def pyAlimHorizontalRail ( cell, ycoord ) :
     
   # Error message if wrong abutment box
   if ( box.getXMin() == box.getXMax() ) or ( box.getYMin() == box.getYMax() ) :
-    err = "\n[Stratus ERROR] AlimHorizontalRail :  Can't place the rail horizontal in the abutment box of model " + str(cell.getName()) \
+    err = "\nAlimHorizontalRail :  Can't place the rail horizontal in the abutment box of model " + str(cell.getName()) \
         + "\n     The abutment box doesn't exist !" \
         + "\n     Maybe you should use DefAb function or ResizeAb function to define un box before the placement of Rail Horizontal.\n"
-    raise err
+    raise ErrorMessage(2,err)
 
   # Check the value of y
   if ( ycoord >= nb_lignes ) or ( ycoord < 0 )  : 
-    err = "\n[Stratus ERROR] AlimHorizontalRail : Illegal argument y, y must be between %d and %d\n" % ( 0, nb_lignes )
-    raise err
+    err = "\nAlimHorizontalRail : Illegal argument y, y must be between %d and %d\n" % ( 0, nb_lignes )
+    raise ErrorMessage(2,err)
 
   # To get the informations about the placement
   reference = getStandardInstancesMasque ( cell )    
 
   if not reference : 
-    err = "\n[Stratus ERROR] AlimHorizontalRail : No instance is placed in the model " + str(cell.getName()) + ".\n"
-    raise err
+    err = "AlimHorizontalRail : No instance is placed in the model " + str(cell.getName()) + ".\n"
+    raise ErrorMessage(2,err)
   
   # get layers     
   metal4 = getDataBase().getTechnology().getLayer ( "METAL4" )
@@ -397,18 +414,18 @@ def pyAlimConnectors ( cell ) :
 
   # Error message if wrong abutment box    
   if ( box.getXMin() == box.getXMax() ) or ( box.getYMin() == box.getYMax() ) :  
-    err = "\n[Stratus ERROR] AlimConnectors : can't place connectors. The abutment box don't exist.\n" \
+    err = "\nAlimConnectors : can't place connectors. The abutment box don't exist.\n" \
         + "The abutment box don't exist !\n" \
         + "Maybe you should use DefAb function or ResizeAb function to define un box before the placement of alim connectors.\n"
-    raise err
+    raise ErrorMessage(2,err)
     
   # avoir les infos actuelles de placement 
   getStandardInstancesMasque ( cell ) 
 
   if not reference : 
-    err = "\n[Stratus ERROR] AlimConnectors : no instance placed in the model " + str(cell.getName()) + "." \
+    err = "\nAlimConnectors : no instance placed in the model " + str(cell.getName()) + "." \
         + "Please place some instances before the placement of alim connectors.\n"
-    raise err
+    raise ErrorMessage(2,err)
     
   metal1 = getDataBase().getTechnology().getLayer("METAL1")
   string = getVddVss ( cell, 0 )
@@ -424,13 +441,11 @@ def pyAlimConnectors ( cell ) :
   
   netPair = cell.getNet ( string )
   if not netPair:
-    err = "\n[Stratus ERROR] AlimConnectors : can't get net " + string + ".\n"
-    raise err
+    raise ErrorMessage(2,"AlimConnectors : can't get net %s."%string)
   
   netImpair = cell.getNet ( inv_string )
   if not netImpair:
-    err = "\n[Stratus ERROR] AlimConnectors : can't get net " + inv_string + ".\n"
-    raise err
+    raise ErrorMessage(2,"AlimConnectors : can't get net %s.\n"%inv_string)
     
   for i in range ( nb_lignes + 1 ) :
     pin_width  = DbU_lambda(12)
@@ -584,16 +599,15 @@ def pyPadNorth ( cell, core, args ) :
   largeur = 0  
   for ins in args : 
     if ins.getPlacementStatus() :
-      err = "\n[Coriolis ERROR] PadNorth : the instance " + str(ins.getName()) + " is already placed.\n"
-      raise err
+      raise ErrorMessage(2,"PadNorth : the instance %s is already placed."%str(ins.getName()))
 
     if ins.getAbutmentBox().getHeight() >= north_espace_width :
-      raise "\n[Coriolis ERROR] PadNorth : not enough space for all pads.\n"
+      raise ErrorMessage(2,"PadNorth : not enough space for all pads.")
   
     largeur += ins.getAbutmentBox().getWidth() 
   
   if largeur > north_espace_longueur :
-    raise "\n[Coriolis ERROR] PadNorth : not enough space for all pads.\n"
+    raise ErrorMessage(2,"PadNorth : not enough space for all pads.")
   
   # calculer l interval entre les pads 
   interval = ( north_espace_longueur - largeur ) / ( nb_pads + 1 )
@@ -624,8 +638,7 @@ def pyPadNorth ( cell, core, args ) :
       pad_height = getPadHeight ( cell )
       if _x <= ( ( cellAB.getXMin() + pad_height ) + coreAB.getXMin() ) / 2 \
       or _x >= ( ( cellAB.getXMax() - pad_height ) + coreAB.getXMax() ) / 2 :
-        err = "\n[Stratus ERROR] PadNorth : pad" + str ( ins.getName() ) + " must be closer to the center.\n"
-        raise err
+        raise ErrorMessage(2,"PadNorth : pad %s must be closer to the center.\n"%str(ins.getName()))
  
     # x calcule pour le pad suivant
     x_init = _x + interval + pad_width
@@ -669,16 +682,15 @@ def pyPadSouth ( cell, core, args ) :
   largeur = 0  
   for ins in args : 
     if ins.getPlacementStatus() :
-      err = "\n[Coriolis ERROR] PadSouth : the instance " + str(ins.getName()) + " is already placed.\n"
-      raise err
+      raise ErrorMessage(2,"PadSouth : the instance %s is already placed."%str(ins.getName()))
   
     if ins.getAbutmentBox().getHeight() >= south_espace_width :
-      raise "\n[Coriolis ERROR] PadSouth : not enough space for all pads.\n"
+      raise ErrorMessage(2,"PadSouth : not enough space for all pads.")
   
     largeur += ins.getAbutmentBox().getWidth() 
   
   if largeur > south_espace_longueur :
-    raise "\n[Coriolis ERROR] PadSouth : not enough space for all pads.\n"
+    raise ErrorMessage(2,"PadSouth : not enough space for all pads.")
   
   # calculer l'interval entre les pads 
   interval = ( south_espace_longueur - largeur ) / ( nb_pads + 1 ) 
@@ -708,8 +720,7 @@ def pyPadSouth ( cell, core, args ) :
       pad_height = getPadHeight ( cell )
       if _x <= ( ( cellAB.getXMin() + pad_height ) + coreAB.getXMin() ) / 2 \
       or _x >= ( ( cellAB.getXMax() - pad_height ) + coreAB.getXMax() ) / 2 :
-        err = "\n[Stratus ERROR] PadSouth : pad " + str ( ins.getName() ) + " must be closer to the center.\n"
-        raise err 
+        raise ErrorMessage(2,"PadSouth : pad %s must be closer to the center."%str(ins.getName()))
  
     # x calcule pour le pad suivant
     x_init = _x + interval + pad_width
@@ -753,16 +764,15 @@ def pyPadEast ( cell, core, args ) :
   largeur = 0  
   for ins in args :
     if ins.getPlacementStatus() :
-      err = "\n[Coriolis ERROR] PadEast : the instance " + str(insGetName()) + " is already placed.\n"
-      raise err
+      raise ErrorMessage(2,"PadEast : the instance %s is already placed."%str(insGetName()))
   
     if ins.getAbutmentBox().getHeight() >= east_espace_width :
-      raise "\n[Coriolis ERROR] PadEast : not enough space for pads.\n"
+      raise ErrorMessage(2,"PadEast : not enough space for pads.")
   
     largeur += ins.getAbutmentBox().getWidth() 
   
   if largeur > east_espace_longueur :
-    raise "\n[Coriolis ERROR] PadEast : not enough space for all pads.\n"
+    raise ErrorMessage(2,"PadEast : not enough space for all pads.")
   
   # calculer l'interval entre les pads 
   interval = ( east_espace_longueur - largeur ) / ( nb_pads + 1 ) 
@@ -796,8 +806,7 @@ def pyPadEast ( cell, core, args ) :
       pad_height = getPadHeight ( cell )
       if _y <= ( ( cellAB.getYMin() + pad_height ) + coreAB.getYMin() ) / 2 \
       or _y >= ( ( cellAB.getYMax() - pad_height ) + coreAB.getYMax() ) / 2 :
-        err = "\n[Stratus ERROR] PadEast : pad " + str ( ins.getName() ) + " must be closer to the center.\n"
-        raise err 
+        raise ErrorMessage(2,"PadEast : pad %s must be closer to the center.\n"%str(ins.getName()))
  
     # y calcule pour le pad suivant
     y_init = _y + interval + pad_width
@@ -841,16 +850,15 @@ def pyPadWest ( cell, core, args ) :
   largeur = 0  
   for ins in args : 
     if ins.getPlacementStatus() :
-      err = "\n[Coriolis ERROR] PadWest : the instance " + str(ins.getName()) + " is already placed.\n"
-      raise err
+      raise ErrorMessage(2,"PadWest : the instance %s is already placed."%str(ins.getName()))
       
     if ins.getAbutmentBox().getHeight() >= west_espace_width :
-      raise "\n[Coriolis ERROR] PadWest : not enough space for pads.\n"
+      raise ErrorMessage(2,"PadWest : not enough space for pads.")
   
     largeur += ins.getAbutmentBox().getWidth() 
   
   if largeur > west_espace_longueur :
-    raise "\n[Coriolis ERROR] PadWest : not enough space for pads.\n"
+    raise ErrorMessage(2,"PadWest : not enough space for pads.")
   
   # calculer l'interval entre les pads 
   interval = int ( ( west_espace_longueur - largeur ) / ( nb_pads + 1 ) ) 
@@ -881,8 +889,7 @@ def pyPadWest ( cell, core, args ) :
 
       if _y <= ( ( cellAB.getYMin() + pad_height ) + coreAB.getYMin() ) / 2 \
       or _y >= ( ( cellAB.getYMax() - pad_height ) + coreAB.getYMax() ) / 2 :
-        err = "\n[Stratus ERROR] PadWest : pad " + str ( ins.getName() ) + " must be closer to the center.\n"
-        raise err
+        raise ErrorMessage(2,"PadWest : pad %s must be closer to the center.\n"%str(ins.getName()))
         
     # y calcule pour le pad suivant
     y_init = _y + interval + pad_width   
@@ -916,10 +923,10 @@ def pyPowerRing ( cell, core, n ) :
   
   UpdateSession.open()
   
-  if pad_north == [] : raise "\n[Stratus ERROR] PowerRing : Pads in the north haven't been placed\n" 
-  if pad_south == [] : raise "\n[Stratus ERROR] PowerRing : Pads in the south haven't been placed\n" 
-  if pad_east  == [] : raise "\n[Stratus ERROR] PowerRing : Pads in the east haven't been placed\n" 
-  if pad_west  == [] : raise "\n[Stratus ERROR] PowerRing : Pads in the west haven't been placed\n" 
+  if pad_north == [] : raise ErrorMessage(2,"PowerRing : Pads in the north haven't been placed")
+  if pad_south == [] : raise ErrorMessage(2,"PowerRing : Pads in the south haven't been placed")
+  if pad_east  == [] : raise ErrorMessage(2,"PowerRing : Pads in the east haven't been placed")
+  if pad_west  == [] : raise ErrorMessage(2,"PowerRing : Pads in the west haven't been placed")
   
   #############################
   #  PARAMETRE DU PLACEMENT  ##
@@ -954,12 +961,19 @@ def pyPowerRing ( cell, core, n ) :
   via3 = db.getTechnology().getLayer ( "VIA34" )
                
   # Recuperer les nets ( qui connectent les connectors du plot : vdde , vsse , vddi , vssi , ck  )
-  model = cell.getInstance ( pad_north[0].getName() ).getMasterCell()
-  vddp  = cell.getInstance ( pad_north[0].getName() ).getPlug ( model.getNet ( "vdde" ) ).getNet()
-  vssp  = cell.getInstance ( pad_north[0].getName() ).getPlug ( model.getNet ( "vsse" ) ).getNet()
-  vdd   = cell.getInstance ( pad_north[0].getName() ).getPlug ( model.getNet ( "vddi" ) ).getNet()
-  vss   = cell.getInstance ( pad_north[0].getName() ).getPlug ( model.getNet ( "vssi" ) ).getNet()
-  ck    = cell.getInstance ( pad_north[0].getName() ).getPlug ( model.getNet ( "ck"   ) ).getNet()
+  instance = cell.getInstance( pad_north[0].getName() )
+  model    = instance.getMasterCell()
+  vddp     = instance.getPlug ( model.getNet("vdde") ).getNet()
+  vssp     = instance.getPlug ( model.getNet("vsse") ).getNet()
+  vdd      = instance.getPlug ( model.getNet("vddi") ).getNet()
+  vss      = instance.getPlug ( model.getNet("vssi") ).getNet()
+  ck       = instance.getPlug ( model.getNet("ck"  ) ).getNet()
+ # If nets are globals, get them from the netlist.
+  if not vddp: vddp = cell.getNet('vdde')
+  if not vssp: vssp = cell.getNet('vsse')
+  if not vdd:  vdd  = cell.getNet('vddi')
+  if not vss:  vss  = cell.getNet('vssi')
+  if not ck:   ck   = cell.getNet('cki')
                  
   # Prendre la hauteur, la longueur, Xmin et Ymin de ce modele 
   cell_height = cell.getAbutmentBox().getHeight()
@@ -975,7 +989,7 @@ def pyPowerRing ( cell, core, n ) :
   limit = DbU_lambda ( int ( DbU_getLambda ( smaller ) / 2 ) ) - pad_height
   
   if ( (2*n + 1) * DbU_lambda(RING_INTERVAL) + (2*n) * DbU_lambda(RING_WIDTH) ) >= limit :   # 2*n + 1 spaces + 2*n width
-    raise "\n[Stratus ERROR] : PowerRing : too many rings, not enough space\n"
+    raise ErrorMessage(2,"PowerRing : too many rings, not enough space")
   
   # la distance entre les couronnes et le core         
   marge = DbU_lambda ( int ( DbU_getLambda ( limit - (2*n + 1 ) * DbU_lambda(RING_INTERVAL) - (2*n) * DbU_lambda(RING_WIDTH) ) ) / 2 )
@@ -1130,8 +1144,7 @@ def pyPowerRing ( cell, core, n ) :
     elif re.search ( "METAL1", element_layer_name ) : old_contact = Contact ( vss, metal1, _x, _y , element.getHeight(), element.getHeight() )
     elif re.search ( "METAL3", element_layer_name ) : old_contact = Contact ( vss, metal3, _x, _y , element.getHeight(), element.getHeight() )
     else : 
-      err = "\n[Coriolis ERROR] : wrong layer of pin in the west of core : ", element_layer_name, ".\n" 
-      raise err          
+      raise ErrorMessage(2,"wrong layer of pin in the west of core : %s.\n" % element_layer_name)
   
     # Connection du cote de l'ouest   
     if element.getAccessDirection() == WEST : 
@@ -1199,8 +1212,7 @@ def pyPowerRing ( cell, core, n ) :
           vertical    = Vertical ( contact, old_contact, metal3, _x, DbU_lambda(RING_WIDTH) )
           old_contact = contact 
         else :
-          err = "\n[Stratus ERROR] : wrong layer of pin in the west of core : ", element_layer_name, ".\n" 
-          raise err         
+          raise ErrorMessage(2,"wrong layer of pin in the west of core : %s.\n"% element_layer_name)
        
     # Connection du cote du sud    
     if element.getAccessDirection() == SOUTH : 
@@ -1220,8 +1232,7 @@ def pyPowerRing ( cell, core, n ) :
           vertical    = Vertical ( contact, old_contact, metal3, _x, DbU_lambda(RING_WIDTH) )
           old_contact = contact
         else :
-          err = "\n[Stratus ERROR] : wrong layer of pin in the west of core : ", element_layer_name, ".\n" 
-          raise err
+          raise ErrorMessage(2,"wrong layer of pin in the west of core : %s."%element_layer_name)
 
     # End of while 
     
@@ -1242,8 +1253,7 @@ def pyPowerRing ( cell, core, n ) :
     elif re.search ( "METAL1", element_layer_name ) : old_contact = Contact ( vdd, metal1, _x, _y , element.getHeight(), element.getHeight() )
     elif re.search ( "METAL3", element_layer_name ) : old_contact = Contact ( vdd, metal3, _x, _y , element.getHeight(), element.getHeight() )  
     else : 
-      err = "\n[Stratus ERROR] : wrong layer of pin in the west of core : ", element_layer_name, ".\n" 
-      raise err          
+      raise ErrorMessage(2,"wrong layer of pin in the west of core : %s."%element_layer_name)
   
     # Connection du cote de l'ouest   
     if element.getAccessDirection() == WEST : 
@@ -1311,8 +1321,7 @@ def pyPowerRing ( cell, core, n ) :
           vertical    = Vertical ( contact, old_contact, metal3, _x, DbU_lambda(RING_WIDTH) )
           old_contact = contact 
         else :
-          err = "\n[Stratus ERROR] : wrong layer of pin in the west of core : ", element_layer_name, ".\n" 
-          raise err       
+          raise ErrorMessage(2,"wrong layer of pin in the west of core : %s."%element_layer_name)
 
     # Connection du cote du sud    
     if element.getAccessDirection() == SOUTH  : 
@@ -1332,8 +1341,7 @@ def pyPowerRing ( cell, core, n ) :
           vertical    = Vertical ( contact, old_contact, metal3, _x, DbU_lambda(RING_WIDTH) )
           old_contact = contact     
         else :
-          err = "\n[Stratus ERROR] : wrong layer of pin in the west of core : ", element_layer_name, ".\n" 
-          raise err 
+          raise ErrorMessage(2,"wrong layer of pin in the west of core : %s."%element_layer_name)
   
     # End of while 
   
@@ -1509,8 +1517,8 @@ def pyPowerRing ( cell, core, n ) :
     if net.isSupply() or net.isClock() :
       for component in NetExternalComponents.get(net):
         plug = instance.getPlug ( net )
-        NET  = plug.getNet()
-        if ( not NET ) : raise "Error plug : %s must be connected\n" % str(plug.getName())
+        NET  = getNetFromPlug( plug )
+        if ( not NET ) : raise ErrorMessage(2,"Error plug : %s must be connected" % str(plug.getName()))
   
         layer     = getNonCLayer ( component.getLayer() )
 
@@ -1632,16 +1640,14 @@ def create_inst ( model, name, cell ) :
 
   # Error : if the cell the instance has to be instanciated in does not exist
   if not cell :
-    err = "\n[Coriolis ERROR] Cannot create instance " + name + " : the cell does not exist.\n"
-    raise err
+    raise ErrorMessage(2,"Cannot create instance %s : the cell does not exist."%name)
     
   # Load model in the database
   modelmastercell = CRL.AllianceFramework.get().getCell ( model, CRL.Catalog.State.Views )
     
   # Error : if the model is not found in the libraries
   if not modelmastercell :
-    err = "\n[Coriolis ERROR] Cannot create instance " + name + " : model " + model + "does not exist in the database.\n"
-    raise err    
+    raise ErrorMessage(2,"Cannot create instance %s : model %s does not exist in the database."%(name,model))
     
   inst = Instance ( cell, name, modelmastercell )
   
@@ -1658,13 +1664,11 @@ def place ( inst, x, y, orientation ) :
     
   # Error : if the hurricane instance does not exist
   if not inst :
-    err = "\n[Coriolis ERROR] Layout : The instance of " + str ( inst.getName() ) + " has not been created.\n"
-    raise err
+    raise ErrorMessage(2,"Layout : The instance of %s has not been created."%str(inst.getName()))
  
   # Error : if the instance is already placed
   if inst.getPlacementStatus() == PlacementStatusFIXED :
-    err = "\n[Stratus ERROR] Placement : the instance " + str ( inst.getName() ) + " is already placed.\n"
-    raise err      
+    raise ErrorMessage(2,"Placement : the instance %s is already placed."%str(inst.getName()))
   
   UpdateSession.open()
     
@@ -1782,7 +1786,7 @@ def verifyPlacement ( cell ) :
      # Error :  if the orientation is different from 0, 2, 4 ,6 
      #if not element_orientation in [0,2,4,6] :
      if element_orientation in [1,3,5,7] :
-       err  = "\n[Stratus ERROR] Placement of cells : please check your file of layout with DRUC.\n"
+       err  = "Placement of cells : please check your file of layout with DRUC."
 #       err += "Error Detail :" + "\n"
 #       err += "    instance " + str(element[2].getName()) + " of model " + str(element[2].getMasterCell().getName()) + "\n"
 #       err += "    in cell "  + str(element[2].getCell().getName()) + "\n"
@@ -1792,7 +1796,7 @@ def verifyPlacement ( cell ) :
 #       err += "    in cell "  + str(standard_instances_list[0][2].getCell().getName()) + "\n"
 #       err += "    reference ymin is " + str(YMin) + " orientation " + str(orientation) + "\n"
 #       err += "    element ymin is", element[0], "orientation", element_orientation + "\n"
-       raise err
+       raise ErrorMessage(2,err)
   
      if distance < 0 : distance = -distance
 
@@ -1801,7 +1805,7 @@ def verifyPlacement ( cell ) :
      # odd number 
      if nb_case % 2 :
        if ( element_orientation - orientation ) in [4,-4] :  
-         err  = "\n[Stratus ERROR] Placement of cells : please check your file of layout with DRUC\n"
+         err  = "Placement of cells : please check your file of layout with DRUC\n"
 #         err += "Error Detail :" + "\n"
 #         err += "    instance " + str(element[2].getName()) + " of model " + str(element[2].getMasterCell().getName()) + "\n"
 #         err += "    in cell "  + str(element[2].getCell().getName()) + "\n"
@@ -1811,12 +1815,12 @@ def verifyPlacement ( cell ) :
 #         err += "    in cell "  + str(standard_instances_list[0][2].getCell().getName()) + "\n"
 #         err += "    reference ymin is " + str(YMin) + " orientation " + orientation + "\n"
 #         err += "    element ymin is " + element[0] + " orientation " + element_orientation + "\n"
-         raise err
+         raise ErrorMessage(2,err)
            
      # even number
      else :
        if ( element_orientation - orientation ) in [2,-2,6,-6] : 
-         err  = "\n[Stratus ERROR] Placement of cells : please check your file of layout with DRUC\n"
+         err  = "Placement of cells : please check your file of layout with DRUC\n"
 #         err += "Error Detail :"
 #         err += "    instance " + str(element[2].getName()) + " of model " + str(element[2].getMasterCell().getName()) + "\n"
 #         err += "    in cell "  + str(element[2].getCell().getName()) + "\n"
@@ -1826,7 +1830,7 @@ def verifyPlacement ( cell ) :
 #         err += "    in cell "  + str(standard_instances_list[0][2].getCell().getName()) + "\n"
 #         err += "    reference ymin is " + str(YMin) + " orientation " + orientation + "\n"
 #         err += "    element ymin is " + element[0] + " orientation " + element_orientation + "\n"
-         raise err
+         raise ErrorMessage(2,err)
          
 ###################################
 def temporarySave ( cell = None ) :
@@ -1850,7 +1854,7 @@ def getVddVss ( cell, y ) :
 
   global reference
   
-  if reference == [] : raise "\n[Coriolis ERROR] getVddVss : Reference is not token.\n" 
+  if reference == [] : raise ErrorMessage(2,"getVddVss : Reference is not token.") 
   
   # in order to know if it is vdd or vss
   distance = y - int ( DbU_getLambda ( reference[1] ) ) / 50
@@ -1866,8 +1870,7 @@ def getVddVss ( cell, y ) :
     if distance % 2 : return "vss"  
     else            : return "vdd"
   else :
-    err = "\n[Stratus ERROR] get_vdd_vss : Illegal orientation of reference " + orientation + ".\n"
-    raise err
+    raise ErrorMessage(2,"get_vdd_vss : Illegal orientation of reference %s.\n"%orientation)
 
 ###########################
 def getPadHeight ( cell ) :
@@ -1882,7 +1885,7 @@ def getPadHeight ( cell ) :
       break
   
   if padFound : return pad_height
-  else        : raise "\n[Coriolis ERROR] getPadHeight : No pad found.\n"
+  else        : raise ErrorMessage(2,"getPadHeight : No pad found.")
 
 ###################
 def isPad ( ins ) :
@@ -2075,10 +2078,16 @@ def createGrid ( my_tuple ) :
     else :
       return position
       
-  _Xmin = None
-  _Ymin = None
-  _Xmax = None
-  _Ymax = None    
+  #_Xmin = None
+  #_Ymin = None
+  #_Xmax = None
+  #_Ymax = None    
+  coreBox = cell.getInstance('core').getAbutmentBox()
+  #print coreBox
+  _Xmin = coreBox.getXMin()
+  _Ymin = coreBox.getYMin()
+  _Xmax = coreBox.getXMax()
+  _Ymax = coreBox.getYMax()
   ck_contact_list = []  
 
   getNetInstances ( cell, net, Transformation ( 0, 0, OrientationID ) )
@@ -2154,7 +2163,7 @@ def createGrid ( my_tuple ) :
               gridContact = Contact(northSegment, via5, x, 0, DbU_lambda(11), DbU_lambda(11))
               northContacts.append(x)
           else : 
-            raise "\n[Stratus ERROR] RouteCK : bad pad placement.\n" 
+            raise ErrorMessage(2,"RouteCK : bad pad placement.") 
             
         elif y >= gridBoundingBox.getYMin() and y <= gridBoundingBox.getYMax() :
           layer = metal6
@@ -2175,16 +2184,16 @@ def createGrid ( my_tuple ) :
               gridContact = Contact(westSegment, via5, 0, y, DbU_lambda(11), DbU_lambda(11))
               westContacts.append(y)
           else : 
-            raise "\n[Stratus ERROR] RouteCK : bad pad placement.\n" 
+            raise ErrorMessage(2,"RouteCK : bad pad placement.") 
             
         else :
-          err = "\n[Stratus ERROR] RouteCk: The pads ("+ str(instance.getName()) +") must be in direct regard of the clock grid\n"
-          err += "coordinates are : x1,y1 = " \
-                 + str(DbU_getLambda(gridBoundingBox.getXMin())) + "," \
-                 + str(DbU_getLambda(gridBoundingBox.getYMin())) + "and x2,y2 = " \
-                 + str(DbU_getLambda(gridBoundingBox.getXMax())) + "," \
-                 + str(DbU_getLambda(gridBoundingBox.getYMax())) + ".\n"
-          raise err
+          err  = "RouteCk: The pads ("+ str(instance.getName()) +") must be in direct regard of the clock grid\n"
+          err += "coordinates are : (x1,y1) = (%s,%s) and (x2,y2) = (%s,%s)." \
+              % ( DbU.getValueString(gridBoundingBox.getXMin())
+                , DbU.getValueString(gridBoundingBox.getYMin())
+                , DbU.getValueString(gridBoundingBox.getXMax())
+                , DbU.getValueString(gridBoundingBox.getYMax()) )
+          raise ErrorMessage(2,err)
 
         compContact = Contact ( net, via5, x, y, DbU_lambda(11), DbU_lambda(11) )
     
@@ -2298,10 +2307,9 @@ def getNetInstances ( cell, net, transformation) :
     # Si c est une instance de type leaf 
     if ins.isLeaf() :
       if ins.getPlacementStatus() == PlacementStatusUNPLACED :
-        raise "Error getNetInstances : instance %s is unplaced" % str(ins.getName())
+        raise ErrorMessage(2,"getNetInstances : instance %s is unplaced" % str(ins.getName()))
       else :
         if not isPad ( ins ) :
-
           # get transformation final de cette instance 
           ins_transformation = transformation.getTransformation ( ins.getTransformation() )
 
@@ -2340,13 +2348,13 @@ def getNetInstances ( cell, net, transformation) :
               break
 
           if not nbSeg :
-            raise "Error getNetInstances : net %s in model %s does not have a segment\n" % ( str ( plug.getMasterNet().getName()), str(ins.getMasterCell().getName()) ) 
+            raise ErrorMessage(2,"getNetInstances : net %s in model %s does not have a segment\n" % ( str ( plug.getMasterNet().getName()), str(ins.getMasterCell().getName()) ) )
 
           if ( not ck_contact_list ) : print "Error in function getNetInstances : no segment found"
               
     else :
       if ins.getPlacementStatus() == PlacementStatusUNPLACED :
-        raise "Error getNetInstances : instance %s is unplaced" % str(ins.getName())
+        raise ErrorMessage(2,"getNetInstances : instance %s is unplaced" % str(ins.getName()))
       else :        
         getNetInstances ( cell, plug.getMasterNet(), transformation.getTransformation ( ins.getTransformation () ))
     
@@ -2376,4 +2384,5 @@ def Segment ( component1, component2, layer, width ) :
   
   if   component1.getX() == component2.getX() : return Vertical   ( component1, component2, layer, component1.getX(), width )
   elif component1.getY() == component2.getY() : return Horizontal ( component1, component2, layer, component1.getY(), width )
-  else                                        : raise "\n[Coriolis ERROR] Segment : the components must be horizontaly or verticaly aligned.\n"
+  else:
+    raise ErrorMessage(2,"Segment : the components must be horizontaly or verticaly aligned.")
