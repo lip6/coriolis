@@ -54,7 +54,7 @@ def credits ():
     return s
 
 
-def runStratusScript ( scriptPath, editor ):
+def runScript ( scriptPath, editor ):
     try:
         script = __import__(scriptPath)
     except Exception, e:
@@ -66,12 +66,12 @@ def runStratusScript ( scriptPath, editor ):
       print '        Trying to continue anyway...'
       return
 
-    if not hasattr(script,'StratusScript'):
-        print '[ERROR] Stratus Script module has no function StratusScript().'
+    if not hasattr(script,'ScriptMain'):
+        print '[ERROR] Script module is missing function ScriptMain().'
         print '        <%s>' % scriptPath
         return
 
-    script.StratusScript(editor)
+    script.ScriptMain(editor)
 
     return
 
@@ -85,10 +85,11 @@ if __name__ == '__main__':
       parser = optparse.OptionParser(usage)
       parser.add_option( '-c', '--cell'          , type='string'      , dest='cell'          , help='The name of the cell to load, whithout extension.')
       parser.add_option(       '--acm-sigda-89'  , type='string'      , dest='acmSigdaName'  , help='An ACM/SIGDA 89 bench name to load, whithout extension.')
-      parser.add_option(       '--stratus-script', type='string'      , dest='stratusScript' , help='Run a Stratus script.')
+      parser.add_option(       '--script'        , type='string'      , dest='script'        , help='Run a Python or Stratus script.')
       parser.add_option( '-v', '--verbose'       , action='store_true', dest='verbose'       , help='First level of verbosity.')
       parser.add_option( '-V', '--very-verbose'  , action='store_true', dest='veryVerbose'   , help='Second level of verbosity.')
       parser.add_option( '-i', '--info'          , action='store_true', dest='info'          , help='Display lots of informational messages.')
+      parser.add_option( '-b', '--bug'           , action='store_true', dest='bug'           , help='Display bug related messages.')
       parser.add_option(       '--show-conf'     , action='store_true', dest='showConf'      , help='Display Kite configuration.')
       parser.add_option( '-D', '--core-dump'     , action='store_true', dest='coreDump'      , help='Enable core-dump when a crash occurs.')
       parser.add_option( '-L', '--log-mode'      , action='store_true', dest='logMode'       , help='Disable ANSI escape sequences in console output.')
@@ -116,6 +117,7 @@ if __name__ == '__main__':
       if options.verbose:      Cfg.getParamBool      ('misc.verboseLevel1').setBool(True)
       if options.veryVerbose:  Cfg.getParamBool      ('misc.verboseLevel2').setBool(True)
       if options.info:         Cfg.getParamBool      ('misc.info'         ).setBool(True)
+      if options.bug:          Cfg.getParamBool      ('misc.bug'          ).setBool(True)
       if options.logMode:      Cfg.getParamBool      ('misc.logMode'      ).setBool(True)
       if options.showConf:     Cfg.getParamBool      ('misc.showConf'     ).setBool(True)
       if options.margin:       Cfg.getParamPercentage('nimbus.spaceMargin').setPercentage(options.margin)
@@ -156,13 +158,13 @@ if __name__ == '__main__':
           unicorn.setApplicationName  ('cgt')
           unicorn.registerTool        (Mauka.GraphicMaukaEngine.grab())
           unicorn.registerTool        (Kite.GraphicKiteEngine.grab())
-          unicorn.setAnonNetSelectable(False)
+         #unicorn.setAnonNetSelectable(False)
           unicorn.setLayerVisible     ("grid"          , False);
           unicorn.setLayerVisible     ("text.instance" , False);
           unicorn.setLayerVisible     ("text.component", False);
 
-          if options.stratusScript:
-              runStratusScript(options.stratusScript,unicorn)
+          if options.script:
+              runScript(options.script,unicorn)
     
           setCgtBanner(unicorn.getBanner())
           print unicorn.getBanner()
