@@ -61,8 +61,7 @@ install: FORCE
 	  cd build.dir/$$tool;                                    \
 	  makeArgs="";                                            \
 	  cmakeArgs="$$commonCMakeArgs -D BUILD_DOC:STRING=OFF";  \
-	  if [  "$$tool" = "crlcore"                              \
-	     -o "$$tool" = "stratus1" ]; then                     \
+	  if [ "$$tool" = "stratus1" ]; then                      \
 	    makeArgs="dvi safepdf html";                          \
 	    cmakeArgs="$$commonCMakeArgs -D BUILD_DOC:STRING=ON"; \
 	  fi;                                                     \

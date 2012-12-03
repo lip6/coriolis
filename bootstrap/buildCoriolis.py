@@ -582,7 +582,7 @@ class ProjectBuilder:
 
        # Remove unpublisheds (yet) tools/files.
         for item in self._packageExcludes:
-            command = [ "/bin/rm", "-r", os.path.join(self._archiveDir,item) ]
+            command = [ "/bin/rm", "-rf", os.path.join(self._archiveDir,item) ]
             self._execute ( command, "rm of %s failed" % item)
 
        # Adds files neededs only for packaging purpose.
