@@ -71,14 +71,14 @@
 .. _Box Router:  http://www.cerc.utexas.edu/~thyeros/boxrouter/boxrouter.htm
 .. _Knik Thesis: http://www-soc.lip6.fr/en/users/damiendupuis/PhD/
 
-.. _coriolis2-1.0.xxxx-1.slsoc6.i686.rpm:    http://asim.lip6.fr/pub/coriolis/2.0/coriolis2-1.0.xxxx-1.slsoc6.i686.rpm
-.. _coriolis2-1.0.xxxx-1.slsoc6.x86_64.rpm:  http://asim.lip6.fr/pub/coriolis/2.0/coriolis2-1.0.xxxx-1.slsoc6.x86_64.rpm
-.. _coriolis2-1.0.xxxx-1.fc16.i686.rpm:      http://asim.lip6.fr/pub/coriolis/2.0/coriolis2-1.0.xxxx-1.fc16.i686.rpm
-.. _coriolis2-1.0.xxxx-1.fc16.x86_64.rpm:    http://asim.lip6.fr/pub/coriolis/2.0/coriolis2-1.0.xxxx-1.fc16.x86_64.rpm
-.. _coriolis2_1.0-xxxx-1_.i386.rpm (10.04):  http://asim.lip6.fr/pub/coriolis/2.0/Ubuntu/10.04/coriolis2_1.0-xxxx-1_i386.rpm
-.. _coriolis2_1.0-xxxx-1_.amd64.rpm (10.04): http://asim.lip6.fr/pub/coriolis/2.0/Ubuntu/10.04/coriolis2_1.0-xxxx-1_i386.rpm
-.. _coriolis2_1.0-xxxx-1_.i386.rpm (12.04):  http://asim.lip6.fr/pub/coriolis/2.0/Ubuntu/12.04/coriolis2_1.0-xxxx-1_i386.rpm
-.. _coriolis2_1.0-xxxx-1_.amd64.rpm (12.04): http://asim.lip6.fr/pub/coriolis/2.0/Ubuntu/12.04/coriolis2_1.0-xxxx-1_i386.rpm
+.. _coriolis2-1.0.2049-1.slsoc6.i686.rpm:    http://asim.lip6.fr/pub/coriolis/2.0/coriolis2-1.0.2049-1.slsoc6.i686.rpm
+.. _coriolis2-1.0.2049-1.slsoc6.x86_64.rpm:  http://asim.lip6.fr/pub/coriolis/2.0/coriolis2-1.0.2049-1.slsoc6.x86_64.rpm
+.. _coriolis2-1.0.2049-1.fc16.i686.rpm:      http://asim.lip6.fr/pub/coriolis/2.0/coriolis2-1.0.2049-1.fc16.i686.rpm
+.. _coriolis2-1.0.2049-1.fc16.x86_64.rpm:    http://asim.lip6.fr/pub/coriolis/2.0/coriolis2-1.0.2049-1.fc16.x86_64.rpm
+.. _coriolis2_1.0-2049-1_.i386.rpm (10.04):  http://asim.lip6.fr/pub/coriolis/2.0/Ubuntu/10.04/coriolis2_1.0-2049-1_i386.rpm
+.. _coriolis2_1.0-2049-1_.amd64.rpm (10.04): http://asim.lip6.fr/pub/coriolis/2.0/Ubuntu/10.04/coriolis2_1.0-2049-1_i386.rpm
+.. _coriolis2_1.0-2049-1_.i386.rpm (12.04):  http://asim.lip6.fr/pub/coriolis/2.0/Ubuntu/12.04/coriolis2_1.0-2049-1_i386.rpm
+.. _coriolis2_1.0-2049-1_.amd64.rpm (12.04): http://asim.lip6.fr/pub/coriolis/2.0/Ubuntu/12.04/coriolis2_1.0-2049-1_i386.rpm
 
 .. Standard CAO/VLSI Concepts.
 .. |netlist|                        replace:: *netlist*
@@ -222,10 +222,10 @@ this release.
 #. A documentation (imcomplete/obsoleted in |Hurricane|'s case). 
 
 
-Release 1.0.xxxx
+Release 1.0.2049
 ~~~~~~~~~~~~~~~~
 
-Release `xxxx` is RC1.
+Release `2049` is Alpha.
 
 |noindent| Changes of this release:
 
@@ -249,23 +249,32 @@ Binary packages avalaible:
 +-----------------------+----------------------------------------------+
 | Distribution          | Package                                      |
 +=======================+==============================================+
-| |Scientific Linux| 6  | | coriolis2-1.0.xxxx-1.slsoc6.i686.rpm_      |
-|                       | | coriolis2-1.0.xxxx-1.slsoc6.x86_64.rpm_    |
+| |Scientific Linux| 6  | | coriolis2-1.0.2049-1.slsoc6.i686.rpm_      |
+|                       | | coriolis2-1.0.2049-1.slsoc6.x86_64.rpm_    |
 +-----------------------+----------------------------------------------+
-| |Fedora| 16           | | coriolis2-1.0.xxxx-1.fc16.i686.rpm_        |
-|                       | | coriolis2-1.0.xxxx-1.fc16.x86_64.rpm_      |
+| |Fedora| 16           | | coriolis2-1.0.2049-1.fc16.i686.rpm_        |
+|                       | | coriolis2-1.0.2049-1.fc16.x86_64.rpm_      |
 +-----------------------+----------------------------------------------+
-| |Ubuntu| 10.04 LTS    | | `coriolis2_1.0-xxxx-1_.i386.rpm (10.04)`_  |
-|                       | | `coriolis2_1.0-xxxx-1_.amd64.rpm (10.04)`_ |
+| |Ubuntu| 10.04 LTS    | | `coriolis2_1.0-2049-1_.i386.rpm (10.04)`_  |
+|                       | | `coriolis2_1.0-2049-1_.amd64.rpm (10.04)`_ |
 +-----------------------+----------------------------------------------+
-| |Ubuntu| 12.04 LTS    | | `coriolis2_1.0-xxxx-1_.i386.rpm (12.04)`_  |
-|                       | | `coriolis2_1.0-xxxx-1_.amd64.rpm (12.04)`_ |
+| |Ubuntu| 12.04 LTS    | | `coriolis2_1.0-2049-1_.i386.rpm (12.04)`_  |
+|                       | | `coriolis2_1.0-2049-1_.amd64.rpm (12.04)`_ |
 +-----------------------+----------------------------------------------+
+
+Older version can be found here: http://asim.lip6.fr/pub/coriolis/2.0 .
 
 If you are installing from source, you should go to section `Installation From Sources`_.
 
 
 |newpage|
+
+
+Documentation
+=============
+
+The general index of the documentation for the various parts of Coriolis
+are avalaibles here file:///usr/share/doc/coriolis2/index.html .
 
 
 Coriolis Configuration & Initialisation
