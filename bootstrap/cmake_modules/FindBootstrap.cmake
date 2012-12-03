@@ -73,8 +73,8 @@
 #
  set(CMAKE_C_FLAGS_DEBUG     "-g -Wall"           CACHE STRING "Debug options."   FORCE)
  set(CMAKE_CXX_FLAGS_DEBUG   "-g -Wall"           CACHE STRING "Debug options."   FORCE)
- set(CMAKE_C_FLAGS_RELEASE   "-O3 -DNDEBUG -Wall" CACHE STRING "Release options." FORCE)
- set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -Wall" CACHE STRING "Release options." FORCE)
+ set(CMAKE_C_FLAGS_RELEASE   "-O2 -DNDEBUG -Wall" CACHE STRING "Release options." FORCE)
+ set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG -Wall" CACHE STRING "Release options." FORCE)
 
 
 #

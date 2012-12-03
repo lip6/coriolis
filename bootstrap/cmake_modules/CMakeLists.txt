@@ -4,6 +4,7 @@
                    FindPythonSitePackages.cmake
                    FindLEFDEF.cmake
                    FindBootstrap.cmake
+                   FindLibexecinfo.cmake
          )
                
  install ( FILES ${finders} DESTINATION share/cmake/Modules ) 

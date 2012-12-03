@@ -173,6 +173,7 @@ if __name__ == "__main__":
       sitePackagesDir = "%s/python%s/dist-packages" % (absLibDir,version)
 
     strippedPythonPath = "%s:"         % (sitePackagesDir) + strippedPythonPath
+    strippedPythonPath = "%s/crlcore:" % (sitePackagesDir) + strippedPythonPath
     strippedPythonPath = "%s/cumulus:" % (sitePackagesDir) + strippedPythonPath
     strippedPythonPath = "%s/stratus:" % (sitePackagesDir) + strippedPythonPath
 
