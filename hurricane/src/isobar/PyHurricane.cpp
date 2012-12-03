@@ -95,6 +95,7 @@
 #include "hurricane/isobar/PyOccurrenceCollection.h"
 #include "hurricane/isobar/PyTechnology.h"
 #include "hurricane/NetExternalComponents.h"
+#include <stddef.h>
 
 
 namespace  Isobar {

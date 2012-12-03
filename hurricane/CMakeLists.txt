@@ -23,6 +23,7 @@
  find_package(PythonLibs REQUIRED)
  find_package(PythonSitePackages REQUIRED)
  find_package(VLSISAPD REQUIRED)
+ find_package(Libexecinfo REQUIRED)
  if(BUILD_DOC)
    find_package(Doxygen)
  endif(BUILD_DOC)

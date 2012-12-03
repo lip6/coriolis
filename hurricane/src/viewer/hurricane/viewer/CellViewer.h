@@ -91,7 +91,7 @@ namespace Hurricane {
               void                 raiseToolInterrupt        ();
               void                 clearToolInterrupt        ();
               void                 runScript                 ();
-              void                 runStratusScript          ();
+            //void                 runStratusScript          ();
     signals:                       
               void                 showSelectionToggled      ( bool );
               void                 stateChanged              ( shared_ptr<CellWidget::State>& );

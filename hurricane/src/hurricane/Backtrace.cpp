@@ -76,7 +76,7 @@ namespace Hurricane {
     size_t depth    = backtrace ( rawStack, _stackSize );
     char** symbols  = backtrace_symbols ( rawStack, depth );
 
-#ifdef __linux__
+#if (defined __linux__ || defined __FreeBSD__)
     boost::regex  re ( "([^/]+)\\(([^+]+)\\+" ); 
     boost::cmatch match;
 
@@ -116,7 +116,7 @@ namespace Hurricane {
       }
     }
 #  else
-    _stack.push_back ( "Backtrace only supported under Linux & OSX." );
+    _stack.push_back ( "Backtrace only supported under FreeBSD, Linux and OSX." );
 #  endif
 #endif
   }

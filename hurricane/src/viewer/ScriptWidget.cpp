@@ -131,7 +131,7 @@ namespace Hurricane {
     dbo_ptr<Isobar::Script> script = Isobar::Script::create(userScript.leaf());
     script->setEditor ( qobject_cast<CellViewer*>(parent) );
 
-    bool returnCode = script->runFunction ( "__hurricane_main__", cell );
+    bool returnCode = script->runFunction ( "ScriptMain", cell );
 
     Isobar::Script::removePath ( userDirectory.string() );
 

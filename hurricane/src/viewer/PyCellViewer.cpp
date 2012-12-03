@@ -153,6 +153,19 @@ extern "C" {
   }
 
 
+  static PyObject* PyCellViewer_refresh ( PyCellViewer* self )
+  {
+    trace << "PyCellViewer_refresh()" << endl;
+
+    HTRY
+    METHOD_HEAD("CellViewer.refresh()")
+    cw->getCellWidget()->refresh();
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
   // ---------------------------------------------------------------
   // PyCellViewer Attribute Method table.
 
@@ -168,6 +181,8 @@ extern "C" {
     , { "setLayerVisible"     , (PyCFunction)PyCellViewer_setLayerVisible     , METH_VARARGS
                               , "Sets the visibility state of the layer <name>." }
     , { "fit"                 , (PyCFunction)PyCellViewer_fit                 , METH_NOARGS
+                              , "Triggers a full redraw of the visible area." }
+    , { "refresh"             , (PyCFunction)PyCellViewer_refresh             , METH_NOARGS
                               , "Fit the contents to the viewer's visible area." }
     , { "destroy"             , (PyCFunction)PyCellViewer_destroy             , METH_NOARGS
                               , "Destroy the associated hurricane object. The python object remains." }

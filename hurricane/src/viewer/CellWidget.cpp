@@ -1974,7 +1974,7 @@ namespace Hurricane {
   {
     Point center = _visibleArea.getCenter();
 
-    cerr << "center: " << center << " + scale:" << scale << endl;
+  //cerr << "center: " << center << " + scale:" << scale << endl;
 
     return Box ( (DbU::Unit)( center.getX() - width () / (scale*2) ) 
                , (DbU::Unit)( center.getY() - height() / (scale*2) ) 

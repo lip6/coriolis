@@ -41,7 +41,7 @@
 #include  "hurricane/viewer/MousePositionWidget.h"
 #include  "hurricane/viewer/ControllerWidget.h"
 #include  "hurricane/viewer/ScriptWidget.h"
-#include  "hurricane/viewer/StratusWidget.h"
+//#include  "hurricane/viewer/StratusWidget.h"
 #include  "hurricane/viewer/GotoWidget.h"
 #include  "hurricane/viewer/SelectCommand.h"
 
@@ -212,17 +212,17 @@ namespace Hurricane {
     _controllerAction->setIcon       ( QIcon(":/images/swiss-knife.png") );
     _controllerAction->setShortcut   ( QKeySequence(tr("CTRL+I")) );
 
-    _scriptAction = new QAction  ( tr("Script"), this );
+    _scriptAction = new QAction  ( tr("Python Script"), this );
     _scriptAction->setObjectName ( "viewer.menuBar.tools.script" );
-    _scriptAction->setStatusTip  ( tr("Run Python Script") );
+    _scriptAction->setStatusTip  ( tr("Run Python Script. Must provide a ScripMain(cell) function") );
     _scriptAction->setIcon       ( QIcon(":/images/python-logo-v3.png") );
-    _scriptAction->setShortcut   ( QKeySequence(tr("SHIFT+P,SHIFT+P")) );
+    _scriptAction->setShortcut   ( QKeySequence(tr("SHIFT+P,SHIFT+S")) );
 
-    _stratusAction = new QAction  ( tr("Stratus"), this );
-    _stratusAction->setObjectName ( "viewer.menuBar.tools.stratusScript" );
-    _stratusAction->setStatusTip  ( tr("Run Stratus Script") );
-    _stratusAction->setIcon       ( QIcon(":/images/stratus-cloud.png") );
-    _stratusAction->setShortcut   ( QKeySequence(tr("SHIFT+P,SHIFT+S")) );
+  //_stratusAction = new QAction  ( tr("Stratus"), this );
+  //_stratusAction->setObjectName ( "viewer.menuBar.tools.stratusScript" );
+  //_stratusAction->setStatusTip  ( tr("Run Stratus Script") );
+  //_stratusAction->setIcon       ( QIcon(":/images/stratus-cloud.png") );
+  //_stratusAction->setShortcut   ( QKeySequence(tr("SHIFT+P,SHIFT+S")) );
   }
 
 
@@ -266,7 +266,7 @@ namespace Hurricane {
     _toolsMenu->setObjectName ( "viewer.menuBar.tools" );
     _toolsMenu->addAction ( _controllerAction );
     _toolsMenu->addAction ( _scriptAction );
-    _toolsMenu->addAction ( _stratusAction );
+  //_toolsMenu->addAction ( _stratusAction );
   }
 
 
@@ -325,7 +325,7 @@ namespace Hurricane {
     connect ( _clearRulersAction     , SIGNAL(triggered())        , _cellWidget, SLOT(clearRulers()) );
     connect ( _controllerAction      , SIGNAL(triggered())        , _controller, SLOT(toggleShow()) );
     connect ( _scriptAction          , SIGNAL(triggered())        , this       , SLOT(runScript()) );
-    connect ( _stratusAction         , SIGNAL(triggered())        , this       , SLOT(runStratusScript()) );
+  //connect ( _stratusAction         , SIGNAL(triggered())        , this       , SLOT(runStratusScript()) );
     connect ( _gotoAction            , SIGNAL(triggered())        , this       , SLOT(doGoto()) );
 
     connect ( _cellWidget            , SIGNAL(dbuModeChanged(unsigned int,DbU::UnitPower))
@@ -594,8 +594,8 @@ namespace Hurricane {
   { ScriptWidget::runScript ( this, getCell() ); }
 
 
-  void  CellViewer::runStratusScript ()
-  { StratusWidget::runScript ( this ); }
+//void  CellViewer::runStratusScript ()
+//{ StratusWidget::runScript ( this ); }
 
 
   string  CellViewer::_getString () const
