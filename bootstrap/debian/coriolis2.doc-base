@@ -4,31 +4,54 @@ Abstract: VLSI Place & Route CAD Tools Documentation
 Section:  Science/Electronics
 
 Format: text
-Files: /usr/share/doc/coriolis2/README.tex.gz
+Files: /usr/share/doc/coriolis2/en/latex/users-guide/*
        /usr/share/doc/coriolis2/en/latex/hurricane/*
+       /usr/share/doc/coriolis2/en/latex/viewer/*
+       /usr/share/doc/coriolis2/en/latex/crlcore/*
+       /usr/share/doc/coriolis2/en/latex/unicorn/*
        /usr/share/doc/coriolis2/en/latex/stratus/stratus.tex.gz
-       /usr/share/doc/coriolis2/en/latex/dpgen/dpgen.tex
+       /usr/share/doc/coriolis2/en/latex/dpgen/dpgen.tex.gz
        /usr/share/doc/coriolis2/en/latex/patterns/patterns.tex.gz
-       /usr/share/doc/coriolis2/en/latex/stratus_developper/stratus_developper.tex
+       /usr/share/doc/coriolis2/en/latex/stratus_developper/stratus_developper.tex.gz
 
 Format: DVI
-Files: /usr/share/doc/coriolis2/README.dvi.gz
-       /usr/share/doc/coriolis2/en/latex/stratus/stratus.dvi.gz
+Files: /usr/share/doc/coriolis2/en/latex/stratus/stratus.dvi.gz
        /usr/share/doc/coriolis2/en/latex/dpgen/dpgen.dvi.gz
        /usr/share/doc/coriolis2/en/latex/patterns/patterns.dvi.gz
        /usr/share/doc/coriolis2/en/latex/stratus_developper/stratus_developper.dvi.gz
 
 Format: PDF
-Files: /usr/share/doc/coriolis2/README.pdf.gz
-       /usr/share/doc/coriolis2/en/latex/stratus/stratus.pdf.gz
+Files: /usr/share/doc/coriolis2/en/latex/stratus/stratus.pdf.gz
        /usr/share/doc/coriolis2/en/latex/dpgen/dpgen.pdf.gz
        /usr/share/doc/coriolis2/en/latex/patterns/patterns.pdf.gz
        /usr/share/doc/coriolis2/en/latex/stratus_developper/stratus_developper.pdf.gz
 
 Format: HTML
 Index: /usr/share/doc/coriolis2/index.html
-Files: /usr/share/doc/coriolis2/en/html/hurricane/*.html
+Files: /usr/share/doc/coriolis2/en/html/users-guide/*.html
+       /usr/share/doc/coriolis2/en/html/users-guide/*.css
+       /usr/share/doc/coriolis2/en/html/users-guide/images/*.png
+       /usr/share/doc/coriolis2/en/html/hurricane/*.css
+       /usr/share/doc/coriolis2/en/html/hurricane/*.html
+       /usr/share/doc/coriolis2/en/html/hurricane/*.gif
+       /usr/share/doc/coriolis2/en/html/crlcore/*.css
+       /usr/share/doc/coriolis2/en/html/crlcore/*.html
+       /usr/share/doc/coriolis2/en/html/crlcore/*.gif
+       /usr/share/doc/coriolis2/en/html/crlcore/*.png
+       /usr/share/doc/coriolis2/en/html/unicorn/*.css
+       /usr/share/doc/coriolis2/en/html/unicorn/*.html
+       /usr/share/doc/coriolis2/en/html/unicorn/*.png
+       /usr/share/doc/coriolis2/en/html/unicorn/*.gif
+       /usr/share/doc/coriolis2/en/html/viewer/*.css
+       /usr/share/doc/coriolis2/en/html/viewer/*.html
+       /usr/share/doc/coriolis2/en/html/viewer/*.png
+       /usr/share/doc/coriolis2/en/html/viewer/*.gif
+       /usr/share/doc/coriolis2/en/html/stratus/*.css
        /usr/share/doc/coriolis2/en/html/stratus/*.html
+       /usr/share/doc/coriolis2/en/html/stratus/*.png
+       /usr/share/doc/coriolis2/en/html/dpgen/*.css
        /usr/share/doc/coriolis2/en/html/dpgen/*.html
+       /usr/share/doc/coriolis2/en/html/patterns/*.css
        /usr/share/doc/coriolis2/en/html/patterns/*.html
+       /usr/share/doc/coriolis2/en/html/stratus_developper/*.css
        /usr/share/doc/coriolis2/en/html/stratus_developper/*.html
