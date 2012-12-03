@@ -1,8 +1,8 @@
 
-                   set ( LATEX2HTML_CONVERTER_FLAGS "-html_version" "4.0,latin1,unicode"
-                                                    "-style" "SoC.css"
-                                                    "-init_file" "${CMAKE_CURRENT_SOURCE_DIR}/.latex2html-init"
-                                                    CACHE STRING "Custom arguments passeds to latex2html" FORCE )
+#                  set ( LATEX2HTML_CONVERTER_FLAGS "-html_version" "4.0,latin1,unicode"
+#                                                   "-style" "SoC.css"
+#                                                   "-init_file" "${CMAKE_CURRENT_SOURCE_DIR}/.latex2html-init"
+#                                                   CACHE STRING "Custom arguments passeds to latex2html" FORCE )
 
 #   add_latex_document ( README.tex IMAGE_DIRS images )
 

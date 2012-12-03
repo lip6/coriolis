@@ -31,9 +31,9 @@
  find_package(HURRICANE REQUIRED)
  find_package(Boost REQUIRED)
  find_package(Libexecinfo REQUIRED)
- if(BUILD_DOC)
-   include(UseLATEX)
- endif(BUILD_DOC)
+#if(BUILD_DOC)
+#  include(UseLATEX)
+#endif(BUILD_DOC)
  
  add_subdirectory(src)
  add_subdirectory(etc)
