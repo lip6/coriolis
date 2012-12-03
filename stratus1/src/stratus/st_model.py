@@ -1,60 +1,27 @@
 #!/usr/bin/python
-
-# This file is part of the Coriolis Project.
-# Copyright (C) Laboratoire LIP6 - Departement ASIM
-# Universite Pierre et Marie Curie
 #
-# Main contributors :
-#        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-#        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-#        Hugo Clement                   <Hugo.Clement@lip6.fr>
-#        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-#        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-#        Christian Masson           <Christian.Masson@lip6.fr>
-#        Marek Sroka                     <Marek.Sroka@lip6.fr>
-# 
-# The  Coriolis Project  is  free software;  you  can redistribute  it
-# and/or modify it under the  terms of the GNU General Public License
-# as published by  the Free Software Foundation; either  version 2 of
-# the License, or (at your option) any later version.
-# 
-# The  Coriolis Project is  distributed in  the hope  that it  will be
-# useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-# of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-# GNU General Public License for more details.
-# 
-# You should have  received a copy of the  GNU General Public License
-# along with the Coriolis Project;  if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-# USA
+# This file is part of the Coriolis Software.
+# Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 #
-# License-Tag
-# Authors-Tag
-# ===================================================================
-#
-# x-----------------------------------------------------------------x 
-# |                                                                 |
+# +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
-# |        S t r a t u s   -  Netlists/Layouts Description          |
+# |  S t r a t u s   -  Netlists/Layouts Description                |
 # |                                                                 |
 # |  Author      :                    Sophie BELLOEIL               |
 # |  E-mail      :       Sophie.Belloeil@asim.lip6.fr               |
 # | =============================================================== |
 # |  Py Module   :       "./st_model.py"                            |
-# | *************************************************************** |
-# |  U p d a t e s                                                  |
-# |                                                                 |
-# x-----------------------------------------------------------------x
+# +-----------------------------------------------------------------+
 
 
-
+import re
+import types
+import string
+import Cfg
 import CRL
 import Viewer
-from Hurricane  import *
+from   Hurricane  import *
 
-import re, types, string
-
-import st_config
 
 FRAMEWORK = None
 EDITOR    = None
@@ -475,16 +442,18 @@ class Model :
     global FRAMEWORK
     global CELLS
 
+    netlistFormat = Cfg.getParamString('stratus1.format').asString()
+
     if views == STRATUS :
       self.exportStratus ( fileName )
 
-    elif st_config.format in ['vst','vhd'] :
+    elif netlistFormat in ['vst','vhd'] :
       UpdateSession.open()
   
       hurCell = self._hur_cell
   
       if str ( hurCell.getName() ) != "__Scratch__" :
-        if st_config.format == 'vst' :
+        if netlistFormat == 'vst' :
           FRAMEWORK.saveCell ( hurCell, views|CRL.Catalog.State.Logical )
         else :
           self.exportVHD()
@@ -497,14 +466,14 @@ class Model :
       
       UpdateSession.close()
 
-    elif st_config.format == 'stratus' :
+    elif netlistFormat == 'stratus' :
       self.exportStratus ( fileName )
 
-    elif st_config.format == 'vlog' :
-      raise Exception('Format %s not yet implemented' % st_config.format)
+    elif netlistFormat == 'vlog' :
+      raise Exception('Format %s not yet implemented' % netlistFormat)
 
     else :
-      raise Exception('Unrecognized format %s' % st_config.format)
+      raise Exception('Unrecognized format %s' % netlistFormat)
 
   ##### Simul : in order to use simulation tool #####
   def Simul ( self, name = None, tool = 'asimut' ) :
@@ -512,9 +481,11 @@ class Model :
       
     if not name : name = self._name
 
-    if st_config.simulator == 'asimut' :
+    simulator = Cfg.getParamString('stratus1.simulator').asString()
+
+    if simulator == 'asimut' :
       runpat ( self._name, name, '-l 1 -p 100 -zerodelay -bdd' )
-    elif st_config.simulator == 'ghdl' :
+    elif simulator == 'ghdl' :
       import os
       cmd_str = ('ghdl -c -g -Psxlib --ieee=synopsys *.vhd -r %s_run --vcd=%s.vcd' %(name,name))
       os.system(cmd_str)
@@ -523,9 +494,11 @@ class Model :
 
   ##### TestBench : in order to create testbench #####
   def Testbench ( self ) :
+    netlistFormat = Cfg.getParamString('stratus1.format').asString()
+
     import stimuli
     stim = stimuli.Stimuli(self)
-    if st_config.format == 'vhd' :
+    if netlistFormat == 'vhd' :
       # Create stimuli input file
       stim.create_stimuli_text_file()
 
@@ -534,10 +507,10 @@ class Model :
 
       # Create testbench and block instance
       stim.create_run(debug = False, downto = True)
-    elif st_config.format == 'vst' :
+    elif netlistFormat == 'vst' :
       stim.create_pat_file()
     else :
-      raise Exception('Testbench not yet implemented for format %s' % st_config.format)
+      raise Exception('Testbench not yet implemented for format %s' % netlistFormat)
 
   ##### Create a stratus file given the database #####
   def exportStratus ( self, fileName ) :

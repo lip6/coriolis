@@ -351,6 +351,7 @@ class Inst :
         if chaine : name = chaine.group(1)
     
         err = "\n[Stratus ERROR] Inst : plug " + name + " of instance " + self._name + " must be connected.\n"
+        err += '               (raw name: <%s>)\n' % str(plug.getMasterNet().getName())
         raise Exception ( err )
 
   ##############

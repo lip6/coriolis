@@ -91,7 +91,7 @@ def PlaceTop ( ins, symetry, offsetX = 0, offsetY = 0, plac = FIXED ) :
   if offsetY % MYSLICE :
     err = "\n[Stratus ERROR] PlaceTop : " + ins._name + " : offsetY is not a mutiple of SLICE.\n"
     raise Exception ( err )
-  
+
   if ( plac != PLACED ) and ( plac != FIXED ) :
     err = "\n[Stratus ERROR] PlaceTop : " + ins._name + " : wrong argument for placement type.\n"
     raise Exception ( err )

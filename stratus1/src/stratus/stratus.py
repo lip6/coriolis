@@ -1,97 +1,65 @@
 #!/usr/bin/python
-
-# This file is part of the Coriolis Project.
-# Copyright (C) Laboratoire LIP6 - Departement ASIM
-# Universite Pierre et Marie Curie
 #
-# Main contributors :
-#        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-#        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-#        Hugo Clement                   <Hugo.Clement@lip6.fr>
-#        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-#        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-#        Christian Masson           <Christian.Masson@lip6.fr>
-#        Marek Sroka                     <Marek.Sroka@lip6.fr>
-# 
-# The  Coriolis Project  is  free software;  you  can redistribute  it
-# and/or modify it under the  terms of the GNU General Public License
-# as published by  the Free Software Foundation; either  version 2 of
-# the License, or (at your option) any later version.
-# 
-# The  Coriolis Project is  distributed in  the hope  that it  will be
-# useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-# of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-# GNU General Public License for more details.
-# 
-# You should have  received a copy of the  GNU General Public License
-# along with the Coriolis Project;  if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-# USA
+# This file is part of the Coriolis Software.
+# Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 #
-# License-Tag
-# Authors-Tag
-# ===================================================================
-#
-# x-----------------------------------------------------------------x 
-# |                                                                 |
+# +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
-# |        S t r a t u s   -  Netlists/Layouts Description          |
+# |  S t r a t u s   -  Netlists/Layouts Description                |
 # |                                                                 |
 # |  Author      :                    Sophie BELLOEIL               |
 # |  E-mail      :       Sophie.Belloeil@asim.lip6.fr               |
 # | =============================================================== |
 # |  Py Module   :       "./stratus.py"                             |
-# | *************************************************************** |
-# |  U p d a t e s                                                  |
-# |                                                                 |
-# x-----------------------------------------------------------------x
+# +-----------------------------------------------------------------+
 
 
-# Get configuration of Stratus
-def getConfigFile():
-   import os
+try:
+  import sys
+  import Cfg
+  import CRL
 
-   config_file = os.path.join(os.getcwd(),".st_config.py")
-   if os.path.exists(config_file):
-      return config_file
-   else:
-      config_file = os.path.join(os.getenv('HOME'),".st_config.py")
-      if os.path.exists(config_file):
-         return config_file
-      else:
-         return None
+ # Triggers the default configuration files loading.
+  CRL.AllianceFramework.get()
 
-configFile = getConfigFile()
-if configFile:
-   import imp
-   imp.load_source('st_config',configFile)
-else:
-   print "No configuration file found, using default configuration"
-   import st_config
-print "Output format : %s\nSimulator : %s" %(st_config.format,st_config.simulator)
+  Cfg.Configuration.pushDefaultPriority(Cfg.Parameter.Priority.ApplicationBuiltin)
+  Cfg.getParamString('stratus1.format'   ).setString('vst')
+  Cfg.getParamString('stratus1.simulator').setString('asimut')
+  Cfg.Configuration.popDefaultPriority()
 
+  print '  o  Stratus Configuration:'
+  print '     - Netlist format: <%s>.' % Cfg.getParamString('stratus1.format').asString()
+  print '     - Simulator: <%s>.'      % Cfg.getParamString('stratus1.simulator').asString()
+  
+  from st_model         import *
+  from st_net           import *
+  from st_instance      import *
+  from st_placement     import *
+  from st_placeAndRoute import *
+  from st_ref           import *
+  from st_generate      import *
+  from st_const         import *
+  from st_cat           import *
+  from st_param         import *
+  from st_getrealmodel  import GetWeightTime, GetWeightArea, GetWeightPower
+  
+  from util_Const       import *
+  from util_Defs        import *
+  from util_Misc        import *
+  from util_Gen         import *
+  from util_Shift       import *
+  from util_uRom        import *
+  from util             import *
+  
+  from patterns         import *
+except ImportError, e:
+  module = str(e).split()[-1]
 
-from st_model         import *
-from st_net           import *
-from st_instance      import *
-from st_placement     import *
-from st_placeAndRoute import *
-from st_ref           import *
-from st_generate      import *
-from st_const         import *
-from st_cat           import *
-from st_param         import *
-from st_getrealmodel  import GetWeightTime, GetWeightArea, GetWeightPower
-
-from util_Const       import *
-from util_Defs        import *
-from util_Misc        import *
-from util_Gen         import *
-from util_Shift       import *
-from util_uRom        import *
-from util             import *
-
-from patterns         import *
-
-
-
+  print '[ERROR] The <%s> python module or symbol cannot be loaded.' % module
+  print '        Please check the integrity of the <coriolis> package.'
+  sys.exit(1)
+except Exception, e:
+  print '[ERROR] A strange exception occurred while loading the basic Coriolis/Python'
+  print '        modules. Something may be wrong at Python/C API level.\n'
+  print '        %s' % e
+  sys.exit(2)
