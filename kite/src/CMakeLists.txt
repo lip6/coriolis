@@ -87,6 +87,7 @@
                                        ${Boost_LIBRARIES}
                                        ${LIBXML2_LIBRARIES}
                                        ${PYTHON_LIBRARIES} -lutil
+                                       ${LIBEXECINFO_LIBRARIES}
                        )
 
            add_library ( pyKite        MODULE ${pyCpps} )

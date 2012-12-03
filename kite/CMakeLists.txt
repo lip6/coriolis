@@ -26,6 +26,7 @@
  find_package(CORIOLIS REQUIRED)
  find_package(KNIK REQUIRED)
  find_package(KATABATIC REQUIRED)
+ find_package(Libexecinfo REQUIRED)
  if(BUILD_DOC)
    find_package(Doxygen)
  endif(BUILD_DOC)

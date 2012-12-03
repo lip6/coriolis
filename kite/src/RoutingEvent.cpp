@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
-//
-// ===================================================================
-//
-// $Id$
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
-// |                                                                 |
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
@@ -17,9 +12,6 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./RoutingEvent.cpp"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
 // +-----------------------------------------------------------------+
 
 
@@ -1619,7 +1611,7 @@ namespace {
       Track*        track = candidates[icandidate].getTrack();
       TrackElement* other = track->getSegment(overlap.getCenter());
       if ( not other ) {
-        cerr << Error("conflictSolve1_v1b(): No segment under overlap center.") << endl;
+        cbug << Error("conflictSolve1_v1b(): No segment under overlap center.") << endl;
         continue;
       }
 
@@ -2004,7 +1996,7 @@ namespace {
     } else {
       clearActions ();
       if ( data->getState() == DataNegociate::Unimplemented ) {
-        cerr << "[UNSOLVED] " << segment << " unable to slacken topology." << endl;
+        cinfo << "[UNSOLVED] " << segment << " unable to slacken topology." << endl;
       }
     }
 
@@ -2396,7 +2388,8 @@ namespace {
                   << " vs. " << DbU::getValueString(interval.getVMax()) << endl;
     // Ugly: Direct uses of routing pitch.
       if ( interval.getVMax()+DbU::lambda(5.0) >= uside.getVMin() ) {
-        ltrace(200) << "Using next GCell." << endl;
+        interval.inflate( 0, DbU::fromLambda(5.0) );
+        ltrace(200) << "Using next GCell " << interval << endl;
         imaxconflict++;
       }
     }
@@ -2443,16 +2436,20 @@ namespace {
       if ( minExpanded ) {
       //doglegAxis = dogLegGCell->getUSide(_segment->getDirection(),false).getVMax() - DbU::lambda(1.0);
         doglegAxis = dogLegGCell->getUSide(_segment->getDirection()/*,false*/).getCenter();
+        ltrace(200) << "MARK 1 doglegAxis: " << DbU::getValueString(doglegAxis) << endl;
       } else {
       // Ugly: hardcoded pitch.
         doglegAxis = interval.getVMin() - DbU::lambda(5.0);
+        ltrace(200) << "MARK 2 doglegAxis: " << DbU::getValueString(doglegAxis) << endl;
       }
     } else {
       if ( maxExpanded ) {
         doglegAxis = dogLegGCell->getUSide(_segment->getDirection()/*,false*/).getVMin();
+        ltrace(200) << "MARK 3 doglegAxis: " << DbU::getValueString(doglegAxis) << endl;
       } else {
       // Ugly: hardcoded pitch (5.0 - 1.0).
         doglegAxis = interval.getVMax() + DbU::lambda(4.0);
+        ltrace(200) << "MARK 4 doglegAxis: " << DbU::getValueString(doglegAxis) << endl;
       }
     }
     if ( doglegReuse1 ) _S.addAction ( dogleg, SegmentAction::OtherRipup );
@@ -3781,7 +3778,7 @@ namespace Kite {
 
     RoutingEvent* parentEvent = parent->getDataNegociate()->getRoutingEvent();
     if ( parentEvent == this ) {
-      cerr << Error("RoutingEvent::getAxisHint(): Parentage loop between\n"
+      cbug << Error("RoutingEvent::getAxisHint(): Parentage loop between\n"
                     "        this  :%p:%s\n        parent:%p:%s"
                    ,_segment->base(),getString(_segment->base()).c_str()
                    ,parent  ->base(),getString(parent  ->base()).c_str()
@@ -3861,7 +3858,7 @@ namespace Kite {
     if ( loop.isLooping() ) {
       if ( ltracelevel() > 200 ) {
 
-        cerr << Error("Loop detected: %s.\n        Enabling trace (level:200)"
+        cbug << Error("Loop detected: %s.\n        Enabling trace (level:200)"
                      ,_getString().c_str()) << endl;
       //ltracelevel ( 200 );
       //Cfg::getParamInt("misc.traceLevel")->setInt ( 200, Cfg::Parameter::CommandLine );
@@ -3875,7 +3872,7 @@ namespace Kite {
 
 #if LOOP_DEBUG
       if ( loop.getMaxCount() > 500 ) {
-        cerr << Error("Loop detected, removing event %s.",_getString().c_str()) << endl;
+        cbug << Error("Loop detected, removing event %s.",_getString().c_str()) << endl;
       //Cfg::getParamInt("misc.traceLevel")->setInt ( 1000, Cfg::Parameter::CommandLine );
       //ltracelevel ( 1000 );
 
@@ -3905,7 +3902,7 @@ namespace Kite {
       for ( size_t i=0 ; i<elements.size() ; ++i ) {
         message << "\n" << setw(10) << elements[i]._count << "| id:" << elements[i]._id;
       }
-      cerr << message.str() << endl;
+      cbug << message.str() << endl;
 #endif
     }
 
@@ -3977,7 +3974,7 @@ namespace Kite {
     State S ( this, queue, history );
 
     if ( S.getState() == State::MissingData ) {
-      cerr << Error("RoutingEvent::process() - Missing datas.") << endl;
+      cbug << Error("RoutingEvent::process() - Missing datas.") << endl;
       return;
     }
 
@@ -4167,10 +4164,14 @@ namespace Kite {
 
       ltrace(200) << "Stage:" << RoutingEvent::getStage() << endl;
       if ( RoutingEvent::getStage() == RoutingEvent::Repair ) {
-        ltrace(200) << "Expanding:" << _constraints << endl;
-      // Ugly: direct uses of Cell Gauge.
-        _constraints.inflate ( DbU::lambda(50.0) );
-        ltrace(200) << "Expanding (after):" << _constraints << endl;
+        if (_segment->isTerminal()) {
+          ltrace(200) << "Not expanding on Terminals:" << _constraints << endl;
+        } else {
+          ltrace(200) << "Expanding:" << _constraints << endl;
+        // Ugly: direct uses of Cell Gauge.
+          _constraints.inflate ( DbU::lambda(50.0) );
+          ltrace(200) << "Expanding (after):" << _constraints << endl;
+        }
       }
       // else if ( _segment->isDogleg()
       //           and (_segment->getDataNegociate()->getState() >= DataNegociate::MaximumSlack) ) {

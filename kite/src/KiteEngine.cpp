@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
@@ -17,10 +12,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./KiteEngine.cpp"                         |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <sstream>
@@ -164,7 +156,7 @@ namespace Kite {
 
     cmess2 << "     - RoutingEvents := " << RoutingEvent::getAllocateds() << endl;
 
-  //_knik->destroy ();
+    _knik->destroy ();
 
     ltraceout(90);
   }
@@ -355,7 +347,7 @@ namespace Kite {
       size_t tracksSize = rp->getTracksSize();
       for ( size_t itrack=0 ; itrack<tracksSize ; ++itrack ) {
         Track*        track   = rp->getTrackByIndex ( itrack );
-        Knik::Edge*   edge    = NULL;
+      //Knik::Edge*   edge    = NULL;
 
         ltrace(300) << "Capacity from: " << track << endl;
 
@@ -539,6 +531,10 @@ namespace Kite {
   //   DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.gi_3_23" );
   //   DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.gi_3_28" );
   //DebugSession::addToTrace ( getCell(), "cout_to_pads" );
+  //DebugSession::addToTrace ( getCell(), "mux_5.sel0" );
+  //DebugSession::addToTrace ( getCell(), "wm_rf.nandr0" );
+  //DebugSession::addToTrace ( getCell(), "adder_sub.gi_2_18" );
+  //DebugSession::addToTrace ( getCell(), "adder_sub.pi_3_20" );
 
     createDetailedGrid ();
     buildPowerRails ();
