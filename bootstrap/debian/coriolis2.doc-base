@@ -9,9 +9,9 @@ Files: /usr/share/doc/coriolis2/en/latex/users-guide/*
        /usr/share/doc/coriolis2/en/latex/viewer/*
        /usr/share/doc/coriolis2/en/latex/crlcore/*
        /usr/share/doc/coriolis2/en/latex/unicorn/*
-       /usr/share/doc/coriolis2/en/latex/stratus/stratus.tex
+       /usr/share/doc/coriolis2/en/latex/stratus/stratus.tex.gz
        /usr/share/doc/coriolis2/en/latex/dpgen/dpgen.tex
-       /usr/share/doc/coriolis2/en/latex/patterns/patterns.tex
+       /usr/share/doc/coriolis2/en/latex/patterns/patterns.tex.gz
        /usr/share/doc/coriolis2/en/latex/stratus_developper/stratus_developper.tex
 
 Format: DVI
@@ -36,16 +36,13 @@ Files: /usr/share/doc/coriolis2/en/html/users-guide/*.html
        /usr/share/doc/coriolis2/en/html/hurricane/*.gif
        /usr/share/doc/coriolis2/en/html/crlcore/*.css
        /usr/share/doc/coriolis2/en/html/crlcore/*.html
-       /usr/share/doc/coriolis2/en/html/crlcore/*.gif
        /usr/share/doc/coriolis2/en/html/crlcore/*.png
        /usr/share/doc/coriolis2/en/html/unicorn/*.css
        /usr/share/doc/coriolis2/en/html/unicorn/*.html
        /usr/share/doc/coriolis2/en/html/unicorn/*.png
-       /usr/share/doc/coriolis2/en/html/unicorn/*.gif
        /usr/share/doc/coriolis2/en/html/viewer/*.css
        /usr/share/doc/coriolis2/en/html/viewer/*.html
        /usr/share/doc/coriolis2/en/html/viewer/*.png
-       /usr/share/doc/coriolis2/en/html/viewer/*.gif
        /usr/share/doc/coriolis2/en/html/stratus/*.css
        /usr/share/doc/coriolis2/en/html/stratus/*.html
        /usr/share/doc/coriolis2/en/html/stratus/*.png
