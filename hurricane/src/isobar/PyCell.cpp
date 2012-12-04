@@ -547,7 +547,7 @@ extern "C" {
     METHOD_HEAD ( "Cell.setAbutmentBox()" )
 
     PyBox* pyBox;
-    if (!PyArg_ParseTuple(args,"O!:Cell.getInstancesUnder", &PyTypeBox, &pyBox)) {
+    if (!PyArg_ParseTuple(args,"O!:Cell.setAbutmentBox", &PyTypeBox, &pyBox)) {
         return NULL;
     }
     cell->setAbutmentBox ( *PYBOX_O(pyBox) );
