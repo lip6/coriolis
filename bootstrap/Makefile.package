@@ -65,7 +65,9 @@ install: FORCE
 	    makeArgs="dvi safepdf html";                          \
 	    cmakeArgs="$$commonCMakeArgs -D BUILD_DOC:STRING=ON"; \
 	  fi;                                                     \
-	  if [  "$$tool" = "hurricane" ]; then                    \
+	  if [    "$$tool" = "hurricane"                          \
+	       -o "$$tool" = "crlcore"                            \
+	       -o "$$tool" = "unicorn"   ]; then                  \
 	    cmakeArgs="$$commonCMakeArgs -D BUILD_DOC:STRING=ON"; \
 	  fi;                                                     \
 	  cmake -D CMAKE_BUILD_TYPE:STRING=RELEASE                \
