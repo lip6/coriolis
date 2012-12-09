@@ -290,13 +290,14 @@ namespace {
     if ( _conflicts.size() > 0 ) {
       DbU::Unit  halfConflict = 0;
       size_t i = 0;
-      for ( ; i<_conflicts.size() ; ++i ) {
+      for ( ; i<_conflicts.size()-1 ; ++i ) {
         halfConflict += _conflicts.size();
         if ( halfConflict > _conflictLength/2 )
           break;
       }
 
     // Ugly: hard-coded pitch.
+      cerr << "_conflicts.size():" << _conflicts.size() << " " << i << endl;
       _breakPos = _conflicts[i].getVMin() - DbU::lambda(5.0);
     }
   }

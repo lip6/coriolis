@@ -96,13 +96,13 @@
                                                   OUTPUT_NAME   "Kite"
                        )
 
-        add_executable ( kite-text     ${kitecpps} )
- target_link_libraries ( kite-text     kite )
+        add_executable ( kite.bin      ${kitecpps} )
+ target_link_libraries ( kite.bin      kite )
  target_link_libraries ( pyKite        kite 
                                        ${CORIOLIS_PYTHON_LIBRARIES}
                        )
                install ( TARGETS       kite            DESTINATION lib${LIB_SUFFIX} )
-               install ( TARGETS       kite-text       DESTINATION bin )
+               install ( TARGETS       kite.bin        DESTINATION bin )
                install ( TARGETS       pyKite          DESTINATION ${PYTHON_SITE_PACKAGES} )
 
                install ( FILES         ${includes}
