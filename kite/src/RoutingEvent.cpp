@@ -297,7 +297,6 @@ namespace {
       }
 
     // Ugly: hard-coded pitch.
-      cerr << "_conflicts.size():" << _conflicts.size() << " " << i << endl;
       _breakPos = _conflicts[i].getVMin() - DbU::lambda(5.0);
     }
   }
