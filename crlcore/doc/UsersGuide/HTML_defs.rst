@@ -48,6 +48,9 @@
 .. |ControllerInspector_3|          replace:: :raw-html:`<center><img src="./images/Controller-Inspector-3.png" alt="Controller Basic Snapshot"></center>`
 .. |ControllerSettings_1|           replace:: :raw-html:`<center><img src="./images/Controller-Settings-1.png" alt="Controller Basic Snapshot"></center>`
 
+.. |BigMouse|                       image:: ./images/ComputerMouse.png
+                                    :scale: 25%
+
 .. Direct LaTeX commands encapsulation.
 .. |dotfill|                        replace:: :raw-html:`&nbsp;&nbsp;`
 .. |noindent|                       replace:: :raw-html:`<p class="empty"></p>`

@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
@@ -17,10 +12,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./Histogram.cpp"                          |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <cmath>
@@ -69,10 +61,10 @@ namespace CRL {
 
   void  Histogram::addSample ( double sample, size_t iset )
   {
-    if ( iset > _sets.size() ) return;
+    if ( iset >= _sets.size() ) return;
 
     size_t binIndex = (size_t)rint ( sample / _step );
-    if ( binIndex > _sets.front().size() ) binIndex = _sets.front().size() - 1;
+    if ( binIndex >= _sets.front().size() ) binIndex = _sets.front().size() - 1;
 
     _sets        [iset][binIndex] += 1.0;
     _totalSamples[iset]++;

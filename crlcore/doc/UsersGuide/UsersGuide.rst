@@ -109,9 +109,6 @@
 .. |kgr|                            replace:: :cb:`kgr`
 .. |dot_conf|                       replace:: :cb:`.conf`
 
-.. |BigMouse|                       image:: ./images/ComputerMouse.png
-                                    :scale: 25%
-
 
 =====================
 Coriolis User's Guide
@@ -1106,5 +1103,5 @@ in the ``bootstrap`` source directory: ::
 
 Use it like this: ::
 
-    dummy@lepka:~> eval `~/coriolis-2.x/src/bootstrap/coriolisEnv.py --v2 --python`
+    dummy@lepka:~> eval `~/coriolis-2.x/src/bootstrap/coriolisEnv.py`
 

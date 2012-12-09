@@ -50,8 +50,12 @@
 .. |ControllerInspector_3|          replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Inspector-3.eps}\end{center}`
 .. |ControllerSettings_1|           replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Settings-1.eps}\end{center}`
 
+.. |BigMouse|                       image:: ./images/ComputerMouse.png
+                                    :scale: 25%
+
 .. Direct LaTeX commands encapsulation.
 .. |dotfill|                        replace:: :raw-latex:`\dotfill`
 .. |noindent|                       replace:: :raw-latex:`\noindent`
 .. |medskip|                        replace:: :raw-latex:`\medskip`
 .. |newpage|                        replace:: :raw-latex:`\newpage`
+
