@@ -2187,13 +2187,10 @@ def createGrid ( my_tuple ) :
             raise ErrorMessage(2,"RouteCK : bad pad placement.") 
             
         else :
-          err  = "RouteCk: The pads ("+ str(instance.getName()) +") must be in direct regard of the clock grid\n"
-          err += "coordinates are : (x1,y1) = (%s,%s) and (x2,y2) = (%s,%s)." \
-              % ( DbU.getValueString(gridBoundingBox.getXMin())
-                , DbU.getValueString(gridBoundingBox.getYMin())
-                , DbU.getValueString(gridBoundingBox.getXMax())
-                , DbU.getValueString(gridBoundingBox.getYMax()) )
-          raise ErrorMessage(2,err)
+          message = [ "pyRouteCk: The pads <%s> must be in direct regard of the clock grid" % str(instance.getName())
+                    , "Clock grid is %s" % str(gridBoundingBox)
+                    ]
+          raise ErrorMessage(2,message)
 
         compContact = Contact ( net, via5, x, y, DbU_lambda(11), DbU_lambda(11) )
     
@@ -2257,35 +2254,35 @@ def createGrid ( my_tuple ) :
     xDistance = abs ( xTarget - xContact )
     yDistance = abs ( yTarget - yContact )
 
-    Contact(net, via2, xContact, yContact, DbU_lambda(2), DbU_lambda(2) ) 
-    Contact(net, via3, xContact, yContact, DbU_lambda(2), DbU_lambda(2) ) 
-    Contact(net, via4, xContact, yContact, DbU_lambda(2), DbU_lambda(2) )
+    Contact(net, via2, xContact, yContact, DbU_lambda(1), DbU_lambda(1) ) 
+    Contact(net, via3, xContact, yContact, DbU_lambda(1), DbU_lambda(1) ) 
+    Contact(net, via4, xContact, yContact, DbU_lambda(1), DbU_lambda(1) )
 
     if xDistance != 0 or yDistance != 0 :
       if ( xDistance <= yDistance + DbU_lambda(10) ):  # test pour faire un horizontal
         if xDistance != 0 :
           if abs(xDistance) <= DbU_lambda(3) :
-            gridContact = Contact ( net, metal5, xTarget, yContact, DbU_lambda(2), DbU_lambda(2) ) 
+            gridContact = Contact ( net, metal5, xTarget, yContact, DbU_lambda(1), DbU_lambda(1) ) 
             layer = metal5
           else :
-            Contact ( net, via5, xContact, yContact, DbU_lambda(2), DbU_lambda(2) )
-            gridContact = Contact ( net, via5, xTarget, yContact, DbU_lambda(2), DbU_lambda(2) ) 
+            Contact ( net, via5, xContact, yContact, DbU_lambda(1), DbU_lambda(1) )
+            gridContact = Contact ( net, via5, xTarget, yContact, DbU_lambda(1), DbU_lambda(1) ) 
             layer = metal6
           Horizontal( gridContact, plugContact, layer, gridContact.getY(), DbU_lambda(2) )
         else :
-          gridContact = Contact ( net, via5, xTarget, yContact, DbU_lambda(2), DbU_lambda(2) ) 
+          gridContact = Contact ( net, via5, xTarget, yContact, DbU_lambda(1), DbU_lambda(1) ) 
       else:
         if yDistance != 0 :
           if abs(yDistance) <= DbU_lambda(3) :
             layer = metal6
-            gridContact = Contact ( net, metal6, xContact, yTarget, DbU_lambda(2), DbU_lambda(2) ) 
-            Contact ( net, via5, xContact, yContact, DbU_lambda(2), DbU_lambda(2) ) 
+            gridContact = Contact ( net, metal6, xContact, yTarget, DbU_lambda(1), DbU_lambda(1) ) 
+            Contact ( net, via5, xContact, yContact, DbU_lambda(1), DbU_lambda(1) ) 
           else :
-            gridContact = Contact ( net, via5, xContact, yTarget, DbU_lambda(2), DbU_lambda(2) ) 
+            gridContact = Contact ( net, via5, xContact, yTarget, DbU_lambda(1), DbU_lambda(1) ) 
             layer = metal5
           Vertical ( gridContact, plugContact, layer, gridContact.getX(), DbU_lambda(2) )
         else :
-          gridContact = Contact ( net, via5, xContact, yTarget, DbU_lambda(2), DbU_lambda(2) ) 
+          gridContact = Contact ( net, via5, xContact, yTarget, DbU_lambda(1), DbU_lambda(1) ) 
 
   del _Xmin
   del _Ymin 
