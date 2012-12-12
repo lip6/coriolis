@@ -408,12 +408,18 @@ class ProjectBuilder:
         if not project.getRepository ():
             print ErrorMessage( 0, "Project \"%s\" isn't associated to a repository."%project.getName() )
             return
+
+        if not os.path.isdir(self._sourceDir):
+            print ErrorMessage( 0, "Source directory <%s> doesn't exists. Creating."%self._sourceDir )
+            os.makedirs( self._sourceDir )
         
         toolSvnTrunkDir = os.path.join ( self._svnMethod+project.getRepository(), tool, "trunk" )
         os.chdir ( self._sourceDir )
 
         print "Doing a SVN checkout of tool: ", tool
         command = [ "svn", "co", toolSvnTrunkDir, tool ]
+        if self._svnTag != "x":
+            command += [ "--revision", self._svnTag ]
         self._execute ( command, "svn checkout %s" % tool )
         print
         return
