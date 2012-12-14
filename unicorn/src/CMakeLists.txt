@@ -77,13 +77,12 @@
                                                   OUTPUT_NAME   "Unicorn"
                        )
 
-        add_executable ( cgt           ${cgtcpp} )
- target_link_libraries ( cgt           unicorn )
- set_target_properties ( cgt           PROPERTIES OUTPUT_NAME   "cgt-cpp" )
+        add_executable ( cgt.bin       ${cgtcpp} )
+ target_link_libraries ( cgt.bin       unicorn )
 
                install ( TARGETS       unicorn        DESTINATION lib${LIB_SUFFIX} )
                install ( TARGETS       pyUnicorn      DESTINATION ${PYTHON_SITE_PACKAGES} )
-               install ( TARGETS       cgt            DESTINATION bin )
+               install ( TARGETS       cgt.bin        DESTINATION bin )
                install ( PROGRAMS      cgt.py         DESTINATION bin RENAME cgt )
                install ( FILES         ${mocincludes}
                                        ${pyIncludes}  DESTINATION include/coriolis2/unicorn ) 

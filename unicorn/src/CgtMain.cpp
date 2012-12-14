@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
-//
-// ===================================================================
-//
-// $Id$
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
-// |                                                                 |
 // |                   C O R I O L I S                               |
 // |          U n i c o r n  -  M a i n   G U I                      |
 // |                                                                 |
@@ -17,9 +12,6 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./CgtMain.cpp"                            |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
 // +-----------------------------------------------------------------+
 
 
@@ -29,7 +21,7 @@
 using namespace std;
 
 #include  <boost/program_options.hpp>
-namespace boptions = boost::program_options;
+namespace bopts = boost::program_options;
 
 #include  <boost/filesystem/operations.hpp>
 namespace bfs = boost::filesystem;
@@ -89,11 +81,6 @@ using namespace Solstice;
 using namespace Unicorn;
 
 
-// x-----------------------------------------------------------------x
-// |                      Fonctions Definitions                      |
-// x-----------------------------------------------------------------x
-
-
 // -------------------------------------------------------------------
 // Function  :  "main()".
 
@@ -122,73 +109,73 @@ int main ( int argc, char *argv[] )
     bool          exportDef;
     bool          saveImport;
 
-    boptions::options_description options ("Command line arguments & options");
+    bopts::options_description options ("Command line arguments & options");
     options.add_options()
       ( "help,h"             , "Print this help." )
-      ( "destroy-db"         , boptions::bool_switch(&destroyDatabase)->default_value(false)
+      ( "destroy-db"         , bopts::bool_switch(&destroyDatabase)->default_value(false)
                              , "Perform a complete deletion of the database (may be buggy).")
-      ( "trace-level,l"      , boptions::value<unsigned int>(&traceLevel)
+      ( "trace-level,l"      , bopts::value<unsigned int>(&traceLevel)
                              , "Set the level of trace, trace messages with a level superior to "
                                "<arg> will be printed on <stderr>." )
-      ( "verbose,v"          , boptions::bool_switch()
+      ( "verbose,v"          , bopts::bool_switch()
                              , "First level of verbosity.")
-      ( "very-verbose,V"     , boptions::bool_switch()
+      ( "very-verbose,V"     , bopts::bool_switch()
                              , "Second level of verbosity.")
-      ( "info,i"             , boptions::bool_switch()
+      ( "info,i"             , bopts::bool_switch()
                              , "Lots of informational messages.")
-      ( "show-conf"          , boptions::bool_switch()
+      ( "show-conf"          , bopts::bool_switch()
                              , "Print Kite configuration settings.")
-      ( "conf"               , boptions::value<string>()
+      ( "conf"               , bopts::value<string>()
                              , "An XML configuration file." )
-      ( "core-dump,D"        , boptions::bool_switch()
+      ( "core-dump,D"        , bopts::bool_switch()
                              , "Enable core dumping.")
-      ( "log-mode,L"         , boptions::bool_switch()
+      ( "log-mode,L"         , bopts::bool_switch()
                              , "Disable ANSI escape sequences displaying.")
-      ( "text,t"             , boptions::bool_switch(&textMode)->default_value(false)
+      ( "text,t"             , bopts::bool_switch(&textMode)->default_value(false)
                              , "Run in pure text mode.")
-      ( "stratus-script"     , boptions::value<string>()
+      ( "stratus-script"     , bopts::value<string>()
                              , "Status script to run." )
-      ( "margin,m"           , boptions::value<double>(&margin)
+      ( "margin,m"           , bopts::value<double>(&margin)
                              , "Percentage of free area to add to the minimal placement area.")
-      ( "quadri-place,p"     , boptions::bool_switch(&quadriPlace)->default_value(false)
+      ( "quadri-place,p"     , bopts::bool_switch(&quadriPlace)->default_value(false)
                              , "Place using quadripartitions then placement legalisation.")
-      ( "annealing-place,P"  , boptions::bool_switch(&annealingPlace)->default_value(false)
+      ( "annealing-place,P"  , bopts::bool_switch(&annealingPlace)->default_value(false)
                              , "Place using simulated annealing (slow).")
-      ( "partition-size-stop", boptions::value<unsigned int>(&partitionSizeStop)
+      ( "partition-size-stop", bopts::value<unsigned int>(&partitionSizeStop)
                              , "Sets the size of a leaf partition (quadripartition stage).")
-      ( "global-route,G"     , boptions::bool_switch(&globalRoute)->default_value(false)
+      ( "global-route,G"     , bopts::bool_switch(&globalRoute)->default_value(false)
                              , "Run the global router (Knik).")
-      ( "load-global,g"      , boptions::bool_switch(&loadGlobal)->default_value(false)
+      ( "load-global,g"      , bopts::bool_switch(&loadGlobal)->default_value(false)
                              , "Reload the global routing from disk.")
-      ( "save-global"        , boptions::bool_switch(&saveGlobal)->default_value(false)
+      ( "save-global"        , bopts::bool_switch(&saveGlobal)->default_value(false)
                              , "Save the global routing solution.")
-      ( "edge,e"             , boptions::value<float>(&edgeCapacity)
+      ( "edge,e"             , bopts::value<float>(&edgeCapacity)
                              , "The egde density ratio applied on global router's edges." )
-      ( "events-limit"       , boptions::value<unsigned long>(&eventsLimit)
+      ( "events-limit"       , bopts::value<unsigned long>(&eventsLimit)
                              , "The maximum number of iterations (events) that the router is"
                                "allowed to perform." )
-      ( "detailed-route,R"   , boptions::bool_switch(&detailedRoute)->default_value(false)
+      ( "detailed-route,R"   , bopts::bool_switch(&detailedRoute)->default_value(false)
                              , "Run the detailed router (Kite).")
-      ( "dump-measures,M"    , boptions::bool_switch(&dumpMeasures)->default_value(false)
+      ( "dump-measures,M"    , bopts::bool_switch(&dumpMeasures)->default_value(false)
                              , "Dump statistical measurements on the disk.")
-      ( "cell,c"             , boptions::value<string>()
+      ( "cell,c"             , bopts::value<string>()
                              , "The name of the cell to load, whithout extension." )
-      ( "save-design,s"      , boptions::value<string>()
+      ( "save-design,s"      , bopts::value<string>()
                              , "Save the routed design.")
-      ( "export-def"         , boptions::bool_switch(&exportDef)->default_value(false)
+      ( "export-def"         , bopts::bool_switch(&exportDef)->default_value(false)
                              , "Export the design in DEF format.")
-      ( "import-def"         , boptions::value<string>()
+      ( "import-def"         , bopts::value<string>()
                              , "Import the design in DEF format.")
-      ( "importk-ispd04-bk"  , boptions::value<string>()
+      ( "importk-ispd04-bk"  , bopts::value<string>()
                              , "The name of the ISPD04 benchmark to import (Bookshelf .aux), whithout extension." )
-      ( "import-iccad04-def" , boptions::value<string>()
+      ( "import-iccad04-def" , bopts::value<string>()
                              , "The name of the ICCAD04 benchmark to import (LEF/DEF), whithout extension." )
-      ( "save-import"        , boptions::bool_switch(&saveImport)->default_value(false)
+      ( "save-import"        , bopts::bool_switch(&saveImport)->default_value(false)
                              , "Save of the imported design immediatly after loading.");
 
-    boptions::variables_map arguments;
-    boptions::store  ( boptions::parse_command_line(argc,argv,options), arguments );
-    boptions::notify ( arguments );
+    bopts::variables_map arguments;
+    bopts::store  ( bopts::parse_command_line(argc,argv,options), arguments );
+    bopts::notify ( arguments );
 
     if ( arguments.count("help") ) {
       cout << options << endl;
@@ -444,7 +431,7 @@ int main ( int argc, char *argv[] )
     cerr << "\nProgram stack:\n" << e.where() << endl;
     exit ( 1 );
   }
-  catch ( boptions::error& e ) {
+  catch ( bopts::error& e ) {
     cerr << "[ERROR] " << e.what() << endl;
     exit ( 1 );
   }
