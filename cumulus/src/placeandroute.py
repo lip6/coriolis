@@ -2204,6 +2204,11 @@ def createGrid ( my_tuple ) :
   widthVTracks  = gridBoundingBox.getWidth()  / nbVTracks
   nbHTracks     = gridBoundingBox.getHeight() / DbU_lambda(200)
   heightHTracks = gridBoundingBox.getHeight() / nbHTracks
+  via12Side     = DbU.fromLambda(1.0)
+  via23Side     = DbU.fromLambda(1.0)
+  via34Side     = DbU.fromLambda(1.0)
+  via45Side     = DbU.fromLambda(1.0)
+  via56Side     = DbU.fromLambda(1.0)
 
   xList = []
   yList = []
@@ -2241,7 +2246,7 @@ def createGrid ( my_tuple ) :
   for contact in ck_contact_list :
     xContact = contact[0]
     yContact = contact[1]
-    plugContact = Contact ( net, via1 , xContact, yContact, DbU_lambda(2), DbU_lambda(2) ) 
+    plugContact = Contact ( net, via1 , xContact, yContact, via12Side, via12Side ) 
     #find the closest x,y on grid
     xList.insert ( 0, gridBoundingBox.getXMin() )
     yList.insert ( 0, gridBoundingBox.getYMin() )
@@ -2254,35 +2259,35 @@ def createGrid ( my_tuple ) :
     xDistance = abs ( xTarget - xContact )
     yDistance = abs ( yTarget - yContact )
 
-    Contact(net, via2, xContact, yContact, DbU_lambda(1), DbU_lambda(1) ) 
-    Contact(net, via3, xContact, yContact, DbU_lambda(1), DbU_lambda(1) ) 
-    Contact(net, via4, xContact, yContact, DbU_lambda(1), DbU_lambda(1) )
+    Contact(net, via2, xContact, yContact, via23Side, via23Side ) 
+    Contact(net, via3, xContact, yContact, via34Side, via34Side ) 
+    Contact(net, via4, xContact, yContact, via45Side, via45Side )
 
     if xDistance != 0 or yDistance != 0 :
       if ( xDistance <= yDistance + DbU_lambda(10) ):  # test pour faire un horizontal
         if xDistance != 0 :
           if abs(xDistance) <= DbU_lambda(3) :
-            gridContact = Contact ( net, metal5, xTarget, yContact, DbU_lambda(1), DbU_lambda(1) ) 
+            gridContact = Contact ( net, metal5, xTarget, yContact, via56Side, via56Side ) 
             layer = metal5
           else :
-            Contact ( net, via5, xContact, yContact, DbU_lambda(1), DbU_lambda(1) )
-            gridContact = Contact ( net, via5, xTarget, yContact, DbU_lambda(1), DbU_lambda(1) ) 
+            Contact ( net, via5, xContact, yContact, via56Side, via56Side )
+            gridContact = Contact ( net, via5, xTarget, yContact, via56Side, via56Side ) 
             layer = metal6
           Horizontal( gridContact, plugContact, layer, gridContact.getY(), DbU_lambda(2) )
         else :
-          gridContact = Contact ( net, via5, xTarget, yContact, DbU_lambda(1), DbU_lambda(1) ) 
+          gridContact = Contact ( net, via5, xTarget, yContact, via56Side, via56Side ) 
       else:
         if yDistance != 0 :
           if abs(yDistance) <= DbU_lambda(3) :
             layer = metal6
-            gridContact = Contact ( net, metal6, xContact, yTarget, DbU_lambda(1), DbU_lambda(1) ) 
-            Contact ( net, via5, xContact, yContact, DbU_lambda(1), DbU_lambda(1) ) 
+            gridContact = Contact ( net, metal6, xContact, yTarget, via56Side, via56Side ) 
+            Contact ( net, via5, xContact, yContact, via56Side, via56Side ) 
           else :
-            gridContact = Contact ( net, via5, xContact, yTarget, DbU_lambda(1), DbU_lambda(1) ) 
+            gridContact = Contact ( net, via5, xContact, yTarget, via56Side, via56Side ) 
             layer = metal5
           Vertical ( gridContact, plugContact, layer, gridContact.getX(), DbU_lambda(2) )
         else :
-          gridContact = Contact ( net, via5, xContact, yTarget, DbU_lambda(1), DbU_lambda(1) ) 
+          gridContact = Contact ( net, via5, xContact, yTarget, via56Side, via56Side ) 
 
   del _Xmin
   del _Ymin 
