@@ -384,6 +384,23 @@ class ProjectBuilder:
         return
 
 
+    def _svnDiff ( self, tool ):
+        toolSourceDir = os.path.join ( self._sourceDir , tool )
+        if not os.path.isdir(toolSourceDir):
+            if not self._quiet:
+                print ErrorMessage( 0, "Missing tool source directory: \"%s\" (skipped)."%toolSourceDir )
+            return
+        os.chdir ( toolSourceDir )
+
+        print "Doing a SVN diff of tool: ", tool
+        command = [ "svn", "diff" ]
+        if self._svnTag != "x":
+            command += [ "--revision", self._svnTag ]
+        self._execute ( command, "svn diff %s" % tool )
+        print
+        return
+
+
     def _svnUpdate ( self, tool ):
         toolSourceDir = os.path.join ( self._sourceDir , tool )
         if not os.path.isdir(toolSourceDir):
@@ -562,6 +579,11 @@ class ProjectBuilder:
 
     def svnCheckout ( self, tools, projects ):
         self._commandTemplate ( tools, projects, "_svnCheckout" )
+        return
+
+
+    def svnDiff ( self, tools, projects ):
+        self._commandTemplate ( tools, projects, "_svnDiff" )
         return
 
 
@@ -834,6 +856,7 @@ if __name__ == "__main__":
         parser.add_option ( "--svn-tag"          , action="store"      , type="string", dest="svnTag"     , help="Explicitly select a SVN tag (for SVN related commands)." )
         parser.add_option ( "--svn-method"       , action="store"      , type="string", dest="svnMethod"  , help="Allows to sets the svn checkout method (svn+ssh://coriolis.soc.lip6.fr)." )
         parser.add_option ( "--svn-status"       , action="store_true"                , dest="svnStatus"  , help="Check status against the SVN repository." )
+        parser.add_option ( "--svn-diff"         , action="store_true"                , dest="svnDiff"    , help="Perform a diff against the SVN repository." )
         parser.add_option ( "--svn-update"       , action="store_true"                , dest="svnUpdate"  , help="Update to the latest SVN version *or* the one given by svn-tag." )
         parser.add_option ( "--svn-checkout"     , action="store_true"                , dest="svnCheckout", help="Checkout the latest SVN version *or* the one given by svn-tag." )
        # Miscellaneous.                                                
@@ -871,6 +894,7 @@ if __name__ == "__main__":
     
         if   options.svnStatus:   builder.svnStatus   ( tools=options.tools, projects=options.projects )
         elif options.svnUpdate:   builder.svnUpdate   ( tools=options.tools, projects=options.projects )
+        elif options.svnDiff:     builder.svnDiff     ( tools=options.tools, projects=options.projects )
         elif options.svnCheckout: builder.svnCheckout ( tools=options.tools, projects=options.projects )
         elif options.userTarball: builder.userTarball ( tools=options.tools, projects=options.projects )
         elif options.tarball:     builder.svnTarball  ( tools=options.tools, projects=options.projects )
