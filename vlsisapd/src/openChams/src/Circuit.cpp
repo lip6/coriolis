@@ -280,6 +280,8 @@ namespace OpenChams {
   }
 
   void Circuit::readCircuitParameters(xmlNode* node) {
+    //cerr << "Circuit::readCircuitParameters()" << endl;
+
     if (readCircuitParametersDone) {
       cerr << "[WARNING] Only one 'parameters' node is allowed in circuit, others will be ignored." << endl;
       return;
@@ -390,6 +392,8 @@ namespace OpenChams {
 
   // INSTANCES //
   void Circuit::readInstances(xmlNode* node, Netlist* netlist) {
+    //cerr << "  Circuit::readInstances()" << endl;
+
     if (readInstancesDone) {
       cerr << "[WARNING] Only one 'instances' node is allowed in 'netlist', others will be ignored." << endl;
       return;
@@ -428,11 +432,15 @@ namespace OpenChams {
       check_lowercase(sourceBulkStr, sbcComps, "[ERROR] In 'instance', 'sourceBulkConnected' property must be 'true', 'false', 'on' or 'off'.");
       bool sourceBulkConnected = ((sourceBulkStr == "true") || (sourceBulkStr == "on")) ? true : false;
       inst = (Instance*)netlist->addDevice(instanceName, modelName, order, mosStr, sourceBulkConnected);
+
+      //cerr << "  - " << instanceName << " of model " << modelName << endl;
     } else if (iNameC && iModelC && iOrderC && !iMOSC && !iSBCC) { // this is a subcircuit
       const std::string& instanceName((const char*)iNameC);
       const std::string& modelName((const char*)iModelC);
       unsigned order = stringAs<unsigned>(iOrderC);
       inst = netlist->addInstance(instanceName, modelName, order);
+
+      //cerr << "  - " << instanceName << " of model " << modelName << endl;
     } else {
       throw OpenChamsException("[ERROR] 'instance' node must have ('name', 'model' and 'order') or ('name', 'model', 'order', 'mostype' and 'sourceBulkConnected') properties.");
       //return inst;
@@ -774,7 +782,7 @@ namespace OpenChams {
     }
     
     Sizing* sizing = new Sizing(this);
-    cerr << "** S ** " << node->name << ": " << node->type << endl;
+    //cerr << "** S ** " << node->name << ": " << node->type << endl;
     xmlNode* child = node->children;
     for (xmlNode* node = child; node; node = node->next) {
       if (node->type == XML_ELEMENT_NODE) {
@@ -973,7 +981,7 @@ namespace OpenChams {
     
     Layout* layout = new Layout(this);
     xmlNode* child = node->children;
-    cerr << "** L ** " << node->name << ": " << node->type << endl;
+    //cerr << "** L ** " << node->name << ": " << node->type << endl;
     for (xmlNode* node = child; node; node = node->next) {
       if (node->type == XML_ELEMENT_NODE) {
 	if (xmlStrEqual(node->name, (xmlChar*)"instance")) {
@@ -1307,7 +1315,7 @@ namespace OpenChams {
       for (map<string,string>::const_iterator it = _params.getValues().begin() ; it != _params.getValues().end() ; ++it) {
         file << "    <parameter name=\"" << (*it).first << "\" value=\"" << (*it).second << "\"/>" << endl;
       }
-      cerr << "_params.getValues().size() = " << _params.getValues().size() << endl;
+      //cerr << "_params.getValues().size() = " << _params.getValues().size() << endl;
       file << "  </parameters>" << endl;
     }
     file << "  <netlist>" << endl
