@@ -727,8 +727,10 @@ extern "C" {
     PyModule_AddObject ( module, "DiffusionLayer"       , (PyObject*)&PyTypeDiffusionLayer );
     Py_INCREF ( &PyTypeTransistorLayer );
     PyModule_AddObject ( module, "TransistorLayer"      , (PyObject*)&PyTypeTransistorLayer );
-    Py_INCREF ( &PyTypeContactLayer );
+    Py_INCREF ( &PyTypeViaLayer );
     PyModule_AddObject ( module, "ViaLayer"             , (PyObject*)&PyTypeViaLayer );
+    Py_INCREF ( &PyTypeContactLayer );
+    PyModule_AddObject ( module, "ContactLayer"         , (PyObject*)&PyTypeContactLayer );
     Py_INCREF ( &PyTypeNetExternalComponents );
     PyModule_AddObject ( module, "NetExternalComponents", (PyObject*)&PyTypeNetExternalComponents );
     Py_INCREF ( &PyTypeUpdateSession );

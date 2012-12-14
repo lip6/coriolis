@@ -19,6 +19,9 @@
 #ifndef __PYHURRICANE__
 #define __PYHURRICANE__
 
+// Enable Python debugging.
+// #define  DEBUG  1
+
 #include "Python.h"
 #include <iostream>
 #include <sstream>
