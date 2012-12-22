@@ -141,7 +141,7 @@ extern "C" {
         Cell*     cell      = kite->getCell();
         PyObject* iterator  = PyObject_GetIter(pyRoutingNets);
         PyObject* pyNetName = NULL;
-        while( pyNetName = PyIter_Next(iterator) ) {
+        while( (pyNetName = PyIter_Next(iterator)) ) {
           if (not PyString_Check(pyNetName)) {
             PyErr_SetString(ConstructorError, "KiteEngine.loadGlobalRouting(): The second argument must be a container of strings.");
             return NULL;

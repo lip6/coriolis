@@ -950,7 +950,7 @@ namespace {
                                                           , DbU::Unit    axisHint=0
                                                           );
              bool                 ripupPerpandiculars     ( unsigned int flags=0 );
-             void                 repackPerpandiculars    ();
+             void                 repackPerpandiculars    ( bool ripInserted=true );
              bool                 ripple                  ();
              bool                 goOutsideGCell          ();
              bool                 minimize                ();
@@ -1856,7 +1856,8 @@ namespace {
             success = Manipulator(segment,*this).desalignate();
             break;
           case DataNegociate::Minimize:
-            if ( isFullBlocked() ) {
+            if ( isFullBlocked() and not segment->isTerminal() ) {
+              ltrace(200) << "Is Fully blocked." << endl;
               nextState = DataNegociate::Unimplemented;
               break;
             }
@@ -3455,7 +3456,7 @@ namespace {
   }
 
 
-  void  Manipulator::repackPerpandiculars ()
+  void  Manipulator::repackPerpandiculars ( bool ripInserted )
   {
     ltrace(200) << "Manipulator::repackPerpandiculars()" << endl;
 
@@ -3468,8 +3469,13 @@ namespace {
       if ( perpandicular->isGlobal() ) continue;
       if ( not data ) continue;
 
-      if ( RoutingEvent::getStage() == RoutingEvent::Repair )
+      if ( RoutingEvent::getStage() == RoutingEvent::Repair ) {
+        if (data->getTrack() and not ripInserted) continue;
+
         data->setState ( DataNegociate::Repair );
+        if (data->getStateCount() > 1)
+          data->resetStateCount();
+      }
       _S.addAction ( perpandicular, SegmentAction::SelfRipupPerpand );
     }
     _S.addAction ( _segment, SegmentAction::SelfRipup|SegmentAction::EventLevel4 );
@@ -4119,6 +4125,9 @@ namespace Kite {
       ltrace(200) << "Insert in free space." << endl;
       Session::addInsertEvent ( _segment, S.getCost(0).getTrack() );
       S.setState ( State::SelfInserted );
+    //Manipulator(_segment,S).repackPerpandiculars (false);
+    //S.doActions ();
+    //queue.commit ();
     } else {
       switch ( S.getData()->getStateCount() ) {
         case 1:

@@ -535,6 +535,8 @@ namespace Kite {
   //DebugSession::addToTrace ( getCell(), "wm_rf.nandr0" );
   //DebugSession::addToTrace ( getCell(), "adder_sub.gi_2_18" );
   //DebugSession::addToTrace ( getCell(), "adder_sub.pi_3_20" );
+  //DebugSession::addToTrace ( getCell(), "core.iram.na4_x1_2_sig" );
+  //DebugSession::addToTrace ( getCell(), "core.ialu.mx3_x2_4_sig" );
 
     createDetailedGrid ();
     buildPowerRails ();
