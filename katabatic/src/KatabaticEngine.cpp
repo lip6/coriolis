@@ -506,8 +506,8 @@ namespace Katabatic {
         if ( net->getType() == Net::Type::GROUND ) excludedType = "GROUND";
         if ( net->getType() == Net::Type::CLOCK  ) excludedType = "CLOCK";
         if ( excludedType ) {
-          cerr << Warning("%s is not a routable net (%s,excluded)."
-                         ,getString(*net).c_str(),excludedType) << endl;
+          cout << "[INFO] " << getString(*net).c_str() << " is not a routable net ("
+               << excludedType << ",excluded)." << endl;
           continue;
         }
         if ( af->isBLOCKAGE(net->getName()) ) continue;
@@ -522,8 +522,8 @@ namespace Katabatic {
         if ( (*it)->getType() == Net::Type::CLOCK  ) excludedType = "CLOCK";
         if ( af->isBLOCKAGE((*it)->getName()) )      excludedType = "BLOCKAGE";
         if ( excludedType ) {
-          cerr << Warning("%s is not a routable net (%s), removed from set."
-                         ,getString(*it).c_str(),excludedType) << endl;
+          cout << "[INFO] " << getString(*it).c_str() << " is not a routable net ("
+               << excludedType << "), removed from set." << endl;
         } else
           _routingNets.insert ( *it );
       }
