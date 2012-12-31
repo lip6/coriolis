@@ -67,7 +67,7 @@ namespace Hurricane {
       inline  void                 setEnableRedrawInterrupt  ( bool );
       inline  void                 setApplicationName        ( const QString& );
               Cell*                getCell                   () const;
-              void                 setCell                   ( Cell* );
+      virtual void                 setCell                   ( Cell* );
               void                 renameCell                ( const char* );
       virtual Cell*                getCellFromDb             ( const char* );
       inline  CellWidget*          getCellWidget             ();

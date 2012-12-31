@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -17,10 +12,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./DynamicLabel.cpp"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 # include  <QFontMetrics>
@@ -47,18 +39,16 @@ namespace Hurricane {
   //_staticLabel->setFrameStyle (QFrame::Panel | QFrame::Raised );
 
     QFont  font   = Graphics::getFixedFont(QFont::Bold);
-    int    cwidth = QFontMetrics(font).width('X');
-
     _dynamicLabel = new QLabel ();
     _dynamicLabel->setText ( "vvv.vu" );
-    _dynamicLabel->setIndent      ( cwidth/2 );
-    _dynamicLabel->setMinimumSize ( QSize(cwidth*10,QFontMetrics(font).height()) );
     _dynamicLabel->setAlignment   ( Qt::AlignRight );
     _dynamicLabel->setFont        ( font );
+    setDynamicWidth               ( 10 );
 
     QHBoxLayout* layout = new QHBoxLayout ();
-    layout->addWidget ( _staticLabel );
-    layout->addWidget ( _dynamicLabel );
+    layout->addWidget  ( _staticLabel );
+    layout->addWidget  ( _dynamicLabel );
+    layout->setSpacing ( 0 );
     layout->setContentsMargins ( 0, 0, 0, 0 );
 
     setLayout ( layout );
@@ -74,6 +64,17 @@ namespace Hurricane {
   QString  DynamicLabel::getDynamicText () const
   {
     return _dynamicLabel->text ();
+  }
+
+
+  void  DynamicLabel::setDynamicWidth ( int chars, int flags )
+  {
+    QFont  font   = Graphics::getFixedFont(QFont::Bold);
+    int    cwidth = QFontMetrics(font).width('X');
+
+    if ( flags|NoIndent   ) _dynamicLabel->setIndent( 0 );
+    if ( flags|HalfIndent ) _dynamicLabel->setIndent( cwidth/2 );
+    _dynamicLabel->setMinimumSize( QSize(cwidth*chars,QFontMetrics(font).height()) );
   }
 
 
