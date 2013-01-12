@@ -537,6 +537,7 @@ class Builder:
         return
 
 
+    def getProject        ( self, name     ): return self._conf.getProject(name)
     def loadConfiguration ( self, confFile ): self._conf.load( confFile )
     def showConfiguration ( self ):           self._conf.show()
 
