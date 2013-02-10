@@ -265,7 +265,7 @@ void BBPlacer::Save()
             instanceOccurrence.getPath().getTransformation().invert().applyOn(instanceTransformation);
             instance->setTransformation(instanceTransformation);
             instance->setPlacementStatus(Instance::PlacementStatus::PLACED);
-            //setPlacementStatusRecursivelyToPlaced(instance);
+          //setPlacementStatusRecursivelyToPlaced(instance);
         }
     }
 

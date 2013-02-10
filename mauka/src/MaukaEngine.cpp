@@ -184,9 +184,9 @@ void MaukaEngine::Construct()
 // **************************
 {
     typedef map<Occurrence, unsigned> InstanceOccurrenceMap;
-    typedef set<Instance*> InstanceSet;
+    typedef map<Instance*,Occurrence> OccurrencesLUT;
     typedef map<Net*, unsigned> NetMap;
-    InstanceSet instanceSet;
+    OccurrencesLUT occurencesLUT;
     NetMap netMap;
     unsigned instanceId = 0;
     unsigned netId = 0;
@@ -222,6 +222,14 @@ void MaukaEngine::Construct()
         {
             //cerr << "unplaced " << (*ioccurrence) << (*ioccurrence).getBoundingBox() << endl;
             Cell* model = instance->getMasterCell();
+            if (model->getAbutmentBox().isEmpty()) {
+              throw Error("Unplaced terminal instance <%s> of <%s> with an empty model abutment box.\n"
+                          "(hint: the vst model may be missing)" 
+                         ,getString(instance->getName()).c_str()
+                         ,getString(model->getName()).c_str()
+                         );
+            }
+
             DbU::Unit insWidth = model->getAbutmentBox().getWidth();
             DbU::Unit insHeight = model->getAbutmentBox().getHeight();
             if (standardCellHeight == 0) {
@@ -239,16 +247,21 @@ void MaukaEngine::Construct()
             _instanceOccurrencesVector.push_back(*ioccurrence);
             //VerifyPathCellBox(*ioccurrence);
             _instanceWidths.push_back(insWidth);
-            InstanceSet::iterator isit = instanceSet.find(instance);
-            if (isit != instanceSet.end())
+            OccurrencesLUT::iterator duplicate = occurencesLUT.find(instance);
+            if (duplicate != occurencesLUT.end())
             {
-                cerr << "Unplaced Instance : "   << *isit << endl;
-                cerr << "Unplaced Occurrence : " << (*ioccurrence) << endl;
-                cerr << (*isit)->getPlacementStatus() << endl;
-                throw Error("Each unplaced instance must have one occurrence only");
+            //cerr << "Unplaced Instance : "   << *duplicate << endl;
+            //cerr << "Unplaced Occurrence : " << (*ioccurrence) << endl;
+            //cerr << (*duplicate)->getPlacementStatus() << endl;
+                throw Error("Each unplaced instance must have one occurrence only.\n"
+                            "Model <%s> is intanciated as:\n<b>.  %s\n.  %s</b>\n(at least)."
+                           ,getString(instance->getMasterCell()->getName()).c_str()
+                           ,(*ioccurrence).getCompactString().c_str()
+                           ,((*duplicate).second).getCompactString().c_str()
+                           );
             }
             _instanceOccurrencesMap[*ioccurrence] = instanceId++;
-            instanceSet.insert(instance);
+            occurencesLUT.insert(make_pair(instance,*ioccurrence));
             _instanceNets.push_back(UVector());
         }
     }

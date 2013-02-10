@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2006-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2006-2013, All Rights Reserved
 //
 // x-----------------------------------------------------------------x
 // |                   C O R I O L I S                               |
