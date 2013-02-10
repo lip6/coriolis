@@ -157,21 +157,27 @@ MetisGraph::MetisGraph ( MetisEngine* metis, GCell* gcell )
     , _partResultVector()
     , _edgeCut(INT_MAX)
 {
-    typedef set<Instance*> InstanceSet;
-    InstanceSet instanceSet;
+  typedef map<Instance*,Occurrence> OccurrencesLUT;
+  OccurrencesLUT occurrencesLUT;
 
-    for_each_occurrence(occurrence, _cell->getLeafInstanceOccurrences())
-    {
-        Instance* instance = static_cast<Instance*>(occurrence.getEntity());
-        if (!instance->isFixed())
-        {
-            if (instanceSet.find(instance) != instanceSet.end())
-                throw Error("MetisEngine limitation : only one occurrence of unplaced instance");
-            instanceSet.insert(instance);
-            _toPlaceInstanceOccurrencesSet.insert(occurrence); //treat this later
-        }
-        end_for;
+  for_each_occurrence(occurrence, _cell->getLeafInstanceOccurrences())
+  {
+    Instance* instance = static_cast<Instance*>(occurrence.getEntity());
+    if (!instance->isFixed()) {
+      OccurrencesLUT::iterator duplicated = occurrencesLUT.find(instance);
+      if (duplicated != occurrencesLUT.end()) {
+        throw Error("MetisEngine limitation: Each unplaced instance must have one occurrence only.\n"
+                    "Model %s is intanciated as:<b>\n.    %s\n.    %s</b>\n  (at least)."
+                   ,getString(instance->getMasterCell()->getName()).c_str()
+                   ,occurrence.getCompactString().c_str()
+                   ,(*duplicated).second.getCompactString().c_str()
+                   );
+      }
+      occurrencesLUT.insert(make_pair(instance,occurrence));
+      _toPlaceInstanceOccurrencesSet.insert(occurrence); //treat this later
     }
+    end_for;
+  }
 
     for_each_occurrence(occurrence, _cell->getHyperNetRootNetOccurrences())
     {
