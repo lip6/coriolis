@@ -94,6 +94,8 @@
 #include "hurricane/isobar/PyOccurrence.h"
 #include "hurricane/isobar/PyOccurrenceCollection.h"
 #include "hurricane/isobar/PyTechnology.h"
+#include "hurricane/isobar/PyQueryMask.h"
+#include "hurricane/isobar/PyQuery.h"
 #include "hurricane/NetExternalComponents.h"
 #include <stddef.h>
 
@@ -583,6 +585,8 @@ extern "C" {
     PyPin_LinkPyType ();
     PyPlug_LinkPyType ();
     PyBreakpoint_LinkPyType ();
+    PyQuery_LinkPyType ();
+    PyQueryMask_LinkPyType ();
 
     PYTYPE_READY ( UpdateSession                 )
     PYTYPE_READY ( Point                         )
@@ -627,6 +631,8 @@ extern "C" {
     PYTYPE_READY ( HyperNet                      )
     PYTYPE_READY ( NetExternalComponents         )
     PYTYPE_READY ( Breakpoint                    )
+    PYTYPE_READY ( Query                         )
+    PYTYPE_READY ( QueryMask                     )
 
     PYTYPE_READY_SUB ( BasicLayer     , Layer    )
     PYTYPE_READY_SUB ( RegularLayer   , Layer    )
@@ -702,6 +708,8 @@ extern "C" {
     __cs.addType ( "path"       , &PyTypePath                  , "<Path>"                  , false );
     __cs.addType ( "occur"      , &PyTypeOccurrence            , "<Occurrence>"            , false );
     __cs.addType ( "occurCol"   , &PyTypeOccurrenceCollection  , "<OccurrenceCollection>"  , false );
+    __cs.addType ( "query"      , &PyTypeQuery                 , "<Query>"                 , false );
+    __cs.addType ( "qmask"      , &PyTypeQueryMask             , "<Query::Mask>"           , false );
 
 
     PyObject* module = Py_InitModule ( "Hurricane", PyHurricane_Methods );
@@ -737,6 +745,19 @@ extern "C" {
     PyModule_AddObject ( module, "UpdateSession"        , (PyObject*)&PyTypeUpdateSession );
     Py_INCREF ( &PyTypeBreakpoint );
     PyModule_AddObject ( module, "Breakpoint"           , (PyObject*)&PyTypeBreakpoint );
+    Py_INCREF ( &PyTypeQuery );
+    PyModule_AddObject ( module, "Query"                , (PyObject*)&PyTypeQuery );
+
+    Py_INCREF ( &PyTypeVertical );
+    PyModule_AddObject ( module, "PyVertical"           , (PyObject*)&PyTypeVertical );
+    Py_INCREF ( &PyTypeHorizontal );
+    PyModule_AddObject ( module, "PyHorizontal"         , (PyObject*)&PyTypeHorizontal );
+    Py_INCREF ( &PyTypeContact );
+    PyModule_AddObject ( module, "PyContact"            , (PyObject*)&PyTypeContact );
+    Py_INCREF ( &PyTypePlug );
+    PyModule_AddObject ( module, "PyPlug"               , (PyObject*)&PyTypePlug );
+    Py_INCREF ( &PyTypePad );
+    PyModule_AddObject ( module, "PyPad"                , (PyObject*)&PyTypePad );
     
     
     PyObject* dictionnary = PyModule_GetDict ( module );

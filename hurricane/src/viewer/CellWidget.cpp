@@ -1272,7 +1272,10 @@ namespace Hurricane {
 
           if ( isDrawable((*iLayer)->getName()) ) {
             _drawingQuery.setBasicLayer ( *iLayer );
-            _drawingQuery.setFilter     ( getQueryFilter().unset(Query::DoMasterCells|Query::DoRubbers|Query::DoMarkers) );
+            _drawingQuery.setFilter     ( getQueryFilter().unset(Query::DoMasterCells
+                                                                |Query::DoRubbers
+                                                                |Query::DoMarkers
+                                                                |Query::DoExtensionGos) );
             _drawingQuery.doQuery       ();
           }
           if ( _enableRedrawInterrupt ) QApplication::processEvents();
@@ -1289,7 +1292,10 @@ namespace Hurricane {
              _drawingPlanes.setBrush ( Graphics::getBrush("boundaries",getDarkening()) );
 
              _drawingQuery.setBasicLayer ( NULL );
-             _drawingQuery.setFilter     ( getQueryFilter().unset(Query::DoComponents|Query::DoRubbers|Query::DoMarkers) );
+             _drawingQuery.setFilter     ( getQueryFilter().unset(Query::DoComponents
+                                                                 |Query::DoRubbers
+                                                                 |Query::DoMarkers
+                                                                 |Query::DoExtensionGos) );
              _drawingQuery.doQuery       ();
           }
         }
@@ -1300,7 +1306,9 @@ namespace Hurricane {
              _drawingPlanes.setBrush ( Graphics::getBrush("text.reference",getDarkening()) );
 
              _drawingQuery.setBasicLayer ( NULL );
-             _drawingQuery.setFilter     ( getQueryFilter().unset(Query::DoComponents|Query::DoMasterCells) );
+             _drawingQuery.setFilter     ( getQueryFilter().unset(Query::DoComponents
+                                                                 |Query::DoExtensionGos
+                                                                 |Query::DoMasterCells) );
              _drawingQuery.doQuery       ();
           }
         }
@@ -1311,7 +1319,10 @@ namespace Hurricane {
              _drawingPlanes.setBrush ( Graphics::getBrush("rubber",getDarkening()) );
 
              _drawingQuery.setBasicLayer ( NULL );
-             _drawingQuery.setFilter     ( getQueryFilter().unset(Query::DoComponents|Query::DoMasterCells|Query::DoMarkers) );
+             _drawingQuery.setFilter     ( getQueryFilter().unset(Query::DoComponents
+                                                                 |Query::DoExtensionGos
+                                                                 |Query::DoMasterCells
+                                                                 |Query::DoMarkers) );
              _drawingQuery.doQuery       ();
           }
         }
@@ -1336,7 +1347,7 @@ namespace Hurricane {
           if ( isDrawableExtension((*islice)->getName()) ) {
             _drawingQuery.setExtensionMask   ( (*islice)->getMask() );
             _drawingQuery.setDrawExtensionGo ( (*islice)->getName() );
-            _drawingQuery.setFilter          ( Query::DoExtensionGos );
+            _drawingQuery.setFilter          ( getQueryFilter().set(Query::DoExtensionGos).unset(Query::DoMasterCells) );
             _drawingQuery.doQuery            ();
           }
         }

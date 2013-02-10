@@ -1,7 +1,7 @@
 
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2013, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -23,8 +23,7 @@
 //
 // $Id$
 //
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,10 +31,7 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/Query.h"                           |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #ifndef  __QUERY_H__
@@ -298,7 +294,6 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "Query".
 
-
   class Query {
     public:
       typedef Hurricane::Mask<int> Mask;
@@ -310,12 +305,12 @@ namespace Hurricane {
                         , DoMarkers       =  8
                         , DoRubbers       = 16
                         , DoExtensionGos  = 32
-                        , DoAll           =   DoMasterCells
-                                            | DoTerminalCells
-                                            | DoComponents
-                                            | DoMarkers
-                                            | DoRubbers
-                                            | DoExtensionGos
+                        , DoAll           = DoMasterCells
+                                          | DoTerminalCells
+                                          | DoComponents
+                                          | DoMarkers
+                                          | DoRubbers
+                                          | DoExtensionGos
                         };
     public:
     // Constructors & Destructors.

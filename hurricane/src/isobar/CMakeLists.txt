@@ -56,6 +56,8 @@
                                     PyDbU.cpp
                                     PyUpdateSession.cpp
                                     PyVertical.cpp
+                                    PyQueryMask.cpp
+                                    PyQuery.cpp
                        )	    
                    set ( includes   hurricane/isobar/ProxyProperty.h
                                     hurricane/isobar/PyBreakpoint.h
@@ -107,6 +109,8 @@
                                     hurricane/isobar/PyDbU.h
                                     hurricane/isobar/PyUpdateSession.h
                                     hurricane/isobar/PyVertical.h
+                                    hurricane/isobar/PyQueryMask.h
+                                    hurricane/isobar/PyQuery.h
                        )
 
 

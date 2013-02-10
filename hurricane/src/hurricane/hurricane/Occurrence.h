@@ -96,6 +96,7 @@ class Occurrence {
     public: string getName() const;
     public: string _getTypeName() const { return _TName("Occurrence"); };
     public: string _getString() const;
+    public: string getCompactString() const;
     public: Record* _getRecord() const;
     public: SharedPath* _getSharedPath() const {return _sharedPath;};
     public: Quark* _getQuark() const;

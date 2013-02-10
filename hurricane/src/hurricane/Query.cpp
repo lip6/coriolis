@@ -1,7 +1,7 @@
 
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2013, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -23,8 +23,7 @@
 //
 // $Id$
 //
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,10 +31,7 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./Query.cpp"                                   |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include <limits>
@@ -151,7 +147,7 @@ namespace Hurricane {
       }
 
       if ( hasExtensionGoCallback() and (_filter.isSet(DoExtensionGos)) ) {
-        if ( not getMasterCell()->isTerminal() or (_filter.isSet(DoTerminalCells)) ) {
+        if ( (not getMasterCell()->isTerminal()) or (_filter.isSet(DoTerminalCells)) ) {
           forEach ( ExtensionSlice*, islice, getMasterCell()->getExtensionSlices() ) {
             if ( not ( (*islice)->getMask() & _extensionMask ) ) continue;
             if ( not (*islice)->getBoundingBox().intersect(getArea()) ) continue;

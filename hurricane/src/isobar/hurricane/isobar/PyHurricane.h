@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -1089,13 +1089,30 @@ extern "C" {
   }
 
 
-  
+#define PyTypeObjectLinkPyTypeWithClassNewInit(PY_SELF_TYPE,SELF_TYPE)            \
+  DirectReprMethod(Py##PY_SELF_TYPE##_Repr, Py##PY_SELF_TYPE,   SELF_TYPE)        \
+  DirectStrMethod (Py##PY_SELF_TYPE##_Str,  Py##PY_SELF_TYPE,   SELF_TYPE)        \
+  DirectCmpMethod (Py##PY_SELF_TYPE##_Cmp,  IsPy##PY_SELF_TYPE, Py##PY_SELF_TYPE) \
+  DirectHashMethod(Py##PY_SELF_TYPE##_Hash, Py##SELF_TYPE)                        \
+  extern void  Py##PY_SELF_TYPE##_LinkPyType() {                                  \
+    trace << "Py" #PY_SELF_TYPE "_LinkType()" << endl;                            \
+                                                                                  \
+    PyType##PY_SELF_TYPE.tp_dealloc = (destructor) Py##PY_SELF_TYPE##_DeAlloc;    \
+    PyType##PY_SELF_TYPE.tp_compare = (cmpfunc)    Py##PY_SELF_TYPE##_Cmp;        \
+    PyType##PY_SELF_TYPE.tp_repr    = (reprfunc)   Py##PY_SELF_TYPE##_Repr;       \
+    PyType##PY_SELF_TYPE.tp_str     = (reprfunc)   Py##PY_SELF_TYPE##_Str;        \
+    PyType##PY_SELF_TYPE.tp_hash    = (hashfunc)   Py##PY_SELF_TYPE##_Hash;       \
+    PyType##PY_SELF_TYPE.tp_new     = (newfunc)    Py##PY_SELF_TYPE##_NEW;        \
+    PyType##PY_SELF_TYPE.tp_init    = (initproc)   Py##PY_SELF_TYPE##_Init;       \
+    PyType##PY_SELF_TYPE.tp_methods = Py##PY_SELF_TYPE##_Methods;                 \
+  }
 
-// -------------------------------------------------------------------
-// Initialisation Function for PyTypeObject Runtime Link.
 
 #define PyTypeObjectLinkPyType(SELF_TYPE)  \
   PyTypeObjectLinkPyTypeWithClass(SELF_TYPE,SELF_TYPE)
+
+#define PyTypeObjectLinkPyTypeNewInit(SELF_TYPE)  \
+  PyTypeObjectLinkPyTypeWithClassNewInit(SELF_TYPE,SELF_TYPE)
 
 
 // Special Initialisation Function for Locator PyTypeObject Runtime Link.

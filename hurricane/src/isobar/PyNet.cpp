@@ -249,6 +249,30 @@ extern "C" {
     return (PyObject*)pyPinCollection;
   }
   
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyNet_getComponents()"
+
+  static PyObject* PyNet_getComponents(PyNet *self) {
+    trace << "PyNet_getComponents()" << endl;
+
+    METHOD_HEAD ( "Net.getComponents()" )
+
+    PyComponentCollection* pyComponentCollection = NULL;
+
+    HTRY
+    Components* components = new Components(net->getComponents());
+
+    pyComponentCollection = PyObject_NEW(PyComponentCollection, &PyTypeComponentCollection);
+    if (pyComponentCollection == NULL) return NULL;
+
+    pyComponentCollection->_object = components;
+    HCATCH
+    
+    return (PyObject*)pyComponentCollection;
+  }
+  
+
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyNet_getExternalComponents()"
 
@@ -272,8 +296,6 @@ extern "C" {
     
     return (PyObject*)pyComponentCollection;
   }
-
-
 
 
   // ---------------------------------------------------------------
@@ -428,34 +450,31 @@ extern "C" {
 
   PyMethodDef PyNet_Methods[] =
     { { "getName"              , (PyCFunction)PyNet_getName                  , METH_NOARGS , "Returns the net name." }
-    , { "getType"              , (PyCFunction)PyNet_getType                  , METH_NOARGS
-                               , "Returns the signal type (by default set to UNDEFINED)." }
-    , { "getDirection"         , (PyCFunction)PyNet_getDirection             , METH_NOARGS
-                               , "Returns the signal direction (by default set to UNDEFINED)." }
+    , { "getType"              , (PyCFunction)PyNet_getType                  , METH_NOARGS , "Returns the signal type (by default set to UNDEFINED)." }
+    , { "getDirection"         , (PyCFunction)PyNet_getDirection             , METH_NOARGS , "Returns the signal direction (by default set to UNDEFINED)." }
     , { "getX"                 , (PyCFunction)PyNet_getX                     , METH_NOARGS , "Returns net abscissa." }
     , { "getY"                 , (PyCFunction)PyNet_getY                     , METH_NOARGS , "Returns net ordinate." }
-    , { "getExternalComponents", (PyCFunction)PyNet_getExternalComponents , METH_NOARGS , "Returns the collection of net's external components. (only for an external net)" }
-    , { "getPlugs"      , (PyCFunction)PyNet_getPlugs          , METH_NOARGS , "Returns the collection of net's plugs." }
-    , { "getPins"        , (PyCFunction)PyNet_getPins            , METH_NOARGS , "Returns the collection of net's pins." }
-    , { "getSegments"    , (PyCFunction)PyNet_getSegments        , METH_NOARGS , "Returns the collection of net's segments." }
-    , { "isGlobal"             , (PyCFunction)PyNet_isGlobal                 , METH_NOARGS, "return true if the net is global" }
-    , { "isExternal"           , (PyCFunction)PyNet_isExternal               , METH_NOARGS, "return true if the the net is external." }
-    , { "isLogical"            , (PyCFunction)PyNet_isLogical                , METH_NOARGS, "return true if the net is logical ." }
-    , { "isClock"              , (PyCFunction)PyNet_isClock                  , METH_NOARGS, "return true if the net is a clock" }
-    , { "isPower"              , (PyCFunction)PyNet_isPower                  , METH_NOARGS, "return true if the net is a power" }
-    , { "isGround"             , (PyCFunction)PyNet_isGround                 , METH_NOARGS, "return true if the net is a ground" }
-    , { "isSupply"             , (PyCFunction)PyNet_isSupply                 , METH_NOARGS, "return true if the net is a supply" }
-    , { "isBound"              , (PyCFunction)PyNet_IsPyBound                , METH_NOARGS, "return true if the net is bounded to the hurricane net" }
+    , { "getComponents"        , (PyCFunction)PyNet_getComponents            , METH_NOARGS , "Returns the collection of net's external components. (only for an external net)" }
+    , { "getExternalComponents", (PyCFunction)PyNet_getExternalComponents    , METH_NOARGS , "Returns the collection of net's external components. (only for an external net)" }
+    , { "getPlugs"             , (PyCFunction)PyNet_getPlugs                 , METH_NOARGS , "Returns the collection of net's plugs." }
+    , { "getPins"              , (PyCFunction)PyNet_getPins                  , METH_NOARGS , "Returns the collection of net's pins." }
+    , { "getSegments"          , (PyCFunction)PyNet_getSegments              , METH_NOARGS , "Returns the collection of net's segments." }
+    , { "isGlobal"             , (PyCFunction)PyNet_isGlobal                 , METH_NOARGS , "return true if the net is global" }
+    , { "isExternal"           , (PyCFunction)PyNet_isExternal               , METH_NOARGS , "return true if the the net is external." }
+    , { "isLogical"            , (PyCFunction)PyNet_isLogical                , METH_NOARGS , "return true if the net is logical ." }
+    , { "isClock"              , (PyCFunction)PyNet_isClock                  , METH_NOARGS , "return true if the net is a clock" }
+    , { "isPower"              , (PyCFunction)PyNet_isPower                  , METH_NOARGS , "return true if the net is a power" }
+    , { "isGround"             , (PyCFunction)PyNet_isGround                 , METH_NOARGS , "return true if the net is a ground" }
+    , { "isSupply"             , (PyCFunction)PyNet_isSupply                 , METH_NOARGS , "return true if the net is a supply" }
+    , { "isBound"              , (PyCFunction)PyNet_IsPyBound                , METH_NOARGS , "return true if the net is bounded to the hurricane net" }
     , { "setName"              , (PyCFunction)PyNet_setName                  , METH_VARARGS, "Allows to change net name." }
     , { "setGlobal"            , (PyCFunction)PyNet_setGlobal                , METH_VARARGS, "set the net global." }
     , { "setExternal"          , (PyCFunction)PyNet_setExternal              , METH_VARARGS, "set the net external." }
     , { "setType"              , (PyCFunction)PyNet_setType                  , METH_VARARGS, "set the type of the net." }
     , { "setDirection"         , (PyCFunction)PyNet_setDirection             , METH_VARARGS, "set the direction of the net." }
     , { "setPosition"          , (PyCFunction)PyNet_setPosition              , METH_VARARGS, "set the X,Y location of the net." }
-    , { "merge"                , (PyCFunction)PyNet_merge                    , METH_VARARGS
-                               , "Merges the net <net> to the net <this> which keeps its characteristics (arity, global, external and direction)." }
-    , { "destroy"              , (PyCFunction)PyNet_destroy                  , METH_NOARGS
-                               , "Destroy associated hurricane object, the python object remains." }
+    , { "merge"                , (PyCFunction)PyNet_merge                    , METH_VARARGS, "Merges the net <net> to the net <this> which keeps its characteristics (arity, global, external and direction)." }
+    , { "destroy"              , (PyCFunction)PyNet_destroy                  , METH_NOARGS , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

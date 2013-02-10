@@ -216,6 +216,24 @@ string Occurrence::_getString() const
     return s;
 }
 
+string Occurrence::getCompactString() const
+// ****************************************
+{
+  string s = "<";
+  if (_entity) {
+    s += getString(getOwnerCell()->getName());
+    s += ":";
+    if (_sharedPath) s += getString(_sharedPath->getName()) + ":";
+    Instance* instance = dynamic_cast<Instance*>(_entity);
+    if (instance)
+      s += getString(instance->getName());
+    else
+      s += getString(_entity);
+  }
+  s += ">";
+  return s;
+}
+
 Record* Occurrence::_getRecord() const
 // ****************************
 {
