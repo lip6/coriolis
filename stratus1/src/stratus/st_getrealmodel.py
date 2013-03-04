@@ -46,6 +46,7 @@
 # |                                                                 |
 # x-----------------------------------------------------------------x
 
+import Cfg
 from st_parser import Parser, InitParser, WeightParser
 
 import os
@@ -53,31 +54,23 @@ import os
 def InitBV () :
   myP = InitParser()
 
-  if 'STRATUS_MAPPING_NAME' in os.environ :
-    myP.Parse ( os.environ['STRATUS_MAPPING_NAME'] )
-  else :
-    err = "\n[Stratus ERROR] Virtual library : No file found in order to parse.\nCheck STRATUS_MAPPING_NAME.\n"
-    raise Exception ( err )    
+  mapping = Cfg.getParamString('stratus1.mappingName').asString()
+  myP.Parse ( mapping )
+  return
 
 def GetRealModel ( model ) :
   myP = Parser()
 
-  if 'STRATUS_MAPPING_NAME' in os.environ :
-    myP.Parse ( os.environ['STRATUS_MAPPING_NAME'] )
-  else :
-    err = "\n[Stratus ERROR] Virtual library : No file found in order to parse.\nCheck STRATUS_MAPPING_NAME.\n"
-    raise Exception ( err )
+  mapping = Cfg.getParamString('stratus1.mappingName').asString()
+  myP.Parse ( mapping )
 
   return myP._realCell[model], myP._inOut[model]    
 
 def GetWeightTime ( model, value=None ) :
   myP = WeightParser()
     
-  if 'STRATUS_MAPPING_NAME' in os.environ :
-    myP.Parse ( os.environ['STRATUS_MAPPING_NAME'] )
-  else :
-    err = "\n[Stratus ERROR] Virtual library : No file found in order to parse.\nCheck STRATUS_MAPPING_NAME.\n"
-    raise Exception ( err )        
+  mapping = Cfg.getParamString('stratus1.mappingName').asString()
+  myP.Parse ( mapping )
 
   if value == None :  
     if type(myP._weightTime[model]) == dict:
@@ -90,11 +83,8 @@ def GetWeightTime ( model, value=None ) :
 def GetWeightArea ( model ) :
   myP = WeightParser()
     
-  if 'STRATUS_MAPPING_NAME' in os.environ :
-    myP.Parse ( os.environ['STRATUS_MAPPING_NAME'] )
-  else :
-    err = "\n[Stratus ERROR] Virtual library : No file found in order to parse.\nCheck STRATUS_MAPPING_NAME.\n"
-    raise Exception ( err )        
+  mapping = Cfg.getParamString('stratus1.mappingName').asString()
+  myP.Parse ( mapping )
     
   return myP._weightArea[model]
 
