@@ -1,0 +1,149 @@
+
+ // -*- C++ -*-
+
+ namespace Hurricane {
+
+ /*! \class        RoutingPad
+  *  \brief        RoutingPad description (\b API)
+  *
+  *  \section      secRoutingPadIntro  Introduction
+  *
+  *                The RoutingPad is a part of the trans-hierarchical mechanism.
+  *                It allows to connect a Net from the top-level netlist to
+  *                a plug in an Instance at any level inside the hierarchy,
+  *                throuhg a Plug Occurrence. RoutingPad can also be created from
+  *                Pin or Contact Occurrences.
+  *
+  *                When the RoutingPad is created using a Plug Occurrence, it can
+  *                be set afterward to any of master net external Component.
+  *                An utility method RoutingPad::setOnBestComponent() is also
+  *                provided to automatically set the RoutingPad on a Component
+  *                matching criteria of surface or layer level.
+  */
+
+
+ //! \enum         RoutingPad::Flags
+ //!               Set of flags to choose how to select the external component of
+ //!               a RoutingPad to be anchored on.
+
+ //! \var          RoutingPad::BiggestArea
+ //!               Select the external Component of biggest area.
+
+ //! \var          RoutingPad::LowestLayer
+ //!               Select the external Component of in the lowest layer.
+
+ //! \var          RoutingPad::HighestLayer
+ //!               Select the external Component of in the highest layer.
+
+ //! \var          RoutingPad::ComponentSelection
+ //!               A mask to filter bit parts of a flag belonging to component selection.
+
+
+ //! \typedef      RoutingPad::Inherit
+ //!               Useful for calling upon methods of the base class without 
+ //!               knowing it. 
+
+ //! \function     RoutingPad*   RoutingPad::create ( Net* net, Occurrence occurrence, unsigned int flags=0 );
+ //! \param        net         The Net of the top-level netlist connected to this RoutingPad.
+ //! \param        occurrence  The Occurrence of Plug, Pin or Pad to connect to.
+ //! \param        flags       In the case of a Plug, the way to select the external
+ //!                           component of the Net.
+ //! \return       The newly created RoutingPad.
+
+ //! \function     RoutingPad*   RoutingPad::create ( Pin* pin );
+ //!               Special variant to create a RoutingPad from a top-level Pin.
+
+ //! \function     Occurrence  RoutingPad::getOccurrence() const;
+ //! \return       The Occurence on which we are anchored on. If a Component has been selected
+ //!               to be the anchor, it's an Occurrence on that component which is returned,
+ //!               not the actual Plug.
+
+ //! \function     Occurrence  RoutingPad::getPlugOccurrence();
+ //! \return       The original Plug Occurrence.
+
+ //! \function     const Layer* RoutingPad::getLayer() const;
+ //! \return       If anchored on a component, the Layer of that Component. If anchored on
+ //!               a Plug, \c NULL.
+
+ //! \function     DbU::Unit  RoutingPad::getX() const;
+ //! \return       The X position of the RoutingPad. This is the position, as returned by
+ //!               Component::getPosition() of the Component it is anchored on.
+
+ //! \function     DbU::Unit  RoutingPad::getY() const;
+ //! \return       The Y position of the RoutingPad. This is the position, as returned by
+ //!               Component::getPosition() of the Component it is anchored on.
+
+ //! \function     Box  RoutingPad::getBoundingBox() const;
+ //! \return       If it's anchored on a Component, returns the bounding box of that component 
+ //!               (with Occurrence Transformation applied). If it's on a Plug, just return a
+ //!               zero-sised box from getPosition().
+
+ //! \function     Box  RoutingPad::getBoundingBox( BasicLayer* layer ) const;
+ //! \return       If it's anchored on a Component, returns the bounding box of that component 
+ //!               in the given \c layer. (with Occurrence Transformation applied).
+ //!               If it's on a Plug, just return a zero-sised box from getPosition().
+
+ //! \function     Point  RoutingPad::getCenter() const;
+ //! \return       The center of the bounding box.
+
+ //! \function     Point  RoutingPad::getSourcePosition() const;
+ //! \return       If anchored on a Segment, the source position of it. getPosition()
+ //!               otherwise.
+
+ //! \function     Point  RoutingPad::getTargetPosition() const;
+ //! \return       If anchored on a Segment, the target position of it. getPosition()
+ //!               otherwise.
+
+ //! \function     Point  RoutingPad::getSourceX() const;
+ //! \return       If anchored on a Segment, the X coordinate of the source position.
+ //!               getX() otherwise.
+
+ //! \function     Point  RoutingPad::getSourceY() const;
+ //! \return       If anchored on a Segment, the Y coordinate of the source position.
+ //!               getY() otherwise.
+
+ //! \function     Point  RoutingPad::getTargetX() const;
+ //! \return       If anchored on a Segment, the X coordinate of the target position.
+ //!               getX() otherwise.
+
+ //! \function     Point  RoutingPad::getTargetY() const;
+ //! \return       If anchored on a Segment, the Y coordinate of the target position.
+ //!               getY() otherwise.
+
+ //! \function     void  RoutingPad::translate ( const DbU::Unit& dx, const DbU::Unit& dy );
+ //!               Translate the RoutingPad by <code>(dx,dy)</code>.
+
+ //! \function     void  RoutingPad::setOffset ( const DbU::Unit& dx, const DbU::Unit& dy );
+ //!               Sets the relative position of the RoutingPad from it's anchor to <code>(dx,dy)</code>.
+
+ //! \function     void  RoutingPad::setX ( const DbU::Unit& x );
+ //!               Sets the X coordinate of the RoutingPad.
+
+ //! \function     void  RoutingPad::setY ( const DbU::Unit& y );
+ //!               Sets the X coordinate of the RoutingPad.
+
+ //! \function     void  RoutingPad::setPosition ( const DbU::Unit& x, const DbU::Unit& y );
+ //!               Sets the absolute position of the RoutingPad to <code>(x,y)</code>.
+
+ //! \function     void  RoutingPad::setPosition ( const Point& position );
+ //!               Sets the absolute position of the RoutingPad to <code>position</code>.
+
+ //! \function     void  RoutingPad::setExternalComponent ( Component* component );
+ //!               When the RoutingPad is anchored on a Plug, allow to set the \c component
+ //!               that we will anchor on. The Occurrence of the RoutingPad is updated
+ //!               from the Plug to the \c component.
+ //!
+ //! \remark       \c component must be tagged as Net external.
+
+ //! \function     void  RoutingPad::setOnBestComponent ( unsigned int flags );
+ //!               Automatically select the best component to anchor on, according
+ //!               to the criteria givens on \c flags (selection occurs in net
+ //!               external components).
+
+ //! \function     void  RoutingPad::restorePlugOccurrence();
+ //!               If the RoutingPad has been anchored on a Component, detach from it and
+ //!               revert to the Plug Occurrence.
+
+ //  \}
+
+ }

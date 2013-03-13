@@ -47,8 +47,9 @@ extern "C" {
 
 
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PyOccurrence_isValid    ,isValid    ,PyOccurrence,Occurrence)
-  DirectGetBoolAttribute(PyOccurrence_hasProperty,hasProperty,PyOccurrence,Occurrence)
+  DirectGetBoolAttribute  (PyOccurrence_isValid         ,isValid         ,PyOccurrence,Occurrence)
+  DirectGetBoolAttribute  (PyOccurrence_hasProperty     ,hasProperty     ,PyOccurrence,Occurrence)
+  DirectGetStringAttribute(PyOccurrence_getCompactString,getCompactString,PyOccurrence,Occurrence)
 
 
   // Standart destroy (Attribute).
@@ -168,16 +169,17 @@ extern "C" {
   // PyOccurrence Attribute Method table.
 
   PyMethodDef PyOccurrence_Methods[] =
-    { { "getEntity"     , (PyCFunction)PyOccurrence_getEntity     , METH_NOARGS, "Returns the referenced entity." }
-    , { "getPath"       , (PyCFunction)PyOccurrence_getPath       , METH_NOARGS, "Returns the hierarchical instaciation path." }
-    , { "getName"       , (PyCFunction)PyOccurrence_getName       , METH_NOARGS, "Returns the occurrence name (concatenation of path and entity name." }
-    , { "getOwnerCell"  , (PyCFunction)PyOccurrence_getOwnerCell  , METH_NOARGS, "Returns the occurrence owner cell." }
-    , { "getMasterCell" , (PyCFunction)PyOccurrence_getMasterCell , METH_NOARGS, "Returns the cell owning the referenced entity." }
-    , { "getBoundingBox", (PyCFunction)PyOccurrence_getBoundingBox, METH_NOARGS, "Returns the occurrence bounding box." }
-    , { "isValid"       , (PyCFunction)PyOccurrence_isValid       , METH_NOARGS, "Returns true if the occurrence is valid." }
-    , { "hasProperty"   , (PyCFunction)PyOccurrence_hasProperty   , METH_NOARGS, "Returns true if the occurrence owns some properties." }
-    , { "destroy"       , (PyCFunction)PyOccurrence_destroy       , METH_NOARGS
-                        , "Destroy associated hurricane object, the python object remains." }
+    { { "getEntity"       , (PyCFunction)PyOccurrence_getEntity       , METH_NOARGS, "Returns the referenced entity." }
+    , { "getPath"         , (PyCFunction)PyOccurrence_getPath         , METH_NOARGS, "Returns the hierarchical instaciation path." }
+    , { "getName"         , (PyCFunction)PyOccurrence_getName         , METH_NOARGS, "Returns the occurrence name (concatenation of path and entity name." }
+    , { "getCompactString", (PyCFunction)PyOccurrence_getCompactString, METH_NOARGS, "Returns the occurrence name (compact format)." }
+    , { "getOwnerCell"    , (PyCFunction)PyOccurrence_getOwnerCell    , METH_NOARGS, "Returns the occurrence owner cell." }
+    , { "getMasterCell"   , (PyCFunction)PyOccurrence_getMasterCell   , METH_NOARGS, "Returns the cell owning the referenced entity." }
+    , { "getBoundingBox"  , (PyCFunction)PyOccurrence_getBoundingBox  , METH_NOARGS, "Returns the occurrence bounding box." }
+    , { "isValid"         , (PyCFunction)PyOccurrence_isValid         , METH_NOARGS, "Returns true if the occurrence is valid." }
+    , { "hasProperty"     , (PyCFunction)PyOccurrence_hasProperty     , METH_NOARGS, "Returns true if the occurrence owns some properties." }
+    , { "destroy"         , (PyCFunction)PyOccurrence_destroy         , METH_NOARGS
+                          , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

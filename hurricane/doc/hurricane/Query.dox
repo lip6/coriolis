@@ -1,0 +1,185 @@
+
+ // -*- C++ -*-
+
+ namespace Hurricane {
+
+ /*! \class        Query
+  *  \brief        Query description (\b API)
+  *
+  *  \section      secQueryIntro  Introduction
+  *
+  *                The Query is a part of the trans-hierarchical mechanism.
+  *                A Query performs a walktrough over all the Occurrences
+  *                of objects under a determined area, thus providing a
+  *                virtual flattening service. Please note that only placed
+  *                objects (i.e. inserted in a QuadTree) are took into account.
+  *                
+  *                To use the Query class the user has to create derived classes
+  *                and overload the various callbacks. At least the following
+  *                pure virtual methods must be overloaded:
+  *                  - Query::masterCellCallback().
+  *                  - Query::goCallback().
+  *                  - Query::extensionGoCallback().
+  *
+  *
+  *  \section      secQueryParameters
+  *
+  *                A query walkthrough is defined by the following parameters:
+  *                  - The starting hierarchical level: only objects with a
+  *                    hierarchical depth greater or equal will be explored.
+  *                    The top level Cell has a depth of \e zero, the master
+  *                    Cell of the instances a depth of \e one and so on.
+  *                  - The stoping hierarchical level: only objects with a
+  *                    hierarchical depth lesser or equal will be considered.
+  *                  - The top Cell on which to start.
+  *                  - The area to consider on the top Cell.
+  *                  - A transformation to apply on the top Cell.
+  *                  - A BasicLayer to select only the Gos containing it.
+  *                  - An ExtensionSlice::Mask to select which user-defined slice
+  *                    to process.
+  *                  - A Mask, to select which kind of Go to process.
+  */
+
+
+ //! \enum         Query::QueryFilter
+ //!               Set of flags to specify on which types of objects the Query
+ //!               must iterate.
+
+ //! \var          Query::DoMasterCells
+ //!               Activate the call of the Query::masterCellCallback().
+
+ //! \var          Query::DoTerminalCells
+ //!               Activate the call of the Query::masterCellCallback(), but only on
+ //!               leaf Cell of the hierarchy.
+
+ //! \var          Query::DoComponents
+ //!               Activate the call of the Query::goCallback().
+
+ //! \var          Query::DoMarkers
+ //!               Activate the call of the Query::markerCallback().
+
+ //! \var          Query::DoRubbers
+ //!               Activate the call of the Query::rubberCallback().
+
+ //! \var          Query::DoExtensionGos
+ //!               Activate the call of the Query::extensionGoCallback().
+
+ //! \var          Query::DoAll
+ //!               Activate all the callbacks at once.
+
+
+ //! \function     Query::Query ();
+ //!               Default constructor. Initialisation is done through Query::setQuery().
+
+ //! \function     Query::~Query ();
+ //!               Default destructor.
+
+ //! \function     unsigned int Query::getStartLevel () const;
+ //! \sreturn      The hierarchical level from which we start to consider objects.
+
+ //! \function     unsigned int Query::getStopLevel () const;
+ //! \sreturn      The hierarchical level from which we stop to consider objects.
+
+ //! \function     size_t  Query::getDepth () const;
+ //! \sreturn      The hierarchical depth of the current Query walkthrough.
+
+ //! \function     const Transformation& Query::getTransformation () const;
+ //! \sreturn      The cumulative transformation of the master cell currently under exploration.
+
+ //! \function     const Box& Query::getArea () const;
+ //! \sreturn      The area to explore, expressed in the coordinates system of the
+ //!               current master cell under exploration. This is the starting area with
+ //!               the inverse of the current transformation applied.
+
+ //! \function     const BasicLayer* Query::getBasicLayer () const;
+ //! \sreturn      The BasicLayer we are filtering with.
+
+ //! \function     Cell* Query::getMasterCell ();
+ //! \sreturn      The master Cell currently under exploration.
+
+ //! \function     Instance* Query::getInstance ();
+ //! \sreturn      The Instance currently under exploration.
+
+ //! \function     Path  Query::getPath () const;
+ //! \sreturn      The instanciation path between the instance currently under inspection
+ //!               and the top cell.
+
+ //! \function     bool  Query::hasGoCallback () const;
+ //! \sreturn      Tells wether the Go callback is present and should be called.
+
+ //! \function     bool  Query::hasMarkerCallback () const;
+ //! \sreturn      Tells wether the Marker callback is present and should be called.
+
+ //! \function     bool  Query::hasRubberCallback () const;
+ //! \sreturn      Tells wether the Rubber callback is present and should be called.
+
+ //! \function     bool  Query::hasExtensionGoCallback () const;
+ //! \sreturn      Tells wether the ExtensionGo callback is present and should be called.
+
+ //! \function     bool  Query::hasMasterCellCallback () const;
+ //! \sreturn      Tells wether the master Cell callback is present and should be called.
+
+ //! \function     void  Query::goCallback ( Go* );
+ //! \sreturn      The method called on each encountered Go. This is a pure virtual
+ //!               method which must be overloaded in derived classes.
+
+ //! \function     void  Query::markerCallback ( Marker* );
+ //! \sreturn      The method called on each encountered Marker. A default implementation
+ //!               is provided, which does absolutely nothing.
+
+ //! \function     void  Query::rubberCallback ( Rubber* );
+ //! \sreturn      The method called on each encountered Rubber. A default implementation
+ //!               is provided, which does absolutely nothing.
+
+ //! \function     void  Query::extensionGoCallback ( Go* );
+ //! \sreturn      The method called on each encountered ExtensionGo. This is a pure virtual
+ //!               method which must be overloaded in derived classes.
+
+ //! \function     void  Query::masterCellCallback ();
+ //! \sreturn      The method called on each encountered master Cell. The Cell is not
+ //!               passed as parameter as it is directly accessible through Query::getCell().
+ //!               This is a pure virtual method which must be overloaded in derived classes.
+
+ //! \function     void  Query::setQuery ( Cell* cell, const Box& area, const Transformation& transformation, const BasicLayer* basicLayer, ExtensionSlice::Mask extensionMask, Mask filter );
+ //! \param        cell            The top Cell on which to start the Query.
+ //! \param        area            The area under which objects are queried.
+ //! \param        transformation  An initial transformation to apply to \c cell.
+ //! \param        basicLayer      Consider only objects containing this BasicLayer.
+ //! \param        extensionMask   Consider only ExtensionGo matching this mask.
+ //! \param        filter          Consider only objects of certain types, as defined in
+ //!                               QueryFilter.
+ //!
+ //!               Initialize the basic parameters of the Query. Those parameters can
+ //!               be changed individually afterwards with specific mutators.
+
+ //! \function     void  Query::setCell ( Cell* cell );
+ //!               Change the top Cell on which to perform the Query.
+
+ //! \function     void  Query::setArea ( const Box& box );
+ //!               Change the top area to query.
+
+ //! \function     void  Query::setTransformation ( const Transformation& transformation );
+ //!               Change the transformation applied to the top level Cell.
+
+ //! \function     void  Query::setBasicLayer ( const BasicLayer* );
+ //!               Change the BasicLayer selector.
+
+ //! \function     void  Query::setExtensionMask ( ExtensionSlice::Mask );
+ //!               Change the filtering mask for ExtensionSlice.
+
+ //! \function     void  Query::setFilter ( Mask );
+ //!               Change the filtering mask for object types.
+
+ //! \function     void  Query::setStartLevel ( unsigned int );
+ //!               Change the starting depth level.
+
+ //! \function     void  Query::setStopLevel ( unsigned int );
+ //!               Change the stoping depth level.
+
+ //! \function     void  Query::doQuery ();
+ //!               Perform the actual Query.
+
+
+ //  \}
+
+ }

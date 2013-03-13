@@ -478,7 +478,9 @@ extern "C" {
     , { "getBox"           , (PyCFunction)PyTransformation_getBox           , METH_VARARGS, "Return transformed box." }
     , { "getInvert"        , (PyCFunction)PyTransformation_getInvert        , METH_NOARGS, "Return inverse transformation." }
     , { "Invert"           , (PyCFunction)PyTransformation_Invert           , METH_NOARGS, "Inverse transformation." }
+    , { "invert"           , (PyCFunction)PyTransformation_Invert           , METH_NOARGS, "Inverse transformation." }
     , { "ApplyOn"          , (PyCFunction)PyTransformation_ApplyOn          , METH_VARARGS, "Apply transformation to object." }
+    , { "applyOn"          , (PyCFunction)PyTransformation_ApplyOn          , METH_VARARGS, "Apply transformation to object." }
     , { "destroy"          , (PyCFunction)PyTransformation_destroy          , METH_NOARGS
                            , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */

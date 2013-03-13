@@ -111,6 +111,22 @@ extern "C" {
 
     return PyLayer_Link ( layer );
   }
+  
+
+  static PyObject* PyComponent_getCenter ( PyComponent *self )
+  {
+    trace << "PyComponent_getCenter ()" << endl;
+    METHOD_HEAD( "Component.getCenter()" )
+
+    PyPoint* pyPoint = PyObject_NEW( PyPoint, &PyTypePoint );
+    if (pyPoint == NULL) return NULL;
+    
+    HTRY
+    pyPoint->_object = new Point( component->getCenter() );
+    HCATCH    
+
+    return (PyObject*)pyPoint;
+  }
 
 
   // ---------------------------------------------------------------
@@ -140,6 +156,7 @@ extern "C" {
     { { "getX"                 , (PyCFunction)PyComponent_getX          , METH_NOARGS , "Return the Component X value." }
     , { "getY"                 , (PyCFunction)PyComponent_getY          , METH_NOARGS , "Return the Component Y value." }
     , { "getPosition"          , (PyCFunction)PyComponent_getPosition   , METH_NOARGS , "Return the Component position." }
+    , { "getCenter"            , (PyCFunction)PyComponent_getCenter     , METH_NOARGS , "Return the Component center position." }
     , { "getNet"               , (PyCFunction)PyComponent_getNet        , METH_NOARGS , "Returns the net owning the component." }
     , { "getLayer"             , (PyCFunction)PyComponent_getLayer      , METH_NOARGS , "Return the component layer." }
     , { "getBoundingBox"       , (PyCFunction)PyComponent_getBoundingBox, METH_NOARGS , "Return the component boundingBox." }

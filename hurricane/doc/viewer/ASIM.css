@@ -7,8 +7,9 @@
  */
 
  html, body, th, td, tr, p, li, h1, h2, h3, h4, h5, h6 {
-   font-size:                   96%;
-   font-family:                 verdana, sans-serif;
+   font-size:                   11pt;
+   /* The Open Sans font family is supplied by TexLive. */
+   font-family:                 "Open Sans", Verdana, sans-serif;;
  }
 
  body {
@@ -19,8 +20,13 @@
    background-attachment:       fixed;
    background-repeat:           no-repeat;
    margin-top:                  2em;
-   margin-right:                8%;
-   margin-left:                 8%;
+   width:                       550pt;
+   margin-right:                auto;
+   margin-left:                 auto;
+   /*
+   margin-right:                12%;
+   margin-left:                 12%;
+   */
  }
 
  hr {
@@ -32,14 +38,14 @@
 
 
  h1, h2, h3, h4, h5, h6 {
-   font-family:                 "Liberation Serif", sans-serif;
+   /*font-family:                 "Liberation Serif", sans-serif;*/
  }
 
  h1                 { text-align:  center; }
  h2, h3, h4, h5, h6 { text-align:  left;
-                      padding-top: 2em;
+                      padding-top: 11pt;
                     }
- h1, h2, h3         { font-family: "Liberation Serif", sans-serif;
+ h1, h2, h3         { /*font-family: "Liberation Serif", sans-serif; */
                     /*color:       #09550B;*/
                     }
  h1                 { font-weight:normal;       font-size: 170%; letter-spacing:0.2em; word-spacing:0.4em; }
@@ -52,8 +58,8 @@
  h2.classHierarchy {
  /*border:                      1px none #008500;*/
    border:                      1px none #000000;
-   border-top-width:            2px;
-   border-top-style:            solid;
+   border-top-width:            1px;
+   border-top-style:            dotted;
    padding-top:                 1em;
  }
  
@@ -110,7 +116,7 @@
 
 
  pre, tt, code {
-   font-family:                 "andale mono", monospace;
+   /*font-family:                 "andale mono", monospace;*/
    font-size:                   100%;
    white-space:                 pre;
  }
@@ -131,7 +137,7 @@
 
  tt          { color:           green;   }
  em          { font-style:      italic;
-               font-weight:     bold;    }
+               font-weight:     normal;  }
  strong      { font-weight:     bold;    }
 
  span.textit { font-style:      italic;  }
@@ -161,8 +167,6 @@
  }
 
 
-
-
 /*
  * +-----------------------------------------------------------------+
  * |                    Doxygen Specific Classes                     |
@@ -176,7 +180,7 @@
 
  h1.header {
    font-size:                   200%;
-   font-family:                 times, verdana, sans-serif;
+ /*font-family:                 times, verdana, sans-serif;*/
  }
 
  center.header {
@@ -184,8 +188,8 @@
  }
 
  table.header {
-   /*width:                       100%;*/
-   /*background-color:            #EEEEEE;*/
+ /*width:                       100%;*/
+ /*background-color:            #EEEEEE;*/
    background-color:            #CCE6CA;
  }
 
@@ -193,8 +197,17 @@
    padding:                     2px 14px;
    text-align:                  center;
    font-weight:                 bold;
-   font-family:                 verdana, sans-serif;
+ /*font-family:                 verdana, sans-serif;*/
    font-size:                   110%;
+ }
+
+ table.DoxUser td, table.DoxUser th {
+   padding:                    0px 5px;
+   border:                     0px;
+ }
+
+ table.DoxUser th {
+   background-color:            #CCE6CA;
  }
 
  table.footer1, table.footer2 { width:       100%;  }
@@ -203,7 +216,7 @@
  td.CFooter                   { text-align:  center;}
  table.footer2 td.RFooter     { font-weight: bold; width: 35%  }
  table.footer2 td.CFooter     { width: 30%  }
- table.footer2 td.LFooter     { font-weight: bold; width: 35%; font-family: time; }
+ table.footer2 td.LFooter     { font-weight: bold; width: 35%; /*font-family: time;*/ }
 
  table.classHierarchy {
    border-collapse:             separate;
@@ -246,7 +259,7 @@
  }
 
  div.ah {
-   font-family:                 time;
+ /*font-family:                 time;*/
    font-size:                   250%;
  }
 
@@ -270,7 +283,9 @@
 
  a.qindex, a.qindex:visited, a.qindex:hover, a.qindexHL, a.el, a.elRef {
    text-decoration:             none;
-   font-weight:                 bold;
+ /*font-family:                 Courier;*/
+   font-weight:                 normal;
+ /*font-size:                   110%;*/
  }
 
  a.qindex, a.qindex:visited {
@@ -407,11 +422,16 @@
  span.preprocessor  { color: #806020 }
  span.stringliteral { color: #002080 }
  span.charliteral   { color: #008080 }
+ span.red           { color: red }
 
 
 /* -------------------------------------------------------------------
  * Attributes Listing.
  */
+
+p.formulaDsp {
+  text-align: center;
+}
 
  .mdTable {
  /*border:                      1px solid #868686;*/

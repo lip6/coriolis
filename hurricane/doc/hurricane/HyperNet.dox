@@ -1,0 +1,54 @@
+
+ // -*- C++ -*-
+
+ namespace Hurricane {
+
+ /*! \class        HyperNet
+  *  \brief        HyperNet description (\b API)
+  *
+  *  \section      secHyperNetIntro  Introduction
+  *
+  *                The HyperNet is a part of the trans-hierarchical mechanism.
+  *                An HyperNet is build upon a Net Occurrence, this occurrence
+  *                is the root of a tree of Net occurrences which represent the
+  *                Net as if flattened. The walkthroughs are provided as
+  *                Collections.
+  *
+  *                In all the walkthrough, if \c doExtraction is set, a simple
+  *                layout extraction is performed. Of course, it makes the
+  *                walkthrough much slower. By default it's disabled and the
+  *                Net occurrence tree is created only from the Plug information.
+  *
+  *  \remark       The \c allowInteruption is deprecated and do nothing.
+  */
+
+
+ //! \function     HyperNet::HyperNet ( const Occurrence& occurrence );
+ //!               Build an HyperNet from an Occurrence of Net, Rubber or Component.
+ //!               That is, any Entity from which a Net can be extracted.
+
+ //! \function     const Occurrence& HyperNet::getNetOccurrence () const;
+ //! \sreturn      The root Net Occurrence.
+
+ //! \function     Cell* HyperNet::getCell () const;
+ //! \sreturn      The Cell that own the net occurrence (the top Cell).
+
+ //! \function     Occurrences HyperNet::getNetOccurrences ( bool doExtraction=false, bool allowInterruption=false) const;
+ //! \param        doExtraction       Perform a simple layout extraction.
+ //! \param        allowInterruption  Allows the extraction process to be interrupted.
+ //! \return       The collection of all the Net occurrences.
+
+ //! \function     Occurrences HyperNet::getNetOccurrencesUnder ( Box area, bool doExtraction=false, bool allowInterruption=false) const;
+ //! \param        area               The area under which do the extraction.
+ //! \param        doExtraction       Perform a layout extraction.
+ //! \param        allowInterruption  Allows the extraction process to be interrupted.
+ //! \return       The collection of all the Net occurrences under \c area.
+
+ //! \function     Occurrences HyperNet::getLeafPlugOccurrences ( bool doExtraction=false, bool allowInterruption=false) const;
+ //! \param        doExtraction       Perform a layout extraction.
+ //! \param        allowInterruption  Allows the extraction process to be interrupted.
+ //! \return       The Collection of all the Plugs from the leaf Cells only.
+
+ //  \}
+
+ }

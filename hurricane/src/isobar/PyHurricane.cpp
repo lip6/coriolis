@@ -84,6 +84,7 @@
 #include "hurricane/isobar/PyComponentCollection.h"
 #include "hurricane/isobar/PyPlug.h"
 #include "hurricane/isobar/PyPlugCollection.h"
+#include "hurricane/isobar/PyRoutingPad.h"
 #include "hurricane/isobar/PySegment.h"
 #include "hurricane/isobar/PySegmentCollection.h"
 #include "hurricane/isobar/PyContact.h"
@@ -579,6 +580,7 @@ extern "C" {
     PyComponent_LinkPyType ();
     PySegment_LinkPyType ();
     PyPad_LinkPyType ();
+    PyRoutingPad_LinkPyType ();
     PyVertical_LinkPyType ();
     PyHorizontal_LinkPyType ();
     PyContact_LinkPyType ();
@@ -645,6 +647,7 @@ extern "C" {
     PYTYPE_READY_SUB ( Reference      , Entity   )
     PYTYPE_READY_SUB ( Net            , Entity   )
     PYTYPE_READY_SUB ( Component      , Entity   )
+    PYTYPE_READY_SUB ( RoutingPad     , Component)
     PYTYPE_READY_SUB ( Segment        , Component)
     PYTYPE_READY_SUB ( Horizontal     , Segment  )
     PYTYPE_READY_SUB ( Vertical       , Segment  )
@@ -698,6 +701,7 @@ extern "C" {
     __cs.addType ( "plug"       , &PyTypePlug                  , "<Plug>"                  , false, "comp" );
     __cs.addType ( "plugCol"    , &PyTypePlugCollection        , "<PlugCollection>"        , false );
     __cs.addType ( "point"      , &PyTypePoint                 , "<Point>"                 , false );
+    __cs.addType ( "rp"         , &PyTypeRoutingPad            , "<RoutingPad>"            , false, "comp" );
     __cs.addType ( "segment"    , &PyTypeSegment               , "<Segment>"               , false, "comp" );
     __cs.addType ( "pad    "    , &PyTypePad                   , "<Pad>"                   , false, "comp" );
     __cs.addType ( "segmentCol" , &PyTypeSegmentCollection     , "<SegmentCollection>"     , false );
@@ -748,6 +752,8 @@ extern "C" {
     Py_INCREF ( &PyTypeQuery );
     PyModule_AddObject ( module, "Query"                , (PyObject*)&PyTypeQuery );
 
+    Py_INCREF ( &PyTypeRoutingPad );
+    PyModule_AddObject ( module, "RoutingPad"           , (PyObject*)&PyTypeRoutingPad );
     Py_INCREF ( &PyTypeVertical );
     PyModule_AddObject ( module, "PyVertical"           , (PyObject*)&PyTypeVertical );
     Py_INCREF ( &PyTypeHorizontal );
@@ -771,15 +777,16 @@ extern "C" {
     PyDict_SetItemString ( dictionnary, "ProxyError"      , ProxyError );
     PyDict_SetItemString ( dictionnary, "HurricaneError"  , HurricaneError );
 
-    DbULoadConstants            ( dictionnary );
-    TransformationLoadConstants ( dictionnary );
-    NetLoadConstants            ( dictionnary );
-    InstanceLoadConstants       ( dictionnary );
-    PinLoadConstants            ( dictionnary );
+    DbULoadConstants           ( dictionnary );
+    TransformationLoadConstants( dictionnary );
+    NetLoadConstants           ( dictionnary );
+    InstanceLoadConstants      ( dictionnary );
+    PinLoadConstants           ( dictionnary );
 
-    PyDbU_postModuleInit ();
-    PyLayer_postModuleInit ();
-    PyBasicLayer_postModuleInit ();
+    PyDbU_postModuleInit();
+    PyLayer_postModuleInit();
+    PyBasicLayer_postModuleInit();
+    PyRoutingPad_postModuleInit();
 
     trace << "Hurricane.so loaded " << (void*)&typeid(string) << endl;
   }

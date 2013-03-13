@@ -134,7 +134,7 @@ extern "C" {
     PyLayer* pyLayer = NULL;
     PyComponent* pyComponent = NULL;
     DbU::Unit x=0, y=0, width=0, height=0;
-    if (PyArg_ParseTuple(args, "O!O!ll|ll:Contact.create",
+   if (PyArg_ParseTuple(args, "O!O!ll|ll:Contact.create",
                 &PyTypeNet, &pyNet, &PyTypeLayer, &pyLayer,
                 &x, &y, &width, &height)) {
         contact = Contact::create(PYNET_O(pyNet), PYLAYER_O(pyLayer), x, y, width, height);

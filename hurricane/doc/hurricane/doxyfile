@@ -659,6 +659,8 @@ INPUT                  = ../../src/hurricane/hurricane/Commons.h \
                          ../../src/hurricane/hurricane/Nets.h \
                          ../../src/hurricane/hurricane/Net.h \
                          Net.dox \
+                         ../../src/hurricane/hurricane/HyperNet.h \
+                         HyperNet.dox \
                          ../../src/hurricane/hurricane/Gos.h \
                          ../../src/hurricane/hurricane/Go.h \
                          Go.dox \
@@ -691,6 +693,8 @@ INPUT                  = ../../src/hurricane/hurricane/Commons.h \
                          Pad.dox \
                          ../../src/hurricane/hurricane/Rubbers.h \
                          ../../src/hurricane/hurricane/Rubber.h \
+                         RoutingPad.dox \
+                         ../../src/hurricane/hurricane/RoutingPad.h \
                          Rubber.dox \
                          ../../src/hurricane/hurricane/Quarks.h \
                          ../../src/hurricane/hurricane/Quark.h \
@@ -716,6 +720,8 @@ INPUT                  = ../../src/hurricane/hurricane/Commons.h \
                          ../../src/hurricane/hurricane/Slices.h \
                          ../../src/hurricane/hurricane/Slice.h \
                          Slice.dox \
+                         ../../src/hurricane/hurricane/Query.h \
+                         Query.dox \
                          ../../src/hurricane/hurricane/UpdateSession.h \
                          UpdateSession.dox
 

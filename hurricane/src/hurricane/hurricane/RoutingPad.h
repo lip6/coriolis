@@ -64,14 +64,14 @@ namespace Hurricane {
       static RoutingPad*   create                ( Pin* );
     public:
     // Accessors.
+      inline  Occurrence   getOccurrence         () const { return _occurrence; };
+              Occurrence   getPlugOccurrence     ();
+      virtual const Layer* getLayer              () const;
       virtual DbU::Unit    getX                  () const;
       virtual DbU::Unit    getY                  () const;
       virtual Box          getBoundingBox        () const;
-      virtual const Layer* getLayer              () const;
       virtual Box          getBoundingBox        ( const BasicLayer* ) const;
       virtual Point        getCenter             () const;
-      inline  Occurrence   getOccurrence         () const { return _occurrence; };
-              Occurrence   getPlugOccurrence     ();
               Point        getSourcePosition     () const;
               Point        getTargetPosition     () const;
               DbU::Unit    getSourceX            () const;
