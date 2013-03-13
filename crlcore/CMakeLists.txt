@@ -16,7 +16,8 @@
  check_distribution()
  set_lib_link_mode()
  setup_sysconfdir("${CMAKE_INSTALL_PREFIX}")
- setup_boost(program_options filesystem python regex)
+ setup_boost(program_options filesystem python regex wave)
+ message(STATUS "${Boost_LIBRARIES}")
 
  find_package(LibXml2 REQUIRED)
  find_package(PythonLibs REQUIRED)
@@ -29,7 +30,6 @@
  find_package(OPENACCESS)
  find_package(VLSISAPD REQUIRED)
  find_package(HURRICANE REQUIRED)
- find_package(Boost REQUIRED)
  find_package(Libexecinfo REQUIRED)
 #if(BUILD_DOC)
 #  include(UseLATEX)

@@ -71,8 +71,6 @@
 #liboaTclEngine.so
 #liboaTclHelp.so
 #liboaTcl.so
-#
-#
 
 MESSAGE(STATUS "Searching for OPENACCESS ...")
 SET(OA_INCLUDE_PATH_DESCRIPTION "directory containing the OpenAccess include files. E.g /usr/local/include")

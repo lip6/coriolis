@@ -1,9 +1,23 @@
 
 # -*- mode:Python -*-
 #
+# This file is part of the Coriolis Software.
+# Copyright (c) UPMC/LIP6 2012-2012, All Rights Reserved
+#
+# +-----------------------------------------------------------------+ 
+# |                   C O R I O L I S                               |
+# |    C o r i o l i s  /  C h a m s   B u i l d e r                |
+# |                                                                 |
+# |  Author      :                    Jean-Paul Chaput              |
+# |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+# | =============================================================== |
+# |  Python      :   "./builder/__init__.py"                        |
+# +-----------------------------------------------------------------+
+#
 # This is file is mandatory to tell python that 'helpers' is a module
 # rather than an ordinary directory, thus enabling the uses of the
 # 'dot' notation in import.
+
 
 import sys
 import os

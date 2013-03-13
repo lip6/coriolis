@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -39,7 +39,7 @@ namespace CRL {
   class AllianceFramework {
     public:
       enum InstancesCountFlags { Recursive=0x1, IgnoreFeeds=0x2 };
-      enum LibraryFlags { CreateLibrary=0x1, InSearchPath=0x2, HasCatalog=0x4 };
+      enum LibraryFlags        { CreateLibrary=0x1, InSearchPath=0x2, HasCatalog=0x4 };
     public:
     // Constructors.
       static AllianceFramework* create                   ();

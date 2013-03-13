@@ -147,10 +147,10 @@
                        set ( iccad04_cpps      iccad04/Iccad04Lefdef.cpp )
                        set ( ispd04_cpps       ispd04/Ispd04Bookshelf.cpp )
  if ( LEFDEF_FOUND )
-                           include_directories ( ${LEFDEF_INCLUDE_DIR} )
+       include_directories ( ${LEFDEF_INCLUDE_DIR} )
  endif ( LEFDEF_FOUND )
  if ( OA_FOUND )
-                           include_directories ( ${OA_INCLUDE_DIR} )
+       include_directories ( ${OA_INCLUDE_DIR} )
  endif ( OA_FOUND )
                          set (openaccess_cpps openaccess/OpenAccessParser.cpp
                                               openaccess/OpenAccessDriver.cpp

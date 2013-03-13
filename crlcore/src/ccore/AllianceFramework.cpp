@@ -328,18 +328,28 @@ namespace CRL {
 
     flags &= ~HasCatalog;
 
-    AllianceLibrary* library = getAllianceLibrary ( libName, flags );
-    if ( library != NULL ) {
-      cerr << Warning("AllianceFramework::createLibrary(): Attempt to re-create <%s>, using already existing."
-                     ,libName.c_str()) << endl;
-      return library;
+    string dupLibName = libName;
+    for ( size_t duplicate=1 ; true ; ++duplicate ) {
+      AllianceLibrary* library = getAllianceLibrary ( dupLibName, flags );
+      if (library == NULL) break;
+
+      ostringstream oss (libName);
+      oss << "." << duplicate;
+      dupLibName = oss.str();
     }
 
+    // AllianceLibrary* library = getAllianceLibrary ( libName, flags );
+    // if ( library != NULL ) {
+    //   cerr << Warning("AllianceFramework::createLibrary(): Attempt to re-create <%s>, using already existing."
+    //                  ,libName.c_str()) << endl;
+    //   return library;
+    // }
+
     SearchPath& LIBRARIES = _environment.getLIBRARIES ();
-    if ( not (flags & InSearchPath) ) LIBRARIES.prepend ( path, libName );
+    if ( not (flags & InSearchPath) ) LIBRARIES.prepend ( path, dupLibName );
     else                              LIBRARIES.select  ( path );
 
-    library = new AllianceLibrary ( path, Library::create(getParentLibrary(),libName) );
+    AllianceLibrary* library = new AllianceLibrary ( path, Library::create(getParentLibrary(),dupLibName) );
 
     AllianceLibraries::iterator ilib = _libraries.begin();
     for ( size_t i=0 ; i<LIBRARIES.getIndex() ; ++i, ++ilib );
@@ -355,7 +365,7 @@ namespace CRL {
     if ( not parser.loadByLib() ) return library;
 
   // Load the whole library.
-    if ( ! _readLocate(libName,Catalog::State::State::Logical,true) ) return library;
+    if ( ! _readLocate(dupLibName,Catalog::State::State::Logical,true) ) return library;
 
   // Call the parser function.
     (parser.getParsLib())( _environment.getLIBRARIES().getSelected() , library->getLibrary() , _catalog );
