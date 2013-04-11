@@ -57,15 +57,49 @@ extern "C" {
   DirectGetLongAttribute(PySegment_getSourceY,getSourceY,PySegment,Segment)
   DirectGetLongAttribute(PySegment_getWidth  ,getWidth  ,PySegment,Segment)
   DirectSetLongAttribute(PySegment_setWidth  ,setWidth  ,"Segment.setWidth",PySegment,Segment)
+  DirectVoidMethod(Segment,segment,invert)
 
   // Standard Destroy (Attribute).
   DBoDestroyAttribute(PySegment_destroy, PySegment)
 
 
+  static PyObject* PySegment_getSource ( PySegment *self )
+  {
+    trace << "PySegment_getSource()" << endl;
+
+    METHOD_HEAD( "Segment.Source()" )
+
+    PyObject* pySource = NULL;
+    
+    HTRY
+    Component* source = segment->getSource();
+    if (source) pySource = PyEntity_NEW( source );
+    else
+      Py_RETURN_NONE;
+    HCATCH    
+
+    return pySource;
+  }
 
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PySegment_getSourcePosition ()"
+  static PyObject* PySegment_getTarget ( PySegment *self )
+  {
+    trace << "PySegment_getTarget()" << endl;
+
+    METHOD_HEAD( "Segment.Target()" )
+
+    PyObject* pyTarget = NULL;
+    
+    HTRY
+    Component* target = segment->getTarget();
+    if (target) pyTarget = PyEntity_NEW( target );
+    else
+      Py_RETURN_NONE;
+    HCATCH    
+
+    return pyTarget;
+  }
+
 
   static PyObject* PySegment_getSourcePosition ( PySegment *self )
   {
@@ -83,9 +117,6 @@ extern "C" {
     return ( (PyObject*)pyPoint );
   }
 
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PySegment_getTargetPosition ()"
 
   static PyObject* PySegment_getTargetPosition ( PySegment *self )
   {
@@ -108,12 +139,15 @@ extern "C" {
   // PySegment Attribute Method table.
 
   PyMethodDef PySegment_Methods[] =
-    { { "getSourceX"           , (PyCFunction)PySegment_getSourceX       , METH_NOARGS , "Return the Segment source X value." }
+    { { "getSource"            , (PyCFunction)PySegment_getSource        , METH_NOARGS , "Return the Segment source component (or None)." }
+    , { "getTarget"            , (PyCFunction)PySegment_getTarget        , METH_NOARGS , "Return the Segment target component (or None)." }
+    , { "getSourceX"           , (PyCFunction)PySegment_getSourceX       , METH_NOARGS , "Return the Segment source X value." }
     , { "getSourceY"           , (PyCFunction)PySegment_getSourceY       , METH_NOARGS , "Return the Segment source Y value." }
     , { "getSourcePosition"    , (PyCFunction)PySegment_getSourcePosition, METH_NOARGS , "Return the Segment source point value." }
     , { "getTargetPosition"    , (PyCFunction)PySegment_getTargetPosition, METH_NOARGS , "Return the Segment target point value." }
     , { "getWidth"             , (PyCFunction)PySegment_getWidth         , METH_NOARGS , "Return the segment width." }
     , { "setWidth"             , (PyCFunction)PySegment_setWidth         , METH_VARARGS, "Modify the Segment width." }
+    , { "invert"               , (PyCFunction)PySegment_invert           , METH_NOARGS , "Swap source & target anchors." }
     , { "destroy"              , (PyCFunction)PySegment_destroy          , METH_NOARGS
                                , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
