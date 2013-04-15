@@ -1,5 +1,10 @@
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+
+// -*- C++ -*-
+//
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
+//
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
@@ -7,10 +12,8 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./PyCell.cpp"                             |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
+
 
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/isobar/PyBox.h"
@@ -22,6 +25,7 @@
 #include "hurricane/isobar/PyNetCollection.h"
 #include "hurricane/isobar/PyReferenceCollection.h"
 #include "hurricane/isobar/PyInstanceCollection.h"
+#include "hurricane/isobar/PyComponentCollection.h"
 #include "hurricane/isobar/PyOccurrenceCollection.h"
 
 namespace  Isobar {
@@ -182,6 +186,61 @@ extern "C" {
     HCATCH
     
     return (PyObject*)pyInstanceCollection;
+  }
+
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyCell_getComponents()"
+
+  static PyObject* PyCell_getComponents(PyCell *self) {
+    trace << "PyCell_getComponents()" << endl;
+
+    METHOD_HEAD("Cell.getComponents()")
+
+    PyComponentCollection* pyComponentCollection = NULL;
+
+    HTRY
+    Components* components = new Components(cell->getComponents());
+
+    pyComponentCollection = PyObject_NEW(PyComponentCollection, &PyTypeComponentCollection);
+    if (pyComponentCollection == NULL) { 
+        return NULL;
+    }
+
+    pyComponentCollection->_object = components;
+    HCATCH
+    
+    return (PyObject*)pyComponentCollection;
+  }
+
+
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyCell_getComponentsUnder()"
+
+  static PyObject* PyCell_getComponentsUnder(PyCell *self, PyObject* args) {
+    trace << "PyCell_getComponentsUnder()" << endl;
+
+    METHOD_HEAD("Cell.getComponentsUnder()")
+
+    PyBox* pyBox;
+    if (!PyArg_ParseTuple(args,"O!:Cell.getInstancesUnder", &PyTypeBox, &pyBox)) {
+        return NULL;
+    }
+    PyComponentCollection* pyComponentCollection = NULL;
+
+    HTRY
+    Components* components = new Components(cell->getComponentsUnder(*PYBOX_O(pyBox)));
+
+    pyComponentCollection = PyObject_NEW(PyComponentCollection, &PyTypeComponentCollection);
+    if (pyComponentCollection == NULL) { 
+        return NULL;
+    }
+
+    pyComponentCollection->_object = components;
+    HCATCH
+    
+    return (PyObject*)pyComponentCollection;
   }
 
 
@@ -588,22 +647,26 @@ extern "C" {
     { { "getLibrary"          , (PyCFunction)PyCell_getLibrary           , METH_NOARGS , "Returns the library owning the cell." }
     , { "getName"             , (PyCFunction)PyCell_getName              , METH_NOARGS , "Returns the name of the cell." }
     , { "getInstance"         , (PyCFunction)PyCell_getInstance          , METH_VARARGS, "Returns the instance of name <name> if it exists, else NULL." }
-    , { "getInstances", (PyCFunction)PyCell_getInstances, METH_NOARGS , "Returns the locator of the collection of all instances called by the cell." } // getInstances
-    , { "getInstancesUnder"  , (PyCFunction)PyCell_getInstancesUnder  , METH_VARARGS, "Returns the locator of the collection of all instances of the cell intersecting the given rectangular area." } // getInstancesUnder
-    , { "getSlaveInstances"  , (PyCFunction)PyCell_getSlaveInstances  , METH_NOARGS , "Returns the locator of the collection of instances whose master is this cell." } // getSlaveInstances
-    , { "getOccurrences"     , (PyCFunction)PyCell_getOccurrences     , METH_VARARGS, "Returns the collection of all occurrences belonging to the cell." }
-    , { "getOccurrencesUnder", (PyCFunction)PyCell_getOccurrencesUnder, METH_NOARGS , "Returns the collection of all occurrences belonging to this cell and intersecting the given rectangular area." }
-    , { "getLeafInstanceOccurrences", (PyCFunction)PyCell_getLeafInstanceOccurrences, METH_VARARGS, "Returns the collection of all occurrences belonging to the cell." }
-    , { "getLeafInstanceOccurrencesUnder", (PyCFunction)PyCell_getLeafInstanceOccurrencesUnder, METH_NOARGS , "Returns the collection of all occurrences belonging to this cell and intersecting the given rectangular area." }
-    , { "getReferences"      , (PyCFunction)PyCell_getReferences      , METH_VARARGS, "Returns the collection of all references belonging to the cell." }
-    , { "getHyperNets"       , (PyCFunction)PyCell_getHyperNets       , METH_VARARGS, "Returns the collection of all hyperNets belonging to the cell." }
+    , { "getInstances"        , (PyCFunction)PyCell_getInstances         , METH_NOARGS , "Returns the locator of the collection of all instances called by the cell." } // getInstances
+    , { "getInstancesUnder"   , (PyCFunction)PyCell_getInstancesUnder    , METH_VARARGS, "Returns the locator of the collection of all instances of the cell intersecting the given rectangular area." } // getInstancesUnder
+    , { "getSlaveInstances"   , (PyCFunction)PyCell_getSlaveInstances    , METH_NOARGS , "Returns the locator of the collection of instances whose master is this cell." } // getSlaveInstances
+    , { "getComponents"       , (PyCFunction)PyCell_getComponents        , METH_VARARGS, "Returns the collection of all components belonging to the cell." }
+    , { "getComponentsUnder"  , (PyCFunction)PyCell_getComponentsUnder   , METH_NOARGS , "Returns the collection of all components belonging to this cell and intersecting the given rectangular area." }
+    , { "getOccurrences"      , (PyCFunction)PyCell_getOccurrences       , METH_VARARGS, "Returns the collection of all occurrences belonging to the cell." }
+    , { "getOccurrencesUnder" , (PyCFunction)PyCell_getOccurrencesUnder  , METH_NOARGS , "Returns the collection of all occurrences belonging to this cell and intersecting the given rectangular area." }
+    , { "getLeafInstanceOccurrences"     , (PyCFunction)PyCell_getLeafInstanceOccurrences     , METH_VARARGS
+      , "Returns the collection of all occurrences belonging to the cell." }
+    , { "getLeafInstanceOccurrencesUnder", (PyCFunction)PyCell_getLeafInstanceOccurrencesUnder, METH_NOARGS
+      , "Returns the collection of all occurrences belonging to this cell and intersecting the given rectangular area." }
+    , { "getReferences"       , (PyCFunction)PyCell_getReferences       , METH_VARARGS, "Returns the collection of all references belonging to the cell." }
+    , { "getHyperNets"        , (PyCFunction)PyCell_getHyperNets        , METH_VARARGS, "Returns the collection of all hyperNets belonging to the cell." }
     , { "getNet"              , (PyCFunction)PyCell_getNet              , METH_VARARGS, "Returns the net of name <name> if it exists, else NULL." }
-    , { "getNets"              , (PyCFunction)PyCell_getNets      , METH_NOARGS , "Returns the collection of all nets of the cell." }
-    , { "getExternalNets", (PyCFunction)PyCell_getExternalNets, METH_NOARGS , "Returns the collection of all external nets of the cell." }
-    , { "getClockNets" , (PyCFunction)PyCell_getClockNets, METH_NOARGS , "Returns the collection of all clock nets of the cell." }
-    , { "getSupplyNets", (PyCFunction)PyCell_getSupplyNets, METH_NOARGS , "Returns the collection of all supply nets of the cell." }
-    , { "getPowerNets" , (PyCFunction)PyCell_getPowerNets, METH_NOARGS , "Returns the collection of all power nets of the cell." }
-    , { "getGroundNets", (PyCFunction)PyCell_getGroundNets, METH_NOARGS , "Returns the collection of all ground nets of the cell." }
+    , { "getNets"             , (PyCFunction)PyCell_getNets             , METH_NOARGS , "Returns the collection of all nets of the cell." }
+    , { "getExternalNets"     , (PyCFunction)PyCell_getExternalNets     , METH_NOARGS , "Returns the collection of all external nets of the cell." }
+    , { "getClockNets"        , (PyCFunction)PyCell_getClockNets        , METH_NOARGS , "Returns the collection of all clock nets of the cell." }
+    , { "getSupplyNets"       , (PyCFunction)PyCell_getSupplyNets       , METH_NOARGS , "Returns the collection of all supply nets of the cell." }
+    , { "getPowerNets"        , (PyCFunction)PyCell_getPowerNets        , METH_NOARGS , "Returns the collection of all power nets of the cell." }
+    , { "getGroundNets"       , (PyCFunction)PyCell_getGroundNets       , METH_NOARGS , "Returns the collection of all ground nets of the cell." }
     , { "getAbutmentBox"      , (PyCFunction)PyCell_getAbutmentBox      , METH_NOARGS , "Returns the abutment box of the cell(which is defined by the designer unlike the bounding box which is managed dynamically)" }
     , { "isTerminal"          , (PyCFunction)PyCell_isTerminal          , METH_NOARGS , "Returns true if the cell is marked as terminal, else false." }
     , { "isLeaf"              , (PyCFunction)PyCell_isLeaf              , METH_NOARGS , "Returns true if the cell is a leaf of the hierarchy, else false." }
