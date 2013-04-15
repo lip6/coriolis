@@ -650,13 +650,13 @@ extern "C" {
     , { "getInstances"        , (PyCFunction)PyCell_getInstances         , METH_NOARGS , "Returns the locator of the collection of all instances called by the cell." } // getInstances
     , { "getInstancesUnder"   , (PyCFunction)PyCell_getInstancesUnder    , METH_VARARGS, "Returns the locator of the collection of all instances of the cell intersecting the given rectangular area." } // getInstancesUnder
     , { "getSlaveInstances"   , (PyCFunction)PyCell_getSlaveInstances    , METH_NOARGS , "Returns the locator of the collection of instances whose master is this cell." } // getSlaveInstances
-    , { "getComponents"       , (PyCFunction)PyCell_getComponents        , METH_VARARGS, "Returns the collection of all components belonging to the cell." }
-    , { "getComponentsUnder"  , (PyCFunction)PyCell_getComponentsUnder   , METH_NOARGS , "Returns the collection of all components belonging to this cell and intersecting the given rectangular area." }
-    , { "getOccurrences"      , (PyCFunction)PyCell_getOccurrences       , METH_VARARGS, "Returns the collection of all occurrences belonging to the cell." }
-    , { "getOccurrencesUnder" , (PyCFunction)PyCell_getOccurrencesUnder  , METH_NOARGS , "Returns the collection of all occurrences belonging to this cell and intersecting the given rectangular area." }
-    , { "getLeafInstanceOccurrences"     , (PyCFunction)PyCell_getLeafInstanceOccurrences     , METH_VARARGS
+    , { "getComponents"       , (PyCFunction)PyCell_getComponents        , METH_NOARGS , "Returns the collection of all components belonging to the cell." }
+    , { "getComponentsUnder"  , (PyCFunction)PyCell_getComponentsUnder   , METH_VARARGS, "Returns the collection of all components belonging to this cell and intersecting the given rectangular area." }
+    , { "getOccurrences"      , (PyCFunction)PyCell_getOccurrences       , METH_NOARGS , "Returns the collection of all occurrences belonging to the cell." }
+    , { "getOccurrencesUnder" , (PyCFunction)PyCell_getOccurrencesUnder  , METH_VARARGS, "Returns the collection of all occurrences belonging to this cell and intersecting the given rectangular area." }
+    , { "getLeafInstanceOccurrences"     , (PyCFunction)PyCell_getLeafInstanceOccurrences     , METH_NOARGS
       , "Returns the collection of all occurrences belonging to the cell." }
-    , { "getLeafInstanceOccurrencesUnder", (PyCFunction)PyCell_getLeafInstanceOccurrencesUnder, METH_NOARGS
+    , { "getLeafInstanceOccurrencesUnder", (PyCFunction)PyCell_getLeafInstanceOccurrencesUnder, METH_VARARGS
       , "Returns the collection of all occurrences belonging to this cell and intersecting the given rectangular area." }
     , { "getReferences"       , (PyCFunction)PyCell_getReferences       , METH_VARARGS, "Returns the collection of all references belonging to the cell." }
     , { "getHyperNets"        , (PyCFunction)PyCell_getHyperNets        , METH_VARARGS, "Returns the collection of all hyperNets belonging to the cell." }
