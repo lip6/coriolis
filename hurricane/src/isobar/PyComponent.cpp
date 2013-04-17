@@ -19,6 +19,7 @@
 #include "hurricane/isobar/PyLayer.h"
 #include "hurricane/isobar/PyPoint.h"
 #include "hurricane/isobar/PyBox.h"
+#include "hurricane/isobar/PyBasicLayer.h"
 #include "hurricane/isobar/PyComponent.h"
 #include "hurricane/isobar/PyPlug.h"
 #include "hurricane/isobar/PyHorizontal.h"
@@ -132,19 +133,33 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyComponent_getBoundingBox ()"
 
-  static PyObject* PyComponent_getBoundingBox ( PyComponent *self ) {
+  static PyObject* PyComponent_getBoundingBox ( PyComponent *self, PyObject* args )
+  {
     trace << "PyComponent_getBoundingBox ()" << endl;
     METHOD_HEAD ( "Component.getBoundingBox()" )
 
     PyBox* pyBox = PyObject_NEW ( PyBox, &PyTypeBox );
-    if (pyBox == NULL) { return NULL; }
-    trace_out ();
+    if (pyBox == NULL) return NULL;
 
     HTRY
-    pyBox->_object = new Box ( component->getBoundingBox() );
+    PyObject* pyLayer = NULL;
+    if (PyArg_ParseTuple( args, "|O:Component.getBoundingBox", &pyLayer )) {
+      if (pyLayer) {
+        if (not IsPyBasicLayer(pyLayer)) {
+          PyErr_SetString( ConstructorError, "Component.getBoundingBox(): First argument is not of type BasicLayer." );
+          return NULL;
+        }
+        pyBox->_object = new Box ( component->getBoundingBox(PYBASICLAYER_O(pyLayer)) );
+      } else {
+        pyBox->_object = new Box ( component->getBoundingBox() );
+      }
+    } else {
+      PyErr_SetString( ConstructorError, "Bad parameters given to Component.getBoundingBox()." );
+      return NULL;
+    }
     HCATCH
 
-    return ( (PyObject*)pyBox );
+    return (PyObject*)pyBox;
   }
 
 
@@ -159,7 +174,7 @@ extern "C" {
     , { "getCenter"            , (PyCFunction)PyComponent_getCenter     , METH_NOARGS , "Return the Component center position." }
     , { "getNet"               , (PyCFunction)PyComponent_getNet        , METH_NOARGS , "Returns the net owning the component." }
     , { "getLayer"             , (PyCFunction)PyComponent_getLayer      , METH_NOARGS , "Return the component layer." }
-    , { "getBoundingBox"       , (PyCFunction)PyComponent_getBoundingBox, METH_NOARGS , "Return the component boundingBox." }
+    , { "getBoundingBox"       , (PyCFunction)PyComponent_getBoundingBox, METH_VARARGS, "Return the component boundingBox (optionally on a BasicLayer)." }
     , { "destroy"              , (PyCFunction)PyComponent_destroy       , METH_NOARGS
                                , "destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */

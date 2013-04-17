@@ -86,6 +86,7 @@ extern "C" {
   extern  PyMethodDef   PyDataBase_Methods[];
 
   extern  PyObject* PyDataBase_create       ( PyObject* module );
+  extern  PyObject* PyDataBase_getDB        ( PyObject* module );
   extern  PyObject* PyDataBase_getDataBase  ( PyObject* module );
   extern  PyObject* PyDataBase_Link         ( Hurricane::DataBase* db  );
   extern  void      PyDataBase_LinkPyType   ();

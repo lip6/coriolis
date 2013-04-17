@@ -64,6 +64,30 @@ extern "C" {
     if ( isExternal ) Py_RETURN_TRUE;
     Py_RETURN_FALSE;
   }
+  
+
+  static PyObject* PyNetExternalComponents_setExternal ( PyObject*, PyObject *args )
+  {
+    trace << "PyNetExternalComponents_setExternal()" << endl;
+
+    bool isExternal = false;
+
+    HTRY
+    PyObject* pyComponent;
+    if (PyArg_ParseTuple( args, "O", &pyComponent )) {
+      if (not PyObject_IsInstance(pyComponent,(PyObject*)&PyTypeComponent)) {
+        PyErr_SetString( ConstructorError, "NetExternalComponents.setExternal(): First argument is not of type Component." );
+        return NULL;
+      }
+      NetExternalComponents::setExternal( PYCOMPONENT_O(pyComponent) );
+    } else {
+      PyErr_SetString( ConstructorError, "Bad parameters given to NetExternalComponents.setExternal()." );
+      return NULL;
+    }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
 
 
   static PyObject* PyNetExternalComponents_get ( PyObject*, PyObject* args )
@@ -91,10 +115,12 @@ extern "C" {
 
 
   PyMethodDef PyNetExternalComponents_Methods[] =
-    { { "isExternal", (PyCFunction)PyNetExternalComponents_isExternal, METH_VARARGS|METH_CLASS
-                    , "Tells if Component belong to the externals of the Net." }
-    , { "get"       , (PyCFunction)PyNetExternalComponents_get       , METH_VARARGS|METH_CLASS
-                    , "Returns the Collection of external components of the Net." }
+    { { "isExternal" , (PyCFunction)PyNetExternalComponents_isExternal , METH_VARARGS|METH_CLASS
+                     , "Tells if Component belong to the externals of the Net." }
+    , { "setExternal", (PyCFunction)PyNetExternalComponents_setExternal, METH_VARARGS|METH_CLASS
+                     , "Flag the Component as belonging to to the external part of it's Net." }
+    , { "get"        , (PyCFunction)PyNetExternalComponents_get        , METH_VARARGS|METH_CLASS
+                     , "Returns the Collection of external components of the Net." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

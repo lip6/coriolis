@@ -15,8 +15,6 @@
 // +-----------------------------------------------------------------+
 
 
-
-
 #include "hurricane/isobar/PyPoint.h"
 #include "hurricane/isobar/PyNet.h"
 #include "hurricane/isobar/PyLayer.h"

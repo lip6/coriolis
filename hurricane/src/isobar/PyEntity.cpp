@@ -29,6 +29,7 @@
 #include "hurricane/isobar/PyContact.h"
 #include "hurricane/isobar/PyPad.h"
 #include "hurricane/isobar/PyPin.h"
+#include "hurricane/isobar/PyRoutingPad.h"
 #include "hurricane/Cell.h"
 
 namespace Isobar {
@@ -125,6 +126,9 @@ extern "C" {
     Reference* reference = dynamic_cast<Reference*>(entity);
     if ( reference ) return PyReference_Link ( reference );
 
+    RoutingPad* rp = dynamic_cast<RoutingPad*>(entity);
+    if ( rp ) return PyRoutingPad_Link ( rp );
+
     Horizontal* horizontal = dynamic_cast<Horizontal*>(entity);
     if ( horizontal ) return PyHorizontal_Link ( horizontal );
     
@@ -173,6 +177,7 @@ Hurricane::Entity* EntityCast ( PyObject* derivedObject ) {
   if ( IsPyPlug      (derivedObject) ) return PYPLUG_O(derivedObject);
   if ( IsPyHorizontal(derivedObject) ) return PYHORIZONTAL_O(derivedObject);
   if ( IsPyVertical  (derivedObject) ) return PYVERTICAL_O(derivedObject);
+  if ( IsPyRoutingPad(derivedObject) ) return PYROUTINGPAD_O(derivedObject);
   if ( IsPyContact   (derivedObject) ) return PYCONTACT_O(derivedObject);
   if ( IsPyPin       (derivedObject) ) return PYPIN_O(derivedObject);
   if ( IsPyNet       (derivedObject) ) return PYNET_O(derivedObject);

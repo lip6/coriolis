@@ -61,8 +61,6 @@ extern "C" {
   // Standart Delete (Attribute).
   DBoDestroyAttribute(PyCell_destroy,PyCell)
 
-
-
   
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyCell_getLibrary ()"

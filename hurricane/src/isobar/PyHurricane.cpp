@@ -513,7 +513,8 @@ extern "C" {
     , { "Box"                   ,              PyBox_create                      , METH_VARARGS, "Creates a new Box." }
     , { "Transformation"        ,              PyTransformation_create           , METH_VARARGS, "Creates a new Transformation." }
     , { "DataBase"              , (PyCFunction)PyDataBase_create                 , METH_NOARGS , "Creates the DataBase." }
-    , { "getDataBase"           , (PyCFunction)PyDataBase_getDataBase            , METH_NOARGS , "Gets the current DataBase." }
+    , { "getDB"                 , (PyCFunction)PyDataBase_getDB                  , METH_NOARGS , "Gets the current DataBase." }
+    , { "getDataBase"           , (PyCFunction)PyDataBase_getDB                  , METH_NOARGS , "Gets the current DataBase." }
     , { "Library"               , (PyCFunction)PyLibrary_create                  , METH_VARARGS, "Creates a new Library." }
 //  , { "getLibrary"            , (PyCFunction)PyLibrary_getLibrary              , METH_NOARGS , "Gets the current Library." }
     , { "Reference"             , (PyCFunction)PyReference_create                , METH_VARARGS, "Creates a new Reference." }

@@ -1,55 +1,18 @@
 
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2007-2013, All Rights Reserved
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
-// ===================================================================
-//
-// $Id: PyHyperNet.cpp,v 1.2 2007/05/10 11:15:56 d2 Exp $
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
-// |  Author      :                      Damien DUPUIS               |
-// |  E-mail      :              Damien.Dupuis@lip6.fr               |
+// |  Author      :                    Jean-Paul CHAPUT              |
+// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./PyHyperNet.cpp"                         |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
-
-
+// +-----------------------------------------------------------------+
 
 
 #include "hurricane/isobar/PyHyperNet.h"
@@ -62,41 +25,47 @@ using namespace Hurricane;
 
 namespace  Isobar {
 
-
-
-
 extern "C" {
 
-
-# define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(HyperNet,hyperNet,function)
-
-
-// x=================================================================x
-// |                 "PyHyperNet" Python Module Code Part                 |
-// x=================================================================x
-
-# if defined(__PYTHON_MODULE__)
+#define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(HyperNet,hyperNet,function)
 
 
-  // x-------------------------------------------------------------x
-  // |                "PyHyperNet" Attribute Methods                    |
-  // x-------------------------------------------------------------x
+// +=================================================================+
+// |              "PyHyperNet" Python Module Code Part               |
+// +=================================================================+
 
-
+#if defined(__PYTHON_MODULE__)
 
   
   // Standart Predicates (Attributes).
   DirectGetBoolAttribute(PyHyperNet_isValid  ,isValid  ,PyHyperNet,HyperNet)
 
-
   // Standart Delete (Attribute).
   DirectDestroyAttribute(PyHyperNet_destroy, PyHyperNet)
 
 
+  static PyObject* PyHyperNet_getNetOccurrences(PyHyperNet *self)
+  {
+    trace << "PyHyperNet_getNetOccurrences()" << endl;
 
+    METHOD_HEAD ( "HyperNet.getNetOccurrences()" )
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyHyperNet_getLeafPlugOccurrences()"
+    PyOccurrenceCollection* pyOccurrenceCollection = NULL;
+
+    HTRY
+    Occurrences* occurrences = new Occurrences(hyperNet->getNetOccurrences());
+
+    pyOccurrenceCollection = PyObject_NEW(PyOccurrenceCollection, &PyTypeOccurrenceCollection);
+    if (pyOccurrenceCollection == NULL) { 
+        return NULL;
+    }
+
+    pyOccurrenceCollection->_object = occurrences;
+    HCATCH
+    
+    return (PyObject*)pyOccurrenceCollection;
+  }
+
 
   static PyObject* PyHyperNet_getLeafPlugOccurrences(PyHyperNet *self)
   {
@@ -121,9 +90,6 @@ extern "C" {
   }
 
     
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyHyperNet_getCell ()"
-
   static PyObject* PyHyperNet_getCell ( PyHyperNet *self )
   {
     trace << "PyHyperNet_getCell ()" << endl;
@@ -139,41 +105,30 @@ extern "C" {
   }
 
 
-
-
-
-  // ---------------------------------------------------------------
-  // PyHyperNet Attribute Method table.
-
   PyMethodDef PyHyperNet_Methods[] =
-    { { "getCell"                     , (PyCFunction)PyHyperNet_getCell                     , METH_NOARGS , "Returns the hyperNet cell." }
-    , { "isValid"                     , (PyCFunction)PyHyperNet_isValid                     , METH_NOARGS , "Returns trus if the HyperNet isValid." }
+    { { "getCell"               , (PyCFunction)PyHyperNet_getCell               , METH_NOARGS , "Returns the hyperNet cell." }
+    , { "isValid"               , (PyCFunction)PyHyperNet_isValid               , METH_NOARGS , "Returns trus if the HyperNet isValid." }
+    , { "getNetOccurrences"     , (PyCFunction)PyHyperNet_getNetOccurrences     , METH_NOARGS 
+                                , "Returns the collection of Net occurrences" }
     , { "getLeafPlugOccurrences", (PyCFunction)PyHyperNet_getLeafPlugOccurrences, METH_NOARGS 
-                                      , "Returns the collection of leaf occurrences" }
-    , { "destroy"                     , (PyCFunction)PyHyperNet_destroy                     , METH_NOARGS
-                                      , "Destroy associated hurricane object, the python object remains." }
-    , {NULL, NULL, 0, NULL}           /* sentinel */
+                                , "Returns the collection of leaf occurrences" }
+    , { "destroy"               , (PyCFunction)PyHyperNet_destroy               , METH_NOARGS
+                                , "Destroy associated hurricane object, the python object remains." }
+    , {NULL, NULL, 0, NULL}     /* sentinel */
     };
 
 
-
-
-  // x-------------------------------------------------------------x
-  // |                  "PyHyperNet" Object Methods                     |
-  // x-------------------------------------------------------------x
   DirectDeleteMethod(PyHyperNet_DeAlloc,PyHyperNet)
   PyTypeObjectLinkPyType(HyperNet)
 
 
-# else  // End of Python Module Code Part.
+#else  // End of Python Module Code Part.
 
 
-// x=================================================================x
-// |                "PyHyperNet" Shared Library Code Part                 |
-// x=================================================================x
+// +=================================================================+
+// |             "PyHyperNet" Shared Library Code Part               |
+// +=================================================================+
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyHyperNet_create ()"
 
   PyObject* PyHyperNet_create ( PyObject *module, PyObject *args ) {
     trace << "PyHyperNet_create()" << endl;
@@ -200,19 +155,12 @@ extern "C" {
   }
 
 
-
-  // ---------------------------------------------------------------
-  // PyHyperNet Object Definitions.
-
   PyTypeObjectDefinitions(HyperNet)
 
 
-# endif  // End of Shared Library Code Part.
+#endif  // End of Shared Library Code Part.
 
 
-}  // End of extern "C".
+}  // extern "C".
 
-
-
-
-}  // End of Isobar namespace.
+}  // Isobar namespace.
