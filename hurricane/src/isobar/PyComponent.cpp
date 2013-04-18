@@ -1,19 +1,19 @@
+
+// -*- C++ -*-
 //
-// $Id: PyComponent.cpp,v 1.17 2008/02/07 17:09:41 xtof Exp $
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
 //
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
-// |  Author      :                   Jean-Paul Chaput               |
-// |  E-mail      :      Jean-Paul.Chaput@asim.lip6.fr               |
+// |  Author      :                    Jean-Paul CHAPUT              |
+// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./PyComponent.cpp"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Module  :       "./PyComponents.cpp"                       |
+// +-----------------------------------------------------------------+
+
 
 #include "hurricane/isobar/PyNet.h"
 #include "hurricane/isobar/PyLayer.h"
@@ -26,15 +26,15 @@
 #include "hurricane/isobar/PyVertical.h"
 #include "hurricane/isobar/PyContact.h"
 #include "hurricane/isobar/PyPin.h"
+#include "hurricane/isobar/PyComponentCollection.h"
+
 
 namespace  Isobar {
-
 
 using namespace Hurricane;
 
 
 extern "C" {
-
 
 #undef   ACCESS_OBJECT
 #undef   ACCESS_CLASS
@@ -43,16 +43,11 @@ extern "C" {
 #define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Component,component,function)
 
 
-// x=================================================================x
+// +=================================================================+
 // |             "PyComponent" Python Module Code Part               |
-// x=================================================================x
+// +=================================================================+
 
 #if defined(__PYTHON_MODULE__)
-
-
-  // x-------------------------------------------------------------x
-  // |              "PyComponent" Attribute Methods                |
-  // x-------------------------------------------------------------x
 
 
   // Standart Accessors (Attributes).
@@ -63,9 +58,8 @@ extern "C" {
   DBoDestroyAttribute(PyComponent_destroy,PyComponent)
   
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyComponent_getPosition ()"
-  static PyObject* PyComponent_getPosition ( PyComponent *self ) {
+  static PyObject* PyComponent_getPosition ( PyComponent *self )
+  {
     trace << "PyComponent_getPosition ()" << endl;
     METHOD_HEAD ( "Component.getPosition()" )
 
@@ -80,10 +74,8 @@ extern "C" {
   }
 
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyComponent_getNet ()"
-
-  static PyObject* PyComponent_getNet ( PyComponent *self ) {
+  static PyObject* PyComponent_getNet ( PyComponent *self )
+  {
     trace << "PyComponent_getNet ()" << endl;
     
     Net* net = NULL;
@@ -97,10 +89,9 @@ extern "C" {
     return PyNet_Link ( net );
   }
  
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyComponent_getLayer ()"
 
-  static PyObject* PyComponent_getLayer ( PyComponent *self ) {
+  static PyObject* PyComponent_getLayer ( PyComponent *self )
+  {
     trace << "PyComponent_getLayer ()" << endl;
     METHOD_HEAD ( "Component.getLayer()" )
 
@@ -129,9 +120,6 @@ extern "C" {
     return (PyObject*)pyPoint;
   }
 
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyComponent_getBoundingBox ()"
 
   static PyObject* PyComponent_getBoundingBox ( PyComponent *self, PyObject* args )
   {
@@ -163,27 +151,65 @@ extern "C" {
   }
 
 
+  static PyObject* PyComponent_getConnexComponents ( PyComponent *self )
+  {
+    trace << "PyComponent_getConnexComponents()" << endl;
+    METHOD_HEAD( "PyComponent.getConnexComponents()" )
 
-  // ---------------------------------------------------------------
-  // PyComponent Attribute Method table.
+    PyComponentCollection* pyComponentCollection = NULL;
+
+    HTRY
+    Components* components = new Components(component->getConnexComponents());
+
+    pyComponentCollection = PyObject_NEW( PyComponentCollection, &PyTypeComponentCollection );
+    if (pyComponentCollection == NULL) { 
+      return NULL;
+    }
+
+    pyComponentCollection->_object = components;
+    HCATCH
+    
+    return (PyObject*)pyComponentCollection;
+  }
+
+
+  static PyObject* PyComponent_getSlaveComponents ( PyComponent *self )
+  {
+    trace << "PyComponent_getSlaveComponents()" << endl;
+    METHOD_HEAD( "PyComponent.getSlaveComponents()" )
+
+    PyComponentCollection* pyComponentCollection = NULL;
+
+    HTRY
+    Components* components = new Components(component->getSlaveComponents());
+
+    pyComponentCollection = PyObject_NEW( PyComponentCollection, &PyTypeComponentCollection );
+    if (pyComponentCollection == NULL) { 
+      return NULL;
+    }
+
+    pyComponentCollection->_object = components;
+    HCATCH
+    
+    return (PyObject*)pyComponentCollection;
+  }
+
 
   PyMethodDef PyComponent_Methods[] =
-    { { "getX"                 , (PyCFunction)PyComponent_getX          , METH_NOARGS , "Return the Component X value." }
-    , { "getY"                 , (PyCFunction)PyComponent_getY          , METH_NOARGS , "Return the Component Y value." }
-    , { "getPosition"          , (PyCFunction)PyComponent_getPosition   , METH_NOARGS , "Return the Component position." }
-    , { "getCenter"            , (PyCFunction)PyComponent_getCenter     , METH_NOARGS , "Return the Component center position." }
-    , { "getNet"               , (PyCFunction)PyComponent_getNet        , METH_NOARGS , "Returns the net owning the component." }
-    , { "getLayer"             , (PyCFunction)PyComponent_getLayer      , METH_NOARGS , "Return the component layer." }
-    , { "getBoundingBox"       , (PyCFunction)PyComponent_getBoundingBox, METH_VARARGS, "Return the component boundingBox (optionally on a BasicLayer)." }
-    , { "destroy"              , (PyCFunction)PyComponent_destroy       , METH_NOARGS
+    { { "getX"                 , (PyCFunction)PyComponent_getX               , METH_NOARGS , "Return the Component X value." }
+    , { "getY"                 , (PyCFunction)PyComponent_getY               , METH_NOARGS , "Return the Component Y value." }
+    , { "getPosition"          , (PyCFunction)PyComponent_getPosition        , METH_NOARGS , "Return the Component position." }
+    , { "getCenter"            , (PyCFunction)PyComponent_getCenter          , METH_NOARGS , "Return the Component center position." }
+    , { "getNet"               , (PyCFunction)PyComponent_getNet             , METH_NOARGS , "Returns the net owning the component." }
+    , { "getLayer"             , (PyCFunction)PyComponent_getLayer           , METH_NOARGS , "Return the component layer." }
+    , { "getBoundingBox"       , (PyCFunction)PyComponent_getBoundingBox     , METH_VARARGS, "Return the component boundingBox (optionally on a BasicLayer)." }
+    , { "getConnexComponents"  , (PyCFunction)PyComponent_getConnexComponents, METH_NOARGS, "All the components connecteds to this one through hyper hooks." }
+    , { "getSlaveComponents"   , (PyCFunction)PyComponent_getSlaveComponents , METH_NOARGS, "All the components anchored directly or indirectly on this one." }
+    , { "destroy"              , (PyCFunction)PyComponent_destroy            , METH_NOARGS
                                , "destroy associated hurricane object, the python object remains." }
-    , {NULL, NULL, 0, NULL}           /* sentinel */
+    , {NULL, NULL, 0, NULL}    /* sentinel */
     };
 
-
-  // x-------------------------------------------------------------x
-  // |               "PyComponent" Object Methods                  |
-  // x-------------------------------------------------------------x
 
   DBoDeleteMethod(Component)
   PyTypeObjectLinkPyType(Component)
@@ -192,23 +218,16 @@ extern "C" {
 #else  // End of Python Module Code Part.
 
 
-// x=================================================================x
+// +=================================================================+
 // |            "PyComponent" Shared Library Code Part               |
-// x=================================================================x
+// +=================================================================+
 
-
-
-  // ---------------------------------------------------------------
-  // PyComponent Object Definitions.
 
   PyTypeInheritedObjectDefinitions(Component, Entity)
 
 #endif  // End of Shared Library Code Part.
 
 
-}  // End of extern "C".
+}  // extern "C".
 
-
-
-
-}  // End of Isobar namespace.
+}  // Isobar namespace.
