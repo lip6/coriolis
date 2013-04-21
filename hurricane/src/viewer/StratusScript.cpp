@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -19,9 +19,7 @@
 #include  <iostream>
 using namespace std;
 
-#include  <boost/filesystem/operations.hpp>
-namespace bfs = boost::filesystem;
-
+#include  "vlsisapd/utilities/Path.h"
 #include  "hurricane/Warning.h"
 #include  "hurricane/viewer/StratusScript.h"
 
@@ -38,17 +36,16 @@ namespace Hurricane {
     , _scriptDirectory()
     , _script         (NULL)
   {
-    bfs::path userStratus   = _scriptName;
-    bfs::path userDirectory = userStratus.branch_path();
+    Utilities::Path userStratus   ( _scriptName );
+    Utilities::Path userDirectory ( userStratus.dirname() );
 
-    if ( not userDirectory.is_complete() )
-      userDirectory = bfs::current_path() / userDirectory;
-    userDirectory.normalize();
+    if ( not userDirectory.absolute() )
+      userDirectory = Utilities::Path::cwd() / userDirectory;
 
     _scriptDirectory = userDirectory.string();
     Isobar::Script::addPath ( _scriptDirectory );
 
-    _script = Isobar::Script::create ( userStratus.leaf() );
+    _script = Isobar::Script::create ( userStratus.basename().string() );
     _script->setEditor ( editor );
   }
 

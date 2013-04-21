@@ -225,10 +225,16 @@ string Occurrence::getCompactString() const
     s += ":";
     if (_sharedPath) s += getString(_sharedPath->getName()) + ":";
     Instance* instance = dynamic_cast<Instance*>(_entity);
-    if (instance)
-      s += getString(instance->getName());
-    else
-      s += getString(_entity);
+    if (instance) {
+      s += "I."+getString(instance->getName());
+    } else {
+      Net* net = dynamic_cast<Net*>(_entity);
+      if (net) {
+        s += "N."+getString(net->getName());
+      } else {
+        s += getString(_entity);
+      }
+    }
   }
   s += ">";
   return s;

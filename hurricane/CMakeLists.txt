@@ -13,7 +13,7 @@
 
  set_cmake_policies()
  set_lib_link_mode()
- setup_boost(regex filesystem)
+ setup_boost(regex)
 
  set(QT_USE_QTXML "true")
  find_package(LibXml2 REQUIRED)

@@ -1,7 +1,7 @@
 
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2013, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,27 +19,19 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                Christophe Alexandre              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./hurricane/NetExternalComponents.h"                  |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./hurricane/NetExternalComponents.h"           |
+// +-----------------------------------------------------------------+
 
 
-#ifndef __HURRICANE_NET_EXTERNAL_COMPONENTS__
-#define __HURRICANE_NET_EXTERNAL_COMPONENTS__
+#ifndef HURRICANE_NET_EXTERNAL_COMPONENTS_H
+#define HURRICANE_NET_EXTERNAL_COMPONENTS_H
 
 #include  "hurricane/Component.h"
 #include  "hurricane/Relation.h"
@@ -60,7 +52,6 @@ namespace Hurricane {
   };
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
-
-#endif  // __HURRICANE_NET_EXTERNAL_COMPONENTS__
+#endif  // HURRICANE_NET_EXTERNAL_COMPONENTS_H

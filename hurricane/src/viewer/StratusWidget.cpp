@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -17,22 +12,13 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./StratusWidget.cpp"                      |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <Python.h>
 #include  <iostream>
 #include  <memory>
 using namespace std;
-
-#include  <boost/filesystem/operations.hpp>
-namespace bfs = boost::filesystem;
-
-#include  "hurricane/Warning.h"
-#include  "hurricane/viewer/Script.h"
 
 #include  <QLabel>
 #include  <QLineEdit>
@@ -42,7 +28,9 @@ namespace bfs = boost::filesystem;
 #include  <QCheckBox>
 #include  <QHBoxLayout>
 #include  <QVBoxLayout>
-
+#include  "vlsisapd/utilities/Path.h"
+#include  "hurricane/Warning.h"
+#include  "hurricane/viewer/Script.h"
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/StratusScript.h"
 #include  "hurricane/viewer/StratusWidget.h"
@@ -126,12 +114,11 @@ namespace Hurricane {
     if ( scriptName.endsWith(".py",Qt::CaseInsensitive) )
       scriptName.truncate ( scriptName.size()-3 );
 
-    bfs::path userStratus   = scriptName.toStdString();
-    bfs::path userDirectory = userStratus.branch_path();
+    Utilities::Path userStratus   ( scriptName.toStdString() );
+    Utilities::Path userDirectory ( userStratus.branch_path() );
 
-    if ( not userDirectory.is_complete() )
-      userDirectory = bfs::current_path() / userDirectory;
-    userDirectory.normalize();
+    if ( not userDirectory.absolute() )
+      userDirectory = Utilities::Path:cwd() / userDirectory;
 
     Isobar::Script::addPath ( userDirectory.string() );
 
