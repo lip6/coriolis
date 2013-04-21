@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -23,9 +23,7 @@ using namespace std;
 #include  <boost/program_options.hpp>
 namespace bopts = boost::program_options;
 
-#include  <boost/filesystem/operations.hpp>
-namespace bfs = boost::filesystem;
-
+#include  "vlsisapd/utilities/Path.h"
 #include  "vlsisapd/bookshelf/Exception.h"
 #include  "vlsisapd/configuration/Configuration.h"
 #include  "hurricane/DebugSession.h"
@@ -90,8 +88,6 @@ int main ( int argc, char *argv[] )
   bool  kiteSuccess = true;
 
   try {
-    bfs::path::default_name_check ( bfs::portable_posix_name );
-
     bool          destroyDatabase;
     float         edgeCapacity;
     unsigned long eventsLimit;
@@ -183,8 +179,8 @@ int main ( int argc, char *argv[] )
     }
 
     if ( arguments.count("conf") ) {
-      bfs::path userConfFile = arguments["conf"].as<string>();
-      if ( bfs::exists(userConfFile) ) {
+      Utilities::Path userConfFile ( arguments["conf"].as<string>() );
+      if ( userConfFile.exists() ) {
         Cfg::Configuration* conf = Cfg::Configuration::get ();
         conf->readFromFile ( userConfFile.string() );
       } else {

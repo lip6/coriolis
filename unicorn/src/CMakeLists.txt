@@ -84,6 +84,7 @@
                install ( TARGETS       pyUnicorn      DESTINATION ${PYTHON_SITE_PACKAGES} )
                install ( TARGETS       cgt.bin        DESTINATION bin )
                install ( PROGRAMS      cgt.py         DESTINATION bin RENAME cgt )
+               install ( PROGRAMS      cgt3.py        DESTINATION bin RENAME cgt3 )
                install ( FILES         ${mocincludes}
                                        ${pyIncludes}  DESTINATION include/coriolis2/unicorn ) 
 
