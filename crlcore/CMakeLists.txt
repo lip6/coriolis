@@ -16,7 +16,7 @@
  check_distribution()
  set_lib_link_mode()
  setup_sysconfdir("${CMAKE_INSTALL_PREFIX}")
- setup_boost(program_options filesystem python regex wave)
+ setup_boost(program_options python regex wave)
  message(STATUS "${Boost_LIBRARIES}")
 
  find_package(LibXml2 REQUIRED)

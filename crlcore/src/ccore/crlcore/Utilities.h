@@ -15,23 +15,19 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef __CRL_UTILITIES_H__
-#define __CRL_UTILITIES_H__
+#ifndef CRL_UTILITIES_H
+#define CRL_UTILITIES_H
 
 #include <cstdarg>
 #include <cstdio>
-
 #include <ostream>
 #include <iostream>
 #include <string>
-
-#include  <boost/filesystem/operations.hpp>
-namespace bfs = boost::filesystem;
-
-#include  "hurricane/Commons.h"
-#include  "hurricane/Error.h"
-#include  "hurricane/Slot.h"
-#include  "hurricane/DbU.h"
+#include "vlsisapd/utilities/Path.h"
+#include "hurricane/Commons.h"
+#include "hurricane/Error.h"
+#include "hurricane/Slot.h"
+#include "hurricane/DbU.h"
 
 
 namespace CRL {
@@ -50,31 +46,31 @@ namespace CRL {
 
   class  System {
     public:
-      static        System*          get           ();
-      static inline bool             getCatchCore  ();
-      static inline const bfs::path& getPath       ( const std::string& );
-      static inline bool             setCatchCore  ( bool catchCore );
-      static inline void             runPythonInit ();
+      static        System*                get           ();
+      static inline bool                   getCatchCore  ();
+      static inline const Utilities::Path& getPath       ( const std::string& );
+      static inline bool                   setCatchCore  ( bool catchCore );
+      static inline void                   runPythonInit ();
     private:
-      static System*                                _singleton;
-             bool                                   _catchCore;
-             std::map<const std::string,bfs::path>  _pathes;
+      static System*                                      _singleton;
+             bool                                         _catchCore;
+             std::map<const std::string,Utilities::Path>  _pathes;
     private:
-                              System         ();
-                              System         ( const System &other );
-             System&          operator=      ( const System &other );
-      static void             _trapSig       ( int sig );
-      inline bool             _getCatchCore  ();
-             const bfs::path& _getPath       ( const std::string& );
-      inline bool             _setCatchCore  ( bool catchCore );
-             void             _runPythonInit ();
+                                    System         ();
+                                    System         ( const System &other );
+             System&                operator=      ( const System &other );
+      static void                   _trapSig       ( int sig );
+      inline bool                   _getCatchCore  ();
+             const Utilities::Path& _getPath       ( const std::string& );
+      inline bool                   _setCatchCore  ( bool catchCore );
+             void                   _runPythonInit ();
   };
 
 
-  inline bool             System::getCatchCore  ()                         { return get()->_getCatchCore(); }
-  inline const bfs::path& System::getPath       ( const std::string& key ) { return get()->_getPath(key); }
-  inline bool             System::setCatchCore  ( bool catchCore )         { return get()->_setCatchCore(catchCore); }
-  inline void             System::runPythonInit ()                         { return get()->_runPythonInit(); }
+  inline bool                   System::getCatchCore  ()                         { return get()->_getCatchCore(); }
+  inline const Utilities::Path& System::getPath       ( const std::string& key ) { return get()->_getPath(key); }
+  inline bool                   System::setCatchCore  ( bool catchCore )         { return get()->_setCatchCore(catchCore); }
+  inline void                   System::runPythonInit ()                         { return get()->_runPythonInit(); }
 
 
 // -------------------------------------------------------------------
@@ -461,4 +457,4 @@ inline linefill& linefill::operator<< ( const T* t )
 LINEFILL_PR_SUPPORT(std::string);
 
 
-# endif
+#endif // CRL_UTILITIES

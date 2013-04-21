@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -24,6 +24,7 @@
 #include  <boost/program_options.hpp>
 namespace boptions = boost::program_options;
 
+#include  "vlsisapd/utilities/Path.h"
 #include  "vlsisapd/configuration/Configuration.h"
 #include  "hurricane/Backtrace.h"
 #include  "hurricane/Warning.h"
@@ -89,8 +90,8 @@ namespace {
 
   void  stratus1MappingNameChanged ( Cfg::Parameter* p )
   {
-    bfs::path stratusMappingName = p->asString();
-    if ( not stratusMappingName.has_root_directory() ) {
+    Utilities::Path stratusMappingName ( p->asString() );
+    if ( not stratusMappingName.absolute() ) {
       stratusMappingName = System::getPath("etc") / stratusMappingName;
     }
     setenv ( "STRATUS_MAPPING_NAME", stratusMappingName.string().c_str(), 1 );
@@ -249,9 +250,6 @@ namespace CRL {
     boptions::store  ( boptions::parse_environment(options,environmentMapper), arguments );
     boptions::notify ( arguments );
 
-    if ( bfs::path::default_name_check_writable() )
-      bfs::path::default_name_check ( bfs::portable_posix_name );
-
   // Force creation of singleton at this stage.
   // cerr << "In System singleton creation." << endl;
   // AllianceFramework::get();
@@ -266,8 +264,8 @@ namespace CRL {
                  );
     }
 
-    bfs::path sysConfDir ( SYS_CONF_DIR );
-    if ( not sysConfDir.has_root_path() ) {
+    Utilities::Path sysConfDir ( SYS_CONF_DIR );
+    if ( not sysConfDir.absolute() ) {
       if ( arguments.count("coriolis_top") ) {
         // const boptions::variable_value& value = arguments["coriolis_top"];
         // cerr << "value:"
@@ -297,12 +295,12 @@ namespace CRL {
     _pathes.insert ( make_pair("home",arguments["home"].as<string>()) );
 
   // Early setting of python pathes to be able to execute configuration scripts.
-    bfs::path pythonSitePackages = PYTHON_SITE_PACKAGES;
+    Utilities::Path pythonSitePackages ( PYTHON_SITE_PACKAGES );
     pythonSitePackages = arguments["coriolis_top"].as<string>() / pythonSitePackages;
     _pathes.insert ( make_pair("pythonSitePackages",pythonSitePackages.string()) );
-    bfs::path crlcoreDir = pythonSitePackages / "crlcore";
-    bfs::path stratusDir = pythonSitePackages / "stratus";
-    bfs::path cumulusDir = pythonSitePackages / "cumulus";
+    Utilities::Path crlcoreDir = pythonSitePackages / "crlcore";
+    Utilities::Path stratusDir = pythonSitePackages / "stratus";
+    Utilities::Path cumulusDir = pythonSitePackages / "cumulus";
 
     Isobar::Script::addPath ( sysConfDir.string() );
     Isobar::Script::addPath ( pythonSitePackages.string() );
@@ -331,7 +329,7 @@ namespace CRL {
     logModeChanged       ( Cfg::getParamBool("misc.logMode"      ) );
     traceLevelChanged    ( Cfg::getParamInt ("misc.traceLevel"   ) );
 
-    bfs::path stratusMappingName;
+    Utilities::Path stratusMappingName;
     if ( arguments.count("stratus_mapping_name") ) {
       Cfg::getParamString( "stratus1.mappingName")->setString ( arguments["stratus_mapping_name"].as<string>() );
     }
@@ -406,11 +404,11 @@ namespace CRL {
   }
 
 
-  const bfs::path& System::_getPath ( const string& key )
+  const Utilities::Path& System::_getPath ( const string& key )
   {
-    static bfs::path nullPath ("no_path");
+    static Utilities::Path nullPath ("no_path");
 
-    map<const string,bfs::path>::const_iterator ipath = _pathes.find ( key );
+    map<const string,Utilities::Path>::const_iterator ipath = _pathes.find( key );
     if ( ipath == _pathes.end() ) return nullPath;
 
     return (*ipath).second;
@@ -420,13 +418,13 @@ namespace CRL {
   void  System::_runPythonInit ()
   {
     Cfg::Configuration* conf               = Cfg::Configuration::get ();
-    bfs::path           sysConfDir         = getPath("etc");
-    bfs::path           pythonSitePackages = getPath("pythonSitePackages");
+    Utilities::Path     sysConfDir         = getPath("etc");
+    Utilities::Path     pythonSitePackages = getPath("pythonSitePackages");
 
 #if XML_NOT_DISABLED
-    bool      systemConfFound = false;
-    bfs::path systemConfFile  = sysConfDir / "tools.configuration.xml";
-    if ( bfs::exists(systemConfFile) ) {
+    bool            systemConfFound = false;
+    Utilities::Path systemConfFile  = sysConfDir / "tools.configuration.xml";
+    if ( systemConfFile.exists() ) {
       systemConfFound = true;
       conf->readFromFile ( systemConfFile.string() );
     } else {
@@ -435,14 +433,14 @@ namespace CRL {
     }
 #endif
 
-    bool      systemConfFound = false;
-    bfs::path systemConfFile  = pythonSitePackages / "crlcore" / "coriolisInit.py";
-    if ( bfs::exists(systemConfFile) ) {
+    bool            systemConfFound = false;
+    Utilities::Path systemConfFile  = pythonSitePackages / "crlcore" / "coriolisInit.py";
+    if ( systemConfFile.exists() ) {
       systemConfFound = true;
     //cout << "  o  Reading python dot configuration:" << endl;
     //cout << "     - <" << systemConfFile.string() << ">." << endl;
 
-      Isobar::Script* systemScript = Isobar::Script::create(systemConfFile.stem());
+      Isobar::Script* systemScript = Isobar::Script::create(systemConfFile.stem().string());
       systemScript->runFunction("coriolisConfigure",NULL,Isobar::Script::NoScriptArgs);
       systemScript->destroy();
     } else {
@@ -450,17 +448,17 @@ namespace CRL {
                      ,systemConfFile.string().c_str()) << endl;
     }
 
-    bool      homeConfFound = false;
-    bfs::path homeConfFile  = getPath("home");
+    bool            homeConfFound = false;
+    Utilities::Path homeConfFile  = getPath("home");
     homeConfFile /= ".coriolis2.configuration.xml";
-    if ( bfs::exists(homeConfFile) ) {
+    if ( homeConfFile.exists() ) {
       homeConfFound = true;
       conf->readFromFile ( homeConfFile.string() );
     }
 
-    bool      dotConfFound = false;
-    bfs::path dotConfFile  = "./.coriolis2.configuration.xml";
-    if ( bfs::exists(dotConfFile) ) {
+    bool            dotConfFound = false;
+    Utilities::Path dotConfFile  = "./.coriolis2.configuration.xml";
+    if ( dotConfFile.exists() ) {
       dotConfFound = true;
       conf->readFromFile ( dotConfFile.string() );
     }

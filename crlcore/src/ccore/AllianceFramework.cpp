@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -16,6 +16,7 @@
 
 
 #include  <unistd.h>
+#include  "vlsisapd/utilities/Path.h"
 #include  "hurricane/Warning.h"
 #include  "hurricane/Technology.h"
 #include  "hurricane/DataBase.h"
@@ -23,7 +24,6 @@
 #include  "hurricane/Cell.h"
 #include  "hurricane/Instance.h"
 #include  "hurricane/viewer/Graphics.h"
-
 #include  "crlcore/Utilities.h"
 #include  "crlcore/GraphicsParser.h"
 #include  "crlcore/SymbolicTechnologyParser.h"
@@ -392,9 +392,9 @@ namespace CRL {
   {
     if ( library == NULL ) return;
 
-    bfs::path libPath ( getString(library->getPath()) );
-    if ( not bfs::exists(libPath) ) {
-      bfs::create_directory(libPath);
+    Utilities::Path libPath ( getString(library->getPath()) );
+    if ( not libPath.exists() ) {
+      libPath.mkdir();
     }
 
     forEach ( Cell*, icell, library->getLibrary()->getCells() ) {

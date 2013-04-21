@@ -2,6 +2,7 @@
                include ( ${QT_USE_FILE} )
    include_directories ( ${CRLCORE_SOURCE_DIR}/src/ccore
                          ${HURRICANE_INCLUDE_DIR}
+                         ${UTILITIES_INCLUDE_DIR}
                          ${Boost_INCLUDE_DIR}
                        )
 
@@ -27,6 +28,7 @@
                                        ${AGDS_LIBRARY}
                                        ${CIF_LIBRARY}
                                        ${CONFIGURATION_LIBRARY}
+                                       ${UTILITIES_LIBRARY}
                                        ${LEFDEF_LIBRARIES}
                                        ${OA_LIBRARIES}
                                        ${QT_LIBRARIES}

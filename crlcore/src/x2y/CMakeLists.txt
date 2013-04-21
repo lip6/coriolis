@@ -2,6 +2,7 @@
                include ( ${QT_USE_FILE} )
    include_directories ( ${CRLCORE_SOURCE_DIR}/src/ccore
                          ${HURRICANE_INCLUDE_DIR}
+                         ${UTILITIES_INCLUDE_DIR}
                          ${Boost_INCLUDE_DIRS}
                        )
 
@@ -11,6 +12,7 @@
  
         add_executable ( cx2y        ${cpps} )
  target_link_libraries ( cx2y        crlcore
- 							${LIBEXECINFO_LIBRARIES} 
- 						)
+                                     ${UTILITIES_LIBRARY}
+                                     ${LIBEXECINFO_LIBRARIES} 
+                       )
                install ( TARGETS     cx2y DESTINATION bin )

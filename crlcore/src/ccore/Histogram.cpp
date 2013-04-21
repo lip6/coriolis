@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -19,10 +19,7 @@
 #include  <sstream>
 #include  <fstream>
 #include  <iomanip>
-#include  <boost/filesystem/operations.hpp>
-#include  <boost/filesystem/fstream.hpp>
-namespace bfs = boost::filesystem;
-
+#include  "vlsisapd/utilities/Path.h"
 #include  "crlcore/Histogram.h"
 
 
@@ -114,11 +111,11 @@ namespace CRL {
 
   void  Histogram::toGnuplot ( const string& basename )
   {
-    bfs::path datFile = basename + _fileExtension + ".dat";
+    Utilities::Path datFile ( basename+_fileExtension+".dat" );
     toFile ( datFile.string() );
 
-    bfs::path pltFile = basename + _fileExtension + ".plt";
-    bfs::ofstream fd ( pltFile );
+    Utilities::Path pltFile ( basename+_fileExtension+".plt" );
+    ofstream fd ( pltFile.string() );
 
     if ( not _mainTitle.empty() )
       fd << "set title \"" << _mainTitle << "\"\n";

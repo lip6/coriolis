@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |      C y c l o p  -  S i m p l e   V i e w e r                  |
 // |                                                                 |
@@ -17,10 +12,8 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./CyclopMain.cpp"                         |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
+
 
 #include  <memory>
 #include  <vector>
@@ -30,14 +23,12 @@ using namespace std;
 #include  <boost/program_options.hpp>
 namespace boptions = boost::program_options;
 
-#include  <boost/filesystem/operations.hpp>
-namespace bfs = boost::filesystem;
-
 #include  <QtGui>
 #if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and not defined (__APPLE__)
 #  include  <QGtkStyle>
 #endif
 
+#include  "vlsisapd/utilities/Path.h"
 #include  "hurricane/DataBase.h"
 #include  "hurricane/Technology.h"
 #include  "hurricane/Layer.h"
@@ -100,8 +91,6 @@ int main ( int argc, char *argv[] )
   int  returnCode = 0;
 
   try {
-    bfs::path::default_name_check ( bfs::portable_posix_name );
-
     unsigned int  traceLevel;
     bool          verbose1;
     bool          verbose2;
@@ -129,7 +118,7 @@ int main ( int argc, char *argv[] )
     boptions::store  ( boptions::parse_command_line(argc,argv,options), arguments );
     boptions::notify ( arguments );
 
-    bfs::path userConfFile = "ma/configuration";
+    Utilities::Path userConfFile ( "ma/configuration" );
     cerr << "Mark:" << userConfFile.string() << endl;
 
     if ( arguments.count("help") ) {
