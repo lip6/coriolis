@@ -5,6 +5,7 @@
                          ${EQUINOX_SOURCE_DIR}/src/intervalTree/src
                          ${HURRICANE_INCLUDE_DIR}
                          ${CORIOLIS_INCLUDE_DIR}
+                         ${UTILITIES_INCLUDE_DIR}
                          ${Boost_INCLUDE_DIRS}
                        )
 

@@ -14,6 +14,7 @@
  
  set(QT_USE_QTXML "true")
  find_package(Qt4 REQUIRED)
+ find_package(VLSISAPD REQUIRED)
  find_package(HURRICANE REQUIRED)
  find_package(CORIOLIS REQUIRED)
  
