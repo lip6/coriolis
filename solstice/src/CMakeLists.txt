@@ -4,6 +4,7 @@
    include_directories ( ${SOLSTICE_SOURCE_DIR}/src
                          ${HURRICANE_INCLUDE_DIR}
                          ${CORIOLIS_INCLUDE_DIR}
+                         ${UTILITIES_INCLUDE_DIR}
                          ${Boost_INCLUDE_DIRS}
                        )
 
