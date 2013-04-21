@@ -2,25 +2,17 @@
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2010, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
-// |                   C O R I O L I S                               |
+// +-----------------------------------------------------------------+
+// |      V L S I  Stand - Alone  Parsers / Drivers                  |
 // |           B o o k s h e l f   P a r s e r                       |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./Main.cpp"                               |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Module  :       "./BookshelfTkMain.cpp"                    |
+// +-----------------------------------------------------------------+
 
 
 #include  <cmath>
@@ -30,9 +22,6 @@ using namespace std;
 
 #include  <boost/program_options.hpp>
 namespace boptions = boost::program_options;
-
-#include  <boost/filesystem/operations.hpp>
-namespace bfs = boost::filesystem;
 
 #include  "vlsisapd/bookshelf/Exception.h"
 #include  "vlsisapd/bookshelf/Node.h"
@@ -145,8 +134,6 @@ int main ( int argc, char* argv[] )
       cout << options << endl; 
       exit ( 0 );
     }
-
-    bfs::path::default_name_check ( bfs::portable_posix_name );
 
     if ( arguments.count("aux") ) {
       auto_ptr<Circuit> circuit ( Circuit::parse(arguments["aux"].as<string>()) );

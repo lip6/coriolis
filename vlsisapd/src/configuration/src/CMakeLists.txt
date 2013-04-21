@@ -1,7 +1,8 @@
 
 
                include ( ${QT_USE_FILE} )
-   include_directories ( ${VLSISAPD_SOURCE_DIR}/src/configuration/src
+   include_directories ( ${VLSISAPD_SOURCE_DIR}/src/utilities/src
+                         ${VLSISAPD_SOURCE_DIR}/src/configuration/src
                          ${VLSISAPD_SOURCE_DIR}/src/openChams/src
                          ${Boost_INCLUDE_DIRS}
                          ${PYTHON_INCLUDE_PATH}
@@ -40,7 +41,8 @@
 				         
            add_library ( configuration   ${cpps} ${mocCpps} ${RCC_SRCS} )
  set_target_properties ( configuration   PROPERTIES VERSION 1.0 SOVERSION 1 )
- target_link_libraries ( configuration   ${QT_LIBRARIES}
+ target_link_libraries ( configuration   vlsisapdutils
+                                         ${QT_LIBRARIES}
                                          ${PYTHON_LIBRARIES}
                                          ${LIBXML2_LIBRARIES}
                                          ${Boost_LIBRARIES}

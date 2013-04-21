@@ -2,37 +2,27 @@
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
-// |                   C O R I O L I S                               |
+// +-----------------------------------------------------------------+
+// |      V L S I  Stand - Alone  Parsers / Drivers                  |
 // |           B o o k s h e l f   P a r s e r                       |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./bookshelf/Parser.h"                     |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./vlsisapd/bookshelf/Parser.cpp"               |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __VLSISAPD_BOOKSHELF_PARSER__
-#define  __VLSISAPD_BOOKSHELF_PARSER__
-
-#include  <boost/filesystem/operations.hpp>
-#include  <boost/filesystem/fstream.hpp>
-namespace bfs = boost::filesystem;
+#ifndef  VLSISAPD_BOOKSHELF_PARSER_H
+#define  VLSISAPD_BOOKSHELF_PARSER_H
 
 #include  <string>
 #include  <iostream>
+#include  <fstream>
 #include  <vector>
+#include  "vlsisapd/utilities/Path.h"
 
 
 namespace Bookshelf {
@@ -45,26 +35,26 @@ namespace Bookshelf {
                                  Parser                ();
              Circuit*            parse                 ( std::string designName, unsigned int flags );
     private:                                           
-             bool                _openStream           ( const bfs::path& );
+             bool                _openStream           ( const Utilities::Path& );
              void                _closeStream          ();
              char*               _readLine             ();
              void                _tokenize             ();
              void                _checkExtraDatas      ( size_t maxtoken, std::vector<char*>& );
              void                _parseFormatRevision  ( const std::string& slotName );
              size_t              _parseNum             ( const std::string& slotName, const std::string& token );
-             void                _parseNodes           ( const bfs::path& );
+             void                _parseNodes           ( const Utilities::Path& );
              void                _parseNodesNode       ();
-             void                _parseNets            ( const bfs::path& );
+             void                _parseNets            ( const Utilities::Path& );
              void                _parseNetsNetDegree   ();
              void                _parseNetsPin         ();
-             void                _parseWts             ( const bfs::path& );
-             void                _parseScl             ( const bfs::path& );
+             void                _parseWts             ( const Utilities::Path& );
+             void                _parseScl             ( const Utilities::Path& );
              void                _parseSclCoreRow      ();
              void                _parseSclSiteorient   ();
              void                _parseSclSitesymmetry ();
              void                _parseSclSubrowOrigin ();
              void                _parseSclCorerowEnd   ();
-             void                _parsePl              ( const bfs::path& );
+             void                _parsePl              ( const Utilities::Path& );
              void                _parsePlNodePlace     ();
       inline bool                _isComment            () const;
       inline bool                _hasExtraDatas        () const;
@@ -72,7 +62,7 @@ namespace Bookshelf {
       enum Misc { BufferSize=4096 };
     private:
       size_t             _lineno;
-      bfs::ifstream      _stream;
+      std::ifstream      _stream;
       char               _buffer[BufferSize];
       std::vector<char*> _tokens;
       unsigned int       _flags;
@@ -87,7 +77,6 @@ namespace Bookshelf {
   inline bool  Parser::_hasExtraDatas () const { return _flags&ExtraDatas; }
 
 
-} // End of Bookshelf namespace.
+} // Bookshelf namespace.
 
-
-#endif  // __VLSISAPD_BOOKSHELF_PARSER__
+#endif  // VLSISAPD_BOOKSHELF_PARSER_H

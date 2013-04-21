@@ -2,11 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
-//
-// ===================================================================
-//
-// $Id$
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -20,9 +16,7 @@
 
 
 #include  <iostream>
-#include  <boost/filesystem/operations.hpp>
-namespace bfs = boost::filesystem;
-
+#include  "vlsisapd/utilities/Path.h"
 #include  "vlsisapd/configuration/Parameter.h"
 #include  "vlsisapd/configuration/Configuration.h"
 
@@ -304,8 +298,8 @@ namespace Cfg {
 
     if ( (flags & MustExist) and hasFlags(MustExist) ) {
       if ( _type == String ) {
-        bfs::path filePath = ( svalue.str() );
-        if ( not bfs::exists(filePath) ) {
+        Utilities::Path filePath ( svalue.str() );
+        if ( not filePath.exists() ) {
         //cerr << " needrestart" << _id << endl;
           configuration->addLog ( Configuration::LogNeedExist, _id );
         } else

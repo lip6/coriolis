@@ -2,25 +2,17 @@
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
-// |                   C O R I O L I S                               |
+// +-----------------------------------------------------------------+
+// |      V L S I  Stand - Alone  Parsers / Drivers                  |
 // |           B o o k s h e l f   P a r s e r                       |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./Parser.cpp"                             |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Module  :  "./Parser.cpp"                                  |
+// +-----------------------------------------------------------------+
 
 
 #include  <sstream>
@@ -87,10 +79,10 @@ namespace Bookshelf {
   { }
 
 
-  bool  Parser::_openStream ( const bfs::path& filePath )
+  bool  Parser::_openStream ( const Utilities::Path& filePath )
   {
     if ( _stream.is_open() ) _closeStream();
-    _stream.open ( filePath );
+    _stream.open ( filePath.string() );
     _lineno = 0;
 
     return _stream.is_open();
@@ -229,7 +221,7 @@ namespace Bookshelf {
   }
 
 
-  void  Parser::_parseNodes ( const bfs::path& nodesPath )
+  void  Parser::_parseNodes ( const Utilities::Path& nodesPath )
   {
     _circuit->setNodesName ( nodesPath.string());
 
@@ -334,7 +326,7 @@ namespace Bookshelf {
   }
 
 
-  void  Parser::_parseNets ( const bfs::path& netsPath )
+  void  Parser::_parseNets ( const Utilities::Path& netsPath )
   {
     _circuit->setNetsName ( netsPath.string());
 
@@ -377,7 +369,7 @@ namespace Bookshelf {
   }
 
 
-  void  Parser::_parseWts ( const bfs::path& nodesPath )
+  void  Parser::_parseWts ( const Utilities::Path& nodesPath )
   {
   //_circuit->setWtsName ( wtsPath.string());
 
@@ -466,7 +458,7 @@ namespace Bookshelf {
   }
 
 
-  void  Parser::_parseScl ( const bfs::path& sclPath )
+  void  Parser::_parseScl ( const Utilities::Path& sclPath )
   {
     _circuit->setSclName ( sclPath.string());
 
@@ -565,7 +557,7 @@ namespace Bookshelf {
   }
 
 
-  void  Parser::_parsePl ( const bfs::path& plPath )
+  void  Parser::_parsePl ( const Utilities::Path& plPath )
   {
     _circuit->setPlName ( plPath.string());
 
@@ -590,8 +582,8 @@ namespace Bookshelf {
 
   Circuit* Parser::parse ( std::string designName, unsigned int flags )
   {
-    bfs::path auxPath ( designName+".aux" );
-    if ( not bfs::exists(auxPath) ) {
+    Utilities::Path auxPath ( designName+".aux" );
+    if ( not auxPath.exists() ) {
       throw Exception ( "%s .aux file not found.", auxPath.string().c_str() );
     }
 
@@ -649,8 +641,8 @@ namespace Bookshelf {
       for ( size_t iext=0 ; iext<5 ; ++iext ) {
         if ( ordereds[iext].empty() ) continue;
 
-        bfs::path slotPath ( ordereds[iext] );
-        if ( bfs::exists(slotPath) ) {
+        Utilities::Path slotPath ( ordereds[iext] );
+        if ( slotPath.exists() ) {
           std::cout << "     o  Reading <" << slotPath.string() << ">" << std::endl;
 
           switch ( iext ) {

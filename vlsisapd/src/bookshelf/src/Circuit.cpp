@@ -2,28 +2,22 @@
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
-// |                   C O R I O L I S                               |
+// +-----------------------------------------------------------------+
+// |      V L S I  Stand - Alone  Parsers / Drivers                  |
 // |           B o o k s h e l f   P a r s e r                       |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./Circuit.cpp"                            |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Module  :  "./Circuit.cpp"                                 |
+// +-----------------------------------------------------------------+
 
 
 #include  <sstream>
+#include  <fstream>
+#include  "vlsisapd/utilities/Path.h"
 #include  "vlsisapd/bookshelf/Exception.h"
 #include  "vlsisapd/bookshelf/Node.h"
 #include  "vlsisapd/bookshelf/Net.h"
@@ -222,55 +216,55 @@ namespace Bookshelf {
 
   void  Circuit::drive ( std::string directory, unsigned int flags )
   {
-    bfs::path  rootDirectory ( directory );
-    if ( not bfs::exists(rootDirectory) ) {
-      bfs::create_directory ( rootDirectory );
+    Utilities::Path  rootDirectory ( directory );
+    if ( not rootDirectory.exists() ) {
+      rootDirectory.mkdir();
     }
 
     if ( flags & Nodes ) {
-      bfs::path nodesPath ( rootDirectory );
+      Utilities::Path nodesPath ( rootDirectory );
       if ( getNodesName().empty() )
         nodesPath /= getDesignName() + ".nodes";
       else
         nodesPath /= getNodesName();
 
-      bfs::ofstream ofnodes ( nodesPath );
+      std::ofstream ofnodes ( nodesPath.c_str() );
       writeNodesToStream ( ofnodes );
       ofnodes.close ();
     }
 
     if ( flags & Nets ) {
-      bfs::path netsPath ( rootDirectory );
+      Utilities::Path netsPath ( rootDirectory );
       if ( getNetsName().empty() )
         netsPath /= getDesignName() + ".nets";
       else
         netsPath /= getNetsName();
 
-      bfs::ofstream ofnets ( netsPath );
+      std::ofstream ofnets ( netsPath.c_str() );
       writeNetsToStream ( ofnets );
       ofnets.close ();
     }
 
     if ( (flags & Scl) and (hasScl()) ) {
-      bfs::path sclPath ( rootDirectory );
+      Utilities::Path sclPath ( rootDirectory );
       if ( getSclName().empty() )
         sclPath /= getDesignName() + ".scl";
       else
         sclPath /= getSclName();
 
-      bfs::ofstream ofscl ( sclPath );
+      std::ofstream ofscl ( sclPath.c_str() );
       writeSclToStream ( ofscl );
       ofscl.close ();
     }
 
     if ( (flags & Pl) and (hasPl()) ) {
-      bfs::path plPath ( rootDirectory );
+      Utilities::Path plPath ( rootDirectory );
       if ( getPlName().empty() )
         plPath /= getDesignName() + ".pl";
       else
         plPath /= getPlName();
 
-      bfs::ofstream ofpl ( plPath );
+      std::ofstream ofpl ( plPath.c_str() );
       writePlToStream ( ofpl );
       ofpl.close ();
     }

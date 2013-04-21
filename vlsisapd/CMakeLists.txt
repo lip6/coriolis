@@ -8,7 +8,7 @@
  list(INSERT CMAKE_MODULE_PATH 0 "${VLSISAPD_SOURCE_DIR}/cmake_modules/")
 
  set_cmake_policies()
- setup_boost(program_options filesystem python regex)
+ setup_boost(program_options python regex)
 
  find_package(LibXml2 REQUIRED)
  find_package(PythonSitePackages REQUIRED)

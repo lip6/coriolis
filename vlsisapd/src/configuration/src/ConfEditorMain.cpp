@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |      V L S I  Stand - Alone  Parsers / Drivers                  |
@@ -22,13 +22,11 @@
 #include  <boost/program_options.hpp>
 namespace boptions = boost::program_options;
 
-#include  <boost/filesystem/operations.hpp>
-namespace bfs = boost::filesystem;
-
 #include  <QtGui>
 #if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and not defined (__APPLE__)
 #  include  <QGtkStyle>
 #endif
+#include  "vlsisapd/utilities/Path.h"
 #include  "vlsisapd/configuration/Configuration.h"
 #include  "vlsisapd/configuration/ConfigurationWidget.h"
 #include  "vlsisapd/configuration/ConfEditorWidget.h"
@@ -67,13 +65,11 @@ int main ( int argc, char* argv[] )
     if ( not disableGtkStyle ) qa->setStyle ( new QGtkStyle() );
 #endif
 
-    bfs::path::default_name_check ( bfs::portable_posix_name );
-
     Configuration* conf = Configuration::get ();
 
     if ( arguments.count("conf") ) {
-      bfs::path confPath = ( arguments["conf"].as<string>() );
-      if ( bfs::exists(confPath) ) {
+      Utilities::Path confPath = ( arguments["conf"].as<string>() );
+      if ( confPath.exists() ) {
         cout << "Reading configuration: <" << confPath.string() << ">." << endl;
         conf->readFromFile ( confPath.string() );
       } else {
@@ -81,8 +77,8 @@ int main ( int argc, char* argv[] )
       }
     }
 
-    bfs::path dotConfPath ( "./.coriolis2.configuration.xml" );
-    if ( bfs::exists(dotConfPath) ) {
+    Utilities::Path dotConfPath ( "./.coriolis2.configuration.xml" );
+    if ( dotConfPath.exists() ) {
       cout << "Reading dot configuration: <" << dotConfPath.string() << ">." << endl;
       conf->readFromFile ( dotConfPath.string() );
     }
@@ -90,8 +86,8 @@ int main ( int argc, char* argv[] )
   //cout << "misc.catchCore:   " << conf->getParameter("misc.catchCore"  )->asBool() << endl;
   //cout << "kite.eventsLimit: " << conf->getParameter("kite.eventsLimit")->asInt () << endl;
 
-    bfs::path pyDotConfPath ( "./.coriolis2.configuration.py" );
-    if ( bfs::exists(pyDotConfPath) ) {
+    Utilities::Path pyDotConfPath ( "./.coriolis2.configuration.py" );
+    if ( pyDotConfPath.exists() ) {
       cout << "Reading python dot configuration: <" << pyDotConfPath.string() << ">." << endl;
       Py_Initialize ();
       FILE* fd = fopen ( pyDotConfPath.string().c_str(), "r" );
