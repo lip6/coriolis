@@ -82,7 +82,7 @@ namespace Bookshelf {
   bool  Parser::_openStream ( const Utilities::Path& filePath )
   {
     if ( _stream.is_open() ) _closeStream();
-    _stream.open ( filePath.string() );
+    _stream.open ( filePath.string().c_str() );
     _lineno = 0;
 
     return _stream.is_open();
