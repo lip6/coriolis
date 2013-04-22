@@ -5,6 +5,7 @@
                          ${KNIK_SOURCE_DIR}/src/flute-2.4/src
                          ${HURRICANE_INCLUDE_DIR} 
                          ${CORIOLIS_INCLUDE_DIR} 
+                         ${UTILITIES_INCLUDE_DIR} 
                          ${Boost_INCLUDE_DIRS}
                        )
                    set ( includes      knik/Configuration.h
@@ -56,6 +57,7 @@
                                        ${CONFIGURATION_LIBRARY}
                                        ${CIF_LIBRARY}
                                        ${AGDS_LIBRARY}
+                                       ${UTILITIES_LIBRARY}
                                        ${LEFDEF_LIBRARIES}
                                        ${OA_LIBRARIES}
                                        ${QT_LIBRARIES}
