@@ -124,18 +124,16 @@ if __name__ == "__main__":
     """echo "%(MESSAGE)s";\n"""                                       \
     """echo "Switching to Coriolis 2.x (%(buildDir)s)";\n"""          \
     """PATH="%(PATH)s";\n"""                                          \
-    """LD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";\n"""                    \
     """BOOTSTRAP_TOP="%(BOOTSTRAP_TOP)s";\n"""                        \
     """CORIOLIS_TOP="%(CORIOLIS_TOP)s";\n"""                          \
     """STRATUS_MAPPING_NAME="%(SYSCONF_DIR)s/stratus2sxlib.xml";\n""" \
-    """export PATH LD_LIBRARY_PATH BOOTSTRAP_TOP CORIOLIS_TOP STRATUS_MAPPING_NAME;\n""" \
+    """export PATH BOOTSTRAP_TOP CORIOLIS_TOP STRATUS_MAPPING_NAME;\n""" \
     """hash -r;\n"""
 
   shellScriptCsh = \
     """echo "%(MESSAGE)s";\n"""                              \
     """echo "Switching to Coriolis 2.x (%(buildDir)s)";\n""" \
     """setenv PATH "%(PATH)s";\n"""                          \
-    """setenv LD_LIBRARY_PATH "%(LD_LIBRARY_PATH)s";\n"""    \
     """setenv BOOTSTRAP_TOP "%(BOOTSTRAP_TOP)s";\n"""        \
     """setenv CORIOLIS_TOP "%(CORIOLIS_TOP)s";\n"""          \
     """setenv STRATUS_MAPPING_NAME "%(SYSCONF_DIR)s/stratus2sxlib.xml";\n""" \
@@ -167,7 +165,7 @@ if __name__ == "__main__":
   if not options.nopython:
     pyVersion = sys.version_info
     version   = "%d.%d" % (pyVersion[0],pyVersion[1])
-    if osType.startswith("Linux.SL") or osType.startswith("Linux.sl"):
+    if osType.startswith("Linux.SL") or osType.startswith("Linux.sl") or osType.startswith("Darwin"):
       sitePackagesDir = "%s/python%s/site-packages" % (absLibDir,version)
     else:
       sitePackagesDir = "%s/python%s/dist-packages" % (absLibDir,version)
@@ -178,8 +176,17 @@ if __name__ == "__main__":
     strippedPythonPath = "%s/stratus:" % (sitePackagesDir) + strippedPythonPath
 
     shellScriptSh  += """PYTHONPATH="%(PYTHONPATH)s";\n""" \
-                      """export PYTHONPATH"""
+                      """export PYTHONPATH;\n"""
     shellScriptCsh += """setenv PYTHONPATH "%(PYTHONPATH)s";"""
+
+    if osType == "Darwin":
+      shellScriptSh += """DYLD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";\n""" \
+                       """export DYLD_LIBRARY_PATH;\n"""
+      shellScriptCsh += """setenv DYLD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";\n""" 
+    else:
+      shellScriptSh += """LD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";\n""" \
+                       """export LD_LIBRARY_PATH;\n"""
+      shellScriptCsh += """setenv LD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";\n""" 
 
   if options.csh: shellScript = shellScriptCsh
   else:           shellScript = shellScriptSh
