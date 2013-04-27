@@ -719,8 +719,24 @@ extern "C" {
       return NULL;                                                               \
   }
 
+#define NolinkLocatorNextMethod(TYPE)                                            \
+  static PyObject* Py##TYPE##LocatorNext(Py##TYPE##CollectionLocator* pyLocator) \
+  {                                                                              \
+      Locator<TYPE*>* locator = pyLocator->_object;                              \
+      HTRY                                                                       \
+      if (locator->isValid()) {                                                  \
+          Py##TYPE* pyObject = PyObject_NEW( Py##TYPE, &PyType##TYPE );          \
+          if (pyObject == NULL) return NULL;                                     \
+          pyObject->_object = locator->getElement();                             \
+          locator->progress();                                                   \
+          return (PyObject*)pyObject;                                            \
+      }                                                                          \
+      HCATCH                                                                     \
+      return NULL;                                                               \
+  }
 
-#define EntityLocatorNextMethod(TYPE)                                         \
+
+#define EntityLocatorNextMethod(TYPE)                                   \
   static PyObject* Py##TYPE##LocatorNext(Py##TYPE##CollectionLocator* pyLocator) {  \
       Locator<TYPE*>* locator = pyLocator->_object;                     \
       HTRY                                                              \

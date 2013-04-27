@@ -41,6 +41,7 @@
                                     PyOccurrence.cpp
                                     PyOccurrenceCollection.cpp
                                     PyHook.cpp
+                                    PyHookCollection.cpp
                                     PyPad.cpp
                                     PyPath.cpp
                                     PyPin.cpp
@@ -95,6 +96,8 @@
                                     hurricane/isobar/PyNetExternalComponents.h
                                     hurricane/isobar/PyOccurrence.h
                                     hurricane/isobar/PyOccurrenceCollection.h
+                                    hurricane/isobar/PyHook.h
+                                    hurricane/isobar/PyHookCollection.h
                                     hurricane/isobar/PyPad.h
                                     hurricane/isobar/PyPath.h
                                     hurricane/isobar/PyPin.h

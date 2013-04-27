@@ -51,6 +51,7 @@
 #include "hurricane/isobar/PyNetExternalComponents.h"
 #include "hurricane/isobar/PyHyperNet.h"
 #include "hurricane/isobar/PyHook.h"
+#include "hurricane/isobar/PyHookCollection.h"
 #include "hurricane/isobar/PyComponent.h"
 #include "hurricane/isobar/PyComponentCollection.h"
 #include "hurricane/isobar/PyPlug.h"
@@ -550,6 +551,7 @@ extern "C" {
     PyNet_LinkPyType ();
     PyHyperNet_LinkPyType ();
     PyHook_LinkPyType ();
+    PyHookCollection_LinkPyType ();
     PyComponent_LinkPyType ();
     PySegment_LinkPyType ();
     PyPad_LinkPyType ();
@@ -573,6 +575,7 @@ extern "C" {
     PYTYPE_READY ( Library                       )
     PYTYPE_READY ( Entity                        )
     PYTYPE_READY ( Hook                          )
+    PYTYPE_READY ( HookCollection                )
     PYTYPE_READY ( Material                      )
     PYTYPE_READY ( Layer                         )
     PYTYPE_READY ( LayerMask                     )
@@ -637,6 +640,7 @@ extern "C" {
     __cs.addType ( "cell"       , &PyTypeCell                  , "<Cell>"                  , false, "ent" );
     __cs.addType ( "cellCol"    , &PyTypeCellCollection        , "<CellCollection>"        , false );
     __cs.addType ( "hook"       , &PyTypeHook                  , "<Hook>"                  , false );
+    __cs.addType ( "hookColl"   , &PyTypeHookCollection        , "<HookCollection>"        , false );
     __cs.addType ( "comp"       , &PyTypeComponent             , "<Component>"             , false, "ent" );
     __cs.addType ( "compCol"    , &PyTypeComponentCollection   , "<ComponentCollection>"   , false );
     __cs.addType ( "contact"    , &PyTypeContact               , "<Contact>"               , false, "comp" );
@@ -729,6 +733,8 @@ extern "C" {
 
     Py_INCREF ( &PyTypeHook );
     PyModule_AddObject ( module, "Hook"                 , (PyObject*)&PyTypeHook );
+    Py_INCREF ( &PyTypeHookCollection );
+    PyModule_AddObject ( module, "HookCollection"       , (PyObject*)&PyTypeHookCollection );
     Py_INCREF ( &PyTypeRoutingPad );
     PyModule_AddObject ( module, "RoutingPad"           , (PyObject*)&PyTypeRoutingPad );
     Py_INCREF ( &PyTypeVertical );

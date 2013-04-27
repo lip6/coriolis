@@ -18,6 +18,7 @@
 #include "hurricane/isobar/PyEntity.h"
 #include "hurricane/isobar/PyComponent.h"
 #include "hurricane/isobar/PyHook.h"
+#include "hurricane/isobar/PyHookCollection.h"
 
 
 namespace  Isobar {
@@ -56,6 +57,48 @@ extern "C" {
     HCATCH
       
     return (PyObject*)PyEntity_NEW(component);
+  }
+  
+
+  static PyObject* PyHook_getHooks ( PyHook *self )
+  {
+    trace << "PyHook_getHooks()" << endl;
+
+    METHOD_HEAD( "Hook.getHooks()" )
+
+    PyHookCollection* pyHookCollection = NULL;
+
+    HTRY
+    Hooks* hooks = new Hooks( hook->getHooks() );
+
+    pyHookCollection = PyObject_NEW( PyHookCollection, &PyTypeHookCollection );
+    if (pyHookCollection == NULL) return NULL;
+
+    pyHookCollection->_object = hooks;
+    HCATCH
+    
+    return (PyObject*)pyHookCollection;
+  }
+  
+
+  static PyObject* PyHook_getSlaveHooks ( PyHook *self )
+  {
+    trace << "PyHook_getSlaveHooks()" << endl;
+
+    METHOD_HEAD( "Hook.getSlaveHooks()" )
+
+    PyHookCollection* pyHookCollection = NULL;
+
+    HTRY
+    Hooks* hooks = new Hooks( hook->getSlaveHooks() );
+
+    pyHookCollection = PyObject_NEW( PyHookCollection, &PyTypeHookCollection );
+    if (pyHookCollection == NULL) return NULL;
+
+    pyHookCollection->_object = hooks;
+    HCATCH
+    
+    return (PyObject*)pyHookCollection;
   }
 
 
@@ -145,6 +188,10 @@ extern "C" {
                                , "Return the master hook next to the master of this Hook." }
     , { "getPreviousMasterHook", (PyCFunction)PyHook_getPreviousMasterHook, METH_NOARGS
                                , "Return the master hook previous to the master of this Hook (walk trough the whole ring)." }
+    , { "getHooks"             , (PyCFunction)PyHook_getHooks             , METH_NOARGS
+                               , "Return the Collection of all hooks part of that ring." }
+    , { "getSlaveHooks"        , (PyCFunction)PyHook_getSlaveHooks        , METH_NOARGS
+                               , "Return the Collection of all hooks slave to this one." }
     , { "isMaster"             , (PyCFunction)PyHook_isMaster             , METH_NOARGS
                                , "Tells if this Hook is of master kind" }
     , { "isAttached"           , (PyCFunction)PyHook_isAttached           , METH_NOARGS
