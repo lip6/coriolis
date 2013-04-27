@@ -18,6 +18,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <sstream>
