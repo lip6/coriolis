@@ -1,36 +1,8 @@
 
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
-//
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -41,8 +13,6 @@
 // | =============================================================== |
 // |  C++ Module  :  "./PyHurricane.cpp"                             |
 // +-----------------------------------------------------------------+
-
-
 
 
 #include "hurricane/isobar/PyHurricane.h"
@@ -80,6 +50,7 @@
 #include "hurricane/isobar/PyNetCollection.h"
 #include "hurricane/isobar/PyNetExternalComponents.h"
 #include "hurricane/isobar/PyHyperNet.h"
+#include "hurricane/isobar/PyHook.h"
 #include "hurricane/isobar/PyComponent.h"
 #include "hurricane/isobar/PyComponentCollection.h"
 #include "hurricane/isobar/PyPlug.h"
@@ -578,6 +549,7 @@ extern "C" {
     PyReference_LinkPyType ();
     PyNet_LinkPyType ();
     PyHyperNet_LinkPyType ();
+    PyHook_LinkPyType ();
     PyComponent_LinkPyType ();
     PySegment_LinkPyType ();
     PyPad_LinkPyType ();
@@ -600,6 +572,7 @@ extern "C" {
     PYTYPE_READY ( Technology                    )
     PYTYPE_READY ( Library                       )
     PYTYPE_READY ( Entity                        )
+    PYTYPE_READY ( Hook                          )
     PYTYPE_READY ( Material                      )
     PYTYPE_READY ( Layer                         )
     PYTYPE_READY ( LayerMask                     )
@@ -663,6 +636,7 @@ extern "C" {
     __cs.addType ( "ent"        , &PyTypeEntity                , "<Entity>"                , false );
     __cs.addType ( "cell"       , &PyTypeCell                  , "<Cell>"                  , false, "ent" );
     __cs.addType ( "cellCol"    , &PyTypeCellCollection        , "<CellCollection>"        , false );
+    __cs.addType ( "hook"       , &PyTypeHook                  , "<Hook>"                  , false );
     __cs.addType ( "comp"       , &PyTypeComponent             , "<Component>"             , false, "ent" );
     __cs.addType ( "compCol"    , &PyTypeComponentCollection   , "<ComponentCollection>"   , false );
     __cs.addType ( "contact"    , &PyTypeContact               , "<Contact>"               , false, "comp" );
@@ -753,6 +727,8 @@ extern "C" {
     Py_INCREF ( &PyTypeQuery );
     PyModule_AddObject ( module, "Query"                , (PyObject*)&PyTypeQuery );
 
+    Py_INCREF ( &PyTypeHook );
+    PyModule_AddObject ( module, "Hook"                 , (PyObject*)&PyTypeHook );
     Py_INCREF ( &PyTypeRoutingPad );
     PyModule_AddObject ( module, "RoutingPad"           , (PyObject*)&PyTypeRoutingPad );
     Py_INCREF ( &PyTypeVertical );

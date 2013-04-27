@@ -1,5 +1,10 @@
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+
+// -*- C++ -*-
+//
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
+//
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
@@ -7,23 +12,18 @@
 // |  E-mail      :      Jean-Paul.Chaput@asim.lip6.fr               |
 // | =============================================================== |
 // |  C++ Module  :       "./PyContact.cpp"                          |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
-
-
+// +-----------------------------------------------------------------+
 
 
 #include "hurricane/isobar/PyNet.h"
 #include "hurricane/isobar/PyLayer.h"
+#include "hurricane/isobar/PyHook.h"
 #include "hurricane/isobar/PyContact.h"
 #include "hurricane/isobar/PyHorizontal.h"
 #include "hurricane/isobar/PyVertical.h"
 
 
 namespace  Isobar {
-
 
 using namespace Hurricane;
 
@@ -38,17 +38,11 @@ extern "C" {
 #define METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Contact,contact,function)
 
 
-// x=================================================================x
-// |              "PyContact" Python Module Code Part                |
-// x=================================================================x
-
 #if defined(__PYTHON_MODULE__)
 
-
-  // x-------------------------------------------------------------x
-  // |               "PyContact" Attribute Methods                 |
-  // x-------------------------------------------------------------x
-
+// +=================================================================+
+// |              "PyContact" Python Module Code Part                |
+// +=================================================================+
 
   // Standart Accessors (Attributes).
   DirectGetLongAttribute(PyContact_getWidth     , getWidth     , PyContact,Contact)
@@ -63,14 +57,12 @@ extern "C" {
   DirectSetLongAttribute(PyContact_setY ,setY ,"Contact.setY" ,PyContact,Contact)
   DirectSetLongAttribute(PyContact_setDx,setDx,"Contact.setDx",PyContact,Contact)
   DirectSetLongAttribute(PyContact_setDy,setDy,"Contact.setDy",PyContact,Contact)
+  accessorHook(getAnchorHook,PyContact,Contact)
 
   
   // Standart destroy (Attribute).
   DBoDestroyAttribute(PyContact_destroy, PyContact)
 
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyContact_translate ()"
 
   static PyObject* PyContact_translate ( PyContact *self, PyObject* args ) {
     trace << "PyContact_translate ()" << endl;
@@ -90,12 +82,10 @@ extern "C" {
   }
 
 
-  // ---------------------------------------------------------------
-  // PyContact Attribute Method table.
-
   PyMethodDef PyContact_Methods[] =
-    { { "destroy"         , (PyCFunction)PyContact_destroy         , METH_NOARGS
+    { { "destroy"        , (PyCFunction)PyContact_destroy        , METH_NOARGS
                          , "Destroy associated hurricane object, the python object remains." }
+    , { "getAnchorHook"  , (PyCFunction)PyContact_getWidth       , METH_NOARGS , "Return the contact anchor hook." }
     , { "getWidth"       , (PyCFunction)PyContact_getWidth       , METH_NOARGS , "Return the contact width." }
     , { "getHalfWidth"   , (PyCFunction)PyContact_getHalfWidth   , METH_NOARGS , "Return the contact half width." }
     , { "getHeight"      , (PyCFunction)PyContact_getHeight      , METH_NOARGS , "Return the contact height." }
@@ -111,14 +101,6 @@ extern "C" {
     };
 
 
-
-
-  // x-------------------------------------------------------------x
-  // |                "PyContact" Object Methods                   |
-  // x-------------------------------------------------------------x
-  
-
-
   DBoDeleteMethod(Contact)
   PyTypeObjectLinkPyType(Contact)
 
@@ -126,12 +108,10 @@ extern "C" {
 #else  // End of Python Module Code Part.
 
 
-// x=================================================================x
+// +=================================================================+
 // |             "PyContact" Shared Library Code Part                |
-// x=================================================================x
+// +=================================================================+
   
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyContact_create ()"
 
   PyObject* PyContact_create ( PyObject *module, PyObject *args ) {
     trace << "PyContact_create()" << endl;
@@ -166,22 +146,14 @@ extern "C" {
   }
 
 
-
-
   // Link/Creation Method.
   DBoLinkCreateMethod(Contact)
-
-
-
-  // ---------------------------------------------------------------
-  // PyContact Object Definitions.
 
   PyTypeInheritedObjectDefinitions(Contact, Component)
 
 #endif  // End of Shared Library Code Part.
 
 
-}  // End of extern "C".
+}  // extern "C".
 
-
-}  // End of Isobar namespace.
+}  // Isobar namespace.

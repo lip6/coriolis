@@ -1,5 +1,10 @@
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+
+// -*- C++ -*-
+//
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
+//
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
@@ -7,10 +12,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./PyBox.cpp"                              |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 
@@ -29,16 +31,11 @@ extern "C" {
 #define  METHOD_HEAD(function)  GENERIC_METHOD_HEAD(Box,box,function)
 
 
-// x=================================================================x
+// +=================================================================+
 // |                 "PyBox" Python Module Code Part                 |
-// x=================================================================x
+// +=================================================================+
 
 #if defined(__PYTHON_MODULE__)
-
-
-  // x-------------------------------------------------------------x
-  // |                "PyBox" Attribute Methods                    |
-  // x-------------------------------------------------------------x
 
 
   // Standart Accessors (Attributes).
@@ -64,11 +61,6 @@ extern "C" {
   DirectDestroyAttribute(PyBox_destroy, PyBox)
 
 
-
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_getCenter ()"
-
   static PyObject* PyBox_getCenter ( PyBox *self ) {
     trace << "PyBox_getCenter()" << endl;
 
@@ -84,12 +76,6 @@ extern "C" {
     return (PyObject*)pyPoint;
   }
 
-
-
-
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_getUnion ()"
 
   static PyObject* PyBox_getUnion ( PyBox *self, PyObject* args ) {
     trace << "PyBox_getUnion()" << endl;

@@ -473,6 +473,23 @@ extern "C" {
   }
 
 
+#define  accessorHook(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)                        \
+  static PyObject*  PY_SELF_TYPE##_##FUNC_NAME( PY_SELF_TYPE *self )           \
+  {                                                                            \
+    trace << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                        \
+                                                                               \
+    PyHook* pyHook = PyObject_NEW( PyHook, &PyTypeHook );                      \
+    if (pyHook == NULL) return NULL;                                           \
+                                                                               \
+    HTRY                                                                       \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")         \
+    pyHook->_object = cobject->FUNC_NAME();                                    \
+    HCATCH                                                                     \
+                                                                               \
+    return (PyObject*)pyHook;                                                  \
+  }                                                                            \
+
+
 // -------------------------------------------------------------------
 // Attribute Method Macro For Booleans.
 

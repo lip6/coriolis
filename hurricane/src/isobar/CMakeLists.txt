@@ -40,6 +40,7 @@
                                     PyNetExternalComponents.cpp
                                     PyOccurrence.cpp
                                     PyOccurrenceCollection.cpp
+                                    PyHook.cpp
                                     PyPad.cpp
                                     PyPath.cpp
                                     PyPin.cpp
