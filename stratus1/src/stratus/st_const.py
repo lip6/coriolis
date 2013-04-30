@@ -119,17 +119,19 @@ class Constant ( Model ) :
     Model.__init__ ( self, name, param )
 
     self.string = Constant.getString ( param )
-    self.nbit   = len ( self.string )
+    if 'nbit' in param: self.nbit = param['nbit']
+    else: self.nbit = len(self.string)
+    self.string = self.string[0] * (self.nbit - len(self.string)) + self.string
 
   def Interface ( self ) :
-    self.outPut = SignalOut ( "output0", self.nbit )
+    self.outPut = SignalOut ( "o", self.nbit )
 
     self.vdd = VddIn ( "vdd" )
     self.vss = VssIn ( "vss" )
 
   def Netlist ( self ) :
     i = 0
-    for letter in self.string :
+    for letter in self.string[::-1] :
       if letter == "1" : self.outPut[i] <= One  ( 1 )
       else             : self.outPut[i] <= Zero ( 1 )
       i += 1
@@ -151,52 +153,48 @@ class Constant ( Model ) :
     nb = param['nb']
     
     # Error : if nb is not a string
-    if type ( nb ) != types.StringType : raise "\n[Stratus ERROR] Constant : the argument must be a string.\n"
+    if type ( nb ) not in [types.StringType, types.IntType, types.LongType] : raise "\n[Stratus ERROR] Constant : the argument must be a string, int or long.\n"
       
     ### String representing a binary number ( from the LSB to the MSB ) ###
-    bina = re.search (     "0[bB]([0-1]+)", nb )
-    hexa = re.search ( "0[xX]([0-9,A-F]+)", nb )
-    oct  = re.search (     "0[oO]([0-7]+)", nb )
-    dec  = re.search (          "([0-9]+)", nb )
+    if isinstance(nb, types.StringType):
+      bina = re.search (         "0[bB]([0-1]+)", nb )
+      hexa = re.search ( "0[xX]([0-9,A-F,a-f]+)", nb )
+      oct  = re.search (         "0[oO]([0-7]+)", nb )
+      dec  = re.search (              "([0-9]+)", nb )
     
-    # The parameter is a binary number
-    if bina :
-      result = bina.group(1)
-      string = ""
-      for i in range ( len (result)-1, -1, -1 ) : string += result[i]
-    # The parameter is an hexadecimal number
-    elif hexa :
-      result = hexa.group(1)
-      string = ""
-      raise "Hexa not ready yet."
-    # The parameter is an octal number
-    elif oct :
-      result = oct.group(1)
-      string = ""
-      raise "Octal not ready yet."
-    # The parameter is a decimal number
-    elif dec :
-      num = int ( nb )
-      string = ""
-
-      if not num :
-        string = "0"
+      # The parameter is a binary number
+      if bina :
+        result = bina.group(1)
+        base = 2
+      # The parameter is an hexadecimal number
+      elif hexa :
+        result = hexa.group(1)
+        base = 16
+      # The parameter is an octal number
+      elif oct :
+        result = oct.group(1)
+        base = 8
+      # The parameter is a decimal number
+      elif dec :
+        result = oct.group(1)
+        base = 10
+            
+      # Error if the string does not belong to the previous categories
       else :
-        if num < 0 :
-          width = ilog2(-num)
-          mask = iexp2(width) - 1
-          string = bin(num & mask)
-          string = string[2:]
-        else:
-          while num :
-            num2 = num
-            num /= 2
-            if ( num * 2 ) != num2 : string += "1"
-            else                   : string += "0"
-          
-    # Error if the string does not belong to the previous categories
-    else :
-      raise "\n[Stratus ERROR] Const : the argument must be a string representing a number in decimal, binary (0b) or hexa (0x).\n"
+        raise "\n[Stratus ERROR] Const : the argument must be a string representing a number in decimal, binary (0b) or hexa (0x).\n"
+     
+      nbit = len(result)
+      nbint = int(result,base)
+
+    ### nb is int or long
+    else:
+      nbint = nb
+      nbit = nb.bit_length()
+
+    if (nbint < 0):
+        string = '1' + bin(nbint & (2**(nbit+1)-1))[2:]
+    else:
+        string = '0' + bin(nbint)[2:]
 
     return string
     
