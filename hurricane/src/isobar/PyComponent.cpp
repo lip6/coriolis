@@ -20,6 +20,7 @@
 #include "hurricane/isobar/PyPoint.h"
 #include "hurricane/isobar/PyBox.h"
 #include "hurricane/isobar/PyBasicLayer.h"
+#include "hurricane/isobar/PyHook.h"
 #include "hurricane/isobar/PyComponent.h"
 #include "hurricane/isobar/PyPlug.h"
 #include "hurricane/isobar/PyHorizontal.h"
@@ -53,6 +54,7 @@ extern "C" {
   // Standart Accessors (Attributes).
   DirectGetLongAttribute(PyComponent_getX,getX,PyComponent,Component)
   DirectGetLongAttribute(PyComponent_getY,getY,PyComponent,Component)
+  accessorHook(getBodyHook,PyComponent,Component)
 
   // Standart Destroy (Attribute).
   DBoDestroyAttribute(PyComponent_destroy,PyComponent)
@@ -196,7 +198,8 @@ extern "C" {
 
 
   PyMethodDef PyComponent_Methods[] =
-    { { "getX"                 , (PyCFunction)PyComponent_getX               , METH_NOARGS , "Return the Component X value." }
+    { { "getBodyHook"          , (PyCFunction)PyComponent_getBodyHook        , METH_NOARGS , "Return the component body hook (is a master Hook)." }
+    , { "getX"                 , (PyCFunction)PyComponent_getX               , METH_NOARGS , "Return the Component X value." }
     , { "getY"                 , (PyCFunction)PyComponent_getY               , METH_NOARGS , "Return the Component Y value." }
     , { "getPosition"          , (PyCFunction)PyComponent_getPosition        , METH_NOARGS , "Return the Component position." }
     , { "getCenter"            , (PyCFunction)PyComponent_getCenter          , METH_NOARGS , "Return the Component center position." }
