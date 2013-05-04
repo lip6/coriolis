@@ -85,7 +85,7 @@ extern "C" {
   PyMethodDef PyContact_Methods[] =
     { { "destroy"        , (PyCFunction)PyContact_destroy        , METH_NOARGS
                          , "Destroy associated hurricane object, the python object remains." }
-    , { "getAnchorHook"  , (PyCFunction)PyContact_getWidth       , METH_NOARGS , "Return the contact anchor hook." }
+    , { "getAnchorHook"  , (PyCFunction)PyContact_getAnchorHook  , METH_NOARGS , "Return the contact anchor hook." }
     , { "getWidth"       , (PyCFunction)PyContact_getWidth       , METH_NOARGS , "Return the contact width." }
     , { "getHalfWidth"   , (PyCFunction)PyContact_getHalfWidth   , METH_NOARGS , "Return the contact half width." }
     , { "getHeight"      , (PyCFunction)PyContact_getHeight      , METH_NOARGS , "Return the contact height." }
