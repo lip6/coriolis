@@ -115,7 +115,7 @@ namespace CRL {
     toFile ( datFile.string() );
 
     Utilities::Path pltFile ( basename+_fileExtension+".plt" );
-    ofstream fd ( pltFile.string() );
+    ofstream fd ( pltFile.string().c_str() );
 
     if ( not _mainTitle.empty() )
       fd << "set title \"" << _mainTitle << "\"\n";
