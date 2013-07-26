@@ -1,26 +1,29 @@
 
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
+// +-----------------------------------------------------------------+
+// |                   C O R I O L I S                               |
+// |          Alliance / Hurricane  Interface                        |
+// |                                                                 |
+// |  Author      :                    Jean-Paul CHAPUT              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
+// | =============================================================== |
+// |  C++ Module  :       "./ToolEngine.cpp"                         |
+// +-----------------------------------------------------------------+
 
 
-#include  "hurricane/Commons.h"
-#include  "hurricane/Error.h"
-#include  "hurricane/Cell.h"
-#include  "hurricane/Relation.h"
-
-#include  "crlcore/Utilities.h"
-#include  "crlcore/ToolEngine.h"
+#include "hurricane/Commons.h"
+#include "hurricane/Error.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Relation.h"
+#include "crlcore/Utilities.h"
+#include "crlcore/ToolEngine.h"
 
 
 namespace {
-
 
   using std::cout;
   using std::cerr;
@@ -38,7 +41,7 @@ namespace {
   using CRL::ToolEngine;
     
 
-  const Name  ToolEnginesRelationName = "ToolEnginesRelationName";
+  const Name  ToolEnginesRelationName   = "ToolEnginesRelationName";
     
 
 // -------------------------------------------------------------------
@@ -162,14 +165,14 @@ namespace {
     set<ToolEnginesRelation*>::iterator irelation = _toolEnginesRelations.begin();
     for ( ; irelation != _toolEnginesRelations.end() ; ++irelation ) {
       vector<ToolEngine*> tools;
-      forEach ( ToolEngine*, itool, (*irelation)->getSlaveOwners().getSubSet<ToolEngine*>() )
-        tools.push_back ( *itool );
-
-      for ( size_t i=0 ; i<tools.size() ; ++i ) {
-        tools[i]->destroy ();
+      forEach ( ToolEngine*, itool, (*irelation)->getSlaveOwners().getSubSet<ToolEngine*>() ) {
+        tools.push_back( *itool );
       }
+
+      for ( size_t i=0 ; i<tools.size() ; ++i )
+        tools[i]->destroy();
     }
-    _toolEnginesRelations.clear ();
+    _toolEnginesRelations.clear();
   }
 
 
@@ -183,6 +186,9 @@ namespace CRL {
 
 // -------------------------------------------------------------------
 // Class  :  "CRL::ToolEngine".
+
+
+  bool  ToolEngine::_inDestroyAll = false;
 
 
   ToolEngine::ToolEngine ( Cell* cell )
@@ -225,22 +231,26 @@ namespace CRL {
   }
 
 
+  bool  ToolEngine::inDestroyAll ()
+  { return _inDestroyAll; }
+
+
   void  ToolEngine::destroyAll ()
   {
-    ToolEnginesRelation::destroyAllToolEnginesRelations  ();
+    _inDestroyAll = true;
+    ToolEnginesRelation::destroyAllToolEnginesRelations();
+    _inDestroyAll = false;
   }
 
 
   string  ToolEngine::_getTypeName () const
-  {
-    return _TName ( "ToolEngine" );
-  }
+  { return _TName ( "ToolEngine" ); }
 
 
   string  ToolEngine::_getString () const
   {
     string s = DBo::_getString();
-    s.insert(s.length() - 1, " " + getString(getName()));
+    s.insert(s.length() - 1, " " + getString(_cell->getName()));
     return s;
   }
 

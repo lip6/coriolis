@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2012, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -37,7 +37,6 @@ namespace Hurricane {
 
 namespace CRL {
 
-
   using std::string;
   using std::vector;
   using Hurricane::Record;
@@ -56,6 +55,7 @@ namespace CRL {
       static  ToolEngines  get                                 ( const Cell* cell );
       static  ToolEngine*  get                                 ( const Cell* cell, const Name& name );
       static  void         destroyAll                          ();
+      static  bool         inDestroyAll                        ();
     // Methods.
       virtual const Name&  getName                             () const = 0;
       inline  Cell*        getCell                             () const;
@@ -66,6 +66,8 @@ namespace CRL {
       virtual string       _getString                          () const;
       virtual Record*      _getRecord                          () const;
 
+    private:
+      static  bool         _inDestroyAll;
     protected:
     // Internal: Attributes
               Cell*        _cell;
