@@ -180,7 +180,7 @@ class net :
                   }
       else :
         inst_name = Constant.getModelName ( constParam )
-        map_cst = { 'output0': cell._TAB_NETS_OUT[num_net]
+        map_cst = { 'o': cell._TAB_NETS_OUT[num_net]
                   , 'vdd': cell._st_vdds[0]
                   , 'vss': cell._st_vsss[0]
                   }

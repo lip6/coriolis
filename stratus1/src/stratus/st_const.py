@@ -194,7 +194,8 @@ class Constant ( Model ) :
     if (nbint < 0):
         string = '1' + bin(nbint & (2**(nbit+1)-1))[2:]
     else:
-        string = '0' + bin(nbint)[2:]
+        tmp = bin(nbint)[2:]
+        string = '0'*(nbit - len(tmp)) + tmp
 
     return string
     
