@@ -154,6 +154,27 @@ extern "C" {
   }
 
 
+  PyObject* PyEnvironment_getLIBRARYPath ( PyEnvironment* self, PyObject* args )
+  {
+    trace << "PyEnvironment_getLIBRARYPath()" << endl;
+
+    HTRY
+    METHOD_HEAD("Environment.getLIBRARYPath()")
+    int  index = 0;
+
+    if (PyArg_ParseTuple( args, "i:Environment.addLIBRARYPath", &index )) {
+      string path = env->getLIBRARYPath( index );
+      if (path.size()) return Py_BuildValue( "s", path.c_str() );
+    } else {
+      PyErr_SetString( ConstructorError, "invalid number of parameters for Environment.getLIBRARYPath." );
+      return NULL;
+    }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
   static PyObject* PyEnvironment_Repr ( PyEnvironment* self )
   {
     if ( self->ACCESS_OBJECT == NULL )
@@ -245,6 +266,8 @@ extern "C" {
                                 , "Gets the pad cell recognition regular expression." }
     , { "getCATALOG"            , (PyCFunction)PyEnvironment_getCATALOG            , METH_NOARGS
                                 , "Gets the catalog file name." }
+    , { "getLIBRARYPath"        , (PyCFunction)PyEnvironment_getLIBRARYPath        , METH_VARARGS
+                                , "Gets the path of the library at the given index." }
     , { "getPrint"              , (PyCFunction)PyEnvironment_getPrint              , METH_NOARGS
                                 , "Display the environment in a terminal fashion formating." }
     , { "isPOWER"               , (PyCFunction)PyEnvironment_isPOWER               , METH_VARARGS

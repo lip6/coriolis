@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -15,13 +15,12 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __CRL_ENVIRONMENT__
-#define  __CRL_ENVIRONMENT__
+#ifndef  CRL_ENVIRONMENT
+#define  CRL_ENVIRONMENT
 
-#include  <regex.h>
-
-#include  <string>
-#include  <crlcore/SearchPath.h>
+#include <regex.h>
+#include <string>
+#include <crlcore/SearchPath.h>
 
 
 namespace CRL {
@@ -30,14 +29,12 @@ namespace CRL {
   class Environment {
     public:
       enum AddMode { Append=1, Prepend=2, Replace=3 };
-
     public:
     // Internal: Static Methods.
       static const char*        getEnv                 ( const char* variable, const char* defaultValue );
     // Constructors & destructors.
                                 Environment            ();
                                ~Environment            ();
-
     // Accessors.
       inline const std::string& getCORIOLIS_TOP        () const;
       inline const std::string& getDisplayStyle        () const;
@@ -56,14 +53,13 @@ namespace CRL {
       inline const std::string& getPad                 () const;
       inline const std::string& getCATALOG             () const;
       inline SearchPath&        getLIBRARIES           ();
-
+             std::string        getLIBRARYPath         ( size_t i );
     // Predicates.
              bool               isPOWER                ( const char* name ) const;
              bool               isGROUND               ( const char* name ) const;
              bool               isCLOCK                ( const char* name ) const;
              bool               isBLOCKAGE             ( const char* name ) const;
              bool               isPad                  ( const char* name ) const;
-
     // Modifiers.
              void               validate               () const;
              void               loadFromXml            ( const std::string& path="", bool warnNotFound=true );
@@ -85,13 +81,11 @@ namespace CRL {
       inline void               setCATALOG             ( const char* value );
       inline void               setWORKING_LIBRARY     ( const char* value );
              void               addSYSTEM_LIBRARY      ( const char* value, const char* libName, unsigned int mode=Append );
-
     // Methods.
              std::string        getPrint               () const;
       inline std::string        _getTypeName           () const;
              std::string        _getString             () const;
              Record*            _getRecord             () const;
-
     protected:
     // Internal: Attributes.
              std::string        _CORIOLIS_TOP;
@@ -117,7 +111,6 @@ namespace CRL {
              regex_t            _BlockageRegex;
              regex_t            _padRegex;
              bool               _inConstructor;
-
     private:
              void         _setRegex       ( regex_t* regex, const std::string& pattern, const char* name );
   };
@@ -156,10 +149,10 @@ namespace CRL {
   inline std::string            Environment::_getTypeName           () const { return "Environment"; }
 
 
-} // End of CRL namespace.
+} // CRL namespace.
 
 
 INSPECTOR_P_SUPPORT(CRL::Environment);
 
 
-# endif
+#endif

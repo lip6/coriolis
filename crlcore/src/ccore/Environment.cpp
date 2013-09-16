@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -15,16 +15,14 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <cctype>
-#include  <cstdlib>
-#include  <map>
-#include  <iomanip>
-
-#include  <QXmlStreamReader>
-
-#include  "crlcore/Utilities.h"
-#include  "crlcore/XmlParser.h"
-#include  "crlcore/Environment.h"
+#include <cctype>
+#include <cstdlib>
+#include <map>
+#include <iomanip>
+#include <QXmlStreamReader>
+#include "crlcore/Utilities.h"
+#include "crlcore/XmlParser.h"
+#include "crlcore/Environment.h"
 
 
 namespace {
@@ -747,6 +745,13 @@ namespace CRL {
       }
     }
     _LIBRARIES.append (value,libName);
+  }
+
+
+  string  Environment::getLIBRARYPath ( size_t i )
+  {
+    if (i >= _LIBRARIES.getSize()) return "";
+    return _LIBRARIES[i].getPath();
   }
 
 
