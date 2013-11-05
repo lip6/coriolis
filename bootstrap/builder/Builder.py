@@ -51,16 +51,16 @@ class Builder:
 
         if attribute in self._conf.getAllIds(): setattr( self._conf, attribute, value )
         
-        if   attribute == "quiet":            self._quiet               = value
-        elif attribute == "rmBuild":          self._rmBuild             = value
-        elif attribute == "doBuild":          self._doBuild             = value
-        elif attribute == "noCache":          self._noCache             = value
-        elif attribute == "enableDoc":        self._enableDoc           = value
-        elif attribute == "enableShared":     self._enableShared        = value
-        elif attribute == "checkDatabase":    self._checkDatabase       = value
-        elif attribute == "checkDeterminism": self._checkDeterminism    = value
-        elif attribute == "verboseMakefile":  self._verboseMakefile     = value
-        elif attribute == "makeArguments":    self._makeArguments       = value.split ()
+        if   attribute == "quiet":            self._quiet            = value
+        elif attribute == "rmBuild":          self._rmBuild          = value
+        elif attribute == "doBuild":          self._doBuild          = value
+        elif attribute == "noCache":          self._noCache          = value
+        elif attribute == "enableDoc":        self._enableDoc        = value
+        elif attribute == "enableShared":     self._enableShared     = value
+        elif attribute == "checkDatabase":    self._checkDatabase    = value
+        elif attribute == "checkDeterminism": self._checkDeterminism = value
+        elif attribute == "verboseMakefile":  self._verboseMakefile  = value
+        elif attribute == "makeArguments":    self._makeArguments    = value.split ()
         return
 
 

@@ -3,7 +3,7 @@
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+# Copyright (c) UPMC 2008-2013, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -54,8 +54,8 @@ def safeImport ( moduleName, symbol=None ):
 
 def guessOs ():
     libDir            = 'lib'
-    osSlsoc6x_64      = re.compile (".*Linux.*el6.*x86_64.*")
-    osSlsoc6x         = re.compile (".*Linux.*el6.*")
+    osSlsoc6x_64      = re.compile (".*Linux.*(el6|slsoc6).*x86_64.*")
+    osSlsoc6x         = re.compile (".*Linux.*(el6|slsoc6).*")
     osSLSoC5x_64      = re.compile (".*Linux.*el5.*x86_64.*")
     osSLSoC5x         = re.compile (".*Linux.*(el5|2.6.23.13.*SoC).*")
     osLinux_64        = re.compile (".*Linux.*x86_64.*")
@@ -71,16 +71,20 @@ def guessOs ():
     if osSlsoc6x_64.match(lines[0]):
         osType = "Linux.slsoc6x_64"
         libDir = "lib64"
-    elif osSlsoc6x   .match(lines[0]): osType = "Linux.slsoc6x"
+    elif osSlsoc6x.match(lines[0]):
+        osType = "Linux.slsoc6x"
     elif osSLSoC5x_64.match(lines[0]):
         osType = "Linux.SLSoC5x_64"
         libDir = "lib64"
-    elif osSLSoC5x .match(lines[0]): osType = "Linux.SLSoC5x"
+    elif osSLSoC5x .match(lines[0]):
+        osType = "Linux.SLSoC5x"
     elif osLinux_64.match(lines[0]):
         osType = "Linux.x86_64"
         libDir = "lib64"
-    elif osLinux .match(lines[0]): osType = "Linux.i386"
-    elif osDarwin.match(lines[0]): osType = "Darwin"
+    elif osLinux .match(lines[0]):
+        osType = "Linux.i386"
+    elif osDarwin.match(lines[0]):
+        osType = "Darwin"
     elif osFreeBSD8x_amd64.match(lines[0]):
         osType = "FreeBSD.8x.amd64"
         libDir = "lib64"
@@ -105,9 +109,10 @@ def guessPythonSitePackage ():
 
 
 def autoLocate ():
+    osType, libDir = guessOs()
+    print 'Building for target: <%s>' % osType
     print 'Making an educated guess to locate myself:'
     sitePackage    = guessPythonSitePackage()
-    osType, libDir = guessOs()
     
     builderDir = None
     locations  = [ os.path.abspath(os.path.dirname(sys.argv[0]))
@@ -140,6 +145,7 @@ def autoLocate ():
       sys.exit(1)
     
     sys.path.insert( 0, builderDir )
+
     return
 
 
@@ -226,7 +232,7 @@ else:
     if options.static:           builder.enableShared      = "OFF"
     if options.doc:              builder.enableDoc         = "ON"
     if options.checkDb:          builder.checkDatabase     = "ON"
-    if options.checkDeterminism: builder.enableDeterminism = "ON"
+    if options.checkDeterminism: builder.checkDeterminism  = "ON"
     if options.verboseMakefile:  builder.verboseMakefile   = "ON"
     if options.rootDir:          builder.rootDir           = options.rootDir
     if options.noBuild:          builder.doBuild           = False

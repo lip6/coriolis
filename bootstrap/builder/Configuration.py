@@ -2,7 +2,7 @@
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+# Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -120,8 +120,8 @@ class Configuration ( object ):
 
     def _guessOs ( self ):
         self._libSuffix         = None
-        self._osSlsoc6x_64      = re.compile (".*Linux.*el6.*x86_64.*")
-        self._osSlsoc6x         = re.compile (".*Linux.*el6.*")
+        self._osSlsoc6x_64      = re.compile (".*Linux.*(el6|slsoc6).*x86_64.*")
+        self._osSlsoc6x         = re.compile (".*Linux.*(el6|slsoc6).*")
         self._osSLSoC5x_64      = re.compile (".*Linux.*el5.*x86_64.*")
         self._osSLSoC5x         = re.compile (".*Linux.*(el5|2.6.23.13.*SoC).*")
         self._osLinux_64        = re.compile (".*Linux.*x86_64.*")
