@@ -17,6 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
+#include <limits>
 #include "hurricane/SharedPath.h"
 #include "hurricane/Instance.h"
 #include "hurricane/Cell.h"
@@ -29,6 +30,7 @@ namespace Hurricane {
 // ****************************************************************************************************
 // SharedPath_Instances declaration
 // ****************************************************************************************************
+
 
 class SharedPath_Instances : public Collection<Instance*> {
 // ******************************************************
@@ -96,14 +98,22 @@ class SharedPath_Instances : public Collection<Instance*> {
 // ****************************************************************************************************
 
 static char NAME_SEPARATOR = '.';
+unsigned int  SharedPath::_idCounter = 0;
+
 
 SharedPath::SharedPath(Instance* headInstance, SharedPath* tailSharedPath)
 // ***********************************************************************
-:  _headInstance(headInstance),
+  : _id(_idCounter++),
+    _headInstance(headInstance),
     _tailSharedPath(tailSharedPath),
     _quarkMap(),
     _nextOfInstanceSharedPathMap(NULL)
 {
+    if (_idCounter == std::numeric_limits<unsigned int>::max()) {
+      throw Error( "SharedName::SharedName(): Identifier counter has reached it's limit (%d bits)."
+                 , std::numeric_limits<unsigned int>::digits );
+    }
+
     if (!_headInstance)
         throw Error("Can't create " + _TName("SharedPath") + " : null head instance");
 
@@ -252,7 +262,7 @@ const Entity* SharedPath::QuarkMap::_getKey(Quark* quark) const
 unsigned SharedPath::QuarkMap::_getHashValue(const Entity* entity) const
 // *********************************************************************
 {
-    return ( (unsigned int)( (unsigned long)entity ) ) / 8;
+  return entity->getId() / 8;
 }
 
 Quark* SharedPath::QuarkMap::_getNextElement(Quark* quark) const

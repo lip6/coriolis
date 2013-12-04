@@ -19,6 +19,7 @@
 
 //#define  TEST_INTRUSIVESET
 
+#include "hurricane/SharedName.h"
 #include "hurricane/Cell.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Library.h"
@@ -215,7 +216,7 @@ void Cell::flattenNets(bool buildRings)
       }
 
       forEach ( Occurrence, iplugOccurrence, hyperNet.getLeafPlugOccurrences() ) {
-        currentRP = RoutingPad::create ( net, *iplugOccurrence, RoutingPad::BiggestArea );
+        currentRP = RoutingPad::create ( net, *iplugOccurrence, RoutingPad::BiggestArea|RoutingPad::ShowWarning );
         currentRP->materialize ();
         if ( buildRings ) {
           if ( previousRP ) {
@@ -409,10 +410,10 @@ Name Cell::InstanceMap::_getKey(Instance* instance) const
     return instance->getName();
 }
 
-unsigned Cell::InstanceMap::_getHashValue(Name name) const
+unsigned int  Cell::InstanceMap::_getHashValue(Name name) const
 // *******************************************************
 {
-    return ( (unsigned int)( (unsigned long)name._getSharedName() ) ) / 8;
+  return name._getSharedName()->getId() / 8;
 }
 
 Instance* Cell::InstanceMap::_getNextElement(Instance* instance) const
@@ -442,7 +443,7 @@ Cell::SlaveInstanceSet::SlaveInstanceSet()
 unsigned Cell::SlaveInstanceSet::_getHashValue(Instance* slaveInstance) const
 // **************************************************************************
 {
-    return ( (unsigned int)( (unsigned long)slaveInstance ) ) / 8;
+  return slaveInstance->getId() / 8;
 }
 
 Instance* Cell::SlaveInstanceSet::_getNextElement(Instance* slaveInstance) const
@@ -478,7 +479,7 @@ Name Cell::NetMap::_getKey(Net* net) const
 unsigned Cell::NetMap::_getHashValue(Name name) const
 // **************************************************
 {
-    return ( (unsigned int)( (unsigned long)name._getSharedName() ) ) / 8;
+  return (unsigned int)name._getSharedName()->getId() / 8;
 }
 
 Net* Cell::NetMap::_getNextElement(Net* net) const
@@ -513,7 +514,7 @@ Name Cell::PinMap::_getKey(Pin* pin) const
 unsigned Cell::PinMap::_getHashValue(Name name) const
 // **************************************************
 {
-    return ( (unsigned int)( (unsigned long)name._getSharedName() ) ) / 8;
+  return (unsigned int)name._getSharedName()->getId() / 8;
 }
 
 Pin* Cell::PinMap::_getNextElement(Pin* pin) const
@@ -548,7 +549,7 @@ const Layer* Cell::SliceMap::_getKey(Slice* slice) const
 unsigned Cell::SliceMap::_getHashValue(const Layer* layer) const
 // *************************************************************
 {
-    return ( (unsigned int)( (unsigned long)layer ) ) / 8;
+  return (unsigned int)layer->getMask() / 8;
 }
 
 Slice* Cell::SliceMap::_getNextElement(Slice* slice) const
@@ -578,7 +579,7 @@ Cell::MarkerSet::MarkerSet()
 unsigned Cell::MarkerSet::_getHashValue(Marker* marker) const
 // **********************************************************
 {
-    return ( (unsigned int)( (unsigned long)marker ) ) / 8;
+  return (unsigned int)marker->getId() / 8;
 }
 
 Marker* Cell::MarkerSet::_getNextElement(Marker* marker) const

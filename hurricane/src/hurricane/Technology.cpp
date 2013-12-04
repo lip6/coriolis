@@ -17,6 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
+#include "hurricane/SharedName.h"
 #include "hurricane/Technology.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Layer.h"
@@ -411,7 +412,7 @@ Name Technology::LayerMap::_getKey(Layer* layer) const
 unsigned Technology::LayerMap::_getHashValue(Name name) const
 // **********************************************************
 {
-    return ( (unsigned int)( (unsigned long)name._getSharedName() ) ) / 8;
+  return name._getSharedName()->getId() / 8;
 }
 
 Layer* Technology::LayerMap::_getNextElement(Layer* layer) const

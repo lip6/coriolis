@@ -19,6 +19,21 @@
   *                cell of a hierachical assembly, as well as for all cells from 
   *                the library which are not instanciated in the current 
   *                design). 
+  *
+  *
+  *  \section      secInstancePlacement  Placement Status
+  *
+  *                See Instance::PlacementStatus and Instance::PlacementStatus::Code.
+  *
+  *                An Instance can have three kind of placement status:
+  *                  - Instance::PlacementStatus::UNPLACED : the instance doesn't have a
+  *                    meaningful position. It shouldn't be materialized either.
+  *                    It's position therfore shouldn't be used.
+  *                  - Instance::PlacementStatus::PLACED : the instance has be placed
+  *                    manually or by an automated tool. It is movable.
+  *                  - Instance::PlacementStatus::FIXED : the instance is placed and
+  *                    mustn't be moved by automated tools. It can still be moved
+  *                    manually.
   * 
   * 
   *  \section      secInstancePredefinedFilters  Predefined filters
@@ -171,5 +186,44 @@
   */
 
  //  \}
+
+ //! \class        Instance::PlacementStatus
+ //! \brief        Instance Placement Status (\b API)
+ //!
+ //! \section      secInstancePStatus  Instance Placement Status
+ //!
+ //!               An Instance can have three kind of placement status:
+ //!                 - Instance::PlacementStatus::UNPLACED : the instance doesn't have a
+ //!                   meaningful position. It shouldn't be materialized either.
+ //!                   It's position therfore shouldn't be used.
+ //!                 - Instance::PlacementStatus::PLACED : the instance has be placed
+ //!                   manually or by an automated tool. It is movable.
+ //!                 - Instance::PlacementStatus::FIXED : the instance is placed and
+ //!                   mustn't be moved by automated tools. It can still be moved
+ //!                   manually.
+
+ //! \function     Instance::PlacementStatus::PlacementStatus( const Code& code=UNPLACED );
+ //!               Constructor. By default the status is unplaced.
+
+ //! \function     Instance::PlacementStatus::PlacementStatus( const Instance::PlacementStatus& );
+ //!               Copy Constructor.
+
+ //! \function     Instance::PlacementStatus::operator const Code& () const;
+ //!               Type converter toward Instance::PlacementStatus::Code enum.
+
+ //! \function     Instance::PlacementStatus::Code& Instance::PlacementStatus::getCode() const;
+ //! \return       The status (Code) value.
+
+ //! \enum         Instance::PlacementStatus::Code
+ //!               Describe the various placement status an Instance can be in.
+
+ //! \var          Instance::PlacementStatus::UNPLACED
+ //! \sa           Instance::PlacementStatus.
+
+ //! \var          Instance::PlacementStatus::PLACED
+ //! \sa           Instance::PlacementStatus.
+
+ //! \var          Instance::PlacementStatus::FIXED
+ //! \sa           Instance::PlacementStatus.
 
  }

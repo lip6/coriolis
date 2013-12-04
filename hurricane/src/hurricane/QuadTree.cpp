@@ -464,7 +464,7 @@ void QuadTree::_explode()
         _urChild = new QuadTree(this);
         _llChild = new QuadTree(this);
         _lrChild = new QuadTree(this);
-        set<Go*> goSet;
+        set<Go*,Entity::CompareById> goSet;
         for_each_go(go, _goSet.getElements()) {
             _goSet._remove(go);
             go->_quadTree = NULL;
@@ -539,7 +539,7 @@ QuadTree::GoSet::GoSet()
 unsigned QuadTree::GoSet::_getHashValue(Go* go) const
 // **************************************************
 {
-    return ( (unsigned int)( (unsigned long)go ) ) / 8;
+  return go->getId() / 8;
 }
 
 Go* QuadTree::GoSet::_getNextElement(Go* go) const

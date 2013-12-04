@@ -151,6 +151,9 @@
   *  \Return       the collection of net's pads. 
   */
 
+ //! \function     RoutingPads Net::getRoutingPads() const;
+ //! \Return       the collection of net's RoutingPads. 
+
  /*! \function     Plugs Net::getSlavePlugs() const;
   *  \Return       the collection of plugs which have this net as master. 
   *

@@ -17,6 +17,8 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
+#include <limits>
+#include "hurricane/Error.h"
 #include "hurricane/Entity.h"
 #include "hurricane/Quark.h"
 #include "hurricane/Cell.h"
@@ -31,11 +33,19 @@ namespace Hurricane {
 // Entity implementation
 // ****************************************************************************************************
 
-Entity::Entity()
-// *************
-:    Inherit()
-{
-}
+
+  unsigned int  Entity::_idCounter = 0;
+
+
+  Entity::Entity()
+    : Inherit()
+    , _id(_idCounter++)
+  {
+    if (_idCounter == std::numeric_limits<unsigned int>::max()) {
+      throw Error( "Entity::Entity(): Identifier counter has reached it's limit (%d bits)."
+                 , std::numeric_limits<unsigned int>::digits );
+    }
+  }
 
 
   void Entity::_preDestroy()
@@ -85,7 +95,9 @@ Entity::Entity()
 string Entity::_getString() const
 // ******************************
 {
-    return Inherit::_getString();
+    string s = Inherit::_getString();
+    s.insert(1, "id:"+getString(_id)+" ");
+    return s;
 }
 
 Record* Entity::_getRecord() const
@@ -93,6 +105,7 @@ Record* Entity::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
+        record->add(getSlot("_id", _id));
         Occurrence occurrence = Occurrence(this);
         if (occurrence.hasProperty())
             record->add(getSlot("Occurrence", occurrence));

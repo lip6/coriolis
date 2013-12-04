@@ -1,7 +1,7 @@
 
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2010, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2013, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -23,8 +23,7 @@
 //
 // $Id$
 //
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,12 +31,10 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./RoutingPad.h"                                |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
+#include <sstream>
 #include "hurricane/Net.h"
 #include "hurricane/NetExternalComponents.h"
 #include "hurricane/Layer.h"
@@ -48,17 +45,18 @@
 #include "hurricane/Vertical.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Instance.h"
+#include "hurricane/Warning.h"
 #include "hurricane/Error.h"
 #include "hurricane/RoutingPad.h"
 
 
 namespace Hurricane {
 
+  using  std::ostringstream;
 
-  RoutingPad::RoutingPad ( Net* net, const Point& p, Occurrence occurrence )
+
+  RoutingPad::RoutingPad ( Net* net, Occurrence occurrence )
     :  Inherit   (net)
-    , _x         (p.getX())
-    , _y         (p.getY())
     , _occurrence(occurrence)
   { }
 
@@ -71,23 +69,23 @@ namespace Hurricane {
     Plug*    plug    = NULL;
     Pin*     pin     = NULL;
     Contact* contact = NULL;
-    Point    position;
 
-    if ( (plug = dynamic_cast<Plug*>(occurrence.getEntity()) ) ) {
-      position = occurrence.getPath().getTransformation().getPoint( plug->getPosition() );
-    } else if ( (pin = dynamic_cast<Pin*>(occurrence.getEntity()) ) ) {
-      position = occurrence.getPath().getTransformation().getPoint( pin->getPosition() );
-    } else if ( (contact = dynamic_cast<Contact*>(occurrence.getEntity()) ) ) {
-      position = occurrence.getPath().getTransformation().getPoint( contact->getPosition() );
+    if ( (plug = dynamic_cast<Plug*>(occurrence.getEntity()) ) == NULL) {
+      if ( (pin = dynamic_cast<Pin*>(occurrence.getEntity()) ) == NULL) {
+        contact = dynamic_cast<Contact*>(occurrence.getEntity());
+      }
     }
 
     if ( (not plug) and (not pin) and (not contact) )
-      throw Error ("Can't create RoutingPad : Plug Pin, or Contact Occurrence *required*");
+      throw Error ("Can't create RoutingPad : Plug, Pin, or Contact Occurrence *required*");
 
-    RoutingPad* routingPad = new RoutingPad(net, position, occurrence);
+    RoutingPad* routingPad = new RoutingPad( net, occurrence );
     routingPad->_postCreate();
 
-    if ( plug and (flags & ComponentSelection) ) routingPad->setOnBestComponent(flags);
+    if ( plug and (flags & ComponentSelection) )
+      routingPad->setOnBestComponent( flags );
+    if (not plug)
+      routingPad->isPlacedOccurrence( flags );
 
     return routingPad;
   }
@@ -117,8 +115,33 @@ namespace Hurricane {
   }
 
 
-  DbU::Unit RoutingPad::getX       () const { return _x; }
-  DbU::Unit RoutingPad::getY       () const { return _y; }
+  bool  RoutingPad::isPlacedOccurrence ( unsigned int flags ) const
+  {
+    vector<Instance*> unplaceds;
+    forEach( Instance*, iinstance, _occurrence.getPath().getInstances() ) {
+      if (iinstance->getPlacementStatus() == Instance::PlacementStatus::UNPLACED) {
+        unplaceds.push_back( *iinstance );
+      }
+    }
+
+    if (not unplaceds.empty() and (flags & ShowWarning)) {
+      ostringstream message;
+      message << "There are unplaced(s) instances in " << this << ":";
+      for ( size_t i=0 ; i<unplaceds.size() ; ++i ) {
+        message << "\n          * Instance <" << unplaceds[i]->getName() << ":"
+                << unplaceds[i]->getMasterCell()->getName() << "> in Cell <"
+                << unplaceds[i]->getCell()->getName() << ">";
+          ;
+      }
+      cerr << Warning( message.str() ) << endl;;
+    }
+
+    return not unplaceds.empty();
+  }
+
+
+  DbU::Unit RoutingPad::getX       () const { return getPosition().getX(); }
+  DbU::Unit RoutingPad::getY       () const { return getPosition().getY(); }
   DbU::Unit RoutingPad::getSourceX () const { return getSourcePosition().getX(); }
   DbU::Unit RoutingPad::getSourceY () const { return getSourcePosition().getY(); }
   DbU::Unit RoutingPad::getTargetX () const { return getTargetPosition().getX(); }
@@ -148,17 +171,28 @@ namespace Hurricane {
   const Layer* RoutingPad::getLayer () const
   {
     Component* component = _getEntityAsComponent();
-    if ( component ) return component->getLayer ();
+    if (component) return component->getLayer ();
 
     return NULL;
+  }
+
+
+  Point RoutingPad::getPosition () const
+  {
+    Component* component = _getEntityAsComponent();
+    if (component)
+      return _occurrence.getPath().getTransformation().getPoint( component->getCenter() );
+
+    return Point();
   }
 
 
   Point RoutingPad::getSourcePosition () const
   {
     Segment* segment = _getEntityAsSegment();
-    if ( segment )
+    if ( segment ) {
       return _occurrence.getPath().getTransformation().getPoint ( segment->getSourcePosition() );
+    }
 
     return getPosition();
   }
@@ -186,25 +220,7 @@ namespace Hurricane {
 
   void RoutingPad::translate(const DbU::Unit& dx, const DbU::Unit& dy)
   {
-    if ( (dx != 0) or (dy != 0) ) {
-      invalidate(true);
-      _x += dx;
-      _y += dy;
-    }
-  }
-
-
-  void RoutingPad::setX        ( const DbU::Unit& x ) { setPosition(x, getY()); }
-  void RoutingPad::setY        ( const DbU::Unit& y ) { setPosition(getX(), y); }
-  void RoutingPad::setPosition ( const DbU::Unit& x, const DbU::Unit& y ) { setOffset(x, y); }
-  void RoutingPad::setPosition ( const Point& position) { setPosition(position.getX(), position.getY()); }
-
-
-  void RoutingPad::setOffset ( const DbU::Unit& x, const DbU::Unit& y )
-  {
-    invalidate(true);
-    _x = x;
-    _y = y;
+  // Does nothing. The position is fixed and relative to the instance path.
   }
 
 
@@ -237,8 +253,6 @@ namespace Hurricane {
   {
     Record* record = Inherit::_getRecord();
     if ( record ) {
-      record->add(getSlot("_x"         , &_x       ));
-      record->add(getSlot("_y"         , &_y       ));
       record->add(getSlot("_occurrence",_occurrence));
     }
     return record;
@@ -275,21 +289,6 @@ namespace Hurricane {
     _occurrence.getMasterCell()->_removeSlaveEntity(_occurrence.getEntity(),this);
     _occurrence = Occurrence(component,Path(plugOccurrence.getPath(),plug->getInstance()));
 
-    Point       position   = _occurrence.getPath().getTransformation().getPoint ( component->getPosition() );
-    Horizontal* horizontal = dynamic_cast<Horizontal*>(component);
-
-    if ( horizontal ) {
-      setX ( 0 );
-      setY ( position.getY() );
-    } else {
-      Vertical* vertical = dynamic_cast<Vertical*>(component);
-      if ( vertical ) {
-        setX ( position.getX() );
-        setY ( 0 );
-      } else
-        setPosition ( position );
-    }
-
     _occurrence.getMasterCell()->_addSlaveEntity(_occurrence.getEntity(),this);
 
     if (!isMaterialized()) materialize();
@@ -320,8 +319,6 @@ namespace Hurricane {
     if (isMaterialized()) unmaterialize();
 
     _occurrence=getPlugOccurrence();
-    setPosition ( _occurrence.getPath().getTransformation().getPoint
-      ( dynamic_cast<Component*>(_occurrence.getEntity())->getPosition() ) );
   }
 
 
@@ -359,6 +356,7 @@ namespace Hurricane {
                   ,getString(plug->getInstance ()).c_str() );
 
     setExternalComponent ( bestComponent );
+    if (flags & ShowWarning) isPlacedOccurrence( flags );
 
     return bestComponent;
   }

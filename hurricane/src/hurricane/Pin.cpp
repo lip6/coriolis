@@ -37,7 +37,7 @@ Pin::Pin(Net* net, const Name& name, const AccessDirection& accessDirection, con
     _nextOfCellPinMap(NULL)
 {
     if (getCell()->getPin(name))
-        throw Error("Can't create " + _TName("Pin") + " : already exists");
+      throw Error("Can't create " + _TName("Pin") + " <" + getString(name) + "> : already exists");
 
 }
 

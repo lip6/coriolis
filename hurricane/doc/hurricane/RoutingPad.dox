@@ -11,14 +11,20 @@
   *                The RoutingPad is a part of the trans-hierarchical mechanism.
   *                It allows to connect a Net from the top-level netlist to
   *                a plug in an Instance at any level inside the hierarchy,
-  *                throuhg a Plug Occurrence. RoutingPad can also be created from
+  *                through a Plug Occurrence. RoutingPad can also be created from
   *                Pin or Contact Occurrences.
   *
   *                When the RoutingPad is created using a Plug Occurrence, it can
   *                be set afterward to any of master net external Component.
-  *                An utility method RoutingPad::setOnBestComponent() is also
+  *                A utility method RoutingPad::setOnBestComponent() is also
   *                provided to automatically set the RoutingPad on a Component
   *                matching criteria of surface or layer level.
+  *
+  *                The position of the RoutingPad is fixed relatively from the
+  *                instances in it's occurrence path and the entity it refers.
+  *                The reference point used on the entity is it's center whether
+  *                it is a segment, a pin or a plug. In the later case, it is
+  *                the center of the cell.
   */
 
 
@@ -38,6 +44,10 @@
  //! \var          RoutingPad::ComponentSelection
  //!               A mask to filter bit parts of a flag belonging to component selection.
 
+ //! \var          RoutingPad::ShowWarning
+ //!               Whether to display a warning or not while checking the instances
+ //!               placement.
+
 
  //! \typedef      RoutingPad::Inherit
  //!               Useful for calling upon methods of the base class without 
@@ -52,6 +62,17 @@
 
  //! \function     RoutingPad*   RoutingPad::create ( Pin* pin );
  //!               Special variant to create a RoutingPad from a top-level Pin.
+
+ //! \function     bool  RoutingPad::isPlacedOccurrence ( unsigned int flags ) const;
+ //!               Check wether all the instances in the occurrence path are placed.
+ //!               If at least, one is not and \c flags contains RoutingPad::ShowWarning,
+ //!               display a warning.
+ //!
+ //!               When using a RoutingPad as a reference/anchor for other physical
+ //!               components (that is, the occurence entity is no longer a Plug),
+ //!               it is critical that it is in a truly meaningful position.
+ //!               And this is true \e only if all the instances in the occurrence's Path
+ //!               have a physical position (i.e. are placed).
 
  //! \function     Occurrence  RoutingPad::getOccurrence() const;
  //! \return       The Occurence on which we are anchored on. If a Component has been selected
@@ -111,22 +132,10 @@
  //!               getY() otherwise.
 
  //! \function     void  RoutingPad::translate ( const DbU::Unit& dx, const DbU::Unit& dy );
- //!               Translate the RoutingPad by <code>(dx,dy)</code>.
-
- //! \function     void  RoutingPad::setOffset ( const DbU::Unit& dx, const DbU::Unit& dy );
- //!               Sets the relative position of the RoutingPad from it's anchor to <code>(dx,dy)</code>.
-
- //! \function     void  RoutingPad::setX ( const DbU::Unit& x );
- //!               Sets the X coordinate of the RoutingPad.
-
- //! \function     void  RoutingPad::setY ( const DbU::Unit& y );
- //!               Sets the X coordinate of the RoutingPad.
-
- //! \function     void  RoutingPad::setPosition ( const DbU::Unit& x, const DbU::Unit& y );
- //!               Sets the absolute position of the RoutingPad to <code>(x,y)</code>.
-
- //! \function     void  RoutingPad::setPosition ( const Point& position );
- //!               Sets the absolute position of the RoutingPad to <code>position</code>.
+ //!               As the position of the RoutingPad is fixed relatively to the instance path
+ //!               and the anchoring component, it cannot be translated. Thus this method do
+ //!               nothing. The Routing pad will translate nevertheless with any translation
+ //!               of any of the instance in it's path or the anchor.
 
  //! \function     void  RoutingPad::setExternalComponent ( Component* component );
  //!               When the RoutingPad is anchored on a Plug, allow to set the \c component

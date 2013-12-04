@@ -17,6 +17,8 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
+#include <limits>
+#include "hurricane/Error.h"
 #include "hurricane/SharedName.h"
 
 namespace Hurricane {
@@ -27,16 +29,24 @@ namespace Hurricane {
 // SharedName implementation
 // ****************************************************************************************************
 
-SharedName::SharedNameMap* SharedName::_SHARED_NAME_MAP = NULL;
+  SharedName::SharedNameMap* SharedName::_SHARED_NAME_MAP = NULL;
+  unsigned int               SharedName::_idCounter       = 0;
 
-SharedName::SharedName(const string& s)
-// ************************************
-:    _count(0),
-    _string(s)
+
+  SharedName::SharedName ( const string& name )
+    : _id    (_idCounter++)
+    , _count (0)
+    , _string(name)
 {
     if (!_SHARED_NAME_MAP) _SHARED_NAME_MAP = new SharedNameMap();
     (*_SHARED_NAME_MAP)[&_string] = this;
+
+    if (_idCounter == std::numeric_limits<unsigned int>::max()) {
+      throw Error( "SharedName::SharedName(): Identifier counter has reached it's limit (%d bits)."
+                 , std::numeric_limits<unsigned int>::digits );
+    }
 }
+
 
 SharedName::~SharedName()
 // **********************
@@ -66,8 +76,8 @@ Record* SharedName::_getRecord() const
 // *****************************
 {
     Record* record = new Record(getString(this));
-    record->add(getSlot("Count", &_count));
-    record->add(getSlot("String", &_string));
+    record->add(getSlot("_count", &_count));
+    record->add(getSlot("_string", &_string));
     return record;
 }
 

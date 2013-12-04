@@ -25,73 +25,43 @@
 namespace Hurricane {
 
 
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::SharedName".
 
-// ****************************************************************************************************
-// SharedName declaration
-// ****************************************************************************************************
 
-class SharedName {
-// *************
+  class SharedName {
+      friend class Name;
 
-// Friends
-// *******
+    public:
+      inline unsigned int  getId        () const;
+             const string& _getSString  () const { return _string; };
+             string        _getTypeName () const { return _TName("SharedName"); };
+             string        _getString   () const;
+             Record*       _getRecord   () const;
+    private:
+                           SharedName   ( const string& );
+                           SharedName   ( const SharedName& );
+                          ~SharedName   ();
+             SharedName&   operator=    ( const SharedName& );
+             void          capture      ();
+             void          release      ();
 
-    friend class Name;
+    private:
+      struct SharedNameMapComparator {
+          bool operator() ( string* lhs, string* rhs ) const;
+      };
+      typedef  map<string*, SharedName*, SharedNameMapComparator>  SharedNameMap;
 
-// Types
-// *****
+    private:
+      static SharedNameMap* _SHARED_NAME_MAP;
+      static unsigned int   _idCounter;
+             unsigned int   _id;
+             int            _count;
+             string         _string;
+  };
 
-    private: struct SharedNameMapComparator {
-    // ************************************
 
-        bool operator()(string* s1, string* s2) const;
-
-    };
-
-    private: typedef map<string*, SharedName*, SharedNameMapComparator> SharedNameMap;
-
-// Attributes
-// **********
-
-    private: static SharedNameMap* _SHARED_NAME_MAP;
-
-    private: int _count;
-    private: string _string;
-
-// Constructors
-// ************
-
-    private: SharedName(const string& s);
-
-    private: SharedName(const SharedName& sharedName);
-                // not implemented to forbid copy construction
-
-// Destructor
-// **********
-
-    private: ~SharedName();
-
-// Operators
-// *********
-
-    private: SharedName& operator=(const SharedName& sharedName);
-                // not implemented to forbid assignment
-
-// Updators
-// ********
-
-    private: void capture();
-    private: void release();
-
-// Others
-// ******
-
-    public: const string &_getSString () const { return _string; };
-    public: string _getTypeName() const { return _TName("SharedName"); };
-    public: string _getString() const;
-    public: Record* _getRecord() const;
-
-};
+  inline  unsigned int  SharedName::getId () const { return _id; }
 
 
 } // End of Hurricane namespace.

@@ -95,10 +95,6 @@ namespace Hurricane {
       inline  void              _setExtractMask              ( const Mask& extractMask );
       inline  void              _setNextOfTechnologyLayerMap ( Layer* layer );
       virtual void              _onDbuChange                 ( float scale );
-    public:
-      struct MaskCompare {
-          inline bool operator () ( const Layer*, const Layer* ) const;
-      };
 
     private:
     // Internal: Attributes
@@ -121,6 +117,11 @@ namespace Hurricane {
                                                              );
       virtual void              _postCreate                  ();
       virtual void              _preDestroy                  ();
+
+    public:
+      struct CompareByMask : public binary_function<const Layer*,const Layer*,bool> {
+          inline bool  operator() ( const Layer* lhs, const Layer* rhs ) const;
+      };
   };
 
 
@@ -140,8 +141,8 @@ namespace Hurricane {
   inline  void                Layer::_setExtractMask              ( const Mask& extractMask ) { _extractMask = extractMask; }
   inline  void                Layer::_setNextOfTechnologyLayerMap ( Layer* layer ) { _nextOfTechnologyLayerMap = layer; }
 
-  inline  bool  Layer::MaskCompare::operator () ( const Layer* layer1, const Layer* layer2 ) const
-  { return layer1->getMask() < layer2->getMask(); }
+  inline bool   Layer::CompareByMask::operator() ( const Layer* lhs, const Layer* rhs ) const
+  { return (lhs?lhs->getMask():Layer::Mask()) < (rhs?rhs->getMask():Layer::Mask()); }
 
 
 

@@ -17,6 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
+#include "hurricane/SharedName.h"
 #include "hurricane/Library.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Cell.h"
@@ -163,7 +164,7 @@ Name Library::LibraryMap::_getKey(Library* library) const
 unsigned Library::LibraryMap::_getHashValue(Name name) const
 // *********************************************************
 {
-    return ( (unsigned int)( (unsigned long)name._getSharedName() ) ) / 8;
+  return name._getSharedName()->getId() / 8;
 }
 
 Library* Library::LibraryMap::_getNextElement(Library* library) const
@@ -199,7 +200,7 @@ Name Library::CellMap::_getKey(Cell* cell) const
 unsigned Library::CellMap::_getHashValue(Name name) const
 // ******************************************************
 {
-    return ( (unsigned int)( (unsigned long)name._getSharedName() ) ) / 8;
+  return name._getSharedName()->getId() / 8;
 }
 
 Cell* Library::CellMap::_getNextElement(Cell* cell) const

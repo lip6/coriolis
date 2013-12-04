@@ -7,49 +7,88 @@
  /*! \class        Entity
   *  \brief        Occurrenceable objects root class (\b API).
   *
-  *  \section      sEntityIntro  Introduction
+  *  \section      secEntityIntro  Introduction
   *
   *                Entities are abstract objects representing the category of
   *                occurrenceable objects.
-  */
-
-
- /*! \function     Cell* Entity::getCell () const;
-  *  \return       Returns the cell owning this entity (when the Entity is a Cell,
-  *                the Cell itself is returned)
-  */
-
- /*! \function     Box  Entity::getBoundingBox () const;
-  *  \return       Returns the bounding box of the entity. It is defined as the
-  *                smallest box enclosing the entity or its constituents.
   *
-  *  \remark       For the Plugs, which are not objects of the physical layout,
-  *                the returned envelope is a Box of null dimensions (ponctual)
-  *                centered on the location of the master Net of the Plug, to
-  *                which has been applied the transformation associated to the
-  *                Instance of the Plug.
+  *  \section      secEntityId  Unique Identifier
+  *
+  *                Each Entity is associated with a unique identifier (see
+  *                Entity::getId()). This identifier is used as a sorting key
+  *                in the various IntrusiveMap throughout Hurricane to ensure
+  *                determinism. It came as a replacement of the object's own
+  *                address which is not suitable for this purpose.
+  *
+  *                For STL container, the Entity::CompareById functor is provided.
+  *
+  *                The identifier is generated from an ever incrementing counter
+  *                on 32 bits or 64 bits, depending on the target system architecture.
+  *                If the 32/64 bit capacity is reached an exception is thrown.
   */
+
+ //! \function     unsigned int  Entity::getId () const;
+ //! \Return       Returns the unique identifier of this Entity.
+
+ //! \function     Cell* Entity::getCell () const;
+ //! \Return       Returns the cell owning this entity (when the Entity is a Cell,
+ //!               the Cell itself is returned)
+
+ //! \function     Box  Entity::getBoundingBox () const;
+ //! \return       Returns the bounding box of the entity. It is defined as the
+ //!               smallest box enclosing the entity or its constituents.
+ //!
+ //! \remark       For the Plugs, which are not objects of the physical layout,
+ //!               the returned envelope is a Box of null dimensions (ponctual)
+ //!               centered on the location of the master Net of the Plug, to
+ //!               which has been applied the transformation associated to the
+ //!               Instance of the Plug.
 
 
  //! \name         Entity Collection
- // \{
+ //! \{
 
- /*! \typedef      typedef GenericCollection<Entity*> Entities;
-  *                Generic collection representing a set of data base objects.
+ //! \typedef      typedef GenericCollection<Entity*> Entities;
+ //!               Generic collection representing a set of data base objects.
+ //!
+
+ //! \typedef      typedef GenericLocator<Entity*> EntityLocator;
+ //!               Generic locator for visiting a data base objects Collection.
+ //!
+
+ //! \typedef      typedef GenericFilter<Entity*> EntityFilter;
+ //!               Filter to selecting a subset of data base objects matching some criteria.
+ //!
+
+ //! \def          for_each_entity(entity,entities)
+ //!               Macro for visiting all objects of a data base objects collection.
+ //!
+
+ //! \}
+
+ /*! \class        Entity::CompareById
+  *  \brief        Entity comparison criterion for STL container.
+  *
+  *                This class is a functor to be used in STL containers of \c Entity*
+  *                whenever determinism is required (as an alternative to the object's
+  *                pointer). If a \c NULL pointer is passed as argument, it's \c id
+  *                is computed as zero, it is a failsafe and should be avoided.
+  *
+\code
+typedef  std::map<Net*,SomeValue,Entity::CompareById>  NetMap;
+
+NetMap  netMap;
+forEach( Net*, inet, cell->getNets() ) {
+  netMap.insert( std::make_pair(*inet,computeSomeValue(*inet)) );
+}
+
+for ( NetMap::iterator imap=netMap.begin() ; imap!=netMap.end() ; ++imap ) {
+  // Show the Net ordering
+  cout << (*imap).first->getId() << ":" << (*imap).first << endl;
+  // Do something
+  // ...
+}
+\endcode
   */
-
- /*! \typedef      typedef GenericLocator<Entity*> EntityLocator;
-  *                Generic locator for visiting a data base objects Collection.
-  */
-
- /*! \typedef      typedef GenericFilter<Entity*> EntityFilter;
-  *                Filter to selecting a subset of data base objects matching some criteria.
-  */
-
- /*! \def          for_each_entity(entity,entities)
-  *                Macro for visiting all objects of a data base objects collection.
-  */
-
- // \}
 
  }

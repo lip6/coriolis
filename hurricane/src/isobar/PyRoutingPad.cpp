@@ -54,8 +54,8 @@ extern "C" {
   DirectGetLongAttribute(PyRoutingPad_getSourceY ,getSourceY ,PyRoutingPad,RoutingPad)
   DirectGetLongAttribute(PyRoutingPad_getTargetX ,getTargetX ,PyRoutingPad,RoutingPad)
   DirectGetLongAttribute(PyRoutingPad_getTargetY ,getTargetY ,PyRoutingPad,RoutingPad)
-  DirectSetLongAttribute(PyRoutingPad_setX       ,setX       ,"RoutingPad.setX",PyRoutingPad,RoutingPad)
-  DirectSetLongAttribute(PyRoutingPad_setY       ,setY       ,"RoutingPad.setY",PyRoutingPad,RoutingPad)
+  // DirectSetLongAttribute(PyRoutingPad_setX       ,setX       ,"RoutingPad.setX",PyRoutingPad,RoutingPad)
+  // DirectSetLongAttribute(PyRoutingPad_setY       ,setY       ,"RoutingPad.setY",PyRoutingPad,RoutingPad)
 
   // Standart destroy (Attribute).
   DBoDestroyAttribute(PyRoutingPad_destroy, PyRoutingPad)
@@ -179,6 +179,7 @@ extern "C" {
   }
 
 
+#if THIS_IS_DEPRECATED
   static PyObject* PyRoutingPad_setPosition ( PyRoutingPad *self, PyObject* args )
   {
     trace << "PyRoutingPad_setPosition ()" << endl;
@@ -229,6 +230,7 @@ extern "C" {
 
     Py_RETURN_NONE;
   }
+#endif
 
 
   static PyObject* PyRoutingPad_setExternalComponent ( PyRoutingPad *self, PyObject* args )
@@ -305,16 +307,16 @@ extern "C" {
     , { "getTargetX"           , (PyCFunction)PyRoutingPad_getTargetX           , METH_NOARGS , "Get the RoutingPad target X position." }
     , { "getTargetY"           , (PyCFunction)PyRoutingPad_getTargetY           , METH_NOARGS , "Get the RoutingPad target Y position." }
     , { "translate"            , (PyCFunction)PyRoutingPad_translate            , METH_VARARGS, "Translates the RoutingPad segment of dx and dy." }
-    , { "setX"                 , (PyCFunction)PyRoutingPad_setX                 , METH_VARARGS, "Modify the RoutingPad X position." }
-    , { "setY"                 , (PyCFunction)PyRoutingPad_setY                 , METH_VARARGS, "Modify the RoutingPad Y position." }
-    , { "setPosition"          , (PyCFunction)PyRoutingPad_setPosition          , METH_VARARGS, "Sets the RoutingPad absolute position." }
-    , { "setOffset"            , (PyCFunction)PyRoutingPad_setOffset            , METH_VARARGS, "Sets the RoutingPad relative position." }
+ // , { "setX"                 , (PyCFunction)PyRoutingPad_setX                 , METH_VARARGS, "Modify the RoutingPad X position." }
+ // , { "setY"                 , (PyCFunction)PyRoutingPad_setY                 , METH_VARARGS, "Modify the RoutingPad Y position." }
+ // , { "setPosition"          , (PyCFunction)PyRoutingPad_setPosition          , METH_VARARGS, "Sets the RoutingPad absolute position." }
+ // , { "setOffset"            , (PyCFunction)PyRoutingPad_setOffset            , METH_VARARGS, "Sets the RoutingPad relative position." }
     , { "setExternalComponent" , (PyCFunction)PyRoutingPad_setExternalComponent , METH_VARARGS, "Sets the RoutingPad on an master net external component." }
     , { "setOnBestComponent"   , (PyCFunction)PyRoutingPad_setOnBestComponent   , METH_VARARGS, "Sets the RoutingPad on master net best external component." }
     , { "restorePlugOccurrence", (PyCFunction)PyRoutingPad_restorePlugOccurrence, METH_VARARGS, "Revert back from an external component to the plug." }
     , { "destroy"              , (PyCFunction)PyRoutingPad_destroy              , METH_NOARGS
                                , "destroy associated hurricane object, the python object remains." }
-    , {NULL, NULL, 0, NULL}           /* sentinel */
+    , {NULL, NULL, 0, NULL}    /* sentinel */
     };
 
 

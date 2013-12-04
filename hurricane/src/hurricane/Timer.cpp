@@ -199,10 +199,10 @@ namespace Hurricane {
   string Timer::getStringMemory ( size_t size ) {
     string s;
 
-    if ( size >> 30 )      s = getString(size>>30) + "Mo";
-    else if ( size >> 20 ) s = getString(size>>20) + "Mo";
-    else if ( size >> 10 ) s = getString(size>>10) + "Ko";
-    else                   s = getString(size) + " octets";
+    if ( size >> 30 )      s = getString(size>>30) + "Mb";
+    else if ( size >> 20 ) s = getString(size>>20) + "Mb";
+    else if ( size >> 10 ) s = getString(size>>10) + "Kb";
+    else                   s = getString(size) + " bytes";
 
     return s;
   }

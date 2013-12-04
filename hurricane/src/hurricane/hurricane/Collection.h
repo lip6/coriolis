@@ -838,7 +838,7 @@ class ForEachIterator {
     inline Element                     operator->      ();
     inline ForEachIterator&            operator++      (int);
   public:
-           GenericCollection<Element>& collection;
+           GenericCollection<Element>  collection;
            GenericLocator<Element>     locator;
            Element                     element;
 };

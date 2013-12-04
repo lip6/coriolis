@@ -1,7 +1,7 @@
 
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2010, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2013, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -23,23 +23,19 @@
 //
 // $Id$
 //
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Authors     :          Hugo Clement & Marek Sroka              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./hurricane/RegularLayer.h"                    |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./hurricane/RoutingPad.h"                      |
+// +-----------------------------------------------------------------+
 
 
-#ifndef __HURRICANE_ROUTINGPAD__
-#define __HURRICANE_ROUTINGPAD__
+#ifndef HURRICANE_ROUTINGPAD_H
+#define HURRICANE_ROUTINGPAD_H
 
 #include "hurricane/Component.h"
 #include "hurricane/Occurrence.h"
@@ -54,16 +50,18 @@ namespace Hurricane {
   class RoutingPad : public Component {
     public:
       typedef Component Inherit;
-      enum    Flags { BiggestArea       =0x1
-                    , HighestLayer      =0x2
-                    , LowestLayer       =0x4
+      enum    Flags { BiggestArea       = 0x0001
+                    , HighestLayer      = 0x0002
+                    , LowestLayer       = 0x0004
                     , ComponentSelection=BiggestArea|HighestLayer|LowestLayer
+                    , ShowWarning       = 0x0008
                     };
     public:
       static RoutingPad*   create                ( Net*, Occurrence, unsigned int flags=0 );
       static RoutingPad*   create                ( Pin* );
     public:
     // Accessors.
+              bool         isPlacedOccurrence    ( unsigned int flags ) const;
       inline  Occurrence   getOccurrence         () const { return _occurrence; };
               Occurrence   getPlugOccurrence     ();
       virtual const Layer* getLayer              () const;
@@ -72,6 +70,7 @@ namespace Hurricane {
       virtual Box          getBoundingBox        () const;
       virtual Box          getBoundingBox        ( const BasicLayer* ) const;
       virtual Point        getCenter             () const;
+      virtual Point        getPosition           () const;
               Point        getSourcePosition     () const;
               Point        getTargetPosition     () const;
               DbU::Unit    getSourceX            () const;
@@ -80,11 +79,6 @@ namespace Hurricane {
               DbU::Unit    getTargetY            () const;
     // Mutators.                                 
       virtual void         translate             ( const DbU::Unit& dx, const DbU::Unit& dy );
-              void         setX                  ( const DbU::Unit& );
-              void         setY                  ( const DbU::Unit& );
-              void         setPosition           ( const DbU::Unit& x, const DbU::Unit& y );
-              void         setPosition           ( const Point& position );
-              void         setOffset             ( const DbU::Unit& dx, const DbU::Unit& dy );
               void         setExternalComponent  ( Component* );
               Component*   setOnBestComponent    ( unsigned int flags );
               void         restorePlugOccurrence ();
@@ -98,11 +92,9 @@ namespace Hurricane {
       virtual void         _postCreate           ();
       virtual void         _preDestroy           ();
     private:
-                           RoutingPad            ( Net*, const Point&, Occurrence occurrence=Occurrence() );
+                           RoutingPad            ( Net*, Occurrence occurrence=Occurrence() );
     private:
     // Attributes.
-      DbU::Unit   _x;
-      DbU::Unit   _y;
       Occurrence  _occurrence;
   };
 
@@ -112,4 +104,4 @@ namespace Hurricane {
 
 INSPECTOR_P_SUPPORT(Hurricane::RoutingPad);
 
-#endif  // __HURRICANE_ROUTINGPAD__
+#endif  // HURRICANE_ROUTINGPAD_H

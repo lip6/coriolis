@@ -20,6 +20,7 @@
 #ifndef HURRICANE_NET
 #define HURRICANE_NET
 
+#include <functional>
 #include "hurricane/Entity.h"
 #include "hurricane/Nets.h"
 #include "hurricane/Component.h"
@@ -231,10 +232,6 @@ class Net : public Entity {
     public: void _setNextOfCellNetMap(Net* net) {_nextOfCellNetMap = net;};
 
 };
-
-
-
-
 
 
 } // End of Hurricane namespace.
