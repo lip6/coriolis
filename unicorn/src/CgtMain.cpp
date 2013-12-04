@@ -15,67 +15,67 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <Python.h>
-#include  <csignal>
-#include  <memory>
+#include <Python.h>
+#include <csignal>
+#include <memory>
 using namespace std;
 
-#include  <boost/program_options.hpp>
+#include <boost/program_options.hpp>
 namespace bopts = boost::program_options;
 
-#include  "vlsisapd/utilities/Path.h"
-#include  "vlsisapd/bookshelf/Exception.h"
-#include  "vlsisapd/configuration/Configuration.h"
-#include  "hurricane/DebugSession.h"
-#include  "hurricane/DataBase.h"
-#include  "hurricane/Cell.h"
-#include  "hurricane/Warning.h"
-#include  "hurricane/UpdateSession.h"
-#include  "hurricane/viewer/Script.h"
+#include "vlsisapd/utilities/Path.h"
+#include "vlsisapd/bookshelf/Exception.h"
+#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/DebugSession.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Warning.h"
+#include "hurricane/UpdateSession.h"
+#include "hurricane/viewer/Script.h"
 
-#include  <QtGui>
+#include <QtGui>
 #if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and not defined (__APPLE__)
 #  include  <QGtkStyle>
 #endif
 
-#include  "hurricane/viewer/HApplication.h"
-#include  "hurricane/viewer/Graphics.h"
-#include  "hurricane/viewer/StratusScript.h"
-#include  "hurricane/viewer/SelectCommand.h"
+#include "hurricane/viewer/HApplication.h"
+#include "hurricane/viewer/Graphics.h"
+#include "hurricane/viewer/StratusScript.h"
+#include "hurricane/viewer/SelectCommand.h"
 using namespace Hurricane;
 
-#include  "crlcore/Utilities.h"
-#include  "crlcore/AllianceFramework.h"
-#include  "crlcore/Hierarchy.h"
-#include  "crlcore/ToolBox.h"
-#include  "crlcore/Ispd04Bookshelf.h"
-#include  "crlcore/Iccad04Lefdef.h"
-#include  "crlcore/DefImport.h"
-#include  "crlcore/DefExport.h"
+#include "crlcore/Utilities.h"
+#include "crlcore/AllianceFramework.h"
+#include "crlcore/Hierarchy.h"
+#include "crlcore/ToolBox.h"
+#include "crlcore/Ispd04Bookshelf.h"
+#include "crlcore/Iccad04Lefdef.h"
+#include "crlcore/DefImport.h"
+#include "crlcore/DefExport.h"
 using namespace CRL;
 
-#include  "nimbus/NimbusEngine.h"
+#include "nimbus/NimbusEngine.h"
 using namespace Nimbus;
 
-#include  "metis/MetisEngine.h"
+#include "metis/MetisEngine.h"
 using namespace Metis;
 
-#include  "mauka/GraphicMaukaEngine.h"
+#include "mauka/GraphicMaukaEngine.h"
 using namespace Mauka;
 
-#include  "knik/GraphicKnikEngine.h"
+#include "knik/GraphicKnikEngine.h"
 using namespace Knik;
 
-#include  "kite/GraphicKiteEngine.h"
+#include "kite/GraphicKiteEngine.h"
 using namespace Kite;
 
-#include  "equinox/GraphicEquinoxEngine.h"
+#include "equinox/GraphicEquinoxEngine.h"
 using namespace Equinox;
 
 #include  "solstice/GraphicSolsticeEngine.h"
 using namespace Solstice;
 
-#include  "unicorn/UnicornGui.h"
+#include "unicorn/UnicornGui.h"
 using namespace Unicorn;
 
 
@@ -389,8 +389,8 @@ int main ( int argc, char *argv[] )
       if ( runKiteTool ) {
       //cell->flattenNets ( not arguments.count("global") );
 
-        unsigned int globalFlags = (loadGlobal) ? Kite::LoadGlobalSolution
-                                                : Kite::BuildGlobalSolution;
+        unsigned int globalFlags = (loadGlobal) ? Kite::KtLoadGlobalRouting
+                                                : Kite::KtBuildGlobalRouting;
 
         static KatabaticEngine::NetSet routingNets;
         KiteEngine* kite = KiteEngine::create ( cell );
@@ -400,8 +400,8 @@ int main ( int argc, char *argv[] )
         if ( saveGlobal ) kite->saveGlobalSolution ();
 
         if ( detailedRoute ) {
-          kite->loadGlobalRouting ( Katabatic::LoadGrByNet, routingNets );
-          kite->layerAssign       ( Katabatic::NoNetLayerAssign );
+          kite->loadGlobalRouting ( Katabatic::EngineLoadGrByNet, routingNets );
+          kite->layerAssign       ( Katabatic::EngineNoNetLayerAssign );
           kite->runNegociate      ();
           kiteSuccess = kite->getToolSuccess ();
           kite->finalizeLayout ();

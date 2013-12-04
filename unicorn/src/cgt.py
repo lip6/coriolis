@@ -89,6 +89,7 @@ if __name__ == '__main__':
       parser.add_option( '-v', '--verbose'       , action='store_true', dest='verbose'       , help='First level of verbosity.')
       parser.add_option( '-V', '--very-verbose'  , action='store_true', dest='veryVerbose'   , help='Second level of verbosity.')
       parser.add_option( '-i', '--info'          , action='store_true', dest='info'          , help='Display lots of informational messages.')
+      parser.add_option(       '--paranoid'      , action='store_true', dest='paranoid'      , help='Display everything that *may be* suspicious...')
       parser.add_option( '-b', '--bug'           , action='store_true', dest='bug'           , help='Display bug related messages.')
       parser.add_option(       '--show-conf'     , action='store_true', dest='showConf'      , help='Display Kite configuration.')
       parser.add_option( '-D', '--core-dump'     , action='store_true', dest='coreDump'      , help='Enable core-dump when a crash occurs.')
@@ -109,6 +110,7 @@ if __name__ == '__main__':
       (options, args) = parser.parse_args()
       args.insert(0, 'cgt')
 
+      af = CRL.AllianceFramework.get()
 
      #Hurricane.trace(True)
       Cfg.Configuration.pushDefaultPriority(Cfg.Parameter.Priority.CommandLine)
@@ -117,6 +119,7 @@ if __name__ == '__main__':
       if options.verbose:      Cfg.getParamBool      ('misc.verboseLevel1').setBool(True)
       if options.veryVerbose:  Cfg.getParamBool      ('misc.verboseLevel2').setBool(True)
       if options.info:         Cfg.getParamBool      ('misc.info'         ).setBool(True)
+      if options.paranoid:     Cfg.getParamBool      ('misc.paranoid'     ).setBool(True)
       if options.bug:          Cfg.getParamBool      ('misc.bug'          ).setBool(True)
       if options.logMode:      Cfg.getParamBool      ('misc.logMode'      ).setBool(True)
       if options.showConf:     Cfg.getParamBool      ('misc.showConf'     ).setBool(True)
@@ -133,8 +136,6 @@ if __name__ == '__main__':
       detailRoute    = options.detailRoute
 
       Cfg.Configuration.popDefaultPriority()
-
-      af = CRL.AllianceFramework.get()
 
       cell = None
       if options.acmSigdaName:
@@ -208,8 +209,8 @@ if __name__ == '__main__':
           runKiteTool = loadGlobal or globalRoute or detailRoute
 
           if runKiteTool:
-              if loadGlobal: globalFlags = Kite.LoadGlobalSolution
-              else:          globalFlags = Kite.BuildGlobalSolution
+              if loadGlobal: globalFlags = Kite.KtLoadGlobalRouting
+              else:          globalFlags = Kite.KtBuildGlobalRouting
 
               routingNets = []
               kite = Kite.KiteEngine.create(cell)
@@ -219,8 +220,8 @@ if __name__ == '__main__':
               if saveGlobal: kite.saveGlobalSolution()
     
               if detailRoute:
-                  kite.loadGlobalRouting( Katabatic.LoadGrByNet, routingNets )
-                  kite.layerAssign      ( Katabatic.NoNetLayerAssign )
+                  kite.loadGlobalRouting( Katabatic.EngineLoadGrByNet, routingNets )
+                  kite.layerAssign      ( Katabatic.EngineNoNetLayerAssign )
                   kite.runNegociate     ()
                   kiteSuccess = kite.getToolSuccess()
                   kite.finalizeLayout()
