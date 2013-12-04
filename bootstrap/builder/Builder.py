@@ -246,7 +246,7 @@ class Builder:
 
 
     def _svnCheckout ( self, tool ):
-        project = self.getToolProject ( tool )
+        project = self._conf.getToolProject ( tool )
         if not project:
             print ErrorMessage( 0, "Tool \"%s\" is not part of any project."%tool
                                  ,"Cannot guess the SVN repository." )
@@ -272,7 +272,7 @@ class Builder:
 
 
     def _svnExport ( self, tool ):
-        project = self.getToolProject ( tool )
+        project = self._conf.getToolProject ( tool )
         if not project:
             print ErrorMessage( 0, "Tool \"%s\" is not part of any project."%tool
                                  , "Cannot guess the SVN repository.")
